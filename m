@@ -1,125 +1,83 @@
-Return-Path: <linux-kernel+bounces-556285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1580CA5C3AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:21:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3736A5C3B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D30D16D378
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:21:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FFF116D0B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FD525B693;
-	Tue, 11 Mar 2025 14:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NS87e9Hu"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FA619AA63;
-	Tue, 11 Mar 2025 14:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C1625B694;
+	Tue, 11 Mar 2025 14:21:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8053C25B68F;
+	Tue, 11 Mar 2025 14:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741702897; cv=none; b=DHusyeplxhpbFEvfar/S4w9hCVxBLyp2WhfScpnyPLKp4gpsTXzPLBd3EH+ko+G4OUwAksYjvMCHLsmU3YM2ozyBMUJwdcQI0p9W4fer9BjZyQlN88uLNLH2VlIXUwLoygs+0AuBEJn182VPGtHDGq3pJ1a3rdp7YX2fm6QeYoU=
+	t=1741702913; cv=none; b=PNwc09HE7PhsbJMJX9hi1Km42zPBeOZJfhxnbI7kMxFokcUpRxY5t7pFEujwpl+3gwA3ofgCvlSDWu4VFXt4rBHAH1B9F0yIZRT0ONXfkHsXMW/tBB7L3WElZXJVd3Uu4bjJpjS3dwKgsqkpITn5LYFyVBvDkS5Kxp0oRKkR/s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741702897; c=relaxed/simple;
-	bh=3vu7/r9ZYXOnDQESpVnU4+c7VBGcFNQK+fIZJP7zUiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r52bsa1eQgoFg7PkCsqxZZB5Fza6F9KE9vj1+Qt4rWr2rDTbSqL9G+LVL7prHAcq9bif/lWN+MdZivmXTf1dF4X64yVQp++wSA2bS5J4KO2Brlu5+VqCQllQ0fM12jUOBbSLxfKh5kVNHYib1AL5XMppBXfYANAPkb9WP4G0i3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NS87e9Hu; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B9hkle004865;
-	Tue, 11 Mar 2025 14:21:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=yxH128XxdZ/UKwOSclHlGQO4gSIsVn
-	fgWzByxlVyMf0=; b=NS87e9Hu8S1dudL3FeZjVokuekhEcaaAKhtjIytQZsX4F/
-	5KZAiiY/anko8RpU70NsY2ox5/hRNfo5Zl3Pfs0guQcNXJJOI+q1sNdyXMKSJpSf
-	Ae+bl1D2GXveHHvGeP3sXo3jDvA1ZSKEj0DcJMdkeWfztAj6oQBkOfM5AZ0K8QHM
-	KQ9KYPTfgUHUFt4RjR3hjWkUNhtLkZoj/Y8NVw3CCdZj7XwcdtZyEamJUi+LudeH
-	TbkpJCv9rIwPrc+6Zl09K1Im1EEh+bO/yswpqeL5P0SpTJPV/64JQlcBb+qPeuTk
-	7olSazADFuPLgP0apwzxX1MDMxUplX5f1z+RuEBQ==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45a78qve48-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 14:21:21 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52BDSQum027631;
-	Tue, 11 Mar 2025 14:21:21 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4591qkmhaq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 14:21:21 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52BELG9V22544774
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Mar 2025 14:21:17 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DC9C820040;
-	Tue, 11 Mar 2025 14:21:16 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4227E20043;
-	Tue, 11 Mar 2025 14:21:16 +0000 (GMT)
-Received: from osiris (unknown [9.179.21.35])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 11 Mar 2025 14:21:16 +0000 (GMT)
-Date: Tue, 11 Mar 2025 15:21:14 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Kees Cook <kees@kernel.org>,
-        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-hardening@vger.kernel.org
-Subject: Re: [PATCH mm-unstable 0/2] mseal system mappings fix + s390
- enablement
-Message-ID: <20250311142114.12846Fd5-hca@linux.ibm.com>
-References: <20250311123326.2686682-1-hca@linux.ibm.com>
- <a326735d-ca3e-4aee-9f98-4e742dfc15f5@lucifer.local>
- <20250311133736.12846D42-hca@linux.ibm.com>
- <b8cf08ef-0125-466f-89d2-d499cbdcd3aa@lucifer.local>
- <20250311140630.12846Eef-hca@linux.ibm.com>
- <6f106b28-7d5e-468f-8a94-e94357a950ee@lucifer.local>
+	s=arc-20240116; t=1741702913; c=relaxed/simple;
+	bh=gnnxfXrI/j17ReBUFkKwGmj3BFF/0mbRExyDYdjISKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mnBuYaB3o45xT7XiUrEZ/1QnRCr4nPKm1+M7OyfDmFvvldD2+R+NfLy4J4LNaqE8X/aGTosP9v4u9ULHY26oiNkVucH57ptEb+9vtW0Onq7Mj7QmxVYD6uORzzB7ba1r/f1hUWsY++4JyeUrGrb+tv9laBbCnsPLs5A0C4FT/BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C43DF1516;
+	Tue, 11 Mar 2025 07:22:01 -0700 (PDT)
+Received: from [10.119.37.172] (unknown [10.119.37.172])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 725473F694;
+	Tue, 11 Mar 2025 07:21:50 -0700 (PDT)
+Message-ID: <affd759b-d84a-4aaa-8de2-812558f1ff49@arm.com>
+Date: Tue, 11 Mar 2025 09:21:49 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f106b28-7d5e-468f-8a94-e94357a950ee@lucifer.local>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: MUlHuszvREW12eXE0On2tzLrxcgpdf3Y
-X-Proofpoint-ORIG-GUID: MUlHuszvREW12eXE0On2tzLrxcgpdf3Y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- spamscore=0 adultscore=0 mlxlogscore=550 phishscore=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 bulkscore=0 suspectscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503110089
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build warning after merge of the tpmdd tree
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250311210011.18b7ab80@canb.auug.org.au>
+ <Z9AMEZw1dm80mwx0@kernel.org>
+Content-Language: en-US
+From: Stuart Yoder <stuart.yoder@arm.com>
+In-Reply-To: <Z9AMEZw1dm80mwx0@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 02:09:30PM +0000, Lorenzo Stoakes wrote:
-> > When it comes to unmapping vdso: this would break user space since
-> > commit df29a7440c4b ("s390/signal: switch to using vdso for sigreturn
-> > and syscall restart") - there haven't been any reports.
-> 
-> OK that seems to implicitly suggest that you're fine with sealing then?
-> 
-> I had a quick glance and it seemed fine for s390. I mean it's _weird_ to remap
-> any of this stuff so it'd be the odd one out that does it (ppc _seems_ to in
-> _some_ circumstances need it, for instance).
-> 
-> So I think we're good? :)
 
-Yes, for s390 we are good.
+
+On 3/11/25 5:10 AM, Jarkko Sakkinen wrote:
+> On Tue, Mar 11, 2025 at 09:00:11PM +1100, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> After merging the tpmdd tree, today's linux-next build (htmldocs)
+>> produced this warning:
+>>
+>> Documentation/security/tpm/tpm_ffa_crb.rst: WARNING: document isn't included in any toctree
+>>
+>> Introduced by commit
+>>
+>>    115be78c0bfe ("Documentation: tpm: add documentation for the CRB FF-A interface")
+>>
+>> -- 
+>> Cheers,
+>> Stephen Rothwell
+> 
+> Stuart, could you send a replacement patch and I'll repeal and replace?
+
+Replacement patch is set.  I just sent v7 patch 5/5.  If you need me to
+resend the entire series as v7 I'll do that.
+
+Thanks!
+Stuart
 
