@@ -1,119 +1,114 @@
-Return-Path: <linux-kernel+bounces-556672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5405A5CD33
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:07:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3E3A5CD37
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:07:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB953B322B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:06:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE72C7A8D74
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB08263883;
-	Tue, 11 Mar 2025 18:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EA1262D23;
+	Tue, 11 Mar 2025 18:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="htrTg1W3"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IssCg3cS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45954262D13;
-	Tue, 11 Mar 2025 18:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC29262D21;
+	Tue, 11 Mar 2025 18:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716411; cv=none; b=Xq2y0HUT2IzwqMT8KXT+yv++zNMBAmfvMIo8a8PZpu7uJ+uN1II5cO5q3v2/mCBvNgXtj9oQKvicP117WCiRkgA3lSgPQTs1uvyIY2nszDkWyezGoeSuIGptOOcPrNQzlQe1P9OxzK/Is4U96SGPi7edLCKEg/ID2VFIWv2zpYk=
+	t=1741716416; cv=none; b=PoySHhhlHALakB02R0gARVFX1Yyw76XtCG6ungMXYZ/hAzUp2XZicjw46MjoAVKpDIm9LxvldDeTADhhr/z3RUiltammZtAyXfLllAt5FM+99GKnqssQkm35U4e/7Pi8KlNWQvAPoBa4R+5pFned9qaarDdCRtSwWBho4jWuRrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716411; c=relaxed/simple;
-	bh=BHav3oKa2uFyPTW/UrA35WATkduan0OqaEQuXBZpk98=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YJFX8FuvJ+/9LdHPH91W8umvXDBe3ihDaJrxpTvxZaVmjY40DtsyH2qpu3uJEnD2qz/YEKWDWP8nGplz0F9heGdrWUPG+hVG04FMp58St2nzxU4OcEEnaL8F1/1SMAUEB2syVs2sWaraXZSkWu8oPKjr7LOF4VaLCh5CAMJDs7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=htrTg1W3; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse-pc.fritz.box (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 328C72FC018A;
-	Tue, 11 Mar 2025 19:06:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1741716406;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V6R6tm4ns8Um0TDPIr9+P3P4IbmZhumCp0uw8ROTCc4=;
-	b=htrTg1W3s0UvkXcQkJ3lKJCLR/NzQPp0EnowKNKRcHBLBhVJ/S+L4RyqDmMluPOiSrTZSP
-	N2oHYP1FzYsqVWlHOXcp/+pKQhzPjY6NRqf6G/H7XTPjA49nakiXU9Ponr/DA4Vdo+3Ke9
-	HULpyc5EsgCd8zDbyfS8Nt1LZlwyvrE=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: hdegoede@redhat.com,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] Input: atkbd - Correctly map F13 - F24
-Date: Tue, 11 Mar 2025 19:06:24 +0100
-Message-ID: <20250311180643.1107430-2-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250311180643.1107430-1-wse@tuxedocomputers.com>
-References: <20250311180643.1107430-1-wse@tuxedocomputers.com>
+	s=arc-20240116; t=1741716416; c=relaxed/simple;
+	bh=XuObIYw3RDsk53zQsCVI6/Eb60dSnbERWjSJp+4yvEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZYQBedToJY6JsDDaGwrnzkx+PIeXBWx83lJRc0Bsb9O98HgOHEmY/mt98Rak83eqit4c3F71G1lyScuLeuhloNAFUy8ROabUhRjUMvgilUk4n5+Xak/emrfNCSYytnWDdOL+q9pENstf/zfUesMKAqrYJWMrvDVGFzRxzQGF29M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IssCg3cS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85EE0C4CEEA;
+	Tue, 11 Mar 2025 18:06:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741716414;
+	bh=XuObIYw3RDsk53zQsCVI6/Eb60dSnbERWjSJp+4yvEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IssCg3cSilF7/wjdOftUOaTpCwST0CEsEV8ami2djc4HT6zPBbMCiV/cHwuS2qMND
+	 BkfRj2zSV9ascPDRQScmPra88Z/6OcwtlZIL7RGSerTgdXK4JbyQXZXkwysZ84tUzd
+	 gZ4N7XKY03vtOf/cOvrtsofH3ARPwTzhgLplkpSlhm0dIPwjn5mAlA8Q/vUIIbFzwj
+	 m4/QuKDoZcuIu69BBnRgW0ygpuhOPul9039z1kpkUtdnd+ZONfpPLcMbjkREjK8hY+
+	 cYmP28DjU0MSVrPw+EdEscCB7XKfcgomXkUj5k7doC8sXSppC2e8aGi+cTIHea0aNn
+	 wfgk00fV7KDxw==
+Date: Tue, 11 Mar 2025 13:06:52 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Ross Burton <ross.burton@arm.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Eric Biggers <ebiggers@google.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Javier Carrasco <javier.carrasco@wolfvision.net>,
+	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Zhi Mao <zhi.mao@mediatek.com>, Hans Verkuil <hverkuil@xs4all.nl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Will Deacon <will@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-media@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Ihor Matushchak <ihor.matushchak@foobox.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-staging@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
+	devicetree@vger.kernel.org,
+	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
+	Julien Massot <julien.massot@collabora.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-gpio@vger.kernel.org,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>
+Subject: Re: [RFC PATCH v2 01/16] dt-bindings: media: i2c: max96717: add
+ myself as maintainer
+Message-ID: <174171641225.3915054.13208024290734160025.robh@kernel.org>
+References: <20250309084814.3114794-1-demonsingur@gmail.com>
+ <20250309084814.3114794-2-demonsingur@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250309084814.3114794-2-demonsingur@gmail.com>
 
-Currently only F23 is correctly mapped for PS/2 keyboards.
 
-Following to this table:
-https://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/translate.pdf
+On Sun, 09 Mar 2025 10:47:53 +0200, Cosmin Tanislav wrote:
+> Analog Devices is taking responsability for the maintenance of the Maxim
+> GMSL2/3 devices.
+> Add myself to the maintainers list and to the device tree bindings.
+> 
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml | 1 +
+>  MAINTAINERS                                                     | 1 +
+>  2 files changed, 2 insertions(+)
+> 
 
-- F24 and Zenkaku/Hankaku share the same scancode, but since in real world
-Zenkaku/Hankaku keys seem to just use the tilde scancode, this patch binds the
-scancode to F24. Note that on userspace side the KEY_ZENKAKUHANKAKU keycode is
-currently not bound in xkeyboard-config, so it is (mostly*) unused anyway.
-
-* Qt on Wayland and therefore KDE on Wayland can see the keypress anyway for
-some reason and it is actually used in a touchpad toggle shortcut, but this is
-currently being fixed in both KDE and xkeyboard-config to make this less weird,
-so it could directly be fixed to correctly handle the F24 keypress instead.
-
-- The scancodes for F13-F22 are currently unmapped so there will probably be no
-harm in mapping them. This would also fix the issue that some of these keys
-can't be mapped as the target from userspace using the `setkeycodes` command.
-
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
----
- drivers/input/keyboard/atkbd.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
-index 3598a21d9d014..4bd6e6ef0715e 100644
---- a/drivers/input/keyboard/atkbd.c
-+++ b/drivers/input/keyboard/atkbd.c
-@@ -84,12 +84,12 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
- #include "hpps2atkbd.h"	/* include the keyboard scancodes */
- 
- #else
--	  0, 67, 65, 63, 61, 59, 60, 88,  0, 68, 66, 64, 62, 15, 41,117,
--	  0, 56, 42, 93, 29, 16,  2,  0,  0,  0, 44, 31, 30, 17,  3,  0,
--	  0, 46, 45, 32, 18,  5,  4, 95,  0, 57, 47, 33, 20, 19,  6,183,
--	  0, 49, 48, 35, 34, 21,  7,184,  0,  0, 50, 36, 22,  8,  9,185,
--	  0, 51, 37, 23, 24, 11, 10,  0,  0, 52, 53, 38, 39, 25, 12,  0,
--	  0, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0, 85,
-+	  0, 67, 65, 63, 61, 59, 60, 88,183, 68, 66, 64, 62, 15, 41,117,
-+	184, 56, 42, 93, 29, 16,  2,  0,185,  0, 44, 31, 30, 17,  3,  0,
-+	186, 46, 45, 32, 18,  5,  4, 95,187, 57, 47, 33, 20, 19,  6,183,
-+	188, 49, 48, 35, 34, 21,  7,184,189,  0, 50, 36, 22,  8,  9,185,
-+	190, 51, 37, 23, 24, 11, 10,  0,191, 52, 53, 38, 39, 25, 12,  0,
-+	192, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0,194,
- 	  0, 86, 91, 90, 92,  0, 14, 94,  0, 79,124, 75, 71,121,  0,  0,
- 	 82, 83, 80, 76, 77, 72,  1, 69, 87, 78, 81, 74, 55, 73, 70, 99,
- 
--- 
-2.43.0
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
