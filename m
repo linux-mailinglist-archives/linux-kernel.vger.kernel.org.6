@@ -1,124 +1,155 @@
-Return-Path: <linux-kernel+bounces-555291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298DEA5B3B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:33:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 300E0A5B356
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:29:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5FB6189321B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:33:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D06EA3AB944
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7246817991;
-	Tue, 11 Mar 2025 00:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EE11C69D;
+	Tue, 11 Mar 2025 00:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P676gk13"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m6Sf/XFL"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADF92F56
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 00:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A61917991
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 00:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741653175; cv=none; b=mlW+fcWlIoMQWvghcka0R2nMoUd+5izhPqhyS2n9ywjHbbwlzm2sM1yUcqIyDJ2V2eX4HUMrTf+zPa/st1eFnSfoGWHQTaqP4+EkoGqT6B+ZrboVxbPUgqozb+NIxxzNC0DAAFx7eQJRuW2+KRwAC4XopiVF2zuWg+yi2sazohk=
+	t=1741652941; cv=none; b=Tapk6WVcrhgewhaENd0fIsJj08k9A0NMwftgtLZAsxWJsMGwjwL4i4JgW0b18L6uuPTQUt5cn/zzM+RqYONDPylc3MZb7QnGcxIoAnrBSrT6rDhLFaB0P2U8XahE5V36aL54yCwqi44VwI1gXgoUqDLcAvu7yYp6iqeM0uwV0XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741653175; c=relaxed/simple;
-	bh=VzdRAXVoKVmLJqAlDJYWoY9x50Z3i8HiRWx+ZRrGixY=;
+	s=arc-20240116; t=1741652941; c=relaxed/simple;
+	bh=H7jZ8AJWpuYWzp+yJpA8zo+LB4yon8C+Vs0avmU6EPE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UCEI2JNg7O/TRd0qKQMIhKAWVs3yluTUE4OoQqwnFbMoE/ExkBF26h61xZhz7X8YNphr6iUsxZQh8Rh5IK22NT0kL8c/5IsCmMe2varGyLJsreWlEUUxc/xI8snZ3SZhTiR6t5HbvajT8IVP2jQHEX88tU92goMRVwTI/d3k00M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=P676gk13; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e5e8274a74so5014459a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:32:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=Sm9FOlr8HVe+NF3xfqBGAm6Fnpc3sYpKipLInOeBo/Vrvbb7EEawG1sw3mvS8QnDAZ9a2x5WxqaKS7LpW7MAN/bfX+fVySCr27CkRwbjjf0mG2E2vnTO9q0cjmKZkQsuZBGiuMqa3rTh9uuUbLq0cfinnmfwL71a5qi5s4Zxe7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m6Sf/XFL; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2242ac37caeso35555ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:29:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1741653171; x=1742257971; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M+NqzMzHbZXk+h6w4tXrOYz6KUMPIha1ekpgVhvukzY=;
-        b=P676gk13dYyFCCiJquT2OAovg33vmsCWEZZchho4xxukiYhAtHyr4kegOuJQu7NgDH
-         6xtWRTqFWI0gC2DKSfKj+Z+iXGfUV95iZzcRfjUjr0q1eq3IAR3sO7g5GVnfUxwIRxRM
-         e/pKcLCl1ECTIhBd6L1s98gBpkglk4sIaWym4=
+        d=google.com; s=20230601; t=1741652939; x=1742257739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UABuFrQuI44iACwIy3HnqNxQ3GKqEJj4Y7sE4lcn2r4=;
+        b=m6Sf/XFLAKPAYy1UzTiQSR8adN0d2pYU9h1HDB8BVv50cfuXpoAhtW2o0e3Rf7KjDV
+         88B8m2f3wQQGCjQ/aWdkcuJaxewb/7ayBbOm+JotKefzS6oPv+C/geu99ZoyrPHsF9kx
+         Nro29Kzqleo4hm+atr4c/GPI/UlEv0bqq8DKjoxUOiT9x0P45pOuJCQkec7Z/VmMiWUP
+         5k4g6/Nzy/hGm3x8shz5dSnl+GaRiQms+OGzJ0/119YIZAVmRfrFRj8CpI0pNL5KmK6X
+         8TuAPmuJXHEeBEkpesJro2FiNWLCbTA9fct+QTcs+22HxILv/Ap9rciIyYhM6XesbbKd
+         QM8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741653171; x=1742257971;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M+NqzMzHbZXk+h6w4tXrOYz6KUMPIha1ekpgVhvukzY=;
-        b=tMi9ZVMEPimNER9BPVRYrGpzcjVms/G/YTATVHzJ5dgOfLTBqxuM/p2RKeaO1LRKSK
-         fZ/drqoS/KLraWIsS7Yf3Hhycvdsa/gwcGgDPrsEdnqR3+MrjAztVkeyRoPFmKtqPbSM
-         mHGrGoe0a4wwhKYRiGFBum5igxJQnEVrBYDowbXAEnC7s87YI+rUfNGBztGIHApXnh+V
-         Fr8mWB9fDYbr7ftE4IAxQ9M7VgeptQJsfeqkrrV4nZvJV/T79ZfPPVrvNKHX2AB2czrF
-         nQ97sIaqd/gGzhj1Dn7mflRI6ZpysGRxoD36JX9gYzixGGfwHGHa3nNYskuvV4VGupzo
-         B3aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVd6ufxS6RmKyeIzVowmGIaEsTUr6XTf6SSGeDOJ2JkthLqqC19mQZrBo+2KA4m4k+dzPl8+smNyglEUHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX2zMyEWFwp5NAnkq/LWCRcJT1kQoIFCDFyjHhp7K/xR60U5CH
-	RJ1oqSgt0mrcRNJrGnrekkscpdiRci+mJ6crYnSMFiSu9x7eZd3psu8BeLUL7rsy6XdCH3HoqzI
-	JvfgnKw==
-X-Gm-Gg: ASbGnct/KiXUQypVdTEcLfeMWi/Cy/7UEbr8VYXg1EqHySGJ6hoAF9JMv9Ze+ec6Jno
-	ljkNvVxuoitsOnuzn21JeAFfAStBKQFJU6asaXN06XMYCxMi94QubQtehnEx4GC9JRnD/zk6e83
-	Cqi3aOzh1QUVJf9zOUSIEWJjkO77t3UJzDG6qQYru/Usn3+3HZQwsaEB0u/DP/IPcn4xLGNm3yf
-	i8pmB+dl3tG4R3TuPXFbfMZACZiAW1Qz96T4BAdcBum6uLXC63ALKIBmZGMr8hh/M+AP57qQ6wO
-	x9MiYYWO5YiUnZ1WMJlAJXY4gcJDEE95fBLMYSFSIdJ5l7xJYDxYKWQehJ/8wsubHCrxDe3VxKk
-	2mq10NdcT6LtIU+3mQXE=
-X-Google-Smtp-Source: AGHT+IEKMjXSrwIq0sECKJbUgSy0nl9vV6plwg1DqweRBPZYxt0dYmWK4l0rpA6ENjqhPts3sLb+8w==
-X-Received: by 2002:a05:6402:4617:b0:5e6:17d7:9a32 with SMTP id 4fb4d7f45d1cf-5e617d7bb68mr34408983a12.18.1741653171132;
-        Mon, 10 Mar 2025 17:32:51 -0700 (PDT)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com. [209.85.128.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2394826absm843298766b.55.2025.03.10.17.32.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 17:32:50 -0700 (PDT)
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso52836025e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:32:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVs0AfmMXItGGH9wdv85D3Z1vRSOfhrfhrBINJ3i7w4VRuZ6YMG8f32HI/eOiGwImiED1xpHFJm4JLxI2Y=@vger.kernel.org
-X-Received: by 2002:a05:6402:4617:b0:5e6:17d7:9a32 with SMTP id
- 4fb4d7f45d1cf-5e617d7bb68mr34370545a12.18.1741652794918; Mon, 10 Mar 2025
- 17:26:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741652939; x=1742257739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UABuFrQuI44iACwIy3HnqNxQ3GKqEJj4Y7sE4lcn2r4=;
+        b=RhIWpNKhoPMx/oA0T3VIW3tV3vRIZVs4CVH3JFo/AoWkE0Fbf6z6PES8KKjVzsboJn
+         awvPZ9HbGRu1UoIWO5qX5wqPmyLI/Ta9dMkXt27Pd97Jz7qg9ZGZUCiwvgHayZlKfa3/
+         6fjHwdclsoXmkbf5/IYzzONnuBwam2CEXgzvkBknaFOkaKfPns4EeSPHhcGYYOjKEbJ/
+         vE8VGGbVqf2W4LIQMuKTMvvQbZ7WOxlODIPMNJq8kUO+3YAF+47fOsHhZVFxxCpMDXB/
+         rdh3Ml+1YKryEz4+Sx5vx0nMCd1Nx+f1vcDlk1PMv7dVs1XLfbDVAB+xb3xqZGV2vM3f
+         3CBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxpWx1g92dJ0Asqb2jyvXqcVIYgH71NT5Bkd5splFD26zaND8xStLOEcM24jjwNzemHVt/unT0qOU9fTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6neTkgUDCr25CyiuopU2ZuuKdYfRwtZMk4xn+4y3ZsChd+i+o
+	PSAEDV77hcbYFkMqT2MsD5llLfQa0kN7sj84EmoAt3vCO4lzOrA+AFQHAuBIIzqiXA+k2TCddYn
+	UItJmK1s0mhtO+3sb3PAs+cnh2+dpov0WVqjl
+X-Gm-Gg: ASbGncsvxQy+cDJCoY+kAXRoDgOfSyHD/QR/v6SW1LG6pKQVjJ4m7kfu/AIZrH38QbT
+	3DNGUn6/BUxNAdhVCJRemzDS7L/VnSEbbGDNYgthQCCBT9CiNfBavXdh++qWTYO9wpTxhGO8vRe
+	/XutrRzp6sXzMf6aEG+mfAx4Cw/BI=
+X-Google-Smtp-Source: AGHT+IGZFYC9l0qSMoTNOCNTKIWeDhgcqZC3Ph7NAr2gIW3VS6y0oQX5vid8Fwv244/bp66pOd+Sbl+r4VXrIV9rhcc=
+X-Received: by 2002:a17:902:d4c6:b0:21b:b3c4:7e0a with SMTP id
+ d9443c01a7336-225477f2f60mr5635095ad.13.1741652939394; Mon, 10 Mar 2025
+ 17:28:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304102934.2999-1-hdanton@sina.com> <20250304233501.3019-1-hdanton@sina.com>
- <20250305045617.3038-1-hdanton@sina.com> <20250305224648.3058-1-hdanton@sina.com>
- <20250307060827.3083-1-hdanton@sina.com> <20250307104654.3100-1-hdanton@sina.com>
- <20250307112920.GB5963@redhat.com> <20250307235645.3117-1-hdanton@sina.com>
- <20250310104910.3232-1-hdanton@sina.com> <20250310113726.3266-1-hdanton@sina.com>
- <20250310124341.GB26382@redhat.com> <20250310233350.3301-1-hdanton@sina.com>
-In-Reply-To: <20250310233350.3301-1-hdanton@sina.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 10 Mar 2025 14:26:17 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wj6TE6axJzYURaq=zv2UNjm6ikRqN2HKgLHHRpB9XnEAA@mail.gmail.com>
-X-Gm-Features: AQ5f1Jqtj243jyxEZTOcRM5xlgqlawFKyahf8z2U2YCV0F6kMW5dTuQ-rcMhxww
-Message-ID: <CAHk-=wj6TE6axJzYURaq=zv2UNjm6ikRqN2HKgLHHRpB9XnEAA@mail.gmail.com>
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
-To: Hillf Danton <hdanton@sina.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, "Sapkal, Swapnil" <swapnil.sapkal@amd.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250228222308.626803-1-irogers@google.com> <20250228222308.626803-7-irogers@google.com>
+ <Z89jxAMEpYea9Qom@google.com>
+In-Reply-To: <Z89jxAMEpYea9Qom@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 10 Mar 2025 17:28:48 -0700
+X-Gm-Features: AQ5f1JpMTIqotVW_qaSlsLG95MiiipTuuoYyviXscstDHkVRcjpAY_dd3vnQQAc
+Message-ID: <CAP-5=fXniy+Ye=xYdGzr4NKMjh=zQpgZuL=X3Y4DC6ATM5t5Pw@mail.gmail.com>
+Subject: Re: [PATCH v2 06/11] perf python: Add optional cpus and threads
+ arguments to parse_events
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, James Clark <james.clark@linaro.org>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Howard Chu <howardchu95@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 10 Mar 2025 at 13:34, Hillf Danton <hdanton@sina.com> wrote:
+On Mon, Mar 10, 2025 at 3:12=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
 >
-> The step-03 in my scenario [1] shows a reader sleeps at line-370 after
-> making the pipe empty, so after your change that cuts the chance for
-> waking up writer, who will wake up the sleeping reader? Nobody.
+> On Fri, Feb 28, 2025 at 02:23:03PM -0800, Ian Rogers wrote:
+> > Used for the evlist initialization.
+> >
+> > Reviewed-by: Howard Chu <howardchu95@gmail.com>
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/util/python.c | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> > index b600b6379b4e..4a3015e7dc83 100644
+> > --- a/tools/perf/util/python.c
+> > +++ b/tools/perf/util/python.c
+> > @@ -1339,12 +1339,18 @@ static PyObject *pyrf__parse_events(PyObject *s=
+elf, PyObject *args)
+> >       struct evlist evlist =3D {};
+> >       struct parse_events_error err;
+> >       PyObject *result;
+> > +     PyObject *pcpus =3D NULL, *pthreads =3D NULL;
+> > +     struct perf_cpu_map *cpus;
+> > +     struct perf_thread_map *threads;
+> >
+> > -     if (!PyArg_ParseTuple(args, "s", &input))
+> > +     if (!PyArg_ParseTuple(args, "s|OO", &input, &pcpus, &pthreads))
+> >               return NULL;
+> >
+> > +     threads =3D pthreads ? ((struct pyrf_thread_map *)pthreads)->thre=
+ads : NULL;
+> > +     cpus =3D pcpus ? ((struct pyrf_cpu_map *)pcpus)->cpus : NULL;
+>
+> I wonder if it needs any type checks before accessing them.
 
-But step-03 will wake the writer.
+Agreed. We don't do it yet elsewhere:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/util/python.c?h=3Dperf-tools-next#n769
+although there keywords potentially avoid ambiguity. Given this I
+think improving the typing is follow up work.
 
-And no, nobody will wake readers, because the pipe is empty. Only the
-next writer that adds data to the pipe should wake any readers.
+Thanks,
+Ian
 
-Note that the logic that sets "wake_writer" and "was_empty" is all
-protected by the pipe semaphore. So there are no races wrt figuring
-out "should we wake readers/writers".
-
-So I really think you need to very explicitly point to what you think
-the problem is. Not point to some other email. Write out all out in
-full and explain.
-
-               Linus
+> Thanks,
+> Namhyung
+>
+> > +
+> >       parse_events_error__init(&err);
+> > -     evlist__init(&evlist, NULL, NULL);
+> > +     evlist__init(&evlist, cpus, threads);
+> >       if (parse_events(&evlist, input, &err)) {
+> >               parse_events_error__print(&err, input);
+> >               PyErr_SetFromErrno(PyExc_OSError);
+> > --
+> > 2.48.1.711.g2feabab25a-goog
+> >
 
