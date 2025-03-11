@@ -1,135 +1,144 @@
-Return-Path: <linux-kernel+bounces-556772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B323A5CE52
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:56:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E8CA5CE56
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:58:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD43D179777
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C6923B226C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481C7263F3C;
-	Tue, 11 Mar 2025 18:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480CE263F30;
+	Tue, 11 Mar 2025 18:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NnaOIMSd"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSIpiGJk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC36B260A43
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B8C149C55;
+	Tue, 11 Mar 2025 18:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741719393; cv=none; b=bxn6/UCnzP0KUZ4WbWPrhn80kD1wWRHJChIAW/mItbOlRwYVryKpXACV6xmo4VJq57/G7Ql6NWFHKfp8Na9ffCWYqbmgG+Skeuq7bdBp/3s59LjRmvSkU/Fn7Sg5VTcetciPj3E0gdwsn6Y7P5CgGQAahqZl11abTK3afynT21g=
+	t=1741719483; cv=none; b=ZF+a9xbq5+1pMEQpRPZ4vnrEVg0m2caP4EEfn9Hh5EwMWOe+vbEKA3hGVooL0VVFLiNC+Dh2HxOJc/GjiX2wdInCWIHPKIREfEyh3TLO7sR/afjTGCqzBRIv/FirW20PAaCqxFv9D3/DrGw9JpcR1EE0kI3BxTpPG90mm2K+B1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741719393; c=relaxed/simple;
-	bh=lNBjEgxta7oq4TwKBSAROy6ISAN/Tq6iYeWcKE4Vv/0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=K5NRMUrJldSpt5/K09f7ym0ZGVS8vEUf6sOwflenAyAOZCinDroc6Ocxr7M61CUqWdDpY/1+eZ2bhb96jHNCtt78vLEAMOUnte5Jhp/7Oo+Tc2iubEyoDaVhmT72AtHU8ceNBDJ5z9q6b2EoaJKXPnUhdPS4X6ykUdRxb/ecSgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NnaOIMSd; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-85b3f92c8dfso102241839f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:56:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741719389; x=1742324189; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=s1YRjMruou9Tx5jtWPInc60tJt2gIen0DOp7oUm6XP0=;
-        b=NnaOIMSddEPHT8Qo1YzHCECi55a8B5zU7qb0NLMcOe01u/v3w/iNulIeG1JuPW0UNy
-         /rb1+5kltBqg60TmY8Bz6/9ajmJYAOCmcQnPy0v2K/gWA7l7rh2l9X/UAAf8zHJ4oM9l
-         6RoNW/z35MtTPNGzjeNPt+nxZRZpIhQjAHkAfSzw//XVlc25z2oXL2Zixzpe5qRnoFYd
-         5THe5/7EDTSfX+eU6+np5F5WsQ6cz5nbf0unICwVfwdpVJ771ofp+Pl9fnNhGlErQG2f
-         1+DDW5DkPSDCCAdW21fZnpey9nZiWZvNwemBtuemnmsJoaTHQI2WCN8mbATBeyQOh2QN
-         EipQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741719389; x=1742324189;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s1YRjMruou9Tx5jtWPInc60tJt2gIen0DOp7oUm6XP0=;
-        b=PnvoveynsEo5t5UGFF8UHlrQ4e+cHACvmg83PFiOeQ6+tTxHY6Sn76BoAh7/YKxdi9
-         GSBYQ91BynsIGvR2wuiaRtwuGbI1hnjSr8GQfXrzS6KjrfaSMxzWDjeoEbmglVgrxJXa
-         uqxhtqGr/mOAXOColPy6Ji5043jvQz60fyL1Y7ljO7YSlKYucgxJmAOvXzGhTwnnNuUj
-         R1fIqx+/SAulVBGg3OKkaXMr3mjn4nvVFwBOjPL1id3v4pYWwM9OXpSgAfUVeGTp0HwO
-         SAvhMrTE7MV27itP2kb46khJg1J+j6c0QaEYFWdhXl9rwKWY+RFDOgcS7XqaENu9XYy3
-         /5hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOQtsQNe9j7WaxOt1Ib/3pwjAcWfxSCVPgETwEEkAYYQIvUOQYIMUTTjlTubIgyiWVjDOZYxGXplg3QO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP0nfHo1Dd2gJw9hBu1AP9dY1LfsjkpwaOXnW5Vw4/C7Yvu7SE
-	O0wNe10djB3sqh1Jc1U7hQnt1YCujfg2999tMCv0aGQIa+wFcF0adkhhCt0RSCM=
-X-Gm-Gg: ASbGncs2Lp/kRInYPRO29h4W81xFeKH7NIc3096sOJaFteoRwbEVcmWSD7IQBz8aj5e
-	rhdoK4bahQy6WDPIwejlsSynn6BQA1fupOEkIBsbu5uAJKP/DGfZN8u0NY2HniL4l9XWy0sUKHp
-	okXOBALqILiXsMkJ5M1fUbc8cLZZbXjvjQKrSUu3F3sABCVX68Z48MKSljTQhhw6cLzU5YvZo0B
-	ECc/Qp4Ubc7uNGOAILsuW85wfuyQ8pcaGZ6AgMxrCDgUFJpXYzaInfRB2MxuFfQbqx0AAf0wFOj
-	PJXugvXDshZ+/yoaiUpPd9NQSPM7qtQ9TRpWFJyg
-X-Google-Smtp-Source: AGHT+IF6QEvMgNWs9dedBUfcF2UZXbN6XsW8AZipdiC80ycaj5jlFprQu0VmRz6Jjl/szbD7bbMzQQ==
-X-Received: by 2002:a05:6e02:1c0b:b0:3a7:87f2:b010 with SMTP id e9e14a558f8ab-3d4419712a9mr212361315ab.5.1741719388965;
-        Tue, 11 Mar 2025 11:56:28 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f23abbf42csm1034856173.105.2025.03.11.11.56.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 11:56:28 -0700 (PDT)
-Message-ID: <32c6f6fb-d75e-45a1-b050-4c078a757a50@kernel.dk>
-Date: Tue, 11 Mar 2025 12:56:27 -0600
+	s=arc-20240116; t=1741719483; c=relaxed/simple;
+	bh=H0YUnZgn3kS4q5aJPaCCPyYjqRuXp8gJMQR2aHdY/es=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=txe9EZDKtXenBkD25zM7FJlLUuHYRU5ZZE8WErGs6SwZ82lPLnOmCp9ylihFk2hBMd3geFqicUTls0AiRYL92P9z2g4tfU2LxvzMLGkY9gYHzU91+DcHtfcz7kkpP4v0LbYYvrIcITw2Q926FTaikYKozz2SORO1YbJD6OKIbTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSIpiGJk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28BB7C4CEE9;
+	Tue, 11 Mar 2025 18:58:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741719483;
+	bh=H0YUnZgn3kS4q5aJPaCCPyYjqRuXp8gJMQR2aHdY/es=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jSIpiGJkXaaT1eLewPodBpgE2myV2gEwryf8sM0z2NCOPmK4ybjEWcSaDurh8eXCq
+	 BVlp7eJ2pU7YvrR981J/CW/c47J3RaqWLGL6gnKRpmpf4l1/sfPoVk8perJZMRKeOB
+	 6wken0eVXJkeAShl07IPP1/WFlr1bwURwRC5GaDG62LvdgMlxicExbouMvQ4xc6rTW
+	 4nA5iDzt3MFYyR8ysNuNlSLVj8KwkItxudg5jw+8P5WKRa285/q2hiAFbBzkYMWih4
+	 TUHKibEfBKwIqbH3vBPkSk2COFw21jsMhBPVPbTk3FhEivtGw9VW1qmJKWwyLcGCmn
+	 JX+aHhgXnXiZA==
+Date: Tue, 11 Mar 2025 20:57:58 +0200
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Christopher Obbard <christopher.obbard@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm interconnects as
+ built-in
+Message-ID: <uljqxwfgl26txrfqvkvzzpj6qurgmwcbuot7gu2u6rwjaqgncb@jeuyi4mexjff>
+References: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
+ <CACr-zFC=mPNeeHMp9XnSby+cMQaPWt_3s8iUiCN+EnVPeGad8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v2 00/11] cgroup v1 deprecation messages
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Josef Bacik <josef@toxicpanda.com>, Waiman Long <longman@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
- Shakeel Butt <shakeel.butt@linux.dev>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
- Muchun Song <muchun.song@linux.dev>, Michal Hocko <mhocko@kernel.org>
-References: <20250311123640.530377-1-mkoutny@suse.com>
-Content-Language: en-US
-In-Reply-To: <20250311123640.530377-1-mkoutny@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACr-zFC=mPNeeHMp9XnSby+cMQaPWt_3s8iUiCN+EnVPeGad8Q@mail.gmail.com>
 
-> Memory controller had begun to print warning messages when using some
-> attributes that do no have a counterpart in its cgroup v2
-> implementation. This is informative to users who run (unwittingly) on v1
-> or to distros that run v1 (they can learn about such users or prepare
-> for disabling v1 configs).
->
-> I consider the deprecated files in three categories:
->   - RE) replacement exists,
->   - DN) dropped as non-ideal concept (e.g. non-hierarchical resources),
->   - NE) not evaluated (yet).
->
-> For RE, I added the replacement into the warning message, DN have only a
-> plain deprecation message and I marked the commits with NE as RFC.
-> Also I'd be happy if you would point out some forgotten knobs that'd
-> deserve similar warnings.
->
-> The level of messages is info to avoid too much noise (may be increased
-> in future when there are fewer users). Some knobs from DN have warn
-> level.
->
-> The net_cls and net_prio controllers that only exist on v1 hierarchies
-> have no straightforward action for users (replacement would rely on net
-> NS or eBPF), so messages for their usage are omitted, although it'd be
-> good to eventually retire that code in favor of aforementioned.
->
-> At the end are some cleanup patches I encountered en route.
+On Tue, Mar 11, 2025 at 07:10:06PM +0100, Christopher Obbard wrote:
+> I sent this patch to start the discussion, some things I found:
+> 
+> 1) Some interconnects are missing from arm defconfig. Should they be =y too ?
 
-For the block related parts, as I'm assuming Tejun will pick this up:
+No, unless those are required for the UART console.
 
-Acked-by: Jens Axboe <axboe@kernel.dk>
+> $ grep CONFIG_INTERCONNECT_QCOM arch/arm/configs/qcom_defconfig
+> CONFIG_INTERCONNECT_QCOM=y
+> CONFIG_INTERCONNECT_QCOM_MSM8974=m
+> CONFIG_INTERCONNECT_QCOM_SDX55=m
+> 
+> 2) Some interconnects are missing from arm64 defconfig (which should
+> probably be in there) (I have included just two examples):
+
+I think `git log -S CONFIG_INTERCONNECT_QCOM
+arch/arm64/configs/defconfig` will answer this question. The drivers are
+enabled on the premises of being required for a particular device, not
+because they exist in the Linux kernel.
+
+> $ grep CONFIG_INTERCONNECT drivers/interconnect/qcom/Makefile
+> obj-$(CONFIG_INTERCONNECT_QCOM_QCS615) += qnoc-qcs615.o
+> obj-$(CONFIG_INTERCONNECT_QCOM_SM7150) += qnoc-sm7150.o
+> 
+> I can handle these in follow-up or v2 of the patchset as follow-up
+> commits, please let me know what you'd prefer.
+> 
+> On Tue, 11 Mar 2025 at 19:03, Christopher Obbard
+> <christopher.obbard@linaro.org> wrote:
+> >
+> > Currently some Qualcomm interconnect drivers are enabled
+> > as modules which isn't overly useful since the interconnects
+> > are required to be loaded during early boot.
+> >
+> > Loading the interconnects late (e.g. in initrd or as module)
+> > can cause boot issues, such as slowdown or even not booting
+> > at all (since the interconnect would be required for storage
+> > devices).
+> >
+> > Be consistent and enable all of the Qualcomm interconnect
+> > drivers as built-in to the kernel image.
+> >
+> > Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
+> > ---
+> >  arch/arm64/configs/defconfig | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> > index 219ef05ee5a757c43a37ec9f8571ce9976354830..6582baee2ab02ecb2ff442c6e73aa6a23fee8d7f 100644
+> > --- a/arch/arm64/configs/defconfig
+> > +++ b/arch/arm64/configs/defconfig
+> > @@ -1656,11 +1656,11 @@ CONFIG_INTERCONNECT_IMX8MN=m
+> >  CONFIG_INTERCONNECT_IMX8MQ=m
+> >  CONFIG_INTERCONNECT_IMX8MP=y
+> >  CONFIG_INTERCONNECT_QCOM=y
+> > -CONFIG_INTERCONNECT_QCOM_MSM8916=m
+> > +CONFIG_INTERCONNECT_QCOM_MSM8916=y
+> >  CONFIG_INTERCONNECT_QCOM_MSM8996=y
+> > -CONFIG_INTERCONNECT_QCOM_OSM_L3=m
+> > +CONFIG_INTERCONNECT_QCOM_OSM_L3=y
+> >  CONFIG_INTERCONNECT_QCOM_QCM2290=y
+> > -CONFIG_INTERCONNECT_QCOM_QCS404=m
+> > +CONFIG_INTERCONNECT_QCOM_QCS404=y
+> >  CONFIG_INTERCONNECT_QCOM_QCS615=y
+> >  CONFIG_INTERCONNECT_QCOM_QCS8300=y
+> >  CONFIG_INTERCONNECT_QCOM_QDU1000=y
+> >
+> > ---
+> > base-commit: b098bcd8278b89cb3eb73fdb6e06dc49af75ad37
+> > change-id: 20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-258fcc961b11
+> >
+> > Best regards,
+> > --
+> > Christopher Obbard <christopher.obbard@linaro.org>
+> >
 
 -- 
-Jens Axboe
-
+With best wishes
+Dmitry
 
