@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-556382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85522A5C5D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:18:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FD3A5C5EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:19:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909C1189B508
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 128633B92BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E71425E81B;
-	Tue, 11 Mar 2025 15:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEF81C3BEB;
+	Tue, 11 Mar 2025 15:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLe8AIPL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="fH4zVI3k"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E281E98FB;
-	Tue, 11 Mar 2025 15:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03B37E110;
+	Tue, 11 Mar 2025 15:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741706103; cv=none; b=MnmyT2NJqtPYrU+M8HJuy+4zvCErPe6Nnyki1GfDc/dy6t5XZeImV0ZzXNyoGMzO9huONZ9AStcgevXOfMtD3b4doJfmR5tQFQBD6BH3xc94dUdmWH95Q93Ed9TAAiNALDC8WJ5fOg6OLSp16Xne6h08gLY57sfdcJCakH+Xrm0=
+	t=1741706148; cv=none; b=fZOAly+WbZKuzbkEOnOiIniHzCiPwB+jhXGX3D7an/xTouqJ1lAOZ8YTk7d6XscU/iUmK6m7ydy6ap91Z90vdScyEWAYKz2Xxs2+dVjwsrC5kMzbuy0SRM8o7NA1uAXhzKj4Eny/oTYDf3+KPL5003Nc82n7mgCBl+3lY7irfzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741706103; c=relaxed/simple;
-	bh=1/1jP4bOvzaF/7PxxywwaioO02SmscSfTomG7fkckZo=;
+	s=arc-20240116; t=1741706148; c=relaxed/simple;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WTwrmtI1s4sik9GkBZg1cbYTMKs7HSAqysCAOZS/Ds0WbQYm0h9u++1TP7dBMJ5PoxZjmp6FUtvLC5QN3QrQuzz3oBfJmtGC3S9x9Cna83gh9/ZL3b9Y2S6bwU5JcD316ATalffht67yhVR1vUZXMap0i/843y9RQ4nx0SB7IlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLe8AIPL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08690C4CEEA;
-	Tue, 11 Mar 2025 15:14:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741706103;
-	bh=1/1jP4bOvzaF/7PxxywwaioO02SmscSfTomG7fkckZo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LLe8AIPLwFoitbv3b3VnX1Bd2TFoxKz76EHmRxYOPe1so01FfDN5g3DGx8yyJu4BV
-	 59eDWhvcTw27Aq9aePM2mPG5935tSXOHxSkKPmlUIl2wsQCQmM5saDdmd1CehFXWtP
-	 eEoy2rLq3GDI+nf68ODsZVL8QacV5U7YsW9EN+UEhzPX4stmaZVjE9HPDb4n8N3Tjq
-	 QZsHXlTKf9hp91InbT5B/XAEsEl9TeqW0UNrywIPnUWykyWUmxdNnh06EVvDhObM0V
-	 lTkpngFh3Ig2Gq3LFeScp3QGBmItt5QRnOk/VYZBh44evB6/0r+YHXxuLBRelv2Bu9
-	 yhPhZysIv5/tw==
-Message-ID: <23a5d017-06e5-4f4d-a522-1f4beb7a1f32@kernel.org>
-Date: Tue, 11 Mar 2025 16:14:55 +0100
+	 In-Reply-To:Content-Type; b=uZlPYDsIM2QF5rjJwI9ZqMIg6RaJY6uLjkuF6gTWrifhOVcCi+wlah5p7uzhm5NTQYbCCt9qr5o5APFXVMWA9dhoJ0Ql8fvfkYN5EfjYBXz9/nFHGp9W8xq1dVvyvwKvDp9w0PDHlC1q3AvIaiN9iNOonPoks/4DqyKaffnTd70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=fH4zVI3k; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1741706126; x=1742310926; i=rwarsow@gmx.de;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=fH4zVI3kI6XIc19fwiwSeNsWGSB2gy1m8YYiPUnOn3sJv6Ew86o99x/zyiB7Hqv/
+	 cdGocUAYYNIPULxbLrWlA7L3b/bwn9fsXZKdy2AaMsN5TYZJW0xGV9dLfetYRyztr
+	 Ln+gcb1N0ZgINg0/6dsJ12Q5gj0Yc+758Ncg7bHXereZ+r88SMolvP2d9bwu5VVkx
+	 MffGuNJrT1YEbdorKDQPe/8/3tjLSedtVS77EXwxugSHmSszcF5O81h0Fd+42X+C5
+	 oGtGyfMjzbp6NtdmE7ELUvAVfi6Ux4Pm1g88QHKKJaQz34UnIVzM7dwnBtcX60toZ
+	 okXUV+kb9yHd3srsUA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.32.160]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MJVDM-1tcYsA1qAK-00RmpX; Tue, 11
+ Mar 2025 16:15:26 +0100
+Message-ID: <f2ea4017-5a57-4fa1-aa73-90b3bfb699f5@gmx.de>
+Date: Tue, 11 Mar 2025 16:15:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,107 +57,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: pwm: Convert lpc32xx-pwm.txt to YAML schema
-To: Purva Yeshi <purvayeshi550@gmail.com>, ukleinek@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, vz@mleia.com,
- piotr.wojtaszczyk@timesys.com
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250311125756.24064-1-purvayeshi550@gmail.com>
- <af6ebce2-7256-48bd-94d4-dc81e2944966@kernel.org>
- <47f6713b-b751-4791-9059-a128dd1fc71d@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <47f6713b-b751-4791-9059-a128dd1fc71d@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 6.13 000/197] 6.13.7-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250311144241.070217339@linuxfoundation.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+Content-Language: de-DE, en-US
+In-Reply-To: <20250311144241.070217339@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:vTh0HqMWvP97ZqYVTQnETiTjR4dbW50Q3/iHpaWoQOc1nz7Jhs/
+ pfwhYsRt0FiYmhy5pJGe2LkSAMPaVOv0lkcD69vVZyREpK7jqlFSdYV/ptUgafIXyLve1sH
+ yUH5UhX5H/HLOfrA0SCo7cAusrYznslTvACBk9Ancz3ldcZEYV6QQIh9G273TRny97T7fU4
+ lhBRqyOBZQ0qjQvDbA+OQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YMPeiVQDR+Q=;KSuoMgpqlYg9R+ln+HdzfFom8PU
+ P++JvP7awCR86BOe0QepLLFH/h74LohQkPC5GuPYOtTnUho2H5wxkHcBqa2hJ22HqV3RoU/Hl
+ WSrgG62dl6c+ThpnrMCMsF6a726voxKJZQXUDS1gkHattw6LS/5kiaEqQ5VJbIfCgQGMUFbW6
+ PbJhW7FyYSU7kmBG3na799G9KLECo239WiiVF2lLz4W+Fl+WEUDxhe7Zf9yh5tC4dztOvdqq3
+ 29HXzRjexs1OoVKtk4DMgT+tZ0JNbNb+KYYO6DcpM4Sx6onXfQLkTivSgoBRCGHfpPYothpKc
+ tqah1scPQiHCKB9zf3Fs2qYduF7tCISE/BZ2PGFME1Ewb/p0SW6SCgd6BEBw6w24qhx59G0Qi
+ 412twVa5tvFNoAedS61m9XdHdJx9XVwHtpVdVP/5a2bFv+G2RUieLb+sgDLYbTTE2gVlZgbzd
+ T1BmHKqoqpzgGdg2TwpGbaqFpBxHRDDoL7RUjZW8GhrhdQqoBue3hzPy8VmUOaehVlDMQAd7C
+ QqhMzphoAlG63dv7kXCFIDigNscC4/jsPbGVFbYS/fFce4UP8rEjZI+mb/HOy3RknBYtSiyBR
+ Ko7j6ORtSF0Qh+k56g4MER5785OWo49kye0sYvuEpmwcZbmyASeag7kseY3Ypq8Xb8iBSnUxR
+ C91VoY2P03hbrOhWv7xBcLt2Sv5q6D2dMryLGExrmkOxigxODpxEzGiEv1iCQJdubV/h0ECUA
+ 5z7XNq/8HkOHsX5Kq2CnDy1XNykEpDcAHiA2+BW2m82nY4LtYhDOMMpSMWr5kztfUjUuVc6/a
+ 6zJiXxg1kn1ZEtqx4udSg5kN4JYbScM7gLtssBZ7jngytgSP5P7esWIRadpdnb012fdmMQ7iC
+ J/wttx1uilIveU/D18Lk3eZjYQ0HwD4rY1mcIvxykn6GKbBOE1521uVcgb0WMz1Sh0go/h0Ny
+ JAbdowYLL9U4Fi7AqBhgaHe1pCy/Qdt00Q+ZyMoaGWoJABs2ikRIAQ4m7UDLccD0rZYx6a5zQ
+ 1bkBaykvRHPx5SHdWkl7GPl91MQsrnBMeizzbEZTg9iF3QN3da7p6YJc7eTSHuzkQsNsU9sFE
+ hIPkfl2GsC6Iw0IqkNFFGVZb6Bkbeseyr4tdx8jDmJxValXyFWxRf4decegYBh24teLKhIvC4
+ YXpnnOXkaj/vPHeF8SG+Rv2nBmjdJ+u44JRbfDpq7lu+7WVc8Ux3Afhqe38CHQPJ+eT2sQZG7
+ 4idDPPRWsMr89fCGIB67kcyxAJWaaRg3BeFa9sPVC4l7wu1pLRbhPtaV1ETt3ZIVGMTv3eDaA
+ emOk/SxhcgoP0l83bN7Sef0NuAtVUCxm2En+56DhGmMxk8uTWkK8cJeQ3TKdssjyStQ6ScS7U
+ VRzFbUmkjGuDcM33YmgsFi5ob5SqmA/J5pHTk6KdeVXiFaJ8g09iWHcAzKR02ZUR2tNt0d8L5
+ F++Ww2v+59G+W7anijCa28JaD8OA=
 
-On 11/03/2025 15:55, Purva Yeshi wrote:
->>>
->>> Define properties:
->>> Restrict `compatible` to `"nxp,lpc3220-pwm"` using `const`.
->>> Limit `reg` to `maxItems: 1` to ensure a single register range.
->>> Set `"#pwm-cells"` to `const: 3` for expected PWM cell properties.
->>>
->>> Mark `compatible` and `reg` as required properties.
->>
->> So it wasn't before? What are you implying here?
-> 
-> The compatible and reg properties were already present in the .txt file, 
-> but in a different format. I initially kept the commit message for them 
-> but have now removed it.
+Hi Greg
 
-What does it mean "different format"?
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-...
+Thanks
 
->>>
->>>   create mode 100644 Documentation/devicetree/bindings/pwm/lpc32xx-pwm.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/pwm/lpc32xx-pwm.yaml b/Documentation/devicetree/bindings/pwm/lpc32xx-pwm.yaml
->>> new file mode 100644
->>> index 000000000..3e41cd291
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/pwm/lpc32xx-pwm.yaml
->>> @@ -0,0 +1,45 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/pwm/nxp,lpc32xx-pwm.yaml#
->>
->> Filename matching compatible.
-> 
-> In the lpc32xx-pwm.txt file, the compatible property was defined as 
-> "nxp,lpc3220-pwm", so I have kept it the same. To ensure consistency 
-> between the filename and compatible, should I rename the file to 
-> nxp,lpc3220-pwm.yaml?
-
-Use whatever is there in the compatible property as the filename.
-
-
-Best regards,
-Krzysztof
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
