@@ -1,280 +1,210 @@
-Return-Path: <linux-kernel+bounces-555406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5086DA5B6FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:56:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09465A5B6FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:56:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEFCF189524F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:56:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC521895115
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED60B1E8331;
-	Tue, 11 Mar 2025 02:55:57 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FE61E8331;
+	Tue, 11 Mar 2025 02:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MSMScBYw"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2073.outbound.protection.outlook.com [40.107.20.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB211DF25C;
-	Tue, 11 Mar 2025 02:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741661757; cv=none; b=oOjixcC6lqiwfvRDES3RFdXpK/ixuf+sEmcKfUeXx5vzFBs98t2B/KlOKYrMqnooV+rSonFwK1jtbcuip7BvwN22Mg8HPHacp23Dufo1gqAknL6EcVwXTLLGQb2gvWcNKifaf81qaUBBhu1cGxs13gqHbC+xuE/JVSc+WFpN3ZE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741661757; c=relaxed/simple;
-	bh=qulKWfGRj75Ztmb5Ay0oSmZ3IY74NDesIjdaXhKxh4c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=i+kdBckkh6WNDSdCVUHsVUIHbdU42uOzxa29ylb/JhK4OOBgLXJo2xkVbdCjntMVSx+X3k3BFzuKI6egYDmGA4LgFQ+GtYy/BQq4T9gM5nQVnRRBId29DYpo8rpEB8mTkDIF8FpTkkYcbpDWJd1Rx6CgrL19gC1wHhuOYXN51rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZBdZB6btjz1ltYv;
-	Tue, 11 Mar 2025 10:51:30 +0800 (CST)
-Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 977BD1A0188;
-	Tue, 11 Mar 2025 10:55:50 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- kwepemg200005.china.huawei.com (7.202.181.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 11 Mar 2025 10:55:49 +0800
-Message-ID: <946cac23-6348-4b18-bb94-58f470bb5a6c@huawei.com>
-Date: Tue, 11 Mar 2025 10:55:42 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACAD1DF25C;
+	Tue, 11 Mar 2025 02:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741661767; cv=fail; b=QKP6wYtMbSocsBpkhjfYpXouxpSUHxPryBtuOtpGpJdLM7ye3d9wEarSwuSuq+57lGlgAxUG7wh6u9oWGmQVIG20QSG/2O9+0UVFMwlmPY+n34V0GW6BsUBLEe6C877PiRalIirxoeS39D0174K2pVrWkHwFJo8sI/EkozYuYwU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741661767; c=relaxed/simple;
+	bh=KOc2/Lemt/6xW1IQNl13FuEK6j5I4JnZuGh22LyqEjg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=CT2IDHQnIC/+eOyCs0y0+v+EIO7AiBZjXvjqkTQnNZb4ODdZf1RCvb4rKENVhupj5+ARkNedlhs4k/sabmXaA+QwA+PgKTdR6gjC+7e+2hwFet1FLZWhgFICHrnjwdaZA3psTFRKre2buuVwFnkAbaQOwHzWBv4RqLwZ8DdvQmc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MSMScBYw; arc=fail smtp.client-ip=40.107.20.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oPj7vrmU+osNzX+U0uBuR/OnKWODl7hy2D6hNjYkq5ZMDJOx6YGzwBcbWeK4Aa7ksG5hpPyyuEgIllxD6qF2Ubeg2UR/Ol//0jIG9otzf+1oGvHZKU4RoKm7nsLiQIRut07mhgi/bbc7uBG+FkwLdkYqh38rScMQTLiw+UWhKDps5tNj4t8PByXPUy2PIF1SHgJ0Bq0sEV1n7wlD5wvDFLAwmBlXjcHRbWCoaPs4zB049ZxbBSR632bzU0FwVGSskVhn4dCQFb6GfHhAJVD0oUZXOb/CNpmbkbS63Tkrv2WDOBvwPuMBbqk0z8i/rK6RmizQiRFGxvW5C7k2hKIZSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E1Dxq5OFSN7FfF8y0sbGRpJARnUbDtlCKbpXg1QZtYY=;
+ b=DVHvxa7V7PzuSvcS5F320xxmPo1he907ey2+/fGFD+QboU9BUKpH7g7Dd/A5MavHdsdeB5iFleZa3mROLPaNzU/s65cxZp/aYL8b+avEruo3odoRh8j/kroo3PLCLzF4REeoQn2q11XlnqyEMTw2NEqBCOxXxUJke28VaFYP5h62jcvAf4ZTfVIGzJvzvXvUYBXpn0JryS+tbWr792tBtblobSgEsWA48UlkVDNwqO3rxHELUQqn7P3cxt3bbe8QUjO2KGUzCDMlQNpfu9jNX2byxXjiIKASxrY6ztFqdrPciHbU7M/jzU4KW5mSd0n0NJn8HezvA9JR1yj4MWzirg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E1Dxq5OFSN7FfF8y0sbGRpJARnUbDtlCKbpXg1QZtYY=;
+ b=MSMScBYwxU3UsDDQL8Xs8g48S7I9VFgnJA0vSguL69Wst/CLuStWc47s0ZSDeMJStgVJsL7pk32D20vwT1AoTmxWoGtEAKQ3TcN2ABYPf4Iw6E7lIB/FIuew3PyccG192HKr3Lvojdqt6fmnryWermJKcwbkWs4vKI6sbC+JHNZmrXG/kmMRl7fLgolXf2mb1hPq7LS4whO8Bd4IvtVLNk/KBIrOOOUNKpdA0QN8kZmp57rxuzsw2YsJ57L1VJ5eZvWb+r0UbO1gmiCxFycIBpLgyR4rh5mEqMsLoGqyxZoUICJ3j/EO9KIyMYV03Dr1J2qZsVjTZVZ+at8qxENC2Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19)
+ by VI2PR04MB11098.eurprd04.prod.outlook.com (2603:10a6:800:293::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
+ 2025 02:56:03 +0000
+Received: from DB9PR04MB8429.eurprd04.prod.outlook.com
+ ([fe80::2edf:edc4:794f:4e37]) by DB9PR04MB8429.eurprd04.prod.outlook.com
+ ([fe80::2edf:edc4:794f:4e37%6]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
+ 02:56:02 +0000
+From: Sherry Sun <sherry.sun@nxp.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	shenwei.wang@nxp.com,
+	frank.li@nxp.com
+Subject: [PATCH V2] tty: serial: fsl_lpuart: disable transmitter before changing RS485 related registers
+Date: Tue, 11 Mar 2025 10:55:50 +0800
+Message-Id: <20250311025550.1243569-1-sherry.sun@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0166.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:28::22) To DB9PR04MB8429.eurprd04.prod.outlook.com
+ (2603:10a6:10:242::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] infiniband: fix use-after-free when rename device
- name
-To: Leon Romanovsky <leon@kernel.org>
-CC: <jgg@ziepe.ca>, <cmeiohas@nvidia.com>, <michaelgur@nvidia.com>,
-	<huangjunxian6@hisilicon.com>, <liyuyu6@huawei.com>, <markzhang@nvidia.com>,
-	<linux@treblig.org>, <jbi.octave@gmail.com>, <dsahern@kernel.org>,
-	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250310064516.3633612-1-wangliang74@huawei.com>
- <20250310101410.GB7027@unreal>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <20250310101410.GB7027@unreal>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemg200005.china.huawei.com (7.202.181.32)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB8429:EE_|VI2PR04MB11098:EE_
+X-MS-Office365-Filtering-Correlation-Id: aacc7262-4070-4468-d7e2-08dd6048427a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nMoXzzJmaqKSD6x8YJz6tM1oOcLnvdOCXaba+8xbLrOFngs1ZiYGHlcHMapL?=
+ =?us-ascii?Q?3tNvKExIkRO4KTp0RUvkJzLAIiMDWysCR7UHusgOP1FcK2hgyDBJrMI8BLM6?=
+ =?us-ascii?Q?AaezSEfMO3arH7tnDai5bHku3czlC749e7xY4Y5HbZmk0CIrKOIjrkhNdQRT?=
+ =?us-ascii?Q?Mcbyj52wRqN4viXRvvwwIOo4zInm6hH1WOFmXh3rN2yVDQf891u3TCry9LtT?=
+ =?us-ascii?Q?8jVYOR8HQYX/ac1JsABYnrpjuiXOKg2IvEWu3gDnwFZPetDqKcipwyK3IWQv?=
+ =?us-ascii?Q?gtk7Z0EJe2o0U5ZBddPtr8P7LnQVT51UsahXMzAHx+3pYLmEOljW2Vmsk7z7?=
+ =?us-ascii?Q?FLtGB9NIM2dOJ3+USyHuW4QwUMwu7481WHHBAXdmZosgRoNWCckS5Dm3YomW?=
+ =?us-ascii?Q?tsYY96K/9ZdeK1Zp+PRGMiDZtfWShkYlYZlKFLQV2o0GVt4U4HIL5GV5f3xm?=
+ =?us-ascii?Q?GGmLotG5Y2tLd6p168KwGmbVFaeYPbWuWgsvSjJHR1IABJiwAODjSw56DLCG?=
+ =?us-ascii?Q?ahfNn1Dm4ZqdfxSJytzgi0oAQ0rOVclGYH1jF2HfGiZKj381PzMVCgWYaAL/?=
+ =?us-ascii?Q?gDySlw80FI5WJnfV3diNlGOFl9oTFmXKFh6doD15liRc7Jcrt13UbQhMsD0A?=
+ =?us-ascii?Q?NK3w2S3JzjjVOGkjKLNSgnNp8m6hNp5PtWhAFxx6brsUlkBjV+z2Qn1OaDQJ?=
+ =?us-ascii?Q?naPrjR9mrz7+s9y0QuNGZWlZL1nVc9bpvOhV1y2BN1ejLLaUd71aBNKscoNX?=
+ =?us-ascii?Q?kPjwcyneV0kycafA0mTjDMpKdwNM72T9efhaP9D50KnsNlfuQMM/v8dpxR9t?=
+ =?us-ascii?Q?+WiNdjkP5bBWeuSfJ/JmCjQQ5vSCm0VYG7BVEH7N9TY+Z/rb6MBoFU6zIcDh?=
+ =?us-ascii?Q?Y6mNmPyBAn3EEsg7641lHlJGgSyUma/O1V6V1RyEcLvQ3UEI/sSCD5yOl/MP?=
+ =?us-ascii?Q?MjyMxl7hB3IWgQHzHcROvXvO1iCfyy5JlW8Hhkd+vy7razgz/AcfJAdYS1RT?=
+ =?us-ascii?Q?Gert5dTenJotXVBv9FpW9Yk7pxVIztrQseu1tLcoRrdFygtchEtunCgxD8bs?=
+ =?us-ascii?Q?SUwlfuh+dURGqQzbhEmbP6nE2afPdlYwwRvwTWzKefyC4xD/XEcksdMTvX2/?=
+ =?us-ascii?Q?ETpu0K9JFFd0ZUv9wJIkvhTAJU+b5CCiDqzzj9NufS0DwXSvuIj12jBEp73o?=
+ =?us-ascii?Q?LvV+NrvnFEjBHaztGhk4eCyrVnzWk2yZwBKgj/M2zBiBpbojheog1JJvZI0n?=
+ =?us-ascii?Q?y9KWG8WrIRzv8KRKSlb/oqPUn0gAPccfgJr2hTHUiKzrjmLqCd+TNDWUsb1J?=
+ =?us-ascii?Q?5bzfglXwVlxINNtEMrgYGryNnBwySPim7WOrH0jdbnAKKAnSq57MbBQWJMLC?=
+ =?us-ascii?Q?ggjT19eJ4DYatmBCzvcPVX5/uHGrXUOaa/hai3DBV7ccIdXanjjRvw0OHPXl?=
+ =?us-ascii?Q?tED6zhflnbbJxFSXHPvbyd01UZBVYdBs?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8429.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?r9iGKq3UiFHFnOQCV/NiMDY1FT5D5JkVQaBubRbkpbcK9A3LYNiZvfet1XIA?=
+ =?us-ascii?Q?7VESoHUelDE0/8oZfve4ZasfeUtL0bpvVBK8MP+dSNJ23dB4SMB75WHHIWQH?=
+ =?us-ascii?Q?4LTWyQk+/rOMkXHdqjU+8F1cG+q29gJ1fm7N1XH//ovIXCL2vMvb0kM4nZjx?=
+ =?us-ascii?Q?LgCUyLvw+xpeNLUmugnmSFPbEFlTlJO0i7HijiXwUxyhWhZAditXwccluwn0?=
+ =?us-ascii?Q?MOKtCMcfE8TrrQ7POVdl+EuUQXUQo1E5JoKov9uWlpy2IBJ6ydU+fb4THV+D?=
+ =?us-ascii?Q?I/1IDF2aj67srnapBbZKRy1qkBE97hYUj864dlih04hGRSYY6X+5o/4tFzPQ?=
+ =?us-ascii?Q?bdOaoCjH4MYWgxRCtlWBmEum0era8zarcMYjpwxMEEfSfVd5qmsRphugpZX2?=
+ =?us-ascii?Q?4W53mKdcSur+vJumIMUKt1QlxWPVM9ItSMKkHDUxCNh1BW4yg+ABCdPOc4pm?=
+ =?us-ascii?Q?4/1l6QG7hbUeWuv+E3wv5YVt7zUJuPGSlp/g74qlcs8Gp/J485+iyj4RUaU/?=
+ =?us-ascii?Q?fk3uMGvJ2SFFuUjL3EgZqu5UqlT6h/xfo7n/05dCyt+zZgQrcGCjJfqFT0IN?=
+ =?us-ascii?Q?DrgaHQZUNbExRPqqK0bUwMVNS8q2xvfpvItXRg3A4GXt5U74xZ5NDmgWYD60?=
+ =?us-ascii?Q?LsnYPMizTJzMYgnch18nfCw9mVM850ZLnmeXMsNN3kV0jfS9lNTmIZwEBVQs?=
+ =?us-ascii?Q?pVWCqp7mTrPh9OWnyWwF5JMNZp2NhKlqNwHhJgIlF/fZF3EoumWXS0BG5Hhm?=
+ =?us-ascii?Q?i+6AJRKK17SO1Q7ZeZe+CrqfSZbpmaUxeLdIq0zpb1h8vnsRWnsqAfQCdx2l?=
+ =?us-ascii?Q?OvU/aSf7SADb8m7vOKKZlzBNCsI9f9bbqcU3hDG8FVKClSWuAkShqT1ytT8y?=
+ =?us-ascii?Q?YJ9ijaSaPUkfYPBlsCyC92mKlBGZjHFopIl47ZpsIc7Coqrb2IJNDHHWTWvu?=
+ =?us-ascii?Q?o/N9PayKlb0cbQ5ZXrl5YC+LEtaZML5h98RTye4uIAecJxDm7Qd67guW7QTG?=
+ =?us-ascii?Q?SY1UaqmsMmDXaw+j8H4jqicCnskzR8bdTGX2+GOctg+EL/U1D7qMvceW/eg+?=
+ =?us-ascii?Q?/1SyNcsObJWHEF5TovDiC0DhOWeXjdkXNEKjQUGIF0iw1sgFiyPqriwxiRT5?=
+ =?us-ascii?Q?V20WfoS27xHS2AcrRIxSgMKKlQ2H1dc5nyLlkVOufao1Vfr5pmSqbX/wHpy7?=
+ =?us-ascii?Q?wXPXroYh+/zd87JVluOoKHGadh+/0WPbQ9kFtwtiiclgx2RF636dsSoZX84E?=
+ =?us-ascii?Q?YUEayIblOj5KK2NNTPH4GBMTTLLInF3Jc35mqn+eL0yuHcPoLRGW0peRvZc1?=
+ =?us-ascii?Q?RdnliEbzkii9+PDaDnjemOPnN4X43cwA6bKupajSiuaRw+JvHhtl3kKpTnWn?=
+ =?us-ascii?Q?ZZW3YGHEF6jRoMDJFo+4OTBJNBgUfzDBalb4RLNXVMHl2aakSS1rJ0H9ETm1?=
+ =?us-ascii?Q?lLHed8JD/7ZakrwJMjaTWRDtx+Y2h+Dqyb+JLbDZBuU1l3wsDoYlhXM+MOgU?=
+ =?us-ascii?Q?1LSlQ7UiAHT9weVKPIrROtgaN9VWEImzAP1S3uZDoZb60JbtObGwKGijXDjf?=
+ =?us-ascii?Q?XqStPpUnSDvUyBOYHF4T18e0pVZsPhE03QXCDADf?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aacc7262-4070-4468-d7e2-08dd6048427a
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8429.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 02:56:02.7871
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9xYm03mqVgnHgsVbxgkFTHeaZcYmxQB+pP/ASBijYR7EcC2RC8rArGRHAT4xFTBr6dH2oyKgCqtNUPGWWlUV/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB11098
 
+According to the LPUART reference manual, TXRTSE and TXRTSPOL of MODIR
+register only can be changed when the transmitter is disabled.
+So disable the transmitter before changing RS485 related registers and
+re-enable it after the change is done.
 
-在 2025/3/10 18:14, Leon Romanovsky 写道:
-> On Mon, Mar 10, 2025 at 02:45:16PM +0800, Wang Liang wrote:
->> Syzbot reported a slab-use-after-free with the following call trace:
->>
->> ==================================================================
->> BUG: KASAN: slab-use-after-free in nla_put+0xd3/0x150 lib/nlattr.c:1099
->> Read of size 5 at addr ffff888140ea1c60 by task syz.0.988/10025
->>
->> CPU: 0 UID: 0 PID: 10025 Comm: syz.0.988 Not tainted 6.14.0-rc4-syzkaller-00859-gf77f12010f67 #0
->> Hardware name: Google Compute Engine, BIOS Google 02/12/2025
->> Call Trace:
->>   <TASK>
->>   __dump_stack lib/dump_stack.c:94 [inline]
->>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->>   print_address_description mm/kasan/report.c:408 [inline]
->>   print_report+0x16e/0x5b0 mm/kasan/report.c:521
->>   kasan_report+0x143/0x180 mm/kasan/report.c:634
->>   kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
->>   __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
->>   nla_put+0xd3/0x150 lib/nlattr.c:1099
->>   nla_put_string include/net/netlink.h:1621 [inline]
->>   fill_nldev_handle+0x16e/0x200 drivers/infiniband/core/nldev.c:265
->>   rdma_nl_notify_event+0x561/0xef0 drivers/infiniband/core/nldev.c:2857
->>   ib_device_notify_register+0x22/0x230 drivers/infiniband/core/device.c:1344
->>   ib_register_device+0x1292/0x1460 drivers/infiniband/core/device.c:1460
->>   rxe_register_device+0x233/0x350 drivers/infiniband/sw/rxe/rxe_verbs.c:1540
->>   rxe_net_add+0x74/0xf0 drivers/infiniband/sw/rxe/rxe_net.c:550
->>   rxe_newlink+0xde/0x1a0 drivers/infiniband/sw/rxe/rxe.c:212
->>   nldev_newlink+0x5ea/0x680 drivers/infiniband/core/nldev.c:1795
->>   rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
->>   rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
->>   netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
->>   netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
->>   netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
->>   sock_sendmsg_nosec net/socket.c:709 [inline]
->>   __sock_sendmsg+0x221/0x270 net/socket.c:724
->>   ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
->>   ___sys_sendmsg net/socket.c:2618 [inline]
->>   __sys_sendmsg+0x269/0x350 net/socket.c:2650
->>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
->> RIP: 0033:0x7f42d1b8d169
->> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 ...
->> RSP: 002b:00007f42d2960038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
->> RAX: ffffffffffffffda RBX: 00007f42d1da6320 RCX: 00007f42d1b8d169
->> RDX: 0000000000000000 RSI: 00004000000002c0 RDI: 000000000000000c
->> RBP: 00007f42d1c0e2a0 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->> R13: 0000000000000000 R14: 00007f42d1da6320 R15: 00007ffe399344a8
->>   </TASK>
->>
->> Allocated by task 10025:
->>   kasan_save_stack mm/kasan/common.c:47 [inline]
->>   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
->>   poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->>   __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
->>   kasan_kmalloc include/linux/kasan.h:260 [inline]
->>   __do_kmalloc_node mm/slub.c:4294 [inline]
->>   __kmalloc_node_track_caller_noprof+0x28b/0x4c0 mm/slub.c:4313
->>   __kmemdup_nul mm/util.c:61 [inline]
->>   kstrdup+0x42/0x100 mm/util.c:81
->>   kobject_set_name_vargs+0x61/0x120 lib/kobject.c:274
->>   dev_set_name+0xd5/0x120 drivers/base/core.c:3468
->>   assign_name drivers/infiniband/core/device.c:1202 [inline]
->>   ib_register_device+0x178/0x1460 drivers/infiniband/core/device.c:1384
->>   rxe_register_device+0x233/0x350 drivers/infiniband/sw/rxe/rxe_verbs.c:1540
->>   rxe_net_add+0x74/0xf0 drivers/infiniband/sw/rxe/rxe_net.c:550
->>   rxe_newlink+0xde/0x1a0 drivers/infiniband/sw/rxe/rxe.c:212
->>   nldev_newlink+0x5ea/0x680 drivers/infiniband/core/nldev.c:1795
->>   rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
->>   rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
->>   netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
->>   netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
->>   netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
->>   sock_sendmsg_nosec net/socket.c:709 [inline]
->>   __sock_sendmsg+0x221/0x270 net/socket.c:724
->>   ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
->>   ___sys_sendmsg net/socket.c:2618 [inline]
->>   __sys_sendmsg+0x269/0x350 net/socket.c:2650
->>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>
->> Freed by task 10035:
->>   kasan_save_stack mm/kasan/common.c:47 [inline]
->>   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
->>   kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
->>   poison_slab_object mm/kasan/common.c:247 [inline]
->>   __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
->>   kasan_slab_free include/linux/kasan.h:233 [inline]
->>   slab_free_hook mm/slub.c:2353 [inline]
->>   slab_free mm/slub.c:4609 [inline]
->>   kfree+0x196/0x430 mm/slub.c:4757
->>   kobject_rename+0x38f/0x410 lib/kobject.c:524
->>   device_rename+0x16a/0x200 drivers/base/core.c:4525
->>   ib_device_rename+0x270/0x710 drivers/infiniband/core/device.c:402
->>   nldev_set_doit+0x30e/0x4c0 drivers/infiniband/core/nldev.c:1146
->>   rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
->>   rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
->>   netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
->>   netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
->>   netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
->>   sock_sendmsg_nosec net/socket.c:709 [inline]
->>   __sock_sendmsg+0x221/0x270 net/socket.c:724
->>   ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
->>   ___sys_sendmsg net/socket.c:2618 [inline]
->>   __sys_sendmsg+0x269/0x350 net/socket.c:2650
->>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>
->> This is because if rename device happens, the old name is freed in
->> ib_device_rename() with lock, but fill_nldev_handle() may visit the dev
->> name locklessly triggered by rxe_newlink().
->>
->> Fix this by add lock around rdma_nl_notify_event() in
->> ib_device_notify_register().
->>
->> Reported-by: syzbot+f60349ba1f9f08df349f@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=25bc6f0ed2b88b9eb9b8
->> Fixes: 9cbed5aab5ae ("RDMA/nldev: Add support for RDMA monitoring")
->> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->> ---
->>   drivers/infiniband/core/device.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
->> index 0ded91f056f3..4536621ada0d 100644
->> --- a/drivers/infiniband/core/device.c
->> +++ b/drivers/infiniband/core/device.c
->> @@ -1341,7 +1341,9 @@ static void ib_device_notify_register(struct ib_device *device)
->>   	u32 port;
->>   	int ret;
->>   
->> +	down_write(&devices_rwsem);
-> The analysis looks correct to me, however this should be down_read(&devices_rwsem)
-> together with comment about possible race with RDMA netlink, which can change
-> internals of struct ib_device.
->
-> I wonder if this read semaphore should be hold for whole
-> ib_device_notify_register() function and not only for RDMA_REGISTER_EVENT event.
->
-> Thanks
-Yes, you are right! The RDMA_NETDEV_ATTACH_EVENT event in function
-ib_device_notify_register() can also visit the dev name locklessly:
+Fixes: 67b01837861c ("tty: serial: lpuart: Add RS485 support for 32-bit uart flavour")
+Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+---
+Changes in V2:
+1. Add TE bit polling read to ensure TE is really become 0 before proceeding.
+2. Add Reviewed-by tag.
+---
+ drivers/tty/serial/fsl_lpuart.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-rxe_newlink
-     ...
-     ib_device_notify_register
-         rdma_nl_notify_event(RDMA_NETDEV_ATTACH_EVENT)
-             fill_mon_netdev_association
-                 // visit dev_name without devices_rwsem
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 91d02c55c470..6b2f3a73a367 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1484,6 +1484,19 @@ static int lpuart32_config_rs485(struct uart_port *port, struct ktermios *termio
+ 
+ 	unsigned long modem = lpuart32_read(&sport->port, UARTMODIR)
+ 				& ~(UARTMODIR_TXRTSPOL | UARTMODIR_TXRTSE);
++	u32 ctrl;
++
++	/* TXRTSE and TXRTSPOL only can be changed when transmitter is disabled. */
++	ctrl = lpuart32_read(&sport->port, UARTCTRL);
++	if (ctrl & UARTCTRL_TE) {
++		/* wait transmit engin complete */
++		lpuart32_wait_bit_set(&sport->port, UARTSTAT, UARTSTAT_TC);
++		lpuart32_write(&sport->port, ctrl & ~UARTCTRL_TE, UARTCTRL);
++
++		while (lpuart32_read(&sport->port, UARTCTRL) & UARTCTRL_TE)
++			cpu_relax();
++	}
++
+ 	lpuart32_write(&sport->port, modem, UARTMODIR);
+ 
+ 	if (rs485->flags & SER_RS485_ENABLED) {
+@@ -1503,6 +1516,10 @@ static int lpuart32_config_rs485(struct uart_port *port, struct ktermios *termio
+ 	}
+ 
+ 	lpuart32_write(&sport->port, modem, UARTMODIR);
++
++	if (ctrl & UARTCTRL_TE)
++		lpuart32_write(&sport->port, ctrl, UARTCTRL);
++
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
 
-What's more, the following trace may also trigger the issue when function
-nldev_set_doit() rename device:
-
-(1)
-RDMA_NLDEV_CMD_GET
-     nldev_get_doit
-         fill_dev_info
-             fill_nldev_handle
-                 // visit dev_name without devices_rwsem
-
-(2)
-RDMA_NLDEV_CMD_PORT_GET
-     nldev_port_get_doit
-         fill_port_info
-             fill_nldev_handle
-                 // visit dev_name without devices_rwsem
-
-(3)
-RDMA_NLDEV_CMD_RES_GET
-     nldev_res_get_doit
-         fill_res_info
-             fill_nldev_handle
-                 // visit dev_name without devices_rwsem
-
-And more...
-
-However, some scenarios hold devices_rwsem, like function 
-nldev_get_dumpit(),
-which was modified by 921eab1143aa("RDMA/devices: Re-organize device.c 
-locking"):
-
-RDMA_NLDEV_CMD_GET
-     nldev_get_dumpit
-         ib_enum_all_devs
-             down_read(&devices_rwsem); // hold devices_rwsem read
-                 _nldev_get_dumpit
-                     fill_dev_info
-                         fill_nldev_handle
-                             // visit dev_name with devices_rwsem
-             up_read(&devices_rwsem);
-
-So only hold devices_rwsem for whole ib_device_notify_register() may be 
-not enough.
-
-How about add down_read(&devices_rwsem) around 
-fill_dev_info()/fill_port_info()/
-fill_res_info()/ib_device_notify_register().
-
-Looking forward to more replies. Thanks.
->>   	ret = rdma_nl_notify_event(device, 0, RDMA_REGISTER_EVENT);
->> +	up_write(&devices_rwsem);
->>   	if (ret)
->>   		return;
->>   
->> -- 
->> 2.34.1
->>
->>
 
