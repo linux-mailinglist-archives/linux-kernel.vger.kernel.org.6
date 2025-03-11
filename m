@@ -1,79 +1,85 @@
-Return-Path: <linux-kernel+bounces-556361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFD9A5C476
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:04:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58060A5C480
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:04:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65E0C7AA947
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:03:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFE771766C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF29625E836;
-	Tue, 11 Mar 2025 15:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE14C25EFBF;
+	Tue, 11 Mar 2025 15:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dt06dy1h"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h51z9ruA"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FCE25DD0B;
-	Tue, 11 Mar 2025 15:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7284525E833;
+	Tue, 11 Mar 2025 15:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741705393; cv=none; b=d6JP4CgAOtH10XQBQgnW2VL8xJwF1GlZPK0M7kw+eGB/rpuQRkF0nxELwAgy6sxcA6CPEs51cqLtmzzbaRvoad4PETtd2S5eOe9RAbFZQ611OVqOgzafG+C8C5t4wAroIZztcSbZ8valfY4FysWYXj8hrxDPi2GreN6nyIOFTOI=
+	t=1741705395; cv=none; b=ccBz6Kn54n81iklLY6djKaM21XydUXJrbNFklyji1QfXQUPaFg1aapjwSK6tNXBLemNA2nMufN/q8MI5mX+XKCztNg90SYCY8OIr0eW/ICsxQKBlQ524TegZgTqs0Jsj7lwHRURhJTHyKO0rrTr5dTHz2hifcDT/ViVU9730PVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741705393; c=relaxed/simple;
-	bh=bwBOhCkyfjaDBhFbEIHAcboh5OGrOLjFxjCLK/1okmM=;
+	s=arc-20240116; t=1741705395; c=relaxed/simple;
+	bh=BBNjOQP4CmwaTxuMkTvDmx+aoMhLUR9wQq+c3rEV3ww=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ttCPW3ztCX4rGxnsrKBgOknvQENv5kHXd5lebIV8DRpA+3VSdSz1xbps9M5USpEZyXvA23FQ1Rp51fUOtdk6vB1JNxdDkQ7Z+AQ8+4XC0OW8DfmaZtkwQz1FLTN73Pt6J0e0YoThauhUKzfhthWv/hGndR/vTmLASs86ekqXe2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dt06dy1h; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=p0aueHQOg5mbpgN7NYpBa8PXKy1UJpKBw6ZpP1XQwP32gZm3dm9nM9Wkzx8pK+ud/uLw6OqA/yPKLa9EgxrD+/cgI3B4F8yMrreVoEb/O4g4OzGR1tDZxMb00YIV/GBCgJC6P+vDgJhDxpoDvHnHOmGsseIG0Htfv3YzMobG/vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h51z9ruA; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741705390; x=1773241390;
+  t=1741705393; x=1773241393;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=bwBOhCkyfjaDBhFbEIHAcboh5OGrOLjFxjCLK/1okmM=;
-  b=dt06dy1hUTd5gg/zBYyyH5M1CI7nX4AuE4RKLKv09DzUiNdsenGiUKL1
-   Rb4dHv4+Olby2SAxP4Dt9yjdiwsy3DsV41AgcX5LdPHhUxtczdvNA0MVS
-   3KkIU4BFR0XaMkyEUTTxHIi/onUPVoQM2aa4IwXr4UctPMcVLIZ8k+Ejs
-   bwnGcLZu57kdEctzpNt3rFoa+O9gsd6YMEbzktBZ2BsuFpzBPR6+vH+jA
-   rUlU5E0PgRXldejHv9sVuW2aDfXj7KFwQtdC3dv6WF22+Rt9tPYdwxphc
-   342H+DuulXCzB8yLW/P/IDtAgqJFy/dZZmZwstoVKbm+54jkmosLJrAVk
+  bh=BBNjOQP4CmwaTxuMkTvDmx+aoMhLUR9wQq+c3rEV3ww=;
+  b=h51z9ruAorpoYZYvh5+0GKQ2N6Lkhwp4PtaHJHaSH3u50ZdG/P4d99Yy
+   siDEu/kM0c/wJEF/6zXlt2x+dgsEmkYxJoC+QfMYCOeY6SSvutT+hEfBT
+   wIYQ2fuOrXcZOkOSek8RckN19w7FRCwzR9pGqiWrm/DEoQXH6iFZC7qJL
+   UFaMvjEej0DHMq+L8NnlpimzfXtEm37mBAFDBNb0SIydTeD2JIU6KUw1J
+   mEGqP5v8M3VH6WR7SVWXXXTVgpqhfX/YxBF9R1uZD2VOu2gt3fR9ZqJnb
+   373jbdoP932YWSMAV1bq/o1JH7Nc22yc1TLfMcUvRgL0LS/QtmlezRQdm
    w==;
-X-CSE-ConnectionGUID: 4SCTEr+wTdyoguXyHeEv1A==
-X-CSE-MsgGUID: JwN2I1NRQFuoxd7l2aQ5dg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="42624779"
+X-CSE-ConnectionGUID: R2OZ5TyJQvaF2O8tkWKSJw==
+X-CSE-MsgGUID: PAZnEcDvTE6duNpSW3K39A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="42624789"
 X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
-   d="scan'208";a="42624779"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 08:03:09 -0700
-X-CSE-ConnectionGUID: akGYNfHzSjKvRDq8cMcw4g==
-X-CSE-MsgGUID: 3L/0Tn2ZT3y63LcMfbjzgQ==
+   d="scan'208";a="42624789"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 08:03:10 -0700
+X-CSE-ConnectionGUID: cJ+j8wTwTbq8zuGjrlxa7A==
+X-CSE-MsgGUID: 0imJHXiJRxS95eLQXhg/Zg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
-   d="scan'208";a="120835168"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 11 Mar 2025 08:03:08 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ts18K-0006k4-3B;
-	Tue, 11 Mar 2025 15:03:04 +0000
-Date: Tue, 11 Mar 2025 23:03:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v3] tracing: Show last module text symbols in the
- stacktrace
-Message-ID: <202503112205.joXgt8gR-lkp@intel.com>
-References: <174161444691.1063601.16690699136628689205.stgit@devnote2>
+   d="scan'208";a="120297721"
+Received: from ghakimel-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.184])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 08:03:09 -0700
+Date: Tue, 11 Mar 2025 08:03:08 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH v8 5/5] x86/rfds: Exclude P-only parts from the RFDS affected
+ list
+Message-ID: <20250311-add-cpu-type-v8-5-e8514dcaaff2@linux.intel.com>
+X-Mailer: b4 0.14.1
+References: <20250311-add-cpu-type-v8-0-e8514dcaaff2@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,110 +88,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <174161444691.1063601.16690699136628689205.stgit@devnote2>
+In-Reply-To: <20250311-add-cpu-type-v8-0-e8514dcaaff2@linux.intel.com>
 
-Hi Masami,
+The affected CPU table (cpu_vuln_blacklist) marks Alderlake and Raptorlake
+P-only parts affected by RFDS. This is not true because only E-cores are
+affected by RFDS. With the current family/model matching it is not possible
+to differentiate the unaffected parts, as the affected and unaffected
+hybrid variants have the same model number.
 
-kernel test robot noticed the following build errors:
+Add a cpu-type match as well for such parts so as to exclude P-only parts
+being marked as affected.
 
-[auto build test ERROR on trace/for-next]
-[cannot apply to linus/master v6.14-rc6 next-20250311]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Note, family/model and cpu-type enumeration could be inaccurate in
+virtualized environments. In a guest affected status is decided by RFDS_NO
+and RFDS_CLEAR bits exposed by VMMs.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-Show-last-module-text-symbols-in-the-stacktrace/20250310-214849
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/174161444691.1063601.16690699136628689205.stgit%40devnote2
-patch subject: [PATCH v3] tracing: Show last module text symbols in the stacktrace
-config: i386-buildonly-randconfig-004-20250311 (https://download.01.org/0day-ci/archive/20250311/202503112205.joXgt8gR-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250311/202503112205.joXgt8gR-lkp@intel.com/reproduce)
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+ Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst | 8 --------
+ arch/x86/kernel/cpu/common.c                                 | 7 +++++--
+ 2 files changed, 5 insertions(+), 10 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503112205.joXgt8gR-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   kernel/trace/trace.c:6072:38: error: incomplete definition of type 'struct module'
-    6072 |         entry->mod_addr = (unsigned long)mod->mem[MOD_TEXT].base;
-         |                                          ~~~^
-   include/linux/printk.h:394:8: note: forward declaration of 'struct module'
-     394 | struct module;
-         |        ^
-   kernel/trace/trace.c:6072:44: error: use of undeclared identifier 'MOD_TEXT'
-    6072 |         entry->mod_addr = (unsigned long)mod->mem[MOD_TEXT].base;
-         |                                                   ^
-   kernel/trace/trace.c:6073:30: error: incomplete definition of type 'struct module'
-    6073 |         strscpy(entry->mod_name, mod->name);
-         |                                  ~~~^
-   include/linux/string.h:114:55: note: expanded from macro 'strscpy'
-     114 |         CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
-         |                                                              ^~~
-   include/linux/string.h:80:21: note: expanded from macro '__strscpy0'
-      80 |         sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) +    \
-         |                            ^~~
-   include/linux/printk.h:394:8: note: forward declaration of 'struct module'
-     394 | struct module;
-         |        ^
-   kernel/trace/trace.c:9411:18: error: incomplete definition of type 'struct module'
-    9411 |                 if (!strcmp(mod->name, entry->mod_name)) {
-         |                             ~~~^
-   include/linux/printk.h:394:8: note: forward declaration of 'struct module'
-     394 | struct module;
-         |        ^
-   kernel/trace/trace.c:9412:11: error: incomplete definition of type 'struct module'
-    9412 |                         if (mod->state == MODULE_STATE_GOING)
-         |                             ~~~^
-   include/linux/printk.h:394:8: note: forward declaration of 'struct module'
-     394 | struct module;
-         |        ^
->> kernel/trace/trace.c:9412:22: error: use of undeclared identifier 'MODULE_STATE_GOING'
-    9412 |                         if (mod->state == MODULE_STATE_GOING)
-         |                                           ^
-   kernel/trace/trace.c:9415:41: error: incomplete definition of type 'struct module'
-    9415 |                                 module_delta[i] = (unsigned long)mod->mem[MOD_TEXT].base
-         |                                                                  ~~~^
-   include/linux/printk.h:394:8: note: forward declaration of 'struct module'
-     394 | struct module;
-         |        ^
-   kernel/trace/trace.c:9415:47: error: use of undeclared identifier 'MOD_TEXT'
-    9415 |                                 module_delta[i] = (unsigned long)mod->mem[MOD_TEXT].base
-         |                                                                           ^
-   8 errors generated.
-
-
-vim +/MODULE_STATE_GOING +9412 kernel/trace/trace.c
-
-  9398	
-  9399	static int make_mod_delta(struct module *mod, void *data)
-  9400	{
-  9401		struct trace_scratch *tscratch;
-  9402		struct trace_mod_entry *entry;
-  9403		struct trace_array *tr = data;
-  9404		long *module_delta;
-  9405		int i;
-  9406	
-  9407		tscratch = tr->scratch;
-  9408		module_delta = READ_ONCE(tscratch->module_delta);
-  9409		for (i = 0; i < tscratch->nr_entries; i++) {
-  9410			entry = &tscratch->entries[i];
-  9411			if (!strcmp(mod->name, entry->mod_name)) {
-> 9412				if (mod->state == MODULE_STATE_GOING)
-  9413					module_delta[i] = 0;
-  9414				else
-  9415					module_delta[i] = (unsigned long)mod->mem[MOD_TEXT].base
-  9416							 - entry->mod_addr;
-  9417				break;
-  9418			}
-  9419		}
-  9420		return 0;
-  9421	}
-  9422	
+diff --git a/Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst b/Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst
+index 0585d02b9a6c..ad15417d39f9 100644
+--- a/Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst
++++ b/Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst
+@@ -29,14 +29,6 @@ Below is the list of affected Intel processors [#f1]_:
+    RAPTORLAKE_S            06_BFH
+    ===================  ============
+ 
+-As an exception to this table, Intel Xeon E family parts ALDERLAKE(06_97H) and
+-RAPTORLAKE(06_B7H) codenamed Catlow are not affected. They are reported as
+-vulnerable in Linux because they share the same family/model with an affected
+-part. Unlike their affected counterparts, they do not enumerate RFDS_CLEAR or
+-CPUID.HYBRID. This information could be used to distinguish between the
+-affected and unaffected parts, but it is deemed not worth adding complexity as
+-the reporting is fixed automatically when these parts enumerate RFDS_NO.
+-
+ Mitigation
+ ==========
+ Intel released a microcode update that enables software to clear sensitive
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 5f81c553e733..92fe56c40238 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1203,6 +1203,9 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
+ #define VULNBL_INTEL_STEPS(vfm, max_stepping, issues)		   \
+ 	X86_MATCH_VFM_STEPS(vfm, X86_STEP_MIN, max_stepping, issues)
+ 
++#define VULNBL_INTEL_TYPE(vfm, cpu_type, issues)	\
++	X86_MATCH_VFM_CPU_TYPE(vfm, INTEL_CPU_TYPE_##cpu_type, issues)
++
+ #define VULNBL_AMD(family, blacklist)		\
+ 	VULNBL(AMD, family, X86_MODEL_ANY, blacklist)
+ 
+@@ -1251,9 +1254,9 @@ static const struct x86_cpu_id cpu_vuln_blacklist[] __initconst = {
+ 	VULNBL_INTEL_STEPS(INTEL_TIGERLAKE,	     X86_STEP_MAX,	GDS),
+ 	VULNBL_INTEL_STEPS(INTEL_LAKEFIELD,	     X86_STEP_MAX,	MMIO | MMIO_SBDS | RETBLEED),
+ 	VULNBL_INTEL_STEPS(INTEL_ROCKETLAKE,	     X86_STEP_MAX,	MMIO | RETBLEED | GDS),
+-	VULNBL_INTEL_STEPS(INTEL_ALDERLAKE,	     X86_STEP_MAX,	RFDS),
++	VULNBL_INTEL_TYPE(INTEL_ALDERLAKE,		     ATOM,	RFDS),
+ 	VULNBL_INTEL_STEPS(INTEL_ALDERLAKE_L,	     X86_STEP_MAX,	RFDS),
+-	VULNBL_INTEL_STEPS(INTEL_RAPTORLAKE,	     X86_STEP_MAX,	RFDS),
++	VULNBL_INTEL_TYPE(INTEL_RAPTORLAKE,		     ATOM,	RFDS),
+ 	VULNBL_INTEL_STEPS(INTEL_RAPTORLAKE_P,	     X86_STEP_MAX,	RFDS),
+ 	VULNBL_INTEL_STEPS(INTEL_RAPTORLAKE_S,	     X86_STEP_MAX,	RFDS),
+ 	VULNBL_INTEL_STEPS(INTEL_ATOM_GRACEMONT,     X86_STEP_MAX,	RFDS),
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
+
 
