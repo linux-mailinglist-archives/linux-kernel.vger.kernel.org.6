@@ -1,133 +1,124 @@
-Return-Path: <linux-kernel+bounces-555398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10781A5B6E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:43:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AE4A5B6E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:44:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D8C13AF409
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:42:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682AF1895458
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973B11E7C2B;
-	Tue, 11 Mar 2025 02:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12F01E7C09;
+	Tue, 11 Mar 2025 02:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="CG4ikMwu"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Z1zqupUZ"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0271E5B65
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 02:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D881DE3B1;
+	Tue, 11 Mar 2025 02:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741660978; cv=none; b=gUmO8ALEc7g/gEOybZH9gp7agVACgYHvndlstAGNFCwjKv54g6gmIZZX9bRG0YgyLvVMonZC/H7D3vPs10hysE9Hjk43WVPiWtEK/n+JJLaYLXvv/PMnILwBHktRlWfqaWyj+xVatr8NjGVPxEvtYwlzhx6aMWbh10HFco2ohro=
+	t=1741661055; cv=none; b=u3SvbDIjybB2SBMrprulwFhDKaXqTCJRjd7DyAJGyhLRTatv3i8N9ZIhJA3vFYmwTYHWILVTy0jt+bvP8PWmbfU7Yb8d2c8wEEKGx2JWJD3SPqU7QRzs3gm2pDgK35pP/4uEovJUeqiZUdR13EIht8d/zL+Lgj7gta/FyUgONwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741660978; c=relaxed/simple;
-	bh=ayQn7cmaD8ZHN9iSLJD53bXwzVAe2nRg8K/OGfo4ezo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qb4AkW2Ku3TWyULxOhNCPTdo/cAvlczhPRcA0g824GDdBh1CRey1MZ9kZXVxh6NUIMjMMNXGiLZ9LXJBuL4EmYUGxxD9EzzG6rx4aqpJ9/pA258IuIQXwhZt7bDWqdm8BdSrSgEIfOF97PcTgMV73+b8eq9xfz6OHX6el3ndq/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=CG4ikMwu; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6e8f94c2698so21970806d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 19:42:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1741660975; x=1742265775; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fLhmxVekInszSwRuSq/Qrb92RROhWIHehhP9/GN0v/o=;
-        b=CG4ikMwu2iEPORK+r0N/+WPG41vfWr93SdVgh9etRT3XMExYcmyVlJIvUYzpGeg4Yg
-         uYZrYwKx2twSbZAp7jSmjazqOcxcrsLsDPbuXpIw2PFRcpwqSXG3rwfAhk6Nx3kDcOVE
-         mPsTnYobH2rsEO/HR8n+o8IGobgxFwO6/aNTrbzFffDUHFXwTO2A/ZG4jsnRJpsyGa5u
-         00sv7+JTY1H7nGqun6gB5fXZEIUFK05huskVaG1K2drbroTyvsshoG62i7ueBJkoxuVt
-         ZjRAeOaE82WQBw5H8NTFPFXY6rg5ScYDPOIPxplZr9ubz+/zB2oOzpmreWLibxu3qnPL
-         tJOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741660975; x=1742265775;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fLhmxVekInszSwRuSq/Qrb92RROhWIHehhP9/GN0v/o=;
-        b=UbIf+yyNEGf9h3tE/kqtDKjHG/IavnV4A21ivFUIBEiXnHt79JOjwuUaulDejlgQPp
-         UmGZ1vEwQXtHHEx9kbCBPy/VKlR9tZQFX1vw+cnDwzjqKJZrnBNAbrh0epAeCUkV9doK
-         e+W5mWIcwPkHSzv9SLqQtU3+ObLWztz+FDP38mi5mA+uXLqi7EVlYmCxB1zPJjX+8b5b
-         gYvg+hns9qkUbx2fjI26G/qxf8IdfnBdAIez3P6+CXnkRENaRH8wQ3ciw8UomS6X5jdL
-         zAV/tABgPU6QA19140O1wrmCJiVhw3ds793NEH+jLTG6I6g4PGQVpoFVpmYGaIJF5dPa
-         Pspg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0UsnAPtldz+RVMk/Ut4NKqF48hY3wzSrbHAUWnXm/f7LWtxVNuPbXtXGpeVfZVki/UVGQOAnCUdKc6Lc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqxH689XVP7JKOmTSCnBAWLk5COKg6D7/rRyYhlnKaSPJkECFT
-	JpJT9DLrLXfcrB2+328jqOGg5vhZBaic1g5zfX/yIwOYWxisYs93z0eSCah7cb8=
-X-Gm-Gg: ASbGnctvNgIOcoMCHeJMsMw78+vOuj6vrlbGvIQxDIJQplDQxenPHCDJRfPW/7CVEAD
-	BPZUPRxhTwQmG5y+kViWsMiVomZH+UADAeXdvWWEtm4T6PfX//fuHMaHa+v86xlQOMnXYB+Z/a/
-	RtSXBke/cP0yD/0xDWBritsKRISDCCMIsRqrm71AcPb/p1RJNM8mDYWFSArVMIgJ/7tmfcABexy
-	U0DBXBuOWS1HW+acBI8DZrE4zY0zhClOlbXxlQDcE4qeM3M1Ohpk1uh4xlTXYY1gSbYI6X9gOk3
-	xFkftFXzewICwhRM+fqJSRogczay97UUyrFsjGb7MLQfiXfHmIbYs6Dleub53t3lj5382hfSAoE
-	I7M/JiufnEHnjx1zsqlgtAQv76pRhIxSyrZWZ/w==
-X-Google-Smtp-Source: AGHT+IHlLnx/8yc1KdPJ5zdTyNSTraZ5mmTbBV9D2H2GKIWW4SnnOdBFw0C3+8mYsLbkz/bwItoSuQ==
-X-Received: by 2002:ad4:5d49:0:b0:6e8:f4f6:9311 with SMTP id 6a1803df08f44-6e9006019c7mr233583136d6.1.1741660975278;
-        Mon, 10 Mar 2025 19:42:55 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f7090cf8sm65776146d6.34.2025.03.10.19.42.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 19:42:54 -0700 (PDT)
-Date: Mon, 10 Mar 2025 22:42:52 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Yunjeong Mun <yunjeong.mun@sk.com>
-Cc: kernel_team@skhynix.com, Joshua Hahn <joshua.hahnjy@gmail.com>,
-	harry.yoo@oracle.com, ying.huang@linux.alibaba.com,
-	gregkh@linuxfoundation.org, rakie.kim@sk.com,
-	akpm@linux-foundation.org, rafael@kernel.org, lenb@kernel.org,
-	dan.j.williams@intel.com, Jonathan.Cameron@huawei.com,
-	dave.jiang@intel.com, horen.chuang@linux.dev, hannes@cmpxchg.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org, kernel-team@meta.com,
-	Honggyu Kim <honggyu.kim@sk.com>
-Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
- memoryless nodes
-Message-ID: <Z8-jLIugrb86KBSZ@gourry-fedora-PF4VCD3F>
-References: <Z871k085e-Th-jTz@gourry-fedora-PF4VCD3F>
- <20250311020806.404-1-yunjeong.mun@sk.com>
+	s=arc-20240116; t=1741661055; c=relaxed/simple;
+	bh=ynlUBd0iiiCwJii8stYJcxV+x99uBGaiIDvKMu7Ds1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OD5QjZWNe1NzORj3IH5iJmj7v+vepg1+wbDVkhQ8rmxpgqmE4zTKfekmQWasPfl34xhpI0B4+5f0OVHn+tDvyMSBQnkMZB3BO1xhaX+N9/krUSiftJabVDHL4y9pwjuMFnsVMigKIYM5/ap9cCiK3M6trRfTkb8rFDEt/Z6HLSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Z1zqupUZ; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52B2hf4b1875742
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 10 Mar 2025 19:43:42 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52B2hf4b1875742
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741661023;
+	bh=lm3/Pn/5S4Hn7cgXsQCrd48kvBMbcykNkA+URMJUL2w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z1zqupUZK/Kh44lSTqS2sZJ0zD3pDqtTZCClTH/Y5y1zWd5JVkFVdih3hxhxoUepC
+	 Qv+6JzHXBNQhUvHrD3fvYDLodCTM7YS7ScYyrAaETP6u3Sow8O3SZTJmkaThRGe5Wc
+	 MPKKRC4oBGVKafVSXATI+Tx2vELwd6lwIbrldRxTL7iNx9FwDuDxEgd5L0UIAg6VDY
+	 feqnPnT8IHfvMntfpCY7KFHYsQ+m7sHTXB+qsKo+6XM1kfrYGnX7NbrrsPzQB8gxyJ
+	 UqPrhKT0YBnrZ7eyCeSJFeulsry3BqhIXXU3EkdNK8lUwKKPDF+xic/KpLk8qnWYO0
+	 l7VQkr0cfxnFg==
+Message-ID: <9d1ddf00-97d7-4ccc-9952-2a3436327539@zytor.com>
+Date: Mon, 10 Mar 2025 19:43:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311020806.404-1-yunjeong.mun@sk.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] kbuild: Add "make headers" to "make help" output
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        nathan@kernel.org, nicolas@fjasle.eu, bp@alien8.de, hpa@zytor.com,
+        sraithal@amd.com
+References: <20250308040451.585561-1-xin@zytor.com>
+ <CAK7LNARHvn4Sy-e4hMmjGt0C7TFaWrGJrLq3YvN0BjehZ8QwSg@mail.gmail.com>
+ <6149ac51-07da-45e2-863e-1d4418f6b662@zytor.com>
+ <CAK7LNATGToVHEfZ-hmJ=3xbQCdHmBZf7x9w2QtQVGV-nMiP2Ag@mail.gmail.com>
+ <08bbfff0-4aef-4d9e-bbeb-661aedaf3737@zytor.com>
+ <CAK7LNASsASD31+6EEramGaRk4McxgXiOQLzfBg8k43dLe6cFdQ@mail.gmail.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <CAK7LNASsASD31+6EEramGaRk4McxgXiOQLzfBg8k43dLe6cFdQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 11:07:27AM +0900, Yunjeong Mun wrote:
-> Hi Gregory,
+On 3/10/2025 7:40 PM, Masahiro Yamada wrote:
+>>> If a help message for "headers" is desired, how about this?
+>>>
+>>>     headers  - Build read-to-install uapi headers in usr/include
+>>>
+>>
+>> LGTM.
+>>
+>> I guess you will make the change right now?
+>>
 > 
-> In my understanding, both SRAT and CFMWS have the above device and interleave setup.
+> I will not do it myself, but I just suggested a change for v2.
 > 
-> and below are the CFMWS configurations (with some unnecessary lines removed):
-> 
-> [0A4h 0164 001h]               Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> [0ACh 0172 008h]         Window base address : 0000002080000000 <- Memory region
-> [0B4h 0180 008h]                 Window size : 0000032780000000
-> [0BCh 0188 001h]          Interleave Members : 01           <-- 2-way interleave
-> [0BDh 0189 001h]       Interleave Arithmetic : 01
-> [0C8h 0200 004h]                First Target : 00000043     <-- host bridge id  
-> [0CCh 0204 004h]                 Next Target : 00000053     <-- host bridge id 
-> 
-> ...
-> 
-> [170h 0368 001h]               Subtable Type : 01 [CXL Fixed Memory Window Structure]
-> [178h 0376 008h]         Window base address : 0000064F80000000
-> [180h 0384 008h]                 Window size : 0000033000000000
-> [188h 0392 001h]          Interleave Members : 01          <-- 2-way interleave
-> [189h 0393 001h]       Interleave Arithmetic : 01
-> [194h 0404 004h]                First Target : 00000143    <-- host bridge id
-> [198h 0408 004h]                 Next Target : 00000153    <-- host bridge id
->
 
-Are you able to share all CXL Fixed Memory Window Structures in the
-CEDT?  Just want to confirm some suspicions here about why we're seeing
-12 NUMA nodes.  This explains 2 and suggests there's at least 4 host
-bridges - but not the other 8.
-
-~Gregory
+I will take care of it then.
 
