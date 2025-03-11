@@ -1,159 +1,122 @@
-Return-Path: <linux-kernel+bounces-556591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4844BA5CC0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:24:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E920BA5CC0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:23:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE0217623C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:24:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 338AD7AB01B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE07B2620DE;
-	Tue, 11 Mar 2025 17:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5092620D8;
+	Tue, 11 Mar 2025 17:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d4XuMbUo"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OkywOVyy"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4EE255E20;
-	Tue, 11 Mar 2025 17:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D410255E20;
+	Tue, 11 Mar 2025 17:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741713841; cv=none; b=dRszGBJVRH1WroNxrZ9f592pair2wS2Mnmq31JEhNTqTmsOfHcyc4o+hfzbg7LUnubKfhf7AH5wgPNbvTIqyaUETaYdoRQalcCCVmYISdyVYvLbvX10g0TuSgjr911paoKsASyhIFxn7vs7PUKiwASROXk4y//7W7rwujKZUQ68=
+	t=1741713831; cv=none; b=iD1kPxWh4CKP7ac11GCosEZIIEyuGLRv7/hs2uGTKEamKJwMzx3WcWZEEFBmtKaDm0gy8bjWTGWNFfKb2fFwHQ7ICL0qajkm+5FmJHJshK75aQFXlSFXDHiKba8A78isM7K354wJlvHTPztf6x4s7lJz3/YyDfhCz503IqquUa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741713841; c=relaxed/simple;
-	bh=owns9l5JLbWYp17TZuEzyhli5LeKH4b9XdYYGM2SdTk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dEW0AJeadrPl01ZlWMJzsWGAte3rb8tRqgeuVjZnezgqegMohYuMhsnnL0WW6mzn4WPopioU9IjGJd4SzfEzf10R9gpcJvJHfRfsTkny53XUFbeaxI+mDriln2QUMoXA6GvUGDSj2ptf3hmrYDMbpR3dvOXNL+IxhYujafJRnEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d4XuMbUo; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394036c0efso34857515e9.2;
-        Tue, 11 Mar 2025 10:23:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741713838; x=1742318638; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2CblXRDFSbYzBfdZvOZoTbib8TKXWZ1Do7JX0N+BLKY=;
-        b=d4XuMbUoBqUpKKWoFYNfWAbTXK3mS3KEReiFjkzbPB7gBOA+NQAf5CkS0d5+PsFF8P
-         u2XP7BbyxeeUfc2S/vtt5QRsiaq6HR8e1/kFWBMwmmnHTWl15Fy7awI/RoFWE6sarNoj
-         arf4vzzl7UHE7CKtG4d4lPvY0TsCJpeTvSHWuKae9YjnkRqwhS3VaOGqqhZJVGUWI2hU
-         mUecpSANozejnJ+pD9UVXPSsfDo0zOKN4g88Tqt79Bkt02Ca2knfi6Auo1kHSsLdj7Qm
-         MM4btfJ6rprNLTU9jdN72i6Kb2fVth85vJQJiSgQl5v51ByL7QOdU2ox9Fdzq1f7lm4W
-         tFQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741713838; x=1742318638;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2CblXRDFSbYzBfdZvOZoTbib8TKXWZ1Do7JX0N+BLKY=;
-        b=NeHhQgUf/Z6O6Hu5v6E6+HhgP5wYhP0SCfnp3YRIkgoQmCX0zt1QuNuNv/v4YoI7Vu
-         oVUcBFR/gpMwz/qTF+CxmfzTHotirw9Pnw7QnF/dkEUzLLGoh5Su3UUbZKlm/1Km30+O
-         UwqqG/Yc6hIem072VAI/pGAZT/9NwXRGVwDLQs48Xzz+h22++8sNfvLq44zd7E6a8zBx
-         hbCYZ+H5D9T86qVzBxTmpWCykU74uhh8xIOAo3OjCNWpxX45p5pRdgdBkE118f15NsoJ
-         s/EIGtUKgbYJxW2+XPoVLEhf80lMugXp+8G9WwpYPEFyTzt70UdRVnnwfOlQCsnGh//V
-         6dCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDAqCf+IgxDKugK5sSL2hJ/n8wdu97R8PCT1aaynDoKyEQGoeahmq5rkQmFKpmv91PVx0MfOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+ZEEEHk4JDm/87+PV/AyG007P7ipuLBuXqs1GPH0XL+URG0bu
-	uugIqa3ylPct+NycTB6nm+fc6EZ8q7ZRtyp6KHaRHFERqnQ428TS
-X-Gm-Gg: ASbGnctKDWxHGbAg4Blr3rFc+sqddHmHlc9XDoHpjTY1Zk+SeZQu6HBo6XsS5WNICe6
-	hYofHgzMiiP3UJDafQTxyFgY6LtN7cdLWa0Y+LtguOqQDT4YS4pxVe2k3b73H3I99hJYbFFIhvH
-	3gISeQ6WcSDOyOflwYBlIOFUce4URMcbez7zRUXse2/s8ytMEu3Z7t7ezb3pzOUT44F3CtWzOuM
-	R6UBOhHKQHvWvF4F8TfnLp9KqttBct8SJf2kiWYbwRO37U7ENYgdhKddw8N+eIwlF/E90NH9Ppq
-	2DYJAYhoQBfwlrurCkjotb5ndxE/HNB8sd0NuIvpXMF+YS/NPMeks6pP36cmY62k9NpKhROTJm9
-	1y0Cem4bI1Mc=
-X-Google-Smtp-Source: AGHT+IHmQIwKqmpw/iCa+vydvbfQuzaYeiFEWI+fVAggDgqfNeIzbmu5lpU7cflubg+ifd7aRx+85w==
-X-Received: by 2002:a5d:5886:0:b0:391:4674:b136 with SMTP id ffacd0b85a97d-3914674b5f1mr8616572f8f.29.1741713837608;
-        Tue, 11 Mar 2025 10:23:57 -0700 (PDT)
-Received: from [93.173.93.237] (93-173-93-237.bb.netvision.net.il. [93.173.93.237])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfb79cfsm18745734f8f.10.2025.03.11.10.23.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 10:23:57 -0700 (PDT)
-Message-ID: <b3eda642-f181-de6c-9975-42ce3e149db3@outbound.gmail.com>
-Date: Tue, 11 Mar 2025 19:23:20 +0200
+	s=arc-20240116; t=1741713831; c=relaxed/simple;
+	bh=CXHCCNEXOprghwu7t9O9nASmfIr6TtyDm1pbOw1Cqxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lCcML3WbVYmydp6aRoXz7qDzUFqH419SGfyZgSHZ6RO1uqDQf/WOTlruFwTDU0a38Nuo4bX9EqmDM62HjmSaSms2JcgGjBMKY7wPoAMf8+goS5e288vlze1umPQcC0eKUw5X0G6EPxfOVCeIrOYIO1VqPg1Lk+JJaKsfbYXtqGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OkywOVyy; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BE3Kts010108;
+	Tue, 11 Mar 2025 17:23:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=5u56dtQHGskTSf5+IQ68wqGEp6+oc9
+	PmagGYB1VKuuw=; b=OkywOVyyDjTwd5Ra9hJluBKTT6lDermeS4faJeFKbjAdGi
+	ySwoiQfoszXo5lsHNJCxz0MlMC606nNQjBZDcJ8krVS80zWrEkwY7o9ixwJuGWH+
+	t0/ishJP9tjw0SJqGSaPW/DB9lf3Ze7aXiGgTqgAwEZ55iI5kXWxUlXLOkqakzPW
+	K9bNUOD4Vc/dAUrvFz7MS1mkhNDgtRA9U1eWv7alAyIA5LNJAf4rrwn2R0gVEYyZ
+	DVafxvT9msrp9mhTSKC+dyMDth6qvTz1d1u7wtfB4BB/+qhTTBexc1qNhzsV5+GR
+	GNPKFk5ezUNNy26kRP08/o+slV+SbazlBiga2kFg==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45apkrh56a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 17:23:45 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52BGeIjw022196;
+	Tue, 11 Mar 2025 17:23:43 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45917nddcr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 17:23:43 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52BHNd8o46137780
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 17:23:39 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D040820049;
+	Tue, 11 Mar 2025 17:23:39 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 25A3C20040;
+	Tue, 11 Mar 2025 17:23:39 +0000 (GMT)
+Received: from localhost (unknown [9.171.9.82])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 11 Mar 2025 17:23:39 +0000 (GMT)
+Date: Tue, 11 Mar 2025 18:23:37 +0100
+From: Vasily Gorbik <gor@linux.ibm.com>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: hca@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhanjun@uniontech.com,
+        niecheng1@uniontech.com, guanwentao@uniontech.com,
+        chenlinxuan@uniontech.com
+Subject: Re: [PATCH] s390/boot: Ignore vmlinux.map
+Message-ID: <your-ad-here.call-01741713817-ext-6705@work.hours>
+References: <F884C733016D6715+20250311030824.675683-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-From: Eli Billauer <eli.billauer@gmail.com>
-Subject: Re: [PATCH v2] char: xillybus: Fix error handling in
- xillybus_init_chrdev()
-To: Ma Ke <make24@iscas.ac.cn>, arnd@arndb.de, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- stable@vger.kernel.org
-References: <20250311013935.219615-1-make24@iscas.ac.cn>
-Content-Language: en-US
-In-Reply-To: <20250311013935.219615-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <F884C733016D6715+20250311030824.675683-1-wangyuli@uniontech.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: zgtopoqPN968ponBEZ9i61AE32kkFDc9
+X-Proofpoint-GUID: zgtopoqPN968ponBEZ9i61AE32kkFDc9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_04,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ adultscore=0 clxscore=1011 priorityscore=1501 mlxlogscore=571
+ lowpriorityscore=0 suspectscore=0 impostorscore=0 malwarescore=0
+ spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503110107
 
-Hello,
-
-In what way is this better? cdev_del() calls cdev_unmap() to undo the 
-mapping that a successful call to cdev_add() performs, but that's 
-unnecessary, because the whole point is that the latter failed. And then 
-cdev_del() calls kobject_put(), and then returns.
-
-So the existing code calls kobject_put() directly, achieving the same 
-effect. It's a matter of coding style. Which is better? I don't know.
-
-What is the common convention in the kernel? Not clear either. For 
-example, in fs/fuse/cuse.c a failure of cdev_add() leads to a call to 
-cdev_del(), like you suggested. However, in uio/uio.c the same scenario 
-is handled by a call to kobject_put(), exactly as in my driver.
-
-Has this topic been discussed in the past? Any decision made?
-
-Besides, if we remove the call to kobject_put(), so should the comment 
-explaining it.
-
-Regards,
-    Eli
-
-On 11/03/2025 3:39, Ma Ke wrote:
-> After cdev_alloc() succeed and cdev_add() failed, call cdev_del() to
-> remove unit->cdev from the system properly.
+On Tue, Mar 11, 2025 at 11:08:24AM +0800, WangYuli wrote:
+> Upon compiling an s390 kernel, a vmlinux.map file might be generated
+> in the current directory.
 > 
-> Found by code review.
+> Append it to the .gitignore file so that Git does not track it.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 8cb5d216ab33 ("char: xillybus: Move class-related functions to new xillybus_class.c")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
 > ---
-> Changes in v2:
-> - modified the patch as suggestions to avoid UAF.
-> ---
->   drivers/char/xillybus/xillybus_class.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/xillybus/xillybus_class.c b/drivers/char/xillybus/xillybus_class.c
-> index c92a628e389e..356af6551b0d 100644
-> --- a/drivers/char/xillybus/xillybus_class.c
-> +++ b/drivers/char/xillybus/xillybus_class.c
-> @@ -104,8 +104,7 @@ int xillybus_init_chrdev(struct device *dev,
->   	if (rc) {
->   		dev_err(dev, "Failed to add cdev.\n");
->   		/* kobject_put() is normally done by cdev_del() */
-> -		kobject_put(&unit->cdev->kobj);
-> -		goto unregister_chrdev;
-> +		goto err_cdev;
->   	}
->   
->   	for (i = 0; i < num_nodes; i++) {
-> @@ -157,6 +156,7 @@ int xillybus_init_chrdev(struct device *dev,
->   		device_destroy(&xillybus_class, MKDEV(unit->major,
->   						     i + unit->lowest_minor));
->   
-> +err_cdev:
->   	cdev_del(unit->cdev);
->   
->   unregister_chrdev:
+>  arch/s390/boot/.gitignore | 1 +
+>  1 file changed, 1 insertion(+)
 
+Acked-by: Vasily Gorbik <gor@linux.ibm.com>
+
+Changed the message to
+"""
+When building with CONFIG_VMLINUX_MAP=y, a decompressor vmlinux.map file
+is generated in the boot directory.
+
+Add this file to .gitignore to ensure Git does not track it.
+"""
+And applied, thank you!
 
