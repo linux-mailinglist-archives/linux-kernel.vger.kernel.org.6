@@ -1,284 +1,132 @@
-Return-Path: <linux-kernel+bounces-556208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A52A5C272
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:23:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 182EEA5C274
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:23:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E3C71891C21
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:22:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01DAE3B2B70
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910AB21B185;
-	Tue, 11 Mar 2025 13:21:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC5A1DE2BD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D14C1BEF77;
+	Tue, 11 Mar 2025 13:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XPi+u4lk"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A461ACEB0
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741699263; cv=none; b=uMe3KvTMpzoQyxrHjGQf9Q70yKn4Fgb0DqgL2NOHLVnJk4BC6FxHmBo3S3BDedxwOXnAOc5nY1QaKF2q37JNDQFo+ZK6JxkTn6SIzCCKc9rguGDgBpR/OoSbgesUr7tJzBVqT0mu1KWKJo15PwSKIwa+bysjGCjpVAqHABnW8jU=
+	t=1741699311; cv=none; b=Yw+a2ekH8vwRBOSYsqCkY2Yfrsotm7vPA/B7GZqALljveAumlf4LxAl9ASbtG2vhoZUzth3CN0pMHy7Uqk3dny+V7nYSk5shMgMWl1gyysy46EsbZimF1bmvFPy6pwGAjoliDkxBLNIEtOt7I0qaukgi5Yz69slUgaDu5IELKQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741699263; c=relaxed/simple;
-	bh=BTsHUr/hRsk7X06wRkRIqSmfLBdh24ysvQgpBpaJiJU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kguogJj0F7rQDoJGcajt6J1bvu25Ae9ws/TVqb7KXxK1U5oQI+QeCOrHCOZSK773DjgRIArz4S3+HTL8Uw71x6iC8wraAlhESsl9nkhlqPXEYXZ5tdd8cRx4z2s1xaOFgyWXPokDBfZPGYMLgRFNnh/+Tq1bFTejEsarRFo+SeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECB1C1424;
-	Tue, 11 Mar 2025 06:21:11 -0700 (PDT)
-Received: from [10.1.30.125] (XHFQ2J9959.cambridge.arm.com [10.1.30.125])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 94F7D3F694;
-	Tue, 11 Mar 2025 06:20:57 -0700 (PDT)
-Message-ID: <818529f7-f720-4ae9-ab72-c8cd6dc43c0b@arm.com>
-Date: Tue, 11 Mar 2025 13:20:56 +0000
+	s=arc-20240116; t=1741699311; c=relaxed/simple;
+	bh=Qd07Q4VGPkFidTJBRui/iWcevj6QeWcKXSoFsfCfUnc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kQ+dfQOONRaH8HS10GcHtNc2M4EzsrtabBNIuCsKkCgfbWhHE2rirZO9H888z385IsA/z3J0BUT5UuI14Su6viVnOuiiYOgzqcY0BLp9smcqaQnLPXiJLZJmrqQVnys9RbNLCvRuCmrBi17TrIwvJzT9aaXduS3XUiOmQchxDcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XPi+u4lk; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30761be8fcfso60893761fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741699308; x=1742304108; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qd07Q4VGPkFidTJBRui/iWcevj6QeWcKXSoFsfCfUnc=;
+        b=XPi+u4lk27GEgdRxJCB9vu8EWp7aKd69bCV4J/ECSl8Ddp2etEmJLue7jFnwkElMev
+         v6j4GuHlb7BsQjMyHMkVrOqQHNY1merU84Wq3dZoT1Qw0HU1cPMRA+3bsaMacqserH0Q
+         v+Buk9Atz4GpVaLslNr7kRtG/o1BxmNdmRwA0SrW4Y8Ox/vw0K0lKoNzHhvewc6hQtlq
+         myf3NbeM1zz4UKq+0yNoOQBdm4MH4gvKJiPNk0IgR/G2GJo4ndppHJ0GG2UzF4kqaZ0G
+         By/LYVVBJscVPNRIAmojW1zuIgbEMX9jGBBdmtp70rm3rda6xPAMdI/XNZlcdZ0YD0kl
+         kapg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741699308; x=1742304108;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qd07Q4VGPkFidTJBRui/iWcevj6QeWcKXSoFsfCfUnc=;
+        b=LUastKdzyTbF1x3huT1bAY4bHkc4UTuE0/ixf0BAHZbAqkzJytJRBAfB3iuroCiJIQ
+         dcI6g/xM7U/cPrTZ9ls8JZ0Gt7GAHKtFijBI4Iz4zumWrRmgYW882+REET5jvmsJUu/V
+         6R750Die+xnM3KEYILgz5CowO3OyYTp2Hv9fdCre0sa/iAPSpX+u2SOOx8zVyIUgyLfw
+         +Iv9mNoC0GvoH/iTbnMQNpx9YrH5XleQkdwOJMWCQEZPTdzm8INVji2s1Er1pmyAmV4G
+         bGoRSTMM4HlxfPFdNA/J4UbmHFSiA2YjK8owE5BHJl+2INQkrHBOwckK+luSTjbWjPBn
+         4LdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVu75bQ5saCx7GDRaFk+GMQJt1BTffzwCSSJjj7E19wkObYqoOGR37gxB5XHEzUufdoHX50zBYHM8x2NTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3cNY/+ISRA2Kytgbm+mCCh4cJCgFZeSdlMYSnBZL5bUnfBGZO
+	3tBGB7OiEPsIo2ce1q/3ELmub3XXbtpga3LC+mtq2IFpv71Ql4JPwaw1kYuH1ZgHfDL9mYvu/Xs
+	3fhhbTB65Lacfmp89Gsp5513xljUBxwR/G0KiEA==
+X-Gm-Gg: ASbGnctlYF9ukDOl+QDLPM+U2YXszKiDcumaPrlDRHNKj2BVMn9OYyjw+P0bDT1bfgK
+	CrP7QamsMY+2HfxiiStGnVM3Y7pB3YHlWy/D01KKEUH4ly1rlkGeN0APt+dhBpxOm6uopLSBCyY
+	ww4tnV83oudu08/HMSzoicxAzD+2rkq6m0A+FY/WCh+SnWzqMDkDRfG8Vd
+X-Google-Smtp-Source: AGHT+IFfdhddh1gHpzqLS8IWLTpedfRgy013YVoiUYXZPF94QYiG23Y1yOKbxXbCrswWfXfhwXoVw/1pv2z+tdow0S8=
+X-Received: by 2002:a05:6512:39c7:b0:542:28b4:23ad with SMTP id
+ 2adb3069b0e04-54990e5da4dmr7596422e87.16.1741699308040; Tue, 11 Mar 2025
+ 06:21:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
-Content-Language: en-GB
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Yang Shi <yang@os.amperecomputing.com>,
- =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
- catalin.marinas@arm.com, will@kernel.org, joro@8bytes.org,
- jean-philippe@linaro.org, mark.rutland@arm.com, joey.gouly@arm.com,
- oliver.upton@linux.dev, james.morse@arm.com, broonie@kernel.org,
- maz@kernel.org, david@redhat.com, akpm@linux-foundation.org, jgg@ziepe.ca,
- nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
- smostafa@google.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
- <20250228182403.6269-6-miko.lenczewski@arm.com>
- <b46dc626-edc9-4d20-99d2-6cd08a01346c@os.amperecomputing.com>
- <43732270-8fd0-4a18-abec-096e383a6a4d@arm.com>
- <5ff34bd0-7823-4f31-9f13-bf60d3345b99@arm.com>
- <7cca1edf-fd1b-4622-999e-8e0ca098dfe2@arm.com>
- <0ac0f1f5-e4a0-46ae-8ea0-2eba7e21a7e1@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <0ac0f1f5-e4a0-46ae-8ea0-2eba7e21a7e1@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250311110034.53959031@erd003.prtnl> <CAMRc=MewC-7XFfWxPS7cmMycxo-62NDrUKFyjnnCbwqXQXWuZw@mail.gmail.com>
+ <20250311133010.760abd61@erd003.prtnl>
+In-Reply-To: <20250311133010.760abd61@erd003.prtnl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 11 Mar 2025 14:21:37 +0100
+X-Gm-Features: AQ5f1JqUOVL3X2gCgcmbpAbT0fy5j2-XGgHTJB1Eycy9onj9r36vOwUAw_3p1l0
+Message-ID: <CAMRc=McLEtiF4tfGpOGW+agA8-BK_qU6UWjvq1BOgthWXXym3A@mail.gmail.com>
+Subject: Re: regression: gpiolib: switch the line state notifier to atomic
+ unexpected impact on performance
+To: David Jander <david@protonic.nl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/03/2025 12:16, Suzuki K Poulose wrote:
-> On 11/03/2025 10:58, Ryan Roberts wrote:
->> On 11/03/2025 10:17, Suzuki K Poulose wrote:
->>> On 03/03/2025 10:17, Ryan Roberts wrote:
->>>> On 01/03/2025 01:32, Yang Shi wrote:
->>>>>
->>>>>
->>>>>
->>>>> On 2/28/25 10:24 AM, Mikołaj Lenczewski wrote:
->>>>>> For supporting BBM Level 2 for userspace mappings, we want to ensure
->>>>>> that the smmu also supports its own version of BBM Level 2. Luckily, the
->>>>>> smmu spec (IHI 0070G 3.21.1.3) is stricter than the aarch64 spec (DDI
->>>>>> 0487K.a D8.16.2), so already guarantees that no aborts are raised when
->>>>>> BBM level 2 is claimed.
->>>>>>
->>>>>> Add the feature and testing for it under arm_smmu_sva_supported().
->>>>>>
->>>>>> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
->>>>>> ---
->>>>>>     arch/arm64/kernel/cpufeature.c                  | 7 +++----
->>>>>>     drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c | 3 +++
->>>>>>     drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c     | 3 +++
->>>>>>     drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h     | 4 ++++
->>>>>>     4 files changed, 13 insertions(+), 4 deletions(-)
->>>>>>
->>>>>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->>>>>> index 63f6d356dc77..1022c63f81b2 100644
->>>>>> --- a/arch/arm64/kernel/cpufeature.c
->>>>>> +++ b/arch/arm64/kernel/cpufeature.c
->>>>>> @@ -2223,8 +2223,6 @@ static bool has_bbml2_noabort(const struct
->>>>>> arm64_cpu_capabilities *caps, int sco
->>>>>>                 if (!cpu_has_bbml2_noabort(__cpu_read_midr(cpu)))
->>>>>>                     return false;
->>>>>>             }
->>>>>> -
->>>>>> -        return true;
->>>>>>         } else if (scope & SCOPE_LOCAL_CPU) {
->>>>>>             /* We are a hot-plugged CPU, so only need to check our MIDR.
->>>>>>              * If we have the correct MIDR, but the kernel booted on an
->>>>>> @@ -2232,10 +2230,11 @@ static bool has_bbml2_noabort(const struct
->>>>>> arm64_cpu_capabilities *caps, int sco
->>>>>>              * we have an incorrect MIDR, but the kernel booted on a
->>>>>>              * sufficient CPU, we will not bring up this CPU.
->>>>>>              */
->>>>>> -        return cpu_has_bbml2_noabort(read_cpuid_id());
->>>>>> +        if (!cpu_has_bbml2_noabort(read_cpuid_id()))
->>>>>> +            return false;
->>>>>>         }
->>>>>>     -    return false;
->>>>>> +    return has_cpuid_feature(caps, scope);
->>>>>
->>>>> Do we really need this? IIRC, it means the MIDR has to be in the allow list
->>>>> *AND* MMFR2 register has to be set too. AmpereOne doesn't have MMFR2 register
->>>>> set.
->>>>
->>>> Miko, I think this should have been squashed into patch #1? It doesn't
->>>> belong in
->>>> this patch.
->>>>
->>>> Yang, we discussed this internally and decided that we thought it was best to
->>>> still require BBML2 being advertised in the feature register. That way if
->>>> trying
->>>> to use KVM to emulate a CPU that is in the allow list but doesn't really
->>>> support
->>>> BBML2, we won't try to use it.
->>>>
->>>> But we still end up with the same problem if running on a physical CPU that
->>>> supports BBML2 with conflict aborts, but emulating a CPU in the allow list. So
->>>
->>> I don't understand the problem here ? In the worst case, if we want to disable
->>> the BBML2 feature on a given CPU, we could provide an id-
->>> override to reset the value of BBML2. Or provide a kernel parameter to
->>> disable this in case we want to absolutely disable the feature on a
->>> "distro" kernel.
->>
->> Hi Suzuki,
->>
->> Sorry perhaps I'm confusing everyone; As I recall, we had a conversation before
->> Miko posted this series where you were suggesting we should check BOTH that all
->> the CPUs' MIDRs are in the allow list AND that BBML2 is advertised in MMFR2 in
->> order to decide to enable the CPU feature. My understanding was that without the
->> MMFR2 check, you were concerned that in a virtualization scenario, a CPU's MIDR
->> could be overridden to emulate a CPU that is in the allow list, but in reality
->> the CPU does not support BBML2. We would then enable BBML2 and BadThings (TM)
->> will happen. So additionally checking the MMFR2 would solve this.
->>
->> But Yang is saying that he plans to add the AmpereOne to the allow list because
->> it does support BBML2+NOCONFLICT semantics and we want to benefit from that. But
->> AmpereOne does not advertise BBML2 in it's MMFR2. So with the current approach,
->> adding AmpereOne to the allow list is not sufficient to enable the feature.
->>
->> But back to your original justification for checking the MMFR2; I don't think
->> that really solves the problem in general, because we don't just require BBML2,
->> we require BBML2+NOCONFLICT. And we can only determine that from the MIDR. So
->> why bother checking MMFR2?
-> 
-> My concerns are not around enabling a CPU, but having a damage control with a
-> "kernel" that a user has no control over (Read, standard distribution kernel).
+On Tue, Mar 11, 2025 at 1:30=E2=80=AFPM David Jander <david@protonic.nl> wr=
+ote:
+>
+> On Tue, 11 Mar 2025 12:45:51 +0100
+> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> > On Tue, Mar 11, 2025 at 11:01=E2=80=AFAM David Jander <david@protonic.n=
+l> wrote:
+> > >
+> > > On kernel 6.13, after git revert -n fcc8b637c542 time is back to what=
+ it was
+> > > on 6.12.
+> > >
+> >
+> > Interestingly: I cannot reproduce it. Obviously gpiofind doesn't exist
+> > in libgpiod v2 but I'm running gpiodetect with and without reverting
+> > these changes and am getting roughly the same results: ~0.050s real
+> > time for 1 up to 4 chips.
+> >
+> > Any idea why that could be? Can you reproduce it with libgpiod v2 (I
+> > don't know why that wouldn't be the case but worth double checking).
+>
+>
+> Can you describe your platform? Is it a multi-core or single-core CPU? Wh=
+at
+> RCU implementation does it use? Tree or tiny? If it is multi-core, is the=
+re a
+> difference if you disable all but one core?
+> Maybe some kernel CONFIG option that makes a difference? I am not an expe=
+rt in
+> RCU (in fact I barely know what it does), so maybe I am missing something=
+ that
+> makes this problem go away?
+>
 
-Ahh I misunderstood then.
+I'm testing on a qemu VM - SMP and single core. RCU algo is tree. In
+any case: I've just sent you an RFT patch that switches to using the
+raw notifier. Could you see what results you're getting with it?
 
-> 
-> 1. If the combination of the above causes problem (in Virtualization)
-> 2. If the combination of the above is detected to have problems in baremetal.
-> 
-> In (1), VMM could control the ID register and disable the feature.
-> 
-> For (2) we could provide an id-override on command line to disable it in
-> the worst case.
-> 
-> So, having the id register case is a good way to get the system running
-> with a given kernel (in either world). Without that, we don't have a tunable to
-> control the behavior at runtime.
-> 
-> May be I am being over paranoid about this.
-> 
->>
->> I guess we could provide an id-override on the kernel command line to *enable*
->> BBML2 for AmpereOne, but that's not going to be suitable for mass deployment, I
-> 
-> Unfortunately, we can't override to provide the "feature" that is missing (at
-> least today).
-> 
-> One option is, run with a whitelist, but provide a kernel parameter to disable
-> bbml2 feature.
-> 
-> Something like, arm64.bbml2=0
-> > So the decision is based on the parameter && MIDR list.
-
-This sounds like a good solution to me. I guess we would wire this up to the SW
-features "register".
-
-Thanks,
-Ryan
-
-> 
-> 
-> Cheers
-> Suzuki
-> 
->> don't think?
->>
->> Thanks,
->> Ryan
->>
->>>
->>> Suzuki
->>>
->>>
->>>> given AmpereOne doesn't advertise BBML2 but does support it, I'd be happy to
->>>> remove this check.
->>>>
->>>> Thanks,
->>>> Ryan
->>>>
->>>>
->>>>>
->>>>> Thanks,
->>>>> Yang
->>>>>
->>>>>>     }
->>>>>>       #ifdef CONFIG_ARM64_PAN
->>>>>> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c b/drivers/iommu/
->>>>>> arm/arm-smmu-v3/arm-smmu-v3-sva.c
->>>>>> index 9ba596430e7c..6ba182572788 100644
->>>>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
->>>>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
->>>>>> @@ -222,6 +222,9 @@ bool arm_smmu_sva_supported(struct arm_smmu_device *smmu)
->>>>>>             feat_mask |= ARM_SMMU_FEAT_VAX;
->>>>>>         }
->>>>>>     +    if (system_supports_bbml2_noabort())
->>>>>> +        feat_mask |= ARM_SMMU_FEAT_BBML2;
->>>>>> +
->>>>>>         if ((smmu->features & feat_mask) != feat_mask)
->>>>>>             return false;
->>>>>>     diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/
->>>>>> arm/arm-smmu-v3/arm-smmu-v3.c
->>>>>> index 358072b4e293..dcee0bdec924 100644
->>>>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->>>>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->>>>>> @@ -4406,6 +4406,9 @@ static int arm_smmu_device_hw_probe(struct
->>>>>> arm_smmu_device *smmu)
->>>>>>         if (FIELD_GET(IDR3_RIL, reg))
->>>>>>             smmu->features |= ARM_SMMU_FEAT_RANGE_INV;
->>>>>>     +    if (FIELD_GET(IDR3_BBML, reg) == IDR3_BBML2)
->>>>>> +        smmu->features |= ARM_SMMU_FEAT_BBML2;
->>>>>> +
->>>>>>         /* IDR5 */
->>>>>>         reg = readl_relaxed(smmu->base + ARM_SMMU_IDR5);
->>>>>>     diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/
->>>>>> arm/arm-smmu-v3/arm-smmu-v3.h
->>>>>> index bd9d7c85576a..85eaf3ab88c2 100644
->>>>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
->>>>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
->>>>>> @@ -60,6 +60,9 @@ struct arm_smmu_device;
->>>>>>     #define ARM_SMMU_IDR3            0xc
->>>>>>     #define IDR3_FWB            (1 << 8)
->>>>>>     #define IDR3_RIL            (1 << 10)
->>>>>> +#define IDR3_BBML            GENMASK(12, 11)
->>>>>> +#define IDR3_BBML1            (1 << 11)
->>>>>> +#define IDR3_BBML2            (2 << 11)
->>>>>>       #define ARM_SMMU_IDR5            0x14
->>>>>>     #define IDR5_STALL_MAX            GENMASK(31, 16)
->>>>>> @@ -754,6 +757,7 @@ struct arm_smmu_device {
->>>>>>     #define ARM_SMMU_FEAT_HA        (1 << 21)
->>>>>>     #define ARM_SMMU_FEAT_HD        (1 << 22)
->>>>>>     #define ARM_SMMU_FEAT_S2FWB        (1 << 23)
->>>>>> +#define ARM_SMMU_FEAT_BBML2        (1 << 24)
->>>>>>         u32                features;
->>>>>>       #define ARM_SMMU_OPT_SKIP_PREFETCH    (1 << 0)
->>>>>
->>>>
->>>
->>
-> 
-
+Bart
 
