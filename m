@@ -1,318 +1,244 @@
-Return-Path: <linux-kernel+bounces-555443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C221A5B76D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:47:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83763A5B772
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:47:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C763F16F557
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:47:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 008AF1893B97
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAEB1DFE00;
-	Tue, 11 Mar 2025 03:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98911E1A05;
+	Tue, 11 Mar 2025 03:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="icZleH04"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="drnk5nmI"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04olkn2010.outbound.protection.outlook.com [40.92.47.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27BF259C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 03:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741664822; cv=none; b=RdB9EJ9HO49Qh72DibxLcUWaSwac8DS6MuyRee2+1dXzMk8HCx0hFqQ9HZfyIzY2FhAd2PxstBstszy8rk9/7X8JJlgQ8sd8L2kJa3fgMTDcnxFXR+E462gS+JXo/MeDi98CofT9FSoQH+xLsBmwzuMCD6PrDVssDVInoq3+Nvo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741664822; c=relaxed/simple;
-	bh=kp54JgZuAEo1oCvBBbmgarSIlly3akfgFJaDK6sQyXk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NSDjJbD37eqzluc0DROZzSbuq1dgwzOn6zWFz3lj5apAsmMfO4XRgdDkWkhIHQ8HtgkCQ6S9AlJ8sld8zEIbGRqa5W+9BDl5lVGsnaImxxs0l84WolBulfMAGMCHRiEai5oD05kVafefPT0b5cVBAZLDX8glWcEAb4OoOipmKcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=icZleH04; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <657416e8-bb05-42ca-b139-dc25177f5eb8@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741664815;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hOsU2O6D/NyorM3+gmGM4JjNYMTiWmpvnLs938pCNf0=;
-	b=icZleH04sD8pZ7umEC7q3EQaJHHCmld8mkTeApTJIIFfvtaRr5cjjwjDfimh4U/gJzK6RF
-	g/OQi9yyQ7i9EVFC62t1b2DgED8zcB0RocCDmGCUYqBSNsEDLOKmA+KayRlPvle1gOaGA8
-	lcX8f65j1w9TEOFmLEUZDieN275wQmE=
-Date: Tue, 11 Mar 2025 09:16:46 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299D51CA84;
+	Tue, 11 Mar 2025 03:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.47.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741664864; cv=fail; b=TlPI0uDjIC5/Q8C18rtr+HjjRCwSbP3TCmgl28fmZyPkCtC6PWxMNfo++15ZpVaRfNU5BuKmhv/Bdo2PXPDU+JcNsLKTrtZCxzNAGhZrMartoPf89ue8jKcM4N+Q5fymJqafpgwplCSgeLaFPh+wmQEuJIPYbKBbpuHXXK5eCSA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741664864; c=relaxed/simple;
+	bh=VouRhnMI0sRUd3LWFkeQn8eT19d5dp1MDif+Ke6x4nk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RuWasdIs2VT6HMqYU6tRkaY1ZWxMiX74O8Q3qmxs2g1G/sLAzCs/0WH2z8f19jpRVq5R5cufrsglfNJ6m39P4jbymqFFwlJq9nbkt/ff0kaSqq5pejoglmmb9Mf0WY1PUMGETKRG1DpGZFz73ZHjg1iW+7p+cLcW0A3x6+yHiwE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=drnk5nmI; arc=fail smtp.client-ip=40.92.47.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jCPs+moJgzf4XWsgpjvz9GP8GZRa6ig1lQF9xy7YAc2a0xEDaFrOVm8OCwsEFW88OsMSC1dHQxqzlAEK96BhldgyXS6RPg7HAnoH1xoYv1Qm+BPQ4ItBgBxmzyJyM2NhrJcD4EqDTtTLV4ukPpgms+fWBwFjyKpTUVUIWVXdNvWBKa/0t9au2JwtM3KT1DeP2Sz4Bps8lid2eW9NyN0MekkhhySLG1TkFUysttU7Nr/MUdDhQ+PmMb0NfmKqGLyS2e1nY69GpLsl47/tB7TLf0DZgt3KOSwcGgc0iKlxJ46Yly4UUBASmKm7Mt1mBHeFAuh2Y0nA0E2TbkzwwNqjUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zlMu3dGjockcmYldggg1woJxdbsF/xh0x9nEkaaLZWc=;
+ b=m0R/PW59LiqAGXdMo0C/F0uQ9h+cectw5DcdKF8JGwLJaTeDwfT1gxHeHFmzrjlk9siEVFPyfyaX8n8f64r19rc2qz0zrzKosyTQf8H99hVxyhROCfo8lbn4VEY192iSe4aO8NWXK1Gul0P5Q1H9/MSwELU2fluxgNBq2to/ny52zmHTwnCzzmaNk50BfgsZHGCy7gdKAP4zOU7GDOII66zpE8Yhfjxnir3DDQwm7oAEnAcFwPSujvYhSEHpYUlCPvtcOVUkS53NTp4eqe5bddrtTeTOopZozmbo/Qa+ks2aOXzwV4OaZjw6nZ6hgxcBl8v76mR7Y0Y8OqBAyZ19mg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zlMu3dGjockcmYldggg1woJxdbsF/xh0x9nEkaaLZWc=;
+ b=drnk5nmIZ3ehOUAs07GchLafViBf56MHQ8XUzmyL2Vp34qqjxTZHwcMYM+0Axin478SLdefH+bmiWm+gY3HhBfCoFtD82dctUVIYHLLi0JaATZJAypoZjpo4qVkl78Hyf5kFP4s+78RK3BViTEWiO0NcD4GI4o0iD9YlO1q14oiMIfX5rBOMHI/RukWoRHB+Q0Bz8wjlamJRb75LfhQe//L40xZevtp3lYsD/b/WppvBb17VHCpl1M87qEJQLC6droyxtpgQ2wAiVKbhGSYagSj29zIqfEW8pz+ZHVIGt5h6rpK0c+WXzY92JXgOS9KtGToeg0I78I8+sgL2EDy7iQ==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by CO1PR02MB8636.namprd02.prod.outlook.com (2603:10b6:303:15f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.16; Tue, 11 Mar
+ 2025 03:47:39 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
+ 03:47:38 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: "longli@linuxonhyperv.com" <longli@linuxonhyperv.com>, "K. Y. Srinivasan"
+	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Long Li <longli@microsoft.com>
+Subject: RE: [Patch v3] uio_hv_generic: Set event for all channels on the
+ device
+Thread-Topic: [Patch v3] uio_hv_generic: Set event for all channels on the
+ device
+Thread-Index: AQHbkgl80f13qpMfKUqxol7QwW6Sc7NtTDgA
+Date: Tue, 11 Mar 2025 03:47:38 +0000
+Message-ID:
+ <SN6PR02MB4157661442A98BFB28855B49D4D12@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <1741644721-20389-1-git-send-email-longli@linuxonhyperv.com>
+In-Reply-To: <1741644721-20389-1-git-send-email-longli@linuxonhyperv.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CO1PR02MB8636:EE_
+x-ms-office365-filtering-correlation-id: ece7126d-f62b-476f-b902-08dd604f77dd
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|8062599003|15080799006|19110799003|8060799006|440099028|3412199025|12091999003|102099032|41001999003|56899033;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?/kFZmh5Zuw7jG2ADrKRlK2TG7rpcYVGL+ZwtEaVVZ8k+tCmpWrJQDwP3IaZU?=
+ =?us-ascii?Q?oJffWVaLMZxkYXYQj6nLTcY4K49un7DitpkB8n/fwGZ198wWC+WHWxWfP1jj?=
+ =?us-ascii?Q?VP1/I3iN3iPvYXooPXAVlUmZoC2m8SIXkld1S2CYl2RwQdOIfWgmSCANNusW?=
+ =?us-ascii?Q?2pLnfzG8725iocvCssLDLNEiA8yxeHQIJrtJ98SamaUR2C7zVZOjg5pNHAU+?=
+ =?us-ascii?Q?5ra+QIuzWuAquUVobpT/JTvntFEVglHmzf6G2PPk0mfmpTKSC8TR9EMj6x7J?=
+ =?us-ascii?Q?nYoAS3s9Amyr3d+ULr2OVoPDeOi9XDuDxnKNP95AixHrpxVI01TEmwO2Yb0i?=
+ =?us-ascii?Q?gdkRlUDsGa5/GTCrqTwIgaMcvy3+VgwnW/QMyzmfqlEbPB1mqhGJel7I7X6h?=
+ =?us-ascii?Q?mahmuxDupFDV+mzsIuTj8AkitzgXL6xM6oa6EuUD3V2Rsq0GosBesYhtQxnY?=
+ =?us-ascii?Q?d69yJb3gn/22kCg9rQYu7sEYJE0r8bpYaPR1ikynkXf8N/n8QuWhBMggBj4Y?=
+ =?us-ascii?Q?2yAijRmCEaWSETszcLXjH/a8j+3n8Dj2Z/thTyN3IbQL3r7Ut+0EtUfBDrqD?=
+ =?us-ascii?Q?J46gUwF+6UXMD8rlAxCVHCppYmhbkvE8lEJXd+B3zQJWjSoxJ+FQa7o5nuJP?=
+ =?us-ascii?Q?6UOANJlodmnrqvVRCEQ3w0gKvg0jSevr1AjkDaPXVTnSdinnSS4CzjFGSuBj?=
+ =?us-ascii?Q?RxG+e/peS8mBiUxx5Eq4cefex7WpQ/mV1awTpeT7rwWGd4SRDML05tfyPUaV?=
+ =?us-ascii?Q?0XOL+xacUtopGbIuE/W7R/jlUrKs68myufTMqobFLimtgph3vRXXL7AaxHjC?=
+ =?us-ascii?Q?63/DY/EZm/wPJgm9xD/iRVlf28Z4QeGuxlSZAXj3K3+YIyK9lHJvP6fKjEmx?=
+ =?us-ascii?Q?tNXvVH7pn5xd5/CSmg/pC44YC8Q/6PzY+qzdCis6+ezEQ2PYfagj4MPO/Zd5?=
+ =?us-ascii?Q?VFv8cdH0MEr2+v5mUdyy4oSKKjLTGOgyk0844qOxPrM2vQwBaKSEZyFos3CH?=
+ =?us-ascii?Q?0H+GtufmNdFn89daMxLBoxfrCxDqD5wWPqFjewjtg3DPFbnIe/OWdJPyyMSU?=
+ =?us-ascii?Q?2AXHuuI6E9nWaVNOwkWtubZphIWzkrCC1pD/UwfMTXGgorpTMU4=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?f/2Ppy/xVApLA1zdlkdgbgapxlvfD2bBw2G2eetJrtdsiMWgyPF4TTfNn8Le?=
+ =?us-ascii?Q?sFxEL1YWygpuezz9iuQLG6kK5AF8+/UnteByjcM8XNzvP/yQ1eYnJ7FXSS9/?=
+ =?us-ascii?Q?WvClgS8ytoi++Lt2J7UjcXnSXc5ZSad956rOCKWMufEdWZfbZ0YH2DkRR5ZP?=
+ =?us-ascii?Q?UOtUhSS+bckMq1od8CH9TofMZ8YC87FtGwH16OhUqbGRA4lky8wANKXJoIMH?=
+ =?us-ascii?Q?dKgrUFqBS83y0xVZbmZ4vssTCjy8UHezTZqiNMrNNapFq2nOIIHUV/1hlS77?=
+ =?us-ascii?Q?6Y3DxCCpHGZWuJyDuzBGRGIx+5vra75VmNUT9VLYNJ5WjnVJCdxUj1v+qS0g?=
+ =?us-ascii?Q?t/gEVjPGs+tnZLzlqUnvfxORwqypDm9C1P7LJuYXWxQmDKlI6SQn3F806alS?=
+ =?us-ascii?Q?ys2IgG5EByektsHwPP88I2QbZokCEBsSB6LpntopePHU7F4RjdYeJJcnTSq8?=
+ =?us-ascii?Q?PW0NNcQCQDnqLUcHqdmWf+hlLTfzSIbaH/ZqfN4fdIgB5Bblocl6fYgsRIOf?=
+ =?us-ascii?Q?9jnff+un6hDIfWcUFGlS25B/zPr0hyxLUD9c1cMJihr4vNBRmelWtizBrkzr?=
+ =?us-ascii?Q?+BUdzgMJIXNvOfAuG7WAHW0/IlICOYcluLLCtmn+BlJuoL2JGqTG53EZoZU9?=
+ =?us-ascii?Q?NYpExm85+1kYwYxdPE9kgT+gfzFL5ICiBsKfQImCnJN+rluOcXqY7SDc9SfK?=
+ =?us-ascii?Q?HICwRsEO7Xhosl3y+uPs0WrtXEmQO92h9VNGB4GzhYBkG8N+GbUadvZiB5IJ?=
+ =?us-ascii?Q?XoovKa/VJZUD/GOjxNNoTb+t3edGvHu9IQ3dS0Yz0nSS/8A3NHpFSYiRZbhp?=
+ =?us-ascii?Q?p8lrUNalZM12QesDgSHNnSWGC0K/muVgg6VtP5o/Vly78EhGKCimtcDHncZh?=
+ =?us-ascii?Q?HAsiop2OCdk2xMKg4eV50xTKblLFnIP03ZELZoSAa8VI1DiCFVzvdxAppJG9?=
+ =?us-ascii?Q?2W3r4gyqKb7RkkhlLROrMqahs5uNSIPmPYsltSk+bIHe26xlyetUgpARqQNX?=
+ =?us-ascii?Q?/mWv7fe7MF+z1UG2PgBJ/xb05MGIkHKue8atZ8O8aBjszfsI0+NClRaP4iGe?=
+ =?us-ascii?Q?RnxQfPs21qnanKH0UMy+x5pWpjf4NMdMHvEnFXvp5KsphA2eHISQGwATAEWv?=
+ =?us-ascii?Q?96Ji/IaSt+CKuVP5E7eiucwPWA2vCN/YwLD/b/cqbQRIfUm80TGz2wkp1Izq?=
+ =?us-ascii?Q?rMolBL/ncaMx+ozzI08bHHU5FAMgtjHfJEHeVMkoTvJAddTXMQF5HW4xTKE?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v10 00/13] drm/bridge: cdns-dsi: Fix the color-shift issue
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Devarsh Thakkar <devarsht@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
- Udit Kumar <u-kumar1@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
- DRI Development List <dri-devel@lists.freedesktop.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>
-References: <20250226155228.564289-1-aradhya.bhatia@linux.dev>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-In-Reply-To: <20250226155228.564289-1-aradhya.bhatia@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: ece7126d-f62b-476f-b902-08dd604f77dd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2025 03:47:38.5910
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR02MB8636
 
-Hi,
+From: longli@linuxonhyperv.com <longli@linuxonhyperv.com> Sent: Monday, Mar=
+ch 10, 2025 3:12 PM
+>=20
+> Hyper-V may offer a non latency sensitive device with subchannels without
+> monitor bit enabled. The decision is entirely on the Hyper-V host not
+> configurable within guest.
+>=20
+> When a device has subchannels, also signal events for the subchannel
+> if its monitor bit is disabled.
+>=20
+> This patch also removes the memory barrier when monitor bit is enabled
+> as it is not necessary. The memory barrier is only needed between
+> setting up interrupt mask and calling vmbus_set_event() when monitor
+> bit is disabled.
+>=20
+> Signed-off-by: Long Li <longli@microsoft.com>
 
-All the patches within this series have been reviewed.
-Are there any more concerns that should be taken care of?
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
-
-On 26/02/25 21:22, Aradhya Bhatia wrote:
-> Hello all,
-> 
-> This series provides some crucial fixes and improvements for the Cadence's DSI
-> TX (cdns-dsi) controller found commonly in Texas Instruments' J7 family of SoCs,
-> as well as in Sitara AM62P and AM62L SoCs.
-> 
-> Along with that, this series aims to fix the color-shift issue that has been
-> going on with the DSI controller. This controller requires to be enabled before
-> the previous entity enables its stream[0]. It's a strict requirement which, if
-> not followed, causes the colors to "shift" on the display. The fix happens in
-> 2 steps.
-> 
->     1. The bridge pre_enable calls have been shifted before the crtc_enable and
->        the bridge post_disable calls have been shifted after the crtc_disable.
->        This has been done as per the definition of bridge pre_enable.
-> 
->        "The display pipe (i.e. clocks and timing signals) feeding this bridge
->        will not yet be running when this callback is called".
-> 
->        Since CRTC is also a source feeding the bridge, it should not be enabled
->        before the bridges in the pipeline are pre_enabled.
-> 
->        The sequence of enable after this patch will look like:
-> 
-> 	        bridge[n]_pre_enable
-> 	        ...
-> 	        bridge[1]_pre_enable
-> 
-> 	        crtc_enable
-> 	        encoder_enable
-> 
-> 	        bridge[1]_enable
-> 	        ...
-> 	        bridge[n]_enable
-> 
->        and vice-versa for the bridge chain disable sequence.
-> 
-> 
->     2. The cdns-dsi enable / disable sequences have now been moved to pre_enable
->        and post_disable sequences. This is the only way to have cdns-dsi drivers
->        be up and ready before the previous entity is enables its streaming.
-> 
-> The DSI also spec requires the Clock and Data Lanes be ready before the DSI TX
-> enables its stream[0]. A patch has been added to make the code wait for that to
-> happen. Going ahead with further DSI (and DSS configuration), while the lanes
-> are not ready, has been found to be another reason for shift in colors.
-> 
-> These patches have been tested with J721E based BeagleboneAI64 along with a
-> RaspberryPi 7" DSI panel. The extra patches can be found in the
-> "next_dsi-v10_1-tests" branch[1] of my github fork if anyone would like to test
-> them.
-> 
-> Thanks,
-> Aradhya
-> 
-> 
-> * Important note about the authorship of patches *
-> 
-> All but one of the patches have been authored when I owned a "ti.com" based
-> email id, i.e. <a-bhatia1@ti.com>. This email id is not in use anymore, and all
-> the work done later has been part of my personal work. Since the original
-> patches were authored using TI's email id, I have maintained the original
-> authorships as they are, as well as their sign offs.
-> 
-> I have further added another sign off that uses my current (and personal) email
-> id, the one that is being used to send this revision, i.e.
-> <aradhya.bhatia@linux.dev>.
-> 
-> 
-> * Note on checkpatch warning in patch 11/13 *
-> Patch 11/13 causes the checkpatch to flare up for 1 checkpatch 'check' -
-> 
-> CHECK: Lines should not end with a '('
-> #77: FILE: drivers/gpu/drm/drm_atomic_helper.c:1304:
-> +                       new_crtc_state = drm_atomic_get_new_crtc_state(
-> 
-> This patch is largely duplicating the original code, with minor differences to
-> perform different operations. This line of code pre-exists in the file and
-> have simply been duplicated. I have decided to keep it as is to maintain the
-> uniformity and the originally intended readability. Should perhaps a fix be
-> required, this patch/series is not the right place, and another patch can be
-> created to fix this across the whole file.
-> 
-> 
-> [0]: Section 12.6.5.7.3: "Start-up Procedure" [For DSI TX controller]
->      in TDA4VM Technical Reference Manual https://www.ti.com/lit/zip/spruil1
-> 
-> [1]: https://github.com/aradhya07/linux-ab/tree/next_dsi-v10_1-tests
-> 
-> 
-> Change Log:
->   - Changes in v10:
->     - Rebase on latest linux-next (next-20250226).
->     - As part of rebase, update the patches to accommodate a couple of
->       widespread changes in DRM Framework -
->         - All the ("drm/atomic-helper: Change parameter name of ***") commits.
->         - All the ("drm/bridge: Pass full state to ***") commits.
->       (These updates are only trivial substitutions.)
->     - Add Tomi Valkeinen's T-b tags in all the patches.
-> 
->   - Changes in v9:
->     - Fix the oops in 11/13 - where the encoder_bridge_enable _was_ pre_enabling
->       the bridges instead of enabling.
->     - Add the following tags:
->       - Dmitry Baryshkov's R-b in patches 2, 10, 11, and A-b in patch 12.
->       - Jayesh Choudhary's R-b in patch 12.
->       - Tomi Valkeinen's R-b in patches 2, 10, 11, 12.
-> 
->   - Changes in v8:
->     - Move the phy de-initialization to bridge post_disable() instead of bridge
->       disable() in patch-3.
->     - Copy the private bridge state (dsi_cfg), in addition to the bridge_state,
->       in patch-9.
->     - Split patch v7:11/12 into three patches, v8:{10,11,12}/13, to separate out
->       different refactorings into different patches, and improve bisectability.
->     - Move patch v7:02/12 down to v8:06/12, to keep the initial patches for
->       fixes only.
->     - Drop patch v7:04/12 as it doesn't become relevant until patch v7:12/12.
->     - Add R-b tags of Dmitry Baryshkov in patch-9 and patch-3, and of
->       Tomi Valkeinen in patch-9.
->    
->   - Changes in v7:
->     - phy_init()/exit() were called from the PM path in v6. Change it back to
->       the bridge enable/disable path in patch-3, so that the phy_init() can go
->       back to being called after D-Phy reset assert.
->     - Reword commit text in patch-5 to explain the need of the fix.
->     - Drop the stray code in patch-10.
->     - Add R-b tag of Dmitry Baryshkov in patch-6.
-> 
->   - Changes in v6:
->     - Reword patch 3 to better explain the fixes around phy de-init.
->     - Fix the Lane ready timeout condition in patch 7.
->     - Fix the dsi _bridge_atomic_check() implementation by adding a new
->       bridge state structure in patch 10.
->     - Rework and combine patches v5:11/13 and v5:12/13 to v6:11/12.
->     - Generate the patches of these series using the "patience" algorithm.
->       Note: All patches, except v6:11/12, *do not* differ from their default
->       (greedy) algorithm variants.
->       For patch 11, the patience algorithm significantly improves the readability.
->     - Rename and move the Bridge enable/disable enums from public to private
->       in patch 11.
->     - Add R-b tags of Tomi Valkeinen in patch 6, and Dmitry Baryshkov in patch 2.
-> 
->   - Changes in v5:
->     - Fix subject and description in patch 1/13.
->     - Add patch to check the return value of
->       phy_mipi_dphy_get_default_config() (patch: 6/13).
->     - Change the Clk and Data Lane ready timeout from forever to 5s.
->     - Print an error instead of calling WARN_ON_ONCE in patch 7/13.
->     - Drop patch v4-07/11: "drm/bridge: cdns-dsi: Reset the DCS write FIFO".
->       There has been some inconsistencies found with this patch upon further
->       testing. This patch was being used to enable a DSI panel based on ILITEK
->       ILI9881C bridge. This will be debugged separately.
->     - Add patch to move the DSI mode check from _atomic_enable() to
->       _atomic_check() (patch: 10/13).
->     - Split patch v4-10/11 into 2 patches - 11/13 and 12/13.
->       Patch 11/13 separates out the Encoder-Bridge operations into a helper
->       function *without* changing the logic. Patch 12/13 then changes the order
->       of the encoder-bridge operations as was intended in the original patch.
->     - Add detailed comment for patch 13/13.
->     - Add Tomi Valkeinen's R-b in patches 1, 2, 4, 5, 7, 8, 9, 13.
-> 
->   - Changes in v4:
->     - Add new patch, "drm/bridge: cdns-dsi: Move to devm_drm_of_get_bridge()",
->       to update to an auto-managed way of finding next bridge in the chain.
->     - Drop patch "drm/bridge: cdns-dsi: Fix the phy_initialized variable" and
->       add "drm/bridge: cdns-dsi: Fix Phy _init() and _exit()" that properly
->       de-initializes the Phy and maintains the initialization state.
->     - Reword patch "drm/bridge: cdns-dsi: Reset the DCS write FIFO" to explain
->       the HW concerns better.
->     - Add R-b tag from Dmitry Baryshkov for patches 1/11 and 8/11.
-> 
->   - Changes in v3:
->     - Reword the commit message for patch "drm/bridge: cdns-dsi: Fix OF node
->       pointer".
->     - Add a new helper API to figure out DSI host input pixel format
->       in patch "drm/mipi-dsi: Add helper to find input format".
->     - Use a common function for bridge pre-enable and enable, and bridge disable
->       and post-disable, to avoid code duplication.
->     - Add T-b tag from Dominik Haller in patch 5/10. (Missed to add it in v2).
->     - Add R-b tag from Dmitry Baryshkov for patch 8/10.
-> 
->   - Changes in v2:
->     - Drop patch "drm/tidss: Add CRTC mode_fixup"
->     - Split patch "drm/bridge: cdns-dsi: Fix minor bugs" into 4 separate ones
->     - Drop support for early_enable/late_disable APIs and instead re-order the
->       pre_enable / post_disable APIs to be called before / after crtc_enable /
->       crtc_disable.
->     - Drop support for early_enable/late_disable in cdns-dsi and use
->       pre_enable/post_disable APIs instead to do bridge enable/disable.
-> 
-> 
-> Previous versions:
-> 
-> v1: https://lore.kernel.org/all/20240511153051.1355825-1-a-bhatia1@ti.com/
-> v2: https://lore.kernel.org/all/20240530093621.1925863-1-a-bhatia1@ti.com/
-> v3: https://lore.kernel.org/all/20240617105311.1587489-1-a-bhatia1@ti.com/
-> v4: https://lore.kernel.org/all/20240622110929.3115714-1-a-bhatia1@ti.com/
-> v5: https://lore.kernel.org/all/20241019195411.266860-1-aradhya.bhatia@linux.dev/
-> v6: https://lore.kernel.org/all/20250111192738.308889-1-aradhya.bhatia@linux.dev/
-> v7: https://lore.kernel.org/all/20250114055626.18816-1-aradhya.bhatia@linux.dev/
-> v8: https://lore.kernel.org/all/20250126191551.741957-1-aradhya.bhatia@linux.dev/
-> v9: https://lore.kernel.org/all/20250209121032.32655-1-aradhya.bhatia@linux.dev/
-> 
-> Aradhya Bhatia (13):
->   drm/bridge: cdns-dsi: Fix connecting to next bridge
->   drm/bridge: cdns-dsi: Fix phy de-init and flag it so
->   drm/bridge: cdns-dsi: Fix the clock variable for mode_valid()
->   drm/bridge: cdns-dsi: Check return value when getting default PHY
->     config
->   drm/bridge: cdns-dsi: Wait for Clk and Data Lanes to be ready
->   drm/bridge: cdns-dsi: Move to devm_drm_of_get_bridge()
->   drm/mipi-dsi: Add helper to find input format
->   drm/bridge: cdns-dsi: Support atomic bridge APIs
->   drm/bridge: cdns-dsi: Move DSI mode check to _atomic_check()
->   drm/atomic-helper: Refactor crtc & encoder-bridge op loops into
->     separate functions
->   drm/atomic-helper: Separate out bridge pre_enable/post_disable from
->     enable/disable
->   drm/atomic-helper: Re-order bridge chain pre-enable and post-disable
->   drm/bridge: cdns-dsi: Use pre_enable/post_disable to enable/disable
-> 
->  .../gpu/drm/bridge/cadence/cdns-dsi-core.c    | 224 ++++++++++++++----
->  .../gpu/drm/bridge/cadence/cdns-dsi-core.h    |   2 -
->  drivers/gpu/drm/drm_atomic_helper.c           | 160 +++++++++++--
->  drivers/gpu/drm/drm_mipi_dsi.c                |  37 +++
->  include/drm/drm_mipi_dsi.h                    |   1 +
->  5 files changed, 348 insertions(+), 76 deletions(-)
-> 
-> 
-> base-commit: 8433c776e1eb1371f5cd40b5fd3a61f9c7b7f3ad
-
--- 
-Regards
-Aradhya
+> ---
+> Change log
+> v2: Use vmbus_set_event() to avoid additional check on monitored bit
+>     Lock vmbus_connection.channel_mutex when going through subchannels
+> v3: Add details in commit messsage on the memory barrier.
+>=20
+>  drivers/uio/uio_hv_generic.c | 32 ++++++++++++++++++++++++++------
+>  1 file changed, 26 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
+> index 3976360d0096..45be2f8baade 100644
+> --- a/drivers/uio/uio_hv_generic.c
+> +++ b/drivers/uio/uio_hv_generic.c
+> @@ -65,6 +65,16 @@ struct hv_uio_private_data {
+>  	char	send_name[32];
+>  };
+>=20
+> +static void set_event(struct vmbus_channel *channel, s32 irq_state)
+> +{
+> +	channel->inbound.ring_buffer->interrupt_mask =3D !irq_state;
+> +	if (!channel->offermsg.monitor_allocated && irq_state) {
+> +		/* MB is needed for host to see the interrupt mask first */
+> +		virt_mb();
+> +		vmbus_set_event(channel);
+> +	}
+> +}
+> +
+>  /*
+>   * This is the irqcontrol callback to be registered to uio_info.
+>   * It can be used to disable/enable interrupt from user space processes.
+> @@ -79,12 +89,15 @@ hv_uio_irqcontrol(struct uio_info *info, s32 irq_stat=
+e)
+>  {
+>  	struct hv_uio_private_data *pdata =3D info->priv;
+>  	struct hv_device *dev =3D pdata->device;
+> +	struct vmbus_channel *primary, *sc;
+>=20
+> -	dev->channel->inbound.ring_buffer->interrupt_mask =3D !irq_state;
+> -	virt_mb();
+> +	primary =3D dev->channel;
+> +	set_event(primary, irq_state);
+>=20
+> -	if (!dev->channel->offermsg.monitor_allocated && irq_state)
+> -		vmbus_setevent(dev->channel);
+> +	mutex_lock(&vmbus_connection.channel_mutex);
+> +	list_for_each_entry(sc, &primary->sc_list, sc_list)
+> +		set_event(sc, irq_state);
+> +	mutex_unlock(&vmbus_connection.channel_mutex);
+>=20
+>  	return 0;
+>  }
+> @@ -95,12 +108,19 @@ hv_uio_irqcontrol(struct uio_info *info, s32 irq_sta=
+te)
+>  static void hv_uio_channel_cb(void *context)
+>  {
+>  	struct vmbus_channel *chan =3D context;
+> -	struct hv_device *hv_dev =3D chan->device_obj;
+> -	struct hv_uio_private_data *pdata =3D hv_get_drvdata(hv_dev);
+> +	struct hv_device *hv_dev;
+> +	struct hv_uio_private_data *pdata;
+>=20
+>  	chan->inbound.ring_buffer->interrupt_mask =3D 1;
+>  	virt_mb();
+>=20
+> +	/*
+> +	 * The callback may come from a subchannel, in which case look
+> +	 * for the hv device in the primary channel
+> +	 */
+> +	hv_dev =3D chan->primary_channel ?
+> +		 chan->primary_channel->device_obj : chan->device_obj;
+> +	pdata =3D hv_get_drvdata(hv_dev);
+>  	uio_event_notify(&pdata->info);
+>  }
+>=20
+> --
+> 2.34.1
+>=20
 
 
