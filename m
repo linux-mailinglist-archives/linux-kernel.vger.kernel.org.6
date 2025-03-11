@@ -1,101 +1,133 @@
-Return-Path: <linux-kernel+bounces-555896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07B9A5BDFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:36:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68096A5BE07
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:38:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 285267A5CDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:35:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CEDE1898A4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A7722FF42;
-	Tue, 11 Mar 2025 10:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D6323875A;
+	Tue, 11 Mar 2025 10:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcWxOy+T"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="hGLkOhv5"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2C3BA34;
-	Tue, 11 Mar 2025 10:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7081CBA34
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741689357; cv=none; b=Z/m4Gaqc+Hck26pIgg0whkpoEGd5gRWRmutuKdUzgvFrAc6ysumTkeBxk6bkj4NJc94leds1mTf29GMIKO+QUT5ykWFs+NgNFKsaUwV2Xq198wt1dOm6o4C0wQIBcvceZXFN6OealU+q/8AvQjhKf98DpxwZG28AIIIMlnx0/Bk=
+	t=1741689484; cv=none; b=Y6cIzqFibZtAbt+dTEey1FSW9lMpKnKqv/V2WgNZ9jJfL5/wU+1BR5oeCLQDUORo4J26CdOT3BMAAg6/01c5hvptEPCT3bnsvaWEvllYEPuZ2CHpe+RhrSYXLIG2nXTZtcc7HjgxNQG0DWK7mOth2H9XougrPKKin8W6QQ8IiR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741689357; c=relaxed/simple;
-	bh=UxDskpVLYU61Yhkdp0Uj1euBtT7W0h1UniNT/9Bub0M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dmb5Msq3kboOTwJsVRkLYqG5WsS7sy2FRHqTt68Vx84ETl2xvVZhwUSDy2E+ppRGYZb4GNWlQW7rHRDoF2gg/NTRVBjTkU5j5G0TeqGerz2zOjFN1EkeaYA2fGRo9wpwz34hKuen/GVLNydgdTKe0V2N+/+iiOkUAaSilDIxk7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gcWxOy+T; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2240b4de10eso12102365ad.1;
-        Tue, 11 Mar 2025 03:35:56 -0700 (PDT)
+	s=arc-20240116; t=1741689484; c=relaxed/simple;
+	bh=EbXZ3DQ9+b6N6Hl4SN9qCQLNiQGag830oTI8EnFB6Ig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MnqHeS5lLb6EgW2tJBki2bDpYtJWKUO+B6UaSS07fxx82uLelc63wiSmXt0lBHV2OE1lutdI8D+0qulK8I2hTg1lpFDDAbV+51s+ZdMqgCDh85lmZZzkt8YTNnLt6uBYcwxFDEZKfKKQJtYh+PPznmYUhjrE8Iw9kYlR3jFYAvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=hGLkOhv5; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3914a5def6bso1230715f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 03:38:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741689356; x=1742294156; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UxDskpVLYU61Yhkdp0Uj1euBtT7W0h1UniNT/9Bub0M=;
-        b=gcWxOy+TeVBDelCLhWQAzFa1dqY6Psq84hW/Xr91qvdNqKu4cmAgylPDf/pvlC7SH5
-         Tld8eF1d+5v/RJwReOELGKtOnWkuNGPzf/1nuUAK3zojCOZ36rI6PLYWPhEwYSaipDgA
-         29p5Tb/t/i+BC0hS1ZNCjCmS5hGYDWn+uVaHWA2DLrrBcyqCMCKW1CgysqR4tzAPyw2f
-         5KYRoUMF56ngtO7sex74RQJJ5IuiazUJCLW6HJ1CpPmGiwkGitfGIgSEChbQy7XzIWM4
-         9+XruF+Ig0B7jdxe7zo6xT/L5zUNPVS+VpnjJn5rAhx2XT+afM9+HT5Oh8gpgGYyaeba
-         KN8Q==
+        d=suse.com; s=google; t=1741689481; x=1742294281; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SyAWrxEwUsWnM7LVGAbr1T8GXaCm2RFT3dQ++j9eSpM=;
+        b=hGLkOhv5IYqDFE5iLkNuWygCyyEreuG0TtFOTjd+Bj+I+flIbFqCF4mAVs0Bjf4uXJ
+         yW3zq41RXMHvM0fmclIOvzE57JEbgFR7rFSZUj10eY2CKGya97a8eejy3nE1FIVrWgvi
+         69Va/2L12qgcEFgn5G7AGxvq3/MfRizQSppX7SBM596yz0SASYC6p32XkO1j+PvRiQ5R
+         lcSeTQHtyc8V9a5gkD7817yJVdENTnGs8Pec3L9pfPZOeweq6nAxAHTyg9K+742cvDVJ
+         PtjsawwuriCo8IEu7AxsywaTypbChvTVXVyaAfa7vvvvu2hkZ/LVvTp9r3ONhKBasFUu
+         eHrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741689356; x=1742294156;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UxDskpVLYU61Yhkdp0Uj1euBtT7W0h1UniNT/9Bub0M=;
-        b=cZHQFENvWzdrG/D4LY/l3ogVEh/0ZcPKdpUEZOeWWB1BufH5/dyAJsTaVSSTvzmsAj
-         KMgHMk0OikeW4sYd+fQtjIen09rM7YwAakVX+kHjmMa8G5Cic5ZqevMLfkYKDwVi6GU6
-         j2C4zh3NEpl75PSredt4stkDHGnU7qG/+zUxMTgsKfXsl63rJFvlCkgIsJQKPVvDCx4u
-         tOuiZNzWMxeDJSqV8eE8a/7N/zv9oAPzClnKQ/aZ1CCymzKWBdqgXuHTlGkAOHEdzFz9
-         mPHsH6DUsy2sWBqrZc8dicMJre/XfdxTK+iGMAbQyeMVaOfWc0mMBCSNXF0TWwQpiZMD
-         7hUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRUvMru7EtGzNrXgDZTFpHWIX07ooUj9uWGNd/+BOMz//ZILDdU8gerWrLiw9nXqA9B7x26FYENLZcCx0=@vger.kernel.org, AJvYcCXVPimWKIfbcvo+XGQQiR6aMgMzhio2Y6OqM3Pw6G8iWgjZHy9ryLBgxmcLA+FIKIohZcjBdDOFzPEpkg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBAqPVFuPuP6xZ0uAnVopqqNcHY2fh9F+Wm7p1lFf65RW8wgaR
-	jUDRYz1AiqX9tLsn1LuTe8u14LcoF5YO+7QfIMprNsIGP5vqImi8oN7Wz5dqFEciCVMEzogjkqb
-	/j171HSm4I5o1oJLk1B0C1sUz3uU=
-X-Gm-Gg: ASbGnctnNHMYoDz9sVi0qXc5IGbebzJ14DhWdohMd65a8s5f06N8iRDO3zgSretDdeF
-	zQmBotSk5lrXdA+py74vyHP50XAvmdfuyVV+MfaGJT9pgWGZ6fAO3/fu8tg+v/3bU9cjy92s0w6
-	Akgk+KPzDVe9b4U5STx1bRYsnMVqJssejQ6PU7
-X-Google-Smtp-Source: AGHT+IF87YUiZ+c5JOKl7/uEv8ins8dVWQu9guMI6WW9ct4VPV38xmxKRqCghoMQdNmqmGUU8pbk7zCcBU98rWgQoGs=
-X-Received: by 2002:a17:902:db10:b0:223:5e86:efa9 with SMTP id
- d9443c01a7336-225932807a6mr15210015ad.8.1741689355745; Tue, 11 Mar 2025
- 03:35:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741689481; x=1742294281;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SyAWrxEwUsWnM7LVGAbr1T8GXaCm2RFT3dQ++j9eSpM=;
+        b=sbGE8lSvu5vPizx1QjD3J7y1qO9fJtWTcLSN4FU3z3cfckh+vTRUYJAV/kr21QhKUq
+         JDpMcxnO1q/ukyT2UcDWcW0pa9h9fWEr3yaAJ79x1sPp7uI2GzepatAGSPBby6rYhMFR
+         48niUBztdXWSCFT+ElXXP81BE/e4lrSMWyy3AvOhg0qtNFl2AzOiCr0KSZt7XgmkgkJp
+         Rs14km687ich9Skpb1iOej3ZJE+enTcNDSqcp6Gh5gnViTVte3/BjJt1xWtWYNSyMXZ3
+         qYMxVMAZgm8DOUgVhYpVjMGspC+yxpsFd1yiJNF6R1WA0eKpfPGaIYqonXOi3bDM/0JE
+         +9aA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgEaDb1gj2yoGfs6Dyv9Rx4UYDmCjTj8OZDutn6N+ReD5+KEFFXHkZWiLDdSqdB8Mm6a0i3mT+4dbC4gw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze1tNWSCHqqHQC2iVd75TjuQo41eVJc3TWaQiMTMeUa0bKocnS
+	0GZ0iozK101gyQ0wyqqFfy1hoAaL74YOzycHb4zhikg1lZ0Dqs39UQPKZq81zCBP2CMYU63jneQ
+	G
+X-Gm-Gg: ASbGncu4/tWwF/Nn0TQPUHv3dC8AqrE8qyVfMF+uVE4aIdCuoeq1RIZMCy5FPmCzI8R
+	ceET2NgA2rTsDoYvAOA9soLLYtXF5VyUSyKBpWdTVEkUVipNbZs53XwipixWnsdgAcUM9XZxeXO
+	fgwrH/n8R3OhhYE53yvxdcTz1sWQuUTh4xoCFFoWKP640I9ksJ1Bgx94k/XMIFtTUTIFgx3JNgu
+	okE6zDCF4zSaKCQi0Vi4u4aJ2hR9BjRMx5ZCKPIs3Lsr0Ml9yCM0Xo7g/5cfqpzgk/dDoKhkf/8
+	DsVtP6+7IMCvt6xLeaoSZ6vdwrETHDjSU1lQJBT4y3vECyg=
+X-Google-Smtp-Source: AGHT+IF/j8vaXxrz6NQ9qVToImBHcx1sXj5BHKod2F3PwyhmwrRzoNCSAtC5+f+03GzQ5ewdWZTRdg==
+X-Received: by 2002:a05:6000:2c5:b0:391:10c5:d1a9 with SMTP id ffacd0b85a97d-39132d82751mr12162685f8f.31.1741689480756;
+        Tue, 11 Mar 2025 03:38:00 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0195casm18059782f8f.53.2025.03.11.03.37.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 03:38:00 -0700 (PDT)
+Date: Tue, 11 Mar 2025 11:37:58 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Todd E Brandt <todd.e.brandt@linux.intel.com>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+	kexec@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH 0/5] printk: renaming some suspend/resume functions and
+ one fix for unblanking
+Message-ID: <Z9AShs1dEO0jrgjL@pathway.suse.cz>
+References: <20250226-printk-renaming-v1-0-0b878577f2e6@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311201726.3f45cc67@canb.auug.org.au>
-In-Reply-To: <20250311201726.3f45cc67@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 11 Mar 2025 11:35:43 +0100
-X-Gm-Features: AQ5f1JpSKQvJcLrhKtcF2ocDtAMKZaTGndWlR_jK9p2w5k5M46BDlLORXfeX0qA
-Message-ID: <CANiq72=_jVDkSo8Q+it4_6-UkTEVxD6xG82aEPcpAwGQpKAB2g@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the rust tree with the drm tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Dave Airlie <airlied@redhat.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Jocelyn Falempe <jfalempe@redhat.com>, 
-	DRI <dri-devel@lists.freedesktop.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226-printk-renaming-v1-0-0b878577f2e6@suse.com>
 
-On Tue, Mar 11, 2025 at 10:17=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote:
->
-> I fixed it up (I guess - see below) and can carry the fix as necessary.
+On Wed 2025-02-26 16:59:00, Marcos Paulo de Souza wrote:
+> Hello, I've being working on some patches that help to clarify the suspend/resume
+> of printk machinery. The last patch on this patchset address one issue regarding
+> suspended consoles and blanking.
+> 
+> This is a part one patchset that I would like to see merged before I send more patches
+> that will rework the suspend flag (a global suspend flag istead of per console) and
+> the removal of CON_ENABLED flag later on (I've created a function that will forcibly)
+> register the console instead of using this flag.
+> 
+> Please review!
+> 
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 
-Looks good to me, thanks!
+Looks good to me. I could fix the typos when pushing.
 
-Cheers,
-Miguel
+Well, there is one more thing. It seems that the simple graphic logger
+was merged for 6.14-rc1. And the console_stop()/console_start() API
+is used also in drivers/gpu/drm/clients/drm_log.c.
+
+It is actually the code which motivated this rename, as already
+pointed out by John, see
+https://lore.kernel.org/lkml/ZyoNZfLT6tlVAWjO@pathway.suse.cz/
+
+Well, I am going to update these two locations when pushing this
+as well. Let's just get this change done.
+
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+Best Regards,
+Petr
 
