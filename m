@@ -1,223 +1,275 @@
-Return-Path: <linux-kernel+bounces-555569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CB9A5B9B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:25:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FBE5A5B9AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:22:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B26627A28D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:24:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3D7F1893FDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7AE2222B0;
-	Tue, 11 Mar 2025 07:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DED221D87;
+	Tue, 11 Mar 2025 07:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="yDCuOJez"
-Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jf88mcdk"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AC31EDA03;
-	Tue, 11 Mar 2025 07:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C3221ADA0
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741677934; cv=none; b=jNp7eJ8DvBxQfZ1OAKQfuq/zl5zFxSE7qSADk80jv6/oby8Hs/pRhP1S7MnbKb3CqPPYpHo+iJf3vRxrpD/rcaheDskakimH4qB9Fm7VTPtLFUyNqza1n6mc3t5cU3KVK8xkb+sM3LehN19oRnQ0MO1V7u/CDpd0s43E4EVGbE4=
+	t=1741677739; cv=none; b=g34bhE4eaIxb8J+yRhC0eUDeqSS8Zz95JFixXY7HgeH70WrF18ehF+9wgST9EUbwPI7XoNv1mXBnv3ut2jvKJIhSJNI2oQFpCVbuqZaPyQq+Ra1UzgH4uRo/n2pr4+AmeZSU4jBje6uEPjqDORJwZPDQYcCVJttwJcGAhgRLtUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741677934; c=relaxed/simple;
-	bh=P7HYlmtZE81obGpsbL9pVBZwUJbbMn6JT5jWFUHPSPY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=gFgm7IiFKRwjdFe+Q4k+H1hTMl6pljhUAtKcFyy6eDOfDn7JW+/XpfBz44vEmGqDlhmTqQ7EKXJ56Ne+OJA0B1CmW0TAzBxQ4APeUgJEw5HgG/4SfuaIqFEUUVjVD5i0H7hBy+Ty1BvdVddIZAJbopAU2tBwTA/NB/g+rPLe2/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=yDCuOJez; arc=none smtp.client-ip=162.62.57.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1741677616; bh=d9+2oX9Th/3/xgHPYEGkNk69EloougLjZ+ArC3bUnT0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=yDCuOJezdJmVOPgs6Xpf/7hUG+5z+xOn+jvENE8Yzt7vchMt7qp+aNmj4AmI1jFr1
-	 Y1L6etRbdE0zbLfXs0ZbZr3TApqv7IvXdisxemO6V8czkDhnzff/Uo9Je+ZmtOvKXO
-	 iSuIu74vO2kzcYAvwmS28uCqWbF1ZOU2ynXJO3Ps=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id 50DB0EAF; Tue, 11 Mar 2025 15:20:13 +0800
-X-QQ-mid: xmsmtpt1741677613t1ff26inv
-Message-ID: <tencent_682C75C376DD66D03C713710966A37E84A09@qq.com>
-X-QQ-XMAILINFO: Oc+6xGkERBk5YDe3Nkkj7Vf2BUr2WM552AP7hHL6kZzXlQievidRzfPlfJ13gS
-	 ZREGuaXbUss8daQY2tHkIAOLbOBmpAbRqTdw5+24O6D/G5nVDNhPnWs/RM3ecT84P0/pcRb4wsDU
-	 S0D8pIgFLER7KHM++9oZbXIizhC6CiXAku3P4X8o5ry4Ps+mJqaqhckiL3ETmJVvEiP6jiIwJUWU
-	 DWtiDWx19bdgN1t3r+ITjW//pGeBziTSMcYsGqHNZjfWw8lON1C+ZyIo/OB7Zqky+An5+4tiqNGA
-	 Xcg5zayP0Xk40UsO7h/zqDIBMLz9JabHoA1LVXkG1/Fvyd7vDdbineKj97iHkzgZMWrYMNpTU7E7
-	 93MLSVCxQK1M1Qy5jsNyIRax+S70cMR0n5yEEZEA47lQwI2oXwvdND78mrK7wNO3i0BCSfHvyKiO
-	 2sbDR1w+3deoGKMtAyKomLxdOMnwPB6G/edlYOW+innZX684TkdgWC6jANu0e54DwI4xdJMXHHMR
-	 95MgrVwIFwGesjjTwtEuBd5NJM+5umOxQEfxAv1IfMYmGBcWu+LaxkjEyga8bZlwpJlrHSJ0KAGa
-	 b4ff+H5Ob+dsfGEDTHWd1pcQBPi6dFz3Ya5UwykEG8vgaKlJDTGOZxDOGPQMKy9jYRxb71Y+yBLn
-	 1/mZVug1dcYFj627Z5dPylyNqcn+NVCKtlLgEEC2WGHn0jsMnCoJR3Mz3PLW/gn5WCfqL4DROG8Z
-	 f01vhsAE/zDI+sGTKxNsn767Qm97oR4WOHK8Qww72iXz8Ew304aXibo8SW9oAaQPzocWpp6r0ZMw
-	 xCcN81ikAmF1P7Kq6yu6pBdLOJmyKe6JPGPY/gKqaDowpfp4TJltlV1Z5gIqsGs3/VUY/pka5I2l
-	 8IgfYAzRsKYYmUitCaqlZUP+MGIW28gIC5gE7jSUVL/tx/XcYemo8=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0d33ab192bd50b6c91e6@syzkaller.appspotmail.com
-Cc: dwlsalmeida@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	mchehab@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V3] media: vidtv: Terminating the subsequent process of initialization failure
-Date: Tue, 11 Mar 2025 15:20:14 +0800
-X-OQ-MSGID: <20250311072013.3858217-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67cee9e2.050a0220.1939a6.0004.GAE@google.com>
-References: <67cee9e2.050a0220.1939a6.0004.GAE@google.com>
+	s=arc-20240116; t=1741677739; c=relaxed/simple;
+	bh=A/zgvG4tcMyh5JCbd0v4U7uD9NDLhEQx/G76Rqzs7fM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qDe0G7fEna/QTGakoS4EVXr4gTcOKKuj2OXvSiQcCishXI3fprIxWXw3YhtzLG6nMFNJqfaTtU86fTaCYWbFH+G+2Z45xxl4mcr1mEreMYPY4zIcvBjMm8EG/u0t27+b7p4YdFALx09fS3f8vPQpJWWhkhHFEnCsSZqfklCEFVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jf88mcdk; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-391342fc0b5so4316230f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 00:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741677734; x=1742282534; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=76PI8U0C3grhZ+WuGPDq/YmQnaoHPH4xWIdsOpqhIzo=;
+        b=jf88mcdkrXgaaDzlbYLnaBb4T4n2aVKnjvG1A9Uss/uCz+bqcS7+9dauNc11+qQHaW
+         2XUzGy1a6KUhZY8lK6M8nNL3T+9ZgZpobvT1HdWGbcMUoYphvFGstjh+i/a/oNRCnhIR
+         dVZ0CTH5ksdYY/CdxXGkYleJV8bkH+ycndSDLCSgD+sXXoeckzs9+Zii2ma/0lXYU6QQ
+         Ow0SC3uCDIEaAbDXjekoQtkpxikiknhUppUGsUGz7gG3aNT0pi/X8kmBjmge3fYEBWW8
+         lGIDnU1ahYP1f0sTi0DGLLNamJE6vFIQCVl2MCc3gkq47tydI/PjILTbJFvpgeohccUW
+         XpYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741677734; x=1742282534;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=76PI8U0C3grhZ+WuGPDq/YmQnaoHPH4xWIdsOpqhIzo=;
+        b=CoR6VpanisUKaPl4Fzh4JYlystm5ibKjW7zIMdLyLIT6yXfr61JQVjM0rFROOJ1tdB
+         Uad4utxJnbIwCu7uVdo69l9F/Pv9A4rnCOdZwNBRn8pUuMud5HpPMjqieOJnXx19Kjj3
+         cTNBbFEtL/SpKM5Hf0YGTnCZw6sln/7GXyt4xAXyzgMCOz9GFhlDhIaCx1xrSEuAoTNd
+         8Ot61T6U8dfZ0e6pfLU3zgnvIjoVL7v7hgbivNwpudbX2QLA+bmJ5XSRCOdT0YTt3FIO
+         Gz5MsJyz63cG58tpJQSfW0yC8TlnRcNC2SOhMp/RoAmI3IZXw978SRaQWjB1DL+weTi8
+         BJsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUK1penMGDGOxoTZcGxDuNABOHmXdl65ETgjLJ/ruoDgd3Uf/t4FNLhoTDv3dGynoLekAlcULRpTKqdxf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+Ib6INL8vvsDDnYzwPFrIlgeTTAu+CB0UdWiv4U5DclEfSHO1
+	/CuEXVB5ZKKAgreNW2SF94Oy4VhHkckV37NDvoSCG5bbIeXxjYRy85s5cXT2IGA=
+X-Gm-Gg: ASbGncsjR599jipU4PYUTKdYbHgmiT50KoM2Guh5lmabOFEvqVirbkHZ6BacrXrNw8k
+	/fjx6f++B2vEzfXyDYvVWhaVNbcaHJJK9QTUoOhUsRvQfhzdMmmeZzmE13QdHT6d1mgp6e5iwes
+	NFT2nxmFUf+iHf1bRhYnpCBvp4DDFxHoTNkkwuC0lvnvA69aWKY/PvE69pnzrq54U1noJJEG/Rh
+	xWBHHoLbWbN5ryYC2vChSQ8UuDKi7F3fnYcP2k0axB8udYmpa+Sf1hAOoS5oiTmCmXIua+PnEmV
+	w7SHv+I6heq+q2Rb2N4moJ0MSY7SOBUaJfTN5u9FcA==
+X-Google-Smtp-Source: AGHT+IHpxAncgrnL4ALrjetV1ziQLeJlcqXChyQIooItqRdevyNiOEaTJs5Dyo8WU/a2A84bNO/4SA==
+X-Received: by 2002:a05:6000:1564:b0:38d:d666:5457 with SMTP id ffacd0b85a97d-39132da24cfmr13958644f8f.42.1741677734190;
+        Tue, 11 Mar 2025 00:22:14 -0700 (PDT)
+Received: from linaro.org ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e1d67sm17233831f8f.74.2025.03.11.00.22.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 00:22:13 -0700 (PDT)
+Date: Tue, 11 Mar 2025 09:22:11 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	laurentiu.tudor1@dell.com, johan@kernel.org
+Subject: Re: [PATCH v1 1/2] drm/msm/dp: Fix support of LTTPR handling
+Message-ID: <Z8/ko76QAGPE46R/@linaro.org>
+References: <20250310211039.29843-1-alex.vinarskis@gmail.com>
+ <20250310211039.29843-2-alex.vinarskis@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310211039.29843-2-alex.vinarskis@gmail.com>
 
-syzbot reported a slab-use-after-free Read in vidtv_mux_init. [1]
+On 25-03-10 22:05:51, Aleksandrs Vinarskis wrote:
+> Take into account LTTPR capabilities when selecting maximum allowed
+> link rate, number of data lines. Initialize LTTPR before
+> msm_dp_panel_read_sink_caps, as
+> a) Link params computation need to take into account LTTPR's caps
+> b) It appears DPTX shall (re)read DPRX caps after LTTPR detection
+> 
+> Return lttpr_count to prepare for per-segment link training.
+> 
+> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/dp/dp_display.c | 31 +++++++++++++++++++----------
+>  drivers/gpu/drm/msm/dp/dp_panel.c   | 30 +++++++++++++++++++---------
+>  drivers/gpu/drm/msm/dp/dp_panel.h   |  2 ++
+>  3 files changed, 44 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+> index bbc47d86ae9e..2edbc6adfde5 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_display.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+> @@ -108,6 +108,8 @@ struct msm_dp_display_private {
+>  	struct msm_dp_event event_list[DP_EVENT_Q_MAX];
+>  	spinlock_t event_lock;
+>  
+> +	u8 lttpr_common_caps[DP_LTTPR_COMMON_CAP_SIZE];
+> +
+>  	bool wide_bus_supported;
+>  
+>  	struct msm_dp_audio *audio;
+> @@ -367,17 +369,21 @@ static int msm_dp_display_send_hpd_notification(struct msm_dp_display_private *d
+>  	return 0;
+>  }
+>  
+> -static void msm_dp_display_lttpr_init(struct msm_dp_display_private *dp)
+> +static int msm_dp_display_lttpr_init(struct msm_dp_display_private *dp, u8 *dpcd)
+>  {
+> -	u8 lttpr_caps[DP_LTTPR_COMMON_CAP_SIZE];
+> -	int rc;
+> +	int rc, lttpr_count;
+>  
+> -	if (drm_dp_read_lttpr_common_caps(dp->aux, dp->panel->dpcd, lttpr_caps))
+> -		return;
+> +	if (drm_dp_read_lttpr_common_caps(dp->aux, dpcd, dp->lttpr_common_caps))
+> +		return 0;
+>  
+> -	rc = drm_dp_lttpr_init(dp->aux, drm_dp_lttpr_count(lttpr_caps));
+> -	if (rc)
+> -		DRM_ERROR("failed to set LTTPRs transparency mode, rc=%d\n", rc);
+> +	lttpr_count = drm_dp_lttpr_count(dp->lttpr_common_caps);
+> +	rc = drm_dp_lttpr_init(dp->aux, lttpr_count);
+> +	if (rc) {
+> +		DRM_ERROR("fialed to set LTTPRs transparency mode, rc=%d\n", rc);
 
-After PSI initialization fails, the si member is accessed again, resulting
-in this uaf.
+Nitpick: failed
 
-After si initialization fails, the subsequent process needs to be exited.
+With that fixed, LGTM:
 
-[1]
-BUG: KASAN: slab-use-after-free in vidtv_mux_pid_ctx_init drivers/media/test-drivers/vidtv/vidtv_mux.c:78 [inline]
-BUG: KASAN: slab-use-after-free in vidtv_mux_init+0xac2/0xbe0 drivers/media/test-drivers/vidtv/vidtv_mux.c:524
-Read of size 8 at addr ffff88802fa42acc by task syz.2.37/6059
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
-CPU: 0 UID: 0 PID: 6059 Comm: syz.2.37 Not tainted 6.14.0-rc5-syzkaller #0
-Hardware name: Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
-<TASK>
-__dump_stack lib/dump_stack.c:94 [inline]
-dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
-print_address_description mm/kasan/report.c:408 [inline]
-print_report+0xc3/0x670 mm/kasan/report.c:521
-kasan_report+0xd9/0x110 mm/kasan/report.c:634
-vidtv_mux_pid_ctx_init drivers/media/test-drivers/vidtv/vidtv_mux.c:78
-vidtv_mux_init+0xac2/0xbe0 drivers/media/test-drivers/vidtv/vidtv_mux.c:524
-vidtv_start_streaming drivers/media/test-drivers/vidtv/vidtv_bridge.c:194
-vidtv_start_feed drivers/media/test-drivers/vidtv/vidtv_bridge.c:239
-dmx_section_feed_start_filtering drivers/media/dvb-core/dvb_demux.c:973
-dvb_dmxdev_feed_start drivers/media/dvb-core/dmxdev.c:508 [inline]
-dvb_dmxdev_feed_restart.isra.0 drivers/media/dvb-core/dmxdev.c:537
-dvb_dmxdev_filter_stop+0x2b4/0x3a0 drivers/media/dvb-core/dmxdev.c:564
-dvb_dmxdev_filter_free drivers/media/dvb-core/dmxdev.c:840 [inline]
-dvb_demux_release+0x92/0x550 drivers/media/dvb-core/dmxdev.c:1246
-__fput+0x3ff/0xb70 fs/file_table.c:464
-task_work_run+0x14e/0x250 kernel/task_work.c:227
-exit_task_work include/linux/task_work.h:40 [inline]
-do_exit+0xad8/0x2d70 kernel/exit.c:938
-do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
-__do_sys_exit_group kernel/exit.c:1098 [inline]
-__se_sys_exit_group kernel/exit.c:1096 [inline]
-__x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
-x64_sys_call+0x151f/0x1720 arch/x86/include/generated/asm/syscalls_64.h:232
-do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f871d58d169
-Code: Unable to access opcode bytes at 0x7f871d58d13f.
-RSP: 002b:00007fff4b19a788 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f871d58d169
-RDX: 0000000000000064 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00007fff4b19a7ec R08: 0000000b4b19a87f R09: 00000000000927c0
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000003
-R13: 00000000000927c0 R14: 000000000001d553 R15: 00007fff4b19a840
- </TASK>
-
-Allocated by task 6059:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kmalloc_noprof include/linux/slab.h:901 [inline]
- kzalloc_noprof include/linux/slab.h:1037 [inline]
- vidtv_psi_pat_table_init drivers/media/test-drivers/vidtv/vidtv_psi.c:970
- vidtv_channel_si_init drivers/media/test-drivers/vidtv/vidtv_channel.c:423
- vidtv_mux_init drivers/media/test-drivers/vidtv/vidtv_mux.c:519
- vidtv_start_streaming drivers/media/test-drivers/vidtv/vidtv_bridge.c:194
- vidtv_start_feed drivers/media/test-drivers/vidtv/vidtv_bridge.c:239
- dmx_section_feed_start_filtering drivers/media/dvb-core/dvb_demux.c:973
- dvb_dmxdev_feed_start drivers/media/dvb-core/dmxdev.c:508 [inline]
- dvb_dmxdev_feed_restart.isra.0 drivers/media/dvb-core/dmxdev.c:537
- dvb_dmxdev_filter_stop+0x2b4/0x3a0 drivers/media/dvb-core/dmxdev.c:564
- dvb_dmxdev_filter_free drivers/media/dvb-core/dmxdev.c:840 [inline]
- dvb_demux_release+0x92/0x550 drivers/media/dvb-core/dmxdev.c:1246
- __fput+0x3ff/0xb70 fs/file_table.c:464
- task_work_run+0x14e/0x250 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xad8/0x2d70 kernel/exit.c:938
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
- __do_sys_exit_group kernel/exit.c:1098 [inline]
- __se_sys_exit_group kernel/exit.c:1096 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
- x64_sys_call arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 6059:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2353 [inline]
- slab_free mm/slub.c:4609 [inline]
- kfree+0x2c4/0x4d0 mm/slub.c:4757
- vidtv_channel_si_init drivers/media/test-drivers/vidtv/vidtv_channel.c:499
- vidtv_mux_init drivers/media/test-drivers/vidtv/vidtv_mux.c:519
- vidtv_start_streaming drivers/media/test-drivers/vidtv/vidtv_bridge.c:194
- vidtv_start_feed drivers/media/test-drivers/vidtv/vidtv_bridge.c:239
- dmx_section_feed_start_filtering drivers/media/dvb-core/dvb_demux.c:973
- dvb_dmxdev_feed_start drivers/media/dvb-core/dmxdev.c:508 [inline]
- dvb_dmxdev_feed_restart.isra.0 drivers/media/dvb-core/dmxdev.c:537
- dvb_dmxdev_filter_stop+0x2b4/0x3a0 drivers/media/dvb-core/dmxdev.c:564
- dvb_dmxdev_filter_free drivers/media/dvb-core/dmxdev.c:840 [inline]
- dvb_demux_release+0x92/0x550 drivers/media/dvb-core/dmxdev.c:1246
- __fput+0x3ff/0xb70 fs/file_table.c:464
- task_work_run+0x14e/0x250 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xad8/0x2d70 kernel/exit.c:938
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
- __do_sys_exit_group kernel/exit.c:1098 [inline]
- __se_sys_exit_group kernel/exit.c:1096 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
- x64_sys_call arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Fixes: 3be8037960bc ("media: vidtv: add error checks")
-Reported-by: syzbot+0d33ab192bd50b6c91e6@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=0d33ab192bd50b6c91e6
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
-V1 -> V2: replace with media: in subject
-V2 -> V3: reduce the line length of the comments
-
- drivers/media/test-drivers/vidtv/vidtv_channel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/test-drivers/vidtv/vidtv_channel.c b/drivers/media/test-drivers/vidtv/vidtv_channel.c
-index 7838e6272712..f3023e91b3eb 100644
---- a/drivers/media/test-drivers/vidtv/vidtv_channel.c
-+++ b/drivers/media/test-drivers/vidtv/vidtv_channel.c
-@@ -497,7 +497,7 @@ int vidtv_channel_si_init(struct vidtv_mux *m)
- 	vidtv_psi_sdt_table_destroy(m->si.sdt);
- free_pat:
- 	vidtv_psi_pat_table_destroy(m->si.pat);
--	return 0;
-+	return -EINVAL;
- }
- 
- void vidtv_channel_si_destroy(struct vidtv_mux *m)
--- 
-2.43.0
-
+> +		return 0;
+> +	}
+> +
+> +	return lttpr_count;
+>  }
+>  
+>  static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
+> @@ -385,12 +391,17 @@ static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
+>  	struct drm_connector *connector = dp->msm_dp_display.connector;
+>  	const struct drm_display_info *info = &connector->display_info;
+>  	int rc = 0;
+> +	u8 dpcd[DP_RECEIVER_CAP_SIZE];
+>  
+> -	rc = msm_dp_panel_read_sink_caps(dp->panel, connector);
+> +	rc = drm_dp_read_dpcd_caps(dp->aux, dpcd);
+>  	if (rc)
+>  		goto end;
+>  
+> -	msm_dp_display_lttpr_init(dp);
+> +	msm_dp_display_lttpr_init(dp, dpcd);
+> +
+> +	rc = msm_dp_panel_read_sink_caps(dp->panel, dp->lttpr_common_caps, connector);
+> +	if (rc)
+> +		goto end;
+>  
+>  	msm_dp_link_process_request(dp->link);
+>  
+> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
+> index 92415bf8aa16..f41b4cf7002e 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
+> @@ -45,9 +45,12 @@ static void msm_dp_panel_read_psr_cap(struct msm_dp_panel_private *panel)
+>  	}
+>  }
+>  
+> -static int msm_dp_panel_read_dpcd(struct msm_dp_panel *msm_dp_panel)
+> +static int msm_dp_panel_read_dpcd(struct msm_dp_panel *msm_dp_panel,
+> +				  const u8 lttpr_common_caps[DP_LTTPR_COMMON_CAP_SIZE])
+>  {
+>  	int rc;
+> +	int max_sink_lanes, max_source_lanes, max_lttpr_lanes;
+> +	int max_sink_rate, max_source_rate, max_lttpr_rate;
+>  	struct msm_dp_panel_private *panel;
+>  	struct msm_dp_link_info *link_info;
+>  	u8 *dpcd, major, minor;
+> @@ -64,16 +67,24 @@ static int msm_dp_panel_read_dpcd(struct msm_dp_panel *msm_dp_panel)
+>  	major = (link_info->revision >> 4) & 0x0f;
+>  	minor = link_info->revision & 0x0f;
+>  
+> -	link_info->rate = drm_dp_max_link_rate(dpcd);
+> -	link_info->num_lanes = drm_dp_max_lane_count(dpcd);
+> +	max_source_lanes = msm_dp_panel->max_dp_lanes;
+> +	max_source_rate = msm_dp_panel->max_dp_link_rate;
+>  
+> -	/* Limit data lanes from data-lanes of endpoint property of dtsi */
+> -	if (link_info->num_lanes > msm_dp_panel->max_dp_lanes)
+> -		link_info->num_lanes = msm_dp_panel->max_dp_lanes;
+> +	max_sink_lanes = drm_dp_max_lane_count(dpcd);
+> +	max_sink_rate = drm_dp_max_link_rate(dpcd);
+> +
+> +	max_lttpr_lanes = drm_dp_lttpr_max_lane_count(lttpr_common_caps);
+> +	max_lttpr_rate = drm_dp_lttpr_max_link_rate(lttpr_common_caps);
+>  
+> +	if (max_lttpr_lanes)
+> +		max_sink_lanes = min(max_sink_lanes, max_lttpr_lanes);
+> +	if (max_lttpr_rate)
+> +		max_sink_rate = min(max_sink_rate, max_lttpr_rate);
+> +
+> +	/* Limit data lanes from data-lanes of endpoint property of dtsi */
+> +	link_info->num_lanes = min(max_sink_lanes, max_source_lanes);
+>  	/* Limit link rate from link-frequencies of endpoint property of dtsi */
+> -	if (link_info->rate > msm_dp_panel->max_dp_link_rate)
+> -		link_info->rate = msm_dp_panel->max_dp_link_rate;
+> +	link_info->rate = min(max_sink_rate, max_source_rate);
+>  
+>  	drm_dbg_dp(panel->drm_dev, "version: %d.%d\n", major, minor);
+>  	drm_dbg_dp(panel->drm_dev, "link_rate=%d\n", link_info->rate);
+> @@ -109,6 +120,7 @@ static u32 msm_dp_panel_get_supported_bpp(struct msm_dp_panel *msm_dp_panel,
+>  }
+>  
+>  int msm_dp_panel_read_sink_caps(struct msm_dp_panel *msm_dp_panel,
+> +	const u8 lttpr_common_caps[DP_LTTPR_COMMON_CAP_SIZE],
+>  	struct drm_connector *connector)
+>  {
+>  	int rc, bw_code;
+> @@ -125,7 +137,7 @@ int msm_dp_panel_read_sink_caps(struct msm_dp_panel *msm_dp_panel,
+>  	drm_dbg_dp(panel->drm_dev, "max_lanes=%d max_link_rate=%d\n",
+>  		msm_dp_panel->max_dp_lanes, msm_dp_panel->max_dp_link_rate);
+>  
+> -	rc = msm_dp_panel_read_dpcd(msm_dp_panel);
+> +	rc = msm_dp_panel_read_dpcd(msm_dp_panel, lttpr_common_caps);
+>  	if (rc) {
+>  		DRM_ERROR("read dpcd failed %d\n", rc);
+>  		return rc;
+> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.h b/drivers/gpu/drm/msm/dp/dp_panel.h
+> index 4906f4f09f24..d89e17a9add5 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_panel.h
+> +++ b/drivers/gpu/drm/msm/dp/dp_panel.h
+> @@ -7,6 +7,7 @@
+>  #define _DP_PANEL_H_
+>  
+>  #include <drm/msm_drm.h>
+> +#include <drm/display/drm_dp_helper.h>
+>  
+>  #include "dp_aux.h"
+>  #include "dp_link.h"
+> @@ -49,6 +50,7 @@ int msm_dp_panel_init_panel_info(struct msm_dp_panel *msm_dp_panel);
+>  int msm_dp_panel_deinit(struct msm_dp_panel *msm_dp_panel);
+>  int msm_dp_panel_timing_cfg(struct msm_dp_panel *msm_dp_panel);
+>  int msm_dp_panel_read_sink_caps(struct msm_dp_panel *msm_dp_panel,
+> +		const u8 lttpr_common_caps[DP_LTTPR_COMMON_CAP_SIZE],
+>  		struct drm_connector *connector);
+>  u32 msm_dp_panel_get_mode_bpp(struct msm_dp_panel *msm_dp_panel, u32 mode_max_bpp,
+>  			u32 mode_pclk_khz);
+> -- 
+> 2.45.2
+> 
 
