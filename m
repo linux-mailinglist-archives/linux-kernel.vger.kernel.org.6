@@ -1,167 +1,114 @@
-Return-Path: <linux-kernel+bounces-556825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0958A5CF28
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:20:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102BCA5CF29
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F78F178A18
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:20:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C424118984DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950542641C1;
-	Tue, 11 Mar 2025 19:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3088263F4E;
+	Tue, 11 Mar 2025 19:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JmJ4pQPs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2OIfwp4"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D55B1F03F2;
-	Tue, 11 Mar 2025 19:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D1A263F3B;
+	Tue, 11 Mar 2025 19:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741720793; cv=none; b=XFiKiMnjadeEnXG8lfRzYqFHLfkxoar4gbyM4Sk8CXH6QbcZd0150SfkvL4nE6DPuaxn0iWh7hjP3GFIOVF5fafFqWCuZ1IAufU3wGXsXpBXwXd8pnNAtv42JBZmjArNpFnUG6MRUrB5syZSbDQeZeq3QkhYCCuSG728qJtEd7k=
+	t=1741720819; cv=none; b=QvlowFgbEKneVMdYD3I7+8ifYwxD5lLhK0uGdGNDihN49zKM6jFL0O6qA0+o41Q6OM+Y6roh0kKqGiNpIZVvLhYjpLCOUYyJu2zk8fqnugwBY2kr4uualvBlqrByfVJ96tCcs/i9S4uxMfgkHBoBxmzdff9P8E9vKZqvXtg+vnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741720793; c=relaxed/simple;
-	bh=2LCiy4lFtFm1TsLHV4lPWQ9w3NrS4s9HWA9Rz74dfj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KFDx0xuv0lX/wM8kb9MLep25yLI5H/RLRASBbg1dF4HWVT2jXwMLx1jwNLw0Ltt8F0x5YhuSsAlcdomf/Uy2QawEkQIN5iFVkYQIVG7yoeyA9OwndlgmVdMdeAv1p+d27x226yrxohS5S336Mg44FmyVuC+o5ojSfruvJMQHHbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JmJ4pQPs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BJ8ZHe017734;
-	Tue, 11 Mar 2025 19:19:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cOhWVdEMxYHFBSFUIiBHuYp/vQkdKu4vEMS65xaXcL8=; b=JmJ4pQPshJW651tO
-	UZvTCFtA2KHcr7OPjqnPp5JIctaSk3ezU/IG/TNQAbL7H/lgLb1juJcvLtV9eem3
-	TMjDLZuTTZt/5hWRZjBC3m3QGpADuoWdrwl+5FPskAyWQ8ViPKk0cA3fTESyF/l5
-	my/EGgV9lPBOPJionF18iH12CNcQgXhrypEsB1PfLxpa7xzhYZRuYabnFOXeBtj0
-	zzXjssSFqFsN09nx2gzQ43toz7mA2dGDCPHbbC1XpXKw+mmQAiCexVfGr4nw3t/f
-	RrBAr3GVQE0wnIZy5QNiAaQkyYBI6nQ+hUc4VMOs6DUeAemeBglV3VljQX3cBcPu
-	+b/nwg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2nr0up-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 19:19:47 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52BJJjLB005862
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 19:19:45 GMT
-Received: from [10.216.38.182] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Mar
- 2025 12:19:41 -0700
-Message-ID: <203ea0bb-c53c-389e-db12-b41773c0ff5d@quicinc.com>
-Date: Wed, 12 Mar 2025 00:49:38 +0530
+	s=arc-20240116; t=1741720819; c=relaxed/simple;
+	bh=RCdZS8dk2ZS37SbH0ZeGYxVd6QvMyepLaIm0iG2+ZIc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gt/0rlEA9IVZeNexAEYMdDmv7OoY4Nygg+V2VE1aeI/Qvd7EBwxPM5EQd618vAS9dZPzw+fUod5AkHugg2YmKgfyYNacBrwPbry2QolMopAUsj28ezCDOtwiFUPUwkWYzNWlNkbsA/MBfgW3kZsvxVvt/I6BrLMzoGKs3NfQGl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2OIfwp4; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22409402574so12568975ad.1;
+        Tue, 11 Mar 2025 12:20:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741720816; x=1742325616; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PljsenAcEFDHEJkpAalMEEK4jdo+wNjGX1LHExZIY/w=;
+        b=k2OIfwp4rRDw4eS1ZdMh146ILhDVy0M8SXzQ1NxkMX1QaHnYH36DFuLd+D5d+6MGog
+         BsLB0Ob2Gl2qrkXTp1m/nAQwbv1KjQH5FjZDzcwg5WNlbgMHj7VkMV2LfU+bqDyTnzMY
+         jXFklKL/2XW2gVmZ/BT9E1O7vZIU0GBh3LRSdNp5GUcmyw0fqNkte2eCCQVjOvLkzdgG
+         ij0aZ5kDV1ezCmpEwkx7g20UvbuLKfLPk+lVOQXuzDZDN/iAZ1HU9ZIWtgdbuA2q5KSm
+         Xoy5zvath4uLZnq2hXVcnPLuGOBO7VwJ7Df9ZaCl4HXGPFKwXlADRZ/dIrQfyrPpDDuz
+         n+kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741720816; x=1742325616;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PljsenAcEFDHEJkpAalMEEK4jdo+wNjGX1LHExZIY/w=;
+        b=Xo8lfBuDjH9tDF563skZ0Liy+C9WhI2zmi8M1s2Png5N/IA05ND8+jhXxshKRzy3qG
+         pqJHniyuetswSb+yus39V4j5HF2E9+H7oUo2dawRCduKxTmpsF6u3W0xwELT5Pc5lemP
+         cUdRZcc7U5VLtRSMjIwaiV9FYkoJBiRg881A9QXBc+cTrDl4p9RV3QpLukprprZiK0vb
+         lIWr4WD29gekLGrUEpoQz49wqjD82e2jwzZlUK/m0AxEzNCmgk4MghHSb0OIfd7HP4Nq
+         B0gCt1fmfghxjB00LH2N3NxFFBLFdpPH+IIR3d9cDxGLPK7UDCaKtpR5eZjxqJNWWa2t
+         lUIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUG30F2GDtK3Uk8IdHcIK3rY0q965zyvKOpNuS1b/uH68Nwy2MFo9puHaCRyYpBdcIBg776+PPv9toShUXhHjA=@vger.kernel.org, AJvYcCWgfGVp7bzjWZHGvh5sjFysyNaNzFKDe96rzpaoj+9FIy1/2kM4rPBYO62EBpO6WkQujKKONtJtfAkSQQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiSgalzBGVaxK4tuSZkWwO1pMYP3Ri+8SwtX+MMcNcuW229i07
+	1uUhkPoKT4d7QAELl3h4Z7F6OClgB4FE9wOTO8Cx1tpwJWTQY/n63bPVfzemclVpSFH0S7TewtG
+	Bm1B8lDK1OTrTFRbFPyX561AiZjo=
+X-Gm-Gg: ASbGnctibp3NZ0zO7/S9WxC5kdzdURxW0NwZxhC/AiSzy32BiwT7L59fTnfj9H6uot5
+	YVhooll2mSTEwywn8LBceoPx3R4Zb2D8iHmJ2K+rcDkl/3f+vPp4DQ7ayv85oNiBl94PHtCzHqS
+	V99Q8qfbeS6vk6ABPbhN055G1hRA==
+X-Google-Smtp-Source: AGHT+IGQS8UGOWNAAVvfaUP3e/l9yfURS1SXg5tRn5KGnCD9O/0FuG5wPHsaGtvF2X1f6DI6BcB0MJxXvQVsX5R2gXU=
+X-Received: by 2002:a17:903:1663:b0:224:88c:9255 with SMTP id
+ d9443c01a7336-22541eaa011mr84413755ad.3.1741720816110; Tue, 11 Mar 2025
+ 12:20:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/4] dt-bindings: media: qcom,sm8550-iris: update power
- domain name
-Content-Language: en-US
-To: Dmitry Baryshkov <lumag@kernel.org>
-CC: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
- <20250311-dtbinding-v1-1-5c807d33f7ae@quicinc.com>
- <7yjj2eemvvvnsgv67d7tueid4h3n3onuou6ammx36am4qhfsal@xam3iamk4er3>
- <c0430086-675d-b58c-4ef9-1bd9ee51d3db@quicinc.com>
- <zssjkvxxv7kionartp6f3y2qh3d4i6gwnhwsrklsfad3t4fy3q@jkehbkx6wcyk>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <zssjkvxxv7kionartp6f3y2qh3d4i6gwnhwsrklsfad3t4fy3q@jkehbkx6wcyk>
+References: <20250108-rust-btf-lto-incompat-v1-1-60243ff6d820@google.com>
+In-Reply-To: <20250108-rust-btf-lto-incompat-v1-1-60243ff6d820@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 11 Mar 2025 20:20:03 +0100
+X-Gm-Features: AQ5f1JpWmNGeYdDCCXf5f08zEALR7P-JnpHC48aAm0TSpWoYRKskvESvqMmcoME
+Message-ID: <CANiq72=q9z1O-OfSy9BHhzB+nAngQ+j79ps7OAEq+0Yzz4sHcw@mail.gmail.com>
+Subject: Re: [PATCH] rust: Disallow BTF generation with Rust + LTO
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Matthias Maennich <maennich@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HgxfAPyusGHWxAxQC0V6gT8J8q9kQRrL
-X-Authority-Analysis: v=2.4 cv=Q4XS452a c=1 sm=1 tr=0 ts=67d08cd3 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=Ve5_cTlWWX7DCNKN5mYA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: HgxfAPyusGHWxAxQC0V6gT8J8q9kQRrL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_05,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- lowpriorityscore=0 mlxscore=0 clxscore=1015 phishscore=0 malwarescore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503110125
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jan 9, 2025 at 12:35=E2=80=AFAM Matthew Maurer <mmaurer@google.com>=
+ wrote:
+>
+> The kernel cannot currently self-parse BTF containing Rust debug
+> information. pahole uses the language of the CU to determine whether to
+> filter out debug information when generating the BTF. When LTO is
+> enabled, Rust code can cross CU boundaries, resulting in Rust debug
+> information in CUs labeled as C. This results in a system which cannot
+> parse its own BTF.
+>
+> Signed-off-by: Matthew Maurer <mmaurer@google.com>
 
-On 3/11/2025 9:05 PM, Dmitry Baryshkov wrote:
-> On Tue, Mar 11, 2025 at 08:41:01PM +0530, Vikash Garodia wrote:
->>
->> On 3/11/2025 8:37 PM, Dmitry Baryshkov wrote:
->>> On Tue, Mar 11, 2025 at 05:33:53PM +0530, Vikash Garodia wrote:
->>>> Not all platforms has a collapsible mx, so use the more generic naming
->>>> of mx in the binding.
->>>
->>> I guess, it wasn't even tested...
->> Not sure what made you guess so, let me check why my binding checker did not
->> catch the bot reported warning.
-> 
-> Obvious: you are changing the bindings in a non-backwards compatible
-> way, but you are not changing the example in the same file (and
-> obviously you are not changing the DTs), which means that this wasn't
-> tested.
-> 
-> Hint: you can use enum [mx, mxc] instead of const. That would make it
-> backwards compatible.
-Currently there are no user of this binding. Given that either of MX or MXC are
-same connection to video hardware, just that one is collapsible, it would be
-good to replace the existing element instead of enum.
+Applied to `rust-fixes` -- thanks everyone!
 
-Regards,
-Vikash
-> 
->> Regards,
->> Vikash
->>>
->>>>
->>>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
->>>> ---
->>>>  Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
->>>> index e424ea84c211f473a799481fd5463a16580187ed..440a0d7cdfe19a1ccedefc207d96b26eed5d6630 100644
->>>> --- a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
->>>> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
->>>> @@ -28,7 +28,7 @@ properties:
->>>>      items:
->>>>        - const: venus
->>>>        - const: vcodec0
->>>> -      - const: mxc
->>>> +      - const: mx
->>>>        - const: mmcx
->>>>  
->>>>    clocks:
->>>>
->>>> -- 
->>>> 2.34.1
->>>>
->>>
-> 
+    Cc: stable@vger.kernel.org
+    Fixes: c1177979af9c ("btf, scripts: Exclude Rust CUs with pahole")
+
+If someone disagrees with those tags, please let me know.
+
+Cheers,
+Miguel
 
