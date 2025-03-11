@@ -1,142 +1,156 @@
-Return-Path: <linux-kernel+bounces-555705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39AAA5BBA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:08:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866D6A5BBA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:09:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D9BE1724F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:08:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EC56188E69D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D793F222576;
-	Tue, 11 Mar 2025 09:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A86223710;
+	Tue, 11 Mar 2025 09:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="KCMITyiw"
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.62.65])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nDJuc/Az";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0wHLy+N3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D93146593
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.62.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980021CD205;
+	Tue, 11 Mar 2025 09:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741684082; cv=none; b=mV6fvScaKOZbeqeArCPFxzh1ur5f1AJJ1DMtWiXgfsNWXJIDkJhIQlEdt2qV8QsEFiGS9sGiUt8Bgf4r7xz2JdKOgIghW8rFOgUfqm7hrvR2gc7Pk8ZFPpd2hIz96IRrBnwo3ROCucz+T6EeDYKUGmZav34FpP0s3lqyAdkoe+E=
+	t=1741684178; cv=none; b=gZI69AdavNgYv+wQm3klwQs3VQX17jzElQF0V9ePBpTyK3r0qfrN9+M09NWp32PpGm+Ib2ikijikDB24Jx88XzE7i0Z3bmlTJfM6fqhsqNMoc36XC1PqBnKR/c1cc7EhURWFXqD2wUcfwiSzsuajgCQdyd3V3qF1wH4ClZpnUZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741684082; c=relaxed/simple;
-	bh=2dOCfF3SE4JtdwJGgzc7tTDXSXveTGf7JBWlac24dI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tJve7QQtaJM1MD56e5JUAosRaLybMRMeSFBbtWLkVkakRZ66ekduUdCe1sntfqmUmBfjW1IZt5ZKh8iUqnRzG+e/BDY+jPinNl7/Y0m2xMCwVMv7j1UAODb09VGJAnu5cEdQrkVGxYvBWA4GRNg+YChEmQg2LV7XMjn7UBfmelU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=KCMITyiw; arc=none smtp.client-ip=114.132.62.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1741684055;
-	bh=ZiPqY/RKHISV8T1AisgYMO+/5+gEQu6ZX6Kam1AOsDc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=KCMITyiw2jf33hRsA5XZI+pABR/NQeKOrjimuH/Fvu/O8XH+beaithnWBYsBbSumM
-	 NxMf5A/nD8GVB60KxWu05RNw4sBomQ9KIR7B68feH4UHb1VU69uIGyB+Yb43Httwcd
-	 JJoiQC7BPXPnNTUS8rtAHtHjWjlK3rzMNycy7E0k=
-X-QQ-mid: bizesmtpip4t1741684045tzy6fhy
-X-QQ-Originating-IP: vufqVQTjWyeothMrDcmUwU25hNfeKgzbYJXcByj5JzM=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 11 Mar 2025 17:07:22 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 1440186853844928154
-From: WangYuli <wangyuli@uniontech.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@unintech.com,
-	guanwentao@uniontech.com,
-	chenlinxuan@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] sched/core: u_clamp: Fix "-Wunused-function" warnings
-Date: Tue, 11 Mar 2025 17:07:14 +0800
-Message-ID: <6C18D4916C41C8D7+20250311090714.902321-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1741684178; c=relaxed/simple;
+	bh=0flGchsd7b+D+Eonmve3najNNsFRrQsnH8yyHv5ZqaI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=JR6LwWh3b21EUbs3pcV+irbN7ybh6mpwEcuWwsD0r8VkTWqlb9HGviT98o8DL/rYXNdEbuORbSuqeMHD1loaQCoqdy0JV0AArc63kaz+Eev18d7BxGt5KhZSM/sNHlVe3xMmc3JLM/2uwmcW9UMn/6SAh5ehYe9Tl4Yy4uScFys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nDJuc/Az; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0wHLy+N3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 11 Mar 2025 09:09:33 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741684174;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ocwnkJUwj5sdelISdMdqZQ3L4dhRo0bS2D0K9BiAXV8=;
+	b=nDJuc/AzPwtSrAt7VQA3/o3Wik5obr8ldjoh7BrlJBWc10dZ8b+A5DN5coRLoia3ZFni4s
+	CrO/ykLIIC9m1WO0B/Yoog5Qa3iBZw2QsijDxmiWlCXU4Bf82OuQqlUbcPpXyvRvlUY6nS
+	DeNdi+RK6MqbCC8Zl9o+GYchCHCA4edfo7yBAyC2VoNBEgeWrsV+SWGsbRDMr1mGDQ4dQd
+	4qaCeViZOGNPYOzVXsosM1Tu4wAoDQ/DsClbbo/xMZc2O+gC+g/c3ac7WUptptL7u95NaC
+	9aXgXchpM/QMrmtsb6L4QIj7CeiMPNsZR9Qve2qAwCdbqfBHgk5CFymaHtEUCw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741684174;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ocwnkJUwj5sdelISdMdqZQ3L4dhRo0bS2D0K9BiAXV8=;
+	b=0wHLy+N3NUB0Y35WXKSUOKVNPm2b+emIDZpldymznCrLVo3IzL2C+fZhorK3J4x07SiRVn
+	5AqMLU/eI0ZTL/Bg==
+From:
+ tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/vdso] sparc/vdso: Always reject undefined references
+ during linking
+Cc: thomas.weissschuh@linutronix.de, Ingo Molnar <mingo@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250306-vdso-checkundef-v2-2-a26cc315fd73@linutronix.de>
+References: <20250306-vdso-checkundef-v2-2-a26cc315fd73@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MW2WLBvYEeCv/l2Wr/ujvAUi8rsh02+maNw3jXFnBUAicw8OeAyKZIKG
-	KN6oA6R3/RoW2Wqi7OO0UiT7FY7YZVGgOK5pAiVZWU3S48Dk90hol+sVOvw8GYsE0bWSzGZ
-	t7bCb5BvIZtoiw45vkQ1+McNyGlkuFUnJt8b6cMoeci18XHJ9RQpGuViF+/+qJLL+fYOgOp
-	o+q5pxbN7BPDYuE18SXf7Sm/vF0hCRhoi29IOaYyzYzM9IWL2elQ1TovSwIUf02awE63K7P
-	Y9W7MBW7A0Cx2cTMQQtHIRVZMpMTZbpiYZl89TxbWgUoKSekAbYEP1aD7Z9xC0jHQjNC0c2
-	yE7FDGfu4XqWyB1/qq5+sqlvMP4066pFlNkSLCAZ6JM1Me03V4xXxFVUxn7hLI6aFlqeOvZ
-	8h7CHb4+CJJsVUFh5Xr/pp1/n6CvAGx2uVS++007HqoMTix3fOI9dsENTvcbIOFQFMT1Xcj
-	Oc6hK/Vmh1UkWhn0byMX1AuUsuZsuYTF5AOdfQdctlXvJzAX6Oe3MbPI55PgOvg5gOxDOmk
-	A0pu+7MpZsGNz5ME9pblAAgdZF8xeWK7C+SzG4JJCTZI6UMiV4F1p9IZgzrXJrEFcXXPENS
-	K3yvUztoZ6rKrZ8RSjn9SFw9iUIKOb3Gxx0tB5eFDxgYkYt2Z26/qo5gJYd8Ddct5ch4AqB
-	rqRVwykL+ZohS+AJcu9h163fyzhapkVbwhaw2EOMboEK9Ge2e/Fk6Y184sgWgB5mSN4ZdbD
-	OJ1y/PLI33Yc0vQKCN3Z0k31Miaj3pAdgO0YfeZ19S4jA8dR0azawh/4KgUFedUd/TxQZRq
-	s3V7B3Kduh0HMg3yuPbqFYF4RCNUHgzueTc9dh9IuOnhMcOJfJcbZirJyUpZ+Sxyvb+QaGE
-	7gAZ5jCuMRK5isaNQgsh7l6OZT0KaMzQb+oF9QkZd3Ni/nd24DqNfXmA201uKibq0bURNpp
-	dwBFLjvbJ2zml3/k22CyMcsJWAtf9NFuuGWBy3s3r6Gv4QPDfddDzqPyB536vqXYw3MYjC/
-	rG0vM3JA==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+Message-ID: <174168417345.14745.6224882189458073686.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Given that uclamp_update_active() is exclusively called by
-uclamp_update_active_tasks(), and considering that
-uclamp_update_active_tasks() is utilized solely when
-CONFIG_UCLAMP_TASK_GROUP is enabled, it follows that
-uclamp_update_active() will emit a compilation warning if
-CONFIG_UCLAMP_TASK_GROUP is not enabled.
+The following commit has been merged into the timers/vdso branch of tip:
 
-Similar reason of uclamp_rq_reinc_id().
+Commit-ID:     652262975db421767ada3f05b926854bbb357759
+Gitweb:        https://git.kernel.org/tip/652262975db421767ada3f05b926854bbb3=
+57759
+Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+AuthorDate:    Thu, 06 Mar 2025 15:07:21 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 11 Mar 2025 09:54:48 +01:00
 
-Fix follow errors with clang-19 when W=1e:
+sparc/vdso: Always reject undefined references during linking
 
-  kernel/sched/core.c:1818:1: error: unused function 'uclamp_update_active' [-Werror,-Wunused-function]
-   1818 | uclamp_update_active(struct task_struct *p)
-        | ^~~~~~~~~~~~~~~~~~~~
+Instead of using a custom script to detect and fail on undefined
+references, use --no-undefined for all VDSO linker invocations.
 
-  kernel/sched/core.c:1800:20: error: unused function 'uclamp_rq_reinc_id' [-Werror,-Wunused-function]
-   1800 | static inline void uclamp_rq_reinc_id(struct rq *rq, struct task_struct *p,
-        |                    ^~~~~~~~~~~~~~~~~~
+Drop the now unused checkundef.sh script.
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Andreas Larsson <andreas@gaisler.com>
+Link: https://lore.kernel.org/r/20250306-vdso-checkundef-v2-2-a26cc315fd73@li=
+nutronix.de
 ---
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/sparc/vdso/Makefile      |  7 +++----
+ arch/sparc/vdso/checkundef.sh | 10 ----------
+ 2 files changed, 3 insertions(+), 14 deletions(-)
+ delete mode 100644 arch/sparc/vdso/checkundef.sh
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 67189907214d..49549e030f4c 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1797,6 +1797,7 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
- 		uclamp_rq_dec_id(rq, p, clamp_id);
- }
- 
-+#ifdef CONFIG_UCLAMP_TASK_GROUP
- static inline void uclamp_rq_reinc_id(struct rq *rq, struct task_struct *p,
- 				      enum uclamp_id clamp_id)
- {
-@@ -1843,7 +1844,6 @@ uclamp_update_active(struct task_struct *p)
- 	task_rq_unlock(rq, p, &rf);
- }
- 
--#ifdef CONFIG_UCLAMP_TASK_GROUP
- static inline void
- uclamp_update_active_tasks(struct cgroup_subsys_state *css)
- {
--- 
-2.47.2
-
+diff --git a/arch/sparc/vdso/Makefile b/arch/sparc/vdso/Makefile
+index 50ec297..fdc4a8f 100644
+--- a/arch/sparc/vdso/Makefile
++++ b/arch/sparc/vdso/Makefile
+@@ -22,7 +22,7 @@ targets +=3D $(foreach x, 32 64, vdso-image-$(x).c vdso$(x)=
+.so vdso$(x).so.dbg)
+=20
+ CPPFLAGS_vdso.lds +=3D -P -C
+=20
+-VDSO_LDFLAGS_vdso.lds =3D -m elf64_sparc -soname linux-vdso.so.1 --no-undefi=
+ned \
++VDSO_LDFLAGS_vdso.lds =3D -m elf64_sparc -soname linux-vdso.so.1 \
+ 			-z max-page-size=3D8192
+=20
+ $(obj)/vdso64.so.dbg: $(obj)/vdso.lds $(vobjs) FORCE
+@@ -101,7 +101,6 @@ $(obj)/vdso32.so.dbg: FORCE \
+ quiet_cmd_vdso =3D VDSO    $@
+       cmd_vdso =3D $(LD) -nostdlib -o $@ \
+ 		       $(VDSO_LDFLAGS) $(VDSO_LDFLAGS_$(filter %.lds,$(^F))) \
+-		       -T $(filter %.lds,$^) $(filter %.o,$^) && \
+-		sh $(src)/checkundef.sh '$(OBJDUMP)' '$@'
++		       -T $(filter %.lds,$^) $(filter %.o,$^)
+=20
+-VDSO_LDFLAGS =3D -shared --hash-style=3Dboth --build-id=3Dsha1 -Bsymbolic
++VDSO_LDFLAGS =3D -shared --hash-style=3Dboth --build-id=3Dsha1 -Bsymbolic --=
+no-undefined
+diff --git a/arch/sparc/vdso/checkundef.sh b/arch/sparc/vdso/checkundef.sh
+deleted file mode 100644
+index 2d85876..0000000
+--- a/arch/sparc/vdso/checkundef.sh
++++ /dev/null
+@@ -1,10 +0,0 @@
+-#!/bin/sh
+-objdump=3D"$1"
+-file=3D"$2"
+-$objdump -t "$file" | grep '*UUND*' | grep -v '#scratch' > /dev/null 2>&1
+-if [ $? -eq 1 ]; then
+-    exit 0
+-else
+-    echo "$file: undefined symbols found" >&2
+-    exit 1
+-fi
 
