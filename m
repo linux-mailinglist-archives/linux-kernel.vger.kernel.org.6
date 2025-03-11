@@ -1,85 +1,88 @@
-Return-Path: <linux-kernel+bounces-556225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4FEA5C2D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:37:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E91D2A5C2D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:38:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450741894EB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:37:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A05891893F8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4031C5D46;
-	Tue, 11 Mar 2025 13:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B9E1C5D46;
+	Tue, 11 Mar 2025 13:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BzbxxUSY"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PvaCAfVG"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D31070821
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD28B78F5D;
+	Tue, 11 Mar 2025 13:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741700260; cv=none; b=V7JjuZ9jQYcMe571R8OqVoT8p4kPK8j70kMOdcSSokmbsA5OTEflVPD/xZcHmDtNWP/jWWfVNJyYMIKSQ0sI/doQE9wyHz/epTQ9cjKgPwa3nAr+XiW+ApUggJqglT58gaxv4+T1S0Y6akv1qD3P6szY75wxnb2fy7b4W6ycrYA=
+	t=1741700276; cv=none; b=Px8+dC+vInRxX91KLFYgVFLsuX+26zMN5+PNt+LDBu+VU/DNxtCAjCZ4QOR4C85GIQyX1pXjvxeeKtS3rQalryMoqFmFloiFrQPCHkojzkQr7t0yHCUzplP2dXE0R4zo/Bb4cmBFZHje2T+FZEQ8FR6EVtqcdS9gY7dOReAYEHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741700260; c=relaxed/simple;
-	bh=Fv9bgoCj8T1HxxYViA2cy8fyVV76Oxipu9JiKde52II=;
+	s=arc-20240116; t=1741700276; c=relaxed/simple;
+	bh=vMtFSGIfzr6HiyZrNZ57TvdsNiX98vzFydxHX92eMyw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PE07zxl/ERNZcegRPHbtx83Kji9b0bmQTL2PNRnuWwZ1jzwRlO9unJlPbUQNv3SVqNTgriTKzm3Z06XxsUfp9S1l1A4oQrzXAvDzftsD3pPnxLBwHSHhjFRKqFdSzXcCLkLwxbAKpGiBM60+cnHKwaIylI0YrLGIthwbHUx8h/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BzbxxUSY; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39133f709f5so2122534f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:37:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741700257; x=1742305057; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+qLMXMTwOhKieWEK80byf0Odi49jjdtVmyVqKoQf3GM=;
-        b=BzbxxUSYSUmdIkiO3hE/W4w7/6gj7nY00+KonJs7Y5Z3oRQ95RkoEhuBus/I9B58yn
-         SPJaV+jYARBV4MVi6+OtOqa2WTMa66Jas49pXHblsymQDcLDA6ejl8MN/Ml3Q/1ukHAd
-         5JGkTFCGl3qUJyr/JpWO8XATbfSnmq9e6bg4KMj8qOvsf1onOUNPEH60bMfHqgBfTQIU
-         XbpJLHDru8weALQMN57aJi/t/ZNJ9dLsn00WJATQz3vqMzd+M/jA68CwUI9ZLcZU0HtE
-         +JupquyaKhHiSA6i1BO8oqbqW1C8BgCWVD/CwXKPtVE3H9/XlRrsLWHA4QiyXulqJ+Vj
-         BDAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741700257; x=1742305057;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+qLMXMTwOhKieWEK80byf0Odi49jjdtVmyVqKoQf3GM=;
-        b=oUn4+RkHVdKa5kKXe9gSTiULGX5QdhySZ7PVBqARA9WDz/pNeUt0XDBVzlgpvPX5rP
-         J3NPGYsDqjqCCK1TxQdIuVTERvm3KrqzuzqNkzFDt2Dw78ilKRXCvFPQ3DpF4Bxu8Gii
-         2mRCeIduK9TTwxzm/1OQq5c6IGUmr1Q4xJhV5YZ7gvMheioUCpLKR5ChXwW5yEu974cX
-         xTvJRq9XSsFuQ28vRx9AW8Nl945oJxwdgEXxSKzZrMQO5M/ts8hbaOKtF6nTg2Ng7Vg0
-         lnmpe03wh4f/nNP9VOJ8IP5eP/Ob0IUxsS0zTXA2hlBi7M+w7831tGalDC1Z7vB+FqHA
-         VU2A==
-X-Gm-Message-State: AOJu0YznZXEE8BjHq1/sdhfO3iCUCnFsM6vBjCgxZVzIt9XzUSn72Na+
-	pRbgj/8i6HH7llFwnpr+5n5h0vdJOQu5cQIVNf9c1I39eBSJ8gZAJb1JxhBcdlo=
-X-Gm-Gg: ASbGnctU//LxBmIiQUHo4wuC3/XWX7g9VYJbQJkVMhwMWGI0FLKyCgMCcGpVOaXXz0u
-	Pva5Qaf30KmBZ5+yVILi2tcN0cX3KjRQm4Qc0eJiXAXFPtje3Spnai8ieN1h6h9cGZuLUYCzmcl
-	EwobhgUeuOun4hCYCJdaePHoeO7lpYkZ1mg/lOCbtxQKQUPEDc7TJvYRj8YPgONrUn+Q/AAbIz4
-	G29PsG7r6PThu4/TsElH13rOxswqiXCp6fxHT6Sw3A97s2/yqgVf0NaZLH7bNx7/yVWdwpULPdS
-	FB/3JOT589b7dGa30iw9CwJBzZBamAjJQTMt
-X-Google-Smtp-Source: AGHT+IHnMSDX5ZaXtJ2dFla7HDmAssBc1J7kBf27eQZe4BxrcsGOSqTZlUY9mpGYXqZde/4Zg6VzWA==
-X-Received: by 2002:a05:6000:402a:b0:391:2c0c:126b with SMTP id ffacd0b85a97d-39132d531c3mr15248738f8f.23.1741700256551;
-        Tue, 11 Mar 2025 06:37:36 -0700 (PDT)
-Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af2810c348esm9560597a12.45.2025.03.11.06.37.34
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Mar 2025 06:37:36 -0700 (PDT)
-Date: Tue, 11 Mar 2025 21:37:31 +0800
-From: joeyli <jlee@suse.com>
-To: KP Singh <kpsingh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	paul@paul-moore.com, bp@alien8.de, sfr@canb.auug.org.au,
-	peterz@infradead.org, nathan@kernel.org,
-	Jiri Kosina <JKosina@suse.cz>, Michal Suchanek <msuchanek@suse.com>
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-Message-ID: <20250311133731.GB17395@linux-l9pv.suse>
-References: <20240801171747.3155893-1-kpsingh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CtYQQrfF4+261kybJ3CjRndszSIsV0nzr2ogD5XU8ymqDa8uqALlodyvEqhRfnjJ/sfPKg8tIATcJbrL43AmDbMDmbAW1N06GSccF5O+k9ibnDLI0W5QfIjN8Z8mjs7xBFkMo6dEnOpp6NWe6zzZwuQ52NeEGgTK8OJQsHorPwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PvaCAfVG; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B9O9BJ026567;
+	Tue, 11 Mar 2025 13:37:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=JJMEVRMgBysG/rCdU5xkas/lYQi1X1
+	Or+Niq8x80GmQ=; b=PvaCAfVGCIetcTtPsGzyClf2gkop1ZbF8debTPYGGmoCa/
+	zE3CFkUWcEWZqMKckJ66vWFVxBkGV490JtjrbA6mR0zg2TznGxRSMn31K304Lxmy
+	/22kc//XQzcPDKa4xrq7hYQQCImktbO/c05jqTGSHpkRDBGDjRM6vrYS7JxURmY7
+	iJRXOmYyGgCUDyC+AkSRhNLdlpnYPxYft6pHStMEdG0Y/y2dWEnnyaFlF2G841wW
+	W9asmSZ7csJRoGyrMKNuLGakc6Xf/BRgSi0UoZsA3BT3/rsias/Tu516Kb0c7NRW
+	MSHR66chT8+yJGgF0xcI16hrnlkrslFH7U+nz90Q==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45a7a1c4ny-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 13:37:42 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52BCBJrY006957;
+	Tue, 11 Mar 2025 13:37:41 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45907t4m2n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 13:37:41 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52BDbcEp50659614
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 13:37:38 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4CFAC20043;
+	Tue, 11 Mar 2025 13:37:38 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9ACE520040;
+	Tue, 11 Mar 2025 13:37:37 +0000 (GMT)
+Received: from osiris (unknown [9.179.21.35])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 11 Mar 2025 13:37:37 +0000 (GMT)
+Date: Tue, 11 Mar 2025 14:37:36 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Kees Cook <kees@kernel.org>,
+        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH mm-unstable 0/2] mseal system mappings fix + s390
+ enablement
+Message-ID: <20250311133736.12846D42-hca@linux.ibm.com>
+References: <20250311123326.2686682-1-hca@linux.ibm.com>
+ <a326735d-ca3e-4aee-9f98-4e742dfc15f5@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,30 +91,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240801171747.3155893-1-kpsingh@kernel.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <a326735d-ca3e-4aee-9f98-4e742dfc15f5@lucifer.local>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ZhUvvsniQwUCumfJ9wijChu1grlkgigb
+X-Proofpoint-GUID: ZhUvvsniQwUCumfJ9wijChu1grlkgigb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=2 priorityscore=1501
+ phishscore=0 lowpriorityscore=0 mlxlogscore=181 malwarescore=0
+ clxscore=1015 mlxscore=2 impostorscore=0 bulkscore=0 spamscore=2
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2503110086
 
-Hi KP,
-
-On Thu, Aug 01, 2024 at 07:17:47PM +0200, KP Singh wrote:
-> With LSMs using static calls, early_lsm_init needs to wait for setup_arch
-> for architecture specific functionality which includes jump tables and
-> static calls to be initialized.
+On Tue, Mar 11, 2025 at 01:02:47PM +0000, Lorenzo Stoakes wrote:
+> On Tue, Mar 11, 2025 at 01:33:24PM +0100, Heiko Carstens wrote:
+> > When rebasing the mseal series on top of the generic vdso data storage
+> > the VM_SEALED_SYSMAP vm flag for the vvar mapping got lost. Add that again.
 > 
-> This only affects "early LSMs" i.e. only lockdown when
-> CONFIG_SECURITY_LOCKDOWN_LSM_EARLY is set.
+> I'm confused by this? Some merge patch resolution thing?
+
+See my other mail.
+
+> > Also add s390 support for MSEAL_SYSTEM_MAPPINGS.
 > 
-> Fixes: 2732ad5ecd5b ("lsm: replace indirect LSM hook calls with static calls")
-> Signed-off-by: KP Singh <kpsingh@kernel.org>
+> 'Also' = the whole thing this series does?
+> 
+> Can you confirm that s390 absolutely does not rely upon
+> moving/manipulating/etc. the VDSO, VVAR, etc. mappings?
+> 
+> You should say that here.
 
-I have tested acpi table override function by
-CONFIG_ACPI_TABLE_OVERRIDE_VIA_BUILTIN_INITRD option. As this patch
-description, the early LSM can NOT lockdown acpi table override in early
-boot stage now. 
-
-Do you have any plan to fix the early lockdown LSM? Or I missed any fix
-patch in kernel mailing list?
-
-Thanks a lot!
-Joey Lee
+Just like for arm64, and x86_64 the s390 part is just adding the new
+vm flag to the _install_mappings() call in vdso code. Otherwise there
+is nothing to be considered.
 
