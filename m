@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-555336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19993A5B5D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:27:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF37FA5B5DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2358F7A207D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B0581709C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6BA1DF985;
-	Tue, 11 Mar 2025 01:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A7F1DF977;
+	Tue, 11 Mar 2025 01:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjQiePPY"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cg+bgZee"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B37DA923;
-	Tue, 11 Mar 2025 01:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83ACA360;
+	Tue, 11 Mar 2025 01:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741656441; cv=none; b=mfkg6vlEi8Ak7tC9r8HkDfQZTavBRp7a8IECbhHQlmuWb/Jf1ZCY1UE8rGXBcw9D4Iciyjj3zkyNiKQXgzVpaNAoLtC61H0hBkPvt6RmOOFalU/MZtuZ3EShcjy3x3CF/QBbCEfa6zo+sjIjNVpRJDnMB0hTKyho9vQXFalX3+A=
+	t=1741656572; cv=none; b=UoM1xTx9coD5wrtU6peraMb4YNqgDXRywWmONsSTA1A/dfa2FiOkPFOloCyXzRtJbgB5EKLagRCa89+p0k56LFZaeRtlDKdeX+rCRw0NYsBJqYAORPfthifNiFkqtzi66N7peiyFYkMpcq2wMrFGRI2iy9a9e/dTWnTX6mGmBs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741656441; c=relaxed/simple;
-	bh=ht9scaUwYIWY/isuqrXAqzg0A5wR6NjSNdeQzdpWLP4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aHHJ/2c6V5pncq7tuvOTMjQCroGPM+mvwMNgfwpN5EGmscTfjvaGt8c7/lRGWkRq8GKj22ysUaEKT/qO4hFHHZePKqIscVs6DPA7BHhwE0KQvzSB70qNxL1+eNyrD/Zs6lLH0NTX4sBi9yNudnpOVfeBVQ0wmrG7ZdsDOBYNOpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KjQiePPY; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c0ca5e6d45so60938085a.3;
-        Mon, 10 Mar 2025 18:27:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741656439; x=1742261239; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mYu4oax/thewz4e+p/abSxr+bcjcos4iMdBqH/7SF5g=;
-        b=KjQiePPYX4PrudbXPwGHsevGCJQ0cDci9pldlxpbs2NL2TRYoQ1spxbZ1LhZJ6LOP6
-         OtQnONB0J/1gHJLywaF/IIMkJ4xVlE8obS6Fxu7pf2BThuLcS0yrbih8hMlL8a6r0glu
-         VPFrOekY6nfSsgD6jBfacUVrYs4PIpOMB4WxKejrm+4NSbAIiTEwGDdDMZq49BZRV+/1
-         Jd2FrFRREbGkdBTHaPJhjX1aHFYpKdwwB+RMqdwD7jBGNZMVVxKPrJNjGlv7M33RycLR
-         TsGsb3eqGgb8E4gKf6IOnPvFvhQj74seTj8m2y5yoZubRdt9uQlZY4u+Ntaq80JKFQ9x
-         mmbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741656439; x=1742261239;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mYu4oax/thewz4e+p/abSxr+bcjcos4iMdBqH/7SF5g=;
-        b=jddfyyCPH08XC98xFNVgEBag+rEIrGmxh7EshkFh0lIhb/AZp1q2k0BRDcjAEHulHf
-         YUZ53lwRRt/LQzyqDk5l/0+6U9Xyjs7d81wEY32Hc47gEAfUOFNE3dV08Wkmi4TcX6Ib
-         7KuipRsAy0Jr01DfJL9IzYncndjmRyxszNjIWpCMuAAf794PwCyRe1Q4vxKBdRoQp5Rn
-         V16jrDY2VDXbOUNY0wwmXEYPpFCSiSiZ+itvX2/yhpp8fWn1jSofSATQrJGzMRbfC5z3
-         rgfoPOLzCifFFfhggBZ+pTjP96pcxjXPVAsmhjj3IUCXAFzcrfJnhsNury6j6EL03Llj
-         Mo6g==
-X-Forwarded-Encrypted: i=1; AJvYcCV1zlstLYQIArZHYFkG6CsHhoW1SRccUFDjwbg74VX9zvetXfmXXp35OPsH3DS7SP0m+jQH0TiGv6UEz3Q=@vger.kernel.org, AJvYcCW6ZNO5mfvnbbBgykNq4nxG60clieU35rCQZDrKWmbOU60d+t380bOznU/81aaMo0JRBZgL+ckQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/3ehcXXkbHyo2/M5QWE097EKugZCXFQPGVvtCTWoiCLb04qBm
-	6wQSTJ4gSLCs2JIVRkquhS+6cyVefAiFEmMtHvJcAE8j59Zz3zw=
-X-Gm-Gg: ASbGncuwB5uECbwMqdpt6OxBdBCM1pmFcmsJZIq9ySYB0nQybrZC7IE/BpdZRAgzaj0
-	Ub2PC3OM4EllRUHxO7Op39hz3EmlomwUbQhHjeyicSY0ReMedVrJ9sdYuejmR3J7tnS8K+Si5eF
-	gC7C9qLeD+KG37ZvcuM5VqbpRS4QtyWlmZbmIYP1BBG57cqDpxSEVjY2JXPThHmykOYJ2Qk52vb
-	eaPBQysnlYIWUDdKbDDFPyrbkfSr/EWeO7HudV22NwI1G2+UtqwP9CTf30Wi90YBOrXJ48mDRZu
-	GzD18d+6OjKZkMqGFoBkMj4d0Zu/FpDMz4AaMxsyNQ==
-X-Google-Smtp-Source: AGHT+IG1lIg0zhgXXdip9xAmm17KRNm/AUw5DrBkAQ32s9Cq80PSZ7xrsQWtT87xxvnN7LcqufT+vA==
-X-Received: by 2002:a05:6214:d06:b0:6e8:f645:2639 with SMTP id 6a1803df08f44-6ea2dd1e540mr10215056d6.5.1741656438961;
-        Mon, 10 Mar 2025 18:27:18 -0700 (PDT)
-Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f70a2dd6sm65178346d6.61.2025.03.10.18.27.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 18:27:17 -0700 (PDT)
-From: Chenyuan Yang <chenyuan0y@gmail.com>
-To: gregkh@linuxfoundation.org,
-	joel@jms.id.au,
-	andrew@codeconstruct.com.au
-Cc: linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Chenyuan Yang <chenyuan0y@gmail.com>
-Subject: [PATCH] usb: gadget: aspeed: Add NULL pointer check in ast_vhub_init_dev()
-Date: Mon, 10 Mar 2025 20:27:05 -0500
-Message-Id: <20250311012705.1233829-1-chenyuan0y@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741656572; c=relaxed/simple;
+	bh=TS2WD0LGdmJ3Bg5okMf22/qVCeyY/UfSxXD8aVLF15g=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=uOdTyI1ofdl3k9A3rAMmJfyh0MNiWmJpmkQHmx3a6VdDJUrqukuZXpzb6aW9+7pmNUILHOrOp4WSiHAkldXkWMw0Y8IDV7jBM2i9eXhnYxZzfjM909rj4FcIGIxNk2XrXt/s83HKfNeT8mo77GaFLSE0xcmrJ9FGvnQjM7MRAAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cg+bgZee; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99764C4CEE5;
+	Tue, 11 Mar 2025 01:29:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741656572;
+	bh=TS2WD0LGdmJ3Bg5okMf22/qVCeyY/UfSxXD8aVLF15g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Cg+bgZeeMUhgypkVyufXcErFqv+HHMEjTCAeFYdEWluBGCAoIceH+iC0y1gOFFIsI
+	 SjR8CDAItsGlgIHEg9P89wZDHF4qJzzrBp3z3YjOlrfLc+8g6ffkExyQ6JVHslsh1o
+	 xGiQSA0CRdYRCEQMTTTLQoyRLogDkfhy+SULTnE5ydqjr2YroNYsM39PVkjQ33U2tM
+	 M/8t6kgMlvLAVxj+vZzgaKZxLx83o78e+S/IuFgyf/EFtGxZQH8+Qum0GklCvNLIwi
+	 pXnqRe3oZd1yNf797NhWGrt7iCdL0RdghTWtMY1e5GuuW0pNDomKaPOyLr7HZcvv4k
+	 pWIX3knQA0mMQ==
+Date: Tue, 11 Mar 2025 10:29:28 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: probe-events: Cleanup entry-arg storing code
+Message-Id: <20250311102928.ae96ceb8870e73e30f6f1279@kernel.org>
+In-Reply-To: <20250306191404.69b0877e@gandalf.local.home>
+References: <174099254917.619976.17555764627143910556.stgit@devnote2>
+	<20250306191404.69b0877e@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The variable d->name, returned by devm_kasprintf(), could be NULL.
-A pointer check is added to prevent potential NULL pointer dereference.
-This is similar to the fix in commit 3027e7b15b02
-("ice: Fix some null pointer dereference issues in ice_ptp.c").
+On Thu, 6 Mar 2025 19:14:04 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-This issue is found by our static analysis tool
+> On Mon,  3 Mar 2025 18:02:29 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > +	/* Search the offset for the sprcified argnum. */
+> > +	for (i = 0; i < earg->size - 1 && earg->code[i].op != FETCH_OP_END; i++) {
+> > +		if (earg->code[i].op != FETCH_OP_ARG || earg->code[i].param != argnum)
+> > +			continue;
+> 
+> I wonder if you can save a loop by changing this to:
+> 
+> 		if (earg->code[i].op != FETCH_OP_ARG) {
+> 			last_offset = earg->code[i].offset;
+> 			continue;
+> 		}
+> 
+> 		if (earg->code[i].param != argnum)
+> 			continue;
+> 
+> 
+> > +
+> > +		if (WARN_ON_ONCE(earg->code[i + 1].op != FETCH_OP_ST_EDATA))
+> > +			continue;
+> > +
+> > +		return earg->code[i + 1].offset;
+> >  	}
+> > -	return -ENOSPC;
+> > +	if (i >= earg->size - 1)
+> > +		return -ENOSPC;
+> > +
+> > +	/* Not found, append new entry if possible. */
+> > +	offset = get_entry_arg_max_offset(earg) + sizeof(unsigned long);
+> 
+> Then here you could use last_offset instead of running the loop again?
 
-Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
----
- drivers/usb/gadget/udc/aspeed-vhub/dev.c | 3 +++
- 1 file changed, 3 insertions(+)
+Yeah, but I would like it easier to read and safer (adding WARN_ON)
+especially, 
 
-diff --git a/drivers/usb/gadget/udc/aspeed-vhub/dev.c b/drivers/usb/gadget/udc/aspeed-vhub/dev.c
-index 573109ca5b79..a09f72772e6e 100644
---- a/drivers/usb/gadget/udc/aspeed-vhub/dev.c
-+++ b/drivers/usb/gadget/udc/aspeed-vhub/dev.c
-@@ -548,6 +548,9 @@ int ast_vhub_init_dev(struct ast_vhub *vhub, unsigned int idx)
- 	d->vhub = vhub;
- 	d->index = idx;
- 	d->name = devm_kasprintf(parent, GFP_KERNEL, "port%d", idx+1);
-+	if (!d->name)
-+		return -ENOMEM;
-+
- 	d->regs = vhub->regs + 0x100 + 0x10 * idx;
- 
- 	ast_vhub_init_ep0(vhub, &d->ep0, d);
+> 		if (earg->code[i].op != FETCH_OP_ARG) {
+> 			last_offset = earg->code[i].offset;
+> 			continue;
+> 		}
+
+this is a bit unsafe if we introduce another operation except for
+the FETCH_OP_ARG and FETCH_OP_ST_EDATA. (and it is expecting the
+offset is always increased.)
+
+Thank you,
+
+> 
+> -- Steve
+> 
+> 
+> > +	store_entry_arg_at(&earg->code[i], argnum, offset);
+> > +	return offset;
+> >  }
+> >  
+
+
 -- 
-2.34.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
