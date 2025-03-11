@@ -1,186 +1,168 @@
-Return-Path: <linux-kernel+bounces-556276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0060A5C392
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:16:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0523A5C397
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:16:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E95316C7DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AACA1177865
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A19825BAC5;
-	Tue, 11 Mar 2025 14:14:31 +0000 (UTC)
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE70225C71C;
+	Tue, 11 Mar 2025 14:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hG0oXFG6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7579F254B0D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07348254B0D;
+	Tue, 11 Mar 2025 14:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741702470; cv=none; b=rUNxHBq36CH/so83adGVsUGRnFZe3pTOmCN5Ru/szPqvNeW7EMc2IMX51sxzU0TPXpyq8HxhHyuIZNZ/aoVwSzj7lgerlnjFJSHxeaN7SoM14jQCnGKhOVbV24Cg0BbiX2iIU3njf1UkEFsuELoIxZINMIfhNWBs/paPYtCo8eM=
+	t=1741702479; cv=none; b=FPhDz7LLThh+dyZpjjHqhew7NyJLdFIbIG6RFQckwktyqysW2VuNtYFuGZiMa6Fy7aw1XuTxT+XbGEMMLMlFh58G+Jqiq9qwHc655WvkjY91NnWFoiotnsbcbXniBkbMHtlPlLLKB1Gu1mlKSwvDjijTvP30TM1cPvD6VTrq8fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741702470; c=relaxed/simple;
-	bh=4GxfhW1VvwugEPa4S44BXC1EuXDp+9/89G1h3HCD//Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fpItS24soEr5u7nzSAHeom/T3u8cx0YA76GkzrNTW1b4qHPwr/u4ow8wDan82HB/X3i9MaTaCRuiCfFbfH3qxzfUQZzRXXgaxm1Jd2zD8iBSZy3QuVAaQbiC1YBQAvpNr1jM2NKc+nAX05xFlKaZzWDhm3Y332f8Pkyr2Mq2nBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 91CB644257;
-	Tue, 11 Mar 2025 14:14:19 +0000 (UTC)
-Message-ID: <536b4feb-4631-4727-b918-c2e39e8217fb@ghiti.fr>
-Date: Tue, 11 Mar 2025 15:14:18 +0100
+	s=arc-20240116; t=1741702479; c=relaxed/simple;
+	bh=yeuRqhNPxhQWRMw+OTMnVBLhf+GKJ3O5IeEzkxZ0+Xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m74fw51nMBjkQP0BQWFzzIZe+wd+U7wCrsr3qKka9F8/C0N8EeG3JalcI9IxYjVeszqY92lAvy9LLNIO5sLVAcrYTcTu4tQv5svJ6ZQzmcFGL29bnKsSAis6gov8jmQoqw7GVeufKK2OvH7V/Oro2Z8ncjO6ijAJ5UgD4TYuN3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hG0oXFG6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C50BC4CEE9;
+	Tue, 11 Mar 2025 14:14:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741702478;
+	bh=yeuRqhNPxhQWRMw+OTMnVBLhf+GKJ3O5IeEzkxZ0+Xg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hG0oXFG6SC8sDIeE5/XxN1PPtT4J5WkqDYCfDK2Fxpycjk3PWYAn6NOXRQrl0qz+E
+	 UgYNxORvvwIhTnNyrBAo3uvi6V//t5SILKN6JvE4mwH/0/KdpvsGRu+g60DRIqrq8X
+	 mJTnJAMsDmgr49FDdgiYiHBmtNp7YPR8dJUU2VW6TggIRk8OA3HPawnqZMEtHTvN49
+	 5ueTMQEt4Dxn+5kVp5mlvGhGvSASFvrDzpjdVsGwEneAQnOT0kiHBJbn8wwAQ85JsK
+	 gzuyHrc4R9Th4qG2eOEvdnnD+cLhWLJ12l7Sd2fAeNADMII4X6hCWqe+/E6o7KMESz
+	 d7yqvzyNNSP3w==
+Date: Tue, 11 Mar 2025 15:14:32 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Eric <eric.4.debian@grabatoulnz.fr>,
+	Salvatore Bonaccorso <carnil@debian.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Jian-Hong Pan <jhp@endlessos.org>, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	Dieter Mummenschanz <dmummenschanz@web.de>
+Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
+ board type") on reboot (but not cold boot)
+Message-ID: <Z9BFSM059Wj2cYX5@ryzen>
+References: <8763ed79-991a-4a19-abb6-599c47a35514@grabatoulnz.fr>
+ <Z8VLZERz0FpvpchM@x1-carbon>
+ <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
+ <Z8l61Kxss0bdvAQt@ryzen>
+ <Z8l7paeRL9szo0C0@ryzen>
+ <689f8224-f118-47f0-8ae0-a7377c6ff386@grabatoulnz.fr>
+ <Z8rCF39n5GjTwfjP@ryzen>
+ <9c4a635a-ce9f-4ed9-9605-002947490c61@redhat.com>
+ <Z88rtGH39C-S8phk@ryzen>
+ <383d5740-7740-4051-b39a-b8c74b035ec2@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: fgraph: Fix stack layout to match
- __arch_ftrace_regs argument of ftrace_return_to_handler
-Content-Language: en-US
-To: Pu Lehui <pulehui@huaweicloud.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- Naresh Kamboju <naresh.kamboju@linaro.org>, Pu Lehui <pulehui@huawei.com>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>
-References: <20250311132243.2178271-1-pulehui@huaweicloud.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250311132243.2178271-1-pulehui@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddvgeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeeuffegheeugfeugeegvdeigeegieegkeejhfeludejhfegvdehvefghfevkedtleenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhmtghouhhnthdrshgsnecukfhppeefuddrfedvrdekuddrudekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeefuddrfedvrdekuddrudekjedphhgvlhhopegludelvddrudeikedrvddurddvhegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepledprhgtphhtthhopehpuhhlvghhuhhisehhuhgrfigvihgtlhhouhgurdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhop
- ehmhhhirhgrmhgrtheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhoshhtvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopehnrghrvghshhdrkhgrmhgsohhjuheslhhinhgrrhhordhorhhgpdhrtghpthhtohepphhulhgvhhhuiheshhhurgifvghirdgtohhm
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <383d5740-7740-4051-b39a-b8c74b035ec2@redhat.com>
 
-Hi Pu,
+Hello Hans, Eric,
 
-Thanks for working on this, we were talking about this issue with Björn 
-this morning!
+On Mon, Mar 10, 2025 at 09:12:13PM +0100, Hans de Goede wrote:
+> 
+> I agree with you that this is a BIOS bug of the motherboard in question
+> and/or a bad interaction between the ATI SATA controller and Samsung SSD
+> 870* models. Note that given the age of the motherboard there are likely
+> not going to be any BIOS updates fixing this though.
 
-On 11/03/2025 14:22, Pu Lehui wrote:
-> From: Pu Lehui <pulehui@huawei.com>
->
-> Naresh Kamboju reported a "Bad frame pointer" kernel warning while
-> running LTP trace ftrace_stress_test.sh in riscv. We can reproduce the
-> same issue with the following command:
->
-> ```
-> $ cd /sys/kernel/debug/tracing
-> $ echo 'f:myprobe do_nanosleep%return args1=$retval' > dynamic_events
-> $ echo 1 > events/fprobes/enable
-> $ echo 1 > tracing_on
-> $ sleep 1
-> ```
->
-> And we can get the following kernel warning:
->
-> [  127.692888] ------------[ cut here ]------------
-> [  127.693755] Bad frame pointer: expected ff2000000065be50, received ba34c141e9594000
-> [  127.693755]   from func do_nanosleep return to ffffffff800ccb16
-> [  127.698699] WARNING: CPU: 1 PID: 129 at kernel/trace/fgraph.c:755 ftrace_return_to_handler+0x1b2/0x1be
-> [  127.699894] Modules linked in:
-> [  127.700908] CPU: 1 UID: 0 PID: 129 Comm: sleep Not tainted 6.14.0-rc3-g0ab191c74642 #32
-> [  127.701453] Hardware name: riscv-virtio,qemu (DT)
-> [  127.701859] epc : ftrace_return_to_handler+0x1b2/0x1be
-> [  127.702032]  ra : ftrace_return_to_handler+0x1b2/0x1be
-> [  127.702151] epc : ffffffff8013b5e0 ra : ffffffff8013b5e0 sp : ff2000000065bd10
-> [  127.702221]  gp : ffffffff819c12f8 tp : ff60000080853100 t0 : 6e00000000000000
-> [  127.702284]  t1 : 0000000000000020 t2 : 6e7566206d6f7266 s0 : ff2000000065bd80
-> [  127.702346]  s1 : ff60000081262000 a0 : 000000000000007b a1 : ffffffff81894f20
-> [  127.702408]  a2 : 0000000000000010 a3 : fffffffffffffffe a4 : 0000000000000000
-> [  127.702470]  a5 : 0000000000000000 a6 : 0000000000000008 a7 : 0000000000000038
-> [  127.702530]  s2 : ba34c141e9594000 s3 : 0000000000000000 s4 : ff2000000065bdd0
-> [  127.702591]  s5 : 00007fff8adcf400 s6 : 000055556dc1d8c0 s7 : 0000000000000068
-> [  127.702651]  s8 : 00007fff8adf5d10 s9 : 000000000000006d s10: 0000000000000001
-> [  127.702710]  s11: 00005555737377c8 t3 : ffffffff819d899e t4 : ffffffff819d899e
-> [  127.702769]  t5 : ffffffff819d89a0 t6 : ff2000000065bb18
-> [  127.702826] status: 0000000200000120 badaddr: 0000000000000000 cause: 0000000000000003
-> [  127.703292] [<ffffffff8013b5e0>] ftrace_return_to_handler+0x1b2/0x1be
-> [  127.703760] [<ffffffff80017bce>] return_to_handler+0x16/0x26
-> [  127.704009] [<ffffffff80017bb8>] return_to_handler+0x0/0x26
-> [  127.704057] [<ffffffff800d3352>] common_nsleep+0x42/0x54
-> [  127.704117] [<ffffffff800d44a2>] __riscv_sys_clock_nanosleep+0xba/0x10a
-> [  127.704176] [<ffffffff80901c56>] do_trap_ecall_u+0x188/0x218
-> [  127.704295] [<ffffffff8090cc3e>] handle_exception+0x14a/0x156
-> [  127.705436] ---[ end trace 0000000000000000 ]---
->
-> The reason is that the stack layout for constructing argument for the
-> ftrace_return_to_handler in the return_to_handler does not match the
-> __arch_ftrace_regs structure of riscv, leading to unexpected results.
->
-> Fixes: a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with ftrace_regs")
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Closes: https://lore.kernel.org/all/CA+G9fYvp_oAxeDFj88Tk2rfEZ7jtYKAKSwfYS66=57Db9TBdyA@mail.gmail.com
-> Signed-off-by: Pu Lehui <pulehui@huawei.com>
-> ---
->   arch/riscv/kernel/mcount.S | 24 +++++++++++-------------
->   1 file changed, 11 insertions(+), 13 deletions(-)
->
-> diff --git a/arch/riscv/kernel/mcount.S b/arch/riscv/kernel/mcount.S
-> index 068168046e0e..da4a4000e57e 100644
-> --- a/arch/riscv/kernel/mcount.S
-> +++ b/arch/riscv/kernel/mcount.S
-> @@ -12,8 +12,6 @@
->   #include <asm/asm-offsets.h>
->   #include <asm/ftrace.h>
->   
-> -#define ABI_SIZE_ON_STACK	80
-> -
->   	.text
->   
->   	.macro SAVE_ABI_STATE
-> @@ -28,12 +26,12 @@
->   	 * register if a0 was not saved.
->   	 */
->   	.macro SAVE_RET_ABI_STATE
-> -	addi	sp, sp, -ABI_SIZE_ON_STACK
-> -	REG_S	ra, 1*SZREG(sp)
-> -	REG_S	s0, 8*SZREG(sp)
-> -	REG_S	a0, 10*SZREG(sp)
-> -	REG_S	a1, 11*SZREG(sp)
-> -	addi	s0, sp, ABI_SIZE_ON_STACK
-> +	addi	sp, sp, -FREGS_SIZE_ON_STACK
-> +	REG_S	ra, FREGS_RA(sp)
-> +	REG_S	s0, FREGS_S0(sp)
-> +	REG_S	a0, FREGS_A0(sp)
-> +	REG_S	a1, FREGS_A1(sp)
-> +	addi	s0, sp, FREGS_SIZE_ON_STACK
->   	.endm
->   
->   	.macro RESTORE_ABI_STATE
-> @@ -43,11 +41,11 @@
->   	.endm
->   
->   	.macro RESTORE_RET_ABI_STATE
-> -	REG_L	ra, 1*SZREG(sp)
-> -	REG_L	s0, 8*SZREG(sp)
-> -	REG_L	a0, 10*SZREG(sp)
-> -	REG_L	a1, 11*SZREG(sp)
-> -	addi	sp, sp, ABI_SIZE_ON_STACK
-> +	REG_L	ra, FREGS_RA(sp)
-> +	REG_L	s0, FREGS_S0(sp)
-> +	REG_L	a0, FREGS_A0(sp)
-> +	REG_L	a1, FREGS_A1(sp)
-> +	addi	sp, sp, FREGS_SIZE_ON_STACK
->   	.endm
->   
->   SYM_TYPED_FUNC_START(ftrace_stub)
+Looking at the number of quirks for some of the ATI SB7x0/SB8x0/SB9x0 SATA
+controllers, they really look like something special (not in a good way):
+https://github.com/torvalds/linux/blob/v6.14-rc6/drivers/ata/ahci.c#L236-L244
+
+-Ignore SError internal
+-No MSI
+-Max 255 sectors
+-Broken 64-bit DMA
+-Retry SRST (software reset)
+
+And that is even without the weird "disable NCQ but only for Samsung SSD
+8xx drives" quirk when using these ATI controllers.
 
 
-It looks good to me, so:
+What does bother me is that we don't know if it is this specific mobo/BIOS:
+     Manufacturer: ASUSTeK COMPUTER INC.
+     Product Name: M5A99X EVO R2.0
+     Version: Rev 1.xx
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+     M5A99X EVO R2.0 BIOS 2501
+     Version 2501
+     3.06 MB
+     2014/05/14
 
-Thanks,
 
-Alex
+that should have a NOLPM quirk, like we do for specific BIOSes:
+https://github.com/torvalds/linux/blob/v6.14-rc6/drivers/ata/ahci.c#L1402-L1439
 
+Or if it this ATI SATA controller that is always broken when it comes
+to LPM, regardless of the drive, or if it is only Samsung drives.
+
+Considering the dmesg comparing cold boot, the Maxtor drive and the
+ASUS ATAPI device seems to be recognized correctly.
+
+Eric, could you please run:
+$ sudo hdparm -I /dev/sdX | grep "interface power management"
+
+on both your Samsung and Maxtor drive?
+(A star to the left of feature means that the feature is enabled)
+
+
+
+One guess... perhaps it could be Device Initiated PM that is broken with
+these controllers? (Even though the controller does claim to support it.)
+
+Eric, could you please try this patch:
+
+diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+index f813dbdc2346..ca690fde8842 100644
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -244,7 +244,7 @@ static const struct ata_port_info ahci_port_info[] = {
+ 	},
+ 	[board_ahci_sb700] = {	/* for SB700 and SB800 */
+ 		AHCI_HFLAGS	(AHCI_HFLAG_IGN_SERR_INTERNAL),
+-		.flags		= AHCI_FLAG_COMMON,
++		.flags		= AHCI_FLAG_COMMON | ATA_FLAG_NO_DIPM,
+ 		.pio_mask	= ATA_PIO4,
+ 		.udma_mask	= ATA_UDMA6,
+ 		.port_ops	= &ahci_pmp_retry_srst_ops,
+
+
+
+Normally, I do think that we need more reports, to see if it is just
+this specific BIOS, or all the ATI SB7x0/SB8x0/SB9x0 SATA controllers
+that are broken...
+
+...but, considering how many quirks these ATI controllers have already...
+
+...and the fact that the one (Dieter) who reported that his Samsung SSD 870
+QVO could enter deeper sleep states just fine was running an Intel AHCI
+controller (with the same FW version as Eric), I would be open to a patch
+that sets ATA_FLAG_NO_LPM for all these ATI controllers.
+
+Or a ATA_QUIRK_NO_LPM_ON_ATI, like you suggested, if we are certain that it
+is only Samsung drives that don't work with these ATI SATA controllers.
+
+
+Kind regards,
+Niklas
 
