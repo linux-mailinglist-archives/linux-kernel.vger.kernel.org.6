@@ -1,411 +1,77 @@
-Return-Path: <linux-kernel+bounces-555294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7AFDA5B3F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:35:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4ABA5B406
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:36:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84B493AE58F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:34:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD32A172F80
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D019288B1;
-	Tue, 11 Mar 2025 00:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA7A200B0;
+	Tue, 11 Mar 2025 00:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="cs/A6iuZ"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NkzqL8m/"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D3118E2A;
-	Tue, 11 Mar 2025 00:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF6D5234
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 00:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741653290; cv=none; b=uBIX2af0V0bLbhg+DZhNHPTBtH4+zW61YCBUoNP9aemsSXp9lnii2dX15KdQcmQqmJHzEnahgukfEiTY7l6OwFFy0PwyW+6z0OuOJsNFJsHcii/bwBhdU22BpbtvNSnnFBxUf2C+KTgzJO3WcbrU46nplPDdw+3qeIipUrKyCDs=
+	t=1741653358; cv=none; b=VSp/KpDnSOWHcrJTsCEvDletc7k3dNbN493PJFT9kAo1CSuP7Bi40KGwl7Yg44kRPh/phChOwDt0SWsrtTHZ96Nmg+yfBll8NQrMPtIu8JDnDBo4CdhzPjdLoleqhx09o33PCgquFlHkTLHJMvBeXifofUoXpFXA8oruPfAewTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741653290; c=relaxed/simple;
-	bh=8Jmh3g2bmFd5Vp8KXq7XkPMX5pLRKW6JPOmo3V4xUvY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u4/Hcop1Gn1fbZdldNKMu+8Vt1TiIHG2ZzVs1Okl1E3fhq3YrphsNpyQFXnYBvM40vGm5nvdO9uFpWRkzYzQz0l2MKBdyqHPVuRVyX1dKSckolljNVrtfuVrPRTjriiXlapM6/fkJDuu/93Ewtw749SJ0nN20lJGfwVJbGhuvPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=cs/A6iuZ; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 8A2B720937;
-	Tue, 11 Mar 2025 01:34:46 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id gj0UgNCP7dwy; Tue, 11 Mar 2025 01:34:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1741653282; bh=8Jmh3g2bmFd5Vp8KXq7XkPMX5pLRKW6JPOmo3V4xUvY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=cs/A6iuZqqP+N1avsySSpeLEYsfWlac/mMjW4BUHvDIaSu+apJGOTE+Up7fNEL0zt
-	 S5fUvuy/squ9iqCEcEZkKdbyz5SANllDc4nLSAgumaQwlHBwPWQvhicG/qvcazz7h9
-	 giRQ5wmSiYJ3h6sMQQu1p5c7w1/yfEuhM+2h8uTvHVl00duneBCZ5IdiynzH4Xtxwv
-	 ZxUFBvMOnpJYBcnhpiwZm+pFOhicYJGJDLlivobHJjPdjsxTUfqx+e3rc/niq+rgyr
-	 C1AGGHXtg0p0IXH0rUw3bU5FcjtZcSFFeIWHoV6aGPNRJJ1IAPMyvnw0IE4UeIyUwF
-	 p9rzkIy6r5LZg==
-From: Gabriel Gonzales <semfault@disroot.org>
-To: 
-Cc: Gabriel Gonzales <semfault@disroot.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v3 2/2] arm64: dts: qcom: sm6125: Initial support for xiaomi-ginkgo
-Date: Tue, 11 Mar 2025 08:33:48 +0800
-Message-ID: <20250311003353.8250-3-semfault@disroot.org>
-In-Reply-To: <20250311003353.8250-1-semfault@disroot.org>
-References: <20250308013019.10321-1-semfault@disroot.org>
- <20250311003353.8250-1-semfault@disroot.org>
+	s=arc-20240116; t=1741653358; c=relaxed/simple;
+	bh=ok9fQkjTAJT8maHeXtQN58QU2aGw86+f2bDLzty8qRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NSisTD5GuTGBuZ0ikTuVv0MRqquN1b/MfzpLGExJIdsYCShi3k16T2/O9yWWkhjRA9ZjXVsWXn0F2DZh9o59H65ybU5y3FskpvXchTjcs7sLa0oVsIbig1hvcvj4Twe08V96C3UOJDDXdxleDi4DPF9vqZmpvO2nm1ouv0N4jNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NkzqL8m/; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=i+tciCSY+qLhnWHcqp4RtdeinAR7d+E6IEhacthVhOg=; b=NkzqL8m/fNT1SrziU4OYXXSiVw
+	OM/WY+f/+pAm/rMsaZAGr5ddqzg7KI0Xjy2RBBtj8Q0u0n88N3L4TiYxnZh4fmQ8oVgLIPnF7v6qD
+	XOSfllDC2TACwUB0VK3LDqSQWut52VxvQjaTBS7vD2jHINgs25u7Bl56Q1uPeT6UrnqYbdfgBfSow
+	rTTYUP39SVJPQw5m9wbODYpOIMkMSjRO1l8pFubOHshYi6oIVYS73dArwuxumwM9QGkUyTGMp4dlC
+	vwl5Zr1W8ajlqv/JCOYH+ztOcRUQr33iEMyNwRDntDJEWW+ZiPX/0lUGCkz79YrQ+6EX2xp+2yyKh
+	fYDblx+w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1trnb8-00000002xHy-0erI;
+	Tue, 11 Mar 2025 00:35:54 +0000
+Date: Tue, 11 Mar 2025 00:35:54 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Amit <amitchoudhary0523@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: Catching use-after-free easily in linux kernel.
+Message-ID: <20250311003554.GN2023217@ZenIV>
+References: <CAFf+5zj=KmBG0Avqy6cq9qtpGKR3HnYNc6rK6y8B_78Ajt4RhQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFf+5zj=KmBG0Avqy6cq9qtpGKR3HnYNc6rK6y8B_78Ajt4RhQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Add support for the Xiaomi Redmi Note 8 based on the SM6125 SoC.
+On Mon, Mar 10, 2025 at 01:24:54PM +0530, Amit wrote:
+> Hi,
+> 
+> We can catch use-after-free easily if we do the following:
+> 
+> kfree(x);
+> (x) = NULL;
+> 
+> Now, if someone uses 'x' again then the kernel will crash and we will know where
+> the use-after-free is happening and then we can fix it.
 
-Defined features:
-- dmesg output to bootloader preconfigured display
-- USB
-- eMMC
-- SD card
-- SMD RPM regulators
-- Volume Up, Down and Power buttons
-
-Signed-off-by: Gabriel Gonzales <semfault@disroot.org>
----
- arch/arm64/boot/dts/qcom/Makefile             |   1 +
- .../boot/dts/qcom/sm6125-xiaomi-ginkgo.dts    | 295 ++++++++++++++++++
- 2 files changed, 296 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dts
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 140b0b2ab..4d7d54f69 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -246,6 +246,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm4450-qrd.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm6115-fxtec-pro1x.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm6115p-lenovo-j606f.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm6125-sony-xperia-seine-pdx201.dtb
-+dtb-$(CONFIG_ARCH_QCOM) += sm6125-xiaomi-ginkgo.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm6125-xiaomi-laurel-sprout.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm6350-sony-xperia-lena-pdx213.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm6375-sony-xperia-murray-pdx225.dtb
-diff --git a/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dts b/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dts
-new file mode 100644
-index 000000000..68a237215
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dts
-@@ -0,0 +1,295 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2025, Gabriel Gonzales <semfault@disroot.org>
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/arm/qcom,ids.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/input/gpio-keys.h>
-+#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-+#include "sm6125.dtsi"
-+#include "pm6125.dtsi"
-+
-+/ {
-+	model = "Xiaomi Redmi Note 8";
-+	compatible = "xiaomi,ginkgo", "qcom,sm6125";
-+	chassis-type = "handset";
-+
-+	/* required for bootloader to select correct board */
-+	qcom,msm-id = <QCOM_ID_SM6125>;
-+	qcom,board-id = <22 0>;
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		framebuffer0: framebuffer@5c000000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0 0x5c000000 0 (2340 * 1080 * 4)>;
-+			width = <1080>;
-+			height = <2340>;
-+			stride = <(1080 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
-+
-+	reserved-memory {
-+		debug_mem: debug@ffb00000 {
-+			reg = <0x0 0xffb00000 0x0 0xc0000>;
-+			no-map;
-+		};
-+
-+		last_log_mem: lastlog@ffbc0000 {
-+			reg = <0x0 0xffbc0000 0x0 0x80000>;
-+			no-map;
-+		};
-+
-+		pstore_mem: ramoops@ffc00000 {
-+			compatible = "ramoops";
-+			reg = <0x0 0xffc40000 0x0 0xc0000>;
-+			record-size = <0x1000>;
-+			console-size = <0x40000>;
-+			pmsg-size = <0x20000>;
-+		};
-+
-+		cmdline_mem: memory@ffd00000 {
-+			reg = <0x0 0xffd40000 0x0 0x1000>;
-+			no-map;
-+		};
-+	};
-+
-+	extcon_usb: extcon-usb {
-+		compatible = "linux,extcon-usb-gpio";
-+		id-gpios = <&tlmm 102 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&vol_up_n>;
-+		pinctrl-names = "default";
-+
-+		key-volume-up {
-+			label = "Volume Up";
-+			gpios = <&pm6125_gpios 6 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+			debounce-interval = <15>;
-+			linux,can-disable;
-+			wakeup-source;
-+		};
-+	};
-+};
-+
-+&pm6125_gpios {
-+	vol_up_n: vol-up-n-state {
-+		pins = "gpio6";
-+		function = "normal";
-+		power-source = <1>;
-+		bias-pull-up;
-+		input-enable;
-+	};
-+};
-+
-+&hsusb_phy1 {
-+	vdd-supply = <&vreg_l7a>;
-+	vdda-pll-supply = <&vreg_l10a>;
-+	vdda-phy-dpdm-supply = <&vreg_l15a>;
-+	status = "okay";
-+};
-+
-+&pon_pwrkey {
-+	status = "okay";
-+};
-+
-+&pon_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+	status = "okay";
-+};
-+
-+&rpm_requests {
-+	regulators-0 {
-+		compatible = "qcom,rpm-pm6125-regulators";
-+
-+		vreg_s6a: s6 {
-+			regulator-min-microvolt = <936000>;
-+			regulator-max-microvolt = <1422000>;
-+		};
-+
-+		vreg_l1a: l1 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1256000>;
-+		};
-+
-+		vreg_l2a: l2 {
-+			regulator-min-microvolt = <1000000>;
-+			regulator-max-microvolt = <1056000>;
-+		};
-+
-+		vreg_l3a: l3 {
-+			regulator-min-microvolt = <1000000>;
-+			regulator-max-microvolt = <1064000>;
-+		};
-+
-+		vreg_l4a: l4 {
-+			regulator-min-microvolt = <872000>;
-+			regulator-max-microvolt = <976000>;
-+			regulator-allow-set-load;
-+		};
-+
-+		vreg_l5a: l5 {
-+			regulator-min-microvolt = <1648000>;
-+			regulator-max-microvolt = <2950000>;
-+			regulator-allow-set-load;
-+		};
-+
-+		vreg_l6a: l6 {
-+			regulator-min-microvolt = <576000>;
-+			regulator-max-microvolt = <656000>;
-+		};
-+
-+		vreg_l7a: l7 {
-+			regulator-min-microvolt = <872000>;
-+			regulator-max-microvolt = <976000>;
-+		};
-+
-+		vreg_l8a: l8 {
-+			regulator-min-microvolt = <400000>;
-+			regulator-max-microvolt = <728000>;
-+		};
-+
-+		vreg_l9a: l9 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1896000>;
-+		};
-+
-+		vreg_l10a: l10 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1896000>;
-+			regulator-allow-set-load;
-+		};
-+
-+		vreg_l11a: l11 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1952000>;
-+			regulator-allow-set-load;
-+		};
-+
-+		vreg_l12a: l12 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1996000>;
-+		};
-+
-+		vreg_l13a: l13 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1832000>;
-+		};
-+
-+		vreg_l14a: l14 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1904000>;
-+		};
-+
-+		vreg_l15a: l15 {
-+			regulator-min-microvolt = <3104000>;
-+			regulator-max-microvolt = <3232000>;
-+		};
-+
-+		vreg_l16a: l16 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1904000>;
-+		};
-+
-+		vreg_l17a: l17 {
-+			regulator-min-microvolt = <1248000>;
-+			regulator-max-microvolt = <1304000>;
-+		};
-+
-+		vreg_l18a: l18 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1264000>;
-+			regulator-allow-set-load;
-+		};
-+
-+		vreg_l19a: l19 {
-+			regulator-min-microvolt = <1648000>;
-+			regulator-max-microvolt = <2952000>;
-+		};
-+
-+		vreg_l20a: l20 {
-+			regulator-min-microvolt = <1648000>;
-+			regulator-max-microvolt = <2952000>;
-+		};
-+
-+		vreg_l21a: l21 {
-+			regulator-min-microvolt = <2600000>;
-+			regulator-max-microvolt = <2856000>;
-+		};
-+
-+		vreg_l22a: l22 {
-+			regulator-min-microvolt = <2944000>;
-+			regulator-max-microvolt = <2950000>;
-+			regulator-allow-set-load;
-+		};
-+
-+		vreg_l23a: l23 {
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3400000>;
-+		};
-+
-+		vreg_l24a: l24 {
-+			regulator-min-microvolt = <2944000>;
-+			regulator-max-microvolt = <2950000>;
-+			regulator-allow-set-load;
-+		};
-+
-+	};
-+};
-+
-+&sdc2_off_state {
-+	sd-cd-pins {
-+		pins = "gpio98";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+};
-+
-+&sdc2_on_state {
-+	sd-cd-pins {
-+		pins = "gpio98";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-up;
-+	};
-+};
-+
-+&sdhc_1 {
-+	vmmc-supply = <&vreg_l24a>;
-+	vqmmc-supply = <&vreg_l11a>;
-+	status = "okay";
-+};
-+
-+&sdhc_2 {
-+	cd-gpios = <&tlmm 98 GPIO_ACTIVE_HIGH>;
-+	vmmc-supply = <&vreg_l22a>;
-+	vqmmc-supply = <&vreg_l5a>;
-+	no-sdio;
-+	no-mmc;
-+	status = "okay";
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <22 2>, <28 6>;
-+};
-+
-+&usb3 {
-+	status = "okay";
-+};
-+
-+&usb3_dwc3 {
-+	extcon = <&extcon_usb>;
-+};
--- 
-2.48.1
-
+That assumes that no pointer is ever stored in more than one place.
+Which is very clearly false.
 
