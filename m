@@ -1,113 +1,106 @@
-Return-Path: <linux-kernel+bounces-557001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C0AA5D238
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:02:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 531E9A5D24B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:06:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5CC07AA403
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E19E6189CE26
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61297265613;
-	Tue, 11 Mar 2025 22:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD843265603;
+	Tue, 11 Mar 2025 22:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Glh+VgsX"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="JMh6fI6C"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C801E7C06;
-	Tue, 11 Mar 2025 22:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE391199FBA;
+	Tue, 11 Mar 2025 22:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741730496; cv=none; b=iMKU5fv5w8DQplXB9ceH9OPz36hImOyXPqMtDD4h0zZB/zQUgetfr4hSnQcTpQ5arZABwqRxXyAoJdw2+2j3Udj8c466XGaHAUk2Uy6N1OIE/fy+UIemEzGI2F9+2+RgEJ/aakyVa7DjHjybHGB/+56cp86qc+DC80Y7cpzwbfM=
+	t=1741730784; cv=none; b=YHCBTqvoymG0w3fwSHvUnPaeVnbt1zkNElUXgvLHIOSSNwtCiYpheK+SF/FFH5kKna95M6EsPJCi7xz2nf2h/PgLWVeLUoWuDa5mDhw8W6DiWCONg0koMGnpSwl0dr/CWddhFKBaZgAwqQ27cRqlDWDAqpap+WMjbJurOhuwQ8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741730496; c=relaxed/simple;
-	bh=XkgS0CXb/WAIjYy8ImyAbrfxCnE9VK/2zhIioxXm5h8=;
+	s=arc-20240116; t=1741730784; c=relaxed/simple;
+	bh=1FsEAoBQCwul9SXkYZakBAby+nof+BFT5YLa9ZLbmWo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jaosfdi6rvo9Kiwrgs7SrVs/w8XOMzzkINIYnQD+hvxE2C+fcf9/Jpl8K4r9ra1QfO1SSCwWl0J5k6rw9XOixdYyUpqJLpCaWvno5xwAebmi8R/lapPAl6SVNKjfiCPka1UkqHEMWvaImxo3pp0mXx7MtxY+8o6Mjzznnee4GLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Glh+VgsX; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22349bb8605so113363155ad.0;
-        Tue, 11 Mar 2025 15:01:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741730494; x=1742335294; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4nGdnQu24c+EnZ9jURP8a6eRlAbk5SN0M0qMNjAtkzg=;
-        b=Glh+VgsXS8HPirf4rmtoKR1WPkA7FDOcEZ5BT+pwzbYtMzarrNjtojSxLMs9SlWymt
-         wQB7YqY+adyhtvptFyFvIWqst6DtjUrZFJY/6DBCSvXpg4tUtfLTHzCBXLxLzEK/os8S
-         egZeKfwwyTUW8n3O1Xu7sLEbgz42bfW9bSRYFk3N9dXhR+GQ+CcxCR+QGurNHUEv0toJ
-         4Xm0DQm3J8KaDRV7FYKD148qMh5b5pj/85wtauqbUICmSvAMVAUGyJrvWT1WbJOiZs7K
-         IBar+U/olayS3FJMUXoehpUlS1nAsZePPbJp/8mxW0faqjv2EU59HwhCY6f99e6oVdaC
-         mZPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741730494; x=1742335294;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4nGdnQu24c+EnZ9jURP8a6eRlAbk5SN0M0qMNjAtkzg=;
-        b=um1Nn9ujXyP+XwQAXnsN+WhSxZVJxXY8dpnlhNN+2L/e9nFv1pAI11Bg9d5lR1E+lu
-         U3xEzy66x2G3ilbXCQIgCH+uTeEBl53ojhKMd0zaJH44lL2dpphpioxqhWn+67CbcK4r
-         W7OZfW4eZmSHzZW1GfhQ1XMhhSwohLD65EyLswqeN91mKSiol4QWUsYwPnaktiHoNLtU
-         sFqmfzn9mp63Qo3s14FDaS4QttL2nFSDc9QvyYWikannt2bp2lrn8XFe/HwpJCGWOoo4
-         9DAruxHkIfGeIjttUaoGRDgff1gHRRb8d54fizMCZkdUcAuD+/t/3prjafcdbqxzs6w2
-         zerg==
-X-Forwarded-Encrypted: i=1; AJvYcCVegTy6rREPhWaPEpDGTFlMxLDmMZq9Ft0hGecYdPdOOz5x8K3h2+ioLo2y9Tjk/DI9yya+rlIcq1Uqarc=@vger.kernel.org, AJvYcCW2EUlFLzGYyLRzkqVX2uIEASydyyXyHyKi6bfxv3z0tnBMrrANvGMggC449MrsFNHa3ew=@vger.kernel.org, AJvYcCWEV0XVUuSy5G8t45T2MW52j3CRW31LmzAgr6fZqks5Dg2q+yn3JaNck6cVa7dRPT4w9zKRT43Hvubyrgo=@vger.kernel.org, AJvYcCWWPoPgIdYY2mt/cRYfTUcddmFeQuq9ImwvD91zy0+P7C15oYzjodwV+B8L6sutUsWDY54NlbMj@vger.kernel.org, AJvYcCWaEdvdOPPq6UZfmaKXf7J+z40FO7scpnnpAx0sbD29vpan3O9HoptEFJR7TZLwOZvUnHx2vk+skeCk1W34@vger.kernel.org, AJvYcCXuxMJeaKA6PQXk3nnxSWlGVLHPVOFkTU1tiq0s4WEGF1EhaXoPKUd0SEXIidlDD+EOdUzfCVbTjXxsjAcDG8I=@vger.kernel.org, AJvYcCXwYH55WfCsoCTcOMwlSP21gH1BuvYPdfloxTecqGD0blh80O+QSGEVfIUl7/HEfi5Rol0afAbisdLa2Bvy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9cKxf6vRjvmDueZzk/QcsubFVFsOzUpl0/+V1EygzYLH/oB7M
-	qOmFUdRxyjGFK8CKki4wpm6ZGKn/qfo4dza3oMftNWe3qIcimdDs
-X-Gm-Gg: ASbGncsRWz/1CptRdSeun8+N20K9SnUNooCnq/ApOZ/VnECTmb8bcikaKoTW3ADLP0I
-	n6DYyPsU8UJQuUq34/5V72or1ibVHBPZZ/QmhBCO+51JZ+Inz48F/Ih7BpdAHnsIQw+SsCxzPYb
-	IjMR4ehtZo7WshFh+eS8PjdKodeKAjAXNtYbE9ziwxs5QwtTI9Z5gR/tS6rMRrsv+JH7HzO1r0z
-	coEABvaf6kxNZDT3UyjcFVaZqQl5iWw0sB9givS8LKN3wXxn7zOs7JzaSSNAqUPq/vR0Rwy+R+Z
-	DSAwU+n5DR3+iSMl1Ld4bNfnWViRXx6OKJCEuI+K0w8GfflEQzUhe2g=
-X-Google-Smtp-Source: AGHT+IHfvnoVJgHMih9pvYSUsyOoOI7rh3JUtGAJjtASiqZVTFfrJXIMw23oGqwW4/w5VR3B4dwAMw==
-X-Received: by 2002:a17:903:32ce:b0:223:4b8d:32f1 with SMTP id d9443c01a7336-22428882233mr316949475ad.1.1741730493639;
-        Tue, 11 Mar 2025 15:01:33 -0700 (PDT)
-Received: from localhost ([216.228.125.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736ded451c1sm4125755b3a.119.2025.03.11.15.01.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 15:01:32 -0700 (PDT)
-Date: Tue, 11 Mar 2025 18:01:30 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
-	akpm@linux-foundation.org, alistair@popple.id.au,
-	andrew+netdev@lunn.ch, andrzej.hajda@intel.com,
-	arend.vanspriel@broadcom.com, awalls@md.metrocast.net, bp@alien8.de,
-	bpf@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
-	brcm80211@lists.linux.dev, dave.hansen@linux.intel.com,
-	davem@davemloft.net, dmitry.torokhov@gmail.com,
-	dri-devel@lists.freedesktop.org, eajames@linux.ibm.com,
-	edumazet@google.com, eleanor15x@gmail.com,
-	gregkh@linuxfoundation.org, hverkuil@xs4all.nl,
-	jernej.skrabec@gmail.com, jirislaby@kernel.org, jk@ozlabs.org,
-	joel@jms.id.au, johannes@sipsolutions.net, jonas@kwiboo.se,
-	jserv@ccns.ncku.edu.tw, kuba@kernel.org, linux-fsi@lists.ozlabs.org,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-serial@vger.kernel.org, linux-wireless@vger.kernel.org,
-	linux@rasmusvillemoes.dk, louis.peens@corigine.com,
-	maarten.lankhorst@linux.intel.com, mchehab@kernel.org,
-	mingo@redhat.com, miquel.raynal@bootlin.com, mripard@kernel.org,
-	neil.armstrong@linaro.org, netdev@vger.kernel.org,
-	oss-drivers@corigine.com, pabeni@redhat.com,
-	parthiban.veerasooran@microchip.com, rfoss@kernel.org,
-	richard@nod.at, simona@ffwll.ch, tglx@linutronix.de,
-	tzimmermann@suse.de, vigneshr@ti.com, x86@kernel.org
-Subject: Re: [PATCH v3 00/16] Introduce and use generic parity16/32/64 helper
-Message-ID: <Z9CyuowYsZyez36c@thinkpad>
-References: <4732F6F6-1D41-4E3F-BE24-E54489BC699C@zytor.com>
- <efc2ee9d-5382-457f-b471-f3c44b81a190@citrix.com>
- <5A790652-1B22-4D13-AAC5-5D9931E90903@zytor.com>
- <20250307195310.58abff8c@pumpkin>
- <EB85C3C1-8A0D-4CB9-B501-BFEABDF3E977@zytor.com>
- <Z824SgB9Dt5zdWYc@visitorckw-System-Product-Name>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jE5bBFsU4YQI5slNlwSO4amX1ivljkuFZHYXDhy4K2frMb6sbqTYqeyyExw/IhYSZi7Dvo4UFJyk3lZJHGqEN9ZpbhBogVuvoTzcTmYqB9thFvFWzM2Se1e7cCf8GWeLqogCXL/azMkhWpuEMSun2TuuByr5FTr9aithxY12Wq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=JMh6fI6C; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=VEtYjw1bJy2FyEgqNltD6h1CKY3ei2RKfjZVJcAYac8=; b=JMh6fI6ClsD77q6QFlO594QFyv
+	sKF4LPcJaQcTQzRqy28KBHvEvNbva/Q4T4karOQKqy3zGz5C6FZf26kql8lG10rd/yWDclC8ace2t
+	E8nv+RSCOd4MSUMTE37Jd6pwCjUlHw6IB88o86uJeQeu1vXLQvCcelUpTMH5zI9UW1Ln/0xzTIYnc
+	+ZxX47CDZdxAPYKw9IFXZpxwHKBPV2C5StuOVk/ouA+IPkzqmTobJn+hz8OlhffXTedE2VG2aUA6F
+	6ipRngplcXCrRC298lr1CqzLj89tc6A4tBT19pldI+iCk9Vc5UcPgIif4YSb1J3UDshYyiuaHWSri
+	JsTs7FhA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38464)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1ts7j7-0004gC-0h;
+	Tue, 11 Mar 2025 22:05:29 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1ts7j4-0003rB-0F;
+	Tue, 11 Mar 2025 22:05:26 +0000
+Date: Tue, 11 Mar 2025 22:05:25 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Mark Brown <broonie@kernel.org>
+Cc: Mike Rapoport <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+	Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Stafford Horne <shorne@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>,
+	Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH 10/13] arch, mm: set high_memory in free_area_init()
+Message-ID: <Z9CzpTlA2e0jR7UJ@shell.armlinux.org.uk>
+References: <20250306185124.3147510-1-rppt@kernel.org>
+ <20250306185124.3147510-11-rppt@kernel.org>
+ <cee346ec-5fa5-4d0b-987b-413ee585dbaa@sirena.org.uk>
+ <Z9Cl8JKkRGhaRrgM@kernel.org>
+ <5e40219b-f149-4e0f-aa10-c09fa183945e@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -116,106 +109,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z824SgB9Dt5zdWYc@visitorckw-System-Product-Name>
+In-Reply-To: <5e40219b-f149-4e0f-aa10-c09fa183945e@sirena.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Sun, Mar 09, 2025 at 11:48:26PM +0800, Kuan-Wei Chiu wrote:
-> On Fri, Mar 07, 2025 at 12:07:02PM -0800, H. Peter Anvin wrote:
-> > On March 7, 2025 11:53:10 AM PST, David Laight <david.laight.linux@gmail.com> wrote:
-> > >On Fri, 07 Mar 2025 11:30:35 -0800
-> > >"H. Peter Anvin" <hpa@zytor.com> wrote:
-> > >
-> > >> On March 7, 2025 10:49:56 AM PST, Andrew Cooper <andrew.cooper3@citrix.com> wrote:
-> > >> >> (int)true most definitely is guaranteed to be 1.  
-> > >> >
-> > >> >That's not technically correct any more.
-> > >> >
-> > >> >GCC has introduced hardened bools that intentionally have bit patterns
-> > >> >other than 0 and 1.
-> > >> >
-> > >> >https://gcc.gnu.org/gcc-14/changes.html
-> > >> >
-> > >> >~Andrew  
-> > >> 
-> > >> Bit patterns in memory maybe (not that I can see the Linux kernel using them) but
-> > >> for compiler-generated conversations that's still a given, or the manager isn't C
-> > >> or anything even remotely like it.
-> > >> 
-> > >
-> > >The whole idea of 'bool' is pretty much broken by design.
-> > >The underlying problem is that values other than 'true' and 'false' can
-> > >always get into 'bool' variables.
-> > >
-> > >Once that has happened it is all fubar.
-> > >
-> > >Trying to sanitise a value with (say):
-> > >int f(bool v)
-> > >{
-> > >	return (int)v & 1;
-> > >}    
-> > >just doesn't work (see https://www.godbolt.org/z/MEndP3q9j)
-> > >
-> > >I really don't see how using (say) 0xaa and 0x55 helps.
-> > >What happens if the value is wrong? a trap or exception?, good luck recovering
-> > >from that.
-> > >
-> > >	David
-> > 
-> > Did you just discover GIGO?
-> 
-> Thanks for all the suggestions.
-> 
-> I don't have a strong opinion on the naming or return type. I'm still a
-> bit confused about whether I can assume that casting bool to int always
-> results in 0 or 1.
-> 
-> If that's the case, since most people prefer bool over int as the
-> return type and some are against introducing u1, my current plan is to
-> use the following in the next version:
-> 
-> bool parity_odd(u64 val);
-> 
-> This keeps the bool return type, renames the function for better
-> clarity, and avoids extra maintenance burden by having just one
-> function.
-> 
-> If I can't assume that casting bool to int always results in 0 or 1,
-> would it be acceptable to keep the return type as int?
-> 
-> Would this work for everyone?
+On Tue, Mar 11, 2025 at 09:33:29PM +0000, Mark Brown wrote:
+> [    0.000000] Booting Linux on physical CPU 0x0
+> [    0.000000] Linux version 6.14.0-rc6-next-20250311 (tuxmake@tuxmake) (arm-linux-gnueabihf-gcc (Debian 13.3.0-5) 13.3.0, GNU ld (GNU Binutils for Debian) 2.43.1) #1 SMP @1741691801
+> [    0.000000] CPU: ARMv7 Processor [414fc0f0] revision 0 (ARMv7), cr=10c5387d
+> [    0.000000] CPU: div instructions available: patching division code
+> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
+> [    0.000000] OF: fdt: Machine model: linux,dummy-virt
+> [    0.000000] random: crng init done
+> [    0.000000] earlycon: pl11 at MMIO 0x09000000 (options '')
+> [    0.000000] printk: legacy bootconsole [pl11] enabled
+> [    0.000000] Memory policy: Data cache writealloc
+> [    0.000000] efi: UEFI not found.
+> [    0.000000] cma: Reserved 64 MiB at 0x00000000
 
-Alright, it's clearly a split opinion. So what I would do myself in
-such case is to look at existing code and see what people who really
-need parity invent in their drivers:
+If that CMA address is correct, then it's wrong. virt machines start
+DRAM at 0x40000000. This is a small memory VM:
 
-                                     bool      parity_odd
-static inline int parity8(u8 val)       -               -
-static u8 calc_parity(u8 val)           -               -
-static int odd_parity(u8 c)             -               +
-static int saa711x_odd_parity           -               +
-static int max3100_do_parity            -               -
-static inline int parity(unsigned x)    -               -
-static int bit_parity(u32 pkt)          -               -
-static int oa_tc6_get_parity(u32 p)     -               -
-static u32 parity32(__le32 data)        -               -
-static u32 parity(u32 sample)           -               -
-static int get_parity(int number,       -               -
-                      int size)
-static bool i2cr_check_parity32(u32 v,  +               -
-                        bool parity)
-static bool i2cr_check_parity64(u64 v)  +               -
-static int sw_parity(__u64 t)           -               -
-static bool parity(u64 value)           +               -
+[    0.000000] Zone ranges:
+[    0.000000]   Normal   [mem 0x0000000040000000-0x0000000045ffffff]
+[    0.000000]   HighMem  empty
 
-Now you can refer to that table say that int parity(uXX) is what
-people want to see in their drivers.
+and this is a larger memory VM:
 
-Whichever interface you choose, please discuss it's pros and cons.
-What bloat-o-meter says for each option? What's maintenance burden?
-Perf test? Look at generated code?
+[    0.000000] Zone ranges:
+[    0.000000]   Normal   [mem 0x0000000040000000-0x000000006fffffff]
+[    0.000000]   HighMem  [mem 0x0000000070000000-0x000000007fffffff]
 
-I personally for a macro returning boolean, something like I
-proposed at the very beginning.
+Neither have CMA enabled (it's not necessary for a VM).
 
-Thanks,
-Yury
+On a real platform where CMA and highmem is enabled, then:
+
+[    0.000000] cma: Reserved 16 MiB at 0x4f000000 on node -1
+[    0.000000] Zone ranges:
+[    0.000000]   Normal   [mem 0x0000000010000000-0x000000003fffffff]
+[    0.000000]   HighMem  [mem 0x0000000040000000-0x000000004fffffff]
+
+So that "cma:" line you are seeing is indicating that something is very
+very wrong - it should definitely not be zero.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
