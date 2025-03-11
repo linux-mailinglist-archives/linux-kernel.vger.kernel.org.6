@@ -1,134 +1,93 @@
-Return-Path: <linux-kernel+bounces-556605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6DDA5CC3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:33:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B5BAA5CC6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:42:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA7E3A1D6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:33:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96D387AC473
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBA7260A5D;
-	Tue, 11 Mar 2025 17:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wzv6Xeof"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5F8262813;
+	Tue, 11 Mar 2025 17:42:05 +0000 (UTC)
+Received: from mail.itouring.de (mail.itouring.de [85.10.202.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3961C1AAA
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 17:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9462524EF6E;
+	Tue, 11 Mar 2025 17:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.202.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741714395; cv=none; b=svJyn+m3HzJMLyrsyzBLiH02/8K3zdc9oahhBhFE31IoBg1JSZXbyh1tZoScaFfgdr8vj72Kq6uzRmLOsRNkiVwVzeqVr1g9NZNv6q+fqYKrMuW6KYUKbAwiSHx9Uf8x9cY8dCFg/m+cCKnDa/hcTbBHdaQzCXPcCBc6rOSQ9vg=
+	t=1741714925; cv=none; b=LLOPYeECJWj2L9VCRV0pYy17hjYto/aerxMULwI8cABdPp/rfYH7RqJvACy6XAr6oSphXLFxFAY4PUkW2EGbcN7sMN+GqSBXysJTiTTpBOEd314hneOJNCrB6yHizFXGe7lbcrdPabt1oUiZmOUDbDQfz1WjDPaHsbxqqPSa9vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741714395; c=relaxed/simple;
-	bh=OjFDkLVrdX3WuCWKNtMoTtzrEYy6c6KnWT37occRvdM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jbYKY2LlVV74cryF614tD8yufiL8K5SBadpE9TAHasRKNVZk7VfFhCUKUYXr76iONgsLctvsipO0Hi0E1OLakC2L1vM5rKqKSoJFRA8gF7gA9nDGc6eTsSxT3kiThldKwGS2GNHbSn3kL6qCttzxrxH9ftA3PodtaN8LtQOncw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Wzv6Xeof; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30797730cbdso60884241fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:33:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741714391; x=1742319191; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eXqqH4KEKZGZtmnxGZpVEpu/EwdmYompCY/YmOfeggc=;
-        b=Wzv6Xeof/z9/Zt/WBRgkcOXpvmsd4pqsIce3kbyYHUfNRpYQKS+/Y69gR6ZOaXn9bR
-         tgxgQJIS3VC9yvbb7KCW8s3L5sQP4g+Kb2BC/kqwzjt+c7qOiwOs1k2G9ZW7bYAUUpH1
-         zKL9/pJaH1KJVhPvGKWw6/sBiBThXOe16A4jU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741714391; x=1742319191;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eXqqH4KEKZGZtmnxGZpVEpu/EwdmYompCY/YmOfeggc=;
-        b=ieXCf2dSDQ1/d7nUiDgXB/s+WnZ5ax7Yj2xpEQOkSwGc8IBQ8vzF3O02MqGH4mDpPZ
-         qnGr6ZJN8ByoqLQJjZH+gOl2tE7S1Gra1y35H/6X1A5grXY6/JLcc9ekSbEaf85fGwQA
-         svNaofkGo2b4zS42qBrXrpB7LZ4RBxa/CNNZHgy7rRXMG8ov6fqZxWWoFhT9Va9mCfjh
-         e0mM4Xp+NUbkaVCtXyRCONBNj0o92yEXmU3692zfP4UY5+NgHj7jUErPDHURZmI2fgOG
-         GmnrzhZuuRZJsIelmAHfQ+B/sRse8QGat5sUZPSLElxWDDojzUK/exyPos96C5onbjVX
-         u5Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCVwEKkovcqE4M1ObYcds72e+E2FOB3E5WZZkJj26y0BCUSztTZFqjhkl1XqS2VkCGFgPbjzeW5SMdkc1SM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOypAiEEnHZLHMsaB4pfvc8e72SU6LxPbY3wfMNb4uRtE9fL5F
-	MCGGozghlRNnninbFLhZiTy7nwkyf3TsMD3I35cUx+WqmSk5oPq3k9gVQL/xlnP7w3t44rLuy2T
-	ACepd
-X-Gm-Gg: ASbGnct6FGyC3H12Ek2hR2PX33ju4c2aIo2+BFPFNe6zV1yZLpN5hdcQUYKRNHutqU9
-	Kvv/4r8tPV3ES7kVcTbjXVJMetxdZvJeXJpR6UCLIE1mQUwSfZgNd/lovMqvo1xyK8okEAALX7B
-	6VaZ371xYrasbSmZl2ZRquyDbP5NqTa/cK1iAGuEPEQZcL0nX7QUxd4Xua3/Yqz1c4yqnAVty8S
-	UKe187od3Kc3XRfxNiqefofkFJgt0eBLyA2swSCjQlwigiqhEH7COHp2wL5uT5w9HR2PY9bAZFY
-	WrxQ9qO5IlMKSp4z6ewfiDCQDJ9ILGq0u8POSgbQCCXqpRDMfIU+68M0MipJr0kyTr5gqxoLJeL
-	Avk+HiUIMj0vKkHvBGlQ=
-X-Google-Smtp-Source: AGHT+IFsgiBA7MA+dqx4CPaDZpJtDvx9f5Y+/8h2p+jV3M4okS1zQs6a8viqLVPjCWDutCivTP5wLw==
-X-Received: by 2002:a2e:7207:0:b0:300:26bc:4311 with SMTP id 38308e7fff4ca-30bf45360a1mr67266971fa.18.1741714390873;
-        Tue, 11 Mar 2025 10:33:10 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1c3b71sm1847288e87.242.2025.03.11.10.33.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 10:33:09 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-549b12ad16eso233449e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:33:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUj+rY70+faS/X5THyFOe5kt501r1OMhgcelqMr15UKMpT6prwyg1kWBAxG3Ncdc1TQUz68JlSV6Bm9pZ4=@vger.kernel.org
-X-Received: by 2002:a05:6512:b11:b0:549:38eb:d68b with SMTP id
- 2adb3069b0e04-549910b5eaamr7637883e87.33.1741714389505; Tue, 11 Mar 2025
- 10:33:09 -0700 (PDT)
+	s=arc-20240116; t=1741714925; c=relaxed/simple;
+	bh=hJlpa7qzIxdqn3x3F/DyyzikAdq8ql0x6CY4+XW6PdA=;
+	h=To:Cc:From:Subject:Message-ID:Date:MIME-Version:Content-Type; b=l4wmOx4noV+LJ5ugMuKJeAvRv8xyF0QFZ0PDlYW8fPJFPeUf8cHt14xctDTHsBdZT59kOFXf0RwfswH6v4r3laS01P/5Dfo5XyFmN1BrbPiblc+XzrKcXj1P6myul/JGB5en6t8EemV5NumFeBCkt1QVTd1/xc4yM6f8eitaDZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com; spf=pass smtp.mailfrom=applied-asynchrony.com; arc=none smtp.client-ip=85.10.202.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=applied-asynchrony.com
+Received: from tux.applied-asynchrony.com (p5b07e9b7.dip0.t-ipconnect.de [91.7.233.183])
+	by mail.itouring.de (Postfix) with ESMTPSA id 7603112560D;
+	Tue, 11 Mar 2025 18:33:10 +0100 (CET)
+Received: from [192.168.100.221] (hho.applied-asynchrony.com [192.168.100.221])
+	by tux.applied-asynchrony.com (Postfix) with ESMTP id CE0F960187F25;
+	Tue, 11 Mar 2025 18:33:09 +0100 (CET)
+To: linux-perf-users@vger.kernel.org,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Guilherme Amadio <amadio@gentoo.org>
+From: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Subject: [PATCH] perf build: filter all combinations of -flto for libbperl
+Organization: Applied Asynchrony, Inc.
+Message-ID: <fa1c3b38-6a23-af22-0e5e-280fa523d06a@applied-asynchrony.com>
+Date: Tue, 11 Mar 2025 18:33:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309040355.381386-1-tejasvipin76@gmail.com>
-In-Reply-To: <20250309040355.381386-1-tejasvipin76@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 11 Mar 2025 10:32:57 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VBZjnVQJC2mh9C5_mF3Oz_qXmBB=Sw3B-6W=qDAsbWrg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jpc46SQirm9tGzN71Qne-KkyVQnyxsbd4VDLmdc6G7lUbX6SjygOF_K9bg
-Message-ID: <CAD=FV=VBZjnVQJC2mh9C5_mF3Oz_qXmBB=Sw3B-6W=qDAsbWrg@mail.gmail.com>
-Subject: Re: [PATCH v3] drm/panel: novatek-nt36523: transition to mipi_dsi
- wrapped functions
-To: Tejas Vipin <tejasvipin76@gmail.com>
-Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	lujianhua000@gmail.com, quic_jesszhan@quicinc.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	asrivats@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 
-Hi,
+When building the libperl feature the build uses perl's build flags
+(ccopts) but filters out various flags, e.g. for LTO.
+While this is conceptually correct, it is insufficient in practice,
+since only "-flto=auto" is filterd out. When perl itself is built with
+"-flto" this can cause parts of perf being built with LTO and others
+without, giving exciting build errors like e.g.:
 
-On Sat, Mar 8, 2025 at 8:04=E2=80=AFPM Tejas Vipin <tejasvipin76@gmail.com>=
- wrote:
->
-> Changes the novatek-nt36523 panel to use multi style functions for
-> improved error handling.
->
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
-> ---
-> Changes in v3:
->     - Remove mipi_dsi_dual_msleep
->     - Change mipi_dsi_dual_dcs_write_seq_multi to use the same dsi_ctx
->       by swapping the dsi accordingly.
->
-> Link to v2: https://lore.kernel.org/all/20250307091519.245889-1-tejasvipi=
-n76@gmail.com/
->
-> Changes in v2:
->     - Uses mipi_dsi_dual_msleep
->     - Changed mipi_dsi_dual_dcs_write_seq_multi to not equate accum_err
->       of either dsi_ctx.
->
-> Link to v1: https://lore.kernel.org/all/20250306134350.139792-1-tejasvipi=
-n76@gmail.com/
-> ---
->  drivers/gpu/drm/panel/panel-novatek-nt36523.c | 1681 ++++++++---------
->  1 file changed, 821 insertions(+), 860 deletions(-)
+   ../tools/perf/pmu-events/pmu-events.c:72851:(.text+0xb79): undefined
+   reference to `strcmp_cpuid_str' collect2: error: ld returned 1 exit status
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Fix this by filtering all matching flag values of -flto{=n,auto,..}.
+
+Signed-off-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+---
+  tools/perf/Makefile.config | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index a148ca9ef..4f5a40ab8 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -820,7 +820,7 @@ else
+    PERL_EMBED_LIBADD = $(call grep-libs,$(PERL_EMBED_LDOPTS))
+    PERL_EMBED_CCOPTS = $(shell perl -MExtUtils::Embed -e ccopts 2>/dev/null)
+    PERL_EMBED_CCOPTS := $(filter-out -specs=%,$(PERL_EMBED_CCOPTS))
+-  PERL_EMBED_CCOPTS := $(filter-out -flto=auto -ffat-lto-objects, $(PERL_EMBED_CCOPTS))
++  PERL_EMBED_CCOPTS := $(filter-out -flto% -ffat-lto-objects, $(PERL_EMBED_CCOPTS))
+    PERL_EMBED_LDOPTS := $(filter-out -specs=%,$(PERL_EMBED_LDOPTS))
+    FLAGS_PERL_EMBED=$(PERL_EMBED_CCOPTS) $(PERL_EMBED_LDOPTS)
+  
+-- 
+2.48.1
 
