@@ -1,178 +1,174 @@
-Return-Path: <linux-kernel+bounces-555771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C27A5BC8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:44:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9156DA5BC90
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:46:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09E3B3ACD94
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:43:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48E5818883A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD8922DFA3;
-	Tue, 11 Mar 2025 09:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06B31DE4CC;
+	Tue, 11 Mar 2025 09:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xgprfeeH";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lOYl09yA";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xgprfeeH";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lOYl09yA"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrGR1Zdd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD95F22B590
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F85BA34;
+	Tue, 11 Mar 2025 09:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741686225; cv=none; b=UWqSmmCGJBNS3Yl5HR4u7QRBNhuIcH7trx4ni/eqdGfoAHYwKnF9ujtJAQL6tBF5rUwZp7A83V/DjhknJrGksRGZ3Yal5hcwhvbSq/bcd+vw6xfcC8cFXobz1KryaByJxZxwllj3GK3J0mqBcXOBvf+yybgjWQ4DWfTL3Plbsww=
+	t=1741686382; cv=none; b=d1/hve6OfnasT6UOLf+bukkJFWiVtCes2lLU+JdhgA5PFV8cIwHH6qHCCl3XZ57w2dPhVajiy1vDNTWm4rLWt8RhL7GrlI98yN83/IkUVbCGu+jmcGcm2VJUGZWqWkQW5DKpZqRLTRKpxQNw/4i5rYsDnIrpHYR9mZTAm2/K3Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741686225; c=relaxed/simple;
-	bh=xI/UtIlPq7MBhSKXy9iDfP/b3IfewPockHRToJ5rXqQ=;
+	s=arc-20240116; t=1741686382; c=relaxed/simple;
+	bh=d8Jim/iiohrABurwDR77MNQoAwfat32rGLhjPDfq6ok=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l4SPnNBrv3jztgBLvz0KJZgPa7foSTJ7nb5oi19Ns+ajeI6Zz19R5sLkcIV0jtcNh1ptV0xklsyrrCMDu+bFxpoGqB0OwtwGu4UjGvRbKHhHZw9OpGHAx7a2aeWG2OeGpYkiIqy6b5KUShGCiyZHwol6Yzoh78YxWfpFzkhcMQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xgprfeeH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lOYl09yA; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xgprfeeH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lOYl09yA; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B4E5921188;
-	Tue, 11 Mar 2025 09:43:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741686221; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Y20H1nGbdauYfEleBbODxTuDqnTmwSYfri+I2J3OVs=;
-	b=xgprfeeHpPgBHFd8gjfIxghw/s8NvDFIHqa1Mo7dypKrxmXhFP0NXAWxiZya3WGxJBaNMO
-	g++qZDffDFjrUBarW+2WURvjy9hniyHis6g8db2HGRWGFFrG5XG6jH7eXA7LN1yLKATyRo
-	q645+qhqo7SZHu9pcmejyGuG4ad/a1M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741686221;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Y20H1nGbdauYfEleBbODxTuDqnTmwSYfri+I2J3OVs=;
-	b=lOYl09yABVsCLjtiHZRUJbA3fjJwwmUNDoae6p5jYLWHPKMEki3Cd8yT1r3iURVGl3xXtk
-	lQyZEZ0jYxkCk4DA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741686221; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Y20H1nGbdauYfEleBbODxTuDqnTmwSYfri+I2J3OVs=;
-	b=xgprfeeHpPgBHFd8gjfIxghw/s8NvDFIHqa1Mo7dypKrxmXhFP0NXAWxiZya3WGxJBaNMO
-	g++qZDffDFjrUBarW+2WURvjy9hniyHis6g8db2HGRWGFFrG5XG6jH7eXA7LN1yLKATyRo
-	q645+qhqo7SZHu9pcmejyGuG4ad/a1M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741686221;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Y20H1nGbdauYfEleBbODxTuDqnTmwSYfri+I2J3OVs=;
-	b=lOYl09yABVsCLjtiHZRUJbA3fjJwwmUNDoae6p5jYLWHPKMEki3Cd8yT1r3iURVGl3xXtk
-	lQyZEZ0jYxkCk4DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5E42C134A0;
-	Tue, 11 Mar 2025 09:43:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9E3GFc0F0GcedwAAD6G6ig
-	(envelope-from <jroedel@suse.de>); Tue, 11 Mar 2025 09:43:41 +0000
-Date: Tue, 11 Mar 2025 10:43:36 +0100
-From: Joerg Roedel <jroedel@suse.de>
-To: Alexey Gladkov <legion@kernel.org>
-Cc: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
-	Borislav Petkov <bp@alien8.de>, Joerg Roedel <joro@8bytes.org>,
-	"Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	Larry.Dewey@amd.com
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <Z9AFyG7798M4VNJQ@suse.de>
-References: <Z86-3n1-MArVLM9Z@8bytes.org>
- <Z87L0bRi8tcAIsDw@example.org>
- <e9d58d64-ab0f-49e8-ac87-c02bda6bc837@suse.com>
- <Z87ce37GjCqpOLCW@8bytes.org>
- <b2e585a7-edd5-4b13-b904-3d0913177aee@suse.com>
- <20250310133833.GHZ87rWfuV6WgQTsoh@fat_crate.local>
- <Z878IRbbzIbUDQvj@example.org>
- <20250310151154.GOZ88BOinZVkbYEx0w@fat_crate.local>
- <104b6d4f-2848-42f4-a134-3373d12d9424@suse.com>
- <Z88Iv0w8_l9i7_8l@example.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m+Mcp/JvqUH1a92PXahgjpPCPxaC0kmIHPcxHFNU3DJae/pOHFH2YaP7/ZHB5BB/o4TStB7RUH6rPK3RR9o95F6rZKpEXqbksPTs0N+EoFExNJFFEuZN8O8L/JxYdZ7jORbJN2RSg/LvIQsgC+C29ZOETuhHweeFkpWQ0U0dj6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MrGR1Zdd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25927C4CEEB;
+	Tue, 11 Mar 2025 09:46:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741686381;
+	bh=d8Jim/iiohrABurwDR77MNQoAwfat32rGLhjPDfq6ok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MrGR1Zdd7AsE2BOoAS7ZJwdLAitNHN8d7OyyL5dlHpHZi9OSlp2RgfE1ZhVVrNDUb
+	 ejLAJ+xwuzDlB5Odcy5tRTzxeNvP3tMoRkGnE7aAzONlqAIfUW92nruRgHwXSqhAGA
+	 RyStsAiyxKKi02hI8UVv7h1uJQVj26H1fjqHDgVUVLPcbsvsElbKwO0aYWIDYvGS2b
+	 1jAO+pINQOnctXmuR7z3rM4oiWp+8H+ST771fHfv5PFj4qCp27UpfQvwH4f17XBV8o
+	 0Qy2DmBzIQsXLRnu7oF+pDvtaRb2OFZBfxxBA7dGAxKJSfjlljjgCdOBiVH6nD+A4I
+	 hOd8SlvpLHxag==
+Date: Tue, 11 Mar 2025 11:46:17 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tpm, tpm_tis: Workaround failed command reception on
+ Infineon devices
+Message-ID: <Z9AGaau3GdNpMBMC@kernel.org>
+References: <Z8lkSKOqBgt78pU2@earth.li>
+ <Z8ogT_gERUYstPbK@kernel.org>
+ <Z8sgfMmsfn894yLj@earth.li>
+ <Z8sixTuKG5sxO-D1@kernel.org>
+ <Z87Y69l5_GbzlLfp@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z88Iv0w8_l9i7_8l@example.org>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo,suse.com:url]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <Z87Y69l5_GbzlLfp@earth.li>
 
-On Mon, Mar 10, 2025 at 04:43:59PM +0100, Alexey Gladkov wrote:
-> If in the /sys/hypervisor we have information for guest (for running under
-> a hypervisor), where do you propose to put the information for the
-> host-side (for running as a hypervisor) ?
+On Mon, Mar 10, 2025 at 12:19:55PM +0000, Jonathan McDowell wrote:
+> From: Jonathan McDowell <noodles@meta.com>
+> 
+> Some Infineon devices have a issue where the status register will get
+> stuck with a quick REQUEST_USE / COMMAND_READY sequence. This is not
+> simply a matter of requiring a longer timeout; the work around is to
+> retry the command submission. Add appropriate logic to do this in the
+> send path.
+> 
+> This is fixed in later firmware revisions, but those are not always
+> available, and cannot generally be easily updated from outside a
+> firmware environment.
+> 
+> Testing has been performed with a simple repeated loop of doing a
+> TPM2_CC_GET_CAPABILITY for TPM_CAP_PROP_MANUFACTURER using the Go code
+> at:
+> 
+>  https://the.earth.li/~noodles/tpm-stuff/timeout-reproducer-simple.go
+> 
+> It can take several hours to reproduce, and several million operations.
+> 
+> Signed-off-by: Jonathan McDowell <noodles@meta.com>
+> ---
+> v2: Rename flag to TPM_TIS_STATUS_VALID_RETRY
+> 
+>  drivers/char/tpm/tpm_tis_core.c | 17 ++++++++++++++---
+>  drivers/char/tpm/tpm_tis_core.h |  1 +
+>  include/linux/tpm.h             |  1 +
+>  3 files changed, 16 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index c969a1793184..4ab69c3e103c 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -463,7 +463,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+>  		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+>  					&priv->int_queue, false) < 0) {
+> -			rc = -ETIME;
+> +			if (test_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags))
+> +				rc = -EAGAIN;
+> +			else
+> +				rc = -ETIME;
+>  			goto out_err;
+>  		}
+>  		status = tpm_tis_status(chip);
+> @@ -480,7 +483,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+>  	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+>  				&priv->int_queue, false) < 0) {
+> -		rc = -ETIME;
+> +		if (test_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags))
+> +			rc = -EAGAIN;
+> +		else
+> +			rc = -ETIME;
+>  		goto out_err;
+>  	}
+>  	status = tpm_tis_status(chip);
+> @@ -545,9 +551,11 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
+>  		if (rc >= 0)
+>  			/* Data transfer done successfully */
+>  			break;
+> -		else if (rc != -EIO)
+> +		else if (rc != EAGAIN && rc != -EIO)
+>  			/* Data transfer failed, not recoverable */
+>  			return rc;
+> +
+> +		usleep_range(priv->timeout_min, priv->timeout_max);
+>  	}
+>  	/* go and do it */
+> @@ -1143,6 +1151,9 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+>  		priv->timeout_max = TIS_TIMEOUT_MAX_ATML;
+>  	}
+> +	if (priv->manufacturer_id == TPM_VID_IFX)
+> +		set_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags);
+> +
+>  	if (is_bsw()) {
+>  		priv->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
+>  					ILB_REMAP_SIZE);
+> diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+> index 690ad8e9b731..970d02c337c7 100644
+> --- a/drivers/char/tpm/tpm_tis_core.h
+> +++ b/drivers/char/tpm/tpm_tis_core.h
+> @@ -89,6 +89,7 @@ enum tpm_tis_flags {
+>  	TPM_TIS_INVALID_STATUS		= 1,
+>  	TPM_TIS_DEFAULT_CANCELLATION	= 2,
+>  	TPM_TIS_IRQ_TESTED		= 3,
+> +	TPM_TIS_STATUS_VALID_RETRY	= 4,
+>  };
+>  struct tpm_tis_data {
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index 20a40ade8030..6c3125300c00 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -335,6 +335,7 @@ enum tpm2_cc_attrs {
+>  #define TPM_VID_WINBOND  0x1050
+>  #define TPM_VID_STM      0x104A
+>  #define TPM_VID_ATML     0x1114
+> +#define TPM_VID_IFX      0x15D1
+>  enum tpm_chip_flags {
+>  	TPM_CHIP_FLAG_BOOTSTRAPPED		= BIT(0),
+> -- 
+> 2.48.1
+> 
 
-Okay, so let's not mix things up too much here. The only (upstream) case
-where Linux _is_ the hypervisor is when running KVM guests. What
-information needs to be provided for this case in SYSFS that is not
-already provided elsewhere, e.g. by the KVM modules or, in case of SEV,
-by /dev/sev? What does Intel expose for TDX?
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Back to the guest-side, I agree with introducing a new directory in
-SYSFS with sub-directories for each detected hypervisor. To maximise
-confusion, it can be called '/sys/hypervisors/', or just /sys/guest/ (as
-Boris suggested).
-
-Regards,
-
--- 
-Jörg Rödel
-jroedel@suse.de
-
-SUSE Software Solutions Germany GmbH
-Frankenstraße 146
-90461 Nürnberg
-Germany
-https://www.suse.com/
-
-Geschäftsführer: Ivo Totev, Andrew McDonald, Werner Knoblich
-(HRB 36809, AG Nürnberg)
+BR, Jarkko
 
