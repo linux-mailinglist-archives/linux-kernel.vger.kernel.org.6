@@ -1,128 +1,88 @@
-Return-Path: <linux-kernel+bounces-556464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691D0A5CA1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:02:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688CDA5CA0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:01:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A981018992E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:01:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96AF173466
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126A01C3C08;
-	Tue, 11 Mar 2025 16:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16134261586;
+	Tue, 11 Mar 2025 16:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EH99VqGY"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjUToyOu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A27E10E5;
-	Tue, 11 Mar 2025 16:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53141260391;
+	Tue, 11 Mar 2025 16:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741708834; cv=none; b=nrI5GXSrTpt8z/PPk89XaYB6vVN5dHHL3m1UgemNewPepuWJWs7nccUNsthufyX0hUBzpEnwKIPkE8KwJPP6r99xbMtaR7knC6esbjikqGMMUqyJFsiPz0U9f0I11vd+2oEIE9uqmbihgLZldn3MsIsRQG8vSEwdN5paSO8mphk=
+	t=1741708840; cv=none; b=RDcYMFreZZFS633AyOzKvTOOKdx6TDHYfWRiSAbLaDC23gY97xNQu8jnRW+2dV3bOJTwpT3zIglCakFU7C78oZ487aaETOxIG/D1POriI6cMgQI7odM0yugBtqfUdasZQVoX5YM8LktapnLiQf+qqSKNiRzwJ28HEwbMazfe8g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741708834; c=relaxed/simple;
-	bh=2auBXNdvESIE1nGPheF77YVwGIOUgDIF/RrJypfSYT0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nCx0FYXs0y9AnnR8CeSu6cBmn2TYg4nyUGEX8YFblTPmmDwxKKDacIWV+Ksx0a6kThnrUCjOZkLE+1eh/u5Zb16729FbMNTDCgv1/bAz9oYmj5boOfOxLQ2RoOn4TYxsE3Dn8n0uNCdjTmItG1aCZJmUQ8PRzACre43dgHKppdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EH99VqGY; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51eb1a714bfso5460562e0c.3;
-        Tue, 11 Mar 2025 09:00:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741708832; x=1742313632; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BYV2O2ADUmnC4EjpgIkzJxqCjUachXXpNhXgHQTp1GQ=;
-        b=EH99VqGYGMTi+f69OQBTxY6ts8WFMf/AmpQgPb1wHv5ysGLtdms7wTq2nKQ3Y2dXFv
-         9NK4DuxxgzN4gRFTklZ5iuGc+o+hbNGyMdc+PVLxVyF94L1Ybyehgkon7PZreYPTisal
-         QdGglXptky1BGfpnhw5/EbYAovDiS3nbYxR0t7KYLMpaH9ZpWgQWbSptXoli4g8yfSSd
-         VaHeh3gK50R+kqjEuqA16Yv9IZNYifQUql+CCqN37WmZQueE+s84C10gPahNf2phdDSP
-         H2b2OxRtHXvE+XkageJ05X2YE6FcFpNH4UhylJLo63Yg5vqtL+puLfVv3U4RP82trjy6
-         2mig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741708832; x=1742313632;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BYV2O2ADUmnC4EjpgIkzJxqCjUachXXpNhXgHQTp1GQ=;
-        b=w0w1jvetAAda0aWWs6eIVhbGxb1PkoBgDmoBCEaq0oh9df3UMunFx8yhWvbMkujdrY
-         pnYVPG9DflyTqpKtyr1avaBF7zfVBSIO+4UyErQCX8mkUEq9Eh7tQStNRjORIy/da0q2
-         wQmTVFWBXvxLtWo0rGBKi4nV1YkObPAKfXF7YSRKzCTAp7vnKfyQ8MVz0BxnC0pe+cjW
-         W0xjlT6xWbWuztflPWoSpb0Xfu5KYpGFGtOty2IPOi9tPgmk9akJkFWntddJWjG/u/dr
-         luRDMJK4KzP279bB/v57WC+9D8/q4djoATHJ0U4hB50D/BGtQZ8e2wAI7EuggCor34MG
-         aKvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqnnrQ96siNKPb2GKUoABIQqfKLM66Cu3bVuMxky5I18Ety+X0MJFjt9fq8Zjy0OvVUXLxioYURAlM1mQ=@vger.kernel.org, AJvYcCWEU83lkwogj3qMsJ1eHzrVNSpXkxN+sL7TXY2FVtswV+h6TLw0NtKMb/DlEF/pLg9aU8A7GkYdaCIyoyk+9ojNNoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytAlozW7eR6A5NzihOyrFKQcTOe8yP288oWfbVomXERo+bJ0Zh
-	Vn84HkUhJxD/Is2lxytlBeogLExuY0P2S7diz+FAiYnp5RQquXzQ3s/eXo8Jd5EAoRyWC0hm9Ue
-	0l6iJdCCCs3iRe5GkaY0Cs9ltJCI=
-X-Gm-Gg: ASbGncurng5gfPmxWCtcHgCf0Lq1La7z4FRiQfcpEja8+oT6NAotg7YBikPiHFqCpfo
-	jfWAfDGDk6qCLf0+HPDoJNhTRlpKmb1Oe8Mw8hVH5eNqteLqLnQup/5IkvtKiIWM8ABRTcpPGsV
-	9bwdCP4M93WbwgF5vGivQIbyjAyg==
-X-Google-Smtp-Source: AGHT+IHivWeI31nWIIPrZrFlhM+7fp8bfXv0CzOpkZZUK77vgQDJv14Iuy7s4ylU5vfDky6AfN2vn2hLt14/RUDK+1w=
-X-Received: by 2002:a05:6122:468e:b0:520:5a87:66ff with SMTP id
- 71dfb90a1353d-524195bb061mr2798719e0c.0.1741708831905; Tue, 11 Mar 2025
- 09:00:31 -0700 (PDT)
+	s=arc-20240116; t=1741708840; c=relaxed/simple;
+	bh=BDMhoO7pIZbqZYNpvEkPEFUNG/YjPB1RjCNjXcRcmGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=puUCTJA8t9vf12L4t7T4QOb5YEimERxnucY8+Wp9Pqbj/XbHJEhF79PRP2wrMKo5IU4kFInIBm7Ple6z2KtjuSiK1ZfodliNTe7A0IPEds2Zqf4Rk4e4DLkOuasgwnpuQB4HmE4UgrlHtAs3T4DG6s5RS4TJ+HLfsLuhrgvhtl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjUToyOu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD8B5C4CEE9;
+	Tue, 11 Mar 2025 16:00:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741708839;
+	bh=BDMhoO7pIZbqZYNpvEkPEFUNG/YjPB1RjCNjXcRcmGs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CjUToyOuRndCb0D0NHcn5OXJ3UFFcwrRuj2x+aM3hfCp2U/TrjJRU96zznSeqBcSn
+	 tQjsLyB834+wfB30Kt9YeMnXZIPvhKYgAzJv+vvx0mSNZLDX0v0kP0xgh5FEEnGNtI
+	 1+hfX8E7Lg4CZossdIVrDlAZuiqg1cKeQoG+6xVQB55Q5B4l4Klx4LU5ckY9g3XbHw
+	 fwX13jdY4+yG9GFvL6LqTG1rx9gHCOwVM3AbtpQNdco536oRrrH6VLqXBSkaDR/wnX
+	 MhbTXW2yH9L+GSo5kp+pA0s1jJYT/dJoWZIOXqIkgqbIp+azNesTM9uwESUH686vKG
+	 ZZDXPhjr8Rvag==
+Date: Tue, 11 Mar 2025 18:00:34 +0200
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thara Gopinath <thara.gopinath@gmail.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Vinod Koul <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Md Sadre Alam <quic_mdalam@quicinc.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v7 2/8] dmaengine: qcom: bam_dma: extend the driver's
+ device match data
+Message-ID: <kzrpoodomeonorvho35ivoe2qy4ycu3lcsxma2hgwhtbkanq3g@dr7zf4pocbim>
+References: <20250311-qce-cmd-descr-v7-0-db613f5d9c9f@linaro.org>
+ <20250311-qce-cmd-descr-v7-2-db613f5d9c9f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c499234d559a0d95ad9472883e46077311051cd8.1741612208.git.geert+renesas@glider.be>
- <CA+V-a8tGuxgan7Zx0YedSByfFSgrg5gmR6Fy3dMDXwU+TscZzg@mail.gmail.com> <CAMuHMdWXcRoqKz6S0sAtBpSM+_ghTs82wsN1dHvbHD5vO8W+7A@mail.gmail.com>
-In-Reply-To: <CAMuHMdWXcRoqKz6S0sAtBpSM+_ghTs82wsN1dHvbHD5vO8W+7A@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 11 Mar 2025 16:00:06 +0000
-X-Gm-Features: AQ5f1JpExm6w0oXJAdyuPwgaj8C68PW5etZpDKlnT5kc8GMf1Hy-JJ74ectxF7A
-Message-ID: <CA+V-a8v_FPt0XG-a8GXNaHbk9z02Phq8KWUO5E+LUKDEvgqHUg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: shmobile: smp: Enforce shmobile_smp_* alignment
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Nicolas Pitre <nico@fluxnic.net>, Simon Horman <horms+renesas@verge.net.au>, 
-	Kees Cook <kees@kernel.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311-qce-cmd-descr-v7-2-db613f5d9c9f@linaro.org>
 
-Hi Geert,
+On Tue, Mar 11, 2025 at 10:25:33AM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> In preparation for supporting the pipe locking feature flag, extend the
+> amount of information we can carry in device match data: create a
+> separate structure and make the register information one of its fields.
+> This way, in subsequent patches, it will be just a matter of adding a
+> new field to the device data.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/dma/qcom/bam_dma.c | 28 ++++++++++++++++++++++------
+>  1 file changed, 22 insertions(+), 6 deletions(-)
+> 
 
-On Tue, Mar 11, 2025 at 3:20=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Tue, 11 Mar 2025 at 16:11, Lad, Prabhakar <prabhakar.csengg@gmail.com>=
- wrote:
-> > On Mon, Mar 10, 2025 at 1:14=E2=80=AFPM Geert Uytterhoeven
-> > > When the addresses of the shmobile_smp_mpidr, shmobile_smp_fn, and
-> > > shmobile_smp_arg variables are not multiples of 4 bytes, secondary CP=
-U
-> > > bring-up fails:
-> > >
-> > >     smp: Bringing up secondary CPUs ...
-> > >     CPU1: failed to come online
-> > >     CPU2: failed to come online
-> > >     CPU3: failed to come online
-> > >     smp: Brought up 1 node, 1 CPU
-> > >
-> > > Fix this by adding the missing alignment directive.
-> > >
-> > > Fixes: 4e960f52fce16a3b ("ARM: shmobile: Move shmobile_smp_{mpidr, fn=
-, arg}[] from .text to .bss")
-> >
-> > I wonder if this fixes tag should go back a bit far as I was able to
-> > reproduce this on 5.10-cip BSP kernel on RZ/G1E this was only seen
-> > when CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE was enabled,
->
-> 4e960f52fce16a3b is in v4.5, so it covers 5.10-cip.
->
-Thanks for pointing.
+Reviewed-by: Dmitry Baryshkov <lumag@kernel.org>
 
-Cheers,
-Prabhakar
+-- 
+With best wishes
+Dmitry
 
