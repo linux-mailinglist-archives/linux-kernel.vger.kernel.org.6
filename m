@@ -1,163 +1,121 @@
-Return-Path: <linux-kernel+bounces-556002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6973AA5BF78
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:43:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBBDA5BF7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC3DB7A8765
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:42:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEB6B1765B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DBE25487F;
-	Tue, 11 Mar 2025 11:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEFA223704;
+	Tue, 11 Mar 2025 11:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="n6Anww8A"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Cj2SWWp2"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE18254875
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDA7253B6D;
+	Tue, 11 Mar 2025 11:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741693408; cv=none; b=Rbta4t/Y7tbHKb8Zb6XZcmCRAD3tyHI1RZg/lldWyZzFtSy8TomTYGdjj/zyJEU6tYgQ5+fzi1L54EOhqAC2DlU0yONtvkLbGKXWwxpSg0XbE7YgHxomWxFwkUoJORvTcwLh6oONNR55c/NxsCFKa487Fk6f7W/XubY1R/ETupo=
+	t=1741693428; cv=none; b=eG7YbVsEmXQQQEdpQpaA5/9eku03UHcWP7NNMuBXFChn5LahlmE51z9Kue8j80fBUBAUcAmTo2DmEGWTvgW7paByTUSI63jFdke1Jy3GyjgYggTLGMRf37HZ1i4MjEw0IT/UpfkdN/+/qFIy2CKacT49PQr3mAQPdPf0dU3ufDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741693408; c=relaxed/simple;
-	bh=R5aw7MD7fszMmISFJnS6fPp1O1iXt+LvTz4PCfyGpJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KiGbIDRaPdQJR24/vIhHAJs+oERuQCic07hvnPPrW10EQ1NajYciGC134zCnW5ahMPF+kvKMKmHlj2PORMkfDjmTjx0vVLHRnryKJFDnZwxH0ovFy125q6ySTuP1vWrRETlq68/h7fel7c/g3P/6pVF4OTKu+k+7cJ4UTi5sNzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=n6Anww8A; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741693403;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RERT5E1MM2pFoldvbcZ0gDwZRyPWCHafbQQW5IfliwY=;
-	b=n6Anww8ANxWByh3stUtbsfnYyUgR3oG+ELt/cBpGh+c0EoUh6I/0TRmgN96kKcableXnJg
-	6nmIsrpzZLoHWbM5YSm8nbzDJn6pYV86GUlJNVKe6pGhc26VjGMfH3+zS7xqEAX76miQml
-	Xs2M7JOBXdoJ393tjm/8gXhrcTqTV3I=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Robert Richter <rrichter@amd.com>,
-	Bruno Faccini <bfaccini@nvidia.com>,
-	Haibo Xu <haibo1.xu@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] ACPI: NUMA: Use str_enabled_disabled() helper function
-Date: Tue, 11 Mar 2025 12:42:57 +0100
-Message-ID: <20250311114300.497657-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1741693428; c=relaxed/simple;
+	bh=tiiSNXH8astLCEcpQWRF/X3PWSabiebyjhRPE4VxtdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VcHROo5g+EoFXEZk5D38aUYqlqHDZ2r1kPIzXx07zG9A7q0+qww2ViPBicrEPMdCc54etPdfkRYGmhEHIRbmbc2hZtqjnSi/nH6KogvHLeiPqToWpD81wcepDfpiyMpYNigm+VDc5pnoY1fPLW3eaoDpTI8Xez2s55a94uudLQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Cj2SWWp2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741693421;
+	bh=WsyUb2XK4Cw3dOV4qMVQvr7j/+Y+1YuVL5aK/Xh2QY4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Cj2SWWp2xy5H0JtaqeMl+vDqMhL9wl+QW+MNMTLWQ/WpHJPLwG7NiDM3qYMo5zw3z
+	 4QL54mE8eMX0oA8KIwEuOsQtCumeAg+UWEWjy2M2Vye7vjCadHNtUsZeUQyFGfqFSE
+	 EAoRjn3qLGNpcBvLOBiuGNUtJgp2iJGbY8g6WRIvvjHJDbWRCmMXFTEPIcz3rEX8xc
+	 WM5dfgX+C9ex7YqJVtpv6DQgOmV7/V9OtDLfTaQFLXQVn3g7C+t4REFMHQ9ADnd7vQ
+	 8bA8JZkucwF7HP/u4UoO61o2f0dM4yIlsOyLg8dmKNEeNTMk5jvA5SgpUJYTktqRH1
+	 Q1YHP2fQKHafg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBsND3zGTz4x3p;
+	Tue, 11 Mar 2025 22:43:40 +1100 (AEDT)
+Date: Tue, 11 Mar 2025 22:43:38 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the tip tree
+Message-ID: <20250311224338.4baf583c@canb.auug.org.au>
+In-Reply-To: <20250311020240.3b8c34b155f76fff5cccee01@linux-foundation.org>
+References: <20250311150847.5a63db36@canb.auug.org.au>
+	<20250311020240.3b8c34b155f76fff5cccee01@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; boundary="Sig_/o/14pxANLDyZHU/__F4tjui";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Remove hard-coded strings by using the str_enabled_disabled() helper
-function.
+--Sig_/o/14pxANLDyZHU/__F4tjui
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Bruno Faccini <bfaccini@nvidia.com>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/acpi/numa/srat.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+Hi Andrew,
 
-diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-index 00ac0d7bb8c9..ac7045f3b85b 100644
---- a/drivers/acpi/numa/srat.c
-+++ b/drivers/acpi/numa/srat.c
-@@ -18,6 +18,7 @@
- #include <linux/nodemask.h>
- #include <linux/topology.h>
- #include <linux/numa_memblks.h>
-+#include <linux/string_choices.h>
- 
- static nodemask_t nodes_found_map = NODE_MASK_NONE;
- 
-@@ -187,8 +188,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
- 			pr_debug("SRAT Processor (id[0x%02x] eid[0x%02x]) in proximity domain %d %s\n",
- 				 p->apic_id, p->local_sapic_eid,
- 				 p->proximity_domain_lo,
--				 (p->flags & ACPI_SRAT_CPU_ENABLED) ?
--				 "enabled" : "disabled");
-+				 str_enabled_disabled(p->flags & ACPI_SRAT_CPU_ENABLED));
- 		}
- 		break;
- 
-@@ -200,8 +200,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
- 				 (unsigned long long)p->base_address,
- 				 (unsigned long long)p->length,
- 				 p->proximity_domain,
--				 (p->flags & ACPI_SRAT_MEM_ENABLED) ?
--				 "enabled" : "disabled",
-+				 str_enabled_disabled(p->flags & ACPI_SRAT_MEM_ENABLED),
- 				 (p->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) ?
- 				 " hot-pluggable" : "",
- 				 (p->flags & ACPI_SRAT_MEM_NON_VOLATILE) ?
-@@ -216,8 +215,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
- 			pr_debug("SRAT Processor (x2apicid[0x%08x]) in proximity domain %d %s\n",
- 				 p->apic_id,
- 				 p->proximity_domain,
--				 (p->flags & ACPI_SRAT_CPU_ENABLED) ?
--				 "enabled" : "disabled");
-+				 str_enabled_disabled(p->flags & ACPI_SRAT_CPU_ENABLED));
- 		}
- 		break;
- 
-@@ -228,8 +226,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
- 			pr_debug("SRAT Processor (acpi id[0x%04x]) in proximity domain %d %s\n",
- 				 p->acpi_processor_uid,
- 				 p->proximity_domain,
--				 (p->flags & ACPI_SRAT_GICC_ENABLED) ?
--				 "enabled" : "disabled");
-+				 str_enabled_disabled(p->flags & ACPI_SRAT_GICC_ENABLED));
- 		}
- 		break;
- 
-@@ -247,8 +244,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
- 				 *(u16 *)(&p->device_handle[0]),
- 				 *(u16 *)(&p->device_handle[2]),
- 				 p->proximity_domain,
--				 (p->flags & ACPI_SRAT_GENERIC_AFFINITY_ENABLED) ?
--				"enabled" : "disabled");
-+				 str_enabled_disabled(p->flags & ACPI_SRAT_GENERIC_AFFINITY_ENABLED));
- 		} else {
- 			/*
- 			 * In this case we can rely on the device having a
-@@ -258,8 +254,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
- 				(char *)(&p->device_handle[0]),
- 				(char *)(&p->device_handle[8]),
- 				p->proximity_domain,
--				(p->flags & ACPI_SRAT_GENERIC_AFFINITY_ENABLED) ?
--				"enabled" : "disabled");
-+				str_enabled_disabled(p->flags & ACPI_SRAT_GENERIC_AFFINITY_ENABLED));
- 		}
- 	}
- 	break;
-@@ -271,8 +266,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
- 			pr_debug("SRAT Processor (acpi id[0x%04x]) in proximity domain %d %s\n",
- 				 p->acpi_processor_uid,
- 				 p->proximity_domain,
--				 (p->flags & ACPI_SRAT_RINTC_ENABLED) ?
--				 "enabled" : "disabled");
-+				 str_enabled_disabled(p->flags & ACPI_SRAT_RINTC_ENABLED));
- 		}
- 		break;
- 
--- 
-2.48.1
+On Tue, 11 Mar 2025 02:02:40 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
+>
+> Yup, thanks.  I trust it's not too much effort to simply skip the
+> mm.git copies?
 
+Not now that I have done it once ("git rerere" remembers my previous
+merge resolutions).  Unless, of course, more changes are made to the
+files involved ...
+
+> There's presumably a better way of doing this, but it's really the
+> first time it has happened in N years so it isn't obviously worth
+> investing in setting something up.
+
+This is why we have shared stable branches.  If the tip guys have all
+those commits in a branch that they guarantee will not rebase (or be
+rewritten), then you could fetch that branch and merge it into your
+tree somewhere.  In this case, since we are beyond -rc6 and I presume
+you are starting to think about your stable branches, you could start
+mm-stable and merge it in there.  I assume that mm-unstable is always
+based on top of mm-stable, right?  So the patches that depend on (or
+clash with) the common commits will be rebased on top of the common
+branch.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/o/14pxANLDyZHU/__F4tjui
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfQIeoACgkQAVBC80lX
+0GxSiQgAi1DEBGs/ulq3u5iUAbfqunrH94ztIiCULBACe1SMtGUsg4+DNDWvOWG0
+xmdfLajz17RG+z9N7ITm7H10ekezzKob2E9yVOcVzadACzBboePmYVPgM5kR4ndf
+gKxEbNabPJlSh1IMeslUQrsB+evdOATpRv4nZHIlnszh3NYVWxiux6ERDP2xzs4+
+bkd6Jusp/UbeqnRezs5u/JSeAq0o1Y4yZb3KD7F5Mx+CPopW6DLJbII4IY+rnvaL
+h9RcoFtZqE7NPclzhY9/0YbI/sjBl+1Spu+JRnjUjskWpDEZssRnmJkuXz8CExtW
+sgy17BQoJalzfWqojDeIjqs6LPTxuQ==
+=l9do
+-----END PGP SIGNATURE-----
+
+--Sig_/o/14pxANLDyZHU/__F4tjui--
 
