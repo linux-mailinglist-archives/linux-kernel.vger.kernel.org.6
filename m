@@ -1,155 +1,152 @@
-Return-Path: <linux-kernel+bounces-556448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574E5A5C8E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:53:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979A5A5C90F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:55:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED23188408C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:53:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CF23188712D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3513D1E98EC;
-	Tue, 11 Mar 2025 15:53:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04DA25EF89;
-	Tue, 11 Mar 2025 15:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E0925F7BB;
+	Tue, 11 Mar 2025 15:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0yA/FyC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF77C25EFBA;
+	Tue, 11 Mar 2025 15:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741708417; cv=none; b=itFDRkHRYe4NRWxoJMzuWO1VAd7KAKiEzhJ7wVR7+8JVFzlDw5mHhxZJd2fzOthSZAHwVeLcv5r1vuXt4zs/QNt8BgGGOnIqJ1m74ME8wEoCFBQLluHR5V7RV8KmFsB9AAU+xlkRV8JS8xziUKxzh3U+iw1Wdr/vkWdBU+DECPk=
+	t=1741708495; cv=none; b=vE9YzfdIX7VJLlmaMFZn4d158bMQ2nipx/kLaAwJ+FB+hCA/VD8Vl7Xauu+fqj1EL1En+vG8DNehnC6Jnuj92xS2sICuVcTp/s/KWTcmf55LiLIHamGOAaDSJKcMD+qm26Ue+OGcwPCL53qgOhRUFgu03x2hISVcojYyo/2fsOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741708417; c=relaxed/simple;
-	bh=54+k/qTljaoqoS/nzOGHavBczwfmeihS1x3jZEhqrFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P/QS5C4jVEyCn1OexyzhY5vARAwOa0BVFx3EIynI1TaZJ7M4vP16lZKnBAOx+FOn7fooIjaPohGjuqSdfkTT+vxQZIFYZEeGbSl6Hnuux0UOH6wF6QnQK/a6Nf5Oot+tiGC+vgh9a5CIZxAI34f5DKISk1/InyJps0O28e8L+/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A117E1516;
-	Tue, 11 Mar 2025 08:53:45 -0700 (PDT)
-Received: from [10.119.37.172] (unknown [10.119.37.172])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB6AD3F673;
-	Tue, 11 Mar 2025 08:53:33 -0700 (PDT)
-Message-ID: <92bc0a65-608f-4307-bb1c-16d8836d42e5@arm.com>
-Date: Tue, 11 Mar 2025 10:53:33 -0500
+	s=arc-20240116; t=1741708495; c=relaxed/simple;
+	bh=59F6J7gJoDFQunyroBn4G1SonEz9fZYnbkG7e7m9IQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=msejliKcXOnf1m/3JbVP+9aQxg9HqYCmYL3oAgHtHT/ZAWIg0CQOYsIKBGeT/oTnS30BgxwqGj+uR6BIrnttsjNaU5FZ96P3dmqzkYD9fliW/pdImJyTwm+v5mCPSOE4tt+sXxc5R+rTWG8J24h6A2FHaZZfa082huFAHibD8F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0yA/FyC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B81C4CEE9;
+	Tue, 11 Mar 2025 15:54:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741708494;
+	bh=59F6J7gJoDFQunyroBn4G1SonEz9fZYnbkG7e7m9IQE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=t0yA/FyC7lczjY8YSNzsRaULUN+PBIZd2eGD73GoaovsruwvmZ8igVjOGsovn/t8c
+	 2sFn8Vsmrd8uRE8LRmyBN+rIVHYAliR4OpPBIljRCC5KBTV3v8saF9DyI73ZsME04h
+	 bbEznsUiUuxYBqW1U43M/5D29DCmk85we3nYORuXfYmR9iF3V+98GVPAefwbQ8xRsJ
+	 5/9a9x3lUgVWq0ZkFxcO64LY4HTab44jiE5/PgSzK20DMdQfxrG8x+wgMlZNNF3jKC
+	 ay84W9nFwOV/CHw2DfQrlBUwsJuPtyFK36F7WZ7afC8DhVt7EH4e21gmnV8CLKd/Kk
+	 w2rnsiYaUEWzQ==
+Date: Tue, 11 Mar 2025 10:54:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Hongxing Zhu <hongxing.zhu@nxp.com>
+Cc: "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kw@linux.com" <kw@linux.com>,
+	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"festevam@gmail.com" <festevam@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 2/2] PCI: imx6: Use domain number replace the hardcodes
+Message-ID: <20250311155452.GA629749@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Build error on -next due to tpm_crb.c changes?
-To: Thorsten Leemhuis <linux@leemhuis.info>, jarkko@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- lenb@kernel.org, rafael@kernel.org, jgg@ziepe.ca, peterhuewe@gmx.de,
- sudeep.holla@arm.com, linux-integrity@vger.kernel.org,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250305173611.74548-1-stuart.yoder@arm.com>
- <0ad035ff-400e-4b15-8b8f-40b69152ec46@leemhuis.info>
-Content-Language: en-US
-From: Stuart Yoder <stuart.yoder@arm.com>
-In-Reply-To: <0ad035ff-400e-4b15-8b8f-40b69152ec46@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AS8PR04MB8676E66BD40C37B2A7E390178CD12@AS8PR04MB8676.eurprd04.prod.outlook.com>
 
+On Tue, Mar 11, 2025 at 01:11:04AM +0000, Hongxing Zhu wrote:
+> > -----Original Message-----
+> > From: Bjorn Helgaas <helgaas@kernel.org>
+> > Sent: 2025年3月10日 23:11
+> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
+> > Cc: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+> > shawnguo@kernel.org; l.stach@pengutronix.de; lpieralisi@kernel.org;
+> > kw@linux.com; manivannan.sadhasivam@linaro.org; bhelgaas@google.com;
+> > s.hauer@pengutronix.de; festevam@gmail.com; devicetree@vger.kernel.org;
+> > linux-pci@vger.kernel.org; imx@lists.linux.dev; kernel@pengutronix.de;
+> > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH v1 2/2] PCI: imx6: Use domain number replace the
+> > hardcodes
+> > 
+> > On Wed, Feb 26, 2025 at 10:42:56AM +0800, Richard Zhu wrote:
+> > > Use the domain number replace the hardcodes to uniquely identify
+> > > different controller on i.MX8MQ platforms. No function changes.
+> > >
+> > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> > > ---
+> > >  drivers/pci/controller/dwc/pci-imx6.c | 14 ++++++--------
+> > >  1 file changed, 6 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/drivers/pci/controller/dwc/pci-imx6.c
+> > > b/drivers/pci/controller/dwc/pci-imx6.c
+> > > index 90ace941090f..ab9ebb783593 100644
+> > > --- a/drivers/pci/controller/dwc/pci-imx6.c
+> > > +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> > > @@ -41,7 +41,6 @@
+> > >  #define IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE	BIT(11)
+> > >  #define IMX8MQ_GPR_PCIE_VREG_BYPASS		BIT(12)
+> > >  #define IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE	GENMASK(11, 8)
+> > > -#define IMX8MQ_PCIE2_BASE_ADDR			0x33c00000
+> > >
+> > >  #define IMX95_PCIE_PHY_GEN_CTRL			0x0
+> > >  #define IMX95_PCIE_REF_USE_PAD			BIT(17)
+> > > @@ -1474,7 +1473,6 @@ static int imx_pcie_probe(struct platform_device
+> > *pdev)
+> > >  	struct dw_pcie *pci;
+> > >  	struct imx_pcie *imx_pcie;
+> > >  	struct device_node *np;
+> > > -	struct resource *dbi_base;
+> > >  	struct device_node *node = dev->of_node;
+> > >  	int i, ret, req_cnt;
+> > >  	u16 val;
+> > > @@ -1515,10 +1513,6 @@ static int imx_pcie_probe(struct
+> > platform_device *pdev)
+> > >  			return PTR_ERR(imx_pcie->phy_base);
+> > >  	}
+> > >
+> > > -	pci->dbi_base = devm_platform_get_and_ioremap_resource(pdev, 0,
+> > &dbi_base);
+> > > -	if (IS_ERR(pci->dbi_base))
+> > > -		return PTR_ERR(pci->dbi_base);
+> > 
+> > This makes me wonder.
+> > 
+> > IIUC this means that previously we set controller_id to 1 if the first item in
+> > devicetree "reg" was 0x33c00000, and now we will set controller_id to 1 if
+> > the devicetree "linux,pci-domain" property is 1.
+> > This is good, but I think this new dependency on the correct
+> > "linux,pci-domain" in devicetree should be mentioned in the commit log.
+> > 
+> > My bigger worry is that we no longer set pci->dbi_base at all.  I see that the
+> > only use of pci->dbi_base in pci-imx6.c was to determine the controller_id,
+> > but this is a DWC-based driver, and the DWC core certainly uses
+> > pci->dbi_base.  Are we sure that none of those DWC core paths are
+> > important to pci-imx6.c?
+> Hi Bjorn:
+> Thanks for your concerns.
+> Don't worry about the assignment of pci->dbi_base.
+> If pci-imx6.c driver doesn't set it. DWC core driver would set it when
+>  dw_pcie_get_resources() is invoked.
 
-
-On 3/11/25 10:21 AM, Thorsten Leemhuis wrote:
-> On 05.03.25 18:36, Stuart Yoder wrote:
->> Firmware Framework for Arm A-profile (FF-A) is a messaging framework
->> for Arm-based systems, and in the context of the TPM CRB driver is used
->> to signal 'start' to a CRB-based TPM service which is hosted in an
->> FF-A secure partition running in TrustZone.
->>
->> These patches add support for the CRB FF-A start method defined
->> in the TCG ACPI specification v1.4 and the FF-A ABI defined
->> in the Arm TPM Service CRB over FF-A (DEN0138) specification:
->> https://developer.arm.com/documentation/den0138/latest/
->> [...]
->> Stuart Yoder (5):
->>    tpm_crb: implement driver compliant to CRB over FF-A
->>    tpm_crb: clean-up and refactor check for idle support
->>    ACPICA: add start method for Arm FF-A
->>    tpm_crb: add support for the Arm FF-A start method
->>    Documentation: tpm: add documentation for the CRB FF-A interface
->>
->>   Documentation/security/tpm/tpm_ffa_crb.rst |  65 ++++
->>   drivers/char/tpm/Kconfig                   |   9 +
->>   drivers/char/tpm/Makefile                  |   1 +
->>   drivers/char/tpm/tpm_crb.c                 | 105 +++++--
->>   drivers/char/tpm/tpm_crb_ffa.c             | 348 +++++++++++++++++++++
->>   drivers/char/tpm/tpm_crb_ffa.h             |  25 ++
->>   include/acpi/actbl3.h                      |   1 +
->> [...]
-> 
-> My daily linux-next builds for Fedora failed building on ARM64 today. I did
-> not bisect, but from the error message I suspect it's du to  patches in this
-> series touching drivers/char/tpm/tpm_crb.c :
-> 
-> ld: Unexpected GOT/PLT entries detected!
-> ld: Unexpected run-time procedure linkages detected!
-> ld: drivers/char/tpm/tpm_crb.o: in function `crb_cancel':
-> /builddir/foo//drivers/char/tpm/tpm_crb.c:496:(.text+0x2c0): undefined reference to `tpm_crb_ffa_start'
-> ld: drivers/char/tpm/tpm_crb.o: in function `__crb_request_locality':
-> /builddir/foo/drivers/char/tpm/tpm_crb.c:285:(.text+0x768): undefined reference to `tpm_crb_ffa_start'
-> ld: drivers/char/tpm/tpm_crb.o: in function `__crb_relinquish_locality':
-> /builddir/foo/drivers/char/tpm/tpm_crb.c:319:(.text+0x81c): undefined reference to `tpm_crb_ffa_start'
-> ld: drivers/char/tpm/tpm_crb.o: in function `__crb_request_locality':
-> /builddir/foo/drivers/char/tpm/tpm_crb.c:285:(.text+0x8bc): undefined reference to `tpm_crb_ffa_start'
-> ld: drivers/char/tpm/tpm_crb.o: in function `__crb_relinquish_locality':
-> /builddir/foo/drivers/char/tpm/tpm_crb.c:319:(.text+0x958): undefined reference to `tpm_crb_ffa_start'
-> ld: drivers/char/tpm/tpm_crb.o:/builddir/foo/drivers/char/tpm/tpm_crb.c:474: more undefined references to `tpm_crb_ffa_start' follow
-> ld: drivers/char/tpm/tpm_crb.o: in function `crb_acpi_add':
-> /builddir/foo/drivers/char/tpm/tpm_crb.c:830:(.text+0x1518): undefined reference to `tpm_crb_ffa_init'
-> make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error 1
-> make[1]: *** [/builddir/foo/Makefile:1242: vmlinux] Error 2
-> make: *** [Makefile:259: __sub-make] Error 2
-> 
-> Full log:
-> https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-41-aarch64/08750241-next-next-all/builder-live.log.gz
-> 
-> Same problem on Fedora 40, 42 and 43.
-
-The problem seems to be that tpm_crb.o was built with
-CONFIG_TCG_ARM_CRB_FFA enabled, yet somehow the
-tpm_crb_ffa.o file is not being picked up by the build.
-
-Not sure how this is possible. I've tested all combinations
-I could through make menuconfig.
-
-tpm_crb_ffa.h is defined as:
-
-#if IS_ENABLED(CONFIG_TCG_ARM_CRB_FFA)
-int tpm_crb_ffa_init(void);
-int tpm_crb_ffa_get_interface_version(u16 *major, u16 *minor);
-int tpm_crb_ffa_start(int request_type, int locality);
-#else
-static inline int tpm_crb_ffa_init(void) { return 0; }
-static inline int tpm_crb_ffa_get_interface_version(u16 *major, u16 
-*minor) { return 0; }
-static inline int tpm_crb_ffa_start(int request_type, int locality) { 
-return 0; }
-#endif
-
-And so due to the linker error, it's clear we're getting the function
-prototypes and not the inline functions.
-
-The tpm Makefile defines
-
-obj-$(CONFIG_TCG_ARM_CRB_FFA) += tpm_crb_ffa.o
-
-So, it should not be possible on one had have
-CONFIG_TCG_ARM_CRB_FFA being true when building tpm_crb.c
-and false resulting in the tpm_crb_ffa.o not being
-picked up in the build.
-
-Thanks,
-Stuart
-
-
-
-
+Great, thanks!  Maybe we can amend the commit log to mention that and
+the new "linux,pci-domain" dependency.
 
