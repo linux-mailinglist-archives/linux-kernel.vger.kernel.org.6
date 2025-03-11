@@ -1,215 +1,240 @@
-Return-Path: <linux-kernel+bounces-556034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73477A5C012
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:05:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B627A5BFFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:03:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA36817625E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:05:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 706B03B3F87
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75343258CF3;
-	Tue, 11 Mar 2025 12:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A3C255E3E;
+	Tue, 11 Mar 2025 12:03:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="knkli6TZ"
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="XTFMkfjH"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189982571A9;
-	Tue, 11 Mar 2025 12:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDA2221F3C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741694597; cv=none; b=ZjXj7HKkh9sGyIRV7/4nk8rkD7UyQNX/PuTYfstBTZXKVCf0Mx98WMf4m4Qxuo4nrf2u8kXCZT5SIeMdLUL//QrwTs8Tro36BCLTfGnSeqZpLemmzS43XFmB8V9aVeqPz4nFY25Jbo45uMRJcsYHSasVuRge938dUPMIT+F63nA=
+	t=1741694585; cv=none; b=gnfm24ly8zAtM8/s+/RstA3g8U7bx6qwoln9KIPzwXYFmt1ngIm0qNU5wU4G2lJUOph0lqdMLN0REBpYEqQwN9fZAAfVJsVzQa3cSp1d0KeQ29vkXurrUJyHeVndUd0MSxGB28Wkj468fbNp1jbxixgElMezQu2eR3WCQfLys/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741694597; c=relaxed/simple;
-	bh=/B8LOU3EPY1bvUwmU8M98LiZ3McvkPIlMaG0ADq5cyg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UqmAs4IuPw8tXbdyFsPDR5ggCBjpsYDuCrDicBFFbFXkeCoJ/E20mJNVCvVxeT4Dw/Eh8QY79JntORIs44km0PZ06WtgiZIOZlG0D7g8Do2+OS3x0uB87B1iHZeLfOodt+nAoBUR3rm2eA8WO/FHnPr6OnZVfILZzDRO6fsjWxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=knkli6TZ; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1741694546;
-	bh=oObmgM37XdbiQEyrtFB9Jj1DhC5YLB/am9mUi1LXOns=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=knkli6TZ+5PJBWNzp+Iti66jQAiAEVTgCST5b6xekTevysV6Z6J9q+8hJEbwKNckH
-	 Ht6cNBfHmXfxNSysn+lVznTbi+REMvQ3sNvCEQwDegt0nhwD2GTpU81yBYWuB6Asa/
-	 kLECI6rKt1zl3czofYW6oo3NJ5J/TeINLqJ8AgxY=
-X-QQ-mid: bizesmtpip3t1741694495tnu5g36
-X-QQ-Originating-IP: yWSAeIPiqtPNf0ao2bIbG/CqRwF5BLPwY+Yu8R3vs9E=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 11 Mar 2025 20:01:33 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 9260470800203559345
-From: WangYuli <wangyuli@uniontech.com>
-To: peterhuewe@gmx.de,
-	jarkko@kernel.org,
-	jgg@ziepe.ca,
-	ardb@kernel.org,
-	wangyuli@uniontech.com,
-	gourry@gourry.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	Chen Linxuan <chenlinxuan@uniontech.com>
-Subject: [PATCH] tpm: eventlog: Declare mapping_size __maybe_unused
-Date: Tue, 11 Mar 2025 20:01:15 +0800
-Message-ID: <10590A3A04DA011F+20250311120115.1451048-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1741694585; c=relaxed/simple;
+	bh=QEzlu7tBYZBQfQErYYPjmA/2wV/XnH2Uoqtr0IRVZR4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W88PbfrFIRaW/TyOhKHxSs6JhK0xEqjqccK9mnSh/pKG7pk8hd6LRF/euampl3JKHNPWtV5k6sC7hlHTLA6gN7QnHd5jA2W/K5VdBdB15t5W4Q5qrMmy5qsYgm4+vTNRAw/uIOaksFnsIiBHHvxi7O41ZKVKI/gL9veIjjIzpV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=XTFMkfjH; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3912e96c8e8so2996971f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:03:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1741694579; x=1742299379; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GZd8g9oClFpKacY11uhhEhq1YIVwvdzwKauFBaAciSw=;
+        b=XTFMkfjH/XyJFnWWFFL0OuXuptriRQaq16UQ1ihtw72XjdYYYuV5VycRvYP8pPE4Fi
+         w9MPAyv0Mj2XNFmlBN7PX+O9Muj3SJ22pdjcIW35sfpWnTrk5xEWHxsQnByz3qpOJ18p
+         KHQJhx/f4UN+GsI9n8/7v1OAo3fpO3qb+tGtbHS85tgNDFmUD2Jaeggac5ao6zEOb/uX
+         ccIS90ZRHdiK+yJ26XYLJRkpNE3BoEB7oDlViNUfa7f/MM1WLnrE6MB3BcRiwlWiiIAM
+         tu+wtwJ7GTCiCUyNlVKlBgOzEkfZh7c0/pVQJRoZgTiW4uxqBMRoGaMgDSa4pf3+WibA
+         WL9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741694579; x=1742299379;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GZd8g9oClFpKacY11uhhEhq1YIVwvdzwKauFBaAciSw=;
+        b=ElCoFRr67RBqAI98IR7tABq1whJ/O8TrYFtEQQJyfkTnC3hunANmIoy5kPHqc5WXjH
+         Cavwen2qwH/k7YjbuROfhRCvc/qIfg3sJQguww51kY46ZJG+V7v9uhQOGGVVpTVblCdY
+         8xMj+PRJtHgOX8RVSXU0WPNe6SbPkBYF/WCA0ixYGaotKB/blFzjM8W8KRO3srKxClws
+         TulOOqb48M806UyvacfuvzLKPgHbHGr+xbEGv6eEgwPoB+luhmaHG6lCog84pRlLO+gW
+         1hTfsMlQ+Ap5Wej2iMH/eZxMQe1HyjWRbzWa4R4lizeVOm8SJvQj2tkTOQB0BhXDm0H6
+         zRCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUj9BVHh47RtH8ba3wALz6vCAf8kF+1fQu8Vj1qZwlcPnTrKrctuqJLC/X9VHb/E+WBPxu0k/+3lza2LXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuJmJA2Tc8fLMtPRKdK5E3i8agbawovjcGejclsVNhg2V6s+zP
+	o4R/c45s70494mllr7Miu6ICwOYiCRhh407sYoJXf2BnLr+DwGm+r2JBx6VF/fU=
+X-Gm-Gg: ASbGncvWRxtzZYxgJyQE8HM8lW5NwxJQTyJ5AI9KWVM1xZZq2n/WMZpmQj+rel1eVSA
+	0F8GRzFOj0cWjX3jcFSZgAMQaa1z/7JiW2oz0fw207ZCoeR1eqDzAYNrNaDx7JhKigOHZfHzuL8
+	qpBayfYdeZh1D3T1T6yV61VWJq/vzsfSqtsQo+fkWaOxzS+cHLEBxA8MXJRTs81BClmir6FTzZT
+	+ehRtumfmDJ4ln3fW5aTumtGCn39cRCRvhmjKQh93jVJp41VrD/jKWVNwqo93Bq6+Kau4HrkvMu
+	Y63TlAiVaFTrfEyl8cDJ99qNV4CUlLKW4j3zMvwB3Q==
+X-Google-Smtp-Source: AGHT+IHczIUM3+sWO+uj6v6xvF08SLG0NXd+dJffFBEyZKS2O1hR3ger+1bkJG79UzNlIMXZ0uUmFA==
+X-Received: by 2002:a5d:64c3:0:b0:391:31c8:ba58 with SMTP id ffacd0b85a97d-39132d16dd6mr15325986f8f.10.1741694579308;
+        Tue, 11 Mar 2025 05:02:59 -0700 (PDT)
+Received: from [127.0.0.1] ([2001:67c:2fbc:1:52de:66e8:f2da:9714])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ceafc09d5sm110537605e9.31.2025.03.11.05.02.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 05:02:58 -0700 (PDT)
+From: Antonio Quartulli <antonio@openvpn.net>
+Subject: [PATCH net-next v22 00/23] Introducing OpenVPN Data Channel
+ Offload
+Date: Tue, 11 Mar 2025 13:02:01 +0100
+Message-Id: <20250311-b4-ovpn-v22-0-2b7b02155412@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OMEqDAhtxLq6no6jefPyEAD/MxqyCdljrmScj8nUuWAmYnc/wXs7Sb60
-	lvTARDenBsaf4xypNWFzSybp4uAtBzKHI37tuB9nlSA2An5e7wx6HvFOqHy5GCi9fBW25gZ
-	nVHyEI1d7qUYB7KXsBoN0P9mH0vchHqJYIiq81mXN5+pFLu4I9mFlpi+SqDsnaKnaLbcDhD
-	ZBR2cAUrY9hkpYW3mu7f+w49AelsHy+udAjUOVZlraYNqzh6wITMd7ZXXGvb72W4t7BYuuy
-	Q0TcYfBJL0ZtiAImBnkc0Dn06Xk7bmYl6JVkSeUFLeRqyi3niBhSo9hhxP7oz01yI6D36v9
-	KIqAl4HA8/O8cIRct4Ds3pl9XQH3ZAhRrWwS6EOpWoV6KzzKXjsAH6NSXXEbIeS5ZSyqY4o
-	6HYpS0E/C2VkZ3ztqnpln6eyUXUIQ0KE9KKfQ0OtRkk1CsnWvVF6mj00w3zxuYvZ55RsgTd
-	LgiX+vdY3ArFbBvMuvh4KydctytgHPSvR7pBVZyqjgaKi1bLwFyc5QYJWtayj7eIiFhzGH2
-	wPovdwjq0KDbRn3XwkjTFbNdpiFIktRijZO9PEjJqxQR+MxxMem95HPim90BHF36IIY3O/i
-	eEpYBqRqqkiFtlKIWRKpErCRRPs71ALt7y7qtZ4a6nmJ12wfJU4BYQ4srHkb5PSjfAV9kK6
-	990ngbTwGhCK//tjZy5l9+Vvb8sjYHnsIvqigvU4QuU8Dk6ID9Jel2y1reioOILUs+t9XSW
-	FZORhmLTGjV1/5pLBVjSlGiDs+KYD0bkbev3eBtucOEdtnvP1qzd9WyV2cxDqklYbwHcJbU
-	6gdzT57QRY8J4UDbiFX/8OOcuEIrmxEgE9KpDk6YWr03pKDCbJVVPdViUaEQ0jhM3MvqPaz
-	Fv3MZNmJ9JDwoH3XT+4XQ/APpQmAZH65T5pZ8v3MmXd2RUGs5g0dHgSldjw6CTpodU2uVkw
-	YcgaBpj0lEvlyOmybTdgRP3fijPbU0ae9cSLYDYz2HJ0nAw6looFYqpGMD901+laf/z3osi
-	La87hJdGc+HoKcD1IsuQn3N9WCYSTJNhxkRC6q4UPzj8VHqVkNJ/pM8lGrZBfJJm3rXrS1e
-	Olu7Yuza+zH
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADom0GcC/23SzW7DIAwH8Fepch4b2HyEnfYe0w4QzJrDkiqpo
+ k5V331Opi5Ug1swP/9xxLWZaeppbl4P12aipZ/7ceAPgKdD0x3D8EmiT7zRgAStpAQRtRiX0yC
+ IF5rOeh2g4dOniXJ/2Vq9NwOdxUCXc/PBlRhmEnEKQ3dcO91rL1+hH1Z57OfzOH1vd1j85n/Tl
+ P1LW7yQIoRIPgGYkMzbeKKBK8/cbktZlCwomJ0qyTa2zqB0zkVyFatK6wur2CbS1redwwC1XNg
+ tFD+IC2wBfc4OMWZfy8XSFuMqZGtdjjqStZagYnVpyztrthRAY5eV1aqWawrLM+7WsEWlCbqQp
+ FVtxdrSlrl2tYRSKmXQtlix7m4NH5KFdWy1i4DOkbGqZtvSYmFbtipLmaLvICZbsX63j/Ou76q
+ 1yaSQIWgX/luQhQW3W1jflceMFlHJFvWjvd1uP1cSP79fAwAA
+X-Change-ID: 20241002-b4-ovpn-eeee35c694a2
+To: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Donald Hunter <donald.hunter@gmail.com>, 
+ Antonio Quartulli <antonio@openvpn.net>, Shuah Khan <shuah@kernel.org>, 
+ sd@queasysnail.net, ryazanov.s.a@gmail.com, 
+ Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>, 
+ steffen.klassert@secunet.com, antony.antony@secunet.com, 
+ willemdebruijn.kernel@gmail.com, David Ahern <dsahern@kernel.org>, 
+ Andrew Lunn <andrew@lunn.ch>, Shuah Khan <skhan@linuxfoundation.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6070; i=antonio@openvpn.net;
+ h=from:subject:message-id; bh=QEzlu7tBYZBQfQErYYPjmA/2wV/XnH2Uoqtr0IRVZR4=;
+ b=owEBbQGS/pANAwAIAQtw5TqgONWHAcsmYgBn0CZrRYlFTh09SzBbDNRUbwD1uexzxjJRZaLYQ
+ sc17lbBxWGJATMEAAEIAB0WIQSZq9xs+NQS5N5fwPwLcOU6oDjVhwUCZ9AmawAKCRALcOU6oDjV
+ hwsPB/9fMq4im/xQXNiQjrnnCxhEWYzCR8sjrELny+oRTjushSk72igVxsd3GfS8BpxNA+Cp03w
+ H2eBMX04KSa5nscCe57JQJiF9toqunOOXZE4zC/4FhJ18Lahmc5m4pcc/vqsMdrLycHbqjM4Xoo
+ 3wkWCrTZ3fL/rzqf64d8aW2VRZmtRjI1Pcsp2/IkPE9Q+gC49eYe8VpUQS/rNckae8QliMKxHpK
+ MX5DiSC1k3ekTRWsm4zhBa8txA8/zG/QPrB/Xj2RvGB8gXNbHEj+pKRAT+Mq1IyQ7pFi/C8i7H2
+ +WdMdRWb+E6xIXtnqbI2gtC1GNE8O6xkx9FaJoQGjrOK0Jls
+X-Developer-Key: i=antonio@openvpn.net; a=openpgp;
+ fpr=CABDA1282017C267219885C748F0CCB68F59D14C
 
-Given that when CONFIG_EFI is not enabled, do_mapping is inherently
-false. Thus, the mapping_size variable is set but remains unused,
-resulting in a compilation warning.
+Notable changes since v21:
+* accessed crypto_slot->primary_idx via READ/WRITE_ONCE
+* made ovpn_aead_init() static
+* converted link tx/rx packet counters from u32 to to uint
+* ensured all u32 NL attributes are read by nla_get_u32()
+* ensured all u32 NL attrivutes are written by nla_put_u32()
+* reset cache upon float or local endpoint change
+* dropped check for delta > 0 in keepalive worker scheduling
+* improved comments in update endpoints logic
+* converted local_ip to void* to avoid useless casts
 
-Simply annotating it with __maybe_unused will resolve this compilation
-warning.
+Please note that some patches were already reviewed/tested by a few
+people. These patches have retained the tags as they have hardly been
+touched.
 
-[ Fix follow errors with clang-19 when W=1e: ]
-  In file included from drivers/char/tpm/tpm1-cmd.c:21:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm1-cmd.o] Error 1
-  make[8]: *** Waiting for unfinished jobs....
-  In file included from drivers/char/tpm/tpm-dev-common.c:19:
-  In file included from drivers/char/tpm/tpm.h:28:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm-dev-common.o] Error 1
-  In file included from drivers/char/tpm/tpm2-cmd.c:14:
-  In file included from drivers/char/tpm/tpm.h:28:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  In file included from drivers/char/tpm/tpm-dev.c:16:
-  In file included from drivers/char/tpm/tpm-dev.h:6:
-  In file included from drivers/char/tpm/tpm.h:28:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm-dev.o] Error 1
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm2-cmd.o] Error 1
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpmrm-dev.o] Error 1
-  In file included from drivers/char/tpm/tpm-chip.c:24:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  In file included from drivers/char/tpm/tpm-sysfs.c:16:
-  In file included from drivers/char/tpm/tpm.h:28:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm-chip.o] Error 1
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm-sysfs.o] Error 1
-  In file included from drivers/char/tpm/tpm2-sessions.c:71:
-  In file included from drivers/char/tpm/tpm.h:28:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm2-sessions.o] Error 1
-  In file included from drivers/char/tpm/tpm-interface.c:28:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm-interface.o] Error 1
-  In file included from drivers/char/tpm/tpm2-space.c:16:
-  In file included from drivers/char/tpm/tpm.h:28:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm2-space.o] Error 1
-  In file included from drivers/char/tpm/eventlog/tpm1.c:24:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/eventlog/tpm1.o] Error 1
-  In file included from drivers/char/tpm/eventlog/common.c:20:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/eventlog/common.o] Error 1
-  In file included from drivers/char/tpm/eventlog/tpm2.c:20:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/eventlog/tpm2.o] Error 1
-  In file included from drivers/char/tpm/tpm_vtpm_proxy.c:24:
-  In file included from drivers/char/tpm/tpm.h:28:
-  ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
-    167 |         int mapping_size;
-        |             ^
-  1 error generated.
-  make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm_vtpm_proxy.o] Error 1
-  make[7]: *** [scripts/Makefile.build:465: drivers/char/tpm] Error 2
-  make[6]: *** [scripts/Makefile.build:465: drivers/char] Error 2
-  make[6]: *** Waiting for unfinished jobs....
+The latest code can also be found at:
 
-Suggested-by: Chen Linxuan <chenlinxuan@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
+https://github.com/OpenVPN/ovpn-net-next
+
+Thanks a lot!
+Best Regards,
+
+Antonio Quartulli
+OpenVPN Inc.
+
 ---
- include/linux/tpm_eventlog.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v21:
+- EDITME: describe what is new in this series revision.
+- EDITME: use bulletpoints and terse descriptions.
+- Link to v20: https://lore.kernel.org/r/20250227-b4-ovpn-v20-0-93f363310834@openvpn.net
 
-diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
-index 891368e82558..7ca58b2e96e8 100644
---- a/include/linux/tpm_eventlog.h
-+++ b/include/linux/tpm_eventlog.h
-@@ -164,7 +164,7 @@ static __always_inline u32 __calc_tpm2_event_size(struct tcg_pcr_event2_head *ev
- 	struct tcg_efi_specid_event_head *efispecid;
- 	struct tcg_event_field *event_field;
- 	void *mapping = NULL;
--	int mapping_size;
-+	__maybe_unused int mapping_size;
- 	void *marker;
- 	void *marker_start;
- 	u32 halg_size;
+---
+Antonio Quartulli (23):
+      net: introduce OpenVPN Data Channel Offload (ovpn)
+      ovpn: add basic netlink support
+      ovpn: add basic interface creation/destruction/management routines
+      ovpn: keep carrier always on for MP interfaces
+      ovpn: introduce the ovpn_peer object
+      ovpn: introduce the ovpn_socket object
+      ovpn: implement basic TX path (UDP)
+      ovpn: implement basic RX path (UDP)
+      ovpn: implement packet processing
+      ovpn: store tunnel and transport statistics
+      ovpn: implement TCP transport
+      skb: implement skb_send_sock_locked_with_flags()
+      ovpn: add support for MSG_NOSIGNAL in tcp_sendmsg
+      ovpn: implement multi-peer support
+      ovpn: implement peer lookup logic
+      ovpn: implement keepalive mechanism
+      ovpn: add support for updating local or remote UDP endpoint
+      ovpn: implement peer add/get/dump/delete via netlink
+      ovpn: implement key add/get/del/swap via netlink
+      ovpn: kill key and notify userspace in case of IV exhaustion
+      ovpn: notify userspace when a peer is deleted
+      ovpn: add basic ethtool support
+      testing/selftests: add test tool and scripts for ovpn module
+
+ Documentation/netlink/specs/ovpn.yaml              |  367 +++
+ Documentation/netlink/specs/rt_link.yaml           |   16 +
+ MAINTAINERS                                        |   11 +
+ drivers/net/Kconfig                                |   15 +
+ drivers/net/Makefile                               |    1 +
+ drivers/net/ovpn/Makefile                          |   22 +
+ drivers/net/ovpn/bind.c                            |   55 +
+ drivers/net/ovpn/bind.h                            |  101 +
+ drivers/net/ovpn/crypto.c                          |  211 ++
+ drivers/net/ovpn/crypto.h                          |  145 ++
+ drivers/net/ovpn/crypto_aead.c                     |  409 ++++
+ drivers/net/ovpn/crypto_aead.h                     |   29 +
+ drivers/net/ovpn/io.c                              |  462 ++++
+ drivers/net/ovpn/io.h                              |   34 +
+ drivers/net/ovpn/main.c                            |  339 +++
+ drivers/net/ovpn/main.h                            |   14 +
+ drivers/net/ovpn/netlink-gen.c                     |  213 ++
+ drivers/net/ovpn/netlink-gen.h                     |   41 +
+ drivers/net/ovpn/netlink.c                         | 1249 ++++++++++
+ drivers/net/ovpn/netlink.h                         |   18 +
+ drivers/net/ovpn/ovpnpriv.h                        |   57 +
+ drivers/net/ovpn/peer.c                            | 1367 +++++++++++
+ drivers/net/ovpn/peer.h                            |  163 ++
+ drivers/net/ovpn/pktid.c                           |  129 ++
+ drivers/net/ovpn/pktid.h                           |   87 +
+ drivers/net/ovpn/proto.h                           |  118 +
+ drivers/net/ovpn/skb.h                             |   61 +
+ drivers/net/ovpn/socket.c                          |  244 ++
+ drivers/net/ovpn/socket.h                          |   49 +
+ drivers/net/ovpn/stats.c                           |   21 +
+ drivers/net/ovpn/stats.h                           |   47 +
+ drivers/net/ovpn/tcp.c                             |  592 +++++
+ drivers/net/ovpn/tcp.h                             |   36 +
+ drivers/net/ovpn/udp.c                             |  442 ++++
+ drivers/net/ovpn/udp.h                             |   25 +
+ include/linux/skbuff.h                             |    2 +
+ include/uapi/linux/if_link.h                       |   15 +
+ include/uapi/linux/ovpn.h                          |  109 +
+ include/uapi/linux/udp.h                           |    1 +
+ net/core/skbuff.c                                  |   18 +-
+ net/ipv6/af_inet6.c                                |    1 +
+ net/ipv6/udp.c                                     |    1 +
+ tools/testing/selftests/Makefile                   |    1 +
+ tools/testing/selftests/net/ovpn/.gitignore        |    2 +
+ tools/testing/selftests/net/ovpn/Makefile          |   31 +
+ tools/testing/selftests/net/ovpn/common.sh         |   92 +
+ tools/testing/selftests/net/ovpn/config            |   10 +
+ tools/testing/selftests/net/ovpn/data64.key        |    5 +
+ tools/testing/selftests/net/ovpn/ovpn-cli.c        | 2395 ++++++++++++++++++++
+ tools/testing/selftests/net/ovpn/tcp_peers.txt     |    5 +
+ .../testing/selftests/net/ovpn/test-chachapoly.sh  |    9 +
+ .../selftests/net/ovpn/test-close-socket-tcp.sh    |    9 +
+ .../selftests/net/ovpn/test-close-socket.sh        |   45 +
+ tools/testing/selftests/net/ovpn/test-float.sh     |    9 +
+ tools/testing/selftests/net/ovpn/test-tcp.sh       |    9 +
+ tools/testing/selftests/net/ovpn/test.sh           |  113 +
+ tools/testing/selftests/net/ovpn/udp_peers.txt     |    5 +
+ 57 files changed, 10072 insertions(+), 5 deletions(-)
+---
+base-commit: 40587f749df216889163dd6e02d88ad53e759e66
+change-id: 20241002-b4-ovpn-eeee35c694a2
+
+Best regards,
 -- 
-2.47.2
+Antonio Quartulli <antonio@openvpn.net>
 
 
