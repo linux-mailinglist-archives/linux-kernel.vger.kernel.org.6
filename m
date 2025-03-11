@@ -1,72 +1,39 @@
-Return-Path: <linux-kernel+bounces-555946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6EBA5BEA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:14:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44757A5BEA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:14:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 377B6188E73F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:14:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 760BB16A6AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472A9222574;
-	Tue, 11 Mar 2025 11:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ef8YPIH4";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ef8YPIH4"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564C222D4FD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D77253B67;
+	Tue, 11 Mar 2025 11:14:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F0E1DEFFC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741691672; cv=none; b=bxtsuLtuQH+VtfUyFQpUjMCONStw5kynyjAmZT6rIrk/7nkp7JOAhg/fcRuUZpX9ltiE4wqIeGMWkuRnTy7j3bUjiXHPvGbh1rEdgi5+95f/DFNdNPa+BvdUZIs1RufLSQlfLvPmwnMMzkeJ/3c00cEafbA+3VOcigOsxYsptpQ=
+	t=1741691673; cv=none; b=Rrgt9A9joElYbsn3Z7o11bxVwc1PPxHwBn7Ke8yptQButrwucRLyVN7KazIzxPRzEA3SNnCn66/2x4+Xv7mJuXxQ8S/NyP250frfRMSFVhWEgW/1C2pZv95YD/bQjGQf+ZVBuEZvwvIaQyEFygTnsuvgu6GQqnI07UEow8/FmzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741691672; c=relaxed/simple;
-	bh=TBWt9A+Q7XKJrdbWu2xr1PBwJClhKZS6DqUQuNX/7Z0=;
+	s=arc-20240116; t=1741691673; c=relaxed/simple;
+	bh=rCuEaZHc0H8Bc4pSNIgY+AJrSgfVj+Hx2zsnlhBU32E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ISAvL1vcCgkqzIx05BZRGM6aZ7mKooPR6Ro9zn/HR9tRNL2Bj8p/qH+kYhqkS525Zht2+au33EqTk4BFOAf2RzVP1HF+Ky7LECoB/DVn9Vn0EdP394QV+fuZNserwHaSaVIbFnd1FTkU5joHj6KahTLH/GGeVorNr/HinqpT4TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ef8YPIH4; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ef8YPIH4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 616A01F388;
-	Tue, 11 Mar 2025 11:14:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1741691668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=TBWt9A+Q7XKJrdbWu2xr1PBwJClhKZS6DqUQuNX/7Z0=;
-	b=ef8YPIH4LpGzxUm6OB3zfGpaJK0Pl9YlGqzg0rV4L5yoOO6e0aZ4g2u+XqwHEt5GUOYwst
-	rHkbJEIPBopsvXlwzbvPiyq+qvt4YrmlYU+XGYvor5BiYl/r5o0b7+HijWNWFOawzY+0Ty
-	1alSC6187sAZjwKPDuAgkN0yWOvOQN4=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=ef8YPIH4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1741691668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=TBWt9A+Q7XKJrdbWu2xr1PBwJClhKZS6DqUQuNX/7Z0=;
-	b=ef8YPIH4LpGzxUm6OB3zfGpaJK0Pl9YlGqzg0rV4L5yoOO6e0aZ4g2u+XqwHEt5GUOYwst
-	rHkbJEIPBopsvXlwzbvPiyq+qvt4YrmlYU+XGYvor5BiYl/r5o0b7+HijWNWFOawzY+0Ty
-	1alSC6187sAZjwKPDuAgkN0yWOvOQN4=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DBEC4134A0;
-	Tue, 11 Mar 2025 11:14:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eJYgNBMb0GdDGAAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 11 Mar 2025 11:14:27 +0000
-Message-ID: <5f4ae919-6283-43f4-b8fb-8ff43d1de645@suse.com>
-Date: Tue, 11 Mar 2025 12:14:27 +0100
+	 In-Reply-To:Content-Type; b=BPc+aI8iFDB6KTKvHwmmbezTFBGFVSbSvaCfSZMOKFJJcrokLoqFcVeTQYgGLNcILNqU5jV0+WiKM0xNLaywlDbyEUqfFlSMrpHMC46sReNsUiwPXt/zRe7aWIrsySMpdtROyhWw+CdnoihPbAaUjZMo4LaYqYxDWKFkuwUET70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F7C7152B;
+	Tue, 11 Mar 2025 04:14:42 -0700 (PDT)
+Received: from [10.1.30.125] (XHFQ2J9959.cambridge.arm.com [10.1.30.125])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF9523F673;
+	Tue, 11 Mar 2025 04:14:29 -0700 (PDT)
+Message-ID: <32814695-359e-4c4b-90a4-c7c34421a1d5@arm.com>
+Date: Tue, 11 Mar 2025 11:14:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,224 +41,198 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-To: Borislav Petkov <bp@alien8.de>
-Cc: Joerg Roedel <jroedel@suse.de>, Alexey Gladkov <legion@kernel.org>,
- Joerg Roedel <joro@8bytes.org>,
- "Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, hpa@zytor.com, Tom Lendacky <thomas.lendacky@amd.com>,
- Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
- Larry.Dewey@amd.com
-References: <e9d58d64-ab0f-49e8-ac87-c02bda6bc837@suse.com>
- <Z87ce37GjCqpOLCW@8bytes.org> <b2e585a7-edd5-4b13-b904-3d0913177aee@suse.com>
- <20250310133833.GHZ87rWfuV6WgQTsoh@fat_crate.local>
- <Z878IRbbzIbUDQvj@example.org>
- <20250310151154.GOZ88BOinZVkbYEx0w@fat_crate.local>
- <104b6d4f-2848-42f4-a134-3373d12d9424@suse.com>
- <Z88Iv0w8_l9i7_8l@example.org> <Z9AFyG7798M4VNJQ@suse.de>
- <29fa0d10-0d3d-47a0-8832-b2c7fc04f637@suse.com>
- <20250311110748.GCZ9AZhPYYAz-MXErv@fat_crate.local>
-Content-Language: en-US
-From: Juergen Gross <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <20250311110748.GCZ9AZhPYYAz-MXErv@fat_crate.local>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------jX0T0KfP1l5SQJ0IDCRwdHa6"
-X-Rspamd-Queue-Id: 616A01F388
-X-Spam-Level: 
-X-Spamd-Result: default: False [-6.41 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SIGNED_PGP(-2.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_UNKNOWN(0.10)[application/pgp-keys];
-	MIME_BASE64_TEXT(0.10)[];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.com:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	HAS_ATTACHMENT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -6.41
-X-Spam-Flag: NO
+Subject: Re: udmabuf vmap failed (Revert "udmabuf: fix vmap_udmabuf error page
+ set" can help)
+Content-Language: en-GB
+To: Huan Yang <link@vivo.com>, Bingbu Cao <bingbu.cao@linux.intel.com>,
+ vivek.kasireddy@intel.com, hch@lst.de
+Cc: linux-kernel@vger.kernel.org, christian.koenig@amd.com,
+ dri-devel@lists.freedesktop.org
+References: <9172a601-c360-0d5b-ba1b-33deba430455@linux.intel.com>
+ <d7a54599-350e-4e58-81b6-119ffa2ab03e@vivo.com>
+ <ab468ce7-c8ac-48eb-a6c0-386ea7aa9a0c@linux.intel.com>
+ <78cd737d-5e85-4d3c-8bb5-0b925d81719b@vivo.com>
+ <29445257-b8df-72bd-0650-44c8deb1506c@linux.intel.com>
+ <5da7bd8a-c6db-4995-b947-444e2c78aa7c@vivo.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <5da7bd8a-c6db-4995-b947-444e2c78aa7c@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------jX0T0KfP1l5SQJ0IDCRwdHa6
-Content-Type: multipart/mixed; boundary="------------SIDtnw0A6sFB4054vNS3owWs";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Joerg Roedel <jroedel@suse.de>, Alexey Gladkov <legion@kernel.org>,
- Joerg Roedel <joro@8bytes.org>,
- "Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, hpa@zytor.com, Tom Lendacky <thomas.lendacky@amd.com>,
- Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
- Larry.Dewey@amd.com
-Message-ID: <5f4ae919-6283-43f4-b8fb-8ff43d1de645@suse.com>
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-References: <e9d58d64-ab0f-49e8-ac87-c02bda6bc837@suse.com>
- <Z87ce37GjCqpOLCW@8bytes.org> <b2e585a7-edd5-4b13-b904-3d0913177aee@suse.com>
- <20250310133833.GHZ87rWfuV6WgQTsoh@fat_crate.local>
- <Z878IRbbzIbUDQvj@example.org>
- <20250310151154.GOZ88BOinZVkbYEx0w@fat_crate.local>
- <104b6d4f-2848-42f4-a134-3373d12d9424@suse.com>
- <Z88Iv0w8_l9i7_8l@example.org> <Z9AFyG7798M4VNJQ@suse.de>
- <29fa0d10-0d3d-47a0-8832-b2c7fc04f637@suse.com>
- <20250311110748.GCZ9AZhPYYAz-MXErv@fat_crate.local>
-In-Reply-To: <20250311110748.GCZ9AZhPYYAz-MXErv@fat_crate.local>
+Hi,
 
---------------SIDtnw0A6sFB4054vNS3owWs
-Content-Type: multipart/mixed; boundary="------------ht361vEGc13kiJYqo2mMXrtI"
+On 11/03/2025 09:34, Huan Yang wrote:
+> Hi Christoph and Ryan,
+> 
+> Can you help us check vmap_pfn's pfn check is right? Did here mischecked pfn_valid?
 
---------------ht361vEGc13kiJYqo2mMXrtI
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+I'm no expert on this piece of code, but I believe pfn_valid() is checking to
+see if a pfn is valid *memory*. i.e. does it have a corresponding struct page?
 
-T24gMTEuMDMuMjUgMTI6MDcsIEJvcmlzbGF2IFBldGtvdiB3cm90ZToNCj4gT24gVHVlLCBN
-YXIgMTEsIDIwMjUgYXQgMTE6MjI6MjNBTSArMDEwMCwgSsO8cmdlbiBHcm/DnyB3cm90ZToN
-Cj4+IEkgY2FuIGxpdmUgd2l0aCB0aGF0LCBhcyBsb25nIGFzIHdlIG1ha2UgaXQgcG9zc2li
-bGUgdG8gbWFrZSBlLmcuDQo+PiAvc3lzL2d1ZXN0L3hlbiBhIGxpbmsgdG8gL3N5cy9oeXBl
-cnZpc29yIChpZiB4ZW4gaXMgdGhlIGh5cGVydmlzb3INCj4+IHRoZSBndWVzdCBpcyBkaXJl
-Y3RseSBydW5uaW5nIG9uKS4gVGhpcyBtZWFucyB0aGF0IC9zeXMvZ3Vlc3QvKi90eXBlDQo+
-PiBzaG91bGQgbm90IGNvbmZsaWN0IHdpdGggL3N5cy9oeXBlcnZpc29yL3R5cGUuDQo+IA0K
-PiBZZWFoLCBzbyBKb2VyZyBhbmQgSSBjYW1lIHVwIHdpdGggdGhpcyBvbiBJUkM6DQo+IA0K
-PiAvc3lzL2h5cGVydmlzb3Ive3Nldix0ZHh9DQo+IA0KPiAqIEl0IHNob3VsZCBub3QgZGlz
-dHVyYiB0aGUgY3VycmVudCBoaWVyYXJjaHkgdGhlcmUNCj4gDQo+ICogTm8gbmVlZCBmb3Ig
-YSBuZXcgaGllcmFyY2h5IGxpa2UgL3N5cy9ndWVzdCAtIHdlIGhheiBlbm91Z2ggYW5kIGJl
-c2lkZXMsDQo+IC9zeXMvaHlwZXJ2aXNvciBzb3VuZHMgbGlrZSB0aGUgcmlnaHQgcGxhY2Ug
-YWxyZWFkeQ0KPiANCj4gKiAuLi4NCj4gDQo+IFNvIHllYWgsIEkgZ3Vlc3Mgd2UgY2FuIHRy
-eSB0aGlzLg0KDQpGdWxsIGFjayBmb3IgdGhpcyBwbGFuLg0KDQoNCkp1ZXJnZW4NCg==
---------------ht361vEGc13kiJYqo2mMXrtI
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+I'm guessing that vmap_pfn() is only intended to be used for non-memory pfns,
+e.g. mmio regions. You probably want either vmap() or vm_map_ram()?
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+Thanks,
+Ryan
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+> 
+> Thank you.
+> 
+> 在 2025/3/11 17:02, Bingbu Cao 写道:
+>> Christoph and Ryan,
+>>
+>> Could you help check this? Thanks.
+>>
+>> On 3/11/25 4:54 PM, Huan Yang wrote:
+>>> 在 2025/3/11 16:42, Bingbu Cao 写道:
+>>>> [You don't often get email from bingbu.cao@linux.intel.com. Learn why this
+>>>> is important at https://aka.ms/LearnAboutSenderIdentification ]
+>>>>
+>>>> Huan,
+>>>>
+>>>> Thanks for your response.
+>>>>
+>>>> On 3/11/25 3:12 PM, Huan Yang wrote:
+>>>>> 在 2025/3/11 14:40, Bingbu Cao 写道:
+>>>>>> [You don't often get email from bingbu.cao@linux.intel.com. Learn why this
+>>>>>> is important at https://aka.ms/LearnAboutSenderIdentification ]
+>>>>>>
+>>>>>> Huan Yang and Vivek,
+>>>>>>
+>>>>>> I am trying to use udmabuf for my test, and I cannot vmap the udmabuf
+>>>>>> buffers now. vmap_pfn_apply() will report a warning to complain that
+>>>>>> the pfns are invalid.
+>>>>>> I dump the pfn numbers as below:
+>>>>>> [ 3365.399641] pg[0] pfn 1148695
+>>>>>> [ 3365.399642] pg[1] pfn 1145057
+>>>>>> [ 3365.399642] pg[2] pfn 1134070
+>>>>>> [ 3365.399643] pg[3] pfn 1148700
+>>>>>> [ 3365.399643] pg[4] pfn 1144871
+>>>>>> [ 3365.399643] pg[5] pfn 1408686
+>>>>>> [ 3365.399643] pg[6] pfn 1408683
+>>>>>> ...
+>>>>>> [ 3365.399660] WARNING: CPU: 3 PID: 2772 at mm/vmalloc.c:3489
+>>>>>> vmap_pfn_apply+0xb7/0xd0
+>>>>>> [ 3365.399667] Modules linked in:...
+>>>>>> [ 3365.399750] CPU: 3 UID: 0 PID: 2772 Comm: drm-test Not tainted 6.13.0-
+>>>>>> rc2-rvp #845
+>>>>>> [ 3365.399752] Hardware name: Intel Corporation Client Platform/xxxx, BIOS
+>>>>>> xxxFWI1.R00.3221.D83.2408120121 08/12/2024
+>>>>>> [ 3365.399753] RIP: 0010:vmap_pfn_apply+0xb7/0xd0
+>>>>>> [ 3365.399755] Code: 5b 41 5c 41 5d 5d c3 cc cc cc cc 48 21 c3 eb d1 48 21
+>>>>>> c3 48 23 3d 31 c0 26 02 eb c5 48 c7 c7 c4 3c 20 a8 e8 5b c0 d8 ff eb 8a
+>>>>>> <0f> 0b b8 ea ff ff ff 5b 41 5c 41 5d 5d c3 cc cc cc cc 0f 1f 80 00
+>>>>>> [ 3365.399756] RSP: 0018:ffffb9b50c32fad0 EFLAGS: 00010202
+>>>>>> [ 3365.399757] RAX: 0000000000000001 RBX: 0000000000118717 RCX:
+>>>>>> 0000000000000000
+>>>>>> [ 3365.399758] RDX: 0000000080000000 RSI: ffffb9b50c358000 RDI:
+>>>>>> 00000000ffffffff
+>>>>>> [ 3365.399758] RBP: ffffb9b50c32fae8 R08: ffffb9b50c32fbd0 R09:
+>>>>>> 0000000000000001
+>>>>>> [ 3365.399759] R10: ffff941602479288 R11: 0000000000000000 R12:
+>>>>>> ffffb9b50c32fbd0
+>>>>>> [ 3365.399759] R13: ffff941618665ac0 R14: ffffb9b50c358000 R15:
+>>>>>> ffff941618665ac8
+>>>>>> [ 3365.399760] FS:  00007ff9e9ddd740(0000) GS:ffff94196f780000(0000)
+>>>>>> knlGS:0000000000000000
+>>>>>> [ 3365.399760] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>> [ 3365.399761] CR2: 000055fda5dc69d9 CR3: 00000001544de003 CR4:
+>>>>>> 0000000000f72ef0
+>>>>>> [ 3365.399762] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+>>>>>> 0000000000000000
+>>>>>> [ 3365.399762] DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7:
+>>>>>> 0000000000000400
+>>>>>> [ 3365.399763] PKRU: 55555554
+>>>>>> [ 3365.399763] Call Trace:
+>>>>>> [ 3365.399765]  <TASK>
+>>>>>> [ 3365.399769]  ? show_regs+0x6d/0x80
+>>>>>> [ 3365.399773]  ? __warn+0x97/0x160
+>>>>>> [ 3365.399777]  ? vmap_pfn_apply+0xb7/0xd0
+>>>>>> [ 3365.399777]  ? report_bug+0x1ec/0x240
+>>>>>> [ 3365.399782]  ? handle_bug+0x63/0xa0
+>>>>>> [ 3365.399784]  ? exc_invalid_op+0x1d/0x80
+>>>>>> [ 3365.399785]  ? asm_exc_invalid_op+0x1f/0x30
+>>>>>> [ 3365.399790]  ? vmap_pfn_apply+0xb7/0xd0
+>>>>>> [ 3365.399791]  __apply_to_page_range+0x522/0x8a0
+>>>>>> [ 3365.399794]  ? __pfx_vmap_pfn_apply+0x10/0x10
+>>>>>> [ 3365.399795]  apply_to_page_range+0x18/0x20
+>>>>>> [ 3365.399796]  vmap_pfn+0x77/0xd0
+>>>>>> [ 3365.399797]  vmap_udmabuf+0xc5/0x110
+>>>>>> [ 3365.399802]  dma_buf_vmap+0x96/0x130
+>>>>>>
+>>>>>> I did an experiment to revert 18d7de823b7150344d242c3677e65d68c5271b04,
+>>>>>> then I can vmap the pages. Could you help what's wrong with that?
+>>>>> Sorry for that, as I reviewed pfn_valid, that's someting wired:
+>>>>>
+>>>>> /**
+>>>>>    * pfn_valid - check if there is a valid memory map entry for a PFN
+>>>>>    * @pfn: the page frame number to check
+>>>>>    *
+>>>>>    * Check if there is a valid memory map entry aka struct page for the @pfn.
+>>>>>    * Note, that availability of the memory map entry does not imply that
+>>>>>    * there is actual usable memory at that @pfn. The struct page may
+>>>>>    * represent a hole or an unusable page frame.
+>>>>>    *
+>>>>>    * Return: 1 for PFNs that have memory map entries and 0 otherwise
+>>>>>    */
+>>>>>
+>>>>> So, if pfn valid, it's return 1, else 0. So mean, only 1 is a valid pfn.
+>>>>> But vmap_pfn_apply in there:
+>>>>>
+>>>>> static int vmap_pfn_apply(pte_t *pte, unsigned long addr, void *private)
+>>>>> {
+>>>>>       struct vmap_pfn_data *data = private;
+>>>>>       unsigned long pfn = data->pfns[data->idx];
+>>>>>       pte_t ptent;
+>>>>>
+>>>>>       if (WARN_ON_ONCE(pfn_valid(pfn)))
+>>>>>           return -EINVAL;
+>>>>>
+>>>>>       ptent = pte_mkspecial(pfn_pte(pfn, data->prot));
+>>>>>       set_pte_at(&init_mm, addr, pte, ptent);
+>>>>>
+>>>>>       data->idx++;
+>>>>>       return 0;
+>>>>> }
+>>>>>
+>>>>> Do it give a wrong check? maybe should fix by:
+>>>> I guess not, it looks more like warning when you trying to vmap a
+>>>> pfn which already took a valid entry in pte.
+>>> No, I think here check need pfn is valid, then can set it. If a pfn is
+>>> invalid, why we set it in PTE?
+>>>
+>>> Also, I can't make sure.
+>>>
+>>> BTW, can you fix it then retest?
+>>>
+>>> Thank you.
+>>>
+>>>> However, the MM code is so complex for me, just my guess. :)
+>>>>
+>>>>> static int vmap_pfn_apply(pte_t *pte, unsigned long addr, void *private)
+>>>>> {
+>>>>>       struct vmap_pfn_data *data = private;
+>>>>>       unsigned long pfn = data->pfns[data->idx];
+>>>>>       pte_t ptent;
+>>>>>
+>>>>> -    if (WARN_ON_ONCE(pfn_valid(pfn)))
+>>>>> +    if (WARN_ON_ONCE(!pfn_valid(pfn)))
+>>>>>           return -EINVAL;
+>>>>>
+>>>>>       ptent = pte_mkspecial(pfn_pte(pfn, data->prot));
+>>>>>       set_pte_at(&init_mm, addr, pte, ptent);
+>>>>>
+>>>>>       data->idx++;
+>>>>>       return 0;
+>>>>> }
+>>>>>
+>>>>> Please help me check it, also, you can apply this and then check it.:)
+>>>>>
+>>>>>> -- 
+>>>>>> Best regards,
+>>>>>> Bingbu Cao
+>>>> -- 
+>>>> Best regards,
+>>>> Bingbu Cao
 
---------------ht361vEGc13kiJYqo2mMXrtI--
-
---------------SIDtnw0A6sFB4054vNS3owWs--
-
---------------jX0T0KfP1l5SQJ0IDCRwdHa6
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmfQGxMFAwAAAAAACgkQsN6d1ii/Ey9a
-Qgf9F2uevrnSu/v0p6hf8SJOY0thWv6iWuZURfqwdiwYhlLtS2EFuCBBnpu/fYlBukoJ0EqbtOel
-G749JY9wSQtAFvyvCSXA2GxhR8xBg/dAY7CZMnsFexmpoexbRjMppluRgMODkvp3TUTTu5jrP5ch
-WQTZAC1tZuwSssFrgwxOsa2QVKWSef8D6yRqtWJsQ5B+r8OPHPbhDw0Jko7SLBl1iK0wwzMSo45H
-KLqc3ADoXKKj8qj+wRPAdLXKy+vruSUwkyltao4s0tXq7+NYLmiWNLTxqC/Fp2l31noYX5gGPgM+
-xuSh9LVGYq9Os6e+BJ19W9E2uNDergEGUMHBqpsBCQ==
-=Wp4S
------END PGP SIGNATURE-----
-
---------------jX0T0KfP1l5SQJ0IDCRwdHa6--
 
