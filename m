@@ -1,120 +1,188 @@
-Return-Path: <linux-kernel+bounces-555927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E3EA5BE74
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:04:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7553A5BE6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7E703B158A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:04:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21AEE167C91
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F79253B5C;
-	Tue, 11 Mar 2025 11:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547492512E3;
+	Tue, 11 Mar 2025 11:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tLsqsEHY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="o4ZTKhG3"
+Received: from smtp28.bhosted.nl (smtp28.bhosted.nl [94.124.121.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B21250BF8;
-	Tue, 11 Mar 2025 11:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FE0241681
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741691063; cv=none; b=V5qyAEzTn8NjTaF82mTUvs56mvoHxLZxVSmLAkvqpsmyupPiuMbxeXvJ8PpTbqYX4dnhBOCtqxUSISyNTnpRpVBx6I95dAhQC/PYga6v0w/i3tGG0uFbRy42zdHx6gQYljjSwhT1uamFwvOQxbDSAZgRtz2T5dsKr1rWctO5fJw=
+	t=1741691038; cv=none; b=EZWwlFn8gFM7eBrzyQY7M5e/6oeRKVORE5Umlxo2IPvlT86dcg8g4sBQAXURS+6tUfY6tiumc496NLomq+3JfjH0KMw63jtMhf3edBt+lhAOuUU2vsXdUI8PZ64K6jXuqNfxcFnj8kBDaDcgR2v+ANlnNgDckoNX5KW6VVUL/rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741691063; c=relaxed/simple;
-	bh=6o03UY2lisvmvbsVebE3RRWS0905oo5xhgPj6TZWwds=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wb6detq2Zk1EcJJ3ZhpQYA2Tg/DzO6o1ZLmBU8zh5nK+c8MGB8d9iYSkg9arj2XXDhDsbnZqK8b744fvsnrbelQapQpbtphJ0se6Qxwu8Ilw1Ixt4py5LwIdBGaZC+qMMQsJwSdQhSzFxc6yl9LSREONVn61RELcjKsnv1y1P8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tLsqsEHY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37163C4CEF5;
-	Tue, 11 Mar 2025 11:04:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741691063;
-	bh=6o03UY2lisvmvbsVebE3RRWS0905oo5xhgPj6TZWwds=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tLsqsEHYGhVZY6sXIc0GzTeWYjltpGF3e6sGmsIlNp3+ZlS33oHQuFYUPPAg7LQ7U
-	 HstlWC0Ue/UcsVjRJMKaGDS+c3Hl2ehoRfKbRcDMZi7vhuwL/LdLiFwMdhMsXor8m8
-	 AG8LoPbD0X59zmMjvmUnV4lv/zjuvVX/CZhGUXL0lDmKXCMjS4z1HG47ROdI1lt/sh
-	 UMbmJbB1joMG9XRnP+w2ncqGhv0t0PSU+APKB3cLPqL3kjWJ6FC/3ViaIVqSmSpWhD
-	 srT2MZy7QLRdib9nTEZeH4t2rUs3vdzfBudvEU5gRqd0CgSe9YVcsRgv6X0OHyyUAz
-	 a6YpCwsrkkGWw==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-549963b5551so4016480e87.2;
-        Tue, 11 Mar 2025 04:04:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW8t5uBac7DkAkjvx8V62jr4N7mvVHsq/P/WVu+39CZWOCDAQN2yrLNHnROlTkn56U0Hht6UXq0IzvFqIo=@vger.kernel.org, AJvYcCWa62f8Ngqkt5R/STv0EifS3+ABKKXf0YWBLU5zryDkhObPxToa13hStZKLk9dW8baxkK/HNPmJDzQIbNPV@vger.kernel.org, AJvYcCXJ7DMhJ7wtcyzx1p4XGV2OjHa/eLsU32jKYJZj7fMq0ynz8DuJr1dyYiMpR9jeriFS3eQjs+KWoKWesvgFTdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr1KUxm7Iyv6OZMNHlHkkhvhQ/vZjHiBWrOXeUAqVYJ3AxVOGt
-	E9HNX2MsgWP8hToqRDyW6yRXRQKSYRpDNv1F2clqXDG0ZK5mWlz6qiRvmAS8TvsiTnOYQb9t9zl
-	WeY+veToYFAbX8aH1QhDG53U8H0o=
-X-Google-Smtp-Source: AGHT+IER4ywfVA/skzrd5Sr+VwZpyStl81oqlaO35YAYLK024eTjoF0dpfuwBpL8A8xiB28H67prlsPO66tzqN9Y/Kk=
-X-Received: by 2002:a05:6512:31d2:b0:549:5822:c334 with SMTP id
- 2adb3069b0e04-549abaed778mr1108996e87.52.1741691061665; Tue, 11 Mar 2025
- 04:04:21 -0700 (PDT)
+	s=arc-20240116; t=1741691038; c=relaxed/simple;
+	bh=c6gsWuE9KbTB/AbCzr5g1BWhPggo9fdPNPaTriurqeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P80pZpfET95KXsq2JBjlRrBUEGGzggPkXYnRJ2jnOH75n1ek6M9DSArUBO8O2r8FVbyB9AFnT9wauMnA4I1zop9GkDmlkvIUtPatfBd25w66ge+Cr1TFaFCT4EwI52J+5doXQxkKMUvUeZ2eGE2dTnTpszz6ykLYqpc9td7KyZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=o4ZTKhG3; arc=none smtp.client-ip=94.124.121.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=ZZMF97YcPvm5C1er0iirc7cTdLB5XykMCEDCq40QqHU=;
+	b=o4ZTKhG3T4SWH3ep4AOVowkxR/jOzYE9if7g5cLPT7GnO0qTy1ytEpzr4vMC/uVxtH2nS2zGyKb0R
+	 ovF2R9y+aaerrmvRLOVg/0py8SLCsTUzTgX0Ysty4RJc7Z8m094rko4kNilteyeILCuiV4tfsKHYMC
+	 LyjM3O+2QDrP2uvqkRWedrdtz5Qg4pm59+aeULQHZHbyyEH06wO6QcnSHHBug03o3j68NeeuoMlKg4
+	 O7ZC5jam1NkSXiyIEYLvf0Zbl6wW91BrgDfVMRFRHNVeYixzA4hnu5OWCnkEyMC5Z09GLtRwlsUMs7
+	 uUocogmya6Oepvj5LRiHRLaPqFIUTkg==
+X-MSG-ID: 8165c850-fe68-11ef-b5cf-0050568164d1
+Date: Tue, 11 Mar 2025 12:03:46 +0100
+From: David Jander <david@protonic.nl>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Kent Gibson
+ <warthog618@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: regression: gpiolib: switch the line state notifier to atomic
+ unexpected impact on performance
+Message-ID: <20250311120346.21ba086d@erd003.prtnl>
+In-Reply-To: <CAMRc=MeWp=m1Bi_t_FCrxFOtiv3s8fSjiBjDk4pOB+_RuN=KGg@mail.gmail.com>
+References: <20250311110034.53959031@erd003.prtnl>
+	<CAMRc=MeWp=m1Bi_t_FCrxFOtiv3s8fSjiBjDk4pOB+_RuN=KGg@mail.gmail.com>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-rust-path-remap-v1-1-021c48188df1@weissschuh.net> <CANiq72mcpVL1YXyDFi-PrbQ2Uh0WUA_VNqLZaOeqQnpY5HnX8Q@mail.gmail.com>
-In-Reply-To: <CANiq72mcpVL1YXyDFi-PrbQ2Uh0WUA_VNqLZaOeqQnpY5HnX8Q@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 11 Mar 2025 20:03:45 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATKK4bZCY7izDdEzNcUu60wjH57TK8ESM50QhUG2a4bRw@mail.gmail.com>
-X-Gm-Features: AQ5f1JpuD3Zjc-2ACZ74uGc7WTZYgBI-CZqrB84wwE-uHK8_c2IqFkOv6W6UPOM
-Message-ID: <CAK7LNATKK4bZCY7izDdEzNcUu60wjH57TK8ESM50QhUG2a4bRw@mail.gmail.com>
-Subject: Re: [PATCH] kbuild, rust: use -fremap-path-prefix to make paths relative
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Ben Hutchings <ben@decadent.org.uk>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Urgau <urgau@numericable.fr>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 17, 2025 at 10:23=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Mon, Feb 10, 2025 at 6:11=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weis=
-sschuh.net> wrote:
+
+Dear Bartosz,
+
+On Tue, 11 Mar 2025 11:21:10 +0100
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+
+> On Tue, Mar 11, 2025 at 11:01=E2=80=AFAM David Jander <david@protonic.nl>=
+ wrote:
 > >
-> > Remap source path prefixes in all output, including compiler
-> > diagnostics, debug information, macro expansions, etc.
->
-> Hmm... We don't do all the cases in the C side -- the docs ask to use
-> `KCFLAGS` when one wants to remove them in the debug info:
->
->     https://docs.kernel.org/kbuild/reproducible-builds.html#absolute-file=
-names
->
-> I am not sure if there is a reason not to cover all cases in C (Cc'ing Be=
-n).
+> >
+> > Dear Bartosz,
+> >
+> > I noticed this because after updating the kernel from 6.11 to 6.14 a
+> > user-space application that uses GPIOs heavily started getting extremel=
+y slow,
+> > to the point that I will need to heavily modify this application in ord=
+er to
+> > be usable again.
+> > I traced the problem down to the following patch that went into 6.13:
+> >
+> > fcc8b637c542 gpiolib: switch the line state notifier to atomic
+> >
+> > What happens here, is that gpio_chrdev_release() now calls
+> > atomic_notifier_chain_unregister(), which uses RCU, and as such must ca=
+ll
+> > synchronize_rcu(). synchronize_rcu() waits for the RCU grace time to ex=
+pire
+> > before returning and according to the documentation can cause a delay o=
+f up to
+> > several milliseconds. In fact it seems to take between 8-10ms on my sys=
+tem (an
+> > STM32MP153C single-core Cortex-A7).
+> >
+> > This has the effect that the time it takes to call close() on a /dev/gp=
+iochipX
+> > takes now ~10ms each time. If I git-revert this commit, close() will ta=
+ke less
+> > than 1ms.
+> > =20
+>=20
+> Thanks for the detailed report!
 
+Thanks to you for making this patch in such a way that it is easy to revert
+without breaking stuff! That was a read time-saver while diagnosing.
 
-GCC manual mentions the below about the -fdebug-prefix-map=3Dold=3Dnew
+> > 10ms doesn't sound like much, but it is more ~10x the time it tool befo=
+re,
+> > and unfortunately libgpiod code calls this function very often in some =
+places,
+> > especially in find_line() if your board has many gpiochips (mine has 16
+> > chardevs). =20
+>=20
+> Yeah, I imagine it can affect the speed of execution of gpiofind,
+> gpiodetect and any other program that iterates over all character
+> devices.
 
+Indeed, it does. My application is written in python and uses the python gp=
+iod
+module. Even in such an environment the impact is killing.
 
-"It can also be used to change an absolute path to
-a relative path by using . for new.
-This can give more reproducible builds, which are location
-independent, but may require an extra command to tell GDB
-where to find the source files."
+> > The effect can easily be reproduced with the gpiofind tool:
+> >
+> > Running on kernel 6.12:
+> >
+> > $ time gpiofind LPOUT0
+> > gpiochip7 9
+> > real    0m 0.02s
+> > user    0m 0.00s
+> > sys     0m 0.01s
+> >
+> > Running on kernel 6.13:
+> >
+> > $ time gpiofind LPOUT0
+> > gpiochip7 9
+> > real    0m 0.19s
+> > user    0m 0.00s
+> > sys     0m 0.01s
+> >
+> > That is almost a 10x increase in execution time of the whole program!!
+> >
+> > On kernel 6.13, after git revert -n fcc8b637c542 time is back to what i=
+t was
+> > on 6.12.
+> >
+> > Unfortunately I can't come up with an easy solution to this problem, th=
+at's
+> > why I don't have a patch to propose. Sorry for that.
+> >
+> > I still think it is a bit alarming this change has such a huge impact. =
+IMHO it
+> > really shouldn't. What can be done about this? Is it maybe possible to =
+defer
+> > unregistering and freeing to a kthread and return from the release func=
+tion
+> > earlier?
+> > =20
+>=20
+> This was my first idea too. Alternatively we can switch to using a raw
+> notifier and provide a spinlock ourselves.
 
+That would probably be a good alternative, although gpiod_line_state_notify=
+()
+wouldn't benefit from the zero-lock RCU implementation and incur a spin_lock
+penalty. Arguably, this is probably a lot more performance-critical than
+closing the chardev, so maybe the atomic notifier isn't a bad idea... we ju=
+st
+need to deal with the writing side so that user-space doesn't have to wait =
+for
+the RCU grace period?
 
-I guess "the extra command" might be a bit annoying.
+Certainly, I suppose switching to the raw notifier is the easier fix.
 
+OTOH, I know from my own experience that the penalty of a spin-lock does
+matter sometimes and not having it in the performance critical path is
+probably nice to have.
 
-
-
-
+Best regards,
 
 --=20
-Best Regards
-Masahiro Yamada
+David Jander
+
 
