@@ -1,100 +1,118 @@
-Return-Path: <linux-kernel+bounces-556693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E47A5CD74
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:13:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0558A5CD82
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:14:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7739189F3E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:13:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35F203A6A58
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC5726389E;
-	Tue, 11 Mar 2025 18:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708CC263883;
+	Tue, 11 Mar 2025 18:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7ii9Ki5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfyX1trx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69352620DB;
-	Tue, 11 Mar 2025 18:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0ADF2627EC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716813; cv=none; b=qdhg9kj1HvFGFmD+Qlk/4oRMvTAPF0Zf4Mqq+57c9sKSpndBbbEzZPvQtBFFOmLwfL9/f38sLTpUsBDim0W+fv6PyGOZ01K1RoPfOd/Q27/f4x85Uluolsbj/GodsKYlVxK4eUAl2iS9Y1cIQ/M6oIYXtkLBYTQ+YXH4a3ASdhk=
+	t=1741716831; cv=none; b=XUecUbnQ9sIfkiJizwGgg00zKO2gvoGXW6cOkE3HemmfVXsaMVrtUUwSDS2XHgVLznovU0n+JqeCVaU4wgIU+warBdsWfzcbS4nXCMQv+P3yO1E6vo+ogMFKnbMfK2eNYOJTAt8C0fKj7Sy8veeixs1PirO4GOD9n+PqIdtOSe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716813; c=relaxed/simple;
-	bh=rdG4W23KcTWMvPIDmswMTtwiZrFfXZ2nz7V1UtXCIG8=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=BfyKaCM3a99OAYC6YnP7wP8QFWdhqJ60XTgh7mitwc7KJm1RCBxJtcFNI7lCntDX/sp7KAZKqqIQZaqrLMnqjjI29taFmCKa8gQYsNYZqE3RuTjU6wYJYDtoimf13ZfEXl7NNcLOXPteR3wT6ANvL60RFPLoX6N0OGJKH9oc4Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7ii9Ki5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC861C4CEE9;
-	Tue, 11 Mar 2025 18:13:32 +0000 (UTC)
+	s=arc-20240116; t=1741716831; c=relaxed/simple;
+	bh=cXeEF19DxsIvhCU468MqIFBIEu8EdcfdGkQCRwLdTrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d8l2YzAGuR1//6FMNEbfGod7Wt+/VU4onT97V2WHsPShoZZZQu7ggzTsO0kkKUhRuI8llR9L1Zzo3BakSg//tI8moVzSD1XpQ8Bsysw2oE6AFBP8OxqVsd4d1g9bNCcb1f8gGBWvxeRmMIQRypgJ6y3Trd5Ch+21Pebwoy4XskQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfyX1trx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66198C4CEEA;
+	Tue, 11 Mar 2025 18:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741716813;
-	bh=rdG4W23KcTWMvPIDmswMTtwiZrFfXZ2nz7V1UtXCIG8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=e7ii9Ki5c/a5sFPriRR26qTfgqFvMrxCxw6ZTDScyd8KG1fbu2YTy+s3gAzZjvKHC
-	 qtUgdLOjEHxAnT/G7zpya8pJT/QjByTCQqHae7uh57ZnBnU7JCnxaXP9Pt/cvf82ql
-	 lrl9eR86Jlma6H5Z3VKq/ejXlXR/rSTI9Ab70M41Uc1bZgkbzG6wnk16/A1O3IFTK4
-	 SNJvXXyDvTTANusWeBcEWrL06ymhW+kZl7WkDqqkVw3CxGUatSvXCzg1PY6GjjYlOr
-	 SVMW2dIjlhrogSbONz3im7cs0/u8I4b2Fo73ExMR8ZUUdQuPa72H8HVVoZKvp91cfx
-	 Ezqo24W9nKw0A==
-Message-ID: <135678b71cd2853fe55c5c5c6a6d3fcb.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1741716831;
+	bh=cXeEF19DxsIvhCU468MqIFBIEu8EdcfdGkQCRwLdTrU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dfyX1trx/EccwwLbzWdaAudGQXy5b9nMnw+QVquoCqaZSgfl6hVvvXIAY/rRAfwYr
+	 WVLjquiD+w/wM2tfq/29PMsoqu2E8aK5cb+9NAl8eYwpigHu2JltVq1kmmxKtlUKhh
+	 9qseAYJZJiqOOdPnJZhxGZv7VlB6fr58XuvpGlSIxyxRZewELmgTy9nqiCZ3g7gIsR
+	 MBfPq6PXQGzaYDOOcaUMCQuYwHWtslr0xxkU/lYe/Gjt2LiZ7kV24m36xosNArmZzx
+	 UphkzBNqCZ1Luzl4gLoGawpT/9Kv3iT0FQvSV2tPOytnT0gYHwMHYkga6ayCtFwqvZ
+	 Ts2jHykra/H3g==
+Date: Tue, 11 Mar 2025 19:13:45 +0100
+From: Alexey Gladkov <legion@kernel.org>
+To: Joerg Roedel <jroedel@suse.de>
+Cc: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+	Borislav Petkov <bp@alien8.de>, Joerg Roedel <joro@8bytes.org>,
+	"Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>,
+	x86@kernel.org, hpa@zytor.com,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+	Larry.Dewey@amd.com
+Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
+Message-ID: <Z9B9WWwfsraBoU41@example.org>
+References: <Z87L0bRi8tcAIsDw@example.org>
+ <e9d58d64-ab0f-49e8-ac87-c02bda6bc837@suse.com>
+ <Z87ce37GjCqpOLCW@8bytes.org>
+ <b2e585a7-edd5-4b13-b904-3d0913177aee@suse.com>
+ <20250310133833.GHZ87rWfuV6WgQTsoh@fat_crate.local>
+ <Z878IRbbzIbUDQvj@example.org>
+ <20250310151154.GOZ88BOinZVkbYEx0w@fat_crate.local>
+ <104b6d4f-2848-42f4-a134-3373d12d9424@suse.com>
+ <Z88Iv0w8_l9i7_8l@example.org>
+ <Z9AFyG7798M4VNJQ@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250309175147.6672-1-krzysztof.kozlowski@linaro.org>
-References: <20250309175147.6672-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.15
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 11 Mar 2025 11:13:30 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z9AFyG7798M4VNJQ@suse.de>
 
-Quoting Krzysztof Kozlowski (2025-03-09 10:51:47)
-> Hi,
->=20
-> New clk drivers for Samsung SoC.  This pull includes drivers which you
-> commented later and pointed out few issues.  Pointed issues are in all Sa=
-msung
-> clk drivers and the ones here just copy existing patterns:
->=20
-> 1. Headers: I fixed it for new and existing drivers and this pull request
-> includes the fixes.
-> 2. device_get_match_data(): I still wait for contributors response. If th=
-ey do
-> not respond, I will fix it for next cycle.
-> 3. refdata and platform_driver_probe: I tried fixing it, but incomplete a=
-nd
-> need to investigate more.
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
-5b:
->=20
->   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.15
->=20
-> for you to fetch changes up to 017bbc922a09630579ff7b5b314fb186b8c0efcf:
->=20
->   clk: samsung: Drop unused clk.h and of.h headers (2025-03-07 16:01:22 +=
-0100)
->=20
-> ----------------------------------------------------------------
+On Tue, Mar 11, 2025 at 10:43:36AM +0100, Joerg Roedel wrote:
+> On Mon, Mar 10, 2025 at 04:43:59PM +0100, Alexey Gladkov wrote:
+> > If in the /sys/hypervisor we have information for guest (for running under
+> > a hypervisor), where do you propose to put the information for the
+> > host-side (for running as a hypervisor) ?
+> 
+> Okay, so let's not mix things up too much here. The only (upstream) case
+> where Linux _is_ the hypervisor is when running KVM guests. What
+> information needs to be provided for this case in SYSFS that is not
+> already provided elsewhere, e.g. by the KVM modules or, in case of SEV,
+> by /dev/sev? What does Intel expose for TDX?
 
-Thanks. Pulled into clk-next
+Right now tdx does not export any information to userspace (neither
+host-side nor guest-side). I want to change that. I want to export
+version, attributes and features, maybe something else.
+
+> Back to the guest-side, I agree with introducing a new directory in
+> SYSFS with sub-directories for each detected hypervisor. To maximise
+> confusion, it can be called '/sys/hypervisors/', or just /sys/guest/ (as
+> Boris suggested).
+> 
+> Regards,
+> 
+> -- 
+> Jörg Rödel
+> jroedel@suse.de
+> 
+> SUSE Software Solutions Germany GmbH
+> Frankenstraße 146
+> 90461 Nürnberg
+> Germany
+> https://www.suse.com/
+> 
+> Geschäftsführer: Ivo Totev, Andrew McDonald, Werner Knoblich
+> (HRB 36809, AG Nürnberg)
+> 
+
+-- 
+Rgrds, legion
+
 
