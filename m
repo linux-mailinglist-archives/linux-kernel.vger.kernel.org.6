@@ -1,134 +1,187 @@
-Return-Path: <linux-kernel+bounces-555604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C74CA5BA27
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:49:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7444A5BA2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:50:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16FFC3B077D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:48:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F02A61714D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FFF222586;
-	Tue, 11 Mar 2025 07:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B0222258F;
+	Tue, 11 Mar 2025 07:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Aial+nO3"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFA1146593;
-	Tue, 11 Mar 2025 07:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tAs0RnLo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EB9146593;
+	Tue, 11 Mar 2025 07:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741679343; cv=none; b=sgWNdZYUvc2fBO8y9rdU3TT6SIgL3nT0pZ3Y7U35uLTYZuY8gePTLXYLch1MD09qd2hKzPcVHY0WE4kEdkk8aEKxZIMY4764p9gAm8JRq+6PDFv0HYcIVAm2gXW5UsJLhh8BHD2FjeIp1l9Vq5/B25eHiojuoF0eqA+2uvvskxI=
+	t=1741679436; cv=none; b=Ffpxsk/zQaxXY+N47TCBphMyIKFudWfV8Rvs/LPpslasetjraUhdIklS3XQ3DlUFqxSWQBHNmySDFGT/OfNV96OGpNhGcs2s46/V5gKqqJAro2c2XhfZ1Z4zi9KBQcj17K4MS4q4EW+3Tc16jP1uTs2RXLY+oW0yUNFAEmCngBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741679343; c=relaxed/simple;
-	bh=JCbxBs+VOmiAGwdeR4RRqZHugLmWuoNIMewCuu/buPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VhB2kXmzEuxe6iTE8nWMkyfbElKIKxT1iPprszIZYNSr/xXRhaRWAOIWCMiWylErxzWkT8uJKVg+2f6hFmYqUx9fq1Auud/cEkNabjOGn+dg8sY++5T3MRLMjH41zrQXysYUCJ/XZ6NXLUxno6CXHCdTsvLyEWXI71doB1i3qwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Aial+nO3; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=T+nEAcVgdWXpw1h1GUtHc8qOgTf3PIgbErKLx/i6IKI=;
-	b=Aial+nO323EJNbsJZq3UX2wEEH2MPHjU79y58wkfS2c1BmC62a/CcjteRosKBd
-	UrI63uczYTXOkRdKTjJ9h++rBCvb/70A3MCW3Awp2sxy5wihUGcKmKwg7HxDFuLt
-	cqHscGd4Rc8uuXGlkNYlxgJ4D40nmdjAtVFh4xsX6iMLU=
-Received: from [10.42.20.80] (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDXf4rJ6s9nMn6xRw--.33271S2;
-	Tue, 11 Mar 2025 15:48:26 +0800 (CST)
-Message-ID: <503d5b4c-4fc8-a971-0745-617f49022fe8@163.com>
-Date: Tue, 11 Mar 2025 15:48:25 +0800
+	s=arc-20240116; t=1741679436; c=relaxed/simple;
+	bh=PfXD9LAIRac4LpEfNqgo9lEHLBGVzIakFvPgYg4Zlqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fw+JYKTVuaEzxiZQyPUfjtGY7Dg/yecPO0JmnXI0crhgKW35HHo7RmRj4DC3iViTv/3HK0m6EUd1uSxJYJIirIFuPwaQP93gkftptieo4UfNn1KdfQytMnAVQO5m3zL2OZBL8/kJxUNPC4O/M9+5W+WdJVj5Tsn75l8w8zPog6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAs0RnLo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C2CC4CEE9;
+	Tue, 11 Mar 2025 07:50:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741679434;
+	bh=PfXD9LAIRac4LpEfNqgo9lEHLBGVzIakFvPgYg4Zlqo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tAs0RnLoI8rz3aCg9hWT1uA95q7khX3NJxB0yOf6mE5yOofZUZf3G14AjQ8X2V7rI
+	 HJU2efgzLf9yGmc/Cqwxk9JbtAXMtl46w9XumQqPYSF2+ZWGk8fo3e2E/zjVGNvZiO
+	 PA7WoNEixNm1Mx10vllM/P+LeLkdxC5+lyg3CsRI2wUmxhV5/h7zX4Tvkzxv9kWSoz
+	 LQqPSIpq6fXuyzFPQVXhD7IcL583+quvTWBgEHYsaPxhobp/ginjTDgQtgSCplbEuo
+	 ICJv3qLPhD8DuQxzirhAZH8rInv768zAu6/j2d6JgX+y1ACfXvpVPnthX/I8x4UDXk
+	 5f6z4/T23+5oA==
+Date: Tue, 11 Mar 2025 08:50:31 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Matt Coster <matt.coster@imgtec.com>
+Cc: Frank Binns <frank.binns@imgtec.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>, 
+	Alessio Belle <alessio.belle@imgtec.com>, Alexandru Dadu <alexandru.dadu@imgtec.com>
+Subject: Re: [PATCH v3 01/18] dt-bindings: gpu: img: Future-proofing
+ enhancements
+Message-ID: <20250311-flashy-rattlesnake-of-rain-dcc4f6@krzk-bin>
+References: <20250310-sets-bxs-4-64-patch-v1-v3-0-143b3dbef02f@imgtec.com>
+ <20250310-sets-bxs-4-64-patch-v1-v3-1-143b3dbef02f@imgtec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2] fbdev: fsl-diu-fb: add missing device_remove_file()
-Content-Language: en-US
-To: Helge Deller <deller@gmx.de>, Timur Tabi <timur@kernel.org>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
-References: <20250309081607.27784-1-oushixiong1025@163.com>
- <0a15e04f-bd6d-4c2b-a8e1-708880fa433c@gmx.de>
-From: Shixiong Ou <oushixiong1025@163.com>
-In-Reply-To: <0a15e04f-bd6d-4c2b-a8e1-708880fa433c@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXf4rJ6s9nMn6xRw--.33271S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KF48CFyxKF1rGFWxXw1rXrb_yoW8CryrpF
-	WxXay5KrWDtr1UGwnFgw4xu3WYqw4Iy34xZryIkay3Wr909FyDXas5GF18Ca9YvrWkC3Wa
-	va4UtryY9F9rWF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zR6BTOUUUUU=
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/xtbBYwEND2fP5d9gcgAAsg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250310-sets-bxs-4-64-patch-v1-v3-1-143b3dbef02f@imgtec.com>
 
-Yeah, you are right, but I believe it would be better to retain the checks.
-Anyway, I have submitted the V3 patch which has dropped the checks.
+On Mon, Mar 10, 2025 at 01:10:25PM +0000, Matt Coster wrote:
+> The first compatible strings added for the AXE-1-16M are not sufficient to
+> accurately describe all the IMG Rogue GPUs. The current "img,img-axe"
+> string refers to the entire family of Series AXE GPUs, but this is
+> primarily a marketing term and does not denote a level of hardware
+> similarity any greater than just "Rogue".
+> 
+> The more specific "img,img-axe-1-16m" string refers to individual AXE-1-16M
+> GPU. For example, unlike the rest of the Series AXE GPUs, the AXE-1-16M
+> only uses a single power domain.
+> 
+> The situation is actually slightly worse than described in the first
+> paragraph, since many "series" (such as Series BXS found in the TI AM68
+> among others and added later in this series) contain cores with both Rogue
+> and Volcanic architectures.
+> 
+> Besides attempting to move away from vague groupings defined only
+> by marketing terms, we want to draw a line between properties inherent to
+> the IP core and choices made by the silicon vendor at integration time.
+> For instance, the number of power domains is a property of the IP core,
+> whereas the decision to use one or multiple clocks is a vendor one.
+> 
+> In the original compatible strings, we must use "ti,am62-gpu" to constrain
+> both of these properties since the number of power domains cannot be fixed
+> for "img,img-axe".
+> 
+> Work is currently underway to add support for volcanic-based Imagination
+> GPUs, for which bindings will be added in "img,powervr-volcanic.yaml".
+> As alluded to previously, the split between rogue and volcanic cores is
+> non-obvious at times, so add a generic top-level "img,img-rogue" compatible
+> string here to allow for simpler differentiation in devicetrees without
+> referring back to the bindings.
+> 
+> The currently supported GPU (AXE-1-16M) only requires a single power
+> domain. Subsequent patches will add support for BXS-4-64 MC1, which has
+> two power domains. Add infrastructure now to allow for this.
+> 
+> Also allow the dma-coherent property to be added to IMG Rogue GPUs, which
+> are DMA devices. The decision for coherency is made at integration time and
+> this property should be applied wherever it accurately describes the
+> vendor integration.
+> 
+> Note that the new required properties for power domains are conditional on
+> the new base compatible string to avoid an ABI break.
+> 
+> Signed-off-by: Matt Coster <matt.coster@imgtec.com>
+> ---
+> Changes in v3:
+> - Remove unnecessary example
+> - Remove second power domain details, add these where they're used instead
+> - Avoid ABI breaks by limiting new required properties to new compatible
+>   strings and making all binding changes in a single patch.
+> - Links to v2:
+>   https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-1-3fd45d9fb0cf@imgtec.com
+>   https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-3-3fd45d9fb0cf@imgtec.com
+>   https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-4-3fd45d9fb0cf@imgtec.com
+> ---
+>  .../devicetree/bindings/gpu/img,powervr-rogue.yaml | 43 ++++++++++++++++++----
+>  1 file changed, 36 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> index 256e252f8087fa0d6081f771a01601d34b66fe19..5c16b2881447c9cda78e5bb46569e2f675d740c4 100644
+> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> @@ -12,10 +12,20 @@ maintainers:
+>  
+>  properties:
+>    compatible:
+> -    items:
+> -      - enum:
+> -          - ti,am62-gpu
+> -      - const: img,img-axe # IMG AXE GPU model/revision is fully discoverable
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - ti,am62-gpu
+> +          - const: img,img-axe-1-16m
+> +          - const: img,img-rogue
 
+That's still ABI break. You got here NAK. You ust preserve img,img-axe.
+Your marketing troubles do not concern Linux.
 
-Thanks and Regards,
-Shixiong Ou.
+> +
+> +      # This legacy combination of compatible strings was introduced early on
+> +      # before the more specific GPU identifiers were used.
+> +      - items:
+> +          - enum:
+> +              - ti,am62-gpu
+> +          - const: img,img-axe
+> +        deprecated: true
+>  
+>    reg:
+>      maxItems: 1
+> @@ -34,8 +44,13 @@ properties:
+>    interrupts:
+>      maxItems: 1
+>  
+> -  power-domains:
+> -    maxItems: 1
+> +  power-domains: true
 
-在 2025/3/10 03:42, Helge Deller 写道:
-> On 3/9/25 09:16, Shixiong Ou wrote:
->> From: Shixiong Ou <oushixiong@kylinos.cn>
->>
->> Call device_remove_file() when driver remove.
->>
->> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
->> ---
->> v1->v2:
->>     add has_sysfs_attrs flag.
->>
->>   drivers/video/fbdev/fsl-diu-fb.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/video/fbdev/fsl-diu-fb.c 
->> b/drivers/video/fbdev/fsl-diu-fb.c
->> index 5ac8201c3533..57f7fe6a4c76 100644
->> --- a/drivers/video/fbdev/fsl-diu-fb.c
->> +++ b/drivers/video/fbdev/fsl-diu-fb.c
->> @@ -384,6 +384,7 @@ struct fsl_diu_data {
->>       __le16 next_cursor[MAX_CURS * MAX_CURS] __aligned(32);
->>       uint8_t edid_data[EDID_LENGTH];
->>       bool has_edid;
->> +    bool has_dev_attr;
->>   } __aligned(32);
->>
->>   /* Determine the DMA address of a member of the fsl_diu_data 
->> structure */
->> @@ -1809,6 +1810,7 @@ static int fsl_diu_probe(struct platform_device 
->> *pdev)
->>               data->dev_attr.attr.name);
->>       }
->>
->> +    data->has_dev_attr = true;
->>       dev_set_drvdata(&pdev->dev, data);
->>       return 0;
->>
->> @@ -1827,6 +1829,10 @@ static void fsl_diu_remove(struct 
->> platform_device *pdev)
->>       int i;
->>
->>       data = dev_get_drvdata(&pdev->dev);
->> +
->> +    if (data->has_dev_attr)
->
-> Looking at other drivers (e.g. drivers/net/can/usb/esd_usb.c) it seems
-> that device_remove_file() is ok even if it's not fully initialized...
->
-> I think you can drop those extra checks.
->
-> Helge
->
->
->> + device_remove_file(&pdev->dev, &data->dev_attr);
->> +
->>       disable_lcdc(&data->fsl_diu_info[0]);
->>
->>       free_irq(data->irq, data->diu_reg);
+No, widest constraints always stay here.
+
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: a
+
+That's not a useful name. Are you sure that datasheet calls it power
+domain A?
+
+> +
+> +  dma-coherent: true
+
+Best regards,
+Krzysztof
 
 
