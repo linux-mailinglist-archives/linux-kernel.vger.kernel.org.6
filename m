@@ -1,134 +1,113 @@
-Return-Path: <linux-kernel+bounces-556056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4156EA5C066
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:15:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F1AA5C05C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:14:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E33311897930
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:12:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9701117980C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A1625F7B1;
-	Tue, 11 Mar 2025 12:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1892571B2;
+	Tue, 11 Mar 2025 12:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ANso++PT"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKH2YSEo"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6816025F792;
-	Tue, 11 Mar 2025 12:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9F82571A0;
+	Tue, 11 Mar 2025 12:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741694648; cv=none; b=WjFgo8Yovf75/G49YCDHpado3Jqcg3PXTbiwkLNgk96MXnVlA/W93cKB/Ti+68G6yiw7PSTK9hxnV4PJtLQbLB1s6yEcu2XWTguhu8+LEpUkJBUArSkPc8pv1Qj6Y/Xwq0UlTqKLtjSHwgNmai9Fzq4L5kj11Dwjt76LNmaNjPA=
+	t=1741694633; cv=none; b=ba8lR9iAgfYyykYH+7nvNRJJuZeCZus4Ze0AtJOev/2CxvHV5gemqvezeLurnXSXVTMkqp1CPcb5l8nmjD78JKv+crg/TaVQS7T9MMTfxWC9TPwofcUBGVGlqAhuKomp5vRKETC4M58J8wMQeS2Xb2ynl1YXw22lZWuNpkGU17w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741694648; c=relaxed/simple;
-	bh=xOEREiN2uQjKIn9J+2s38uHFDGAokPVsN8kB9KMEmtE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6RzYMMLU1oKyVlgcUFV+c+J6YL+K6rFehkva31/6wbHoxOdzqOJ/4+Gtxnq0vR+1H29mf+zlh9IDEEnZIH/yu8zBe781Ut1Ay+7RVPKZgrHMS3TBQR52ijCInaNlVF8R1mOsPbIjwGpsZhyefeKiROmrjEnTgfruBpRY2HxcRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ANso++PT; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6818840E01A5;
-	Tue, 11 Mar 2025 12:04:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 7ftBxgbX5-Fr; Tue, 11 Mar 2025 12:03:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741694639; bh=CO+LDNh8IlZoGZzHBH1aBZkh7iJLXMM3yHqf4JXWOlI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ANso++PTHNhvd5YCgSkM2TF6+6p1IdTTAAcjLu27nUYiPnfwFkzTVe/+dKx2bxdjs
-	 vhC/f3OmEGB/fMW3YyunVZnL9jwBneGhjW3U1gDGsPeYQqtlob1vvk8HhkUm4lZshb
-	 6qEBOQ2wihnpCls2nZqgsjhPoCLSxgEzCVKVgMQ8/O3bYqKrt47+mSkNPl2GGY6cGG
-	 vNu8fBSw6QeaAqoLR5af2RM02DYtp/mHrZngT0jCogMvYxVToUkOxg0U7MnrGvrJLM
-	 PNoeAk6WfgSRA1FaiQRLXQuhq+0lDrOTi2XYjsWcQlENsrGWTmai9ZY5d2w6xtFDRi
-	 JmZhQt5Nx7aFGxYo7iBxQ7Or9q5AlPYokLtGx8ohojR3eOCUnms5cSDNrW8E4ZYa76
-	 s6QuiwHoTfovd8W378wktVBdHyZtwRDGTElOk1NIjVyk0mlXQ2TJTmg3IgyPBNu8Ax
-	 gGiL+Q+N283lw4QAO7Xzd5HKwcKSpssagft2rYkhdBi0cewWUK+hlQCiVfhd7jBLMB
-	 8xLJpCYz696V2+ZyhDaqjA5a54qaVa6c/BX7C04/Zx/EHtUq4IcMDDyvk03mjDv5dN
-	 hdMP6BETr0FRLHJE6c2q+zPooM0PM842aAYsHNDpSShHTchR+t3jZWJgZf34/00Tbs
-	 MvnttPVpr2HZU4coilPLexL0=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C588740E015D;
-	Tue, 11 Mar 2025 12:03:46 +0000 (UTC)
-Date: Tue, 11 Mar 2025 13:03:40 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Patrick Bellasi <derkling@google.com>,
-	Brendan Jackman <jackmanb@google.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patrick Bellasi <derkling@matbug.net>,
-	David Kaplan <David.Kaplan@amd.com>
-Subject: Re: [PATCH final?] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-Message-ID: <20250311120340.GFZ9AmnAcZg-4pXOBv@fat_crate.local>
-References: <20250303150557.171528-1-derkling@google.com>
+	s=arc-20240116; t=1741694633; c=relaxed/simple;
+	bh=lNB+xluVHdB0sMAdXkr3VICv+cyzUuhxC/f3Rfb+EYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cTpqgpN1lyynHt45TUJaacRTYJPV2WQw7+vzcjHItqnX6TGkwFJXFhkZ6ljVxL6YNPHoOrs45eW9fLts8lsxO21U+YE9q4go7x0cc+WnF9svcR5O1RRyWZWupJsx2cpW2hi5FQicYXeKkdXAcDmENWiEuf9jjsfXeQsxFo2u+jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKH2YSEo; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223f4c06e9fso88725835ad.1;
+        Tue, 11 Mar 2025 05:03:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741694631; x=1742299431; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RZQCZpAfe5gKaMnJVFSrCHy4twk7KgmPvZpy3BHUx0w=;
+        b=WKH2YSEoFZXQE0//T6VOe8UFjJdsIQYWgpJA3QKTlUjh4aAuufedIDCnb10xvOhjOr
+         UnDDrs3eF+yapZwZ2Gppy+JxnEtE3+iiCFRQUZMPgdP3kUCL5tEFzIYeEzpjmNrOxoTi
+         So1c+QXUSm4lXU3M+K0NDAWLzJwIireKEOuUkZkMjf56YEFrRvu3oD9U7uxfRBqnE99x
+         g2hhjZAlaPr4V8YFf5QVik6s4F8mFHIKhToGUyVV8kxLrcfmYNHmC8HqxGaaCqBqk8Lm
+         J+eUo073TJ1J+qJPPnYBl6eB8Ko7dStLBrdcq8YHhPwEHsfdiLvWgJ1arHlDwtgNF62L
+         Hx9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741694631; x=1742299431;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RZQCZpAfe5gKaMnJVFSrCHy4twk7KgmPvZpy3BHUx0w=;
+        b=gSRDCh/ybTe0uKEL2lYNj0g+knsdTj+QgYkudmQT4SBCgNxtIkyqAhkHrMLs+yB/OK
+         dQ+HnX1DMJqHhNLkGTNBizraPnN6XgwVfnGt6uZmEgiqRYwq+kRgMdSgeQkvYpdO0X11
+         iqPg4dr/uSIPfvpirT0DLhthY+OWfgbtN/YcJ0NU/uywovWzFbdNzjJwV8qPyLJbtvwb
+         /sjHQtmM9VcWhIHnk/SlWC6M9XMOFTbSz6W5A8kkX8YVs2eJAYxE2ITtcuakpDFxxRUG
+         6T9XaQY3eZciuNxomPsktrMUyCMOX5xCOsNfT6DWt6IUR4RWQsHXUUXq99yZ76HnJk5V
+         2zsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKi7tGDCSj/l+380KElwnroYXsH+7v7OOYYx/pjpYa8UwtTrXoTg43CssE2O8YljJu1LvVpp2QN5OK+oOG3QBMACUL@vger.kernel.org, AJvYcCVkNOJ0M6QjMruM+4ILQsDVZUpZlbS1ossVpufZP5rw2yLDzDV4BjOuPkzZW9cgtISAbiBxfJ++R1Q=@vger.kernel.org, AJvYcCXRPh3Bz4DF1hVQvJGo6bKx/c5vMIu5EoETUlcD4MfPPdwOVCBp3MgWGNsuK9ZGswJFMtxOHZ6FMQPYl6C6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza4NkyWZyv2Tdoo0//jeeVUzhdDeK1KDF8jTHZ/vgpU5TprGqD
+	sV6BYZHi/tSDIXiJ39ZTEYG6fCCITiRuxCGo02UqzbAfxsnDGDcW
+X-Gm-Gg: ASbGnctrIswdIG0ynSwq7LbMofdhib26NeSjcYX3EagZkWPQV7FYlH6rQu63gCfUijc
+	RmbTZjaLK36PfCsTQ4REI1+fcUrv1JyLQVBhYnQRcgBFsOUILgB5J6NMW+cZORNLy+fxTj9w6Co
+	MhAyC78MjnR+NvlDsrXOQpZCJEq9X6t5f9Xm9YJsse1nl2uol6NsODnq3XbhCv0HLENqy4+LIIP
+	fz0SKyD5/EyqXk0xSdSzeeNtzTrhBhaH/iM9yzDM3pNa9qNsSAtsmI4dt+BjPW2uyqsIDQMAXgm
+	jRtPgqiqosxICeZV92hqkNamk1bmqHL61QaA25OI+uyIGTSwO3CnhrGNAEUywil1IZNubUOvpTU
+	OqW0oaAaW2VzvwUKfvQCPjPgk
+X-Google-Smtp-Source: AGHT+IFGTZJKgUE85hdQhCUMDZf/YDgvHbNQzVbwDVYAa4WWsCDfLx5Oc+vp9Cn6By0AnN6qgXQJZw==
+X-Received: by 2002:a17:902:cec6:b0:220:fe36:650c with SMTP id d9443c01a7336-22593dbba6emr47676715ad.23.1741694631530;
+        Tue, 11 Mar 2025 05:03:51 -0700 (PDT)
+Received: from ?IPV6:2409:4080:1188:3708:3a3b:1a57:b459:3f2b? ([2409:4080:1188:3708:3a3b:1a57:b459:3f2b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410aaa9e7sm96219675ad.244.2025.03.11.05.03.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 05:03:51 -0700 (PDT)
+Message-ID: <e36ebdb7-775c-40e2-9523-37eefee4bbaf@gmail.com>
+Date: Tue, 11 Mar 2025 17:33:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250303150557.171528-1-derkling@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: tracing: Reduce maxdepth in index documentation
+To: Bagas Sanjaya <bagasdotme@gmail.com>, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, corbet@lwn.net
+Cc: skhan@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20250217112109.7734-1-purvayeshi550@gmail.com>
+ <Z7aczkdNVgLy1NeP@archie.me>
+Content-Language: en-US
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <Z7aczkdNVgLy1NeP@archie.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 03, 2025 at 03:05:56PM +0000, Patrick Bellasi wrote:
-> That's why we are also going to detect this cases and set
-> SRSO_MITIGATION_BP_SPEC_REDUCE_NA, so that we get a:
+On 20/02/25 08:39, Bagas Sanjaya wrote:
+> On Mon, Feb 17, 2025 at 04:51:09PM +0530, Purva Yeshi wrote:
+>> Reduce :maxdepth: from 2 to 1 in index.rst to simplify the table of
+>> contents, showing only top-level document titles for better readability.
+>>
 > 
->   "Vulnerable: Reduced Speculation, not available"
+> Is this patch mean to be applied on top of/squashed into your toctree
+> refactoring ([1])?
 > 
-> from vulnerabilities/spec_rstack_overflow, which should be the only place users
-> look for to assess the effective mitigation posture, ins't it?
+> Confused...
+> 
+> [1]: https://lore.kernel.org/linux-doc/20250217110637.6640-1-purvayeshi550@gmail.com/
+> 
 
-If they even look. The strategy so far has been that the kernel should simply
-DTRT (it being the default) if the user doesn't know anything about
-mitigations etc.
-
-So I have another idea: how about we upstream enough ASI bits - i.e., the
-function which checks whether ASI is enabled - and use that in the mitigation
-selection?
-
-IOW:
-	case SRSO_CMD_BP_SPEC_REDUCE:
-		if ((boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-			select it
-		} else {
-			if (ASI enabled)
-				do not fall back to IBPB;
-			else
-				fallback to IBPB;
-		}
-
-"ASI enabled" will return false upstream - at least initially only, until ASI
-is out-of-tree - and then it'll fall back.
-
-On your kernels, it'll return true and there it won't fall back.
-
-We just need to sync with Brendan what "ASI enabled" would be and then it
-should work and your backports would be easy in that respect.
-
-Until ASI is not upstream, that is.
-
-Hmmmm?
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Sorry for the confusion. I will send a series of patches, like [0/3] and 
+[1/3], to make the dependencies clear. Thanks for your patience!
 
