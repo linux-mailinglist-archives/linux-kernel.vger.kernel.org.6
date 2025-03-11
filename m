@@ -1,233 +1,285 @@
-Return-Path: <linux-kernel+bounces-555922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99156A5BE5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:00:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77281A5BE60
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8253F7AAB91
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:58:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DA4A16C3C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFDB251797;
-	Tue, 11 Mar 2025 10:59:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C087F250BF8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B81F250C1C;
+	Tue, 11 Mar 2025 11:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ly03n0sG"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAE71EE001
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741690741; cv=none; b=nqsC1zRjKYo30S2DueQ4OpMe1UzMCXsHfXjNJy7m5oQtkFqN2wXlavDVI/npDEq6lljUDVgGN8Apq0ii61oVzEh7QWH0X2xebDVazRQwSP6trQAl//KTdjHohAf2d3XZSS+cTltlBfRrY5oLv58PSSqzXsZru3ebrH5XD1Yp/ZA=
+	t=1741690904; cv=none; b=o9o1X3JBiyg1GJSOrIbtAEV8YFnXOUpodmQL88FUH9YWp/RkAUmGQlBF5ZhoeeUVSee8vbZpfhUQJyJl0JUPAOvxPH1gp5hPTX+Eyd2qZngv6FDB6dZcq+ZrdQNa7R+bfcUFbQgIjbuDfP0d7pytwWpY8vyQdyA/Dpra6DOzgpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741690741; c=relaxed/simple;
-	bh=XVzqMHkJc4JT2E7A6VzB/d4ACXN8tfVE4I1WavXkVKM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=R7EuUgBfRLR0XyNtANKxuCRSi/k50vjQ4um2rHd4RQ3kNV2Dr42rs6dV7qNL0R+ep+Ikryngdy+a107VNvu9c3suo62DfZKUbpEVg+jkqLjbaJMSC6e1/JyxitFi5ZzdPCfVfRgQrqAw6XzkJku5N6b1ozlIQdGTS4TYSZAC7Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37B411762;
-	Tue, 11 Mar 2025 03:59:10 -0700 (PDT)
-Received: from [10.1.30.125] (XHFQ2J9959.cambridge.arm.com [10.1.30.125])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EEE1B3F673;
-	Tue, 11 Mar 2025 03:58:55 -0700 (PDT)
-Message-ID: <7cca1edf-fd1b-4622-999e-8e0ca098dfe2@arm.com>
-Date: Tue, 11 Mar 2025 10:58:54 +0000
+	s=arc-20240116; t=1741690904; c=relaxed/simple;
+	bh=A+f6h6EfmTGtZRZEGW74yESJsS+IX3pOBHVErJKcIns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oIMX7sXYBRIHcdqWHjZAUBvNP7zE+dnTCGqTZ/l/xatJpB2zAU8jeKWGvTbluxOUKe7zngf2EYEFX1dravcxP+P4rE2uv20KP7gjxvXm1n5i1ZmeU3CUZQrFKMSm9eYSBQmsPqpMQhz+Y3jFN6VAtSpWoO5o2dnyklmkXDsDMTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ly03n0sG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B6xLUQ001921
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:01:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	awHQ8/tSf8UnEsKyWlG4BaSlcVJSFDh55E2Y4eShfpE=; b=ly03n0sGnyRbWXZc
+	Eqmmn8T5v7nvzm1W+54NHl4VONNYs+ofF3qBBVxJmnT9jQ+LSElHdo7V953oVPwb
+	62Rw2UoZPLYr+cMO7iaOSMZW6X9oLfwB/k826PojqKeSSKsKueQ8ovkS259fw12p
+	+e5Cl0IGU5bj6UTfE3wym/GZEZcQbvRdulNkEJSqnp+hFKPkc3zatm5Xe067lr6q
+	ybhm0xllpzRjurkpzT0NGZ8lvTAw1t3zG3r0MlErqBSrP4YrvJ+kGuZQWgaa0GG7
+	T+JK9SNCjnmf7b/XorQg7IB3olq7itSCVXWETV/YzwBzK0Q5yiuPsW7uJeC+ESnN
+	yW96Ng==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f6agb5y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:01:41 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2fe8c5dbdb0so9274015a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 04:01:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741690901; x=1742295701;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=awHQ8/tSf8UnEsKyWlG4BaSlcVJSFDh55E2Y4eShfpE=;
+        b=dlhPZi5l23PFjVlTO50kECOCof/YBfc5XV5uEKZ5GtCogFz8E8uapOgTbWMG5ci2cc
+         DIB80fq/argUIW8k0W6uug98q2Tbf2ZMrQInqPXNVS43bVDPkp2JrQ0Y7jM8UXGmXKXp
+         rSYcd51XbUgSi73h2Toa8tn5JnmIU4K9Xeukfkpb59M1xuWGb7kVf7kxcJDO1FTuJvel
+         Fy5WNVybeKMc0y4D0ik902iETAaXYW/5aOMyXZ/MgInXYKeeV1BoWhghwrvDiIne1XEu
+         hmun2vLhBmY94Nk8WgOWubM3GGxZDfTlB/2GHNn707oMLywQ11qpKca4hdO+rz0nr1uO
+         KV7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUXYt/yvBmAAKJ1hMurM+6HGNABessHCjbB8hu5fb6u6kyTpO/CT2h/IW4fe5vp8b0xlmmBUztpCYdRUT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8KwUfub8dg4U4GFAFYvesRKvSS6DCqpNmhPKE260u07zISMai
+	XlNt+bow++skaGBqMZWEsj9bAr9FAW/rrVwNDnUjT8QqJaw78RuqNMxDch7AolXFD9OJ7BAhUF/
+	8sQgVR6gdoSM3NEhiebRPKbo46ZG82A5svYoHpFTQ/qGsUqarxbQc1xplQoJdNP4=
+X-Gm-Gg: ASbGncvfn+3mr0TNE68A0XHaARavhpz/WFkzbNc+YbbwWRpT7TG3KufhdqVldCxfrPF
+	erEmac+3jc8poRktiQlvZ92JXMCkkScazQRE6JgboNKGUPzBCuQBsRB3PBXnl5R6hPHvMWE+RlC
+	iKP3uONZWIP9UNKveKe5N+5x+uOze6EXTbOn/qLs6qDK+ilak3EbvV9+4RXW61zux4wBxpSYbFU
+	8iHLrv4PFFHyp29310quqUawC1hktud+pyzrhV91HoB1K3kd59heEL9kR4GQ7rHJO4MAkzk32+m
+	r6WjLz8aYcJxfLrw4s3eEbN6QAo6X9fITWR2B3+n9zxeUQ==
+X-Received: by 2002:a17:90b:164f:b0:2fe:a0ac:5fcc with SMTP id 98e67ed59e1d1-2ff7cf3e3eamr20418702a91.34.1741690900609;
+        Tue, 11 Mar 2025 04:01:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvJShX7YcLtJuvnkvs5xiC1/MxsI3XPL/xg/+Wod3SHY2aB1lbaMeinxu1i1VNUiUbskVt6w==
+X-Received: by 2002:a17:90b:164f:b0:2fe:a0ac:5fcc with SMTP id 98e67ed59e1d1-2ff7cf3e3eamr20418654a91.34.1741690900084;
+        Tue, 11 Mar 2025 04:01:40 -0700 (PDT)
+Received: from [10.92.192.202] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff693e7388sm10834772a91.35.2025.03.11.04.01.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 04:01:39 -0700 (PDT)
+Message-ID: <9be6ce8e-f0e2-7226-e900-3a0c2506a16a@oss.qualcomm.com>
+Date: Tue, 11 Mar 2025 16:31:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
-Content-Language: en-GB
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Yang Shi <yang@os.amperecomputing.com>,
- =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
- catalin.marinas@arm.com, will@kernel.org, joro@8bytes.org,
- jean-philippe@linaro.org, mark.rutland@arm.com, joey.gouly@arm.com,
- oliver.upton@linux.dev, james.morse@arm.com, broonie@kernel.org,
- maz@kernel.org, david@redhat.com, akpm@linux-foundation.org, jgg@ziepe.ca,
- nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
- smostafa@google.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
- <20250228182403.6269-6-miko.lenczewski@arm.com>
- <b46dc626-edc9-4d20-99d2-6cd08a01346c@os.amperecomputing.com>
- <43732270-8fd0-4a18-abec-096e383a6a4d@arm.com>
- <5ff34bd0-7823-4f31-9f13-bf60d3345b99@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <5ff34bd0-7823-4f31-9f13-bf60d3345b99@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v7 2/4] PCI: of: Add API to retrieve equalization presets
+ from device tree
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi
+ <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+ <kw@linux.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        quic_mrana@quicinc.com, quic_vbadigan@quicinc.com
+References: <20250225-preset_v6-v7-0-a593f3ef3951@oss.qualcomm.com>
+ <20250225-preset_v6-v7-2-a593f3ef3951@oss.qualcomm.com>
+ <20250306032250.vzfhznmionz3qkx7@thinkpad>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <20250306032250.vzfhznmionz3qkx7@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=WsDRMcfv c=1 sm=1 tr=0 ts=67d01815 cx=c_pps a=vVfyC5vLCtgYJKYeQD43oA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=OvU543Yhaul-O2FZsO4A:9 a=QEXdDO2ut3YA:10
+ a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-GUID: xA38pOKjXo1G4GIS24G-JuNYut6cnhqj
+X-Proofpoint-ORIG-GUID: xA38pOKjXo1G4GIS24G-JuNYut6cnhqj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_01,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 adultscore=0
+ impostorscore=0 phishscore=0 mlxscore=0 mlxlogscore=999 clxscore=1015
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503110072
 
-On 11/03/2025 10:17, Suzuki K Poulose wrote:
-> On 03/03/2025 10:17, Ryan Roberts wrote:
->> On 01/03/2025 01:32, Yang Shi wrote:
->>>
->>>
->>>
->>> On 2/28/25 10:24 AM, Mikołaj Lenczewski wrote:
->>>> For supporting BBM Level 2 for userspace mappings, we want to ensure
->>>> that the smmu also supports its own version of BBM Level 2. Luckily, the
->>>> smmu spec (IHI 0070G 3.21.1.3) is stricter than the aarch64 spec (DDI
->>>> 0487K.a D8.16.2), so already guarantees that no aborts are raised when
->>>> BBM level 2 is claimed.
->>>>
->>>> Add the feature and testing for it under arm_smmu_sva_supported().
->>>>
->>>> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
->>>> ---
->>>>    arch/arm64/kernel/cpufeature.c                  | 7 +++----
->>>>    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c | 3 +++
->>>>    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c     | 3 +++
->>>>    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h     | 4 ++++
->>>>    4 files changed, 13 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->>>> index 63f6d356dc77..1022c63f81b2 100644
->>>> --- a/arch/arm64/kernel/cpufeature.c
->>>> +++ b/arch/arm64/kernel/cpufeature.c
->>>> @@ -2223,8 +2223,6 @@ static bool has_bbml2_noabort(const struct
->>>> arm64_cpu_capabilities *caps, int sco
->>>>                if (!cpu_has_bbml2_noabort(__cpu_read_midr(cpu)))
->>>>                    return false;
->>>>            }
->>>> -
->>>> -        return true;
->>>>        } else if (scope & SCOPE_LOCAL_CPU) {
->>>>            /* We are a hot-plugged CPU, so only need to check our MIDR.
->>>>             * If we have the correct MIDR, but the kernel booted on an
->>>> @@ -2232,10 +2230,11 @@ static bool has_bbml2_noabort(const struct
->>>> arm64_cpu_capabilities *caps, int sco
->>>>             * we have an incorrect MIDR, but the kernel booted on a
->>>>             * sufficient CPU, we will not bring up this CPU.
->>>>             */
->>>> -        return cpu_has_bbml2_noabort(read_cpuid_id());
->>>> +        if (!cpu_has_bbml2_noabort(read_cpuid_id()))
->>>> +            return false;
->>>>        }
->>>>    -    return false;
->>>> +    return has_cpuid_feature(caps, scope);
->>>
->>> Do we really need this? IIRC, it means the MIDR has to be in the allow list
->>> *AND* MMFR2 register has to be set too. AmpereOne doesn't have MMFR2 register
->>> set.
+
+
+On 3/6/2025 8:52 AM, Manivannan Sadhasivam wrote:
+> On Tue, Feb 25, 2025 at 05:15:05PM +0530, Krishna Chaitanya Chundru wrote:
+>> PCIe equalization presets are predefined settings used to optimize
+>> signal integrity by compensating for signal loss and distortion in
+>> high-speed data transmission.
 >>
->> Miko, I think this should have been squashed into patch #1? It doesn't belong in
->> this patch.
+>> As per PCIe spec 6.0.1 revision section 8.3.3.3 & 4.2.4 for data rates
+>> of 8.0 GT/s, 16.0 GT/s, 32.0 GT/s, and 64.0 GT/s, there is a way to
+>> configure lane equalization presets for each lane to enhance the PCIe
+>> link reliability. Each preset value represents a different combination
+>> of pre-shoot and de-emphasis values. For each data rate, different
+>> registers are defined: for 8.0 GT/s, registers are defined in section
+>> 7.7.3.4; for 16.0 GT/s, in section 7.7.5.9, etc. The 8.0 GT/s rate has
+>> an extra receiver preset hint, requiring 16 bits per lane, while the
+>> remaining data rates use 8 bits per lane.
 >>
->> Yang, we discussed this internally and decided that we thought it was best to
->> still require BBML2 being advertised in the feature register. That way if trying
->> to use KVM to emulate a CPU that is in the allow list but doesn't really support
->> BBML2, we won't try to use it.
+>> Based on the number of lanes and the supported data rate, this function
+>> reads the device tree property and stores in the presets structure.
 >>
->> But we still end up with the same problem if running on a physical CPU that
->> supports BBML2 with conflict aborts, but emulating a CPU in the allow list. So
+>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+>> ---
+>>   drivers/pci/of.c  | 43 +++++++++++++++++++++++++++++++++++++++++++
+>>   drivers/pci/pci.h | 27 ++++++++++++++++++++++++++-
+>>   2 files changed, 69 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+>> index 7a806f5c0d20..9ebe7d0e4e0c 100644
+>> --- a/drivers/pci/of.c
+>> +++ b/drivers/pci/of.c
+>> @@ -851,3 +851,46 @@ u32 of_pci_get_slot_power_limit(struct device_node *node,
+>>   	return slot_power_limit_mw;
+>>   }
+>>   EXPORT_SYMBOL_GPL(of_pci_get_slot_power_limit);
+>> +
+>> +/**
+>> + * of_pci_get_equalization_presets - Parses the "eq-presets-Ngts" property.
+>> + *
+>> + * @dev: Device containing the properties.
+>> + * @presets: Pointer to store the parsed data.
+>> + * @num_lanes: Maximum number of lanes supported.
+>> + *
+>> + * If the property is present read and store the data in the preset structure
+>> + * else assign default value 0xff to indicate property is not present.
 > 
-> I don't understand the problem here ? In the worst case, if we want to disable
-> the BBML2 feature on a given CPU, we could provide an id-
-> override to reset the value of BBML2. Or provide a kernel parameter to
-> disable this in case we want to absolutely disable the feature on a
-> "distro" kernel.
-
-Hi Suzuki,
-
-Sorry perhaps I'm confusing everyone; As I recall, we had a conversation before
-Miko posted this series where you were suggesting we should check BOTH that all
-the CPUs' MIDRs are in the allow list AND that BBML2 is advertised in MMFR2 in
-order to decide to enable the CPU feature. My understanding was that without the
-MMFR2 check, you were concerned that in a virtualization scenario, a CPU's MIDR
-could be overridden to emulate a CPU that is in the allow list, but in reality
-the CPU does not support BBML2. We would then enable BBML2 and BadThings (TM)
-will happen. So additionally checking the MMFR2 would solve this.
-
-But Yang is saying that he plans to add the AmpereOne to the allow list because
-it does support BBML2+NOCONFLICT semantics and we want to benefit from that. But
-AmpereOne does not advertise BBML2 in it's MMFR2. So with the current approach,
-adding AmpereOne to the allow list is not sufficient to enable the feature.
-
-But back to your original justification for checking the MMFR2; I don't think
-that really solves the problem in general, because we don't just require BBML2,
-we require BBML2+NOCONFLICT. And we can only determine that from the MIDR. So
-why bother checking MMFR2?
-
-I guess we could provide an id-override on the kernel command line to *enable*
-BBML2 for AmpereOne, but that's not going to be suitable for mass deployment, I
-don't think?
-
-Thanks,
-Ryan
-
+> 'If the property is present, read and store the data in the @presets structure.
+> Else, assign a default value of PCI_EQ_RESV.'
 > 
-> Suzuki
+>> + *
+>> + * Return: 0 if the property is not available or successfully parsed; errno otherwise.
+>> + */
+>> +int of_pci_get_equalization_presets(struct device *dev,
+>> +				    struct pci_eq_presets *presets,
+>> +				    int num_lanes)
+>> +{
+>> +	char name[20];
+>> +	int ret;
+>> +
+>> +	presets->eq_presets_8gts[0] = PCI_EQ_RESV;
+>> +	ret = of_property_read_u16_array(dev->of_node, "eq-presets-8gts",
+>> +					 presets->eq_presets_8gts, num_lanes);
+>> +	if (ret && ret != -EINVAL) {
+>> +		dev_err(dev, "Error reading eq-presets-8gts :%d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	for (int i = 0; i < EQ_PRESET_TYPE_MAX; i++) {
+>> +		presets->eq_presets_Ngts[i][0] = PCI_EQ_RESV;
+>> +		snprintf(name, sizeof(name), "eq-presets-%dgts", 8 << (i + 1));
+>> +		ret = of_property_read_u8_array(dev->of_node, name,
+>> +						presets->eq_presets_Ngts[i],
+>> +						num_lanes);
+>> +		if (ret && ret != -EINVAL) {
+>> +			dev_err(dev, "Error reading %s :%d\n", name, ret);
+>> +			return ret;
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(of_pci_get_equalization_presets);
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index 01e51db8d285..c8d44b21ef03 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -9,6 +9,8 @@ struct pcie_tlp_log;
+>>   /* Number of possible devfns: 0.0 to 1f.7 inclusive */
+>>   #define MAX_NR_DEVFNS 256
+>>   
+>> +#define MAX_NR_LANES 16
+>> +
+>>   #define PCI_FIND_CAP_TTL	48
+>>   
+>>   #define PCI_VSEC_ID_INTEL_TBT	0x1234	/* Thunderbolt */
+>> @@ -808,6 +810,20 @@ static inline u64 pci_rebar_size_to_bytes(int size)
+>>   
+>>   struct device_node;
+>>   
+>> +#define PCI_EQ_RESV	0xff
+>> +
+>> +enum equalization_preset_type {
 > 
-> 
->> given AmpereOne doesn't advertise BBML2 but does support it, I'd be happy to
->> remove this check.
->>
->> Thanks,
->> Ryan
->>
->>
->>>
->>> Thanks,
->>> Yang
->>>
->>>>    }
->>>>      #ifdef CONFIG_ARM64_PAN
->>>> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c b/drivers/iommu/
->>>> arm/arm-smmu-v3/arm-smmu-v3-sva.c
->>>> index 9ba596430e7c..6ba182572788 100644
->>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
->>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
->>>> @@ -222,6 +222,9 @@ bool arm_smmu_sva_supported(struct arm_smmu_device *smmu)
->>>>            feat_mask |= ARM_SMMU_FEAT_VAX;
->>>>        }
->>>>    +    if (system_supports_bbml2_noabort())
->>>> +        feat_mask |= ARM_SMMU_FEAT_BBML2;
->>>> +
->>>>        if ((smmu->features & feat_mask) != feat_mask)
->>>>            return false;
->>>>    diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/
->>>> arm/arm-smmu-v3/arm-smmu-v3.c
->>>> index 358072b4e293..dcee0bdec924 100644
->>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->>>> @@ -4406,6 +4406,9 @@ static int arm_smmu_device_hw_probe(struct
->>>> arm_smmu_device *smmu)
->>>>        if (FIELD_GET(IDR3_RIL, reg))
->>>>            smmu->features |= ARM_SMMU_FEAT_RANGE_INV;
->>>>    +    if (FIELD_GET(IDR3_BBML, reg) == IDR3_BBML2)
->>>> +        smmu->features |= ARM_SMMU_FEAT_BBML2;
->>>> +
->>>>        /* IDR5 */
->>>>        reg = readl_relaxed(smmu->base + ARM_SMMU_IDR5);
->>>>    diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/
->>>> arm/arm-smmu-v3/arm-smmu-v3.h
->>>> index bd9d7c85576a..85eaf3ab88c2 100644
->>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
->>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
->>>> @@ -60,6 +60,9 @@ struct arm_smmu_device;
->>>>    #define ARM_SMMU_IDR3            0xc
->>>>    #define IDR3_FWB            (1 << 8)
->>>>    #define IDR3_RIL            (1 << 10)
->>>> +#define IDR3_BBML            GENMASK(12, 11)
->>>> +#define IDR3_BBML1            (1 << 11)
->>>> +#define IDR3_BBML2            (2 << 11)
->>>>      #define ARM_SMMU_IDR5            0x14
->>>>    #define IDR5_STALL_MAX            GENMASK(31, 16)
->>>> @@ -754,6 +757,7 @@ struct arm_smmu_device {
->>>>    #define ARM_SMMU_FEAT_HA        (1 << 21)
->>>>    #define ARM_SMMU_FEAT_HD        (1 << 22)
->>>>    #define ARM_SMMU_FEAT_S2FWB        (1 << 23)
->>>> +#define ARM_SMMU_FEAT_BBML2        (1 << 24)
->>>>        u32                features;
->>>>      #define ARM_SMMU_OPT_SKIP_PREFETCH    (1 << 0)
->>>
->>
-> 
+> For the sake of completeness, you should add EQ_PRESET_TYPE_8GTS also. You could
+> skip it while reading the of_property_read_u8_array().
+Can we add like this to make parsing logic easier otherwise while
+deference the presets array we need to subtract -1.
+currently we are using like this presets[EQ_PRESET_TYPE_16GTS] if
+we want to keep in same way we need to use like below.
 
+	EQ_PRESET_TYPE_8GTS,
+	EQ_PRESET_TYPE_16GTS = 0,
+> 
+>> +	EQ_PRESET_TYPE_16GTS,
+>> +	EQ_PRESET_TYPE_32GTS,
+>> +	EQ_PRESET_TYPE_64GTS,
+>> +	EQ_PRESET_TYPE_MAX
+>> +};
+>> +
+>> +struct pci_eq_presets {
+>> +	u16 eq_presets_8gts[MAX_NR_LANES];
+>> +	u8 eq_presets_Ngts[EQ_PRESET_TYPE_MAX][MAX_NR_LANES];
+>> +};
+>> +
+>>   #ifdef CONFIG_OF
+>>   int of_get_pci_domain_nr(struct device_node *node);
+>>   int of_pci_get_max_link_speed(struct device_node *node);
+>> @@ -822,7 +838,9 @@ void pci_release_bus_of_node(struct pci_bus *bus);
+>>   
+>>   int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge);
+>>   bool of_pci_supply_present(struct device_node *np);
+>> -
+>> +int of_pci_get_equalization_presets(struct device *dev,
+>> +				    struct pci_eq_presets *presets,
+>> +				    int num_lanes);
+>>   #else
+>>   static inline int
+>>   of_get_pci_domain_nr(struct device_node *node)
+>> @@ -867,6 +885,13 @@ static inline bool of_pci_supply_present(struct device_node *np)
+>>   {
+>>   	return false;
+>>   }
+>> +
+>> +static inline int of_pci_get_equalization_presets(struct device *dev,
+>> +						  struct pci_eq_presets *presets,
+>> +						  int num_lanes)
+>> +{
+> 
+> Don't you need to initialize presets to PCI_EQ_RESV?
+> 
+I will update in the next patch.
+
+- Krishna Chaitanya.
+> - Mani
+> 
 
