@@ -1,118 +1,148 @@
-Return-Path: <linux-kernel+bounces-555966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6427A5BED6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:23:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E948A5BEDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:23:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4D01898B4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:23:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDB1116EF78
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E2F253B46;
-	Tue, 11 Mar 2025 11:23:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52632505AC;
-	Tue, 11 Mar 2025 11:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A88253F05;
+	Tue, 11 Mar 2025 11:23:29 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5881523816D;
+	Tue, 11 Mar 2025 11:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741692200; cv=none; b=O+UXQzvmqcWYZ3nRpJ3jlsD0iCZ3KkaXbO+slR6/5t30W65vVGz9nDhrXNeCae10i1zxRlTRtCxEeN03C5XeJ/3pohBPI30Y+7TfC6xhFuQjdeJp+KWvMCrzZbrvuY86yIUiiS9vOrZeaq+M58X5O9l9ZF1a1sV+RfRJwVmOaww=
+	t=1741692208; cv=none; b=UzrIaQFPYlMvp4MBB1rv+Wr58GP3SeOP3DwcdIJwjUMXZcm3zYTOmwBLs4waCAWraZ4WSwgKqDLP74V369hWTQIHbsgp63Og8iaYDoMK3blwytGlt4WhGBYMC3Ns5P6fMtmef8NOcfjwiYBKVYbm5vgB96kBzd/tu9jvQe0Xd+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741692200; c=relaxed/simple;
-	bh=ZpalmG4T9OY6m/3LwzKKa9/c72xUEFW6lIUVnjnmeAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RRv3FNU/rXWQk8Zf+9WFbIvyd3Cdjd67AieqnWSQYrgc1P2/+anUQjMGt83b6uqcwdvn+Q+0/9L10d2lJAArp4TSWv8AjwtRMzF2TUBqH/HslynWF27EIY2vQdQyY/gFY0h0lxA1rVSvlr29Gs8gmc9etbjVPfLzoM3yugga0WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6DFB152B;
-	Tue, 11 Mar 2025 04:23:28 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9EC73F673;
-	Tue, 11 Mar 2025 04:23:14 -0700 (PDT)
-Date: Tue, 11 Mar 2025 11:23:12 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Saravana Kannan <saravanak@google.com>,
-	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Aisheng Dong <aisheng.dong@nxp.com>,
-	"Fabio Estevam" <festevam@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	"Sascha Hauer" <s.hauer@pengutronix.de>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH 1/4] firmware: arm_scmi: bus: Bypass setting fwnode for
- scmi cpufreq
-Message-ID: <Z9AdICiyaCmzKh-N@bogus>
-References: <Z7Rf9GPdO2atP89Z@bogus>
- <20250218133619.GA22647@nxa18884-linux>
- <Z7Wvyn1QJQMVigf9@bogus>
- <Z7Z-ZnztmvUxWoQJ@NXL53680.wbi.nxp.com>
- <Z86w3ZRS6T2MvV3X@bogus>
- <DB9PR04MB84614FBF96E7BC0D125D97F688D62@DB9PR04MB8461.eurprd04.prod.outlook.com>
- <Z87UJdhiTWhssnbl@bogus>
- <Z87sGF_jHKau_FMe@bogus>
- <PAXPR04MB8459EA5C7898393E51C246AD88D12@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <PAXPR04MB8459A73179FFF0ED0C9A51E488D12@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1741692208; c=relaxed/simple;
+	bh=gaEpZqmgr8C7OEl9qKSUSCWcDsIXL/k2RXNQZz2ohOA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bw+rPaPTsWmZJ4yPizPqgr3kRkdykjPSbVDPMTN8WmGjBHoPTsw3gcbeUSE0v/Iogs+8/tWP4DYS6Jkvo6lqQ1gTcCEZKt/6/E2uLnP5zHHA5bEg8yHXCLICNLRSZKZ8LlL83Sqyb0vYdTgTxHtRt2zVfHSQ7l7QK5lZ05JhC+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4ZBrxN0L2Zz27gHM;
+	Tue, 11 Mar 2025 19:23:52 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 416DC1A016C;
+	Tue, 11 Mar 2025 19:23:17 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 11 Mar 2025 19:23:17 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 11 Mar
+ 2025 19:23:16 +0800
+Message-ID: <59bea7ac-ad43-0c0f-0796-6567962428a7@huawei.com>
+Date: Tue, 11 Mar 2025 19:23:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459A73179FFF0ED0C9A51E488D12@PAXPR04MB8459.eurprd04.prod.outlook.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v2 06/13] mailbox: pcc: Refactor error handling in irq
+ handler into separate function
+To: Sudeep Holla <sudeep.holla@arm.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Jassi Brar <jassisinghbrar@gmail.com>, Adam Young
+	<admiyo@os.amperecomputing.com>, Robbie King <robbiek@xsightlabs.com>
+References: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
+ <20250305-pcc_fixes_updates-v2-6-1b1822bc8746@arm.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20250305-pcc_fixes_updates-v2-6-1b1822bc8746@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On Tue, Mar 11, 2025 at 11:12:45AM +0000, Peng Fan wrote:
-> Based on linux-next, I added below node:
+
+在 2025/3/6 0:38, Sudeep Holla 写道:
+> The existing error handling logic in pcc_mbox_irq() is intermixed with the
+> main flow of the function. The command complete check and the complete
+> complete update/acknowledgment are nicely factored into separate functions.
 >
+> Moves error detection and clearing logic into a separate function called:
+> pcc_mbox_error_check_and_clear() by extracting error-handling logic from
+> pcc_mbox_irq().
+>
+> This ensures error checking and clearing are handled separately and it
+> improves maintainability by keeping the IRQ handler focused on processing
+> events.
+>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Huisong Li <lihuisong@huawei.com>
+Tested-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>   drivers/mailbox/pcc.c | 30 ++++++++++++++++++++----------
+>   1 file changed, 20 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+> index b1b8223b5da7002fc522523dbc82f6124215439a..41bd14851216e8c4f03052c81aaf938a5e5c5343 100644
+> --- a/drivers/mailbox/pcc.c
+> +++ b/drivers/mailbox/pcc.c
+> @@ -269,6 +269,25 @@ static bool pcc_mbox_cmd_complete_check(struct pcc_chan_info *pchan)
+>   	return !!val;
+>   }
+>   
+> +static int pcc_mbox_error_check_and_clear(struct pcc_chan_info *pchan)
+> +{
+> +	u64 val;
+> +	int ret;
 > +
-> +               test@4f000000 {
-> +                       compatible = "fsl,imx-test";
-> +                       power-domains = <&scmi_devpd IMX95_PD_VPU>, <&scmi_perf IMX95_PERF_VPU>;
-> +                       power-domain-names = "vpumix", "vpuperf";
-> +               };
+> +	ret = pcc_chan_reg_read(&pchan->error, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	val &= pchan->error.status_mask;
+> +	if (val) {
+> +		val &= ~pchan->error.status_mask;
+> +		pcc_chan_reg_write(&pchan->error, val);
+> +		return -EIO;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static void check_and_ack(struct pcc_chan_info *pchan, struct mbox_chan *chan)
+>   {
+>   	struct acpi_pcct_ext_pcc_shared_memory pcc_hdr;
+> @@ -309,8 +328,6 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+>   {
+>   	struct pcc_chan_info *pchan;
+>   	struct mbox_chan *chan = p;
+> -	u64 val;
+> -	int ret;
+>   
+>   	pchan = chan->con_priv;
+>   
+> @@ -324,15 +341,8 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+>   	if (!pcc_mbox_cmd_complete_check(pchan))
+>   		return IRQ_NONE;
+>   
+> -	ret = pcc_chan_reg_read(&pchan->error, &val);
+> -	if (ret)
+> +	if (pcc_mbox_error_check_and_clear(pchan))
+>   		return IRQ_NONE;
+> -	val &= pchan->error.status_mask;
+> -	if (val) {
+> -		val &= ~pchan->error.status_mask;
+> -		pcc_chan_reg_write(&pchan->error, val);
+> -		return IRQ_NONE;
+> -	}
+>   
+>   	/*
+>   	 * Clear this flag immediately after updating interrupt ack register
 >
-> I not write a driver for it, so just check devlink information from sysfs interface.
->
-> From below sys directory, this test device takes scmi_dev.4 and scmi_dev.3 as supplier.
-> root@imx95evk:/sys/bus/platform/devices/soc:test@4f000000# ls
-> driver_override  of_node  subsystem                          supplier:scmi_protocol:scmi_dev.4  waiting_for_supplier
-> modalias         power    supplier:scmi_protocol:scmi_dev.3  uevent
->
-> Checking scmi_dev.4 below, it is scmi cpufreq, not the scmi perf device.
-> scmi_dev.3 is correct, it is genpd.
->
-> root@imx95evk:/sys/bus/platform/devices/soc:test@4f000000# cat /sys/bus/scmi_protocol/devices/scmi_dev.4/modalias
-> scmi_dev.4:13:cpufreq
-> root@imx95evk:/sys/bus/platform/devices/soc:test@4f000000# cat /sys/bus/scmi_protocol/devices/scmi_dev.3/modalias
-> scmi_dev.3:11:genpd
-> root@imx95evk:/sys/bus/platform/devices/soc:test@4f000000#
->
->
-> So it is clear that wrong fw_devlink is created, it is because scmi cpufreq device is
-> created earlier and when device_add, the below logic makes the fwnode pointer points
-> to scmi cpufreq device.
->         if (dev->fwnode && !dev->fwnode->dev) {
->                 dev->fwnode->dev = dev;
->                 fw_devlink_link_device(dev);
->         }
->
-
-Thanks, looks like simple way to reproduce the issue. I will give it a try.
-
---
-Regards,
-Sudeep
 
