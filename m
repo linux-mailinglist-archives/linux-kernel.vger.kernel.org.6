@@ -1,288 +1,186 @@
-Return-Path: <linux-kernel+bounces-555561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4321A5B996
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:12:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF08A5B9A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B8D33ADBA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:12:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27D073A910A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3492206BE;
-	Tue, 11 Mar 2025 07:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AF42222AD;
+	Tue, 11 Mar 2025 07:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="i1zXt3Fl"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011000.outbound.protection.outlook.com [52.101.129.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmuQ2Nsy"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0782557C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741677171; cv=fail; b=GY6xotTRsxLELZWYIElo6G2nLPYLyGZ87UJg9AJkt1igfraZeMyZnisdvA5CWr5M5CpnwlKp/6zQojusivSmdVrRYpd4T4D1YUwIFPxZ8db8ggw8SRwjmuGPz5HQXNs2R+UQkGkcC9RlSGpPtAn2mI4YNsuCJVUQG5u+9zIkgvI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741677171; c=relaxed/simple;
-	bh=jKGgPMldo+3KQ+t9h72aIaGE6PQ1qQb0dfE6ZH8FZBA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EDas9bypbdTIjkjQ+w0RcD0PfTajBqYZkctzQfYoR+rVE8NZnN857ojY4yTcdkBZH4WyYmOvm5HR8eMj0CJxTHypMv1m28o89PJ9FpYY/7brKfZ5U/QTIGat8Rda60ujieNo4EMi+D/XY3Fn6xQLRolam4DrvAMYj8skFv3eMOU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=i1zXt3Fl; arc=fail smtp.client-ip=52.101.129.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SYj34x1ZXQfhzHb9QhsJcwG2Jn2EPO86AouB2badMd0EngrpQwoq1eUx4mwbJ7B3umtGzO7ZoYIPOub3ZalLH1XRXi9JqEx1ckI4yY0uBFcAW0an+jLmjDD1LETpKQovD3yrTHdpzPpGihY7T9OgMnDSL9etJQGDV31OfYS3f3x7GIGfey0OELuhDzRc7NdFO5bJti4r3/fiSe4+UWhWN2jr14eKSWcziuja/Y1E3ETp+pa9keYvED/OtlwHRUgXqSzTHQNhdWyZDaZot7Lsbfn2OPoEZtSX6IyKgi1fAt93hL7oH7BlvgufoX+r2BoivBNJhkZl04cjLjzv5WBNkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Zh3FY3fgFDIyT4L8STHZNUOESccMItlFvFXmkz95+ac=;
- b=wVHqXI44jtFWW6C2Ljv+fd6Y7EbKdcrNVQtn96WYnUtN0xE8uMfySxd6f39hP3FYcU3oaA0FDTVZp5GCMlug6gbZfVsTIFemKh9TIK8gWGDIbQUr3/Xd8mddjoB1HUU/fZD8fUer890RSe6Wo+gbpHMdDrioP9TdTl+FcTxVOd+ZSuKPI9XMRhsvh7+1+03OpE6ylqlrfwI6TJfJiOMYsEm7d93YDIUZ6bqxgJFM+s/dQkFnXhKEoe2TNxv8epElhxGIoqoBeTgxdf3r7G+v9OsWRs7WKpX6UgxDlPq2qkxtgL3cNyga85rR8bk/mpxqwlxtyqzTGMwRdfttm3EVdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Zh3FY3fgFDIyT4L8STHZNUOESccMItlFvFXmkz95+ac=;
- b=i1zXt3Fl7XPAjI2wckbZiOTko+3m8BbMc1MENH3CkrA7yCmgYSWVN1zKYV8uccyj/nMpWaMKxSmLjeaZGgLtFXfJcb1WMaOL5dGwWQQKA7GaEHr0+DRvdYcvpMLT2WXHpQDf5o3VNJvBybrZQAZCIwBmH/8xLOO+fJTIrs61R+t9bDSt5HortimxT3HxotQmzkDNq2NisPzIO5yAuVzes5dCFvV5ccciI+KWgHKD9O/7G0JIE17Kpq2G2cq1pupJlWsYpgS03Ns7sBwPO3C8HvRMAfvpSSbpmvxaaOv6ZHp3gHxj/y2xZ6Kk7Y75+CeexZyi5F3HTfyYh/CPmed+sA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by TY0PR06MB5578.apcprd06.prod.outlook.com (2603:1096:400:328::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
- 2025 07:12:44 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%3]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
- 07:12:43 +0000
-Message-ID: <d7a54599-350e-4e58-81b6-119ffa2ab03e@vivo.com>
-Date: Tue, 11 Mar 2025 15:12:38 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: udmabuf vmap failed (Revert "udmabuf: fix vmap_udmabuf error page
- set" can help)
-To: Bingbu Cao <bingbu.cao@linux.intel.com>, vivek.kasireddy@intel.com
-Cc: linux-kernel@vger.kernel.org, christian.koenig@amd.com,
- dri-devel@lists.freedesktop.org
-References: <9172a601-c360-0d5b-ba1b-33deba430455@linux.intel.com>
-From: Huan Yang <link@vivo.com>
-In-Reply-To: <9172a601-c360-0d5b-ba1b-33deba430455@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP286CA0352.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:7c::19) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3475821421F;
+	Tue, 11 Mar 2025 07:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741677441; cv=none; b=UtW1Wy5Pczig930BSrR4VeujIoqnX/5AMdzageiFkERxDmkxGHUOc34J49XgDXteQA8Bf9uBpWKrgjQ5kSQfOHedspfvEOnPBjqpefgu4ymtLK84/rX8KVf8BwfJElf4z2zDjh4uhwFMkTNYBmUrjT+vgUzd7oCRP0Wh+7Xca7Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741677441; c=relaxed/simple;
+	bh=lMQHpotAZT+or9bRBn1RXMX/D7xRB6YRlUt12c1LBPE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WVehsAxCDfj2ttAhnvhNxZXdEB5ASvAHl7XcDBpqAsLsx3CarOnOSHs3qHX4GdqeN7hf4ha0q3snDBeHcy5NaIMfXoZuGeKWjMvkYUQ7cfwH0F3h2RVF0bAFAs/wHz6PUgBGo05P63KjHRie+xD08s20z+CwbphRjeZaNTU8iH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jmuQ2Nsy; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-523dc366e42so1980696e0c.2;
+        Tue, 11 Mar 2025 00:17:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741677438; x=1742282238; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QgXuDCwAmQulDTtjzIIH53l6D34oij/uowJ4XpgRVJo=;
+        b=jmuQ2NsyE8noLdtxc+TREY9oLrDvx9VBoTXoUmPe9JDF63vBIRCMzoMPoPOF0CTgE0
+         A3uZa3Mv565E6ZCX4A9H9yP0TKV1mjAdX80osSGcXYxoIwftBkSogxlnMwh6PQ8QmYWt
+         terLKAh7bVkCeKM9tZkP5Ytt1cMP3PGT+d8AwXQJ8M2Ze8DBY3eGVMX4eHj5bzFLAz+D
+         hS3Y0POn6viCl2NHNxIqoKdXJx/xlA8YQHeJuHsaQ/g6ZaOo2nV3f98vZMHgGkJSCQIW
+         uGF6yepsce4ILOnK6Y4pexCRHgJPhHUYewhAIOKK8hnWcmVN/KeGAd3iQAeW43JNwMMN
+         D1Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741677438; x=1742282238;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QgXuDCwAmQulDTtjzIIH53l6D34oij/uowJ4XpgRVJo=;
+        b=XgmqXqB4z9p/xl14qHBgQfetvxid479XV/o557fQiG8kjN6KrIi8nmOyzWKHKwHCHH
+         9K3zUGjgJMHNlrIX8l247YVp3KoIxyPoGVFQ22klkhSUwLMWZqHSkFB837z1d7+7Lv/z
+         rFb7srbA5K6oOH7m7N//mA+x5xhwb2cGxvZb8iLnaICq2mk5S0TtweYMiIAvTCQrSKvV
+         SCnNmufpDu9dwDrfSkdhdU41Pq74em1PVbQNZtaXNaVWEYqbEXmQclNb7RNt7hSot7wN
+         YaXYgJw7glOsp/weNYkoP2tVBKcxNKHL+a0fjjP5jSCPyChpIVrLdB/xa6Kf8QTXmv30
+         thkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFB7Y5aCYNAcWIkl+rv1zOX0id+NgNaSMVOyxG8bKUNVlinfhEjinE9TEtMHAlYhHBa/ciHzYwzGxk@vger.kernel.org, AJvYcCUY9dIax7uzn0ry0xAUH4zcOB1mjzhB3XAXwdbeP2wS1CMEa4DUYLXDIQTfdEW4UxH7eLOnKap7nq8XrQRC@vger.kernel.org, AJvYcCW2k4Q5awaEo87UM/6ISLLinjjKWNT8o6HDviAU/aOK29+JFAM0LXNuPhyJdL4wUntITr6kp82A@vger.kernel.org, AJvYcCX05hZFok/Ridsh6EYYSeNlzMwmHg0HrF5/HUd5McdacZj+plwfRDddJp5HZcCFF/omN8lvhlxVaTkZ2X4aygRsnm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZuunyrTNG+TEJXYMwYajY3d3agXJ/PLxNMUy5kLv4pD+SG/sk
+	tER1pUV2a++zoxzpngSOlttUUN+SCSAstWK7E1yy4+aEIQAPLx7ER3iSaCCqGxhq9B8Ktw8I8g2
+	fDQykB7tXYFTpv7gObticqICFASw=
+X-Gm-Gg: ASbGncsLH8nr631j45bwGhMt1XsY2c2LGSHibwGKXL7ThyeRU32/XpdcqR5m6cfIupF
+	ZcvTuMTR5vmy6MFwCCTVVXU6Crp6813GdCdoKmrykyeJvEvRpnEHlQr7YTtcuYByHx1Yd5yIoUa
+	jPoekfsaYC4SCBrlsOihdlCt6fAA==
+X-Google-Smtp-Source: AGHT+IHL9bGh1peMKIZaQk5HkCRcMvybeFANZeZSC4bWbrbEOygDwgyxh5TwDNL6xNH9/SVkNxI01E1JJlfqV10gxoE=
+X-Received: by 2002:a05:6122:1809:b0:520:60c2:3f1 with SMTP id
+ 71dfb90a1353d-523e3fd2c81mr9612329e0c.0.1741677437848; Tue, 11 Mar 2025
+ 00:17:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|TY0PR06MB5578:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa3a6453-f1ce-4db2-c89b-08dd606c1dfd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RFYwMVZsSUtWVzJUVU9YYmlZWmdjVnQ1T1hiUUVibjlEQ1Bkck5TTm9PMTBO?=
- =?utf-8?B?MzltTWdEY1JISUwzNzJROUlPZHNMamJMUEFVaENXUUY3dEdxNWluQ3hmN1FN?=
- =?utf-8?B?SUoyVDdQeDllVkZ0ejJCOEF4OElYYUx2RitQZFNacVRsNVF5MGl3enBWVUZ6?=
- =?utf-8?B?ZDNxUExDU0VyRWI2NXBZSGQza0RNZTRlUWh0ejN4RmFqTFp4bWVSeTl6SFAr?=
- =?utf-8?B?MlN0MytOSDNQaW14VDRxQTRoeWpVdmI1bzF6amNQaXdTT0VqaGFsMjZreDFH?=
- =?utf-8?B?d3lVUVF5TkhOWFF6dUhTejh3enE1eW1nd2cveGw0OVVtenIwUXJxdXZUZGlv?=
- =?utf-8?B?QXIwbEQycEU0bE8zQ3ROZHBIeW40REY4bXM5WEtLY05VN1UydzdOUGIyWTR5?=
- =?utf-8?B?dGt0Zm1lRzVabG1VMnk3SXNIS1pDb1ZTaldxc1RrNk5RSGYvZGZaS000V2FU?=
- =?utf-8?B?VjRKN2I5aHdtTzlEZVV5L1NYNEkvY3pWS3pHallWcVljbUlHTVFjRDAxVzcv?=
- =?utf-8?B?SEc5SnRJRERhSno1QzFKemNxVHkxd2FrY3M0M3crcHg3R0FBOUw0OFlzdUN3?=
- =?utf-8?B?ZmwvdlFVbVpFV05wNkExVXFHMFJUUXJmN0RhL0dCZ2RCTTlSYXcvVjZWQjBQ?=
- =?utf-8?B?RXArSnIzL3NOT3VMZTJjWmFkYXlHS3JLd1d1YVBXY2xQYzJhUi92TmFaWE94?=
- =?utf-8?B?bGRkQTdEUXVDdDZWdzQzS1Y4a2lLL0IxZmwzMTg5dzZ5azdQZnlaRXRsQlJB?=
- =?utf-8?B?UDFuQ3RBNkxrVnRNOUg4bHZkQllra2RRaURZc2t5MWw1UkxueXFvUFZFN3do?=
- =?utf-8?B?T1pwWmU0Q0RLUGRlemtIY2tOVC96VmVJRE1OZWlpU2IrTDQ5cmJ3SitRYTBt?=
- =?utf-8?B?c1cycXcwTTR2UjhLdnBIb2JuK1ozQTBYUW1uQXdKY25qZUs0U2dCc2lLRXVV?=
- =?utf-8?B?RlUra0F5Z1p3dTI5bHAvWnJZTjRpVWdvbndOb3ErSTJoeHRUbm90UFpQb1FB?=
- =?utf-8?B?a3BjTlYxOVNpWVI4UEJnWW5RT1J6WXJ4TnhLdENjS1ViMGNjZjBSMzhVaERq?=
- =?utf-8?B?c3RlRmZVT3BBUldEZnNMVnUyQkw1enI0Q3hiMzY1Q0diNldtdjdiV29xNk5D?=
- =?utf-8?B?azdXMDJhNEN0ZEhqWDBJa2lMNW1OeHVFcUpNOWhGVnVyOFpZc2kzNHBKNFR1?=
- =?utf-8?B?U2Z4UjlRRkh3OUs1Wm5nSEtJRllaNlVUazhqN2N4OWtEQ2U5RHRlMnV3Qk9V?=
- =?utf-8?B?SndCVUtEYnN1SUQ1Yk1HSGJ5L09VQUlaQXpyNm5SQkRnSTQ5SlNFSjY0TFdN?=
- =?utf-8?B?cWdLMTZBY2IwWFpJM1J3a3krQWs4MXU4aUpqOUF0UlMvbDBLNWJqVE50cmNE?=
- =?utf-8?B?ekY1Y0RIZFVDR282MGJDUmE4ZXJhOEVSa2lncGhsNzQzL201UGpBL1NHQkov?=
- =?utf-8?B?QmlKZnVQY1c4bzJiUTdEek5vamxhZGx1WE5lNmd4MDZWNGJjNFhDZnIrOTNs?=
- =?utf-8?B?Ylk0Z1hzcnNGbTFiZDhudjY5ejQvd2tQTDF6V0gzZDB0SHZpMVlhSjJWejFE?=
- =?utf-8?B?d09ZUG9XWVV2YkxMYit5cHZzM0NlVkJxTUpQSk0yeXVIOUtQdEpZcjdJM09T?=
- =?utf-8?B?VUdZUTNYQmJyMTViM05UcGQxWEhVUlQ5ZTluczk3RFJJZmFGWERZc1E1TGx1?=
- =?utf-8?B?aUNHU0FyWXp6SVUvM0l5alp0YXJ1dm5aWEpMN1BzY096R3d3emFIRGJkK2pT?=
- =?utf-8?B?dGZHWjRZRllZK0dMSVpuVVU0L3ltR3Y5L3M5NW1uRnU0ZWRRaUZyWkExZEF4?=
- =?utf-8?B?bHRhcU4vRGl0VUl2SWpjNWFrUnVySDM4TlJBaHp5bklBQmRiaVp5M3BqWGFS?=
- =?utf-8?B?WHI1MXgvR0p4Y2VJRkhmNkZ3WGtsTmFIUWY0Y0tyZDRyaCtBNFEwY1d2RElZ?=
- =?utf-8?Q?QP15YSNBDT5vOomGmCxE8up8VjBwtn6Y?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZWxrZGF5clpZM1czWWtHU2JBRHUrWVFyUkJ2S2FuSUd6T0lyalh1YmRkeFhV?=
- =?utf-8?B?akZKQjRjdTgvMEZVeXJUa2h3dGsyK3QzRHhOblZibUFKWld5S09iWWdIeHlP?=
- =?utf-8?B?U3BJZmY1SGtCc21ISlF6a0Ntam5WSElPaHN3bWdxaW1QRjZSSjdPTnRlaHZ6?=
- =?utf-8?B?azQ0U1hVMktmZWltc0kxaE8rS1lBUDVZOVJ5UzdpdUVmclNvRkVaN2dDTVEz?=
- =?utf-8?B?WmRGVVFYZUdRV2loNi9GcUR4M01hWHBIajR1SWdVN2dNZ05uRHJaQklVbU5Z?=
- =?utf-8?B?cldQTVl5MEJxVTRTUlFwejdzL1l3RjljN3h3T3h4ZVZWbWwydGZTWndLWHVR?=
- =?utf-8?B?V0R6N2lZZEx6WklxMGdsRjBpV1R1bE5UTitVUVdiS0JiWnFTWUs0L0M3c1h0?=
- =?utf-8?B?VjJSKzFuZWhzZDBYUmRZNk5zS0VXWnZFaEJ6aUpOMnI5dVNNajJiTzNnNXp3?=
- =?utf-8?B?TUVCVWg4d2E2R2FObXoyZFViMVJpSngvMWFpQTgyRzhMNG1xNGV1Vm91SzR5?=
- =?utf-8?B?K3p5NEl3ZVBHdElONEEzNlIyQ3p3bWpwM1ZVZkprWmtIQlh5Y1FSZjNOdjBD?=
- =?utf-8?B?NUtMNys3bC9YdEQzdFM0R0tmdHdpM0lxTFN4TFBubnJKSTBBWXZjZDVIdCtB?=
- =?utf-8?B?azM0eWh6bm5hYmxJQ1Y5Q2FGM1NnNHN5YTNCVnNsNktUMGVyNjFJdzJId1Yx?=
- =?utf-8?B?Wis4TnFBclZGclpwNmU0MUdTZlhqSk5LYVYyNUNiQkF4VnF3L29vMkFhcE5v?=
- =?utf-8?B?RFpDNlpUNUx5V1JWeU9SRVBMN3ZiVjlkcWFmVVhXd2JsZ1RCUWp3RDNMVHZM?=
- =?utf-8?B?RWN1Ylc5RWhYQzRkdjBWRFNnYjRZQnAzTTE2Tnp3cW1TUjZwQytCQnRhaEVa?=
- =?utf-8?B?V3JRU2RvVTMvdkVsb00xVUxLRWFTWHlzaitielJRYnFzVGJKbFJWTjNaQ2dT?=
- =?utf-8?B?bGRjOXd5bG44cXJEQXdlOC9GdDRyMnVsTlpDclVGOGhERTNZR3crYk5JemRi?=
- =?utf-8?B?N1dnSExTOUFjZTlkeUtnTWtrQlh6Y1YrYzJqeU1neExuWjB2QUgyQ3lpeDEv?=
- =?utf-8?B?RmpibytGVVUwVGw0d3ZydjRTeTREL2JCU1BOSFNhbTRDN2pOMXczUDcwcFFI?=
- =?utf-8?B?Y3BZbUVKWFk4Tk5iSUJ6OWZHSEhFaE5kZG04U05EL3ZRU3VISHJ1dlpsZ3hv?=
- =?utf-8?B?WUhGWDVhaXNjZW8vTmJ6ZkxpUXFFT1pqQW5YV1hGK01RUWZ4RWN6dkJ4ZTNt?=
- =?utf-8?B?SDJLK09HcGRNbHh5RUgwLzdMT2J2ci9JeElkK1NkMGkxMWxDOWJlWXMyRERW?=
- =?utf-8?B?OUVBaFl2UGJmdFFtWFp4RFN6RzdPZmZ6RjdWZElhNEtWa25KSExUL3hrbFM2?=
- =?utf-8?B?akhIYnFraUZGMDd0L0M2RDREYnQwN0Y4VnMvcVRRUEt1eFJHR1YrcDQycEo1?=
- =?utf-8?B?Qktkdmgyd3dRdjJVbjRVeVZsZG9mV1kxdTcvRWRTVUY3bW1vTld2TzVLdURJ?=
- =?utf-8?B?d1NyaGcrdVc1TVQ5R3ZKMm1TNWFRWGQvYnhRMjh2VEhHeUFZK011YjJKV0d2?=
- =?utf-8?B?dzVDQXFrazZBYWlaWFNRYU5MelB2aXlHUVRoalpXRTVDNVU3dncxYTl3b1Vh?=
- =?utf-8?B?dXVQclBmUTY3Vm5HWHYrcU5WTFBOazJRVmFzUkJQMzExMjlBeDAwSG5MTm8z?=
- =?utf-8?B?UHJwditYL1ZQWU5BZEo0SGJCZjFqWmxXS0o5NVpjNmlpSDhubm9kdnZSR0pS?=
- =?utf-8?B?djVsb1pXRzllR0RsY0hTSWxqS3JRUHM5ZEhIa3pNSHJsZGNDWTlITWRGM3I5?=
- =?utf-8?B?cU9oNWljRVZGWXo4OVM5dkl1WmMrSHNYODhxbUhmVk16V0l2cnpoSUpHeEpi?=
- =?utf-8?B?NkpmOTBhZFVzOTFsWHAyZlprS2cvdkVwRDBFcDRsNDE5RWRNak9lbnhLWU9k?=
- =?utf-8?B?ZHU4SHNqZExEWXZYUWN6UjcvUE9BZWIzMkFuUUZVZkFlTU9jN2N6Z1dDNExp?=
- =?utf-8?B?TTBYVk1RRVZucE5tazVKb3ZYaEhkY05CcC9WQlhxTW44aXR1WUpTaitlQU84?=
- =?utf-8?B?TGFja2N0TlUxd1Z6Q3FZVmM4VGFsTzZkeGk4aXpncytldDE4YldsQ3pZcDgy?=
- =?utf-8?Q?ffi4l7IWNWxjYtJBCqwRvKXxc?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa3a6453-f1ce-4db2-c89b-08dd606c1dfd
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 07:12:43.5134
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pbgJ5mamaMn5GtGHxGR7Z1r4cHFTNE0jlwWoGIW7AOmDHKdmR+C10GrPC4vk69mTFmf+ofBKVzvqlNRxHmCWfg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5578
+References: <20250308200921.1089980-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250308200921.1089980-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250310213056.GA904881-robh@kernel.org>
+In-Reply-To: <20250310213056.GA904881-robh@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 11 Mar 2025 07:16:52 +0000
+X-Gm-Features: AQ5f1Jo8YORcwnFwKCITHCfJ8Sp8085yTfEpHt0PYoBNnCKqikUJMGmDGgK5HdU
+Message-ID: <CA+V-a8uinTxr8FheR5-Pbv37j9wFR1cfrFDX6gExA5dW8WWPSA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 1/3] dt-bindings: net: dwmac: Increase
+ 'maxItems' for 'interrupts' and 'interrupt-names'
+To: Rob Herring <robh@kernel.org>, "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Rob,
 
-在 2025/3/11 14:40, Bingbu Cao 写道:
-> [You don't often get email from bingbu.cao@linux.intel.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+Thank you for the review.
+
+On Mon, Mar 10, 2025 at 9:30=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
 >
-> Huan Yang and Vivek,
+> On Sat, Mar 08, 2025 at 08:09:19PM +0000, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Increase the `maxItems` value for the `interrupts` and `interrupt-names=
+`
+> > properties to accommodate the Renesas RZ/V2H(P) SoC, which features the
+> > `snps,dwmac-5.20` IP with 11 interrupts.
+> >
+> > Also add `additionalItems: true` to allow specifying extra interrupts
+> > beyond the predefined ones. Update the `interrupt-names` property to
+> > allow specifying extra `interrupt-names`.
+> >
+> > Also refactor the optional `interrupt-names` property by consolidating
+> > repeated enums into a single enum list.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > Note, for this change I will be sending a sperate patch for vendor
+> > bindings to add constraints.
+> >
+> > v1->v2
+> > - No change
+> > ---
+> >  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Do=
+cumentation/devicetree/bindings/net/snps,dwmac.yaml
+> > index 3f0aa46d798e..fad0d611a75c 100644
+> > --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > @@ -114,6 +114,8 @@ properties:
+> >
+> >    interrupts:
+> >      minItems: 1
+> > +    maxItems: 11
+> > +    additionalItems: true
+> >      items:
+> >        - description: Combined signal for various interrupt events
+> >        - description: The interrupt to manage the remote wake-up packet=
+ detection
+> > @@ -122,11 +124,11 @@ properties:
+> >
+> >    interrupt-names:
+> >      minItems: 1
+> > +    maxItems: 11
+> > +    additionalItems: true
+> >      items:
+> >        - const: macirq
+> >        - enum: [eth_wake_irq, eth_lpi, sfty]
+> > -      - enum: [eth_wake_irq, eth_lpi, sfty]
+> > -      - enum: [eth_wake_irq, eth_lpi, sfty]
 >
-> I am trying to use udmabuf for my test, and I cannot vmap the udmabuf
-> buffers now. vmap_pfn_apply() will report a warning to complain that
-> the pfns are invalid.
-> I dump the pfn numbers as below:
-> [ 3365.399641] pg[0] pfn 1148695
-> [ 3365.399642] pg[1] pfn 1145057
-> [ 3365.399642] pg[2] pfn 1134070
-> [ 3365.399643] pg[3] pfn 1148700
-> [ 3365.399643] pg[4] pfn 1144871
-> [ 3365.399643] pg[5] pfn 1408686
-> [ 3365.399643] pg[6] pfn 1408683
-> ...
-> [ 3365.399660] WARNING: CPU: 3 PID: 2772 at mm/vmalloc.c:3489 vmap_pfn_apply+0xb7/0xd0
-> [ 3365.399667] Modules linked in:...
-> [ 3365.399750] CPU: 3 UID: 0 PID: 2772 Comm: drm-test Not tainted 6.13.0-rc2-rvp #845
-> [ 3365.399752] Hardware name: Intel Corporation Client Platform/xxxx, BIOS xxxFWI1.R00.3221.D83.2408120121 08/12/2024
-> [ 3365.399753] RIP: 0010:vmap_pfn_apply+0xb7/0xd0
-> [ 3365.399755] Code: 5b 41 5c 41 5d 5d c3 cc cc cc cc 48 21 c3 eb d1 48 21 c3 48 23 3d 31 c0 26 02 eb c5 48 c7 c7 c4 3c 20 a8 e8 5b c0 d8 ff eb 8a <0f> 0b b8 ea ff ff ff 5b 41 5c 41 5d 5d c3 cc cc cc cc 0f 1f 80 00
-> [ 3365.399756] RSP: 0018:ffffb9b50c32fad0 EFLAGS: 00010202
-> [ 3365.399757] RAX: 0000000000000001 RBX: 0000000000118717 RCX: 0000000000000000
-> [ 3365.399758] RDX: 0000000080000000 RSI: ffffb9b50c358000 RDI: 00000000ffffffff
-> [ 3365.399758] RBP: ffffb9b50c32fae8 R08: ffffb9b50c32fbd0 R09: 0000000000000001
-> [ 3365.399759] R10: ffff941602479288 R11: 0000000000000000 R12: ffffb9b50c32fbd0
-> [ 3365.399759] R13: ffff941618665ac0 R14: ffffb9b50c358000 R15: ffff941618665ac8
-> [ 3365.399760] FS:  00007ff9e9ddd740(0000) GS:ffff94196f780000(0000) knlGS:0000000000000000
-> [ 3365.399760] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 3365.399761] CR2: 000055fda5dc69d9 CR3: 00000001544de003 CR4: 0000000000f72ef0
-> [ 3365.399762] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [ 3365.399762] DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7: 0000000000000400
-> [ 3365.399763] PKRU: 55555554
-> [ 3365.399763] Call Trace:
-> [ 3365.399765]  <TASK>
-> [ 3365.399769]  ? show_regs+0x6d/0x80
-> [ 3365.399773]  ? __warn+0x97/0x160
-> [ 3365.399777]  ? vmap_pfn_apply+0xb7/0xd0
-> [ 3365.399777]  ? report_bug+0x1ec/0x240
-> [ 3365.399782]  ? handle_bug+0x63/0xa0
-> [ 3365.399784]  ? exc_invalid_op+0x1d/0x80
-> [ 3365.399785]  ? asm_exc_invalid_op+0x1f/0x30
-> [ 3365.399790]  ? vmap_pfn_apply+0xb7/0xd0
-> [ 3365.399791]  __apply_to_page_range+0x522/0x8a0
-> [ 3365.399794]  ? __pfx_vmap_pfn_apply+0x10/0x10
-> [ 3365.399795]  apply_to_page_range+0x18/0x20
-> [ 3365.399796]  vmap_pfn+0x77/0xd0
-> [ 3365.399797]  vmap_udmabuf+0xc5/0x110
-> [ 3365.399802]  dma_buf_vmap+0x96/0x130
+> I think this should be structured similar to the DWC PCIe binding where
+> we define all possible names, but not the order:
 >
-> I did an experiment to revert 18d7de823b7150344d242c3677e65d68c5271b04,
-> then I can vmap the pages. Could you help what's wrong with that?
-
-Sorry for that, as I reviewed pfn_valid, that's someting wired:
-
-/**
-  * pfn_valid - check if there is a valid memory map entry for a PFN
-  * @pfn: the page frame number to check
-  *
-  * Check if there is a valid memory map entry aka struct page for the @pfn.
-  * Note, that availability of the memory map entry does not imply that
-  * there is actual usable memory at that @pfn. The struct page may
-  * represent a hole or an unusable page frame.
-  *
-  * Return: 1 for PFNs that have memory map entries and 0 otherwise
-  */
-
-So, if pfn valid, it's return 1, else 0. So mean, only 1 is a valid pfn. 
-But vmap_pfn_apply in there:
-
-static int vmap_pfn_apply(pte_t *pte, unsigned long addr, void *private)
-{
-     struct vmap_pfn_data *data = private;
-     unsigned long pfn = data->pfns[data->idx];
-     pte_t ptent;
-
-     if (WARN_ON_ONCE(pfn_valid(pfn)))
-         return -EINVAL;
-
-     ptent = pte_mkspecial(pfn_pte(pfn, data->prot));
-     set_pte_at(&init_mm, addr, pte, ptent);
-
-     data->idx++;
-     return 0;
-}
-
-Do it give a wrong check? maybe should fix by:
-
-static int vmap_pfn_apply(pte_t *pte, unsigned long addr, void *private)
-{
-     struct vmap_pfn_data *data = private;
-     unsigned long pfn = data->pfns[data->idx];
-     pte_t ptent;
-
--    if (WARN_ON_ONCE(pfn_valid(pfn)))
-+    if (WARN_ON_ONCE(!pfn_valid(pfn)))
-         return -EINVAL;
-
-     ptent = pte_mkspecial(pfn_pte(pfn, data->prot));
-     set_pte_at(&init_mm, addr, pte, ptent);
-
-     data->idx++;
-     return 0;
-}
-
-Please help me check it, also, you can apply this and then check it.:)
-
+> minItems: 1
+> maxItems: 11
+> items:
+>   oneOf:
+>     - const: macirq
+>       description: ...
+>     - const: eth_wake_irq
+>       description: ...
+>     - pattern: '^rx-queue-[0-3]$'
+>       description: ...
+>     - pattern: '^tx-queue-[0-3]$'
+>       description: ...
 >
+> And so on. Move the descriptions from 'interrupts' and drop 'items' and
+> 'additionalItems' from it.
 >
-> --
-> Best regards,
-> Bingbu Cao
+Thanks for the pointer, I'll do as suggested above.
+
+@Russel, are you OK from me to add rx-queue/tx-queue in this binding
+file or would you suggest different names for it. Please share your
+thoughts.
+
+Cheers,
+Prabhakar
 
