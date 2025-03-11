@@ -1,293 +1,401 @@
-Return-Path: <linux-kernel+bounces-555624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C874EA5BA6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:05:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBFACA5BA6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:06:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D14E3A614F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:05:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1FF47A262E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022C5223324;
-	Tue, 11 Mar 2025 08:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B667322257B;
+	Tue, 11 Mar 2025 08:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jLxCzslc"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aCYOCUFh"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6815F1EB9E8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5FF1EB9E8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741680330; cv=none; b=mfhq3OzqbfP36SbcxTU0ndlLEL9s3yfdUe8appnsp6mTmri5smP/8Ru5ET7bE14SBNZQWBAwwE0kMO9ZWSh6eGhS2IjoudFFLsTKroFom97GhpCCh2wASGWXv9+jPkqJ80btTVTLpt/w8Hf+iu2DwXQxsBmPHJLGcIfnRoxy7Ek=
+	t=1741680357; cv=none; b=h2ciVZlW7a2m03BaMucwoMc4G0/4S/lj/Er7jWkWREoeBiZPa5w6RFLlny8b3vicAUEXZqwhw6EkoVPPSom/N1uh39vHXTjw70Bj+F2lzy1i3Qey9s1gB2rZcUiVlk9fKdW69R9w0UKRG/xZFhBdieyf8WiOS8gTIcH6u4ylI5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741680330; c=relaxed/simple;
-	bh=f9GgyKlgz40K7OCYckltu7XNEMChc55zyDT/Pqpng3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mlU43py4QY+w6zYxdi5l6wNmQ/lawr3TqkOcXsG2X7O+zmE2hWYePFjqtCPz7QqkbJ231YpTz9WlQlZjpfUjmZtYe0moGWpuAuQWkz9wc2HK7MF3aLDbonmocqn6PKuIdGnttP7Dg2wM8f5DOeOkeyzrUlhn0jIuQD209aT0XJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jLxCzslc; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 11 Mar 2025 01:05:06 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741680316;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RAYFqIJlHKyWKw1zT75h7lHBHX+DTmxUr/wIvnOdyrw=;
-	b=jLxCzslcec0OsCOjhfULLAcEuIzEXocTLubSRZU/3vUw9+V04MLn0CDiJpn8y/UDUQTjcM
-	F0x5lUrgtOVBgvhQdSd5XwGyt41o2YYaT69wqIUhUi8I2Uf778+xbFbeOBwM0r2VB6O08H
-	tLdmKd+OjG4x7OEMdOrRxpHNCf6drp8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Zhenyu Ye <yezhenyu2@huawei.com>
-Cc: maz@kernel.org, yuzenghui@huawei.com, will@kernel.org,
-	catalin.marinas@arm.com, joey.gouly@arm.com,
-	linux-kernel@vger.kernel.org, xiexiangyou@huawei.com,
-	zhengchuan@huawei.com, wangzhou1@hisilicon.com,
-	linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v1 3/5] arm64/kvm: using ioctl to enable/disable the
- HDBSS feature
-Message-ID: <Z8_usklidqnerurc@linux.dev>
-References: <20250311040321.1460-1-yezhenyu2@huawei.com>
- <20250311040321.1460-4-yezhenyu2@huawei.com>
+	s=arc-20240116; t=1741680357; c=relaxed/simple;
+	bh=iICklwo3wPiDgAanlTEiuQP54zlT8s9UHiMdSWjKFLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=svsTY8NiK0oaR5OTgGIy9/AZjXXXXv/MEzGuUhGW+u2ggMDsu0VtG/e+SlZIznUr44iBWCmmkBczIBvNuP5OHpQ6aQEFFBk6jZxOZP0rq9kP5I7T+IRuBLH/PIb4kXm0Ws+ZKSwC6wMBUB406v8RpbCe5oqhqP40Fr5qiaRPv2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aCYOCUFh; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741680353;
+	bh=iICklwo3wPiDgAanlTEiuQP54zlT8s9UHiMdSWjKFLw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aCYOCUFhrZpqxb2zlHECvjEKY8WrLHHHcuNOcbGuOdMWLahQBo1g/C+p+gW8PFBpv
+	 /OS6Gsb98smbVUjTIMa/T81++aNLJ5AbySz6bqJt3cHZrYCG3VaKVW2a+0d1q+Rnib
+	 SHLWHVeUu5hcJN7oVmMRX3FyZ4zlqXQZbvF/EJylFIp54OEPSSHbVFWwxK14Aiv5zt
+	 SdySo9VcBqeRow6ra1s3o1fn+erTf/VcZwlNv7NT4RhmOfvZDyr9ZxlpaxjU+rqI/s
+	 0P2kFbU+rOVI8vp+JBkyAg4L+FqJs47koRaNxQLcEeoNN8iGnhRaTKX/rqOEZeTTOg
+	 NapYbQoTMUpvg==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0E67117E0237;
+	Tue, 11 Mar 2025 09:05:53 +0100 (CET)
+Date: Tue, 11 Mar 2025 09:05:45 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch, kernel@collabora.com, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com
+Subject: Re: [PATCH v1 4/6] drm/panfrost: Add support for AARCH64_4K page
+ table format
+Message-ID: <20250311090545.3b941567@collabora.com>
+In-Reply-To: <20250310195921.157511-5-ariel.dalessandro@collabora.com>
+References: <20250310195921.157511-1-ariel.dalessandro@collabora.com>
+	<20250310195921.157511-5-ariel.dalessandro@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311040321.1460-4-yezhenyu2@huawei.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 12:03:19PM +0800, Zhenyu Ye wrote:
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index d919557af5e5..bd73ee92b12c 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -787,6 +787,12 @@ struct kvm_vcpu_arch {
+On Mon, 10 Mar 2025 16:59:19 -0300
+Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
+
+> Currently, Panfrost only supports MMU configuration in "LEGACY" (as
+> Bifrost calls it) mode, a (modified) version of LPAE "Large Physical
+> Address Extension", which in Linux we've called "mali_lpae".
+> 
+> This commit adds support for conditionally enabling AARCH64_4K page
+> table format. To achieve that, a "GPU optional configurations" field was
+> added to `struct panfrost_features` with the related flag.
+> 
+> Note that, in order to enable AARCH64_4K mode, the GPU variant must have
+> the HW_FEATURE_AARCH64_MMU feature flag present.
+> 
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_device.h |  16 +++
+>  drivers/gpu/drm/panfrost/panfrost_mmu.c    | 132 +++++++++++++++++++--
+>  drivers/gpu/drm/panfrost/panfrost_regs.h   |  34 ++++++
+>  3 files changed, 169 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
+> index cffcb0ac7c111..0385702aa43c7 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
+> @@ -42,6 +42,14 @@ enum panfrost_gpu_pm {
+>  	GPU_PM_VREG_OFF,
+>  };
 >  
->  	/* Per-vcpu CCSIDR override or NULL */
->  	u32 *ccsidr;
+> +/**
+> + * enum panfrost_gpu_config - GPU optional configurations
+> + * @GPU_CONFIG_AARCH64_4K: Use AARCH64_4K page table format
+> + */
+> +enum panfrost_gpu_config {
+> +	GPU_CONFIG_AARCH64_4K,
+> +};
 > +
-> +	/* HDBSS registers info */
-> +	struct {
-> +		u64 br_el2;
-> +		u64 prod_el2;
-> +	} hdbss;
+>  struct panfrost_features {
+>  	u16 id;
+>  	u16 revision;
+> @@ -95,6 +103,9 @@ struct panfrost_compatible {
+>  
+>  	/* Allowed PM features */
+>  	u8 pm_features;
+> +
+> +	/* GPU features */
+> +	u8 gpu_configs;
 
-I'm not a fan of storing the raw system register values in the vCPU
-struct. I'd rather we kept track of the buffer base address, size, and
-index as three separate fields.
+I would probably name this gpu_quirks, with the GPU_CONFIG_AARCH64_4K
+flag renamed GPU_QUIRK_FORCE_AARCH64_PAGE_TABLE.
 
 >  };
 >  
->  /*
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> index b98ac6aa631f..ed5b68c2085e 100644
-> --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -330,6 +330,18 @@ static __always_inline void __load_stage2(struct kvm_s2_mmu *mmu,
->  	asm(ALTERNATIVE("nop", "isb", ARM64_WORKAROUND_SPECULATIVE_AT));
->  }
+>  struct panfrost_device {
+> @@ -162,6 +173,11 @@ struct panfrost_mmu {
+>  	int as;
+>  	atomic_t as_count;
+>  	struct list_head list;
+> +	struct {
+> +		u64 transtab;
+> +		u64 memattr;
+> +		u64 transcfg;
+> +	} cfg;
+>  };
 >  
-> +static __always_inline void __load_hdbss(struct kvm_vcpu *vcpu)
+>  struct panfrost_engine_usage {
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> index 31df3a96f89bd..4a9b8de2ff987 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> @@ -26,6 +26,48 @@
+>  #define mmu_write(dev, reg, data) writel(data, dev->iomem + reg)
+>  #define mmu_read(dev, reg) readl(dev->iomem + reg)
+>  
+> +static u64 mair_to_memattr(u64 mair, bool coherent)
 > +{
-> +	if (!vcpu->kvm->enable_hdbss)
-> +		return;
+> +	u64 memattr = 0;
+> +	u32 i;
 > +
-> +	write_sysreg_s(vcpu->arch.hdbss.br_el2, SYS_HDBSSBR_EL2);
-> +	write_sysreg_s(vcpu->arch.hdbss.prod_el2, SYS_HDBSSPROD_EL2);
+> +	for (i = 0; i < 8; i++) {
+> +		u8 in_attr = mair >> (8 * i), out_attr;
+> +		u8 outer = in_attr >> 4, inner = in_attr & 0xf;
 > +
-> +	dsb(sy);
-> +	isb();
-
-What are you synchronizing against here? dsb(sy) is a *huge* hammer. A
-dsb() in this context would only make sense if there were pending stores
-to the dirty tracking structure, which ought not be the case at load.
-
-Also keep in mind the EL1&0 regime is out of context...
-
+> +		/* For caching to be enabled, inner and outer caching policy
+> +		 * have to be both write-back, if one of them is write-through
+> +		 * or non-cacheable, we just choose non-cacheable. Device
+> +		 * memory is also translated to non-cacheable.
+> +		 */
+> +		if (!(outer & 3) || !(outer & 4) || !(inner & 4)) {
+> +			out_attr = AS_MEMATTR_AARCH64_INNER_OUTER_NC |
+> +				   AS_MEMATTR_AARCH64_SH_MIDGARD_INNER |
+> +				   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(false, false);
+> +		} else {
+> +			out_attr = AS_MEMATTR_AARCH64_INNER_OUTER_WB |
+> +				   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(inner & 1, inner & 2);
+> +			/* Use SH_MIDGARD_INNER mode when device isn't coherent,
+> +			 * so SH_IS, which is used when IOMMU_CACHE is set, maps
+> +			 * to Mali's internal-shareable mode. As per the Mali
+> +			 * Spec, inner and outer-shareable modes aren't allowed
+> +			 * for WB memory when coherency is disabled.
+> +			 * Use SH_CPU_INNER mode when coherency is enabled, so
+> +			 * that SH_IS actually maps to the standard definition of
+> +			 * inner-shareable.
+> +			 */
+> +			if (!coherent)
+> +				out_attr |= AS_MEMATTR_AARCH64_SH_MIDGARD_INNER;
+> +			else
+> +				out_attr |= AS_MEMATTR_AARCH64_SH_CPU_INNER;
+> +		}
+> +
+> +		memattr |= (u64)out_attr << (8 * i);
+> +	}
+> +
+> +	return memattr;
 > +}
 > +
->  static inline struct kvm *kvm_s2_mmu_to_kvm(struct kvm_s2_mmu *mmu)
+>  static int wait_ready(struct panfrost_device *pfdev, u32 as_nr)
 >  {
->  	return container_of(mmu->arch, struct kvm, arch);
-> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-> index b727772c06fb..3040eac74f8c 100644
-> --- a/arch/arm64/include/asm/sysreg.h
-> +++ b/arch/arm64/include/asm/sysreg.h
-> @@ -1105,6 +1105,18 @@
->  #define GCS_CAP(x)	((((unsigned long)x) & GCS_CAP_ADDR_MASK) | \
->  					       GCS_CAP_VALID_TOKEN)
+>  	int ret;
+> @@ -121,9 +163,57 @@ static int mmu_hw_do_operation(struct panfrost_device *pfdev,
+>  	return ret;
+>  }
+>  
+> +static void mmu_cfg_init_mali_lpae(struct panfrost_mmu *mmu)
+> +{
+> +	struct io_pgtable_cfg *pgtbl_cfg = &mmu->pgtbl_cfg;
+> +
+> +	/* TODO: The following fields are duplicated between the MMU and Page
+> +	 * Table config structs. Ideally, should be kept in one place.
+> +	 */
+> +	mmu->cfg.transtab = pgtbl_cfg->arm_mali_lpae_cfg.transtab;
+> +	mmu->cfg.memattr = pgtbl_cfg->arm_mali_lpae_cfg.memattr;
+> +	mmu->cfg.transcfg = AS_TRANSCFG_ADRMODE_LEGACY;
+> +}
+> +
+> +static void mmu_cfg_init_aarch64_4k(struct panfrost_mmu *mmu)
+> +{
+> +	struct io_pgtable_cfg *pgtbl_cfg = &mmu->pgtbl_cfg;
+> +
+> +	mmu->cfg.transtab = pgtbl_cfg->arm_lpae_s1_cfg.ttbr &
+> +				AS_TRANSTAB_AARCH64_4K_ADDR_MASK;
+
+Silently masking the low 4bits is not the solution, it's just papering
+over a real issue. If pgtbl_cfg->arm_lpae_s1_cfg.ttbr is not aligned on
+16 bytes (PAGE_SIZE even) we have a problem, so I would drm_WARN_ON()
+here, and return an error so we can fail the probe.
+
+> +
+> +	mmu->cfg.memattr = mair_to_memattr(pgtbl_cfg->arm_lpae_s1_cfg.mair,
+> +					   pgtbl_cfg->coherent_walk);
+> +
+> +	mmu->cfg.transcfg = AS_TRANSCFG_PTW_MEMATTR_WB |
+> +			    AS_TRANSCFG_PTW_RA |
+> +			    AS_TRANSCFG_ADRMODE_AARCH64_4K |
+> +			    AS_TRANSCFG_INA_BITS(55 - pgtbl_cfg->ias);
+> +	if (pgtbl_cfg->coherent_walk)
+> +		mmu->cfg.transcfg |= AS_TRANSCFG_PTW_SH_OS;
+> +}
+> +
+> +static void panfrost_mmu_cfg_init(struct panfrost_mmu *mmu,
+> +				  enum io_pgtable_fmt fmt)
+> +{
+> +	struct panfrost_device *pfdev = mmu->pfdev;
+> +
+> +	switch (fmt) {
+> +	case ARM_64_LPAE_S1:
+> +		mmu_cfg_init_aarch64_4k(mmu);
+> +		break;
+> +	case ARM_MALI_LPAE:
+> +		mmu_cfg_init_mali_lpae(mmu);
+> +		break;
+> +	default:
+> +		dev_WARN_ONCE(pfdev->dev, 1, "Unhandled page table format\n");
+> +		break;
+> +	}
+> +}
+> +
+>  static void
+>  _panfrost_mmu_as_control_write(struct panfrost_device *pfdev, u32 as_nr,
+> -			       u64 transtab, u64 memattr)
+> +			       u64 transtab, u64 memattr, u64 transcfg)
+>  {
+>  	mmu_hw_do_operation_locked(pfdev, as_nr, 0, ~0ULL, AS_COMMAND_FLUSH_MEM);
+>  
+> @@ -133,25 +223,28 @@ _panfrost_mmu_as_control_write(struct panfrost_device *pfdev, u32 as_nr,
+>  	mmu_write(pfdev, AS_MEMATTR_LO(as_nr), lower_32_bits(memattr));
+>  	mmu_write(pfdev, AS_MEMATTR_HI(as_nr), upper_32_bits(memattr));
+>  
+> +	mmu_write(pfdev, AS_TRANSCFG_LO(as_nr), lower_32_bits(transcfg));
+> +	mmu_write(pfdev, AS_TRANSCFG_HI(as_nr), upper_32_bits(transcfg));
+> +
+>  	write_cmd(pfdev, as_nr, AS_COMMAND_UPDATE);
+> +
+> +	dev_dbg(pfdev->dev, "mmu_as_control: as=%d, transtab=0x%016llx, memattr=0x%016llx, transcfg=0x%016llx",
+> +		as_nr, transtab, memattr, transcfg);
+>  }
+>  
+>  static void panfrost_mmu_enable(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
+>  {
+> -	int as_nr = mmu->as;
+> -	struct io_pgtable_cfg *cfg = &mmu->pgtbl_cfg;
+> -	u64 transtab = cfg->arm_mali_lpae_cfg.transtab;
+> -	u64 memattr = cfg->arm_mali_lpae_cfg.memattr;
+> -
+>  	/* Need to revisit mem attrs.
+>  	 * NC is the default, Mali driver is inner WT.
+>  	 */
+> -	_panfrost_mmu_as_control_write(pfdev, as_nr, transtab, memattr);
+> +	_panfrost_mmu_as_control_write(pfdev, mmu->as, mmu->cfg.transtab,
+> +				       mmu->cfg.memattr, mmu->cfg.transcfg);
+>  }
+>  
+>  static void panfrost_mmu_disable(struct panfrost_device *pfdev, u32 as_nr)
+>  {
+> -	_panfrost_mmu_as_control_write(pfdev, as_nr, 0, 0);
+> +	_panfrost_mmu_as_control_write(pfdev, as_nr, 0, 0,
+> +				       AS_TRANSCFG_ADRMODE_UNMAPPED);
+>  }
+>  
+>  u32 panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
+> @@ -616,6 +709,7 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
+>  {
+>  	u32 va_bits = GPU_MMU_FEATURES_VA_BITS(pfdev->features.mmu_features);
+>  	u32 pa_bits = GPU_MMU_FEATURES_PA_BITS(pfdev->features.mmu_features);
+> +	enum io_pgtable_fmt fmt = ARM_MALI_LPAE;
+>  	struct panfrost_mmu *mmu;
+>  
+>  	mmu = kzalloc(sizeof(*mmu), GFP_KERNEL);
+> @@ -641,16 +735,28 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
+>  		.iommu_dev	= pfdev->dev,
+>  	};
+>  
+> -	mmu->pgtbl_ops = alloc_io_pgtable_ops(ARM_MALI_LPAE, &mmu->pgtbl_cfg,
+> -					      mmu);
+> -	if (!mmu->pgtbl_ops) {
+> -		kfree(mmu);
+> -		return ERR_PTR(-EINVAL);
+> +	if (pfdev->comp->gpu_configs & BIT(GPU_CONFIG_AARCH64_4K)) {
+> +		if (!panfrost_has_hw_feature(pfdev, HW_FEATURE_AARCH64_MMU)) {
+> +			dev_err_once(pfdev->dev,
+> +				     "AARCH64_4K page table not supported\n");
+> +			goto err_free_mmu;
+> +		}
+> +		fmt = ARM_64_LPAE_S1;
+>  	}
+
+How about moving this check before allocating the mmu object, so you
+don't have to free it if it fails?
+
+>  
+> +	mmu->pgtbl_ops = alloc_io_pgtable_ops(fmt, &mmu->pgtbl_cfg, mmu);
+> +	if (!mmu->pgtbl_ops)
+> +		goto err_free_mmu;
+> +
+> +	panfrost_mmu_cfg_init(mmu, fmt);
+> +
+>  	kref_init(&mmu->refcount);
+>  
+>  	return mmu;
+> +
+> +err_free_mmu:
+> +	kfree(mmu);
+> +	return ERR_PTR(-EINVAL);
+>  }
+>  
+>  static const char *access_type_name(struct panfrost_device *pfdev,
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_regs.h b/drivers/gpu/drm/panfrost/panfrost_regs.h
+> index b5f279a19a084..2b8f1617b8369 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_regs.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_regs.h
+> @@ -301,6 +301,17 @@
+>  #define AS_TRANSTAB_HI(as)		(MMU_AS(as) + 0x04) /* (RW) Translation Table Base Address for address space n, high word */
+>  #define AS_MEMATTR_LO(as)		(MMU_AS(as) + 0x08) /* (RW) Memory attributes for address space n, low word. */
+>  #define AS_MEMATTR_HI(as)		(MMU_AS(as) + 0x0C) /* (RW) Memory attributes for address space n, high word. */
+> +#define   AS_MEMATTR_AARCH64_INNER_ALLOC_IMPL		(2 << 2)
+> +#define   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(w, r)	((3 << 2) | \
+> +							 ((w) ? BIT(0) : 0) | \
+> +							 ((r) ? BIT(1) : 0))
+> +#define   AS_MEMATTR_AARCH64_SH_MIDGARD_INNER		(0 << 4)
+> +#define   AS_MEMATTR_AARCH64_SH_CPU_INNER		(1 << 4)
+> +#define   AS_MEMATTR_AARCH64_SH_CPU_INNER_SHADER_COH	(2 << 4)
+> +#define   AS_MEMATTR_AARCH64_SHARED			(0 << 6)
+> +#define   AS_MEMATTR_AARCH64_INNER_OUTER_NC		(1 << 6)
+> +#define   AS_MEMATTR_AARCH64_INNER_OUTER_WB		(2 << 6)
+> +#define   AS_MEMATTR_AARCH64_FAULT			(3 << 6)
+>  #define AS_LOCKADDR_LO(as)		(MMU_AS(as) + 0x10) /* (RW) Lock region address for address space n, low word */
+>  #define AS_LOCKADDR_HI(as)		(MMU_AS(as) + 0x14) /* (RW) Lock region address for address space n, high word */
+>  #define AS_COMMAND(as)			(MMU_AS(as) + 0x18) /* (WO) MMU command register for address space n */
+> @@ -311,6 +322,24 @@
+>  /* Additional Bifrost AS registers */
+>  #define AS_TRANSCFG_LO(as)		(MMU_AS(as) + 0x30) /* (RW) Translation table configuration for address space n, low word */
+>  #define AS_TRANSCFG_HI(as)		(MMU_AS(as) + 0x34) /* (RW) Translation table configuration for address space n, high word */
+> +#define   AS_TRANSCFG_ADRMODE_LEGACY			(0 << 0)
+> +#define   AS_TRANSCFG_ADRMODE_UNMAPPED			(1 << 0)
+> +#define   AS_TRANSCFG_ADRMODE_IDENTITY			(2 << 0)
+> +#define   AS_TRANSCFG_ADRMODE_AARCH64_4K		(6 << 0)
+> +#define   AS_TRANSCFG_ADRMODE_AARCH64_64K		(8 << 0)
+> +#define   AS_TRANSCFG_INA_BITS(x)			((x) << 6)
+> +#define   AS_TRANSCFG_OUTA_BITS(x)			((x) << 14)
+> +#define   AS_TRANSCFG_SL_CONCAT				BIT(22)
+> +#define   AS_TRANSCFG_PTW_MEMATTR_NC			(1 << 24)
+> +#define   AS_TRANSCFG_PTW_MEMATTR_WB			(2 << 24)
+> +#define   AS_TRANSCFG_PTW_SH_NS				(0 << 28)
+> +#define   AS_TRANSCFG_PTW_SH_OS				(2 << 28)
+> +#define   AS_TRANSCFG_PTW_SH_IS				(3 << 28)
+> +#define   AS_TRANSCFG_PTW_RA				BIT(30)
+> +#define   AS_TRANSCFG_DISABLE_HIER_AP			BIT(33)
+> +#define   AS_TRANSCFG_DISABLE_AF_FAULT			BIT(34)
+> +#define   AS_TRANSCFG_WXN				BIT(35)
+> +#define   AS_TRANSCFG_XREADABLE				BIT(36)
+>  #define AS_FAULTEXTRA_LO(as)		(MMU_AS(as) + 0x38) /* (RO) Secondary fault address for address space n, low word */
+>  #define AS_FAULTEXTRA_HI(as)		(MMU_AS(as) + 0x3C) /* (RO) Secondary fault address for address space n, high word */
+>  
+> @@ -326,6 +355,11 @@
+>  #define AS_TRANSTAB_LPAE_READ_INNER		BIT(2)
+>  #define AS_TRANSTAB_LPAE_SHARE_OUTER		BIT(4)
 >  
 > +/*
-> + * Definitions for the HDBSS feature
+> + * Begin AARCH64_4K MMU TRANSTAB register values
 > + */
-> +#define HDBSS_MAX_SIZE		HDBSSBR_EL2_SZ_2MB
+> +#define AS_TRANSTAB_AARCH64_4K_ADDR_MASK	0xfffffffffffffff0
 > +
-> +#define HDBSSBR_EL2(baddr, sz)	(((baddr) & GENMASK(55, 12 + sz)) | \
-> +				 ((sz) << HDBSSBR_EL2_SZ_SHIFT))
-> +#define HDBSSBR_BADDR(br)	((br) & GENMASK(55, (12 + HDBSSBR_SZ(br))))
-> +#define HDBSSBR_SZ(br)		(((br) & HDBSSBR_EL2_SZ_MASK) >> HDBSSBR_EL2_SZ_SHIFT)
-> +
-> +#define HDBSSPROD_IDX(prod)	(((prod) & HDBSSPROD_EL2_INDEX_MASK) >> HDBSSPROD_EL2_INDEX_SHIFT)
-> +
->  #define ARM64_FEATURE_FIELD_BITS	4
+>  #define AS_STATUS_AS_ACTIVE			0x01
 >  
->  /* Defined for compatibility only, do not add new users. */
-> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> index 0160b4924351..825cfef3b1c2 100644
-> --- a/arch/arm64/kvm/arm.c
-> +++ b/arch/arm64/kvm/arm.c
-> @@ -80,6 +80,70 @@ int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
->  	return kvm_vcpu_exiting_guest_mode(vcpu) == IN_GUEST_MODE;
->  }
->  
-> +static int kvm_cap_arm_enable_hdbss(struct kvm *kvm,
-> +				    struct kvm_enable_cap *cap)
-> +{
-> +	unsigned long i;
-> +	struct kvm_vcpu *vcpu;
-> +	struct page *hdbss_pg;
-> +	int size = cap->args[0];
-> +
-> +	if (!system_supports_hdbss()) {
-> +		kvm_err("This system does not support HDBSS!\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (size < 0 || size > HDBSS_MAX_SIZE) {
-> +		kvm_err("Invalid HDBSS buffer size: %d!\n", size);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Enable the HDBSS feature if size > 0, otherwise disable it. */
-> +	if (size) {
-> +		kvm->enable_hdbss = true;
-> +		kvm->arch.mmu.vtcr |= VTCR_EL2_HD | VTCR_EL2_HDBSS;
+>  #define AS_FAULTSTATUS_ACCESS_TYPE_MASK		(0x3 << 8)
 
-Nothing prevents a vCPU from using a VTCR value with HDBSS enabled
-before a tracking structure has been allocated.
-
-> +		kvm_for_each_vcpu(i, vcpu, kvm) {
-> +			hdbss_pg = alloc_pages(GFP_KERNEL, size);
-
-GFP_KERNEL_ACCOUNT
-
-> +			if (!hdbss_pg) {
-> +				kvm_err("Alloc HDBSS buffer failed!\n");
-> +				return -EINVAL;
-> +			}
-
-enable_hdbss and vtcr aren't cleaned up in this case, and EINVAL is an
-inappopriate return for a failed memory allocation.
-
-> +			vcpu->arch.hdbss.br_el2 = HDBSSBR_EL2(page_to_phys(hdbss_pg), size);
-> +			vcpu->arch.hdbss.prod_el2 = 0;
-> +
-> +			/*
-> +			 * We should kick vcpus out of guest mode here to
-> +			 * load new vtcr value to vtcr_el2 register when
-> +			 * re-enter guest mode.
-> +			 */
-> +			kvm_vcpu_kick(vcpu);
-
-VTCR_EL2 is configured on vcpu_load() for VHE. How is this expected to
-work?
-
-> +		}
-> +
-> +		kvm_info("Enable HDBSS success, HDBSS buffer size: %d\n", size);
-
-Drop the debugging printks.
-
-> +	} else if (kvm->enable_hdbss) {
-> +		kvm->arch.mmu.vtcr &= ~(VTCR_EL2_HD | VTCR_EL2_HDBSS);
-> +
-> +		kvm_for_each_vcpu(i, vcpu, kvm) {
-> +			/* Kick vcpus to flush hdbss buffer. */
-> +			kvm_vcpu_kick(vcpu);
-> +
-> +			hdbss_pg = phys_to_page(HDBSSBR_BADDR(vcpu->arch.hdbss.br_el2));
-> +			if (hdbss_pg)
-> +				__free_pages(hdbss_pg, HDBSSBR_SZ(vcpu->arch.hdbss.br_el2));
-> +
-> +			vcpu->arch.hdbss.br_el2 = 0;
-> +			vcpu->arch.hdbss.prod_el2 = 0;
-> +		}
-> +
-> +		kvm->enable_hdbss = false;
-> +		kvm_info("Disable HDBSS success\n");
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
->  			    struct kvm_enable_cap *cap)
->  {
-> @@ -125,6 +189,9 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
->  		}
->  		mutex_unlock(&kvm->slots_lock);
->  		break;
-> +	case KVM_CAP_ARM_HW_DIRTY_STATE_TRACK:
-> +		r = kvm_cap_arm_enable_hdbss(kvm, cap);
-> +		break;
->  	default:
->  		break;
->  	}
-> @@ -393,6 +460,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->  	case KVM_CAP_ARM_SUPPORTED_REG_MASK_RANGES:
->  		r = BIT(0);
->  		break;
-> +	case KVM_CAP_ARM_HW_DIRTY_STATE_TRACK:
-> +		r = system_supports_hdbss();
-> +		break;
-
-I'm not sure this is creating the right abstraction for userspace. At
-least for the dirty bitmap, this is exposing an implementation detail to
-the VMM.
-
-You could, perhaps, associate the dirty tracking structure with a
-similar concept (e.g. vCPU dirty rings) available to userspace.
-
->  	default:
->  		r = 0;
->  	}
-> diff --git a/arch/arm64/kvm/hyp/vhe/switch.c b/arch/arm64/kvm/hyp/vhe/switch.c
-> index 647737d6e8d0..6b633a219e4d 100644
-> --- a/arch/arm64/kvm/hyp/vhe/switch.c
-> +++ b/arch/arm64/kvm/hyp/vhe/switch.c
-> @@ -256,6 +256,7 @@ void kvm_vcpu_load_vhe(struct kvm_vcpu *vcpu)
->  	__vcpu_load_switch_sysregs(vcpu);
->  	__vcpu_load_activate_traps(vcpu);
->  	__load_stage2(vcpu->arch.hw_mmu, vcpu->arch.hw_mmu->arch);
-> +	__load_hdbss(vcpu);
->  }
->  
->  void kvm_vcpu_put_vhe(struct kvm_vcpu *vcpu)
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index 1f55b0c7b11d..9c11e2292b1e 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -1703,6 +1703,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	if (writable)
->  		prot |= KVM_PGTABLE_PROT_W;
->  
-> +	if (kvm->enable_hdbss && logging_active)
-> +		prot |= KVM_PGTABLE_PROT_DBM;
-> +
-
-We should set DBM if the mapping is PTE sized. That way you can
-potentially avoid faults for pages that precede the dirty tracking
-enable.
-
-Thanks,
-Oliver
 
