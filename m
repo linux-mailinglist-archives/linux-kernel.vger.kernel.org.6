@@ -1,97 +1,155 @@
-Return-Path: <linux-kernel+bounces-556217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A423A5C297
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:26:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21959A5C2AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ACBC170808
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:26:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 953D57A90A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17311BD517;
-	Tue, 11 Mar 2025 13:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lo5NgzJj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2162E5680;
-	Tue, 11 Mar 2025 13:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4941C3BEB;
+	Tue, 11 Mar 2025 13:29:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BA2156880;
+	Tue, 11 Mar 2025 13:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741699601; cv=none; b=Y/vIYeZbtrpI8ogDtBVPHHu19AmbLUMOlkdlOVCozDJ9eiC0SbqIkWP5hfBXht142yFvUu4BKBmSC1cR9YAxzI3oZ00CkkqdjDX9R5eMxIu0YX+W23k/SI5heyJUE/XqZvHLOUXg3wToszHxrqous/uRJ9NHXH4QyK9r685+K3E=
+	t=1741699768; cv=none; b=ERG0HSyyHTMLi/kcT09n4pwlvFZ9eur+8krDr90bKg3DWXeyn9hiQrHO2DxvCeaPBL90l2ckKWCqbADyijAdXosFpX8BEf1dkO9IVqazV07IIG/S7gNys6rfic7mAZ09VTESG2waXyAqRwdUblJ1hw/3LyWheTuT4GNmzQGQpq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741699601; c=relaxed/simple;
-	bh=6vwoLYDEO0sclPWLvRykycYPWlixS3LqBxJsGlHWJM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dAOiW40ByC0tY67yc402YdDhhfXEQtpg64KBNNHIqovT+Jb58g2lwX1xOE8Qg0F5WKuRe5zCnwQLZE0f05B0tippqkp5I6UbLXR5FsojzBEo5AsLnzIwcAvxdeXFLqqCsFVthes02Mbehz9E2ot7HUB3KsvIhu0iFl2ZEHUAOQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lo5NgzJj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9859DC4CEF0;
-	Tue, 11 Mar 2025 13:26:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741699600;
-	bh=6vwoLYDEO0sclPWLvRykycYPWlixS3LqBxJsGlHWJM8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lo5NgzJjYmOF9Cwwrf0cKvMjjq3nZpstoT400EUtgsRsM6sukQ9S7wWw9O3cVsI70
-	 MbjWzLEYRf+CBWlzVYrXAoKUMQ7quZh5tCunbkw3q+CbLoFXFQ3PY2FGmgMzi3xdW/
-	 nWewRV7nrtrM21QvxiW3ieytUH/Y+GYuQxzZdfBSxvK56TWCGRvrW1UezbGIP5rFtM
-	 HOrxBXzs4/4PbOW9K1POFWp5iX4kcZl/hMCPyVvNjfNiyVgAE0tR/+iWdl/4aYz2tW
-	 oxKlNBCjrcyKQWWt/5Jkdm1lu5WRfa2YBNdWm96+WOOb6VztuoCMyWzjbZ2N9mgNpt
-	 5ZsCq3T3yyu3w==
-Date: Tue, 11 Mar 2025 13:26:33 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.1 000/109] 6.1.131-rc1 review
-Message-ID: <86bbe03e-7ded-4bb3-a58b-bf5e3b5d9368@sirena.org.uk>
-References: <20250310170427.529761261@linuxfoundation.org>
+	s=arc-20240116; t=1741699768; c=relaxed/simple;
+	bh=gqeqJ0qwfHmM8KEVQQJqOUAcSknDweM1L7QmLhmF25M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g+SmWDm+B0BKSE8xTQZvtFDepCSX4qalxELlcQ64X5PJxrVUaUy9OzleF/RG1JTJn4JSlo5hnxrlWZVzYBvGlfWQkJcEW93J/bvRl3MabHpbZCrzxC33HWWa6ogs9F+5/F6n+zrom7iT1/liFrGXEE0526VmoIpqGHTX525+Uvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA4511424;
+	Tue, 11 Mar 2025 06:29:36 -0700 (PDT)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9309E3F694;
+	Tue, 11 Mar 2025 06:29:22 -0700 (PDT)
+Message-ID: <e6731145-5290-41f8-aafb-1d0f1bcc385a@arm.com>
+Date: Tue, 11 Mar 2025 14:29:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="n0XCh5xlJfjQbuu6"
-Content-Disposition: inline
-In-Reply-To: <20250310170427.529761261@linuxfoundation.org>
-X-Cookie: Androphobia:
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/8] sched/deadline: Rebuild root domain accounting
+ after every update
+To: Waiman Long <llong@redhat.com>, Juri Lelli <juri.lelli@redhat.com>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Qais Yousef <qyousef@layalina.io>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Swapnil Sapkal <swapnil.sapkal@amd.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
+ luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
+ Jon Hunter <jonathanh@nvidia.com>
+References: <20250310091935.22923-1-juri.lelli@redhat.com>
+ <Z86yxn12saDHLSy3@jlelli-thinkpadt14gen4.remote.csb>
+ <797146a4-97d6-442e-b2d3-f7c4f438d209@arm.com>
+ <398c710f-2e4e-4b35-a8a3-4c8d64f2fe68@redhat.com>
+ <fd4d6143-9bd2-4a7c-80dc-1e19e4d1b2d1@redhat.com>
+ <Z9Alq55RpuFqWT--@jlelli-thinkpadt14gen4.remote.csb>
+ <be2c47b8-a5e4-4591-ac4d-3cbc92e2ce5d@redhat.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <be2c47b8-a5e4-4591-ac4d-3cbc92e2ce5d@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 11/03/2025 13:34, Waiman Long wrote:
+> On 3/11/25 7:59 AM, Juri Lelli wrote:
+>> On 10/03/25 20:16, Waiman Long wrote:
+>>> On 3/10/25 3:18 PM, Waiman Long wrote:
+>>>> On 3/10/25 2:54 PM, Dietmar Eggemann wrote:
+>>>>> On 10/03/2025 10:37, Juri Lelli wrote:
+>>>>>> Rebuilding of root domains accounting information (total_bw) is
+>>>>>> currently broken on some cases, e.g. suspend/resume on aarch64.
+>>>>>> Problem
+>>>>> Nit: Couldn't spot any arch dependency here. I guess it was just
+>>>>> tested
+>>>>> on Arm64 platforms so far.
+>>>>>
+>>>>> [...]
+>>>>>
+>>>>>> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+>>>>>> index 44093339761c..363ad268a25b 100644
+>>>>>> --- a/kernel/sched/topology.c
+>>>>>> +++ b/kernel/sched/topology.c
+>>>>>> @@ -2791,6 +2791,7 @@ void partition_sched_domains_locked(int
+>>>>>> ndoms_new, cpumask_var_t doms_new[],
+>>>>>>        ndoms_cur = ndoms_new;
+>>>>>>          update_sched_domain_debugfs();
+>>>>>> +    dl_rebuild_rd_accounting();
+>>>>> Won't dl_rebuild_rd_accounting()'s lockdep_assert_held(&cpuset_mutex)
+>>>>> barf when called via cpuhp's:
+>>>>>
+>>>>> sched_cpu_deactivate()
+>>>>>
+>>>>>     cpuset_cpu_inactive()
+>>>>>
+>>>>>       partition_sched_domains()
+>>>>>
+>>>>>         partition_sched_domains_locked()
+>>>>>
+>>>>>           dl_rebuild_rd_accounting()
+>>>>>
+>>>>> ?
+>> Good catch. Guess I didn't notice while testing with LOCKDEP as I was
+>> never able to hit this call path on my systems.
+>>
+>>>> Right. If cpuhp_tasks_frozen is true, partition_sched_domains() will be
+>>>> called without holding cpuset mutex.
+>>>>
+>>>> Well, I think we will need an additional wrapper in cpuset.c that
+>>>> acquires the cpuset_mutex first before calling
+>>>> partition_sched_domains()
+>>>> and use the new wrapper in these cases.
+>>> Actually, partition_sched_domains() is called with the special
+>>> arguments (1,
+>>> NULL, NULL) to reset the domain to a single one. So perhaps something
+>>> like
+>>> the following will be enough to avoid this problem.
+>> I think this would work, as we will still rebuild the accounting after
+>> last CPU comes back from suspend. The thing I am still not sure about is
+>> what we want to do in case we have DEADLINE tasks around, since with
+>> this I belive we would be ignoring them and let suspend proceed.
+> 
+> That is the current behavior. You can certainly create a test case to
+> trigger such condition and see what to do about it. Alternatively, you
+> can document that and come up with a follow-up patch later on.
 
---n0XCh5xlJfjQbuu6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+But don't we rely on that partition_sched_domains_locked() calls
+dl_rebuild_rd_accounting() even in the reset_domain=1 case?
 
-On Mon, Mar 10, 2025 at 06:05:44PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.131 release.
-> There are 109 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Testcase: suspend/resume
 
-Tested-by: Mark Brown <broonie@kernel.org>
+on Arm64 big.LITTLE cpumask=[LITTLE][big]=[0,3-5][1-2]
+plus cmd line option 'isolcpus=3,4'.
 
---n0XCh5xlJfjQbuu6
-Content-Type: application/pgp-signature; name="signature.asc"
+with Waiman's snippet:
+https://lkml.kernel.org/r/fd4d6143-9bd2-4a7c-80dc-1e19e4d1b2d1@redhat.com
 
------BEGIN PGP SIGNATURE-----
+...
+[  234.831675] --- > partition_sched_domains_locked() reset_domain=1
+[  234.835966] psci: CPU4 killed (polled 0 ms)
+[  234.838912] Error taking CPU3 down: -16
+[  234.838952] Non-boot CPUs are not disabled
+[  234.838986] Enabling non-boot CPUs ...
+...
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfQOgkACgkQJNaLcl1U
-h9DZ3gf9Gks+kHYmX0qfwt7VoCfZ+21YggJqANgsIPTOwMKOK5IwVqpImXRLwByy
-EG72+U91YXKKfVLoqEx8yoLfgv0Dufh7NJV5IPmxk5SJkOXSZNKJsyywsDnbL4Wi
-Bm1JXTf+WmdY0CUouUdB8WyJHg/qD5Mckp6GDyCZbZdQjAEC6bzvLzh03s4FPdDq
-IB95MN/8wQUyoRqzIjsi1irB2zF42WyQIkL5mWMbLnsjuz0xiCC8v39R2L4j+f4T
-PD3xkhx4E/ECp+rZFVx0qIgvmVEjJxTZ+6AscWw8pRu4b2QIZZF0nCObF53hfIqv
-Ek90wH3sosf7EvFmDZl2NRocs3AeyQ==
-=w4Xy
------END PGP SIGNATURE-----
-
---n0XCh5xlJfjQbuu6--
+IIRC, that's the old DL accounting issue.
 
