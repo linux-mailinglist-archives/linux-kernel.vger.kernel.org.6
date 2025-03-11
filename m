@@ -1,145 +1,131 @@
-Return-Path: <linux-kernel+bounces-555628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6D0A5BA78
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:07:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D356BA5BA86
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:12:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE733A05FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:07:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B214A3A5DA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EFD224241;
-	Tue, 11 Mar 2025 08:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C45422424D;
+	Tue, 11 Mar 2025 08:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/h7PXgM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XOdhGi4S"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920242222C9;
-	Tue, 11 Mar 2025 08:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB701DE894;
+	Tue, 11 Mar 2025 08:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741680433; cv=none; b=ofGbGI1njfo2s20cB4qXUm90SkrTMu0xyLY28PHmiZQCOhGHkPQkn9x+XUS6djnuykDX5toV91vc3z7Vqj+rd6HWc3fFw5/fClgIh9zyqTrn+6qRPkqMFwFu+Hgv9HA5yE4xLfjDU8qgijPQTDDXivWom0xRiKvuqlB1v5w5Vp8=
+	t=1741680722; cv=none; b=LiY8XZKKiHVj+5TSCHEbYoT8gCm2rEd/5mSg9WFo9Fl7ItWof5YbYB/Ez0pEoPWHcGNSfgqpxHh9gACuLOBjuXMw2WRJlZ9qeibFcSfFHbI4RHWChq1gOo6phxbyxZwXwsLn1VsMRqrzLQGZr/vZUXGZeVSP/3b66jOD4ox3cro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741680433; c=relaxed/simple;
-	bh=ZtI3BPfxkUxUFIHbmyl6XFRwlrtyk7qksexHnsdaz0s=;
+	s=arc-20240116; t=1741680722; c=relaxed/simple;
+	bh=vA06Rl2ek5wsWLgUNf9K2XAhCsBQfUsYoPC1Dx7H0os=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IXSzs7dsbDG/gtrR3QjvgXh+ccIg8ZEaLxjJX2X3HHPW9pSM48hceygaJ/f5TJzojOBAo5uIb8HpQrbYcSkAtHhMnt3mlcIKjHHmrGMEu5rRE6mWfa4auGqQ80llARVU8hvXLYAOwLO8BUaaqvBz6baX5omGW6C9VoykcTgBkiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U/h7PXgM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 951E6C4CEE9;
-	Tue, 11 Mar 2025 08:07:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741680432;
-	bh=ZtI3BPfxkUxUFIHbmyl6XFRwlrtyk7qksexHnsdaz0s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U/h7PXgMOSAGbndHGkKUKiEIJoiOTC00zUrB+InlOsaKJ9us1tQK8WaTVTYTX6/31
-	 rvpED6HJyNuGG1rl9XU0wQy0IalgnzmWgqSRL3jDkJnA7nRTUAah3ImRMrh8aVUYuI
-	 ZHDm5qFuFV85SFttR4Sxg82jSO18jmLS2XGUpP6lDWMfcsvpaN23VWwQ4rltpydqBZ
-	 R3WBSwkOGmMBQvBUx5PjSIbTIPo7UZogIzN9tmEHX2Tl0FDnHvZFNugr3Oinv/IHXJ
-	 r7zY67ZQrzN4yQZ6YvgEZg+GZ6EXm3JjtnoSGPg1my692rl9GFkVE/VWJBnPNIRCyP
-	 6clygOGhD9QZw==
-Date: Tue, 11 Mar 2025 09:07:10 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org
-Subject: Re: [PATCH 3/4] drm/vc4: use new helper to get ACR values
-Message-ID: <20250311-intrepid-obedient-lizard-64ad2c@houat>
-References: <20250309-drm-hdmi-acr-v1-0-bb9c242f4d4b@linaro.org>
- <20250309-drm-hdmi-acr-v1-3-bb9c242f4d4b@linaro.org>
- <20250310-invisible-married-firefly-945c84@houat>
- <esgb42dyhpjixm62tfk2nfzdiygnfn4bcwq4zn7rhydmt4np2q@7v77p7kveb4e>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nI662eA1qRbXRSoK8ZWwCHRU+k2EPourxgQyftpWCe9AKLHmV05YBGtADFzo5zz6+673bhl7cqnYPqFsMvMhJK3NxViFVoJiQ/R0WSnZMvuoggWiG6u4MBP0ucBF4tH1vob25wSaxHieYafwRtXRG3k4mlOZHXm+2sytloRbCZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XOdhGi4S; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741680720; x=1773216720;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vA06Rl2ek5wsWLgUNf9K2XAhCsBQfUsYoPC1Dx7H0os=;
+  b=XOdhGi4SzWDlbCN4Zzr4Ag2BdzRTMuKpxUqJBv6Pqd4zVTQAvAjTQk2e
+   KwEIqCGq3R5mg+XWkSVPe6pTFbjJV/jW0LHI4YqbLn4q4KnFOGOi4UFjo
+   Tg0dtZ+5EYfOY3qRpzhvA3UYWOq88LIPrpJQg7d1a313Iw6v2BNWLS+yW
+   /B3pj2ZCEz7ybCI2DBB0OzUE11uOHQMUhrnWY7LjSDwj9cHN24CX0UMDJ
+   O3uPPPB+TeCxVtHJIRw0230NHx7NMD3JDsDYwVcERKa17SZTCDi+ZfCs8
+   cr1q6scGv34aqA3f2+Dedk3c9YjGngDz9FWfaDEf12onh1Ci44GgnUNk5
+   g==;
+X-CSE-ConnectionGUID: E+Z0r5nvSaC5/6eJ5D39Yw==
+X-CSE-MsgGUID: QrJ0vETuQlWFxv35VwMj4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="45491357"
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="45491357"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 01:12:00 -0700
+X-CSE-ConnectionGUID: M6GakZ3hRaaph7ZMRwMV/w==
+X-CSE-MsgGUID: bSPH9ntvQPOnyoB8aL8geA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="157464742"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 01:11:56 -0700
+Date: Tue, 11 Mar 2025 09:08:03 +0100
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, Gal Pressman <gal@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Carolina Jubran <cjubran@nvidia.com>
+Subject: Re: [PATCH net 6/6] net/mlx5e: Prevent bridge link show failure for
+ non-eswitch-allowed devices
+Message-ID: <Z8/vY+fEb/CeDwtw@mev-dev.igk.intel.com>
+References: <1741644104-97767-1-git-send-email-tariqt@nvidia.com>
+ <1741644104-97767-7-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dyye5w7y4dznz4ng"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <esgb42dyhpjixm62tfk2nfzdiygnfn4bcwq4zn7rhydmt4np2q@7v77p7kveb4e>
+In-Reply-To: <1741644104-97767-7-git-send-email-tariqt@nvidia.com>
 
+On Tue, Mar 11, 2025 at 12:01:44AM +0200, Tariq Toukan wrote:
+> From: Carolina Jubran <cjubran@nvidia.com>
+> 
+> mlx5_eswitch_get_vepa returns -EPERM if the device lacks
+> eswitch_manager capability, blocking mlx5e_bridge_getlink from
+> retrieving VEPA mode. Since mlx5e_bridge_getlink implements
+> ndo_bridge_getlink, returning -EPERM causes bridge link show to fail
+> instead of skipping devices without this capability.
+> 
+> To avoid this, return -EOPNOTSUPP from mlx5e_bridge_getlink when
+> mlx5_eswitch_get_vepa fails, ensuring the command continues processing
+> other devices while ignoring those without the necessary capability.
+> 
+> Fixes: 4b89251de024 ("net/mlx5: Support ndo bridge_setlink and getlink")
+> Signed-off-by: Carolina Jubran <cjubran@nvidia.com>
+> Reviewed-by: Jianbo Liu <jianbol@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> ---
+>  drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> index a814b63ed97e..8fcaee381b0e 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> @@ -5132,11 +5132,9 @@ static int mlx5e_bridge_getlink(struct sk_buff *skb, u32 pid, u32 seq,
+>  	struct mlx5e_priv *priv = netdev_priv(dev);
+>  	struct mlx5_core_dev *mdev = priv->mdev;
+>  	u8 mode, setting;
+> -	int err;
+>  
+> -	err = mlx5_eswitch_get_vepa(mdev->priv.eswitch, &setting);
+> -	if (err)
+> -		return err;
+> +	if (mlx5_eswitch_get_vepa(mdev->priv.eswitch, &setting))
+> +		return -EOPNOTSUPP;
+>  	mode = setting ? BRIDGE_MODE_VEPA : BRIDGE_MODE_VEB;
+>  	return ndo_dflt_bridge_getlink(skb, pid, seq, dev,
+>  				       mode,
 
---dyye5w7y4dznz4ng
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/4] drm/vc4: use new helper to get ACR values
-MIME-Version: 1.0
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-On Mon, Mar 10, 2025 at 10:18:04PM +0200, Dmitry Baryshkov wrote:
-> On Mon, Mar 10, 2025 at 03:51:53PM +0100, Maxime Ripard wrote:
-> > On Sun, Mar 09, 2025 at 10:13:58AM +0200, Dmitry Baryshkov wrote:
-> > > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > >=20
-> > > Use drm_hdmi_acr_get_n_cts() helper instead of calculating N and CTS
-> > > values in the VC4 driver.
-> > >=20
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/vc4/vc4_hdmi.c | 10 +++-------
-> > >  drivers/gpu/drm/vc4/vc4_hdmi.h |  7 +++++++
-> > >  2 files changed, 10 insertions(+), 7 deletions(-)
-> > >=20
->=20
-> > > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4=
-_hdmi.h
-> > > index e3d989ca302b72533c374dfa3fd0d5bd7fe64a82..0a775dbfe99d45521f3d0=
-a2016555aefa81d7934 100644
-> > > --- a/drivers/gpu/drm/vc4/vc4_hdmi.h
-> > > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
-> > > @@ -211,6 +211,13 @@ struct vc4_hdmi {
-> > >  	 * KMS hooks. Protected by @mutex.
-> > >  	 */
-> > >  	enum hdmi_colorspace output_format;
-> > > +
-> > > +	/**
-> > > +	 * @tmds_char_rate: Copy of
-> > > +	 * @drm_connector_state.hdmi.tmds_char_rate for use outside of
-> > > +	 * KMS hooks. Protected by @mutex.
-> > > +	 */
-> > > +	unsigned long long tmds_char_rate;
-> > >  };
-> >=20
-> > This should be in drm_connector_hdmi if it's useful
->=20
-> That would mean bringing the state to a non-state structure on the
-> framework level. Is it fine from your POV?
-
-Sorry, I'm changing my mind a little bit, but it's pretty much the same
-case than for accessing the infoframes from debugfs: we want to get some
-information stored in the state from outside of KMS.
-
-What we did for the infoframes is that we're actually just taking the
-connection_mutex from the DRM device and access the drm_connector->state
-pointer.
-
-I guess it would also work for ALSA?
-
-Maxime
-
---dyye5w7y4dznz4ng
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ8/vLQAKCRDj7w1vZxhR
-xUTYAQDyuqn5t5cMpn/5BQvLfTTmRbB8sQbVEyGnQO76VRXLEgD8DIkV+06Aq3Wk
-upcHhxdxp69/BSRmI5L12OmC4dqEywU=
-=V2Cq
------END PGP SIGNATURE-----
-
---dyye5w7y4dznz4ng--
+> -- 
+> 2.31.1
 
