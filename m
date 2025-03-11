@@ -1,123 +1,265 @@
-Return-Path: <linux-kernel+bounces-555646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73D0A5BABF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:22:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 608B4A5BA8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:13:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1866F3A6AAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:22:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 923F8172991
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FA5224244;
-	Tue, 11 Mar 2025 08:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AA62248AC;
+	Tue, 11 Mar 2025 08:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mpPO/8x2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="pThZM7nP"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543461DE894;
-	Tue, 11 Mar 2025 08:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C7A2222B4
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741681343; cv=none; b=V+L1OCUoK6DJijFmMYE5VIOFBmcQF+EuC9sYbGdRx7CkNFCV95HHy+vrq8aWR2CB3vd0nA9xumzWsbF5Y163hd8P/3M9QMHntXvni833JT7RuEKiY1/FOfmInPLRk4nDQEoH4nPhMpqDWNw1Q3VJhP1bZgLSyvKWbKnYssOaAuc=
+	t=1741680774; cv=none; b=ExrOrg2kVbsqRAHMG+J4fwzKm/XqartNbYlRgz7/BC8wd5WPES+3T+CQCUV+5YFZMtJVYWz4j1MfinyBd5hLaZUoIXyHX4P1G6WHz1SV0ZHwTJF2i9uLpH4nLJyq3YnLJuVESE5vfyRqQzFuHMw8Tasy0xqqOhBsNF3d/NY8yqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741681343; c=relaxed/simple;
-	bh=oDgMFfKoOYNvurMdYjsKlHk+6v4ec6TZPOD47GjfsLU=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=XtbOlbUp5eejAMaEJ5HNXgRA5K5mhkuD5AwlHAGWgOpIKthINwI3KQZD67HbEsiN86WaB+aS/t8jB2pto6Nv2nopoiadbqwTXgS9WE0VYb+UrbDqRvkp0bt+ew1U0x590lLLFH62vc9V+XVItVUj559zRq/WUHchcp7+QkaFL54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mpPO/8x2; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741681341; x=1773217341;
-  h=from:to:cc:subject:date:message-id;
-  bh=oDgMFfKoOYNvurMdYjsKlHk+6v4ec6TZPOD47GjfsLU=;
-  b=mpPO/8x2coacSu2P6qOwudWw3oJw5YOmR3EwMrkwbvyv+t0Om0tnR/1y
-   TMtderfvUGd4lLzVHmSOEdY66A0LedP100aP/BA/aTTCBSmY0/avxGHK6
-   gsNL+V7hzuNTdEYuL90+c8DZEg0ybzoWchx04xktKPXwaiJXifTUMZ/33
-   mkslmY+Hghzh8OdWWQpWyqWYXLa/9nUTfiUqTTwbmcs9PGF33uQ6VWXof
-   SbbKThVb1h8PnmaWd9iJigCIOA9c5V4NzXNKO92AttoAiqPbzOsDcoAR4
-   FpWeDtgIN5lw4oW4O8EmwwTq5um6mnJ79mtJYeD7AsEUlGGmUN+dRe6eZ
-   Q==;
-X-CSE-ConnectionGUID: zmLL13wlRQ2QxC+ML4WhHA==
-X-CSE-MsgGUID: KDIhl/GdQ92p7mjDBIuO7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="68067096"
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="68067096"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 01:22:21 -0700
-X-CSE-ConnectionGUID: wBS/iF1eQN+yUTCZnNwSiA==
-X-CSE-MsgGUID: aj6FqxiVRdSzGBOjGhIA0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="120202946"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 01:22:19 -0700
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	qiuxu.zhuo@intel.com,
-	yi1.lai@intel.com
-Subject: [PATCH 1/1] selftests/mincore: Allow read-ahead pages to reach the end of the file
-Date: Tue, 11 Mar 2025 16:09:40 +0800
-Message-Id: <20250311080940.21413-1-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1741680774; c=relaxed/simple;
+	bh=0c1JB1mhBjJNviQkaqiKr/lgyKO/7RrJgIykZMGH444=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=anBnTXd154akJ0eQB6XnDNS5qU7jRM6ZPLOww69qr0SPbVB8RBsh+c32OKAnhFFW3Yh2xzAodm1KuPFY6XSVIkl8O7Avgt+VQRgO+H2I0Z7USHRYp8ZmRgGAO2LmVq5ymsSNISXQ1+oI2QSyWziw/KB8FlxefCgNqe9pFXjMTsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=pThZM7nP; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
+	by cmsmtp with ESMTPS
+	id roUKtq4ajVkcRruhotDgjU; Tue, 11 Mar 2025 08:11:16 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id ruhktFmOXkhljruhltiwTT; Tue, 11 Mar 2025 08:11:13 +0000
+X-Authority-Analysis: v=2.4 cv=F79RdLhN c=1 sm=1 tr=0 ts=67cff023
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=6Vi/Wpy7sgpXGMLew8oZcg==:17
+ a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=OXdeduLSBdMSo9eDwqgA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=R/lmvIUe4lNj3XZkokRwvbtDuIId69U724e5krgi9KE=; b=pThZM7nPgN1l69lZs5n4FvJSgN
+	cctP7X0ETqCTUmN41PgQLiXR2Zhk/9C/NgrZtNyZugh7IieJnDDl9f9uH434A6bL0w2+4JPlDVrNP
+	IrF88Kpj7xT8yos1vAk2qMZSYRh2YtaODtzLqsp/u0OwhbmVD9kD0Akbr64zp4Wbld97we2O7ouz9
+	c3vi6OWNcrB0HDtW5WB7g5KuTnXV8ZfrzWrrj/RJULJvvPdBJalRiTvN2BhPwl6pfmN9tQrlrdEvx
+	8PjhqO3/F/I21q+gncexY3AsIYJd3ztoJ4yKeNZGP2KS3+nZ7+/k/qO8ilZ6DwjHnZV51vyL3p66s
+	megrRwng==;
+Received: from [45.124.203.140] (port=53616 helo=[192.168.0.158])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1truhj-00000003Tls-1Sv0;
+	Tue, 11 Mar 2025 03:11:12 -0500
+Message-ID: <864c7dd5-0deb-4adb-a1cf-c8a809514d7e@embeddedor.com>
+Date: Tue, 11 Mar 2025 18:40:56 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] drm/amd/pm: Avoid multiple
+ -Wflex-array-member-not-at-end warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Kenneth Feng <kenneth.feng@amd.com>, Alex Deucher
+ <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <Z678TNhCbTk363Tw@kspp>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <Z678TNhCbTk363Tw@kspp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 45.124.203.140
+X-Source-L: No
+X-Exim-ID: 1truhj-00000003Tls-1Sv0
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.158]) [45.124.203.140]:53616
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfHYdftyrh8nKh+TRF73gsLSpdWLPP4MsYykX6oOq9So2KT29losmUGpHo2+s7krr+OZs6tg95suHaSMALvleQqlx0SqeLyTyaW+/VfFZZOHLlZB5SZmo
+ fz7NJztHHusq3rVQ3LGAewCBvI94JZ6Od9cFoKFrwLjjwcJZmqFV3DFByyihvMXA92m0tme5jjmb3O8+B01uEt58YYzpvxTtHTrF3UndcrWzehYplXk2X5ej
 
-When running the mincore_selftest on a system with an XFS file system, it
-failed the "check_file_mmap" test case due to the read-ahead pages reaching
-the end of the file. The failure log is as below:
+Hi all,
 
-   RUN           global.check_file_mmap ...
-  mincore_selftest.c:264:check_file_mmap:Expected i (1024) < vec_size (1024)
-  mincore_selftest.c:265:check_file_mmap:Read-ahead pages reached the end of the file
-  check_file_mmap: Test failed
-           FAIL  global.check_file_mmap
+Friendly ping: who can take this, please? :)
 
-This is because the read-ahead window size of the XFS file system on this
-machine is 4 MB, which is larger than the size from the #PF address to the
-end of the file. As a result, all the pages for this file are populated.
+Thanks!
+--
+Gustavo
 
-  blockdev --getra /dev/nvme0n1p5
-    8192
-  blockdev --getbsz /dev/nvme0n1p5
-    512
-
-This issue can be fixed by extending the current FILE_SIZE 4MB to a larger
-number, but it will still fail if the read-ahead window size of the file
-system is larger enough. Additionally, in the real world, read-ahead pages
-reaching the end of the file can happen and is an expected behavior.
-Therefore, allowing read-ahead pages to reach the end of the file is a
-better choice for the "check_file_mmap" test case.
-
-Reported-by: Yi Lai <yi1.lai@intel.com>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
- tools/testing/selftests/mincore/mincore_selftest.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/tools/testing/selftests/mincore/mincore_selftest.c b/tools/testing/selftests/mincore/mincore_selftest.c
-index e949a43a6145..efabfcbe0b49 100644
---- a/tools/testing/selftests/mincore/mincore_selftest.c
-+++ b/tools/testing/selftests/mincore/mincore_selftest.c
-@@ -261,9 +261,6 @@ TEST(check_file_mmap)
- 		TH_LOG("No read-ahead pages found in memory");
- 	}
- 
--	EXPECT_LT(i, vec_size) {
--		TH_LOG("Read-ahead pages reached the end of the file");
--	}
- 	/*
- 	 * End of the readahead window. The rest of the pages shouldn't
- 	 * be in memory.
--- 
-2.17.1
+On 14/02/25 18:48, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> So, in order to avoid ending up with a flexible-array member in the
+> middle of other structs, we use the `struct_group_tagged()` helper
+> to create a new tagged `struct NISLANDS_SMC_SWSTATE_HDR` (and `struct
+> SISLANDS_SMC_SWSTATE_HDR`). This structures group together all the
+> members of the flexible `struct NISLANDS_SMC_SWSTATE` (and `struct
+> SISLANDS_SMC_SWSTATE`) except the flexible array.
+> 
+> As a result, the array is effectively separated from the rest of the
+> members without modifying the memory layout of the flexible structure.
+> We then change the type of the middle struct members currently causing
+> trouble from `struct NISLANDS_SMC_SWSTATE` to `struct
+> NISLANDS_SMC_SWSTATE_HDR` (and from `struct SISLANDS_SMC_SWSTATE` to
+> `struct SISLANDS_SMC_SWSTATE_HDR`).
+> 
+> We also want to ensure that when new members need to be added to the
+> flexible structure, they are always included within the newly created
+> tagged struct. For this, we use `static_assert()`. This ensures that
+> the memory layout for both the flexible structure and the new tagged
+> struct is the same after any changes.
+> 
+> This approach avoids having to implement `struct NISLANDS_SMC_SWSTATE_HDR`
+> (and `struct SISLANDS_SMC_SWSTATE_HDR`) as a completely separate structure,
+> thus preventing having to maintain two independent but basically identical
+> structures, closing the door to potential bugs in the future.
+> 
+> We also use `container_of()` whenever we need to retrieve a pointer to
+> the flexible structure, through which we can access the flexible-array
+> member, if necessary.
+> 
+> So, with this changes, fix the following warnings:
+> 
+> drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/sislands_smc.h:218:49: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.h:819:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.h:818:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.h:817:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.h:816:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>   drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.c    |  7 ++++--
+>   drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.h    | 23 +++++++++++--------
+>   .../gpu/drm/amd/pm/legacy-dpm/sislands_smc.h  | 15 ++++++++----
+>   3 files changed, 29 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.c b/drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.c
+> index a87dcf0974bc..2c9d473d122f 100644
+> --- a/drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.c
+> +++ b/drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.c
+> @@ -5234,7 +5234,8 @@ static int si_init_smc_table(struct amdgpu_device *adev)
+>   
+>   	table->driverState.flags = table->initialState.flags;
+>   	table->driverState.levelCount = table->initialState.levelCount;
+> -	table->driverState.levels[0] = table->initialState.level;
+> +	container_of(&table->driverState, SISLANDS_SMC_SWSTATE, __hdr)->levels[0] =
+> +								table->initialState.level;
+>   
+>   	ret = si_do_program_memory_timing_parameters(adev, amdgpu_boot_state,
+>   						     SISLANDS_INITIAL_STATE_ARB_INDEX);
+> @@ -5755,7 +5756,9 @@ static int si_upload_sw_state(struct amdgpu_device *adev,
+>   	int ret;
+>   	u32 address = si_pi->state_table_start +
+>   		offsetof(SISLANDS_SMC_STATETABLE, driverState);
+> -	SISLANDS_SMC_SWSTATE *smc_state = &si_pi->smc_statetable.driverState;
+> +	SISLANDS_SMC_SWSTATE *smc_state =
+> +		container_of(&si_pi->smc_statetable.driverState,
+> +			     SISLANDS_SMC_SWSTATE, __hdr);
+>   	size_t state_size = struct_size(smc_state, levels,
+>   					new_state->performance_level_count);
+>   	memset(smc_state, 0, state_size);
+> diff --git a/drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.h b/drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.h
+> index 11cb7874a6bb..62530f89ebdf 100644
+> --- a/drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.h
+> +++ b/drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.h
+> @@ -784,12 +784,17 @@ typedef struct NISLANDS_SMC_HW_PERFORMANCE_LEVEL NISLANDS_SMC_HW_PERFORMANCE_LEV
+>   
+>   struct NISLANDS_SMC_SWSTATE
+>   {
+> -    uint8_t                             flags;
+> -    uint8_t                             levelCount;
+> -    uint8_t                             padding2;
+> -    uint8_t                             padding3;
+> -    NISLANDS_SMC_HW_PERFORMANCE_LEVEL   levels[];
+> +	/* New members MUST be added within the struct_group() macro below. */
+> +	struct_group_tagged(NISLANDS_SMC_SWSTATE_HDR, __hdr,
+> +		uint8_t                             flags;
+> +		uint8_t                             levelCount;
+> +		uint8_t                             padding2;
+> +		uint8_t                             padding3;
+> +	);
+> +	NISLANDS_SMC_HW_PERFORMANCE_LEVEL   levels[];
+>   };
+> +static_assert(offsetof(struct NISLANDS_SMC_SWSTATE, levels) == sizeof(struct NISLANDS_SMC_SWSTATE_HDR),
+> +	      "struct member likely outside of struct_group_tagged()");
+>   
+>   typedef struct NISLANDS_SMC_SWSTATE NISLANDS_SMC_SWSTATE;
+>   
+> @@ -813,10 +818,10 @@ struct NISLANDS_SMC_STATETABLE
+>       uint32_t                            lowSMIO[NISLANDS_MAX_NO_VREG_STEPS];
+>       NISLANDS_SMC_VOLTAGEMASKTABLE       voltageMaskTable;
+>       PP_NIslands_DPM2Parameters          dpm2Params;
+> -    NISLANDS_SMC_SWSTATE                initialState;
+> -    NISLANDS_SMC_SWSTATE                ACPIState;
+> -    NISLANDS_SMC_SWSTATE                ULVState;
+> -    NISLANDS_SMC_SWSTATE                driverState;
+> +    struct NISLANDS_SMC_SWSTATE_HDR		initialState;
+> +    struct NISLANDS_SMC_SWSTATE_HDR		ACPIState;
+> +    struct NISLANDS_SMC_SWSTATE_HDR		ULVState;
+> +    struct NISLANDS_SMC_SWSTATE_HDR		driverState;
+>       NISLANDS_SMC_HW_PERFORMANCE_LEVEL   dpmLevels[NISLANDS_MAX_SMC_PERFORMANCE_LEVELS_PER_SWSTATE - 1];
+>   };
+>   
+> diff --git a/drivers/gpu/drm/amd/pm/legacy-dpm/sislands_smc.h b/drivers/gpu/drm/amd/pm/legacy-dpm/sislands_smc.h
+> index 90ec411c5029..1711e3e35e80 100644
+> --- a/drivers/gpu/drm/amd/pm/legacy-dpm/sislands_smc.h
+> +++ b/drivers/gpu/drm/amd/pm/legacy-dpm/sislands_smc.h
+> @@ -172,12 +172,17 @@ struct SISLANDS_SMC_HW_PERFORMANCE_LEVEL {
+>   typedef struct SISLANDS_SMC_HW_PERFORMANCE_LEVEL SISLANDS_SMC_HW_PERFORMANCE_LEVEL;
+>   
+>   struct SISLANDS_SMC_SWSTATE {
+> -	uint8_t                             flags;
+> -	uint8_t                             levelCount;
+> -	uint8_t                             padding2;
+> -	uint8_t                             padding3;
+> +	/* New members MUST be added within the struct_group() macro below. */
+> +	struct_group_tagged(SISLANDS_SMC_SWSTATE_HDR, __hdr,
+> +		uint8_t                             flags;
+> +		uint8_t                             levelCount;
+> +		uint8_t                             padding2;
+> +		uint8_t                             padding3;
+> +	);
+>   	SISLANDS_SMC_HW_PERFORMANCE_LEVEL   levels[];
+>   };
+> +static_assert(offsetof(struct SISLANDS_SMC_SWSTATE, levels) == sizeof(struct SISLANDS_SMC_SWSTATE_HDR),
+> +	      "struct member likely outside of struct_group_tagged()");
+>   
+>   typedef struct SISLANDS_SMC_SWSTATE SISLANDS_SMC_SWSTATE;
+>   
+> @@ -215,7 +220,7 @@ struct SISLANDS_SMC_STATETABLE {
+>   	struct SISLANDS_SMC_SWSTATE_SINGLE	initialState;
+>   	struct SISLANDS_SMC_SWSTATE_SINGLE	ACPIState;
+>   	struct SISLANDS_SMC_SWSTATE_SINGLE	ULVState;
+> -	SISLANDS_SMC_SWSTATE			driverState;
+> +	struct SISLANDS_SMC_SWSTATE_HDR		driverState;
+>   	SISLANDS_SMC_HW_PERFORMANCE_LEVEL	dpmLevels[SISLANDS_MAX_SMC_PERFORMANCE_LEVELS_PER_SWSTATE];
+>   };
+>   
 
 
