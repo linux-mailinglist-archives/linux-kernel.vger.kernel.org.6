@@ -1,78 +1,76 @@
-Return-Path: <linux-kernel+bounces-556520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00410A5CB0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:43:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F00A5CB0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:44:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36A5917AB46
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B2A63B8D6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3C026039E;
-	Tue, 11 Mar 2025 16:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763EA260A27;
+	Tue, 11 Mar 2025 16:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="EZIC0svS"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KybhA1Q8"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207A0260383
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2970F260396
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741711430; cv=none; b=hnRetsMfqUxBi07D98YDGj6HP/9NHq1AqkJx4gkNgG47yPsYCKn+J90n3CZSaOgrO6hvqZxOLBH21EMJ9ogfPqEmaZ3my7tRTMWo7WS3jRbDn33Yplev7O4uZ8kOWUBvDZh8xOAEe2cUp+U88TBcgN0LYcQh1PsbTUhXRzFoiqE=
+	t=1741711491; cv=none; b=QwByFrkLZMyUo5+FFHKQe/o5IYBYKjjrjODquGA8b07Wyd5e7F0YywpKgMMHTop8olBTHBFIxN7ZcWEQ+O2Mbha/TH3Oqm32KwycsUv7m2bay0Jdia1VXnvgLADUWC2aitkXGW38WqWwb1fFi0WnnYtiGHno4A9srLD5oMEAZiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741711430; c=relaxed/simple;
-	bh=9gA/bdnk8ZzHPCFp68QBpPozxpHS5U6govbbmsu7pSY=;
+	s=arc-20240116; t=1741711491; c=relaxed/simple;
+	bh=CFlZUAocSaDCXWGn3dMPc0Nzh3K2elHq0BNPfszI2Jk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oGnM43FRd2p7d9T8OqYm3pjo/3SoZqX4s0W3MaW5HsPr4SiUB/tDT8F4cvp5l1lUDYUQPQYAkn9KYP/UHR3ddsEE9b7Tn7+eVJMZX0VoTyCTyCXB2YmyLBdmDerS0igIzuYtBkFm0wqiIz/82qhaIWuTCp+IIVUpRhODb7CzBHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=EZIC0svS; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2240ff0bd6eso12065955ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:43:47 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=CpGdXHHtj2iINj8cOgGAVbucnxkYkfKBGLpjcW5Kt6fzExSXuB7/b0Ah5nY0q4n8kFFes7xE2gWcFwhA5Qg5TAhbQ74vubZzWObxTvgLGqmvWmuCXewX/IEgLe83U4IyT6K2WYi8BbwX30op++oYlXGnRufx4IRFPNlRaWtuMVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KybhA1Q8; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-85b44094782so95935039f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:44:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741711427; x=1742316227; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1741711489; x=1742316289; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=qtDPI8Ma8CKYJvSmsJ89yrdXIJa4yOEuJo/99lfQz24=;
-        b=EZIC0svSR6MWnSjckLg68b8g20goY4sbGrmI879M9KlfkGsx/jVTxOpjwehMUbCN5M
-         wqZzTL4IefKG67AOmSFW1sDhaLudOqyHx/Oyv0CFP1o0VrAXIAvSBVsjz7Lc+tuObOZS
-         T49savGL74khGm2lAsJW8lkPUs9tC9M6YUOQzwt0frRQ6z0UxFBzjpC5LNUwLn1BWulE
-         4aT8dcZMfd8Skh6SED5mmWjGLvp2ViPHcDXMwmmkh+i0E77OgzM9+N2Qo+YYWXsYpiAc
-         UdK3Ygc3hpOQGHAEFQ1Wy0BUhZThLDaBXUPv7Vqi+LrCcmF5UdieNjsFhllNvBjjThtt
-         uRGA==
+        bh=xrH+kNIJIiWCh3H6rvZdYxZUqPJqXFDTzqMH9zIOUuE=;
+        b=KybhA1Q8CjzcqS+1d/wecNEYPoaeHvaDB4CLHsx7Mt8i/PXHOWYytsTsutuu9X587a
+         9zUsKEmqI2aaJXMqLp+4aIzzZuY/Z483XnKiuyXVWjEI9JEcByYBW84OMpPCNydrxcbd
+         rxeNc+LBDqbzoYDV6BufUTLH2q028cD60sO7M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741711427; x=1742316227;
+        d=1e100.net; s=20230601; t=1741711489; x=1742316289;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qtDPI8Ma8CKYJvSmsJ89yrdXIJa4yOEuJo/99lfQz24=;
-        b=jfzWc0yAjDLooSPWZlbMKnGpDc41O0X7RfzqC2rGt+oxKPf4BXxcdKz4k+KwiCDhAc
-         6bXOLfI8uDbtqY/xwo+uGD5NyVfGKJD6hjEvdlM1cDJ5eymeg826UMg9n/RpxWfu0qAl
-         D6da5IEg0bIR/ChIkHy1fd0rYp4usKXLTdLG6FFDHTNhL6allAhFGwti3ctAcLDqLMB0
-         QnyIhtzHoxZiGLSfppVWYkXXRpiqO8apvS3IhM35SuutDnttRybb8cmJ21BI1uxpN1Bl
-         JFKPMYBFUa0ozWunx6Q63NKfkuzVkh4d5YTH9m2J6zwRqW+pgc4DNH5HTc/lE5ZYCw95
-         WQfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSqlf3v7MpAVrBIgtY11BbgqfteCqcP0afMo5saDub2pLrNkgOH4Eaalz2Siu6wpHzo13+VsjJWynJCyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3oO8/E2UZx2MkGKyfqnsiO+3DPKYskUmKrLTPB5x9Itoa+WEC
-	L/Lt3Sy/sBxMbVIv6bb3bi8qgQdkNNCEt7k3S6/wvYEii8QIniqSbrJmi++H0+w=
-X-Gm-Gg: ASbGnctBgaswl9vcpj9SnAK++oY3lCAk4TpMhSm89teNBr7wGIf7iHU0eOqaZrsQ5kN
-	qvyr/ty5EqikfMfB9CwvdOGhE55c7tzPbI0ob8tePMkvKBxpDsZaOEvUS8mtXnWUbGL1psEeJGa
-	Ux+wNgabniUfVD+3ne15fAVByp3gJdWnyO9rGDg0QYyFajOuvRlASdO+15GNHvwc/wd26ZKfmZU
-	ujT765PSujKjdNLqtjsJeRdCJo9CeHIO3m3eZpZ3yS9t+4W693T7imSAXdpuoanHbBeFySMwKO5
-	2b4QHHLCVetLW/KonZfyg+NwOMqE23hE9lU2r4keBmPqCyFQkrGEvYGVEj3TcBprGm4=
-X-Google-Smtp-Source: AGHT+IEN5y7M/lLL/f/eXFIg9hXlsHue3V3G+/HMpNFBFFNQHPhNFW6PBTNRv2DgtDGLsbOAdBBaGg==
-X-Received: by 2002:a17:902:f610:b0:216:30f9:93c5 with SMTP id d9443c01a7336-2259326ed23mr23288955ad.6.1741711427268;
-        Tue, 11 Mar 2025 09:43:47 -0700 (PDT)
-Received: from [10.254.33.33] ([139.177.225.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a91be9sm100010845ad.179.2025.03.11.09.43.41
+        bh=xrH+kNIJIiWCh3H6rvZdYxZUqPJqXFDTzqMH9zIOUuE=;
+        b=tDQ+0CiAj0VSijnK8na1xheWPsd+WZODijnsJQw559sf4yyTifQ7ryJut6egNFfTwC
+         KwB+1j0BrnpCMusFWbGUg5rGBTlWY2R7zphNVfuK4O5bbWsfIWHAPtzZaIDlA1Zm9QRW
+         IrwlWNHspewzbzNzIccD76Ey5rsspJIgFdBaUKt84xNNIuck/JtCRrKo1txsZgHIG+bk
+         53TRJYmYsUtPKmTCT+Ti4DECt1EJ4iTqkblJDDhPSOnyVPcrOEwn0q1aAqT/v9eDB6Lg
+         lMUlZ5rbavEIEJv/uR4CfiZNNVHG/VSUYvGxAkR0B6FVUg2lo+iuaTtflAm9Uy99q6RX
+         GQ6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXJps8/h4OZHIvPKXOvFr6IbnKhzt92vUu/n7CP03ZE04o7Qzxj78MZPG3TAgxk3OPolTzFIYgfpvUpUxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjJm4+X0k5neWSUW3Wd6aBbRp+nCSgXt/gJNJjc1kXlfxOibut
+	QH/JrtCqvmQglgrMobuWdJ1NYShmx8Oliuovx8BFA1w7ghtyVdzU8nmP2M19pKTisYW0Xg/Mh3g
+	Y
+X-Gm-Gg: ASbGncsNkimkEDV4BBAgU8sRrszu8HY1aH8jo4YohrpQpWoi40FnC/h7ue/VS3qekvB
+	wJNzVL6AgIMjKO63df8i7LbjIqGTuivrsf3vt2V2CHnVdsFXyoiL9z+JJvS83Yumnd+9/XxgHt4
+	Edsqd3g0WWAqEJAAuHtsYrFctzgW6CWbi4laPWLfyk+8owpzMaGUQhJwTtoopNUFsbZwwpnfChd
+	a7q3D1/H436e9GnzGoKpKyGdX7rL/M1byuVGsh79pw9Ey4YNPGe8IiOuqFoHQZfPIC4pBe4PBPn
+	4Exd+FkyyPn+Axq0rKzyoyW72XHMu0Eo0egqSt78Of8Qz45zbD6gPIc=
+X-Google-Smtp-Source: AGHT+IHrb2zFlSXoeeuX8IlI/WoFm/acPhdpIFoy6HtCqLdyW+KyMDolqqVQT4wQsO6WnDlvn4+BoQ==
+X-Received: by 2002:a05:6602:3e81:b0:85b:5d92:35b4 with SMTP id ca18e2360f4ac-85b5d923763mr831411739f.3.1741711489174;
+        Tue, 11 Mar 2025 09:44:49 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f225d0af78sm1882165173.17.2025.03.11.09.44.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 09:43:46 -0700 (PDT)
-Message-ID: <2c8c4cdb-e9b7-40f3-aa83-d82676641162@bytedance.com>
-Date: Wed, 12 Mar 2025 00:43:39 +0800
+        Tue, 11 Mar 2025 09:44:48 -0700 (PDT)
+Message-ID: <df71bef3-822d-40b2-870f-ba7ada74580a@linuxfoundation.org>
+Date: Tue, 11 Mar 2025 10:44:47 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,172 +78,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Re: [RFC PATCH 2/2] sched/fair: Do not specialcase SCHED_IDLE
- cpus in select slowpath
-To: Josh Don <joshdon@google.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Tianchen Ding <dtcccc@linux.alibaba.com>,
- "open list:SCHEDULER" <linux-kernel@vger.kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-References: <20250310074044.3656-1-wuyun.abel@bytedance.com>
- <20250310074044.3656-3-wuyun.abel@bytedance.com>
- <CABk29Ns9wq+mB5mAfu72gi3RZkNdwzXmkZSq3FQpKkTEH23dgw@mail.gmail.com>
+Subject: Re: [PATCH 6.13 000/207] 6.13.7-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250310170447.729440535@linuxfoundation.org>
 Content-Language: en-US
-From: Abel Wu <wuyun.abel@bytedance.com>
-In-Reply-To: <CABk29Ns9wq+mB5mAfu72gi3RZkNdwzXmkZSq3FQpKkTEH23dgw@mail.gmail.com>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250310170447.729440535@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Josh,
-
-On 3/11/25 6:38 AM, Josh Don wrote:
-> Thanks Abel,
+On 3/10/25 11:03, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.13.7 release.
+> There are 207 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
->> @@ -7481,12 +7481,13 @@ sched_balance_find_dst_group_cpu(struct sched_group *group, struct task_struct *
->>                                  latest_idle_timestamp = rq->idle_stamp;
->>                                  shallowest_idle_cpu = i;
->>                          }
->> -               } else if (shallowest_idle_cpu == -1 && si_cpu == -1) {
->> -                       if (sched_idle_cpu(i)) {
->> -                               si_cpu = i;
->> -                               continue;
->> -                       }
->> -
->> +               } else if (shallowest_idle_cpu == -1) {
->> +                       /*
->> +                        * The SCHED_IDLE cpus do not necessarily means anything
->> +                        * to @p due to the cgroup hierarchical behavior. But it
->> +                        * is almost certain that the wakee will get better served
->> +                        * if the cpu is less loaded.
->> +                        */
->>                          load = cpu_load(cpu_rq(i));
->>                          if (load < min_load) {
->>                                  min_load = load;
+> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
+> Anything received after that time might be too late.
 > 
-> This seems reasonable due to the case you describe. However, I'm
-> wondering if you considered any heuristics here to help identify when
-> a target cpu should really be considered sched_idle from the
-> perspective of the incoming task. For example, in your cgroup
-> hierarchy, if you have a cpu currently only running tasks in your
-> besteffort container (and all cpus in the system are busy running
-> something), then that cpu should be considered as a good target for a
-> waking task in the "guaranteed" container, and not a good target for a
-> waking task in the "containerd" container.  A simple way to do this
-
-Yes, it actually did cost me several days trying hard to figure out
-whether there is a proper way to achieve what you're suggesting.
-
-
-Solution A
-----------
-
-Mark all the hierarchically idle task_groups by assigning a unique
-prime, and define a tree walk starts from @n to root that contains
-all the preemptable nodes.
-
-	struct task_group {
-		/*
-		 * Set to a unique prime if at least 1 ancestor is idle,
-		 * otherwise set to 1.
-		 */
-		u64	prime;
-		u64	mul;
-	};
-
-	/* Called by sched_group_set_idle() */
-	static void calculate_mul(struct task_group *tg)
-	{
-		struct task_group *curr, *iter;
-
-		lockdep_assert_held(&shares_mutex);
-		for (curr = tg; curr->parent; curr = curr->parent) {
-			list_for_each_entry(iter, &curr->parent->children, siblings) {
-				/* Can't preempt non-idle siblings */
-				if (!iter->idle)
-					continue;
-				/*
-				 * For each node in the subtree rooted at @iter do:
-				 *	tg->mul *= node->prime;
-				 */
-				traverse_subtree(tg, iter);
-			}
-		}
-	}
-
-	int sched_idle_cpu(int cpu, struct task_struct *p)
-	{
-		/* rq::cached_mul caches rq->donor's tg::mul */
-		return p->sched_task_group.mul % cpu_rq(cpu)->cached_mul == 0;
-	}
-
-With this we even can drop find_matching_se(), since it's quite easy
-to know whether or not a sched_entity can preempt another. But sadly
-task_group::mul will quickly get overflowed.
-
-
-Solution B
-----------
-
-Since we do not require 100% accurate, solution A can be shifted to
-using bloom filters.
-
-	struct task_group {
-		u64	key; /* A random number used for hashing */
-		u64	filter;
-	};
-
-	/* Called by sched_group_set_idle() */
-	static void calculate_filter(struct task_group *tg)
-	{
-		struct task_group *curr, *iter;
-
-		lockdep_assert_held(&shares_mutex);
-		for (curr = tg; curr->parent; curr = curr->parent) {
-			list_for_each_entry(iter, &curr->parent->children, siblings) {
-				/* Can't preempt non-idle siblings */
-				if (!iter->idle)
-					continue;
-				/*
-				 * For each node in the subtree rooted at @iter do:
-				 * 	set_bit(bloom_hash(node->key), &tg->filter);
-				 */
-				traverse_subtree(tg, iter);
-			}
-		}
-	}
-
-	int sched_idle_cpu(int cpu, struct task_struct *p)
-	{
-		u64 filter = p->sched_task_group.filter;
-		u64 cached = cpu_rq(cpu)->cached_filter;
-
-		return filter & cached == cached;
-	}
-
-False positives are possible, but the possibility can be reduced by
-optimizing blooming setup.
-
-I chose the simplest way for now to workaround the issue we encountered,
-while I am still trying to do something to get rid of sched_idle_cpu().
-Thoughts?
-
-> would be to do a find_matching_se on the incoming task and the current
-> on_cpu task. That does have a drawback of cgroup pointer chasing in a
-> hot wakeup path, so I don't love it.
-
-Neither do I. But if we go through find_matching_se(), I think we need
-this rq locked.
-
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.7-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
+> and the diffstat can be found below.
 > 
-> In any case, I'm fine with the change as-is, mostly curious if you
-> gave any additional thought to the case mentioned above.
+> thanks,
+> 
+> greg k-h
+> 
 
-Thanks!
-	Abel
+Compiled and booted on my test system. No dmesg regressions.
 
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
 
