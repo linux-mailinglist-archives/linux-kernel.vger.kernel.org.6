@@ -1,129 +1,130 @@
-Return-Path: <linux-kernel+bounces-556683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7610BA5CD5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:11:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD432A5CD60
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:11:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE92517C966
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD5D917CC0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48924262D2C;
-	Tue, 11 Mar 2025 18:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A135263C7D;
+	Tue, 11 Mar 2025 18:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I0jKxy4P"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IA5jojoB"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE362627EC
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29D72638BF
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716678; cv=none; b=O+uIF3oFX7x9/Hep1iwqam3j+/CwELMTltujVs/ejH5IuvvDK1UlKiOnJLhHUiAaIGzUv/02r+5vsKYTSqrcMPFCYw/jYbcjLEuG7W9PuGAzAXYKZTDaqFQVh8kaabMewlGFyj0PkZfMxwkO/u/t9qh/kFtnLHlYUzefXvtkSSM=
+	t=1741716686; cv=none; b=TTwqBXDe+Fbl9pMmiK8tRjSTqyyz19j/Ou+AhsiiNm+bFcf0KgzIduzprl+hVdRRwV7hOadgZt1B6j5N+ItKC8yHULitTImurpYYNRx/2RMOrxURW41mXWJU+0703yIUA0iituLZgHiQhx4oE1uJjAmiR735tXbJ7ki4wgpmsDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716678; c=relaxed/simple;
-	bh=AEdBNyFmF49Xeo/B4rOVD0J8zs+o9tpxxbbteCwizeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pyo2CVChlb/PDMCeSH04h3rY9mwCZ95milC7bToAgX61235Le9UH4ObrSOVXz6aHXoNLf6LYnDO6t+BMhIUo5hc4FWMxpRB9d1i1lwByYhtcAGe0jC+8PmCS3sg5QxkKfa2lAi1vN8H6CT6BemtNMXxjzxtDispQJ2F1RqWDDRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I0jKxy4P; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso1191333666b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:11:16 -0700 (PDT)
+	s=arc-20240116; t=1741716686; c=relaxed/simple;
+	bh=BRd7+HtTtvaBFcdTTNSbCQPKzTGFFg/AS6THF+DAXJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=drD4YA4KWSsExi/ugnhKvkgwQgF08BW+mZ4zXSqglUG+fBR5aPsvQGQvu71H8hcyCr2D0Hcyi9TBrQlU9sehnSsyDVia5kAmrEChHeZcSiCEw0AnLcvOhhkbUs5UlTj/hKRzneQvFxrWSReg0khPjMhkTd5b+qu1QefOdT+SGS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IA5jojoB; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac297cbe017so20334266b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:11:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741716675; x=1742321475; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=41PVLFX1AYbFOO8iSJTaDeh8JCGVoEDoLLcodvBXC0M=;
-        b=I0jKxy4P+V7n0KD5KZGS9YBLknbcRdt7tbRIJqC72b7X3n0RgWm3BoK5unVEbN6NSS
-         UDhmzyGRA9/qxGIkUDpMNxngsaAT5YdRQdZdkAGj20WhT7a3v2FFJ88rZwOfyOH22nEY
-         SDzvD84QsAfmP9Xs9ex5j1co8MNelgU5VOgaO2FCKyCstSEp0SRDxw3eTwlC9aSJYhNX
-         GCArfjkNXRxq9xNGhCRLSn17DRvZwDgb3xVNirP6sXr/HqKNK8m0Ji7Y7cE0bSTRDrDT
-         2UZ3SPNoBFZcgqQ2I9FT0agpN1SZcnYH0KbagMeImZpHZoIVsfvPXbaP9zBbmY4610TI
-         1i9w==
+        d=linaro.org; s=google; t=1741716683; x=1742321483; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=imQlH5hLyEPyeFpcTG/nV9BIkwuBSyfjOhkAYwjO1MI=;
+        b=IA5jojoB7fcbxyJpLQ9DKynZhmXSr7okK0sFzTXiezwpDvYUv+LwIT9U1B/prnNhan
+         nqY2B7gF6qvo55Ra4izZ0u38iV18CQtOP5VL2ctyERrW0Q3Gbvj9AaujIHSGdir5OjSm
+         rJQZYnB1fU4Bw1fcWoBNR8iDdIR3stvXU4ZyewnzMd4A/yPAqZ830fB4xAIJzUH7L8dL
+         /pBcOn2xTOsm9fkEE1QDPLTaKEPJQAm3j9++nDwqmIlYZGOR2WBxuQ/S2RtkeJ9IZq/X
+         Rv0YeFd5sF86/d61k474QMxQ4RmtEUoRFpOs967i88nUzUmsqPdcakqb6eQ4gEZvdwY+
+         jcpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741716675; x=1742321475;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1741716683; x=1742321483;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=41PVLFX1AYbFOO8iSJTaDeh8JCGVoEDoLLcodvBXC0M=;
-        b=LjXt0GhYJwa2L7+KtznKWfF0mIYZ177BGvyoediwyLytPsfeiznXtIlmYcqIElEq+v
-         fQeRGmMC3v2LLfFXfizKt1q0QHbJotJ5hUiGyXwgUi937O3I5bhuhxYgKlME0t+xrkMf
-         1zORke9gbVyX/pn7tnRT92Wu+e/nTAmNro+6Pd+QOm9wSI8O0X+R0XHaJ96XfObs7zH+
-         gpnHW8JMdLtDVdlc1K9FN2kjsG92R56ElWgmH0FgSdSI4eC9S1Zu9A3LgcvEodwLKzO/
-         GYJvy4fwHBronWNjWRhZCqo+CJeccPievqUGOLC2iBvoQq2cKMmCpJaeqQlskrggptf+
-         whkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSkBfCzSxzr//FwOIqj1ArtLHtgVceUKwV2Sab7upjnYEOVcJcTxMFe5YWtNyyhUa5TkumU8yg+2n3rg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs8Wm1fRz+fW7Qqrb2UnF47ydLlJC1g+XYf/V1z7LZrko3e+HF
-	Wrdq+L8LRPHhVrvuBiaaU91MVkoLpY02NBFwqwwaB4yzUq30WBCJ
-X-Gm-Gg: ASbGncuyuapJnJkIgFSsk0+gPEJeSK2RZS+l7c6eQOpi0TnUZyh12EK5oJZTLNeQ/OX
-	qccsLS4VHdDgPnn0w5LRIZtIZQ6b/wNIF+/p0sH7mKTHYznhdXOIWO6RrM2oKpucNFhxVUWWDvg
-	kbaIaEK+xktC/YgZBQUv5TLehHCSFBUdjQIxuWepCUir+HsZ6Sm5irGuTVLPuSURgVWeUGEcVxD
-	ZwwyNc72B5/zlGm3IfundZn4Il8HWp7qikALOvBHN5WT5qA83smKLzqNbSdrggOBRckEosopcaG
-	OqN51Uw1CUO8vemziomMCjzF0GOu6fz0JNhvhXT3
-X-Google-Smtp-Source: AGHT+IFuf5jV1z/9Zb7FeABCoFloU76Yb/dVd5w+lI7W53ONofj3nILLix1YBAW9+jdvFrRC0/U+iA==
-X-Received: by 2002:a17:907:c10:b0:ac2:7cf9:71a1 with SMTP id a640c23a62f3a-ac2b9ea16d2mr676508866b.41.1741716674872;
-        Tue, 11 Mar 2025 11:11:14 -0700 (PDT)
-Received: from andrea ([31.189.82.201])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2929390b4sm453700066b.75.2025.03.11.11.11.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 11:11:14 -0700 (PDT)
-Date: Tue, 11 Mar 2025 19:11:10 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
-Cc: Andy Chiu <andybnac@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bjorn@rivosinc.com,
-	puranjay12@gmail.com, alexghiti@rivosinc.com,
-	yongxuan.wang@sifive.com, greentime.hu@sifive.com,
-	nick.hu@sifive.com, nylon.chen@sifive.com, tommy.wu@sifive.com,
-	eric.lin@sifive.com, viccent.chen@sifive.com, zong.li@sifive.com,
-	samuel.holland@sifive.com
-Subject: Re: [PATCH v3 6/7] riscv: add a data fence for CMODX in the kernel
- mode
-Message-ID: <Z9B8vgdTq1M9r3_k@andrea>
-References: <20241127172908.17149-1-andybnac@gmail.com>
- <20241127172908.17149-7-andybnac@gmail.com>
- <87ldtck8k0.fsf@all.your.base.are.belong.to.us>
- <Z9AwF5hwF0ES9Grl@andrea>
- <87ldtbwrdb.fsf@all.your.base.are.belong.to.us>
+        bh=imQlH5hLyEPyeFpcTG/nV9BIkwuBSyfjOhkAYwjO1MI=;
+        b=rjRjyjdly188EKFw9yt7sZ9ZCIv8ZYAK35vqsJep2OWWRCaR+t9SsIimz2tcoo2pB+
+         fdAriqH1Lu/7bqRc/quEUYEbgS/qUt6koD5KbrhcyYxkEdMXEAQals98lGYUYx5MUFeU
+         2kWf6Woep/52ao85uj5iEejf+F79S4+vBp2LvhrHlw54C+IyH5zV2BsyJlQXNpUFCxnN
+         VrJ4LbpcWmaWu7M8EZOEnbXkaEgSieSrZ2WN6jVNx6C6RXrCA7E9KesWfJAlKPPzu4NZ
+         NF78+OTnytfmEh8meiluxYOxeXpQ5SbkojB0HA0wBiSUjP/JOaqzoGGr9upKwrHYq7YJ
+         ZZ8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVoc7DxfMxHisRi79lV9Qj+fIDLL1OHkwON/e2o4J7uG5Fs5sNp9fiXj0KQkli70HkoB/mxW8mwtuh3yQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOaPYtV2zsY2iY7/+UivyZB2dbEnE37X4OArPlink7D4T9vrFL
+	JGc+JmkyEszVzsN6aW8x7WtMYncTKZNuQ7n5U0OTFC7ALtx/6ZWd233KL10MBt4=
+X-Gm-Gg: ASbGncvGzjC6mDyIXMzgNwdZcqwhb59tn0eMUj9TaJrzK5hQWe5CaR9tBMqPkeK1QPe
+	q0Xco8DCcPlbzENr3Y+yO0hIlCfSD8aWnmvTe5zzJaKFi1gmwqDHiw8JMLjTifFwPieXaCE25sG
+	j52HTbKYpO9xzKjC4Z0F8rIL/iE4/N5Dwj2EUy4GJGvC7SwY7Rxq/26kfK2+4J2+x1mGzLvQ1AG
+	lSVHsW8VGdukiyXK4db8u8zn9Rtppkn4Pn8CU5JmodR1Ry6goG1Z6HwYHSurnSVUtHgnH+WCXRE
+	nIcOa3ICehvecEz+uC23w/oD4A7s7hWaKvyzhuiw6MR1ne0cR8E5dngKZZDKApnm6AjaTCNgZ+x
+	hioaRUbNO+3H5WVebjOHz
+X-Google-Smtp-Source: AGHT+IERTZ3nFwIDF0pC/Jsa9/UMytNY/0RkyK1in1I6p0biiBCy+0RcM+HnsMyf2YSwOxxQbZ6xSQ==
+X-Received: by 2002:a17:907:2d0d:b0:abf:6e88:3a63 with SMTP id a640c23a62f3a-ac2ba4c7b97mr529724766b.9.1741716682967;
+        Tue, 11 Mar 2025 11:11:22 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac288ffe157sm509101066b.132.2025.03.11.11.11.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 11:11:22 -0700 (PDT)
+Message-ID: <b21b5f03-e328-4708-a854-1b3fa9c3dfa3@linaro.org>
+Date: Tue, 11 Mar 2025 18:11:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87ldtbwrdb.fsf@all.your.base.are.belong.to.us>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/8] clk: qcom: Add support to attach multiple power
+ domains in cc probe
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <CMTYKKilQJYeHUYYKvlqnwv4Q2P-58Ic1v1ndS9HQ8Yhq2xpHuNThibFDjXDEQ1PyNbx__f9BVBr0peoTUdvPg==@protonmail.internalid>
+ <20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com>
+ <5a45fd25-74ed-46e3-b0e3-5adf92b5e9f7@linaro.org>
+ <46d4f090-3e31-414f-abfc-3d1018913c56@linaro.org>
+ <9e6fdcfe-3c6d-44c7-95a3-7652c0650bf4@linaro.org>
+ <caa00d62-b24d-4db7-9e12-170a10c073e3@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <caa00d62-b24d-4db7-9e12-170a10c073e3@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 03:53:36PM +0100, Björn Töpel wrote:
-> Andrea Parri <parri.andrea@gmail.com> writes:
+On 11/03/2025 17:55, Vladimir Zapolskiy wrote:
 > 
-> >> FWIW, the for S-IMSIC the write is already writel(), so we'll have the
-> >> text patching and IPI ordered. Regardless, there's more than one flavor
-> >> of IPI on RISC-V!
-> >
-> > AFAIU, this writel() is intended to order the insertion (and the initialization)
-> > of the CSD object before the MMIO writes; so, the "right fix" seems to turn the
-> > "other flavors" into using a writel() or providing a similar ordering guarantee.
+> I kindly ask to elaborate here.
 > 
-> Yes, that's probably the right approach, or maybe follow-up!
-> 
-> > As a bonus, such change should address/fix all current and future occurrences of
-> > the message-passing scenario in question (the patch addressed the occurrence in
-> > flush_icache_all(), but there appears to be a similar one in flush_icache_mm()).
-> 
-> Indeed. I wonder if the SBI remote fence.i needs it?
+> This series does not touch CAMCC at all, and if the series touches CAMCC,
+> then it changes DT ABI, which is objected. Or is it for some reason
+> objected only for SM8550 and not for the other platforms? More information
+> is needed.
 
-Ah!  So I am not alone: AFAICT, that remains a matter of discussions with your SEE
-team/developers.  :-|
+No but it _should_ Vlad, that's the ask.
 
-  Andrea
+Both of these clock controllers will require this same change to be 
+implemented, that's what I'm asking Jagadeesh to do.
+
+Certainly that's the case for x1e and asking Jagadeesh to also check 
+that for sm8650.
+
+---
+bod
 
