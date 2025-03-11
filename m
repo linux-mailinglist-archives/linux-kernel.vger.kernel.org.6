@@ -1,154 +1,180 @@
-Return-Path: <linux-kernel+bounces-555577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED86A5B9D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:32:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454D1A5B9DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:33:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DA761895194
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:32:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6F237A892D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD32221576;
-	Tue, 11 Mar 2025 07:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78CD1E9B1D;
+	Tue, 11 Mar 2025 07:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Gl+Q5VdC"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHEozVXL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2815B1E7C06;
-	Tue, 11 Mar 2025 07:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EF01E9B34;
+	Tue, 11 Mar 2025 07:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741678352; cv=none; b=Z60X+KX/S0i48IxyaYstk3yZE5v1lSnvJk+AoimAQV5vin4wvpneRAxTCVDKMnGjwKGp3N3S48yp55QOKLLFce/2Sj9fDrzSnAfLoGEobhXITuXN8cyeBQfa1szz5DG/Aha/Qqz+Iv1w3Sa2PFwdRER1OMyFzmTgpzQy0JVfCi4=
+	t=1741678376; cv=none; b=Bb3O1K7ODFg5yXF+fjNA6SLudxDk058sU1lq3g2t4RNIwPiw1sLbVkotW03H6c+/g0//7x77tGROquiNAzyGD/2faAbrTNKEhJqct2JyhkFe6SZka9JGX14JY5e9ZlYESPxWsuINDH6PUs2BkgfEXnH9WzJ7VRzAYFnvSJLpHhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741678352; c=relaxed/simple;
-	bh=Ya6le97lQO/QUzfLoztyjsewtNn6ASubIT9SkgopjuE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EnsWlYOlPlA7ea/YbtR+zrHcueRg+jkjs7F4OfbOvryB1ls9/Hl67SxruB5iUK5+2feFMDgNA7OzxmbJuoODrrqetiDHr9OKxapvpzRRogveOhKt16sf0mA0VLydx93UCr6bPVXK+0zgJbu6dZQ2fTRgWjLQSnFk57sqxvZzYkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Gl+Q5VdC; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52B7WING699670
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Mar 2025 02:32:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741678339;
-	bh=SV7h4ls8IB7WbhH4rLYzHQP8pvDUXO29NP9uDd/G99g=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=Gl+Q5VdCOk2Jt5F2GpIdEvc9OC9FNT8oJEQlDLVGsHP4gFb+C8D47CsoODSuJbidw
-	 i2g7qZ1NB8jXzS7Fl7TWLDK3gmdm9Q1BAAwM5PxIJ/AC4wSk+9ZgPxzbDTiL+4nFRl
-	 yRAIIPoBSysf0Ov+Oe9EnWbv57invSfO5yjO14QI=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52B7WI1Z003237
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 11 Mar 2025 02:32:18 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
- Mar 2025 02:32:18 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 11 Mar 2025 02:32:18 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52B7WHV9008584;
-	Tue, 11 Mar 2025 02:32:18 -0500
-Date: Tue, 11 Mar 2025 13:02:16 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <vigneshr@ti.com>, <manivannan.sadhasivam@linaro.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <rogerq@kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-Subject: Re: [PATCH] PCI: j721e: Fix the value of linkdown_irq_regfield for
- J784S4
-Message-ID: <20250311073216.ynw7rzmu36dwywij@uda0492258>
-References: <20250305132018.2260771-1-s-vadapalli@ti.com>
- <20250310210746.GA2377483@rocinante>
- <20250311051806.smcu4o4dxpngimth@uda0492258>
- <20250311072546.GA277060@rocinante>
+	s=arc-20240116; t=1741678376; c=relaxed/simple;
+	bh=eq1zDERNnHCEBXKhMKABIiOPB5489qmkacw1l2N8o+k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qLBxfuejYPuaCbBy/3xtdY8qm2bLD+feswqIsMJq+iPDciJQU9p1F3iw79oO9+qRaL9viaDUO2XO/1yoph49DJrNEcwFUt8C3WWbJkui2jTLe3Y6pjfWPfbPtHgxOw214fE2IkrEMVWbEP39DCZCS9FbBbSVPXZ67F1XfQrgmDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oHEozVXL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E5DC4CEE9;
+	Tue, 11 Mar 2025 07:32:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741678375;
+	bh=eq1zDERNnHCEBXKhMKABIiOPB5489qmkacw1l2N8o+k=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=oHEozVXLIaIOh0FquEgNapuhQD4+gHPUCvtvrHfmgXV5dH1cmCakA2epJjRgmWsef
+	 /GOxWt+JjFIJ0uDAGahT7BzW459Ulwp33TkRwBJ8kj4dELnblWdVnHF4N0D+m2wVln
+	 Cz72loZzPS03pbmFweRGX/GXxzPu0Q1xrW2pdsrRQivwT5ce1y59Lq9sZIaqdytgGF
+	 xyVEqUMSecnXiTNnzkOwcatmyLdSHhRotA0lJxTqhyiwhT4uM9cqh7tEV8Wz5NOtDJ
+	 yBxeD/uOML3fBpzv19oBrIn12S1078QYLC6T2m3iKSoofl0hYHXZidyhPILNYb2wp8
+	 XqvD1/hZLiACA==
+Message-ID: <5d14e715-7940-4f1b-ab79-860ada066072@kernel.org>
+Date: Tue, 11 Mar 2025 08:32:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250311072546.GA277060@rocinante>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-binding: aspeed: Add LPC PCC controller
+To: Kevin Chen <kevin_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, derek.kiernan@amd.com, dragan.cvetic@amd.com,
+ arnd@arndb.de, gregkh@linuxfoundation.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20250310114839.3098148-1-kevin_chen@aspeedtech.com>
+ <20250310114839.3098148-2-kevin_chen@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250310114839.3098148-2-kevin_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 04:25:46PM +0900, Krzysztof Wilczyński wrote:
-> Hello,
-> 
-> > > > Hence, set 'linkdown_irq_regfield' to the macro 'J7200_LINK_DOWN' which
-> > > > expands to BIT(10) and was first defined for the J7200 SoC. Other SoCs
-> > > > already reuse this macro since it accurately represents the link-state
-> > > > field in their respective "PCIE_INTD_ENABLE_REG_SYS_2" register.
-> > > 
-> > > Can you confirm for me that the following use the correct macro?
-> > > 
-> > >   333-static const struct j721e_pcie_data j721e_pcie_rc_data = {
-> > >   337:	.linkdown_irq_regfield = LINK_DOWN,
-> > >   
-> > >   341-static const struct j721e_pcie_data j721e_pcie_ep_data = {
-> > >   343:	.linkdown_irq_regfield = LINK_DOWN,
-> > >   
-> > >   347-static const struct j721e_pcie_data j7200_pcie_rc_data = {
-> > >   350:	.linkdown_irq_regfield = J7200_LINK_DOWN,
-> > >   
-> > >   362-static const struct j721e_pcie_data am64_pcie_rc_data = {
-> > >   364:	.linkdown_irq_regfield = J7200_LINK_DOWN,
-> > >   
-> > >   369-static const struct j721e_pcie_data am64_pcie_ep_data = {
-> > >   371:	.linkdown_irq_regfield = J7200_LINK_DOWN,
-> > >   
-> > >   375-static const struct j721e_pcie_data j784s4_pcie_rc_data = {
-> > >   379:	.linkdown_irq_regfield = LINK_DOWN,
-> > >   
-> > >   383-static const struct j721e_pcie_data j784s4_pcie_ep_data = {
-> > >   385:	.linkdown_irq_regfield = LINK_DOWN,
-> > >   
-> > >   389-static const struct j721e_pcie_data j722s_pcie_rc_data = {
-> > >   391:	.linkdown_irq_regfield = J7200_LINK_DOWN,
-> > > 
-> > > I am asking as some use LINK_DOWN, so I wanted to make sure.
-> > 
-> > Yes, the above are accurate except for J784S4 which is fixed by this
-> > patch. LINK_DOWN i.e. BIT(1) is applicable only to J721E which was the
-> > first SoC after which the driver has been named. For all other SoCs, the
-> > integration of the PCIe Controller into the SoC led to BIT(10) of the
-> > register being used to indicate the link status.
-> 
-> Sounds good!  Thank you for letting me know.
-> 
-> > > Tht said, the following has no .linkdown_irq_regfield property set:
-> > > 
-> > >   355-static const struct j721e_pcie_data j7200_pcie_ep_data = {
-> > >   356-	.mode = PCI_MODE_EP,
-> > >   357-	.quirk_detect_quiet_flag = true,
-> > >   358-	.quirk_disable_flr = true,
-> > >   359-	.max_lanes = 2,
-> > >   360-};
-> > > 
-> > > Would this be a problem?  Or is this as expected?
-> > 
-> > Thank you for pointing this out. This has to be fixed and the
-> > "linkdown_irq_regfield" member has to be added to match
-> > j7200_pcie_rc_data. I will post the fix for this.
-> 
-> No need to send a new version.
-> 
-> I will update the branch directly when I pull the patch.  Not to worry.
+On 10/03/2025 12:48, Kevin Chen wrote:
+> Add dt-bindings for Aspeed for Aspeed LPC POST code capture controller.
 
-Thank you Krzysztof :)
 
-Regards,
-Siddharth.
+<form letter>
+This is a friendly reminder during the review process.
+
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
+
+Thank you.
+</form letter>
+
+> 
+> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
+> ---
+>  .../devicetree/bindings/mfd/aspeed-lpc.yaml   | 38 +++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml b/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
+> index 5dfe77aca167..178c151a19ba 100644
+> --- a/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
+> @@ -149,6 +149,37 @@ patternProperties:
+>        - interrupts
+>        - snoop-ports
+>  
+> +  "^lpc-pcc@[0-9a-f]+$":
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    description:
+> +      The LPC pcc interface allows the BMC to listen on and record the data
+> +      bytes written by the Host to the targeted LPC I/O pots.
+> +
+> +    properties:
+> +      compatible:
+> +        items:
+> +          - enum:
+> +              - aspeed,ast2600-lpc-pcc
+> +
+> +      reg:
+> +        maxItems: 1
+> +
+> +      interrupts:
+> +        maxItems: 1
+> +
+> +      pcc-ports:
+> +        $ref: /schemas/types.yaml#/definitions/uint32-array
+> +        description:
+> +          As a device handshake with a host using the port-mmaped I/O in x86
+> +          architecture, need to handle specific which port I/O address for use.
+
+<form letter>
+This is a friendly reminder during the review process.
+
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
+
+Thank you.
+</form letter>
+
+
+
+Best regards,
+Krzysztof
 
