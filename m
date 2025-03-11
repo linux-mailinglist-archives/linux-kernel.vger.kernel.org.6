@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-556722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82BACA5CDF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:31:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46373A5CDF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:33:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3D7617634D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:31:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66F9189E9A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B238A2620E1;
-	Tue, 11 Mar 2025 18:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KoZvPbqF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068B9260375;
-	Tue, 11 Mar 2025 18:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E1D2620F9;
+	Tue, 11 Mar 2025 18:33:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4285260373
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741717857; cv=none; b=p6Xmt/elK2eij0s4QyhHAnOnYw9GjF94r6BnsVrMI7UWGET8g96/0gJKu6BfA5pTBpxJO/llQwOAQCTk2eLDzf7OQuSwJ0SfrSWX1NlhngmEI4UyVNjhaZs7zekioJSVua0pjZLeXMHGJoH9qdhZNw7/qGy07AjpnKpEK1cM+ws=
+	t=1741718014; cv=none; b=I+AsTyV8knp0ufo2aB1oAn2Ci84RcD3nzR4PTrGqMFy+po6+U4L/KmEm62qRSS1RFRDsQW0Nb+ESshFW6fOfp31fZ9OeY2LjsoWulsn/+UHzSjXXAo/2M8j+XYxIpZi/yQI+n4M03Zii95R7mX6gghdEdldwkVJEr1ij8Ql3VDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741717857; c=relaxed/simple;
-	bh=nqJGj2gczt5ZrI0zy+StoezidkdBwshZUOHFEphXLc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=glfPIFzykBCOsIDkMpEGjrGzQCs+Rxy6cKyJt/c1vU/qkFbYE7Ylr8sqEH12CrD3bu4fLSGZK6Y8MQn0GTq5Az6VB+p52GeOqIMGlSTU6zxH7sHANRGkyL3v7B5fN5mqGgjF0j5bEBWSqR878RZ20MH4NLjot7BAELCNP386pM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KoZvPbqF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C876EC4CEE9;
-	Tue, 11 Mar 2025 18:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741717856;
-	bh=nqJGj2gczt5ZrI0zy+StoezidkdBwshZUOHFEphXLc0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KoZvPbqFccgIhq0iGup/S17CS4VzxYEJuyq+OnE0v74gahP5QyKad6RAV5jErhefo
-	 Pb/+leksiPh+OL5l9/zSdGCmjtHlRCmm/4Xw2hUbx66t7AY3dWJ9KcaIuUDZqlJO9h
-	 Bhz6kpy9lIW66lBBNJMaRF3MtQbWk3jb2cOERLFzl2OLr/nF6riLAsgvG7diV5cqyT
-	 OvCXawCJz1sDeo+Xp8WGu6pUWR6HmYW9sL5HJ9dthaAbE/7jNdnfZGdgVwvuvbewq4
-	 2pVR21sULRo37Qq21csVzbcjRD6YTka/oU4CGunC2eUKV6r1LfMG/5vyn7/11smX2w
-	 gvLJPulaVUdHg==
-Date: Tue, 11 Mar 2025 13:30:53 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ihor Matushchak <ihor.matushchak@foobox.net>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	Eric Biggers <ebiggers@google.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-	Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Tommaso Merciai <tomm.merciai@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, devicetree@vger.kernel.org,
-	Julien Massot <julien.massot@collabora.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Ross Burton <ross.burton@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Will Deacon <will@kernel.org>, Zhi Mao <zhi.mao@mediatek.com>,
-	linux-gpio@vger.kernel.org,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Javier Carrasco <javier.carrasco@wolfvision.net>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-staging@lists.linux.dev
-Subject: Re: [RFC PATCH v2 06/16] dt-bindings: media: i2c: max96717: add
- support for MAX96793
-Message-ID: <174171785257.3942045.11201403719435330786.robh@kernel.org>
-References: <20250309084814.3114794-1-demonsingur@gmail.com>
- <20250309084814.3114794-7-demonsingur@gmail.com>
+	s=arc-20240116; t=1741718014; c=relaxed/simple;
+	bh=2Ed75qd5KiL5AresZo+nkero+T7NYsFxnCsnq3hMB8U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jvlY27PnANjBMVB473ISwuN+N9m4EXPELZmLbiowfdYftAXjNPI7DZJLGCKWkGtoqVJPKgSbGf8bN3K87o7i2qrt8pSb3KgscXF06NweXjX6QhnZQd488HuF3zBm4a9/ERL7ICtWErL8tUy3fRSIlQsPcSchxPxagHqm50p73xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9091A1688;
+	Tue, 11 Mar 2025 11:33:42 -0700 (PDT)
+Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 20EDE3F694;
+	Tue, 11 Mar 2025 11:33:25 -0700 (PDT)
+Message-ID: <2a5947c1-b493-430a-9383-33eb8f1e76af@arm.com>
+Date: Tue, 11 Mar 2025 18:33:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250309084814.3114794-7-demonsingur@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/49] x86/resctrl: Move the resctrl filesystem code to
+ /fs/resctrl
+To: Amit Singh Tomar <amitsinght@marvell.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+ Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, David Hildenbrand <david@redhat.com>,
+ Rex Nie <rex.nie@jaguarmicro.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com
+References: <20250228195913.24895-1-james.morse@arm.com>
+ <5436632b-cdc8-4a55-8766-0cc2aec0b807@marvell.com>
+ <5f3171e0-d96e-47ea-92d7-0a3e3e3f8147@marvell.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <5f3171e0-d96e-47ea-92d7-0a3e3e3f8147@marvell.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hi Amit,
+
+On 07/03/2025 13:50, Amit Singh Tomar wrote:
+> On 3/7/2025 3:57 PM, Amit Singh Tomar wrote:
+>> Changes since v6?:
+>>
+>>>   * All the excitement is in patch 37, turns out there are two rmdir() paths
+>>>     that don't join up.
+>>> The last eight patches are new:
+>>>   * The python script has been replaced with the patch that it generates, see
+>>>     the bare branch below if you want to regenerate it.
+>>>   * There have been comments on the followup to the generated patch, those are
+>>>     included here - I suggest they be squashed into the generated patch.
+>>>   * This version includes some checkpatch linting from Dave.
+>>>
+>>> ---
+>>> This series renames functions and moves code around. With the
+>>> exception of invalid configurations for the configurable-events, there should
+>>> be no changes in behaviour caused by this series. It is now possible for
+>>> throttle_mode to report 'undefined', but no known platform will do this.
+>>>
+>>> The driving pattern is to make things like struct rdtgroup private to resctrl.
+>>> Features like pseudo-lock aren't going to work on arm64, the ability to disable
+>>> it at compile time is added.
+>>>
+>>> After this, I can start posting the MPAM driver to make use of resctrl on arm64.
+>>> (What's MPAM? See the cover letter of the first series. [1])
+>>>
+>>> This series is based on v6.14-rc3 and can be retrieved from:
+>>> https://urldefense.proofpoint.com/v2/url?
+>>> u=https-3A__git.kernel.org_pub_scm_linux_kernel_git_morse_linux.git&d=DwIDAg&c=nKjWec2b6R0mOyPaz7xtfQ&r=V_GK7jRuCHDErm6txmgDK1-MbUihtnSQ3gPgB-A-JKU&m=nuwqirfPj-0yJqyDZfy25skE_NJ-fYFcygpI04RUICnSUBYHutdqE6Gakd1Z3I8H&s=34Q-cAJD41LWUgU21FvoSkXHOM-uSrOs2a1vEwaxrNE&e= <https://urldefense.proofpoint.com/v2/url?u=https-3A__git.kernel.org_pub_scm_linux_kernel_git_morse_linux.git&d=DwIDAg&c=nKjWec2b6R0mOyPaz7xtfQ&r=V_GK7jRuCHDErm6txmgDK1-MbUihtnSQ3gPgB-A-JKU&m=nuwqirfPj-0yJqyDZfy25skE_NJ-fYFcygpI04RUICnSUBYHutdqE6Gakd1Z3I8H&s=34Q-cAJD41LWUgU21FvoSkXHOM-uSrOs2a1vEwaxrNE&e=> mpam/move_to_fs/v7
+>>> or for those who want to regnerate the patch that moves all the code:
+>>
+>> After rebasing mpam/snapshot/v6.14-rc1 on top of this series,
+
+Hmmm - right, because this series doesn't contain the python script that generates
+patch-45, so git can't know that all the code is the same.
 
 
-On Sun, 09 Mar 2025 10:47:58 +0200, Cosmin Tanislav wrote:
-> MAX96793 is a newer variant of the MAX96717 which also supports GMSL3
-> links.
+>> Tested a few MPAM
+>> controls, including Cache Portion Partitioning and Memory Bandwidth Partitioning, on
+>> Marvell CN10K ARM64 platform, and It looks good.
+
+Thanks!
+
+
+>> For this patch-set:
+>> Tested-by: amitsinght@marvell.com
+> Realized I used an incorrect format for the Tested-by tag, correcting it now
 > 
-> Document this compatibility.
-> 
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> ---
->  Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+> Tested-by: Amit Singh Tomar <amitsinght@marvell.com>
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+I'll add an '# arm64' suffix on that as that's what got tested.
 
+
+Thanks,
+
+Jaems
 
