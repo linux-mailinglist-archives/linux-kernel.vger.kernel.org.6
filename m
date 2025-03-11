@@ -1,428 +1,347 @@
-Return-Path: <linux-kernel+bounces-556527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC764A5CB1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:49:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1554A5CB1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:49:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BF6E3B08B2
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F410617B46C
 	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BF719E975;
-	Tue, 11 Mar 2025 16:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6483260A27;
+	Tue, 11 Mar 2025 16:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="d/LkO+RQ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Frbe28wd"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="QVssYB2S"
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7531EB9E3
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741711769; cv=fail; b=r3+BtY3L8kkR80cHgpEFOwjHAP4q4W71jHKJ8TuLF0/9Eq7wKJv2SOhjj8EtYwntPp/Tx1y8W5/yI+/RxhIn8SlZ+fDEwyIEyzUl7IUEU/0buCzNPINy2OIHY9bbksOFir3+i86LGLU6h5E/slgZUmoj6GRBT5qtVos+zQCGg/8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741711769; c=relaxed/simple;
-	bh=ohCC8U4wC3+a1hlfScNdk4/GSiwWM4PwpIxbKCYE2lM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dXxXjPYtaNLXJ2T5mn9Bws8htPTqw+CoWzRVZfSJVnp3wN7OKAKwPF5aEX+a6G9Mt/ABJmuMIr7QjscvqwsiGkV25hEvgO4C3G5LewK5UY7quhHzaPg15o5E3ufTvhEswDvlskhpXcTFqtkxjvMZlfqavU6B7legvMhCMsWFO0I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=d/LkO+RQ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Frbe28wd; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BGQmE0004069;
-	Tue, 11 Mar 2025 16:49:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=9P+Ecr5UCdHOH0NxBHd1dR4rloeVXWZTRJ4ZdmVi0ug=; b=
-	d/LkO+RQkmi7lZDU+mL8+2QXQv8oB4Ly4a6T6xGuuB2yw/QoeZkW1NVmG4lO+k5B
-	AoDiF93RQx432ubQLZhZTuTv4mCoYZNZLib1SQlRxzWcbTyEg71/3UpaNE7hfulB
-	Y54fSsBR9cB/y6bld5/+MZOsD7KIdEimDsXEpQWl6L/BA6qCjlO1VRvUDe/D5JBT
-	zIsvQlZVpInsKulT7iwDs5nXkiaQIX7J7+mEvAJLFKCtnti6U/KW8jtx8fgJ8ugp
-	M+uf4o9teaI3CIn2YhwhMw+iAvrtS9KaclV0Rfl+S1tOi+Xu1bLnnrdvqRaSAsWi
-	MZIXYg6Jhf6SiHOZfJkf2g==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 458dgt59fd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Mar 2025 16:49:08 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52BFwsMp030600;
-	Tue, 11 Mar 2025 16:49:07 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2176.outbound.protection.outlook.com [104.47.57.176])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 458gcnne53-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Mar 2025 16:49:07 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d1T66KoObK4Cpn0uRLHuyO8A+fU5+IhgGqWqf0apUr2+nGx/ZmEAdDfYkzUQQTcaBH8yDBID73STgWu9T/9cwaWN1fgjSWQd1HkBCR/AAtGuuO+NZmfn+R4cCBUwy70CCubJwcBtsYfQQr0PsybBc0StrHwjOEMGO3cpAOtNDXJ9AVnNWZ89FDXAyIaJ6VrgyKvwDNcYu+dvaVGuIQhqocBvaIjdDjdESFSZNU2UE6AtUUenJ3ttf1fcsHmqGhryiDgiNpWdlLS7f/5L2so4+vUw6bSSGpE1ZKoUuD7auTFZEANmFjHCp4MVqDTWS7mBc/uV74ckHekUSGaHcHibuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9P+Ecr5UCdHOH0NxBHd1dR4rloeVXWZTRJ4ZdmVi0ug=;
- b=C0iOWEJ2fRxLrjBubVly2sf7eD1QSW/N0rS4mRi664y2ZSpE4kE7afuEDfAnkvAru6DQR/eOTL4c/oiyfBFoxJvRoch4IkapFo3lp5YsgRgoox6RjN3iwoQSfGCng6iuCanokcYZCRbpi/G4Zst45/w2Ejrt4yRFqc4P779JFTFXEdNlLFxhQCn/a2r1H9UDaOPXGXzcCTwEn5vj0fGdB8b51LUTQ51rSLnB6DBbo7yVr1FIAluWtnoxddGybL2/ijQfnBlAAb0zgJUfoJT/G+1NHYTCtTu/KvVEQ95GXILZTYKTp/7iZkd8bFULUyTzA91ZsEysOT67I5kxDTIzsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9P+Ecr5UCdHOH0NxBHd1dR4rloeVXWZTRJ4ZdmVi0ug=;
- b=Frbe28wdL0U192Ld7RpaSY9dV46IUrJ0y2E/IXVql9h9t+ESn5HBrBzjluiKnlULNftTY2l9+77uCFZvlPZ/KmmL8y5z6nnzs9o7qKU2Q0UUvS/3pWARZVq1Le8igfWGnDPKJ+PLW+17Zg88JqW5hzAuEOQVyTGmF7Q4gEpN0+Y=
-Received: from MW5PR10MB5738.namprd10.prod.outlook.com (2603:10b6:303:19b::14)
- by SJ1PR10MB6001.namprd10.prod.outlook.com (2603:10b6:a03:488::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
- 2025 16:49:04 +0000
-Received: from MW5PR10MB5738.namprd10.prod.outlook.com
- ([fe80::187b:b241:398b:50eb]) by MW5PR10MB5738.namprd10.prod.outlook.com
- ([fe80::187b:b241:398b:50eb%5]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
- 16:49:04 +0000
-Message-ID: <e495bf9c-9fba-44ce-99fe-04879f8dd0c2@oracle.com>
-Date: Tue, 11 Mar 2025 11:49:01 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] jfs: jfs_xtree: replace XT_GETPAGE macro with
- xt_getpage() function
-To: Suchit Karunakaran <suchitkarunakaran@gmail.com>,
-        jfs-discussion@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-References: <20250302191558.47180-1-suchitkarunakaran@gmail.com>
-Content-Language: en-US
-From: Dave Kleikamp <dave.kleikamp@oracle.com>
-In-Reply-To: <20250302191558.47180-1-suchitkarunakaran@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0P223CA0020.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:610:116::10) To MW5PR10MB5738.namprd10.prod.outlook.com
- (2603:10b6:303:19b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C9F25B691
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.228
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741711762; cv=none; b=HrVcQ02xtuCZ9nu4SjWtY9ESZJCb0+Dx4vKlH9veHdziPmbZZYqp1VwgTHRTSs7j0n3BMrIMhc2pmhGURBYG8CQw9Ul42Rcn78O2cXYGP1kAiES3qFExRPAx8sUEZhS/a2dv1OcxrwPVXumfSPDShXU47QyTT4gCrSR0rUM9lyA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741711762; c=relaxed/simple;
+	bh=u+F//cZ1UgpTvl9mhVb92LvKNIukphzxazwTjPnXvv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oMWQ+2k+9k4/h8kZBG/w+faIlZNvBnIHNEE1Dyo7d/CAZ2pEwJx03YJnzD8LdHLSBL4GYtY2jBfA9w84T/50KVM1k4213XcjYnJyc9MUpEikgJ9jJuACUd0Hzas5RIrRYFM4hzHxU2benjlUJQyJ+sMroiKJO0ZXDW3N9V6CyqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=QVssYB2S; arc=none smtp.client-ip=185.136.64.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 202503111649158f41bc75547d721482
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 11 Mar 2025 17:49:15 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=LO4Oi66aFoDRbKkoCWm/iGhfrvYWXFfo0k1ZnUAyzgQ=;
+ b=QVssYB2Sx1SAXJ8tyYd4ASblVv+4gfHWNnqfZyOp5W6G8ggM/1h7zbYy8iMXKkB0YMyIn4
+ Tt8wKFS5iVFfjVDuyGggIs+VuHNi4q+y5Hz6RUskNcB/+JannMR1wpJBMQqN5hHd2S2hbMIm
+ Vuxs+WrkQ8/i/iNt+lf3dXB9qd/y2fAuRYbTR3kuu9sChWRcLgWkZ6jOu6rcljE/3F1LEFgC
+ tLPDcPsvLwng1n1rWsBpfmSK5CsilVEucadGz3xa708JOnOiYeKppHqonpS4Yv8ekYwpfQRi
+ L3bOinjYshe9/Lnn8PjaFehV45CRt5zx0xBxnN9IZzDnA4MSi/uGR6Yg==;
+Message-ID: <f6aa7dd8-6ca7-4c79-b915-65ff7869d28c@siemens.com>
+Date: Tue, 11 Mar 2025 16:49:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW5PR10MB5738:EE_|SJ1PR10MB6001:EE_
-X-MS-Office365-Filtering-Correlation-Id: d27c5998-fbe9-4e46-fbcd-08dd60bca1b7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Qi96TitSeGJtWUQyOGk1QVplL0hlL3d0K0xxVFU5eEVYcDFncERJaUdmMkpZ?=
- =?utf-8?B?eG5uZGNmMHQ3REVySDZqaEhiN1JiV1R3SngzVnU5Y3Y0QjR3YW9XYjkzYkkv?=
- =?utf-8?B?K09TR2ZzSGxZT1pBWE1qeWFvaTBJa1hReXhOWXRsQUJVd2pBc0laKzVPcHcy?=
- =?utf-8?B?S3V1VXdLYXRDbC9SUyttQmlVVklORmJrTXpFa2t4RkJHdkJrZUtld09JR0Nr?=
- =?utf-8?B?RGRPbng0UG9KcWlCeFM0anQyckllU1RWUW9iUUp2cDNaWi9zbFJnT2tmM2g0?=
- =?utf-8?B?VHZYcDJwaHNKVmE1S1VNTWpsdjNYaDlTbXB0eEZxdEZ3MCs5ZEo3UlJUb0hO?=
- =?utf-8?B?Z0ZlTVN6bmFHV3Zwc1Ura25ZNXFTcGw1WGIzNnJUUVFrTUJqNGlFcUVUSldD?=
- =?utf-8?B?YnJOUGlJbzY2NXMyNEdOSlhDTXZISjBwYWhpZEhpUk05b0hOaHlSNHM2c1N6?=
- =?utf-8?B?OVNNWWg5SHRhMk85MU5DYkVLaEpvQzNMc3pWQVprZGhVSExtU01xWkdwNlBI?=
- =?utf-8?B?RnM3d3ZSakNscm9NZWlYVlM2OTBvNHVuS2ZiT0RiUllISTlPeFo2UFFWdmZT?=
- =?utf-8?B?VVNuNGJKbE1OandaY1IvS2dNT0dIYTVVWHhDaEUySnMrU0ZScmMwVlZRa3lU?=
- =?utf-8?B?MjN2dll2dnk2MUROZEFZekxqR0k5WFg4cnExb0RJZWcvOU1pUWQrdlVtNlNz?=
- =?utf-8?B?MTJ0SUh4WDFMWHI2dVgyMnpjOGRmTDNvZmpvQktDam9YVkIwMDJYVTBpbkhm?=
- =?utf-8?B?VmFTa0tqaDdsLy83QTcrSk1ORWl5alRSdkt1S1d0eEJhTkZEUUxTQ0JqUXVq?=
- =?utf-8?B?YUpabmhGKzNmWVBhTkY1M3hnZTVPaXRRVW5XY3ZwWHVUdnpyVElzNCtnSGhh?=
- =?utf-8?B?MGhTTGFaa1NoTm5TVzM0dVpLQ0xNSk95Ry8vNFpuajRkWTAvdlc4bkVPaUhU?=
- =?utf-8?B?Z0VjTCtJaHVjSmVJWjVoODd3VWM2N25VRENHaDlOejRPTnpzUXp0S0ozZEU4?=
- =?utf-8?B?N240eWNIWDlYSStpcVNGcTJjVTdjV1Y3RkhBeHFrcGVVelY1N0EzeENnQmlF?=
- =?utf-8?B?eUNPaE1sK3hodUpXOVIwOHp3RURHVysvc3U3TmI4dDFqWGxsaXFGaEJFc2Z0?=
- =?utf-8?B?RVQvUXlrMm5mVFM5aDJKUXllS1VuUW1LUjFHeFM0d2xJU2hMMnY5S21MZzZy?=
- =?utf-8?B?encwNkdWSnRkZmE0emdUU1hjbDhQWlZBRmY2dVZPeVJxNzBzYThQZ3o4K2Ez?=
- =?utf-8?B?L3JJMTZjMkUzTGVsdFhINkREajdhVU5nZVlsSGJsQlRSR2hjNUN3OVBvOFJj?=
- =?utf-8?B?amVIeHhQU29SREdRMFpId004azduWjhUbmRDYWFkd2QweW1OVlhyai9RdE1B?=
- =?utf-8?B?NC9EdGFBSU5iZGZTb1N5Zlo3UG1BWHdsdWVqckQ5aWNpeHdhTHVxYjhYV0Iz?=
- =?utf-8?B?dTQvL3JUK0o2SzFXeWU1OStkd2pMQmpmSWZUWkYxdkxDaHcxWGxackkyRTBn?=
- =?utf-8?B?SWl4dUQ1bnJFKytDT1UycU9sT1ViNzZGQVFHMTFhT3hIRFQ0ZGQydnMwbmw4?=
- =?utf-8?B?cEpZbzFqd3dmN0lrQ0x1SkZzTU55eG1uMGg2cjN1azRuaTJMUUVBNUoxV3Q3?=
- =?utf-8?B?Zko4N1JLb0dObTQxTzBKNmoweXRuUjJBZkp4SWJFeHdBMy9Bc2ZncDJ6K3p2?=
- =?utf-8?B?THYvN0l0b1VHc3lQd2w2Vk9vbWRqdDRYYVNHdUFERGp2YjFIYzIxdmZMdnJ3?=
- =?utf-8?B?KzBDbWhyYjBGNDEzdldlR1U5V3ZFTEtudE5PZjR5OVJVZ3h4b0ZXTFhsZDhG?=
- =?utf-8?B?ckVsTmlhTkpybmR2cllpdE9FbXpWU0dJZEZKSG9FdmFzYmtRRWltenBUdEh3?=
- =?utf-8?Q?olr4PWggP18DO?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR10MB5738.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?K0xFSERYaktwYVRCWEgzSDRqQnJ0QkRiUUU1L0hrdWIzWEpZS0lFQXhNazBP?=
- =?utf-8?B?ZFMwMUlDbmcyY1lNRUgwRW96YmFmRkNFUU5hd1Y1MUZ5WXVhZy9pYVM4M3U0?=
- =?utf-8?B?OHUxUGlCMkpneGR3aldJSUpsTFZycmZwaUZ2OTNoTkVSR1htSTVKUzBCcmpW?=
- =?utf-8?B?Tlp2UC9CZkFXOFZWbzF6U3k1QVJFY2wzdUkvUjREYjhlcTZzUWZLd0lpYTl6?=
- =?utf-8?B?THF1UW5ORTUzSW1NKzMvd3BxQmd6Y1VQL1REQ3BZZWxHQ1piR1lxeWNKT1I5?=
- =?utf-8?B?TzgvNjRXNFhtQ2lueTh6Y1FvTEowdjRZbm4wYlNJMkt5TmZveGltaHBmTGlO?=
- =?utf-8?B?Qjd2dnQ3aDg5T1FLY0l3TkthYm5JUU5NeXg0NENZMjk5MU1QTGVFQ2NRQkZp?=
- =?utf-8?B?WXJlWFpNYXh1WFloMWthNXBPMVFJL0FiSTlzTzRCTnJBZFFaUlkyZ2t2SDhB?=
- =?utf-8?B?QzVtUnFsZGEwR2F5UHhJNjkwR2QvUzVVbXcyTDZnb0NNVlpGT0czY3M5elZj?=
- =?utf-8?B?eTdaWDB0ek9jNElBbnB6c2dLN0FPd29HempqLzl5UDNBSy8xVmF1dDRDVVBI?=
- =?utf-8?B?TzVuWVpqVG5ncjNuMTFpUy9GM3hkSTVoRzcvWWdBb3ZPVU10ZmZ0NWRmZEFo?=
- =?utf-8?B?bGZzK3hJL2dHc1VoZWxNZitYYVpmZWVBN2cxa3dRL1NRTWFYbzVXQU5BSlJ0?=
- =?utf-8?B?VVJsNlA1UGJkT3ZDL0c2eEhSRDRnZEd0b1djTUxvczFGZ0w4VURkbW5Nc1No?=
- =?utf-8?B?UEJ2SW11cVBydGhUR3dEU3pwMnVTMWJXSnZweldVUXQrS3BiclArOWlFS0l0?=
- =?utf-8?B?L25WejFUVm1WcUJTcjhuT0xvSEZJdmt1NCttVGZ6T2ljUnBzMWhPNXFRMGpx?=
- =?utf-8?B?NkcwOW4vdW9raEdoR1JnWmErR1hkU2ZtUFlVUDgyb21hcFMvS1d0UWZ2R25l?=
- =?utf-8?B?Ymp0WmNkeUVVMmVMeWVoYjJCZUF2ZGwwY2dGTStyVS9oaklBSUJnaE1XVXNX?=
- =?utf-8?B?WWpZTnVVYzFBckNnK1Jra0hIOCtjSGJHMWxqV2xhKzVxcG5yVjdxbGhEQ3Nw?=
- =?utf-8?B?S1BrYmNrdVpISHJvVFdrZGQvWWZsTjQvUjdZMUxqNU5TSTNzY3lkTEQyS1RS?=
- =?utf-8?B?S3dsdmNuZVdFdDRwcW5TMWR5eXl6VzJaa1VlaXZvUnZaV3c0YnNPWlFua2hY?=
- =?utf-8?B?K01wUDNoemVUOVdXTXVMTWdQbnZaenJCNngxMW9EdER4RnVJMmlXc3NmcFBG?=
- =?utf-8?B?a3p5TytvVHVSdU9LK2k2RGp4U2wvNW9pN2diamgwRTQ3S0RWbFBkdVNqbEZQ?=
- =?utf-8?B?aUtveDJoNTJzczhaaTAyM09nejdsN2xJLzd1VUJDT3g2QlZoaHgxNHVFelFI?=
- =?utf-8?B?NFdtMTAydWhtSmpxdGZKbldmK3lYTjREUFRBWmZZL1ZtNjdRSGVyT0pvcG45?=
- =?utf-8?B?OUJGbWRQT000R1RJY2l5NlRHY255NzZhYVpUVHQrRnhJcFRsL0p1VzNPWncw?=
- =?utf-8?B?V3hNU0c2eExtNVJzV29lT1BUU1N2TWpsSksxbnJaRHdDRlFqdXU1eEM2V09W?=
- =?utf-8?B?a1lyd0ZZbzIvSE5GK0dhc2dQaDlwRlEwbnRNK0UvV0EyVnJDc3lKZTZjSjg5?=
- =?utf-8?B?cU9IMWRIc2l4UnE0MjZLZnd6YWg2MkgyVnAyS0dQcjMrenVDcnNWQWpuMTgw?=
- =?utf-8?B?TWNQWldjVWZFUExCNUtsYnRyY1ROK3FXTm5oTEo5ZVJzTjFUczNHK0NEYlpK?=
- =?utf-8?B?N2ZaTVdpSmQ2Ykd0LzVEbEVFOEtING8wNnVSTGEzalpROEtZK1lmRWRnQmRF?=
- =?utf-8?B?bjhzakZRdktRR2VyU3ByQXNwUEZ0Q0I2bXZxaEJRbDhZNUJoVGVpRTlwY2Jo?=
- =?utf-8?B?NksveS9RcTVxVWsrTCtlbUl0d2NQcnpxMHdHOE5Yajh5SjFsVmROZlBMQkJa?=
- =?utf-8?B?MCtJZG9DVVlvZENqamhrRkZBbjB5NG00eW5DeTd5ZVFCUk1hUzlZQ3NOcDhh?=
- =?utf-8?B?ZTVCTGF2TFp1dEphbGQvdWt2U3dyVVQ4UHhubnZXT0ZzdElDYjYxN2RFSTc2?=
- =?utf-8?B?K3BoV2MrZHBleHZkbENHK1BIWFRKaWs0ekNtOHh3T0haV29heTJCamVFSktm?=
- =?utf-8?B?anVhdEdVQmxvRmFQY00xN0IrYSttait3bC9id2V5RnZib2NUODFaTkFpdTgr?=
- =?utf-8?B?N0E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	/JmgSRcK2Iwbg3p788W+vigONmM67gfRP2NMyL01V5KAfyTT/e4FcOQO1v0h+EPQ6/RSQ0cOORJyQT0vIwxFSw3o/GwBpWNTvlYXTt8kxYFOrf+LevBT78xdgVuBhZr3iaGWo6JfH/TVXj1VfEg6iU0wWIfsdN+zux7y5C4XAiSmFgWpgnrsQoOUFYMOvkwU67RZFZMHnREWuvDpMhWU1Ee8Dh7rpSyQHITJQLL7ezcg6vqIsqveHosOXzctYx0GKRu05lPL3XUsTAa5Y6rK80Zr0iOseRJhvNsDc4llibOueaSEpUNjHui2ZM9a78SO0du/UerVozemPXkpNIXpRbY2+EQlPDZIRGKCEUfRv/DtiJLwdwY7lOBDe2n732Melv+zlPW3wgXg23Wd390sJfYjUVQvJTX8RrVqM9nGAJZjvSlJ+oiGl4nwAptoJJz5Mdyg3i9fsKHNbq/7Zzqy6KldWT2s9QNCrCJX0uuG07/EKxj6CZEQV1If6+DCt2qW5vXCSaceN/JFIwQACEkjn6Af7ZO6Kd8OhVMdcE6TUBJRMwP9TZYbtZrpvouBYKzv2shIoEXSs8Y1enkmxtI8gx2LxMcMbWGl+TVl/olnaiA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d27c5998-fbe9-4e46-fbcd-08dd60bca1b7
-X-MS-Exchange-CrossTenant-AuthSource: MW5PR10MB5738.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 16:49:04.2402
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FnZfB4VY7QW9NhLXRGLyYTitdP0YGumf2yAq+mOplYIVTemOBdOc8ZmFh1BMVLXrpTXuwg4T3na3u/LQjnQL1uZnPKTYSO2mPwmkAQ65Gt8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR10MB6001
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_04,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 phishscore=0
- adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2503110106
-X-Proofpoint-GUID: Y7CnToO662MMlWmJl0NFWKAJZ5fWelPA
-X-Proofpoint-ORIG-GUID: Y7CnToO662MMlWmJl0NFWKAJZ5fWelPA
+Subject: Re: [PATCH] watchdog: Add driver for Intel OC WDT
+To: Guenter Roeck <linux@roeck-us.net>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, jan.kiszka@siemens.com,
+ benedikt.niedermayr@siemens.com
+References: <20250311-ivo-intel_oc_wdt-v1-1-fd470460d9f5@siemens.com>
+ <fea41656-ca80-491f-b84b-d118b35b5f72@roeck-us.net>
+ <bc354400-52bf-46ee-8619-479c3fe9b28e@siemens.com>
+ <8bdf9a4d-5d25-4b53-947b-0644c00cc999@roeck-us.net>
+Content-Language: en-US
+From: Diogo Ivo <diogo.ivo@siemens.com>
+In-Reply-To: <8bdf9a4d-5d25-4b53-947b-0644c00cc999@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328357:519-21489:flowmailer
 
-On 3/2/25 1:15PM, Suchit Karunakaran wrote:
-> Replace legacy XT_GETPAGE macro with an inline function and update all
-> instances of XT_GETPAGE in jfs_xtree.c file to use the new function.
-
-I like the idea, but as long as we are changing this to a function, I'd 
-like to simplify it to return the xtpage (xtpage_t *). A NULL return 
-would indicate a failure.
-
-Also, the first argument should just be "struct inode *ip". That should 
-eliminate your second patch.
-  >
-> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-> ---
->   fs/jfs/jfs_xtree.c | 86 ++++++++++++++++++++++++++++------------------
->   1 file changed, 52 insertions(+), 34 deletions(-)
+On 3/11/25 4:06 PM, Guenter Roeck wrote:
+> On 3/11/25 07:59, Diogo Ivo wrote:
+>> On 3/11/25 2:10 PM, Guenter Roeck wrote:
+>>> On 3/11/25 06:18, Diogo Ivo wrote:
+>>>> Add a driver for the Intel Over-Clocking Watchdog found in Intel
+>>>> Platform Controller (PCH) chipsets. This watchdog is controlled
+>>>> via a simple single-register interface and would otherwise be
+>>>> standard except for the presence of a LOCK bit that can only be
+>>>> set once per power cycle, needing extra handling around it.
+>>>>
+>>>> Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
+>>>> ---
+>>>>   drivers/acpi/acpi_pnp.c         |   2 +
+>>>>   drivers/watchdog/Kconfig        |  11 ++
+>>>>   drivers/watchdog/Makefile       |   1 +
+>>>>   drivers/watchdog/intel_oc_wdt.c | 235 ++++++++++++++++++++++++++++ 
+>>>> ++ ++++++++++
+>>>>   4 files changed, 249 insertions(+)
+>>>>
+>>>> diff --git a/drivers/acpi/acpi_pnp.c b/drivers/acpi/acpi_pnp.c
+>>>> index 
+>>>> 01abf26764b00c86f938dea2ed138424f041f880..3f5a1840f573303c71f5d579e32963a5b29d2587 100644
+>>>> --- a/drivers/acpi/acpi_pnp.c
+>>>> +++ b/drivers/acpi/acpi_pnp.c
+>>>> @@ -355,8 +355,10 @@ static bool acpi_pnp_match(const char *idstr, 
+>>>> const struct acpi_device_id **matc
+>>>>    * device represented by it.
+>>>>    */
+>>>>   static const struct acpi_device_id acpi_nonpnp_device_ids[] = {
+>>>> +    {"INT3F0D"},
+>>>>       {"INTC1080"},
+>>>>       {"INTC1081"},
+>>>> +    {"INTC1099"},
+>>>>       {""},
+>>>>   };
+>>>
+>>> This needs to be a separate patch.
+>>
+>> I will split it for v2.
+>>
+>>>> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+>>>> index 
+>>>> f81705f8539aa0b12d156a86aae521aa40b4527d..16e6df441bb344c0f91b40bd76b6322ad3016e72 100644
+>>>> --- a/drivers/watchdog/Kconfig
+>>>> +++ b/drivers/watchdog/Kconfig
+>>>> @@ -1350,6 +1350,17 @@ config INTEL_MID_WATCHDOG
+>>>>         To compile this driver as a module, choose M here.
+>>>> +config INTEL_OC_WATCHDOG
+>>>> +    tristate "Intel OC Watchdog"
+>>>> +    depends on X86 && ACPI
+>>>> +    select WATCHDOG_CORE
+>>>> +    help
+>>>> +      Hardware driver for Intel Over-Clocking watchdog present in
+>>>> +      Platform Controller Hub (PCH) chipsets.
+>>>> +
+>>>> +      To compile this driver as a module, choose M here: the
+>>>> +      module will be called intel_oc_wdt.
+>>>> +
+>>>>   config ITCO_WDT
+>>>>       tristate "Intel TCO Timer/Watchdog"
+>>>>       depends on X86 && PCI
+>>>> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+>>>> index 
+>>>> 8411626fa162268e8ccd06349f7193b15a9d281a..3a13f3e80a0f460b99b4f1592fcf17cc6428876b 100644
+>>>> --- a/drivers/watchdog/Makefile
+>>>> +++ b/drivers/watchdog/Makefile
+>>>> @@ -149,6 +149,7 @@ obj-$(CONFIG_W83977F_WDT) += w83977f_wdt.o
+>>>>   obj-$(CONFIG_MACHZ_WDT) += machzwd.o
+>>>>   obj-$(CONFIG_SBC_EPX_C3_WATCHDOG) += sbc_epx_c3.o
+>>>>   obj-$(CONFIG_INTEL_MID_WATCHDOG) += intel-mid_wdt.o
+>>>> +obj-$(CONFIG_INTEL_OC_WATCHDOG) += intel_oc_wdt.o
+>>>>   obj-$(CONFIG_INTEL_MEI_WDT) += mei_wdt.o
+>>>>   obj-$(CONFIG_NI903X_WDT) += ni903x_wdt.o
+>>>>   obj-$(CONFIG_NIC7018_WDT) += nic7018_wdt.o
+>>>> diff --git a/drivers/watchdog/intel_oc_wdt.c b/drivers/watchdog/ 
+>>>> intel_oc_wdt.c
+>>>> new file mode 100644
+>>>> index 
+>>>> 0000000000000000000000000000000000000000..0a2df3440024090f7e342fe7da895a7930ac09b2
+>>>> --- /dev/null
+>>>> +++ b/drivers/watchdog/intel_oc_wdt.c
+>>>> @@ -0,0 +1,235 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +/*
+>>>> + * Intel OC Watchdog driver
+>>>> + *
+>>>> + * Copyright (C) 2025, Siemens SA
+>>>> + * Author: Diogo Ivo <diogo.ivo@siemens.com>
+>>>> + */
+>>>> +
+>>>> +#define DRV_NAME    "intel_oc_wdt"
+>>>> +
+>>>> +#include <linux/acpi.h>
+>>>> +#include <linux/bits.h>
+>>>> +#include <linux/io.h>
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/moduleparam.h>
+>>>> +#include <linux/platform_device.h>
+>>>> +#include <linux/watchdog.h>
+>>>> +
+>>>> +#define INTEL_OC_WDT_TOV        GENMASK(9, 0)
+>>>> +#define INTEL_OC_WDT_MIN_TOV        1
+>>>> +#define INTEL_OC_WDT_MAX_TOV        1024
+>>>> +
+>>>> +/*
+>>>> + * One-time writable lock bit. If set forbids
+>>>> + * modification of itself, _TOV and _EN until
+>>>> + * next reboot.
+>>>> + */
+>>>> +#define INTEL_OC_WDT_CTL_LCK        BIT(12)
+>>>> +
+>>>> +#define INTEL_OC_WDT_EN            BIT(14)
+>>>> +#define INTEL_OC_WDT_NO_ICCSURV_STS    BIT(24)
+>>>> +#define INTEL_OC_WDT_ICCSURV_STS    BIT(25)
+>>>> +#define INTEL_OC_WDT_RLD        BIT(31)
+>>>> +
+>>>> +#define INTEL_OC_WDT_STS_BITS (INTEL_OC_WDT_NO_ICCSURV_STS | \
+>>>> +                   INTEL_OC_WDT_ICCSURV_STS)
+>>>> +
+>>>> +#define INTEL_OC_WDT_CTRL_REG(wdt)    ((wdt)->ctrl_res->start)
+>>>> +
+>>>> +struct intel_oc_wdt {
+>>>> +    struct watchdog_device wdd;
+>>>> +    struct resource *ctrl_res;
+>>>> +    bool locked;
+>>>> +};
+>>>> +
+>>>> +#define WDT_HEARTBEAT            60
+>>>> +static int heartbeat = WDT_HEARTBEAT;
+>>>
+>>> Normally this is set to 0 and the default timeout is initialized 
+>>> together
+>>> with min_timeout and max_timeout. This lets the watchdog core 
+>>> override it
+>>> with devicetree data (if that is available).
+>>
+>> Ok, thank you for the insight. I will address this for v2.
+>> It is unlikely that this driver will have devicetree data but it's
+>> better to follow best practice.
+>>
 > 
-> diff --git a/fs/jfs/jfs_xtree.c b/fs/jfs/jfs_xtree.c
-> index 5ee618d17e77..fb736a06ea58 100644
-> --- a/fs/jfs/jfs_xtree.c
-> +++ b/fs/jfs/jfs_xtree.c
-> @@ -49,26 +49,6 @@
->   
->   #define XT_PAGE(IP, MP) BT_PAGE(IP, MP, xtpage_t, i_xtroot)
->   
-> -/* get page buffer for specified block address */
-> -/* ToDo: Replace this ugly macro with a function */
-> -#define XT_GETPAGE(IP, BN, MP, SIZE, P, RC)				\
-> -do {									\
-> -	BT_GETPAGE(IP, BN, MP, xtpage_t, SIZE, P, RC, i_xtroot);	\
-> -	if (!(RC)) {							\
-> -		if ((le16_to_cpu((P)->header.nextindex) < XTENTRYSTART) || \
-> -		    (le16_to_cpu((P)->header.nextindex) >		\
-> -		     le16_to_cpu((P)->header.maxentry)) ||		\
-> -		    (le16_to_cpu((P)->header.maxentry) >		\
-> -		     (((BN) == 0) ? XTROOTMAXSLOT : PSIZE >> L2XTSLOTSIZE))) { \
-> -			jfs_error((IP)->i_sb,				\
-> -				  "XT_GETPAGE: xtree page corrupt\n");	\
-> -			BT_PUTPAGE(MP);					\
-> -			MP = NULL;					\
-> -			RC = -EIO;					\
-> -		}							\
-> -	}								\
-> -} while (0)
-> -
->   /* for consistency */
->   #define XT_PUTPAGE(MP) BT_PUTPAGE(MP)
->   
-> @@ -114,6 +94,44 @@ static int xtSplitPage(tid_t tid, struct inode *ip, struct xtsplit * split,
->   static int xtSplitRoot(tid_t tid, struct inode *ip,
->   		       struct xtsplit * split, struct metapage ** rmpp);
->   
-> +/*
-> + *	xt_getpage()
-> + *
-> + * function:	get the page buffer for a specified block address.
-> + *
-> + * parameters:
-> + *	ip      - pointer to the inode
-> + *	bn      - block number (s64) of the xtree page to be retrieved;
-> + *	mp      - pointer to a metapage pointer where the page buffer is returned;
-> + *	size    - size parameter to pass to BT_GETPAGE;
-> + *	p       - pointer to an xtpage_t pointer mapping the page's data.
-> + *
-> + * returns:
-> + *	0 on success, or -EIO if the page is corrupt or an error occurs.
-> + */
-> +
-> +static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
-> +			unsigned int size, xtpage_t **p)
-> +{
-> +	int rc;
-> +
-> +	BT_GETPAGE(ip, bn, *mp, xtpage_t, size, *p, rc, i_xtroot);
-> +
-> +	if (!rc) {
-> +		if ((le16_to_cpu((*p)->header.nextindex) < XTENTRYSTART) ||
-> +			(le16_to_cpu((*p)->header.nextindex) >
-> +				le16_to_cpu((*p)->header.maxentry)) ||
-> +			(le16_to_cpu((*p)->header.maxentry) >
-> +				((bn == 0) ? XTROOTMAXSLOT : PSIZE >> L2XTSLOTSIZE))) {
-> +			jfs_error(ip->i_sb, "xt_getpage: xtree page corrupt\n");
-> +			BT_PUTPAGE(*mp);
-> +			*mp = NULL;
-> +			rc = -EIO;
-> +		}
-> +	}
-> +	return rc;
-> +}
-> +
->   /*
->    *	xtLookup()
->    *
-> @@ -252,7 +270,7 @@ static int xtSearch(struct inode *ip, s64 xoff,	s64 *nextp,
->   	 */
->   	for (bn = 0;;) {
->   		/* get/pin the page to search */
-> -		XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> +		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
->   		if (rc)
->   			return rc;
->   
-> @@ -807,7 +825,7 @@ xtSplitUp(tid_t tid,
->   		 * insert router entry in parent for new right child page <rp>
->   		 */
->   		/* get/pin the parent page <sp> */
-> -		XT_GETPAGE(ip, parent->bn, smp, PSIZE, sp, rc);
-> +		rc = xt_getpage(ip, parent->bn, &smp, PSIZE, &sp);
->   		if (rc) {
->   			XT_PUTPAGE(rcmp);
->   			return rc;
-> @@ -1062,7 +1080,7 @@ xtSplitPage(tid_t tid, struct inode *ip,
->   	 * update previous pointer of old next/right page of <sp>
->   	 */
->   	if (nextbn != 0) {
-> -		XT_GETPAGE(ip, nextbn, mp, PSIZE, p, rc);
-> +		rc = xt_getpage(ip, nextbn, &mp, PSIZE, &p);
->   		if (rc) {
->   			XT_PUTPAGE(rmp);
->   			goto clean_up;
-> @@ -1417,7 +1435,7 @@ int xtExtend(tid_t tid,		/* transaction id */
->   			return rc;
->   
->   		/* get back old page */
-> -		XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> +		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
->   		if (rc)
->   			return rc;
->   		/*
-> @@ -1433,7 +1451,7 @@ int xtExtend(tid_t tid,		/* transaction id */
->   			XT_PUTPAGE(mp);
->   
->   			/* get new child page */
-> -			XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> +			rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
->   			if (rc)
->   				return rc;
->   
-> @@ -1711,7 +1729,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t * nxad)
->   			return rc;
->   
->   		/* get back old page */
-> -		XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> +		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
->   		if (rc)
->   			return rc;
->   		/*
-> @@ -1727,7 +1745,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t * nxad)
->   			XT_PUTPAGE(mp);
->   
->   			/* get new child page */
-> -			XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> +			rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
->   			if (rc)
->   				return rc;
->   
-> @@ -1788,7 +1806,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t * nxad)
->   		XT_PUTPAGE(mp);
->   
->   		/* get new right page */
-> -		XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> +		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
->   		if (rc)
->   			return rc;
->   
-> @@ -1864,7 +1882,7 @@ printf("xtUpdate.updateLeft.split p:0x%p\n", p);
->   			return rc;
->   
->   		/* get back old page */
-> -		XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> +		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
->   		if (rc)
->   			return rc;
->   
-> @@ -1881,7 +1899,7 @@ printf("xtUpdate.updateLeft.split p:0x%p\n", p);
->   			XT_PUTPAGE(mp);
->   
->   			/* get new child page */
-> -			XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> +			rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
->   			if (rc)
->   				return rc;
->   
-> @@ -2268,7 +2286,7 @@ s64 xtTruncate(tid_t tid, struct inode *ip, s64 newsize, int flag)
->   	 * first access of each page:
->   	 */
->         getPage:
-> -	XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> +	rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
->   	if (rc)
->   		return rc;
->   
-> @@ -2506,7 +2524,7 @@ s64 xtTruncate(tid_t tid, struct inode *ip, s64 newsize, int flag)
->   
->   	/* get back the parent page */
->   	bn = parent->bn;
-> -	XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> +	rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
->   	if (rc)
->   		return rc;
->   
-> @@ -2791,7 +2809,7 @@ s64 xtTruncate_pmap(tid_t tid, struct inode *ip, s64 committed_size)
->   		 * first access of each page:
->   		 */
->         getPage:
-> -		XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> +		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
->   		if (rc)
->   			return rc;
->   
-> @@ -2836,7 +2854,7 @@ s64 xtTruncate_pmap(tid_t tid, struct inode *ip, s64 committed_size)
->   
->   	/* get back the parent page */
->   	bn = parent->bn;
-> -	XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> +	rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
->   	if (rc)
->   		return rc;
->   
+> I just submitted a patch to have the watchdog core also look into 
+> firmware data,
+> which would include data provided by ACPI.
 
+Great to know, and all the more reason to apply your suggested change.
+
+>>>> +module_param(heartbeat, uint, 0);
+>>>> +MODULE_PARM_DESC(heartbeat, "Watchdog heartbeats in seconds. 
+>>>> (default="
+>>>> +         __MODULE_STRING(WDT_HEARTBEAT) ")");
+>>>> +
+>>>> +static bool nowayout = WATCHDOG_NOWAYOUT;
+>>>> +module_param(nowayout, bool, 0);
+>>>> +MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started 
+>>>> (default="
+>>>> +         __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
+>>>> +
+>>>> +static int intel_oc_wdt_start(struct watchdog_device *wdd)
+>>>> +{
+>>>> +    struct intel_oc_wdt *oc_wdt = watchdog_get_drvdata(wdd);
+>>>> +
+>>>> +    if (oc_wdt->locked)
+>>>> +        return 0;
+>>>> +
+>>>> +    outl(inl(INTEL_OC_WDT_CTRL_REG(oc_wdt)) | INTEL_OC_WDT_EN,
+>>>> +         INTEL_OC_WDT_CTRL_REG(oc_wdt));
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int intel_oc_wdt_stop(struct watchdog_device *wdd)
+>>>> +{
+>>>> +    struct intel_oc_wdt *oc_wdt = watchdog_get_drvdata(wdd);
+>>>> +
+>>>> +    outl(inl(INTEL_OC_WDT_CTRL_REG(oc_wdt)) & ~INTEL_OC_WDT_EN,
+>>>> +         INTEL_OC_WDT_CTRL_REG(oc_wdt));
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int intel_oc_wdt_ping(struct watchdog_device *wdd)
+>>>> +{
+>>>> +    struct intel_oc_wdt *oc_wdt = watchdog_get_drvdata(wdd);
+>>>> +
+>>>> +    outl(inl(INTEL_OC_WDT_CTRL_REG(oc_wdt)) | INTEL_OC_WDT_RLD,
+>>>> +         INTEL_OC_WDT_CTRL_REG(oc_wdt));
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int intel_oc_wdt_set_timeout(struct watchdog_device *wdd,
+>>>> +                    unsigned int t)
+>>>> +{
+>>>> +    struct intel_oc_wdt *oc_wdt = watchdog_get_drvdata(wdd);
+>>>> +
+>>>> +    outl((inl(INTEL_OC_WDT_CTRL_REG(oc_wdt)) & ~INTEL_OC_WDT_TOV) | 
+>>>> (t - 1),
+>>>> +         INTEL_OC_WDT_CTRL_REG(oc_wdt));
+>>>> +
+>>>> +    wdd->timeout = t;
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static const struct watchdog_info intel_oc_wdt_info = {
+>>>> +    .options = WDIOF_SETTIMEOUT | WDIOF_MAGICCLOSE | 
+>>>> WDIOF_KEEPALIVEPING,
+>>>> +    .identity = DRV_NAME,
+>>>> +};
+>>>> +
+>>>> +static const struct watchdog_ops intel_oc_wdt_ops = {
+>>>> +    .owner = THIS_MODULE,
+>>>> +    .start = intel_oc_wdt_start,
+>>>> +    .stop = intel_oc_wdt_stop,
+>>>> +    .ping = intel_oc_wdt_ping,
+>>>> +    .set_timeout = intel_oc_wdt_set_timeout,
+>>>> +};
+>>>> +
+>>>> +static int intel_oc_wdt_setup(struct intel_oc_wdt *oc_wdt)
+>>>> +{
+>>>> +    struct watchdog_info *info;
+>>>> +    unsigned long val;
+>>>> +
+>>>> +    val = inl(INTEL_OC_WDT_CTRL_REG(oc_wdt));
+>>>> +
+>>>> +    if (val & INTEL_OC_WDT_STS_BITS)
+>>>> +        oc_wdt->wdd.bootstatus |= WDIOF_CARDRESET;
+>>>> +
+>>>> +    oc_wdt->locked = !!(val & INTEL_OC_WDT_CTL_LCK);
+>>>> +
+>>>> +    if (val & INTEL_OC_WDT_EN) {
+>>>> +        /*
+>>>> +         * No need to issue a ping here to "commit" the new timeout
+>>>> +         * value to hardware as the watchdog core schedules one
+>>>> +         * immediately when registering the watchdog.
+>>>> +         */
+>>>> +        set_bit(WDOG_HW_RUNNING, &oc_wdt->wdd.status);
+>>>> +
+>>>> +        if (oc_wdt->locked) {
+>>>> +            info = (struct watchdog_info *)&intel_oc_wdt_info;
+>>>> +            /*
+>>>> +             * Set nowayout unconditionally as we cannot stop
+>>>> +             * the watchdog and read the current timeout.
+>>>> +             */
+>>>
+>>> But the timeout is read below ? Do you mean "change the current 
+>>> timeout" ?
+>>
+>> In this case where the BIOS both enabled the watchdog and set the LOCK
+>> bit we cannot change the timeout anymore, meaning that we have to read
+>> the value currently in the register and pass it to the watchdog core,
+>> which is what is done below.
+>>
+> Yes, but the comment says " we cannot stop the watchdog and _read_ the
+> current timeout" (emphasis added), suggesting that the current timeout
+> can not be _read_ if locked is true.
+> 
+>>>> +            nowayout = true;
+>>>> +
+>>>> +            oc_wdt->wdd.timeout = (val & INTEL_OC_WDT_TOV) + 1;
+> 
+> However, this code does read the timeout even if locked is set. That
+> suggests that it is not possible to _change_ the timeout if locked is set,
+> but that it is possible to read the current timeout.
+
+Sorry for the confusing wording. Yes, according to the documentation [1]
+this is exactly the case, we cannot change the timeout but it is possible
+to read it. I will word this better in v2 to avoid confusion.
+
+Best regards,
+Diogo
+
+[1]: 
+https://edc.intel.com/content/www/us/en/design/publications/14th-generation-core-processors-ioe-p-registers/over-clocking-wdt-control-oc-wdt-ctl-offset-54/
 
