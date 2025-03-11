@@ -1,116 +1,103 @@
-Return-Path: <linux-kernel+bounces-555807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8716CA5BD0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:00:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0115A5BD10
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:01:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25003AC762
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:00:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 075833AC333
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533BB233D88;
-	Tue, 11 Mar 2025 09:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3103E233120;
+	Tue, 11 Mar 2025 10:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VG+tVE2G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IuIxAPvh"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A9F22FF22;
-	Tue, 11 Mar 2025 09:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B4B22FE06;
+	Tue, 11 Mar 2025 10:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741687193; cv=none; b=QhI5odKsuc9Ezt4KDBBgYM0PQ1DuzThyKRGG9F6Cn+s20dtlFYQxqibnaAcgixwdoJdQ42s+LFH90PK4p6SmF1/Ax4ogkX5f1Jivic35lUM5px3JPxINyfBl8yX9PA0r5iDSiwrgEN2d/dfE12DzrFyqhr0FiuC80yzVoDoUDoE=
+	t=1741687217; cv=none; b=oswb8XiziDywWTV22cRhjlKRMM5a3CfK/JBqTnHhrT6KXah5oFhZGIjbE46nO649aB/9mjYk1NDEwA3b4kYtJlfNGX8W55OXSf7U7sXXZP167p1GcfJUxjhLS423y3XowNIsh4Rw5/bzRYk855qUFsaUo1uyyM+3YuXvc+hdNYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741687193; c=relaxed/simple;
-	bh=zsOBPexXIma9FbHuX3ibpi1OjULOqW0uLKONM/kuVVU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nPbrx35R88dEMn2ka12NXXUYi2YdQCnVr6eBFs3QpKAm3f4gw5uSd+sawdyzRNaO3V4cIYuIa+b7yPeT6hCXdr7dzy9EIiNJx/vM29u3b63W61Q2VgxDtV/A3ietGcuJx7JZRucA1dXfyeORmcQPeYGz2olohwvZUtrQnMfWFBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VG+tVE2G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BDADC4CEE9;
-	Tue, 11 Mar 2025 09:59:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741687193;
-	bh=zsOBPexXIma9FbHuX3ibpi1OjULOqW0uLKONM/kuVVU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VG+tVE2GzVsRb2JLul75HRtiRbXVhMMo4dxouYOHV1ATfkBNftFJxqRlhNgGrt4Bg
-	 8vXYNEQkZEHXksDzgCVF/Yyx8hIt91AxQNxWIk89I5AqHIGU4eJhD3Pq53mR/y341v
-	 UYHr2jy1GiMEAPviiRXQLPCUWgZRLBHH9GFNhH+S0hl1qMwW2pQ75WmAq2zxa7BoRc
-	 HRdcHfn4o6MLMcknCGBnQ8umntBPefnWVLRwMF2suzzgDNx4UCGvuSZ1XOzPE2s4sN
-	 KDke/58ap/xklW+Bl71/yrmJriKNh4CjEL0i4lfQ6viZOLUgeFrHfGY01Gmg8LN0o9
-	 MAaKmoA2pBEMA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1trwOt-00CTwt-2K;
-	Tue, 11 Mar 2025 09:59:51 +0000
-Date: Tue, 11 Mar 2025 09:59:50 +0000
-Message-ID: <86tt7zopk9.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Zhenyu Ye <yezhenyu2@huawei.com>
-Cc: <yuzenghui@huawei.com>,
-	<will@kernel.org>,
-	<oliver.upton@linux.dev>,
-	<catalin.marinas@arm.com>,
-	<joey.gouly@arm.com>,
-	<linux-kernel@vger.kernel.org>,
-	<xiexiangyou@huawei.com>,
-	<zhengchuan@huawei.com>,
-	<wangzhou1@hisilicon.com>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<kvm@vger.kernel.org>,
-	<kvmarm@lists.linux.dev>
-Subject: Re: [PATCH v1 3/5] arm64/kvm: using ioctl to enable/disable the HDBSS feature
-In-Reply-To: <20250311040321.1460-4-yezhenyu2@huawei.com>
-References: <20250311040321.1460-1-yezhenyu2@huawei.com>
-	<20250311040321.1460-4-yezhenyu2@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1741687217; c=relaxed/simple;
+	bh=Icw7d7CWXNiSHZD7IuvA/ABSL8G+50+g6+GEnsv3xLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qwdfUuynTj3NPZsVYZUJwLi9t+B5yE8azO2RakQBvLPoCNuccbMPgptKboXwLIquo1Tr3d+jWqdII/DpdU1GucAUbyR/k+0Xss/zEpEDBnkWQb8+1C5eBQ+FCr5U4EILabSvbWm9DA+YDuT6z4kV/IAxuxl2JlhTrQJqqFG1lZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IuIxAPvh; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741687212;
+	bh=7a/wC/Qp2ltlmIN9hTSEJZ5XPwuWZ4fbVoIgO94hJIw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IuIxAPvhjJiV0AWj6TnbtjkMjVDfm9QHH3s6cnA7yKTcEiLebNxXWxn2J4sKIAtxa
+	 D1sSA6liQoCJqOq4IoHxbKxfjedS3I3UJABRFknj507hekGNrIMIciT+zm8Kv45Cw2
+	 CnL7xC0sgthb+AD0NIaUMvvcCzNpB11NCMkKGAAV7bKOa0xFjJlyeJoDdEuzG0p+/w
+	 qm+Kgt2tL0yuYGyCWxqrJRsMXSD8zLtkhq500Uwf2IsHykXHZ0HR3BQYSXIICmPfV/
+	 DgfkrNOODAsUTbqqIYfiZkT9jmJYWqNMuP2cVM0hH4iuUaqU8qHZgEd6U2MjHIybRl
+	 dXzngOLdd8Ajw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBq4r0Dt0z4x3p;
+	Tue, 11 Mar 2025 21:00:12 +1100 (AEDT)
+Date: Tue, 11 Mar 2025 21:00:11 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Stuart Yoder <stuart.yoder@arm.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the tpmdd tree
+Message-ID: <20250311210011.18b7ab80@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/D_mT90U0BpSUm/wCh_JjhLV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/D_mT90U0BpSUm/wCh_JjhLV
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yezhenyu2@huawei.com, yuzenghui@huawei.com, will@kernel.org, oliver.upton@linux.dev, catalin.marinas@arm.com, joey.gouly@arm.com, linux-kernel@vger.kernel.org, xiexiangyou@huawei.com, zhengchuan@huawei.com, wangzhou1@hisilicon.com, linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: quoted-printable
 
-+1 on everything Oliver said. Additionally:
+Hi all,
 
-On Tue, 11 Mar 2025 04:03:19 +0000,
-Zhenyu Ye <yezhenyu2@huawei.com> wrote:
-> 
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index 1f55b0c7b11d..9c11e2292b1e 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -1703,6 +1703,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	if (writable)
->  		prot |= KVM_PGTABLE_PROT_W;
->  
-> +	if (kvm->enable_hdbss && logging_active)
-> +		prot |= KVM_PGTABLE_PROT_DBM;
-> +
+After merging the tpmdd tree, today's linux-next build (htmldocs)
+produced this warning:
 
-This looks totally wrong. If the page is defined as R/O
-(KVM_PGTABLE_PROT_W not being set), setting the DBM flag makes it
-writable anyway (the W bit is the Dirty bit). Hello, memory
-corruption?
+Documentation/security/tpm/tpm_ffa_crb.rst: WARNING: document isn't include=
+d in any toctree
 
-overall, this patch is a total mess, and needs to be split to have the
-runtime logic on one side, and the userspace API on the other. Don't
-mix the two.
+Introduced by commit
 
-Thanks,
+  115be78c0bfe ("Documentation: tpm: add documentation for the CRB FF-A int=
+erface")
 
-	M.
+--=20
+Cheers,
+Stephen Rothwell
 
--- 
-Without deviation from the norm, progress is not possible.
+--Sig_/D_mT90U0BpSUm/wCh_JjhLV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfQCasACgkQAVBC80lX
+0Gxn7Af/StVl4/bDguxrdHgziH4ZJ6/fyik4lrNsjgI8+iVdcci8zpsEsSNMcEQa
+0PtTZE5dFldjAxUrVrvBzc0AohscCLhSg5f2oi1D8cMNu1Fz/BSLuFJqtDbC6N7Y
+LbXe2AY1qZJ6RIo30B0RmsHvsgyACD3OM8Za+nspzf2GhpWWjKhnHl7BAL5d8bez
+TZsZe9peERcoxbBXEgshAqXHGLdmDijs90DupO44tzKaFiX9JhcoqBSi0I178iy1
+T4HCJDxkz1U7JpxLqjkYkVGC4YwMfJrDvtjdHygQO3e0Q2xAb8ieTDVQUa3NEioF
+Nf7y5kxFRLPabi9CrkeYaucLvafN7g==
+=mNxD
+-----END PGP SIGNATURE-----
+
+--Sig_/D_mT90U0BpSUm/wCh_JjhLV--
 
