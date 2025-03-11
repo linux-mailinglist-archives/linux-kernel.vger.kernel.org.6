@@ -1,84 +1,126 @@
-Return-Path: <linux-kernel+bounces-555961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120E3A5BEC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:20:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF80A5BECD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:21:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF97D1896FDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:20:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A500318983B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AED2528E4;
-	Tue, 11 Mar 2025 11:20:35 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB9B253331;
+	Tue, 11 Mar 2025 11:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P3HAGsCR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C665B29A1;
-	Tue, 11 Mar 2025 11:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D34C225776;
+	Tue, 11 Mar 2025 11:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741692035; cv=none; b=IOLHXk14QsdfNudSwtCgAmxoK6NxwYTqKHPv7xhVEwYbLpvSv/NiWLZtduBzxuSxMirtLr+F/A+K0rC4Cb9pEHK4yTIl0mvE1CvvnNhl/UMdaxq/OYhmyWQvOccauoQva7qzCkv1wCfLIORvNvHTsvVQa24tfxTjQPl2OL8Bvok=
+	t=1741692080; cv=none; b=K7Rhu20Uxp6nGvY7zzKPmSzyx/0MFYl0acdvbFACH6h9aiSVExj2iah2jcUC0liFfsR/8Zyu54Gf2tB0T2NVZtgnpLZw1/cFBCow9/CtJI8p8wamSsOI4WQDMrpP9TFiUecDDLhIPnQwqOMQR2A4kW6lkUhnS5RjgYQUWm81NWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741692035; c=relaxed/simple;
-	bh=JHms5rRxyKYX5WTvns8fxT9S6nrKbRB04BFrU9h/ECU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hStW93WCyKZQW+qwUQIpJhz14j47Hss/b9XWQq5TIgibHyjuit1OEmWveLarU98gIDiF/4FHCZM5DPEo1cgqWRQ92+CJx7RN8DWgCm3wCL/BJ9XuScZDVd9jOulV+IaUE9c1RVJKKSYmnae2jP6S0V935yqnYX0kIeSo8FJz20s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4ZBrnj6b1vzDsx7;
-	Tue, 11 Mar 2025 19:17:13 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8D4881800CD;
-	Tue, 11 Mar 2025 19:20:24 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 11 Mar 2025 19:20:24 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 11 Mar
- 2025 19:20:23 +0800
-Message-ID: <3d51d249-7e87-0bf3-c756-f46cd4892745@huawei.com>
-Date: Tue, 11 Mar 2025 19:20:23 +0800
+	s=arc-20240116; t=1741692080; c=relaxed/simple;
+	bh=nnIQqMrvpootJdeosqnzjSHdzPQS3AA2sGWdn9jPN9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=daOezmBwuQRsu0P1L1EC1Tk3M7BjhsGzWNxTcBNbe0Sdj8dVm8E213NiEgqIhbRqfJbCrGS1KNAXSpNWMqKTElHyny7J+VjdQasKvDL8ZLwbonsqBwk5c05hjmVZExKLLnM+xk5LmTUfs4FR4ZOvjZ8du9GlUK+iFpHvYgR+Qag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P3HAGsCR; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741692079; x=1773228079;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nnIQqMrvpootJdeosqnzjSHdzPQS3AA2sGWdn9jPN9Y=;
+  b=P3HAGsCRRycGYd+qbk0Vhu4hcTV9qmIauxfMaUpeLdMjauv4paYwTw7s
+   erHoSS096xFOWofu48jWK66ItDYoCz/yUb6ZRgDLGVzdprO0xt2+WoSFi
+   lumx+V1AsYFOOL3IMrFTuOZPZqatrhsmyC4KjAA5s8LBDS1oMzWsIsioz
+   3hBJxekgKjQIZeyg4EWZvubWJ+SKYUXzdlpzzERq2+QW1IYh+PU6mWi5N
+   ju8iA6joQ2gdM19iaHer4bZyMmMhAOJmM+MHEzKVTU2OHm9zAz7QuxeuP
+   HsFOkTHj/99YcQKRj415spKvcntaulHl8ddgyKlbhHXJAMDFUTQecD75B
+   g==;
+X-CSE-ConnectionGUID: Af1Vl8VtTmqI2YtJm7scgg==
+X-CSE-MsgGUID: kJMyY+SmRgmWb+4rVs6iGw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="53350823"
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="53350823"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 04:21:18 -0700
+X-CSE-ConnectionGUID: AARiflbFSIGPsZWc9OUZnw==
+X-CSE-MsgGUID: tjfMSEz4RMK62L9a6p2iMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="121000004"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 11 Mar 2025 04:21:15 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1trxfX-0006bg-18;
+	Tue, 11 Mar 2025 11:21:09 +0000
+Date: Tue, 11 Mar 2025 19:20:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nam Tran <trannamatk@gmail.com>, pavel@kernel.org, lee@kernel.org,
+	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Nam Tran <trannamatk@gmail.com>
+Subject: Re: [PATCH v3 3/3] leds: add new LED driver for TI LP5812
+Message-ID: <202503111910.ko7pwUem-lkp@intel.com>
+References: <20250306172126.24667-4-trannamatk@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v2 04/13] mailbox: pcc: Return early if no GAS register
- from pcc_mbox_cmd_complete_check
-To: Sudeep Holla <sudeep.holla@arm.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Jassi Brar <jassisinghbrar@gmail.com>, Adam Young
-	<admiyo@os.amperecomputing.com>, Robbie King <robbiek@xsightlabs.com>
-References: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
- <20250305-pcc_fixes_updates-v2-4-1b1822bc8746@arm.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <20250305-pcc_fixes_updates-v2-4-1b1822bc8746@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306172126.24667-4-trannamatk@gmail.com>
 
+Hi Nam,
 
-在 2025/3/6 0:38, Sudeep Holla 写道:
-> pcc_mbox_cmd_complete_check() accesses pchan->cmd_complete.gas to check
-> command completion status. Even if GAS is NULL, pcc_chan_reg_read() gets
-> called which returns success doing nothing and then we return.
->
-> Add an early return if pchan->cmd_complete.gas == NULL before performing
-> any operations.
->
-> Acked-by: Huisong Li <lihuisong@huawei.com>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
-Tested-by: Huisong Li <lihuisong@huawei.com>
->
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on lee-leds/for-leds-next]
+[also build test ERROR on robh/for-next linus/master v6.14-rc6 next-20250307]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Nam-Tran/dt-bindings-leds-Add-LP5812-LED-driver/20250307-012604
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+patch link:    https://lore.kernel.org/r/20250306172126.24667-4-trannamatk%40gmail.com
+patch subject: [PATCH v3 3/3] leds: add new LED driver for TI LP5812
+config: x86_64-randconfig-077-20250310 (https://download.01.org/0day-ci/archive/20250311/202503111910.ko7pwUem-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250311/202503111910.ko7pwUem-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503111910.ko7pwUem-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/slub_kunit.o
+>> ERROR: modpost: "lp5812_disable_all_leds" [drivers/leds/leds-lp5812.ko] undefined!
+>> ERROR: modpost: "lp5812_enable_disable" [drivers/leds/leds-lp5812.ko] undefined!
+>> ERROR: modpost: "lp5812_set_pwm_dimming_scale" [drivers/leds/leds-lp5812.ko] undefined!
+>> ERROR: modpost: "lp5812_get_pwm_dimming_scale" [drivers/leds/leds-lp5812.ko] undefined!
+>> ERROR: modpost: "lp5812_read" [drivers/leds/leds-lp5812.ko] undefined!
+>> ERROR: modpost: "lp5812_set_phase_align" [drivers/leds/leds-lp5812.ko] undefined!
+>> ERROR: modpost: "lp5812_get_phase_align" [drivers/leds/leds-lp5812.ko] undefined!
+>> ERROR: modpost: "lp5812_read_aep_status" [drivers/leds/leds-lp5812.ko] undefined!
+>> ERROR: modpost: "lp5812_read_auto_pwm_value" [drivers/leds/leds-lp5812.ko] undefined!
+>> ERROR: modpost: "lp5812_read_lsd_status" [drivers/leds/leds-lp5812.ko] undefined!
+WARNING: modpost: suppressed 23 unresolved symbol warnings because there were too many)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
