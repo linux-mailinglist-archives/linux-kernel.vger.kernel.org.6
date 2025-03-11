@@ -1,129 +1,119 @@
-Return-Path: <linux-kernel+bounces-556988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B22F3A5D1F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:48:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B47A5D202
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74623189E110
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:48:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E25217BD1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8B9264A68;
-	Tue, 11 Mar 2025 21:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD750264A8C;
+	Tue, 11 Mar 2025 21:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="irmHBhpo"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="L1OwFySP"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA12221720;
-	Tue, 11 Mar 2025 21:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBFE228C8D;
+	Tue, 11 Mar 2025 21:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741729677; cv=none; b=FrgLeKlzq9yUvXR3ImGWqI9ya+uMjaPjbtLGbiBMJRb9Hvu5ZjH1kxLoXlx4x73hWFjxG6LBC1eY4or6n9gqgRy1OZZAdC2X5ZNzLTfZMqxSIE7VjfvSQpmJmGts2ESgk32ERRxEB3eS1+IK4JuAreHMt0I8HFn8l2g0x64C3ss=
+	t=1741729870; cv=none; b=bX3ZwO9d/HlB+qi8mc3W1gBhq5PK/W2t5eW+i/wZS2MV35UqjsVhi3rdDNElGNdC77wWO7jSBcFiE/1Wub+YCApDwfoG0PmVYRVhcMvK1iVvvvmgLXSTRxc8v2vPdR2zU3YI5DtRTPLdDtgV3Sfs+fTib6BFmoXPwW8ZPo67awA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741729677; c=relaxed/simple;
-	bh=3T4DbaFg18rciOHzFePVLDz+eAOpKoSoMMwqeyCCDOE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NgGyh31DPpBVMEJ5nwjLwV9qeDR113Ite1FZxqZmcEIfGhrjkGAzJhPolTF0He35iJU4widsUP2f0QK7xr+YvwL4di8qY2W/FMKDZbIZ2WbcHfwA3AwrJK/CzPZwkKBcR/y8/giQ1DospuTmUQu/J99j8yWBCfqK7m6a40gHcZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=irmHBhpo; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30b83290b7bso65344021fa.1;
-        Tue, 11 Mar 2025 14:47:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741729674; x=1742334474; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K9vgzU+eZVFcSIn6w6E51XRuCiWeRmIlJU64r3csFlU=;
-        b=irmHBhpoBTXb8D1lNc4V6sNlKpnIJoJIetQV0FOiN/pLaxIhk8SDypN7h0yPsJn9P5
-         f/oPVUVe+amLczKCOlGOze46MKDkXw2skuAfS2GTP9+qbaaFEwsJ5MBaqsCu0wnUsU6K
-         CWte74prQbmAIBBplPzvGRbMMy3qlKA2kkwWRMPTtXiZCSQTViLoBGy9VoHbD4XcPIUU
-         L7YQxfNeuG7+igJUxTc7kEeLo7SKcWpO8of2/im6xIY5mfxRFG2WMHTpGBmK3HelzBTD
-         bkJU/2uqFxWdgymL09ESNlkIKv0CEGbS+TfBOrnvwS1F2yAZVGnkbHNfZR3B9Xid7S1+
-         Bopw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741729674; x=1742334474;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K9vgzU+eZVFcSIn6w6E51XRuCiWeRmIlJU64r3csFlU=;
-        b=iVYTnY4TshFDn8C4QFmJzGO5ySkSf1XtSAcZL4GO7toG/qAncSBAUAwy1USYNBqwQi
-         Vwoqq6eeyJgUctb9d3oQjnAm3d0OiToo9MPdEB5o0mTYXVdZbhRRsiWG3j/sTkAQTX1U
-         7YN0bP7bESqyNh2shtuBfytP5mKOT6w/c7P2gfDPbPxx4Y3yAaq6XPUBEuuD/5J3gSA4
-         50snV+5mhfhfbpf9oeGOD0LfigREblf7WS02UXMnIKWdJL6BFxhpVnVo+ZKPtT+RMjuE
-         lic7//F1pWXVYRYCsDLTgIjC//Pe4md0lZPOyMxwpjHB54xq0Hbes3Wu3effQmTM01Ct
-         BYew==
-X-Forwarded-Encrypted: i=1; AJvYcCWJV9sFoEIjv2gYNg8C224Q8sQNcryB4lPp2+ODsa0DctA1Uy/Dua5WZo0Jxh27Lz5Xg2p2cWRz@vger.kernel.org, AJvYcCXvOJsQko2p+Fjlyj9irCKAFQ0xfXHcmvFTTiIUuduIe+ps5i2MIDL7d4dMfuorE3de0Uq8Qi9M40/GIes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbpzehByr9Ms1Kgz0XaEhwT97ixVYjhIcmCr84tko4sAn4Re6X
-	3MBEHexcxBrUsOFKaY950sYKAinXUbMQCuTADBpAbgLWwTXXuKEcIn0jn6Ky4BU3CiohRseT64Y
-	kmaBLWQhIXh9ba5GYuZIqRaUXCQ==
-X-Gm-Gg: ASbGncs7rl4wfHNblkZcxkR+ydsxX7HGNBwvJ6sVqFsi0Q2YoOT5VzxUdITXKildAMe
-	4xeJwW0ofBCMfc31hOhLmwR2gcPmJrOJpjlkmVkhGOAHNUARA/VCUgFjCs6dCHbh6mlUffCbLwd
-	EbUpQFYJw4KgDME/cVhTkdhS+eeT13pEWi6tV4Nq0/
-X-Google-Smtp-Source: AGHT+IF8xESdXJHMqJ/D9UyFzEiq2RloDH6VkP8Bza5VBEIJMeohMMuQFJRHBfaH+sCixf8rzrKmdEY9nafjRASdd64=
-X-Received: by 2002:a05:6512:3d15:b0:545:60b:f394 with SMTP id
- 2adb3069b0e04-54990e2bcdbmr6813537e87.4.1741729674090; Tue, 11 Mar 2025
- 14:47:54 -0700 (PDT)
+	s=arc-20240116; t=1741729870; c=relaxed/simple;
+	bh=iPijpG+Ein0l65BI0jDKoR2fUUogRl5NRwPh6/WZaI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Yqseo+ndzNbf2NAvkNHeF7+kPEj4+b6COuRB44LXK2oocQwr4RJq35513kpKP3cq/FcTc2uSSzgqdyNYWZse9LOjsp3mPIoh7d9Qp6kptnRsWXtc2Fu0iuHAvIDTrpVrIoosgTDqLngHrNv27yIqC9tVfGaxFT/yRLE2lzDiOPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=L1OwFySP; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741729863;
+	bh=Jn9nRcpdljEQSc2Pubr9/mhILU/2Se6kmSyL0z/RxvA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=L1OwFySPcoRPj25ahpMT27FgIeAV5k7JdpXSIY/cgdjf5BiTeypCTsCJ5yiffwmUr
+	 5lyZpRH1gW9nH/0pgmNq79guntxK81z8vwKCz7kR0nut1hNSHjbsAb2lqKcsqb/xic
+	 Jmw6JelKXAMFEypUkJFpGe8Xh35yoRwxuw4MZgwQgjbH6xaF9HTtD8pJw4pqBzwx4N
+	 PzCFclANprpXoLaUP3oKczsu9aucsdufP3KHUODzAJ3I3EgGApMTrFjXnUsO5/98R5
+	 XtTi665uqqjnJSL+IkngD8B+pmepmlbZfFVo94P+ktcCBjKMC0G8cBWky1+XCBA9Tv
+	 z12LF+jc/DpEw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZC6s21ZXQz4xD9;
+	Wed, 12 Mar 2025 08:51:02 +1100 (AEDT)
+Date: Wed, 12 Mar 2025 08:51:01 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Heiko Stuebner
+ <heiko@sntech.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>, Shawn Lin <shawn.lin@rock-chips.com>
+Subject: Re: linux-next: manual merge of the scsi tree with the rockchip
+ tree
+Message-ID: <20250312085101.58cdd1e5@canb.auug.org.au>
+In-Reply-To: <6134949.lOV4Wx5bFT@earth>
+References: <20250311183524.38989e83@canb.auug.org.au>
+	<6134949.lOV4Wx5bFT@earth>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311102326.GAZ9APHqe5aSQ1m5ND@fat_crate.local>
- <CAMj1kXHTLz4onmR5iyowptRE38RCK4jNT3BoURBkq2FoDOMTxQ@mail.gmail.com>
- <20250311112112.GEZ9AcqM2ceIQVUA0N@fat_crate.local> <20250311131356.GGZ9A3FNOxp32eGAgV@fat_crate.local>
- <20250311143724.GE3493@redhat.com> <20250311174626.GHZ9B28rDrfWKJthsN@fat_crate.local>
- <20250311181056.GF3493@redhat.com> <20250311190159.GIZ9CIp81bEg1Ny5gn@fat_crate.local>
- <20250311192405.GG3493@redhat.com> <CAMzpN2hb7uD6Z410YFPYiGQvsV6-9b8iMXXCtfJYJ7ATwO-L5g@mail.gmail.com>
- <20250311214159.GH3493@redhat.com>
-In-Reply-To: <20250311214159.GH3493@redhat.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Tue, 11 Mar 2025 17:47:42 -0400
-X-Gm-Features: AQ5f1JoR5bIlFE8s6b_lH2efo_DiDc9TYiwcTayS_CBM6l0T4F9nszPzkfD95g4
-Message-ID: <CAMzpN2iDOdn_r2aFipfyx3yKSKcSkQ5U6BpZ84L7i_Q6LmXgbA@mail.gmail.com>
-Subject: Re: [PATCH] x86/stackprotector: fix build failure with CONFIG_STACKPROTECTOR=n
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org, 
-	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>, Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/FN7Hn/ikkX16Gy1WEVHGBJi";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/FN7Hn/ikkX16Gy1WEVHGBJi
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 11, 2025 at 5:42=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wro=
-te:
->
-> On 03/11, Brian Gerst wrote:
-> >
-> > On Tue, Mar 11, 2025 at 3:24=E2=80=AFPM Oleg Nesterov <oleg@redhat.com>=
- wrote:
-> > >
-> > > OK. I'll update the subject/changelog to explain that this is only
-> > > needed for the older binutils and send V2.
-> >
-> > With it conditional on CONFIG_STACKPROTECTOR, you can also drop PROVIDE=
-S().
->
-> Sorry Brian, I don't understand this magic even remotely...
->
-> Do you mean
->
->         -/* needed for Clang - see arch/x86/entry/entry.S */
->         -PROVIDE(__ref_stack_chk_guard =3D __stack_chk_guard);
->         +#ifdef CONFIG_STACKPROTECTOR
->         +__ref_stack_chk_guard =3D __stack_chk_guard;
->         +#endif
->
-> ?
->
-> Oleg.
+Hi Detlev,
 
-Yes.  Also keep the comment about Clang.
+On Tue, 11 Mar 2025 12:24:25 -0400 Detlev Casanova <detlev.casanova@collabo=
+ra.com> wrote:
+>
+> Unfortunately, this fix is incorrect as nodes must be in address order, s=
+o=20
+> ufshc: ufshc@2a2d0000 must be above sfc1: spi@2a300000.
 
+OK, I have switched it around in my resolution.
 
-Brian Gerst
+> As we are close the the merge window, I won't mind if the patches have to=
+ be=20
+> postponed to the next cycle, but some device trees won't build anymore.
+>=20
+> This can also be left as is with a new patch to fix the order (to be back=
+ported=20
+> if needed)
+
+This merge resolution will be redone by Linus when the trees are merged
+during the merge window.  Someone just needs to mention it to him.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/FN7Hn/ikkX16Gy1WEVHGBJi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfQsEUACgkQAVBC80lX
+0Gz7JAf8Cr8W6S71rnAzMEatJm4e/1EyZ4wa2VCifV0GXp8uDevRFwYDvTLvarLf
+DS+Z3zqv07TMkHaVTtonHloI+Kx52IC4PIvFa5S+98VJtQ2Uid56FHuMCwmsQm0U
+K6Ved+GpKYm2Kx7kxhHjcVhiePlMb1/ALbfzM009yORFFhKm1JrW1589tSXWYnr0
+VcVRzCSUaiFvFY26UOvlEWbyhlzSlTUyLMQZaFHqq0q/oKKUEZ6Ah+Z6Iv1aCMMe
+3YC/6l+FtPSVdVoeFDTxwN2C0cHN+K87bRXfEA6z+GEbckrCN9R6HbBU6YBXGgIq
+pz9ltSKtuCxknO6vTVZkdh5Zg6+Rlg==
+=EcRW
+-----END PGP SIGNATURE-----
+
+--Sig_/FN7Hn/ikkX16Gy1WEVHGBJi--
 
