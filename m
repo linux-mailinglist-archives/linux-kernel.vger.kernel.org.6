@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-556192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79E8A5C247
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:19:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95862A5C249
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E32A16F075
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:19:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E273B2529
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEB81D5176;
-	Tue, 11 Mar 2025 13:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3071D5CC7;
+	Tue, 11 Mar 2025 13:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n7rBrxT2"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nGHkQ7zB"
 Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCED71C8636
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BD11D47AD
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741699109; cv=none; b=rdoF/GFS7KJ7Bf+eTmG928uhGIXiio3V3mQjCsqzPkv2RCe8D779zJ+TZX8HkpYoRt+3b67GMa3q5v6MQ9uK1EYLQaLvBhrdxI4LmidWYuaVwTpa4cAyTOx0I1VY3gWFczWfv7FDPBBb+2fX1JND3qgsVlKxythqnCJ/Omg+8fo=
+	t=1741699111; cv=none; b=Uc3e3aPV5hIquyfyY5szLhz5+mSf1wuTtqOQBnJYWGhSeHK363RD/OEmKpgiRLo1MqjRrx/9imS5dcfthNApYpFhTVK8A5sE3sgg9XA+Hswz6ulxt+AFzo06iqCEsARDqpxDfgcvraHd+kO2l5fWfJU34QjSSjeLK6kAxkkxl6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741699109; c=relaxed/simple;
-	bh=7cu9Mo5jePwqRqrQo8QLwmI2cqs8fPM09Kmi4kZUvjs=;
+	s=arc-20240116; t=1741699111; c=relaxed/simple;
+	bh=ZAXSMCvr+IvZnGOVJS0yA66QSG3JhZXcjwBrekeGfBs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jnY9dH5T723J9ody4uWdYv8uk2q+rwn7XlFXQBfMaSA/TJClCoKNhlslTrMjONLbK4QTZ/Nkxtm/iGjjOaz6D8nmmoJOP2RCz0SYpqSFOKNoSs0HX1v/Qccz8RNa+S47vBq4ay26drNdl5BK0jCp3VfjeTXsuV1dEsh8TQRivww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n7rBrxT2; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=HaMIoQBNnBEn+N/LnDn1eefrT6IGInb/qa9iqparaKEIUWVq2ZAdvoAwJlYaAbdfpBDfeUbc8XmWSl/jOamt6gNP/bge4ENfGlYhENeYFmjya287pHJIF7tfXdg2D6wTGK0JjYJxiDzlKlROD0emtsfE0GXNZw22yFHi+FYMqeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nGHkQ7zB; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d01024089so11529915e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:18:27 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43ceed237efso20691295e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:18:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741699106; x=1742303906; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741699108; x=1742303908; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5QUtJ68S5WVMBdPVxDoGekz8XvAVXh0h8UUq5TqoFAw=;
-        b=n7rBrxT2Yk8Ff/HuAbhiwpQDQKDuYlr7cRXL7aJjI61NU3ZU734PgVzJSawdaxQRdJ
-         blvMsdcYwwUzdtosHTMe9ywU+Tcsk/mlYq/n6/4lO1TeY8FvOyXLKhBGZKQpnqflEf6s
-         slXmCM1byGNUDvZYm0opb8lh2Bl/uUzlDrcuMWdicbJKNTMzKc/ZhSbc5zU5lwuwBcDN
-         d+OrCMqqVz18FN/MfKZgQFX+CEwcyEIyiKkgldDSXLMa6hv8y6fzLArN1VwqAthWLdbX
-         Yd32i2kq50JBSvAz92bF3U8u/dW66B9uA2cNqSR8Z63OA9WDpAcNG2uPv5F5rH0EAao+
-         HCWg==
+        bh=LGBb/Y6S3RxkI/6vwf1UwhFj4ViFPcNM6Jmgh/1tpM4=;
+        b=nGHkQ7zBfBAh0E2oqdVC8DoeXRBzDb5o6fd/qxgNVftEh5BfS8V8XMefPQupXWT6Cw
+         OoQww4SZpH+2vtD0gKBju3YWOhP/JOvNWxnjtmAX5s+LhY3ahfCfVTWaSFD+yjeyK9lF
+         ADOR8NupGkadboMHeDH0b4p0zjHiLs06Z4MNs4l9kHO0Ko6F01ojAkRgm4xdYJWq1M6K
+         6ORviiK+WXuyCoAXtM06rvSCk66nKR7C++Xlk5Ct5ruvb8JE8RGCaP1ehJ6fteyireFt
+         gqsgKZcmBi23+CC4RMepurGCXka1zQ3mGBvEO2HUgqiN53E/O4MNM6yn3WgURyFj0DzD
+         V4Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741699106; x=1742303906;
+        d=1e100.net; s=20230601; t=1741699108; x=1742303908;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5QUtJ68S5WVMBdPVxDoGekz8XvAVXh0h8UUq5TqoFAw=;
-        b=upSiTVU2tvnX9KwJ+yfqub7XfI1t1oXmYCpH0CJPVNiyGTgyFFdQledJEnIbEKNNNr
-         xiK+6Uh+w3UsHeGg28+ilvtHBG2CueM4bBVxWaJajMkOXaZW3//8M7R8L+7Qpp+t3FD5
-         TZxKBoNjyz2zwJLg6Qidwgi7WWd3AYV8rAQyutOGUWsvhKb8CdYVztw7hR7Emt3G3rMf
-         mM/PNGp4YZwUaYR/drDoP48+23ASTDtWNqTvPqomV3by2SagtT4uwnvsp13CkTRN7fHZ
-         GM4TZ/FDPVcSscpSTjfdkhfLb/pc7c1CZmj3NUf+xTEJKGl82kNOTMXQbmmru0ZmI0dm
-         VR9g==
-X-Forwarded-Encrypted: i=1; AJvYcCX/Ua8n3pioRKDgQZr+Fp0DOz1PD8KaPYZR9AqCrjORm6rm4Kp3I9UytF0C5g3JXjq7YXTBqMMRxPTyvBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7+x/0Np1ImqxBjVGp7h+F6xjw0g/qlFGV67GBFAQ2N5vslukb
-	/ZyVTtIeF397HJeV6EzHN95qaVzB2ayYY5HRKompQB781DJSaSeJHkxqwtcWD2NOJPZsXgsFYYT
-	DhmSub7sBxg==
-X-Google-Smtp-Source: AGHT+IHToyTOs3PPNxoBJUiCtaIlgO3ErHmKsYxSiQO/bRF9eUGsPTje1OCUomarBDaBQGTLwh5n+zuKNOR9zw==
-X-Received: from wmbet7.prod.google.com ([2002:a05:600c:8187:b0:43c:fad4:7595])
+        bh=LGBb/Y6S3RxkI/6vwf1UwhFj4ViFPcNM6Jmgh/1tpM4=;
+        b=fh/Pq/CET2w41xUVUve8E4mTRb+MmVaDZ3qWYCgAHAjX6FZiITEJNnuYOAwLC+jgZC
+         UYNUrhzs4CzUrbJZHPT/hRCtALJGRxG0Jd/e1Nw+sw2fu3Nz8Fl0Au9xwuP9phU0J7JP
+         zAjkB7ZPLcxw60az9zRYoXbO/TKzGGXOoYcoiTbttmSy77iHL3nOnicYPuXsTBkd9xFj
+         1SEypgTdEVgDFJi3Lbr/jAj4nmG78U1AQ90iOgRBJk1WR8llZn/+PtZmw8O4YHLilOY4
+         A4fW+JriRrsyrxxHSb8b4peI3ixV0pPGDHG1tJIf9/cERfB6at6RPc+p8ky9JqEIO8n1
+         JjvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIik+28nmWACHK05hXLH/NWl9Ghn2FXocuzjDC45WP4kx0L3lsuWGReWa6bH9fmYiJ0Td3TaetH6t1aYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+IwA9gNdEymRBfNRw2oRlmA5qEqtx4mVSn4epcSLe7wRYaJyv
+	RMWRx0EpIUHSieuaovifc0Pw1NHqc9xDREyUrO0TbdAmvoBZv8fOCUAzt+WVt7rMUWvghe6snWR
+	Oiuk9j2F7Qg==
+X-Google-Smtp-Source: AGHT+IEB4Ugao+9oG4PoYlVLqRx0MnCh6L1DYai8LwtyRUN8s3dqA+kO7+QszcVXjAFc8ZgqGgWa+WHaCnWckQ==
+X-Received: from wmbhc25.prod.google.com ([2002:a05:600c:8719:b0:43c:fce2:1db2])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3554:b0:43c:fffc:787b with SMTP id 5b1f17b1804b1-43cfffc7b0fmr77724175e9.12.1741699106174;
- Tue, 11 Mar 2025 06:18:26 -0700 (PDT)
-Date: Tue, 11 Mar 2025 13:18:15 +0000
+ 2002:a05:600c:4e8f:b0:43c:f184:2e16 with SMTP id 5b1f17b1804b1-43d01bd2167mr54372315e9.5.1741699108122;
+ Tue, 11 Mar 2025 06:18:28 -0700 (PDT)
+Date: Tue, 11 Mar 2025 13:18:16 +0000
 In-Reply-To: <20250311-mm-selftests-v4-0-dec210a658f5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250311-mm-selftests-v4-0-dec210a658f5@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20250311-mm-selftests-v4-4-dec210a658f5@google.com>
-Subject: [PATCH v4 04/12] selftests/mm/uffd: Rename nr_cpus -> nr_parallel
+Message-ID: <20250311-mm-selftests-v4-5-dec210a658f5@google.com>
+Subject: [PATCH v4 05/12] selftests/mm: Print some details when uffd-stress
+ gets bad params
 From: Brendan Jackman <jackmanb@google.com>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
 	Shuah Khan <shuah@kernel.org>
@@ -82,176 +83,27 @@ Cc: Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org, linux-kselftest@vger.kernel
 	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-A later commit will bound this variable so it no longer necessarily
-matches the number of CPUs. Rename it appropriately.
+So this can be debugged more easily.
 
-Reviewed-by: Dev Jain <dev.jain@arm.com>
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- tools/testing/selftests/mm/uffd-common.c     |  8 ++++----
- tools/testing/selftests/mm/uffd-common.h     |  2 +-
- tools/testing/selftests/mm/uffd-stress.c     | 28 ++++++++++++++--------------
- tools/testing/selftests/mm/uffd-unit-tests.c |  2 +-
- 4 files changed, 20 insertions(+), 20 deletions(-)
+ tools/testing/selftests/mm/uffd-stress.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
-index 7ad6ba660c7d6f1f5762d0b231b92b05e971a3c5..dd01d2c95175b0329a75e220d2f43c915261090c 100644
---- a/tools/testing/selftests/mm/uffd-common.c
-+++ b/tools/testing/selftests/mm/uffd-common.c
-@@ -10,7 +10,7 @@
- #define BASE_PMD_ADDR ((void *)(1UL << 30))
- 
- volatile bool test_uffdio_copy_eexist = true;
--unsigned long nr_cpus, nr_pages, nr_pages_per_cpu, page_size;
-+unsigned long nr_parallel, nr_pages, nr_pages_per_cpu, page_size;
- char *area_src, *area_src_alias, *area_dst, *area_dst_alias, *area_remap;
- int uffd = -1, uffd_flags, finished, *pipefd, test_type;
- bool map_shared;
-@@ -269,7 +269,7 @@ void uffd_test_ctx_clear(void)
- 	size_t i;
- 
- 	if (pipefd) {
--		for (i = 0; i < nr_cpus * 2; ++i) {
-+		for (i = 0; i < nr_parallel * 2; ++i) {
- 			if (close(pipefd[i]))
- 				err("close pipefd");
- 		}
-@@ -365,10 +365,10 @@ int uffd_test_ctx_init(uint64_t features, const char **errmsg)
- 	 */
- 	uffd_test_ops->release_pages(area_dst);
- 
--	pipefd = malloc(sizeof(int) * nr_cpus * 2);
-+	pipefd = malloc(sizeof(int) * nr_parallel * 2);
- 	if (!pipefd)
- 		err("pipefd");
--	for (cpu = 0; cpu < nr_cpus; cpu++)
-+	for (cpu = 0; cpu < nr_parallel; cpu++)
- 		if (pipe2(&pipefd[cpu * 2], O_CLOEXEC | O_NONBLOCK))
- 			err("pipe");
- 
-diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
-index a70ae10b5f6206daecc8e19ed3e3bbb388e265aa..7700cbfa397563d2f2bc82be45f96f2fc2032bbe 100644
---- a/tools/testing/selftests/mm/uffd-common.h
-+++ b/tools/testing/selftests/mm/uffd-common.h
-@@ -98,7 +98,7 @@ struct uffd_test_case_ops {
- };
- typedef struct uffd_test_case_ops uffd_test_case_ops_t;
- 
--extern unsigned long nr_cpus, nr_pages, nr_pages_per_cpu, page_size;
-+extern unsigned long nr_parallel, nr_pages, nr_pages_per_cpu, page_size;
- extern char *area_src, *area_src_alias, *area_dst, *area_dst_alias, *area_remap;
- extern int uffd, uffd_flags, finished, *pipefd, test_type;
- extern bool map_shared;
 diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
-index 91174e9425cde2500b459db78cb27adda6647b55..d6b57e5a2e1d7611aa1588ee41601ce16117a574 100644
+index d6b57e5a2e1d7611aa1588ee41601ce16117a574..4ba5bf13a0108435ce8b53340b9e17ccd47e859e 100644
 --- a/tools/testing/selftests/mm/uffd-stress.c
 +++ b/tools/testing/selftests/mm/uffd-stress.c
-@@ -180,12 +180,12 @@ static void *background_thread(void *arg)
- static int stress(struct uffd_args *args)
- {
- 	unsigned long cpu;
--	pthread_t locking_threads[nr_cpus];
--	pthread_t uffd_threads[nr_cpus];
--	pthread_t background_threads[nr_cpus];
-+	pthread_t locking_threads[nr_parallel];
-+	pthread_t uffd_threads[nr_parallel];
-+	pthread_t background_threads[nr_parallel];
+@@ -457,7 +457,8 @@ int main(int argc, char **argv)
  
- 	finished = 0;
--	for (cpu = 0; cpu < nr_cpus; cpu++) {
-+	for (cpu = 0; cpu < nr_parallel; cpu++) {
- 		if (pthread_create(&locking_threads[cpu], &attr,
- 				   locking_thread, (void *)cpu))
- 			return 1;
-@@ -203,7 +203,7 @@ static int stress(struct uffd_args *args)
- 				   background_thread, (void *)cpu))
- 			return 1;
- 	}
--	for (cpu = 0; cpu < nr_cpus; cpu++)
-+	for (cpu = 0; cpu < nr_parallel; cpu++)
- 		if (pthread_join(background_threads[cpu], NULL))
- 			return 1;
- 
-@@ -219,11 +219,11 @@ static int stress(struct uffd_args *args)
- 	uffd_test_ops->release_pages(area_src);
- 
- 	finished = 1;
--	for (cpu = 0; cpu < nr_cpus; cpu++)
-+	for (cpu = 0; cpu < nr_parallel; cpu++)
- 		if (pthread_join(locking_threads[cpu], NULL))
- 			return 1;
- 
--	for (cpu = 0; cpu < nr_cpus; cpu++) {
-+	for (cpu = 0; cpu < nr_parallel; cpu++) {
- 		char c;
- 		if (bounces & BOUNCE_POLL) {
- 			if (write(pipefd[cpu*2+1], &c, 1) != 1)
-@@ -246,11 +246,11 @@ static int userfaultfd_stress(void)
- {
- 	void *area;
- 	unsigned long nr;
--	struct uffd_args args[nr_cpus];
-+	struct uffd_args args[nr_parallel];
- 	uint64_t mem_size = nr_pages * page_size;
- 	int flags = 0;
- 
--	memset(args, 0, sizeof(struct uffd_args) * nr_cpus);
-+	memset(args, 0, sizeof(struct uffd_args) * nr_parallel);
- 
- 	if (features & UFFD_FEATURE_WP_UNPOPULATED && test_type == TEST_ANON)
- 		flags = UFFD_FEATURE_WP_UNPOPULATED;
-@@ -325,7 +325,7 @@ static int userfaultfd_stress(void)
- 		 */
- 		uffd_test_ops->release_pages(area_dst);
- 
--		uffd_stats_reset(args, nr_cpus);
-+		uffd_stats_reset(args, nr_parallel);
- 
- 		/* bounce pass */
- 		if (stress(args)) {
-@@ -359,7 +359,7 @@ static int userfaultfd_stress(void)
- 
- 		swap(area_src_alias, area_dst_alias);
- 
--		uffd_stats_report(args, nr_cpus);
-+		uffd_stats_report(args, nr_parallel);
- 	}
- 	uffd_test_ctx_clear();
- 
-@@ -453,9 +453,9 @@ int main(int argc, char **argv)
- 		return KSFT_SKIP;
- 	}
- 
--	nr_cpus = sysconf(_SC_NPROCESSORS_ONLN);
-+	nr_parallel = sysconf(_SC_NPROCESSORS_ONLN);
- 
--	nr_pages_per_cpu = bytes / page_size / nr_cpus;
-+	nr_pages_per_cpu = bytes / page_size / nr_parallel;
+ 	nr_pages_per_cpu = bytes / page_size / nr_parallel;
  	if (!nr_pages_per_cpu) {
- 		_err("invalid MiB");
- 		usage();
-@@ -466,7 +466,7 @@ int main(int argc, char **argv)
- 		_err("invalid bounces");
+-		_err("invalid MiB");
++		_err("pages_per_cpu = 0, cannot test (%lu / %lu / %lu)",
++			bytes, page_size, nr_parallel);
  		usage();
  	}
--	nr_pages = nr_pages_per_cpu * nr_cpus;
-+	nr_pages = nr_pages_per_cpu * nr_parallel;
  
- 	printf("nr_pages: %lu, nr_pages_per_cpu: %lu\n",
- 	       nr_pages, nr_pages_per_cpu);
-diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testing/selftests/mm/uffd-unit-tests.c
-index 74c8bc02b5063f4667c4284c432edc7dee7ba3a5..24ea82ee223184612781adc852460138c4fe28f0 100644
---- a/tools/testing/selftests/mm/uffd-unit-tests.c
-+++ b/tools/testing/selftests/mm/uffd-unit-tests.c
-@@ -198,7 +198,7 @@ uffd_setup_environment(uffd_test_args_t *args, uffd_test_case_t *test,
- 
- 	nr_pages = UFFD_TEST_MEM_SIZE / page_size;
- 	/* TODO: remove this global var.. it's so ugly */
--	nr_cpus = 1;
-+	nr_parallel = 1;
- 
- 	/* Initialize test arguments */
- 	args->mem_type = mem_type;
 
 -- 
 2.49.0.rc0.332.g42c0ae87b1-goog
