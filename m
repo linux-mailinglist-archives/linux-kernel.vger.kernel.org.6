@@ -1,89 +1,76 @@
-Return-Path: <linux-kernel+bounces-555333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD1DA5B5CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:22:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D35A5B5B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:20:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4600E7A1D61
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:21:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106683AA358
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B341E3DD3;
-	Tue, 11 Mar 2025 01:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73491E47CA;
+	Tue, 11 Mar 2025 01:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Wi0Fzjmm"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="U18SOVj7"
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4191E1A17;
-	Tue, 11 Mar 2025 01:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE92B1E0DE8;
+	Tue, 11 Mar 2025 01:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741656031; cv=none; b=g9SwXb2/5lyzImvQrj9zzvD8fj6N/nj7b9XxiZZK1MEsW3lwAJd8RIEsZp2JXNDzPa7bgYKpvsqZxVXr1ZBuiZ5Pgm2FkshyWG63x0Q2t2RfoweO1Os/RmiymdvbHAGUPiVoqAaRLIBTCktSKPNjY6ztjUCntOrlRr0bxUFqoZs=
+	t=1741655992; cv=none; b=EeDxVvJXQvQtgkZYNslQ+y9QIjKJhsnjHqEJuid07ZEhQdFEIQg3HDlK1x8PvSnHuSo+vEvPXQi2IEYLni5n99XJR3i5LE2qMQlR5ib8JBx4Lm7RwYgWcsVRLMbfs3sTHR7xmyluTcXWXB24NwZ+vdv010Osx7fFAQrP7e7ckJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741656031; c=relaxed/simple;
-	bh=34R4iBMYkNwIZW2c4Jm/VrAGEpij9SqFvkCLwnE1iQg=;
+	s=arc-20240116; t=1741655992; c=relaxed/simple;
+	bh=cRysWTu/ZgnC0ySgI+aRJu91jCLYtgyYkA8YrYHMMQI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WJpi+HRh0pBUdpcmwquXhvW9zy08e7osvlUqAfZ7dt0oPcqT/bmM4NKpu5J1Ky72yuNpyb5v+csXR3zm0TvMP325wwDH0bjnXHxQTfs6QKgA+36dJ+vyZZvgjKGzocDx5FdfWBoL1Lnq8YvuJL0ObHt+nA9vyDL/pTSYfdzjHCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Wi0Fzjmm; arc=none smtp.client-ip=205.220.177.32
+	 MIME-Version:Content-Type; b=qEAaSSmJV+Pqlls66SgHyTJs3ft3V+sw93Nbv5VffKNjyA31U6su3zXV+bBu1W4tecNzb9/wfwRYbb+Bapmw5xm6e7YHbsyG8GISz5VhYXYlf1ktIZfU4C4FNvNQL7bpRSmL9ToRBbi9nDN5my3ZK0aupkzl25Jiw07fK3aK1fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=U18SOVj7; arc=none smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52ALgTYm017881;
-	Tue, 11 Mar 2025 01:19:47 GMT
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52ALgTxX009907;
+	Tue, 11 Mar 2025 01:19:48 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=O1l3Q6hdDfVpSHm5BOkDpAGIeyKt2R2zixyQs3hB5Xw=; b=
-	Wi0Fzjmmpmi5HDDQeQkraouJn6JosnFRFlmZMzfJmL2AI9gjmleP/5IikaO7TOgM
-	f/SVeMEzQK+G2nFx7pIXEYphRaa8d6oM8qbnnVGofEk1YvBUY+lUX5PqATiOx7lq
-	mGr1vwKw09o0tD/qRJOng8PU+ujEpQnc0zT8pBOj9++ma+594zpI4VQglIvI/NMy
-	fa7gJQkiT+rkLWaiq9R5nrQiU9VaO5YR1607ayBA9eNMAlRXf1y1kvONWbxCY6EL
-	hUSSj23TGJ3sNgNEtGi3nnfo746rHNoE5rpH16MWrz2J9Q3jN55R5JQSvLcFuaqU
-	ujkwmu7Y6IfeBRn8/1C7ww==
+	corp-2023-11-20; bh=BPOX8QjtM4ikjrrtiAcfOMpTH31E248pB9JcFq7Mgjg=; b=
+	U18SOVj7WWMpPW8gHhJ5SuiqBC7Rmwx2267yT6oH0dkY0SetXv7KoE2dGdMt+oiu
+	l8Cypm+2UcdY3LZpXQrTrEehmvp4I727Lbb2nUHJikgMRAnKrInQl1DRmULnEd5Q
+	70MQXZ9/vcbFLWmBSwGVfy4a8RY53ERmbWaz2R6x2kHXlJWo31AOpM9aYWHtt9Iv
+	AKcNkgUIS6/NZmhAngKCWmid6eWJzNMJhuMSJ5qP7SnfgMNcZ1+xNJeHKdRnXNWR
+	4nVY7lotnhuTwI7bkD43zegKbEEg7KoWv1FH/IrtI2FyFNysD9GIef120xBeWB8i
+	e3XQF2JTm+N/snJn8qlAfw==
 Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 458cp33vvg-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 458dgt3u5w-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Tue, 11 Mar 2025 01:19:47 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52B09KML014954;
-	Tue, 11 Mar 2025 01:19:46 GMT
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52ANtQkq017073;
+	Tue, 11 Mar 2025 01:19:47 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 458cbencnj-1
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 458cbencns-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Mar 2025 01:19:46 +0000
+	Tue, 11 Mar 2025 01:19:47 +0000
 Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52B1JfrJ014960;
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52B1JfrN014960;
 	Tue, 11 Mar 2025 01:19:46 GMT
 Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 458cbencm8-7;
-	Tue, 11 Mar 2025 01:19:45 +0000
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 458cbencm8-9;
+	Tue, 11 Mar 2025 01:19:46 +0000
 From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-scsi@vger.kernel.org, codalist@coda.cs.cmu.edu,
-        linux-nfs@vger.kernel.org, nicolas.bouchinet@clip-os.org
+To: Thorsten Blum <thorsten.blum@linux.dev>
 Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-        Clemens Ladisch <clemens@ladisch.de>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-        Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-        Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>,
-        Anna Schumaker <anna@kernel.org>, Bart Van Assche <bvanassche@acm.org>,
-        Zhu Yanjun <yanjun.zhu@linux.dev>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Joel Granados <joel.granados@kernel.org>
-Subject: Re: (subset) [PATCH v2 0/6] Fixes multiple sysctl bound checks
-Date: Mon, 10 Mar 2025 21:19:06 -0400
-Message-ID: <174165505001.528513.14421854436163772182.b4-ty@oracle.com>
+        linux-hardening@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: target: Replace deprecated strncpy() with strscpy()
+Date: Mon, 10 Mar 2025 21:19:08 -0400
+Message-ID: <174165505011.528513.5802380818483016300.b4-ty@oracle.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
-References: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
+In-Reply-To: <20250302225641.245127-2-thorsten.blum@linux.dev>
+References: <20250302225641.245127-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,30 +83,31 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-11_01,2025-03-07_03,2024-11-22_01
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0 spamscore=0
- mlxlogscore=999 malwarescore=0 suspectscore=0 mlxscore=0 bulkscore=0
+ mlxlogscore=820 malwarescore=0 suspectscore=0 mlxscore=0 bulkscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
  definitions=main-2503110007
-X-Proofpoint-GUID: dLkaRhK_qqdeCFBaLV_uVw2BUsIaNlNk
-X-Proofpoint-ORIG-GUID: dLkaRhK_qqdeCFBaLV_uVw2BUsIaNlNk
+X-Proofpoint-GUID: Spes4Umjs7KcsA6g-EEMvnBpsvrUUmi3
+X-Proofpoint-ORIG-GUID: Spes4Umjs7KcsA6g-EEMvnBpsvrUUmi3
 
-On Mon, 24 Feb 2025 10:58:15 +0100, nicolas.bouchinet@clip-os.org wrote:
+On Sun, 02 Mar 2025 23:56:41 +0100, Thorsten Blum wrote:
 
-> This patchset adds some bound checks to sysctls to avoid negative
-> value writes.
+> strncpy() is deprecated for NUL-terminated destination buffers; use
+> strscpy() instead. The destination buffer db_root is only used with "%s"
+> format strings and must therefore be NUL-terminated, but not NUL-padded.
 > 
-> The patched sysctls were storing the result of the proc_dointvec
-> proc_handler into an unsigned int data. proc_dointvec being able to
-> parse negative value, and it return value being a signed int, this could
-> lead to undefined behaviors.
-> This has led to kernel crash in the past as described in commit
-> 3b3376f222e3 ("sysctl.c: fix underflow value setting risk in vm_table")
+> Use scnprintf() because snprintf() could return a value >= DB_ROOT_LEN
+> and lead to an out-of-bounds access. This doesn't happen because count
+> is explicitly checked against DB_ROOT_LEN before. However, scnprintf()
+> always returns the number of characters actually written to the string
+> buffer, which is always within the bounds of db_root_stage, and should
+> be preferred over snprintf().
 > 
 > [...]
 
 Applied to 6.15/scsi-queue, thanks!
 
-[4/6] sysctl: Fixes scsi_logging_level bounds
-      https://git.kernel.org/mkp/scsi/c/2cef5b4472c6
+[1/1] scsi: target: Replace deprecated strncpy() with strscpy()
+      https://git.kernel.org/mkp/scsi/c/dfb7df1ddb29
 
 -- 
 Martin K. Petersen	Oracle Linux Engineering
