@@ -1,91 +1,84 @@
-Return-Path: <linux-kernel+bounces-555941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64115A5BE97
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:13:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B78A5BE9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C659B1898567
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:13:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2813A1898531
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C714254868;
-	Tue, 11 Mar 2025 11:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EAD253F02;
+	Tue, 11 Mar 2025 11:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqFu/7Ip"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t4HOG6zp"
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A342253B5C;
-	Tue, 11 Mar 2025 11:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9082E238D5F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741691588; cv=none; b=a1Vf0iNpr0EvtrcNPgORkfPBGTqpmQaYua3rx4IWgpalYv7fHVfZzn7+O+d0BKIVOio04dQ+Q5NVhOu9WiSlqZmheqLV+ltAhW1J8sBH1RG4ag6fjEDjirjX9YnbAJ4QXCMmA5cVd0PukCg75l44qZstdxg8h13YDzDBR7xqIow=
+	t=1741691614; cv=none; b=piLRQt0NmPa9MAfAIjtn1Afrae7mYLDEigg+Eb2n3LgOB5fYJj82jWgz4+sdPVPaFUhcK/bNenBLlQZ0sqY6UFJg5LB3rWPOhkGnTwCb1Gyt7FwKfzGEVZlBw2WwMQ/mCAuGkMvLjMhTCTM2pUTm2kO9JgokyI0U84oGl8Jf8Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741691588; c=relaxed/simple;
-	bh=MCSFipezs08azWSv6XDg9ZURoBjjcv5P3dlnKmvdUpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lLbcbFhADMua3waEo2nuG21AgnlGFrRqJHM8076JVggKdMrjQSJqwJwORsAmBAMypH9m/UZMSHnE5/UcAe1zqKjTcIW+wie1SQ8DW/9SlAKM9CH/EFpAep8zMhT4Nv9o99YVLug58K1hC6nNW/aA94mXX/7lXM/rhlnJt52KTrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqFu/7Ip; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3AE7C4CEE9;
-	Tue, 11 Mar 2025 11:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741691587;
-	bh=MCSFipezs08azWSv6XDg9ZURoBjjcv5P3dlnKmvdUpM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tqFu/7IpDtcBQ4/PT1umuRXF95PiBTRqR2DxX54smhTGURBCEYbsgHjeyK3ofIZ4t
-	 JefS59LspRXUHhJcnRhulCNd1qrXR0VQTUCnvulwPmXOtVGM1kGGpiXG9WAcqcY2w8
-	 tqsRgt8+U9FvSzzf73QDrtxLl38LExA4FgpB3hxiW29WTYqXE9PZljIkPv1vmlJMW9
-	 Ookgy7IBhKoUHIm5dEepNUfI9BJUkpmfbkAL4OwN/QRMFXFEOLJ0BdOafrHIMiYOId
-	 Jck67SEeFPW2X9O1kk1HGJ7gxyWhGeWfLJiboDRCLDa+orLhmBLNYwWUN9QqI9Hkg8
-	 T7lhsXP1xncdg==
-Date: Tue, 11 Mar 2025 12:13:01 +0100
-From: Simon Horman <horms@kernel.org>
-To: Uday Shankar <ushankar@purestorage.com>
-Cc: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH net-next v5 2/2] netconsole: allow selection of egress
- interface via MAC address
-Message-ID: <20250311111301.GL4159220@kernel.org>
-References: <20250220-netconsole-v5-0-4aeafa71debf@purestorage.com>
- <20250220-netconsole-v5-2-4aeafa71debf@purestorage.com>
- <20250225144035.GY1615191@kernel.org>
- <Z8tS5t+warQdwFTs@dev-ushankar.dev.purestorage.com>
+	s=arc-20240116; t=1741691614; c=relaxed/simple;
+	bh=ZSfnlQTOZD8O0fLofbS5GkGXGqJx98kuofJ7wgZMeTE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r1XkaB7icDvL9A26LIwPMUIk13/0di6i5TQUNQJ1CbtuXwyAq4p4woKFerTRdqG3VcjuaiUxFMLfgXM7yodJFevC3AfY5NPLSPJRx/BbG2JV+3mlGvpIhpRRHZQMx07EInb3BxT6HebJTNP+JrgXKnN9KQcfo3l7mxVtnjKh8JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t4HOG6zp; arc=none smtp.client-ip=95.215.58.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741691610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HfPMogj46GXj+PK6wnAMkLlFbwsd12CYKYgvhpu8sPY=;
+	b=t4HOG6zpcaANRvzYUVZLQbuMvGQ0/yUxrJ2bqnY+oHDmVT0FYsg8KIRZVGeC9eekxEUWKf
+	RvgymgbuzlqBFqooyjMILKTR94Z8ZezDVo/3EIzKescXENbbQwet1xHAxMJQWxqH/ZDonD
+	eAptpFSq+FUwnJ7eXFyJAYWWxPTCoDE=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] bcachefs: Use max() to improve gen_after()
+Date: Tue, 11 Mar 2025 12:13:11 +0100
+Message-ID: <20250311111310.495922-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8tS5t+warQdwFTs@dev-ushankar.dev.purestorage.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Mar 07, 2025 at 01:11:18PM -0700, Uday Shankar wrote:
-> On Tue, Feb 25, 2025 at 02:40:35PM +0000, Simon Horman wrote:
-> > Reviewed-by: Simon Horman <horms@kernel.org>
-> 
-> Hey, since this has gotten quiet for a while, just wanted to confirm
-> that there's no action needed from my end? Is this in the queue for
-> net-next?
+Use max() to simplify gen_after() and improve its readability.
 
-Hi Uday,
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ fs/bcachefs/buckets.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-It seems that this series has been marked as Changes Requested in
-patchwork, which may explain the lack of progress. But that designation
-doesn't seem correct to me. So let's see if this can move this series
-back into the queue for the maintainers.
-
+diff --git a/fs/bcachefs/buckets.h b/fs/bcachefs/buckets.h
+index a9acdd6c0c86..124ac380b22e 100644
+--- a/fs/bcachefs/buckets.h
++++ b/fs/bcachefs/buckets.h
+@@ -167,9 +167,7 @@ static inline int gen_cmp(u8 a, u8 b)
+ 
+ static inline int gen_after(u8 a, u8 b)
+ {
+-	int r = gen_cmp(a, b);
+-
+-	return r > 0 ? r : 0;
++	return max(0, gen_cmp(a, b));
+ }
+ 
+ static inline int dev_ptr_stale_rcu(struct bch_dev *ca, const struct bch_extent_ptr *ptr)
 -- 
-pw-bot: under-review
+2.48.1
+
 
