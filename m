@@ -1,155 +1,154 @@
-Return-Path: <linux-kernel+bounces-555575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA21A5B9D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:31:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EED86A5B9D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:32:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78FDD1894304
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:31:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DA761895194
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3322222CD;
-	Tue, 11 Mar 2025 07:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD32221576;
+	Tue, 11 Mar 2025 07:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hm9JOtjc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Gl+Q5VdC"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7D11F874E
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2815B1E7C06;
+	Tue, 11 Mar 2025 07:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741678259; cv=none; b=XUiIGpralCI7Yx/W8zvZol6Ak7r+Zxjxd6xKqmDEd53c5CC1qIGQof5quxgDXDfNjwUCy0md42AzGUMIRJz1qA01LE4dDNyQ6/1IcqSIPD7Bw3uxPnhbczEGhap99MxD/rgBT2EUMCFvp/EbGnK+vrAM0wFtLzT0NEn4bF+IIiY=
+	t=1741678352; cv=none; b=Z60X+KX/S0i48IxyaYstk3yZE5v1lSnvJk+AoimAQV5vin4wvpneRAxTCVDKMnGjwKGp3N3S48yp55QOKLLFce/2Sj9fDrzSnAfLoGEobhXITuXN8cyeBQfa1szz5DG/Aha/Qqz+Iv1w3Sa2PFwdRER1OMyFzmTgpzQy0JVfCi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741678259; c=relaxed/simple;
-	bh=6ptZt8W9PzGYxBsoNW9hgth6W4PsnPj1HOAvttTz8uw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZCOTSzu4BgVoryDZ6K0HUHbnw5Vt5HTUvvkP8uUYig6tSBQ1NYgNwgYXDZtoAj43eGJ3vWduq8tLIIikCzWis2j5rINor/guMpVng2ycFIewhk6wnvtkSwzHICOJMd2vIA+lGbJVTw7W+3Ztrad9hEvIte6JaFldatyowppUto8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hm9JOtjc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF120C4CEE9;
-	Tue, 11 Mar 2025 07:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741678259;
-	bh=6ptZt8W9PzGYxBsoNW9hgth6W4PsnPj1HOAvttTz8uw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hm9JOtjcqc1SNJz4wc5g8742zi6JTP1ZsA53aqShmsFgc/9mO5aPMDhxqpEI9ZYN4
-	 7/W5iMWLwSEbqzmC0fjowOo2zu3JC3mlslxTCFRflQV3VV1X+QAtcaegD9kftiZaSL
-	 fM4atI9YqgbPAkiLOm7kVAp+Ax/JnsZaB+fYNVw6vL7koJkEzFB8yRLm+fVXNROOdD
-	 j9b2VFGqt3C7xVjj07QRIXrSZN/WdH7rkJbige+2IldRf5KwxkE7GhjjHx4XSsKa9N
-	 mOypXMkv90n66EbgpXGMj2txElg1PnkxDQSaJqyjC76Y78PUWSbvGfAJdOP+r7A5UY
-	 e/YV7JXHBdxrQ==
-Date: Tue, 11 Mar 2025 08:30:56 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Michael Trimarchi <michael@amarulasolutions.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Tejas Vipin <tejasvipin76@gmail.com>, Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2] drm/panel/synaptics-r63353: Use _multi variants
-Message-ID: <20250311-warm-icy-rottweiler-cefcdd@houat>
-References: <20250310-mipi-synaptic-1-v2-1-20ee4397c670@redhat.com>
+	s=arc-20240116; t=1741678352; c=relaxed/simple;
+	bh=Ya6le97lQO/QUzfLoztyjsewtNn6ASubIT9SkgopjuE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EnsWlYOlPlA7ea/YbtR+zrHcueRg+jkjs7F4OfbOvryB1ls9/Hl67SxruB5iUK5+2feFMDgNA7OzxmbJuoODrrqetiDHr9OKxapvpzRRogveOhKt16sf0mA0VLydx93UCr6bPVXK+0zgJbu6dZQ2fTRgWjLQSnFk57sqxvZzYkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Gl+Q5VdC; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52B7WING699670
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 02:32:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741678339;
+	bh=SV7h4ls8IB7WbhH4rLYzHQP8pvDUXO29NP9uDd/G99g=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Gl+Q5VdCOk2Jt5F2GpIdEvc9OC9FNT8oJEQlDLVGsHP4gFb+C8D47CsoODSuJbidw
+	 i2g7qZ1NB8jXzS7Fl7TWLDK3gmdm9Q1BAAwM5PxIJ/AC4wSk+9ZgPxzbDTiL+4nFRl
+	 yRAIIPoBSysf0Ov+Oe9EnWbv57invSfO5yjO14QI=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52B7WI1Z003237
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 11 Mar 2025 02:32:18 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
+ Mar 2025 02:32:18 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 11 Mar 2025 02:32:18 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52B7WHV9008584;
+	Tue, 11 Mar 2025 02:32:18 -0500
+Date: Tue, 11 Mar 2025 13:02:16 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
+        <vigneshr@ti.com>, <manivannan.sadhasivam@linaro.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <rogerq@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+Subject: Re: [PATCH] PCI: j721e: Fix the value of linkdown_irq_regfield for
+ J784S4
+Message-ID: <20250311073216.ynw7rzmu36dwywij@uda0492258>
+References: <20250305132018.2260771-1-s-vadapalli@ti.com>
+ <20250310210746.GA2377483@rocinante>
+ <20250311051806.smcu4o4dxpngimth@uda0492258>
+ <20250311072546.GA277060@rocinante>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3msoj54ufxrpizvm"
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20250310-mipi-synaptic-1-v2-1-20ee4397c670@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250311072546.GA277060@rocinante>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+On Tue, Mar 11, 2025 at 04:25:46PM +0900, Krzysztof Wilczyński wrote:
+> Hello,
+> 
+> > > > Hence, set 'linkdown_irq_regfield' to the macro 'J7200_LINK_DOWN' which
+> > > > expands to BIT(10) and was first defined for the J7200 SoC. Other SoCs
+> > > > already reuse this macro since it accurately represents the link-state
+> > > > field in their respective "PCIE_INTD_ENABLE_REG_SYS_2" register.
+> > > 
+> > > Can you confirm for me that the following use the correct macro?
+> > > 
+> > >   333-static const struct j721e_pcie_data j721e_pcie_rc_data = {
+> > >   337:	.linkdown_irq_regfield = LINK_DOWN,
+> > >   
+> > >   341-static const struct j721e_pcie_data j721e_pcie_ep_data = {
+> > >   343:	.linkdown_irq_regfield = LINK_DOWN,
+> > >   
+> > >   347-static const struct j721e_pcie_data j7200_pcie_rc_data = {
+> > >   350:	.linkdown_irq_regfield = J7200_LINK_DOWN,
+> > >   
+> > >   362-static const struct j721e_pcie_data am64_pcie_rc_data = {
+> > >   364:	.linkdown_irq_regfield = J7200_LINK_DOWN,
+> > >   
+> > >   369-static const struct j721e_pcie_data am64_pcie_ep_data = {
+> > >   371:	.linkdown_irq_regfield = J7200_LINK_DOWN,
+> > >   
+> > >   375-static const struct j721e_pcie_data j784s4_pcie_rc_data = {
+> > >   379:	.linkdown_irq_regfield = LINK_DOWN,
+> > >   
+> > >   383-static const struct j721e_pcie_data j784s4_pcie_ep_data = {
+> > >   385:	.linkdown_irq_regfield = LINK_DOWN,
+> > >   
+> > >   389-static const struct j721e_pcie_data j722s_pcie_rc_data = {
+> > >   391:	.linkdown_irq_regfield = J7200_LINK_DOWN,
+> > > 
+> > > I am asking as some use LINK_DOWN, so I wanted to make sure.
+> > 
+> > Yes, the above are accurate except for J784S4 which is fixed by this
+> > patch. LINK_DOWN i.e. BIT(1) is applicable only to J721E which was the
+> > first SoC after which the driver has been named. For all other SoCs, the
+> > integration of the PCIe Controller into the SoC led to BIT(10) of the
+> > register being used to indicate the link status.
+> 
+> Sounds good!  Thank you for letting me know.
+> 
+> > > Tht said, the following has no .linkdown_irq_regfield property set:
+> > > 
+> > >   355-static const struct j721e_pcie_data j7200_pcie_ep_data = {
+> > >   356-	.mode = PCI_MODE_EP,
+> > >   357-	.quirk_detect_quiet_flag = true,
+> > >   358-	.quirk_disable_flr = true,
+> > >   359-	.max_lanes = 2,
+> > >   360-};
+> > > 
+> > > Would this be a problem?  Or is this as expected?
+> > 
+> > Thank you for pointing this out. This has to be fixed and the
+> > "linkdown_irq_regfield" member has to be added to match
+> > j7200_pcie_rc_data. I will post the fix for this.
+> 
+> No need to send a new version.
+> 
+> I will update the branch directly when I pull the patch.  Not to worry.
 
---3msoj54ufxrpizvm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] drm/panel/synaptics-r63353: Use _multi variants
-MIME-Version: 1.0
+Thank you Krzysztof :)
 
-On Mon, Mar 10, 2025 at 04:58:22PM -0400, Anusha Srivatsa wrote:
-> Move away from using deprecated API and use _multi
-> variants if available. Use mipi_dsi_msleep()
-> and mipi_dsi_usleep_range() instead of msleep()
-> and usleep_range() respectively.
->=20
-> Used Coccinelle to find the multiple occurences.
-> SmPl patch:
-> @rule@
-> identifier dsi_var;
-> identifier r;
-> identifier func;
-> type t;
-> position p;
-> expression dsi_device;
-> expression list es;
-> @@
-> t func(...) {
-> ...
-> struct mipi_dsi_device *dsi_var =3D dsi_device;
-> +struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D dsi_var };
-> <+...
-> (
-> -mipi_dsi_dcs_write_seq(dsi_var,es)@p;
-> +mipi_dsi_dcs_write_seq_multi(&dsi_ctx,es);
-> |
-> -mipi_dsi_generic_write_seq(dsi_var,es)@p;
-> +mipi_dsi_generic_write_seq_multi(&dsi_ctx,es);
-> |
-> -mipi_dsi_generic_write(dsi_var,es)@p;
-> +mipi_dsi_generic_write_multi(&dsi_ctx,es);
-> |
-> -r =3D mipi_dsi_dcs_nop(dsi_var)@p;
-> +mipi_dsi_dcs_nop_multi(&dsi_ctx);
-> |
-> ....rest of API
-> ..
-> )
-> -if(r < 0) {
-> -...
-> -}
-> ...+>
-
-Again, you need to provide the full coccinelle script here otherwise
-it's useless. And I have serious doubts that it's actually the script
-you used, because ...
-
-> @@ -106,53 +107,46 @@ static int r63353_panel_power_off(struct r63353_pan=
-el *rpanel)
->  static int r63353_panel_activate(struct r63353_panel *rpanel)
->  {
->  	struct mipi_dsi_device *dsi =3D rpanel->dsi;
-> -	struct device *dev =3D &dsi->dev;
-> -	int i, ret;
-> +	struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D dsi };
-> +	int i;
-> =20
-> -	ret =3D mipi_dsi_dcs_soft_reset(dsi);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to do Software Reset (%d)\n", ret);
-> +	mipi_dsi_dcs_soft_reset_multi(&dsi_ctx);
-> +	if (dsi_ctx.accum_err)
->  		goto fail;
-> -	}
-
-This changes was definitely not what the script is doing.
-
-Maxime
-
---3msoj54ufxrpizvm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ8/mrwAKCRDj7w1vZxhR
-xaVXAP98kanq9Agy3UxY4yV8gi6eRHDpADPZ362A29nVqTaqDQD/bSjaKpH9TL2w
-y3HcrZBloZtnBL7lnxKDIKDEJT3cjws=
-=aG2R
------END PGP SIGNATURE-----
-
---3msoj54ufxrpizvm--
+Regards,
+Siddharth.
 
