@@ -1,166 +1,213 @@
-Return-Path: <linux-kernel+bounces-555297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C24A5B474
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:40:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67526A5B484
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:40:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 474391888ECB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:40:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90D3E1737C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40DC2F509;
-	Tue, 11 Mar 2025 00:40:08 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0A21C5D72;
+	Tue, 11 Mar 2025 00:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OeDT/I6I"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0173AD5A;
-	Tue, 11 Mar 2025 00:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944E041C72
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 00:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741653608; cv=none; b=ibsuaaPSlwHSOYRlIhSrA/UBq04dDlkKmZH+TfYDy0Yqg2FcAq6PMuPERXoY+TW5N6AYBkXH94rl8WJgybosvPX0PRGm/GdABAy4TtAf+bviVXppstAx+TMwIc4kfYeWrVNB7j4k0lYwRbvs7yXmX/R0pB+36voSxzOha8eXNWs=
+	t=1741653631; cv=none; b=ZRaX6e1xC4e1cqppRaKVyAL/b4gVQQ/xUzJKL5pEsjr2Dg/atYieBhjwhi4zXdxIQmtd+dgfLyd/K+P7ShwwOo5rlE1Ib2F8iOekyUz+17uqMJV70txu1L/UZdmoqPCeGDfDXE0ZXnMSipfG6x8awaDlmJXjjBSGph3ERbTx0ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741653608; c=relaxed/simple;
-	bh=IFxIDLySzcDt2s61LMkBUfkmcFfpQk5sYPpSp6OaGBA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CHBxKodzPZLyNQ1KVAzFUKDJ98O0VcfX/fXgFGSpSLRMJQ4/PWT1Fr3uZ0qbDc+i7dFPSm35nT1ZqneaIi3iNtYOE/8pVWxRGCyxId8OLDLmISqp8FoR8YqJixZqtfW0CVjzp8+RGTWBqJ3r3rTL3UzlYHbCq5P9l4mqHYq654I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B0Wilb020395;
-	Mon, 10 Mar 2025 17:39:53 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 458p9qjda1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 10 Mar 2025 17:39:53 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Mon, 10 Mar 2025 17:39:52 -0700
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Mon, 10 Mar 2025 17:39:50 -0700
-From: <jianqi.ren.cn@windriver.com>
-To: <stable@vger.kernel.org>, <liushixin2@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <minchan@kernel.org>,
-        <senozhatsky@chromium.org>, <axboe@kernel.dk>,
-        <akpm@linux-foundation.org>, <linux-block@vger.kernel.org>
-Subject: [PATCH 6.6.y] zram: fix NULL pointer in comp_algorithm_show()
-Date: Tue, 11 Mar 2025 08:39:49 +0800
-Message-ID: <20250311003949.3927527-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741653631; c=relaxed/simple;
+	bh=dyw753/H6BTUrRf3jQI1iojuAfN0WdNF+kraI3CjYVI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hky+QTt59OLQJSq6l3HVMQVFsWFBDmVhtvKP+KHZLKK6+aYn7KKSuUKg/Of8GdTYLje1a8091T1d8ET9HQORDSoqDhtxQzSPmtOs+C+oNs0NPRSAHI7gA1y9JsTvRKptq0zJvHd/0EKG+mWPOa073dMw4USHMr/UO543DcwZ3+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OeDT/I6I; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741653626;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nPFnFp1VkXPuK1wBnfwovz6gQVIIRqPSnwN9UsbsTOA=;
+	b=OeDT/I6IhoEhZa5RmSa5zq19OSOVtSOTqKEeKud8LqC6eHU8BH8RnotD3J1BgXBNAHW+3x
+	gOR7XqOH6iCuq+VtpsrBotGzjcOLnzTbRfWKmRawjpXBFSOK+LhQ0V+m0JjuVc2U+rR7lR
+	0JikXVSrBYPVaJoyFUYJn1RXwhobx/U=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-460-ixMIOxnyOsahtgzuacb5WA-1; Mon, 10 Mar 2025 20:40:25 -0400
+X-MC-Unique: ixMIOxnyOsahtgzuacb5WA-1
+X-Mimecast-MFC-AGG-ID: ixMIOxnyOsahtgzuacb5WA_1741653624
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ff581215a0so13731387a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:40:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741653624; x=1742258424;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nPFnFp1VkXPuK1wBnfwovz6gQVIIRqPSnwN9UsbsTOA=;
+        b=tFr/NyBnHziqRYXBgHEXZIcDER1jv1LLj8ANyKHaJTtO6kAbkQZ51o9foOiO6XQRqF
+         OGQ9OLigxNlo7k9udgkR3G14ayXJoQTlty5K4L0s8NybwFf5uVCNvheaC9oWFPTQK819
+         MxPgCkpdK578fAcBHTgtmGvVLZPaFN6M8exX7HaV+UPoxQ/BOIlFk1cO48E91nN0D9DG
+         ISgnOxYHBsuEruBgyKDE/v3YoVt2FiMuqHp63UUFOmfTYnHkx3L+0NVItxl/Dd58bbCf
+         xCa8e7ICLDEO6AFQCtWhwPOxsxVcvjRkmUfLtPMfp23cJHvtS5aBcgkTrRlFuDeGGH2B
+         8rvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYOPGZ3WJCkRppmrX1i2im96GgyVDJFFZ4mgQzLbszMnlGZDYFXizVu31cJoAlJZTWVSooLhPGk6JNBPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLWVf+m0ZfRbCrMnoQWKlV3UquOTBByMl7Dku4lXBfkykzHXp6
+	1rGvG1lCgu49m0JvnCPvppMniRtKLP60KndLtgbHQQ7b8rWbc41Rmd4ab2LhIa1l3fuwjuWf8lJ
+	CIDwCX7S1BtKPDwZgRMrruSJwYSSYOSMzK0XauIMKqVKuQ8fh9UHQQhr62IKjYVKobhVRETJZ/D
+	tmcQAKyjP3Bk8Gm4JTnBsOtTKI0H+8mEnSff/M
+X-Gm-Gg: ASbGncuMaOhtr6weCKinmxsPdsUidwFZ0dBzgWXrmf/tmHn2qftn0PciafDH4mHckhh
+	XLFl4hUehsuoVOIxETl+TSBbaTFpGaYRzIwe1ub/xOyBUknyrKI5sg1ZP/hsm5AFzkGKRRA==
+X-Received: by 2002:a17:90b:4d8c:b0:2ee:b8ac:73b0 with SMTP id 98e67ed59e1d1-2ff7ce47c06mr25678677a91.2.1741653623961;
+        Mon, 10 Mar 2025 17:40:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFCTIxNW5KVnhioASoe6KuDcaNU+MoVXuWjH8X5aO/fiowwzFcttBDg5Qj2LCfTQUSRsi5colKFgqeeGjkAv4Y=
+X-Received: by 2002:a17:90b:4d8c:b0:2ee:b8ac:73b0 with SMTP id
+ 98e67ed59e1d1-2ff7ce47c06mr25678644a91.2.1741653623483; Mon, 10 Mar 2025
+ 17:40:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=QNySRhLL c=1 sm=1 tr=0 ts=67cf8659 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=i0EeH86SAAAA:8 a=cm27Pg_UAAAA:8 a=Z4Rwk6OoAAAA:8 a=t7CeM3EgAAAA:8
- a=m3UGnVx-GgMgIQ9NKaQA:9 a=HkZW87K1Qel5hWWM3VKY:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: noMcFJsJb6vVsnykpK8onSoqLxEPRDmG
-X-Proofpoint-ORIG-GUID: noMcFJsJb6vVsnykpK8onSoqLxEPRDmG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_08,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- phishscore=0 spamscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
- clxscore=1011 adultscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.21.0-2502100000
- definitions=main-2503110002
+References: <20250307-rss-v9-0-df76624025eb@daynix.com> <20250307-rss-v9-3-df76624025eb@daynix.com>
+ <CACGkMEsNHba=PY5UQoH1zdGQRiHC8FugMG1nkXqOj1TBdOQrww@mail.gmail.com> <5d81246c-1e69-4301-ae6f-63838733672d@daynix.com>
+In-Reply-To: <5d81246c-1e69-4301-ae6f-63838733672d@daynix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 11 Mar 2025 08:40:11 +0800
+X-Gm-Features: AQ5f1Jrq56wv3c7Sji25V2t3viqORzyfR5RJXtNkfnP10Huk8xi4r-Xv7AC1mUA
+Message-ID: <CACGkMEv0ehQJPUzkJTkX0=bsSULdRdtgxOpjCJ+56Xh6RAQJYA@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 3/6] tun: Introduce virtio-net hash feature
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
+	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Liu Shixin <liushixin2@huawei.com>
+On Mon, Mar 10, 2025 at 3:59=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
+.com> wrote:
+>
+> On 2025/03/10 12:55, Jason Wang wrote:
+> > On Fri, Mar 7, 2025 at 7:01=E2=80=AFPM Akihiko Odaki <akihiko.odaki@day=
+nix.com> wrote:
+> >>
+> >> Hash reporting
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>
+> >> Allow the guest to reuse the hash value to make receive steering
+> >> consistent between the host and guest, and to save hash computation.
+> >>
+> >> RSS
+> >> =3D=3D=3D
+> >>
+> >> RSS is a receive steering algorithm that can be negotiated to use with
+> >> virtio_net. Conventionally the hash calculation was done by the VMM.
+> >> However, computing the hash after the queue was chosen defeats the
+> >> purpose of RSS.
+> >>
+> >> Another approach is to use eBPF steering program. This approach has
+> >> another downside: it cannot report the calculated hash due to the
+> >> restrictive nature of eBPF steering program.
+> >>
+> >> Introduce the code to perform RSS to the kernel in order to overcome
+> >> thse challenges. An alternative solution is to extend the eBPF steerin=
+g
+> >> program so that it will be able to report to the userspace, but I didn=
+'t
+> >> opt for it because extending the current mechanism of eBPF steering
+> >> program as is because it relies on legacy context rewriting, and
+> >> introducing kfunc-based eBPF will result in non-UAPI dependency while
+> >> the other relevant virtualization APIs such as KVM and vhost_net are
+> >> UAPIs.
+> >>
+> >> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> >> Tested-by: Lei Yang <leiyang@redhat.com>
+> >> ---
+> >>   Documentation/networking/tuntap.rst |   7 ++
+> >>   drivers/net/Kconfig                 |   1 +
+> >>   drivers/net/tap.c                   |  68 ++++++++++++++-
+> >>   drivers/net/tun.c                   |  98 +++++++++++++++++-----
+> >>   drivers/net/tun_vnet.h              | 159 ++++++++++++++++++++++++++=
+++++++++--
+> >>   include/linux/if_tap.h              |   2 +
+> >>   include/linux/skbuff.h              |   3 +
+> >>   include/uapi/linux/if_tun.h         |  75 +++++++++++++++++
+> >>   net/core/skbuff.c                   |   4 +
+> >>   9 files changed, 386 insertions(+), 31 deletions(-)
+> >>
+> >> diff --git a/Documentation/networking/tuntap.rst b/Documentation/netwo=
+rking/tuntap.rst
+> >> index 4d7087f727be5e37dfbf5066a9e9c872cc98898d..86b4ae8caa8ad062c1e558=
+920be42ce0d4217465 100644
+> >> --- a/Documentation/networking/tuntap.rst
+> >> +++ b/Documentation/networking/tuntap.rst
+> >> @@ -206,6 +206,13 @@ enable is true we enable it, otherwise we disable=
+ it::
+> >>         return ioctl(fd, TUNSETQUEUE, (void *)&ifr);
+> >>     }
+> >>
 
-[ Upstream commit f364cdeb38938f9d03061682b8ff3779dd1730e5 ]
+[...]
 
-LTP reported a NULL pointer dereference as followed:
+> >>
+> >> diff --git a/drivers/net/tun_vnet.h b/drivers/net/tun_vnet.h
+> >> index 58b9ac7a5fc4084c789fe94fe36b5f8631bf1fa4..8e7d51fb0b4742cef56e7c=
+5ad778b156cc654bed 100644
+> >> --- a/drivers/net/tun_vnet.h
+> >> +++ b/drivers/net/tun_vnet.h
+> >> @@ -6,6 +6,16 @@
+> >>   #define TUN_VNET_LE     0x80000000
+> >>   #define TUN_VNET_BE     0x40000000
+> >>
+> >> +typedef struct virtio_net_hash *(*tun_vnet_hash_add)(struct sk_buff *=
+);
+> >> +typedef const struct virtio_net_hash *(*tun_vnet_hash_find)(const str=
+uct sk_buff *);
+> >> +
+> >> +struct tun_vnet_hash_container {
+> >> +       struct tun_vnet_hash common;
+> >
+> > I'd rename this as hash.
+>
+> Everything in this structure is about hash. "common" represents its
+> feature well.
+>
+> I see a few alternative options though I don't prefer them either; they
+> make the code verbose and I don't think they are worthwhile:
+> 1. Rename tun_vnet_hash to tun_vnet_hash_common.
+> 2. Prefix the other fields with "hash_" for consistency.
 
- CPU: 7 UID: 0 PID: 5995 Comm: cat Kdump: loaded Not tainted 6.12.0-rc6+ #3
- Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
- pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
- pc : __pi_strcmp+0x24/0x140
- lr : zcomp_available_show+0x60/0x100 [zram]
- sp : ffff800088b93b90
- x29: ffff800088b93b90 x28: 0000000000000001 x27: 0000000000400cc0
- x26: 0000000000000ffe x25: ffff80007b3e2388 x24: 0000000000000000
- x23: ffff80007b3e2390 x22: ffff0004041a9000 x21: ffff80007b3e2900
- x20: 0000000000000000 x19: 0000000000000000 x18: 0000000000000000
- x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
- x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
- x11: 0000000000000000 x10: ffff80007b3e2900 x9 : ffff80007b3cb280
- x8 : 0101010101010101 x7 : 0000000000000000 x6 : 0000000000000000
- x5 : 0000000000000040 x4 : 0000000000000000 x3 : 00656c722d6f7a6c
- x2 : 0000000000000000 x1 : ffff80007b3e2900 x0 : 0000000000000000
- Call trace:
-  __pi_strcmp+0x24/0x140
-  comp_algorithm_show+0x40/0x70 [zram]
-  dev_attr_show+0x28/0x80
-  sysfs_kf_seq_show+0x90/0x140
-  kernfs_seq_show+0x34/0x48
-  seq_read_iter+0x1d4/0x4e8
-  kernfs_fop_read_iter+0x40/0x58
-  new_sync_read+0x9c/0x168
-  vfs_read+0x1a8/0x1f8
-  ksys_read+0x74/0x108
-  __arm64_sys_read+0x24/0x38
-  invoke_syscall+0x50/0x120
-  el0_svc_common.constprop.0+0xc8/0xf0
-  do_el0_svc+0x24/0x38
-  el0_svc+0x38/0x138
-  el0t_64_sync_handler+0xc0/0xc8
-  el0t_64_sync+0x188/0x190
+Or use different structures, one for hash_report another is for rss.
 
-The zram->comp_algs[ZRAM_PRIMARY_COMP] can be NULL in zram_add() if
-comp_algorithm_set() has not been called.  User can access the zram device
-by sysfs after device_add_disk(), so there is a time window to trigger the
-NULL pointer dereference.  Move it ahead device_add_disk() to make sure
-when user can access the zram device, it is ready.  comp_algorithm_set()
-is protected by zram->init_lock in other places and no such problem.
+>
+> >
+> >> +       struct tun_vnet_hash_rss rss;
+> >> +       u32 rss_key[VIRTIO_NET_RSS_MAX_KEY_SIZE];
+> >> +       u16 rss_indirection_table[];
+> >> +};
+> >
+> > Besides the separated ioctl, I'd split this structure into rss and
+> > hash part as well.
 
-Link: https://lkml.kernel.org/r/20241108100147.3776123-1-liushixin2@huawei.com
-Fixes: 7ac07a26dea7 ("zram: preparation for multi-zcomp support")
-Signed-off-by: Liu Shixin <liushixin2@huawei.com>
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Minchan Kim <minchan@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-[This fix does not backport zram_comp_params_reset which was introduced after
- v6.6, in commit f2bac7ad187d ("zram: introduce zcomp_params structure")]
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
-Verified the build test
----
- drivers/block/zram/zram_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Like this.
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index b73038ad86f7..44cf0e51d7db 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -2247,6 +2247,8 @@ static int zram_add(void)
- 	zram->disk->private_data = zram;
- 	snprintf(zram->disk->disk_name, 16, "zram%d", device_id);
- 
-+	comp_algorithm_set(zram, ZRAM_PRIMARY_COMP, default_compressor);
-+
- 	/* Actual capacity set using sysfs (/sys/block/zram<id>/disksize */
- 	set_capacity(zram->disk, 0);
- 	/* zram devices sort of resembles non-rotational disks */
-@@ -2281,8 +2283,6 @@ static int zram_add(void)
- 	if (ret)
- 		goto out_cleanup_disk;
- 
--	comp_algorithm_set(zram, ZRAM_PRIMARY_COMP, default_compressor);
--
- 	zram_debugfs_register(zram);
- 	pr_info("Added device: %s\n", zram->disk->disk_name);
- 	return device_id;
--- 
-2.25.1
+Thanks
 
 
