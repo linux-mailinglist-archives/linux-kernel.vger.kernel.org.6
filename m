@@ -1,105 +1,129 @@
-Return-Path: <linux-kernel+bounces-555724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6E2A5BBDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:18:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2D3A5BBDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:17:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30FB017331E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 905023AF413
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A5622B8AB;
-	Tue, 11 Mar 2025 09:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D3F22CBCC;
+	Tue, 11 Mar 2025 09:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJGWK4O0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="beWikhIv"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E09222572;
-	Tue, 11 Mar 2025 09:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7460D1D8E07;
+	Tue, 11 Mar 2025 09:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741684668; cv=none; b=efNAm0asgg4gzXhfANFNWblEBoyTwe/KMBs1reR44P0zzenSuLbObmtqfxO5vKU9P2cCVoJIqhD0nV90+qrRkX3ikK/Fj762oK8KNGUHfVQ4L8cD6jvsN0cFD1St2YRaLnS4F+fjC4vZs45l+XNPEKyYhrrOjzA63vgWVcU5IZA=
+	t=1741684657; cv=none; b=fOljxF+lJUQJyncse3xb+LImxoovXuMB0RH9qYh+CC1tqKW17VhdyHnIQxl8T8vLm+DB35D0sxhfcEPVqgKljaK09dxd/d7kfH7MkNnLUxpSt8CQXC1U09PK5N2NJbGGHEK+dCVhjVBSQTEwAJFnIHDnzyROaY2DLR3VC4URz1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741684668; c=relaxed/simple;
-	bh=I3wvXEq4ikbk6K4qeOqy4pOSFqJ/9hXqSnnILl+b6SQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dkhivHFtmvUqNfwLeNPAJgne63HKpQdDrQIaJTVrPJFNiaHeNQBeAlWd/tJtBBG+nzOQM31pDIwxMtnn0xOsaEh3Cz1xIBT3AG0CDu4R42cB7Mr/kOF6DEDDpi4AAm+3ZevnRiqK25cCpqhLIhHdRsdMYP83BcwgEqDNgwOdScs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJGWK4O0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FBA5C4CEF1;
-	Tue, 11 Mar 2025 09:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741684667;
-	bh=I3wvXEq4ikbk6K4qeOqy4pOSFqJ/9hXqSnnILl+b6SQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EJGWK4O0JvO72MUNTL9fyv6dFbUqrS+QlTHt9NSqPcSEJqsR93Ay3OI6sDys1v5Ps
-	 ZOHEtYwl5HwMHmmalXc8osqgNPVM3DiAsgCavmEAhm8yAj55EqduZIi1MfudAjORht
-	 x37BrIwjmNIZJpJgmBH+B0DoV3sLvdPKMFyBBJuA3HGrvdxypU2BcR9xDf/I172/2v
-	 pa/oAPUJK9OsxoBcXkOwyI4vygXhqaUItZU9VQ4jApa63Z4eAJH4d+dp1mEKFMCbY1
-	 TeeGKPxmFmsmdqmVkPXTMYPA221sp62O4MfsEFVGviIIvn8wPBA8WgsScwPnQpxUHk
-	 3SGIedLzIEaWg==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5498d2a8b89so5252886e87.1;
-        Tue, 11 Mar 2025 02:17:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUkWPk2zSJCTIsUlplIUkICws3HUUaVfSp695Ql3LHi9OwnU/35vAN6RMJD/wv9ZrEJwVknEGnxI7RCLfg=@vger.kernel.org, AJvYcCX66lzLtANeNyf0yCtFKOAsNvagxEwm3hMYrF7KOYSXuEhwNuu7ZMDpzONg367twf3iGIRWPApZg+BJfFUmtQTmTNP4@vger.kernel.org, AJvYcCXTmO/CTv0V30IJl5HGwuZyOmRDU3TELwKme2tIyPEk47zYVgUwwYZxj5vhKin8hQQrUO6ZVcVMCc7C2DgZ9g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrE2q0ZX8OtEfa1qpe/qhDy7iohb00MlMDFAw9j/r9sHXAiHbs
-	zWpB0SAewFjiale5qZxDiR11uCwgpeuIY6ROm03IrclXRqF6Lgew4K0peyO+UFsBm9ZJEL3GCAg
-	DeYcQsQNqRF2J4gmHNBCJLxJSWWg=
-X-Google-Smtp-Source: AGHT+IFNr/MqTS76yOqZHInZldYwY6xgGLGctV3Upe1fjkqrKfD1g+oL+NuiwvAIf/RdlzvPulALp+YL5nPG4/u5HHs=
-X-Received: by 2002:ac2:44c6:0:b0:549:91d3:8e66 with SMTP id
- 2adb3069b0e04-54991d38f57mr3671557e87.8.1741684665913; Tue, 11 Mar 2025
- 02:17:45 -0700 (PDT)
+	s=arc-20240116; t=1741684657; c=relaxed/simple;
+	bh=mo2VOE5Pdost2IrWBbeMn+NGtDeyaW/lhYvg8WhS0/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mTGXRj9jAXBi91Q2xANceq+FIKBXDFudn2ZcV/cnlQOHdNSbUY36xggDMRzxGlSw3hMi76TCGchu/ZtKKIK4F+nplmujoak2lQIe7hOY3q3vAXLwmbRx+IaFEh63j20p/pv4OrXcBtwYR7JiDs+0ss8BkafEA6fdmF9esU1adVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=beWikhIv; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741684649;
+	bh=+7rgICWy4cnzwX384jJ8pJ+8ukLphTwXiqmF9tmuYq0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=beWikhIvVfDpgOHMSRKU+GaukBeI+pGQvSxaxfWyKXfTtM6G4uJh4535HoKathiRY
+	 jOaLixcdE/RtxGl8W/6hSbpoj3W4qgZOyPjXSScwJzVlcPHywi0uqlruAwNnunGOIE
+	 XU4Ua0PBlBmcDnlD3BX8+xT+JasPZ/wZr8+8rxoQn9+zW490Z1rmIXMxge7uDUkhr6
+	 JaCGwkZsABkHpI1e33srrA1rF72uvkmxR1YEOF0fmK2i+DWkapNVHDx3LmaC/wJD+C
+	 Jf/lm1wEIeLOjdo2ufN+GK+BuwkQHv/iMAfN06XBv1lZXkTxWmqp3v44HLpnnmTTHB
+	 CVMEpAf13Ee+g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBp7X62VWz4x3p;
+	Tue, 11 Mar 2025 20:17:27 +1100 (AEDT)
+Date: Tue, 11 Mar 2025 20:17:26 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>, Dave Airlie <airlied@redhat.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Jocelyn Falempe
+ <jfalempe@redhat.com>, DRI <dri-devel@lists.freedesktop.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the rust tree with the drm tree
+Message-ID: <20250311201726.3f45cc67@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305192808.2826336-1-kris.van.hees@oracle.com>
-In-Reply-To: <20250305192808.2826336-1-kris.van.hees@oracle.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 11 Mar 2025 18:17:08 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASvQJT5rCGGQT+L+JtRX32_amZz05QCn9cvT4W4+uVJuA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrfovPclrUeoRyJ5wu2zI2p6MJIrGdvqeXCG7Sskxj7mqOIUIcKMP8Uwhs
-Message-ID: <CAK7LNASvQJT5rCGGQT+L+JtRX32_amZz05QCn9cvT4W4+uVJuA@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: exclude .rodata.(cst|str)* when building ranges
-To: Kris Van Hees <kris.van.hees@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Nick Alcock <nick.alcock@oracle.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Sam James <sam@gentoo.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Jiri Olsa <olsajiri@gmail.com>, 
-	Elena Zannoni <elena.zannoni@oracle.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Jack Vogel <jack.vogel@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/WRC61WYquP.DU.LnirxUgyK";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/WRC61WYquP.DU.LnirxUgyK
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 6, 2025 at 4:28=E2=80=AFAM Kris Van Hees <kris.van.hees@oracle.=
-com> wrote:
->
-> The .rodata.(cst|str)* sections are often resized during the final
-> linking and since these sections do not cover actual symbols there is
-> no need to include them in the modules.builtin.ranges data.
->
-> When these sections were included in processing and resizing occurred,
-> modules were reported with ranges that extended beyond their true end,
-> causing subsequent symbols (in address order) to be associated with
-> the wrong module.
->
-> Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
-> Reviewed-by: Jack Vogel <jack.vogel@oracle.com>
-> ---
+Hi all,
 
-Applied with the following tag:
+Today's linux-next merge of the rust tree got a conflict in:
 
-Fixes: 5f5e7344322f ("kbuild: generate offset range data for builtin module=
-s")
+  drivers/gpu/drm/drm_panic_qr.rs
 
-Please let me know if this is wrong.
+between commit:
+
+  dbed4a797e00 ("drm/panic: Better binary encoding in QR code")
+
+from the drm tree and commit:
+
+  fc2f191f850d ("panic_qr: use new #[export] macro")
+
+from the rust tree.
+
+I fixed it up (I guess - see below) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
-Best Regards
-Masahiro Yamada
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/drm_panic_qr.rs
+index 5d21f6d10bcb,ecd87e8ffe05..000000000000
+--- a/drivers/gpu/drm/drm_panic_qr.rs
++++ b/drivers/gpu/drm/drm_panic_qr.rs
+@@@ -27,7 -26,8 +27,7 @@@
+  //! * <https://github.com/erwanvivien/fast_qr>
+  //! * <https://github.com/bjguillot/qr>
+ =20
+- use kernel::str::CStr;
+ -use core::cmp;
++ use kernel::{prelude::*, str::CStr};
+ =20
+  #[derive(Debug, Clone, Copy, PartialEq, Eq, Ord, PartialOrd)]
+  struct Version(usize);
+
+--Sig_/WRC61WYquP.DU.LnirxUgyK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfP/6YACgkQAVBC80lX
+0GwUWAf/cQViY4ylwkS/1xzQYSshSANM8Mdpc2O/hl93LFKTqI8CF5tz1s3Dnsxv
+2Ds3e0pQED2VnOw2OAStVpKgJg/Mq48TCIiCpXV/5LYZ+/3pcChKI1X67KfXo6Cc
+ZP9DPeJ6UoVQytvYSzzzAbvPm/HUHlIEkygRcTFvS/VhzsdnQ20w2JtcCqWGkv5D
+P05bDe2xfremGB0zndwq8/GgQImITGSfQXaKy9htzlDqHubY270OYZlvqM/hYYbx
+J9z/Dx4nPQnTQ5QtMKeVXPkYN+uIU235nebW+hQznrn8BV85Z026T9nuLROYwWmX
+KVEgdPK6N7NJeHXiOqM5YO4JpIMfSg==
+=O7nl
+-----END PGP SIGNATURE-----
+
+--Sig_/WRC61WYquP.DU.LnirxUgyK--
 
