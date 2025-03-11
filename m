@@ -1,145 +1,137 @@
-Return-Path: <linux-kernel+bounces-555376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAFD8A5B69B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:19:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7A6A5B699
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A93283ADFEF
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9706A16E20C
 	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DD21E3DFA;
-	Tue, 11 Mar 2025 02:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC541E51E3;
+	Tue, 11 Mar 2025 02:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="kqEs78NT"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ba0lMRoX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F301DFE00;
-	Tue, 11 Mar 2025 02:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7148C15820C;
+	Tue, 11 Mar 2025 02:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741659578; cv=none; b=Pd/19MYr0Z7h8KPkTpm+vvSONs1m/clq4qHemkAKqfbKKYMKjEBZSV9OE7lOp6C+GrRQE2YY1eLN2/MuKbxQogFrcCb/57tva0pMxqpgmJUqjFM5KDUnMArpMSkJ7s7JYbeeWTKV4h95BUvtFrbtXCsl6I+1uESgY55kfXdHQ14=
+	t=1741659566; cv=none; b=Zk0vJpaMK9Oq14zdCtELF9KnaqwunXtPwqC6FfxOudFSFZ2vt+hwG9dTEaUa8XBOHnw3r4tlQTpT198rYCbhM7HRr8cOxQL8OsKKxpfP4S5Nra0AjYqYlEb47ss9aL4iDTjssJnI2OhLSfOSsRAQx13CLQ+kMb4QzKugx08ucws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741659578; c=relaxed/simple;
-	bh=Sth8l67n+uwLQKxCXrukaimfOae11pQFiWD/R/v/SeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PoEd7t5SomifJ5EhbXJpdDyQqPg9ffBERk5HR0FH4FraZIMvgrEflHPX8d51L1VKoKULE0Av88kzloCKQ6F92seH1L/bhL9oJQstNPwIN9G+RxMUnBH5yQGio6p02Xv7u7YicML0b7URlKJIH+abwb9UOGD9fIgAdDLOqVqiTvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=kqEs78NT; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52B2J6su1869505
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 10 Mar 2025 19:19:07 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52B2J6su1869505
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741659548;
-	bh=RRnyrixk4lF11HSwzZsW5tJQgq5fiSSNVV/SDhLEu7c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kqEs78NT0RMed9+pWysEdFOMLGaEx67KyyrKHIV9vaUlM8K/7b2JagrU0JiUhV10D
-	 D2A84l8gaejvfUxi9q8Y0x+AU6yF4oc3Zl/rBMTQWzjohefTXmHt4ciwkiigZeRWcv
-	 3lQsi6dTSj/H+gU10FJ0rSymVFMWReEhgmEE/icQkeKg2x6D6xfQYP0V8d4iluT5sf
-	 U/BBAz5tnj97uDN1TTntWhBpvBWXoWxd9Kt2U7ShEX/2kBJllXRF3PNX8fgx18nP0I
-	 Waq3uZUG5yT/v2XBo9l1EzgXIkKUR4+BtEGh6e7zv+wQoYvstiUUsLj7FDVi4eG8a+
-	 rwSNT/Vd1LpDQ==
-Message-ID: <08bbfff0-4aef-4d9e-bbeb-661aedaf3737@zytor.com>
-Date: Mon, 10 Mar 2025 19:19:05 -0700
+	s=arc-20240116; t=1741659566; c=relaxed/simple;
+	bh=mfAmdbFQbLlMZDckT+cuqEi3rf2Re5oZ+lu2lZ/dX1Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PWhLSn2eQqu8BTIiriw2kUwcMVxO8TO9ex+oJwWCl78B7ljP3illJvHBq+2YwCRoZf6pe+ggzETMLkK/kCG0AsjGUqDbZGtXJK82WPFyy8Yjk5EKTlY7QzxN/A4AalRMue5S1Iu0u27n3Zz92psPq986Cpi7koYkwT8dJuO50DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ba0lMRoX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DCC8DC4CEE5;
+	Tue, 11 Mar 2025 02:19:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741659565;
+	bh=mfAmdbFQbLlMZDckT+cuqEi3rf2Re5oZ+lu2lZ/dX1Q=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ba0lMRoXy/XRrv3mYJAKFSr3WPmRFH+7UUaL7GFJYFSfW9bWCxbbAAii4MBnE6CPe
+	 G8SuKgd+ObzFc6TWDRbQrG2NW+3eQlFdp8dXTvw7KNEipn2ooVhKj1CPhzD1Tq7ri0
+	 BDN6erjXK3ZfpDTeZUusbFL9QA+QzbOvsZw8WRiI/Lk6IR9TtuzTodgPa0Ho+FYV8s
+	 hW7l51R14P+h37qy15TH+nkXcCQST3piLUuJ9R7zELbnBVgdWvi/qVTRASgqWPzvLc
+	 xJVYA08Erp7/WJUnrwgR7Q//s7kwi7PnJuBdF0kmTv1VMxmn68aKxm6ThBrGgKfRsH
+	 eNwpvMh1yMjEA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D17FBC282DE;
+	Tue, 11 Mar 2025 02:19:25 +0000 (UTC)
+From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
+Date: Mon, 10 Mar 2025 19:19:07 -0700
+Subject: [PATCH] usb: typec: tcpm: fix state transition for
+ SNK_WAIT_CAPABILITIES state in run_state_machine()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] kbuild: Add "make headers" to "make help" output
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        nathan@kernel.org, nicolas@fjasle.eu, bp@alien8.de, hpa@zytor.com,
-        sraithal@amd.com
-References: <20250308040451.585561-1-xin@zytor.com>
- <CAK7LNARHvn4Sy-e4hMmjGt0C7TFaWrGJrLq3YvN0BjehZ8QwSg@mail.gmail.com>
- <6149ac51-07da-45e2-863e-1d4418f6b662@zytor.com>
- <CAK7LNATGToVHEfZ-hmJ=3xbQCdHmBZf7x9w2QtQVGV-nMiP2Ag@mail.gmail.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <CAK7LNATGToVHEfZ-hmJ=3xbQCdHmBZf7x9w2QtQVGV-nMiP2Ag@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250310-fix-snk-wait-timeout-v6-14-rc6-v1-1-5db14475798f@google.com>
+X-B4-Tracking: v=1; b=H4sIAJqdz2cC/x2NQQqDMBQFryJ/7YPEWiW9irgw8Vs/pbEkqQri3
+ Q0uZzEzB0UOwpFexUGBV4my+Ay6LMjNg38zZMxMlaqe6qEVJtkR/QfbIAlJvrz8E9YGukZwDVp
+ bj2ayxjpjKEd+gbNxD7r+PC8ebybscAAAAA==
+X-Change-ID: 20250310-fix-snk-wait-timeout-v6-14-rc6-7b4d9fb9bc99
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Badhri Jagan Sridharan <badhri@google.com>, 
+ RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Xu Yang <xu.yang_2@nxp.com>, stable@vger.kernel.org, 
+ Amit Sunil Dhamne <amitsd@google.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741659565; l=1869;
+ i=amitsd@google.com; s=20241031; h=from:subject:message-id;
+ bh=XWKs46l6MPTHMIBPMpAx7vxNIqzh3Rjw4va51+i3hu0=;
+ b=mOi/HQ11Z/dzJ5PxxlT67S+U9on/YeTBQANmHH5IF/SogEd0hxlPmReJW7KBH8mte5yaCXODy
+ Z0P5YiKv/lqDw0c7ak5BFfx5wnO/acB2v7BH7AEhFAbAbhHPwrtfGqe
+X-Developer-Key: i=amitsd@google.com; a=ed25519;
+ pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
+X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
+ auth_id=262
+X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
+Reply-To: amitsd@google.com
 
-On 3/10/2025 6:52 PM, Masahiro Yamada wrote:
-> On Mon, Mar 10, 2025 at 3:23 PM Xin Li <xin@zytor.com> wrote:
->>
->> On 3/8/2025 7:12 AM, Masahiro Yamada wrote:
->>> On Sat, Mar 8, 2025 at 1:05 PM Xin Li (Intel) <xin@zytor.com> wrote:
->>>>
->>>> Meanwhile explicitly state that the headers are uapi headers.
->>>
->>> There are many internal-use targets, which are not documented in the
->>> help message.
->>> I assume this one is the case.
->>>
->>> If users want to install UAPI headers, 'headers_install' is
->>> the user-visible interface and it is already documented.
->>>
->>>
->>
->> hpa and Boris prefer to add it, which I also agree.  But ofc it's your
->> call :)
->>
->> If you don't want to add help for "headers", it probably still makes
->> sense to explicitly state that the headers are uapi headers, no?
->>
->> Thanks!
->>       Xin
-> 
-> 
-> If a help message for "headers" is desired, how about this?
-> 
->    headers  - Build read-to-install uapi headers in usr/include
-> 
+From: Amit Sunil Dhamne <amitsd@google.com>
 
-LGTM.
+A subtle error got introduced while manually fixing merge conflict in
+tcpm.c for commit 85c4efbe6088 ("Merge v6.12-rc6 into usb-next"). As a
+result of this error, the next state is unconditionally set to
+SNK_WAIT_CAPABILITIES_TIMEOUT while handling SNK_WAIT_CAPABILITIES state
+in run_state_machine(...).
 
-I guess you will make the change right now?
+Fix this by setting new state of TCPM state machine to `upcoming_state`
+(that is set to different values based on conditions).
 
-Thanks!
-     Xin
+Cc: stable@vger.kernel.org
+Fixes: 85c4efbe60888 ("Merge v6.12-rc6 into usb-next")
+Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+---
+ drivers/usb/typec/tcpm/tcpm.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index 47be450d2be352698e9dee2e283664cd4db8081b..758933d4ac9e4e55d45940b068f3c416e7e51ee8 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -5117,16 +5117,16 @@ static void run_state_machine(struct tcpm_port *port)
+ 		 */
+ 		if (port->vbus_never_low) {
+ 			port->vbus_never_low = false;
+-			tcpm_set_state(port, SNK_SOFT_RESET,
+-				       port->timings.sink_wait_cap_time);
++			upcoming_state = SNK_SOFT_RESET;
+ 		} else {
+ 			if (!port->self_powered)
+ 				upcoming_state = SNK_WAIT_CAPABILITIES_TIMEOUT;
+ 			else
+ 				upcoming_state = hard_reset_state(port);
+-			tcpm_set_state(port, SNK_WAIT_CAPABILITIES_TIMEOUT,
+-				       port->timings.sink_wait_cap_time);
+ 		}
++
++		tcpm_set_state(port, upcoming_state,
++			       port->timings.sink_wait_cap_time);
+ 		break;
+ 	case SNK_WAIT_CAPABILITIES_TIMEOUT:
+ 		/*
+
+---
+base-commit: 5c8c229261f14159b54b9a32f12e5fa89d88b905
+change-id: 20250310-fix-snk-wait-timeout-v6-14-rc6-7b4d9fb9bc99
+
+Best regards,
+-- 
+Amit Sunil Dhamne <amitsd@google.com>
+
+
 
