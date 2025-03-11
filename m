@@ -1,107 +1,117 @@
-Return-Path: <linux-kernel+bounces-555964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F795A5BED2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:21:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C162A5BED4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:22:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF7C217527E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:21:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC63C175483
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5D3253F0E;
-	Tue, 11 Mar 2025 11:21:42 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900D7252913;
+	Tue, 11 Mar 2025 11:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmOlMRpA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6693252913;
-	Tue, 11 Mar 2025 11:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7A029A1;
+	Tue, 11 Mar 2025 11:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741692102; cv=none; b=pVxVAjUprSRVKSZWOiqJqmyA7fNaCH7a14V8mAtQIfbJBzhxhFTdEm4pnUAnIKbPxn05oSBUzUiG8uLAlCkcEvJvKrFC2zHeb6c8p0pP3GmmPLz+0XJzrvwb9btpDWbebaXPplIri8hiN1GbN7w5Wi62W3ZEWafjfyYVHPMknS8=
+	t=1741692147; cv=none; b=jI6ET5ij8XUnfCk4McCFo9VDf4A/3sV9oms2QBWZ5mvLjpNdOtwwO4ywwyAMdvso2YemyUdxGLV+zQlBuRPJiEZcx2j4EEoHn1EjsypXGBwcQOfxYgfs/KYLgJR2PClspxBCYz613M7lEpqrxTb2B1Wf/fVwD4e6Nhm+zkVYXiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741692102; c=relaxed/simple;
-	bh=tO9+vFf9dJmvAOiMPYF/nYCN3QITcFpTODxWhhf2Ols=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QZkQONy/F1s2jevjdssoWw8Y+lYa1raSwLBdnZLQyRRX2bqGQP31yITBaKUqHGFvFh8i3WTv1o8E4NeIN2EVD9NMxiRka6qd9H5s3zAkPo0WWcY6J0BkgV413YygIQCNHRCGT60rpsfSE2FI0HfkhO72fHHFFmCU23LuHzNa0lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZBrpM3y6mzvWqV;
-	Tue, 11 Mar 2025 19:17:47 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id B331D1401F2;
-	Tue, 11 Mar 2025 19:21:37 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 11 Mar 2025 19:21:37 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 11 Mar
- 2025 19:21:36 +0800
-Message-ID: <4ecf2dd3-dd88-aeb8-c1c3-0322c17438ab@huawei.com>
-Date: Tue, 11 Mar 2025 19:21:36 +0800
+	s=arc-20240116; t=1741692147; c=relaxed/simple;
+	bh=lMU6ponq0xF7hfMuNjfylz3m1p39UzPIIE6c6X297+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6QiDovRMbq8L7dD+5YtsJA+YkY0mljeoWwjT45RpkhZ6khVKcpqRSWmaU67iKaM3dlmWQ0XvCVbV+QXcGe5bX+dT6HxZMKT0D0+QP5s55+JzJ8qWfF177wSqn37Xr6H68ZOsOmzN8ca1BgiHmrFzxCVk/aIohlLezXvko1NtRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmOlMRpA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6944C4CEE9;
+	Tue, 11 Mar 2025 11:22:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741692146;
+	bh=lMU6ponq0xF7hfMuNjfylz3m1p39UzPIIE6c6X297+M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gmOlMRpAXXcA7HM4xu9omX8AqdedevKRIxId0WOqOTno+zeda+2h8sy95HaIMCk+G
+	 bUBrnjhfGBQGo06Bw9JqGY18N+soUJB+Q+oWBECAJcFlPJv8OiS7A0Ny6NXt0/wBzq
+	 0YNWW3Ij51kn6LRNut5b9Ju5pcdI6doRnu+n1s/fHiL9NYqiXaYNhE0aLQH1r21Cg3
+	 j8J4qHgQKVfEJVVARzlszEMPUZp2uQ7fxy8GCcW+LD5EUO+Pn14Yu/eEREWfZybWgI
+	 lz4aNnFusUI5DLXQ29K1rVKM63ZON90uW6pR5HTjAMFFGPILh9fYyIrbB1hwGcpnvX
+	 EeDnn5iHRQHWg==
+Date: Tue, 11 Mar 2025 12:22:22 +0100
+From: Vinod Koul <vkoul@kernel.org>
+To: Kever Yang <kever.yang@rock-chips.com>
+Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-phy@lists.infradead.org,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] dt-bindings: phy: rockchip,inno-usb2phy: add rk3562
+Message-ID: <Z9Ac7hhQj9J7sFwJ@vaman>
+References: <20241224094240.3817261-1-kever.yang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v2 05/13] mailbox: pcc: Use acpi_os_ioremap() instead of
- ioremap()
-To: Sudeep Holla <sudeep.holla@arm.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Jassi Brar <jassisinghbrar@gmail.com>, Adam Young
-	<admiyo@os.amperecomputing.com>, Robbie King <robbiek@xsightlabs.com>
-References: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
- <20250305-pcc_fixes_updates-v2-5-1b1822bc8746@arm.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <20250305-pcc_fixes_updates-v2-5-1b1822bc8746@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241224094240.3817261-1-kever.yang@rock-chips.com>
 
-
-在 2025/3/6 0:38, Sudeep Holla 写道:
-> The Platform Communication Channel (PCC) mailbox driver currently uses
-> ioremap() to map channel shared memory regions. However it is preferred
-> to use acpi_os_ioremap(), which is mapping function specific to EFI/ACPI
-> defined memory regions. It ensures that the correct memory attributes
-> are applied when mapping ACPI-provided regions.
->
-> While at it, also add checks for handling any errors with the mapping.
->
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+On 24-12-24, 17:42, Kever Yang wrote:
+> Add compatible for the USB2 phy in the Rockchip RK3562 SoC.
+> 
+> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
 > ---
->   drivers/mailbox/pcc.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-> index 5a9ae67f5c50a3e43d30aa368c31c80b81db01f7..b1b8223b5da7002fc522523dbc82f6124215439a 100644
-> --- a/drivers/mailbox/pcc.c
-> +++ b/drivers/mailbox/pcc.c
-> @@ -418,8 +418,12 @@ int pcc_mbox_ioremap(struct mbox_chan *chan)
->   		return -1;
->   	pchan_info = chan->con_priv;
->   	pcc_mbox_chan = &pchan_info->chan;
-> -	pcc_mbox_chan->shmem = ioremap(pcc_mbox_chan->shmem_base_addr,
-> -				       pcc_mbox_chan->shmem_size);
-> +
-> +	pcc_mbox_chan->shmem = acpi_os_ioremap(pcc_mbox_chan->shmem_base_addr,
-> +					       pcc_mbox_chan->shmem_size);
-> +	if (!pcc_mbox_chan->shmem)
-> +		return -ENXIO;
-> +
->   	return 0;
->   }
->   EXPORT_SYMBOL_GPL(pcc_mbox_ioremap);
-LGTM,
-Acked-by: Huisong Li <lihuisong@huawei.com>
-Tested-by: Huisong Li <lihuisong@huawei.com>
+> 
+>  .../devicetree/bindings/phy/rockchip,inno-usb2phy.yaml         | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+> index 6a7ef556414c..367297f6f8b5 100644
+> --- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+> @@ -19,6 +19,7 @@ properties:
+>        - rockchip,rk3328-usb2phy
+>        - rockchip,rk3366-usb2phy
+>        - rockchip,rk3399-usb2phy
+> +      - rockchip,rk3562-usb2phy
+>        - rockchip,rk3568-usb2phy
+>        - rockchip,rk3576-usb2phy
+>        - rockchip,rk3588-usb2phy
+> @@ -150,7 +151,6 @@ allOf:
+>              enum:
+>                - rockchip,rk3568-usb2phy
+>                - rockchip,rk3588-usb2phy
+> -
+
+Unrelated change?
+
+>      then:
+>        properties:
+>          host-port:
+> @@ -190,6 +190,7 @@ allOf:
+>                - rockchip,rk3328-usb2phy
+>                - rockchip,rk3366-usb2phy
+>                - rockchip,rk3399-usb2phy
+> +              - rockchip,rk3562-usb2phy
+>                - rockchip,rk3568-usb2phy
+>                - rockchip,rk3588-usb2phy
+>                - rockchip,rv1108-usb2phy
+> -- 
+> 2.25.1
+> 
+> 
+> -- 
+> linux-phy mailing list
+> linux-phy@lists.infradead.org
+> https://lists.infradead.org/mailman/listinfo/linux-phy
+
+-- 
+~Vinod
 
