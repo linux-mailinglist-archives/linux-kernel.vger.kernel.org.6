@@ -1,162 +1,117 @@
-Return-Path: <linux-kernel+bounces-556515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F878A5CB00
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:38:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD8BA5CB06
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 824803B89DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE66F3B8A70
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A79260A29;
-	Tue, 11 Mar 2025 16:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837AD260A2D;
+	Tue, 11 Mar 2025 16:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CcS3x7I1"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S0TFRpJ3"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A1E25F78A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD01825B69D;
+	Tue, 11 Mar 2025 16:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741711094; cv=none; b=Y3QuRso8CiQ+InQui21Qtj5/oHC0LtN8JlOOYTTSSBE0zrZXbR7vmz3CR19cF8UifplPXieMlGlVzniDA8x3CC3UHL8iHfmRLRiB/sYc80wdn/tp2nf0t3Tp+14rAMbuJHMKXmm2cWg0yHULW/d1SNuXddsK7mXpTShWtz6WRyE=
+	t=1741711247; cv=none; b=AXrnv5obD2ZwBBnhcdjFIX+mwfa8/qIkAG9bAAkTURm8A+NQ+Dk6MYG5+kr1sKkiG+4jiAZWaeFjkYbgognFU+2rSQHCdT6nroGEgrLM20adpLlbWZjF8qACk4VEjIziZOlCErrli9YHlR2vzgrO2AkTKfFib4s6+4CRz2SNi3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741711094; c=relaxed/simple;
-	bh=k/qqYE18dumnTrExg52yxnDgHqbEw22SqqHqyAXOR34=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UxsJ7C56F8tIIafBRHJqMYrfRuDQp0OwasmRk31kEbwU+CrTys1MXK7d8vvCMojxy5b2eCGK5jBc1Cd48hOO7WLa36oWhiEDN1ssZI4R96NNFH/7fhS3CTUreiI4Y8cclLzmL4AQ2PETeDjgpwy7Dn0GzyLrw7NCXFnXaXoelXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CcS3x7I1; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30761be8fcfso63531651fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:38:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741711090; x=1742315890; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O2J/hC01hBS+/+SHi16lHvEsy7aFLaWqMUUObIUNbiY=;
-        b=CcS3x7I1Def8YQPhV2sP4D3Jaw73ir+Hqb2lRf8CvdOJs1E/ruu7l1w0x5BUpNd33x
-         pnwTtsQQnnfAwAzfNiYVtiamjBPaE8N/N2OwTyRYsPDwJie3vdd6MOU6ZOjN5WnQUD8L
-         NmGhhDt3lMKlpQYGGYJraQoCgcTYy3tvWD/lY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741711090; x=1742315890;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O2J/hC01hBS+/+SHi16lHvEsy7aFLaWqMUUObIUNbiY=;
-        b=KgqfvXu2kwrThguGlYafahITHxA61swQIAPH1MHrT+DbwL7diyf20fENeYtabDrSS4
-         ox8SMRp43/COS/Rd4WL11Kdz7XA6p4MePQK6H8IcmUrc8kCsw99IioBbeNMKR5Tbyk9k
-         KIcY/BdpUNTN0n3xjNkBc+UrfQkAhcZ3mGPfO4QEqHuyD/PmZI5sdeWLlbSPVwymXEwC
-         SLVnlSkS+D6apkmH8ymaDoMRg01vgbE0zqWC9K2jTGf1/7ai+tsJI16E0SUlLPBIRibh
-         NkhJlmhg2pv/KdbNNDPEttN9FUNnCqD6ZJgzq3Su8t//bKRAtCUt4LY2b90NJRHhBs78
-         XBBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMXtrEpQWQeUVKneomU9teZIu7fapkiR5K8bk87pbXWOlmqcvHQJMA7SCBD2uMJWedR7+a5trVn50fbeA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl25vKS92Sgu8DpYTFN2kh3G/QPXZW5nlA0XtS3lZSsT4fU7IA
-	JsGwqfxm3xvdBgn+epteqUzGT1URklXOusE96vUUCgrDoG3Ix5sruMrgLgtGrZ1iMjuYLtJZpeE
-	Jx+4/rhAo7uObjcMNCg1aKkZoL/wfbVwbe/x4
-X-Gm-Gg: ASbGncsFButwwpDiXlZluOnzsDkdzmFoIu1ft3WFS9BEY4CSX2T624RFEIan3BIXAqS
-	y978Z0DWR2uOuIPx0I60ZzNmaiPwdO7JgtMBqKSGEoRLa4f6K9CcA5hY5OvP0XMZbAeB7MhFBjY
-	e9QvTVMOBdk7vZUnduiCm11lU/sWWsHRlfbKQj
-X-Google-Smtp-Source: AGHT+IE17lMcS87AcZdY9lwHljntIGFjrdX/tIws8/mMJWqlvfj4BKIje8AtAeZJAoP34LDD7scalOwGJSBgf3KZaUc=
-X-Received: by 2002:a05:6512:118a:b0:549:4a13:3a82 with SMTP id
- 2adb3069b0e04-54990e5db47mr6045073e87.21.1741711089888; Tue, 11 Mar 2025
- 09:38:09 -0700 (PDT)
+	s=arc-20240116; t=1741711247; c=relaxed/simple;
+	bh=Wy+8EZh4dGWZSx8yJwDto+VPZKMU0wZaUq8VJgwIZis=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oJitJchEoKYZ7sgm9hgzJ5cHeuBNxVXQO1C3mpRPqL1EAMmcOLY9E+FISQ9US//Ywo5ywnOamQBTcBz46hl7NkohVwGIungsVOiFMT+akZYUEvWuFQ9LNeXMTX0cmPdYYg8w+TL4zY1NeGJZx6hfq/oGNalPp+yWWO1OWpRUHXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S0TFRpJ3; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 603A520454;
+	Tue, 11 Mar 2025 16:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741711237;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=BX8MNYhz0nxWMzf1+xnQg1mi6wTmP7EBm2twdrUm7v8=;
+	b=S0TFRpJ3AyXV9KHXjY5DlNxy8NO77/HuAixVNSs7sGUyZTxK9DmwQWfxhelgTcgemMKMB7
+	UIyQ4/OfmUou5NxHIwa50NR8okTD8lwfCay12eooeCDGN55QL78Sg5LCO9z5mN16rHQSOr
+	K+jKvlF2WKQt1hIU7McWkR4W+kCPSoZFsnrURAlQbcQyCKFGGJk5szB4dKOyP8xasRka8k
+	leaMIh+0fGcyVvtomgHmSrBiBOlxblI5k2fs/8VwhyVs8N1Qwn5+PQsyYplsyuCWY0Mrc5
+	4h212PLBmKylB8nIa3iBN+MXwoGDNu9PxYxWqeqOOjZa4rQse0sAja2jWANfeA==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Subject: [PATCH 0/2] Add POWERTIP PH128800T004-ZZA01 panel support
+Date: Tue, 11 Mar 2025 17:40:04 +0100
+Message-Id: <20250311-add-powertip-ph128800t004-v1-0-7f95e6984cea@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303200212.3294679-1-dualli@chromium.org> <20250303200212.3294679-2-dualli@chromium.org>
- <CAHC9VhRiZS2Dh+0-GqHE+um7T05p4_=EXG7tOtC5pciWMteDDw@mail.gmail.com>
-In-Reply-To: <CAHC9VhRiZS2Dh+0-GqHE+um7T05p4_=EXG7tOtC5pciWMteDDw@mail.gmail.com>
-From: Li Li <dualli@chromium.org>
-Date: Tue, 11 Mar 2025 09:37:59 -0700
-X-Gm-Features: AQ5f1Jq-kymgLHVS7YmwSl159Xa7tY4tbyEsovgee_yrgxg5Hu6qlOytWyioff4
-Message-ID: <CANBPYPhkYPYGSxhBWbJ2pMqf_iYqNE6H9=ND9ONuTxoPviW=3g@mail.gmail.com>
-Subject: Re: [PATCH v16 1/3] lsm, selinux: Add setup_report permission to binder
-To: Paul Moore <paul@paul-moore.com>
-Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	donald.hunter@gmail.com, gregkh@linuxfoundation.org, arve@android.com, 
-	tkjos@android.com, maco@android.com, joel@joelfernandes.org, 
-	brauner@kernel.org, cmllamas@google.com, surenb@google.com, 
-	omosnace@redhat.com, shuah@kernel.org, arnd@arndb.de, masahiroy@kernel.org, 
-	bagasdotme@gmail.com, horms@kernel.org, tweek@google.com, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	netdev@vger.kernel.org, selinux@vger.kernel.org, hridya@google.com, 
-	smoreland@google.com, ynaffit@google.com, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGVn0GcC/x3MQQqAIBBA0avErBsYLSm6SrSwHGs2JRoVhHdPW
+ r7F/y8kjsIJhuqFyJckOfYCVVewbHZfGcUVgyZtqFGE1jkMx83xlIBhU7rviU6iFtvGGt8pv2g
+ zQ+lDZC/P/x6nnD8NnyvfawAAAA==
+X-Change-ID: 20250310-add-powertip-ph128800t004-43a5f71fc25b
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=764;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=Wy+8EZh4dGWZSx8yJwDto+VPZKMU0wZaUq8VJgwIZis=;
+ b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBn0Gd8GLC2HXiom4X5kjgGEKBoCePp32te7YSYp
+ g1Anj9pVY2JAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCZ9BnfAAKCRDRgEFAKaOo
+ Nl7cD/oCcuiDxHD7QS8L/NYIxlsF3/CkbY1JS5sa9dgPU3wg65FgLdhlVrywFTQa8vP7vf3wbbL
+ nrjEr9+1L1+U2ddN47tCM1ute9s3JD9/I32zMm6kU2GDm+v4AUvzaAIk4ey9Ze+JoFLc7O+e9s0
+ LyOZdNNqkypPCg/5Y/Uv0ZGersIZZk9P89dzoBnar5ADJ/TZewLIQOxYsl9gATCp1WsXAVG+j1X
+ LBc0Ly8q/bzVp/7xA6fSpkdnx+UNUu0TcDEsT3pDHxfFpULOAuHL8uJKP7lDJaQo6L5ULPECa48
+ OPomMsNGB89zVdcSEDjsgaEF9cTmr1rN+LpIwhiDwfYsODH506TTO+oTLl82OUkNGpjrY0tA0do
+ 79kKB5H+vMdfb1H1Xp+4KOcKWc4FyHir9yfJgdP242Qbdbb7HC89Z6oJZJrwiYwcv8j6q2DVwqm
+ qc0/GQaN0bSrwz8bnRfnRItPz4rTNGgbxREsoD2j/js5Z4s1QnOcNLgnR/F7EBTPMnt56/DMdDT
+ yzxDhrcf+t7VMxYIgoajRtsk2GdwljveeGea3Cd27pNfzyHAdjyPY5tRPXVS+h62EZ+KhnCdcl9
+ hCRMv9pwxfst9xPo/ZqD1ffBscmcnTsXFFf53iqxP7tWZkpfSgGfmLtOSpdHVarfRyAv3bpEBYg
+ 55a/I8VMSGMabzQ==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddvjeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomheptehnthhonhhinhcuifhouggrrhguuceorghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeduvdefkeffteeluedvgffhjeegffduveegfffghfejteejkedvgfeuvedtudejkeenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeejtgehtgemiegruggvmeejleegkeemgedtheelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeejtgehtgemiegruggvmeejleegkeemgedtheelpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpegrnhhtohhnihhnrdhgohgurghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvl
+ hdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhhihgvrhhrhidrrhgvughinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomh
+X-GND-Sasl: antonin.godard@bootlin.com
 
-On Fri, Mar 7, 2025 at 1:47=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
->
-> On Mon, Mar 3, 2025 at 3:02=E2=80=AFPM Li Li <dualli@chromium.org> wrote:
-> >
-> > From: Thi=C3=A9baud Weksteen <tweek@google.com>
-> >
-> > Introduce a new permission "setup_report" to the "binder" class.
-> > This persmission controls the ability to set up the binder generic
-> > netlink driver to report certain binder transactions.
-> >
-> > Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
-> > Signed-off-by: Li Li <dualli@google.com>
-> > ---
-> >  include/linux/lsm_hook_defs.h       |  1 +
-> >  include/linux/security.h            |  6 ++++++
-> >  security/security.c                 | 13 +++++++++++++
-> >  security/selinux/hooks.c            |  7 +++++++
-> >  security/selinux/include/classmap.h |  3 ++-
-> >  5 files changed, 29 insertions(+), 1 deletion(-)
->
-> ...
->
-> > diff --git a/security/security.c b/security/security.c
-> > index 8aa839232c73..382e3bbab215 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -1043,6 +1043,19 @@ int security_binder_transfer_file(const struct c=
-red *from,
-> >         return call_int_hook(binder_transfer_file, from, to, file);
-> >  }
-> >
-> > +/**
-> > + * security_binder_setup_report() - Check if process allowed to set up=
- binder reports.
->
-> Please keep the line length in the LSM and SELinux code to 80
-> characters or less.
->
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 0d958f38ff9f..2fafa8feafdf 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -2092,6 +2092,12 @@ static int selinux_binder_transfer_file(const st=
-ruct cred *from,
-> >                             &ad);
-> >  }
-> >
-> > +static int selinux_binder_setup_report(const struct cred *to)
-> > +{
-> > +       return avc_has_perm(current_sid(), cred_sid(to), SECCLASS_BINDE=
-R,
-> > +                           BINDER__SETUP_REPORT, NULL);
-> > +}
->
-> There should also be an associated patch{set} against the
-> selinux-testsuite to add tests for the binder/setup_report permission
-> introduced here.  My apologies if you've already posted one, but I'm
-> looking now and I don't see anything either on the lists or on GH.
->
-> * https://github.com/SELinuxProject/selinux-testsuite
->
-> --
-> paul-moore.com
+The POWERTIP PH128800T004-ZZA01 panel is close to the POWERTIP
+PH128800T006-ZHC01, with different timings. Add a binding and a panel
+entry under panel-simple.c.
 
-Thank you very much! I'll add such a test, along with other binder
-fixes mentioned by Carlos.
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+---
+Antonin Godard (2):
+      dt-bindings: display: simple: Add POWERTIP PH128800T004-ZZA01 panel
+      drm/panel: simple: Add POWERTIP PH128800T004-ZZA01 panel entry
+
+ .../bindings/display/panel/panel-simple.yaml       |  2 ++
+ drivers/gpu/drm/panel/panel-simple.c               | 29 ++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
+---
+base-commit: 66683f3b2661643f694607283ee8f01b7a934c83
+change-id: 20250310-add-powertip-ph128800t004-43a5f71fc25b
+
+Best regards,
+-- 
+Antonin Godard <antonin.godard@bootlin.com>
+
 
