@@ -1,168 +1,100 @@
-Return-Path: <linux-kernel+bounces-556278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE6DA5C393
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:16:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A02A5C395
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:16:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACCE23B5576
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:15:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C19C1881DC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC5325C6E7;
-	Tue, 11 Mar 2025 14:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D8A2580F8;
+	Tue, 11 Mar 2025 14:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q/kFUKlt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="chQdwNG6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="00ArYphL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A8725BAAE;
-	Tue, 11 Mar 2025 14:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4E519D067
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741702514; cv=none; b=G23wNXujBxHTxv2qcU0rqfujLeHMfpd4fIKNYXA6jkAI1ZvDRHiRps0MGt1BWSDI3XF4JPh2G1JauEbXFXPZMRtwIsEL/JNZD4pXjYzbTbxvw6cggloV3xIRw2CvJRjjUgg2cwj4R0c5+/zYv2Ymd1uEqfevsg4KXaufqGbSFmU=
+	t=1741702594; cv=none; b=g+eqjDRViPgy6gw7vJ4jgQuE2fOAwEAEixPnV6L+Mu+nqY3MjGUiqccF154rKsDkcpYOUPF9aefOYz3kNlf3uDyngD39IJozRf8FswI/49lZ7QCXKp4XRVkxajLM6UltxFsUhTn7DBg9Rm3i41MzM5rfZfh462Hl/35zOqhSSB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741702514; c=relaxed/simple;
-	bh=Fl2EHoPu5bp/EQu9H9P/PviH867qLoW/sh72dVG/YG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SlXtx7NHsEzvQRNANq8lzrmKl/zSBPPlnKEjq+sTibqX4caKCDW/8C5OTdF5ukj3EFyJaiKfIQOAEPt/m19VWtmgUPr/DokQ9nXUg8FIFxbtSKHX5CC7y2Hc4+3eZgUAcRmioZZc/hr1g1U2GoUwrthXu/dOpMQejb9pjcVS5sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q/kFUKlt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3518CC4CEE9;
-	Tue, 11 Mar 2025 14:15:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741702513;
-	bh=Fl2EHoPu5bp/EQu9H9P/PviH867qLoW/sh72dVG/YG0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q/kFUKltAh5LAX8HNtd6Wv7rLWIvOZyGPEO8I3Tli9Aozau1n8V3y2NofgLHeYiMW
-	 M3ompJU5tDMNB1PqqG2Yh/8xNF0YyPw8vfy6suYeWqan14WFjQdaKnzMn85S4p0yBZ
-	 BcVrunDmYbnRj58J83KPMZzivyf3IxpIy7KfbgIQ=
-Date: Tue, 11 Mar 2025 15:15:10 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: rafael@kernel.org, "stable@vger.kernel.org" <stable@vger.kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: queue-5.10: Panic on shutdown at platform_shutdown+0x9
-Message-ID: <2025031100-busboy-lusty-334e@gregkh>
-References: <231c0362-f03e-4cef-8045-0787bca05d25@oracle.com>
- <2025020722-joyfully-viewless-4b03@gregkh>
- <0c84262b-c3e2-4855-9021-d170894f766c@oracle.com>
- <b3ce27d9-4b94-4e75-92fe-a42d6c97834e@oracle.com>
- <2025030703-translate-sterling-19d7@gregkh>
- <54ccf1f1-52d9-4444-ad23-fb74a8d64cf1@oracle.com>
+	s=arc-20240116; t=1741702594; c=relaxed/simple;
+	bh=UfXHTMaPVdG7ZxNL1lHSUbJV5e4J5vNj/AHB9cZQTac=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dyKozvEIEvTP2xtZCrQYcSfzf/g/D8Y471aujtcyAHp8CL9o7SUSt8UdeP3DMvp7tD2RbO7ue0K4E/09QSS9fZeiNwQlexBoOH/nsvVhIrAg+EfwZ0GIkVaaiBouvkjKK6pep5a5tmfMOeVkxIr6LZIkv4Wyg8zVPAro57IlTHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=chQdwNG6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=00ArYphL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741702591;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DwyWWMDbvftDi6swFTAUyPJOVj0fxdOJ/gPcHhgwuoQ=;
+	b=chQdwNG6AzEXXMLe1zDBCnPTPxLEyGI02HWMKBlIwLf/dyPTJkOpO15oa+Z1NzhOt9iGNa
+	4L6LFuT+W6ryBgHTafQ+os29/0QSxjv/1HyZsdm4HKWsMkIUAdj3/EeGFyib9/386EsIWA
+	Y7ZhJf/Vw69Rt5znxAVfa1e6jF/c7puI0n5gFCUex0ak4aocmOMdmWcrv5dF5PEyGWIIJm
+	s+RrfoZF/GkAsCRXODRnXkvqZO7BptTY/h05WtkLViSBXcitGpflutSfU8zmvIsikx31Is
+	A/cu1VVizPKFCnuRxS1XUpY5m0dEdhIsgUgtDIfpBu6J3e5m1ni1I/cHIiCq3w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741702591;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DwyWWMDbvftDi6swFTAUyPJOVj0fxdOJ/gPcHhgwuoQ=;
+	b=00ArYphLbzRh7uDnC9ScRsfnzlUUL+SAj/I1l0rK3Vz0RsOmCo2s2i+B/0HgBVmT+SGTPc
+	R4E6ssgEhps0ETBw==
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Benjamin Segall <bsegall@google.com>, Eric
+ Dumazet <edumazet@google.com>, Andrey Vagin <avagin@openvz.org>, Pavel
+ Tikhomirov <ptikhomirov@virtuozzo.com>, Peter Zijlstra
+ <peterz@infradead.org>, Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: Re: [patch V3 02/18] posix-timers: Initialise timer before adding
+ it to the hash table
+In-Reply-To: <Z9A5uixC_Tjk308w@localhost.localdomain>
+References: <20250308155501.391430556@linutronix.de>
+ <20250308155623.572035178@linutronix.de>
+ <Z9A5uixC_Tjk308w@localhost.localdomain>
+Date: Tue, 11 Mar 2025 15:16:30 +0100
+Message-ID: <87y0xbzm81.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <54ccf1f1-52d9-4444-ad23-fb74a8d64cf1@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 07, 2025 at 09:30:31AM -0500, Chuck Lever wrote:
-> On 3/7/25 9:29 AM, Greg KH wrote:
-> > On Fri, Mar 07, 2025 at 08:55:55AM -0500, Chuck Lever wrote:
-> >> On 2/9/25 10:57 AM, Chuck Lever wrote:
-> >>> On 2/7/25 10:10 AM, Greg KH wrote:
-> >>>> On Thu, Feb 06, 2025 at 01:31:42PM -0500, Chuck Lever wrote:
-> >>>>> Hi -
-> >>>>>
-> >>>>> For the past 3-4 days, NFSD CI runs on queue-5.10.y have been failing. I
-> >>>>> looked into it today, and the test guest fails to reboot because it
-> >>>>> panics during a reboot shutdown:
-> >>>>>
-> >>>>> [  146.793087] BUG: unable to handle page fault for address:
-> >>>>> ffffffffffffffe8
-> >>>>> [  146.793918] #PF: supervisor read access in kernel mode
-> >>>>> [  146.794544] #PF: error_code(0x0000) - not-present page
-> >>>>> [  146.795172] PGD 3d5c14067 P4D 3d5c15067 PUD 3d5c17067 PMD 0
-> >>>>> [  146.795865] Oops: 0000 [#1] SMP NOPTI
-> >>>>> [  146.796326] CPU: 3 PID: 1 Comm: systemd-shutdow Not tainted
-> >>>>> 5.10.234-g99349f441fe1 #1
-> >>>>> [  146.797256] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
-> >>>>> 1.16.3-2.fc40 04/01/2014
-> >>>>> [  146.798267] RIP: 0010:platform_shutdown+0x9/0x20
-> >>>>> [  146.798838] Code: b7 46 08 c3 cc cc cc cc 31 c0 83 bf a8 02 00 00 ff
-> >>>>> 75 ec c3 cc cc cc cc 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 8b 47
-> >>>>> 68 <48> 8b 40 e8 48 85 c0 74 09 48 83 ef 10 ff e0 0f 1f 00 c3 cc cc cc
-> >>>>> [  146.801012] RSP: 0018:ff7f86f440013de0 EFLAGS: 00010246
-> >>>>> [  146.801651] RAX: 0000000000000000 RBX: ff4f0637469df418 RCX:
-> >>>>> 0000000000000000
-> >>>>> [  146.802500] RDX: 0000000000000001 RSI: ff4f0637469df418 RDI:
-> >>>>> ff4f0637469df410
-> >>>>> [  146.803350] RBP: ffffffffb2e79220 R08: ff4f0637469dd808 R09:
-> >>>>> ffffffffb2c5c698
-> >>>>> [  146.804203] R10: 0000000000000000 R11: 0000000000000000 R12:
-> >>>>> ff4f0637469df410
-> >>>>> [  146.805059] R13: ff4f0637469df490 R14: 00000000fee1dead R15:
-> >>>>> 0000000000000000
-> >>>>> [  146.805909] FS:  00007f4e7ecc6b80(0000) GS:ff4f063aafd80000(0000)
-> >>>>> knlGS:0000000000000000
-> >>>>> [  146.806866] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >>>>> [  146.807558] CR2: ffffffffffffffe8 CR3: 000000010ecb2001 CR4:
-> >>>>> 0000000000771ee0
-> >>>>> [  146.808412] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-> >>>>> 0000000000000000
-> >>>>> [  146.809262] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-> >>>>> 0000000000000400
-> >>>>> [  146.810109] PKRU: 55555554
-> >>>>> [  146.810460] Call Trace:
-> >>>>> [  146.810791]  ? __die_body.cold+0x1a/0x1f
-> >>>>> [  146.811282]  ? no_context.constprop.0+0xf8/0x2f0
-> >>>>> [  146.811854]  ? exc_page_fault+0xc5/0x150
-> >>>>> [  146.812342]  ? asm_exc_page_fault+0x1e/0x30
-> >>>>> [  146.812862]  ? platform_shutdown+0x9/0x20
-> >>>>> [  146.813362]  device_shutdown+0x158/0x1c0
-> >>>>> [  146.813853]  __do_sys_reboot.cold+0x2f/0x5b
-> >>>>> [  146.814370]  ? vfs_writev+0x9b/0x110
-> >>>>> [  146.814824]  ? do_writev+0x57/0xf0
-> >>>>> [  146.815254]  do_syscall_64+0x30/0x40
-> >>>>> [  146.815708]  entry_SYSCALL_64_after_hwframe+0x67/0xd1
-> >>>>>
-> >>>>> Let me know how to further assist.
-> >>>>
-> >>>> Bisect?
-> >>>
-> >>> First bad commit:
-> >>>
-> >>> commit a06b4817f3d20721ae729d8b353457ff9fe6ff9c
-> >>> Author:     Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> >>> AuthorDate: Thu Nov 19 13:46:11 2020 +0100
-> >>> Commit:     Sasha Levin <sashal@kernel.org>
-> >>> CommitDate: Tue Feb 4 13:04:31 2025 -0500
-> >>>
-> >>>     driver core: platform: use bus_type functions
-> >>>
-> >>>     [ Upstream commit 9c30921fe7994907e0b3e0637b2c8c0fc4b5171f ]
-> >>>
-> >>>     This works towards the goal mentioned in 2006 in commit 594c8281f905
-> >>>     ("[PATCH] Add bus_type probe, remove, shutdown methods.").
-> >>>
-> >>>     The functions are moved to where the other bus_type functions are
-> >>>     defined and renamed to match the already established naming scheme.
-> >>>
-> >>>     Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> >>>     Link:
-> >>> https://lore.kernel.org/r/20201119124611.2573057-3-u.kleine-koenig@pengutronix.de
-> >>>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >>>     Stable-dep-of: bf5821909eb9 ("mtd: hyperbus: hbmc-am654: fix an OF
-> >>> node reference leak")
-> >>>     Signed-off-by: Sasha Levin <sashal@kernel.org>
-> >>>
-> >>
-> >> Hi Greg, I still see crashes on shutdown 100% of the time on queue/5.10
-> >> kernels. Is there a plan to revert this commit?
-> > 
-> > Yes, I haven't had the cycles to get to looking at the 5.10 queue in a
-> > while, which is why I haven't pushed out new 5.10-rc kernels.
-> > 
-> > I'll get to it "soon".  Hopefully.  Ugh.
-> 
-> Understood. Thanks!
+On Tue, Mar 11 2025 at 14:25, Frederic Weisbecker wrote:
+> Le Sat, Mar 08, 2025 at 05:48:14PM +0100, Thomas Gleixner a =C3=A9crit :
+>>=20=20
+>> -static struct k_itimer *posix_timer_by_id(timer_t id)
+>> +static inline struct signal_struct *posix_sig_owner(const struct k_itim=
+er *timer)
+>>  {
+>> -	struct signal_struct *sig =3D current->signal;
+>> -	struct hlist_head *head =3D &posix_timers_hashtable[hash(sig, id)];
+>> +	unsigned long val =3D (unsigned long)timer->it_signal;
+>
+> When used from posix_timer_add() -> posix_timer_hashed(), it can race
+> with another do_timer_create() that clears the BIT 0. It's fine but
+> KCSAN is going to warn sooner or later.
 
-Ok, all now dropped and cleaned up, thanks!
+Indeed
 
-greg k-h
+> It looks like a good candidate for data_race() ? Well, READ_ONCE() is
+> fine too.
+
+READ_ONCE() is the right thing to do.
 
