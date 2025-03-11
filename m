@@ -1,83 +1,125 @@
-Return-Path: <linux-kernel+bounces-555392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3268A5B6CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:37:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 001A5A5B6D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:37:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617E418955CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:37:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A43E93A8D57
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547CF1E5B69;
-	Tue, 11 Mar 2025 02:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5EA1E7C27;
+	Tue, 11 Mar 2025 02:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="lPnlQljQ"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4429EEEBA;
-	Tue, 11 Mar 2025 02:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="JMhGny2o"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0095F1E520E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 02:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741660643; cv=none; b=Zcg9fcnnrQkrhO0u6lh0hNYSIqjVa/gYJ6Dl3ltdaOGo9liCiqeiutzERD+V/ZdCM/4YVV+Jrf60Cfijg7Y7jQnN0D6gVl7aXMN14WdKhUJKWPFQvtgPiduQiJ+Pyz+YnmUFef+rxziQHizykRJTYyqM6T2b0R76rAzoSwHddbU=
+	t=1741660672; cv=none; b=mLnk9Smx+ewPQSzw5n/UBSnMeUILCZYVdf3Ua1oy3WKusgbB5ALQSlI8t/Ut7s5/1IJm06LjZ0tc0KOTbreeIRaplxdQQzDYIS/cjYLzPcszbl949DwZ8BTggzn9A4/jpNuZvcLyxreOBnCdT0swBfB+R3mLudg/rm8f5U+kCb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741660643; c=relaxed/simple;
-	bh=FXtPzAGVJb0GdIlkJWer/5cmp+mFmG55OSNf2JR/SK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AEtbTggwc7gCgc6Tzxd0f9E/0oBiuYQj2ITNWvOtbL4wfEEFDjpAjsqXp3q6fHcpMKsQYK6nZK+5qjvgGw3doVnN6QSinvywc8Vq85if1mhygsCC3Ie3jOCUz1WwX9d/+wHnT43XTe+402s8fWAz60+8ZEkWo461vKqv6PxASPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=lPnlQljQ; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=ynTyUmTRCgFTrUshSeCg3vb32qg0W3S4+Fy0XJ4c8bs=;
-	b=lPnlQljQAhc8CzTGxTeVOX4ueEc/kN7y2BvyDQp4u5LvrdQPaN8hStqne9EMN2
-	FUNpegP2C6hbrt+Xx5h/RZYg7fhsXJlYeumba48vBAHlwKtyylT4vRtopgPar/p4
-	dNUQ4HkoEYQ0opeCu4j57BMGcDwLF7vIADn8JTjYMF1Cc=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgAXFkPEoc9n2Xe0AA--.48983S3;
-	Tue, 11 Mar 2025 10:36:54 +0800 (CST)
-Date: Tue, 11 Mar 2025 10:36:52 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] arm64: dts: im8mq: move dwc3 usb port under ports
-Message-ID: <Z8+hxCxum9uTLGGC@dragon>
-References: <20250224193308.407606-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1741660672; c=relaxed/simple;
+	bh=hh7QDsywcXB+6disdfK5pr9T8ubWm1fW4QiNis++4VA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dp63V+VozYbUEt6L23bgea4XAm4rmPouN0eGsqSHpsmMlGbmKrKaCD7uzaCv7K9misO9zC5MJqAhF1DIzquMVTrstUilVlUtNml++i3la9PP2KUfwOxFlrbtE5IymwirR7cZIxPQxc4yEVIjBAndtuE6ZOseS9wOQGvPUVNd3nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=JMhGny2o; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2234e4b079cso88530885ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 19:37:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1741660670; x=1742265470; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1EJIiSH26iW36iQ0AY70VtFe7J14wVFHIbN5UzXmWNM=;
+        b=JMhGny2ohaL4dT2gQ+rZcQbfAnckNl3h8rXMQpctLvpJmwhA2GT/aWwrfFAh2BUvf5
+         7qyUkrPEiin91wP/MrOrL78HqgGvfPH3PMcdE+ynYSc5XXBmi0K8FTGZ7S6rL0m9oV5/
+         4F9IARyhLjC6KzQguBRKZ0tSSc7nNff0oX/X3faMMwtan0p+g53A10olLu8tEcOoRasr
+         I46J5Y4A/1TR1irDJsmhXws7KZVvhxL9Scf1eY2CQ82N45KJeiul2Fqw4dfV1ujkZpwy
+         RNlhZoCZvuGZ17sLdFve3qT07JfAxerTvTjDFuvi2nj7JdiqzJIL/DWqjCwSh7RHZyRq
+         khjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741660670; x=1742265470;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1EJIiSH26iW36iQ0AY70VtFe7J14wVFHIbN5UzXmWNM=;
+        b=vJ4pIoBSZ1E+4elX+OhsfUnb8I3DYSrmp4j/5MhFPhGejbPLXdqVm1WOA+VO+HVFIW
+         fHeInQPaEUYK2ighYlLVkZaUG2pOhP3ktxgShnzYS0z27kC+cGCWOGkyzv077l3FYvVV
+         dgoIrLtkGaqwhbghC1pOz9JU0fXAT7L+9hvJKoB05o6nROukHK2VmQVxtcKjx9sJS0zr
+         1z4YOSU0gX3goQxXCz6lBdN0ddY810l28FsCPJZvXDT77Td7NU1N57dA3T5tOPfQE3ML
+         pKDQYgHWoIyjLlKm3Pcy3jUZTyNgYKUxFK2rMCSg8TQhE7Kcji2c8FuN2RC0Hw4/DtoT
+         D++w==
+X-Forwarded-Encrypted: i=1; AJvYcCUfL8CDCAvKX8mDRy/S0tl/fKr4/ZJsjpCUHeqz59Nniu9EH+rKsOVUz1JK/NWBIqOOvGFuhQtel1BjE7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5tBOTwt1RJYmjqU+NqCdXMb3Vf7TB4rs1WYaXcV8m3mA0DOEc
+	ASk5GezfobMo9Of8JpZx8/0k15I+NvQR9WFlWxZ4Jc6Wp6ijmjtuBy2tk8NhNdw=
+X-Gm-Gg: ASbGncv8H3OlDTlnEh7w/R7W3C1UVQqeioDvkgF2r4U2RfCqPyqc8+DboZOKpBrAmW0
+	zOZEQFtzh4BPdsfl4UA8vyfng8u+8s+sJxHsy6Vg2N24PEQ8ix97e1WE35tD+dpQVemJPzeTUL4
+	FRDmPuebjJuy9v4uqCjYdvwgqEzgl81svKjDmdYtqUkp8LwAeCLtH4aCBN5Kpywv6sYUWo0ShSx
+	Sakem5pR7ueREIVuxyKL6VW4W31R9VVRRWX+aLjFd//kTBfDJbllp9KDsiBmB2pdDGCnw2x2Fa0
+	hJNMVajFR4gYHuVsJucEgt02CgYOCipjbjXbJdpdDtbyVzEIggurSCE0LNrIOu/GG86ciu8keZm
+	DzvuI
+X-Google-Smtp-Source: AGHT+IGqOQCr1tOk5CkVd1S+i7SxypBwbxwvlNPK+GIp3D5+3dsq4NswgC6lEGNZin82dMDVWEMT1Q==
+X-Received: by 2002:a17:902:e88d:b0:21f:768:cced with SMTP id d9443c01a7336-22428886828mr219614335ad.8.1741660670288;
+        Mon, 10 Mar 2025 19:37:50 -0700 (PDT)
+Received: from cyan-mbp.internal.sifive.com ([136.226.240.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410aa4a79sm85850615ad.214.2025.03.10.19.37.48
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 10 Mar 2025 19:37:49 -0700 (PDT)
+From: Cyan Yang <cyan.yang@sifive.com>
+To: akpm@linux-foundation.org,
+	shuah@kernel.org,
+	david@redhat.com
+Cc: linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Cyan Yang <cyan.yang@sifive.com>
+Subject: [PATCH] selftests/mm/cow: Fix the incorrect error handling
+Date: Tue, 11 Mar 2025 10:37:30 +0800
+Message-Id: <20250311023730.56658-1-cyan.yang@sifive.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224193308.407606-1-Frank.Li@nxp.com>
-X-CM-TRANSID:Ms8vCgAXFkPEoc9n2Xe0AA--.48983S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZr4fGFy3XF1kAw15ZrykGrg_yoW3uFX_Aa
-	17Wr1rur4DZFs7KF1jyFn7Aa4UK347J3srXryfXw1kXryIv3Z2kF45tr95ur1UGF40qF93
-	Ar15JF10y39akjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0rsqJUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgANZWfPVKnuuQAAs4
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025 at 02:33:07PM -0500, Frank Li wrote:
-> Move port@0 and port@1 under ports to fix below DTB_CHECK warnings.
-> 
-> arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dtb: usb@38100000: port@0:reg:0:0: 0 is less than the minimum of 1
-> 	from schema $id: http://devicetree.org/schemas/usb/snps,dwc3.yaml#
-> arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dtb: usb@38100000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'dr_mode', 'phy-names', 'phys', 'port@0', 'port@1', 'snps,parkmode-disable-ss-quirk' were unexpected)
-> 	from schema $id: http://devicetree.org/schemas/usb/snps,dwc3.yaml#
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+There are two error handlings did not check the correct return value.
+This patch will fix them.
 
-Applied with a change on subject prefix, s/im8mq/im8mq-librem5, thanks!
+Fixes: f4b5fd6946e244cdedc3bbb9a1f24c8133b2077a ("selftests/vm: anon_cow: THP tests")
+Signed-off-by: Cyan Yang <cyan.yang@sifive.com>
+---
+ tools/testing/selftests/mm/cow.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/mm/cow.c b/tools/testing/selftests/mm/cow.c
+index 9446673645eb..16fcadc090a4 100644
+--- a/tools/testing/selftests/mm/cow.c
++++ b/tools/testing/selftests/mm/cow.c
+@@ -876,13 +876,13 @@ static void do_run_with_thp(test_fn fn, enum thp_run thp_run, size_t thpsize)
+ 		mremap_size = thpsize / 2;
+ 		mremap_mem = mmap(NULL, mremap_size, PROT_NONE,
+ 				  MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+-		if (mem == MAP_FAILED) {
++		if (mremap_mem == MAP_FAILED) {
+ 			ksft_test_result_fail("mmap() failed\n");
+ 			goto munmap;
+ 		}
+ 		tmp = mremap(mem + mremap_size, mremap_size, mremap_size,
+ 			     MREMAP_MAYMOVE | MREMAP_FIXED, mremap_mem);
+-		if (tmp != mremap_mem) {
++		if (tmp == MAP_FAILED) {
+ 			ksft_test_result_fail("mremap() failed\n");
+ 			goto munmap;
+ 		}
+-- 
+2.39.5 (Apple Git-154)
 
 
