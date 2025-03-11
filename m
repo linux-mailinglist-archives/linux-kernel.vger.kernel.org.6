@@ -1,96 +1,87 @@
-Return-Path: <linux-kernel+bounces-556116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC9FA5C134
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:31:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2968A5C124
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:30:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B673116C640
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:29:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269CE3A9E86
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFC3256C7B;
-	Tue, 11 Mar 2025 12:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b="QOCuvqvc"
-Received: from mx.nixnet.email (mx.nixnet.email [5.161.67.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8562571C4;
-	Tue, 11 Mar 2025 12:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.161.67.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1C2257432;
+	Tue, 11 Mar 2025 12:26:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941352356D7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741696000; cv=none; b=Y2TS/GSr5jZ71tYlQw+3is204vm0yffjoQzqTNHthq5Z4LcYVSLNjoa1ahkbo7+JUehFuGwXUa3cWHgXlZqvWZC16l1RMmrh5ZdZLoqp7g1spWwbJrSEVbsxIfMyvpAPD5UIa77wqOXJiJ2gm0/u5WSk4gF7FLXilQQ8VEPJUog=
+	t=1741696002; cv=none; b=ky9mddyhwIBV7np5BO0xzmiskN26f/3XkKK4VnAiZ9DdXGBAxHWSMjaW9tuWFCbmfv5HhX2OftDn4z4ejOpvX/IUuydiNpbozhTfajHteQJjzf5Cy2qthsKYNSfK25G9CKIYC8H7fkvUJwGLMc4Fc03JWJRtdtWptc03rdhb3iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741696000; c=relaxed/simple;
-	bh=ZDA41D56M+Vb+JPh5GHUAjorEx/znjRD+rUHpDYb9K0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=a6IqDdBNTDGf/YCjIELmpdniR2WDFCMkvsJp/b3L+bFAjd6dGBwK06PCL84cxrlzqkB1M16Vw7Z6mzF2XyGv1kYsecjQ6bbFeE4cbm/Ha2SB6eRPh7YHz4f9tXzN1dlphLSajv5FQIekAjK4hFuB+R6nrgLTB4kX9t/2vG55ZlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life; spf=pass smtp.mailfrom=pwned.life; dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b=QOCuvqvc; arc=none smtp.client-ip=5.161.67.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pwned.life
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by mx.nixnet.email (Postfix) with ESMTPSA id 6DEEB7D32D;
-	Tue, 11 Mar 2025 13:26:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pwned.life; s=202002021149;
-	t=1741695988;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rTv3pvCKkLqk/zFp5+ZFY3D3ixFEYyO9KwHWCI9sGiE=;
-	b=QOCuvqvcG3T4/eMP7cfADz9CFayB0MNL3WOz7VoRNh0WnVc65QyRW3NaJiTSQbEq2+V9zr
-	33Ozms4idIdSV7brd+UEDQG71ru7MpNub97rbtG7zkXo/6GDnZgAaQuGpaXFFCsi3mRXeO
-	0RU9ZLnG/rxiQ4v6pBaV/XcXurBWHDE=
+	s=arc-20240116; t=1741696002; c=relaxed/simple;
+	bh=3QP0oBTuG17lcSAGTKtF7YT2QD5SMBxytI9UyE2ctsM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nT19dyD5ImORxT5L/7vKxUQI2T87mhJz7AtKm7U42QCF44Jt5bdlWQ16bqYq1UZAm3sHkK/upNSIt6WUNrbr8xhH6UgyUsKpCVZh6euwNDYQ63K4rRQZHTiVPK2ttB3hJ07yi+G4h1myWAj/aSZkO2jjfAtipul952YusyCTcx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0841A152B;
+	Tue, 11 Mar 2025 05:26:51 -0700 (PDT)
+Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D564E3F673;
+	Tue, 11 Mar 2025 05:26:35 -0700 (PDT)
+Message-ID: <667edf42-2218-4a04-bbee-fdb020969d58@arm.com>
+Date: Tue, 11 Mar 2025 12:26:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/49] x86/resctrl: Move the resctrl filesystem code to
+ /fs/resctrl
+To: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+ Babu Moger <Babu.Moger@amd.com>,
+ "shameerali.kolothum.thodi@huawei.com"
+ <shameerali.kolothum.thodi@huawei.com>,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ "carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
+ "lcherian@marvell.com" <lcherian@marvell.com>,
+ "bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
+ "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+ Jamie Iles <quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+ "peternewman@google.com" <peternewman@google.com>,
+ "dfustini@baylibre.com" <dfustini@baylibre.com>,
+ "amitsinght@marvell.com" <amitsinght@marvell.com>,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>,
+ "fenghuay@nvidia.com" <fenghuay@nvidia.com>
+References: <20250228195913.24895-1-james.morse@arm.com>
+ <TYCPR01MB8804B2389B9B553928A3F3658BCA2@TYCPR01MB8804.jpnprd01.prod.outlook.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <TYCPR01MB8804B2389B9B553928A3F3658BCA2@TYCPR01MB8804.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 11 Mar 2025 13:26:24 +0100
-Message-Id: <D8DFP5JO7TF8.3354I1EBRW655@pwned.life>
-Subject: Re: [PATCH 6.13 000/207] 6.13.7-rc1 review
-From: "Achill Gilgenast" <fossdd@pwned.life>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <stable@vger.kernel.org>
-Cc: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
- <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
- <lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
- <f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>,
- <srw@sladewatkins.net>, <rwarsow@gmx.de>, <conor@kernel.org>,
- <hargar@microsoft.com>, <broonie@kernel.org>
-X-Greeting: Hi mom! Look, I'm in somebodys mail client!
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250310170447.729440535@linuxfoundation.org>
-In-Reply-To: <20250310170447.729440535@linuxfoundation.org>
+Content-Transfer-Encoding: 7bit
 
-On Mon Mar 10, 2025 at 6:03 PM CET, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.7 release.
-> There are 207 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.7-=
-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git=
- linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hello!
 
-Thanks! Tested with Alpine Linux configs and packaging.
+On 06/03/2025 11:47, Shaopeng Tan (Fujitsu) wrote:
+> I ran tools/tests/selftests/resctrl on Intel(R) Xeon(R) Gold 6338T CPU @ 2.10GHz, there is no problem.
+> 
+> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 
-Tested-By: Achill Gilgenast <fossdd@pwned.life>
+Thanks for testing again!
+
+
+James
 
