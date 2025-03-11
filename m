@@ -1,132 +1,151 @@
-Return-Path: <linux-kernel+bounces-557053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0097A5D308
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:16:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ADAEA5D309
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:16:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FCEE189A880
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:16:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81543B2D77
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6858922C331;
-	Tue, 11 Mar 2025 23:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EpjKsEAm"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0696A22E415;
+	Tue, 11 Mar 2025 23:16:38 +0000 (UTC)
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442971D6DBB;
-	Tue, 11 Mar 2025 23:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435381D6DBB;
+	Tue, 11 Mar 2025 23:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741734961; cv=none; b=VOguHFq9iGMTykcNoHzVB/p2TMsVX35zavtB2eyTnbcwe5wh93C4dJEdlkSFdbj7sCcWr3OBgo1IpqRScuQCHh/8Z2zUSO4KJ3JcIffSXndLrHoR1M+uIh7fyQg5WwitzJE1eO0siLeaMFH5pkkm1jSJBlzEKoebaWf7HslKU3U=
+	t=1741734997; cv=none; b=J663FfMPR5b62ZXRXi6Q31xCD8ZYcfyc0VnMM7aRoCfI73UDJvUMx6mz7ZwYdWDLJjXhwHdun4q+/ydRsbAJ3+3cmUqiYRkE+VJHk1PED00gLYOjxz2k+eVx/8rFvPJEtUYy3Ur0ak4jDDrPXtilYLnGjQW7Oa+OlfiS427LVZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741734961; c=relaxed/simple;
-	bh=JfqA/cREN5ap0KC+NOoguLsVwcHMC4kC6hiUOpBMvyc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RT1eNH/kZOkLWw5wq9wNziLB/dgYITDslxqItPpxvF7SzZA84+o0Favf4negmHtXgbszWt9Z2tNlG65rN26dfCZu2Np1XVZLSyfvUHsHmlshfACDFxP6RFNcAlzQW93ig77qWRkqfw4Yp3QzOua0nT6qgF4H5BQ4IvlhRO8Zj4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EpjKsEAm; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741734997; c=relaxed/simple;
+	bh=vFKn9KFzy4ZOURbADObnCPQdkfa71sW9tJpVeAApJxA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QaMGVkcRDkfScDiQX0e8eV3POmfkeuJYlWbPs9yIakfFjuBo4rwJsBesidvXImyjLScbS5TzxDlbyRGRY1YR6gXh+Ue6aDLqDpdUNfNFVXupFj+JmaruPGLpPs2XaZ6mLSo5DItWiPu00tCyn2edjF+mBYigPbnadreuHZoGsoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso36594205e9.0;
-        Tue, 11 Mar 2025 16:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741734958; x=1742339758; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tX/dTIeYNxTzj5gZHvJ5AtwpzySsIM3wBh1XC79KOyI=;
-        b=EpjKsEAm86dqI/AbWJorn+3jEH0EEXafb/YkpdV4iBQor+MoVVz6bZmAxImn9TcMtu
-         k3zKtv475p3Ki22bfMaaEksDLrT+CnQpi/GWOktqyJbDUX9mX2QfMjXxpvAW4vkdjZFq
-         yPGH+NGRMAFlGsYKglcQzCDGOQHlxveIvl95a4B5kazFeVNUuL4lWMicSkxos+XJQFlZ
-         YN0hXCJJGxNRbNz4bsMpILG0ZRZ/8K/cG5mzx/tCAb0Wc9CWeOV6FuXvZ81koM03ltAI
-         /AloDX8Uav+6UIMyYOIi87FXGfhq/jDBg22KRAHmSPsrSB6oi0vL+vRusDFLu09eqi2f
-         XZag==
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3f556b90790so1800684b6e.0;
+        Tue, 11 Mar 2025 16:16:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741734958; x=1742339758;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tX/dTIeYNxTzj5gZHvJ5AtwpzySsIM3wBh1XC79KOyI=;
-        b=DpowqH51dZ2lPgkNIVduaG1S/BXv4soG4WIqCgwfo4KtLxZUJaKBQNDwnIpqZ4u1wr
-         Pzt8ibUAnLmfucMALRCdPtCg5DVKmkZhYx+mVsPlOYWxo4ZvqxWzv1ttXt4cefa1xwf5
-         dBObou1PwMC0W0eoy35msgVauq3FJ6tPdxwvtorMfQNh6U2WTeo0PD7m1eU8suDq1478
-         HL84OZGJ8EOs6LHLg6GutSFT45evfgAzmOStZl9FQHWNlOFM0f8/q+tfe9sH5ZIMLu6Z
-         hO8ENbA8nyyoNLh0ZYzXjE5uQ+0Eh67RSnVNDjzbmJu3NH2BmbBXCHEKdy+nCg2MsqYE
-         wKqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVH6cAXA9a5lBi76iJRZBQ2HYaHP0NcmjIVypnRm8LekeBk9giwITZKUfw7h0wFix9QbBWVEELgJ+O2wNI+@vger.kernel.org, AJvYcCWPu4puuwMGvR23NkrVfBt0bergGbZtYuMHeNoLxVcYBTCODaN+V7iXFxMFRsdTWLQxBJkeHgpep8RG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsR6ocTTN469Mvpr6VGLLZpr9prtsCjrpqPyK+l2z+OPEcaMIm
-	MoLcXfRbfBZbBG7qH0l7NcTZok377Md5jlARbBJ1kL2zhI3YvuIY3RAzthn6+mdYcVxxXeKmnK0
-	C4mtu1zt7oBlduLxDAVxfyFQxlNM=
-X-Gm-Gg: ASbGncsTzC0tYYi+e1VmYbnD/Z9ybpfHZ/jiSu7UfLG3gPvsPXNgo16I9Y3QaNBLgOC
-	mYgBVD8RVmEjjrlwY4Xn0G0S/OblXDI2Q0jvzcG/HyH+M2WykxAsWOQNZj63DGQCrGL2gXtVh6S
-	79+hyeWSVKkr/flRD97++9iwKHyL7BudKD8520ksDaDzpjmqdV5+4nkJDwbaS+ymocgGIf
-X-Google-Smtp-Source: AGHT+IHdE+IvjKPy/H/187X9ESbJuc1W239VyqGDem3VC44hAK/6v4MUY7Ogj5IPUx6y6MopfRCWPyu9jEmvdN+2VSY=
-X-Received: by 2002:a5d:47cc:0:b0:391:23de:b1b4 with SMTP id
- ffacd0b85a97d-39132db0648mr15300763f8f.45.1741734958355; Tue, 11 Mar 2025
- 16:15:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741734995; x=1742339795;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NT3ET2M4CvJfrjc7UtUz6A9ZzH+M6UROsJOl9KIGkA8=;
+        b=cXbgyvuLOBMm7z5PON3aAC+uyUZyowaM+PxsH6IUY/5lSXe+XadSBiqUiAhVIcVlk8
+         rQFUBgRvlauaybjbt1inzvHakS9r5BRxkRwVW+sv2hY3ctDdjmwXs35zs3jg5kIHYzXA
+         Racvt9kxWnkr9Qe6ueYgUY+Omijvs1VM8DUwJz8pJ2y7qe7P2VhMy4em+0Xb5LKsIpAU
+         IFEs0iWUf/+CMeB8ZOKVV9SOZEh/iCxlWwUlKnV/Lquox8cHnC9n5ABD9zXjbCoin/yd
+         68mPJqnn/9dshLBoZPA+Bx3E5cQIk/0uqfIIaUOQStcumgJEi2TbQ+AyTGSB7UA9MSj9
+         jqgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYv0m2UEjfuSgqsHero+8haNnd+5HSbEy9iWHpWnKX/YuusyREEAMWBfUvy04+sZrrVuUQEGImZzeSLyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn+fYNCgdu9aIsaFaU5XN9G7QosHDOOvP/VbIQIRo4sXV378Js
+	y/LJSDyAZ0//vR5bIC/m5Byx8YvTazHmNyr4CNkUhbD1DitAeD3b
+X-Gm-Gg: ASbGncvF4JtqY9hogf7xKQ7hJDZqiklKLxpe891slRt1NBrNfaROpVnT2kc1SoRgIBs
+	yrYdcvBaAGw+juL22gKUIS2NcE4VTx9/suhdwxbaO/TT6/LJtutY5QS4KJvGE3YDhHmEkvymoYr
+	y09Ct6nbZMp1T0iOgzzk587+k+EnhcF934uhPs1xchE84PPYzHqtg8o6Q1vTfeCB3tZrBgwibD6
+	TQfl7YEPHW53xR3BzHqI9hPYN9Ws8q68Ja93Rqyhr02poyl5p9IQTPsDoqPVp+f95b9z/olFRBR
+	NNrC3/QAvV9rgFgEjW7q6hWpFLFutsCqERKBmY80mR9B2JCPoxEGNck88Xji6/KIZ9/rI/LG
+X-Google-Smtp-Source: AGHT+IHvIh7HOKUF2kSTrwl4yZYSR9cniot7aBmMKPsu/SKTAalazf30n182yH5QwSl2BrLtR1sAWQ==
+X-Received: by 2002:a05:6808:3996:b0:3f8:effc:938 with SMTP id 5614622812f47-3f8effc0cecmr5870095b6e.34.1741734995283;
+        Tue, 11 Mar 2025 16:16:35 -0700 (PDT)
+Received: from sean-ThinkPad-T450s.lan ([207.191.35.252])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f92706ce68sm868016b6e.26.2025.03.11.16.16.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 16:16:33 -0700 (PDT)
+From: sean.wang@kernel.org
+To: marcel@holtmann.org,
+	johan.hedberg@gmail.com,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sean Wang <sean.wang@mediatek.com>,
+	Yake Yang <yake.yang@mediatek.com>
+Subject: [PATCH] Bluetooth: btmtk: delay usb_autopm_put_interface until WMT event received
+Date: Tue, 11 Mar 2025 16:16:30 -0700
+Message-Id: <20250311231630.35255-1-sean.wang@kernel.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311141245.2719796-1-liujianfeng1994@gmail.com>
-In-Reply-To: <20250311141245.2719796-1-liujianfeng1994@gmail.com>
-From: Jimmy Hon <honyuenkwun@gmail.com>
-Date: Tue, 11 Mar 2025 18:15:47 -0500
-X-Gm-Features: AQ5f1JpTXjTmVT-uFEQ-cp0wVYjs646Qn0g9ep9yELCKIu65h4ws4boyJnIroik
-Message-ID: <CALWfF7JfJxudKKfvOBXiLOMijUi+xZCAUL_WRsB-UxpV3XKDEg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix pcie reset gpio on Orange Pi 5 Max
-To: Jianfeng Liu <liujianfeng1994@gmail.com>
-Cc: linux-rockchip@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 11, 2025 at 9:13=E2=80=AFAM Jianfeng Liu <liujianfeng1994@gmail=
-.com> wrote:
->
-> According to the schematic, pcie reset gpio is GPIO3_D4,
-> not GPIO4_D4.
-Thanks for the correction.
-Also applies to the Orange Pi 5 Ultra.
+From: Sean Wang <sean.wang@mediatek.com>
 
-I made the typo when starting with the Orange Pi 5 Plus with "gpio3
-RK_PB3" and changed both "3" to "4".
+Delay calling usb_autopm_put_interface until the WMT event response is
+received to ensure proper synchronization and prevent premature power
+management actions.
 
-I'm guessing u-boot has already initialized the device, otherwise the
-problem would be more obvious.
+Co-developed-by: Yake Yang <yake.yang@mediatek.com>
+Signed-off-by: Yake Yang <yake.yang@mediatek.com>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ drivers/bluetooth/btmtk.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
->
-> Fixes: c600d252dc52 ("arm64: dts: rockchip: Add Orange Pi 5 Max board")
-> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
-Reviewed-by: Jimmy Hon <honyuenkwun@gmail.com>
+diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+index 68846c5bd4f7..01832bc6a259 100644
+--- a/drivers/bluetooth/btmtk.c
++++ b/drivers/bluetooth/btmtk.c
+@@ -620,17 +620,14 @@ static int btmtk_usb_hci_wmt_sync(struct hci_dev *hdev,
+ 
+ 	if (err < 0) {
+ 		clear_bit(BTMTK_TX_WAIT_VND_EVT, &data->flags);
+-		usb_autopm_put_interface(data->intf);
+-		goto err_free_wc;
++		goto err_pm_put;
+ 	}
+ 
+ 	/* Submit control IN URB on demand to process the WMT event */
+ 	err = btmtk_usb_submit_wmt_recv_urb(hdev);
+ 
+-	usb_autopm_put_interface(data->intf);
+-
+ 	if (err < 0)
+-		goto err_free_wc;
++		goto err_pm_put;
+ 
+ 	/* The vendor specific WMT commands are all answered by a vendor
+ 	 * specific event and will have the Command Status or Command
+@@ -646,18 +643,18 @@ static int btmtk_usb_hci_wmt_sync(struct hci_dev *hdev,
+ 	if (err == -EINTR) {
+ 		bt_dev_err(hdev, "Execution of wmt command interrupted");
+ 		clear_bit(BTMTK_TX_WAIT_VND_EVT, &data->flags);
+-		goto err_free_wc;
++		goto err_pm_put;
+ 	}
+ 
+ 	if (err) {
+ 		bt_dev_err(hdev, "Execution of wmt command timed out");
+ 		clear_bit(BTMTK_TX_WAIT_VND_EVT, &data->flags);
+ 		err = -ETIMEDOUT;
+-		goto err_free_wc;
++		goto err_pm_put;
+ 	}
+ 
+ 	if (data->evt_skb == NULL)
+-		goto err_free_wc;
++		goto err_pm_put;
+ 
+ 	/* Parse and handle the return WMT event */
+ 	wmt_evt = (struct btmtk_hci_wmt_evt *)data->evt_skb->data;
+@@ -700,6 +697,8 @@ static int btmtk_usb_hci_wmt_sync(struct hci_dev *hdev,
+ err_free_skb:
+ 	kfree_skb(data->evt_skb);
+ 	data->evt_skb = NULL;
++err_pm_put:
++	usb_autopm_put_interface(data->intf);
+ err_free_wc:
+ 	kfree(wc);
+ 	return err;
+-- 
+2.25.1
 
-> ---
->
->  arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-compact.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-compact.dtsi =
-b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-compact.dtsi
-> index 6e4dcd8fff26..f748c6f760d8 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-compact.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-compact.dtsi
-> @@ -64,7 +64,7 @@ &led_blue_pwm {
->
->  /* phy2 */
->  &pcie2x1l1 {
-> -       reset-gpios =3D <&gpio4 RK_PD4 GPIO_ACTIVE_HIGH>;
-> +       reset-gpios =3D <&gpio3 RK_PD4 GPIO_ACTIVE_HIGH>;
->         vpcie3v3-supply =3D <&vcc3v3_pcie_eth>;
->         status =3D "okay";
->  };
-> --
-> 2.43.0
->
 
