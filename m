@@ -1,137 +1,218 @@
-Return-Path: <linux-kernel+bounces-555480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22E8A5B83F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:09:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E229A5B844
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:11:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2BF0170507
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:09:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1965E3AA03B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4001EB9F9;
-	Tue, 11 Mar 2025 05:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852B41EBFED;
+	Tue, 11 Mar 2025 05:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tx5OK/tr"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jg0strsL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAE41CA9C;
-	Tue, 11 Mar 2025 05:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC451CA9C;
+	Tue, 11 Mar 2025 05:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741669768; cv=none; b=omtXX30BEWuRfhd+ugZ1DVulJsJB6cILKJ73lOl61VkTmL87mt77zz6tt6+K0zfr8wGeMrypjz8sTfgZr0ieVyWstSkZOvSy0TPeAY79rdz6kyp7Hl8QoFCHbJWLKYKP/m4HYigddBLPj9UFZF7CBL9eRt4cb5jIh4W6aDhRhWg=
+	t=1741669895; cv=none; b=EBIL/eIznjQb9JG4RLHT96ie3h5GJtLo1EdqQjAg7UEmpXNw0KcR7VnakE82QY7Pm16C95HFOm88PBoSm8QZpLQDpx8AzOTS4BZNYEtYNWVBas3j2mS7BDibxZb5cYvG7oUU/825d/DIKnGuzfXVPN+pN4DsiT3/EneL7kdyCdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741669768; c=relaxed/simple;
-	bh=szPTbQX8ub+gJITeHt7+qztGeP736USbvzR9YZkzPWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RGR3i7c7TC7lMFdU+d8XXWXUAL1oi2xELVSxMcsc+sS0qzS5US07hhTW+UWH4ZZOO9vxTYP8gMx61ggJ9ARjXFj1RvyqJhUgcjmcgOb3C8tOmtHrbgOblQu6gb3qCuzaoDvWHWOs/CyDjvHXfFqEdN7Bk5j9MhYN6HMne26fZYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tx5OK/tr; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-223959039f4so99785945ad.3;
-        Mon, 10 Mar 2025 22:09:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741669767; x=1742274567; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n4KhD9AXiV/vH2JoWEUcvtMF0yMzInAf7cgiESBdhb4=;
-        b=Tx5OK/trsMVdYbMR3j26S7rz3f5bTCNT+dtQ5iutqi1nxtt/FSWCuRiLQr906nlSih
-         5DF22HUbWO30JNlkfQIkrt81zHo68/A/3MJiqY7ZJOMxQl3dRqweoFXDJ+pqsjBpT2Ga
-         ghkZkWVKdUacbODMNb9uBa/l5kI6iUXNjYOs2LeaD2KmlNKq7ZvKkiTykCEhte7jO9Fe
-         kUjKOtIFwZj2dtfXNb4np54FtFHqYo0eeqHX/ORwFEl4FjMl4SPfqdwSEh8iiQR1EipS
-         K4sSs57TuRYGQTSdhsgit6gP937+2khem5Uzwo3pXlzUhGbYCGJQLFWNLnLabJwn2Td6
-         Su1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741669767; x=1742274567;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n4KhD9AXiV/vH2JoWEUcvtMF0yMzInAf7cgiESBdhb4=;
-        b=qrneEGqFE63WjEuEhKdupGWBuJXXvs4/oPuZsP9y/UwLdFCW9zER8TWrMYoCstLt0H
-         5qEsG3bMPGqRvXFY/zPy8cZzlsHVVgajRfSnv90PZMhn5t2gyLhloBEhv5K/NyLaC7YD
-         7Nb1kb+jJbt1HTnqMbqutJJZHf9Tsq9XgsiCnmAG6uLIuK99NkeM+8dtM5j69SmaWBLl
-         gQv5Ded77AMGj10O5DgR0BfNJ5zjBWIWFzeV+THhcAZvhJyAW4nLWJUs31VkNp9hIWV5
-         6e0bBNCrk1v/bGvy1iXGocdUp8QiDai8IgIzQIrC45f84U1bAsrNoVqJ5Em9d8qDWVTD
-         PC9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWPduDrEtUaj9uGudCI4PXmerkmNv4eKRqxuRREnJDqVmDoNwZPnkess/r7KxeZfnTo2BzfN2IcLDIAyOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6opmLBs+d69od8IIIYmx0JELE68QWeFM+FjNxneHIkH5jY8GI
-	p0m4bI029GsnXlqSbc0CcNKv27uS6yIUZ1WHKTPUi26eHSxFR2pX
-X-Gm-Gg: ASbGncs3CPFO9EiyHgxeC2tobEI/O7d3mjK6PDcr55ScbVqILIi4J1+RvppbBFy3Fpz
-	Ll9odO2MmUAcsQrq4oLIcJ3voyrK61wiTHct6l1czu5dSZa9TUbFq+He6h6nUAm8JXI0udCuXra
-	PxCK7J+h7mYl2VS0FQjJOm7o0537FF7FZE3pRkdWaEKwgn80KNCYCk+TbbaG0XEmytZXgNGs1+a
-	VsggXjp75nUkg3VKJHT9kv+18x+cFZrKoDj+f0JRhgwLVFhMCGX1GofHqe9pKGCmmkmrkIzCiMM
-	ub3CM11dfdZ3sBazbJUsZvYCWNkO3mbhrV21trEi80OJ
-X-Google-Smtp-Source: AGHT+IGCSJeg6lOkx+ryXRSoD/HFXBAGt4n82r1GjKJMtUbJQG1WxjEPT+XrgKO2OFeDFfl2ljy3fg==
-X-Received: by 2002:a17:903:22cc:b0:224:1943:c5c with SMTP id d9443c01a7336-2242888d0d9mr231616155ad.15.1741669766401;
-        Mon, 10 Mar 2025 22:09:26 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:eb9f:29c2:9ede:46d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a9d147sm88150065ad.208.2025.03.10.22.09.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 22:09:26 -0700 (PDT)
-Date: Mon, 10 Mar 2025 22:09:23 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] Input: hisi_powerkey: Enable system-wakeup for s2idle
-Message-ID: <Z8_Fgx4YWwdpB1XK@google.com>
-References: <20250306115021.797426-1-ulf.hansson@linaro.org>
+	s=arc-20240116; t=1741669895; c=relaxed/simple;
+	bh=Kxl8j5wpLxgE2DdLVXqlCpYNXctpkEDglr9Hc6XOEHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=t5OMOe4rsdebegVg0/KexrT2mtV4hJzw+AU9+fZkXQ+n4eWJTaq4YVrpPHawPdhE9xAkHrISDenYhJ210kVBs9QXUJItz5iW/816zpQsEpcrOsOvJ/UXICMjcCrx3hIq14mgk+C+vSaR2Ky/NZMNA7qASTBzp1v6DLfpPNO/7pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jg0strsL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B19sJD007470;
+	Tue, 11 Mar 2025 05:11:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	d7xlSAngvWWJyjikNyPYTPL4YbXF3/24fPIj0EaQQ5g=; b=jg0strsLUkyQxlTk
+	ZjXG4yDiCKBv2wPpEdhFW65tdvxlyEeUI/IVl5CJpW2lHm6UWlyyvQEqdnUfhgy8
+	+ejLo4XmWt/IdFOcGneeHXcu2A9jF8xj9ZzuUN0IeK7SM5KRDw9tISDQCvw3uGxb
+	s3TL3twDy9CwwLEtVwYK0uaHhMTlSWWXCbPTjBRi9fWvUPQoGNOZEngZOrb9IP3i
+	WTvsNYawCwt2fMqvY2b5AIq/obzWujzKyHYLfhnkrDVJP4tOGCdJ2rwB0sLhU/B9
+	HbsPqgZii9asKtNfE43k3I8LYgyhpf6XnjXpxb6ASiWrMA38D/qlm4JjzgF+nJJJ
+	Fp9YhA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ab95ggs1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 05:11:21 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52B5BLuK025078
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 05:11:21 GMT
+Received: from [10.151.36.43] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Mar
+ 2025 22:11:16 -0700
+Message-ID: <775e7801-c84b-e8a4-032d-1c3b6cb6bf25@quicinc.com>
+Date: Tue, 11 Mar 2025 10:41:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306115021.797426-1-ulf.hansson@linaro.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v6 02/12] dmaengine: add DMA_PREP_LOCK and DMA_PREP_UNLOCK
+ flag
+To: Vinod Koul <vkoul@kernel.org>
+CC: <corbet@lwn.net>, <thara.gopinath@gmail.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <martin.petersen@oracle.com>, <enghua.yu@intel.com>,
+        <u.kleine-koenig@baylibre.com>, <dmaengine@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_utiwari@quicinc.com>, <quic_srichara@quicinc.com>,
+        <quic_varada@quicinc.com>
+References: <20250115103004.3350561-1-quic_mdalam@quicinc.com>
+ <20250115103004.3350561-3-quic_mdalam@quicinc.com> <Z89NMPF9TGmz9Js/@vaman>
+Content-Language: en-US
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <Z89NMPF9TGmz9Js/@vaman>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: LxT-zZ1a_60qL6PEp8hQtGoVs5zRprSX
+X-Authority-Analysis: v=2.4 cv=fvgmZE4f c=1 sm=1 tr=0 ts=67cfc5f9 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=zkCprTptnbEQjy2woTsA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: LxT-zZ1a_60qL6PEp8hQtGoVs5zRprSX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_01,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 spamscore=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 priorityscore=1501 clxscore=1015 bulkscore=0
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503110033
 
-Hi Ulf,
 
-On Thu, Mar 06, 2025 at 12:50:21PM +0100, Ulf Hansson wrote:
-> To wake up the system from s2idle when pressing the power-button, let's
-> convert from using pm_wakeup_event() to pm_wakeup_dev_event(), as it allows
-> us to specify the "hard" in-parameter, which needs to be set for s2idle.
 
-I was looking at pm_wakeup_event() and pm_wakeup_dev_event() and I am
-afraid I do not understand the distinction. Why would we want to
-abort suspend by only by some wakeup sources and not by others? And why
-does a driver need to know whether a system uses s2idle or some other
-implementation of low power state?
-
-FWIW we have Chromebooks that use S0ix and Chromebooks that use S3 as
-well as ARM Chromebooks and I do not think they use
-pm_wakeup_dev_event() variant.
-
-I'm cc-ing Rafael to give us some guidance.
-
+On 3/11/2025 2:06 AM, Vinod Koul wrote:
+> On 15-01-25, 15:59, Md Sadre Alam wrote:
+>> Add lock and unlock flag support on command descriptor.
+>> Once lock set in requester pipe, then the bam controller
+>> will lock all others pipe and process the request only
+>> from requester pipe. Unlocking only can be performed from
+>> the same pipe.
+>>
+>> If DMA_PREP_LOCK flag passed in command descriptor then requester
+>> of this transaction wanted to lock the BAM controller for this
+>> transaction so BAM driver should set LOCK bit for the HW descriptor.
+>>
+>> If DMA_PREP_UNLOCK flag passed in command descriptor then requester
+>> of this transaction wanted to unlock the BAM controller.so BAM driver
+>> should set UNLOCK bit for the HW descriptor.
+>>
+>> BAM IP version 1.4.0 and above only supports this LOCK/UNLOCK
+>> feature.
 > 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/input/misc/hisi_powerkey.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Have you aligned internally b/w team at Qualcomm to have this as single
+> approach for LOCK implementation. I would like to see ack from
+> Mukesh/Bjorn before proceeding ahead with this
+I have already discuss this internally with Mukesh and he has posted his 
+response here [1]
+[1] 
+https://lore.kernel.org/all/1566eafb-7286-4f27-922d-0bbaaab8120b@quicinc.com/
 > 
-> diff --git a/drivers/input/misc/hisi_powerkey.c b/drivers/input/misc/hisi_powerkey.c
-> index d3c293a95d32..d315017324d9 100644
-> --- a/drivers/input/misc/hisi_powerkey.c
-> +++ b/drivers/input/misc/hisi_powerkey.c
-> @@ -30,7 +30,7 @@ static irqreturn_t hi65xx_power_press_isr(int irq, void *q)
->  {
->  	struct input_dev *input = q;
->  
-> -	pm_wakeup_event(input->dev.parent, MAX_HELD_TIME);
-> +	pm_wakeup_dev_event(input->dev.parent, MAX_HELD_TIME, true);
->  	input_report_key(input, KEY_POWER, 1);
->  	input_sync(input);
->  
-> -- 
-> 2.43.0
+>>
+>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>> ---
+>>
+>> Change in [v6]
+>>
+>> * Change "BAM" to "DAM"
+>>
+>> Change in [v5]
+>>
+>> * Added DMA_PREP_LOCK and DMA_PREP_UNLOCK flag support
+>>
+>> Change in [v4]
+>>
+>> * This patch was not included in v4
+>>
+>> Change in [v3]
+>>
+>> * This patch was not included in v3
+>>
+>> Change in [v2]
+>>
+>> * This patch was not included in v2
+>>   
+>> Change in [v1]
+>>
+>> * This patch was not included in v1
+>>
+>>   Documentation/driver-api/dmaengine/provider.rst | 15 +++++++++++++++
+>>   include/linux/dmaengine.h                       |  6 ++++++
+>>   2 files changed, 21 insertions(+)
+>>
+>> diff --git a/Documentation/driver-api/dmaengine/provider.rst b/Documentation/driver-api/dmaengine/provider.rst
+>> index 3085f8b460fa..a032e55d0a4f 100644
+>> --- a/Documentation/driver-api/dmaengine/provider.rst
+>> +++ b/Documentation/driver-api/dmaengine/provider.rst
+>> @@ -628,6 +628,21 @@ DMA_CTRL_REUSE
+>>     - This flag is only supported if the channel reports the DMA_LOAD_EOT
+>>       capability.
+>>   
+>> +- DMA_PREP_LOCK
+>> +
+>> +  - If set, the DMA will lock all other pipes not related to the current
+>> +    pipe group, and keep handling the current pipe only.
+>> +
+>> +  - All pipes not within this group will be locked by this pipe upon lock
+>> +    event.
+>> +
+>> +  - only pipes which are in the same group and relate to the same Environment
+>> +    Execution(EE) will not be locked by a certain pipe.
+>> +
+>> +- DMA_PREP_UNLOCK
+>> +
+>> +  - If set, DMA will release all locked pipes
+>> +
+>>   General Design Notes
+>>   ====================
+>>   
+>> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+>> index 346251bf1026..8ebd43a998a7 100644
+>> --- a/include/linux/dmaengine.h
+>> +++ b/include/linux/dmaengine.h
+>> @@ -200,6 +200,10 @@ struct dma_vec {
+>>    *  transaction is marked with DMA_PREP_REPEAT will cause the new transaction
+>>    *  to never be processed and stay in the issued queue forever. The flag is
+>>    *  ignored if the previous transaction is not a repeated transaction.
+>> + *  @DMA_PREP_LOCK: tell the driver that there is a lock bit set on command
+>> + *  descriptor.
+>> + *  @DMA_PREP_UNLOCK: tell the driver that there is a un-lock bit set on command
+>> + *  descriptor.
+>>    */
+>>   enum dma_ctrl_flags {
+>>   	DMA_PREP_INTERRUPT = (1 << 0),
+>> @@ -212,6 +216,8 @@ enum dma_ctrl_flags {
+>>   	DMA_PREP_CMD = (1 << 7),
+>>   	DMA_PREP_REPEAT = (1 << 8),
+>>   	DMA_PREP_LOAD_EOT = (1 << 9),
+>> +	DMA_PREP_LOCK = (1 << 10),
+>> +	DMA_PREP_UNLOCK = (1 << 11),
+>>   };
+>>   
+>>   /**
+>> -- 
+>> 2.34.1
 > 
-
-Thanks.
-
--- 
-Dmitry
 
