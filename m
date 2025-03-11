@@ -1,132 +1,131 @@
-Return-Path: <linux-kernel+bounces-556849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084ABA5CF73
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:33:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43340A5CF78
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF79189DE88
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:33:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7908717BCA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBA22641CD;
-	Tue, 11 Mar 2025 19:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1EA2641D5;
+	Tue, 11 Mar 2025 19:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="u1x9L7ey";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="fqOmzWlM"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6ZF0rBC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741BA25C6E9;
-	Tue, 11 Mar 2025 19:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741721577; cv=fail; b=AOM0WZNzFT+rcPy4mJXllz4P5f4+EdScdfT1oWyllVq64x2uwUcaOEgD7vLgiZH7sp2YN8x50hTnf147P/mGuPpy+n6EI2u2Vv1uK4QWBtWG6stgoydCkpshLvUPw3JsK2wxqIgqPts+cVQNFZpLcIBk1QX0OkUyPGAvWPXcj90=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741721577; c=relaxed/simple;
-	bh=3npwjNufxhciOd0zlHArPhSA/VZY6Z/ta2Lvun4MYGI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=m0cEUPh3eRdDx1DWxbqJhomQTf5aQB/QeU4wxk4b11cz2uYbFopziNmtrAzu//+NRP/VwUK5tWs84PHoNZvFb2d9445G2SXupG45yKl//FENeyPh733Mkg+aVA7Rqb72EQBY0h3NnnW06ncjut7d0YaDZQJuldu6WqtyjaCx+MU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=u1x9L7ey; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=fqOmzWlM; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id 6B993480A55;
-	Tue, 11 Mar 2025 15:32:55 -0400 (EDT)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1741721575;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=3npwjNufxhciOd0zlHArPhSA/VZY6Z/ta2Lvun4MYGI=;
- b=u1x9L7eyfhDDNBjHtzMNLaqMDFMyKZRD2nfztEb/9MisNOEqcbViC+p7xJEJbbXalkZIX
- ybj6VTdcmRL5h9BCg==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1741721575;
-	cv=none; b=XxFPAuK6Knwt22rlC/01coV1a1TeKd5uUiU4oSOAmzFyf/xkehDy/MeMo7EyjRoPOP1gLr4gz4s3h1fFEnsEfsrXpOUNZ5gVLl/8IztovK8C2mRfhZCrnrT+3+PsscmN5Py5pYdoRshCpaQkRCP6TfGoOcjLyS3NWkBmjG++lyVisZylD5P4SmoC5VfIXgX2CCBQgDvfg5J+N+EtpEuCcMLUHNU0EGS+KxzOSeeX1d3WibH/IXFQLtiIHZS5vq/uMx+H54LwQm9g1VE+LVziurceS6jjjRzw9kFmizZ+e4Hv9g0vjBApVeY3jW/q9hTmMlPUTR0otsR4GvG2Oj1mpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1741721575; c=relaxed/simple;
-	bh=3npwjNufxhciOd0zlHArPhSA/VZY6Z/ta2Lvun4MYGI=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=vBv6OSskje2UvHAPgNLoW9Sn/ODwrLiIUn4zjXyuhTkAWqi+fq0IhTO+jxKz+/M0mAapxMJBXhu+MNiKp5J+eDGero9Ac/pcIRgSmPloAnqB8cJYAWnZCe6f7nDdwod6LZb1GzKgVomJ0sWkM+Yo0rkx3+2ImZ0rP28Wpuj1nY2vP0QhhxP2oE3rz1ACF4fLyYrWgFSKgp0kEJAzyXGABb1J5AQBCcVix4HQFlrQb13Mi7/Uyfm7XToNERRC2ZR/l/EFETORVFqZdLzIMk8OcREiVc+Vc7UhKWgzvSrGwnUQqED44O2EaYWZPCjuEcg7CWErWzwzQ5CnEZQsT6QdYQ==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1741721575;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=3npwjNufxhciOd0zlHArPhSA/VZY6Z/ta2Lvun4MYGI=;
- b=fqOmzWlM6BJCSw3pwY6xfQA2DA4fjqdAsUhOfT07jzA3BvDF72xM6tBd8j01EL4uyh6JY
- SMF7m9ol+0lNGlRavQC8HB2ndh+kUgDcYsFVkkultyK4tEXLCFAyG9r6X+eentaq3RerVSl
- AnNmZSHr6opkiAceebMBTkhmihY2egP/lT6fDBMAQ0EzQOqGXejQftvqU32n7avy794quEv
- L7xFUWeiR0NbiRt7ZCcnCkquFkGVY0l5go8onn12NQXzQqzaPfMfV5a9gzvCjlWvufkaE82
- MTa2BxsQvU6pWXwaAOAs1IxKS4+Nc+Kdejj2L9h6eFQMjJm2Plzr+P6M/cAQ==
-Received: by srv8.prv.sapience.com (Postfix) id 3F94E28003C;
-	Tue, 11 Mar 2025 15:32:55 -0400 (EDT)
-Message-ID: <aadd3bef2732a99cf611323aa1a3a39b655376fc.camel@sapience.com>
-Subject: Re: rc4 and later log message: gpiochip_add_data_with_key:
- get_direction failed
-From: Genes Lists <lists@sapience.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 11 Mar 2025 15:32:55 -0400
-In-Reply-To: <962ff60ebdb9207354560f938de8f23e4d02f30a.camel@sapience.com>
-References: <579283e5c832d77aeed531e8680961c815557613.camel@sapience.com>
-			 <1d8bf01be50646bb7b36abfc1ecb25eb997598dd.camel@sapience.com>
-			 <CAMRc=Mc6Tn9CZJA6EN_a0i=hiiz6jTr9oYLHdJ8iyrtsw+LmZw@mail.gmail.com>
-	 <962ff60ebdb9207354560f938de8f23e4d02f30a.camel@sapience.com>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-krYBO8OLqVZriyabkDaA"
-User-Agent: Evolution 3.54.3 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFCA1EBFFD
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 19:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741721608; cv=none; b=gpPN97IuWQ3pZBymLRoJ+cMpOaIgVwcc+p7X9XwUeJtDqU1W5Sq/A3LMVSa9lgHUrUMIFqVTzDX0KY8PXStfl2mmPeUbEMD/xngiC3vUj4aPN/YHkIJ1rcHFPteEDJwI0zx3XnczALQY6+Xfb6YtqRhJi3qt2qEimH067voJZyE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741721608; c=relaxed/simple;
+	bh=0eBZ3mKbc6FbHFU4M90DMSCxTvs8xVQcHIMudr/3iH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C1ixVfvqUkjs4KMtKUlC0QekiTCfYmhJZ1S79Ry4ngIe0J3WQiWL4TgwkQe+diBF9cAEyLanvN136KWxQVILOAkoSrraa37hjeKOPEjoZpjv4qy/VxlLR/Y8Gikv7ByisYrz4C5nlGy/OPhW2O0XXsSeSGExrbz7kQXqXC3YPcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6ZF0rBC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2586C4CEE9;
+	Tue, 11 Mar 2025 19:33:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741721608;
+	bh=0eBZ3mKbc6FbHFU4M90DMSCxTvs8xVQcHIMudr/3iH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G6ZF0rBC0uON6Bxk4pzSubjG+D7fEz5iFql20/A9fDOLyhhOz/epbP69jyqm0PVuW
+	 9Phr2qNIQDIwAmJHFJkhT7JGi54PqDXmdnQ5ync4Lg2z4I+zfI8e3lGS/YLWLk0waS
+	 uTzXwxKIOIVWlo0LR71FIrXaD7jKjlPzyc3vTXk4NfGdD2bNLjK9Jnbf5vmVEEO+D2
+	 mGqSjzh/KGehZeuwgXZ8xZE260ymuTUymhRAQyCKXLiLuZ/QhdKh044ZevNnv+BUJi
+	 3r63Go0jxaCgpNouGrpEz3JbB6QmMnZppk5h0cjGokhzSJveP6xEQtpR0b7EmxIjBE
+	 aiTXxBDpHb6MQ==
+Date: Tue, 11 Mar 2025 21:33:23 +0200
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	lujianhua000@gmail.com, quic_jesszhan@quicinc.com, dianders@chromium.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, asrivats@redhat.com
+Subject: Re: [PATCH v3] drm/panel: novatek-nt36523: transition to mipi_dsi
+ wrapped functions
+Message-ID: <7q7qdqh3my37uvvgl6ygo6amrw4nf57mbnscmxx6wwu5fsntny@a2uedhwg2a6p>
+References: <20250309040355.381386-1-tejasvipin76@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250309040355.381386-1-tejasvipin76@gmail.com>
+
+On Sun, Mar 09, 2025 at 09:33:55AM +0530, Tejas Vipin wrote:
+> Changes the novatek-nt36523 panel to use multi style functions for
+> improved error handling.
+> 
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> ---
+> Changes in v3:
+>     - Remove mipi_dsi_dual_msleep
+>     - Change mipi_dsi_dual_dcs_write_seq_multi to use the same dsi_ctx
+>       by swapping the dsi accordingly.
+> 
+> Link to v2: https://lore.kernel.org/all/20250307091519.245889-1-tejasvipin76@gmail.com/
+> 
+> Changes in v2:
+>     - Uses mipi_dsi_dual_msleep
+>     - Changed mipi_dsi_dual_dcs_write_seq_multi to not equate accum_err
+>       of either dsi_ctx.
+> 
+> Link to v1: https://lore.kernel.org/all/20250306134350.139792-1-tejasvipin76@gmail.com/
+> ---
+>  drivers/gpu/drm/panel/panel-novatek-nt36523.c | 1681 ++++++++---------
+>  1 file changed, 821 insertions(+), 860 deletions(-)
 
 
---=-krYBO8OLqVZriyabkDaA
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+[..]
 
-On Tue, 2025-03-11 at 15:30 -0400, Genes Lists wrote:
->=20
-> Thank you Bart.
->=20
-Sorry - I forgot to mention that the number of warnings with your
-pinctl patch =C2=A0is down to 87 from 194.
-=C2=A0
+> 
+> @@ -1063,18 +1026,16 @@ static int nt36523_prepare(struct drm_panel *panel)
+>  static int nt36523_disable(struct drm_panel *panel)
+>  {
+>  	struct panel_info *pinfo = to_panel_info(panel);
+> -	int i, ret;
+> +	int i;
+>  
+>  	for (i = 0; i < DSI_NUM_MIN + pinfo->desc->is_dual_dsi; i++) {
+> -		ret = mipi_dsi_dcs_set_display_off(pinfo->dsi[i]);
+> -		if (ret < 0)
+> -			dev_err(&pinfo->dsi[i]->dev, "failed to set display off: %d\n", ret);
+> +		mipi_dsi_dcs_set_display_off_multi(
 
-thanks
---=20
-Gene
+-:1726: CHECK:OPEN_ENDED_LINE: Lines should not end with a '('
+#1726: FILE: drivers/gpu/drm/panel/panel-novatek-nt36523.c:1032:
++		mipi_dsi_dcs_set_display_off_multi(
 
+> +			&(struct mipi_dsi_multi_context){.dsi = pinfo->dsi[i]});
+>  	}
+>  
+>  	for (i = 0; i < DSI_NUM_MIN + pinfo->desc->is_dual_dsi; i++) {
+> -		ret = mipi_dsi_dcs_enter_sleep_mode(pinfo->dsi[i]);
+> -		if (ret < 0)
+> -			dev_err(&pinfo->dsi[i]->dev, "failed to enter sleep mode: %d\n", ret);
+> +		mipi_dsi_dcs_enter_sleep_mode_multi(
 
---=-krYBO8OLqVZriyabkDaA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Same here. I think it might be cleaner to define a variable of struct
+mipi_dsi_multi_context type and pass it here.
 
------BEGIN PGP SIGNATURE-----
+> +			&(struct mipi_dsi_multi_context){.dsi = pinfo->dsi[i]});
+>  	}
+>  
+>  	msleep(70);
+> -- 
+> 2.48.1
+> 
 
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ9CP5wAKCRA5BdB0L6Ze
-2715AQC1UrvvteMiysF/cbWkAVWl+dGBmdsaVMzb31cn9qMl1gEAyxEBMbvhnnoj
-e0IkzB8P2R3QHdDMbtQ9+rikcX30sgQ=
-=QDp1
------END PGP SIGNATURE-----
-
---=-krYBO8OLqVZriyabkDaA--
+-- 
+With best wishes
+Dmitry
 
