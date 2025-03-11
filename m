@@ -1,172 +1,132 @@
-Return-Path: <linux-kernel+bounces-557052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9DEA5D302
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:15:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0097A5D308
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:16:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4ED797A4FDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FCEE189A880
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C868233737;
-	Tue, 11 Mar 2025 23:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6858922C331;
+	Tue, 11 Mar 2025 23:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uvm5QHg5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EpjKsEAm"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34FB22C331
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 23:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442971D6DBB;
+	Tue, 11 Mar 2025 23:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741734910; cv=none; b=T37xQyY2OeCWuVtwIos5PD2yUFkIerJyXbd/14KvxlheUQZT20GxBfMGR4dLIV8nWfiQCzk7/ZF+Dw+YjPGOzaX8vbld947CruE++Whn5EK+S2An1W+FKGxc9Xv57Y4456+1jTMSIV2etEQEEIynr7Vs/yIflYYDOU7J8aKham0=
+	t=1741734961; cv=none; b=VOguHFq9iGMTykcNoHzVB/p2TMsVX35zavtB2eyTnbcwe5wh93C4dJEdlkSFdbj7sCcWr3OBgo1IpqRScuQCHh/8Z2zUSO4KJ3JcIffSXndLrHoR1M+uIh7fyQg5WwitzJE1eO0siLeaMFH5pkkm1jSJBlzEKoebaWf7HslKU3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741734910; c=relaxed/simple;
-	bh=dn4yPhL5avHiqtNfeTaKE69bgTDdHt4EMpDz5juIA4M=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=np/s7rcBfrsGPXadArL1RUbuBxGCFRCpnYrTKbUTmZn+kExpgkaxYh4cGQTNfeWG2/PxM4z1J1Ryi7heuAeafElIpUlXNN2UIoyIh0LCif9mRdZltplVmMbjxdp81HzntbKlalRnjvKGytl8Jf5AsEXbcc7VRFQgQRmeS9OYF04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uvm5QHg5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741734907;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YtUFGu6o0/J9RvV/h3s9K30gUjjCCkNCcQynXOmfbNQ=;
-	b=Uvm5QHg53ymsaaMl1ufD0v5PjyilhP5fR7199+FaqHTHlLw0+MTDeF1WItNC+IVwgat12F
-	Bj+zI3NLUGBbaQFljVaX9QbHt1nef+3cwm2L7MDt8Dm3hdQgkdL7p8WF7ZqPXNYFLVucLm
-	SkTiVmVjhsRAG6JL8vSQt3jlmIS1LWg=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-463-AgbKgPtGMVetziY0cnJATw-1; Tue,
- 11 Mar 2025 19:15:04 -0400
-X-MC-Unique: AgbKgPtGMVetziY0cnJATw-1
-X-Mimecast-MFC-AGG-ID: AgbKgPtGMVetziY0cnJATw_1741734902
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D01361809CA3;
-	Tue, 11 Mar 2025 23:15:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E0F43180094A;
-	Tue, 11 Mar 2025 23:14:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <953587.1741611236@warthog.procyon.org.uk>
-References: <953587.1741611236@warthog.procyon.org.uk>
-To: netdev@vger.kernel.org
-Cc: dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-    "David S. Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
-    Chuck Lever <chuck.lever@oracle.com>, linux-crypto@vger.kernel.org,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL net-next] crypto: Add Kerberos crypto lib
+	s=arc-20240116; t=1741734961; c=relaxed/simple;
+	bh=JfqA/cREN5ap0KC+NOoguLsVwcHMC4kC6hiUOpBMvyc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RT1eNH/kZOkLWw5wq9wNziLB/dgYITDslxqItPpxvF7SzZA84+o0Favf4negmHtXgbszWt9Z2tNlG65rN26dfCZu2Np1XVZLSyfvUHsHmlshfACDFxP6RFNcAlzQW93ig77qWRkqfw4Yp3QzOua0nT6qgF4H5BQ4IvlhRO8Zj4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EpjKsEAm; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso36594205e9.0;
+        Tue, 11 Mar 2025 16:15:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741734958; x=1742339758; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tX/dTIeYNxTzj5gZHvJ5AtwpzySsIM3wBh1XC79KOyI=;
+        b=EpjKsEAm86dqI/AbWJorn+3jEH0EEXafb/YkpdV4iBQor+MoVVz6bZmAxImn9TcMtu
+         k3zKtv475p3Ki22bfMaaEksDLrT+CnQpi/GWOktqyJbDUX9mX2QfMjXxpvAW4vkdjZFq
+         yPGH+NGRMAFlGsYKglcQzCDGOQHlxveIvl95a4B5kazFeVNUuL4lWMicSkxos+XJQFlZ
+         YN0hXCJJGxNRbNz4bsMpILG0ZRZ/8K/cG5mzx/tCAb0Wc9CWeOV6FuXvZ81koM03ltAI
+         /AloDX8Uav+6UIMyYOIi87FXGfhq/jDBg22KRAHmSPsrSB6oi0vL+vRusDFLu09eqi2f
+         XZag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741734958; x=1742339758;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tX/dTIeYNxTzj5gZHvJ5AtwpzySsIM3wBh1XC79KOyI=;
+        b=DpowqH51dZ2lPgkNIVduaG1S/BXv4soG4WIqCgwfo4KtLxZUJaKBQNDwnIpqZ4u1wr
+         Pzt8ibUAnLmfucMALRCdPtCg5DVKmkZhYx+mVsPlOYWxo4ZvqxWzv1ttXt4cefa1xwf5
+         dBObou1PwMC0W0eoy35msgVauq3FJ6tPdxwvtorMfQNh6U2WTeo0PD7m1eU8suDq1478
+         HL84OZGJ8EOs6LHLg6GutSFT45evfgAzmOStZl9FQHWNlOFM0f8/q+tfe9sH5ZIMLu6Z
+         hO8ENbA8nyyoNLh0ZYzXjE5uQ+0Eh67RSnVNDjzbmJu3NH2BmbBXCHEKdy+nCg2MsqYE
+         wKqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVH6cAXA9a5lBi76iJRZBQ2HYaHP0NcmjIVypnRm8LekeBk9giwITZKUfw7h0wFix9QbBWVEELgJ+O2wNI+@vger.kernel.org, AJvYcCWPu4puuwMGvR23NkrVfBt0bergGbZtYuMHeNoLxVcYBTCODaN+V7iXFxMFRsdTWLQxBJkeHgpep8RG@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsR6ocTTN469Mvpr6VGLLZpr9prtsCjrpqPyK+l2z+OPEcaMIm
+	MoLcXfRbfBZbBG7qH0l7NcTZok377Md5jlARbBJ1kL2zhI3YvuIY3RAzthn6+mdYcVxxXeKmnK0
+	C4mtu1zt7oBlduLxDAVxfyFQxlNM=
+X-Gm-Gg: ASbGncsTzC0tYYi+e1VmYbnD/Z9ybpfHZ/jiSu7UfLG3gPvsPXNgo16I9Y3QaNBLgOC
+	mYgBVD8RVmEjjrlwY4Xn0G0S/OblXDI2Q0jvzcG/HyH+M2WykxAsWOQNZj63DGQCrGL2gXtVh6S
+	79+hyeWSVKkr/flRD97++9iwKHyL7BudKD8520ksDaDzpjmqdV5+4nkJDwbaS+ymocgGIf
+X-Google-Smtp-Source: AGHT+IHdE+IvjKPy/H/187X9ESbJuc1W239VyqGDem3VC44hAK/6v4MUY7Ogj5IPUx6y6MopfRCWPyu9jEmvdN+2VSY=
+X-Received: by 2002:a5d:47cc:0:b0:391:23de:b1b4 with SMTP id
+ ffacd0b85a97d-39132db0648mr15300763f8f.45.1741734958355; Tue, 11 Mar 2025
+ 16:15:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1199600.1741734896.1@warthog.procyon.org.uk>
+References: <20250311141245.2719796-1-liujianfeng1994@gmail.com>
+In-Reply-To: <20250311141245.2719796-1-liujianfeng1994@gmail.com>
+From: Jimmy Hon <honyuenkwun@gmail.com>
+Date: Tue, 11 Mar 2025 18:15:47 -0500
+X-Gm-Features: AQ5f1JpTXjTmVT-uFEQ-cp0wVYjs646Qn0g9ep9yELCKIu65h4ws4boyJnIroik
+Message-ID: <CALWfF7JfJxudKKfvOBXiLOMijUi+xZCAUL_WRsB-UxpV3XKDEg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Fix pcie reset gpio on Orange Pi 5 Max
+To: Jianfeng Liu <liujianfeng1994@gmail.com>
+Cc: linux-rockchip@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 11 Mar 2025 23:14:56 +0000
-Message-ID: <1199601.1741734896@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Sigh.  I used the old tag by accident.  Attached is a pull request for one
-that got pulled Herbert.  The only difference was that I rebased it on the
-cryptodev tree - no other changes were made.
+On Tue, Mar 11, 2025 at 9:13=E2=80=AFAM Jianfeng Liu <liujianfeng1994@gmail=
+.com> wrote:
+>
+> According to the schematic, pcie reset gpio is GPIO3_D4,
+> not GPIO4_D4.
+Thanks for the correction.
+Also applies to the Orange Pi 5 Ultra.
 
-Apologies for that.
-David
----
-The following changes since commit 17ec3e71ba797cdb62164fea9532c81b60f4716=
-7:
+I made the typo when starting with the Orange Pi 5 Plus with "gpio3
+RK_PB3" and changed both "3" to "4".
 
-  crypto: lib/Kconfig - Hide arch options from user (2025-03-02 15:21:47 +=
-0800)
+I'm guessing u-boot has already initialized the device, otherwise the
+problem would be more obvious.
 
-are available in the Git repository at:
+>
+> Fixes: c600d252dc52 ("arm64: dts: rockchip: Add Orange Pi 5 Max board")
+> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
+Reviewed-by: Jimmy Hon <honyuenkwun@gmail.com>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/crypto-krb5-20250303
-
-for you to fetch changes up to fc0cf10c04f49ddba1925b630467f49ea993569e:
-
-  crypto/krb5: Implement crypto self-testing (2025-03-02 21:56:47 +0000)
-
-----------------------------------------------------------------
-crypto: Add Kerberos crypto lib
-
-----------------------------------------------------------------
-David Howells (17):
-      crypto/krb5: Add API Documentation
-      crypto/krb5: Add some constants out of sunrpc headers
-      crypto: Add 'krb5enc' hash and cipher AEAD algorithm
-      crypto/krb5: Test manager data
-      crypto/krb5: Implement Kerberos crypto core
-      crypto/krb5: Add an API to query the layout of the crypto section
-      crypto/krb5: Add an API to alloc and prepare a crypto object
-      crypto/krb5: Add an API to perform requests
-      crypto/krb5: Provide infrastructure and key derivation
-      crypto/krb5: Implement the Kerberos5 rfc3961 key derivation
-      crypto/krb5: Provide RFC3961 setkey packaging functions
-      crypto/krb5: Implement the Kerberos5 rfc3961 encrypt and decrypt fun=
-ctions
-      crypto/krb5: Implement the Kerberos5 rfc3961 get_mic and verify_mic
-      crypto/krb5: Implement the AES enctypes from rfc3962
-      crypto/krb5: Implement the AES enctypes from rfc8009
-      crypto/krb5: Implement the Camellia enctypes from rfc6803
-      crypto/krb5: Implement crypto self-testing
-
- Documentation/crypto/index.rst   |   1 +
- Documentation/crypto/krb5.rst    | 262 +++++++++++++
- crypto/Kconfig                   |  13 +
- crypto/Makefile                  |   3 +
- crypto/krb5/Kconfig              |  26 ++
- crypto/krb5/Makefile             |  18 +
- crypto/krb5/internal.h           | 247 ++++++++++++
- crypto/krb5/krb5_api.c           | 452 ++++++++++++++++++++++
- crypto/krb5/krb5_kdf.c           | 145 +++++++
- crypto/krb5/rfc3961_simplified.c | 797 ++++++++++++++++++++++++++++++++++=
-+++++
- crypto/krb5/rfc3962_aes.c        | 115 ++++++
- crypto/krb5/rfc6803_camellia.c   | 237 ++++++++++++
- crypto/krb5/rfc8009_aes2.c       | 362 ++++++++++++++++++
- crypto/krb5/selftest.c           | 544 ++++++++++++++++++++++++++
- crypto/krb5/selftest_data.c      | 291 ++++++++++++++
- crypto/krb5enc.c                 | 504 +++++++++++++++++++++++++
- crypto/testmgr.c                 |  16 +
- crypto/testmgr.h                 | 351 +++++++++++++++++
- include/crypto/authenc.h         |   2 +
- include/crypto/krb5.h            | 160 ++++++++
- 20 files changed, 4546 insertions(+)
- create mode 100644 Documentation/crypto/krb5.rst
- create mode 100644 crypto/krb5/Kconfig
- create mode 100644 crypto/krb5/Makefile
- create mode 100644 crypto/krb5/internal.h
- create mode 100644 crypto/krb5/krb5_api.c
- create mode 100644 crypto/krb5/krb5_kdf.c
- create mode 100644 crypto/krb5/rfc3961_simplified.c
- create mode 100644 crypto/krb5/rfc3962_aes.c
- create mode 100644 crypto/krb5/rfc6803_camellia.c
- create mode 100644 crypto/krb5/rfc8009_aes2.c
- create mode 100644 crypto/krb5/selftest.c
- create mode 100644 crypto/krb5/selftest_data.c
- create mode 100644 crypto/krb5enc.c
- create mode 100644 include/crypto/krb5.h
-
+> ---
+>
+>  arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-compact.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-compact.dtsi =
+b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-compact.dtsi
+> index 6e4dcd8fff26..f748c6f760d8 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-compact.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-compact.dtsi
+> @@ -64,7 +64,7 @@ &led_blue_pwm {
+>
+>  /* phy2 */
+>  &pcie2x1l1 {
+> -       reset-gpios =3D <&gpio4 RK_PD4 GPIO_ACTIVE_HIGH>;
+> +       reset-gpios =3D <&gpio3 RK_PD4 GPIO_ACTIVE_HIGH>;
+>         vpcie3v3-supply =3D <&vcc3v3_pcie_eth>;
+>         status =3D "okay";
+>  };
+> --
+> 2.43.0
+>
 
