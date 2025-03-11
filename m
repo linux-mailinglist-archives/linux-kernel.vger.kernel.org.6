@@ -1,117 +1,129 @@
-Return-Path: <linux-kernel+bounces-557055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD976A5D30C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:16:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15829A5D314
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:20:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47DFA3B2BDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:16:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56A8D17B5DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F292343CF;
-	Tue, 11 Mar 2025 23:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A7B22DFB0;
+	Tue, 11 Mar 2025 23:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHwfdiPk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQsAXcDw"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23701D6DBB;
-	Tue, 11 Mar 2025 23:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3E0233120;
+	Tue, 11 Mar 2025 23:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741735001; cv=none; b=FvwMfU08meeY6zPRZ19Qi0I55ibCjUN9ia0AGlMcupf/nHC0I/xsNPkY7eH2YHeaBjpqF+qwZdJjGB0OZJiEf01BgwEXjOMARDQaoJ2ZFO7jjXWLOyr0G3gtR6DoxvVOl/ZNudApzXo8pY9lxOJ7GpWip8gEkG7uTiNXFX1zgJI=
+	t=1741735204; cv=none; b=GHK8M9hX2xOtRfIy0ZbJ/J0UAMsyfjFD0BvammU5UZLAVBWEHCAh3UYocn6BFEGR3nyKDM7aqQrZBb38bj5gu2fOKCmo/CHM12BjJxkH0X0EoDgRCd5bNSRqPEDBe7VUtSyDFBN9l+i3VtcL4/8ijANSW3rYGf7vJQY1bPrKxWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741735001; c=relaxed/simple;
-	bh=PfimZx7PgZ/5Gi9CD2rOAcgt5dAWqfxSVWTYj2Jq5nY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5HxK2FfUFhpIy/6rzorzWWYN8Hzx5XVAgZ5pKsMJY/puITgSNEjpENBJiNbl4KCz6+cctbpsyMeOavLqthBml/Ns6FhwUFjrhAlbwHQ9oit5f/Jf7byTmwH8hlEK1CxNTsDOHrn3MiHZDxJ963pHD4kHdDdK0dWnrM4S2A8zMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHwfdiPk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CA6EC4CEEE;
-	Tue, 11 Mar 2025 23:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741735000;
-	bh=PfimZx7PgZ/5Gi9CD2rOAcgt5dAWqfxSVWTYj2Jq5nY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nHwfdiPkB4R7wXEfdDOvowQshJv8zRAnt6aBix9+yfuWB7qg34ggPKMQQe+8L1O0Q
-	 uHRRPWfNw/VcezTLuYbGh2MIYNmLV+3rjTjf5vj/zNopgqy0TPvBR6xGHcHz/e9oFU
-	 nlci6yxjSOIi0Z5UF5J8CRSh0NPMiWLIs/7sA6oL27ey1dpANMCybYfPSSj5Ucv5di
-	 kkRvC9cXy0mgGsvCFhgsc85TLM8TQpS8trr0xJEdPx7XxmGr8joo6f4dwUoOcxbj6F
-	 tTIURLvA0H7KKcS81zfVKv8E3ANKWuj0KsDDCk676xjgcbLFO1jyiDSjZqaZdItCIk
-	 cIq/q4P18b2lQ==
-Date: Wed, 12 Mar 2025 00:16:31 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Zoie Lin =?utf-8?B?KOael+emueWmoSk=?= <Zoie.Lin@mediatek.com>
-Cc: Qii Wang =?utf-8?B?KOeOi+eQqik=?= <Qii.Wang@mediatek.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
-	Teddy Chen =?utf-8?B?KOmZs+S5vuWFgyk=?= <Teddy.Chen@mediatek.com>, 
-	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
-	Shunchang Wang =?utf-8?B?KOeOi+iInOaYjCk=?= <ot_shunchang.wang@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	Joseph-CC Chang =?utf-8?B?KOW8teasvea0sik=?= <Joseph-CC.Chang@mediatek.com>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, 
-	Leilk Liu =?utf-8?B?KOWImOejiik=?= <Leilk.Liu@mediatek.com>
-Subject: Re: [PATCH v4 0/1] i2c: mediatek: add runtime PM operations and bus
- regulator control
-Message-ID: <idbp6ckhu2pdt5p6vapcblqlinezpq5miqzl4hrzmlbgrniw7o@ucd42tvbtfmr>
-References: <20250211144016.488001-1-zoie.lin@mediatek.com>
- <46621db1-6096-46af-b021-c919c1cae7ef@collabora.com>
- <ec77bb9478cd86a6737b92135170064970925b3c.camel@mediatek.com>
+	s=arc-20240116; t=1741735204; c=relaxed/simple;
+	bh=RWNybGVzz/LGb1S8gWHQfkrw4kktSlEUJF8LNV+qzeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KK/f10jDG6olnZb+jEcTnE6qZgk+RlT2HLQIYWPzWu/kO1lgGAhyW0AY9SfKvHOIa2OliZXP2oQaVmH+MqvNSnWCRvqPuDdq0fx1FcHyOVkwe802oHteqkBayDgs19LkFpcJgPBwO73bbAbz1BiqXSIgw7ySuxlZXgSZNQj69lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gQsAXcDw; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2217875d103so13296055ad.3;
+        Tue, 11 Mar 2025 16:20:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741735202; x=1742340002; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DAUgXMKaBCt8jE7rE61tKNziPcEFBt3jzJkm5qy/uqg=;
+        b=gQsAXcDwu/EBNQk4ELbrI+EBgUyKYjxJsR84RT8APCzyTlhru6+e0BQvBBm1UrROaZ
+         yCjctj04IF2xBe0TQvlJKnQqRWHamx9egzlCY93HM+sepQcpt20pH4u43wIYMctE6eUM
+         1Y8rlJiduiX+3Lwg9VawH0RXLQh1UEDak0OlTuU0/iZOWSWEpOuVoXcM6luxamUUH3dL
+         0deTHmr5/KZ6rIIBGb0Ro+7QNnvwuc2aZedK+1Rko+P3/pX46mpcCPvvAhlfSxslhMT0
+         dFsMyLtiRBh5CiCVmEQKVkklTjPnGcUHmUwjoWKCpDx6pSNVhvg8ob7HEVM09m69FNuY
+         WASQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741735202; x=1742340002;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DAUgXMKaBCt8jE7rE61tKNziPcEFBt3jzJkm5qy/uqg=;
+        b=Zvt2eUmd6kOTrSb3Kd/vAYjggN2uCELpbbXvprGT2Goiqr1GBnQB8fuisw6iBsSX0k
+         bbZVfrZ4I8tCUuPtA0eKDfYTfWfZYU8DEJtNEWOThOpm3eP6Av0s1oLqsNhc0sfADdd/
+         nMj/drvn5yS2P1iQ5vG7AqNmLYiAMR6ZEh1TAuCpO+KbU4L6jT/Z2X79X/VI30nsSure
+         Ka54stOaov368cpMn9lal6bbOdsICvXWm1P26iDOg2znIHlytyCWOSNzMNG2FAxm1RVH
+         6o6v0Qadsjpab7am9gw6TZq1fam5BRv6kSpcKottSdpBoTkca6BLyGRrKhCfzzss13mn
+         A4iA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGFJPjULx1e3/X1a07uhW6R0gzAAi4oN7LQamNJLpWHzkxo862RDqb/NzgBFp590DQqdLdgL4sgWseDouUb04=@vger.kernel.org, AJvYcCXqMC30fBXn+XcXLtQQ4ymuoeiTGSdGx+vw1rzPf3H/cJ2dPAkZY0KQpWsjNeeIJeNZ84cHVZDJqoK52rE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLhcYgFK7JcwusTHvJDy81UxrcvRpwWdEhCehyMq8AOKnEh5r1
+	xEW2lk0A8Z+/oWEFJFHOaTbbD6WPLk4ui4uS25bO7GYRXkpNZcHPv7FspnCJV834r5rUneewbY8
+	WQP3ZmhXbPKbNF2r6oHsCv2Q5oRg=
+X-Gm-Gg: ASbGncswda7VbXqtrciCPEH9FmMjajDL0QguaAFwk0ywiXktMlnKJWn4GxS2h3OHfCI
+	f6u85gh/sOjOOon3oh6g+AdC5ROJ0qp49O+0AAu5nvbbCT6ClPb8AwlDnhdzRTqJTEYJfvidV7w
+	eDu1+lVjbpAhwy/4h2r6GPYld5TuXgkC48L7Cl
+X-Google-Smtp-Source: AGHT+IE/KHuRNLhh1ySUuLCaJj3/AGeIE3rdkArsyCxx5i6QVa1Yy1UbuDoLIkjRAYC33kLdHpH7yxo1M0P2bxA9/SI=
+X-Received: by 2002:a17:902:e841:b0:224:252c:eae1 with SMTP id
+ d9443c01a7336-2259326ec92mr27457635ad.6.1741735201955; Tue, 11 Mar 2025
+ 16:20:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec77bb9478cd86a6737b92135170064970925b3c.camel@mediatek.com>
+References: <20250210-rust-analyzer-bindings-include-v1-0-6cbf420e95b6@gmail.com>
+In-Reply-To: <20250210-rust-analyzer-bindings-include-v1-0-6cbf420e95b6@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 12 Mar 2025 00:19:49 +0100
+X-Gm-Features: AQ5f1JrYA7EY46JGpv_p16l0CwWMnsXV2E8BWnBytRcltWC1CFpxQ_OkC1HGz4A
+Message-ID: <CANiq72mWZ6YDECjvnhGdWOGmVY0PQJaJdwY0sHJLc1h4p9B6ww@mail.gmail.com>
+Subject: Re: [PATCH 0/2] rust: fix rust-analyzer configuration for generated files
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Kees Cook <kees@kernel.org>, 
+	Fiona Behrens <me@kloenk.dev>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Asahi Lina <lina@asahilina.net>, 
+	Boris-Chengbiao Zhou <bobo1239@web.de>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Zoie,
+On Mon, Feb 10, 2025 at 6:56=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> The individual patches should be descriptive on their own. They are
+> included in a single series because the second patch uses a function
+> introduced in the first.
+>
+> I've confirmed this allows me to navigate to symbols defined in
+> generated files as well as to the generated files themselves. I am using
+> an out-of-source build.
+>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-On Tue, Mar 04, 2025 at 08:37:27AM +0000, Zoie Lin (林禹妡) wrote:
-> 
-> ...
-> 
-> On Thu, 2025-02-13 at 12:57 +0100, AngeloGioacchino Del Regno wrote:
-> > 
-> > 
-> > Turning on and off regulators at start of transfer and end of
-> > transfer respectively
-> > is very expensive and, while it makes sense for power efficiency of
-> > the controller,
-> > it doesn't make sense for:
-> > 
-> >   1. Responsiveness (latency); and
-> >   2. Platform power efficiency at a whole.
-> > 
-> > As a start, just set the autosuspend delay to 250ms; this gives you
-> > at least time
-> > to bring up clocks and regulators and usually finish a transfer at
-> > 400KHz, giving
-> > you the chance to also get some more requests before autosuspend
-> > decides to, well,
-> > auto..suspend the device.
-> > 
-> > The right way of choosing an autosuspend delay a bit more precisely,
-> > though, for
-> > this device, would be to check the bus speed and calculate the
-> > autosuspend time
-> > accordingly.
-> 
-> We understand the importance of balancing power efficiency and
-> responsiveness. Given the diversity of I2C devices connected
-> under each platform, it is indeed challenging to estimate an
-> appropriate delay time for testing.
-> 
-> Therefore, we would like to proceed with your initial suggestion
-> and set the autosuspend delay to 250ms. Based on our preliminary
-> tests, this adjustment appears to be a practical solution across 
-> our existing platforms.
+Applied to `rust-fixes` -- thanks everyone!
 
-Am I understanding correctly that you are planning a v2?
+      [ Originally we were not using `OBJTREE` in the `kernel` crate, but
+        we did pass the variable anyway, so conceptually it could have been
+        there since then.
 
-Andi
+        Regarding `include_dirs`, it started in `kernel` before being in
+        mainline because we included the bindings directly there (i.e.
+        there was no `bindings` crate). However, when that crate got
+        created, we moved the `OBJTREE` there but not the `include_dirs`.
+        Nowadays, though, we happen to need the `include_dirs` also in
+        the `kernel` crate for `generated_arch_static_branch_asm.rs` which
+        was not there back then -- Tamir confirms it is indeed required
+        for that reason. - Miguel ]
+
+    [ Slightly reworded title. - Miguel ]
+
+    [ Slightly reworded title. - Miguel ]
+
+Cheers,
+Miguel
 
