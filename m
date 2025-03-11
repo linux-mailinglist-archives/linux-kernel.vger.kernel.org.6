@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-556737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19AC5A5CE0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:41:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5ABA5CE0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:42:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45821189F6FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:41:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F0BC3B6F2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF7326462A;
-	Tue, 11 Mar 2025 18:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41359264A62;
+	Tue, 11 Mar 2025 18:40:41 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0269B26461F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E125926461F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741718436; cv=none; b=Rn9RGDiG+xCBzlAwwzuxrWYth7Dx7E7Du5Fz2vsSdvlkH8kbodBh9/x0bobDK4Gt2wKop2nsARCKR3Yxys4iAY3ZekXw827c3zs2fyN7VsezDKEfUw/txhtogzfjjyoQht2KUwgFU9IndSs+ULgY99DDbEDIcP45T+5G8/bORJk=
+	t=1741718440; cv=none; b=RanyGBWhezkEfy6RviWoKM1s5L6s/g4ZIpzBOroqfa8IhQ6RUhZqkrovOCKCemrs98DN6qq5Mt2d6dAwuyKcnpFQf/3H+231p/SpCPtdve+VN1ZF13nIpRfanp+PUTr+ENzGM2rXmB5TId9Z5kJQgSZLfZ89/TTyIRn3ggfIQT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741718436; c=relaxed/simple;
-	bh=d+XK1VkzcpSrU9CPsml/xRbtYcqbV5x6iGdvspUX/1U=;
+	s=arc-20240116; t=1741718440; c=relaxed/simple;
+	bh=WIMTabFq5rtpRGSKg9xj7oyKCmBUSfdS3qZ0H430xHo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LAEfuC7qpErVtplgYLeAlz4CzRcPeDzZ4p9KaAl6UplZRMslzwUvH+kRkGPQDM7w8tf1j6hr0pAfhjWpwqXV8RGq1/iO9hVs3m3Ma2pZ65FMO0uw3ZGAFC2ejnCBCThQ0A4uqTJzkoKV0gu3lQkj//R3608JbFi/hYU4mBb8AQs=
+	 MIME-Version; b=lb3ZRbv1DZgC09sWP9Y1V05TA+sprFyqN5hjGmKHQAYzre5H9Lt+HeJ6Lp2idJXrWdJn+0IbgM/NItGuZDydOG/6u2KcrJCi0uCFlfD1/We6P+CDPEchatg9N+Jh0fmCZzRanSNTRb5DcRd3vMWJuxuzFtZMGPk6cbhwKNGGqiQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F9721713;
-	Tue, 11 Mar 2025 11:40:45 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31AED1762;
+	Tue, 11 Mar 2025 11:40:49 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA5C23F694;
-	Tue, 11 Mar 2025 11:40:30 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 982213F694;
+	Tue, 11 Mar 2025 11:40:34 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -63,9 +63,9 @@ Cc: Reinette Chatre <reinette.chatre@intel.com>,
 	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
 	Babu Moger <babu.moger@amd.com>,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v8:for-boris 07/30] x86/resctrl: Add max_bw to struct resctrl_membw
-Date: Tue, 11 Mar 2025 18:36:52 +0000
-Message-Id: <20250311183715.16445-8-james.morse@arm.com>
+Subject: [PATCH v8:for-boris 08/30] x86/resctrl: Generate default_ctrl instead of sharing it
+Date: Tue, 11 Mar 2025 18:36:53 +0000
+Message-Id: <20250311183715.16445-9-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250311183715.16445-1-james.morse@arm.com>
 References: <20250311183715.16445-1-james.morse@arm.com>
@@ -77,27 +77,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-__rdt_get_mem_config_amd() and __get_mem_config_intel() both use
-the default_ctrl property as a maximum value. This is because the
-MBA schema works differently between these platforms. Doing this
-complicates determining whether the default_ctrl property belongs
-to the arch code, or can be derived from the schema format.
+The struct rdt_resource default_ctrl is used by both the architecture
+code for resetting the hardware controls, and sometimes by the
+filesystem code as the default value for the schema, unless the
+bandwidth software controller is in use.
 
-Deriving the maximum or default value from the schema format would
-avoid the architecture code having to tell resctrl such obvious
-things as the maximum percentage is 100, and the maximum bitmap
-is all ones.
-
-Maximum bandwidth is always going to vary per platform. Add
-max_bw as a special case. This is currently used for the maximum
-MBA percentage on Intel platforms, but can be removed from the
-architecture code if 'percentage' becomes a schema format resctrl
-supports directly.
-
-This value isn't needed for other schema formats.
-
-This will allow the default_ctrl to be generated from the schema
-properties when it is needed.
+Having the default exposed by the architecture code causes unnecessary
+duplication for each architecture as the default value must be specified,
+but can be derived from other schema properties. Now that the
+maximum bandwidth is explicitly described, resctrl can derive the default
+value from the schema format and the other resource properties.
 
 Signed-off-by: James Morse <james.morse@arm.com>
 Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
@@ -108,77 +97,191 @@ Tested-by: Shanker Donthineni <sdonthineni@nvidia.com> # arm64
 Tested-by: Babu Moger <babu.moger@amd.com>
 Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 Reviewed-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
 ---
+Changes since v7:
+ * Dropped the hunk in cache_alloc_hsw_probe() and left it open-coded for
+   readability.
+
+Changes since v6:
+ * Return MBA_BW_MAX from delay_bw_map() for improved readability.
+ * Generate the bitmap directly in rdt_get_cache_alloc_cfg() to make it
+   clear shareable_bits is being generated correctly.
+
 Changes since v5:
- * Removed redundant setting of schema_fmt on AMD platforms.
- * Fixed off by one in cbm_validate().
+ * Rewrote commit message.
 
 Changes since v2:
  * This patch is new.
 ---
- arch/x86/kernel/cpu/resctrl/core.c        | 2 ++
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 4 ++--
- include/linux/resctrl.h                   | 2 ++
- 3 files changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/resctrl/core.c        | 13 +++++--------
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  5 +++--
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    |  6 +++---
+ include/linux/resctrl.h                   | 19 +++++++++++++++++--
+ 4 files changed, 28 insertions(+), 15 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 754fb65565ec..4504a12efc97 100644
+index 4504a12efc97..d001ca43b53d 100644
 --- a/arch/x86/kernel/cpu/resctrl/core.c
 +++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -212,6 +212,7 @@ static __init bool __get_mem_config_intel(struct rdt_resource *r)
+@@ -155,7 +155,6 @@ static inline void cache_alloc_hsw_probe(void)
+ 		return;
+ 
+ 	hw_res->num_closid = 4;
+-	r->default_ctrl = max_cbm;
+ 	r->cache.cbm_len = 20;
+ 	r->cache.shareable_bits = 0xc0000;
+ 	r->cache.min_cbm_bits = 2;
+@@ -211,7 +210,6 @@ static __init bool __get_mem_config_intel(struct rdt_resource *r)
+ 	cpuid_count(0x00000010, 3, &eax.full, &ebx, &ecx, &edx.full);
  	hw_res->num_closid = edx.split.cos_max + 1;
  	max_delay = eax.split.max_delay + 1;
- 	r->default_ctrl = MAX_MBA_BW;
-+	r->membw.max_bw = MAX_MBA_BW;
+-	r->default_ctrl = MAX_MBA_BW;
+ 	r->membw.max_bw = MAX_MBA_BW;
  	r->membw.arch_needs_linear = true;
  	if (ecx & MBA_IS_LINEAR) {
- 		r->membw.delay_linear = true;
-@@ -250,6 +251,7 @@ static __init bool __rdt_get_mem_config_amd(struct rdt_resource *r)
+@@ -250,7 +248,6 @@ static __init bool __rdt_get_mem_config_amd(struct rdt_resource *r)
+ 
  	cpuid_count(0x80000020, subleaf, &eax, &ebx, &ecx, &edx);
  	hw_res->num_closid = edx + 1;
- 	r->default_ctrl = 1 << eax;
-+	r->membw.max_bw = 1 << eax;
+-	r->default_ctrl = 1 << eax;
+ 	r->membw.max_bw = 1 << eax;
  
  	/* AMD does not use delay */
- 	r->membw.delay_linear = false;
+@@ -276,13 +273,13 @@ static void rdt_get_cache_alloc_cfg(int idx, struct rdt_resource *r)
+ 	union cpuid_0x10_1_eax eax;
+ 	union cpuid_0x10_x_ecx ecx;
+ 	union cpuid_0x10_x_edx edx;
+-	u32 ebx;
++	u32 ebx, default_ctrl;
+ 
+ 	cpuid_count(0x00000010, idx, &eax.full, &ebx, &ecx.full, &edx.full);
+ 	hw_res->num_closid = edx.split.cos_max + 1;
+ 	r->cache.cbm_len = eax.split.cbm_len + 1;
+-	r->default_ctrl = BIT_MASK(eax.split.cbm_len + 1) - 1;
+-	r->cache.shareable_bits = ebx & r->default_ctrl;
++	default_ctrl = BIT_MASK(eax.split.cbm_len + 1) - 1;
++	r->cache.shareable_bits = ebx & default_ctrl;
+ 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
+ 		r->cache.arch_has_sparse_bitmasks = ecx.split.noncont;
+ 	r->alloc_capable = true;
+@@ -329,7 +326,7 @@ static u32 delay_bw_map(unsigned long bw, struct rdt_resource *r)
+ 		return MAX_MBA_BW - bw;
+ 
+ 	pr_warn_once("Non Linear delay-bw map not supported but queried\n");
+-	return r->default_ctrl;
++	return MAX_MBA_BW;
+ }
+ 
+ static void mba_wrmsr_intel(struct msr_param *m)
+@@ -438,7 +435,7 @@ static void setup_default_ctrlval(struct rdt_resource *r, u32 *dc)
+ 	 * For Memory Allocation: Set b/w requested to 100%
+ 	 */
+ 	for (i = 0; i < hw_res->num_closid; i++, dc++)
+-		*dc = r->default_ctrl;
++		*dc = resctrl_get_default_ctrl(r);
+ }
+ 
+ static void ctrl_domain_free(struct rdt_hw_ctrl_domain *hw_dom)
 diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-index 59610b209b4e..23a01eaebd58 100644
+index 23a01eaebd58..5d87f279085f 100644
 --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
 +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -63,9 +63,9 @@ static bool bw_validate(char *buf, u32 *data, struct rdt_resource *r)
- 		return true;
- 	}
+@@ -113,8 +113,9 @@ static int parse_bw(struct rdt_parse_data *data, struct resctrl_schema *s,
+  */
+ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
+ {
+-	unsigned long first_bit, zero_bit, val;
++	u32 supported_bits = BIT_MASK(r->cache.cbm_len) - 1;
+ 	unsigned int cbm_len = r->cache.cbm_len;
++	unsigned long first_bit, zero_bit, val;
+ 	int ret;
  
--	if (bw < r->membw.min_bw || bw > r->default_ctrl) {
-+	if (bw < r->membw.min_bw || bw > r->membw.max_bw) {
- 		rdt_last_cmd_printf("MB value %u out of range [%d,%d]\n",
--				    bw, r->membw.min_bw, r->default_ctrl);
-+				    bw, r->membw.min_bw, r->membw.max_bw);
+ 	ret = kstrtoul(buf, 16, &val);
+@@ -123,7 +124,7 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
  		return false;
  	}
  
+-	if ((r->cache.min_cbm_bits > 0 && val == 0) || val > r->default_ctrl) {
++	if ((r->cache.min_cbm_bits > 0 && val == 0) || val > supported_bits) {
+ 		rdt_last_cmd_puts("Mask out of range\n");
+ 		return false;
+ 	}
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 1e0bae1a9d95..cd8f65c12124 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -978,7 +978,7 @@ static int rdt_default_ctrl_show(struct kernfs_open_file *of,
+ 	struct resctrl_schema *s = of->kn->parent->priv;
+ 	struct rdt_resource *r = s->res;
+ 
+-	seq_printf(seq, "%x\n", r->default_ctrl);
++	seq_printf(seq, "%x\n", resctrl_get_default_ctrl(r));
+ 	return 0;
+ }
+ 
+@@ -2882,7 +2882,7 @@ static int reset_all_ctrls(struct rdt_resource *r)
+ 		hw_dom = resctrl_to_arch_ctrl_dom(d);
+ 
+ 		for (i = 0; i < hw_res->num_closid; i++)
+-			hw_dom->ctrl_val[i] = r->default_ctrl;
++			hw_dom->ctrl_val[i] = resctrl_get_default_ctrl(r);
+ 		msr_param.dom = d;
+ 		smp_call_function_any(&d->hdr.cpu_mask, rdt_ctrl_update, &msr_param, 1);
+ 	}
+@@ -3417,7 +3417,7 @@ static void rdtgroup_init_mba(struct rdt_resource *r, u32 closid)
+ 		}
+ 
+ 		cfg = &d->staged_config[CDP_NONE];
+-		cfg->new_ctrl = r->default_ctrl;
++		cfg->new_ctrl = resctrl_get_default_ctrl(r);
+ 		cfg->have_new_ctrl = true;
+ 	}
+ }
 diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index e1a982adef45..465f3cf8c4bc 100644
+index 465f3cf8c4bc..d16dc960f1fc 100644
 --- a/include/linux/resctrl.h
 +++ b/include/linux/resctrl.h
-@@ -165,6 +165,7 @@ enum membw_throttle_mode {
- /**
-  * struct resctrl_membw - Memory bandwidth allocation related data
-  * @min_bw:		Minimum memory bandwidth percentage user can request
-+ * @max_bw:		Maximum memory bandwidth value, used as the reset value
-  * @bw_gran:		Granularity at which the memory bandwidth is allocated
-  * @delay_linear:	True if memory B/W delay is in linear scale
-  * @arch_needs_linear:	True if we can't configure non-linear resources
-@@ -175,6 +176,7 @@ enum membw_throttle_mode {
-  */
- struct resctrl_membw {
- 	u32				min_bw;
-+	u32				max_bw;
- 	u32				bw_gran;
- 	u32				delay_linear;
- 	bool				arch_needs_linear;
+@@ -216,7 +216,6 @@ enum resctrl_schema_fmt {
+  * @ctrl_domains:	RCU list of all control domains for this resource
+  * @mon_domains:	RCU list of all monitor domains for this resource
+  * @name:		Name to use in "schemata" file.
+- * @default_ctrl:	Specifies default cache cbm or memory B/W percent.
+  * @schema_fmt:		Which format string and parser is used for this schema.
+  * @evt_list:		List of monitoring events
+  * @cdp_capable:	Is the CDP feature available on this resource
+@@ -233,7 +232,6 @@ struct rdt_resource {
+ 	struct list_head	ctrl_domains;
+ 	struct list_head	mon_domains;
+ 	char			*name;
+-	u32			default_ctrl;
+ 	enum resctrl_schema_fmt	schema_fmt;
+ 	struct list_head	evt_list;
+ 	bool			cdp_capable;
+@@ -268,6 +266,23 @@ struct resctrl_schema {
+ 	u32				num_closid;
+ };
+ 
++/**
++ * resctrl_get_default_ctrl() - Return the default control value for this
++ *                              resource.
++ * @r:		The resource whose default control type is queried.
++ */
++static inline u32 resctrl_get_default_ctrl(struct rdt_resource *r)
++{
++	switch (r->schema_fmt) {
++	case RESCTRL_SCHEMA_BITMAP:
++		return BIT_MASK(r->cache.cbm_len) - 1;
++	case RESCTRL_SCHEMA_RANGE:
++		return r->membw.max_bw;
++	}
++
++	return WARN_ON_ONCE(1);
++}
++
+ /* The number of closid supported by this resource regardless of CDP */
+ u32 resctrl_arch_get_num_closid(struct rdt_resource *r);
+ u32 resctrl_arch_system_num_rmid_idx(void);
 -- 
 2.39.5
 
