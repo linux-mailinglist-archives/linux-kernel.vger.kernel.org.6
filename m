@@ -1,397 +1,322 @@
-Return-Path: <linux-kernel+bounces-556471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF37A5CA42
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:06:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B054AA5CA4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:07:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24D6918966C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:06:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39E01896773
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8345325EFBC;
-	Tue, 11 Mar 2025 16:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FF125FA3B;
+	Tue, 11 Mar 2025 16:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="airIh9x+"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="S2hiYyN/"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48F810E5;
-	Tue, 11 Mar 2025 16:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7B225EF90
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741709174; cv=none; b=OoQdlpKXq41xK5/w/O4wI4z1GfwcHJ/8DLxw0c4HflK8uUYFV0NthB4F1J5l7TZEHZvgp4v1BUgsnJpr+YdgZ6D5Pyp+npikmDntyVcslXPugIkTp4H7Psb24NxoQ3z9ysmLYx9e1vsJgII9YYVkZJSqL0tGgTTCAvO2COJcM+8=
+	t=1741709220; cv=none; b=OsWDHyhUNIY0vCfKHK2ly0cTMHyvcFHlkOTNNFXcK/ZHYIKH+kb0/i56gjsIfWVP1O9VjXmZoWnGZNh0HwFB7psO9cAIn0vYoYY5Fb7gjkwKVDEXhAts3slERfk4nkIWgtosbk6xUeOZQTk3LGIzZKuoX7AiuowPMgzTJu23sc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741709174; c=relaxed/simple;
-	bh=3Ry3yf3JWmL0fBfyqbHe4M+TCvF4oI+xF7+wwor61xI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gp0QXxE/IWzlqtRhRpo/bH1YM/+mFmAYb8H6eZaeTuVoMINcxZfEuhYOVsLgjuh2lcAbTUrg2WPuLaY5cTwbMQNJcRi9gXc3RDxCDwMcspj47AN2PkWMi2EIKOc57IsXooDkbF7kcXcetcICHvL9EA8EGNlFgS93h1sIzxxbtek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=airIh9x+; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-224019ad9edso128808285ad.1;
-        Tue, 11 Mar 2025 09:06:12 -0700 (PDT)
+	s=arc-20240116; t=1741709220; c=relaxed/simple;
+	bh=9xfrqn5PaUD3Cww4DF0JnKtGG8IfmxoEKQSBl/5uVoU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JpI9X71QNpAJ3u+5H9/Ibk0XCj5q4LjgvU4xgBYXa4mbA2buln8fFi6YA3E90VNazoWDNwPVxdZrOmoMzujFhAelnNWOtHy9ShK9zhgRAcnUGnCEwyDSUiOuIfMCISaVVd70VndIXXsZ+2DiizBjOznHyGtj7QT4QnS1CsMtgDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=S2hiYyN/; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso9675694a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:06:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741709172; x=1742313972; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=LG6kF6C4qwqb1cIfo+7C7Aea5SBDdamgsmDp86jI3Fw=;
-        b=airIh9x+F+lsfUW0t8wAQdbSb/7guOTpu4eT6bH1WdeVRuE4dz/dU+QujojCO5LAzz
-         uflnYnzkERzpFd1C1ZYvrTRUb9j+cygxtqHQ8XTnCkp5FBdu42s72e8MA8o21jjlZ6ec
-         vhtXjYe7Dohojm0VM/vnEbgNBCCZs/1GBVeK/9maktFIDKHJQtnWj7CFbKvVjRBqHBYj
-         GckHsjCILFm1skLUhGpIo5LExququlHxFxlYCa7wBwTjlfZ1x51qZPQgtQJrTw98fiNL
-         SIdYRyvxw9OJBIY6CKTjitjL8aIbuzILM1lB72YOX4+608sLiqOTlgncz44L/KAMYhQf
-         af+Q==
+        d=broadcom.com; s=google; t=1741709218; x=1742314018; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hM4rbW6LjxVDNSNvYjso9fRHbCk2dFhxwSUcK0gnU+A=;
+        b=S2hiYyN/EAheqYsBK+EUVUdJquOtswQ/yRfMp+Z/+/UmqBbWSCfC6aiEh9SnWlwhZh
+         eNx/cjP7tl7zBYmJSna5YFGfbxf/PafzST1bWTF4hZPtJCDFKdcYGQink9BMoyJ0qSWD
+         yq31f2JPFCLymnl+yV+3MQ1CzouexBztpl+Vw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741709172; x=1742313972;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LG6kF6C4qwqb1cIfo+7C7Aea5SBDdamgsmDp86jI3Fw=;
-        b=M2x72g+TaAHiuHd/1dmi3/0KFwLtl4T/NIbbnzcA2+ZHcUBT/m/VuepRXJ1hAy9dsb
-         S3/lFYNa6KgPc10a8sJIdPYnVS0NyjnbwwRitQWGlRSqGASST2yOiYdZJaIXhx4Y+dWh
-         1YYQiiv+TmvFMQv8LetTOzY7cZLPlzI6OHDM+OcyhuHBUDeM+RKDnycD1os7Kg6cij8e
-         14HDNIUckBsE0CtoQUsN54btYb3B6uc0Yqw1jtrNOH6GNJtRYzIn2l4RpKEW4JtSVPft
-         RywEplv0cSjN4AdrayJQTHV471x2xuZDLmHRJr3+IZer14bD1ibQm/o8J+Maom0aiz/5
-         owNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqrWouO/lXhvFeMkwV8aXTx/zrmCtnCOjow6pnPn3jxxa0g6SKKpYUJaiiaxxLJ4SNqDoSmPAz6Gyh@vger.kernel.org, AJvYcCVw2yiAKNvZ/tKxjO/HIq/QS9oc+ka/4KnKHEYKTS1t8w1a8rfK3Rxf0f4QExb/sf9DpIEyvuae1N1uECu4M4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0fInG8kwGpwtaY0v9o+GqUrpE+RLSDKI+oY02TB1WUjAD5YXD
-	RARpyWnMkE4J4P9xn21aKyB45J5DwjFTt+yYZLNCmqHdlqJwAbKXJ64VwQ==
-X-Gm-Gg: ASbGnctIFrlRiFpXJECi+ylF9R7WK38rS63qOf9tC41W3bmWeAJEZNsTGhcG47wSHwA
-	N1kgl1EvWyOFNpvbDdgbMj7XXiy+EDsQFsAKj4CjuLaNeFuJlaBdCc9h8NErDiBnmZBuknjvFP8
-	uUKeAIsQytIKb8JZYXLso538GKsSl0m4xRbHzsn1fgloo8WeFH2FFjv4JA4gsstF+Fm1KbZaPg1
-	a4Aby0pgOnM20Nl84Iwakcm1VqiX9zibGv1vqap9JFFJlyecb7PDK8eNYRppjuAtUMDU/8ucGOV
-	a8CnEFAOrpCzSpCwl7j870gg7Q14iM2AcKwcNi5zVTQVLynmEvFg+elHqbUF9DYrAsZPg5toTaX
-	IhdVGejfOa9f5H/blAw==
-X-Google-Smtp-Source: AGHT+IFkxLnyhiIuq3JW2E4AeBe6ThZgeQd09UhGO4Cw3olXu1+YXOcwu7I9xPzQt+yzK/JaB454+A==
-X-Received: by 2002:a05:6a00:3e29:b0:736:2f20:9d1 with SMTP id d2e1a72fcca58-736aab287e7mr24853665b3a.23.1741709171760;
-        Tue, 11 Mar 2025 09:06:11 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736b589aae4sm8070443b3a.152.2025.03.11.09.06.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 09:06:11 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <8bdf9a4d-5d25-4b53-947b-0644c00cc999@roeck-us.net>
-Date: Tue, 11 Mar 2025 09:06:09 -0700
+        d=1e100.net; s=20230601; t=1741709218; x=1742314018;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hM4rbW6LjxVDNSNvYjso9fRHbCk2dFhxwSUcK0gnU+A=;
+        b=mhTvIy8Nwr1ryQi1M6AOPEaBgwV3HOMvYEKaI8XSe6PQkw2Xcvfv8lDrpbOxlT1fnA
+         uOmvW3Zbt7hhbNKStgg1tEYQlHMv8CsFMToIkAI7KVjFGu3EHqPszpiqWjPyHUjwkdT5
+         tZoPtTLvxs91LGIpEVIF6miSR3bBrQomLy8yvDGZX0O37OZf1BdJg84YQiJcjmRAFCz9
+         IpLA9xgRATkcPsF8idz/l/yrp0YiOmeWve2IAflB0/XGf+NFbLSkQqP8ETM+eFpy1Gjb
+         khqr8sHEAV+gCnQgzeURhyLF76m8bfn5kmf3iLOL7T6G+KKrnxf3Clq9qWldoodaLMOD
+         jutw==
+X-Forwarded-Encrypted: i=1; AJvYcCXccaYPQgqL7Zm2HZ7XuCJ4WO1mRIazbXdyypRnMWtds1AT1q3QHxGvWGxGgG34IOqo1JrL/QuKkvFCzrU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5vzp34dWKpNfkUFfAiRkYq1a0NqsMZkhnRecOMjbxDWLcwO46
+	tic4wjSMt2fo5qpmtWlISL/D6PeKFzQvJWJltp+vNep8r5QdA7E0MJJZmjlMIJyL79enHYvv9+v
+	WX6Z3i+54oytCTKkvQdUtL/fEuJDr1H88O8EY
+X-Gm-Gg: ASbGncvSUtXaMmo9IVJreZjWDjQVrb0bazzd1JePda8DyfZtFdNYkE70SbtkWI7Eqrq
+	BincHJryla5pJicsz5DsGGaXXp1uyncjHgr/fykl96ISTn4s/Py3nTRNFhb+YiCUBRG85j8fo93
+	XzLkUWpmeDSgecJBAsYrwklq5quQw=
+X-Google-Smtp-Source: AGHT+IE36fk6W16fZ24D9Um05YI34qYQeMpFD/Fu13W3g0zHxL6+gSNZuwbSkxqQdxCB8t1MRNP32lKWlS+bzVOdJuM=
+X-Received: by 2002:a17:90b:53c3:b0:2fa:6793:e860 with SMTP id
+ 98e67ed59e1d1-301002eadf6mr5953818a91.0.1741709217074; Tue, 11 Mar 2025
+ 09:06:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] watchdog: Add driver for Intel OC WDT
-To: Diogo Ivo <diogo.ivo@siemens.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-watchdog@vger.kernel.org, jan.kiszka@siemens.com,
- benedikt.niedermayr@siemens.com
-References: <20250311-ivo-intel_oc_wdt-v1-1-fd470460d9f5@siemens.com>
- <fea41656-ca80-491f-b84b-d118b35b5f72@roeck-us.net>
- <bc354400-52bf-46ee-8619-479c3fe9b28e@siemens.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <bc354400-52bf-46ee-8619-479c3fe9b28e@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250311150136.46938-1-kamal.dasu@broadcom.com> <aa4284fa-1f68-4c7e-8d58-1c5129adda27@broadcom.com>
+In-Reply-To: <aa4284fa-1f68-4c7e-8d58-1c5129adda27@broadcom.com>
+From: Kamal Dasu <kamal.dasu@broadcom.com>
+Date: Tue, 11 Mar 2025 12:06:19 -0400
+X-Gm-Features: AQ5f1JpSi62VLJlBuC0dak2KFHVpwzvRvnj9P8OVAxmHNa-s7uCtBu4nwXoQ5HI
+Message-ID: <CAKekbevwB9Nd36WNkuh6Xh45puf3dPmfHDKgQBgUEVApbTm2rw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-brcmstb: add cqhci suspend/resume to PM ops
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Al Cooper <alcooperx@gmail.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000042cdf60630134729"
 
-On 3/11/25 07:59, Diogo Ivo wrote:
-> Hi Guenter, thanks for the quick review!
-> 
-> On 3/11/25 2:10 PM, Guenter Roeck wrote:
->> On 3/11/25 06:18, Diogo Ivo wrote:
->>> Add a driver for the Intel Over-Clocking Watchdog found in Intel
->>> Platform Controller (PCH) chipsets. This watchdog is controlled
->>> via a simple single-register interface and would otherwise be
->>> standard except for the presence of a LOCK bit that can only be
->>> set once per power cycle, needing extra handling around it.
->>>
->>> Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
->>> ---
->>>   drivers/acpi/acpi_pnp.c         |   2 +
->>>   drivers/watchdog/Kconfig        |  11 ++
->>>   drivers/watchdog/Makefile       |   1 +
->>>   drivers/watchdog/intel_oc_wdt.c | 235 ++++++++++++++++++++++++++++++ ++++++++++
->>>   4 files changed, 249 insertions(+)
->>>
->>> diff --git a/drivers/acpi/acpi_pnp.c b/drivers/acpi/acpi_pnp.c
->>> index 01abf26764b00c86f938dea2ed138424f041f880..3f5a1840f573303c71f5d579e32963a5b29d2587 100644
->>> --- a/drivers/acpi/acpi_pnp.c
->>> +++ b/drivers/acpi/acpi_pnp.c
->>> @@ -355,8 +355,10 @@ static bool acpi_pnp_match(const char *idstr, const struct acpi_device_id **matc
->>>    * device represented by it.
->>>    */
->>>   static const struct acpi_device_id acpi_nonpnp_device_ids[] = {
->>> +    {"INT3F0D"},
->>>       {"INTC1080"},
->>>       {"INTC1081"},
->>> +    {"INTC1099"},
->>>       {""},
->>>   };
->>
->> This needs to be a separate patch.
-> 
-> I will split it for v2.
-> 
->>> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
->>> index f81705f8539aa0b12d156a86aae521aa40b4527d..16e6df441bb344c0f91b40bd76b6322ad3016e72 100644
->>> --- a/drivers/watchdog/Kconfig
->>> +++ b/drivers/watchdog/Kconfig
->>> @@ -1350,6 +1350,17 @@ config INTEL_MID_WATCHDOG
->>>         To compile this driver as a module, choose M here.
->>> +config INTEL_OC_WATCHDOG
->>> +    tristate "Intel OC Watchdog"
->>> +    depends on X86 && ACPI
->>> +    select WATCHDOG_CORE
->>> +    help
->>> +      Hardware driver for Intel Over-Clocking watchdog present in
->>> +      Platform Controller Hub (PCH) chipsets.
->>> +
->>> +      To compile this driver as a module, choose M here: the
->>> +      module will be called intel_oc_wdt.
->>> +
->>>   config ITCO_WDT
->>>       tristate "Intel TCO Timer/Watchdog"
->>>       depends on X86 && PCI
->>> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
->>> index 8411626fa162268e8ccd06349f7193b15a9d281a..3a13f3e80a0f460b99b4f1592fcf17cc6428876b 100644
->>> --- a/drivers/watchdog/Makefile
->>> +++ b/drivers/watchdog/Makefile
->>> @@ -149,6 +149,7 @@ obj-$(CONFIG_W83977F_WDT) += w83977f_wdt.o
->>>   obj-$(CONFIG_MACHZ_WDT) += machzwd.o
->>>   obj-$(CONFIG_SBC_EPX_C3_WATCHDOG) += sbc_epx_c3.o
->>>   obj-$(CONFIG_INTEL_MID_WATCHDOG) += intel-mid_wdt.o
->>> +obj-$(CONFIG_INTEL_OC_WATCHDOG) += intel_oc_wdt.o
->>>   obj-$(CONFIG_INTEL_MEI_WDT) += mei_wdt.o
->>>   obj-$(CONFIG_NI903X_WDT) += ni903x_wdt.o
->>>   obj-$(CONFIG_NIC7018_WDT) += nic7018_wdt.o
->>> diff --git a/drivers/watchdog/intel_oc_wdt.c b/drivers/watchdog/ intel_oc_wdt.c
->>> new file mode 100644
->>> index 0000000000000000000000000000000000000000..0a2df3440024090f7e342fe7da895a7930ac09b2
->>> --- /dev/null
->>> +++ b/drivers/watchdog/intel_oc_wdt.c
->>> @@ -0,0 +1,235 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Intel OC Watchdog driver
->>> + *
->>> + * Copyright (C) 2025, Siemens SA
->>> + * Author: Diogo Ivo <diogo.ivo@siemens.com>
->>> + */
->>> +
->>> +#define DRV_NAME    "intel_oc_wdt"
->>> +
->>> +#include <linux/acpi.h>
->>> +#include <linux/bits.h>
->>> +#include <linux/io.h>
->>> +#include <linux/module.h>
->>> +#include <linux/moduleparam.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/watchdog.h>
->>> +
->>> +#define INTEL_OC_WDT_TOV        GENMASK(9, 0)
->>> +#define INTEL_OC_WDT_MIN_TOV        1
->>> +#define INTEL_OC_WDT_MAX_TOV        1024
->>> +
->>> +/*
->>> + * One-time writable lock bit. If set forbids
->>> + * modification of itself, _TOV and _EN until
->>> + * next reboot.
->>> + */
->>> +#define INTEL_OC_WDT_CTL_LCK        BIT(12)
->>> +
->>> +#define INTEL_OC_WDT_EN            BIT(14)
->>> +#define INTEL_OC_WDT_NO_ICCSURV_STS    BIT(24)
->>> +#define INTEL_OC_WDT_ICCSURV_STS    BIT(25)
->>> +#define INTEL_OC_WDT_RLD        BIT(31)
->>> +
->>> +#define INTEL_OC_WDT_STS_BITS (INTEL_OC_WDT_NO_ICCSURV_STS | \
->>> +                   INTEL_OC_WDT_ICCSURV_STS)
->>> +
->>> +#define INTEL_OC_WDT_CTRL_REG(wdt)    ((wdt)->ctrl_res->start)
->>> +
->>> +struct intel_oc_wdt {
->>> +    struct watchdog_device wdd;
->>> +    struct resource *ctrl_res;
->>> +    bool locked;
->>> +};
->>> +
->>> +#define WDT_HEARTBEAT            60
->>> +static int heartbeat = WDT_HEARTBEAT;
->>
->> Normally this is set to 0 and the default timeout is initialized together
->> with min_timeout and max_timeout. This lets the watchdog core override it
->> with devicetree data (if that is available).
-> 
-> Ok, thank you for the insight. I will address this for v2.
-> It is unlikely that this driver will have devicetree data but it's
-> better to follow best practice.
-> 
+--00000000000042cdf60630134729
+Content-Type: multipart/alternative; boundary="0000000000002fc6fc06301347ad"
 
-I just submitted a patch to have the watchdog core also look into firmware data,
-which would include data provided by ACPI.
+--0000000000002fc6fc06301347ad
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->>> +module_param(heartbeat, uint, 0);
->>> +MODULE_PARM_DESC(heartbeat, "Watchdog heartbeats in seconds. (default="
->>> +         __MODULE_STRING(WDT_HEARTBEAT) ")");
->>> +
->>> +static bool nowayout = WATCHDOG_NOWAYOUT;
->>> +module_param(nowayout, bool, 0);
->>> +MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
->>> +         __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
->>> +
->>> +static int intel_oc_wdt_start(struct watchdog_device *wdd)
->>> +{
->>> +    struct intel_oc_wdt *oc_wdt = watchdog_get_drvdata(wdd);
->>> +
->>> +    if (oc_wdt->locked)
->>> +        return 0;
->>> +
->>> +    outl(inl(INTEL_OC_WDT_CTRL_REG(oc_wdt)) | INTEL_OC_WDT_EN,
->>> +         INTEL_OC_WDT_CTRL_REG(oc_wdt));
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static int intel_oc_wdt_stop(struct watchdog_device *wdd)
->>> +{
->>> +    struct intel_oc_wdt *oc_wdt = watchdog_get_drvdata(wdd);
->>> +
->>> +    outl(inl(INTEL_OC_WDT_CTRL_REG(oc_wdt)) & ~INTEL_OC_WDT_EN,
->>> +         INTEL_OC_WDT_CTRL_REG(oc_wdt));
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static int intel_oc_wdt_ping(struct watchdog_device *wdd)
->>> +{
->>> +    struct intel_oc_wdt *oc_wdt = watchdog_get_drvdata(wdd);
->>> +
->>> +    outl(inl(INTEL_OC_WDT_CTRL_REG(oc_wdt)) | INTEL_OC_WDT_RLD,
->>> +         INTEL_OC_WDT_CTRL_REG(oc_wdt));
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static int intel_oc_wdt_set_timeout(struct watchdog_device *wdd,
->>> +                    unsigned int t)
->>> +{
->>> +    struct intel_oc_wdt *oc_wdt = watchdog_get_drvdata(wdd);
->>> +
->>> +    outl((inl(INTEL_OC_WDT_CTRL_REG(oc_wdt)) & ~INTEL_OC_WDT_TOV) | (t - 1),
->>> +         INTEL_OC_WDT_CTRL_REG(oc_wdt));
->>> +
->>> +    wdd->timeout = t;
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static const struct watchdog_info intel_oc_wdt_info = {
->>> +    .options = WDIOF_SETTIMEOUT | WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING,
->>> +    .identity = DRV_NAME,
->>> +};
->>> +
->>> +static const struct watchdog_ops intel_oc_wdt_ops = {
->>> +    .owner = THIS_MODULE,
->>> +    .start = intel_oc_wdt_start,
->>> +    .stop = intel_oc_wdt_stop,
->>> +    .ping = intel_oc_wdt_ping,
->>> +    .set_timeout = intel_oc_wdt_set_timeout,
->>> +};
->>> +
->>> +static int intel_oc_wdt_setup(struct intel_oc_wdt *oc_wdt)
->>> +{
->>> +    struct watchdog_info *info;
->>> +    unsigned long val;
->>> +
->>> +    val = inl(INTEL_OC_WDT_CTRL_REG(oc_wdt));
->>> +
->>> +    if (val & INTEL_OC_WDT_STS_BITS)
->>> +        oc_wdt->wdd.bootstatus |= WDIOF_CARDRESET;
->>> +
->>> +    oc_wdt->locked = !!(val & INTEL_OC_WDT_CTL_LCK);
->>> +
->>> +    if (val & INTEL_OC_WDT_EN) {
->>> +        /*
->>> +         * No need to issue a ping here to "commit" the new timeout
->>> +         * value to hardware as the watchdog core schedules one
->>> +         * immediately when registering the watchdog.
->>> +         */
->>> +        set_bit(WDOG_HW_RUNNING, &oc_wdt->wdd.status);
->>> +
->>> +        if (oc_wdt->locked) {
->>> +            info = (struct watchdog_info *)&intel_oc_wdt_info;
->>> +            /*
->>> +             * Set nowayout unconditionally as we cannot stop
->>> +             * the watchdog and read the current timeout.
->>> +             */
->>
->> But the timeout is read below ? Do you mean "change the current timeout" ?
-> 
-> In this case where the BIOS both enabled the watchdog and set the LOCK
-> bit we cannot change the timeout anymore, meaning that we have to read
-> the value currently in the register and pass it to the watchdog core,
-> which is what is done below.
-> 
-Yes, but the comment says " we cannot stop the watchdog and _read_ the
-current timeout" (emphasis added), suggesting that the current timeout
-can not be _read_ if locked is true.
+On Tue, Mar 11, 2025 at 11:46=E2=80=AFAM Florian Fainelli <
+florian.fainelli@broadcom.com> wrote:
 
->>> +            nowayout = true;
->>> +
->>> +            oc_wdt->wdd.timeout = (val & INTEL_OC_WDT_TOV) + 1;
+> On 3/11/25 08:01, Kamal Dasu wrote:
+> > cqhci timeouts observed on brcmstb platforms during suspend:
+> >    ...
+> >    [  164.832853] mmc0: cqhci: timeout for tag 18
+> >    ...
+> >
+> > Adding cqhci_suspend()/resume() calls to disable cqe
+> > in sdhci_brcmstb_suspend()/resume() respectively to fix
+> > CQE timeouts seen on PM suspend.
+> >
+> > Fixes: d46ba2d17f90 ("mmc: sdhci-brcmstb: Add support for Command
+> Queuing (CQE)")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
+> > ---
+> >   drivers/mmc/host/sdhci-brcmstb.c | 9 +++++++++
+> >   1 file changed, 9 insertions(+)
+> >
+> > diff --git a/drivers/mmc/host/sdhci-brcmstb.c
+> b/drivers/mmc/host/sdhci-brcmstb.c
+> > index 0ef4d578ade8..bf55a9185eb6 100644
+> > --- a/drivers/mmc/host/sdhci-brcmstb.c
+> > +++ b/drivers/mmc/host/sdhci-brcmstb.c
+> > @@ -505,6 +505,12 @@ static int sdhci_brcmstb_suspend(struct device *de=
+v)
+> >       struct sdhci_brcmstb_priv *priv =3D sdhci_pltfm_priv(pltfm_host);
+>
+> Missing an int ret declaration here, otherwise that won't build.
+>
+> oops will fix it and send v2.
 
-However, this code does read the timeout even if locked is set. That
-suggests that it is not possible to _change_ the timeout if locked is set,
-but that it is possible to read the current timeout.
 
-Guenter
+> >
+> >       clk_disable_unprepare(priv->base_clk);
+> > +     if (host->mmc->caps2 & MMC_CAP2_CQE) {
+> > +             ret =3D cqhci_suspend(host->mmc);
+> > +             if (ret)
+> > +                     return ret;
+> > +     }
+> > +
+> >       return sdhci_pltfm_suspend(dev);
+> >   }
+> >
+> > @@ -529,6 +535,9 @@ static int sdhci_brcmstb_resume(struct device *dev)
+> >                       ret =3D clk_set_rate(priv->base_clk,
+> priv->base_freq_hz);
+> >       }
+> >
+> > +     if (host->mmc->caps2 & MMC_CAP2_CQE)
+> > +             ret =3D cqhci_resume(host->mmc);
+> > +
+> >       return ret;
+> >   }
+> >   #endif
+>
+>
+> --
+> Florian
+>
 
+--0000000000002fc6fc06301347ad
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=
+=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Mar 11, 2025=
+ at 11:46=E2=80=AFAM Florian Fainelli &lt;<a href=3D"mailto:florian.fainell=
+i@broadcom.com" target=3D"_blank">florian.fainelli@broadcom.com</a>&gt; wro=
+te:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px =
+0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">On 3/11/25 0=
+8:01, Kamal Dasu wrote:<br>
+&gt; cqhci timeouts observed on brcmstb platforms during suspend:<br>
+&gt;=C2=A0 =C2=A0 ...<br>
+&gt;=C2=A0 =C2=A0 [=C2=A0 164.832853] mmc0: cqhci: timeout for tag 18<br>
+&gt;=C2=A0 =C2=A0 ...<br>
+&gt; <br>
+&gt; Adding cqhci_suspend()/resume() calls to disable cqe<br>
+&gt; in sdhci_brcmstb_suspend()/resume() respectively to fix<br>
+&gt; CQE timeouts seen on PM suspend.<br>
+&gt; <br>
+&gt; Fixes: d46ba2d17f90 (&quot;mmc: sdhci-brcmstb: Add support for Command=
+ Queuing (CQE)&quot;)<br>
+&gt; Cc: <a href=3D"mailto:stable@vger.kernel.org" target=3D"_blank">stable=
+@vger.kernel.org</a><br>
+&gt; Signed-off-by: Kamal Dasu &lt;<a href=3D"mailto:kamal.dasu@broadcom.co=
+m" target=3D"_blank">kamal.dasu@broadcom.com</a>&gt;<br>
+&gt; ---<br>
+&gt;=C2=A0 =C2=A0drivers/mmc/host/sdhci-brcmstb.c | 9 +++++++++<br>
+&gt;=C2=A0 =C2=A01 file changed, 9 insertions(+)<br>
+&gt; <br>
+&gt; diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci=
+-brcmstb.c<br>
+&gt; index 0ef4d578ade8..bf55a9185eb6 100644<br>
+&gt; --- a/drivers/mmc/host/sdhci-brcmstb.c<br>
+&gt; +++ b/drivers/mmc/host/sdhci-brcmstb.c<br>
+&gt; @@ -505,6 +505,12 @@ static int sdhci_brcmstb_suspend(struct device *d=
+ev)<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0struct sdhci_brcmstb_priv *priv =3D sdhci_pl=
+tfm_priv(pltfm_host);<br>
+<br>
+Missing an int ret declaration here, otherwise that won&#39;t build.<br>
+<br></blockquote><div>oops will fix it and send v2.</div><div>=C2=A0</div><=
+blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-l=
+eft:1px solid rgb(204,204,204);padding-left:1ex">
+&gt;=C2=A0 =C2=A0<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0clk_disable_unprepare(priv-&gt;base_clk);<br=
+>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (host-&gt;mmc-&gt;caps2 &amp; MMC_CAP2_CQE) {<=
+br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D cqhci_suspend=
+(host-&gt;mmc);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0return ret;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return sdhci_pltfm_suspend(dev);<br>
+&gt;=C2=A0 =C2=A0}<br>
+&gt;=C2=A0 =C2=A0<br>
+&gt; @@ -529,6 +535,9 @@ static int sdhci_brcmstb_resume(struct device *dev=
+)<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0ret =3D clk_set_rate(priv-&gt;base_clk, priv-&gt;base_freq_hz)=
+;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
+&gt;=C2=A0 =C2=A0<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (host-&gt;mmc-&gt;caps2 &amp; MMC_CAP2_CQE)<br=
+>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D cqhci_resume(=
+host-&gt;mmc);<br>
+&gt; +<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;<br>
+&gt;=C2=A0 =C2=A0}<br>
+&gt;=C2=A0 =C2=A0#endif<br>
+<br>
+<br>
+-- <br>
+Florian<br>
+</blockquote></div></div>
+</div>
+
+--0000000000002fc6fc06301347ad--
+
+--00000000000042cdf60630134729
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+DxuNuBlySpn/GYqPcDcRZd8EENWqnZrjtjHMk0j7ZfrPGXq8sQkbG3OX+DOwSaefPRq1pLGWBZaZ
+YuUo5O7CNHo7h7Hc9GgjiW+6X9BjKAzSaDy8jwIDAQABo4IB2DCCAdQwDgYDVR0PAQH/BAQDAgWg
+MIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3VyZS5nbG9iYWxzaWdu
+LmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEGCCsGAQUFBzABhjVo
+dHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMDBNBgNV
+HSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2ln
+bi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6hjhodHRwOi8vY3Js
+Lmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNybDAiBgNVHREEGzAZ
+gRdrYW1hbC5kYXN1QGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAW
+gBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUcRYSWvAVyA3hgTrQ2c4AFquBsG0wDQYJ
+KoZIhvcNAQELBQADggEBAIKB2IOweF2sIYGBZTDm+Hwmhga+sjekM167Sk/KwxxvQFwZYP6i0SnR
+7aR59vbfVQVaAiZH/a+35EYxP/sXaIM4+E3bFykBuXwcGEnYyEn6MceiOCkjkWQq1Co2JyOdNvkP
+nAxyPoWlsJtr+N/MF1EYKGpYMdPM7S2T/gujjO9N56BCGu9yJElszWcXHmBl5IsaQqMS36vhsV0b
+NxffjNkeAdgfN/SS9S9Rj4WXD7pF1M0Xq8gPLCLyXrx1i2KkYOYJsj0PWlC6VRg6E1xXkYDte0VL
+fAAG4QsETU27E1HBNQyp5zF1PoPCPvq3EnWQnbLgYk+Jz2iwIUwiqwr/bDgxggJgMIICXAIBATBr
+MFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9i
+YWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgw89WX2Pp7ue922QVkwDQYJYIZI
+AWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEIFI8CS7ruiokp1AAnPPloQL5mWMLRhBc5BZqZzDA
+EMlUMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDMxMTE2MDY1
+OFowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQB
+AjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJYIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIB
+ABglf3sIsmAe5TJQX4ezh8yohJ7UJU/zdGG2edFl0TexHW/cNxDmAqJAjDTSTf0jV4P+BggtWBk3
+0Zy3MKcKaHYkynhnHIkUb57ruuGZt1HDnroORnqeqMNFBEhX7EaID29iL2XnMEviLk1YyyHykwX0
+vjkQ6OFtO5Vjz8OLuWb05KP0oqqc/4FVJJ3tSl6B/BlaYDk3XefIvjy67KOwfv8Xkgh+x0YRhrvx
+7P3q8qzKes9eK1ownmvvQfR0LxIn8/7Iumc2a97szTpY3GHKPBsasjUc4ZURytGD11CgZPqZTsBm
+MIaeI8fvbOzA7jZRiF/QWyjzQznL/V6RBWSb7rU=
+--00000000000042cdf60630134729--
 
