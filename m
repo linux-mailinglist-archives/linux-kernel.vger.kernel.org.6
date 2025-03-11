@@ -1,122 +1,142 @@
-Return-Path: <linux-kernel+bounces-555703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDAF4A5BB9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:06:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39AAA5BBA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:08:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 065E31890A9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:07:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D9BE1724F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D0F22686F;
-	Tue, 11 Mar 2025 09:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D793F222576;
+	Tue, 11 Mar 2025 09:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lgeoWLy9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="KCMITyiw"
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.62.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3454D1EB199;
-	Tue, 11 Mar 2025 09:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D93146593
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.62.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741684004; cv=none; b=pQvRbpfexm0qcnaSliUv8y9Y03fsf67zmKuAOf0eXgL9lX+mP7bsf0/BdQO0YCSxKB3JOJTcRoW4CWq3tYq0jWReMp55fnxrR4O11gAbOP2OBLF48fKwkieIhmtLXXpIOswuSYw6WFzPxNrQxy6m91jXuILuSuPgcAzLJOD+CRg=
+	t=1741684082; cv=none; b=mV6fvScaKOZbeqeArCPFxzh1ur5f1AJJ1DMtWiXgfsNWXJIDkJhIQlEdt2qV8QsEFiGS9sGiUt8Bgf4r7xz2JdKOgIghW8rFOgUfqm7hrvR2gc7Pk8ZFPpd2hIz96IRrBnwo3ROCucz+T6EeDYKUGmZav34FpP0s3lqyAdkoe+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741684004; c=relaxed/simple;
-	bh=Lf1ll/w54v7N4pMRqpFCRX6LM4srEfAQ8cYdNV9dHR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AL7tR3kNS0Y9RJQouXDEILv6+pqoJU2FeZYXb9nUO2xFTEc3Wdj2VJKkrSSvkgN0zNBMErR/lAl2FkYn5z7hCZWyVBowlBHG7o+Le0pf+FscGjEPPlXZdKvOP/DLBDeSOc6FLDMmwCyxe6VGHNcsX6ViUbYxK0ZVgAcaCJHrvqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lgeoWLy9; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741684003; x=1773220003;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Lf1ll/w54v7N4pMRqpFCRX6LM4srEfAQ8cYdNV9dHR0=;
-  b=lgeoWLy9sCM28FPgdkFGoaz+thmUXWyuVD+MWef5AxXjLw9cqyH4zOG5
-   XGeadQLzuT4N6+4qxpdT20mvhB2kS8n1Dpy/IhTNqWomxMvrjCiHgG/he
-   hnyQc0b7xRzDTDPZQO8U7vM1M2GeED973s12R5B7tOHqqQ5iLJweOhl7r
-   yZhcv10+rKsoScPmo1drobg/oYhPQFHsRkGwX+h8DtF7N+Um36MktXCqi
-   341ul1lza9I9Bz2+uNW8e4+f0Elx9a1x8H4CeIRyK9bU5PlL3BIyiziet
-   RFtrD5/EDjr/s0oUTwN5Log6DmJnqudZW+p8CM9Pd9CVqHABbYv1x2iBJ
-   w==;
-X-CSE-ConnectionGUID: mp5oBq+4Qh21NPZutmkN6g==
-X-CSE-MsgGUID: B0bxsHQ1RsyjBmYeKYmdiw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42427740"
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="42427740"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 02:06:42 -0700
-X-CSE-ConnectionGUID: QYf9xl73QsWOniN1NCeshQ==
-X-CSE-MsgGUID: RvshfzS+QI+d6Cp3vR22QA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="120484207"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 11 Mar 2025 02:06:36 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1trvZK-0006Vq-0G;
-	Tue, 11 Mar 2025 09:06:34 +0000
-Date: Tue, 11 Mar 2025 17:06:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>, bhelgaas@google.com,
-	lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
-	kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-	dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
-	abel.vesa@linaro.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	quic_ziyuzhan@quicinc.com, quic_qianyu@quicinc.com,
-	quic_krichai@quicinc.com, johan+linaro@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: qcs615-ride: Enable PCIe
- interface
-Message-ID: <202503111654.Uo5Nw44p-lkp@intel.com>
-References: <20250310065613.151598-4-quic_ziyuzhan@quicinc.com>
+	s=arc-20240116; t=1741684082; c=relaxed/simple;
+	bh=2dOCfF3SE4JtdwJGgzc7tTDXSXveTGf7JBWlac24dI8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tJve7QQtaJM1MD56e5JUAosRaLybMRMeSFBbtWLkVkakRZ66ekduUdCe1sntfqmUmBfjW1IZt5ZKh8iUqnRzG+e/BDY+jPinNl7/Y0m2xMCwVMv7j1UAODb09VGJAnu5cEdQrkVGxYvBWA4GRNg+YChEmQg2LV7XMjn7UBfmelU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=KCMITyiw; arc=none smtp.client-ip=114.132.62.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1741684055;
+	bh=ZiPqY/RKHISV8T1AisgYMO+/5+gEQu6ZX6Kam1AOsDc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=KCMITyiw2jf33hRsA5XZI+pABR/NQeKOrjimuH/Fvu/O8XH+beaithnWBYsBbSumM
+	 NxMf5A/nD8GVB60KxWu05RNw4sBomQ9KIR7B68feH4UHb1VU69uIGyB+Yb43Httwcd
+	 JJoiQC7BPXPnNTUS8rtAHtHjWjlK3rzMNycy7E0k=
+X-QQ-mid: bizesmtpip4t1741684045tzy6fhy
+X-QQ-Originating-IP: vufqVQTjWyeothMrDcmUwU25hNfeKgzbYJXcByj5JzM=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 11 Mar 2025 17:07:22 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 1440186853844928154
+From: WangYuli <wangyuli@uniontech.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@unintech.com,
+	guanwentao@uniontech.com,
+	chenlinxuan@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] sched/core: u_clamp: Fix "-Wunused-function" warnings
+Date: Tue, 11 Mar 2025 17:07:14 +0800
+Message-ID: <6C18D4916C41C8D7+20250311090714.902321-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310065613.151598-4-quic_ziyuzhan@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MW2WLBvYEeCv/l2Wr/ujvAUi8rsh02+maNw3jXFnBUAicw8OeAyKZIKG
+	KN6oA6R3/RoW2Wqi7OO0UiT7FY7YZVGgOK5pAiVZWU3S48Dk90hol+sVOvw8GYsE0bWSzGZ
+	t7bCb5BvIZtoiw45vkQ1+McNyGlkuFUnJt8b6cMoeci18XHJ9RQpGuViF+/+qJLL+fYOgOp
+	o+q5pxbN7BPDYuE18SXf7Sm/vF0hCRhoi29IOaYyzYzM9IWL2elQ1TovSwIUf02awE63K7P
+	Y9W7MBW7A0Cx2cTMQQtHIRVZMpMTZbpiYZl89TxbWgUoKSekAbYEP1aD7Z9xC0jHQjNC0c2
+	yE7FDGfu4XqWyB1/qq5+sqlvMP4066pFlNkSLCAZ6JM1Me03V4xXxFVUxn7hLI6aFlqeOvZ
+	8h7CHb4+CJJsVUFh5Xr/pp1/n6CvAGx2uVS++007HqoMTix3fOI9dsENTvcbIOFQFMT1Xcj
+	Oc6hK/Vmh1UkWhn0byMX1AuUsuZsuYTF5AOdfQdctlXvJzAX6Oe3MbPI55PgOvg5gOxDOmk
+	A0pu+7MpZsGNz5ME9pblAAgdZF8xeWK7C+SzG4JJCTZI6UMiV4F1p9IZgzrXJrEFcXXPENS
+	K3yvUztoZ6rKrZ8RSjn9SFw9iUIKOb3Gxx0tB5eFDxgYkYt2Z26/qo5gJYd8Ddct5ch4AqB
+	rqRVwykL+ZohS+AJcu9h163fyzhapkVbwhaw2EOMboEK9Ge2e/Fk6Y184sgWgB5mSN4ZdbD
+	OJ1y/PLI33Yc0vQKCN3Z0k31Miaj3pAdgO0YfeZ19S4jA8dR0azawh/4KgUFedUd/TxQZRq
+	s3V7B3Kduh0HMg3yuPbqFYF4RCNUHgzueTc9dh9IuOnhMcOJfJcbZirJyUpZ+Sxyvb+QaGE
+	7gAZ5jCuMRK5isaNQgsh7l6OZT0KaMzQb+oF9QkZd3Ni/nd24DqNfXmA201uKibq0bURNpp
+	dwBFLjvbJ2zml3/k22CyMcsJWAtf9NFuuGWBy3s3r6Gv4QPDfddDzqPyB536vqXYw3MYjC/
+	rG0vM3JA==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-Hi Ziyue,
+Given that uclamp_update_active() is exclusively called by
+uclamp_update_active_tasks(), and considering that
+uclamp_update_active_tasks() is utilized solely when
+CONFIG_UCLAMP_TASK_GROUP is enabled, it follows that
+uclamp_update_active() will emit a compilation warning if
+CONFIG_UCLAMP_TASK_GROUP is not enabled.
 
-kernel test robot noticed the following build errors:
+Similar reason of uclamp_rq_reinc_id().
 
-[auto build test ERROR on c674aa7c289e51659e40dda0f954886ef7f80042]
+Fix follow errors with clang-19 when W=1e:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ziyue-Zhang/dt-bindings-PCI-qcom-Document-the-QCS615-PCIe-Controller/20250310-145902
-base:   c674aa7c289e51659e40dda0f954886ef7f80042
-patch link:    https://lore.kernel.org/r/20250310065613.151598-4-quic_ziyuzhan%40quicinc.com
-patch subject: [PATCH v3 3/4] arm64: dts: qcom: qcs615-ride: Enable PCIe interface
-config: arm64-randconfig-003-20250311 (https://download.01.org/0day-ci/archive/20250311/202503111654.Uo5Nw44p-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250311/202503111654.Uo5Nw44p-lkp@intel.com/reproduce)
+  kernel/sched/core.c:1818:1: error: unused function 'uclamp_update_active' [-Werror,-Wunused-function]
+   1818 | uclamp_update_active(struct task_struct *p)
+        | ^~~~~~~~~~~~~~~~~~~~
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503111654.Uo5Nw44p-lkp@intel.com/
+  kernel/sched/core.c:1800:20: error: unused function 'uclamp_rq_reinc_id' [-Werror,-Wunused-function]
+   1800 | static inline void uclamp_rq_reinc_id(struct rq *rq, struct task_struct *p,
+        |                    ^~~~~~~~~~~~~~~~~~
 
-All errors (new ones prefixed by >>):
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ kernel/sched/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> Error: arch/arm64/boot/dts/qcom/qcs8300-ride.dts:288.1-6 Label or path pcie not found
->> Error: arch/arm64/boot/dts/qcom/qcs8300-ride.dts:298.1-10 Label or path pcie_phy not found
-   FATAL ERROR: Syntax error parsing input tree
-
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 67189907214d..49549e030f4c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1797,6 +1797,7 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
+ 		uclamp_rq_dec_id(rq, p, clamp_id);
+ }
+ 
++#ifdef CONFIG_UCLAMP_TASK_GROUP
+ static inline void uclamp_rq_reinc_id(struct rq *rq, struct task_struct *p,
+ 				      enum uclamp_id clamp_id)
+ {
+@@ -1843,7 +1844,6 @@ uclamp_update_active(struct task_struct *p)
+ 	task_rq_unlock(rq, p, &rf);
+ }
+ 
+-#ifdef CONFIG_UCLAMP_TASK_GROUP
+ static inline void
+ uclamp_update_active_tasks(struct cgroup_subsys_state *css)
+ {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.2
+
 
