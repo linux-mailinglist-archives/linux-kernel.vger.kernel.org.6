@@ -1,141 +1,134 @@
-Return-Path: <linux-kernel+bounces-555456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EEBA5B7B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:04:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B77A5B7BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:09:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 470637A8720
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:03:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12A3188E9B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF57321D5A9;
-	Tue, 11 Mar 2025 04:03:46 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC58A1EB182;
+	Tue, 11 Mar 2025 04:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tWSDOW+s"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FE31F4C87;
-	Tue, 11 Mar 2025 04:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD5C1DEFC6;
+	Tue, 11 Mar 2025 04:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741665826; cv=none; b=Y80iau0GLKMZmueqdDkktEehallB5VVzFeSWuRKB565fiQssAxiYLwrv3r56P6/gDCEBYUxaAehHFHTLy9eAvspBA7kPA2vsM4KskvhOgPn/zti1UQz5olUvm1rc4nb5YztA2e55hfddgWDFMc2MZyD40dxZCFcub00lGiJoBLA=
+	t=1741666135; cv=none; b=OV8tU6+vPfe/e+BNfOxfQc5YC4G4OC4zeJYGwPXtIbXq9eCeK9wpyVOpwkwbetF/iqtCgatbvEaVTNfHll6x5gyqar0xEYuhwNkyH8aZbCVIhCUqDcEClf4RTuTAN+B1xcWXw3+mSG0aGkoSE40M+xggskf7bM5Ol9k3WuLNKoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741665826; c=relaxed/simple;
-	bh=ummS0YLZrl6/ek9FLrqOaWeDKWLnyo887hHkaiLIeCE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VEmvPdVT9C8ns8QAFAFXv3jMo5a1JeOQWMMrvWNMB/KTUhLkgWLCymUgW01pHOqF2Zr/ECCSxUtgcUMSIT/uJHhwEhiVztswL5tj0TC7H0ds/KIrQzB8XpoVYjT8OHi/evRE1dcCGr/lt5TDYJR6XqsyOO4whJN/xQehJpgv6+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4ZBg4S5m9fz1f0Pm;
-	Tue, 11 Mar 2025 11:59:20 +0800 (CST)
-Received: from kwepemj500003.china.huawei.com (unknown [7.202.194.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 50EDE1A016C;
-	Tue, 11 Mar 2025 12:03:41 +0800 (CST)
-Received: from DESKTOP-KKJBAGG.huawei.com (10.174.178.32) by
- kwepemj500003.china.huawei.com (7.202.194.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 11 Mar 2025 12:03:40 +0800
-From: Zhenyu Ye <yezhenyu2@huawei.com>
-To: <maz@kernel.org>, <yuzenghui@huawei.com>, <will@kernel.org>,
-	<oliver.upton@linux.dev>, <catalin.marinas@arm.com>, <joey.gouly@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <yezhenyu2@huawei.com>,
-	<xiexiangyou@huawei.com>, <zhengchuan@huawei.com>, <wangzhou1@hisilicon.com>,
-	<linux-arm-kernel@lists.infradead.org>, <kvm@vger.kernel.org>,
-	<kvmarm@lists.linux.dev>
-Subject: [PATCH v1 5/5] arm64/config: add config to control whether enable HDBSS feature
-Date: Tue, 11 Mar 2025 12:03:21 +0800
-Message-ID: <20250311040321.1460-6-yezhenyu2@huawei.com>
-X-Mailer: git-send-email 2.22.0.windows.1
-In-Reply-To: <20250311040321.1460-1-yezhenyu2@huawei.com>
-References: <20250311040321.1460-1-yezhenyu2@huawei.com>
+	s=arc-20240116; t=1741666135; c=relaxed/simple;
+	bh=Qja134C/wJaCaQVYpuecIUYuehH+ojbX9undd3UV3w4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n1m/kIUbVFNeh/wHnDKVpcPg2vHLrxWf8ZwZb6s9XAUArSbaV09Fsn7CqME5m9ou7+HI/AEsOendT+Rr2KPhYcLgB6Sfixtf7IUWhzdTKec1IgXm9Ryg9m0BnsggY/d00NXagvA90Z4Sjjk+CbZjovLzJElDpRwFIl88dIY0tTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tWSDOW+s; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741666129;
+	bh=G9LZex+ScjyCa4n4xpxmhtKckQVblnzbw8xzpeAVBcs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tWSDOW+sgBIAyUOZIOCnVnb4NF6wpjiCeJ6+pccKYFHOuOfuxDVs4qQn5pA7DE5J9
+	 pJnIMu1Y0UBUKbsgPMIS88yHPAPHNmvCYuJruhv3w9lvQAvfKIrlVNw1B23cQaL+/T
+	 qG4z2AfvE+Nunzsqtkcn5VBaYjb5yIYuXsdunQ1pWNfScZ6tueiUz3kYDkzUG/ARSO
+	 wfsyjZzojlxrKi+YbjVpQPvrhmt1asVFFUBHkYIzneVOKBQmOint8cDCW5M5XzwwuA
+	 2THWlUMzRt9XTuc7o13bzu/6300qYVqiWsxE/GdMc41FTJg/O/cOvd/DeCWK8iAnIY
+	 QZPR6zlmlh6Dw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBgHN3WjYz4x3J;
+	Tue, 11 Mar 2025 15:08:48 +1100 (AEDT)
+Date: Tue, 11 Mar 2025 15:08:47 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the tip tree
+Message-ID: <20250311150847.5a63db36@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemj500003.china.huawei.com (7.202.194.33)
+Content-Type: multipart/signed; boundary="Sig_/J7lZN/VrH1F73ucDQL7skho";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: eillon <yezhenyu2@huawei.com>
+--Sig_/J7lZN/VrH1F73ucDQL7skho
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The HDBSS feature introduces new assembly registers
-(HDBSSBR_EL2 and HDBSSPROD_EL2), which depends on the armv9.5-a
-compilation support. So add ARM64_HDBSS config to control whether
-enable the HDBSS feature.
+Hi all,
 
-Signed-off-by: eillon <yezhenyu2@huawei.com>
----
- arch/arm64/Kconfig                  | 19 +++++++++++++++++++
- arch/arm64/Makefile                 |  4 +++-
- arch/arm64/include/asm/cpufeature.h |  3 +++
- 3 files changed, 25 insertions(+), 1 deletion(-)
+The following commits are also in the mm tree as different commits
+(but the same patches):
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 940343beb3d4..3458261eb14b 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -2237,6 +2237,25 @@ config ARM64_GCS
- 
- endmenu # "v9.4 architectural features"
- 
-+menu "ARMv9.5 architectural features"
-+
-+config ARM64_HDBSS
-+	bool "Enable support for Hardware Dirty state tracking Structure (HDBSS)"
-+	default y
-+	depends on AS_HAS_ARMV9_5
-+	help
-+	  Hardware Dirty state tracking Structure(HDBSS) enhances tracking
-+	  translation table descriptors’ dirty state to reduce the cost of
-+	  surveying for dirtied granules.
-+
-+	  The feature introduces new assembly registers (HDBSSBR_EL2 and
-+	  HDBSSPROD_EL2), which depends on AS_HAS_ARMV9_5.
-+
-+config AS_HAS_ARMV9_5
-+	def_bool $(cc-option,-Wa$(comma)-march=armv9.5-a)
-+
-+endmenu # "ARMv9.5 architectural features"
-+
- config ARM64_SVE
- 	bool "ARM Scalable Vector Extension support"
- 	default y
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index 2b25d671365f..f22507fb09b9 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -103,7 +103,9 @@ endif
- # freely generate instructions which are not supported by earlier architecture
- # versions, which would prevent a single kernel image from working on earlier
- # hardware.
--ifeq ($(CONFIG_AS_HAS_ARMV8_5), y)
-+ifeq ($(CONFIG_AS_HAS_ARMV9_5), y)
-+  asm-arch := armv9.5-a
-+else ifeq ($(CONFIG_AS_HAS_ARMV8_5), y)
-   asm-arch := armv8.5-a
- else ifeq ($(CONFIG_AS_HAS_ARMV8_4), y)
-   asm-arch := armv8.4-a
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index c76d51506562..32e432827934 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -748,6 +748,9 @@ static inline bool system_supports_hdbss(void)
- 	u64 mmfr1;
- 	u32 val;
- 
-+	if (!IS_ENABLED(CONFIG_ARM64_HDBSS))
-+		return false;
-+
- 	mmfr1 =	read_sanitised_ftr_reg(SYS_ID_AA64MMFR1_EL1);
- 	val = cpuid_feature_extract_unsigned_field(mmfr1,
- 						ID_AA64MMFR1_EL1_HAFDBS_SHIFT);
--- 
-2.39.3
+  0b3bc3354eb9 ("arm64: vdso: Switch to generic storage implementation")
+  127b0e05c166 ("vdso: Rename included Makefile")
+  30533a55ec8e ("parisc: Remove unused symbol vdso_data")
+  31e9fa2ba9ad ("arm: vdso: Switch to generic storage implementation")
+  365841e1557a ("vdso: Add generic architecture-specific data storage")
+  3ef32d90cdaa ("x86/vdso: Fix latent bug in vclock_pages calculation")
+  46fe55b204bf ("riscv: vdso: Switch to generic storage implementation")
+  51d6ca373f45 ("vdso: Add generic random data storage")
+  5b47aba85810 ("vdso: Introduce vdso/align.h")
+  69896119dc9d ("MIPS: vdso: Switch to generic storage implementation")
+  9729dceab17b ("x86/vdso/vdso2c: Remove page handling")
+  998a8a260819 ("vdso: Remove remnants of architecture-specific random stat=
+e storage")
+  ac1a42f4e4e2 ("vdso: Remove remnants of architecture-specific time storag=
+e")
+  d2862bb9d9ca ("LoongArch: vDSO: Switch to generic storage implementation")
+  dafde29605eb ("x86/vdso: Switch to generic storage implementation")
+  df7fcbefa710 ("vdso: Add generic time data storage")
 
+These are causing the following conflicts:
+
+CONFLICT (content): Merge conflict in arch/arm64/include/asm/vdso/compat_ge=
+ttim
+ofday.h
+CONFLICT (content): Merge conflict in arch/arm64/include/asm/vdso/vsyscall.h
+CONFLICT (content): Merge conflict in arch/powerpc/include/asm/vdso/gettime=
+ofday.h
+CONFLICT (content): Merge conflict in arch/s390/kernel/time.c
+CONFLICT (content): Merge conflict in arch/x86/include/asm/vdso/gettimeofda=
+y.h
+CONFLICT (content): Merge conflict in include/asm-generic/vdso/vsyscall.h
+CONFLICT (content): Merge conflict in include/vdso/datapage.h
+CONFLICT (content): Merge conflict in include/vdso/helpers.h
+CONFLICT (content): Merge conflict in kernel/time/namespace.c
+CONFLICT (content): Merge conflict in kernel/time/vsyscall.c
+CONFLICT (add/add): Merge conflict in lib/vdso/datastore.c
+CONFLICT (content): Merge conflict in lib/vdso/gettimeofday.c
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/J7lZN/VrH1F73ucDQL7skho
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfPt08ACgkQAVBC80lX
+0GzfgAgAmvrAVvzQ2WRGG+crhNP+sNzrx6ggNxtH67ERhqXktto89uk0ydSbxW0b
+sbDFwTYfXl232Zwz52KlVmtrqatWOHjnizqXHNPXkEAikEBxyGgEbur1p7G9AZoS
+OsBoWkLT+nDv5KmMofVxQIr0gqt4Iyq14keQsIw44VNmfYt9qId9W1lVvlH3PnLX
+fqVc2LBXL9ffIwPdCiQIcBSRjuJV1bTaIhumuY/30CdIF/9Kj42IBn0GoE5Q82Le
+kpbrxv6GpMb/K5jfz66V/Z4CIRgBw75eYnp55znFNMGHGpuouVU8Pg2vfhSW0vCe
+I0Zy28lzWhznxUQ0I0PpeEBrhRedBA==
+=cYsq
+-----END PGP SIGNATURE-----
+
+--Sig_/J7lZN/VrH1F73ucDQL7skho--
 
