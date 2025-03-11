@@ -1,113 +1,156 @@
-Return-Path: <linux-kernel+bounces-556454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C5CA5C9F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:59:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754CEA5C9F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:59:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 144841891A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:59:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAAA23AE98C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B680026038C;
-	Tue, 11 Mar 2025 15:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604B4260A32;
+	Tue, 11 Mar 2025 15:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SPRMTpVG"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYrFmUvf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD795BE67;
-	Tue, 11 Mar 2025 15:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3203BE67;
+	Tue, 11 Mar 2025 15:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741708638; cv=none; b=B5SiJ/yJFqxvBJoE2Y0LRJXVmxRYQH9b5FxrpBfXS++D6nTkz0FNK2Go5OXpOj/dGYdnJ1/bwba7sKkjMpQVXVXWglPTGGUotwQKjp1qEYeVhkQp7eLmuMcr3kH7P1d4BAH4r07I+kgugaBAQhigSv+cbUJsbNg0uITTuEwzUbw=
+	t=1741708643; cv=none; b=oJt630bvsM/dfK4G+Wup5I2ssXDhMB51+qwuZ68zU7He9A9vwJNTPr8CJ0iz2w85Zn7B7JfQGxzBmqORSboZjthWqlPhQEN/A0RHcMfzzH0BSPvfOBpZ5OcqpaTmTgF7xnrnf/y9rX9tw0sc6/RmanVKshiJjIhx26n79ihu4TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741708638; c=relaxed/simple;
-	bh=QiTJDFfxLU9Gdio7K1tp3Kp5UXJzPmwHrML4jWux2sA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m4oYzjA0BBFoudJq9rL9+ThCCMt2FahyvMwgyMVhXWIktiTVnJw0wD2maaSmMmTj+/S5Fapb/mjrkhMhUpXI0S31sCAsE7fSboa/Gt4TZr9AbOEv8w2yK3MGCiUAvSxVmbxv0nK0nM16F/0hDynHjjT3t2xcbTeaOCjs4mWwuT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SPRMTpVG; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-224191d92e4so100182585ad.3;
-        Tue, 11 Mar 2025 08:57:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741708635; x=1742313435; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J4NIRzGDOVcS6TD9kYD+mYeXE946YKDHV/XFzdUHads=;
-        b=SPRMTpVG4tg/cjaUzObJ0Z4OgFnCobQQJ+kpZBHv+UlLCNPr7BRNE49t3106g00hZ2
-         pW3hnUlkFRD/Tdi5OvVwH6n5mHr3ZZx6uD4WKfUk2E+RVJx9lXm81ar15nZV5q/h1/Wk
-         AjgJ+q4uz1YBQwWHcr8HzZhPDrNu38XaLFkjAiL9I4iHWRHFWQwUMVTJWCexEjG3Acmv
-         LIroGxQCdFVm3PWb+NJi5SxOLRxBpgIIGOv7BOrlBv0H23K+O+uNkejTYG3Viyq1ZwGq
-         ZXhhwwelqX7XIcHAQBIsZc8pDWiY3uWgy+G9k865YlAk3aZky2hkJq5IcJnitKl9+xae
-         rEVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741708635; x=1742313435;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J4NIRzGDOVcS6TD9kYD+mYeXE946YKDHV/XFzdUHads=;
-        b=Pyau2zRfUuXAw9ckpiCZKtr/ognRtOQlCVhmExMb0Fk4ZF/gNaSN3InVAw6ZB+ikwP
-         Fh29RgigVAlXVnxOyiRgb2QghTvIdWLiGFgdy21QvLrwS9XECbnORBwE2Bp6btQ+rpco
-         L6FYjHTqzOk2BCENkBi4Eq99X1FuAm2PEGH9QTInwf2kWkKuohVIH25y/hjhY24iMvn1
-         +jp/pZfFrsctG8j+Dt+eHVlR5YjTNZfrl8LuMyXnqOYlbWWpnIWPR2W5xNmbQko3QFuF
-         cNZFmwiaQFkIYR+qQY6OiwmwwMWYpT6uYrHzzYYSrGtlXGDuqkoYbMDXBhAQAXZKmUAj
-         ByGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUf3qhGTUZWXVG6RQehnu6GpYdPwjSml1ghPMS9vN3+NZ1cWDGmgBJvEAP7tXzg/SsnsZO8wIhTprtUYIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD/IbiDHZGNWLcEX8ILDiTsSRtWxi+YP76CvJkP81drNchHsPl
-	DVM1Rh0F38ejAWyDLcQ7m3KboQteyBWSpyr0r6WALBPIi05tfEJB
-X-Gm-Gg: ASbGncvSWFizws0jQn9fJWQ8Z/7ipdJmH6JNRePPpOkdcrzIgxos8jOogx/borTJloE
-	2/2Lrf8P2aNgxjGNU+Q6salr/qlYZjRRhtUutCwDtLKGHOExne36Zfb2UUF1j/A3pk8MMEwSa1Y
-	iZdRMZuLQqM6em6YTvxuB2J0k7W21IbZTecBVc+aRpXHHOZnvOhIsEUomvTwY5Aabj6CX8BBeL1
-	LYuCRa03t+kCPCj9mLsS4R9znx1MJQe4PfAQ69j95gUfPUVNQHaZHeM8dG2/mS5BMCh4IhO/ObP
-	J23cCHkX10TT+wN0ijJqmuCcc9pYVQ3Zw8xdcT085aoGtIZEBdFY5lc7rZjPT7eBEQ6JXnMHbns
-	SRss4QjU7+/JH4gEJf9ryZptBUwymc0Aw0yfT/hPdNKaigN3Z
-X-Google-Smtp-Source: AGHT+IH5/BCCi+5l4KCxVrRlmAbA3yJymSl1EQCH67ZXG6uj4vYb9kHfwTEpsYrpesxsDeXXAPuLtg==
-X-Received: by 2002:a17:902:e80f:b0:215:8809:b3b7 with SMTP id d9443c01a7336-2242888068emr218114155ad.7.1741708635418;
-        Tue, 11 Mar 2025 08:57:15 -0700 (PDT)
-Received: from test-suraj.qjz2hk5f2gku1a3adsvczrat5c.xx.internal.cloudapp.net ([20.9.134.79])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e942bsm99873325ad.71.2025.03.11.08.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 08:57:15 -0700 (PDT)
-From: Suraj Patil <surajpatil522@gmail.com>
-To: gregkh@linuxfoundation.org,
-	oneukum@suse.com,
-	stern@rowland.harvard.edu
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Suraj Patil <surajpatil522@gmail.com>
-Subject: [PATCH] usb: cdc-wdm: Fix typo in comment
-Date: Tue, 11 Mar 2025 15:57:12 +0000
-Message-ID: <20250311155712.467380-1-surajpatil522@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741708643; c=relaxed/simple;
+	bh=BZTxXXA67zvcYZUPAms2o1IQhwkgm/4LnFmDVxI2ONs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JYr2aIlSTN/o94qzp9Rn4W0d1sHMmab2lCeBi5Z9jMR6tiuuE4yuIkSfgICtV3+OFV4a8OsfOKKu3+MBMfHHpQgsAnC6RcNoz9RKWA3zPoOYLxY/EU9K2w5lmQgId9TMuiz4JQk8nRjlnYKlvzZd5a5LZGsIBoHGJMYMhWmboGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYrFmUvf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D941C4CEEC;
+	Tue, 11 Mar 2025 15:57:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741708643;
+	bh=BZTxXXA67zvcYZUPAms2o1IQhwkgm/4LnFmDVxI2ONs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NYrFmUvfLJTnTAUuNsvf7jl110FlX1XQjHYJv6UtMkxM487T1UwPjrJnb/KFOOXDY
+	 4c/FTYEtU3qswKyPGejNRtq9L4QnNxy+rDETa8i1IAL2MhiMEW+6PJnE6ajqGYLfL8
+	 JHDnS7kP7oW2bNHPkridid0tOs53GJHG9msqCSX/ReUA415polcodWwWksAHJXoQwk
+	 Q7zbpaLmB369VDgojkiXPq1kNn+gICyoTQ0g91wrOQkty74sa2qKd3by0RjZGS6WNw
+	 fqrMTu3Rb7/NHMMay2gFyahQ3CSkmM+sNuZejCnSqzmPMrrEf+Q4+Prhg3OjPWvlZH
+	 XOobXYZ3D+D9g==
+Date: Tue, 11 Mar 2025 15:57:16 +0000
+From: Will Deacon <will@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
+	mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
+	smostafa@google.com, ddutile@redhat.com, yi.l.liu@intel.com,
+	praan@google.com, patches@lists.linux.dev
+Subject: Re: [PATCH v8 12/14] iommu/arm-smmu-v3: Introduce struct
+ arm_smmu_vmaster
+Message-ID: <20250311155714.GC5138@willie-the-truck>
+References: <cover.1740504232.git.nicolinc@nvidia.com>
+ <f205a4e2f5971cd4b1033d7cac41683e10ebabfb.1740504232.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f205a4e2f5971cd4b1033d7cac41683e10ebabfb.1740504232.git.nicolinc@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Signed-off-by: Suraj Patil <surajpatil522@gmail.com>
----
- drivers/usb/class/cdc-wdm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Feb 25, 2025 at 09:25:40AM -0800, Nicolin Chen wrote:
+> Use it to store all vSMMU-related data. The vsid (Virtual Stream ID) will
+> be the first use case. Since the vsid reader will be the eventq handler
+> that already holds a streams_mutex, reuse that to fenche the vmaster too.
 
-diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
-index 86ee39db013f..c5123db416fa 100644
---- a/drivers/usb/class/cdc-wdm.c
-+++ b/drivers/usb/class/cdc-wdm.c
-@@ -1181,7 +1181,7 @@ static int wdm_probe(struct usb_interface *intf, const struct usb_device_id *id)
-  *
-  * The subdriver will manage the given interrupt endpoint exclusively
-  * and will issue control requests referring to the given intf. It
-- * will otherwise avoid interferring, and in particular not do
-+ * will otherwise avoid interfering, and in particular not do
-  * usb_set_intfdata/usb_get_intfdata on intf.
-  *
-  * The return value is a pointer to the subdriver's struct usb_driver.
--- 
-2.43.0
+"fenche"?
 
+> Also add a pair of arm_smmu_attach_prepare/commit_vmaster helpers to set
+> or unset the master->vmaster point. Put these helpers inside the existing
+
+s/point/pointer/
+
+> arm_smmu_attach_prepare/commit().
+> 
+> For identity/blocked ops that don't call arm_smmu_attach_prepare/commit(),
+> add a simpler arm_smmu_master_clear_vmaster helper to unset the vmaster.
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Pranjal Shrivastavat <praan@google.com>
+
+(per Pranjal: please fix his mis-spelling of his own name here and in
+the other patches too!)
+
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   | 28 ++++++++++++
+>  .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     | 45 +++++++++++++++++++
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 18 +++++++-
+>  3 files changed, 90 insertions(+), 1 deletion(-)
+
+[...]
+
+> @@ -1055,9 +1062,30 @@ struct iommufd_viommu *arm_vsmmu_alloc(struct device *dev,
+>  				       struct iommu_domain *parent,
+>  				       struct iommufd_ctx *ictx,
+>  				       unsigned int viommu_type);
+> +int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
+> +				    struct arm_smmu_nested_domain *nested_domain);
+> +void arm_smmu_attach_commit_vmaster(struct arm_smmu_attach_state *state);
+> +void arm_smmu_master_clear_vmaster(struct arm_smmu_master *master);
+>  #else
+>  #define arm_smmu_hw_info NULL
+>  #define arm_vsmmu_alloc NULL
+> +
+> +static inline int
+> +arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
+> +				struct arm_smmu_nested_domain *nested_domain)
+> +{
+> +	return 0; /* NOP */
+> +}
+
+Please drop this comment.
+
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> index 5aa2e7af58b4..6b712b1ab429 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> @@ -85,6 +85,51 @@ static void arm_smmu_make_nested_domain_ste(
+>  	}
+>  }
+>  
+> +int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
+> +				    struct arm_smmu_nested_domain *nested_domain)
+> +{
+> +	struct arm_smmu_vmaster *vmaster;
+> +	unsigned long vsid;
+> +	int ret;
+> +
+> +	iommu_group_mutex_assert(state->master->dev);
+> +
+> +	/* Skip invalid vSTE */
+> +	if (!(nested_domain->ste[0] & cpu_to_le64(STRTAB_STE_0_V)))
+> +		return 0;
+
+Ok, and we don't need to set 'state->vmaster' in this case because we
+only report stage-1 faults back to the vSMMU?
+
+With the nits fixed:
+
+Acked-by: Will Deacon <will@kernel.org>
+
+Thanks,
+
+Will
 
