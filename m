@@ -1,127 +1,160 @@
-Return-Path: <linux-kernel+bounces-556939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40502A5D11A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:50:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F1BA5D127
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:51:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7206917C3EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:50:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D2553B904B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BC5264A8B;
-	Tue, 11 Mar 2025 20:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA06264A87;
+	Tue, 11 Mar 2025 20:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jVNO6MgX"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQ6+6LZ8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D38C1C07F6;
-	Tue, 11 Mar 2025 20:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E642F23F378;
+	Tue, 11 Mar 2025 20:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741726231; cv=none; b=Jz9pIxnxIUt5z7PCT/AuLBF6JyxlrG0pULf8MSuADHKsk5PtB8w8uqKJDLJuGDf9SKk+AY+z9fqsMDUIHkMx5kmwztQLR8sGb4qxs/VNlYBHvhmd6xV61+Inz0OujLMRIIirp7DBOzzBUUOYKqI0YsJfOvCFjxWzs1LLodx7v5E=
+	t=1741726274; cv=none; b=NRXYDzat2CI4Qe+NXiMuXOzxHiqJHss6jQT5gtRKboc8paMCTWwbX46UbdfYrvgwPuzNnBa1IC8gUcgK/ksEhUw8k0D7S1kjV9/GwxE+uXVV7NMzvTnUs+QNDf+VZCFqB2XthZ2x0kgBW9BRPLYfXiUBdAqrxJp2sEZKRGiaf+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741726231; c=relaxed/simple;
-	bh=oVKq5TbENWHyPMyjXS5YAxHWzJmVViDoKuMy7xMuJl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qR2vYjUtWqJOhI2CxSY+00CGAlHoME6XPeyRSwZTaArj8LbAiDO3wJI0rtBbwAWm7QNYur8ayFZIIcJUCzjGEg60NUijaJsSo3nKfUiEkfaR1x4GTPpkfKAwOKhQCtS2l1CsK8HnU9DVSx6XXKZF3RvMCLWjXNUdV93obkEsOPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jVNO6MgX; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac25d2b2354so758815166b.1;
-        Tue, 11 Mar 2025 13:50:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741726228; x=1742331028; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/l+hci5LxmrsX7kXt4haDLTY6mALyMMCg0pgcAEwgTc=;
-        b=jVNO6MgXZbVbzt7YWVifbf1s1xX8CDQTAu8eNJI1n+dfZYjihP3p8+LezMDtNIDswB
-         CwsWYJOi88+YrWm+BgKIpOU2neItkh1LIFiowydSxcxtuz7IB4e0V5HzVjKG1kD4g+w7
-         0wKWU8dH5p4TgFKRKramL1ctbVFRsQiXd9obNLJECBBNU+znxrDZkADgMdIm/AJRmAqh
-         RR+59S5jytHgjbSo3JwongQ36/ZLhj7SoStoTP1WRIL5T9DwxMjrsSEXQos1nDGp1UsI
-         xLXnxGe2x4nNXG9D5dqO6sPBMEzbEkn2GraURLDnibKAm7AlPRbGy+2Y51Fp0PICngW1
-         r39Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741726228; x=1742331028;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/l+hci5LxmrsX7kXt4haDLTY6mALyMMCg0pgcAEwgTc=;
-        b=ZqrBsM+tNF6jVQquzF8BYMFOzQfNDUa0XK74tE+egWK12nW/ve3TVWji6N28ArbyfH
-         /7G3xTpgWGkN6Ghj/UCK0HIXPWRAxSiLO9Kp1lJXGDOKRJHJq7kmM1oQCtk/0U6/Ut2g
-         iCbjys/OlmsYCxcWonrRdvCda63+Cnrqisoh+5tS7gG66TrtRw2wS4Uva0UOqbJFphYq
-         A5DVhrVRUwjdRWPG6OW4p5WhqYyQQeLzgawLvGWBTeGCJLFQ2eyHNcvV/dcv3Yj9Zz04
-         ghqAGh6qjV2myCR6378Hzng5FhdMdzNvISJuuMKO9pAocKfmbbj7dffuC/57vIFAx2ap
-         NnNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIU/mg9x7XmwGHIs+NkxmeujckZY8c+FygbcRrL7dOXiN5nN1KMVxy+qkjawjrM98ewQwAu4RRJQTCb+Q=@vger.kernel.org, AJvYcCVzXLZ752p2JhRJRf2JkTZi+adGdJxsaEQPw75TtB4MGa5PMh4vZbEn9Kqgv5SsMrpxThdCMHL7@vger.kernel.org, AJvYcCWJlrZVX1MJjvbZt3b7nbTUA+cR16FdwILBmAZKqdsmNm8j1Feu2QHCUCo7BOgJGbT7PJYCt6gu6Ohe3Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3R1hu9w2iXm02ZHRD7+RgZIhrgBHRjFmCcyH6wjn+gqeb5xDX
-	3HfogseHMup+wVCcFeP6bdc+8vMbf6GKtL9mQdsS0520Jnl5KhCF
-X-Gm-Gg: ASbGncvZYPqF7lq6+khtzpmR7i7Q1fY2TM1JoQn/u65wzIJHKyl5bvsfBMgyvjCQ+hY
-	VI2z0lHB1Uzkog1FWv4dciuMWIX6rr6U1LwSnGj62pLQIzGwhJPukbn1CWGyTKGuqEVUi1un063
-	0AKMcTjFDtVgp06vzaHVwSEj0+Fz3pTuAKSELJ5ircn4hlqzkQaiqTCDPjIPGv9nbonmBIvBO0p
-	6+mcRndEOQCQ7BBqhpGLdMaAyBpy1wfnCTEnh+/oF+9tpG3PsRmsoDz0WPgcoupkQBT/twhvT18
-	6UcXG0cx4RKRzADs2bPNOziLxyt2lHw3CgcMY1TN0f8eh45jCCwozlWUhRliJjnz
-X-Google-Smtp-Source: AGHT+IGiAdrC0XMxxtZh8QiPtM1d+V4mARMfjlRF1592uT00GQfzYvmUE5WVe0dDQcSS8tqykimrWw==
-X-Received: by 2002:a17:907:2d8d:b0:abf:6db5:c9a9 with SMTP id a640c23a62f3a-ac252f9f653mr2726299466b.39.1741726227378;
-        Tue, 11 Mar 2025 13:50:27 -0700 (PDT)
-Received: from [172.27.51.89] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac28cf931d0sm505636866b.95.2025.03.11.13.50.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 13:50:27 -0700 (PDT)
-Message-ID: <9960fce1-991e-4aa3-b2a9-b3b212a03631@gmail.com>
-Date: Tue, 11 Mar 2025 22:50:24 +0200
+	s=arc-20240116; t=1741726274; c=relaxed/simple;
+	bh=+X7hgr7jF2if8yShSezZxlfQeaoI5V4WeDPLfqIDNcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DX8wkXcZ4+a4lebDqJvHcccR5rEhtbg3xL0lJaq8Ch1F/SIdF0uHcPyTApUcIcTzVq+osKsXmViJujfvCwy4G9vKrZrzvcVO7uYmuLDSgxX0tZ03lHd8SJK9tXvqHtMVgTcRuz4EDp3ro8wocZje57CPWEOZ3RMk2dZoNGHHAuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQ6+6LZ8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87EE5C4CEEA;
+	Tue, 11 Mar 2025 20:51:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741726273;
+	bh=+X7hgr7jF2if8yShSezZxlfQeaoI5V4WeDPLfqIDNcs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uQ6+6LZ8UwEXAS1h+f6cX3MVwFEGEtxRo99VIVLKzcJN1MFwNcOOi8eoQ38soJjzt
+	 ss6UFGhzUPIUqnlb58/VUBhhWxpPSKORACRWj1HTz64GzriG7bSiEfGkwSOVpGL1FP
+	 XXsV+Hopn6XSBx3z/44uYFnhmIgz78WT9jA5KiS9TdhFaY8e3NeeXoKtYmP3rqnEk/
+	 pmgLhxnseLnwiqua1mvRGzLZgiGeGXadacDsJUisihHnlW/KQ+7RP0NmSYk+fg1Z6S
+	 AU+Nzi0OP9NX0fqQMznqSXud+LCGp08xgAyWN+Rc6YtnSR816ES712EzL8+SAV/eFK
+	 aGRej0e3PRRqQ==
+Date: Tue, 11 Mar 2025 20:51:07 +0000
+From: Conor Dooley <conor@kernel.org>
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: "robh@kernel.org" <robh@kernel.org>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>,
+	"magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"rui.zhang@intel.com" <rui.zhang@intel.com>,
+	"lukasz.luba@arm.com" <lukasz.luba@arm.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"john.madieu@gmail.com" <john.madieu@gmail.com>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v2 3/7] dt-bindings: thermal: r9a09g047-tsu: Document the
+ TSU unit
+Message-ID: <20250311-immature-quit-81066aec062e@spud>
+References: <20250227122453.30480-1-john.madieu.xa@bp.renesas.com>
+ <20250227122453.30480-4-john.madieu.xa@bp.renesas.com>
+ <20250228-shampoo-uprising-44ae0d3bd68b@spud>
+ <OSBPR01MB2775DFC184F78E9FB50F28FFFFD52@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+ <20250307-everyone-ragweed-e05a10a9646b@spud>
+ <OSBPR01MB277531D7C872C9EB0B287069FFD52@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+ <20250307-barbell-pretzel-368d6a4d1336@spud>
+ <OSBPR01MB2775D121B55A0C543F251BAEFFD72@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+ <20250310-blurry-scam-bee8233878bc@spud>
+ <OSBPR01MB2775B3826A9FE602AC08172BFFD12@OSBPR01MB2775.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [pull-request] mlx5-next updates 2025-03-10
-To: patchwork-bot+netdevbpf@kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, andrew+netdev@lunn.ch, leon@kernel.org,
- saeedm@nvidia.com, gal@nvidia.com, mbloch@nvidia.com, moshe@nvidia.com,
- linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, leonro@nvidia.com, ychemla@nvidia.com,
- Tariq Toukan <tariqt@nvidia.com>
-References: <1741608293-41436-1-git-send-email-tariqt@nvidia.com>
- <174168972325.3890771.16087738431627229920.git-patchwork-notify@kernel.org>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <174168972325.3890771.16087738431627229920.git-patchwork-notify@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="+5vlRAFPk4HzuSfw"
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB2775B3826A9FE602AC08172BFFD12@OSBPR01MB2775.jpnprd01.prod.outlook.com>
 
 
+--+5vlRAFPk4HzuSfw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 11/03/2025 12:42, patchwork-bot+netdevbpf@kernel.org wrote:
-> Hello:
-> 
-> This pull request was applied to bpf/bpf-next.git (net)
+On Tue, Mar 11, 2025 at 11:24:59AM +0000, John Madieu wrote:
+> Hi Conor,
+>=20
+> > -----Original Message-----
+> > From: Conor Dooley <conor@kernel.org>
+> > Sent: Monday, March 10, 2025 5:15 PM
+> > To: John Madieu <john.madieu.xa@bp.renesas.com>
+> > Subject: Re: [PATCH v2 3/7] dt-bindings: thermal: r9a09g047-tsu: Docume=
+nt
+> > the TSU unit
+> >=20
+> > On Sun, Mar 09, 2025 at 10:39:27AM +0000, John Madieu wrote:
+> > > Hi Conor,
+> > > > > Changes are not possible at runtime. Some customers may want
+> > > > > software, while other may want the external trigger, and this is
+> > > > > immutable configuration.
+> > > >
+> > > > What makes it immutable? Set by some wiring on the board? I couldn't
+> > > > find the user in your driver patches to better understand how you
+> > > > were using it.
+> > >
+> > > I haven't prototyped ELC trigger yet. Since the hardware manual
+> > > describes about ELC trigger, I have documented it in bindings. If you
+> > > think, it is not needed at this stage, then I can drop it now and
+> > > revisit later.
+> >=20
+> > Ideally a binding is complete, even if the driver isn't. To me "immutab=
+le"
+> > would mean something like "the trigger type is determined by hardware or
+> > firmware configuration", but if it is determined by register writes (e.=
+g.
+> > wired up for elc trigger, but you can opt for software trigger in the
+> > driver) then it should be a userspace control.
+>=20
+> It is complete, and I confirm, this can be changed by register writes.
+> Apart from defining default to 0, should I implement userspace change
+> support now ?
+>=20
+> Or should I keep it as it is, just setting default to 0 (thus making
+> the property optional), and add support for userspace change when I add
+> ELC support.
+>=20
+> My other question is, in case I must add userspace change support now, wo=
+uld
+> sysfs be Ok ? If yes, is there any path recommendations ?
 
-Seems to be mistakenly applied to bpf-next instead of net-next.
+How to change it from userspace ain't my domain, sorry. Just drop the
+property since isn't something determined by the hardware, but rather by
+what you put into the registers.
 
-> by Jakub Kicinski <kuba@kernel.org>:
-> 
-> On Mon, 10 Mar 2025 14:04:53 +0200 you wrote:
->> Hi,
->>
->> The following pull-request contains common mlx5 updates for your *net-next* tree.
->> Please pull and let me know of any problem.
->>
->> Regards,
->> Tariq
->>
->> [...]
-> 
-> Here is the summary with links:
->    - [pull-request] mlx5-next updates 2025-03-10
->      https://git.kernel.org/bpf/bpf-next/c/ef4a47a8abb3
-> 
-> You are awesome, thank you!
+--+5vlRAFPk4HzuSfw
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ9CiOwAKCRB4tDGHoIJi
+0rLpAP4nP6wGoxRKYgBDm3VvemmjsSAGmmOqP64lzu3zDlgH6gD/YvTeAmTBk8Zp
+oIKYspNwcyW/0MPrFQ7FL7dkEyoCAgM=
+=VZy1
+-----END PGP SIGNATURE-----
+
+--+5vlRAFPk4HzuSfw--
 
