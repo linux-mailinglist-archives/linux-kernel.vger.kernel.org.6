@@ -1,926 +1,341 @@
-Return-Path: <linux-kernel+bounces-556921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC99A5D0B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:21:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04CD8A5D0AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:21:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72EBD3B82E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:21:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9174C3B818F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F626264A7C;
-	Tue, 11 Mar 2025 20:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01AB264A7A;
+	Tue, 11 Mar 2025 20:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="DM2qMPTC"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P76rhy1+"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCA6222572;
-	Tue, 11 Mar 2025 20:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460FD2620F9;
+	Tue, 11 Mar 2025 20:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741724484; cv=none; b=gQNk784FAupJQly3IbiZ/ra6I1+h2B/kx3k+gdUfX9TK2YZXfISx4mjZ3pMW8rIrJWJ8RYv5O933yUS01Wwn9Us3JJdTpHzlsz/iq47USHNVrhhYhCH8KD6geoPQXCtVValywRvuSeMwm4okmUtbb0SjoJKVxRcG8Vj5QUC80+0=
+	t=1741724485; cv=none; b=Is/l5/hvyWPT2zxAxUO+SZbqXqK3A3xUV0amAX2WFEjfWNXh/5rFXQCZGcyShnk8xPhTMAg4lhLDoXnvPRhT6aJQVx9fDz7wLfrcOspTCINjRsFzPsC05k0hHjlOPMyOCAxaAzgCO8R/GN3JmPe0igWKIIb1iBIaXKCoZ0gT/b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741724484; c=relaxed/simple;
-	bh=THdU/mYmhkTbOBHFBvvqXs1HCv0DfBINVZku1GntJQc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PsndExAAJzOtGQ9jB9MCwRxU3bIR9YogcGsln4rMG4uqRmZJXDmbhswcYRH9ocGwzBpvidCmlB6EqGieTbttcGrJAbCaQHvPPvb2/sgAkcJAB4q5tYjwnHzL7aheVddKEQp5oaCuzF0SNXUrzGsRf1vU0Qu8l/mcGWm7AZdG0Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=DM2qMPTC; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1741724471; x=1742329271; i=w_armin@gmx.de;
-	bh=eLlTewnnzfem89h3kNoQRzyOqUPgmAkLeoeJlRw5HrY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=DM2qMPTC2WuLIRFVWxba5cVErptSlORrisEBg5ZZb5G823enSW3Xh07IQnfiNfXB
-	 jZCog800p79fk/puOh81mJ9E8w3nMs7CPQBxA5CZh7ylOf+r4v3+cwCcsAAcwldSm
-	 6hsW03LAWntSzdknhu23CzrbEJD83x8GMrSS/6/E9qQL+YDtQORN86pg8szWrL9CN
-	 N7iupkpA5HXeJLgKc4mhlroE/RzceI/PFn5yy+J0TH2cHgtI9taKDdF7R2g/vCz0y
-	 a7CpNu7TYvPDLMtpi5q8khWgLo0SJ/qawZnpFMUP+uJyH1S4zsJKx6KhoJD3RggaM
-	 giIL/CO2eFHT8RKj2w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N1wq3-1tCX1j3mkT-014hOV; Tue, 11
- Mar 2025 21:21:11 +0100
-Message-ID: <cd4ab6b4-d6c2-441a-805e-6069e1c57737@gmx.de>
-Date: Tue, 11 Mar 2025 21:21:08 +0100
+	s=arc-20240116; t=1741724485; c=relaxed/simple;
+	bh=6g1VZ4JJ54Jbzddxj+x1pObccBYckO5tyWsgllTLh2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AAwO864ep7P4NDBb4ZPzmHLOjIGm0+Ky4MejEbroT7/qtN/pB9AuaucIko2PYbs5F+kCdX1+h4Lv1S1OsItwAXJH0iN8tl4yYRAHntIm7Yy2xzf135EWZ/QL3rGlfmx2Hi6LrZk01IEr6ShEJ0wWV/ksjVPUiiqH9M+nMdbbxI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P76rhy1+; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-225477548e1so65048275ad.0;
+        Tue, 11 Mar 2025 13:21:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741724482; x=1742329282; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zrLIR0sPxlin15R9Y2KMmVEFo9WqVxmuHLYt59spjsI=;
+        b=P76rhy1+g1/DHbeYlZ8ybfrKzmBgvMQQmcOC14Ji+iKZGnhwuar2bCFeqjvIca2iU2
+         dgRHxd7lnXo40woP98SGr14RJekM5vt3sUjGukSeIU5rpiVzCDEplVQQHnBUIWT5OWwt
+         RP/FDfwymeSoSjsT/pTK3Uj0QOknfOOU3/oP5xKVYRUmaLLmX/RrTfTdbs8oWaPQZ682
+         8xfpsZcT3LUoPiQHF0rp0872aHMB6KfMCPI3DXabw71GFvzDJvZOE5qtSGOwoGQ5w3QI
+         2xC0kiHM/69vp3HdY/LFDHMITgSLsKY7FydWFIlRWHwU+OMLMZRdrcvKDrW2MfUVUdvu
+         ZeLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741724482; x=1742329282;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zrLIR0sPxlin15R9Y2KMmVEFo9WqVxmuHLYt59spjsI=;
+        b=L3eBAbDoaKPDXn5mSL4L1RO20jJTnf90+aD5JhwuYzLMjBsyC58gt3+wC4eemNMbZV
+         GRm4k9s9+EPRAgmhohEwbHbaWI9JrK2gomxMoJ5TU6KeNoomOTechJIUXlFBX8knpoCb
+         sy3UTqXy85PKHmwLxzZFuA53x4hGrV3A0b+wt3ohnHAyT05tuJtDQMGKYQsM6Lks4o0e
+         Y8HOC8mjr7B/A9zlktdcwqNOmTfnKx7nEYkiJFoHMMGhD2/cZAQsRwELKjOibq9qybaG
+         8YJlxi45jeybIEuETcnHOxj1vorKBfDJJQ/Penk9IejW/SCfs3igJugaTzHWoM8cHrSj
+         gNYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTCr9xf23hLtKZJnWouVFg8QcL9kJSvdpDWQx0QXDDak0k3Ivz+zB2G2y/SJVX2Ax5YmEM6QypR7MbxjY=@vger.kernel.org, AJvYcCVa0A7mqN9dKB4x2rmsB/1gZ6yvhlv4qlvPtF82INBISrlDnQPJhcVdK0J9XCefZXhHnWf4hJfZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVGzRfqssXWC2chVcQclE66oiK3U4YjskKEPqAkNF5yrhCgk9+
+	scQO8/TVnXsdlt2aHm8TyH9e85ZMqEd3agBS7dfq0LNdwJPLyZ8=
+X-Gm-Gg: ASbGncvYj6/+MZREADbUReHFTCwMrG+jzKGl0Qvo7wQddygUkvvs0bkEHOQ7cUcFGHP
+	FSLjuR1cLeAxb92ulVPck0I3nG3I4zLbZNDASvcn8h+qjVaASUJJvBHaMumZJVLBxxxlyVE5mzL
+	HOzM6oSQUEQpqGtIEOsrRJbqe3aARurnvuoFAwtskUb0fgrg0zMO6Ob52p/z4z2TBQiU2s8qYD4
+	5M8vERUoHVpcKvbgIrLwDxRAPJKdW0OUpWQlK765QyG2KRtwcSEFi14YfpS2o18fFXg9UyPEiKq
+	fkv+yxIv95PsyP7NKNc+2LmWXPwr7Dg+mxVIefkwIxIs
+X-Google-Smtp-Source: AGHT+IGWdYuJquS3tiJAmGKYAM/JbITm96LbUw+elS4m8ucyANswpHpxNeiLHGOMPiDpeM/wfjul9Q==
+X-Received: by 2002:a17:902:d509:b0:224:191d:8a87 with SMTP id d9443c01a7336-22428aa2f48mr293332115ad.26.1741724482322;
+        Tue, 11 Mar 2025 13:21:22 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109dfad4sm102657485ad.23.2025.03.11.13.21.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 13:21:21 -0700 (PDT)
+Date: Tue, 11 Mar 2025 13:21:21 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: syzbot <syzbot+2d6285cc150f4ee51ef9@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] possible deadlock in dev_set_mac_address
+Message-ID: <Z9CbQaapTggFitFY@mini-arch>
+References: <67d0961e.050a0220.14e108.001a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] platform/x86: Add Lenovo Gamezone WMI Driver
-To: Derek John Clark <derekjohn.clark@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>, Mario Limonciello <superm1@kernel.org>,
- Luke Jones <luke@ljones.dev>, Xino Ni <nijs1@lenovo.com>,
- Zhixin Zhang <zhangzx36@lenovo.com>, Mia Shao <shaohz1@lenovo.com>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
- "Cody T . -H . Chiu" <codyit@gmail.com>, John Martens <johnfanv2@gmail.com>,
- platform-driver-x86@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250225220037.16073-1-derekjohn.clark@gmail.com>
- <20250225220037.16073-3-derekjohn.clark@gmail.com>
- <dd6f0d07-d629-40ce-9009-1a0919d93493@gmx.de>
- <231333f8-8b00-4e56-bfcb-e11c264b35b2@gmx.de>
- <CAFqHKTm-T5G3ZyQwjbO3KSaq=T1wS6vSGWxzsuzvqGmoTLj_hg@mail.gmail.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <CAFqHKTm-T5G3ZyQwjbO3KSaq=T1wS6vSGWxzsuzvqGmoTLj_hg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PAdTaikogSe4OJzcPJow92xwsIgQrxVaBJ3gy06iXDyCARkc1QJ
- V9bnjLzTmD/btAboTN2JRtg/UXGSjG0qott9WQkSIGufSg4Fr4ZJxvOG1JjUq+s/3tYnWhH
- UwZIxtd0tnEW+pbX9Lv1/ufgBiK9LbdEIi+TaU7u9JShz9F35WWLtHBZhx6Dvp66iH/MpAb
- IJnzgcD6DCMnfXb6l7w5w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ZVUMflTdMio=;momvvgOmRfG40vOtO3WAEFluCEA
- 7qVby+ypfngYFh8ku2B24wmNMOyK3rvDal7/ioPQg2q9i3+Od6cN9QoRuNEVTbT3NFW3sCBJY
- 1X3y5ACCNJy02e6+gsylvUu626UlsKyj1VJGxENKKbzE1u/ZPO3fw2oYel+Eqkdhp93L/oW0n
- /OYk9Zz6s+WUDsb8MvijDUfgypnb9qHs2yNjBhIXHO96bplSB+nAmpo4l+mbytKP9SKQ5FTQt
- neYeMRZocnBGpHEwFqJuTfGLFRnUr/wjwutafA2EgFwuXIPkWrsZO/sLZQLq6YQ8PhzgxzntJ
- 9SDmfwBi49p/ynwAmZdeZ8BoG9Jl4NRFz2ClQyvu8fTZGZiJzt/26vPXRaWqei/U2pMKDFgT5
- 2LSmp15z5nhfmqIepQg+aicBvBjq8wzBcF0ZY4nePbsnWq/XZDljXqDLaHlw8EFwwrFHqf2pc
- DYKOt2SXDsD4nOZ78/gsqGJgZILT3N8o3UcD40e7WnG0QuugPbNFx7+UnLIncBeTD7io4O3Yf
- y3tmXST+OoL6Kg5gmsKfBmWoNJwrvmF70V6PNpUHi0v+pWYVXUGcDoixqFOANdjKVrdlURDHI
- ruu54X4QA+wO+XEtitVkrMREORKevuhlb7SgG6cNmL/LI2bidxE2xHst+JGOtHUFJ6gyeYote
- tgC/aZs7Ru1fNBKpWLzfbDqtsTB/8FFAM9RizwQ+5iv+NIFRMJb/LN9syyxI+wjJiLCxhCsSi
- zCufDSmIx8XPto1aUOsQMxNU7MFQPoLvm5m8+0YAA2uIYTHirKjTVVU3H0GI5nmlxB6AgFSM+
- mUB6ER7QaOM5nzgJEo4orXXigZuN45Nh9y/h8P+GoUeUYSmLJ36d3ennuy+UtojztQGIh3cBG
- S0y0um8RV4mPa70CBC+bOR2+fdam/vTVplqx6XNvAFd/OYM4IH4FzcfzxZdHLR8n+alGbpBG8
- ljI2aDEU2eJdE46Kinat4+yZL+slVPjgI0qvITQ4lhGBJNasjcXwiablr/NoXZs5ToeVsILwX
- eQ7V48W+BOlCuKDG6giWEc/6xC9IyoT4CS1X/bHWv3lxCiQqk5yeM6MxN3bR3/Kx/Y/OZlafE
- fAiUqbcrbULkPvVD1L434fFVHW5uFkNXM+t4nySrF7y4Ofo9gHdiS4GupRe57Yba0sAgDsOhd
- sWAygu5OKe6xgFwdwR/G+TPr8kEXuxpqmfOnMISx5vPtn7DZcGSrcTLm679KomUz5HCFjtT/V
- hvkIO25vOAdAvndZeEB1IDkDxqSIoDW3nOu7KcseouWn3G1tLivEbP1tICYp1cp2chUL+CFtc
- 66xFVi+olWc3y30kGUKozM98FXUpVYXhHLeHNEgvnMNBeGvzO4UaZHGEwmgAqZS8UIlrZokPz
- 3F9jLWpz8pBn81h1v5EG3g+YfKgrXe/iFpFULTP/qkWOkfXBwa6wJpJqJWlUYuV+rEurVE89g
- P5HTrQl5vC9PC3CSfIckCQwGtBSzAoVO6EmJTeuu4/l6386aMv6O3aJEzyY9dVd2j/qBPFw==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <67d0961e.050a0220.14e108.001a.GAE@google.com>
 
-Am 10.03.25 um 23:20 schrieb Derek John Clark:
+On 03/11, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    40587f749df2 Merge branch 'enic-enable-32-64-byte-cqes-and..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1420d478580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ca99d9d1f4a8ecfa
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2d6285cc150f4ee51ef9
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/6d02993a9211/disk-40587f74.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/2c8b300bf362/vmlinux-40587f74.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/2d5be21882cf/bzImage-40587f74.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+2d6285cc150f4ee51ef9@syzkaller.appspotmail.com
+> 
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.14.0-rc5-syzkaller-01183-g40587f749df2 #0 Not tainted
+> ------------------------------------------------------
+> syz.3.4651/21867 is trying to acquire lock:
+> ffff88805e634d28 (&dev_instance_lock_key#12){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2731 [inline]
+> ffff88805e634d28 (&dev_instance_lock_key#12){+.+.}-{4:4}, at: dev_set_mac_address+0x2a/0x50 net/core/dev_api.c:302
+> 
+> but task is already holding lock:
+> ffff88807de0cd28 (&dev_instance_lock_key#2){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2731 [inline]
+> ffff88807de0cd28 (&dev_instance_lock_key#2){+.+.}-{4:4}, at: do_setlink+0xa94/0x40f0 net/core/rtnetlink.c:3094
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #2 (&dev_instance_lock_key#2){+.+.}-{4:4}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>        __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+>        __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
+>        netdev_lock include/linux/netdevice.h:2731 [inline]
+>        netif_set_up net/core/dev.h:143 [inline]
+>        __dev_open+0x5cb/0x8a0 net/core/dev.c:1651
+>        netif_open+0xae/0x1b0 net/core/dev.c:1667
+>        dev_open+0x13e/0x260 net/core/dev_api.c:191
+>        team_port_add drivers/net/team/team_core.c:1230 [inline]
+>        team_add_slave+0xabe/0x28a0 drivers/net/team/team_core.c:1989
+>        do_set_master+0x579/0x730 net/core/rtnetlink.c:2943
+>        do_setlink+0xfee/0x40f0 net/core/rtnetlink.c:3149
+>        rtnl_changelink net/core/rtnetlink.c:3759 [inline]
+>        __rtnl_newlink net/core/rtnetlink.c:3918 [inline]
+>        rtnl_newlink+0x15a6/0x1d90 net/core/rtnetlink.c:4055
+>        rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6945
+>        netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2534
+>        netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>        netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
+>        netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
+>        sock_sendmsg_nosec net/socket.c:709 [inline]
+>        __sock_sendmsg+0x221/0x270 net/socket.c:724
+>        ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
+>        ___sys_sendmsg net/socket.c:2618 [inline]
+>        __sys_sendmsg+0x269/0x350 net/socket.c:2650
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #1 (team->team_lock_key#2){+.+.}-{4:4}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>        __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+>        __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
+>        team_set_mac_address+0x122/0x280 drivers/net/team/team_core.c:1817
+>        netif_set_mac_address+0x327/0x510 net/core/dev.c:9605
+>        do_setlink+0xaa6/0x40f0 net/core/rtnetlink.c:3095
+>        rtnl_changelink net/core/rtnetlink.c:3759 [inline]
+>        __rtnl_newlink net/core/rtnetlink.c:3918 [inline]
+>        rtnl_newlink+0x15a6/0x1d90 net/core/rtnetlink.c:4055
+>        rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6945
+>        netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2534
+>        netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>        netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
+>        netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
+>        sock_sendmsg_nosec net/socket.c:709 [inline]
+>        __sock_sendmsg+0x221/0x270 net/socket.c:724
+>        __sys_sendto+0x363/0x4c0 net/socket.c:2178
+>        __do_sys_sendto net/socket.c:2185 [inline]
+>        __se_sys_sendto net/socket.c:2181 [inline]
+>        __x64_sys_sendto+0xde/0x100 net/socket.c:2181
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #0 (&dev_instance_lock_key#12){+.+.}-{4:4}:
+>        check_prev_add kernel/locking/lockdep.c:3163 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+>        validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
+>        __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>        __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+>        __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
+>        netdev_lock include/linux/netdevice.h:2731 [inline]
+>        dev_set_mac_address+0x2a/0x50 net/core/dev_api.c:302
+>        bond_set_mac_address+0x28e/0x830 drivers/net/bonding/bond_main.c:4903
+>        netif_set_mac_address+0x327/0x510 net/core/dev.c:9605
+>        do_setlink+0xaa6/0x40f0 net/core/rtnetlink.c:3095
+>        rtnl_changelink net/core/rtnetlink.c:3759 [inline]
+>        __rtnl_newlink net/core/rtnetlink.c:3918 [inline]
+>        rtnl_newlink+0x15a6/0x1d90 net/core/rtnetlink.c:4055
+>        rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6945
+>        netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2534
+>        netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>        netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
+>        netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
+>        sock_sendmsg_nosec net/socket.c:709 [inline]
+>        __sock_sendmsg+0x221/0x270 net/socket.c:724
+>        ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
+>        ___sys_sendmsg net/socket.c:2618 [inline]
+>        __sys_sendmsg+0x269/0x350 net/socket.c:2650
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> other info that might help us debug this:
+> 
+> Chain exists of:
+>   &dev_instance_lock_key#12 --> team->team_lock_key#2 --> &dev_instance_lock_key#2
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&dev_instance_lock_key#2);
+>                                lock(team->team_lock_key#2);
+>                                lock(&dev_instance_lock_key#2);
+>   lock(&dev_instance_lock_key#12);
+> 
+>  *** DEADLOCK ***
+> 
+> 2 locks held by syz.3.4651/21867:
+>  #0: ffffffff8fed6908 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
+>  #0: ffffffff8fed6908 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
+>  #0: ffffffff8fed6908 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0xc4c/0x1d90 net/core/rtnetlink.c:4054
+>  #1: ffff88807de0cd28 (&dev_instance_lock_key#2){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2731 [inline]
+>  #1: ffff88807de0cd28 (&dev_instance_lock_key#2){+.+.}-{4:4}, at: do_setlink+0xa94/0x40f0 net/core/rtnetlink.c:3094
+> 
+> stack backtrace:
+> CPU: 0 UID: 0 PID: 21867 Comm: syz.3.4651 Not tainted 6.14.0-rc5-syzkaller-01183-g40587f749df2 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2076
+>  check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2208
+>  check_prev_add kernel/locking/lockdep.c:3163 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+>  validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
+>  __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
+>  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>  __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+>  __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
+>  netdev_lock include/linux/netdevice.h:2731 [inline]
+>  dev_set_mac_address+0x2a/0x50 net/core/dev_api.c:302
+>  bond_set_mac_address+0x28e/0x830 drivers/net/bonding/bond_main.c:4903
+>  netif_set_mac_address+0x327/0x510 net/core/dev.c:9605
+>  do_setlink+0xaa6/0x40f0 net/core/rtnetlink.c:3095
+>  rtnl_changelink net/core/rtnetlink.c:3759 [inline]
+>  __rtnl_newlink net/core/rtnetlink.c:3918 [inline]
+>  rtnl_newlink+0x15a6/0x1d90 net/core/rtnetlink.c:4055
+>  rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6945
+>  netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2534
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>  netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
+>  netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
+>  sock_sendmsg_nosec net/socket.c:709 [inline]
+>  __sock_sendmsg+0x221/0x270 net/socket.c:724
+>  ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
+>  ___sys_sendmsg net/socket.c:2618 [inline]
+>  __sys_sendmsg+0x269/0x350 net/socket.c:2650
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fb6b198d169
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fb6af7d5038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 00007fb6b1ba6080 RCX: 00007fb6b198d169
+> RDX: 0000000000040880 RSI: 0000400000000000 RDI: 0000000000000009
+> RBP: 00007fb6b1a0e2a0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007fb6b1ba6080 R15: 00007fff137bf0e8
+>  </TASK>
+> bond0: entered promiscuous mode
+> team0: entered promiscuous mode
+> bond0: left allmulticast mode
+> team0: left allmulticast mode
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-> On Fri, Mar 7, 2025 at 4:41=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote=
-:
->> Am 07.03.25 um 23:47 schrieb Armin Wolf:
->>
->>> Am 25.02.25 um 22:59 schrieb Derek J. Clark:
->>>
->>>> Adds lenovo-wmi-gamezone.c which provides a driver for the Lenovo
->>>> Gamezone WMI interface that comes on Lenovo "Gaming Series" hardware.
->>>> Provides ACPI platform profiles over WMI.
->>>>
->>>> Adds lenovo-wmi.h and lenovo-wmi.c which provide helper functions for
->>>> wmidev_evaluate_method as well as prototypes for exported functions.
->>>> v3:
->>>> - Use notifier chain to report platform profile changes to any
->>>>     subscribed drivers.
->>>> - Adds THERMAL_MODE_EVENT GUID and .notify function to trigger notifi=
-er
->>>>     chain.
->>>> - Adds support for Extreme Mode profile on supported hardware, as wel=
-l
->>>>     as a DMI quirk table for some devices that report extreme mode
->>>> version
->>>>     support but so not have it fully implemented.
->>>> - Update to include recent changes to platform-profile.
->>>> v2:
->>>> - Use devm_kmalloc to ensure driver can be instanced, remove global
->>>>     reference.
->>>> - Ensure reverse Christmas tree for all variable declarations.
->>>> - Remove extra whitespace.
->>>> - Use guard(mutex) in all mutex instances, global mutex.
->>>> - Use pr_fmt instead of adding the driver name to each pr_err.
->>>> - Remove noisy pr_info usage.
->>>> - Rename gamezone_wmi to lenovo_wmi_gz_priv and gz_wmi to priv.
->>>> - Remove GZ_WMI symbol exporting.
->>>>
->>>> Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
->>>> ---
->>>>    MAINTAINERS                                |   3 +
->>>>    drivers/platform/x86/Kconfig               |  16 +
->>>>    drivers/platform/x86/Makefile              |   2 +
->>>>    drivers/platform/x86/lenovo-wmi-gamezone.c | 374 +++++++++++++++++=
-++++
->>>>    drivers/platform/x86/lenovo-wmi.c          |  77 +++++
->>>>    drivers/platform/x86/lenovo-wmi.h          |  62 ++++
->>>>    6 files changed, 534 insertions(+)
->>>>    create mode 100644 drivers/platform/x86/lenovo-wmi-gamezone.c
->>>>    create mode 100644 drivers/platform/x86/lenovo-wmi.c
->>>>    create mode 100644 drivers/platform/x86/lenovo-wmi.h
->>>>
->>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>> index e20c32b3c480..cf7f4fce1a25 100644
->>>> --- a/MAINTAINERS
->>>> +++ b/MAINTAINERS
->>>> @@ -13157,6 +13157,9 @@ L: platform-driver-x86@vger.kernel.org
->>>>    S:    Maintained
->>>>    F:    Documentation/wmi/devices/lenovo-wmi-gamezone.rst
->>>>    F:    Documentation/wmi/devices/lenovo-wmi-other.rst
->>>> +F:    drivers/platform/x86/lenovo-wmi-gamezone.c
->>>> +F:    drivers/platform/x86/lenovo-wmi.c
->>>> +F:    drivers/platform/x86/lenovo-wmi.h
->>>>      LETSKETCH HID TABLET DRIVER
->>>>    M:    Hans de Goede <hdegoede@redhat.com>
->>>> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kcon=
-fig
->>>> index 7e20a58861eb..875822e6bd65 100644
->>>> --- a/drivers/platform/x86/Kconfig
->>>> +++ b/drivers/platform/x86/Kconfig
->>>> @@ -459,6 +459,22 @@ config IBM_RTL
->>>>         state =3D 0 (BIOS SMIs on)
->>>>         state =3D 1 (BIOS SMIs off)
->>>>    +config LENOVO_WMI
->>>> +    tristate
->>>> +    depends on ACPI_WMI
->>> Please rename this module to LENOVO_WMI_HELPERS.
->>>
->>>> +
->>>> +config LENOVO_WMI_GAMEZONE
->>>> +    tristate "Lenovo GameZone WMI Driver"
->>>> +    depends on ACPI_WMI
->>>> +    select ACPI_PLATFORM_PROFILE
->>>> +    select LENOVO_WMI
->>>> +    help
->>>> +      Say Y here if you have a WMI aware Lenovo Legion device and
->>>> would like to use the
->>>> +      platform-profile firmware interface to manage power usage.
->>>> +
->>>> +      To compile this driver as a module, choose M here: the module
->>>> will
->>>> +      be called lenovo-wmi-gamezone.
->>>> +
->>>>    config IDEAPAD_LAPTOP
->>>>        tristate "Lenovo IdeaPad Laptop Extras"
->>>>        depends on ACPI
->>>> diff --git a/drivers/platform/x86/Makefile
->>>> b/drivers/platform/x86/Makefile
->>>> index 5f6307246e69..4a7b2d14eb82 100644
->>>> --- a/drivers/platform/x86/Makefile
->>>> +++ b/drivers/platform/x86/Makefile
->>>> @@ -67,7 +67,9 @@ obj-$(CONFIG_THINKPAD_ACPI)    +=3D thinkpad_acpi.o
->>>>    obj-$(CONFIG_THINKPAD_LMI)    +=3D think-lmi.o
->>>>    obj-$(CONFIG_YOGABOOK)        +=3D lenovo-yogabook.o
->>>>    obj-$(CONFIG_YT2_1380)        +=3D
->>>> lenovo-yoga-tab2-pro-1380-fastcharger.o
->>>> +obj-$(CONFIG_LENOVO_WMI)    +=3D lenovo-wmi.o
->>>>    obj-$(CONFIG_LENOVO_WMI_CAMERA)    +=3D lenovo-wmi-camera.o
->>>> +obj-$(CONFIG_LENOVO_WMI_GAMEZONE)    +=3D lenovo-wmi-gamezone.o
->>>>      # Intel
->>>>    obj-y                +=3D intel/
->>>> diff --git a/drivers/platform/x86/lenovo-wmi-gamezone.c
->>>> b/drivers/platform/x86/lenovo-wmi-gamezone.c
->>>> new file mode 100644
->>>> index 000000000000..d5329fecba47
->>>> --- /dev/null
->>>> +++ b/drivers/platform/x86/lenovo-wmi-gamezone.c
->>>> @@ -0,0 +1,374 @@
->>>> +// SPDX-License-Identifier: GPL-2.0-or-later
->>>> +/*
->>>> + * Lenovo GameZone WMI interface driver. The GameZone WMI interface
->>>> provides
->>>> + * platform profile and fan curve settings for devices that fall
->>>> under the
->>>> + * "Gaming Series" of Lenovo Legion devices.
->>>> + *
->>>> + * Copyright(C) 2024 Derek J. Clark <derekjohn.clark@gmail.com>
->>>> + */
->>>> +
->>>> +#include "linux/container_of.h"
->>>> +#include "linux/printk.h"
->>>> +#include <linux/cleanup.h>
->>>> +#include <linux/dev_printk.h>
->>>> +#include <linux/dmi.h>
->>>> +#include <linux/list.h>
->>>> +#include <linux/notifier.h>
->>>> +#include <linux/platform_profile.h>
->>>> +#include <linux/types.h>
->>>> +#include <linux/wmi.h>
->>>> +#include "lenovo-wmi.h"
->>>> +
->>>> +/* Interface GUIDs */
->>>> +#define LENOVO_GAMEZONE_GUID "887B54E3-DDDC-4B2C-8B88-68A26A8835D0"
->>>> +#define THERMAL_MODE_EVENT_GUID "D320289E-8FEA-41E0-86F9-911D83151B5=
-F"
->>>> +
->>>> +/* Method IDs */
->>>> +#define WMI_METHOD_ID_SMARTFAN_SUPP 43 /* IsSupportSmartFan */
->>>> +#define WMI_METHOD_ID_SMARTFAN_SET 44 /* SetSmartFanMode */
->>>> +#define WMI_METHOD_ID_SMARTFAN_GET 45 /* GetSmartFanMode */
->>>> +
->>>> +enum lenovo_wmi_gz_type {
->>>> +    GAMEZONE_FULL =3D 1,
->>>> +    THERMAL_MODE,
->>>> +};
->>>> +
->>>> +#define GAMEZONE_WMI_DEVICE(guid, type)                             =
- \
->>>> +    .guid_string =3D (guid), .context =3D &(enum lenovo_wmi_gz_type)=
- \
->>>> + {                                                            \
->>>> +        type                                                 \
->>>> +    }
->>>> +
->>>> +static BLOCKING_NOTIFIER_HEAD(gz_chain_head);
->>>> +static DEFINE_MUTEX(gz_chain_mutex);
->>>> +
->>>> +struct lenovo_wmi_gz_priv {
->>>> +    enum platform_profile_option current_profile;
->>> This variable is only assigned and never read, please remove it.
->>>
->>>> +    struct wmi_device *wdev;
->>>> +    bool extreme_supported;
->>>> +    struct device *ppdev; /*platform profile device */
->>>> +    enum lenovo_wmi_gz_type type;
->>>> +    struct blocking_notifier_head nhead;
->>>> +};
->>>> +
->>>> +struct quirk_entry {
->>>> +    bool extreme_supported;
->>>> +};
->>>> +
->>>> +static struct quirk_entry quirk_no_extreme_bug =3D {
->>>> +    .extreme_supported =3D false,
->>>> +};
->>> Can you make this const?
->>>
->>>> +
->>>> +/* Platform Profile Methods & Setup */
->>>> +static int
->>>> +lenovo_wmi_gz_platform_profile_supported(struct lenovo_wmi_gz_priv
->>>> *priv,
->>>> +                     int *supported)
->>>> +{
->>>> +    return lenovo_wmidev_evaluate_method_1(priv->wdev, 0x0,
->>>> +                           WMI_METHOD_ID_SMARTFAN_SUPP, 0, supported=
-);
->>>> +}
->>>> +
->>>> +static int lenovo_wmi_gz_profile_get(struct device *dev,
->>>> +                     enum platform_profile_option *profile)
->>>> +{
->>>> +    struct lenovo_wmi_gz_priv *priv =3D dev_get_drvdata(dev);
->>>> +    int sel_prof;
->>>> +    int ret;
->>>> +
->>>> +    ret =3D lenovo_wmidev_evaluate_method_1(priv->wdev, 0x0,
->>>> +                          WMI_METHOD_ID_SMARTFAN_GET, 0, &sel_prof);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    switch (sel_prof) {
->>>> +    case SMARTFAN_MODE_QUIET:
->>>> +        *profile =3D PLATFORM_PROFILE_LOW_POWER;
->>>> +        break;
->>>> +    case SMARTFAN_MODE_BALANCED:
->>>> +        *profile =3D PLATFORM_PROFILE_BALANCED;
->>>> +        break;
->>>> +    case SMARTFAN_MODE_PERFORMANCE:
->>>> +        if (priv->extreme_supported) {
->>>> +            *profile =3D PLATFORM_PROFILE_BALANCED_PERFORMANCE;
->>>> +            break;
->>>> +        }
->>>> +        *profile =3D PLATFORM_PROFILE_PERFORMANCE;
->>>> +        break;
->>>> +    case SMARTFAN_MODE_EXTREME:
->>>> +        *profile =3D PLATFORM_PROFILE_PERFORMANCE;
->>>> +        break;
->>>> +    case SMARTFAN_MODE_CUSTOM:
->>>> +        *profile =3D PLATFORM_PROFILE_CUSTOM;
->>>> +        break;
->>>> +    default:
->>>> +        return -EINVAL;
->>>> +    }
->>>> +
->>>> +    priv->current_profile =3D *profile;
->>>> +
->>>> +    ret =3D blocking_notifier_call_chain(&gz_chain_head,
->>>> THERMAL_MODE_EVENT,
->>>> +                       &sel_prof);
->>> Is it really necessary to call the notifier here? AFAIK the notifier
->>> needs to be called
->>> only:
->>>
->>>   - when the platform profile was changed either by the user or the
->>> firmware.
->>>   - when a new notifier handler was registered so that the handler doe=
-s
->>> not have to wait for the next user input
->>>
->>> Please only call the notifier in those two situations.
->> I thought about this a bit and i came to the conclusion that my proposa=
-l would not work. The problem is that if no
->> gamezone driver is available the notifier handler will not be called at=
- all.
->>
->> I instead suggest that you move the notifier inside the lenovo-wmi-othe=
-r driver. Then the gamezone driver registers itself
->> with this notifier and supplies the current platform profile if the len=
-ovo-wmi-other driver requests it. In this case
->> it would make sense to cache the current platform profile.
-> I have a few questions as I want to make sure I understand how to
-> "reverse" the information flow for the notifier chain.
-> - Would it be as simple as filling the data pointer sent by other with
-> a pointer to the profile in gamezone? If so, would gamezone return
-> NOTIFY_STOP or NOTIFY_DONE to indicate the pointer was filled so that
-> other could verify?
+I think it should be addressed by https://lore.kernel.org/netdev/20250311084507.3978048-1-sdf@fomichev.me/
 
-Yes, the data pointer would ideally point to a variable with a type of "en=
-um platform_profile_option" inside the
-lenovo-wmi-other driver which will then be modified by the gamezone driver=
-.
+It is the same team_lock->netdev_ops vs netdev_ops->team_lock ordering issue:
 
-> - Since other might be initialized before gamezone, should I do a
-> notifier call chain every time I need to know the platform?
+rtnl_newlink
+  rtnl_changelink
+    do_setlink IFLA_MASTER lower
+      do_set_master
+        team_add_slave
+	  team_lock
+	    team_port_add
+	      dev_open
+	        dev_instance_lock#2 - for netdev_ops (not taken)
+	          netif_open
+	            __dev_open
+		      netif_set_up
+		        dev_instance_lock#2 - for non-netdev_ops (taken)
 
-Yes.
+rtnl_newlink
+  __rtnl_newlink
+    rtnl_changelink
+      do_setlink IFLA_ADDRESS upper
+        dev_instace_lock - for non-netdev_ops (taken) <<< GONNA BE REPLACED BY DEV_ADDR_SEM
+          netif_set_mac_address
+	    team_set_mac_address
+	      team_lock
 
-> - How would the WMI events notifications work as well, since currently
-> they are what calls the chain and other has no context for that.
-
-WMI events that change the platform profile are of no concern to the lenov=
-o-wmi-other driver because
-he always asks for the current platform profile before performing an opera=
-tion anyway.
-
-The notifier used by the WMI event driver can be constructed like the noti=
-fier inside the uniwill-wmi
-driver available at https://github.com/Wer-Wolf/uniwill-laptop.
-
-Thanks,
-Armin Wolf
-
-> Cheers,
-> - Derek
->
->> Thanks,
->> Armin Wolf
->>
->>>> +    if (ret =3D=3D NOTIFY_BAD)
->>>> +        pr_err("Failed to send notification to call chain for WMI
->>>> event %u\n",
->>>> +               priv->type);
->>> Use dev_err() here please.
->>>
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int lenovo_wmi_gz_profile_set(struct device *dev,
->>>> +                     enum platform_profile_option profile)
->>>> +{
->>>> +    struct lenovo_wmi_gz_priv *priv =3D dev_get_drvdata(dev);
->>>> +    int sel_prof;
->>>> +    int ret;
->>>> +
->>>> +    switch (profile) {
->>>> +    case PLATFORM_PROFILE_LOW_POWER:
->>>> +        sel_prof =3D SMARTFAN_MODE_QUIET;
->>>> +        break;
->>>> +    case PLATFORM_PROFILE_BALANCED:
->>>> +        sel_prof =3D SMARTFAN_MODE_BALANCED;
->>>> +        break;
->>>> +    case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
->>>> +        sel_prof =3D SMARTFAN_MODE_PERFORMANCE;
->>>> +        break;
->>>> +    case PLATFORM_PROFILE_PERFORMANCE:
->>>> +        if (priv->extreme_supported) {
->>>> +            sel_prof =3D SMARTFAN_MODE_EXTREME;
->>>> +            break;
->>>> +        }
->>>> +        sel_prof =3D SMARTFAN_MODE_PERFORMANCE;
->>>> +        break;
->>>> +    case PLATFORM_PROFILE_CUSTOM:
->>>> +        sel_prof =3D SMARTFAN_MODE_CUSTOM;
->>>> +        break;
->>>> +    default:
->>>> +        return -EOPNOTSUPP;
->>>> +    }
->>>> +
->>>> +    ret =3D lenovo_wmidev_evaluate_method_1(priv->wdev, 0x0,
->>>> +                          WMI_METHOD_ID_SMARTFAN_SET, sel_prof, NULL=
-);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static const struct dmi_system_id fwbug_list[] =3D {
->>>> +    {
->>>> +        .ident =3D "Legion Go 8APU1",
->>>> +        .matches =3D {
->>>> +            DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
->>>> +            DMI_MATCH(DMI_PRODUCT_VERSION, "Legion Go 8APU1"),
->>>> +        },
->>>> +        .driver_data =3D &quirk_no_extreme_bug,
->>>> +    },
->>>> +    {
->>>> +        .ident =3D "Legion Go S 8ARP1",
->>>> +        .matches =3D {
->>>> +            DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
->>>> +            DMI_MATCH(DMI_PRODUCT_VERSION, "Legion Go S 8ARP1"),
->>>> +        },
->>>> +        .driver_data =3D &quirk_no_extreme_bug,
->>>> +    },
->>>> +    {
->>>> +        .ident =3D "Legion Go S 8APU1",
->>>> +        .matches =3D {
->>>> +            DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
->>>> +            DMI_MATCH(DMI_PRODUCT_VERSION, "Legion Go S 8APU1"),
->>>> +        },
->>>> +        .driver_data =3D &quirk_no_extreme_bug,
->>>> +    },
->>>> +    {},
->>>> +
->>>> +};
->>>> +
->>>> +static bool extreme_supported(int profile_support_ver)
->>>> +{
->>>> +    const struct dmi_system_id *dmi_id;
->>>> +    struct quirk_entry *quirks;
->>>> +
->>>> +    if (profile_support_ver < 6)
->>>> +        return false;
->>>> +
->>>> +    dmi_id =3D dmi_first_match(fwbug_list);
->>>> +    if (!dmi_id)
->>>> +        return true;
->>>> +
->>>> +    quirks =3D dmi_id->driver_data;
->>>> +    return quirks->extreme_supported;
->>>> +}
->>>> +
->>>> +static int lenovo_wmi_platform_profile_probe(void *drvdata,
->>>> +                         unsigned long *choices)
->>>> +{
->>>> +    struct lenovo_wmi_gz_priv *priv =3D drvdata;
->>>> +    enum platform_profile_option profile;
->>> Unused variable, please remove.
->>>
->>>> +    int profile_support_ver;
->>>> +    int ret;
->>>> +
->>>> +    ret =3D lenovo_wmi_gz_platform_profile_supported(priv,
->>>> +                               &profile_support_ver);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    if (profile_support_ver < 1)
->>>> +        return -ENODEV;
->>>> +
->>>> +    priv->extreme_supported =3D extreme_supported(profile_support_ve=
-r);
->>>> +
->>>> +    set_bit(PLATFORM_PROFILE_LOW_POWER, choices);
->>>> +    set_bit(PLATFORM_PROFILE_BALANCED, choices);
->>>> +    set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
->>>> +    set_bit(PLATFORM_PROFILE_CUSTOM, choices);
->>>> +
->>>> +    if (priv->extreme_supported)
->>>> +        set_bit(PLATFORM_PROFILE_BALANCED_PERFORMANCE, choices);
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static const struct platform_profile_ops
->>>> lenovo_wmi_gz_platform_profile_ops =3D {
->>>> +    .probe =3D lenovo_wmi_platform_profile_probe,
->>>> +    .profile_get =3D lenovo_wmi_gz_profile_get,
->>>> +    .profile_set =3D lenovo_wmi_gz_profile_set,
->>>> +};
->>>> +
->>>> +/* Notifier Methods */
->>>> +int lenovo_wmi_gz_register_notifier(struct notifier_block *nb)
->>>> +{
->>>> +    guard(mutex)(&gz_chain_mutex);
->>> The blocking notifier already does the locking itself. Please remove
->>> this mutex.
->>>
->>>> +    return blocking_notifier_chain_register(&gz_chain_head, nb);
->>>> +}
->>>> +EXPORT_SYMBOL_NS_GPL(lenovo_wmi_gz_register_notifier, "GZ_WMI");
->>> Can you name the namespace similar to "LENOVO_GAMEZONE_WMI" please?
->>>
->>>> +
->>>> +int lenovo_wmi_gz_unregister_notifier(struct notifier_block *nb)
->>>> +{
->>>> +    guard(mutex)(&gz_chain_mutex);
->>>> +    return blocking_notifier_chain_unregister(&gz_chain_head, nb);
->>>> +}
->>>> +EXPORT_SYMBOL_NS_GPL(lenovo_wmi_gz_unregister_notifier, "GZ_WMI");
->>>> +
->>>> +static void devm_lenovo_wmi_gz_unregister_notifier(void *data)
->>>> +{
->>>> +    struct notifier_block *nb =3D data;
->>>> +
->>>> +    lenovo_wmi_gz_unregister_notifier(nb);
->>>> +}
->>>> +
->>>> +int devm_lenovo_wmi_gz_register_notifier(struct device *dev,
->>>> +                     struct notifier_block *nb)
->>>> +{
->>>> +    int ret;
->>>> +
->>>> +    ret =3D lenovo_wmi_gz_register_notifier(nb);
->>>> +    if (ret < 0)
->>>> +        return ret;
->>>> +
->>>> +    return devm_add_action_or_reset(dev,
->>>> devm_lenovo_wmi_gz_unregister_notifier, nb);
->>>> +}
->>>> +EXPORT_SYMBOL_NS_GPL(devm_lenovo_wmi_gz_register_notifier, "GZ_WMI")=
-;
->>>> +
->>>> +/* Driver Methods */
->>>> +static void lenovo_wmi_gz_notify(struct wmi_device *wdev,
->>>> +                 union acpi_object *obj)
->>>> +{
->>>> +    struct lenovo_wmi_gz_priv *tm_priv =3D dev_get_drvdata(&wdev->de=
-v);
->>>> +    struct lenovo_wmi_gz_priv *gz_priv =3D
->>>> +        container_of(&gz_chain_head, struct lenovo_wmi_gz_priv, nhea=
-d);
->>> I fear that this will not work because gz_chain_head is a global
->>> variable, not a field inside
->>> struct lenovo_wmi_gz_priv. Also this would crash the kernel should the
->>> main gamezone driver be
->>> unbound from its WMI device.
->>>
->>> I suggest you move the WMI driver for the WMI event into a separate
->>> module. Then you use another notifier
->>> inside the new module to allow the gamezone driver to listen for
->>> events. For example this separate WMI event driver
->>> could use the "val" argument inside blocking_notifier_call_chain() to
->>> specify the type of event (like THERMAL_MODE_CHANGED)
->>> and the "v" argument to pass a pointer to a u32 variable containing
->>> the new thermal mode.
->>>
->>> This also allows you to extend the separate WMI driver later to
->>> support more WMI event GUIDs.
->>>
->>>> +    int sel_prof;
->>>> +    int ret;
->>>> +
->>>> +    if (obj->type !=3D ACPI_TYPE_INTEGER)
->>>> +        return;
->>>> +
->>>> +    switch (tm_priv->type) {
->>>> +    case THERMAL_MODE:
->>>> +        sel_prof =3D obj->integer.value;
->>>> +        break;
->>>> +    default:
->>>> +        return;
->>>> +    }
->>>> +
->>>> +    /* Update primary Gamezone instance */
->>>> +    switch (sel_prof) {
->>>> +    case SMARTFAN_MODE_QUIET:
->>>> +        gz_priv->current_profile =3D PLATFORM_PROFILE_LOW_POWER;
->>>> +        break;
->>>> +    case SMARTFAN_MODE_BALANCED:
->>>> +        gz_priv->current_profile =3D PLATFORM_PROFILE_BALANCED;
->>>> +        break;
->>>> +    case SMARTFAN_MODE_PERFORMANCE:
->>>> +        if (gz_priv->extreme_supported) {
->>>> +            gz_priv->current_profile =3D
->>>> +                PLATFORM_PROFILE_BALANCED_PERFORMANCE;
->>>> +            break;
->>>> +        }
->>>> +        gz_priv->current_profile =3D PLATFORM_PROFILE_PERFORMANCE;
->>>> +        break;
->>>> +    case SMARTFAN_MODE_EXTREME:
->>>> +        gz_priv->current_profile =3D PLATFORM_PROFILE_PERFORMANCE;
->>>> +        break;
->>>> +    case SMARTFAN_MODE_CUSTOM:
->>>> +        gz_priv->current_profile =3D PLATFORM_PROFILE_CUSTOM;
->>>> +        break;
->>>> +    default:
->>>> +        break;
->>>> +    }
->>> Please use platform_profile_notify() to notify userspace of the new
->>> platform profile settings.
->>>
->>>> +
->>>> +    ret =3D blocking_notifier_call_chain(&gz_chain_head,
->>>> THERMAL_MODE_EVENT,
->>>> +                       &sel_prof);
->>>> +    if (ret =3D=3D NOTIFY_BAD)
->>>> +        pr_err("Failed to send notification to call chain for WMI
->>>> event %u\n",
->>>> +               tm_priv->type);
->>>> +}
->>>> +
->>>> +static int lenovo_wmi_gz_probe(struct wmi_device *wdev, const void
->>>> *context)
->>>> +{
->>>> +    struct lenovo_wmi_gz_priv *priv =3D
->>>> +        devm_kzalloc(&wdev->dev, sizeof(*priv), GFP_KERNEL);
->>> Please do the call to devm_kzalloc() on a separate line:
->>>
->>>      struct lenovo_wmi_gz_priv *priv;
->>>
->>>      priv =3D devm_kzalloc(&wdev->dev, sizeof(*priv), GFP_KERNEL);
->>>
->>>> +
->>>> +    if (!priv)
->>>> +        return -ENOMEM;
->>>> +
->>>> +    if (!context)
->>>> +        return -EINVAL;
->>>> +
->>>> +    priv->wdev =3D wdev;
->>>> +    priv->type =3D *((enum lenovo_wmi_gz_type *)context);
->>>> +
->>>> +    dev_set_drvdata(&wdev->dev, priv);
->>>> +
->>>> +    if (priv->type !=3D GAMEZONE_FULL)
->>>> +        return 0;
->>>> +
->>>> +    priv->nhead =3D gz_chain_head;
->>>> +    priv->ppdev =3D platform_profile_register(&wdev->dev,
->>>> "lenovo-wmi-gamezone",
->>>> +                        priv, &lenovo_wmi_gz_platform_profile_ops);
->>> Please check if platform_profile_register() was successful and return
->>> an error if not.
->>>
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static const struct wmi_device_id lenovo_wmi_gz_id_table[] =3D {
->>>> +    { GAMEZONE_WMI_DEVICE(LENOVO_GAMEZONE_GUID, GAMEZONE_FULL) },
->>>> +    { GAMEZONE_WMI_DEVICE(THERMAL_MODE_EVENT_GUID, THERMAL_MODE) },
->>>> +    {}
->>>> +};
->>>> +
->>>> +static struct wmi_driver lenovo_wmi_gz_driver =3D {
->>>> +    .driver =3D {
->>>> +        .name =3D "lenovo_wmi_gamezone",
->>>> +        .probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
->>>> +    },
->>>> +    .id_table =3D lenovo_wmi_gz_id_table,
->>>> +    .probe =3D lenovo_wmi_gz_probe,
->>>> +    .notify =3D lenovo_wmi_gz_notify,
->>>> +    .no_singleton =3D true,
->>>> +};
->>>> +
->>>> +module_wmi_driver(lenovo_wmi_gz_driver);
->>>> +
->>>> +MODULE_IMPORT_NS("LENOVO_WMI");
->>>> +MODULE_DEVICE_TABLE(wmi, lenovo_wmi_gz_id_table);
->>>> +MODULE_AUTHOR("Derek J. Clark <derekjohn.clark@gmail.com>");
->>>> +MODULE_DESCRIPTION("Lenovo GameZone WMI Driver");
->>>> +MODULE_LICENSE("GPL");
->>>> diff --git a/drivers/platform/x86/lenovo-wmi.c
->>>> b/drivers/platform/x86/lenovo-wmi.c
->>>> new file mode 100644
->>>> index 000000000000..0de2c37e69bd
->>>> --- /dev/null
->>>> +++ b/drivers/platform/x86/lenovo-wmi.c
->>>> @@ -0,0 +1,77 @@
->>>> +// SPDX-License-Identifier: GPL-2.0-or-later
->>>> +/*
->>>> + * Lenovo Legion WMI interface driver. The Lenovo Legion WMI
->>>> interface is
->>>> + * broken up into multiple GUID interfaces that require
->>>> cross-references
->>>> + * between GUID's for some functionality. The "Custom Method"
->>>> interface is a
->>>> + * legacy interface for managing and displaying CPU & GPU power and
->>>> hwmon
->>>> + * settings and readings. The "Other Mode" interface is a modern
->>>> interface
->>>> + * that replaces or extends the "Custom Method" interface methods. T=
-he
->>>> + * "Gamezone" interface adds advanced features such as fan profiles =
-and
->>>> + * overclocking. The "Lighting" interface adds control of various
->>>> status
->>>> + * lights related to different hardware components. "Other Mode" use=
-s
->>>> + * the data structs LENOVO_CAPABILITY_DATA_00,
->>>> LENOVO_CAPABILITY_DATA_01
->>>> + * and LENOVO_CAPABILITY_DATA_02 structs for capability information.
->>>> + *
->>>> + * Copyright(C) 2024 Derek J. Clark <derekjohn.clark@gmail.com>
->>>> + *
->>>> + */
->>>> +
->>>> +#include <linux/wmi.h>
->>>> +#include "lenovo-wmi.h"
->>>> +
->>>> +/* wmidev_evaluate_method helper functions */
->>>> +static int lenovo_wmidev_evaluate_method(struct wmi_device *wdev, u8
->>>> instance,
->>>> +                     u32 method_id, struct acpi_buffer *in,
->>>> +                     struct acpi_buffer *out)
->>>> +{
->>>> +    acpi_status status;
->>>> +
->>>> +    status =3D wmidev_evaluate_method(wdev, instance, method_id, in,
->>>> out);
->>>> +
->>>> +    if (ACPI_FAILURE(status))
->>>> +        return -EIO;
->>>> +
->>>> +    return 0;
->>>> +};
->>>> +
->>>> +int lenovo_wmidev_evaluate_method_2(struct wmi_device *wdev, u8
->>>> instance,
->>>> +                    u32 method_id, u32 arg0, u32 arg1,
->>>> +                    u32 *retval)
->>>> +{
->>> Please give this method a more descriptive name.
->>>
->>>> +    struct wmi_method_args args =3D { arg0, arg1 };
->>>> +    struct acpi_buffer input =3D { (acpi_size)sizeof(args), &args };
->>> Cast to acpi_size is unnecessary here.
->>>
->>>> +    struct acpi_buffer output =3D { ACPI_ALLOCATE_BUFFER, NULL };
->>>> +    union acpi_object *ret_obj __free(kfree) =3D NULL;
->>>> +    int err;
->>>> +
->>>> +    err =3D lenovo_wmidev_evaluate_method(wdev, instance, method_id,
->>>> &input,
->>>> +                        &output);
->>>> +
->>>> +    if (err)
->>>> +        return err;
->>>> +
->>>> +    if (retval) {
->>>> +        ret_obj =3D (union acpi_object *)output.pointer;
->>>> +        if (!ret_obj)
->>>> +            return -ENODATA;
->>>> +
->>>> +        if (ret_obj->type !=3D ACPI_TYPE_INTEGER)
->>>> +            return -ENXIO;
->>>> +
->>>> +        *retval =3D (u32)ret_obj->integer.value;
->>>> +    }
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +EXPORT_SYMBOL_NS_GPL(lenovo_wmidev_evaluate_method_2, "LENOVO_WMI");
->>> Can you please rename the namespace to "LENOVO_WMI_HELPERS"?
->>>
->>>> +
->>>> +int lenovo_wmidev_evaluate_method_1(struct wmi_device *wdev, u8
->>>> instance,
->>>> +                    u32 method_id, u32 arg0, u32 *retval)
->>>> +{
->>> Same as above.
->>>
->>>> +    return lenovo_wmidev_evaluate_method_2(wdev, instance,
->>>> method_id, arg0,
->>>> +                           0, retval);
->>>> +}
->>>> +EXPORT_SYMBOL_NS_GPL(lenovo_wmidev_evaluate_method_1, "LENOVO_WMI");
->>>> +MODULE_AUTHOR("Derek J. Clark <derekjohn.clark@gmail.com>");
->>>> +MODULE_DESCRIPTION("Lenovo WMI Common Driver");
->>>> +MODULE_LICENSE("GPL");
->>>> diff --git a/drivers/platform/x86/lenovo-wmi.h
->>>> b/drivers/platform/x86/lenovo-wmi.h
->>>> new file mode 100644
->>>> index 000000000000..113928b4fc0f
->>>> --- /dev/null
->>>> +++ b/drivers/platform/x86/lenovo-wmi.h
->>>> @@ -0,0 +1,62 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0-or-later
->>>> + *
->>>> + * Lenovo Legion WMI interface driver. The Lenovo Legion WMI
->>>> interface is
->>>> + * broken up into multiple GUID interfaces that require
->>>> cross-references
->>>> + * between GUID's for some functionality. The "Custom Method"
->>>> interface is a
->>>> + * legacy interface for managing and displaying CPU & GPU power and
->>>> hwmon
->>>> + * settings and readings. The "Other Mode" interface is a modern
->>>> interface
->>>> + * that replaces or extends the "Custom Method" interface methods. T=
-he
->>>> + * "Gamezone" interface adds advanced features such as fan profiles =
-and
->>>> + * overclocking. The "Lighting" interface adds control of various
->>>> status
->>>> + * lights related to different hardware components. "Other Mode" use=
-s
->>>> + * the data structs LENOVO_CAPABILITY_DATA_00,
->>>> LENOVO_CAPABILITY_DATA_01
->>>> + * and LENOVO_CAPABILITY_DATA_02 structs for capability information.
->>>> + *
->>>> + * Copyright(C) 2024 Derek J. Clark <derekjohn.clark@gmail.com>
->>>> + *
->>>> + */
->>>> +#include <linux/notifier.h>
->>>> +#include <linux/platform_profile.h>
->>>> +
->>>> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->>> This causes a build error on my machine. Please only use this macro
->>> inside source files
->>> for modules and not inside header files.
->>>
->>>> +
->>>> +#ifndef _LENOVO_WMI_H_
->>>> +#define _LENOVO_WMI_H_
->>>> +
->>>> +#include <linux/bits.h>
->>>> +#include <linux/types.h>
->>>> +#include <linux/wmi.h>
->>>> +
->>>> +struct wmi_method_args {
->>>> +    u32 arg0;
->>>> +    u32 arg1;
->>>> +};
->>>> +
->>>> +/* gamezone structs */
->>>> +enum thermal_mode {
->>>> +    SMARTFAN_MODE_QUIET =3D 0x01,
->>>> +    SMARTFAN_MODE_BALANCED =3D 0x02,
->>>> +    SMARTFAN_MODE_PERFORMANCE =3D 0x03,
->>>> +    SMARTFAN_MODE_EXTREME =3D 0xE0, /* Ver 6+ */
->>>> +    SMARTFAN_MODE_CUSTOM =3D 0xFF,
->>>> +};
->>>> +
->>>> +enum lenovo_wmi_action {
->>>> +    THERMAL_MODE_EVENT =3D 1,
->>>> +};
->>>> +
->>>> +/* wmidev_evaluate_method helper functions */
->>>> +int lenovo_wmidev_evaluate_method_2(struct wmi_device *wdev, u8
->>>> instance,
->>>> +                    u32 method_id, u32 arg0, u32 arg1,
->>>> +                    u32 *retval);
->>>> +int lenovo_wmidev_evaluate_method_1(struct wmi_device *wdev, u8
->>>> instance,
->>>> +                    u32 method_id, u32 arg0, u32 *retval);
->>>> +
->>>> +/* lenovo_wmi_gz_driver notifier functions */
->>>> +int lenovo_wmi_gz_notifier_call(struct notifier_block *nb, unsigned
->>>> long action,
->>>> +                enum platform_profile_option *profile);
->>>> +int lenovo_wmi_gz_register_notifier(struct notifier_block *nb);
->>>> +int lenovo_wmi_gz_unregister_notifier(struct notifier_block *nb);
->>>> +int devm_lenovo_wmi_gz_register_notifier(struct device *dev,
->>>> +                     struct notifier_block *nb);
->>> Can you please create a separate header file for each driver?
->>> Otherwise this header file
->>> will contain many different things from different drivers, which will
->>> maybe not even be
->>> available depending on the Kconfig settings.
->>>
->>> Thanks,
->>> Armin Wolf
->>>
->>>> +#endif /* !_LENOVO_WMI_H_ */
+Will keep an eye on the dashboard..
 
