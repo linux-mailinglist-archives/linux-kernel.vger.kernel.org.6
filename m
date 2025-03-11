@@ -1,178 +1,156 @@
-Return-Path: <linux-kernel+bounces-556602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08D8A5CC2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:30:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045A4A5CC34
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:31:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 646FC3B5E4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:30:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8785189DB61
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97DD262800;
-	Tue, 11 Mar 2025 17:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49DD260A3A;
+	Tue, 11 Mar 2025 17:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZK/eAHl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OM93F3xA"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BE02620DF;
-	Tue, 11 Mar 2025 17:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C461876;
+	Tue, 11 Mar 2025 17:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741714215; cv=none; b=LM+3yXVP2D6VsIN9H5C5YsV8eB0Qg53WC4P3UR9HUVv/4WfE8oITK6WI8ME2ZLSxs6WoV2/ItsjH+WRdPJwTWrXIP1SqASGZGDmWMYQXoF7P1B85q0vXo5lh5sEB/E47n7t0DaQd29t5ORHhFT1Vx6GeIuUFyNvimqVZkjGAyZ0=
+	t=1741714275; cv=none; b=NKD0FhCB0BMUoH4YUDYZsLlfGz5+wruea0tt0oFnIrJX7p91UePxYxJXVeUzha0YcCK2Fhb4+yF+Q6Pp7C6igIRK+0H/sfQHI1BR6JhbYjySFWNarIMVwBRMpiDce5dPO/yP8XvxombV6h1uyo51IPC5k4hqeFiyT/u8jdlkkDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741714215; c=relaxed/simple;
-	bh=DFKbP2m17x9NhY5DC8m8FMLjs0ba6aQS3fbzjF3mYrE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=E8kKiw96evSPGombLIul72IiW5++SkaISOH3Z8aRdK8DtQ0JyJB3vCNc8EhEweH72SdpL+ZtfBAdR1tU6kW6gvq6R9hHsMnkhaLB5rbznwohbcZB/Jn3m4iajCnWHMbkN1oaBmK+yO6WqZC/PJQZcxXAyjBm2+9rpZ8IXZnquVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZK/eAHl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97774C4CEED;
-	Tue, 11 Mar 2025 17:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741714214;
-	bh=DFKbP2m17x9NhY5DC8m8FMLjs0ba6aQS3fbzjF3mYrE=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=KZK/eAHl2rAR3zFRRGg/ru97OPCUza/H45sejnwQX2pb8wegKnxXd9T6jKgxLC4ac
-	 elBYBvFeAyPJItZ0000+nFDusFBRAi6KhDfMlVY0aIz5fssw/pVMdR0BWtOyrj9SR3
-	 sLr6H9OZGrZJPMPKL566+VnMKWzIDjCU8Al3shldmZJ08TbPwABnS/BaraBUINCYA5
-	 ucFkRvgJAdljbWPp+e6gCMGJVYFzAUmVq9SEqShg2IufC/My3am17P2Ip18c2mXHGS
-	 ftW6VPQucRPvhqbSeWWRXcLiX5XlTx8p/8RrmlwTR5rL/N/CBBTjS+iALCbD7YkBqZ
-	 mSWjy7OJ46tyw==
-Message-ID: <25fa661b-98e4-468b-bb4d-4a2c95f32b71@kernel.org>
-Date: Tue, 11 Mar 2025 18:30:07 +0100
+	s=arc-20240116; t=1741714275; c=relaxed/simple;
+	bh=YnU39UTdrkK967CS5QBoK9SJMChpCj6ucq5fmt6tDlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F2JdmLZkdGTH5mkumBrjXs2neLqP6AMwFasAcOxwNKoLGM+prpsXXG7hAzuSNWKI9lTjCBJbVKPwnkqYSN1NUQcMvNlbQf7Qx3Qn1UEKKPfqFOVoayY/vzMKwvd4SyTFYj/ootTRkbNnMoPaiTWxUs5fHzth+02W/YOFPkhBM8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OM93F3xA; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F194A441B3;
+	Tue, 11 Mar 2025 17:31:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741714264;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e4ce7XpyqCF9Ov39zRPIKLWSbFCk4LaFJEpsxtfdhHI=;
+	b=OM93F3xA1g51io8YkQQiFUSlwLnXaX/o9Sao+TxG8GIwmnE/IkiiXGf/hzopkxgEo3X5gd
+	6a2oA/4x0nw9LOqZq3EBk0+ZyXcP0ps4ae7oRhF4+6ypnxFk1cflI9WZSmVW276cBmlzM1
+	admySuOuqaG81EDCsPfneFXG/0Pj1bI7lTUhMDuVK+fUzxagAWTPYKMoAfhhU+7+tsCKul
+	hPfG9FW8ysuzHO6EXJt3uSo1gI4ZytzA71Ju0KKi99qebyIJz2dnATeeRJ9T3L2vicI4/3
+	ilT2NHvUuKBe2oEyeIgJqn4jn4AAmeQcQz/hP4H3N+zXjCjK4J40ECGYRiC0mw==
+Date: Tue, 11 Mar 2025 18:31:01 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Russell King <rmk+kernel@armlinux.org.uk>,
+ Thangaraj Samynathan <Thangaraj.S@microchip.com>, Rengarajan Sundararajan
+ <Rengarajan.S@microchip.com>, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH net-next v3 6/7] net: usb: lan78xx: Transition
+ get/set_pause to phylink
+Message-ID: <20250311183101.5192c3df@fedora.home>
+In-Reply-To: <20250310115737.784047-7-o.rempel@pengutronix.de>
+References: <20250310115737.784047-1-o.rempel@pengutronix.de>
+	<20250310115737.784047-7-o.rempel@pengutronix.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] drivers/thermal/exymos: Use guard notation when
- acquiring mutex
-To: Anand Moon <linux.amoon@gmail.com>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>,
- "open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250310143450.8276-1-linux.amoon@gmail.com>
- <20250310143450.8276-5-linux.amoon@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250310143450.8276-5-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddvkeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrt
+ ghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeifohhojhhunhhgrdhhuhhhsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopehrmhhkodhkvghrnhgvlhesrghrmhhlihhnuhigrdhorhhgrdhukh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On 10/03/2025 15:34, Anand Moon wrote:
-> Using guard notation makes the code more compact and error handling
-> more robust by ensuring that mutexes are released in all code paths
-> when control leaves critical section.
+Hi Oleksij,
+
+On Mon, 10 Mar 2025 12:57:36 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+
+> Replace lan78xx_get_pause and lan78xx_set_pause implementations with
+> phylink-based functions. This transition aligns pause parameter handling
+> with the phylink API, simplifying the code and improving
+> maintainability.
 > 
-
-Subject: typo, exynos
-
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
-> v4: used DEFINE_GUARD macro to guard exynos_tmu_data structure.
->     However, incorporating guard(exynos_tmu_data)(data); results
->     in a recursive deadlock with the mutex during initialization, as this
->     data structure is common to all the code configurations of Exynos TMU
-> v3: New patch
 
-If you ever use cleanup or guards, you must build your code with recent
-clang and W=1. Failure to do so means you ask reviewers manually to spot
-issues not visible in the context, instead of using tools. It's a NAK
-for me.
+Some very minor things below :
 
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 25 +++++++++++--------------
->  1 file changed, 11 insertions(+), 14 deletions(-)
+>  drivers/net/usb/lan78xx.c | 51 ++-------------------------------------
+>  1 file changed, 2 insertions(+), 49 deletions(-)
 > 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index a71cde0a4b17e..85f88c5e0f11c 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -12,6 +12,7 @@
->   */
+> diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+> index 7107eaa440e5..3aa916a9ee0b 100644
+> --- a/drivers/net/usb/lan78xx.c
+> +++ b/drivers/net/usb/lan78xx.c
+> @@ -1878,63 +1878,16 @@ static void lan78xx_get_pause(struct net_device *net,
+>  			      struct ethtool_pauseparam *pause)
+>  {
+>  	struct lan78xx_net *dev = netdev_priv(net);
+> -	struct phy_device *phydev = net->phydev;
+> -	struct ethtool_link_ksettings ecmd;
+> -
+> -	phy_ethtool_ksettings_get(phydev, &ecmd);
+> -
+> -	pause->autoneg = dev->fc_autoneg;
 >  
->  #include <linux/clk.h>
-> +#include <linux/cleanup.h>
->  #include <linux/io.h>
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
-> @@ -199,6 +200,9 @@ struct exynos_tmu_data {
->  	void (*tmu_clear_irqs)(struct exynos_tmu_data *data);
->  };
+> -	if (dev->fc_request_control & FLOW_CTRL_TX)
+> -		pause->tx_pause = 1;
+> -
+> -	if (dev->fc_request_control & FLOW_CTRL_RX)
+> -		pause->rx_pause = 1;
+> +	phylink_ethtool_get_pauseparam(dev->phylink, pause);
+>  }
 >  
-> +DEFINE_GUARD(exynos_tmu_data, struct exynos_tmu_data *,
-
-I do not understand why do you need custom guard.
-
-> +	     mutex_lock(&_T->lock), mutex_unlock(&_T->lock))
-> +
->  /*
->   * TMU treats temperature as a mapped temperature code.
->   * The temperature is converted differently depending on the calibration type.
-> @@ -256,7 +260,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->  	unsigned int status;
->  	int ret = 0;
+>  static int lan78xx_set_pause(struct net_device *net,
+>  			     struct ethtool_pauseparam *pause)
+>  {
+>  	struct lan78xx_net *dev = netdev_priv(net);
+> -	struct phy_device *phydev = net->phydev;
+> -	struct ethtool_link_ksettings ecmd;
+> -	int ret;
+> -
+> -	phy_ethtool_ksettings_get(phydev, &ecmd);
+> -
+> -	if (pause->autoneg && !ecmd.base.autoneg) {
+> -		ret = -EINVAL;
+> -		goto exit;
+> -	}
 >  
-> -	mutex_lock(&data->lock);
-> +	guard(mutex)(&data->lock);
+> -	dev->fc_request_control = 0;
+> -	if (pause->rx_pause)
+> -		dev->fc_request_control |= FLOW_CTRL_RX;
+> -
+> -	if (pause->tx_pause)
+> -		dev->fc_request_control |= FLOW_CTRL_TX;
 
-Which you do not use... Please don't use cleanup.h if you do not know
-it. It leads to bugs.
+Sorry not to have spotted that before, but after that patch you no
+longer need dev->fc_request_control, you can get rid of that in
+struct lan78xx_net.
 
+Related to other patches (probably patch 1), it also appears you can get
+rid of :
+ - dev->fc_autoneg
+ - dev->interface
+ - dev->link_on
 
-Best regards,
-Krzysztof
+Thanks,
+
+Maxime
 
