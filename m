@@ -1,140 +1,111 @@
-Return-Path: <linux-kernel+bounces-556159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E2DA5C199
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:46:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3C7A5C19E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD61C3A4E9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:46:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8454F3AA43A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C608F22FF22;
-	Tue, 11 Mar 2025 12:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BC5253F13;
+	Tue, 11 Mar 2025 12:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="iOqEUJgv"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hqGc63mn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8D7322E
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D841D514E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741697209; cv=none; b=lC4gYlN8j418KD8L0lL2K3G+p68OyaqbtRlmntJpTLZRkwIkc+LndAI9rmefM5yKQpvRUB8IrkC+GteIAl8dX5XBwLAaic10t1ekG9Fjd9B5qV/Cj2cziDdUo+OGcqBjCx1GKy1TjOS80x3IvzX4GdGOm96AiilHADpHPivdmkM=
+	t=1741697267; cv=none; b=MUryDGN2Pf2HC7zpUolbWmr07jyY5RQshw44ryJsbWFT0rsJQnqwUaWZzGwtIedChZqMUdGAE+bo2ABxSusmd2YjDgdSYXTpxcbnk8aMnYKbnOk2jlRB1zrk49lzGuzng/eA407cxEeNFqhOmzqtvIoge8qnX+CvksvRqJDjY+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741697209; c=relaxed/simple;
-	bh=hIuzAPv8x7HdhF3kOYgKUE08BcmIV4Tk3xoim98ixEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QCKK14FrXFnDiRav0id/agdpCB1MjFARcyxz+cLk2ItXeA9vbe0w7JAQaffOxzt36eb1i4GIXf+NCqU5NePAk3gOGVGLIM9ZhbNONhM1m4h5NQq8MC6evYD1wnnULIkZCtdRzJH9xk4mJBAr3cJMkC6N5dkT71RjdyNS8TI51T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=iOqEUJgv; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-Date: Tue, 11 Mar 2025 08:46:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1741697201;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mOG0CEw3FP2FlG0epn5X7Xw21NWLyIUELyR5vBonHPk=;
-	b=iOqEUJgvADrMU0rIWuG0Ruc7Rtt8IZl+4o95HtRzhUdZyQGFZ1JqrK6ZYGRItGhaB/i6vx
-	SUKlcXNM56cjtmk6uLgcFTxRSu13CBv7gM8RK/UHtKCdvpIuuoCKgOg2ZyE5WaPzY26G76
-	uyHRVJJ+1DwdlUYaed7Wflte4dOcoRNxcMzYlo6FIlE42eXoaGrJVauc3xcB5jmYo5XCcD
-	BUXc+bXEclIcJh9ZSiUkawPEsyTzJaoUtop39EGchJ3EqbnbnlWjQvuj3E3YGsIrgGFuaL
-	uZv6bDGFaxw6XdeG2kdrdBdFkuQ7+IJDK/zThbDQLqxqGNj8xUbEJQw7INmUrA==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-To: Rob Clark <robdclark@gmail.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Faith Ekstrand <faith.ekstrand@collabora.com>,
-	Janne Grunau <j@jannau.net>, Sven Peter <sven@svenpeter.dev>,
-	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, Asahi Lina <lina@asahilina.net>
-Subject: Re: [PATCH] drm: Add UAPI for the Asahi driver
-Message-ID: <Z9Awpj5Avh0rx_fq@blossom>
-References: <20250310-agx-uapi-v1-1-86c80905004e@rosenzweig.io>
- <CAF6AEGukrBzwwdDWX5jUXDKqj7+kn7LBRy6NocE4=bw1D9WjcQ@mail.gmail.com>
+	s=arc-20240116; t=1741697267; c=relaxed/simple;
+	bh=6kcD7D+tKa3jd+9NZ4BfVmrA80KiU0Mvj3U1zhs1YN0=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=PnTO1m0n/veTh5hf/ee2TEQnYLp8IN9EVq2TtdiaA2wJG8GiKhfcsPlyhv4l7/ECWvDgbMxa4nTilicNhdT4jyvWGmxtrMEMqQPJ9rP+2LNZw6nG3hPxenkJK59c0/nGu527wAAsdbueSXFwiYCIoa5f3YX7UtDrQqBYxXOzJLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hqGc63mn; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741697265; x=1773233265;
+  h=date:from:to:cc:subject:message-id;
+  bh=6kcD7D+tKa3jd+9NZ4BfVmrA80KiU0Mvj3U1zhs1YN0=;
+  b=hqGc63mnYFqTFHtj8ZtsmhHc+7I4U0mth1nGnsSsvb3Pqjvs6vxhTWkS
+   j+gLXsBVpObY3Q21PcV5/fbBN6ANis1SCL3r3qnPcmXSTn1O7mWgjscla
+   MaMFBoLoHTkDbT+sPooor17HB+DFrhb8odBThnk5ZpfIpj9OUbJgjdW3k
+   4+mu4BbAHUNpLMRhxiSywAXyta2g7JjZ4aHATM4atwDUyZ4UeygufCdg1
+   ScOswEipYLdQhtxsMC6UuKMHvmBz6/Lu4dH8LfyUghYOnOe/Pr+zk5CSG
+   3hFJTJezX2AfTpuJ6E4UDdh0yj8qyDGfrkLNHBo2Gr8bvkbSalV8rqYWj
+   g==;
+X-CSE-ConnectionGUID: 1vBcGCTrQ5u1vNvbPj2THQ==
+X-CSE-MsgGUID: 7dFJbZr5Sdug9qKTcyb24g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42916655"
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="42916655"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 05:47:44 -0700
+X-CSE-ConnectionGUID: EqHzGnUYRyGkQ0or5Tj3uQ==
+X-CSE-MsgGUID: m3JSWOldTvWt0F3MDqrLXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="151260863"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 11 Mar 2025 05:47:44 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1trz1H-0006f6-1n;
+	Tue, 11 Mar 2025 12:47:40 +0000
+Date: Tue, 11 Mar 2025 20:47:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/mm] BUILD SUCCESS
+ 4f10ec03fe1ed12479134be33ddf006382744651
+Message-ID: <202503112016.XuNcNG7F-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAF6AEGukrBzwwdDWX5jUXDKqj7+kn7LBRy6NocE4=bw1D9WjcQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-> > +/**
-> > + * struct drm_asahi_gem_bind - Arguments passed to
-> > + * DRM_IOCTL_ASAHI_GEM_BIND
-> > + */
-> > +struct drm_asahi_gem_bind {
-> > +       /** @op: Bind operation (enum drm_asahi_bind_op) */
-> > +       __u32 op;
-> > +
-> > +       /** @flags: One or more of ASAHI_BIND_* (BIND only) */
-> > +       __u32 flags;
-> > +
-> > +       /** @handle: GEM object to bind/unbind (BIND or UNBIND_ALL) */
-> > +       __u32 handle;
-> > +
-> > +       /** @vm_id: The ID of the VM to operate on */
-> > +       __u32 vm_id;
-> > +
-> > +       /** @offset: Offset into the object (BIND only) */
-> > +       __u64 offset;
-> > +
-> > +       /**
-> > +        * @range: Number of bytes to bind/unbind to addr (BIND or UNBIND only)
-> > +        */
-> > +       __u64 range;
-> > +
-> > +       /** @addr: Address to bind to (BIND or UNBIND only) */
-> > +       __u64 addr;
-> > +};
-> 
-> No in/out syncobj/fences?  This seems to diverge from xe/nouveau/panthor..
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/mm
+branch HEAD: 4f10ec03fe1ed12479134be33ddf006382744651  x86/mm/ident_map: Fix theoretical virtual address overflow to zero
 
-Async vm_bind is useful mainly as an optimization, it's not (as far as I
-know) required for correctness - you can always wait/signal from a
-userspace submit thread with sync vm_bind. It's my understanding (from
-when I chatted with Faith about this when bringing up sparse) that this
-is how sparse was implemented historically and maybe still is on
-Windows?
+elapsed time: 990m
 
-> > +/**
-> > + * enum drm_asahi_sync_type - Sync item type
-> > + */
-> > +enum drm_asahi_sync_type {
-> > +       /** @DRM_ASAHI_SYNC_SYNCOBJ: Binary sync object */
-> > +       DRM_ASAHI_SYNC_SYNCOBJ = 0,
-> > +
-> > +       /** @DRM_ASAHI_SYNC_TIMELINE_SYNCOBJ: Timeline sync object */
-> > +       DRM_ASAHI_SYNC_TIMELINE_SYNCOBJ = 1,
-> > +};
-> 
-> IMHO it would still be worthwhile to also support fence fd's, since it
-> would avoid a couple extra ioctls to convert btwn fence fds and
-> syncobj for virtgpu native context..
+configs tested: 19
+configs skipped: 127
 
-Ditto for this as an optimization. Both of these can be added in a
-straightforward backwards-compat way later, so I'm inclined to not add
-any extra functionality beyond what we already have (and know works),
-rather than commit prematurely to new features and risk getting
-something wrong.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-(and then it means more rust bindings...)
+tested configs:
+i386                         allmodconfig    gcc-12
+i386                          allnoconfig    gcc-12
+i386                         allyesconfig    gcc-12
+i386    buildonly-randconfig-001-20250311    gcc-12
+i386    buildonly-randconfig-002-20250311    clang-19
+i386    buildonly-randconfig-003-20250311    clang-19
+i386    buildonly-randconfig-004-20250311    clang-19
+i386    buildonly-randconfig-005-20250311    clang-19
+i386    buildonly-randconfig-006-20250311    gcc-11
+i386                            defconfig    clang-19
+x86_64                        allnoconfig    clang-19
+x86_64                       allyesconfig    clang-19
+x86_64  buildonly-randconfig-001-20250311    gcc-12
+x86_64  buildonly-randconfig-002-20250311    gcc-12
+x86_64  buildonly-randconfig-003-20250311    clang-19
+x86_64  buildonly-randconfig-004-20250311    clang-19
+x86_64  buildonly-randconfig-005-20250311    gcc-12
+x86_64  buildonly-randconfig-006-20250311    gcc-12
+x86_64                          defconfig    gcc-11
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
