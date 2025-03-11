@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-556949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2BCEA5D14C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:00:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2868BA5D14D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:01:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6904A3B852F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:00:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8B6D189CD3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982842222DB;
-	Tue, 11 Mar 2025 21:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CA9224AEB;
+	Tue, 11 Mar 2025 21:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EybcrF6m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BadLIGob"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30778BF8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 21:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A4E1E9B0C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 21:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741726826; cv=none; b=hGbcy0VnN8xkumvzxC7dlULzcYEDljUxrWXMnGFpvn/sx5Bg/AIIihldwN/Mb7LLdFkIz1AKGzvvebeMKfUWyI8Z6E/xgXg4T09kaSaRg7j2d72sQr49jGgE+rnXs+z+3u7GBGISe3mfnd7SX+x5OvkFNEP5WC2vktaCNXIJBFk=
+	t=1741726881; cv=none; b=oQ8PCeHhzqKjuRyyBAXgzoR9j6pKuzo9jbcJLt40zTzggRBj2jEsfbepLj8dhWHfH+vJO5N6YpXkNN9W2qWtQ9M4V6XQtFj/UXmw2WjkkFR54hMINGCOZrV8y0U+GBYhkqWEUg3XuCML8Gt8lVlq5PEYN/3O58GSyHExq/0tqdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741726826; c=relaxed/simple;
-	bh=QLkONEElsgGKxIzNwS3VferQTigrHPHxuZz5dFwdp5s=;
+	s=arc-20240116; t=1741726881; c=relaxed/simple;
+	bh=+NTNS0fhln7wAifm0+ONt7nOeyWyL6zedv9NQ16rf7Y=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KNMJQRSu4gE3rTw5yVlTirZNanWnd+NSfAHwciDPKSWIG93FASmScO9YA/DLvirUEwEySNdwIRWDYiH3zy4ahokLkocZoRML04azHmGVEGBl7Uh4gTh18JdPwuhNpGL6rXQFz4sJClpyfZW+/3CYpq3CQYSNt6gJcZBXJZLDIT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EybcrF6m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D71AC4CEE9;
-	Tue, 11 Mar 2025 21:00:25 +0000 (UTC)
+	 MIME-Version; b=afGCV9bQDJ3zWJnXjdK/Xb7spq8CtAT71o/RxqUqNIMEEQnFDLXMgdcexVDlPrnp3nmeCiW81IVFpINVx6Gd1eccJh4Z40yWCFPu1/ramXj9a7lBDuCdb23jAehBzsqH1w6teJIDXW84gf8dFI37qTwbgktQ6SqWYlIYmfGzuDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BadLIGob; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 438D0C4CEE9;
+	Tue, 11 Mar 2025 21:01:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741726825;
-	bh=QLkONEElsgGKxIzNwS3VferQTigrHPHxuZz5dFwdp5s=;
+	s=k20201202; t=1741726880;
+	bh=+NTNS0fhln7wAifm0+ONt7nOeyWyL6zedv9NQ16rf7Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EybcrF6mztt/bLYNcuSF2rCGMEPvxvMLV/UEQGBqRccO0fFU0RoFznkIYcX/c+NLf
-	 Q0kxEjONBkyhvtip0iJkEaZihjA0e2TENb/PBuBlNPhVcbVgilBsFMz4HAAxwoL2m4
-	 ZaJXyj8rW2EO9iTwjElzPDOnK+R743BcX7ouTbaNdgTS9VF6rcjmYrVcAmkQ+eRf79
-	 Xm37L0xrPhd0glAOPz6Py3uVce2Ync3qlXsGPxqEEKkLVeyLPIOpdg6u7fYLw0wvAh
-	 8rIe4nKRawf+/SBEhgyvxZGxR57THsyCpMkHtlzGY1CZ/lvOmqSYrMFqCy0cVth/s8
-	 vi0dZ6rNs0PIQ==
+	b=BadLIGob3p2Avw2SasIiOnPmJSmwhz0lacvAgjfidbEk8OEOtXASvEluZ/cqnq5mT
+	 GvcwXgfk33hNWLXtVTEKA/GDMBxBCoCT/EuhqD4yan2WD0SFKQ9qa7pVENJiQgKHxd
+	 uI83wfED6XDpnbvPAJHy/0Tr+FhXuSlrB7VI297Eo2rlFMbbEIysx+7wF2WDXwkkdR
+	 /+JxI+bDN2wwlIKmDecB3rpwXEVR5a1V/mLpcR9yXQgIC3V7xv1kSugcSKSkjt9uqg
+	 kWtWvil3XEUjirL97/X54Ekw76Aolae3VKw562TMpGf1ujkhnY+u9gv2XhO2iyMB7V
+	 QHQXd8RezjEwQ==
 From: SeongJae Park <sj@kernel.org>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: SeongJae Park <sj@kernel.org>,
@@ -50,12 +50,13 @@ Cc: SeongJae Park <sj@kernel.org>,
 	Vlastimil Babka <vbabka@suse.cz>,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 7/9] mm/madvise: let madvise_{dontneed,free}_single_vma() caller batches tlb flushes
-Date: Tue, 11 Mar 2025 14:00:23 -0700
-Message-Id: <20250311210023.85435-1-sj@kernel.org>
+	linux-mm@kvack.org,
+	Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH 8/9] mm/madvise: batch tlb flushes for [process_]madvise(MADV_{DONTNEED[_LOCKED],FREE})
+Date: Tue, 11 Mar 2025 14:01:18 -0700
+Message-Id: <20250311210118.85501-1-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <e55c43a1-55de-4720-9177-8af08c797d17@lucifer.local>
+In-Reply-To: <d4ac2770-7ef2-4522-beba-97ba16a2f7ac@lucifer.local>
 References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,211 +66,150 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Mar 2025 13:07:25 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On Tue, 11 Mar 2025 13:59:10 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-> Super super UBER nitty but... pretty sure the subject here should be <= 75
-> chars right? :P
+> +cc Rik on this, as he's working on TLB flush-related stuff. Maybe worth
+> cc-ing him on series respins too? Unless Rik objects of course :P
+> 
+> Again, nit, but your subject line/first line of commit message is
+> definitely too long here! :)
 
-I believe that's not a hard limit, but I will try to make it shorter in the
-next spin.
+I will reduce.
 
 > 
-> On Mon, Mar 10, 2025 at 10:23:16AM -0700, SeongJae Park wrote:
-> > Update madvise_dontneed_single_vma() and madvise_free_single_vma()
-> > functions so that the caller can pass an mmu_gather object that should
-> > be initialized and will be finished outside, for batched tlb flushes.
-> > Also modify their internal code to support such usage by skipping the
-> > initialization and finishing of self-allocated mmu_gather object if it
-> > received a valid mmu_gather object.
+> On Mon, Mar 10, 2025 at 10:23:17AM -0700, SeongJae Park wrote:
+> > MADV_DONTNEED[_LOCKED] and MADV_FREE internal logics for
+> > [process_]madvise() can be invoked with batched tlb flushes.  Update
+> > vector_madvise() and do_madvise(), which are called for the two system
+> > calls  respectively, to use those in the efficient way.  Initialize an
+> > mmu_gather object before starting the internal works, and flush the
+> > gathered tlb entries at once after all the internal works are done.
+> 
+> super nit but logics -> logic and works -> work :)
+> 
+> I think we need more here as to why you're restricting to
+> MADV_DONTNEED_LOCKED and MADV_FREE. I see pageout initialises a tlb gather
+> object, so does cold, etc. etc.?
+
+Good point.  I'm just trying to start from small things.  I will clarify this
+on the next spin.
+
+> 
 > >
 > > Signed-off-by: SeongJae Park <sj@kernel.org>
+> 
+> This is really nice, I love how we're able to evolve this towards batching
+> flushes.
+> 
+> Overall though I'd like you to address some of the concerns here before
+> giving tags... :)
+
+Thank you for nice comments! :)
+
+> 
 > > ---
-> >  mm/internal.h |  3 +++
-> >  mm/madvise.c  | 37 +++++++++++++++++++++++++------------
-> >  mm/memory.c   | 16 +++++++++++++---
-> >  3 files changed, 41 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/mm/internal.h b/mm/internal.h
-> > index 0caa64dc2cb7..ce7fb2383f65 100644
-> > --- a/mm/internal.h
-> > +++ b/mm/internal.h
-> > @@ -438,6 +438,9 @@ void unmap_page_range(struct mmu_gather *tlb,
-> >  			     struct vm_area_struct *vma,
-> >  			     unsigned long addr, unsigned long end,
-> >  			     struct zap_details *details);
-> > +void unmap_vma_single(struct mmu_gather *tlb, struct vm_area_struct *vma,
-> > +		      unsigned long addr, unsigned long size,
-> > +		      struct zap_details *details);
-> >  int folio_unmap_invalidate(struct address_space *mapping, struct folio *folio,
-> >  			   gfp_t gfp);
+> >  mm/madvise.c | 51 +++++++++++++++++++++++++++++++++++++++++++++++----
+> >  1 file changed, 47 insertions(+), 4 deletions(-)
 > >
 > > diff --git a/mm/madvise.c b/mm/madvise.c
-> > index ba2a78795207..d7ea71c6422c 100644
+> > index d7ea71c6422c..d5f4ce3041a4 100644
 > > --- a/mm/madvise.c
 > > +++ b/mm/madvise.c
-> > @@ -794,12 +794,19 @@ static const struct mm_walk_ops madvise_free_walk_ops = {
-> >  	.walk_lock		= PGWALK_RDLOCK,
-> >  };
+> > @@ -905,6 +905,7 @@ static bool madvise_dontneed_free_valid_vma(struct vm_area_struct *vma,
 > >
-> > -static int madvise_free_single_vma(struct vm_area_struct *vma,
-> > -			unsigned long start_addr, unsigned long end_addr)
-> > +static int madvise_free_single_vma(
-> > +		struct mmu_gather *caller_tlb, struct vm_area_struct *vma,
-> 
-> I find this interface horrible, and super confusing. It's not clear at all
-> what's going on here.
-> 
-> Why not use your new helper struct to add a field you can thread through
-> here?
-
-I will do so in the next spin.
-
-> 
-> > +		unsigned long start_addr, unsigned long end_addr)
-> >  {
-> >  	struct mm_struct *mm = vma->vm_mm;
-> >  	struct mmu_notifier_range range;
-> > -	struct mmu_gather tlb;
-> > +	struct mmu_gather self_tlb;
+> >  struct madvise_behavior {
+> >  	int behavior;
 > > +	struct mmu_gather *tlb;
-> > +
-> > +	if (caller_tlb)
-> > +		tlb = caller_tlb;
-> > +	else
-> > +		tlb = &self_tlb;
-> >
-> >  	/* MADV_FREE works for only anon vma at the moment */
-> >  	if (!vma_is_anonymous(vma))
-> > @@ -815,16 +822,18 @@ static int madvise_free_single_vma(struct vm_area_struct *vma,
-> >  				range.start, range.end);
-> >
-> >  	lru_add_drain();
-> > -	tlb_gather_mmu(&tlb, mm);
-> > +	if (!caller_tlb)
-> > +		tlb_gather_mmu(tlb, mm);
+> >  };
 > 
-> Yeah really don't like this.
+> Aha! Good :)
 > 
-> Ideally we'd abstract the mmu_gather struct to the helper struct (which I
-> see you do in a subsequent patch anyway) would be ideal if you could find a
-> way to make that work.
-> 
-> But if not, then:
-> 
-> if (behavior->batched_tlb)
-> 	tlb_gather_mmu(&tlb, mm);
-> 
-> etc. etc.
-> 
-> Would work better.
+> I see in 9/9 you actually pull the caller_tlb stuff out, I still feel like
+> we should be threading this state through further, if possible, rather than
+> passing in behavior->tlb as a parameter.
 
-Agreed.
+Yes, I will do so.
 
 > 
-> >  	update_hiwater_rss(mm);
+> But this is nitty I suppose!
+> 
 > >
-> >  	mmu_notifier_invalidate_range_start(&range);
-> > -	tlb_start_vma(&tlb, vma);
-> > +	tlb_start_vma(tlb, vma);
-> 
-> Also not a fan of making tlb refer to a pointer now when before it
-> didn't... I mean that's more of a nit and maybe unavoidable, but still!
-> 
-> I mean yeah ok this is probably unavoidable, ignore.
-
-Yeah... I also find no good way to make this very cleaner without the followup
-cleanup for now.
-
-> 
-> >  	walk_page_range(vma->vm_mm, range.start, range.end,
-> > -			&madvise_free_walk_ops, &tlb);
-> > -	tlb_end_vma(&tlb, vma);
-> > +			&madvise_free_walk_ops, tlb);
-> > +	tlb_end_vma(tlb, vma);
-> >  	mmu_notifier_invalidate_range_end(&range);
-> > -	tlb_finish_mmu(&tlb);
-> > +	if (!caller_tlb)
-> > +		tlb_finish_mmu(tlb);
-> >
-> >  	return 0;
-> >  }
-> > @@ -848,7 +857,8 @@ static int madvise_free_single_vma(struct vm_area_struct *vma,
-> >   * An interface that causes the system to free clean pages and flush
-> >   * dirty pages is already available as msync(MS_INVALIDATE).
-> >   */
-> > -static long madvise_dontneed_single_vma(struct vm_area_struct *vma,
-> > +static long madvise_dontneed_single_vma(struct mmu_gather *tlb,
-> > +					struct vm_area_struct *vma,
-> >  					unsigned long start, unsigned long end)
-> >  {
-> >  	struct zap_details details = {
-> > @@ -856,7 +866,10 @@ static long madvise_dontneed_single_vma(struct vm_area_struct *vma,
-> >  		.even_cows = true,
-> >  	};
-> >
-> > -	zap_page_range_single(vma, start, end - start, &details);
-> > +	if (!tlb)
-> > +		zap_page_range_single(vma, start, end - start, &details);
-> 
-> Please don't put the negation case first, it's confusing. Swap them!
-
-Ok, I will do so.
-
-> 
-> 
-> > +	else
-> > +		unmap_vma_single(tlb, vma, start, end - start, &details);
-> >  	return 0;
-> >  }
-> >
-> > @@ -951,9 +964,9 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
+> >  static long madvise_dontneed_free(struct vm_area_struct *vma,
+> > @@ -964,9 +965,11 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
 > >  	}
 > >
 > >  	if (behavior == MADV_DONTNEED || behavior == MADV_DONTNEED_LOCKED)
-> > -		return madvise_dontneed_single_vma(vma, start, end);
-> > +		return madvise_dontneed_single_vma(NULL, vma, start, end);
+> > -		return madvise_dontneed_single_vma(NULL, vma, start, end);
+> > +		return madvise_dontneed_single_vma(
+> > +				madv_behavior->tlb, vma, start, end);
 > >  	else if (behavior == MADV_FREE)
-> > -		return madvise_free_single_vma(vma, start, end);
-> > +		return madvise_free_single_vma(NULL, vma, start, end);
+> > -		return madvise_free_single_vma(NULL, vma, start, end);
+> > +		return madvise_free_single_vma(
+> > +				madv_behavior->tlb, vma, start, end);
 > 
-> Not to labour the point, but this is also horrid, passing a mystery NULL
-> parameter first...
+> Yeah as I said above be nice to just pass madv_behavior, makes things more
+> flexible to pass a pointer to the helper struct through, as you can
 
-Agreed again.  I will just pass the madvise_behavior struct in the next spin.
+Yes.
 
 > 
 > >  	else
 > >  		return -EINVAL;
 > >  }
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 88c478e2ed1a..3256b9713cbd 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -1995,9 +1995,19 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
-> >  	mmu_notifier_invalidate_range_end(&range);
+> > @@ -1639,6 +1642,32 @@ static void madvise_unlock(struct mm_struct *mm, int behavior)
+> >  		mmap_read_unlock(mm);
 > >  }
 > >
-> > -static void unmap_vma_single(struct mmu_gather *tlb,
-> > -		struct vm_area_struct *vma, unsigned long address,
-> > -		unsigned long size, struct zap_details *details)
-> > +/**
-> > + * unmap_vma_single - remove user pages in a given range
-> > + * @tlb: pointer to the caller's struct mmu_gather
-> > + * @vma: vm_area_struct holding the applicable pages
-> > + * @address: starting address of the pages
-> > + * @size: number of bytes to remove
-> > + * @details: details of shared cache invalidation
-> > + *
-> > + * @tlb shouldn't be NULL.  The range must fit into one VMA.
+> > +static bool madvise_batch_tlb_flush(int behavior)
+> > +{
+> > +	switch (behavior) {
+> > +	case MADV_DONTNEED:
+> > +	case MADV_DONTNEED_LOCKED:
+> > +		return true;
+> > +	default:
+> > +		return false;
+> > +	}
+> > +}
 > 
-> Can we add some VM_WARN_ON[_ONCE]()'s for these conditions please?
+> I kind of hate this madvise_ prefix stuff, like we're in mm/madvise.c, it's
+> pretty obvious static functions are related to madvise :) but this is a
+> pre-existing thing, not your fault, and it's actually right to maintain
+> consistency with this.
+> 
+> So this is purely a whine that can be >/dev/null.
 
-Nice suggestion, I will do so.
+Thank you for understanding :)
 
 > 
-> Thanks for documenting!
+> > +
+> > +static void madvise_init_tlb(struct madvise_behavior *madv_behavior,
+> > +		struct mm_struct *mm)
+> > +{
+> > +	if (!madvise_batch_tlb_flush(madv_behavior->behavior))
+> > +		return;
+> > +	tlb_gather_mmu(madv_behavior->tlb, mm);
+> > +}
+> > +
+> > +static void madvise_finish_tlb(struct madvise_behavior *madv_behavior)
+> > +{
+> > +	if (!madvise_batch_tlb_flush(madv_behavior->behavior))
+> > +		return;
+> > +	tlb_finish_mmu(madv_behavior->tlb);
+> > +}
+> > +
+> 
+> Nitty, but for both of these, usually I like the guard clause pattern, but
+> since it's such a trivial thing I think it reads better as:
+> 
+> 	if (madvise_batch_tlb_flush(madv_behavior->behavior))
+> 		tlb_gather_mmu(madv_behavior->tlb, mm);
+> 
+> and:
+> 
+> 	if (madvise_batch_tlb_flush(madv_behavior->behavior))
+> 		tlb_finish_mmu(madv_behavior->tlb);
 
-Kudos to Shakeel, who suggested this kerneldoc comment :)
+Totally agreed, thank you for catching this.
 
 
 Thanks,
