@@ -1,99 +1,163 @@
-Return-Path: <linux-kernel+bounces-556001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54EA4A5BF76
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:43:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6973AA5BF78
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:43:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6C163B35AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:42:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC3DB7A8765
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC30E2571AE;
-	Tue, 11 Mar 2025 11:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DBE25487F;
+	Tue, 11 Mar 2025 11:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUXhwXQL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="n6Anww8A"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE1D254861;
-	Tue, 11 Mar 2025 11:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE18254875
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741693333; cv=none; b=mdodtUZgocFd0TZXWUWUix1xxskq/eUJuE3rKS7vADFKuHSh6YiZ7+HHIwQcmx9QByye1IYKtxQ9sWPhYMlGJ7Xat8Lgqop0IxYK27L7e1T5W7nN9uGFc/FoPry/EGMppFFGAbO/hy1wu+DvUuGY8O2wf4X7uF+LIVHCAB02Mdw=
+	t=1741693408; cv=none; b=Rbta4t/Y7tbHKb8Zb6XZcmCRAD3tyHI1RZg/lldWyZzFtSy8TomTYGdjj/zyJEU6tYgQ5+fzi1L54EOhqAC2DlU0yONtvkLbGKXWwxpSg0XbE7YgHxomWxFwkUoJORvTcwLh6oONNR55c/NxsCFKa487Fk6f7W/XubY1R/ETupo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741693333; c=relaxed/simple;
-	bh=0cT+g/6WFHRo97S8MzNd/drxoZXKifddanz+n4Uem64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D83IQBorCdey99LBtEgzsKLMgQqYzkUioOUSVfKOzE35B+SlLJRaxzFGshumYIcVjd99kKlRUyF90LlWRihOjx6R7zTMdJTheQjRTVVPYBKWfw9QXsyqgXZdc3kzz4kUtaYmL10ZB3h9YmS1yxkLGtqd5Je6nZRIufCUgrRS13A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUXhwXQL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AE5DC4CEEB;
-	Tue, 11 Mar 2025 11:42:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741693332;
-	bh=0cT+g/6WFHRo97S8MzNd/drxoZXKifddanz+n4Uem64=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gUXhwXQLYpC885YJdW2TRx7RUjZm5rSn13EHYURan6o2jQC3pgD+e2hKRnYvENUev
-	 IoPstSAUq6ZbXhledQeIrrlmuOGplzdFM1g8h52AMbNS2RN6NK66yvHRSlMg8wX8FO
-	 FCPl/kZqLxUF+z1+oPfxJRZo6aRMd0lLFbbrHDqeWeBS5jYgku6BK34y1E8ambTZfo
-	 OM2Cy1Z5ZJ8VAZce1vPKhK2/JbXCBZPNeoLJQJ2V7+WW2ethWoFp5rqjolTGskUcSm
-	 TQOzVOGlkbYV9Ho9jsztzeW4fkWX8mLb5QS4yKdedn86e7qDzpe615WK+R8unxCa1d
-	 RsALeUlcGrUBA==
-Date: Tue, 11 Mar 2025 12:42:08 +0100
-From: Vinod Koul <vkoul@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	Guo Ren <guoren@kernel.org>, Yangyu Chen <cyy@cyyself.name>,
-	Ben Hutchings <ben@decadent.org.uk>, Felix Fietkau <nbd@nbd.name>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org, linux-mediatek@lists.infradead.org,
-	linux-usb@vger.kernel.org, upstream@airoha.com
-Subject: Re: [PATCH 10/13] phy: airoha: Add support for Airoha AN7581 USB PHY
-Message-ID: <Z9AhkByegWQgC9YE@vaman>
-References: <20250309132959.19045-1-ansuelsmth@gmail.com>
- <20250309132959.19045-11-ansuelsmth@gmail.com>
- <Z9AhN9T8s1oogCUn@vaman>
+	s=arc-20240116; t=1741693408; c=relaxed/simple;
+	bh=R5aw7MD7fszMmISFJnS6fPp1O1iXt+LvTz4PCfyGpJ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KiGbIDRaPdQJR24/vIhHAJs+oERuQCic07hvnPPrW10EQ1NajYciGC134zCnW5ahMPF+kvKMKmHlj2PORMkfDjmTjx0vVLHRnryKJFDnZwxH0ovFy125q6ySTuP1vWrRETlq68/h7fel7c/g3P/6pVF4OTKu+k+7cJ4UTi5sNzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=n6Anww8A; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741693403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RERT5E1MM2pFoldvbcZ0gDwZRyPWCHafbQQW5IfliwY=;
+	b=n6Anww8ANxWByh3stUtbsfnYyUgR3oG+ELt/cBpGh+c0EoUh6I/0TRmgN96kKcableXnJg
+	6nmIsrpzZLoHWbM5YSm8nbzDJn6pYV86GUlJNVKe6pGhc26VjGMfH3+zS7xqEAX76miQml
+	Xs2M7JOBXdoJ393tjm/8gXhrcTqTV3I=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Robert Richter <rrichter@amd.com>,
+	Bruno Faccini <bfaccini@nvidia.com>,
+	Haibo Xu <haibo1.xu@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] ACPI: NUMA: Use str_enabled_disabled() helper function
+Date: Tue, 11 Mar 2025 12:42:57 +0100
+Message-ID: <20250311114300.497657-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9AhN9T8s1oogCUn@vaman>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 11-03-25, 12:40, Vinod Koul wrote:
-> On 09-03-25, 14:29, Christian Marangi wrote:
-> > Add support for Airoha AN7581 USB PHY driver. AN7581 supports up to 2
-> > USB port with USB 2.0 mode always supported and USB 3.0 mode available
-> > only if the Serdes port is correctly configured for USB 3.0.
-> > 
-> > On xLate probe, the Serdes mode is validated and the driver return error
-> > if the Serdes mode doesn't reflect the expected mode. This is required
-> > as Serdes mode are controlled by the SCU SSR bits and can be either USB
-> > 3.0 mode or HSGMII or PCIe 2. In such case USB 3.0 won't work.
-> > 
-> > If the USB 3.0 mode is not supported, the modes needs to be also
-> > disabled in the xHCI node or the driver will report unsable clock and
-> > fail probe.
+Remove hard-coded strings by using the str_enabled_disabled() helper
+function.
 
-Also I dont see phy depends on rest. Please split this and post phy bits
-separately at least..
+Acked-by: Bruno Faccini <bfaccini@nvidia.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/acpi/numa/srat.c | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
 
+diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
+index 00ac0d7bb8c9..ac7045f3b85b 100644
+--- a/drivers/acpi/numa/srat.c
++++ b/drivers/acpi/numa/srat.c
+@@ -18,6 +18,7 @@
+ #include <linux/nodemask.h>
+ #include <linux/topology.h>
+ #include <linux/numa_memblks.h>
++#include <linux/string_choices.h>
+ 
+ static nodemask_t nodes_found_map = NODE_MASK_NONE;
+ 
+@@ -187,8 +188,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+ 			pr_debug("SRAT Processor (id[0x%02x] eid[0x%02x]) in proximity domain %d %s\n",
+ 				 p->apic_id, p->local_sapic_eid,
+ 				 p->proximity_domain_lo,
+-				 (p->flags & ACPI_SRAT_CPU_ENABLED) ?
+-				 "enabled" : "disabled");
++				 str_enabled_disabled(p->flags & ACPI_SRAT_CPU_ENABLED));
+ 		}
+ 		break;
+ 
+@@ -200,8 +200,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+ 				 (unsigned long long)p->base_address,
+ 				 (unsigned long long)p->length,
+ 				 p->proximity_domain,
+-				 (p->flags & ACPI_SRAT_MEM_ENABLED) ?
+-				 "enabled" : "disabled",
++				 str_enabled_disabled(p->flags & ACPI_SRAT_MEM_ENABLED),
+ 				 (p->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) ?
+ 				 " hot-pluggable" : "",
+ 				 (p->flags & ACPI_SRAT_MEM_NON_VOLATILE) ?
+@@ -216,8 +215,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+ 			pr_debug("SRAT Processor (x2apicid[0x%08x]) in proximity domain %d %s\n",
+ 				 p->apic_id,
+ 				 p->proximity_domain,
+-				 (p->flags & ACPI_SRAT_CPU_ENABLED) ?
+-				 "enabled" : "disabled");
++				 str_enabled_disabled(p->flags & ACPI_SRAT_CPU_ENABLED));
+ 		}
+ 		break;
+ 
+@@ -228,8 +226,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+ 			pr_debug("SRAT Processor (acpi id[0x%04x]) in proximity domain %d %s\n",
+ 				 p->acpi_processor_uid,
+ 				 p->proximity_domain,
+-				 (p->flags & ACPI_SRAT_GICC_ENABLED) ?
+-				 "enabled" : "disabled");
++				 str_enabled_disabled(p->flags & ACPI_SRAT_GICC_ENABLED));
+ 		}
+ 		break;
+ 
+@@ -247,8 +244,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+ 				 *(u16 *)(&p->device_handle[0]),
+ 				 *(u16 *)(&p->device_handle[2]),
+ 				 p->proximity_domain,
+-				 (p->flags & ACPI_SRAT_GENERIC_AFFINITY_ENABLED) ?
+-				"enabled" : "disabled");
++				 str_enabled_disabled(p->flags & ACPI_SRAT_GENERIC_AFFINITY_ENABLED));
+ 		} else {
+ 			/*
+ 			 * In this case we can rely on the device having a
+@@ -258,8 +254,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+ 				(char *)(&p->device_handle[0]),
+ 				(char *)(&p->device_handle[8]),
+ 				p->proximity_domain,
+-				(p->flags & ACPI_SRAT_GENERIC_AFFINITY_ENABLED) ?
+-				"enabled" : "disabled");
++				str_enabled_disabled(p->flags & ACPI_SRAT_GENERIC_AFFINITY_ENABLED));
+ 		}
+ 	}
+ 	break;
+@@ -271,8 +266,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+ 			pr_debug("SRAT Processor (acpi id[0x%04x]) in proximity domain %d %s\n",
+ 				 p->acpi_processor_uid,
+ 				 p->proximity_domain,
+-				 (p->flags & ACPI_SRAT_RINTC_ENABLED) ?
+-				 "enabled" : "disabled");
++				 str_enabled_disabled(p->flags & ACPI_SRAT_RINTC_ENABLED));
+ 		}
+ 		break;
+ 
 -- 
-~Vinod
+2.48.1
+
 
