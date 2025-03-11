@@ -1,100 +1,183 @@
-Return-Path: <linux-kernel+bounces-555953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95835A5BEB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:17:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7286BA5BEBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:18:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5766170C56
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:17:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 185EF3A553C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C06238172;
-	Tue, 11 Mar 2025 11:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F1D2512C9;
+	Tue, 11 Mar 2025 11:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0uWgT4A9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Nq/lxou3"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E242528FD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1FF29A1;
+	Tue, 11 Mar 2025 11:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741691840; cv=none; b=pMmNTVGru25RHwxSw48NEoOL4I0GWeHwvfQs9K1rmSBiHay+hx315gb0pXoPd+aWrjMBxQ7L0pexEodt2iCOHdIDNxXkkPDlY0JiUcsxq7gD7AHjek3rqYBkAgvzJ5lsayJ61klZQTE/hJszm6wvfrjYCtrSf5YjPkoVri9P3sQ=
+	t=1741691882; cv=none; b=rvQA1+eXSbYLqQQ0fmBChdX90irvavoyPjams7AWJYGJTnbqsYIlBbUxQ9hPXFX+tyuW1uXnhIDhuhgF/kVB9+ghJV45I2MzSKqcLzF35ov7yckudWXeRiScGjRat/gfWtx/NkiF2Z4t0gQIykIWphIwYq7zLLKkZAy/lZqknwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741691840; c=relaxed/simple;
-	bh=OM09r8o7osyfiRG+Tl7EaqHM/urKajqaYfr9L6tuhl0=;
+	s=arc-20240116; t=1741691882; c=relaxed/simple;
+	bh=ANzMonclTV44VJy9H0c2FCCBJdNL8hQGxAaoWHlCpGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BP5KXQhtr/ehgbnobxONtXhz0RMb3J38eYi7SdGnFXlP5mSfC36Pro7k2au7gi50cEg2puZUeTjvx+4pDBLr1aYq4tSNAtH9RGryA0kF69fXoGkMnyD2RhY3gV1WOHbRhSKmH981F2Nn/C9GbNWxcsJsWT93Yjt6JvO34B3QXVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0uWgT4A9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5543C4CEE9;
-	Tue, 11 Mar 2025 11:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741691840;
-	bh=OM09r8o7osyfiRG+Tl7EaqHM/urKajqaYfr9L6tuhl0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOMmVYqHXSaImr1DKbS0s0iSWUPPcM53bdT+ckppw1W3sQTm8xbboj1j1yIIcP2ETSbHuA1zo3Bm4lFjUypCVpfQOtBUQCrJjd6sGFURAmV8sUaBR8kpTJel5suTFKMLvuYX6ykTTb8dX3t11S+UKvmcSY7AWl5u0aP9nZ+Rrgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Nq/lxou3; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 41E8440E015D;
+	Tue, 11 Mar 2025 11:17:58 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id H4FL8XNhNoEl; Tue, 11 Mar 2025 11:17:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741691874; bh=yb4r/vcfCtod52jhxzSeBLW72Dv5xW6kz176PIoHlas=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0uWgT4A9MQsvKFhUlGk2hYPuGEB/Zvu80oR4VoiNwZfKy/fjVilY9jom1F+JfGCuV
-	 lqzR9gnj1lwYPHntg0E3mFWT770IEyLeuR1ZptmqVa/yA7GAW1kI+7OcRLx70fnJhS
-	 GTbZSYfCTKCba9SdFRu1iNM9cXFlowWV1ry9IlzM=
-Date: Tue, 11 Mar 2025 12:17:17 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Siddarth G <siddarthsgml@gmail.com>
-Cc: abbotti@mev.co.uk, hsweeten@visionengravers.com,
-	skhan@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	ruffalolavoisier@gmail.com, colin.i.king@gmail.com,
-	n.zhandarovich@fintech.ru
-Subject: Re: [PATCH v2] staging: comedi: remove redundant filename references
- in headers
-Message-ID: <2025031113-resize-charbroil-0d6d@gregkh>
-References: <20250311100741.11999-1-siddarthsgml@gmail.com>
+	b=Nq/lxou3zOuLduIo8NzTGA8e/nGWIYlfBZMiQ/MMoYw2P/EItP1igQxXFPRPAbIfM
+	 UFjXIklsTecL9f4XKDaZu3v0GFQjpLWOAx47GVERBMcpZ6XWUnnqAHOnFGvl7WTe6j
+	 NLTc3HdXFha8OH0YVvq0JBv3a9SfJ3C+rts2v1D4NwOWy09rX67G1So7uxR4hzpYHF
+	 sfK97sRWc/rnWieacZz5E7LXZ2UbaRmjhFsSjT9NeDCordtUd62sqprwWGR0ikKaIT
+	 71ifHkoxp5dKzSEsDLr7rejdMN97iU6aJsFmoywuQNoaD68oR9c6ar8A8P9w1nFTC+
+	 wzxTG0/hrDO1qmwnd8zY69WhOCe7/wkLjBI2vB35t9hVdxytXu/UunX6d1V2/eOMlp
+	 CgzjPGk28vRFmgiZHODqAiohzsM8L1uE3pKPUDvefl6ND8BDzWH8bXPReQvjWNCSX/
+	 tcQ012GNghPf4pkh1ApIZaQkPFIHsywKntSOiiwnPgy0qQIP+C6srDS6je3LrccQdA
+	 Dguq5aj00ptFCNZ28ioX52ueF9WjLnt5kOOKogG6XLJ+KLoSG4bzCJMuoVgocQpA5A
+	 c2re4QQYz2B/R7rA0t9vPXvhekghYxCIR5DauhBu+YRXnckhy+ApRfuQFV2Tu2/fWz
+	 69WJRxsIqdfGFh0IZE0P1LKA=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3224E40E0218;
+	Tue, 11 Mar 2025 11:17:46 +0000 (UTC)
+Date: Tue, 11 Mar 2025 12:17:45 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>
+Subject: Re: [PATCH v2 4/4] x86: Get rid of Makefile.postlink
+Message-ID: <20250311111745.GDZ9Ab2f6-iHLXmRra@fat_crate.local>
+References: <20250311110616.148682-6-ardb+git@google.com>
+ <20250311110616.148682-10-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250311100741.11999-1-siddarthsgml@gmail.com>
+In-Reply-To: <20250311110616.148682-10-ardb+git@google.com>
 
-On Tue, Mar 11, 2025 at 03:37:41PM +0530, Siddarth G wrote:
-> checkpatch.pl reports the following warning in COMEDI subsystem files:
->   WARNING: It's generally not useful to have the filename in the file
-> These file headers contain redundant filename references (e.g., "* comedi_buf.c"
-> in comedi_buf.c) which are unnecessary.
-> This patch removes these references from 14 files to comply with kernel coding
-> standards and eliminate the warnings.
++ Petr for 9d9173e9ceb6
+
+@Petr, you can find the whole thread on lore.
+
+On Tue, Mar 11, 2025 at 12:06:21PM +0100, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
 > 
-> Signed-off-by: Siddarth G <siddarthsgml@gmail.com>
+> Instead of generating the vmlinux.relocs file (needed by the
+> decompressor build to construct the KASLR relocation tables) as a
+> vmlinux postlink step, which is dubious because it depends on data that
+> is stripped from vmlinux before the build completes, generate it from
+> vmlinux.unstripped, which has been introduced specifically for this
+> purpose.
+> 
+> This ensures that each artifact is rebuilt as needed, rather than as a
+> side effect of another build rule.
+> 
+> This effectively reverts commit
+> 
+>   9d9173e9ceb6 ("x86/build: Avoid relocation information in final vmlinux")
+> 
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 > ---
-> Changes in v2:
-> -Included the exact checkpatch.pl warning in the commit message for clarity.
-> ---
->  drivers/comedi/comedi_buf.c                          | 1 -
->  drivers/comedi/comedi_fops.c                         | 1 -
->  drivers/comedi/comedi_pci.c                          | 1 -
->  drivers/comedi/comedi_pcmcia.c                       | 1 -
->  drivers/comedi/comedi_usb.c                          | 1 -
->  drivers/comedi/drivers.c                             | 1 -
->  drivers/comedi/drivers/ni_routing/ni_device_routes.c | 1 -
->  drivers/comedi/drivers/ni_routing/ni_device_routes.h | 1 -
->  drivers/comedi/drivers/ni_routing/ni_route_values.c  | 1 -
->  drivers/comedi/drivers/ni_routing/ni_route_values.h  | 1 -
->  drivers/comedi/drivers/tests/comedi_example_test.c   | 1 -
->  drivers/comedi/drivers/tests/ni_routes_test.c        | 1 -
->  drivers/comedi/drivers/tests/unittest.h              | 1 -
->  drivers/comedi/range.c                               | 1 -
+>  arch/x86/Makefile.postlink        | 38 --------------------
+>  arch/x86/boot/compressed/Makefile |  9 +++--
+>  2 files changed, 6 insertions(+), 41 deletions(-)
+> 
+> diff --git a/arch/x86/Makefile.postlink b/arch/x86/Makefile.postlink
+> deleted file mode 100644
+> index 445fce66630f..000000000000
+> --- a/arch/x86/Makefile.postlink
+> +++ /dev/null
+> @@ -1,38 +0,0 @@
+> -# SPDX-License-Identifier: GPL-2.0
+> -# ===========================================================================
+> -# Post-link x86 pass
+> -# ===========================================================================
+> -#
+> -# 1. Separate relocations from vmlinux into vmlinux.relocs.
+> -# 2. Strip relocations from vmlinux.
+> -
+> -PHONY := __archpost
+> -__archpost:
+> -
+> --include include/config/auto.conf
+> -include $(srctree)/scripts/Kbuild.include
+> -
+> -CMD_RELOCS = arch/x86/tools/relocs
+> -OUT_RELOCS = arch/x86/boot/compressed
+> -quiet_cmd_relocs = RELOCS  $(OUT_RELOCS)/vmlinux.relocs
+> -      cmd_relocs = \
+> -	mkdir -p $(OUT_RELOCS); \
+> -	$(CMD_RELOCS) $@ > $(OUT_RELOCS)/vmlinux.relocs; \
+> -	$(CMD_RELOCS) --abs-relocs $@
+> -
+> -# `@true` prevents complaint when there is nothing to be done
+> -
+> -vmlinux vmlinux.unstripped: FORCE
+> -	@true
+> -ifeq ($(CONFIG_X86_NEED_RELOCS),y)
+> -	$(call cmd,relocs)
+> -endif
+> -
+> -clean:
+> -	@rm -f $(OUT_RELOCS)/vmlinux.relocs
+> -
+> -PHONY += FORCE clean
+> -
+> -FORCE:
+> -
+> -.PHONY: $(PHONY)
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> index 606c74f27459..5edee7a9786c 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -117,9 +117,12 @@ $(obj)/vmlinux.bin: vmlinux FORCE
+>  
+>  targets += $(patsubst $(obj)/%,%,$(vmlinux-objs-y)) vmlinux.bin.all vmlinux.relocs
+>  
+> -# vmlinux.relocs is created by the vmlinux postlink step.
+> -$(obj)/vmlinux.relocs: vmlinux
+> -	@true
+> +CMD_RELOCS = arch/x86/tools/relocs
+> +quiet_cmd_relocs = RELOCS  $@
+> +      cmd_relocs = $(CMD_RELOCS) $< > $@;$(CMD_RELOCS) --abs-relocs $<
+> +
+> +$(obj)/vmlinux.relocs: vmlinux.unstripped FORCE
+> +	$(call if_changed,relocs)
+>  
+>  vmlinux.bin.all-y := $(obj)/vmlinux.bin
+>  vmlinux.bin.all-$(CONFIG_X86_NEED_RELOCS) += $(obj)/vmlinux.relocs
+> -- 
+> 2.49.0.rc0.332.g42c0ae87b1-goog
+> 
 
-These files are not in the "staging" directory, so no need for staging/
-to be in the subject line at all :(
+-- 
+Regards/Gruss,
+    Boris.
 
-Also, start by working on checkpatch cleanups in the drivers/staging/
-directory, not elsewhere in the kernel tree, so you get experience in
-doing all of this properly before moving out to other areas.  Also, some
-subsystems do not want checkpatch cleanups, so be careful.
-
-thanks,
-
-greg k-h
+https://people.kernel.org/tglx/notes-about-netiquette
 
