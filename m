@@ -1,188 +1,454 @@
-Return-Path: <linux-kernel+bounces-556505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B28A5CACE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:27:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E30AA5CACF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2B2217851D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:27:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E8757A834F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9FE260394;
-	Tue, 11 Mar 2025 16:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C846A25F990;
+	Tue, 11 Mar 2025 16:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GcMdrCp9"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ByFWe6ff"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFD4260370
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F8E25F790
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741710451; cv=none; b=p3IczETgE1tTZMxPQmwne+4e//Wu5/KDXnXBJAn4bqJAhwN9nE7RYMptgoAPUGr9bleQ3u8IhezxeWDW/uV2jgU2uaDNTbKrztpOZsQJBYBrWrX02eGnmLX/tEs5sejhE9QuopHwsSHIYXGBU4UmQv3cwkBGRBkFySRqoeuJBeU=
+	t=1741710494; cv=none; b=I+8QOJf3IPRB+1oUUchoNbzrcgol3R+XvhB9s/r37YFXih4hiunGUKDHNtNwDbmI2OKVuvC9EL+zAD0kClvp7o/JoTLQA4KIcXAi/sSzdP2/0w4K+tcW97uKHhZ+n4aEckY8Tbd6aDBhnD0sdoPFp380OzUGt0EUVdZ5uP+Hj2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741710451; c=relaxed/simple;
-	bh=0mCyXyj/1a5L4Ssc/7ltee11X6K/OBjhBSlN18FgDDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hLC5U5U5sVvY6gcNglowbLzDHnkPexiJvu57goc2qa9Dg/JEuxXSLS+JVDMrM0iqG80AjRFYdMOJV8r2TM4H1Mo/eyTyTYjp6DELanOxrirgwgoWmcplha3ost1cNjHPZPhP1GKto+DyhfSGek55TJGwswb9JusBj/nMHYfrMqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GcMdrCp9; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1741710494; c=relaxed/simple;
+	bh=x+wpmtAYgSc+pe4W1R7hHOB2+1F3s2w0i+kgH7KmulQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eTLjmusDGz5cYBIly8J6UK2DCUJenDA440cNBcumBeYqSvMvnhAmMlySgWWi2K8rXvU1B8oDdpYnka8dBlDAJRGkT+EdoYfyE+Hy9Px+sIdOgWHE+t1lenOMmEp7WstD6pkvU7xQc3Sxdo+hVvYCin9XZuJ5v8ngVlbFKwrPuFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ByFWe6ff; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223594b3c6dso103466625ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:27:29 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac2c663a3daso152396566b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:28:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741710449; x=1742315249; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dl1JWfYJOg72EaaV3ldWA/0rrmYP/fUTPGuYqr0ndJY=;
-        b=GcMdrCp9TOCZMk/iaQjgcTGttfOksDTKdiuDinD+DYKp4LkZHWwS3GBGbmx4AysjFo
-         0mN7JuTDvAWljbN3vGzfQyrnotlhHlgtNDrs6mNvrteTc1iuitDbTs/KcI704InIiTVW
-         KTvAsp5WNEX3c58zUbgncpwAYD6qy/blUp95KtGGQJe37qHpUgqaV/GQ2kRfgx7ww1/U
-         mLnuKn4SlJumtk8EaZqAO4pvd4TYCIfCZDGAB9wFKWLe87eMsKIHDLWXS+RwqiACLedn
-         LDgj7Yb0I5/5IfsuHJzpsK7Aa1FaksOBsWWsrJnMKbipAUQuvge20VvZQH/HsX+wPcvY
-         U/EQ==
+        d=linaro.org; s=google; t=1741710491; x=1742315291; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oXkZmkekDF4erQW4L8Wd+Ws9eCP3QjYuHoEqnb/QOwc=;
+        b=ByFWe6ffwqwMSvx964Qe5UtrJCvpHdHD0Yw4tkyciPZXgPkBtSyvbKQ00AuJUDbqif
+         NZQnYfS36DE1L3pXwFPAj/lbxwK+E2YotN31e6KuiaiDeSRtMQfjCGc//+/x3X77/3ou
+         2vPvyoOkSFXA0eqVqvANKbDX57VHLT5325OTsEldX7pS91EgWU5neS5LVQWoL6J3W7Pc
+         qz6JctF16ECbDOZRky+VBnZfxv2tAMxnfb8ueD9kIPFiIXAw9kUOQQbXVJjJh9F3EnZK
+         tuJHuXx+2PE8Y9yBg6Vl0GOas5U+pSGsL9Z6wTzqt3Z6bz2MXJiczDIp6lse6NGu3cPQ
+         Korw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741710449; x=1742315249;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dl1JWfYJOg72EaaV3ldWA/0rrmYP/fUTPGuYqr0ndJY=;
-        b=Bk5oqthvOljplVMlvELocG+3013ZKIQCEIsdpu8sY3aExQcLVwqI3fSZTEbvNiMcJV
-         7LRATxbjnaL02affrxIAEtEoSjnopb2l+jtBC/VDrYMSDrI19iwciGnbGUrpEmUxO4B2
-         6Y2QUb52lVFZnn4jaJdakkBC128kR80otDuoVKShMssczk4oQrIC6UQziGMSFsJzMzzZ
-         fx4JNHQncMujMfJzCk0I80QiSujVuTzSbnXQACqQIq+5wqjRU3x7o8XGF9akUSSc2mtr
-         k2ZsCiX6hli+X9V2vP6m44DFRwTJOZ007/Y+asThCX5nWDr/62r1KpAcb79mfDJRU3ou
-         BDxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOEDvmN5Ett0HyHf6LOKK651HYiD9pY4FwGWoqKHB2JpUxV5/RqrH0AxqgVQrfuJ9OCLcgl4nDOCdF0AE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwWGVPaxdT047yoJbrRwxH52MyEfJICy2NWodGIWBfUBCoGkN4
-	3gehaAHGFl9q4JhWPJ+AQe4xgQ98Mnh2EuGMfHl14BaZNExD6neaDxdmN1vVI2s=
-X-Gm-Gg: ASbGncv/qID0jx4pPdNDnKWa4+weBOlKV05ySkT6l1lOz1dxJp2wTXM7Owq0QfxRHEZ
-	st+qGh4jeV/ngSyXK/5GzR4RhwAEtn+ngGmGzfdI9QX4dbgzVu0/cE66FpAbuy7iEkBSGHdqFQJ
-	KQcYg7PzjHewRapw+O7I5JTcmuEIzgbcnBYaVBAgEjgKfClLjgwVng/3Pv5v3x/f60T6eALqAuj
-	oYdUwWfD9VOFiIH+TrU31tFCrommttjyl67msRZSy+gvFX5+0EtOcq0jLyJpBDNmNEZrA3w8SW0
-	ULDQ/tLz9GnRrtI5k0O+sn//CHEwVMVa5jO+hhCqz2WAWheb
-X-Google-Smtp-Source: AGHT+IF2UG2Kdovm4QQZtJqBjJbgL9SWkVL1VlYQjoRQyWIygr7zZtU2BIqigowT+nJo0KVbHMcrnA==
-X-Received: by 2002:a17:903:32c2:b0:224:1074:6393 with SMTP id d9443c01a7336-22428bffe92mr243601665ad.43.1741710449034;
-        Tue, 11 Mar 2025 09:27:29 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:ff32:9486:a333:ba9e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e948asm100400365ad.75.2025.03.11.09.27.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 09:27:28 -0700 (PDT)
-Date: Tue, 11 Mar 2025 10:27:25 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: p.zabel@pengutronix.de, robh@kernel.org, krzk+dt@kernel.org,
-	shawnguo@kernel.org, devicetree@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, conor+dt@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, andersson@kernel.org,
-	Frank.Li@nxp.com, peng.fan@nxp.com, laurentiu.mihalcea@nxp.com,
-	iuliana.prodan@nxp.com, shengjiu.wang@nxp.com
-Subject: Re: [PATCH v5 0/8] imx8mp: Add support to Run/Stall DSP via reset API
-Message-ID: <Z9BkbVHlx60VFD7q@p14s>
-References: <20250311085812.1296243-1-daniel.baluta@nxp.com>
+        d=1e100.net; s=20230601; t=1741710491; x=1742315291;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oXkZmkekDF4erQW4L8Wd+Ws9eCP3QjYuHoEqnb/QOwc=;
+        b=LanqjOBi483Z4RGN8/Q0yhlkYeviSkl6cUznjjDxTHdEL3SPkv2aeRg2rBnF3krdxs
+         whwz+FzSfmFgcx51ehKlHCGU6BrVNGqFggUdH2gL/SheQvCl1ZNCJmQM3o/G5HtJroLL
+         X6egXzxufz1t8dnLUFhJyVfS6GuoU76T4qKkvp0V4VtVZgeERz0pD6sumoUN+7OBQyyX
+         bLaYQjcScJMMBfszGR6hUscksBqXyryiO76rGrYA2iPp8cOQXIVlDx5Cvmi1ipOGeRI0
+         sEcpd3HWS0OPD3I4ca+UmGCPvGecS7M4EcAydYv77/DHbBZVqB+xtGNfRhZZwAjmuvei
+         sBPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvlSn8+fSXNwBpgrpxevJ6UcQyEljIO6S9CwnQbk560q99CdQcRjfSjtibyRjFN0EWeipD+Ff3ci7x6IQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2GmzQaK0axRAeYpU9ql2HMY/oWawS57LoSFKh4zI7hW5XzxCk
+	do3th2f7cSUPLwhPOc8HXj1QK+CGJgpymi5pG17qYSHD+g+DlfwiSy5sHut8C5PjQSOsulZqUkG
+	cj/jmMkf/vMwfGPRPtHhIPkkcRsdSDvT7o5iToQ==
+X-Gm-Gg: ASbGncvT9f2DJ3dhziVXGaHsDYFGuIMoXv8jxlLv765HulZpRcxFU7xkgW4U59llfhn
+	RnjMZW6a5I+SNKlxcf0HHtNmYkRKwy5V2Lt/RhExJQ4VRGv4o9zo8d8Pos/coVQTJ8/DvA7Z9DR
+	8fYYLhkp/CueXOPdiVXFmaR04AjW5BGaJ2K8RwVvY3Mzoc19XI9ApcFrA=
+X-Google-Smtp-Source: AGHT+IEWSfqcPK1uijDUTErKoHYAH+v4oQz6W4wRySKk7OoakJWRIlXoPK6BMeqxiIkJ2EsXUZ6JiPn5r+7sbl8FGPE=
+X-Received: by 2002:a17:906:cecb:b0:ac2:8118:27e7 with SMTP id
+ a640c23a62f3a-ac2811831a3mr1555912566b.50.1741710490636; Tue, 11 Mar 2025
+ 09:28:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311085812.1296243-1-daniel.baluta@nxp.com>
+References: <20250302210539.1563190-1-vincent.guittot@linaro.org>
+ <20250302210539.1563190-6-vincent.guittot@linaro.org> <0dabf19f-96be-4c55-a4bb-8325d288eacc@linux.ibm.com>
+In-Reply-To: <0dabf19f-96be-4c55-a4bb-8325d288eacc@linux.ibm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 11 Mar 2025 17:27:59 +0100
+X-Gm-Features: AQ5f1JrIKbdiJh3Sve9A94k3mPHFUfr2-C9L_EDsA9sYiJDhUq2ETJLYto2XwRI
+Message-ID: <CAKfTPtD+aZwwDo7YP=xvdGBFLSLXEgHcWqmfF5Jo6TWhf4B7CQ@mail.gmail.com>
+Subject: Re: [PATCH 5/7 v5] sched/fair: Add push task mechanism for EAS
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: qyousef@layalina.io, hongyan.xia2@arm.com, christian.loehle@arm.com, 
+	luis.machado@arm.com, qperret@google.com, mingo@redhat.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	lukasz.luba@arm.com, rafael.j.wysocki@intel.com, pierre.gondois@arm.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks for the re-spin.  I will wait for Shawn and Sascha to review their
-respective bits before picking up this set.
+Hi Shrikanth,
 
-Mathieu
+On Mon, 10 Mar 2025 at 19:21, Shrikanth Hegde <sshegde@linux.ibm.com> wrote:
+>
+>
+> Hi Vincent, trying to understand this series. I see most of the places
+> are with sched_energy_enabled() checks. So it shouldn't affect non-EAS
+> systems.
+>
+> > EAS is based on wakeup events to efficiently place tasks on the system, but
+> > there are cases where a task doesn't have wakeup events anymore or at a far
+> > too low pace. For such situation, we can take advantage of the task being
+> > put back in the enqueued list to check if it should be pushed on another
+> > CPU. When the task is alone on the CPU, it's never put back in the enqueued
+> > list; In this special case, we use the tick to run the check.
+> >
+> > Wake up events remain the main way to migrate tasks but we now detect
+> > situation where a task is stuck on a CPU by checking that its utilization
+> > is larger than the max available compute capacity (max cpu capacity or
+> > uclamp max setting)
+> >
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >   kernel/sched/fair.c  | 220 +++++++++++++++++++++++++++++++++++++++++++
+> >   kernel/sched/sched.h |   2 +
+> >   2 files changed, 222 insertions(+)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index a9b97bbc085f..c3e383b86808 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -7051,6 +7051,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+> >       hrtick_update(rq);
+> >   }
+> >
+> > +static void fair_remove_pushable_task(struct rq *rq, struct task_struct *p);
+> >   static void set_next_buddy(struct sched_entity *se);
+> >
+> >   /*
+> > @@ -7081,6 +7082,8 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+> >               h_nr_idle = task_has_idle_policy(p);
+> >               if (task_sleep || task_delayed || !se->sched_delayed)
+> >                       h_nr_runnable = 1;
+> > +
+> > +             fair_remove_pushable_task(rq, p);
+> >       } else {
+> >               cfs_rq = group_cfs_rq(se);
+> >               slice = cfs_rq_min_slice(cfs_rq);
+> > @@ -8589,6 +8592,197 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+> >       return target;
+> >   }
+> >
+> > +static inline bool task_stuck_on_cpu(struct task_struct *p, int cpu)
+> > +{
+> > +     unsigned long max_capa, util;
+> > +
+> > +     max_capa = min(get_actual_cpu_capacity(cpu),
+> > +                    uclamp_eff_value(p, UCLAMP_MAX));
+> > +     util = max(task_util_est(p), task_runnable(p));
+> > +
+> > +     /*
+> > +      * Return true only if the task might not sleep/wakeup because of a low
+> > +      * compute capacity. Tasks, which wake up regularly, will be handled by
+> > +      * feec().
+> > +      */
+> > +     return (util > max_capa);
+> > +}
+> > +
+> > +static inline bool sched_energy_push_task(struct task_struct *p, struct rq *rq)
+> > +{
+> > +     if (p->nr_cpus_allowed == 1)
+> > +             return false;
+> > +
+> > +     if (is_rd_overutilized(rq->rd))
+> > +             return false;
+> > +
+> > +     if (task_stuck_on_cpu(p, cpu_of(rq)))
+> > +             return true;
+> > +
+> > +     return false;
+> > +}
+> > +
+> > +static int active_load_balance_cpu_stop(void *data);
+> > +
+> > +static inline void check_pushable_task(struct task_struct *p, struct rq *rq)
+> > +{
+> > +     int new_cpu, cpu = cpu_of(rq);
+> > +
+> > +     if (!sched_energy_enabled())
+> > +             return;
+> > +
+> > +     if (WARN_ON(!p))
+> > +             return;
+> > +
+> > +     if (WARN_ON(!task_current(rq, p)))
+> > +             return;
+> > +
+> > +     if (is_migration_disabled(p))
+> > +             return;
+> > +
+> > +     /* If there are several task, wait for being put back */
+> > +     if (rq->nr_running > 1)
+> > +             return;
+> > +
+> > +     if (!sched_energy_push_task(p, rq))
+> > +             return;
+> > +
+> > +     new_cpu = find_energy_efficient_cpu(p, cpu);
+> > +
+> > +     if (new_cpu == cpu)
+> > +             return;
+> > +
+> > +     /*
+> > +      * ->active_balance synchronizes accesses to
+> > +      * ->active_balance_work.  Once set, it's cleared
+> > +      * only after active load balance is finished.
+> > +      */
+> > +     if (!rq->active_balance) {
+> > +             rq->active_balance = 1;
+> > +             rq->push_cpu = new_cpu;
+> > +     } else
+> > +             return;
+> > +
+>
+> Does this need preempt disable/enable guards similar to sched_balance_rq?
 
-On Tue, Mar 11, 2025 at 10:58:03AM +0200, Daniel Baluta wrote:
-> This patch series adds support to control the Run/Stall DSP bits found on
-> i.MX8MP via the reset controller API instead of using the syscon API.
-> 
-> DSP found on i.MX8MP doesn't have a direct reset line so according to hardware
-> design team in order to handle assert/deassert/reset functionality we
-> need to use a combination of control bits from two modules.
-> 
-> Audio block control module:
-> 	- for Run/Stall control bits of the DSP
-> 
-> Debug Access Port (DAP)
-> 	- for Software Reset via IMX8M_DAP_PWRCTL register
-> 
-> The current implementation for IMX DSP Remotproc driver and for Sound Open
-> Firmware driver (already upstream) uses the following approach:
-> 	- maps the Audio Block Control address via syscon API through
->           the fsl,dsp-ctrl property of the dsp node.
-> 	- maps the DAP address space using directly a call to ioremap
->           with IMX8M_DAP_DEBUG macro depicting the DAP base address.
-> 
-> The both approaches are problematic when comes to describing the address
-> spaces via the DT:
-> 	- for Audio Block Control, because it uses the syscon interface
-> 	- for DAP because it hardcodes de base address instead of using a dt node.
-> 
-> This patch series aims to fix the Audio Block control usage of the
-> syscon interface and replace it with Reset Controller interface.
-> 
-> Main advantages of using the Reset Controller API is that we stop
-> abusing the syscon interface, offer a better probe ordering, PM runtime
-> support. Main critique of using the Reset Controller API is that
-> Run/Stall bits are not reset bits (but according the hardware design
-> team they are part of the reset proccess since there is no real reset
-> line).
-> 
-> Initial discussion is here:
-> https://patchwork.kernel.org/project/imx/patch/20250212085222.107102-6-daniel.baluta@nxp.com/
-> 
-> Note that we can safely remove the fsl,dsp-ctrl property usage from IMX DSP
-> remoteproc driver because there is no Device Tree users.
-> 
-> Changes since v4:
-> https://lore.kernel.org/lkml/20250305100037.373782-3-daniel.baluta@nxp.com/T/
-> 	- picked-up R-b tags from Frank Li and Peng Fan
-> 	- reworded commit message of patch 8/8 as per Mathieu Poirier suggestion
-> 
-> Changes since v3:
-> https://lore.kernel.org/linux-arm-kernel/20250225102005.408773-5-daniel.baluta@nxp.com/T/
-> 	- renamed resets ids as per Philipp comments
-> 	- add boths resets (named them runstall and softreset) as per Philipp comments
-> 
-> Changes since v2:
-> (https://lore.kernel.org/lkml/Z7ZNngd3wtJ5MZgl@lizhi-Precision-Tower-5810/T/)
->         - picked R-b and A-b tags
->         - use run_stall instead of reset to refer to reset controller
->           instance
->         - remove 'resets' description as it is a common property
->         - add correct include in the yaml dts snippet example
-> Changes since v1:
-> (https://lore.kernel.org/imx/20250219030809.GD6537@nxa18884-linux/T/)
->         - addresed comments received on v1
->         - picked up R-b and A-b tags
-> 
-> Daniel Baluta (8):
->   dt-bindings: reset: audiomix: Add reset ids for EARC and DSP
->   dt-bindings: dsp: fsl,dsp: Add resets property
->   arm64: dts: imx8mp: Use resets property
->   reset: imx8mp-audiomix: Add prefix for internal macro
->   reset: imx8mp-audiomix: Prepare the code for more reset bits
->   reset: imx8mp-audiomix: Introduce active_low configuration option
->   reset: imx8mp-audiomix: Add support for DSP run/stall
->   imx_dsp_rproc: Use reset controller API to control the DSP
-> 
->  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 24 +++++-
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi     |  3 +
->  drivers/remoteproc/imx_dsp_rproc.c            | 25 ++++--
->  drivers/remoteproc/imx_rproc.h                |  2 +
->  drivers/reset/reset-imx8mp-audiomix.c         | 78 +++++++++++++------
->  .../dt-bindings/reset/imx8mp-reset-audiomix.h | 13 ++++
->  6 files changed, 114 insertions(+), 31 deletions(-)
->  create mode 100644 include/dt-bindings/reset/imx8mp-reset-audiomix.h
-> 
-> -- 
-> 2.43.0
-> 
+Pierre asked me about this in the RFC version [1]. Preempt
+enable/disable has been added by commit f0498d2a54e7 ("sched: Fix
+stop_one_cpu_nowait() vs hotplug") and AFAIK we are safe with the use
+case mentioned in the commit
+
+[1] https://lore.kernel.org/lkml/ccf4095f-5fca-42f4-b9fe-aa93e703016e@arm.com/
+
+>
+> > +     raw_spin_rq_unlock(rq);
+> > +     stop_one_cpu_nowait(cpu,
+> > +             active_load_balance_cpu_stop, rq,
+> > +             &rq->active_balance_work);
+> > +     raw_spin_rq_lock(rq);
+> > +}
+> > +
+> > +static inline int has_pushable_tasks(struct rq *rq)
+> > +{
+> > +     return !plist_head_empty(&rq->cfs.pushable_tasks);
+> > +}
+> > +
+> > +static struct task_struct *pick_next_pushable_fair_task(struct rq *rq)
+> > +{
+> > +     struct task_struct *p;
+> > +
+> > +     if (!has_pushable_tasks(rq))
+> > +             return NULL;
+> > +
+> > +     p = plist_first_entry(&rq->cfs.pushable_tasks,
+> > +                           struct task_struct, pushable_tasks);
+> > +
+> > +     WARN_ON_ONCE(rq->cpu != task_cpu(p));
+> > +     WARN_ON_ONCE(task_current(rq, p));
+> > +     WARN_ON_ONCE(p->nr_cpus_allowed <= 1);
+> > +     WARN_ON_ONCE(!task_on_rq_queued(p));
+> > +
+>
+> Isnt it better to print it everytime? it could different process each
+> time no?
+
+This should never happen so once seems enough and it prevents
+overloading the log.
+
+>
+> > +     /*
+> > +      * Remove task from the pushable list as we try only once after that
+> > +      * the task has been put back in enqueued list.
+> > +      */
+> > +     plist_del(&p->pushable_tasks, &rq->cfs.pushable_tasks);
+> > +
+> > +     return p;
+> > +}
+> > +
+> > +/*
+> > + * See if the non running fair tasks on this rq can be sent on other CPUs
+> > + * that fits better with their profile.
+> > + */
+> > +static bool push_fair_task(struct rq *rq)
+> > +{
+> > +     struct task_struct *next_task;
+> > +     int prev_cpu, new_cpu;
+> > +     struct rq *new_rq;
+> > +
+> > +     next_task = pick_next_pushable_fair_task(rq);
+> > +     if (!next_task)
+> > +             return false;
+> > +
+> > +     if (is_migration_disabled(next_task))
+> > +             return true;
+> > +
+> > +     /* We might release rq lock */
+> > +     get_task_struct(next_task);
+> > +
+> > +     prev_cpu = rq->cpu;
+> > +
+> > +     new_cpu = find_energy_efficient_cpu(next_task, prev_cpu);
+> > +
+> > +     if (new_cpu == prev_cpu)
+> > +             goto out;
+> > +
+> > +     new_rq = cpu_rq(new_cpu);
+> > +
+> > +     if (double_lock_balance(rq, new_rq)) {
+> > +             /* The task has already migrated in between */
+> > +             if (task_cpu(next_task) != rq->cpu) {
+> > +                     double_unlock_balance(rq, new_rq);
+> > +                     goto out;
+> > +             }
+> > +
+> > +             deactivate_task(rq, next_task, 0);
+> > +             set_task_cpu(next_task, new_cpu);
+> > +             activate_task(new_rq, next_task, 0);
+> > +
+> > +             resched_curr(new_rq);
+> > +
+> > +             double_unlock_balance(rq, new_rq);
+> > +     }
+> > +
+> > +out:
+> > +     put_task_struct(next_task);
+> > +
+> > +     return true;
+> > +}
+> > +
+> > +static void push_fair_tasks(struct rq *rq)
+> > +{
+> > +     /* push_fair_task() will return true if it moved a fair task */
+> > +     while (push_fair_task(rq))
+> > +             ;
+> > +}
+> > +
+> > +static DEFINE_PER_CPU(struct balance_callback, fair_push_head);
+> > +
+> > +static inline void fair_queue_pushable_tasks(struct rq *rq)
+> > +{
+> > +     if (!sched_energy_enabled() || !has_pushable_tasks(rq))
+> > +             return;
+>
+> has_pushable_task has any tasks iff sched_energy_enabled. so this check
+> may not be needed. But it shouldnt hurt, since it is static key.
+
+I didn't want to add the useless call of  has_pushable_tasks() even if
+it should be cheap
+
+>
+> > +
+> > +     queue_balance_callback(rq, &per_cpu(fair_push_head, rq->cpu), push_fair_tasks);
+> > +}
+> > +static void fair_remove_pushable_task(struct rq *rq, struct task_struct *p)
+> > +{
+> > +     if (sched_energy_enabled())
+> > +             plist_del(&p->pushable_tasks, &rq->cfs.pushable_tasks);
+> > +}
+> > +
+> > +static void fair_add_pushable_task(struct rq *rq, struct task_struct *p)
+> > +{
+> > +     if (sched_energy_enabled() && task_on_rq_queued(p) && !p->se.sched_delayed) {
+> > +             if (sched_energy_push_task(p, rq)) {
+> > +                     plist_del(&p->pushable_tasks, &rq->cfs.pushable_tasks);
+> > +                     plist_node_init(&p->pushable_tasks, p->prio);
+> > +                     plist_add(&p->pushable_tasks, &rq->cfs.pushable_tasks);
+> > +             }
+> > +     }
+> > +}
+> > +
+> >   /*
+> >    * select_task_rq_fair: Select target runqueue for the waking task in domains
+> >    * that have the relevant SD flag set. In practice, this is SD_BALANCE_WAKE,
+> > @@ -8758,6 +8952,10 @@ balance_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+> >       return sched_balance_newidle(rq, rf) != 0;
+> >   }
+> >   #else
+> > +static inline void check_pushable_task(struct task_struct *p, struct rq *rq) {}
+> > +static inline void fair_queue_pushable_tasks(struct rq *rq) {}
+> > +static void fair_remove_pushable_task(struct rq *rq, struct task_struct *p) {}
+> > +static inline void fair_add_pushable_task(struct rq *rq, struct task_struct *p) {}
+> >   static inline void set_task_max_allowed_capacity(struct task_struct *p) {}
+> >   #endif /* CONFIG_SMP */
+> >
+> > @@ -8947,6 +9145,12 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
+> >               put_prev_entity(cfs_rq, pse);
+> >               set_next_entity(cfs_rq, se);
+> >
+> > +             /*
+> > +              * The previous task might be eligible for being pushed on
+> > +              * another cpu if it is still active.
+> > +              */
+> > +             fair_add_pushable_task(rq, prev);
+> > +
+> >               __set_next_task_fair(rq, p, true);
+> >       }
+> >
+> > @@ -9019,6 +9223,13 @@ static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct t
+> >               cfs_rq = cfs_rq_of(se);
+> >               put_prev_entity(cfs_rq, se);
+> >       }
+> > +
+> > +     /*
+> > +      * The previous task might be eligible for being pushed on another cpu
+> > +      * if it is still active.
+> > +      */
+> > +     fair_add_pushable_task(rq, prev);
+> > +
+> >   }
+> >
+> >   /*
+> > @@ -13151,6 +13362,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+> >       if (static_branch_unlikely(&sched_numa_balancing))
+> >               task_tick_numa(rq, curr);
+> >
+> > +     check_pushable_task(curr, rq);
+> >       update_misfit_status(curr, rq);
+> >       check_update_overutilized_status(task_rq(curr));
+> >
+> > @@ -13303,6 +13515,8 @@ static void __set_next_task_fair(struct rq *rq, struct task_struct *p, bool firs
+> >   {
+> >       struct sched_entity *se = &p->se;
+> >
+> > +     fair_remove_pushable_task(rq, p);
+> > +
+> >   #ifdef CONFIG_SMP
+> >       if (task_on_rq_queued(p)) {
+> >               /*
+> > @@ -13320,6 +13534,11 @@ static void __set_next_task_fair(struct rq *rq, struct task_struct *p, bool firs
+> >       if (hrtick_enabled_fair(rq))
+> >               hrtick_start_fair(rq, p);
+> >
+> > +     /*
+> > +      * Try to push prev task before checking misfit for next task as
+> > +      * the migration of prev can make next fitting the CPU
+> > +      */
+> > +     fair_queue_pushable_tasks(rq);
+> >       update_misfit_status(p, rq);
+> >       sched_fair_update_stop_tick(rq, p);
+> >   }
+> > @@ -13350,6 +13569,7 @@ void init_cfs_rq(struct cfs_rq *cfs_rq)
+> >       cfs_rq->tasks_timeline = RB_ROOT_CACHED;
+> >       cfs_rq->min_vruntime = (u64)(-(1LL << 20));
+> >   #ifdef CONFIG_SMP
+> > +     plist_head_init(&cfs_rq->pushable_tasks);
+> >       raw_spin_lock_init(&cfs_rq->removed.lock);
+> >   #endif
+> >   }
+> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> > index ab16d3d0e51c..2db198dccf21 100644
+> > --- a/kernel/sched/sched.h
+> > +++ b/kernel/sched/sched.h
+> > @@ -722,6 +722,8 @@ struct cfs_rq {
+> >       struct list_head        leaf_cfs_rq_list;
+> >       struct task_group       *tg;    /* group that "owns" this runqueue */
+> >
+> > +     struct plist_head       pushable_tasks;
+> > +
+> >       /* Locally cached copy of our task_group's idle value */
+> >       int                     idle;
+> >
+>
 
