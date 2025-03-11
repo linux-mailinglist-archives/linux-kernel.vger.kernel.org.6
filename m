@@ -1,59 +1,66 @@
-Return-Path: <linux-kernel+bounces-556507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF5FA5CAD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:28:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFAEA5CAD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:29:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33403B0E77
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:28:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 074A37A96E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA5825F994;
-	Tue, 11 Mar 2025 16:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF6126038A;
+	Tue, 11 Mar 2025 16:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ry8tyfgv"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGihK8Rw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F01725EFA5
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F37326036F;
+	Tue, 11 Mar 2025 16:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741710520; cv=none; b=Q3DuN8mmDX8H7UBVJJ/cehAlvxibQdd+Out0e5T3b/4coR19uWt7DyuyWPCUzaZ9rgQEB72geqJhvoCq50Df+6mNZDFm/aWN6AUtmrBC2ijlyFmfOSJBzQfIQpcQv19Y5YAmtn8fd+DUvmMujbKrYQj74hljNu2L24RZkyrdI6U=
+	t=1741710538; cv=none; b=XZDOfHR6yRcw37cDsj/FTr9mxBTYK0FjCuUMqKqSiB+40VqMEzU/ft5jD1+lNxj6E3wXZ3J294Rh5ttlj71BfhznhqX8CbTy/H2RJO5fIOWQuq5xnl9O8HHcaNcU9KMcpiHmaN3QsvJWTIL2HI9bridUn3ns8YFLeUuyH5+M8hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741710520; c=relaxed/simple;
-	bh=IWASrnOWANM8XtQXfnGhgl+lCP5IEYneKhicR53pZ+E=;
+	s=arc-20240116; t=1741710538; c=relaxed/simple;
+	bh=8OMFcL17uY6gRsTtXxJDcoNAW0nxjeHevA06z8Dqk8c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbRbOljrbVCsMt3YZhCGuqDdoWX/Q/xxmAmCefomb3EnQJ+9UWedV8jU4yOCN+XOnoSc7qTJldqcjUbRf3545gt/fkN/Ne/sdhlbXgybIgu9LoH84ifFHbPQY/PPiCyTLQ9neBSM9O1aznYCxcN3FNXH3oTFOgw6PMbfGMAllBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ry8tyfgv; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 11 Mar 2025 16:28:15 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741710506;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2v5924SrAK+nkot0P3H41NQkoPOcxGeW7jlz7h2Cp3Y=;
-	b=ry8tyfgvaN3wVqqxD6oXXY6WLpOgUHm2JyK4G+Rnwy8772eAsrttvHyjnTg16e6N3l6to0
-	lDNYA0HOEZ7Kl92wfwQkEQyHHPD07HKzBzqDQ5m1MZ2lMokb4SUp20WIVAmAN6HpTW+HzA
-	zutYDxLanrFINUm0SkCJ6+KvThNgRjc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] memcg: drain obj stock on cpu hotplug teardown
-Message-ID: <Z9Bkn63LE4JRB3x7@google.com>
-References: <20250310230934.2913113-1-shakeel.butt@linux.dev>
- <20250311153032.GB1211411@cmpxchg.org>
- <orewawh6kpgrbl4jlvpeancg4s6cyrldlpbqbd7wyjn3xtqy5y@2edkh5ffbnas>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b9lYCrFfefnl5dp+J44m9IvvJpjOaXh1ZTO8qz04VZuh8pDlKSkkdh3H78n93GRyAkdNDRMNFqq/sm8qa/Vya/hrIoILy8eLM5Jj+R85Tz6XvXbuYu9AUVnIWSseD0LoRbMf/rFsTmi/RxB2HboeMOmmlsfqBOLuPeFIu3iy22A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DGihK8Rw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE5AC4CEE9;
+	Tue, 11 Mar 2025 16:28:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741710537;
+	bh=8OMFcL17uY6gRsTtXxJDcoNAW0nxjeHevA06z8Dqk8c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DGihK8RwnXcf3DnbbaIW/U/FdSBz92bwToI+TYJyMCBQPfDWDeKNjt1OK52W+W+x5
+	 9Wel/gkGxvsan8B5WywVcuX/uw/fOOzDF1ivuAxc+p6V1r0Ik+jxE/be3wJm+JmikA
+	 tB2l76Cj8LiTXcWVwUAPr024J3qDTybb034auXx1KqHXlnE/A4zo8z7XZy+zwwJrWf
+	 ow9nBgOUT3Mu94FZ/DJ4WErLdwpEUn/oRHgLLzU9wi9H8lghTRqOFLVco/zIlF9zOu
+	 lNnzLt/5axCkugPxNwGQIEXcHArQPZo98Zik5rg0Aw4GfXRYLhPTDe/Iyhu3wZ/3uZ
+	 D1kV980Lv+utg==
+Date: Tue, 11 Mar 2025 18:28:50 +0200
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org
+Subject: Re: [PATCH 3/4] drm/vc4: use new helper to get ACR values
+Message-ID: <wass63nz24l4h3umszsyptb5bnkny4h2wmnbeunjrdfhyacl4l@w6emq2ipt552>
+References: <20250309-drm-hdmi-acr-v1-0-bb9c242f4d4b@linaro.org>
+ <20250309-drm-hdmi-acr-v1-3-bb9c242f4d4b@linaro.org>
+ <20250310-invisible-married-firefly-945c84@houat>
+ <esgb42dyhpjixm62tfk2nfzdiygnfn4bcwq4zn7rhydmt4np2q@7v77p7kveb4e>
+ <20250311-intrepid-obedient-lizard-64ad2c@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,69 +69,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <orewawh6kpgrbl4jlvpeancg4s6cyrldlpbqbd7wyjn3xtqy5y@2edkh5ffbnas>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250311-intrepid-obedient-lizard-64ad2c@houat>
 
-On Tue, Mar 11, 2025 at 08:57:54AM -0700, Shakeel Butt wrote:
-> On Tue, Mar 11, 2025 at 11:30:32AM -0400, Johannes Weiner wrote:
-> > On Mon, Mar 10, 2025 at 04:09:34PM -0700, Shakeel Butt wrote:
-> > > Currently on cpu hotplug teardown, only memcg stock is drained but we
-> > > need to drain the obj stock as well otherwise we will miss the stats
-> > > accumulated on the target cpu as well as the nr_bytes cached. The stats
-> > > include MEMCG_KMEM, NR_SLAB_RECLAIMABLE_B & NR_SLAB_UNRECLAIMABLE_B. In
-> > > addition we are leaking reference to struct obj_cgroup object.
+On Tue, Mar 11, 2025 at 09:07:10AM +0100, Maxime Ripard wrote:
+> On Mon, Mar 10, 2025 at 10:18:04PM +0200, Dmitry Baryshkov wrote:
+> > On Mon, Mar 10, 2025 at 03:51:53PM +0100, Maxime Ripard wrote:
+> > > On Sun, Mar 09, 2025 at 10:13:58AM +0200, Dmitry Baryshkov wrote:
+> > > > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > 
+> > > > Use drm_hdmi_acr_get_n_cts() helper instead of calculating N and CTS
+> > > > values in the VC4 driver.
+> > > > 
+> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > ---
+> > > >  drivers/gpu/drm/vc4/vc4_hdmi.c | 10 +++-------
+> > > >  drivers/gpu/drm/vc4/vc4_hdmi.h |  7 +++++++
+> > > >  2 files changed, 10 insertions(+), 7 deletions(-)
+> > > > 
+> > 
+> > > > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4_hdmi.h
+> > > > index e3d989ca302b72533c374dfa3fd0d5bd7fe64a82..0a775dbfe99d45521f3d0a2016555aefa81d7934 100644
+> > > > --- a/drivers/gpu/drm/vc4/vc4_hdmi.h
+> > > > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
+> > > > @@ -211,6 +211,13 @@ struct vc4_hdmi {
+> > > >  	 * KMS hooks. Protected by @mutex.
+> > > >  	 */
+> > > >  	enum hdmi_colorspace output_format;
+> > > > +
+> > > > +	/**
+> > > > +	 * @tmds_char_rate: Copy of
+> > > > +	 * @drm_connector_state.hdmi.tmds_char_rate for use outside of
+> > > > +	 * KMS hooks. Protected by @mutex.
+> > > > +	 */
+> > > > +	unsigned long long tmds_char_rate;
+> > > >  };
 > > > 
-> > > Fixes: bf4f059954dc ("mm: memcg/slab: obj_cgroup API")
-> > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > > Cc: <stable@vger.kernel.org>
+> > > This should be in drm_connector_hdmi if it's useful
 > > 
-> > Wow, that's old. Good catch.
-> > 
-> > > ---
-> > >  mm/memcontrol.c | 9 +++++++++
-> > >  1 file changed, 9 insertions(+)
-> > > 
-> > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > > index 4de6acb9b8ec..59dcaf6a3519 100644
-> > > --- a/mm/memcontrol.c
-> > > +++ b/mm/memcontrol.c
-> > > @@ -1921,9 +1921,18 @@ void drain_all_stock(struct mem_cgroup *root_memcg)
-> > >  static int memcg_hotplug_cpu_dead(unsigned int cpu)
-> > >  {
-> > >  	struct memcg_stock_pcp *stock;
-> > > +	struct obj_cgroup *old;
-> > > +	unsigned long flags;
-> > >  
-> > >  	stock = &per_cpu(memcg_stock, cpu);
-> > > +
-> > > +	/* drain_obj_stock requires stock_lock */
-> > > +	local_lock_irqsave(&memcg_stock.stock_lock, flags);
-> > > +	old = drain_obj_stock(stock);
-> > > +	local_unlock_irqrestore(&memcg_stock.stock_lock, flags);
-> > > +
-> > >  	drain_stock(stock);
-> > > +	obj_cgroup_put(old);
-> > 
-> > It might be better to call drain_local_stock() directly instead. That
-> > would prevent a bug of this type to reoccur in the future.
+> > That would mean bringing the state to a non-state structure on the
+> > framework level. Is it fine from your POV?
 > 
-> The issue is drain_local_stock() works on the local cpu stock while here
-> we are working on a remote cpu cpu which is dead (memcg_hotplug_cpu_dead
-> is in PREPARE section of hotplug teardown which runs after the cpu is
-> dead).
+> Sorry, I'm changing my mind a little bit, but it's pretty much the same
+> case than for accessing the infoframes from debugfs: we want to get some
+> information stored in the state from outside of KMS.
 > 
-> We can safely call drain_stock() on remote cpu stock here but
-> drain_obj_stock() is a bit tricky as it can __refill_stock() to local cpu
-> stock and can call __mod_objcg_mlstate to flush stats. Both of these
-> requires irq disable for NON-RT kernels and thus I added the local_lock
-> here.
+> What we did for the infoframes is that we're actually just taking the
+> connection_mutex from the DRM device and access the drm_connector->state
+> pointer.
 > 
-> Anyways I wanted a simple fix for the backports and in parallel I am
-> working on cleaning up all the stock functions as I plan to add multi
-> memcg support.
+> I guess it would also work for ALSA?
 
-Really curious to see patches/more details here, I have some ideas here
-as well (nothing materialized yet though).
+I'd really prefer to follow the drm_connector.infoframes.audio. It makes
+sense to group all ALSA-related functionality together. Maybe I should
+refactor it to:
 
-Thanks!
+struct drm_connector {
+    struct {
+	struct mutex lock;
+	struct drm_connector_hdmi_infoframe audio_infoframe;
+	unsigned long long tmds_char_rate;
+    } audio;
+};
+
+WDYT? If that doesn't sound appealing, I'll go the connetion_mutex and
+drm_connector_state way.
+
+-- 
+With best wishes
+Dmitry
 
