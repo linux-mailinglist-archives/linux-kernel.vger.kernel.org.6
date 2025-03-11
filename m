@@ -1,161 +1,85 @@
-Return-Path: <linux-kernel+bounces-555410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A5CA5B706
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:02:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F93A5B70B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:05:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C33151890E61
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:02:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E4BF172869
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058C11E5702;
-	Tue, 11 Mar 2025 03:02:41 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFB7566A;
-	Tue, 11 Mar 2025 03:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4FF1E8331;
+	Tue, 11 Mar 2025 03:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Nu4Z8q8B"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F131ADC83;
+	Tue, 11 Mar 2025 03:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741662160; cv=none; b=fqsTqHBKlgQp/8jTvtyEAGpxI7bfoUqHSIymoqzq5wzyaBvaGVqSgb6RZu9Dj7Q3qgcrZTCOJCIwuHo5MoNM89FHOBui8JwalFKBCjmWEEkmMebbExVgODuEXhFJUF2LFO7F1PH6wPPx2K/ks9HMr1UQpL+ZGS5EuQihg4PE/rc=
+	t=1741662322; cv=none; b=Yp+CBXh6HMe5sagWTMV1Ze1mYE3aU2KjAs96R5YCwuwWTqVTcDikkwioPMzEE7xJWebmBuAzHAWoPYTnKy+Rfz3BpPzmCPxPoXM9NFKsScX8WfP21cYFnsTcm7BoKGYqQwk2EzFzZ9mPaQPOBQfO9hEfZWgDEouPA554AA9rJjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741662160; c=relaxed/simple;
-	bh=iEVYhP9aOFIypShC1CexYSkBukl52OlAM4gwvDer6II=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eRKDIVZhZTtkOKx+JOwCWrX7DC0swXmJJKZIDzyaoOz1PFQ7xeEeUqvjOxDTiNT7NeVCSWD+aKkOECSOTBsy0iJxyEMv7/YkVZkPfVtlwQUWqgaCqTi9izXvWeDfeulYfHVBQwduedx4jAQFP3pexfT6sD7CAiJD4nR/jvQf9z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FAFDC4CEE5;
-	Tue, 11 Mar 2025 03:02:37 +0000 (UTC)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>
-Cc: linux-ide@vger.kernel.org,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Yuli Wang <wangyuli@uniontech.com>,
-	Jie Fan <fanjie@uniontech.com>,
-	Erpeng Xu <xuerpeng@uniontech.com>
-Subject: [PATCH V2] ahci: Marvell 88SE9215 controllers prefer DMA for ATAPI
-Date: Tue, 11 Mar 2025 11:02:17 +0800
-Message-ID: <20250311030217.4177569-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1741662322; c=relaxed/simple;
+	bh=Tvdo/LZO1dissNuv/0SYsd1MKjzBgYB27TXwIlSgDWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZHNlkqiP2HJfghJ/+WOqbmYPjzGcsFxbocHIrXzkNYhrahLadPmHZrkTrk+yOT7IAARJd6/z5wPmTb62QhCAf4VV8atifuVU+mjRtZvK6HY0zMzDRyoBzZ9VJSzSu+WE4X/dVhPuD5uG+POO7FG43zY5TgGJOE9EdatCdjkG9Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Nu4Z8q8B; arc=none smtp.client-ip=1.95.21.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=tPjzWEIRgrMC7GoOBG9nlVWAbgBUY/TGQT4CORiN6s4=;
+	b=Nu4Z8q8BfhcwGD/Cfdj8iKpZDOrY2WE5lT8uJsA6KpfyUxls4/rceTJeEasYV+
+	GOywZ15Kq318QEyWn+WHn5c8CnrT6OVRE8ChQE5SR/r6ySHlwIInvTem+6AadQEP
+	S6qUwhZ4PaTN+F6KjFXYbGAyFVrkTk9DG3EMsgcn1yXO4=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgCXlUJGqM9nrs20AA--.48493S3;
+	Tue, 11 Mar 2025 11:04:40 +0800 (CST)
+Date: Tue, 11 Mar 2025 11:04:38 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>, Marek Vasut <marex@denx.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Adam Ford <aford173@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] arm64: dts: imx8mp: add AUDIO_AXI_CLK_ROOT to
+ AUDIOMIX block
+Message-ID: <Z8+oRjW7YN+kw73/@dragon>
+References: <20250226164513.33822-1-laurentiumihalcea111@gmail.com>
+ <20250226164513.33822-4-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226164513.33822-4-laurentiumihalcea111@gmail.com>
+X-CM-TRANSID:Ms8vCgCXlUJGqM9nrs20AA--.48493S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUI1CGUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNQgKb2fPqEj92gAA33
 
-We use CD/DVD drives under Marvell 88SE9215 SATA controller on many
-Loongson-based machines. We found its PIO doesn't work well, and on the
-opposite its DMA seems work very well. We don't know the detail of the
-88SE9215 SATA controller, but we have tested different CD/DVD drives
-and they all have problems under 88SE9215 (but they all work well under
-an Intel SATA controller). So we can define a new AHCI board id named
-board_ahci_atapi_dma, and for this id we set the ATA_FLAG_ATAPI_DMA and
-ATA_QUIRK_ATAPI_MOD16_DMA flags on the SATA controller to prefer ATAPI
-DMA.
+On Wed, Feb 26, 2025 at 11:45:12AM -0500, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> 
+> Needed because the DSP and OCRAM_A components from AUDIOMIX are clocked
+> by AUDIO_AXI_CLK_ROOT instead of AUDIO_AHB_CLK_ROOT.
+> 
+> Fixes: b86c3afabb4f ("arm64: dts: imx8mp: Add SAI, SDMA, AudioMIX")
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
 
-BTW, return -EOPNOTSUPP instead of 1 if ATAPI DMA is not supported in
-atapi_check_dma().
-
-Reported-by: Yuli Wang <wangyuli@uniontech.com>
-Tested-by: Jie Fan <fanjie@uniontech.com>
-Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
-Tested-by: Yuli Wang <wangyuli@uniontech.com>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- drivers/ata/ahci.c        | 12 ++++++++++++
- drivers/ata/libata-core.c |  6 +++++-
- include/linux/libata.h    |  1 +
- 3 files changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
-index f813dbdc2346..a64db28549d8 100644
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -49,6 +49,7 @@ enum board_ids {
- 	/* board IDs by feature in alphabetical order */
- 	board_ahci,
- 	board_ahci_43bit_dma,
-+	board_ahci_atapi_dma,
- 	board_ahci_ign_iferr,
- 	board_ahci_no_debounce_delay,
- 	board_ahci_no_msi,
-@@ -137,6 +138,12 @@ static const struct ata_port_info ahci_port_info[] = {
- 		.udma_mask	= ATA_UDMA6,
- 		.port_ops	= &ahci_ops,
- 	},
-+	[board_ahci_atapi_dma] = {
-+		.flags		= AHCI_FLAG_COMMON,
-+		.pio_mask	= ATA_PIO4,
-+		.udma_mask	= ATA_UDMA6,
-+		.port_ops	= &ahci_ops,
-+	},
- 	[board_ahci_ign_iferr] = {
- 		AHCI_HFLAGS	(AHCI_HFLAG_IGN_IRQ_IF_ERR),
- 		.flags		= AHCI_FLAG_COMMON,
-@@ -591,6 +598,8 @@ static const struct pci_device_id ahci_pci_tbl[] = {
- 	  .driver_data = board_ahci_yes_fbs },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9230),
- 	  .driver_data = board_ahci_yes_fbs },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9215),
-+	  .driver_data = board_ahci_atapi_dma },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9235),
- 	  .driver_data = board_ahci_no_debounce_delay },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TTI, 0x0642), /* highpoint rocketraid 642L */
-@@ -1917,6 +1926,9 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* save initial config */
- 	ahci_pci_save_initial_config(pdev, hpriv);
- 
-+	if (board_id == board_ahci_atapi_dma)
-+		pi.flags |= ATA_FLAG_ATAPI_DMA;
-+
- 	/* prepare host */
- 	if (hpriv->cap & HOST_CAP_NCQ) {
- 		pi.flags |= ATA_FLAG_NCQ;
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index c085dd81ebe7..87a3dbf3ac93 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -3029,6 +3029,10 @@ int ata_dev_configure(struct ata_device *dev)
- 		dev->max_sectors = ATA_MAX_SECTORS;
- 	}
- 
-+	if ((dev->class == ATA_DEV_ATAPI) &&
-+	    (ap->flags & ATA_FLAG_ATAPI_DMA))
-+		dev->quirks |= ATA_QUIRK_ATAPI_MOD16_DMA;
-+
- 	if ((dev->class == ATA_DEV_ATAPI) &&
- 	    (atapi_command_packet_set(id) == TYPE_TAPE)) {
- 		dev->max_sectors = ATA_MAX_SECTORS_TAPE;
-@@ -4544,7 +4548,7 @@ int atapi_check_dma(struct ata_queued_cmd *qc)
- 	 */
- 	if (!(qc->dev->quirks & ATA_QUIRK_ATAPI_MOD16_DMA) &&
- 	    unlikely(qc->nbytes & 15))
--		return 1;
-+		return -EOPNOTSUPP;
- 
- 	if (ap->ops->check_atapi_dma)
- 		return ap->ops->check_atapi_dma(qc);
-diff --git a/include/linux/libata.h b/include/linux/libata.h
-index c1c57f814b98..67d374279a65 100644
---- a/include/linux/libata.h
-+++ b/include/linux/libata.h
-@@ -194,6 +194,7 @@ enum {
- 					    /* (doesn't imply presence) */
- 	ATA_FLAG_SATA		= (1 << 1),
- 	ATA_FLAG_NO_LPM		= (1 << 2), /* host not happy with LPM */
-+	ATA_FLAG_ATAPI_DMA	= (1 << 4), /* ATAPI use DMA */
- 	ATA_FLAG_NO_LOG_PAGE	= (1 << 5), /* do not issue log page read */
- 	ATA_FLAG_NO_ATAPI	= (1 << 6), /* No ATAPI support */
- 	ATA_FLAG_PIO_DMA	= (1 << 7), /* PIO cmds via DMA */
--- 
-2.47.1
+Applied, thanks!
 
 
