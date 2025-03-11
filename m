@@ -1,123 +1,90 @@
-Return-Path: <linux-kernel+bounces-557027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F8CA5D2A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:40:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F2BA5D2A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:41:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 768A43B8E35
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:40:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA51F179F41
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EE3265606;
-	Tue, 11 Mar 2025 22:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8375926560E;
+	Tue, 11 Mar 2025 22:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ax62DSMb"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aq8ybwVl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A91F1E7C2B;
-	Tue, 11 Mar 2025 22:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7691E7C2B;
+	Tue, 11 Mar 2025 22:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741732848; cv=none; b=QY8pm6R2RbOk8gbabABV2Jj/eWyE+Cq49R9mwIuOHaaYF1fVCchGzsvNxQbZcbDY8F78DLnOjPkkkeGeXJ3jfW+Ca/zk7ZLfIzyacqkKOidWJott+A6kqTn/d1v2YCrN8C+BWWblTHP2bhNWAglkptLfM+hONMomwalod04qnu0=
+	t=1741732893; cv=none; b=oL2EPqvLvJAFJ+tB0+ud14nspc9k3H9O5dUP0iZbvNKbkHm9fqR2XEjPh50HRajmKCzemn2o04YPt0fITGzalwR1UMilY1yHHQ9XEaYdRQKxw1ig2pAtbjC4XFPSZTb0pVpce77kT9dRzsFm4CG34AWf7sZbEfgu333BiFx1XzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741732848; c=relaxed/simple;
-	bh=T4AmMPVFHy4fO3oFe7eoF2Y1+Qwo3p8w3QJ+kd/k+ps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i5WLhn4rQZDgCs1KTYYy1U3r9p/xH0YIEDQ0Kyo15/IiNOb/5uN2ZyLFOg9K1Ou/hWBz+3UxGBdU7Ani0qYFCidAh0sa/iu04bdXAW0gkFfPg0akrd7d+k0zD8dHTs2sBBS7/Ff4UaDTN4ljinfk0ojxUt21IiKzO5f34hVtVVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=ax62DSMb; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cfecdd8b2so18472615e9.2;
-        Tue, 11 Mar 2025 15:40:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1741732845; x=1742337645; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CEGPWOgVfNQ1ZfxDumHE60ajETskqInTxO4liQoGmRQ=;
-        b=ax62DSMbG6pJrytHBRJMr3I/Rn9VLm+XGniWqd2b49inp7OPAHDBJfutkglAu05TOx
-         +aEClzb9KTPu/Kf+ZCXjjl2aSqU+hWC0H88vwMNNQM3+qN/M/2yordQdfWp2khHr6Xhj
-         FXcwQeloi47ZblfrXZOwmRZLGtM2qDfhKGXZiEalg1wU+niVtYAV5gqxgtSdwxA6ECLz
-         VNm8kSqHECVRlt31pPd1vQuDAjjy2/iIFeyJmSY+XT9ctFx5xE4zcJnr6gmeQPGfqA9q
-         aMbbu0H2FwfLKbXF6gJw0pW+RvMmBjVUeFeCntwqELTgTL1EfqtFiTwDH+I7/CKSAZz3
-         WERQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741732845; x=1742337645;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CEGPWOgVfNQ1ZfxDumHE60ajETskqInTxO4liQoGmRQ=;
-        b=U5+Yte/lvkiYZkKu8S6ogRjrvUTRq5EXym13xVjotpjNZ0WqXuB7hkRgS6DH5G0Mao
-         IHkjAkFMjRaaDRB/2vecocIp9o4AsGjRRO+sCBJhdGbyVcR1st/vJziufybqvEDCR/A8
-         GFU67XVbqFZfhELxVudPTBsxuf2MQtIiZDu3XBIucr8jIP6FrAQv6hfBITTyTmDIQi8r
-         zrjw3RcjFmS1rDsyqyC34z9xU+DuyR4+F0eCJuY04SbG1vwVvhYFburozkz4zqyILNFn
-         +odaJdPywWG/v6eu9TDfplsZhrzYodKjjRDZoV51GO9lZTSgymn3HOliRfLlcop/64RG
-         gVhA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3y9jTz/53pNakvlvHo7BLMuy23zwzUXNQ7qynSyHyQuuRrIhSzuiHsYDJqwtw+1bTv4F1uiJC@vger.kernel.org, AJvYcCXb4zn8GMtGjDw3xK8Hk4SyaEFRhDMUoOTNvf0QHqYmagxM1PRoDBPG5gAc7R4NYGAmM01fuQaW8KBrNks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzZ0HJb4YrXRrIZdrYb7nOwPESoBNPdFXEYvDnFFulTTMi2PgS
-	s+Xve+vJOsk5PILLT0MF0jFG41//Nyl+P2vo2Rp6zfsIqtuGVrM=
-X-Gm-Gg: ASbGncsLh9HTdKzEguZHFqok+GUcsgvUzke1+2FQuK+G8do1HCtyMUL17j3VN3+x1oj
-	Ou/tlBV4fEAXxVZ/6YlBGwa22bpTyI9uy0ekjM+oF0ZJpePju9PmW19LMxyk+Qk+Anjx66WoEtB
-	kIVjeGnJWY7XYvibshE/bWSSpSnYtg2huttU84XJPE17chrNhscMb8okIc7F1irNug7aUbF8BF3
-	8IQfguhZ/JkF0c4KaUHf6LqIAT0lO6kh2Bk3NG8EC6POh0AwPsCOj6NRPnUKsWrIdICrBiRqWeG
-	xVkUKIgd/fPgXFQAAtE41sEHe8tix1mX9Ix2ekDp83e5tJmOnIzhtG1Jd/edD1kgMTtiwT4nZZ1
-	EMm/MeRGbz50SX8bAUwIXMw==
-X-Google-Smtp-Source: AGHT+IHK+c/sNBHna7qu4NW4kaABpYfBEx6OtVltunM93j3NtyT0tJyYUqcf5XxgCowA7M74GN4J7w==
-X-Received: by 2002:a05:600c:1f92:b0:43c:e5c2:394 with SMTP id 5b1f17b1804b1-43ce5c2054emr139387295e9.0.1741732845302;
-        Tue, 11 Mar 2025 15:40:45 -0700 (PDT)
-Received: from [192.168.1.3] (p5b05767c.dip0.t-ipconnect.de. [91.5.118.124])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfdb9sm19168697f8f.27.2025.03.11.15.40.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 15:40:43 -0700 (PDT)
-Message-ID: <77f74bb1-89a3-4982-a937-78b990deceab@googlemail.com>
-Date: Tue, 11 Mar 2025 23:40:41 +0100
+	s=arc-20240116; t=1741732893; c=relaxed/simple;
+	bh=+coG37l2eGCn++hwp9pjgurrJsYlGaIgrcTm4zrjQq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o/KX6f2z8I79+uO8n/CJ0YphfzvSVYiR3iZxskux4EJvcK9AjKcQKdb4wLDR8bXBM92XVGVMdINHFJ07gXdaKTwVPCdrZk8VgkRCjrtbzfqavlW3DzqypshFFDKyHWRduTy7Io7V6QPUGmGerbozn89fmtMzm6Oe3PzaFI0ezPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aq8ybwVl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A91A0C4CEE9;
+	Tue, 11 Mar 2025 22:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741732892;
+	bh=+coG37l2eGCn++hwp9pjgurrJsYlGaIgrcTm4zrjQq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Aq8ybwVla2q0KOz660iw1mOT9EYn0dH46xGvjhQN0XgvJMXkj4L1dZBFcemoaGqGW
+	 Vd8qJDDvNqtkjPXSJq4GQnt4LnEayMlnaKq4/N1c5BBbA12It51mC9zV8RXkIKdLLK
+	 Iv2QEBYvpADJ/47SfWwToq3xR5kMcIPn0pH+Jhf9gVuQVwQBR38WslOwUlRwH/LfTl
+	 HwLKkKKxX/Vft2tic54DhftabJH2Oyyl1JFiO1BoQrAGO5eVxeuua3GYE9QUxHAzcu
+	 2VoJGU4pLbcRn+kicCib5IEhj7TrK8WHyQSSenrQGkyJSAj/uEZZlfjQSrPxSKH9ne
+	 L8TVGExGlLPLg==
+Date: Tue, 11 Mar 2025 15:41:29 -0700
+From: Kees Cook <kees@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] net: macb: Truncate TX1519CNT for trailing NUL
+Message-ID: <202503111540.8EB9B4702@keescook>
+References: <20250310222415.work.815-kees@kernel.org>
+ <64b35f60-2ed4-4ab0-8f4e-0dba042b4d4d@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/144] 6.6.83-rc2 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250311135648.989667520@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250311135648.989667520@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <64b35f60-2ed4-4ab0-8f4e-0dba042b4d4d@lunn.ch>
 
-Am 11.03.2025 um 15:02 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.83 release.
-> There are 144 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Mar 11, 2025 at 03:12:00PM +0100, Andrew Lunn wrote:
+> On Mon, Mar 10, 2025 at 03:24:16PM -0700, Kees Cook wrote:
+> > GCC 15's -Wunterminated-string-initialization saw that this string was
+> > being truncated. Adjust the initializer so that the needed final NUL
+> > character will be present.
+> 
+> This is where we get into the ugliness of the ethtool API for strings.
+> It is not actually NUL terminated. The code uses memcpy(), see:
+> 
+> https://elixir.bootlin.com/linux/v6.13.6/source/drivers/net/ethernet/cadence/macb_main.c#L3193
+> 
+> The kAPI is that userspace provides a big buffer, and the kernel then
+> copies these strings into the buffer at 32 byte offsets. There is no
+> requirement for a NUL between them since they are all 32 bytes long.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
-
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
-
-
-Beste Grüße,
-Peter Schneider
+Oh right! Yes, I always forget these are not NUL terminated. Okay, I
+will resend this with a proper __nonstring annotation. I see the title
+use in drivers/net/ethernet/cadence/macb_main.c and can confirm it's not
+using C String APIs.
 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Kees Cook
 
