@@ -1,194 +1,118 @@
-Return-Path: <linux-kernel+bounces-556422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195D7A5C7AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:37:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24061A5C7D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:39:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9379916493C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 382DA1770D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B9825FA26;
-	Tue, 11 Mar 2025 15:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QwlcDbzn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4F625F782;
+	Tue, 11 Mar 2025 15:34:28 +0000 (UTC)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEFD25FA19
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C70825E805;
+	Tue, 11 Mar 2025 15:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741707151; cv=none; b=djSdx7k/cq4E56uB6HmSPQqVo2A31X/pYlcchqE4A4UmLLdDtTkfP8Xh6AoFwtTR8i7/RqyXxZiCNQR0kEepL4+A2t/B42LwBWJ/d5T60QEtb+TKXJU1vzifSeKRvc5tsM+o7ofGNr86mOZEj0VpZpEa2HEzMSP2yGRB8P4DPUQ=
+	t=1741707267; cv=none; b=T34jPu2MxiWhsxyJkJPtA0oCpdVrPDV1gBxnYxhwWPtCp95Cd8n/dIYVQbenQ7wDZKhKOtz/nwaDSfPGESEmrlmzfrxkhPvWAqXjpOzBI5pghc4DQAYDVlz3gyTjgbH2ROSxYakuZ5jB25tD8BenoPLScVAn2HWC7a9yzs3AtSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741707151; c=relaxed/simple;
-	bh=cGR7yW+ul2CirNwt05XAkvBMRVJPmchILZoVSdAQWE4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=f5wvXcuyxkh/KMP0Nr3eMCJgm5J0E2aGaXALy/3SodyUTCIzZNOPx5ve0uR6jyG3YLASNWyoHkEwAPfEAOaJknroWMUGsxscYPtU2xFFlPgmcU0BqbanakeiwM2VW06bBZTg1psPQYbbw4Mdu1/GPsPWq+qihcumh3mA/WOmaZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QwlcDbzn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741707148;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z/4Zhen8otZUUIGUirLVRCURFAkEQAh1g/kYBjTL128=;
-	b=QwlcDbznTboMEMAtNn4w6pDPNK8/goRXL6teh99+o4W8bBtCoDCw7FWbJeJJxDiFZANbrf
-	/GftojZw2oItJnK64cYnm2zcQSk8r2v/4lqVBFNGkrgu/dZ98xHWjvyigoVyej7DA81JQM
-	+tWiD2bCTMlfa86hVuKcoLbXZz+RQrc=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-398-o59P4KF0ObuOuSntHzDrbw-1; Tue, 11 Mar 2025 11:32:27 -0400
-X-MC-Unique: o59P4KF0ObuOuSntHzDrbw-1
-X-Mimecast-MFC-AGG-ID: o59P4KF0ObuOuSntHzDrbw_1741707146
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3933ab5b1d5so504767f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:32:27 -0700 (PDT)
+	s=arc-20240116; t=1741707267; c=relaxed/simple;
+	bh=d5LHK8UgcwvGOl2UNFuhIPiUyyKpmlJZzTYBqs8A1Lo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rTdkTL8PvqynRBUBvfF6HtP1I/c2NSXWDPW420dRNyltD6c4lCUJkZ2lhozTtV0kS6perlwBwilCYNTDsdp6SvyH47AhfxBmJXuOQnGQQYj9YRI4HlTUB9UpkU/BZCe+wTqX3EI3W3spJdjhTNcuvXSxwG7qFsE/USiEFwqyEuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22548a28d0cso18612055ad.3;
+        Tue, 11 Mar 2025 08:34:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741707146; x=1742311946;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z/4Zhen8otZUUIGUirLVRCURFAkEQAh1g/kYBjTL128=;
-        b=aWEtNoSmtz+Gyim+uqw/6Fmdg6mXtVMq79KxisX1FpjxUF9odH2NoYOH19qv9cqBIc
-         7EaW5y+LCpOVIm4CcikxRZ6af9OHE0fF1yI86q/RdeingZtnSKEcR5Sr1sLQbe5Gv7Ug
-         Z8ojD9ZdKO8jFz8nDoQ4gkyJbz/QmFGILEV7lrRe/8H8uHQ7gfUr5hD28Ko0VAYX1PeX
-         3uqdaislfv98iTawMIOuYVcb9hCZDGuDQL/EuNbo09ObYqrVe4qOPzaotdbt8w3paetK
-         5Ktja6+2C9nDeqj3bDuEbuIeGo9ePU/TxJ/71mLl+uYxktDn0OvvLOrf8HKiTIfvOKE8
-         hMRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWaxjbtLRQKv6QwlG9mYW9crcJqSEbif6PZK19xnqcyCN0pFjeJzlVL/knyIh128LSlczywCsifEWxuh20=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn2yDJkXisaH6KhITaUptNNZq1ouKRxxalAOHEXEs0AROx6cQr
-	4a7S8foriGO7ExpxqlSaAzxArimOUMNpahMtmxti6X192EdTElx893KXvKyw/CSxrSM+OrkJBqT
-	Lw7CyAzoBeqgrwnDaRkmUKDdSF0GWQ/Zzm0d619ChGKs+fpJGRxRq80Bae+qC+A==
-X-Gm-Gg: ASbGncvvBG3Lm7+4QbFNlpCHAaF8H5WtI6tw9UjkQBjnBIgwZhkA86EoW58OHtonxwB
-	CnjSYMCkIidDBFv9hWp/m0Sc3cN7MRNiu1z+6kCcpG+3rD4R0hHv4WAnDYPuDhKaWQMkWLKyBSC
-	vuUjidyXKs2W0mufGTybSMgGqFIOLFK8meN/ZUmDmS0sgFV4cnQd8hoFIIXNnRhv9rRndqLiY6n
-	FYuu2lgdyU4KtIdRvKKaF58ro/pJ2tkGVPOCe6mzsc/1F4PuVDaZ9MQukTiTAcMJ5Wlz3MOPE9e
-	yAcBsgyCp/WuenyOnSzVvbbnH6zi4U5mME3GWGro3GxvjE2tPSG5ULG8YX5KHve7OV9TtYBaigg
-	C
-X-Received: by 2002:a5d:5f8f:0:b0:390:e311:a8c7 with SMTP id ffacd0b85a97d-39132d2ac23mr14041015f8f.5.1741707146146;
-        Tue, 11 Mar 2025 08:32:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE5idbTwPC29cIZuVqWeIsBnJdPqrG40K1D1QZSJ7ax4/92Y7jODHouGk43yk3oUBObhGOXHw==
-X-Received: by 2002:a5d:5f8f:0:b0:390:e311:a8c7 with SMTP id ffacd0b85a97d-39132d2ac23mr14040985f8f.5.1741707145716;
-        Tue, 11 Mar 2025 08:32:25 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfba66esm18681629f8f.18.2025.03.11.08.32.24
+        d=1e100.net; s=20230601; t=1741707265; x=1742312065;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WnmgUREpEZzHIqf+ZGbEOfCKGLjHhsT93+h47gc6MEc=;
+        b=Xjd9bsGogbb9YGBumwhlmLj8LrpfRSEbMQ2oF50AiNkljjHU2awOFRfkeGPd5xCs1E
+         h5ism8jxEiJKOpPgTABhjWs4fxOIckhZH/xDp2nJ8Nbq1tTHLFM1q2AlqQg4jzGFvhgM
+         c2+avpAL8srBOws4poaKBWgHTXp4hzmzNZ6Ir6xYVl4E4OPNUOOXjBwYUL6dgQZPnwIC
+         tEir/n+uN4feXRuyfHBJ8HXmMgqV/5IrKdYcVCgwIdAa/7DQa76d7IxEE8dyR9/nXYVa
+         7tV6dtG4jpw0UHazmMTFUrZ0BxDkzF6GM//ZSJ+7SWo5CiYDQF/tpV6Fa58OvIIFIzRN
+         v3gA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9kqb2pT8crWqSgK3f/4Woa0VptYNtmv2pkL0y9ELX2QWKqPpLOBpAPFnIgZFnMTwKtLxpEVzs@vger.kernel.org, AJvYcCUQzHXNNgf4eZnWtRaEJNpNB1hDtyGrNPF0pwaVbq3f6SQbCU2/LTaHG5AIKfpDkI1JxQvwCzT+X9Ff@vger.kernel.org, AJvYcCV7v6nKgOcl6uyRUAl8bcuJSE271CHREHfQwyTK6z1wDsRZYvkl7yHSwMffXeXI2joSvYoTd0udJMSPAQ==@vger.kernel.org, AJvYcCXseIvVna+WZKqZ6CrhqPuCixYxoYNyvU0GBoxhADj3+F57cieCsyDO/Yn62xabeUimoRtRSYl5dIVVqpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVaUqbsLqhVnHn+7Y6kQ8FJdAvTTyDhUzUQ+7mmSzcF5nxRiI3
+	AmDRp5+BvbdzjFRGRD+zp9AdUxoy0jrPiaBuFXPgAmn7ywVYzn41
+X-Gm-Gg: ASbGncvUJxXcl+WdJVSEXVYWBS3r3dThjKgrgAWPoVGwRnInVYOgKNFHKz1XFLBZiML
+	/Vpa0rvV3Ktz314kkhkcLn81EaB6qxhD+nrFgL5+oRk0s5MRBDgdO2ztjZSgdAIIZ8t6NLCzAkz
+	oxTMcIOTN6LFIG/qA5TPTylwmWUE3Iv3m47Q4qD4Zb81rYIXmwsf8WVqYvivayX0ld14KnYEcyW
+	RvwI8cWJiIftIiAU3Bej+MvSbE4V7eDQ5ulQbSd0hM9Dh1grJn1zZ5ROh0bPXHp3rPMxFPxHtn9
+	WPpBoLudOjcDmru4qWEt+DjbEqC/KdG9ulWTzeszVSlHT+wtn+UnOzqu0asQ+JntkramgjZWBvo
+	C6gg=
+X-Google-Smtp-Source: AGHT+IEp15FNyX/Zw521mFQHT8du6CWvUWJLD3C+Me9OYF9D/bY261KLnGwCsIfgZX7kcU0kGdCDpw==
+X-Received: by 2002:a17:902:cf07:b0:223:58ea:6fdf with SMTP id d9443c01a7336-22428a8d325mr352593315ad.28.1741707265450;
+        Tue, 11 Mar 2025 08:34:25 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109e944csm99547085ad.74.2025.03.11.08.34.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 08:32:25 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Naman Jain <namjain@linux.microsoft.com>, Ingo Molnar
- <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
- <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
- <mgorman@suse.de>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Wahl
- <steve.wahl@hpe.com>, Saurabh Singh Sengar <ssengar@linux.microsoft.com>,
- srivatsa@csail.mit.edu, K Prateek Nayak <kprateek.nayak@amd.com>, Michael
- Kelley <mhklinux@outlook.com>, Naman Jain <namjain@linux.microsoft.com>,
- Shrikanth Hegde <sshegde@linux.ibm.com>
-Subject: Re: [PATCH v5] sched/topology: Enable topology_span_sane check only
- for debug builds
-In-Reply-To: <20250310052509.1416-1-namjain@linux.microsoft.com>
-References: <20250310052509.1416-1-namjain@linux.microsoft.com>
-Date: Tue, 11 Mar 2025 16:32:24 +0100
-Message-ID: <xhsmh34fjr3av.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        Tue, 11 Mar 2025 08:34:25 -0700 (PDT)
+Date: Wed, 12 Mar 2025 00:34:23 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, vigneshr@ti.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	bhelgaas@google.com, rogerq@kernel.org, linux-omap@vger.kernel.org,
+	linux-pci@vger.kernel.org, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	srk@ti.com
+Subject: Re: [PATCH] PCI: j721e: Fix the value of linkdown_irq_regfield for
+ J784S4
+Message-ID: <20250311153423.GD1381004@rocinante>
+References: <20250305132018.2260771-1-s-vadapalli@ti.com>
+ <20250310210746.GA2377483@rocinante>
+ <20250311051806.smcu4o4dxpngimth@uda0492258>
+ <20250311072546.GA277060@rocinante>
+ <20250311073216.ynw7rzmu36dwywij@uda0492258>
+ <20250311152133.GC1381004@rocinante>
+ <20250311152921.cwb7obw5bmlrhvsi@uda0492258>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311152921.cwb7obw5bmlrhvsi@uda0492258>
 
-On 10/03/25 10:55, Naman Jain wrote:
-> From: Saurabh Sengar <ssengar@linux.microsoft.com>
->
-> On a x86 system under test with 1780 CPUs, topology_span_sane() takes
-> around 8 seconds cumulatively for all the iterations. It is an expensive
-> operation which does the sanity of non-NUMA topology masks.
->
-> CPU topology is not something which changes very frequently hence make
-> this check optional for the systems where the topology is trusted and
-> need faster bootup.
->
-> Restrict this to sched_verbose kernel cmdline option so that this penalty
-> can be avoided for the systems who want to avoid it.
->
-> Cc: stable@vger.kernel.org
-> Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap")
-> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> Co-developed-by: Naman Jain <namjain@linux.microsoft.com>
-> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> ---
-> Changes since v4:
-> https://lore.kernel.org/all/20250306055354.52915-1-namjain@linux.microsoft.com/
->       - Rephrased print statement and moved it to sched_domain_debug.
->         (addressing Valentin's comments)
-> Changes since v3:
-> https://lore.kernel.org/all/20250203114738.3109-1-namjain@linux.microsoft.com/
->       - Minor typo correction in comment
->       - Added Tested-by tag from Prateek for x86
-> Changes since v2:
-> https://lore.kernel.org/all/1731922777-7121-1-git-send-email-ssengar@linux.microsoft.com/
->       - Use sched_debug() instead of using sched_debug_verbose
->         variable directly (addressing Prateek's comment)
->
-> Changes since v1:
-> https://lore.kernel.org/all/1729619853-2597-1-git-send-email-ssengar@linux.microsoft.com/
->       - Use kernel cmdline param instead of compile time flag.
->
-> Adding a link to the other patch which is under review.
-> https://lore.kernel.org/lkml/20241031200431.182443-1-steve.wahl@hpe.com/
-> Above patch tries to optimize the topology sanity check, whereas this
-> patch makes it optional. We believe both patches can coexist, as even
-> with optimization, there will still be some performance overhead for
-> this check.
->
-> ---
->  kernel/sched/topology.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index c49aea8c1025..d7254c47af45 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -132,8 +132,11 @@ static void sched_domain_debug(struct sched_domain *sd, int cpu)
->  {
->       int level = 0;
->
-> -	if (!sched_debug_verbose)
-> +	if (!sched_debug_verbose) {
-> +		pr_info_once("%s: Scheduler topology debugging disabled, add 'sched_verbose' to the cmdline to enable it\n",
-> +			     __func__);
->               return;
-> +	}
->
+Hello,
 
-Nit: I've been told not to break warnings over multiple lines so they can
-be grep'ed, but given this has the "sched_domain_debug:" prefix I think we
-could get away with the below.
+[...]
+> > > > No need to send a new version.
+> > > > 
+> > > > I will update the branch directly when I pull the patch.  Not to worry.
+> > > 
+> > > Thank you Krzysztof :)
+> > 
+> > Done.  Have a look at:
+> > 
+> >   https://web.git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/j721e&id=01d04dcd6e80f63ca5e97324ec17c20553947e35
+> > 
+> > Let me know if there is anything else to update.
+> 
+> The changes look good to me. There seems to be a minor typo in the
+> commit message:
+> [kwilczynski: add a issing .linkdown_irq_regfield member set to
+> 
+> You probably meant "missing".
 
-Regardless:
-Reviewed-by: Valentin Schneider <vschneid@redhat.com>
+Oops... Fixed. :)  Thank you!
 
----
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index d7254c47af455..b4dc7c7d2c41c 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -133,7 +133,8 @@ static void sched_domain_debug(struct sched_domain *sd, int cpu)
- 	int level = 0;
- 
- 	if (!sched_debug_verbose) {
--		pr_info_once("%s: Scheduler topology debugging disabled, add 'sched_verbose' to the cmdline to enable it\n",
-+		pr_info_once("%s: Scheduler topology debugging disabled, "
-+			     "add 'sched_verbose' to the cmdline to enable it\n",
- 			     __func__);
- 		return;
- 	}
+> Thank you once again for fixing it without the need for a new patch.
 
+No worries.
+
+	Krzysztof
 
