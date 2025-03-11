@@ -1,159 +1,163 @@
-Return-Path: <linux-kernel+bounces-555773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8B3A5BC93
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:46:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F2FA5BC96
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:47:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A263618883FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:46:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5300E7A2A66
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78911624C0;
-	Tue, 11 Mar 2025 09:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB911E47B7;
+	Tue, 11 Mar 2025 09:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MnLaHEYA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqpnwX9B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3181DE4CC;
-	Tue, 11 Mar 2025 09:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45743BA34;
+	Tue, 11 Mar 2025 09:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741686400; cv=none; b=tdopS3Hl0snqzdmgwBGesl4U7R+48mSxqwUXwSNGAa0O9bJHQ/vmNKzN5P9pJ+vRvll4cQj6rkiA5mkZ6sylzp2UCtFL8pkIgm6Crry4ksDCPyHxqAdVsNnjz/DZOU1A/i056XPs9mptWMJD3rx24+tlWeW98mUasPJ6r8/TDTE=
+	t=1741686435; cv=none; b=EqURWO12Y7Z+p8SQPySuBsfLIOo1m0qS9wqVme0Z0HlqwsOvJsR2u1JbXXFiVKmzE6N8LynVWl6w5wJO68NpB4kLVDE/oJ1JCCK35wIrLpmHY0rWdQQ5JY0W2gu2pNaNrSMv44czxlxVs8xVc666eaHUheFReXyWD6KWRo3dak0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741686400; c=relaxed/simple;
-	bh=b1wG5aEm4jUY9AjL337oYXys81MYKzcODDs+/+d+EO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i7y5vYsxI78FjO9510YiZMkD9Z7sNmFgxfu3s4fOGlsMSlKRsJigLrt9//q5ST148UHfTGiR/J8AScTlvcs8ofEe0ghP4enu08oFIGTMqFpEmZXAiDcQDEsWHgzl8YuxEwpu7vnJEQQvKblplYc2zNqMKUh1tVH8HO2fF8SHF48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MnLaHEYA; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741686398; x=1773222398;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=b1wG5aEm4jUY9AjL337oYXys81MYKzcODDs+/+d+EO0=;
-  b=MnLaHEYAfNQpoFX1cM3eKEIcQ+ovn5miNEogxGR2oKERbiexoibox+RB
-   Rrx+9Q0M+AGmP4Ezy/jkIJPQTzjeb+5Ahp32tqHbbGvdwsTRUCQmgNXzV
-   3vEpmfPP65hteo010J1pqQancfX4pMF9GjsMmWhZ2Id3l7+oPqV1xygo+
-   ZWTnU/pLtKRwb+IODOBzFSePnAOy9EjY2WwP7isNP7N3Hc1pRku1mIsOm
-   GOphk2QmOzHKOTLFBX3SXr1cWnLE0Flcy9cz1bKS8jRWmMomQ+mKkJqHi
-   CldfJtLw+BjbQq1jhU0NhQ3vgGvVURTA2f5rmzhxtcruu0GH/4ZtLnSBh
-   g==;
-X-CSE-ConnectionGUID: MJFMC8u5QpeLZrtcJTff7Q==
-X-CSE-MsgGUID: NK7DUqoPSWGD9dgAifPObQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42842175"
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="42842175"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 02:46:38 -0700
-X-CSE-ConnectionGUID: dusUJ33MQSuVoPjtWEqqLw==
-X-CSE-MsgGUID: dWo2rMMoRTyZjmeaB7+NEw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="125168279"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 02:46:34 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 5796911F7F2;
-	Tue, 11 Mar 2025 11:46:32 +0200 (EET)
-Date: Tue, 11 Mar 2025 09:46:32 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Shravan.Chippa@microchip.com
-Cc: laurent.pinchart@ideasonboard.com, tarang.raval@siliconsignals.io,
-	kieran.bingham@ideasonboard.com, mchehab@kernel.org,
-	hverkuil@xs4all.nl, umang.jain@ideasonboard.com,
-	zhi.mao@mediatek.com, julien.massot@collabora.com,
-	mike.rudenko@gmail.com, benjamin.mugnier@foss.st.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] media: i2c: imx334: Convert to CCI register access
- helpers
-Message-ID: <Z9AGeIA-207RuGQ0@kekkonen.localdomain>
-References: <20250310071751.151382-1-tarang.raval@siliconsignals.io>
- <20250310071751.151382-3-tarang.raval@siliconsignals.io>
- <PH0PR11MB5611A568DC879D4206FDE76681D12@PH0PR11MB5611.namprd11.prod.outlook.com>
- <20250311063849.GB29331@pendragon.ideasonboard.com>
- <PH0PR11MB5611257EF7BF21EA7617008881D12@PH0PR11MB5611.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1741686435; c=relaxed/simple;
+	bh=m8GtSASoTKItJBBxR++EYkWDcnQaVyq2qcdQfxdQw0Q=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gZhAM7M/dz+Q2EbJqRF/ZQ/dL4XcnHU5uN8s/Nt6U443fT084HwJ7zgLYx5e4ZQAzjCPlftF5D+3Byps1/ZAPyUTNeIhfKtReLWr6iJE6ORqtvbmDVroG/otNQfcb/5vNy+Ai/BJA3SMXCtsRZtpsgPvCswXidSQGBfPpCyBzwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqpnwX9B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3D57C4CEE9;
+	Tue, 11 Mar 2025 09:47:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741686434;
+	bh=m8GtSASoTKItJBBxR++EYkWDcnQaVyq2qcdQfxdQw0Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YqpnwX9B2JRyJ6ffnkz3XHwibH3H3cz+fKM7rFClRH42y0w7kEVeC6u6lz8wUqISl
+	 vTC1Q9lEiea8HUF3BMsUXFRnMB6g//gY9uy6QvxySDgdN239b7u2sA/EnQ3ICQLCW5
+	 S+vyETyiQh89sUgQ1LcKHa0g0J5vnY7YthLDoTTTRnyvKt0ZF4SNX3C9b+TxDj8UMA
+	 HWFye28XUeXvz8s/V6KAQm+wzS+ZbzcdDZaPMcpSHNU98jePa1d55AvLIzMrDyo69a
+	 j31njN3HxtBFCUtx2LUliEwEp0MokEQo7zSkZAyXeJQTPaMhfuoxoUfIT8AGWg5JCh
+	 f272CICu68NHQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1trwCe-00CTdL-GR;
+	Tue, 11 Mar 2025 09:47:12 +0000
+Date: Tue, 11 Mar 2025 09:47:12 +0000
+Message-ID: <86wmcvoq5b.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Zhenyu Ye <yezhenyu2@huawei.com>
+Cc: <yuzenghui@huawei.com>,
+	<will@kernel.org>,
+	<oliver.upton@linux.dev>,
+	<catalin.marinas@arm.com>,
+	<joey.gouly@arm.com>,
+	<linux-kernel@vger.kernel.org>,
+	<xiexiangyou@huawei.com>,
+	<zhengchuan@huawei.com>,
+	<wangzhou1@hisilicon.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<kvm@vger.kernel.org>,
+	<kvmarm@lists.linux.dev>
+Subject: Re: [PATCH v1 2/5] arm64/kvm: support set the DBM attr during memory abort
+In-Reply-To: <20250311040321.1460-3-yezhenyu2@huawei.com>
+References: <20250311040321.1460-1-yezhenyu2@huawei.com>
+	<20250311040321.1460-3-yezhenyu2@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH0PR11MB5611257EF7BF21EA7617008881D12@PH0PR11MB5611.namprd11.prod.outlook.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: yezhenyu2@huawei.com, yuzenghui@huawei.com, will@kernel.org, oliver.upton@linux.dev, catalin.marinas@arm.com, joey.gouly@arm.com, linux-kernel@vger.kernel.org, xiexiangyou@huawei.com, zhengchuan@huawei.com, wangzhou1@hisilicon.com, linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Shravan, Tarang,
+Please follow the current convention for the subject of your patch (if
+you do a git log --oneline on arch/arm64/kvm, all commit should have
+the same style).
 
-On Tue, Mar 11, 2025 at 06:51:48AM +0000, Shravan.Chippa@microchip.com wrote:
-> Hi Laurent,
+On Tue, 11 Mar 2025 04:03:18 +0000,
+Zhenyu Ye <yezhenyu2@huawei.com> wrote:
 > 
-> > -----Original Message-----
-> > From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Sent: Tuesday, March 11, 2025 12:09 PM
-> > To: shravan Chippa - I35088 <Shravan.Chippa@microchip.com>
-> > Cc: tarang.raval@siliconsignals.io; sakari.ailus@linux.intel.com;
-> > kieran.bingham@ideasonboard.com; mchehab@kernel.org;
-> > hverkuil@xs4all.nl; umang.jain@ideasonboard.com; zhi.mao@mediatek.com;
-> > julien.massot@collabora.com; mike.rudenko@gmail.com;
-> > benjamin.mugnier@foss.st.com; linux-media@vger.kernel.org; linux-
-> > kernel@vger.kernel.org
-> > Subject: Re: [PATCH 2/6] media: i2c: imx334: Convert to CCI register access
-> > helpers
-> > 
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the
-> > content is safe
-> > 
-> > Hi Shravan,
-> > 
-> > On Tue, Mar 11, 2025 at 06:14:28AM +0000, Shravan.Chippa@microchip.com
-> > wrote:
-> > > Hi Tarang,
-> > >
-> > > Thanks for the patch series with CCI register access helpers on top of
-> > > my patches I have tested (1080p,720p, 480p resolution only) and
-> > > working on my board with small PLL changes to make it compatible with
-> > > pfsoc board (mpfs-video-kit).
-> > 
-> > Could you please provide more information about what those PLL changes are
-> > ?
+> From: eillon <yezhenyu2@huawei.com>
 > 
-> Here is the change for mpfs-video-kit board.
+> Since the ARMv8, the page entry has supported the DBM attribute.
+> Support set the attr during user_mem_abort().
+
+Not quite. ARMv8.1 added DBM, and that is still, to this day, an
+optional functionality, including in ARMv9.5.
+
 > 
-> diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
-> index 375367314416..30470dbd1f3c 100644
-> --- a/drivers/media/i2c/imx334.c
-> +++ b/drivers/media/i2c/imx334.c
-> @@ -236,9 +236,9 @@ static const struct cci_reg_sequence common_mode_regs[] = {
->         { IMX334_REG_XVS_XHS_OUTSEL, 0x20},
->         { IMX334_REG_XVS_XHS_DRV, 0x0f},
->         { IMX334_REG_BCWAIT_TIME, 0x3b},
-> -       { IMX334_REG_CPWAIT_TIME, 0x2a},
-> +       { IMX334_REG_CPWAIT_TIME, 0x29},
+> Signed-off-by: eillon <yezhenyu2@huawei.com>
+> ---
+>  arch/arm64/include/asm/kvm_pgtable.h | 3 +++
+>  arch/arm64/kvm/hyp/pgtable.c         | 6 ++++++
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
+> index 6b9d274052c7..35648d7f08f5 100644
+> --- a/arch/arm64/include/asm/kvm_pgtable.h
+> +++ b/arch/arm64/include/asm/kvm_pgtable.h
+> @@ -86,6 +86,8 @@ typedef u64 kvm_pte_t;
+>  
+>  #define KVM_PTE_LEAF_ATTR_HI_S2_XN	BIT(54)
+>  
+> +#define KVM_PTE_LEAF_ATTR_HI_S2_DBM	BIT(51)
+> +
+>  #define KVM_PTE_LEAF_ATTR_HI_S1_GP	BIT(50)
+>  
+>  #define KVM_PTE_LEAF_ATTR_S2_PERMS	(KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | \
+> @@ -252,6 +254,7 @@ enum kvm_pgtable_prot {
+>  
+>  	KVM_PGTABLE_PROT_DEVICE			= BIT(3),
+>  	KVM_PGTABLE_PROT_NORMAL_NC		= BIT(4),
+> +	KVM_PGTABLE_PROT_DBM			= BIT(5),
+>  
+>  	KVM_PGTABLE_PROT_SW0			= BIT(55),
+>  	KVM_PGTABLE_PROT_SW1			= BIT(56),
+> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
+> index df5cc74a7dd0..3ea6bdbc02a0 100644
+> --- a/arch/arm64/kvm/hyp/pgtable.c
+> +++ b/arch/arm64/kvm/hyp/pgtable.c
+> @@ -700,6 +700,9 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
+>  	if (prot & KVM_PGTABLE_PROT_W)
+>  		attr |= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W;
+>  
+> +	if (prot & KVM_PGTABLE_PROT_DBM)
+> +		attr |= KVM_PTE_LEAF_ATTR_HI_S2_DBM;
+> +
+>  	if (!kvm_lpa2_is_enabled())
+>  		attr |= FIELD_PREP(KVM_PTE_LEAF_ATTR_LO_S2_SH, sh);
+>  
+> @@ -1309,6 +1312,9 @@ int kvm_pgtable_stage2_relax_perms(struct kvm_pgtable *pgt, u64 addr,
+>  	if (prot & KVM_PGTABLE_PROT_W)
+>  		set |= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W;
+>  
+> +	if (prot & KVM_PGTABLE_PROT_DBM)
+> +		set |= KVM_PTE_LEAF_ATTR_HI_S2_DBM;
+> +
 
-A patch converting the driver to use V4L2 CCI / human-readable register
-names should not change the values written.
+Why isn't that exclusive of PROT_W?
 
-This change is exactly the same than your 2nd patch does. It'd be good to
-understand why it is different and what is effect of that difference.
+>  	if (prot & KVM_PGTABLE_PROT_X)
+>  		clr |= KVM_PTE_LEAF_ATTR_HI_S2_XN;
+>  
 
->         { IMX334_REG_INCKSEL1, 0x0129},
-> -       { IMX334_REG_INCKSEL2, 0x06},
-> +       { IMX334_REG_INCKSEL2, 0x0a},
+What is driving this KVM_PGTABLE_PROT_DBM bit?
 
-This is a bigger change indeed.
+Thanks,
 
->         { IMX334_REG_INCKSEL3, 0xa0},
->         { IMX334_REG_INCKSEL4, 0x7e},
->         { IMX334_REG_SYS_MODE, 0x02},
+	M.
 
 -- 
-Regards,
-
-Sakari Ailus
+Without deviation from the norm, progress is not possible.
 
