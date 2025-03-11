@@ -1,235 +1,191 @@
-Return-Path: <linux-kernel+bounces-555529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFAFA5B921
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:20:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8CE7A5B926
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:21:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0FD01895284
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:20:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165E11700DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767001EF38D;
-	Tue, 11 Mar 2025 06:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1621EE7B9;
+	Tue, 11 Mar 2025 06:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="r0pVdBqS"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FpvmBb0v"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2089.outbound.protection.outlook.com [40.107.244.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373351684AC
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741673994; cv=none; b=YayVHH0xgOIBAGDJmrG5JmYka6BnKLilTXZltLkxma/YN86IxIrQFIfuxHtgUWj2q9YN/IvMokJmag0ttJWMhwQ8bk2GQKmkTZ+VZs1sOjRskjjv9R8MPztJwAQZjjdm+XJchkSoDyWOXLdPtgpN5nscaddS3CNMQhv5MgXWNsk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741673994; c=relaxed/simple;
-	bh=ZP4EaVCBU43ETX1tsWfetopJ677SR8acZVhOJLrcrw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qr3MIEURdwiZ2AQ9oOTvJimJr9DymOu3Zs1cc6Ks04wgr8uf41RuiRWxesVVC21dH5Ft/zeEnxi9p+P01w+G3V8mH346ewCisfxy+kcXyT6sI/WMUwFTpzQAEA9YnF0zbhtfKOj/SpM12NGpeawXIZ3AJnIKGgYxyfZp+pk1UwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=r0pVdBqS; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22409077c06so2155105ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 23:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741673992; x=1742278792; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EbcW5/eDAGhdpWi7HyX3jjOdHbLTgrUim/DP0OQGuWo=;
-        b=r0pVdBqSlYlaLTahjdTPd8TF3QsBOiOSOqTWeNjGAMKFcI3nXQfondYE+kch38jYSL
-         5YwEt4prOcOBGftjrZ1F72y8/J6hrFawCMkGNOP7+u7cJYnWCiXuiIRC2SESSFSS8CHA
-         FpBomgMo+qnJRoTHuw9co+mDt0+ce85cp3ZT6HRywW3SPQ4o/xiUA36SkNWtxvrAuT1w
-         WQGmmF9NVuhUaZJNg8ARmVSDem38gWxRzgcUhPrBP2GNGfHzkT7cU3GnW9wdecY583rN
-         TaB0euWxhno9HQIRt0XJG3o75zVFGnVvvndOBG4FGmbz/S++SRb1q0Bsu7843OPZgFzX
-         zPsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741673992; x=1742278792;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EbcW5/eDAGhdpWi7HyX3jjOdHbLTgrUim/DP0OQGuWo=;
-        b=cUeB94PYTa4aXSEapW0r9pNqOQt9XOkJpirpz3SWA2h458cclAcIG/cnhPkSzB3tF9
-         eTvBkd8FhR7BoJhtqZrg0JPTvVDbSsSrTtcOLOqgFnV553Qs5EItsZQrKiDTnNUZmGZn
-         cuicStJwlIIO+/Tb5SN0Cd+B8eok0qebYbLWTdFdNmtbUKlyr+rQfrlBach4AGOjgvYT
-         DvGT9H/vRP06mCaWHdS3oqQ6zDcDImvsTrbkc1gzeGv3fFkdPluO9j4AuIkt0HkK7euW
-         e1ndKnSDLrGhPeEoFOnE6va0JTbjDHnORua+dihFRzk8lgRydn80wpqqLIy4CNG1qeyj
-         6HRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfWit+HApNI9IdLeW9wbG2SrD4dXc2OOPHYIeiCD8q1QNVrJvtb4OTjgPQbalqVG7UxHQaiBG1uNZuPHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzehDetI9n5mM1wQaUISWR5JIJdzXljkjua7qYa2yDnwyiqmyLO
-	iXRtXb4qqi9nl+dZfOn01q4vI4tU1ipYZ060uaXAmiHwzoKo8NS/FXJ+fVE9J5k=
-X-Gm-Gg: ASbGncvsQ95m20FOfe/0FUKQTshdm136uc+8o+laSqlteNbZufTNcL4vq+F8G97hfTo
-	7x7O6qcNglDuk1NVQF5aExWjiVHdBJfW5Z6WgfSxIW7k4YBrlL/EAmtgOvKnGxDNhe7TWTbz/IS
-	ssuYLDdZOcHiTmulTZD3IH847AkDlNzbKTimOEpIi7cfxvr5YDdxlxyLUxYS9mBZApPdNO7zbI6
-	QwvFaF6RRjbv+LEyjkmVW++zc+W4ziD4hM/hxR2UtRZlkoKmptrdDEO6YXSzWkvEeZzB5gCLj7f
-	ku7GLgibw0GH+H4YjJ3xDqzEdqgk3l72NvfM9CCJoRgMgM5qUBn8XsSEZQ==
-X-Google-Smtp-Source: AGHT+IEO1Addst46ofGtxfDAcyJAfRa7cWyZNqzRhdZXtyiIrODFKfx6qBjS5jqvhrfaOM+pKspNkg==
-X-Received: by 2002:a17:902:e802:b0:223:26da:4b6f with SMTP id d9443c01a7336-22428895abfmr268969215ad.14.1741673992501;
-        Mon, 10 Mar 2025 23:19:52 -0700 (PDT)
-Received: from [157.82.205.237] ([157.82.205.237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f5dasm89029115ad.137.2025.03.10.23.19.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 23:19:52 -0700 (PDT)
-Message-ID: <217fb3ef-336d-4141-b47e-3236f2c22ec3@daynix.com>
-Date: Tue, 11 Mar 2025 15:19:47 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2731684AC;
+	Tue, 11 Mar 2025 06:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741674095; cv=fail; b=W+ihAo5XdJCBIxFkXu6XhpX7284Z9EnVfX9wbH19fBufwQoC9K4CbSRBaL72sGEhhZqV9gE6UsuyaHiF8qXSVMAzxbxp2++rMtDT1bNaqPOz4PXCUnnmuYLoGPzFv46SmnA7r6rxA3clGfxv5gCpl2IXVFlXjYxhPB0UR8Hll6A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741674095; c=relaxed/simple;
+	bh=FByc08cvD0NNhBcORZfi/hq272h2/kQeSpmeVEKP3Qs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ffYJ6+1xkseyJ/ykqVdeWnNoKa0aBI6x1K5Ujk0+YEDYzIcUiqNqQwmzSb6vCCe5hJSWnDuu9lCPNs33rq1SdJPrSnXKAoWRAhXZG5qjuaxSvgOx1XLN5mbz3/KujlRYGIc4sr0hg2Vbgogw4LMPafzU1EGsChRAEmbF1LLj0+8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FpvmBb0v; arc=fail smtp.client-ip=40.107.244.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y3WL0+OUQve4MbdTPclhpxIvaMX4Y/AFN6rcwpq+ckFk/6WR1NY2QxOy0mlZ4C60/YEO1LbX228np/7h7b+6NR1ESXdUdZR/5vcLQgmqR16kQHtoHC2FZa2jUfejHLtecy/QZwMTFwVF3SFliOBkkDkOsp+RGFSt1rBhW7lV/OrvqwJCkQsrBAsKKli4nmPtURmpgeDr3dm8bmCE0AiVRFwdHU02siJ6toPlKEeSydLMFQ7SIWfohBZNyNg2NnDQrJ3p16YBGttU7vS+tg0y9ihoIspGIfa4ELq/o10t8p64Xf+7IifaZ8S6hVAhKKuYN9s8OXoQb7D6u+UsYr/uAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pGJ/YHD7Y0Amb2zrDwYJ4wBFM+f2UpR9zsgGfCLQmXQ=;
+ b=ouNY1fvn3YhX7nO2EQChglh3LcLUlHb9FOGjYdW2WnxfQafowEJ02tIo9QErl/JEoZX7XkdP3x//XORXwdhf7x3rtaIjoX+kN03tDdnAgPstBioHETJa8VT212RrJtLPOBM6587YCoa2iKUDHGzOglGI3afJgRFUV+OBAyrl69Vzsf7IOhcra0pSwrkzmJVFK9xt35SoLfNkI+TpY9tg3izfOrh0ZJo/jtlAmiuBhOMY6jdJOq54rJdZR6Tg2Br2zy3g377iAggTRfUfTUG9gFTzvoTmN+NLHuiqZe4e36Z/qf1ggS4M+LFT4plcmsqavn5C372DdqxSL8Fyz1QkLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pGJ/YHD7Y0Amb2zrDwYJ4wBFM+f2UpR9zsgGfCLQmXQ=;
+ b=FpvmBb0vRTB/U0UWu/C4vqLpRBH2Q9EzBJPSsuBc3WVsgtT+LoKCtrFHbQGIlkQjJw4Ybd3yLgvkZMnsPHlo32ZCp2DUuhIfSMxoN7EEVqlGAE+fxz3/sp6mQ72IaUwUe5tv4fKDJSThMH1LzEK63FHvC9PYsxzXDNC+UNuYtKrl+RNX2SR3lpIYHt7GiWV9mGzVllhU0nCrMwUTMpIkWVw5i4qltpDw6lwzZm//uqdQrTs7uHARe3kZP2qOylZWcrM+OhEtoYMoIt2sfCWKa5L5MSndOySAlavLV1b9e50LaB5VnzvkZZblA5z8SaBxnmg+UOKcRCaMRjHgsLNvBg==
+Received: from BY3PR05CA0043.namprd05.prod.outlook.com (2603:10b6:a03:39b::18)
+ by CH3PR12MB9281.namprd12.prod.outlook.com (2603:10b6:610:1c8::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
+ 2025 06:21:30 +0000
+Received: from MWH0EPF000989E6.namprd02.prod.outlook.com
+ (2603:10b6:a03:39b:cafe::cc) by BY3PR05CA0043.outlook.office365.com
+ (2603:10b6:a03:39b::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.21 via Frontend Transport; Tue,
+ 11 Mar 2025 06:21:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ MWH0EPF000989E6.mail.protection.outlook.com (10.167.241.133) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Tue, 11 Mar 2025 06:21:29 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 10 Mar
+ 2025 23:21:22 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 10 Mar 2025 23:21:21 -0700
+Received: from build-sheetal-bionic-20250305.nvidia.com (10.127.8.13) by
+ mail.nvidia.com (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14
+ via Frontend Transport; Mon, 10 Mar 2025 23:21:21 -0700
+From: "Sheetal ." <sheetal@nvidia.com>
+To: <broonie@kernel.org>, <linux-sound@vger.kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<jonathanh@nvidia.com>, <thierry.reding@gmail.com>, <mkumard@nvidia.com>,
+	<spujar@nvidia.com>, Ritu Chaudhary <rituc@nvidia.com>, Sheetal
+	<sheetal@nvidia.com>
+Subject: [PATCH] ASoC: tegra: Use non-atomic timeout for ADX status register
+Date: Tue, 11 Mar 2025 06:20:10 +0000
+Message-ID: <20250311062010.33412-1-sheetal@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 5/6] selftest: tun: Add tests for virtio-net
- hashing
-To: Jason Wang <jasowang@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- Yuri Benditovich <yuri.benditovich@daynix.com>,
- Andrew Melnychenko <andrew@daynix.com>,
- Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com,
- Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
-References: <20250307-rss-v9-0-df76624025eb@daynix.com>
- <20250307-rss-v9-5-df76624025eb@daynix.com>
- <CACGkMEuTwd4+DP1Cb+ZgJtxTiJj4N_NMPHiKusd8a4Tn3+B_3A@mail.gmail.com>
-Content-Language: en-US
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-In-Reply-To: <CACGkMEuTwd4+DP1Cb+ZgJtxTiJj4N_NMPHiKusd8a4Tn3+B_3A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E6:EE_|CH3PR12MB9281:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6da0aa69-1723-4ff4-5cfa-08dd6064f621
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UwponhYSN1XXrhTEqi/o61i//w168AY4GtL7S/TvRz6hnJUyQbY7y9Ot5N46?=
+ =?us-ascii?Q?351yrT1uLxNqqLZU5y5EcpdlxT13oLjNfzhGDsGcBjZidx3bUa1BDGtFryrQ?=
+ =?us-ascii?Q?QSCOpQPGLrilGIo0qv0PHUug4Wz1GHBfkIclsPO+ZDlF+yR0BWAFoXR53b6H?=
+ =?us-ascii?Q?+8awdoDX/O79STUoSwYi2k9gs+3Bn3P2d8pCEkFWsYC8jm3PbL+kFplDELmH?=
+ =?us-ascii?Q?yRLwwkpp9CvOA/yQP3Huf2M1D4egTQ+nCQsCuThjFvYoR7RyX7RO+v8Q9e0Q?=
+ =?us-ascii?Q?yPoXyHsl4lfIWZGqLA/B0JnNfIRqXN2conBGllzdQY0L3WHKmkHyK/KYJbCk?=
+ =?us-ascii?Q?7FrZ4smSfjHZNwwLPC6PUgITyTrZmgbke2qRNvtrN1XbrOK6q50tXK9rB9pZ?=
+ =?us-ascii?Q?AjuprlVGGQYMdU1SrlVYr2sPikAk5kuwZ1HQPpOLdYl5aNxjVHQJ+seFCM/J?=
+ =?us-ascii?Q?7sJn0/UskzZ1e6naXarnqYw/53uc6j2+zMptzfqV8L6xB7AgN8A9eJA3l2SW?=
+ =?us-ascii?Q?IcA97Wk4oi0Vejzmnu1slH38X8yqnNdTl/dpjxVfkCetGN4jvtapgFfIUgpY?=
+ =?us-ascii?Q?nKBZM36caZXrkkYislOWwcZaon381Ne/aoagWckBt1tSOF0fXjz9qeg3tm67?=
+ =?us-ascii?Q?gfjUkds/dFUgtKnPpth/GRaW7aZfruLXYVtVKrSRceEQ4rO0iJ2N8L0dodpc?=
+ =?us-ascii?Q?kObf75iZ/tlCLDxm4+AGAu3Y0W8bnrqsvReMIUYZjh2zbxCcReGmIOwMAlh5?=
+ =?us-ascii?Q?4k3IRo6IfvCvkNvXR/W1m1bxMjnpRMCJ3o42q9/0e1rliyTcbq9s9TxbFo3p?=
+ =?us-ascii?Q?JaLy8pT8izErqG/m3GKwuBww3YKt3kmK9jktnh0zFJGXNOJbaLMbTh3D/pie?=
+ =?us-ascii?Q?vVvRm6QHjzmNXQWwGQIiLqGTgJut0WW5QKnKaBAbPsAWQNNlqwjCl42yX3+/?=
+ =?us-ascii?Q?Tr1DA6WflTJRiOn3a+gbOEQM5xqPjQKEhBqs60rGxlCM9f5G5gFQb6fxVgTy?=
+ =?us-ascii?Q?mnURGYlG0A1kPNsNmhxDVav2Dh69hghXPmxw40bKOTmGJR8vb8jHNloigu9y?=
+ =?us-ascii?Q?f1tlXleQew465YepEgkgj4PRgdA4QWp/hIUaEj+1dcYoQ140Ri220LSCNJtd?=
+ =?us-ascii?Q?r3AEeL7D0gg0wtVCug+Y3o4Cz1QC1/Ob9yvxuVTkN155VfBQePW/SveHRqEf?=
+ =?us-ascii?Q?bAKo4Ez3IEHIwjSeQ2o3R8hGAjibtem3Kg+TNA2/yrZ4RzCMkUP1he+q/JBR?=
+ =?us-ascii?Q?Q8YPVNUj6nrKl4r3jv9LWC16dWIw4z5PZ1VpG3gOMlnyaWpoA9c/4WMExp9x?=
+ =?us-ascii?Q?ta20PuqOK4qGEGAsGf1u0i9OYAHNQ4jcgguyz/24HpI81XXFyln5ibmt4pM+?=
+ =?us-ascii?Q?CtySszpvFvCuZMEUTJpUwBu7EWh5qZPttGyczx3wL1fgaLCha/nuA/Wg0YMy?=
+ =?us-ascii?Q?hdSi9KhFuHfrjzCRwfKzJaATiim1QKK2dS9C9xqW2Eg+9tIPs7vfxgi8dvph?=
+ =?us-ascii?Q?uv7evUARlxpJSvg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 06:21:29.7918
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6da0aa69-1723-4ff4-5cfa-08dd6064f621
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989E6.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9281
 
-On 2025/03/10 13:03, Jason Wang wrote:
-> On Fri, Mar 7, 2025 at 7:02 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>
->> The added tests confirm tun can perform RSS and hash reporting, and
->> reject invalid configurations for them.
-> 
-> Let's be more verbose here. E.g what's the network topology used here.
+From: Ritu Chaudhary <rituc@nvidia.com>
 
-The network topology doesn't matter because this only tests the rx of 
-one device.
+ADX startup() callback uses atomic poll timeout on ADX status register.
 
-I can still add more details; it tests all supported hash types, and 
-tests both the queue selection and reported hash values.
+This is unnecessary because:
 
-And this message is wrong in terms that it does not test validation of 
-configuration so it also needs correction.
+- The startup() callback itself is non-atomic.
+- The subsequent timeout call in the same function already uses a
+  non-atomic version.
 
-> 
->>
->> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
->> Tested-by: Lei Yang <leiyang@redhat.com>
->> ---
->>   tools/testing/selftests/net/Makefile |   2 +-
->>   tools/testing/selftests/net/tun.c    | 584 ++++++++++++++++++++++++++++++++++-
->>   2 files changed, 576 insertions(+), 10 deletions(-)
->>
->> diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
->> index 73ee88d6b043004be23b444de667a1d99a6045de..9772f691a9a011d99212df32463cdb930cf0a1a0 100644
->> --- a/tools/testing/selftests/net/Makefile
->> +++ b/tools/testing/selftests/net/Makefile
->> @@ -123,6 +123,6 @@ $(OUTPUT)/reuseport_bpf_numa: LDLIBS += -lnuma
->>   $(OUTPUT)/tcp_mmap: LDLIBS += -lpthread -lcrypto
->>   $(OUTPUT)/tcp_inq: LDLIBS += -lpthread
->>   $(OUTPUT)/bind_bhash: LDLIBS += -lpthread
->> -$(OUTPUT)/io_uring_zerocopy_tx: CFLAGS += -I../../../include/
->> +$(OUTPUT)/io_uring_zerocopy_tx $(OUTPUT)/tun: CFLAGS += -I../../../include/
->>
->>   include bpf.mk
->> diff --git a/tools/testing/selftests/net/tun.c b/tools/testing/selftests/net/tun.c
->> index 463dd98f2b80b1bdcb398cee43c834e7dc5cf784..acadeea7194eaea9416a605b47f99f7a5f1f80cd 100644
->> --- a/tools/testing/selftests/net/tun.c
->> +++ b/tools/testing/selftests/net/tun.c
->> @@ -2,21 +2,38 @@
->>
->>   #define _GNU_SOURCE
->>
->> +#include <endian.h>
->>   #include <errno.h>
->>   #include <fcntl.h>
->> +#include <sched.h>
-> 
-> Is this needed?
+Using atomic version can hog CPU when it is not really needed,
+so replace it with non-atomic version.
 
-Yes, it is for unshare().
+Fixes: a99ab6f395a9e ("ASoC: tegra: Add Tegra210 based ADX driver")
+Signed-off-by: Ritu Chaudhary <rituc@nvidia.com>
+Signed-off-by: Sheetal <sheetal@nvidia.com>
+---
+ sound/soc/tegra/tegra210_adx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> 
->> +#include <stddef.h>
->>   #include <stdio.h>
->>   #include <stdlib.h>
->>   #include <string.h>
->>   #include <unistd.h>
->> -#include <linux/if.h>
->> +#include <net/if.h>
->> +#include <netinet/ip.h>
->> +#include <sys/ioctl.h>
->> +#include <sys/socket.h>
->> +#include <linux/compiler.h>
->> +#include <linux/icmp.h>
->> +#include <linux/if_arp.h>
->>   #include <linux/if_tun.h>
->> +#include <linux/ipv6.h>
->>   #include <linux/netlink.h>
->>   #include <linux/rtnetlink.h>
->> -#include <sys/ioctl.h>
->> -#include <sys/socket.h>
->> +#include <linux/sockios.h>
->> +#include <linux/tcp.h>
->> +#include <linux/udp.h>
->> +#include <linux/virtio_net.h>
->>
->>   #include "../kselftest_harness.h"
->>
->> +#define TUN_HWADDR_SOURCE { 0x02, 0x00, 0x00, 0x00, 0x00, 0x00 }
->> +#define TUN_HWADDR_DEST { 0x02, 0x00, 0x00, 0x00, 0x00, 0x01 }
->> +#define TUN_IPADDR_SOURCE htonl((172 << 24) | (17 << 16) | 0)
->> +#define TUN_IPADDR_DEST htonl((172 << 24) | (17 << 16) | 1)
->> +
->>   static int tun_attach(int fd, char *dev)
->>   {
->>          struct ifreq ifr;
->> @@ -39,7 +56,7 @@ static int tun_detach(int fd, char *dev)
->>          return ioctl(fd, TUNSETQUEUE, (void *) &ifr);
->>   }
->>
->> -static int tun_alloc(char *dev)
->> +static int tun_alloc(char *dev, short flags)
->>   {
->>          struct ifreq ifr;
->>          int fd, err;
->> @@ -52,7 +69,8 @@ static int tun_alloc(char *dev)
->>
->>          memset(&ifr, 0, sizeof(ifr));
->>          strcpy(ifr.ifr_name, dev);
->> -       ifr.ifr_flags = IFF_TAP | IFF_NAPI | IFF_MULTI_QUEUE;
->> +       ifr.ifr_flags = flags | IFF_TAP | IFF_NAPI | IFF_NO_PI |
->> +                       IFF_MULTI_QUEUE;
->>
->>          err = ioctl(fd, TUNSETIFF, (void *) &ifr);
->>          if (err < 0) {
->> @@ -64,6 +82,40 @@ static int tun_alloc(char *dev)
->>          return fd;
->>   }
->>
->> +static bool tun_add_to_bridge(int local_fd, const char *name)
->> +{
-> 
-> I wonder if a packet socket is more convenient here.
-
-I'll try it. Thanks for suggestion.
-
-Regards,
-Akihiko Odaki
-
-> 
-> Thanks
-> 
+diff --git a/sound/soc/tegra/tegra210_adx.c b/sound/soc/tegra/tegra210_adx.c
+index 0aa93b948378..3c10e09976ad 100644
+--- a/sound/soc/tegra/tegra210_adx.c
++++ b/sound/soc/tegra/tegra210_adx.c
+@@ -1,5 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 NVIDIA CORPORATION & AFFILIATES.
++// SPDX-FileCopyrightText: Copyright (c) 2021-2025 NVIDIA CORPORATION & AFFILIATES.
+ // All rights reserved.
+ //
+ // tegra210_adx.c - Tegra210 ADX driver
+@@ -57,8 +57,8 @@ static int tegra210_adx_startup(struct snd_pcm_substream *substream,
+ 	int err;
+ 
+ 	/* Ensure if ADX status is disabled */
+-	err = regmap_read_poll_timeout_atomic(adx->regmap, TEGRA210_ADX_STATUS,
+-					      val, !(val & 0x1), 10, 10000);
++	err = regmap_read_poll_timeout(adx->regmap, TEGRA210_ADX_STATUS,
++				       val, !(val & 0x1), 10, 10000);
+ 	if (err < 0) {
+ 		dev_err(dai->dev, "failed to stop ADX, err = %d\n", err);
+ 		return err;
+-- 
+2.17.1
 
 
