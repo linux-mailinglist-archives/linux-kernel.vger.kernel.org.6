@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-556853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F6CA5CF80
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:34:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F20FA5CF82
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:34:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60E74188A5EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:34:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F80188A80C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930D92641F8;
-	Tue, 11 Mar 2025 19:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5B9263F49;
+	Tue, 11 Mar 2025 19:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OlsVUps8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkoRgJeJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA6D17591;
-	Tue, 11 Mar 2025 19:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C616B262800;
+	Tue, 11 Mar 2025 19:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741721661; cv=none; b=WUrvzCtC+sH8NGZqLE5F/yfm/5LxmYTd5wGey46j20E5zVDEii2SqB6Lqdc8pIsxrdEPEaykVTvM+b5teVMAD4mEUlKS8t+Zojriiu/ebcq0glnbPYhaLRkSkt3JXsI2R5jA9pdwSnmw7cNBVXpIdFKUJQWPPiX56poXJbND80Q=
+	t=1741721666; cv=none; b=GGcrfy1lgvoN8AhEYz+2NUEsKY2hD7LChPilz8EGA2bJV5FfPBLVQv8gWQSftLaR345nWWiV1nkxq3z8ZAie1WMVznZTJJR25TPTVFzU1gHhiyuoyMghwNhuhUVLjrWF2qoRjwmqvHiz18cYgFomZNggs3wnhb92dZudysJHemk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741721661; c=relaxed/simple;
-	bh=p87FX0SnpPxZ9l1ZBDNa6QJprc90RiIs0UOFXGZGDxM=;
+	s=arc-20240116; t=1741721666; c=relaxed/simple;
+	bh=7SzSmNQI5Lq15IlMk57NIhjyJKbjRjI8NcTmba3AXVM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EKCF8Ga4tJWNW9LyOFMe7HjZvSglD3uG4JOA4VQS2yuKW0LNU/wXcSK3cL0/Cyf4g3n6HSIU8dfQnJhYLEFj3ynJ9LzFUK9VzyTM+tBRrSW10d8MXQ3pc46c7SlDTUHb+gwA7rJwmjDHasJzn9ZWj/KrH6DpQgQbjTkczOiPib0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OlsVUps8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C8FC4CEE9;
-	Tue, 11 Mar 2025 19:34:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qjVp4yzGqaOm6lCqJTiEgR6A2g/rnA5aP2nuqvBPax/HSm2fhd/cMjtqEVIrfr5m7pVpyimZZiWYpChjh9iRdO0EgQsmE10j+IDu/pqR+Bh+LiDXmMZ89+tTVZuEbbwSp8rZ/vRQSTPMoTWO8uyKDgmsNBtmQbQ1YYO6y3glvIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QkoRgJeJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B17C4CEEC;
+	Tue, 11 Mar 2025 19:34:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741721659;
-	bh=p87FX0SnpPxZ9l1ZBDNa6QJprc90RiIs0UOFXGZGDxM=;
+	s=k20201202; t=1741721666;
+	bh=7SzSmNQI5Lq15IlMk57NIhjyJKbjRjI8NcTmba3AXVM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OlsVUps8vrLIXM3DGWSr6KQfKDIbTTZV/i2KsDQ5w74YasGSAPZHdgYEGSpXG6eoI
-	 AaFU3I652y/uAms2zTuP9rNq3cMsg+a4jnD/fZw9AZ3QhXuOGTUkSZ6fRhZWpENM8l
-	 XpgfnHMC9vuPV1u8s+qXmCpY7hxwCWPOQPKXz/G2SteMk0H3kP+NraT4IL3ZkI++Qm
-	 exbdtkzmMl1Uw9ylgaCthmVlxvVTYqeYG+yGeZwjjm3HzBEj21QN8nM5C2E3FVda8m
-	 X+gGPUbFzXnM3FB+7pfM8uoucLf6jKBZzdHqHjNHxIP4G3sahe5GqbR4+G71yUk+Pz
-	 Rt01Cw+xFgd2A==
-Date: Tue, 11 Mar 2025 09:34:18 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Ming Lei <ming.lei@redhat.com>, axboe@kernel.dk, josef@toxicpanda.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH] blk-throttle: support io merge over iops_limit
-Message-ID: <Z9CQOuJA-bo4xZkH@slm.duckdns.org>
-References: <20250307090152.4095551-1-yukuai1@huaweicloud.com>
- <Z8sZyElaHQQwKqpB@slm.duckdns.org>
- <5fc124c9-e202-99ca-418d-0f52d027640f@huaweicloud.com>
- <Z85LjhvkCzlqBVZy@fedora>
- <Z88K5JtR4rhhIFsY@slm.duckdns.org>
- <baba2f82-6c35-8c24-847c-32a002009b63@huaweicloud.com>
+	b=QkoRgJeJFXxlTW+99XRp2q4NDI9BDBJPGkBfz6igAVwDGxzS/HyKTtrx39Ai71c4d
+	 isNzsFY1aKZj9sa2BSv+dc9ljLPkz5XZKo+K6dg04Unvtu3/T9VlCSydoN937mvUpu
+	 HO9QDuG2WziULaShHg590LN/H36/OktS//Kf7ZA+xbStMjW13Zqao+z716+X9NcMIg
+	 auXhiZVXPDDQvrRf4Bf5PnL+q2BFornqaZ6gw6u9JhhePTzGBE7HaDtv/JjlXvD97k
+	 GjoWMP1PvTx0KM4aez0R6/7jjRJFtHwa3RYfrTgVwQ0AEtC84UYdf5TSTs7FYQ7K8N
+	 D+mkFg7Qx8YAw==
+Date: Tue, 11 Mar 2025 21:34:20 +0200
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Antonin Godard <antonin.godard@bootlin.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/2] drm/panel: simple: Add POWERTIP PH128800T004-ZZA01
+ panel entry
+Message-ID: <l5xqtntobwrqm6itp2bxnfr735fbzye7vvai6fl2wdmk6jzjbs@dk2kmfhzg5to>
+References: <20250311-add-powertip-ph128800t004-v1-0-7f95e6984cea@bootlin.com>
+ <20250311-add-powertip-ph128800t004-v1-2-7f95e6984cea@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,27 +64,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <baba2f82-6c35-8c24-847c-32a002009b63@huaweicloud.com>
+In-Reply-To: <20250311-add-powertip-ph128800t004-v1-2-7f95e6984cea@bootlin.com>
 
-Hello,
-
-On Tue, Mar 11, 2025 at 11:08:00AM +0800, Yu Kuai wrote:
-...
-> > That said, I'm not sure about changing the behavior now. blk-throtl has
-> > mostly used the number of bios as long as it has existed and given that
-> > there can be a signficant difference between the two metrics, I'm not sure
-> > the change is justified at this point.
+On Tue, Mar 11, 2025 at 05:40:06PM +0100, Antonin Godard wrote:
+> Add support for the POWERTIP PH128800T004-ZZA01 10.1" (1280x800)
+> LCD-TFT panel. Its panel description is very much like the POWERTIP
+> PH128800T006-ZHC01 configured below this one, only its timings are
+> different.
 > 
-> If we really concern about the behavior change, can we consider a new
-> flag that can switch to the old behavior? We'll see if any user will
-> complain.
+> Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+> ---
+>  drivers/gpu/drm/panel/panel-simple.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
 
-Yeah, that may be the right way to go about this, but let me turn this
-around and ask you why adding a new behavior would be a good idea. What
-problems are you trying to solve?
-
-Thanks.
+Reviewed-by: Dmitry Baryshkov <lumag@kernel.org>
 
 -- 
-tejun
+With best wishes
+Dmitry
 
