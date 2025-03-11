@@ -1,160 +1,136 @@
-Return-Path: <linux-kernel+bounces-556569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F4AA5CBC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:11:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F37EFA5CBCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:12:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BDFB170F61
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:11:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3702016CD7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB11E261593;
-	Tue, 11 Mar 2025 17:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CB11C1F22;
+	Tue, 11 Mar 2025 17:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kzS1HYkv"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="GP4l2rFV"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0968925C6FF;
-	Tue, 11 Mar 2025 17:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549D46088F;
+	Tue, 11 Mar 2025 17:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741713087; cv=none; b=Tw/l+VbDHwW+5GluQRpQFsLCore9zhx0EwAuIoufVgZVn4QtPmNfVx/48WiY9JLTtw9n1nbuoO3Z9bAf/goTjVU78UfyW7aI4unh1tu5hygbhRJIsCiPQ9ar+UzHhL25QKz3TYQuajdGKdrr+UQ4h+BJGci6l1dVZtELEptB6Rk=
+	t=1741713133; cv=none; b=q4jkYOgkXl9EFzoaokJB/+Tk6nP+vzAQn54maM/IISz3FovX7TMLq75s+iJNS+dkCtAH1AMZymsP0VCu310g51ww1ampYIZ30iT0BwEXsm/zt77u5G4izgUgFuIWsrRodTFq42rAzuRSvnSeWlfRyH03vP/EBoyJ0j3fTpn1meI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741713087; c=relaxed/simple;
-	bh=iWOfywb2ZgN/DV2L//kHF5EmUlAssN1Lf9nq9WyUOfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t8l7AY7kRQjj+qcCK5wC7I06lYZdmNJIohg3xxaQ+OiOHDV6cvX0aSSOvpghUbBiVV6eBjzDl1YT++uVgEXU+ZElsrxlvEF/PYxCRm1POlckzkCoBuE59MTIthFXkGW94WKYmmuIc8L5XmUhc5NiZz1IuAS/bGlZ6KI+C+K8728=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kzS1HYkv; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E3C21442AD;
-	Tue, 11 Mar 2025 17:11:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741713082;
+	s=arc-20240116; t=1741713133; c=relaxed/simple;
+	bh=Qu2jSxI68Yuv58ZY1s3DUu3opjr5ViPKgK7NowSBIHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UWnqatheacQEDvv3I8RwZuPqU6MTFZwdX68FMvQ4y0sWT2F0qRE0QhPSDTZS8DwlaZw7ouVluIBbx0iTIZbljFe4Yhn6ge279lrqxM+ukZIOvou9/W0aqMDT+pNgNDwzXSNaK3a85NHXE+vah0TKO0HrLT7PoMeLNVH+I/kkZ84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=GP4l2rFV; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 2C1EA2FC0187;
+	Tue, 11 Mar 2025 18:12:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1741713126;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aWrlzjIwoAbjcMpraGEw8NTMjMyT86D1v//3+JUsrVc=;
-	b=kzS1HYkvnbeKZVIbFIGXOh/rU88MERKp63D8IY6mH/mtzYKRUAfJgCQqZjBxW9FeVEGzJJ
-	N5730t4BTu6i+4oBvIZiA1CPb2cIPLmlI//WSjmjsXoBMjuaohQZO8168RyTYTJ+gKTXb2
-	46A8m5Lc3sRu2MB5lfNK5Ou4Wu3I7e3VarPm0z9vmfRBVXEJsVeGw+NDNiWJupoD8nrq+5
-	3B6X3E6qpVBaLolYfqK95659NH0fHOJb5Dq9mV6AuHrmHFDCZteOffGI2B43ZIHzllWRhl
-	jDDY4Kp6ssChVwqfjIYAs/O9+s4XBg92FPvY+/42jQS8Y6mspZgo/XoVtCDLwA==
-Date: Tue, 11 Mar 2025 18:11:20 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Russell King <rmk+kernel@armlinux.org.uk>,
- Thangaraj Samynathan <Thangaraj.S@microchip.com>, Rengarajan Sundararajan
- <Rengarajan.S@microchip.com>, kernel@pengutronix.de,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v3 5/7] net: usb: lan78xx: port link settings
- to phylink API
-Message-ID: <20250311181120.604c0a49@fedora.home>
-In-Reply-To: <20250310115737.784047-6-o.rempel@pengutronix.de>
-References: <20250310115737.784047-1-o.rempel@pengutronix.de>
-	<20250310115737.784047-6-o.rempel@pengutronix.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	bh=yFujNVfNFwEITADlkgmdAe1zG2boTNm0ddAG1aVDUMo=;
+	b=GP4l2rFV4cdd9HMy7iVxRAUUHDjIl1JzbXyl7OvSWyRnbyxqX2tzi+N3bL9q+ifVZNULNz
+	5iZhVdmLlMCXPyAkQXg+Wl7zmOPJbBcBwAUg3Y/d6R93e3cOmCv9ctEExDxZbs+gIxDvOU
+	cPHwt6rIvcaiTF2Hb0g/+N8rV5cpNDU=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <d39e465a-29ae-4961-a144-cb45945c2e2a@tuxedocomputers.com>
+Date: Tue, 11 Mar 2025 18:12:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] Input: atkbd - Correctly map F13 - F24
+To: hdegoede@redhat.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250311170429.1091067-1-wse@tuxedocomputers.com>
+ <20250311170429.1091067-2-wse@tuxedocomputers.com>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <20250311170429.1091067-2-wse@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddvjeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrt
- ghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeifohhojhhunhhgrdhhuhhhsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopehrmhhkodhkvghrnhgvlhesrghrmhhlihhnuhigrdhorhhgrdhukh
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hello Oleksij,
+Hi Hans, Hi Dimitry,
 
-On Mon, 10 Mar 2025 12:57:35 +0100
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+Regarding remapping KEY_ZENKAKUHANKAKU to KEY_TOUCHPAD_TOGGLE:
 
-> Refactor lan78xx_get_link_ksettings and lan78xx_set_link_ksettings to
-> use the phylink API (phylink_ethtool_ksettings_get and
-> phylink_ethtool_ksettings_set) instead of directly interfacing with the
-> PHY. This change simplifies the code and ensures better integration with
-> the phylink framework for link management.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Am 11.03.25 um 18:04 schrieb Werner Sembach:
+> Currently only F23 is correctly mapped for PS/2 keyboards.
+>
+> Following to this table:
+> https://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/translate.pdf
+>
+> - F24 and Zenkaku/Hankaku share the same scancode, but since in real world
+> Zenkaku/Hankaku keys seem to just use the tilde scancode, this patch binds the
+> scancode to F24. Note that on userspace side the KEY_ZENKAKUHANKAKU keycode is
+> currently not bound in xkeyboard-config, so it is (mostly*) unused anyway.
+
+I think what the firmware vendor actually wanted to do was to send 
+ctrl+super+f24 upon touchpad toggle. This would somewhat fall in line with, for 
+example, the copilot key being implemented as shift+super+f23.
+
+Following this, my suggestion is to do this remapping and handle the rest in 
+xkeyboard-config.
+
+>
+> * Qt on Wayland and therefore KDE on Wayland can see the keypress anyway for
+> some reason and it is actually used in a touchpad toggle shortcut, but this is
+> currently being fixed in both KDE and xkeyboard-config to make this less weird,
+> so it could directly be fixed to correctly handle the F24 keypress instead.
+>
+> - The scancodes for F13-F22 are currently unmapped so there will probably be no
+> harm in mapping them. This would also fix the issue that some of these keys
+> can't be mapped as the target from userspace using the `setkeycodes` command.
+
+This is optional. I can split it off if wanted.
+
+Best regards,
+
+Werner
+
+>
+> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
 > ---
->  drivers/net/usb/lan78xx.c | 34 ++--------------------------------
->  1 file changed, 2 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-> index 73f62c3e5c58..7107eaa440e5 100644
-> --- a/drivers/net/usb/lan78xx.c
-> +++ b/drivers/net/usb/lan78xx.c
-> @@ -1862,46 +1862,16 @@ static int lan78xx_get_link_ksettings(struct net_device *net,
->  				      struct ethtool_link_ksettings *cmd)
->  {
->  	struct lan78xx_net *dev = netdev_priv(net);
-> -	struct phy_device *phydev = net->phydev;
-> -	int ret;
-> -
-> -	ret = usb_autopm_get_interface(dev->intf);
-> -	if (ret < 0)
-> -		return ret;
->  
-> -	phy_ethtool_ksettings_get(phydev, cmd);
-> -
-> -	usb_autopm_put_interface(dev->intf);
-> -
-> -	return ret;
-> +	return phylink_ethtool_ksettings_get(dev->phylink, cmd);
->  }
->  
->  static int lan78xx_set_link_ksettings(struct net_device *net,
->  				      const struct ethtool_link_ksettings *cmd)
->  {
->  	struct lan78xx_net *dev = netdev_priv(net);
-> -	struct phy_device *phydev = net->phydev;
-> -	int ret = 0;
-> -	int temp;
-> -
-> -	ret = usb_autopm_get_interface(dev->intf);
-> -	if (ret < 0)
-> -		return ret;
-
-It is unclear to me why these usb_autopm_* calls are here in the first
-place. I think we only need to make sure that the mdio accesses are done
-under usb_autopm_get_interface(), which is already the case.
-
-> -	/* change speed & duplex */
-> -	ret = phy_ethtool_ksettings_set(phydev, cmd);
->  
-> -	if (!cmd->base.autoneg) {
-> -		/* force link down */
-> -		temp = phy_read(phydev, MII_BMCR);
-> -		phy_write(phydev, MII_BMCR, temp | BMCR_LOOPBACK);
-> -		mdelay(1);
-> -		phy_write(phydev, MII_BMCR, temp);
-> -	}
-> -
-> -	usb_autopm_put_interface(dev->intf);
-> -
-> -	return ret;
-> +	return phylink_ethtool_ksettings_set(dev->phylink, cmd);
->  }
->  
->  static void lan78xx_get_pause(struct net_device *net,
-
-If you need to respin maybe add something about it in the commit,
-but besides that,
-
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-
-Maxime
+>   drivers/input/keyboard/atkbd.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+> index 3598a21d9d014..4bd6e6ef0715e 100644
+> --- a/drivers/input/keyboard/atkbd.c
+> +++ b/drivers/input/keyboard/atkbd.c
+> @@ -84,12 +84,12 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
+>   #include "hpps2atkbd.h"	/* include the keyboard scancodes */
+>   
+>   #else
+> -	  0, 67, 65, 63, 61, 59, 60, 88,  0, 68, 66, 64, 62, 15, 41,117,
+> -	  0, 56, 42, 93, 29, 16,  2,  0,  0,  0, 44, 31, 30, 17,  3,  0,
+> -	  0, 46, 45, 32, 18,  5,  4, 95,  0, 57, 47, 33, 20, 19,  6,183,
+> -	  0, 49, 48, 35, 34, 21,  7,184,  0,  0, 50, 36, 22,  8,  9,185,
+> -	  0, 51, 37, 23, 24, 11, 10,  0,  0, 52, 53, 38, 39, 25, 12,  0,
+> -	  0, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0, 85,
+> +	  0, 67, 65, 63, 61, 59, 60, 88,183, 68, 66, 64, 62, 15, 41,117,
+> +	184, 56, 42, 93, 29, 16,  2,  0,185,  0, 44, 31, 30, 17,  3,  0,
+> +	186, 46, 45, 32, 18,  5,  4, 95,187, 57, 47, 33, 20, 19,  6,183,
+> +	188, 49, 48, 35, 34, 21,  7,184,189,  0, 50, 36, 22,  8,  9,185,
+> +	190, 51, 37, 23, 24, 11, 10,  0,191, 52, 53, 38, 39, 25, 12,  0,
+> +	192, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0,194,
+>   	  0, 86, 91, 90, 92,  0, 14, 94,  0, 79,124, 75, 71,121,  0,  0,
+>   	 82, 83, 80, 76, 77, 72,  1, 69, 87, 78, 81, 74, 55, 73, 70, 99,
+>   
 
