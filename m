@@ -1,125 +1,125 @@
-Return-Path: <linux-kernel+bounces-555636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA8AA5BA99
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:14:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BBDDA5BA9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4681188CBEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:14:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA1163AAEB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEDD22423D;
-	Tue, 11 Mar 2025 08:14:21 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA828F6C;
-	Tue, 11 Mar 2025 08:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8007022423D;
+	Tue, 11 Mar 2025 08:14:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84801190674;
+	Tue, 11 Mar 2025 08:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741680860; cv=none; b=Ren1uEF+/OH8Y34mHS5CAMSQFWmNvXKQk/HTOjxv0LVWtOoEQxiFTMZqrwGrMBVXGMw9oVDX71aPYvnqopF4pEybs1TvsAz4NngX+teUHtc02o5HepcKnj6lTI4IxjQ84svd2G23/VIXD2h5vM4QM/I1NM3hbkTFdfUUwiEKHLM=
+	t=1741680892; cv=none; b=JISrviHhg0KFTa2FfBXjtFGgSHNZXGDn4XaLuBYrpSnSAdFsgKJtXDXx4CJh0fgiSiyBcDAQRCXo/ZR3i+/Pvuj1EFsS+xbwQ9SJnVK8NbDKoEYmXaO/b7iTP+VD3Y6A6jnoEasZ1FsKiZWIi90JkPjpFD9sswxufRslgRH4Yh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741680860; c=relaxed/simple;
-	bh=zNUahkr4ceyQKOxdCI7/WCIpVBaDh6Z1v6aPh3hQyPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IsMMzZh6ODz/7rvG54ylq7ut7iJZzXQ5/Vml1afLc1Mg9tlXito5rtjcFnLx6iIXzQeLHTdtTPMmA/HmnwJyK212iS56kdOMDd9Af3Aujpsj/XkKNbqV5Ho0S7SYrbYlTX42+dOnPx5c81yhqXiaGqbkLPWzmB3CyrkyPY+dkDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZBmkP6jSjzyRrm;
-	Tue, 11 Mar 2025 16:14:05 +0800 (CST)
-Received: from kwepemo200002.china.huawei.com (unknown [7.202.195.209])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2627B1800C9;
-	Tue, 11 Mar 2025 16:14:09 +0800 (CST)
-Received: from [10.174.179.13] (10.174.179.13) by
- kwepemo200002.china.huawei.com (7.202.195.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 11 Mar 2025 16:14:08 +0800
-Message-ID: <bb6bba1d-fabe-cc14-2521-ffbf2e31ac63@huawei.com>
-Date: Tue, 11 Mar 2025 16:14:07 +0800
+	s=arc-20240116; t=1741680892; c=relaxed/simple;
+	bh=fnvdHzd7V7r7rqyLT2xRsX4MdQDqZhJcwTJpt44q0zc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=auur1Fo9MTjqCskXxqQPrOzxwDNKZv12ycIoPcT/EP6+dMQb2xhC1FguM/EFZXb6NsA6SnOItXkQ1Kj5EHUfDxAe34YjBgk+1DwXCI07enquEZmWNmRo5+MbIc5Xq6YqA/iqwXhuiUUqMoAJCANIJDr17LqZm4sLqKWQdbvvbmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC808152B;
+	Tue, 11 Mar 2025 01:14:59 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CA973F694;
+	Tue, 11 Mar 2025 01:14:47 -0700 (PDT)
+Date: Tue, 11 Mar 2025 08:14:43 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Yujie Liu <yujie.liu@intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Martin Liska <martin.liska@hey.com>
+Subject: Re: [PATCH] perf script: Update brstack syntax documentation
+Message-ID: <20250311081443.GI9682@e132581.arm.com>
+References: <20250225061736.1698175-1-yujie.liu@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: Using userfaultfd with KVM's async page fault handling causes
- processes to hung waiting for mmap_lock to be released
-To: Peter Xu <peterx@redhat.com>
-CC: jimsiak <jimsiak@cslab.ece.ntua.gr>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
-	<linux-mm@kvack.org>, <wangkefeng.wang@huawei.com>
-References: <79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr>
- <20250307072133.3522652-1-tujinjiang@huawei.com>
- <46ac83f7-d3e0-b667-7352-d853938c9fc9@huawei.com>
- <dee238e365f3727ab16d6685e186c53c@cslab.ece.ntua.gr>
- <Z8t2Np8fOM9jWmuu@x1.local> <bb6eb768-2e3b-0419-6a7d-9ed9165a2024@huawei.com>
- <Z880ejmfqjY1cuX7@x1.local>
-From: Jinjiang Tu <tujinjiang@huawei.com>
-In-Reply-To: <Z880ejmfqjY1cuX7@x1.local>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemo200002.china.huawei.com (7.202.195.209)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225061736.1698175-1-yujie.liu@intel.com>
 
+Hi Yujie,
 
-在 2025/3/11 2:50, Peter Xu 写道:
-> On Mon, Mar 10, 2025 at 02:40:35PM +0800, Jinjiang Tu wrote:
->> 在 2025/3/8 6:41, Peter Xu 写道:
->>> On Fri, Mar 07, 2025 at 03:11:09PM +0200, jimsiak wrote:
->>>> Hi,
->>>>
->>>>   From my side, I managed to avoid the freezing of processes with the
->>>> following change in function userfaultfd_release() in file fs/userfaultfd.c
->>>> (https://elixir.bootlin.com/linux/v5.13/source/fs/userfaultfd.c#L842):
->>>>
->>>> I moved the following command from line 851:
->>>> WRITE_ONCE(ctx->released, true);
->>>> (https://elixir.bootlin.com/linux/v5.13/source/fs/userfaultfd.c#L851)
->>>>
->>>> to line 905, that is exactly before the functions returns 0.
->>>>
->>>> That simple workaround worked for my use case but I am far from sure that is
->>>> a correct/sufficient fix for the problem at hand.
->>> Updating the field after userfaultfd_ctx_put() might mean UAF, afaict.
->>>
->>> Maybe it's possible to remove ctx->released but only rely on the mmap write
->>> lock.  However that'll need some closer look and more thoughts.
->>>
->>> To me, the more straightforward way to fix it is to use the patch I
->>> mentioned in the other email:
->>>
->>> https://lore.kernel.org/all/ZLmT3BfcmltfFvbq@x1n/
->>>
->>> Or does it mean it didn't work at all?
->> This patch works for me. mlock() syscall calls GUP with FOLL_UNLOCKABLE and
->> allows to release mmap lock and retry.
->>
->> But other GUP call without FOLL_UNLOCKABLE will return VM_FAULT_SIGBUS,
->> is it a regression for the below commit？
-> Do you have an explicit reproducer / use case of such?
->
-> AFAIU, below commit should only change it from SIGBUS to NOPAGE when
-> "released" is set.  I don't see how it can regress on !FOLL_UNLOCKABLE.
->
-> Thanks,
+Sorry I missed this patch.
 
-You are right, the below commit seems to only care about page fault from userspace (which has
-FAULT_FLAG_ALLOW_RETRY flag), and doesn't care about GUP from drivers (which may be !FOLL_UNLOCKABLE)
+On Tue, Feb 25, 2025 at 02:17:36PM +0800, Yujie Liu wrote:
+> 
+> The following commits appended new fields to the end of the branch info
+> list, such as branch type and branch speculation info.
+> 
+> commit 1f48989cdc7d ("perf script: Output branch sample type")
+> commit 6ade6c646035 ("perf script: Show branch speculation info")
+> 
+> Update brstack syntax documentation to be consistent with the latest
+> branch info list. Improve the descriptions to help users interpret the
+> fields accurately.
+> 
+> Signed-off-by: Yujie Liu <yujie.liu@intel.com>
+> ---
+>  tools/perf/Documentation/perf-script.txt | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
+> index b72866ef270b..8bd105084280 100644
+> --- a/tools/perf/Documentation/perf-script.txt
+> +++ b/tools/perf/Documentation/perf-script.txt
+> @@ -239,13 +239,15 @@ OPTIONS
+>         i.e., -F "" is not allowed.
+> 
+>         The brstack output includes branch related information with raw addresses using the
+> -       /v/v/v/v/cycles syntax in the following order:
+> -       FROM: branch source instruction
+> -       TO  : branch target instruction
+> -        M/P/-: M=branch target mispredicted or branch direction was mispredicted, P=target predicted or direction predicted, -=not supported
+> -       X/- : X=branch inside a transactional region, -=not in transaction region or not supported
+> -       A/- : A=TSX abort entry, -=not aborted region or not supported
+> -       cycles
+> +       FROM/TO/PRED/INTX/ABORT/CYCLES/TYPE/SPEC syntax in the following order:
+> +       FROM  : branch source instruction
+> +       TO    : branch target instruction
+> +       PRED  : M=branch target mispredicted or branch direction was mispredicted, P=target predicted or direction predicted, -=not supported
 
-Thanks.
+Can we use a more generic naming (e.g., EVENT) for this field?
 
->> commit 656710a60e3693911bee3a355d2f2bbae3faba33
->> Author: Andrea Arcangeli <aarcange@redhat.com>
->> Date:   Fri Sep 8 16:12:42 2017 -0700
->>
->>      userfaultfd: non-cooperative: closing the uffd without triggering SIGBUS
->>
->>> Thanks,
->>>
+My patches have added a 'N' flag in this field, which stands for
+"Not taken branch".  Later we might extend this field for support new
+event types.
+
+Thanks,
+Leo
+
+> +       INTX  : X=branch inside a transactional region, -=not in transaction region or not supported
+> +       ABORT : A=TSX abort entry, -=not aborted region or not supported
+> +       CYCLES: the number of cycles that have elapsed since the last branch was recorded
+> +       TYPE  : branch type
+> +       SPEC  : branch speculation info
+> 
+>         The brstacksym is identical to brstack, except that the FROM and TO addresses are printed in a symbolic form if possible.
+> 
+> --
+> 2.34.1
+> 
+> 
 
