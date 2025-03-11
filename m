@@ -1,136 +1,173 @@
-Return-Path: <linux-kernel+bounces-556570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37EFA5CBCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:12:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF972A5CBD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:13:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3702016CD7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:12:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CC62189A526
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CB11C1F22;
-	Tue, 11 Mar 2025 17:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A0D26039B;
+	Tue, 11 Mar 2025 17:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="GP4l2rFV"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fcfFIT1r"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549D46088F;
-	Tue, 11 Mar 2025 17:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262086088F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 17:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741713133; cv=none; b=q4jkYOgkXl9EFzoaokJB/+Tk6nP+vzAQn54maM/IISz3FovX7TMLq75s+iJNS+dkCtAH1AMZymsP0VCu310g51ww1ampYIZ30iT0BwEXsm/zt77u5G4izgUgFuIWsrRodTFq42rAzuRSvnSeWlfRyH03vP/EBoyJ0j3fTpn1meI=
+	t=1741713204; cv=none; b=uM+s/ux4FjkiJGeCtWiG0TNknBOv+2hK8YCCqF6Vv0Bgw7OHy2hb1GPLi5zMXfYe+l7zZ6dH4BKhx+Lplc/j5xnjHYK65/gEz7R08WbWvA7q0RaVTUYsqG3UvfCpJ0DpPZPgBsAx2/b78eKUcn3AyRuaFL52y/9l1b4MvHbNcO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741713133; c=relaxed/simple;
-	bh=Qu2jSxI68Yuv58ZY1s3DUu3opjr5ViPKgK7NowSBIHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UWnqatheacQEDvv3I8RwZuPqU6MTFZwdX68FMvQ4y0sWT2F0qRE0QhPSDTZS8DwlaZw7ouVluIBbx0iTIZbljFe4Yhn6ge279lrqxM+ukZIOvou9/W0aqMDT+pNgNDwzXSNaK3a85NHXE+vah0TKO0HrLT7PoMeLNVH+I/kkZ84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=GP4l2rFV; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 2C1EA2FC0187;
-	Tue, 11 Mar 2025 18:12:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1741713126;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yFujNVfNFwEITADlkgmdAe1zG2boTNm0ddAG1aVDUMo=;
-	b=GP4l2rFV4cdd9HMy7iVxRAUUHDjIl1JzbXyl7OvSWyRnbyxqX2tzi+N3bL9q+ifVZNULNz
-	5iZhVdmLlMCXPyAkQXg+Wl7zmOPJbBcBwAUg3Y/d6R93e3cOmCv9ctEExDxZbs+gIxDvOU
-	cPHwt6rIvcaiTF2Hb0g/+N8rV5cpNDU=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <d39e465a-29ae-4961-a144-cb45945c2e2a@tuxedocomputers.com>
-Date: Tue, 11 Mar 2025 18:12:06 +0100
+	s=arc-20240116; t=1741713204; c=relaxed/simple;
+	bh=24+5qJIcAfCH8EBR18YUzgbstW0szGfuyAGdr6wElAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RcOL3xrqiBGhCJvJZsNHkhYlOMRg+OM2cLDTgumDysYsayVSK95+2ii+JrJnlk5iQp1XIQ/CK3l7TEMQ8lg+ySKvCpWbwzpPL3h5eQgcY0II5EiRHNCTI3rjMwJZB4HXnmNwSb6jl5+764InBRgPZ7BCnRMPlFHQRHpUazfKlr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fcfFIT1r; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741713203; x=1773249203;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=24+5qJIcAfCH8EBR18YUzgbstW0szGfuyAGdr6wElAA=;
+  b=fcfFIT1rK/64E491BKGHG6sHIX/Ew74gkwiko06d8blqS91MDQLD/tS+
+   6h3ULk+Z8GJizlMblohXclvJ3UJOMRpSKs9aUaBW8zaWIAb+qr7shruj5
+   vEyluNP2jPf6EXv0tcR64v1ryW+vgKUq9mGmUOnLsVVR3BwA99J2a5bsR
+   e5SBO5npEE3eRv9bgLAoINURb2uRVVvHb2A17HQcWDr8QkJB3LSk0Li+v
+   g3+sr6+tDDKJgbR22cA1QK6w2vQW6sDgzeoqFpkSIVYetpH4BUYZXG37q
+   jH8v9SE01PJFl9LW6j119G0RTEdCo1rngvBZxkQ9t3a+rXGBRZRFtQlhn
+   Q==;
+X-CSE-ConnectionGUID: O1eF1G38TU+V3x1B4NcjYQ==
+X-CSE-MsgGUID: eywFkSwcR2SF12/rCn1pDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="60312349"
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="60312349"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 10:13:22 -0700
+X-CSE-ConnectionGUID: Sd44fNiVQvS0KlFxHSngYQ==
+X-CSE-MsgGUID: YYdp9I3OToyuGLScQZb5UA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="120326006"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 10:13:18 -0700
+Date: Tue, 11 Mar 2025 19:13:15 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	siqueira@igalia.com, airlied@gmail.com, simona@ffwll.ch,
+	rodrigo.vivi@intel.com, jani.nikula@linux.intel.com,
+	Xaver Hugl <xaver.hugl@kde.org>
+Subject: Re: [PATCH 2/2] drm/amdgpu: Make use of drm_wedge_app_info
+Message-ID: <Z9BvK55_Nim54eOu@black.fi.intel.com>
+References: <20250228121353.1442591-1-andrealmeid@igalia.com>
+ <20250228121353.1442591-3-andrealmeid@igalia.com>
+ <Z8HO-s_otb2u44V7@black.fi.intel.com>
+ <38b9cc8b-2a55-4815-a19f-f5bdf0f7687c@igalia.com>
+ <Z8KjZfLYjH6ehYwy@black.fi.intel.com>
+ <73602c9b-74f6-4b4a-82c6-918292b13cf7@igalia.com>
+ <CADnq5_PbZUoyxyqweqa=kUNsSXanjY=5mUJrn03aY3je6rER+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Input: atkbd - Correctly map F13 - F24
-To: hdegoede@redhat.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250311170429.1091067-1-wse@tuxedocomputers.com>
- <20250311170429.1091067-2-wse@tuxedocomputers.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <20250311170429.1091067-2-wse@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADnq5_PbZUoyxyqweqa=kUNsSXanjY=5mUJrn03aY3je6rER+w@mail.gmail.com>
 
-Hi Hans, Hi Dimitry,
+On Mon, Mar 10, 2025 at 06:03:27PM -0400, Alex Deucher wrote:
+> On Mon, Mar 10, 2025 at 5:54 PM André Almeida <andrealmeid@igalia.com> wrote:
+> >
+> > Em 01/03/2025 03:04, Raag Jadav escreveu:
+> > > On Fri, Feb 28, 2025 at 06:49:43PM -0300, André Almeida wrote:
+> > >> Hi Raag,
+> > >>
+> > >> On 2/28/25 11:58, Raag Jadav wrote:
+> > >>> On Fri, Feb 28, 2025 at 09:13:53AM -0300, André Almeida wrote:
+> > >>>> To notify userspace about which app (if any) made the device get in a
+> > >>>> wedge state, make use of drm_wedge_app_info parameter, filling it with
+> > >>>> the app PID and name.
+> > >>>>
+> > >>>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+> > >>>> ---
+> > >>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 19 +++++++++++++++++--
+> > >>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_job.c    |  6 +++++-
+> > >>>>    2 files changed, 22 insertions(+), 3 deletions(-)
+> > >>>>
+> > >>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> > >>>> index 00b9b87dafd8..e06adf6f34fd 100644
+> > >>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> > >>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> > >>>> @@ -6123,8 +6123,23 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
+> > >>>>            atomic_set(&adev->reset_domain->reset_res, r);
+> > >>>> -  if (!r)
+> > >>>> -          drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
+> > >>>> +  if (!r) {
+> > >>>> +          struct drm_wedge_app_info aux, *info = NULL;
+> > >>>> +
+> > >>>> +          if (job) {
+> > >>>> +                  struct amdgpu_task_info *ti;
+> > >>>> +
+> > >>>> +                  ti = amdgpu_vm_get_task_info_pasid(adev, job->pasid);
+> > >>>> +                  if (ti) {
+> > >>>> +                          aux.pid = ti->pid;
+> > >>>> +                          aux.comm = ti->process_name;
+> > >>>> +                          info = &aux;
+> > >>>> +                          amdgpu_vm_put_task_info(ti);
+> > >>>> +                  }
+> > >>>> +          }
+> > >>> Is this guaranteed to be guilty app and not some scheduled worker?
+> > >>
+> > >> This is how amdgpu decides which app is the guilty one earlier in the code
+> > >> as in the print:
+> > >>
+> > >>      ti = amdgpu_vm_get_task_info_pasid(ring->adev, job->pasid);
+> > >>
+> > >>      "Process information: process %s pid %d thread %s pid %d\n"
+> > >>
+> > >> So I think it's consistent with what the driver thinks it's the guilty
+> > >> process.
+> > >
+> > > Sure, but with something like app_info we're kind of hinting to userspace
+> > > that an application was _indeed_ involved with reset. Is that also guaranteed?
+> > >
+> > > Is it possible that an application needlessly suffers from a false positive
+> > > scenario (reset due to other factors)?
+> > >
+> >
+> > I asked Alex Deucher in IRC about that and yes, there's a chance that
+> > this is a false positive. However, for the majority of cases this is the
+> > right app that caused the hang. This is what amdgpu is doing for GL
+> > robustness as well and devcoredump, so it's very consistent with how
+> > amdgpu deals with this scenario even if the mechanism is still not perfect.
+> 
+> It's usually the guilty one, but it's not guaranteed.  For example,
+> say you have a ROCm user queue and a gfx job submitted to a kernel
+> queue.  The actual guilty job may be the ROCm user queue, but the
+> driver may not detect that the ROCm queue was hung until some other
+> event (e.g., memory pressure).  However, the timer for the gfx job may
+> timeout before that happens on the ROCm queue so in that case the gfx
+> job would be incorrectly considered guilty.
 
-Regarding remapping KEY_ZENKAKUHANKAKU to KEY_TOUCHPAD_TOGGLE:
+So it boils down to what are the chances of that happening and whether
+it's significant enough to open the door for API abuse.
 
-Am 11.03.25 um 18:04 schrieb Werner Sembach:
-> Currently only F23 is correctly mapped for PS/2 keyboards.
->
-> Following to this table:
-> https://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/translate.pdf
->
-> - F24 and Zenkaku/Hankaku share the same scancode, but since in real world
-> Zenkaku/Hankaku keys seem to just use the tilde scancode, this patch binds the
-> scancode to F24. Note that on userspace side the KEY_ZENKAKUHANKAKU keycode is
-> currently not bound in xkeyboard-config, so it is (mostly*) unused anyway.
+Considering this is amd specific accuracy, it's still an open question
+how other drivers are/will be managing it.
 
-I think what the firmware vendor actually wanted to do was to send 
-ctrl+super+f24 upon touchpad toggle. This would somewhat fall in line with, for 
-example, the copilot key being implemented as shift+super+f23.
-
-Following this, my suggestion is to do this remapping and handle the rest in 
-xkeyboard-config.
-
->
-> * Qt on Wayland and therefore KDE on Wayland can see the keypress anyway for
-> some reason and it is actually used in a touchpad toggle shortcut, but this is
-> currently being fixed in both KDE and xkeyboard-config to make this less weird,
-> so it could directly be fixed to correctly handle the F24 keypress instead.
->
-> - The scancodes for F13-F22 are currently unmapped so there will probably be no
-> harm in mapping them. This would also fix the issue that some of these keys
-> can't be mapped as the target from userspace using the `setkeycodes` command.
-
-This is optional. I can split it off if wanted.
-
-Best regards,
-
-Werner
-
->
-> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-> ---
->   drivers/input/keyboard/atkbd.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
-> index 3598a21d9d014..4bd6e6ef0715e 100644
-> --- a/drivers/input/keyboard/atkbd.c
-> +++ b/drivers/input/keyboard/atkbd.c
-> @@ -84,12 +84,12 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
->   #include "hpps2atkbd.h"	/* include the keyboard scancodes */
->   
->   #else
-> -	  0, 67, 65, 63, 61, 59, 60, 88,  0, 68, 66, 64, 62, 15, 41,117,
-> -	  0, 56, 42, 93, 29, 16,  2,  0,  0,  0, 44, 31, 30, 17,  3,  0,
-> -	  0, 46, 45, 32, 18,  5,  4, 95,  0, 57, 47, 33, 20, 19,  6,183,
-> -	  0, 49, 48, 35, 34, 21,  7,184,  0,  0, 50, 36, 22,  8,  9,185,
-> -	  0, 51, 37, 23, 24, 11, 10,  0,  0, 52, 53, 38, 39, 25, 12,  0,
-> -	  0, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0, 85,
-> +	  0, 67, 65, 63, 61, 59, 60, 88,183, 68, 66, 64, 62, 15, 41,117,
-> +	184, 56, 42, 93, 29, 16,  2,  0,185,  0, 44, 31, 30, 17,  3,  0,
-> +	186, 46, 45, 32, 18,  5,  4, 95,187, 57, 47, 33, 20, 19,  6,183,
-> +	188, 49, 48, 35, 34, 21,  7,184,189,  0, 50, 36, 22,  8,  9,185,
-> +	190, 51, 37, 23, 24, 11, 10,  0,191, 52, 53, 38, 39, 25, 12,  0,
-> +	192, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0,194,
->   	  0, 86, 91, 90, 92,  0, 14, 94,  0, 79,124, 75, 71,121,  0,  0,
->   	 82, 83, 80, 76, 77, 72,  1, 69, 87, 78, 81, 74, 55, 73, 70, 99,
->   
+Raag
 
