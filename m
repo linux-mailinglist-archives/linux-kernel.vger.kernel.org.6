@@ -1,94 +1,104 @@
-Return-Path: <linux-kernel+bounces-555951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA48FA5BEAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:16:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3887A5BEA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:15:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B5217A3D79
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97F3E1889AAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427FF250C1D;
-	Tue, 11 Mar 2025 11:16:18 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AE2250C1D;
+	Tue, 11 Mar 2025 11:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g8lSvO2r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D08B250BF7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE9F1DEFFC;
+	Tue, 11 Mar 2025 11:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741691777; cv=none; b=bmzGlct8gOaE9zjN26+eyTN9ebOsYYar+xG3juisAsFmKb4FbtwhDKWMerklhnNl+WPcbO6oYJkDfBOw+Tv+nH0l6O1bjEW2IgA1b334wvZnvW9F2bGqdNqL2AT7RfwU3OOZ/srvNnrJA66yQyt57S6LyNNC8sXmK46PuHBn6A8=
+	t=1741691736; cv=none; b=ip2BVF2bjCmEbHf/hITGvHaBMOUxXaVZhpEGw/FqNoFXnz5mmC37tyI+tCqWfE0oOYwxwTd6keqbC+V9/1LWXNm6a4/GRN69NnZZrtRGvY99zfPBpRpRbccF9cB0rIWEukPivuiFOIuGpaFC49z7zbrUttwv/hYHfdD+rHUl++o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741691777; c=relaxed/simple;
-	bh=XG/rSXLaOcL6k7H140eanA/VEB364+N4FRu/KpUN/64=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HPuVD6Jweh51wJQXZgHA6+szH7Q67GCmc0jHAMRA+HLGtZcyI8iK01P0+N3pTL/k9b/4ZVHYtgRshUFT+co/scskYrnGo/kM03c5xwfUcfXNXdc8Q1MHCSEhc4GRnUSTqQ6CObYN8p3QRpmVthtjhqXZN/JG0htOa46sZ244WDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Tue, 11 Mar
- 2025 14:15:01 +0300
-Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Tue, 11 Mar
- 2025 14:15:01 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: Alex Deucher <alexander.deucher@amd.com>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, Xinhui Pan
-	<Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, <amd-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH] drm/radeon: fix uninitialized size issue in radeon_vce_cs_parse()
-Date: Tue, 11 Mar 2025 14:14:59 +0300
-Message-ID: <20250311111501.9190-1-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741691736; c=relaxed/simple;
+	bh=va1by/3p8+ybPKxwukKtBv1gAiHFNUyh60yOFGE+flY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aJsavit5Q9a4G8M/kyU2DdP3WhOl+hubtAwzxzQQk4GeQmYb4u1c8QcUuMtamDMy8AHb3AkHPM+kKuVD560ibkKnGx22nuJYBRuaJbPywKtAByezOhrXbdna7i/2SVZXaHSWtmpKmimBpIw0upYybHqbVTgAC/0AYdDJnlawuO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g8lSvO2r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CCD4C4CEE9;
+	Tue, 11 Mar 2025 11:15:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741691735;
+	bh=va1by/3p8+ybPKxwukKtBv1gAiHFNUyh60yOFGE+flY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g8lSvO2rGMe+Nzq6zhEaimTDOAUiBeWNsBX5H3YkPa2UfUr4fHtvfqyLnELvotVFi
+	 icnIRV1M31GceJQYoovc5tF0e1vkawKd89jNj6L3tfLx5imnYQOeVP9UiSQUAgCTo6
+	 qELVS4uuxKK+pH9v2xZLvGtT66hJlaYSXkL2eoYNBUlgfIoHtDyGkxkhJSjRRaiyJp
+	 1WWDiz/tlD6N2CvTZSHg9QYoN0IfFY3TrALefCTT9TQVABfhGXG5AHpRFKO174lhlB
+	 +72+giQyK4eZFUP4JzajufVfqTuJIOBot9Ut1HqeF5BymKsrxqL4AagHSADv4WmXTB
+	 V5gABTBzrrZvw==
+Date: Tue, 11 Mar 2025 12:15:29 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yu-Chun Lin <eleanor15x@gmail.com>
+Cc: shshaikh@marvell.com, manishc@marvell.com, GR-Linux-NIC-Dev@marvell.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+	visitorckw@gmail.com
+Subject: Re: [PATCH net-next] qlcnic: Optimize performance by replacing
+ rw_lock with spinlock
+Message-ID: <20250311111529.GM4159220@kernel.org>
+References: <20250306163124.127473-1-eleanor15x@gmail.com>
+ <20250307132929.GI3666230@kernel.org>
+ <Z8xx0aN4vA7d-73i@eleanor-wkdl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8xx0aN4vA7d-73i@eleanor-wkdl>
 
-On the off chance that command stream passed from userspace via
-ioctl() call to radeon_vce_cs_parse() is weirdly crafted and
-first command to execute is to encode (case 0x03000001), the function
-in question will attempt to call radeon_vce_cs_reloc() with size
-argument that has not been properly initialized. Specifically, 'size'
-will point to 'tmp' variable before the latter had a chance to be
-assigned any value.
+On Sun, Mar 09, 2025 at 12:35:29AM +0800, Yu-Chun Lin wrote:
+> On Fri, Mar 07, 2025 at 01:29:29PM +0000, Simon Horman wrote:
+> > On Fri, Mar 07, 2025 at 12:31:24AM +0800, Yu-Chun Lin wrote:
+> > > The 'crb_lock', an rwlock, is only used by writers, making it functionally
+> > > equivalent to a spinlock.
+> > > 
+> > > According to Documentation/locking/spinlocks.rst:
+> > > 
+> > > "Reader-writer locks require more atomic memory operations than simple
+> > > spinlocks. Unless the reader critical section is long, you are better
+> > > off just using spinlocks."
+> > > 
+> > > Since read_lock() is never called, switching to a spinlock reduces
+> > > overhead and improves efficiency.
+> > > 
+> > > Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> > 
+> > Hi Yu-Chun Lin,
+> > 
+> > Thanks for your patch.
+> > 
+> > My main question is if you have hardware to test this?
+> > And if so, was a benefit observed?
+> > 
+> > If not, my feeling is that although your change looks
+> > correct, we'd be better off taking the lower risk option
+> > of leaving things be.
+> 
+> Hi Simon
+> 
+> I perform a compile test to ensure correctness. But I don't have the
+> hardware to run a full test.
 
-Play it safe and init 'tmp' with 0, thus ensuring that
-radeon_vce_cs_reloc() will catch an early error in cases like these.
+Thanks Yu-Chun Lin,
 
-Found by Linux Verification Center (linuxtesting.org) with static
-analysis tool SVACE.
-
-Fixes: 2fc5703abda2 ("drm/radeon: check VCE relocation buffer range v3")
-Cc: stable@vger.kernel.org
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
----
- drivers/gpu/drm/radeon/radeon_vce.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/radeon/radeon_vce.c b/drivers/gpu/drm/radeon/radeon_vce.c
-index d1871af967d4..2355a78e1b69 100644
---- a/drivers/gpu/drm/radeon/radeon_vce.c
-+++ b/drivers/gpu/drm/radeon/radeon_vce.c
-@@ -557,7 +557,7 @@ int radeon_vce_cs_parse(struct radeon_cs_parser *p)
- {
- 	int session_idx = -1;
- 	bool destroyed = false, created = false, allocated = false;
--	uint32_t tmp, handle = 0;
-+	uint32_t tmp = 0, handle = 0;
- 	uint32_t *size = &tmp;
- 	int i, r = 0;
- 
+Unfortunately I think we need hardware testing to accept this
+kind of change.
 
