@@ -1,322 +1,237 @@
-Return-Path: <linux-kernel+bounces-556474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B054AA5CA4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:07:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129A9A5CA46
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39E01896773
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:07:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0F517AE054
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FF125FA3B;
-	Tue, 11 Mar 2025 16:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253BB25EFBC;
+	Tue, 11 Mar 2025 16:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="S2hiYyN/"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WshGA6XX"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7B225EF90
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4234A25E825
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741709220; cv=none; b=OsWDHyhUNIY0vCfKHK2ly0cTMHyvcFHlkOTNNFXcK/ZHYIKH+kb0/i56gjsIfWVP1O9VjXmZoWnGZNh0HwFB7psO9cAIn0vYoYY5Fb7gjkwKVDEXhAts3slERfk4nkIWgtosbk6xUeOZQTk3LGIzZKuoX7AiuowPMgzTJu23sc0=
+	t=1741709197; cv=none; b=U5T/69pjOkg1Lkyqlm1Cj0cjY1YehqU+vRVt4203AM4W8bPKkLClCFPMH1DsgBuMq3Y3ftn+crp9jNZlEua3bn0B68rA4klP1zNT7BVn+MCYtICdW5ftHH3j0bBD0WorT4V/uemB0gF/H6KXqlQ7NrYl0HV0e3O+VJyxARpd8n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741709220; c=relaxed/simple;
-	bh=9xfrqn5PaUD3Cww4DF0JnKtGG8IfmxoEKQSBl/5uVoU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JpI9X71QNpAJ3u+5H9/Ibk0XCj5q4LjgvU4xgBYXa4mbA2buln8fFi6YA3E90VNazoWDNwPVxdZrOmoMzujFhAelnNWOtHy9ShK9zhgRAcnUGnCEwyDSUiOuIfMCISaVVd70VndIXXsZ+2DiizBjOznHyGtj7QT4QnS1CsMtgDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=S2hiYyN/; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso9675694a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:06:58 -0700 (PDT)
+	s=arc-20240116; t=1741709197; c=relaxed/simple;
+	bh=93Eu+qH7Gk9D2wT5TQuGxgkgE9YqDib5BBP+k0h/J8U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z4y+yqirdX58JdDgZrgfennfnotnPhwXlCNQOYIcnAc5/cO0WKm7TWdGHGoDFpzbj+/YRHkZIwFadfmWGgHzSyeYeWA6IPF9Bo7qQojgXX3TKSY9T3EbeHnRY5y3DQPhM8W8oZPqkmDuTcfRK5dq7TlFWeoQ4Q1Ky82XVDV1Db0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WshGA6XX; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3913fdd003bso1564684f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:06:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1741709218; x=1742314018; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hM4rbW6LjxVDNSNvYjso9fRHbCk2dFhxwSUcK0gnU+A=;
-        b=S2hiYyN/EAheqYsBK+EUVUdJquOtswQ/yRfMp+Z/+/UmqBbWSCfC6aiEh9SnWlwhZh
-         eNx/cjP7tl7zBYmJSna5YFGfbxf/PafzST1bWTF4hZPtJCDFKdcYGQink9BMoyJ0qSWD
-         yq31f2JPFCLymnl+yV+3MQ1CzouexBztpl+Vw=
+        d=linaro.org; s=google; t=1741709193; x=1742313993; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FXsmviR97V/C+Y6DN95zESwUd4Ub5ygS+7V9sfykhO8=;
+        b=WshGA6XXCVznxdQ3ThnTJpSW8riOkFAwRJiIloZmepTdio99nUz6XAQCs7I3y0Whki
+         MVexLMZa0Gbtu9y0GE4n0oG7NSVV2/NR7dh9HOorN2fb0PPADQ/zp2G9NPKZLG8ET62e
+         74cG9zeozBZepnqVVMdSsKTfZW79ytiVs8A/x3KjSiCkxcBjG6VhSgQIw4qypdiRKjN9
+         W8oOzEy9uXIjaVjtJjwV4AGYoCoJ+MsYENqmviYoMKANxa1gHiyikWUYV/D5iIEgScdI
+         Yy7vl8qAIc9M+ZEHkQZ+oGvaFeQg+wtEJDPJ3VI59Jp9abxabF511z9SFMLwsEk1eP65
+         i4Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741709218; x=1742314018;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hM4rbW6LjxVDNSNvYjso9fRHbCk2dFhxwSUcK0gnU+A=;
-        b=mhTvIy8Nwr1ryQi1M6AOPEaBgwV3HOMvYEKaI8XSe6PQkw2Xcvfv8lDrpbOxlT1fnA
-         uOmvW3Zbt7hhbNKStgg1tEYQlHMv8CsFMToIkAI7KVjFGu3EHqPszpiqWjPyHUjwkdT5
-         tZoPtTLvxs91LGIpEVIF6miSR3bBrQomLy8yvDGZX0O37OZf1BdJg84YQiJcjmRAFCz9
-         IpLA9xgRATkcPsF8idz/l/yrp0YiOmeWve2IAflB0/XGf+NFbLSkQqP8ETM+eFpy1Gjb
-         khqr8sHEAV+gCnQgzeURhyLF76m8bfn5kmf3iLOL7T6G+KKrnxf3Clq9qWldoodaLMOD
-         jutw==
-X-Forwarded-Encrypted: i=1; AJvYcCXccaYPQgqL7Zm2HZ7XuCJ4WO1mRIazbXdyypRnMWtds1AT1q3QHxGvWGxGgG34IOqo1JrL/QuKkvFCzrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5vzp34dWKpNfkUFfAiRkYq1a0NqsMZkhnRecOMjbxDWLcwO46
-	tic4wjSMt2fo5qpmtWlISL/D6PeKFzQvJWJltp+vNep8r5QdA7E0MJJZmjlMIJyL79enHYvv9+v
-	WX6Z3i+54oytCTKkvQdUtL/fEuJDr1H88O8EY
-X-Gm-Gg: ASbGncvSUtXaMmo9IVJreZjWDjQVrb0bazzd1JePda8DyfZtFdNYkE70SbtkWI7Eqrq
-	BincHJryla5pJicsz5DsGGaXXp1uyncjHgr/fykl96ISTn4s/Py3nTRNFhb+YiCUBRG85j8fo93
-	XzLkUWpmeDSgecJBAsYrwklq5quQw=
-X-Google-Smtp-Source: AGHT+IE36fk6W16fZ24D9Um05YI34qYQeMpFD/Fu13W3g0zHxL6+gSNZuwbSkxqQdxCB8t1MRNP32lKWlS+bzVOdJuM=
-X-Received: by 2002:a17:90b:53c3:b0:2fa:6793:e860 with SMTP id
- 98e67ed59e1d1-301002eadf6mr5953818a91.0.1741709217074; Tue, 11 Mar 2025
- 09:06:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741709193; x=1742313993;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FXsmviR97V/C+Y6DN95zESwUd4Ub5ygS+7V9sfykhO8=;
+        b=OgmZ9T3XzA2VRailjBfCIxHWSl6KePphv4mZFUDE6RMb+iK6mAeWKzSdt4Kpq1vAVP
+         nEABGyYv4Y7qGL2jHwsYm8MAfmNlKK4vddxzeiYkxnoUAugemzatXBeepDG6c2UtHPJr
+         BPNn7H/RBXx2owcWtf1tbh3r3tVgXYcEs7fKq3ah2XqptO9XpChHtauY525LzfkGrp6N
+         ng5V1aEZV93rUqKw9mqNWUGbZbwUjTYOoNboCMc2UsvND3c+0Qceu33EFcnPo+qZsiWA
+         txkNBs9GxVTDP8QRLK29OEDI7hj3UJKq6O0VhDjaOUgIa0MXfpONdYke9pE3pT+dh0q2
+         d6Uw==
+X-Gm-Message-State: AOJu0Yz0hvPpF5uzAT0oqW2uDy7GLEEOG7SNgP+Yn7vuTRYU9aO8CRT5
+	I38aggL5DR1TR3i5/EXua6RMJTNhy/AvyLhDDQZ5B1mQ3dUvLOrWUfMiNngp0Q4AK63Az5Y/k4i
+	B
+X-Gm-Gg: ASbGncvMflzzkdsQHWEkqisk7eLYrzwcIX40PeWRmeb+zJx86jAxr3AlQpIWIjulEob
+	W7nefkJrbSVUV86cB83YTjidFsTbAncRFmEJ/Onf9jdFyHzK4dM7fLxg9gNNk1G2fKCxcZ9zKWF
+	SxIejR/uPH6sIKRea3V1/BjjdZqYEFNqZf5d6ELu9wZVG1lseeSkVrL4cGjNUsn4HcH3vIWH8Vi
+	TOLfauEW0PmYYDOYN/1THFkJ6qbJxxl+b34UCsUqLqD3sS/gn8OFkkaL9HEgpZvEp8xQXNe2vOD
+	mUngP6E4v0iZfSVYok/wm/1b4YLaDROngjUoxjvxX6A2Z56nl4hVREmV6KSLI0Q=
+X-Google-Smtp-Source: AGHT+IHSsCm8PJOCNTBLbU5hS9VK9UHGVgainULGpG4I1aqQfmscGAZFmbLVme10Qk7EkXAo6AGeDQ==
+X-Received: by 2002:a05:6000:1a8f:b0:391:3207:2e68 with SMTP id ffacd0b85a97d-3926c3b8b38mr4616837f8f.9.1741709193494;
+        Tue, 11 Mar 2025 09:06:33 -0700 (PDT)
+Received: from [192.168.1.247] ([145.224.65.43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c01de21sm18711241f8f.59.2025.03.11.09.06.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 09:06:32 -0700 (PDT)
+Message-ID: <16fd2023-1ffa-4e87-ad89-a7ccdd8ba458@linaro.org>
+Date: Tue, 11 Mar 2025 16:06:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311150136.46938-1-kamal.dasu@broadcom.com> <aa4284fa-1f68-4c7e-8d58-1c5129adda27@broadcom.com>
-In-Reply-To: <aa4284fa-1f68-4c7e-8d58-1c5129adda27@broadcom.com>
-From: Kamal Dasu <kamal.dasu@broadcom.com>
-Date: Tue, 11 Mar 2025 12:06:19 -0400
-X-Gm-Features: AQ5f1JpSi62VLJlBuC0dak2KFHVpwzvRvnj9P8OVAxmHNa-s7uCtBu4nwXoQ5HI
-Message-ID: <CAKekbevwB9Nd36WNkuh6Xh45puf3dPmfHDKgQBgUEVApbTm2rw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-brcmstb: add cqhci suspend/resume to PM ops
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Al Cooper <alcooperx@gmail.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000042cdf60630134729"
-
---00000000000042cdf60630134729
-Content-Type: multipart/alternative; boundary="0000000000002fc6fc06301347ad"
-
---0000000000002fc6fc06301347ad
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Mar 11, 2025 at 11:46=E2=80=AFAM Florian Fainelli <
-florian.fainelli@broadcom.com> wrote:
-
-> On 3/11/25 08:01, Kamal Dasu wrote:
-> > cqhci timeouts observed on brcmstb platforms during suspend:
-> >    ...
-> >    [  164.832853] mmc0: cqhci: timeout for tag 18
-> >    ...
-> >
-> > Adding cqhci_suspend()/resume() calls to disable cqe
-> > in sdhci_brcmstb_suspend()/resume() respectively to fix
-> > CQE timeouts seen on PM suspend.
-> >
-> > Fixes: d46ba2d17f90 ("mmc: sdhci-brcmstb: Add support for Command
-> Queuing (CQE)")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
-> > ---
-> >   drivers/mmc/host/sdhci-brcmstb.c | 9 +++++++++
-> >   1 file changed, 9 insertions(+)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-brcmstb.c
-> b/drivers/mmc/host/sdhci-brcmstb.c
-> > index 0ef4d578ade8..bf55a9185eb6 100644
-> > --- a/drivers/mmc/host/sdhci-brcmstb.c
-> > +++ b/drivers/mmc/host/sdhci-brcmstb.c
-> > @@ -505,6 +505,12 @@ static int sdhci_brcmstb_suspend(struct device *de=
-v)
-> >       struct sdhci_brcmstb_priv *priv =3D sdhci_pltfm_priv(pltfm_host);
->
-> Missing an int ret declaration here, otherwise that won't build.
->
-> oops will fix it and send v2.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] coresight: Add a KUnit test for
+ coresight_find_default_sink()
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, Mike Leach <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Leo Yan <leo.yan@arm.com>
+References: <20250305-james-cs-kunit-test-v2-1-83ba682b976c@linaro.org>
+ <c31de6cb-f8f5-432c-b99e-68b10a24bc5e@arm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <c31de6cb-f8f5-432c-b99e-68b10a24bc5e@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-> >
-> >       clk_disable_unprepare(priv->base_clk);
-> > +     if (host->mmc->caps2 & MMC_CAP2_CQE) {
-> > +             ret =3D cqhci_suspend(host->mmc);
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
-> > +
-> >       return sdhci_pltfm_suspend(dev);
-> >   }
-> >
-> > @@ -529,6 +535,9 @@ static int sdhci_brcmstb_resume(struct device *dev)
-> >                       ret =3D clk_set_rate(priv->base_clk,
-> priv->base_freq_hz);
-> >       }
-> >
-> > +     if (host->mmc->caps2 & MMC_CAP2_CQE)
-> > +             ret =3D cqhci_resume(host->mmc);
-> > +
-> >       return ret;
-> >   }
-> >   #endif
->
->
-> --
-> Florian
->
 
---0000000000002fc6fc06301347ad
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 11/03/2025 3:00 pm, Suzuki K Poulose wrote:
+> On 05/03/2025 15:07, James Clark wrote:
+>> Add a test to confirm that default sink selection skips over an ETF
+>> and returns an ETR even if it's further away.
+>>
+>> This also makes it easier to add new unit tests in the future.
+>>
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> ---
+>> Changes in v2:
+>> - Let devm free everything rather than doing individual kfrees:
+>>    "Like with managed drivers, KUnit-managed fake devices are
+>>    automatically cleaned up when the test finishes, but can be manually
+>>    cleaned up early with kunit_device_unregister()."
+>> - Link to v1: https://lore.kernel.org/r/20250225164639.522741-1- 
+>> james.clark@linaro.org
+>> ---
+>>   drivers/hwtracing/coresight/Kconfig                |  9 +++
+>>   drivers/hwtracing/coresight/Makefile               |  3 +-
+>>   drivers/hwtracing/coresight/coresight-core.c       |  1 +
+>>   .../hwtracing/coresight/coresight-kunit-tests.c    | 77 ++++++++++++ 
+>> ++++++++++
+>>   4 files changed, 88 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/ 
+>> coresight/Kconfig
+>> index ecd7086a5b83..f064e3d172b3 100644
+>> --- a/drivers/hwtracing/coresight/Kconfig
+>> +++ b/drivers/hwtracing/coresight/Kconfig
+>> @@ -259,4 +259,13 @@ config CORESIGHT_DUMMY
+>>         To compile this driver as a module, choose M here: the module 
+>> will be
+>>         called coresight-dummy.
+>> +
+>> +config CORESIGHT_KUNIT_TESTS
+>> +      tristate "Enable Coresight unit tests"
+>> +      depends on KUNIT
+>> +      default KUNIT_ALL_TESTS
+>> +      help
+>> +        Enable Coresight unit tests. Only useful for development and not
+>> +        intended for production.
+>> +
+>>   endif
+>> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/ 
+>> coresight/Makefile
+>> index 8e62c3150aeb..96f0dfedb1bf 100644
+>> --- a/drivers/hwtracing/coresight/Makefile
+>> +++ b/drivers/hwtracing/coresight/Makefile
+>> @@ -51,5 +51,4 @@ coresight-cti-y := coresight-cti-core.o    
+>> coresight-cti-platform.o \
+>>              coresight-cti-sysfs.o
+>>   obj-$(CONFIG_ULTRASOC_SMB) += ultrasoc-smb.o
+>>   obj-$(CONFIG_CORESIGHT_DUMMY) += coresight-dummy.o
+>> -obj-$(CONFIG_CORESIGHT_CTCU) += coresight-ctcu.o
+>> -coresight-ctcu-y := coresight-ctcu-core.o
+>> +obj-$(CONFIG_CORESIGHT_KUNIT_TESTS) += coresight-kunit-tests.o
+>> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/ 
+>> hwtracing/coresight/coresight-core.c
+>> index bd0a7edd38c9..b101aa133ceb 100644
+>> --- a/drivers/hwtracing/coresight/coresight-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-core.c
+>> @@ -959,6 +959,7 @@ coresight_find_default_sink(struct 
+>> coresight_device *csdev)
+>>       }
+>>       return csdev->def_sink;
+>>   }
+>> +EXPORT_SYMBOL_GPL(coresight_find_default_sink);
+>>   static int coresight_remove_sink_ref(struct device *dev, void *data)
+>>   {
+>> diff --git a/drivers/hwtracing/coresight/coresight-kunit-tests.c b/ 
+>> drivers/hwtracing/coresight/coresight-kunit-tests.c
+>> new file mode 100644
+>> index 000000000000..a136af05eaf4
+>> --- /dev/null
+>> +++ b/drivers/hwtracing/coresight/coresight-kunit-tests.c
+>> @@ -0,0 +1,77 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +#include <kunit/test.h>
+>> +#include <kunit/device.h>
+>> +#include <linux/coresight.h>
+>> +
+>> +#include "coresight-priv.h"
+>> +
+>> +static struct coresight_device *coresight_test_device(struct device 
+>> *dev)
+>> +{
+>> +    struct coresight_device *csdev = devm_kcalloc(dev, 1,
+>> +                             sizeof(struct coresight_device),
+>> +                             GFP_KERNEL);
+>> +    csdev->pdata = devm_kcalloc(dev, 1,
+>> +                   sizeof(struct coresight_platform_data),
+>> +                   GFP_KERNEL);
+>> +    return csdev;
+>> +}
+>> +
+>> +static int coresight_test_cpuid(struct coresight_device *csdev)
+>> +{
+>> +    return 0;
+>> +}
+>> +
+>> +static void test_default_sink(struct kunit *test)
+>> +{
+>> +    /*
+>> +     * ETM -> ETF -> ETR -> CATU
+>> +     *                ^
+>> +     *                | default
+>> +     */
+>> +    struct device *dev = kunit_device_register(test, "coresight_kunit");
+>> +    struct coresight_device *etm = coresight_test_device(dev),
+>> +                *etf = coresight_test_device(dev),
+>> +                *etr = coresight_test_device(dev),
+>> +                *catu = coresight_test_device(dev);
+>> +    struct coresight_connection conn = {};
+>> +    struct coresight_ops_source src_ops = {.cpu_id = 
+>> coresight_test_cpuid };
+> 
+> Do we need the trace_id() ? Why is this required ?
+> 
+> Suzuki
+> 
 
-<div dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=
-=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Mar 11, 2025=
- at 11:46=E2=80=AFAM Florian Fainelli &lt;<a href=3D"mailto:florian.fainell=
-i@broadcom.com" target=3D"_blank">florian.fainelli@broadcom.com</a>&gt; wro=
-te:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px =
-0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">On 3/11/25 0=
-8:01, Kamal Dasu wrote:<br>
-&gt; cqhci timeouts observed on brcmstb platforms during suspend:<br>
-&gt;=C2=A0 =C2=A0 ...<br>
-&gt;=C2=A0 =C2=A0 [=C2=A0 164.832853] mmc0: cqhci: timeout for tag 18<br>
-&gt;=C2=A0 =C2=A0 ...<br>
-&gt; <br>
-&gt; Adding cqhci_suspend()/resume() calls to disable cqe<br>
-&gt; in sdhci_brcmstb_suspend()/resume() respectively to fix<br>
-&gt; CQE timeouts seen on PM suspend.<br>
-&gt; <br>
-&gt; Fixes: d46ba2d17f90 (&quot;mmc: sdhci-brcmstb: Add support for Command=
- Queuing (CQE)&quot;)<br>
-&gt; Cc: <a href=3D"mailto:stable@vger.kernel.org" target=3D"_blank">stable=
-@vger.kernel.org</a><br>
-&gt; Signed-off-by: Kamal Dasu &lt;<a href=3D"mailto:kamal.dasu@broadcom.co=
-m" target=3D"_blank">kamal.dasu@broadcom.com</a>&gt;<br>
-&gt; ---<br>
-&gt;=C2=A0 =C2=A0drivers/mmc/host/sdhci-brcmstb.c | 9 +++++++++<br>
-&gt;=C2=A0 =C2=A01 file changed, 9 insertions(+)<br>
-&gt; <br>
-&gt; diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci=
--brcmstb.c<br>
-&gt; index 0ef4d578ade8..bf55a9185eb6 100644<br>
-&gt; --- a/drivers/mmc/host/sdhci-brcmstb.c<br>
-&gt; +++ b/drivers/mmc/host/sdhci-brcmstb.c<br>
-&gt; @@ -505,6 +505,12 @@ static int sdhci_brcmstb_suspend(struct device *d=
-ev)<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0struct sdhci_brcmstb_priv *priv =3D sdhci_pl=
-tfm_priv(pltfm_host);<br>
-<br>
-Missing an int ret declaration here, otherwise that won&#39;t build.<br>
-<br></blockquote><div>oops will fix it and send v2.</div><div>=C2=A0</div><=
-blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-l=
-eft:1px solid rgb(204,204,204);padding-left:1ex">
-&gt;=C2=A0 =C2=A0<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0clk_disable_unprepare(priv-&gt;base_clk);<br=
->
-&gt; +=C2=A0 =C2=A0 =C2=A0if (host-&gt;mmc-&gt;caps2 &amp; MMC_CAP2_CQE) {<=
-br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D cqhci_suspend=
-(host-&gt;mmc);<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret)<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0return ret;<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0}<br>
-&gt; +<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return sdhci_pltfm_suspend(dev);<br>
-&gt;=C2=A0 =C2=A0}<br>
-&gt;=C2=A0 =C2=A0<br>
-&gt; @@ -529,6 +535,9 @@ static int sdhci_brcmstb_resume(struct device *dev=
-)<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0ret =3D clk_set_rate(priv-&gt;base_clk, priv-&gt;base_freq_hz)=
-;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt;=C2=A0 =C2=A0<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0if (host-&gt;mmc-&gt;caps2 &amp; MMC_CAP2_CQE)<br=
->
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D cqhci_resume(=
-host-&gt;mmc);<br>
-&gt; +<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;<br>
-&gt;=C2=A0 =C2=A0}<br>
-&gt;=C2=A0 =C2=A0#endif<br>
-<br>
-<br>
--- <br>
-Florian<br>
-</blockquote></div></div>
-</div>
+Because it tests with per-cpu sources so it checks if any of the TRBE 
+sinks have been assigned first:
 
---0000000000002fc6fc06301347ad--
+  /* look for a default sink if we have not found for this device */
+    if (!csdev->def_sink) {
+       if (coresight_is_percpu_source(csdev))
+	 csdev->def_sink = per_cpu(csdev_sink,
+                                    source_ops(csdev)->cpu_id(csdev));
 
---00000000000042cdf60630134729
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+I think this test would probably fail if run somewhere TRBE was already 
+probed. I can make the source subtype to be 
+CORESIGHT_DEV_SUBTYPE_SOURCE_BUS for the test to work around it. Any 
+value other than CORESIGHT_DEV_SUBTYPE_SOURCE_PROC will work. And then I 
+can drop the fake cpu_id() callback.
 
-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
-DxuNuBlySpn/GYqPcDcRZd8EENWqnZrjtjHMk0j7ZfrPGXq8sQkbG3OX+DOwSaefPRq1pLGWBZaZ
-YuUo5O7CNHo7h7Hc9GgjiW+6X9BjKAzSaDy8jwIDAQABo4IB2DCCAdQwDgYDVR0PAQH/BAQDAgWg
-MIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3VyZS5nbG9iYWxzaWdu
-LmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEGCCsGAQUFBzABhjVo
-dHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMDBNBgNV
-HSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2ln
-bi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6hjhodHRwOi8vY3Js
-Lmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNybDAiBgNVHREEGzAZ
-gRdrYW1hbC5kYXN1QGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAW
-gBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUcRYSWvAVyA3hgTrQ2c4AFquBsG0wDQYJ
-KoZIhvcNAQELBQADggEBAIKB2IOweF2sIYGBZTDm+Hwmhga+sjekM167Sk/KwxxvQFwZYP6i0SnR
-7aR59vbfVQVaAiZH/a+35EYxP/sXaIM4+E3bFykBuXwcGEnYyEn6MceiOCkjkWQq1Co2JyOdNvkP
-nAxyPoWlsJtr+N/MF1EYKGpYMdPM7S2T/gujjO9N56BCGu9yJElszWcXHmBl5IsaQqMS36vhsV0b
-NxffjNkeAdgfN/SS9S9Rj4WXD7pF1M0Xq8gPLCLyXrx1i2KkYOYJsj0PWlC6VRg6E1xXkYDte0VL
-fAAG4QsETU27E1HBNQyp5zF1PoPCPvq3EnWQnbLgYk+Jz2iwIUwiqwr/bDgxggJgMIICXAIBATBr
-MFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9i
-YWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgw89WX2Pp7ue922QVkwDQYJYIZI
-AWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEIFI8CS7ruiokp1AAnPPloQL5mWMLRhBc5BZqZzDA
-EMlUMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDMxMTE2MDY1
-OFowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQB
-AjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJYIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIB
-ABglf3sIsmAe5TJQX4ezh8yohJ7UJU/zdGG2edFl0TexHW/cNxDmAqJAjDTSTf0jV4P+BggtWBk3
-0Zy3MKcKaHYkynhnHIkUb57ruuGZt1HDnroORnqeqMNFBEhX7EaID29iL2XnMEviLk1YyyHykwX0
-vjkQ6OFtO5Vjz8OLuWb05KP0oqqc/4FVJJ3tSl6B/BlaYDk3XefIvjy67KOwfv8Xkgh+x0YRhrvx
-7P3q8qzKes9eK1ownmvvQfR0LxIn8/7Iumc2a97szTpY3GHKPBsasjUc4ZURytGD11CgZPqZTsBm
-MIaeI8fvbOzA7jZRiF/QWyjzQznL/V6RBWSb7rU=
---00000000000042cdf60630134729--
 
