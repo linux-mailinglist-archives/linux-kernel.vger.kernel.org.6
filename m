@@ -1,228 +1,125 @@
-Return-Path: <linux-kernel+bounces-555635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45FDA5BA90
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:13:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA8AA5BA99
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:14:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9392118962BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:13:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4681188CBEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826881EB9E8;
-	Tue, 11 Mar 2025 08:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eZhEst07"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEDD22423D;
+	Tue, 11 Mar 2025 08:14:21 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91886224245
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA828F6C;
+	Tue, 11 Mar 2025 08:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741680782; cv=none; b=EVC5NTvH9YiDJp6kEizbMp5/cyTTxmhaYVZIR/N50098Ay7YcIXIUCWpM5y5G/v/I3Cqj3eO/LJ/C93ed1Qpa1RMLerKqj6jsmLdUnKVcfVIjW4+C3C0mF+m7t4AzVffx/JgpdlshIOrAFYsFrWLFCdiIiHlzlHfemi7wYBSO9Q=
+	t=1741680860; cv=none; b=Ren1uEF+/OH8Y34mHS5CAMSQFWmNvXKQk/HTOjxv0LVWtOoEQxiFTMZqrwGrMBVXGMw9oVDX71aPYvnqopF4pEybs1TvsAz4NngX+teUHtc02o5HepcKnj6lTI4IxjQ84svd2G23/VIXD2h5vM4QM/I1NM3hbkTFdfUUwiEKHLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741680782; c=relaxed/simple;
-	bh=TH0u9dVGvoVbZ7K3UqXVA55ShQn2kghUIl5g3rDHr+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HossSDtJpt9meDoNeYjLGmiFIJ4LqK9S88ZVz+9wjCm6VX8KKp7r5mYGVxS5jDh6deYIt6OT3q27OACyrYrJBNXQ7LAne03EusfGYPvp4ZWA5e45qL/bVgc6YtH44A8fcZPqkgmLkuGt2vG2BFSfr1jyg1ubKPaa3MDvCRcfnCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eZhEst07; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3914a5def6bso1123637f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 01:13:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741680779; x=1742285579; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d9hUC77ttL7VpNgoPVtZetc+bIdsy8nR0pbNY/lEgyQ=;
-        b=eZhEst07rhV5kf5u7dj+6dCOlS1nDnM3V/ElrLDm+/DrYl4UmNOF6oR2L/b3hGcdJA
-         nHUr3kZUjTzlg/TR90tUYe8qWkff/MSDbm6L8ztivZCTa/0DEy4ehSXg18MDL7StLgPd
-         CWnt42erkYgYzlrwWmpccQlvE4bSVM+QvIhJ8Ku9pCRKPF/rEPMsCrWE2L4lMmWknfXZ
-         45YjXKBZA20jQte7GxWh5G2RuqhFgmFPeDVC1fQvmYLoZpRr+hAYCOfc8MaqNcY3XbHo
-         VnBKHSS9eR+h/5VKb64bR0NXHk09B9803zaJ2lrTxggqC9xYzcLLEviMMZqGIQljvYO0
-         Ypdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741680779; x=1742285579;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d9hUC77ttL7VpNgoPVtZetc+bIdsy8nR0pbNY/lEgyQ=;
-        b=Ir1aMvNWYvIQJlXdppBus4cpmV6dQivn1vhQ3joy28F4fUpV85uG4C5BR6eXpQC9P4
-         A3L0SoOO1EvdlrLN5zXkrvhif8Cx9itKBHSoshoBy6OWVIsRdBDYYAe8WIE0EtnrtdAf
-         jtWTBNHN19EpQM/N9/b0t5C1YhmLq9GFGgbQ611+2UCSUs07n9IQOTbeTLHC583NVfMP
-         daE84WI23NF+VoD47kHFdTQxG9aMCFTaauvWvT21JtCAnvPSvk3ZmuYlsLmOl3vWH3QS
-         nO1zhNtrutnkDwEwZl9Riy+b1k2WCFdp/hYg7gyD6zRz58mpQI3sVf5jpKVS2eOxMerL
-         F9Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdJ4XgqSzVb1ARXgp8L8JfRx+ucHfUYsoTNnZGB7+TGnm7HgyDQ4qfBefw60uYPtAbD60ee0FF5BxQmFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYgK0fFcGxBhS9W9/JMvBNJC2vfZ2BmiLq4LWaR7ohB4CX2tl5
-	+7/6D72wkxOXmvwiR29PTCw14yPdWEqTwrreeakDnM/Gy8V3zlSVVaC8DqiPx213PEljJtI+eGA
-	/
-X-Gm-Gg: ASbGncupC+DlbBqs2VLFZh2dlQJNIehx/G2k+NJwjZgVg+R1MzQy2JyxNVwoFm9/5Wv
-	yXD3xFZVvr2kqZrd0MRxdKhR+9BGuw3kTD5BQIEhEXkmh5cj2BGHk3pVOEzirYpc/4up1hUaPVJ
-	nRYwZ6mt6L+WFvTgAJzr504+POL4v3BRfOq5lbH5M9nn+atHOKilyC1Kr07qkrZliRt9xQMYdry
-	E4e79g+qTw1AM462tP3bMl7EuEdsgs9nw2zu+iXcOoLhqK6GrKFzWX0scq3gdNp6nHSqMiPjsgu
-	Basw21xgRZp6qWfzw0G2VcB7Q2bIMpAh1hkxZ8GdKpl4Vai1QA==
-X-Google-Smtp-Source: AGHT+IHQe5urwt2Q3djRRAmzur7elKU2h0pqAZvz5+2zIbJd7QEmn7pPxhLZABGxMIFRNedH3+9Dqg==
-X-Received: by 2002:adf:9b9d:0:b0:391:3b11:d604 with SMTP id ffacd0b85a97d-3913b11d767mr6992628f8f.54.1741680778874;
-        Tue, 11 Mar 2025 01:12:58 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0195bfsm17215168f8f.48.2025.03.11.01.12.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 01:12:58 -0700 (PDT)
-Date: Tue, 11 Mar 2025 11:12:54 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Thompson <davthompson@nvidia.com>
-Cc: Borislav Petkov <bp@alien8.de>, Shravan Ramani <shravankr@nvidia.com>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [bug report] EDAC, mellanox: Add ECC support for BlueField DDR4
-Message-ID: <7c58ba57-96ff-4d9b-a014-dfe3fc0c44b5@stanley.mountain>
-References: <046bf689-9a2b-4993-b8ca-927d7d2a0cc5@stanley.mountain>
- <20250303145226.GCZ8XCKkC0YSLHXycB@fat_crate.local>
- <PH7PR12MB590225F9E7C1BA48B5EF538AC7D12@PH7PR12MB5902.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1741680860; c=relaxed/simple;
+	bh=zNUahkr4ceyQKOxdCI7/WCIpVBaDh6Z1v6aPh3hQyPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IsMMzZh6ODz/7rvG54ylq7ut7iJZzXQ5/Vml1afLc1Mg9tlXito5rtjcFnLx6iIXzQeLHTdtTPMmA/HmnwJyK212iS56kdOMDd9Af3Aujpsj/XkKNbqV5Ho0S7SYrbYlTX42+dOnPx5c81yhqXiaGqbkLPWzmB3CyrkyPY+dkDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZBmkP6jSjzyRrm;
+	Tue, 11 Mar 2025 16:14:05 +0800 (CST)
+Received: from kwepemo200002.china.huawei.com (unknown [7.202.195.209])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2627B1800C9;
+	Tue, 11 Mar 2025 16:14:09 +0800 (CST)
+Received: from [10.174.179.13] (10.174.179.13) by
+ kwepemo200002.china.huawei.com (7.202.195.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 11 Mar 2025 16:14:08 +0800
+Message-ID: <bb6bba1d-fabe-cc14-2521-ffbf2e31ac63@huawei.com>
+Date: Tue, 11 Mar 2025 16:14:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH7PR12MB590225F9E7C1BA48B5EF538AC7D12@PH7PR12MB5902.namprd12.prod.outlook.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: Using userfaultfd with KVM's async page fault handling causes
+ processes to hung waiting for mmap_lock to be released
+To: Peter Xu <peterx@redhat.com>
+CC: jimsiak <jimsiak@cslab.ece.ntua.gr>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
+	<linux-mm@kvack.org>, <wangkefeng.wang@huawei.com>
+References: <79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr>
+ <20250307072133.3522652-1-tujinjiang@huawei.com>
+ <46ac83f7-d3e0-b667-7352-d853938c9fc9@huawei.com>
+ <dee238e365f3727ab16d6685e186c53c@cslab.ece.ntua.gr>
+ <Z8t2Np8fOM9jWmuu@x1.local> <bb6eb768-2e3b-0419-6a7d-9ed9165a2024@huawei.com>
+ <Z880ejmfqjY1cuX7@x1.local>
+From: Jinjiang Tu <tujinjiang@huawei.com>
+In-Reply-To: <Z880ejmfqjY1cuX7@x1.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemo200002.china.huawei.com (7.202.195.209)
 
-On Tue, Mar 11, 2025 at 02:22:20AM +0000, David Thompson wrote:
-> > -----Original Message-----
-> > From: Borislav Petkov <bp@alien8.de>
-> > Sent: Monday, March 3, 2025 9:52 AM
-> > To: Dan Carpenter <dan.carpenter@linaro.org>; David Thompson
-> > <davthompson@nvidia.com>
-> > Cc: Shravan Ramani <sramani@mellanox.com>; linux-edac@vger.kernel.org; lkml
-> > <linux-kernel@vger.kernel.org>
-> > Subject: Re: [bug report] EDAC, mellanox: Add ECC support for BlueField DDR4
-> > 
-> > On Thu, Oct 24, 2024 at 11:20:45AM +0300, Dan Carpenter wrote:
-> > > Hello Shravan Kumar Ramani,
-> > >
-> > > Commit 82413e562ea6 ("EDAC, mellanox: Add ECC support for BlueField
-> > > DDR4") from Jun 25, 2019 (linux-next), leads to the following Smatch
-> > > static checker warning:
-> > >
-> > > drivers/edac/bluefield_edac.c:205 bluefield_gather_report_ecc() error:
-> > uninitialized symbol 'dram_syndrom'.
-> > > drivers/edac/bluefield_edac.c:219 bluefield_gather_report_ecc() error:
-> > uninitialized symbol 'dram_additional_info'.
-> > > drivers/edac/bluefield_edac.c:231 bluefield_gather_report_ecc() error:
-> > uninitialized symbol 'edea0'.
-> > > drivers/edac/bluefield_edac.c:231 bluefield_gather_report_ecc() error:
-> > uninitialized symbol 'edea1'.
-> > > drivers/edac/bluefield_edac.c:256 bluefield_edac_check() error: uninitialized
-> > symbol 'ecc_count'.
-> > >
-> > > drivers/edac/bluefield_edac.c
-> > >     173 static void bluefield_gather_report_ecc(struct mem_ctl_info *mci,
-> > >     174                                         int error_cnt,
-> > >     175                                         int is_single_ecc)
-> > >     176 {
-> > >     177         struct bluefield_edac_priv *priv = mci->pvt_info;
-> > >     178         u32 dram_additional_info, err_prank, edea0, edea1;
-> > >     179         u32 ecc_latch_select, dram_syndrom, serr, derr, syndrom;
-> > >     180         enum hw_event_mc_err_type ecc_type;
-> > >     181         u64 ecc_dimm_addr;
-> > >     182         int ecc_dimm, err;
-> > >     183
-> > >     184         ecc_type = is_single_ecc ? HW_EVENT_ERR_CORRECTED :
-> > >     185                                    HW_EVENT_ERR_UNCORRECTED;
-> > >     186
-> > >     187         /*
-> > >     188          * Tell the External Memory Interface to populate the relevant
-> > >     189          * registers with information about the last ECC error occurrence.
-> > >     190          */
-> > >     191         ecc_latch_select = MLXBF_ECC_LATCH_SEL__START;
-> > >     192         err = bluefield_edac_writel(priv, MLXBF_ECC_LATCH_SEL,
-> > ecc_latch_select);
-> > >     193         if (err)
-> > >     194                 dev_err(priv->dev, "ECC latch select write failed.\n");
-> > >     195
-> > >     196         /*
-> > >     197          * Verify that the ECC reported info in the registers is of the
-> > >     198          * same type as the one asked to report. If not, just report the
-> > >     199          * error without the detailed information.
-> > >     200          */
-> > >     201         err = bluefield_edac_readl(priv, MLXBF_SYNDROM,
-> > &dram_syndrom);
-> > >     202         if (err)
-> > >     203                 dev_err(priv->dev, "DRAM syndrom read failed.\n");
-> > >
-> > > If bluefield_edac_readl() fails then dram_syndrom is uninitialized.
-> > >
-> > >     204
-> > > --> 205         serr = FIELD_GET(MLXBF_SYNDROM__SERR, dram_syndrom);
-> > >     206         derr = FIELD_GET(MLXBF_SYNDROM__DERR, dram_syndrom);
-> > >     207         syndrom = FIELD_GET(MLXBF_SYNDROM__SYN, dram_syndrom);
-> > >
-> > 
-> > This looks forgotten.
-> > 
-> > I'm thinking of:
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 8e0736dc2ee0..061149ade8c0 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -8222,8 +8222,7 @@ F:
-> > 	Documentation/devicetree/bindings/edac/aspeed-sdram-edac.txt
-> >  F:	drivers/edac/aspeed_edac.c
-> > 
-> >  EDAC-BLUEFIELD
-> > -M:	Shravan Kumar Ramani <shravankr@nvidia.com>
-> > -S:	Supported
-> > +S:	Orphan
-> >  F:	drivers/edac/bluefield_edac.c
-> > 
-> >  EDAC-CALXEDA
-> > 
-> > but lemme Cc people who have touched this recently first.
-> > 
-> > Thx.
-> > 
-> > --
-> > Regards/Gruss,
-> >     Boris.
-> > 
-> > https://people.kernel.org/tglx/notes-about-netiquette
-> 
-> Shravan and I will investigate solving this 'smatch' warning.
-> 
-> I setup a recent linux-next repo, installed the sparse package, and downloaded + built the smatch tool.  
-> I execute the following command to run 'smatch' over the entire linux kernel, including bluefield_edac.c:
->    $ make CHECK="/path/to/smatch -p=kernel --file-output" C=1 -j64
-> 
-> I don't see any warnings related to the bluefield_edac.c module. That is, the generated file 
-> "drivers/edac/bluefield_edac.c.smatch" has size 0, and thus no content.
-> 
-> What is the recommended command line options to pass to Linux kernel build?
-> Is there something I am missing here?
 
-The actual issue is the first "return -1" in secure_readl().
+在 2025/3/11 2:50, Peter Xu 写道:
+> On Mon, Mar 10, 2025 at 02:40:35PM +0800, Jinjiang Tu wrote:
+>> 在 2025/3/8 6:41, Peter Xu 写道:
+>>> On Fri, Mar 07, 2025 at 03:11:09PM +0200, jimsiak wrote:
+>>>> Hi,
+>>>>
+>>>>   From my side, I managed to avoid the freezing of processes with the
+>>>> following change in function userfaultfd_release() in file fs/userfaultfd.c
+>>>> (https://elixir.bootlin.com/linux/v5.13/source/fs/userfaultfd.c#L842):
+>>>>
+>>>> I moved the following command from line 851:
+>>>> WRITE_ONCE(ctx->released, true);
+>>>> (https://elixir.bootlin.com/linux/v5.13/source/fs/userfaultfd.c#L851)
+>>>>
+>>>> to line 905, that is exactly before the functions returns 0.
+>>>>
+>>>> That simple workaround worked for my use case but I am far from sure that is
+>>>> a correct/sufficient fix for the problem at hand.
+>>> Updating the field after userfaultfd_ctx_put() might mean UAF, afaict.
+>>>
+>>> Maybe it's possible to remove ctx->released but only rely on the mmap write
+>>> lock.  However that'll need some closer look and more thoughts.
+>>>
+>>> To me, the more straightforward way to fix it is to use the patch I
+>>> mentioned in the other email:
+>>>
+>>> https://lore.kernel.org/all/ZLmT3BfcmltfFvbq@x1n/
+>>>
+>>> Or does it mean it didn't work at all?
+>> This patch works for me. mlock() syscall calls GUP with FOLL_UNLOCKABLE and
+>> allows to release mmap lock and retry.
+>>
+>> But other GUP call without FOLL_UNLOCKABLE will return VM_FAULT_SIGBUS,
+>> is it a regression for the below commit？
+> Do you have an explicit reproducer / use case of such?
+>
+> AFAIU, below commit should only change it from SIGBUS to NOPAGE when
+> "released" is set.  I don't see how it can regress on !FOLL_UNLOCKABLE.
+>
+> Thanks,
 
-You need build the cross function database to see the warning in Smatch.
-In fact you'd need to build it twice because it's two functions away.
-It's not hard to build the database but it takes a few hours.
+You are right, the below commit seems to only care about page fault from userspace (which has
+FAULT_FLAG_ALLOW_RETRY flag), and doesn't care about GUP from drivers (which may be !FOLL_UNLOCKABLE)
 
-~/progs/smatch/release/smatch_scripts/build_kernel_data.sh
+Thanks.
 
-I wouldn't bother trying to silence the warning.  We don't worry about
-false positives.  The only thing to consider is the kernel code.
-
-Probably bluefield_edac_readl() can't actually fail in real life can
-it?  There are a lot of functions like that in the kernel.  If reading
-from the PCI stops working, there is nothing you can do in the software
-to recover from that, you need to buy new hardware.  If you want I can
-just add bluefield_edac_readl() to the list of functions which don't
-actually fail.
-
-regards,
-dan carpenter
+>> commit 656710a60e3693911bee3a355d2f2bbae3faba33
+>> Author: Andrea Arcangeli <aarcange@redhat.com>
+>> Date:   Fri Sep 8 16:12:42 2017 -0700
+>>
+>>      userfaultfd: non-cooperative: closing the uffd without triggering SIGBUS
+>>
+>>> Thanks,
+>>>
 
