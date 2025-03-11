@@ -1,156 +1,215 @@
-Return-Path: <linux-kernel+bounces-555764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB49A5BC7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:42:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 441B0A5BC80
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:42:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 527DF7A631E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:41:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 813A87A280A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585D122DFB4;
-	Tue, 11 Mar 2025 09:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244F722CBF1;
+	Tue, 11 Mar 2025 09:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R8JW6M/K"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F1lbl9gX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86F122B590
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A2422D7AB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741686140; cv=none; b=us33nGYsvvYi/FQCd5/Az8DJ2R13m0jjTJZ/Ur1oly4u1p4bbtqfRin5fMzxuTRX4i6XX1YOizN1kMvSWHfA7VnnK/R+8EnlqFGKu0MYp3gma/8CrxhOTWgm58TD3YqQJMVMylv+dn59LL0hraqGCUHpDGrhx7fFtqpHgZfaZyI=
+	t=1741686159; cv=none; b=NcTPTcvH8UAoc09QZZ1UG2aZ3e9MJd48DbtoOM0wjLCYuP7jDOwyC64/12X/oCJXRr0AAl3RCaNxShPZuFmAeKk3xoc7RNqeklpwC9QgEOSLM5GHP/qEqxculyC6ccaB59ktGRfu5pIyVVSkYoNZRAhWtqIDo1l4bibIy3yXoCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741686140; c=relaxed/simple;
-	bh=6G6q9gJE+xvV3I97HSJ4wqR6R7EQnz4zmkCtLbU3u8g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JwJKjN/3zZmPgn8bQGffKsrK8j5vYJTqrvLydOjoL4vO6t2mRJkuuAS/uOGA9tleF7C/UnsHoy1rNBLmEx0uETtq9gKuuLfGySYCxktotgb0NbqcPPXWDu9M8+c1Z8UDhw/r2T62S2mT2RweZ0U82RX8ySO1uGbDZjIxVySlPGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R8JW6M/K; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B7iAjI029395
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:42:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jLmEFyG3LTIS/8bd0t7FZ5xsj2uzD9vnCxgeQMsx2zY=; b=R8JW6M/Km9+3D2yt
-	U5m03KYMgJEVx+EdhRU/jwhD0Tq7GY20BnJjfEYNpPfJ1mPZ6T+Gox91keNRBQa3
-	jbEAmgGnEGICxwSAkR4C4kk7ER0IGsr6jfDKlB4KtJ8fyZ9lEpZeo7K5AZhQlsG8
-	EnC8BENpjx/3Nda8xExLwiiYbOj7NI+SHZ7p8YE/SNMYC+7teCz4Q3Kg83vrGkMz
-	Gh33SQ6JNSCaxbbuFtCkxgVcagQy2JO9woK8u2+/mELTTX4cCDylpkwc+2q7ZPKi
-	EdKuJ2zO4YMF3X0FG3h5Ivs33QrM2IcJLQ0DLk6uvXo6yCw8Cpbwb75sU1Eq31QS
-	cT4cGQ==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ah1y8bnq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:42:16 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e19bfc2025so13934066d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 02:42:16 -0700 (PDT)
+	s=arc-20240116; t=1741686159; c=relaxed/simple;
+	bh=bk1utCoL0jpm+fE7QxhWVPAm20ULaoWKvqvMoOSo3r0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=cB+begHJ4sS4UoJDxqqBfiqV+w66psHVoy7jS2OT2c5rO4dPHbTzY+6oqmhaRPr5RA9ducyEPaXX/spoAGpUxptp4UOBm1Ztc/yN90e1MTlmyItDOKyjm666ETg1X3NJp6tm3+MwKilRSN/3x26duTOoDuIKlRNX8WO1cpKjAz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F1lbl9gX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741686156;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VtUeSeWcd1CI3feUKO1y+/FGn6aMUK50DGWtG1Q+97U=;
+	b=F1lbl9gXpaAWGtv0GCqBAaDfD4MEshsoomQKn8EmZIJ3suypsKy2BU5Ps6tlL3KT4TAUQG
+	MCZtULkkKpYl+sk8tHRGa4x5rGUfyN8n+jz/yCY/pjAv5D/QU58Tcsep0YEeOqYMWv0O3o
+	r5dYP4czpgbDlcJvTp3xGN6p5EVyydU=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-453-ouS52p5sPcmbAHvPz2qHCA-1; Tue, 11 Mar 2025 05:42:35 -0400
+X-MC-Unique: ouS52p5sPcmbAHvPz2qHCA-1
+X-Mimecast-MFC-AGG-ID: ouS52p5sPcmbAHvPz2qHCA_1741686154
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5da03762497so6598383a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 02:42:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741686135; x=1742290935;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jLmEFyG3LTIS/8bd0t7FZ5xsj2uzD9vnCxgeQMsx2zY=;
-        b=IY3wqPfJPQjtOQWnR8KtLO0BfGB+sxBWEPUWDdEqWLAV0bI/0D/2wBs2aqFmJUmfbw
-         GlFUYnWf4wHpom5F7bQ3qrVzvYAEzh/xGv+Ua4j9DnMjpocgvN/+EbHw/lXkDu1fFccj
-         SC5A6URVN9N3u9lZl2NbessAp0sRg7slMzlLXeK2bIFgc/8LY5GLG6y/mX1t52s0erZK
-         JrJjRrcFdKc9VFfA7UyG4MRbhu6ZEAy2s7psx27CghDF+KxMkR2pJbWE7HbQvCM9tER8
-         zpziOKFGZ39OTHdJM2jr4ucrQO+WFgXBsLjiT2K/VrRmJPioQa5WK7a4H1qp8zECLAwa
-         c6aw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiNCDH9EQz19Qme9e0pc3S3844hX+mYoj5YBxWfA/ZxIA3itW4WUHLB6de5EbD1H9HAWD0QQH6egCyZTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx601KrjoIUY8dzldGUH95akpOVV5U56ti+A86tWV3Pgt/tUJT+
-	ROBU+SWlUBLNpnYM9GNNwH+afy2Jq1MgAKakAb96qcH7mJ+cgDSNnc6PJU1jyDX8DOEmoxJzPLa
-	NyBQmvn5mYBy5aNA4ZdIMgkAN7pnNkojQUMHY84ytndN2bMDVHu0h4gqTgei/c7g=
-X-Gm-Gg: ASbGnctGPnw5jao1J3B+mpe8tqBymDg2yPiqBEDRrSSyp9CdKp/WKe2fVP6eDCTCABl
-	uVfMsTBrUQOl5vD/ocVBJYdVWX5uNTlyMmoGDLRk3tGak79dDsVaKLRqqFeUVU1eKKqjw+NHQgU
-	poR3FEIS4XHvzBTgCPg+ahzOXssKfgFBDikjNws3pL/6g5NhuJ67oahHsBSiEPK7xu1Spcu+p9j
-	2O7knvVeTzg7M3lHxcXpE7dFh2FiqwPdDwP2yu1IxbEQ+C9fgkfo2Vh0PwZtWk+aR5v7CB6c6MI
-	nWe0vQ41oFjXfYLATQTxkgEmkl8ZaLkwF9bWNaWEtsR4c+NWWu1JBKb+ufGAcl4fF7olYA==
-X-Received: by 2002:ad4:5bcd:0:b0:6e8:fe16:4d42 with SMTP id 6a1803df08f44-6e908c726c7mr74383966d6.1.1741686135467;
-        Tue, 11 Mar 2025 02:42:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGSytYD0gUExD8i7pJCZHGU18JQpmW4aJe9Ty5cJD0CL5USKGnlHQQ7o9cBjRcodkWS9b6EA==
-X-Received: by 2002:ad4:5bcd:0:b0:6e8:fe16:4d42 with SMTP id 6a1803df08f44-6e908c726c7mr74383746d6.1.1741686135118;
-        Tue, 11 Mar 2025 02:42:15 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239438117sm882353366b.26.2025.03.11.02.42.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 02:42:14 -0700 (PDT)
-Message-ID: <e73b3666-9f1d-40c0-afd5-5c0c83771e37@oss.qualcomm.com>
-Date: Tue, 11 Mar 2025 10:42:12 +0100
+        d=1e100.net; s=20230601; t=1741686154; x=1742290954;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VtUeSeWcd1CI3feUKO1y+/FGn6aMUK50DGWtG1Q+97U=;
+        b=bMEkWjlcSzNYEARiCQzdAwXZHCp3rEAp+E5pl60INvocekoUKe0jtWDhqQQzcnWSrM
+         mvhF2HYWNzrViGw1ocFsROigySoJoJSvMLNWLTILhhcQPfhSIoQSFCX3vPP0PIF7yej0
+         tl/kwNxFuq5shlGjIQ/pm+J+E/AwXF/HNwSi2cDp/uYdFwFo71PyGtW/2YnGz9KIeWpj
+         0/Db6IfK76hMPVzaCRflQ3GAHQAYn5WI+odCwQMs0EZarMzcz3oGv1677e2bbTGnr3NK
+         zufXsWd9V18EapXL9LCSjTQdiBT2F77qzkxe3aM1Kwd14WN5HvPuifn4WbkBR5Q6Qa7y
+         sqGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNl1sBH6BW+R8m/eDJVrGealsFg2URdYBPQe7hJrZ1yssRR/390Fbfg0rF12C63ozCqxC8YIu/SlcK+ps=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/TQMdnO/5mVy9ekDcdluIySIg4kB+BZiP3OKi1dpsT/gOFiER
+	LKSM5iOVa+yNnb84HfWW9WxM3FCCqemD8YTQF2eQmISpBrM57Y2FXp0KV2kD1iCvCu8K34H88qR
+	0CJXN/APhdUA7ocoRSDOy435W+hNf9yfCGAEsWAHQcWhsqi6AHr5Yk1SWJGo04A==
+X-Gm-Gg: ASbGncv3L+I+GlM3iolkAE8a82u3QOUXaVzeDU/8efeZMf6N73PMRjxF16Hnd5B6PC1
+	qNbRFl2rCBUoGEdt+699IEpkOBQe8IMvCX7wcKU3YQ7Zb2s5kIZoLcZweoM674+xAr+zqDg45kl
+	KgNWFjtZnfoq4MuUrYsnoU6MoI+Mx68p/BP/hx5U8umO27HMNbnSfI8uoBLvSpW7Vxk+ZaZwUiz
+	Q64elw1gAD77i1bxxLM+1sEgWZ9qZF7xsNdogiFt2xL3JlxS06GSP/mcpve/2VZK9baGAx9i31A
+	HqML7gAMn6PLxfY5QugPzzIF70jxdWR3paMl1pWz2wxH3SJKEodwDA/JF1b31XJSz3EYT1yS
+X-Received: by 2002:a05:6402:40d5:b0:5e7:87ea:b18c with SMTP id 4fb4d7f45d1cf-5e787eacf57mr872938a12.15.1741686153791;
+        Tue, 11 Mar 2025 02:42:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHY2OSneC4cl7aSD4PE0BPNJTrwCmoiCQ+JTyO3tvYbex45WTvoHfGFh8SwSjQWrtNpqraj+A==
+X-Received: by 2002:a05:6402:40d5:b0:5e7:87ea:b18c with SMTP id 4fb4d7f45d1cf-5e787eacf57mr872899a12.15.1741686153165;
+        Tue, 11 Mar 2025 02:42:33 -0700 (PDT)
+Received: from localhost.localdomain (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c7473c17sm8118639a12.28.2025.03.11.02.42.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 02:42:32 -0700 (PDT)
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	linux-integrity@vger.kernel.org,
+	Dov Murik <dovmurik@linux.ibm.com>,
+	Dionna Glaze <dionnaglaze@google.com>,
+	linux-coco@lists.linux.dev,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Joerg Roedel <jroedel@suse.de>,
+	Stefano Garzarella <sgarzare@redhat.com>
+Subject: [PATCH v3 0/4] Enlightened vTPM support for SVSM on SEV-SNP
+Date: Tue, 11 Mar 2025 10:42:21 +0100
+Message-ID: <20250311094225.35129-1-sgarzare@redhat.com>
+X-Mailer: git-send-email 2.48.1
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcm6490-fairphone-fp5: Add touchscreen
- node
-To: Luca Weiss <luca.weiss@fairphone.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Jens Reidel <adrian@mainlining.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250311-fp5-touchscreen-v1-1-4d80ad3e4dfc@fairphone.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250311-fp5-touchscreen-v1-1-4d80ad3e4dfc@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 2I-BPvHXRfxEDYX7WzlAbE4tlWI6Wsm1
-X-Authority-Analysis: v=2.4 cv=aptICTZV c=1 sm=1 tr=0 ts=67d00578 cx=c_pps a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=8DUqKY-xeV0tu31MSWsA:9
- a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-GUID: 2I-BPvHXRfxEDYX7WzlAbE4tlWI6Wsm1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_01,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 adultscore=0 clxscore=1015 malwarescore=0 spamscore=0
- phishscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503110065
+Content-Transfer-Encoding: 8bit
 
-On 3/11/25 9:23 AM, Luca Weiss wrote:
-> Add a node for the GT9897 touchscreen found on this smartphone connected
-> via SPI.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
-> The series adding support for this chip (incl. dt-bindings) has been
-> applied on 2025-03-10 to the input tree:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git/log/?h=next
-> ---
->  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> index 356cee8aeba90e21c11f46df924ed180bfce3160..35ce9dfca6f092a88d8873673ff57b591e210b02 100644
-> --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> @@ -1069,7 +1069,18 @@ &sdhc_2 {
->  &spi13 {
->  	status = "okay";
->  
-> -	/* Goodix touchscreen @ 0 */
-> +	touchscreen@0 {
-> +		compatible = "goodix,gt9897";
-> +		reg = <0>;
-> +		interrupt-parent = <&tlmm>;
-> +		interrupts = <81 IRQ_TYPE_LEVEL_LOW>;
+AMD SEV-SNP defined a new mechanism for adding privileged levels (VMPLs)
+in the context of a Confidential VM. These levels can be used to run the
+guest OS at a lower privilege level than a Secure VM Service Module (SVSM).
+In this way SVSM can be used to emulate those devices (such as TPM) that
+cannot be delegated to an untrusted host.
 
-interrupts-extended
+The guest OS can talk to SVSM using a specific calling convention and
+instructions (a kind of system call/hyper call) and request services such
+as TPM emulation.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+The main goal of this series is to add a driver for the vTPM defined by
+the AMD SVSM spec [3]. The specification defines a protocol that a
+SEV-SNP guest OS (running on VMPL >= 1) can use to discover and talk to
+a vTPM emulated by the SVSM in the guest context, but at a more
+privileged level (VMPL0).
 
-Konrad
+This series is based on the RFC sent by James last year [1].
+In the meantime, the patches have been maintained and tested in the
+Coconut Linux fork [2] along with the work to support the vTPM
+emulation in Coconut SVSM.
+
+The first patch adds public APIs to use AMD SVSM vTPM. They use
+SVSM_VTPM_QUERY call to probe for the vTPM device and SVSM_VTPM_CMD call
+to execute vTPM operations as defined in the AMD SVSM spec [3].
+The second patch adds an interface with helpers for the SVSM_VTPM_CMD calls
+used by the vTPM protocol defined by the AMD SVSM spec and then used by the
+third patch to implement the SVSM vTPM driver. The fourth patch simply
+registers the platform device.
+
+Since all SEV-SNP dependencies are now upstream, this series can be
+applied directly to the Linus' tree.
+
+These patches were tested in an AMD SEV-SNP guest running:
+- a recent version of Coconut SVSM [4] containing an ephemeral vTPM
+- a PoC [5] containing a stateful vTPM used for sealing/unsealing a LUKS key
+
+Changelog:
+
+v2 RFC -> v3
+- Removed send_recv() ops and followed the ftpm driver implementing .status,
+  .req_complete_mask, .req_complete_val, etc. [Jarkko]
+  As we agreed, I will send another series with that patch to continue the
+  discussion along with the changes in this driver and ftpm driver.
+- Renamed fill/parse functions [Tom]
+- Renamed helpers header and prefix to make clear it's related to the
+  SVSM vTPM protocol and not to the TCG TPM Simulator
+- Slimmed down snp_svsm_vtpm_probe() [Borislav]
+- Removed link to the spec because those URLs are unstable [Borislav]
+- Removed features check and any print related [Tom]
+- Squashed "x86/sev: add SVSM call macros for the vTPM protocol" patch
+  with the next one [Borislav]
+
+v1 -> v2 RFC: https://lore.kernel.org/linux-integrity/20250228170720.144739-1-sgarzare@redhat.com/
+- Added send_recv() tpm_class_ops callback
+- Removed the intermediate tpm_platform.ko driver
+- Renamed tpm_platform.h to tpm_tcgsim.h and included some API to fill
+  TPM_SEND_COMMAND requests and parse responses from a device emulated using
+  the TCG Simulatore reference implementation
+- Added public API in x86/sev usable to discover and talk with the SVSM vTPM
+- Added the tpm-svsm platform driver in driver/char/tpm/
+- Fixed some SVSM TPM related issues (resp_size as u32, don't fail on
+  features !=0, s/VTPM/vTPM)
+
+v0 RFC -> v1: https://lore.kernel.org/linux-integrity/20241210143423.101774-1-sgarzare@redhat.com/
+- Used SVSM_VTPM_QUERY to probe the TPM as Tom Lendacky suggested
+- Changed references/links to TCG TPM repo since in the last year MS
+  donated the reference TPM implementation to the TCG.
+- Addressed Dov Murik's comments:
+  https://lore.kernel.org/all/f7d0bd07-ba1b-894e-5e39-15fb1817bc8b@linux.ibm.com/
+- Added a new patch with SVSM call macros for the vTPM protocol, following
+  what we already have for SVSM_CORE and SVSM_ATTEST
+- Rebased on v6.13-rc2
+
+Thanks,
+Stefano
+
+[1] https://lore.kernel.org/all/acb06bc7f329dfee21afa1b2ff080fe29b799021.camel@linux.ibm.com/
+[2] https://github.com/coconut-svsm/linux/tree/svsm
+[3] "Secure VM Service Module for SEV-SNP Guests"
+    Publication # 58019 Revision: 1.00
+    https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/specifications/58019.pdf
+[4] https://github.com/coconut-svsm/svsm/commit/6522c67e1e414f192a6f014b122ca8a1066e3bf5
+[5] https://github.com/stefano-garzarella/snp-svsm-vtpm
+
+Stefano Garzarella (4):
+  x86/sev: add SVSM vTPM probe/send_command functions
+  svsm: add header with SVSM_VTPM_CMD helpers
+  tpm: add SNP SVSM vTPM driver
+  x86/sev: register tpm-svsm platform device
+
+ arch/x86/include/asm/sev.h  |   7 ++
+ include/linux/svsm_vtpm.h   | 141 ++++++++++++++++++++++++++++++++++
+ arch/x86/coco/sev/core.c    |  39 ++++++++++
+ drivers/char/tpm/tpm_svsm.c | 148 ++++++++++++++++++++++++++++++++++++
+ drivers/char/tpm/Kconfig    |  10 +++
+ drivers/char/tpm/Makefile   |   1 +
+ 6 files changed, 346 insertions(+)
+ create mode 100644 include/linux/svsm_vtpm.h
+ create mode 100644 drivers/char/tpm/tpm_svsm.c
+
+-- 
+2.48.1
+
 
