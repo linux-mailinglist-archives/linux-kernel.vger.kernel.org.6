@@ -1,113 +1,117 @@
-Return-Path: <linux-kernel+bounces-556321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D50A5C404
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:38:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41D1A5C400
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:38:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A325F1899E0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:38:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0860E189A34B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D5C25A632;
-	Tue, 11 Mar 2025 14:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dnYJEFzL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C2C2253EE
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A472256C6F;
+	Tue, 11 Mar 2025 14:37:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CC21D514E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741703913; cv=none; b=TZ87W38RTXn9NnLE3pndX9BDHHUzzlHI66L4/vQMMj447gqiVoI8FjRgXcZJ4r1S4nfAS4vOMQJLZc8pwz2SbcCzL722VAArba+a5H+o9fUI2LccHgH2WiW1D0ho7ZAPg6pkBUsffF8yWw1w8oYhrNoosyFx+kIkM+ugjofhab8=
+	t=1741703876; cv=none; b=IsLKNmQf0yuVjHGaSSjRFQ8u2LH0v0oWen5c0vro6ax4/30WnALETZFhN0/opjjbwWdvBPcvWR+t1ecMX0+vNsF3buZSvZyzJbypM6WQGrrSZ5ovKDXf4hD11mGpNFNeQo88zwchUB0r4g1tSLI3UvVDkS595CzgnZKo+tF4I0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741703913; c=relaxed/simple;
-	bh=m/eEMxP8Xj8yG2a7Hu4kR+mrcgF0OixHM7fnWN4XHvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c4HnO7tcHxTcAAmpGkEB2qB5rRMi76Q3GKkct2H40+rJnjCsovSeSDO/713Oi8/sBSLoBMVj/yxntENi7oa/j+sVqhu/hb7UmiwAAC5te1kJN+Uxxss2ZuZCUw8ji1lcfK/uYmokT8a1cNYtEgbP+cvtaR27OVKqWVLvHYJngew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dnYJEFzL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741703911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cpTpvcWE2P9qSD301paokWQsARnj6IAdwHTa1z+B9WQ=;
-	b=dnYJEFzLXL+PomIkbo6VPAzhTFd81njTuigVmFtWaKf8RvE8FHGEv22EeIrojPdiH5Zp5f
-	Nfahj1b95QhmviHPfWVAIwxgli5UOFFcX27KEu4OdyQdzbsctUijAx9MljROePNN24FYe2
-	CtaPUAjoEqg3Zx9JCnvpLHN2Rrh4XGg=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-423-H1IGM8NeOoSottojaFFw6w-1; Tue,
- 11 Mar 2025 10:38:28 -0400
-X-MC-Unique: H1IGM8NeOoSottojaFFw6w-1
-X-Mimecast-MFC-AGG-ID: H1IGM8NeOoSottojaFFw6w_1741703897
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 27853180025B;
-	Tue, 11 Mar 2025 14:38:03 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.22.90.58])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6848C18009AE;
-	Tue, 11 Mar 2025 14:37:57 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 11 Mar 2025 15:37:31 +0100 (CET)
-Date: Tue, 11 Mar 2025 15:37:25 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org,
-	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH] x86/stackprotector: fix build failure with
- CONFIG_STACKPROTECTOR=n
-Message-ID: <20250311143724.GE3493@redhat.com>
-References: <20241206142152.GB31748@redhat.com>
- <CAMj1kXGo5yv56VvNMvYBohxgyoyDtZhr4d4kjRdGTDQchHW0Gw@mail.gmail.com>
- <CAMzpN2iUi_q_CfDa53H8MEV_zkb8NRtXtQPvOwDrEks58=3uAg@mail.gmail.com>
- <CAMj1kXF8PZq4660mzNYcT=QmWywB1gOOfZGzZhi1sQxQacUX=g@mail.gmail.com>
- <20250310214402.GBZ89dIo_NLF4zOSKh@fat_crate.local>
- <CAMj1kXEK0Kgx-C8sOvWJ9rkmC0ioWDEb+tpM9BTeWVwOWyGNog@mail.gmail.com>
- <20250311102326.GAZ9APHqe5aSQ1m5ND@fat_crate.local>
- <CAMj1kXHTLz4onmR5iyowptRE38RCK4jNT3BoURBkq2FoDOMTxQ@mail.gmail.com>
- <20250311112112.GEZ9AcqM2ceIQVUA0N@fat_crate.local>
- <20250311131356.GGZ9A3FNOxp32eGAgV@fat_crate.local>
+	s=arc-20240116; t=1741703876; c=relaxed/simple;
+	bh=xLuI5lqAjWTTmx57sgMjkb37akll+8TyZv4iWhDeumg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dFcVaqiY+szaVu+5jJwtSIeazLUFrqlezMqoOJR/D3ZRwcudXy/bjQ1KnGI9Rj2qRYxvNS1pYWciO5+5U6k/0ggDrlfJM+XVV2FbHAshpsBnYqi3QRY7lToLE29nzw3te/hXEM3Y9ER32+qp/I+chD8yJPSNS45fCRDrfx4mQR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA4FF152B;
+	Tue, 11 Mar 2025 07:38:04 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD4E23F694;
+	Tue, 11 Mar 2025 07:37:50 -0700 (PDT)
+Message-ID: <58c5e76a-e320-4296-8292-1ddf3f7ba56d@arm.com>
+Date: Tue, 11 Mar 2025 14:37:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311131356.GGZ9A3FNOxp32eGAgV@fat_crate.local>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
+To: Jason Gunthorpe <jgg@ziepe.ca>, Ryan Roberts <ryan.roberts@arm.com>
+Cc: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
+ Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+ "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+ "yang@os.amperecomputing.com" <yang@os.amperecomputing.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "joro@8bytes.org" <joro@8bytes.org>,
+ "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>,
+ "joey.gouly@arm.com" <joey.gouly@arm.com>,
+ "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+ "james.morse@arm.com" <james.morse@arm.com>,
+ "broonie@kernel.org" <broonie@kernel.org>, "maz@kernel.org"
+ <maz@kernel.org>, "david@redhat.com" <david@redhat.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "nicolinc@nvidia.com" <nicolinc@nvidia.com>,
+ "mshavit@google.com" <mshavit@google.com>,
+ "jsnitsel@redhat.com" <jsnitsel@redhat.com>,
+ "smostafa@google.com" <smostafa@google.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>
+References: <20250228182403.6269-2-miko.lenczewski@arm.com>
+ <20250228182403.6269-6-miko.lenczewski@arm.com>
+ <20250228193221.GM5011@ziepe.ca>
+ <b23aa37f8e864dea82a6143bece912d6@huawei.com>
+ <20250303103102.GC13345@e133081.arm.com> <20250303165255.GS5011@ziepe.ca>
+ <20250303190330.GA426248@e133081.arm.com> <20250304142634.GC5011@ziepe.ca>
+ <67fbe3f4-4fb6-4753-b34c-320b7897fd16@arm.com>
+ <20250304161943.GD5011@ziepe.ca>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250304161943.GD5011@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 03/11, Borislav Petkov wrote:
->
-> On Tue, Mar 11, 2025 at 12:21:12PM +0100, Borislav Petkov wrote:
-> > Yap, that fixes the build:
->
-> Lemme run randbuilds with that one, see what else breaks with it.
+On 04/03/2025 4:19 pm, Jason Gunthorpe wrote:
+> On Tue, Mar 04, 2025 at 04:02:20PM +0000, Ryan Roberts wrote:
+>> On 04/03/2025 14:26, Jason Gunthorpe wrote:
+>>> On Mon, Mar 03, 2025 at 07:03:42PM +0000, Mikołaj Lenczewski wrote:
+>>>
+>>>> For example, if we use BBML2 for kernel mappings, does that require us
+>>>> to repaint all kernel mappings when disabling BBML2 on smmu attach? I
+>>>> am not sure, but definitely something to be worked out.
+>>>
+>>> No, it would be a per-mm_struct basis only if we did something like
+>>> that
+>>>
+>>> When the SMMU driver puts a SVA on top of the mm_struct it would
+>>> disable BBML2 usage only for that mm_struct and it's contained VMAs.
+>>
+>> I guess we would need to figure out some synchonization mechanism if disabling
+>> BBML2 dynaically per-mm. If there was already a BBML2 operation in flight would
+>> want to wait for it to end. But that's a problem to solve if/when it's shown to
+>> be needed, I think.
+> 
+> I have a feeling we can piggyback on the mmu notifiers to achieve this
+> as all the changes to the PTEs should be bracketed by notifier
+> callbacks..
+> 
+> Let's hope it isn't needed.
 
-sorry for the off-topic noise, but what about the
+Yup, as mentioned previously, this is largely theoretical and at worst 
+only a risk of affecting 3rd-party SMMU implementations. Arm's 
+implementations from MMU-700 onwards do support BBML2; MMU-600 *might* 
+actually be OK as well, but it predates the definition of the feature, 
+and there are more practical reasons not to integrate a decade-old SMMU 
+design with brand new CPUs anyway.
 
-	[PATCH] x86/stackprotector: fix build failure with CONFIG_STACKPROTECTOR=n
-	https://lore.kernel.org/all/20241206123207.GA2091@redhat.com/
-
-fix for the older binutils? It was acked by Ard.
-
-Should I resend it?
-
-Oleg.
-
+Thanks,
+Robin.
 
