@@ -1,160 +1,123 @@
-Return-Path: <linux-kernel+bounces-556458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 771E8A5C9FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:59:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5150CA5CA02
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:00:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8ED5171C04
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:59:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 920A01899A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FA526138B;
-	Tue, 11 Mar 2025 15:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F7A25F7BC;
+	Tue, 11 Mar 2025 15:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M37FfNOU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="G6GTh78x"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19EB261382;
-	Tue, 11 Mar 2025 15:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DED825F78A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741708706; cv=none; b=LMI0vCGHptl/hslFbc4EMJ4HMgVbk68w5CljL/fEImJSCv0XZNELN5XgsPqlfkm5vD0XUhcfmWqi3nBHlRaPCVlAMQZHny0XT6wctvR98LC8bGFqmQX/xwQ4SSSO8UEGwb0Fy8sh9CLJMG/nRrqcKOWOfjCbaSt4HlA/QHMjLcU=
+	t=1741708741; cv=none; b=EWTIgCaSIaCLWRXvTPcAZrxY1FEvZwNLpqZ0A62pJTJq2NKwjqBs1kzT9Bxh8K3k58LO6z+DU7ZAakT8ftqkzIdOClWHXBN1ka6Pcg05Ji7wxuf5xWH3CddrcXt2R4JFMJo47bGQqhZjEMSaDiIWX1NOPQjGEuSepXJAnPjWbV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741708706; c=relaxed/simple;
-	bh=s/BI0c/mXjRIlHmmtIUh0vfxDHCIvIHWrReoajMcp3w=;
+	s=arc-20240116; t=1741708741; c=relaxed/simple;
+	bh=Kf0XD+4NQsGqhvJzqE/CH9n9Xpw5uC/LHjG4Urq2ZtA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XEPjCpvt/RHEVje8E1FlTS1RzRsyNrXb5QwaR9iAlnzrigwWy/HW820jzmmX1Si3wuZJe+5DgWAB7pmieKj0on6MmQ8SOKuJthICJaiuR5BkBOGw9T2RTd+XPx4d5WNkwG93ulWxkVPan4A9C7W/Rhsa/b38prasfHPE9wCbpg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M37FfNOU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC7EC4CEE9;
-	Tue, 11 Mar 2025 15:58:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741708706;
-	bh=s/BI0c/mXjRIlHmmtIUh0vfxDHCIvIHWrReoajMcp3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M37FfNOUp8wIK6kCnGLOcug2rsqGqnA2ypPy4D1rjVfsu0hwzbBfTyxhC/fFO7SB3
-	 vZaCDm/fSf3F4iKXhAWODZPyeBQYmtKVZzgq7jsmOTBLGj/imFRenVxJfM6j2T6+A0
-	 kU6YKGremPgPfdmMToSpOzfT8TO+GFU4QaIWngkOJWyEQjG3IfpSOzKr7vFuw0Olz/
-	 0DvToCb4pdILnhZxsMoBgtGkl2DRcxgcaVnpRm1h/uRDo+WOUd65Fd/1SGCYuA5myO
-	 fx7IcWkOYSBLP6RsoqIggTbYsXE+mQnxm7/SFWe6ehpc0wYG6+YtRhui1DpizRkmO2
-	 NOQORL9/gfBhQ==
-Date: Tue, 11 Mar 2025 17:58:19 +0200
-From: Dmitry Baryshkov <lumag@kernel.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Dmitry Baryshkov <dbaryshkov@gmail.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Hermes Wu <Hermes.wu@ite.com.tw>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v5 2/2] drm/msm/dp: reuse generic HDMI codec
- implementation
-Message-ID: <ecw5wdvkf2iqwxvigze374q3lb3esqbokv43mkblbnpfmudutu@e75i4lqhuux7>
-References: <20250307-dp-hdmi-audio-v5-0-f3be215fdb78@linaro.org>
- <20250307-dp-hdmi-audio-v5-2-f3be215fdb78@linaro.org>
- <20250310-daft-bittern-of-foundation-67c657@houat>
- <CALT56yMSs7K_0b5YtkCW5Ypyt9Hu_YLkitFFJwTtBkwUJk-NHA@mail.gmail.com>
- <20250311-vivid-almond-elk-83fda5@houat>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y7BWJTaqg1kWH5oA6gh5sQmil8R8udJ9vcw+DGZTYdtlTFGTitUdg2y6NVuThUf8Fcdk0KL2yzRCe79jYncyG3gdt+9j4ftiLda4MdvSHnW/OVgjFzlHbUai2+Xok0t5/QS3XQNQYCLPr6NlocpNarwTNwi3dfANZcebISyuq64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=G6GTh78x; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7be6fdeee35so1079816785a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1741708738; x=1742313538; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=x5MIY1YFuGzMEl9B7g1td8wp5xC/AyaxT2y//gV10VU=;
+        b=G6GTh78xzH1JT94By3eikJimS1MZQSieTW2dDl22jIML9n8HBsOYDG4HW7wnANuzey
+         mEifVq7faiTt+3t96h2LhA/AUIHziymh33VN+WDSmTGUBgcksE337H2Nf+ljqDLZGb/b
+         aE85TKdi1FHyc7uK0vrEysHU/5EHxDN+9ou80HKwebKgryRuD4Q5w9862g0lnlMQlUPs
+         sRtHdHrSsmVQLZsVBi5N8g56sk8GbkKOb0p/fXZYuFmVWJGuY4CoQOzfZKe2pLeDWGiN
+         FJwQSPHnojtfYr6PktFLJaFWrGNyAf4Knlk7zu9iLU62kakH0SkYPJs21XXbO31h5zPN
+         vLJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741708738; x=1742313538;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x5MIY1YFuGzMEl9B7g1td8wp5xC/AyaxT2y//gV10VU=;
+        b=gXRMZ96y69LzDFFNeQvZfvDx44UHNm4BenIQ2pm0t6frHmmdEHVlLJm9XFUlJTpKfe
+         D6+9xj8QCoewWSLZ+SOq2zZC3BbALmK/YIOAX14v/JumzMij6nfHLO3UVzUt02Gazi0/
+         hNSRI5zA3auHbZZxLnqbdNj2hFIoDRbnnmT0dlSYD61LW8Ft/dbZIPvm7R4YhwBb7qaN
+         bzfvwf60shKr7uD/FSmxjt0lh2lskzvM6HsRfk9Dk4L04CM1T69sIi2YMOiK/nm2C3mg
+         dXj7y6nPEQfYcVfWXFuILJlozHsuczovbEB7YLAY9ePUCo2SlHFtwUEksvfZXz0+1IBV
+         6FjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcUfF3EoYl4XjkcdLVaEXVnTmbtN6vroMBq288pd1OeB91m2c8+SGK2yH3yAXp/acITMHhT+gO+jCRUqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPUykkhOddGheAZ9eTFe9rtnDKMYtRktgw+CX5i0eZU2gRWutU
+	I7gAIXAAoIAFLzgi8MF1qjwFE274usI3NBt791qVQPNrsEhhIqsR2cawvYa3pps=
+X-Gm-Gg: ASbGncue8rNCEGJSbd2v05XmtIMCA7AjFP9452dNFG74Pv8tYDwPcTxeWcM9HcAtGSZ
+	OvPI6er96oM2xlezjnDFpwbWmzmSqVKH18+rZNisOneF4D8UZjH8EOBZiEiPL8Npzf1ITk6/MWG
+	NkeNT57v1s4drOhCirniyDoadBgkyWMigbFTXE9ZJvGRWgcM0Cq1ORuP6emRkdmXIGFfWMh9Fa7
+	lNvvmq6P7/m6kTiPcviE+b9WFWxlk5z7WtRW2w+L/UK48QLtH95f9JHkvbdfkd/tYp3Ot8dvZzp
+	KBkCFUTwNzBqixXXeAHFULqFj/8C7jD+NlXFHY4jANvHk04tqTPo4oarw5bzHJScO++SYq32fqk
+	xvVV6EpGfH09uo2FzlgALWl/s3NE=
+X-Google-Smtp-Source: AGHT+IGY+q9fXEIzLK5PRqLHxDbH9gjNl112Y7A8nGw2k9Rrrn3f350E8jTleyyIVailHzrgpleY6g==
+X-Received: by 2002:a05:6214:29ef:b0:6e8:fa72:be4c with SMTP id 6a1803df08f44-6e90060476bmr245065826d6.1.1741708738413;
+        Tue, 11 Mar 2025 08:58:58 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f715b809sm73419286d6.79.2025.03.11.08.58.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 08:58:58 -0700 (PDT)
+Date: Tue, 11 Mar 2025 11:58:56 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Zi Yan <ziy@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>, Yang Shi <shy828301@gmail.com>,
+	lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: CXL Boot to Bash - Section 3: Memory (block) Hotplug
+Message-ID: <Z9BdwFZ-ZRpMSabG@gourry-fedora-PF4VCD3F>
+References: <Z7OWmDXEYhT0BB0X@gourry-fedora-PF4VCD3F>
+ <CAHbLzkq6Me6nRaL6b09YxJ_nFkxb+n+M3-q_aJwOs2ZO4q8VCg@mail.gmail.com>
+ <Z7TLwtQY3vGUw2bO@gourry-fedora-PF4VCD3F>
+ <1b4c6442-a2b0-4290-8b89-c7b82a66d358@redhat.com>
+ <Z7TswQbpPV590ADr@gourry-fedora-PF4VCD3F>
+ <bda4cf52-d81a-4935-b45a-09e9439e33b6@redhat.com>
+ <CAHbLzkqDQcrHLPzk8n0SMgkidH2ByCqdwfYXX=uBPQfOArWf8A@mail.gmail.com>
+ <Z7d3vVdJ8UWU5oex@gourry-fedora-PF4VCD3F>
+ <4ae838ee-b079-408e-8799-e9530ca50417@redhat.com>
+ <0C5749C4-B3EE-4393-A8EA-AA56B399E9E3@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250311-vivid-almond-elk-83fda5@houat>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0C5749C4-B3EE-4393-A8EA-AA56B399E9E3@nvidia.com>
 
-On Tue, Mar 11, 2025 at 09:41:13AM +0100, Maxime Ripard wrote:
-> Hi,
+On Tue, Mar 11, 2025 at 10:53:41AM -0400, Zi Yan wrote:
+> On 20 Feb 2025, at 14:26, David Hildenbrand wrote:
 > 
-> On Mon, Mar 10, 2025 at 08:53:24PM +0200, Dmitry Baryshkov wrote:
-> > On Mon, 10 Mar 2025 at 17:08, Maxime Ripard <mripard@kernel.org> wrote:
-> > >
-> > > On Fri, Mar 07, 2025 at 07:55:53AM +0200, Dmitry Baryshkov wrote:
-> > > > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > >
-> > > > The MSM DisplayPort driver implements several HDMI codec functions
-> > > > in the driver, e.g. it manually manages HDMI codec device registration,
-> > > > returning ELD and plugged_cb support. In order to reduce code
-> > > > duplication reuse drm_hdmi_audio_* helpers and drm_bridge_connector
-> > > > integration.
-> > > >
-> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > ---
-> > > >  drivers/gpu/drm/msm/Kconfig         |   1 +
-> > > >  drivers/gpu/drm/msm/dp/dp_audio.c   | 131 ++++--------------------------------
-> > > >  drivers/gpu/drm/msm/dp/dp_audio.h   |  27 ++------
-> > > >  drivers/gpu/drm/msm/dp/dp_display.c |  28 ++------
-> > > >  drivers/gpu/drm/msm/dp/dp_display.h |   6 --
-> > > >  drivers/gpu/drm/msm/dp/dp_drm.c     |   8 +++
-> > > >  6 files changed, 31 insertions(+), 170 deletions(-)
-> > > >
-
-[...]
-
-> > > >
-> > > >  static int msm_edp_bridge_atomic_check(struct drm_bridge *drm_bridge,
-> > > > @@ -320,9 +324,13 @@ int msm_dp_bridge_init(struct msm_dp *msm_dp_display, struct drm_device *dev,
-> > > >        */
-> > > >       if (!msm_dp_display->is_edp) {
-> > > >               bridge->ops =
-> > > > +                     DRM_BRIDGE_OP_HDMI_AUDIO |
-> > > >                       DRM_BRIDGE_OP_DETECT |
-> > > >                       DRM_BRIDGE_OP_HPD |
-> > > >                       DRM_BRIDGE_OP_MODES;
-> > > > +             bridge->hdmi_audio_dev = &msm_dp_display->pdev->dev;
-> > > > +             bridge->hdmi_audio_max_i2s_playback_channels = 8;
-> > > > +             bridge->hdmi_audio_dai_port = -1;
-> > > >       }
-> > >
-> > > I think I'd prefer the toggle to be OP_DP_AUDIO, even if the
-> > > implementation is exactly the same. That way, we'll be able to condition
-> > > it to the DP support when that arrives, and we have the latitude to
-> > > rework it to accomodate some DP subtleties without affecting the drivers
-> > > later on.
-> > 
-> > I don't think that there is a point in having OP_DP_AUDIO. There is
-> > not so much difference in the driver. Also currently OP_HDMI_AUDIO
-> > follows existing approach (which was pointed out by Laurent) - that
-> > OP_foo should guard a particular set of callbacks. From this
-> > perspective, OP_HDMI_AUDIO is fine - it guards usage of
-> > hdmi_audio_foo(). OP_DP_AUDIO would duplicate that.
+> > Yes, the only way to get some 1 GiB pages is by using larger memory blocks (e.g., 2 GiB on x86-64), which comes with a different set of issues (esp. hotplug granularity).
 > 
-> HDMI and DP are two competing standards, with different governing
-> bodies. I don't think either have claimed that they will strictly adhere
-> to what the other is doing, and I don't have the will to cross-check
-> every given audio feature in both HDMI and DP right now.
+> An alternative I can think of is to mark a hot-plugged memory block dedicated
+> to memmap and use it for new memory block’s memmap provision. In this way,
+> a 256MB memory block can be used for 256MB*(256MB/4MB)=16GB hot plugged memory.
+> Yes, it will waste memory before 256MB+16GB is online, but that might be
+> easier to handle than variable sized memory block, I suppose?
+> 
+> >
 
-Hmm. Currently (or before the first hdmi_audio patchset) everybody has
-been plumbing hdmi-codec directly from the driver (even for DP audio).
+The devil is in the details here.  We'd need a way for the driver to
+tell hotplug "use this for memmap for some yet-to-be-mapped region" -
+rather than having that allocate naturally.  Either this, or a special
+ZONE specifically for memmap allocations.
 
-> However, I think we should really have the flexibility to deal with that
-> situation if it happens, and without having to do any major refactoring.
-> That means providing an API that is consistent to the drivers, and
-> provides what the driver needs. Here, it needs DP audio support, not
-> HDMI's.
-
-Would OP_HDMI_CODEC be a better name for the OP? (we can rename the
-existing callbacks to be hdmi_codec instead of hdmi_audio too).
-
-> How we plumb it is an implementation detail, and I do agree we can use
-> the same functions under the hood right now. But the driver is a DP
-> driver, it wants DP infrastructure and DP audio support.
-
-Would OP_DP_AUDIO require a different set of callbacks on the bridge
-level? I don't want to end up with too much of duplication. Maybe we
-should the cdns bridges which implement both HDMI and DP functionality
-IIRC.
-
-
--- 
-With best wishes
-Dmitry
+~Gregory
 
