@@ -1,111 +1,121 @@
-Return-Path: <linux-kernel+bounces-556015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CDF6A5BFD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:56:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55DECA5BFD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:56:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCC0F173D72
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:56:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD08B7A6BE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF219255E3C;
-	Tue, 11 Mar 2025 11:55:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1772221F10;
-	Tue, 11 Mar 2025 11:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55331254AE2;
+	Tue, 11 Mar 2025 11:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RZErmzD5"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB32D221F10
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741694158; cv=none; b=TARmqLB7u1dpeig+Tm0blu9IXu4MfL/II0z47c7RjZh47pB0bp/rnUvBBYy+LcEe9krfksHqU/Scv73Qt0aEdJhE5sFeLOSQD04wXdpixbj4X6eDbSdehdsgGXwVeb+rEsXinHmAIR1gPqYlxjxR7Xo+mdwn3opKUhkkbyIcAjs=
+	t=1741694206; cv=none; b=rIO/lLCl6VSbR+1LDsK0CaGNHslPdzrVP75WGepR4lDLx1W+3bs/dH5GO2VE+SWKke6rBuzX096i1naSC+WkFOaQNO8XwSgNoTaTfayDTKkS9mN5q4G4VAOPMWJO/BUQiEcnA6he2beA5XNLwnRv+exj7tadkl+IHQFg9ABwrxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741694158; c=relaxed/simple;
-	bh=R6D6TLTMr0oW9Mj0KH3+YY8ScQKRFMhfTtqWwF7+U0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gXRN/6f27gNAEaOrWDnjbSfAOqdZ8KVct899yFuWgWmQTdvNenVcTupA5S2v8eS1/OMjSDVL8L5IDm3eZRR0CvqoX+tL5N/SUlBm2VVQp8hNN3zR0j+lI9bFKvlNTfsv5SADehhrLOafnAeo+bumtTeytnfQInovGwiugrIPOaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2722A152B;
-	Tue, 11 Mar 2025 04:56:07 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F00443F673;
-	Tue, 11 Mar 2025 04:55:53 -0700 (PDT)
-Date: Tue, 11 Mar 2025 11:55:43 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Kees Cook <kees@kernel.org>, Peter Collingbourne <pcc@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH] string: Disable read_word_at_a_time() optimizations if
- kernel MTE is enabled
-Message-ID: <Z9Akv6qQFfmYFReD@J2N7QTR9R3>
-References: <20250308023314.3981455-1-pcc@google.com>
- <202503071927.1A795821A@keescook>
- <Z88jbhobIz2yWBbJ@arm.com>
- <Z88r5qFLOSo0itaq@J2N7QTR9R3.cambridge.arm.com>
- <Z88yC7Oaj9DGaswc@arm.com>
- <Z88_fFgr23_EtHMf@J2N7QTR9R3>
- <Z9AiUQdC4o0g8sxu@arm.com>
+	s=arc-20240116; t=1741694206; c=relaxed/simple;
+	bh=oJdU3+ooCjDHVuYhhwqBKzx0i6eCKL9c3ARobA2BNDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kvw3k4UCAi/QwrRNYkvZn10o47Qupsi8F6QdFUHwmoTl5PLw7TIPF1CRNn1umfHxtR/uJrkqaG3NHEzpbmk9r3DSetDFwbCrZxcQma/bi1sgsHvQT0QZL3LMMC7/tpEVuKUoA0QIXv1nqDKdSaoZ7IDwqtAH16ogkMx4kTjj7pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RZErmzD5; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741694202;
+	bh=oJdU3+ooCjDHVuYhhwqBKzx0i6eCKL9c3ARobA2BNDA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RZErmzD5hR6eBaNCp3Ra952zZqHpfdYpxB/QT515Jm1n74Cay6gDxrhgE9emAwaz/
+	 6FdGJ0YWE9p6DkYmdCEvgCj286rMwe3kGuOLX89U7nx5H6+8VuEyu+UT394erUfgVu
+	 DZxDk03R2UYg44KbWMsa7vmHMecYtOXtkos9XzuJXAEpEVJqWWpE3WbjEUucwZvqHn
+	 llWloNx5Pt/RZfTgSKcusiTV4n5y/gu0MHVqiNDVIBMjIkf2UmJmA2cmVPuUfdYlrM
+	 4LEIrWnEfRhuD1vjaoVmmIO8mZYVW/0vHFatGw3tVFHP/ZjiQo2tVv2hP6r8aIUyHJ
+	 yp0STOd+W5xAA==
+Received: from [10.20.66.114] (unknown [103.163.65.90])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2368717E0B25;
+	Tue, 11 Mar 2025 12:56:39 +0100 (CET)
+Message-ID: <daa0733c-14e3-44df-8374-33aba6662813@collabora.com>
+Date: Tue, 11 Mar 2025 17:26:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9AiUQdC4o0g8sxu@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: defconfig: mediatek: enable PHY drivers
+To: Krzysztof Kozlowski <krzk@kernel.org>, linux-mediatek@lists.infradead.org
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, nfraprado@collabora.com,
+ angelogioacchino.delregno@collabora.com, daniels@collabora.com,
+ airlied@gmail.com, simona.vetter@ffwll.ch, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250311061703.16850-1-vignesh.raman@collabora.com>
+ <dc659e19-c1ae-42d8-84c9-0d2aafa81fe2@kernel.org>
+Content-Language: en-US
+From: Vignesh Raman <vignesh.raman@collabora.com>
+In-Reply-To: <dc659e19-c1ae-42d8-84c9-0d2aafa81fe2@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 11:45:21AM +0000, Catalin Marinas wrote:
-> On Mon, Mar 10, 2025 at 07:37:32PM +0000, Mark Rutland wrote:
-> > I was worried that ex_handler_load_unaligned_zeropad() might not do the
-> > right thing in response to a tag check fault (e.g. access the wrong 8
-> > bytes), but it looks as though that's ok due to the way it generates the
-> > offset and the aligned pointer.
-> > 
-> > If load_unaligned_zeropad() is handed a string that starts with an
-> > unexpected tag (and even if that starts off aligned),
-> > ex_handler_load_unaligned_zeropad() will access that and cause another
-> > tag check fault, which will be reported.
+Hi Krzysztof,
+
+On 11/03/25 12:54, Krzysztof Kozlowski wrote:
+> On 11/03/2025 07:16, Vignesh Raman wrote:
+>> The mediatek display driver fails to probe on mt8173 and mt8183 in
+>> v6.14-rc4, with the following errors:
 > 
-> Yes, it will report an async tag check fault on the
-> exit_to_kernel_mode() path _if_ load_unaligned_zeropad() triggered the
-> fault for other reasons (end of page).
+> Which boards?
 
-Sorry, yes. The aligned case I mentioned shouldn't apply here.
+These are the boards,
+https://lava.pages.collabora.com/docs/boards/chromebooks/boards/hana/
+https://lava.pages.collabora.com/docs/boards/chromebooks/boards/jacuzzi/
 
-> It's slightly inconsistent, we could set TCO for the async case in
-> ex_handler_load_unaligned_zeropad() as well.
+> 
+>>
+>> mt8173:
+>> platform 1401b000.dsi: deferred probe pending: mtk-dsi: Failed to get hs clock
+>> platform 14025000.hdmi: deferred probe pending: (reason unknown)
+>> i2c 1-0008: deferred probe pending: (reason unknown)
+>>
+>> mt8183:
+>> platform 14014000.dsi: deferred probe pending: mtk-dsi: Failed to get hs clock
+>> i2c 4-0058: deferred probe pending: anx7625: fail to find dsi host.
+>>
+>> Enabling CONFIG_PHY_MTK_MIPI_DSI=y in drm-ci resolves this error,
+>> but mt8173 still fails with,
+>>
+>> [drm:mtk_dsi_host_attach] *ERROR* failed to add dsi_host component: -517
+>> panel-simple-dp-aux aux-1-0008: DP AUX done_probing() can't defer
+>> panel-simple-dp-aux aux-1-0008: probe with driver panel-simple-dp-aux failed with error -22
+>>
+>> Enabling CONFIG_PHY_MTK_XSPHY=y and CONFIG_PHY_MTK_HDMI=y in drm-ci
+>> resolves this issue for mt8173.
+>>
+>> So enable these PHY configs for mediatek platforms.
+> 
+> Just say which boards need it for which functionality/features. Three
+> sentences are enough.
 
-Yep, I think that'd be necessary for async mode.
+Sure, will update the commit message. Thanks.
 
-> For sync checks, we'd get the first fault ending up in
-> ex_handler_load_unaligned_zeropad() and a second tag check fault while
-> processing the first. This ends up in do_tag_recovery and we disable
-> tag checking after the report. Not ideal but not that bad.
+Regards,
+Vignesh
 
-Yep; that's what I was describing in the second paragraph above, though
-I forgot to say that was assuming sync or asymm mode.
+> 
+> Best regards,
+> Krzysztof
 
-> We could adjust ex_handler_load_unaligned_zeropad() to return false if
-> the pointer is already aligned but we need to check the semantics of
-> load_unaligned_zeropad(), is it allowed to fault on the first byte?
-
-IIUC today it's only expected to fault due to misalignment, and the
-gneral expectation is that for a sequence of load_unaligned_zeropad()
-calls, we should get at least one byte without faulting (for the NUL
-terminator).
-
-I reckon it'd be better to figure this out based on the ESR if possible.
-Kristina's patches for MOPS would give us that.
-
-Mark.
 
