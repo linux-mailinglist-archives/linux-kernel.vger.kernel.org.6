@@ -1,111 +1,83 @@
-Return-Path: <linux-kernel+bounces-555343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BD1A5B5F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:40:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC57DA5B5F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:41:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7EB188EBDD
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A5647A65E6
 	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A1D1E1022;
-	Tue, 11 Mar 2025 01:40:00 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5F71DF977;
-	Tue, 11 Mar 2025 01:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7062F1E0DEA;
+	Tue, 11 Mar 2025 01:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="QyvimTas"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA611DEFE4;
+	Tue, 11 Mar 2025 01:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741657200; cv=none; b=i3ysf2XZoey7y8FLyHexHDqsrwNRN2qF/H1RlhI/uCVcOEkO2nrP1uMmXtVIsCLTfF1cOW7rB/UEWHZMc52Ho2Olf2BitkU8EaXKOuQtopK+JDar6etFnrWr9DEJet4aCg+zvUvM9gr7mpmmeX7t8EezV2eNSOMVx8dq7JjAmQk=
+	t=1741657271; cv=none; b=NzEXTgXTZjJxO1oRvDES4hbLPo0M2C17yqd9r32Q5D+vkJmVc0wJTB451jN70/Pi8ECdu1OMJQWXGFN2dVWLOngZGwSQnKslj2Se+r3UKAvrwueDd3OHY91y4KrnI0Rr3DUD0J5A7RD1QIEed/lBciDPIBXIYnkzFCkr98PBVrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741657200; c=relaxed/simple;
-	bh=vhZIzTDN0OSeiT0046Ezc3Do+jQB3FRS93pF8EYxZIY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DgQwFUDLsanu3t08d98FCH9Gn9ZIiIhhc4WJm46AJuEspvn4TxK0qG6fvqzFu3KjXt/66V48CH2JVqcuWGU3r5WxcqrPzceqYLxUJummXLMZV59Eyix0ejSRavoAnW5xKSjohn+LxWMPPoDMsAkkQSktAba5FRAjSb534sS9yl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowABHsMlZlM9nXH7HEw--.388S2;
-	Tue, 11 Mar 2025 09:39:45 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: eli.billauer@gmail.com,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] char: xillybus: Fix error handling in xillybus_init_chrdev()
-Date: Tue, 11 Mar 2025 09:39:35 +0800
-Message-Id: <20250311013935.219615-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741657271; c=relaxed/simple;
+	bh=Uqg4BvoIFHOy8ZsafPUstg5rBCNgYL7IMM8j6pBom3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vCqKx3RSWrFcN4iFcscfy7ELjRCoX2JCg8RPU8DYFKEvjr/OWtHBXMhUWX2HftnX39/Pqrcq24Ua43S1qclVwSYLzIIHQ9swPM1mGB91Ossf54YZLjx+KOezH0Mv0huQDpknmtD46RfEpuYapAoM9J+zoz5TlXcDC2cZeVYLhYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=QyvimTas; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=aNXkJxcJ2zsVazXzVhb67vC/AWSm5E/sISjDwq9fejc=;
+	b=QyvimTasT15gCS/eL9gH7dR1XCjRIaHLmSGawEgiQNyCNQEbQqZUQBmpNu8ytM
+	W6ateqgBkQc1Y3b0eOALREUSlFp/7z0kKxudAbLp826Yz3bcmsfOjgcTlYFYxszk
+	NEoDQugL3Yo58BGWfkXKCydkgxL4XvH92CJnSgF+BWNSA=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgCHyeCWlM9nKL2zAA--.807S3;
+	Tue, 11 Mar 2025 09:40:40 +0800 (CST)
+Date: Tue, 11 Mar 2025 09:40:38 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [PATCH v2 0/6] arm64: dts: imx8mp-skov: add new variants
+Message-ID: <Z8+Ultn2BDg+fSng@dragon>
+References: <20250218-skov-imx8mp-new-boards-v2-0-4040379742ea@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABHsMlZlM9nXH7HEw--.388S2
-X-Coremail-Antispam: 1UD129KBjvJXoWrKr4ktr47JrWfJF4kKry8Krg_yoW8JF1UpF
-	47W3WrKrW5Ja1jyr1DJa1DGFW3JayqvF9rur47K3sxZw15u3W8JFWrCrWUJFyDX3yrKay5
-	AFsxA3Z5JryxZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWI
-	evJa73UjIFyTuYvjfUY3kuUUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218-skov-imx8mp-new-boards-v2-0-4040379742ea@pengutronix.de>
+X-CM-TRANSID:Ms8vCgCHyeCWlM9nKL2zAA--.807S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU4IJmUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRANZWfPUEK8TAAAs7
 
-After cdev_alloc() succeed and cdev_add() failed, call cdev_del() to
-remove unit->cdev from the system properly.
+On Tue, Feb 18, 2025 at 07:38:12PM +0100, Ahmad Fatoum wrote:
+> Ahmad Fatoum (5):
+>       dt-bindings: arm: fsl: add more compatibles for Skov i.MX8MP variants
+>       arm64: dts: imx8mp-skov: move I2C2 pin control group into DTSI
+>       arm64: dts: imx8mp-skov: describe I2C bus recovery for all controllers
+>       arm64: dts: imx8mp-skov: add revC BD500 board
+>       arm64: dts: imx8mp-skov: support new 7" panel board
+> 
+> Oleksij Rempel (1):
+>       arm64: dts: imx8mp-skov: add basic board as fallback
 
-Found by code review.
-
-Cc: stable@vger.kernel.org
-Fixes: 8cb5d216ab33 ("char: xillybus: Move class-related functions to new xillybus_class.c")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the patch as suggestions to avoid UAF.
----
- drivers/char/xillybus/xillybus_class.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/char/xillybus/xillybus_class.c b/drivers/char/xillybus/xillybus_class.c
-index c92a628e389e..356af6551b0d 100644
---- a/drivers/char/xillybus/xillybus_class.c
-+++ b/drivers/char/xillybus/xillybus_class.c
-@@ -104,8 +104,7 @@ int xillybus_init_chrdev(struct device *dev,
- 	if (rc) {
- 		dev_err(dev, "Failed to add cdev.\n");
- 		/* kobject_put() is normally done by cdev_del() */
--		kobject_put(&unit->cdev->kobj);
--		goto unregister_chrdev;
-+		goto err_cdev;
- 	}
- 
- 	for (i = 0; i < num_nodes; i++) {
-@@ -157,6 +156,7 @@ int xillybus_init_chrdev(struct device *dev,
- 		device_destroy(&xillybus_class, MKDEV(unit->major,
- 						     i + unit->lowest_minor));
- 
-+err_cdev:
- 	cdev_del(unit->cdev);
- 
- unregister_chrdev:
--- 
-2.25.1
+Applied all, thanks!
 
 
