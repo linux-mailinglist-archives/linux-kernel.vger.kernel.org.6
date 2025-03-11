@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-556639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BBE6A5CCBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:51:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF11FA5CCBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:51:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78C347AD081
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:50:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78C50189EE98
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B03F263C6B;
-	Tue, 11 Mar 2025 17:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF642641E2;
+	Tue, 11 Mar 2025 17:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FcD7O3B+"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUeZJZr3"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3761263F3F;
-	Tue, 11 Mar 2025 17:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828F6263C85;
+	Tue, 11 Mar 2025 17:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741715400; cv=none; b=OA2/IUfy/R4+x/yBwkNILQ0Fp9b8KZLWqUyEV2L9QpzyonRofoo0tqek6V2Jxamdx/IzjUveW3tbxqIB8adA2EAKOqzxEg7en0AI5BptK3Mob4u1076S7RHqsDMD9bsDTZmsBqVsX4B4dGcGf6Sm7VAKeG9gIMog7Sn6DK4D8ls=
+	t=1741715402; cv=none; b=ZmF6FwyBaC19TUOssLjo8mURkMLiVfAuH4gqBCQyjV5NfP9hnY+Uo0W5sS2gxmzkc1X6xyyQ9tnRGM7JnMj/Vdua9umW98WpGYUN4IgDbYrhAnSjXkWizkyL40xyJmDBUxkAPDXq7s4fsGoZ41Wxm5uv9ciWIeWunk+goEXFstI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741715400; c=relaxed/simple;
-	bh=j4ICurqMmlLInUMYmohM6h+/0kW79Y0dJonUlhaLBYA=;
+	s=arc-20240116; t=1741715402; c=relaxed/simple;
+	bh=VyefDGWH0N2YpL9VfzECx+ApcLuk3v2hDwgQ1bV/Fl0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TghHXbP9TMDFGEKq6v1RrKQvFLe2g2c7hucXuaVhliaW5cKIQOoPcGY8fxNU8lZXcCu3S7mMkRPrTPjsy/Nf8VXsEZ5/nUnZNPBxD5KjAnc5zwpVgkCcYfh/3PD6+9c3fmfUEFFTyBFM61sXpqQKDlQ7CceaPS+UIOj/C0hZOdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FcD7O3B+; arc=none smtp.client-ip=209.85.208.177
+	 MIME-Version; b=aQAa1eT0AefvwyneddZ8Uc1I4q0YelfibW0k9L4nfPgqHOHO3DXMsJOkxaR/ohqcRMRpLRFnTgO5x392ewPMkQOajFSDn6bQitVicgkHvmW2n8Hh1DIQDuFzqUiTXUS/GlW3J87SoOXp0gOpP4+mv4ZebWl6u18Yg8Jxa/KFKPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FUeZJZr3; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30762598511so62039021fa.0;
-        Tue, 11 Mar 2025 10:49:58 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30613802a59so64189001fa.0;
+        Tue, 11 Mar 2025 10:50:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741715397; x=1742320197; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741715399; x=1742320199; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lSrzlK5UgeilNXDe6by3qJ/tSZ9bYf/cIKJZFecm9Fs=;
-        b=FcD7O3B+6SsDMNw4/xz5VPBhM2qMxvsKVry7fS/GKisfUd741lZl0I5OXm4nxpfqGi
-         HWDZd2USyaIStejaGGq1IKUzU0ewSlJ8S0CnNQOuf17R0sr7OwHhXKrjvmlvrRTqcn0C
-         3Uh7ARqHUWjiOygSIeBVtscnTse9MqPEphJYdNuRrVg+fh19itUQail2mexUdoA6oVcy
-         GtDamkVPBTI+J6/9Mva3W01MC/OM82aAvDbOJHVviRLdG9FEk1rPyMlDVIn8TWY3OHgZ
-         asbaFnHIrV6CTBfLwp43m4HtjkhaA6CZ0qJIBrKyQZOLbDlCULtkDRMMony8+N2xX4sx
-         cBNQ==
+        bh=9RE7FkHXPj3rgd/JOL9Q773Ys4uYomt6iSafrtUCPEA=;
+        b=FUeZJZr3yXQFWbfN7otgg8iPf/9Mw88VcrL4GGMdj9K/OX3h7CGue9mRl+hRLyVdXm
+         pWY9eInHLHzhYhXIYq7uhOwXAjHEAFIfLLl7yN34ilbakUEgl7VVLT+3bZ3aX0xX0Ggc
+         LqnHQm02tinm+q+SHkS3FpydD8ZjtHv45krpl1vIEX1qXc9ZScHSZhdYNVv6uJsgvQmj
+         E73aN9SVZZj9MatUPei6SLbAiThewYVS09fluQ+r73lHuriU2KWvs4QY1ZHiCUnIsHLM
+         rj5Acnijq7obrtpWjMeUmrZXqGFOZzlgEnFIHVbrx2e8h+7GBHldJT16ycl5WkSLcCjU
+         5vlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741715397; x=1742320197;
+        d=1e100.net; s=20230601; t=1741715399; x=1742320199;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lSrzlK5UgeilNXDe6by3qJ/tSZ9bYf/cIKJZFecm9Fs=;
-        b=ZzFRKXvsAV2K+zJUHMDQTKcqCYJTYxkK0yDPLGEVJFrXgltbF6awdiPvE3eIhCht+p
-         V5Fz+kAlvRw2CQenHaI73YSYr80dO+L5b+OjUBQEp+qezh4Zxm0E57IagdnhXtP1/awI
-         2SHgZNxiFt+IpryetBP9ln+Xmv9sMWZ/9peDFXlKkq+x7VD+vNe53aVxXjvoBkyk4hdg
-         KT1dhbvLMIDFm6XYkRjg3MA6PQwZrw+MBh1xz3N4wDPiAp5e7Z+s+oh81dkywTKbjto8
-         c4NASPLuNd2F46fdGvhRl/+hvdGcHTkKbww+R9s/iBM1hlrgLfoEAi95ouypIJ8yZl7L
-         Cwlw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3koYL38jwLhPV7qieP3vR46cXkXEb+PoTDAK6dYRpL/FRb1PzQzOXTt/YdpwP85Ymr9MVRqpbgOyGyZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEWbAr3q4+4VtZ9E4WtSJQXE1egXCTDE/a9haFL1gsDp5g5Vis
-	TceWfgFOgiE0zmh9fbEcWLk5jW+UnpqPBVqYzPR0EII7Kjbqkk5Pk6nbBg==
-X-Gm-Gg: ASbGncsrKFHw4ZtKcuE4kA0Nu27v19fyEUszawpngjZLlD57OLOWfJu4tZYVRzuh4CZ
-	VuZXqjKdpoL5h+i4ERMZq8jkV1Pkvyq2Z/GtauLcpHVlLlW8178w/qTg3QVUJRw4KEio9BX6pQC
-	xzq3hi0hdBMKMnkmg5khhWjQGqmYxWjSXv5vIcJu4WYnOr/3nOwNqy59AcqnNbBNG1CSa4KSjBz
-	4GfkBrrsDnMxAniKhxx/wQDr0T8czu9mfr4L3qAmwpVpcrNUdE9G/Q2Ijs2Ns6fkubMBYNg6TMh
-	RdsEY8wtfnOfLEhYQAqK03q/c5jYj0bUtr60GZKvBIh8RRMdQDmev20yVnTfAi3v6476GpUscCE
-	+oRhUGk7HsZJjmhHSHaTLZA==
-X-Google-Smtp-Source: AGHT+IGIrskUDBhrtLJ6SrsQZPVLptUzfeEFgQD5QeWDh0vtw/4t8hw7rBlRiiUbzBV0cn9Wc/W8UQ==
-X-Received: by 2002:a05:6512:3c98:b0:545:2550:7d67 with SMTP id 2adb3069b0e04-54990eaacadmr6700836e87.36.1741715396745;
-        Tue, 11 Mar 2025 10:49:56 -0700 (PDT)
+        bh=9RE7FkHXPj3rgd/JOL9Q773Ys4uYomt6iSafrtUCPEA=;
+        b=cdbnUseNE/KeYd4cI7pQvYmPB1Z/KpPlydHbt9ev+7yBeO+5RwQBPb5GBmhFDhou6b
+         76B2cvU0OBlPOVlFIxyYKvkoaBf5TBCZ60tqn4flbYuOgV74jDHWdEcL/fRZlqfyZz4p
+         kmO+hkFdaUU9qBlYLOrudM84fBLqJKkzcbNuKt+AiscHCBubDtllcp+04Cl9utAjyvfX
+         5w+XQk1UlP031m5ChUnULlb52uBiGJ1yBplCyHBIFNF9JID+mbOU9FXb4GKq2rnXFPgc
+         T/SewyWNdQX5KqsEYFHyODOHU7B/P+nYS8g4gC9Wx658HjCp1MaQhz/4bc9PGSmyRoz6
+         BPpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUteqAvdD7KJHdJaG312Id7kikLlPa8gMo12Wgok4cEMmMN4L/OVrNGrcFkOhNVgmchhqwUIEbSNw7Rb/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwraBgy2rBLwmO5fq0FeKmQOR2xcuSG00pnsVqDrB09+vNvPwuq
+	JQDgyuBlhVZnuJBs2rZTv+UH75HOt/0pWXZs6R4BqsEByk103lt420N4bg==
+X-Gm-Gg: ASbGnct4+JCLslQ7+IEphO373zd8zfT8NVYzNs8oBOVGIgM6oONUc8FidAe14wozeHO
+	dEJO22vvaao/N8TlxWXfW5yaxJ84R19gVt9jJ1d2y/+S6lTcf/OnHaEuTNamr5k/194/CDNAMRO
+	CywWdNRsMYahKv7zEvilfTH96Ub5bNmAG/WjTJOAzQ278OCvYDa+Jms3TpdsluA7M8VtF6JZbJK
+	xgYqfOzwIXfwVExT9msAaYs7phwIBxVEQOjEscyrPDH97ZJ5HRbfFi80UMp7d3d3Rz2bzoeTIj/
+	RQHdlhDhQdzALZbXI6KebGQUcbxLiYPR2UAmWQrUcLuCFP3NHjKuvsv+NAsshUtx7eWcePXH7ZE
+	08fJT6lFyzKWM5UsfC7cdRA==
+X-Google-Smtp-Source: AGHT+IG4/njd7PlBm1mpnIVR9OdsVm4WGkJQXiTRSmnS3QRyKrR3ovUI1B0STYMLIlQyY1eNipdRAA==
+X-Received: by 2002:a19:8c0b:0:b0:549:b13a:5d7f with SMTP id 2adb3069b0e04-549b13a5e20mr216857e87.41.1741715398584;
+        Tue, 11 Mar 2025 10:49:58 -0700 (PDT)
 Received: from abj-NUC9VXQNX.. (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae4465fsm1921728e87.26.2025.03.11.10.49.53
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae4465fsm1921728e87.26.2025.03.11.10.49.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 10:49:55 -0700 (PDT)
+        Tue, 11 Mar 2025 10:49:57 -0700 (PDT)
 From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 To: rust-for-linux@vger.kernel.org,
 	daniel.almeida@collabora.com,
@@ -93,9 +93,9 @@ Cc: Miguel Ojeda <ojeda@kernel.org>,
 	airlied@redhat.com,
 	iommu@lists.linux.dev (open list:DMA MAPPING HELPERS),
 	Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Subject: [PATCH v14 06/11] rust: dma: add dma addressing capabilities
-Date: Tue, 11 Mar 2025 19:48:02 +0200
-Message-ID: <20250311174930.2348813-7-abdiel.janulgue@gmail.com>
+Subject: [PATCH v14 07/11] rust: pci: implement the `dma::Device` trait
+Date: Tue, 11 Mar 2025 19:48:03 +0200
+Message-ID: <20250311174930.2348813-8-abdiel.janulgue@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250311174930.2348813-1-abdiel.janulgue@gmail.com>
 References: <20250311174930.2348813-1-abdiel.janulgue@gmail.com>
@@ -109,118 +109,25 @@ Content-Transfer-Encoding: 8bit
 
 From: Danilo Krummrich <dakr@kernel.org>
 
-Implement `dma_set_mask()` and `dma_set_mask_and_coherent()` in the
-`dma::Device` trait.
+The PCI bus is potentially capable of performing DMA, hence implement
+the `dma:Device` trait for `pci::Device`.
 
-Those methods are used to inform the kernel about the device's DMA
-addressing capabilities.
-
-Co-developed-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 ---
- rust/helpers/dma.c     |  8 ++++++++
- rust/helpers/helpers.c |  1 +
- rust/kernel/dma.rs     | 46 +++++++++++++++++++++++++++++++++++++++---
- 3 files changed, 52 insertions(+), 3 deletions(-)
- create mode 100644 rust/helpers/dma.c
+ rust/kernel/pci.rs | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/rust/helpers/dma.c b/rust/helpers/dma.c
-new file mode 100644
-index 000000000000..8eb482386f93
---- /dev/null
-+++ b/rust/helpers/dma.c
-@@ -0,0 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/dma-mapping.h>
-+
-+int rust_helper_dma_set_mask_and_coherent(struct device *dev, u64 mask)
-+{
-+	return dma_set_mask_and_coherent(dev, mask);
-+}
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index 0640b7e115be..8f3808c8b7fe 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -13,6 +13,7 @@
- #include "build_bug.c"
- #include "cred.c"
- #include "device.c"
-+#include "dma.c"
- #include "err.c"
- #include "fs.c"
- #include "io.c"
-diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-index 7ff797a7ad18..ac3ec0042327 100644
---- a/rust/kernel/dma.rs
-+++ b/rust/kernel/dma.rs
-@@ -5,10 +5,10 @@
- //! C header: [`include/linux/dma-mapping.h`](srctree/include/linux/dma-mapping.h)
- 
- use crate::{
--    bindings, build_assert,
--    device,
-+    bindings, build_assert, device,
-     error::code::*,
-     error::Result,
-+    prelude::*,
-     transmute::{AsBytes, FromBytes},
-     types::ARef,
- };
-@@ -18,7 +18,35 @@
- /// The [`Device`] trait should be implemented by bus specific device representations, where the
- /// underlying bus has potential support for DMA, such as [`crate::pci::Device`] or
- /// [crate::platform::Device].
--pub trait Device: AsRef<device::Device> {}
-+pub trait Device: AsRef<device::Device> {
-+    /// Inform the kernel about the device's DMA addressing capabilities.
-+    ///
-+    /// Set both the DMA mask and the coherent DMA mask to the same value.
-+    ///
-+    /// Note that we don't check the return value from the C `dma_set_coherent_mask` as the DMA API
-+    /// guarantees that the coherent DMA mask can be set to the same or smaller than the streaming
-+    /// DMA mask.
-+    fn dma_set_mask_and_coherent(&mut self, mask: u64) -> Result {
-+        // SAFETY: By the type invariant of `device::Device`, `self.as_ref().as_raw()` is valid.
-+        let ret = unsafe { bindings::dma_set_mask_and_coherent(self.as_ref().as_raw(), mask) };
-+        if ret != 0 {
-+            Err(Error::from_errno(ret))
-+        } else {
-+            Ok(())
-+        }
-+    }
-+
-+    /// Same as [`Self::dma_set_mask_and_coherent`], but set the mask only for streaming mappings.
-+    fn dma_set_mask(&mut self, mask: u64) -> Result {
-+        // SAFETY: By the type invariant of `device::Device`, `self.as_ref().as_raw()` is valid.
-+        let ret = unsafe { bindings::dma_set_mask(self.as_ref().as_raw(), mask) };
-+        if ret != 0 {
-+            Err(Error::from_errno(ret))
-+        } else {
-+            Ok(())
-+        }
-+    }
-+}
- 
- /// Possible attributes associated with a DMA mapping.
- ///
-@@ -374,3 +402,15 @@ macro_rules! dma_write {
-         }
-     };
+diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+index f7b2743828ae..5839aa5d4098 100644
+--- a/rust/kernel/pci.rs
++++ b/rust/kernel/pci.rs
+@@ -432,3 +432,5 @@ fn as_ref(&self) -> &device::Device {
+         &self.0
+     }
  }
 +
-+/// Helper function to set the bit mask for DMA addressing.
-+pub const fn dma_bit_mask(n: usize) -> u64 {
-+    if n > 64 {
-+        return 0;
-+    }
-+    if n == 64 {
-+        !0
-+    } else {
-+        (1 << (n)) - 1
-+    }
-+}
++impl crate::dma::Device for Device {}
 -- 
 2.43.0
 
