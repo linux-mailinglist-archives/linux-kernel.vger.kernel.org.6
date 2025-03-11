@@ -1,72 +1,45 @@
-Return-Path: <linux-kernel+bounces-556282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6137A5C3A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:19:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B39C7A5C39B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:17:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16F031889B6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:19:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 837E5160919
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CDE25B689;
-	Tue, 11 Mar 2025 14:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="GDziwUc2"
-Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C995258;
-	Tue, 11 Mar 2025 14:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B94925B662;
+	Tue, 11 Mar 2025 14:17:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEFF1C5D61;
+	Tue, 11 Mar 2025 14:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741702728; cv=none; b=nxKMh9CIEfTQ122kq/zRVsrvBcgKvhbsRtmdbeoD6SHExYaHZdRiOpKNVes6w718+5XHCa5iGS94Wuy8gdWrInOIr+LTLziUkjIzlnJYtFF6E/3NhER3ZSWwOD/m/IGrOtKbp/0ihHvZL6CK2DgpHY47389+eULbKcsbaoUw1iA=
+	t=1741702648; cv=none; b=f2JTOflkVSydf+Tba3FQweiIYjf8G6RD3UTI2fBOHwDWfVEMBjnBG5Qq7QLDX2J5NHzPfKcr2ZFzWzVDBnwCwkyhzW4LBdNqohepSRDDaTO1NRyQbUobxOUB7gp2mPaL3SO7k5bRpXlXFEw2kKzYCiiOdbiUynOh/YCygs4fU74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741702728; c=relaxed/simple;
-	bh=wOYjxEZ/0wmOjDYjIIZ/PDKOZ+0BzYlXCetbCEpPVO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KFE6jBCmI1OXX3UAM4Okld4nNq7eGUaEChw0FTyJXrsT8I5BfCoP0Gw5YwzxBAfItIkFJ3DUxh6Mfx1xFBb5JY1PLAiJpmhmee+dRKP0ymyqk8Js4fNMXuVAqoeGAlcoVQecdg82OIcIJcxj8SXgF7qIFiBMW8IIfCA+wi60BGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=GDziwUc2; arc=none smtp.client-ip=43.154.197.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1741702650;
-	bh=NuLTb6/IZznVNvNlPQ92jV9NmTmPUh3Vr6zv3u8Mkrg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=GDziwUc2d/DoEdUwKYShyrmlPhPBxVsx5TmNHI95Wuay+XlsZa+A7lfegQAx+jG1u
-	 Q9bxzQ3MzWBc6MbF7PLkE/dAE2CWWF+9SbOgr5csGj0H7f3jogjaIuohBEuuvlDIJL
-	 jJXRIm6bKXr6AdXzTZEaajyuFQ/HY8lby0RG3ReE=
-X-QQ-mid: bizesmtpip3t1741702635trwluo4
-X-QQ-Originating-IP: uLe1LkVYOpronyFtP5Q40Qs/2Ik8VmNj44zUrSn5RoM=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 11 Mar 2025 22:17:11 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 7136192104827494518
-From: WangYuli <wangyuli@uniontech.com>
-To: wangyuli@uniontech.com
-Cc: andrew+netdev@lunn.ch,
-	chenlinxuan@uniontech.com,
-	czj2441@163.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	guanwentao@uniontech.com,
-	idosch@nvidia.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	niecheng1@uniontech.com,
-	pabeni@redhat.com,
-	petrm@nvidia.com,
-	zhanjun@uniontech.com
-Subject: [PATCH net 2/2] mlxsw: spectrum_acl_bloom_filter: Type block_count to u32
-Date: Tue, 11 Mar 2025 22:17:01 +0800
-Message-ID: <994A4354E63E1310+20250311141701.1626533-2-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <484364B641C901CD+20250311141025.1624528-1-wangyuli@uniontech.com>
-References: <484364B641C901CD+20250311141025.1624528-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1741702648; c=relaxed/simple;
+	bh=txT6ecDe6SJc28gdi7DRBSzVeUr4dFoNyVNQOww37jI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BwhNLqpHE1S7llTtd8ftvvRfs1DgEkZmyMUXjYkKy3tZuBqnW2EexZzY5s/cLr6MFOd0MeLpR6RlSx8GRWQj3JpPfaGs5UZUFWAe7kxuGbEBagt2qj3FFzXbBvpgsjwhWcS839v7CiHIs2rQmlJHOB+XcFa2pubdK2iSVFyiLas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47CED1516;
+	Tue, 11 Mar 2025 07:17:37 -0700 (PDT)
+Received: from beelzebub.ast.arm.com (u203013-lin.austin.arm.com [10.118.28.29])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2E2D43F694;
+	Tue, 11 Mar 2025 07:17:26 -0700 (PDT)
+From: Stuart Yoder <stuart.yoder@arm.com>
+To: jarkko@kernel.org,
+	sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 5/5] Documentation: tpm: add documentation for the CRB FF-A interface
+Date: Tue, 11 Mar 2025 09:17:18 -0500
+Message-Id: <20250311141718.145276-1-stuart.yoder@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,56 +47,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MUibas7vHviY2UFWBR+OTYPjBbPOSIvO6/gEpzQKCj4CxKffoK/c9tfK
-	78tzcUQGl1fU38bxFrqeWfuMWQFLVFCKAZO11FjwdTeEkBthwxyTRxtJmurDIOXSZanbg+z
-	dqqNxz+WCxpAdbQpjiQWngIk+htjsWUdwu37Kz80i1MCsWTuTF+/dYZTrdLt4hlUJZYbKLJ
-	IbMQrfOh9EAN17oIGzSz4cxn3LzOh3VDs62fgWsDD7pzE9xbuyCsSvCF32sxeUOdlT42KJw
-	su9W+72rKLso62XBHm+4b00kT0tDqCXxngqYV7q4oaYgZyhPJ2wcnrv1neHg+LB1SaZdQvL
-	ivMCnZkooLeioLcONeQjwSl1VCm+T9fWF5lx4S5rJhFSCG++9m/YgbJhBfp/So9a7s0H001
-	9A1uXG4cEbmeBfbJ6IHLlFlNs2Q62xMAyt64JdfzvgJV7j6KDHX4qR3TOCTHkoL31YDXJm/
-	HchYNwRuVtnlZmcvEll/UVJIfVqKU6rXSUmGZGvWkSn4R41g3YHK5EqYWEUyM/NgdtnG6ni
-	GeWcJ0QHIWO6i4ngbT6N++dwV5Hjs8v02AsOh+SCR1QZaZbXOwxaDrN1QQ/NmpdjhLuCkgM
-	0fmYK+zDHPqk89a8k+3v8M4ZOA55ylweeum6iui6A86n2Gj9P0i8CbIP2Lot1TThFj4g0qj
-	GnXJQFfu469Q4YcVsraFNTh2RRbqRt08SWQiMQT/T1uKoCZI+ejZKsiPnw3uJhZwU1uHPTL
-	Q8ZJ2xQ7y2dhtDxLyZOz3Elqot5yZRFJO/Oyyq020qtTr31KQK30CHImUrMge99Ktrsg/cY
-	ePx5GuozqEt3WRHIMAJwcl/7PF1f8KLrXTIcvMnzSvZHocccrnjyl2c/pVXQxyyia8dM6S6
-	vb+GRHOuAnca8s5rwFOAGa8+o0IvokByy+fUopAwFveTISN/rsbSFkb7p331NZ9J6oUHie6
-	3+aFOlbuVqdSWXhGHi0ILWPmM2/ipLBJP3E7SMUn4OMv3lOHxL+2KTthx/lZy8ugqym6wMP
-	7jFdCxPLeymtUsVPuQuNhplcql65uk+NupGPLGej0gbvmJi2+l6EmQC1qX0jxUMv74qQp19
-	QeBt7W4RYGml5kW++fwY69IPlkydkBlKw==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
 
-In light of the fact that block_count is populated by
-mlxsw_afk_key_info_blocks_count_get(key_info), whose type is unsigned
-int and which returns the blocks_count member (also of type unsigned
-int) from the mlxsw_afk_key_info struct, it is illogical to define
-block_count as u8.
+Add documentation providing details of how the CRB driver interacts
+with FF-A.
 
-Co-developed-by: Zijian Chen <czj2441@163.com>
-Signed-off-by: Zijian Chen <czj2441@163.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
 ---
- .../net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c    | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/security/tpm/index.rst       |  1 +
+ Documentation/security/tpm/tpm_ffa_crb.rst | 65 ++++++++++++++++++++++
+ 2 files changed, 66 insertions(+)
+ create mode 100644 Documentation/security/tpm/tpm_ffa_crb.rst
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
-index 96105bab680b..174bfda53985 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
-@@ -224,7 +224,8 @@ __mlxsw_sp_acl_bf_key_encode(struct mlxsw_sp_acl_atcam_region *aregion,
- 			     u8 key_offset, u8 chunk_key_len, u8 chunk_len)
- {
- 	struct mlxsw_afk_key_info *key_info = aregion->region->key_info;
--	u8 chunk_index, chunk_count, block_count;
-+	u8 chunk_index, chunk_count;
-+	u32 block_count;
- 	char *chunk = output;
- 	char *enc_key_src_ptr;
- 	__be16 erp_region_id;
+diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
+index fa593d960040..deda952eacbe 100644
+--- a/Documentation/security/tpm/index.rst
++++ b/Documentation/security/tpm/index.rst
+@@ -10,3 +10,4 @@ Trusted Platform Module documentation
+    tpm_vtpm_proxy
+    xen-tpmfront
+    tpm_ftpm_tee
++   tpm_ffa_crb
+diff --git a/Documentation/security/tpm/tpm_ffa_crb.rst b/Documentation/security/tpm/tpm_ffa_crb.rst
+new file mode 100644
+index 000000000000..0184193da3c7
+--- /dev/null
++++ b/Documentation/security/tpm/tpm_ffa_crb.rst
+@@ -0,0 +1,65 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++========================
++TPM CRB over FF-A Driver
++========================
++
++The TPM Command Response Buffer (CRB) interface is a standard TPM interface
++defined in the TCG PC Client Platform TPM Profile (PTP) Specification [1]_.
++The CRB provides a structured set of control registers a client uses when
++interacting with a TPM as well as a data buffer for storing TPM commands and
++responses. A CRB interface can be implemented in:
++
++- hardware registers in a discrete TPM chip
++
++- in memory for a TPM running in isolated environment where shared memory
++  allows a client to interact with the TPM
++
++The Firmware Framework for Arm A-profile (FF-A) [2]_ is a specification
++that defines interfaces and protocols for the following purposes:
++
++- Compartmentalize firmware into software partitions that run in the Arm
++  Secure world environment (also know as TrustZone)
++
++- Provide a standard interface for software components in the Non-secure
++  state, for example OS and Hypervisors, to communicate with this firmware.
++
++A TPM can be implemented as an FF-A secure service.  This could be a firmware
++TPM or could potentially be a TPM service that acts as a proxy to a discrete
++TPM chip. An FF-A based TPM abstracts hardware details (e.g. bus controller
++and chip selects) away from the OS and can protect locality 4 from access
++by an OS.  The TCG-defined CRB interface is used by clients to interact
++with the TPM service.
++
++The Arm TPM Service Command Response Buffer Interface Over FF-A [3]_
++specification defines FF-A messages that can be used by a client to signal
++when updates have been made to the CRB.
++
++How the Linux CRB driver interacts with FF-A is summarized below:
++
++- The tpm_crb_ffa driver registers with the FF-A subsystem in the kernel
++  with an architected TPM service UUID defined in the CRB over FF-A spec.
++
++- If a TPM service is discovered by FF-A, the probe() function in the
++  tpm_crb_ffa driver runs, and the driver initializes.
++
++- The probing and initialization of the Linux CRB driver is triggered
++  by the discovery of a TPM advertised via ACPI.  The CRB driver can
++  detect the type of TPM through the ACPI 'start' method.  The start
++  method for Arm FF-A was defined in TCG ACPI v1.4 [4]_.
++
++- When the CRB driver performs its normal functions such as signaling 'start'
++  and locality request/relinquish it invokes the tpm_crb_ffa_start() funnction
++  in the tpm_crb_ffa driver which handles the FF-A messaging to the TPM.
++
++References
++==========
++
++.. [1] **TCG PC Client Platform TPM Profile (PTP) Specification**
++   https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/
++.. [2] **Arm Firmware Framework for Arm A-profile (FF-A)**
++   https://developer.arm.com/documentation/den0077/latest/
++.. [3] **Arm TPM Service Command Response Buffer Interface Over FF-A**
++   https://developer.arm.com/documentation/den0138/latest/
++.. [4] **TCG ACPI Specification**
++   https://trustedcomputinggroup.org/resource/tcg-acpi-specification/
 -- 
-2.47.2
+2.34.1
 
 
