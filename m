@@ -1,125 +1,279 @@
-Return-Path: <linux-kernel+bounces-556948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A8EA5D149
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:59:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2BCEA5D14C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:00:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F51D7A6E94
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:58:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6904A3B852F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0AA264F81;
-	Tue, 11 Mar 2025 20:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982842222DB;
+	Tue, 11 Mar 2025 21:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="hamOIRcr"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EybcrF6m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F042D26462C;
-	Tue, 11 Mar 2025 20:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30778BF8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 21:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741726782; cv=none; b=dUTzu3gufqZghOBBa3ZwfrFo1KJQq/f88iEuQSvawozFx3N/JJNbDn+df8tokOX2Ks9LZ9tagQLjSKmoC2sPw8oZ0yb1E66uADWaB9Eko8uiHws9A0eg29wIHQYLcgUFrWOnxtE4VndeQP+UYHWvfdfFa5Xvi5qJ8aTXkySeA2I=
+	t=1741726826; cv=none; b=hGbcy0VnN8xkumvzxC7dlULzcYEDljUxrWXMnGFpvn/sx5Bg/AIIihldwN/Mb7LLdFkIz1AKGzvvebeMKfUWyI8Z6E/xgXg4T09kaSaRg7j2d72sQr49jGgE+rnXs+z+3u7GBGISe3mfnd7SX+x5OvkFNEP5WC2vktaCNXIJBFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741726782; c=relaxed/simple;
-	bh=ZTLoy04AcxE0+RsFhYHFuRWDBsjVehCNjOKy+T6WHiE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e8UhpGTv6biWptqqq/6xvBqCZrAgxIjlmEq4aqkT3hnrWUxm/+XnflZbPIzBeQGwatiFuRZA5FaX2TfiTk63n48oCBCLcHoAQlmS91YnNdrgBge7vhZr+NiUEbZNtlb/YcmS68XmsdpTo5QpuFbvLfIju4tfvQEO16FcVipdN7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=hamOIRcr; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1741726771; x=1742331571; i=w_armin@gmx.de;
-	bh=aS72S4iQimxR1qs1rymCfzNqiC6Wx8HofYRqfoLxjcw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=hamOIRcrIrpNXaCDBsn2Lw3wV5Vhh9hyP+AeleaujF/2kuliVrrrSniqY6SLWj7p
-	 zgJ84nhQOe9Ggnpihudj0EYdmzAeG2UnoXH9Rojqan7YzeA4y7+wB6qh7QnNpPKSy
-	 PqVn7iaZaX7sc2G1kIG3aC9B006Qy7Pya4ntINw/DoAEpNG4KD/bnM02zjFeCHHeY
-	 BwDvA33l22sfohsyzHLYxZx+HQEcRrrqWt50Uc9MJbUL3JSkqQqTUOLKDH46mOt5h
-	 f9nEjrRtCHmRRDNIjAZRBz0r317A99ZTmmSQlXvHMnz6aHzADkWBi3z7MA2fzSjvQ
-	 vbO+sOxbVPyoTrqpvw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MTzf6-1tjtVB1quA-00X7qW; Tue, 11
- Mar 2025 21:59:31 +0100
-Message-ID: <f5d3ef28-7321-4bb1-955a-8f9b53b13c2a@gmx.de>
-Date: Tue, 11 Mar 2025 21:59:29 +0100
+	s=arc-20240116; t=1741726826; c=relaxed/simple;
+	bh=QLkONEElsgGKxIzNwS3VferQTigrHPHxuZz5dFwdp5s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KNMJQRSu4gE3rTw5yVlTirZNanWnd+NSfAHwciDPKSWIG93FASmScO9YA/DLvirUEwEySNdwIRWDYiH3zy4ahokLkocZoRML04azHmGVEGBl7Uh4gTh18JdPwuhNpGL6rXQFz4sJClpyfZW+/3CYpq3CQYSNt6gJcZBXJZLDIT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EybcrF6m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D71AC4CEE9;
+	Tue, 11 Mar 2025 21:00:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741726825;
+	bh=QLkONEElsgGKxIzNwS3VferQTigrHPHxuZz5dFwdp5s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EybcrF6mztt/bLYNcuSF2rCGMEPvxvMLV/UEQGBqRccO0fFU0RoFznkIYcX/c+NLf
+	 Q0kxEjONBkyhvtip0iJkEaZihjA0e2TENb/PBuBlNPhVcbVgilBsFMz4HAAxwoL2m4
+	 ZaJXyj8rW2EO9iTwjElzPDOnK+R743BcX7ouTbaNdgTS9VF6rcjmYrVcAmkQ+eRf79
+	 Xm37L0xrPhd0glAOPz6Py3uVce2Ync3qlXsGPxqEEKkLVeyLPIOpdg6u7fYLw0wvAh
+	 8rIe4nKRawf+/SBEhgyvxZGxR57THsyCpMkHtlzGY1CZ/lvOmqSYrMFqCy0cVth/s8
+	 vi0dZ6rNs0PIQ==
+From: SeongJae Park <sj@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <howlett@gmail.com>,
+	David Hildenbrand <david@redhat.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 7/9] mm/madvise: let madvise_{dontneed,free}_single_vma() caller batches tlb flushes
+Date: Tue, 11 Mar 2025 14:00:23 -0700
+Message-Id: <20250311210023.85435-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <e55c43a1-55de-4720-9177-8af08c797d17@lucifer.local>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: In-kernel parser for the BMOF format used by WMI-ACPI
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: "linux@weissschuh.net" <linux@weissschuh.net>,
- Kurt Borja <kuurtb@gmail.com>, akpm@linux-foundation.org, mcgrof@kernel.org,
- russ.weight@linux.dev, dakr@kernel.org,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <a18f2f93-c8ee-47af-9446-97e3714fc275@gmx.de>
- <20250311201357.tyldll7j2eogmryw@pali>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20250311201357.tyldll7j2eogmryw@pali>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0pYFNu1p7yxC3XdWznunZDkjog3VrEkGNcPel/jOl9RP+W1NbYB
- U2CdiqUThGFnPy1Zk4pPyYrkiwHRp1WmeGPakhlWX3V1D+OTCiQwA+z+WhCACGNkVTEhGUi
- EYUUERFH2c94hsFY2fCT+HjUqh4LkQ8cPHI7DEqFMv2OoUpGgTKowNmHbbAfoesJB+oSEYa
- nFQBnzipO9rwe/HEpahmw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:i+9CkMzfrT8=;3nlfRByhenhspUBgbL57BVxNuwJ
- pGdVBlA6rloXqb8OhsWPNaC3uZmF5vBSi8ZqvcEBgwjGA6LKIw1w6U9hHMP7C4uW4NFp5u6iH
- uioLg4iv3YXfKNTvmDsOQl9w+Qws72xL8G0pZwjTJZtNY/Gvcndd/GVXM+0vhGFZ4LJaReN5P
- NhfCxIlFYEunr7Vmb/7cclYfOfJOo19jhjGbtAcjeC2lEmVeZ2m2Lo6ZJmq93bNss63DhmGxz
- NsOvyKYfTbz3JJw6u6eWhlZ3MqbhXjWInPW27JIMv4/pwy37ejJW4Ogb2qLj/72gbTSOxlulN
- e1L5uDbCERDIrBP3biBjiVtdWh0g6MI/jlBEiTpy5mZYEz2Y1Effw/yDuqvnwEBZ/AK7aDjVc
- BSmNcU8rsI2gwYacqusEB7JN9iRjsgGawX07vMyMoS8yTTkhY6fJUZMdGM6WimVAClQEyQzON
- g5BuUFA/DLn4SFGe9BAxQ36rF99Avk4CZea+T+/TBFh3F9xNdD8oKoN56z/pohdznAlLe+dAp
- 1KQhbJLjxHayIRS02VAq9vCHn03lvS+aAorpi3u6GBHTd2PRdQE12W4hLjV9jQ2ANNGuWyTE7
- miihOsCDxqWpjs61lbAIqwhu1UoxRWljNTIFLjyHt3UTn1fqBcZ8rBqH2XTzV+F22PgKD5cIH
- 2PkwUKtswroJ4mJvGRkR8X62dnUn/EpJfH8LgpyrpR04oAM58AWtqP5KPFpMKXms9F5/w6Avo
- yJ+UMYalUc/3+eXiS0bl5lU+9OobscgDGrlJyjY5HGjjhu2JUmp0tROPXwzkdvsajmZyryFaP
- afvq9xjYPdiLRsdPbGLy0YlIWXUGq5A7SjZWok3Pkim1FtAbtMIP2rnf6BRDuyYZYzZwsYml0
- scbHcqpO1srMHSXd37UJIRuM/8OHPWwp5xZxRlLm/iLH4KwMhTZZRnORhpXd2IHapWxF+KBzn
- IU+Uca02tzVCf3lffyIZvmiXDfzKZNiaqLDWk42kDQAi5rLPiNyI5WJZijxY0TouCBTUZ4vzE
- NfJg8byJ+sEuFgAJrL0x0FVZNnCpBwPk8yw9zxbnWJAf9MG6aEC5PKFdFxWDqv3rqyAMqmuPt
- tWTldcSFa931hpwUBQrBP15syPUgOqQm/7N7AMMkdArNtkpb1unEBZD75GyUtXNlN4ABe4vCZ
- fCXslYMigeAJkvaOcxisPUZmx1v59eeS9N//Ptyn9xHOg0W8wtKYrUnXvgcbBE3MvaZagk+nR
- XG3DIpw6IBVpENROTsi+b1smVI7GOlgQljSBwDEW5U0B1sR6S1BIrpDqkhnkf2KijPA9Lsum2
- vBqEdLOqAQhFU/mw2ZtmCQxgw9hI1gXI4pEAT1Hqhw+LwGx/V5FaskED2vXeDwl9vG64nP0BG
- bES08KO/CBn59tY33Rvk2GxUs0ZNVP/GMUPdIHZmKkLjnoCoc398nHGzUX
+Content-Transfer-Encoding: 8bit
 
-Am 11.03.25 um 21:13 schrieb Pali Roh=C3=A1r:
+On Tue, 11 Mar 2025 13:07:25 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-> On Tuesday 11 March 2025 21:06:16 Armin Wolf wrote:
->>   - Is there any way to check whether the Doublespace compression algor=
-ithm is still encumbered by patents?
-> Linux kernel 2.2 or 2.4 had full read/write support for doublespace
-> compression algorithm in mainline kernel and it was connected with fat
-> driver. IIRC it was dropped for kernel 2.6 because nobody ported that
-> vfat code to new fs API and hence doublespace in-kernel compression
-> algorithm was not needed/used anymore. But I do not remember details.
->
-> So IMHO it should not be a problem to reintroduce same code into kernel
-> again if there is a new need for it.
->
-> And in my project I reused the doublespace compression code from old
-> Linux kernel.
+> Super super UBER nitty but... pretty sure the subject here should be <= 75
+> chars right? :P
 
-AFAIK only the CVF code used by the dmsdos driver was inside the mainline =
-kernel,
-but not the dmsdos driver itself.
+I believe that's not a hard limit, but I will try to make it shorter in the
+next spin.
+
+> 
+> On Mon, Mar 10, 2025 at 10:23:16AM -0700, SeongJae Park wrote:
+> > Update madvise_dontneed_single_vma() and madvise_free_single_vma()
+> > functions so that the caller can pass an mmu_gather object that should
+> > be initialized and will be finished outside, for batched tlb flushes.
+> > Also modify their internal code to support such usage by skipping the
+> > initialization and finishing of self-allocated mmu_gather object if it
+> > received a valid mmu_gather object.
+> >
+> > Signed-off-by: SeongJae Park <sj@kernel.org>
+> > ---
+> >  mm/internal.h |  3 +++
+> >  mm/madvise.c  | 37 +++++++++++++++++++++++++------------
+> >  mm/memory.c   | 16 +++++++++++++---
+> >  3 files changed, 41 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/mm/internal.h b/mm/internal.h
+> > index 0caa64dc2cb7..ce7fb2383f65 100644
+> > --- a/mm/internal.h
+> > +++ b/mm/internal.h
+> > @@ -438,6 +438,9 @@ void unmap_page_range(struct mmu_gather *tlb,
+> >  			     struct vm_area_struct *vma,
+> >  			     unsigned long addr, unsigned long end,
+> >  			     struct zap_details *details);
+> > +void unmap_vma_single(struct mmu_gather *tlb, struct vm_area_struct *vma,
+> > +		      unsigned long addr, unsigned long size,
+> > +		      struct zap_details *details);
+> >  int folio_unmap_invalidate(struct address_space *mapping, struct folio *folio,
+> >  			   gfp_t gfp);
+> >
+> > diff --git a/mm/madvise.c b/mm/madvise.c
+> > index ba2a78795207..d7ea71c6422c 100644
+> > --- a/mm/madvise.c
+> > +++ b/mm/madvise.c
+> > @@ -794,12 +794,19 @@ static const struct mm_walk_ops madvise_free_walk_ops = {
+> >  	.walk_lock		= PGWALK_RDLOCK,
+> >  };
+> >
+> > -static int madvise_free_single_vma(struct vm_area_struct *vma,
+> > -			unsigned long start_addr, unsigned long end_addr)
+> > +static int madvise_free_single_vma(
+> > +		struct mmu_gather *caller_tlb, struct vm_area_struct *vma,
+> 
+> I find this interface horrible, and super confusing. It's not clear at all
+> what's going on here.
+> 
+> Why not use your new helper struct to add a field you can thread through
+> here?
+
+I will do so in the next spin.
+
+> 
+> > +		unsigned long start_addr, unsigned long end_addr)
+> >  {
+> >  	struct mm_struct *mm = vma->vm_mm;
+> >  	struct mmu_notifier_range range;
+> > -	struct mmu_gather tlb;
+> > +	struct mmu_gather self_tlb;
+> > +	struct mmu_gather *tlb;
+> > +
+> > +	if (caller_tlb)
+> > +		tlb = caller_tlb;
+> > +	else
+> > +		tlb = &self_tlb;
+> >
+> >  	/* MADV_FREE works for only anon vma at the moment */
+> >  	if (!vma_is_anonymous(vma))
+> > @@ -815,16 +822,18 @@ static int madvise_free_single_vma(struct vm_area_struct *vma,
+> >  				range.start, range.end);
+> >
+> >  	lru_add_drain();
+> > -	tlb_gather_mmu(&tlb, mm);
+> > +	if (!caller_tlb)
+> > +		tlb_gather_mmu(tlb, mm);
+> 
+> Yeah really don't like this.
+> 
+> Ideally we'd abstract the mmu_gather struct to the helper struct (which I
+> see you do in a subsequent patch anyway) would be ideal if you could find a
+> way to make that work.
+> 
+> But if not, then:
+> 
+> if (behavior->batched_tlb)
+> 	tlb_gather_mmu(&tlb, mm);
+> 
+> etc. etc.
+> 
+> Would work better.
+
+Agreed.
+
+> 
+> >  	update_hiwater_rss(mm);
+> >
+> >  	mmu_notifier_invalidate_range_start(&range);
+> > -	tlb_start_vma(&tlb, vma);
+> > +	tlb_start_vma(tlb, vma);
+> 
+> Also not a fan of making tlb refer to a pointer now when before it
+> didn't... I mean that's more of a nit and maybe unavoidable, but still!
+> 
+> I mean yeah ok this is probably unavoidable, ignore.
+
+Yeah... I also find no good way to make this very cleaner without the followup
+cleanup for now.
+
+> 
+> >  	walk_page_range(vma->vm_mm, range.start, range.end,
+> > -			&madvise_free_walk_ops, &tlb);
+> > -	tlb_end_vma(&tlb, vma);
+> > +			&madvise_free_walk_ops, tlb);
+> > +	tlb_end_vma(tlb, vma);
+> >  	mmu_notifier_invalidate_range_end(&range);
+> > -	tlb_finish_mmu(&tlb);
+> > +	if (!caller_tlb)
+> > +		tlb_finish_mmu(tlb);
+> >
+> >  	return 0;
+> >  }
+> > @@ -848,7 +857,8 @@ static int madvise_free_single_vma(struct vm_area_struct *vma,
+> >   * An interface that causes the system to free clean pages and flush
+> >   * dirty pages is already available as msync(MS_INVALIDATE).
+> >   */
+> > -static long madvise_dontneed_single_vma(struct vm_area_struct *vma,
+> > +static long madvise_dontneed_single_vma(struct mmu_gather *tlb,
+> > +					struct vm_area_struct *vma,
+> >  					unsigned long start, unsigned long end)
+> >  {
+> >  	struct zap_details details = {
+> > @@ -856,7 +866,10 @@ static long madvise_dontneed_single_vma(struct vm_area_struct *vma,
+> >  		.even_cows = true,
+> >  	};
+> >
+> > -	zap_page_range_single(vma, start, end - start, &details);
+> > +	if (!tlb)
+> > +		zap_page_range_single(vma, start, end - start, &details);
+> 
+> Please don't put the negation case first, it's confusing. Swap them!
+
+Ok, I will do so.
+
+> 
+> 
+> > +	else
+> > +		unmap_vma_single(tlb, vma, start, end - start, &details);
+> >  	return 0;
+> >  }
+> >
+> > @@ -951,9 +964,9 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
+> >  	}
+> >
+> >  	if (behavior == MADV_DONTNEED || behavior == MADV_DONTNEED_LOCKED)
+> > -		return madvise_dontneed_single_vma(vma, start, end);
+> > +		return madvise_dontneed_single_vma(NULL, vma, start, end);
+> >  	else if (behavior == MADV_FREE)
+> > -		return madvise_free_single_vma(vma, start, end);
+> > +		return madvise_free_single_vma(NULL, vma, start, end);
+> 
+> Not to labour the point, but this is also horrid, passing a mystery NULL
+> parameter first...
+
+Agreed again.  I will just pass the madvise_behavior struct in the next spin.
+
+> 
+> >  	else
+> >  		return -EINVAL;
+> >  }
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 88c478e2ed1a..3256b9713cbd 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -1995,9 +1995,19 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
+> >  	mmu_notifier_invalidate_range_end(&range);
+> >  }
+> >
+> > -static void unmap_vma_single(struct mmu_gather *tlb,
+> > -		struct vm_area_struct *vma, unsigned long address,
+> > -		unsigned long size, struct zap_details *details)
+> > +/**
+> > + * unmap_vma_single - remove user pages in a given range
+> > + * @tlb: pointer to the caller's struct mmu_gather
+> > + * @vma: vm_area_struct holding the applicable pages
+> > + * @address: starting address of the pages
+> > + * @size: number of bytes to remove
+> > + * @details: details of shared cache invalidation
+> > + *
+> > + * @tlb shouldn't be NULL.  The range must fit into one VMA.
+> 
+> Can we add some VM_WARN_ON[_ONCE]()'s for these conditions please?
+
+Nice suggestion, I will do so.
+
+> 
+> Thanks for documenting!
+
+Kudos to Shakeel, who suggested this kerneldoc comment :)
+
 
 Thanks,
-Armin Wolf
+SJ
 
+[...]
 
