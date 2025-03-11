@@ -1,300 +1,210 @@
-Return-Path: <linux-kernel+bounces-556490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D727DA5CA7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:12:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7151BA5CA7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:13:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DDCB188E08F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:13:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A40D3176733
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6C7260A28;
-	Tue, 11 Mar 2025 16:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13CA25F988;
+	Tue, 11 Mar 2025 16:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXRE2DNo"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KM0sz2kL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED8525F968;
-	Tue, 11 Mar 2025 16:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A56D25F782
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741709544; cv=none; b=uf16g1ou9YEUg/8jgnYSSucB7oTHlck+q5Qq7k0TuAviyBSIy4tcHtKC/RCQ8+MqFNoBoTzFXGKuebJmB6BqNkZnU5BUQb/lL8KCdoELBermfjmbWtD8FNiJPP8bha0HoOjPRnplHOJhF8Qzhjaf3I7INgbHOO/ciZi3bEcmcI8=
+	t=1741709566; cv=none; b=KWQBAWXlGFJVNsL8yQ4AouTEPY5+bOTaxDvKanARKfECiAbBgPbbBQRVftv3sDoU0oMpwAN+wC2rTcg6wtMpJlyhiM36kDz3Ux5MqesnLPDu7fu/JDhHU1vk+7scXLui85rnztRPOAr8RjAFqAZmHfltHzY8YyLlzA/VUDYeMYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741709544; c=relaxed/simple;
-	bh=08ikVFE4r7eJqr1YdwoBE6cm67vMz6CsVPTbF/HeYwA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C/zYpolCt2I9yicTmOwxPt0gfPQ35htpNhwz7n1EMeaA6GRwitimDSAbh6w556x5+AgiMeOPyZs7SvgM2qkyrfGCn6rKuTR6c2NXMKuN96VzhZIJxiCfgjvujeRkgamA1PXDbd9XXqV1v8Gs08IILwY5X/lJqg5B8yoY2wBR3ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YXRE2DNo; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43bdf0cbb6bso33874855e9.1;
-        Tue, 11 Mar 2025 09:12:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741709541; x=1742314341; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2YVAPWNU6X9KodjU6cnxu6uXZ4aud/elyY8D03IVUK4=;
-        b=YXRE2DNo23+IHfRcRwA//AEy69psE6t2cZoVubpVam6xu+VulG4AkGSj9+6RKZM0xq
-         tE+keIyScQffeHu5fBD1TaDOBp5BCR0iRzCdvQRy5SYWZepJxyfhdyFkmcsp+gCXdRCJ
-         NHVbbqCOe/rPiyrYI1qG2i5Z0rIUxHb+IJwcqdPCTnVeWXy2D43HrOb/aK8EkE3qx6oE
-         P4EsoAqg/kTiszdQZb+q52Xm6JN8wpLWS/xhD3GThsp93CwouD3oJ1swa+hbXV1kO2pS
-         Jq0Hx898oehe0QYVFZh6+zFPmqhiT9v3wIZCEruAiz2lRJCcIpEFOfUx2sP5bFfDSV8H
-         Sg3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741709541; x=1742314341;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2YVAPWNU6X9KodjU6cnxu6uXZ4aud/elyY8D03IVUK4=;
-        b=OJ6al1a0UbP+jQHtEwhj3+8kt22c85OQrIfhKXKojx5bfSOgdWV2gwX+gaMlhPay0p
-         9G+KG2pKZC5vEZceUR45T+dstEQsFOvkNnqxs7dRFMei5m9pIKjk+rLrQUECPqtnolee
-         U9U/AjCwoIfF5cGu3KuWuLudJTeKQZJSfK+AR7m5tmCihugvo73icympH2uXAJ2uloOR
-         E6PC06HNql5zp2F1mOHAgkekynC2ogd4XdRyw1rrdarSPg6glNnwd4Wf9PbGWx+JtwwR
-         D4GmKJBY4uZP54dwO6fDwYftgbHgyqwWLZlOIieEM91bI/do+KDphai3Im3mOcHL+nvJ
-         yFcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBaUhMXhx09Q2BVPgVw0coit68cAW04jRtftaUEw1yqkut+FsaptDMt97ZYLqhUk84jeWYncyR@vger.kernel.org, AJvYcCUCDLOjueLj72XahV6vTfw0RccSeMq+pzgDBKE0xihXB2S8d7PucwAv6xj1kjnCrySwXIBYrF1algEl@vger.kernel.org, AJvYcCUn2t2o2l4HPWapqiKPsn1UwZigUCvTDEJSettWFEm4lh2T9rdkkQSroJohzTmmkebUFmdiFkL72bsu5ig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWs0OWCElcA9NxolUek2cF2iw1NVTFeFLcT4/bIgo8mOZAIRuD
-	mqZ/V1tTgOBkWdqzHgZM99t+1YkpHZZQUZZaRthhSCoPqc7UWxqs
-X-Gm-Gg: ASbGncs5GFzr3RkZof2so9tE+BEDyJ7gWAlW9fYnQlIGKjSDDPt8LZBc9taDWN2EADD
-	p0K1jY8BoZLTdhM5a5HOh4pCXFEO6DrQvSvFHhUJhPnGVKhxnHa0IRMEsdiYx6gYnYrLP682BQ+
-	T8lMMhz7oVNX+JOwBAdGKLWZKaEBIJduFAUMoxK48ul6HhWVDS9d3DvU5+jp7yUUpUHffoj9Js8
-	I+rz0y7d/01u7nGoUdv2Ld4FwdRB9TtfBtRhKWoE56HgwtQvsumJKY5nuNjAwUgxgDTvW2FejqC
-	b7nVBvspH5EqxHpJfkB1/fWGANN/3DKhZVBb1PF2JL8ZUs5NgxQw/Xy8qig=
-X-Google-Smtp-Source: AGHT+IFBLUgDMtRyAUVGrvv/9k4E3aCt70nIDcjTBdSBDZPdsLITH9UrfoUY3TMgTJSh+RJ7J+y8MQ==
-X-Received: by 2002:a05:600c:3b94:b0:43c:f8fc:f686 with SMTP id 5b1f17b1804b1-43cf8fcf858mr77369445e9.3.1741709540584;
-        Tue, 11 Mar 2025 09:12:20 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:c7c:6696:8300:4d2a:98a0:d51e:4f69])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d073555e5sm15331905e9.4.2025.03.11.09.12.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 09:12:20 -0700 (PDT)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	syzbot <syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] net: fix uninitialised access in mii_nway_restart() and cleanup error handling
-Date: Tue, 11 Mar 2025 16:11:57 +0000
-Message-Id: <20250311161157.49065-1-qasdev00@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1741709566; c=relaxed/simple;
+	bh=Vv+W8BWsFIppfBrJLl0xt21IvxzSdTfjfugnv+BbV0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UNxqXw9wLMpaUv8ccdrmzAqNUc/nvd62qYEv7dB68NcWNNiCUs33bRwH3QkPZSl2uQQWjl+/Zvwoy+KdDQ9AhNnwKHaRy5TWlxczO79nSgXmsmaLmY/B6eEy8q/aXg4f44KlfWrSqhrKKcArgRXuhvFDCwAsp285B9Ef5gR5s/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KM0sz2kL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AEA8C4CEE9;
+	Tue, 11 Mar 2025 16:12:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741709565;
+	bh=Vv+W8BWsFIppfBrJLl0xt21IvxzSdTfjfugnv+BbV0g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KM0sz2kLlgIEOGF3OtSqFogA8Rmo8q8WX37MYFiIEKqkHGKYSaY7bTOBsT/xXLh/Q
+	 wfUFMWhut+plVI6fu95jyUAjRsllmezflUIEg+AqBA5UpdmCE1Y18mPoGtte9V39hL
+	 WilpP39C5rm3SxsmxmLnX5CT0zFbsz8Q0tEp9/839Qjukp3cvmhxbhW8xdN0G0X+WK
+	 3myKIRnSTXnuExb9sVqvX8HodJn1scg5rBf6654KrdBTOWkse3hdGwsIL/xtJGWJkG
+	 exFtj9Gng4QHT/Vg4f8wdzpC+CIEorxtqjQ+Uopa6J4y0MnunpbBLoAYuK5FFGCvti
+	 HJ6Ef3L3cy5Fw==
+Date: Tue, 11 Mar 2025 17:12:42 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] drm/tests: hdmi: Add macros to simplify EDID setup
+Message-ID: <20250311-spiritual-hornet-of-prestige-ef4132@houat>
+References: <20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com>
+ <20250311-hdmi-conn-yuv-v2-5-fbdb94f02562@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ehgan4hodvsqo6jl"
+Content-Disposition: inline
+In-Reply-To: <20250311-hdmi-conn-yuv-v2-5-fbdb94f02562@collabora.com>
 
-In mii_nway_restart() during the line:
 
-        bmcr = mii->mdio_read(mii->dev, mii->phy_id, MII_BMCR);
+--ehgan4hodvsqo6jl
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 5/7] drm/tests: hdmi: Add macros to simplify EDID setup
+MIME-Version: 1.0
 
-The code attempts to call mii->mdio_read which is ch9200_mdio_read().
+On Tue, Mar 11, 2025 at 12:57:37PM +0200, Cristian Ciocaltea wrote:
+> Introduce a few macros to facilitate setting custom (i.e. non-default)
+> EDID data during connector initialization.
+>=20
+> This helps reducing boilerplate code while also drops some redundant
+> calls to set_connector_edid().
+>=20
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 245 ++++++++-------=
+------
+>  1 file changed, 93 insertions(+), 152 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers=
+/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> index e97efd3af9ed18e6cf8ee66b4923dfc805b34e19..a3f7f3ce31c73335c2c2643bd=
+c5395b6ceb6f071 100644
+> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> @@ -183,10 +183,12 @@ static const struct drm_connector_funcs dummy_conne=
+ctor_funcs =3D {
+> =20
+>  static
+>  struct drm_atomic_helper_connector_hdmi_priv *
+> -drm_kunit_helper_connector_hdmi_init_funcs(struct kunit *test,
+> -					   unsigned int formats,
+> -					   unsigned int max_bpc,
+> -					   const struct drm_connector_hdmi_funcs *hdmi_funcs)
+> +connector_hdmi_init_funcs_set_edid(struct kunit *test,
+> +				   unsigned int formats,
+> +				   unsigned int max_bpc,
+> +				   const struct drm_connector_hdmi_funcs *hdmi_funcs,
+> +				   const char *edid_data,
+> +				   size_t edid_len)
+>  {
+>  	struct drm_atomic_helper_connector_hdmi_priv *priv;
+>  	struct drm_connector *conn;
+> @@ -240,30 +242,27 @@ drm_kunit_helper_connector_hdmi_init_funcs(struct k=
+unit *test,
+> =20
+>  	drm_mode_config_reset(drm);
+> =20
+> +	if (edid_data && edid_len) {
+> +		ret =3D set_connector_edid(test, &priv->connector, edid_data, edid_len=
+);
+> +		KUNIT_ASSERT_GT(test, ret, 0);
+> +	}
+> +
+>  	return priv;
+>  }
+> =20
+> -static
+> -struct drm_atomic_helper_connector_hdmi_priv *
+> -drm_kunit_helper_connector_hdmi_init(struct kunit *test,
+> -				     unsigned int formats,
+> -				     unsigned int max_bpc)
+> -{
+> -	struct drm_atomic_helper_connector_hdmi_priv *priv;
+> -	int ret;
+> +#define drm_kunit_helper_connector_hdmi_init_funcs_set_edid(test, format=
+s, max_bpc, funcs, edid) \
+> +	connector_hdmi_init_funcs_set_edid(test, formats, max_bpc, funcs, edid,=
+ ARRAY_SIZE(edid))
+> =20
+> -	priv =3D drm_kunit_helper_connector_hdmi_init_funcs(test,
+> -							  formats, max_bpc,
+> -							  &dummy_connector_hdmi_funcs);
+> -	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv);
+> +#define drm_kunit_helper_connector_hdmi_init_funcs(test, formats, max_bp=
+c, funcs)		\
+> +	connector_hdmi_init_funcs_set_edid(test, formats, max_bpc, funcs, NULL,=
+ 0)
+> =20
+> -	ret =3D set_connector_edid(test, &priv->connector,
+> -				 test_edid_hdmi_1080p_rgb_max_200mhz,
+> -				 ARRAY_SIZE(test_edid_hdmi_1080p_rgb_max_200mhz));
+> -	KUNIT_ASSERT_GT(test, ret, 0);
+> +#define drm_kunit_helper_connector_hdmi_init_set_edid(test, formats, max=
+_bpc, edid)		\
+> +	drm_kunit_helper_connector_hdmi_init_funcs_set_edid(test, formats, max_=
+bpc,		\
+> +							    &dummy_connector_hdmi_funcs, edid)
+> =20
+> -	return priv;
+> -}
+> +#define drm_kunit_helper_connector_hdmi_init(test, formats, max_bpc)				\
+> +	drm_kunit_helper_connector_hdmi_init_set_edid(test, formats, max_bpc,		=
+	\
+> +						      test_edid_hdmi_1080p_rgb_max_200mhz)
 
-ch9200_mdio_read() utilises a local buffer, which is initialised
-with control_read():
+I'd really prefer to have functions to macros here. They are easier to
+read, extend, and don't have any particular drawbacks.
 
-        unsigned char buff[2];
+I also don't think we need that many, looking at the tests:
 
-However buff is conditionally initialised inside control_read():
+  - We need drm_kunit_helper_connector_hdmi_init() to setup a connector
+    with test_edid_hdmi_1080p_rgb_max_200mhz and
+    dummy_connector_hdmi_funcs()
 
-        if (err == size) {
-                memcpy(data, buf, size);
-        }
+  - We need to create a
+    drm_kunit_helper_connector_hdmi_init_with_edid_funcs() to pass both
+    the funcs and edid pointers
 
-If the condition of "err == size" is not met, then buff remains
-uninitialised. Once this happens the uninitialised buff is accessed
-and returned during ch9200_mdio_read():
+And that's it, right?
 
-        return (buff[0] | buff[1] << 8);
+>  /*
+>   * Test that if we change the RGB quantization property to a different
+> @@ -771,19 +770,15 @@ static void drm_test_check_output_bpc_crtc_mode_cha=
+nged(struct kunit *test)
+>  	struct drm_crtc *crtc;
+>  	int ret;
+> =20
+> -	priv =3D drm_kunit_helper_connector_hdmi_init(test,
+> -						    BIT(HDMI_COLORSPACE_RGB),
+> -						    10);
+> +	priv =3D drm_kunit_helper_connector_hdmi_init_set_edid(test,
+> +				BIT(HDMI_COLORSPACE_RGB),
+> +				10,
+> +				test_edid_hdmi_1080p_rgb_yuv_dc_max_200mhz);
 
-The problem stems from the fact that ch9200_mdio_read() ignores the
-return value of control_read(), leading to uinit-access of buff.
+I think that convertion should be part of another patch.
 
-To fix this we should check the return value of control_read()
-and return early on error.
+Maxime
 
-Furthermore the get_mac_address() function has a similar problem where
-it does not directly check the return value of each control_read(),
-instead it sums up the return values and checks them all at the end
-which means if any call to control_read() fails the function just 
-continues on.
+--ehgan4hodvsqo6jl
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Handle this by validating the return value of each call and fail fast
-and early instead of continuing.
+-----BEGIN PGP SIGNATURE-----
 
-Lastly ch9200_bind() ignores the return values of multiple 
-control_write() calls.
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ9Bg+gAKCRDj7w1vZxhR
+xZ0RAP9ZOjOoFg8CpHr2Bi37SQdP5J9ZAOHIW8zTNCC42bKF4QD/UBVPIUNL6Bc7
+5qTju7pvnBUnivSNbLt4ywKJ7QsASAo=
+=VrjK
+-----END PGP SIGNATURE-----
 
-Validate each control_write() call to ensure it succeeds before
-continuing with the next call.
-
-Reported-by: syzbot <syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=3361c2d6f78a3e0892f9
-Tested-by: syzbot <syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com>
-Fixes: 4a476bd6d1d9 ("usbnet: New driver for QinHeng CH9200 devices")
-Cc: stable@vger.kernel.org
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
----
- drivers/net/mii.c        |  2 ++
- drivers/net/usb/ch9200.c | 55 +++++++++++++++++++++++++++-------------
- 2 files changed, 40 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/net/mii.c b/drivers/net/mii.c
-index 37bc3131d31a..e305bf0f1d04 100644
---- a/drivers/net/mii.c
-+++ b/drivers/net/mii.c
-@@ -464,6 +464,8 @@ int mii_nway_restart (struct mii_if_info *mii)
- 
- 	/* if autoneg is off, it's an error */
- 	bmcr = mii->mdio_read(mii->dev, mii->phy_id, MII_BMCR);
-+	if (bmcr < 0)
-+		return bmcr;
- 
- 	if (bmcr & BMCR_ANENABLE) {
- 		bmcr |= BMCR_ANRESTART;
-diff --git a/drivers/net/usb/ch9200.c b/drivers/net/usb/ch9200.c
-index f69d9b902da0..e938501a1fc8 100644
---- a/drivers/net/usb/ch9200.c
-+++ b/drivers/net/usb/ch9200.c
-@@ -178,6 +178,7 @@ static int ch9200_mdio_read(struct net_device *netdev, int phy_id, int loc)
- {
- 	struct usbnet *dev = netdev_priv(netdev);
- 	unsigned char buff[2];
-+	int ret;
- 
- 	netdev_dbg(netdev, "%s phy_id:%02x loc:%02x\n",
- 		   __func__, phy_id, loc);
-@@ -185,8 +186,10 @@ static int ch9200_mdio_read(struct net_device *netdev, int phy_id, int loc)
- 	if (phy_id != 0)
- 		return -ENODEV;
- 
--	control_read(dev, REQUEST_READ, 0, loc * 2, buff, 0x02,
--		     CONTROL_TIMEOUT_MS);
-+	ret = control_read(dev, REQUEST_READ, 0, loc * 2, buff, 0x02,
-+			   CONTROL_TIMEOUT_MS);
-+	if (ret != 2)
-+		return ret;
- 
- 	return (buff[0] | buff[1] << 8);
- }
-@@ -303,24 +306,27 @@ static int ch9200_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
- 
- static int get_mac_address(struct usbnet *dev, unsigned char *data)
- {
--	int err = 0;
- 	unsigned char mac_addr[0x06];
--	int rd_mac_len = 0;
-+	int rd_mac_len;
- 
- 	netdev_dbg(dev->net, "%s:\n\tusbnet VID:%0x PID:%0x\n", __func__,
- 		   le16_to_cpu(dev->udev->descriptor.idVendor),
- 		   le16_to_cpu(dev->udev->descriptor.idProduct));
- 
--	memset(mac_addr, 0, sizeof(mac_addr));
--	rd_mac_len = control_read(dev, REQUEST_READ, 0,
--				  MAC_REG_STATION_L, mac_addr, 0x02,
--				  CONTROL_TIMEOUT_MS);
--	rd_mac_len += control_read(dev, REQUEST_READ, 0, MAC_REG_STATION_M,
--				   mac_addr + 2, 0x02, CONTROL_TIMEOUT_MS);
--	rd_mac_len += control_read(dev, REQUEST_READ, 0, MAC_REG_STATION_H,
--				   mac_addr + 4, 0x02, CONTROL_TIMEOUT_MS);
--	if (rd_mac_len != ETH_ALEN)
--		err = -EINVAL;
-+	rd_mac_len = control_read(dev, REQUEST_READ, 0, MAC_REG_STATION_L,
-+				  mac_addr, 0x02, CONTROL_TIMEOUT_MS);
-+	if (rd_mac_len != 2)
-+		return rd_mac_len;
-+
-+	rd_mac_len = control_read(dev, REQUEST_READ, 0, MAC_REG_STATION_M,
-+				  mac_addr + 2, 0x02, CONTROL_TIMEOUT_MS);
-+	if (rd_mac_len != 2)
-+		return rd_mac_len;
-+
-+	rd_mac_len = control_read(dev, REQUEST_READ, 0, MAC_REG_STATION_H,
-+				  mac_addr + 4, 0x02, CONTROL_TIMEOUT_MS);
-+	if (rd_mac_len != 2)
-+		return rd_mac_len;
- 
- 	data[0] = mac_addr[5];
- 	data[1] = mac_addr[4];
-@@ -329,12 +335,12 @@ static int get_mac_address(struct usbnet *dev, unsigned char *data)
- 	data[4] = mac_addr[1];
- 	data[5] = mac_addr[0];
- 
--	return err;
-+	return 0;
- }
- 
- static int ch9200_bind(struct usbnet *dev, struct usb_interface *intf)
- {
--	int retval = 0;
-+	int retval;
- 	unsigned char data[2];
- 	u8 addr[ETH_ALEN];
- 
-@@ -357,37 +363,52 @@ static int ch9200_bind(struct usbnet *dev, struct usb_interface *intf)
- 	data[1] = 0x0F;
- 	retval = control_write(dev, REQUEST_WRITE, 0, MAC_REG_THRESHOLD, data,
- 			       0x02, CONTROL_TIMEOUT_MS);
-+	if (retval)
-+		return retval;
- 
- 	data[0] = 0xA0;
- 	data[1] = 0x90;
- 	retval = control_write(dev, REQUEST_WRITE, 0, MAC_REG_FIFO_DEPTH, data,
- 			       0x02, CONTROL_TIMEOUT_MS);
-+	if (retval)
-+		return retval;
- 
- 	data[0] = 0x30;
- 	data[1] = 0x00;
- 	retval = control_write(dev, REQUEST_WRITE, 0, MAC_REG_PAUSE, data,
- 			       0x02, CONTROL_TIMEOUT_MS);
-+	if (retval)
-+		return retval;
- 
- 	data[0] = 0x17;
- 	data[1] = 0xD8;
- 	retval = control_write(dev, REQUEST_WRITE, 0, MAC_REG_FLOW_CONTROL,
- 			       data, 0x02, CONTROL_TIMEOUT_MS);
-+	if (retval)
-+		return retval;
- 
- 	/* Undocumented register */
- 	data[0] = 0x01;
- 	data[1] = 0x00;
- 	retval = control_write(dev, REQUEST_WRITE, 0, 254, data, 0x02,
- 			       CONTROL_TIMEOUT_MS);
-+	if (retval)
-+		return retval;
- 
- 	data[0] = 0x5F;
- 	data[1] = 0x0D;
- 	retval = control_write(dev, REQUEST_WRITE, 0, MAC_REG_CTRL, data, 0x02,
- 			       CONTROL_TIMEOUT_MS);
-+	if (retval)
-+		return retval;
- 
- 	retval = get_mac_address(dev, addr);
-+	if (retval)
-+		return retval;
-+
- 	eth_hw_addr_set(dev->net, addr);
- 
--	return retval;
-+	return 0;
- }
- 
- static const struct driver_info ch9200_info = {
--- 
-2.39.5
-
+--ehgan4hodvsqo6jl--
 
