@@ -1,152 +1,345 @@
-Return-Path: <linux-kernel+bounces-555983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C46A5BF09
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B7CAA5BF08
 	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:31:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B213B1F74
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:31:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB1B3189812E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F7F253B59;
-	Tue, 11 Mar 2025 11:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39232505AF;
+	Tue, 11 Mar 2025 11:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mMMU27jL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="htGXWelU"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B732206A4
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3EF1DE2C7;
+	Tue, 11 Mar 2025 11:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741692703; cv=none; b=t4UAlACYCHWu+rliPBTRDZAuuFts45rQojgQvznhjxKV063SILJhJIxyAxV/N2k7qBbBWh1L78Nk5gj7n8Dh1NwkShtKZYryYjPIMlk8C4tBfotRHg7PIDg7rdrGm7CD9bqmHBFGSYEm7PMfdNoBvA7R2TXrV9i9T2dCTNpd8RA=
+	t=1741692703; cv=none; b=o1OILGXxBnHdl0QTsVY4qsa38/50U2F8qES3mwI9L8qnbJqVWOutd+JyP5iQw6e/4XsSPuKEAJTJ8sBWTfh4ZfMKDv65jE7owC9VgkQe4Wkzb0emmC2t3jAuibGDSCqen2PxapuRgZYGHsgA/CltkvbKI7e0DD3dMzP6E2c9gvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741692703; c=relaxed/simple;
-	bh=0tsQsh3zhZV4peIz77XXKqRoGd4Q7VV6Rr61QE3yElU=;
+	bh=kR3S0ccEOGKeFCsyABB5MUnsrQuat3HAhn9co3wXCDg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aBt9WkliFdnyNkY+rZ2VF0Z9G7JK9tN6jRPVSg6QFGbREyG8WGKjiwxrXBbx2rp+akpnO/4g3Y9k/pFnf5MI6niNXb2DX4tTdVlviWWW1EE6amgbgyQSlPiu+T/px9vqTdjqcvE/SPiKErwUqD/1gDQBPRyd0UUAzKgirJypXUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mMMU27jL; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741692702; x=1773228702;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0tsQsh3zhZV4peIz77XXKqRoGd4Q7VV6Rr61QE3yElU=;
-  b=mMMU27jL531kG8H6/2nP23aZv+1BmSYCxYHjWKwIWI1eVGTkBNgP8DHl
-   7e7GiLCbRGDt1ZzOwI66pNRK7KY/altMdlvRHonBtTiTmJofRWWhdkFu3
-   WI789upI4SoEd/FZ8EK/+Ypac8vuxKRAL22hYT30PQVctAyOrXklDSwd0
-   RSjW8hboqn17TKGvqeSEFeKpsKbk1KjN8/IWovE8eSdrHkNlIffk0QCIP
-   UuujKd77QDXTXG439aY04LhdqmjJPexipu/p1pi1OjShSkZxF/lnztkWK
-   vqcdcVY8gU3qoQgJP/4QyIAfCYrYXf27bDkyRfppNs9YfG/rENWusegjT
-   A==;
-X-CSE-ConnectionGUID: QxdGqE7HTuWlKfIXO1HSCw==
-X-CSE-MsgGUID: JOna0Z4TQkiqlWT87E5IvA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="65182174"
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="65182174"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 04:31:41 -0700
-X-CSE-ConnectionGUID: saD4g5O3RZC3b8rSV/pfXw==
-X-CSE-MsgGUID: cabz44ZsQo6Mwgwk+BYESQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="124897106"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 11 Mar 2025 04:31:36 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1trxpd-0006c0-2r;
-	Tue, 11 Mar 2025 11:31:33 +0000
-Date: Tue, 11 Mar 2025 19:31:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrey Ryabinin <arbn@yandex-team.com>, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Alexander Graf <graf@amazon.com>, James Gowans <jgowans@amazon.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Eric Biederman <ebiederm@xmission.com>, kexec@lists.infradead.org,
-	Pratyush Yadav <ptyadav@amazon.de>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	David Rientjes <rientjes@google.com>,
-	Andrey Ryabinin <arbn@yandex-team.com>
-Subject: Re: [PATCH v2 4/7] kexec, kstate: delay loading of kexec segments
-Message-ID: <202503111944.pfx9UdvP-lkp@intel.com>
-References: <20250310120318.2124-5-arbn@yandex-team.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wv24xtvLoX6jlSyxi5eZN1e0zZ4YAS8mWQC+FML60bANzhvnOJtCZXIWu3ouYsb1CrakUpr4oITs8WFUZ4ENm0L/5jJ3nP6k6ObKs75ztGcDenSJhDdF4BhwbkvgkBJvARrqFCiQV4E6xDOVTAMLZoL95KS6VlbGEWog621Cu9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=htGXWelU; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=gX0oE5lGbaC5HsJCFKke83AgOfwt5rZen3WV1FTI52U=; b=htGXWelUYXNZaSh86SY5odeA4h
+	+hzDM+1lNmmW74wWnw1hs7oziGmHIJLF+j9p7Y6OteiCHzsWt8CpEJikE6bqhPvZNzR+NU0A+beOr
+	J33E4vcskzuOEmJPBPSshmJBs2HOMKE0SKelqkb/8ho2sJNKXz1Qotnsl7iws0cjX0RmRoUQzfelJ
+	T79SWp7aU2WD2+KIH56Jeb5R/YdnNhrZzSYdeRfdgnxtbfjbjxSETZa21zZ8YKKaHhmS1BtnnZns9
+	PlTnHqLbVy/fmKSKRl5vQ6Y0BRX7p8HPm/nThEsehD4QZtGNJwHrT6pQvxlYgR9+y6XaHEQ2Ymzc8
+	rGTKSjFw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1trxpb-000000028S9-28Wv;
+	Tue, 11 Mar 2025 11:31:31 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2734B3006C0; Tue, 11 Mar 2025 12:31:29 +0100 (CET)
+Date: Tue, 11 Mar 2025 12:31:28 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: mark.barnett@arm.com
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	irogers@google.com, ben.gainey@arm.com, deepak.surti@arm.com,
+	ak@linux.intel.com, will@kernel.org, james.clark@arm.com,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 3/5] perf: Allow adding fixed random jitter to the
+ alternate sampling period
+Message-ID: <20250311113128.GD19424@noisy.programming.kicks-ass.net>
+References: <20250307202247.648633-1-mark.barnett@arm.com>
+ <20250307202247.648633-4-mark.barnett@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250310120318.2124-5-arbn@yandex-team.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250307202247.648633-4-mark.barnett@arm.com>
 
-Hi Andrey,
+On Fri, Mar 07, 2025 at 08:22:45PM +0000, mark.barnett@arm.com wrote:
+> From: Ben Gainey <ben.gainey@arm.com>
+> 
+> This change modifies the core perf overflow handler, adding some small
+> random jitter to each sample period whenever an event switches between the
+> two alternate sample periods. A new flag is added to perf_event_attr to
+> opt into this behaviour.
+> 
+> This change follows the discussion in [1], where it is recognized that it
+> may be possible for certain patterns of execution to end up with biased
+> results.
+> 
+> [1] https://lore.kernel.org/linux-perf-users/Zc24eLqZycmIg3d2@tassilo/
+> 
+> Signed-off-by: Ben Gainey <ben.gainey@arm.com>
+> Signed-off-by: Mark Barnett <mark.barnett@arm.com>
+> ---
+>  include/uapi/linux/perf_event.h | 7 ++++++-
+>  kernel/events/core.c            | 9 ++++++++-
+>  2 files changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+> index 499a8673df8e..c0076ce8f80a 100644
+> --- a/include/uapi/linux/perf_event.h
+> +++ b/include/uapi/linux/perf_event.h
+> @@ -461,7 +461,12 @@ struct perf_event_attr {
+>  				inherit_thread :  1, /* children only inherit if cloned with CLONE_THREAD */
+>  				remove_on_exec :  1, /* event is removed from task on exec */
+>  				sigtrap        :  1, /* send synchronous SIGTRAP on event */
+> -				__reserved_1   : 26;
+> +				/*
+> +				 * Add a limited amount of jitter on each alternate period, where
+> +				 * the jitter is between [0, (2<<jitter_alt_period) - 1]
+> +				 */
+> +				jitter_alt_period : 3,
+> +				__reserved_1   : 23;
 
-kernel test robot noticed the following build errors:
+So; I've been thinking about this interface.
 
-[auto build test ERROR on tip/x86/core]
-[also build test ERROR on akpm-mm/mm-nonmm-unstable akpm-mm/mm-everything linus/master v6.14-rc6 next-20250307]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I think I prefer you keep the existing sample_period/sample_freq working
+as is and simply modulate with random and high-freq components.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrey-Ryabinin/kstate-Add-kstate-a-mechanism-to-describe-and-migrate-kernel-state-across-kexec/20250310-200803
-base:   tip/x86/core
-patch link:    https://lore.kernel.org/r/20250310120318.2124-5-arbn%40yandex-team.com
-patch subject: [PATCH v2 4/7] kexec, kstate: delay loading of kexec segments
-config: i386-buildonly-randconfig-003-20250311 (https://download.01.org/0day-ci/archive/20250311/202503111944.pfx9UdvP-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250311/202503111944.pfx9UdvP-lkp@intel.com/reproduce)
+A very little like so..
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503111944.pfx9UdvP-lkp@intel.com/
+I've made the hf_sample_period 32bit since I figured that ought to be
+enough -- you're aiming at very short periods after all. But there's
+enough unused bits left.
 
-All errors (new ones prefixed by >>):
+So this has sample_period or sample_freq compute hwc->sample_period_base
+which is first modified with random such that the average is exactly
+sample_period_base (assuming a flat distribution).
 
-   In file included from kernel/vmcore_info.c:24:
->> kernel/kexec_internal.h:39:43: error: incomplete definition of type 'struct kimage'
-      39 |         return IS_ENABLED(CONFIG_KSTATE) && image->file_mode &&
-         |                                             ~~~~~^
-   kernel/kexec_internal.h:9:8: note: forward declaration of 'struct kimage'
-       9 | struct kimage *do_kimage_alloc_init(void);
-         |        ^
-   kernel/kexec_internal.h:40:9: error: incomplete definition of type 'struct kimage'
-      40 |                 (image->type == KEXEC_TYPE_DEFAULT);
-         |                  ~~~~~^
-   kernel/kexec_internal.h:9:8: note: forward declaration of 'struct kimage'
-       9 | struct kimage *do_kimage_alloc_init(void);
-         |        ^
->> kernel/kexec_internal.h:40:19: error: use of undeclared identifier 'KEXEC_TYPE_DEFAULT'
-      40 |                 (image->type == KEXEC_TYPE_DEFAULT);
-         |                                 ^
-   3 errors generated.
+This means that sample_period_base is still the right number to use for
+computing freq based things. Additionally, have the 'extra' interrupt
+ignored for adaptive period crud.
+
+Also, someone needs to consider the eBPF hook and what to do with it.
+I've kept the ordering as per this series, but I suspect it's wrong and
+we want this before the BPF hook. Please think about this and explicitly
+mention this in the next series.
+
+Anyway, very much a sketch of things, incomplete and not been near a
+compiler.
 
 
-vim +39 kernel/kexec_internal.h
 
-    36	
-    37	static inline bool kexec_late_load(struct kimage *image)
-    38	{
-  > 39		return IS_ENABLED(CONFIG_KSTATE) && image->file_mode &&
-  > 40			(image->type == KEXEC_TYPE_DEFAULT);
-    41	}
-    42	
+---
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 76f4265efee9..c5dd6442e96f 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -229,6 +229,10 @@ struct hw_perf_event {
+ #define PERF_HES_UPTODATE	0x02 /* event->count up-to-date */
+ #define PERF_HES_ARCH		0x04
+ 
++#define PERF_HES_HF_ON		0x10 /* using high-fred sampling */
++#define PERF_HES_HF_SAMPLE	0x20
++#define PERF_HES_HF_RAND	0x40
++
+ 	int				state;
+ 
+ 	/*
+@@ -241,6 +245,7 @@ struct hw_perf_event {
+ 	 * The period to start the next sample with.
+ 	 */
+ 	u64				sample_period;
++	u64				sample_period_base;
+ 
+ 	union {
+ 		struct { /* Sampling */
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 0524d541d4e3..8dbe027f93f1 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -379,6 +379,7 @@ enum perf_event_read_format {
+ #define PERF_ATTR_SIZE_VER6	120	/* add: aux_sample_size */
+ #define PERF_ATTR_SIZE_VER7	128	/* add: sig_data */
+ #define PERF_ATTR_SIZE_VER8	136	/* add: config3 */
++#define PERF_ATTR_SIZE_VER9	144	/* add: hf_sample */
+ 
+ /*
+  * Hardware event_id to monitor via a performance monitoring event:
+@@ -531,6 +532,14 @@ struct perf_event_attr {
+ 	__u64	sig_data;
+ 
+ 	__u64	config3; /* extension of config2 */
++	union {
++		__u64 hf_sample;
++		struct {
++			__u64 hf_sample_period : 32,
++			      hf_sample_rand   :  4,
++			      __reserved_4     : 28;
++		};
++	};
+ };
+ 
+ /*
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index b87a5ac42ce2..e5a93edf3b5f 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8,6 +8,7 @@
+  *  Copyright  ©  2009 Paul Mackerras, IBM Corp. <paulus@au1.ibm.com>
+  */
+ 
++#include "linux/random.h"
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ #include <linux/cpu.h>
+@@ -55,6 +56,7 @@
+ #include <linux/pgtable.h>
+ #include <linux/buildid.h>
+ #include <linux/task_work.h>
++#include <linux/prandom.h>
+ 
+ #include "internal.h"
+ 
+@@ -443,6 +445,8 @@ static cpumask_var_t perf_online_pkg_mask;
+ static cpumask_var_t perf_online_sys_mask;
+ static struct kmem_cache *perf_event_cache;
+ 
++static struct rnd_state perf_rand;
++
+ /*
+  * perf event paranoia level:
+  *  -1 - not paranoid at all
+@@ -4233,19 +4237,19 @@ static void perf_adjust_period(struct perf_event *event, u64 nsec, u64 count, bo
+ 
+ 	period = perf_calculate_period(event, nsec, count);
+ 
+-	delta = (s64)(period - hwc->sample_period);
++	delta = (s64)(period - hwc->sample_period_base);
+ 	if (delta >= 0)
+ 		delta += 7;
+ 	else
+ 		delta -= 7;
+ 	delta /= 8; /* low pass filter */
+ 
+-	sample_period = hwc->sample_period + delta;
++	sample_period = hwc->sample_period_base + delta;
+ 
+ 	if (!sample_period)
+ 		sample_period = 1;
+ 
+-	hwc->sample_period = sample_period;
++	hwc->sample_period_base = sample_period;
+ 
+ 	if (local64_read(&hwc->period_left) > 8*sample_period) {
+ 		if (disable)
+@@ -4490,6 +4494,8 @@ void perf_event_task_tick(void)
+ 	if (ctx)
+ 		perf_adjust_freq_unthr_context(ctx, !!throttled);
+ 	rcu_read_unlock();
++
++	prandom_seed_state(&perf_rand, get_random_u64());
+ }
+ 
+ static int event_enable_on_exec(struct perf_event *event,
+@@ -9979,6 +9985,8 @@ static int __perf_event_overflow(struct perf_event *event,
+ 				 int throttle, struct perf_sample_data *data,
+ 				 struct pt_regs *regs)
+ {
++	struct hw_perf_event *hwc = &event->hw;
++	u64 sample_period;
+ 	int events = atomic_read(&event->event_limit);
+ 	int ret = 0;
+ 
+@@ -9989,15 +9997,50 @@ static int __perf_event_overflow(struct perf_event *event,
+ 	if (unlikely(!is_sampling_event(event)))
+ 		return 0;
+ 
+-	ret = __perf_event_account_interrupt(event, throttle);
++	/*
++	 * High Freq samples are injected inside the larger period:
++	 *
++	 *   |------------|-|------------|-|
++	 *   P0          HF P1          HF
++	 *
++	 * By ignoring the HF samples, we measure the actual period.
++	 */
++	if (!(hwc->state & PERF_HES_HF_SAMPLE))
++		ret = __perf_event_account_interrupt(event, throttle);
+ 
+ 	if (event->attr.aux_pause)
+ 		perf_event_aux_pause(event->aux_event, true);
+ 
++	/* XXX interaction between HF samples and BPF */
+ 	if (event->prog && event->prog->type == BPF_PROG_TYPE_PERF_EVENT &&
+ 	    !bpf_overflow_handler(event, data, regs))
+ 		goto out;
+ 
++	sample_period = hwc->sample_period_base;
++	if (hwc->state & PERF_HES_HF_RAND) {
++		u64 rand = 1 << event->attr.hf_sample_rand;
++		sample_period -= rand / 2;
++		sample_period += prandom_u32_state(&perf_rand) & (rand - 1);
++	}
++	if (hwc->state & PERF_HES_HF_ON) {
++		u64 hf_sample_period = event->attr.hf_sample_period;
++
++		if (sample_period < hf_sample_period) {
++			hwc->state &= ~PERF_HES_HF_ON;
++			goto set_period;
++		}
++
++		if (!(hwc->state & PERF_HES_HF_SAMPLE)) {
++			hwc->sample_period -= hf_sample_period;
++			hwc->state |= PERF_HES_HF_SAMPLE;
++		} else {
++			hwc->sample_period = hf_sample_period;
++			hwc->state &= ~PERF_HES_HF_SAMPLE;
++		}
++	}
++set_period:
++	hwc->sample_period = sample_period;
++
+ 	/*
+ 	 * XXX event_limit might not quite work as expected on inherited
+ 	 * events
+@@ -12458,8 +12501,11 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+ 
+ 	hwc = &event->hw;
+ 	hwc->sample_period = attr->sample_period;
+-	if (attr->freq && attr->sample_freq)
++	hwc->sample_period_base = attr->sample_period;
++	if (attr->freq && attr->sample_freq) {
+ 		hwc->sample_period = 1;
++		hwc->sample_period_base = 1;
++	}
+ 	hwc->last_period = hwc->sample_period;
+ 
+ 	local64_set(&hwc->period_left, hwc->sample_period);
+@@ -13824,6 +13870,7 @@ inherit_event(struct perf_event *parent_event,
+ 		struct hw_perf_event *hwc = &child_event->hw;
+ 
+ 		hwc->sample_period = sample_period;
++		hwc->sample_period_base = sample_period;
+ 		hwc->last_period   = sample_period;
+ 
+ 		local64_set(&hwc->period_left, sample_period);
+@@ -14279,6 +14326,8 @@ void __init perf_event_init(void)
+ {
+ 	int ret;
+ 
++	prandom_seed_state(&perf_rand, get_random_u64());
++
+ 	idr_init(&pmu_idr);
+ 
+ 	perf_event_init_all_cpus();
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
