@@ -1,142 +1,78 @@
-Return-Path: <linux-kernel+bounces-556609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B88FEA5CC4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:35:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2CC2A5CC4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:35:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75C8E189BA0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:35:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FCE5173B0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA9E262802;
-	Tue, 11 Mar 2025 17:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126F42627EC;
+	Tue, 11 Mar 2025 17:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SR6DmOGD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnMhODrL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA75C1D514A;
-	Tue, 11 Mar 2025 17:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680FF2620E7;
+	Tue, 11 Mar 2025 17:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741714496; cv=none; b=WkRq6cNJSuTZAWMA4S6GVQ1EXPa9hU5uYOunMNTlUM3yAX30fggp58Zqdj9O9AHPz+YaLmcFOu4idAeUhSTAom155/HQWxO/oHsXh+XOT/Vrpxzo2/4ew4fLYc7PDl9TeOJafSpzR4Q+nOGIWJQZKIecqkc7s8BwiVT6AbLr+Jc=
+	t=1741714513; cv=none; b=ncQj/jWNuddT+tK20mnOgo1AdssCR6CwIYqtF1GZg1YHeQ/Su7Px+G55KjhYtIW0/29IoRmlM/BrweG05WGkJ5jLyR+VmFs0amq8bso5q715dQFGzUyELM4FOmPx8IXUX3uzpjwczk/0J8+gjrLgH83l9ayb3+r6+Lupe570V+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741714496; c=relaxed/simple;
-	bh=hO+ZWV3c02739h2EmWuf5jS4BdGdx7DrCGtd7Xchzck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IxoelIjytL5YYKfnZxDhuCneJQNPMRC5YVIt3TBsVGHbWMhCQSCtFbDzvNnQ0VPcLtZWS2B3kG62PEnoctbkzIvgP5RZV+vutg0nDMgwo4Xv6Skin1NVpSBJE0HM1DZFBCF45HZlP22PW6Cv8ArWU4BDonzvFXriJZpOWuyiIlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SR6DmOGD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5112AC4CEE9;
-	Tue, 11 Mar 2025 17:34:51 +0000 (UTC)
+	s=arc-20240116; t=1741714513; c=relaxed/simple;
+	bh=JEMUyG1Mc9eg7j3W0eO4Wl8+aC8HhuaW4FFMVwJ/AYk=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Ew8zBHMifUIjcIZ/Cuz9RHxAUz35eHOskfl9+wrZ8npxugLdhDZOytb0ykNcURnzLA72UiY6M7lWMC2STu5SiapF8vJnIbXMeTUf2tx+Bhl95kKyKSOvllezvvvg1rf+iPfmRUwg5awk87/gD/9DrPykiSpXez/53xCsHfsG0Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jnMhODrL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43AC8C4CEE9;
+	Tue, 11 Mar 2025 17:35:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741714496;
-	bh=hO+ZWV3c02739h2EmWuf5jS4BdGdx7DrCGtd7Xchzck=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SR6DmOGDFDAl7Q3urxGjgjTRmUoSn4P5garJmxng2MTzIEIr5IQDKFP2DCuGrdzar
-	 oFxkBKtmo5ydwbvtq0YpeWihllHcboP7XQaVWhNj4sRVTi6BEE9uU6b5WgokIymFLn
-	 BC0XbtXcHCNP459XQWJT+epHuvxYlYsJvg/7/1Kn1MMKDdvj8JyY7v7CM4QWhhXPm/
-	 AH3FWd+TejOeQVDm/cDyiQ5zXKc1Mkb+fkbOo00N8/Mi2hNqy3eXnAdLT03EDngAbP
-	 WxpfsO9UWurEcepbM1DRlg+Ko464cMZwL/IuScDdnR8m/8+cj2MJhnf+JHURR7npto
-	 aTkXT8plXDq/Q==
-Message-ID: <058546d4-d180-439f-9f30-d01e66cac438@kernel.org>
-Date: Tue, 11 Mar 2025 18:34:49 +0100
+	s=k20201202; t=1741714513;
+	bh=JEMUyG1Mc9eg7j3W0eO4Wl8+aC8HhuaW4FFMVwJ/AYk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=jnMhODrL6fY421U7NvOXtXA0I/Mx+ovpjl/hy8SOFY8o2VC61DZWjrextfNp26HcG
+	 3nKH6MS4Ga0TnvJdYuiegTMogVy/QxBC/pMWH2b9/HCT3kVwL95uNCTCUb6GnzEZu3
+	 JCVmHJ11YsxTQSFg0G4F/dXtEi3tsi71YWdcTExGXKhVSANcH3WfYSThKbH985mWQd
+	 zvGcmwgD75tGGFiRK62NV+YmjYLQCBqs1tQFQCNaoDDJ83KaCQKYmwzm1nD32GGbQg
+	 fygILKK1KN66rSPk5YhG+rGXdv4Mj3DhTcRjE78s4xpT6tZvBc7UScfGFFaTHuANWL
+	 0nOiTf2HHz2kQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE2AD380AC1C;
+	Tue, 11 Mar 2025 17:35:48 +0000 (UTC)
+Subject: Re: [GIT PULL] pin control fixes for v6.14
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdZmBznW3b132Wze8t2zC=-8YuEW+5aQD1qSSr3w2OFfZg@mail.gmail.com>
+References: <CACRpkdZmBznW3b132Wze8t2zC=-8YuEW+5aQD1qSSr3w2OFfZg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdZmBznW3b132Wze8t2zC=-8YuEW+5aQD1qSSr3w2OFfZg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.14-3
+X-PR-Tracked-Commit-Id: 7ff4faba63571c51004280f7eb5d6362b15ec61f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0b46b049d6eccd947c361018439fcb596e741d7a
+Message-Id: <174171454721.169681.6398861200080705545.pr-tracker-bot@kernel.org>
+Date: Tue, 11 Mar 2025 17:35:47 +0000
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] media: iris: add compatible string for sa8775p
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
- <20250311-dtbinding-v1-4-5c807d33f7ae@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250311-dtbinding-v1-4-5c807d33f7ae@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 11/03/2025 13:03, Vikash Garodia wrote:
-> Add required compatible string to enable video hardware
-> acceleration on sa8775p.
+The pull request you sent on Tue, 11 Mar 2025 11:43:16 +0100:
 
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.14-3
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0b46b049d6eccd947c361018439fcb596e741d7a
 
-> 
-> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> ---
->  drivers/media/platform/qcom/iris/iris_probe.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-> index aca442dcc153830e6252d1dca87afb38c0b9eb8f..23c9e76a68013399b0fc1d68c1ccf0f8b0ddb037 100644
-> --- a/drivers/media/platform/qcom/iris/iris_probe.c
-> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
-> @@ -324,6 +324,10 @@ static const struct of_device_id iris_dt_match[] = {
->  		.compatible = "qcom,sm8550-iris",
->  		.data = &sm8550_data,
->  	},
-> +	{
-> +		.compatible = "qcom,sa8775p-iris",
-Drop. Not needed.
+Thank you!
 
-Best regards,
-Krzysztof
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
