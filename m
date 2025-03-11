@@ -1,180 +1,193 @@
-Return-Path: <linux-kernel+bounces-555875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E41A5BDB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:22:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF97A5BDBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:22:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA6DF18994A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:22:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63F2D7A2693
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59721235362;
-	Tue, 11 Mar 2025 10:21:53 +0000 (UTC)
-Received: from mail.avm.de (mail.avm.de [212.42.244.119])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7FB3EA83;
-	Tue, 11 Mar 2025 10:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B90235BE1;
+	Tue, 11 Mar 2025 10:22:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B751234977;
+	Tue, 11 Mar 2025 10:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741688512; cv=none; b=CCB4T+4NehG79mUygWoHIprBW+ce6hNXa4UlVi+3onHsIIXDnO4FCWN8VDzcar9DsLctSgck5bT+pnGRPH4o4IyZu76bMa6PrvMD8LY+E6WtdwPKqZnfvnQKaZTXOdWLgwtFtKu23/Lqx75gpKBR53Xil4seg78hw26JqKWLqX0=
+	t=1741688527; cv=none; b=Hd4tEewGOH+SFVHk3oko5GrGyWS5DU67uTkSovx1lWAeBZkMmGHdeqtwPMF+qyZoD5/QeYoDR1WcJ5NOXVT83HmthlJN2RlPgjCie5fEK/Th4uCwcypneWi60Xa6t909LzHk36zNrwrX8/lRGb90UvOW1xcDgZA89RKSK8y7VQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741688512; c=relaxed/simple;
-	bh=ElLAS8zc6vfN5JLE1jccytSZW34Ce0pmQCfGDufTGh0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b02bDZ9DJEg3BzpqTWcteSWQQXOptKfHSC56TxiuDnFG1T3FrGNT31sb80Ty2Pi7pI7+4UxjOrr0xx3Fx1VDATbXCCnODdwa6WeqvGUQjaALibNT4iOsER6X/heXuEXPLibKGQfpytqPT2CVJGCB6TDFcfFr3PENs10kdNJQpb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; arc=none smtp.client-ip=212.42.244.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-Received: from [212.42.244.71] (helo=mail.avm.de)
-	by mail.avm.de with ESMTP (eXpurgate 4.52.1)
-	(envelope-from <phahn-oss@avm.de>)
-	id 67d00eb9-1471-7f0000032729-7f000001904a-1
-	for <multiple-recipients>; Tue, 11 Mar 2025 11:21:45 +0100
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Tue, 11 Mar 2025 11:21:45 +0100 (CET)
-From: Philipp Hahn <phahn-oss@avm.de>
-To: netdev@vger.kernel.org
-Cc: Philipp Hahn <phahn-oss@avm.de>,
-	Oliver Neukum <oliver@neukum.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Leon Schuermann <leon@is.currently.online>,
-	Kory Maincent <kory.maincent@bootlin.com>
-Subject: [PATCH v2] net-next: cdc_ether|r8152: ThinkPad Hybrid USB-C/A Dock quirk
-Date: Tue, 11 Mar 2025 11:21:34 +0100
-Message-Id: <f736f5bd20e465656ebe2cc2e7be69c0ada852e3.1741627632.git.p.hahn@avm.de>
+	s=arc-20240116; t=1741688527; c=relaxed/simple;
+	bh=LSLcGBRioPeMdvm1qw8/dxTdxYG8cUK8kyu3PmmIiUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tJc79YoHI4JbkR2kjh7YPNS1k428vTBMNQ3wi1aRhMN71Cl9zRudfHjKyFiGAl9DbjJR3I0RaTZkt9EowXQ+4zdKccKZMcA83SZb8mXVOqo+PD8rHPA2KkyZkMpO4bVZiwyCED+LSe6rybr5n5LX5XGuCFSUsVunJ9WzBPJdmFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA8D81762;
+	Tue, 11 Mar 2025 03:22:15 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 633833F673;
+	Tue, 11 Mar 2025 03:22:04 -0700 (PDT)
+Date: Tue, 11 Mar 2025 10:22:00 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: coresight@lists.linaro.org, yeoreum.yun@arm.com,
+	Mike Leach <mike.leach@linaro.org>,
+	Jonathan Corbet <corbet@lwn.net>, Leo Yan <leo.yan@linux.dev>,
+	Namhyung Kim <namhyung@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] coresight: docs: Remove target sink from examples
+Message-ID: <20250311102200.GJ9682@e132581.arm.com>
+References: <20241210144933.295798-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: AVM GmbH, Berlin, Germany
-Content-Transfer-Encoding: 8bit
-X-purgate-ID: 149429::1741688505-54D8F9D3-12866081/0/0
-X-purgate-type: clean
-X-purgate-size: 4567
-X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
-X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
-X-purgate: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210144933.295798-1-james.clark@linaro.org>
 
-Lenovo ThinkPad Hybrid USB-C with USB-A Dock (17ef:a359) is affected by
-the same problem as the Lenovo Powered USB-C Travel Hub (17ef:721e):
-Both are based on the Realtek RTL8153B chip used to use the cdc_ether
-driver. However, using this driver, with the system suspended the device
-constantly sends pause-frames as soon as the receive buffer fills up.
-This causes issues with other devices, where some Ethernet switches stop
-forwarding packets altogether.
+On Tue, Dec 10, 2024 at 02:49:28PM +0000, James Clark wrote:
+> 
+> Previously the sink had to be specified, but now it auto selects one by
+> default. Including a sink in the examples causes issues when copy
+> pasting the command because it might not work if that sink isn't
+> present. Remove the sink from all the basic examples and create a new
+> section specifically about overriding the default one.
+> 
+> Make the text a but more concise now that it's in the advanced section,
+> and similarly for removing the old kernel advice.
+> 
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  Documentation/trace/coresight/coresight.rst   | 41 ++++++++-----------
+>  .../userspace-api/perf_ring_buffer.rst        |  4 +-
+>  2 files changed, 18 insertions(+), 27 deletions(-)
+> 
+> diff --git a/Documentation/trace/coresight/coresight.rst b/Documentation/trace/coresight/coresight.rst
+> index d4f93d6a2d63..806699871b80 100644
+> --- a/Documentation/trace/coresight/coresight.rst
+> +++ b/Documentation/trace/coresight/coresight.rst
+> @@ -462,44 +462,35 @@ queried by the perf command line tool:
+> 
+>                 cs_etm//                                    [Kernel PMU event]
+> 
+> -       linaro@linaro-nano:~$
+> -
+>  Regardless of the number of tracers available in a system (usually equal to the
+>  amount of processor cores), the "cs_etm" PMU will be listed only once.
+> 
+>  A Coresight PMU works the same way as any other PMU, i.e the name of the PMU is
+> -listed along with configuration options within forward slashes '/'.  Since a
+> -Coresight system will typically have more than one sink, the name of the sink to
+> -work with needs to be specified as an event option.
+> -On newer kernels the available sinks are listed in sysFS under
+> +provided along with configuration options within forward slashes '/' (see
+> +`Config option formats`_).
+> +
+> +Advanced Perf framework usage
+> +-----------------------------
+> +
+> +Sink selection
+> +~~~~~~~~~~~~~~
+> +
+> +An appropriate sink will be selected automatically for use with Perf, but since
+> +there will typically be more than one sink, the name of the sink to use may be
+> +specified as a special config option prefixed with '@'.
+> +
+> +The available sinks are listed in sysFS under
+>  ($SYSFS)/bus/event_source/devices/cs_etm/sinks/::
+> 
+>         root@localhost:/sys/bus/event_source/devices/cs_etm/sinks# ls
+>         tmc_etf0  tmc_etr0  tpiu0
 
-Using the Realtek driver (r8152) fixes this issue. Pause frames are no
-longer sent while the host system is suspended.
+Just a minor comment.  To reflect the latest hardware, it is good to
+mention the TRBE case, users should not and cannot specify TRBE as the
+sink name.  The driver will give priority for TRBE by default unless
+users specify other sink types.
 
-Cc: Oliver Neukum <oliver@neukum.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: linux-usb@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Leon Schuermann <leon@is.currently.online>
-Link: https://git.kernel.org/netdev/net/c/cb82a54904a9
-Link: https://git.kernel.org/netdev/net/c/2284bbd0cf39
-Link: https://www.lenovo.com/de/de/p/accessories-and-software/docking/docking-usb-docks/40af0135eu
-Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
-Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
----
-V1 -> V2: Prefix subject with `net-next:`
-V1 -> V2: Add additional Cc:s
- drivers/net/usb/cdc_ether.c | 7 +++++++
- drivers/net/usb/r8152.c     | 6 ++++++
- drivers/net/usb/r8153_ecm.c | 6 ++++++
- 3 files changed, 19 insertions(+)
+Otherwise, this is a good polish for me.
 
-diff --git a/drivers/net/usb/cdc_ether.c b/drivers/net/usb/cdc_ether.c
-index a6469235d904..a032c1ded406 100644
---- a/drivers/net/usb/cdc_ether.c
-+++ b/drivers/net/usb/cdc_ether.c
-@@ -783,6 +783,13 @@ static const struct usb_device_id	products[] = {
- 	.driver_info = 0,
- },
- 
-+/* Lenovo ThinkPad Hybrid USB-C with USB-A Dock (40af0135eu, based on Realtek RTL8153) */
-+{
-+	USB_DEVICE_AND_INTERFACE_INFO(LENOVO_VENDOR_ID, 0xa359, USB_CLASS_COMM,
-+			USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
-+	.driver_info = 0,
-+},
-+
- /* Aquantia AQtion USB to 5GbE Controller (based on AQC111U) */
- {
- 	USB_DEVICE_AND_INTERFACE_INFO(AQUANTIA_VENDOR_ID, 0xc101,
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index 468c73974046..96fa3857d8e2 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -785,6 +785,7 @@ enum rtl8152_flags {
- #define DEVICE_ID_THINKPAD_USB_C_DONGLE			0x720c
- #define DEVICE_ID_THINKPAD_USB_C_DOCK_GEN2		0xa387
- #define DEVICE_ID_THINKPAD_USB_C_DOCK_GEN3		0x3062
-+#define DEVICE_ID_THINKPAD_HYBRID_USB_C_DOCK		0xa359
- 
- struct tally_counter {
- 	__le64	tx_packets;
-@@ -9787,6 +9788,7 @@ static bool rtl8152_supports_lenovo_macpassthru(struct usb_device *udev)
- 		case DEVICE_ID_THINKPAD_USB_C_DOCK_GEN2:
- 		case DEVICE_ID_THINKPAD_USB_C_DOCK_GEN3:
- 		case DEVICE_ID_THINKPAD_USB_C_DONGLE:
-+		case DEVICE_ID_THINKPAD_HYBRID_USB_C_DOCK:
- 			return 1;
- 		}
- 	} else if (vendor_id == VENDOR_ID_REALTEK && parent_vendor_id == VENDOR_ID_LENOVO) {
-@@ -10064,6 +10066,8 @@ static const struct usb_device_id rtl8152_table[] = {
- 	{ USB_DEVICE(VENDOR_ID_MICROSOFT, 0x0927) },
- 	{ USB_DEVICE(VENDOR_ID_MICROSOFT, 0x0c5e) },
- 	{ USB_DEVICE(VENDOR_ID_SAMSUNG, 0xa101) },
-+
-+	/* Lenovo */
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x304f) },
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3054) },
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3062) },
-@@ -10074,7 +10078,9 @@ static const struct usb_device_id rtl8152_table[] = {
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x720c) },
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x7214) },
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x721e) },
-+	{ USB_DEVICE(VENDOR_ID_LENOVO,  0xa359) },
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0xa387) },
-+
- 	{ USB_DEVICE(VENDOR_ID_LINKSYS, 0x0041) },
- 	{ USB_DEVICE(VENDOR_ID_NVIDIA,  0x09ff) },
- 	{ USB_DEVICE(VENDOR_ID_TPLINK,  0x0601) },
-diff --git a/drivers/net/usb/r8153_ecm.c b/drivers/net/usb/r8153_ecm.c
-index 20b2df8d74ae..8d860dacdf49 100644
---- a/drivers/net/usb/r8153_ecm.c
-+++ b/drivers/net/usb/r8153_ecm.c
-@@ -135,6 +135,12 @@ static const struct usb_device_id products[] = {
- 				      USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
- 	.driver_info = (unsigned long)&r8153_info,
- },
-+/* Lenovo ThinkPad Hybrid USB-C with USB-A Dock (40af0135eu, based on Realtek RTL8153) */
-+{
-+	USB_DEVICE_AND_INTERFACE_INFO(VENDOR_ID_LENOVO, 0xa359, USB_CLASS_COMM,
-+				      USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
-+	.driver_info = (unsigned long)&r8153_info,
-+},
- 
- 	{ },		/* END */
- };
--- 
-2.34.1
+Thanks,
+Leo
 
+> -On older kernels, this may need to be found from the list of coresight devices,
+> -available under ($SYSFS)/bus/coresight/devices/::
+> -
+> -       root:~# ls /sys/bus/coresight/devices/
+> -        etm0     etm1     etm2         etm3  etm4      etm5      funnel0
+> -        funnel1  funnel2  replicator0  stm0  tmc_etf0  tmc_etr0  tpiu0
+>         root@linaro-nano:~# perf record -e cs_etm/@tmc_etr0/u --per-thread program
+> 
+> -As mentioned above in section "Device Naming scheme", the names of the devices could
+> -look different from what is used in the example above. One must use the device names
+> -as it appears under the sysFS.
+> -
+> -The syntax within the forward slashes '/' is important.  The '@' character
+> -tells the parser that a sink is about to be specified and that this is the sink
+> -to use for the trace session.
+> -
+>  More information on the above and other example on how to use Coresight with
+>  the perf tools can be found in the "HOWTO.md" file of the openCSD gitHub
+>  repository [#third]_.
+> 
+> -Advanced perf framework usage
+> ------------------------------
+> -
+>  AutoFDO analysis using the perf tools
+>  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> @@ -508,7 +499,7 @@ perf can be used to record and analyze trace of programs.
+>  Execution can be recorded using 'perf record' with the cs_etm event,
+>  specifying the name of the sink to record to, e.g::
+> 
+> -    perf record -e cs_etm/@tmc_etr0/u --per-thread
+> +    perf record -e cs_etm//u --per-thread
+> 
+>  The 'perf report' and 'perf script' commands can be used to analyze execution,
+>  synthesizing instruction and branch events from the instruction trace.
+> @@ -572,7 +563,7 @@ sort example is from the AutoFDO tutorial (https://eur03.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgcc.gnu.org%2Fwiki%2FAutoFDO%2FTuto&data=05%7C02%7Cleo.yan%40arm.com%7C0d4875673b894a332a5508dd192a1f35%7Cf34e597957d94aaaad4db122a662184d%7C0%7C0%7C638694390923618348%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=vX1RVi4hA2gEqrVk9lvMV8UFVDzvClvUN7yILwv0788%3D&reserved=0
+>         Bubble sorting array of 30000 elements
+>         5910 ms
+> 
+> -       $ perf record -e cs_etm/@tmc_etr0/u --per-thread taskset -c 2 ./sort
+> +       $ perf record -e cs_etm//u --per-thread taskset -c 2 ./sort
+>         Bubble sorting array of 30000 elements
+>         12543 ms
+>         [ perf record: Woken up 35 times to write data ]
+> diff --git a/Documentation/userspace-api/perf_ring_buffer.rst b/Documentation/userspace-api/perf_ring_buffer.rst
+> index bde9d8cbc106..dc71544532ce 100644
+> --- a/Documentation/userspace-api/perf_ring_buffer.rst
+> +++ b/Documentation/userspace-api/perf_ring_buffer.rst
+> @@ -627,7 +627,7 @@ regular ring buffer.
+>  AUX events and AUX trace data are two different things.  Let's see an
+>  example::
+> 
+> -        perf record -a -e cycles -e cs_etm/@tmc_etr0/ -- sleep 2
+> +        perf record -a -e cycles -e cs_etm// -- sleep 2
+> 
+>  The above command enables two events: one is the event *cycles* from PMU
+>  and another is the AUX event *cs_etm* from Arm CoreSight, both are saved
+> @@ -766,7 +766,7 @@ only record AUX trace data at a specific time point which users are
+>  interested in.  E.g. below gives an example of how to take snapshots
+>  with 1 second interval with Arm CoreSight::
+> 
+> -  perf record -e cs_etm/@tmc_etr0/u -S -a program &
+> +  perf record -e cs_etm//u -S -a program &
+>    PERFPID=$!
+>    while true; do
+>        kill -USR2 $PERFPID
+> --
+> 2.34.1
+> 
+> _______________________________________________
+> CoreSight mailing list -- coresight@lists.linaro.org
+> To unsubscribe send an email to coresight-leave@lists.linaro.org
 
