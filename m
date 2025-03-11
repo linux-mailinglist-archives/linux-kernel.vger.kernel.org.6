@@ -1,126 +1,103 @@
-Return-Path: <linux-kernel+bounces-556599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C837CA5CC22
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:29:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F947A5CC2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1827A3B557D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:29:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 938F17A43C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7565C2620F1;
-	Tue, 11 Mar 2025 17:29:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F74F25D8EF;
-	Tue, 11 Mar 2025 17:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977ED2627F2;
+	Tue, 11 Mar 2025 17:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="b+hQoqDR"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FF02620F6
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 17:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741714180; cv=none; b=nCmOOLETAfyYdDOga/4GeVoT74zf3XBs8x05XUOnydPuAb2nEVJfuJ31hrdHWf+AIzgO0m4bX1ZpJ0m1cGCfGmqIPJLwjmA2ZunIGXhjES9ZXM4obK9xEjJ4xjtxElhbpgF4mKAEjT37iW3j+iX4Q03vFLnHn+0HvYpJkApiPwc=
+	t=1741714197; cv=none; b=R66WZzbytj/e3s7396ZiT8y6DEdNynpsbhmYXGXUNXUy/vPOFupts/LH5yNkQOJMvSEyZCNc88Buyr0xGbjhj5gUavs82dmcheOaHh61iLaltQYNEYVQHDg+dvrKzmrbCulH1BqdlOkGOMZEUAB8FsoDzOm4SHaI9x2H6jq8WP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741714180; c=relaxed/simple;
-	bh=dNaFF2I5Gxfj66buzQR0TbVjSPqPPsRobfCdX/cIf1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mcy+MxEWocSATvbGB2izAw9WXuKUfmhnz7oYrffUJ3cJ5mek2a5vWJiKJ0jg7b6SwfLRReM3OglwLH1mPeDRhXb5ZnJmUmGJyTnQPj1J1qu1Ey1rQT8lDgaXHqHUmH5LDoP0mTip4nVUx7NEjQ6WoQAZ/MnFYljgGvfK1oeoo6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF71B152B;
-	Tue, 11 Mar 2025 10:29:48 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A6303F673;
-	Tue, 11 Mar 2025 10:29:35 -0700 (PDT)
-Message-ID: <053851d9-49e3-46f7-86ae-59dcee6ddaa9@arm.com>
-Date: Tue, 11 Mar 2025 17:29:13 +0000
+	s=arc-20240116; t=1741714197; c=relaxed/simple;
+	bh=/Yt5i5AF7ypc2L/ll5JCcPxRnvIMR77klsNKBNpcRpw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=JUsooKKbWRJfSVfd+7HzhDLKR8bd53JOhx81qqUKnivRUk0869F3cMwov4YItJ6qKUaN1b1pT2Kl23LeHEMkzXoJbnMDBEbDeFFsvqe1j5S8Y6SxVira9iA5Zf+7XTVdGk7TooZVO3/bt/aF1j4V2d6/SAIGhUv5wCBvj2IutJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=b+hQoqDR; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52BHTiUq2168609
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 11 Mar 2025 10:29:44 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52BHTiUq2168609
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741714185;
+	bh=/Yt5i5AF7ypc2L/ll5JCcPxRnvIMR77klsNKBNpcRpw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=b+hQoqDRQbLdsA11y4j6eyFnlaIyqzyWYexM3A26iD6ZZQtbE36gSvKKxCrJD/DEa
+	 kIyooRFMJt5fcNMA80Fvl9mVH42YOqApsZSGPSPyGIejiiANi/HSfFtUzmVw+vMhFf
+	 A/8vMb3hLmyPc1lBw8YGEE9kH1IrKSNW1NHvMzOBfJ5GAEAjo5Ty+PE22nGD1VdBbG
+	 JWjezLj/yzEo7KGOLzfgh46wSEVKkuBg/tHo034GfiKwRBTAisuU7sh223VOC1LsoM
+	 JIt4iNR0Nyg7C8COcNmYeDWiH2ZTNM3qbpXsrAHMDwu5j2CY0heFXjvZJ4Ikl08dqQ
+	 6csVSlj0u8XTQ==
+Date: Tue, 11 Mar 2025 10:29:43 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+CC: Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Gerd Hoffmann <kraxel@redhat.com>,
+        Juergen Gross <jgross@suse.com>, Jan Beulich <jbeulich@suse.com>,
+        Paul Durrant <paul@xen.org>, David Woodhouse <dwmw2@infradead.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BRFC_PATCH_resend=5D_x86/boot=3A_Drop_CRC-32_?=
+ =?US-ASCII?Q?checksum_and_the_build_tool_that_generates_it?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAMj1kXHZsk68kVA=dFbCb3yCrLJmHvn7HZ-qqSjjuQkdUf9_2Q@mail.gmail.com>
+References: <20250307164801.885261-2-ardb+git@google.com> <87bju7o65f.fsf@redhat.com> <3AD32490-F072-4C10-A732-E5BF1E303C43@zytor.com> <CAMj1kXHZsk68kVA=dFbCb3yCrLJmHvn7HZ-qqSjjuQkdUf9_2Q@mail.gmail.com>
+Message-ID: <988E1140-BF0F-49CF-AA0B-D05741148836@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/arm: Allow disabling Qualcomm support in
- arm_smmu_v3
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250310-b4-qcom-smmu-v1-1-733a1398ff85@gmail.com>
- <6f5f2047-b315-440b-b57d-2ed0dd7395f6@arm.com>
- <CALHNRZ87t7eXohTcpFnejFAPDsyE_1g0aPsASuQ7y5c_zxnLUw@mail.gmail.com>
- <c99db1aa-8b3e-4a8d-8cee-b9574686cb7f@arm.com>
- <CALHNRZ884fF4kpM_=N4d1vR27-9BOeaS7_cN_JhKN0S6MYQVQw@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <CALHNRZ884fF4kpM_=N4d1vR27-9BOeaS7_cN_JhKN0S6MYQVQw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 10/03/2025 8:15 pm, Aaron Kling wrote:
-> On Mon, Mar 10, 2025 at 2:52 PM Robin Murphy <robin.murphy@arm.com> wrote:
+On March 11, 2025 10:25:15 AM PDT, Ard Biesheuvel <ardb@kernel=2Eorg> wrote=
+:
+>On Tue, 11 Mar 2025 at 18:14, H=2E Peter Anvin <hpa@zytor=2Ecom> wrote:
 >>
->> On 2025-03-10 4:45 pm, Aaron Kling wrote:
->>> On Mon, Mar 10, 2025 at 7:42 AM Robin Murphy <robin.murphy@arm.com> wrote:
->>>>
->>>> On 2025-03-10 6:11 am, Aaron Kling via B4 Relay wrote:
->>>>> From: Aaron Kling <webgeek1234@gmail.com>
->>>>>
->>>>> If ARCH_QCOM is enabled when building arm_smmu_v3,
->>>>
->>>> This has nothing to do with SMMUv3, though?
->>>>
->>>>> a dependency on
->>>>> qcom-scm is added, which currently cannot be disabled. Add a prompt to
->>>>> ARM_SMMU_QCOM to allow disabling this dependency.
->>>>
->>>> Why is that an issue - what problem arises from having the SCM driver
->>>> enabled? AFAICS it's also selected by plenty of other drivers including
->>>> pretty fundamental ones like pinctrl. If it is somehow important to
->>>> exclude the SCM driver, then I can't really imagine what the use-case
->>>> would be for building a kernel which won't work on most Qualcomm
->>>> platforms but not simply disabling ARCH_QCOM...
->>>>
->>>
->>> I am working with the android kernel. The more recent setup enables a
->>> minimal setup of configs in a core kernel that works across all
->>> supported arch's, then requires further support to all be modules. I
->>> specifically am working with tegra devices. But as ARCH_QCOM is
->>> enabled in the core defconfig, when I build smmuv3 as a module, I end
->>> up with a dependency on qcom-scm which gets built as an additional
->>> module. And it would be preferable to not require qcom modules to boot
->>> a tegra device.
+>> >Ard Biesheuvel <ardb+git@google=2Ecom> writes:
+>> >
+>=2E=2E=2E
+>> >> it seems quite unlikely that this checksum is being used, so let's j=
+ust
+>> >> drop it, along with the tool that generates it=2E
+>> >>
+>> >> Instead, use simple file concatenation and truncation to combine the=
+ two
+>> >> pieces into bzImage, and replace the checks on the size of the setup
+>> >> block with a couple of ASSERT()s in the linker script=2E
+>> >>
+>=2E=2E=2E
 >>
->> That just proves my point though - if you disable ARM_SMMU_QCOM in that
->> context then you've got a kernel which won't work properly on Qualcomm
->> platforms, so you may as well have just disabled ARCH_QCOM anyway. In
->> fact the latter is objectively better since it then would not break the
->> fundamental premise of "a core kernel that works across all supported
->> arch's" :/
-> 
-> I'm not sure this is entirely true. Google's GKI mandates a fixed core
-> kernel Image. This has the minimal configs that can't be built as
-> modules. Then each device build is supposed to build independent sets
-> of modules via defconfig snippets that support the rest of the
-> hardware. Then what gets booted on a device is a prebuilt core kernel
-> image provided by Google, plus the modules built by the vendor. In
-> this setup, qcom-scm and ARM_SMMU_QCOM are modules and not part of the
-> core kernel. For a qcom target, arm_smmu_v3 would be built with
-> ARM_SMMU_QCOM. But then any non-qcom target that needs arm_smmu_v3
-> currently builds and deps qcom-scm. But there's no technical reason
-> they need that dep.
+>> Please leave the bytes in question as explicit zeroes if possible=2E
+>
+>Keeping the
+>
+>=2E =3D ALIGN(=2E + 4, 0x200);
+>
+>in arch/x86/boot/compressed/vmlinux=2Elds=2ES should be sufficient to
+>guarantee that the last 4 bytes of the file are zero, so it is quite
+>trivial to implement=2E However, I'm not quite sure what purpose that
+>would serve: could you elaborate?
 
-There *is* a dependency, because when ARM_SMMU_QCOM is enabled and both 
-ARM_SMMU=m and QCOM_SCM=m, arm-smmu.ko references symbols from 
-qcom-scm.ko, so the module loader literally cannot load and dynamically 
-link one without the other. As I said, you are welcome to do the work to 
-try to relax that dependency somehow. What you cannot do is turn off 
-ARM_SMMU_QCOM and functionally break ARCH_QCOM while still claiming to 
-support ARCH_QCOM, because there is only one arm-smmu.ko - the fact that 
-it's not built-in is immaterial, it's still effectively a "core" driver 
-because it is shared by many different platforms.
-
-Thanks,
-Robin.
+It means if someone *does* care it will be easier for them to adjust=2E
 
