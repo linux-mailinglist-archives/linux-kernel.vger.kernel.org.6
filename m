@@ -1,168 +1,122 @@
-Return-Path: <linux-kernel+bounces-556512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D7EA5CAF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:35:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58DBAA5CAF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7C0189D1B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:35:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9956017961A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22E8260391;
-	Tue, 11 Mar 2025 16:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D693326039A;
+	Tue, 11 Mar 2025 16:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="asDfZYqy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="27gEdoBE";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="asDfZYqy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="27gEdoBE"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WVl6VZFl"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F6C25F7A9
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9F0260378
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741710918; cv=none; b=PbwIG0IYB30dJqdYt51yp4tn+Q6BotTkC652N8ui01u57/B3xQpt9BLx6sGDo4YVL63EfwC5Qzat2/Iyjdg9Zd+n9F/u9SntaKVWpwq72ob9GhwAfzE5TNfrtfMOAR9GOTg1y+tQ0z3MxFdyJQOQaEJNMTAyn+izC3fAsQq9+Sc=
+	t=1741710943; cv=none; b=dHzEP9fEA7/8bzJ1K6/npHaTgD47PyC2RQ0R6WfjGGWUqSPt+2RGXqLxscl4QWxFAv9e/Jt0N3kaXPxchw0tsEcRVeyPPM8iC/LxwK3psRU6Thb7C8pi1CU5WMTvZ8jB3MMaE8v9tJsKwtBrsCaxv9VawTXJB2O4CQASW2/Puvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741710918; c=relaxed/simple;
-	bh=/svaRfiYI4lkEZDADjUZDmB8YqnexxNtUQwHPcBD4/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AAWhFa5Hwhq7YCkqeUxYRCwxXAW4OetuE4HDS9mYZu163VM466RLaElWq+m7n3mQQA7s5XTrsdz9eegJlz8XWOtCI0QTUlD551ZWT7r0CUxGtXlADGgYwpW6Nc6BxNsd/nxGVX1V8gKadbId0DJpg+X9XZPVWJORaQGitIik2BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=asDfZYqy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=27gEdoBE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=asDfZYqy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=27gEdoBE; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 96C4C1F7F8;
-	Tue, 11 Mar 2025 16:35:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741710914; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IqLnaJ6B5vJlBfOyqtzWOpIISZfLjXQhQVAEiGNZ9e8=;
-	b=asDfZYqyBkCyzr8CJ2e6ehtldUBJ0YHzjFOXMsjzXK72X/kD1U4ymb16vbtaY52At+Tceo
-	ffbDTrWZaj64yLfuHFrRwJIWyl3sWSvyS9VPvmq1OH2jg02c5/H1aBtVZkBxAzo1E5XcUb
-	wF47e2seMEHyC/y6Dx5Nmgje8fbeV7c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741710914;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IqLnaJ6B5vJlBfOyqtzWOpIISZfLjXQhQVAEiGNZ9e8=;
-	b=27gEdoBEv63Z8w2nop7f6TK06Gm+z8fi7Sft2rbkVqj1Crb1D0tevf4nMUaBNVoZjqe5eM
-	KiPmHOlii3Ax5ZBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741710914; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IqLnaJ6B5vJlBfOyqtzWOpIISZfLjXQhQVAEiGNZ9e8=;
-	b=asDfZYqyBkCyzr8CJ2e6ehtldUBJ0YHzjFOXMsjzXK72X/kD1U4ymb16vbtaY52At+Tceo
-	ffbDTrWZaj64yLfuHFrRwJIWyl3sWSvyS9VPvmq1OH2jg02c5/H1aBtVZkBxAzo1E5XcUb
-	wF47e2seMEHyC/y6Dx5Nmgje8fbeV7c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741710914;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IqLnaJ6B5vJlBfOyqtzWOpIISZfLjXQhQVAEiGNZ9e8=;
-	b=27gEdoBEv63Z8w2nop7f6TK06Gm+z8fi7Sft2rbkVqj1Crb1D0tevf4nMUaBNVoZjqe5eM
-	KiPmHOlii3Ax5ZBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 233CE132CB;
-	Tue, 11 Mar 2025 16:35:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fxP5BUJm0GeTAwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 11 Mar 2025 16:35:14 +0000
-Date: Tue, 11 Mar 2025 17:35:12 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Gregory Price <gourry@gourry.net>, David Hildenbrand <david@redhat.com>,
-	Yang Shi <shy828301@gmail.com>, lsf-pc@lists.linux-foundation.org,
-	linux-mm@kvack.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: CXL Boot to Bash - Section 3: Memory (block) Hotplug
-Message-ID: <Z9BmQH5EMpC1noCz@localhost.localdomain>
-References: <Z7TLwtQY3vGUw2bO@gourry-fedora-PF4VCD3F>
- <1b4c6442-a2b0-4290-8b89-c7b82a66d358@redhat.com>
- <Z7TswQbpPV590ADr@gourry-fedora-PF4VCD3F>
- <bda4cf52-d81a-4935-b45a-09e9439e33b6@redhat.com>
- <CAHbLzkqDQcrHLPzk8n0SMgkidH2ByCqdwfYXX=uBPQfOArWf8A@mail.gmail.com>
- <Z7d3vVdJ8UWU5oex@gourry-fedora-PF4VCD3F>
- <4ae838ee-b079-408e-8799-e9530ca50417@redhat.com>
- <0C5749C4-B3EE-4393-A8EA-AA56B399E9E3@nvidia.com>
- <Z9BdwFZ-ZRpMSabG@gourry-fedora-PF4VCD3F>
- <7A60A7B1-0BFF-45ED-8A11-06F0D5286723@nvidia.com>
+	s=arc-20240116; t=1741710943; c=relaxed/simple;
+	bh=YH94RY01QlOuT/Zb1gSEI5tCi3DWgTYhx5iGmc0LtB0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mt8BDd3CtMmOo/wgzPuet4t0jO9ZOnBo7YRYW8Vzp3/LAb3Sr+BPMmQu0NtthDHfEfM9kJKE5/TL0+kbkFxpURlUP5UdLJEe3MKpIbe4WZtlBoETvy9d8W4FXiW2mM5TiMI1xu4Jhu4eiBiK8U+5RvDUDpV3mLHF1srxlCLMC3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WVl6VZFl; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abec8b750ebso964531266b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:35:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741710939; x=1742315739; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YH94RY01QlOuT/Zb1gSEI5tCi3DWgTYhx5iGmc0LtB0=;
+        b=WVl6VZFlqAN/qjFaAsKi9FagPQR3/+0UUM0mUXJm6CblcVt0QZNhx8k1xrNM2q9NZa
+         5HDlHqvmTTkXEawRyY/EAGGIjug7PwLtfsuTq0eSneq4xALqzJpfhewSAt85Q3TLo2eh
+         LvFgVLECc7SpRAvDFIJ2rfMq/hC2C90z3GcxYQu5Fl7rOQWlQrty0cfOuYE+ltqSvzFl
+         /ELLGo/i8rciH4dCBGptlWJtL/o3AHf5DbW3SnuiJZWFgq8UV53jq7+scWmfKt9c6aDp
+         mBY4sWu72w4pa78iWBhSaHdktRfCe4rM/X2JW5yXq5kr5mil4+xX5UnQnRCl3q81uVJW
+         IeaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741710939; x=1742315739;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YH94RY01QlOuT/Zb1gSEI5tCi3DWgTYhx5iGmc0LtB0=;
+        b=ClxfLjCU3r6+LHlNgqbUguSo3AEByUm+mbiXHDcXpM7MlNo04/ccGu+YRxWZskDVK1
+         SKTbmYrtTlRO6eg+YWOQ6yUR0x1BK/GzUtQGR/vZSUiCqWZD0P5IbXPh+A+JRJGTZa4b
+         lBY4lUP93qmIyUCdk71fvUj9DOmAo4CRS9GzVeBQbVBANZrS++gZ0w39FRgbeV7bld0R
+         GJHpYPqG1NCofjxEVSFP28zc7JUjaVMw27HAA/4r/lwoTa0xkTE13BNtMWwaZTEUVViN
+         2GCPhLFAl9UpdrZqVPWq6YfUefYptfygDUdlGQJzI9nnFoLLGw4TQTS0nZ98G/NcO6ke
+         ikjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXz/osQmtSmw8m5MvUqwpKluAOjGg6V0FEk6SYBY1uiArBWNou7ohqziDqrxRbbEAKe7irRVewF3cykEHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3wTkDjIKYPBM3ijRs8ofmAuacyAv30MbzS6jqsrbGFxQsv8tx
+	ORFDOC+lexyBjVy8X4sZ6QBua82RfCgK3kMZosaJunTkVFVvNN57TlYygTyTzQNBZEQ6YLYyMBs
+	mkTR0tww3QGxUMUZ00AN+8YVYhBS04c5wFzCdfg==
+X-Gm-Gg: ASbGncvP5S61+1LSfI6MdiqXRvMP5BIg9VAOy57uUkFbEFDTM+3qaOp0ajpDJ93RL+F
+	gH74Qp3IZ5Qx7fF3nUeyR5fcER23bYfBwY20Njrz8ntZ6LzvM2JxgQUVj76aqHJ3WvYWIAxrFqj
+	Vu4k4la4KLFPEKHvo8eCeA98r7J/T9USF+PINC7+pu4gTfooa404GBpVk=
+X-Google-Smtp-Source: AGHT+IEBoqu1wBzPhkT+HTNtgDy4DjfvjEvB904ckPw4RxalBrogme2Qo3stOfn8n5UA7m3WWCDxBT8cx2o2ZwvNYGY=
+X-Received: by 2002:a17:907:74a:b0:abf:727e:aa6b with SMTP id
+ a640c23a62f3a-ac25273a8e5mr2505417466b.11.1741710938753; Tue, 11 Mar 2025
+ 09:35:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7A60A7B1-0BFF-45ED-8A11-06F0D5286723@nvidia.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gourry.net,redhat.com,gmail.com,lists.linux-foundation.org,kvack.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+References: <20250306162635.2614376-1-dietmar.eggemann@arm.com>
+ <CAKfTPtCfd_=gm7rsT_qBL8pw5uybEvYH4N2tvxpKndxxi4L7oA@mail.gmail.com> <8ddd7bb2-3a18-48b5-85c6-23263134308a@arm.com>
+In-Reply-To: <8ddd7bb2-3a18-48b5-85c6-23263134308a@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 11 Mar 2025 17:35:26 +0100
+X-Gm-Features: AQ5f1JrAwTzSCpMd7nF4ODmoDcm4mYknyHqx444OKOXCOY--d0hFRkmiII6Wv00
+Message-ID: <CAKfTPtD9DwWquFN6G8BXAii7HH5zJeEXiUjE8ma-eHdEqeHzdw@mail.gmail.com>
+Subject: Re: [PATCH] /sched/core: Fix Unixbench spawn test regression
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Hagar Hemdan <hagarhem@amazon.com>, linux-kernel@vger.kernel.org, 
+	wuchi.zero@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 11, 2025 at 12:08:03PM -0400, Zi Yan wrote:
-> Or a new option for memmap_on_memory like “use_whole_block”, then hotplug
-> code checks altmap is NULL or not when a memory block is plugged.
-> If altmap is NULL, the hot plugged memory block is used as memmap,
-> otherwise, the memory block is plugged as normal memory. The code also
-> needs to maintain which part of the altmap is used to tell whether
-> the memmap’d memory block can be offline or not.
+On Mon, 10 Mar 2025 at 16:29, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>
+> On 10/03/2025 14:59, Vincent Guittot wrote:
+> > On Thu, 6 Mar 2025 at 17:26, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+> >>
+> >> Hagar reported a 30% drop in UnixBench spawn test with commit
+> >> eff6c8ce8d4d ("sched/core: Reduce cost of sched_move_task when config
+> >> autogroup") on a m6g.xlarge AWS EC2 instance with 4 vCPUs and 16 GiB RAM
+> >> (aarch64) (single level MC sched domain) [1].
+> >>
+> >> There is an early bail from sched_move_task() if p->sched_task_group is
+> >> equal to p's 'cpu cgroup' (sched_get_task_group()). E.g. both are
+> >> pointing to taskgroup '/user.slice/user-1000.slice/session-1.scope'
+> >> (Ubuntu '22.04.5 LTS').
+> >
+> > Isn't this same use case that has been used by commit eff6c8ce8d4d to
+> > show the benefit of adding the test if ((group ==
+> > tsk->sched_task_group) ?
+> > Adding Wuchi who added the condition
+>
+> IMHO, UnixBench spawn reports a performance number according to how many
+> tasks could be spawned whereas, IIUC, commit eff6c8ce8d4d was reporting
+> the time spend in sched_move_task().
 
-One of the first versions of memmap_on_memory did not have the restrictions of
-working only per memblock, so one could hot-plug more than a memory-block worth
-of memory using memmap_on_memory, meaning that we could end up with memblocks
-only containing memmap pages.
+But does not your patch revert the benefits shown in the figures of
+commit eff6c8ce8d4d ? It skipped sched_move task in do_exit autogroup
+and you adds it back
 
-Now, we decided to go with only one memblock at a time because of simplicity
-and also because we did not have any real-world scenarios that needed that
-besides being able to have larger contiguos memory for e.g: hugetlb.
 
-If people think that there is more to it, we could revisit that and see how it
-would look nowadays. Maybe it is not too much of a surgery. (or maybe it is :-))
- 
-
--- 
-Oscar Salvador
-SUSE Labs
+>
+> [...]
 
