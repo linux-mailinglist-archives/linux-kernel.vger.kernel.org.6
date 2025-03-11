@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-555408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A232A5B701
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:57:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18ECFA5B702
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:59:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2B2D7A4F49
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:56:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE4F188D119
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5E61E8336;
-	Tue, 11 Mar 2025 02:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8E31E832E;
+	Tue, 11 Mar 2025 02:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="bZN/HkxA"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9E01DF25C;
-	Tue, 11 Mar 2025 02:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="mZnOCRZQ"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6AA1E47DD
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 02:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741661854; cv=none; b=TDM3wPcJb0R+oErwGftwGlc2ICQ912O7tiGvXORacpxktbDvO2RX5Ok7yAwCSogetj0NUZluVI3n9a4X7REgfqPg8RFxK6cX25LV0tK2sQDlbzE0XH9ytLZ0TD7baBjFb+2fd6rh8SxQcx5wFI/ln41qQ0x4dzajvPAYY90p+TE=
+	t=1741661952; cv=none; b=EXxTJ4jaZwuyys+rZz11V/0S15ANYMpKebK2U3TYQM321FMkJM/wIHvHx3nsh3xh5tyCAZnDKz/yiEPfUdN8X9TKn0Z26rnfd+gxPg4MS1R3MtetBc13bYU7qYNEZiwSituxYHUesWD97l3+rN5H+mi8UR/B79pfV6Z4y2A1zLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741661854; c=relaxed/simple;
-	bh=rwQqyDcDc+bMra20ugcrb8veDxxTFzOfBpewMmM2OsI=;
+	s=arc-20240116; t=1741661952; c=relaxed/simple;
+	bh=FU1Fda26sF6aIGkPyt3zuGoD7LdpQPSS+hCtJJEfPm8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g49JeEytmYZRR/zMjXPDiFPf2g1dPzXzhFlOHkHxVAa0Kgs55bMMz3gXXMRWfZZxxcne3AqdSxcLT9aPl4KjT+W2VMk4v41AhMvLNWBblrn/DpoqlkIfwOXe85/mZvJ25pzcxS5SHKfGa24JvgKlpjmn0yfwUGhoE8SVCiOjQ90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=bZN/HkxA; arc=none smtp.client-ip=1.95.21.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gb4bh/w3dBwzONWf6wxXWS5FuNrXthYayBr9VvxLgQHIsnHkuBi9XkrxYeIHl6NPVZcftV0zxXar1DPe8DYWwnTu9N6p/eaX94UnL0c7KCITouMoPmRjkM8GVeUqISuzBbt2mq+pfOpJRLa5lJzfUtO8my/+yflGjvF9rRBU8eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=mZnOCRZQ; arc=none smtp.client-ip=1.95.21.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
 	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=2UT5JWESlIqMK88Qm0fZJYn8VJFoNxpbvjgrdMRXN5E=;
-	b=bZN/HkxAw8pLxgZlkQiT5Uevk+4WAvRTFDqPITaWXNqhsjzQM27BtnVpAqTS+O
-	tUKdb3R6e3galk+evy/LBZmavjIEHvB6B55Z2DriV8CjulaoOsj2Hy3xklw0zMQJ
-	liWMaEFT+JF4XsDbDQ5vF/y3RqtwkOsdXEdJBeTRBDhX4=
+	Content-Type; bh=GSR8BTfCX9kMB6qOH0+UvwaxFfvP+jyFvyHmy/gj9gE=;
+	b=mZnOCRZQXcVe3qU42I6laEGda6LowRCDbbqby/VYSPkoIP7nfG6xvzU/5Jqa6z
+	pRCqMJYTRfo35c3f5zV+o/9Rtii1wOF3p/1FvJciRnfLqV26vVOhM21mslRJvhB4
+	Yt4vHL4RM0M1NetSflvuDl68Ia94puFgxeiaoP6+yAvgc=
 Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgCXbUZxps9nP+awAA--.43587S3;
-	Tue, 11 Mar 2025 10:56:51 +0800 (CST)
-Date: Tue, 11 Mar 2025 10:56:49 +0800
+	by gzsmtp3 (Coremail) with SMTP id M88vCgBnGk7Fps9n5JGvAA--.954S3;
+	Tue, 11 Mar 2025 10:58:14 +0800 (CST)
+Date: Tue, 11 Mar 2025 10:58:12 +0800
 From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, soc@linux.dev,
+	Arnd Bergmann <arnd@arndb.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Fabio Estevam <festevam@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH resend v3 1/1] arm64: dts: imx93: add ddr edac support
-Message-ID: <Z8+mcZw9yjOr3m/y@dragon>
-References: <20250225192159.2907320-1-Frank.Li@nxp.com>
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: imx: mark imx53_suspend_sz as unused
+Message-ID: <Z8+mxDdvtak/3SRs@dragon>
+References: <20250225201157.4190864-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,16 +58,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225192159.2907320-1-Frank.Li@nxp.com>
-X-CM-TRANSID:Mc8vCgCXbUZxps9nP+awAA--.43587S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVvedUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNROT+GfPpnP3ogAA3l
+In-Reply-To: <20250225201157.4190864-1-arnd@kernel.org>
+X-CM-TRANSID:M88vCgBnGk7Fps9n5JGvAA--.954S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JFyDGF4DWw1DAr18Zr4fKrg_yoWxtwcE9a
+	yrtw1xAr1fJr9Igw17Jan0yr40g3yDurn8Z34rJ3WakFyj9FZrZ3y8t34kX39agr42k3Wx
+	GF9Iqw1fCrZ5CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU00PfJUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBUNZWfPoGYkbQAAse
 
-On Tue, Feb 25, 2025 at 02:21:58PM -0500, Frank Li wrote:
-> Add ddr edac support for imx93.
+On Tue, Feb 25, 2025 at 09:11:52PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Unused 'static const' variables cause a warning when building with
+> W=1, and imx53_suspend_sz has a definition for this as an
+> alternative when CONFIG_SUSPEND is disabled:
+> 
+>     In file included from arch/arm/mach-imx/cpu.c:9:
+>     arch/arm/mach-imx/common.h:101:18: error: 'imx53_suspend_sz' defined but not used [-Werror=unused-const-variable=]
+> 
+> It's still referenced though, so mark it as __maybe_unused, so
+> the one user can address the dummy copy and other files that include
+> the header don't produce a warning.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
 Applied, thanks!
 
