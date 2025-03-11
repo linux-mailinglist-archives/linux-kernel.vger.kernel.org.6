@@ -1,103 +1,85 @@
-Return-Path: <linux-kernel+bounces-555809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0115A5BD10
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:01:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB55A5BD14
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:01:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 075833AC333
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:00:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54A213AE84E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3103E233120;
-	Tue, 11 Mar 2025 10:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IuIxAPvh"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C386B233737;
+	Tue, 11 Mar 2025 10:00:35 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B4B22FE06;
-	Tue, 11 Mar 2025 10:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4089822F389
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741687217; cv=none; b=oswb8XiziDywWTV22cRhjlKRMM5a3CfK/JBqTnHhrT6KXah5oFhZGIjbE46nO649aB/9mjYk1NDEwA3b4kYtJlfNGX8W55OXSf7U7sXXZP167p1GcfJUxjhLS423y3XowNIsh4Rw5/bzRYk855qUFsaUo1uyyM+3YuXvc+hdNYM=
+	t=1741687235; cv=none; b=SSrx8gujzjVLdt2sxDXUxBJSG5tsTHEAu9HOyN1Eb8Cu7wDuNMR+ge/mXAgdl/672nS6Ib+Q+K31OLYF4FKVNLTe/bg5T2T00iFhQGJy9iFCg2o7DpEkf46qJ5bdCec+gH7wvlnjD0Vks4ok+Uzn9jHFn6gGZSm2YAKdeG8T+Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741687217; c=relaxed/simple;
-	bh=Icw7d7CWXNiSHZD7IuvA/ABSL8G+50+g6+GEnsv3xLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qwdfUuynTj3NPZsVYZUJwLi9t+B5yE8azO2RakQBvLPoCNuccbMPgptKboXwLIquo1Tr3d+jWqdII/DpdU1GucAUbyR/k+0Xss/zEpEDBnkWQb8+1C5eBQ+FCr5U4EILabSvbWm9DA+YDuT6z4kV/IAxuxl2JlhTrQJqqFG1lZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IuIxAPvh; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741687212;
-	bh=7a/wC/Qp2ltlmIN9hTSEJZ5XPwuWZ4fbVoIgO94hJIw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=IuIxAPvhjJiV0AWj6TnbtjkMjVDfm9QHH3s6cnA7yKTcEiLebNxXWxn2J4sKIAtxa
-	 D1sSA6liQoCJqOq4IoHxbKxfjedS3I3UJABRFknj507hekGNrIMIciT+zm8Kv45Cw2
-	 CnL7xC0sgthb+AD0NIaUMvvcCzNpB11NCMkKGAAV7bKOa0xFjJlyeJoDdEuzG0p+/w
-	 qm+Kgt2tL0yuYGyCWxqrJRsMXSD8zLtkhq500Uwf2IsHykXHZ0HR3BQYSXIICmPfV/
-	 DgfkrNOODAsUTbqqIYfiZkT9jmJYWqNMuP2cVM0hH4iuUaqU8qHZgEd6U2MjHIybRl
-	 dXzngOLdd8Ajw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBq4r0Dt0z4x3p;
-	Tue, 11 Mar 2025 21:00:12 +1100 (AEDT)
-Date: Tue, 11 Mar 2025 21:00:11 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Stuart Yoder <stuart.yoder@arm.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the tpmdd tree
-Message-ID: <20250311210011.18b7ab80@canb.auug.org.au>
+	s=arc-20240116; t=1741687235; c=relaxed/simple;
+	bh=ZPEwqzWudHSJLpPww+0gDeglxepvNxQVsD7a4OJ5xBE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=YS8FCyIxwbgYSXPqnXxD4/Qz3hYZ2QAyy07PjW5PestI4IWbnIP8tqp9Y1ntriijEWzXepOnr/qMG8I67izEjMrT80NyUv6oRcPXI7pN2sFVZeEXvK2kLpGZaJRStC0KUfwjoJVc3Npvpe+hQnqHLShfKzB7nRqQhLd9jssPZa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.215.89])
+	by smtp.qiye.163.com (Hmail) with ESMTP id de30fc18;
+	Tue, 11 Mar 2025 18:00:20 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: kever.yang@rock-chips.com
+Cc: frank.wang@rock-chips.com,
+	heiko@sntech.de,
+	kishon@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	vkoul@kernel.org,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Subject: Re: [PATCH 2/2] phy: rockchip: inno-usb2: add usb2 phy support for rk3562
+Date: Tue, 11 Mar 2025 18:00:16 +0800
+Message-Id: <20250311100016.841525-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241224094240.3817261-2-kever.yang@rock-chips.com>
+References: <20241224094240.3817261-2-kever.yang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/D_mT90U0BpSUm/wCh_JjhLV";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCTkpPVkkfQ0xJGkpNGkMYTFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKTlVDQllXWRYaDxIVHRRZQVlPS0hVSktJT09PS1VKS0tVS1
+	kG
+X-HM-Tid: 0a9584a5ea7403a2kunmde30fc18
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NhQ6Hgw*NjJNCBkeHwk1Ny4w
+	LxwKCTZVSlVKTE9KTUNMSUlJS0xPVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
+	QlVKSUlVSUpOVUNCWVdZCAFZQU9ITDcG
 
---Sig_/D_mT90U0BpSUm/wCh_JjhLV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+> This adds vbus detection function control and make the below tuning
+> to enhance the usb2-phy SQ for RK3562 SoC.
+>  - enable pre-emphasis during non-chirp phase
+>  - set HS eye height to 425mv
+>  - turn off differential receiver by default to save power
 
-After merging the tpmdd tree, today's linux-next build (htmldocs)
-produced this warning:
+This is implemented by the rk3562_usb2phy_tuning function. Since
+this is missing, I think the commit message needs to be changed.
 
-Documentation/security/tpm/tpm_ffa_crb.rst: WARNING: document isn't include=
-d in any toctree
+Thanks,
+Chukun
 
-Introduced by commit
+--
+2.25.1
 
-  115be78c0bfe ("Documentation: tpm: add documentation for the CRB FF-A int=
-erface")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/D_mT90U0BpSUm/wCh_JjhLV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfQCasACgkQAVBC80lX
-0Gxn7Af/StVl4/bDguxrdHgziH4ZJ6/fyik4lrNsjgI8+iVdcci8zpsEsSNMcEQa
-0PtTZE5dFldjAxUrVrvBzc0AohscCLhSg5f2oi1D8cMNu1Fz/BSLuFJqtDbC6N7Y
-LbXe2AY1qZJ6RIo30B0RmsHvsgyACD3OM8Za+nspzf2GhpWWjKhnHl7BAL5d8bez
-TZsZe9peERcoxbBXEgshAqXHGLdmDijs90DupO44tzKaFiX9JhcoqBSi0I178iy1
-T4HCJDxkz1U7JpxLqjkYkVGC4YwMfJrDvtjdHygQO3e0Q2xAb8ieTDVQUa3NEioF
-Nf7y5kxFRLPabi9CrkeYaucLvafN7g==
-=mNxD
------END PGP SIGNATURE-----
-
---Sig_/D_mT90U0BpSUm/wCh_JjhLV--
 
