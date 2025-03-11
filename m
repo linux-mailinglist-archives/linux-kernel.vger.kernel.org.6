@@ -1,136 +1,253 @@
-Return-Path: <linux-kernel+bounces-556163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F3DDA5C1A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:51:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A317EA5C1A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25ACC188A0D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:51:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4D2C16A2A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10A725485A;
-	Tue, 11 Mar 2025 12:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631B2256C8F;
+	Tue, 11 Mar 2025 12:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="U3VQe8xV"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MFNKq0Db"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FEA2222C2
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1B72222D0
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741697463; cv=none; b=AjQR2uablCUE5oFpBaOygZHDJDbm9P+y8+7+hpYNuM0oXuPX3GlbtbPTt4hHVT4qeHGYTwhQyMqIK0AGs6V9t/zqo1LwMKdn9oxPCSoBuRoRELqob773ejFKlOJXcqZtjsm3Vcyme9fl0ofBklIA0YprgSouaz2deMtTEg23mFk=
+	t=1741697495; cv=none; b=Hz/mwMzqoE27LDumG3CP63F2WEHV8noEljM11XxlWgcXNaAb/vpvCGt+5HLlPrb6apBKmyMJsMBijvLxxY1JxYfbjdmP8/2aHcM3uy6ely6L+TY9hAEl4S6Ytyljrzo4hmlqhYFKVbtyM/gDfnI1TYqbbOhkVL8CBmQz/MTiQlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741697463; c=relaxed/simple;
-	bh=+TAU5vCBRg1301biu5ak8wIgH0pgOx3eRwTmb9b6WP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G/AwtlwvbX8aeXCSe4hfvqe8n3OsNFmYXIiM+sMVICTInCWdhIsf7Rk8keSml2ZbmYOLkFTOXZ5apzJDMZAWiUuCY1eo0BbkPJUXCZJsjTdM4Th+Zw66hpgZF/K8pNCrwDOTGJgi7MJWX+U/2ihnbUHpqWNJSAIijjToidsyOPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=U3VQe8xV; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-300fefb8e06so1868472a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:51:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl.com; s=google; t=1741697461; x=1742302261; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cM6S/I+r/Ly1JBEFG+Hw1zWZq5rloLNf5UiOb6Ru1Lo=;
-        b=U3VQe8xVJoAaKF8W1RRy1PySMCSJINVxgnEJ/KmL3ovo7aeRR27fvxdE55E6ZJjJ1F
-         2h4AOO1RGtGMZGhXlqS9hjVFjq++KchjwdpziVTCEvMJKsXPKeP/z19J+cfw9+3b3dW9
-         HqPzTahLDUwQAWKRD+CAujQgULBGby3J3NM6Skr9QlIhVveYgCaK9Frdmrc2vwQ8zUpO
-         Cykk9ZcgBQJ/0gApckSICDXP/Jf+ICmndF0zzX9jYrD4kHTxFZDObsaWbzeLoRiW3Yi1
-         y2m+OKE3+o98ueKnjIAokrE7dQsASfPVzAXt3W6DfEPGt46gmOCgF6riGg6XhdpuxD5c
-         54XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741697461; x=1742302261;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cM6S/I+r/Ly1JBEFG+Hw1zWZq5rloLNf5UiOb6Ru1Lo=;
-        b=FJPkhvIK9qI56YA31Xdsm+j/NAVC7haizNTt9ZprdwIhApv4xkmiMJR4RtIUgDCZ4l
-         pm/aAj0TRj/1XbHIzdOuGXZlQ0hs7+ECyWqndWvr9g0gJ4lfcOe0Qu1eZ4crZIyc6nKc
-         RQKXn2YWv5BucSb+JHqmKXQbrObOW/EBZlrUjscseAQ4DIpDZnM0ItlgSvK87Ygk7czl
-         2Cs/gYh/EVRw4IlmzRIGf5HHXu5bmq+45iHk2qrKe4/qMstybhJbGnbGjIcTeGga7uCE
-         RVdfCDVuo7lWLWtTJh4hRveGqpM9mrcZiRSTWkn9OAsMKVm31FZ2qZ8os5DEGLIlxuXs
-         4NYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnVtF/UBT3BTdD2Rrk85RvGI3mJI7C15wCwFYjx2dqrjmroTRHFz/KesQpURxAoJ81KhGdfAD1DUQs9bo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn5R9kjMR8yi8gsEE+mFHAyJEnzhYuqtXCU8FO7aIC+Tnf3BPo
-	FeBrEcpr1VVjA6dWvK0czn9onFHmyPQLRwRYy1fW5+2ZEx2pVVIn9ZJJBq43mG1wgWNJ9Gjt5wn
-	djnQ4QQyX3D8DEHjXWO8RXTgKjCOh4PKs6HTQJg==
-X-Gm-Gg: ASbGncvkUpC+8iABOqjo1ngvxqGF6xPpbK8Ps+cZv8V0aYWeIxQ5KXwOOfyKl1qdMEL
-	9WKjJkgMR+n2LgHPdxKXRGLmqNwWVK+LbgcoUBJgDNQc65LYFxujGBwd5fE+CSaJ8Chn7H2jeDA
-	sFJ45Vc2nF8snr0lD8Bao118/CvQ==
-X-Google-Smtp-Source: AGHT+IFinsjUmVMQLT2zwdJ4SFAabPxwf+IIVy37I6UpJF8Ii/4h255n8As1DyOfJHUeM9IApQ+FMpbagJsAZpctEOM=
-X-Received: by 2002:a17:90b:2e42:b0:2f7:7680:51a6 with SMTP id
- 98e67ed59e1d1-300ff0a4593mr4513741a91.6.1741697460991; Tue, 11 Mar 2025
- 05:51:00 -0700 (PDT)
+	s=arc-20240116; t=1741697495; c=relaxed/simple;
+	bh=KmF+4zJ8JclvHmT5HnU2BmRfsjBMEGKl3Que0NW7Qrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=DCrnA7ub/6DpJ1rys//SbebiekQEKWLXjwBWYFpaX+UxJ4CTLqMGz+S0exF4TXoJEPmTrdRrwGgUMdZx0AtMOyA3e6/MEcgJkiPT5CPuBw/S02Rn1bJubchC7J3hbn2rhOErD69Hu00Jws/ZuHdHXbGbTOLlGUTCJAtSgVe4aKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MFNKq0Db; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250311125125euoutp027274673743792d7e6e65d5d2de4bec8f~rwKJ9WHQX2463524635euoutp02L
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:51:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250311125125euoutp027274673743792d7e6e65d5d2de4bec8f~rwKJ9WHQX2463524635euoutp02L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741697485;
+	bh=dnf/ASi3GnbN2CMqDrsLAENksVAqTq9VEfIXEJdF0qQ=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=MFNKq0DbDnJpaAeGY534MN/NLlkvjA4WIZdsVd+Ws17qKfuDSeJAP+xSvNAr/GfVC
+	 4IZXDf7LxA2gBJ2JR5XSI7tGp7WH1pqlOCmVM69as0sVJrh6KCUFxB6o7+lajHIUAS
+	 XLrMKjV2FuYlJYDJKljnRPC3hMd7Wkwtt6QoloXY=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250311125124eucas1p1eb4b347dc2332b59b0675e5afc66b936~rwKJihjGb0432104321eucas1p1w;
+	Tue, 11 Mar 2025 12:51:24 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 4E.D2.20397.CC130D76; Tue, 11
+	Mar 2025 12:51:24 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250311125124eucas1p136fb8eb9d2cd360bd33093f45f2748f4~rwKJJjwmz0432304323eucas1p14;
+	Tue, 11 Mar 2025 12:51:24 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250311125124eusmtrp143ce184b585b792697612be27e56e84a~rwKJGHPZW0602406024eusmtrp1g;
+	Tue, 11 Mar 2025 12:51:24 +0000 (GMT)
+X-AuditID: cbfec7f5-e59c770000004fad-a6-67d031cc148c
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 17.9A.19920.BC130D76; Tue, 11
+	Mar 2025 12:51:24 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250311125122eusmtip2c4b2477809b08d989e40fa2aa9e27e25~rwKIA7LnQ2117321173eusmtip2M;
+	Tue, 11 Mar 2025 12:51:22 +0000 (GMT)
+Message-ID: <067bd072-eb3f-451a-b1c4-59eae777cf00@samsung.com>
+Date: Tue, 11 Mar 2025 13:51:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310170447.729440535@linuxfoundation.org>
-In-Reply-To: <20250310170447.729440535@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Tue, 11 Mar 2025 21:50:44 +0900
-X-Gm-Features: AQ5f1JqE5Y78tUwLtePj2OHVcXEnFp4En8VZ49aac9Rm2u-wJhTW-_RzlHHxcMo
-Message-ID: <CAKL4bV4MCTujqjkg5A4DYR5UoOUjYQ9zKpQsvrcGJQcbfznSDw@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/207] 6.13.7-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v1 1/1] bnx2: Fix unused data compilation warning
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jakub Kicinski
+	<kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>, Christoph Hellwig <hch@lst.de>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Rasesh Mody
+	<rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+	Dumazet <edumazet@google.com>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <Z8ggoUoKpSPPcs5S@smile.fi.intel.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAKsWRmVeSWpSXmKPExsWy7djPc7pnDC+kGxzZIm+x/MEOVovepulM
+	FnPOt7BYPD32iN3iwSJGi5WrjzJZXNjWx2pxedccNotjC8Qsvp1+w2jxZtsiZgdujy0rbzJ5
+	LNhU6rFpVSebx7yTgR67bzaweezc8ZnJY/LCi8we7/ddZfP4vEkugDOKyyYlNSezLLVI3y6B
+	K+PW/vlMBQc1Kub8XczcwDhPuYuRg0NCwERi7cSMLkYuDiGBFYwSu1/uZIVwvjBKPL3ZwwTh
+	fGaU+L6kC8jhBOs4t/kPG4gtJLCcUWL7ymiIoo+MEn+WbQZL8ArYSexo2cAIYrMIqEq8ObOH
+	HSIuKHFy5hMWEFtUQF7i/q0Z7CBnCAt4SnzaXAkSFhGIlri0fz4zyExmgU1MEpsebwfrZRYQ
+	l7j1ZD7YEWwChhJdb7vAdnEKGEk8/naHGaJGXmL72znMEIdO5pRYcTkPwnaRuPhrKiOELSzx
+	6vgWdghbRuL05B4WkGUSAu2MEgt+32eCcCYwSjQ8vwXVYS1x59wvNpBLmQU0Jdbv0ocIO0qs
+	vvSLHRKOfBI33gpC3MAnMWnbdGaIMK9ER5sQRLWaxKzj6+DWHrxwiXkCo9IspFCZheTLWUi+
+	mYWwdwEjyypG8dTS4tz01GLjvNRyveLE3OLSvHS95PzcTYzARHb63/GvOxhXvPqod4iRiYPx
+	EKMEB7OSCO/BK+fShXhTEiurUovy44tKc1KLDzFKc7AoifMu2t+aLiSQnliSmp2aWpBaBJNl
+	4uCUamBK6RLYudsyQM/j7Ipf30QVd5/49dlnYpnHuiP7rabf271jcpehduyb4PrJcp/Wfl/+
+	4MIsTmvDo58Zb3Xlm3ge7TD4++vOj+gL/2pfObySid6vvVpxZUedhe4Xnc0tb7adTCph2/On
+	7pRsYZG70+I/jWabn2Yc1xFgyk14tsJ3vVk6y7Xb2xKkFlxI0j0dLmsu5rjs5X2WCZKS905Z
+	X7Bfx1D7d2nermP7Iv9eWvy1bVOQxmz7O6FiJf8OuV86sH/Ww2XnZG6zXO1+kTKZ5cdPNsEi
+	sZRFPPqs8wo0LrGfnXdSxfV67PaQz272HTtubv0T/O0k+2uW7RGy9udeWXfKxV9q41ghclvs
+	W3736Ytmu5RYijMSDbWYi4oTAXxWW+TTAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEIsWRmVeSWpSXmKPExsVy+t/xe7pnDC+kG9x9yWix/MEOVovepulM
+	FnPOt7BYPD32iN3iwSJGi5WrjzJZXNjWx2pxedccNotjC8Qsvp1+w2jxZtsiZgdujy0rbzJ5
+	LNhU6rFpVSebx7yTgR67bzaweezc8ZnJY/LCi8we7/ddZfP4vEkugDNKz6Yov7QkVSEjv7jE
+	Vina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+PW/vlMBQc1Kub8XczcwDhP
+	uYuRk0NCwETi3OY/bF2MXBxCAksZJZ7du8wKkZCRODmtAcoWlvhzrQuq6D2jxNvTE9lBErwC
+	dhI7WjYwgtgsAqoSb87sgYoLSpyc+YQFxBYVkJe4f2sGUJyDQ1jAU+LT5koQU0QgWuJndx5I
+	BbPAJiaJhVNLQWwhgR3MEl8nlkLExSVuPZnPBGKzCRhKdL0FOYGTg1PASOLxtzvMEDVmEl1b
+	uxghbHmJ7W/nME9gFJqF5IhZSEbNQtIyC0nLAkaWVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmb
+	GIGRu+3Yz807GOe9+qh3iJGJg/EQowQHs5II78Er59KFeFMSK6tSi/Lji0pzUosPMZoCQ2Ii
+	s5Rocj4wdeSVxBuaGZgamphZGphamhkrifO6XT6fJiSQnliSmp2aWpBaBNPHxMEp1cDkKPJ2
+	6gSZrFXVfDNehF28sXzmh8LD4qWVat/txFa9n2r6U32rruRUy38796Te0l9Zu+HYpisfbd/t
+	Snp04U02/1HLfY62a21+zdqiasKr8t7m+7uceSH7vH/96I5odOLtkrzomnowjHNrTa6Nt0fZ
+	Wy71rQtdrim0Zdyykjh2XXLGp3sfkzqf2K7fy7th8osvc9Tcl6kqPH4x2eTs1rcLAxZMOWbI
+	cbz81gyGzU4VhTc25E3/d/S+ic2/FYmXDESqYyvL3rRlezwV9Sw4EJerJ+m08riYssjk0Ftm
+	VZPEOtt/tl0pW3zw3/NdtTPvlFz7uogjxK7s//0eEelHql265zu3/pJn91bcmLGlM8d4mRJL
+	cUaioRZzUXEiAN8HK4llAwAA
+X-CMS-MailID: 20250311125124eucas1p136fb8eb9d2cd360bd33093f45f2748f4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250305100010eucas1p1986206542bc353300aee7ac8d421807f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250305100010eucas1p1986206542bc353300aee7ac8d421807f
+References: <20250228100538.32029-1-andriy.shevchenko@linux.intel.com>
+	<20250303172114.6004ef32@kernel.org> <Z8bcaR9MS7dk8Q0p@smile.fi.intel.com>
+	<5ec0a2cc-e5f6-42dd-992c-79b1a0c1b9f5@redhat.com>
+	<Z8bq6XJGJNbycmJ9@smile.fi.intel.com> <Z8cC_xMScZ9rq47q@smile.fi.intel.com>
+	<20250304083524.3fe2ced4@kernel.org>
+	<CGME20250305100010eucas1p1986206542bc353300aee7ac8d421807f@eucas1p1.samsung.com>
+	<Z8ggoUoKpSPPcs5S@smile.fi.intel.com>
 
-Hi Greg
+Hi Andy,
 
-On Tue, Mar 11, 2025 at 2:09=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On 05.03.2025 11:00, Andy Shevchenko wrote:
+> On Tue, Mar 04, 2025 at 08:35:24AM -0800, Jakub Kicinski wrote:
+>> On Tue, 4 Mar 2025 15:41:19 +0200 Andy Shevchenko wrote:
+> ...
 >
-> This is the start of the stable review cycle for the 6.13.7 release.
-> There are 207 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+>>>>> Would that work?
+>>> Actually it won't work because the variable is under the same ifdeffery.
+>>> What will work is to spreading the ifdeffery to the users, but it doesn't any
+>>> better than __maybe_unsused, which is compact hack (yes, I admit that it is not
+>>> the nicest solution, but it's spread enough in the kernel).
+>> I meant something more like (untested):
+> We are starving for the comment from the DMA mapping people.
+
+I'm really sorry for this delay. Just got back to the everyday stuff 
+after spending a week in bed recovering from flu...
+
+>> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+>> index b79925b1c433..a7ebcede43f6 100644
+>> --- a/include/linux/dma-mapping.h
+>> +++ b/include/linux/dma-mapping.h
+>> @@ -629,10 +629,10 @@ static inline int dma_mmap_wc(struct device *dev,
+>>   #else
+>>   #define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)
+>>   #define DEFINE_DMA_UNMAP_LEN(LEN_NAME)
+>> -#define dma_unmap_addr(PTR, ADDR_NAME)           (0)
+>> -#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { } while (0)
+>> -#define dma_unmap_len(PTR, LEN_NAME)             (0)
+>> -#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { } while (0)
+>> +#define dma_unmap_addr(PTR, ADDR_NAME)           ({ typeof(PTR) __p __maybe_unused = PTR; 0; )}
+>> +#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { typeof(PTR) __p __maybe_unused = PTR; } while (0)
+>> +#define dma_unmap_len(PTR, LEN_NAME)             ({ typeof(PTR) __p __maybe_unused = PTR; 0; )}
+>> +#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { typeof(PTR) __p __maybe_unused = PTR; } while (0)
+>>   #endif
+>>   
+>>   #endif /* _LINUX_DMA_MAPPING_H */
+>>
+>> I just don't know how much code out there depends on PTR not
+>> existing if !CONFIG_NEED_DMA_MAP_STATE
+> Brief checking shows that only drivers/net/ethernet/chelsio/* comes
+> with ifdeffery, the rest most likely will fail in the same way
+> (note, overwhelming majority of the users is under the network realm):
+
+Frankly speaking I wasn't aware of this API till now.
+
+If got it right the above proposal should work fine. The addr/len names 
+can be optimized out, but the pointer to the container should exist.
+
+
+> $ git grep -lw dma_unmap_[al][de].*
 >
-> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
-> Anything received after that time might be too late.
+> drivers/infiniband/hw/cxgb4/cq.c
+> drivers/infiniband/hw/cxgb4/qp.c
+> drivers/infiniband/hw/mthca/mthca_allocator.c
+> drivers/infiniband/hw/mthca/mthca_eq.c
+> drivers/net/ethernet/alacritech/slicoss.c
+> drivers/net/ethernet/alteon/acenic.c
+> drivers/net/ethernet/amazon/ena/ena_netdev.c
+> drivers/net/ethernet/arc/emac_main.c
+> drivers/net/ethernet/atheros/alx/main.c
+> drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
+> drivers/net/ethernet/broadcom/bcmsysport.c
+> drivers/net/ethernet/broadcom/bnx2.c
+> drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+> drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
+> drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+> drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.c
+> drivers/net/ethernet/broadcom/genet/bcmgenet.c
+> drivers/net/ethernet/broadcom/tg3.c
+> drivers/net/ethernet/brocade/bna/bnad.c
+> drivers/net/ethernet/chelsio/cxgb/sge.c
+> drivers/net/ethernet/chelsio/cxgb3/sge.c
+> drivers/net/ethernet/emulex/benet/be_main.c
+> drivers/net/ethernet/engleder/tsnep_main.c
+> drivers/net/ethernet/google/gve/gve_tx.c
+> drivers/net/ethernet/google/gve/gve_tx_dqo.c
+> drivers/net/ethernet/intel/fm10k/fm10k_main.c
+> drivers/net/ethernet/intel/fm10k/fm10k_netdev.c
+> drivers/net/ethernet/intel/i40e/i40e_main.c
+> drivers/net/ethernet/intel/i40e/i40e_txrx.c
+> drivers/net/ethernet/intel/i40e/i40e_xsk.c
+> drivers/net/ethernet/intel/iavf/iavf_txrx.c
+> drivers/net/ethernet/intel/ice/ice_txrx.c
+> drivers/net/ethernet/intel/ice/ice_txrx_lib.c
+> drivers/net/ethernet/intel/idpf/idpf_singleq_txrx.c
+> drivers/net/ethernet/intel/idpf/idpf_txrx.c
+> drivers/net/ethernet/intel/igb/igb_ethtool.c
+> drivers/net/ethernet/intel/igb/igb_main.c
+> drivers/net/ethernet/intel/igc/igc_dump.c
+> drivers/net/ethernet/intel/igc/igc_main.c
+> drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
+> drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+> drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
+> drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+> drivers/net/ethernet/marvell/skge.c
+> drivers/net/ethernet/marvell/sky2.c
+> drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> drivers/net/ethernet/mscc/ocelot_fdma.c
+> drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+> drivers/net/ethernet/qlogic/qla3xxx.c
+> drivers/net/ethernet/rocker/rocker_main.c
+> drivers/net/ethernet/wangxun/libwx/wx_lib.c
+> drivers/net/wireless/intel/iwlegacy/3945-mac.c
+> drivers/net/wireless/intel/iwlegacy/3945.c
+> drivers/net/wireless/intel/iwlegacy/4965-mac.c
+> drivers/net/wireless/intel/iwlegacy/common.c
+> drivers/net/wireless/marvell/mwl8k.c
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.13.7-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.13.y
-> and the diffstat can be found below.
+> include/net/libeth/tx.h
 >
-> thanks,
->
-> greg k-h
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-6.13.7-rc1 tested.
-
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
-
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
-
-[    0.000000] Linux version 6.13.7-rc1rv-g2fe515e18cba
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20250207, GNU ld (GNU
-Binutils) 2.44) #1 SMP PREEMPT_DYNAMIC Tue Mar 11 18:49:13 JST 2025
-
-Thanks
-
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
