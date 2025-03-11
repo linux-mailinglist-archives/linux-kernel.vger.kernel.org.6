@@ -1,102 +1,129 @@
-Return-Path: <linux-kernel+bounces-555643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ED4BA5BAB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:20:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63366A5BAB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:20:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61D5A1896289
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:20:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 263F918964BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABAE224B07;
-	Tue, 11 Mar 2025 08:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1836226CF0;
+	Tue, 11 Mar 2025 08:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPTHEgBE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oxJHnjs0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8101E7C2B;
-	Tue, 11 Mar 2025 08:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547FF1E7C2B;
+	Tue, 11 Mar 2025 08:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741681226; cv=none; b=Hpg04h+VN/kWjTsqkE91oe6Qcayh93DiZWGFDNy7YKJsYaN00owM2Jj5TnxEiaEYC+TnkLKtNogW7yZJUyrAf//ihOO6lQFRnX0GZ7STdm/1MGhEQp8of4407RaQUpzgesYBbhEaXOVntwsqn0bDzkGjZR+IcqeSwQRmMM/h19c=
+	t=1741681229; cv=none; b=t1x97OMY38ou7zpppIfPLW3m7oHs1QqqXC2YX71bgAZY8zVihsadbRsLcd5NVLoFKQDN0RGVX0mNFN995EhFiv1XED33BAN7hqbQZz1T2otFs6g59mvr0kWnNIsg8bF7/XY6gYaC23P1wwCBppmybBCv7HiRA/GCTDYEouFzch4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741681226; c=relaxed/simple;
-	bh=gaGVYX0NNOaIcaCq6wPZv9fxpNdPOdTR8URu/LPwxus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+TGFLUClvDa3XKL6Gbx1jOBWpGfGFPT35BwWY5IGV5UXkr77A9hOnuxMABSnQdmVidxii6pwYKd8FxFwhn2EpfIc2APxubtqb3FTBymeTrogPQ9egvKZS07dzwLT2qxfP4fuW/vZ6V/DW2DT1d66/rjCLPRir0ZeD5vUKvVfSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPTHEgBE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E64AC4CEEF;
-	Tue, 11 Mar 2025 08:20:25 +0000 (UTC)
+	s=arc-20240116; t=1741681229; c=relaxed/simple;
+	bh=Liygq0XgfhMoR0han+8fEYkAEuEyqeTxQkV/x/4uT+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gL1apjNsHRxBlDdsIc/B0vDDW0Wl6WCBzMt76/wvilFpiWR8zYAthmNu9y+Pmr8rpCudI2GoQx8jjNmhHiPJXr6rXQ8WcTZfw4nL9/GvIdGMHK0CgNCJg9iVAxm/Pd7lOcszrs9KyNFK89ryWSX3SvXQP3mvlGq5YEYz6HtSa9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oxJHnjs0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FE43C4CEED;
+	Tue, 11 Mar 2025 08:20:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741681225;
-	bh=gaGVYX0NNOaIcaCq6wPZv9fxpNdPOdTR8URu/LPwxus=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DPTHEgBEaigvAitgVNeQ5F6kP2BP+sjQkfPwZ+DWbHyC//fBTuj280Ds7/H5uor4d
-	 y+AMnjeIRniwEOdALym7aNeBUhyrdbQmVzbN8MNmVTUoHLIhbIS6YmBlcXQls2XubU
-	 fUnx1tygHDYNSX5khc094R3JZV5FQnMhwrKjM/o9q5MOcn6wTTtJ9Pm2nBPJLqL7Kz
-	 aIemnq76eJpcetTu9JAS0kVRZchzJUD129eGUBbLB/ETZt/QWF8hBqcMsSZ8ULNrbb
-	 u9F6WaICJVWRvsg6kshqgK8BP7xEDURWa/kDsbNU2UAiI1zRzhVsV9n0SgNXoKcLNx
-	 E3ZyD2tAqmEFg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1truqa-000000004FQ-16rC;
-	Tue, 11 Mar 2025 09:20:20 +0100
-Date: Tue, 11 Mar 2025 09:20:20 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH 0/3] USB-Serial serdev support
-Message-ID: <Z8_yRFZrb6WFp5Y2@hovoldconsulting.com>
-References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
- <20241001072453.3xv5sqxaj4zjprnz@pengutronix.de>
- <2024100109-maker-ravine-7c65@gregkh>
- <20241028225702.tdtfqzhm335vvuv5@pengutronix.de>
+	s=k20201202; t=1741681228;
+	bh=Liygq0XgfhMoR0han+8fEYkAEuEyqeTxQkV/x/4uT+g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oxJHnjs0b3dO/j7O+4GF59p6nmbracwB+SwUGw9Ls5Nu67vMXePv5rZoFOaI8KOrT
+	 zYBX3hntsy0JrPQvDpbjd3l2k00aJsI1Zpxtaur/gL7ax5NUup/rYnVOvjpjKoF9KF
+	 XvXoE2h+VLmN+dwVQe7C5qYga1NvdDDGinTY3kTI0ceX9OUarVyz5xw3dKN6B8alVm
+	 9WU+WXHOfdnojIVWhg1QCwI6v4tOXyOc8SfBTGLdUii2ySec8LDFLRdtgjfaz32WpU
+	 kqccNaIMxiQuI5/W6kqHYz/5rHEwwPkMSk57Jgby4wU2TVoKAbcXStvEEgbCk4agOG
+	 PUvJmNoSKs/XA==
+Message-ID: <dc772e9e-632f-4c38-a654-833df0800ee1@kernel.org>
+Date: Tue, 11 Mar 2025 09:20:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028225702.tdtfqzhm335vvuv5@pengutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: thermal: generic-adc: Add optional
+ io-channel-cells property
+To: Svyatoslav Ryhel <clamor95@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250310075638.6979-1-clamor95@gmail.com>
+ <20250310075638.6979-2-clamor95@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250310075638.6979-2-clamor95@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 28, 2024 at 11:57:02PM +0100, Marco Felsch wrote:
-
-> On 24-10-01, Greg Kroah-Hartman wrote:
-> > On Tue, Oct 01, 2024 at 09:24:53AM +0200, Marco Felsch wrote:
-
-> > > gentle ping as this is series is two months old now.
-> > 
-> > And it was rejected as serdev does not support hotplug which of course,
-> > usb-serial does.
+On 10/03/2025 08:56, Svyatoslav Ryhel wrote:
+> This implements a mechanism to derive temperature values from an existing
+> ADC IIO channel, effectively creating a temperature IIO channel. This
+> approach avoids adding a new sensor and its associated conversion table,
+> while providing IIO-based temperature data for devices that may not utilize
+> hwmon.
 > 
-> I hoped to get some feedback on my answer [1]. Regarding hotplug
-> support: serdev _requires_ some sort of firmware like OF (not sure if it
-> does work with ACPI too). That said, if serdev finds no firmware a
-> fallback is provided to the standard serial handling.
 
-It's devices going away not being supported which is the main concern.
-The serdev ttyport implementation does not implement hangup() which is
-used for serial port tear down.
+You got comments from Rob few days ago to which you did not respond.
+Instead you decided to send next version, which hides the previous
+unresolved discussion.
 
-> The firmware could either be added directly by the platform OF file or
-> via OF-overlays. By making use of overlays we could gain some kind of
-> hotplug: Once a usb devices was detected and the driver has an
-> overlay, the overlay gets applied and the probe continues, like we do it
-> for PCIe devices now [2]. For devices which don't have a registered
-> overlay the standard usb-serial setup is done by exposing the serial
-> interface to the userspace.
+This patch does not look necessary based on earlier discussion.
 
-Then it would also be nice to have a way to describe hotplugged devices
-on the fly, and overlays could indeed be used for that. But that's a
-separate story.
-
-Johan
+Best regards,
+Krzysztof
 
