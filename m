@@ -1,116 +1,145 @@
-Return-Path: <linux-kernel+bounces-555969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A8CA5BEE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:25:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD16A5BEE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:26:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC9F1887E2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:25:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E708C3AAA45
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BC2254AE6;
-	Tue, 11 Mar 2025 11:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94167254854;
+	Tue, 11 Mar 2025 11:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UnCvqARG"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q1OP3A74"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D64253B5D;
-	Tue, 11 Mar 2025 11:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90DE253F30;
+	Tue, 11 Mar 2025 11:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741692325; cv=none; b=c+BJXon8KH/v+2oOrh4WM+2ZmpODhG/Dz3O6V77Vj7Gc+Lyl/Ux7Ufg29FdMU4lj4oS63vpOi+noBcnBnd+HADth8tSls324Ir+k2h+PegX5g6GDohVhsN/y32kav1Ws08ch98GAAXHpK8yACxIS8aIZLwxOPHsB8HIJGufJ47s=
+	t=1741692335; cv=none; b=G9IU7V7CnH63PqqrXQcRF2BKFvU1khINfKR+uKh5j80UdqewjwE47otsJXkiZ412CN4vmbRC2z5G1JTthZ4QICvYX1/kjbmAI10sBEOiLFAPi5ytEQfaGc06n0nOzsi3aSm4Nykw8A4dWnPn+0kIA5nj6u99YIwpgNQR50Makxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741692325; c=relaxed/simple;
-	bh=uZ7Z+RehYAPUxpL5pUcapSesQqtDYnmhf5cqsLhYGO4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qiB47tEROw/ZHmQIfhHqtIyefK6eFMv3435a9nPWdKMd9txr0oyIaYaKSmA6wVBuMdFwMsv+tbDiRsKMInYk2t3N5aIQYf0qj57WSXuLfFztI4UrWP54+MwWbdO9MF0uMHHnNxDaCJlMXDW5mJizsDYjpYrBUBXh2kmvz884j88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UnCvqARG; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22409402574so11109055ad.1;
-        Tue, 11 Mar 2025 04:25:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741692323; x=1742297123; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uZ7Z+RehYAPUxpL5pUcapSesQqtDYnmhf5cqsLhYGO4=;
-        b=UnCvqARGYsyj6g5rm+NroaRgICgwVFmXARLnIGuewyzRTZqWLgVMetJXN8opQyQsKC
-         J2WpH3u8mP1O4omrAnXE19f9US1YlWhe11gUWPUah+jmmWFU8eovElPmEzPYnlH1XbZ3
-         948ypr+Nai7me7TPqUOS4q8ubwdJGv5JwtkJyFn73eyqpgZNb3b2DPkEli7K1TWF5SKw
-         hdQo8Jwnn+YbEnqN08lzC6afFwNW6xszE73T557vnD+EP4KEvTkX0DB72AWRN9omsLpa
-         tbpFM84BqQ9M+8oim6kcdnNJZ5+cufiuwmMe+r7eMCAedll3SUaQm7l9hC55tofj6knL
-         vr+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741692323; x=1742297123;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uZ7Z+RehYAPUxpL5pUcapSesQqtDYnmhf5cqsLhYGO4=;
-        b=AmMNryF9b90WjKH1nItiRo6MTlKs3hzBum4kEppCGarrj/pUlM0nt6FoPWQKBgdXXJ
-         D8AU+4T81cKzlCAXTrZXIk2pQWEuHBMd3FtTRhulpLQD/X2Vh7YLg/OpZ6x2dG1hvNq6
-         msRIAF1G1MExE8VBxPIi0vketfrrDfXuPK/rXsf5cOUkmIhmD0TyA075PadtnN2nkr7A
-         JEBO3KvX/wqVcZfjwX5PBrO1p/EwjSbE7RG7DeVufwBVZp8ZLbsOj98Zf8KKTQZJsKa6
-         MY/kgCMEKfvT7PQznFr9gqA98JA68Wal46R6FqC36cfr27J2FJ8RZMKWMVFo08pAYrAL
-         PUYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdOyHAaByHDK4YKvF+4Pp4f0PgJy/vHBomP5R7oINK9V3wj1LWeL9k1gzzydQVsemyv9fzJWjs2iiFKUk=@vger.kernel.org, AJvYcCUqBiGwnqgk9bvwytL1J/8AipcCRDkR+1usp2i37/cMdliT9bX8as1CwYvw0SUEX+RjvpQgvYOaPpJoi9mtvfk=@vger.kernel.org, AJvYcCV++9E0jlTr2GixSflyyxR3uE6LpIEgWB/MmeB9UFln7khcieodJOZA9JHViKY6TAI1vuVd3V2ZCaxO1o2E@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc7yUe0fX8vpehEI9Gltx9/qBV2UFVQ9YbZGMuCF3F23Gofwh2
-	nDJ23gi63xh6JGVmR8hF5ZZoHhPs/R7iYT455ZqHIf++gvlihJIi6Fjhvgg2I1L5c05yZ98Q5UF
-	26aBqUa45GfNNnYV4eG5pBbQQA3g=
-X-Gm-Gg: ASbGncvhNZVlnxi0snJtk51phY8SUxcYvkHImsA5880AfYdif6vLgPZd3idtj/KDFlc
-	RMhbQfPptPQCvQlnyRChJ5XSR5ptq+qPcuX6d/1UBM3m9xhNVdJzdr4j0Y1VpRUVObfF0Az7ghm
-	8w/nx9C2rSyj+jTB0MvggAwd9N4g==
-X-Google-Smtp-Source: AGHT+IFerWSSRnD9v86YeC/80CVF/PDb0ihirl1213NdB/dcv5ANfOwY/e+8Y9lVWiGeMvAc9tn8g0ooXf5XvUlUiWQ=
-X-Received: by 2002:a17:902:d48d:b0:220:e98e:4f17 with SMTP id
- d9443c01a7336-22541ea9638mr71862085ad.2.1741692322799; Tue, 11 Mar 2025
- 04:25:22 -0700 (PDT)
+	s=arc-20240116; t=1741692335; c=relaxed/simple;
+	bh=u7/57dEhCOj1fmmaKRl5QbfzyvBTbMFEOAtmTjv3mFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/wOCrBpeMnLisQxTe+tu7eHfHsLNaRzKwJpyvrKcWyueXvVghFMqEG03p5DQkpmyY+C4t3aJIvFd5tFfkYyUPoPXAEUpm70y6OsqLnTF3vM/fbVJpNz99kSb19xSD4krh4W39zIUDJL1LsuZBggO3K7Jue1kyQZt2rhfH2Mcf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q1OP3A74; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B892C4CEE9;
+	Tue, 11 Mar 2025 11:25:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741692335;
+	bh=u7/57dEhCOj1fmmaKRl5QbfzyvBTbMFEOAtmTjv3mFE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q1OP3A7401f/VGQmUjmvgu2wB5YvkLI+XIG0VwfoHPFeWlVUVX6MrInSjO97KesKh
+	 l0/wX7Bkdws8cExOTP/Mv1Ozjkrz/74V6Lac0slQqeIBa4kSSA5/jm6yyDASxqdvtK
+	 nn9+3XNBsmvxbr0WrhOyfg+KdmBFiDVda3NjsS5k=
+Date: Tue, 11 Mar 2025 12:25:32 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Ron Economos <re@w6rz.net>
+Cc: Jon Hunter <jonathanh@nvidia.com>, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 5.15 000/620] 5.15.179-rc1 review
+Message-ID: <2025031119-capitol-wrongdoer-5598@gregkh>
+References: <20250310170545.553361750@linuxfoundation.org>
+ <65b397b4-d3f9-4b20-9702-7a4131369f50@rnnvmail205.nvidia.com>
+ <07b8296d-ad04-4499-9c76-e57464331737@nvidia.com>
+ <a97e013b-67cd-4db6-bb65-ba0319a4f38c@w6rz.net>
+ <2025031138-disprove-walmart-d238@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-rust-path-remap-v1-1-021c48188df1@weissschuh.net>
- <CANiq72mcpVL1YXyDFi-PrbQ2Uh0WUA_VNqLZaOeqQnpY5HnX8Q@mail.gmail.com> <CAK7LNATKK4bZCY7izDdEzNcUu60wjH57TK8ESM50QhUG2a4bRw@mail.gmail.com>
-In-Reply-To: <CAK7LNATKK4bZCY7izDdEzNcUu60wjH57TK8ESM50QhUG2a4bRw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 11 Mar 2025 12:25:10 +0100
-X-Gm-Features: AQ5f1JpdJuaCqSDi_HshZJxMo3vvlLqCilD4cHL1BkIjDHJ8ZAF5-Ex-MPIJtas
-Message-ID: <CANiq72n9Wo6Mf7sVfm2akqiKknGNeTegiMesNtHzbHhWS4iQTQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild, rust: use -fremap-path-prefix to make paths relative
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Ben Hutchings <ben@decadent.org.uk>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Urgau <urgau@numericable.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2025031138-disprove-walmart-d238@gregkh>
 
-On Tue, Mar 11, 2025 at 12:04=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
->
-> GCC manual mentions the below about the -fdebug-prefix-map=3Dold=3Dnew
->
-> "It can also be used to change an absolute path to
-> a relative path by using . for new.
-> This can give more reproducible builds, which are location
-> independent, but may require an extra command to tell GDB
-> where to find the source files."
->
-> I guess "the extra command" might be a bit annoying.
+On Tue, Mar 11, 2025 at 12:12:52PM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Mar 11, 2025 at 03:38:51AM -0700, Ron Economos wrote:
+> > On 3/11/25 03:11, Jon Hunter wrote:
+> > > Hi Greg,
+> > > 
+> > > On 11/03/2025 10:02, Jon Hunter wrote:
+> > > > On Mon, 10 Mar 2025 17:57:26 +0100, Greg Kroah-Hartman wrote:
+> > > > > This is the start of the stable review cycle for the 5.15.179 release.
+> > > > > There are 620 patches in this series, all will be posted as a response
+> > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > let me know.
+> > > > > 
+> > > > > Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
+> > > > > Anything received after that time might be too late.
+> > > > > 
+> > > > > The whole patch series can be found in one patch at:
+> > > > >     https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.179-rc1.gz
+> > > > > 
+> > > > > or in the git tree and branch at:
+> > > > >     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> > > > > linux-5.15.y
+> > > > > and the diffstat can be found below.
+> > > > > 
+> > > > > thanks,
+> > > > > 
+> > > > > greg k-h
+> > > > 
+> > > > Failures detected for Tegra ...
+> > > > 
+> > > > Test results for stable-v5.15:
+> > > >      10 builds:    10 pass, 0 fail
+> > > >      28 boots:    28 pass, 0 fail
+> > > >      101 tests:    100 pass, 1 fail
+> > > > 
+> > > > Linux version:    5.15.179-rc1-gcfe01cd80d85
+> > > > Boards tested:    tegra124-jetson-tk1, tegra186-p2771-0000,
+> > > >                  tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+> > > >                  tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+> > > >                  tegra210-p2371-2180, tegra210-p3450-0000,
+> > > >                  tegra30-cardhu-a04
+> > > > 
+> > > > Test failures:    tegra194-p2972-0000: boot.py
+> > > 
+> > > 
+> > > With this update I am seeing the following kernel warnings for Tegra ...
+> > > 
+> > >  WARNING KERN gpio gpiochip0: (max77620-gpio): not an immutable chip,
+> > > please consider fixing it!
+> > >  WARNING KERN gpio gpiochip1: (tegra194-gpio): not an immutable chip,
+> > > please consider fixing it!
+> > >  WARNING KERN gpio gpiochip2: (tegra194-gpio-aon): not an immutable
+> > > chip, please consider fixing it!
+> > > 
+> > > The above warning comes from commit 6c846d026d49 ("gpio: Don't fiddle
+> > > with irqchips marked as immutable") and to fix this for Tegra I believe
+> > > that we need commits bba00555ede7 ("gpio: tegra186: Make the irqchip
+> > > immutable") and 7f42aa7b008c ("gpio: max77620: Make the irqchip
+> > > immutable"). There are other similar patches in the original series that
+> > > I am guessing would be needed too.
+> > > 
+> > > Thanks
+> > > Jon
+> > 
+> > Also seeing this on RISC-V.
+> > 
+> > [    0.281617] gpio gpiochip0: (10060000.gpio): not an immutable chip,
+> > please consider fixing it!
+> 
+> Ugh, I think I know what that is, a patch slipped back in again, let me
+> go dig...
 
-Ah, so you mean that could be reason for not doing it for the debug
-case -- I see, thanks!
+Found it, I'll push out a -rc2 later today with the fix.
 
-Cheers,
-Miguel
+thanks,
+
+greg k-h
 
