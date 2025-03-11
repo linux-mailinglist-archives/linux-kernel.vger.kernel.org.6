@@ -1,238 +1,172 @@
-Return-Path: <linux-kernel+bounces-555840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6DBA5BD55
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:13:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E392A5BD6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:15:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C63118986C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:13:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99627188CB7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E397236424;
-	Tue, 11 Mar 2025 10:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF20123535A;
+	Tue, 11 Mar 2025 10:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Y74rpTBl"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2054.outbound.protection.outlook.com [40.107.93.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Be+vbEiM"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9C0236437;
-	Tue, 11 Mar 2025 10:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741687919; cv=fail; b=U1jpt6yNpkcn3V9lwA7mjOebRnuPOtdy7W26TDqOuBcmky4ueZ3JkrXBUYrYlCGk4VXn9U/3kWJ3HypNehucb/wZdbHgY/XH3vfJHM38Vne/e8kPu3NxUULNVL6IHkm9vR26giENGA/tu3ba15O38+qeqYRRRGnJYLfV1kCNoP0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741687919; c=relaxed/simple;
-	bh=CIJSq1gtg9iacBPDz+zh5W/njrBxK7skb30O4bW6ze4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fo/E+3IGTFaa1CsYbsIqL1NVBIeRF+v3X0oQvgzg/tI0PlqsiidkNYvJnMMvUuOML2FTeCaxeqtTsbag4Q8y3KbQksZ62/LtUfxo8NZTKkFtGnAA+d/z69xtRWdRgWoIJIGydQ9Irng39J+EQlNUg4GjtS3zOld7DOIqxdEfrig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Y74rpTBl; arc=fail smtp.client-ip=40.107.93.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MqCySFNYPEhhZqraKGmByg5PY8QtnLdJx1j/vF0u514hP8HRz2BcduJA9HJqDy/eCzbSKL1yeknN3L319Tt5JHN0sigO40kVcPHujIzJME/Oi6p2Rlz0gj+93QoU8kLKS+BOxtr7Agl4ZYy+Kk+QZsUM5nn9KHQUmYT/92IedgmQXonDArnIhwerk1pplDJcoB72JEyknchGpaQkCOR5cKN1lN/1fmnBqEGg7vq1M8x+UPTqBgo5gfCbo+llR8NQpFbXEm2WpYPs4+K19NmAT1DthLRrek8EvwYR/48jBK6bb97BMeESFeJ/TDJRCKRosx6mWsYfuEnImRVSuwCr+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vJ5LkLN2t7aHZX8yiclY2/akbv1YkxB5V9WvAqbDNAE=;
- b=adKP4kVLwICZ9lozW1yM5qNNZo80E+Z4/C45QRteUBDDju4IXa9oa8wCALgry2EszbC6WeXBx4lEeTFm/c9uCgQ4Gq3vknUqw8U7/oGv6lcmxXtUroTW3S7VtJSHpwKV2qcpBqJte0DIlREZMVJcftRSdFHzcvwbLM+pfbAoAQtgfKc5aIvxhdpGe2f8ezV+khAvI6AFl9fQZyDjWEAjWYGH3ui0qXpKm4HwvGAtdbH7FQp4bg/NyBheM/YO6N3gciDUWPz7zjdeM1hzTmGFL/ewvCOP+7zDFsxjGVyWuBJzehHHIVIEy+gUxb52XAdNeSrEg2N0cBjjUv5MBykYuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vJ5LkLN2t7aHZX8yiclY2/akbv1YkxB5V9WvAqbDNAE=;
- b=Y74rpTBlZ7AIMoyiP9Nmc4rN8b+9riYK1KnR/h3F0Voj7waERUShABtU6a1lVbR40tjO3o0vxdVRsDK5I5wr91e55JbIMp1ykwOX14cO7r0FXhWaAZ+0ZECYjdFF6jmQQpX5BdPGezqPcQSWUXQaalhGlDZB0uzUzxD1nKCGAqqO5FJMbcl7/AMw1J4ZZibckAh+PcgZxea+A/431oyzQj10So7fM7/MvVSdOCvY+3gz+hJrFSW+IgwHE7VTbUUK9PFVjgXjCMlNS4uGZ9t4LeQmuI43rObBuk64LyLCPAaok2wnkFNIjJSALm0ZMP/sZ+9iaqeBAdCBobyAFc3glg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by CH0PR12MB8486.namprd12.prod.outlook.com (2603:10b6:610:18a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
- 2025 10:11:55 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%6]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
- 10:11:55 +0000
-Message-ID: <07b8296d-ad04-4499-9c76-e57464331737@nvidia.com>
-Date: Tue, 11 Mar 2025 10:11:48 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/620] 5.15.179-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- linux-tegra@vger.kernel.org, stable@vger.kernel.org
-References: <20250310170545.553361750@linuxfoundation.org>
- <65b397b4-d3f9-4b20-9702-7a4131369f50@rnnvmail205.nvidia.com>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <65b397b4-d3f9-4b20-9702-7a4131369f50@rnnvmail205.nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P123CA0042.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600::30)
- To SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC3B234969
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741687949; cv=none; b=HTj7VWk3RjyRroejEyqipziHg6+Ql3jzS5WChHNfoHPHHfsW2e6u/ZoTBvlV3jMm7Q2ttGkd61u6GAoqDDZpdfKj53+kIVHCGRdewR6XJUKKpuV9me09OsbSo+SqguMPbY36wlnTDTqAXI6zWSdFjc5IKD4TS/IkW7CR1EZT2Rc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741687949; c=relaxed/simple;
+	bh=+3yq1s96UJR2X/8rxc0GrcD75DfM7d3VNeS5ZzC5agU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Me1KL1HxlmRxF+NmCzRlLHXo8msn577cwWloJe6pB+AdusPwNaM39do77/KWqpyK/wgOEYBABxcJvX3GBfLGDonxy3xMqBlT2Zn9CYLA6ZIVAKXToKlrF3JHKfGR2oP6F0TgNmFPFj3YEgq/imZx7DEmvVl1qlsbN4kbSdEA04A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Be+vbEiM; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5499cca5ddbso402210e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 03:12:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741687945; x=1742292745; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M0Ue4Q4qIT2SkgukgvQkQoV58AEl4Qx/JQQFOU8HKzc=;
+        b=Be+vbEiMYeyOEhWZc2tx9xaa0o21RFpqTNwCkJ4EE2iyCqmv4GqtReV+D1ZlTAStoF
+         9k2ZsMhaYQmPDGF2lgY143CTeQZl3IX9QDgfCjKsnITf/2cRBfLx/r+DByyZrIJ2rG1k
+         DkpKw+Ckmv3kLxPBWfHlkNAvHUpEVaGmzgIgk2N13OXZ3gjSGeeTnbYoA1evjrVfLTYD
+         FgZ1q5WVEIggr03LoEhULaaWa8bOOjeQHun3Zv1ib7faD+ZPH+rwqDFqoNp+QNzI93Ew
+         wPW6u3gTAi1D3OOJhg5pk3dm40NfM4Rbd6N1UFRUofeB37el5iyS7v8EfQ8OsxTacK7H
+         Q9iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741687945; x=1742292745;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M0Ue4Q4qIT2SkgukgvQkQoV58AEl4Qx/JQQFOU8HKzc=;
+        b=r+Wsxm9VAwbyx/0a8qXEDNmJUrctmbYCM3dEWOqxIWAse6Kxoam3a9zV8MwuzptLGN
+         5sqErSW0HQxRzTNkzLRskbI5BYrkfe3FiTC0IDw39Y56AmO/ksDkt8alY/Axg7JnGvEf
+         g1fXBHPE6Z44+SBOkCAFyE/kbk4kdE7cQ91vby42ppz7iNTDWXojoVpdzF0Jdp4ug1i+
+         n8nJjODLdGlPBqMkwtXHA7GuQMjoL3XSaU6WQpia3Xri80tk9MDInpmoRZfFu8Dl0E3l
+         OJfjwZygKS3FKW8DheuHgL+iVKd0XCFuen8gzLngVgT2fx8JpHJaZLrLs4i1KtBsFpO+
+         Wz7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWnEU0j5d3cpm9oClHh+GnsiNr9Sb5XABOIy8IYAEWNcpcmu6/Z6/1GDlWbQB9rmJuiFzylwOSukeuQzmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKwMezNAhjt26GS5W4XFcGjaLtF1UhLqn4LNJxdeeJG5ThiA6Z
+	YsFUvofrfYMyLeKp7CoOH6B0ESsogoeN+dvT2/RfSMYM9U1rJcrKh4gsxsrftmk=
+X-Gm-Gg: ASbGncs94Xpa5bsLNPVaY+OUaPpR2hieBvclLTvBLf6dzExic0Y5GqmMGZ6fP5luURb
+	xgGXhM35NLxNnd5iktiX5q5Njbt2odHL4cvhhBOaAPLNbgj/UXnHPAK7TFtFdoxARw4xkM7vcik
+	yEj9pIu2YEnhi7EVUMHLxoCOXx8PaO24tIpCYrUlZgnGGZ4o1Yiiel+RESB201teJ7AtDDqZ/7i
+	rI4KXvQip6Ov7MK/KKEFpFPQBBZMU9ohmbQ0vI15Q44F4xVWH7iJSHVdUsj9GcbizGvE7kceKDf
+	byvjGboYa3YZenUhuESB1j/YdIUVggo8G4jGgK0UUo6uwboIgSx2aTSBBbNCKWdDy7W5PUTuu1z
+	UehMcETDVhM/Qw312uaqx6Eo=
+X-Google-Smtp-Source: AGHT+IGIs8Uu4dRag/V9E+dTalU6U6PS8Xj1gzq2Dg/DyTe7dnw6wtEZjbZZzgP2hxww523Rqg5BKg==
+X-Received: by 2002:a05:6512:3b0c:b0:549:732d:e2d1 with SMTP id 2adb3069b0e04-549abaf1056mr371507e87.11.1741687944758;
+        Tue, 11 Mar 2025 03:12:24 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b0bd0b6sm1735773e87.109.2025.03.11.03.12.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 03:12:23 -0700 (PDT)
+Message-ID: <46d4f090-3e31-414f-abfc-3d1018913c56@linaro.org>
+Date: Tue, 11 Mar 2025 12:12:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CH0PR12MB8486:EE_
-X-MS-Office365-Filtering-Correlation-Id: 200da797-ff34-4e09-f136-08dd60852655
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K1ZoQi8wQ3JDSCtIS1lMUGpxSkNtU2NPekRIOVd3c0N2ekV2NHNRbEhzVGdQ?=
- =?utf-8?B?c2lSbEQzZnFpSTNvK1BlY3p3by9mdEF2TE5obzEvUU9WaTZDWXVJNE00QWhS?=
- =?utf-8?B?d2pWQnlDd3Uyc1BHaTRvc2w4anVGQzJTYTBTNllCdU1tNnpxUzgxbmxaYTFH?=
- =?utf-8?B?bGhPc2FLQWNIYUk5U0EzRHRya0psQld1b1ZKb0RDMTZUVFdrNCtiWkUyUll3?=
- =?utf-8?B?V1ZST1pDRDl4RzI0ZzljdlRZb2ZWZSsySEdqZkozdXl6NVBXTlUvMnowQVVK?=
- =?utf-8?B?YjhESnp1QUJSWW9yWkhkcTZUT2duN0RSbGFqRUl4ZzBEbzRDRTNVSTF0R0ND?=
- =?utf-8?B?WjF2bHl4WDFYMFpKR24wNVlTS1N2aVdBN1BBM0o0VUJsMTRocURMc2xxOHFj?=
- =?utf-8?B?L0RSeWJBbmplSU83TW93K25FR0NyRVRTK2NLc1B2QVpEdWxKcW1jem0zbzdT?=
- =?utf-8?B?c2thVkx4d2FGemVFeWN2UWZzU2ZHRndpZjBYVlFMb2p1TnlMS1FwVXpRci82?=
- =?utf-8?B?NUdvM0ZuT0hiMkpYT0xOVmlud0FtcnQrS2dBcnBUOXhaM3Y2R3RVcGpvWG1i?=
- =?utf-8?B?UDhrR05lcU4vYVhQUXlUNzMrak1pSDRCUnRpTWtDb3o0dDV6TFVCZHdxSVVZ?=
- =?utf-8?B?VkRuRUF1aXYzQmh6MmFMdHdObk1ZZERWbG5rY1B4aEdTMEdKTXdEWFFoSU16?=
- =?utf-8?B?SHpnR0RGVFh5MlAwNnlSOE1vSmlkZnBvVDhzVi9BekxJbjlhUVdlem5wbmtB?=
- =?utf-8?B?Sy9McUtHNDNJd0FFY2ZNSTdnN2dhV2Z6ODRVSFJ5L1JMWXlKQkdOMFYwMnRR?=
- =?utf-8?B?NjFwaTEzY3YrL3BPaC9MY2F0WkVOdVN4czdhdzE0ZkVsRWFONnI3UmU3V3Ba?=
- =?utf-8?B?M2l6dFhFbHRhdDBZYmxlR1pQV2ZaSmJ5WXlGUXJRVWs4QlNJUTJSREdjNUM0?=
- =?utf-8?B?WXBKMEtnM0kwT1FiV3ZWWnAzOVFYdURLaUdsK0RFV2daaWZqNkhuZ0pYbDBt?=
- =?utf-8?B?VzU3QnlGaDRxTTFMZmFrOXZLTTVaVUJlVE1sdjFJRFlHVHRObmphMXFZMmZE?=
- =?utf-8?B?eitMeWVvVjhuRm9vNk1mbWVWMGRKeEFScThVUVoxT2JRcUJWSjdDSklsb1J4?=
- =?utf-8?B?OGJxMnZPNnZ4MzdLL01Ga3pTZE81bjcyeXdXd0t5VTNwWFlnN2k5REcwM1ox?=
- =?utf-8?B?UUQ0MElrWWZReTJGK3RLVmxqNEdRZXVuS3lralBlMkRhQWw5eFpGT1Y5OGxB?=
- =?utf-8?B?RHVNeFRWRHlHd2VQVWRQWGk4dXVXbDJRbUk1NGhOOWp1RDFvc1N4ODZXaENz?=
- =?utf-8?B?T01FRVpXV1NTblhMMUpxZDl1dTRnVDA1SHMwUkowaUJEbmhiRVRLTU5sTUdR?=
- =?utf-8?B?VDdRMEtPcFl5cWpNM0Zuc28rak4wYmlKMW9LbDFCY29tb0gvM3dFSThLUnpE?=
- =?utf-8?B?ZVpvalpTUWd3TmVHTEpJYkF6ZFkxaVhvUUZFa1hDT1ZYbURyNWozQ1BrNlVQ?=
- =?utf-8?B?WWNoeGVGVnl2NVZmSUR0ZmdpSVl2N2RZZHJKZkN6cERxSTlPaHQrVXpucmh4?=
- =?utf-8?B?S3Y3TVNmcFE1WDlHWEEvRTlqTGV3Nng1Z3VUbVdUMTJ4VFBGMk42WmJaQ1lm?=
- =?utf-8?B?NG5kT082T1padys2OVkzRkxNR3VGdHpNSVJBUUUwYk1CR1FYZGQvSGNjNHhJ?=
- =?utf-8?B?VWhFUjlUSUM4ajZrN3M2QUZ5N1dRcTlmSDNJTFdBSENWdEtCRGFiWksyeUFq?=
- =?utf-8?B?amU0aTF1enc5c3VGc2FjNXhPaGV6bDQxK2xyS2pUb01SN3B2dDdGbDBtekJs?=
- =?utf-8?B?RnRqQmV3RkM5Z2JLdlNZSEFEMXhZWXllMjVWSTdxWTVXR3FMZTU3RjFKUUFV?=
- =?utf-8?Q?j+4UymsgDFn4f?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M0JXQWEvTkNicjZ1MVp4Q0RPVy84WDB2U0ZteXZjKysrY0NNVUVOZ1hlWFVV?=
- =?utf-8?B?RWNVU3JyTTFoQ2Z0TUZFUm45Tjk5UmxDU0NzVEI3TXBDOG9ZS2dmV2V4SWc0?=
- =?utf-8?B?L1c3OVVhMHhmY1h0cFo1V3M3MTFJSElOTVlzWmhzZHhMK3dyZU42S1hud2dw?=
- =?utf-8?B?N3N6cHBWMWJKTW9JWlVsck9RbkI0WDlKdTZLR0o1WTM5UjR3cENCMllZS3d5?=
- =?utf-8?B?OGRxQ3c1WmZCOVloY0Q5cURsNGZOTVc3S2FOcGJCUHlpOGdzc1VNSkVHQ1BN?=
- =?utf-8?B?S1hXbFlJblh3aS95ai8waGkzK1N4UmdldTIxK21ib1VqemhBZm5xM3lqQjho?=
- =?utf-8?B?WEk3Y3grSXRkb0Iva2wyR2lBT3pPNjNmTTA5ZWRIWERVSEpQakQvNkxNVFlz?=
- =?utf-8?B?OStFYVViendIa1l5cjBOS2hwaE9qQ3cwbmVHVks5Vy9vaFcwbWlFTlNQUGNl?=
- =?utf-8?B?L3dNSndLOG9HdEI4TFE5RnBxcE16K3pKR1ZyWlNaOHVqYlFIWU1HSmFWb0s1?=
- =?utf-8?B?eVNTODNidlpMbThxaHBkeU1JYm1UN0MxWFpTR3VrWGgrcnVkRXZqNm1nVXRK?=
- =?utf-8?B?ME8vQUlUK2xGLzJEYmVCc2ZHazNaZEtMY1p0bHpXUk5xVkFvRVpkWnNRd1pC?=
- =?utf-8?B?UFRoeEpMSnd0NnJLdkk0MFlpN2ZUMDBIT1Z0SU5zT2F4Q3VsVlpaY0VFbStB?=
- =?utf-8?B?aUhaMDR6TSs5b1dNYk1PS2IvZklhQlZzQWJGemVUSzBRMzZya1FjaXJhc0hZ?=
- =?utf-8?B?UWliemdSeE9hUm8zaXJvelFTcmVLYTlQR0wrQ0UwZVY1MzI5WExrQ2Nsc3RF?=
- =?utf-8?B?cytIb1ZGdVZreFlLNFlFdEM1aWFCSHNqU05pSmhjeXQ3UTlLRVFVL3d5M3FR?=
- =?utf-8?B?WEhSWEdINnhGeDJ4VFh6dk8vb0ROeDBTTWdPaUxIQ1RmK1pEbkZ4YTlxaEZy?=
- =?utf-8?B?dFU0MTRlQmc0My9PbUpDS1ZOOFFPbUFGc1lqclVwZjZTT1lNQnIrNC9tZExF?=
- =?utf-8?B?eE8vUklEeFVVc2xRUDhuSWkxM2pMRjBlS1ZaMUdnSzlXalRvZEtGQyswNlg1?=
- =?utf-8?B?UFFwVnF3VmR2QlpqbjJCMlVCMEg1MkZRaUpaazFZZzA1VG43TXNGUjdCMkxP?=
- =?utf-8?B?QlJ1MTVMeGF3MHVpNWN3aTFDdzJ0R1JMVENxL3hxSFpnREx1SXpGQk9IUjlD?=
- =?utf-8?B?QjNUSE1OdGRJQkJYZ015V201b0IvWXFoZGNEQTZ5M0w3OEU3VFo4UjRlaE5S?=
- =?utf-8?B?UTNXM1VNQTlPWW5zcFV4b0NoUzFXYllGT3MvN3dIcEg0Y0NWMEU2MnFOaGhh?=
- =?utf-8?B?Um5VOVlyc2NPbThsY1BQcHlvL2RVMVhveE95QW5TT1Q0SUxYditIakVYV05H?=
- =?utf-8?B?Q2xENS94eWhja01jdEFjK0ZlZS9aRlpQTFc4Mlk1T0RCVVFNaVdUTzd4TC83?=
- =?utf-8?B?eW1aS01wWkh5RTVqTHlKc0hQcjYxYUUyL0FraDhkd2FqeEtYNERTR2dPeWZi?=
- =?utf-8?B?WmpNeXVIUmQ2Q0wxcXFKWi9PYTdMNU0xUnlrZDlJTzJvdktZSGxmSzc3T3Z4?=
- =?utf-8?B?UUNReXdEN0RQK3Nic0VLbFQvdmsrR05ONUttaGE1UHVlVFJId3ZQc2lxWlVI?=
- =?utf-8?B?ckgzV2xUTWxyZ0FQWUorOTdzNFArYWsvYlA2WDcvbDNEdlNka3JCMFFsYmM1?=
- =?utf-8?B?S2FKblBkdDZzVDc2M2RnTzNreUFIZU9hVkg0bzFTMW9EVEVrUFpaQlVFdEo4?=
- =?utf-8?B?TVA4aVMxMWVwTmFoYm1tdWphNGwvUjBnZjd0ZW9RZ2ZWREFjKzhLRWFqQXpl?=
- =?utf-8?B?V1JmWjl3M3hrOEx4ZnM1RkY1cWJaNGZ5dFkzSzlrZ1BSTE9QS09OdnZaVjlT?=
- =?utf-8?B?RmV5dk1jaDVrM2NtMDJWenhobXZQWDUwQ0FpTTNyYUVLcUloSDBJS1dYS0Yx?=
- =?utf-8?B?QjY3cTlOZG9yWXN5YmkzK2EyUzhCZUt1V3l4aUZtUmRNaTBreGozdUpHM3RK?=
- =?utf-8?B?eHdmL1FEQm5qcENaeWVENWpQdjNTL2ZEMFNCM2RIQldpcG5WTXltS2MwUUdy?=
- =?utf-8?B?RTJmcFlpdEZuM05SaFNsM0dKYzZJdnJrR3VhNFFJWGtSY0xyWk13WGdEZFIw?=
- =?utf-8?Q?iibUocgnweAb3TKasnBEnWPBT?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 200da797-ff34-4e09-f136-08dd60852655
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 10:11:54.9360
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IOPw6aVrLTkAAJBDqA1Vgz6E9VLUX3nbCkNWLWu7SJhZX+Lt+MiiB7SWrTcOyyzvQeYM74x37RkTNaEj24Dxig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8486
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/8] clk: qcom: Add support to attach multiple power
+ domains in cc probe
+Content-Language: ru-RU
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <CMTYKKilQJYeHUYYKvlqnwv4Q2P-58Ic1v1ndS9HQ8Yhq2xpHuNThibFDjXDEQ1PyNbx__f9BVBr0peoTUdvPg==@protonmail.internalid>
+ <20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com>
+ <5a45fd25-74ed-46e3-b0e3-5adf92b5e9f7@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <5a45fd25-74ed-46e3-b0e3-5adf92b5e9f7@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Greg,
-
-On 11/03/2025 10:02, Jon Hunter wrote:
-> On Mon, 10 Mar 2025 17:57:26 +0100, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 5.15.179 release.
->> There are 620 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
+On 3/11/25 11:52, Bryan O'Donoghue wrote:
+> On 06/03/2025 08:55, Jagadeesh Kona wrote:
+>> In some of the recent chipsets, PLLs require more than one power domain
+>> to be kept ON to configure the PLL. But the current code doesn't enable
+>> all the required power domains while configuring the PLLs, this leads
+>> to functional issues due to suboptimal settings of PLLs.
 >>
->> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
->> Anything received after that time might be too late.
+>> To address this, add support for handling runtime power management,
+>> configuring plls and enabling critical clocks from qcom_cc_really_probe.
+>> The clock controller can specify PLLs, critical clocks, and runtime PM
+>> requirements in the descriptor data. The code in qcom_cc_really_probe()
+>> ensures all necessary power domains are enabled before configuring PLLs
+>> or critical clocks.
 >>
->> The whole patch series can be found in one patch at:
->> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.179-rc1.gz
->> or in the git tree and branch at:
->> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
->> and the diffstat can be found below.
+>> This series updates SM8450 & SM8550 videocc drivers to handle rpm,
+>> configure PLLs and enable critical clocks from within qcom_cc_really_probe()
+>> using above support, so video PLLs are configured properly.
 >>
->> thanks,
+>> This series fixes the below warning reported in SM8550 venus testing due
+>> to video_cc_pll0 not properly getting configured during videocc probe
 >>
->> greg k-h
+>> [   46.535132] Lucid PLL latch failed. Output may be unstable!
+>>
+>> The patch adding support to configure the PLLs from common code is
+>> picked from below series and updated it.
+>> https://lore.kernel.org/all/20250113-support-pll-reconfigure-v1-0-1fae6bc1062d@quicinc.com/
+>>
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> ---
+>> Changes in v2:
+>>    - Added support to handle rpm, PLL configuration and enable critical
+>>      clocks from qcom_cc_really_probe() in common code as per v1 commments
+>>      from Bryan, Konrad and Dmitry
+>>    - Added patches to configure PLLs from common code
+>>    - Updated the SM8450, SM8550 videocc patches to use the newly
+>>      added support to handle rpm, configure PLLs from common code
+>>    - Split the DT change for each target separately as per
+>>      Dmitry comments
+>>    - Added R-By and A-By tags received on v1
+>> - Link to v1: https://lore.kernel.org/r/20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com
+>>
+>> ---
+>> Jagadeesh Kona (7):
+>>         dt-bindings: clock: qcom,sm8450-videocc: Add MXC power domain
+>>         clk: qcom: common: Manage rpm, configure PLLs & AON clks in really probe
+>>         clk: qcom: videocc-sm8450: Move PLL & clk configuration to really probe
+>>         clk: qcom: videocc-sm8550: Move PLL & clk configuration to really probe
+>>         arm64: dts: qcom: Add MXC power domain to videocc node on SM8450
+>>         arm64: dts: qcom: Add MXC power domain to videocc node on SM8550
+>>         arm64: dts: qcom: Add MXC power domain to videocc node on SM8650
+>>
+> This list looks sparse.
 > 
-> Failures detected for Tegra ...
+> - camcc is missing
+> - x1e is missing
+> - sm8650 and sm8750 and both also missing
 > 
-> Test results for stable-v5.15:
->      10 builds:	10 pass, 0 fail
->      28 boots:	28 pass, 0 fail
->      101 tests:	100 pass, 1 fail
-> 
-> Linux version:	5.15.179-rc1-gcfe01cd80d85
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                  tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
->                  tegra194-p3509-0000+p3668-0000, tegra20-ventana,
->                  tegra210-p2371-2180, tegra210-p3450-0000,
->                  tegra30-cardhu-a04
-> 
-> Test failures:	tegra194-p2972-0000: boot.py
 
+Since there are concerns about DT bindings ABI change of CAMCC given by
+Krzysztof, likely CAMCC changes shall not be inserted into this series.
 
-With this update I am seeing the following kernel warnings for Tegra ...
-
-  WARNING KERN gpio gpiochip0: (max77620-gpio): not an immutable chip, 
-please consider fixing it!
-  WARNING KERN gpio gpiochip1: (tegra194-gpio): not an immutable chip, 
-please consider fixing it!
-  WARNING KERN gpio gpiochip2: (tegra194-gpio-aon): not an immutable
-chip, please consider fixing it!
-
-The above warning comes from commit 6c846d026d49 ("gpio: Don't fiddle 
-with irqchips marked as immutable") and to fix this for Tegra I believe 
-that we need commits bba00555ede7 ("gpio: tegra186: Make the irqchip 
-immutable") and 7f42aa7b008c ("gpio: max77620: Make the irqchip 
-immutable"). There are other similar patches in the original series that 
-I am guessing would be needed too.
-
-Thanks
-Jon
-
--- 
-nvpublic
-
+--
+Best wishes,
+Vladimir
 
