@@ -1,79 +1,92 @@
-Return-Path: <linux-kernel+bounces-556539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7858A5CB83
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:03:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4828EA5CB88
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:05:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596683B556A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:03:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002F2188FE7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE31D1C1F22;
-	Tue, 11 Mar 2025 17:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D97A25DCFA;
+	Tue, 11 Mar 2025 17:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="06Xl15Y2"
-Received: from antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="OZvPjIDH"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF4D2080D9;
-	Tue, 11 Mar 2025 17:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2B725C6FF;
+	Tue, 11 Mar 2025 17:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741712622; cv=none; b=RSJUWx6uAol54fKhOW650kbh11cHyMzzzmYK8TLhimsFDuNH1QFyMnwORe1W1Oz4HAht1N0CzKW3mNHU0vst0TAf6pfBUgdt2Gjqp2e2obAG/WUhVhsppDQUZiL/4jmaC1fRwVjjNP+MAxJKzXsiyaA6M/WSG8vgE2b2lEFP6rk=
+	t=1741712707; cv=none; b=eG5xxLufWYNiljWCoxPNbpTVijYCTxPZco7uO4JHWc74lwvWtFFrmTO8RabHgSY/iC83ZJwiXZ/DH4ul26Ip5s71uV08kcJIGjnunloVz9f2zm5uzd5m0SiU5AXHTr79LERkib+GLewBGDBslxsxFuLt2XwxETKZ+MGhyLCnsRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741712622; c=relaxed/simple;
-	bh=3lgFxyV0pjLheJdj0WHk3Nfcy0PkOqA8S4AKNvnKn0U=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZDzR75ZP+hrfBV1WmbDwmm5IAJJFt6pmyj/Z4bbULVRbYflgjxkWMuv+THl4u9RPP0ufSeBA58MvXhYtK4f7+6HwP5LLO6MeemMGuz+E/mkPGm72yc/84YA6Pfn/qHB58zUZzhduPYOqrDEUS8xMeB7sdLCzs0Cmer6qt6Oidzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=06Xl15Y2; arc=none smtp.client-ip=91.227.220.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
-Date: Tue, 11 Mar 2025 18:03:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
-	s=202107; t=1741712613;
-	bh=3lgFxyV0pjLheJdj0WHk3Nfcy0PkOqA8S4AKNvnKn0U=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To:Cc:content-type:date:From:from:
-	 in-reply-to:message-id:mime-version:references:reply-to:Sender:
-	 Subject:To;
-	b=06Xl15Y23CzM+3OGHRaYXELzF/uWpr9JOuln7W44Co+EmJlMFP2RYESWR++/Bnw7u
-	 /gMHwloI8jWdXcMhOVsvze/WmEj/ENAQJ1ZXCI4twH7PHC9tnxuwTEQhs6lmLKEIgi
-	 Miy+kDPZrRvIIwJBzSOIQFhdsPnm8R+CMy5yY21oYBXuDIzyim2kfs8I7RVcInSQ9e
-	 nBp7H7SD1MdCo3YEVj7X0acrh7+kRqGTC0+7vlaZJxH8lR0Pj0yrG8fljBlLERAY1z
-	 t/fM/KtSDj89eN3eVecvRGpjJH5a9CQ6FYHJGL/Ly8jXj0Jwj5SDCsYQwTdBV6OfHg
-	 eZerMNxrBhPCg==
-From: Markus Reichelt <lkt+2023@mareichelt.com>
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.12 000/269] 6.12.19-rc1 review
-Message-ID: <20250311170332.GC2770@pc21.mareichelt.com>
-Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250310170457.700086763@linuxfoundation.org>
+	s=arc-20240116; t=1741712707; c=relaxed/simple;
+	bh=tPgnU+rJhHBiowGyT3sROXA/KCzcSc7LZwfiexOaLEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lhy6U+pRx5XaQuQgI41zpyuTeBLdm40T13Cf8bEOTANS+J0rnuFvlSDFGpkHrqhoMZqFO70bLzcN6wOT/ljnEvGVTr730vkG/OI7iO2NhhfWVUadSlfsu0epkTwwgxS8HKANmnea7uHAU6IHbk0P3wrLYJSknj43cYH1nE9k0i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=OZvPjIDH; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from wse-pc.fritz.box (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id CBB512FC0187;
+	Tue, 11 Mar 2025 18:04:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1741712694;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0zuTJhP/TAHW2pWcx32Xiq2E7JP9tUTogWrJlqIJkLs=;
+	b=OZvPjIDHMeopZiMEC2VUPX/SgP3lBnQg8LI1cSP+IiLX1ulXhal0B3bKKQHmp8GI32Qd1v
+	SSj5OU8u2mxnGTrUIn0SvYvSe0WqnZAj+nYkLkLfrG4PERR2Wte/dTZFmcX9hZZfR8gf5u
+	K78WvGOzAz/OlwrPmrRqzBK6GuUAhYU=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: hdegoede@redhat.com,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Werner Sembach <wse@tuxedocomputers.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] Input: atkbd - Map FN-key for TongFang barebones
+Date: Tue, 11 Mar 2025 18:04:22 +0100
+Message-ID: <20250311170429.1091067-1-wse@tuxedocomputers.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310170457.700086763@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
 
-* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+TongFangs firmware sends scancode 0xe0 0x78 upon pressing the FN key.
 
-> This is the start of the stable review cycle for the 6.12.19 release.
-> There are 269 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
-> Anything received after that time might be too late.
+This patch maps this scancode to avoid a dmesg warning printed every FN-keypress
+and to enable userspace to use they key in other shortcuts then the firmware
+builtin ones.
 
-Hi Greg
+Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+---
+ drivers/input/keyboard/atkbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-6.12.19-rc1 compiles, boots and runs here on x86_64 (AMD Ryzen 5 7520U,
-Slackware64-current), no regressions observed.
+diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+index adf0f311996c9..3598a21d9d014 100644
+--- a/drivers/input/keyboard/atkbd.c
++++ b/drivers/input/keyboard/atkbd.c
+@@ -98,7 +98,7 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
+ 	173,114,  0,113,  0,  0,  0,126,128,  0,  0,140,  0,  0,  0,127,
+ 	159,  0,115,  0,164,  0,  0,116,158,  0,172,166,  0,  0,  0,142,
+ 	157,  0,  0,  0,  0,  0,  0,  0,155,  0, 98,  0,  0,163,  0,  0,
+-	226,  0,  0,  0,  0,  0,  0,  0,  0,255, 96,  0,  0,  0,143,  0,
++	226,  0,  0,464,  0,  0,  0,  0,  0,255, 96,  0,  0,  0,143,  0,
+ 	  0,  0,  0,  0,  0,  0,  0,  0,  0,107,  0,105,102,  0,  0,112,
+ 	110,111,108,112,106,103,  0,119,  0,118,109,  0, 99,104,119,  0,
+ 
+-- 
+2.43.0
 
-Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
 
