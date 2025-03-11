@@ -1,143 +1,176 @@
-Return-Path: <linux-kernel+bounces-555899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9EB8A5BE0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:38:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80FA9A5BE0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05F8216A6B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:38:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22F083B209C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49F42206BD;
-	Tue, 11 Mar 2025 10:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1392238158;
+	Tue, 11 Mar 2025 10:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="GTcgDXAw"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="L648o4N9"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E830C22DFA5
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FA422DFA5
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741689513; cv=none; b=V5JmRCaOXq64P2FJA4rAuwPBsn/Mf2tLUgVaoTEsTjyE+SX7ORyIPw3At1LGPctgZQYJz7fNmIoPJZEkP4qccG6QcWYqptA1R+nH5hBe01+fgay7ycZ9QWKXfbR7LqKPTFL8HwWJM8+XYW9Ze0RcZbA6+x2BqDqYBLvBRLUQ4i8=
+	t=1741689540; cv=none; b=NEZ8jDDIbNWXLyytmnXWSMVvrAMxZDXZ2XGxu3RC2rIR2w3o3P10NZU4fEHw8JR7R9p+Gw7b7L484Q8VSxWcVL8fSClPAtnW11AjIAauO431mkm/7vPKDxQOsHza4pxLpx3F/JqkadjkOJF1HcPO6sVFzVCGC/rJYtcLDnjME8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741689513; c=relaxed/simple;
-	bh=bZNmeeJGdW6e1FhGKC9CeGntVL96H/2KvoayCD+biY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sCgIhD+/GOTjR8KYYAGIgKyoyqBRdiibJuK8yw9ovHHhAFu2AczrOInMCvJ3fz9Bw7EsbJ3v0i1SIzbSj8jRh0E/IpmsohRUp0AL4YEatF1+HcBBdxsXgzN71tRpmIl7QF3+YHdG5NVd3PqW9P2Ws9K6IdwxTwObsrE+Q3xZadY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=GTcgDXAw; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22185cddbffso110868605ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 03:38:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1741689510; x=1742294310; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f1K76VH9GZtVs+LPd+wKDkO5SY/QeivVsM/htD74ZLE=;
-        b=GTcgDXAwx/ARM9nEBghY5AJuHUStiwulWJF5XVFmWuYk0E/rHQW9hLgWUhWpBNE1Sg
-         ewOZNfbb5BVRO2Nt8Tj9jnX2IlyrtX9ro9D2MgEnJ5VZM5Utt2nFmGU6I/s8O5HZWKMn
-         D9p0k+uX2XkcC7bKXATp+jfmY9Akhzf694Pha5mPlB1BrlGtLdJ6t8AdZfhoRlLaKe7z
-         0Z+uZKYFAa9oGNzkK5tFx/UWQyKlbyzJPg81RANgi/ICE5ZxnJjdN9zEzX48W2PN3syj
-         74LxROofU8FrrXWdJiA8k0IpZsJrVVV7+FeLxyQxKXpc1obzstwQ3KbF1A3oVhPcoMGD
-         306g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741689510; x=1742294310;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f1K76VH9GZtVs+LPd+wKDkO5SY/QeivVsM/htD74ZLE=;
-        b=qUnzAQizEiwx2MaDC15xArtWHfb+iMCTidX2Ol+U5jGiilVS62ipvtgFRlZKIg4uKL
-         TDgOPH+81aMbVJ5YPUihday7zEA6EQ41err8ge/6uRi2HeIVishnnf8C8MajRllLqlE2
-         jfBkwuCQfEIICSHL01BTCo/q2OybM6efi17HAf7dd5R3kX101+vdR2mjq2IYinz6lcxh
-         Iig+BfU2z9qHYs9eW2NtpjDYMZjr36q5tpY7wWV4HTxueyy2J5CFoRgD4ZeKH+X6sUEx
-         W9YnwKbg8tRKvaDMIXeXnAxKunbkBOwqzlikHzCFUj4U/sj2ghycYq+xugEWjJi/LFFr
-         hmoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMP21DL696/dWMHrkwn1PHvd2LAIzUBH2xHS14FZzB+mAwzKw0eOUxLq9KAHDLXeIyZ+LrsR4JLA7EyfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQU8eDC26U9L2jfzx6rusrVfPty/36J/NoucX5i1LbLJcDsxX2
-	Jm9a/9mk91LK4wpKA9CP4Hzz3SxXO7WF3CB+fK7/s5WtfdD7VwvELQMKSUWhRPM=
-X-Gm-Gg: ASbGnct1k0v1BrcKAALZvf3jNnEos6jWYBAeeITfA4T+Bf99xAhltbdghS4/Fj0sZWN
-	haKswMSSzZTWGGkWzXKBXE6/QxOu3jRL27p8cZxZVg1lsXRifQ8QUNSL8ryt1C51cAvNOaBmR1b
-	UoDSmGsBHc0ZezWf7cNgynQtMVynQlaJa1vFCQGWuvlFbGNmXuHY9Q8gGprCpBkl9T359BQuN9w
-	2kqn13ozEH79EyEC/5sqWCS7dMeglj1jhMegDy9FUWXabmWrq/hgA9Z2JBFU8QHOjed/p2XrSdu
-	Usz5UfS1Lmg5jp+Sghuu8yNm+/e6sDRbrZEvwQ66eK3erdbo/4vDpw==
-X-Google-Smtp-Source: AGHT+IGwF00pn0ttTAwXGotu4n032tAfHEPg1cyOkGTgN8LMC/JgxCYBqIV6RS/HysJzHJ7Xm/MRrw==
-X-Received: by 2002:a05:6a21:329f:b0:1f5:8cf7:de4b with SMTP id adf61e73a8af0-1f58d6ff812mr3970836637.16.1741689510077;
-        Tue, 11 Mar 2025 03:38:30 -0700 (PDT)
-Received: from cyan-mbp ([136.226.240.168])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af287c2d533sm8673120a12.23.2025.03.11.03.38.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 03:38:29 -0700 (PDT)
-Date: Tue, 11 Mar 2025 18:38:25 +0800
-From: Cyan Yang <cyan.yang@sifive.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, shuah@kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/mm/cow: Fix the incorrect error handling
-Message-ID: <Z9ASoTIastiD7utL@cyan-mbp>
-References: <20250311023730.56658-1-cyan.yang@sifive.com>
- <4a068856-328f-48ae-9b1c-0ec7d65dde6b@redhat.com>
+	s=arc-20240116; t=1741689540; c=relaxed/simple;
+	bh=oVd5XyQGciBFbDQHNaiEb+MTjGZgXL5/ydTtVz3t3GQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p3t25OPi+jqqttB6ooSIOqiPS/zSNzmXQcTGKeJNLlAjzuYoThmCLInxE8KCYMvaw3y0QwZe3QXlYHNEmKd8MnyVnjlF4Qr5HsYjM0x2E477YkYfFQXODkEdRTqj5j0veWSve1DU4l0uei2MmVLG5Rz+3eaW2sljjN7hYmeptPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=L648o4N9; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6001a.ext.cloudfilter.net ([10.0.30.140])
+	by cmsmtp with ESMTPS
+	id rseqtKdidWuHKrx0jtu4nW; Tue, 11 Mar 2025 10:38:57 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id rx0itXHjwsTV2rx0itSYCY; Tue, 11 Mar 2025 10:38:57 +0000
+X-Authority-Analysis: v=2.4 cv=GquJ+V1C c=1 sm=1 tr=0 ts=67d012c1
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=SoV1cWDepzK6XYGrUZ8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yIukXYU2O1RYqi6EvgEDl26+58TVpLDae3NfzcBMU/g=; b=L648o4N97+CGcvjR20dKpMY0s+
+	OLvp1qRqsRoXzAQ+5RsFvAoS076vx9rAMdqyoG2QFfoMaCH/zMM1t7E95WDHdC5HeQZ3VRgNiIBcH
+	Sc1QiYn9+Bon0B5KVPFGRj9CnASf63j/7o7LeaoszuoQxFPfRNbIcgqO5vapG248WBrjVEjeilCK3
+	ME8u5LRXd/PF4S/OATrP4OLdaAU6d4rYWFRcUk8FIKq1JyvXZ2CtkB3mjapu57L5Npov5jx/vN1Ym
+	CWsA7zh/VHWxtkns4g4tDG52Kp3oPR3RxiJ8CG3oVULfXTCHxoOfsm/xkfVp7ejYXV+DRoSWDBmqf
+	fjbW7OHA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:36824 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1trx0g-00000001gMS-1zyb;
+	Tue, 11 Mar 2025 04:38:54 -0600
+Message-ID: <a97e013b-67cd-4db6-bb65-ba0319a4f38c@w6rz.net>
+Date: Tue, 11 Mar 2025 03:38:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a068856-328f-48ae-9b1c-0ec7d65dde6b@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 000/620] 5.15.179-rc1 review
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ linux-tegra@vger.kernel.org, stable@vger.kernel.org
+References: <20250310170545.553361750@linuxfoundation.org>
+ <65b397b4-d3f9-4b20-9702-7a4131369f50@rnnvmail205.nvidia.com>
+ <07b8296d-ad04-4499-9c76-e57464331737@nvidia.com>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <07b8296d-ad04-4499-9c76-e57464331737@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1trx0g-00000001gMS-1zyb
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:36824
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 74
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfJghuykBVG1iQzuPMae557nbE/yb81zD5KtGdh3v/IfK2DiZWywLP25ErtGXVH8If6jdYQxDXI9ZYh1guVYjTKouBGFOUViDoI5VrUIrIy5WlYd6drtT
+ CtYfzetD/ZHKXyb87cnNmx4QJsUcXrVB9u335mhAVQ20a46AikBU6vxdMqxuRksfLnUEuOYUB+S49AawhWMCJGSN+yjHV8iK5T0=
 
-On Tue, Mar 11, 2025 at 10:19:32AM +0100, David Hildenbrand wrote:
-> On 11.03.25 03:37, Cyan Yang wrote:
-> > There are two error handlings did not check the correct return value.
-> > This patch will fix them.
-> > 
-> > Fixes: f4b5fd6946e244cdedc3bbb9a1f24c8133b2077a ("selftests/vm: anon_cow: THP tests")
-> > Signed-off-by: Cyan Yang <cyan.yang@sifive.com>
-> > ---
-> >   tools/testing/selftests/mm/cow.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/mm/cow.c b/tools/testing/selftests/mm/cow.c
-> > index 9446673645eb..16fcadc090a4 100644
-> > --- a/tools/testing/selftests/mm/cow.c
-> > +++ b/tools/testing/selftests/mm/cow.c
-> > @@ -876,13 +876,13 @@ static void do_run_with_thp(test_fn fn, enum thp_run thp_run, size_t thpsize)
-> >   		mremap_size = thpsize / 2;
-> >   		mremap_mem = mmap(NULL, mremap_size, PROT_NONE,
-> >   				  MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-> > -		if (mem == MAP_FAILED) {
-> > +		if (mremap_mem == MAP_FAILED) {
-> >   			ksft_test_result_fail("mmap() failed\n");
-> >   			goto munmap;
-> >   		}
-> 
-> Yes, that check is wrong.
-> 
-> >   		tmp = mremap(mem + mremap_size, mremap_size, mremap_size,
-> >   			     MREMAP_MAYMOVE | MREMAP_FIXED, mremap_mem);
-> > -		if (tmp != mremap_mem) {
-> > +		if (tmp == MAP_FAILED) {
-> >   			ksft_test_result_fail("mremap() failed\n");
-> >   			goto munmap;
-> >   		}
-> 
-> As Dev says, this one is just fine. Leave it as it is.
-> 
+On 3/11/25 03:11, Jon Hunter wrote:
+> Hi Greg,
+>
+> On 11/03/2025 10:02, Jon Hunter wrote:
+>> On Mon, 10 Mar 2025 17:57:26 +0100, Greg Kroah-Hartman wrote:
+>>> This is the start of the stable review cycle for the 5.15.179 release.
+>>> There are 620 patches in this series, all will be posted as a response
+>>> to this one.  If anyone has any issues with these being applied, please
+>>> let me know.
+>>>
+>>> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
+>>> Anything received after that time might be too late.
+>>>
+>>> The whole patch series can be found in one patch at:
+>>>     https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.179-rc1.gz 
+>>>
+>>> or in the git tree and branch at:
+>>>     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git 
+>>> linux-5.15.y
+>>> and the diffstat can be found below.
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>
+>> Failures detected for Tegra ...
+>>
+>> Test results for stable-v5.15:
+>>      10 builds:    10 pass, 0 fail
+>>      28 boots:    28 pass, 0 fail
+>>      101 tests:    100 pass, 1 fail
+>>
+>> Linux version:    5.15.179-rc1-gcfe01cd80d85
+>> Boards tested:    tegra124-jetson-tk1, tegra186-p2771-0000,
+>>                  tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+>>                  tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+>>                  tegra210-p2371-2180, tegra210-p3450-0000,
+>>                  tegra30-cardhu-a04
+>>
+>> Test failures:    tegra194-p2972-0000: boot.py
+>
+>
+> With this update I am seeing the following kernel warnings for Tegra ...
+>
+>  WARNING KERN gpio gpiochip0: (max77620-gpio): not an immutable chip, 
+> please consider fixing it!
+>  WARNING KERN gpio gpiochip1: (tegra194-gpio): not an immutable chip, 
+> please consider fixing it!
+>  WARNING KERN gpio gpiochip2: (tegra194-gpio-aon): not an immutable
+> chip, please consider fixing it!
+>
+> The above warning comes from commit 6c846d026d49 ("gpio: Don't fiddle 
+> with irqchips marked as immutable") and to fix this for Tegra I 
+> believe that we need commits bba00555ede7 ("gpio: tegra186: Make the 
+> irqchip immutable") and 7f42aa7b008c ("gpio: max77620: Make the 
+> irqchip immutable"). There are other similar patches in the original 
+> series that I am guessing would be needed too.
+>
+> Thanks
+> Jon
 
-Thank you for the review.
+Also seeing this on RISC-V.
 
-I agree with you and Dev this is just fine. The reason I prefer to modify it is
-- usually caller checks the return value directly and "tmp == mremap_mem"
-should be determined by "mremap".
+[    0.281617] gpio gpiochip0: (10060000.gpio): not an immutable chip, 
+please consider fixing it!
 
-If you still prefer to leave it as it is, I will send out the v2 to remove it.
-
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
 
