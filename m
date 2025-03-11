@@ -1,85 +1,129 @@
-Return-Path: <linux-kernel+bounces-556682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE4CA5CD56
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:11:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7610BA5CD5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:11:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB144189E9CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:11:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE92517C966
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD2B263881;
-	Tue, 11 Mar 2025 18:11:05 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48924262D2C;
+	Tue, 11 Mar 2025 18:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I0jKxy4P"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0AD262D37;
-	Tue, 11 Mar 2025 18:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE362627EC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716665; cv=none; b=bL92gGfFHN0TaTMZrz4SwosnYpeFvALkoxfutE6pB2eeKwkOohgWncDfZLn866LsNJf8An6XomMgHpK0nQ7iK8rAW+jNPrsmJLAuqRJzeXeDvu18R3Rx8MNddfR6nmjep4e/eiprHZ8DNxM0T7Ox1A2Hqva5RPIdgnpHtxrMgqU=
+	t=1741716678; cv=none; b=O+uIF3oFX7x9/Hep1iwqam3j+/CwELMTltujVs/ejH5IuvvDK1UlKiOnJLhHUiAaIGzUv/02r+5vsKYTSqrcMPFCYw/jYbcjLEuG7W9PuGAzAXYKZTDaqFQVh8kaabMewlGFyj0PkZfMxwkO/u/t9qh/kFtnLHlYUzefXvtkSSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716665; c=relaxed/simple;
-	bh=nW6kcnaVPnd2s0tPsVOrq9MHgOdzd6vGVvSPXXLhxKk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O+DVQ1SvyfzOlsRdjn9BgPXOypfgVD8eExbTlksJr1FpFqv3t/NRaBq0jzcK9Ic2IvvUNo9rQmIdUVgwv8bzP1DIhxaTXwtd19QjdlkL+UMa1CJgwahimmhbXdAPcz1Y4+OmSvBXTqJ6EQJoi01Y3IxjAZtDhKRzbKHtt2xmHJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZC1vZ0Mhpz6H7Wy;
-	Wed, 12 Mar 2025 02:07:54 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1E7771401F1;
-	Wed, 12 Mar 2025 02:11:01 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Mar
- 2025 19:11:00 +0100
-Date: Tue, 11 Mar 2025 18:10:58 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-CC: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, "Bjorn
- Helgaas" <bhelgaas@google.com>, <linux-hyperv@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Tero Kristo
-	<kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Jon Mason
-	<jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, Allen Hubbe
-	<allenbh@gmail.com>, <ntb@lists.linux.dev>, Wei Huang <wei.huang2@amd.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, "James E.J.
- Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>
-Subject: Re: [patch 06/10] PCI: hv: Switch MSI descriptor locking to guard()
-Message-ID: <20250311181058.00000621@huawei.com>
-In-Reply-To: <20250309084110.521468021@linutronix.de>
-References: <20250309083453.900516105@linutronix.de>
-	<20250309084110.521468021@linutronix.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741716678; c=relaxed/simple;
+	bh=AEdBNyFmF49Xeo/B4rOVD0J8zs+o9tpxxbbteCwizeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pyo2CVChlb/PDMCeSH04h3rY9mwCZ95milC7bToAgX61235Le9UH4ObrSOVXz6aHXoNLf6LYnDO6t+BMhIUo5hc4FWMxpRB9d1i1lwByYhtcAGe0jC+8PmCS3sg5QxkKfa2lAi1vN8H6CT6BemtNMXxjzxtDispQJ2F1RqWDDRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I0jKxy4P; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso1191333666b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:11:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741716675; x=1742321475; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=41PVLFX1AYbFOO8iSJTaDeh8JCGVoEDoLLcodvBXC0M=;
+        b=I0jKxy4P+V7n0KD5KZGS9YBLknbcRdt7tbRIJqC72b7X3n0RgWm3BoK5unVEbN6NSS
+         UDhmzyGRA9/qxGIkUDpMNxngsaAT5YdRQdZdkAGj20WhT7a3v2FFJ88rZwOfyOH22nEY
+         SDzvD84QsAfmP9Xs9ex5j1co8MNelgU5VOgaO2FCKyCstSEp0SRDxw3eTwlC9aSJYhNX
+         GCArfjkNXRxq9xNGhCRLSn17DRvZwDgb3xVNirP6sXr/HqKNK8m0Ji7Y7cE0bSTRDrDT
+         2UZ3SPNoBFZcgqQ2I9FT0agpN1SZcnYH0KbagMeImZpHZoIVsfvPXbaP9zBbmY4610TI
+         1i9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741716675; x=1742321475;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=41PVLFX1AYbFOO8iSJTaDeh8JCGVoEDoLLcodvBXC0M=;
+        b=LjXt0GhYJwa2L7+KtznKWfF0mIYZ177BGvyoediwyLytPsfeiznXtIlmYcqIElEq+v
+         fQeRGmMC3v2LLfFXfizKt1q0QHbJotJ5hUiGyXwgUi937O3I5bhuhxYgKlME0t+xrkMf
+         1zORke9gbVyX/pn7tnRT92Wu+e/nTAmNro+6Pd+QOm9wSI8O0X+R0XHaJ96XfObs7zH+
+         gpnHW8JMdLtDVdlc1K9FN2kjsG92R56ElWgmH0FgSdSI4eC9S1Zu9A3LgcvEodwLKzO/
+         GYJvy4fwHBronWNjWRhZCqo+CJeccPievqUGOLC2iBvoQq2cKMmCpJaeqQlskrggptf+
+         whkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSkBfCzSxzr//FwOIqj1ArtLHtgVceUKwV2Sab7upjnYEOVcJcTxMFe5YWtNyyhUa5TkumU8yg+2n3rg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs8Wm1fRz+fW7Qqrb2UnF47ydLlJC1g+XYf/V1z7LZrko3e+HF
+	Wrdq+L8LRPHhVrvuBiaaU91MVkoLpY02NBFwqwwaB4yzUq30WBCJ
+X-Gm-Gg: ASbGncuyuapJnJkIgFSsk0+gPEJeSK2RZS+l7c6eQOpi0TnUZyh12EK5oJZTLNeQ/OX
+	qccsLS4VHdDgPnn0w5LRIZtIZQ6b/wNIF+/p0sH7mKTHYznhdXOIWO6RrM2oKpucNFhxVUWWDvg
+	kbaIaEK+xktC/YgZBQUv5TLehHCSFBUdjQIxuWepCUir+HsZ6Sm5irGuTVLPuSURgVWeUGEcVxD
+	ZwwyNc72B5/zlGm3IfundZn4Il8HWp7qikALOvBHN5WT5qA83smKLzqNbSdrggOBRckEosopcaG
+	OqN51Uw1CUO8vemziomMCjzF0GOu6fz0JNhvhXT3
+X-Google-Smtp-Source: AGHT+IFuf5jV1z/9Zb7FeABCoFloU76Yb/dVd5w+lI7W53ONofj3nILLix1YBAW9+jdvFrRC0/U+iA==
+X-Received: by 2002:a17:907:c10:b0:ac2:7cf9:71a1 with SMTP id a640c23a62f3a-ac2b9ea16d2mr676508866b.41.1741716674872;
+        Tue, 11 Mar 2025 11:11:14 -0700 (PDT)
+Received: from andrea ([31.189.82.201])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2929390b4sm453700066b.75.2025.03.11.11.11.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 11:11:14 -0700 (PDT)
+Date: Tue, 11 Mar 2025 19:11:10 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
+Cc: Andy Chiu <andybnac@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bjorn@rivosinc.com,
+	puranjay12@gmail.com, alexghiti@rivosinc.com,
+	yongxuan.wang@sifive.com, greentime.hu@sifive.com,
+	nick.hu@sifive.com, nylon.chen@sifive.com, tommy.wu@sifive.com,
+	eric.lin@sifive.com, viccent.chen@sifive.com, zong.li@sifive.com,
+	samuel.holland@sifive.com
+Subject: Re: [PATCH v3 6/7] riscv: add a data fence for CMODX in the kernel
+ mode
+Message-ID: <Z9B8vgdTq1M9r3_k@andrea>
+References: <20241127172908.17149-1-andybnac@gmail.com>
+ <20241127172908.17149-7-andybnac@gmail.com>
+ <87ldtck8k0.fsf@all.your.base.are.belong.to.us>
+ <Z9AwF5hwF0ES9Grl@andrea>
+ <87ldtbwrdb.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87ldtbwrdb.fsf@all.your.base.are.belong.to.us>
 
-On Sun,  9 Mar 2025 09:41:51 +0100 (CET)
-Thomas Gleixner <tglx@linutronix.de> wrote:
+On Tue, Mar 11, 2025 at 03:53:36PM +0100, Björn Töpel wrote:
+> Andrea Parri <parri.andrea@gmail.com> writes:
+> 
+> >> FWIW, the for S-IMSIC the write is already writel(), so we'll have the
+> >> text patching and IPI ordered. Regardless, there's more than one flavor
+> >> of IPI on RISC-V!
+> >
+> > AFAIU, this writel() is intended to order the insertion (and the initialization)
+> > of the CSD object before the MMIO writes; so, the "right fix" seems to turn the
+> > "other flavors" into using a writel() or providing a similar ordering guarantee.
+> 
+> Yes, that's probably the right approach, or maybe follow-up!
+> 
+> > As a bonus, such change should address/fix all current and future occurrences of
+> > the message-passing scenario in question (the patch addressed the occurrence in
+> > flush_icache_all(), but there appears to be a similar one in flush_icache_mm()).
+> 
+> Indeed. I wonder if the SBI remote fence.i needs it?
 
-> Convert the code to use the new guard(msi_descs_lock).
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Haiyang Zhang <haiyangz@microsoft.com>
-> Cc: Wei Liu <wei.liu@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-hyperv@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Ah!  So I am not alone: AFAICT, that remains a matter of discussions with your SEE
+team/developers.  :-|
+
+  Andrea
 
