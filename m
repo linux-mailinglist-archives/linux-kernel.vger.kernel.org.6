@@ -1,152 +1,161 @@
-Return-Path: <linux-kernel+bounces-557009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B244A5D257
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:13:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B28A5D25B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B52393B862F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:13:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81C28173B7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4469D26560E;
-	Tue, 11 Mar 2025 22:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89E9264F99;
+	Tue, 11 Mar 2025 22:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZTDg1D0r"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D6CC4r+x"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDE3264F86
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D571E7C06;
+	Tue, 11 Mar 2025 22:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741731189; cv=none; b=gZuOpl6iYLBb8+vIDRgkmjEnYl+CmfHLfsViasHA4/Quw2B9FCevR0EbZUC6Cf6QEOrxdXj9J7cAbpcsU8HGMTmE2U1pnYPcRBNG53FhTsLrUX+szlLdNnOD5TZLvEc1yf5sXXhHdgq93/GXhXjW3Tr0FgoPnT4i/E3UQ1tsb1Q=
+	t=1741731209; cv=none; b=d+ENXUU3YaP7vAJNOJ8UED0kRwNALxEE5yI51R15QWEwA/owHKeKmLjGGpHx0i0xjO6jSd3ljQ/n8aEPzhe52z/EZSOi1ZCy70ME7nvOSrAwhjpSt5Tpvi3+Xpvd6fE6oyaKnQ+7kQPM+Ca3qUZL9vLK/MmWJuvk6udl+/tbWMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741731189; c=relaxed/simple;
-	bh=/m2scfei2Ytzh5tu9Nw/wGalvCrzP8JZJmXDECgc3h0=;
+	s=arc-20240116; t=1741731209; c=relaxed/simple;
+	bh=3aGBcFcTaNaR79p8ePa1pCcF1TKKHFwBabPmxaAkhoE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hp0UCh6RnxO/ttAzdNoqs16HX5pD3wHylAeo4zYz5X4BcmaJ2zvdt15ZlPG5I340/uE1Hw8hj6YB3FKpFgfwsmX3Tj/ZRspkdydBkIF/sUFrNqe71sZANV6bMjsUsBMAv5LSsma6TcYSpTKBwjzzD92e9Xa/S45wk/55pIr8+wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZTDg1D0r; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-72b938f6014so287549a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:13:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=KGNoVzLVGbrYoQPfOBzv6vYMrAGut7BFyEuff/3dZrijYVDTsjQfrVFWe8akpMdQnkIjuXG55yOn9OcY+QpBTeuIBmxX9aTcPQzFUyhBynj0wmy7VOlKycRz2rySucdl7dc+2Ulb5gl5vtnYV1Dzz5+t248Y2FdK44ff8A1p1j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D6CC4r+x; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abf3d64849dso703450866b.3;
+        Tue, 11 Mar 2025 15:13:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741731187; x=1742335987; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9gx/uI7Jj+LFnh/Y9Cm66/wk2fyG/s7LdrL3JXmhnGY=;
-        b=ZTDg1D0ryFXRp5GlDcrzjKLGw6BJkINECL7kurvTS4XmJ7njzfSh7K/B61705i/pxM
-         +ZD8R2Q49Jh+aJuHbMGx82FMNJamqH266JVhibaprjadjzF0t+YP5riTczhQsKf9mDdB
-         crfTvajdHPqG229PkoR3+wmGs0dnk5iJEFWVE=
+        d=gmail.com; s=20230601; t=1741731206; x=1742336006; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rjUc9bePqbTdDTZkTfNHhdZzvWN4QLUd87uz3URl6ag=;
+        b=D6CC4r+xzDIlgqPv4grzBXtonyzlAmJIoxU8qQ3jPwTMx5rKNdY3bc3cY9oiePXbx9
+         bt/KVQxxFJZ6HrB4lbhoEdoY5oe0lai5ddiAr7yowf2oYtufKFE3HRy5xRuu4ZKWKzFm
+         jwQbPSYvxlabHVWFKYHDcl6LIElX29MVl0BFrMcYb+VW9F7Evj8Y6L5uPS/kjPXaSgSs
+         mOqybz2i+nt1XL6iEvuIi88MHDPRzlN/BSDDp5nbeb0Rk9vxh4FTIkMswdm+HRuUVkyj
+         +QCl5hZYtJcEjnR5ATF3Aw9GjL/Dh7qgdyj9QEfuPae6GcOJA/1TXbzDnEM56mq8coxn
+         8spg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741731187; x=1742335987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9gx/uI7Jj+LFnh/Y9Cm66/wk2fyG/s7LdrL3JXmhnGY=;
-        b=s1DPNkk0DtOWyAPHIFKQt2K81MYOYvJ+45hogfZdyXSJtSxqcjUiOcNTRgC3xCKfoe
-         bNHYcgUJN+rbRt9hoh8mRK4QMkIA2MU9swWnXm4+lnT1XIB7oJRxkxg2jLJRMdNw0BHO
-         qByWaSOwBEU2K3MRiTQ2gfTuUyPzQRS2LV++iqkvqzQmnUUbcUWtmk63O2X+BOyVW7Yi
-         AW2PvnM3pxurIoRrxxFKRWJi3qiFOeAGXxSZDTCJvyOoDY+nyGZ+n6xD2oYTXUN2TKKk
-         h9hb07ubAmuTYsiCkt6g323jGrBZQ6e5SGhjPJhUw89HfYwhQeVyXThoWvq9tiuxd/YB
-         p8kA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuJUoctVBTU4XczNGZD9LXC/6ZP0oSlEZg3PG3ldKe3w2GJgs3vPNJ5XWc0w7CPxG/ARNtnETLtjsR6/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1pgxC3rAnw81z1ujylArEocsIHZrJGDlkiifSsbSy5c4kmS/n
-	15fEypbT4S3MrUTuJZSAu7+4OGoV2Sk0ETC6IBZhKF/5j6X3XTagDrUeT46sTT7pONsHnLnQ8y1
-	L1Wnnz0PyHyzjfu9kyRFC/lrqXdPlNdYpVDhk
-X-Gm-Gg: ASbGncvAE/56S//sM+LsOg38U5e2AzaZGXQ9cn2/Llrwk6sN4uCurz+nSo7suZC61c8
-	PTczii+eXh/H/3F8WpBqjk6I/rmzKuoqSfiCXNM1OafNYT+S8QaWCzQUoXsESNJWK4RSxfR6QH4
-	o2bNa+36GMbzxMLDC3h7rh7KGO
-X-Google-Smtp-Source: AGHT+IF6cHOCc1/WT6rYQME8ZwTzRijq4TF0n6zKoV4EldL5MeMYHAbxupldljEVnQ7QDui54Qopy4486X05dA/Olqo=
-X-Received: by 2002:a05:6830:3808:b0:727:32f5:df87 with SMTP id
- 46e09a7af769-72b9b51ba95mr1072927a34.4.1741731187229; Tue, 11 Mar 2025
- 15:13:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741731206; x=1742336006;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rjUc9bePqbTdDTZkTfNHhdZzvWN4QLUd87uz3URl6ag=;
+        b=qmFB33MGA9BfDcA0QeW/gFbRZDrbXwbfX38lvJPCQtYeTVFPu5EFPuZpt1LGZA8vF+
+         gqAKLlgsvoWAW4tltYQ1YDjTtJ0Lql03O/aHFJVLZW93EIPD6w6akBv/+0Ks4ZCYTjEh
+         mdvjXluGHfqTKagrMuo/jgdFCSfkG3XKvLsbvUuD3iMVSUDiRuT0mW1UjIgEwH2lpdfk
+         P3sSe663ZovSRdJQmBmtzNxxXl68isE20TRID5aDduOk7r2ZLgZVaHw5XS/cJuHkSqy9
+         B3IsOLUoZlaHtnJnucMzzWGwvMywCfhwvAymsNF+I4VoB2cr5RJh7I0P7CG7xgYdCzeT
+         RjXw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9aUOcYCpNOsSJyBJS4g/qo/ecQ+foAHg+YPtce14KMLPRbK5PB9RA0r+ILY5D6o3FWlaYsxg5zh7T4Qkr@vger.kernel.org, AJvYcCVStD/EkVDQv6OTDWAj2Ljxi9+RqvlbR6UXFbuNhXpzs9ucvCWde0/QdSzjH4UsoaXV9Ji1H1kaSnYXxM0=@vger.kernel.org, AJvYcCWLWmMDjNrRXoBt2rtqhjwaRWvmIQGf2j/7Cke7HhCJ+viDMSQwOUJOZDp5RlX6wxeSqJA0sxh0Cplf@vger.kernel.org, AJvYcCX1hqpagB7+3wRdd15BvKcvLLlAPbgresPr0dl3qpkj+hTfHki92pHWY9v35gop9G8dOUpyKK0Eep0fNIv75g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywiz8ozVWAjaYxpQQfx1ayYjWnSnQMT93zavw6vJtQXr8NrMAlD
+	p543nMJKzwI5T518ufDq1kjPAm5guyidZlyA/pahL2ZMLkFNYo0o/1FunSCCgs71Jgc3G3GZVGI
+	BzGmy2ziwwJ4yqv8HJo4TBEX6TgDWvg==
+X-Gm-Gg: ASbGnctkdNJtYvrwp0QbG70PnUNrGviFxB09nE/Qk0xq3M14I9mMkvj96Peq+SL5YDZ
+	yc5WRQnBsQvbpeVD0eM0AZz3ps+wh79oEPc1cJ5Euf5CplUH8zjUBXnbzj6ZA+SKM61sVyKklmy
+	Fcgpi5Dd4gt8fVuNiRgHLiZaQD4InW8EGFuGK2mzaoK5+qBAV7gT9J11qr7g==
+X-Google-Smtp-Source: AGHT+IEnlCesq9Sm6fpV1dwPArArN/oTo2sRyqjMAyFXYP4HF57/9egXxxaFYA3J1rptFlnafWwJQQ7H/6zLNQVjros=
+X-Received: by 2002:a17:906:dc8a:b0:ac1:dc6d:af32 with SMTP id
+ a640c23a62f3a-ac25269072cmr205164466b.27.1741731205522; Tue, 11 Mar 2025
+ 15:13:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311123326.2686682-1-hca@linux.ibm.com> <20250311123326.2686682-3-hca@linux.ibm.com>
- <CABi2SkXWD4Pg7Y7TG9fMV9eat_1fOGwHjvEUKHXREN+pRe18NA@mail.gmail.com>
-In-Reply-To: <CABi2SkXWD4Pg7Y7TG9fMV9eat_1fOGwHjvEUKHXREN+pRe18NA@mail.gmail.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Tue, 11 Mar 2025 15:12:55 -0700
-X-Gm-Features: AQ5f1Jp67jwM-684SO1tDeImf4lP5e9Q1ZLCVvcfHKRXZQkMxKgJL8mewS-yfP0
-Message-ID: <CABi2SkXzqJ10NW3j1y-FtmrheDkqzL5QgMcN9UN6UvhbXFHCuQ@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable 2/2] mseal sysmap: enable s390
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Kees Cook <kees@kernel.org>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-hardening@vger.kernel.org
+References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
+ <20250311-dtbinding-v1-1-5c807d33f7ae@quicinc.com> <7yjj2eemvvvnsgv67d7tueid4h3n3onuou6ammx36am4qhfsal@xam3iamk4er3>
+ <c0430086-675d-b58c-4ef9-1bd9ee51d3db@quicinc.com> <zssjkvxxv7kionartp6f3y2qh3d4i6gwnhwsrklsfad3t4fy3q@jkehbkx6wcyk>
+ <203ea0bb-c53c-389e-db12-b41773c0ff5d@quicinc.com>
+In-Reply-To: <203ea0bb-c53c-389e-db12-b41773c0ff5d@quicinc.com>
+From: Dmitry Baryshkov <dbaryshkov@gmail.com>
+Date: Wed, 12 Mar 2025 00:13:14 +0200
+X-Gm-Features: AQ5f1JrSy91oYnYZTZryNqtuXvq7j4AA0a3FL9eIdiJigCbNEuF4Dql52zRWNxM
+Message-ID: <CALT56yP5mh4QjhOEHh0x2s_+BWWXH0fPM7r7YVvx+DEgWZ0MCw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: media: qcom,sm8550-iris: update power
+ domain name
+To: Vikash Garodia <quic_vgarodia@quicinc.com>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, Dikshita Agarwal <quic_dikshita@quicinc.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-One more thing: do you want to update mseal.rst to add s390 as
-supported architecture?
-
-Currently in the mseal.rst:
- "The following architectures currently support this feature: x86-64 and ar=
-m64."
-
-Thanks
--Jeff
-
-On Tue, Mar 11, 2025 at 2:55=E2=80=AFPM Jeff Xu <jeffxu@chromium.org> wrote=
-:
+On Tue, 11 Mar 2025 at 21:19, Vikash Garodia <quic_vgarodia@quicinc.com> wrote:
 >
-> On Tue, Mar 11, 2025 at 5:33=E2=80=AFAM Heiko Carstens <hca@linux.ibm.com=
-> wrote:
-> >
-> > Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on s390, covering the
-> > vdso.
-> >
-> > Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
-> > ---
-> >  arch/s390/Kconfig       | 1 +
-> >  arch/s390/kernel/vdso.c | 2 +-
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-> > index 608a965e2344..93b880992596 100644
-> > --- a/arch/s390/Kconfig
-> > +++ b/arch/s390/Kconfig
-> > @@ -141,6 +141,7 @@ config S390
-> >         select ARCH_SUPPORTS_DEBUG_PAGEALLOC
-> >         select ARCH_SUPPORTS_HUGETLBFS
-> >         select ARCH_SUPPORTS_INT128 if CC_HAS_INT128 && CC_IS_CLANG
-> > +       select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
-> >         select ARCH_SUPPORTS_NUMA_BALANCING
-> >         select ARCH_SUPPORTS_PER_VMA_LOCK
-> >         select ARCH_USE_BUILTIN_BSWAP
-> > diff --git a/arch/s390/kernel/vdso.c b/arch/s390/kernel/vdso.c
-> > index 70c8f9ad13cd..430feb1a5013 100644
-> > --- a/arch/s390/kernel/vdso.c
-> > +++ b/arch/s390/kernel/vdso.c
-> > @@ -80,7 +80,7 @@ static int map_vdso(unsigned long addr, unsigned long=
- vdso_mapping_len)
-> >         vdso_text_start =3D vvar_start + VDSO_NR_PAGES * PAGE_SIZE;
-> >         /* VM_MAYWRITE for COW so gdb can set breakpoints */
-> >         vma =3D _install_special_mapping(mm, vdso_text_start, vdso_text=
-_len,
-> > -                                      VM_READ|VM_EXEC|
-> > +                                      VM_READ|VM_EXEC|VM_SEALED_SYSMAP=
-|
-> >                                        VM_MAYREAD|VM_MAYWRITE|VM_MAYEXE=
-C,
-> >                                        vdso_mapping);
-> >         if (IS_ERR(vma)) {
-> > --
-> > 2.45.2
-> >
-> Great ! one more architecture uses this feature.
 >
-> Reviewed-by: Jeff Xu <jeffxu@chromium.org>
+> On 3/11/2025 9:05 PM, Dmitry Baryshkov wrote:
+> > On Tue, Mar 11, 2025 at 08:41:01PM +0530, Vikash Garodia wrote:
+> >>
+> >> On 3/11/2025 8:37 PM, Dmitry Baryshkov wrote:
+> >>> On Tue, Mar 11, 2025 at 05:33:53PM +0530, Vikash Garodia wrote:
+> >>>> Not all platforms has a collapsible mx, so use the more generic naming
+> >>>> of mx in the binding.
+> >>>
+> >>> I guess, it wasn't even tested...
+> >> Not sure what made you guess so, let me check why my binding checker did not
+> >> catch the bot reported warning.
+> >
+> > Obvious: you are changing the bindings in a non-backwards compatible
+> > way, but you are not changing the example in the same file (and
+> > obviously you are not changing the DTs), which means that this wasn't
+> > tested.
+> >
+> > Hint: you can use enum [mx, mxc] instead of const. That would make it
+> > backwards compatible.
+> Currently there are no user of this binding. Given that either of MX or MXC are
+> same connection to video hardware, just that one is collapsible, it would be
+> good to replace the existing element instead of enum.
+
+This obviously should go to the commit message.
+
+>
+> Regards,
+> Vikash
+> >
+> >> Regards,
+> >> Vikash
+> >>>
+> >>>>
+> >>>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> >>>> ---
+> >>>>  Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml | 2 +-
+> >>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> >>>> index e424ea84c211f473a799481fd5463a16580187ed..440a0d7cdfe19a1ccedefc207d96b26eed5d6630 100644
+> >>>> --- a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> >>>> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> >>>> @@ -28,7 +28,7 @@ properties:
+> >>>>      items:
+> >>>>        - const: venus
+> >>>>        - const: vcodec0
+> >>>> -      - const: mxc
+> >>>> +      - const: mx
+> >>>>        - const: mmcx
+> >>>>
+> >>>>    clocks:
+> >>>>
+> >>>> --
+> >>>> 2.34.1
+> >>>>
+> >>>
+> >
+
+
+
+-- 
+With best wishes
+Dmitry
 
