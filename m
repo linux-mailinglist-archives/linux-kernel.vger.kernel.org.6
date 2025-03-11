@@ -1,236 +1,117 @@
-Return-Path: <linux-kernel+bounces-556155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09ADBA5C18C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:42:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A98A5C193
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:44:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50CFF7A1492
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:41:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D3CB7A4BCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B63255E37;
-	Tue, 11 Mar 2025 12:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F48253F3B;
+	Tue, 11 Mar 2025 12:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFXar4u7"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BmPFYSKF"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C23A1DE894;
-	Tue, 11 Mar 2025 12:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5F0214A9A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741696936; cv=none; b=M/zUgSDatFjrmXHGBGRvkcEtP7ieaqM7FSzchDT/QQeoWi5Ni9Pz5mKxVbj6VE8K3Ikr5tU5yqmnXBLjkAqPNlGX2VDEjzc0HaikFVH8vODYbX03qYneiM2bYDHB+mCmXYLH49eFA6g2vYgvcexcYOukYjNX9ixbPxUX1Efrfwk=
+	t=1741697059; cv=none; b=aR92Fukiss7mBGLQTZOpGa9UqxJK8TLVcBILwM+nPkNo5XMsc2y6CuFEhTWCRh/XFUFm2tgu7wGr1Y3dZbMYuzArbWBq5b+Se6xqYezWxlBI8EznH7ngffPxyxiD2ybps6WWMWABJdgTyj1RbjOI3YTqemZrJC3EyEdkCAjumxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741696936; c=relaxed/simple;
-	bh=isFALg6CXqDl8cu7cPP7y6ryoQs71iJg27uKq5QT0gM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WqLMKrabscomzZuJDIN4ZXK8vokLEPR6bDf3byj8ECS54xLEmh/yEyJyhaIM1rzCZrHrAqpAca0ZAJ2L8MjEE6DWVsDVdYxDVHF36zs9wA9DAKYU2d59/vh2Yo3UixVtz/WbmtI1NGyRzy5PxTuJZI4FAJh05D7p17GObgugag0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EFXar4u7; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1741697059; c=relaxed/simple;
+	bh=gTYyejWsFNlkaOkOvzvafCWEzbM9F8F/DqOTjyHLBRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z2W75M3d9Lxe+uXYJTXfjHMFYjrOC4v9mBk9vYkMbEUhbiXvLjrFvtjrYaud88OCZqvMYuCEoFpguSgijX6sw8MGSm8K69LyQxQsouhadL/dRRIA+MBlWGU+XyDueRl7YjzxQwhtpkZHcx+68yrHZLJY+WYlM6vuewKVd4PkZFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BmPFYSKF; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-223959039f4so106755945ad.3;
-        Tue, 11 Mar 2025 05:42:14 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5b572e45cso9829895a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:44:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741696934; x=1742301734; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WKfNUEOjLl/LJnQn1CB92jCGeCH7231aksnRXVNSbLI=;
-        b=EFXar4u7FqepL/TdIjlR7Rr1E6ZejB+I+ZMvh0GB6oaJttbRWOO2ZAthqs4W9y2IFR
-         VhE4Aj9SLEa5duK1Tp7aZcKNgap7oW53vTiXFPCe6svkgqJqQ4//nDplOk2u8cofBDm0
-         7AQiGiRiaFwgS/McIAaeWZJAs6CKQJ0nHyeMeU1wing9FXyC4Ouijw4Kiv61c9By5AGK
-         qmoRI5AgRtWCZLPJbImh+4aeOVZcXO89+C62PMc0aKtLhNqV/WBx3tPzb+II9PhIyzg1
-         0Zb4jaxGILbf/X5OpaTvNqh4i7igUCnUkAzUuY0YeAQTxCgP4LtBt4HuQW21vSrLRX28
-         D1lA==
+        d=gmail.com; s=20230601; t=1741697057; x=1742301857; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KAxTVq2MkmffpCsIoG9Vx8XOOm1e2JNRTwJ0699I4wM=;
+        b=BmPFYSKFJ7WM1gkm5okzuCA5jGbjbpqqqNp3lq4ZD4u+U6UUNrkg4yYHOObNpPXGDL
+         X7CcfwTC8G0eCTIGYiJaGgeAuAc/LbUMazwtdaWMaoMfY3tq2OUoDZmyHUXjGDxXUtsj
+         /mCvRBtoqUk5sBHfsYr9toDs+4eeBQupivpOYntVIVHrzQ6uwI9avACV2D25DKT0qPT4
+         urLy7kG9hr/D4/erxRDLBibWGwYtfrk1bMUmXN+lCfkXLSuEjoWJIxs2Gs+hSMPTx6Yy
+         TYNsjenqRm0RG4DpmuiMFWBxJlwPqKvixxs1N/N97KSdK7STDDF6uOpjFs1Q92BQP6/i
+         U6mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741696934; x=1742301734;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WKfNUEOjLl/LJnQn1CB92jCGeCH7231aksnRXVNSbLI=;
-        b=mF+VsxL3NSVht9/P0MKFmQKc5mrOHMqnIAh5dLsxIJZ2IKbWlYYkz8zAsuONLBipug
-         S3gFPrDfkDQAGxlO56P3lBTCFq3B+0Bu9xjCjzRCb99qBuRvcuG3kLZb+owUX7I48yBo
-         Jy6Pb1ocWt42vP8Z+6zCdnm2WsSIu++pTMIDTfcgGS780/eTqKWrBIZCdWtDQL84YlRF
-         H2tBs1NZJZb7DbOlR1dXWWzqkHip+zzy+epu+9A+NeuMVv0InGVZSB1NX+l6zWkJx+fI
-         J+rpO/+2HdxW6coVV/FCTkSERs2ChFWJ4nvfPPb8/sGBCOnmOcunORf69uVLZN3oN+rJ
-         6/eA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9M6uV/SPUbjcglWNCQIQE9rw0I01QCfgQ+stEbk7DMP45cU+zQ+bNHe1B6IDT1KRfq/p6Cr3XHYu1ZTCP@vger.kernel.org, AJvYcCUfYL9EdaHIxHuTTStgkw1k/5kEhP4ePMF8H3vqhoiQGMgFprMwrAjuYWWGyW79Fa+rvMymQsYM0vswpRFFoKxkh8hO@vger.kernel.org, AJvYcCVLQWDzB7Gl++zKzoaXMMHZqlmvBBAA2OUu2OGJ/ReQQ9DBSP4oqpNfEpGlZC0tpoZ/aUiiplB8x2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKA9+vDCsvXYwIaM0k0Y+ufzxduNawd5j7OiUlUGQVRhqULBX0
-	vYcnQiMXnFKID2XiFMw+5PWu1ev6cXQeGjrPUP0L2Zvjd2fQ5Kwg+x1HByffzKQ=
-X-Gm-Gg: ASbGncvIst72bqKVEglk7EMXMJQQqY6Pcl+CiAvjYrBSgyoQyCwW+jDQu81CIueaN8v
-	nqL3IBfAahT+dbHi6yRKJD6UV2QLuBmqVBZ0nlaMXRXKN2GqZrvRE/7uCn6ugllm0oIGWcpYhiO
-	uZzuboSC0ZmW/69GmV2NSWsgbikKGbN6KHVHRoFnzmkFEVPnbfKizaqbpT8S8a8pbnrM9Qs2Xsj
-	11GSYiWO2C6sA3p1CAEGt72hyDORpzZYnvy6+3TJJSewwV8IycwK68Mv5uHiHY1/dK7e1X8IGvD
-	uBqCJnrcCO65pXz5Q02c0xAI0dWOE2Dg/1TuBvSoSP8CFBqHMxOqVX9cImAp+DANRp/AHRghDO0
-	o2OFtmSME4g==
-X-Google-Smtp-Source: AGHT+IFksfkPNQwMHiJKY4c3iD+j5d/ZmUsPno28U2muS68dudrD9hC8Ud5qfSRkEDv+fENeBL7Z/w==
-X-Received: by 2002:a17:902:d488:b0:215:b9a6:5cb9 with SMTP id d9443c01a7336-2242887eb5cmr282396875ad.5.1741696934361;
-        Tue, 11 Mar 2025 05:42:14 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([14.139.108.62])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410aa4a15sm96360125ad.215.2025.03.11.05.42.10
+        d=1e100.net; s=20230601; t=1741697057; x=1742301857;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KAxTVq2MkmffpCsIoG9Vx8XOOm1e2JNRTwJ0699I4wM=;
+        b=B1XJX855/bhxCgzgAMTolic2UktuS1FEiczXJYpHutmF6+oyUwN3zWqK0y+jRmqxrk
+         4/+/mP6UsPgYelsNFsK7XTooZtc/KgohcRUm72CWf4bihEyNYlYKmNZyyJK+cXK4yXaV
+         Ut+H3PFmEQytR20dYYeqwJLG1WV7Fh7N5B2aqzmf8KMpQ6YkoJ5Qmg7xg+EaF8o7I3TV
+         vhrSsrh/R3qdoKvx3dnVPa3Ll4hcSGNQusw4ehQbepaFZoqnBL18cmmIEWcKFIiG/sW8
+         hKqiX99LqtqlenBjGAbSUG5jdz0uPsug3wUVi/ZBzbSTcGdLs9VfmwBmayBXyI3XH/pV
+         d8wA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFwReFYKx4TDABORVyTvmm7bAaY1eGdqs7e6CUffVQjbKM/CnxqMQ/jL6ghorFtePLBjRLKjhvCkkxfVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOUz6ZwNVXB8B63druKmReIcvaZ4TusCsSyR1ERRIChhiA8QMN
+	8HKfCdlE26suMente8D7JGBfrQYRPiqJY7gDSQDIEc3ALJYTbbwo
+X-Gm-Gg: ASbGncvEEbAnFTl3UubJnllh9O3hk80J93LA/vGVW6Y949B/xXVAdD2gdY9M/XbMr1c
+	FzBpgPaGI+rK/yNc2oKolMOccXKbcTUvKerN+IdpsiKQYD0T0jcTNSX5HKKm5quJk2XfgDnAXvD
+	pPt107ENWgfZswhzsHLYDRJrGJ8For/huOVdofBy/FhoCSLoI4JrtPWR45PzatGak4Id5O+k0oP
+	Aox/1kPCZgdzinZWG7Juupjvm0CmsQJ5q5DJAiQZT6Cg0WcjwzFiCymws609P/RlX4/GyFlXkJ8
+	IQttaaCCMlgRMOV0C0y0Cs2h7TWop6UZGjGAq+Yl
+X-Google-Smtp-Source: AGHT+IEO56Nb9J2khSBHRHHVBhO30LQsgobeKL8CBisjIMZ6nYRRy/fBVYFBaFBes9nMuhIvDJu9uw==
+X-Received: by 2002:a05:6402:3581:b0:5e5:b7d2:d425 with SMTP id 4fb4d7f45d1cf-5e5e22db495mr18901947a12.8.1741697056272;
+        Tue, 11 Mar 2025 05:44:16 -0700 (PDT)
+Received: from andrea ([31.189.82.201])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c768ef30sm8283422a12.69.2025.03.11.05.44.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 05:42:13 -0700 (PDT)
-From: Purva Yeshi <purvayeshi550@gmail.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	corbet@lwn.net
-Cc: mathieu.desnoyers@efficios.com,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Purva Yeshi <purvayeshi550@gmail.com>
-Subject: [PATCH 0/3] docs: tracing: Refactor index.rst documentation
-Date: Tue, 11 Mar 2025 18:11:58 +0530
-Message-Id: <20250311124158.22950-1-purvayeshi550@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 11 Mar 2025 05:44:15 -0700 (PDT)
+Date: Tue, 11 Mar 2025 13:44:07 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
+Cc: Andy Chiu <andybnac@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bjorn@rivosinc.com,
+	puranjay12@gmail.com, alexghiti@rivosinc.com,
+	yongxuan.wang@sifive.com, greentime.hu@sifive.com,
+	nick.hu@sifive.com, nylon.chen@sifive.com, tommy.wu@sifive.com,
+	eric.lin@sifive.com, viccent.chen@sifive.com, zong.li@sifive.com,
+	samuel.holland@sifive.com
+Subject: Re: [PATCH v3 6/7] riscv: add a data fence for CMODX in the kernel
+ mode
+Message-ID: <Z9AwF5hwF0ES9Grl@andrea>
+References: <20241127172908.17149-1-andybnac@gmail.com>
+ <20241127172908.17149-7-andybnac@gmail.com>
+ <87ldtck8k0.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ldtck8k0.fsf@all.your.base.are.belong.to.us>
 
-Refactor Documentation/trace/index.rst to improve clarity, structure,
-and organization. Reformat sections and add appropriate headings for
-better readability.
+> FWIW, the for S-IMSIC the write is already writel(), so we'll have the
+> text patching and IPI ordered. Regardless, there's more than one flavor
+> of IPI on RISC-V!
 
-Improve section grouping and refine descriptions for better usability.
+AFAIU, this writel() is intended to order the insertion (and the initialization)
+of the CSD object before the MMIO writes; so, the "right fix" seems to turn the
+"other flavors" into using a writel() or providing a similar ordering guarantee.
 
-Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
----
-V1 - https://lore.kernel.org/all/20250204133616.27694-1-purvayeshi550@gmail.com/
-V2 - https://lore.kernel.org/lkml/20250206141453.139613-1-purvayeshi550@gmail.com/
-V3 - Improve section grouping and refine descriptions.
+As a bonus, such change should address/fix all current and future occurrences of
+the message-passing scenario in question (the patch addressed the occurrence in
+flush_icache_all(), but there appears to be a similar one in flush_icache_mm()).
 
- Documentation/trace/index.rst | 94 +++++++++++++++++++++++++++++------
- 1 file changed, 79 insertions(+), 15 deletions(-)
+Or am I misunderstanding your previous comment?
 
-diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index 2c991dc96..6b268194f 100644
---- a/Documentation/trace/index.rst
-+++ b/Documentation/trace/index.rst
-@@ -1,39 +1,103 @@
--==========================
--Linux Tracing Technologies
--==========================
-+================================
-+Linux Tracing Technologies Guide
-+================================
-+
-+Tracing in the Linux kernel is a powerful mechanism that allows
-+developers and system administrators to analyze and debug system
-+behavior. This guide provides documentation on various tracing
-+frameworks and tools available in the Linux kernel.
-+
-+Introduction to Tracing
-+-----------------------
-+
-+This section provides an overview of Linux tracing mechanisms
-+and debugging approaches.
- 
- .. toctree::
-    :maxdepth: 2
- 
--   ftrace-design
-+   debugging
-+   tracepoints
-    tracepoint-analysis
-+   ring-buffer-map
-+
-+Core Tracing Frameworks
-+-----------------------
-+
-+The following are the primary tracing frameworks integrated into
-+the Linux kernel.
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-    ftrace
-+   ftrace-design
-    ftrace-uses
--   fprobe
-    kprobes
-    kprobetrace
-    uprobetracer
-    fprobetrace
--   tracepoints
-+   fprobe
-+   ring-buffer-design
-+
-+Event Tracing and Analysis
-+--------------------------
-+
-+A detailed explanation of event tracing mechanisms and their
-+applications.
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-    events
-    events-kmem
-    events-power
-    events-nmi
-    events-msr
--   mmiotrace
-+   boottime-trace
-    histogram
-    histogram-design
--   boottime-trace
--   debugging
--   hwlat_detector
--   osnoise-tracer
--   timerlat-tracer
-+
-+Hardware and Performance Tracing
-+--------------------------------
-+
-+This section covers tracing features that monitor hardware
-+interactions and system performance.
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-    intel_th
--   ring-buffer-design
--   ring-buffer-map
-    stm
-    sys-t
-    coresight/index
--   user_events
-    rv/index
-    hisi-ptt
-+   mmiotrace
-+   hwlat_detector
-+   osnoise-tracer
-+   timerlat-tracer
-+
-+User-Space Tracing
-+------------------
-+
-+These tools allow tracing user-space applications and
-+interactions.
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-+   user_events
-+
-+Additional Resources
-+--------------------
-+
-+For more details, refer to the respective documentation of each
-+tracing tool and framework.
-+
-+.. only:: subproject and html
-+
-+   Indices
-+   =======
-+
-+   * :ref:`genindex`
-\ No newline at end of file
--- 
-2.34.1
-
+  Andrea
 
