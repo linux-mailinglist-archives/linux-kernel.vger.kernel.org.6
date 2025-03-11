@@ -1,165 +1,161 @@
-Return-Path: <linux-kernel+bounces-555301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28FAA5B4FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:45:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D1EA5B513
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:46:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD5A31739F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:45:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 623751738EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25ECC1DEFC6;
-	Tue, 11 Mar 2025 00:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D0D1DE4C5;
+	Tue, 11 Mar 2025 00:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ibqyUgKc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B8/xZIoV"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848F91DE4F3;
-	Tue, 11 Mar 2025 00:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EACDEEB3
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 00:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741653929; cv=none; b=nLj8wf3XA/lDf53MTaSbpCAqg7OCdhX2UOq7mSQZuIsTXIWhVXB2ZGHdzAo2NaIYhlduizN0V/MT0nxaLXWxl2Sxq9YM+5QY6ftDUtRe7/9oMXgbymbfrNdmIUKdwFO4v7qvupuv6BmWqiuQT8u7DA3hbVakekD3+XNLURJidUI=
+	t=1741653984; cv=none; b=tCQ5yz7MdcGsl4K6lf6uxfsFuWGZ39A3De78f7/bf3dKb8YDoG+9mVw7AasCEgdcR5N1FDLDmv8m90KtqJDcjr6OEuZEoLtG1c3a3es2N2TrHenHl5eHrHp3e99HUn8GGeW/21Zbl0jjvcZ74+lPp0ieBI05KqIbqnJRgKnuhtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741653929; c=relaxed/simple;
-	bh=8fysGV/DETVS5cSCbvfDu7bU+efp3MuujNHDeLv2eAw=;
+	s=arc-20240116; t=1741653984; c=relaxed/simple;
+	bh=KfeZPvyIXPU9DBlzbfsIc6bpAtz0C0Wzqm0VtesCYDo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bf2n6xnToHGSV1ZaYySZyYLdjZJhp6iTlh4jPWbuhwAtsbdv2BEyB0HI67L+V5UPvpIKrsV/EWcTjI9vQL0gMbA2YRgiPOny99Qa0TZCDNoFGPpzFYI0q3mYi39uIvr2o0VWQEKsJLrokTih8cVxpoESlCcXq1DSb5kQjjPTrO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ibqyUgKc; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741653927; x=1773189927;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8fysGV/DETVS5cSCbvfDu7bU+efp3MuujNHDeLv2eAw=;
-  b=ibqyUgKcu5PLOwpJtY6jsIfkh+Rv48il7vAx38cCHnlFOCKGwNjxCVPY
-   aPnWSo7iJUxs+2qN/3Yo1HfoqIM4kKhUaLlyLfIFzA148N6l6+9Bm2thk
-   YqL5Ttzkw1tmy/FqRcw76JDbbBMENgHTOaFFf5Fbq/BBg+tzuMywErCSy
-   TF1icPE1pPn5XOtLpbjNRbibIb8MekTQt2htWcibYojiSgLrnVvvOKz7r
-   trpLFdLNhW6XsJf/Do0HTWiVa0+xekgfi/X/20R43FHZxxf8iR3j6tMpL
-   5Yr1NnCNEHE+Qq6yVohdrdzUxL+ICY7eeD2tlehtChQ11sLlsbPy2TUcv
-   A==;
-X-CSE-ConnectionGUID: 5vCUVMnYSIu5bNUKmB65BA==
-X-CSE-MsgGUID: IGXKZZo+RcupRvzKfOUi+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="52883315"
-X-IronPort-AV: E=Sophos;i="6.14,237,1736841600"; 
-   d="scan'208";a="52883315"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 17:45:27 -0700
-X-CSE-ConnectionGUID: mt3H7reTTmaYNYls5N1LKw==
-X-CSE-MsgGUID: 760FJxwAQo2PqCD7Nol5sQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,237,1736841600"; 
-   d="scan'208";a="119995364"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 17:45:22 -0700
-Message-ID: <ba8dedbc-9a5f-4038-ad51-2b20baa6af65@linux.intel.com>
-Date: Tue, 11 Mar 2025 08:45:20 +0800
+	 In-Reply-To:Content-Type; b=ZEk/gZ4DevovkLclwxKTnpNNkYiqP0w5bN6n5Z5QCnaV23FPN5Of8V14ZgexqlxXHxen2r1wUtVUUmubCUpl3VgJyiXEpSKGoU1joWR53Do+Jzy7w+THAR7tsid8RnVP24ZJ7Azhqe1gte2bXqI61YI3ikGr0sQFzL9VwkPIEDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B8/xZIoV; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ff1562e2-b9c7-4747-9953-75c3e8a60c99@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741653970;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PTfwQ1pfoRoRpyYqPQNeAPPhuLkty3IVLj6VlX3VrQs=;
+	b=B8/xZIoVSeT2xwK2zWt9Bouk/oq25Z592Jq7VaWHwkWOatH9mGYysRv5bAFGwxzqb9mWFU
+	9k5AVxHl9inqnrWtoBgy74QgtD47mEuGIK+ssHDspwz4b7ri24lAkqyP8Spq85BFN5kEjQ
+	J3OEySYIApOUtopu7mGn3Ckj3Y0JwN4=
+Date: Mon, 10 Mar 2025 17:46:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] perf x86 evlist: Update comments on topdown
- regrouping
-To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>,
- Dominique Martinet <asmadeus@codewreck.org>, Andi Kleen
- <ak@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Falcon <thomas.falcon@intel.com>
-References: <20250307023906.1135613-1-irogers@google.com>
- <20250307023906.1135613-4-irogers@google.com> <Z89Y5pUchAaJj4PY@google.com>
+Subject: =?UTF-8?Q?Re=3A_=5BRESEND=5D_Fwd=3A_=5BBUG=5D_list_corruption_in_?=
+ =?UTF-8?B?X19icGZfbHJ1X25vZGVfbW92ZSAoKSDjgJAgYnVnIGZvdW5kIGFuZCBzdWdnZXN0?=
+ =?UTF-8?Q?ions_for_fixing_it=E3=80=91?=
+To: Hou Tao <houtao@huaweicloud.com>, Strforexc yn <strforexc@gmail.com>
+Cc: "Alexei Starovoitov," <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <263a77e4-9ba8-f9e2-4aaf-5e2854d487e5@huaweicloud.com>
+ <2e946e29-ccd3-3a12-d6b4-d44d778c9223@huaweicloud.com>
 Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <Z89Y5pUchAaJj4PY@google.com>
-Content-Type: text/plain; charset=UTF-8
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <2e946e29-ccd3-3a12-d6b4-d44d778c9223@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-
-On 3/11/2025 5:25 AM, Namhyung Kim wrote:
-> Hello,
->
-> On Thu, Mar 06, 2025 at 06:39:05PM -0800, Ian Rogers wrote:
->> From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+On 3/9/25 7:19 PM, Hou Tao wrote:
+> Resend due to the HTML part in the reply. Sorry for the inconvenience.
+> 
+> Hi,
+> 
+> On 3/5/2025 9:28 PM, Strforexc yn wrote:
+>> Hi Maintainers,
 >>
->> Update to remove comments about groupings not working and with the:
->> ```
->> perf stat -e "{instructions,slots},{cycles,topdown-retiring}"
->> ```
->> case that now works.
+>> When using our customized Syzkaller to fuzz the latest Linux kernel,
+>> the following crash was triggered.
+>> Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.config
 >>
->> Signed-off-by: Ian Rogers <irogers@google.com>
-> Dapeng, can I get your Signed-off-by here?
->
-> Thanks,
-> Namhyung
->
->> ---
->>  tools/perf/arch/x86/util/evlist.c | 27 ++++++---------------------
->>  1 file changed, 6 insertions(+), 21 deletions(-)
+>> A kernel BUG was reported due to list corruption during BPF LRU node movement.
+>> The issue occurs when the node being moved is the sole element in its list and
+>> also the next_inactive_rotation candidate. After moving, the list became empty,
+>> but next_inactive_rotation incorrectly pointed to the moved node, causing later
+>> operations to corrupt the list.
+> 
+> The list being pointed by next_inactive_rotation is a doubly linked list
+> (aka, struct list_head), therefore, there are at least two nodes in the
+> non-empty list: the head of the list and the sole element. When the node
+> is the last element in the list, next_inactive_rotation will be pointed
+> to the head of the list after the move. So I don't think the analysis
+> and the fix below is correct.
 >>
->> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
->> index ed205d1b207d..7905a28d7734 100644
->> --- a/tools/perf/arch/x86/util/evlist.c
->> +++ b/tools/perf/arch/x86/util/evlist.c
->> @@ -39,28 +39,13 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
->>  	 *         26,319,024      slots
->>  	 *          2,427,791      instructions
->>  	 *          2,683,508      topdown-retiring
->> -	 *
->> -	 * If slots event and topdown metrics events are not in same group, the
->> -	 * topdown metrics events must be first event after the slots event group,
->> -	 * otherwise topdown metrics events can't be regrouped correctly, e.g.
->> -	 *
->> -	 * a. perf stat -e "{instructions,slots},cycles,topdown-retiring" -C0 sleep 1
->> -	 *    WARNING: events were regrouped to match PMUs
->> -	 *     Performance counter stats for 'CPU(s) 0':
->> -	 *         17,923,134      slots
->> -	 *          2,154,855      instructions
->> -	 *          3,015,058      cycles
->> -	 *    <not supported>      topdown-retiring
->> -	 *
->> -	 * If slots event and topdown metrics events are in two groups, the group which
->> -	 * has topdown metrics events must contain only the topdown metrics event,
->> -	 * otherwise topdown metrics event can't be regrouped correctly as well, e.g.
->> -	 *
->> -	 * a. perf stat -e "{instructions,slots},{topdown-retiring,cycles}" -C0 sleep 1
->> +	 * e. slots event and metrics event are in a group and not adjacent
-
-Yes, here is my SoB.
-
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-
-BTW, It seems there is a typo and missed the "not" word. It should be 
-"slots event and metrics event are not in a group and not adjacent"
-
-Thanks.
-
-
->> +	 *    perf stat -e "{instructions,slots},cycles,topdown-retiring" -C0 sleep 1
->>  	 *    WARNING: events were regrouped to match PMUs
->> -	 *    Error:
->> -	 *    The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
->> -	 *    event (topdown-retiring)
->> +	 *         68,433,522      slots
->> +	 *          8,856,102      topdown-retiring
->> +	 *          7,791,494      instructions
->> +	 *         11,469,513      cycles
->>  	 */
->>  	if (topdown_sys_has_perf_metrics() &&
->>  	    (arch_evsel__must_be_in_group(lhs) || arch_evsel__must_be_in_group(rhs))) {
->> -- 
->> 2.49.0.rc0.332.g42c0ae87b1-goog
+>> Here is my fix suggestion:
+>> The fix checks if the node was the only element before adjusting
+>> next_inactive_rotation. If so, it sets the pointer to NULL, preventing invalid
+>> access.
 >>
+>> diff --git a/kernel/bpf/bpf_lru_list.c b/kernel/bpf/bpf_lru_list.c
+>> index XXXXXXX..XXXXXXX 100644
+>> --- a/kernel/bpf/bpf_lru_list.c
+>> +++ b/kernel/bpf/bpf_lru_list.c
+>> @@ -119,8 +119,13 @@ static void __bpf_lru_node_move(struct bpf_lru_list *l,
+>>    * move the next_inactive_rotation pointer also.
+>>    */
+>>    if (&node->list == l->next_inactive_rotation)
+>> - l->next_inactive_rotation = l->next_inactive_rotation->prev;
+>> -
+>> + {
+>> + if (l->next_inactive_rotation->prev == &node->list) {
+
+I don't think it is the right fix. I don't see how both this new "if" and the 
+above "if (&node->list == l->next_inactive_rotation)" can be true together. If 
+it fixed the issue, the root cause should be somewhere else.
+
+I tried to simulate a one node inactive list and then rotate to the active list. 
+I cannot reproduce it.
+
+Can you share the syzkaller reproducer that you have used to test this fix?
+
+Is it something that you have seen recently and something that you can bisect?
+
+>> + l->next_inactive_rotation = NULL;
+>> + } else {
+>> + l->next_inactive_rotation = l->next_inactive_rotation->prev;
+>> + }
+>> + }
+>>    list_move(&node->list, &l->lists[tgt_type]);
+>>   }
+>>
+>> -- 2.34.1 Our knowledge of the kernel is somewhat limited, and we'd
+>> appreciate it if you could determine if there is such an issue. If
+>> this issue doesn't have an impact, please ignore it ☺. If you fix this
+>> issue, please add the following tag to the commit: Reported-by:
+>> Zhizhuo Tang strforexctzzchange@foxmail.com, Jianzhou Zhao
+>> xnxc22xnxc22@qq.com, Haoran Liu <cherest_san@163.com> Last is my
+>> report： vmalloc memory list_add corruption. next->prev should be prev
+>> (ffffe8ffac433e40), but was 50ffffe8ffac433e. (next=ffffe8ffac433e41).
+>> ------------[ cut here ]------------ kernel BUG at
+>> lib/list_debug.c:29! Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+>> PTI CPU: 0 UID: 0 PID: 14524 Comm: syz.0.285 Not tainted
+>> 6.14.0-rc5-00013-g99fa936e8e4f #1 Hardware name: QEMU Standard PC
+>> (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014 RIP:
+>> 0010:__list_add_valid_or_report+0xfc/0x1a0 lib/list_debug.c:29
+> 
+> I suspect that the content of lists[BPF_LRU_LIST_T_ACTIVE].next has been
+> corrupted, because the pointer itself should be at least 8-bytes
+> aligned, but its value is 0xffffe8ffac433e41. Also only the last bit of
+
+It is more puzzling. Instead of the inactive list, the active list's head is 
+corrupted in the last bit of its next. I don't see the lru code path is reusing 
+the last bit of the next pointer. It is not a hlist_nulls... We need the 
+syzkaller reproducer to understand it better.
+
+> the next pointer is different with the address of
+> list[BPF_LRU_LIST_T_ACTIVE] itelse (aka 0xffffe8ffac433e40).
 
