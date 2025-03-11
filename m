@@ -1,112 +1,132 @@
-Return-Path: <linux-kernel+bounces-555358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA73A5B655
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:53:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539F6A5B65A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:53:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21E7317270A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:53:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42CAE3A8CC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5524C1E47C2;
-	Tue, 11 Mar 2025 01:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFqGcXH8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8997D1E2848;
+	Tue, 11 Mar 2025 01:53:23 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABE81E32D6;
-	Tue, 11 Mar 2025 01:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12521DE2DF;
+	Tue, 11 Mar 2025 01:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741657976; cv=none; b=cMpVRFpNUmpJKZs3yG5pVPP1IgXeGMR15SkcNHQWNH4R06JIBOaKk7qGON3dDzKteTWevUatJDSU5myVMcyyhZ/+iib+lEaNX51d/UnOizJIEtwNxH+AZ/dnhYkXhkhQWuekfzqIItTDgbbhs/EpiTvCFQoQKsIg+4crxdOE3IM=
+	t=1741658003; cv=none; b=PvJWqs8UbXQ/IW7rrDQkl/51Ywscu3L0lDR0U96JawrLni7nuyH+VBKS12l6AHRvQSq1swTpvys0AsFEygYUEC73nK2mIpxfhAKTUP9mY9ea8ST2V+38i8iDEVmr5JVMRrk9wwhFgNm/3ffj4bPeNmvu7J6X+rGTEHvvHSn0g4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741657976; c=relaxed/simple;
-	bh=MlTxgVvSZKPsUA1Zh1N2uIlutYs79Ci0sLeczGFxFUM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jUfXBcuefU5t1BZEFkg6XftUeVIdt7/bj8WFje79iXWfz+v9k1S9aALueSlx+9wCZ+R2CD4de89xFM6QGq33Ju+ChFPZJcr+AGTLsT5lOGiP7k7xdVHAmb0JTgIp7EDrpKSj1hexxFki4z+jIkZskTq6EySl8OEUGnagY8jye88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GFqGcXH8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DE0C4AF09;
-	Tue, 11 Mar 2025 01:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741657976;
-	bh=MlTxgVvSZKPsUA1Zh1N2uIlutYs79Ci0sLeczGFxFUM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GFqGcXH8lkfxZGIXIbqPZ8jPIrnNvJtCSAaBw02o8rRY7cu1wepGppQHE/dN02yCI
-	 Rc7eoLdSCuO6MF2FP/H41JuDb0Oh4CgNR0RmOiGgz/8C808XL8BoF/YcJKVMd3ThJ8
-	 LtXONO1tf53wsqGomouKsw9h3zlydZHdivhgCZSz4ssRpVPw+ePRuCzPhF9kZWtvhu
-	 JmiSYAar6/u5iypC4abzWmtHBcmakDGtC8rxIrAwAwhThSqT3Is1spvKYFkqPyduUz
-	 Z5BuvJ9lYO6ahhMWWNwA3s1H0PGDJ6PDMwLztrw4hknxwD+Y9RnwuivChR6Bp86Q2c
-	 6Irt2XmlDLZww==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5499bd3084aso2466868e87.0;
-        Mon, 10 Mar 2025 18:52:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUiehuhry6iWPb6HP74PyvDeDuSAoBu7RC509GG0S1NLoH+c2LAjfqBU+boXtJP9VMYcMlEN8Q13TDDn10=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt+EfHZa3+H9kGsz3XmCrJfEh9PkmGMWBNVrA/aljfOkbdSaDx
-	9FzaFYPLo0e11YtXSkXlEP7LR8VqBEeCeWKFwif58hkVVVedtzpztgF8wsdUZloztGRLOVjJst8
-	CpvHonxPoVqNIOItQ4Y1KkDorhlw=
-X-Google-Smtp-Source: AGHT+IGGnGHlIqSrfRtcEhqr52Xmx0BWXlTup0pbx6a/Ct3L/hwQrW+faZtidozO4L57dvcfvv6mw4mQqsv93oXhSwA=
-X-Received: by 2002:a05:6512:3b9b:b0:549:3b4f:4b39 with SMTP id
- 2adb3069b0e04-54990e298bfmr4957010e87.10.1741657974686; Mon, 10 Mar 2025
- 18:52:54 -0700 (PDT)
+	s=arc-20240116; t=1741658003; c=relaxed/simple;
+	bh=szEY0YYmkbxUjsGeecngthEIAEf8kRWWKy2Mav+yNv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NT27jnfPQ1pPHgDEjC3DW5D43babuCIsHwPiU+3P373Z7sqT1UqDV6habtjfvEuLPQwJ2FtO/qJ3n/W0nexm0c+bYPYPUexfwbE/1FUKVFnStW4BXyhyD0M3gDNdbxzj42bFie0l4hLQv3mI/bnQsvtHuETqQTfRrGj376qiBew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZBcBZ72n0zvWpL;
+	Tue, 11 Mar 2025 09:49:26 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id EB73E1402CB;
+	Tue, 11 Mar 2025 09:53:16 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 11 Mar 2025 09:53:16 +0800
+Message-ID: <b6dcc1e5-7f43-ec10-fbd9-48def2f6517f@huawei.com>
+Date: Tue, 11 Mar 2025 09:53:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250308040451.585561-1-xin@zytor.com> <CAK7LNARHvn4Sy-e4hMmjGt0C7TFaWrGJrLq3YvN0BjehZ8QwSg@mail.gmail.com>
- <6149ac51-07da-45e2-863e-1d4418f6b662@zytor.com>
-In-Reply-To: <6149ac51-07da-45e2-863e-1d4418f6b662@zytor.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 11 Mar 2025 10:52:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATGToVHEfZ-hmJ=3xbQCdHmBZf7x9w2QtQVGV-nMiP2Ag@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq2fCkxhFKXJrvYU15EKSnQ6PG1QaNoLvPd4kPHXDt6ZUwememQLl4myXo
-Message-ID: <CAK7LNATGToVHEfZ-hmJ=3xbQCdHmBZf7x9w2QtQVGV-nMiP2Ag@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] kbuild: Add "make headers" to "make help" output
-To: Xin Li <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	nathan@kernel.org, nicolas@fjasle.eu, bp@alien8.de, hpa@zytor.com, 
-	sraithal@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Mar 10, 2025 at 3:23=E2=80=AFPM Xin Li <xin@zytor.com> wrote:
->
-> On 3/8/2025 7:12 AM, Masahiro Yamada wrote:
-> > On Sat, Mar 8, 2025 at 1:05=E2=80=AFPM Xin Li (Intel) <xin@zytor.com> w=
-rote:
-> >>
-> >> Meanwhile explicitly state that the headers are uapi headers.
-> >
-> > There are many internal-use targets, which are not documented in the
-> > help message.
-> > I assume this one is the case.
-> >
-> > If users want to install UAPI headers, 'headers_install' is
-> > the user-visible interface and it is already documented.
-> >
-> >
->
-> hpa and Boris prefer to add it, which I also agree.  But ofc it's your
-> call :)
->
-> If you don't want to add help for "headers", it probably still makes
-> sense to explicitly state that the headers are uapi headers, no?
->
-> Thanks!
->      Xin
-
-
-If a help message for "headers" is desired, how about this?
-
-  headers  - Build read-to-install uapi headers in usr/include
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v3 1/3] scsi: hisi_sas: Enable force phy when SATA disk
+ directly connected
+Content-Language: en-CA
+To: John Garry <john.g.garry@oracle.com>, <liyihang9@huawei.com>,
+	<yanaijie@huawei.com>
+CC: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <liuyonglong@huawei.com>,
+	<kangfenglong@huawei.com>, <liyangyang20@huawei.com>,
+	<f.fangjian@huawei.com>, <xiabing14@h-partners.com>
+References: <20250220130546.2289555-1-yangxingui@huawei.com>
+ <20250220130546.2289555-2-yangxingui@huawei.com>
+ <4bf89b6c-8730-4ae8-8b26-770b2aab2c13@oracle.com>
+ <5a4384dc-4edb-9e29-d1dd-190d69b9e313@huawei.com>
+ <1e98a1eb-a763-4190-94c5-a867cdf0e09b@oracle.com>
+ <235e7ad8-1e19-4b7b-c64b-b6703851ca65@huawei.com>
+ <d233a108-a46e-47dd-86ad-756c60c8665e@oracle.com>
+ <cc9ba6f8-1efb-4910-8952-9ca07c707658@huawei.com>
+ <5d34595f-ff57-4679-b263-fa3fea006ce3@oracle.com>
+ <25552c7d-858d-ea1e-0987-55f71642a503@huawei.com>
+ <420fde94-28ec-4321-943b-5cb84cf14f0e@oracle.com>
+ <d0a6b502-328b-2f83-3cdf-55c1effd80c1@huawei.com>
+ <1fe3bb6b-1f7a-4188-83a3-f4c62e2a963d@oracle.com>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <1fe3bb6b-1f7a-4188-83a3-f4c62e2a963d@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepemh500009.china.huawei.com (7.202.181.140) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
 
 
+On 2025/3/11 1:45, John Garry wrote:
+>>> Sure, but I am just trying to keep this simple. If you deform and 
+>>> reform the port - and so lose and find the disk (which does the itct 
+>>> config) - will that solve the problem?
+>>>
+>> We found that we need to perform lose and find for all devices on the 
+>> port including the local phy and the remote phy. This process still 
+>> requires traversing the phy information corresponding to all devices 
+>> to reset and it is also necessary to consider that there is a race 
+>> between device removal and the current process.  it looks similar to 
+>> solution of update port id directly. And there will be the problem 
+>> mentioned above. e.g, during error handling, the recovery state will 
+>> last for more than 15 seconds, affecting the performance of other 
+>> disks on the same host.
+> 
+> How do you even detect the port id inconsistency for the device attached 
+> at the remote phy? For this series, you could detect it at the phy 
+> up/down handler for the directly attached device - how would it be 
+> triggered for the remote phy?
 
---=20
-Best Regards
-Masahiro Yamada
+When the hardware port ID of the EXP is detected to have changed, the 
+link reset is performed on the local phy of EXP in sequence, which will 
+not trigger the lose and find process of the EXP device, and it will not 
+trigger the lose and find process of the disks connected to the remote 
+phy. Therefore, it is necessary to lose and found all devices separately 
+to update the device's port id in itct.
+
+local phy0 --------------------------- disk0
+
+local phy1 --------------------------- disk1
+
+local phy2 --------------------------- disk2
+
+local phy3 --------------------------- disk3
+                     _________
+local phy4 --------|         |-------- disk4
+                    |         |
+local phy5 --------|         |-------- disk5
+                    |         |
+local phy6 --------|   EXP   |-------- disk6
+                    |         |
+local phy7 --------|         |-------- disk7
+                    |_________|
+
+
+Thanks,
+Xingui
+.
+
 
