@@ -1,135 +1,167 @@
-Return-Path: <linux-kernel+bounces-556824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E72A5CF23
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:19:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0958A5CF28
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:20:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23E323B3293
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:18:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F78F178A18
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87BE263C88;
-	Tue, 11 Mar 2025 19:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950542641C1;
+	Tue, 11 Mar 2025 19:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2z7xqHD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JmJ4pQPs"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F721F03F2;
-	Tue, 11 Mar 2025 19:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D55B1F03F2;
+	Tue, 11 Mar 2025 19:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741720745; cv=none; b=cNaRLcI3pT4H6VnfKBvF40rpjeK8LF0AsWyKPa64ngBkyAnN35zgPGDkevyaEf0c8sapXvEOWqNffk1pJp75i7tDMB4kh89UsC9p5ETIyE2FOZ8eFLYtpqa+Kf4hnXnfj7BYgGhuFhDs5jyH9oHmjQWTnLPo4IwSlnOfL8eC2uw=
+	t=1741720793; cv=none; b=XFiKiMnjadeEnXG8lfRzYqFHLfkxoar4gbyM4Sk8CXH6QbcZd0150SfkvL4nE6DPuaxn0iWh7hjP3GFIOVF5fafFqWCuZ1IAufU3wGXsXpBXwXd8pnNAtv42JBZmjArNpFnUG6MRUrB5syZSbDQeZeq3QkhYCCuSG728qJtEd7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741720745; c=relaxed/simple;
-	bh=3d/S8WxmyjbwsOGzzvQQBkHzXVau/+4/fPLg8CUftHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qWmk9XAqwvnekbM+GvxKuCw4cNT5wiXFrEW6R5BsTWIs/w0R8/gJGgGvOofHfjy0J9XtL6w8gSxD6aNeJ22a5O79/yRYiBN9BDamVExFW5d7/m62AIoMNAAXCe8WzLVbYeS6TskZghFMdYFngjfICr14OSoZEuQzfjerbIRG9D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2z7xqHD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C668C4CEE9;
-	Tue, 11 Mar 2025 19:19:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741720744;
-	bh=3d/S8WxmyjbwsOGzzvQQBkHzXVau/+4/fPLg8CUftHc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G2z7xqHDFF+s71everhZkMQeIXs8UTcaRdSt5W9X9qPZN0ogQ30bB0ApqkhZIqJ2E
-	 fltp0iaW3juz1DHBe6SL4EqH1eD6IzS2DmmOXWKCykrvPR6FRY9GsxSTqvtABg7Bbj
-	 ruBBtWub1a+YgN1LG0x2gfMA/RVkKpU6G8DuqY+6v+HRank9USMYcGV88uBbtp4xeF
-	 TpgM5+xTL70FkiwzMD9azHZas4qjDcLRcG7/OqRKeLDgVB161L/OTg4kk7Mkq0AC9b
-	 tJFMaIEPdHEEx6MCo5D/7aCvWW36StLvtCe4O8wVoWNJ00lP1dGFva49lLDxAMwec1
-	 o/jkkgfjf0Nfw==
-Date: Tue, 11 Mar 2025 20:19:00 +0100
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ben Hutchings <ben@decadent.org.uk>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH] kbuild: deb-pkg: remove "version" variable in mkdebian
-Message-ID: <20250311191900.GB1958594@ax162>
-References: <20250311190238.634226-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1741720793; c=relaxed/simple;
+	bh=2LCiy4lFtFm1TsLHV4lPWQ9w3NrS4s9HWA9Rz74dfj4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KFDx0xuv0lX/wM8kb9MLep25yLI5H/RLRASBbg1dF4HWVT2jXwMLx1jwNLw0Ltt8F0x5YhuSsAlcdomf/Uy2QawEkQIN5iFVkYQIVG7yoeyA9OwndlgmVdMdeAv1p+d27x226yrxohS5S336Mg44FmyVuC+o5ojSfruvJMQHHbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JmJ4pQPs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BJ8ZHe017734;
+	Tue, 11 Mar 2025 19:19:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	cOhWVdEMxYHFBSFUIiBHuYp/vQkdKu4vEMS65xaXcL8=; b=JmJ4pQPshJW651tO
+	UZvTCFtA2KHcr7OPjqnPp5JIctaSk3ezU/IG/TNQAbL7H/lgLb1juJcvLtV9eem3
+	TMjDLZuTTZt/5hWRZjBC3m3QGpADuoWdrwl+5FPskAyWQ8ViPKk0cA3fTESyF/l5
+	my/EGgV9lPBOPJionF18iH12CNcQgXhrypEsB1PfLxpa7xzhYZRuYabnFOXeBtj0
+	zzXjssSFqFsN09nx2gzQ43toz7mA2dGDCPHbbC1XpXKw+mmQAiCexVfGr4nw3t/f
+	RrBAr3GVQE0wnIZy5QNiAaQkyYBI6nQ+hUc4VMOs6DUeAemeBglV3VljQX3cBcPu
+	+b/nwg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2nr0up-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 19:19:47 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52BJJjLB005862
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 19:19:45 GMT
+Received: from [10.216.38.182] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Mar
+ 2025 12:19:41 -0700
+Message-ID: <203ea0bb-c53c-389e-db12-b41773c0ff5d@quicinc.com>
+Date: Wed, 12 Mar 2025 00:49:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311190238.634226-1-masahiroy@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 1/4] dt-bindings: media: qcom,sm8550-iris: update power
+ domain name
+Content-Language: en-US
+To: Dmitry Baryshkov <lumag@kernel.org>
+CC: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
+ <20250311-dtbinding-v1-1-5c807d33f7ae@quicinc.com>
+ <7yjj2eemvvvnsgv67d7tueid4h3n3onuou6ammx36am4qhfsal@xam3iamk4er3>
+ <c0430086-675d-b58c-4ef9-1bd9ee51d3db@quicinc.com>
+ <zssjkvxxv7kionartp6f3y2qh3d4i6gwnhwsrklsfad3t4fy3q@jkehbkx6wcyk>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <zssjkvxxv7kionartp6f3y2qh3d4i6gwnhwsrklsfad3t4fy3q@jkehbkx6wcyk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: HgxfAPyusGHWxAxQC0V6gT8J8q9kQRrL
+X-Authority-Analysis: v=2.4 cv=Q4XS452a c=1 sm=1 tr=0 ts=67d08cd3 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=Ve5_cTlWWX7DCNKN5mYA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: HgxfAPyusGHWxAxQC0V6gT8J8q9kQRrL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_05,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
+ lowpriorityscore=0 mlxscore=0 clxscore=1015 phishscore=0 malwarescore=0
+ spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503110125
 
-On Wed, Mar 12, 2025 at 04:02:24AM +0900, Masahiro Yamada wrote:
-> ${version} and ${KERNELRELEASE} are the same.
+
+On 3/11/2025 9:05 PM, Dmitry Baryshkov wrote:
+> On Tue, Mar 11, 2025 at 08:41:01PM +0530, Vikash Garodia wrote:
+>>
+>> On 3/11/2025 8:37 PM, Dmitry Baryshkov wrote:
+>>> On Tue, Mar 11, 2025 at 05:33:53PM +0530, Vikash Garodia wrote:
+>>>> Not all platforms has a collapsible mx, so use the more generic naming
+>>>> of mx in the binding.
+>>>
+>>> I guess, it wasn't even tested...
+>> Not sure what made you guess so, let me check why my binding checker did not
+>> catch the bot reported warning.
 > 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-
-Always love less indirection.
-
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
-> ---
+> Obvious: you are changing the bindings in a non-backwards compatible
+> way, but you are not changing the example in the same file (and
+> obviously you are not changing the DTs), which means that this wasn't
+> tested.
 > 
->  scripts/package/mkdebian | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
+> Hint: you can use enum [mx, mxc] instead of const. That would make it
+> backwards compatible.
+Currently there are no user of this binding. Given that either of MX or MXC are
+same connection to video hardware, just that one is collapsible, it would be
+good to replace the existing element instead of enum.
+
+Regards,
+Vikash
 > 
-> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> index 80ed96561993..6685d13737c1 100755
-> --- a/scripts/package/mkdebian
-> +++ b/scripts/package/mkdebian
-> @@ -163,7 +163,6 @@ while [ $# -gt 0 ]; do
->  done
->  
->  # Some variables and settings used throughout the script
-> -version=$KERNELRELEASE
->  if [ "${KDEB_PKGVERSION:+set}" ]; then
->  	packageversion=$KDEB_PKGVERSION
->  else
-> @@ -222,11 +221,11 @@ Build-Depends-Arch: bc, bison, flex,
->   python3:native, rsync
->  Homepage: https://www.kernel.org/
->  
-> -Package: $packagename-$version
-> +Package: $packagename-${KERNELRELEASE}
->  Architecture: $debarch
-> -Description: Linux kernel, version $version
-> +Description: Linux kernel, version ${KERNELRELEASE}
->   This package contains the Linux kernel, modules and corresponding other
-> - files, version: $version.
-> + files, version: ${KERNELRELEASE}.
->  EOF
->  
->  if [ "${SRCARCH}" != um ]; then
-> @@ -245,11 +244,11 @@ EOF
->  if is_enabled CONFIG_MODULES; then
->  cat <<EOF >> debian/control
->  
-> -Package: linux-headers-$version
-> +Package: linux-headers-${KERNELRELEASE}
->  Architecture: $debarch
->  Build-Profiles: <!pkg.${sourcename}.nokernelheaders>
-> -Description: Linux kernel headers for $version on $debarch
-> - This package provides kernel header files for $version on $debarch
-> +Description: Linux kernel headers for ${KERNELRELEASE} on $debarch
-> + This package provides kernel header files for ${KERNELRELEASE} on $debarch
->   .
->   This is useful for people who need to build external modules
->  EOF
-> @@ -259,11 +258,11 @@ fi
->  if is_enabled CONFIG_DEBUG_INFO; then
->  cat <<EOF >> debian/control
->  
-> -Package: linux-image-$version-dbg
-> +Package: linux-image-${KERNELRELEASE}-dbg
->  Section: debug
->  Architecture: $debarch
->  Build-Profiles: <!pkg.${sourcename}.nokerneldbg>
-> -Description: Linux kernel debugging symbols for $version
-> +Description: Linux kernel debugging symbols for ${KERNELRELEASE}
->   This package will come in handy if you need to debug the kernel. It provides
->   all the necessary debug symbols for the kernel and its modules.
->  EOF
-> -- 
-> 2.43.0
+>> Regards,
+>> Vikash
+>>>
+>>>>
+>>>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+>>>> ---
+>>>>  Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+>>>> index e424ea84c211f473a799481fd5463a16580187ed..440a0d7cdfe19a1ccedefc207d96b26eed5d6630 100644
+>>>> --- a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+>>>> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+>>>> @@ -28,7 +28,7 @@ properties:
+>>>>      items:
+>>>>        - const: venus
+>>>>        - const: vcodec0
+>>>> -      - const: mxc
+>>>> +      - const: mx
+>>>>        - const: mmcx
+>>>>  
+>>>>    clocks:
+>>>>
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>>
 > 
 
