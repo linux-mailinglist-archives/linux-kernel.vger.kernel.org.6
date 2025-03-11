@@ -1,195 +1,152 @@
-Return-Path: <linux-kernel+bounces-556187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E664A5C23D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:18:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C094A5C23B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:18:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E947188F6E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:18:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A25CD16E4DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6A9192D96;
-	Tue, 11 Mar 2025 13:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF5D189F43;
+	Tue, 11 Mar 2025 13:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a8gsCiwK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CLyZDLyO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCD2187554
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E32835979
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741699087; cv=none; b=SwhMa1QTfVeNbtc0evTABY2EMz4dqxuBl2VQaAYdoaCJDQy8FkDYWBjPBtthuAYFvY6pSXf9xZ77MAH/10Fk/9a4xBGIGFzdmrJXyer6OIn08bAIH7Xd0pit2eW14LpqUaUyDdjJSqiuOsACjldz8JRG/4LYT5EutsXSQpMe7U8=
+	t=1741699077; cv=none; b=q0euwwSEQd4ufCe2169xUqdABww4Qd+wrINSdWrryklBoS7itOgr8n3BQdzheI0/HdmP+jff2l3EPkixyGLKILhqAg/3hzAXoBwfbbZZjuK5EvtyLqzX/36NUMXyAAropsQC5tzCVSgSHOuS3rW6ePzhhh6e7Bl9uiMoI/mOeEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741699087; c=relaxed/simple;
-	bh=nVCsjTgW37BdBSlETCcrwnkUH9bmIvNz4ug0yrwgjtQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cWdPDud/m/VbnJ1n68GEwEMgRdvp53eLjn9yaKzd81ZsgIo1SM6awkrPw7ilAITPWk3MWYbJb/C5g0xzyUWoNcguggMHzjf4HxCRZK2O6wcQaU1NfmPcmcAv8HdWmqnJyzimuOZyGbO75lEqsep3rtBf4GrxCC6D99FzFVhjtvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a8gsCiwK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B7D77E001448;
-	Tue, 11 Mar 2025 13:17:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+NehKP8e4S0NppJuqsk5lNv/Xu+eR8eN6r9S0JKM6qA=; b=a8gsCiwKjbAXcqn9
-	LeeKewZfmNGS/MVxIhueHsPgqvYfyfpc3OJ4oWqbB/m+ZHG7sEHFFqskehwJoN40
-	XiCsJLGkAouRqfJ/GfUq2CSQWHt7a+9x/zSYN3r9DvkSnOIWzNyu233guxO2+Lji
-	OoiKe/uaYSbDO9r6DHH+xqiIa2lbcA74CrBVfAlJ9pLjyFwv887qqLEy330UyGjY
-	QpWlkHi3S8EMRqy2qJWeiMtFPv4Nsan2gfgfAS7xFqIFLxtlv5fM9X9ZNA5Xma/M
-	7HJIhtvP/W9Sh+QQ3Q4cP3XVd0CYvuMM9hdhj3nj7yGhsm7i9LQqNZQsCxvq2I+V
-	Rpv0Pw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f6ags2q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 13:17:53 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52BDHq1g005318
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 13:17:52 GMT
-Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 11 Mar 2025 06:17:50 -0700
-From: Zhongqiu Han <quic_zhonhan@quicinc.com>
-To: <mst@redhat.com>, <jasowang@redhat.com>, <xuanzhuo@linux.alibaba.com>,
-        <eperezma@redhat.com>,
-        <syzbot+efe683d57990864b8c8e@syzkaller.appspotmail.com>
-CC: <virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <quic_zhonhan@quicinc.com>, <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] virtio_ring: Fix data race when accessing the event_triggered field of vring_virtqueue
-Date: Tue, 11 Mar 2025 21:17:35 +0800
-Message-ID: <20250311131735.3205493-1-quic_zhonhan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <67c7761a.050a0220.15b4b9.0018.GAE@google.com>
-References: <67c7761a.050a0220.15b4b9.0018.GAE@google.com>
+	s=arc-20240116; t=1741699077; c=relaxed/simple;
+	bh=oWF/zCJYw7SOJxfyEqPYmPrpZVbzoyOjUzQd8BjQX+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XHVkn+J3GYopdyYX0lLv6Y7IVfE4h1npWg2xnFKFAy7eJ76oULBY9ThB8fvu7KODa5AOIzGPBmGU/0epr2/nPpLOiVm6ieKWDWaOWtGPaRKvspfu/IUBj/xaaRxLOyEX41UWL6J5tSOtCayWdUOG1cIkHtgtfRlG+vLgpZfEoeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CLyZDLyO; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741699075; x=1773235075;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=oWF/zCJYw7SOJxfyEqPYmPrpZVbzoyOjUzQd8BjQX+Y=;
+  b=CLyZDLyODxOHZRcCRolbnBBvx0x3XHKqTTcYQFHK4GZpdZEvfSK3F+bC
+   Oij8PW+wlblHDnhp/h3dFSjYeuvO/diKRSFUI2NPwM8EwZ1yQzWH6VlV+
+   JtqQqx4XjDT/n8Eo7aui7qrmdKy2nV6lM0RAO2VDL4VWFpUGqBzNk2vNp
+   84ze/GfNBr0NE9teyBaWugUo5WGnG+32CTW/X5fX71ky6BKNOUXWxAiSj
+   GDe6eIzOuN5Oy6zH8xo78VD9xGanz6P1MvnXCjc8oqXemmffK0nI9BdOi
+   JHAIBJfuIoSVSp+sJZv9kplOi8OLspjQJ6ODV6VUF85vMNClrmCPYSMNJ
+   w==;
+X-CSE-ConnectionGUID: TTXRNU+hQpqBRgO1Xg35rg==
+X-CSE-MsgGUID: 2tK3WHR0QxyooVABUEQr+w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="41988780"
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="41988780"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 06:17:54 -0700
+X-CSE-ConnectionGUID: BcIUVsxjRnWDa+PGvIbsmg==
+X-CSE-MsgGUID: RROuWSc4QRWQnLeVpBL4BQ==
+X-Ironport-Invalid-End-Of-Message: True
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="120256698"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 11 Mar 2025 06:17:54 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1trzUU-0006fo-1t;
+	Tue, 11 Mar 2025 13:17:50 +0000
+Date: Tue, 11 Mar 2025 21:17:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Keith Busch <kbusch@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Mike Christie <michael.christie@oracle.com>
+Subject: kernel/vhost_task.c:148:9-16: WARNING: ERR_CAST can be used with tsk
+Message-ID: <202503112124.LprWipYC-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=WsDRMcfv c=1 sm=1 tr=0 ts=67d03801 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=hSkVLCK3AAAA:8 a=COk6AnOGAAAA:8
- a=edFxmn3aAle89QKSA5UA:9 a=cQPPKAXgyycSBL8etih5:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: s2kuMPb435NXyKGbyoqyl2oB-Nz3a6Ja
-X-Proofpoint-ORIG-GUID: s2kuMPb435NXyKGbyoqyl2oB-Nz3a6Ja
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 adultscore=0
- impostorscore=0 phishscore=0 mlxscore=0 mlxlogscore=999 clxscore=1011
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503110085
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Syzkaller reports a data-race when accessing the event_triggered field of
-vring_virtqueue in virtqueue_disable_cb / virtqueue_enable_cb_delayed.
-Here is the simplified stack when the issue occurred:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   4d872d51bc9d7b899c1f61534e3dbde72613f627
+commit: cb380909ae3b1ebf14d6a455a4f92d7916d790cb vhost: return task creation error instead of NULL
+date:   10 days ago
+config: parisc-randconfig-r064-20250311 (https://download.01.org/0day-ci/archive/20250311/202503112124.LprWipYC-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.2.0
 
-==================================================================
-BUG: KCSAN: data-race in virtqueue_disable_cb / virtqueue_enable_cb_delayed
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503112124.LprWipYC-lkp@intel.com/
 
-write to 0xffff8881025bc452 of 1 bytes by task 3288 on cpu 0:
- virtqueue_enable_cb_delayed+0x42/0x3c0 drivers/virtio/virtio_ring.c:2653
- start_xmit+0x230/0x1310 drivers/net/virtio_net.c:3264
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x119/0x3f0 net/core/dev.c:3816
- sch_direct_xmit+0x1a9/0x580 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:4039 [inline]
- __dev_queue_xmit+0xf6a/0x2090 net/core/dev.c:4615
+cocci warnings: (new ones prefixed by >>)
+>> kernel/vhost_task.c:148:9-16: WARNING: ERR_CAST can be used with tsk
 
-read to 0xffff8881025bc452 of 1 bytes by interrupt on cpu 1:
- virtqueue_disable_cb_split drivers/virtio/virtio_ring.c:880 [inline]
- virtqueue_disable_cb+0x92/0x180 drivers/virtio/virtio_ring.c:2566
- skb_xmit_done+0x5f/0x140 drivers/net/virtio_net.c:777
- vring_interrupt+0x161/0x190 drivers/virtio/virtio_ring.c:2715
- __handle_irq_event_percpu+0x95/0x490 kernel/irq/handle.c:158
- handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
- handle_irq_event+0x64/0xf0 kernel/irq/handle.c:210
- handle_edge_irq+0x16d/0x5b0 kernel/irq/chip.c:831
- generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
- handle_irq arch/x86/kernel/irq.c:249 [inline]
+vim +148 kernel/vhost_task.c
 
-value changed: 0x01 -> 0x00
-==================================================================
+   106	
+   107	/**
+   108	 * vhost_task_create - create a copy of a task to be used by the kernel
+   109	 * @fn: vhost worker function
+   110	 * @handle_sigkill: vhost function to handle when we are killed
+   111	 * @arg: data to be passed to fn and handled_kill
+   112	 * @name: the thread's name
+   113	 *
+   114	 * This returns a specialized task for use by the vhost layer or NULL on
+   115	 * failure. The returned task is inactive, and the caller must fire it up
+   116	 * through vhost_task_start().
+   117	 */
+   118	struct vhost_task *vhost_task_create(bool (*fn)(void *),
+   119					     void (*handle_sigkill)(void *), void *arg,
+   120					     const char *name)
+   121	{
+   122		struct kernel_clone_args args = {
+   123			.flags		= CLONE_FS | CLONE_UNTRACED | CLONE_VM |
+   124					  CLONE_THREAD | CLONE_SIGHAND,
+   125			.exit_signal	= 0,
+   126			.fn		= vhost_task_fn,
+   127			.name		= name,
+   128			.user_worker	= 1,
+   129			.no_files	= 1,
+   130		};
+   131		struct vhost_task *vtsk;
+   132		struct task_struct *tsk;
+   133	
+   134		vtsk = kzalloc(sizeof(*vtsk), GFP_KERNEL);
+   135		if (!vtsk)
+   136			return ERR_PTR(-ENOMEM);
+   137		init_completion(&vtsk->exited);
+   138		mutex_init(&vtsk->exit_mutex);
+   139		vtsk->data = arg;
+   140		vtsk->fn = fn;
+   141		vtsk->handle_sigkill = handle_sigkill;
+   142	
+   143		args.fn_arg = vtsk;
+   144	
+   145		tsk = copy_process(NULL, 0, NUMA_NO_NODE, &args);
+   146		if (IS_ERR(tsk)) {
+   147			kfree(vtsk);
+ > 148			return ERR_PTR(PTR_ERR(tsk));
+   149		}
+   150	
+   151		vtsk->task = tsk;
+   152		return vtsk;
+   153	}
+   154	EXPORT_SYMBOL_GPL(vhost_task_create);
+   155	
 
-After an interrupt is triggered, event_triggered can be set to true in the
-func vring_interrupt(). Then virtqueue_disable_cb_split() will read it as
-true and stop further work of disabling cbs. During this time, if another
-virtqueue processing sets same event_triggered to false in func
-virtqueue_enable_cb_delayed(), a race condition will occur, potentially
-leading to further vq data inconsistency because both
-virtqueue_disable_cb_split() and virtqueue_enable_cb_delayed() can
-continue read/write multiple field members of vring_virtqueue.
-
-Fix this by using smp_load_acquire() and smp_store_release().
-
-Additionally, virtqueue_disable_cb_packed() may be called in the same
-stack as virtqueue_disable_cb_split() while vq->packed_ring is true in
-func virtqueue_disable_cb(), so event_triggered should also be protected
-in it.
-
-Reported-by: syzbot+efe683d57990864b8c8e@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/67c7761a.050a0220.15b4b9.0018.GAE@google.com/
-Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
----
- drivers/virtio/virtio_ring.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index fdd2d2b07b5a..b8ff82730618 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -875,9 +875,10 @@ static void virtqueue_disable_cb_split(struct virtqueue *_vq)
- 
- 		/*
- 		 * If device triggered an event already it won't trigger one again:
--		 * no need to disable.
-+		 * no need to disable. smp_load_acquire pairs with smp_store_release()
-+		 * in virtqueue_enable_cb_delayed()
- 		 */
--		if (vq->event_triggered)
-+		if (smp_load_acquire(&vq->event_triggered))
- 			return;
- 
- 		if (vq->event)
-@@ -1802,9 +1803,10 @@ static void virtqueue_disable_cb_packed(struct virtqueue *_vq)
- 
- 		/*
- 		 * If device triggered an event already it won't trigger one again:
--		 * no need to disable.
-+		 * no need to disable. smp_load_acquire pairs with smp_store_release()
-+		 * in virtqueue_enable_cb_delayed()
- 		 */
--		if (vq->event_triggered)
-+		if (smp_load_acquire(&vq->event_triggered))
- 			return;
- 
- 		vq->packed.vring.driver->flags =
-@@ -2650,7 +2652,8 @@ bool virtqueue_enable_cb_delayed(struct virtqueue *_vq)
- 	struct vring_virtqueue *vq = to_vvq(_vq);
- 
- 	if (vq->event_triggered)
--		vq->event_triggered = false;
-+		/* Pairs with smp_load_acquire in virtqueue_disable_cb_split/packed() */
-+		smp_store_release(&vq->event_triggered, false);
- 
- 	return vq->packed_ring ? virtqueue_enable_cb_delayed_packed(_vq) :
- 				 virtqueue_enable_cb_delayed_split(_vq);
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
