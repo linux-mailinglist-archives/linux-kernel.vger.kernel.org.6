@@ -1,140 +1,137 @@
-Return-Path: <linux-kernel+bounces-556169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A957A5C1C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:00:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E37EDA5C1D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:03:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629D216C193
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:00:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA74188D09C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBA41EB2F;
-	Tue, 11 Mar 2025 13:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3cqm1M5K"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F192C1A2;
+	Tue, 11 Mar 2025 13:03:10 +0000 (UTC)
+Received: from b-painless.mh.aa.net.uk (b-painless.mh.aa.net.uk [81.187.30.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F552F56
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0F88836;
+	Tue, 11 Mar 2025 13:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.187.30.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741698038; cv=none; b=bwAFzPbuFfP18Lr9XsbDKWl+7y04ASsZF2FqrrqyPhP5f89EsA6kM+Ertm7TVwWbrPgBDJC0YGFLwyqRM0Bx+5T0pnhiePj4wU6uoOFODf17bC22EFi2oRtERF/kK1Fm5pv3HtQh9/VdYPG5iS0U6BEo9V6X5yZ/PPLWpwKMPEY=
+	t=1741698190; cv=none; b=BwfUCQCIoUobet8qC6DKXwTpL0Zz8FDzvVNwYlwaB9ZWqu2T8OpyS1AAxFztIktRjkp6vAKihvntlClCANR44QFuxzwNvBLp4wlriVXZH6gGcm+odE8dU+UtvWFH4T46VF5eMM7jly6dn6P+uIXPySIfq0F+UY5nrwPtNIq+6pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741698038; c=relaxed/simple;
-	bh=yIpxJDcYAls4A+23wuwEwSo9LSvMNE6FKOtlsMqjj84=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ufI+o91SKOpMEYXQsWHyT0k+sPPK2xshbqaDTaTN6Sxt0ZQjYQBPx2J9MkRpHzj2SKWpqDEFyUpFvtyjrk4z3ku4z1RQHtCL8yzaj9WWJVwQLNqylMCKnzcTOGI22b41dUnair2vBZ27HSmJhbhF9oC2fL7PxQGJ1GWKiuA9oyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3cqm1M5K; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4769e30af66so183971cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:00:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741698036; x=1742302836; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4VHQhu5V4TeRvh0NUCJQSxM18BZB2qvN8uXFXJh7n+Y=;
-        b=3cqm1M5K55z681zzj9d60o9NM5Z7GNg4QcLyrAQczVswM3xpNoeuSvRYWzAGCx6Ql2
-         9QbrWpmpDCuCrL4VPJ3b5b30rZ/nJfZV6DeCH5VCtGE+Fq8SR9tyZZH/Ajsobv41qsvX
-         DXlfI3fLNReDQilS0zdvvffVZW6O+LBok89io0GAtbhQklV148SDSWB04YWTfhJGpGXC
-         8dKqjfcEOddUDnOMdNUOr0NpGzoAeJ/7AykruON3WjBu/v+nfL+TXKZDBDENZnKjKRsi
-         xlzi6hXT1FLr1juLXMsuaN6kf1j8j0f7RFYgvsyIaLyqjhMzUcGa/4NO/M1vuWDyv+OR
-         J6HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741698036; x=1742302836;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4VHQhu5V4TeRvh0NUCJQSxM18BZB2qvN8uXFXJh7n+Y=;
-        b=l8u9EN55X1+7GJCA3pzVVwyI2lCk1Tkzu5UngGJmYFrV5QGraRcmn7hmVloz3M4yBj
-         rY2M6/7BCm+rxxtAEHYJozqkeoY98dRZ7wJyJHVDhtO1Wk+dyB3x8uKfZ3QDOTAqq2l+
-         pcvAOJK8D0g7zthDH7tFTe0CaNrmUn74/WuJpLtdUGwp3vgYPJWvRpiGRr3dYslssymZ
-         9/IKg0a57hDHGvGpdqDp9Fw9zcDRmUv8INLgOEqicCDHkh3cBLqGsRpTSHfWZCTayFkE
-         P2Gbsx88BIeTi5kIDnxPq5A9QbFuYWKkVI99cgaz4lo+t/N5r0uiZ5Gk3iNjb+VT5HhF
-         5KHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVUIVVrmkE9Ie5s7KEb83lPt3iSI3PIUtRdHs9XvorazaOnBoXKRNvmibr58bhh9ngfCIBmpUuOH/TEFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+b4QOZElfU89Fxvx5+1wm1mg/p6/ti9Tcw+8FIxkbHhWRy0aQ
-	ksP2X8ykRqi0hR1rJArfWrOl2hhUP1Jyl2bb1jJmEG/G2EyPylXQUWCjovhG2JDPz+ssDKsqT0I
-	OhgBRB/KN6iDb7uXEjAETBvH7HEyAE0BsMIy3
-X-Gm-Gg: ASbGncsCmRWfG2cLKCxUhENixX9x3T6diKG6gWpHaGdxG5YkDgfTqPpW5OO4JVZ+c/8
-	eH3M+FDPw4ikwzDGa6d/RSoktk/daThxPZNh9YKf54NLVQxoPMqGWN/ua9aZQpvOA7+QzSgFmuo
-	kW4Rjvs09Ha3sYP1/ck4Ah/TqwHiv4xhUticnyXuqI7kcyNBpW+JnRgpCx
-X-Google-Smtp-Source: AGHT+IHjbvoyGhYxZy+5DnhAXj+weZD+odUEYuzByCq9hSqciyG94OAwXLnaCEx0Sp1sFSDatHVUQxyRQdN8oDCn60M=
-X-Received: by 2002:a05:622a:53cd:b0:474:b44f:bb88 with SMTP id
- d75a77b69052e-47668af5d7cmr11461811cf.27.1741698035462; Tue, 11 Mar 2025
- 06:00:35 -0700 (PDT)
+	s=arc-20240116; t=1741698190; c=relaxed/simple;
+	bh=O9TwnmR4AKXxhgiL3DZPmOcqYMRKkKpfdbXTiuRl3HA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RbuwQ7q4s2blPoP8K6lI2c4gkIkklODK+Loz37bQEGRX4lGQHEywSoJ7ujmeoSrxv/VNkqy84SAsFgKBgD9/KUjj9vli6VwAJZzRRD+J0NumU22xIo4/A6b7vtZyL222+7937MYuIgmJdMHogjimxNC04i4Sowj6BRhFd5CasE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pileofstuff.org; spf=pass smtp.mailfrom=pileofstuff.org; arc=none smtp.client-ip=81.187.30.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pileofstuff.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pileofstuff.org
+Received: from 0.9.9.0.0.0.0.0.0.0.0.0.0.0.0.0.0.5.8.0.9.1.8.0.0.b.8.0.1.0.0.2.ip6.arpa ([2001:8b0:819:850::990] helo=andrews-2024-laptop.lan)
+	by painless-b.tch.aa.net.uk with esmtp (Exim 4.96)
+	(envelope-from <kernel.org@pileofstuff.org>)
+	id 1trzGC-0066tT-1n;
+	Tue, 11 Mar 2025 13:03:04 +0000
+From: Andrew Sayers <kernel.org@pileofstuff.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Len Brown <len.brown@intel.com>,
+	Todd E Brandt <todd.e.brandt@linux.intel.com>
+Cc: Andrew Sayers <kernel.org@pileofstuff.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PM: Use two lines for "Restarting..." / "done" messages
+Date: Tue, 11 Mar 2025 13:00:37 +0000
+Message-ID: <20250311130204.216345-1-kernel.org@pileofstuff.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228-mm-selftests-v3-0-958e3b6f0203@google.com>
- <20250228-mm-selftests-v3-8-958e3b6f0203@google.com> <08023d47-dcf4-4efb-bf13-5aef3c6dca14@redhat.com>
- <Z8mYG8eQnMsOA4c1@google.com> <16023193-6cb4-46d1-91c4-43342e7e6d30@redhat.com>
-In-Reply-To: <16023193-6cb4-46d1-91c4-43342e7e6d30@redhat.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Tue, 11 Mar 2025 14:00:24 +0100
-X-Gm-Features: AQ5f1JqAOw6spu6AMy4R-fMyLCvyaVsj-m1jqaL8Pde_lEnMc-b72Se9VM50FPs
-Message-ID: <CA+i-1C3srkh44tN8dMQ5aD-jhoksUkdEpa+mMfdDtDrPAUv7gQ@mail.gmail.com>
-Subject: Re: [PATCH v3 08/10] selftests/mm: Skip gup_longerm tests on weird filesystems
-To: David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>, Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 6 Mar 2025 at 15:40, David Hildenbrand <david@redhat.com> wrote:
-> Yes, just skip 9pfs early, and mention in the commit message that 9pfs
-> has a history of being probematic with "use-after-unlink", maybe
-> mentioning the discussion I linked above.
->
-> Maybe something like this would work?
->
-> diff --git a/tools/testing/selftests/mm/gup_longterm.c b/tools/testing/selftests/mm/gup_longterm.c
-> index 9423ad439a614..349e40d3979f2 100644
-> --- a/tools/testing/selftests/mm/gup_longterm.c
-> +++ b/tools/testing/selftests/mm/gup_longterm.c
-> @@ -47,6 +47,16 @@ static __fsword_t get_fs_type(int fd)
->          return ret ? 0 : fs.f_type;q
->   }
->
-> +static bool fs_is_problematic(__fsword_t fs_type)
-> +{
-> +       switch (fs_type) {
-> +       case V9FS_MAGIC:
-> +               return false;
-> +       default:
-> +               return true;
-> +       }
-> +}
+Other messages are occasionally printed between these two, for example:
 
-Ugh, some fun discoveries.
+    [203104.106534] Restarting tasks ...
+    [203104.106559] mei_hdcp 0000:00:16.0-b638ab7e-94e2-4ea2-a552-d1c54b627f04: bound 0000:00:02.0 (ops i915_hdcp_ops [i915])
+    [203104.112354] done.
 
-1. fstatfs() seems to have the same bug as ftruncate() i.e. it doesn't
-work on unlinked files on 9pfs. This can be worked around by calling
-it on the parent directory, but...
+This seems to be a timing issue, seen in two of the eleven
+hibernation exits in my current `dmesg` output.
 
-2. 9pfs seems to pass the f_type through from the host. So you can't
-detect it this way anyway.
+When printed on its own, the "done" message has the default log level.
+This makes the output of `dmesg --level=warn` quite misleading.
 
-[3. I guess overlayfs & friends would also be an issue here although
-that doesn't affect my usecase.]
+Add enough context for the "done" messages to make sense on their own,
+and use the same log level for all messages.
 
-Anyway, I think we would have to scrape /proc/mounts to do this :(
+Signed-off-by: Andrew Sayers <kernel.org@pileofstuff.org>
+---
 
-I think the proper way to deal with this is something like what I've
-described here[0]. I.e. have a central facility as part of kselftest
-to detect relevant characteristics of the platform. This logic could
-be written in a proper programming language or in Bash, then the
-relevant info could be passed in via the environment or whatever (e.g.
-export KSFT_SYSENV_cwd_ftruncate_unlinked_works=1).
+I haven't been able to trigger "Restarting kernel threads" at all,
+so can only prove the above occurs for "Restarting tasks".
+But inspecting the code suggests it's possible, and it
+seems more elegant for both pairs to look the same.
 
-[0] https://lore.kernel.org/all/Z8WJEsEAwUPeMkqy@google.com/
+ kernel/power/process.c             | 8 ++++----
+ tools/power/pm-graph/sleepgraph.py | 3 ++-
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-But, to find an immediate way to get these tests working, I think we
-are stuck with just peeking at errno and guessing for the time being.
+diff --git a/kernel/power/process.c b/kernel/power/process.c
+index 66ac067d9ae6..4c674282df03 100644
+--- a/kernel/power/process.c
++++ b/kernel/power/process.c
+@@ -189,7 +189,7 @@ void thaw_processes(void)
+ 
+ 	oom_killer_enable();
+ 
+-	pr_info("Restarting tasks ... ");
++	pr_info("Restarting tasks ...\n");
+ 
+ 	__usermodehelper_set_disable_depth(UMH_FREEZING);
+ 	thaw_workqueues();
+@@ -208,7 +208,7 @@ void thaw_processes(void)
+ 	usermodehelper_enable();
+ 
+ 	schedule();
+-	pr_cont("done.\n");
++	pr_info("Done restarting tasks.\n");
+ 	trace_suspend_resume(TPS("thaw_processes"), 0, false);
+ }
+ 
+@@ -217,7 +217,7 @@ void thaw_kernel_threads(void)
+ 	struct task_struct *g, *p;
+ 
+ 	pm_nosig_freezing = false;
+-	pr_info("Restarting kernel threads ... ");
++	pr_info("Restarting kernel threads ...\n");
+ 
+ 	thaw_workqueues();
+ 
+@@ -229,5 +229,5 @@ void thaw_kernel_threads(void)
+ 	read_unlock(&tasklist_lock);
+ 
+ 	schedule();
+-	pr_cont("done.\n");
++	pr_info("Done restarting kernel threads.\n");
+ }
+diff --git a/tools/power/pm-graph/sleepgraph.py b/tools/power/pm-graph/sleepgraph.py
+index 918eae58b0b4..b608c7b44b5d 100755
+--- a/tools/power/pm-graph/sleepgraph.py
++++ b/tools/power/pm-graph/sleepgraph.py
+@@ -4017,7 +4017,8 @@ def parseKernelLog(data):
+ 							'PM: early restore of devices complete after.*'],
+ 		'resume_complete': ['PM: resume of devices complete after.*',
+ 							'PM: restore of devices complete after.*'],
+-		    'post_resume': [r'.*Restarting tasks \.\.\..*'],
++		    'post_resume': [r'.*Restarting tasks \.\.\..*',
++							'Done restarting tasks.*'],
+ 	}
+ 
+ 	# action table (expected events that occur and show up in dmesg)
+-- 
+2.47.2
+
 
