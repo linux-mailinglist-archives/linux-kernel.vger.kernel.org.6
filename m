@@ -1,132 +1,65 @@
-Return-Path: <linux-kernel+bounces-556209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 182EEA5C274
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:23:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2727FA5C27B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:23:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01DAE3B2B70
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAEF33B2A0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D14C1BEF77;
-	Tue, 11 Mar 2025 13:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XPi+u4lk"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068B71BF33F;
+	Tue, 11 Mar 2025 13:22:31 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A461ACEB0
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B95B74BED;
+	Tue, 11 Mar 2025 13:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741699311; cv=none; b=Yw+a2ekH8vwRBOSYsqCkY2Yfrsotm7vPA/B7GZqALljveAumlf4LxAl9ASbtG2vhoZUzth3CN0pMHy7Uqk3dny+V7nYSk5shMgMWl1gyysy46EsbZimF1bmvFPy6pwGAjoliDkxBLNIEtOt7I0qaukgi5Yz69slUgaDu5IELKQU=
+	t=1741699350; cv=none; b=pUgUjv0kXU+KF5dysvJ/6Yz74ViR3PCSP9Wa2bJnd6yiuPNW0mZ1ovoh4BQYla7rSPAjle3CyLKOJkPMCYSCcH1tXwM77wHumAwSNBllLZWilAu3rYZZaZHAkyZhQr3yWUfHJsK+462KVWtAfJhAbnUZeEmqrHR7AlHU8QmB11U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741699311; c=relaxed/simple;
-	bh=Qd07Q4VGPkFidTJBRui/iWcevj6QeWcKXSoFsfCfUnc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kQ+dfQOONRaH8HS10GcHtNc2M4EzsrtabBNIuCsKkCgfbWhHE2rirZO9H888z385IsA/z3J0BUT5UuI14Su6viVnOuiiYOgzqcY0BLp9smcqaQnLPXiJLZJmrqQVnys9RbNLCvRuCmrBi17TrIwvJzT9aaXduS3XUiOmQchxDcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XPi+u4lk; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30761be8fcfso60893761fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:21:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741699308; x=1742304108; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qd07Q4VGPkFidTJBRui/iWcevj6QeWcKXSoFsfCfUnc=;
-        b=XPi+u4lk27GEgdRxJCB9vu8EWp7aKd69bCV4J/ECSl8Ddp2etEmJLue7jFnwkElMev
-         v6j4GuHlb7BsQjMyHMkVrOqQHNY1merU84Wq3dZoT1Qw0HU1cPMRA+3bsaMacqserH0Q
-         v+Buk9Atz4GpVaLslNr7kRtG/o1BxmNdmRwA0SrW4Y8Ox/vw0K0lKoNzHhvewc6hQtlq
-         myf3NbeM1zz4UKq+0yNoOQBdm4MH4gvKJiPNk0IgR/G2GJo4ndppHJ0GG2UzF4kqaZ0G
-         By/LYVVBJscVPNRIAmojW1zuIgbEMX9jGBBdmtp70rm3rda6xPAMdI/XNZlcdZ0YD0kl
-         kapg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741699308; x=1742304108;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qd07Q4VGPkFidTJBRui/iWcevj6QeWcKXSoFsfCfUnc=;
-        b=LUastKdzyTbF1x3huT1bAY4bHkc4UTuE0/ixf0BAHZbAqkzJytJRBAfB3iuroCiJIQ
-         dcI6g/xM7U/cPrTZ9ls8JZ0Gt7GAHKtFijBI4Iz4zumWrRmgYW882+REET5jvmsJUu/V
-         6R750Die+xnM3KEYILgz5CowO3OyYTp2Hv9fdCre0sa/iAPSpX+u2SOOx8zVyIUgyLfw
-         +Iv9mNoC0GvoH/iTbnMQNpx9YrH5XleQkdwOJMWCQEZPTdzm8INVji2s1Er1pmyAmV4G
-         bGoRSTMM4HlxfPFdNA/J4UbmHFSiA2YjK8owE5BHJl+2INQkrHBOwckK+luSTjbWjPBn
-         4LdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVu75bQ5saCx7GDRaFk+GMQJt1BTffzwCSSJjj7E19wkObYqoOGR37gxB5XHEzUufdoHX50zBYHM8x2NTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3cNY/+ISRA2Kytgbm+mCCh4cJCgFZeSdlMYSnBZL5bUnfBGZO
-	3tBGB7OiEPsIo2ce1q/3ELmub3XXbtpga3LC+mtq2IFpv71Ql4JPwaw1kYuH1ZgHfDL9mYvu/Xs
-	3fhhbTB65Lacfmp89Gsp5513xljUBxwR/G0KiEA==
-X-Gm-Gg: ASbGnctlYF9ukDOl+QDLPM+U2YXszKiDcumaPrlDRHNKj2BVMn9OYyjw+P0bDT1bfgK
-	CrP7QamsMY+2HfxiiStGnVM3Y7pB3YHlWy/D01KKEUH4ly1rlkGeN0APt+dhBpxOm6uopLSBCyY
-	ww4tnV83oudu08/HMSzoicxAzD+2rkq6m0A+FY/WCh+SnWzqMDkDRfG8Vd
-X-Google-Smtp-Source: AGHT+IFfdhddh1gHpzqLS8IWLTpedfRgy013YVoiUYXZPF94QYiG23Y1yOKbxXbCrswWfXfhwXoVw/1pv2z+tdow0S8=
-X-Received: by 2002:a05:6512:39c7:b0:542:28b4:23ad with SMTP id
- 2adb3069b0e04-54990e5da4dmr7596422e87.16.1741699308040; Tue, 11 Mar 2025
- 06:21:48 -0700 (PDT)
+	s=arc-20240116; t=1741699350; c=relaxed/simple;
+	bh=WguRmOB8IXWeKyTiumivP2L8VdW68o5oI2d4pEwwHKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X5k37AMZJsjIU1L8sQOaA5V2uBi7EKw6c9BW/7wJ6q7UQNZPKcBjlYdGL5JgDDIdTFREIBbRj5LIZc5TU742jE/B2X2kL+0WW0pprmz3g4of2zEPU4BkzUJ8uOY3goRvdS5VrDryQgdpJMSdbmVCk+nUfgLAE9JcqNGkzd8fNlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 770C6C4CEE9;
+	Tue, 11 Mar 2025 13:22:28 +0000 (UTC)
+Date: Tue, 11 Mar 2025 09:22:24 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the ftrace tree
+Message-ID: <20250311092224.33e3873d@batman.local.home>
+In-Reply-To: <20250311162730.2762bbd0@canb.auug.org.au>
+References: <20250311162730.2762bbd0@canb.auug.org.au>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311110034.53959031@erd003.prtnl> <CAMRc=MewC-7XFfWxPS7cmMycxo-62NDrUKFyjnnCbwqXQXWuZw@mail.gmail.com>
- <20250311133010.760abd61@erd003.prtnl>
-In-Reply-To: <20250311133010.760abd61@erd003.prtnl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 11 Mar 2025 14:21:37 +0100
-X-Gm-Features: AQ5f1JqUOVL3X2gCgcmbpAbT0fy5j2-XGgHTJB1Eycy9onj9r36vOwUAw_3p1l0
-Message-ID: <CAMRc=McLEtiF4tfGpOGW+agA8-BK_qU6UWjvq1BOgthWXXym3A@mail.gmail.com>
-Subject: Re: regression: gpiolib: switch the line state notifier to atomic
- unexpected impact on performance
-To: David Jander <david@protonic.nl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 1:30=E2=80=AFPM David Jander <david@protonic.nl> wr=
-ote:
->
-> On Tue, 11 Mar 2025 12:45:51 +0100
-> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> > On Tue, Mar 11, 2025 at 11:01=E2=80=AFAM David Jander <david@protonic.n=
-l> wrote:
-> > >
-> > > On kernel 6.13, after git revert -n fcc8b637c542 time is back to what=
- it was
-> > > on 6.12.
-> > >
-> >
-> > Interestingly: I cannot reproduce it. Obviously gpiofind doesn't exist
-> > in libgpiod v2 but I'm running gpiodetect with and without reverting
-> > these changes and am getting roughly the same results: ~0.050s real
-> > time for 1 up to 4 chips.
-> >
-> > Any idea why that could be? Can you reproduce it with libgpiod v2 (I
-> > don't know why that wouldn't be the case but worth double checking).
->
->
-> Can you describe your platform? Is it a multi-core or single-core CPU? Wh=
-at
-> RCU implementation does it use? Tree or tiny? If it is multi-core, is the=
-re a
-> difference if you disable all but one core?
-> Maybe some kernel CONFIG option that makes a difference? I am not an expe=
-rt in
-> RCU (in fact I barely know what it does), so maybe I am missing something=
- that
-> makes this problem go away?
->
+On Tue, 11 Mar 2025 16:27:30 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-I'm testing on a qemu VM - SMP and single core. RCU algo is tree. In
-any case: I've just sent you an RFT patch that switches to using the
-raw notifier. Could you see what results you're getting with it?
+> Hi all,
+> 
+> After merging the ftrace tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
 
-Bart
+Yep, this was already reported. I'm currently testing this patch, and
+will be pushing to my next branch after it finishes the tests.
+
+  https://lore.kernel.org/linux-trace-kernel/20250308123649.1330e9ca@batman.local.home/
+
+-- Steve
 
