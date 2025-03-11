@@ -1,170 +1,169 @@
-Return-Path: <linux-kernel+bounces-555852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEAFA5BD73
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:15:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14FFAA5BD74
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:15:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78DA6188A592
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:15:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45BB4173E87
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793762356AA;
-	Tue, 11 Mar 2025 10:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A661233149;
+	Tue, 11 Mar 2025 10:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RiuGFZtA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j/EfJZHY"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C6422FF32;
-	Tue, 11 Mar 2025 10:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE5E22FE18
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741688021; cv=none; b=nHmiYiDFnoZuGOrY0RgJmZawWsJ2sGyu3yRn3pGfNE7I30idUyVVhF9z2Fpsz95QmNYRbBY1JZjQcNJe2EIrwh58+6cnBQyC10j1BVif6e9CkEnl0TjOJG8s5NCN6sLhk0doKMfRw4rWcMDh8HrowDOfKijN5py1GIwYy/lp6zI=
+	t=1741688044; cv=none; b=qi3PC8/JGA16HVn9FkmsAtMwb5FPEFI6e2XsJwuak/bMsx08HqBV9wj7TgVpotk/JGfGF/emscdIg9YtvN9sLCZKMqvNX/y740+/Bsw3xg+n6a0kH+ndLuavBf0HMbUetYHUbYwHfrtxJolQ5oJL/7wsWMxEK0rQ3ZhMMkl4Aa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741688021; c=relaxed/simple;
-	bh=GBn0NHUBaGIWk0/Mhl3s+SCamZca4Z2s+E0VjQ/t7yg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PG3jgY5KPvUE90bce1du5Q5uvJTz9VWOdDuGEDLQOFBBJa0z95c/xic/2vJcVJ3o1psLbHfUxkD8Gkn6u5CSfnIYAKTtTmgrVh1VDTErGGUZcWTnUjjpU7xCwQybsX+FykbtdU5hoAXwpIb5uejg80+Ge0JgNRTD0UtJtcrjojA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RiuGFZtA; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741688019; x=1773224019;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=GBn0NHUBaGIWk0/Mhl3s+SCamZca4Z2s+E0VjQ/t7yg=;
-  b=RiuGFZtAOa6pkP7iCyWO0rKXD4qJzs3lhvz5spzTmwrMWhck7w0TFe4c
-   cVKIEr86HK4zCWGU1F/pK1X7slbxSlign4o7jp28g3q9toWdy20Z3ZtZe
-   yY7RDkJ0yEp0ti4T7mwps8ITGS1DAF9ny1JGrYWjSkiKqX3oohsN+6tY1
-   O2LtIfsLdOej+lEt1wb67tlE822yhxyJeCmC36vXpm5TNW/EsvprUd+VF
-   RW5JxqA0hm1AlrlvMG4dPEr8mENcRL1JnyGccwbACLZ5IG0imgdYQAMl/
-   pl+ihZrKCdZXRRRcMouL5pNN7QT8ZSPUL1Mfpy0uYARZCP6DFEkmwyrop
-   A==;
-X-CSE-ConnectionGUID: ybaABSk7RGyTpweZspyaVw==
-X-CSE-MsgGUID: tBH219ieT4mX1xEidJlOBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="46366259"
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="46366259"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 03:13:36 -0700
-X-CSE-ConnectionGUID: v2AEapuIRVGpcC2EwYDGJg==
-X-CSE-MsgGUID: 3Wzl8BTgT76oVqpNZ1tqsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="120312756"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 03:13:33 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 5FC7711F828;
-	Tue, 11 Mar 2025 12:13:31 +0200 (EET)
-Date: Tue, 11 Mar 2025 10:13:31 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: "Shravan.Chippa@microchip.com" <Shravan.Chippa@microchip.com>,
-	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
-	"kieran.bingham@ideasonboard.com" <kieran.bingham@ideasonboard.com>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-	"umang.jain@ideasonboard.com" <umang.jain@ideasonboard.com>,
-	"zhi.mao@mediatek.com" <zhi.mao@mediatek.com>,
-	"julien.massot@collabora.com" <julien.massot@collabora.com>,
-	"mike.rudenko@gmail.com" <mike.rudenko@gmail.com>,
-	"benjamin.mugnier@foss.st.com" <benjamin.mugnier@foss.st.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/6] media: i2c: imx334: Convert to CCI register access
- helpers
-Message-ID: <Z9AMywzmV97OycES@kekkonen.localdomain>
-References: <20250310071751.151382-1-tarang.raval@siliconsignals.io>
- <20250310071751.151382-3-tarang.raval@siliconsignals.io>
- <PH0PR11MB5611A568DC879D4206FDE76681D12@PH0PR11MB5611.namprd11.prod.outlook.com>
- <20250311063849.GB29331@pendragon.ideasonboard.com>
- <PH0PR11MB5611257EF7BF21EA7617008881D12@PH0PR11MB5611.namprd11.prod.outlook.com>
- <Z9AGeIA-207RuGQ0@kekkonen.localdomain>
- <PN3P287MB18297B36A79D3A1AD568448A8BD12@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1741688044; c=relaxed/simple;
+	bh=794aUF8aT5RtUCA1W8S8mWuIs9X87hy//ZVZ105DGrM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KUb2UUA3HQAiB1VLDC0J2bBwUXLTleAyEolO5RkUssxID5v6s4fSP7itKKvtrT4xNcOTkCENi8eF86l5s3wkSGiZR4LEd0V8H75XBqfEqK0pT2je9H0RWbj6aU7r+6H6BNXIES5BKRqLQIVFyMKCMUuM6MIHFXhVg3+3Pncns9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j/EfJZHY; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3912fe32a30so2071659f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 03:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741688041; x=1742292841; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=76XLIKmBPGbPkpHodLQEwOqQeh98tsdwIlAdA3e7Be0=;
+        b=j/EfJZHYrO85cljGKP8q0Rv/LOzNl/aiJ8NSUFmMtOckGDx0r6Uqtd3/XUK9ReyE+0
+         ULW6MjyFI7nhGZeZpj6RPczNfDA5OTGQ5OcW4OfIu+1WwRBfvWKZjU5ay01YtueGSr6d
+         O1sAHWPv6v2tClDWzkLxfxeOPqJnFb4PRv8Y+YFFEPpPRij/xgCbUOari+fp4otQwzK+
+         Vs69LwFH5rgQXp+7ZO2qaVNvJ2qRKF/FWBQifcxedNJCriazXEHhLcudjU9/6IF3DJUh
+         YaG2I8+cMtNZKhf3ThQ7r8Me1bwinnkeq3nFXDcS3kikH7pnCYu6sZnt4YY9IOHb/tMv
+         iNGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741688041; x=1742292841;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=76XLIKmBPGbPkpHodLQEwOqQeh98tsdwIlAdA3e7Be0=;
+        b=nF8LZFwfCep8DSvpF83pOJIsicLa8m1YPqAf/Jtjt1ZFZ2J9ZhCx6KotdHYTg2ibeQ
+         6X/8SE4AehiyoEqbrxaZeWYGBq7688XBcGgLu+nZM+OzQDFHtFPDbUzvzwzWVciY9lyE
+         SUvrYq13nZauLbZF6K2NbSEwnkyzooxGwLjt/xibHgDDt3stCq3GXXI3iRa02nf5izpK
+         G1P5uiPfD/TUJ8oO2iQex+ZOFGFpLG2K3UCeedve5x4k/8bsNeVrSr/c6+SEHEc4DrbG
+         9fpIdvSs1hswFGfXK72MP0oQ4SWBlxk1c5iNzTxSHqk56TIpS9Q3lmNeLU4ngWRjF7Ap
+         /VdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWc8OW1DlGbfQTnzRHEvz1BSwLQRzkrVJ6wxL50Gy+87/bldV+EaeMcKsdz2jfyUSE0UdhnraKObo6vAAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnFc9aVAxS0FkxdFoMRjkqJa1TlJVursLzjsRTVPSjCMFZWuh9
+	daCFdzo42VtHbZQR3TBurdpsdvgJDfK915K8PXpgmaY3WE4lq7GmSKfiRY2Yre+FZCgTlKuLVhT
+	Tus89WQVY+u8d/g==
+X-Google-Smtp-Source: AGHT+IFJVzLeFx7L0yyWjDJgVw/RWiflq5x78L5FY3pE8LtKm0n7pMwPUKo8oJWv4kX2v6gGp6/XzcFbeRoqDl4=
+X-Received: from wmbep27.prod.google.com ([2002:a05:600c:841b:b0:43c:fe99:2bc5])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:5983:0:b0:38d:b325:471f with SMTP id ffacd0b85a97d-392641bd0fcmr3471236f8f.15.1741688041067;
+ Tue, 11 Mar 2025 03:14:01 -0700 (PDT)
+Date: Tue, 11 Mar 2025 10:13:59 +0000
+In-Reply-To: <CAJ-ks9nR9AcqK8WfHDshG4h+K9PzEa8Lwr3odn99r34y=zzWgA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3P287MB18297B36A79D3A1AD568448A8BD12@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+Mime-Version: 1.0
+References: <20250310161947.1767855-2-bqe@google.com> <CAJ-ks9nR9AcqK8WfHDshG4h+K9PzEa8Lwr3odn99r34y=zzWgA@mail.gmail.com>
+Message-ID: <Z9AM57PG08UuijDB@google.com>
+Subject: Re: [PATCH v3] rust: add bindings and API for bitmap.h and bitops.h.
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Burak Emir <bqe@google.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Tarang,
+On Mon, Mar 10, 2025 at 12:44:59PM -0400, Tamir Duberstein wrote:
+> Hi Burak, some comments inline. Hopefully I haven't missed important
+> context from previous versions.
+>=20
+> On Mon, Mar 10, 2025 at 12:21=E2=80=AFPM Burak Emir <bqe@google.com> wrot=
+e:
+> > +/// # Invariants
+> > +///
+> > +/// * `ptr` is obtained from a successful call to `bitmap_zalloc` and
+> > +///   holds the address of an initialized array of unsigned long
+> > +///   that is large enough to hold `nbits` bits.
+> > +pub struct Bitmap {
+> > +    /// Pointer to an array of unsigned long.
+> > +    ptr: NonNull<usize>,
+> > +    /// How many bits this bitmap stores. Must be < 2^32.
+> > +    nbits: usize,
+>=20
+> How come this isn't held as u32? There's a lot of conversion to u32
+> sprinkled around.
 
-On Tue, Mar 11, 2025 at 10:05:12AM +0000, Tarang Raval wrote:
-> Hi Sakari,
-> 
-> > On Tue, Mar 11, 2025 at 06:51:48AM +0000, Shravan.Chippa@microchip.com wrote:
-> > > Hi Laurent,
-> > >
-> > > > -----Original Message-----
-> > > > From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > > Sent: Tuesday, March 11, 2025 12:09 PM
-> > > > To: shravan Chippa - I35088 <Shravan.Chippa@microchip.com>
-> > > > Cc: tarang.raval@siliconsignals.io; sakari.ailus@linux.intel.com;
-> > > > kieran.bingham@ideasonboard.com; mchehab@kernel.org;
-> > > > hverkuil@xs4all.nl; umang.jain@ideasonboard.com; zhi.mao@mediatek.com;
-> > > > julien.massot@collabora.com; mike.rudenko@gmail.com;
-> > > > benjamin.mugnier@foss.st.com; linux-media@vger.kernel.org; linux-
-> > > > kernel@vger.kernel.org
-> > > > Subject: Re: [PATCH 2/6] media: i2c: imx334: Convert to CCI register access
-> > > > helpers
-> > > >
-> > > > EXTERNAL EMAIL: Do not click links or open attachments unless you know the
-> > > > content is safe
-> > > >
-> > > > Hi Shravan,
-> > > >
-> > > > On Tue, Mar 11, 2025 at 06:14:28AM +0000, Shravan.Chippa@microchip.com
-> > > > wrote:
-> > > > > Hi Tarang,
-> > > > >
-> > > > > Thanks for the patch series with CCI register access helpers on top of
-> > > > > my patches I have tested (1080p,720p, 480p resolution only) and
-> > > > > working on my board with small PLL changes to make it compatible with
-> > > > > pfsoc board (mpfs-video-kit).
-> > > >
-> > > > Could you please provide more information about what those PLL changes are
-> > > > ?
-> > >
-> > > Here is the change for mpfs-video-kit board.
-> > >
-> > > diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
-> > > index 375367314416..30470dbd1f3c 100644
-> > > --- a/drivers/media/i2c/imx334.c
-> > > +++ b/drivers/media/i2c/imx334.c
-> > > @@ -236,9 +236,9 @@ static const struct cci_reg_sequence common_mode_regs[] = {
-> > >         { IMX334_REG_XVS_XHS_OUTSEL, 0x20},
-> > >         { IMX334_REG_XVS_XHS_DRV, 0x0f},
-> > >         { IMX334_REG_BCWAIT_TIME, 0x3b},
-> > > -       { IMX334_REG_CPWAIT_TIME, 0x2a},
-> > > +       { IMX334_REG_CPWAIT_TIME, 0x29},
-> > 
-> > A patch converting the driver to use V4L2 CCI / human-readable register
-> > names should not change the values written.
-> 
-> This change is not from my patch.
-> 
-> You can recheck Shravan’s second patch, there is no change in the 
-> CPWAIT_TIME value from my patch or his.
-> 
-> The change Shravan mentioned was made locally to ensure compatibility
-> with the mpfs-video-kit board, as Laurent requested. 
-> That’s why he provided those details.
+Then we would need conversions to usize in other places. I think the
+right choice of type in the public API here is usize, but the underlying
+C API uses int in various places.
 
-Right. I don't know what this or the other change do exactly, but
-presumably the other one is a clock tree divider that reduces the link
-frequency (or pixel rate in pixel array). That should be handled
-separately.
+> > +#[cold]
+> > +fn panic_not_in_bounds_lt(arg: &'static str, len: usize, val: usize) -=
+> ! {
+> > +    panic!("{arg} must be less than length {len}, was {val}");
+> > +}
+>=20
+> Have you considered using build_error or returning an error?
 
--- 
-Sakari Ailus
+I think using build error for these is a bad idea. It's a hack that Rust
+doesn't support well, and the optimizer will not always be able to prove
+that the integer is in bounds.
+
+> > +    /// Constructs a new [`Bitmap`].
+> > +    ///
+> > +    /// Fails with AllocError if `nbits` is greater than or equal to 2=
+^32,
+> > +    /// or when the bitmap could not be allocated.
+> > +    ///
+> > +    /// # Example
+> > +    ///
+> > +    /// ```
+> > +    /// # use kernel::bitmap::Bitmap;
+> > +    ///
+> > +    /// fn new_bitmap() -> Bitmap {
+> > +    ///   Bitmap::new(128, GFP_KERNEL).unwrap()
+> > +    /// }
+> > +    /// ```
+> > +    #[inline]
+> > +    pub fn new(nbits: usize, flags: Flags) -> Result<Self, AllocError>=
+ {
+> > +        if let Ok(nbits_u32) =3D u32::try_from(nbits) {
+> > +            // SAFETY: nbits =3D=3D 0 is permitted and nbits fits in u=
+32.
+> > +            let ptr =3D unsafe { bindings::bitmap_zalloc(nbits_u32, fl=
+ags.as_raw()) };
+> > +            // Zero-size allocation is ok and yields a dangling pointe=
+r.
+> > +            let ptr =3D NonNull::new(ptr).ok_or(AllocError)?;
+> > +            Ok(Bitmap { ptr, nbits })
+> > +        } else {
+> > +            Err(AllocError)
+> > +        }
+> > +    }
+>=20
+> Similar question to above: why return an error here but panic in the sett=
+ers?
+
+Out of memory is something the caller must handle. There's no way for
+the caller to avoid it.
+
+Out of bounds is a bug in the caller. The caller can avoid it by not
+passing too large indices.
+
+Alice
 
