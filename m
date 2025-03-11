@@ -1,301 +1,323 @@
-Return-Path: <linux-kernel+bounces-556262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A096A5C346
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:08:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B12EFA5C34A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:09:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065073A907D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:08:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 477F51888994
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27E325B666;
-	Tue, 11 Mar 2025 14:08:40 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADBB25B678;
+	Tue, 11 Mar 2025 14:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="IDBC+HDO"
+Received: from smtp16.bhosted.nl (smtp16.bhosted.nl [94.124.121.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BE31C07D9;
-	Tue, 11 Mar 2025 14:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCE71CD205
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741702120; cv=none; b=k7MdShw1k8QDLXx+CXbrbAvS5tslCCUOX88Hp13/aHU/8EK2q2kKhKSChHYhk2ZRuE7qI5J7By5MAwuAiPQaiFcqVTw2ekblw3jo9ZtcthNh0UOCkFmWqCjXO6E/o+LtWCvBfOvUmCwT2F92vh9/hcRACZ7bI4fLwKp1iZv2MaQ=
+	t=1741702167; cv=none; b=XuNVEWBthuTkJe0U2cCwKFWAUQRdn7mZVAPmDtHgb6EVkuDxORXnoZYDAXjmXhcN0K1HvyLbWEDDiBY37GSKfv5sHBpYVAG86EhwNkN+b5dB8noSbQwQlsAlAHvi201heVQ+X5UVG2GvjFe3fnnwXXYuI3dasv3kahwk0hALyK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741702120; c=relaxed/simple;
-	bh=/0aJfE3w+ZRG+dTjYxqTqSTxFVwN+j1mMW6vC7nALZU=;
+	s=arc-20240116; t=1741702167; c=relaxed/simple;
+	bh=yvQXTOenIw/rexLmtAwi2lUo0l516FbJ6cYE4QbYS8M=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l3z3/tQqyqP+FMQgUjGuRufIIbtjOp0ifm9oAHNpQ66BNZDOYG8R9bwvNgyeZ+iI5QHXb8j2ln6Vds4DOACMD6NKPINqW51PGylonjm3fuZJnZ2K0HZK8yv18cbodWHA504LjE455oZBQINwVkFhVM0eDXpGyRsN1iNdPs/hMGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8C7DC4CEE9;
-	Tue, 11 Mar 2025 14:08:38 +0000 (UTC)
-Date: Tue, 11 Mar 2025 10:08:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
- Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v3] tracing: Show last module text symbols in the
- stacktrace
-Message-ID: <20250311100832.747b3b83@batman.local.home>
-In-Reply-To: <174161444691.1063601.16690699136628689205.stgit@devnote2>
-References: <174161444691.1063601.16690699136628689205.stgit@devnote2>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=D3JJ9b+i49/xqnyfzKFyZNlDOaYNO8ID8Q2YVl0mi9BKEXKooeTyufhFZNzxUsEnAmO+bPvnLmocx78Ym3h4HpNfKy6X1xg6RY088HFu21aH0w1rIOR3kSflXuS9CqbK1K6QXl5k6+7Y0QgP+42aLu8jalFU2XlkQxxVIDcwDSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=IDBC+HDO; arc=none smtp.client-ip=94.124.121.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=sHJ/I/NwKEVR+tvM07hrs9JoMkywpmUnIKANpoAFlq4=;
+	b=IDBC+HDOwmi/OnqaXdVV2t8/VymuRBIOrzerJ2kk+ZMmK8hBrsSnXRecbq5ANpkA0zSa4Oq+OOMlZ
+	 qwNQ4VNNJo7MXtwtBL9COwcYUYA9CIkLpn0icSghrazT4rrBM4lKFydbG1nq/W+IaMd0196QfYCDKI
+	 5Be3ufPmc9/LOrU2ZpByyEYMc4euw+nvwJ9zLjAUnfhIhWFuJ+wQEZ6KbfQvKZY0TWpx49ILSC+PGw
+	 ix5DkoXsWKjVWOLe/ZfdZN94CmwY4v2yNPxZ5Htw8OpCa22Pc9q44Ot1g7jvAx4LZK6Sb+KFA1Cvkz
+	 a3ZvuP36LTY1RJVL9TIeGZVLck+hYkw==
+X-MSG-ID: 6bfec4b5-fe82-11ef-8b4f-005056817704
+Date: Tue, 11 Mar 2025 15:09:17 +0100
+From: David Jander <david@protonic.nl>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Kent Gibson
+ <warthog618@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: regression: gpiolib: switch the line state notifier to atomic
+ unexpected impact on performance
+Message-ID: <20250311150917.3c11421a@erd003.prtnl>
+In-Reply-To: <CAMRc=McLEtiF4tfGpOGW+agA8-BK_qU6UWjvq1BOgthWXXym3A@mail.gmail.com>
+References: <20250311110034.53959031@erd003.prtnl>
+	<CAMRc=MewC-7XFfWxPS7cmMycxo-62NDrUKFyjnnCbwqXQXWuZw@mail.gmail.com>
+	<20250311133010.760abd61@erd003.prtnl>
+	<CAMRc=McLEtiF4tfGpOGW+agA8-BK_qU6UWjvq1BOgthWXXym3A@mail.gmail.com>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 10 Mar 2025 22:47:27 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+On Tue, 11 Mar 2025 14:21:37 +0100
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Since the previous boot trace buffer can include module text address in
-> the stacktrace. As same as the kernel text address, convert the module
-> text address using the module address information.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  Changes in v3:
->   - Move module_delta to trace_scratch data structure.
->   - Remove LRU based removed module information.
-> ---
->  kernel/trace/trace.c        |   99 +++++++++++++++++++++++++++++++++++++++++--
->  kernel/trace/trace.h        |    2 +
->  kernel/trace/trace_output.c |    4 +-
->  3 files changed, 98 insertions(+), 7 deletions(-)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index c3c79908766e..0c1aa1750077 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -49,6 +49,7 @@
->  #include <linux/fsnotify.h>
->  #include <linux/irq_work.h>
->  #include <linux/workqueue.h>
-> +#include <linux/sort.h>
->  
->  #include <asm/setup.h> /* COMMAND_LINE_SIZE and kaslr_offset() */
->  
-> @@ -5996,11 +5997,41 @@ struct trace_mod_entry {
->  struct trace_scratch {
->  	unsigned long		kaslr_addr;
->  	unsigned long		nr_entries;
-> +	long			*module_delta;
+> On Tue, Mar 11, 2025 at 1:30=E2=80=AFPM David Jander <david@protonic.nl> =
+wrote:
+> >
+> > On Tue, 11 Mar 2025 12:45:51 +0100
+> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > =20
+> > > On Tue, Mar 11, 2025 at 11:01=E2=80=AFAM David Jander <david@protonic=
+.nl> wrote: =20
+> > > >
+> > > > On kernel 6.13, after git revert -n fcc8b637c542 time is back to wh=
+at it was
+> > > > on 6.12.
+> > > > =20
+> > >
+> > > Interestingly: I cannot reproduce it. Obviously gpiofind doesn't exist
+> > > in libgpiod v2 but I'm running gpiodetect with and without reverting
+> > > these changes and am getting roughly the same results: ~0.050s real
+> > > time for 1 up to 4 chips.
+> > >
+> > > Any idea why that could be? Can you reproduce it with libgpiod v2 (I
+> > > don't know why that wouldn't be the case but worth double checking). =
+=20
+> >
+> >
+> > Can you describe your platform? Is it a multi-core or single-core CPU? =
+What
+> > RCU implementation does it use? Tree or tiny? If it is multi-core, is t=
+here a
+> > difference if you disable all but one core?
+> > Maybe some kernel CONFIG option that makes a difference? I am not an ex=
+pert in
+> > RCU (in fact I barely know what it does), so maybe I am missing somethi=
+ng that
+> > makes this problem go away?
+> > =20
+>=20
+> I'm testing on a qemu VM - SMP and single core. RCU algo is tree.=20
 
-Why are we adding this pointer into the persistent memory when it is
-useless after a crash?
+I haven't followed deep into the RCU code, but I had the impression that the
+synchronize_rcu code sets a completion and waits for it, so I suspect the b=
+ulk
+of the delay coming from context switches. Maybe on qemu this behaves
+differently than on real hardware in terms of timing and overhead?
 
->  	struct trace_mod_entry	entries[];
->  };
->  
->  static DEFINE_MUTEX(scratch_mutex);
->  
-> +/**
-> + * trace_adjust_address() - Adjust prev boot address to current address.
-> + * @tr: Persistent ring buffer's trace_array.
-> + * @addr: Address in @tr which is adjusted.
-> + */
-> +unsigned long trace_adjust_address(struct trace_array *tr, unsigned long addr)
-> +{
-> +	struct trace_scratch *tscratch;
-> +	long *module_delta;
-> +	int i;
-> +
-> +	/* If we don't have last boot delta, return the address */
-> +	if (!(tr->flags & TRACE_ARRAY_FL_LAST_BOOT))
-> +		return addr;
-> +
-> +	tscratch = tr->scratch;
-> +	module_delta = READ_ONCE(tscratch->module_delta);
-> +	if (!tscratch || !tscratch->nr_entries || !module_delta ||
+Btw, there is also another way this can be made visible:
 
-You shouldn't have a !tscratch test just after dereferencing it:
+$ strace -r gpiodetect
+     0.000000 execve("/usr/bin/gpiodetect", ["gpiodetect"], 0x7eec5d94 /* 1=
+3 vars */) =3D 0
+     0.017348 brk(NULL)                 =3D 0xc21000
+     0.000689 access("/etc/ld.so.preload", R_OK) =3D -1 ENOENT (No such fil=
+e or directory)
+...
+     0.000677 openat(AT_FDCWD, "/dev/gpiochip9", O_RDWR|O_CLOEXEC) =3D 18
+     0.000741 statx(AT_FDCWD, "/dev/gpiochip9", AT_STATX_SYNC_AS_STAT|AT_SY=
+MLINK_NOFOLLOW|AT_NO_AUTOMOUNT, STATX_BASIC_STATS, {stx_mask=3DSTATX_BASIC_=
+STATS|STATX_MNT_ID, stx_attributes=3D0, stx_mode=3DS_IFCHR|0600, stx_size=
+=3D0, ...}) =3D 0
+     0.000794 statx(AT_FDCWD, "/dev/gpiochip9", AT_STATX_SYNC_AS_STAT|AT_NO=
+_AUTOMOUNT, STATX_BASIC_STATS, {stx_mask=3DSTATX_BASIC_STATS|STATX_MNT_ID, =
+stx_attributes=3D0, stx_mode=3DS_IFCHR|0600, stx_size=3D0, ...}) =3D 0
+     0.000794 access("/sys/bus/gpio/devices/gpiochip9/dev", R_OK) =3D 0
+     0.000738 openat(AT_FDCWD, "/sys/bus/gpio/devices/gpiochip9/dev", O_RDO=
+NLY) =3D 19
+     0.000754 read(19, "254:9\n", 15)   =3D 6
+     0.000597 close(19)                 =3D 0
+     0.000569 ioctl(18, GPIO_GET_CHIPINFO_IOCTL, {name=3D"gpiochip9", label=
+=3D"GPIOJ", lines=3D16}) =3D 0
+     0.000631 statx(1, "", AT_STATX_SYNC_AS_STAT|AT_NO_AUTOMOUNT|AT_EMPTY_P=
+ATH, STATX_BASIC_STATS, {stx_mask=3DSTATX_BASIC_STATS|STATX_MNT_ID, stx_att=
+ributes=3D0, stx_mode=3DS_IFCHR|0600, stx_size=3D0, ...}) =3D 0
+     0.000778 ioctl(1, TCGETS, {c_iflag=3DICRNL|IXON|IXOFF|IUTF8, c_oflag=
+=3DNL0|CR0|TAB0|BS0|VT0|FF0|OPOST|ONLCR, c_cflag=3DB1500000|CS8|CREAD|HUPCL=
+|CLOCAL, c_lflag=3DISIG|ICANON|ECHO|ECHOE|ECHOK|ECHOKE, ...}) =3D 0
+     0.001941 write(1, "gpiochip0 [GPIOA] (16 lines)\n", 29gpiochip0 [GPIOA=
+] (16 lines)
+) =3D 29
+     0.000670 close(3)                  =3D 0
+     0.006162 write(1, "gpiochip1 [GPIOB] (16 lines)\n", 29gpiochip1 [GPIOB=
+] (16 lines)
+) =3D 29
+     0.000655 close(4)                  =3D 0
+     0.006250 write(1, "gpiochip10 [GPIOK] (8 lines)\n", 29gpiochip10 [GPIO=
+K] (8 lines)
+) =3D 29
+     0.000667 close(5)                  =3D 0
+     0.006338 write(1, "gpiochip11 [GPIOZ] (8 lines)\n", 29gpiochip11 [GPIO=
+Z] (8 lines)
+) =3D 29
+     0.000661 close(6)                  =3D 0
+     0.006321 write(1, "gpiochip12 [unknown] (22 lines)\n", 32gpiochip12 [u=
+nknown] (22 lines)
+) =3D 32
+     0.000662 close(7)                  =3D 0
+     0.006365 write(1, "gpiochip13 [mcp23s17.0] (16 line"..., 35gpiochip13 =
+[mcp23s17.0] (16 lines)
+) =3D 35
+     0.000672 close(8)                  =3D 0
+     0.006389 write(1, "gpiochip14 [0-0020] (16 lines)\n", 31gpiochip14 [0-=
+0020] (16 lines)
+) =3D 31
+     0.000641 close(9)                  =3D 0
+     0.006268 write(1, "gpiochip15 [0-0021] (16 lines)\n", 31gpiochip15 [0-=
+0021] (16 lines)
+) =3D 31
+     0.000677 close(10)                 =3D 0
+     0.006330 write(1, "gpiochip2 [GPIOC] (16 lines)\n", 29gpiochip2 [GPIOC=
+] (16 lines)
+) =3D 29
+     0.000648 close(11)                 =3D 0
+     0.006358 write(1, "gpiochip3 [GPIOD] (16 lines)\n", 29gpiochip3 [GPIOD=
+] (16 lines)
+) =3D 29
+     0.000655 close(12)                 =3D 0
+     0.006333 write(1, "gpiochip4 [GPIOE] (16 lines)\n", 29gpiochip4 [GPIOE=
+] (16 lines)
+) =3D 29
+     0.000669 close(13)                 =3D 0
+     0.006332 write(1, "gpiochip5 [GPIOF] (16 lines)\n", 29gpiochip5 [GPIOF=
+] (16 lines)
+) =3D 29
+     0.000653 close(14)                 =3D 0
+     0.006359 write(1, "gpiochip6 [GPIOG] (16 lines)\n", 29gpiochip6 [GPIOG=
+] (16 lines)
+) =3D 29
+     0.000653 close(15)                 =3D 0
+     0.006332 write(1, "gpiochip7 [GPIOH] (16 lines)\n", 29gpiochip7 [GPIOH=
+] (16 lines)
+) =3D 29
+     0.000657 close(16)                 =3D 0
+     0.006344 write(1, "gpiochip8 [GPIOI] (16 lines)\n", 29gpiochip8 [GPIOI=
+] (16 lines)
+) =3D 29
+     0.000661 close(17)                 =3D 0
+     0.006343 write(1, "gpiochip9 [GPIOJ] (16 lines)\n", 29gpiochip9 [GPIOJ=
+] (16 lines)
+) =3D 29
+     0.000654 close(18)                 =3D 0
+     0.006394 exit_group(0)             =3D ?
+     0.001335 +++ exited with 0 +++
 
-		tscratch->module_delta
+I hope this is readable. Notice the long relative time-stamp of the syscall
+immediately preceding each of the close() calls that close a gpiochip chard=
+ev.
 
-Perhaps have it be:
+For comparison, here's the output after applying your patch:
 
-	module_delta = tscratch ? READ_ONCE(tscratch->module_delta) : 0;
-	if (!module_delta || !tscratch->nr_entries || tscratch->entries[0].mod_addr > addr)
+...
+     0.000474 close(3)                  =3D 0
+     0.000472 write(1, "gpiochip1 [GPIOB] (16 lines)\n", 29gpiochip1 [GPIOB=
+] (16 lines)
+) =3D 29
+     0.000426 close(4)                  =3D 0
+     0.000406 write(1, "gpiochip10 [GPIOK] (8 lines)\n", 29gpiochip10 [GPIO=
+K] (8 lines)
+) =3D 29
+     0.000418 close(5)                  =3D 0
+     0.000354 write(1, "gpiochip11 [GPIOZ] (8 lines)\n", 29gpiochip11 [GPIO=
+Z] (8 lines)
+) =3D 29
+     0.000454 close(6)                  =3D 0
+     0.000359 write(1, "gpiochip12 [unknown] (22 lines)\n", 32gpiochip12 [u=
+nknown] (22 lines)
+) =3D 32
+     0.000457 close(7)                  =3D 0
+     0.000433 write(1, "gpiochip13 [mcp23s17.0] (16 line"..., 35gpiochip13 =
+[mcp23s17.0] (16 lines)
+) =3D 35
+     0.000412 close(8)                  =3D 0
+     0.000422 write(1, "gpiochip14 [0-0020] (16 lines)\n", 31gpiochip14 [0-=
+0020] (16 lines)
+) =3D 31
+     0.000416 close(9)                  =3D 0
+     0.000416 write(1, "gpiochip15 [0-0021] (16 lines)\n", 31gpiochip15 [0-=
+0021] (16 lines)
+) =3D 31
+     0.000408 close(10)                 =3D 0
+     0.000358 write(1, "gpiochip2 [GPIOC] (16 lines)\n", 29gpiochip2 [GPIOC=
+] (16 lines)
+) =3D 29
+     0.000441 close(11)                 =3D 0
+     0.000359 write(1, "gpiochip3 [GPIOD] (16 lines)\n", 29gpiochip3 [GPIOD=
+] (16 lines)
+) =3D 29
+     0.000443 close(12)                 =3D 0
+     0.000359 write(1, "gpiochip4 [GPIOE] (16 lines)\n", 29gpiochip4 [GPIOE=
+] (16 lines)
+) =3D 29
+     0.000394 close(13)                 =3D 0
+     0.000413 write(1, "gpiochip5 [GPIOF] (16 lines)\n", 29gpiochip5 [GPIOF=
+] (16 lines)
+) =3D 29
+     0.000396 close(14)                 =3D 0
+     0.000479 write(1, "gpiochip6 [GPIOG] (16 lines)\n", 29gpiochip6 [GPIOG=
+] (16 lines)
+) =3D 29
+     0.000431 close(15)                 =3D 0
+     0.000431 write(1, "gpiochip7 [GPIOH] (16 lines)\n", 29gpiochip7 [GPIOH=
+] (16 lines)
+) =3D 29
+     0.000471 close(16)                 =3D 0
+     0.000381 write(1, "gpiochip8 [GPIOI] (16 lines)\n", 29gpiochip8 [GPIOI=
+] (16 lines)
+) =3D 29
+     0.000484 close(17)                 =3D 0
+     0.000374 write(1, "gpiochip9 [GPIOJ] (16 lines)\n", 29gpiochip9 [GPIOJ=
+] (16 lines)
+) =3D 29
+     0.000480 close(18)                 =3D 0
+     0.000418 exit_group(0)             =3D ?
+     0.001373 +++ exited with 0 +++
 
+> In
+> any case: I've just sent you an RFT patch that switches to using the
+> raw notifier. Could you see what results you're getting with it?
 
-> +	    tscratch->entries[0].mod_addr > addr)
-> +		return addr + tr->text_delta;
-> +
-> +	/* Note that entries must be sorted. */
-> +	for (i = 0; i < tscratch->nr_entries; i++)
-> +		if (addr < tscratch->entries[i].mod_addr)
-> +			break;
+Thanks! This was quick :-)
 
-If we are bother sorting it, why not do a binary search here?
+Like I also replied to the patch email (kernel 6.13 and libgpiod 1.6.3):
 
-> +
-> +	return addr + module_delta[i - 1];
-> +}
-> +
->  static int save_mod(struct module *mod, void *data)
->  {
->  	struct trace_array *tr = data;
-> @@ -6029,6 +6060,7 @@ static int save_mod(struct module *mod, void *data)
->  static void update_last_data(struct trace_array *tr)
->  {
->  	struct trace_scratch *tscratch;
-> +	long *module_delta;
->  
->  	if (!(tr->flags & TRACE_ARRAY_FL_BOOT))
->  		return;
-> @@ -6063,6 +6095,8 @@ static void update_last_data(struct trace_array *tr)
->  		return;
->  
->  	tscratch = tr->scratch;
-> +	module_delta = READ_ONCE(tscratch->module_delta);
-> +	WRITE_ONCE(tscratch->module_delta, NULL);
->  
->  	/* Set the persistent ring buffer meta data to this address */
->  #ifdef CONFIG_RANDOMIZE_BASE
-> @@ -6071,6 +6105,8 @@ static void update_last_data(struct trace_array *tr)
->  	tscratch->kaslr_addr = 0;
->  #endif
->  	tr->flags &= ~TRACE_ARRAY_FL_LAST_BOOT;
-> +
-> +	kfree(module_delta);
->  }
->  
->  /**
-> @@ -9342,10 +9378,43 @@ static struct dentry *trace_instance_dir;
->  static void
->  init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer);
->  
-> +static int make_mod_delta(struct module *mod, void *data)
-> +{
-> +	struct trace_scratch *tscratch;
-> +	struct trace_mod_entry *entry;
-> +	struct trace_array *tr = data;
-> +	long *module_delta;
-> +	int i;
-> +
-> +	tscratch = tr->scratch;
-> +	module_delta = READ_ONCE(tscratch->module_delta);
-> +	for (i = 0; i < tscratch->nr_entries; i++) {
-> +		entry = &tscratch->entries[i];
-> +		if (!strcmp(mod->name, entry->mod_name)) {
-> +			if (mod->state == MODULE_STATE_GOING)
-> +				module_delta[i] = 0;
-> +			else
-> +				module_delta[i] = (unsigned long)mod->mem[MOD_TEXT].base
-> +						 - entry->mod_addr;
-> +			break;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int mod_addr_comp(const void *a, const void *b, const void *data)
-> +{
-> +	const struct trace_mod_entry *e1 = a;
-> +	const struct trace_mod_entry *e2 = b;
-> +
-> +	return e1->mod_addr > e2->mod_addr ? 1 : -1;
-> +}
-> +
->  static void setup_trace_scratch(struct trace_array *tr,
->  				struct trace_scratch *tscratch, unsigned int size)
->  {
->  	struct trace_mod_entry *entry;
-> +	int i, nr_entries;
->  
->  	if (!tscratch)
->  		return;
-> @@ -9362,7 +9431,7 @@ static void setup_trace_scratch(struct trace_array *tr,
->  		goto reset;
->  
->  	/* Check if each module name is a valid string */
-> -	for (int i = 0; i < tscratch->nr_entries; i++) {
-> +	for (i = 0; i < tscratch->nr_entries; i++) {
->  		int n;
->  
->  		entry = &tscratch->entries[i];
-> @@ -9376,6 +9445,21 @@ static void setup_trace_scratch(struct trace_array *tr,
->  		if (n == MODULE_NAME_LEN)
->  			goto reset;
->  	}
-> +
-> +	nr_entries = i;
-> +	tscratch->module_delta = kcalloc(nr_entries, sizeof(long), GFP_KERNEL);
-> +	if (!tscratch->module_delta) {
-> +		pr_info("module_delta allocation failed. Not able to decode module address.");
-> +		goto reset;
-> +	}
-> +
-> +	/* Sort the entries so that we can find appropriate module from address. */
-> +	sort_r(tscratch->entries, nr_entries, sizeof(struct trace_mod_entry),
-> +	       mod_addr_comp, NULL, NULL);
-> +
-> +	/* Scan modules to make text delta for modules. */
-> +	module_for_each_mod(make_mod_delta, tr);
-> +
->  	return;
->   reset:
->  	/* Invalid trace modules */
-> @@ -10101,19 +10185,23 @@ static bool trace_array_active(struct trace_array *tr)
->  	return trace_events_enabled(tr, NULL) > 1;
->  }
->  
-> -static void trace_module_record(struct module *mod)
-> +static void trace_module_record(struct module *mod, bool remove)
->  {
->  	struct trace_array *tr;
-> +	unsigned long flags;
->  
->  	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
-> +		flags = tr->flags & (TRACE_ARRAY_FL_BOOT | TRACE_ARRAY_FL_LAST_BOOT);
->  		/* Update any persistent trace array that has already been started */
-> -		if ((tr->flags & (TRACE_ARRAY_FL_BOOT | TRACE_ARRAY_FL_LAST_BOOT)) ==
-> -		    TRACE_ARRAY_FL_BOOT) {
-> +		if (flags == TRACE_ARRAY_FL_BOOT && !remove) {
+$ time gpiofind LPOUT0
+gpiochip7 9
+real    0m 0.02s
+user    0m 0.00s
+sys     0m 0.01s
 
-Can you rename the parameter from "remove" to "add" so we don't have a
-double negative.
+$ time gpiodetect
+gpiochip0 [GPIOA] (16 lines)
+gpiochip1 [GPIOB] (16 lines)
+gpiochip10 [GPIOK] (8 lines)
+gpiochip11 [GPIOZ] (8 lines)
+gpiochip12 [unknown] (22 lines)
+gpiochip13 [mcp23s17.0] (16 lines)
+gpiochip14 [0-0020] (16 lines)
+gpiochip15 [0-0021] (16 lines)
+gpiochip2 [GPIOC] (16 lines)
+gpiochip3 [GPIOD] (16 lines)
+gpiochip4 [GPIOE] (16 lines)
+gpiochip5 [GPIOF] (16 lines)
+gpiochip6 [GPIOG] (16 lines)
+gpiochip7 [GPIOH] (16 lines)
+gpiochip8 [GPIOI] (16 lines)
+gpiochip9 [GPIOJ] (16 lines)
+real    0m 0.03s
+user    0m 0.00s
+sys     0m 0.01s
 
-		if (flags == TRACE_ARRAY_FL_BOOT && add) {
+Best regards,
 
-
->  			/* Only update if the trace array is active */
->  			if (trace_array_active(tr)) {
->  				guard(mutex)(&scratch_mutex);
->  				save_mod(mod, tr);
->  			}
-> +		} else if (flags & TRACE_ARRAY_FL_LAST_BOOT) {
-> +			/* Update delta if the module loaded in previous boot */
-> +			make_mod_delta(mod, tr);
->  		}
->  	}
->  }
-> @@ -10126,10 +10214,11 @@ static int trace_module_notify(struct notifier_block *self,
->  	switch (val) {
->  	case MODULE_STATE_COMING:
->  		trace_module_add_evals(mod);
-> -		trace_module_record(mod);
-> +		trace_module_record(mod, false);
-
-		trace_module_record(mod, true);
-
->  		break;
->  	case MODULE_STATE_GOING:
->  		trace_module_remove_evals(mod);
-> +		trace_module_record(mod, true);
-
-		trace_module_record(mod, false);
-
->  		break;
->  	}
->  
->
-
--- Steve
+--=20
+David Jander
 
