@@ -1,178 +1,154 @@
-Return-Path: <linux-kernel+bounces-555788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B52AA5BCD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:53:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B9BA5BCCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:52:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE7EE7A45D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:52:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AEB018928D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A17922DFB8;
-	Tue, 11 Mar 2025 09:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2893122E415;
+	Tue, 11 Mar 2025 09:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePytkQLl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gmjr6g88"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D9F225776;
-	Tue, 11 Mar 2025 09:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53525225776;
+	Tue, 11 Mar 2025 09:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741686771; cv=none; b=GWfRvwOh9/ZayJ6OdNBmB+jSq1V3cDSm2mbvcRbERXs0jpfDGPp+MFk9T9g9Xc49iFT1/sp7F1WykA/0VOXIQLQqNE/5ix2QAS9rD7hvWJHp3wnyDVQpM6P1U5Lz7rAw+7ZbyNzZt84/jeGCwws8Ac7MK9zMydCa1+9M1ZBh3TQ=
+	t=1741686756; cv=none; b=bnttCj4c1LgZBeWJ5WOnRksg86VBQtwl9vaslQTdtruqVcKRYI/xnFscF+lQfPKYCaN645dmd3J7SS4L7sxntXIDQQ5PF2om8ZMAvW6aFamKpHSlPK/EcbThHfF45Vedj73nsWF5frUvrIpRR/YqMP5H71xcdBSIt5REV2OhhP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741686771; c=relaxed/simple;
-	bh=mPq4JlVzua4yzFh1NNNJl4UlOm9bg8+UIsXT4ZUQekE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W8auBKRM2Jh8UcRAAnWP3OuqpIBVHg3GAoFT1Hi7rjB93sOi9rweg+jlnphjIvOWCeorEGylBSeCvZgEnpeTNAp+Zr7/3m1pKGuJc58lmSJxzmN1Lbmua7whQmykzNjiYExmpYA8UQ+7ATcpLfuxWe/kUYGJvfFEepG9v4Tmh8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePytkQLl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26C1FC4CEF2;
-	Tue, 11 Mar 2025 09:52:51 +0000 (UTC)
+	s=arc-20240116; t=1741686756; c=relaxed/simple;
+	bh=pCyBHqU0zoiqSyN755vMT64wjgPcH6oB5zFBzmqyNGk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UKZTDJIDrW+MITqc4GylRCphn4/fE4RDadPGQH0ylE7iJRggpKjYAhB2ycXp2CHYbyJ21ZsyrusJNkKubvwZc6C72lNXz2Uqo3SGbnZxqzIp55KgkBsoT1Kgcfjg29H7rnqfqzaTwqPMxDEqx7QG0op3sY0Jica+qiTtAYcGwv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gmjr6g88; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3188C4CEE9;
+	Tue, 11 Mar 2025 09:52:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741686771;
-	bh=mPq4JlVzua4yzFh1NNNJl4UlOm9bg8+UIsXT4ZUQekE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ePytkQLljKktEzSq4WuTDN2YIKnwA+YstBgG1uJT+DVepSJasylnikQIeQGOgTpH/
-	 r1wDf9DHzV6XOAkYHGoml4HagPuWmqaAqclqnZOXaKHI/Ts7yPBMuq/3sjlGdvrpGO
-	 ncJjq/+S8slzpP+JfTDoCN05gp3kMoedLMQxrSYwj065axTId4mdQZu0zfPU9MkpaR
-	 +7auCu0kK7b166L4OZZo+SjB4i+pNakqx+VgpjVOfXOg3OPJipSEXtb/IA3whzaaud
-	 ss9X7dHOPnLIbN34rvHkRRRNcHZ7GZqxT5NmBGXgQzHOZtRoiUQsAWbeNylk2+Bx1j
-	 wZPtpQ3CORPcA==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5499c5d9691so2859216e87.2;
-        Tue, 11 Mar 2025 02:52:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHo1RUOfE+lYFtAMcpQ1nKx8Uji25+2r04rRZZgVXnQf0jVlIdXXc2o/9bnD1q8CUN0ZrlttkQWdJeR6wz@vger.kernel.org, AJvYcCVhIuRRcBCM2kviUnG5PyANTldohwS/pa8MuvnCRZsfuGfRps/NJ9fTWmCMLswbpyLK7Ro460eBwl5Vdck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzES+EydBC6G6wEpTqdBscffo6W93+vkMSA4qJHvO++hE1hu3vF
-	/ajyF3LmlG4gVedOgUoCN6BHWL80IWDh8za+ciS1MnZUYQIKKAlCWYtkgD/aKXD/M1+P2+5Euec
-	7MvUChhDAc5r77Hy4orUDqXKVTBE=
-X-Google-Smtp-Source: AGHT+IHk3DfD0lxEQrLyX0Kd/NSo7lFeZ6SZ37YrOVzBPx2qN0PZlB1QgKAq84rh7lAlAYiJ0x3MJ2uVYENGYFub430=
-X-Received: by 2002:a05:6512:3e1e:b0:549:8b24:9891 with SMTP id
- 2adb3069b0e04-54990e2bfe3mr5761727e87.6.1741686769669; Tue, 11 Mar 2025
- 02:52:49 -0700 (PDT)
+	s=k20201202; t=1741686755;
+	bh=pCyBHqU0zoiqSyN755vMT64wjgPcH6oB5zFBzmqyNGk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Gmjr6g88AKIwS64SeaJXYdnIc1W2nenQ8+vZZksdhsUyHjPTpnTy/6iXxWQVyiKdH
+	 vSjwadeZ5tdywFnU1WxuIoabRHc3EAz1ERtgy6Ps2xg6TTj3sXdLFnt6pOG0P9nW7W
+	 d+TcUZ8yo+OB6bS2NnLOfAfoO07oxsDd1ONw+ldYoNGEJRHk0etxwQXXM3lZ+cFuz/
+	 ya4B0rxaOLIb8S8nP9njodBefi1W3ebKc+HKozOzhMKL5RhmVtNks6SaHqscS6EYrq
+	 fL2ed6jW/1NDBNMLjDuf9Y10H7yFLhjZ+Ckxr1CZpehCgfgaZ2NS4IfsHBaLauWqg3
+	 sv1pTE9nPSb2g==
+Message-ID: <ff074197-8d2c-4f76-a4c1-8d91c8cdd821@kernel.org>
+Date: Tue, 11 Mar 2025 10:52:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224132132.1765115-6-ardb+git@google.com> <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
- <CAK7LNATLf2iXNGi-UKRg=+PRRqgmxry5QQnQ4GUNsuVmDBAnmw@mail.gmail.com>
- <CAMj1kXGVe-R7VF1nHmRx+UB4FuhSjiwMU=n_uWCLC99rTTa5ZQ@mail.gmail.com>
- <CAK7LNATkaTvAwPmNM3kSOCkCptW-bo9Ko6asWyFVcGYgu5rHtw@mail.gmail.com>
- <CAMj1kXHCia-gQy7fkVC5SgMyFqz6rRgpVbz6_W7e9jk7ENaQxA@mail.gmail.com>
- <Z81j8EguDyz_uesu@gmail.com> <CAK7LNATb40pkqXXH+o_CXW6Vf3zavAj8oSeWnpGfXq6SCto4kw@mail.gmail.com>
- <CAMj1kXEAw7qqRSPCnKj+sO5QEtWsFQ2P7gkxuNQhssWd3E6S=Q@mail.gmail.com>
-In-Reply-To: <CAMj1kXEAw7qqRSPCnKj+sO5QEtWsFQ2P7gkxuNQhssWd3E6S=Q@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 11 Mar 2025 18:52:13 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASE7jn3t23MbB375ma-yJj6FhzqB_Zr+-+8NbeoYxCdmw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jro8cIcIaRSbPbpJsCE7AA_bbfqQxJc2emdJtf4t_5qR7I4umYai8FaMeI
-Message-ID: <CAK7LNASE7jn3t23MbB375ma-yJj6FhzqB_Zr+-+8NbeoYxCdmw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] x86/build: Get rid of vmlinux postlink step
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-kbuild@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 3/7] dt-bindings: PCI: qcom: Use sdx55 reg description
+ for ipq9574
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, p.zabel@pengutronix.de,
+ quic_nsekar@quicinc.com, dmitry.baryshkov@linaro.org,
+ linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org
+References: <20250220094251.230936-1-quic_varada@quicinc.com>
+ <20250220094251.230936-4-quic_varada@quicinc.com>
+ <41b400fe-5e08-42c0-9bc6-a238d25d155a@kernel.org>
+ <33bb1cb2-0c5e-402b-a5c6-9604b1dd8d99@kernel.org>
+ <Z86YReHsKeF165F6@hu-varada-blr.qualcomm.com>
+ <84456c70-e933-469f-ac7a-7d899f85e777@linaro.org>
+ <Z8/Dto1fZWvemiY5@hu-varada-blr.qualcomm.com>
+ <01a7918b-dc4b-4ed3-8f74-bc59a9629ce9@kernel.org>
+ <Z8/xTotUg+2GN2+G@hu-varada-blr.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z8/xTotUg+2GN2+G@hu-varada-blr.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 3:40=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
-ote:
->
-> On Tue, 11 Mar 2025 at 03:39, Masahiro Yamada <masahiroy@kernel.org> wrot=
-e:
-> >
-> > On Sun, Mar 9, 2025 at 6:48=E2=80=AFPM Ingo Molnar <mingo@kernel.org> w=
-rote:
-> > >
-> > >
-> > > * Ard Biesheuvel <ardb@kernel.org> wrote:
-> > >
-> > > > On Sat, 8 Mar 2025 at 17:17, Masahiro Yamada <masahiroy@kernel.org>=
- wrote:
-> > > > >
-> > > > ...
-> > > > > I do not think it is broken.
-> > > > > As I mentioned above, I regard vmlinux.relocs as a byproduct
-> > > > > of the atomic build rule of vmlinux. This works.
-> > >
-> > > Except when it doesn't work, such as when an intermediate linking ste=
-p
-> > > fails, and intermediate build products are lost and cannot be recreat=
-ed
-> > > easily (or at all without modifying the source)?
-> > >
-> > > And the thing is, there should be no such thing as an 'atomic build
-> > > rule of vmlinux' if it means lost information when the build is broke=
-n
-> > > at an intermediate step. What purpose does it have?
-> > >
-> > > > There is no make rule for vmlinux.relocs, and so
-> > > >
-> > > > - if it gets deleted, it cannot be rebuilt and even though the buil=
-d
-> > > > does not break, the relocation data is missing from the compressed
-> > > > image, and this could potentially break the kaslr startup code,
-> > > > - it vmlinux.relocs is older than vmlinux for some reason, make wil=
-l
-> > > > not notice and silently reuse the outdated version,
-> > > > - when creating vmlinux.relocs from vmlinux and an error occurs,
-> > > > vmlinux is deleted, making it difficult to diagnose the problem.
-> > > >
-> > > > I think this is badly broken, but if you think this is all working =
-as
-> > > > it should, I am not going to debate this further, and you can consi=
-der
-> > > > the patch series withdrawn.
-> > >
-> > > That's very sad, as both the simplification is substantial:
-> > >
-> > >   19 files changed, 52 insertions(+), 87 deletions(-)
-> > >
-> > > and the increase in debuggability is substantial as well.
-> > >
-> > > Thanks,
-> > >
-> > >         Ingo
-> >
-> > When a byproduct is accidentally lost
-> > (for example, manually deleted), it is not automatically restored.
-> > Running 'rm vmlinux' or 'make clean' is needed.
-> >
->
-> Exactly. Make cannot detect this situation, and so the build breaks in so=
-me way.
->
-> > vmlinux.relocs is one such byproduct.
-> > Another is the map file when CONFIG_VMLINUX_MAP=3Dy is enabled.
-> >
->
-> The linker map is not depended upon by other build targets, and is
-> typically for human debug consumption, so while not ideal, it is not
-> as broken as for the unstripped vmlinux.
->
->
-> > I am a bit concerned about having more and more
-> > intermediate vmlinux.* files, but maybe only me.
-> > I hope vmlinux.unstripped is the only/last one.
-> >
->
-> Maybe we should not strip vmlinux at all, but only remove any static
-> relocations when packaging? E.g., tar-pkg, etc
-> >
-> > OK, let's do this.
-> >
-> > Ard, please send v2 with .gitignore and 'clean' target updates.
-> >
->
-> Thanks, I'll prepare a v2, but in the meantime, can we think about not
-> removing the relocations in the first place?
+On 11/03/2025 09:16, Varadarajan Narayanan wrote:
+>> I don't understand what is duplication of something here.
+> 
+> By duplication, I meant the same set of reg-names (in different order).
+> 
+>>> 	if (adding mhi to ipq9574 reg-names != duplication)
+>>>
+>>> 		/* Keep existing order */
+>>>
+>>> 		* Append "mhi" to ipq9574
+>>
+>> ipq9574 does not have mhi, does it?
+> 
+> ipq9574 also has it.
 
-OK, let's try this approach.
+Current binding says no, so something is missing.
 
+> 
+>> If it has, it should be separate patch with its own explanation of the
+>> hardware.
+> 
+> Will discard these patches from the patchset -
+> 
+> 	dt-bindings: PCI: qcom: Use sdx55 reg description for ipq9574 Varadarajan Narayanan
+> 	arm64: dts: qcom: ipq9574: Reorder reg and reg-names Varadarajan Narayanan
+> 
+> Will add mhi for ipq9574 and post the next version. Is that ok?
 
---
-Best Regards
-Masahiro Yamada
+Yes.
+
+Best regards,
+Krzysztof
 
