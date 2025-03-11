@@ -1,73 +1,112 @@
-Return-Path: <linux-kernel+bounces-555553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F13A5B97B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:59:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C9BA5B981
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:02:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FA581893433
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F8573AC3BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7157A220685;
-	Tue, 11 Mar 2025 06:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05064217719;
+	Tue, 11 Mar 2025 07:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N8GWyhe3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LPJoIPRW"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95DA1C3C1C;
-	Tue, 11 Mar 2025 06:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFF81AB52D;
+	Tue, 11 Mar 2025 07:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741676371; cv=none; b=CRo6gBI2agdYYe0cylaQL9R6bLArwCps9+spXLINo+rvUmonVtKpjAfRgX4/FDOaujj6GGy6FL8NKZyQnMiedv6j8w5c+JqeqwJdOGQTQcn1ANXmZpy8lr9vsPMRYXcq/A9fPBMTijqWbKIrSsdElgHGMUl1QeH7F1ITh7jGlSs=
+	t=1741676554; cv=none; b=hOmI4I0dIkKgjiZJUjcN5xXkpNDUeJyAxtWR/r2J7ex1Oh56Fj8NiT/7ksFEqqk/YEIw/rLQnyTdhFIwsIbwhkjuvV8NShNbCmk3Nn6MHqeAa/LSKYtH5e9/DMekQ5LF4GM98bJ9X+j2HyWCSGosaIURCvVo9ZyeyObtHCWkLRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741676371; c=relaxed/simple;
-	bh=+qy3os88weZeL6J67prExXZz+5oBn86BhVCuf5i67E0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gc40h9GaNrhqce+HecL0yE8hbYTILOaXXleVbtU2l95P3mOJQ3xgpEswMDgRJ1PVr1eRCZqjJnIzU7JoxGL27sZmVV7Mu5+G6kef3Zik5/vf830aZ9ol9ivA/jcLLzPsDjEg+r0pIv3W1+99z0IALJEFUoKB2rkC2piOm7lEETY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N8GWyhe3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98EDC4CEEA;
-	Tue, 11 Mar 2025 06:59:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741676371;
-	bh=+qy3os88weZeL6J67prExXZz+5oBn86BhVCuf5i67E0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N8GWyhe3OsEas7MImdqJu07utUZtJiujLs+fghyI9LZhv/NQb3aNLphzGYr6b8Mo2
-	 EPJb9CGrWzysmO+MTSxyvx9nNCQfS0obztXINvQnNolHOGNE8HOTrc0xnL1z5xHo9+
-	 G6/7UYIUM0qYoS0sKmTRH+dsgWAMfnvnJEUxl3z8=
-Date: Tue, 11 Mar 2025 07:58:09 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Cameron Williams <cang1@live.co.uk>
-Cc: jirislaby@kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] tty: serial: 8250: Add Brainboxes XC devices
-Message-ID: <2025031103-spooky-venomous-7a85@gregkh>
-References: <DB7PR02MB3802907A9360F27F6CD67AAFC4D62@DB7PR02MB3802.eurprd02.prod.outlook.com>
- <AM0PR02MB3793F5DE28571BED66028FDBC4D12@AM0PR02MB3793.eurprd02.prod.outlook.com>
+	s=arc-20240116; t=1741676554; c=relaxed/simple;
+	bh=4/xmULi6eu65ZqipJf3D744X61ZyPi7RnHbWhmlHIrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KcnHWRmYgfyBAm/jHfKWGl6PVsd4m2Q0p/YFnASUm1MvxyT6yuCn8qjCbkBc6ZYfzXczVYbiiH3h6dkjS+7pVrsELrWQGQAhXTbjRFt1xL9wA9ery+732pWCdj21P7ZX/BWCy6eUQ9nir7q0+Y/mCAZIE0pRmnI0R5hHVEXtmFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LPJoIPRW; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741676545;
+	bh=DfdQmhz8vbCPv39uRzeCg19ZNOajPR1ntgBF6+oNJgw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LPJoIPRWz/N89oXfAe5rOqflM3A+CGl8AkDYy0zX0wKcp7jGcwZBVqt/Nl/6iWkly
+	 UGF8QFsmvln6Nx0PH19VBn0aY4ePZ2v6omKzKa9g/loFI85NY86qg+6ppmT3Iqbhhp
+	 M0BJTM8w0CAREss2+AiAszH236HafDTlqyDTgD1BT94ksQD9KtPKJOvAb+U4TPgIfK
+	 QcXmgz+Tc8rfLIms4KxqiMN5v5mIcIGVfE9QeS3m+Ajw0vLgz+lhkVXUEAOMK1WI9g
+	 jIS4HXbvnvc4ONpk7hqYGYngEvJcXWjtlNOenVyDl+ZA5OxYX+BZ7b5PG7aZ8pGunk
+	 WZtIpz6jAsQog==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBl7h5F2cz4x04;
+	Tue, 11 Mar 2025 18:02:24 +1100 (AEDT)
+Date: Tue, 11 Mar 2025 18:02:02 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Dave Airlie
+ <airlied@redhat.com>, Lucas De Marchi <lucas.demarchi@intel.com>, Thomas
+ =?UTF-8?B?SGVsbHN0csO2bQ==?= <thomas.hellstrom@linux.intel.com>, DRM XE
+ List <intel-xe@lists.freedesktop.org>, Balbir Singh <balbirs@nvidia.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Matthew Brost
+ <matthew.brost@intel.com>, DRI <dri-devel@lists.freedesktop.org>
+Subject: Re: linux-next: manual merge of the drm-xe tree with the mm tree
+Message-ID: <20250311180202.058334d5@canb.auug.org.au>
+In-Reply-To: <kk4fmefhwnis4lwlvssgu6t54o5mkahgyz4cm3wjh2hgtriexh@x3xseg5v7nrm>
+References: <20250307122954.1ab65809@canb.auug.org.au>
+	<20250311131214.530934a4@canb.auug.org.au>
+	<kk4fmefhwnis4lwlvssgu6t54o5mkahgyz4cm3wjh2hgtriexh@x3xseg5v7nrm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM0PR02MB3793F5DE28571BED66028FDBC4D12@AM0PR02MB3793.eurprd02.prod.outlook.com>
+Content-Type: multipart/signed; boundary="Sig_/+2hsQUYER6lr60l67w3/fL2";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Mar 11, 2025 at 06:54:00AM +0000, Cameron Williams wrote:
-> Cc'ing stable
-> 
-> Cc: stable@vger.kernel.org
-> 
+--Sig_/+2hsQUYER6lr60l67w3/fL2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-<formletter>
+Hi Alistair,
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+On Tue, 11 Mar 2025 16:57:49 +1100 Alistair Popple <apopple@nvidia.com> wro=
+te:
+>
+> I'm not sure what the process is here, but having either reviewed or auth=
+ored
+> these patches I can add that the fix up carried below looks correct.
 
-</formletter>
+Thanks.  This means that people can have a bit more confidence in the
+resulting linux-next tree (and so can I :-)) and when the merge
+requests are sent to Linus, they can just reference my resolution.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+2hsQUYER6lr60l67w3/fL2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfP3+oACgkQAVBC80lX
+0GyEawf/W7+vuzzj0fSnm+S5FH7jSA1QIbUR9kArWxLNAKFTLaoKzFjwOu3Ii9xK
+hSzdS6Rr672C8QpgKciVVP3a2L2yvYNcRo5LxXIy1Fe3wJB+HbWKi9FeWw9TQTa7
+y+uKgCUMj/6Jsc0lkJneV5i8SDIT5MRr7oUHwMUS6WBjJvUujCf45nuBYJ0KcINN
+T0063JuMfyjsWmpfBrMrvC/Pk1RmyFAojsyPLBImkG+ZNwQc560slfgk7bdSf9/H
+pAhSw0UMejBPlSfPByOKOv3vA+At1ScwpLoUbQfQD4VBp+s62GSwuAfCDdi5lzJ2
+VWqc6oMUQg5wjK1HYGRil0DNy4fmzg==
+=j6TV
+-----END PGP SIGNATURE-----
+
+--Sig_/+2hsQUYER6lr60l67w3/fL2--
 
