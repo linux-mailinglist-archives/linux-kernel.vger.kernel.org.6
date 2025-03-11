@@ -1,145 +1,143 @@
-Return-Path: <linux-kernel+bounces-555495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C44A5B88D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:29:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE639A5B851
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:19:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 554093AA2B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:29:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CD83189011E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019621EEA56;
-	Tue, 11 Mar 2025 05:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9581EB5F4;
+	Tue, 11 Mar 2025 05:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cYwuJy+T"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Rp5ZlQZX"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F621EDA3A;
-	Tue, 11 Mar 2025 05:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9429429A1
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741670969; cv=none; b=QYP+GHfx4VZnEyDygzH2chH1FOt7U2C9twDYUkxzcJjjqX8XuPLXIkUncXhYQmdahfHTePfUPoyiLOH0p6jPzEWzsFfG5sWgoPSODvxbXdHGUozxiC9CUEJzt2EzsSYghH4x4AylY7tCMeS+Txde5ku77A4nQBZIoPrXhpnuo9k=
+	t=1741670375; cv=none; b=t77JxCxEw5fnfL9XUgLe9SPcd0fzPAvU28Y9OU1eN/k+NNtc/2BhgQeKjUp8SBMJunJtBwENxi3OOcdvQB4gcuPPY8r6TG6ThZxEa9vACsBSgE7Vx/rVm6yXvt21fzxIZAU6Se3X0RNyIA/fvbKTTmEsqlj5FiGj1yk+GMNdpKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741670969; c=relaxed/simple;
-	bh=j4T/ihpX+piLqBcmM4WOze2O+wOXuPhkdsGGFg65LBE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G+8DKfiSRZIiG6HmjYjj4XqxzODp2q2mp2aGJLGM+P0RHsDgWDe7VCEAezeH4xS1+bZPGQcW9Ea9RAX6iPJaCx7/NEWhX2dQxHjCLpoRS8DsdrrS+S0l/EqOUFSt8Wrg1GpzMmwzIrZ1nLnuinaaFeg021yHd+Xxg9sIRyhr5O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cYwuJy+T; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52B5I8ni675075
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Mar 2025 00:18:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741670288;
-	bh=NspGx0nqDbjExHcl+uSnaAoQr3YyjgF3MKCUI7kJdT8=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=cYwuJy+TZKOyrfecU6ZY2c8glXSCWO9OfycFIJ3QbZLTnpLwAqDJuLH9zmk1doOzq
-	 gmGEtZIuhHBgL0kTCbDTiKw9XN3R0FKgtn1UCIcb8T37lq9yrNs9kCLgu9BQimLrMg
-	 3LPcgwWeuGTCZtbNUV6ZTrsDgqGTVmhlVHLOnJng=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52B5I81c034069
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 11 Mar 2025 00:18:08 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
- Mar 2025 00:18:08 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 11 Mar 2025 00:18:08 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52B5I6G9051545;
-	Tue, 11 Mar 2025 00:18:07 -0500
-Date: Tue, 11 Mar 2025 10:48:06 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <vigneshr@ti.com>, <manivannan.sadhasivam@linaro.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <rogerq@kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-Subject: Re: [PATCH] PCI: j721e: Fix the value of linkdown_irq_regfield for
- J784S4
-Message-ID: <20250311051806.smcu4o4dxpngimth@uda0492258>
-References: <20250305132018.2260771-1-s-vadapalli@ti.com>
- <20250310210746.GA2377483@rocinante>
+	s=arc-20240116; t=1741670375; c=relaxed/simple;
+	bh=Qf1HYt/4XQv3aVYt3Mn1+083Ac+3uBskW9Fb1amUZKM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=MhqmkcRW/1h/mt0AhHzQIfzZJfphXTnOmrhUNefowu9ZzPOmqbqh5MO3ZJfvRyxQolQy+A+vuPSvZB2zAD3MHHUxs7Uxwu6fkVLhYGTMwyjrds1yYmCzKs+g4u2Yk34O8+TEDf71qdSP+icS3P5UMjX/DGEsBaHLx7HEWqm5okA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Rp5ZlQZX; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2254e0b4b79so1268195ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 22:19:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1741670373; x=1742275173; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+i/dt0ZX89cRHtWHaB/kc777cnfXfjLxAIjIrBqsq1Y=;
+        b=Rp5ZlQZXV5A8osFeyA+W0v/Aayaf2FxGNRItJeRTLpOM1WjlwgN/H429+B0mrY/tfv
+         oyXk+4IOZ2v1DIV8X86T4qLe5BbAIzWzXLKoYDWF2gb6nrSI6948fJo70Yh7aCiEYyf/
+         EkN10HWEatLCH7mxt2LUWSrk3pL4LE+Go7bKS/2DUxYc4L3YX2y4MRDUUtYi3P5qT5li
+         0RyHlpiKH081tWcPUmwW0XL1bvDkEQv9jGSnsLHk1b30/VxWeltMaSLKTp59ZnjNEmpB
+         Vg4WMZiRX0IYQTzlGREJAP66I8b8dXLYIFCgxnZdn351hUHhd7xC37GxqbYYmHHtN24o
+         8QDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741670373; x=1742275173;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+i/dt0ZX89cRHtWHaB/kc777cnfXfjLxAIjIrBqsq1Y=;
+        b=m7hXNUk9oXPvaO9u+tDlNjow18PQcqmzL8ygEP7BRycDZONdiFqd3wDnLKE2mAx0In
+         a+Ph+eDzphAkfNchfI93ZUoAzXzbO5mem0X87D+r5HP1hgKd4JkgTM6BpRN4LFqStIFG
+         /VGK6S5bVzGz+56LPVuRfpEaA3goY0uYluwXYUw4TXKTlivsRMkuqWmw95ikWJn7pnMf
+         5nn1H0WDc8FT3ZnEthGLu+SVLDhzx+v3PXBCdH2DoWDRqK8l0p8ZyDd3bkETzRrGfbQv
+         6pfWxH97+gE2U91/OG02nOerSIZ+OFP0fIs8rjt1fqOwyY5aqiheueunRtFRpe9CX35v
+         Jzcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ0Iy1qaxa5L2XvnpgbWVgqlL0xSXacvtesxxXamApVdzGQm+hKrMAZT2ooSjvEY+MkJrS5aILaUERYcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ1ZCVnqno6FjdRtDDcjwyWkohL2v2jsphiL0szEk6Kd4r4Bi+
+	ymOL+igcrGlqNMVhmxwSQB2/u696a+sda6ixbWmfxbbwMgNwTmsQ+N5AfYcBv00=
+X-Gm-Gg: ASbGncvWykvLPNgTg3KYU/+b7OLHBPxac99WW9Z+VVidIiClSVnbzww5tI9JxDPBcGq
+	p1kAg0qgoqUExDdMh//zqfdshg1RBs62TJ/85Cqg4yYww/7Vwb4KeUfxr6bmnUonpAFVgGFSkV/
+	Q5l6do4N7qaiZChcdszlxVwMNDAXC2NRBUIyOntZJA8KBtkZTOWJm/wFGtpeb7FYbzVfGVvfyJO
+	Rpv8ieQwTLheUjYQIi0kvHbJvizAgrtvjxzVMV0BgF6KY4cbeieY4GIcpJGWGpiQlOJvvSe6lB2
+	ve0Y4c+rJWYItZo6wgrRVSEf/avmkaKgvFmiqQ5Ayf6dM863b4kLTrP6qE+5fuzs9YU=
+X-Google-Smtp-Source: AGHT+IEntr734nFZJCJi9wFIrZS3LNF88PAO3SBZe3Z3mk94wDz9J7xsCrG6KvNbYGMyW21bfvgtPw==
+X-Received: by 2002:a17:902:d48f:b0:224:1219:934b with SMTP id d9443c01a7336-22428c099abmr227046695ad.50.1741670372831;
+        Mon, 10 Mar 2025 22:19:32 -0700 (PDT)
+Received: from hsinchu26.internal.sifive.com ([210.176.154.34])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e9fbfsm88597995ad.92.2025.03.10.22.19.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 22:19:32 -0700 (PDT)
+From: Nick Hu <nick.hu@sifive.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Anup Patel <anup@brainfault.org>
+Cc: Nick Hu <nick.hu@sifive.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH] dt-bindings: timer: Add SiFive CLINT2
+Date: Tue, 11 Mar 2025 13:19:03 +0800
+Message-Id: <20250311051903.3825-1-nick.hu@sifive.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250310210746.GA2377483@rocinante>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Mar 11, 2025 at 06:07:46AM +0900, Krzysztof Wilczyński wrote:
-> Hello,
-> 
-> > Hence, set 'linkdown_irq_regfield' to the macro 'J7200_LINK_DOWN' which
-> > expands to BIT(10) and was first defined for the J7200 SoC. Other SoCs
-> > already reuse this macro since it accurately represents the link-state
-> > field in their respective "PCIE_INTD_ENABLE_REG_SYS_2" register.
-> 
-> Can you confirm for me that the following use the correct macro?
-> 
->   333-static const struct j721e_pcie_data j721e_pcie_rc_data = {
->   337:	.linkdown_irq_regfield = LINK_DOWN,
->   
->   341-static const struct j721e_pcie_data j721e_pcie_ep_data = {
->   343:	.linkdown_irq_regfield = LINK_DOWN,
->   
->   347-static const struct j721e_pcie_data j7200_pcie_rc_data = {
->   350:	.linkdown_irq_regfield = J7200_LINK_DOWN,
->   
->   362-static const struct j721e_pcie_data am64_pcie_rc_data = {
->   364:	.linkdown_irq_regfield = J7200_LINK_DOWN,
->   
->   369-static const struct j721e_pcie_data am64_pcie_ep_data = {
->   371:	.linkdown_irq_regfield = J7200_LINK_DOWN,
->   
->   375-static const struct j721e_pcie_data j784s4_pcie_rc_data = {
->   379:	.linkdown_irq_regfield = LINK_DOWN,
->   
->   383-static const struct j721e_pcie_data j784s4_pcie_ep_data = {
->   385:	.linkdown_irq_regfield = LINK_DOWN,
->   
->   389-static const struct j721e_pcie_data j722s_pcie_rc_data = {
->   391:	.linkdown_irq_regfield = J7200_LINK_DOWN,
-> 
-> I am asking as some use LINK_DOWN, so I wanted to make sure.
+Add compatible string and property for the SiFive CLINT v2.
 
-Yes, the above are accurate except for J784S4 which is fixed by this
-patch. LINK_DOWN i.e. BIT(1) is applicable only to J721E which was the
-first SoC after which the driver has been named. For all other SoCs, the
-integration of the PCIe Controller into the SoC led to BIT(10) of the
-register being used to indicate the link status.
+Signed-off-by: Nick Hu <nick.hu@sifive.com>
+Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+---
+ .../bindings/timer/sifive,clint.yaml          | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-> 
-> Tht said, the following has no .linkdown_irq_regfield property set:
-> 
->   355-static const struct j721e_pcie_data j7200_pcie_ep_data = {
->   356-	.mode = PCI_MODE_EP,
->   357-	.quirk_detect_quiet_flag = true,
->   358-	.quirk_disable_flr = true,
->   359-	.max_lanes = 2,
->   360-};
-> 
-> Would this be a problem?  Or is this as expected?
+diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+index 76d83aea4e2b..93d74c504b5f 100644
+--- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
++++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+@@ -36,6 +36,9 @@ properties:
+               - starfive,jh7110-clint   # StarFive JH7110
+               - starfive,jh8100-clint   # StarFive JH8100
+           - const: sifive,clint0        # SiFive CLINT v0 IP block
++      - items:
++          - const: sifive,clint2        # SiFive CLINT v2 IP block
++        description: SiFive CLINT v2 is the HRT that supports the Zicntr
+       - items:
+           - enum:
+               - allwinner,sun20i-d1-clint
+@@ -62,6 +65,22 @@ properties:
+     minItems: 1
+     maxItems: 4095
+ 
++  sifive,fine-ctr-bits:
++    description: The width in bits of the fine counter.
++
++if:
++  properties:
++    compatible:
++      contains:
++        const: sifive,clint2
++then:
++  properties:
++    sifive,fine-ctr-bits:
++      maximum: 15
++else:
++  properties:
++    sifive,fine-ctr-bits: false
++
+ additionalProperties: false
+ 
+ required:
+-- 
+2.17.1
 
-Thank you for pointing this out. This has to be fixed and the
-"linkdown_irq_regfield" member has to be added to match
-j7200_pcie_rc_data. I will post the fix for this.
-
-Regards,
-Siddharth.
 
