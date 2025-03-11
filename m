@@ -1,149 +1,120 @@
-Return-Path: <linux-kernel+bounces-557075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31032A5D34C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:44:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B772A5D34E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:44:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 550CA1898221
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D626D1895654
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033A8234984;
-	Tue, 11 Mar 2025 23:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E881233727;
+	Tue, 11 Mar 2025 23:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="dCuQrjld";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="kLBL1Hza"
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oSMS2P3i"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314891E1021;
-	Tue, 11 Mar 2025 23:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443797B3E1
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 23:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741736666; cv=none; b=hujV7AcWdNARRveF5ttWCOqEPqtOdpJkj4vGr836DFLeuQnErRwr8PTEZyvZYRjefHDUFx7VN/txNVXY/8AaDFJgaNNu4+iP4jc9y5f9a5+1XzG8TYPA9dGNODA94RFxA/7vUzRmfSaTYbYvDW5K+fBQuU6plNQzWdde1sYNNFs=
+	t=1741736684; cv=none; b=oPbOVDvBysTrV60ZvWiWxzf9Fa2G5f2ceVF/rkXzmzjz+R1NqjEPNaWKUbdekH/g6Kk1RJ9tt2hgCmSJmbECykk5MLRkEX/WPVCXkq9R67ciX+EahFRYIPe7tbLCrd+aq528vdADq2+Fdc+SVB0hRhEfnDkdKcBWGdp2+ubRTMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741736666; c=relaxed/simple;
-	bh=zo5S5g9SDDg5D0vyXj5+j5Nom1Jl/tHuPw0zZZUjYXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nHJuKiBFDHP5R+MrqO3nJ7rjmM286jINy6zJr+uS5ZjlDTlY4Myu2Px+4tNLAJBsjuHkXd9+cRrgGp41tJ/k/vpApivC4GKSyaZdk4vB2Zv/ToOFL7XEdooaIipNkbIAbomT8BGvgKYxRVprpOMm26qPQYMy43pW9JXT/B46+xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=dCuQrjld; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=kLBL1Hza; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id CE1CD60292; Wed, 12 Mar 2025 00:44:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1741736653;
-	bh=Zy4H9Jv5YfvsQEUnC9uG0DhMz5JfwXq9yCcEHqiTgoA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dCuQrjldqeqnYI/PldvkMU2V6Bp+hA/HwlY9EMQeDrnYiBAjZICwM9gPlxhJoSSpG
-	 wZ3sm4kF8H+BL9z6zaEdVcQ/LglJa/NqsPKC27g454L/lUFHDW99BptODIrzN/yyHT
-	 t/yZoMDc9WykSeScCm4MMymPj4k/tiOEdh21gQNHONXTisiY59ILJiAUrofoANGdla
-	 oFfcx2OdWhPYSQhr+vFxI8YONrevo7KDoM2OkKZf1Esg6h8lTFFECWmg0bTtYGIVCM
-	 QdlSGFdCQdx27d6o0ZttuKXJdvlJ8iVY9nlduIVZMRIFYGUp4iyjX6OFh030AcfvYT
-	 EskUkG6I4SoAA==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id F13DD60281;
-	Wed, 12 Mar 2025 00:44:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1741736648;
-	bh=Zy4H9Jv5YfvsQEUnC9uG0DhMz5JfwXq9yCcEHqiTgoA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kLBL1Hzar1cmkrQuKybLF66CTNES1VcZwNNIMmceAZVUWG5+PeM/BvDuffpu85yec
-	 wSCdNGmitWR2/y3qO93O7m5UoYNKtgV+UMNE3RSCZLEtC3QrrCx5Ui7dzYI58OpWlx
-	 NwubfakCqFL6Je9par6JdWhDjcNJFmritUaP6eC06ocENmPzpiec0y8GuyB+7RNRpX
-	 yhqSCf2339YL33+0nTwjf5i1QZ20gGgH7fTS6Lw5NjdHN+qVQ+1exZ2T3tciJq/8kh
-	 KqPz2aZ2hTBXT2boxpytoDg2qPdtF3KzUcG9KrRXHFunP2n1vk46/9Q2OKi2SN/ESu
-	 yNF8SeDIdPDXQ==
-Date: Wed, 12 Mar 2025 00:44:04 +0100
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Eric Woudstra <ericwouds@gmail.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Roopa Prabhu <roopa@nvidia.com>, Ivan Vecera <ivecera@redhat.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Simon Horman <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, bridge@lists.linux.dev,
+	s=arc-20240116; t=1741736684; c=relaxed/simple;
+	bh=b51MerqZisIu4CsCLrU2raVfXD7bPut63futlnMslx0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lu6xdSHSaqMXTIz7ydMocbMyyfbYfecDXZJvIkEFb5FDB9qUSL+MddsIVL89Ja9Ic2zqtMwy44yx/gSx1xrynngnb1ES2h+u9EgDoG5j3q7bMoXoeWPmwFh+Cbl3yDLJeWxCEoJxKWiA74wF8ccuHqLRjcWebQTh/HNM7WOiLJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oSMS2P3i; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741736680;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Oi1BLbE7r5Jv82rbxY9jzsh/6odGMKYOpVA/m+ctSAs=;
+	b=oSMS2P3iID7v+wiMAoAinih2NDgr8K39BTILgxvDMNQ4bTMlDqOjbO4ZVovP48XrnBdkxd
+	qMhQiTAjEyPSTOPvpeWC04oEh1iQ30UvNMzRSjX2lcYdOHVBoAYM0aW32Rh6EdNNdo26ZW
+	Zq23OYzylV5zqv+GXg9OYrajB7Bxy4U=
+From: Oliver Upton <oliver.upton@linux.dev>
+To: kvmarm@lists.linux.dev,
+	Oliver Upton <oliver.upton@linux.dev>
+Cc: Marc Zyngier <maz@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Colton Lewis <coltonlewis@google.com>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Daniel Golle <daniel@makrotopia.org>
-Subject: Re: [PATCH v9 nf 00/15] bridge-fastpath and related improvements
-Message-ID: <Z9DKxOnxr1fSv0On@calendula>
-References: <20250305102949.16370-1-ericwouds@gmail.com>
- <897ade0e-a4d0-47d0-8bf7-e5888ef45a61@gmail.com>
+	linux-kernel@vger.kernel.org,
+	Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH v3 00/14] KVM: arm64: FEAT_PMUv3 on Apple hardware
+Date: Tue, 11 Mar 2025 16:44:26 -0700
+Message-Id: <174173663466.1065484.5411031116504311230.b4-ty@linux.dev>
+In-Reply-To: <20250305202641.428114-1-oliver.upton@linux.dev>
+References: <20250305202641.428114-1-oliver.upton@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <897ade0e-a4d0-47d0-8bf7-e5888ef45a61@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
-
-On Tue, Mar 11, 2025 at 09:22:35AM +0100, Eric Woudstra wrote:
+On Wed, 05 Mar 2025 12:26:27 -0800, Oliver Upton wrote:
+> Hopefully close to the last spin, this time addressing Marc's comments
+> on v2.
 > 
+> Full details found in the v1 cover letter.
 > 
-> On 3/5/25 11:29 AM, Eric Woudstra wrote:
-> > This patchset makes it possible to set up a software fastpath between
-> > bridged interfaces. One patch adds the flow rule for the hardware
-> > fastpath. This creates the possibility to have a hardware offloaded
-> > fastpath between bridged interfaces. More patches are added to solve
-> > issues found with the existing code.
+> v1: https://lore.kernel.org/kvmarm/20241217212048.3709204-1-oliver.upton@linux.dev/
+> v2: https://lore.kernel.org/kvmarm/20250203183111.191519-1-oliver.upton@linux.dev/
 > 
-> 
-> > Changes in v9:
-> > - No changes, resend to netfilter
-> 
-> Hi Pablo,
-> 
-> I've changed tag [net-next] to [nf], hopefully you can have a look at
-> this patch-set. But, after some days, I was in doubt if this way I have
-> brought it to your attention. Perhaps I need to do something different
-> to ask the netfilter maintainer have a look at it?
+> [...]
 
-Apologies, this maintainance service is best effort.
+Applied to next, thanks!
 
-I am also going to be very busy until April to complete a few more
-deliverables, I cannot afford more cancelled projects. I will try to
-collect what is left for net-next and wait for the next merge window.
+[01/14] drivers/perf: apple_m1: Refactor event select/filter configuration
+        https://git.kernel.org/kvmarm/kvmarm/c/75ecffc361bb
+[02/14] drivers/perf: apple_m1: Support host/guest event filtering
+        https://git.kernel.org/kvmarm/kvmarm/c/46573d944f00
+[03/14] KVM: arm64: Compute PMCEID from arm_pmu's event bitmaps
+        https://git.kernel.org/kvmarm/kvmarm/c/93b01528586b
+[04/14] KVM: arm64: Always support SW_INCR PMU event
+        https://git.kernel.org/kvmarm/kvmarm/c/ed335722b457
+[05/14] KVM: arm64: Use a cpucap to determine if system supports FEAT_PMUv3
+        https://git.kernel.org/kvmarm/kvmarm/c/6f34024d185e
+[06/14] KVM: arm64: Drop kvm_arm_pmu_available static key
+        https://git.kernel.org/kvmarm/kvmarm/c/a38b67d15183
+[07/14] KVM: arm64: Use guard() to cleanup usage of arm_pmus_lock
+        https://git.kernel.org/kvmarm/kvmarm/c/3d6d9172128e
+[08/14] KVM: arm64: Move PMUVer filtering into KVM code
+        https://git.kernel.org/kvmarm/kvmarm/c/56290316a443
+[09/14] KVM: arm64: Compute synthetic sysreg ESR for Apple PMUv3 traps
+        https://git.kernel.org/kvmarm/kvmarm/c/2c433f70dccc
+[10/14] KVM: arm64: Advertise PMUv3 if IMPDEF traps are present
+        https://git.kernel.org/kvmarm/kvmarm/c/bed9b8ec8c71
+[11/14] KVM: arm64: Remap PMUv3 events onto hardware
+        https://git.kernel.org/kvmarm/kvmarm/c/1e7dcbfa4b7c
+[12/14] drivers/perf: apple_m1: Provide helper for mapping PMUv3 events
+        https://git.kernel.org/kvmarm/kvmarm/c/2d00cab849be
+[13/14] KVM: arm64: Provide 1 event counter on IMPDEF hardware
+        https://git.kernel.org/kvmarm/kvmarm/c/1b92e65f5006
+[14/14] arm64: Enable IMP DEF PMUv3 traps on Apple M*
+        https://git.kernel.org/kvmarm/kvmarm/c/e1231aacb065
 
-Therefore, I suggest you start with a much smaller series with a
-carefully selected subset including preparatory patches. I suggest you
-start with the software enhancements only. Please, add datapath tests.
-
-As for the hardware offload part, I have a board that I received 4.5
-ago years as a engineering sample that maybe I can use to test this,
-but no idea, really.
-
-You are a passer-by (ahem, "contributor"), this will get merged
-upstream at some point and we will have to maintain all this new code
-without your help maybe ... (people change bussiness units...), I have
-to understand what is going on here. The throughput available is
-limited, I am afraid we can only go _slow and careful_.
-
-Thanks.
-
-P.S: You work is important, very important, but maybe there is no need
-to Cc so many mailing lists and people, maybe netdev@,
-netfilter-devel@ and bridge@ is sufficient.
+--
+Best,
+Oliver
 
