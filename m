@@ -1,97 +1,132 @@
-Return-Path: <linux-kernel+bounces-555651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29E45A5BAD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:28:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE41DA5BAD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:30:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A76DE7A5E48
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:27:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D4637A5566
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9DF224AEF;
-	Tue, 11 Mar 2025 08:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F65B222596;
+	Tue, 11 Mar 2025 08:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fl9CboID"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="EoA8z5rT"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCED22259D;
-	Tue, 11 Mar 2025 08:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4471E1DE2A4;
+	Tue, 11 Mar 2025 08:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741681709; cv=none; b=hlvu+UK2yi+SddJh0J3hRm/Qa6pmNEcD34IsBrtGrOMsgDmODOCrnqI4xjMFQzNkvjJ3O+aY2RcgJtLInrpDJFGYwSnjYAQCIiohBddOyelE0aJj/CaaIVYhICYWCxJ3tb9a+37iLuXs4CHPyuqIuprUvN82DoYqKuJwim6iNnA=
+	t=1741681819; cv=none; b=JHiRLNlp3XNHOEUbUqbpf/NNdyJNF4OvLqzaVOU+Zaj8iSIcy8X9FXXFSYyEju5eRjYln8Q6bo59QBcZ6qKceylsgKOsnpRERf6uLfswdYcBher9AB8o+pXe8LflbRXooL5/On6MrzaCpRz48yOjJAM/IZuQGhVGySUXe1cD3WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741681709; c=relaxed/simple;
-	bh=7ZwpmjJZnpXO5LGEbzV1r/EFTliKGVJ1yxIMUn7Wtik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RVIdmXfPUX9w1oObu6gXmhUaapz4ujaBBeEVr2WhBz1e3w0lNW1JOsJQj5lVJoRkDBe2mAgnnQ1Hh/1YaNXUJJ0Xfmq7/r6fEQjlIgPT4c3/EVOnF8TdO6Z3nNH4ZRaDfBfByeN2rvl5lzSXBd1EvyrmZ/UBPbgflaTXKkVVipQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fl9CboID; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43464C4CEEB;
-	Tue, 11 Mar 2025 08:28:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741681708;
-	bh=7ZwpmjJZnpXO5LGEbzV1r/EFTliKGVJ1yxIMUn7Wtik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fl9CboIDc/cKyNQHJ2awS1S6wbFQGeZmp6w12zghNyj+TjyihMuXMKhWJHk7YhxUe
-	 EGYTz/gteoipus7eSqlmrhaSQxW+3SZH3MgnFjn3FIZP3oJCP6jCEE/P7gNlyLhytz
-	 IlPJWtWuCCoeJLJeoWOTiD2httqwg3jchVIGI01ZWAFWo5XgG3Ynv3BdFLA8sXkMGz
-	 ATZCqG5Ok7Sg7Q+zGtqB5ZgEIbPkWWDvAvCTYK3tbxj+8i35TDZ/CqiyeSej4o2jr+
-	 SEDvjM/RgkmQgOUzX920ZTfYnLBcaTCBpj995q7vezHkRjr4NHIL1djyYyd3GqQWmE
-	 fTqXZzslbriAw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1truyM-000000004Mn-2Dgn;
-	Tue, 11 Mar 2025 09:28:23 +0100
-Date: Tue, 11 Mar 2025 09:28:22 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	laurentiu.tudor1@dell.com, abel.vesa@linaro.org
-Subject: Re: [PATCH v1 2/2] drm/msm/dp: Introduce link training per-segment
- for LTTPRs
-Message-ID: <Z8_0JuNTDpgani-d@hovoldconsulting.com>
-References: <20250310211039.29843-1-alex.vinarskis@gmail.com>
- <20250310211039.29843-3-alex.vinarskis@gmail.com>
+	s=arc-20240116; t=1741681819; c=relaxed/simple;
+	bh=UUA0Y37FSi7aV58TqFjojhMJfCMHNIsS4hu80pn/VPw=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iAac7C1c+YGxL3tddG9v2Ng+IGPaT0TTT11RFxlQS3OpIqvrilBgR5A1g/iQD5UlRdCh+53iJHAZxvlm8LY2WERD7C91685hIFwrpsX9yOEZeK2EtBur1c+mcTkoEmf/4MKVoh+a2DWTDnoBYP/jCfE0KncDda8flHYLKTj5Anw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=EoA8z5rT; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 52B8T1bnC585486, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1741681741; bh=UUA0Y37FSi7aV58TqFjojhMJfCMHNIsS4hu80pn/VPw=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=EoA8z5rTuAXJASTTGSxNh9SHAEH3QXtFeCF9QqMbnysHDFNvrA8L64F0ZBuaq0fiF
+	 2bLF3n1VxAQWVt4zO1b0gtlxOT7YWPMTvjUx/XnThIEPjbVVs7Sy8TUg7CXHbLQW/S
+	 qTBg11cP+QqQZsUW8d+bhI+SrCMhwQ76hK6gUE8l3atuW2EvYbLooTFg4R80QPR3qQ
+	 u2p8NeENIaE0Et5R7Z1LRxMlYxQu7s1UVZgHkTggPUpnbgI5W74csBaKVJs/dWSD6A
+	 hQIdeGFnVupszM3O8CuxUbaJB4naolNXYZCFBpogguatfFBzvd6qARUGHoVZv37gJT
+	 04dHdIU/+QpXA==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 52B8T1bnC585486
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 16:29:01 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 11 Mar 2025 16:29:01 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 11 Mar 2025 16:29:00 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Tue, 11 Mar 2025 16:29:00 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Shengyu Qu <wiagn233@outlook.com>, Felix Fietkau <nbd@nbd.name>,
+        "lorenzo@kernel.org" <lorenzo@kernel.org>,
+        "ryder.lee@mediatek.com"
+	<ryder.lee@mediatek.com>,
+        "shayne.chen@mediatek.com"
+	<shayne.chen@mediatek.com>,
+        "sean.wang@mediatek.com"
+	<sean.wang@mediatek.com>,
+        "johannes@sipsolutions.net"
+	<johannes@sipsolutions.net>,
+        "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>,
+        "angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>,
+        "miriam.rachel.korenblit@intel.com" <miriam.rachel.korenblit@intel.com>,
+        "howard-yh.hsu@mediatek.com" <howard-yh.hsu@mediatek.com>,
+        "greearb@candelatech.com" <greearb@candelatech.com>,
+        "chui-hao.chiu@mediatek.com" <chui-hao.chiu@mediatek.com>,
+        "mingyen.hsieh@mediatek.com" <mingyen.hsieh@mediatek.com>,
+        "quic_adisi@quicinc.com" <quic_adisi@quicinc.com>,
+        "sujuan.chen@mediatek.com"
+	<sujuan.chen@mediatek.com>,
+        "gustavoars@kernel.org" <gustavoars@kernel.org>,
+        "bo.jiao@mediatek.com" <bo.jiao@mediatek.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>
+Subject: RE: [PATCH v9 RESEND] wifi: mt76: mt7915: add wds support when wed is enabled
+Thread-Topic: [PATCH v9 RESEND] wifi: mt76: mt7915: add wds support when wed
+ is enabled
+Thread-Index: AQHbkD+97GjFG0DhG0q+h/KT1ZUhfbNrhPNAgAAkR4CAAAIEAIAAIakAgADK8rCAAEqHgIAANknA
+Date: Tue, 11 Mar 2025 08:29:00 +0000
+Message-ID: <f25427774f1147d995d9fd86da071ef3@realtek.com>
+References: <TYCPR01MB84376C7074C566865654F05098D42@TYCPR01MB8437.jpnprd01.prod.outlook.com>
+ <b6b52bfcdb614137ac63fddfdaf9cb97@realtek.com>
+ <OSZPR01MB843481965BA47B030566DF2698D62@OSZPR01MB8434.jpnprd01.prod.outlook.com>
+ <71ed8398-4619-4793-804d-77cad36e7402@nbd.name>
+ <OSZPR01MB84345D44294ACA75A863ED6B98D62@OSZPR01MB8434.jpnprd01.prod.outlook.com>
+ <349d0fbe197a40068377e889a2311cb2@realtek.com>
+ <TYCPR01MB84379512D874F722A0466D0A98D12@TYCPR01MB8437.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYCPR01MB84379512D874F722A0466D0A98D12@TYCPR01MB8437.jpnprd01.prod.outlook.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310211039.29843-3-alex.vinarskis@gmail.com>
 
-Hi Aleksandrs,
-
-Just a drive-by comment.
-
-On Mon, Mar 10, 2025 at 10:05:52PM +0100, Aleksandrs Vinarskis wrote:
-
-> @@ -1084,10 +1091,13 @@ static int msm_dp_ctrl_update_vx_px(struct msm_dp_ctrl_private *ctrl)
->  }
->  
->  static bool msm_dp_ctrl_train_pattern_set(struct msm_dp_ctrl_private *ctrl,
-> -		u8 pattern)
-> +		u8 pattern, enum drm_dp_phy dp_phy)
->  {
->  	u8 buf;
->  	int ret = 0;
-> +	int reg = dp_phy == DP_PHY_DPRX ?
-> +			    DP_TRAINING_PATTERN_SET :
-> +			    DP_TRAINING_PATTERN_SET_PHY_REPEATER(dp_phy);
-
-This is hardly readable; avoid using the ternary operator and split
-declaration from non-trivial initialisation.
-
-Johan
+PiA+Pg0KPiA+PiAgICAJbXQ3Nl9jb25uYWNfbWN1X2RlbF93dGJsX2FsbCgmZGV2LT5tdDc2KTsN
+Cj4gPj4NCj4gPj4gLQlpZiAoKG10a193ZWRfZGV2aWNlX2FjdGl2ZSgmZGV2LT5tdDc2Lm1taW8u
+d2VkKSAmJg0KPiA+PiAtCSAgICAgaXNfbXQ3OTE1KCZkZXYtPm10NzYpKSB8fA0KPiA+PiAtCSAg
+ICAhbXRrX3dlZF9nZXRfcnhfY2FwYSgmZGV2LT5tdDc2Lm1taW8ud2VkKSkNCj4gPj4gLQkJbXQ3
+OTE1X21jdV93YV9jbWQoZGV2LCBNQ1VfV0FfUEFSQU1fQ01EKENBUEFCSUxJVFkpLCAwLCAwLCAw
+KTsNCj4gPj4gKyNpZiBJU19FTkFCTEVEKENPTkZJR19ORVRfTUVESUFURUtfU09DX1dFRCkNCj4g
+Pg0KPiA+IEluIE1UNzYsIHRoZXJlIGFyZSB0d28gc3R5bGVzOg0KPiA+ICAgICNpZiBJU19FTkFC
+TEVEKENPTkZJR19ORVRfTUVESUFURUtfU09DX1dFRCkNCj4gPiAgICAjaWZkZWYgQ09ORklHX05F
+VF9NRURJQVRFS19TT0NfV0VEDQo+ID4NCj4gPiBJIHRoaW5rIGJvdGggYXJlIGNvcnJlY3QuIEp1
+c3Qgd29uZGVyIHdoeSBub3QgbWFraW5nIHRoZW0gY29uc2lzdGVudC4NCj4gU2VlbXMgeW91IGRp
+ZG4ndCByZWNlaXZlIEZlbGl4J3MgZW1haWwsIGNoZWNrIHRoaXM6DQo+IGh0dHBzOi8vbG9yZS5r
+ZXJuZWwub3JnL2xpbnV4LXdpcmVsZXNzLzcxZWQ4Mzk4LTQ2MTktNDc5My04MDRkLTc3Y2FkMzZl
+NzQwMkBuYmQubmFtZS8NCj4gDQoNCkkgd2FzIGF3YXJlIG9mIHRoaXMuIEZlbGl4IHBvaW50ZWQg
+b3V0ICdpZiAoSVNfRU5BQkxFRChDT05GSUdfTkVUX01FRElBVEVLX1NPQ19XRUQpKScNCndpbGwg
+bGVhZCBidWlsZCBlcnJvci4gQnV0IHdoYXQgSSBtZW50aW9uZWQgaGVyZSB3ZXJlICcjaWYnIGFu
+ZA0KJyNpZmRlZicgKHByZXByb2Nlc3MgZGlyZWN0aXZlKS4NCg0KQW55d2F5LCBpZ25vcmUgdGhp
+cy4NCg0K
 
