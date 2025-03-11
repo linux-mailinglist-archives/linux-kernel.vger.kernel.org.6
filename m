@@ -1,134 +1,214 @@
-Return-Path: <linux-kernel+bounces-555905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC37EA5BE1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:43:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB4D9A5BE2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:45:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 069C97A6614
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:42:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18F83170321
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC66923F37E;
-	Tue, 11 Mar 2025 10:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1652424168F;
+	Tue, 11 Mar 2025 10:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G7Snc1bH"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P7hPtugr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1672356D3
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66661DE2BB;
+	Tue, 11 Mar 2025 10:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741689811; cv=none; b=jiXVT2rsiXQz+n7yF9qu7nxn/SWRCqupYwUHFuyV9a6YwVW+wQ4QHEHaXsnJjgEaCOFLveBgk+xW3UZWG0rnQsGuHqixOjNnwSy9DTG+TbCdiqOD9/IQcHue574N7ZMiuSn/aOXRlWAxZGAZPPbgnaynLjoFIoDkzYIrlzJbbzQ=
+	t=1741689910; cv=none; b=tuxVwO809KjhvM8ccaDqoweH2byMFflsgNztUavxltmHdoBFpglmQGD8hA0eNBCJDzpFgmLK6A3RmqaEA4GRvn3iNKT1k2c5/jRfmZArDgPmY2ynnjEzP2WWqB5mkvmNejEwAmBEB6ZQBBH7TqTfauyASLHHrjpLhPAl9VTiI9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741689811; c=relaxed/simple;
-	bh=TF2pt+VlYvXsO/bDy6P04Ye6e61vp/s0aMmqW7gn1Oc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=KyayDKCNdx/ZCtR9o6JoKnrM30EWpv0IbcBrSYpfhUvCbwJRRjsq+dj/gCWTmlTJ8+MRp7cSxfkzlBPb/3QigaMNzf8v8QPxfrZ2DRZv0ZbsjdDHZtelFidhsEpEvqacDxJvNMM/1NtrDgk6t/Vhl8CpcT5gTiUfN3D8FhxVXyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G7Snc1bH; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5499bd3084aso2800182e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 03:43:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741689807; x=1742294607; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dBFMdhOL1E36IC9V9YqTpC1340SUGaSyuFxF0T9JfTQ=;
-        b=G7Snc1bHsTOUNmiv7dNJCeUukp4+dxZJ2kNKNAKAj6W8T/EdiZnN0G8qRHJBjlKAsW
-         VweCIJaS+860fbEkfRuGn1yw7rU4jUKvmXspBciQbeF6Ej6o2+TIs2/fvVIbFwJReZde
-         i6f06PD5JuJmKiwR+5/T9jiVk+ggN3lYEbm3H9TtnxPp6X87h1x447NSG1+Jgq2Imzna
-         S1P3Ls0sEgrOckhPgMh8C7RZcJG7LZqb1JYsjSz0k1/pN/WsKF3W9gIM51Lzdrh5lQIT
-         1cw2oqMzvY2unlk1sCryl+wuITFvA5Te0JA4+bTrl/C72Eo3sIC2O2VBQ+e+i3dBA3p8
-         rSqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741689807; x=1742294607;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dBFMdhOL1E36IC9V9YqTpC1340SUGaSyuFxF0T9JfTQ=;
-        b=CPK/P07Do3xc2/ULhqbFbepsNnlEQKcm+KpzIgywti980+08NtfkfyrDycUeu+BI+O
-         GY5Rwjoxwg5ql/+zKcciDEyf7WSBCkn6jL5y6Kf9rxsVD4Bgi+J9yxePpQ0YFpE9sYom
-         lzBZT1dNa0TVGgf/BIcCcyhPdirL0w/Pjawhir5y9BXeOnk987ItLUWhsZHd8s/Q09QG
-         OULrV2NhkJrio5mXnpvOaHXyt8OR/900u9n0vdmvOo0nFyRQDODZAbxu5HxqAJ3VO7nX
-         HREc1swb+8W22TFni0Xjk3EHLHDD+UvttEoQeRz2nyPFXQGV5Du01G0dummylBDRy/z8
-         IHOg==
-X-Gm-Message-State: AOJu0YwHjkyzRGj6LNrstR2VqdZx5e1MOKow00/vih3GN+w6dG0ZIdWf
-	IzHBTNn1uW+NmwiYE9oLVVXNIzVsVefgJNr5nYCZTArjbDddhPWnia5IGpyAAvHt456g6LbwFF4
-	Ifx3wM0+gC6gcYKcq+qMni14jCemEhVOHE/aQKw==
-X-Gm-Gg: ASbGncsoIFfG/66/bdsj/hhFRm+9aqgdk8swPorHGdnMeuhKU9P1mBBO/sziapqkdKL
-	VQsZ1XvqKZpOxH/jFsEoCNv+MRRr+Lv7mKKN4VTvThvSBoBpOB6lhixujV94MaDabYnZAJAprUD
-	5g3boG7eB+8L5JnaoyC45aZwCgMA==
-X-Google-Smtp-Source: AGHT+IGS4R1q+LV5vAuY4Bv9EtMuTTEYniQOjcVnb44o4oTeSd8Lkb4YxR/Qp2OF8HLFDaQ1BDJuRSqkimJ6DUZKF74=
-X-Received: by 2002:ac2:4981:0:b0:549:91d7:4b51 with SMTP id
- 2adb3069b0e04-54991d74bdfmr3668992e87.2.1741689807375; Tue, 11 Mar 2025
- 03:43:27 -0700 (PDT)
+	s=arc-20240116; t=1741689910; c=relaxed/simple;
+	bh=2qtZx71hOP7XTKnjKVCGoxZv4RprBeHFFlw7SOTHDCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UYiuBSefdq202vHzVbMphTxrihmHxupU2jsAZLWYDTa16tcil0kEXjVPZTlDIOyQxexeMsr7ZujXjDioHFdoPw6cR3tfz7g/umSLx7utyptCcasNasXa3ool/oyBuNRwhXgOtclwbNWp0WxdHjOGjWaJgXXXRUMZNmUmaY/GGOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P7hPtugr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BA4P1Z015125;
+	Tue, 11 Mar 2025 10:44:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	S2i6mRK0jajy0u0bUB2Z9AQTcwRxDHV/B/HG8iEiju8=; b=P7hPtugr6omYfGnF
+	DqAmVqW5Ec8QzF4iWGD/4Og9HQB5DAx/IavD+obS5gb5CdS5ikvpibXWZIF2RUVg
+	ezwUl16GdE9am/hNnwpU02HFbxGistvoPJNuov/DqWMw3eZM6cZo+Yv+IUTCH7fh
+	K3NO0eaoFqkNAhglRxQZSMooooPlLCQjOZYqZqnscMHrpCpDYANy1uzMm1zHrM0i
+	CmBM42HYPXIvxe3u7vfSo871QPqEs2QnTlI9OVAhc8pE97Wefe8ZZJ7cgDtRuATQ
+	C+0xq7slbdU6VCbxS3qpzrMXpkrGIt0jaeLMutPVO9UizqYf+9Pi6pJacA5lms1G
+	Dlk5uQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ab8m1hhm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 10:44:50 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52BAinNJ018053
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 10:44:49 GMT
+Received: from [10.253.38.132] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Mar
+ 2025 03:44:42 -0700
+Message-ID: <4c24723a-1773-4034-95fb-47748f6e8982@quicinc.com>
+Date: Tue, 11 Mar 2025 18:44:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 11 Mar 2025 11:43:16 +0100
-X-Gm-Features: AQ5f1JofDKmAv94-INk5bhpi9KjVa5U3EneTkYX1fDYQF4TcIsOLZq83AfAeqtI
-Message-ID: <CACRpkdZmBznW3b132Wze8t2zC=-8YuEW+5aQD1qSSr3w2OFfZg@mail.gmail.com>
-Subject: [GIT PULL] pin control fixes for v6.14
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, 
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 04/14] net: ethernet: qualcomm: Initialize PPE
+ buffer management for IPQ9574
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Lei Wei <quic_leiwei@quicinc.com>,
+        Suruchi Agarwal
+	<quic_suruchia@quicinc.com>,
+        Pavithra R <quic_pavir@quicinc.com>,
+        "Simon
+ Horman" <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook
+	<kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        "Philipp
+ Zabel" <p.zabel@pengutronix.de>,
+        <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
+        <srinivas.kandagatla@linaro.org>, <bartosz.golaszewski@linaro.org>,
+        <john@phrozen.org>
+References: <20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com>
+ <20250209-qcom_ipq_ppe-v3-4-453ea18d3271@quicinc.com>
+ <a79027ed-012c-4771-982c-b80b55ab0c8a@lunn.ch>
+ <c592c262-5928-476f-ac2a-615c44d67277@quicinc.com>
+ <33529292-00cd-4a0f-87e4-b8127ca722a4@lunn.ch>
+ <cffdd8e8-76bc-4424-8cdb-d48f5010686d@quicinc.com>
+ <74f89e1e-c440-42cb-9d8e-be213a3d83a4@lunn.ch>
+Content-Language: en-US
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <74f89e1e-c440-42cb-9d8e-be213a3d83a4@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: txnyqolXEKgHcYx5KUazcWu3fq0FVdnZ
+X-Authority-Analysis: v=2.4 cv=K9nYHzWI c=1 sm=1 tr=0 ts=67d01422 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=IKtIH902HmA1w457l2kA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: txnyqolXEKgHcYx5KUazcWu3fq0FVdnZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_01,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 spamscore=0 mlxlogscore=999 clxscore=1015
+ priorityscore=1501 mlxscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503110070
 
-Hi Linus,
 
-some three pin control fixes for the v6.14 series.
 
-Details in the signed tag.
+On 3/6/2025 11:29 PM, Andrew Lunn wrote:
+>> Thanks for the suggestion. Just to clarify, we preferred
+>> u32p_replace_bits() over FIELD_PREP() because the former does
+>> a clear-and-set operation against a given mask, where as with
+>> FIELD_PREP(), we need to clear the bits first before we use the
+>> macro and then set it. Due to this, we preferred using
+>> u32_replace_bits() since it made the macro definitions to modify
+>> the registers simpler. Given this, would it be acceptable to
+>> document u32p_replace_bits() better, as it is already being used
+>> by other drivers as well?
+> 
+> I suggest you submit a patch to those who maintain that file and see
+> what they say.
+> 
+> But maybe also look at how others are using u32p_replace_bits() and
+> should it be wrapped up in a macro? FIELD_MOD()? These macros do a lot
+> of build time checking that you are not overflowing the type. It would
+> be good to have that to catch bugs at build time, rather than years
+> later at runtime.
+> 
+>        Andrew
 
-Please pull it in.
+OK, understand. I will submit the patch by adding the FIELD_MODIFY()
+with required build time checking included.
 
-Yours,
-Linus Walleij
+Below is a draft of the macro, please take a look if possible before
+it is posted to maintainers. I will update the driver to use this macro
+if it can be accepted. Thanks.
 
-The following changes since commit d082ecbc71e9e0bf49883ee4afd435a77a5101b6:
+/** 
+  
+  
 
-  Linux 6.14-rc4 (2025-02-23 12:32:57 -0800)
+  * FIELD_MODIFY() - modify a bitfield element 
+  
+  
 
-are available in the Git repository at:
+  * @_mask: shifted mask defining the field's length and position 
+  
+  
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v6.14-3
+  * @_reg_p: point to the memory that should be updated 
+  
+  
 
-for you to fetch changes up to 7ff4faba63571c51004280f7eb5d6362b15ec61f:
+  * @_val: value to store in the bitfield 
+  
+  
 
-  pinctrl: spacemit: enable config option (2025-02-25 17:22:36 +0100)
+  * 
+  
+  
 
-----------------------------------------------------------------
-Some further v6.14 fixes:
+  * FIELD_MODIFY() modifies the set of bits in @_reg_p specified
+  * by @_mask, by replacing them with the bitfield value passed
+  * in as @_val. 
+  
+  
+  
+  
 
-- Fix the regmap settings for bcm281xx, this was missing the
-  stride.
+  */ 
+  
+  
 
-- NULL check for the Nuvoton npcm8xx devm_kasprintf()
+#define FIELD_MODIFY(_mask, _reg_p, _val)              		      \ 
+  
+  
 
-- Enable the Spacemit pin controller by default in the
-  SoC config. The SoC will not boot without it so this one
-  is prett much required.
+         ({                                  			      \ 
+  
+  
 
-----------------------------------------------------------------
-Artur Weber (1):
-      pinctrl: bcm281xx: Fix incorrect regmap max_registers value
+                 __BF_FIELD_CHECK(_mask, *_reg_p, _val, "FIELD_MODIFY: 
+"); \ 
+  
 
-Charles Han (1):
-      pinctrl: nuvoton: npcm8xx: Add NULL check in npcm8xx_gpio_fw
+                 *_reg_p &= ~(_mask);                                  \ 
+  
+  
 
-Yixun Lan (1):
-      pinctrl: spacemit: enable config option
+                 *_reg_p |= (_val) << __bf_shf(_mask) & (_mask);       \ 
+  
+  
 
- arch/riscv/Kconfig.socs                   | 1 +
- drivers/pinctrl/bcm/pinctrl-bcm281xx.c    | 2 +-
- drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c | 3 +++
- drivers/pinctrl/spacemit/Kconfig          | 3 ++-
- drivers/pinctrl/spacemit/pinctrl-k1.c     | 2 +-
- 5 files changed, 8 insertions(+), 3 deletions(-)
+         })
+
 
