@@ -1,83 +1,112 @@
-Return-Path: <linux-kernel+bounces-555357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 058D6A5B654
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:53:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA73A5B655
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:53:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BB107A7730
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:52:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21E7317270A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C861E32A3;
-	Tue, 11 Mar 2025 01:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5524C1E47C2;
+	Tue, 11 Mar 2025 01:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="bb/WEbWa"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C8B1DF98B;
-	Tue, 11 Mar 2025 01:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFqGcXH8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABE81E32D6;
+	Tue, 11 Mar 2025 01:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741657974; cv=none; b=ocYTyBd+oF1fUSgAtFr1z6EkAxhKWbG8UnDC7DpywDcMjdy2yM9qlaU+JVRR6jtTPyx2C+b5mN7Kk0x4beFwRjPNgp7A4X/IRgdSXFy62mArMFBPufHnYdM/CkVhcQZqMpKN2/5ibZlswsrKPSKwqkV6+QqJaSx7J4QdJmq2cFc=
+	t=1741657976; cv=none; b=cMpVRFpNUmpJKZs3yG5pVPP1IgXeGMR15SkcNHQWNH4R06JIBOaKk7qGON3dDzKteTWevUatJDSU5myVMcyyhZ/+iib+lEaNX51d/UnOizJIEtwNxH+AZ/dnhYkXhkhQWuekfzqIItTDgbbhs/EpiTvCFQoQKsIg+4crxdOE3IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741657974; c=relaxed/simple;
-	bh=BePCeOBZ4CRUJOn6ITYHMdMXC7Jdn4+7xT6rUAg2NZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XnyDQJgUGYpM8OEc8i5ptDJbPjHYUlfM8AtbjXXdzwsm7auymVqghfFivDFOHUO/YyER0kkzeIhA6FmdFzuO2qLQsv7NXld2bAes1TgHIaTdtEig4IrMy0OOo1WBKQxJSeh7jM4CM/iX9Ubwwa5inIpb4+mNyZKUyCfCaxydySg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=bb/WEbWa; arc=none smtp.client-ip=1.95.21.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=Y2j5IpfsHdKFIq/wwefRt4BQxdOS5Lzz8+3jguMQeEI=;
-	b=bb/WEbWaAcQBK5+/SWIhhJjQGY7QSw5WAcBBHbKVmjct4jdi2d60S4OI1j8Neg
-	i4e7C7VVShbb16g7RpTN8y86Mfc5t0NkrYHEYeh/47CUvXLQgkax895lamkfoh7h
-	kNQ7Ab3+rLlUtu3JY+H6kxNnS0Rnu5rdchdZBJPlZ6IO4=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgAnJdRFl89nbBawAA--.715S3;
-	Tue, 11 Mar 2025 09:52:07 +0800 (CST)
-Date: Tue, 11 Mar 2025 09:52:05 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux@ew.tq-group.com,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/9] ARM: dts: TQMa6/6UL/7: DT cleanup
-Message-ID: <Z8+XRalDiwot8Xsl@dragon>
-References: <20250219081748.1181507-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1741657976; c=relaxed/simple;
+	bh=MlTxgVvSZKPsUA1Zh1N2uIlutYs79Ci0sLeczGFxFUM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jUfXBcuefU5t1BZEFkg6XftUeVIdt7/bj8WFje79iXWfz+v9k1S9aALueSlx+9wCZ+R2CD4de89xFM6QGq33Ju+ChFPZJcr+AGTLsT5lOGiP7k7xdVHAmb0JTgIp7EDrpKSj1hexxFki4z+jIkZskTq6EySl8OEUGnagY8jye88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GFqGcXH8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DE0C4AF09;
+	Tue, 11 Mar 2025 01:52:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741657976;
+	bh=MlTxgVvSZKPsUA1Zh1N2uIlutYs79Ci0sLeczGFxFUM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GFqGcXH8lkfxZGIXIbqPZ8jPIrnNvJtCSAaBw02o8rRY7cu1wepGppQHE/dN02yCI
+	 Rc7eoLdSCuO6MF2FP/H41JuDb0Oh4CgNR0RmOiGgz/8C808XL8BoF/YcJKVMd3ThJ8
+	 LtXONO1tf53wsqGomouKsw9h3zlydZHdivhgCZSz4ssRpVPw+ePRuCzPhF9kZWtvhu
+	 JmiSYAar6/u5iypC4abzWmtHBcmakDGtC8rxIrAwAwhThSqT3Is1spvKYFkqPyduUz
+	 Z5BuvJ9lYO6ahhMWWNwA3s1H0PGDJ6PDMwLztrw4hknxwD+Y9RnwuivChR6Bp86Q2c
+	 6Irt2XmlDLZww==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5499bd3084aso2466868e87.0;
+        Mon, 10 Mar 2025 18:52:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUiehuhry6iWPb6HP74PyvDeDuSAoBu7RC509GG0S1NLoH+c2LAjfqBU+boXtJP9VMYcMlEN8Q13TDDn10=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt+EfHZa3+H9kGsz3XmCrJfEh9PkmGMWBNVrA/aljfOkbdSaDx
+	9FzaFYPLo0e11YtXSkXlEP7LR8VqBEeCeWKFwif58hkVVVedtzpztgF8wsdUZloztGRLOVjJst8
+	CpvHonxPoVqNIOItQ4Y1KkDorhlw=
+X-Google-Smtp-Source: AGHT+IGGnGHlIqSrfRtcEhqr52Xmx0BWXlTup0pbx6a/Ct3L/hwQrW+faZtidozO4L57dvcfvv6mw4mQqsv93oXhSwA=
+X-Received: by 2002:a05:6512:3b9b:b0:549:3b4f:4b39 with SMTP id
+ 2adb3069b0e04-54990e298bfmr4957010e87.10.1741657974686; Mon, 10 Mar 2025
+ 18:52:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219081748.1181507-1-alexander.stein@ew.tq-group.com>
-X-CM-TRANSID:Mc8vCgAnJdRFl89nbBawAA--.715S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUcb18DUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiERsNZWfPU+q+ZQAAso
+References: <20250308040451.585561-1-xin@zytor.com> <CAK7LNARHvn4Sy-e4hMmjGt0C7TFaWrGJrLq3YvN0BjehZ8QwSg@mail.gmail.com>
+ <6149ac51-07da-45e2-863e-1d4418f6b662@zytor.com>
+In-Reply-To: <6149ac51-07da-45e2-863e-1d4418f6b662@zytor.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 11 Mar 2025 10:52:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATGToVHEfZ-hmJ=3xbQCdHmBZf7x9w2QtQVGV-nMiP2Ag@mail.gmail.com>
+X-Gm-Features: AQ5f1Jq2fCkxhFKXJrvYU15EKSnQ6PG1QaNoLvPd4kPHXDt6ZUwememQLl4myXo
+Message-ID: <CAK7LNATGToVHEfZ-hmJ=3xbQCdHmBZf7x9w2QtQVGV-nMiP2Ag@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] kbuild: Add "make headers" to "make help" output
+To: Xin Li <xin@zytor.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	nathan@kernel.org, nicolas@fjasle.eu, bp@alien8.de, hpa@zytor.com, 
+	sraithal@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 19, 2025 at 09:17:35AM +0100, Alexander Stein wrote:
-> Alexander Stein (4):
->   ARM: dts: imx6qdl-tqma6: Order DT properties
->   ARM: dts: imx6ul-tqma6ul: Order DT properties
->   ARM: dts: imx6ul-tqma6ul: Add vcc-supply for spi-nor
->   ARM: dts: imx7-tqma7: Add vcc-supply for spi-nor
-> 
-> Markus Niebel (5):
->   ARM: dts: imx6qdl-tqma6: limit PMIC SW4 to 3.3V
->   ARM: dts: imx6qdl-tqma6: use sw4_reg as 3.3V supply
->   ARM: dts: imx6qdl-tqma6: Add partitions subnode to spi-nor
->   ARM: dts: tqma6ul: Add partitions subnode to spi-nor
->   ARM: dts: tqma7: Add partitions subnode to spi-nor
+On Mon, Mar 10, 2025 at 3:23=E2=80=AFPM Xin Li <xin@zytor.com> wrote:
+>
+> On 3/8/2025 7:12 AM, Masahiro Yamada wrote:
+> > On Sat, Mar 8, 2025 at 1:05=E2=80=AFPM Xin Li (Intel) <xin@zytor.com> w=
+rote:
+> >>
+> >> Meanwhile explicitly state that the headers are uapi headers.
+> >
+> > There are many internal-use targets, which are not documented in the
+> > help message.
+> > I assume this one is the case.
+> >
+> > If users want to install UAPI headers, 'headers_install' is
+> > the user-visible interface and it is already documented.
+> >
+> >
+>
+> hpa and Boris prefer to add it, which I also agree.  But ofc it's your
+> call :)
+>
+> If you don't want to add help for "headers", it probably still makes
+> sense to explicitly state that the headers are uapi headers, no?
+>
+> Thanks!
+>      Xin
 
-Applied all, thanks!
 
+If a help message for "headers" is desired, how about this?
+
+  headers  - Build read-to-install uapi headers in usr/include
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
