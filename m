@@ -1,145 +1,127 @@
-Return-Path: <linux-kernel+bounces-556954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC09A5D154
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:05:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F6CA5D15D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:06:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1D717CBAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:05:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E853A17CBEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742E8263F31;
-	Tue, 11 Mar 2025 21:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534FE264A75;
+	Tue, 11 Mar 2025 21:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="APt9RGl0"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Pz04Z1fv"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E429222572;
-	Tue, 11 Mar 2025 21:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7651386DA;
+	Tue, 11 Mar 2025 21:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741727100; cv=none; b=aDp1owstudP5gxT0xN5bTyMmpaJo6MZ0mPBpnca2bamRUllOVMIF7Xp/efONZfMeNwKwaVICPKjK9jYX7mnUmq/I82RfYCxJqZu8dXCBY7oAepXmLk1hRGgb5QAmOsZT+ijgTDMNST2cHoghN8qOzGcR40SmwD38TnnTsBO6Pvo=
+	t=1741727175; cv=none; b=holqbe8VdIjrBVm8LOPTEZMTVOvfMfJMZvj44nnKe9wcOxpPve7LY84yqqGzoUwY+UECDLR4EoEqdqIi/VKmaMEWNRcAkGN03jC/3CwDdyIHyP0+Z1dAeVk/raJmElpfjC8WPywPfZ0Hs+cqJhS9u5VpkOB2XEYTzrwYEaFw+m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741727100; c=relaxed/simple;
-	bh=PbrbTkpkyfNdlih0/V9VTYpRyWEsPGhl4jbqwjfOzS8=;
+	s=arc-20240116; t=1741727175; c=relaxed/simple;
+	bh=aGHrqIf6TaZnD6AIuiiF2VpR10cGUHRJs2RNL3cvJJA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gBi3YKsWPK3PFrjnTXcNKbqWB8oizHDY/Vuc/1yRDEpgiXvLSPPQMGcPiX+JOPNsMo+rbVyUhPBNIgSU9CsSFA2dtqOVI9L6nK2iTHZ/XxntvYlLFJJEbO9sDnnxNu8BhY+7ZEvVnWwrCSbuwoSuDro8rqpYGaj2rSO8KSFjUCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=APt9RGl0; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1741727097;
-	bh=PbrbTkpkyfNdlih0/V9VTYpRyWEsPGhl4jbqwjfOzS8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=APt9RGl0K7e6V6tAglj0pmLww/GIZ1pLxh4x5Nw4NaMGTMwMtIk42wJ4Cl8IUoq/I
-	 e1Hb3OINFntBeG99F2S4vY+QG3sIOuhYj43WSQeXZ8u2xIj9fhAHbQQ7c38W7aUznf
-	 opECeFb/PU2LM3mVVpio3JrrhM5Pa5riJ+dXli40=
-Date: Tue, 11 Mar 2025 22:04:56 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Ben Hutchings <ben@decadent.org.uk>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Urgau <urgau@numericable.fr>
-Subject: Re: [PATCH] kbuild, rust: use -fremap-path-prefix to make paths
- relative
-Message-ID: <ed6acfb2-f1a0-4713-8401-60b0cfcd2e91@t-8ch.de>
-References: <20250210-rust-path-remap-v1-1-021c48188df1@weissschuh.net>
- <CANiq72mcpVL1YXyDFi-PrbQ2Uh0WUA_VNqLZaOeqQnpY5HnX8Q@mail.gmail.com>
- <CAK7LNATKK4bZCY7izDdEzNcUu60wjH57TK8ESM50QhUG2a4bRw@mail.gmail.com>
- <c49cc967294f9a3a4a34f69b6a8727a6d3959ed8.camel@decadent.org.uk>
- <CAK7LNARdPcnsaP-z7tZUQLqAgBXD90XsEWAtTy8aTwDpTqMo9A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y8Ml93DCGMzm8Je3ZvsZOoJ9bfPEPXm812Rb/KT8pvky0UwF5tbo5woa41KQHFQiYbbzpI13lWdi73AdGWHDup/aTkqHdQceuWpJgpCZTmtEkEeuxYlVaDIxnu2nvQRGGRVjKN2DhBGz3nFUPtbk7V6fnsE4XB/j+IFd6f2f74A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Pz04Z1fv; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=8cQ/NQPSdJvXIo45BwmVpV7YAKqa0qFriHj8RB6qbiE=; b=Pz04Z1fvHkkbn+am
+	bDaVD+7ggiir2qFZ2Iqkr7OXYGTOz8FuXkQ2AP4fsFAAgsWetrP6mohkF0dCc9GMbLL9M8VmTztz4
+	msU/eXqHFhgCyS3670Sj3w1LlpeJnRr7fTL26B8NOwlW1jSckvtiDi+6PrZvycwDhznZLa8N4az8D
+	oc5MOLb6mleltSBbkpodGkqU71/JhnLe+f9SC2ZjKp0A1C8sDMcW9sUMyRgCCoMVkzNU3I3uGOTzW
+	8TTrrk+vMkCdGnYb5dww4Cbeln3tIOs8l8/Qx8jom91OlYW2NjXW1s2qfM+4dmTo3hWQ9qCLfk3aL
+	rxKKxORjsRATavJ46w==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1ts6nV-004Gh7-2p;
+	Tue, 11 Mar 2025 21:05:57 +0000
+Date: Tue, 11 Mar 2025 21:05:57 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: arnd@arndb.de, lee@kernel.org, dmitry.torokhov@gmail.com,
+	sre@kernel.org, lgirdwood@gmail.com, alexandre.belloni@bootlin.com,
+	danielt@kernel.org, jingoohan1@gmail.com, deller@gmx.de,
+	linus.walleij@linaro.org, brgl@bgdev.pl, tsbogend@alpha.franken.de,
+	linux-mips@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/9] Remove pcf50633
+Message-ID: <Z9CltdJsg_qaTKzQ@gallifrey>
+References: <20250309193612.251929-1-linux@treblig.org>
+ <174172393659.371198.1480937233663952854.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNARdPcnsaP-z7tZUQLqAgBXD90XsEWAtTy8aTwDpTqMo9A@mail.gmail.com>
+In-Reply-To: <174172393659.371198.1480937233663952854.b4-ty@kernel.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 21:05:11 up 307 days,  8:19,  1 user,  load average: 0.00, 0.01,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 2025-03-12 04:07:51+0900, Masahiro Yamada wrote:
-> On Wed, Mar 12, 2025 at 2:36 AM Ben Hutchings <ben@decadent.org.uk> wrote:
-> >
-> > On Tue, 2025-03-11 at 20:03 +0900, Masahiro Yamada wrote:
-> > > On Mon, Feb 17, 2025 at 10:23 PM Miguel Ojeda
-> > > <miguel.ojeda.sandonis@gmail.com> wrote:
-> > > >
-> > > > On Mon, Feb 10, 2025 at 6:11 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > > > >
-> > > > > Remap source path prefixes in all output, including compiler
-> > > > > diagnostics, debug information, macro expansions, etc.
-> > > >
-> > > > Hmm... We don't do all the cases in the C side -- the docs ask to use
-> > > > `KCFLAGS` when one wants to remove them in the debug info:
-> > > >
-> > > >     https://docs.kernel.org/kbuild/reproducible-builds.html#absolute-filenames
-> > > >
-> > > > I am not sure if there is a reason not to cover all cases in C (Cc'ing Ben).
-> >
-> > I think we should use the prefix-map options by default, for both C and
-> > Rust code.
+* Mark Brown (broonie@kernel.org) wrote:
+> On Sun, 09 Mar 2025 19:36:03 +0000, linux@treblig.org wrote:
+> > The pcf50633 was used as part of the OpenMoko devices but
+> > the support for its main chip was recently removed in:
+> > commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support")
+> > 
+> > See https://lore.kernel.org/all/Z8z236h4B5A6Ki3D@gallifrey/
+> > 
+> > Remove it.
+> > 
+> > [...]
 > 
-> A patch is appreciated.
-> (top-level Makefile change with updates
-> in Documentation/kbuild/reproducible-builds.rst)
+> Applied to
+> 
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+> 
+> Thanks!
+> 
+> [6/9] regulator: pcf50633-regulator: Remove
+>       commit: 248bc01138b11ff3af38c3b4a39cb8db7aae6eb6
 
-I'm happy to send a patch.
-The new patch will conflict with the rust patch.
-Could you push the current kbuild tree to git.kernel.org so the new
-patch can be based on top of it?
+Thanks!
+Although....I'd only tested this as part of the series and assumed
+someone (Lee?) would pick the lot up in one go.
 
-> > The default of using absolute filenames only works when the build and
-> > debug systems have their sources in the same absolute directory.  For
-> > some developers this will always be true because they're the same
-> > system.  In the general case, and particularly in production, it's
-> > unlikely to be true.  See below.
-> >
-> > > GCC manual mentions the below about the -fdebug-prefix-map=old=new
-> > >
-> > >
-> > > "It can also be used to change an absolute path to
-> > > a relative path by using . for new.
-> > > This can give more reproducible builds, which are location
-> > > independent, but may require an extra command to tell GDB
-> > > where to find the source files."
-> > >
-> > >
-> > > I guess "the extra command" might be a bit annoying.
-> >
-> > The command in question is "dir <source-root-directory>".  It's not
-> > particulary annoying.  It also isn't needed when invoking gdb with the
-> > kernel source root as its current directory.
-> >
-> > Running that command adds the directory to gdb's source search path,
-> > causing it to look for sources referenced in debug info by:
-> >
-> > 1. Appending the full filename to that directory
-> > 2. Appending the base filename to that directory
-> >
-> > (This is slightly simplified from the docuemntation at:
-> > <https://sourceware.org/gdb/current/onlinedocs/gdb.html/Source-Path.html#Source-Path>.)
-> >
-> > When the debug info has relative filenames, case 1 should always work.
-> >
-> > When the debug info has absolute filenames, case 2 can work if all
-> > sources are in the same directory.  But the kernel has source files
-> > spread across many directories, so there's no general way to make gdb
-> > find them all.
-> >
-> > Ben.
-> >
-> > --
-> > Ben Hutchings
-> > A free society is one where it is safe to be unpopular.
-> >                                                       - Adlai Stevenson
+Dave
+
+> All being well this means that it will be integrated into the linux-next
+> tree (usually sometime in the next 24 hours) and sent to Linus during
+> the next merge window (or sooner if it is a bug fix), however if
+> problems are discovered then the patch may be dropped or reverted.
+> 
+> You may get further e-mails resulting from automated or manual testing
+> and review of the tree, please engage with people reporting problems and
+> send followup patches addressing any issues that are reported if needed.
+> 
+> If any updates are required or you are submitting further changes they
+> should be sent as incremental updates against current git, existing
+> patches will not be replaced.
+> 
+> Please add any relevant lists and maintainers to the CCs when replying
+> to this mail.
+> 
+> Thanks,
+> Mark
+> 
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
