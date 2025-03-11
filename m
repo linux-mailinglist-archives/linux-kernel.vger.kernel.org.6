@@ -1,151 +1,117 @@
-Return-Path: <linux-kernel+bounces-557054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADAEA5D309
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:16:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD976A5D30C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:16:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81543B2D77
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:16:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47DFA3B2BDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0696A22E415;
-	Tue, 11 Mar 2025 23:16:38 +0000 (UTC)
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F292343CF;
+	Tue, 11 Mar 2025 23:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHwfdiPk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435381D6DBB;
-	Tue, 11 Mar 2025 23:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23701D6DBB;
+	Tue, 11 Mar 2025 23:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741734997; cv=none; b=J663FfMPR5b62ZXRXi6Q31xCD8ZYcfyc0VnMM7aRoCfI73UDJvUMx6mz7ZwYdWDLJjXhwHdun4q+/ydRsbAJ3+3cmUqiYRkE+VJHk1PED00gLYOjxz2k+eVx/8rFvPJEtUYy3Ur0ak4jDDrPXtilYLnGjQW7Oa+OlfiS427LVZ8=
+	t=1741735001; cv=none; b=FvwMfU08meeY6zPRZ19Qi0I55ibCjUN9ia0AGlMcupf/nHC0I/xsNPkY7eH2YHeaBjpqF+qwZdJjGB0OZJiEf01BgwEXjOMARDQaoJ2ZFO7jjXWLOyr0G3gtR6DoxvVOl/ZNudApzXo8pY9lxOJ7GpWip8gEkG7uTiNXFX1zgJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741734997; c=relaxed/simple;
-	bh=vFKn9KFzy4ZOURbADObnCPQdkfa71sW9tJpVeAApJxA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QaMGVkcRDkfScDiQX0e8eV3POmfkeuJYlWbPs9yIakfFjuBo4rwJsBesidvXImyjLScbS5TzxDlbyRGRY1YR6gXh+Ue6aDLqDpdUNfNFVXupFj+JmaruPGLpPs2XaZ6mLSo5DItWiPu00tCyn2edjF+mBYigPbnadreuHZoGsoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3f556b90790so1800684b6e.0;
-        Tue, 11 Mar 2025 16:16:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741734995; x=1742339795;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NT3ET2M4CvJfrjc7UtUz6A9ZzH+M6UROsJOl9KIGkA8=;
-        b=cXbgyvuLOBMm7z5PON3aAC+uyUZyowaM+PxsH6IUY/5lSXe+XadSBiqUiAhVIcVlk8
-         rQFUBgRvlauaybjbt1inzvHakS9r5BRxkRwVW+sv2hY3ctDdjmwXs35zs3jg5kIHYzXA
-         Racvt9kxWnkr9Qe6ueYgUY+Omijvs1VM8DUwJz8pJ2y7qe7P2VhMy4em+0Xb5LKsIpAU
-         IFEs0iWUf/+CMeB8ZOKVV9SOZEh/iCxlWwUlKnV/Lquox8cHnC9n5ABD9zXjbCoin/yd
-         68mPJqnn/9dshLBoZPA+Bx3E5cQIk/0uqfIIaUOQStcumgJEi2TbQ+AyTGSB7UA9MSj9
-         jqgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYv0m2UEjfuSgqsHero+8haNnd+5HSbEy9iWHpWnKX/YuusyREEAMWBfUvy04+sZrrVuUQEGImZzeSLyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn+fYNCgdu9aIsaFaU5XN9G7QosHDOOvP/VbIQIRo4sXV378Js
-	y/LJSDyAZ0//vR5bIC/m5Byx8YvTazHmNyr4CNkUhbD1DitAeD3b
-X-Gm-Gg: ASbGncvF4JtqY9hogf7xKQ7hJDZqiklKLxpe891slRt1NBrNfaROpVnT2kc1SoRgIBs
-	yrYdcvBaAGw+juL22gKUIS2NcE4VTx9/suhdwxbaO/TT6/LJtutY5QS4KJvGE3YDhHmEkvymoYr
-	y09Ct6nbZMp1T0iOgzzk587+k+EnhcF934uhPs1xchE84PPYzHqtg8o6Q1vTfeCB3tZrBgwibD6
-	TQfl7YEPHW53xR3BzHqI9hPYN9Ws8q68Ja93Rqyhr02poyl5p9IQTPsDoqPVp+f95b9z/olFRBR
-	NNrC3/QAvV9rgFgEjW7q6hWpFLFutsCqERKBmY80mR9B2JCPoxEGNck88Xji6/KIZ9/rI/LG
-X-Google-Smtp-Source: AGHT+IHvIh7HOKUF2kSTrwl4yZYSR9cniot7aBmMKPsu/SKTAalazf30n182yH5QwSl2BrLtR1sAWQ==
-X-Received: by 2002:a05:6808:3996:b0:3f8:effc:938 with SMTP id 5614622812f47-3f8effc0cecmr5870095b6e.34.1741734995283;
-        Tue, 11 Mar 2025 16:16:35 -0700 (PDT)
-Received: from sean-ThinkPad-T450s.lan ([207.191.35.252])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f92706ce68sm868016b6e.26.2025.03.11.16.16.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 16:16:33 -0700 (PDT)
-From: sean.wang@kernel.org
-To: marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Sean Wang <sean.wang@mediatek.com>,
-	Yake Yang <yake.yang@mediatek.com>
-Subject: [PATCH] Bluetooth: btmtk: delay usb_autopm_put_interface until WMT event received
-Date: Tue, 11 Mar 2025 16:16:30 -0700
-Message-Id: <20250311231630.35255-1-sean.wang@kernel.org>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741735001; c=relaxed/simple;
+	bh=PfimZx7PgZ/5Gi9CD2rOAcgt5dAWqfxSVWTYj2Jq5nY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X5HxK2FfUFhpIy/6rzorzWWYN8Hzx5XVAgZ5pKsMJY/puITgSNEjpENBJiNbl4KCz6+cctbpsyMeOavLqthBml/Ns6FhwUFjrhAlbwHQ9oit5f/Jf7byTmwH8hlEK1CxNTsDOHrn3MiHZDxJ963pHD4kHdDdK0dWnrM4S2A8zMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHwfdiPk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CA6EC4CEEE;
+	Tue, 11 Mar 2025 23:16:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741735000;
+	bh=PfimZx7PgZ/5Gi9CD2rOAcgt5dAWqfxSVWTYj2Jq5nY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nHwfdiPkB4R7wXEfdDOvowQshJv8zRAnt6aBix9+yfuWB7qg34ggPKMQQe+8L1O0Q
+	 uHRRPWfNw/VcezTLuYbGh2MIYNmLV+3rjTjf5vj/zNopgqy0TPvBR6xGHcHz/e9oFU
+	 nlci6yxjSOIi0Z5UF5J8CRSh0NPMiWLIs/7sA6oL27ey1dpANMCybYfPSSj5Ucv5di
+	 kkRvC9cXy0mgGsvCFhgsc85TLM8TQpS8trr0xJEdPx7XxmGr8joo6f4dwUoOcxbj6F
+	 tTIURLvA0H7KKcS81zfVKv8E3ANKWuj0KsDDCk676xjgcbLFO1jyiDSjZqaZdItCIk
+	 cIq/q4P18b2lQ==
+Date: Wed, 12 Mar 2025 00:16:31 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Zoie Lin =?utf-8?B?KOael+emueWmoSk=?= <Zoie.Lin@mediatek.com>
+Cc: Qii Wang =?utf-8?B?KOeOi+eQqik=?= <Qii.Wang@mediatek.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	Teddy Chen =?utf-8?B?KOmZs+S5vuWFgyk=?= <Teddy.Chen@mediatek.com>, 
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
+	Shunchang Wang =?utf-8?B?KOeOi+iInOaYjCk=?= <ot_shunchang.wang@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	Joseph-CC Chang =?utf-8?B?KOW8teasvea0sik=?= <Joseph-CC.Chang@mediatek.com>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, 
+	Leilk Liu =?utf-8?B?KOWImOejiik=?= <Leilk.Liu@mediatek.com>
+Subject: Re: [PATCH v4 0/1] i2c: mediatek: add runtime PM operations and bus
+ regulator control
+Message-ID: <idbp6ckhu2pdt5p6vapcblqlinezpq5miqzl4hrzmlbgrniw7o@ucd42tvbtfmr>
+References: <20250211144016.488001-1-zoie.lin@mediatek.com>
+ <46621db1-6096-46af-b021-c919c1cae7ef@collabora.com>
+ <ec77bb9478cd86a6737b92135170064970925b3c.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ec77bb9478cd86a6737b92135170064970925b3c.camel@mediatek.com>
 
-From: Sean Wang <sean.wang@mediatek.com>
+Hi Zoie,
 
-Delay calling usb_autopm_put_interface until the WMT event response is
-received to ensure proper synchronization and prevent premature power
-management actions.
+On Tue, Mar 04, 2025 at 08:37:27AM +0000, Zoie Lin (林禹妡) wrote:
+> 
+> ...
+> 
+> On Thu, 2025-02-13 at 12:57 +0100, AngeloGioacchino Del Regno wrote:
+> > 
+> > 
+> > Turning on and off regulators at start of transfer and end of
+> > transfer respectively
+> > is very expensive and, while it makes sense for power efficiency of
+> > the controller,
+> > it doesn't make sense for:
+> > 
+> >   1. Responsiveness (latency); and
+> >   2. Platform power efficiency at a whole.
+> > 
+> > As a start, just set the autosuspend delay to 250ms; this gives you
+> > at least time
+> > to bring up clocks and regulators and usually finish a transfer at
+> > 400KHz, giving
+> > you the chance to also get some more requests before autosuspend
+> > decides to, well,
+> > auto..suspend the device.
+> > 
+> > The right way of choosing an autosuspend delay a bit more precisely,
+> > though, for
+> > this device, would be to check the bus speed and calculate the
+> > autosuspend time
+> > accordingly.
+> 
+> We understand the importance of balancing power efficiency and
+> responsiveness. Given the diversity of I2C devices connected
+> under each platform, it is indeed challenging to estimate an
+> appropriate delay time for testing.
+> 
+> Therefore, we would like to proceed with your initial suggestion
+> and set the autosuspend delay to 250ms. Based on our preliminary
+> tests, this adjustment appears to be a practical solution across 
+> our existing platforms.
 
-Co-developed-by: Yake Yang <yake.yang@mediatek.com>
-Signed-off-by: Yake Yang <yake.yang@mediatek.com>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/bluetooth/btmtk.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+Am I understanding correctly that you are planning a v2?
 
-diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
-index 68846c5bd4f7..01832bc6a259 100644
---- a/drivers/bluetooth/btmtk.c
-+++ b/drivers/bluetooth/btmtk.c
-@@ -620,17 +620,14 @@ static int btmtk_usb_hci_wmt_sync(struct hci_dev *hdev,
- 
- 	if (err < 0) {
- 		clear_bit(BTMTK_TX_WAIT_VND_EVT, &data->flags);
--		usb_autopm_put_interface(data->intf);
--		goto err_free_wc;
-+		goto err_pm_put;
- 	}
- 
- 	/* Submit control IN URB on demand to process the WMT event */
- 	err = btmtk_usb_submit_wmt_recv_urb(hdev);
- 
--	usb_autopm_put_interface(data->intf);
--
- 	if (err < 0)
--		goto err_free_wc;
-+		goto err_pm_put;
- 
- 	/* The vendor specific WMT commands are all answered by a vendor
- 	 * specific event and will have the Command Status or Command
-@@ -646,18 +643,18 @@ static int btmtk_usb_hci_wmt_sync(struct hci_dev *hdev,
- 	if (err == -EINTR) {
- 		bt_dev_err(hdev, "Execution of wmt command interrupted");
- 		clear_bit(BTMTK_TX_WAIT_VND_EVT, &data->flags);
--		goto err_free_wc;
-+		goto err_pm_put;
- 	}
- 
- 	if (err) {
- 		bt_dev_err(hdev, "Execution of wmt command timed out");
- 		clear_bit(BTMTK_TX_WAIT_VND_EVT, &data->flags);
- 		err = -ETIMEDOUT;
--		goto err_free_wc;
-+		goto err_pm_put;
- 	}
- 
- 	if (data->evt_skb == NULL)
--		goto err_free_wc;
-+		goto err_pm_put;
- 
- 	/* Parse and handle the return WMT event */
- 	wmt_evt = (struct btmtk_hci_wmt_evt *)data->evt_skb->data;
-@@ -700,6 +697,8 @@ static int btmtk_usb_hci_wmt_sync(struct hci_dev *hdev,
- err_free_skb:
- 	kfree_skb(data->evt_skb);
- 	data->evt_skb = NULL;
-+err_pm_put:
-+	usb_autopm_put_interface(data->intf);
- err_free_wc:
- 	kfree(wc);
- 	return err;
--- 
-2.25.1
-
+Andi
 
