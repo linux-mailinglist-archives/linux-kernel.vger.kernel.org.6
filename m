@@ -1,130 +1,164 @@
-Return-Path: <linux-kernel+bounces-556899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3156EA5D040
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:00:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A357A5D04C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:01:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCDF7189F45F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:00:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CCCC3BA006
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C61262819;
-	Tue, 11 Mar 2025 19:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603B225A65A;
+	Tue, 11 Mar 2025 20:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBPJVxj5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aRKYs3u8"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F63D1EBFE1;
-	Tue, 11 Mar 2025 19:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298891E8336;
+	Tue, 11 Mar 2025 20:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741723195; cv=none; b=Y8dEeLdI7+sXcSIvPIqnH53NeEGGKeo8c1NUmZbBKL+ncBXTUiHII3Wfv2VW+mFyoLDGiFrw+pbfiH5Ou2lBit/qdRrtNBr1hHeyuIg5JNGyuMfKKWdZqjtpOsa29PcWcpoVo6QflhaaVb5MmkdeX44wmLrFKZ8OMMtl/ilfPvE=
+	t=1741723284; cv=none; b=V/XsF7DfPOWVlCKPAXU/Ou0NJnf4OnZSlY0eIt8Hu3KvY8EDnKVvDztrQNkeTByG6ofop1rC2XnKAhqoIA08WrTNwD7UvHfh1/NUZr13K8vAaLAKJ1jS23d3DQh0E+LPk69a3M9Vo36TqV9TIkufVK4ijhkF7/e7N0VpAcs2qmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741723195; c=relaxed/simple;
-	bh=a7ft1FG1P7enHItsLHhcaGuRIOritOtiGuKBj8oJcz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZhKojm1CWOTHlAQLQGb4Mto5fQkUAb9STZv2/yjJq5a03gKQsmBzdZKfWHw4HKPP504j9Ckph9dN4m/7GqTZGbLISvPyTNAiGa0nSbucXB8TfMoE7RGXiZX5mOeHx1ctJI5SSdJGJAHSvdpsP9gG6iobaE6aml0RWXtMkgEcvDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBPJVxj5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB074C4CEE9;
-	Tue, 11 Mar 2025 19:59:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741723195;
-	bh=a7ft1FG1P7enHItsLHhcaGuRIOritOtiGuKBj8oJcz0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rBPJVxj5GfO21nu2i/ZfFuupxvCFPw+ws7YV96bY5T36lgy7bR1ghLdlq6zhwpjYD
-	 AjFkGbeiwuXM8XLoL8oXgzYKFkxw6Mu5e8W3L7nh10Lygxx9aEC8lKjPb74hTiBW6Q
-	 dcSSc9ncWHoMFz+4dw6VwSbOkH/FrVu8b4IHsr1WpYQGIzBs3Cg8I6PSpe5OobeAE3
-	 hm/VSJhkpO+RDpIY5lvajhX3CSu7qTezLTvk2qQcHIhCMK3tBg7nqkAmpjJOj56Au0
-	 bepj+jVJftYM6Cd+mEWGdHYLehGGfh7cqwwNlC303BfLQb40Qi6YME/WOVxU7Gucn7
-	 Uz0C8nD1UoW2w==
-Date: Tue, 11 Mar 2025 14:59:53 -0500
-From: Rob Herring <robh@kernel.org>
-To: Nick Hu <nick.hu@sifive.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Anup Patel <anup@brainfault.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: timer: Add SiFive CLINT2
-Message-ID: <20250311195953.GA14239-robh@kernel.org>
-References: <20250311051903.3825-1-nick.hu@sifive.com>
+	s=arc-20240116; t=1741723284; c=relaxed/simple;
+	bh=D2A2IZnBHN+EoyX6mct98H9AZxLT/NlYZhNNNGH4hOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YclqaIFbroTYRAjL5RDOfGYrEkRlSIEEyclsA2J+EkfM0kDshIekeUjBa7CFWF4u6/pu5zES11tmEjDxtWv7TW4+s7clz1kWBIHGm4UUi3vr7VzOPX4JmS0tHDGyJSG53gGUQbWH5pDO/6p99ejYWzBoaxbLS+yA2kE7jllg+DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aRKYs3u8; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4394a823036so50645015e9.0;
+        Tue, 11 Mar 2025 13:01:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741723281; x=1742328081; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8qFhtHxY/uDqNyIojZGB9+AuGiGGlLJ5Td0/uLKfH98=;
+        b=aRKYs3u8pL6iZV1KWN2iPGc5d1lxTK5E5KY4RVZi9vf5XnuyR3b2cCBL8fDaRTc1qj
+         kEmILXDTjklAOFvAzfGyjM3B+WMHeKdwnJfV5J5j9py5I7LaIqSsd/zyCptFJoT/s5bF
+         0R9viWpP/s2EvOCkYip85ZCkk4ATv/UiumZYjCAzso5xhn3HJxRH3A76zE6GPRXU1/sT
+         CRuR3TWVUs3X+4aqw4EkPRxUUaK+YTDeCVkCRGBdMNCizSZip5M70/U6ixxxkyzt1XJT
+         0ncFZgBffeG/jUWHJRMJDtCkr+Y7ODoeXdsEuWfEEgcMCWaDzqK4c6IbzjqWTTibqpD4
+         WfpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741723281; x=1742328081;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8qFhtHxY/uDqNyIojZGB9+AuGiGGlLJ5Td0/uLKfH98=;
+        b=TCvKQ8FkI+XKTFsFplUqpVMLINpfSWFb8JzvZOX5ma6qUhXNrQmrCDpuAyWfzbeF74
+         Kxm6B/8OpeGcLMxIKspeGrhbZUMfVkpSu/IQuGMcnlIkuNuCj11QU5mZfPckYBK/ai8b
+         KJVZ9yPndAPt6AkbOSDwQOECaO7yAJFng6ICPG7PsOI5I9U3F9EhbEdGHC/oBIeYxxgV
+         hbgxnDJ8axaguvOmnB+cCLi9bFEPn0s7JLQiUi6eDUqTpt9NrVd3GrSahzUhYcxvQzIr
+         vmMwklNpLn4t0v66rEhvPGlwlZpq7UXHVr+Mb3AS6EpP+NeTwx2WVZ4rY97By2Iqx6Xk
+         jMfw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/JkcEnvhMoDNNpp1/l4/pwYe0/e0eZUdJUO1uTXjOHYwa9NmsfmHWog4zPrU2x0mllbLavQbbuaHdvwbn@vger.kernel.org, AJvYcCUVuPohIHccXgMygpfj1+Kvl69j1iLfCgJS8LjbSLgcnSNaaCDnWG0aevJ/Rsk0MB3tbnu5/Ababmhf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv3+ksm5j5MDLY9mLvhOnNmtq/rnUPsk5OsZI4svDp5tm5opBz
+	vo+oa12laj7MQDV8P7KHCy6oJQwM+YmgCmGsBcdGh/94vGRrEUsMEZXQcQ==
+X-Gm-Gg: ASbGnctkMmpML4gjxYhtWN2MW03bJ9oKudEC9UUT35mYy7EFcvoqxXP2zDkcPsUztK3
+	mIup0zFSrUlbXIlqvEIsO5SqnuWWVVwQ/sgXeEX2IFNROgZb2tK4oifdSsdNALd9rR+H5JJe8my
+	2zyLV0uXp2kRmbHmSlQD3RSSR4y/ma7Cx58hvaY4VRNj4qtzUXuPNaofeG0giw1GF6+0edWqOJq
+	99O7LmdggDOyS/hIewL2cKsUJIEW3+17g1neoM8rfJR+kATscVe0/P/ENTolqTIBzuQS5SERmIr
+	MYuVLh+ml0ZpsZg83/fdrFmtR6bZm4tMI1gS+w/Lxz2YbYpyDumA4qcXQ+U2bEqtczT9u40YYaS
+	hDw4sI7M=
+X-Google-Smtp-Source: AGHT+IGtTEJDgKx6kXjkrxG8yv5xGmC0q8UwVL6/L9qjkOa0EZUeDeIKcCgT2OIJ9lu3yQy0ryso/A==
+X-Received: by 2002:a05:600c:1c81:b0:43c:efed:733e with SMTP id 5b1f17b1804b1-43d01be6389mr74488735e9.14.1741723281123;
+        Tue, 11 Mar 2025 13:01:21 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd42c588dsm215421735e9.21.2025.03.11.13.01.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 13:01:20 -0700 (PDT)
+Date: Tue, 11 Mar 2025 20:01:19 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, "Artem S. Tashkinov" <aros@gmx.com>,
+ linux-ext4@vger.kernel.org, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>
+Subject: Re: A syscall for changing birth time
+Message-ID: <20250311200119.4802d896@pumpkin>
+In-Reply-To: <20250311170725.GE8837@mit.edu>
+References: <bda3fa3f-dd12-40de-841a-e4c216ab533f@gmx.com>
+	<20250310135828.GB8837@mit.edu>
+	<20250310221243.0d5db7b3@pumpkin>
+	<20250311044935.GD69932@mit.edu>
+	<20250311045635.GP2023217@ZenIV>
+	<20250311170725.GE8837@mit.edu>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311051903.3825-1-nick.hu@sifive.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 01:19:03PM +0800, Nick Hu wrote:
-> Add compatible string and property for the SiFive CLINT v2.
+On Tue, 11 Mar 2025 13:07:25 -0400
+"Theodore Ts'o" <tytso@mit.edu> wrote:
+
+> On Tue, Mar 11, 2025 at 04:56:35AM +0000, Al Viro wrote:
+> > On Tue, Mar 11, 2025 at 12:49:35AM -0400, Theodore Ts'o wrote:
+> >   
+> > > This really goes to my question of exactly how useful the file
+> > > creation time concept really is.  Perhaps that's why the developers at
+> > > the UC Berkley made ctime be "inode change time", I suspect when they
+> > > authored the BSD Fast File System 42 years ago.  Personally, while I
+> > > don't find "change time" to be all that useful --- I find "creation
+> > > time" an order of magnitude *more* useless.  :-)  
+> > 
+> > The third timestamp had been introduced in v7 and it had been "change
+> > time" from the very beginning, with incremental backups as stated
+> > rationale in filesys(5).  "I'm sure that" from David means "I couldn't
+> > be arsed to check my WAG"...  
 > 
-> Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
->  .../bindings/timer/sifive,clint.yaml          | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-> index 76d83aea4e2b..93d74c504b5f 100644
-> --- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-> +++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-> @@ -36,6 +36,9 @@ properties:
->                - starfive,jh7110-clint   # StarFive JH7110
->                - starfive,jh8100-clint   # StarFive JH8100
->            - const: sifive,clint0        # SiFive CLINT v0 IP block
-
-Notice that we don't allow clint0 by itself. We shouldn't start now.
-
-> +      - items:
-
-If you don't have a specific one yet, then add '- {}' for the first 
-entry.
-
-> +          - const: sifive,clint2        # SiFive CLINT v2 IP block
-> +        description: SiFive CLINT v2 is the HRT that supports the Zicntr
->        - items:
->            - enum:
->                - allwinner,sun20i-d1-clint
-> @@ -62,6 +65,22 @@ properties:
->      minItems: 1
->      maxItems: 4095
->  
-> +  sifive,fine-ctr-bits:
-> +    description: The width in bits of the fine counter.
-
-maximum: 15
-
-Unless you know of a different maximum in which case why aren't you 
-documenting that too?
-
-> +
-> +if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: sifive,clint2
-> +then:
-> +  properties:
-> +    sifive,fine-ctr-bits:
-> +      maximum: 15
-> +else:
-> +  properties:
-> +    sifive,fine-ctr-bits: false
-> +
->  additionalProperties: false
->  
->  required:
-> -- 
-> 2.17.1
+> I actually pulled down the V7 sources and there was a comment in
+> /usr/sys/h/ino.h which has a comment around the on-disk inode stating
+> "creation time" (see below).  These comments are also there up to
+> 3BSD, and changed to "inode change time" in the BSD 4.2 sources,
+> probably coincident with the BSD Fast File System implementation.
 > 
+> So to be fair to David, I'm guessing this is what he saw.
+
+Quite likely - it was a long time ago and I didn't take an 'offsite
+backup' of the sources (and I definitely have nothing that will read
+the system disk from an old 68010 box).
+I didn't use Unix until the mid 80s - and I think that was SVR2 rather
+than anything Berkeley. Most of the systems were SVR4 - around the time
+of the initial collaboration between AT&T and Sun to get SMP working
+(which, IIRC, pulled some BSD code into SVR4).
+
+> I still maintain that "creation time" as a concept isn't terribly
+> useful, and that's probably *why* historical Unix systems have used
+> ctime as "change time" for decades.  Whether it's 42 years or 45 years
+> doesn't really change my point.
+
+I do have half a brain cell that remembers it not quite being 'file
+create' time - probably just changes to di_mode, di_uid or di_gid.
+
+Anyway it is all old history.
+
+	David
+
+> 
+>   		      		      	 - Ted
+> 
+> struct dinode
+> {
+> 	unsigned short	di_mode;     	/* mode and type of file */
+> 	short	di_nlink;    	/* number of links to file */
+> 	short	di_uid;      	/* owner's user id */
+> 	short	di_gid;      	/* owner's group id */
+> 	off_t	di_size;     	/* number of bytes in file */
+> 	char  	di_addr[40];	/* disk block addresses */
+> 	time_t	di_atime;   	/* time last accessed */
+> 	time_t	di_mtime;   	/* time last modified */
+> 	time_t	di_ctime;   	/* time created */
+> };
+> 
+
 
