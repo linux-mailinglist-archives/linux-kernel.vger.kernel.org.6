@@ -1,137 +1,144 @@
-Return-Path: <linux-kernel+bounces-555647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D023A5BAC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:22:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8780BA5BAC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:24:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70D63ABE87
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:22:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD6E3A6F72
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A742224AF7;
-	Tue, 11 Mar 2025 08:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD8B224AEB;
+	Tue, 11 Mar 2025 08:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4eUPaWD"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="sRPUNWMS"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB1A1EB182;
-	Tue, 11 Mar 2025 08:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADA8221554
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741681361; cv=none; b=M7wI8d2hE6rwBXR2MzcFJ7TrC9jdo/lREwEhdEZBrfYJkpLAuFgcBflE0rhfWrqbLXry2dab8dvJFbUuDKj4vd4F8V1si7BT2bHOujFN1E+/4EolfimeClDyCNw2jTe02NJGTzKO7ST7oO3q3KtU1TCg070b35C8xfJSY1KvcRA=
+	t=1741681465; cv=none; b=F+To6qMMl0eskUNm5Dsu3V3ZBg3KoE7OTZaI3RJEMHi1nmbqAZQw5hUV5j+UclWH9o8W2k3Q7piir+4td8vbwGtJFFhPdFL6kwuuN8OPTry3Ys5XYcBbIo6lpDjhv7yVCImukYg1iVD5B/fX7LO21kkvCJw+h4BXLs0WJklYa0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741681361; c=relaxed/simple;
-	bh=UFNNBRGR/6gDpDCHdvz/G/BUoK1siPWwMWJCgE09xoA=;
-	h=Message-ID:Date:MIME-Version:Subject:Cc:References:From:To:
-	 In-Reply-To:Content-Type; b=EKcB2N8oOmOeCHtpMThcfXpxzBNxWwlgbBEE+RG+GSuQxi7Wav7u0TfQLOoPjXMiCKDmuvwLr6p+tWYEG8PRdQLYchM01crCltLQ4aful1Do76zXNsOiGdVwZM534b21YWLqT2hbC7/vt03bL9uH2VbQGuYrZ7vFAV3yW+nhv2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k4eUPaWD; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so6303663a12.3;
-        Tue, 11 Mar 2025 01:22:39 -0700 (PDT)
+	s=arc-20240116; t=1741681465; c=relaxed/simple;
+	bh=xu3zP1HoofD6juWhjBldyocKjaXNqT0I+Ivbyr36UBk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aXu75jQZKONCVJ1BH6SRN7SCXadyhwVu2l/k7+pzeQCr3J4yphv8/EpStR4UM6MIFUpdL1gnMFwARiyIbTd/kiuqzaVw7pZZ4PQkVK9TohsuZfu4OqZG4xPPPZHWJSaPV2yWy29TZBxW4GtcDCtq2b/D5SveLbTifRANnoYy6iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=sRPUNWMS; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39104c1cbbdso2498456f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 01:24:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741681358; x=1742286158; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:to:content-language:from
-         :references:cc:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UFNNBRGR/6gDpDCHdvz/G/BUoK1siPWwMWJCgE09xoA=;
-        b=k4eUPaWDRKJBzVskNX5h82cXsdLBnSenekb1UNAW/A8CvxQps2GlZv98gAcXFtxs5g
-         dmeoSaBum1KDmpi4uL2pzxi8qcA0GA6RSwquXeOj8YPtUwsPqxl+JpjWakY/+STpNEPN
-         Tmt2sGeMZFfN6mRO5taeNsupyuqU2FO0bSQ7NVQX1pKhzOGvgT/rGc+imxGpbXMgiFlC
-         geG8V05mvE6dpwOkiHxM+AldAXGivkETSZpwf2/fDCCPVTuQScoB/4yRwEN+BHHVEFe8
-         tP9jqH8HTrFLUegg4lHM5iGKAQwoZPl1huRl78fp/4CHn/PONZtFtEx7bUSNsKUBtWhi
-         PIUg==
+        d=fairphone.com; s=fair; t=1741681460; x=1742286260; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MkuwlZJMUyuJz7nY/CVS9mePyWOIvMtEr4YIIpcR7vI=;
+        b=sRPUNWMSVCVA33WWr3T+aN6HEboHPmysl8eDIiLjY71lRrzl9PhVLh6+yEtIYeejjR
+         nsSsuNDNFAiic1lg12XPDRxEzsjI79f0/Qjg8KdzFdTkWz1AdJ0Qs9pJbRQIIt37zYGP
+         +ns/gnuwHufskOB+rINsa/DtIijImFioQubkppvCV7FvWwKdAE71YwzlJr8d9PRs3yMw
+         I3IMrPrw/68wkDm1vNfBnlEAzsoizbePairK6aB8wxZcXXcI2D+UnZ9wQ4ks1k2qeWLP
+         XOkOWreaBfvSu6ZH1BhzGQ/B45LXbhh7BqGDse8Oyc93qRHIAKFA2IukarzhsRSMip/9
+         JnGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741681358; x=1742286158;
-        h=content-transfer-encoding:in-reply-to:to:content-language:from
-         :references:cc:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UFNNBRGR/6gDpDCHdvz/G/BUoK1siPWwMWJCgE09xoA=;
-        b=hkHso5/esosbIwSRE3eaUHPiybudIRJOnT2BVRQt9gFQ7wSYgxDQf16mXbHslpENMw
-         S0i9VeheYEPHBESm9AS+AUVKYru3afIAWDeD1JjQEzvcV2yq9ZgTWolW8ZY/KzQr3L3O
-         FMacQ8a7u8fRah42D0EzGPnN8S8yxoK6iURNjm70qy7N3gYtmFNCYy38EGQRxmJhcrCP
-         jD9ghbZpLAewIfqvlGy4KCWji8j/fxF0RV9SI3MwbZFMevsLw8xeN6PjjFyr+pBGeDi5
-         SuoGx/2eCY5UMenGbqqQZ6CELlTSkjOq71uhKBhl/zdZX1fkgVNYaEVMEyzS0I9bp8y2
-         y0/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUK+HHfeqwlRx1+8Dciib1FayTsZQb5x8hL+HRDB73GR7+vyDRLSttSib4jGWYoxdj1TaGf6CXdG1yFWLzILe3v@vger.kernel.org, AJvYcCUtoLQ+Rq+SYTdMXVnOA9lLKrUReCThYup/L3nECppvF0Yso/WCXLgHgQ9Y98I7ldHwHEn2PsADOP1RpyIE@vger.kernel.org, AJvYcCV66mtRXXgegyI1LtxqXrlYzgam7vOOmXABCbzlGMQQX+APl1rX/rdA8RVW9YvIg5CJQIoQNffVr8p+N691Mlc=@vger.kernel.org, AJvYcCXcRLYYTvbLGekhXNUyg86zJZ6wggoZOxGbmDfKu0LDUAWQF+rmZGpZaKLqaqF/dRTiqK4DvWI3@vger.kernel.org
-X-Gm-Message-State: AOJu0YyheTMxVW27y29nMWdJKWxHP+DYwqm+bftxXGVjgVvO3aDdSXaj
-	eUZsbWfFeZsMFmRtoiDzQLubZMYwyXovUw4ILzniQpOpOnca4IBB
-X-Gm-Gg: ASbGncvVwMMjs1DriPqYuLdQh5HSnOG0mnVEVTzPhwWM65AiCR3zd1xIlCOgFG4kiLI
-	cEWpLK+GLGZbjbiXadzY1AIZ1MGtUUAgVfbNEzArUEeefPyt0mWZg/4FoVi7RQmvsCiqhKdnGZI
-	Kt0Y31lPtBKoMc3PpNLn5Rg86TZocjOtKMb718mJfx0KPf0wXD4Dxv7s2GTMpmocq28iaiqCDWS
-	mPpzjo+5QWiGhP8upiTqEGdADiqqb+f9n14AOYwA+1MvDrtR/9DgnDu2jJRIszf02TBnFQ7vxhb
-	h5qGeKefcqnzxB7iPt2vpv53cuSLPvK/sH7CDDgZv5qvNv5c8aUEMnfuio6zA+3gUGP3pHGZE5r
-	RMgtJxPppxUs9wjXV/aSC/aCrcW9slcgHDrkJKKNAPrMya9KGe5Z0A5f0z4PMqPl0GJGG4wIEGz
-	EyV01wEGUk8wjA2BVXr6c=
-X-Google-Smtp-Source: AGHT+IHVZMV/MbyEPPexb7J3WeNZYZ5CxjZ+VTFaUFe+rZPsUq+igvni96NJQxPQP+jJ8ClbAvXlfA==
-X-Received: by 2002:a05:6402:4302:b0:5e7:7262:3bb6 with SMTP id 4fb4d7f45d1cf-5e772625471mr1960367a12.29.1741681357815;
-        Tue, 11 Mar 2025 01:22:37 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:20d:1300:1b1c:4449:176a:89ea? (2001-1c00-020d-1300-1b1c-4449-176a-89ea.cable.dynamic.v6.ziggo.nl. [2001:1c00:20d:1300:1b1c:4449:176a:89ea])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c76913bbsm7880931a12.78.2025.03.11.01.22.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 01:22:37 -0700 (PDT)
-Message-ID: <897ade0e-a4d0-47d0-8bf7-e5888ef45a61@gmail.com>
-Date: Tue, 11 Mar 2025 09:22:35 +0100
+        d=1e100.net; s=20230601; t=1741681460; x=1742286260;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MkuwlZJMUyuJz7nY/CVS9mePyWOIvMtEr4YIIpcR7vI=;
+        b=rTzsSgpcDTys6yC+++Jrbq/kg3e2CTRrTtalKUK1hasGOA+B4ibXCBHWSqgMJ+Zz2V
+         7uhH9ltivsMjD676NQ1qqJgI8UyB/nVaJBayjIBbl0W8Zip0HThKTDcACY6183b9MbcX
+         R5gqVW4m/EZJiQd0ydZAcb4JM/PKzimOuXlSKO6VSHW4izTvMgqg2rXQ7Ps/4ROF77ju
+         mVngKcJMmdHYgLqL+Xcq5LaXh5cNPhrt0WPqZr0CuHWZP03xQ8l4Nmqu5cvcZIOC5eOo
+         WDCuykUWFoAlo38Zq8u0pNPYc+P7IR/p188rg1ih9gCOpZCSli8QuvQE/F0MGbZZv2rq
+         Q1oA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZLDWNWhxhbP+asIHvCqg14pLBH/tbLpV0L8ejZtQAmHx6db16mXkOeW45wHF/AlQnX0vYHZqy8qpE1xs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhJg6rg4Mvy0M2ZoT/iJKxp2q/7xhnPMYTckAhicS8ahX2KTl/
+	+IH49kS29pA88EPwQRDzGEubUj1jrG9fVMQqIE3AqVW/bo70UcS0MBnr6zVToC4=
+X-Gm-Gg: ASbGnctCgT42ZtpzvBt35+sP0AGjBeW8eKrevlxNsffcLLSTrWov1DN/U2rK2OEfBAw
+	ci8jdHUK6RARQhb8knZMbNugKXaf1n32gl6NH94Q4k4dYNuA8ixlrb/D8CLsKHPelqW5WEN+MWN
+	8AIeNK8qQj6Tps8a4XuJjmtgvLkLw+hF97a2l+LUNCpl0jNfoOJ9QZlgX4dDcLkXwu2rhyagjxM
+	dAolPkHgjOnTPu9k2xQ8NWmm7UzG7kBBeskVmP405vBImXdgzKl5dl0dz1ciwvq0+X5cfCUc7i+
+	/f2yfiArpC6YuiUstR6pyMKYwC3X5IXNkhwajVGfBwHInTQXdgKpZ2YVrH8Zf6eTg4YWC4rKifW
+	pOQ+y6kUpjwH7gvVKKw==
+X-Google-Smtp-Source: AGHT+IGcMWouoW5czhBbn4yWMxCe7rFrkdK1wII/1naqJaluMq6AQhQYDYrv/8Bujg++Ac3Li9uWDQ==
+X-Received: by 2002:a05:6000:2a3:b0:390:efe7:20fa with SMTP id ffacd0b85a97d-3926c69b312mr3431264f8f.47.1741681460573;
+        Tue, 11 Mar 2025 01:24:20 -0700 (PDT)
+Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ceeb5995esm90826545e9.16.2025.03.11.01.24.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 01:24:20 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Date: Tue, 11 Mar 2025 09:23:39 +0100
+Subject: [PATCH] arm64: dts: qcom: qcm6490-fairphone-fp5: Add touchscreen
+ node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 nf 00/15] bridge-fastpath and related improvements
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Kuniyuki Iwashima <kuniyu@amazon.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Nikolay Aleksandrov <razor@blackwall.org>, Roopa Prabhu <roopa@nvidia.com>,
- Ivan Vecera <ivecera@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, Simon Horman <horms@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, bridge@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Ahmed Zaki <ahmed.zaki@intel.com>, Vladimir Oltean <olteanv@gmail.com>,
- Frank Wunderlich <frank-w@public-files.de>,
- Daniel Golle <daniel@makrotopia.org>
-References: <20250305102949.16370-1-ericwouds@gmail.com>
-From: Eric Woudstra <ericwouds@gmail.com>
-Content-Language: en-US
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-In-Reply-To: <20250305102949.16370-1-ericwouds@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250311-fp5-touchscreen-v1-1-4d80ad3e4dfc@fairphone.com>
+X-B4-Tracking: v=1; b=H4sIAAvzz2cC/x3MQQqAIBBA0avErBNMK6irRAsbx5qNilYE4d2Tl
+ m/x/wuZElOGuXkh0c2Zg6/o2gbwMH4nwbYalFSDVFILFwdxhguPjInIC8RxGmWne2s2qFVM5Pj
+ 5j8taygcnJb1iYQAAAA==
+X-Change-ID: 20250203-fp5-touchscreen-cc6960134dab
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jens Reidel <adrian@mainlining.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.2
 
+Add a node for the GT9897 touchscreen found on this smartphone connected
+via SPI.
 
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+The series adding support for this chip (incl. dt-bindings) has been
+applied on 2025-03-10 to the input tree:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git/log/?h=next
+---
+ arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-On 3/5/25 11:29 AM, Eric Woudstra wrote:
-> This patchset makes it possible to set up a software fastpath between
-> bridged interfaces. One patch adds the flow rule for the hardware
-> fastpath. This creates the possibility to have a hardware offloaded
-> fastpath between bridged interfaces. More patches are added to solve
-> issues found with the existing code.
+diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+index 356cee8aeba90e21c11f46df924ed180bfce3160..35ce9dfca6f092a88d8873673ff57b591e210b02 100644
+--- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
++++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+@@ -1069,7 +1069,18 @@ &sdhc_2 {
+ &spi13 {
+ 	status = "okay";
+ 
+-	/* Goodix touchscreen @ 0 */
++	touchscreen@0 {
++		compatible = "goodix,gt9897";
++		reg = <0>;
++		interrupt-parent = <&tlmm>;
++		interrupts = <81 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&tlmm 105 GPIO_ACTIVE_LOW>;
++		avdd-supply = <&vreg_l3c>;
++		vddio-supply = <&vreg_l2c>;
++		spi-max-frequency = <1000000>;
++		touchscreen-size-x = <1224>;
++		touchscreen-size-y = <2700>;
++	};
+ };
+ 
+ &tlmm {
 
-
-> Changes in v9:
-> - No changes, resend to netfilter
-
-Hi Pablo,
-
-I've changed tag [net-next] to [nf], hopefully you can have a look at
-this patch-set. But, after some days, I was in doubt if this way I have
-brought it to your attention. Perhaps I need to do something different
-to ask the netfilter maintainer have a look at it?
+---
+base-commit: 93498f5ea4d0415cb5a95680224335651580cf08
+change-id: 20250203-fp5-touchscreen-cc6960134dab
 
 Best regards,
-
-Eric
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
 
 
