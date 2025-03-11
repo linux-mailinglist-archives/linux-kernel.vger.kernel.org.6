@@ -1,176 +1,202 @@
-Return-Path: <linux-kernel+bounces-556151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22C4A5C182
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:40:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A68A5C180
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B89D63ADC1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:40:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15AA0165447
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF752580CA;
-	Tue, 11 Mar 2025 12:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7872571A3;
+	Tue, 11 Mar 2025 12:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CszX6Zmy"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="K9tMkc4z"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584E32566CE;
-	Tue, 11 Mar 2025 12:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E94256C89;
+	Tue, 11 Mar 2025 12:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741696740; cv=none; b=uvEfjK4LwlB4WOpCQOVVgHnNataWswfYkkMeaqec7AeiA8bM14HX69CEdsAqcOO8BYmi5OO/oRdkFbv8HVXCVGbxfNpd3XHv8JF+RQKHw7oxyCVWTDGFpK3zOAOu964hONUqnjTi50NT8x268xTFVQTzqdmlzNyBMD6iT8MFzvk=
+	t=1741696813; cv=none; b=kbGixNhIYG1fnMIgQYsjsgoYKsT7AjxMdLTJVM9jsfjlKhqOnPqSa1Pec/fA8v4/Dhy8nPzWnA5/Z4td5Rs7eXyZvAxeUHXQuF/cAsXCFQ1tI8TXxUX3GRmGeBJP0rvVy/apTTh+gUCREschxp52nGb9+FnraSiRJ8sv1i06OaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741696740; c=relaxed/simple;
-	bh=cltyPHCJ49JbabS3P+aS/KZW4H/0eZzPUIxutqhJIwg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OgHi30ttKPvt/4bbd0nXdk7jXoVj2pcwjvafUeoM0W92gVt2Et0n0djjCeIrNETgXTU3d8oWHPUprlfRE4xp27JPxFZT630qzQwynXdJ0/ZPbb1OJHTISqp89WPSJL3catUbiap3ou8/RG7b/j1PNerOT+gRqxNvaNi7v9ngTEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CszX6Zmy; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30615661f98so58142581fa.2;
-        Tue, 11 Mar 2025 05:38:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741696736; x=1742301536; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Zq92IivDzfgLqOwKYZMD/CP0Rg3YY3KQafzGl2ujB8=;
-        b=CszX6Zmyk7Sz7RVBt0E7akXCsdWukQ152DSfuq2RRCFsRLbsZ2Ko25jzcnLLdhDbD3
-         MbUQVomHymk1t6sZmY0WOMqX8b4ha3g9YbVfY61gZmzczMddAwfEuA+W2BYzuimggKt1
-         ru5lnqhG0vC9silFIqbMKmDbW/0YckaBAc2qmBBul98D5tdLozvbu8ws4mUUaZHwHXfm
-         uo249yTmCiAu0w4c3zGgjaMr9QYbigAgIeJxAC+5EHOl1EoVbaRcxg/DfdLAeMUZ+cIP
-         QoNhFyPJgd5vOkpL0DgqZPEhYFoU+/g9JLDsaERz+wUIvdieXMHjbid0Aaq1P4o0q05y
-         VJOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741696736; x=1742301536;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Zq92IivDzfgLqOwKYZMD/CP0Rg3YY3KQafzGl2ujB8=;
-        b=q+OD7ygPKmdoaEVQsuZpFGeJACxwHoYQVxPIwpeUVMrOcmHTJmtemofs4sMZolOeXx
-         xshR0wxgClp/BOpgv9RbhTF7xm+TmJEg6H2RTLB9doBGIw9i6g2QBj/xk3/wJtapDTYG
-         E5+31R8XyXlwc/pJf1eyhyVUwtfyZNhwaO5mTyNa3LNXPTYkQgCSW1YGuBeSRViO5kEb
-         lFqFHzaw6mOpccfeKx57euXdoP5MSXuoYIPQIon6d7puRIoP8fiOwuR6mTQu+b3tFvKO
-         jP5zlk+YJsU0KlOYn7l0dwC51WquFjLOX4STHnrxY4T/yIwhpv5Pho5GKZIRGaB5zZ+o
-         41dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRShb0oVL6nY76VTaC7Mh175CkDl9Paz+3v4gYaC7RNLNBMABiFUulCCGQcKilZ9exm/Wk@vger.kernel.org, AJvYcCWrrsvSN/sLssIy8DESt8lNpFo49wyanexOLymQ5OZoQktApBMCsqAG3XnLlMVNMyEgAFadxwF0vEBqElI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlAK1CS2MHekITFVa44dVj1XAeWOGaB7R6Zyz7vlGRjCvjuYYm
-	6UP5RJw4SQku31Og6ilmj5EAJ35+nGPMfDEfO+Bj7CeVl4WGPCwr
-X-Gm-Gg: ASbGncsOaef8Qg4zhKvhiN9d7mVEU0PyRNt/P8WGZPZgBuhB2aoFt9m9LsFfARP+0Mv
-	llVgDvgjn+ARRYaW1D6NGTrWpg+r/uI5DnwYtiw1yb2TWaqePj5QxJxHNaCPvPtDQEm9tH85V77
-	2FEu/oBeHi/Rg+ahWY3T0lNO7/JLdZynP+oX7SPF0CSbGS5KJTBa6IUVaeTjsZO+FKMvOzfaEnQ
-	H/nIaaCOjdaQs3agzUCSkr4f+UNEcnw+kOIA3nP7Nmf8+C+EmfQy53MDhPxAZKQvYJAHzK/5uy9
-	K49X084wP20PNQeGTdw8Tu0z/4ViTPgZasI9aLagwwxEcwkrC5A7J2dy9xXpJ8Z15YA=
-X-Google-Smtp-Source: AGHT+IFVSDfkDIFA/y0QFEveP3iRhGPEoi94T2fCmGV+zq3Tl2ugxm8Fdk/1pXq/YAIpEwzep6LdRQ==
-X-Received: by 2002:a05:6512:3086:b0:549:8c36:592 with SMTP id 2adb3069b0e04-54990e2bf7cmr5708280e87.5.1741696735989;
-        Tue, 11 Mar 2025 05:38:55 -0700 (PDT)
-Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae465cdsm1767911e87.21.2025.03.11.05.38.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 05:38:55 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 11 Mar 2025 13:38:53 +0100
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <Z9Au3RWVt9ERrea6@pc636>
-References: <20250227131613.52683-1-urezki@gmail.com>
- <20250227131613.52683-3-urezki@gmail.com>
- <20250310015507.GA3993297@joelnvbox>
+	s=arc-20240116; t=1741696813; c=relaxed/simple;
+	bh=S02jbh8PKO5i/uzetQ+Nll2XWomIcWUHAYwcFP/SNGg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QDvfq1Qx8dptaSF5MRgkvvWYecwFKDn/NLLXkE+B9OaQ7KqyYMfgIdRQ27pfGyqzdRIzTVTkccrToWvHO4xPYoKc364NLJHgVD7CTlW2msb/G9yXmN314xDyFQp1XyMsHNn5shlhttSejZZWpX8AO3QuBU9xSSqvDTYzmWTHAkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=K9tMkc4z; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52BCdmfD1291709
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 11 Mar 2025 07:39:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741696788;
+	bh=dbO2fCpxNxJpEsWSKYH0roYSpPeD9BXytOm6a3W9txs=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=K9tMkc4zekntqwUHkZjMLEZCS08yElSK7E+LN0WiYeT3oXIlfww66vL5zICky8y0W
+	 TNUNb6O5QdbgDhHvYG9fVA6O2W7Q3OToDh6jYfFt9Qo3+ef+w7BUTAgIzWng4HhEXD
+	 au4tEF4oTGQGU0JUOYlURuh0FJvXbTTJQm5KdUTc=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52BCdm2O032648;
+	Tue, 11 Mar 2025 07:39:48 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
+ Mar 2025 07:39:47 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 11 Mar 2025 07:39:47 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52BCdlJ7081396;
+	Tue, 11 Mar 2025 07:39:47 -0500
+Date: Tue, 11 Mar 2025 07:39:47 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Andreas Kemnade <andreas@kemnade.info>
+CC: <vigneshr@ti.com>, <aaro.koskinen@iki.fi>, <khilman@baylibre.com>,
+        <rogerq@kernel.org>, <tony@atomide.com>, <jmkrzyszt@gmail.com>,
+        <andi.shyti@kernel.org>, <reidt@ti.com>, <wsa@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@kernel.org>
+Subject: Re: [PATCH v2] i2c: omap: fix IRQ storms
+Message-ID: <20250311123947.jce4i5heeufzwmji@serotonin>
+References: <20250228140420.379498-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250310015507.GA3993297@joelnvbox>
+In-Reply-To: <20250228140420.379498-1-andreas@kemnade.info>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello, Joel!
+On 15:04-20250228, Andreas Kemnade wrote:
+> On the GTA04A5 writing a reset command to the gyroscope causes IRQ
+> storms because NACK IRQs are enabled and therefore triggered but not
+> acked.
+> 
+> Sending a reset command to the gyroscope by
+> i2cset 1 0x69 0x14 0xb6
+> with an additional debug print in the ISR (not the thread) itself
+> causes
+> 
+> [ 363.353515] i2c i2c-1: ioctl, cmd=0x720, arg=0xbe801b00
+> [ 363.359039] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: 0x0, stop: 1
+> [ 363.366180] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x1110)
+> [ 363.371673] omap_i2c 48072000.i2c: IRQ (ISR = 0x0010)
+> [ 363.376892] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> [ 363.382263] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> [ 363.387664] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> repeating till infinity
+> [...]
+> (0x2 = NACK, 0x100 = Bus free, which is not enabled)
+> Apparently no other IRQ bit gets set, so this stalls.
+> 
+> Do not ignore enabled interrupts and make sure they are acked.
+> If the NACK IRQ is not needed, it should simply not enabled, but
+> according to the above log, caring about it is necessary unless
+> the Bus free IRQ is enabled and handled. The assumption that is
+> will always come with a ARDY IRQ, which was the idea behind
+> ignoring it, proves wrong.
+> It is true for simple reads from an unused address.
+> 
+> To still avoid the i2cdetect trouble which is the reason for
+> commit c770657bd261 ("i2c: omap: Fix standard mode false ACK readings"),
+> avoid doing much about NACK in omap_i2c_xfer_data() which is used
+> by both IRQ mode and polling mode, so also the false detection fix
+> is extended to polling usage and IRQ storms are avoided.
+> 
+> By changing this, the hardirq handler is not needed anymore to filter
+> stuff.
+> 
+> The mentioned gyro reset now just causes a -ETIMEDOUT instead of
+> hanging the system.
+> 
+> Fixes: c770657bd261 ("i2c: omap: Fix standard mode false ACK readings").
+> CC: <stable@kernel.org>
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+> This needs at least to be tested on systems where false acks were
+> detected.
 
-> Hi Uladzislau,
+At least on BeaglePlay, I have not been able to reproduce the original
+bug which was the trigger for commit c770657bd261
+
+I also ran basic boot tests on other K3 platforms and none seem to show
+regressions at the very least.
+
+Tested-by: Nishanth Menon <nm@ti.com>
+
 > 
-> On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
-> > Switch for using of get_state_synchronize_rcu_full() and
-> > poll_state_synchronize_rcu_full() pair to debug a normal
-> > synchronize_rcu() call.
-> > 
-> > Just using "not" full APIs to identify if a grace period is
-> > passed or not might lead to a false-positive kernel splat.
-> > 
-> > It can happen, because get_state_synchronize_rcu() compresses
-> > both normal and expedited states into one single unsigned long
-> > value, so a poll_state_synchronize_rcu() can miss GP-completion
-> > when synchronize_rcu()/synchronize_rcu_expedited() concurrently
-> > run.
+>  drivers/i2c/busses/i2c-omap.c | 26 +++++++-------------------
+>  1 file changed, 7 insertions(+), 19 deletions(-)
 > 
-> Agreed, I provided a scenario below but let me know if I missed anything.
-> 
-> > To address this, switch to poll_state_synchronize_rcu_full() and
-> > get_state_synchronize_rcu_full() APIs, which use separate variables
-> > for expedited and normal states.
-> 
-> Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
-> 
-> For completeness and just to clarify how this may happen, firstly as noted:
-> rcu_poll_gp_seq_start/end() is called for both begin/end of normal and exp
-> GPs thus compressing the use of the rcu_state.gp_seq_polled counter for
-> both normal and exp GPs.
-> 
-> Then if we intersperse synchronize_rcu() with synchronize_rcu_expedited(),
-> something like the following may happen.
-> 
-> CPU 0					CPU 1
-> 
-> 					synchronize_rcu_expedited()
-> 					// -> rcu_poll_gp_seq_start()
-> 					// This does rcu_seq_start on the
-> 					// gp_seq_polled and
-> 					// notes the started gp_seq_polled
-> 					// (say its 5)
-> synchronize_rcu()
->  -> synchronize_rcu_normal()
->   -> rs.head.func =
->      get_state_synchronize_rcu();
->      // saves the value 12
+> diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+> index 92faf03d64cf..f18c3e74b076 100644
+> --- a/drivers/i2c/busses/i2c-omap.c
+> +++ b/drivers/i2c/busses/i2c-omap.c
+> @@ -1048,23 +1048,6 @@ static int omap_i2c_transmit_data(struct omap_i2c_dev *omap, u8 num_bytes,
+>  	return 0;
+>  }
 >  
+> -static irqreturn_t
+> -omap_i2c_isr(int irq, void *dev_id)
+> -{
+> -	struct omap_i2c_dev *omap = dev_id;
+> -	irqreturn_t ret = IRQ_HANDLED;
+> -	u16 mask;
+> -	u16 stat;
+> -
+> -	stat = omap_i2c_read_reg(omap, OMAP_I2C_STAT_REG);
+> -	mask = omap_i2c_read_reg(omap, OMAP_I2C_IE_REG) & ~OMAP_I2C_STAT_NACK;
+> -
+> -	if (stat & mask)
+> -		ret = IRQ_WAKE_THREAD;
+> -
+> -	return ret;
+> -}
+> -
+>  static int omap_i2c_xfer_data(struct omap_i2c_dev *omap)
+>  {
+>  	u16 bits;
+> @@ -1095,8 +1078,13 @@ static int omap_i2c_xfer_data(struct omap_i2c_dev *omap)
+>  		}
+>  
+>  		if (stat & OMAP_I2C_STAT_NACK) {
+> -			err |= OMAP_I2C_STAT_NACK;
+> +			omap->cmd_err |= OMAP_I2C_STAT_NACK;
+>  			omap_i2c_ack_stat(omap, OMAP_I2C_STAT_NACK);
+> +
+> +			if (!(stat & ~OMAP_I2C_STAT_NACK)) {
+> +				err = -EAGAIN;
+> +				break;
+> +			}
+>  		}
+>  
+>  		if (stat & OMAP_I2C_STAT_AL) {
+> @@ -1472,7 +1460,7 @@ omap_i2c_probe(struct platform_device *pdev)
+>  				IRQF_NO_SUSPEND, pdev->name, omap);
+>  	else
+>  		r = devm_request_threaded_irq(&pdev->dev, omap->irq,
+> -				omap_i2c_isr, omap_i2c_isr_thread,
+> +				NULL, omap_i2c_isr_thread,
+>  				IRQF_NO_SUSPEND | IRQF_ONESHOT,
+>  				pdev->name, omap);
+>  
+> -- 
+> 2.39.5
 > 
->  -> rcu_gp_init()
->   -> rcu_poll_gp_seq_start()
->   // rcu_seq_start does nothing
->   // but notes the pre-started
->   // gp_seq_polled (value 5)
 > 
-> -> rcu_gp_cleanup()
->   // -> rcu_poll_gp_seq_end()
->   // ends the gp_seq_polled since it
->   // matches prior saved gp_seq_polled (5)
->   // new gp_seq_polled is 8.
-> 
->                         /*  NORMAL GP COMPLETES  */
-> 
-> rcu_gp_cleanup()
->  -> rcu_sr_normal_gp_cleanup()
->    -> rcu_sr_normal_complete()
->      -> poll_state_synchronize_rcu()
->        -> returns FALSE because gp_seq_polled is still 8.
->        -> Warning (false positive)
-> 
-> 
-Thank you for clarification, this is good for archive :)
 
---
-Uladzislau Rezki
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
