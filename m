@@ -1,92 +1,97 @@
-Return-Path: <linux-kernel+bounces-556541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4828EA5CB88
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:05:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FF1A5CB86
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:04:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002F2188FE7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:05:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23AA3B37C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D97A25DCFA;
-	Tue, 11 Mar 2025 17:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B5A260A52;
+	Tue, 11 Mar 2025 17:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="OZvPjIDH"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="A9uNa4z2"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2B725C6FF;
-	Tue, 11 Mar 2025 17:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B731D1C1F22;
+	Tue, 11 Mar 2025 17:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741712707; cv=none; b=eG5xxLufWYNiljWCoxPNbpTVijYCTxPZco7uO4JHWc74lwvWtFFrmTO8RabHgSY/iC83ZJwiXZ/DH4ul26Ip5s71uV08kcJIGjnunloVz9f2zm5uzd5m0SiU5AXHTr79LERkib+GLewBGDBslxsxFuLt2XwxETKZ+MGhyLCnsRs=
+	t=1741712670; cv=none; b=dnqE7dAKti87W/fXU6gZQDCGjwVcasqcWZNeGQfXHewDNWAt4+qlZ8dax/E6QgI+9/ZNl3oOWVGBNc+uEb/PsBHIQEDAKIC3eRji2iWECbtGI4ilGAmW1YmF2gsi3rZ3CbQ42Rr0I31dcGCt3WBnie9nkdCfE2hqkNlSOJsC9GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741712707; c=relaxed/simple;
-	bh=tPgnU+rJhHBiowGyT3sROXA/KCzcSc7LZwfiexOaLEo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lhy6U+pRx5XaQuQgI41zpyuTeBLdm40T13Cf8bEOTANS+J0rnuFvlSDFGpkHrqhoMZqFO70bLzcN6wOT/ljnEvGVTr730vkG/OI7iO2NhhfWVUadSlfsu0epkTwwgxS8HKANmnea7uHAU6IHbk0P3wrLYJSknj43cYH1nE9k0i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=OZvPjIDH; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse-pc.fritz.box (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id CBB512FC0187;
-	Tue, 11 Mar 2025 18:04:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1741712694;
+	s=arc-20240116; t=1741712670; c=relaxed/simple;
+	bh=bB2I3mJnd9I+qCd6WsvHTfD1BEbi95Tjt4/PZYZdp7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jVzu5CuZG4bUoHifaLUcoveAy/zNQSuk+Fets8tp+yNC0F+V3yjk38/Jcu8/18WTHGQpjbAoYVGqD7o86r7uIvzWBfeirbUdW4OchxAnqkMRypeSWpBiCnD/ctf/ejlnnHIylGufp3a9teHF1gMHo24W3aZHwvbmPoJ1SJnMJf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=A9uNa4z2; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BF583442A3;
+	Tue, 11 Mar 2025 17:04:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741712665;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0zuTJhP/TAHW2pWcx32Xiq2E7JP9tUTogWrJlqIJkLs=;
-	b=OZvPjIDHMeopZiMEC2VUPX/SgP3lBnQg8LI1cSP+IiLX1ulXhal0B3bKKQHmp8GI32Qd1v
-	SSj5OU8u2mxnGTrUIn0SvYvSe0WqnZAj+nYkLkLfrG4PERR2Wte/dTZFmcX9hZZfR8gf5u
-	K78WvGOzAz/OlwrPmrRqzBK6GuUAhYU=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: hdegoede@redhat.com,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] Input: atkbd - Map FN-key for TongFang barebones
-Date: Tue, 11 Mar 2025 18:04:22 +0100
-Message-ID: <20250311170429.1091067-1-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BNPRZz6gCCKyyFXFdw9IZIUbcNdOvYF0RyfJNnSYlVs=;
+	b=A9uNa4z2UZxS3imKwWuSsDdXmWEQekV4Ngo1wVUip7lm2VyiAXH/i0+CcOawsGlwkN8Pbd
+	wBXzxZokMO3Z3dqsbNIZkFSzbcKTmh6DO3lpPggG10IzshXdGJH2z6hEO/I4a8uZZXyoaF
+	6XQ5h5HQyqsyX6WCQw+QluCKwbk4YX6WpTab3Jv+9tffi1vBPbxffdAuW5Hm5pcvZOX1q1
+	ymzlaA8iEWAZuD400jq9YrkQNv2M+Ip4eQpMvbSVm43O5pWyXsCSUxDZld/JaEUBhKtYqe
+	jWQLUyWA3QApg/FRHL+KZANiP76y0E62H7uAmiun5QlB9j9YFEcaLa7Lq/8qHg==
+Date: Tue, 11 Mar 2025 18:04:23 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Russell King <rmk+kernel@armlinux.org.uk>,
+ Thangaraj Samynathan <Thangaraj.S@microchip.com>, Rengarajan Sundararajan
+ <Rengarajan.S@microchip.com>, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH net-next v3 4/7] net: usb: lan78xx: Use
+ ethtool_op_get_link to reflect current link status
+Message-ID: <20250311180423.24232a0c@fedora.home>
+In-Reply-To: <20250310115737.784047-5-o.rempel@pengutronix.de>
+References: <20250310115737.784047-1-o.rempel@pengutronix.de>
+	<20250310115737.784047-5-o.rempel@pengutronix.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddvjeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrt
+ ghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeifohhojhhunhhgrdhhuhhhsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopehrmhhkodhkvghrnhgvlhesrghrmhhlihhnuhigrdhorhhgrdhukh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-TongFangs firmware sends scancode 0xe0 0x78 upon pressing the FN key.
+Hello Oleksij,
 
-This patch maps this scancode to avoid a dmesg warning printed every FN-keypress
-and to enable userspace to use they key in other shortcuts then the firmware
-builtin ones.
+On Mon, 10 Mar 2025 12:57:34 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
----
- drivers/input/keyboard/atkbd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Replace the custom lan78xx_get_link implementation with the standard
+> ethtool_op_get_link helper, which uses netif_carrier_ok to reflect
+> the current link status accurately.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
-index adf0f311996c9..3598a21d9d014 100644
---- a/drivers/input/keyboard/atkbd.c
-+++ b/drivers/input/keyboard/atkbd.c
-@@ -98,7 +98,7 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
- 	173,114,  0,113,  0,  0,  0,126,128,  0,  0,140,  0,  0,  0,127,
- 	159,  0,115,  0,164,  0,  0,116,158,  0,172,166,  0,  0,  0,142,
- 	157,  0,  0,  0,  0,  0,  0,  0,155,  0, 98,  0,  0,163,  0,  0,
--	226,  0,  0,  0,  0,  0,  0,  0,  0,255, 96,  0,  0,  0,143,  0,
-+	226,  0,  0,464,  0,  0,  0,  0,  0,255, 96,  0,  0,  0,143,  0,
- 	  0,  0,  0,  0,  0,  0,  0,  0,  0,107,  0,105,102,  0,  0,112,
- 	110,111,108,112,106,103,  0,119,  0,118,109,  0, 99,104,119,  0,
- 
--- 
-2.43.0
 
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+Thanks,
+
+Maxime
 
