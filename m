@@ -1,153 +1,206 @@
-Return-Path: <linux-kernel+bounces-556678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30AF4A5CD49
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:10:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4052BA5CD4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:10:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7198617B18C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:10:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F9BB17C2A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0DA2627E7;
-	Tue, 11 Mar 2025 18:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="At4YJ3V5"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8278A2638BB;
+	Tue, 11 Mar 2025 18:10:27 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9F2262D32
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7902638A8;
+	Tue, 11 Mar 2025 18:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716620; cv=none; b=ptySOr7UkpYMLXzCvTFIhR4QWQotdUPB8YZpx+HfJXk1uMSbHscO0A0uaA64ube4hiUcLBbLIix9Hsv8sByO0TVrBdBeOfGN15te1P0/MHbHscdg81AZYqL80SZd7/m3HJNpt54iF+hLDViSKXpZsgLPSL2n7KPj9gan42NfS9c=
+	t=1741716627; cv=none; b=W0+v5boHT1fExuqAVnfGdhJRHm1QdATUh502pU1dtd2A5EzbUKn2+4iIcf3SO2NNeU87jWKlqZMxjvjrltwfOp9Q3aMjHRJJG/4SCJ5drtbuHDzALPedlSWLkcUDLFXIiBqg2fkimD9lHtfftAn2Rt44AMqWBxgonrb/1ZgMQ1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716620; c=relaxed/simple;
-	bh=coAzhB0hx7rYebe0dMRnAoaKwZDK9rhElFVz2wVG6jc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aXyUtPBZJj30Btuxy+pGf/At0MXx5i3O840VG2sSTkVUrPGB5NzPzs1bwmPVK0HY+Z5XId0nwtaFt8qcS+7q8eCfJ3nd5J3KeZn2pXogEvNmDWjujwXMMOGrqoRKW7injPIwgaltOMWkilgqqAD2UZI7m1JZ+RTFROIBWrDI5HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=At4YJ3V5; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-391342fc0b5so5107287f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:10:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741716617; x=1742321417; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7tecvAy+u2nTgNfC9RdDCsqyar8u41Y2yinoQJZWxPw=;
-        b=At4YJ3V51CeWCPyLfE0DJVp//Dep8xz9zqENUdX0gbpbeWvp1hGWhYmta56PGiu1d/
-         Q9rqu/Ld1nwCoUauIk9PM/AnWH6A2LXYvEOG6MHAQ0xbJ5dzjszKvbHq6+8y6WJs5pY4
-         C0APWZOoS5kLoYZEqpN1Ofwn1TOFHmbYf2SZYSjNk/AtIUarR06HCmxwRJ9+LBeabcBF
-         cvpi8LdZogC9/PGhF028kHFS8h9jtEVni7XIRiE9LQoFOJv5zbuMbojFzoWxfGJcw2rV
-         XkBHVY9ZOE/T7hPvHW1IjUxAu6syOsBi2DvXcR5qeo6z0pOkAB0/zz+fdQKuE+VHjMOx
-         xTlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741716617; x=1742321417;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7tecvAy+u2nTgNfC9RdDCsqyar8u41Y2yinoQJZWxPw=;
-        b=t+Vi8XlaAKJuZNl1IT9zRXKl2VuMBwX+iQYwkY6ftsLUHZEB/g1mJZ9vPuhcA5vyd7
-         fm32hOPxthVLPCu9VQwcP/N60Ryj9Iet/QmDX+aWALyZly+3AkFH828A/tZ7w6zuGIzQ
-         /czT9XG2cTjDIySUC21O0SLRzp+2WncETaLlb8/Q3apIDvw0pHBVwVRFqY7BeYSIrtGe
-         aqb0pMwwWpUcVB7pbstgUqNp1Pm80VYoZx7yiRNVkRh8orL1DCmUoj6BhR/PpXs5e/kn
-         XW62vdewzkswfK1NvLIh9aFxDsyXEq9yFkuZL/XIK0yfLFY+vXCCfRgVm4qqafmmrXMH
-         a04w==
-X-Forwarded-Encrypted: i=1; AJvYcCWdzdojAAAt/O4OPJEUTSEw0VQvHOmDN0P223L1ARZ4g5qYhAbqwroXKZ/kxGbhq5PiuSJUSa0mruUdg5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4frbihVJMbmKaCpzvxNg/r5SvHkF3kCpDOPybvXgBQeqFD3KA
-	NPRCbNOt/Bi9QBiCxgZ/sIeJxescss5yyEBFyUiuHnCfZsOGlv+DOHNpJPDf0zmEDE//vwznqcU
-	DNP82B6zOFkPNrihHI6H0ZhdBWzbvNZDOstH2qw==
-X-Gm-Gg: ASbGncvm7i6YAoR3AZEhtd/BxApt7l5RS73lJzfWe27Z6s1M6wOchZrw+hiizc1QXOS
-	D3xLrpB+Oim2y3Xy7IC4RjI9yIJr9ZGndTrc1oGi1gqL6Fs7+wOiTdPDSKoXz8y3ggJrFE+p+Lg
-	OxF2u8zNihpuMHepzbTIzf0e1tP4I=
-X-Google-Smtp-Source: AGHT+IEoMIu2qa0ouzgu4WMGPB2l4x9tF1jT5ThBiiWJB8oICkXYch22N7BWvOSIBrMFeOfJO4XpxafHp8QkcQy5AgE=
-X-Received: by 2002:a05:6000:402a:b0:391:888:f534 with SMTP id
- ffacd0b85a97d-39132d39209mr19655289f8f.20.1741716617093; Tue, 11 Mar 2025
- 11:10:17 -0700 (PDT)
+	s=arc-20240116; t=1741716627; c=relaxed/simple;
+	bh=uFQjRjX3d/rynmWIbL31HzUK72S6VsxciF2bSXaoFzc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HIPFrf6SbA7ihJzvGism1Ggkg9vd4lqn8a8EJTs+e/bfH+G9J7g6k7DgbAylAedBvjzJE6qV70AGylRR9r3pLJUcNHEllR4V18DwvKm1MxzJYoUgnKXL7I7jn+aT3aZDBfX9XyZyDv1o4XcqhQQN2f56YXr2jF9VxVdLFTvKNtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZC1vS2WHyz6HJjj;
+	Wed, 12 Mar 2025 02:07:48 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 66C6C140134;
+	Wed, 12 Mar 2025 02:10:21 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Mar
+ 2025 19:10:20 +0100
+Date: Tue, 11 Mar 2025 18:10:18 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+CC: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>, Bjorn
+ Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>, "Nishanth Menon"
+	<nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
+	<ssantosh@kernel.org>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+	<dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+	<ntb@lists.linux.dev>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+	<wei.liu@kernel.org>, <linux-hyperv@vger.kernel.org>, Wei Huang
+	<wei.huang2@amd.com>, Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>, "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+	<martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>
+Subject: Re: [patch 05/10] PCI/MSI: Switch to MSI descriptor locking to
+ guard()
+Message-ID: <20250311181018.0000477f@huawei.com>
+In-Reply-To: <20250309084110.458224773@linutronix.de>
+References: <20250309083453.900516105@linutronix.de>
+	<20250309084110.458224773@linutronix.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
-In-Reply-To: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
-From: Christopher Obbard <christopher.obbard@linaro.org>
-Date: Tue, 11 Mar 2025 19:10:06 +0100
-X-Gm-Features: AQ5f1Jog8mLk3h4VXg6PLgDM_85qkXGsgrKxdx2EG0uqVayo6r93gzulMiKOPb8
-Message-ID: <CACr-zFC=mPNeeHMp9XnSby+cMQaPWt_3s8iUiCN+EnVPeGad8Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm interconnects as built-in
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-I sent this patch to start the discussion, some things I found:
+On Sun,  9 Mar 2025 09:41:49 +0100 (CET)
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-1) Some interconnects are missing from arm defconfig. Should they be =y too ?
-$ grep CONFIG_INTERCONNECT_QCOM arch/arm/configs/qcom_defconfig
-CONFIG_INTERCONNECT_QCOM=y
-CONFIG_INTERCONNECT_QCOM_MSM8974=m
-CONFIG_INTERCONNECT_QCOM_SDX55=m
+> Convert the code to use the new guard(msi_descs_lock).
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linux-pci@vger.kernel.org
 
-2) Some interconnects are missing from arm64 defconfig (which should
-probably be in there) (I have included just two examples):
-$ grep CONFIG_INTERCONNECT drivers/interconnect/qcom/Makefile
-obj-$(CONFIG_INTERCONNECT_QCOM_QCS615) += qnoc-qcs615.o
-obj-$(CONFIG_INTERCONNECT_QCOM_SM7150) += qnoc-sm7150.o
+This one runs into some of the stuff that the docs say
+to not do.  I don't there there are bugs in here as such
+but it gets harder to reason about and fragile in the long
+run.  Easy enough to avoid though - see inline.
 
-I can handle these in follow-up or v2 of the patchset as follow-up
-commits, please let me know what you'd prefer.
+Jonathan
 
-On Tue, 11 Mar 2025 at 19:03, Christopher Obbard
-<christopher.obbard@linaro.org> wrote:
->
-> Currently some Qualcomm interconnect drivers are enabled
-> as modules which isn't overly useful since the interconnects
-> are required to be loaded during early boot.
->
-> Loading the interconnects late (e.g. in initrd or as module)
-> can cause boot issues, such as slowdown or even not booting
-> at all (since the interconnect would be required for storage
-> devices).
->
-> Be consistent and enable all of the Qualcomm interconnect
-> drivers as built-in to the kernel image.
->
-> Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
-> ---
->  arch/arm64/configs/defconfig | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 219ef05ee5a757c43a37ec9f8571ce9976354830..6582baee2ab02ecb2ff442c6e73aa6a23fee8d7f 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1656,11 +1656,11 @@ CONFIG_INTERCONNECT_IMX8MN=m
->  CONFIG_INTERCONNECT_IMX8MQ=m
->  CONFIG_INTERCONNECT_IMX8MP=y
->  CONFIG_INTERCONNECT_QCOM=y
-> -CONFIG_INTERCONNECT_QCOM_MSM8916=m
-> +CONFIG_INTERCONNECT_QCOM_MSM8916=y
->  CONFIG_INTERCONNECT_QCOM_MSM8996=y
-> -CONFIG_INTERCONNECT_QCOM_OSM_L3=m
-> +CONFIG_INTERCONNECT_QCOM_OSM_L3=y
->  CONFIG_INTERCONNECT_QCOM_QCM2290=y
-> -CONFIG_INTERCONNECT_QCOM_QCS404=m
-> +CONFIG_INTERCONNECT_QCOM_QCS404=y
->  CONFIG_INTERCONNECT_QCOM_QCS615=y
->  CONFIG_INTERCONNECT_QCOM_QCS8300=y
->  CONFIG_INTERCONNECT_QCOM_QDU1000=y
->
-> ---
-> base-commit: b098bcd8278b89cb3eb73fdb6e06dc49af75ad37
-> change-id: 20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-258fcc961b11
->
-> Best regards,
-> --
-> Christopher Obbard <christopher.obbard@linaro.org>
->
+> --- a/drivers/pci/msi/msi.c
+> +++ b/drivers/pci/msi/msi.c
+> @@ -351,7 +351,7 @@ static int msi_verify_entries(struct pci
+>  static int msi_capability_init(struct pci_dev *dev, int nvec,
+>  			       struct irq_affinity *affd)
+>  {
+> -	struct irq_affinity_desc *masks = NULL;
+> +	struct irq_affinity_desc *masks __free(kfree) = NULL;
+
+This is a pattern that the cleanup.h docs talk about that
+Linus really didn't like in some of the early patches because
+of wanting constructors and destructors together.
+
+Maybe use an inline definition as
+
+	struct irq_affinity_desc *masks =
+		affd ? irq_create_affinity_masks(nvec, affd) : NULL;
+
+
+>  	struct msi_desc *entry, desc;
+>  	int ret;
+>  
+> @@ -369,7 +369,7 @@ static int msi_capability_init(struct pc
+>  	if (affd)
+>  		masks = irq_create_affinity_masks(nvec, affd);
+>  
+> -	msi_lock_descs(&dev->dev);
+> +	guard(msi_descs_lock)(&dev->dev);
+>  	ret = msi_setup_msi_desc(dev, nvec, masks);
+>  	if (ret)
+>  		goto fail;
+
+This runs against the advice in cleanup.h. It is probably
+correct and doesn't hit the undefined paths that motivated
+that guidance, but still maybe worth avoiding the mix of
+cleanup and goto handling.
+
+Easiest way being to factor out the code after guard to a helper.
+
+
+> @@ -399,16 +399,13 @@ static int msi_capability_init(struct pc
+>  
+>  	pcibios_free_irq(dev);
+>  	dev->irq = entry->irq;
+> -	goto unlock;
+> +	return 0;
+>  
+>  err:
+>  	pci_msi_unmask(&desc, msi_multi_mask(&desc));
+>  	pci_free_msi_irqs(dev);
+>  fail:
+>  	dev->msi_enabled = 0;
+> -unlock:
+> -	msi_unlock_descs(&dev->dev);
+> -	kfree(masks);
+>  	return ret;
+>  }
+>  
+> @@ -669,13 +666,13 @@ static void msix_mask_all(void __iomem *
+>  static int msix_setup_interrupts(struct pci_dev *dev, struct msix_entry *entries,
+>  				 int nvec, struct irq_affinity *affd)
+>  {
+> -	struct irq_affinity_desc *masks = NULL;
+> +	struct irq_affinity_desc *masks __free(kfree) = NULL;
+Similar to above.
+>  	int ret;
+>  
+>  	if (affd)
+>  		masks = irq_create_affinity_masks(nvec, affd);
+>  
+> -	msi_lock_descs(&dev->dev);
+> +	guard(msi_descs_lock)(&dev->dev);
+>  	ret = msix_setup_msi_descs(dev, entries, nvec, masks);
+>  	if (ret)
+>  		goto out_free;
+> @@ -690,13 +687,10 @@ static int msix_setup_interrupts(struct
+>  		goto out_free;
+>  
+>  	msix_update_entries(dev, entries);
+> -	goto out_unlock;
+> +	return 0;
+>  
+>  out_free:
+Here as well.
+>  	pci_free_msi_irqs(dev);
+> -out_unlock:
+> -	msi_unlock_descs(&dev->dev);
+> -	kfree(masks);
+>  	return ret;
+>  }
+>  
+> @@ -871,13 +865,13 @@ void __pci_restore_msix_state(struct pci
+>  
+>  	write_msg = arch_restore_msi_irqs(dev);
+>  
+> -	msi_lock_descs(&dev->dev);
+> -	msi_for_each_desc(entry, &dev->dev, MSI_DESC_ALL) {
+> -		if (write_msg)
+> -			__pci_write_msi_msg(entry, &entry->msg);
+> -		pci_msix_write_vector_ctrl(entry, entry->pci.msix_ctrl);
+> +	scoped_guard (msi_descs_lock, &dev->dev) {
+> +		msi_for_each_desc(entry, &dev->dev, MSI_DESC_ALL) {
+> +			if (write_msg)
+> +				__pci_write_msi_msg(entry, &entry->msg);
+> +			pci_msix_write_vector_ctrl(entry, entry->pci.msix_ctrl);
+> +		}
+>  	}
+> -	msi_unlock_descs(&dev->dev);
+>  
+>  	pci_msix_clear_and_set_ctrl(dev, PCI_MSIX_FLAGS_MASKALL, 0);
+>  }
+> 
+> 
+> 
+
 
