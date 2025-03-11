@@ -1,108 +1,176 @@
-Return-Path: <linux-kernel+bounces-556718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E128A5CDE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:29:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5EDA5CDE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:29:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF5B8175C7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:29:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AA6A3A2F37
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F1A2620DD;
-	Tue, 11 Mar 2025 18:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447A6263C66;
+	Tue, 11 Mar 2025 18:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="kH94Yn7I"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CjKq4kU7"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7C2260362
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B9425FA2F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741717757; cv=none; b=UkPnIvILcizltMResExwsAS9yYl7vbdN2Voy/oj62ra4E2i+HrcdxK40fopeOyNksLYZrgBO7UWpIBYSk+IYcxiul27CrsG/YCB7V03uN8p5MB9A09adSG3nHr1oFSXJsAepDqpZA7gmvQt0WYpNwNixXaSYVpgB0//p6SPq6Lc=
+	t=1741717781; cv=none; b=Fva2unaR9+NBfL+nqNpE1kF+fNs1wtISG1IlmKtOrwwEff2QLm0KJ0gi+kctulQvWeV/5+wv3HHJOX9KyAGwKWqQAzx0OkCoDc5Q3uH2XOIIk7JmtpqCTFL+yMIPWesDM3BopwJiE5YqrBRLxDy7Q4Hwe6JQK1285fxqrmiibjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741717757; c=relaxed/simple;
-	bh=9X15yVtPK8bVmWqLZRTi+cR507jNF7k6sPV9emhz/Mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UyDpaRQWp95zxaegMQrzQ+VgPASwaam0mpvyF1OmG+Ro1geyxEHgwXUJPigjkY15v5aHvDT8hjhWaEwFsAWq7dHbYiwHGPEKYsgA7kdjegG7djaaH1Bh9mKliatsd09uEMBUW67HFyyJqnozAv1FGqpSwkZK511zGw2KvOAyP7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=kH94Yn7I; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=9X15
-	yVtPK8bVmWqLZRTi+cR507jNF7k6sPV9emhz/Mw=; b=kH94Yn7INUhujzxXZa9F
-	qYhMJG5Un5/PmKtvCmse3UcQP46yY8Ozquk4nAG70xUfxj7cuEKT13pYfxivBfIn
-	lUd9fMaLpDqkBu16Uf5ywNnaC8zriImupa8iHn2yC7buduS+eopUsA7MBQ+pXXil
-	s9h3XywWIdNuYKhmGKb+DhwkiN94cLhoY+JNd31gXlZ42K04hrUUdXHDG11xCwp1
-	1s88NdR2LTlFCesRVTzBFdN80/HjrNR8ti8B7aRyUPNf+9wkQ2H6iaJMLyg27Nz5
-	NKij/fy5uhUi4EK5XqFLfVl4R42YMvcdVNc09h0qo4hNYYtq1H2BTLyG9GaXMZQb
-	lA==
-Received: (qmail 969077 invoked from network); 11 Mar 2025 19:29:08 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Mar 2025 19:29:08 +0100
-X-UD-Smtp-Session: l3s3148p1@k1amQxUwesS57tsa
-Date: Tue, 11 Mar 2025 19:29:04 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: vigneshr@ti.com, aaro.koskinen@iki.fi, khilman@baylibre.com,
-	rogerq@kernel.org, tony@atomide.com, jmkrzyszt@gmail.com,
-	andi.shyti@kernel.org, reidt@ti.com, wsa@kernel.org,
-	linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@kernel.org
-Subject: Re: [PATCH v2] i2c: omap: fix IRQ storms
-Message-ID: <Z9CA8H2GAArdTRqI@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andreas Kemnade <andreas@kemnade.info>, vigneshr@ti.com,
-	aaro.koskinen@iki.fi, khilman@baylibre.com, rogerq@kernel.org,
-	tony@atomide.com, jmkrzyszt@gmail.com, andi.shyti@kernel.org,
-	reidt@ti.com, wsa@kernel.org, linux-omap@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@kernel.org
-References: <20250228140420.379498-1-andreas@kemnade.info>
+	s=arc-20240116; t=1741717781; c=relaxed/simple;
+	bh=zgSKxBt+rElVEw68ebE3jI9WCobyYWxY8zdElXJF0tc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p5OK/1evoxp4e6NyEWYOm4fVPxQYPkigqjhL9R+cfGanePe7YeQ8/gEAog+9wXTLfSNBDSWVyMNW3VO2dtifnMZfMK8dGRyynZWCoIB820cu61RbLCOIssHXpuRMXm/sHGVLpDgdyLGBTxHYLtQv5pjEcj/OVA527F4DKS17Les=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CjKq4kU7; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-224191d92e4so103403915ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741717779; x=1742322579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WRTQ4j61hoHCf9EekEGmcFt4dM7Z3jMdsNpn83Wx2KQ=;
+        b=CjKq4kU79caMQmKSzEX3W+x9iT6SzKgj9OpMy1Og3ZlHX+28BJ6Rxp9EoU8I71qoZY
+         3/RXlzZ1jXt/bFeQlfeLJbI5quQuAo1V/1w0evX0s0fNNQn0hlqLYkFwJ7LscZGNDIUn
+         jIXVrBBUc8wMH68brlEb5NMpJELOHj96i3zf1yde2Sw7DYwP0m6RrgS7i9+enayThYG3
+         kP5/cRU05owP6GvLKt/rxYrTw9lsLiYarekyZfqjhYb07Voy7oKMGu4R3S+T4sOzLveK
+         1N3PnBv6wyEKATrkoAydl6pFN6ih41+/b7PoAtlxKnPc+QPtRPSmYhu7qELIv8U7MVfu
+         TzfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741717779; x=1742322579;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WRTQ4j61hoHCf9EekEGmcFt4dM7Z3jMdsNpn83Wx2KQ=;
+        b=l3AOyOZ6KVGF/8ksJDduUiiOHHAr9UiCo189y8iXP0uys9NG0qToWhNfE5yBEQXozS
+         xYUpmzec9HeWj0TE4z0pQVLT1w8BNKCsWD7H1gnwMCeWHHBUlnrBuKS2NZg2tQ+o7a1E
+         8SsHvEWhYEKghAhdCdqu46tyiHfSTRgYh8nQVx4B93BCPD6MfRRr+uvbfnAwJ28G8WQQ
+         tl7M3JJbgAxJVdzJhdWlWK6iSX/cepoq4WeiobYmdDRHMQ4wrj5f7mpQMKTBUslcG9Z/
+         UcEo+GscNKj2ImnjGKH3nNwZlT85tOVDGvrP8Ih6vWcXhP4mebTtDSF46kT+3/olJ9y9
+         fF4A==
+X-Gm-Message-State: AOJu0YyE8/MMsnlYIjtovDj/nMmW0vnc+aybwNEf4+835Cjk2mQ40IBJ
+	RaCwE/rbXwW+1aP4CP22Jc3hYC8mJbergllxdVNHyFXk6CBnlH07a8qdOg==
+X-Gm-Gg: ASbGncv2Wx7x0JdazSWS1TENTUhWg9nefzFmJPg4xbmG6kMDK2Gb15o6fThdJT7F/1O
+	g+2nqElUicDB0WVglVYs81j9KOTuY4A0E2PcQ5D6B9UwIR8+s5/lxEsvjU7IDM3e9vQJpNS4XGP
+	GpcJvhAjsbS4BfoRLEB95QjmnGFXj2xs83sShh8c221kDPEpJhpEmRyHSY+TPmGdydjlfRKn7A6
+	tjnEEKzV/zxeJblX7dj40NFPpqjGySvuDaOSorbnKwK7ek2lIiv7iiw3/6fvIP+WlRCuF+Zl9ai
+	aeeb/3oUh1+pZ3dXdgSUIlcCsbc7DOASlPjBVkz0xawu+Wke9BBA5xNth9EhTbHGvl3IrNjOw2I
+	Jr7WFBoslAIkyQQEo9MQg+7BOmL5MiJ+o77OP
+X-Google-Smtp-Source: AGHT+IFQGJTTdvG6pVR1MHG6bR1ijM1daouvVEyrnHZC4BKr1lZ7plVYB99CvzkloxCXHvl3HNoOxw==
+X-Received: by 2002:a05:6a00:1703:b0:736:a682:deb8 with SMTP id d2e1a72fcca58-736aa9e54edmr31970782b3a.8.1741717778978;
+        Tue, 11 Mar 2025 11:29:38 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:76e1:9160:984c:6886])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736c05cb6e3sm6949933b3a.45.2025.03.11.11.29.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 11:29:38 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH] f2fs: add carve_out sysfs node
+Date: Tue, 11 Mar 2025 11:29:31 -0700
+Message-ID: <20250311182931.1043290-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pbb9IRLzipP7HCI7"
-Content-Disposition: inline
-In-Reply-To: <20250228140420.379498-1-andreas@kemnade.info>
+Content-Transfer-Encoding: 8bit
 
+From: Daeho Jeong <daehojeong@google.com>
 
---pbb9IRLzipP7HCI7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+For several zoned storage devices, vendors will provide extra space
+which was used for device level GC than specs and F2FS can use this
+space for filesystem level GC. To do that, we can reserve the space
+using reserved_blocks. However, it is not enough, since this extra
+space should not be shown to users. So, with this new sysfs node,
+we can hide the space by substracting reserved_blocks from total
+bytes.
 
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs | 10 ++++++++++
+ fs/f2fs/f2fs.h                          |  3 +++
+ fs/f2fs/super.c                         |  3 ++-
+ fs/f2fs/sysfs.c                         |  2 ++
+ 4 files changed, 17 insertions(+), 1 deletion(-)
 
-> This needs at least to be tested on systems where false acks were
-> detected.
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 3e1630c70d8a..6e327fdc6ef4 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -828,3 +828,13 @@ Date:		November 2024
+ Contact:	"Chao Yu" <chao@kernel.org>
+ Description:	It controls max read extent count for per-inode, the value of threshold
+ 		is 10240 by default.
++
++What:		/sys/fs/f2fs/<disk>/carve_out
++Date:		March 2025
++Contact:	"Daeho Jeong" <daehojeong@google.com>
++Description:	For several zoned storage devices, vendors will provide extra space which
++		was used for device level GC than specs and F2FS can use this space for
++		filesystem level GC. To do that, we can reserve the space using
++		reserved_blocks. However, it is not enough, since this extra space should
++		not be shown to users. So, with this new sysfs node, we can hide the space
++		by substracting reserved_blocks from total bytes.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1afa7be16e7d..5718996c42a8 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1800,6 +1800,9 @@ struct f2fs_sb_info {
+ 	u64 committed_atomic_block;
+ 	u64 revoked_atomic_block;
+ 
++	/* carve out reserved_blocks from total blocks */
++	bool carve_out;
++
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	struct kmem_cache *page_array_slab;	/* page array entry */
+ 	unsigned int page_array_slab_size;	/* default page array slab size */
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 19b67828ae32..42651ec824f9 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1836,7 +1836,8 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	buf->f_blocks = total_count - start_count;
+ 
+ 	spin_lock(&sbi->stat_lock);
+-
++	if (sbi->carve_out)
++		buf->f_blocks -= sbi->current_reserved_blocks;
+ 	user_block_count = sbi->user_block_count;
+ 	total_valid_node_count = valid_node_count(sbi);
+ 	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index d15c68b28952..a50f5cfe9fa9 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -1065,6 +1065,7 @@ F2FS_SBI_GENERAL_RW_ATTR(max_read_extent_count);
+ F2FS_SBI_GENERAL_RO_ATTR(unusable_blocks_per_sec);
+ F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
+ #endif
++F2FS_SBI_GENERAL_RW_ATTR(carve_out);
+ 
+ /* STAT_INFO ATTR */
+ #ifdef CONFIG_F2FS_STAT_FS
+@@ -1252,6 +1253,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(warm_data_age_threshold),
+ 	ATTR_LIST(last_age_weight),
+ 	ATTR_LIST(max_read_extent_count),
++	ATTR_LIST(carve_out),
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(f2fs);
+-- 
+2.49.0.rc0.332.g42c0ae87b1-goog
 
-Which do you mean? You did test this on GTA04A5, or?
-
-
---pbb9IRLzipP7HCI7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfQgO0ACgkQFA3kzBSg
-KbYNng//dJNXHPtSyagIA2NIcawXbeW9DuepAmJECAsvWUxEclN9RCaVX9nm7mZo
-AsGMdedDFbZS8zsNRkmnu9B0EegEubjWjXUhcg0JqWl5vgiO8BiT6GFMbiQleITa
-7ADVB9c4du32CBEnb1jirBeBidciUoXSHxHE/e7jZoE+IPfypi61bpc1yS7fsTzH
-9V9vWKALDg4/SMs0OFl77leLLiB+/mdNNRhzQZkba+72PUfxdRDr1mqTDAu+CrTe
-YG/ACH1BOYJcNmawFwvy6IAGZWkmGZ6tlXx0duXUxkfAFQCqoBb+sZKTAFpjcS1N
-hz99qG20hzQXOxtMj2Oq15FjXE2c5cNjDijTVlxCQPkWc8srm5/fh/JhF7uy9y1o
-Ot+bWrypWRBKaMMwwTf0OalE9wgV/2FvwTKrgAw5N1yfRUun+7HifDUUQJvC249H
-gQDnM2oMnkBZ2S5TZ1cfBd3zpVQ/X1s6byrCCoUOzgAzuBKEEmvmSAq0orrKuQrg
-drBVElD3LXlGclBNJeC4IkThfo0E7n8bN9RAEdR+TTnWj/CL4WQTSE1F8E/uHjKr
-9VwLbBoR7wGqjaFPSmqYgKnk4KpNJuxsWpJEPBAhrZZb5We5KuiACmEJovO+mSbx
-/47B6kqCeGP4TOjlEOSIzqkKJqvFg0l+cPIY0+vERL1FKdpIwqA=
-=eCGB
------END PGP SIGNATURE-----
-
---pbb9IRLzipP7HCI7--
 
