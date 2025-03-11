@@ -1,175 +1,116 @@
-Return-Path: <linux-kernel+bounces-556019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2411BA5BFE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:59:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EAFBA5BFEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:01:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56EFF173FA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:59:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BECCC174154
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36345255E3C;
-	Tue, 11 Mar 2025 11:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF771DED69;
+	Tue, 11 Mar 2025 12:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aqTwGj9C"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DFYWG/si"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7F5222589
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3073597C;
+	Tue, 11 Mar 2025 12:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741694389; cv=none; b=H0tUuB+hJnOT6/pu4wZA4jXmNAc61FBuE6IaEhgzSbPVQHotmvd9nJ9RceLAd1f8lUQtThQbL9SycL8jlJYKFtrmB8BTHXf/c4rsMQRtuP64MWzDbfWUDeNK4sNZjYHy9E/UkC8PkLGuR4jQf55qvIskuGjyFe/BDynA46T+IN4=
+	t=1741694462; cv=none; b=ASGBK845XRmsI91DvfOsMw6ZgvsQiPKecTUQu8zPsbnYP+mV540gVl75VA76/1eGsXuvTrZfJ/NAGR0vSIa9V67wb2pe8hvojeBBCdvuB6C+6eeDYxEsNScsTyXesgqhjVnJtsNAubBJT+d9JJdAjO7UVKXCqiRnxJ5A0kaPLlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741694389; c=relaxed/simple;
-	bh=6ik8CDdyssom/lcu/O8RGgc/PpkhidUmPdJmCaGldO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sZtNBwSHHg24pRmxLh11lDXql8Wpvj0YR3LxDlDScR7A0qd7Yz5qnqc4MOHQRUCEgsdrT/gnGHwB3iPJ+UVx3PyZlRF5woo/mzh4moVRqE4kYH5QyAe5JznTb0Iv9eel44q+QWxLPzxWu4Szfq7Xi2i1R0eGrmNBJrUnYCad4t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aqTwGj9C; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741694386;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QDKIujl/GD2HW4RyQYl/pH+0c9rxOzqbtce1pc+BO6M=;
-	b=aqTwGj9CHkVFVn3DEBlCkxhlU06W8g0emzKte2tBn2ihXl5YSI8FcpHEs5OrrYf7pwYmPw
-	i+af9rTlUQd+klYkOLgWXQdiuMUZbwxkNzPLF8rQjBmkwmiZbUZspIq5lmyWWFN9LLcNDT
-	mJcwqwhLdI1y7HzRkX+heto3qjrWdDg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-216-bZtOmGD0NHeGpt81KJ-pZw-1; Tue, 11 Mar 2025 07:59:45 -0400
-X-MC-Unique: bZtOmGD0NHeGpt81KJ-pZw-1
-X-Mimecast-MFC-AGG-ID: bZtOmGD0NHeGpt81KJ-pZw_1741694384
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-438da39bb69so38012845e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 04:59:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741694384; x=1742299184;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QDKIujl/GD2HW4RyQYl/pH+0c9rxOzqbtce1pc+BO6M=;
-        b=mzS4iGMuNguKca8HeWFwQRIl5k5/qHxQAV6yOvBtaNDLOugn3/cduhr4LL5WfQ3g3L
-         2h/vlI7nHi8OmGahAGuIe8QduQbeL0c/7Jxj2VqErU7A5O2m56ITIay0S5/vnufyJ4tl
-         Xd3XmgJhjBgjyZhCjVN22n8R+fklhX+Nmi2BhaclHo5cZg7NtljtLfgFT486bU9rNqid
-         JzVS6vGtkDofNLJMDxoUhksIRkfeB8bwqBJv7og0pcP4gurr67u3rZAmtu2Rfz8I8Dno
-         8s9Y343kBr6w6E962LFmXlZCY1AXNuQEJ0AlFeRe9tuOXrHx3RXTdtgFM08xAFtVzhdp
-         4feA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvfqaN/RgJQZhKoiCr0FO2zhgkERzr5i3pDwGn1U5uCtVIc/0l1YaeBbcP/oRG3SIkM2smQ5rpqt6FAgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXFMDG2YCyOXZLDLnJYozhX5G9rNZ/WVYxkOFJt74AcOUzfjEO
-	BpBvIG9fq4ZczdQLkTZnk3zIJJu0NRHvy4G3WxZS9snNY3cnYBBKTDHcDvKyR9ca8MpiQSBu7fY
-	bhcjPmXFlILKNEwUKK7vAQtGl8lzRX8gmiIe+V5O5Fh1719mZp4C9N4pMKnSJug==
-X-Gm-Gg: ASbGnct1MTI0OBZbmspRE2Ak2ne7mVkDtVfFU493Rsp7tUyyGfjGNfTCKhhMQsHlthL
-	IogNAW68nlypy8yDt+jitGVk8K2mJ+OdHt+h5CCpLoIg/B0ZMQdax27A89TgRjFIzb9ltgpXVzJ
-	vsBw7iCNy6aiWFNjJf2TccagR5SyOhbu/eaP41u3JjlQjSHLcUP+Y4IG1tKNV0s19jgcUJ7Jpxs
-	xDkxOJU6uaoP0XGluRLqeCa3WnCTLjWnhbdn19U5ZlMtYR4iI9ZBhKYasK4Bdx3TqSjZRfNbICQ
-	fRcvihot129iF4QjOm8aMXc1owH8J+78d/CqW/M5LIY=
-X-Received: by 2002:a05:600c:4f0c:b0:43c:eeee:b713 with SMTP id 5b1f17b1804b1-43ceeeeb9e3mr86667185e9.20.1741694384265;
-        Tue, 11 Mar 2025 04:59:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGO9dgeAbIUcM48A8qtpiJ49dyz1L2I4mkXKwM7z476ZguqAw6Rk7o/AfXg3QYfwBdjPJvv1w==
-X-Received: by 2002:a05:600c:4f0c:b0:43c:eeee:b713 with SMTP id 5b1f17b1804b1-43ceeeeb9e3mr86666545e9.20.1741694383075;
-        Tue, 11 Mar 2025 04:59:43 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.49.7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd4352e29sm206132935e9.32.2025.03.11.04.59.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 04:59:42 -0700 (PDT)
-Date: Tue, 11 Mar 2025 12:59:39 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <llong@redhat.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
-	tommaso.cucinotta@santannapisa.it,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 4/8] sched/deadline: Rebuild root domain accounting
- after every update
-Message-ID: <Z9Alq55RpuFqWT--@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250310091935.22923-1-juri.lelli@redhat.com>
- <Z86yxn12saDHLSy3@jlelli-thinkpadt14gen4.remote.csb>
- <797146a4-97d6-442e-b2d3-f7c4f438d209@arm.com>
- <398c710f-2e4e-4b35-a8a3-4c8d64f2fe68@redhat.com>
- <fd4d6143-9bd2-4a7c-80dc-1e19e4d1b2d1@redhat.com>
+	s=arc-20240116; t=1741694462; c=relaxed/simple;
+	bh=1po9kPpQ5NSe95BZBG3yLS0Kw6JEa7dbgysMQJ2FGYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C05xlg0lRYTNdYa96GGzt2rASu3dS8HDAaZf5rmwhwxC48apN1FCZWta3I83BPM6u/Srr+sw79rCT5LKM/+J7oz+5T4p6dDsHK77gl2gjxnu1gMNNy/PTjV++9IUGcjw7QxjoBu8RMnxMpZrhahXOWI0jbJ2zrdiDfTpDO6jbcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DFYWG/si; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741694421; x=1742299221; i=markus.elfring@web.de;
+	bh=1po9kPpQ5NSe95BZBG3yLS0Kw6JEa7dbgysMQJ2FGYA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=DFYWG/siRh0Mh/2be3tAPCHYrqeeu0/+cHC14EWXnBOem63oJzDXMoohArMYAT0P
+	 utdEpb3PlH/NH4mHcvvApNBhWZyEMXqUx66l8VnTqDt+9zkMgHlZ2Svmh5LslMC9H
+	 CsAst5VWlRAYT/3McvxAmqzg9G3Z3XUfEix1etePWq3elzVe6U34HhS/iqRb/Zrwg
+	 pUu9tyoyiM9n0QTYUnEV9vq+nWLo81HkG6caRbHxeE0oxIFrQ0X2y0mXWBB+b52vc
+	 aduFyui07XuG+hVWr0vOpUhp0ijBP3VBkt2TDCK2oTqmD84qSxArWhWQj8ZgFUrCG
+	 mfa5++zL1WOlYlXcAQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.40]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MP3CC-1tZMWv1jqO-00VlJ9; Tue, 11
+ Mar 2025 13:00:21 +0100
+Message-ID: <bf26ba74-ff44-4642-864e-2c54d49ead74@web.de>
+Date: Tue, 11 Mar 2025 13:00:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fd4d6143-9bd2-4a7c-80dc-1e19e4d1b2d1@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] device property: Split fwnode_get_child_node_count()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-acpi@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Jakob Riepler <jakob+lkml@paranoidlabs.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Daniel Scally <djrscally@gmail.com>,
+ Danilo Krummrich <dakr@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Lee Jones <lee@kernel.org>, Matti Vaittinen <mazziesaccount@gmail.com>,
+ Pavel Machek <pavel@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+References: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
+ <20250310150835.3139322-2-andriy.shevchenko@linux.intel.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250310150835.3139322-2-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Q/a3GCeWD3iUFv6+3kpvObqx+Bs4+4nh6EgTLERJ3lTZ1L52yrg
+ Q2VwG9XADV/Ol9rBvkHE9v7/VSYnZeBq+K12f5MpvIUNTVqFeExkLvdolfJKEN1vU5XPP1I
+ oeEf8/hlStMfKsV6QZRn7ejw42fIEuDEbzUmonLDw+2E03UJ7UkHaBHIt6wvvfOazNW4Wem
+ q3vahFzBH9NvO9iYRb5CA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:M0Vtme7G86E=;Z4oV0SEqDKd1dI2BbPj5sTxr7dv
+ 9kx9rhCJNbUFO7cYtCYt12hgM20h1d5bcYz9n/9Z5XW0shX9AJZ78iKFb4wcH9Ir2rdUcTVVo
+ PRz2SysCb/frPHYUA/TNQoPI91FJzflnEvtLj3DvX3v+ULH1qtgUzcLroRWOGm7GdFFjL2lYT
+ s2aqDca1l4mGYB9J4MyxdmPykJtpFtnZRzSnlu+w6KdvgZX+k8jA4sYX2Ad0Ba3NHWlrZqB4x
+ IjZMOnqNJBEiSN8lbfYPsUL0C3M5UEQwIZlBX4iVc5qcX/K42ChZudsL7JlC19sNIESmCMcLv
+ wZn9AXGROECKN9JtDnuLJtXTl3Imkos7T6pROa7YaJo1JfcWS11dTeR20ovhHXquLkZz35YJV
+ vVKnxittJ6rv4xfYcoey1sFk0yVPGa09OzzkyLniYoOo6hBfmRkjEn3PQ/0BPzpI/tNs+4kHb
+ YC9a9gIaIGVYBsJEEzXltXqOhlH2kAm5Ai+uD74LTatv+rX5URneTV9jddiXggcSmoBa56SvT
+ 60yRlhwWsA5gWRnDPsWDHYTimTqTz24ARvRgWmJ6f05QGdtrC9YYxs4uFz/Twga1h1XSov7VO
+ 4otoTQDBh2KWhX64CsC7/bq3HSrHAeAOELyPGm2CA+xXnNnSPem735RzBgMqTdvCt/Mtf4/e+
+ JVy8K7QJkUEAInDt66QZUrSYpZVH9WecY9TLD6QAai7D9mAqUDGcMEb+PKATbua/zpzMCy3w/
+ TixFfrOJNpQvTpsrSREN+hzn1XVuISafELT5B4xUkQFYVXGS8P7SQhLaR7QUKd2APX81fqD1A
+ J56oET7hkOFagf2Jo7kx4NBy/bd1gKzh8R5n1A1A8k0hKwaHmGZOXa7hoTiWiWCVVBfVnOuo/
+ 8dxm5R+2nS5MO0nU5CHrfNACy55eSUCNcZEvEYPwJd1V7Pv5V9/QqCosA6D4hU2/z/HUjAf4M
+ b/x2EQJyJVWuS8h38RNPrDSqwLOhMOTE/MFIQ0mmKcZJ2i1SNM3vdTDN7qGLdTCpopG5/J6j+
+ FNQlw4NjtoS9eMo1rrD5q7Loe1QhXleQ34VdP1iXs5x87i4AzjYWoc7PmbEitItF64UAgKfP3
+ TpGUCz+4Nju6sKJsVBs6TbitlVQNmQ18xXGnXMnD4AAATq5BH4nyhEL9zxirrufwRJEdeyQA3
+ is2CXBAERevsmiSGxF0MhTrHvX2QJC8OfoKi17zo4sXSZ3g5c0D4LY875A8rJkcF0X/qjrHJa
+ CTFA7kD4NueAwZodu9RxIJmrm3jr2xOCNXlKE6O7E1e7R0m3qJ+H+kiNkQUE4cB2vSQ9SG9Ko
+ Jiq3qZCOlWVD6om6KyH/jM8TbpOkHDnMHmbbfHYnFNr6NWJ22L8SlfqLdhX0JikbxQgTNVrr0
+ RDE4B3D8TgHKlT0sT8AfeB9zyU7HeSmjRZp9tSNKMFSpGs2RITDORU5oNSmCta+LN6WcdWJS9
+ 8xaNWEg==
 
-On 10/03/25 20:16, Waiman Long wrote:
-> On 3/10/25 3:18 PM, Waiman Long wrote:
-> > 
-> > On 3/10/25 2:54 PM, Dietmar Eggemann wrote:
-> > > On 10/03/2025 10:37, Juri Lelli wrote:
-> > > > Rebuilding of root domains accounting information (total_bw) is
-> > > > currently broken on some cases, e.g. suspend/resume on aarch64. Problem
-> > > Nit: Couldn't spot any arch dependency here. I guess it was just tested
-> > > on Arm64 platforms so far.
-> > > 
-> > > [...]
-> > > 
-> > > > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> > > > index 44093339761c..363ad268a25b 100644
-> > > > --- a/kernel/sched/topology.c
-> > > > +++ b/kernel/sched/topology.c
-> > > > @@ -2791,6 +2791,7 @@ void partition_sched_domains_locked(int
-> > > > ndoms_new, cpumask_var_t doms_new[],
-> > > >       ndoms_cur = ndoms_new;
-> > > >         update_sched_domain_debugfs();
-> > > > +    dl_rebuild_rd_accounting();
-> > > Won't dl_rebuild_rd_accounting()'s lockdep_assert_held(&cpuset_mutex)
-> > > barf when called via cpuhp's:
-> > > 
-> > > sched_cpu_deactivate()
-> > > 
-> > >    cpuset_cpu_inactive()
-> > > 
-> > >      partition_sched_domains()
-> > > 
-> > >        partition_sched_domains_locked()
-> > > 
-> > >          dl_rebuild_rd_accounting()
-> > > 
-> > > ?
+> The new helper is introduced to allow counting the child firmware nodes
+> of their parent without requiring a device to be passed. =E2=80=A6
 
-Good catch. Guess I didn't notice while testing with LOCKDEP as I was
-never able to hit this call path on my systems.
+See also:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc6#n94
 
-> > Right. If cpuhp_tasks_frozen is true, partition_sched_domains() will be
-> > called without holding cpuset mutex.
-> > 
-> > Well, I think we will need an additional wrapper in cpuset.c that
-> > acquires the cpuset_mutex first before calling partition_sched_domains()
-> > and use the new wrapper in these cases.
-> 
-> Actually, partition_sched_domains() is called with the special arguments (1,
-> NULL, NULL) to reset the domain to a single one. So perhaps something like
-> the following will be enough to avoid this problem.
-
-I think this would work, as we will still rebuild the accounting after
-last CPU comes back from suspend. The thing I am still not sure about is
-what we want to do in case we have DEADLINE tasks around, since with
-this I belive we would be ignoring them and let suspend proceed.
-
+Regards,
+Markus
 
