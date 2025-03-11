@@ -1,90 +1,152 @@
-Return-Path: <linux-kernel+bounces-556368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E2F5A5C4DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:09:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D244A5C4E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B66E3B399C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:06:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 290903A4887
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82AC25EFB3;
-	Tue, 11 Mar 2025 15:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434D825E454;
+	Tue, 11 Mar 2025 15:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="JvwAxaH+"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fRZBDhXR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nbQn4Dwp";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fRZBDhXR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nbQn4Dwp"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74F425E808
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF3B25DCE3
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741705583; cv=none; b=rCrIedBSYrdLe5HJ2phEinemL+v6fUdq5wgQzvXnGYA2uUaXJ/g1PlrE9gFx3iZQpIf9kSFJ4vX10PbdfGzvUkGPlcPu9zhCqkC6IoUs2/gdNQPMCFmbYm7PPOyAECzAfpk1IiNW/4WdDKHUu3ErWY/n+B3ZvDBQeuPmZlK9jCg=
+	t=1741705595; cv=none; b=OzZ8bsbwBQ8Mfw9QdKHWSkpOl+3x7rJ7S3XIY54YXnw2z5TH5EbpgzVcFfgsQxKzLZK3UuHEtraw+QBozX69bnKN1AS1FuvKJ0RTJLjKvSFifco/HUrJT0uDDJe4HaIohIAs5chIZuIkAPINU87Z965zfp6YUohVZmxl4t9yKX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741705583; c=relaxed/simple;
-	bh=x55CRst2EELB6Twy47K84CTION8NSXOLyNJziGCLwg4=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=l00mGd8fB9l5J+DLzYoqAUBReENb+nwfn9rs5eancZlOI7GPWwiDtaHeP7/nl5aaJ1eqiwK+nDI2PMxWxumW9evoYL9anRvOsMmOv7jIZPBvLTFRHulwVA2iR34s2IGEjcW7/xpLSkqzTPADBfqR67kEgyJ0ryp+DP4z0RohqSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=JvwAxaH+; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1741705573; x=1741964773;
-	bh=x55CRst2EELB6Twy47K84CTION8NSXOLyNJziGCLwg4=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=JvwAxaH+lZBCg9JPca0w0osp4GnAEKSG416BhB3OIdgEPv1yi+4ry8/4NimjKw39B
-	 WXqZiTiu6XEHEMsD/FGnEIUBCtthPn4LT4FQMY9u+S2d0TBC508+sQ1U207axvJaOM
-	 ysxcuWb1FMs3C+iSmHk+byTxWGCYErPImXjsR2aQZHgsEw/rEj6cLorhahEiERb1Su
-	 g/qweuFXdJR0SE4HvAaiAXx+WtZHRKt02qGIREhyh2ekW+ZBfXK5Rn6L4CnjnZUr3h
-	 OOAiYvfwXECs/KMsRW3rxfz11l47/NYc0Bz5tMLh/IMsa1l7qU2SrLDTdq2fWCzhhm
-	 9XcRC+oTUPKKA==
-Date: Tue, 11 Mar 2025 15:06:10 +0000
-To: syzbot+c17ad4b4367b72a853cb@syzkaller.appspotmail.com
-From: Roxana Nicolescu <nicolescu.roxana@protonmail.com>
-Cc: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] bcachefs: Initialize from_inode members for bhc_io_opts
-Message-ID: <20250311150606.127577-1-nicolescu.roxana@protonmail.com>
-Feedback-ID: 136600343:user:proton
-X-Pm-Message-ID: 94f2d0f51b63559c1248d2c4379aab0ba1857824
+	s=arc-20240116; t=1741705595; c=relaxed/simple;
+	bh=N/Q5yCArb0lZ1alwloBHl6BW2oXOvExRNHwIvb5JVz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GgvddxynRHqTAaU/+mtDwn6l3cnOoCmNfCzl+GJCK1MlQI4Wu1XRwyvixRviTkZeV1GoDRM/ZqzoMNyWKQLd/K8ctR3AX6gz/nliZ61AcujjBHqciqvEu2ryrz/Ib+7W1xzIRJ6Qc+bR3WD7Dyc8okPKzkH3p3v9BOCHnqWzwWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fRZBDhXR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nbQn4Dwp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fRZBDhXR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nbQn4Dwp; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 17F9F1F388;
+	Tue, 11 Mar 2025 15:06:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741705587; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNm4pytyaoe7ANX3uVAZTOUpMB40I2SmkL4njmoWVMY=;
+	b=fRZBDhXRcR8zxQB7E4FtNgsDK/tAdjw6IGbvkC8RdHfaWFXARN8h4l4GoPFR7i5qXOEo2V
+	SGNRbY5/+x5EM0lDrYff6RexFqOWC/6Xa7/kdFNpmr/mkYUIqrhIRU0N/QKPi+LRnIbvUn
+	g0bv1m887pAOKLcNVC1XKMRcncHxyco=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741705587;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNm4pytyaoe7ANX3uVAZTOUpMB40I2SmkL4njmoWVMY=;
+	b=nbQn4Dwpf6FmN3viwh5m0UZsz+M8ZBE4ZVeZyK1hDdIYSIlxytRaG+MrQcxAe2eue1ErQc
+	ilnfx+189PwC6XAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=fRZBDhXR;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=nbQn4Dwp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741705587; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNm4pytyaoe7ANX3uVAZTOUpMB40I2SmkL4njmoWVMY=;
+	b=fRZBDhXRcR8zxQB7E4FtNgsDK/tAdjw6IGbvkC8RdHfaWFXARN8h4l4GoPFR7i5qXOEo2V
+	SGNRbY5/+x5EM0lDrYff6RexFqOWC/6Xa7/kdFNpmr/mkYUIqrhIRU0N/QKPi+LRnIbvUn
+	g0bv1m887pAOKLcNVC1XKMRcncHxyco=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741705587;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNm4pytyaoe7ANX3uVAZTOUpMB40I2SmkL4njmoWVMY=;
+	b=nbQn4Dwpf6FmN3viwh5m0UZsz+M8ZBE4ZVeZyK1hDdIYSIlxytRaG+MrQcxAe2eue1ErQc
+	ilnfx+189PwC6XAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 063E0132CB;
+	Tue, 11 Mar 2025 15:06:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MqE2AHNR0GcoZgAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Tue, 11 Mar 2025 15:06:27 +0000
+Date: Tue, 11 Mar 2025 16:06:26 +0100
+From: Daniel Wagner <dwagner@suse.de>
+To: Daniel Wagner <wagi@kernel.org>
+Cc: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
+	Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, 
+	Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 07/15] nvmet-fcloop: update refs on tfcp_req
+Message-ID: <48b56e21-2ccf-42ad-83ff-3cd97415e661@flourine.local>
+References: <20250311-nvmet-fcloop-v2-0-fc40cb64edea@kernel.org>
+ <20250311-nvmet-fcloop-v2-7-fc40cb64edea@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311-nvmet-fcloop-v2-7-fc40cb64edea@kernel.org>
+X-Rspamd-Queue-Id: 17F9F1F388
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-When there is no inode source, all "from_inode" members in the structure
-bhc_io_opts should be set false.
+On Tue, Mar 11, 2025 at 11:11:33AM +0100, Daniel Wagner wrote:
+> @@ -930,6 +932,8 @@ fcloop_fcp_req_release(struct nvmet_fc_target_port *tgtport,
+>  {
+>  	struct fcloop_fcpreq *tfcp_req = tgt_fcp_req_to_fcpreq(tgt_fcpreq);
+>  
+> +	if (!fcloop_tfcp_req_get(tfcp_req))
+> +		return;
+>  	queue_work(nvmet_wq, &tfcp_req->tio_done_work);
+>  }
 
-Fixes: 7a7c43a0c1ecf ("bcachefs: Add bch_io_opts fields for indicating whet=
-her the opts came from the inode")
-Reported-by: syzbot+c17ad4b4367b72a853cb@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3Dc17ad4b4367b72a853cb
-Signed-off-by: Roxana Nicolescu <nicolescu.roxana@protonmail.com>
----
- fs/bcachefs/inode.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/bcachefs/inode.c b/fs/bcachefs/inode.c
-index 04ec05206f8c..339b80770f1d 100644
---- a/fs/bcachefs/inode.c
-+++ b/fs/bcachefs/inode.c
-@@ -1198,6 +1198,7 @@ void bch2_inode_opts_get(struct bch_io_opts *opts, st=
-ruct bch_fs *c,
- =09=09opts->_name##_from_inode =3D true;=09=09=09\
- =09} else {=09=09=09=09=09=09=09\
- =09=09opts->_name =3D c->opts._name;=09=09=09=09\
-+=09=09opts->_name##_from_inode =3D false;=09=09=09\
- =09}
- =09BCH_INODE_OPTS()
- #undef x
---=20
-2.34.1
-
-
+The ref is already taken in fcloop_fcp_req, so this is wrong and is the
+reason for memory leak I observed.
 
