@@ -1,109 +1,136 @@
-Return-Path: <linux-kernel+bounces-556178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8994FA5C1FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:09:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EB5A5C208
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B60816D572
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:09:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D3C16D406
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7A378F47;
-	Tue, 11 Mar 2025 13:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E5078F52;
+	Tue, 11 Mar 2025 13:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VxQRLfeo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hXXU4nzr"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D9BEEC0
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20631EEC0;
+	Tue, 11 Mar 2025 13:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741698552; cv=none; b=B7qYLNmiLCF+IVf4qEF0naIGUkFsLw7Nh7nW87fJTXhF3j88tcunKCx3o0hgIBMSOSc4mpvGWGFYMM+WfLinBcYFJhdCemkvM5J2fHwFEdcbi7mmzrLQYMBG+PSXhnQLPEZswppgOFCCUEoip1iizSshZT3V/BFG1EWIFPSOGzU=
+	t=1741698655; cv=none; b=CNhRTWgRCIVNWbaZjP02gj5VPbEMzypCNMtf/aYakWfqDVaf65EP7iwEjXKyucQeU/V9uClQDHEbeCcPqPZBGj1sQIsBFleG+MUbHtD22lQkeekw9dDUlfB0DbziW8X3X3Imlz0F/49RLLqShRImk2Spm8lS2vz4Vauwgj2acHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741698552; c=relaxed/simple;
-	bh=3oKxiRuwa/MVmwmoGHZ7LXpHpTMbcebcJS0NOhXOp2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q8OQbAIxVJ57vaychUuqaQk1CD/gyC4e2FpHH81xGekE9TIIcZ/gVCLr35lnBIRJftbYhwumjlYtHLVKVwdIBJso1yHMmEzBwZBDgk6kk+FH6AOrPKcXY/hEGy3pUrS9sIJWHPHfvwiVuiXRaHLLQlGhedBoV674sCYyztuuBzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VxQRLfeo; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741698550;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2rp8S2qoYWcpM+y/XUGLKvTaosjAUEXQWiY3R6tC6Xk=;
-	b=VxQRLfeotZs6SWeBtNO+W7BxMiql9CSi7FyKghGnxQITUXHUxUDEynU1P+7WmOiRPHRxdj
-	G6uCOpw7E/douKopI0DuKzeyvVbCRSPk4Vyl+K5NOsIo6qtXXkGWAIPqg3QV1FL3iQKyYP
-	nCyvbHI9bltOp8SQntRf/vftuoDFzvg=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-605-aIEqmh42NYGkzXEx4iZ2FQ-1; Tue,
- 11 Mar 2025 09:09:07 -0400
-X-MC-Unique: aIEqmh42NYGkzXEx4iZ2FQ-1
-X-Mimecast-MFC-AGG-ID: aIEqmh42NYGkzXEx4iZ2FQ_1741698546
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B9C3A1955D5D;
-	Tue, 11 Mar 2025 13:09:05 +0000 (UTC)
-Received: from localhost (unknown [10.22.81.23])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0C7901800268;
-	Tue, 11 Mar 2025 13:09:04 +0000 (UTC)
-Date: Tue, 11 Mar 2025 10:09:03 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>,
-	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH 0/4] Documentation/rtla: Cover BPF sample collection
-Message-ID: <Z9A178_gk0LGynjd@uudg.org>
-References: <20250311114936.148012-1-tglozar@redhat.com>
+	s=arc-20240116; t=1741698655; c=relaxed/simple;
+	bh=x2wx83Af4auGESkptVyzXE8x4VbScnVfHSrzRSy8Sis=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=sRW0VKszPyFAexROzKeceAMWGFqlZZOYi2PDyl82h9Lq7/me6yeoLNLJK8bIwRlzEOsNd5v54CyJF7dSs04X1lZ8i9EoDUeaGqf2eSPIpScXBgHWqWSJjohpgPe6FgMBfW7G+MmadbQ31sy38O16q0AsITETKEY7TBT7KLKIb0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hXXU4nzr; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741698618; x=1742303418; i=markus.elfring@web.de;
+	bh=d4+v+/FFY1NFCcEvkaRdbNdq0w4BmXK0lz0GP1TGRu4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=hXXU4nzro6J+l+7pD5Mes3OaAGI748t3bffQODOyUCJb8rQpiJa273PJ691hNk61
+	 FCvPFYRnuEgTU1I2e0UNuvu6toIWs/1PN/k7Ytm5Ykevyus9R3lhZ+5Nh4bUeAVp+
+	 MIp7YXaQbNDgcU+9z4MxiPxw1KffhJR4leAvAVE/vFxevDkBzk9sWPuGtssfXYE8Z
+	 p0IeZsCaLF6TMGP4fbG/JBkdUm+wWmW4X7bYSj2pdN1rUf2Ok8/eTAf6D7uTVwd3M
+	 /zFaAaVOJdpE7WESeIkd5JeyPOWDyPiu5MiSxY77nQEXXAayYcrL2UnAZ6uy0/UCI
+	 wkknlg+z3MaLUH/rog==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.40]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MBjIG-1u43eQ010e-0092uf; Tue, 11
+ Mar 2025 14:10:18 +0100
+Message-ID: <d5ea4ef6-f6ca-4135-b339-fdb8b4ca1360@web.de>
+Date: Tue, 11 Mar 2025 14:10:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311114936.148012-1-tglozar@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+To: Swapnil Sapkal <swapnil.sapkal@amd.com>,
+ Ravi Bangoria <ravi.bangoria@amd.com>, linux-perf-users@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Ananth Narayan <ananth.narayan@amd.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Chen Yu <yu.c.chen@intel.com>,
+ David Vernet <void@manifault.com>, "Gautham R. Shenoy"
+ <gautham.shenoy@amd.com>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, James Clark <james.clark@arm.com>,
+ James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Kan Liang <kan.liang@linux.intel.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>, Mark Rutland
+ <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Sandipan Das <sandipan.das@amd.com>,
+ Santosh Shukla <Santosh.Shukla@amd.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Yang Jihong <yangjihong@bytedance.com>
+References: <20250311120230.61774-2-swapnil.sapkal@amd.com>
+Subject: Re: [PATCH v3 1/8] perf sched stats: Add record and rawdump support
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250311120230.61774-2-swapnil.sapkal@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Np+1EWQXjLlpql+1NDX0O7syvijYDw/2V0a0UsG9NA6ezKwhwt9
+ 6PY24Nkq0vUUr5WQcf0hVaJ64TgShyyxzGp4gXJCcIu6vyl3LIO1bNE8DPFlX2IoCS9j4kj
+ UGurIZQNbLS/fFvWNRXsF0EdUqi8VKMydNgphKDU+TxMcCn2hdhtN/dHisF6C1ugXBCYVJI
+ y97E1MpZPm4MmhUcNP41A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:BzBHoab1J0Y=;+CfozBFERwrLP4bnqCwy8YkNFSN
+ j/c/Q81YjwCvZRJpgozH0R6CvSmsjalRV9FQGlHUq49Vj+y6CpGLnMd5kzJY6yUxaCAigbG4k
+ ZyHlys7J6m2cBzUuw0FudGTVKxsQGAPcg/bTXL10R9AA9hdGEh7xKMcBF1C43xXeQk06vfvjt
+ KFQ/sinuZmXKZWE6AbN1UNurvOWyGLykM6SowLLqKRHf83sqf9izoWR7VZjJW1RrrAX6lOsQ2
+ 3hERtkntrCnURNeQP+cXk9x+J8gB9qjeTTJNS+8hKReEPnSD+g2DMBeqwUM0bGa5KZCYSfNNX
+ uZ75GU2UrS46Ul1fo8tn0I1uJPd176uLIS70OjRIW4h2moi0q4vlOSzIxgr1s445mA8uhEfRl
+ h/Aec1LCBDEjCa67QO2s0JJTGJosmlPehUx4yNmqwUFJqojDnZBidjE0Qmq972rf56FlicZAG
+ csvotgZB4zcZIQED80x/bfP1F114lVCwQ7Id2IhNrLZ4YFtRGVURxezPkEARGEoC2lPSc3jFm
+ CeQWqR+RLAhuH+pWoFA1qpI5lFCPh/dkxTWDtoAFHDUIQCkV0btKUb2CsCctTP88CB7NDBOlE
+ CXOIVlNb4w63OX4Gd/DELc0qZq3sB8FS3GlqsJuoCu88h2aF8tAICG/BTRHihP1OOFBKN/zyn
+ t6yjuSPbCIDHTfr5EoGdYxKGHHtneUMxsuXNh1B/iXSc+/3Yi+pcmatmo3gM9sR9+BSauZHdM
+ UAiRgBDBGDaxIo3ahyDirim+WtgGxFitbj9qbFYd6K4UI8jWXsZbeIp3QELMQIAadz6UgtTK7
+ F944J7PyPDx11sJTNp3vN6x+WbL1p7jMmKN+OSWcAwcwbToum2NYnguc2b37xPlNtma0TEhB+
+ pLdFnrfqV4QHl+5t8CSsdbKeHNXl0YNhTMb3oaXhnDhzz7Ty/gUaYC2AfVzwRbkzlf4tQHo4B
+ LBDM1/9GmQ12eDgMblRTsjT+ijG3lTf/5Zr7fDzuXb8BDJfXXLdP6WhdQR+RIo7LKS11fmtRX
+ 60KInQA8dG2B7w1knAsxMF/eCfrPb9ZNJdyQrke6NgVVtSJ3NUi11laj0NsvmMmbd+qxC2APc
+ Y+4vKaL9N2iBrOhXsATziGem6gjaOxKBbZO+droXAv/OpIQFJANM+5sKCmqcejq0KLTZgtFL0
+ IG6Xi59VuthA2YdtXGWiQErQJk1HkPXUvPZrgA8tf//eWUYHcO9LAqvFjSIiQv1v8/Dx0dmHq
+ BFrjlwFRCROJAQ/tQ3wuNT6KCbdA3a3rmpTeuN9G2r5aKt44zeu/e8bwC292FP9LTWH3nRljd
+ A8nWj17HkSgIjtotnYXOzStjpHD0En9I2t5AaaRsrecxhTlMrljUi4sR3mPo/F3cD8Dx1Bpai
+ uEDg73E2rkAg8yLTPBmbB14tVQlO0dGon+RSwymNuh++JIQ+gAoR/gnMjmkE/l5wThgRKaPN+
+ WFBGIWamc4W9fRjVtA9c74x7lsRCpyrqzcO+9jRtkNIpC35duNgMmQQrlnHRndcc/OT97AA==
 
-On Tue, Mar 11, 2025 at 12:49:32PM +0100, Tomas Glozar wrote:
-> This is a follow-up to the BPF sample collection patchset [1],
-> documenting both the feature's build requirements in the readme and
-> the feature itself in the manpages.
-> 
-> A few fixes affecting the same manpages are also included in
-> the patchset.
-> 
-> [1] https://lore.kernel.org/linux-trace-kernel/20250218145859.27762-1-tglozar@redhat.com/T/#u
+=E2=80=A6
+> +++ b/tools/perf/builtin-sched.c
+=E2=80=A6
+> +static int enable_sched_schedstats(int *reset)
+> +{
+=E2=80=A6
+> +	ch =3D getc(fp);
+> +	if (ch =3D=3D '0') {
+> +		*reset =3D 1;
+> +		rewind(fp);
+> +		putc('1', fp);
+> +		fclose(fp);
+> +	}
+> +	return 0;
+> +}
+=E2=80=A6
 
-LGTM.
+Is the error detection incomplete so far?
+https://cwe.mitre.org/data/definitions/252.html
 
-Reviewed-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
-
- 
-> Tomas Glozar (4):
->   Documentation/rtla: Fix duplicate text about timerlat tracer
->   Documentation/rtla: Fix typo in rtla-timerlat.rst
->   Documentation/rtla: Fix typo in common_timerlat_description.rst
->   Documentation/rtla: Include BPF sample collection
-> 
->  .../tools/rtla/common_timerlat_description.rst         | 10 +++++++++-
->  Documentation/tools/rtla/rtla-timerlat.rst             |  9 +++------
->  tools/tracing/rtla/README.txt                          |  7 +++++++
->  3 files changed, 19 insertions(+), 7 deletions(-)
-> 
-> -- 
-> 2.48.1
-> 
----end quoted text---
-
+Regards,
+Markus
 
