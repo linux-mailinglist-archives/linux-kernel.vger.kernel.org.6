@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-555739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 848B7A5BC23
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:26:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB20A5BC2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:26:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD83C3B0B16
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:26:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A85718967F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F95233725;
-	Tue, 11 Mar 2025 09:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52ED72356C4;
+	Tue, 11 Mar 2025 09:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="agggFf28"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="fEAPUbG+"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96B222B595
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44EC22FF42
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741685150; cv=none; b=msoG6s6pEwtVHBdFvtdkVu7uYWgmMZY3ItPf+n2MTzizRuHGOvuz+H7taQC3i4Rm32A/UJRXINrnkncyAsiiwv/gvgmhLVHWaMBghLALpatqw0zb2Us/x0PiAzXaDxQlLWWCYLSwQbWUipJteY9uEKOr3hX12e+3UmSy89J/HC0=
+	t=1741685152; cv=none; b=g1fRraMmaOpnqvpOxZcv5n85JkW7KDKVEFHNOES1Dhxs1m8kij6cRM683oCQ/o2CgvlF+naAhfeyJBMprT+b8XdKdZ+wMVRBS8ELlWf/4Gl11CRSj0DWfv3/maWK1CjmjkW1EB8/T/Ty2RAvgsJ771k9iKsXvHW7wPj1w4qokNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741685150; c=relaxed/simple;
-	bh=3byXgp4P/O/ND2QbeLx+RU+FGOviEZdPuLQWMQhYWyc=;
+	s=arc-20240116; t=1741685152; c=relaxed/simple;
+	bh=MDk4VkFEZ3Omoennvcf4KMiiddpmT7+bDeMGysrEOqw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JZcViRHMAuQ0lFVGRAoiBfrafTzbVCI7zOHvSNeCWpNNvZ7Q7+mRYJT0fC2XFBJPuhiw3r30IWZ2DavBmisFHK49AcgbpRS3a3Wp9IrO/tNCxZp/rc7TCQ/e+gcG5RrgLnT0aSk5hluz56b3+HPFcaRcv0x8n+/xGtJq5Xd7eII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=agggFf28; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:To:Cc; b=lDduECNbRqMqippcyvWChmx7LD8SwAcgqNQkE7U1BCbJlsbmCVsWflBIv3LAfikO/GabaJVgWiMGysJl945QS9etQNJAyAKWZGTTb0MpA0U8v8nBP74askysnhBIXGL7j8UTxdzbRPm9Tl8JCcWWXLf3svI5TOj1gKc+QClRvQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=fEAPUbG+; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso12306495e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 02:25:47 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so17572465e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 02:25:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741685146; x=1742289946; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741685147; x=1742289947; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TlP1aFnu/CDXSr/k7ULiiydiHqpcTMvKfeRj+DO5m9I=;
-        b=agggFf28mKJu2Iw1KoojJHNS5bPH9YnQ0ZKl9w73bi15l7gPrU87RxuG09PRalMfGA
-         XByG4OLfpwSRxF0fu7Ra4RUEdG/3ndVDdkmNa/kTXD/NJlgKSUZiY5W7XzNdSXzcFeTO
-         uiw8pA44eeQeDEtv8scjYbyuKhLyQEAGbIz9EbzGsTsu3bbxr6CyMTIde8OMREh23rSf
-         S/tWvppRoG2y6DEr0cxURIGcmx/ZNFzXGOI05hNUlg3ca+XjUuyOdOjm/jLOCkNgg2kO
-         dQ+y17b+mHZV9BQ+2prxu78cuH24MkCZEbjxaJ2aE5lJ8VhGwPe2011gKSeNkuCcecaf
-         84kg==
+        bh=UtqnqsyxQP/e9bo5ZCxKCH3JxZzZtKfe9AQxqfuk5ec=;
+        b=fEAPUbG+8Tz0LIpHl+kaplvV8uf/0SzGXxuJPQ/870CG3saQgOokZFkS2XKXyBBfc5
+         z5q/fFnP5a2a5uHWIsDFEP79fC+V/YgzeiXLJFExca0cyELs0ap62LKd+htHRPALwkOU
+         XRlmBOkB4JDeB1KKgj4GriH+Grmul83rpG7HMfyOun7+Rsh3qKJJCpiPWNW6hGN4AI3e
+         BndRRE4CxInuKSrk9Z1ri1VgVy+L/Asa70Sq58+3hSqo/HFwyMgoulerHU3uoZlD31QY
+         QxdcuvRCf0sBiP4ckg9ah6ZUSKUNK0TFKOKoVaDl3Dv+GXRRnQVvWponKpftoJs78lHi
+         VfNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741685146; x=1742289946;
+        d=1e100.net; s=20230601; t=1741685147; x=1742289947;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TlP1aFnu/CDXSr/k7ULiiydiHqpcTMvKfeRj+DO5m9I=;
-        b=FAr96zU60C/w1Pe6ymd6MRunW3r5ZDfx+eae5XCUaifzS9IhoHjQzDM7MnNwrIpqd1
-         WLtYecrT2LAf7ZJVbT9VYUtF0qF4Y9yU/Tcxt7qqCQ0W5hFxZoOhzJc6VGjPZ/xMZ8XV
-         8AH3ssJh6pwJdqgst47ns3k0N6G0vLBlnNO/5UlhCRaDeab2bi1yPICVflrRH5ptPVGX
-         aumGt5YJ/bRVqlTQQFMx9dGFlpXsRgfie4buRH6Z84zhEDIyIB6fh4KHnmRCISBi94D0
-         2+5SAGpjVY0M6/yzuP6phg4Pb7QkGjgI/ozuI/wS7kT9c5m8QOA5PylZA/rg9WCW2lD4
-         4WoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaMzPFrmnvZuZ46MLOA+RyjImdrkpTn0tb+j79twrI4gzE+3hJosdqwSY5rfTIdHSW/ktSUsuG9YHCYAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFwqp1lDhps2dSjAKRyj0GauiSu6P2dMbwqTKdtZgN7QvuwvCq
-	bVnHoMY0mxvEbMHADrlT8O4wc/Ks3OUXmRj66+bG8PEFhN7WAv2sYDU9BPpjvlk=
-X-Gm-Gg: ASbGncthkmYwZZduWeGlTPBDqapfoHXUwBCIGxLk2az92YeKE8gE80jWsQp7p0sOdcT
-	GsFehNBCcXvhlyRwsHhLWmgDYTyvP+XZx//KcqHjVvr6is8o5+1BuWQgavWIw/eC97KC5IrK4ha
-	YRDX/FI3uEltrd6Iaxb/ksPlVP5iV8KBbyqcBYbLVQMJpG/iWC/HRXac8furJP9ochtGsp2b+G+
-	3O40P8qWUs6K1zDdpdThiM/rQRImqCe/9BurkLlVXweHi3wv0EZ7FpOTX0LhE6nlboKs4vShQg7
-	BjU3G9lRoxbxWbNBrK9Bsu/SnG9kSbW2/ICe
-X-Google-Smtp-Source: AGHT+IEFonuMUsv5t7RMkQ8iEA9Po7UEbOofnFEQRO86TnGyuTu9OQAPv+aswdukrUC/lL8XbNZzxQ==
-X-Received: by 2002:a05:6000:2a5:b0:391:489a:ce12 with SMTP id ffacd0b85a97d-392646936demr3632369f8f.26.1741685145889;
-        Tue, 11 Mar 2025 02:25:45 -0700 (PDT)
+        bh=UtqnqsyxQP/e9bo5ZCxKCH3JxZzZtKfe9AQxqfuk5ec=;
+        b=MA+KOEUANGeDhjHAoCTnXeubJnUCv5qUSNHU43QeYHGQGUudEPnN+PC9uBZ68RQ/wk
+         bCmct4eKajehiPdtPV1JrVGnVwweqtoF4CXpOeUXU5FTGD85OaRXg3P71jpi2LIxrdcH
+         LHYzo18+2NZd/IEw1oJDGPbhuuqt1it4qaBZxLbDVahVXVaUsxacbtvTVhHKHC+prSVb
+         HhZbj0EkmRqEFxSrHEiwbj3tQ/I650MjULJ6FHPJYLcM7QoDy+Jh8bgpij5SUfxzlvf9
+         6VWAZt7jpcyO/JHEsCyBk+jcohqoXbeWU8Mv4M5i4bEvVYghNPCfp5M5AlstVvcqbpX1
+         s+Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCXy5VOjniSpPY8GxKgcLlExt0zTHaAdqZFTenFIW99TPa0G5MZHiJWcWXkY5wGgtH5TsmSoJc3dHI4WT5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGdGxb12hXvIzoQY55htdybKva/yqQ8It8Cy5y+Z/xIttxlSZ+
+	UvhPeC9rIGvdFIJGfyYvny1EWyzINCKAB8XtbrQaQh+9QeKtNvn18K0TsTnsDwA=
+X-Gm-Gg: ASbGncvxqS88iKUyfvex+Y7hgEqECgXWBdUvT3VwF5BdhBhXRDop/hV98/eNgjoC6Jg
+	8S10QX97ISnzDGohphmCV+fZZd4/kzVmyNcpRcOP4vLwfhfczDsqFWcWvANqCdE4qd9uAshpPn2
+	DwbvUIaVVVLh6BeKks8u/+fEJRdoVrDSXpjB+3+ZzSGWdmizNFWe4TN4PC6jgbaS8yjPxAoqkYI
+	WvVX9Zph+lPYfqrk0tXzZncBo6iIBjqFyYoX2ygPTJS/1IEa41NN7W4D5XH6+rxlOhY4ZpSVRme
+	2S96rQ5IVd+VJcZbXBgBmZQ1CBQy8aUE/qiX
+X-Google-Smtp-Source: AGHT+IG1l09uBciNj409gzaq9ZRZL6KB9sv+vZnatdy5m6HxJOreByN1ubwyWqhG8i9TAR3rokJMgw==
+X-Received: by 2002:a05:600c:3596:b0:43c:f8fc:f697 with SMTP id 5b1f17b1804b1-43cf8fcf8e0mr52620265e9.9.1741685146987;
+        Tue, 11 Mar 2025 02:25:46 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:5946:3143:114d:3f3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cea8076fcsm107436465e9.15.2025.03.11.02.25.44
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cea8076fcsm107436465e9.15.2025.03.11.02.25.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 02:25:45 -0700 (PDT)
+        Tue, 11 Mar 2025 02:25:46 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 11 Mar 2025 10:25:33 +0100
-Subject: [PATCH v7 2/8] dmaengine: qcom: bam_dma: extend the driver's
- device match data
+Date: Tue, 11 Mar 2025 10:25:34 +0100
+Subject: [PATCH v7 3/8] dmaengine: qcom: bam_dma: add bam_pipe_lock flag
+ support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250311-qce-cmd-descr-v7-2-db613f5d9c9f@linaro.org>
+Message-Id: <20250311-qce-cmd-descr-v7-3-db613f5d9c9f@linaro.org>
 References: <20250311-qce-cmd-descr-v7-0-db613f5d9c9f@linaro.org>
 In-Reply-To: <20250311-qce-cmd-descr-v7-0-db613f5d9c9f@linaro.org>
 To: Thara Gopinath <thara.gopinath@gmail.com>, 
@@ -96,125 +96,91 @@ Cc: linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  linux-doc@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3543;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2188;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=Pg4kQtSGs2f8BpuZiVEMtvVvzRRbqxcmk7ypHqWY96M=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn0AGVl3C5lSeEdfpfP+zIBEzDJCcFCX2vmzasU
- gOKZib0fpaJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ9ABlQAKCRARpy6gFHHX
- chhBD/wIRjW/QOjQXff90g8HVICSDdXkKD5BRJH+wautyIX+duSZp1IFDylvKfYIMy5QHl3mTXA
- NTYdCzfKfzTze5I89ENDmJ+OsVC8tnYN7Qn+kPwfwYEZVFsMg9LOJHBAAOFV26FljVkgRCmImL6
- WHhu6e5mJFZrqmmZLZTLGRPhO2MkzHi/QzqnFmRkILhrjaOq0rNMRtoky8jyIA10i7c98vSbUNj
- 05A0K55UIiNCd9o+jrsZeXG3zus+Fk+BYi0ai+cTWVBdTHYBAapa9MPPc5pCXT97mH3mJ52LzQl
- FVK+JbAYbRrs5A0OEiiTbkPtUNQIFUc7BUTOaPs6T1rde8MpuUi7b2+g2UhP0XmTIE1Pp0QKpIG
- cH7nucGIbu6fIjTG7TG9WO/+dmbd+SheIslA0pV17/0NFf7XF2FBYsMBxT/9yKMw9TOy0JCui8I
- Jn1jwBI3kY9AuUogPDDztpNoH5odNstKWFndGe2zgNQKEYKdyc7r7zt0ipC8e42XzsWZxU8bWXS
- a9mrdwihu61+tkiIuBmfVBSkeY3jRvnwTHtmcnT4tgiIsaLlZ4uX2buJg8EADfrpNq57XUPZ4Pd
- n/ybHmqcs/IEInA7ifOjGoq+bMe77cfKHL+wh2sNuSiEdcllYVbSTyx/HaAnO+JIYDCY6dPZV1p
- at4UvxJfshZDpkA==
+ bh=q/3RP4DiTyaxTRnIH/tALxp3dBkxS3/vcvd9GKBezPM=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn0AGVUBvjeQRh7H7aAx1rE8T2VzvFTVozUiuqz
+ vf1B0ns0RSJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ9ABlQAKCRARpy6gFHHX
+ cjelEACN3/JUgds8V7OXUaqnsGAgQkUwmon/d9kX8vT1YYVYYguRoqUrSTNeC9njYmcKrucjs5K
+ k2k1oWasiHuafyOeEVIAqLtsXUL6sYz2cSKDl3j4dnfK1HSRE9Uh/ESR3JawYqwT4JI/cZXI6A/
+ JOPdtRb2ik4iGtUSxn3Uz4rEGv7zfeCKzfUTl+VimkvHv8coNAghD9bI5NsaN3Xo59kB4KesWQb
+ j75ftmhE7WcPw6L6k0H0Y5C394+rKmt4xoFpDczUY/Lbqxbqh9tM3zjFV8H8XNqkE4OWujEkwG6
+ flbnLqZNiwDxXZg6bRFG24STnKsv/TsTlc54mnt3w9N2nurVJCEI0I6HoWgrv1bNaeySWOb6GS0
+ hdsCEU9sdYkts4FjT38yi81tbluPpvbOkfn6XOTaynYBMbqoKG0CB8TSjmM5yT58vXEDHqWME1/
+ r6KKVRQT+1ySkn/cXyBHRT7U3iE3jbWhjp63WTx9zGNmKVuyr1m1jXJRIa6iOHOrqmKDa4sZivJ
+ szseRtVCJsUJ7iUeQSa5RcgQ6rtLTx0MXlxpdjTBuTUmrXvWlo3Qf5rQC/T+oyAUqiZ2+GFPPcT
+ FH5+7j4YRP29sYKuIE0FRl+7zF4fPmhTHyohLVoDmGrF6jrQUPh5arOPMJv7tADVTNJDiX9gFPf
+ tSS4tBeYqPZmF/Q==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-In preparation for supporting the pipe locking feature flag, extend the
-amount of information we can carry in device match data: create a
-separate structure and make the register information one of its fields.
-This way, in subsequent patches, it will be just a matter of adding a
-new field to the device data.
+Extend the device match data with a flag indicating whether the IP
+supports the BAM lock/unlock feature. Set it to true on BAM IP versions
+1.4.0 and above.
 
+Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/dma/qcom/bam_dma.c | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+ drivers/dma/qcom/bam_dma.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
-index 2cf060174795..8861245314b1 100644
+index 8861245314b1..737fce396c2e 100644
 --- a/drivers/dma/qcom/bam_dma.c
 +++ b/drivers/dma/qcom/bam_dma.c
-@@ -111,6 +111,10 @@ struct reg_offset_data {
- 	unsigned int pipe_mult, evnt_mult, ee_mult;
+@@ -58,6 +58,8 @@ struct bam_desc_hw {
+ #define DESC_FLAG_EOB BIT(13)
+ #define DESC_FLAG_NWD BIT(12)
+ #define DESC_FLAG_CMD BIT(11)
++#define DESC_FLAG_LOCK BIT(10)
++#define DESC_FLAG_UNLOCK BIT(9)
+ 
+ struct bam_async_desc {
+ 	struct virt_dma_desc vd;
+@@ -113,6 +115,7 @@ struct reg_offset_data {
+ 
+ struct bam_device_data {
+ 	const struct reg_offset_data *reg_info;
++	bool bam_pipe_lock;
  };
  
-+struct bam_device_data {
-+	const struct reg_offset_data *reg_info;
-+};
-+
  static const struct reg_offset_data bam_v1_3_reg_info[] = {
- 	[BAM_CTRL]		= { 0x0F80, 0x00, 0x00, 0x00 },
- 	[BAM_REVISION]		= { 0x0F84, 0x00, 0x00, 0x00 },
-@@ -140,6 +144,10 @@ static const struct reg_offset_data bam_v1_3_reg_info[] = {
- 	[BAM_P_FIFO_SIZES]	= { 0x1020, 0x00, 0x40, 0x00 },
+@@ -179,6 +182,7 @@ static const struct reg_offset_data bam_v1_4_reg_info[] = {
+ 
+ static const struct bam_device_data bam_v1_4_data = {
+ 	.reg_info = bam_v1_4_reg_info,
++	.bam_pipe_lock = true,
  };
  
-+static const struct bam_device_data bam_v1_3_data = {
-+	.reg_info = bam_v1_3_reg_info,
-+};
-+
- static const struct reg_offset_data bam_v1_4_reg_info[] = {
- 	[BAM_CTRL]		= { 0x0000, 0x00, 0x00, 0x00 },
- 	[BAM_REVISION]		= { 0x0004, 0x00, 0x00, 0x00 },
-@@ -169,6 +177,10 @@ static const struct reg_offset_data bam_v1_4_reg_info[] = {
- 	[BAM_P_FIFO_SIZES]	= { 0x1820, 0x00, 0x1000, 0x00 },
- };
- 
-+static const struct bam_device_data bam_v1_4_data = {
-+	.reg_info = bam_v1_4_reg_info,
-+};
-+
  static const struct reg_offset_data bam_v1_7_reg_info[] = {
- 	[BAM_CTRL]		= { 0x00000, 0x00, 0x00, 0x00 },
- 	[BAM_REVISION]		= { 0x01000, 0x00, 0x00, 0x00 },
-@@ -198,6 +210,10 @@ static const struct reg_offset_data bam_v1_7_reg_info[] = {
- 	[BAM_P_FIFO_SIZES]	= { 0x13820, 0x00, 0x1000, 0x00 },
+@@ -212,6 +216,7 @@ static const struct reg_offset_data bam_v1_7_reg_info[] = {
+ 
+ static const struct bam_device_data bam_v1_7_data = {
+ 	.reg_info = bam_v1_7_reg_info,
++	.bam_pipe_lock = true,
  };
  
-+static const struct bam_device_data bam_v1_7_data = {
-+	.reg_info = bam_v1_7_reg_info,
-+};
-+
  /* BAM CTRL */
- #define BAM_SW_RST			BIT(0)
- #define BAM_EN				BIT(1)
-@@ -391,7 +407,7 @@ struct bam_device {
- 	bool powered_remotely;
- 	u32 active_channels;
+@@ -707,8 +712,15 @@ static struct dma_async_tx_descriptor *bam_prep_slave_sg(struct dma_chan *chan,
+ 		unsigned int curr_offset = 0;
  
--	const struct reg_offset_data *layout;
-+	const struct bam_device_data *dev_data;
+ 		do {
+-			if (flags & DMA_PREP_CMD)
++			if (flags & DMA_PREP_CMD) {
+ 				desc->flags |= cpu_to_le16(DESC_FLAG_CMD);
++				if (bdev->dev_data->bam_pipe_lock) {
++					if (flags & DMA_PREP_LOCK)
++						desc->flags |= cpu_to_le16(DESC_FLAG_LOCK);
++					else if (flags & DMA_PREP_UNLOCK)
++						desc->flags |= cpu_to_le16(DESC_FLAG_UNLOCK);
++				}
++			}
  
- 	struct clk *bamclk;
- 	int irq;
-@@ -409,7 +425,7 @@ struct bam_device {
- static inline void __iomem *bam_addr(struct bam_device *bdev, u32 pipe,
- 		enum bam_reg reg)
- {
--	const struct reg_offset_data r = bdev->layout[reg];
-+	const struct reg_offset_data r = bdev->dev_data->reg_info[reg];
- 
- 	return bdev->regs + r.base_offset +
- 		r.pipe_mult * pipe +
-@@ -1225,9 +1241,9 @@ static void bam_channel_init(struct bam_device *bdev, struct bam_chan *bchan,
- }
- 
- static const struct of_device_id bam_of_match[] = {
--	{ .compatible = "qcom,bam-v1.3.0", .data = &bam_v1_3_reg_info },
--	{ .compatible = "qcom,bam-v1.4.0", .data = &bam_v1_4_reg_info },
--	{ .compatible = "qcom,bam-v1.7.0", .data = &bam_v1_7_reg_info },
-+	{ .compatible = "qcom,bam-v1.3.0", .data = &bam_v1_3_data },
-+	{ .compatible = "qcom,bam-v1.4.0", .data = &bam_v1_4_data },
-+	{ .compatible = "qcom,bam-v1.7.0", .data = &bam_v1_7_data },
- 	{}
- };
- 
-@@ -1251,7 +1267,7 @@ static int bam_dma_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	bdev->layout = match->data;
-+	bdev->dev_data = match->data;
- 
- 	bdev->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(bdev->regs))
+ 			desc->addr = cpu_to_le32(sg_dma_address(sg) +
+ 						 curr_offset);
 
 -- 
 2.45.2
