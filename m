@@ -1,110 +1,108 @@
-Return-Path: <linux-kernel+bounces-556958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A306A5D171
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:12:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 186D2A5D190
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:14:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AE06189F05A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:13:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F8303B6DB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E994A263F31;
-	Tue, 11 Mar 2025 21:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="JJoD4cs7"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BB9264A7A;
+	Tue, 11 Mar 2025 21:14:23 +0000 (UTC)
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BD2264633
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 21:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAF02641EA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 21:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741727566; cv=none; b=hvVyxSWfSElgZn0/ZIk9351e4BKKBYLLQrAYfldciPowiYPp7DYOPMlKq5WdBKtBMtOXqUbWv5rcyy/+6TKmpSabQODLNLxF+3GEKDdclm7yW2CV0vZISDBilPLx3QsmxY0Cu2Cf+RuLh9OcY4fXy1pwxkxm2Kdbeno6U85HVlw=
+	t=1741727663; cv=none; b=sn8FyCQziPkyj8R9a+3n13evwF2nZqUVIfxdmoQbPAn/w8oqImy8GWpx2bLHOhSVomR5sO7r4VbqXTBe4EitwO18I9dGYR+01vzoP2LmjqTtLJSpUbgQqaHqm0YPbcYHXvFWTJDhiGCtynCHFMlcBoAe08UNBbJX5az81gXMlQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741727566; c=relaxed/simple;
-	bh=lC6Y0QO5+K1XxRtRb92W3nce/JojG7rq0xhvK0oFL4k=;
+	s=arc-20240116; t=1741727663; c=relaxed/simple;
+	bh=FCYNWe3lNar4OL1kQXSUntLlpEfGImEZCm1nQF6VtMg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XZwxcpOcpUVy4dIY+I48wYOtqBrBid/YSAor3B1RjcKHlc4aO/2h6h6w/qD1q1IgLfdL0X31mf9mbFShGWKvvrsJtEQPOUqhQVhJft1TCzXcYxcTIpw+4WcNpv/eVkcSCBrU+P8RhUhdCTs5YIQ2HyR9Zw6pFr7o9INsZXovTC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=JJoD4cs7; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=lC6Y
-	0QO5+K1XxRtRb92W3nce/JojG7rq0xhvK0oFL4k=; b=JJoD4cs7zvVvI4Jhk3ak
-	wSnKi0YSHoQaRfloIz+5C0hwaEUxdzQzgquq0PfvZa+qunhR8ag6YfMHtekxg4CK
-	uCgELVM9mniDhzywU6sFVwR3Bf56d9P9U5Uz/CduUPz4GBTQrgMHgRSVnPJu76Yd
-	IDddh//MPNZjvroL9vr35a3UEtG0LK4u+KGjLOK9nbh18S9BlBTAS+eCkw2+DGOa
-	+P125qgw+P9cgqzbMFN9PbVDd4byuL6urbsV+VKnqhqbEL9fkOS8EvsZ3bLgvZjY
-	D79B9hrsb86lG6yeP9+p/0fSRAHhF6MoybHvk8RXt/+znSBS9JrvREQlChU7ovaR
-	Ew==
-Received: (qmail 1011587 invoked from network); 11 Mar 2025 22:12:40 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Mar 2025 22:12:40 +0100
-X-UD-Smtp-Session: l3s3148p1@31uFjBcwDOMgAQnoAEqwANClyB/R595S
-Date: Tue, 11 Mar 2025 22:12:39 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: vigneshr@ti.com, aaro.koskinen@iki.fi, khilman@baylibre.com,
-	rogerq@kernel.org, tony@atomide.com, jmkrzyszt@gmail.com,
-	andi.shyti@kernel.org, reidt@ti.com, wsa@kernel.org,
-	linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@kernel.org
-Subject: Re: [PATCH v2] i2c: omap: fix IRQ storms
-Message-ID: <Z9CnR2kFoTjUwy6M@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andreas Kemnade <andreas@kemnade.info>, vigneshr@ti.com,
-	aaro.koskinen@iki.fi, khilman@baylibre.com, rogerq@kernel.org,
-	tony@atomide.com, jmkrzyszt@gmail.com, andi.shyti@kernel.org,
-	reidt@ti.com, wsa@kernel.org, linux-omap@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@kernel.org
-References: <20250228140420.379498-1-andreas@kemnade.info>
- <Z9CA8H2GAArdTRqI@shikoro>
- <20250311201450.61d48787@akair>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lIy/JWTDDDzRPAf3V44J1b94dU9dlzWNP7vehoOVFw0UbiYU/3Ylv67Ao1iRExcOSU13ZInRcT6ISTQV0lZguUfSSHiL7P3GHy1XQXWMN7yUGCWn4j8oSX4A3szsEXlLNU8eAjGUuEY7loNlLTlpRE0fI0Q/VCx7CLcVPyAoCLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-112-29.bstnma.fios.verizon.net [173.48.112.29])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 52BLEBwv011005
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 17:14:12 -0400
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 5665C2E010B; Tue, 11 Mar 2025 17:14:11 -0400 (EDT)
+Date: Tue, 11 Mar 2025 17:14:11 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: David Sterba <dsterba@suse.cz>
+Cc: "Artem S. Tashkinov" <aros@gmx.com>, linux-ext4@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: A syscall for changing birth time
+Message-ID: <20250311211411.GA132466@mit.edu>
+References: <bda3fa3f-dd12-40de-841a-e4c216ab533f@gmx.com>
+ <20250310135828.GB8837@mit.edu>
+ <69d8b100-f65d-470f-a957-2819795e82a4@gmx.com>
+ <20250310153744.GD8837@mit.edu>
+ <20250311160839.GG32661@twin.jikos.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sRASLUo3ObCMz+qA"
-Content-Disposition: inline
-In-Reply-To: <20250311201450.61d48787@akair>
-
-
---sRASLUo3ObCMz+qA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250311160839.GG32661@twin.jikos.cz>
 
+On Tue, Mar 11, 2025 at 05:08:39PM +0100, David Sterba wrote:
+> 
+> From my experience and use case: for archiving purposes the creation
+> time has a meaning and it gets lost when the files get moved to bigger
+> storage. Sometimes the creation is stored in the file metadata (like jpeg
+> or video files), but ultimately the creation time is stored in the file
+> inode metadata itself regardless of the format.
+> 
+> Another use case is for send/receive that transfers snapshots from one
+> btrfs filesystem to another. In protocol v2 we added the creation time
+> (otime) to the stream so the receiving side can read it, but cannot
+> write it yet.
+> 
+> Question about ability to change otime/btime can be found around
+> internet, there was attempt to make it a utimensat() operation
+> (https://lore.kernel.org/linux-btrfs/cover.1550136164.git.osandov@fb.com).
 
-> Exactly the tests which Nishanth did. So I would say with his Tested-By,
-> this patch is good to go.
+How about this as a compromise?  We can define in statx two different
+timestamp fields.  One is "btime" which is considered forensic
+information which is not changeable by a system call interface, and
+the other is "crtime" which *can* be changed by a system call
+interface.  An individual file system is free to support one, or the
+other, or both of these time stamp fields.
 
-This is what I wanted to know. Thanks for the heads up!
+So file systems that come from the Windows world, including ntfs,
+cifs, vfat, etc. can use crtime, and it can be set via some
+standardized interface --- and file systems like xfs that want to
+treat it as a non-changeable timestamp can only support btime.
 
+What I might do with ext4 is to add a file system compat flag which
+will cause the file system to support either crtime or btime, and
+would use the on-dik inode field for one or the other.  That way I
+don't break existing file system and potential use cases that want to
+use btime, and allow those users who do want to use crtime in some of
+the use cases that you've described to do so.  It does mean that a
+single file system can only support "btime" or "crtime", but not both,
+but it has the advantage that the semantics which are offered by a
+particular file system are very clear --- and we don't have to gain
+consensus across the various Linux file system maintainers about what
+the One True Semantic for "btime/crttime" should be.  We can just have
+both.
 
---sRASLUo3ObCMz+qA
-Content-Type: application/pgp-signature; name="signature.asc"
+(And of course, some file systems might only support
+mtime/ctime/atime, or only support a single timestamp value, and
+that's also fine.)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfQp0MACgkQFA3kzBSg
-Kba0GA//co82xU2jKLsT0M979EbwwKBaF0l41p/vh69x6qIuiF+R0AFxRV6ZJCYt
-z7dfGEJE7Av6nnV0Zuuv6u/EpwFWfmF32Q5ID5OnefkDUg5bS8P5rhRxcdWzon47
-V5drpAtgVlsf7wWUJgqr/i2AhJkPAbTZExhRia5cIu3BhfMBvdbjW9X21bizaBuS
-c4CHH0zERC55jnAtp7CNo6E03UsN1SIzZk/ZP/CVrY4+qcweIOWlNwiOB8KYgw2V
-LCIKh59aLLvXrqA4Gx9Pna5o8z+8e0JKXVSubuiJ+UnlIv6TfAGQ8tHE12NYU7mW
-nGy1GdJtFIh5xa/aQVYHV3XqA7a3gvsMFJG9yhG+ObdwghzNBl+URNykdWiDo4pl
-peWXnykrVwtJC71M+D9jSSSa44ESFdfA1NndF3AsPTc+haPA/7WQMgs9XSlCv8lc
-CWJJDM8YfBeY99xDGj0WSj+2n64kYAsbL8QQBECs7X/5Qz+EhQbmpS39YwAToQbA
-YzKLuviTlphAWVQW2bE2Ji5goawHSRd5RQD1QXPmjwL8A30h0leyHilDaW2rnA5P
-A89/I0ZmTKNq7/chq3Uz7EjLo84LwYP85oAr4BwtNInASj85Ae8wyX/RsSLnYdZE
-zzONLZlrIWkSflUG6auujGMwmuN5PwX/Xi2ai7JRUaRADGTKbak=
-=Du7U
------END PGP SIGNATURE-----
-
---sRASLUo3ObCMz+qA--
+						- Ted
 
