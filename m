@@ -1,131 +1,118 @@
-Return-Path: <linux-kernel+bounces-555631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D356BA5BA86
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:12:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E94A5BA7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:09:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B214A3A5DA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:12:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8243F167E17
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C45422424D;
-	Tue, 11 Mar 2025 08:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A771F223710;
+	Tue, 11 Mar 2025 08:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XOdhGi4S"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JIQRQO6G"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB701DE894;
-	Tue, 11 Mar 2025 08:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E0C1DE894
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741680722; cv=none; b=LiY8XZKKiHVj+5TSCHEbYoT8gCm2rEd/5mSg9WFo9Fl7ItWof5YbYB/Ez0pEoPWHcGNSfgqpxHh9gACuLOBjuXMw2WRJlZ9qeibFcSfFHbI4RHWChq1gOo6phxbyxZwXwsLn1VsMRqrzLQGZr/vZUXGZeVSP/3b66jOD4ox3cro=
+	t=1741680547; cv=none; b=ZNo+JgZ85/kDsK/MhTeadQId/3DtuoLbP71LcyDvwEJsowsVqjxdg5lbr2Rp/yEeMgRGOWbRscewhMnj7lwgf6jFB0ebxNeEigrkPSESRs91eKa/z+dqdpLWIGP8EHvZ9FfxmMg9g9x6yKD3U/OC1VnRS37y6q0UDB9iDI7pi60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741680722; c=relaxed/simple;
-	bh=vA06Rl2ek5wsWLgUNf9K2XAhCsBQfUsYoPC1Dx7H0os=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nI662eA1qRbXRSoK8ZWwCHRU+k2EPourxgQyftpWCe9AKLHmV05YBGtADFzo5zz6+673bhl7cqnYPqFsMvMhJK3NxViFVoJiQ/R0WSnZMvuoggWiG6u4MBP0ucBF4tH1vob25wSaxHieYafwRtXRG3k4mlOZHXm+2sytloRbCZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XOdhGi4S; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741680720; x=1773216720;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vA06Rl2ek5wsWLgUNf9K2XAhCsBQfUsYoPC1Dx7H0os=;
-  b=XOdhGi4SzWDlbCN4Zzr4Ag2BdzRTMuKpxUqJBv6Pqd4zVTQAvAjTQk2e
-   KwEIqCGq3R5mg+XWkSVPe6pTFbjJV/jW0LHI4YqbLn4q4KnFOGOi4UFjo
-   Tg0dtZ+5EYfOY3qRpzhvA3UYWOq88LIPrpJQg7d1a313Iw6v2BNWLS+yW
-   /B3pj2ZCEz7ybCI2DBB0OzUE11uOHQMUhrnWY7LjSDwj9cHN24CX0UMDJ
-   O3uPPPB+TeCxVtHJIRw0230NHx7NMD3JDsDYwVcERKa17SZTCDi+ZfCs8
-   cr1q6scGv34aqA3f2+Dedk3c9YjGngDz9FWfaDEf12onh1Ci44GgnUNk5
-   g==;
-X-CSE-ConnectionGUID: E+Z0r5nvSaC5/6eJ5D39Yw==
-X-CSE-MsgGUID: QrJ0vETuQlWFxv35VwMj4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="45491357"
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="45491357"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 01:12:00 -0700
-X-CSE-ConnectionGUID: M6GakZ3hRaaph7ZMRwMV/w==
-X-CSE-MsgGUID: bSPH9ntvQPOnyoB8aL8geA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="157464742"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 01:11:56 -0700
-Date: Tue, 11 Mar 2025 09:08:03 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, Gal Pressman <gal@nvidia.com>,
-	Mark Bloch <mbloch@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Carolina Jubran <cjubran@nvidia.com>
-Subject: Re: [PATCH net 6/6] net/mlx5e: Prevent bridge link show failure for
- non-eswitch-allowed devices
-Message-ID: <Z8/vY+fEb/CeDwtw@mev-dev.igk.intel.com>
-References: <1741644104-97767-1-git-send-email-tariqt@nvidia.com>
- <1741644104-97767-7-git-send-email-tariqt@nvidia.com>
+	s=arc-20240116; t=1741680547; c=relaxed/simple;
+	bh=JDmQM8Dhze4FKjCBOIy9JrDUTaaxnVukGFxN9fy/cl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gDPT68gwVrQs82c9V4ViEyr62Oe7OJCceetmN5ZsIltW/8LLlta4ieQN3lTdkBC1EnACrWc/yLO8PgYyW50YNzyBAXokWQjeFy1CvqmNbdmvfV7K7r0E8hHRbpSuLImipLVHIuvDWBqIyf+N6YTHCn0fmGhPR+ec8i1S83Qc3DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JIQRQO6G; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741680543;
+	bh=JDmQM8Dhze4FKjCBOIy9JrDUTaaxnVukGFxN9fy/cl4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JIQRQO6GB0j4uGLUnX+WM6YlhluKEHd9N8JWH1xxbqlijd6kQ6rTEdZXIfktU8C06
+	 wTNBEj3qI8eRm4T5PDZ9/T2KBPS479Xfk+o4A9PJM8v0QIqsZikKzt4d4MiNwAArfp
+	 kv60m3OTgSF8ryOydyZyk+pdaSGfqNIWxNZu3jdK1vWzSSFiKHvm2yc12LjANU8JQL
+	 jf8+ZOVPuZehRaXOHLlKi2T+9/mm8uOaPeZmErvZ8Vpq32rxxNJ8g6tSjCEH4uDDqm
+	 3PAserwgJsV6JI5jM657UDI0NPbBBWuLMYiZy3DDyogOhxrpWC+SG3yq//HTQET2/e
+	 Z8nztYk2wWWjA==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 06E8517E0237;
+	Tue, 11 Mar 2025 09:09:02 +0100 (CET)
+Date: Tue, 11 Mar 2025 09:08:55 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch, kernel@collabora.com, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com
+Subject: Re: [PATCH v1 6/6] drm/panfrost: Set HW_FEATURE_AARCH64_MMU feature
+ flag on Bifrost models
+Message-ID: <20250311090855.0211c114@collabora.com>
+In-Reply-To: <20250310195921.157511-7-ariel.dalessandro@collabora.com>
+References: <20250310195921.157511-1-ariel.dalessandro@collabora.com>
+	<20250310195921.157511-7-ariel.dalessandro@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1741644104-97767-7-git-send-email-tariqt@nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 12:01:44AM +0200, Tariq Toukan wrote:
-> From: Carolina Jubran <cjubran@nvidia.com>
+On Mon, 10 Mar 2025 16:59:21 -0300
+Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
+
+> Set this feature flag on all Mali Bifrost platforms as the MMU supports
+> AARCH64 4K page table format.
 > 
-> mlx5_eswitch_get_vepa returns -EPERM if the device lacks
-> eswitch_manager capability, blocking mlx5e_bridge_getlink from
-> retrieving VEPA mode. Since mlx5e_bridge_getlink implements
-> ndo_bridge_getlink, returning -EPERM causes bridge link show to fail
-> instead of skipping devices without this capability.
-> 
-> To avoid this, return -EOPNOTSUPP from mlx5e_bridge_getlink when
-> mlx5_eswitch_get_vepa fails, ensuring the command continues processing
-> other devices while ignoring those without the necessary capability.
-> 
-> Fixes: 4b89251de024 ("net/mlx5: Support ndo bridge_setlink and getlink")
-> Signed-off-by: Carolina Jubran <cjubran@nvidia.com>
-> Reviewed-by: Jianbo Liu <jianbol@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+
 > ---
->  drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+>  drivers/gpu/drm/panfrost/panfrost_features.h | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> index a814b63ed97e..8fcaee381b0e 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> @@ -5132,11 +5132,9 @@ static int mlx5e_bridge_getlink(struct sk_buff *skb, u32 pid, u32 seq,
->  	struct mlx5e_priv *priv = netdev_priv(dev);
->  	struct mlx5_core_dev *mdev = priv->mdev;
->  	u8 mode, setting;
-> -	int err;
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_features.h b/drivers/gpu/drm/panfrost/panfrost_features.h
+> index 7ed0cd3ea2d4c..52f9d69f6db9d 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_features.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_features.h
+> @@ -54,6 +54,7 @@ enum panfrost_hw_feature {
+>  	BIT_ULL(HW_FEATURE_THREAD_GROUP_SPLIT) | \
+>  	BIT_ULL(HW_FEATURE_FLUSH_REDUCTION) | \
+>  	BIT_ULL(HW_FEATURE_PROTECTED_MODE) | \
+> +	BIT_ULL(HW_FEATURE_AARCH64_MMU) | \
+>  	BIT_ULL(HW_FEATURE_COHERENCY_REG))
 >  
-> -	err = mlx5_eswitch_get_vepa(mdev->priv.eswitch, &setting);
-> -	if (err)
-> -		return err;
-> +	if (mlx5_eswitch_get_vepa(mdev->priv.eswitch, &setting))
-> +		return -EOPNOTSUPP;
->  	mode = setting ? BRIDGE_MODE_VEPA : BRIDGE_MODE_VEB;
->  	return ndo_dflt_bridge_getlink(skb, pid, seq, dev,
->  				       mode,
+>  #define hw_features_g72 (\
+> @@ -64,6 +65,7 @@ enum panfrost_hw_feature {
+>  	BIT_ULL(HW_FEATURE_FLUSH_REDUCTION) | \
+>  	BIT_ULL(HW_FEATURE_PROTECTED_MODE) | \
+>  	BIT_ULL(HW_FEATURE_PROTECTED_DEBUG_MODE) | \
+> +	BIT_ULL(HW_FEATURE_AARCH64_MMU) | \
+>  	BIT_ULL(HW_FEATURE_COHERENCY_REG))
+>  
+>  #define hw_features_g51 hw_features_g72
+> @@ -77,6 +79,7 @@ enum panfrost_hw_feature {
+>  	BIT_ULL(HW_FEATURE_PROTECTED_MODE) | \
+>  	BIT_ULL(HW_FEATURE_PROTECTED_DEBUG_MODE) | \
+>  	BIT_ULL(HW_FEATURE_IDVS_GROUP_SIZE) | \
+> +	BIT_ULL(HW_FEATURE_AARCH64_MMU) | \
+>  	BIT_ULL(HW_FEATURE_COHERENCY_REG))
+>  
+>  #define hw_features_g76 (\
 
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-
-> -- 
-> 2.31.1
 
