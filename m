@@ -1,163 +1,139 @@
-Return-Path: <linux-kernel+bounces-555589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621C1A5B9F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:36:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B64A5BA09
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 990A81717FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:36:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DC713B001D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7682622424B;
-	Tue, 11 Mar 2025 07:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AAC1E9B34;
+	Tue, 11 Mar 2025 07:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="R48GsdkS"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldh5MXHm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AA3223300;
-	Tue, 11 Mar 2025 07:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEC5222569;
+	Tue, 11 Mar 2025 07:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741678533; cv=none; b=SkgpWcNOfSbP/K9iz9Gm2WGfkqp3R1IiJjkaZ2qgtS+QR2qBymItL7kV+OpchIGdzHnZGriVUWI4ErbW/lEvneBx1S5NLHu7odMmOCDWU7Nb3yLaV1kNPO/7w+h+Ojp4SNfZiCnTVkKVOkYMhgc60EgI+RVqJhio5X7JLj12tD0=
+	t=1741678606; cv=none; b=AFJET0bqZ7TCnEBNIcBMKjHvev4lauHpa5u7wi3MzIf/Tt2aNR6RNwk2+GKsJC6Z2kCQol6wv4xWdKiEr32TzUAIOEwKP1WibZpKWruAv0sVTox5OXif+fO/T5YDrVm9GXUXSAmDl3a3GIbI1eREeU6P1+PkNriYVSnFqycdeRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741678533; c=relaxed/simple;
-	bh=POjYP11ijGhrMQ/irsFz8LQK3UogA6nQt9n5S4M0ExI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DbBjIAJNVtoCXL0Ialb+NJ8hKLK9V0lv6o1XtUeOg8MOsV180j+C6oiprC3QgfeK9gZQCaE1Z0nLSz7tVSW0/rj09UPRoKUUwSxgqaWDD1xEcIDNYeJzPY6CPfg4SLHV0KPBkk81NQOuXhG2mizQnP3WckIZgUxSJ6rjR6CLBi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=R48GsdkS; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741678527;
-	bh=+di+w3XDN0XK7wrSBYa8FBFLbOobo94ufMhlAR2ajB4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=R48GsdkSaKsBUSen7yRgRbAsbomrVay2i55ADnrXg4oPTiip9u3WNsJPAT5cP9SAA
-	 6wdl5DeduraEHDzpv70bx0EVLCkAMKrYPfuJ21UIpCiIB/78myPJSbD6zD2HaDxztj
-	 VCPj68NRbK0VMEqKPSZ66pEQenHkiOQEYnwlbOhL65U60Deocfewp0yZMgDf/HtaQG
-	 o8Z4ImbwVjYBTASsXJ5SFVeyOLVpi0r31p4OgvxcJJulPCmtGxIxRVtscu68FcoRwV
-	 YPUu95U0LaaXAcouzYVzPMLleJiuueuXTO4i4ovb5M4L2wIKBqdo9TTCMLoJPjg7ZL
-	 V6USCma8wtvIw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBlsn4cW4z4xD9;
-	Tue, 11 Mar 2025 18:35:25 +1100 (AEDT)
-Date: Tue, 11 Mar 2025 18:35:24 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Heiko Stuebner
- <heiko@sntech.de>
-Cc: Detlev Casanova <detlev.casanova@collabora.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Shawn Lin <shawn.lin@rock-chips.com>
-Subject: linux-next: manual merge of the scsi tree with the rockchip tree
-Message-ID: <20250311183524.38989e83@canb.auug.org.au>
+	s=arc-20240116; t=1741678606; c=relaxed/simple;
+	bh=NlSYeBHkuN4uuQXn3s5uTUiD1LIIuFvtgumzckXKVdY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pax15oUWvBb5AuRZIkPqX9nUIMN0R3j4v1pAe9/XzYSZ88sQFeSpRtwmNJVxw0PRULFGJCVyRAU+tTTwi9+0qysc5t85V5KVtEibugpgXaNmI+mNugzR4iRdDOu2HorlpE8ptKa4cPW4SoOZahVWnP/71SQXJX+GpiRwc8yt5sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldh5MXHm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 030E2C4CEEE;
+	Tue, 11 Mar 2025 07:36:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741678605;
+	bh=NlSYeBHkuN4uuQXn3s5uTUiD1LIIuFvtgumzckXKVdY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ldh5MXHm6Dxk7oS7ong5Qz0RQq2Cy4yJ2zdwn/PpS135rFIWsSbfIJb0VP/ep3iH5
+	 osAEXdZlwKL+edebVSvniZuHMrEgIbM5k2taPWyNPVqc7NCc4Q0zAM0k8nWJsPbjr/
+	 D0NOiTuQC1FuzjpKYLZaCN5M6ZI1hk+z4h05MQRklmW45K0lAjC417+smGxBIyZZTn
+	 y2TuGEBzR160/XjDZL80EF/ZAm7VZbj46f9Zn0HymvhP3TvcGgQCsJhL2P14MbO8N/
+	 aRJ4suNLHsx0YhGTHJt1kfroNrNZzQ+SR86pHZQI0u1iuHi6CmrFTFsyICwJ7lwNIZ
+	 Cv1A24VEuc2MQ==
+Message-ID: <ed700b54-8599-4775-b07f-43c7d62ae722@kernel.org>
+Date: Tue, 11 Mar 2025 08:36:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/aRgCxtyZ6Cad2=.Ts_IQDNO";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/9] dt-bindings: clock: brcm,kona-ccu: Add BCM281xx
+ bus clocks
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alex Elder <elder@kernel.org>,
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
+ <20250308-kona-bus-clock-v3-4-d6fb5bfc3b67@gmail.com>
+ <20250310-orange-frog-of-abundance-af80f3@krzk-bin>
+ <2b120341-0026-4a9c-9ad1-b14adfac50c8@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <2b120341-0026-4a9c-9ad1-b14adfac50c8@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/aRgCxtyZ6Cad2=.Ts_IQDNO
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 10/03/2025 21:20, Artur Weber wrote:
+> On 10.03.2025 10:43, Krzysztof Kozlowski wrote:
+>> On Sat, Mar 08, 2025 at 08:50:42AM +0100, Artur Weber wrote:
+>>> Add bus clocks corresponding to peripheral clocks currently supported
+>>> by the BCM281xx clock driver and add the relevant clock IDs to the
+>>> clock/bcm281xx.h dt-bindings header.
+>>
+>> Please squash the patch so we see complete change.
+> 
+> Squash which patch(-es)? Both CCU bindings and the dt-bindings header
+> are modified in this patch, as outlined in the commit message (though
+> now that I look at it, I could reword the first sentence to specifically
+> imply "add bus clocks *to the binding*"...). What is missing?
 
-Hi all,
+If I got it correctly, you are changing the same lines in bindings in
+two patches, so squash these two patches.
 
-Today's linux-next merge of the scsi tree got a conflict in:
 
-  arch/arm64/boot/dts/rockchip/rk3576.dtsi
-
-between commit:
-
-  36299757129c ("arm64: dts: rockchip: Add SFC nodes for rk3576")
-
-from the rockchip tree and commit:
-
-  c75e5e010fef ("scsi: arm64: dts: rockchip: Add UFS support for RK3576 SoC=
-")
-
-from the scsi tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/boot/dts/rockchip/rk3576.dtsi
-index edfa0326f299,bd55bd8a67cb..000000000000
---- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-@@@ -1334,17 -1221,30 +1334,41 @@@
-  			};
-  		};
- =20
- +		sfc1: spi@2a300000 {
- +			compatible =3D "rockchip,sfc";
- +			reg =3D <0x0 0x2a300000 0x0 0x4000>;
- +			interrupts =3D <GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>;
- +			clocks =3D <&cru SCLK_FSPI1_X2>, <&cru HCLK_FSPI1>;
- +			clock-names =3D "clk_sfc", "hclk_sfc";
- +			#address-cells =3D <1>;
- +			#size-cells =3D <0>;
- +			status =3D "disabled";
- +		};
- +
-+ 		ufshc: ufshc@2a2d0000 {
-+ 			compatible =3D "rockchip,rk3576-ufshc";
-+ 			reg =3D <0x0 0x2a2d0000 0x0 0x10000>,
-+ 			      <0x0 0x2b040000 0x0 0x10000>,
-+ 			      <0x0 0x2601f000 0x0 0x1000>,
-+ 			      <0x0 0x2603c000 0x0 0x1000>,
-+ 			      <0x0 0x2a2e0000 0x0 0x10000>;
-+ 			reg-names =3D "hci", "mphy", "hci_grf", "mphy_grf", "hci_apb";
-+ 			clocks =3D <&cru ACLK_UFS_SYS>, <&cru PCLK_USB_ROOT>, <&cru PCLK_MPHY>,
-+ 				 <&cru CLK_REF_UFS_CLKOUT>;
-+ 			clock-names =3D "core", "pclk", "pclk_mphy", "ref_out";
-+ 			assigned-clocks =3D <&cru CLK_REF_OSC_MPHY>;
-+ 			assigned-clock-parents =3D <&cru CLK_REF_MPHY_26M>;
-+ 			interrupts =3D <GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH>;
-+ 			power-domains =3D <&power RK3576_PD_USB>;
-+ 			pinctrl-0 =3D <&ufs_refclk>;
-+ 			pinctrl-names =3D "default";
-+ 			resets =3D <&cru SRST_A_UFS_BIU>, <&cru SRST_A_UFS_SYS>,
-+ 				 <&cru SRST_A_UFS>, <&cru SRST_P_UFS_GRF>;
-+ 			reset-names =3D "biu", "sys", "ufs", "grf";
-+ 			reset-gpios =3D <&gpio4 RK_PD0 GPIO_ACTIVE_LOW>;
-+ 			status =3D "disabled";
-+ 		};
-+=20
-  		sdmmc: mmc@2a310000 {
-  			compatible =3D "rockchip,rk3576-dw-mshc";
-  			reg =3D <0x0 0x2a310000 0x0 0x4000>;
-
---Sig_/aRgCxtyZ6Cad2=.Ts_IQDNO
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfP57wACgkQAVBC80lX
-0GzxFwf/ZQHt+LZ57HYlfjCOG9PcocowM3cypC8pAZTlZM4H+uzN+hwk4EO2GQFl
-qZgQAMqCW5CAEOCOqVWJQKBMMPGh57ybcf/Pu2qvv+crEEW/jvWdZcu3/pueVNNa
-nteVTeYlQUkojBjkxMwBsS/MVCRic1X4hHB2wWxXy/frnWPKBC4ZsZ4kI+Aew5n0
-fFabnvPBxW6s82tRFZ5VkFkO5ckbXRmdFnuBbpqlymZej7fH5WYeZEVx3J5GCYvm
-1S2McWGYDajhd+P1X0vQmmSfLdF9/+EcRVIGJTSY17bXhGCwPjSLHakrmqNMDLEf
-BftrG7Wo0cClTwu6E2UhnKAwkMinng==
-=wlQu
------END PGP SIGNATURE-----
-
---Sig_/aRgCxtyZ6Cad2=.Ts_IQDNO--
+Best regards,
+Krzysztof
 
