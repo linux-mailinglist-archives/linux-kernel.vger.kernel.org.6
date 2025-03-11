@@ -1,105 +1,105 @@
-Return-Path: <linux-kernel+bounces-555363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515EAA5B66D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:05:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3FAA5B670
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F8F189372C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D11D1893588
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97A81E411D;
-	Tue, 11 Mar 2025 02:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236411E47A6;
+	Tue, 11 Mar 2025 02:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GJOH5+2l"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Zhc8taC7"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14373FD1;
-	Tue, 11 Mar 2025 02:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D323FD1;
+	Tue, 11 Mar 2025 02:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741658695; cv=none; b=sXlYh0E6w7GsVontdiKljQDRsRnE74CE9jT8Lmq1F7FoW251teZ1MOZmFVKQZOukI2fXlzw1bWRmQkawTwEKtR9L9xndCPcow+b+xfG0dL/3bjaeo+os+XwEXHgT0Juns3HwFtSx1xfpjnh3kIp0OUbxYG0YwXKmxvlJPxiSNFM=
+	t=1741658826; cv=none; b=QpamHjAlJBEWxCUvi6tFWLOmIux8yoOxdNQ72/HT9bfsKyF6zqysudnB7H258CvX4ATTgF/Ykf6WczRIeQlZD+dFEXIxW/dcW3OaLcmGmOAD9fBLKXitPC4hz1LKjZ7DNz+GiaTCgkFhEpXWoMQOl2PW0BMIVLjHOHNHPMM+S8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741658695; c=relaxed/simple;
-	bh=VHMrKqhpYUmRanfgiEYjl4Dpa9ZGizbuJ2E9zZatBEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lY8A3HnWErCN0+BpFr81RmFWQpovIW/It6+p1Jws1NQLGQhkhOZpzPh4OVF6rbZzqcx72F6AFiT8a/oNWdnI8KR7R3KikKqkuh1qJoE8/gOoXUQhydtm3Yfna/mPtISJrHECfsIcdi8lHa+HBUFGEkd2mrOSMXn/EDNU0yKiSeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GJOH5+2l; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741658688;
-	bh=53y+lO1WpbMGCgaxDUAvybBmVxTmGb+/kXbwt+Wj+Vk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GJOH5+2l1mKlsSU3ovhdYk9E70/dBalkUOIEGPx3lv/j2cTsmNHgG5rAXSBznrhDS
-	 ib2iU9evvg4xuknksQmrEO1kV9E7c6eXcF4HYwZHZS44DcEg2Jw+pzPLKH0MlHJFtS
-	 gWYzMtxNSfx8ycXA//qbPiC5XpOCPRLONIT2HdeuV7X1atm2BzCYNvFm2ZKB6Wx9Pm
-	 FmbvgBaQ+oXuAQC8YZtqfmLSX0cNe9BvO6byJFBLflfv32ZlDIfQ7E06M3SEwu6jb1
-	 X6eZqbO5tNgSy1I+88q74Nb8IkD7wLF0+ndVOb6KuzzpwGWHD4rZy2mbU27Cx66q79
-	 HCF6a7mrEHpWw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBcXG2vDTz4wcw;
-	Tue, 11 Mar 2025 13:04:46 +1100 (AEDT)
-Date: Tue, 11 Mar 2025 13:04:44 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
- <johan.hedberg@gmail.com>, David Miller <davem@davemloft.net>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the bluetooth tree
-Message-ID: <20250311130444.0baf2349@canb.auug.org.au>
+	s=arc-20240116; t=1741658826; c=relaxed/simple;
+	bh=z6jVo03j7ZbrcOq9bBY8qnIpoBkz5o6+15aKdHE31EI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SghBUYtJZEjE9w3T0LVupL0S1ALgolZAGvRu7c1petUwEvIQ8TXiy31RMvQCRjNAovTCxI3cSqEhJ7A6YviiBlDGkcBWsA9pttpUZH+suX3QKNXgya7kw3kxRrgtOhbaCGbA1jxd5jEiWRHyYqKYUZXPxaIKzQtr0DP2jpKKBl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Zhc8taC7; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1741658819; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=BzglBtV+XA2a3PeBuIhCqkESUNYrOmlDABzPylPcK5w=;
+	b=Zhc8taC7P9/Vc4IPGJCdNWp7AvNo3j5UUAusoCH7u5pFUXHvrYF2uZNVIjtbBa+R8JYeGHT4dUVRi110e7pZ4j8iydYjHt0GrsoZLht4UgWBNsnN/ZxC/qS0Kr/Vn6o1eo8EjNXgv9obFmQxMfT7C/GC3+sjqBGlytYh4azfxLs=
+Received: from 30.221.130.118(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WR7LvPK_1741658816 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 11 Mar 2025 10:06:57 +0800
+Message-ID: <47785d3f-3560-4832-b88a-031a80d1fd28@linux.alibaba.com>
+Date: Tue, 11 Mar 2025 10:06:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Xah6Fz0YMHfx9/W.cfM2V.P";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] PCI: hotplug: Add a generic RAS tracepoint for hotplug
+ event
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: lukas@wunner.de, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ helgaas@kernel.org, bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, oleg@redhat.com,
+ naveen@kernel.org, davem@davemloft.net, anil.s.keshavamurthy@intel.com,
+ mark.rutland@arm.com, peterz@infradead.org, tianruidong@linux.alibaba.com
+References: <20250109025543.56830-1-xueshuai@linux.alibaba.com>
+ <20250113155503.71467082@gandalf.local.home>
+ <deb6f0c4-77b8-431e-9b81-555a8344c750@linux.alibaba.com>
+ <20250310105044.129dc354@gandalf.local.home>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250310105044.129dc354@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---Sig_/Xah6Fz0YMHfx9/W.cfM2V.P
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-The following commits are also in the net tree as different commits
-(but the same patches):
+在 2025/3/10 22:50, Steven Rostedt 写道:
+> On Mon, 10 Mar 2025 11:59:55 +0800
+> Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+> 
+>> Hi, Steve,
+>>
+>> If I move PCI_HOTPLUG_EVENT into one place, `include/upai/linux/pci.h`,
+>> I need to include:
+>>
+>>       #include <linux/tracepoint.h>
+>>
+>> Then, kernel build fails with CONFIG_UAPI_HEADER_TEST=y:
+> 
+> Just move the enum definitions, not the entire event file.
+> 
+> That is, have one place has the PCI_HOTPLUG_EVENT macro, and have both the
+> uapi header as well as the tracepoint header include that header.
+> 
+> I guess I need to see the entire change.
+> 
 
-  01aa72784e50 ("Bluetooth: SCO: fix sco_conn refcounting on sco_conn_ready=
-")
-  8da76b2ac810 ("Revert "Bluetooth: hci_core: Fix sleeping function called =
-from invalid context"")
-  c01c0d443bcd ("Bluetooth: btusb: Configure altsetting for HCI_USER_CHANNE=
-L")
-  c7c65369f5a3 ("Bluetooth: hci_event: Fix enabling passive scanning")
+Hi, Steven,
 
---=20
-Cheers,
-Stephen Rothwell
+IMHO, the problem is that the PCI_HOTPLUG_EVENT macro needs to include
+"linux/tracepoint.h" but it is not allowed in userspace.
 
---Sig_/Xah6Fz0YMHfx9/W.cfM2V.P
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+The entire change in v6 build fails with CONFIG_UAPI_HEADER_TEST=y:
 
------BEGIN PGP SIGNATURE-----
+   https://lore.kernel.org/lkml/202501190108.tRReJA1Z-lkp@intel.com/T/#mae507b91b8b80c386dfa9e63fbbdd45826c2e003
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfPmjwACgkQAVBC80lX
-0GxK4gf/aF/kTXC5O+8SZutLdatEAYMaJWUSECGcZlmLOHvwVmhADNY7qe6EDPOd
-BgCaanmwm64JNV5nNu7r/orlgNul33bhSBpqusoW/D0Io2Ucd4e9QPKTRVJL+XrM
-fTXAyFdtdNj3W9iZ/53C47RZNuQOPryvWIKO/K9VfXa6fcpC8CrGZ/diD/3/UGyo
-ixbozTAyydXc+1sLuivRubr7NWGaRSVz4hDrqCqPOrWP553mdreMaJH+tn5fOC6V
-AQzwD7PgQ4Fveuu1HnDcVFpQr6uqvd1obXP2HCIWH24iPqHR0oxMdiPVHAqi3LOa
-uo8lTH57R/pwTsBGxPYuG3oy7jRijg==
-=12wp
------END PGP SIGNATURE-----
+(sorry, I did not see the problem because my local .config do not set
+CONFIG_UAPI_HEADER_TEST)
 
---Sig_/Xah6Fz0YMHfx9/W.cfM2V.P--
+Thanks
+Shuai
 
