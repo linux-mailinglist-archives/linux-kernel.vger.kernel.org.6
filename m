@@ -1,201 +1,82 @@
-Return-Path: <linux-kernel+bounces-556243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B77CA5C30F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:54:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C991A5C305
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:52:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FDB318992D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:54:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 622483A97C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFD91D5ADC;
-	Tue, 11 Mar 2025 13:54:09 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407E91D5173;
+	Tue, 11 Mar 2025 13:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWg4qFbR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F1C1E260A;
-	Tue, 11 Mar 2025 13:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741701248; cv=fail; b=Vyeda1VQ992UFA9HWt1iWd2pO52eD/fBkNsJ4V4hv1JvOWyrmvBpJMwJkWhTRLiSlIYAcRyH3wkDCRYqxi8d8OsMxPxI85M/bMHDRpBsp0OwIrUq9E5DkXm9mwxEIb6fh272/uWUrVLyCwdZl4dV3YvLz3KoKneJrhc4iJ57CQU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741701248; c=relaxed/simple;
-	bh=rpSuvwx9MPS494S2GT+nieGQcOyykndaYQ1uf5RjXnk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dNCSfcKu3pezGUOF8mGo6OCWVxQhcYE6nYZiZiAXQFAtEJyFfXT+7CoNQpuWEb4AGVs0TJaS2WGsL+zT/Cx8cboa8eyNVlDJAbL9cxqCa3u8nrIrDJyMmSz3/hT/pwY6L1tt2NH/nvSGVjgU2XZ8VoQTRgdKRCH7NYZPsJYu03o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BBh3M2017197;
-	Tue, 11 Mar 2025 13:53:54 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2045.outbound.protection.outlook.com [104.47.55.45])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 458b413gsy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 13:53:53 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jm8u48utoxmDlJeKPtXccoyDOcUn01YWG+PhAqJOMrseRaPMHWkkwrIvsWEIAt7uiLLgjLd79burc7kKm0FD4EqGJgayPGpNHUO3ZEeuKAiGVOycScZakFctQEHmF7NQyzjwtx0t+6ktij3greg1A8grQrZd2hFeSYBRlA5sLhPDtXwU8I8k+w819r3GDCG+nqedd5kREuwFuHO3S8qm41yM+o9tynJVNBGpmMdJeMU6R6C29qkVhYCHY3tc9UXSS2P+KK8Pze7HDvsYEhC53BzlbVGL24ns+Kgrj46/U+7FSxmJGdhKvYqUtzcCRDyLVBDqwnE4JXTS2C35uK/UiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Cuy6yDIGgB4FkRjtcjNCLWK4aO3/8HrKM1dxZNMw4n8=;
- b=i9Q8zxLTGLolktOn0W9TZgDw4jGFQRCbU1ZSvpnRkEdRN35WbTbsyU3yzVv29avrHxfWSkVtnNTzIqx9eKEjyeY/FlvT5MW919DdX5xncNJA6i/LEhM3PYoewSEaJoFMgVzrwNE5rxM2VIU/PDAmo6G01kzfvZKcX9hLzHUXDnNkBS8VGbulYLyGBg7zOXkQRnPxWseGIEZHyHqTM6ZSLN9lgOiZxowO1p1iYXFZk7hbVQGVYScMigThnRYULsN5T2LIMWCZqk7PeLAdW9adMWT2/4hGpSLNZapYwPl3tp60zRq+4+cBQQdHewcTpaDEJmVbyEoIyU+ZIhYg/Rvfmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from SJ0PR11MB5866.namprd11.prod.outlook.com (2603:10b6:a03:429::10)
- by DM4PR11MB6454.namprd11.prod.outlook.com (2603:10b6:8:b8::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.27; Tue, 11 Mar 2025 13:53:51 +0000
-Received: from SJ0PR11MB5866.namprd11.prod.outlook.com
- ([fe80::265f:31c0:f775:c25b]) by SJ0PR11MB5866.namprd11.prod.outlook.com
- ([fe80::265f:31c0:f775:c25b%4]) with mapi id 15.20.8489.025; Tue, 11 Mar 2025
- 13:53:51 +0000
-From: Bo Sun <Bo.Sun.CN@windriver.com>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Vidya Sagar <vidyas@nvidia.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kevin Hao <kexin.hao@windriver.com>,
-        Bo Sun <Bo.Sun.CN@windriver.com>, Bjorn Helgaas <helgaas@kernel.org>
-Subject: [PATCH v2 2/2] PCI: of_property: Omit 'bus-range' property if no secondary bus
-Date: Tue, 11 Mar 2025 21:52:29 +0800
-Message-ID: <20250311135229.3329381-3-Bo.Sun.CN@windriver.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250311135229.3329381-1-Bo.Sun.CN@windriver.com>
-References: <20250311135229.3329381-1-Bo.Sun.CN@windriver.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYAPR01CA0140.jpnprd01.prod.outlook.com
- (2603:1096:404:2d::32) To SJ0PR11MB5866.namprd11.prod.outlook.com
- (2603:10b6:a03:429::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4C21C245C;
+	Tue, 11 Mar 2025 13:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741701162; cv=none; b=BSwZ0J+s+y6LZnA0869H9nVqsNdDM4Wj5rfIQAmwxmEiN0yYIc6CH7Bjiwn9836S9igPuXo/gHkW75MIasiwWWwS0RgQSCy/HfeMEjGzuvkqfPVoFB1VNRp7jL94Hy3e9yNePJOSMOFwx2Nji+od0AiZPTCcQ5qEKxVH9Aktgjw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741701162; c=relaxed/simple;
+	bh=n45UPAxWADbzGDd4VBZbcmVUcHI4dsPczYexj1kkWEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QOAoavALe1cxNuVKrmGQXMk30FDmOV+2EyOTre+fWoP5HT0DFHjK4o7FGL7VUoyHEDnX2fVxaaJMKhdgPWAg6OvUbRq3liXJ5eC5R1ej771koO6cXiAyMSYb8dcqc7KeaCVV0oGEg0Q5d6aYQWNLYhcb3WmnmjwmVn8LsoLCm1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BWg4qFbR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF739C4CEE9;
+	Tue, 11 Mar 2025 13:52:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741701162;
+	bh=n45UPAxWADbzGDd4VBZbcmVUcHI4dsPczYexj1kkWEs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BWg4qFbRX+MK5lX3pYS8YQg/kViYWdb7cQsXn5bTDT4CfmScsfpNDELBKWBAR6vIC
+	 RF6he+8/ejSI/Yt4NttNln+tNp4X2pYPmXHs3owBpmfhmR2c/y56f+5MhXpmBOQBGo
+	 qq9M0HX5l7XoR/qqtUiic4dKBb18YwgUU+SUHUNusab675xkWoD7jlz7Bgyzr65IwH
+	 xnm6HZUh69Ha2gJvM/X/Y+aXbE3N4LdtpDVmln6HYJ3TF4R5WoeDXrOouMfwGi9c8J
+	 nJUZDOXG+xLiFYq9YdV0MLUF7tVPTK1sOyB3pTYCKOkcE+PhhJ+khcuOs0YSoTnzO9
+	 KtclIZyqaQfPg==
+Date: Tue, 11 Mar 2025 14:52:36 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rui Salvaterra <rsalvaterra@gmail.com>
+Cc: muhammad.husaini.zulkifli@intel.com, anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com, edumazet@google.com, kuba@kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] igc: enable HW VLAN insertion/stripping by default
+Message-ID: <20250311135236.GO4159220@kernel.org>
+References: <20250307110339.13788-1-rsalvaterra@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR11MB5866:EE_|DM4PR11MB6454:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71f800ea-d42a-4acc-6167-08dd60a42753
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1cN6yib1uBH6jY/xjZ+onI5p674a0G61/oN5ts43K0FZXcJHK94OJ+omIFRG?=
- =?us-ascii?Q?dTGgs3ozZ0077T78GkDXMLpfU+UsO0f5ihGjfbQkXgNE4RDOaGieADB0kuk/?=
- =?us-ascii?Q?5Rz3ijFRnEF0js4mBhSDW10pZdDDSqVl+JJbkMDkPH72QEMa3+Vu3fd3x/+M?=
- =?us-ascii?Q?cy3coyyL4mk7wPqd5W4WgmWf66TZtufYXNPIRotXqxOjfT0CxhA1H5GzRW3Z?=
- =?us-ascii?Q?OEhAQgChihF284PE367oTLC+cDPJoFXQPFYb3/AwhfrS+hdggZYpB46NdkQ+?=
- =?us-ascii?Q?DXP/0+qEWl9Z9dvpTyUkdT4JD6hBmc9iOL/p6QK3C3tyMEPoqxdN3nTdxbOw?=
- =?us-ascii?Q?1HES2FxYjzmkxGJFMP2FpwN/d5dZWYiY82Fc0bWZU1y2O2jQjYQ8/TQQ9zuu?=
- =?us-ascii?Q?l9LDQ+Ge4qrrZqCWzkCXVZawyPxD78yQVaNBgZ1CYIbKBfthU5JUHsCLD1ef?=
- =?us-ascii?Q?vgsqeUnvGlWaajxiINa4L1cZxY+pCQqbF5Ew6wy/dlo/yGBYD22ARangmeiE?=
- =?us-ascii?Q?9Vr3aaxQGm7K2c50JeMje6isx1yiSWMfntfa8YN0k5hicynuOYmRKxsSYoyC?=
- =?us-ascii?Q?Z9YurzptbmkpyNwIht2nhakrx2EfyqP/ewB3qMCGQQOK3/XKpwB8jIsPVtWn?=
- =?us-ascii?Q?vkR4nv/QRqXSAJWhIB+WjJ3AmHbFVlVIXJszOGMVDPBraQ01ktLAFTbZ2jXx?=
- =?us-ascii?Q?wIm+EnHyMok9bhvCiZkA3tc516W7hq08ku6J3Bfpr2PnGoZmGCBVAOzm+sQG?=
- =?us-ascii?Q?e09EwwHaW6MAo32fHwH+lZzSUb1l+6594bdGaUfj84L1L5af1S7pAC3QGIqJ?=
- =?us-ascii?Q?6pVp9WykvDZ0er0Q0F7FRGzVEgzAcMWlr3JmPtWD3iuaDygitiPQXSiP0J8k?=
- =?us-ascii?Q?9IoxuM+qKCsp932PoIoLDD/rKA1eSWyUe9d1LdlmTs/rEVdkc9VmADOTzbqH?=
- =?us-ascii?Q?u6EYaF92rHBSMmQDv8r8IabrWsVioU+jD3W9rpKiCJfAzTlGuWt6gyLV7mlX?=
- =?us-ascii?Q?wc0wMT7uuuBqZ+0kLdAPBUdZCa2ybmDEJXB+IuKvbCTxSpAOskEl8p1XBGcI?=
- =?us-ascii?Q?Arm2idbljdouRz9yzsXrApcA3TrZ3ZYzCW24fp4BaxBh6YwKxByvHmA2d7y/?=
- =?us-ascii?Q?ziebvjvO3bLbBXtirpduzZqkeybZwiJZRkUmybWke4596+N/gzWAfQcH1yc1?=
- =?us-ascii?Q?J9aNps4baeD5If7Ze/nGicMWWJfIkttyLrWvSS/YoHjJoxDjMV512nnWnqCi?=
- =?us-ascii?Q?ezzYnZ85Cq3CKAnvfmTcTtKi/vi7hQGBiha5hU/4KndnCXlyZ9u6WnsSZtDJ?=
- =?us-ascii?Q?2O7UhiDU32SUDpkD8L85rNOWPowFR1XA5aII3VRTSKa6ptfXrZt9Nx9n4rOe?=
- =?us-ascii?Q?faYCvgid0sTC5hQDk57vWw0DnBLJiTfzKExerubhJvPuC51OEEFytTlfTFy9?=
- =?us-ascii?Q?0PqDSjGCJjZVAunjBocw6ys/oPJb6cLn?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5866.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1D/ck6zoSb4vmexGGDLD9sUeOaXk54D7582zEUlU8gieIvRu8FYalJ19oz9F?=
- =?us-ascii?Q?lSF8oH30uibp5Czff8Auym4ZueQpTrwVZV769BoS4MJB80dtXszW+kH9u9Ji?=
- =?us-ascii?Q?KO6Xvm4fg0PgLy8CN6z9bMu5QYdTbBX1XV3hBWYpvWJWsX1y7NvEkJxUFiV5?=
- =?us-ascii?Q?RuwdihskedT6TgspmGjueXdNljDvRUzjSPBWXJ8qu3umMDsgykBULj55cyEf?=
- =?us-ascii?Q?R+nwO7o2ePexm1SoTkUuQhLPpP9SvnoKiYkvzMIxVBDqCGUmRJK6DUdWksdP?=
- =?us-ascii?Q?hmAG6NlBN6A//rUud9AGdVZF4txlKGxwu7G50g0x6+h4yTYByl7HsR6fWDGu?=
- =?us-ascii?Q?WE2Bl1hBiLFdzywpi5I5eVP5Kirc8qJu5ADaFJ9b9x/ivNieLNDQCVgFR+qS?=
- =?us-ascii?Q?F2EgovoSjy8Mm6kRJBYp/RkTn01ZnIC9E8Es0YTRN7jsExFjpoTHsc2QmxO/?=
- =?us-ascii?Q?SRjl3FKbABYLy4qUVx+B82aX2/hlV6uPNwduPuwMO0sBlv2iR2G5u/Dx5i++?=
- =?us-ascii?Q?pHgjCfB9218K4lTH8HKHg6UpyBdzIaZqGgB8FA/2Zd8O2acXOYiuFhuCTNgh?=
- =?us-ascii?Q?AuXeyiZ/kMvD1zJL2r6v8In9RgvR9B1DLvZfOANj+WA6bzaxYoL1tDde4iOg?=
- =?us-ascii?Q?SPXft7iQSS4jcCF492Mc/NzOF6v86EisEQbs7s+h6pcr52sglyhSxnvEyhtV?=
- =?us-ascii?Q?drWD/MfN7+K2PSrgV5F7SwoiJOOiDV6jdU27XB/YWmRzHq/INPkrbxPC0ZmO?=
- =?us-ascii?Q?nWknAbBjB3e6peV9vPpkDP99C9AULWG23vvrrdrYqxxUEl3ajTc3q685oucs?=
- =?us-ascii?Q?0ieQ/FrKcq9b3+32YEvZ/gfMwAqnzWTqwbNIxFrviUQQeVFFYuLYqHonGy5b?=
- =?us-ascii?Q?8nw+I+xwWGWR1bkGEb1SrVhdO1Af7Aueiyb5+EnE4/EA8w0MyOM9XMWyVJhX?=
- =?us-ascii?Q?VqL3d+v7ZiKMQ/9FCLd1HITYEuW7QF6SgEthrYUBI6JXM197cVGErewxoRqY?=
- =?us-ascii?Q?BE0lEis7XCoa1XfCSRasIDcJgTdZ8HfxtuAjSlNoe4SAGjAFoG72PQ92GiQE?=
- =?us-ascii?Q?jw/VNrR6Eam0gp63F1fzbLQ/AuIHlkOuihhf1MD8GbXLC+LxhtEVDvgQSgXJ?=
- =?us-ascii?Q?5SX5eBm0eViYD+y0qA5RMe06s303t0rUpkBkiio1GQGgiDlghKHduM9zLPnK?=
- =?us-ascii?Q?+suq8jaCr8AR1cyWRxFe5rtsxdHMWKOuI5KV2a9IqEpso5Ld0dvgXfi3Ki4t?=
- =?us-ascii?Q?PnedWxzPJrvNZV9WCMIw3PZGRAIkAkzMia2phkkSF/I6IABw0p6My7DyjwTu?=
- =?us-ascii?Q?qNj8FSYdD77gdF0+2buueBBEwFYJhDKHW/n26m8AqMOQ6Ytgkrj51eIlToGT?=
- =?us-ascii?Q?TZ12P1Zjz7v9vsMUFHKKDW+pxS1gpkb1RuHWR/F4xw1xB+pUuCFRlam3rK0E?=
- =?us-ascii?Q?TGBOnfVEQXD1XSjJSEXaNY7CBmF/B5WmehASWYtGQHdzZz254DI/YP3iDcxi?=
- =?us-ascii?Q?IV/KPOAMGLktRgGR27YkrMoQzmRyYJGjfqANfrJ8biCWnGPgk8VgQ23pyABl?=
- =?us-ascii?Q?SLJ4Vp//wBKTOfKN/PAvjiLgbOTCuRtTGfmfU+LBAdkkRNk0XQ7nJinqui1q?=
- =?us-ascii?Q?OQ=3D=3D?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71f800ea-d42a-4acc-6167-08dd60a42753
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5866.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 13:53:50.9836
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: S6XPE1cYPWI5Q3B3cDbiHcDYOwqmlpup+VL6IApafrYojAPQcWL40ZktDUl2PpQccgQzaEVNfTcHBWQAxawSUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6454
-X-Authority-Analysis: v=2.4 cv=JYNGrVKV c=1 sm=1 tr=0 ts=67d04071 cx=c_pps a=R19XVbJ/69TrMGWtO/A4Aw==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=Vs1iUdzkB0EA:10
- a=VwQbUJbxAAAA:8 a=t7CeM3EgAAAA:8 a=UaaBw9Nihny3kgCARB4A:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: 4JRK82gFdIN3Mrzq2EKQnBV9wqpSGwUz
-X-Proofpoint-GUID: 4JRK82gFdIN3Mrzq2EKQnBV9wqpSGwUz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1011
- priorityscore=1501 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
- spamscore=0 malwarescore=0 adultscore=0 phishscore=0 suspectscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2502100000
- definitions=main-2503110088
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307110339.13788-1-rsalvaterra@gmail.com>
 
-The previous implementation of of_pci_add_properties() and
-of_pci_prop_bus_range() assumed that a valid secondary bus is always
-present, which can be problematic in cases where no bus numbers are
-assigned for a secondary bus. This patch introduces a check for a valid
-secondary bus and omits the 'bus-range' property if it is not available,
-preventing dereferencing the NULL pointer.
+On Fri, Mar 07, 2025 at 11:02:39AM +0000, Rui Salvaterra wrote:
+> This is enabled by default in other Intel drivers I've checked (e1000, e1000e,
+> iavf, igb and ice). Fixes an out-of-the-box performance issue when running
+> OpenWrt on typical mini-PCs with igc-supported Ethernet controllers and 802.1Q
+> VLAN configurations, as ethtool isn't part of the default packages and sane
+> defaults are expected.
+> 
+> In my specific case, with an Intel N100-based machine with four I226-V Ethernet
+> controllers, my upload performance increased from under 30 Mb/s to the expected
+> ~1 Gb/s.
+> 
+> Signed-off-by: Rui Salvaterra <rsalvaterra@gmail.com>
+> ---
+> 
+> This patch cost me two afternoons of network debugging, last weekend. Is there
+> any plausible reason why VLAN acceleration wasn't enabled by default for this
+> driver, specifically?
 
-Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
-Signed-off-by: Bo Sun <Bo.Sun.CN@windriver.com>
----
-v2: New patch.
-
- drivers/pci/of_property.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
-index 58fbafac7c6a..792b0163af45 100644
---- a/drivers/pci/of_property.c
-+++ b/drivers/pci/of_property.c
-@@ -91,6 +91,9 @@ static int of_pci_prop_bus_range(struct pci_dev *pdev,
- 				 struct of_changeset *ocs,
- 				 struct device_node *np)
- {
-+	if (!pdev->subordinate)
-+		return -EINVAL;
-+
- 	u32 bus_range[] = { pdev->subordinate->busn_res.start,
- 			    pdev->subordinate->busn_res.end };
- 
--- 
-2.48.1
-
+Having looked over this I am also curious to know the answer to that question.
+This does seem to be the default for other Intel drivers (at least).
 
