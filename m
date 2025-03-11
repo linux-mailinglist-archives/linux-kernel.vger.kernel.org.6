@@ -1,104 +1,124 @@
-Return-Path: <linux-kernel+bounces-556834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BFF3A5CF42
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:24:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BCA7A5CF49
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:25:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC4417BEBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:24:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DCD117BF95
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B972641E4;
-	Tue, 11 Mar 2025 19:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A432641C4;
+	Tue, 11 Mar 2025 19:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNWAzyBh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DOpsfz7P"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E0C263F46;
-	Tue, 11 Mar 2025 19:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10107263F3F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 19:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741721040; cv=none; b=gqEWFRz3L1qbAA8GTLw8bCpKkXAOkky5EPay7XPNT46OQD9t64sdKMGYsWxGMIqadMJLaWThKgvRJjBtj3ELd+aRplIyquXrLOLaQ6ZmbHiVBCWiogSF9tQZXAQMxJch9mDSDMwXGJyCSbqn9vwEYNqpgXafzL5MMAkjKLyd0xQ=
+	t=1741721094; cv=none; b=c0RrkB2vEHKOP9YSVlrURQXZVz+bbFnTNdUeEyXtBts5RCO7/ob45c6ZUyVnOV8ZPZCSOPqfZVgPQpVX73I8ip4ReMFrodXLcc0RzZ5nsc9+t30cLXp0MqTKZUF2CixhhU7w0AcaNS2uFmT0YNfXbQTGfF5E6B9kmplhwuZ/rZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741721040; c=relaxed/simple;
-	bh=5mVnh8fjGF8Oy9qr15OGfcozu4fYLmyI3uszL0xmuO8=;
+	s=arc-20240116; t=1741721094; c=relaxed/simple;
+	bh=l48ePkX07jt/Dy2NQli1RjdHXntbwEXbAp0TLcnmM4U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A05qokKQIBI9i/4VwwG2Q7er5OYuGkIq9+kbCSdGryTenBTZ+CNHxzYN7vGVioSoOly0XVrs5dZ1PJNCYP08kNlbB2lQP9KRFQWhopdDcU5NNlFWwk69ri+EwkiWaVglwAuuQLtitOcvoIqgVqvvxzXkPo9G07/Ly09CCwTXl1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNWAzyBh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 811E0C4CEEA;
-	Tue, 11 Mar 2025 19:23:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741721039;
-	bh=5mVnh8fjGF8Oy9qr15OGfcozu4fYLmyI3uszL0xmuO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fNWAzyBhegpIESCOpfUhfzWO0+SAu6ynu9nA6DUlg8WBeqULGPcOe4cN5w1uTmc/w
-	 ol4QgnmOPAPOa++rCqD0ehNxbIjO8lV3ep1BSfMPYBE6t9mzLqezDg66k68DCliV6U
-	 9uhl9V8z6tuVSoCDM97UhnHozGzXn5KJ/PSlqlVhbdlQoh4K/CAFmpIfPDSpOp8Z1s
-	 lXbpe3fING+9OMnDwOTIjEAhuePf9KpaC18x50wDxB4GeZ9ivHyjCDUTZZk8qk7vkO
-	 OLcLWRhSddu2NRHptKZsr9V3fenrsTxkrDtg/Xyos95TkLLAPmfjf3iS8wdQQ8ipM5
-	 49bBC8dpZimrw==
-Date: Tue, 11 Mar 2025 09:23:58 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org, Josef Bacik <josef@toxicpanda.com>,
-	Waiman Long <longman@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Michal Hocko <mhocko@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v2 00/11] cgroup v1 deprecation messages
-Message-ID: <Z9CNzt9VAjFrLPBT@slm.duckdns.org>
-References: <20250311123640.530377-1-mkoutny@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EpRZW93rHW4hlMIzo+RxWd51heGSbE59FeyBi4xNgLTLfV4IMLx3awD3hsKdt0Bmc2lSB3j/+zYG9oKxuADVb/KPDcqroIAXpAj87/sCLjjcAMrlPd2ubKSZa+eC5cuORhaf0wuaYDkofW2rzDwHBHjN9KbHcOsrc+vTWqGw0tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DOpsfz7P; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741721091;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KcYxt6lKlQkGEaI+wYIlW5PAOr/JWvJEjCeftUnJOe4=;
+	b=DOpsfz7PLRTj8rb7dd42N7Hj1oG/hXM8TttL+djFxZ0+m0VIwAzr+RyrI+g1p/O6OSETw/
+	pjK740bY0/7A29wsGz+iYmBV7J9MiDnUpKXu9YV0NmoUfsoa8/jAfv/UkBvE9OxoX5Dw/k
+	mE/om2OMqRlxVRXaoLIt+dh7jyrxZZc=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-694-7F1u8v5PNvK6JRj9bi_e3g-1; Tue,
+ 11 Mar 2025 15:24:46 -0400
+X-MC-Unique: 7F1u8v5PNvK6JRj9bi_e3g-1
+X-Mimecast-MFC-AGG-ID: 7F1u8v5PNvK6JRj9bi_e3g_1741721084
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9807919560A3;
+	Tue, 11 Mar 2025 19:24:43 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.22.90.58])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 17A6618001EF;
+	Tue, 11 Mar 2025 19:24:38 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 11 Mar 2025 20:24:12 +0100 (CET)
+Date: Tue, 11 Mar 2025 20:24:06 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org,
+	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH] x86/stackprotector: fix build failure with
+ CONFIG_STACKPROTECTOR=n
+Message-ID: <20250311192405.GG3493@redhat.com>
+References: <20250310214402.GBZ89dIo_NLF4zOSKh@fat_crate.local>
+ <CAMj1kXEK0Kgx-C8sOvWJ9rkmC0ioWDEb+tpM9BTeWVwOWyGNog@mail.gmail.com>
+ <20250311102326.GAZ9APHqe5aSQ1m5ND@fat_crate.local>
+ <CAMj1kXHTLz4onmR5iyowptRE38RCK4jNT3BoURBkq2FoDOMTxQ@mail.gmail.com>
+ <20250311112112.GEZ9AcqM2ceIQVUA0N@fat_crate.local>
+ <20250311131356.GGZ9A3FNOxp32eGAgV@fat_crate.local>
+ <20250311143724.GE3493@redhat.com>
+ <20250311174626.GHZ9B28rDrfWKJthsN@fat_crate.local>
+ <20250311181056.GF3493@redhat.com>
+ <20250311190159.GIZ9CIp81bEg1Ny5gn@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250311123640.530377-1-mkoutny@suse.com>
+In-Reply-To: <20250311190159.GIZ9CIp81bEg1Ny5gn@fat_crate.local>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, Mar 11, 2025 at 01:36:17PM +0100, Michal Koutný wrote:
-> Memory controller had begun to print warning messages when using some
-> attributes that do no have a counterpart in its cgroup v2
-> implementation. This is informative to users who run (unwittingly) on v1
-> or to distros that run v1 (they can learn about such users or prepare
-> for disabling v1 configs).
-> 
-> I consider the deprecated files in three categories:
->   - RE) replacement exists,
->   - DN) dropped as non-ideal concept (e.g. non-hierarchical resources),
->   - NE) not evaluated (yet).
-> 
-> For RE, I added the replacement into the warning message, DN have only a
-> plain deprecation message and I marked the commits with NE as RFC.
-> Also I'd be happy if you would point out some forgotten knobs that'd
-> deserve similar warnings.
-> 
-> The level of messages is info to avoid too much noise (may be increased
-> in future when there are fewer users). Some knobs from DN have warn
-> level.
-> 
-> The net_cls and net_prio controllers that only exist on v1 hierarchies
-> have no straightforward action for users (replacement would rely on net
-> NS or eBPF), so messages for their usage are omitted, although it'd be
-> good to eventually retire that code in favor of aforementioned.
-> 
-> At the end are some cleanup patches I encountered en route.
+On 03/11, Borislav Petkov wrote:
+>
+> On Tue, Mar 11, 2025 at 07:10:57PM +0100, Oleg Nesterov wrote:
+> > See the "older binutils?" above ;)
+> >
+> > my toolchain is quite old,
+> >
+> > 	$ ld -v
+> > 	GNU ld version 2.25-17.fc23
+> >
+> > but according to Documentation/process/changes.rst
+> >
+> > 	binutils               2.25             ld -v
+> >
+> > it should be still supported.
+>
+> So your issue happens because of older binutils? Any other ingredient?
 
-Applied to cgroup/for-6.15.
+Yes, I think so.
 
-Thanks.
+> I'd like for the commit message to contain *exactly* what we're fixing here so
+> that anyone who reads this, can know whether this fix is needed on her/his
+> kernel or not...
 
--- 
-tejun
+OK. I'll update the subject/changelog to explain that this is only
+needed for the older binutils and send V2.
+
+Oleg.
+
 
