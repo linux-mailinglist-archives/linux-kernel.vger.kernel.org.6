@@ -1,135 +1,132 @@
-Return-Path: <linux-kernel+bounces-556220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B35A5C2C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:32:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45481A5C2D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:35:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 672AF1894B84
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD9B93B1624
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523A81C5F39;
-	Tue, 11 Mar 2025 13:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6941C3BEB;
+	Tue, 11 Mar 2025 13:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjUGOna9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rO1cdg6t"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919551487E9;
-	Tue, 11 Mar 2025 13:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97AE5680;
+	Tue, 11 Mar 2025 13:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741699964; cv=none; b=Wj64mCmbCbkKqDYPGc8ANA5TAQpx3vPvFDDMFGf7oOQzCbUt9fHEDoWeSUrtDE9iczlVQIhhiyw1zqYFDdQh5Q0WQrnZIKdeAY5Fwit2hqXcCRagH+bxWBBlMzuw2lrFXxuutv3zITRCfhabsu1OXmOy17ARO/qmISdrGfbyNIo=
+	t=1741700148; cv=none; b=s2U9jjzjz/2feMlpl8u9Npc37MG8H1Ct0gXIKwi1OY4dvGDMXWT7zaSxfjeq8h+sVxJqCpiN+QNTUUM3dLDg9+57Q6XF20S7IVqisvPhoE30VosHkoGCf7TTZsHp2FjVvjJkwu49HKh/BFtiv2U3rwrpK9Cl8j4mYF7KamoyEr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741699964; c=relaxed/simple;
-	bh=foFBmGFbc+QCSONoZVpR+givHeN3h/c5aJuICUYGiE0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DXNuSj4+ueC4+4VILS36C8qLSsy+Ke6mtZjwPpHczd70V4caUSDwjheL0xWSv8u0WWI3y5cqMQ2KmRajk7Sz/13SiM4nWk9C4i6/PYhu16jzIZ1WnGbk3w8gpv9qtGVsi3CQRaPB3FK4KDWC8Kk/+L9bKDhlQsL5XFEOHH9By2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjUGOna9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B2A3C4CEF3;
-	Tue, 11 Mar 2025 13:32:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741699964;
-	bh=foFBmGFbc+QCSONoZVpR+givHeN3h/c5aJuICUYGiE0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IjUGOna96P6PIijXA/JopSCd1d/VyKBBN+ce/Ed0nBiLhKysYuXMOO8ntjKoNJFoo
-	 KvvRKcBWnITLYLhGRnSUQitn+rIdSSRK2Cpm5n6Mn/118FAtbrimE5jYp/UXlZTfql
-	 gprF+LsaUajaD4mfZOL8d+MWXSTnEbYoMmCi0oUOd2lKGUmCmlD38v+i4Wiq5Pmpjr
-	 ayzyPa2JHPukyRerL2/P8O+UDUAqMM7QygXATRowtyikvNNz/2O+EBnThkGFsw2KTR
-	 mnRaXP7EryYvf+2VABTSHwEZzyziKQIuYIaobgi/ftZzS8lPgE5Ag3aYBUTqbdFhEr
-	 HnFlBeThaEv+w==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e5c9662131so8324312a12.3;
-        Tue, 11 Mar 2025 06:32:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVE/etq7yYVR731//mLbIx6fuz4N3WBsp/taDv6DUAdjSAvEFKqUOOcbNyt/mjSFvGPbId9zBqo21EC1w==@vger.kernel.org, AJvYcCVFFxWXi1G8EDjZ5tpKHuBLeDYh4rjTO2HNngx05BKIuJGzRJWd0LGcG/kHH0ZIDsQJKt2BCiE2koKJ@vger.kernel.org, AJvYcCW8UgNm2ORV6uv3gidMyg8hIgmUN1Lt9mJoi+wO2yxk3H2Rn4pAsnqQt1dohVxqKOsczdONO8z4Tw5a@vger.kernel.org, AJvYcCXkMokhN/355TGe12OSjeljQvVcn00quRImZ2ljZ6tIYzQ4VTmMH7PvgM8LtAe7ue13DOn99RcbuXyV@vger.kernel.org, AJvYcCXsHpk+Kco0TOlhTmQxQXJOw/sJn9QgRvlPYy+FAXFETqK6kuxts8w7ztT6RQVlVCkfabZPUZ8p2Ny2wNuE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyvnou1cphY4sdaDF6XuvRYP/txe/G9yT/v+J9yb9bKE0VqXdDN
-	KvnBxlQ8CXvCoJnhV1poU82s4+iFqTkRNkkMVcKGumV5WsZTjOlXsmeX06w6v9K1ITKFtPLZnjO
-	2tXt6e1OYEiuildher/TYDvdidw==
-X-Google-Smtp-Source: AGHT+IEifrCmqJfikkidIDTYr2jS6o8iDBri/VlKwu/FWmzn0+fbwXWdCCMBLNQSNY6IZ7RZHzcbstx5Fj81dc05srU=
-X-Received: by 2002:a05:6402:2353:b0:5e5:c5f5:f82 with SMTP id
- 4fb4d7f45d1cf-5e5e211e1f1mr21034407a12.0.1741699962525; Tue, 11 Mar 2025
- 06:32:42 -0700 (PDT)
+	s=arc-20240116; t=1741700148; c=relaxed/simple;
+	bh=GkcFE4LozpHKFxYYuNtMXyCbGTtq8p5Q/ljO4LAzDCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uGfs9+qy7sBiXInSvkzuisZoHBsQ7mNawd+InengS0kZPlj+DkpdAb5mtQaIbrqR3vxmRAe1TdVpx03eLp3SWbJlNyEntGO9Bp3Oo79e8AF1dsjMMU02i7S9gZQTMKfmoKvwfuF1SnMvhht1ACBoFcPi/LNhi+ZCkMROFDg3kSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rO1cdg6t; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B7uSBG016551;
+	Tue, 11 Mar 2025 13:33:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=mr7/vg
+	z6z9VChc4A6lC4P1SOGCYwupdTeYiYt187Y5A=; b=rO1cdg6t//szdZtK+tdw9o
+	zrj/rQIPH/AKdyRI6rd7Aj71nfGhZ/Rq+T5zfiw98E0XAz+26jxep3aYqtC0MjKv
+	+3ZDKEWuFgA6HUp8OcV7QiMlRG6hkFxFmrTZcdx2+ClUt0MW+35uUV91iZrTB4un
+	3EoCbVsg6/SjCNcqfuQBkafwr53A1H1WOMt31IIq+dZLhnyo29RdQ8lDL1JTafqn
+	mhn1DVYxFq5IijxR6QQYDQKgWPCZ0sVMLeBZBbcPSLAj/R6XyC+dtcnnarA4/eRq
+	75D+FZKUmnnrxIRSiYQMMsof1KQjz40VSaYC7vxyluA+Iub8RI2BJVZdXDCH3rig
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45a1gp6c9s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 13:33:05 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52BAgfLe014460;
+	Tue, 11 Mar 2025 13:33:04 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4592ekc40r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 13:33:04 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52BDX1ds41419254
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 13:33:01 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EC1C420043;
+	Tue, 11 Mar 2025 13:33:00 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2E25020040;
+	Tue, 11 Mar 2025 13:33:00 +0000 (GMT)
+Received: from osiris (unknown [9.179.21.35])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 11 Mar 2025 13:33:00 +0000 (GMT)
+Date: Tue, 11 Mar 2025 14:32:58 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Kees Cook <kees@kernel.org>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH mm-unstable 1/2] mseal sysmap: generic vdso vvar mapping
+Message-ID: <20250311133258.12846C3b-hca@linux.ibm.com>
+References: <20250311123326.2686682-1-hca@linux.ibm.com>
+ <20250311123326.2686682-2-hca@linux.ibm.com>
+ <20250311135542-574f3a8a-525f-4e84-9f04-c9d1ded0deef@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1738963156.git.andrea.porta@suse.com> <c0acc51a7210fb30cae7b26f4ad1f0449beed95e.1738963156.git.andrea.porta@suse.com>
- <20250310212125.GB2377483@rocinante>
-In-Reply-To: <20250310212125.GB2377483@rocinante>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 11 Mar 2025 08:32:28 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKPGOdS_8KDggO5tBHAnC-NTLAC5iS9GANm9BuxBfQUsw@mail.gmail.com>
-X-Gm-Features: AQ5f1JpFqtVYiSlkH0QD-dTfJ4bf9VAjFuYNndnQ1jy7PeA-IWSalDclsIDbfBA
-Message-ID: <CAL_JsqKPGOdS_8KDggO5tBHAnC-NTLAC5iS9GANm9BuxBfQUsw@mail.gmail.com>
-Subject: Re: [PATCH v7 03/11] dt-bindings: pci: Add common schema for devices
- accessible through PCI BARs
-To: Krzysztof Wilczynski <kw@linux.com>
-Cc: Andrea della Porta <andrea.porta@suse.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
-	Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Andrew Lunn <andrew@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250311135542-574f3a8a-525f-4e84-9f04-c9d1ded0deef@linutronix.de>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: SmyYxSi9cZdoEJKUXlm4nWhXpj0cG8wx
+X-Proofpoint-ORIG-GUID: SmyYxSi9cZdoEJKUXlm4nWhXpj0cG8wx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ mlxlogscore=470 suspectscore=0 spamscore=0 impostorscore=0 bulkscore=0
+ phishscore=0 malwarescore=0 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503110086
 
-On Mon, Mar 10, 2025 at 4:21=E2=80=AFPM Krzysztof Wilczynski <kw@linux.com>=
- wrote:
->
-> Hello,
->
-> [...]
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index d45c88955072..af2e4652bf3b 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -19752,6 +19752,7 @@ RASPBERRY PI RP1 PCI DRIVER
-> >  M:   Andrea della Porta <andrea.porta@suse.com>
-> >  S:   Maintained
-> >  F:   Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.ya=
-ml
-> > +F:   Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> >  F:   Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.ya=
-ml
-> >  F:   include/dt-bindings/clock/rp1.h
-> >  F:   include/dt-bindings/misc/rp1.h
->
-> I would be happy to pick this via the PCI tree as per the standard
-> operating procedure.  However, the MAINTAINERS changes do not exist
-> for us yet, and are added in the first patch of the series, which is
-> not ideal.
->
-> I can add the missing dependency manually, but that would cause issues
-> for linux-next tree, which is also not ideal.
->
-> I saw some review feedback, as such, when you are going to be sending
-> another version, can you make MAINTAINERS changes to be the last patch,
-> perhaps.  Basically, something standalone that perhaps whoever will pick
-> the misc patch could also pick and apply at the same time.
->
-> Alternatively, someone else picking up the PCI dt-bindings would work, to=
-o.
->
-> Your thoughts?
+On Tue, Mar 11, 2025 at 01:59:21PM +0100, Thomas Weißschuh wrote:
+> Hi Heiko,
+> 
+> On Tue, Mar 11, 2025 at 01:33:25PM +0100, Heiko Carstens wrote:
+> > With the introduction of the generic vdso data storage the VM_SEALED_SYSMAP
+> > vm flag must be moved from the architecture specific
+> > _install_special_mapping() call [1] [2] which maps the vvar mapping to
+> > generic code.
+> 
+> I think this change should be part of the merge commit between the
+> trees carrying the generic vdso data storage and mseal for system mappings.
+> 
+> https://lore.kernel.org/lkml/20250307151426.5f3c0c39@canb.auug.org.au/
+> https://lore.kernel.org/lkml/20250311150847.5a63db36@canb.auug.org.au/
 
-I guess I missed this in review, but why is a common schema buried in
-a device maintainer entry? Also, an entry in MAINTAINERS is redundant
-anyway because get_maintainers.pl can fetch maintainers from the
-schema file.
+Yes, but Andrew added your patches into his tree and on top of that
+the mseal patches:
+https://lore.kernel.org/all/20250306235802.ff0f406acd0117bcfe927082@linux-foundation.org/
+https://web.git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/log/?h=mm-unstable
 
-Rob
+When doing that the vvar bits got lost. I don't know what Andrew's
+plans for the merge window are, but right now there is no merge commit
+which could be fixed.
 
