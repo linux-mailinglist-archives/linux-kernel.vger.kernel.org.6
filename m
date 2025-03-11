@@ -1,424 +1,313 @@
-Return-Path: <linux-kernel+bounces-556069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD28A5C077
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:17:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78313A5C00C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 140433AE2EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:14:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 342CA176E60
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7782566EE;
-	Tue, 11 Mar 2025 12:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6268B2586EF;
+	Tue, 11 Mar 2025 12:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dycRB5Tp"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2087.outbound.protection.outlook.com [40.107.95.87])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KL9EHCA/";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JaPu7Xx8"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF6325A33A;
-	Tue, 11 Mar 2025 12:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0426221F24
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741694768; cv=fail; b=iSbbXKMtYNhkuSRc2E3BdW58svySI4wGimBUGWPLsJabl050HYB3rBiK/wbwnqKtmMLWpV3VCHQpTJp2l4WrSNgCA4RldFmT8aC/AiJeY7szWMhAEdcT4exua+a6LoD7LADRaIKr/9YiIrenOhGKoeqLNwDCAahZlUHIyV6K1CY=
+	t=1741694596; cv=fail; b=SKbCtW3UcD+cEN27HPl8ew1RzXRNTkrv8T0kTYV6TtvM0escaZvxcGaJz8vNYsZ9dkdRjoMjMbl/y+I/CrwJFPoe+Flhh6z2ANKkkk+VIQnXqvEv2mDD33HGDoJ9VRZFRdJ+aWYV8N5mBxxigQi2UUaVUwXQ7hTc9zJmksvT2tw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741694768; c=relaxed/simple;
-	bh=Yh1o9rgFLBl9BDa/YcldugNz2kJpZMS8NpYQO1EzaQc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qjIwf9+Z0fdq5VoebeN5lPhLxcdxh8s2SczCvmtF2E19LwEx4JucG5pKmJHq6KsZs8/uPwRVO3L+c8Qayix1JHG3dwtYCypGmmHpeS3gKMWQYVKkzw/WeCz/ekguaJPPtHW+cH1uUx71tdEHufywCVi2ZTM8H+H/MigbXt5hhBQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dycRB5Tp; arc=fail smtp.client-ip=40.107.95.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1741694596; c=relaxed/simple;
+	bh=1gtVHWpeAcQzORHVSibRz285QJa2nSzq+z+uozQ9iig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lJt3Ol3GJJb85oYDRKOyqCyCUMMyDGQbOhUgsY3tb1p8UgEA+tlj2fdRQpkQmMo9juruBqA9UBfZJp53DLPWZewr8PlZV/4y7pYZf7G9xO+2xK9o+W0a011nnkr2vWdKtjcE2l50ls+uU724qxHQuHFhOAgJA2r2ySPepe1i1wg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=KL9EHCA/; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JaPu7Xx8; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B1fvLU021401;
+	Tue, 11 Mar 2025 12:02:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=PAuP8lA7TmJx0l0t7F
+	/ZXxG/d7mV1LhJbstH49FyMaw=; b=KL9EHCA/HeDB9Dom6sgRprUFnSn3BvYbht
+	GVoj12t06v8h+cNbJu/Io7A+QK9mv2HXVqvbDW8E467/M7mUsZTckII131/qqSk9
+	r/cEEsl3jsyN6p1Ks3K1t33txfUg4YBMVBszHaiL+BWRcPm2+i+Yh6Y0MNoMQ2w5
+	dSO3OQt/DMBAhKVVbCCI+yMEZaP/Ukwpj7bOe9iMxzP6U4uSQzzGVBrkr7Hj5ZcF
+	y4y+IxxC8XVxCf1ngxaewUYdDmpxtvePKpR8z2X7kK7gwqNCM0u9Vr9hVSFkzfI2
+	JcusAZI6PV+6hbBYv3pAo6+DA/j2fTj+T7GnumQ5IUo/+r8HRX3w==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 458eeu4n3m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 12:02:56 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52BAtph9021903;
+	Tue, 11 Mar 2025 12:02:55 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2049.outbound.protection.outlook.com [104.47.70.49])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 458wmpdmmf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 12:02:55 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=csEFLYw9VaVkMYQ9qOx55csQ5BP11YrlgaLTdSt/clZ9NblXKjgZGjJ823tz3oa/iGaXQT1hFFkG3+QWtXAPCdnaKi53Gp23S0GYcSlk726zxYpLccj0yrehvaTYo6BVpZkT+vlsLBvs04bneDSpCE9pq6/OAtEYIJff0pE9LrQ88Fz2HvsV+O8oNQox3NpxwIvRANO8yCsIV1Mtsg0haIsMKFINogtuv47wqNa1PCVfkeCE9kZ56Hl2tMbK0SBSylNOEUbfcMqE/y/EcYDA3xgE0YoAGRCPj0CWn6bjWoquvTBWTXeuMfrpkkFcb/ekZED3ucEFP8Zf9KEJ2ISnDg==
+ b=M72dgbXeEC7HbB72gHoXXSdbPoAw67mWFED0cIvj3eHefUy2O+/+CopZv4KuRy6NLhbakDyWQIl1qFGD+qxLVIRb/1nOEp7KF3oiTobds9t78dV2LGVcSclF6a7dodqt2uuIbQ2wWq2dthn3Qy+LNxzTkpj8DJj3qRTti+tudDzQm/gjY0peQPM/YG395r0Gwr9a4pSbCT52DloMr6aplRejXl7oaOihHKQcSj2aVwP4UBNxVc3QU13Rziu5qykCSSJF91RgSUuny8lvmhhJgm16TCZcQpvce62AJogw1vX/FlqWcpH1gFVLJ4wO4AQr9CU+gghirYxk/Ckp/eK+qg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v0Szet5zxm0zXidzP83AMFma6wKKQgT2C3tPnKkFVb0=;
- b=kDfbixNnXOH+a0qNcc91C7W5uiz/C/rsUhuvi+jbwSNagHiA4bKMsdyRaN9RG0CKORLztF/Re+WRhvjMX6aPJDZK47x5MI6ApuuLOmgzUNbtkeftHPYMpNojROfKu46XaoSQhuphRSewUSHvTy9oIuJ7zc0DGOfNaQ3F+k9RhEMV58ciK+qpFWO3LkXtyTW3AAgpGnroCSaj3tDP3Iv8NJ8/zex5tdKXAXbIDRYXwTJHpHfQ7SbhQE8d28SGffrMJwCw+rVOPAHE0SLVEXALA/okumzvE7rVONu7q2Cr7fPkDn9+FkTwPmeH/KPN0nDu8+gOTcK33VxHULd/x4ltow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=PAuP8lA7TmJx0l0t7F/ZXxG/d7mV1LhJbstH49FyMaw=;
+ b=iQGZ8Sg5f16XtdlV3lYReoJjmveenf0hU3LJwZtqpEHCYxzlHLbMK0q0d2SMkqKXTEsBK0uJaUoKt/oOJLvg3VZWRqZHaPCJVgqnN7Q25D7Gf5+ZIrqmn/lXFERSgaGWP5UZYmAFiZSfuQdFpAxs/BnaAST5LXVygFdvylJU+Y3/XKLdacpNrIRUTM2E3MoFE/QxhkMdoYqtsgPOgxWT6wOnC78aOw4GvW3C408OpqsIh72B7449cg9+7l3syo0v8YA28/Y6Pn1Li1BjSgpiqlTIfzhjUfWTb85qLx06NiYvLFqsd+buDqUfeardmxqsgASoBTqbVpDvFRPLuUlkCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v0Szet5zxm0zXidzP83AMFma6wKKQgT2C3tPnKkFVb0=;
- b=dycRB5TpYD8Xks6zVZDpIsL1cjsP8TUAH4BxkT09jY1fiVPudXonJszDZccKgXJ6rlqXiQFBD1OBtkHrz816Llc7USqR70xOPlEKvd8zAQXVlvOC0B2Dxwdq9gcTtWmBXGM33OwaBwjRnj/YGecSozYKT0deFe6XXoK82xIzvIQ=
-Received: from SJ0PR03CA0218.namprd03.prod.outlook.com (2603:10b6:a03:39f::13)
- by IA1PR12MB6388.namprd12.prod.outlook.com (2603:10b6:208:388::7) with
+ bh=PAuP8lA7TmJx0l0t7F/ZXxG/d7mV1LhJbstH49FyMaw=;
+ b=JaPu7Xx8Bm8+PU6DSwR+J7kCN1IwdmmLrbRxgNOtNrIfQsGz+bSTr3wAOQrEwT4JCqQ+tyzUU7DEMg9uiaKStp6UiBPahLxUri4hzAIEIjkewE3cSDW35CAgm9mX3XlcDaYG77Ksmmqfd3PlLpY39Dvxr7veNvAgoHIF6ukNTR8=
+Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
+ by MW4PR10MB6299.namprd10.prod.outlook.com (2603:10b6:303:1e2::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
- 2025 12:05:59 +0000
-Received: from CO1PEPF000075ED.namprd03.prod.outlook.com
- (2603:10b6:a03:39f:cafe::c8) by SJ0PR03CA0218.outlook.office365.com
- (2603:10b6:a03:39f::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.27 via Frontend Transport; Tue,
- 11 Mar 2025 12:05:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000075ED.mail.protection.outlook.com (10.167.249.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Tue, 11 Mar 2025 12:05:59 +0000
-Received: from tapi.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 11 Mar
- 2025 07:05:51 -0500
-From: Swapnil Sapkal <swapnil.sapkal@amd.com>
-To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <irogers@google.com>, <james.clark@arm.com>
-CC: <ravi.bangoria@amd.com>, <swapnil.sapkal@amd.com>, <yu.c.chen@intel.com>,
-	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-	<jolsa@kernel.org>, <rostedt@goodmis.org>, <vincent.guittot@linaro.org>,
-	<adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<gautham.shenoy@amd.com>, <kprateek.nayak@amd.com>, <juri.lelli@redhat.com>,
-	<yangjihong@bytedance.com>, <void@manifault.com>, <tj@kernel.org>,
-	<sshegde@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <santosh.shukla@amd.com>,
-	<ananth.narayan@amd.com>, <sandipan.das@amd.com>
-Subject: [PATCH v3 8/8] perf sched stats: Add details in man page
-Date: Tue, 11 Mar 2025 12:02:30 +0000
-Message-ID: <20250311120230.61774-9-swapnil.sapkal@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250311120230.61774-1-swapnil.sapkal@amd.com>
-References: <20250311120230.61774-1-swapnil.sapkal@amd.com>
+ 2025 12:02:50 +0000
+Received: from MN2PR10MB4112.namprd10.prod.outlook.com
+ ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
+ ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8489.025; Tue, 11 Mar 2025
+ 12:02:50 +0000
+Date: Tue, 11 Mar 2025 12:02:48 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R. Howlett" <howlett@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Shakeel Butt <shakeel.butt@linux.dev>,
+        Vlastimil Babka <vbabka@suse.cz>, kernel-team@meta.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 3/9] mm/madvise: deduplicate madvise_do_behavior() skip
+ case handlings
+Message-ID: <45ce499d-27a8-45ba-9644-67cfb73e489a@lucifer.local>
+References: <20250310172318.653630-1-sj@kernel.org>
+ <20250310172318.653630-4-sj@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310172318.653630-4-sj@kernel.org>
+X-ClientProxiedBy: LO2P265CA0403.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:f::31) To MN2PR10MB4112.namprd10.prod.outlook.com
+ (2603:10b6:208:11e::33)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000075ED:EE_|IA1PR12MB6388:EE_
-X-MS-Office365-Filtering-Correlation-Id: b651e82f-cbe7-4b63-60fe-08dd60951605
+X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|MW4PR10MB6299:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57c8f9d1-584b-4150-72a3-08dd6094a55f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024|7416014|13003099007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?m6W9VcHB1RaKUepswfhbKh8pGcypehyR8GyTZScGfXmX+XfdjgBjEjhXPwGb?=
- =?us-ascii?Q?muzJ6/ZukXoXT/Rkl21bj/Kdl5+sUynmENzEzPvBGl26mUL016xig/q6RCMR?=
- =?us-ascii?Q?94GE372sMDwSKNJekPowAGiZwLuzz806GU4UhOmxm4yUCTcJzZJyB6FyeqRb?=
- =?us-ascii?Q?zIlvMfa2NYR5c+jNblrwqi6zDldNeUvlx1YB/1Ow8J7dn7NDHdf4gIEmQ2Ty?=
- =?us-ascii?Q?4ZLkFvR8zvT8dmFpNmwIpHOBfTpcGJsc0hktBjTPD0+6Jg8h0TAAYzkmFnMz?=
- =?us-ascii?Q?W8m3pc3ZkTfOU6ChMHedr8w1RBrksidDEgS4YVxJbeX6Bk8MhyMp5fF+wFQW?=
- =?us-ascii?Q?N7tOetLYFYLpFGrokZDoANZ2mwCUfMiZhSKCg8G7iXeRddI0hr7SlSZAVl/y?=
- =?us-ascii?Q?wSO2nbYs3uTkU9fiSF8XK6UgoW3+ag06gWE7I2YloW5yMK8JltcjBxVSm/l+?=
- =?us-ascii?Q?drSiwHwWXg1cTK+rXHX/YHE4UCCK26pk5t2IgH6ee+3vtjqwOTuB6FO9oaQ9?=
- =?us-ascii?Q?QR151ElxY9NFycViuZzyTADTqAFaO/PEiHEFc8M89AcAJKOR0IwjMyDrGPny?=
- =?us-ascii?Q?1r8lvv4bppcGi5BuH0FTTMBeOJcC634M43O36ddHXdTtdneJnM5Sohd1OC/4?=
- =?us-ascii?Q?uURjk/qzeGhoIF8WylvDSukGy4GFcT2c3dJ962JLcM055HVVVowRRym3lQdc?=
- =?us-ascii?Q?C6wnLm5ep3rrkP2a8gOG26pwFWyekAqqCeO5kohfKm+sS5xmI3lP872W4fBz?=
- =?us-ascii?Q?7EztfA53H3Zwg32AlFbVlKhLfc1uYHt0g5lxqWMPVV64LSp7jfH+y9n5nTZv?=
- =?us-ascii?Q?nWMuWXSanVzWaNcKftHphPpCZfbeHaEspKKDMMH0y1bLh0vcJ0mXO9Tzqgq3?=
- =?us-ascii?Q?RYPJvspSz1M/4ZsC1CSIspyOs6SWXyyOmq7MNV0hlmvh4zE3YMDWnHu0O86T?=
- =?us-ascii?Q?EsNWEiVF8W7B7JqZnk6J8an8U87EmoH0FtvA76p0g1QoocGXWBX3yDq2GyK1?=
- =?us-ascii?Q?hcaf3LoBhwCNHai0/aYMq1xupy0/xphnerwnChuJavlEE9RbA4Q0cInXWC2w?=
- =?us-ascii?Q?zBfsaEED6/heXpzYcleRzy1LIlI0J2WJ1x66jiNACIQDLRc0yJrlmLHKo5Ur?=
- =?us-ascii?Q?CWrZfMEwNcs+FLyb9A+bZ/wqTQZ+5R3bM9Rdpwe/JY0aQXMmTLU8RQkehz+g?=
- =?us-ascii?Q?ZWvVxHhTxZ1t5VRAC2UirPFQDahQSNYASZGVEA72nKwXZY2dW+xZwsCmn9VP?=
- =?us-ascii?Q?wZmPZg3TLj0DUcsRoaanhx3BiVZtBppJNm+gL0ldD6y6CokjafjnaZAof5Zq?=
- =?us-ascii?Q?T19yon/XE5GYSqm5xAgUH+hFOjNnI5svJJrQ2iqbCgQuekZsYgRJz9O06zcr?=
- =?us-ascii?Q?SJG4+/Dzo/W4EI/J/CyHR8EM83jkUVPdhtHytIyoGRxNDtg6JkEUuxXb9vQ1?=
- =?us-ascii?Q?UFaUkB0miLtW3Sc5z9RcEnHN+gS2WFgwvo1uVnj34yf0uhL5+QJZqu8anTEg?=
- =?us-ascii?Q?MxDIXTBc6nN38Oo=3D?=
+	=?us-ascii?Q?+cyuc2G4erjdh6coekiveIsVcwoKuwI5884jnZGaUARIy6gvbTfOw8cRe3hZ?=
+ =?us-ascii?Q?7yheA6Q1nTWBLvxrZD6HxQ+wamAekWqmPviQsSmP0fsK0m4/uxGtZ6f7n/Ad?=
+ =?us-ascii?Q?yqpHXSi/9CvkpmhXSK2g9XpXtaj/3JOKzmwMtL942HP1t8g6kKuzLK3HuqUR?=
+ =?us-ascii?Q?qlP0TAosqYSWouyG43N6DW2GfO9Sq6HC34hpC6WCyRXYts1lG+eKmSrEmi2u?=
+ =?us-ascii?Q?TBnWuoz3AbkGis53N0YLOuE7DyD/y4ynfMqVkSHpfHBSYLbnW4E2j3C9YWYz?=
+ =?us-ascii?Q?Ea6itBItmgqSF5L24wsHi4QApLSGIo/n5l5Y6Spge6V1u1OEm1fWFyY3Xnak?=
+ =?us-ascii?Q?OWIdNOPGAeOD/jh+lKe+IhiIKT8OeZWtILmrFd6eh6Lvf9Da4ODnBBk97QFp?=
+ =?us-ascii?Q?WQVTVdR1Ysk23g5kmqRzIvaL0DipIZgBnBusIG9hYBQz0+RcbsfZmkXsmeeJ?=
+ =?us-ascii?Q?e6NdgF6PpkvZt37smJT/aHqcvv1ENxAtJK+QvjmFH92kYLF9iKf4t6u/3WjQ?=
+ =?us-ascii?Q?u9uKOs7sh37hL+GmJayPol1PU89pwjX5XrSussIJrGYhTQfSFS2v6wYyMBwz?=
+ =?us-ascii?Q?QG5liDAeSLYvjubCGS41mDLoa40M/Np2nOx9X6b2giAmAqMoBWKIjMc5KSfR?=
+ =?us-ascii?Q?nvjYIvwopJYySXw2MW8y2VAIjTtm2F6ny3KhPoT39oUEUW5lCxx23C7v8FZe?=
+ =?us-ascii?Q?R9kNG1xraIOz4KhseBPQydXYYQnWI74H+BMDkF6SKKzoZmebKrEImGnYYd+p?=
+ =?us-ascii?Q?Gwt7ICnL9XCf0TQyyBB9KvpC3qBSXLFIbY/N8165X2U6W7JFxQ3FF+XGv0ow?=
+ =?us-ascii?Q?TRL5Vvw1WwaO5FYJ0OUzllxCrXBrJPpc2w4ptopVR+tNa9c7jAI+oTmWSj2X?=
+ =?us-ascii?Q?LUTkp1cRlDsCRudfdM2Sr1lKelFIL/1CxvaREVzdiZ5nRm2KbgWjX2GL28Z+?=
+ =?us-ascii?Q?yQr51izDSG+89Tr2kn0VyYLOSoOEg4YNiO5qb8w2EpvKaeN0xRcm0u8k9OUZ?=
+ =?us-ascii?Q?UrcqAk9txpjQNwYTVkJYl43E10OolpHbm0kbByUcUr8Ee+1mCUyuHnW6WXev?=
+ =?us-ascii?Q?sFAOhUFLbpJLZTHDI7KQjOsLEBZekx7+rCEPz2DjNnA78ZHpZYoUb2LZ1fmx?=
+ =?us-ascii?Q?7xGjjo9OiJPh8reZCF8yLdi/+ybjqotr20qx0jxaJWnyBmwuotXeQN5bzKfX?=
+ =?us-ascii?Q?wILiI9+I/OH6LARcx+2XzDOEnNGDe7VJjEcnm+xnJyl3bgGwq+MyeDo6NpfP?=
+ =?us-ascii?Q?Dssx6mXo+SCDLx8Zh7c6TMN+P6Vi/K+dDcpmw8cqK6N3kbM7pEi3f4sjbwsv?=
+ =?us-ascii?Q?s6vMKwzk3YNRFU6h/TwJYe92UM3nHX7QQpuXrIRyKsPALSt345QbDmeBcoi1?=
+ =?us-ascii?Q?TDeTi2LEGGZJk6rHL6QwYBD3gAYU?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024)(7416014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 12:05:59.0604
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?SUO5/cjX335HItahmgnN+hAFm8scGHY+4wAfz7e9WLdJUwpWehXbH4T/kIqu?=
+ =?us-ascii?Q?i4FwVvmQ51POgFLWCpzGpODUmLf+VQZegqZTFvYMOR3Ujc1D0VfuUlW7fk78?=
+ =?us-ascii?Q?DHYXMzDJxcKh06nT7zuz79i0gBk9nSeAJ23MEqPJ+Vj5CYAorG4ctRA7X7Pa?=
+ =?us-ascii?Q?QqCpF2WzNfvsCTX4HuQ/OiKi7l1A/mRBFAOB2vJk9VriTAITx7pwgEcNplsT?=
+ =?us-ascii?Q?UB/fRZ4I9TVWgW8UFVqy4QFZwds5xtRGsbNQ9AmH4VwwNQ7/hVQdJ7n8YNv+?=
+ =?us-ascii?Q?LcHH8B361G9F+YYcF+DsbrCk9zE5qHSX5Tj4cugWHgMNUncsyNHlSE+/opSl?=
+ =?us-ascii?Q?9P63Wdnk6wNK+713NL5jbD1HdHJAAc7vXuwsZT7BhvRnV0M/xy0BcYq5YMI/?=
+ =?us-ascii?Q?TmXfMdPpEYNmLOel72WjlXeednfkenVICK/Ngqy1kEjmuhIefZP2wdEIqRrR?=
+ =?us-ascii?Q?5E7xGpUj+cIZoQUVrlMV/THG0EH2H+TLUxTbd6EJ5KRNJkkJL9mXxA4/h0Vo?=
+ =?us-ascii?Q?zYgP4iHvL0sC9U55g1EQkqlKVNZfpQGERNWwHzqLbFKNY1fcs1NOd8wZBMtx?=
+ =?us-ascii?Q?J1tGOq9t0kMs5QQ0CsfSePprXkMYGfclGQkudFkM9svICT+p2DO0dqCugbKB?=
+ =?us-ascii?Q?+cyUmR843DyaqWv/Sovo8u7me7tKPcpGGdspGZyMYky6wmfOzJsPQ8CcsSql?=
+ =?us-ascii?Q?bA2Xb+TwxfljBL469oMblg+s/00tGtpbvkRZt1V85v59v0En2OySBetARuvE?=
+ =?us-ascii?Q?qdcMk8EB9riBUNhh62/UW5ngQCKrYMqW7r6a5gABkrgVItNFp1NVwv9oW+7u?=
+ =?us-ascii?Q?O8IBq6BXB8ahZR+bxR1eVpWjuDsDU5MqIliEWwUfcMpMRUJRwZpSIN1SCuSl?=
+ =?us-ascii?Q?fxi/ROskWwQBrB/xjE1gz/FeSL0iXbYR3RcHmfaVmh0tkIxpJOF6BGGu/0C0?=
+ =?us-ascii?Q?yjHAGGoHMhflt5NUPTCMhxRZfe34Qt26b/OMojew9yKlvM0suiKCbBXns10+?=
+ =?us-ascii?Q?6D6K4qmPQhPY+/p23UUNrGVyYzPuG70JSa+yb8Y15Y3Fnj3rPzfcxmlc0+HG?=
+ =?us-ascii?Q?rxMogR+o91AP5XbckhiQA3wS/lLOSJBjC6GtWi2Jfroetol0KMO0tcpWjg3i?=
+ =?us-ascii?Q?2y/xRydJmkcS46JQHR7PeqiN7jbAwuAIo1WtVFHO/8llGU9HvbTCj8VJjTzo?=
+ =?us-ascii?Q?Zml1RyD/UD4N9MUfUfRVsX+hzpvp2kTJ6q5gj96/qpjLdN4ZfdcTe08uFLC9?=
+ =?us-ascii?Q?eLvoOQ3uQli2tdc/qDgMsdNYthpdpHx3BwtCwXD+A+LFEiRaQXfSH/3fNxN3?=
+ =?us-ascii?Q?nmTckl+lyK7aaG7MPXwEffAfMWn1mAOuiuXE38+mFgaw/LYSHwyJsI+kv34z?=
+ =?us-ascii?Q?37upyizvJcYwM5iHt9BZrnFKsiSwfr2ctKKceUX6hTkVqdh+9L9awYTnoSmd?=
+ =?us-ascii?Q?9Er/oitBQ6ujXI+XqArb6WOfGTFam24OyvvQFhyE8Bc1q3AtcUgn0FfrsA2I?=
+ =?us-ascii?Q?ISa51NmeM84tfEBQ0trOPc6hwxGJH/OHND9CON23aFmiLbF+I33a5tZgEa3r?=
+ =?us-ascii?Q?0q6EqjEMZ5s/BLTT6sGilDadNXfN4DEO1T/IUf/ILbWwXe2VjVsiSpwKr/Y2?=
+ =?us-ascii?Q?rQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	8EoWmXRycxNAh9p+2bvBwu7ku3qaEgOIwFI7mBdG6rEq53YBrJ09AjyB1o0IgVq7+P5+PZ5fS0pwFMPBMjpeP8bq25nh6gA6amTtaN8uEoH7SSxk5OrnwbYllXTBnpVQn2IONo7Iao0fuWhz4HD5IYs9m3Ko5tTHS9asMMgL2P/mVU4/wwwpGq88gWicbq0Gsru1OBuB6Ck8zHBm2+kbVFuccvJWgQ65yLM8BhF0D0pGsEImNk0aSoXoma1BAj5J5UBk+mbtIL+fjEoPuppg+VLOdLjTsTAeCd15f6wL6ecUTMtmRrOFhc6wV22KbfmR0duSLjKhEZk2Iz+0OeHjUhxuUl2M/yQKP5t6EGD5l7BZe21/a0q/n5kBExonCb2qhMsvtrJN+/MFk06mU8RDWj+HKCUeCPj5INjrD3H3zs/1W4/zXwh4lZm96wqF4lC1ClXmEB5xsG+AZgv6eH9UY1MIaYSeu6HhcL9S3t7rBPFZX6aoDWWhtWFn/gKVVLwpu1LVOWMts5206qo5iStDZTL/kWfNXi+iEGpAbdnb7kj/heWFNIFNrJuvhz6X6/LEsfraw6rGxr9YrXJxpsy8TQa75o31Vn4t4Fck6tHMyAE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57c8f9d1-584b-4150-72a3-08dd6094a55f
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 12:02:50.5760
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b651e82f-cbe7-4b63-60fe-08dd60951605
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000075ED.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6388
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wEes9VtqplkU6D/b5L7pO48Do0UmUmLLofk7pHXMKerfTjlO1wHP4hsDKFR5rah8XHi8h6/9Dqc2IyZOFf06aaQksqOGLJrLQB5by7ti2K4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB6299
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_01,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 adultscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2503110078
+X-Proofpoint-ORIG-GUID: tE329kAYSoEbeXE0xyF18ui33NP4dHFi
+X-Proofpoint-GUID: tE329kAYSoEbeXE0xyF18ui33NP4dHFi
 
-Document perf sched stats purpose, usage examples and guide on
-how to interpret the report data in the perf-sched man page.
+On Mon, Mar 10, 2025 at 10:23:12AM -0700, SeongJae Park wrote:
+> The logic for checking if a given madvise() request for a single memory
+> range can skip real work, namely madvise_do_behavior(), is duplicated in
+> do_madvise() and vector_madvise().  Split out the logic to a function
+> and resue it.
 
-Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
-Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
----
- tools/perf/Documentation/perf-sched.txt | 243 +++++++++++++++++++++++-
- 1 file changed, 242 insertions(+), 1 deletion(-)
+NIT: typo :)
 
-diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-index 6dbbddb6464d..c674d95e2811 100644
---- a/tools/perf/Documentation/perf-sched.txt
-+++ b/tools/perf/Documentation/perf-sched.txt
-@@ -8,7 +8,7 @@ perf-sched - Tool to trace/measure scheduler properties (latencies)
- SYNOPSIS
- --------
- [verse]
--'perf sched' {record|latency|map|replay|script|timehist}
-+'perf sched' {record|latency|map|replay|script|timehist|stats}
- 
- DESCRIPTION
- -----------
-@@ -80,8 +80,249 @@ There are several variants of 'perf sched':
-     
-    Times are in msec.usec.
- 
-+   'perf sched stats {record | report | diff} <command>' to capture, report the diff
-+   in schedstat counters and show the difference between perf sched stats report.
-+   schedstat counters which are present in the linux kernel which are exposed through
-+   the file ``/proc/schedstat``. These counters are enabled or disabled via the
-+   sysctl governed by the file ``/proc/sys/kernel/sched_schedstats``. These counters
-+   accounts for many scheduler events such as ``schedule()`` calls, load-balancing
-+   events, ``try_to_wakeup()`` call among others. This is useful in understading the
-+   scheduler behavior for the workload.
-+
-+   Note: The tool will not give correct results if there is topological reordering or
-+         online/offline of cpus in between capturing snapshots of `/proc/schedstat`.
-+
-+    Example usage:
-+        perf sched stats record -- sleep 1
-+        perf sched stats report
-+        perf sched stats diff
-+
-+   A detailed description of the schedstats can be found in the Kernel Documentation:
-+   https://www.kernel.org/doc/html/latest/scheduler/sched-stats.html
-+
-+   The result can be interprested as follows:
-+
-+   The `perf sched stats report` starts with description of the columns present in
-+   the report. These column names are gievn before cpu and domain stats to improve
-+   the readability of the report.
-+
-+   ----------------------------------------------------------------------------------------------------
-+   DESC                    -> Description of the field
-+   COUNT                   -> Value of the field
-+   PCT_CHANGE              -> Percent change with corresponding base value
-+   AVG_JIFFIES             -> Avg time in jiffies between two consecutive occurrence of event
-+   ----------------------------------------------------------------------------------------------------
-+
-+   Next is the total profiling time in terms of jiffies:
-+
-+   ----------------------------------------------------------------------------------------------------
-+   Time elapsed (in jiffies)                                   :       24537
-+   ----------------------------------------------------------------------------------------------------
-+
-+   Next is CPU scheduling statistics. These are simple diffs of /proc/schedstat
-+   CPU lines along with description. The report also prints % relative to base stat.
-+
-+   In the example below, schedule() left the CPU0 idle 98.19% of the time.
-+   16.54% of total try_to_wake_up() was to wakeup local CPU. And, the total
-+   waittime by tasks on CPU0 is 0.49% of the total runtime by tasks on the
-+   same CPU.
-+
-+   ----------------------------------------------------------------------------------------------------
-+   CPU 0
-+   ----------------------------------------------------------------------------------------------------
-+   DESC                                                                COUNT  PCT_CHANGE
-+   ----------------------------------------------------------------------------------------------------
-+   sched_yield() count                                         :           0
-+   Legacy counter can be ignored                               :           0
-+   schedule() called                                           :       17138
-+   schedule() left the processor idle                          :       16827  (  98.19% )
-+   try_to_wake_up() was called                                 :         508
-+   try_to_wake_up() was called to wake up the local cpu        :          84  (  16.54% )
-+   total runtime by tasks on this processor (in jiffies)       :  2408959243
-+   total waittime by tasks on this processor (in jiffies)      :    11731825  (  0.49% )
-+   total timeslices run on this cpu                            :         311
-+   ----------------------------------------------------------------------------------------------------
-+
-+   Next is load balancing statistics. For each of the sched domains
-+   (eg: `SMT`, `MC`, `DIE`...), the scheduler computes statistics under
-+   the following three categories:
-+
-+   1) Idle Load Balance: Load balancing performed on behalf of a long
-+                         idling CPU by some other CPU.
-+   2) Busy Load Balance: Load balancing performed when the CPU was busy.
-+   3) New Idle Balance : Load balancing performed when a CPU just became
-+                        idle.
-+
-+   Under each of these three categories, sched stats report provides
-+   different load balancing statistics. Along with direct stats, the
-+   report also contains derived metrics prefixed with *. Example:
-+
-+   ----------------------------------------------------------------------------------------------------
-+   CPU 0 DOMAIN SMT CPUS <0, 64>
-+   ----------------------------------------------------------------------------------------------------
-+   DESC                                                                     COUNT     AVG_JIFFIES
-+   ----------------------------------------- <Category idle> ------------------------------------------
-+   load_balance() count on cpu idle                                 :          50   $      490.74 $
-+   load_balance() found balanced on cpu idle                        :          42   $      584.21 $
-+   load_balance() move task failed on cpu idle                      :           8   $     3067.12 $
-+   imbalance sum on cpu idle                                        :           8
-+   pull_task() count on cpu idle                                    :           0
-+   pull_task() when target task was cache-hot on cpu idle           :           0
-+   load_balance() failed to find busier queue on cpu idle           :           0   $        0.00 $
-+   load_balance() failed to find busier group on cpu idle           :          42   $      584.21 $
-+   *load_balance() success count on cpu idle                        :           0
-+   *avg task pulled per successful lb attempt (cpu idle)            :        0.00
-+   ----------------------------------------- <Category busy> ------------------------------------------
-+   load_balance() count on cpu busy                                 :           2   $    12268.50 $
-+   load_balance() found balanced on cpu busy                        :           2   $    12268.50 $
-+   load_balance() move task failed on cpu busy                      :           0   $        0.00 $
-+   imbalance sum on cpu busy                                        :           0
-+   pull_task() count on cpu busy                                    :           0
-+   pull_task() when target task was cache-hot on cpu busy           :           0
-+   load_balance() failed to find busier queue on cpu busy           :           0   $        0.00 $
-+   load_balance() failed to find busier group on cpu busy           :           1   $    24537.00 $
-+   *load_balance() success count on cpu busy                        :           0
-+   *avg task pulled per successful lb attempt (cpu busy)            :        0.00
-+   ---------------------------------------- <Category newidle> ----------------------------------------
-+   load_balance() count on cpu newly idle                           :         427   $       57.46 $
-+   load_balance() found balanced on cpu newly idle                  :         382   $       64.23 $
-+   load_balance() move task failed on cpu newly idle                :          45   $      545.27 $
-+   imbalance sum on cpu newly idle                                  :          48
-+   pull_task() count on cpu newly idle                              :           0
-+   pull_task() when target task was cache-hot on cpu newly idle     :           0
-+   load_balance() failed to find busier queue on cpu newly idle     :           0   $        0.00 $
-+   load_balance() failed to find busier group on cpu newly idle     :         382   $       64.23 $
-+   *load_balance() success count on cpu newly idle                  :           0
-+   *avg task pulled per successful lb attempt (cpu newly idle)      :        0.00
-+   ----------------------------------------------------------------------------------------------------
-+
-+   Consider following line:
-+
-+   load_balance() found balanced on cpu newly idle                  :         382    $      64.23 $
-+
-+   While profiling was active, the load-balancer found 382 times the load
-+   needs to be balanced on a newly idle CPU 0. Following value encapsulated
-+   inside $ is average jiffies between two events (24537 / 382 = 64.23).
-+
-+   Next are active_load_balance() stats. alb did not trigger while the
-+   profiling was active, hence it's all 0s.
-+
-+   --------------------------------- <Category active_load_balance()> ---------------------------------
-+   active_load_balance() count                                      :           0
-+   active_load_balance() move task failed                           :           0
-+   active_load_balance() successfully moved a task                  :           0
-+   ----------------------------------------------------------------------------------------------------
-+
-+   Next are sched_balance_exec() and sched_balance_fork() stats. They are
-+   not used but we kept it in RFC just for legacy purpose. Unless opposed,
-+   we plan to remove them in next revision.
-+
-+   Next are wakeup statistics. For every domain, the report also shows
-+   task-wakeup statistics. Example:
-+
-+   ------------------------------------------- <Wakeup Info> ------------------------------------------
-+   try_to_wake_up() awoke a task that last ran on a diff cpu       :       12070
-+   try_to_wake_up() moved task because cache-cold on own cpu       :        3324
-+   try_to_wake_up() started passive balancing                      :           0
-+   ----------------------------------------------------------------------------------------------------
-+
-+   Same set of stats are reported for each CPU and each domain level.
-+
-+   How to interpret the diff
-+   ~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+   The `perf sched stats diff` will also start with explaining the columns
-+   present in the diff. Then it will show the diff in time in terms of
-+   jiffies. The order of the values depends on the order of input data
-+   files. Example:
-+
-+   ----------------------------------------------------------------------------------------------------
-+   Time elapsed (in jiffies)                                        :        2009,       2001
-+   ----------------------------------------------------------------------------------------------------
-+
-+   Below is the sample representing the difference in cpu and domain stats of
-+   two runs. Here third column or the values enclosed in `|...|` shows the
-+   percent change between the two. Second and fourth columns shows the
-+   side-by-side representions of the corresponding fields from `perf sched
-+   stats report`.
-+
-+   ----------------------------------------------------------------------------------------------------
-+   CPU <ALL CPUS SUMMARY>
-+   ----------------------------------------------------------------------------------------------------
-+   DESC                                                                    COUNT1      COUNT2  PCT_CHANGE  PCT_CHANGE1 PCT_CHANGE2
-+   ----------------------------------------------------------------------------------------------------
-+   sched_yield() count                                              :           0,          0  |    0.00% |
-+   Legacy counter can be ignored                                    :           0,          0  |    0.00% |
-+   schedule() called                                                :      442939,     447305  |    0.99% |
-+   schedule() left the processor idle                               :      154012,     174657  |   13.40% |  (   34.77,      39.05 )
-+   try_to_wake_up() was called                                      :      306810,     258076  |  -15.88% |
-+   try_to_wake_up() was called to wake up the local cpu             :       21313,      14130  |  -33.70% |  (    6.95,       5.48 )
-+   total runtime by tasks on this processor (in jiffies)            :  6235330010, 5463133934  |  -12.38% |
-+   total waittime by tasks on this processor (in jiffies)           :  8349785693, 5755097654  |  -31.07% |  (  133.91,     105.34 )
-+   total timeslices run on this cpu                                 :      288869,     272599  |   -5.63% |
-+   ----------------------------------------------------------------------------------------------------
-+
-+   Below is the sample of domain stats diff:
-+
-+   ----------------------------------------------------------------------------------------------------
-+   CPU <ALL CPUS SUMMARY>, DOMAIN SMT CPUS <0, 64>
-+   ----------------------------------------------------------------------------------------------------
-+   DESC                                                                    COUNT1      COUNT2  PCT_CHANGE     AVG_JIFFIES1  AVG_JIFFIES2
-+   ----------------------------------------- <Category busy> ------------------------------------------
-+   load_balance() count on cpu busy                                 :         154,         80  |  -48.05% |  $       13.05,       25.01 $
-+   load_balance() found balanced on cpu busy                        :         120,         66  |  -45.00% |  $       16.74,       30.32 $
-+   load_balance() move task failed on cpu busy                      :           0,          4  |    0.00% |  $        0.00,      500.25 $
-+   imbalance sum on cpu busy                                        :        1640,        299  |  -81.77% |
-+   pull_task() count on cpu busy                                    :          55,         18  |  -67.27% |
-+   pull_task() when target task was cache-hot on cpu busy           :           0,          0  |    0.00% |
-+   load_balance() failed to find busier queue on cpu busy           :           0,          0  |    0.00% |  $        0.00,        0.00 $
-+   load_balance() failed to find busier group on cpu busy           :         120,         66  |  -45.00% |  $       16.74,       30.32 $
-+   *load_balance() success count on cpu busy                        :          34,         10  |  -70.59% |
-+   *avg task pulled per successful lb attempt (cpu busy)            :        1.62,       1.80  |   11.27% |
-+   ----------------------------------------- <Category idle> ------------------------------------------
-+   load_balance() count on cpu idle                                 :         299,        481  |   60.87% |  $        6.72,        4.16 $
-+   load_balance() found balanced on cpu idle                        :         197,        331  |   68.02% |  $       10.20,        6.05 $
-+   load_balance() move task failed on cpu idle                      :           1,          2  |  100.00% |  $     2009.00,     1000.50 $
-+   imbalance sum on cpu idle                                        :         145,        222  |   53.10% |
-+   pull_task() count on cpu idle                                    :         133,        199  |   49.62% |
-+   pull_task() when target task was cache-hot on cpu idle           :           0,          0  |    0.00% |
-+   load_balance() failed to find busier queue on cpu idle           :           0,          0  |    0.00% |  $        0.00,        0.00 $
-+   load_balance() failed to find busier group on cpu idle           :         197,        331  |   68.02% |  $       10.20,        6.05 $
-+   *load_balance() success count on cpu idle                        :         101,        148  |   46.53% |
-+   *avg task pulled per successful lb attempt (cpu idle)            :        1.32,       1.34  |    2.11% |
-+   ---------------------------------------- <Category newidle> ----------------------------------------
-+   load_balance() count on cpu newly idle                           :       21791,      15976  |  -26.69% |  $        0.09,        0.13 $
-+   load_balance() found balanced on cpu newly idle                  :       16226,      12125  |  -25.27% |  $        0.12,        0.17 $
-+   load_balance() move task failed on cpu newly idle                :         236,         88  |  -62.71% |  $        8.51,       22.74 $
-+   imbalance sum on cpu newly idle                                  :        6655,       4628  |  -30.46% |
-+   pull_task() count on cpu newly idle                              :        5329,       3763  |  -29.39% |
-+   pull_task() when target task was cache-hot on cpu newly idle     :           0,          0  |    0.00% |
-+   load_balance() failed to find busier queue on cpu newly idle     :           0,          0  |    0.00% |  $        0.00,        0.00 $
-+   load_balance() failed to find busier group on cpu newly idle     :       12649,       9914  |  -21.62% |  $        0.16,        0.20 $
-+   *load_balance() success count on cpu newly idle                  :        5329,       3763  |  -29.39% |
-+   *avg task pulled per successful lb attempt (cpu newly idle)      :        1.00,       1.00  |    0.00% |
-+   --------------------------------- <Category active_load_balance()> ---------------------------------
-+   active_load_balance() count                                      :           0,          0  |    0.00% |
-+   active_load_balance() move task failed                           :           0,          0  |    0.00% |
-+   active_load_balance() successfully moved a task                  :           0,          0  |    0.00% |
-+   --------------------------------- <Category sched_balance_exec()> ----------------------------------
-+   sbe_count is not used                                            :           0,          0  |    0.00% |
-+   sbe_balanced is not used                                         :           0,          0  |    0.00% |
-+   sbe_pushed is not used                                           :           0,          0  |    0.00% |
-+   --------------------------------- <Category sched_balance_fork()> ----------------------------------
-+   sbf_count is not used                                            :           0,          0  |    0.00% |
-+   sbf_balanced is not used                                         :           0,          0  |    0.00% |
-+   sbf_pushed is not used                                           :           0,          0  |    0.00% |
-+   ------------------------------------------ <Wakeup Info> -------------------------------------------
-+   try_to_wake_up() awoke a task that last ran on a diff cpu        :       16606,      10214  |  -38.49% |
-+   try_to_wake_up() moved task because cache-cold on own cpu        :        3184,       2534  |  -20.41% |
-+   try_to_wake_up() started passive balancing                       :           0,          0  |    0.00% |
-+   ----------------------------------------------------------------------------------------------------
-+
- OPTIONS
- -------
-+Applicable to {record|latency|map|replay|script}
-+
- -i::
- --input=<file>::
-         Input file name. (default: perf.data unless stdin is a fifo)
--- 
-2.43.0
+>
+> Signed-off-by: SeongJae Park <sj@kernel.org>
 
+madvise_set_anon_name() seems to do something similar, but somewhat
+differently... not sure if you address this in a later commit but worth
+looking at too!
+
+Anyway this seems sane, so:
+
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+Note nits!
+
+> ---
+>  mm/madvise.c | 53 +++++++++++++++++++++++++++++-----------------------
+>  1 file changed, 30 insertions(+), 23 deletions(-)
+>
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 611db868ae38..764ec1f2475b 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -1640,6 +1640,27 @@ static bool is_valid_madvise(unsigned long start, size_t len_in, int behavior)
+>  	return true;
+>  }
+>
+> +/*
+> + * madvise_should_skip() - Return if an madivse request can skip real works.
+
+NIT: 'real works' sounds strange.
+
+I'd say something like 'if the specified behaviour is invalid or nothing
+would occur, we skip this operation. In the former case we return an
+error.'
+
+> + * @start:	Start address of madvise-requested address range.
+> + * @len_in:	Length of madvise-requested address range.
+> + * @behavior:	Requested madvise behavor.
+> + * @err:	Pointer to store an error code from the check.
+> + */
+> +static bool madvise_should_skip(unsigned long start, size_t len_in,
+> +		int behavior, int *err)
+> +{
+> +	if (!is_valid_madvise(start, len_in, behavior)) {
+> +		*err = -EINVAL;
+> +		return true;
+> +	}
+> +	if (start + PAGE_ALIGN(len_in) == start) {
+> +		*err = 0;
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+>  static bool is_madvise_populate(int behavior)
+>  {
+>  	switch (behavior) {
+> @@ -1747,23 +1768,15 @@ static int madvise_do_behavior(struct mm_struct *mm,
+>   */
+>  int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int behavior)
+>  {
+> -	unsigned long end;
+>  	int error;
+> -	size_t len;
+> -
+> -	if (!is_valid_madvise(start, len_in, behavior))
+> -		return -EINVAL;
+> -
+> -	len = PAGE_ALIGN(len_in);
+> -	end = start + len;
+> -
+> -	if (end == start)
+> -		return 0;
+>
+> +	if (madvise_should_skip(start, len_in, behavior, &error))
+> +		return error;
+>  	error = madvise_lock(mm, behavior);
+>  	if (error)
+>  		return error;
+> -	error = madvise_do_behavior(mm, start, len_in, len, behavior);
+> +	error = madvise_do_behavior(mm, start, len_in, PAGE_ALIGN(len_in),
+> +			behavior);
+>  	madvise_unlock(mm, behavior);
+>
+>  	return error;
+> @@ -1790,19 +1803,13 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
+>  	while (iov_iter_count(iter)) {
+>  		unsigned long start = (unsigned long)iter_iov_addr(iter);
+>  		size_t len_in = iter_iov_len(iter);
+> -		size_t len;
+> -
+> -		if (!is_valid_madvise(start, len_in, behavior)) {
+> -			ret = -EINVAL;
+> -			break;
+> -		}
+> +		int error;
+>
+> -		len = PAGE_ALIGN(len_in);
+> -		if (start + len == start)
+> -			ret = 0;
+> +		if (madvise_should_skip(start, len_in, behavior, &error))
+> +			ret = error;
+>  		else
+> -			ret = madvise_do_behavior(mm, start, len_in, len,
+> -					behavior);
+> +			ret = madvise_do_behavior(mm, start, len_in,
+> +					PAGE_ALIGN(len_in), behavior);
+>  		/*
+>  		 * An madvise operation is attempting to restart the syscall,
+>  		 * but we cannot proceed as it would not be correct to repeat
+> --
+> 2.39.5
 
