@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-556200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB82A5C25C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:21:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C620A5C259
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:20:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F3A21891CC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:20:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5BD16ED38
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECD02222BD;
-	Tue, 11 Mar 2025 13:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6262580E0;
+	Tue, 11 Mar 2025 13:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r8u+PQK9"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RVRagUag"
 Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9802571A3
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774C1257AEC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741699121; cv=none; b=PAhw86UrjqpEgzZEVxOxFLX39KVwlf65A8nHQ3cemYJdwMaCE1iHtKoPOo9AG2v/MmNIKpwuDc7Rg2jBmHhqMiB/1c5Gw/b9ows5rIYZK6WD0yUcqP3CPdlicGKfq7LAYKMojegXIk4KDHzSew1m3a9Fg/03y3agieTbEV0i6y0=
+	t=1741699124; cv=none; b=AyYYk6ePDHzx+q4shUtMyTbUwwCr9cjsKYiwUof50cUlV4YGMmeyKw53zPBFj43fz9a6HVVwg2c+KAAQaWjmrCNavL+f5K5g0CdVdYgCjh9P/on+3n21ykZpYPM2a2JLWsIGY5bIAQ0RugF7vursPWKhumDxPCAJMtlKBEiXipE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741699121; c=relaxed/simple;
-	bh=keuqAf1Yd7pMC60Jehq/im4QvYhNmbzI5DqGZpBJqLI=;
+	s=arc-20240116; t=1741699124; c=relaxed/simple;
+	bh=cpB8G5qu+8qB5CaAmCrhUFZfkRWT/4ipT85Ja0ySsMc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=B6ZlPmAlgJMOvuuNEFDRN2+My/3OCboNuv8mGR545AT2Te/W0Mt6pURRQ9tfPtOVI3+HTnIkQGXusw2T6GPzISsXywhBLZu8xsXWu3Ge3lvuBtr4tqk3eD7Q4aCDEqWWPDu/77qLCxRgoJYrqlFtsi7jsMdVMrsCdMrY2+PkCt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r8u+PQK9; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=gCxwGFDtYCqMTK7OFWyfUU1PHoXF6rpSIrWGcEJq1SxM1kZY2IqR1OwnHDaIPEfjU+1a1SGWU35JN7R/+7YcvZsJSQ+tmfZE5yMLDaj/6CVq49S+7rKU0SAZWcJZv+YLescEjVTxrZ3GDwMCgdjNXqFolCoJ6ZVtluT0fCfU2Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RVRagUag; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43d00017e9dso9065545e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:18:39 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43ce245c5acso26256015e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:18:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741699118; x=1742303918; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741699120; x=1742303920; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h7ic2pHOinjRIlh+O43kggDBsm61b3OXoKlUUGdMcQQ=;
-        b=r8u+PQK9GbqRfxVUanAZh6A/XMo4EDT2oMZ1q8Uo/0jpRjQuNHIxczEEHPIm9oPzgu
-         c3yIthtIbM+U8OMSBHSotcuAfucj6NmSybVqopKRA+qM3dCPhgcJKO8jxGnOiAU3PqR9
-         J9Xr+kdubXkcNeLEeNXf8NoRE7dK+gVMblUPc4PrS2yqHmzwIriUFFFnko5gDmv0vYPM
-         VdWX6OK6oV/yMIwc0Cs5TUeyYCg6qi9MvV7kalpzmQIcaK5Omk1ClmiW4LE4LTsUbGHz
-         JIsOXoOo2vnLtzrO/w9C72qZ+RUC/2UiWcX5+aPpYzN9WXwq9KnmNuMxNNQ+rr9X5Z4S
-         nCBA==
+        bh=AK0S7bcFsX0odpC5RGhRJMkWaOy0j3srCbmbQDGiiBc=;
+        b=RVRagUag7pOLcuZaLduo9a8ik0O+cCOy+ksP98v6w3foNhEejsY7lomibuB1dOzPOv
+         B/2agTO6Xv4f1UceU8u22GOEDCt/Su0ToFd7fmHZyF3Nou/aO8TLUBG0X36O4LsyBEwD
+         W7IuGpdsAqr3L9LIQMBlQbZcnS9Kn4RjO9Fu/aosnt4oxl0rZN3Tko99wdB9hCnO+2nF
+         lqYq1Ep96mzpxVctBwGmPrCkM9RjlWIb9IA4JjE1jOGMi5Z1WXqy6ky54EYv/3aaCIJe
+         Jy1XItIpCxdFSnyHE0XAPHLlRRTQ9YA0B1r3cViip5l73r0lYlwHO8Vkm4zhp9sy9lnd
+         P7CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741699118; x=1742303918;
+        d=1e100.net; s=20230601; t=1741699120; x=1742303920;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h7ic2pHOinjRIlh+O43kggDBsm61b3OXoKlUUGdMcQQ=;
-        b=eZ+pUig2GmXI/Q5Z1Ao+qgYJrxs1bxYpPwUEF7qLQ4aCBaFpgzBkZcfqe6BhbVj9Sv
-         0JdZuPzWnM7pK0wPZU0ptb/GuMmVmi2I1dvfLq4M6gzD0czSk26It3AfDX0cXvwvMtY1
-         wJo0F0NqnWEaBpvytJ5KYWZAbvXsCS3dfSVZ/QqgM8FxXEJBe2EBOxwXo7omAg2yHeYf
-         1GeN0geOM3sZBHxcy+vO4gsqGm1IQ6qmuNAAe/HafYTNQiSqAPXUJuWywQz6N7kS0uQ/
-         A96RqiOfUGoPsBvI1GwOskh2FXsLzsIpby8iwGhBcWJa7umitaSKET+52A2rSI6+7YCi
-         uiPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWe8qrlq9ui45vKt8UkFVb44efva9wkjhFALNJOJbwYcNcgt4m8tcC93/TH15BQR2NC3K6HXd/DGO4HpDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbpbjlV0oL410edDv98RG24DthEuGl1tg/koVUfmXy2xpKLJ/q
-	qctr85vFUQCmu9Tut37aB32S+xtcAcyZGieOSolhUeJTBnAMq65BPtpG2Oj5M+xrFp3xuYw4n0F
-	UxbErG2cUbg==
-X-Google-Smtp-Source: AGHT+IHZlMGTcKX5RZ/uPw4+acv8n0aHStFuR6vrPyvpA6CiIDxxzLWRCjz5dgJEeQYAtTRRHyrT3C1VMcyAzA==
-X-Received: from wmbea7.prod.google.com ([2002:a05:600c:6747:b0:43c:f8e5:6033])
+        bh=AK0S7bcFsX0odpC5RGhRJMkWaOy0j3srCbmbQDGiiBc=;
+        b=JQBvWX7BPQbsGP0vfYmhbCShk1Ff9pBcEPwdbGIKblNpjnAgbaGyIx0Ppfu71Q+ZCw
+         OSf96uzmA59ewftPd7uChbjhnFH9XrNOOYRK54UxtjZxC27rV0R1C9T1fREYhZ97qI5U
+         tf5ibc/qLtk0uNrQAgVGrEyTbSC7foM32qSfB55sVIhcbN3Q2sxhfmZPxtg7TNYnBG20
+         1IOzpCetZUbLdzUI7z+Nphjw7NoR4rwjsD8wbylzEFkN0pwS1SibaW7mU6acb75F+NF0
+         UwbUwia14QaJRZNZ/I5O76in0Kx0wX/ecqPFRfheg5/C/Yq8Z7uPzXZIqLajjD7/RlEr
+         E/uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/Pc/FF/62VAjEfHLZM3ex5nkzqED9b0BZa4y042OS0ygD+hspCcZIJEIGhD9MHS7nbZBqvUsaoOtVHIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOm5CwiPc8ldATJp5ur/+Dq14w60IXKtAjmnjbjCmWCzILa/d/
+	W6UKn4KU8zH21IvulTZIDWB7IQqR3GIO/DCj9qifTHp6827Sie7ySuUiZCScKc4VQL3By8gGW0V
+	3Aa9XD0aOXQ==
+X-Google-Smtp-Source: AGHT+IFnEky9E+WTZ67n4oDhD85FHBGvf1ZaUlsC4CSzVhw94LW+c4vdMdF17ZTVjJHaNu8o0hoGt9vNnRMLVA==
+X-Received: from wmpz18.prod.google.com ([2002:a05:600c:a12:b0:43c:ebbe:4bce])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3586:b0:43c:ec4c:25b1 with SMTP id 5b1f17b1804b1-43cec4c26d2mr91373805e9.23.1741699118100;
- Tue, 11 Mar 2025 06:18:38 -0700 (PDT)
-Date: Tue, 11 Mar 2025 13:18:21 +0000
+ 2002:a05:600c:444d:b0:43c:fe15:41cb with SMTP id 5b1f17b1804b1-43cfe154379mr72788015e9.15.1741699119995;
+ Tue, 11 Mar 2025 06:18:39 -0700 (PDT)
+Date: Tue, 11 Mar 2025 13:18:22 +0000
 In-Reply-To: <20250311-mm-selftests-v4-0-dec210a658f5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250311-mm-selftests-v4-0-dec210a658f5@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20250311-mm-selftests-v4-10-dec210a658f5@google.com>
-Subject: [PATCH v4 10/12] selftests/mm: Ensure uffd-wp-mremap gets pages of
- each size
+Message-ID: <20250311-mm-selftests-v4-11-dec210a658f5@google.com>
+Subject: [PATCH v4 11/12] selftests/mm: Skip mlock tests if nobody user can't
+ read it
 From: Brendan Jackman <jackmanb@google.com>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
 	Shuah Khan <shuah@kernel.org>
@@ -83,51 +83,36 @@ Cc: Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org, linux-kselftest@vger.kernel
 	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-This test allocates a page of every available size and doesn't have any
-SKIP logic if the allocation fails. So, ensure it's available and skip
-the test if we can't do so.
+If running from a directory that can't be read by unprivileged users,
+executing on-fault-test via the nobody user will fail.
+
+The kselftest build does give the file the correct permissions, but
+after being installed it might be in a directory without global execute
+permissions.
+
+Since the script can't safely fix that, just skip if it happens. Note
+that the stderr of the `ls` command is unfiltered meaning the user sees
+a "permission denied" error that can help inform them why the test was
+skipped.
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- tools/testing/selftests/mm/run_vmtests.sh | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ tools/testing/selftests/mm/run_vmtests.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
-index 0f9fe757c3320a6551e39b6d4552fd4874b0bf43..e86ef8cb37d00e572be8cf0ea9cc8246d4eecd7e 100755
+index e86ef8cb37d00e572be8cf0ea9cc8246d4eecd7e..1467594b594c4fb1dceae875fe7616ecc3cd9382 100755
 --- a/tools/testing/selftests/mm/run_vmtests.sh
 +++ b/tools/testing/selftests/mm/run_vmtests.sh
-@@ -309,9 +309,30 @@ CATEGORY="userfaultfd" run_test ${uffd_stress_bin} hugetlb "$half_ufd_size_MB" 3
- CATEGORY="userfaultfd" run_test ${uffd_stress_bin} hugetlb-private "$half_ufd_size_MB" 32
- CATEGORY="userfaultfd" run_test ${uffd_stress_bin} shmem 20 16
- CATEGORY="userfaultfd" run_test ${uffd_stress_bin} shmem-private 20 16
--CATEGORY="userfaultfd" run_test ./uffd-wp-mremap
-+# uffd-wp-mremap requires at least one page of each size.
-+have_all_size_hugepgs=true
-+declare -A nr_size_hugepgs
-+for f in /sys/kernel/mm/hugepages/**/nr_hugepages; do
-+	old=$(cat $f)
-+	nr_size_hugepgs["$f"]="$old"
-+	if [ "$old" == 0 ]; then
-+		echo 1 > "$f"
-+	fi
-+	if [ $(cat "$f") == 0 ]; then
-+		have_all_size_hugepgs=false
-+		break
-+	fi
-+done
-+if $have_all_size_hugepgs; then
-+	CATEGORY="userfaultfd" run_test ./uffd-wp-mremap
-+else
-+	echo "# SKIP ./uffd-wp-mremap"
-+fi
- 
- #cleanup
-+for f in "${!nr_size_hugepgs[@]}"; do
-+	echo "${nr_size_hugepgs["$f"]}" > "$f"
-+done
- echo "$nr_hugepgs" > /proc/sys/vm/nr_hugepages
+@@ -337,7 +337,7 @@ echo "$nr_hugepgs" > /proc/sys/vm/nr_hugepages
  
  CATEGORY="compaction" run_test ./compaction_test
+ 
+-if command -v sudo &> /dev/null;
++if command -v sudo &> /dev/null && sudo -u nobody ls ./on-fault-limit >/dev/null;
+ then
+ 	CATEGORY="mlock" run_test sudo -u nobody ./on-fault-limit
+ else
 
 -- 
 2.49.0.rc0.332.g42c0ae87b1-goog
