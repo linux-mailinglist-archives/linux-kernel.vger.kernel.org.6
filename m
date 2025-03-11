@@ -1,171 +1,262 @@
-Return-Path: <linux-kernel+bounces-555621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AB5A5BA5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:02:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92158A5BA60
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:03:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C1103A7230
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:02:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A82E01895EDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4AC224224;
-	Tue, 11 Mar 2025 08:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4CF224243;
+	Tue, 11 Mar 2025 08:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1Ii6f0A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="QQmUUnGw"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2211EA7FD;
-	Tue, 11 Mar 2025 08:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D4B1EA7FD;
+	Tue, 11 Mar 2025 08:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741680138; cv=none; b=AzTp0Ze9uuk6IPD/8g07BGnzoy5ZoWaIxNma5fTqXNTnZzY/NYbJ/6KaSiwEXXOv5jjDJzOip1x9VGMkRd0thyqfYQXs3R6a4ZDf/qvhE9Tr3xjQXwd2KGOT6tLIT3gZ1zwLncJ0J32+Vn9Q/QMNH3z6E46Wx+x9ugff32tpDPs=
+	t=1741680175; cv=none; b=s/bUKdnPYWfeKIIXqKpC5N6MUIAL0l0/Tq0W8e0F9iUzD04uRlldvnsvihaEb3zSFFPglUh53OcN7aQc8KSVlIIzqRvamzwKEnv0cf3r28IDtdBHt9o8dt3bGHk9sInAVyhuVmUfhpwNXKJaDzjT4086rKtorGFYkeOXb8oofbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741680138; c=relaxed/simple;
-	bh=ER+SoneXM3aC53kwTjsYgrHGqM1EmcSSSqClcNpsios=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gUbEq5evEruGaafD0gv21riPI3reXCw8ZqNhwRLU1k3vXt1UAmVg0IkXjskT6kVL2u6EmkYzk2C/H5KAqiCt6UEOGaX6bgos9VrZ2ITaqQc1cTI5SXnoQNEPTOhdAnZ5kwIvKhWpmvgTrog4j5AntmTb10iO2nVfbeisenXZwfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1Ii6f0A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA9BAC4CEE9;
-	Tue, 11 Mar 2025 08:02:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741680134;
-	bh=ER+SoneXM3aC53kwTjsYgrHGqM1EmcSSSqClcNpsios=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L1Ii6f0AYn5e94wJ6fY4sQ60vyv+Ve56Uvflq+oAUrLzFPD5ndP3C1i0zbDWVLBay
-	 DUSB2bZMaqvUBDC1Icgk3X1lrElTqnjUbhwmw7uiiNaJPjwmIV42bIDmKs6RJDEYLi
-	 MXRSYjh2JiZg1xEqC0loybvy11SrazORpc/Ruh6sDEkaePrkcetIL5WYE9da29O17k
-	 6vvL93mJM/lr1l9Ao9sDaj/zd7a7uXcPu8V/ti0UbwBkgJ0k2SyR+REmx9G3O2UunY
-	 4oQw3b5z6eE94rdwxjGg5iT9nPKWZV8xbcd5pMAYlS05vN0H1y80750gd8jsIs9kUV
-	 OmyPj3ORjNzAA==
-Message-ID: <e00a7061-5283-4809-b652-5f6c5e1e4496@kernel.org>
-Date: Tue, 11 Mar 2025 09:02:07 +0100
+	s=arc-20240116; t=1741680175; c=relaxed/simple;
+	bh=LSjdvaAkpe0Pmc07F6X/Q7yeIReLFdX+62wcHomTM84=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U8gUWWmAwCq7mFgIFFfAwR0fBjVEIQSHLlzPFhxP1oauwk9VpIPucz1QEDNZ1krOoA7NMzmnjMmN1KcQ5gUw5tFXq52XSkNQWzg4+r4UBdRZJnT/6JTOMXCwPOqurkkNXGzHn706hhsIBJBqNNp+k8HvLWSM4LXhIwX9U2KPow4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=QQmUUnGw; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1741680174; x=1773216174;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=dUt3LEoSvOjSrsb26MD+fECZCawYRKXBOLzP/h4uqJU=;
+  b=QQmUUnGwVpUki+9/ShMCMX7HSkiV460YicdjobNiT7gUL+CzV94T9MJ2
+   dm5aUUXt0w+MPe24AyI7x8UVG1groxn2hEoG9M32VGq5j1uisTDWQTNe8
+   Ysq7qLsOpM4exJTYbUoKoXwAwtu9NUbM2VD4YCe7PUxG3ZSaGs7ADXBx8
+   w=;
+X-IronPort-AV: E=Sophos;i="6.14,238,1736812800"; 
+   d="scan'208";a="473988847"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 08:02:47 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:22259]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.235:2525] with esmtp (Farcaster)
+ id 316f76c8-51bd-48b1-bb20-93ea36c10044; Tue, 11 Mar 2025 08:02:45 +0000 (UTC)
+X-Farcaster-Flow-ID: 316f76c8-51bd-48b1-bb20-93ea36c10044
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 11 Mar 2025 08:02:45 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.88.128.133) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 11 Mar 2025 08:02:41 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <aleksandr.mikhalitsyn@canonical.com>
+CC: <arnd@arndb.de>, <bluca@debian.org>, <brauner@kernel.org>,
+	<cgroups@vger.kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
+	<hannes@cmpxchg.org>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<leon@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <mkoutny@suse.com>,
+	<mzxreary@0pointer.de>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<shuah@kernel.org>, <tj@kernel.org>, <willemb@google.com>
+Subject: Re: [PATCH net-next 4/4] tools/testing/selftests/cgroup: add test for SO_PEERCGROUPID
+Date: Tue, 11 Mar 2025 01:02:32 -0700
+Message-ID: <20250311080233.11136-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250309132821.103046-5-aleksandr.mikhalitsyn@canonical.com>
+References: <20250309132821.103046-5-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/6] arm64: dts: qcom: Add support for QCS9075 Ride &
- Ride-r3
-To: Wasim Nazir <quic_wasimn@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <Z3gzezBgZhZJkxzV@hu-wasimn-hyd.qualcomm.com>
- <37isla6xfjeofsmfvb6ertnqe6ufyu3wh3duqsyp765ivdueex@nlzqyqgnocib>
- <67b888fb-2207-4da5-b52e-ce84a53ae1f9@kernel.org>
- <Z3/hmncCDG8OzVkc@hu-wasimn-hyd.qualcomm.com>
- <b0b08c81-0295-4edb-ad97-73715a88bea6@kernel.org>
- <Z4dMRjK5I8s2lT3k@hu-wasimn-hyd.qualcomm.com>
- <80e59b3b-2160-4e24-93f2-ab183a7cbc74@kernel.org>
- <Z8AWHiVu05s0RJws@hu-wasimn-hyd.qualcomm.com>
- <a8991221-88b2-4a39-a51b-587c4cdeebe4@kernel.org>
- <Z8laCxtHOdNm3rRu@hu-wasimn-hyd.qualcomm.com>
- <Z8lb889QrqluPXXl@hu-wasimn-hyd.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Z8lb889QrqluPXXl@hu-wasimn-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D037UWB004.ant.amazon.com (10.13.138.84) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On 06/03/2025 09:25, Wasim Nazir wrote:
->> +-----------------------------------------------------------------------------------------------------------------------------------------------+
->> |                                                                                                                                               |
->> |                                                          sa8775p.dtsi                                                                         |
->> |                                                              |                                                                                |
->> |                                    +-------------------------+-----------------------+                                                        |
->> |                                    |                         |                       |                                                        |
->> |                                    v                         |                       v                                                        |
->> |                             qcs9075-som.dtsi                 |                qcs9100-som.dtsi                                                |
->> |                                    |                         |                       |                                                        |
->> |                                    v                         v                       v                                                        |
->> |                                  (IOT)                    (AUTO)                   (IOT)                                                      |
->> |                                    |                         |                       |                                                        |
->> |             +----------------------+                         |                       |                                                        |
->> |             |                      |                         |                       |                                                        |
->> |             |                      | +-------------------------+-----------------------+-----------------< sa8775p-ride-common.dtsi           |
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date: Sun,  9 Mar 2025 14:28:15 +0100
+> +static void client(FIXTURE_DATA(so_peercgroupid) *self,
+> +		   const FIXTURE_VARIANT(so_peercgroupid) *variant)
+> +{
+> +	int cfd, err;
+> +	socklen_t len;
+> +	uint64_t peer_cgroup_id = 0, test_cgroup1_id = 0, test_cgroup2_id = 0;
+> +	char state;
+> +
+> +	cfd = socket(AF_UNIX, variant->type, 0);
+> +	if (cfd < 0) {
+> +		log_err("socket");
+> +		child_die();
+> +	}
+> +
+> +	if (variant->type == SOCK_DGRAM) {
+> +		fill_sockaddr(self->client_addr, variant->abstract);
+> +
+> +		if (bind(cfd, (struct sockaddr *)&self->client_addr->listen_addr, self->client_addr->addrlen)) {
+> +			log_err("bind");
+> +			child_die();
+> +		}
+> +	}
+> +
+> +	/* negative testcase: no peer for socket yet */
+> +	len = sizeof(peer_cgroup_id);
+> +	err = getsockopt(cfd, SOL_SOCKET, SO_PEERCGROUPID, &peer_cgroup_id, &len);
+> +	if (!err || (errno != ENODATA)) {
+> +		log_err("getsockopt must fail with errno == ENODATA when socket has no peer");
+> +		child_die();
+> +	}
+> +
+> +	if (connect(cfd, (struct sockaddr *)&self->server_addr.listen_addr,
+> +		    self->server_addr.addrlen) != 0) {
+> +		log_err("connect");
+> +		child_die();
+> +	}
+> +
+> +	state = 'R';
+> +	write(self->sync_sk[1], &state, sizeof(state));
+
+nit: This looks unnecessary ?
 
 
-There is no ride-common hardware. If there is, send us any proof of its
-existence. all your statements here show you want to create some
-structure because you like it. I don't think you get my questions. You
-painted diagram of DTS, not hardware.
+> +
+> +	read(self->sync_sk[1], &test_cgroup1_id, sizeof(uint64_t));
+> +	read(self->sync_sk[1], &test_cgroup2_id, sizeof(uint64_t));
+> +
+> +	len = sizeof(peer_cgroup_id);
+> +	if (getsockopt(cfd, SOL_SOCKET, SO_PEERCGROUPID, &peer_cgroup_id, &len)) {
+> +		log_err("Failed to get SO_PEERCGROUPID");
+> +		child_die();
+> +	}
+> +
+> +	/*
+> +	 * There is a difference between connection-oriented sockets
+> +	 * and connectionless ones from the perspective of SO_PEERCGROUPID.
+> +	 *
+> +	 * sk->sk_cgrp_data is getting filled when we allocate struct sock (see call to cgroup_sk_alloc()).
+> +	 * For DGRAM socket, self->server socket is our peer and by the time when we allocate it,
+> +	 * parent process sits in a test_cgroup1. Then it changes cgroup to test_cgroup2, but it does not
+> +	 * affect anything.
+> +	 * For STREAM/SEQPACKET socket, self->server is not our peer, but that one we get from accept()
+> +	 * syscall. And by the time when we call accept(), parent process sits in test_cgroup2.
+> +	 *
+> +	 * Let's ensure that it works like that and if it get changed then we should detect it
+> +	 * as it's a clear UAPI change.
+> +	 */
+> +	if (variant->type == SOCK_DGRAM) {
+> +		/* cgroup id from SO_PEERCGROUPID should be equal to the test_cgroup1_id */
+> +		if (peer_cgroup_id != test_cgroup1_id) {
+> +			log_err("peer_cgroup_id != test_cgroup1_id: %" PRId64 " != %" PRId64, peer_cgroup_id, test_cgroup1_id);
+> +			child_die();
+> +		}
+> +	} else {
+> +		/* cgroup id from SO_PEERCGROUPID should be equal to the test_cgroup2_id */
+> +		if (peer_cgroup_id != test_cgroup2_id) {
+> +			log_err("peer_cgroup_id != test_cgroup2_id: %" PRId64 " != %" PRId64, peer_cgroup_id, test_cgroup2_id);
+> +			child_die();
+> +		}
+> +	}
+> +}
+> +
+> +TEST_F(so_peercgroupid, test)
+> +{
+> +	uint64_t test_cgroup1_id, test_cgroup2_id;
+> +	int err;
+> +	int pfd;
+> +	char state;
+> +	int child_status = 0;
+> +
+> +	if (cg_find_unified_root(self->cgroup_root, sizeof(self->cgroup_root), NULL))
+> +		ksft_exit_skip("cgroup v2 isn't mounted\n");
+> +
+> +	self->test_cgroup1 = cg_name(self->cgroup_root, "so_peercgroupid_cg1");
+> +	ASSERT_NE(NULL, self->test_cgroup1);
+> +
+> +	self->test_cgroup2 = cg_name(self->cgroup_root, "so_peercgroupid_cg2");
+> +	ASSERT_NE(NULL, self->test_cgroup2);
+> +
+> +	err = cg_create(self->test_cgroup1);
+> +	ASSERT_EQ(0, err);
+> +
+> +	err = cg_create(self->test_cgroup2);
+> +	ASSERT_EQ(0, err);
+> +
+> +	test_cgroup1_id = cg_get_id(self->test_cgroup1);
+> +	ASSERT_LT(0, test_cgroup1_id);
+> +
+> +	test_cgroup2_id = cg_get_id(self->test_cgroup2);
+> +	ASSERT_LT(0, test_cgroup2_id);
+> +
+> +	/* enter test_cgroup1 before allocating a socket */
+> +	err = cg_enter_current(self->test_cgroup1);
+> +	ASSERT_EQ(0, err);
+> +
+> +	self->server = socket(AF_UNIX, variant->type, 0);
+> +	ASSERT_NE(-1, self->server);
+> +
+> +	/* enter test_cgroup2 after allocating a socket */
+> +	err = cg_enter_current(self->test_cgroup2);
+> +	ASSERT_EQ(0, err);
+> +
+> +	fill_sockaddr(&self->server_addr, variant->abstract);
+> +
+> +	err = bind(self->server, (struct sockaddr *)&self->server_addr.listen_addr, self->server_addr.addrlen);
+> +	ASSERT_EQ(0, err);
+> +
+> +	if (variant->type != SOCK_DGRAM) {
+> +		err = listen(self->server, 1);
+> +		ASSERT_EQ(0, err);
+> +	}
+> +
+> +	err = socketpair(AF_UNIX, SOCK_DGRAM | SOCK_CLOEXEC, 0, self->sync_sk);
+> +	EXPECT_EQ(err, 0);
+> +
+> +	self->client_pid = fork();
+> +	ASSERT_NE(-1, self->client_pid);
+> +	if (self->client_pid == 0) {
+> +		close(self->server);
+> +		close(self->sync_sk[0]);
+> +		client(self, variant);
+> +		exit(0);
+> +	}
+> +	close(self->sync_sk[1]);
+> +
+> +	if (variant->type != SOCK_DGRAM) {
+> +		pfd = accept(self->server, NULL, NULL);
+> +		ASSERT_NE(-1, pfd);
 
-We talk about hardware. Not your DTS. Drop all DTSI, DTS, DTSO from here
-and show us the hardware.
+nit: close(self->server) here ?
 
-I have been asking it for two months now and it is just waste of time to
-keep talking the same.
+It's close()d anyway when the process exits.
 
 
->> |             |                      | |                       | |                     | |                                                      |
->> |             v                      v v                       v v                     v v                                                      |
->> |  qcs9075-iq-9075-evk.dts     qcs9075-ride.dts         sa8775p-ride.dts         qcs9100-ride.dts                                               |
->> |                                    |                         |                       |                                                        |
->> |                                    +-------------------------+-----------------------+-------------------< sa8775p-ride-ethernet-aqr115c.dtso |
+> +	} else {
+> +		pfd = self->server;
+> +	}
+> +
+> +	/* wait until the child arrives at checkpoint */
+> +	read(self->sync_sk[0], &state, sizeof(state));
+> +	ASSERT_EQ(state, 'R');
 
-How does "sa8775p-ride-ethernet-aqr115c" hardware look like?
+The client will wait two write()s without this synchronisation.
 
->> |                                    |                         |                       |                                                        |
->> |                                    v                         v                       v                                                        |
->> |                             qcs9075-ride-r3.dts      sa8775p-ride-r3.dts      qcs9100-ride-r3.dts                                             |
->> |                                                                                                                                               |
->> +-----------------------------------------------------------------------------------------------------------------------------------------------+
->>
-> 
-> Updating typo: qcom-ride-* changed to sa8775p-ride-*.
-> 
 
-Best regards,
-Krzysztof
+> +
+> +	write(self->sync_sk[0], &test_cgroup1_id, sizeof(uint64_t));
+> +	write(self->sync_sk[0], &test_cgroup2_id, sizeof(uint64_t));
+> +
+> +	close(pfd);
+> +	waitpid(self->client_pid, &child_status, 0);
+> +	ASSERT_EQ(0, WIFEXITED(child_status) ? WEXITSTATUS(child_status) : 1);
+> +}
+> +
+> +TEST_HARNESS_MAIN
 
