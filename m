@@ -1,85 +1,451 @@
-Return-Path: <linux-kernel+bounces-557035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B656A5D2BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:53:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D153BA5D2BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:53:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E153168054
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:53:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D09D1899747
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBDA226545;
-	Tue, 11 Mar 2025 22:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ejFSraxY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E808B226545;
+	Tue, 11 Mar 2025 22:53:28 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCBD1E573F;
-	Tue, 11 Mar 2025 22:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3041E9B08
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741733581; cv=none; b=SHsXNosXfDhEoodtoyCvZGjj3UXpyzpAWeis64Ba8wJ+94txCrVKhtHm+Z7Z0gsMLrHpJhjgABSDWU+9V9QkogbzG948KVI1JlIstGQsapzhTk1mBEELcnHjkpnbcFFBqWuEZcbV976W0xj73PcgZI70gp5mBPD5LR099gcjmiI=
+	t=1741733607; cv=none; b=m08ywANQx7gCpBljLI85hVOCLlku7QGieTdX7wMDalvEoy2Ww0SqlENpKoHE0xYGGcDno6x7kOeiFBHDdm8Z+99y/jo/KJI7Vwm33Wl2HB0Qx7JvJeoPC4+IOm4rZWVwzuJpIfYMxoD79H4IgrBuL3ETc7mB0smmav0QP9WDLnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741733581; c=relaxed/simple;
-	bh=KEX5faxsQsWkg721kkVxKxCrx0PVeG7B3p7zEqzbq3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BH56Wd7rj/+NU5xVYfX0ZCQNVvbZ1axFo57Zrgn4bsXC1yawQdFDYMML41nf+ZGisFzvV38lcGxw/M3IbwYrHUze2/apuMfo7OHWmfnErLXXj++p6ApJm709aEeCNzdnkgi21soeLQZlE9B6my1Av3jVbtBt/h94A1B+aKq3wIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ejFSraxY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C3CCC4CEE9;
-	Tue, 11 Mar 2025 22:52:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741733580;
-	bh=KEX5faxsQsWkg721kkVxKxCrx0PVeG7B3p7zEqzbq3o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ejFSraxYqzOg9hmkx8gLlKzXz6jGLZ1YUSeP5ZVQX6fCbug+BDTzAUIdtIg3ayxPv
-	 FJT8PfdUEfkSJZRLJ8qI6HC6JCjd2dB/MrNo3fSVhvWJA5HScaMJIZVmFgVI1P1EVe
-	 JGhBlRrHu1DvXSSO8TUfNpv0VSxpFjUhi89G9ukQRmX2u9+zRk7C3cyrEPFWl8v347
-	 4YksuuG7U/IQnXn8a0x/jWvlKyWpmJ7mHbe9ZdzvZ5cQjn/ZaduQnWbCJylATeUluf
-	 QIXqNj8QGh7QEjTq88CAbhvbmP7XK3lMpzk0ArUfT35v/yZKjFRB/1CKpxNfwgYMMw
-	 qKFzG5QL61icQ==
-Date: Tue, 11 Mar 2025 23:52:49 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Vitalii Mordan <mordan@ispras.ru>
-Cc: Michal Simek <michal.simek@amd.com>, 
-	Harini Katakam <harinik@xilinx.com>, Wolfram Sang <wsa@kernel.org>, 
-	Soren Brinkmann <soren.brinkmann@xilinx.com>, linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Fedor Pchelkin <pchelkin@ispras.ru>, 
-	Alexey Khoroshilov <khoroshilov@ispras.ru>, Vadim Mutilin <mutilin@ispras.ru>, lvc-project@linuxtesting.org
-Subject: Re: [PATCH] i2c: cadence: fix call balance of id->clk handling
- routines
-Message-ID: <rbn5jxvmcl76n3grg3fzc3z5vqgmieixmrq3rkhbpdremlbeze@quqxmsszknfe>
-References: <20250303140805.644143-1-mordan@ispras.ru>
+	s=arc-20240116; t=1741733607; c=relaxed/simple;
+	bh=kEd9Ek0Bsd2B5rWWkgGBxSb297ZI9V6d62ToRfAPTxA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=d6nnOyxzZ9EDtrqgwTdYoO0yxc5Cj+Z1XCjkLFeVfEwWGSLhCUGQW1SdivF1tigfm8rf5chlGQnjQEBSGqA0rfzAKHAWqtad2rRuPQuvbAhVQn12S1CQt1N/yQ06bdKaOE2ouhAVmYJVAX84KJLF3OpAD6QkV9Og6xBzc55HCEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d43621bb7eso3585715ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:53:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741733605; x=1742338405;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ocZPuP6VPq8evU7zsrsoR5L7O/sZVxmpq4603WTa5IA=;
+        b=GIy0/5RHoYdIYmQOqTiuqJipiuvAoyIhvS9ZoVIc145Lpr3Dfg+rU9LrkwKj5j9pOl
+         PA7Ia32ZwOBDKCul/5u8VlPrRadj8G04WSvuVauuzeGyrlbiR2HgS0Dh1D//+rHp7LfT
+         CIE7000FmK02IQO8+QneK4ZsZYszzjIOTTYT0FXrej9BF4lyIUKwaL2GFdBgacmI2bfr
+         qjgIxtHa+t30HEzQZp0df7YZDvXbeEHCYW5cySJnLHO0VhswvB8cxhzw2CaAOsxMuDJY
+         6j1iRMyrOqNJP2W7xoUD0J7V2u0VAD6ow98N1k7oip1Xx8//vF8qaBzYaSDWlt1v8jzY
+         xZjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrBt0sEaBPGUvQSk8SaaEJ7O/R8x3w42TcCQryrqsK/zuRpXRvILVqSShDp5sO6U70drFzjUOrTvFPY/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEqBeNLzXEfywVIhAWnbfqKfmxOGSoGSXEsno7p86Y7wWMDegV
+	j2wYerZIsAZM1KPj5A32tE5EwEkndOgvn5EcWJ5Bizsj46QOQeAzXPCqgrYd55BwT4KhUMceE50
+	A7AKL1llZ1bzu5oYJjsHFElu+0FXDBy9gRUW76RSOQ4S+iWFtGWiQtw4=
+X-Google-Smtp-Source: AGHT+IGzgOU4zfW5n8Sdw0VIJcUg/BFtapFf4ths2BzYj0O2y5IJC7oOD40C4otA+00h51eBEETJu0KM0T7meI2/bESzqUOkVP4m
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303140805.644143-1-mordan@ispras.ru>
+X-Received: by 2002:a05:6e02:1a41:b0:3d3:d1a8:8e82 with SMTP id
+ e9e14a558f8ab-3d4691b80fcmr54513855ab.9.1741733604864; Tue, 11 Mar 2025
+ 15:53:24 -0700 (PDT)
+Date: Tue, 11 Mar 2025 15:53:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67d0bee4.050a0220.14e108.001f.GAE@google.com>
+Subject: [syzbot] [io-uring?] possible deadlock in io_uring_mmap
+From: syzbot <syzbot+96c4c7891428e8c9ac1a@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Vitalii,
+Hello,
 
-On Mon, Mar 03, 2025 at 05:08:05PM +0300, Vitalii Mordan wrote:
-> If the clock id->clk was not enabled in cdns_i2c_probe(), it should not be
-> disabled in any execution path. If the clock was not enabled, the probe
-> function should return an error code.
-> 
-> Use the devm_clk_get_enabled() helper function to ensure proper call
-> balance for id->clk.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Klever.
-> 
-> Fixes: df8eb5691c48 ("i2c: Add driver for Cadence I2C controller")
-> Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
+syzbot found the following issue on:
 
-Thanks for this patch, but it was already sent previously by
-Michal and Manikanta.
+HEAD commit:    77c95b8c7a16 Merge remote-tracking branch 'will/for-next/p..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=137d2a64580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=afb3000d0159783f
+dashboard link: https://syzkaller.appspot.com/bug?extid=96c4c7891428e8c9ac1a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
 
-Thanks,
-Andi
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a9fe810b5d23/disk-77c95b8c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b46f8f4fa912/vmlinux-77c95b8c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/83ddebd15489/Image-77c95b8c.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+96c4c7891428e8c9ac1a@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.14.0-rc5-syzkaller-g77c95b8c7a16 #0 Not tainted
+------------------------------------------------------
+syz.3.85/7036 is trying to acquire lock:
+ffff0000cf4f89b8 (&vma->vm_lock->lock){++++}-{4:4}, at: vma_start_write include/linux/mm.h:770 [inline]
+ffff0000cf4f89b8 (&vma->vm_lock->lock){++++}-{4:4}, at: vm_flags_set include/linux/mm.h:900 [inline]
+ffff0000cf4f89b8 (&vma->vm_lock->lock){++++}-{4:4}, at: io_region_mmap io_uring/memmap.c:312 [inline]
+ffff0000cf4f89b8 (&vma->vm_lock->lock){++++}-{4:4}, at: io_uring_mmap+0x37c/0x504 io_uring/memmap.c:339
+
+but task is already holding lock:
+ffff0000f51da8d8 (&ctx->mmap_lock){+.+.}-{4:4}, at: class_mutex_constructor include/linux/mutex.h:201 [inline]
+ffff0000f51da8d8 (&ctx->mmap_lock){+.+.}-{4:4}, at: io_uring_mmap+0x100/0x504 io_uring/memmap.c:325
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #9 (&ctx->mmap_lock){+.+.}-{4:4}:
+       __mutex_lock_common+0x1f0/0x24b8 kernel/locking/mutex.c:585
+       __mutex_lock kernel/locking/mutex.c:730 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:782
+       class_mutex_constructor include/linux/mutex.h:201 [inline]
+       io_uring_get_unmapped_area+0x84/0x348 io_uring/memmap.c:357
+       __get_unmapped_area+0x1d8/0x364 mm/mmap.c:846
+       do_mmap+0x4a8/0x1150 mm/mmap.c:409
+       vm_mmap_pgoff+0x228/0x3c4 mm/util.c:575
+       ksys_mmap_pgoff+0x3a4/0x5c8 mm/mmap.c:607
+       __do_sys_mmap arch/arm64/kernel/sys.c:28 [inline]
+       __se_sys_mmap arch/arm64/kernel/sys.c:21 [inline]
+       __arm64_sys_mmap+0xf8/0x110 arch/arm64/kernel/sys.c:21
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+-> #8 (&mm->mmap_lock){++++}-{4:4}:
+       __might_fault+0xc4/0x124 mm/memory.c:6851
+       drm_mode_object_get_properties+0x208/0x540 drivers/gpu/drm/drm_mode_object.c:407
+       drm_mode_obj_get_properties_ioctl+0x2bc/0x4fc drivers/gpu/drm/drm_mode_object.c:459
+       drm_ioctl_kernel+0x26c/0x368 drivers/gpu/drm/drm_ioctl.c:796
+       drm_ioctl+0x6a0/0xb98 drivers/gpu/drm/drm_ioctl.c:893
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl fs/ioctl.c:892 [inline]
+       __arm64_sys_ioctl+0x14c/0x1cc fs/ioctl.c:892
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+-> #7 (crtc_ww_class_mutex){+.+.}-{4:4}:
+       ww_acquire_init include/linux/ww_mutex.h:162 [inline]
+       drm_modeset_acquire_init+0x1e4/0x384 drivers/gpu/drm/drm_modeset_lock.c:250
+       drmm_mode_config_init+0xb98/0x130c drivers/gpu/drm/drm_mode_config.c:462
+       vkms_modeset_init drivers/gpu/drm/vkms/vkms_drv.c:155 [inline]
+       vkms_create drivers/gpu/drm/vkms/vkms_drv.c:216 [inline]
+       vkms_init+0x2fc/0x5fc drivers/gpu/drm/vkms/vkms_drv.c:253
+       do_one_initcall+0x254/0xaa4 init/main.c:1257
+       do_initcall_level+0x154/0x214 init/main.c:1319
+       do_initcalls+0x84/0xf4 init/main.c:1335
+       do_basic_setup+0x8c/0xa0 init/main.c:1354
+       kernel_init_freeable+0x324/0x478 init/main.c:1568
+       kernel_init+0x24/0x2a0 init/main.c:1457
+       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+
+-> #6 (crtc_ww_class_acquire){+.+.}-{0:0}:
+       ww_acquire_init include/linux/ww_mutex.h:161 [inline]
+       drm_modeset_acquire_init+0x1c4/0x384 drivers/gpu/drm/drm_modeset_lock.c:250
+       drm_client_modeset_commit_atomic+0xd8/0x724 drivers/gpu/drm/drm_client_modeset.c:1018
+       drm_client_modeset_commit_locked+0xd0/0x4a8 drivers/gpu/drm/drm_client_modeset.c:1182
+       drm_client_modeset_commit+0x50/0x7c drivers/gpu/drm/drm_client_modeset.c:1208
+       __drm_fb_helper_restore_fbdev_mode_unlocked+0xd4/0x178 drivers/gpu/drm/drm_fb_helper.c:237
+       drm_fb_helper_set_par+0xc4/0x110 drivers/gpu/drm/drm_fb_helper.c:1351
+       fbcon_init+0xf34/0x1eb8 drivers/video/fbdev/core/fbcon.c:1113
+       visual_init+0x27c/0x548 drivers/tty/vt/vt.c:1011
+       do_bind_con_driver+0x7dc/0xe04 drivers/tty/vt/vt.c:3831
+       do_take_over_console+0x4ac/0x5f0 drivers/tty/vt/vt.c:4397
+       do_fbcon_takeover+0x158/0x260 drivers/video/fbdev/core/fbcon.c:549
+       do_fb_registered drivers/video/fbdev/core/fbcon.c:2988 [inline]
+       fbcon_fb_registered+0x370/0x4ec drivers/video/fbdev/core/fbcon.c:3008
+       do_register_framebuffer drivers/video/fbdev/core/fbmem.c:449 [inline]
+       register_framebuffer+0x470/0x610 drivers/video/fbdev/core/fbmem.c:515
+       __drm_fb_helper_initial_config_and_unlock+0x1334/0x1880 drivers/gpu/drm/drm_fb_helper.c:1843
+       drm_fb_helper_initial_config+0x48/0x64 drivers/gpu/drm/drm_fb_helper.c:1908
+       drm_fbdev_client_hotplug+0x158/0x22c drivers/gpu/drm/clients/drm_fbdev_client.c:52
+       drm_client_register+0x144/0x1e0 drivers/gpu/drm/drm_client.c:140
+       drm_fbdev_client_setup+0x1a4/0x39c drivers/gpu/drm/clients/drm_fbdev_client.c:159
+       drm_client_setup+0x78/0x140 drivers/gpu/drm/clients/drm_client_setup.c:39
+       vkms_create drivers/gpu/drm/vkms/vkms_drv.c:227 [inline]
+       vkms_init+0x4ec/0x5fc drivers/gpu/drm/vkms/vkms_drv.c:253
+       do_one_initcall+0x254/0xaa4 init/main.c:1257
+       do_initcall_level+0x154/0x214 init/main.c:1319
+       do_initcalls+0x84/0xf4 init/main.c:1335
+       do_basic_setup+0x8c/0xa0 init/main.c:1354
+       kernel_init_freeable+0x324/0x478 init/main.c:1568
+       kernel_init+0x24/0x2a0 init/main.c:1457
+       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+
+-> #5 (&client->modeset_mutex){+.+.}-{4:4}:
+       __mutex_lock_common+0x1f0/0x24b8 kernel/locking/mutex.c:585
+       __mutex_lock kernel/locking/mutex.c:730 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:782
+       drm_client_modeset_probe+0x300/0x3cb0 drivers/gpu/drm/drm_client_modeset.c:843
+       __drm_fb_helper_initial_config_and_unlock+0x100/0x1880 drivers/gpu/drm/drm_fb_helper.c:1820
+       drm_fb_helper_initial_config+0x48/0x64 drivers/gpu/drm/drm_fb_helper.c:1908
+       drm_fbdev_client_hotplug+0x158/0x22c drivers/gpu/drm/clients/drm_fbdev_client.c:52
+       drm_client_register+0x144/0x1e0 drivers/gpu/drm/drm_client.c:140
+       drm_fbdev_client_setup+0x1a4/0x39c drivers/gpu/drm/clients/drm_fbdev_client.c:159
+       drm_client_setup+0x78/0x140 drivers/gpu/drm/clients/drm_client_setup.c:39
+       vkms_create drivers/gpu/drm/vkms/vkms_drv.c:227 [inline]
+       vkms_init+0x4ec/0x5fc drivers/gpu/drm/vkms/vkms_drv.c:253
+       do_one_initcall+0x254/0xaa4 init/main.c:1257
+       do_initcall_level+0x154/0x214 init/main.c:1319
+       do_initcalls+0x84/0xf4 init/main.c:1335
+       do_basic_setup+0x8c/0xa0 init/main.c:1354
+       kernel_init_freeable+0x324/0x478 init/main.c:1568
+       kernel_init+0x24/0x2a0 init/main.c:1457
+       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+
+-> #4 (&helper->lock){+.+.}-{4:4}:
+       __mutex_lock_common+0x1f0/0x24b8 kernel/locking/mutex.c:585
+       __mutex_lock kernel/locking/mutex.c:730 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:782
+       __drm_fb_helper_restore_fbdev_mode_unlocked+0xb4/0x178 drivers/gpu/drm/drm_fb_helper.c:228
+       drm_fb_helper_set_par+0xc4/0x110 drivers/gpu/drm/drm_fb_helper.c:1351
+       fbcon_init+0xf34/0x1eb8 drivers/video/fbdev/core/fbcon.c:1113
+       visual_init+0x27c/0x548 drivers/tty/vt/vt.c:1011
+       do_bind_con_driver+0x7dc/0xe04 drivers/tty/vt/vt.c:3831
+       do_take_over_console+0x4ac/0x5f0 drivers/tty/vt/vt.c:4397
+       do_fbcon_takeover+0x158/0x260 drivers/video/fbdev/core/fbcon.c:549
+       do_fb_registered drivers/video/fbdev/core/fbcon.c:2988 [inline]
+       fbcon_fb_registered+0x370/0x4ec drivers/video/fbdev/core/fbcon.c:3008
+       do_register_framebuffer drivers/video/fbdev/core/fbmem.c:449 [inline]
+       register_framebuffer+0x470/0x610 drivers/video/fbdev/core/fbmem.c:515
+       __drm_fb_helper_initial_config_and_unlock+0x1334/0x1880 drivers/gpu/drm/drm_fb_helper.c:1843
+       drm_fb_helper_initial_config+0x48/0x64 drivers/gpu/drm/drm_fb_helper.c:1908
+       drm_fbdev_client_hotplug+0x158/0x22c drivers/gpu/drm/clients/drm_fbdev_client.c:52
+       drm_client_register+0x144/0x1e0 drivers/gpu/drm/drm_client.c:140
+       drm_fbdev_client_setup+0x1a4/0x39c drivers/gpu/drm/clients/drm_fbdev_client.c:159
+       drm_client_setup+0x78/0x140 drivers/gpu/drm/clients/drm_client_setup.c:39
+       vkms_create drivers/gpu/drm/vkms/vkms_drv.c:227 [inline]
+       vkms_init+0x4ec/0x5fc drivers/gpu/drm/vkms/vkms_drv.c:253
+       do_one_initcall+0x254/0xaa4 init/main.c:1257
+       do_initcall_level+0x154/0x214 init/main.c:1319
+       do_initcalls+0x84/0xf4 init/main.c:1335
+       do_basic_setup+0x8c/0xa0 init/main.c:1354
+       kernel_init_freeable+0x324/0x478 init/main.c:1568
+       kernel_init+0x24/0x2a0 init/main.c:1457
+       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+
+-> #3 (console_lock){+.+.}-{0:0}:
+       console_lock+0x19c/0x1f4 kernel/printk/printk.c:2833
+       __bch2_print_string_as_lines fs/bcachefs/util.c:267 [inline]
+       bch2_print_string_as_lines+0x2c/0xd4 fs/bcachefs/util.c:286
+       bch2_print_str+0x90/0xcc fs/bcachefs/super.c:102
+       bch2_dump_trans_updates+0xf4/0x160 fs/bcachefs/btree_iter.c:1516
+       bch2_bucket_ref_update+0xfc0/0x1390 fs/bcachefs/buckets.c:485
+       __mark_pointer fs/bcachefs/buckets.c:550 [inline]
+       bch2_trigger_pointer fs/bcachefs/buckets.c:589 [inline]
+       __trigger_extent+0x1150/0x46dc fs/bcachefs/buckets.c:736
+       bch2_trigger_extent+0x474/0x814 fs/bcachefs/buckets.c:865
+       bch2_key_trigger fs/bcachefs/bkey_methods.h:88 [inline]
+       bch2_key_trigger_old fs/bcachefs/bkey_methods.h:102 [inline]
+       run_one_trans_trigger fs/bcachefs/btree_trans_commit.c:511 [inline]
+       run_btree_triggers+0x6bc/0xe10 fs/bcachefs/btree_trans_commit.c:540
+       bch2_trans_commit_run_triggers fs/bcachefs/btree_trans_commit.c:573 [inline]
+       __bch2_trans_commit+0x210/0x6190 fs/bcachefs/btree_trans_commit.c:1010
+       bch2_trans_commit fs/bcachefs/btree_update.h:183 [inline]
+       bch2_extent_update+0x3d0/0x9b4 fs/bcachefs/io_write.c:326
+       bch2_remap_range+0x193c/0x304c fs/bcachefs/reflink.c:715
+       bch2_remap_file_range+0x9d4/0xcc8 fs/bcachefs/fs-io.c:916
+       vfs_clone_file_range+0x69c/0xc58 fs/remap_range.c:403
+       ioctl_file_clone fs/ioctl.c:240 [inline]
+       ioctl_file_clone_range fs/ioctl.c:258 [inline]
+       do_vfs_ioctl+0x1708/0x2724 fs/ioctl.c:853
+       __do_sys_ioctl fs/ioctl.c:904 [inline]
+       __se_sys_ioctl fs/ioctl.c:892 [inline]
+       __arm64_sys_ioctl+0xe4/0x1cc fs/ioctl.c:892
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+-> #2 (bcachefs_btree){+.+.}-{0:0}:
+       trans_set_locked+0x88/0x1a4 fs/bcachefs/btree_locking.h:198
+       bch2_trans_begin+0x6fc/0x980 fs/bcachefs/btree_iter.c:3305
+       bchfs_read+0x1dc/0x1dc0 fs/bcachefs/fs-io-buffered.c:161
+       bch2_readahead+0xafc/0xed4 fs/bcachefs/fs-io-buffered.c:291
+       read_pages+0x150/0x4f0 mm/readahead.c:161
+       page_cache_ra_order+0x7d0/0xb8c mm/readahead.c:516
+       do_sync_mmap_readahead+0x3d8/0x890
+       filemap_fault+0x69c/0x1518 mm/filemap.c:3447
+       bch2_page_fault+0x34c/0x808 fs/bcachefs/fs-io-pagecache.c:594
+       __do_fault+0xf8/0x498 mm/memory.c:4988
+       do_read_fault mm/memory.c:5403 [inline]
+       do_fault mm/memory.c:5537 [inline]
+       do_pte_missing mm/memory.c:4058 [inline]
+       handle_pte_fault+0x3504/0x57b0 mm/memory.c:5900
+       __handle_mm_fault mm/memory.c:6043 [inline]
+       handle_mm_fault+0xfa8/0x188c mm/memory.c:6212
+       faultin_page mm/gup.c:1196 [inline]
+       __get_user_pages+0x1878/0x3400 mm/gup.c:1491
+       populate_vma_page_range+0x220/0x2f0 mm/gup.c:1929
+       __mm_populate+0x240/0x3d8 mm/gup.c:2032
+       mm_populate include/linux/mm.h:3386 [inline]
+       vm_mmap_pgoff+0x304/0x3c4 mm/util.c:580
+       ksys_mmap_pgoff+0x3a4/0x5c8 mm/mmap.c:607
+       __do_sys_mmap arch/arm64/kernel/sys.c:28 [inline]
+       __se_sys_mmap arch/arm64/kernel/sys.c:21 [inline]
+       __arm64_sys_mmap+0xf8/0x110 arch/arm64/kernel/sys.c:21
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+-> #1 (mapping.invalidate_lock#5){.+.+}-{4:4}:
+       down_read+0x58/0x2fc kernel/locking/rwsem.c:1524
+       filemap_invalidate_lock_shared include/linux/fs.h:932 [inline]
+       filemap_fault+0x524/0x1518 mm/filemap.c:3435
+       bch2_page_fault+0x34c/0x808 fs/bcachefs/fs-io-pagecache.c:594
+       __do_fault+0xf8/0x498 mm/memory.c:4988
+       do_shared_fault mm/memory.c:5467 [inline]
+       do_fault mm/memory.c:5541 [inline]
+       do_pte_missing mm/memory.c:4058 [inline]
+       handle_pte_fault+0x1348/0x57b0 mm/memory.c:5900
+       __handle_mm_fault mm/memory.c:6043 [inline]
+       handle_mm_fault+0xfa8/0x188c mm/memory.c:6212
+       do_page_fault+0x408/0x10ac arch/arm64/mm/fault.c:647
+       do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
+       do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:919
+       el0_da+0x60/0x178 arch/arm64/kernel/entry-common.c:604
+       el0t_64_sync_handler+0xcc/0x108 arch/arm64/kernel/entry-common.c:765
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+-> #0 (&vma->vm_lock->lock){++++}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3163 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+       validate_chain kernel/locking/lockdep.c:3906 [inline]
+       __lock_acquire+0x34f0/0x7904 kernel/locking/lockdep.c:5228
+       lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5851
+       down_write+0x50/0xc0 kernel/locking/rwsem.c:1577
+       vma_start_write include/linux/mm.h:770 [inline]
+       vm_flags_set include/linux/mm.h:900 [inline]
+       io_region_mmap io_uring/memmap.c:312 [inline]
+       io_uring_mmap+0x37c/0x504 io_uring/memmap.c:339
+       call_mmap include/linux/fs.h:2245 [inline]
+       mmap_file mm/internal.h:124 [inline]
+       __mmap_new_file_vma mm/vma.c:2292 [inline]
+       __mmap_new_vma mm/vma.c:2356 [inline]
+       __mmap_region mm/vma.c:2457 [inline]
+       mmap_region+0x1ae0/0x2518 mm/vma.c:2535
+       do_mmap+0xbc8/0x1150 mm/mmap.c:561
+       vm_mmap_pgoff+0x228/0x3c4 mm/util.c:575
+       ksys_mmap_pgoff+0x3a4/0x5c8 mm/mmap.c:607
+       __do_sys_mmap arch/arm64/kernel/sys.c:28 [inline]
+       __se_sys_mmap arch/arm64/kernel/sys.c:21 [inline]
+       __arm64_sys_mmap+0xf8/0x110 arch/arm64/kernel/sys.c:21
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+other info that might help us debug this:
+
+Chain exists of:
+  &vma->vm_lock->lock --> &mm->mmap_lock --> &ctx->mmap_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ctx->mmap_lock);
+                               lock(&mm->mmap_lock);
+                               lock(&ctx->mmap_lock);
+  lock(&vma->vm_lock->lock);
+
+ *** DEADLOCK ***
+
+2 locks held by syz.3.85/7036:
+ #0: ffff0000c2fc45d0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_write_lock_killable include/linux/mmap_lock.h:152 [inline]
+ #0: ffff0000c2fc45d0 (&mm->mmap_lock){++++}-{4:4}, at: vm_mmap_pgoff+0x154/0x3c4 mm/util.c:573
+ #1: ffff0000f51da8d8 (&ctx->mmap_lock){+.+.}-{4:4}, at: class_mutex_constructor include/linux/mutex.h:201 [inline]
+ #1: ffff0000f51da8d8 (&ctx->mmap_lock){+.+.}-{4:4}, at: io_uring_mmap+0x100/0x504 io_uring/memmap.c:325
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 7036 Comm: syz.3.85 Not tainted 6.14.0-rc5-syzkaller-g77c95b8c7a16 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+ dump_stack+0x1c/0x28 lib/dump_stack.c:129
+ print_circular_bug+0x154/0x1c0 kernel/locking/lockdep.c:2076
+ check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2208
+ check_prev_add kernel/locking/lockdep.c:3163 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+ validate_chain kernel/locking/lockdep.c:3906 [inline]
+ __lock_acquire+0x34f0/0x7904 kernel/locking/lockdep.c:5228
+ lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5851
+ down_write+0x50/0xc0 kernel/locking/rwsem.c:1577
+ vma_start_write include/linux/mm.h:770 [inline]
+ vm_flags_set include/linux/mm.h:900 [inline]
+ io_region_mmap io_uring/memmap.c:312 [inline]
+ io_uring_mmap+0x37c/0x504 io_uring/memmap.c:339
+ call_mmap include/linux/fs.h:2245 [inline]
+ mmap_file mm/internal.h:124 [inline]
+ __mmap_new_file_vma mm/vma.c:2292 [inline]
+ __mmap_new_vma mm/vma.c:2356 [inline]
+ __mmap_region mm/vma.c:2457 [inline]
+ mmap_region+0x1ae0/0x2518 mm/vma.c:2535
+ do_mmap+0xbc8/0x1150 mm/mmap.c:561
+ vm_mmap_pgoff+0x228/0x3c4 mm/util.c:575
+ ksys_mmap_pgoff+0x3a4/0x5c8 mm/mmap.c:607
+ __do_sys_mmap arch/arm64/kernel/sys.c:28 [inline]
+ __se_sys_mmap arch/arm64/kernel/sys.c:21 [inline]
+ __arm64_sys_mmap+0xf8/0x110 arch/arm64/kernel/sys.c:21
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
