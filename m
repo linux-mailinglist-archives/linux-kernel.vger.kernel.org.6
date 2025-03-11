@@ -1,118 +1,123 @@
-Return-Path: <linux-kernel+bounces-555630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E94A5BA7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:09:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73D0A5BABF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8243F167E17
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:09:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1866F3A6AAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A771F223710;
-	Tue, 11 Mar 2025 08:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FA5224244;
+	Tue, 11 Mar 2025 08:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JIQRQO6G"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mpPO/8x2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E0C1DE894
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543461DE894;
+	Tue, 11 Mar 2025 08:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741680547; cv=none; b=ZNo+JgZ85/kDsK/MhTeadQId/3DtuoLbP71LcyDvwEJsowsVqjxdg5lbr2Rp/yEeMgRGOWbRscewhMnj7lwgf6jFB0ebxNeEigrkPSESRs91eKa/z+dqdpLWIGP8EHvZ9FfxmMg9g9x6yKD3U/OC1VnRS37y6q0UDB9iDI7pi60=
+	t=1741681343; cv=none; b=V+L1OCUoK6DJijFmMYE5VIOFBmcQF+EuC9sYbGdRx7CkNFCV95HHy+vrq8aWR2CB3vd0nA9xumzWsbF5Y163hd8P/3M9QMHntXvni833JT7RuEKiY1/FOfmInPLRk4nDQEoH4nPhMpqDWNw1Q3VJhP1bZgLSyvKWbKnYssOaAuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741680547; c=relaxed/simple;
-	bh=JDmQM8Dhze4FKjCBOIy9JrDUTaaxnVukGFxN9fy/cl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gDPT68gwVrQs82c9V4ViEyr62Oe7OJCceetmN5ZsIltW/8LLlta4ieQN3lTdkBC1EnACrWc/yLO8PgYyW50YNzyBAXokWQjeFy1CvqmNbdmvfV7K7r0E8hHRbpSuLImipLVHIuvDWBqIyf+N6YTHCn0fmGhPR+ec8i1S83Qc3DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JIQRQO6G; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741680543;
-	bh=JDmQM8Dhze4FKjCBOIy9JrDUTaaxnVukGFxN9fy/cl4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JIQRQO6GB0j4uGLUnX+WM6YlhluKEHd9N8JWH1xxbqlijd6kQ6rTEdZXIfktU8C06
-	 wTNBEj3qI8eRm4T5PDZ9/T2KBPS479Xfk+o4A9PJM8v0QIqsZikKzt4d4MiNwAArfp
-	 kv60m3OTgSF8ryOydyZyk+pdaSGfqNIWxNZu3jdK1vWzSSFiKHvm2yc12LjANU8JQL
-	 jf8+ZOVPuZehRaXOHLlKi2T+9/mm8uOaPeZmErvZ8Vpq32rxxNJ8g6tSjCEH4uDDqm
-	 3PAserwgJsV6JI5jM657UDI0NPbBBWuLMYiZy3DDyogOhxrpWC+SG3yq//HTQET2/e
-	 Z8nztYk2wWWjA==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 06E8517E0237;
-	Tue, 11 Mar 2025 09:09:02 +0100 (CET)
-Date: Tue, 11 Mar 2025 09:08:55 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch, kernel@collabora.com, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com
-Subject: Re: [PATCH v1 6/6] drm/panfrost: Set HW_FEATURE_AARCH64_MMU feature
- flag on Bifrost models
-Message-ID: <20250311090855.0211c114@collabora.com>
-In-Reply-To: <20250310195921.157511-7-ariel.dalessandro@collabora.com>
-References: <20250310195921.157511-1-ariel.dalessandro@collabora.com>
-	<20250310195921.157511-7-ariel.dalessandro@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741681343; c=relaxed/simple;
+	bh=oDgMFfKoOYNvurMdYjsKlHk+6v4ec6TZPOD47GjfsLU=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=XtbOlbUp5eejAMaEJ5HNXgRA5K5mhkuD5AwlHAGWgOpIKthINwI3KQZD67HbEsiN86WaB+aS/t8jB2pto6Nv2nopoiadbqwTXgS9WE0VYb+UrbDqRvkp0bt+ew1U0x590lLLFH62vc9V+XVItVUj559zRq/WUHchcp7+QkaFL54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mpPO/8x2; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741681341; x=1773217341;
+  h=from:to:cc:subject:date:message-id;
+  bh=oDgMFfKoOYNvurMdYjsKlHk+6v4ec6TZPOD47GjfsLU=;
+  b=mpPO/8x2coacSu2P6qOwudWw3oJw5YOmR3EwMrkwbvyv+t0Om0tnR/1y
+   TMtderfvUGd4lLzVHmSOEdY66A0LedP100aP/BA/aTTCBSmY0/avxGHK6
+   gsNL+V7hzuNTdEYuL90+c8DZEg0ybzoWchx04xktKPXwaiJXifTUMZ/33
+   mkslmY+Hghzh8OdWWQpWyqWYXLa/9nUTfiUqTTwbmcs9PGF33uQ6VWXof
+   SbbKThVb1h8PnmaWd9iJigCIOA9c5V4NzXNKO92AttoAiqPbzOsDcoAR4
+   FpWeDtgIN5lw4oW4O8EmwwTq5um6mnJ79mtJYeD7AsEUlGGmUN+dRe6eZ
+   Q==;
+X-CSE-ConnectionGUID: zmLL13wlRQ2QxC+ML4WhHA==
+X-CSE-MsgGUID: KDIhl/GdQ92p7mjDBIuO7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="68067096"
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="68067096"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 01:22:21 -0700
+X-CSE-ConnectionGUID: wBS/iF1eQN+yUTCZnNwSiA==
+X-CSE-MsgGUID: aj6FqxiVRdSzGBOjGhIA0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="120202946"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 01:22:19 -0700
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qiuxu.zhuo@intel.com,
+	yi1.lai@intel.com
+Subject: [PATCH 1/1] selftests/mincore: Allow read-ahead pages to reach the end of the file
+Date: Tue, 11 Mar 2025 16:09:40 +0800
+Message-Id: <20250311080940.21413-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Mon, 10 Mar 2025 16:59:21 -0300
-Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
+When running the mincore_selftest on a system with an XFS file system, it
+failed the "check_file_mmap" test case due to the read-ahead pages reaching
+the end of the file. The failure log is as below:
 
-> Set this feature flag on all Mali Bifrost platforms as the MMU supports
-> AARCH64 4K page table format.
-> 
-> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+   RUN           global.check_file_mmap ...
+  mincore_selftest.c:264:check_file_mmap:Expected i (1024) < vec_size (1024)
+  mincore_selftest.c:265:check_file_mmap:Read-ahead pages reached the end of the file
+  check_file_mmap: Test failed
+           FAIL  global.check_file_mmap
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+This is because the read-ahead window size of the XFS file system on this
+machine is 4 MB, which is larger than the size from the #PF address to the
+end of the file. As a result, all the pages for this file are populated.
 
-> ---
->  drivers/gpu/drm/panfrost/panfrost_features.h | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_features.h b/drivers/gpu/drm/panfrost/panfrost_features.h
-> index 7ed0cd3ea2d4c..52f9d69f6db9d 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_features.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_features.h
-> @@ -54,6 +54,7 @@ enum panfrost_hw_feature {
->  	BIT_ULL(HW_FEATURE_THREAD_GROUP_SPLIT) | \
->  	BIT_ULL(HW_FEATURE_FLUSH_REDUCTION) | \
->  	BIT_ULL(HW_FEATURE_PROTECTED_MODE) | \
-> +	BIT_ULL(HW_FEATURE_AARCH64_MMU) | \
->  	BIT_ULL(HW_FEATURE_COHERENCY_REG))
->  
->  #define hw_features_g72 (\
-> @@ -64,6 +65,7 @@ enum panfrost_hw_feature {
->  	BIT_ULL(HW_FEATURE_FLUSH_REDUCTION) | \
->  	BIT_ULL(HW_FEATURE_PROTECTED_MODE) | \
->  	BIT_ULL(HW_FEATURE_PROTECTED_DEBUG_MODE) | \
-> +	BIT_ULL(HW_FEATURE_AARCH64_MMU) | \
->  	BIT_ULL(HW_FEATURE_COHERENCY_REG))
->  
->  #define hw_features_g51 hw_features_g72
-> @@ -77,6 +79,7 @@ enum panfrost_hw_feature {
->  	BIT_ULL(HW_FEATURE_PROTECTED_MODE) | \
->  	BIT_ULL(HW_FEATURE_PROTECTED_DEBUG_MODE) | \
->  	BIT_ULL(HW_FEATURE_IDVS_GROUP_SIZE) | \
-> +	BIT_ULL(HW_FEATURE_AARCH64_MMU) | \
->  	BIT_ULL(HW_FEATURE_COHERENCY_REG))
->  
->  #define hw_features_g76 (\
+  blockdev --getra /dev/nvme0n1p5
+    8192
+  blockdev --getbsz /dev/nvme0n1p5
+    512
+
+This issue can be fixed by extending the current FILE_SIZE 4MB to a larger
+number, but it will still fail if the read-ahead window size of the file
+system is larger enough. Additionally, in the real world, read-ahead pages
+reaching the end of the file can happen and is an expected behavior.
+Therefore, allowing read-ahead pages to reach the end of the file is a
+better choice for the "check_file_mmap" test case.
+
+Reported-by: Yi Lai <yi1.lai@intel.com>
+Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+---
+ tools/testing/selftests/mincore/mincore_selftest.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/tools/testing/selftests/mincore/mincore_selftest.c b/tools/testing/selftests/mincore/mincore_selftest.c
+index e949a43a6145..efabfcbe0b49 100644
+--- a/tools/testing/selftests/mincore/mincore_selftest.c
++++ b/tools/testing/selftests/mincore/mincore_selftest.c
+@@ -261,9 +261,6 @@ TEST(check_file_mmap)
+ 		TH_LOG("No read-ahead pages found in memory");
+ 	}
+ 
+-	EXPECT_LT(i, vec_size) {
+-		TH_LOG("Read-ahead pages reached the end of the file");
+-	}
+ 	/*
+ 	 * End of the readahead window. The rest of the pages shouldn't
+ 	 * be in memory.
+-- 
+2.17.1
 
 
