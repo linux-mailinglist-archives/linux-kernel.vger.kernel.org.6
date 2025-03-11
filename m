@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-556637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C427A5CCB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:50:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02AFA5CCB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:51:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8844917A170
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:50:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C2E67ACDE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88062263F20;
-	Tue, 11 Mar 2025 17:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77852263F39;
+	Tue, 11 Mar 2025 17:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0N0kxtp"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ACAzO07K"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8AD263C66;
-	Tue, 11 Mar 2025 17:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6C0263C6B;
+	Tue, 11 Mar 2025 17:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741715396; cv=none; b=AoZ6+Q1Vq9NqbxN9FxYU2jvkuwN4TWQJeBDoUPUcnKvC+kyl7LvavSrkMXScR/AEKjkbtbXlMsdoSmYkn/7Wewq9VftmHWswnN0R2BydDvhOm3SeFcrmFi07ULr78M8LqXGqKJ++CtBGZ1wk9Wv2VM3ieQ031vMjTNcXdqj1xok=
+	t=1741715397; cv=none; b=mOOmmgtwYIz7M/y2qdYp3OKyIDcPr8A/ArAZAJbmOn3IWEzPAWHt69eBSLch0zOq1v9/CbdJqPp6AJVOt+GwwWc6lxciC4ZQyAj/xNK8UZ+lLFKbPuU+5Qqvj81IYTWOXx+I6bha2Mxfhb4pxUG/ScMekFCBLECrOe7P4Ya/ND8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741715396; c=relaxed/simple;
-	bh=kcqiy6qGt4Y+kxGncSLGf72ytPK9edLXcjO1O4LH7hE=;
+	s=arc-20240116; t=1741715397; c=relaxed/simple;
+	bh=g2IUN8jCVllbF1ZiAJOX0NP0fmAmUk0/qWWI8VzUu7g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y7CteoHsSmd29vBOaIczSGPiomba2pmkUmS9vLkcSxhokOlRIdofbK0V/L5KeHBV45u+nQM5y2p6NMvciFTSR2vRdJgpxOgCJVx2t1x73t7O2D6xh+dtujSEfBFMbz16SQWTTOFC97cyqA/PNQibGG10/D7eH6Oo9RLq05GHwfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j0N0kxtp; arc=none smtp.client-ip=209.85.208.177
+	 MIME-Version; b=sneDVswQwqEG46KbANzywvJIf5EWHt0N6Op7iE/6Nog5vLx54mARpLsSNXjIVSMaBxaNfAbuKhkFpwEVzS4IdMLknraLRFBpc8g4Km34a9FT3/+/CaN3H+sypLjA7zlsMGHlcQQXszSGwtI9Awqnq9DPg+5ZNBzElNjhwt/G64Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ACAzO07K; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30bae572157so56924651fa.3;
-        Tue, 11 Mar 2025 10:49:53 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5495c1e1b63so5948092e87.0;
+        Tue, 11 Mar 2025 10:49:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741715392; x=1742320192; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741715394; x=1742320194; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=14YkA0wGL7fYnkvOubGO+Rkt0qCHzCYEIoKnBb0OOUg=;
-        b=j0N0kxtplm9KWRJDHkSrqzZjj2AsnbrTIsldfnpKi+BlToJ4lrMas/uUI3Cpaj1qtA
-         1MCXV8Cvyz7K4aX5QOCNm30YH48pmsQ98za4v58FQeG4za6FoUVm2Y4KYsj12R/YXUbk
-         zLkFp734qQ28S2CiiFka2d65s0QlPUdY6nkwxUV2Z+lHLoPNKLmnIkzzIx4aB5mx3Cdf
-         7YPFJWYdlTgUDt+QMVCBHiELzCPZ+wk3IhfST9eQYaFzwAivbkmQD66WFGx+yzCy6rVf
-         OrzNu1d4WzoSH+L105JrmkMnFL3rBctTIDz4Vj5SX8TPYX62SF0KZWW/Zz7pPhNFcKzu
-         b8XA==
+        bh=W4DDd/iic2hsiU29M8h+cyzkeUX9RCrQK1w4R9M79gk=;
+        b=ACAzO07K4QwVkfLyRMiRcqfF6m/PloyGn/UndV2bbkBdR+AvNuOh7jqATmDiavXVKx
+         /ALPLyPB/T93/3MpUk3uwnYkaXBHQ0V8VfCPTx//nOy1VOVRrKbGx5HdRT7ws+TnqUfs
+         aoark/k0oyUd56EcgGoWThW7D9hTxQHJc8qsMKwIYSNbbqRl1mjxxcQSSzyHsX1jQD0f
+         3CkIAwNSzdatdn53pS+3gnjPqQuhiqiI9eyQj7lM+GzvJsHIn3xGTA526YOresEVdWUp
+         5F+qr1hZsZgytUud+B7jLeSW721hUYs2DWTPI/fICDhusSw5IVc3fqKeNdKXvf9HFa4+
+         wj6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741715392; x=1742320192;
+        d=1e100.net; s=20230601; t=1741715394; x=1742320194;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=14YkA0wGL7fYnkvOubGO+Rkt0qCHzCYEIoKnBb0OOUg=;
-        b=l/Z8rgRq3yKYISVISqCX27WAdlFmZLYqhqD4JUi//7vODvrXqfEKlJ5QW6XqNoE6pc
-         l83ojcpQlrG0YTlC7Zfd+/+cUj5Cq/+W6aGuKdv7V9NnnhOXfFFsIsKD9YUaTiLtPbSW
-         kgUN7xayZlruBANt4p66mOqBx1XGNphWAlP9Pnd/FezPqKUAErGEVGOEWJKaGB9CYuTj
-         00gcRhQwbemrrVso08WGGNIc+3E47xVBl69S6tRPfpNYVfTPRMvMy5uGO/RdX0itMjjg
-         8MeMf7dDacAcPhxhLk8Cjrsc3iv9ruK3YmJyAPyD7J83cbe6ZUXQuhmgem8rfcJj1NXR
-         GKQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUXO4JtGkN2Z3ggwuimGRXluf2DSTetar9yAzAMugdvckaJpm+xU9fyueswSgO19oK7c38fl5JiwkrPHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVu8XUMQ4ztoYBhvQEyDqPOudvIRVq0RP/WscztgCrgKLUgo/V
-	kY8+UyuIkJk1dOnWSLm9juvagC40SwkfrcimLt3++8a/1PzXXBguLEq7SQ==
-X-Gm-Gg: ASbGncvqitdzNfHQxnFlFEuDKCE/tvQjlRJLE0iMyg3QNeY6xg4Lui7Sg2Bebwj87nW
-	IaxYW/krQlER6byxFNP0fqDjbFv+ge5gbfuT9URofvyeX3RIdd6otgc90ZJXrgZNgdiVeyw1KeN
-	uV3nSmCylKDpZSrPj865wKasrps+Eq1lvn+Uum+EYFHT4Tvkd+JcmHsKltAghAaLUqeLg/j46Dg
-	SsiFYlFe721YfJk1M/GwNTCuHJJLA6HFy73GeGRC2aqYpS53mTvxKnd9wgofxh/oepw2uMcJ5Iz
-	CY6+QHGcfBFWPIThOglvA11wvRLswW+cW+559Oyn5HE98X5XJNuc7wlatbSDKkQ2NKlS+XTGGU8
-	ez4QukNHyMJE3HBdggE6dyA==
-X-Google-Smtp-Source: AGHT+IHOS3hlQgJU64hUJKXadQ+ab5L4zyh26dMc/jdCYKiPNtOWkm2Ahv2s8J3tE0GaKNyF1kyskg==
-X-Received: by 2002:a05:6512:6d6:b0:549:8d2a:8820 with SMTP id 2adb3069b0e04-549ababf0ccmr1847721e87.17.1741715391892;
-        Tue, 11 Mar 2025 10:49:51 -0700 (PDT)
+        bh=W4DDd/iic2hsiU29M8h+cyzkeUX9RCrQK1w4R9M79gk=;
+        b=hGckO7HHHxpLXZ1zb4O21qzunt2aYLHWJ7gqW2eTRZJHP0lQ4LUA+BmuEZhAF7gx5K
+         gRZbynkZ+ANVpJhB5BlkSs68fndCoe6EgIVz0A3bCbFZnX7T+wSZpACCEIaLUynzU7j/
+         Y+/MErj9Wzkw5v4nL+jdwNOGHbpzvd7iP3pkm1aDebOM7HTMiFD4W/y90fdjxuFbTGwd
+         /25Vxz9gQ7VSgQojb8WCHGdsYhXUq0H4xCtBWtq++PDegS1Gz+hMRZrmNsUngJyGqXhq
+         ztnSN60qEs+PB+zmn+cVl9R0bAyyAh1LnyrAwGjaNmnVOXk29bB/bYboozKOe1uwR3xc
+         CrEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrQylZZ9PKv+mSF/Bsu5PpN8yeuZGNk5hAh1gQfsJCKp6bFpvtX9tQaUF3jvMi93v7RvRvFJ12lNS26ZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywN2IuouQ66w7WV3MNwAVSZnIByXhW08TbLJN+jflVXdeVYTae
+	bfdWOb87EDP5P3rMQvpR7RfR5cQ/tQKpR/AP7AeosE0VCSGd5iTa5quV6w==
+X-Gm-Gg: ASbGncuyuCJLDYYBgoVXCMFS2IUbGvJzPEc63Iq7Kgyzp8y9CsghDp/6GUz7pGv+e/T
+	RAR8wi98/1MyHUDmpjd20KDqtLsoLrFFBCMBhLHiKs8Q+EPESkYq1YONNqDUyICLjSQOdRwhTWi
+	grgjXFDjBBtSqQDxEpwBFANKhe0St9JMdn0FxxieefCi/diRgcOlgH6id8GV+QqyO93NfvkYI4C
+	XGN6v1tldr58gArBAigYn60r64vo4zrTa6QTU+Xd877QPln05cLKnxVLGn2mEUe/W27VvxOvglM
+	04EKgASdcltyyAzKvt2P5VsjpHr4ditb3qDGW8PXcxg7HSqnz/Oclc6bSStooKcAcVjTpSs9JTq
+	NdAyS3X9V26qydh90noM/Hw==
+X-Google-Smtp-Source: AGHT+IEK8bFyfeYyDu9u2ggRv4bnWCiWDFZdozZy4sv0fCHGsi/lf50Ck2X/Ydwr4axZ6CUhdcQvDg==
+X-Received: by 2002:a05:6512:1116:b0:545:6fa:bf5f with SMTP id 2adb3069b0e04-549abaaaf60mr1682087e87.2.1741715393817;
+        Tue, 11 Mar 2025 10:49:53 -0700 (PDT)
 Received: from abj-NUC9VXQNX.. (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae4465fsm1921728e87.26.2025.03.11.10.49.50
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae4465fsm1921728e87.26.2025.03.11.10.49.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 10:49:51 -0700 (PDT)
+        Tue, 11 Mar 2025 10:49:53 -0700 (PDT)
 From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 To: rust-for-linux@vger.kernel.org,
 	daniel.almeida@collabora.com,
@@ -93,9 +93,9 @@ Cc: Miguel Ojeda <ojeda@kernel.org>,
 	airlied@redhat.com,
 	iommu@lists.linux.dev (open list:DMA MAPPING HELPERS),
 	Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Subject: [PATCH v14 04/11] MAINTAINERS: add entry for Rust dma mapping helpers device driver API
-Date: Tue, 11 Mar 2025 19:48:00 +0200
-Message-ID: <20250311174930.2348813-5-abdiel.janulgue@gmail.com>
+Subject: [PATCH v14 05/11] rust: dma: implement `dma::Device` trait
+Date: Tue, 11 Mar 2025 19:48:01 +0200
+Message-ID: <20250311174930.2348813-6-abdiel.janulgue@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250311174930.2348813-1-abdiel.janulgue@gmail.com>
 References: <20250311174930.2348813-1-abdiel.janulgue@gmail.com>
@@ -107,40 +107,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add an entry for the Rust dma mapping helpers abstractions.
+From: Danilo Krummrich <dakr@kernel.org>
 
-Nacked-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Danilo Krummrich <dakr@kernel.org>
-Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
+Add a trait that defines the DMA specific methods of devices.
+
+The `dma::Device` trait should be implemented by (bus) device
+representations, where the underlying bus potentially supports DMA, such
+as `pci::Device` or `platform::Device`.
+
+Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 ---
- MAINTAINERS | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ rust/kernel/dma.rs | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 007ca67cc830..aa49c551fbec 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6902,6 +6902,19 @@ F:	include/linux/dma-mapping.h
- F:	include/linux/swiotlb.h
- F:	kernel/dma/
+diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+index 325b00fe7871..7ff797a7ad18 100644
+--- a/rust/kernel/dma.rs
++++ b/rust/kernel/dma.rs
+@@ -6,13 +6,20 @@
  
-+DMA MAPPING HELPERS DEVICE DRIVER API [RUST]
-+M:	Abdiel Janulgue <abdiel.janulgue@gmail.com>
-+M:	Danilo Krummrich <dakr@kernel.org>
-+R:	Daniel Almeida <daniel.almeida@collabora.com>
-+R:	Robin Murphy <robin.murphy@arm.com>
-+R:	Andreas Hindborg <a.hindborg@kernel.org>
-+L:	rust-for-linux@vger.kernel.org
-+S:	Supported
-+W:	https://rust-for-linux.com
-+T:	git https://github.com/Rust-for-Linux/linux.git alloc-next
-+F:	rust/kernel/dma.rs
-+F:	samples/rust/rust_dma.rs
+ use crate::{
+     bindings, build_assert,
+-    device::Device,
++    device,
+     error::code::*,
+     error::Result,
+     transmute::{AsBytes, FromBytes},
+     types::ARef,
+ };
+ 
++/// Trait to be implemented by bus specific devices.
++///
++/// The [`Device`] trait should be implemented by bus specific device representations, where the
++/// underlying bus has potential support for DMA, such as [`crate::pci::Device`] or
++/// [crate::platform::Device].
++pub trait Device: AsRef<device::Device> {}
 +
- DMA-BUF HEAPS FRAMEWORK
- M:	Sumit Semwal <sumit.semwal@linaro.org>
- R:	Benjamin Gaignard <benjamin.gaignard@collabora.com>
+ /// Possible attributes associated with a DMA mapping.
+ ///
+ /// They can be combined with the operators `|`, `&`, and `!`.
+@@ -130,7 +137,7 @@ pub mod attrs {
+ // Hence, find a way to revoke the device resources of a `CoherentAllocation`, but not the
+ // entire `CoherentAllocation` including the allocated memory itself.
+ pub struct CoherentAllocation<T: AsBytes + FromBytes> {
+-    dev: ARef<Device>,
++    dev: ARef<device::Device>,
+     dma_handle: bindings::dma_addr_t,
+     count: usize,
+     cpu_addr: *mut T,
+@@ -152,7 +159,7 @@ impl<T: AsBytes + FromBytes> CoherentAllocation<T> {
+     /// # Ok::<(), Error>(()) }
+     /// ```
+     pub fn alloc_attrs(
+-        dev: &Device,
++        dev: &device::Device,
+         count: usize,
+         gfp_flags: kernel::alloc::Flags,
+         dma_attrs: Attrs,
+@@ -194,7 +201,7 @@ pub fn alloc_attrs(
+     /// Performs the same functionality as [`CoherentAllocation::alloc_attrs`], except the
+     /// `dma_attrs` is 0 by default.
+     pub fn alloc_coherent(
+-        dev: &Device,
++        dev: &device::Device,
+         count: usize,
+         gfp_flags: kernel::alloc::Flags,
+     ) -> Result<CoherentAllocation<T>> {
 -- 
 2.43.0
 
