@@ -1,169 +1,121 @@
-Return-Path: <linux-kernel+bounces-556999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB75A5D22D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:00:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C803A5D22F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:00:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2EB017BD1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:00:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEC6F17BD19
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D66A264FB1;
-	Tue, 11 Mar 2025 22:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A38A264FA3;
+	Tue, 11 Mar 2025 22:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="F1O49Jcd"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIHeJ4+T"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25301E32D9;
-	Tue, 11 Mar 2025 22:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D6222425F;
+	Tue, 11 Mar 2025 22:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741730422; cv=none; b=YGFN/VcnJXW6o+0Bc3qpIxq4k/PlTOCOlE5WqKUvMvYLHu79regCIoOs7rOia47iBA0T5nVnNY3TNs6wLkyD392A+K1KZaPiddjz7ClOoJE5oFao4NuQDCipbuljCcnTRbsR4xY1cKblUpAOJukp7CZ5rHwFljZgTCCMo1u4w6s=
+	t=1741730448; cv=none; b=NexZX1aXzu3BFIPXB52/zapbgFSlDmCPHOuMsGn6BGt/7E9aC3ja5jBlVNahGtxlYSQ77/msBCNLLkRIgZCJ55ZDraAo8jkCHUL7SWWF7gOftMODcf6vGLrxcBYTL20VMPcwFhZX2ViAcqUK3jMPCXW+BLjV8sEUjXD+Ypuq9SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741730422; c=relaxed/simple;
-	bh=KW9q+EPECptB7iseFxr1KMbGaCZk6HumkEumo9/sS7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KlAiOC8oFCqjCfhwiyGLFohoioPFLGr9tsXG0YHi81evUmWe3VAVO8xWd9arSCCXtN6ekuVwkMBajoh2Dagm9gquAKV5nKBm9RKCPabC6ULrYncB8ZPDWDnEmwAs1SCbi8wzHyXoxl/H+QtaOkEO3nq/J8L98JQybkBv3ez/9OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=F1O49Jcd; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=LWqJoM88kHGjOcIG7y4jtQUycMU0Xkkz6/jQHA0YJWI=; b=F1O49JcdrryD+c7bjEti6SJD0k
-	5m7yB4f0mnO5oz3PWpTGFZeEDOz6jtfbEDUSGHdJuMJUdyyJrvc8w+axXtk6TDmTIIbFbkuO1ydxZ
-	ZkUVQwkCQYx3t/GvJXd0N89ERqlBZ1oyV/qsqt5n8bhxYILHdPBMEdtZh+E3rV1O6LTEgz6NY19dX
-	uMkm10gBWDJvLQbGsJ+OV21R+sYmoK2kOuMEJxHVPH/5fNpWBs+wMK5IxvFr7yXp1/8ISm8hB2ZeX
-	FrHvjmC4OQ8J8YC0afIQJre6b+7hqinDLiAbLbux5CbnHbe0gdh4CpCr9WT+96+4aXVFDLO7rTs/o
-	DeeyVT7w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55314)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1ts7dT-0004fB-2A;
-	Tue, 11 Mar 2025 21:59:39 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1ts7dN-0003qv-0O;
-	Tue, 11 Mar 2025 21:59:33 +0000
-Date: Tue, 11 Mar 2025 21:59:32 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Mark Brown <broonie@kernel.org>
-Cc: Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-	Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Stafford Horne <shorne@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>,
-	Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH 10/13] arch, mm: set high_memory in free_area_init()
-Message-ID: <Z9CyRHewqfZlmgIo@shell.armlinux.org.uk>
-References: <20250306185124.3147510-1-rppt@kernel.org>
- <20250306185124.3147510-11-rppt@kernel.org>
- <cee346ec-5fa5-4d0b-987b-413ee585dbaa@sirena.org.uk>
+	s=arc-20240116; t=1741730448; c=relaxed/simple;
+	bh=Rneh6RCXI7eVbgvGNv8c52GLdcTmVoxm9gAf3PKEjuM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sbXzzRj5XO0hH3karzpDBu7ZzODWFI6XFZB/LC7yj2WL7EGzf9jRBCyigJ6am9+XW/8CBIZ/pxXvYfxIzlo93DKK3HggUWc1qiYuRGCWhcb+baRMFbpUq7Vxs1zV8ldvIDZY4XtRIDADXcTYbxlH2vIHcPQG3eDfv8E51E/7jTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nIHeJ4+T; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff66327419so1563711a91.1;
+        Tue, 11 Mar 2025 15:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741730445; x=1742335245; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rneh6RCXI7eVbgvGNv8c52GLdcTmVoxm9gAf3PKEjuM=;
+        b=nIHeJ4+TWZ3xwAula3pYJZmFPAqRYqx9f60FqYO8UNNTRLwXTMU7A67vB3LDrByMwH
+         SIuM3P+YzG4vY2xOWM73kVZfq2gHh+kEZbLDOHBgpqYNYMiTiurNuqyZHUveF7n0ohD9
+         SRBgA2dhQJH2RkY73lthBxMlOH2OiLCpy7hr3r0dZne2ganSP6Qdzf0FF9TDsWj1V4zf
+         GECnCUd24RP7uu4S7WXazUCE8xx9TNE9w378s90zCFPtkhLTjg1+S4miDFkr7UQJwO10
+         /dG6vNcYrBf3Y8LjmnzljcTgg8abPDNGTFJ/GSPIJkSfI8kpFZTpVSdIKrMJ4u3iHmz4
+         22yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741730445; x=1742335245;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rneh6RCXI7eVbgvGNv8c52GLdcTmVoxm9gAf3PKEjuM=;
+        b=kFGcGaVORENbnUF78It85ybGHmi14H5LWQ77LzWZc0p+N5kmn2XvwJwLmNLAwL0cT6
+         AQPLgr2h6iKDOfbhJ3jp4clazzn33s9MpIk938Q+5Btgjdxb2v6YPyejKeGkUIfcZ45R
+         p4F+Muxg9msrI7K+3UGoh2bxg31/COSpTCBD4GAWDwxr6nDOQQsI8vH4ewLq9aF8hHqw
+         PnsGiPrqW25f0LGFOozu0QGm2etxdqqq5aSiXrR3QXS3alKg4dI6dzbrgsDg+L6uTgKt
+         sb3AoHdjRJuxbw6tjCE2WYTmcVsFr+E4rxVs9ij6QJwx/yJFnGBM5wuqrCEShzhU7/oY
+         URNw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4wnVthjik+2lJ+HCn54oFBKUCQl2joxrcz4GA4noe0niDZSRxUs/iu4ZeINhJ97KWGKe2AYE/tIaTq7o=@vger.kernel.org, AJvYcCWvgMRGFbCg9CLhsjZxoB91OOL0VFgMKL/jqSX7pqsYblJEn0CP4u+ovQTUemSZBXAlNmrYh5rHVdhQp86Wx6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYIOGF2bxeebKkZ7Yoja84gN8juE9A/f9LSeAkzT9vwuEPELHw
+	lQz1Mg9KShSmSQ2XOqlmqiyy/SZ2LC2Pg3i0EbZXVt0DLJ1fgaS0U5+jz2O88s0tFONbWKDn2pZ
+	FqoAppzzTpjQcXCBgwylCrXG64cs=
+X-Gm-Gg: ASbGnctty9CIwvxGcCgjlxDpjWffWT5lS6ywEM1MT5cyhZW+h3Ik4xKvCOLN1r+G2d8
+	YSBk9K2Q7hkFjOEazogvapMZjnVDpcjrwnITg/lAcj9lKc/44I1hi/bm/3K/EWNuWETl9+OKulv
+	teUxbr+dk0fgwgAOOCcNAVWCFh7g==
+X-Google-Smtp-Source: AGHT+IFlE5YIuDYHDZa8nRrelvV0jwCZ3acNZPl6icSJLZ4XBzWjtq64xn2dz9xNntqHG3w1fsEMNU5ZWTgvbA1wEXY=
+X-Received: by 2002:a17:90b:4d8d:b0:2fe:91d0:f781 with SMTP id
+ 98e67ed59e1d1-300ff724478mr2471430a91.2.1741730444778; Tue, 11 Mar 2025
+ 15:00:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cee346ec-5fa5-4d0b-987b-413ee585dbaa@sirena.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20250210-rust-analyzer-bindings-include-v2-0-23dff845edc3@gmail.com>
+ <20250210-rust-analyzer-bindings-include-v2-1-23dff845edc3@gmail.com>
+In-Reply-To: <20250210-rust-analyzer-bindings-include-v2-1-23dff845edc3@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 11 Mar 2025 23:00:32 +0100
+X-Gm-Features: AQ5f1JpFBu3sU8smtONUMJaWsoYZFqlOwNk8Ue4Zygb6CVCM0-PD6CRvhECF73I
+Message-ID: <CANiq72=YhXGKLuEfvK5XnAsc0sbuf4FBRt_GnzmrZoW_L-S-ow@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] scripts: generate_rust_analyzer.py: add missing include_dirs
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Kees Cook <kees@kernel.org>, 
+	Fiona Behrens <me@kloenk.dev>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Asahi Lina <lina@asahilina.net>, 
+	Boris-Chengbiao Zhou <bobo1239@web.de>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 11, 2025 at 05:51:06PM +0000, Mark Brown wrote:
-> On Thu, Mar 06, 2025 at 08:51:20PM +0200, Mike Rapoport wrote:
-> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> > 
-> > high_memory defines upper bound on the directly mapped memory.
-> > This bound is defined by the beginning of ZONE_HIGHMEM when a system has
-> > high memory and by the end of memory otherwise.
-> > 
-> > All this is known to generic memory management initialization code that
-> > can set high_memory while initializing core mm structures.
-> > 
-> > Remove per-architecture calculation of high_memory and add a generic
-> > version to free_area_init().
-> 
-> This patch appears to be causing breakage on a number of 32 bit arm
-> platforms, including qemu's virt-2.11,gic-version=3.  Affected platforms
-> die on boot with no output, a bisect with qemu points at this commit and
-> those for physical platforms appear to be converging on the same place.
+On Mon, Feb 10, 2025 at 7:04=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> Commit 8c4555ccc55c ("scripts: add `generate_rust_analyzer.py`")
+> specified OBJTREE for the bindings crate, and `source.include_dirs` for
+> the kernel crate, likely in an attempt to support out-of-source builds
+> for those crates where the generated files reside in `objtree` rather
+> than `srctree`. This was insufficient because both bits of configuration
+> are required for each crate; the result is that rust-analyzer is unable
+> to resolve generated files for either crate in an out-of-source build.
 
-I'm not convinced that the old and the new code is doing the same
-thing.
+Originally we were not using `OBJTREE` in the `kernel` crate, but we
+did pass it anyway, so conceptually it could have been there. So I am
+not sure if it counts as a fix for that commit, but it shouldn't hurt
+even if backported.
 
-The new code:
+Regarding `include_dirs`, it started in `kernel` before being in
+mainline because we included the bindings there (i.e. there was not
+`bindings` crate), but it should have been probably moved when it was
+split. Nowadays, I guess we still need it for
+`generated_arch_static_branch_asm.rs`, or is it something else that
+needs it? I assume it shouldn't hurt, in any case, so it looks OK.
 
-+       phys_addr_t highmem = memblock_end_of_DRAM();
-+
-+#ifdef CONFIG_HIGHMEM
-+       unsigned long pfn = arch_zone_lowest_possible_pfn[ZONE_HIGHMEM];
-+
-+       if (arch_has_descending_max_zone_pfns() || highmem > PFN_PHYS(pfn))
-+               highmem = PFN_PHYS(pfn);
-+#endif
-+
-+       high_memory = phys_to_virt(highmem - 1) + 1;
-
-First, when CONFIG_HIGHMEM is disabled, this code assumes that the last
-byte of DRAM declared to memblock is the highmem limit. This _could_
-overflow phys_to_virt() and lead to an invalid value for high_memory.
-
-Second, arch_zone_lowest_possible_pfn[ZONE_HIGHMEM] is the _start_ of
-highmem. This is not what arch code sets high_memory to - because
-the start of highmem may not contiguously follow on from lowmem.
-
-In arch/arm/mm/mmu.c, lowmem_limit is computed to be the highest + 1
-physical address that lowmem can possibly be, taking into account the
-amount of vmalloc memory that is required. This is used to set
-high_memory.
-
-We also limit the amount of usable RAM via memblock_set_current_limit()
-which memblock_end_of_DRAM() doesn't respect.
-
-I don't think the proposed generic version is suitable for 32-bit arm.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Cheers,
+Miguel
 
