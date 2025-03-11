@@ -1,133 +1,89 @@
-Return-Path: <linux-kernel+bounces-555491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9CEA5B883
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:27:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 811E3A5B887
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:28:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1865A188FC73
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:27:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0E361706CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4201EBA09;
-	Tue, 11 Mar 2025 05:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Qa5IQytx"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F74F1E9B36;
-	Tue, 11 Mar 2025 05:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43661EBA09;
+	Tue, 11 Mar 2025 05:28:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D0F1EB9E5
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741670856; cv=none; b=lg+rclYZm3GXSx+48Y4A9VTmkWg8T3UKT1xXx6ap5FV7TDjlAGLZ6LT15Jtc+7ofmwi4VFjhO7E7s7uZR09Bq/580EEtnox2CB+yE58S9/5eXO1eG9z4WqrdK2wPUe35MpYNeQBX1fY5AT7txSfXtserK+2msaoIe5ZPgsN7Z0U=
+	t=1741670888; cv=none; b=EYL0Fv+gJH0FPLpfw6AyhYD5Xglxo6J9I9KLUqaFyIRVNAr2JQl6P/D+aFFqiI9w03mYTIFy+2v2lGjYgdlG8KWFyOjdJEPq3DCHr9pdSssGHwvplFwnYAbaKSChgZXZ9lHLkERANqXm+Mv4IYChwLrv8+NKM8B+/sZVurSgxaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741670856; c=relaxed/simple;
-	bh=swyYk98GCb1QjGqyzf5ZJBUAE1q9FAtVlZRh92bxtG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tYWD9Szsbc+v4finjERTgLEioy6YzvzMjJSmWzaIVseW3ngDRIdgfkKF7uM/aqevl/j5LfzwE6HzMP9Tsa2+NDJx+QVnK1AYrFkXzIbgquaONsaxk1/b/O2Q5jAA2LUVAzz80ngOmyQQ6IrAoIgwspKgV4+/iwQ8QdXZfj5Lu8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Qa5IQytx; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741670851;
-	bh=y5fr0UTLOJJIqeRgg8Vg/OLNcU8T9+K3GX1Wh/1F2B4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Qa5IQytxImhu5nKdjyD20z/IqtKjdbO83gSYGxtozrj6LJz5KcJE8JnlfWs+jrbU9
-	 v04/GnEzQTxmNx+vmxt0HR8Azbg+HelZOiDflDh9WxO18AWY4NzQQpc9IlzgKQlybq
-	 1XQISVFlH5dkFwKFN7Jb26If/ls7wZvjl8rSewIlISjvAaiEvK6to/3M26zZ9wsblL
-	 zK94ghNvKB6rC7yayrc0L/U2HJfoyLmEaEU2L5zMFbcnupQGpYCqqO748FAKh0mVrO
-	 Rcqiw1TWGrdmy+N9xrk+zT+HmSgFwq0U/R/bdSEP+vIcB0UU6CXoh3h+cSyhFcBCwr
-	 Zx3X04y3EpuRA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBj2C2nwjz4xCW;
-	Tue, 11 Mar 2025 16:27:31 +1100 (AEDT)
-Date: Tue, 11 Mar 2025 16:27:30 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the ftrace tree
-Message-ID: <20250311162730.2762bbd0@canb.auug.org.au>
+	s=arc-20240116; t=1741670888; c=relaxed/simple;
+	bh=eKRlHLWaBspEoRQ8S57NlVWYi2I+xHjGl2BFk2h+y7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lNHF7OxodecxvuvJttFssQjlo1lJ7zRBYyUg0zGTmNbvePWEJksVXxOoGtTDkVdVw8xqOTVKO7kHDn0nmbEpO6cRVFKYmOTmIZMtGNkwnDjYVeSMIWmaRnz0DesxfY9Y3G7ZOC1jbSD3E6maVvN6FTRNO+nFkSOxGmC+ALdzVxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1734D1516;
+	Mon, 10 Mar 2025 22:28:17 -0700 (PDT)
+Received: from [10.162.40.19] (a077893.blr.arm.com [10.162.40.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2EA103F694;
+	Mon, 10 Mar 2025 22:28:03 -0700 (PDT)
+Message-ID: <dd8aa408-5260-4f53-b057-2c14c9a585d7@arm.com>
+Date: Tue, 11 Mar 2025 10:58:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/z38POeWRo690QIe.Zl/IXxD";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm: use ptep_get() instead of directly dereferencing
+ pte_t*
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250310140418.1737409-1-ryan.roberts@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250310140418.1737409-1-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/z38POeWRo690QIe.Zl/IXxD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 3/10/25 19:34, Ryan Roberts wrote:
+> It is best practice for all pte accesses to go via the arch helpers, to
+> ensure non-torn values and to allow the arch to intervene where needed
+> (contpte for arm64 for example). While in this case it was probably safe
+> to directly dereference, let's tidy it up for consistency.
+> 
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> ---
+>  mm/migrate.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 22e270f727ed..33a22c2d6b20 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -202,7 +202,7 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
+>  		return false;
+>  	VM_BUG_ON_PAGE(!PageAnon(page), page);
+>  	VM_BUG_ON_PAGE(!PageLocked(page), page);
+> -	VM_BUG_ON_PAGE(pte_present(*pvmw->pte), page);
+> +	VM_BUG_ON_PAGE(pte_present(ptep_get(pvmw->pte)), page);
+> 
+>  	if (folio_test_mlocked(folio) || (pvmw->vma->vm_flags & VM_LOCKED) ||
+>  	    mm_forbids_zeropage(pvmw->vma->vm_mm))
+> --
+> 2.43.0
+> 
+> 
 
-Hi all,
+LGTM.
 
-After merging the ftrace tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
-
-In file included from arch/arm/include/asm/page.h:185,
-                 from arch/arm/include/asm/thread_info.h:14,
-                 from include/linux/thread_info.h:60,
-                 from include/asm-generic/preempt.h:5,
-                 from ./arch/arm/include/generated/asm/preempt.h:1,
-                 from include/linux/preempt.h:79,
-                 from include/linux/alloc_tag.h:11,
-                 from include/linux/percpu.h:5,
-                 from include/linux/context_tracking_state.h:5,
-                 from include/linux/hardirq.h:5,
-                 from include/linux/interrupt.h:11,
-                 from include/linux/trace_recursion.h:5,
-                 from kernel/trace/ring_buffer.c:7:
-kernel/trace/ring_buffer.c: In function '__rb_map_vma':
-kernel/trace/ring_buffer.c:7137:59: error: passing argument 1 of 'virt_to_p=
-fn' makes pointer from integer without a cast [-Wint-conversion]
- 7137 |                 if (virt_addr_valid(cpu_buffer->subbuf_ids[s]))
-      |                                     ~~~~~~~~~~~~~~~~~~~~~~^~~
-      |                                                           |
-      |                                                           long unsi=
-gned int
-arch/arm/include/asm/memory.h:386:66: note: in definition of macro 'virt_ad=
-dr_valid'
-  386 |                                         && pfn_valid(virt_to_pfn(ka=
-ddr)))
-      |                                                                  ^~=
-~~~
-arch/arm/include/asm/memory.h:290:53: note: expected 'const void *' but arg=
-ument is of type 'long unsigned int'
-  290 | static inline unsigned long virt_to_pfn(const void *p)
-      |                                         ~~~~~~~~~~~~^
-
-Caused by commit
-
-  10a299da2c2b ("ring-buffer: Allow persistent ring buffers to be mmapped")
-
-I used the ftrace tree from next-20250307 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/z38POeWRo690QIe.Zl/IXxD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfPycIACgkQAVBC80lX
-0GwrDQf/QjVf9xAVRW965OaKz0OQnGhYnNsgbVIYAzDpSGWPRdss/QYb2qiT0DtR
-+4OeytEp9G1rgAQJEFKTiLbEtl7mloBiOUykppnv1BhnFj895VVzcKBLHYrOS0l/
-BG9kqzdbXtlMDyDuFcs5tBwsI9UXBegUOzWIQ5uGo69PTv5R6pTMyXMMmT6RQyVt
-gO+2dqnfGKkNmMwjcr8C5cPap7/aClTTanxmGV8qmdBZEZHEU1jpYyHWLweeJe/P
-kl1qBQFbxLWf+TKEa9SQegex/RLSvP2mMxtobNv0CdAE7hC1nt60gsjcRhcHzMB5
-h5EDQoYHQ9CpQ3XxSm6TQ2WsAnJYAA==
-=rWfU
------END PGP SIGNATURE-----
-
---Sig_/z38POeWRo690QIe.Zl/IXxD--
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
