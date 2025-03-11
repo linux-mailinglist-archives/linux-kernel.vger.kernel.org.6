@@ -1,230 +1,115 @@
-Return-Path: <linux-kernel+bounces-556245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE77A5C318
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:56:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A035DA5C31B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:57:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD30F166B92
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:56:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0B2C166BB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1521E2566C0;
-	Tue, 11 Mar 2025 13:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="etkLWdkO"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B730E1D5ADC
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE012255E37;
+	Tue, 11 Mar 2025 13:57:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1B51D5ADC;
+	Tue, 11 Mar 2025 13:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741701401; cv=none; b=U1z2dQfYcRdx+Idhiju3OOTPfx/0MMhVXqTQ0EwM6qjX2ftbm+YcCHxs/XEpzWFhbVXNFtJll1q+ldt4kiX+FN9vovq8EvILajrmoO4IfeNv0f169zdx3Gxi9lvK7sypulXTamQrMR1k6QDe4GivJ1SOMEBD+Jik0KqR9a9vOM0=
+	t=1741701431; cv=none; b=fEvSPxf3ZQYyjgubVLQTK6rI/NnyFHL/Rj4Ysv2M0lAqQMtXQuqyHL7ICotPBm8fN+GH1jjxB4wrCrpbQJ5UYSZXxotWHS/pDET3dBchFFEZQ6ig4O+VOx2uk1dGk2nD8dWdQhWzdjWqfz3llX4GmI2KH0IJrIIg/Q4wFvCDgBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741701401; c=relaxed/simple;
-	bh=8IiP310D7e4ansyuaQQM1xov8Mvy6oaQfxyIgMszHD0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DW6OS2eLI/9/VoPmF0wQP04VPxYNIuATT6gZJLJgNrmxE771pTE/wE+m6WwRUvt7sU+P1zi/hCg2fIxk6zgjRs/cpMBzXy6DQLle9PZo6295fcFXerOt5xR2qVa7LS5Vt5YgPWjgFjJUBHA42rwM74MlrehyBCibso7lPB80Cnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=etkLWdkO; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-524038ba657so2449485e0c.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:56:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741701398; x=1742306198; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U2N+Aak+CIPeIHj0r29UVuXvGehh5FWJExHuvJuMJuw=;
-        b=etkLWdkO/1PgqBwcW5eaB5PLHcGmnst+3iiJHOzt/FYjqdDcP5I7AJyg6Jxj5sX6VV
-         NaK/i9S3aksxXqsQBYfLcWnLv9tcQ/wl7G2NeaxnZ64SDUqf9mUFWG4Q5wddsplgMnt4
-         qippK+2PM8x1Cim9PfJlj767FKfxLekedTzpim4mZfGNjFmXCy4vi1wTOn6phweWjWDe
-         LqbBz4Ro7gJuZM9MAGxoefJLIRFxFAVhQal11/Gts0wsY5YOP+DkIHP6psaS/63QBvTW
-         ZOPJg9Bxkfa3JpJNBL2ytX9471G3pJWPVasuHXxnBAOrKLJAvz62YkzJrD5gTcyR/k+Z
-         ftmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741701398; x=1742306198;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U2N+Aak+CIPeIHj0r29UVuXvGehh5FWJExHuvJuMJuw=;
-        b=T3bM/YnfpV5nTlFjsc6tyzlQ45pJZj5nWeBFNbPDiu3kOX6uv0YljyG8OGsVB5vikD
-         3W6fYs3+RmiAoHUmsbXwaeFIcYuRMawZGL1vsqQYBPHN19c0ijeFsSf7KX22dzwIMS5Z
-         zA9VfeKpzNOYYOP7/4jU27FLHwa9IF8wjmTXobOL5EgU22ysUmlvQoR6WfL1qPgwPX54
-         zVTlgjkabxVvp7+3uOjeuPQpZGIyxZbrqrwRR4QK5kHReD7mehF2hk+V2t49/LJRMDm6
-         viuElTPDElh33lt44FII1KqFWRN47MLqaDzRJ07XgzexdIH5LOsxHWtQVHHTBU7q9vZM
-         v5Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmNSizYl+WfcbRfg1zFviqParqFhdR64/Jy5JhkulJgZeuKm3r+8+eeHsTufpNkxdfyG6pKmX1YTYSuuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb5iTCqrqIsPKWKm3liRf+I6CfZgz6SrShrxmQl1olvwULoJMF
-	qGQzwOlEBGtgpIURKlBu9l6ROWNI/aG3cX3hGAd2QVFsOl5XPnBctti+9My6kCdRKEikvwTKDGa
-	j2xRxwDiVwx2/otKN0wdCXuHVM3+YjejDH1WQUw==
-X-Gm-Gg: ASbGncusINmq94wxUYEsMBDX0luTZOl+i4Mi3Q85a4sbaOdQZA8sc8UaVr9oA3rrqfi
-	HAH9ojPExYRYWhkbPad4eVcg9OaTLMmbd4H+R+FvY75leFHGzh1QxCK+1Ng8AXMWQwy5cclHvg/
-	H5DP2+qHnMtHoGs2WMTAHHzBYQme3Sb2/IVGcH8Cocs2bnNSa/UmHdMgjfGFY=
-X-Google-Smtp-Source: AGHT+IEFerF36HL1rGh4auPc7CBLh70p65CcQmhmyY6oaALXU6swyvZCI0BvNaOEVhtsxQeTQfLD2Hu11+otSm5zxMY=
-X-Received: by 2002:a05:6122:3d47:b0:523:dbd5:4e7f with SMTP id
- 71dfb90a1353d-52419754983mr2484522e0c.3.1741701398495; Tue, 11 Mar 2025
- 06:56:38 -0700 (PDT)
+	s=arc-20240116; t=1741701431; c=relaxed/simple;
+	bh=WJ7skOWoJeFHR7rNvq3i+XJAdc435edWr7FTfPWVkF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VbAxm7ZddHTDRb4uE0RQlmoh617aqrM+7hN5IYC80Dy3n/09po26OwHY5Kfqh9y27GPz42LHAipvjSWQEeda/2+XLc4tatidUoQZpdpq3SA2aQ/2b1srbn4xtG2eH/jf1qAyJhC4iPoO2Kh6tPXr/OSTR/oZj0XwyNkKJcjA9WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E97F01515;
+	Tue, 11 Mar 2025 06:57:19 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F20B3F694;
+	Tue, 11 Mar 2025 06:57:08 -0700 (PDT)
+Date: Tue, 11 Mar 2025 13:57:04 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: coresight@lists.linaro.org, yeoreum.yun@arm.com,
+	Mike Leach <mike.leach@linaro.org>,
+	Jonathan Corbet <corbet@lwn.net>, Leo Yan <leo.yan@linux.dev>,
+	Namhyung Kim <namhyung@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] coresight: docs: Remove target sink from examples
+Message-ID: <20250311135704.GK9682@e132581.arm.com>
+References: <20241210144933.295798-1-james.clark@linaro.org>
+ <20250311102200.GJ9682@e132581.arm.com>
+ <898f1265-522f-44aa-a7da-879870b18807@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310170447.729440535@linuxfoundation.org>
-In-Reply-To: <20250310170447.729440535@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 11 Mar 2025 19:26:26 +0530
-X-Gm-Features: AQ5f1JpJScIVXTIFtt-TDzw-VZFe3PYeUikQXgKwV-72D77COTTUyRM5ws7x7v4
-Message-ID: <CA+G9fYtzO4bv8ij+x7yV5YDbSr+wsHRQCzfzjXUA29oQmvTsvg@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/207] 6.13.7-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <898f1265-522f-44aa-a7da-879870b18807@linaro.org>
 
-On Mon, 10 Mar 2025 at 22:38, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.13.7 release.
-> There are 207 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.13.7-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue, Mar 11, 2025 at 10:51:39AM +0000, James Clark wrote:
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+[...]
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > > +Sink selection
+> > > +~~~~~~~~~~~~~~
+> > > +
+> > > +An appropriate sink will be selected automatically for use with Perf, but since
+> > > +there will typically be more than one sink, the name of the sink to use may be
+> > > +specified as a special config option prefixed with '@'.
+> > > +
+> > > +The available sinks are listed in sysFS under
+> > >   ($SYSFS)/bus/event_source/devices/cs_etm/sinks/::
+> > > 
+> > >          root@localhost:/sys/bus/event_source/devices/cs_etm/sinks# ls
+> > >          tmc_etf0  tmc_etr0  tpiu0
+> > 
+> > Just a minor comment.  To reflect the latest hardware, it is good to
+> > mention the TRBE case, users should not and cannot specify TRBE as the
+> 
+> Is that strictly true? From looking at the code I think you could pick one
+> TRBE sink as long as you are only tracing from a single ETM. Although yeah
+> it would be pointless.
 
-## Build
-* kernel: 6.13.7-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 2fe515e18cbae9a204a7662d4b3b5760633f31fa
-* git describe: v6.13.6-208-g2fe515e18cba
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13=
-.6-208-g2fe515e18cba
+My testing result shows perf reports error when specifying trbe as sink:
 
-## Test Regressions (compared to v6.13.3-552-g3244959bfa6b)
+  # perf record -e cs_etm/@trbe0/ -- ls
+  failed to mmap with 12 (Cannot allocate memory)
 
-## Metric Regressions (compared to v6.13.3-552-g3244959bfa6b)
+But I can make success for the command:
 
-## Test Fixes (compared to v6.13.3-552-g3244959bfa6b)
+  # perf record -C 0 -e cs_etm/@trbe0/ -- ls
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.062 MB perf.data ]
 
-## Metric Fixes (compared to v6.13.3-552-g3244959bfa6b)
+This makes sense to me that if a perf session tries to enable trace for
+multiple CPUs but only a CPU sink is supported, the driver should
+report error to remind users the command does not work.
 
-## Test result summary
-total: 74660, pass: 60565, fail: 2624, skip: 11471, xfail: 0
+> > sink name.  The driver will give priority for TRBE by default unless
+> > users specify other sink types.
+> > 
+> 
+> IMO mentioning TRBE would be overly wordy and not really add anything.
+> Removing the sink from all the base examples is exactly to make TRBE work
+> without going into detail about why. And the advanced section doesn't
+> mention TRBE because manually picking it is never right.
 
-## Build Summary
-* arc: 6 total, 5 passed, 1 failed
-* arm: 143 total, 137 passed, 6 failed
-* arm64: 58 total, 56 passed, 2 failed
-* i386: 22 total, 19 passed, 3 failed
-* mips: 38 total, 33 passed, 5 failed
-* parisc: 5 total, 3 passed, 2 failed
-* powerpc: 44 total, 42 passed, 2 failed
-* riscv: 27 total, 24 passed, 3 failed
-* s390: 26 total, 25 passed, 1 failed
-* sh: 6 total, 5 passed, 1 failed
-* sparc: 5 total, 3 passed, 2 failed
-* x86_64: 50 total, 49 passed, 1 failed
+The section "Sink selection" applies _only_ to traditional sinks, not
+to TRBE.  I am not sure if we should clarify a bit for this.  I don't
+have strong opinion on it, as it is a trade-off between providing
+necessary info and avoiding overstatement.
 
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-crypto
-* ltp-cve
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
+So this patch is fine for me:
 
---
-Linaro LKFT
-https://lkft.linaro.org
+Reviewed-by: Leo Yan <leo.yan@arm.com>
 
