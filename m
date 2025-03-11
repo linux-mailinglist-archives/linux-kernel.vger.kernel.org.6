@@ -1,132 +1,85 @@
-Return-Path: <linux-kernel+bounces-556686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DFD4A5CD67
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:12:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE4CA5CD56
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:11:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 387713B38FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:11:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB144189E9CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9617C2638AA;
-	Tue, 11 Mar 2025 18:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a7M7tmFC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD2B263881;
+	Tue, 11 Mar 2025 18:11:05 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5C926389D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0AD262D37;
+	Tue, 11 Mar 2025 18:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716704; cv=none; b=JUFytO6aUCkdeaA0EDZAHGXC9yGNXyBKsk14EqAHRh9pt5p7hCl1J0R/98DBq9pCWhIRuGVFrA2cQzVPbIoKTu2/2dTZ1h7EcVCAU+6sKyF2jLMG9NmDocOQ2QeWOT8jUAA4PA/yxkcujfhUvMIJBT/1XLECFtdwi0mrCitGga0=
+	t=1741716665; cv=none; b=bL92gGfFHN0TaTMZrz4SwosnYpeFvALkoxfutE6pB2eeKwkOohgWncDfZLn866LsNJf8An6XomMgHpK0nQ7iK8rAW+jNPrsmJLAuqRJzeXeDvu18R3Rx8MNddfR6nmjep4e/eiprHZ8DNxM0T7Ox1A2Hqva5RPIdgnpHtxrMgqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716704; c=relaxed/simple;
-	bh=bE6PkRpllkCxKlej02vHSlOzbCcwwgn/UGaMPH9i/L8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bLG3VGGKQHCLJYaLQkXkD+q2OsAq0Nbp5DO49Tw0hUj5xs5O2ZT6gKQ4J9qHwtMUAXRxoMcL7y2T0Wuf3te+2W+bIXqqJBG76HCwB7xES2BpA1yu2zpqg3tCj8XbOIJUGD09PbSN+7lnVICzqsfRWLmgLIeAY3V00uybYBf3ldk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a7M7tmFC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741716701;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TzrnYIEosGlaSeyPR0KJldsPFTrK0e57CDLAtUE1YhI=;
-	b=a7M7tmFCDuq6IuwY+XAQ7JwrywfNxYrp++Esfmzv7MX1Zgygnt5L4AJcWxnRKU1PMUlDvW
-	PHmD6ovrvR9wqF6k+hUrwAkAYFJSy7aHTdVF4Octgybwr1sPz0uHK1atTciSn0TRtIA7OU
-	o11KeKqe5u05A+4Uzhk3lxsTI+3+KcU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-353-8FHXh_3OPY6-5jtrBpPWMw-1; Tue,
- 11 Mar 2025 14:11:37 -0400
-X-MC-Unique: 8FHXh_3OPY6-5jtrBpPWMw-1
-X-Mimecast-MFC-AGG-ID: 8FHXh_3OPY6-5jtrBpPWMw_1741716696
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 56C18180025A;
-	Tue, 11 Mar 2025 18:11:35 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.22.90.58])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id AED7118001F6;
-	Tue, 11 Mar 2025 18:11:29 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 11 Mar 2025 19:11:04 +0100 (CET)
-Date: Tue, 11 Mar 2025 19:10:57 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org,
-	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH] x86/stackprotector: fix build failure with
- CONFIG_STACKPROTECTOR=n
-Message-ID: <20250311181056.GF3493@redhat.com>
-References: <CAMzpN2iUi_q_CfDa53H8MEV_zkb8NRtXtQPvOwDrEks58=3uAg@mail.gmail.com>
- <CAMj1kXF8PZq4660mzNYcT=QmWywB1gOOfZGzZhi1sQxQacUX=g@mail.gmail.com>
- <20250310214402.GBZ89dIo_NLF4zOSKh@fat_crate.local>
- <CAMj1kXEK0Kgx-C8sOvWJ9rkmC0ioWDEb+tpM9BTeWVwOWyGNog@mail.gmail.com>
- <20250311102326.GAZ9APHqe5aSQ1m5ND@fat_crate.local>
- <CAMj1kXHTLz4onmR5iyowptRE38RCK4jNT3BoURBkq2FoDOMTxQ@mail.gmail.com>
- <20250311112112.GEZ9AcqM2ceIQVUA0N@fat_crate.local>
- <20250311131356.GGZ9A3FNOxp32eGAgV@fat_crate.local>
- <20250311143724.GE3493@redhat.com>
- <20250311174626.GHZ9B28rDrfWKJthsN@fat_crate.local>
+	s=arc-20240116; t=1741716665; c=relaxed/simple;
+	bh=nW6kcnaVPnd2s0tPsVOrq9MHgOdzd6vGVvSPXXLhxKk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O+DVQ1SvyfzOlsRdjn9BgPXOypfgVD8eExbTlksJr1FpFqv3t/NRaBq0jzcK9Ic2IvvUNo9rQmIdUVgwv8bzP1DIhxaTXwtd19QjdlkL+UMa1CJgwahimmhbXdAPcz1Y4+OmSvBXTqJ6EQJoi01Y3IxjAZtDhKRzbKHtt2xmHJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZC1vZ0Mhpz6H7Wy;
+	Wed, 12 Mar 2025 02:07:54 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1E7771401F1;
+	Wed, 12 Mar 2025 02:11:01 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Mar
+ 2025 19:11:00 +0100
+Date: Tue, 11 Mar 2025 18:10:58 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+CC: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, <linux-hyperv@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Tero Kristo
+	<kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Jon Mason
+	<jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, Allen Hubbe
+	<allenbh@gmail.com>, <ntb@lists.linux.dev>, Wei Huang <wei.huang2@amd.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, "James E.J.
+ Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+	<martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>
+Subject: Re: [patch 06/10] PCI: hv: Switch MSI descriptor locking to guard()
+Message-ID: <20250311181058.00000621@huawei.com>
+In-Reply-To: <20250309084110.521468021@linutronix.de>
+References: <20250309083453.900516105@linutronix.de>
+	<20250309084110.521468021@linutronix.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311174626.GHZ9B28rDrfWKJthsN@fat_crate.local>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 03/11, Borislav Petkov wrote:
->
-> On Tue, Mar 11, 2025 at 03:37:25PM +0100, Oleg Nesterov wrote:
-> > sorry for the off-topic noise, but what about the
-> >
-> > 	[PATCH] x86/stackprotector: fix build failure with CONFIG_STACKPROTECTOR=n
-> > 	https://lore.kernel.org/all/20241206123207.GA2091@redhat.com/
-> >
-> > fix for the older binutils? It was acked by Ard.
-> >
-> > Should I resend it?
->
-> Can you pls explain how you trigger this?
->
-> I just did a
->
-> # CONFIG_STACKPROTECTOR is not set
->
-> build here and it was fine.
->
-> So there's something else I'm missing.
+On Sun,  9 Mar 2025 09:41:51 +0100 (CET)
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-See the "older binutils?" above ;)
-
-my toolchain is quite old,
-
-	$ ld -v
-	GNU ld version 2.25-17.fc23
-
-but according to Documentation/process/changes.rst
-
-	binutils               2.25             ld -v
-
-it should be still supported.
-
-Oleg.
-
+> Convert the code to use the new guard(msi_descs_lock).
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Haiyang Zhang <haiyangz@microsoft.com>
+> Cc: Wei Liu <wei.liu@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linux-hyperv@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
