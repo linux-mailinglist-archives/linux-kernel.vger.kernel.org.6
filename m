@@ -1,207 +1,186 @@
-Return-Path: <linux-kernel+bounces-556307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44420A5C3D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:33:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18127A5C3DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 774E6176C91
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:33:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D298A1899679
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B5C25CC66;
-	Tue, 11 Mar 2025 14:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1498125BADD;
+	Tue, 11 Mar 2025 14:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NyjgEq5u"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Hg0EY7KV"
+Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C643F1D516C;
-	Tue, 11 Mar 2025 14:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B739A2580DD
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741703569; cv=none; b=ulzxFRnNxxgto8Wr12CKQCmATOrLcNMp4QI3P/ziNmqcKr5tUfT1qhoMM0aNGSxWySYMq+NQz7r4HreYnlqi6AHl0DwA+4yIuXryQbfo8Ofg2q5HKRj8jewksVx3H/5g7Rog1mJlKWX5E3qa3J9/Xmbaif0bA+tRLv2cWIOBJdo=
+	t=1741703588; cv=none; b=GZi3Olbv3LXwgtDUr5ZudsHDb7OGH6Ncp7Z5YHnlFM0Gw+mYQP50BkqIm7TNz/8GhK3Bsw56IEHj1i0FtyGNgaGKR2UyBaAzVd6vO5efw68xmPc5uIpCYdItNx1g6azUAq3GTUxRVj4wMZc0xU/kHEVZXmIoyzI1DXXMd7NmetM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741703569; c=relaxed/simple;
-	bh=6LRWqagH50pWtOvWLzmPECzX8JInGE4+p6WZsOeip2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y3PJJ5lhUQOQwtbhgm4u9NUl5vPh7RuPLetBCRKJkDWTFQu5rrXmD0BEcK9jfujLxV9Z7iBhMKagLLXb1FXU+NxxTlTdVKpNvPqlcx/xtL4fnDYTXXzpmfXxym+ofsSyhyt7drq76CR6V1o/01A+ZEPdvK7xF2OyRmo//n1gT2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NyjgEq5u; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 689B844293;
-	Tue, 11 Mar 2025 14:32:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741703559;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=03SEpe76buerxO1Tyt/a95sW01GQX/8qXbwOFtLXNuw=;
-	b=NyjgEq5uNCMIvDFGJV4PzI9PBcADaiZ+rts7F1XijZiBRgxbhADNqb4p0IdN4cEJu6WMpi
-	JxUHcKEk/q2Pdw/oF/ikapdSxAyUThyvIWkCUCFakseQp8l45mVbcXUilmvFTzhBA7UWLC
-	PfvzwTymO1lcAjJzoafWUpNjDfGZ7XIrxIzaOOLdLLxruovnbTEiaupjv0tMPiRjNh2xJz
-	owTVU6I/Ndid2IM4CRuC0Y0pqkdhvJhqbPOO+4h/RO+DVyXePQ4miKTXZjFaWyKhW6B6Yo
-	gJN5eJtTocgxk7BGSc3dA3oSbs6fCxcuQZ0B4DsR7Y64QwyEaAuRw5mRJMo6XQ==
-Date: Tue, 11 Mar 2025 15:32:35 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Philipp Hahn <phahn-oss@avm.de>
-Cc: netdev@vger.kernel.org, Oliver Neukum <oliver@neukum.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, Leon Schuermann <leon@is.currently.online>
-Subject: Re: [PATCH v2] net-next: cdc_ether|r8152: ThinkPad Hybrid USB-C/A
- Dock quirk
-Message-ID: <20250311153235.6cae893a@kmaincent-XPS-13-7390>
-In-Reply-To: <f736f5bd20e465656ebe2cc2e7be69c0ada852e3.1741627632.git.p.hahn@avm.de>
-References: <f736f5bd20e465656ebe2cc2e7be69c0ada852e3.1741627632.git.p.hahn@avm.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741703588; c=relaxed/simple;
+	bh=SDDAXoqsqgExN7f0hzwwey7bsU0+LraGSsZgPodTofU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VYWvmPJtz+odeGHi7fjCMI4fiGhMwbsity7nElH4f/lxWata5Jbg92t1hPMEFMphtk06mhG0CzmCOMN6eGGDETo9rqs4Z8+2Tm3cg49BQz9/4G8UQL5/Hf9llxRImLQ8kTb5linhfiuHO7KjsPT+Cc5F9jdFs6Ap1ThkoJEYjqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Hg0EY7KV; arc=none smtp.client-ip=84.16.66.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZBx7W2svnzPw3;
+	Tue, 11 Mar 2025 15:32:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1741703575;
+	bh=2YaIPQV3+DbYwSfcD/whlGeuuxi/uei3xpiA8a5+614=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hg0EY7KVZr1ApFtnd/GAt7n68atO6ULLYkeN+FJ6eIaZNUS2cNYoTHL/RPWaXgNS9
+	 Wz7mfId0x0dwjq5N7fVjW8RnncOxImFwxlT3ZtpSzPVISNqd676yS+eMCeSbWpm7mb
+	 qohwJrlT3KMgK6Pu26RRGbZCnn/BhDL4Vs3Npdo8=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZBx7V4tKgzhL7;
+	Tue, 11 Mar 2025 15:32:54 +0100 (CET)
+Date: Tue, 11 Mar 2025 15:32:53 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, sergeh@kernel.org, 
+	David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	linux-security-module@vger.kernel.org, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, 
+	Peter Newman <peternewman@google.com>
+Subject: Re: [RFC 1/2] landlock: Multithreading support for
+ landlock_restrict_self()
+Message-ID: <20250311.aefai7vo6huW@digikod.net>
+References: <20250221184417.27954-2-gnoack3000@gmail.com>
+ <20250221184417.27954-3-gnoack3000@gmail.com>
+ <20250227.Aequah6Avieg@digikod.net>
+ <20250228.b3794e33d5c0@gnoack.org>
+ <20250304.aroh3Aifiiz9@digikod.net>
+ <20250310.990b29c809af@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddvgeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeetgeeghfduhefhleelueeuueejjeegueegffdviedtheejieekhedvveejteehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdplhgvnhhovhhordgtohhmpdgsohhothhlihhnrdgtohhmnecukfhppeduleehrddvledrheegrddvgeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrvdelrdehgedrvdegfedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddvpdhrtghpthhtohepphhhrghhnhdqohhsshesrghvmhdruggvpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhlihhvvghrsehnvghukhhumhdrohhrghdprhgtphhtthhopegrnhgurhgvfidon
- hgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhm
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250310.990b29c809af@gnoack.org>
+X-Infomaniak-Routing: alpha
 
-On Tue, 11 Mar 2025 11:21:34 +0100
-Philipp Hahn <phahn-oss@avm.de> wrote:
+On Mon, Mar 10, 2025 at 02:04:23PM +0100, Günther Noack wrote:
+> Hello Paul and Serge!
+> 
+> On Tue, Mar 04, 2025 at 09:25:51PM +0100, Mickaël Salaün wrote:
+> > On Fri, Feb 28, 2025 at 06:33:55PM +0100, Günther Noack wrote:
+> > > Hello!
+> > > 
+> > > Thanks for the review!
+> > > 
+> > > I'm adding David Howells to this thread as well.  David, maybe you can
+> > > help us and suggest a appropriate way to update the struct cred across
+> > > multiple threads?
+> 
+> Paul and Serge, since you are volunteering to take ownership of
+> credentials, maybe you can advise on what is the best approach here?
+> 
+> To summarize the approaches that I have been discussing with Mickaël:
+> 
+> Approach 1: Use the creds API thread-by-thread (implemented here)
+> 
+>   * Each task calls prepare_creds() and commit_creds() on its own, in
+>     line with the way the API is designed to be used (from a single
+>     task).
+>   * Task work gets scheduled with a pseudo-signal and the task that
+>     invoked the syscall is waiting for all of them to return.
+>   * Task work can fail at the beginning due to prepare_creds(), in
+>     which case all tasks have to abort_creds(). Additional
+>     synchronization is needed for that.
+> 
+>   Drawback: We need to grab the system-global task lock to prevent new
+>   thread creation and also grab the per-process signal lock to prevent
+>   races with other creds accesses, for the entire time as we wait for
+>   each task to do the task work.
 
-> Lenovo ThinkPad Hybrid USB-C with USB-A Dock (17ef:a359) is affected by
-> the same problem as the Lenovo Powered USB-C Travel Hub (17ef:721e):
-> Both are based on the Realtek RTL8153B chip used to use the cdc_ether
-> driver. However, using this driver, with the system suspended the device
-> constantly sends pause-frames as soon as the receive buffer fills up.
-> This causes issues with other devices, where some Ethernet switches stop
-> forwarding packets altogether.
->=20
-> Using the Realtek driver (r8152) fixes this issue. Pause frames are no
-> longer sent while the host system is suspended.
+In other words, this approach blocks all threads from the same process.
 
-It seems patchwork detects it for net-next tree but nonetheless the subject
-of your patch should look like this:
-[PATCH net-next v2] cdc_ether|r8152: ThinkPad Hybrid USB-C/A Dock quirk
+> 
+> Approach 2: Attempt to do the prepare_creds() step in the calling task.
+> 
+>   * Would use an API similar to what keyctl uses for the
+>     parent-process update.
+>   * This side-steps the credentials update API as it is documented in
+>     Documentation, using the cred_alloc_blank() helper and replicating
+>     some prepare_creds() logic.
+> 
+>   Drawback: This would introduce another use of the cred_alloc_blank()
+>   API (and the cred_transfer LSM hook), which would otherwise be
+>   reasonable to delete if we can remove the keyctl use case.
+>   (https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/)
 
-Regards,
+cred_alloc_blank() was designed to avoid dealing with -ENOMEM, which is
+a required property for this Landlock TSYNC feature (i.e. atomic and
+consistent synchronization).
 
-> Cc: Oliver Neukum <oliver@neukum.org>
-> Cc: Andrew Lunn <andrew+netdev@lunn.ch>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: linux-usb@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Leon Schuermann <leon@is.currently.online>
-> Link: https://git.kernel.org/netdev/net/c/cb82a54904a9
-> Link: https://git.kernel.org/netdev/net/c/2284bbd0cf39
-> Link:
-> https://www.lenovo.com/de/de/p/accessories-and-software/docking/docking-u=
-sb-docks/40af0135eu
-> Signed-off-by: Philipp Hahn <phahn-oss@avm.de> Reviewed-by: Kory Maincent
-> <kory.maincent@bootlin.com> ---
-> V1 -> V2: Prefix subject with `net-next:`
-> V1 -> V2: Add additional Cc:s
->  drivers/net/usb/cdc_ether.c | 7 +++++++
->  drivers/net/usb/r8152.c     | 6 ++++++
->  drivers/net/usb/r8153_ecm.c | 6 ++++++
->  3 files changed, 19 insertions(+)
->=20
-> diff --git a/drivers/net/usb/cdc_ether.c b/drivers/net/usb/cdc_ether.c
-> index a6469235d904..a032c1ded406 100644
-> --- a/drivers/net/usb/cdc_ether.c
-> +++ b/drivers/net/usb/cdc_ether.c
-> @@ -783,6 +783,13 @@ static const struct usb_device_id	products[] =3D {
->  	.driver_info =3D 0,
->  },
-> =20
-> +/* Lenovo ThinkPad Hybrid USB-C with USB-A Dock (40af0135eu, based on
-> Realtek RTL8153) */ +{
-> +	USB_DEVICE_AND_INTERFACE_INFO(LENOVO_VENDOR_ID, 0xa359,
-> USB_CLASS_COMM,
-> +			USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
-> +	.driver_info =3D 0,
-> +},
-> +
->  /* Aquantia AQtion USB to 5GbE Controller (based on AQC111U) */
->  {
->  	USB_DEVICE_AND_INTERFACE_INFO(AQUANTIA_VENDOR_ID, 0xc101,
-> diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-> index 468c73974046..96fa3857d8e2 100644
-> --- a/drivers/net/usb/r8152.c
-> +++ b/drivers/net/usb/r8152.c
-> @@ -785,6 +785,7 @@ enum rtl8152_flags {
->  #define DEVICE_ID_THINKPAD_USB_C_DONGLE			0x720c
->  #define DEVICE_ID_THINKPAD_USB_C_DOCK_GEN2		0xa387
->  #define DEVICE_ID_THINKPAD_USB_C_DOCK_GEN3		0x3062
-> +#define DEVICE_ID_THINKPAD_HYBRID_USB_C_DOCK		0xa359
-> =20
->  struct tally_counter {
->  	__le64	tx_packets;
-> @@ -9787,6 +9788,7 @@ static bool rtl8152_supports_lenovo_macpassthru(str=
-uct
-> usb_device *udev) case DEVICE_ID_THINKPAD_USB_C_DOCK_GEN2:
->  		case DEVICE_ID_THINKPAD_USB_C_DOCK_GEN3:
->  		case DEVICE_ID_THINKPAD_USB_C_DONGLE:
-> +		case DEVICE_ID_THINKPAD_HYBRID_USB_C_DOCK:
->  			return 1;
->  		}
->  	} else if (vendor_id =3D=3D VENDOR_ID_REALTEK && parent_vendor_id =3D=3D
-> VENDOR_ID_LENOVO) { @@ -10064,6 +10066,8 @@ static const struct usb_devic=
-e_id
-> rtl8152_table[] =3D { { USB_DEVICE(VENDOR_ID_MICROSOFT, 0x0927) },
->  	{ USB_DEVICE(VENDOR_ID_MICROSOFT, 0x0c5e) },
->  	{ USB_DEVICE(VENDOR_ID_SAMSUNG, 0xa101) },
-> +
-> +	/* Lenovo */
->  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x304f) },
->  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3054) },
->  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3062) },
-> @@ -10074,7 +10078,9 @@ static const struct usb_device_id rtl8152_table[]=
- =3D {
->  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x720c) },
->  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x7214) },
->  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x721e) },
-> +	{ USB_DEVICE(VENDOR_ID_LENOVO,  0xa359) },
->  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0xa387) },
-> +
->  	{ USB_DEVICE(VENDOR_ID_LINKSYS, 0x0041) },
->  	{ USB_DEVICE(VENDOR_ID_NVIDIA,  0x09ff) },
->  	{ USB_DEVICE(VENDOR_ID_TPLINK,  0x0601) },
-> diff --git a/drivers/net/usb/r8153_ecm.c b/drivers/net/usb/r8153_ecm.c
-> index 20b2df8d74ae..8d860dacdf49 100644
-> --- a/drivers/net/usb/r8153_ecm.c
-> +++ b/drivers/net/usb/r8153_ecm.c
-> @@ -135,6 +135,12 @@ static const struct usb_device_id products[] =3D {
->  				      USB_CDC_SUBCLASS_ETHERNET,
-> USB_CDC_PROTO_NONE), .driver_info =3D (unsigned long)&r8153_info,
->  },
-> +/* Lenovo ThinkPad Hybrid USB-C with USB-A Dock (40af0135eu, based on
-> Realtek RTL8153) */ +{
-> +	USB_DEVICE_AND_INTERFACE_INFO(VENDOR_ID_LENOVO, 0xa359,
-> USB_CLASS_COMM,
-> +				      USB_CDC_SUBCLASS_ETHERNET,
-> USB_CDC_PROTO_NONE),
-> +	.driver_info =3D (unsigned long)&r8153_info,
-> +},
-> =20
->  	{ },		/* END */
->  };
+I think it would make sense to replace most of the
+key_change_session_keyring() code with a new cred_transfer() helper that
+will memcpy the old cred to the new, increment the appropriate ref
+counters, and call security_transfer_creds().  We could then use this
+helper in Landlock too.
 
+To properly handle race conditions with a thread changing its own
+credentials, we would need a new LSM hook called by commit_creds().
+For the Landlock implementation, this hook would check if the process is
+being Landlocked+TSYNC and return -ERESTARTNOINTR if it is the case.
+The newly created task_work would then be free to update each thread's
+credentials while only blocking the calling thread (which is also a
+required feature).
 
+Alternatively, instead of a new LSM hook, commit_creds() could check
+itself a new group leader's flag set if all the credentials from the
+calling process are being updated, and return -ERESTARTNOINTR in this
+case.
 
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+> 
+> Approach 3: Store Landlock domains outside of credentials altogether
+> 
+>   * We could also store a task's Landlock domain as a pointer in the
+>     per-task security blob, and refcount these.  We would need to make
+>     sure that they get newly referenced and updated in the same
+>     scenarios as they do within struct cred today.
+>   * We could then guard accesses to a task's Landlock domain with a
+>     more classic locking mechanism.  This would make it possible to
+>     update the Landlock domain of all tasks in a process without
+>     having to go through pseudo-signals.
+> 
+>   Drawbacks:
+>   * Would have to make sure that the Landlock domain the task's LSM
+>     blob behaves exactly the same as before in the struct cred.
+>   * Potentially slower to access Landlock domains that are guarded by
+>     a mutex.
+
+This would not work because the kernel (including LSM hooks) uses
+credentials to check access.
+
+> 
+> I'd be interested to hear your opinion on how we should best approach
+> this.
+> 
+> P.S. This is probably already clear to everyone who read this far, but
+> the problem that creds can't be updated across tasks has already lead
+> to other difficult APIs and also bleeds into user-level interfaces
+> such as the setuid() family of syscalls as well as capability
+> updating.  Both of these are solved from user space through the signal
+> hack documented in nptl(7), which is used in glibc for setuid()-style
+> calls and in libpsx for capabilities and Landlock's Go library.  If we
+> had a working way to do these cross-thread updates in the kernel, that
+> would simplify these userspace implementations.  (There are more links
+> in the cover letter at the top of this thread.)
+> 
+> Thanks,
+> –Günther
+> 
 
