@@ -1,242 +1,145 @@
-Return-Path: <linux-kernel+bounces-556993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9E6A5D20E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:54:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98BC7A5D215
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:54:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9EC53B18CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:54:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64C8B188980A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D00C264633;
-	Tue, 11 Mar 2025 21:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3C3264A98;
+	Tue, 11 Mar 2025 21:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f/yhf+Ow"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JoMB+255"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9603F264F93
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 21:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B916264A7D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 21:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741730042; cv=none; b=RzgMgUa7VTxGk2j9UhaCHh1j/ropHUfG+BAfeMYEy3Kdppey230RHdazfUlS8Et/fYaqOzT86zO6EcJUKjoXooKPNmabZERBoB/blZd5kRXEGtakxskTTEWAPtI0lg6FPWQ47WHp8/en/KjVDLuUXJTYZWpIZjJxHpt6ww+vs84=
+	t=1741730091; cv=none; b=GCIaDJprnwv1Buxr0SFGM5ihNCGVASqqPI2o95uZrZcj2NvsFKi/K3VN8PlQT4rie8cmCTkPDz0y4ZyZtrAac5aCZW3TpTGxAngu0+JmypWtMkUvBijlh7WM0ncSqB3C4nsZeiqahW3ieRtgmoOaY0TWrmadMg3x6iVROr++IzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741730042; c=relaxed/simple;
-	bh=ZgzE4thBCoSTa+dcViXPcQn5/G3IUHp1o/3wzyNpJ6I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LnOzZsjWgTwjQE20aDJzhMd+XuRyOrFOXxjDIr+vle7A/yGSVM68iFLFwGZwy2gTV2gZYBpE0/k/rnFKY1UVS+Ecms1CvFc4UXj0MAghP62zfR9ukqFei+MFhnwoa0fuUN3M12xwwhIXF/KRAPP4AZAj9Em69lxL3D0CkxWvLKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f/yhf+Ow; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54995620c02so520373e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:53:59 -0700 (PDT)
+	s=arc-20240116; t=1741730091; c=relaxed/simple;
+	bh=lx6oQy6ulCdJcKW6pyA6L4sW6xfoPq/2WIZT3ctB5TQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZvqUE0OJYu7rKjH7nnyCWsVMOGqwISfieomy6GVY+V8IxtoK4ZWwHjasN+BBZrBKoX+5BeBZxnlC7YH2NuEE4LMKQmygXAI/FZ2MnVNWhEyJeR5lggSKAPkCN1V+KAdJigq017jo1DP7ywpDDvQ0EmR8vPoF4d4G4zAKYpRCcEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JoMB+255; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-601a15186f0so260223eaf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:54:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741730038; x=1742334838; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X5gsB+0yYh8xE9yPNlTczFYo/dqiaFhvnnAdkeUoWJg=;
-        b=f/yhf+Ow6qLnHeu7fpBARK6iQQyRmHWvFObl/a0hci1teamJW+UNUazoTQxxo7esNl
-         arQvnfnn6Eq+GUuglGzFjCRxlPy3bGNrmpA7ZWCmnuNPB9lsq6CTUuQn/n6i1o4XdJpZ
-         WYP7WVSZou2lt+5F8OHTinmJSjsNNe/IaaQ2XeS7BNvGbr4MUehdokjGbMjXFobxE1qL
-         cwTYeXwwdp9u+Kz/q5/1SuPIPxv3hIvJwvOTEHOTzO8tYdmtCoYFq/nw8w7PxTh9YWrg
-         R25eUG17re6Scd0jjMyQ6S5xoM6tAYGXlJn4JyxKoFswjSCyDehZf/Dg9nsICyE0UNn+
-         wQtA==
+        d=chromium.org; s=google; t=1741730089; x=1742334889; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZqtLjg1DzXxI0seit2K5+J+AUgYKo7ZSLSErJeqONSA=;
+        b=JoMB+255sF2i8fhdBJHvHjw4KW+rB8y5LAiR03LkvLMSV674R/GMu9+QF8XjBMlpqz
+         iLIP9Pt+mkVatgHHlktlkUlhiF7oKMQxzd0X6B/zR8iXgWVe+k3uO1AlcPb0lFuld7Sz
+         Fl5I6xQ3tKuvWG2SAZHNszd8/Y2kKFFKjteKg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741730038; x=1742334838;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X5gsB+0yYh8xE9yPNlTczFYo/dqiaFhvnnAdkeUoWJg=;
-        b=Pc4fcU4sO2jr6BvQRECU6Tvlul/MkTm9ORcyZu93Ddu0QnhJOTbh3jEMW/WutNzYeQ
-         KjeZBLkn24dd0Qf+8imzvu4+FKobVuVAquVf39/wzcU9p8G9bFLwWLNukVZgni92GXPg
-         Bk8LCuQFoPYaq98lpZaI+WmTa47uX8N7eMpPfUpdk7YOFubjsIZI4GdKQPoAW4+OO5Cw
-         f6YIuQQoHC09YZVe9hbSp1WUNxWza8eBr8RSv8adH3EtnXwmL5dDlej/2+MjkZcFmBbB
-         /3Ds94+AcrOvEyOtCulSQvC1J0A9XYYG45K9sYy2Vr3aC2A+zH0MT3BEJs6lzgpe+fZU
-         AxGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUK+Pfck52NTxz4uiggKhAZRZES6j2Ah2WESGGVjPJMt79s249PahfBjRLEk32zYEZrEXXaXNdcqk8hp0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNE/scdt22XdICbBagJ2ESldEcw6AzJOpgsMobvSoyulCA+v9r
-	ShF0n4tsN9JHg9jIFHchG2hbjl4ptqTVWyYHdZqfnIBc7dqM4nsYVB1mI+VhPpM=
-X-Gm-Gg: ASbGnctqIBLxByG5qPcxN/+ZKQdasrNLBeSmetrCxbWWhAHHH3HDMUAzfW81KDRcF8M
-	VfaLj9iSJuabVfJF+9+aStqwhtq/NJnYKI4T8HB7f0/n4QbI3BEHdJnVODlv0vBcwDfv3T/YVSc
-	eohjUMQBmWlt64s71ypw5TS6UfaQ1NiaWwYXpIpruq9NwbZQbXyaSIslhcmGyd9HzCrVKRCZhcf
-	umDSB7v/52ExEKd1tBh3QrgCygwIOZRTUPWDAdNTrRyINc8mzh+/2B5P86dWyVvLVhumw329Fbk
-	OC2A9Zm3qD989fCJUAxiTbo6LCSi6Dtra96a3uQMUT6D1dug9D9lVRb+X6QsdxijTH7k4CwLPtg
-	uowhR6ANrzcDFsUcME4oZ2IsPfEInPzQqYQ==
-X-Google-Smtp-Source: AGHT+IFMqD7MP0QO68gqxLROvT5NFpnEwxTOzpskeLzkJrA9xPbwOTw4OmpOx0RaAr9lWptyIlaMyw==
-X-Received: by 2002:a05:6512:3b10:b0:545:6f1:948d with SMTP id 2adb3069b0e04-549abacc9e6mr613771e87.7.1741730037032;
-        Tue, 11 Mar 2025 14:53:57 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae462c6sm1910515e87.4.2025.03.11.14.53.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 14:53:55 -0700 (PDT)
-Message-ID: <70d6acfc-739a-4c0a-9087-77e16c6ac989@linaro.org>
-Date: Tue, 11 Mar 2025 23:53:49 +0200
+        d=1e100.net; s=20230601; t=1741730089; x=1742334889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZqtLjg1DzXxI0seit2K5+J+AUgYKo7ZSLSErJeqONSA=;
+        b=pyjag0HRTJ+3twIpr80ptS9MRbL5yf8dJxdDBMuGYdSeG7v81FrGf6v+sKvXOMiqH0
+         kXNQoljKwKTG4JgRya5KbafCOBHHqAOW944WxnX1EDzC3efw9qYb/3h/4SxivGrmQ9qm
+         b1VvONa4io1xeOZE3UWgZhFxnd8YE0WWnyu0x7La2ooUz+3EX7bo6CBY8FSsAb8lXKJN
+         oDhUnWAkZ6EQ6tyt/G+TMr6kDVnPudHbepjsmCYbl6tVIWISJtkbaUikAfyRYo0MeA/t
+         X0o+hP8QjlRHRyNqDGeFpWcnjUG8dnklDnjT7TuaFhe4jXPXHTPqfjKVfs0uuKkPEZd1
+         fctA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpg8pdkR2y7W4k77ELSdvvz5Lj6xD3ui5cXSXMWNkpf9KsXnY3b9SUlVDn5qiA/6/6SEKDfaFJj75Zg7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyygjF1nqov4lrlI/Hewc4mII7WBzblWjpV8s9uanBN90zrJPiT
+	FNdT+hB7X1hqezAlMZck7mZ/v5vttxqysTgTqJdKLAT+IyvrTIlsu4D4pADE1ajhbGkq7ylQ5uT
+	GDfRK/VIl/7SGgxsuOkGc2XhHTqgJHFN/eTkG
+X-Gm-Gg: ASbGncstn4bIj8b/p6MeJsYwNIjilfG6wu3aupbln+qzKzksROD2oaHpx9ygJz9/iDw
+	V3B0DKQa2hh914Y3k4TtVkW1qmUinKcMGR9PkmVEtrD16ix6N8+3gyaKaH5lvJu024ynQAv28UM
+	JNDf7b8JUTGYvRl8LizlN7xwAq
+X-Google-Smtp-Source: AGHT+IH2IPSslGXs3S6U3SZyEjhufps+FOgJ4MI5DY7Uu+/0+4vI/knID5uO2tWz7qPzGa2aOnkdzTN2mj4h7r9KJSs=
+X-Received: by 2002:a05:6808:228a:b0:3f4:1be4:b1d4 with SMTP id
+ 5614622812f47-3f6a2b39ca2mr2959328b6e.2.1741730088963; Tue, 11 Mar 2025
+ 14:54:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] dt-bindings: media: Add qcom,x1e80100-camss
-Content-Language: ru-RU
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-0-c2964504131c@linaro.org>
- <20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-1-c2964504131c@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-1-c2964504131c@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250311123326.2686682-1-hca@linux.ibm.com> <20250311123326.2686682-2-hca@linux.ibm.com>
+In-Reply-To: <20250311123326.2686682-2-hca@linux.ibm.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Tue, 11 Mar 2025 14:54:37 -0700
+X-Gm-Features: AQ5f1JoHdL7fy9WOBHHtsPNXX2PhdRPHU3FfnSh5XG6auVNGW-V5IoHWDbRycD8
+Message-ID: <CABi2SkUG6ddwOpZqp3frfHh+AvQP3fyhfN5WOn-cCNpavUhZ3A@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable 1/2] mseal sysmap: generic vdso vvar mapping
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Kees Cook <kees@kernel.org>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Bryan.
+On Tue, Mar 11, 2025 at 5:33=E2=80=AFAM Heiko Carstens <hca@linux.ibm.com> =
+wrote:
+>
+> With the introduction of the generic vdso data storage the VM_SEALED_SYSM=
+AP
+> vm flag must be moved from the architecture specific
+> _install_special_mapping() call [1] [2] which maps the vvar mapping to
+> generic code.
+>
+Thanks for fixing this merging problem.
+The new selftest in mseal_system_mappings should catch this :-)
 
-On 1/19/25 02:54, Bryan O'Donoghue wrote:
-> Add bindings for qcom,x1e80100-camss in order to support the camera
-> subsystem for x1e80100 as found in various Co-Pilot laptops.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Hi Andrew,
+when you apply this to mm-unstable, could you please insert this between:
 
-<snip>
+commit 5bda54a4f304a7c3d65a40c9c3f015901caa2ce6
+selftests: x86: test_mremap_vdso: skip if vdso is msealed
+and
+commit 884323e928c6938923e5dfcb8a601b3363e1130b
+ mseal sysmap: enable x86-64
 
-> +
-> +  reg-names:
-> +    items:
-> +      - const: csid_wrapper
-> +      - const: csid0
-> +      - const: csid1
-> +      - const: csid2
-> +      - const: csid_lite0
-> +      - const: csid_lite1
-> +      - const: csiphy0
-> +      - const: csiphy1
-> +      - const: csiphy2
-> +      - const: csiphy4
-> +      - const: csitpg0
-> +      - const: csitpg1
-> +      - const: csitpg2
-> +      - const: vfe_lite0
-> +      - const: vfe_lite1
-> +      - const: vfe0
-> +      - const: vfe1
+That will make the series complete.
 
-Here I'm a bit lost about the selected ordering rule, I kindly
-ask for a clarification.
 
-In ASCII the underscore symbol '_' goes way after any 7-bit symbols
-including '0' and other digits, but this is violated in the sorting
-order above.
-
-The expected sorting order would rather be like this one:
-
-   - const: csid0
-   - const: csid1
-   - const: csid2
-   - const: csid_lite0
-   - const: csid_lite1
-   - const: csid_wrapper
-   - const: csiphy0
-   - const: csiphy1
-   - const: csiphy2
-   - const: csiphy4
-   - const: csitpg0
-   - const: csitpg1
-   - const: csitpg2
-   - const: vfe0
-   - const: vfe1
-   - const: vfe_lite0
-   - const: vfe_lite1
-
-> +
-> +  clocks:
-> +    maxItems: 29
-> +
-> +  clock-names:
-> +    items:
-> +      - const: camnoc_rt_axi
-> +      - const: camnoc_nrt_axi
-
-Okay, there might be some explanations about the underscore symbol,
-anyway I would appreciate to get them, but here it's definitely
-incorrect, it's very unlikely that the symbol 'r' precedes 'n'.
-
-> +      - const: core_ahb
-> +      - const: cpas_ahb
-> +      - const: cpas_fast_ahb
-> +      - const: cpas_vfe0
-> +      - const: cpas_vfe1
-> +      - const: cpas_vfe_lite
-> +      - const: cphy_rx_clk_src
-> +      - const: csid
-> +      - const: csid_csiphy_rx
-> +      - const: csiphy0
-> +      - const: csiphy0_timer
-> +      - const: csiphy1
-> +      - const: csiphy1_timer
-> +      - const: csiphy2
-> +      - const: csiphy2_timer
-> +      - const: csiphy4
-> +      - const: csiphy4_timer
-> +      - const: gcc_axi_hf
-> +      - const: gcc_axi_sf
-> +      - const: vfe0
-> +      - const: vfe0_fast_ahb
-> +      - const: vfe1
-> +      - const: vfe1_fast_ahb
-> +      - const: vfe_lite
-> +      - const: vfe_lite_ahb
-> +      - const: vfe_lite_cphy_rx
-> +      - const: vfe_lite_csid
-> +
-> +  interrupts:
-> +    maxItems: 13
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: csid0
-> +      - const: csid1
-> +      - const: csid2
-> +      - const: csid_lite0
-> +      - const: csid_lite1
-> +      - const: csiphy0
-> +      - const: csiphy1
-> +      - const: csiphy2
-> +      - const: csiphy4
-> +      - const: vfe0
-> +      - const: vfe1
-> +      - const: vfe_lite0
-> +      - const: vfe_lite1
-
-Same as above.
-
-> +  interconnects:
-> +    maxItems: 4
-> +
-> +  interconnect-names:
-> +    items:
-> +      - const: cam_ahb
-> +      - const: cam_hf_mnoc
-> +      - const: cam_sf_mnoc
-> +      - const: cam_sf_icp_mnoc
-> +
-
---
-Best wishes,
-Vladimir
+> [1] https://lkml.kernel.org/r/20250305021711.3867874-4-jeffxu@google.com
+> [2] https://lkml.kernel.org/r/20250305021711.3867874-5-jeffxu@google.com
+>
+> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+> ---
+>  lib/vdso/datastore.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/lib/vdso/datastore.c b/lib/vdso/datastore.c
+> index e227fbbcb796..b7c7386c98a9 100644
+> --- a/lib/vdso/datastore.c
+> +++ b/lib/vdso/datastore.c
+> @@ -99,7 +99,8 @@ const struct vm_special_mapping vdso_vvar_mapping =3D {
+>  struct vm_area_struct *vdso_install_vvar_mapping(struct mm_struct *mm, u=
+nsigned long addr)
+>  {
+>         return _install_special_mapping(mm, addr, VDSO_NR_PAGES * PAGE_SI=
+ZE,
+> -                                       VM_READ | VM_MAYREAD | VM_IO | VM=
+_DONTDUMP | VM_PFNMAP,
+> +                                       VM_READ | VM_MAYREAD | VM_IO | VM=
+_DONTDUMP |
+> +                                       VM_PFNMAP | VM_SEALED_SYSMAP,
+>                                         &vdso_vvar_mapping);
+>  }
+>
+> --
+> 2.45.2
+>
+Reviewed-by: Jeff Xu <jeffxu@chromium.org>
 
