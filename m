@@ -1,200 +1,95 @@
-Return-Path: <linux-kernel+bounces-556126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E58A5C12A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:31:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15FCA5C148
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:34:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 463BF7A350A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:30:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD04D189D319
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFCC256C8F;
-	Tue, 11 Mar 2025 12:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDEB253B6A;
+	Tue, 11 Mar 2025 12:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="SaoEPgfw"
-Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHlviE+2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9230123645F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B2225487A;
+	Tue, 11 Mar 2025 12:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741696222; cv=none; b=IlXAkNlrN3RkmeNMCgkxEEZHWMdt84oNszdMtt2Ss9jwyRiTnPMeAAKkG1mixel1643svYwvG9RLKdX8AlpSJyeWYfyDGfbC5+fhctHcReb3AYTWageh04W8IL2odvKvkn3XpWHu6FRateNiijtg5Olb8cEqQI71z2PfY6UFfSE=
+	t=1741696198; cv=none; b=Ctwgge7iz+cyCC2e4wI+1xvn/LJLyelHmnIDvp1RTLThtZWz0ZDO24fnVu5KwZ+xC6cFFumIHNRejyt5wq33RTvQsXQhpym1EU0Crx+G1FiZRajfYEiix66cFc8v4FoD3tsBw10if49oG2O+MMLm5z6AQpUKpu43+J5CaSOQ/0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741696222; c=relaxed/simple;
-	bh=iGzfkjKIKGQ3nIRCtf8/atYf8W5Mghy7B9NvHDLqI4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b/x4TzJ+e8Zxrn8YkDE8tx0c4sabICGKJ4C4AXQvbeFLTuPLQ0KG3naGteZrF12XIs6C6ksMKiIy/ltcYukua/GYoO18BpYqdanVz+RQSIO8MW5fB6TltNn148rpq9hKectVQvVNhc8m99B5apsYJMWzGHJ9uPzoAZHrKFEATq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=SaoEPgfw; arc=none smtp.client-ip=94.124.121.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=protonic.nl; s=202111;
-	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
-	 message-id:subject:cc:to:from:date:from;
-	bh=GBW0Y8yGR5o8MgBeufRUfD01/b7zRBYHTos8St3c3AM=;
-	b=SaoEPgfw/rsLhvKxWH4sQGvHUrsaWHmccdd7YxC6ibKkB5hLWIt7PA0nd+8zlefWFUEvkgjtxjef3
-	 UdtS7Hf+Unc3uQYcrPsK3tsEIygSfuAiXroDT7F/x7U22FGE4sjt6YEpNFg1TJgTrblAsaglhskFsM
-	 jTKytl4vqNAvLMI5PqAhGUm2XdDu2I380gElYUrSeKXmhMW0ska4+YogBWwBpz2n4ym6anJ9mrAcG5
-	 MoivYVcqjTbFW1EBgP1be0Qp1lCemyh45bGUrgTLl0LK7xscNurTY0JVsNzJtmVhLDQnaJp4JCy/ye
-	 BgM/H1dRyD6mBZOH+/1w+7L1iQXHTlw==
-X-MSG-ID: 93500ca2-fe74-11ef-a3a3-00505681446f
-Date: Tue, 11 Mar 2025 13:30:10 +0100
-From: David Jander <david@protonic.nl>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Kent Gibson
- <warthog618@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: regression: gpiolib: switch the line state notifier to atomic
- unexpected impact on performance
-Message-ID: <20250311133010.760abd61@erd003.prtnl>
-In-Reply-To: <CAMRc=MewC-7XFfWxPS7cmMycxo-62NDrUKFyjnnCbwqXQXWuZw@mail.gmail.com>
-References: <20250311110034.53959031@erd003.prtnl>
-	<CAMRc=MewC-7XFfWxPS7cmMycxo-62NDrUKFyjnnCbwqXQXWuZw@mail.gmail.com>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741696198; c=relaxed/simple;
+	bh=QtZXEnAsq+kpo0B3XWYCNv9iskcf8SuO6bT85S2GaiA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=PVbK9WAVu9JfQ+P41Y58ktaHrQTAz1YA7sBHhVe7r2QE2CR14fhuGgP3Hjhumbr8L5VLgVU8Jlkj2XvMj49dBu9l3ZBxU+aQETb4y3Tt2MuZINPvKngDvbXl5d4Fbo8YkK4ksdFr2Gt1q5we+Vu7drc/SJDbjdCshjpbuwVuKLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHlviE+2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 112C7C4CEE9;
+	Tue, 11 Mar 2025 12:29:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741696198;
+	bh=QtZXEnAsq+kpo0B3XWYCNv9iskcf8SuO6bT85S2GaiA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=VHlviE+2/1h3kZo6MwoozbySOwHSmNTBqo9W6wPc9xI93K7Hlh1G56SpYUa1VJmdu
+	 U5PtWGkAOdMyUX6Ma81gm+vn3Sb8Bbny0zjVHwDOKGP7W5qk1okmgar+YP/Ysx7QLk
+	 u5GXz2t05m9rUzWKhuvckLDx84YroqLQTvXSfNovjNFXN4LesY1gbya98enSy6QGex
+	 AvHY3cCWOBgjtwsIO1DXHpRf60I4AvtZismEj3I4X4qsC2CGth0/2VMJw8YZQrvBOL
+	 2MDCcPW1JUW8Tdvr/DM9fLT3spewWApZo4x5oOs89n5G6OXpP7Dh8kjEGhrJE8bz5t
+	 VwXAk2Dgf+2vQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7123C380AC1C;
+	Tue, 11 Mar 2025 12:30:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCHv4 net 0/2] bonding: fix incorrect mac address setting
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174169623226.66274.17244628271427546125.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Mar 2025 12:30:32 +0000
+References: <20250306023923.38777-1-liuhangbin@gmail.com>
+In-Reply-To: <20250306023923.38777-1-liuhangbin@gmail.com>
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: netdev@vger.kernel.org, jv@jvosburgh.net, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ razor@blackwall.org, horms@kernel.org, shuah@kernel.org, cratiu@nvidia.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 11 Mar 2025 12:45:51 +0100
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+Hello:
 
-> On Tue, Mar 11, 2025 at 11:01=E2=80=AFAM David Jander <david@protonic.nl>=
- wrote:
-> >
-> > On kernel 6.13, after git revert -n fcc8b637c542 time is back to what i=
-t was
-> > on 6.12.
-> > =20
->=20
-> Interestingly: I cannot reproduce it. Obviously gpiofind doesn't exist
-> in libgpiod v2 but I'm running gpiodetect with and without reverting
-> these changes and am getting roughly the same results: ~0.050s real
-> time for 1 up to 4 chips.
->=20
-> Any idea why that could be? Can you reproduce it with libgpiod v2 (I
-> don't know why that wouldn't be the case but worth double checking).
+This series was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-I had libgpiod version 1.6.3 and I have now built libgpiod version 2.1.3.
+On Thu,  6 Mar 2025 02:39:21 +0000 you wrote:
+> The mac address on backup slave should be convert from Solicited-Node
+> Multicast address, not from bonding unicast target address.
+> 
+> v4: no change, just repost.
+> v3: also fix the mac setting for slave_set_ns_maddr. (Jay)
+>     Add function description for slave_set_ns_maddr/slave_set_ns_maddrs (Jay)
+> v2: fix patch 01's subject
+> 
+> [...]
 
-Here are my findings:
+Here is the summary with links:
+  - [PATCHv4,net,1/2] bonding: fix incorrect MAC address setting to receive NS messages
+    https://git.kernel.org/netdev/net/c/0c5e145a350d
+  - [PATCHv4,net,2/2] selftests: bonding: fix incorrect mac address
+    https://git.kernel.org/netdev/net/c/9318dc2357b6
 
-1. time gpiodetect on kernel 6.13 and gpiod 1.6.3:
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-$ time gpiodetect=20
-gpiochip0 [GPIOA] (16 lines)
-gpiochip1 [GPIOB] (16 lines)
-gpiochip10 [GPIOK] (8 lines)
-gpiochip11 [GPIOZ] (8 lines)
-gpiochip12 [unknown] (22 lines)
-gpiochip13 [mcp23s17.0] (16 lines)
-gpiochip14 [0-0020] (16 lines)
-gpiochip15 [0-0021] (16 lines)
-gpiochip2 [GPIOC] (16 lines)
-gpiochip3 [GPIOD] (16 lines)
-gpiochip4 [GPIOE] (16 lines)
-gpiochip5 [GPIOF] (16 lines)
-gpiochip6 [GPIOG] (16 lines)
-gpiochip7 [GPIOH] (16 lines)
-gpiochip8 [GPIOI] (16 lines)
-gpiochip9 [GPIOJ] (16 lines)
-real    0m 0.19s
-user    0m 0.00s
-sys     0m 0.01s
 
-2. time gpiodetect on kernel 6.13 and gpiod 2.1.3:
-
-$ time gpiodetect=20
-gpiochip0 [GPIOA] (16 lines)
-gpiochip1 [GPIOB] (16 lines)
-gpiochip2 [GPIOC] (16 lines)
-gpiochip3 [GPIOD] (16 lines)
-gpiochip4 [GPIOE] (16 lines)
-gpiochip5 [GPIOF] (16 lines)
-gpiochip6 [GPIOG] (16 lines)
-gpiochip7 [GPIOH] (16 lines)
-gpiochip8 [GPIOI] (16 lines)
-gpiochip9 [GPIOJ] (16 lines)
-gpiochip10 [GPIOK] (8 lines)
-gpiochip11 [GPIOZ] (8 lines)
-gpiochip12 [unknown] (22 lines)
-gpiochip13 [mcp23s17.0] (16 lines)
-gpiochip14 [0-0020] (16 lines)
-gpiochip15 [0-0021] (16 lines)
-real    0m 0.22s
-user    0m 0.00s
-sys     0m 0.06s
-
-(note that it became slightly slower from v1 -> v2)
-
-3. time gpiodetect on kernel 6.12 and gpiod 1.6.3:
-
-$ time gpiodetect=20
-gpiochip0 [GPIOA] (16 lines)
-gpiochip1 [GPIOB] (16 lines)
-gpiochip10 [GPIOK] (8 lines)
-gpiochip11 [GPIOZ] (8 lines)
-gpiochip12 [unknown] (22 lines)
-gpiochip13 [mcp23s17.0] (16 lines)
-gpiochip14 [0-0020] (16 lines)
-gpiochip15 [0-0021] (16 lines)
-gpiochip2 [GPIOC] (16 lines)
-gpiochip3 [GPIOD] (16 lines)
-gpiochip4 [GPIOE] (16 lines)
-gpiochip5 [GPIOF] (16 lines)
-gpiochip6 [GPIOG] (16 lines)
-gpiochip7 [GPIOH] (16 lines)
-gpiochip8 [GPIOI] (16 lines)
-gpiochip9 [GPIOJ] (16 lines)
-real    0m 0.03s
-user    0m 0.00s
-sys     0m 0.01s
-
-4. time gpiodetect on kernel 6.12 and gpiod 2.1.3:
-
-$ time gpiodetect=20
-gpiochip0 [GPIOA] (16 lines)
-gpiochip1 [GPIOB] (16 lines)
-gpiochip2 [GPIOC] (16 lines)
-gpiochip3 [GPIOD] (16 lines)
-gpiochip4 [GPIOE] (16 lines)
-gpiochip5 [GPIOF] (16 lines)
-gpiochip6 [GPIOG] (16 lines)
-gpiochip7 [GPIOH] (16 lines)
-gpiochip8 [GPIOI] (16 lines)
-gpiochip9 [GPIOJ] (16 lines)
-gpiochip10 [GPIOK] (8 lines)
-gpiochip11 [GPIOZ] (8 lines)
-gpiochip12 [unknown] (22 lines)
-gpiochip13 [mcp23s17.0] (16 lines)
-gpiochip14 [0-0020] (16 lines)
-gpiochip15 [0-0021] (16 lines)
-real    0m 0.07s
-user    0m 0.00s
-sys     0m 0.06s
-
-(roughly same speed difference from v1 -> v2).
-
-Can you describe your platform? Is it a multi-core or single-core CPU? What
-RCU implementation does it use? Tree or tiny? If it is multi-core, is there=
- a
-difference if you disable all but one core?
-Maybe some kernel CONFIG option that makes a difference? I am not an expert=
- in
-RCU (in fact I barely know what it does), so maybe I am missing something t=
-hat
-makes this problem go away?
-
-Best regards,
-
---=20
-David Jander
 
