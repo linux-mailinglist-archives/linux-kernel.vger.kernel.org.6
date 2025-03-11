@@ -1,136 +1,99 @@
-Return-Path: <linux-kernel+bounces-556255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D200A5C336
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:05:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8341FA5C338
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65663168A38
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:05:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0E721890A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD73025B666;
-	Tue, 11 Mar 2025 14:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1QjvbTl9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UDjpensC"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1926E25B69C;
+	Tue, 11 Mar 2025 14:05:31 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964D4156C62;
-	Tue, 11 Mar 2025 14:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BE2156C62
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741701924; cv=none; b=c+gSCnQt0akW8IJR4jT0ORqjMqnBZlaIP4cIGmpNnQrS8wUFf8Hr7mqxSPcvsWTQ36Ab2dANB+ElbN1F8yzswX52Je6tii+CLeOp2pEm7xeh72MmgIlq3CDtPXDrAdmX7+mOcna3qlif1UWGdXZqEy0d0LAL/4nWueu3hLEDcRM=
+	t=1741701930; cv=none; b=eUwLfnbTI3th4lpVj9iPlTcyxR6eoVsML1dhVIgaOCXVaHHaALVBD30DC+btiKR7CeYz/jsQ2Oe61MJDhyNWfDeZSZchawUP4/zvM3biMS5tBzAUa/88B+wE9e12+PoldtdxXhQVa+WfifxD3KvmLlKSaFoHK9y/MfTQOP05OPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741701924; c=relaxed/simple;
-	bh=7TIUhH6YvCGnqZKtUNrL8O3a77QVGxzBJt4gDmHpNhU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ht8vPcY+cXXh5Y2udtQtszVaP042KQAWOJdYshx+oEYjmFQOtQjjTwFtoztsRG4Wb8IB59FUqht4ex8B+oV2tPa73YlZrB1XkWc1PFza3bW0dHawVFMot+8nHFs7GWGh23YTlkeRtpRYueYh3R1MexLc/tCbmDJ04rfI8qFhS9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1QjvbTl9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UDjpensC; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741701918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DFuGzd839JjnXJnzQCNenTt8lLgnnByiRc80jF+qXsw=;
-	b=1QjvbTl9/qg3XdLtrSh1NBF9ecD218AyolXh74KUuMJRgXfArp6ur83sGi6l7oceGsr/MS
-	uV+eKjCu9ukEMUo9IY7BxrI54nLgX+ygH81TAKr1HyNlnKKDc7VyvN/O5Y9oaXbU70X7nr
-	dlXUBurO3zNTcaTPfNzrRQYMqshyBPk2ECPelB0br8U5rVvryq9N7CMRve1twMdgxa82aX
-	pobVPEMT94RcyX3jrFFsUwcfSwY4N64dSShrbbeVMg1BJlfRlyOPFBvt6s+Q5oK6fnHsAZ
-	oE0eTvaXovVOBuFXimr0cup6LS2nVBAZqSUMnvCxHiH7O4VuFzT3C79VWQ91dQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741701918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DFuGzd839JjnXJnzQCNenTt8lLgnnByiRc80jF+qXsw=;
-	b=UDjpensClIuIbIu62W+Sz+m0Qwh8XPFDhb0RE/GtjkHZYOwH+oiOZsuS+FD3XgaABcFg3Z
-	18tOCJu5V713yXCw==
-To: Tsai Sung-Fu <danielsftsai@google.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>, Rob Herring
- <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Chant
- <achant@google.com>, Brian Norris <briannorris@google.com>, Sajid Dalvi
- <sdalvi@google.com>, Mark Cheng <markcheng@google.com>, Ben Cheng
- <bccheng@google.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH] PCI: dwc: Chain the set IRQ affinity request back to
- the parent
-In-Reply-To: <CAK7fddBSJk61h2t73Ly9gxNX22cGAF46kAP+A2T5BU8VKENceQ@mail.gmail.com>
-References: <20250303070501.2740392-1-danielsftsai@google.com>
- <87a5a2cwer.ffs@tglx>
- <CAK7fddD4Y5CJ3hKQvppGB2Bof4ibYDX4mBK3N1y8qt-NVoBb7w@mail.gmail.com>
- <87eczd6scg.ffs@tglx>
- <CAK7fddAqDPw1CuvBDUsQApbs1ZSE_ruyTAdsp+c4116C0ZjvVw@mail.gmail.com>
- <878qpi61sk.ffs@tglx>
- <CAK7fddCG6-Q0s-jh5GE7LG+Kf6nON8u9BS4Ame9Xa7VF1=ujiw@mail.gmail.com>
- <878qpg4o4t.ffs@tglx>
- <CAK7fddBSJk61h2t73Ly9gxNX22cGAF46kAP+A2T5BU8VKENceQ@mail.gmail.com>
-Date: Tue, 11 Mar 2025 15:05:17 +0100
-Message-ID: <874izz1x42.ffs@tglx>
+	s=arc-20240116; t=1741701930; c=relaxed/simple;
+	bh=J3dU4+pSvGnhcZnktKIwuBfpfDsywJqi8ZI3XVhfpM4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SmeYIFt6DZpONH/889QLmFkV2XPPYhm9AEMfzPKHobQeuto0LgqujDyCZ7DMsfCw3vNpqddBKGsXB1WEnn6Pc4Zab6Fd7gKwBi4Zml3j+yOL7u6DtkSbgW8XOHPmszT6/MTJ3G8KDTBrtb0qMQdYNq8LgmZzuCFz6zs6PjJkNoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d451ad5b2dso26337355ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:05:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741701928; x=1742306728;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aCJL+tsWtR/2aLDIIPayU3/jY5LVGiEAzwSErKvzPQY=;
+        b=w9rkMw3RrI27cX+fBqZX0JupOzEvP7VMa64DX5/mSAW5r/My+lFZKrB9l7v30p/3mk
+         1H+eKWRVsdBBRf834/KdapySsND7HFjYUmqlZzQtpGDc0ySyTJLfPZpmlCEGSsJVSVUN
+         EQyk2HS5qH4GpilSKC0vS+w4qyNBMOFzaNq8lPbbXoCpRen2lWjUizqjHgC0vLFnmmsk
+         NTSGM8kDs3Y0f5zbcLAEn3ob2kIakkoB17wQE0h/QFrRzwp/OfZGszYBw0Ng0kWT8XZX
+         QBub8ZkMIWm6iXxLDvE6MdDaOGhMMbi9Aejynuo823IjCXR8TAh4shyRgDNQivKI8a6P
+         XXVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjwAfEYRqFTmMYlGoEnmbGVPapn6/9tI+SCvWEYAAqOsYyukd/ZXupZPC3LFKmZp5l5c+sG8eFigmZO6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSOG3rkR5a+QVkzTQitIliSaKI7Ax9Sa8e4RRR1iWva1iNWPua
+	0IoBR5fDqUAmk6E/ROUHG3J/GqzuAUxklgZiZknuZpMcCCnzx51uP6RsFwmYQT5kYwE9N3+qBdT
+	uq6QOWuwczyOKM3bP2P10bfId2Z4GpR3TcK2XKXbVmDtjBgGs3RkJUIk=
+X-Google-Smtp-Source: AGHT+IEAYhezGVOq/Lvj0W+L9exDil80kEgDIi1mq2q5XwzW0xRlrG0tx7LrHm3WiNgrUfqCfXy68Nf/24WR0biLw2mgPC5CyIdp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:3a13:b0:3d3:de5f:af25 with SMTP id
+ e9e14a558f8ab-3d4690a4dabmr45263025ab.0.1741701928144; Tue, 11 Mar 2025
+ 07:05:28 -0700 (PDT)
+Date: Tue, 11 Mar 2025 07:05:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67d04328.050a0220.14e108.0004.GAE@google.com>
+Subject: [syzbot] Monthly exfat report (Mar 2025)
+From: syzbot <syzbot+list005cd041278fc64ff364@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 11 2025 at 17:52, Tsai Sung-Fu wrote:
+Hello exfat maintainers/developers,
 
-Please do not top-post and trim your replies.
+This is a 31-day syzbot report for the exfat subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/exfat
 
-> Running some basic tests with this patch (
-> https://tglx.de/~tglx/patches.tar ) applied on my device, at first
-> glance, the affinity feature is working.
->
-> I didn't run stress test to test the stability, and the Kernel version
-> we used is a bit old, so I only applied change in this 2 patches
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 15 issues are still open and 21 have already been fixed.
 
-I don't care about old kernels and what you can apply or not. Kernel
-development happens against upstream and not against randomly chosen
-private kernel versions.
+Some of the still happening issues:
 
-> And adding if check on irq_chip_redirect_set_affinity() and
-> irq_set_redirect_target() to avoid cpumask_first() return nr_cpu_ids
+Ref Crashes Repro Title
+<1> 92      Yes   KMSAN: uninit-value in iov_iter_alignment_iovec
+                  https://syzkaller.appspot.com/bug?extid=f2a9c06bfaa027217ebb
+<2> 13      Yes   INFO: task hung in vfs_rmdir (2)
+                  https://syzkaller.appspot.com/bug?extid=42986aeeddfd7ed93c8b
+<3> 11      Yes   INFO: task hung in chmod_common (5)
+                  https://syzkaller.appspot.com/bug?extid=4426dfa686191fab8b50
 
-I assume you know how diff works.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> May I ask, would this patch be officially added to the 6.14 kernel ?
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-You may ask. But you should know the answer already, no?
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-The merge window for 6.14 closed on February 2nd with the release of
-6.14-rc1. Anything which goes into Linus tree between rc1 and the final
-release is fixes only.
-
-This is new infrastructure, which has neither been posted nor reviewed
-nor properly tested. There are also no numbers about the overhead and
-no analysis whether that overhead causes regressions on existing setups.
-
-These changes want to be:
-
-   1) Put into a series with proper change logs
-
-   2) Posted on the relevant mailing list
-
-   3) Tested and proper numbers provided
-
-So they are not even close to be ready for the 6.15 merge window, simply
-because the irq tree is going to freeze at 6.14-rc7, i.e. by the end of
-this week.
-
-I'm not planning to work on them. Feel free to take the PoC patches,
-polish them up and post them according to the documented process.
-
-Thanks,
-
-        tglx
+You may send multiple commands in a single email message.
 
