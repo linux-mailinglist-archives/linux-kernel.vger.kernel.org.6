@@ -1,140 +1,255 @@
-Return-Path: <linux-kernel+bounces-556063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F51A5C07B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:17:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824E1A5C08F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97E0116A9D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13C201889FF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE65260A2B;
-	Tue, 11 Mar 2025 12:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="es8V7vrJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48029260A5B;
+	Tue, 11 Mar 2025 12:05:11 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563D3260397;
-	Tue, 11 Mar 2025 12:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD39260A50
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741694691; cv=none; b=LajFpvhV8jbhlRPO7ApNtmyA0Wfcp/KhjjUlh8gjT8QSb5+LqqP4gwnf7bpFeRRk9I6NrXWnpprvwVDTO6rTI/H54zh7UOyGBzve10XzNNKSPv4KsVu0XWme6OSqFbr1coaHnb7HpHHdrt3SVNBLfj7mlzCBVn4GWFSHSbbKDZo=
+	t=1741694710; cv=none; b=S+fjCGvqLbXC2ITxY1blcithPnT6iBFgjfM/JzZjvecapBUJJnYK8KK2hcCNnbhhqoAo4jhv2Nsoz4NMaEokcwwsqAv3V/1jol+Abq7INvURM417xXRwGaRj5TyZXwoK7rWaVH8iQ0+I+TvdSLjlpAI7AY7JF9VlNnKFAIo+J6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741694691; c=relaxed/simple;
-	bh=EUvBOPRBNMUzY5oXa8fdFGkO7p8sO7vMgeD833I44qo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=KiP6Rxk/HNEJq+pfz/5plfzjBJcko6FTl6VEZ+6oeCkNGSyPJlc/5s3tpGFGqm5XNSCHQ+WPKZg/bA9QEv2BKR2OeSR2Vf1EDLYZX8jHxhoe9o1FNUiOc4Jk3599cFTn6FaJDATq9hA5WasE3VgPjvNq0iWaTMIw6qSpRpDH7ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=es8V7vrJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B7lAeX001680;
-	Tue, 11 Mar 2025 12:04:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WvM6XBi8PzZIc190rqU5Cj7PO52ayu9ud9wWdcjq/JE=; b=es8V7vrJvJcgxCPd
-	iA1WPlidzn5pfyTIAWNCPOfVk1HrVKx7SEHddNb0+Tmljb1bnjJeWbAkb9CyxVxn
-	+x1xAQJEDY2YJQT+sQEwOpERoH4Kv4w/m8R7Lg6vzgexPh5jVxNU8cM+YTQWYXFB
-	FfuPhc03luntZzyl8kYTz6ZggAL5d8/IwAP1EPFfMgmNYvS9LqZqGVwRQTSEY2yZ
-	UjR0VR8/CsxS6SWg2b/g2IlzDp3tjx8RNV+qGhujexzJp3jvTTz40i2JRvEbgLAR
-	xfP5Qcg/Jo6ZKqeGFbZ0F4QNoRj7OQ3zq+XvM4ypH10AFwqNugK/IpcmXEwGLKZP
-	AiJXvw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458ewk8ehp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 12:04:46 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52BC4jUR028742
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 12:04:45 GMT
-Received: from hu-vgarodia-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 11 Mar 2025 05:04:42 -0700
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-Date: Tue, 11 Mar 2025 17:33:56 +0530
-Subject: [PATCH 4/4] media: iris: add compatible string for sa8775p
+	s=arc-20240116; t=1741694710; c=relaxed/simple;
+	bh=t20yuOvGQQsvRDlo35tvfwHYzGxDYPuVQtBjEcVnqQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQR6D1XLG854zb6D+/wgYyEwG9Y4jjt32e50ywKGpDqMGSy+JLx7heJ5P9Hs6/0KbD0p5fdFx/wk8uATPigeEKqZ6W1if2eam3PPum2I6dkLAwxROGC2N/GhfTh8QxkPg+dAWTKTk9T2Se7hxCw/nl2xFAPQ5yVI0DJH4hesaxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tryM5-0008Nt-Gb; Tue, 11 Mar 2025 13:05:05 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tryM3-005B4L-13;
+	Tue, 11 Mar 2025 13:05:03 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tryM3-007j7z-0d;
+	Tue, 11 Mar 2025 13:05:03 +0100
+Date: Tue, 11 Mar 2025 13:05:03 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Frank Li <Frank.li@nxp.com>, Marc Kleine-Budde <mkl@pengutronix.de>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org, Daniel Baluta <daniel.baluta@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/5] arm64: dts: imx8mp: convert 'aips5' to 'aipstz5'
+Message-ID: <20250311120503.ryqg2thnj4mkgsjz@pengutronix.de>
+References: <20250221191909.31874-1-laurentiumihalcea111@gmail.com>
+ <20250221191909.31874-5-laurentiumihalcea111@gmail.com>
+ <Z7jahtO3bxjkMfnc@lizhi-Precision-Tower-5810>
+ <cd6a84cd-ff17-45df-becc-9bfc74522f73@gmail.com>
+ <20250227-monumental-whale-of-security-b1c84e-mkl@pengutronix.de>
+ <Z8CWsI/DKZtDBkzE@lizhi-Precision-Tower-5810>
+ <20250228101952.g6tae3ni5xrhjk3y@pengutronix.de>
+ <bfe3c719-f1c5-4ae5-9a40-45ad75cd5855@gmail.com>
+ <20250307152236.3ayulbjqnu3vn7mf@pengutronix.de>
+ <ec38d41d-f2ce-4a98-bb02-d1ae9beb0b3b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250311-dtbinding-v1-4-5c807d33f7ae@quicinc.com>
-References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
-In-Reply-To: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741694666; l=880;
- i=quic_vgarodia@quicinc.com; s=20241104; h=from:subject:message-id;
- bh=EUvBOPRBNMUzY5oXa8fdFGkO7p8sO7vMgeD833I44qo=;
- b=AuqVntTv/pJ1XpXbHnq2VCcFFjSFzp8YQGReqnpVtu603tLA+mBUU0m5KqcEqk6JmYJ08Iah8
- l8ibVCMzOI8CLTyOGxNZT/zlhKFSuNvujArmnhgdLttFCBz8QIopCOy
-X-Developer-Key: i=quic_vgarodia@quicinc.com; a=ed25519;
- pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Tr8chCXh c=1 sm=1 tr=0 ts=67d026de cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=hFD4c8h0E7I3NbZ52p0A:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: aHYC8eVWuiY_UtKzKoxIeA4tamtbLSl8
-X-Proofpoint-ORIG-GUID: aHYC8eVWuiY_UtKzKoxIeA4tamtbLSl8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_01,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 mlxlogscore=999 spamscore=0 lowpriorityscore=0
- mlxscore=0 clxscore=1015 phishscore=0 malwarescore=0 impostorscore=0
- bulkscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503110078
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ec38d41d-f2ce-4a98-bb02-d1ae9beb0b3b@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Add required compatible string to enable video hardware
-acceleration on sa8775p.
+On 25-03-10, Laurentiu Mihalcea wrote:
+> On 3/7/2025 5:22 PM, Marco Felsch wrote:
+> > On 25-03-04, Laurentiu Mihalcea wrote:
+> >> On 2/28/2025 12:19 PM, Marco Felsch wrote:
+> >>> Hi,
+> >>>
+> >>> On 25-02-27, Frank Li wrote:
+> >>>> On Thu, Feb 27, 2025 at 11:57:54AM +0100, Marc Kleine-Budde wrote:
+> >>>>> On 25.02.2025 16:14:34, Mihalcea Laurentiu wrote:
+> >>>>>> On 21.02.2025 21:56, Frank Li wrote:
+> >>>>>>> On Fri, Feb 21, 2025 at 02:19:08PM -0500, Laurentiu Mihalcea wrote:
+> >>>>>>>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> >>>>>>>>
+> >>>>>>>> AIPS5 is actually AIPSTZ5 as it offers some security-related
+> >>>>>>>> configurations. Since these configurations need to be applied before
+> >>>>>>>> accessing any of the peripherals on the bus, it's better to make AIPSTZ5
+> >>>>>>>> be their parent instead of keeping AIPS5 and adding a child node for
+> >>>>>>>> AIPSTZ5. Also, because of the security configurations, the address space
+> >>>>>>>> of the bus has to be changed to that of the configuration registers.
+> >>>>>>> The orginal 0x30c0_0000..0x31200000 include 0x30df0000, why not map only
+> >>>>>>> config address part in your drivers.
+> >>>>>>>
+> >>>>>>> Frank
+> >>>>>> Any concerns/anything wrong with current approach?
+> >>>>>>
+> >>>>>>
+> >>>>>> I find it a bit awkward to have the whole bus address space
+> >>>>>> in the DT given that we're only interested in using the access
+> >>>>>> controller register space.
+> >>>>>>
+> >>>>>>
+> >>>>>> I'm fine with the approach you suggested but I don't see a
+> >>>>>> reason for using it?
+> >>>>> Looking at the "AIPS5 Memory Map" (page 34/35 in i.MX 8M Plus
+> >>>>> Applications Processor Reference Manual, Rev. 3, 08/2024), the
+> >>>>> AIPS5_Configuration is part of the AIPS5 bus. IMHO the bus is something
+> >>>>> different than the bus configuration. Why not model it as part of the
+> >>>>> bus?
+> >>>>>
+> >>>>>>>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> >>>>>>>> index e0d3b8cba221..a1d9b834d2da 100644
+> >>>>>>>> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> >>>>>>>> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> >>>>>>>> @@ -1399,11 +1399,13 @@ eqos: ethernet@30bf0000 {
+> >>>>>>>>  			};
+> >>>>>>>>  		};
+> >>>>>>>>
+> >>>>>>>> -		aips5: bus@30c00000 {
+> >>>>>>>> -			compatible = "fsl,aips-bus", "simple-bus";
+> >>>>>>>> -			reg = <0x30c00000 0x400000>;
+> >>>>>>>> +		aips5: bus@30df0000 {
+> >>>>>                        ^^^^^^^^^^^^
+> >>>>>>>> +			compatible = "fsl,imx8mp-aipstz", "simple-bus";
+> >>>>>>>> +			reg = <0x30df0000 0x10000>;
+> >>>>>>>> +			power-domains = <&pgc_audio>;
+> >>>>>>>>  			#address-cells = <1>;
+> >>>>>>>>  			#size-cells = <1>;
+> >>>>>>>> +			#access-controller-cells = <0>;
+> >>>>>>>>  			ranges;
+> >>>>>>>>
+> >>>>>>>>  			spba-bus@30c00000 {
+> >>>>>                         ^^^^^^^^^^^^^^^^^
+> >>>>>
+> >>>>> This looks very strange: The aips5 bus starts at 0x30df0000 and has a
+> >>>>> child bus starting at 0x30c00000?
+> >>>> @30df0000 should match controller reg's address.
+> >>>>
+> >>>> subnode address 0x30c00000,  should be descript in "ranges", which 1:1 map.
+> >>>>
+> >>>> So it should be reasonable. another example:
+> >>>> i2c@1000 {
+> >>>>
+> >>>> 	device@1c <- which use difference address space.
+> >>>> }
+> >>>>
+> >>>> The similar case also happen at pcie.
+> >>> I'm not really convinced that pcie and i2c are good examples here. I2C
+> >>> does have an other addressing scheme by nature and the hotplug-able pcie
+> >>> is dependeds on the pcie device memory map of course.
+> >>>
+> >>> Here we're talking about an access control IP core on a bus which is
+> >>> static.
+> >>>
+> >>> But.. it looks like from DT abstraction it's fine because STM did
+> >>> something similiar with their st,stm32mp25-rifsc or st,stm32-etzpc
+> >>> albeit it does look strange and I don't know why we have to limit the
+> >>> address space since it was already mapped but used by the fsl,aips-bus
+> >>> driver.
+> >>>
+> >>> Regards,
+> >>>   Marco
+> >> The address space of the bridge was changed to that of the bridge's
+> >> configuration space because I think it's very awkward from the
+> >> software's point of view to have to hardcode the offset and size of
+> >> the configuration space inside the driver. 
+> > You mean the access-controller IP core. I could also arguee that it's
+> > akward to put the bridge access-controller IP core into the middle of
+> > the bridge address-space instead of placing it at the very beginning of
+> > the bridge. But this doesn't help here :)
+> >
+> > I see what you mean but from DT abstraction POV it seems more reasonable
+> > to keep it as it is and just adapt the compatible. The current driver
+> > maps the whole address space too, so I don't see why we need to change
+> > it if we change it to the aipstz driver. If you see the
+> > access-controller IP core as part of the bus I don't see any problem and
+> > would argue that the offset detail needs to be handled within the
+> > driver.
+> >
+> >> I also looked at what STM did with "st,stm32-etzpc" so I thought this
+> >> would be acceptable from the DT's POV.
+> >>
+> >> Regarding why I chose not to model the access controller part as a subnode of the
+> >> bus:
+> >>
+> >>     1) The access controller is part of the bridge itself (not a separate module accessible
+> >>     via the bridge like it's the case for its children) so I think the current approach
+> >>     should also make sense if we take the hardware into consideration.
+> > I don't like this approach if you see the controller as part of the
+> > bridge because the offset could be handled within the bridge driver.
+> > I also that the register offset needs to be supplied else we can't reuse
+> > the driver and we don't want to adapt the driver for each SoC.
+> >
+> > What came into my mind is the following:
+> >
+> > 	spba-bus@30c00000 {
+> > 		compatible = "nxp,imx8mp-aiptz-bus", "nxp,aiptz-bus";
+> > 		reg = <0x30c00000 0x400000>, <0x30df0000 0x10000>;
+> > 		reg-names = "bus", "aipstz";
+> >
+> > 		child-nodes {};
+> > 		child-nodes {};
+> > 		child-nodes {};
+> > 	}
+> >
+> > This way we can abstract the access-controller register space and the
+> > whole bus register space and a generic driver could be written just by
+> > making use two reg fields.
+> 
+> by changing the compatible, we've also effectively changed the
+> programming model.
 
-Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
----
- drivers/media/platform/qcom/iris/iris_probe.c | 4 ++++
- 1 file changed, 4 insertions(+)
+You need to keep the backward compatible which means, a new kernel have
+to boot an old dts (firmware), which is stil the case since the
+"simple-bus" driver sill matches on the old dts files.
 
-diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-index aca442dcc153830e6252d1dca87afb38c0b9eb8f..23c9e76a68013399b0fc1d68c1ccf0f8b0ddb037 100644
---- a/drivers/media/platform/qcom/iris/iris_probe.c
-+++ b/drivers/media/platform/qcom/iris/iris_probe.c
-@@ -324,6 +324,10 @@ static const struct of_device_id iris_dt_match[] = {
- 		.compatible = "qcom,sm8550-iris",
- 		.data = &sm8550_data,
- 	},
-+	{
-+		.compatible = "qcom,sa8775p-iris",
-+		.data = &sm8550_data,
-+	},
- #if (!IS_ENABLED(CONFIG_VIDEO_QCOM_VENUS))
- 		{
- 			.compatible = "qcom,sm8250-venus",
+But this doesn't mean that a new dts (firmware) have to be compatible
+with an old kernel.
 
--- 
-2.34.1
+> I don't really see why we need to stick to the old way of configuring
+> the bus node (i.e: specify the whole address space of the bus as well)
+> when all we really care about is the AC configuration region?
 
+I see and as I said it's just my oppinion that we should abstract it
+this way since upstream already accepted the approach you implemented
+for the STM32 case.
+
+If NXP would have placed the AC at the beginning of each AIPS bus you
+wouldn't need to deal with this problem too since you would have the
+base register already.
+
+> anyhow, I'm not going to insist on this. I think the proposed approach
+> will work just fine. If there's no other comments on this then I'll
+> just switch to it in V3.
+
+That would be nice but please wait for maintainers feedback e.g Shawn.
+
+Regards,
+  Marco
 
