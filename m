@@ -1,101 +1,117 @@
-Return-Path: <linux-kernel+bounces-557041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495FEA5D2CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:56:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28C2A5D2DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:01:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFCAB3B7640
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D23B3B5766
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5506522F177;
-	Tue, 11 Mar 2025 22:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664EC1DEFDC;
+	Tue, 11 Mar 2025 23:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OpwGlMr2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lj5wpzbV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1DC1C6FFD;
-	Tue, 11 Mar 2025 22:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A95125B9
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 23:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741733769; cv=none; b=gmvQfKBBFdGYU1ummM/ZGCBitIK8HZQlI1OdX1+PufGE6MX375oF+3c/7pBCr3qh3l1BxUXnB9O1Kfrg0XzJnXycHW5R/cF/DqXbTw07E3Wt6nzR5V+d+4ExYAbmkIzsGw4US+vAIERN03WsJtk872NLW2WSuZRsqB0Q2AIKQM4=
+	t=1741734054; cv=none; b=ZsfedLllL/Av1L9TT0X97sgh7BZYeDCUOal98/n/NehcNbMGIRkBsJabbvwtSnckGTrPbhgzZBjtNQVXBKitIrvm40OhyZ+eDNdl5YcCfTxabLRWJH9phfgv/UIrsyQsLi8E1JZHuGAtpv8j5dtMnty3TAZ8wvKsWLpsqGc7+sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741733769; c=relaxed/simple;
-	bh=XxAgClsxKPG2KmlxHQuyMZEpZ99q9TU35MBOea//jvI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wsaw/CbQvgLqRV+L74/qBHh/VrildJNSsGxzuUjpUCzAtzkD+lQR2kWg29c41Q6l76TSYyOsrue1mqxuo6lZ8yzFBorfksRuGgNNxP8wY69cZ6fP3V5oQkmi4BwnXODPWvwa3nd7qV4JVrp7M0x3pTA7CJ3v2Rty+M2CvjvClp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OpwGlMr2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E3B1C4CEE9;
-	Tue, 11 Mar 2025 22:56:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741733769;
-	bh=XxAgClsxKPG2KmlxHQuyMZEpZ99q9TU35MBOea//jvI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OpwGlMr26zqb+vRuXVzpw/FhE32HmjpQdcf8hOvnFr1s3CM/ZiibCT748ozyLeDlZ
-	 YWMbSf1ihwQ0DhefwJV7k/AZfkn0EKGpUh2ZAP1H4Gsj4jVhuQX3r3YwzGGKcuLi4F
-	 aAU/RxrsXGgb63p6oANUx1h0kXPpk7HpPiBtmf3dhOxhlEOivSIT1boAe2gF809QY4
-	 WvCnG/YR23Uy2zZnP+D7HkacUOKzxgLoirHQD1ec8ot7hW8dsej++8mC+K5W2UBKt4
-	 rO2H1a2iZ+D6cITFrX7mbh5XW45fLSW+i5jgn6kbBWSC2yw61laOgGMzfv0ykIs6j5
-	 fJB1tSwE3GHfg==
-From: Kees Cook <kees@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Kees Cook <kees@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	En-Wei Wu <en-wei.wu@canonical.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2] wifi: virt_wifi: Add __nonstring annotations for unterminated strings
-Date: Tue, 11 Mar 2025 15:56:05 -0700
-Message-Id: <20250311225604.it.926-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741734054; c=relaxed/simple;
+	bh=fpP5lJazepeksDoS0wu0HdSV37w5EWa/PsQulq7Kv0k=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=AWyrVuiStV5PPpqkDN+VqbSDBkC+AZdtortgrlkOIkrDf8nLskW24mfVaGBszCAtD9oUk4hBkTagHsl1STSY32uh08Uu7rQxcxesoVgoLwcLcasK4WsQ+DSojiKC6/++4wlGDC1OF/Ama4jOa14qtnR/qsGy4raMNjmxRhzoouY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lj5wpzbV; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741734053; x=1773270053;
+  h=date:from:to:cc:subject:message-id;
+  bh=fpP5lJazepeksDoS0wu0HdSV37w5EWa/PsQulq7Kv0k=;
+  b=Lj5wpzbVOpgXVlxMaP3Q4j6U81uANxq4TDSIUT9S44VfDupJWAEzlMNJ
+   e+DVNrsSARlnH5ZdHFW3l68BDTib2qpyiclAD5wDzZuUElPygms5yBoNF
+   LQ5h7L5KkTjNVKEpyKa+GSaTpZPdMHXRwMFU8fHEG9CoZBDFzIyOQ8qwD
+   /5jB0xNAEdNYIhkB6QR5R7y4tbgEHjVuqQ0r7XhgtSh0e006ia03CMn34
+   gQBrfygetWFWH0+bfvl2jydXmUY5fmU76Ah5/pNnY3nG9lydxBBtazOD3
+   3EQRp+GrWbQLnbo3/s6dDcNjYhIqj2JS2VYVMkFA8j74Bs/4f2ItAUQmO
+   A==;
+X-CSE-ConnectionGUID: QiEYVXoiTnS/av8ROZNmyQ==
+X-CSE-MsgGUID: 2ZwR3JQATHCTRKYvTetxBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="53436687"
+X-IronPort-AV: E=Sophos;i="6.14,240,1736841600"; 
+   d="scan'208";a="53436687"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 16:00:52 -0700
+X-CSE-ConnectionGUID: rxGCKTYXRKiVY8XRrr2JfQ==
+X-CSE-MsgGUID: IAVQjk2wRgWxDP8OQNdn/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,240,1736841600"; 
+   d="scan'208";a="151420639"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 11 Mar 2025 16:00:51 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ts8aE-0007vK-2d;
+	Tue, 11 Mar 2025 23:00:30 +0000
+Date: Wed, 12 Mar 2025 06:59:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:timers/vdso] BUILD SUCCESS
+ 652262975db421767ada3f05b926854bbb357759
+Message-ID: <202503120642.uX1t7sNK-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1357; i=kees@kernel.org; h=from:subject:message-id; bh=XxAgClsxKPG2KmlxHQuyMZEpZ99q9TU35MBOea//jvI=; b=owGbwMvMwCVmps19z/KJym7G02pJDOkX9rf0fvk/9XYCx74v2Vv8Z1yoVPdSKC8XjVG9HCcbu bnMTPl5RykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwER2XmP4p2a1y16mc45/5c1P p7+o523NY+G0/hrAuvNX66uqZ9tvrGP4X/qNiWnaaz89iR0Py2L+VmpaSS2wNv0w48juPcb3tOf uZAYA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
 
-When a character array without a terminating NUL character has a static
-initializer, GCC 15's -Wunterminated-string-initialization will only
-warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
-with __nonstring to and correctly identify the char array as "not a C
-string" and thereby eliminate the warning.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/vdso
+branch HEAD: 652262975db421767ada3f05b926854bbb357759  sparc/vdso: Always reject undefined references during linking
 
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
----
- v1: https://lore.kernel.org/lkml/20250310222318.work.395-kees@kernel.org/
- v2: correctly split and fix subject
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: En-Wei Wu <en-wei.wu@canonical.com>
-Cc: Kalle Valo <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org
----
- drivers/net/wireless/virtual/virt_wifi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+elapsed time: 759m
 
-diff --git a/drivers/net/wireless/virtual/virt_wifi.c b/drivers/net/wireless/virtual/virt_wifi.c
-index 4ee374080466..fc122b79301a 100644
---- a/drivers/net/wireless/virtual/virt_wifi.c
-+++ b/drivers/net/wireless/virtual/virt_wifi.c
-@@ -146,7 +146,7 @@ static void virt_wifi_inform_bss(struct wiphy *wiphy)
- 	static const struct {
- 		u8 tag;
- 		u8 len;
--		u8 ssid[8];
-+		u8 ssid[8] __nonstring;
- 	} __packed ssid = {
- 		.tag = WLAN_EID_SSID,
- 		.len = VIRT_WIFI_SSID_LEN,
--- 
-2.34.1
+configs tested: 25
+configs skipped: 97
 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+i386                          allmodconfig    gcc-12
+i386                           allnoconfig    gcc-12
+i386                          allyesconfig    gcc-12
+i386     buildonly-randconfig-001-20250311    gcc-12
+i386     buildonly-randconfig-002-20250311    clang-19
+i386     buildonly-randconfig-003-20250311    clang-19
+i386     buildonly-randconfig-004-20250311    clang-19
+i386     buildonly-randconfig-005-20250311    clang-19
+i386     buildonly-randconfig-006-20250311    gcc-11
+i386                             defconfig    clang-19
+sparc                         allmodconfig    gcc-14.2.0
+sparc                          allnoconfig    gcc-14.2.0
+sparc              randconfig-001-20250311    gcc-14.2.0
+sparc              randconfig-002-20250311    gcc-14.2.0
+sparc64            randconfig-001-20250311    gcc-14.2.0
+sparc64            randconfig-002-20250311    gcc-14.2.0
+x86_64                         allnoconfig    clang-19
+x86_64                        allyesconfig    clang-19
+x86_64   buildonly-randconfig-001-20250311    gcc-12
+x86_64   buildonly-randconfig-002-20250311    gcc-12
+x86_64   buildonly-randconfig-003-20250311    clang-19
+x86_64   buildonly-randconfig-004-20250311    clang-19
+x86_64   buildonly-randconfig-005-20250311    gcc-12
+x86_64   buildonly-randconfig-006-20250311    gcc-12
+x86_64                           defconfig    gcc-11
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
