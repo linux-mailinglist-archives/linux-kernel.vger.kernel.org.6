@@ -1,239 +1,301 @@
-Return-Path: <linux-kernel+bounces-556261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFF4AA5C345
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:07:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A096A5C346
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:08:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B786C3A8880
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:07:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065073A907D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4768C25B675;
-	Tue, 11 Mar 2025 14:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="FqUZnOD1"
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27E325B666;
+	Tue, 11 Mar 2025 14:08:40 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315431C5F3B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BE31C07D9;
+	Tue, 11 Mar 2025 14:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741702045; cv=none; b=pltyOiHSwmbupQtvq7mShqua92JfP6VylOWsihjzBVYvFL1TVE7ywnn0t3xRumfDLFC82+yj3cBFo/EJV/j1pGHZPU8OQYTVqlycJLxKv2In0MU8dkmJFB0An2K3UacKBL4h/rd+CALGqcX5tN76yh+rJjW1a+/LxpugJNiOS0A=
+	t=1741702120; cv=none; b=k7MdShw1k8QDLXx+CXbrbAvS5tslCCUOX88Hp13/aHU/8EK2q2kKhKSChHYhk2ZRuE7qI5J7By5MAwuAiPQaiFcqVTw2ekblw3jo9ZtcthNh0UOCkFmWqCjXO6E/o+LtWCvBfOvUmCwT2F92vh9/hcRACZ7bI4fLwKp1iZv2MaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741702045; c=relaxed/simple;
-	bh=zuVi/E1Al6TUmc/+jkkv6LNyuS+TtK/JPKUr/5q7Lmw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AYGhfFb+71Q5NMopkKeTTCtg+cjCPetmS7iYwOB6N21KT0V+LbyDYxTFy8ciAMJm2HP4oxbXnjz1mjxVkB49bIMTojTuXzz8ofWbJwZGAKX6BDFEZswoG7jTgCleLW3eFXbDbCjk5cc6IZtXjoKMrXYFEji1tE8b7lFZQRi7alM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=FqUZnOD1; arc=none smtp.client-ip=185.136.65.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20250311140717c686fd8abedf1372fb
-        for <linux-kernel@vger.kernel.org>;
-        Tue, 11 Mar 2025 15:07:17 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=felix.moessbauer@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=W7gdTvCCbDeK3IYfYXUgbt4+QqIUYRanJjLcRGdDaGM=;
- b=FqUZnOD19JNRvztWfWX4fNsOIeGHvkLNDFvhMuUsFZdA4HJOT8ed7nV4n8k2XSXSE/UeY3
- XBN0MOgVtQAnCWf2y4JFOow+qjrzPyDk7oh+iXRDgJvlMqLMN4F1d32OKrzSF29jAXKbEnrw
- rmNDjoDXENRajJyx8mJPHztSFon5AWjBsbMqZ+rrMHxmUbabNf9LSqoBMIRJtqd986ep4Jxk
- edu67kdMlFI+j7JwtQ1iTpUW3VrxmiCiii2AKnQaQY4cRQec2NXc3b6x9oYkXYmywVxn77FX
- +WJrAGjy9tuWYV5ZDrO8I+QXbeIW8vjgdZrfAOefwPIa+tyWHl0bkVJw==;
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
-To: stable@vger.kernel.org
-Cc: Felix Moessbauer <felix.moessbauer@siemens.com>,
-	linux-kernel@vger.kernel.org,
-	tglx@linutronix.de,
-	qyousef@layalina.io,
-	frederic@kernel.org,
-	jan.kiszka@siemens.com,
-	bigeasy@linutronix.de,
-	anna-maria@linutronix.de
-Subject: [PATCH 6.1.y 1/1] hrtimer: Use and report correct timerslack values for realtime tasks
-Date: Tue, 11 Mar 2025 15:07:05 +0100
-Message-ID: <20250311140706.435615-1-felix.moessbauer@siemens.com>
+	s=arc-20240116; t=1741702120; c=relaxed/simple;
+	bh=/0aJfE3w+ZRG+dTjYxqTqSTxFVwN+j1mMW6vC7nALZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l3z3/tQqyqP+FMQgUjGuRufIIbtjOp0ifm9oAHNpQ66BNZDOYG8R9bwvNgyeZ+iI5QHXb8j2ln6Vds4DOACMD6NKPINqW51PGylonjm3fuZJnZ2K0HZK8yv18cbodWHA504LjE455oZBQINwVkFhVM0eDXpGyRsN1iNdPs/hMGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8C7DC4CEE9;
+	Tue, 11 Mar 2025 14:08:38 +0000 (UTC)
+Date: Tue, 11 Mar 2025 10:08:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v3] tracing: Show last module text symbols in the
+ stacktrace
+Message-ID: <20250311100832.747b3b83@batman.local.home>
+In-Reply-To: <174161444691.1063601.16690699136628689205.stgit@devnote2>
+References: <174161444691.1063601.16690699136628689205.stgit@devnote2>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1321639:519-21489:flowmailer
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-commit ed4fb6d7ef68111bb539283561953e5c6e9a6e38 upstream.
+On Mon, 10 Mar 2025 22:47:27 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
-The timerslack_ns setting is used to specify how much the hardware
-timers should be delayed, to potentially dispatch multiple timers in a
-single interrupt. This is a performance optimization. Timers of
-realtime tasks (having a realtime scheduling policy) should not be
-delayed.
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Since the previous boot trace buffer can include module text address in
+> the stacktrace. As same as the kernel text address, convert the module
+> text address using the module address information.
+> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  Changes in v3:
+>   - Move module_delta to trace_scratch data structure.
+>   - Remove LRU based removed module information.
+> ---
+>  kernel/trace/trace.c        |   99 +++++++++++++++++++++++++++++++++++++++++--
+>  kernel/trace/trace.h        |    2 +
+>  kernel/trace/trace_output.c |    4 +-
+>  3 files changed, 98 insertions(+), 7 deletions(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index c3c79908766e..0c1aa1750077 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -49,6 +49,7 @@
+>  #include <linux/fsnotify.h>
+>  #include <linux/irq_work.h>
+>  #include <linux/workqueue.h>
+> +#include <linux/sort.h>
+>  
+>  #include <asm/setup.h> /* COMMAND_LINE_SIZE and kaslr_offset() */
+>  
+> @@ -5996,11 +5997,41 @@ struct trace_mod_entry {
+>  struct trace_scratch {
+>  	unsigned long		kaslr_addr;
+>  	unsigned long		nr_entries;
+> +	long			*module_delta;
 
-This logic was inconsitently applied to the hrtimers, leading to delays
-of realtime tasks which used timed waits for events (e.g. condition
-variables). Due to the downstream override of the slack for rt tasks,
-the procfs reported incorrect (non-zero) timerslack_ns values.
+Why are we adding this pointer into the persistent memory when it is
+useless after a crash?
 
-This is changed by setting the timer_slack_ns task attribute to 0 for
-all tasks with a rt policy. By that, downstream users do not need to
-specially handle rt tasks (w.r.t. the slack), and the procfs entry
-shows the correct value of "0". Setting non-zero slack values (either
-via procfs or PR_SET_TIMERSLACK) on tasks with a rt policy is ignored,
-as stated in "man 2 PR_SET_TIMERSLACK":
+>  	struct trace_mod_entry	entries[];
+>  };
+>  
+>  static DEFINE_MUTEX(scratch_mutex);
+>  
+> +/**
+> + * trace_adjust_address() - Adjust prev boot address to current address.
+> + * @tr: Persistent ring buffer's trace_array.
+> + * @addr: Address in @tr which is adjusted.
+> + */
+> +unsigned long trace_adjust_address(struct trace_array *tr, unsigned long addr)
+> +{
+> +	struct trace_scratch *tscratch;
+> +	long *module_delta;
+> +	int i;
+> +
+> +	/* If we don't have last boot delta, return the address */
+> +	if (!(tr->flags & TRACE_ARRAY_FL_LAST_BOOT))
+> +		return addr;
+> +
+> +	tscratch = tr->scratch;
+> +	module_delta = READ_ONCE(tscratch->module_delta);
+> +	if (!tscratch || !tscratch->nr_entries || !module_delta ||
 
-  Timer slack is not applied to threads that are scheduled under a
-  real-time scheduling policy (see sched_setscheduler(2)).
+You shouldn't have a !tscratch test just after dereferencing it:
 
-The special handling of timerslack on rt tasks in downstream users
-is removed as well.
+		tscratch->module_delta
 
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240814121032.368444-2-felix.moessbauer@siemens.com
----
- fs/proc/base.c        |  9 +++++----
- fs/select.c           | 11 ++++-------
- kernel/sched/core.c   |  8 ++++++++
- kernel/sys.c          |  2 ++
- kernel/time/hrtimer.c | 18 +++---------------
- 5 files changed, 22 insertions(+), 26 deletions(-)
+Perhaps have it be:
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ecc45389ea793..82e4a8805bae6 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2633,10 +2633,11 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
- 	}
- 
- 	task_lock(p);
--	if (slack_ns == 0)
--		p->timer_slack_ns = p->default_timer_slack_ns;
--	else
--		p->timer_slack_ns = slack_ns;
-+	if (task_is_realtime(p))
-+		slack_ns = 0;
-+	else if (slack_ns == 0)
-+		slack_ns = p->default_timer_slack_ns;
-+	p->timer_slack_ns = slack_ns;
- 	task_unlock(p);
- 
- out:
-diff --git a/fs/select.c b/fs/select.c
-index 3f730b8581f65..e66b6189845ea 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -77,19 +77,16 @@ u64 select_estimate_accuracy(struct timespec64 *tv)
- {
- 	u64 ret;
- 	struct timespec64 now;
-+	u64 slack = current->timer_slack_ns;
- 
--	/*
--	 * Realtime tasks get a slack of 0 for obvious reasons.
--	 */
--
--	if (rt_task(current))
-+	if (slack == 0)
- 		return 0;
- 
- 	ktime_get_ts64(&now);
- 	now = timespec64_sub(*tv, now);
- 	ret = __estimate_accuracy(&now);
--	if (ret < current->timer_slack_ns)
--		return current->timer_slack_ns;
-+	if (ret < slack)
-+		return slack;
- 	return ret;
- }
- 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 0a483fd9f5de5..9be8a509b5f3f 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7380,6 +7380,14 @@ static void __setscheduler_params(struct task_struct *p,
- 	else if (fair_policy(policy))
- 		p->static_prio = NICE_TO_PRIO(attr->sched_nice);
- 
-+	/* rt-policy tasks do not have a timerslack */
-+	if (task_is_realtime(p)) {
-+		p->timer_slack_ns = 0;
-+	} else if (p->timer_slack_ns == 0) {
-+		/* when switching back to non-rt policy, restore timerslack */
-+		p->timer_slack_ns = p->default_timer_slack_ns;
-+	}
-+
- 	/*
- 	 * __sched_setscheduler() ensures attr->sched_priority == 0 when
- 	 * !rt_policy. Always setting this ensures that things like
-diff --git a/kernel/sys.c b/kernel/sys.c
-index d06eda1387b69..06a9a87a8d3e0 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2477,6 +2477,8 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 			error = current->timer_slack_ns;
- 		break;
- 	case PR_SET_TIMERSLACK:
-+		if (task_is_realtime(current))
-+			break;
- 		if (arg2 <= 0)
- 			current->timer_slack_ns =
- 					current->default_timer_slack_ns;
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 8db65e2db14c7..f6d799646dd9c 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -2090,14 +2090,9 @@ long hrtimer_nanosleep(ktime_t rqtp, const enum hrtimer_mode mode,
- 	struct restart_block *restart;
- 	struct hrtimer_sleeper t;
- 	int ret = 0;
--	u64 slack;
--
--	slack = current->timer_slack_ns;
--	if (dl_task(current) || rt_task(current))
--		slack = 0;
- 
- 	hrtimer_init_sleeper_on_stack(&t, clockid, mode);
--	hrtimer_set_expires_range_ns(&t.timer, rqtp, slack);
-+	hrtimer_set_expires_range_ns(&t.timer, rqtp, current->timer_slack_ns);
- 	ret = do_nanosleep(&t, mode);
- 	if (ret != -ERESTART_RESTARTBLOCK)
- 		goto out;
-@@ -2278,7 +2273,7 @@ void __init hrtimers_init(void)
- /**
-  * schedule_hrtimeout_range_clock - sleep until timeout
-  * @expires:	timeout value (ktime_t)
-- * @delta:	slack in expires timeout (ktime_t) for SCHED_OTHER tasks
-+ * @delta:	slack in expires timeout (ktime_t)
-  * @mode:	timer mode
-  * @clock_id:	timer clock to be used
-  */
-@@ -2305,13 +2300,6 @@ schedule_hrtimeout_range_clock(ktime_t *expires, u64 delta,
- 		return -EINTR;
- 	}
- 
--	/*
--	 * Override any slack passed by the user if under
--	 * rt contraints.
--	 */
--	if (rt_task(current))
--		delta = 0;
--
- 	hrtimer_init_sleeper_on_stack(&t, clock_id, mode);
- 	hrtimer_set_expires_range_ns(&t.timer, *expires, delta);
- 	hrtimer_sleeper_start_expires(&t, mode);
-@@ -2331,7 +2319,7 @@ EXPORT_SYMBOL_GPL(schedule_hrtimeout_range_clock);
- /**
-  * schedule_hrtimeout_range - sleep until timeout
-  * @expires:	timeout value (ktime_t)
-- * @delta:	slack in expires timeout (ktime_t) for SCHED_OTHER tasks
-+ * @delta:	slack in expires timeout (ktime_t)
-  * @mode:	timer mode
-  *
-  * Make the current task sleep until the given expiry time has
--- 
-2.47.2
+	module_delta = tscratch ? READ_ONCE(tscratch->module_delta) : 0;
+	if (!module_delta || !tscratch->nr_entries || tscratch->entries[0].mod_addr > addr)
 
+
+> +	    tscratch->entries[0].mod_addr > addr)
+> +		return addr + tr->text_delta;
+> +
+> +	/* Note that entries must be sorted. */
+> +	for (i = 0; i < tscratch->nr_entries; i++)
+> +		if (addr < tscratch->entries[i].mod_addr)
+> +			break;
+
+If we are bother sorting it, why not do a binary search here?
+
+> +
+> +	return addr + module_delta[i - 1];
+> +}
+> +
+>  static int save_mod(struct module *mod, void *data)
+>  {
+>  	struct trace_array *tr = data;
+> @@ -6029,6 +6060,7 @@ static int save_mod(struct module *mod, void *data)
+>  static void update_last_data(struct trace_array *tr)
+>  {
+>  	struct trace_scratch *tscratch;
+> +	long *module_delta;
+>  
+>  	if (!(tr->flags & TRACE_ARRAY_FL_BOOT))
+>  		return;
+> @@ -6063,6 +6095,8 @@ static void update_last_data(struct trace_array *tr)
+>  		return;
+>  
+>  	tscratch = tr->scratch;
+> +	module_delta = READ_ONCE(tscratch->module_delta);
+> +	WRITE_ONCE(tscratch->module_delta, NULL);
+>  
+>  	/* Set the persistent ring buffer meta data to this address */
+>  #ifdef CONFIG_RANDOMIZE_BASE
+> @@ -6071,6 +6105,8 @@ static void update_last_data(struct trace_array *tr)
+>  	tscratch->kaslr_addr = 0;
+>  #endif
+>  	tr->flags &= ~TRACE_ARRAY_FL_LAST_BOOT;
+> +
+> +	kfree(module_delta);
+>  }
+>  
+>  /**
+> @@ -9342,10 +9378,43 @@ static struct dentry *trace_instance_dir;
+>  static void
+>  init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer);
+>  
+> +static int make_mod_delta(struct module *mod, void *data)
+> +{
+> +	struct trace_scratch *tscratch;
+> +	struct trace_mod_entry *entry;
+> +	struct trace_array *tr = data;
+> +	long *module_delta;
+> +	int i;
+> +
+> +	tscratch = tr->scratch;
+> +	module_delta = READ_ONCE(tscratch->module_delta);
+> +	for (i = 0; i < tscratch->nr_entries; i++) {
+> +		entry = &tscratch->entries[i];
+> +		if (!strcmp(mod->name, entry->mod_name)) {
+> +			if (mod->state == MODULE_STATE_GOING)
+> +				module_delta[i] = 0;
+> +			else
+> +				module_delta[i] = (unsigned long)mod->mem[MOD_TEXT].base
+> +						 - entry->mod_addr;
+> +			break;
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int mod_addr_comp(const void *a, const void *b, const void *data)
+> +{
+> +	const struct trace_mod_entry *e1 = a;
+> +	const struct trace_mod_entry *e2 = b;
+> +
+> +	return e1->mod_addr > e2->mod_addr ? 1 : -1;
+> +}
+> +
+>  static void setup_trace_scratch(struct trace_array *tr,
+>  				struct trace_scratch *tscratch, unsigned int size)
+>  {
+>  	struct trace_mod_entry *entry;
+> +	int i, nr_entries;
+>  
+>  	if (!tscratch)
+>  		return;
+> @@ -9362,7 +9431,7 @@ static void setup_trace_scratch(struct trace_array *tr,
+>  		goto reset;
+>  
+>  	/* Check if each module name is a valid string */
+> -	for (int i = 0; i < tscratch->nr_entries; i++) {
+> +	for (i = 0; i < tscratch->nr_entries; i++) {
+>  		int n;
+>  
+>  		entry = &tscratch->entries[i];
+> @@ -9376,6 +9445,21 @@ static void setup_trace_scratch(struct trace_array *tr,
+>  		if (n == MODULE_NAME_LEN)
+>  			goto reset;
+>  	}
+> +
+> +	nr_entries = i;
+> +	tscratch->module_delta = kcalloc(nr_entries, sizeof(long), GFP_KERNEL);
+> +	if (!tscratch->module_delta) {
+> +		pr_info("module_delta allocation failed. Not able to decode module address.");
+> +		goto reset;
+> +	}
+> +
+> +	/* Sort the entries so that we can find appropriate module from address. */
+> +	sort_r(tscratch->entries, nr_entries, sizeof(struct trace_mod_entry),
+> +	       mod_addr_comp, NULL, NULL);
+> +
+> +	/* Scan modules to make text delta for modules. */
+> +	module_for_each_mod(make_mod_delta, tr);
+> +
+>  	return;
+>   reset:
+>  	/* Invalid trace modules */
+> @@ -10101,19 +10185,23 @@ static bool trace_array_active(struct trace_array *tr)
+>  	return trace_events_enabled(tr, NULL) > 1;
+>  }
+>  
+> -static void trace_module_record(struct module *mod)
+> +static void trace_module_record(struct module *mod, bool remove)
+>  {
+>  	struct trace_array *tr;
+> +	unsigned long flags;
+>  
+>  	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
+> +		flags = tr->flags & (TRACE_ARRAY_FL_BOOT | TRACE_ARRAY_FL_LAST_BOOT);
+>  		/* Update any persistent trace array that has already been started */
+> -		if ((tr->flags & (TRACE_ARRAY_FL_BOOT | TRACE_ARRAY_FL_LAST_BOOT)) ==
+> -		    TRACE_ARRAY_FL_BOOT) {
+> +		if (flags == TRACE_ARRAY_FL_BOOT && !remove) {
+
+Can you rename the parameter from "remove" to "add" so we don't have a
+double negative.
+
+		if (flags == TRACE_ARRAY_FL_BOOT && add) {
+
+
+>  			/* Only update if the trace array is active */
+>  			if (trace_array_active(tr)) {
+>  				guard(mutex)(&scratch_mutex);
+>  				save_mod(mod, tr);
+>  			}
+> +		} else if (flags & TRACE_ARRAY_FL_LAST_BOOT) {
+> +			/* Update delta if the module loaded in previous boot */
+> +			make_mod_delta(mod, tr);
+>  		}
+>  	}
+>  }
+> @@ -10126,10 +10214,11 @@ static int trace_module_notify(struct notifier_block *self,
+>  	switch (val) {
+>  	case MODULE_STATE_COMING:
+>  		trace_module_add_evals(mod);
+> -		trace_module_record(mod);
+> +		trace_module_record(mod, false);
+
+		trace_module_record(mod, true);
+
+>  		break;
+>  	case MODULE_STATE_GOING:
+>  		trace_module_remove_evals(mod);
+> +		trace_module_record(mod, true);
+
+		trace_module_record(mod, false);
+
+>  		break;
+>  	}
+>  
+>
+
+-- Steve
 
