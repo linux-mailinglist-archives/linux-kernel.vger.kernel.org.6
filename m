@@ -1,153 +1,104 @@
-Return-Path: <linux-kernel+bounces-556397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26496A5C6A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:27:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96EB1A5C674
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3CEB3BB4DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:21:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DFAE189F47D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063E91EA80;
-	Tue, 11 Mar 2025 15:21:02 +0000 (UTC)
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04BF25E83D;
+	Tue, 11 Mar 2025 15:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pViIHUx/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NLb9GsqO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C038A25EFB4;
-	Tue, 11 Mar 2025 15:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B19C25E83C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741706461; cv=none; b=tS7V0uhZV9XrgzUldNVyZM+uGB6n8QmtJbwXJY5/3IchgDnnangaM4dVZZrk4PCP4mPmCp/+gx8M2W5I6+h0WknWwfyb/nS/YCRJFxxoN+yXQmmJmzMLNcc96AXCHW1pR48O/EH4sICiGMlNc5i7ZYOIkdgiWyP0JGpOdbe4zzA=
+	t=1741706451; cv=none; b=u3HipaZtddGwdflXeW1DTCJ8ikIw5Eh4MXBDFsq0yjWKK6l2g0FJpkIgL3GYxBqyhIV04nu714WDHmxgaAou0/+qzMRVoN0T4bRfpUKa8OXqgkswwIaQq7wakR92NgXrPBGx0zW9gJsT9nIy08a8jDuHShg7lnQCP6yuSAwdU4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741706461; c=relaxed/simple;
-	bh=PN02Sl/bF+57BkEv8uEA5QsYCHO1zi9p/ej9QStXJq0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N1go4vh7/Serl9D2yZG7vcT/yklg23fs1/Fe/3Kg3c8Soudx9BZ6EE3yQvdPuWCp4mPAatX8WhNGz2/Teze2De/6bgxzrvATnlf7J23jkVBkFqrA+32AalOi91pjUFqTd6BAaJrcExoUPELuCSP9NReR/r2Cm7qGX1R3TOmV5hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c081915cf3so744970185a.1;
-        Tue, 11 Mar 2025 08:20:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741706457; x=1742311257;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rAZ5WY/+AZg82voxgpoZA7Yb7kIn6Uh4GFZ7o1KdBUg=;
-        b=c4sw7Ua2t6FSY7WpygwPenC+5OyV0Z/Mj7xJ2jkwYV4Ey+9bc0GNgQtiSer1hjSpKv
-         YANXw/QjQFHNyrD55LRFckneFX+z9HbLVUSznVONVUaIBnI1IXZ5kVMxNjd/lax3h60l
-         QrpCYa7MkcXRFWU1es3mw1NiAs7tMopw7vcQIlJp2g5i2EvPO19YoBkeunKC8KS6gGxD
-         mBzFZuraR3rvuSPcMQ7Dyb/Law7SDhRgDvBbLtXpNouog0kgjdv1y4wC1RjGwmW/dHS6
-         Afx4jDU1WdMrR1BmY+Cq5u4bNkA17g9mncFLL1NCs+qaIGF60LWY6pgDwk1mF6BAeFwS
-         dMAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzL5PRbZqvZDw3zvmv0oh5Wtuhvi3sgMY5OOxGNMmtsnmonp9BMR+I9kfVXnj0fZ5wsW2HLjGBuabFe0I=@vger.kernel.org, AJvYcCXiIlrTyuo/T7onpv3i6O06XCe3o6zjmpJBOdEmePy8bb3A7J1ytwDk98ZbCXE0lAbVb/5FqJxq0kxfXT7OGaIcCXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq/dcW7B7VmzuTLr2AT7glXjS3V+sHhJxjgJffRivUEeIZEj8J
-	LxbD9s9hwkrRgNDOyVb2bprTK4FANh5xIn37ttCVvc/IAqGndEuYh/XXFWJ9
-X-Gm-Gg: ASbGncsFgEyZWPccvbctRnPCYyfYwRCnobUVRGhexWOR3tCQ63otLLmQARX65QjD8vt
-	0Q4WAPyc0KGjyL/BYlBbecbrY7LmkKfzMEMu6VddckGl7L1OzDP3eMaJ2v++rjBRIxei1MI6PPu
-	HorX84/vWeNDBAHeP4HvxvMpWFCP4p3355wXyeh9NE/GyGvX5Ftaf5+rrL9/irmXxrPloidRgrY
-	0++lVFIB8nxo3t3NnrNUS1cf5jOOONzsrrnorIaMJ23LotHTGnSwt5aGiR5/FqxMPkvyAxqaEZD
-	Y1fvizQVnInqM899JCfSXS26+DNLiHh77bmMnn9JDandBjQ8kDCUOVlm51y+J0FRGce1+4bYvim
-	Z+gbJJB/Ofz+EsIN9PhZREw==
-X-Google-Smtp-Source: AGHT+IGsH5SOIyP/cdE9RbED1AzzwX7YN+i3LTiqbGYcXsmnm1O16pwj+TCPHgNr2hATP5sRtX+WQg==
-X-Received: by 2002:a05:620a:6501:b0:7c5:59a6:bad7 with SMTP id af79cd13be357-7c559a6bc8bmr772782385a.17.1741706457499;
-        Tue, 11 Mar 2025 08:20:57 -0700 (PDT)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com. [209.85.222.181])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c54b916f6bsm428129785a.30.2025.03.11.08.20.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 08:20:56 -0700 (PDT)
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c0155af484so768399585a.0;
-        Tue, 11 Mar 2025 08:20:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXdvlemPCfvXV19CZELaxiURp6KeW4XjXdZuOIdIA9avPTIv+bcUsBwZRME1tzdc01SgjZSYsN9VIcaUSqjATgRiNs=@vger.kernel.org, AJvYcCXjvBnsLK9eb+VzmTRMSXpzWWdOumzaqkbTi5Re+d8QPJnwGjirsXRFhwTCXQiRFZNJmG1AH1S3wyXK9S4=@vger.kernel.org
-X-Received: by 2002:a05:620a:2581:b0:7c0:c046:7c6b with SMTP id
- af79cd13be357-7c4e61ed9cfmr2913292885a.53.1741706456479; Tue, 11 Mar 2025
- 08:20:56 -0700 (PDT)
+	s=arc-20240116; t=1741706451; c=relaxed/simple;
+	bh=GcpDziY8qOx5YRGLqb/cRimpWOxsaBJxO50EW31p4Uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EpE9evYo6nH3rq4BTKFCYALWmkEWHKMU83Zyg0Pu9y+H35z9mBD9WO5yuBJJrjGzmChFydgfYU0AXQeJ/nKHsnIgSXSDK912AYH/PZhGwDI7Bjmb+LLI+5kyLbig7te9FGoMGMn/p37EFmgUT2/7uapoDSA3ywE6AXqYKSNe0Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pViIHUx/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NLb9GsqO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 11 Mar 2025 16:20:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741706447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P3XptVuc2m+IYwJb7oAfuU9ofUsI8DrSGL83HXUys58=;
+	b=pViIHUx/PXR4ILaNIa49JfY6VcD6xzYOVdhna8+OLpTUvavL0V3tBmjRI05zo8r7z8BUl5
+	labnMkOe+X0h1cOXoSLlUlCl/VNOuDzy7UFVmc+fqjT+7eDNoSF4VTuxkJKxG8Mt9ACd2c
+	Gw/JuFSkmfSrpbBztMjxDQI4+rJIa0CFr7w+MOfkTAnj79aU9IzZGgCk4XYCk4ly4iQu18
+	7litSp7JgNkMw9GZhXaGT3OjKmXJfCeV90CebNZj/9U91Nj9dAtL8OWWhNqRbZFbyhQzQM
+	fTiIPabXKpfmGoeAGbsZh7gl/ESohygwnfO+p2W2SJYsClOXIo96t/BP26kKPA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741706447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P3XptVuc2m+IYwJb7oAfuU9ofUsI8DrSGL83HXUys58=;
+	b=NLb9GsqOM3nhQShsrIH6WN16qfcSURgMvLlVDXjT0iKgqtbHoxfPZJiGeYxjTr9yc2vfXK
+	mB2LMjuyeSFw+kDw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v9 00/11] futex: Add support task local hash maps.
+Message-ID: <20250311152045.AqadBOG9@linutronix.de>
+References: <20250225170914.289358-1-bigeasy@linutronix.de>
+ <20250303105416.GY11590@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c499234d559a0d95ad9472883e46077311051cd8.1741612208.git.geert+renesas@glider.be>
- <CA+V-a8tGuxgan7Zx0YedSByfFSgrg5gmR6Fy3dMDXwU+TscZzg@mail.gmail.com>
-In-Reply-To: <CA+V-a8tGuxgan7Zx0YedSByfFSgrg5gmR6Fy3dMDXwU+TscZzg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 11 Mar 2025 16:20:44 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWXcRoqKz6S0sAtBpSM+_ghTs82wsN1dHvbHD5vO8W+7A@mail.gmail.com>
-X-Gm-Features: AQ5f1JpeSxFRSkFxS6bR3-g2Fuibv6APqy0-HXmtfiaxTjbbrF2D0dsaDVIBB70
-Message-ID: <CAMuHMdWXcRoqKz6S0sAtBpSM+_ghTs82wsN1dHvbHD5vO8W+7A@mail.gmail.com>
-Subject: Re: [PATCH] ARM: shmobile: smp: Enforce shmobile_smp_* alignment
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Nicolas Pitre <nico@fluxnic.net>, Simon Horman <horms+renesas@verge.net.au>, 
-	Kees Cook <kees@kernel.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250303105416.GY11590@noisy.programming.kicks-ass.net>
 
-Hi Prabhakar,
+On 2025-03-03 11:54:16 [+0100], Peter Zijlstra wrote:
+> After that I rebased my FUTEX2_NUMA patch on top of all this and added
+> a new FUTEX2_MPOL, which is something Christoph Lameter asked for a
+> while back, and something we can now actually do sanely, since we have
+> lockless vma lookups working.
 
-On Tue, 11 Mar 2025 at 16:11, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> On Mon, Mar 10, 2025 at 1:14=E2=80=AFPM Geert Uytterhoeven
-> > When the addresses of the shmobile_smp_mpidr, shmobile_smp_fn, and
-> > shmobile_smp_arg variables are not multiples of 4 bytes, secondary CPU
-> > bring-up fails:
-> >
-> >     smp: Bringing up secondary CPUs ...
-> >     CPU1: failed to come online
-> >     CPU2: failed to come online
-> >     CPU3: failed to come online
-> >     smp: Brought up 1 node, 1 CPU
-> >
-> > Fix this by adding the missing alignment directive.
-> >
-> > Fixes: 4e960f52fce16a3b ("ARM: shmobile: Move shmobile_smp_{mpidr, fn, =
-arg}[] from .text to .bss")
->
-> I wonder if this fixes tag should go back a bit far as I was able to
-> reproduce this on 5.10-cip BSP kernel on RZ/G1E this was only seen
-> when CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE was enabled,
+I'm going to keep the keep the changes mostly as-is (except the few
+compile fallouts). I thing I wanted to mention in case someone has a
+simple idea: We have this now:
+|struct {
+|         unsigned long            hashmask;
+|         unsigned int             hashshift;
+|         struct futex_hash_bucket *queues[MAX_NUMNODES];
+| } __futex_data __read_mostly __aligned(2*sizeof(long));
 
-4e960f52fce16a3b is in v4.5, so it covers 5.10-cip.
+This MAX_NUMNODES will be set to 1 << 10 due to MAXSMP for instance on
+Debian. This in turn leads to an 8KiB huge queues array which will be
+largely unused on a simple machine which has no / 1 nodes. I don't have
+access to machine with more than 4 nodes so _assumed_ this is the limit.
+Anyway. I'm also not aware about the corner cases, say we have that many
+nodes (1024) but just two CPUs. That would lead roundup_pow_of_two(0) in
+futex_init().
 
-> RZ/G1E failure logs:
-> --------------------------
-> [    0.006719] smp: Bringing up secondary CPUs ...
-> [    1.040749] CPU1: failed to come online
+> WDYT?
 
-> c154d5fd B shmobile_smp_mpidr
-> c154d61d B shmobile_smp_fn
-> c154d63d B shmobile_smp_arg
-
-Bang!
-
-> > Closes: https://lore.kernel.org/r/CAMuHMdU=3DQR-JLgEHKWpsr6SbaZRc-Hz9r9=
-1JfpP8c3n2G-OjqA@mail.gmail.com
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > To be queued in renesas-fixes-for-v6.14.
-> > ---
-> >  arch/arm/mach-shmobile/headsmp.S | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Sebastian
 
