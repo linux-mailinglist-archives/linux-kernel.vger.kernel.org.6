@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-556946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046BAA5D141
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:56:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008E1A5D144
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:58:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9FA4189E03B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:56:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 241531756F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B751264A7F;
-	Tue, 11 Mar 2025 20:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBEB264A88;
+	Tue, 11 Mar 2025 20:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZS52X85"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LvGZFBaT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0001EF368
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 20:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F01D23F378
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 20:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741726580; cv=none; b=CAfysYrElA4WNHxugj/MHlqfziflntgvaSO/yEKmp1G1jazxygeVqYhC764xbafTM9gz6e2PaloeosTjgjuNmHhbJ0MABa+qTAIwroK9NHhhHEeBV3ETKcmYMud8HLieEjIUpctllgAqlBNb5vnjIdHhquSOyP0OEvP8noZ8VEM=
+	t=1741726683; cv=none; b=DRHFGmIWS6lR62Hbhh8w7PUQQOBd511p5TB4/Uyso9J0ISAnV4ePFmoEjJ4J0X3Zbgk6v9UFCBjjD1vdT8L7F7K8SEwf0RUHT4sdp6yA4a2EcSYiKoIjbdCXWp1aFN04xf/kiR/KtR14/ZjiqwfVVWb8dt6ywbQFMRBgoeQONgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741726580; c=relaxed/simple;
-	bh=o5UAXdx6olL6kpW4dejaSRN4uTcKi0Yeg/ER1IsfsUs=;
+	s=arc-20240116; t=1741726683; c=relaxed/simple;
+	bh=SK+SYOnBQrPOlVqhunMya7xbfpWHCq0YSwjPq1HLipw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Z6guhkhQINhobNk0FRyKWkncq3DvZGd3MhF+Ahb0sBwY5I26ITGqgUaXRjn9Uf5HwrKOtFZdN3gKi60H5okfUv6pcv70VjD27ouUfH1mEQqfsWjEM1Omqe8U7BJfhEYWLY/79Y674hk0Vksu0yp46OlTjbtNhqPngMjZMSFJGkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZS52X85; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5348C4CEE9;
-	Tue, 11 Mar 2025 20:56:19 +0000 (UTC)
+	 MIME-Version; b=q2gqC65AH8WYM/k6qpFiWW0FIccsWCGxVDjUNyy+UJT78A6/jwrKPAQDKsI2g6pI/W2Im8UP9aKNJZtARCK2bIxdJI9yBKFB9QEDEv2VDK96cSmJCj45c7Cacieo0JNXj5+EzcJW53deNnriSoTB6Llz2kOo0JSSQq620dXBIUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LvGZFBaT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 512ECC4CEE9;
+	Tue, 11 Mar 2025 20:58:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741726580;
-	bh=o5UAXdx6olL6kpW4dejaSRN4uTcKi0Yeg/ER1IsfsUs=;
+	s=k20201202; t=1741726683;
+	bh=SK+SYOnBQrPOlVqhunMya7xbfpWHCq0YSwjPq1HLipw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aZS52X85F+NGmllHkQyuICjUfciGdzqNkF4y3T/s2wAE0u6JK22WOwuelYpLCWnv/
-	 hrtnJ7GEEybI93A3YQ+r6fs0FlUB3FLeKOrHJnvBh/QXbMYrnlHmICnZsJjDHETFf+
-	 zRrPz7W2fjVVpcjpaVBK0Ox1Cr5Coz1iPkCm5SBXLjxrNmyDwPkFCC7rUyxg+8BSC3
-	 OtbPwDq01r2o1Fc4YA9hPS4/RFUmIPzjZhhl/HWpbE3LCcgGPi470/dxLkzTwNMyPV
-	 JrAWQULbeLC8cHk1Lqi/io7aMXrbB0HVry3msMJQRn4gWp6OJMgkMfeNsVP7Q+V2LD
-	 fsmRyOUz2pSLw==
+	b=LvGZFBaTDTAuVlILLegfdTgXxbCAYYWcB18xC7bc6lZaEze4BXtwxenTVwWWhdLDG
+	 xZMEADH2TzQWEj4fygROIVKZDzbWmbnbiFkAXSYlPg7nLnm/s+PYeM8VhFmlCXzXT/
+	 jVGcVNn/gHx1oth9nlIj5CSTbrNs5zT3bCUtPkUk2WKcEUByUbsSiQoygf3M0gjkT8
+	 t+6oxdJVZQmkZNqmsOQ2KhYViohwpNTzhPSMYmAXRKFgB4l8ebklaFCLdMWeGB61hw
+	 +0OmztfrFMCZxYt8lO4tAx83F4sUnlQtjsDFvBaBVCM51TzS3Rfy+6Pih10ZrbXJrF
+	 8kVGjKzfdNvfQ==
 From: SeongJae Park <sj@kernel.org>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: SeongJae Park <sj@kernel.org>,
@@ -50,12 +50,13 @@ Cc: SeongJae Park <sj@kernel.org>,
 	Vlastimil Babka <vbabka@suse.cz>,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 5/9] mm/madvise: define and use madvise_behavior struct for madvise_do_behavior()
-Date: Tue, 11 Mar 2025 13:56:17 -0700
-Message-Id: <20250311205617.85289-1-sj@kernel.org>
+	linux-mm@kvack.org,
+	Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH 6/9] mm/memory: split non-tlb flushing part from zap_page_range_single()
+Date: Tue, 11 Mar 2025 13:58:01 -0700
+Message-Id: <20250311205801.85356-1-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <cb48d187-6fa5-41f5-9fc9-3f424f105785@lucifer.local>
+In-Reply-To: <6250fc68-2ce8-43a8-a064-e24877033ce1@lucifer.local>
 References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,93 +66,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Mar 2025 12:17:40 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On Tue, 11 Mar 2025 12:45:44 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-> On Mon, Mar 10, 2025 at 10:23:14AM -0700, SeongJae Park wrote:
-> > To implement batched tlb flushes for MADV_DONTNEED[_LOCKED] and
-> > MADV_FREE, an mmu_gather object in addition to the behavior integer need
-> > to be passed to the internal logics.  Using a struct can make it easy
-> > without increasing the number of parameters of all code paths towards
-> > the internal logic.  Define a struct for the purpose and use it on the
-> > code path that starts from madvise_do_behavior() and ends on
-> > madvise_dontneed_free().
-> 
-> Oh a helper struct! I like these!
-> 
-> Nitty but...
-> 
-> I wonder if we should just add the the mmu_gather field immediately even if
-> it isn't used yet?
-
-I will do so in the next spin.
-
-> 
-> Also I feel like this patch and 6 should be swapped around, as you are
-> laying the groundwork here for patch 7 but then doing something unrelated
-> in 6, unless I'm missing something.
-
-I actually introduced patch 6 before this one initially.  But I started
-thinking this patch could help not only tlb flushes batching but potential
-future madvise behavior extensions, and ended up chaging the order in current
-way.  I have no strong opinion and your suggestion also sounds nice to me.  I
-will swap those in the next version unless someone makes voice.
-
-> 
-> Also maybe add a bit in commit msg about changing the madvise_walk_vmas()
-> visitor type signature
-
-I will do so, in the next version.
-
-> (I wonder if that'd be better as a typedef tbh?)
-
-Something like below?
-
-    typedef void *madvise_walk_arg;
-
-I think that could make the code easier to read.  But I feel the void pointer
-is also not very bad for the current simple static functions use case, so I'd
-like keep this as is if you don't mind.
-
-Please let me know if I'm missing your point.
-
-> 
-> However, this change looks fine aside from nits (and you know, helper
-> struct and I'm sold obviously ;) so:
-> 
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-Thank you! :)
-
-> 
+> On Mon, Mar 10, 2025 at 10:23:15AM -0700, SeongJae Park wrote:
+> > Some of zap_page_range_single() callers such as [process_]madvise() with
+> > MADV_DONEED[_LOCKED] cannot batch tlb flushes because
+> > zap_page_range_single() does tlb flushing for each invocation.  Split
+> > out the body of zap_page_range_single() except mmu_gather object
+> > initialization and gathered tlb entries flushing parts for such batched
+> > tlb flushing usage.
 > >
 > > Signed-off-by: SeongJae Park <sj@kernel.org>
 > > ---
-> >  mm/madvise.c | 36 ++++++++++++++++++++++++------------
-> >  1 file changed, 24 insertions(+), 12 deletions(-)
+> >  mm/memory.c | 36 ++++++++++++++++++++++--------------
+> >  1 file changed, 22 insertions(+), 14 deletions(-)
 > >
-> > diff --git a/mm/madvise.c b/mm/madvise.c
-> > index 469c25690a0e..ba2a78795207 100644
-> > --- a/mm/madvise.c
-> > +++ b/mm/madvise.c
-> > @@ -890,11 +890,16 @@ static bool madvise_dontneed_free_valid_vma(struct vm_area_struct *vma,
-> >  	return true;
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 78c7ee62795e..88c478e2ed1a 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -1995,38 +1995,46 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
+> >  	mmu_notifier_invalidate_range_end(&range);
 > >  }
 > >
-> > +struct madvise_behavior {
-> > +	int behavior;
-> > +};
-> > +
-> >  static long madvise_dontneed_free(struct vm_area_struct *vma,
-> >  				  struct vm_area_struct **prev,
-> >  				  unsigned long start, unsigned long end,
-> > -				  int behavior)
-> > +				  struct madvise_behavior *madv_behavior)
+> > -/**
+> > - * zap_page_range_single - remove user pages in a given range
+> > - * @vma: vm_area_struct holding the applicable pages
+> > - * @address: starting address of pages to zap
+> > - * @size: number of bytes to zap
+> > - * @details: details of shared cache invalidation
+> > - *
+> > - * The range must fit into one VMA.
+> > - */
+> > -void zap_page_range_single(struct vm_area_struct *vma, unsigned long address,
+> > +static void unmap_vma_single(struct mmu_gather *tlb,
+> > +		struct vm_area_struct *vma, unsigned long address,
+> >  		unsigned long size, struct zap_details *details)
+> >  {
+> >  	const unsigned long end = address + size;
+> >  	struct mmu_notifier_range range;
+> > -	struct mmu_gather tlb;
+> >
+> >  	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm,
+> >  				address, end);
+> >  	hugetlb_zap_begin(vma, &range.start, &range.end);
+> > -	tlb_gather_mmu(&tlb, vma->vm_mm);
+> >  	update_hiwater_rss(vma->vm_mm);
+> >  	mmu_notifier_invalidate_range_start(&range);
+> >  	/*
+> >  	 * unmap 'address-end' not 'range.start-range.end' as range
+> >  	 * could have been expanded for hugetlb pmd sharing.
+> >  	 */
+> > -	unmap_single_vma(&tlb, vma, address, end, details, false);
+> > +	unmap_single_vma(tlb, vma, address, end, details, false);
+> >  	mmu_notifier_invalidate_range_end(&range);
+> > -	tlb_finish_mmu(&tlb);
+> >  	hugetlb_zap_end(vma, details);
 > 
-> Nitty, but not sure about the need for 'madv_' here. I think keeping this as
-> 'behavior' is fine, as the type is very clear.
+> Previously hugetlb_zap_end() would happen after tlb_finish_mmu(), now it happens
+> before?
+> 
+> This seems like a major problem with this change.
 
-Agreed.  I wanted to reduce the name conflict causing diff lines, but I think
-your suggestion is the right thing to do for long term.
+Oh, you're right.  This could re-introduce the racy hugetlb allocation failure
+problem that fixed by commit 2820b0f09be9 ("hugetlbfs: close race between
+MADV_DONTNEED and page fault").  That is, this patch can make hugetlb
+allocation failures increase while MADV_DONTNEED is going on.
+
+Maybe a straightforward fix of the problem is doing hugetlb_zap_end() for all
+vmas in a batched manner, similar to that for tlb flush.  For example, add a
+list or an array for the vmas in 'struct madvise_behavior', let
+'unmap_vma_single()' adds each vma in there, and call hugetlb_zap_end() for
+gathered vmas at vector_madvise() or do_madvise().  Does that make sense?
+
+Also Cc-ing Rik, who is the author of the commit 2820b0f09be9 ("hugetlbfs:
+close race between MADV_DONTNEED and page fault") for a case that I'm missing
+something important.
+
+> If not you need to explain why
+> not in the commit message.
+
+I now think it is a problem.  If it turns out I'm wrong, I will of course add
+the reason on the commit message.
 
 
 Thanks,
