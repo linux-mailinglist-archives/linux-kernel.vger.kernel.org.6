@@ -1,114 +1,120 @@
-Return-Path: <linux-kernel+bounces-556714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE1FA5CDDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:26:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10151A5CDE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35BB87A4B41
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:25:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C05189BF11
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72850263C69;
-	Tue, 11 Mar 2025 18:25:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA6341C72;
-	Tue, 11 Mar 2025 18:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D00C263F35;
+	Tue, 11 Mar 2025 18:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="GE0Z30h4"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75695263C69;
+	Tue, 11 Mar 2025 18:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741717555; cv=none; b=S2KvJZEhZSQoxXPauY0ovDWBufeY6p3Q/0l9X+iXpcggBoxScdaO6Tta64XsFxKgxcG3EPaj+v8a0bQSISQpAOaKhPI8Xp29S9LqyqwaTQo0f/6UYCLbBoLcyu1Bfu2ACbLllDGBM7JI7Pd9zZgi19jY9ImUyqIKyT01p6+1weU=
+	t=1741717628; cv=none; b=SkSVAnyZ4JwQs2NYB0HoFxzTOXNoR+r54aD500nBOfomlZF6VhyPVS4THLobz58i3lefLm6ocKLy4T1jeVtCR7z3GA4ndzRgHTpTzUpbDABOdXE+XCUqBSz7XF55UjIrDiR/Q2kPwqP9yxTV0uLp+zrH+U+vev3sfHUmx+ZWae4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741717555; c=relaxed/simple;
-	bh=wqRGd9aY+2+mbyav8XTN1xcMeuNHpDV+Zkes4FCyOtU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z6BktLRazALInMQEqiJZIlJf2g+97IaG2BMNtBJf5f7mlh4K/6n23wHXlc4RxjR9V3HE+jvBltpZ28ed8H1f5moaAkJIb6VaKVY8NF/LuUoP4pV6x44srjMdaYRC5YX+YMNIv+EJtDVouFcB1cdmWvOmAsQ/YPq1CsNWFNQ5Lks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A57EF1424;
-	Tue, 11 Mar 2025 11:26:02 -0700 (PDT)
-Received: from [10.118.109.66] (G9L3377F54.austin.arm.com [10.118.109.66])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 482773F694;
-	Tue, 11 Mar 2025 11:25:51 -0700 (PDT)
-Message-ID: <23c77291-7c6e-45ea-b1ad-952c01882579@arm.com>
-Date: Tue, 11 Mar 2025 13:25:50 -0500
+	s=arc-20240116; t=1741717628; c=relaxed/simple;
+	bh=sAcPmP5x4MDgX3q+zT45VHsc2Xff81Pj4aR2VDWSe9I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V6WO0lgPrpaURFV84CQedovaXi3yG1ftdnDcvkgJEXjt0XttuGel+UbJ674WDt0jhQ682S2FRw62d2+x35paFwHujVFfKTPvUJKVbuDHLLmaG/p1AP+yNR31or3U52BSa+CNRQiiZeSlkLWaBrXTKNSmZNcq+5TgaMHZ5y/gPt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=GE0Z30h4; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BEwj83023500;
+	Tue, 11 Mar 2025 11:26:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=L+B7/fcRis6/t8DAVLhAttm
+	jqV+WSMG+iLFaF0sDEIM=; b=GE0Z30h4oH/EF3iIiJL7SNfvKry+MH/rZctFiUP
+	gHB1eN+Q7ZG9heOvu0ykR9dErblvukToKfoGx3zAFwqJtYpR42RSYcHiBSuHxkc3
+	8G0OdKtzp2KGXWyBqgat3sfXLaTHhDeA7GKBHa+GEsivL4IVLEG/HH9ac84lsdg9
+	ymttmKjk9/oAnsDHP7zRDrpBNNabxAvz/60R6+v0DzSPQBV+eRxsIEN0wikXfcvI
+	KjwyAWCvRyF6bQCS5U/ZVGzd1MheDIWI8vn/MsMbc7loojj+ew1E1H+GIDEcVoNL
+	O2eX/P+1vFTXA1CcXHejZikVSVw4kEA85W0abF1lhNXgzKQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 45aqdjgg5e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 11:26:41 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 11 Mar 2025 11:26:40 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 11 Mar 2025 11:26:40 -0700
+Received: from hyd1425.marvell.com (unknown [10.29.37.152])
+	by maili.marvell.com (Postfix) with ESMTP id 26E843F705D;
+	Tue, 11 Mar 2025 11:26:33 -0700 (PDT)
+From: Sai Krishna <saikrishnag@marvell.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
+        <gakula@marvell.com>, <lcherian@marvell.com>, <jerinj@marvell.com>,
+        <hkelam@marvell.com>, <sbhatta@marvell.com>, <andrew+netdev@lunn.ch>,
+        <bbhushan2@marvell.com>, <nathan@kernel.org>,
+        <ndesaulniers@google.com>, <morbo@google.com>,
+        <justinstitt@google.com>, <llvm@lists.linux.dev>, <horms@kernel.org>
+CC: Sai Krishna <saikrishnag@marvell.com>
+Subject: [net-next PATCH v3 0/2] octeontx2-af: fix build warnings flagged
+Date: Tue, 11 Mar 2025 23:56:29 +0530
+Message-ID: <20250311182631.3224812-1-saikrishnag@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Build error on -next due to tpm_crb.c changes?
-To: Thorsten Leemhuis <linux@leemhuis.info>, jarkko@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- lenb@kernel.org, rafael@kernel.org, jgg@ziepe.ca, peterhuewe@gmx.de,
- sudeep.holla@arm.com, linux-integrity@vger.kernel.org,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250305173611.74548-1-stuart.yoder@arm.com>
- <0ad035ff-400e-4b15-8b8f-40b69152ec46@leemhuis.info>
- <92bc0a65-608f-4307-bb1c-16d8836d42e5@arm.com>
- <77fb9077-f598-4308-8862-6d09b23688bb@leemhuis.info>
-Content-Language: en-US
-From: Stuart Yoder <stuart.yoder@arm.com>
-In-Reply-To: <77fb9077-f598-4308-8862-6d09b23688bb@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=A8WWP7WG c=1 sm=1 tr=0 ts=67d08061 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=Vs1iUdzkB0EA:10 a=8sePa-ASlOdttdOSK3gA:9
+X-Proofpoint-GUID: gPQOg9BHDoTlbXxBhWcGm2YEq4qe-BpP
+X-Proofpoint-ORIG-GUID: gPQOg9BHDoTlbXxBhWcGm2YEq4qe-BpP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_05,2025-03-11_02,2024-11-22_01
+
+There are couple of build warnings observed on x86_64 flagged by Sparse.
+Some are inconsistent usage of __iomem annotations and other Sparse 
+warnings are typecasting related. This patch series fixes the same.
+
+Patch #1 This patch corrects the __iomem annotations flagged by Sparse.
+
+Patch #2 This patch fixes rest of compiler warnings flagged by Sparse
+         which are related to typecasting to required datatype from
+         _iomem.
 
 
+Sai Krishna (2):
+  octeontx2-af: correct __iomem annotations flagged by Sparse
+  octeontx2-af: fix compiler warnings flagged by Sparse
+---
+v3 changes:
+	Addressed review comments given by Simon Horman
+	1. Fixed compilation warnings reported by kernel test robot.
+	2. Addressed build warning fixes into separate patches.
 
-On 3/11/25 11:51 AM, Thorsten Leemhuis wrote:
-> On 11.03.25 16:53, Stuart Yoder wrote:
->> On 3/11/25 10:21 AM, Thorsten Leemhuis wrote:
->>> On 05.03.25 18:36, Stuart Yoder wrote:
->> [...]
->> So, it should not be possible on one had have
->> CONFIG_TCG_ARM_CRB_FFA being true when building tpm_crb.c
->> and false resulting in the tpm_crb_ffa.o not being
->> picked up in the build.
-> 
-> Many thx for the answer. Maybe Fedora's way to prepare the .config files
-> (which my package builds use to be close to Fedora's official packages)
-> is doing something odd/wrong. Will take a closer look and report back.
+v2 changes:
+	Addressed review comments given by Jakub Kicinski
+          Corrected Closes tag which was tampered by mail server.
 
-I've been experimenting with some different build config combinations
-and have reproduced what must be the issue.
+ drivers/net/ethernet/marvell/octeontx2/af/common.h   |  2 +-
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.c      | 12 +++++++-----
+ .../net/ethernet/marvell/octeontx2/nic/otx2_common.c | 10 +++++-----
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c |  9 ++++-----
+ 4 files changed, 17 insertions(+), 16 deletions(-)
 
-This works fine:
-<*>   TPM 2.0 CRB Interface 
-                                         < >   TPM CRB over Arm FF-A 
-Transport
-
-This works fine:
-< >   TPM 2.0 CRB Interface 
-                                         <*>   TPM CRB over Arm FF-A 
-Transport
-
-This works fine:
-<*>   TPM 2.0 CRB Interface 
-                                         <*>   TPM CRB over Arm FF-A 
-Transport
-
-This works fine:
-<M>   TPM 2.0 CRB Interface 
-                                         <M>   TPM CRB over Arm FF-A 
-Transport
-
-This fails:
-<*>   TPM 2.0 CRB Interface 
-                                         <M>   TPM CRB over Arm FF-A 
-Transport
-
-The 2 drivers are coupled, so we can't have one built as a module
-and the other built-in.
-
-I'm not a Kconfig expert, and need to do some fiddling to see
-if I can find a Kconfig syntax that prevents that failure scenario.
-
-Thanks,
-Stuart
-
+-- 
+2.25.1
 
 
