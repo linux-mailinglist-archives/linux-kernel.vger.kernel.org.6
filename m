@@ -1,57 +1,52 @@
-Return-Path: <linux-kernel+bounces-556576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16CD0A5CBE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:17:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33FBA5CBE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:17:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 564C43AEE72
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:17:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E30F1899A0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF6C2627E0;
-	Tue, 11 Mar 2025 17:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+KELLa+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028CE25CC65;
+	Tue, 11 Mar 2025 17:17:40 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27852620E7;
-	Tue, 11 Mar 2025 17:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFDA1925AF;
+	Tue, 11 Mar 2025 17:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741713449; cv=none; b=ueeMU0BRJhNBQR10S6tZuxU4grwgzPHmg3a89aRDKWNbk4+YWbhee+wq4A310Pk2oJO/4PYDvU/OOtMeEFLXH2u58+Y6jAl+NTn5W7i6qjLaNq/P5hvK0wlcYLa9eZmR7Prgl5O60e25fjJXtPwni4Av505qboqLwOfb8c/SxHw=
+	t=1741713459; cv=none; b=jAUhohSt2dPCAWEK5MNudfiBjwrwmVcwdl/N7Mqps5k3hRWUDH8+2hbCZbJD29QHQm+vaaEGDc+2tcTp3UrSMqYaYau/i3aMlnqGEVvrvmpxPQvXii3GWPUlzCXGjykwogMKw2pkmf2tcPRg8eTVaqyaVwp3WYEAfgVnf24Fz7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741713449; c=relaxed/simple;
-	bh=qymAbbIdLchqAtQBBL+pqPrr3X7OBh13PkUPlVUStBs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=r8abjYdFTl8VqUvN7EBWU+Uv3AzlTgU86ll+YiKva3DhYxIEeupQs+WYNt9z9aPVLurygQcfM30qzf5o6WqXRsvH3X7sMtZfETPtkHi7zVhlrWmk0yzX61HOmt4qdl1rlKQcqcpNjRUbnG8nG2f9vuay0//7rFfIj+G8Ef2hpFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+KELLa+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91835C4CEEA;
-	Tue, 11 Mar 2025 17:17:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741713448;
-	bh=qymAbbIdLchqAtQBBL+pqPrr3X7OBh13PkUPlVUStBs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Y+KELLa+knvBq8Y6mOU+ZaIu7WLEGPkUTLOIifEoLx07A7YpymGP0EZ6RUaaNcqCo
-	 3k856Xxx9mvWBtD/kW1hpH8z5UicEuGryGX30wmmSHiELQpagjfqaS1agU6u+Ormzd
-	 H13ylecD0RyKi1f6lDHHyTw5SNprB9ReQRFALFQOf50T5hCqx8I/BLFZvKoOPgiFWb
-	 P9ZsWCFH5nLDGwZAdVzP6/CgAlYeJxf09jwL55/v2cRksfU8G5OAxxeW+m/CsF2CxO
-	 rtF6kcxMyfgI0v5VfXCYgJEublnndzXB34xpUffIw0lnOZfkJyTfhcCp14pIApgvAE
-	 Pp7+Yg2hJJ1MA==
-From: Mark Brown <broonie@kernel.org>
-To: Leilk Liu <leilk.liu@mediatek.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-spi@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- fparent@baylibre.com
-In-Reply-To: <20250304024045.7788-1-leilk.liu@mediatek.com>
-References: <20250304024045.7788-1-leilk.liu@mediatek.com>
-Subject: Re: [PATCH v2] spi: mt65xx: add PM QoS support
-Message-Id: <174171344631.214660.9058567324727633834.b4-ty@kernel.org>
-Date: Tue, 11 Mar 2025 17:17:26 +0000
+	s=arc-20240116; t=1741713459; c=relaxed/simple;
+	bh=d2MUZCjy8ry37cjCWkBKe3JtYOwSxUPPNJthsOU6ecc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KmPWsZR4ZGKnjt4qbtDlG7NdTt7J0wE2ESe6epQmmKGRzstwJZSKbNTpADrk3Kibixu0AIsnvzZvcnibXIbohU2pmyKAqbcbQwsAWP6ghFASDKqVW0QofdIaDz9rEDPIVbzjM7EPMUW/QvzWOXKIrqFfgU/93lMq7BgEU31p/ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B55EBC4CEE9;
+	Tue, 11 Mar 2025 17:17:36 +0000 (UTC)
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: linux-arm-kernel@lists.infradead.org,
+	mark.rutland@arm.com,
+	robh@kernel.org,
+	Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Will Deacon <will@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [PATCH V3] arm64/boot: Enable EL2 requirements for FEAT_PMUv3p9
+Date: Tue, 11 Mar 2025 17:17:34 +0000
+Message-Id: <174171335999.3659520.16613654046629962007.b4-ty@arm.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250227035119.2025171-1-anshuman.khandual@arm.com>
+References: <20250227035119.2025171-1-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,45 +54,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+Content-Transfer-Encoding: 8bit
 
-On Tue, 04 Mar 2025 10:37:15 +0800, Leilk Liu wrote:
-> Enable Quality of Service(QoS) support to speed up interrupt service
-> routine handle. Sometimes, a gic interrupt will be generated after
-> SPI transmission, but at this time the CPU is in an idle state and the
-> processing handler will be very slow. It takes time to exit the idle state
-> and then become active. This will cause the SPI handler to execute slowly
-> and cause SPI transfer timeouts.
+On Thu, 27 Feb 2025 09:21:19 +0530, Anshuman Khandual wrote:
+> FEAT_PMUv3p9 registers such as PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1
+> access from EL1 requires appropriate EL2 fine grained trap configuration
+> via FEAT_FGT2 based trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2.
+> Otherwise such register accesses will result in traps into EL2.
+> 
+> Add a new helper __init_el2_fgt2() which initializes FEAT_FGT2 based fine
+> grained trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2 (setting the
+> bits nPMICNTR_EL0, nPMICFILTR_EL0 and nPMUACR_EL1) to enable access into
+> PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1 registers.
 > 
 > [...]
 
-Applied to
+Applied to arm64 (for-next/el2-enable-feat-pmuv3p9), thanks!
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+[1/1] arm64/boot: Enable EL2 requirements for FEAT_PMUv3p9
+      https://git.kernel.org/arm64/c/858c7bfcb35e
 
-Thanks!
+I removed Cc: stable since, if it gets backported automatically, it will
+miss the sysreg updates and break the build. Please send it to stable
+directly once it lands upstream, together with the dependencies.
 
-[1/1] spi: mt65xx: add PM QoS support
-      commit: 632556d5799a2b3e87dd5594a59245523b39cf31
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+Catalin
 
 
