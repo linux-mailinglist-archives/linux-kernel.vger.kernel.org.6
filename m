@@ -1,221 +1,100 @@
-Return-Path: <linux-kernel+bounces-556437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7EDA5C89C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:46:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7097BA5C8B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:48:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45D6B162B87
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:43:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 872C81888A96
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7382225E82C;
-	Tue, 11 Mar 2025 15:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E39025F783;
+	Tue, 11 Mar 2025 15:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="of+hZPg8"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fh2Ia8hC"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBFD25B691;
-	Tue, 11 Mar 2025 15:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0391F255E37
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741707805; cv=none; b=FrUwfpYuT3MBJRZcd7MAreTcC4aN6aey/a1ZQPsrt6H5j8pMuJq2/yY/GC6GLNWNEPz76HdSsvZw9MyOqOMwQ9i6DdERGH8sFVLtnunL8nrlW/T1nZq5m0oAu3n0NZi7IKWNBo5dSecShyahiPANvV5sRKWS0GLnOYKf6IxYBpA=
+	t=1741707894; cv=none; b=MphuV9yi2TdBwWhUz9P3xNdp22p9jFwxkk34WMJfFrbXssLUi479y6hNv/jPwufcG5YxMXCnFh8YtjuEJTiMNf29VlZxjF06qY9QthkRb0UyZn8hEEfSrwQN+qbc0O6gPzIPUS1KW5i5K7PGs0Z/EJtbkwNvzN4cORavvHGPYR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741707805; c=relaxed/simple;
-	bh=bgd5j5JiBhYU2Xa9KUz+Wa9gA8t7yfru0IU54bWjBiE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ELBUHztOPUqS5eSIOZ2iHFYzPsQuiFPZIHdYQVVwghPlramOyG/joEBWMavps95+2miIoTHZ6q8B6yXuyyZfqKHs1josPN5GDwG6yeV0NVQlCupo5wmnWm8Ve+uRwSPdYPb19pO16OLoxmUb+99PX1bWNKaLLoAQb0bcx/gp980=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=of+hZPg8; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52BFh5v61332568
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Mar 2025 10:43:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741707786;
-	bh=AUhtus2LRR/f9mDsXKrJtEtC9OIA8rEjoQCsfNgcDkc=;
-	h=From:To:CC:Subject:Date;
-	b=of+hZPg8Y3UmkYXah2uvyRnBIAybBcmKTt7fvWSj1HHXWwe7eeazuxuqYucboC0lQ
-	 2N57JNGL75Utvc0hB7/JckO/X8OpLpj/ALR8xs6MPpHd46xy/8pALi0LZ319QwR+7W
-	 /y5iNKgd+f/2zMmpiIFz9+uPm+B0p5/5oZKhqZdk=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52BFh54v002591
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 11 Mar 2025 10:43:05 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
- Mar 2025 10:43:05 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 11 Mar 2025 10:43:05 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52BFh0FA096785;
-	Tue, 11 Mar 2025 10:43:00 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <rogerq@kernel.org>,
-        <horms@kernel.org>, <alexander.sverdlin@siemens.com>,
-        <dan.carpenter@linaro.org>, <c-vankar@ti.com>, <jpanis@baylibre.com>,
-        <npitre@baylibre.com>
-CC: <vigneshr@ti.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, <s-vadapalli@ti.com>
-Subject: [PATCH net v3] net: ethernet: ti: am65-cpsw: Fix NAPI registration sequence
-Date: Tue, 11 Mar 2025 21:12:59 +0530
-Message-ID: <20250311154259.102865-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741707894; c=relaxed/simple;
+	bh=A8lLSHH7koinx09SGDGiYPP7dnY4B81EBv/d0OMEEcs=;
+	h=Message-ID:Date:MIME-Version:From:To:Subject:Content-Type; b=uUJplGfgg6wEIDJlbZymDQCatDXl4rtbX+Gr3+H+U4wu/T3nQhiXRD5NkaYcccvP8MsoLnPwjzlEtHZzFJqiteyoSsMSxJv+LQ+dNveRh6LS121zQurVfc78qSvDv0yLuGTwGkhocqYKbZ/5HGp+kbBzu45MyRk592xCS6V1OsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fh2Ia8hC; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so34185625e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:44:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741707891; x=1742312691; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:to:from:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=A8lLSHH7koinx09SGDGiYPP7dnY4B81EBv/d0OMEEcs=;
+        b=Fh2Ia8hC1N7/YWAfmRicuj8DLdlqcBCHlLZS1P/EPs0MuNeca7zw8quxes2a+Wq8rX
+         fb4PUy8mUERgDMKLevsPN5xEu7unsbMBAmj2b0OuzobO1szYCQDcA1SC44wWmpCv85UO
+         TUsATa/uykCVHDgoxvcAOzgfX76E+ONFolv6vmLLoZeGeiHhvzt6x0wc+osmnGq7GA2n
+         hNp7FdLy5ca16O1tV2sy/X8TBR0fTe1dnWlpsNnvH7nqTury/qepuD2Sm5fXw7aoh9O2
+         oSiGvDqGFc5f8m6i8WGliqVby+yn5plHsrK2B2TaQJm3+zlOkGzeqEsZ3UPJE/bACFRq
+         0zqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741707891; x=1742312691;
+        h=content-transfer-encoding:subject:to:from:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A8lLSHH7koinx09SGDGiYPP7dnY4B81EBv/d0OMEEcs=;
+        b=cEWuGaaxC4YHEAU03p1+qEvyMDMF5o6xkBSq2vOf506r2xQEmU5az15XS/JUchY5h+
+         VfNWbSjbfUneFer4JEEGisOmQy4JhLTwILpXEuozctSt6SErfBKElY5+K23eSkw8b5IE
+         I5vpi4IPeHLLSmYblNXeDIld8gb2Swk3s73hNhrUIKzOi2+b6GyMwVEjqwI5JMF+SErH
+         aPNaCNAaDt9t0qDX7xXnW2rkSG5ysB2bIS0If7LvaoME2rA0qu9M6oLqntWJODKvDZ1v
+         1sC3Vbx/TPZ0x1gR9UwDHadVTu1b0MHzj7R3OgGEFA+4Of7OVPkSTle+GvAW6ernfXWo
+         NWWQ==
+X-Gm-Message-State: AOJu0YxBGzfnNsDzGfH6JudXxEY6NQmzR0o0zsftUsY+qomuc/SjKto3
+	bTi7eUTGgHvyGtmhcwbWTb9oBWHrSXIFiFM4zPR9VHfz9L+szRUjysgA/Q==
+X-Gm-Gg: ASbGncs+aP9EnY5O9SXB9p7vQQQn/vF489khUbcNc9ZzfZkocIys5ZLFzuzQZvNT6QC
+	u6hsUlWFIp3PGSY24tez4bCB0MYAm3XGPF4R4wNtywHik58d1K7TnpuRp99vuR2VSC2/WF0zmPi
+	J6jgBUTkxvsOUfw5QuP8u6kH90Qcvmy5Gg8xe/aDhhcE4hGNBUbAjYnu/jAgNVTxJZBWmvBqegF
+	1RCx6bIh2t3FJyYKA/314xdJwF6j+JI47a8WreqihVfqbtygzz9C1Blg01VIfHytIdQx3eXfANu
+	UBakO6a3kNuXIHCjy0/dCkeV1q46ro6dj1GlgZ94TOF340AO59jafGhg3FBF2Uem84ZVwClITHk
+	=
+X-Google-Smtp-Source: AGHT+IG4OdTidYgn2ASGoKST1qrz0bt/nppFFQJL/xL1uwhfRzAAtLJs/sBPZ6MhKlaWJA9PI7ljaw==
+X-Received: by 2002:a05:600c:358f:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-43d01be65cfmr61077865e9.16.1741707891066;
+        Tue, 11 Mar 2025 08:44:51 -0700 (PDT)
+Received: from DESKTOP-A54QG66 ([39.46.225.101])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ce48165c0sm131452845e9.26.2025.03.11.08.44.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
+        Tue, 11 Mar 2025 08:44:50 -0700 (PDT)
+Message-ID: <67d05a72.050a0220.16956.0911@mx.google.com>
+Date: Tue, 11 Mar 2025 08:44:50 -0700 (PDT)
+X-Google-Original-Date: 11 Mar 2025 11:44:50 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+From: yacine.mypackagingpro@gmail.com
+To: linux-kernel@vger.kernel.org
+Subject: Personalized Bags and Boxes
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 
-From: Vignesh Raghavendra <vigneshr@ti.com>
-
-Registering the interrupts for TX or RX DMA Channels prior to registering
-their respective NAPI callbacks can result in a NULL pointer dereference.
-This is seen in practice as a random occurrence since it depends on the
-randomness associated with the generation of traffic by Linux and the
-reception of traffic from the wire.
-
-Fixes: 681eb2beb3ef ("net: ethernet: ti: am65-cpsw: ensure proper channel cleanup in error path")
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-Co-developed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
-
-Hello,
-
-This patch is based on commit
-4d872d51bc9d Merge tag 'x86-urgent-2025-03-10' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-of Mainline Linux.
-
-v2 of this patch is at:
-https://lore.kernel.org/r/20250311130103.68971-1-s-vadapalli@ti.com/
-Changes since v2:
-- Updated error handling in am65_cpsw_nuss_init_rx_chns() by introducing
-  a new "goto label" namely "err_request_irq", since there are 3 different
-  error paths leading to the existing "goto label" named "err_flow", of
-  which, only one of them requires an extra netif_napi_del() invocation.
-  This change is based on the feedback from 
-  Alexander Sverdlin <alexander.sverdlin@siemens.com>
-  at:
-  https://lore.kernel.org/r/02d685e2aa8721a119f528bde2f4ec9533101663.camel@siemens.com/
-
-v1 of this patch is at:
-https://lore.kernel.org/r/20250311061214.4111634-1-s-vadapalli@ti.com/
-Changes since v1:
-- Based on the feedback provided by Alexander Sverdlin <alexander.sverdlin@siemens.com>
-  the patch has been updated to account for the cleanup path in terms of an imbalance
-  between the number of successful netif_napi_add_tx/netif_napi_add calls and the
-  number of successful devm_request_irq() calls. In the event of an error, we will
-  always have one extra successful netif_napi_add_tx/netif_napi_add that needs to be
-  cleaned up before we clean an equal number of netif_napi_add_tx/netif_napi_add and
-  devm_request_irq.
-
-Regards,
-Siddharth.
-
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 32 +++++++++++++-----------
- 1 file changed, 18 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 2806238629f8..bef734c6e5c2 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -2306,14 +2306,18 @@ static void am65_cpsw_nuss_remove_tx_chns(struct am65_cpsw_common *common)
- static int am65_cpsw_nuss_ndev_add_tx_napi(struct am65_cpsw_common *common)
- {
- 	struct device *dev = common->dev;
-+	struct am65_cpsw_tx_chn *tx_chn;
- 	int i, ret = 0;
- 
- 	for (i = 0; i < common->tx_ch_num; i++) {
--		struct am65_cpsw_tx_chn *tx_chn = &common->tx_chns[i];
-+		tx_chn = &common->tx_chns[i];
- 
- 		hrtimer_init(&tx_chn->tx_hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_PINNED);
- 		tx_chn->tx_hrtimer.function = &am65_cpsw_nuss_tx_timer_callback;
- 
-+		netif_napi_add_tx(common->dma_ndev, &tx_chn->napi_tx,
-+				  am65_cpsw_nuss_tx_poll);
-+
- 		ret = devm_request_irq(dev, tx_chn->irq,
- 				       am65_cpsw_nuss_tx_irq,
- 				       IRQF_TRIGGER_HIGH,
-@@ -2323,19 +2327,16 @@ static int am65_cpsw_nuss_ndev_add_tx_napi(struct am65_cpsw_common *common)
- 				tx_chn->id, tx_chn->irq, ret);
- 			goto err;
- 		}
--
--		netif_napi_add_tx(common->dma_ndev, &tx_chn->napi_tx,
--				  am65_cpsw_nuss_tx_poll);
- 	}
- 
- 	return 0;
- 
- err:
--	for (--i ; i >= 0 ; i--) {
--		struct am65_cpsw_tx_chn *tx_chn = &common->tx_chns[i];
--
--		netif_napi_del(&tx_chn->napi_tx);
-+	netif_napi_del(&tx_chn->napi_tx);
-+	for (--i; i >= 0; i--) {
-+		tx_chn = &common->tx_chns[i];
- 		devm_free_irq(dev, tx_chn->irq, tx_chn);
-+		netif_napi_del(&tx_chn->napi_tx);
- 	}
- 
- 	return ret;
-@@ -2569,6 +2570,9 @@ static int am65_cpsw_nuss_init_rx_chns(struct am65_cpsw_common *common)
- 			     HRTIMER_MODE_REL_PINNED);
- 		flow->rx_hrtimer.function = &am65_cpsw_nuss_rx_timer_callback;
- 
-+		netif_napi_add(common->dma_ndev, &flow->napi_rx,
-+			       am65_cpsw_nuss_rx_poll);
-+
- 		ret = devm_request_irq(dev, flow->irq,
- 				       am65_cpsw_nuss_rx_irq,
- 				       IRQF_TRIGGER_HIGH,
-@@ -2577,11 +2581,8 @@ static int am65_cpsw_nuss_init_rx_chns(struct am65_cpsw_common *common)
- 			dev_err(dev, "failure requesting rx %d irq %u, %d\n",
- 				i, flow->irq, ret);
- 			flow->irq = -EINVAL;
--			goto err_flow;
-+			goto err_request_irq;
- 		}
--
--		netif_napi_add(common->dma_ndev, &flow->napi_rx,
--			       am65_cpsw_nuss_rx_poll);
- 	}
- 
- 	/* setup classifier to route priorities to flows */
-@@ -2589,11 +2590,14 @@ static int am65_cpsw_nuss_init_rx_chns(struct am65_cpsw_common *common)
- 
- 	return 0;
- 
-+err_request_irq:
-+	netif_napi_del(&flow->napi_rx);
-+
- err_flow:
--	for (--i; i >= 0 ; i--) {
-+	for (--i; i >= 0; i--) {
- 		flow = &rx_chn->flows[i];
--		netif_napi_del(&flow->napi_rx);
- 		devm_free_irq(dev, flow->irq, flow);
-+		netif_napi_del(&flow->napi_rx);
- 	}
- 
- err:
--- 
-2.34.1
+SGksDQoNCldlIG1ha2UgcGVyc29uYWxpemVkIHBhY2thZ2luZ+KAlHR1Y2sgYm94ZXMs
+IENCRCBib3hlcywgbWFpbGVyIGJveGVzLCByaWdpZCBib3hlcywgYmFrZXJ5IGJveGVz
+LCByZXRhaWwgYm94ZXMsIHNob3BwaW5nIGJhZ3MsIGxhYmVsIHN0aWNrZXJzIGFuZCBt
+b3JlLg0KDQpTaW1wbHkgcHJvdmlkZSB1cyB3aXRoIHRoZSBkaW1lbnNpb25zIChMIHgg
+VyB4IEgpLCBxdWFudGl0eSwgYW5kIHByZWZlcnJlZCBib3ggc3R5bGUsIGFuZCB3ZSds
+bCBwcm92aWRlIHlvdSB3aXRoIGEgY29tcGV0aXRpdmUgcXVvdGUuIFBsdXMsIGZvciBh
+IGxpbWl0ZWQgdGltZSwgd2XigJlyZSBhbHNvIHByb3ZpZGluZyBjb21wbGltZW50YXJ5
+IGRlc2lnbiBzZXJ2aWNlcyBhbmQgc2hpcHBpbmcgb24gYWxsIG9yZGVycy4NCg0KVGhh
+bmtzLCBhbmQgbG9va2luZyBmb3J3YXJkIHRvIHBvdGVudGlhbGx5IHdvcmtpbmcgdG9n
+ZXRoZXIuDQoNCkJlc3QgcmVnYXJkcywNCllhY2luZSBXaWxidXINCk1hcmtldGluZyBF
+eGVjdXRpdmUNCk15IFBhY2thZ2luZyBQcm8u
 
 
