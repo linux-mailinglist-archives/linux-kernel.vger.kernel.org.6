@@ -1,133 +1,133 @@
-Return-Path: <linux-kernel+bounces-556252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0835A5C32E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:03:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A917A5C333
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:04:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DA5E3B3079
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:02:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1F5B188AFBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332BB25BAA7;
-	Tue, 11 Mar 2025 14:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3062D25A348;
+	Tue, 11 Mar 2025 14:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UNdkTVLH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="zftlI627";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="kIONNL+C"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CA225BAA1
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741701740; cv=none; b=eMsKjsjpTQm+Eh0kWb5Hi2sfi/IxkRGwA0TzW+LaLlc2Zv8ToBLZHvPHBoq1RcpXCXUF6I0BPCZKZO19Ei0f2oPtNahkAQz1l9HXN5aMLHPHQI8sXz9ws/+8Fe8tY+h0xCs1HdkEX4t/dV7ktTvWoVE430DyF9DbHAEtBe0jjFM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741701740; c=relaxed/simple;
-	bh=w4/4MsuywTM8dKIEtT8CwRyGelvllPmBbieFzdzBLJI=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=s2jy1tOImMsEh0cjMuBcEznJO8B06zzXPO8CvkGDSpFlnGtG/P/G+yuAiGOg/q7bNwP8Y1HfFRt7/L8YgD7QUCkhkGot2ZB0R40/2mIZY/0iLmjpyzvGZRGT4vi2ZkRZ1uycmWjSQJtWY50we2X6FJPzuYYie7rP9iYFFaIVW0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UNdkTVLH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741701738;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=srjZEoMcmsNF1ucfOw62TWPMYLcdnIdIH/Ek8tx9FZo=;
-	b=UNdkTVLHpWoHhs0Zky3u9Q2F+ZjF+d72JdOZ7cXJPe0whjaQv/qWZ92wCO7uFstKus1P74
-	y0Ha5u99WTeJG+Q/bBDMEsTR2fXt3pGrc5gg7BKLD2NV56zRhXPSZXk4YtVgCajfF+hmjD
-	4g9/rYMkUF8EMyP6d4fg/FL8WecOGa8=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-58-O3VIieRrPrqdlkVDWLeZdA-1; Tue, 11 Mar 2025 10:02:16 -0400
-X-MC-Unique: O3VIieRrPrqdlkVDWLeZdA-1
-X-Mimecast-MFC-AGG-ID: O3VIieRrPrqdlkVDWLeZdA_1741701736
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c3b8b95029so841997785a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:02:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741701736; x=1742306536;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=srjZEoMcmsNF1ucfOw62TWPMYLcdnIdIH/Ek8tx9FZo=;
-        b=jhcDVrVSAf5BZ3Gg1VT1iLmo1oKhclwfZ4ekynWkIZoEQmnifVAuTQw9A5Jt5PmUsG
-         wxAA9digVCBZ+HwOawBzI9HQQt4awKvpYoYDpT94x+pLrMmz2RxaO74+jQjd+S1Vvp41
-         +SptI1oGW6KdbmnO7ucMqvAFt3yOFZH/4SoAIGY/KjHSGl2EnBT3ppRylwtZZZZgpmnk
-         aQk0CTuC/KWCzq89RsWBZXWSjhZmDaLK12IshXRxmcn1FFjQ+rXop5RSDdlFvG2AxIMC
-         cwPq5xxdb7veP0HiPT9FIdzR3aRigzVl/3/Wu82g+Z5XBxpHr7MEhd0fl/H1yv8yxPdw
-         N8jg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbow7fO2WlMw6l8FdMCmet+UDWjp+aLAafveSXwNhFrFBDqBJQl0ytRygp1CntjTAY1c1+TivIqo21zMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOcquvMVmeKRUXirIz3eqDGe3ZOfy+6adcksa7ApVyuem1iMi4
-	bib2oNEKrAYbcnkR3R53NB1hi8hixkXaR3vmw8ybCjo13Mn9ygc8UiZlSLy0FLJC6Esf7jHeT2L
-	90XzWSj0aRLPUH8UZn+i5ICzB2pVpJK59hm12dPxDQ2TEWyC+yZ4+WhZ0s1pFKg==
-X-Gm-Gg: ASbGncu1QnyY6f9X2OYPkd9C3SOUL97J9sM/jkdIGA2jlvUQxX5xuLSDrPdMDCHY1WJ
-	gHznAhPr0TqUEXhczQi2col5iKTtFv8Xs1G7digw+d36AMhV95XqdggVJ0XC9JiJDv6rfj+smx1
-	YULj/JwzJdSKfURj+8D/ddGQW9DGxufvl5ZjsufkNQKELJKovMb5G+6nxRuffZXPQixicLTYZ9z
-	OeFDnuqOaufk72Wj59V9AMEIt1HKuaVugNay4M2L3XcJxa9IgbCXDASMV75tJPaRTeDY3z8NxRN
-	dO+9lbLLfoReLFwK3uX7hcV/My0U/HweIVGPbix/TgOIot+X00LZaQ/s2op+Nw==
-X-Received: by 2002:a05:620a:8707:b0:7c5:5670:bd75 with SMTP id af79cd13be357-7c55670c019mr929100585a.46.1741701736044;
-        Tue, 11 Mar 2025 07:02:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGRg+L8adczL3Foi2AAcnsKmOHEJwYXqihA5sf9EJSRouLY4pSX3Hx4mbey3OW2QQT9tXALaQ==
-X-Received: by 2002:a05:620a:8707:b0:7c5:5670:bd75 with SMTP id af79cd13be357-7c55670c019mr929097085a.46.1741701735738;
-        Tue, 11 Mar 2025 07:02:15 -0700 (PDT)
-Received: from ?IPV6:2601:188:c100:5710:315f:57b3:b997:5fca? ([2601:188:c100:5710:315f:57b3:b997:5fca])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c558a2f92asm248542785a.33.2025.03.11.07.02.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 07:02:15 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <1959b178-5c3d-4564-beb3-f411cb9efe77@redhat.com>
-Date: Tue, 11 Mar 2025 10:02:14 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4017156C62;
+	Tue, 11 Mar 2025 14:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741701849; cv=fail; b=UohutipeW5hMMVFuaeg9EVVV8RodONyonntnSu2m8xwJdFuBCq53vzKsqjbNLCSP8TwZFF+MkPBZJkd7O+ERlglBcq131rhqd68n1H6hWD6fusSNQ93OcSJOJCf7deQER8cE25Y9jpuj0jrtBYNQCPbuprMtOPlsmumriWLsHTE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741701849; c=relaxed/simple;
+	bh=6nHrDQ8cOrPo5pjs0rTrD6/mUY7oQ1PLh8so96EyNMg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LIMkmMHX7b8lX50ARNHogvo5fw4Eckyv0c9hskPNS+J2uymhOXyyWQvwvo19ku2ZLmWR1LWtZN5+kwaccxTFK8O9PQywAJHlKBSHQRzL8sRz5+YDcbTExRxHcyjN/BN8uc1GDPylMJGhtgiXcm0WtEQHJZ6M/hCyLRda857AX/Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=zftlI627; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=kIONNL+C; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id 25F03480A55;
+	Tue, 11 Mar 2025 10:04:00 -0400 (EDT)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1741701840;
+ h=message-id : subject : from : to : date : in-reply-to : references :
+ content-type : mime-version : from;
+ bh=6nHrDQ8cOrPo5pjs0rTrD6/mUY7oQ1PLh8so96EyNMg=;
+ b=zftlI627L73r95AFYNp807CYMsIaV6h+R2fSUXU/5Wavd/CmttrJoVrbS+KSuGBsrThPa
+ 4Tp5djCnTnj87eHCw==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1741701840;
+	cv=none; b=gxz8Zsj+HMxZQLCSi9rBr3fP669bjFSWMaPcL8JXoPMLj2YV/q6jmQRkm4D+5E4ak1dEWd/HHFvptiPz/twGvfh/2022tMyShe2vAtLASrIYaMCrnIVk5CRmeFsEtlxKUXrzSEl0py+Ucx0c/XVfRbc42pdfGSa3EqRZjjAGBOOjviFMv8yeTSlBkCnxnhHKg5qWkTXjnePYMO/zXd3nECnPdmWkw9ab4ST1QADBZnJPZTLKCeesmFaSmecu+/MjpzYF2pvZe90KFFmQiSzX0rWs8CdzoLtoBK0EyRVvLX2bKQs6r/UvTZQuovA2inE7dS2Vtpq2t3eEhIK8JF3gAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1741701840; c=relaxed/simple;
+	bh=6nHrDQ8cOrPo5pjs0rTrD6/mUY7oQ1PLh8so96EyNMg=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=QZnx8Jb868Q21oaWSJJeTt7o6pNKWvCzROMpmCYoCExvjY4sAaa6MAOjpInoUIK9FMhKMUveryL9bxCLrfNjNdG8+HQGBuMW+qxl2bdqcbiruP8aOCyc3QpSov+D3jyEDmrd0DrlvhNW6cCNf0amjzYOJRPuJ8lGZnnpUs/ehYx/8MeiNjKhAHNiPrIccQPTyg3Cma04DEDv8YxPa6SBt+5z4fNQBemVXzPq2FeeacpamZeDjKJeeQi/T2cGvmUoHkTuGmACJbm7x9WZd3tAlC36+cgynp6d7yL9MsShaAc0yuKVSEYn6RAVnEoIkd9aybJznb6HV4SRUvS1aCJEZg==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1741701840;
+ h=message-id : subject : from : to : date : in-reply-to : references :
+ content-type : mime-version : from;
+ bh=6nHrDQ8cOrPo5pjs0rTrD6/mUY7oQ1PLh8so96EyNMg=;
+ b=kIONNL+CDk+TCIuVvZvAH6VE4BVzkTCYzTRCIj43mvPA+BTWEKkK7th4wI2xSiU0+gA8D
+ tMnOg+VdE5Ded2QomLURiUD/ShIxurQPMIRxPedfFjwg/LG2qKIvhu/2gByEOjRr+8ehw59
+ a11NEHfkfUJZ64Dt0EPx6GmY+AWzX0UAqcxVm4d7uxJiajMOY73DRMXM0Q/YIa+pZ/vPCPo
+ 71J9bVUtupNpBxDb+iHjl2madGzl6JmrdtduZrgjdEO6tCwU175WC7arBO4I/0ez444yn43
+ B8BY7NWfMao9FpBV+HvpjpfzsCW66EblwJ+IbqbuO8LbWSEwVf2SgVOh6Jhw==
+Received: by srv8.prv.sapience.com (Postfix) id ED97428003C;
+	Tue, 11 Mar 2025 10:03:59 -0400 (EDT)
+Message-ID: <1d8bf01be50646bb7b36abfc1ecb25eb997598dd.camel@sapience.com>
+Subject: Re: rc4 and later  log message:  gpiochip_add_data_with_key:
+ get_direction failed
+From: Genes Lists <lists@sapience.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+	 <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 11 Mar 2025 10:03:59 -0400
+In-Reply-To: <579283e5c832d77aeed531e8680961c815557613.camel@sapience.com>
+References: <579283e5c832d77aeed531e8680961c815557613.camel@sapience.com>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-53Et8eAPGW0HeO1swSaM"
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/11] cgroup/cpuset-v1: Add deprecation messages to
- sched_load_balance and memory_pressure_enabled
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>
-References: <20250311123640.530377-1-mkoutny@suse.com>
- <20250311123640.530377-2-mkoutny@suse.com>
-Content-Language: en-US
-In-Reply-To: <20250311123640.530377-2-mkoutny@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 3/11/25 8:36 AM, Michal Koutný wrote:
-> These two v1 feature have analogues in cgroup v2.
->
-> Signed-off-by: Michal Koutný <mkoutny@suse.com>
-> ---
->   kernel/cgroup/cpuset-v1.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/kernel/cgroup/cpuset-v1.c b/kernel/cgroup/cpuset-v1.c
-> index 25c1d7b77e2f2..9d47b20c03c4b 100644
-> --- a/kernel/cgroup/cpuset-v1.c
-> +++ b/kernel/cgroup/cpuset-v1.c
-> @@ -430,12 +430,14 @@ static int cpuset_write_u64(struct cgroup_subsys_state *css, struct cftype *cft,
->   		retval = cpuset_update_flag(CS_MEM_HARDWALL, cs, val);
->   		break;
->   	case FILE_SCHED_LOAD_BALANCE:
-> +		pr_info_once("cpuset.%s is deprecated, use cpuset.cpus.partition instead\n", cft->name);
->   		retval = cpuset_update_flag(CS_SCHED_LOAD_BALANCE, cs, val);
->   		break;
->   	case FILE_MEMORY_MIGRATE:
->   		retval = cpuset_update_flag(CS_MEMORY_MIGRATE, cs, val);
->   		break;
->   	case FILE_MEMORY_PRESSURE_ENABLED:
-> +		pr_info_once("cpuset.%s is deprecated, use memory.pressure with CONFIG_PSI instead\n", cft->name);
->   		cpuset_memory_pressure_enabled = !!val;
->   		break;
->   	case FILE_SPREAD_PAGE:
-Acked-by: Waiman Long <longman@redhat.com>
 
+--=-53Et8eAPGW0HeO1swSaM
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, 2025-03-08 at 15:45 -0500, Genes Lists wrote:
+> ...
+>=20
+> there are now 194 lines logged on boot with:
+> =C2=A0=C2=A0=C2=A0=20
+> =C2=A0gpio gpiochip0: gpiochip_add_data_with_key: get_direction failed: -
+> 22
+>=20
+
+
+For completeness - same log noise with rc5 and through commit
+4d872d51bc9d7b899c1f61534e3dbde72613f627.
+
+
+--=20
+Gene
+
+
+--=-53Et8eAPGW0HeO1swSaM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ9BCzwAKCRA5BdB0L6Ze
+2yD4AQC78vhEEx2EVj4M/Jy2vbWBo1bxnZ5yI3pGEDX53Bz2swEAmQe+4sVUSevx
+6bSZ6+lMA36uj9Mvt9/dDD7dCP6VaQI=
+=Md/g
+-----END PGP SIGNATURE-----
+
+--=-53Et8eAPGW0HeO1swSaM--
 
