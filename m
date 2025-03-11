@@ -1,133 +1,111 @@
-Return-Path: <linux-kernel+bounces-555897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68096A5BE07
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:38:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86FEEA5BE0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:38:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CEDE1898A4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:38:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0868716D737
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D6323875A;
-	Tue, 11 Mar 2025 10:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CBF238170;
+	Tue, 11 Mar 2025 10:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="hGLkOhv5"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2uun/cS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7081CBA34
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74285BA34;
+	Tue, 11 Mar 2025 10:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741689484; cv=none; b=Y6cIzqFibZtAbt+dTEey1FSW9lMpKnKqv/V2WgNZ9jJfL5/wU+1BR5oeCLQDUORo4J26CdOT3BMAAg6/01c5hvptEPCT3bnsvaWEvllYEPuZ2CHpe+RhrSYXLIG2nXTZtcc7HjgxNQG0DWK7mOth2H9XougrPKKin8W6QQ8IiR0=
+	t=1741689492; cv=none; b=UgSfFdLv4hwR8+h+84aZ2LROxDpMY2t0q/h0zvoPBegHpxyLWzxP5U3YuerzA8Mn6tQNfv9C7gvkN7adKRjgzlM2SusJYoSNm5GdiAZHBiqj9oqhP9vv3SvvffQZYeGu5nGVd/1LT/ZzyhCCIhSjqXT4P9bFmaB9FmYlcG7IS2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741689484; c=relaxed/simple;
-	bh=EbXZ3DQ9+b6N6Hl4SN9qCQLNiQGag830oTI8EnFB6Ig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MnqHeS5lLb6EgW2tJBki2bDpYtJWKUO+B6UaSS07fxx82uLelc63wiSmXt0lBHV2OE1lutdI8D+0qulK8I2hTg1lpFDDAbV+51s+ZdMqgCDh85lmZZzkt8YTNnLt6uBYcwxFDEZKfKKQJtYh+PPznmYUhjrE8Iw9kYlR3jFYAvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=hGLkOhv5; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3914a5def6bso1230715f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 03:38:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741689481; x=1742294281; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SyAWrxEwUsWnM7LVGAbr1T8GXaCm2RFT3dQ++j9eSpM=;
-        b=hGLkOhv5IYqDFE5iLkNuWygCyyEreuG0TtFOTjd+Bj+I+flIbFqCF4mAVs0Bjf4uXJ
-         yW3zq41RXMHvM0fmclIOvzE57JEbgFR7rFSZUj10eY2CKGya97a8eejy3nE1FIVrWgvi
-         69Va/2L12qgcEFgn5G7AGxvq3/MfRizQSppX7SBM596yz0SASYC6p32XkO1j+PvRiQ5R
-         lcSeTQHtyc8V9a5gkD7817yJVdENTnGs8Pec3L9pfPZOeweq6nAxAHTyg9K+742cvDVJ
-         PtjsawwuriCo8IEu7AxsywaTypbChvTVXVyaAfa7vvvvu2hkZ/LVvTp9r3ONhKBasFUu
-         eHrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741689481; x=1742294281;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SyAWrxEwUsWnM7LVGAbr1T8GXaCm2RFT3dQ++j9eSpM=;
-        b=sbGE8lSvu5vPizx1QjD3J7y1qO9fJtWTcLSN4FU3z3cfckh+vTRUYJAV/kr21QhKUq
-         JDpMcxnO1q/ukyT2UcDWcW0pa9h9fWEr3yaAJ79x1sPp7uI2GzepatAGSPBby6rYhMFR
-         48niUBztdXWSCFT+ElXXP81BE/e4lrSMWyy3AvOhg0qtNFl2AzOiCr0KSZt7XgmkgkJp
-         Rs14km687ich9Skpb1iOej3ZJE+enTcNDSqcp6Gh5gnViTVte3/BjJt1xWtWYNSyMXZ3
-         qYMxVMAZgm8DOUgVhYpVjMGspC+yxpsFd1yiJNF6R1WA0eKpfPGaIYqonXOi3bDM/0JE
-         +9aA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgEaDb1gj2yoGfs6Dyv9Rx4UYDmCjTj8OZDutn6N+ReD5+KEFFXHkZWiLDdSqdB8Mm6a0i3mT+4dbC4gw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze1tNWSCHqqHQC2iVd75TjuQo41eVJc3TWaQiMTMeUa0bKocnS
-	0GZ0iozK101gyQ0wyqqFfy1hoAaL74YOzycHb4zhikg1lZ0Dqs39UQPKZq81zCBP2CMYU63jneQ
-	G
-X-Gm-Gg: ASbGncu4/tWwF/Nn0TQPUHv3dC8AqrE8qyVfMF+uVE4aIdCuoeq1RIZMCy5FPmCzI8R
-	ceET2NgA2rTsDoYvAOA9soLLYtXF5VyUSyKBpWdTVEkUVipNbZs53XwipixWnsdgAcUM9XZxeXO
-	fgwrH/n8R3OhhYE53yvxdcTz1sWQuUTh4xoCFFoWKP640I9ksJ1Bgx94k/XMIFtTUTIFgx3JNgu
-	okE6zDCF4zSaKCQi0Vi4u4aJ2hR9BjRMx5ZCKPIs3Lsr0Ml9yCM0Xo7g/5cfqpzgk/dDoKhkf/8
-	DsVtP6+7IMCvt6xLeaoSZ6vdwrETHDjSU1lQJBT4y3vECyg=
-X-Google-Smtp-Source: AGHT+IF/j8vaXxrz6NQ9qVToImBHcx1sXj5BHKod2F3PwyhmwrRzoNCSAtC5+f+03GzQ5ewdWZTRdg==
-X-Received: by 2002:a05:6000:2c5:b0:391:10c5:d1a9 with SMTP id ffacd0b85a97d-39132d82751mr12162685f8f.31.1741689480756;
-        Tue, 11 Mar 2025 03:38:00 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0195casm18059782f8f.53.2025.03.11.03.37.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 03:38:00 -0700 (PDT)
-Date: Tue, 11 Mar 2025 11:37:58 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Todd E Brandt <todd.e.brandt@linux.intel.com>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH 0/5] printk: renaming some suspend/resume functions and
- one fix for unblanking
-Message-ID: <Z9AShs1dEO0jrgjL@pathway.suse.cz>
-References: <20250226-printk-renaming-v1-0-0b878577f2e6@suse.com>
+	s=arc-20240116; t=1741689492; c=relaxed/simple;
+	bh=21MGhRofUEJ0IDxhS/iYYEkZv7ETUGr/oWnYX8xLlUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=teHSaIZBq6Fjb8lyqN8X4nAz63rx52mtEhbonftCdY0bRfznzWEhrIC9QWaVwxxpIP05iaxpgcd3zopv7O4EvGgIl7WQaSijUlEbN/FsodMTIcepSt30rLJtqguDDQFYCewqEKwsZVlVgwFBDvFZec8ddcbDsrlfzA8MWtKjLQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2uun/cS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E33BFC4CEEF;
+	Tue, 11 Mar 2025 10:38:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741689491;
+	bh=21MGhRofUEJ0IDxhS/iYYEkZv7ETUGr/oWnYX8xLlUI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=c2uun/cSpJpOKknbR7fJLyOmluRIxIbLOkrrdW/X6jV+8YjfKADX5+qa08Cx1MIju
+	 3+bikZO5TwGOXN4SuaeaIv0tA3nyjo6eEspFGijS10AloVXdMyl+95BtxV2aB7Am+G
+	 GTi9bNpOJjXJd+w+DfqPi2NjKBUrCL4x5bvfz2BK82Qs55oguXmpqbOrEC8XzIBCz0
+	 mEH+8s+6wwoo7Uya1GjR2mMgsm501eEmuYZ+PXs/MYXB3Uh1VlcNP4iiVU13YdbGrR
+	 a5OzGo+hlZ5NPjoQy18jkmGCSiFwrdLHoGCCordVmuL31PaRFZ7GWJ1LMSxxuAJt4U
+	 Hd9e4ogJYTXqQ==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5497590ffbbso6049301e87.1;
+        Tue, 11 Mar 2025 03:38:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVISjD3MKDhuSLY0YzFP9SmC8OLijnP740RcOSYIl30XouyfTTATvrXa+fBxMS2HDu77kD++YxD@vger.kernel.org, AJvYcCXwWvjDJif3QTloGN1SY14TOSbftHApYEZ47wKYrK51i383WSFg+ppFioFRRaW798AhOBxr6rjJi5PuIUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzZZz9HzzWWeDMIEjFYqNPK+DSkt92Izs0SMlwYsM0EzaKm6xk
+	NvBBNsBciR/R12k4NE1itlz3o45bPJLVvNCt/v6pSCHyW4BhSD8+Nc2rP9tqhvw1m2s4sJLWw65
+	Da+mHLoQgoU04CxgeWakqPNEeaiA=
+X-Google-Smtp-Source: AGHT+IFrw+jE8gCJmyCxRdWJX3PFj25i+6jaxU+VEI+QQJjytmYuJT8E955/OiftWm3m7XUK+z46/p2vYkJY2vCm23k=
+X-Received: by 2002:a05:6512:b84:b0:545:f1d:6f2c with SMTP id
+ 2adb3069b0e04-54990e5d4c2mr5402590e87.18.1741689490117; Tue, 11 Mar 2025
+ 03:38:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226-printk-renaming-v1-0-0b878577f2e6@suse.com>
+References: <20241105155801.1779119-1-brgerst@gmail.com> <20241105155801.1779119-2-brgerst@gmail.com>
+ <20241206123207.GA2091@redhat.com> <CAMj1kXGKCJfBVqgsqjX1bA_SY=503Z-tJV893y5JAwoVs0BUfw@mail.gmail.com>
+ <20241206142152.GB31748@redhat.com> <CAMj1kXGo5yv56VvNMvYBohxgyoyDtZhr4d4kjRdGTDQchHW0Gw@mail.gmail.com>
+ <CAMzpN2iUi_q_CfDa53H8MEV_zkb8NRtXtQPvOwDrEks58=3uAg@mail.gmail.com>
+ <CAMj1kXF8PZq4660mzNYcT=QmWywB1gOOfZGzZhi1sQxQacUX=g@mail.gmail.com>
+ <20250310214402.GBZ89dIo_NLF4zOSKh@fat_crate.local> <CAMj1kXEK0Kgx-C8sOvWJ9rkmC0ioWDEb+tpM9BTeWVwOWyGNog@mail.gmail.com>
+ <20250311102326.GAZ9APHqe5aSQ1m5ND@fat_crate.local>
+In-Reply-To: <20250311102326.GAZ9APHqe5aSQ1m5ND@fat_crate.local>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 11 Mar 2025 11:37:59 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHTLz4onmR5iyowptRE38RCK4jNT3BoURBkq2FoDOMTxQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrK06MMGiOLeXqn-RxFrz_Tgl974_VpGDYK6e2sdNyxF6FLCPKn4dvM90Y
+Message-ID: <CAMj1kXHTLz4onmR5iyowptRE38RCK4jNT3BoURBkq2FoDOMTxQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/stackprotector: fix build failure with CONFIG_STACKPROTECTOR=n
+To: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>, Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org, 
+	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>, Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed 2025-02-26 16:59:00, Marcos Paulo de Souza wrote:
-> Hello, I've being working on some patches that help to clarify the suspend/resume
-> of printk machinery. The last patch on this patchset address one issue regarding
-> suspended consoles and blanking.
-> 
-> This is a part one patchset that I would like to see merged before I send more patches
-> that will rework the suspend flag (a global suspend flag istead of per console) and
-> the removal of CON_ENABLED flag later on (I've created a function that will forcibly)
-> register the console instead of using this flag.
-> 
-> Please review!
-> 
-> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+On Tue, 11 Mar 2025 at 11:24, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Mon, Mar 10, 2025 at 11:19:03PM +0100, Ard Biesheuvel wrote:
+> > and no error.
+>
+> Oh fun.
+>
+> > Could you capture the output of
+> >
+> > objdump -dr .tmp_vmlinux2 --section .head.text
+> >
+> > and share it somewhere please?
+>
+> See attached.
+>
+> Now lemme try to bisect it, see what this machine says since it is magically
+> toolchain or whatnot-specific. :-\
+>
 
-Looks good to me. I could fix the typos when pushing.
+There are many occurrences of
 
-Well, there is one more thing. It seems that the simple graphic logger
-was merged for 6.14-rc1. And the console_stop()/console_start() API
-is used also in drivers/gpu/drm/clients/drm_log.c.
+ffffffff8373cb87: 49 c7 c6 20 c0 55 86 mov    $0xffffffff8655c020,%r14
+ffffffff8373cb8a:         R_X86_64_32S __ref_stack_chk_guard
 
-It is actually the code which motivated this rename, as already
-pointed out by John, see
-https://lore.kernel.org/lkml/ZyoNZfLT6tlVAWjO@pathway.suse.cz/
+whereas the ordinary Clang uses R_X86_64_REX_GOTPCRELX here, which are
+relaxed by the linker.
 
-Well, I am going to update these two locations when pushing this
-as well. Let's just get this change done.
+I suspect that Ubuntu's Clang 15 has some additional patches that
+trigger this behavior.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-
-Best Regards,
-Petr
+We could add __no_stack_protector to __head to work around this.
 
