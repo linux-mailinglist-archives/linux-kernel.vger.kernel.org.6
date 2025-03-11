@@ -1,160 +1,151 @@
-Return-Path: <linux-kernel+bounces-555606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ABAEA5BA2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:51:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F3F4A5BA3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:53:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 478E41892846
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:52:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE1857A7AB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB63222593;
-	Tue, 11 Mar 2025 07:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E39A224247;
+	Tue, 11 Mar 2025 07:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBlgToLC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RC5XNDhs"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86C5146593;
-	Tue, 11 Mar 2025 07:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6602B224244
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741679511; cv=none; b=XI5raFM0iSmJA0HIGUumFgOAn+Ua475xisOF8PGVuQy6Tgu1zvV8gOrQgC2UOmd1zLVecPY27xPvm+euF06uH5WVgc1HtC4HzCV9CF0lb/sz67+0ejm06f2QCwu14Rd/SeLzWAMYua6yvJYBohFFICebeXc8rlDfq8nZmzqXMeg=
+	t=1741679558; cv=none; b=hl9Or9Q1NbipdN+x+1gI3f40ETjEOq3xX/kO8IfKmN5VtCShoyUMnqCqaMAdiymRWXCx7EgSppKSvnM+UxqHANgVyUdpxFOgdWI3DkLpmsoxQLxm4EUT7rFLC8m9UuWnbJP+sdi1jtEKhKka4yPbKb6C0jqPgZe61OMUspzs1yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741679511; c=relaxed/simple;
-	bh=sgPc3Qvg0vgmi1gbRN19F9lZOqeVer1XVd9n2oDi5Nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q2FK899EcazCp62VWHZLjID8J1oBCYwSMjJytd8kYuugLJ7puPpfh2ghuH+ZpdEdbeb/cYar+Wkv5LfNyMMaxi+i7ovsqZpMJRWE6jA6WTto3BBZl9zJ81G/fVArkMSKYi/PdNYDN6/Et75s0c0rGwInr+5mZ+hvKHa9aRp7hKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBlgToLC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B819EC4CEE9;
-	Tue, 11 Mar 2025 07:51:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741679511;
-	bh=sgPc3Qvg0vgmi1gbRN19F9lZOqeVer1XVd9n2oDi5Nk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hBlgToLCWNhHLQM49b0jfSigvXzWgDtpL4wroyDom0phMXBTPN/44Iqyvdw1dr4He
-	 48/fKjrsIbLP82a0DaqlamJ6Nc/ZXp9W8dUS2g3AV2dD4ufXMyyed9zWq4jsaQ5R30
-	 wP+MyCVPxyX0eqD9FGpOiROcux4u3HxxeHRiw3KVuquuzbphqV62qdPjBs7AA/aCvX
-	 1uyVADxfKpDtjqwCXCqmYAr0F98W0y+XQbWI/ASI+Tyf+r0caRUDXQnCddp36vyFiy
-	 4C/huKSzMg593dmW4vrZJZRhvSIBf3utvIDxILeOHV0x68VWaTgjb6JEGjG7u40wJK
-	 Fix209mp90HcQ==
-Date: Tue, 11 Mar 2025 08:51:48 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Matt Coster <matt.coster@imgtec.com>
-Cc: Frank Binns <frank.binns@imgtec.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>, 
-	Alessio Belle <alessio.belle@imgtec.com>, Alexandru Dadu <alexandru.dadu@imgtec.com>
-Subject: Re: [PATCH v3 02/18] dt-bindings: gpu: img: Add BXS-4-64 devicetree
- bindings
-Message-ID: <20250311-bizarre-debonair-macaque-451c4f@krzk-bin>
-References: <20250310-sets-bxs-4-64-patch-v1-v3-0-143b3dbef02f@imgtec.com>
- <20250310-sets-bxs-4-64-patch-v1-v3-2-143b3dbef02f@imgtec.com>
+	s=arc-20240116; t=1741679558; c=relaxed/simple;
+	bh=EimAiqOb8wjiUPBJICf8ehV1iDRon72lxCFcAtQyG1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qRoixCVy547bqripCSCxdSh2amnbjj3sOJEjy3A6tapri3pM65BsNT6/CTeGknZKM2hgtZ3K6vdKB0YLZjOmxgFoXWJUn4/hSWOMc5Yy8mfyScz2hhrnfLr0zcDtxDKNt8O0sB1xWS3ANfClm+sw2NofStArLt3n2snESsHeP+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RC5XNDhs; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741679553;
+	bh=EimAiqOb8wjiUPBJICf8ehV1iDRon72lxCFcAtQyG1A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RC5XNDhswZec48hvGwJO3Ne0/FLgT7vITlZQ0t2ppxFhr8b6Yinjer64D49aJuXVm
+	 fb9xWd3Gx9HrmuCr1BCZpoc4Ys4/wHamUXeX56j75E+9niet0Ku/ZEjbQwrIME+QYy
+	 WbzAXLVyPRvs4dFaPXa+azYplQUMs8IMaY/r9XlLbb2iLnIlMo21YzuQH4cV4kGg+j
+	 RnMiqz2lA5/i5lJfPYa7YhSyD/+RDtCEmSHM9r+ekNcwNvkNux4Dt9hBoEsUuEL9qP
+	 aq17fyGgqimLjGUfkXGm3OjulnGBOaImG4LYUH4Gm3JXD+EjbgQXQ/ThqNupvPZlHR
+	 qd+uYu7o8NyiA==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A8B5817E0237;
+	Tue, 11 Mar 2025 08:52:32 +0100 (CET)
+Date: Tue, 11 Mar 2025 08:51:58 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch, kernel@collabora.com, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com
+Subject: Re: [PATCH v1 3/6] drm/panfrost: Unify panfrost_mmu_enable/disable
+ common code
+Message-ID: <20250311085158.37329b0c@collabora.com>
+In-Reply-To: <20250310195921.157511-4-ariel.dalessandro@collabora.com>
+References: <20250310195921.157511-1-ariel.dalessandro@collabora.com>
+	<20250310195921.157511-4-ariel.dalessandro@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250310-sets-bxs-4-64-patch-v1-v3-2-143b3dbef02f@imgtec.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 01:10:26PM +0000, Matt Coster wrote:
-> Unlike AXE-1-16M, BXS-4-64 uses two power domains.
+On Mon, 10 Mar 2025 16:59:18 -0300
+Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
+
+> Both these functions write to MMU_AS_CONTROL register in the same way.
+> Define a common _panfrost_mmu_as_control_write function with the shared
+> code.
 > 
-> Like the existing AXE-1-16M integration, BXS-4-64 uses the single clock
-> integration in the TI k3-j721s2.
-> 
-> Signed-off-by: Matt Coster <matt.coster@imgtec.com>
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
 > ---
-> Changes in v3:
-> - Include adding the second power domain so it's in context
-> - Remove unnecessary example
-> - Link to v2: https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-8-3fd45d9fb0cf@imgtec.com
-> Changes in v2:
-> - Use normal reg syntax for 64-bit values
-> - Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-8-4ed30e865892@imgtec.com
-> ---
->  .../devicetree/bindings/gpu/img,powervr-rogue.yaml | 34 +++++++++++++++++++++-
->  1 file changed, 33 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/panfrost/panfrost_mmu.c | 33 ++++++++++++-------------
+>  1 file changed, 16 insertions(+), 17 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> index 5c16b2881447c9cda78e5bb46569e2f675d740c4..d9409d33154d429019776ddbf9d123b33f8c9740 100644
-> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> @@ -18,6 +18,11 @@ properties:
->                - ti,am62-gpu
->            - const: img,img-axe-1-16m
->            - const: img,img-rogue
-> +      - items:
-> +          - enum:
-> +              - ti,j721s2-gpu
-> +          - const: img,img-bxs-4-64
-> +          - const: img,img-rogue
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> index 294f86b3c25e7..31df3a96f89bd 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> @@ -121,38 +121,37 @@ static int mmu_hw_do_operation(struct panfrost_device *pfdev,
+>  	return ret;
+>  }
 >  
->        # This legacy combination of compatible strings was introduced early on
->        # before the more specific GPU identifiers were used.
-> @@ -49,6 +54,7 @@ properties:
->    power-domain-names:
->      items:
->        - const: a
-> +      - const: b
+> -static void panfrost_mmu_enable(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
+> +static void
+> +_panfrost_mmu_as_control_write(struct panfrost_device *pfdev, u32 as_nr,
+> +			       u64 transtab, u64 memattr)
 
-No, you just affected old device claiming it has two items. What's more,
-it's not synced with power-domains. Both properties must have the same
-constraints, but above power domains have "anything".
+I'm honestly not convinced this is needed. Let's just stick to
+panfrost_mmu_enable/disable().
 
+>  {
+> -	int as_nr = mmu->as;
+> -	struct io_pgtable_cfg *cfg = &mmu->pgtbl_cfg;
+> -	u64 transtab = cfg->arm_mali_lpae_cfg.transtab;
+> -	u64 memattr = cfg->arm_mali_lpae_cfg.memattr;
+> -
+>  	mmu_hw_do_operation_locked(pfdev, as_nr, 0, ~0ULL, AS_COMMAND_FLUSH_MEM);
 >  
->    dma-coherent: true
+>  	mmu_write(pfdev, AS_TRANSTAB_LO(as_nr), lower_32_bits(transtab));
+>  	mmu_write(pfdev, AS_TRANSTAB_HI(as_nr), upper_32_bits(transtab));
 >  
-> @@ -74,12 +80,38 @@ allOf:
->          - power-domains
->          - power-domain-names
+> -	/* Need to revisit mem attrs.
+> -	 * NC is the default, Mali driver is inner WT.
+> -	 */
+>  	mmu_write(pfdev, AS_MEMATTR_LO(as_nr), lower_32_bits(memattr));
+>  	mmu_write(pfdev, AS_MEMATTR_HI(as_nr), upper_32_bits(memattr));
 >  
-> +  # Cores with one power domain
-
-Drop
-
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: img,img-axe-1-16m
-> +    then:
-> +      properties:
-> +        power-domain-names:
-> +          minItems: 1
-
-Drop
-
-> +          maxItems: 1
-> +
-> +  # Cores with two power domains
-
-Drop
-
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: img,img-bxs-4-64
-> +    then:
-> +      properties:
-> +        power-domain-names:
-> +          minItems: 2
-> +          maxItems: 2
-
-Missing constraints for power-domains.
-
-Best regards,
-Krzysztof
+>  	write_cmd(pfdev, as_nr, AS_COMMAND_UPDATE);
+>  }
+>  
+> -static void panfrost_mmu_disable(struct panfrost_device *pfdev, u32 as_nr)
+> +static void panfrost_mmu_enable(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
+>  {
+> -	mmu_hw_do_operation_locked(pfdev, as_nr, 0, ~0ULL, AS_COMMAND_FLUSH_MEM);
+> -
+> -	mmu_write(pfdev, AS_TRANSTAB_LO(as_nr), 0);
+> -	mmu_write(pfdev, AS_TRANSTAB_HI(as_nr), 0);
+> +	int as_nr = mmu->as;
+> +	struct io_pgtable_cfg *cfg = &mmu->pgtbl_cfg;
+> +	u64 transtab = cfg->arm_mali_lpae_cfg.transtab;
+> +	u64 memattr = cfg->arm_mali_lpae_cfg.memattr;
+>  
+> -	mmu_write(pfdev, AS_MEMATTR_LO(as_nr), 0);
+> -	mmu_write(pfdev, AS_MEMATTR_HI(as_nr), 0);
+> +	/* Need to revisit mem attrs.
+> +	 * NC is the default, Mali driver is inner WT.
+> +	 */
+> +	_panfrost_mmu_as_control_write(pfdev, as_nr, transtab, memattr);
+> +}
+>  
+> -	write_cmd(pfdev, as_nr, AS_COMMAND_UPDATE);
+> +static void panfrost_mmu_disable(struct panfrost_device *pfdev, u32 as_nr)
+> +{
+> +	_panfrost_mmu_as_control_write(pfdev, as_nr, 0, 0);
+>  }
+>  
+>  u32 panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
 
 
