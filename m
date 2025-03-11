@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-556713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C933A5CDD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:25:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE1FA5CDDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:26:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05D2D1895BE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:25:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35BB87A4B41
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8897263F22;
-	Tue, 11 Mar 2025 18:24:47 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6A2263C82;
-	Tue, 11 Mar 2025 18:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72850263C69;
+	Tue, 11 Mar 2025 18:25:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA6341C72;
+	Tue, 11 Mar 2025 18:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741717487; cv=none; b=KL0prH6uU0f19RKFH/tL9qXiR/1NvK4aat1pBEu3fESomAXsY58gB7g/bSXQSHpuND0l1DcsEGbF0usuMpkw65yqmKXAVS/FXNSNJTSvrzmBBBuncf7IpWn1szb3nPTXujf+1BCo03fsUjb7x4bAUeYk5544t0mcEXvcB2/yyQ8=
+	t=1741717555; cv=none; b=S2KvJZEhZSQoxXPauY0ovDWBufeY6p3Q/0l9X+iXpcggBoxScdaO6Tta64XsFxKgxcG3EPaj+v8a0bQSISQpAOaKhPI8Xp29S9LqyqwaTQo0f/6UYCLbBoLcyu1Bfu2ACbLllDGBM7JI7Pd9zZgi19jY9ImUyqIKyT01p6+1weU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741717487; c=relaxed/simple;
-	bh=X/kifDF7vVOvdHV/s2HFBd/9y6wRS9DpCSIfNvNZK1I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Egv+eUEkm4/rbKkXyiaiY9j/GkjYKrJyz5ZQ9wCsG98Y88/WeDGCWdC02c4FU6GAVM8eRViqGLzWzEILaV/VlbLolz44XgTB/j7U4p4+hfcKqq9Wkj6u10bjYndsmIFskRdzsaaoXYf2TGE89prWI6tVSv3qxa9MWfHqCR6Vm+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA252C4CEEC;
-	Tue, 11 Mar 2025 18:24:46 +0000 (UTC)
-Received: from wens.tw (localhost [127.0.0.1])
-	by wens.tw (Postfix) with ESMTP id 6624F5FA01;
-	Wed, 12 Mar 2025 02:24:43 +0800 (CST)
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- Andre Przywara <andre.przywara@arm.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-In-Reply-To: <20250307002628.10684-1-andre.przywara@arm.com>
-References: <20250307002628.10684-1-andre.przywara@arm.com>
-Subject: Re: [PATCH v4 00/14] clk: sunxi-ng: add A523 clock support
-Message-Id: <174171748337.1740144.15952522850275241981.b4-ty@csie.org>
-Date: Wed, 12 Mar 2025 02:24:43 +0800
+	s=arc-20240116; t=1741717555; c=relaxed/simple;
+	bh=wqRGd9aY+2+mbyav8XTN1xcMeuNHpDV+Zkes4FCyOtU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z6BktLRazALInMQEqiJZIlJf2g+97IaG2BMNtBJf5f7mlh4K/6n23wHXlc4RxjR9V3HE+jvBltpZ28ed8H1f5moaAkJIb6VaKVY8NF/LuUoP4pV6x44srjMdaYRC5YX+YMNIv+EJtDVouFcB1cdmWvOmAsQ/YPq1CsNWFNQ5Lks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A57EF1424;
+	Tue, 11 Mar 2025 11:26:02 -0700 (PDT)
+Received: from [10.118.109.66] (G9L3377F54.austin.arm.com [10.118.109.66])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 482773F694;
+	Tue, 11 Mar 2025 11:25:51 -0700 (PDT)
+Message-ID: <23c77291-7c6e-45ea-b1ad-952c01882579@arm.com>
+Date: Tue, 11 Mar 2025 13:25:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Build error on -next due to tpm_crb.c changes?
+To: Thorsten Leemhuis <linux@leemhuis.info>, jarkko@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lenb@kernel.org, rafael@kernel.org, jgg@ziepe.ca, peterhuewe@gmx.de,
+ sudeep.holla@arm.com, linux-integrity@vger.kernel.org,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250305173611.74548-1-stuart.yoder@arm.com>
+ <0ad035ff-400e-4b15-8b8f-40b69152ec46@leemhuis.info>
+ <92bc0a65-608f-4307-bb1c-16d8836d42e5@arm.com>
+ <77fb9077-f598-4308-8862-6d09b23688bb@leemhuis.info>
+Content-Language: en-US
+From: Stuart Yoder <stuart.yoder@arm.com>
+In-Reply-To: <77fb9077-f598-4308-8862-6d09b23688bb@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
 
-On Fri, 07 Mar 2025 00:26:14 +0000, Andre Przywara wrote:
-> this is the fourth drop of the series introducing basic clock support for
-> the Allwinner A523 family of SoCs, comprising A523, A527, T527, H728. [1]
-> This times just a small rename of a macro name, and fixing the DT
-> binding, where the separate patches for the two CCUs got merged into
-> one. For a more detailed changelog, see below.
+
+
+On 3/11/25 11:51 AM, Thorsten Leemhuis wrote:
+> On 11.03.25 16:53, Stuart Yoder wrote:
+>> On 3/11/25 10:21 AM, Thorsten Leemhuis wrote:
+>>> On 05.03.25 18:36, Stuart Yoder wrote:
+>> [...]
+>> So, it should not be possible on one had have
+>> CONFIG_TCG_ARM_CRB_FFA being true when building tpm_crb.c
+>> and false resulting in the tpm_crb_ffa.o not being
+>> picked up in the build.
 > 
-> *************
-> Please note that the clock numbers changed compared to v1 and v2, (but
-> not against v3) so DTs from that older era cannot be used anymore with
-> this driver: you have to update the DTB. Just copying the binding header
-> and recompiling the DTB should do the trick, since the symbols stayed
-> mostly the same, at least as far they are used in the basic DTs we use
-> today.
-> *************
-> 
-> [...]
+> Many thx for the answer. Maybe Fedora's way to prepare the .config files
+> (which my package builds use to be close to Fedora's official packages)
+> is doing something odd/wrong. Will take a closer look and report back.
 
-Applied to clk-for-6.15 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
+I've been experimenting with some different build config combinations
+and have reproduced what must be the issue.
 
-[01/14] clk: sunxi-ng: mp: introduce dual-divider clock
-        commit: af7a221c12137271e8c31bc0c205ef4c57e89b4c
-[02/14] clk: sunxi-ng: mp: provide wrappers for setting feature flags
-        commit: 24ad1a7e8a3eca04dfe225b3e7935ab4ec326bb8
-[03/14] clk: sunxi-ng: Add support for update bit
-        commit: 38ea575784d3121b9c2e4c0bf425bc669e1c5e1b
-[04/14] dt-bindings: clk: sunxi-ng: document two Allwinner A523 CCUs
-        commit: 17bed1817f11b7d3c4ea0b38254f1bab78531a3d
-[05/14] clk: sunxi-ng: Add support for the A523/T527 CCU PLLs
-        commit: 04f6ff49525a8ba8ef3297de3e1a0e15ea3f5102
-[06/14] clk: sunxi-ng: a523: Add support for bus clocks
-        commit: 2d47dae9398135a48b58da9b059c23027b0e345e
-[07/14] clk: sunxi-ng: a523: add video mod clocks
-        commit: 4b759de121c46c693b61d6a22bf77d62333838e9
-[08/14] clk: sunxi-ng: a523: add system mod clocks
-        commit: 9bc061e57b4d97e187a767e45bff06b63f2a3126
-[09/14] clk: sunxi-ng: a523: add interface mod clocks
-        commit: dd19c52e686eb9f66816cd55fddfae8c7be2e6ea
-[10/14] clk: sunxi-ng: a523: add USB mod clocks
-        commit: 5fd7421770fb31a1ec35dd2400a849598466ac3b
-[11/14] clk: sunxi-ng: a523: remaining mod clocks
-        commit: 680f52d723e2ee9d97d167040eacc6a3af0b9cda
-[12/14] clk: sunxi-ng: a523: add bus clock gates
-        commit: 4548c0414839989be821e106b5128d5e7e13f2a4
-[13/14] clk: sunxi-ng: a523: add reset lines
-        commit: 9c8d960c13ab41c7e678eab5396b9258eaf8a159
-[14/14] clk: sunxi-ng: add support for the A523/T527 PRCM CCU
-        commit: 575464821eb0f72c86d93794a79900a853b256b5
+This works fine:
+<*>   TPM 2.0 CRB Interface 
+                                         < >   TPM CRB over Arm FF-A 
+Transport
 
-Best regards,
--- 
-Chen-Yu Tsai <wens@csie.org>
+This works fine:
+< >   TPM 2.0 CRB Interface 
+                                         <*>   TPM CRB over Arm FF-A 
+Transport
+
+This works fine:
+<*>   TPM 2.0 CRB Interface 
+                                         <*>   TPM CRB over Arm FF-A 
+Transport
+
+This works fine:
+<M>   TPM 2.0 CRB Interface 
+                                         <M>   TPM CRB over Arm FF-A 
+Transport
+
+This fails:
+<*>   TPM 2.0 CRB Interface 
+                                         <M>   TPM CRB over Arm FF-A 
+Transport
+
+The 2 drivers are coupled, so we can't have one built as a module
+and the other built-in.
+
+I'm not a Kconfig expert, and need to do some fiddling to see
+if I can find a Kconfig syntax that prevents that failure scenario.
+
+Thanks,
+Stuart
+
 
 
