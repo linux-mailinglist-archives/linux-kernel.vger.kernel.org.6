@@ -1,105 +1,139 @@
-Return-Path: <linux-kernel+bounces-556184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EAE4A5C227
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:14:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC2BA5C234
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4315F16E698
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:14:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8EF8188F15F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB7E149DFF;
-	Tue, 11 Mar 2025 13:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7A0189F43;
+	Tue, 11 Mar 2025 13:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="j1KKI1xt"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Do0mxjPQ"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258272F852;
-	Tue, 11 Mar 2025 13:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0044C5680;
+	Tue, 11 Mar 2025 13:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741698864; cv=none; b=boMc8zlqTphxym/y9m872/jQqbXt2XSjZAkmeix6VTOhXSjvLczdxVZykyjxGhi1kFwY+pud6PNrD/0/bw+ZNPZqDLIlNzkM20Yatbtm/aojOYi4MMlvlFFWR6THOmfdi0vfKUsUpiFMuSsML5DKaY3rjfOPKo8hM9FkwM0kVVE=
+	t=1741698988; cv=none; b=cbIARI/EI6EQXytKBq1CyvRiox9DYeZjnMTpi5l7o1Si6u4t2B2AyctBTwmZAmsWyP3bfp2f2ZtWZhxE7aesFyrxCxmiHaasQe5RoA0/Unez2JLBA+ukcluj18az+PDRuw+1nROVV8uwRPo17s05ZAeh/hdJjVui2oCw6aO3YQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741698864; c=relaxed/simple;
-	bh=BQhfhUseX2V5jOLDq+Btn1RgTFexdcL1iRxgHTbENu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dR3ROsiglmLUg2zZFU+v0e9fDkxZrE9hSzcjEZyz+GNqDMt1uJk9ydny3BQJXcc2uxGx2jrU6QBHcHZok00qcAqlH/9VLEtyuEK9s8GDfwYMY8zwWDuw4xxp+T+WjR7/jDf7pntMBObuGcMnGjKz7Y7mHjmUtUMH4QqJOB0/vX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=j1KKI1xt; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C595440E0217;
-	Tue, 11 Mar 2025 13:14:19 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ojfAd7syJE-p; Tue, 11 Mar 2025 13:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741698855; bh=W+a1kySbYasmLefuZgIGtPN2vooFA0YmQ9WzL7MYfbg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j1KKI1xtIUbq42L0uhB/iHHl3YYD9CzV7pmFwiaScE00EgYVuLYjbBBVolOeDCrAx
-	 xqjEpOS9ifhrtIt3gSmpsoelwSf0na4KBtQZS5N15ilgRQexaDCvM84Gfz39mn09k2
-	 y6sN26WQxY5gA4O8E0UkH+9FH8EQcI914csBYLsHM+4FPwkkm6i096vB8/0HqrmGQz
-	 PelkFSguactTL5YMY8UlK3um7TNy7uPrkzR3by7uNk4cz+Un/WhYTtGIDlmLulFwg/
-	 Ky/GFJIxd4Tm0tL/fjH0e0U5sQSoytYIJ+S75mhLegprR3+Hs9AEb2Fc3SnEsWJfkg
-	 ByQrf9rdDSGuAo+DKy5XWkOt9jPYibzTMwkSwPpSjAYCSfDBZ+lRUB3KSYjUWRDscd
-	 s+ZuGlJ0gIwcuWQsBL71ZDw4GDGBqHpGbB2Cscm0kWTI/Aw9L/i0jv4uCX5y++0reR
-	 CWfTSEXgIAmzeLuV4woHgWn6PLRUebRo1T0Nqr+XAKqEW3JhVtG69tizzWhSRGroDf
-	 nS8TMwJXPSZsKdDPqhtwhtfx4vZzrkUnYoBJ5JzrEw8N9SkfLekbaTMbn7ZZOhjinR
-	 xxHlBpRXJa8wdLPZY1nODbeJS4JPSzxYCdtHbrYk76zCyyLqy88E3AiQfCPYiPT+gc
-	 sDz6N2NW+UwDbpiUKdNxFfV4=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A0A7940E01A5;
-	Tue, 11 Mar 2025 13:14:02 +0000 (UTC)
-Date: Tue, 11 Mar 2025 14:13:56 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org,
-	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH] x86/stackprotector: fix build failure with
- CONFIG_STACKPROTECTOR=n
-Message-ID: <20250311131356.GGZ9A3FNOxp32eGAgV@fat_crate.local>
-References: <CAMj1kXGKCJfBVqgsqjX1bA_SY=503Z-tJV893y5JAwoVs0BUfw@mail.gmail.com>
- <20241206142152.GB31748@redhat.com>
- <CAMj1kXGo5yv56VvNMvYBohxgyoyDtZhr4d4kjRdGTDQchHW0Gw@mail.gmail.com>
- <CAMzpN2iUi_q_CfDa53H8MEV_zkb8NRtXtQPvOwDrEks58=3uAg@mail.gmail.com>
- <CAMj1kXF8PZq4660mzNYcT=QmWywB1gOOfZGzZhi1sQxQacUX=g@mail.gmail.com>
- <20250310214402.GBZ89dIo_NLF4zOSKh@fat_crate.local>
- <CAMj1kXEK0Kgx-C8sOvWJ9rkmC0ioWDEb+tpM9BTeWVwOWyGNog@mail.gmail.com>
- <20250311102326.GAZ9APHqe5aSQ1m5ND@fat_crate.local>
- <CAMj1kXHTLz4onmR5iyowptRE38RCK4jNT3BoURBkq2FoDOMTxQ@mail.gmail.com>
- <20250311112112.GEZ9AcqM2ceIQVUA0N@fat_crate.local>
+	s=arc-20240116; t=1741698988; c=relaxed/simple;
+	bh=UMlmsuVO6GEF8DdJQdsYePJLIYfHJRb0hZjOvxykXng=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LamLNtMrl1ESS7lD1g6vvqcdeEB56UZgLEfGtS71Xj5fF05pxiFNlf/sJyLB3WpBPMQJbARGCFIxBLGpu3G/RQavEe8gaSzmfOQilYOySbUBIF6GrvC+Vwnovs9BFuAv0oCMuWk3SX+y2MO33jzB26LKbvbQMmGv4o6U4tAH7Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Do0mxjPQ; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1741698896;
+	bh=bqsJB7Ukp7U/upUJDVCAC/kv30cLNFALcWDC23R8Y8Q=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Do0mxjPQKX9O8nFHK5mNdG78DZDiKc3CRospvZmXZLh6OZKEXkgsVOO8o8AL5/OJy
+	 VdE+xEjRS2a5F8C3KBc7J5qHFNC4TEOSVtbhl0n9VxpT622wxNdlqM6YSHEMMnMza3
+	 NDqXVlOzBj7wnZog3c38rpgr1MYqBPaQt8flvc0s=
+X-QQ-mid: bizesmtpip4t1741698889txnqiw4
+X-QQ-Originating-IP: 38TNyXAdpG1cQvPev52XGYHqr0JmBM8kEIh2CHYNCYY=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 11 Mar 2025 21:14:47 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 952616671164402820
+From: WangYuli <wangyuli@uniontech.com>
+To: peterhuewe@gmx.de,
+	jarkko@kernel.org,
+	jgg@ziepe.ca
+Cc: linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	James.Bottomley@HansenPartnership.com,
+	stefanb@linux.ibm.com,
+	ardb@kernel.org,
+	roberto.sassu@huawei.com,
+	viro@zeniv.linux.org.uk,
+	gourry@gourry.net,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] MAINTAINERS: Add include/linux/tpm*.h to TPM maintainers
+Date: Tue, 11 Mar 2025 21:14:40 +0800
+Message-ID: <3E528EFF1AE81A17+20250311131440.1468875-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250311112112.GEZ9AcqM2ceIQVUA0N@fat_crate.local>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: McJfg7Aee/FZXzDXxt8QEVnoUM6dxLzdt0aSVPOgc8ZQ2DH9QYyMyfiQ
+	wmywPojbpABIQ6PL/cr4gbr+ptnZbaUz4+mYbPez/XniOi10Aig+OjXfUSrXMrNOSkBqGGD
+	GKr5fyEx2u/XVvDQPGXFWCQaAxFWv0Pd7pal6LpPqgZBQM2GX0+2a/eWx/DwyuJzdMqypuX
+	jYsljs/nnK/d+d3gZMJTRl4q5d9gkPzlKjAHOGI/sO8Ctl0P9389nRYYioeJ7cxWJEgRP2I
+	zNchFFGid7IH724JqqRs70iBVd/YdgybethcmoY6pF40DdHPe+lFMdlDXx2/vQhgK6Qp4qA
+	IAFTUMr8fHPU6ud9j7LyGB3Ci1pck5Ufo+H+QUK5gAJeTWMHUNoKs0k+NIZ9KHXDgys5NJT
+	wiAU4jmxxnDM6OYGpOyPewemzLyzuELYxTwMYBZwoXiiySmrBDlhCsvY813sqtt06IFMFSv
+	3UjlalD6jLZeu8+IPGLRu0uUItUCkpuaVOu7IE1vX1byIvagZNG+bSE57HdOS4yLYDqu/CU
+	S3SqpfLWv3xY/5vv01tTXcy1J7zunLZwheDXM3+/vXQBwBOfiAtxf2JnMtjl9y/jBvVnZAZ
+	EdErxAVXh6nA4M+PgoEMkbLw2SPy0MbC55fqivq/QgFZIfhAsPdKtUyO3t4iPOwVkNSdf+m
+	W3V9auFUlqBKJj0rV7A9GFmYkT/pkPdiSBT4+ginE583Soo0QER+KVH1sExPXlhZYP2bOVK
+	QAirKo6+wcpTGWOdXHRLxVWEbFZmn6QKian/zmQGnHDBxQ41h5phPVkrVhFfxPCKFxNG/PX
+	jhH9Tu7L9+WqPJ8FHH2JJAZOfg6uUbCMDbNoYeIXHqO8muEMKLI4A6nTAcePZ5sh3IDEZoG
+	boL2ooc7QdESLfoND7V+jjWBgGoBnj6okZRM2JdrTeA1QnrJZKNmsu6q586Flhiiq6sCUGm
+	VWgSp0DJccHTs1u7kmQisLcX2ZGkzgEQ6XjYTLr7SWeJZad4tpik/RAWB
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On Tue, Mar 11, 2025 at 12:21:12PM +0100, Borislav Petkov wrote:
-> Yap, that fixes the build:
+As of now, within include/linux, there are three header files
+pertaining to the TPM driver: tpm.h, tpm_eventlg.h and tpm_command.h.
 
-Lemme run randbuilds with that one, see what else breaks with it.
+Upon investigation when attempting code modifications, it has become
+evident that these files are currently without a maintainer.
 
+In light of their intrinsic relationship with the TPM driver itself,
+stewardship of these files should fall under the TPM subsystem. So
+that scripts/get_maintainer.pl can provide more accurate output
+
+It should be noted that this change entails the omission of some
+commit_signer and author entries from the scripts/get_maintainer.pl
+output. A list is provided herein for future investigation:
+ *tpm.h:
+    Jarkko Sakkinen <jarkko@kernel.org> (commit_signer)
+    James Bottomley <James.Bottomley@HansenPartnership.com> (commit_signer)
+    Stefan Berger <stefanb@linux.ibm.com> (commit_signer)
+    Ard Biesheuvel <ardb@kernel.org> (commit_signer)
+    Roberto Sassu <roberto.sassu@huawei.com> (commit_signer)
+    Al Viro <viro@zeniv.linux.org.uk> (author)
+ *tpm_eventlog.h:
+    Ard Biesheuvel <ardb@kernel.org> (commit_signer)
+    Gregory Price <gourry@gourry.net> (commit_signer)
+
+In passing, also include include/uapi/linux/vtpm_proxy.h for TPM
+maintainers, as it is facing a comparable plight.
+
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ed7aa6867674..4a7b2e8b97de 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -24037,6 +24037,8 @@ Q:	https://patchwork.kernel.org/project/linux-integrity/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
+ F:	Documentation/devicetree/bindings/tpm/
+ F:	drivers/char/tpm/
++F:	include/linux/tpm*.h
++F:	include/uapi/linux/vtpm_proxy.h
+ F:	tools/testing/selftests/tpm2/
+ 
+ TPS546D24 DRIVER
 -- 
-Regards/Gruss,
-    Boris.
+2.47.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
