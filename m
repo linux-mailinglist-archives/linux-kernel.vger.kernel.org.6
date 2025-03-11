@@ -1,134 +1,160 @@
-Return-Path: <linux-kernel+bounces-555458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B77A5B7BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:09:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 496E0A5B7E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:12:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12A3188E9B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:09:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20A283ABF1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC58A1EB182;
-	Tue, 11 Mar 2025 04:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99501EA7C4;
+	Tue, 11 Mar 2025 04:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tWSDOW+s"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD5C1DEFC6;
-	Tue, 11 Mar 2025 04:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="pBsRYPpF"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14581DEFC6;
+	Tue, 11 Mar 2025 04:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741666135; cv=none; b=OV8tU6+vPfe/e+BNfOxfQc5YC4G4OC4zeJYGwPXtIbXq9eCeK9wpyVOpwkwbetF/iqtCgatbvEaVTNfHll6x5gyqar0xEYuhwNkyH8aZbCVIhCUqDcEClf4RTuTAN+B1xcWXw3+mSG0aGkoSE40M+xggskf7bM5Ol9k3WuLNKoE=
+	t=1741666339; cv=none; b=u4kd5W34QvR+INI0bfN/j+dYTiMH7eJcnIGTOVCg43pF/dUc/W3ngCkZq3L9u9YUrsOHJD5sbb9aqjjwefQyEg0QrMxGlvFHa0AohH5SsG5XoSJyeTYCgU39Yz4bg4dsul8UOLJphBhSaUt9JylEdZQVdhY+HMR6baadKpZpxOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741666135; c=relaxed/simple;
-	bh=Qja134C/wJaCaQVYpuecIUYuehH+ojbX9undd3UV3w4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n1m/kIUbVFNeh/wHnDKVpcPg2vHLrxWf8ZwZb6s9XAUArSbaV09Fsn7CqME5m9ou7+HI/AEsOendT+Rr2KPhYcLgB6Sfixtf7IUWhzdTKec1IgXm9Ryg9m0BnsggY/d00NXagvA90Z4Sjjk+CbZjovLzJElDpRwFIl88dIY0tTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tWSDOW+s; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741666129;
-	bh=G9LZex+ScjyCa4n4xpxmhtKckQVblnzbw8xzpeAVBcs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tWSDOW+sgBIAyUOZIOCnVnb4NF6wpjiCeJ6+pccKYFHOuOfuxDVs4qQn5pA7DE5J9
-	 pJnIMu1Y0UBUKbsgPMIS88yHPAPHNmvCYuJruhv3w9lvQAvfKIrlVNw1B23cQaL+/T
-	 qG4z2AfvE+Nunzsqtkcn5VBaYjb5yIYuXsdunQ1pWNfScZ6tueiUz3kYDkzUG/ARSO
-	 wfsyjZzojlxrKi+YbjVpQPvrhmt1asVFFUBHkYIzneVOKBQmOint8cDCW5M5XzwwuA
-	 2THWlUMzRt9XTuc7o13bzu/6300qYVqiWsxE/GdMc41FTJg/O/cOvd/DeCWK8iAnIY
-	 QZPR6zlmlh6Dw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBgHN3WjYz4x3J;
-	Tue, 11 Mar 2025 15:08:48 +1100 (AEDT)
-Date: Tue, 11 Mar 2025 15:08:47 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the tip tree
-Message-ID: <20250311150847.5a63db36@canb.auug.org.au>
+	s=arc-20240116; t=1741666339; c=relaxed/simple;
+	bh=K2+jhtniO3+sHD1likhsY/r8f6NPabjz7wCK5LeoxT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eJyycuF49I6EaXL7OqnB91EIHJBuUcYF9E5bTc6W+RaccD8Rjm5EdpTJNoSpxl/BB+IkkrFSt0M7mf9J1waELu82z21AMoxLwEU98Gw3FCQL4u/5NvBu03zzGSQkALwr9ck07fBl+Ov8tbl1SVqTFK8RweHGj549fVySH2Iyq4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=pBsRYPpF; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 47A872111424; Mon, 10 Mar 2025 21:12:17 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 47A872111424
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741666337;
+	bh=T4+3byS9QQCfauiu8VrCImosgNfjC6A7fWIdxfJ3XmA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pBsRYPpFjClheI959zyEe9W0iYPXY7ggT50J2AHGv3BoqwISxBkoPcaNfoHLuxhrH
+	 9zkkhgeZu3dek9q/qE9bvBzhBPUBU4fXKPQef742EFYeu9JUI4ztlz4Lh6g64aPQO/
+	 GPciJqaCAfZfEY6u9dLLk3Mt7g+EQOeewfmvISFo=
+Date: Mon, 10 Mar 2025 21:12:17 -0700
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: longli@linuxonhyperv.com
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Long Li <longli@microsoft.com>
+Subject: Re: [Patch v3] uio_hv_generic: Set event for all channels on the
+ device
+Message-ID: <20250311041217.GA7165@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1741644721-20389-1-git-send-email-longli@linuxonhyperv.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/J7lZN/VrH1F73ucDQL7skho";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1741644721-20389-1-git-send-email-longli@linuxonhyperv.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
---Sig_/J7lZN/VrH1F73ucDQL7skho
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Mar 10, 2025 at 03:12:01PM -0700, longli@linuxonhyperv.com wrote:
+> From: Long Li <longli@microsoft.com>
+> 
+> Hyper-V may offer a non latency sensitive device with subchannels without
+> monitor bit enabled. The decision is entirely on the Hyper-V host not
+> configurable within guest.
+> 
+> When a device has subchannels, also signal events for the subchannel
+> if its monitor bit is disabled.
+> 
+> This patch also removes the memory barrier when monitor bit is enabled
+> as it is not necessary. The memory barrier is only needed between
+> setting up interrupt mask and calling vmbus_set_event() when monitor
+> bit is disabled.
+> 
+> Signed-off-by: Long Li <longli@microsoft.com>
+> ---
+> Change log
+> v2: Use vmbus_set_event() to avoid additional check on monitored bit
+>     Lock vmbus_connection.channel_mutex when going through subchannels
+> v3: Add details in commit messsage on the memory barrier.
+> 
+>  drivers/uio/uio_hv_generic.c | 32 ++++++++++++++++++++++++++------
+>  1 file changed, 26 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
+> index 3976360d0096..45be2f8baade 100644
+> --- a/drivers/uio/uio_hv_generic.c
+> +++ b/drivers/uio/uio_hv_generic.c
+> @@ -65,6 +65,16 @@ struct hv_uio_private_data {
+>  	char	send_name[32];
+>  };
+>  
+> +static void set_event(struct vmbus_channel *channel, s32 irq_state)
+> +{
+> +	channel->inbound.ring_buffer->interrupt_mask = !irq_state;
+> +	if (!channel->offermsg.monitor_allocated && irq_state) {
+> +		/* MB is needed for host to see the interrupt mask first */
+> +		virt_mb();
+> +		vmbus_set_event(channel);
+> +	}
+> +}
+> +
+>  /*
+>   * This is the irqcontrol callback to be registered to uio_info.
+>   * It can be used to disable/enable interrupt from user space processes.
+> @@ -79,12 +89,15 @@ hv_uio_irqcontrol(struct uio_info *info, s32 irq_state)
+>  {
+>  	struct hv_uio_private_data *pdata = info->priv;
+>  	struct hv_device *dev = pdata->device;
+> +	struct vmbus_channel *primary, *sc;
+>  
+> -	dev->channel->inbound.ring_buffer->interrupt_mask = !irq_state;
+> -	virt_mb();
+> +	primary = dev->channel;
+> +	set_event(primary, irq_state);
+>  
+> -	if (!dev->channel->offermsg.monitor_allocated && irq_state)
+> -		vmbus_setevent(dev->channel);
+> +	mutex_lock(&vmbus_connection.channel_mutex);
+> +	list_for_each_entry(sc, &primary->sc_list, sc_list)
+> +		set_event(sc, irq_state);
+> +	mutex_unlock(&vmbus_connection.channel_mutex);
+>  
+>  	return 0;
+>  }
+> @@ -95,12 +108,19 @@ hv_uio_irqcontrol(struct uio_info *info, s32 irq_state)
+>  static void hv_uio_channel_cb(void *context)
+>  {
+>  	struct vmbus_channel *chan = context;
+> -	struct hv_device *hv_dev = chan->device_obj;
+> -	struct hv_uio_private_data *pdata = hv_get_drvdata(hv_dev);
+> +	struct hv_device *hv_dev;
+> +	struct hv_uio_private_data *pdata;
+>  
+>  	chan->inbound.ring_buffer->interrupt_mask = 1;
+>  	virt_mb();
+>  
+> +	/*
+> +	 * The callback may come from a subchannel, in which case look
+> +	 * for the hv device in the primary channel
+> +	 */
+> +	hv_dev = chan->primary_channel ?
+> +		 chan->primary_channel->device_obj : chan->device_obj;
+> +	pdata = hv_get_drvdata(hv_dev);
+>  	uio_event_notify(&pdata->info);
+>  }
+>  
+> -- 
+> 2.34.1
+> 
 
-Hi all,
+Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 
-The following commits are also in the mm tree as different commits
-(but the same patches):
-
-  0b3bc3354eb9 ("arm64: vdso: Switch to generic storage implementation")
-  127b0e05c166 ("vdso: Rename included Makefile")
-  30533a55ec8e ("parisc: Remove unused symbol vdso_data")
-  31e9fa2ba9ad ("arm: vdso: Switch to generic storage implementation")
-  365841e1557a ("vdso: Add generic architecture-specific data storage")
-  3ef32d90cdaa ("x86/vdso: Fix latent bug in vclock_pages calculation")
-  46fe55b204bf ("riscv: vdso: Switch to generic storage implementation")
-  51d6ca373f45 ("vdso: Add generic random data storage")
-  5b47aba85810 ("vdso: Introduce vdso/align.h")
-  69896119dc9d ("MIPS: vdso: Switch to generic storage implementation")
-  9729dceab17b ("x86/vdso/vdso2c: Remove page handling")
-  998a8a260819 ("vdso: Remove remnants of architecture-specific random stat=
-e storage")
-  ac1a42f4e4e2 ("vdso: Remove remnants of architecture-specific time storag=
-e")
-  d2862bb9d9ca ("LoongArch: vDSO: Switch to generic storage implementation")
-  dafde29605eb ("x86/vdso: Switch to generic storage implementation")
-  df7fcbefa710 ("vdso: Add generic time data storage")
-
-These are causing the following conflicts:
-
-CONFLICT (content): Merge conflict in arch/arm64/include/asm/vdso/compat_ge=
-ttim
-ofday.h
-CONFLICT (content): Merge conflict in arch/arm64/include/asm/vdso/vsyscall.h
-CONFLICT (content): Merge conflict in arch/powerpc/include/asm/vdso/gettime=
-ofday.h
-CONFLICT (content): Merge conflict in arch/s390/kernel/time.c
-CONFLICT (content): Merge conflict in arch/x86/include/asm/vdso/gettimeofda=
-y.h
-CONFLICT (content): Merge conflict in include/asm-generic/vdso/vsyscall.h
-CONFLICT (content): Merge conflict in include/vdso/datapage.h
-CONFLICT (content): Merge conflict in include/vdso/helpers.h
-CONFLICT (content): Merge conflict in kernel/time/namespace.c
-CONFLICT (content): Merge conflict in kernel/time/vsyscall.c
-CONFLICT (add/add): Merge conflict in lib/vdso/datastore.c
-CONFLICT (content): Merge conflict in lib/vdso/gettimeofday.c
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/J7lZN/VrH1F73ucDQL7skho
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfPt08ACgkQAVBC80lX
-0GzfgAgAmvrAVvzQ2WRGG+crhNP+sNzrx6ggNxtH67ERhqXktto89uk0ydSbxW0b
-sbDFwTYfXl232Zwz52KlVmtrqatWOHjnizqXHNPXkEAikEBxyGgEbur1p7G9AZoS
-OsBoWkLT+nDv5KmMofVxQIr0gqt4Iyq14keQsIw44VNmfYt9qId9W1lVvlH3PnLX
-fqVc2LBXL9ffIwPdCiQIcBSRjuJV1bTaIhumuY/30CdIF/9Kj42IBn0GoE5Q82Le
-kpbrxv6GpMb/K5jfz66V/Z4CIRgBw75eYnp55znFNMGHGpuouVU8Pg2vfhSW0vCe
-I0Zy28lzWhznxUQ0I0PpeEBrhRedBA==
-=cYsq
------END PGP SIGNATURE-----
-
---Sig_/J7lZN/VrH1F73ucDQL7skho--
+- Saurabh
 
