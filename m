@@ -1,103 +1,145 @@
-Return-Path: <linux-kernel+bounces-555629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6409CA5BA7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:07:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B6D0A5BA78
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD9553A91D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:07:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE733A05FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2552236E9;
-	Tue, 11 Mar 2025 08:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EFD224241;
+	Tue, 11 Mar 2025 08:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AIC5nti+"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/h7PXgM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1661EDA15
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920242222C9;
+	Tue, 11 Mar 2025 08:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741680451; cv=none; b=pmgTd79ti1uOrQoF8UHANRe5LgH9O7RvCY6YCSv7rqL5psIdm76Owzj8zbQoouLezLbB51/Mu45w631ZZzjZVji246r6lSOPZB1/CnKJPSyt9SH7ACHxYwPcjJQYhSAQHLv/ZwcvPVK+MC1yYSi04ZihFmX+PaSlSYzb5zI+zEA=
+	t=1741680433; cv=none; b=ofGbGI1njfo2s20cB4qXUm90SkrTMu0xyLY28PHmiZQCOhGHkPQkn9x+XUS6djnuykDX5toV91vc3z7Vqj+rd6HWc3fFw5/fClgIh9zyqTrn+6qRPkqMFwFu+Hgv9HA5yE4xLfjDU8qgijPQTDDXivWom0xRiKvuqlB1v5w5Vp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741680451; c=relaxed/simple;
-	bh=Wln6HbJ1YhxwRZiQK3YIiagu79K/yCUP4PftsyrzyJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GrAM/28JcYCf2oSjxztXt2xwbPq92HX6w/xoC7+xPJkn8BxkLDSsQVCzqeA1IvXVgwg7jmQbxvfb4mZSdUFzXmsiJmh2hZn/TQ+CoSF5Kr1svTGY0OODNn79qi4Ok0DY0mJK+nkvXRVwtWTHK+hQCrwzFxCyLPggwp/kqQUoBcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AIC5nti+; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741680448;
-	bh=Wln6HbJ1YhxwRZiQK3YIiagu79K/yCUP4PftsyrzyJo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AIC5nti+7eUbHYa6koRGpGRDZWZUbDap8+kiOPa6xudRu7/6HjjqlTTTq6qe2/eUP
-	 Lm4HrDY94i1XeUGM9dBC7TanQ2zW+Ew7KiM7mA8Ctfvllyh/j//QUiaA5cyubszlpZ
-	 rHDwH9F0Wyj/ZftoFQL26wvIBB4Sk/UFeymsxRC1g2gSxQqBxV3ptne2FoWM4mLYP7
-	 NNjC+9XFBIeDBcAmhb62N601XSk9+J/cDysAdY9y47RnM8oh/ZxJDcpITuPm5ULtQO
-	 MocuUeeR4PIDK+pPBZY+m3Epg6xukvWc30vrwWYQIjNEFgmaJYhZQZNkgdMyrtJi4q
-	 QY0VkpuOtjtlg==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A6CBD17E0237;
-	Tue, 11 Mar 2025 09:07:27 +0100 (CET)
-Date: Tue, 11 Mar 2025 09:06:49 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch, kernel@collabora.com, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com
-Subject: Re: [PATCH v1 5/6] drm/panfrost: Enable AARCH64_4K page table
- format on mediatek_mt8188
-Message-ID: <20250311090649.0d15d74d@collabora.com>
-In-Reply-To: <20250310195921.157511-6-ariel.dalessandro@collabora.com>
-References: <20250310195921.157511-1-ariel.dalessandro@collabora.com>
-	<20250310195921.157511-6-ariel.dalessandro@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741680433; c=relaxed/simple;
+	bh=ZtI3BPfxkUxUFIHbmyl6XFRwlrtyk7qksexHnsdaz0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IXSzs7dsbDG/gtrR3QjvgXh+ccIg8ZEaLxjJX2X3HHPW9pSM48hceygaJ/f5TJzojOBAo5uIb8HpQrbYcSkAtHhMnt3mlcIKjHHmrGMEu5rRE6mWfa4auGqQ80llARVU8hvXLYAOwLO8BUaaqvBz6baX5omGW6C9VoykcTgBkiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U/h7PXgM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 951E6C4CEE9;
+	Tue, 11 Mar 2025 08:07:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741680432;
+	bh=ZtI3BPfxkUxUFIHbmyl6XFRwlrtyk7qksexHnsdaz0s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U/h7PXgMOSAGbndHGkKUKiEIJoiOTC00zUrB+InlOsaKJ9us1tQK8WaTVTYTX6/31
+	 rvpED6HJyNuGG1rl9XU0wQy0IalgnzmWgqSRL3jDkJnA7nRTUAah3ImRMrh8aVUYuI
+	 ZHDm5qFuFV85SFttR4Sxg82jSO18jmLS2XGUpP6lDWMfcsvpaN23VWwQ4rltpydqBZ
+	 R3WBSwkOGmMBQvBUx5PjSIbTIPo7UZogIzN9tmEHX2Tl0FDnHvZFNugr3Oinv/IHXJ
+	 r7zY67ZQrzN4yQZ6YvgEZg+GZ6EXm3JjtnoSGPg1my692rl9GFkVE/VWJBnPNIRCyP
+	 6clygOGhD9QZw==
+Date: Tue, 11 Mar 2025 09:07:10 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org
+Subject: Re: [PATCH 3/4] drm/vc4: use new helper to get ACR values
+Message-ID: <20250311-intrepid-obedient-lizard-64ad2c@houat>
+References: <20250309-drm-hdmi-acr-v1-0-bb9c242f4d4b@linaro.org>
+ <20250309-drm-hdmi-acr-v1-3-bb9c242f4d4b@linaro.org>
+ <20250310-invisible-married-firefly-945c84@houat>
+ <esgb42dyhpjixm62tfk2nfzdiygnfn4bcwq4zn7rhydmt4np2q@7v77p7kveb4e>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dyye5w7y4dznz4ng"
+Content-Disposition: inline
+In-Reply-To: <esgb42dyhpjixm62tfk2nfzdiygnfn4bcwq4zn7rhydmt4np2q@7v77p7kveb4e>
 
-On Mon, 10 Mar 2025 16:59:20 -0300
-Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
 
-> Now that Panfrost supports AARCH64_4K page table format, let's enable it
-> on Mediatek MT8188.
+--dyye5w7y4dznz4ng
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 3/4] drm/vc4: use new helper to get ACR values
+MIME-Version: 1.0
 
-Can you maybe give more details on why this is needed
-(legacy shareability/cacheability not suitable for this GPU?)?
+On Mon, Mar 10, 2025 at 10:18:04PM +0200, Dmitry Baryshkov wrote:
+> On Mon, Mar 10, 2025 at 03:51:53PM +0100, Maxime Ripard wrote:
+> > On Sun, Mar 09, 2025 at 10:13:58AM +0200, Dmitry Baryshkov wrote:
+> > > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > >=20
+> > > Use drm_hdmi_acr_get_n_cts() helper instead of calculating N and CTS
+> > > values in the VC4 driver.
+> > >=20
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > ---
+> > >  drivers/gpu/drm/vc4/vc4_hdmi.c | 10 +++-------
+> > >  drivers/gpu/drm/vc4/vc4_hdmi.h |  7 +++++++
+> > >  2 files changed, 10 insertions(+), 7 deletions(-)
+> > >=20
+>=20
+> > > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4=
+_hdmi.h
+> > > index e3d989ca302b72533c374dfa3fd0d5bd7fe64a82..0a775dbfe99d45521f3d0=
+a2016555aefa81d7934 100644
+> > > --- a/drivers/gpu/drm/vc4/vc4_hdmi.h
+> > > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
+> > > @@ -211,6 +211,13 @@ struct vc4_hdmi {
+> > >  	 * KMS hooks. Protected by @mutex.
+> > >  	 */
+> > >  	enum hdmi_colorspace output_format;
+> > > +
+> > > +	/**
+> > > +	 * @tmds_char_rate: Copy of
+> > > +	 * @drm_connector_state.hdmi.tmds_char_rate for use outside of
+> > > +	 * KMS hooks. Protected by @mutex.
+> > > +	 */
+> > > +	unsigned long long tmds_char_rate;
+> > >  };
+> >=20
+> > This should be in drm_connector_hdmi if it's useful
+>=20
+> That would mean bringing the state to a non-state structure on the
+> framework level. Is it fine from your POV?
 
-> 
-> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> ---
->  drivers/gpu/drm/panfrost/panfrost_drv.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> index 0f3935556ac76..d7b8bded6d784 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -824,6 +824,7 @@ static const struct panfrost_compatible mediatek_mt8188_data = {
->  	.num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
->  	.pm_domain_names = mediatek_mt8183_pm_domains,
->  	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
-> +	.gpu_configs = BIT(GPU_CONFIG_AARCH64_4K),
->  };
->  
->  static const char * const mediatek_mt8192_supplies[] = { "mali", NULL };
+Sorry, I'm changing my mind a little bit, but it's pretty much the same
+case than for accessing the infoframes from debugfs: we want to get some
+information stored in the state from outside of KMS.
 
+What we did for the infoframes is that we're actually just taking the
+connection_mutex from the DRM device and access the drm_connector->state
+pointer.
+
+I guess it would also work for ALSA?
+
+Maxime
+
+--dyye5w7y4dznz4ng
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ8/vLQAKCRDj7w1vZxhR
+xUTYAQDyuqn5t5cMpn/5BQvLfTTmRbB8sQbVEyGnQO76VRXLEgD8DIkV+06Aq3Wk
+upcHhxdxp69/BSRmI5L12OmC4dqEywU=
+=V2Cq
+-----END PGP SIGNATURE-----
+
+--dyye5w7y4dznz4ng--
 
