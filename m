@@ -1,87 +1,161 @@
-Return-Path: <linux-kernel+bounces-555409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18ECFA5B702
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:59:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A5CA5B706
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE4F188D119
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:59:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C33151890E61
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8E31E832E;
-	Tue, 11 Mar 2025 02:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="mZnOCRZQ"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6AA1E47DD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 02:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058C11E5702;
+	Tue, 11 Mar 2025 03:02:41 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFB7566A;
+	Tue, 11 Mar 2025 03:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741661952; cv=none; b=EXxTJ4jaZwuyys+rZz11V/0S15ANYMpKebK2U3TYQM321FMkJM/wIHvHx3nsh3xh5tyCAZnDKz/yiEPfUdN8X9TKn0Z26rnfd+gxPg4MS1R3MtetBc13bYU7qYNEZiwSituxYHUesWD97l3+rN5H+mi8UR/B79pfV6Z4y2A1zLk=
+	t=1741662160; cv=none; b=fqsTqHBKlgQp/8jTvtyEAGpxI7bfoUqHSIymoqzq5wzyaBvaGVqSgb6RZu9Dj7Q3qgcrZTCOJCIwuHo5MoNM89FHOBui8JwalFKBCjmWEEkmMebbExVgODuEXhFJUF2LFO7F1PH6wPPx2K/ks9HMr1UQpL+ZGS5EuQihg4PE/rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741661952; c=relaxed/simple;
-	bh=FU1Fda26sF6aIGkPyt3zuGoD7LdpQPSS+hCtJJEfPm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gb4bh/w3dBwzONWf6wxXWS5FuNrXthYayBr9VvxLgQHIsnHkuBi9XkrxYeIHl6NPVZcftV0zxXar1DPe8DYWwnTu9N6p/eaX94UnL0c7KCITouMoPmRjkM8GVeUqISuzBbt2mq+pfOpJRLa5lJzfUtO8my/+yflGjvF9rRBU8eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=mZnOCRZQ; arc=none smtp.client-ip=1.95.21.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=GSR8BTfCX9kMB6qOH0+UvwaxFfvP+jyFvyHmy/gj9gE=;
-	b=mZnOCRZQXcVe3qU42I6laEGda6LowRCDbbqby/VYSPkoIP7nfG6xvzU/5Jqa6z
-	pRCqMJYTRfo35c3f5zV+o/9Rtii1wOF3p/1FvJciRnfLqV26vVOhM21mslRJvhB4
-	Yt4vHL4RM0M1NetSflvuDl68Ia94puFgxeiaoP6+yAvgc=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgBnGk7Fps9n5JGvAA--.954S3;
-	Tue, 11 Mar 2025 10:58:14 +0800 (CST)
-Date: Tue, 11 Mar 2025 10:58:12 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, soc@linux.dev,
-	Arnd Bergmann <arnd@arndb.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: imx: mark imx53_suspend_sz as unused
-Message-ID: <Z8+mxDdvtak/3SRs@dragon>
-References: <20250225201157.4190864-1-arnd@kernel.org>
+	s=arc-20240116; t=1741662160; c=relaxed/simple;
+	bh=iEVYhP9aOFIypShC1CexYSkBukl52OlAM4gwvDer6II=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eRKDIVZhZTtkOKx+JOwCWrX7DC0swXmJJKZIDzyaoOz1PFQ7xeEeUqvjOxDTiNT7NeVCSWD+aKkOECSOTBsy0iJxyEMv7/YkVZkPfVtlwQUWqgaCqTi9izXvWeDfeulYfHVBQwduedx4jAQFP3pexfT6sD7CAiJD4nR/jvQf9z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FAFDC4CEE5;
+	Tue, 11 Mar 2025 03:02:37 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>
+Cc: linux-ide@vger.kernel.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Yuli Wang <wangyuli@uniontech.com>,
+	Jie Fan <fanjie@uniontech.com>,
+	Erpeng Xu <xuerpeng@uniontech.com>
+Subject: [PATCH V2] ahci: Marvell 88SE9215 controllers prefer DMA for ATAPI
+Date: Tue, 11 Mar 2025 11:02:17 +0800
+Message-ID: <20250311030217.4177569-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225201157.4190864-1-arnd@kernel.org>
-X-CM-TRANSID:M88vCgBnGk7Fps9n5JGvAA--.954S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JFyDGF4DWw1DAr18Zr4fKrg_yoWxtwcE9a
-	yrtw1xAr1fJr9Igw17Jan0yr40g3yDurn8Z34rJ3WakFyj9FZrZ3y8t34kX39agr42k3Wx
-	GF9Iqw1fCrZ5CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU00PfJUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBUNZWfPoGYkbQAAse
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 09:11:52PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Unused 'static const' variables cause a warning when building with
-> W=1, and imx53_suspend_sz has a definition for this as an
-> alternative when CONFIG_SUSPEND is disabled:
-> 
->     In file included from arch/arm/mach-imx/cpu.c:9:
->     arch/arm/mach-imx/common.h:101:18: error: 'imx53_suspend_sz' defined but not used [-Werror=unused-const-variable=]
-> 
-> It's still referenced though, so mark it as __maybe_unused, so
-> the one user can address the dummy copy and other files that include
-> the header don't produce a warning.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+We use CD/DVD drives under Marvell 88SE9215 SATA controller on many
+Loongson-based machines. We found its PIO doesn't work well, and on the
+opposite its DMA seems work very well. We don't know the detail of the
+88SE9215 SATA controller, but we have tested different CD/DVD drives
+and they all have problems under 88SE9215 (but they all work well under
+an Intel SATA controller). So we can define a new AHCI board id named
+board_ahci_atapi_dma, and for this id we set the ATA_FLAG_ATAPI_DMA and
+ATA_QUIRK_ATAPI_MOD16_DMA flags on the SATA controller to prefer ATAPI
+DMA.
 
-Applied, thanks!
+BTW, return -EOPNOTSUPP instead of 1 if ATAPI DMA is not supported in
+atapi_check_dma().
+
+Reported-by: Yuli Wang <wangyuli@uniontech.com>
+Tested-by: Jie Fan <fanjie@uniontech.com>
+Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
+Tested-by: Yuli Wang <wangyuli@uniontech.com>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ drivers/ata/ahci.c        | 12 ++++++++++++
+ drivers/ata/libata-core.c |  6 +++++-
+ include/linux/libata.h    |  1 +
+ 3 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+index f813dbdc2346..a64db28549d8 100644
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -49,6 +49,7 @@ enum board_ids {
+ 	/* board IDs by feature in alphabetical order */
+ 	board_ahci,
+ 	board_ahci_43bit_dma,
++	board_ahci_atapi_dma,
+ 	board_ahci_ign_iferr,
+ 	board_ahci_no_debounce_delay,
+ 	board_ahci_no_msi,
+@@ -137,6 +138,12 @@ static const struct ata_port_info ahci_port_info[] = {
+ 		.udma_mask	= ATA_UDMA6,
+ 		.port_ops	= &ahci_ops,
+ 	},
++	[board_ahci_atapi_dma] = {
++		.flags		= AHCI_FLAG_COMMON,
++		.pio_mask	= ATA_PIO4,
++		.udma_mask	= ATA_UDMA6,
++		.port_ops	= &ahci_ops,
++	},
+ 	[board_ahci_ign_iferr] = {
+ 		AHCI_HFLAGS	(AHCI_HFLAG_IGN_IRQ_IF_ERR),
+ 		.flags		= AHCI_FLAG_COMMON,
+@@ -591,6 +598,8 @@ static const struct pci_device_id ahci_pci_tbl[] = {
+ 	  .driver_data = board_ahci_yes_fbs },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9230),
+ 	  .driver_data = board_ahci_yes_fbs },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9215),
++	  .driver_data = board_ahci_atapi_dma },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9235),
+ 	  .driver_data = board_ahci_no_debounce_delay },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_TTI, 0x0642), /* highpoint rocketraid 642L */
+@@ -1917,6 +1926,9 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	/* save initial config */
+ 	ahci_pci_save_initial_config(pdev, hpriv);
+ 
++	if (board_id == board_ahci_atapi_dma)
++		pi.flags |= ATA_FLAG_ATAPI_DMA;
++
+ 	/* prepare host */
+ 	if (hpriv->cap & HOST_CAP_NCQ) {
+ 		pi.flags |= ATA_FLAG_NCQ;
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index c085dd81ebe7..87a3dbf3ac93 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -3029,6 +3029,10 @@ int ata_dev_configure(struct ata_device *dev)
+ 		dev->max_sectors = ATA_MAX_SECTORS;
+ 	}
+ 
++	if ((dev->class == ATA_DEV_ATAPI) &&
++	    (ap->flags & ATA_FLAG_ATAPI_DMA))
++		dev->quirks |= ATA_QUIRK_ATAPI_MOD16_DMA;
++
+ 	if ((dev->class == ATA_DEV_ATAPI) &&
+ 	    (atapi_command_packet_set(id) == TYPE_TAPE)) {
+ 		dev->max_sectors = ATA_MAX_SECTORS_TAPE;
+@@ -4544,7 +4548,7 @@ int atapi_check_dma(struct ata_queued_cmd *qc)
+ 	 */
+ 	if (!(qc->dev->quirks & ATA_QUIRK_ATAPI_MOD16_DMA) &&
+ 	    unlikely(qc->nbytes & 15))
+-		return 1;
++		return -EOPNOTSUPP;
+ 
+ 	if (ap->ops->check_atapi_dma)
+ 		return ap->ops->check_atapi_dma(qc);
+diff --git a/include/linux/libata.h b/include/linux/libata.h
+index c1c57f814b98..67d374279a65 100644
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -194,6 +194,7 @@ enum {
+ 					    /* (doesn't imply presence) */
+ 	ATA_FLAG_SATA		= (1 << 1),
+ 	ATA_FLAG_NO_LPM		= (1 << 2), /* host not happy with LPM */
++	ATA_FLAG_ATAPI_DMA	= (1 << 4), /* ATAPI use DMA */
+ 	ATA_FLAG_NO_LOG_PAGE	= (1 << 5), /* do not issue log page read */
+ 	ATA_FLAG_NO_ATAPI	= (1 << 6), /* No ATAPI support */
+ 	ATA_FLAG_PIO_DMA	= (1 << 7), /* PIO cmds via DMA */
+-- 
+2.47.1
 
 
