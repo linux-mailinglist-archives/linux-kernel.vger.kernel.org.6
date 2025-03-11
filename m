@@ -1,127 +1,141 @@
-Return-Path: <linux-kernel+bounces-556288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59032A5C3B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:23:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CEDBA5C3C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:27:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A25BE3B4756
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:23:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B6FA3B4C16
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3454225B696;
-	Tue, 11 Mar 2025 14:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F89925BAC0;
+	Tue, 11 Mar 2025 14:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InI0GoQz"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VLM+zq1w"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5351917C9F1;
-	Tue, 11 Mar 2025 14:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F7625B67A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741703018; cv=none; b=J2UUdfXCCTtMDsB502KF8xIpOPKrFxSxJDMvgRNmTKNP1+P+tmcXOt3lOPZFNAxUtYZCoKZDoKJEh++gWQWNWEYzymmyCxedjTv1ByRV5GaQRztlX1azGW/0FwK7B6F4YmNCevAiy7HPuVZubfinJj4NMxMVH8UP3WNHB/Ejzqo=
+	t=1741703161; cv=none; b=mFdlLbNzcFJ/2VG1s48+idL4Zl141VJD1VtQvwmkDgNho3vHHlRIg8rZKPzQ5pM0GXivh6IDUR1a5fIqrTRp3f++FHvnqhLSBkHgMsogy0LW7qFkKm9zOl+XzN0ComMTW6b4SNWz1jgAcN7MsdyAe/rZmK9oTAWTNx0TQu76Bp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741703018; c=relaxed/simple;
-	bh=bVsNey6nqpLgc9wuzfwetyTPGy3g4G0YH24pC9RLxqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VjYpMnGXTsXt3bz0XGw7piYV6RFZBba/BLmD9/YhFopJbhZVj2ygqnLZxsP0mCil7jVyL/HEja7S7A/APb9SKj5/x7DozJ4IuJzYkQm189V5LOKNlHyZqAH6JtUgtVeM6wNG7nyE+OmK6Xs/w4p09bZsNBeSudsBFvKX1jLbOZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=InI0GoQz; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-225a28a511eso7144475ad.1;
-        Tue, 11 Mar 2025 07:23:37 -0700 (PDT)
+	s=arc-20240116; t=1741703161; c=relaxed/simple;
+	bh=79lDXHkxGXTpgvX4Tf1jMBZMfqeS438xlynxsP86f/o=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=pNLGdaEW2nUjjvrwbs+LaWRTVLQo7mR5fijvfPilT2Qrq3wKppBrYpAKaDO559SiqmI+z5+paHuyGTGttRHlUXYGOmtOYyzqGgBB65dKh/SrSSnwvitkM5iAvnqe0H9fVvt4gqnUk+llHZMrlaHoNxs3QTy8Fautc6Q/gtfW48E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VLM+zq1w; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43bd0586b86so39261375e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:25:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741703016; x=1742307816; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bVsNey6nqpLgc9wuzfwetyTPGy3g4G0YH24pC9RLxqM=;
-        b=InI0GoQzsNjF6suEIDz9jLS+cBs6zHcmm9E5uAzcHucpUIEPT/cgBMAt9imUlTMvrr
-         ctvWClFb4XMkEoJxSCjnjtyIMkKoG8Z0ZkeNmsIhZ/Ykj+/xyEnNAbgNn+/G6rSapXQo
-         qrWfkeV+Z53io1xB2sXFXuM68Jqpgdl1Mkzxl0reZXtNHegyyFt4pOxRszmeuz0jsvit
-         TRCOj+pge+gA/wSo/9mBIpUJIuUrKe/Rx8vefK7TI3auVthkcsdsiFdrrEskbT2fhhvp
-         usxvTmNHzeIUgze39udWtDuWHAMopsZrWVwXbbs8kgJ1AGlkaflOQE++Ujel0yKeEhh8
-         jGiQ==
+        d=google.com; s=20230601; t=1741703158; x=1742307958; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lC0i4WOQpGCKB2dNWp8ThzgBQKaOLrnFmghttL4ZvZA=;
+        b=VLM+zq1w9fY9Q8yKHz64E+EzwNhtk8UbK4IB8gfz2QlQUecXxB3hDmO04AYLPG6X6D
+         56fjwJSUX1Rr7zgy+Gma7xu/Q2CcJlTvOke3RzUhXKVEx+9Fh2ogpwF7PLVfmYAmr5pi
+         Iby75AasR170e6ozuFM8YDAVipVoPJ5qs/nZFHUVWcFWTQUBXEXmoOccb83RY35cuUvO
+         vLAnj9ST+/UJlbvagVzJaUUKnVK2uWFgVeLQt+p960qg2j/j26QKZl0pLPAYYNr78Zc7
+         SK/czpG5abgceVIRfpYDnkp2rESu6BJ4enDR2GNCxGXvtf28ABFgpn3ivN9ctSqGHEXk
+         fROw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741703016; x=1742307816;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bVsNey6nqpLgc9wuzfwetyTPGy3g4G0YH24pC9RLxqM=;
-        b=VJ+DIdxCrgd5YVzJI7VssWAvF+gTBTCCCvmkxb0lag9pRsXshN/1f+zU4vnd7T8DdA
-         acvpw4slh+mvYPgCYadt9kGZLdDwWHl5i6NQAetdV94DYH/F5uRxUOFymjQOQp3uET2W
-         tQWS1Brqdr6XEheu81eN5fuaUkcNzvOR/ML+AEQ7+9mho3Zv6Tx3N7b3BeA67T8kri4P
-         7tew5wsj1d8xxV5SrCFoYWhegRmeqyoPZgWq7FklFqDzJ4K1J2EzoYjDsaH69/9NmOZM
-         CWlvwcJmZIKoUI2EL1ygjfzvVehLoo9sOBbd8vNDtx/AeJuO14aBaYAg6UMoFY7h4tc+
-         vReQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULR4L8PdrtywudHR4hdQFc2nAer07zYp8YwaXaActwS92+zOu7dQmV+CFzwckfRMl51y88CFjuDYcnmEnw@vger.kernel.org, AJvYcCV98p9f05b5yEP0OhsGl4fvG558y/W+GSrLHkxRcjm97ZyITR/ee8MzKVgREMb34IAMZDSmHoa4870=@vger.kernel.org, AJvYcCWWliUuheWGda6d7PpEUmrHChqls4beYiT24fScqateDOf2CrOEn8YmrlbrAFc3Z2TcB5XEr7Z6KseiwGV9QasWYe20@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOwNynN+c271tfwoGtNIZWXQZ5ab+ovaXAy2Y5+3X1lGShEbcP
-	SZgIeNipMH29cHVdxKkPUW7TRjWwDhIWIRLmPkyhAJkJxuYVaaPp
-X-Gm-Gg: ASbGnctBboH2a1BNi5l6dygs2kDhFiOsvn/kinwp1Dp9zAgFAHACM5tOJ0uOXc5NXoW
-	yGJEt0kFFeU14lLgJz0X1BBiO3LFdsI6YhCcVEvTcf+o5suWxL8j14/ToIOEOELU2hunM6cUwor
-	F4V3g7CzeZxQkEXjOzCmV/03bceph6k/VZjuUB3veprBubagFZX2wARJBNmfjqpla+GHc++OeoU
-	jmIj/kSeenev1zGUvAK+tkC7HT+ru/OUZXUVAHU2XM3EsWn2cerELS7/YS6fmUHnvU1NVISgVXq
-	KIFsfu/HZ3zx8JUAlu+si78cDU+xf95ETMFiydIg3pYw
-X-Google-Smtp-Source: AGHT+IHqrPFh17Cmi1OZseYWRYA77dEJerZdXXiZoErlG8RlygvpGsCvt+XYSvfs8p54D3Zlh1fLkw==
-X-Received: by 2002:a17:902:f686:b0:224:1ec0:8a1d with SMTP id d9443c01a7336-22428ab535bmr240669445ad.30.1741703016149;
-        Tue, 11 Mar 2025 07:23:36 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a91985sm98340635ad.194.2025.03.11.07.23.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 07:23:34 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id CAC7A41F562C; Tue, 11 Mar 2025 21:23:31 +0700 (WIB)
-Date: Tue, 11 Mar 2025 21:23:31 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Purva Yeshi <purvayeshi550@gmail.com>, rostedt@goodmis.org,
-	mhiramat@kernel.org, corbet@lwn.net
-Cc: mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 0/3] docs: tracing: Refactor index.rst documentation
-Message-ID: <Z9BHY1UH1Q3fET4P@archie.me>
-References: <20250311124158.22950-1-purvayeshi550@gmail.com>
+        d=1e100.net; s=20230601; t=1741703158; x=1742307958;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lC0i4WOQpGCKB2dNWp8ThzgBQKaOLrnFmghttL4ZvZA=;
+        b=PqVI9rTFS3VyXl9FdFBfZO0GY838+q9ycj1WW7B61FqDj+YNjqWienxcHVKlBsFsNX
+         mCucENc9RZris87o7vlLlnsIj1DFqlczgprJVERLIz/bH2x3oWSzB0MDRG58OjXzn9lC
+         zOU9oV1NSxcqPh8mu77/xA+VaIrc4DPy2rkFAvonSnBgUr3FBBBla//bR/i4JjDLaHVu
+         uyIpvRT/xaOr1UFTxbEDVz4Vj4dyFgoCCX1EzNhOnGBX4Se0EOtzbnKq66p++Kgx7wcZ
+         1vpo3yaLXUB9hkxE1xTvuu9QWjA72Jq3n/nn1v4X4bifhuNSEKaZzjNgHhLKjrWI/QoP
+         Qmxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUm5A0ivR4wMvqlppnol5d/jjDKQzIroQlwrcvSPzlC06qfE5KMD8ETSXxVQVxUkIBZIu1GSTOQ5uIX3FU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcaXnPSMbOnYKFNpd6Ex5w9RxaweT+HtS2TD6Y7VwNejz1UBaW
+	bMEy3yglYqUGjZp7giyxV1jhTyO6ft8jfhded/EiIeTwjRa7SyvyoejYgW+ogr+BC6y1CCt2u06
+	wbRc+fhggrNEwJA==
+X-Google-Smtp-Source: AGHT+IHObWBudLSNtdlwggAkdEg4nz/CJMyp8c7bGwJLWJCSzcPLWepW0RpiTZDtyFKNwXvPaWD7Vm2Q2jQ6++A=
+X-Received: from wmbay27.prod.google.com ([2002:a05:600c:1e1b:b0:43c:f3b7:f2d7])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3ba3:b0:43c:fb95:c76f with SMTP id 5b1f17b1804b1-43cfb95cc9emr61468885e9.9.1741703158566;
+ Tue, 11 Mar 2025 07:25:58 -0700 (PDT)
+Date: Tue, 11 Mar 2025 14:25:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IDclmnVtmqF5WZTo"
-Content-Disposition: inline
-In-Reply-To: <20250311124158.22950-1-purvayeshi550@gmail.com>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAMhH0GcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDY0ND3cz8Mt3MktQi3WRLC5PE1EQD8xRDCyWg8oKi1LTMCrBR0bG1tQB qct4gWgAAAA==
+X-Change-Id: 20250311-iov-iter-c984aea07d18
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1483; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=79lDXHkxGXTpgvX4Tf1jMBZMfqeS438xlynxsP86f/o=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBn0EfYNTjv0Lr2ZQvM38OJGqhfN5FIbHP0QU5vk
+ EqXglINxOSJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ9BH2AAKCRAEWL7uWMY5
+ Ri3fD/41qzMbjnvzYRw6OV1nkBbjtMG+HQfXOFQfyP1Q4ySyToRSBLHhcLoOncHjbtq5S0duK0N
+ yvsfBV8yczH/k91FLBIgzOGExLQFcmWehkEP20nAdYMFBB/y4GiejjEW29F/FUTKej3krvtRSuR
+ H4b3UNeS8cKKdN6mxZhA/qPk1V05MlV/GRR+w6TOnqo0Bbiry+NLTVArDunjrO1h9BrcKLj774D
+ s+ZjP594sh7LF4NdAcNfvVXBR+EkKbql42EPrJakEAYT2mUE1UvMPPz/Nq0b0qXmBg2PsiWJbpx
+ dbDhG+w6QFcPO4W0X6ravv9TGciUMSsb2Yh3vZTwvcfwT7gmetyqzQ0sNM9TY1LDptTmUHSxtqm
+ 2+/pbwPVR603mjxHyqH2UHCz6xhIF462KkEWDOOQeI2u3bCeQQJ3t+sR36unvlgv/Z9yNSOqqxN
+ Ny2S+j65lyzKkmkHzT35tkuGlS2yokdpeAYzLQM2jnoCONTo8z4ikV+JdEhqPcYaKKLlaVfhb0Z
+ ttqsYxFfv55EJvy6wCBN/OU7I5IzWt0vVN+eUGszlK1bxUbXM7NVB1cG7Q2upTu29bVgPCbZcYf
+ l4ct+hmWWzOzLuaQy34xszPStgKAlniLBy43n84V5qKeptiYN/fj3XxZPuUZnt/GEwQQdEJn6it 8TqVbUcFgGDeCww==
+X-Mailer: b4 0.14.2
+Message-ID: <20250311-iov-iter-v1-0-f6c9134ea824@google.com>
+Subject: [PATCH 0/5] Rust support for `struct iov_iter`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, Lee Jones <lee@kernel.org>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
+This series adds support for the `struct iov_iter` type. This type
+represents an IO buffer for reading or writing, and can be configured
+for either direction of communication.
 
---IDclmnVtmqF5WZTo
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In Rust, we define separate types for reading and writing. This will
+ensure that you cannot mix them up and e.g. call copy_from_iter in a
+read_iter syscall.
 
-On Tue, Mar 11, 2025 at 06:11:58PM +0530, Purva Yeshi wrote:
-> Refactor Documentation/trace/index.rst to improve clarity, structure,
-> and organization. Reformat sections and add appropriate headings for
-> better readability.
->=20
-> Improve section grouping and refine descriptions for better usability.
+To use the new abstractions, miscdevices are given new methods read_iter
+and write_iter that can be used to implement the read/write syscalls on
+a miscdevice. The miscdevice sample is updated to provide read/write
+operations.
 
-Where are patches [2/3] and [3/3]?
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Alice Ryhl (4):
+      rust: iov: add iov_iter abstractions for ITER_SOURCE
+      rust: iov: add iov_iter abstractions for ITER_DEST
+      rust: miscdevice: Provide additional abstractions for iov_iter and kiocb structures
+      rust: alloc: add Vec::clear
 
-Confused...
+Lee Jones (1):
+      samples: rust_misc_device: Expand the sample to support read()ing from userspace
 
---=20
-An old man doll... just what I always wanted! - Clara
+ rust/kernel/alloc/kvec.rs        |  27 ++++
+ rust/kernel/iov.rs               | 308 +++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs               |   1 +
+ rust/kernel/miscdevice.rs        |  97 +++++++++++-
+ samples/rust/rust_misc_device.rs |  37 ++++-
+ 5 files changed, 467 insertions(+), 3 deletions(-)
+---
+base-commit: 046cc01be6b9d139b49dfc396b7201c633ff1a26
+change-id: 20250311-iov-iter-c984aea07d18
 
---IDclmnVtmqF5WZTo
-Content-Type: application/pgp-signature; name=signature.asc
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ9BHXgAKCRD2uYlJVVFO
-o5uoAQCj+toCQB1w4pPX2Y08OQjlVmrltaLUyZYWdezv2/Rz2AD/UnpRB4fxSlqU
-EWbYci2rNEeq10P541gFEii25XTTRAY=
-=QEAM
------END PGP SIGNATURE-----
-
---IDclmnVtmqF5WZTo--
 
