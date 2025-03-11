@@ -1,156 +1,88 @@
-Return-Path: <linux-kernel+bounces-556603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045A4A5CC34
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:31:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD809A5CC37
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:32:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8785189DB61
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89AC8189A37F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49DD260A3A;
-	Tue, 11 Mar 2025 17:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OM93F3xA"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F33E2620DF;
+	Tue, 11 Mar 2025 17:32:17 +0000 (UTC)
+Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C461876;
-	Tue, 11 Mar 2025 17:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD061876;
+	Tue, 11 Mar 2025 17:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741714275; cv=none; b=NKD0FhCB0BMUoH4YUDYZsLlfGz5+wruea0tt0oFnIrJX7p91UePxYxJXVeUzha0YcCK2Fhb4+yF+Q6Pp7C6igIRK+0H/sfQHI1BR6JhbYjySFWNarIMVwBRMpiDce5dPO/yP8XvxombV6h1uyo51IPC5k4hqeFiyT/u8jdlkkDU=
+	t=1741714337; cv=none; b=D7Ms4cPQ6hUtBh1wm+iRuB0WmSbErz/UNSCdLyQUPEViJVRsoaY2MDESPgokrq/6LQEMluyMNPJ8L2N9EaHnXBg7gSj0PKVaTxxX2dsvlhc9tsYDwGuuSbgXMtO6uFJkK+JEIA83hBWuix4v/JsAYKuFZ6iYWnVwyuLkMypMIE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741714275; c=relaxed/simple;
-	bh=YnU39UTdrkK967CS5QBoK9SJMChpCj6ucq5fmt6tDlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F2JdmLZkdGTH5mkumBrjXs2neLqP6AMwFasAcOxwNKoLGM+prpsXXG7hAzuSNWKI9lTjCBJbVKPwnkqYSN1NUQcMvNlbQf7Qx3Qn1UEKKPfqFOVoayY/vzMKwvd4SyTFYj/ootTRkbNnMoPaiTWxUs5fHzth+02W/YOFPkhBM8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OM93F3xA; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F194A441B3;
-	Tue, 11 Mar 2025 17:31:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741714264;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e4ce7XpyqCF9Ov39zRPIKLWSbFCk4LaFJEpsxtfdhHI=;
-	b=OM93F3xA1g51io8YkQQiFUSlwLnXaX/o9Sao+TxG8GIwmnE/IkiiXGf/hzopkxgEo3X5gd
-	6a2oA/4x0nw9LOqZq3EBk0+ZyXcP0ps4ae7oRhF4+6ypnxFk1cflI9WZSmVW276cBmlzM1
-	admySuOuqaG81EDCsPfneFXG/0Pj1bI7lTUhMDuVK+fUzxagAWTPYKMoAfhhU+7+tsCKul
-	hPfG9FW8ysuzHO6EXJt3uSo1gI4ZytzA71Ju0KKi99qebyIJz2dnATeeRJ9T3L2vicI4/3
-	ilT2NHvUuKBe2oEyeIgJqn4jn4AAmeQcQz/hP4H3N+zXjCjK4J40ECGYRiC0mw==
-Date: Tue, 11 Mar 2025 18:31:01 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Russell King <rmk+kernel@armlinux.org.uk>,
- Thangaraj Samynathan <Thangaraj.S@microchip.com>, Rengarajan Sundararajan
- <Rengarajan.S@microchip.com>, kernel@pengutronix.de,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v3 6/7] net: usb: lan78xx: Transition
- get/set_pause to phylink
-Message-ID: <20250311183101.5192c3df@fedora.home>
-In-Reply-To: <20250310115737.784047-7-o.rempel@pengutronix.de>
-References: <20250310115737.784047-1-o.rempel@pengutronix.de>
-	<20250310115737.784047-7-o.rempel@pengutronix.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741714337; c=relaxed/simple;
+	bh=yeyYZ85Ho06QZ9y/d0NITYgG6Q4IZtDXDMAK19Z5q04=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IqekAZAjjBnMTTnvlPiaHNr60oHiUeoUO4SAqgHiSRo9pUuxVXsa1aM908maxo9bB/APazaG8jg6BuKtxFvs4Urwp5AGb458xOXvpYpTpKnCVqNLu5f6Df/c4Cmqm+WD8dc9NYFDRK7+4pyD4EgYe54y5dhqdM4O50oRLESY+e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
+Received: from mgb4.. (unknown [62.77.71.229])
+	by mx.gpxsee.org (Postfix) with ESMTPSA id 948CF40AA9;
+	Tue, 11 Mar 2025 18:32:05 +0100 (CET)
+From: tumic@gpxsee.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Martin=20T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
+Subject: [PATCH] docs: media: mgb4: Improve mgb4 driver documentation
+Date: Tue, 11 Mar 2025 18:31:41 +0100
+Message-ID: <20250311173141.6910-1-tumic@gpxsee.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddvkeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrt
- ghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeifohhojhhunhhgrdhhuhhhsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopehrmhhkodhkvghrnhgvlhesrghrmhhlihhnuhigrdhorhhgrdhukh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Oleksij,
+From: Martin Tůma <martin.tuma@digiteqautomotive.com>
 
-On Mon, 10 Mar 2025 12:57:36 +0100
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+Add some basic info about the HW/driver + contact info.
 
-> Replace lan78xx_get_pause and lan78xx_set_pause implementations with
-> phylink-based functions. This transition aligns pause parameter handling
-> with the phylink API, simplifying the code and improving
-> maintainability.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
+Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
+---
+ Documentation/admin-guide/media/mgb4.rst | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Some very minor things below :
+diff --git a/Documentation/admin-guide/media/mgb4.rst b/Documentation/admin-guide/media/mgb4.rst
+index f69d331e3cb1..5ac69b833a7a 100644
+--- a/Documentation/admin-guide/media/mgb4.rst
++++ b/Documentation/admin-guide/media/mgb4.rst
+@@ -1,8 +1,17 @@
+ .. SPDX-License-Identifier: GPL-2.0
+ 
++.. include:: <isonum.txt>
++
+ The mgb4 driver
+ ===============
+ 
++Copyright |copy| 2023 - 2025 Digiteq Automotive
++    author: Martin Tůma <martin.tuma@digiteqautomotive.com>
++
++This is a v4l2 device driver for the Digiteq Automotive FrameGrabber 4, a PCIe
++card capable of capturing and generating FPD-Link III and GMSL2/3 video streams
++as used in the automotive industry.
++
+ sysfs interface
+ ---------------
+ 
 
->  drivers/net/usb/lan78xx.c | 51 ++-------------------------------------
->  1 file changed, 2 insertions(+), 49 deletions(-)
-> 
-> diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-> index 7107eaa440e5..3aa916a9ee0b 100644
-> --- a/drivers/net/usb/lan78xx.c
-> +++ b/drivers/net/usb/lan78xx.c
-> @@ -1878,63 +1878,16 @@ static void lan78xx_get_pause(struct net_device *net,
->  			      struct ethtool_pauseparam *pause)
->  {
->  	struct lan78xx_net *dev = netdev_priv(net);
-> -	struct phy_device *phydev = net->phydev;
-> -	struct ethtool_link_ksettings ecmd;
-> -
-> -	phy_ethtool_ksettings_get(phydev, &ecmd);
-> -
-> -	pause->autoneg = dev->fc_autoneg;
->  
-> -	if (dev->fc_request_control & FLOW_CTRL_TX)
-> -		pause->tx_pause = 1;
-> -
-> -	if (dev->fc_request_control & FLOW_CTRL_RX)
-> -		pause->rx_pause = 1;
-> +	phylink_ethtool_get_pauseparam(dev->phylink, pause);
->  }
->  
->  static int lan78xx_set_pause(struct net_device *net,
->  			     struct ethtool_pauseparam *pause)
->  {
->  	struct lan78xx_net *dev = netdev_priv(net);
-> -	struct phy_device *phydev = net->phydev;
-> -	struct ethtool_link_ksettings ecmd;
-> -	int ret;
-> -
-> -	phy_ethtool_ksettings_get(phydev, &ecmd);
-> -
-> -	if (pause->autoneg && !ecmd.base.autoneg) {
-> -		ret = -EINVAL;
-> -		goto exit;
-> -	}
->  
-> -	dev->fc_request_control = 0;
-> -	if (pause->rx_pause)
-> -		dev->fc_request_control |= FLOW_CTRL_RX;
-> -
-> -	if (pause->tx_pause)
-> -		dev->fc_request_control |= FLOW_CTRL_TX;
+base-commit: f4b211714bcc70effa60c34d9fa613d182e3ef1e
+-- 
+2.48.1
 
-Sorry not to have spotted that before, but after that patch you no
-longer need dev->fc_request_control, you can get rid of that in
-struct lan78xx_net.
-
-Related to other patches (probably patch 1), it also appears you can get
-rid of :
- - dev->fc_autoneg
- - dev->interface
- - dev->link_on
-
-Thanks,
-
-Maxime
 
