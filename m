@@ -1,215 +1,113 @@
-Return-Path: <linux-kernel+bounces-556937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96647A5D10C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:49:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 267BAA5D113
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:50:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9EC017577B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:49:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 714837A8DCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE75D264A6D;
-	Tue, 11 Mar 2025 20:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7748C264A87;
+	Tue, 11 Mar 2025 20:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPmUW+YU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0bUizCs"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27ADB2620F9;
-	Tue, 11 Mar 2025 20:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875E62620F9;
+	Tue, 11 Mar 2025 20:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741726167; cv=none; b=oJgoy1iRWwJhEDNQ0VyGj5+mV6q7BgjiteI5sgeZ41UQPEHyoQPpfplogeNWGvCEs/m1fgmD5betijz1rqq3ma5ymH3ru0HKhQbRCw7BFCsVX3WAkeRVSMQoEsQDdXSUUgK0yOMflS1klOHS3i7lKc7doXdKpKKFITD6R8mYP7Q=
+	t=1741726211; cv=none; b=eyj2WYMi/PDrLSm56oZTm+L1Q39OCvBH1d9rTgnrhPaDrLpiSQf0vNMn+n+FHLFlMyWJ37YWSjtPA6ZYIK2D20XIa051L9xFdMfwP9QEceriLwdAne4ELWt1IR2vdLq3C78XNAZkISgA0xZO7MKSF2SkveivLlOcHFHzsNyTGo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741726167; c=relaxed/simple;
-	bh=8FmPYlcHFOpSfnHE1XVVmISlRoOzSb1SFySvsKU2bLM=;
+	s=arc-20240116; t=1741726211; c=relaxed/simple;
+	bh=JWdKg5zoGBpY28zuxaqBxi6+dP6Re/Qr912PEvIfcXY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tuRTdiqaexkVmQ8TAAf/fjjkkbhMpZPjmsrkokGKZBh7+kyLzgap0m9rG5YnMT8YAi4dF2vFtCdL+sLY5Q/IW3cmmFJUKU70kM9qyTbDINsrgueRavefvE32106qhwfsXNqH91tIf2P1B9rolFHNOMxqncgVdTnt3+f3HrHaOos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPmUW+YU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC513C4CEE9;
-	Tue, 11 Mar 2025 20:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741726167;
-	bh=8FmPYlcHFOpSfnHE1XVVmISlRoOzSb1SFySvsKU2bLM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hPmUW+YU4x+MqhdXvR9UPVQKT2sjxAiptQMsT01ERZr9zhhJOd1ulpswNO3COGf9S
-	 GlGAgr8lOc62Soihct+fa9aioqyCTDa4V86HncGSTvdtDDtG7Qw9FdUvUQZ3UH+iYm
-	 O3mxdnt/rb8PU4LJ6P0xraOjJyLPcrXBd657GIDNx2aQitpQcC+K7xUUpIPEsGbjp2
-	 X7LUKSzne9lQlIF1J5cYZfSFDrVPMsj4Wzaxd6XY0vyc/36ac9DBcZzbu+ULCaBzyB
-	 qhVpskFsFkdzhNNQsAm/EOIPgEAq9jbUoZX8Qs8+rahv9taCZFJUEU+Fo4v+R/fwH2
-	 6PrTfBVcQvW9A==
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-523ee30e0d4so2022630e0c.2;
-        Tue, 11 Mar 2025 13:49:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVSd7ObnlP098bYAo27uDnieGFqfSZJxwdgqYjSw5e39FxNvWcQvEaiUDTDBIsE5GYqS4xYq8PCqiLaHkU=@vger.kernel.org, AJvYcCWw77Ur7Pg8NhMoHNiSkWCkk0GIsJCGPxxBz7MpLH/JqxPIfBoKyP9VA7nCps6VHOx3P0LP7ek1KE+Q6X4=@vger.kernel.org, AJvYcCWxUYZlJlvvWbEnM6o0IuuTe81L5ixHaVQPrnpS+z4e0dPH1ar5palctRWXG+RFjw3zeYXjUxs7W0pRoes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDkTf+1wZaxVoKnW0+gHl4LtJPY1X6oFEUVILX/GMrnchZPwho
-	smRj59lTH2oSkyvozag+79aMNZvmkhJxUYEbItTxwYAwZ01Cc4gwp2Cb3qwPoHo5NySCTYeOall
-	+YzK6J0Vqhz5wmjlPVdZRaMALMcc=
-X-Google-Smtp-Source: AGHT+IGv8rYPtePlNgNFcXomGIjZGgtpHGzu87s3KufWdYOrUgDZ1+WsBcXha+mFin0bUO1R5dcgCvuClQlj1vzVEKQ=
-X-Received: by 2002:a05:6102:3fa7:b0:4c3:49b:8f78 with SMTP id
- ada2fe7eead31-4c30a72e421mr12682483137.25.1741726166067; Tue, 11 Mar 2025
- 13:49:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=rz6oqNvGCl1MjOKIV73SgOocjmmFLCFeIe0TwjcoQckpXDd4cmNI3wRbUuX2pH5GeVXr9GEjYk8Y16qmNEfB+UcA606ML3/C+mWlz8WqdCNdtbktyriYi7VYhSBGC0j2hz7I0BwAGDzCQxckxesvgzzT9DbyfF9SIWcTelHEnyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0bUizCs; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2217875d103so13012575ad.3;
+        Tue, 11 Mar 2025 13:50:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741726210; x=1742331010; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JWdKg5zoGBpY28zuxaqBxi6+dP6Re/Qr912PEvIfcXY=;
+        b=H0bUizCs18oHpEp1Olr4prlrkbDaq9aHcupuydxe/XcmmoEqf/S51BUDftog0YS1Yo
+         WLKJTS59n8OBbOrc8WW9S2NDLC12pGy1CxdxNjQFfyUijbG6ovPX2iS/mF97131RfOxB
+         P6VbtbptFVTL/AQ1HYt8YJowL0bK+9XRl1khkERW1Db/Tv/k0qRBr1lIDqM6JRltiHrz
+         0oESvkYcC4vC010JQbEMfokEhQIwN5pkWareD4MXi0IdTHe9nLVdB6XwUZcnOurgqtk/
+         k4jXLIBwSvWramERRs359LKOLq8N2vKFQZq4/1RQ2H82ATxZmFJYTZ93kFjse+75w9Eh
+         Bw3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741726210; x=1742331010;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JWdKg5zoGBpY28zuxaqBxi6+dP6Re/Qr912PEvIfcXY=;
+        b=YAdisoZAtERcCK40SWjzkcj3NwhItKnFKWKQ4Rwr2fyduu6JOzdwaZ18a4sPIBM7yX
+         JuUqpxjqZbmATkHgxBfPYbGZL5nhT8H7u2qkB3oosa1nF2MAQbjQJFR1c4eykaEcKhVU
+         UGr9n7ytf8O/ThK1lqJwwkrFdJjiVUMD6N+sHH4Ao7PDq7rq1/d4NxMmteqekH2gzb09
+         5JkfnaLv5+1vofBlSDm/YF1/QJ9kYpjcX+raJ3tdNFWp72yabSt+ve+NzhcWFHpiGnLe
+         baPtgcgSe4XXASfYzg8mWpIrK3aMeZOuI2y6GIYYOiah1sifCzTCw37yKkrtMeP3nkfx
+         OM8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUrv0uUrrDp0Glw68FdgRMfKgLliruCkXqF0ejoxn8i6eBXfW3iximsNAk2JIOsTU6l7C2HvCUwe8aQFjG4LSE=@vger.kernel.org, AJvYcCV1HZZXulFP4keccihcjnABTsSCvdSxdi7Fw2Iru0bwbqiRybYTUKL5OpxA7R9HI0wY0MYxjahnZUv+@vger.kernel.org, AJvYcCV9Q9mSF+IzhDPsOs3r0Qur/nPDR2fJRxMZxcggk1EjGoeGAHH/6mNczdFEwdkgPnpfumyslnTlzzeAAWFxg6zs@vger.kernel.org, AJvYcCVYklpJrhGblkPoYBz+WGBpKVCAPcTU96Vqf78HCdQILVJLZla/ipohoLQcV7COsxB3vbAAGkJ25HAk9UM=@vger.kernel.org, AJvYcCXS7f4TpD+ooRIdlev30yVPIkPE3hovYNJq4VtbaDCt+R+jpF4h3KnYuwmaNHADRE9R7viTtwhEhrELm/OI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7N1PhtBaaLP44nYGJfMDP1V23IJM/zjDMO0Pw8N/PnvnKmBWg
+	XPKX0rpSSirvthB64mb2UB8MvWSTPkSqPp2qCld5qD3W08ethEwUE+GemZdYcgqaB05Lic6IK2I
+	ADcaXBhgt1WHNIsQkisONoi09IH3Cltc3fLq7hA==
+X-Gm-Gg: ASbGncs29ePX9eiq5F9mOtVI4H800FNQdmwsHewfkA9D1FuqXWHesmt5BHY2WHOYoio
+	OeFxg4MAaoEkq+dsFUDVoRAV/JKGxNUyRbVC54Nn8I+Bh8mNFtHqgSsRahYbERz9sR9qorBWMOz
+	vmq+gwcyQZh3eqOSmuOSq0NWmziw==
+X-Google-Smtp-Source: AGHT+IF6Iu5cJXNrmMcH037VEuQgEw5FQiSeS4rw7qJG+vfgUlX6Z+xe0TEh54YrTrzNEmVy1nOOetWOtZm26Z9qTGA=
+X-Received: by 2002:a17:902:c952:b0:223:659d:ac66 with SMTP id
+ d9443c01a7336-22593302b09mr26173505ad.12.1741726209805; Tue, 11 Mar 2025
+ 13:50:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu> <20250308-imx214_clk_freq-v1-1-467a4c083c35@apitzsch.eu>
-In-Reply-To: <20250308-imx214_clk_freq-v1-1-467a4c083c35@apitzsch.eu>
-From: Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date: Tue, 11 Mar 2025 21:49:09 +0100
-X-Gmail-Original-Message-ID: <CAPybu_3MEY8GziQFwA6QFfycdYvLovrY0bQOv=xSbOS=X+627A@mail.gmail.com>
-X-Gm-Features: AQ5f1JrlWikQKbkSC4DkBsFp6tcFAV6eyIqSzm6I74jq4lhMBcm0n3Qp36BdMzg
-Message-ID: <CAPybu_3MEY8GziQFwA6QFfycdYvLovrY0bQOv=xSbOS=X+627A@mail.gmail.com>
-Subject: Re: [PATCH RESEND 1/4] media: i2c: imx214: Calculate link bit rate
- from clock frequency
-To: git@apitzsch.eu
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250307-ptr-as-ptr-v1-1-582d06514c98@gmail.com>
+ <202503120332.YTCpFEvv-lkp@intel.com> <CAJ-ks9mkbs9KG5D5yETvOJfeqyzTts1gVZyNAogbxjXbwOreZg@mail.gmail.com>
+In-Reply-To: <CAJ-ks9mkbs9KG5D5yETvOJfeqyzTts1gVZyNAogbxjXbwOreZg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 11 Mar 2025 21:49:56 +0100
+X-Gm-Features: AQ5f1JpxGxSGer3XisukrOBay0DQPLazUdlb5Q5D9ZecG6Ve_YwoPvaVLT-TLE8
+Message-ID: <CANiq72n2cYvAWkz+QwG9++NknaN-A2g=N4AeatADwRZ1pWtk0A@mail.gmail.com>
+Subject: Re: [PATCH] rust: enable `clippy::ptr_as_ptr` lint
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: kernel test robot <lkp@intel.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Bjorn Helgaas <helgaas@kernel.org>, oe-kbuild-all@lists.linux.dev, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 8, 2025 at 10:48=E2=80=AFPM Andr=C3=A9 Apitzsch via B4 Relay
-<devnull+git.apitzsch.eu@kernel.org> wrote:
+On Tue, Mar 11, 2025 at 9:44=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
 >
-> From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
->
-> Replace the magic link bit rate number (4800) by its calculation based
-> on the used parameters and the provided external clock frequency.
->
-> The link bit rate is output bitrate multiplied by the number lanes. The
-> output bitrate is the OPPXCK clock frequency multiplied by the number of
-> bits per pixel. The OPPXCK clock frequency is OPCK multiplied by the
-> OPPXCK clock division ratio. And OPCK is the external clock frequency
-> multiplied by the PreDivider setting and the PLL multiple setting.
->
-> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-Acked-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/i2c/imx214.c | 51 +++++++++++++++++++++++++++++++++-------=
-------
->  1 file changed, 37 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index 6c3f6f3c8b1f7724110dc55fead0f8a168edf35b..14a4c5094799014da38ab1bee=
-c401f0d923c2152 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -84,6 +84,7 @@
->  #define IMX214_CSI_DATA_FORMAT_RAW10   0x0A0A
->  #define IMX214_CSI_DATA_FORMAT_COMP6   0x0A06
->  #define IMX214_CSI_DATA_FORMAT_COMP8   0x0A08
-> +#define IMX214_BITS_PER_PIXEL_MASK     0xFF
->
->  #define IMX214_REG_CSI_LANE_MODE       CCI_REG8(0x0114)
->  #define IMX214_CSI_2_LANE_MODE         1
-> @@ -104,11 +105,23 @@
->
->  /* PLL settings */
->  #define IMX214_REG_VTPXCK_DIV          CCI_REG8(0x0301)
-> +#define IMX214_DEFAULT_VTPXCK_DIV      5
-> +
->  #define IMX214_REG_VTSYCK_DIV          CCI_REG8(0x0303)
-> +#define IMX214_DEFAULT_VTSYCK_DIV      2
-> +
->  #define IMX214_REG_PREPLLCK_VT_DIV     CCI_REG8(0x0305)
-> +#define IMX214_DEFAULT_PREPLLCK_VT_DIV 3
-> +
->  #define IMX214_REG_PLL_VT_MPY          CCI_REG16(0x0306)
-> +#define IMX214_DEFAULT_PLL_VT_MPY      150
-> +
->  #define IMX214_REG_OPPXCK_DIV          CCI_REG8(0x0309)
-> +#define IMX214_DEFAULT_OPPXCK_DIV      10
-> +
->  #define IMX214_REG_OPSYCK_DIV          CCI_REG8(0x030b)
-> +#define IMX214_DEFAULT_OPSYCK_DIV      1
-> +
->  #define IMX214_REG_PLL_MULT_DRIV       CCI_REG8(0x0310)
->  #define IMX214_PLL_SINGLE              0
->  #define IMX214_PLL_DUAL                        1
-> @@ -204,6 +217,14 @@
->  #define IMX214_PIXEL_ARRAY_WIDTH       4208U
->  #define IMX214_PIXEL_ARRAY_HEIGHT      3120U
->
-> +/* Link bit rate for a given input clock frequency in single PLL mode */
-> +#define IMX214_LINK_BIT_RATE(clk_freq) \
-> +       (((clk_freq) / 1000000) / IMX214_DEFAULT_PREPLLCK_VT_DIV \
-> +       * IMX214_DEFAULT_PLL_VT_MPY \
-> +       / (IMX214_DEFAULT_OPSYCK_DIV * IMX214_DEFAULT_OPPXCK_DIV) \
-> +       * (IMX214_CSI_DATA_FORMAT_RAW10 & IMX214_BITS_PER_PIXEL_MASK) \
-> +       * (IMX214_CSI_4_LANE_MODE + 1))
-I am always very scared of these macros.... Integer over/underflows
-are very easy to miss
-If we support a small number of frequencies I would rather see a
-function with a switch and a comment explaining where the number comes
-from.
+> By the way, it would be great if the email also included the rustc versio=
+n used.
 
+Yeah, I think I may have mentioned it at some point... For the moment,
+one can look for it manually in the linked config (i.e.
+`CONFIG_RUSTC_VERSION_TEXT`).
 
-> +
->  static const char * const imx214_supply_name[] =3D {
->         "vdda",
->         "vddd",
-> @@ -299,15 +320,16 @@ static const struct cci_reg_sequence mode_4096x2304=
-[] =3D {
->         { IMX214_REG_DIG_CROP_WIDTH, 4096 },
->         { IMX214_REG_DIG_CROP_HEIGHT, 2304 },
->
-> -       { IMX214_REG_VTPXCK_DIV, 5 },
-> -       { IMX214_REG_VTSYCK_DIV, 2 },
-> -       { IMX214_REG_PREPLLCK_VT_DIV, 3 },
-> -       { IMX214_REG_PLL_VT_MPY, 150 },
-> -       { IMX214_REG_OPPXCK_DIV, 10 },
-> -       { IMX214_REG_OPSYCK_DIV, 1 },
-> +       { IMX214_REG_VTPXCK_DIV, IMX214_DEFAULT_VTPXCK_DIV },
-> +       { IMX214_REG_VTSYCK_DIV, IMX214_DEFAULT_VTSYCK_DIV },
-> +       { IMX214_REG_PREPLLCK_VT_DIV, IMX214_DEFAULT_PREPLLCK_VT_DIV },
-> +       { IMX214_REG_PLL_VT_MPY, IMX214_DEFAULT_PLL_VT_MPY },
-> +       { IMX214_REG_OPPXCK_DIV, IMX214_DEFAULT_OPPXCK_DIV },
-> +       { IMX214_REG_OPSYCK_DIV, IMX214_DEFAULT_OPSYCK_DIV },
->         { IMX214_REG_PLL_MULT_DRIV, IMX214_PLL_SINGLE },
->
-> -       { IMX214_REG_REQ_LINK_BIT_RATE, IMX214_LINK_BIT_RATE_MBPS(4800) }=
-,
-> +       { IMX214_REG_REQ_LINK_BIT_RATE,
-> +               IMX214_LINK_BIT_RATE_MBPS(IMX214_LINK_BIT_RATE(IMX214_DEF=
-AULT_CLK_FREQ)) },
->
->         { CCI_REG8(0x3A03), 0x09 },
->         { CCI_REG8(0x3A04), 0x50 },
-> @@ -362,15 +384,16 @@ static const struct cci_reg_sequence mode_1920x1080=
-[] =3D {
->         { IMX214_REG_DIG_CROP_WIDTH, 1920 },
->         { IMX214_REG_DIG_CROP_HEIGHT, 1080 },
->
-> -       { IMX214_REG_VTPXCK_DIV, 5 },
-> -       { IMX214_REG_VTSYCK_DIV, 2 },
-> -       { IMX214_REG_PREPLLCK_VT_DIV, 3 },
-> -       { IMX214_REG_PLL_VT_MPY, 150 },
-> -       { IMX214_REG_OPPXCK_DIV, 10 },
-> -       { IMX214_REG_OPSYCK_DIV, 1 },
-> +       { IMX214_REG_VTPXCK_DIV, IMX214_DEFAULT_VTPXCK_DIV },
-> +       { IMX214_REG_VTSYCK_DIV, IMX214_DEFAULT_VTSYCK_DIV },
-> +       { IMX214_REG_PREPLLCK_VT_DIV, IMX214_DEFAULT_PREPLLCK_VT_DIV },
-> +       { IMX214_REG_PLL_VT_MPY, IMX214_DEFAULT_PLL_VT_MPY },
-> +       { IMX214_REG_OPPXCK_DIV, IMX214_DEFAULT_OPPXCK_DIV },
-> +       { IMX214_REG_OPSYCK_DIV, IMX214_DEFAULT_OPSYCK_DIV },
->         { IMX214_REG_PLL_MULT_DRIV, IMX214_PLL_SINGLE },
->
-> -       { IMX214_REG_REQ_LINK_BIT_RATE, IMX214_LINK_BIT_RATE_MBPS(4800) }=
-,
-> +       { IMX214_REG_REQ_LINK_BIT_RATE,
-> +               IMX214_LINK_BIT_RATE_MBPS(IMX214_LINK_BIT_RATE(IMX214_DEF=
-AULT_CLK_FREQ)) },
->
->         { CCI_REG8(0x3A03), 0x04 },
->         { CCI_REG8(0x3A04), 0xF8 },
->
-> --
-> 2.48.1
->
->
+Cheers,
+Miguel
 
