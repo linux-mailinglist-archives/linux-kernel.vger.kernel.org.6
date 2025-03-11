@@ -1,145 +1,108 @@
-Return-Path: <linux-kernel+bounces-555338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80BF1A5B5DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:30:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C35AA5B5E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32CAF188C209
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:30:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA43C170BF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBB11E0DCB;
-	Tue, 11 Mar 2025 01:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9463D1E00B4;
+	Tue, 11 Mar 2025 01:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7zoyQNd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NGevNZVh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E0817AE11;
-	Tue, 11 Mar 2025 01:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0332AD04;
+	Tue, 11 Mar 2025 01:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741656608; cv=none; b=iz7qYa2zCawVQTZdEP76dO+4EvCZUpYOlAzqHSg6k33K7wCgZtvnCoUjvLNUHW0QC46szog/O0jlkL0GNJw51V2UuUR/vvTfpdLfskhhK+9U5PZVoLlZq3FZjaVLo5gFvpvxnps/N+jRY84YPi0kGn0SMDFCUEFBUaZUKJM9rSM=
+	t=1741656734; cv=none; b=cn3gcJ32vvzt5cizSs8gBcztNpqRZYFoMEeGQk50qSJk4kudau/OQEe0uB6qe/14oBq9rg1z9OI7VKg6F7f/1/PeXjjLRt0P/Vl/VVMY/yFk1bd97tFURBhOslkikdDiIm+S8YgI0HjNEne+KFF40N7YdB/s41TW01acrtUrgnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741656608; c=relaxed/simple;
-	bh=w9HyIeLsxGet48XT7rsx5+4DYHO4MrVOy19e355cau0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P0hcy7RXfX3+N91HzbhEyTl9Y3VKt1NMtk2uCOmJoyIHLmqHYfEi1PI4Dg5aZCxjs6GEBiqzrBcXQiESvYnuLLwlyy4ThiDS5BsdJ8Ox84rt7kfBOBh/EU9vVCJyuONDutAnlrkK9uAQcKDY4K8AvOstPAZU2hgIRNBakfg/jHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7zoyQNd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2835BC4CEE5;
-	Tue, 11 Mar 2025 01:30:05 +0000 (UTC)
+	s=arc-20240116; t=1741656734; c=relaxed/simple;
+	bh=Cz/8z4ogsB2e4LZuFVFwDmgAExkUr/0BAjvdTwGLBSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mMYRj1ppSi7+UNmHYiOXTM9SEDCgSXqtxtDZlYrkN6FHjEKqCnuNEwosBCwVCNgDYECJg3g4S7AEgjKr6HjNops7oFMwOFxXgVGfNi/NoIeitr56TGMbB/VxIR1dB4Wr9mGWh9YvcNcoPvj1dNk1pqYxOsWTyCbF9pZfYOgxqvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NGevNZVh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF150C4CEE5;
+	Tue, 11 Mar 2025 01:32:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741656607;
-	bh=w9HyIeLsxGet48XT7rsx5+4DYHO4MrVOy19e355cau0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=k7zoyQNdUBbSuIq4RIvsTyMxonGniWRIP9P9sXkN7svWNyu1oXRnuQqwZ5k8txSlc
-	 fJf2hJnCCUm6G+UuCIHW/UxM2wNgPDN3qGyDrFTvCqvvQmcKsdkFRVrjXp2hXqcJig
-	 W4xH4yB4fCx6KbiKB59nTDql+fqbeNpigvtnmo5O2/JhkJKAXBYS2WMX8NAJyCkyMD
-	 HrqoyyAqfzCyQGGdVUSDXdXOSOYAqLNe4UL1jc1JzaCQxj3RnfTyj5NbvYsQ9+BlPA
-	 gIljIUhs4k7W/2/nxVasYtlw7iyqjK5h3cN9P2gDO1gXP22Y+firfhesm+I8cxAstW
-	 Gs34zbJGslNJg==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	s=k20201202; t=1741656733;
+	bh=Cz/8z4ogsB2e4LZuFVFwDmgAExkUr/0BAjvdTwGLBSc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NGevNZVhCBAzAZdPxfwRXUp4qN2wF2NFBlwriw4EhwJaTEIq22tch3HJ3vvHzS+FL
+	 sUmcNnshcN0+uPMz12AXaL5lQmI5i3iuV0z6yi7cqijt/+ITKnyvFj83dINEoMVHpB
+	 7gZQrGs/fX7GXnL3+XLHXL+PBVZza4f4iPtFly6TdTNuZsKt+AQ/X9evhbHNy+xG1p
+	 OmVzfGhvyNXcNGee6xRCfOvBsi1rjoPAuYIN5JYhwGClA5x+BxPa4swBrZdoSyEoM+
+	 4UC7+33P2VZUgRdgya0KP9tpPVtR/Uil631qChEyj/OlOsMQVrizq8PL33YXbFluyU
+	 b/O0oLa7B4kXg==
+Date: Tue, 11 Mar 2025 12:02:15 +1030
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Johannes Berg <johannes@sipsolutions.net>,
+	Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH v2] tracing: Skip update_last_data() if cleared and remove active check for save_mod()
-Date: Tue, 11 Mar 2025 10:30:03 +0900
-Message-ID: <174165660328.1173316.15529357882704817499.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-User-Agent: StGit/0.19
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] wifi: ath12k: core.h: Avoid
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <Z8-Snz86Xfwdlyd7@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-If the last boot data is already cleared, there is no reason to update it
-again. Skip if the TRACE_ARRAY_FL_LAST_BOOT is cleared.
-Also, for calling save_mod() when module loading, we don't need to check
-the trace is active or not because any module address can be on the
-stacktrace.
+Move the conflicting declaration to the end of the structure. Notice
+that `struct ieee80211_chanctx_conf` is a flexible structure --a
+structure that contains a flexible-array member.
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Fix 30 of the following warnings:
+
+drivers/net/wireless/ath/ath12k/core.h:298:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
- Changes in v2:
-  - merge [1/3] and [2/3] in the previous series.
----
- kernel/trace/trace.c |   26 ++++++++------------------
- 1 file changed, 8 insertions(+), 18 deletions(-)
+ drivers/net/wireless/ath/ath12k/core.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index c3c79908766e..d17278a72e72 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6033,6 +6033,12 @@ static void update_last_data(struct trace_array *tr)
- 	if (!(tr->flags & TRACE_ARRAY_FL_BOOT))
- 		return;
+diff --git a/drivers/net/wireless/ath/ath12k/core.h b/drivers/net/wireless/ath/ath12k/core.h
+index 3fac4f00d383..d6b4c4d2c400 100644
+--- a/drivers/net/wireless/ath/ath12k/core.h
++++ b/drivers/net/wireless/ath/ath12k/core.h
+@@ -295,7 +295,6 @@ struct ath12k_link_vif {
+ 	int txpower;
+ 	bool rsnie_present;
+ 	bool wpaie_present;
+-	struct ieee80211_chanctx_conf chanctx;
+ 	u8 vdev_stats_id;
+ 	u32 punct_bitmap;
+ 	u8 link_id;
+@@ -303,6 +302,13 @@ struct ath12k_link_vif {
+ 	struct ath12k_rekey_data rekey_data;
  
-+	if (!(tr->flags & TRACE_ARRAY_FL_LAST_BOOT))
-+		return;
+ 	u8 current_cntdown_counter;
 +
-+	/* Only if the buffer has previous boot data clear and update it. */
-+	tr->flags &= ~TRACE_ARRAY_FL_LAST_BOOT;
-+
- 	/* Reset the module list and reload them */
- 	if (tr->scratch) {
- 		struct trace_scratch *tscratch = tr->scratch;
-@@ -6045,9 +6051,6 @@ static void update_last_data(struct trace_array *tr)
- 		module_for_each_mod(save_mod, tr);
- 	}
++	/* Must be last - ends in a flexible-array member.
++	 *
++	 * FIXME: Driver should not copy struct ieee80211_chanctx_conf,
++	 * especially because it has a flexible array. Find a better way.
++	 */
++	struct ieee80211_chanctx_conf chanctx;
+ };
  
--	if (!(tr->flags & TRACE_ARRAY_FL_LAST_BOOT))
--		return;
--
- 	/*
- 	 * Need to clear all CPU buffers as there cannot be events
- 	 * from the previous boot mixed with events with this boot
-@@ -6070,7 +6073,6 @@ static void update_last_data(struct trace_array *tr)
- #else
- 	tscratch->kaslr_addr = 0;
- #endif
--	tr->flags &= ~TRACE_ARRAY_FL_LAST_BOOT;
- }
- 
- /**
-@@ -10092,15 +10094,6 @@ static void trace_module_remove_evals(struct module *mod)
- static inline void trace_module_remove_evals(struct module *mod) { }
- #endif /* CONFIG_TRACE_EVAL_MAP_FILE */
- 
--static bool trace_array_active(struct trace_array *tr)
--{
--	if (tr->current_trace != &nop_trace)
--		return true;
--
--	/* 0 is no events, 1 is all disabled */
--	return trace_events_enabled(tr, NULL) > 1;
--}
--
- static void trace_module_record(struct module *mod)
- {
- 	struct trace_array *tr;
-@@ -10109,11 +10102,8 @@ static void trace_module_record(struct module *mod)
- 		/* Update any persistent trace array that has already been started */
- 		if ((tr->flags & (TRACE_ARRAY_FL_BOOT | TRACE_ARRAY_FL_LAST_BOOT)) ==
- 		    TRACE_ARRAY_FL_BOOT) {
--			/* Only update if the trace array is active */
--			if (trace_array_active(tr)) {
--				guard(mutex)(&scratch_mutex);
--				save_mod(mod, tr);
--			}
-+			guard(mutex)(&scratch_mutex);
-+			save_mod(mod, tr);
- 		}
- 	}
- }
+ struct ath12k_vif {
+-- 
+2.43.0
 
 
