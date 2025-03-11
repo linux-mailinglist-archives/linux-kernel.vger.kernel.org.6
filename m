@@ -1,117 +1,91 @@
-Return-Path: <linux-kernel+bounces-556319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41D1A5C400
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:38:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8500A5C403
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:38:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0860E189A34B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:38:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2446E165F50
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A472256C6F;
-	Tue, 11 Mar 2025 14:37:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CC21D514E
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174D225CC63;
+	Tue, 11 Mar 2025 14:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JYE/+KNn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715061D514E;
+	Tue, 11 Mar 2025 14:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741703876; cv=none; b=IsLKNmQf0yuVjHGaSSjRFQ8u2LH0v0oWen5c0vro6ax4/30WnALETZFhN0/opjjbwWdvBPcvWR+t1ecMX0+vNsF3buZSvZyzJbypM6WQGrrSZ5ovKDXf4hD11mGpNFNeQo88zwchUB0r4g1tSLI3UvVDkS595CzgnZKo+tF4I0U=
+	t=1741703879; cv=none; b=q2OuXdF9xOSfd1cIwz5B0JHYJCxCRDvD2FhbPAWeWSA6QuRdSwuznEyqsvl1tU+n0JIjN+7IJHwcG6jNJTUlQtoYgmIwGG3/IMmq64XqL06JbLLCkGGECBE+A7lZWwhQSeWOgWcrxD3OSdvzyuyF8iorbKhj4nq2aSMBRzrJF+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741703876; c=relaxed/simple;
-	bh=xLuI5lqAjWTTmx57sgMjkb37akll+8TyZv4iWhDeumg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dFcVaqiY+szaVu+5jJwtSIeazLUFrqlezMqoOJR/D3ZRwcudXy/bjQ1KnGI9Rj2qRYxvNS1pYWciO5+5U6k/0ggDrlfJM+XVV2FbHAshpsBnYqi3QRY7lToLE29nzw3te/hXEM3Y9ER32+qp/I+chD8yJPSNS45fCRDrfx4mQR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA4FF152B;
-	Tue, 11 Mar 2025 07:38:04 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD4E23F694;
-	Tue, 11 Mar 2025 07:37:50 -0700 (PDT)
-Message-ID: <58c5e76a-e320-4296-8292-1ddf3f7ba56d@arm.com>
-Date: Tue, 11 Mar 2025 14:37:48 +0000
+	s=arc-20240116; t=1741703879; c=relaxed/simple;
+	bh=4lpvvfvh6hEmkzgKd/iYgOgCrNqFGWnI/yWgvDil+Uc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bnM0exFzYulc6awivLeIFkM2Yds8/NGV80LBSRnd4khSpwYMCJI+EvF9Fb9fXVYF8WY9s3uJJluq7SzdJ6LpaiuGnpwCPmO96zfvurCQNmtMTlohokfeUlWd62QTPi4/DUjyy1Iqv5HL7IqiA0zNmdbq376SvmCK7dsyTXqyEDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JYE/+KNn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF93C4CEE9;
+	Tue, 11 Mar 2025 14:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741703878;
+	bh=4lpvvfvh6hEmkzgKd/iYgOgCrNqFGWnI/yWgvDil+Uc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JYE/+KNnj9EkOy7KYNpOYWIm9SIZH1BkNsniZ/azOQzux6kQ62foeAViEtBPIoSAb
+	 54FQB7XJvPcdJzoDu3E65M+qagT1KEdm8taOKKI0YQTPWWm5oVW+yNqyvsN4AysMul
+	 Bpi6CCFoxQ+Vl0eJt38dXinaVHmi5uTrCAO1BSMo=
+Date: Tue, 11 Mar 2025 15:37:56 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Matthew Maurer <mmaurer@google.com>, Lee Jones <lee@kernel.org>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 0/5] Rust support for `struct iov_iter`
+Message-ID: <2025031140-saffron-kilobyte-bd2e@gregkh>
+References: <20250311-iov-iter-v1-0-f6c9134ea824@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
-To: Jason Gunthorpe <jgg@ziepe.ca>, Ryan Roberts <ryan.roberts@arm.com>
-Cc: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
- Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
- "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
- "yang@os.amperecomputing.com" <yang@os.amperecomputing.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>, "joro@8bytes.org" <joro@8bytes.org>,
- "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
- "mark.rutland@arm.com" <mark.rutland@arm.com>,
- "joey.gouly@arm.com" <joey.gouly@arm.com>,
- "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
- "james.morse@arm.com" <james.morse@arm.com>,
- "broonie@kernel.org" <broonie@kernel.org>, "maz@kernel.org"
- <maz@kernel.org>, "david@redhat.com" <david@redhat.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "nicolinc@nvidia.com" <nicolinc@nvidia.com>,
- "mshavit@google.com" <mshavit@google.com>,
- "jsnitsel@redhat.com" <jsnitsel@redhat.com>,
- "smostafa@google.com" <smostafa@google.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
- <20250228182403.6269-6-miko.lenczewski@arm.com>
- <20250228193221.GM5011@ziepe.ca>
- <b23aa37f8e864dea82a6143bece912d6@huawei.com>
- <20250303103102.GC13345@e133081.arm.com> <20250303165255.GS5011@ziepe.ca>
- <20250303190330.GA426248@e133081.arm.com> <20250304142634.GC5011@ziepe.ca>
- <67fbe3f4-4fb6-4753-b34c-320b7897fd16@arm.com>
- <20250304161943.GD5011@ziepe.ca>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250304161943.GD5011@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311-iov-iter-v1-0-f6c9134ea824@google.com>
 
-On 04/03/2025 4:19 pm, Jason Gunthorpe wrote:
-> On Tue, Mar 04, 2025 at 04:02:20PM +0000, Ryan Roberts wrote:
->> On 04/03/2025 14:26, Jason Gunthorpe wrote:
->>> On Mon, Mar 03, 2025 at 07:03:42PM +0000, Mikołaj Lenczewski wrote:
->>>
->>>> For example, if we use BBML2 for kernel mappings, does that require us
->>>> to repaint all kernel mappings when disabling BBML2 on smmu attach? I
->>>> am not sure, but definitely something to be worked out.
->>>
->>> No, it would be a per-mm_struct basis only if we did something like
->>> that
->>>
->>> When the SMMU driver puts a SVA on top of the mm_struct it would
->>> disable BBML2 usage only for that mm_struct and it's contained VMAs.
->>
->> I guess we would need to figure out some synchonization mechanism if disabling
->> BBML2 dynaically per-mm. If there was already a BBML2 operation in flight would
->> want to wait for it to end. But that's a problem to solve if/when it's shown to
->> be needed, I think.
+On Tue, Mar 11, 2025 at 02:25:11PM +0000, Alice Ryhl wrote:
+> This series adds support for the `struct iov_iter` type. This type
+> represents an IO buffer for reading or writing, and can be configured
+> for either direction of communication.
 > 
-> I have a feeling we can piggyback on the mmu notifiers to achieve this
-> as all the changes to the PTEs should be bracketed by notifier
-> callbacks..
+> In Rust, we define separate types for reading and writing. This will
+> ensure that you cannot mix them up and e.g. call copy_from_iter in a
+> read_iter syscall.
 > 
-> Let's hope it isn't needed.
+> To use the new abstractions, miscdevices are given new methods read_iter
+> and write_iter that can be used to implement the read/write syscalls on
+> a miscdevice. The miscdevice sample is updated to provide read/write
+> operations.
 
-Yup, as mentioned previously, this is largely theoretical and at worst 
-only a risk of affecting 3rd-party SMMU implementations. Arm's 
-implementations from MMU-700 onwards do support BBML2; MMU-600 *might* 
-actually be OK as well, but it predates the definition of the feature, 
-and there are more practical reasons not to integrate a decade-old SMMU 
-design with brand new CPUs anyway.
+Nice, this is good to have, but what's the odds of tieing in the
+"untrusted buffer" logic here so that all misc drivers HAVE to properly
+validate the data sent to them before they can touch it:
+	https://lore.kernel.org/r/20240925205244.873020-1-benno.lossin@proton.me
 
-Thanks,
-Robin.
+I'd like to force drivers to do this, otherwise it's just going to force
+us to audit all paths from userspace->kernel that happen.
+
+thanks,
+
+greg k-h
 
