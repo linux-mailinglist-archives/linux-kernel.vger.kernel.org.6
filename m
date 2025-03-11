@@ -1,154 +1,126 @@
-Return-Path: <linux-kernel+bounces-556905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3F6A5D064
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:06:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99DB6A5D06E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C43217D188
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:06:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126D117D182
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6555264617;
-	Tue, 11 Mar 2025 20:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8116264625;
+	Tue, 11 Mar 2025 20:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="LSlYGTiK"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPGRFmy0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98071E833F;
-	Tue, 11 Mar 2025 20:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D85322F169;
+	Tue, 11 Mar 2025 20:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741723588; cv=none; b=fe1fe1bsPIbBEXcCK5+H1sAb4prtQmtFDPp7JGlMfmP7V1yQHXj3CvOUDBMTPuhmqSEqAFNaLPhYWSN9iZEqM2I0MOuJU4i1kjl4hQD0YEHlIdZ6wN9bKJ4O0aTOOXSEzoFs1yxBzcGwwhhZ0T9vaPzsgLsJowGx3/qNQqMgLS8=
+	t=1741723624; cv=none; b=EmnLz/YYS/0eJETueAD9GALrM4EhjPwT+w3N4i3mfPv2pV95KNWVhLqf4opgnuzccuRy1AnmuJ5Ct7+EtieS7ea3q1OpkXYBPhSL1i9aspH85/6/iSqasbeOYhmF28WgxWAXdJ3dihrHlOFzhplz3dwiEoL270Se/KoeYdWqnBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741723588; c=relaxed/simple;
-	bh=Gti7/A9BWac5/4NqS14sIP1I/ISfrQITkGaBNSl6lrE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=WkVw/phbWu1IJFgXwO7+xPY0Vpl1do7fNYf+Clfy6XLbnYgtT7o3hfbcDJdYi97wMFzUQRQcs3s1ul8c37Zs0eQZgoH1VTPUKgjY56/uWYH3ORTO+NFxL98bxufq4rheRUocVIohOyA2RDSns/wdjQa7TRS5hyBWXNBhCcnDSnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=LSlYGTiK; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1741723577; x=1742328377; i=w_armin@gmx.de;
-	bh=DZBmXE3PhEOsVN8AoczAX6QJdKpQt5bApj5pggD05dA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=LSlYGTiKojOEOqvsNuOOtCdrWnA2q8AEbTmMRgPfcVz3Al4w7qPQEdYlcCZqRpX8
-	 G7t/hpGE8OfxU/ORkLNRYuiYyqwdC4Xx1tdQnVq2E/jegdEEZuD1C0e+tXxKV7e3U
-	 /PK/11bI6Sw2n1Jpeew+gAPN9f0EIGkoBbOcrD5jkcNBl2+chFZvfR/VSzlugzx3h
-	 eohyzTX7zVG64wxQ0mF3b8x4xWI3vinvJVIIsowZUbs357sHR6S45C1X6O2xKBbOZ
-	 bnifa+NrKNp2hAgjHcBxq1RmSb6kiAjuOEWgjmEqaf86Vi1A2bOMrZa+DWVBpr2g7
-	 cyWeJdeWFFuFbe3XOg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MTAFh-1tnWVC1uN5-00VuUl; Tue, 11
- Mar 2025 21:06:17 +0100
-Message-ID: <a18f2f93-c8ee-47af-9446-97e3714fc275@gmx.de>
-Date: Tue, 11 Mar 2025 21:06:16 +0100
+	s=arc-20240116; t=1741723624; c=relaxed/simple;
+	bh=vmaAEzFBzlwDTRy5wbpxrPDsyq9A9SymsOA8U2CimH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IHYlcdvDJ2uQaD9Y3TCQT8N98B6Hpclz/ffT8FWFe14P5YUiV98XZ2Ymd7F2pfu6du8bpC0xO7ILo7X7tRJbWVZQKBL7SEvhmGnGCgd+iq49E+rZrSzplaQpp43ywk8jhkSP7RMnvtH/5yvMrFEJmh7s9wmV9zL/4WTJQ3Fy2JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPGRFmy0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42233C4CEE9;
+	Tue, 11 Mar 2025 20:07:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741723623;
+	bh=vmaAEzFBzlwDTRy5wbpxrPDsyq9A9SymsOA8U2CimH0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CPGRFmy0YVDPHDZ7+K5ZTo4vlxXOfDmTaKHtwHWjkPwPsuD0S+rT853k4/cIXkN/Z
+	 SY3BYWAPve5Ok17t8mhicA4mhb7c0uBGGXA0ToN9E4WMR9cNXfgFElMzI3qWXI0XNp
+	 rhRJryEkB/c5tLMqPviYw8mea5GMaLjULNp9s6D4XEC9FHQdt6QI5eiEuHloahwB2j
+	 XA7lfhFwWnvSE9f2mkLHjSJaBm4klpwloKDLGhgKR60XEBmPwkTn4fDVl9P/Rhirda
+	 zN3OFgHa2bw1t+CFKFm2GKMnIeoNQjx2dZ+dBRMDHuPTSSYSj9gObLOB08K8iIVkvQ
+	 1/zGT3HdwoxNg==
+Date: Tue, 11 Mar 2025 15:07:02 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Friday Yang <friday.yang@mediatek.com>
+Cc: linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+	Yong Wu <yong.wu@mediatek.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Project_Global_Chrome_Upstream_Group@mediatek.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] dt-bindings: memory: mediatek: Add SMI reset and
+ clamp for MT8188
+Message-ID: <174172361378.44650.15345202042780383326.robh@kernel.org>
+References: <20250311122327.20685-1-friday.yang@mediatek.com>
+ <20250311122327.20685-2-friday.yang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
- "linux@weissschuh.net" <linux@weissschuh.net>, Kurt Borja
- <kuurtb@gmail.com>, akpm@linux-foundation.org, mcgrof@kernel.org,
- russ.weight@linux.dev, dakr@kernel.org
-Cc: "platform-driver-x86@vger.kernel.org"
- <platform-driver-x86@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-From: Armin Wolf <W_Armin@gmx.de>
-Subject: In-kernel parser for the BMOF format used by WMI-ACPI
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pifAFIH/MdkCINMdtBpl9GRvvRacmhl8BBbuaAju7gpDOIML/vl
- EN1roCDbeoJEsIsrnSId9bH4e7Ttod2tPCRY7+cPHacdHHnWhXnY6DvPlnwmgltvhdjjcJg
- /4E2cFwyOg+9+Pmr7ISUz6Us5J7oxNSuGLCjg8IdRgu4UwuSMtSYDsD3PzevXCWXg51IdcK
- IuXP2FXcd7ke8qpF45GoA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VpPaDzBZEeQ=;BjNxB/FzusFAZMkhAloUumPNcqf
- Gi4j6W73NeoLC8rn3sOCsdSjRJgYzbfE517CbkoJnFXeH8XuuSkeJEMLVuzs1T4lARzV/6uli
- bbRkJYcUe1eEBly0tJ+p3HHlq2iDZwkvLgPSVNJaRP801IMzDcVewxdYXpL7B9YULt5C4U5Ed
- pePHoNXZP+qjDCqZmdNMFHvA+hqPOtBu+Scm5eB4/dP06SPVMgJ/vt100/cZG2J+m1XK3lCRu
- gR0Ci4OxPGi/Gmh+FyMcO5uCu77jqWtyjOcnvApMLTSpYBmZIrttkf5LVu0kzfOKgvHGA9viT
- YMMRAh5l7ucpQsU48P4v3TClwPrfxnPabYJ8DEgB+7/oZJ+8kYraVdDJbCnmxndmmzAkyJFwO
- 58H7TE7m9fBq+stTH1YIFO37DGooNpdRsQ+b5voyT+DcfX1SijvSh8KYE/UOqUUEq4zA55VD3
- a17ULh6zACM0TW7S2oxVrdgwAoZFh173nmPtSRqODloRNByg7v49Oaei35uLC+tx0mZ2l5G75
- Aaqp9aa6XSX2EJJHxB/lsj+0NbDXysNBSmxrqNqk4GQGJiTVm7iPi0zjspeFS1TpEDbGJCrh8
- LQlDXEJ0WIPxZme2uOuqc0+0PH53tPc/ml0gqJIcPKkM4oKmMAzBOnDn6dRudRCt0BBn/BlZJ
- liv/BrH1GwNMi96wLNiqMzLUeUFFjF3Bmngx2fXVCc2/zV3qlca2UmvruII3TcggA+TJv5kBV
- kYjPsszhmX6iZDC2T1o0VqR2hj/CxjCoR0zXTc4SJGc8fKJfb6ixKpI2gqevW9Tk+OZVNsuKp
- F99YdAOC0H/GDYWxneg6aaaqT1bh4WpQ/0aa2X00L4WOzqmpo9mVQzb/MCOk7UIAeXqfLmjoT
- rhCeT/nw3Ikj3r6CRg/coBz5zwThfw2dvYPBFYG35JVWv0+xePUw1pKl1KK0I2LRlfIjD6SOT
- cIvvsNX3wfBUIZsAj69eWzIt5tUDM73ZEgYJt2Fg1rJeOU5PTxOocLrXLBL4zVPRtAb/k6ZQE
- mmV8uIKv/2Iy1fe5SmHZOsxnKZsFmEd3bG728Eq2ZfyIvMasFg0lpMrhTpGcsfkWo85InOAKY
- didEYnMHfj3JikqMsaWSHOHnywKzyylBOiN4PUEfcC3d3557VLUTHsLEUzTzVu37lQtaGhrcm
- LkpIFaoCeekWl30p6oJQRSRdYIHwxerjpT/M3SDgHLZV8V0QwYbcOatPHGWrFPRcm8CQ6cQ5v
- aPukZ/XcLvpTLs4ERfcHAPgs5a0z2g9qvtkNCRAjxwrIGoJCSjqU2VVGNPzM7FBe3IY3tfXp3
- wu3Au2LdZC2bgamFzJUmvrDqfALQIiM2NDVIEbWRkcx8jayQdeudfmq/zoGfJCeUO8CCyqag3
- gJdDmxnQf8vudjirMO8vaIRwi38lLzmDhB/XVAYduaslRA4C8TviiRxaT2ngLXpGDvXbv5fml
- vuoZ3d8Dp9fI/9D0bWW/CyS+R5iEpvTku9rhZxqrg+BNLM/6hBpLTwXsqPu4Y7/CrgpyMLw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311122327.20685-2-friday.yang@mediatek.com>
 
-Hello,
 
-since around 2017 we are able to partially decode the Binary MOF (BMOF) da=
-ta used to describe the interfaces of WMI-ACPI
-devices found inside modern devices. This initial reverse-engineering was =
-done by Pali Roh=C3=A1r and implementing a BMOF parser
-inside the kernel was originally also proposed by him (see https://lore.ke=
-rnel.org/lkml/201706041809.21573@pali/T/).
+On Tue, 11 Mar 2025 20:23:21 +0800, Friday Yang wrote:
+> From: "Friday Yang" <friday.yang@mediatek.com>
+> 
+> On the MediaTek platform, some SMI LARBs are directly connected to
+> the SMI Common, while others are connected to the SMI Sub-Common,
+> which in turn is connected to the SMI Common. The hardware block
+> diagram can be described as follows.
+> 
+>              SMI-Common(Smart Multimedia Interface Common)
+>                  |
+>          +----------------+------------------+
+>          |                |                  |
+>          |                |                  |
+>          |                |                  |
+>          |                |                  |
+>          |                |                  |
+>        larb0       SMI-Sub-Common0     SMI-Sub-Common1
+>                    |      |     |      |             |
+>                   larb1  larb2 larb3  larb7       larb9
+> 
+> For previous discussion on the direction of the code modifications,
+> please refer to:
+> https://lore.kernel.org/all/CAFGrd9qZhObQXvm2_abqaX83xMLqxjQETB2=wXpobDWU1CnvkA@mail.gmail.com/
+> https://lore.kernel.org/all/CAPDyKFpokXV2gJDgowbixTvOH_5VL3B5H8eyhP+KJ5Fasm2rFg@mail.gmail.com/
+> 
+> On the MediaTek MT8188 SoC platform, we encountered power-off failures
+> and SMI bus hang issues during camera stress tests. The issue arises
+> because bus glitches are sometimes produced when MTCMOS powers on or
+> off. While this is fairly normal, the software must handle these
+> glitches to avoid mistaking them for transaction signals. What's
+> more, this issue emerged only after the initial upstreaming of this
+> binding. Without these patches, the SMI becomes unstable during camera
+> stress tests.
+> 
+> The software solutions can be summarized as follows:
+> 
+> 1. Use CLAMP to disable the SMI sub-common port after turning off the
+>    LARB CG and before turning off the LARB MTCMOS.
+> 2. Use CLAMP to disable/enable the SMI sub-common port.
+> 3. Implement an AXI reset for SMI LARBs.
+> 
+> This patch primarily add two changes:
+> 1. Add compatible for SMI sub-common on MT8188 SoC.
+> 2. Add 'resets' and 'reset-names' properties for SMI LARBs to
+>    support SMI reset operations.
+> 
+> Signed-off-by: Friday Yang <friday.yang@mediatek.com>
+> ---
+>  .../mediatek,smi-common.yaml                  |  2 ++
+>  .../memory-controllers/mediatek,smi-larb.yaml | 19 +++++++++++++++++++
+>  2 files changed, 21 insertions(+)
+> 
 
-As part of my bachelor thesis i finished the reverse-engineering and creat=
-ed yet another utility for parsing BMOF data.
-This utility can be found at github (https://github.com/Wer-Wolf/tarkin) a=
-nd i now intend to use it to finally implement
-a BMOF parser inside the kernel.
-
-There exists a growing list of WMI drivers using quirk tables for detectin=
-g the presence of specific WMI methods on a given
-device. This approach is maintenance-intensive and not exactly user friend=
-ly (end users rarely send kernel patches). Because
-of this we need this BMOF parser so that we can check which WMI methods ar=
-e available.
-
-My current idea for this BMOF parser looks like this:
-
-  - support for the MS-DOS Doublespace compression algorithm (only decompr=
-ession) lands in lib/ds/
-
-  - WMI driver core moves into drivers/platform/x86/wmi/
-
-  - a new component called the WMI repository will hold all BMOF data know=
-n to the kernel (necessary to emulate the WMI infrastructure under Windows=
-)
-
-  - parsing of BMOF data is only done by the WMI repository which exposes =
-a in-kernel API under include/linux/wmi/repository.h
-
-  - BMOF data can be loaded into the WMI repository by the wmi-bmof driver=
- (for firmware-provided BMOF data) or by WMI drivers themself (for WMI dev=
-ices with firmware-provided BMOF data)
-
-The remaining questions are:
-
-  - How to structure the library code inside /lib/ds/?
-
-  - Is there any way to check whether the Doublespace compression algorith=
-m is still encumbered by patents?
-
-  - Can BMOF files used by WMI drivers be included inside linux-firmware e=
-ven if they only hold configuration data?
-
-I would be very happy if the relevant maintainers could comment on the abo=
-ve questions.
-
-Thanks,
-Armin Wolf
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
