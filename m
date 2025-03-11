@@ -1,106 +1,172 @@
-Return-Path: <linux-kernel+bounces-556398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB86EA5C68C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:26:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9722BA5C6BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:28:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BCC01889545
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:22:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB2AA3AB571
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695D325F7A7;
-	Tue, 11 Mar 2025 15:21:38 +0000 (UTC)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C2525F965;
+	Tue, 11 Mar 2025 15:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="bLKeJfqL"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0F625BAAA;
-	Tue, 11 Mar 2025 15:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCB0249F9;
+	Tue, 11 Mar 2025 15:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741706498; cv=none; b=eJtqTau4uJ+dn/QD2DdOG0t8T1qCCIUrMcdhn/XDerq++58rVMOrBpCFhIXp3yChgGViz/rXsBF9jBCFOYxfvZT6+XOYcTpmdK/CM9elgegk2nWrTpAJebIN9qHG06hS7+dgvtfU7sOpTdyiEpPMPH8Hv8X5X0oK5v7g5UdFwdg=
+	t=1741706509; cv=none; b=cGT+wFlekQDI31cs5rAkyaZp5sznKKXbFdLklfi3l9ZP9Xq7KY8V8m0VFSZkWVDJdXo44brzpUDz5sauWrgZs4PI86qKD5TkPIcantcRqghWm5ZRmZmsyYFaTVr8n/pIsbC/Ry6Tb4HOuXzeF7VYfhoQSrKvorr1/1jEGtDnwmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741706498; c=relaxed/simple;
-	bh=T319i0iTkEbGjZEaEiOULwpphTae3Q9TA08ZpzK+V6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jZmHslFjkpLflqiJj6uCRP8z+oELNVFEamwc5YrGyEdf+GSY+wyMKaO+TFtBj2/6wet/ZnvCF8WIvo90IQRkMDUqAANtFGNQ77sBmbKdiY8Q+l98k05yu/WyK9JbSbTG2Cgsn7QOPsMNOfhkp/AuDfT8lQn+6CyY1f+o9yDiwcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-223f4c06e9fso94153335ad.1;
-        Tue, 11 Mar 2025 08:21:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741706495; x=1742311295;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/E1C9TLEjucQveUr2gSBnFJRTsayVaSmXuzEE+51s00=;
-        b=t7r03qOAv719Vkh7diY7P11S5mGMLvFPqU//46f/t9sN45skxQpXQfEJSekhcq/cef
-         0BZ4Y2Y73tC8oNmeFjqjiw8cj8uM23mHuQaSA9LZBykG7UnlJre4Qkrz+r78ERybQd6S
-         f9SeXdSe1cf+vQfDBEfG1KC4XeDO6KB23TU1/MSP4rM7CH1Z3guIyeHg6JwM+OOcxQ3i
-         Ea2uFSdNVTQeSvINVj3B4LCvkp6+MzIOqSFefG8PdzVo/3SqDcacfRlqGQ0IXBWdTq1p
-         HLXoMrmJLZrw6NKhI82Q8ez7W9w9Z9rVB0pCqk1qHSlfZ/Qr/R5KWeL3RaKQ0KuZJvap
-         Pksg==
-X-Forwarded-Encrypted: i=1; AJvYcCUO0t2u2oGoyFjzuV3YkKnOw8KM8habPjeO7vS7D9eFCoyS7/xQv5ozLMDlX7gEAruJispy7VkD@vger.kernel.org, AJvYcCUaHENdZFIL+QxI/0GAG189hEPh1eamwNjaukgsJDSdsMWY+qXjMK1DF7BnvMQZiISsBaW5WhDH/41V@vger.kernel.org, AJvYcCVT0KDdbubNg6vn4X9OBJMMF0Sd3lxlSE/mnVyJJyGv8SwvVsD7Xu4x3+zMewAU7qDXsj9CesJ1gW1hyw==@vger.kernel.org, AJvYcCWDGMDlDFmSCr0aUSxU4MfyZwZsRr51UrumVAPXluUxVm5vgh9IqLfoHlpzKK2wOHoPsRKAbNlYExKKRXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGErIZahyuAFF2FPTOMBkd1tvuuPE4aBZ9AU1meHtHfQHNens6
-	AtO9aPE1V4gZHS+4HV7rSYggi2yQEclvWbjpurs4qxR9RFO0X4Ye
-X-Gm-Gg: ASbGncvA+zwOV1OJDMq3hn9BpBbcuGJGh/LI/qTx2rNvwpFxbDxi+o/rXXXKpp8dTg0
-	AIa2Lh3sHq1O/FHawJLUpXPv0cAhqDAxDSgvdYrMyykD2jFY1zmoe7jZ0FFGfP9lXfXPr179hdo
-	JdXfh1W9O7CevnOoMLuTdKsI9GRiXpXHny2XvDSm/d3rTNCAU59ToQHNIUODamxpjuDkcYEgrWO
-	U3PEPrsvbVTLf4AqL/DBHU20Jlle0suBZMPe42Ps07iXXO4cx7Fh/gZXqnMDfBHSZBo1jQjiKGB
-	4S0ji166iIVE8gw+uyZyGf0PJQFw0fkJuHxGMVz8Is9GeHEwu03ksob8Bivn8je/DCWHr4N7sM8
-	N3i0=
-X-Google-Smtp-Source: AGHT+IFGz3iPtgYgyVDkphxmllQ/7kN3j2BaMrz84yDHpAk+pc1wjYonA27kitB771cxOGozpwoJqQ==
-X-Received: by 2002:a17:902:dacd:b0:21f:98fc:8414 with SMTP id d9443c01a7336-22593df9927mr55406405ad.26.1741706494802;
-        Tue, 11 Mar 2025 08:21:34 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109fda8esm99146375ad.101.2025.03.11.08.21.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 08:21:34 -0700 (PDT)
-Date: Wed, 12 Mar 2025 00:21:33 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, vigneshr@ti.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, rogerq@kernel.org, linux-omap@vger.kernel.org,
-	linux-pci@vger.kernel.org, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	srk@ti.com
-Subject: Re: [PATCH] PCI: j721e: Fix the value of linkdown_irq_regfield for
- J784S4
-Message-ID: <20250311152133.GC1381004@rocinante>
-References: <20250305132018.2260771-1-s-vadapalli@ti.com>
- <20250310210746.GA2377483@rocinante>
- <20250311051806.smcu4o4dxpngimth@uda0492258>
- <20250311072546.GA277060@rocinante>
- <20250311073216.ynw7rzmu36dwywij@uda0492258>
+	s=arc-20240116; t=1741706509; c=relaxed/simple;
+	bh=BRIerRhMDBgnyf720IdQcAp71wVmGDkhMc0a+8VEsT0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NQvFzBwxH999xdGo4FhOx+Eatdln6Y10b37PbCk9twEz93Y5aFkzdTim109ppL2J5CMZsbIwRa0Pzw79dnvwd3JKDEVkbS1nnSrFjL8OPndSD/Qjqi0pTY7FVN0J14v+y2gbfy6XY/QPbfvzodN4QI8fb5fUvOQsDiZfcGuqQJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=bLKeJfqL; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=Ool8GRiW/HZCPfD4470uVk0ukB9vkhzB98xjnc0KA8k=; t=1741706506;
+	x=1742138506; b=bLKeJfqL95WWPAZ+gWrkBNis/avoF5mLHlEObMO+1fXtuL3W6QgMeKPojggz1
+	qvjfpRl5rh4B2TOlxt6jY6MTASKa0i9HgouORwBRBPOaMElKk+Q07nfpAbdLHrUElpHMsrEcK1i/Z
+	/0wmSjOsj0St/YXscaxgPR/zRym3XbNdCp/sTV136O7B0n+AFMnU9QG8yZGEVeiaqlM3KktH9Ddg2
+	7RMFe6RFxkFof8sd2qiYiF/H29i7yE+c1Osq2TT/MRP2rWvJ6mx/T2Lf5oFHEN2/AJqeA49msGFQ5
+	gmnvz8EPhyJjPUxXtHcVkUMXMYdyTdVLNGpqB10BVeZJ7xbWJA==;
+Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	id 1ts1QI-0048RR-2z;
+	Tue, 11 Mar 2025 16:21:39 +0100
+Message-ID: <0ad035ff-400e-4b15-8b8f-40b69152ec46@leemhuis.info>
+Date: Tue, 11 Mar 2025 16:21:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311073216.ynw7rzmu36dwywij@uda0492258>
+User-Agent: Mozilla Thunderbird
+Subject: Build error on -next due to tpm_crb.c changes? (was: Re: [PATCH v6
+ 0/5] Add support for the TPM FF-A start method)
+To: Stuart Yoder <stuart.yoder@arm.com>, jarkko@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lenb@kernel.org, rafael@kernel.org, jgg@ziepe.ca, peterhuewe@gmx.de,
+ sudeep.holla@arm.com, linux-integrity@vger.kernel.org,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250305173611.74548-1-stuart.yoder@arm.com>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: de-DE, en-US
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <20250305173611.74548-1-stuart.yoder@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1741706507;6cfd430a;
+X-HE-SMSGID: 1ts1QI-0048RR-2z
 
-Hello,
-
-[...]
-> > No need to send a new version.
-> > 
-> > I will update the branch directly when I pull the patch.  Not to worry.
+On 05.03.25 18:36, Stuart Yoder wrote:
+> Firmware Framework for Arm A-profile (FF-A) is a messaging framework
+> for Arm-based systems, and in the context of the TPM CRB driver is used
+> to signal 'start' to a CRB-based TPM service which is hosted in an
+> FF-A secure partition running in TrustZone.
 > 
-> Thank you Krzysztof :)
+> These patches add support for the CRB FF-A start method defined
+> in the TCG ACPI specification v1.4 and the FF-A ABI defined
+> in the Arm TPM Service CRB over FF-A (DEN0138) specification:
+> https://developer.arm.com/documentation/den0138/latest/
+> [...]
+> Stuart Yoder (5):
+>   tpm_crb: implement driver compliant to CRB over FF-A
+>   tpm_crb: clean-up and refactor check for idle support
+>   ACPICA: add start method for Arm FF-A
+>   tpm_crb: add support for the Arm FF-A start method
+>   Documentation: tpm: add documentation for the CRB FF-A interface
+> 
+>  Documentation/security/tpm/tpm_ffa_crb.rst |  65 ++++
+>  drivers/char/tpm/Kconfig                   |   9 +
+>  drivers/char/tpm/Makefile                  |   1 +
+>  drivers/char/tpm/tpm_crb.c                 | 105 +++++--
+>  drivers/char/tpm/tpm_crb_ffa.c             | 348 +++++++++++++++++++++
+>  drivers/char/tpm/tpm_crb_ffa.h             |  25 ++
+>  include/acpi/actbl3.h                      |   1 +
+> [...]
 
-Done.  Have a look at:
+My daily linux-next builds for Fedora failed building on ARM64 today. I did
+not bisect, but from the error message I suspect it's du to  patches in this
+series touching drivers/char/tpm/tpm_crb.c :
 
-  https://web.git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/j721e&id=01d04dcd6e80f63ca5e97324ec17c20553947e35
+ld: Unexpected GOT/PLT entries detected!
+ld: Unexpected run-time procedure linkages detected!
+ld: drivers/char/tpm/tpm_crb.o: in function `crb_cancel':
+/builddir/foo//drivers/char/tpm/tpm_crb.c:496:(.text+0x2c0): undefined reference to `tpm_crb_ffa_start'
+ld: drivers/char/tpm/tpm_crb.o: in function `__crb_request_locality':
+/builddir/foo/drivers/char/tpm/tpm_crb.c:285:(.text+0x768): undefined reference to `tpm_crb_ffa_start'
+ld: drivers/char/tpm/tpm_crb.o: in function `__crb_relinquish_locality':
+/builddir/foo/drivers/char/tpm/tpm_crb.c:319:(.text+0x81c): undefined reference to `tpm_crb_ffa_start'
+ld: drivers/char/tpm/tpm_crb.o: in function `__crb_request_locality':
+/builddir/foo/drivers/char/tpm/tpm_crb.c:285:(.text+0x8bc): undefined reference to `tpm_crb_ffa_start'
+ld: drivers/char/tpm/tpm_crb.o: in function `__crb_relinquish_locality':
+/builddir/foo/drivers/char/tpm/tpm_crb.c:319:(.text+0x958): undefined reference to `tpm_crb_ffa_start'
+ld: drivers/char/tpm/tpm_crb.o:/builddir/foo/drivers/char/tpm/tpm_crb.c:474: more undefined references to `tpm_crb_ffa_start' follow
+ld: drivers/char/tpm/tpm_crb.o: in function `crb_acpi_add':
+/builddir/foo/drivers/char/tpm/tpm_crb.c:830:(.text+0x1518): undefined reference to `tpm_crb_ffa_init'
+make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error 1
+make[1]: *** [/builddir/foo/Makefile:1242: vmlinux] Error 2
+make: *** [Makefile:259: __sub-make] Error 2
 
-Let me know if there is anything else to update.
+Full log:
+https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-41-aarch64/08750241-next-next-all/builder-live.log.gz
 
-Thank you!
+Same problem on Fedora 40, 42 and 43. 
 
-	Krzysztof
+Ciao, Thorsten
 
