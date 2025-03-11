@@ -1,324 +1,182 @@
-Return-Path: <linux-kernel+bounces-555756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F441A5BC61
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:35:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514B1A5BC66
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:35:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A147F166BAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:35:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC0B3AB288
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743DF21B9F4;
-	Tue, 11 Mar 2025 09:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74AE22D7A8;
+	Tue, 11 Mar 2025 09:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ik5NxzOp"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011046.outbound.protection.outlook.com [52.101.129.46])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aTWqcXAz"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CEB225A20
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741685701; cv=fail; b=ba3vipjfJw7yH+GxYEW2jEit9rQ26B9r4w/XQy+pOegAHnA9vikvAiUNAbn+mHFadRoVsCdoHbv7TYkBSem+FZNn1CHxxqZYs1UJhO+90lO7PwICjFZPEk4RqhP+AsBZRhIk+mSUSanf4dLgN2RcNH9R6tRl1BcJNGWoAQpEnQg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741685701; c=relaxed/simple;
-	bh=g2HRSrDG0w9vAfjQK0OVwrFNn7lehO5ityZ6zOCUxrA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DpMcO0V0gWLjUS/mCcOe+J+XorKzl0U8f0/Ppd3/KwB8RElhu3bkVMGpwXCb9n9Fku1ffkqEOC3v4Xn+i5C/t5bvmIhiDOeLtp2/6KZBJ4TcO2ylhTPJlYuM7BerfbwpSChHYG2RB0dK2Ea2I8BSvMZyQRPkBfCuJELBdn9OJ18=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ik5NxzOp; arc=fail smtp.client-ip=52.101.129.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VBlxtPaRhTue2pVgyDMjT/Z8LCgJPAYKxfNrRaceVzLQMwFf76WZPEYbWwJTj1XebPB2RjhXEJfZ75kdV9bWw8mpwFb7KMf9fmIhaT1qnAKJanv714XESC2Rhv3lwsU9ut6T0j21wZwF2fb/R5DQw+Skru7QAeTRQl60K0/j4QYLHAufVSNTtYyTsCuqxF/bc9P13qLJd/3YluWBv4hGrb55JzLdGY6TbA8JbXHgufMdoMp5svFgm71hY8UNTBko4tjIaMLs3VPM91DascoDE5QeZdNcVA32IAGDN5racrjsV5MFBQtqoXVYNkmA9QmNJkmuWAwpNQLPVzVDmHsa+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D/O9eHrCaTThyzdZ+4hLwEb1RgcCD+E/ziDm3Lvk79A=;
- b=EysPIn3ia6ioQ/+5DUkFwiS6FkCz5N9qS5lozrzNAqKt6Wpwhx43imeYgfGu8OynbTMXDg8JH81qthX8C0pAP2iHfw2MQj6tB5alcnZYZweqpy2QZK2uY84/+sKZJlCxtLKh4DKfkmHGmw0BM3Q7I9vXTF43nhij/suadHOzQjXBeyl3A8gwj8jxO9EdR6EpH2LkKAgW9yw2IrT8IMl4dAI879Mrdc3oXQahSOR2449AS78Rb/G/uW4TDorjlwrvtsZWp+tQspEFEXk9iAbEhJ/L3pvqXyVWDnR9cweMfdx/IiEwWuTKTzdBMPdYQIIPw707w003u1Tq4XQVVpMymg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D/O9eHrCaTThyzdZ+4hLwEb1RgcCD+E/ziDm3Lvk79A=;
- b=ik5NxzOpRQ3ibSA3KqLXSAmyN3MJyAugFxLk4jZ57XOi3x82bSqwAhPAmqLfrzQZ7iSMsSpk6Gl3aSDcnO1uVpJGe5l+kMC3Wz6Q68HX0rCt8KuLvfK0EsE+86IXta1rgxLAKtYYYOuSfM5t2mOgTqrkpceq8U0coK5ShNW02+yWg949WzKSdiZJb6ZTK6w7dqSX0hC4biHT/K/tvRwH8Th4GP9A/8OBGAjZp3zcmbv1d/RekLnCzAH6CmdF7XfiJ8KjZM7k5LwIeCXzaCTyxsxL4aMEqeO4icFo9q9zpXVtBqliu0I5mCbhmqf6cF2eO3yge+bYEnXDQnKSSof6Ig==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by SG2PR06MB5010.apcprd06.prod.outlook.com (2603:1096:4:1b5::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
- 2025 09:34:53 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%3]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
- 09:34:53 +0000
-Message-ID: <5da7bd8a-c6db-4995-b947-444e2c78aa7c@vivo.com>
-Date: Tue, 11 Mar 2025 17:34:48 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: udmabuf vmap failed (Revert "udmabuf: fix vmap_udmabuf error page
- set" can help)
-To: Bingbu Cao <bingbu.cao@linux.intel.com>, vivek.kasireddy@intel.com,
- ryan.roberts@arm.com, hch@lst.de, Ryan Roberts <ryan.roberts@arm.com>,
- Christoph Hellwig <hch@lst.de>
-Cc: linux-kernel@vger.kernel.org, christian.koenig@amd.com,
- dri-devel@lists.freedesktop.org
-References: <9172a601-c360-0d5b-ba1b-33deba430455@linux.intel.com>
- <d7a54599-350e-4e58-81b6-119ffa2ab03e@vivo.com>
- <ab468ce7-c8ac-48eb-a6c0-386ea7aa9a0c@linux.intel.com>
- <78cd737d-5e85-4d3c-8bb5-0b925d81719b@vivo.com>
- <29445257-b8df-72bd-0650-44c8deb1506c@linux.intel.com>
-From: Huan Yang <link@vivo.com>
-In-Reply-To: <29445257-b8df-72bd-0650-44c8deb1506c@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP301CA0020.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:381::13) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11224225A50
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741685717; cv=none; b=k27noxlU2XQ0vp/Sb7+v5Ood+3yu8LlC6oXJz6fzcvEy4DckX3q/RGq61TcRIr7lwJTI78grEKwvd/IMKg6SkWXuUs4ULP4OWWAjK0OOBnajbO+gctzGn517dkP1FYRxSYL/Tcv8knV03gTi39AFcprIx6wcFGzdndoEaRQpbyc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741685717; c=relaxed/simple;
+	bh=ktS716Ut5UD+HH38uMLpPTCWkHMpybJEZhiqU304vTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R1WYfnQjbKxb6PJmpgljd1axWZ1MjLW+xAiiEc3PhNKXKeNdL2xUhFuJVIwVaQyGXYQzAM+DoW4Nc+4+LmVgaLzECL3p4LWUzUrXpKCs47Hp9+jk/n/NbaK2oD9osfk4MztsGGwE9dJvkVfoNz8VFvoePRvXSImPhXcwkZu1nYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aTWqcXAz; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <aa840586-cd70-417f-82c2-bb887f337720@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741685711;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/wVsNKg9YkEQ7KSJyQziX/Pf5MNW/2LBII724NcKRvc=;
+	b=aTWqcXAzSWTgWXO+B8RX7iWZngEyO3a1jHoDvm0k0X7XvWTj3V6GECXGR3ooUXgbororde
+	6H+mxi8YqAjgzhuqWwr4p6ti7biIiW1JvnEB5yepdDfKJZLRgaXawAOIkgWvFgZr6j//J0
+	9a1fDrz5yhnkLIvSmHodJk0bhubB2uE=
+Date: Tue, 11 Mar 2025 17:34:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SG2PR06MB5010:EE_
-X-MS-Office365-Filtering-Correlation-Id: 487b063c-598f-4fc3-f6a7-08dd607ffa0a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|13003099007|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VEtRK0xZTkt2ZFZMbURhTWtkSGRKVzJDREdZRkl4bmthTEdBUmpIUlA3eDUr?=
- =?utf-8?B?Q0pZNUtxajNpUjhiZlMvd2x1Wi9uTjV6R29vSlpaZ1d4eElKTS8ySlMvZUt1?=
- =?utf-8?B?ZTJwZWhla05sODRGS2tMY0RaRG1EaDNITUMxU0tsaFV5LzBLalB3MkNSamJO?=
- =?utf-8?B?UzdIQmJ2bThiTlRmbGZCcUNTdHpKNEU4Q1BGaS9EcngwNjFrUlp0UEN0K3la?=
- =?utf-8?B?dFJkdnI4VUJrWWpEVzBqOUdmRE1Ma0xOL0FPcERrZUNBeUdBQjZWOTBWcVQ2?=
- =?utf-8?B?dFV1NDI1T0tUcE1Qbnc5MDRTZzRpTXJuQ0hadHUveXY0Z3JnR0lzdVNKdnA1?=
- =?utf-8?B?Tzh1N0RBZldQMC90aGpma0FzMVdtV2x0VTFLVWQyNlcxV1AvazZUMGx2dDZ1?=
- =?utf-8?B?ZENMc2RsZEpxYnZZb0szZkg3Mi8zbGNZTXZKY3NMREpIWmVNbjlSZFZZbktQ?=
- =?utf-8?B?ejYwejhnSW1zWGk4c25aYkc2eW9ScHVTbEdLejRyeklBak41Q0ZEdzl0RHJU?=
- =?utf-8?B?WXlvOHhScGEySHF4Y0F5Z3g4UEo3TWRHOXVQVVJWRXovTERacDhsb0gzRW91?=
- =?utf-8?B?QVpnM2F4c2h1aHhlNFM0SWdsQmJWUU00RGNKVkE2T0Z4U0s3bzJOdHpXMGQw?=
- =?utf-8?B?OG9qUVNQY255Z1lMNFZ3VlVPd05PcVFuZFBEOFM4cElMaHdpUDdVUC9FUkV1?=
- =?utf-8?B?YVJoZzQrYTJWWDNTUjRkcEkxTmxEdHh5N2RmQXdGeVd6dkxyYzdyM0NTSllj?=
- =?utf-8?B?VFNENHlMNlBNQSttMTlQU1d2TjRCa3NjODEwWU9kK2dOVnpiRDFCL29zWm1D?=
- =?utf-8?B?UnVNRHhFSVoyTmFIYm9wK1BGN0NrbytXK3FsNC9MMXBQblBMNCt4WWp2QkI5?=
- =?utf-8?B?MFhLSjdCemJtYTdsOHNVaDZHYmhVbldZdk9iVndFdGJqeTk4UWU4dDV5Mk1t?=
- =?utf-8?B?M0l2ZEg2TkhyK1pRekcvc00wWWNONk1IWEZlR3laZ3lweGdRWEVMbnJFUXpJ?=
- =?utf-8?B?T2JGbXFmYVM5VU91WmlCaWVwaWJha1BDOGwwdHlLT2hsak5JRUJJN1Z6ZWtK?=
- =?utf-8?B?dHBFdjhJZENseVozY0JGWjVSU05KYVl2UThOTWdCRCs2RFdsQXhRaURPMWtt?=
- =?utf-8?B?YkRpL1lIM0tLb1hqR0JueVJPZ2YwcHkycWU2ZlIzd0NUUjhjbjJ5UjFVY24r?=
- =?utf-8?B?RnNOK1pldVhZR01GMFowUmxBM1ZjM3YvdXlUYmVCUEdjcmNMcExReE84NVpT?=
- =?utf-8?B?WmJIL0tzenJ0aXRvaW50L010bVpQZ2JCSzgwaDlWRGx4RVZzRUt6ejVrVGhT?=
- =?utf-8?B?U2MrLzZ5emwwcElXZU9rRy9PdldVSkx1UWlMR2dwT3pEY3VBZ295M1hUa1dl?=
- =?utf-8?B?M29tekdyWHZQNUk4YWNQY2R3b0NXYzRkTCtsaUdHUTJzb2pzblU2eTRsNkVT?=
- =?utf-8?B?aEpOaXF1SFh4Y2ZTMDh3NzBTcTN2UTRNVXY1Ny84TjZMQThFaTZoM1VadStQ?=
- =?utf-8?B?azJqUVpsc2wycW4ySjFid01IR2VPRlZyUHpnK0dtc3ZYcWVtTG1weFoxS0Vl?=
- =?utf-8?B?cmxTMUp5VHlvbE5hNnR0VDFaaEhDaXhrVndjQ2dQY1B5alJ3TnV0Y091Y09R?=
- =?utf-8?B?VjcvZWc3WnlMekNHWFRVeEN6a052d2QvRWRjR1JINnVPdjFjaUw4N3RCODJN?=
- =?utf-8?B?dTlTNFhXUjFZVWF3OTVQMnFEL05SaTBmN2c2RnM1T3ZZcDJFNTR4NjYvNnBJ?=
- =?utf-8?B?R0pTVWsxVWNBMVRrSVJuZHZkZzlmaDBmaEpjSWZVbzhubEhIWUNCaWpsK0Ni?=
- =?utf-8?B?dm9NeWNSNVluR3NkUUVQdmxoN0Z0ZlI0VHEwNy9oRzF6T0hZZlE3NEliWjRm?=
- =?utf-8?B?cjNKM0RWUm1IVlpFMkNiSTNtR2t5WjF1c2lUOHpIVFNXbkM5QlgzRjF0N3pp?=
- =?utf-8?Q?0EmX0hzP83RWVoD3tdztD4kZ54rx59Es?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(13003099007)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?U3JVYlhTbFptU0dtaUlXYi9qUUtVeXQzMkZ5R0dyK3c1b3FhWmV0cjNWUDBi?=
- =?utf-8?B?akN4b2llMTU0WkpMMkRTcmVLMGQ5MkxNNzdYVGVVbHNrMFY4RzgxdVpXYXNa?=
- =?utf-8?B?eGppTkhzWktJb052b2RDZ29hRDd6MkVqeGFJbFc2a0JjTGlkUEFXQ1Z3ZHJx?=
- =?utf-8?B?K01rdTYrSUREVzNHOFgrdlFUNXdBQTdkMnNjWjJ3eVFYT0ZCSVNOTjhnTnVm?=
- =?utf-8?B?REl3ZzlRblNIWHRaNmtMZnBIOXRSaVI4SGZkbU1PSmtKZVA5VlNVdjdoN0pr?=
- =?utf-8?B?SGlYTDRKeW1TOU1XK29lRjRnWkQrN29XYlhkMURLRW5xeEE0TzlBVUp5cXpT?=
- =?utf-8?B?Uk1RYVcwYmlHMEk2T05vdkp1U2JvS1VoR29FSEpIVmVkd3dJZ3lMR3NQbFUy?=
- =?utf-8?B?L1V0d1pVWndtdFh1NDZ2OXZ2c0QwdVlFNUVWU3NneEdTN1kyMUJUV285M0JD?=
- =?utf-8?B?U2Z6VlY5RXkxUmhHTjJFNTY0ZUJVdC85TjI1b0FJVzV2SU5pZGs5MFl1a2ZX?=
- =?utf-8?B?cUkxd09jZUx3SWFVL1k1OThtdDI1V1F3QjkraEpHQm8zdFlUWCsxcEJpRVFh?=
- =?utf-8?B?UUgxZHl6aHlkaHl3NFZwMlZIZHRYOS80QnZzd3hwQVhHVkVENEk5VnpHb08y?=
- =?utf-8?B?QWdaL3ZHRGVhS0hmZlI4YjhmQlJhOVpxZnh0alBNa2xLMVJDOG1YQmlLR2lL?=
- =?utf-8?B?eklwZk9mK2FLdGVPMnRJdTFrY0RHQzhNdWtHcSs3K0FpYmFBb2U3VFNqZFE5?=
- =?utf-8?B?dUpvVDA0WnpUQkNXS3p5NUtXczNBUGN6Uk94b0hqeEplcjgzd01zNExGM1Vi?=
- =?utf-8?B?eDFqOU1DNHMweGRUNkxtaHBtdm10Z1N1NzcwMmlhY0hmTmdxTlc5aUx0SW8w?=
- =?utf-8?B?SWprN01iUGlwN1k3SjZkZ1NWV2JKakJJakVkYkNheGh4alZGTk9DT3RRQ0tX?=
- =?utf-8?B?aGM1M0ZSU04rME00U3JoWkRRazZFWitqVDV4UkZDdE1GcGlkRlptelVMajd1?=
- =?utf-8?B?SGgzMStmbFVwbGNpOGQxSnJCS3BqSVpBcitnZThRajBrMzRrUkJsVzF6VEk1?=
- =?utf-8?B?MW01clZvNzRHY3J4eVlqYmRCblNLRy9xd3BJNkc4UGQ2N2hEa1JtRURTY01v?=
- =?utf-8?B?THdyeGgxczYvbnNJTHFkR2paZXExd3pSNEtsdkdNc2hiWmczRHlxdUlwZndL?=
- =?utf-8?B?ekRCMm43MVN2eXdEanZuSnZPZ3pkNFovMG1aMUFnNFg1aUFEVEo2TnJsblRa?=
- =?utf-8?B?dFlsNkVtRE9RSWg4b3FWQ2hVL3FQMSt2WGdLQ3gyL0txSHhrUG5mV0FSY3h5?=
- =?utf-8?B?cjhXaHNTL1lLZENsMEdXMUpxNDdkaWQ1c0p0TCtvSEROc3J3RU9YQmZqMVpX?=
- =?utf-8?B?eVprdVRBM3I2dzN3ZDhRdWlVanZTeDZPak9obmtudXBHbEY5QnR3dWJESXNQ?=
- =?utf-8?B?YkoydmpnWElPVzc1RDRCUjdxdEVyTkcxYU1xWmQwY2VhdjBjaGpaenRFU1Rn?=
- =?utf-8?B?ZlNIUndHczdtTngvMERYdmFvNUlTalk3TExoMEpzZENqZktORlJnQzNER2g5?=
- =?utf-8?B?UmZHb1l2MnRMNHlhNGwrakExSlN3WVVGNXpyRHA3M04vZnVvZHR1c2E0WEpS?=
- =?utf-8?B?dFhRWlIzUDZLcjJmRWMrZHhkQlUvbm5qb0xVQ3JaYUxKVzUzUW5qemlhWWNS?=
- =?utf-8?B?NE41OEROdWkxMEdYa2xXUHhnaDZ1MkhNZUxxWGY0RUlxZlBTZlN5YWhGMEkx?=
- =?utf-8?B?SUNRelJFK2hDcjZqZzEydFFob3hRM3h4VlFtTmE5TXI2dmRMREZZRks5WktX?=
- =?utf-8?B?RkN6MkJndGszUTlWVUVsUE13UURYbXhqMmN4SE5mcnlUaW5oY1dBc1YvNVJq?=
- =?utf-8?B?T2dwR0NBS2JCRW9jVXA3ZTVFdThyQUtvNGxoRXB3NE1VZUhTNjJ3eXI3UXh6?=
- =?utf-8?B?cUMvNFR2azNvQ2ZQV2QvZ3V1Y3JpR3pvMFhTd0xyWGxza0NnQU1OeE5WNnAy?=
- =?utf-8?B?dVRpNXlEN2Q5R2ZjUmt0RkFIV2VENzVmbjNLN2dlV1ZsNk9DWG9LUU9BQS9m?=
- =?utf-8?B?dTlleFZIQlI0SXlUZUppc2ZyR0VJTmEvNEFLVW4xeUgvKytUbzJjUUV4UWpw?=
- =?utf-8?Q?V3eMGWadJFlpegmpQ3MQQr+9L?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 487b063c-598f-4fc3-f6a7-08dd607ffa0a
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 09:34:53.0525
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KQk2RGKNaqQannNwOkjjECj/EfeLuxHb/CTWut162Mi2ATyL77ViRukMUkhReysaVlmB/KKZ4rCZh8rQ5LXGHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5010
+Subject: Re: [PATCH v2 2/2] vsprintf: remove redundant and unused %pCn format
+ specifier
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Petr Mladek <pmladek@suse.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+ Alex Shi <alexs@kernel.org>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250311-vsprintf-pcn-v2-0-0af40fc7dee4@bootlin.com>
+ <20250311-vsprintf-pcn-v2-2-0af40fc7dee4@bootlin.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20250311-vsprintf-pcn-v2-2-0af40fc7dee4@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Christoph and Ryan,
 
-Can you help us check vmap_pfn's pfn check is right? Did here mischecked 
-pfn_valid?
-
-Thank you.
-
-在 2025/3/11 17:02, Bingbu Cao 写道:
-> Christoph and Ryan,
+在 3/11/25 5:21 PM, Luca Ceresoli 写道:
+> %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
+> add %pC{,n,r} format specifiers for clocks") introducing them does not
+> clarify any intended difference. It can be assumed %pC is a default for
+> %pCn as some other specifiers do, but not all are consistent with this
+> policy. Moreover there is now no other suffix other than 'n', which makes a
+> default not really useful.
 >
-> Could you help check this? Thanks.
+> All users in the kernel were using %pC except for one which has been
+> converted. So now remove %pCn and all the unnecessary extra code and
+> documentation.
 >
-> On 3/11/25 4:54 PM, Huan Yang wrote:
->> 在 2025/3/11 16:42, Bingbu Cao 写道:
->>> [You don't often get email from bingbu.cao@linux.intel.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->>>
->>> Huan,
->>>
->>> Thanks for your response.
->>>
->>> On 3/11/25 3:12 PM, Huan Yang wrote:
->>>> 在 2025/3/11 14:40, Bingbu Cao 写道:
->>>>> [You don't often get email from bingbu.cao@linux.intel.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->>>>>
->>>>> Huan Yang and Vivek,
->>>>>
->>>>> I am trying to use udmabuf for my test, and I cannot vmap the udmabuf
->>>>> buffers now. vmap_pfn_apply() will report a warning to complain that
->>>>> the pfns are invalid.
->>>>> I dump the pfn numbers as below:
->>>>> [ 3365.399641] pg[0] pfn 1148695
->>>>> [ 3365.399642] pg[1] pfn 1145057
->>>>> [ 3365.399642] pg[2] pfn 1134070
->>>>> [ 3365.399643] pg[3] pfn 1148700
->>>>> [ 3365.399643] pg[4] pfn 1144871
->>>>> [ 3365.399643] pg[5] pfn 1408686
->>>>> [ 3365.399643] pg[6] pfn 1408683
->>>>> ...
->>>>> [ 3365.399660] WARNING: CPU: 3 PID: 2772 at mm/vmalloc.c:3489 vmap_pfn_apply+0xb7/0xd0
->>>>> [ 3365.399667] Modules linked in:...
->>>>> [ 3365.399750] CPU: 3 UID: 0 PID: 2772 Comm: drm-test Not tainted 6.13.0-rc2-rvp #845
->>>>> [ 3365.399752] Hardware name: Intel Corporation Client Platform/xxxx, BIOS xxxFWI1.R00.3221.D83.2408120121 08/12/2024
->>>>> [ 3365.399753] RIP: 0010:vmap_pfn_apply+0xb7/0xd0
->>>>> [ 3365.399755] Code: 5b 41 5c 41 5d 5d c3 cc cc cc cc 48 21 c3 eb d1 48 21 c3 48 23 3d 31 c0 26 02 eb c5 48 c7 c7 c4 3c 20 a8 e8 5b c0 d8 ff eb 8a <0f> 0b b8 ea ff ff ff 5b 41 5c 41 5d 5d c3 cc cc cc cc 0f 1f 80 00
->>>>> [ 3365.399756] RSP: 0018:ffffb9b50c32fad0 EFLAGS: 00010202
->>>>> [ 3365.399757] RAX: 0000000000000001 RBX: 0000000000118717 RCX: 0000000000000000
->>>>> [ 3365.399758] RDX: 0000000080000000 RSI: ffffb9b50c358000 RDI: 00000000ffffffff
->>>>> [ 3365.399758] RBP: ffffb9b50c32fae8 R08: ffffb9b50c32fbd0 R09: 0000000000000001
->>>>> [ 3365.399759] R10: ffff941602479288 R11: 0000000000000000 R12: ffffb9b50c32fbd0
->>>>> [ 3365.399759] R13: ffff941618665ac0 R14: ffffb9b50c358000 R15: ffff941618665ac8
->>>>> [ 3365.399760] FS:  00007ff9e9ddd740(0000) GS:ffff94196f780000(0000) knlGS:0000000000000000
->>>>> [ 3365.399760] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>> [ 3365.399761] CR2: 000055fda5dc69d9 CR3: 00000001544de003 CR4: 0000000000f72ef0
->>>>> [ 3365.399762] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>> [ 3365.399762] DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7: 0000000000000400
->>>>> [ 3365.399763] PKRU: 55555554
->>>>> [ 3365.399763] Call Trace:
->>>>> [ 3365.399765]  <TASK>
->>>>> [ 3365.399769]  ? show_regs+0x6d/0x80
->>>>> [ 3365.399773]  ? __warn+0x97/0x160
->>>>> [ 3365.399777]  ? vmap_pfn_apply+0xb7/0xd0
->>>>> [ 3365.399777]  ? report_bug+0x1ec/0x240
->>>>> [ 3365.399782]  ? handle_bug+0x63/0xa0
->>>>> [ 3365.399784]  ? exc_invalid_op+0x1d/0x80
->>>>> [ 3365.399785]  ? asm_exc_invalid_op+0x1f/0x30
->>>>> [ 3365.399790]  ? vmap_pfn_apply+0xb7/0xd0
->>>>> [ 3365.399791]  __apply_to_page_range+0x522/0x8a0
->>>>> [ 3365.399794]  ? __pfx_vmap_pfn_apply+0x10/0x10
->>>>> [ 3365.399795]  apply_to_page_range+0x18/0x20
->>>>> [ 3365.399796]  vmap_pfn+0x77/0xd0
->>>>> [ 3365.399797]  vmap_udmabuf+0xc5/0x110
->>>>> [ 3365.399802]  dma_buf_vmap+0x96/0x130
->>>>>
->>>>> I did an experiment to revert 18d7de823b7150344d242c3677e65d68c5271b04,
->>>>> then I can vmap the pages. Could you help what's wrong with that?
->>>> Sorry for that, as I reviewed pfn_valid, that's someting wired:
->>>>
->>>> /**
->>>>    * pfn_valid - check if there is a valid memory map entry for a PFN
->>>>    * @pfn: the page frame number to check
->>>>    *
->>>>    * Check if there is a valid memory map entry aka struct page for the @pfn.
->>>>    * Note, that availability of the memory map entry does not imply that
->>>>    * there is actual usable memory at that @pfn. The struct page may
->>>>    * represent a hole or an unusable page frame.
->>>>    *
->>>>    * Return: 1 for PFNs that have memory map entries and 0 otherwise
->>>>    */
->>>>
->>>> So, if pfn valid, it's return 1, else 0. So mean, only 1 is a valid pfn. But vmap_pfn_apply in there:
->>>>
->>>> static int vmap_pfn_apply(pte_t *pte, unsigned long addr, void *private)
->>>> {
->>>>       struct vmap_pfn_data *data = private;
->>>>       unsigned long pfn = data->pfns[data->idx];
->>>>       pte_t ptent;
->>>>
->>>>       if (WARN_ON_ONCE(pfn_valid(pfn)))
->>>>           return -EINVAL;
->>>>
->>>>       ptent = pte_mkspecial(pfn_pte(pfn, data->prot));
->>>>       set_pte_at(&init_mm, addr, pte, ptent);
->>>>
->>>>       data->idx++;
->>>>       return 0;
->>>> }
->>>>
->>>> Do it give a wrong check? maybe should fix by:
->>> I guess not, it looks more like warning when you trying to vmap a
->>> pfn which already took a valid entry in pte.
->> No, I think here check need pfn is valid, then can set it. If a pfn is invalid, why we set it in PTE?
->>
->> Also, I can't make sure.
->>
->> BTW, can you fix it then retest?
->>
->> Thank you.
->>
->>> However, the MM code is so complex for me, just my guess. :)
->>>
->>>> static int vmap_pfn_apply(pte_t *pte, unsigned long addr, void *private)
->>>> {
->>>>       struct vmap_pfn_data *data = private;
->>>>       unsigned long pfn = data->pfns[data->idx];
->>>>       pte_t ptent;
->>>>
->>>> -    if (WARN_ON_ONCE(pfn_valid(pfn)))
->>>> +    if (WARN_ON_ONCE(!pfn_valid(pfn)))
->>>>           return -EINVAL;
->>>>
->>>>       ptent = pte_mkspecial(pfn_pte(pfn, data->prot));
->>>>       set_pte_at(&init_mm, addr, pte, ptent);
->>>>
->>>>       data->idx++;
->>>>       return 0;
->>>> }
->>>>
->>>> Please help me check it, also, you can apply this and then check it.:)
->>>>
->>>>> -- 
->>>>> Best regards,
->>>>> Bingbu Cao
->>> -- 
->>> Best regards,
->>> Bingbu Cao
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+
+Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
+
+
+Thanks,
+
+Yanteng
+
+>
+> ---
+>
+> Changes in v2:
+> - update Chinese documentation (change acked by Yanteng Si <si.yanteng@linux.dev>)
+> ---
+>   Documentation/core-api/printk-formats.rst                    |  3 +--
+>   Documentation/translations/zh_CN/core-api/printk-formats.rst |  3 +--
+>   lib/vsprintf.c                                               | 10 ++--------
+>   3 files changed, 4 insertions(+), 12 deletions(-)
+>
+> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+> index ecccc0473da9c10f45f2464566f690472c61401e..f3009e6ec80a864c330c8812efcd82c12f4066b3 100644
+> --- a/Documentation/core-api/printk-formats.rst
+> +++ b/Documentation/core-api/printk-formats.rst
+> @@ -571,9 +571,8 @@ struct clk
+>   ::
+>   
+>   	%pC	pll1
+> -	%pCn	pll1
+>   
+> -For printing struct clk structures. %pC and %pCn print the name of the clock
+> +For printing struct clk structures. %pC prints the name of the clock
+>   (Common Clock Framework) or a unique 32-bit ID (legacy clock framework).
+>   
+>   Passed by reference.
+> diff --git a/Documentation/translations/zh_CN/core-api/printk-formats.rst b/Documentation/translations/zh_CN/core-api/printk-formats.rst
+> index bd36d35eba4eb124be43a66227059a30429e4135..96a917ecc93f2a4872784b6d8e3f98bcb9f5f737 100644
+> --- a/Documentation/translations/zh_CN/core-api/printk-formats.rst
+> +++ b/Documentation/translations/zh_CN/core-api/printk-formats.rst
+> @@ -523,9 +523,8 @@ clk结构体
+>   ::
+>   
+>   	%pC	pll1
+> -	%pCn	pll1
+>   
+> -用于打印clk结构。%pC 和 %pCn 打印时钟的名称（通用时钟框架）或唯一的32位
+> +用于打印clk结构。%pC 打印时钟的名称（通用时钟框架）或唯一的32位
+>   ID（传统时钟框架）。
+>   
+>   通过引用传递。
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 56fe96319292674c9f79559cf78dd0d99d1a1f06..143d55cb1c12acac21a6c6bafd255437e878f280 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -1969,15 +1969,11 @@ char *clock(char *buf, char *end, struct clk *clk, struct printf_spec spec,
+>   	if (check_pointer(&buf, end, clk, spec))
+>   		return buf;
+>   
+> -	switch (fmt[1]) {
+> -	case 'n':
+> -	default:
+>   #ifdef CONFIG_COMMON_CLK
+> -		return string(buf, end, __clk_get_name(clk), spec);
+> +	return string(buf, end, __clk_get_name(clk), spec);
+>   #else
+> -		return ptr_to_id(buf, end, clk, spec);
+> +	return ptr_to_id(buf, end, clk, spec);
+>   #endif
+> -	}
+>   }
+>   
+>   static
+> @@ -2382,8 +2378,6 @@ char *rust_fmt_argument(char *buf, char *end, void *ptr);
+>    *      T    time64_t
+>    * - 'C' For a clock, it prints the name (Common Clock Framework) or address
+>    *       (legacy clock framework) of the clock
+> - * - 'Cn' For a clock, it prints the name (Common Clock Framework) or address
+> - *        (legacy clock framework) of the clock
+>    * - 'G' For flags to be printed as a collection of symbolic strings that would
+>    *       construct the specific value. Supported flags given by option:
+>    *       p page flags (see struct page) given as pointer to unsigned long
+>
 
