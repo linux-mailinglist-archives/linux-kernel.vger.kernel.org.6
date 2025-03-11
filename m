@@ -1,213 +1,95 @@
-Return-Path: <linux-kernel+bounces-555299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67526A5B484
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:40:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC24A5B479
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:40:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90D3E1737C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:40:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27A7E17328A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0A21C5D72;
-	Tue, 11 Mar 2025 00:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2401C78F52;
+	Tue, 11 Mar 2025 00:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OeDT/I6I"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iiD+OIiE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944E041C72
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 00:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E346088F;
+	Tue, 11 Mar 2025 00:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741653631; cv=none; b=ZRaX6e1xC4e1cqppRaKVyAL/b4gVQQ/xUzJKL5pEsjr2Dg/atYieBhjwhi4zXdxIQmtd+dgfLyd/K+P7ShwwOo5rlE1Ib2F8iOekyUz+17uqMJV70txu1L/UZdmoqPCeGDfDXE0ZXnMSipfG6x8awaDlmJXjjBSGph3ERbTx0ig=
+	t=1741653618; cv=none; b=Pcg6aIu9J7bh0/9UkQPjxwe1d2gEl9V72O63dAuJFhe+1uB2g6afMstkMu0ZSKZprdFod+WQJyZkFJqojvloQBPSG4+kyFeqfhKtN6ox0Bg6B3aix+v3jdVekmx48z3txzZLSsR3jbR3Y6je9cgdUrNBnxYnEEpodUI1UeprVHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741653631; c=relaxed/simple;
-	bh=dyw753/H6BTUrRf3jQI1iojuAfN0WdNF+kraI3CjYVI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hky+QTt59OLQJSq6l3HVMQVFsWFBDmVhtvKP+KHZLKK6+aYn7KKSuUKg/Of8GdTYLje1a8091T1d8ET9HQORDSoqDhtxQzSPmtOs+C+oNs0NPRSAHI7gA1y9JsTvRKptq0zJvHd/0EKG+mWPOa073dMw4USHMr/UO543DcwZ3+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OeDT/I6I; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741653626;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nPFnFp1VkXPuK1wBnfwovz6gQVIIRqPSnwN9UsbsTOA=;
-	b=OeDT/I6IhoEhZa5RmSa5zq19OSOVtSOTqKEeKud8LqC6eHU8BH8RnotD3J1BgXBNAHW+3x
-	gOR7XqOH6iCuq+VtpsrBotGzjcOLnzTbRfWKmRawjpXBFSOK+LhQ0V+m0JjuVc2U+rR7lR
-	0JikXVSrBYPVaJoyFUYJn1RXwhobx/U=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-460-ixMIOxnyOsahtgzuacb5WA-1; Mon, 10 Mar 2025 20:40:25 -0400
-X-MC-Unique: ixMIOxnyOsahtgzuacb5WA-1
-X-Mimecast-MFC-AGG-ID: ixMIOxnyOsahtgzuacb5WA_1741653624
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ff581215a0so13731387a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:40:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741653624; x=1742258424;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nPFnFp1VkXPuK1wBnfwovz6gQVIIRqPSnwN9UsbsTOA=;
-        b=tFr/NyBnHziqRYXBgHEXZIcDER1jv1LLj8ANyKHaJTtO6kAbkQZ51o9foOiO6XQRqF
-         OGQ9OLigxNlo7k9udgkR3G14ayXJoQTlty5K4L0s8NybwFf5uVCNvheaC9oWFPTQK819
-         MxPgCkpdK578fAcBHTgtmGvVLZPaFN6M8exX7HaV+UPoxQ/BOIlFk1cO48E91nN0D9DG
-         ISgnOxYHBsuEruBgyKDE/v3YoVt2FiMuqHp63UUFOmfTYnHkx3L+0NVItxl/Dd58bbCf
-         xCa8e7ICLDEO6AFQCtWhwPOxsxVcvjRkmUfLtPMfp23cJHvtS5aBcgkTrRlFuDeGGH2B
-         8rvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYOPGZ3WJCkRppmrX1i2im96GgyVDJFFZ4mgQzLbszMnlGZDYFXizVu31cJoAlJZTWVSooLhPGk6JNBPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLWVf+m0ZfRbCrMnoQWKlV3UquOTBByMl7Dku4lXBfkykzHXp6
-	1rGvG1lCgu49m0JvnCPvppMniRtKLP60KndLtgbHQQ7b8rWbc41Rmd4ab2LhIa1l3fuwjuWf8lJ
-	CIDwCX7S1BtKPDwZgRMrruSJwYSSYOSMzK0XauIMKqVKuQ8fh9UHQQhr62IKjYVKobhVRETJZ/D
-	tmcQAKyjP3Bk8Gm4JTnBsOtTKI0H+8mEnSff/M
-X-Gm-Gg: ASbGncuMaOhtr6weCKinmxsPdsUidwFZ0dBzgWXrmf/tmHn2qftn0PciafDH4mHckhh
-	XLFl4hUehsuoVOIxETl+TSBbaTFpGaYRzIwe1ub/xOyBUknyrKI5sg1ZP/hsm5AFzkGKRRA==
-X-Received: by 2002:a17:90b:4d8c:b0:2ee:b8ac:73b0 with SMTP id 98e67ed59e1d1-2ff7ce47c06mr25678677a91.2.1741653623961;
-        Mon, 10 Mar 2025 17:40:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFCTIxNW5KVnhioASoe6KuDcaNU+MoVXuWjH8X5aO/fiowwzFcttBDg5Qj2LCfTQUSRsi5colKFgqeeGjkAv4Y=
-X-Received: by 2002:a17:90b:4d8c:b0:2ee:b8ac:73b0 with SMTP id
- 98e67ed59e1d1-2ff7ce47c06mr25678644a91.2.1741653623483; Mon, 10 Mar 2025
- 17:40:23 -0700 (PDT)
+	s=arc-20240116; t=1741653618; c=relaxed/simple;
+	bh=dwNVoDSO9LuhxUhoL9pz/AvCnYig/Hu3oCVWghUy+fo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=hORGVnfqLxh763o9LhwFYKSFxIoWu1nlXGxrKpFod9yjsLVtjR58Lcss7DgsvdZEbfoKmn/xHHDdckYhzcJEaqs3Sl2WySLHnJ4WWKSSxOurFds7rJC70pqjieNGqWOs7LFm1AU+AI+2WzW0TQeXx5tzx+SdFBb4fay4e67MduY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iiD+OIiE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93C9EC4CEE5;
+	Tue, 11 Mar 2025 00:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741653617;
+	bh=dwNVoDSO9LuhxUhoL9pz/AvCnYig/Hu3oCVWghUy+fo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iiD+OIiETMOaeju9Asvfi74ipxsWTNoyekRFPJTwTazZAwlFfX7y9ioBrXRJDnSq3
+	 lO7a5Eu51cAGJsfrtKYqhCqJSVf3dwKCISceLmuaM6YJetVqBjhBpeK3kZV7oFa9t0
+	 o4ep9mIF0u4l87onP1mgfxWGHtW+Ft6nSUo0FIZMqTFxTJTpv5nkNA8ScfENIHdMxC
+	 +WuxJWDXhzZZrTmClfie0zWvKczW3uogIG4B3k9XQVvscaavWefc2OP6BnJSgcnqFA
+	 Lw2M+3CNx2fSq2U26vHjGss3ErYKEF2JMOMBKAdLpUTt1mBggjgscUBcgrLFAGB9ci
+	 FTflX7XGhMyvQ==
+Date: Tue, 11 Mar 2025 09:40:14 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 2/3] tracing: Remove checking the activity when module
+ map is updating
+Message-Id: <20250311094014.0cd4f495b31f25405f3c380e@kernel.org>
+In-Reply-To: <20250307102137.2b3dde8f@gandalf.local.home>
+References: <20250207015330.5c71ad55ed2f516da1410711@kernel.org>
+	<173886113592.496116.11615563462036645436.stgit@devnote2>
+	<20250307102137.2b3dde8f@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250307-rss-v9-0-df76624025eb@daynix.com> <20250307-rss-v9-3-df76624025eb@daynix.com>
- <CACGkMEsNHba=PY5UQoH1zdGQRiHC8FugMG1nkXqOj1TBdOQrww@mail.gmail.com> <5d81246c-1e69-4301-ae6f-63838733672d@daynix.com>
-In-Reply-To: <5d81246c-1e69-4301-ae6f-63838733672d@daynix.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 11 Mar 2025 08:40:11 +0800
-X-Gm-Features: AQ5f1Jrq56wv3c7Sji25V2t3viqORzyfR5RJXtNkfnP10Huk8xi4r-Xv7AC1mUA
-Message-ID: <CACGkMEv0ehQJPUzkJTkX0=bsSULdRdtgxOpjCJ+56Xh6RAQJYA@mail.gmail.com>
-Subject: Re: [PATCH net-next v9 3/6] tun: Introduce virtio-net hash feature
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
-	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
-	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
-	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 3:59=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
-.com> wrote:
->
-> On 2025/03/10 12:55, Jason Wang wrote:
-> > On Fri, Mar 7, 2025 at 7:01=E2=80=AFPM Akihiko Odaki <akihiko.odaki@day=
-nix.com> wrote:
-> >>
-> >> Hash reporting
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>
-> >> Allow the guest to reuse the hash value to make receive steering
-> >> consistent between the host and guest, and to save hash computation.
-> >>
-> >> RSS
-> >> =3D=3D=3D
-> >>
-> >> RSS is a receive steering algorithm that can be negotiated to use with
-> >> virtio_net. Conventionally the hash calculation was done by the VMM.
-> >> However, computing the hash after the queue was chosen defeats the
-> >> purpose of RSS.
-> >>
-> >> Another approach is to use eBPF steering program. This approach has
-> >> another downside: it cannot report the calculated hash due to the
-> >> restrictive nature of eBPF steering program.
-> >>
-> >> Introduce the code to perform RSS to the kernel in order to overcome
-> >> thse challenges. An alternative solution is to extend the eBPF steerin=
-g
-> >> program so that it will be able to report to the userspace, but I didn=
-'t
-> >> opt for it because extending the current mechanism of eBPF steering
-> >> program as is because it relies on legacy context rewriting, and
-> >> introducing kfunc-based eBPF will result in non-UAPI dependency while
-> >> the other relevant virtualization APIs such as KVM and vhost_net are
-> >> UAPIs.
-> >>
-> >> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
-> >> Tested-by: Lei Yang <leiyang@redhat.com>
-> >> ---
-> >>   Documentation/networking/tuntap.rst |   7 ++
-> >>   drivers/net/Kconfig                 |   1 +
-> >>   drivers/net/tap.c                   |  68 ++++++++++++++-
-> >>   drivers/net/tun.c                   |  98 +++++++++++++++++-----
-> >>   drivers/net/tun_vnet.h              | 159 ++++++++++++++++++++++++++=
-++++++++--
-> >>   include/linux/if_tap.h              |   2 +
-> >>   include/linux/skbuff.h              |   3 +
-> >>   include/uapi/linux/if_tun.h         |  75 +++++++++++++++++
-> >>   net/core/skbuff.c                   |   4 +
-> >>   9 files changed, 386 insertions(+), 31 deletions(-)
-> >>
-> >> diff --git a/Documentation/networking/tuntap.rst b/Documentation/netwo=
-rking/tuntap.rst
-> >> index 4d7087f727be5e37dfbf5066a9e9c872cc98898d..86b4ae8caa8ad062c1e558=
-920be42ce0d4217465 100644
-> >> --- a/Documentation/networking/tuntap.rst
-> >> +++ b/Documentation/networking/tuntap.rst
-> >> @@ -206,6 +206,13 @@ enable is true we enable it, otherwise we disable=
- it::
-> >>         return ioctl(fd, TUNSETQUEUE, (void *)&ifr);
-> >>     }
-> >>
+On Fri, 7 Mar 2025 10:21:37 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-[...]
+> On Fri,  7 Feb 2025 01:58:56 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Remove unnecessary active check because tr->flags already checks it.
+> 
+> I've thought this over, and sure, if we start tracing on a persistent ring
+> buffer, then it can add all modules loaded from then on even if it it's not
+> tracing.
+> 
+> Can you merge patches 1 and 2, rebase it on ring-buffer/for-next and
+> resubmit this as one patch?
 
-> >>
-> >> diff --git a/drivers/net/tun_vnet.h b/drivers/net/tun_vnet.h
-> >> index 58b9ac7a5fc4084c789fe94fe36b5f8631bf1fa4..8e7d51fb0b4742cef56e7c=
-5ad778b156cc654bed 100644
-> >> --- a/drivers/net/tun_vnet.h
-> >> +++ b/drivers/net/tun_vnet.h
-> >> @@ -6,6 +6,16 @@
-> >>   #define TUN_VNET_LE     0x80000000
-> >>   #define TUN_VNET_BE     0x40000000
-> >>
-> >> +typedef struct virtio_net_hash *(*tun_vnet_hash_add)(struct sk_buff *=
-);
-> >> +typedef const struct virtio_net_hash *(*tun_vnet_hash_find)(const str=
-uct sk_buff *);
-> >> +
-> >> +struct tun_vnet_hash_container {
-> >> +       struct tun_vnet_hash common;
-> >
-> > I'd rename this as hash.
->
-> Everything in this structure is about hash. "common" represents its
-> feature well.
->
-> I see a few alternative options though I don't prefer them either; they
-> make the code verbose and I don't think they are worthwhile:
-> 1. Rename tun_vnet_hash to tun_vnet_hash_common.
-> 2. Prefix the other fields with "hash_" for consistency.
+Oops, I've missed this message. OK, let me rebase it.
 
-Or use different structures, one for hash_report another is for rss.
+Thanks,
 
->
-> >
-> >> +       struct tun_vnet_hash_rss rss;
-> >> +       u32 rss_key[VIRTIO_NET_RSS_MAX_KEY_SIZE];
-> >> +       u16 rss_indirection_table[];
-> >> +};
-> >
-> > Besides the separated ioctl, I'd split this structure into rss and
-> > hash part as well.
+> 
+> Thanks,
+> 
+> -- Steve
 
-Like this.
 
-Thanks
-
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
