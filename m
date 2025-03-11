@@ -1,146 +1,191 @@
-Return-Path: <linux-kernel+bounces-556378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17107A5C56C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:14:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D966AA5C57B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:15:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC9311887901
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:11:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCAA2188D558
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF9F25E83D;
-	Tue, 11 Mar 2025 15:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6045C25EF81;
+	Tue, 11 Mar 2025 15:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IDu6dlMi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mss7qbqp"
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0262E25D8E8;
-	Tue, 11 Mar 2025 15:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2003125E820;
+	Tue, 11 Mar 2025 15:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741705877; cv=none; b=CbPoUoL1AmNoJAt1mLq15/XiafRv2gk2QB12J3fwHf5eQbZ5b8yyW3RoMpae7ZMhOLeLjUWgFXQSk8kmL9NomQwU038fC9O1A8SlYYkTtJakWcziwb+U24E2pajAkO1PAFF0XJUpAGktgmZg8Ew7K+rqwNU3AS096VLjwN6jvBM=
+	t=1741705905; cv=none; b=OSXxxFufgnqMdEXHZnr3RbJNLo9gT8j5zCdhueWXdhC6DLnYkYzTuazMmlmErtKM7g3gYIxlbxjOQ3WFmXpOILuHwOsIObth0emBzIASwkAYLgGKqJUL+yscV8oXLiWSCSmklYAmxc3czBUvSiU4EY4n2Nr20XYVLLL2vdHA0uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741705877; c=relaxed/simple;
-	bh=/2JfqBfYxANVZwdS6FN2vkLC/ku+BK9lPPVgRVFC/x0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mhcOTrP33+laV2Zc2mwJyfOTWGE8BiJJ61Mzr8DYN5ITBjDUXO//WmyAcwyp/XyzY4N+6KIFIGmtKBlXCjSPryb1tswcsfxS126BYT5vzCSzDac2DXy+efP7POLzaE+bti23RIx9y4L9lsZu1q9+Y9eASi8WKRRODmnsq6uBsbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IDu6dlMi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B7oAR6024899;
-	Tue, 11 Mar 2025 15:11:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DUR/cWXH5NlTRsr2OBVhIWSYEd2H/cuBsfodsuw/YXg=; b=IDu6dlMiyvLb1UJf
-	KcQxmHCbn4yE9C5qZiXXhVaGPhhRN+dpJ+L7xWprYjZ82BmM2X7+OlVq1jgcrlSd
-	wtWBrPIP+sDkS+ijhRWeSC+D7ta1T0q32UrYj/jHZNLy+GVisXtAL+J7I0q6agUY
-	6mlFMLKHQ4vAHKEhcY1AKTLH+EmMJX1r+G/SfU5mVW6fucvVCuArvFRXeKO9Vgxq
-	sH3N/15rllbpriJLCY4aJ2NL/bIDos4oZdAeBgbVFUmJimjD5HfUsAW9mEy0zYT4
-	M+Jla7qx/HzAf7bX/FtLqqTkhLl3wY2MDxQR1rEho9pk2kgB2XtEDneqtHGlhC4e
-	Dkr85A==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ah4t1d0b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 15:11:09 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52BFB8CX008825
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 15:11:08 GMT
-Received: from [10.216.38.182] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Mar
- 2025 08:11:04 -0700
-Message-ID: <c0430086-675d-b58c-4ef9-1bd9ee51d3db@quicinc.com>
-Date: Tue, 11 Mar 2025 20:41:01 +0530
+	s=arc-20240116; t=1741705905; c=relaxed/simple;
+	bh=zu/L7+HG6HCLqSThKKvejHwz7q04O4o7/CbXHL+MeOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BlziOqiULFoqel2H35UYJ2lwH2GLFQ9qwLHwhZQ696+vCHHPyMOtxPMbUdokk/Z/mRD1cZj9SUuXyU7O50+3M0prFJf3vyWOsjP/PTnd88pWbdSNgxVWoE91Ubqov8ElrUaq9QZJi+MWsyBjQHdvVdBjaOmH1pIqIkXqVVSSoJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mss7qbqp; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-867129fdb0aso5038603241.1;
+        Tue, 11 Mar 2025 08:11:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741705903; x=1742310703; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DTuA7YSQf6BTENhRE44x2ahXNAujiJZaMhILjLcujAA=;
+        b=Mss7qbqpDDXbAP5nmPTtXEUlCGPNMUKCWAsmmQIEKxcYw5P9SGpLeckaurYCHOGI6S
+         ZbmsmIAAvalt5OjRgN9pbUP4cybR8hq1FMbNhgwIeTBlV3VzyMfZX/J3MRX2qQdBy0o0
+         ib+6YpRS5mXU68OeSZ7Zd910NP1n9Oxs6hZXwPtSjjNIjuanaxP/hW9yL/HDUle7xJRb
+         JMSsPuqXHzGIvjVrYt5iWVZv5M88XyZhOs+ywI+nkieihVHyQPNm8+q54FA4+SlkBizq
+         1731sHUwxXQUmLOjSKFUbeMCCT8T+gojA0Eri4TdCD/UfCJT37HGjrn2r8IZP9gHvUeS
+         7u9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741705903; x=1742310703;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DTuA7YSQf6BTENhRE44x2ahXNAujiJZaMhILjLcujAA=;
+        b=QfdVmK89ZAZ3ox3bS/MS3RiQy/7eIyISkmKm8OY3r2JQwWEu4969mVoWrQ3tU0EjQY
+         9aaxVd3I15LJQPX/jdrp81CnRQu57lHx1Hl77+9yVVnMVWY9uN6JbKMLtrzCBczXyo6T
+         5//xriQ/igQus4UV9zSWXnq933tsfbYaB3xhotazk25jBJ/GbQO3jlYMcDVOgJY1Ni43
+         6qszwFKq4Zm8UVGYQXnbmwJBhHLyGWSKVwAbdqhrJJ5zMv+L1FoAtY7v/GLgcvIJ163q
+         9dk4qH7DTJFvG3fTsci+2RvlvgzzH806hFjJS1wprUTJqYm6ndl/EFMfEEx+PezJ5vzt
+         3N9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVqo2mnDHkxu8Nzy7R58qoz2WTXQ9g6nDd6d80LZjlXuwOOBuUFw2Tk34xkfweQSJSUR/yqp0nu1iMRZ+E=@vger.kernel.org, AJvYcCWI2pyYwPOCL9rAgamdN7OHva2I2Sb/cbxVursi12l5TySNCelLpoy8Dk7wUHOPtNW6JdacUUxbfpY9EuWsCl1cuU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5+2oaF+0KUCOPed2xUweZ+hNezWq5E5IsdcF9FRALVrrRFLZR
+	BvH2TEL37XXQ23de0wd1Y9s4OCcn8yuJYc3kX4BhOxrft6bbOJnxaVc8uVIfEh9/uMn81SWFNWU
+	/8C6V15aBPlaLrcvMm+Wg/cndHCM=
+X-Gm-Gg: ASbGncvTfh4AiDke79Uaf1SQOR8w8UeB4BVYG1Pd+C8C+v1DqqbAYv/Ax1FkWNY3MY9
+	ymwivzVZH7a2riQbhkgwTonBRZotLyEh6M3c93nael6eRdAmyTEdgtkxHQf4HPrqYIcxfo1nCnq
+	y05uCazjyabeCbsAyNkyBRAOUIog==
+X-Google-Smtp-Source: AGHT+IGrRBAfEL4AxUiuseuyI92pGLRtD/JII/C+DL6HvPbEkqygZtUt+JWnvwrEiMJgIWvk5rmcyl+90xCH5yInaRw=
+X-Received: by 2002:a05:6102:5793:b0:4bb:e14a:9451 with SMTP id
+ ada2fe7eead31-4c34d31add4mr3130230137.20.1741705902795; Tue, 11 Mar 2025
+ 08:11:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/4] dt-bindings: media: qcom,sm8550-iris: update power
- domain name
-Content-Language: en-US
-To: Dmitry Baryshkov <lumag@kernel.org>
-CC: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
- <20250311-dtbinding-v1-1-5c807d33f7ae@quicinc.com>
- <7yjj2eemvvvnsgv67d7tueid4h3n3onuou6ammx36am4qhfsal@xam3iamk4er3>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <7yjj2eemvvvnsgv67d7tueid4h3n3onuou6ammx36am4qhfsal@xam3iamk4er3>
+References: <c499234d559a0d95ad9472883e46077311051cd8.1741612208.git.geert+renesas@glider.be>
+In-Reply-To: <c499234d559a0d95ad9472883e46077311051cd8.1741612208.git.geert+renesas@glider.be>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 11 Mar 2025 15:11:16 +0000
+X-Gm-Features: AQ5f1Jpx2fGdbJPdj5FDcS5GoLqqOGLJlYzfmSg2SJ8trxO8w9qoL6dJAOW-mek
+Message-ID: <CA+V-a8tGuxgan7Zx0YedSByfFSgrg5gmR6Fy3dMDXwU+TscZzg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: shmobile: smp: Enforce shmobile_smp_* alignment
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Nicolas Pitre <nico@fluxnic.net>, Simon Horman <horms+renesas@verge.net.au>, 
+	Kees Cook <kees@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Xy-gXHTNsqHwWFFly7DvqE3zpK5OtIeL
-X-Authority-Analysis: v=2.4 cv=fZ9Xy1QF c=1 sm=1 tr=0 ts=67d0528d cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=iFF1eBH5fexweo0nmsgA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: Xy-gXHTNsqHwWFFly7DvqE3zpK5OtIeL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- phishscore=0 impostorscore=0 adultscore=0 spamscore=0 clxscore=1011
- malwarescore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501
- mlxlogscore=922 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503110095
+Content-Transfer-Encoding: quoted-printable
+
+Hi Geert,
+
+Thank you for the patch.
+
+On Mon, Mar 10, 2025 at 1:14=E2=80=AFPM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> When the addresses of the shmobile_smp_mpidr, shmobile_smp_fn, and
+> shmobile_smp_arg variables are not multiples of 4 bytes, secondary CPU
+> bring-up fails:
+>
+>     smp: Bringing up secondary CPUs ...
+>     CPU1: failed to come online
+>     CPU2: failed to come online
+>     CPU3: failed to come online
+>     smp: Brought up 1 node, 1 CPU
+>
+> Fix this by adding the missing alignment directive.
+>
+> Fixes: 4e960f52fce16a3b ("ARM: shmobile: Move shmobile_smp_{mpidr, fn, ar=
+g}[] from .text to .bss")
+I wonder if this fixes tag should go back a bit far as I was able to
+reproduce this on 5.10-cip BSP kernel on RZ/G1E this was only seen
+when CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE was enabled,
+
+RZ/G1E failure logs:
+--------------------------
+[    0.006719] smp: Bringing up secondary CPUs ...
+[    1.040749] CPU1: failed to come online
+[    1.041014] smp: Brought up 1 node, 1 CPU
+[    1.041038] SMP: Total of 1 processors activated (65.00 BogoMIPS).
+[    1.041063] CPU: All CPU(s) started in SVC mode.
+[    1.041904] devtmpfs: initialized
+[    1.050811] VFP support v0.3: implementor 41 architecture 2 part 30
+variant 7 rev 5
+[    1.051143] clocksource: jiffies: mask: 0xffffffff max_cycles:
+0xffffffff, max_idle_ns: 19112604462750000 ns
+[    1.051197] futex hash table entries: 512 (order: 3, 32768 bytes, linear=
+)
+[    1.060510] pinctrl core: initialized pinctrl subsystem
+[    1.063139] NET: Registered protocol family 16
+
+$ grep shmobile_smp_ System.map-notworking
+c021caa0 t shmobile_smp_apmu_cpu_kill
+c021cb20 t shmobile_smp_apmu_enter_suspend
+c021cb54 t shmobile_smp_apmu_boot_secondary
+c021cbc0 t shmobile_smp_apmu_cpu_shutdown
+c021cc18 t shmobile_smp_apmu_do_suspend
+c021cc60 t shmobile_smp_apmu_cpu_die
+c021cc84 T shmobile_smp_hook
+c021ccd8 T shmobile_smp_cpu_can_disable
+c021d050 t shmobile_smp_continue_gen2
+c021d0c4 T shmobile_smp_boot
+c021d0e4 t shmobile_smp_boot_find_mpidr
+c021d0fc t shmobile_smp_boot_next
+c021d10c t shmobile_smp_boot_found
+c021d114 T shmobile_smp_sleep
+c021d380 T shmobile_smp_scu_cpu_die
+c021d3b4 T shmobile_smp_scu_cpu_kill
+c120a87c t shmobile_smp_apmu_prepare_cpus_dt
+c120aab8 T shmobile_smp_apmu_suspend_init
+c120aad0 T shmobile_smp_init_fallback_ops
+c120b0f0 T shmobile_smp_scu_prepare_cpus
+c1262778 t __cpu_method_of_table_shmobile_smp_apmu
+c154d5fd B shmobile_smp_mpidr
+c154d61d B shmobile_smp_fn
+c154d63d B shmobile_smp_arg
 
 
-On 3/11/2025 8:37 PM, Dmitry Baryshkov wrote:
-> On Tue, Mar 11, 2025 at 05:33:53PM +0530, Vikash Garodia wrote:
->> Not all platforms has a collapsible mx, so use the more generic naming
->> of mx in the binding.
-> 
-> I guess, it wasn't even tested...
-Not sure what made you guess so, let me check why my binding checker did not
-catch the bot reported warning.
-Regards,
-Vikash
-> 
->>
->> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
->> ---
->>  Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
->> index e424ea84c211f473a799481fd5463a16580187ed..440a0d7cdfe19a1ccedefc207d96b26eed5d6630 100644
->> --- a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
->> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
->> @@ -28,7 +28,7 @@ properties:
->>      items:
->>        - const: venus
->>        - const: vcodec0
->> -      - const: mxc
->> +      - const: mx
->>        - const: mmcx
->>  
->>    clocks:
->>
->> -- 
->> 2.34.1
->>
-> 
+> Closes: https://lore.kernel.org/r/CAMuHMdU=3DQR-JLgEHKWpsr6SbaZRc-Hz9r91J=
+fpP8c3n2G-OjqA@mail.gmail.com
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in renesas-fixes-for-v6.14.
+> ---
+>  arch/arm/mach-shmobile/headsmp.S | 1 +
+>  1 file changed, 1 insertion(+)
+>
+Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Cheers,
+Prabhakar
+
+> diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/he=
+adsmp.S
+> index a956b489b6ea12ca..2bc7e73a8582d2b3 100644
+> --- a/arch/arm/mach-shmobile/headsmp.S
+> +++ b/arch/arm/mach-shmobile/headsmp.S
+> @@ -136,6 +136,7 @@ ENDPROC(shmobile_smp_sleep)
+>         .long   shmobile_smp_arg - 1b
+>
+>         .bss
+> +       .align  2
+>         .globl  shmobile_smp_mpidr
+>  shmobile_smp_mpidr:
+>         .space  NR_CPUS * 4
+> --
+> 2.43.0
+>
+>
 
