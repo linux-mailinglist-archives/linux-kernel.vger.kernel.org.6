@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-556757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D3FA5CE20
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:45:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E3CA5CE26
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:46:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 885507AAC7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:44:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A499F3BAA5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE948266B4F;
-	Tue, 11 Mar 2025 18:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220D2266B63;
+	Tue, 11 Mar 2025 18:41:55 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C1E266588
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26379264A6B
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741718511; cv=none; b=SKMh/KSlTp46LDbZnR3hMr+G476MaG1jjC5u3Ex6dqpQF/xg6nMNuoaJnk9115opx6DgirhidzblAO1vsQXv7URhFCDrdt0sUcj9Anu97tqNSgrlEFdgHW45hBqja2n/G+npvfz/hCywpxu0SQF8SitZkhII0oTH5ivAWAkkPOc=
+	t=1741718514; cv=none; b=ZFzvDzpC6TqyCt0U2WMSRojcQpuf1wappiTgqbFvBmV9bZAQdhaEHMKu5qU+EaO2D54p5WmVPzeQqM9DnQET1F2Hs0DoqhhiQkmgybaqmov3W7MJngUKhT4mr9nKC+Tu3IJo4gRMh3Yy2QAWh2+4w3wlyvOV9mQWpZ6lhTm1hO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741718511; c=relaxed/simple;
-	bh=hSk8lB0mxQLdff/yB0fkodC5DIeCq8cy48atAAOobwY=;
+	s=arc-20240116; t=1741718514; c=relaxed/simple;
+	bh=YFPWpHhDg2XqafTvBY/CdA4ujctbyQwWVJLDDnG3HRw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iZ9NTZ8jAUhusXsvDWwOlqAJCwVCdfPDX8iCJLAdB5Home+OCo1YrOfT5sm2BIMFq1RU9O8P6qCmZk0cEmshWDkHLHRkGSkgOn8T9Adu1d8+Ub+cZ3hc4Die2Em615IbKGEoEBv4c/F2mRuJLSkY2oHr7Elr4IHCIfKuQ2TmCSw=
+	 MIME-Version; b=qsP1Cbzgp1KfcFNE0VqbNcbkrEJN3htfnmQRuszHIRoXKEF7hIsZk9rRznCQGcT37RoFH9bQ5rYT/WeWmEqWjjPh5IMqlFwWSXyYAxrHkRBANrfxM8JnLB9FIBhIHiLWfCGtDeceFC78dG0Sk+wHcpOTcQWMG1asop0AJWQFU2o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EF881713;
-	Tue, 11 Mar 2025 11:42:00 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B53241515;
+	Tue, 11 Mar 2025 11:42:03 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B59233F694;
-	Tue, 11 Mar 2025 11:41:45 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 566BA3F694;
+	Tue, 11 Mar 2025 11:41:49 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -62,9 +62,9 @@ Cc: Reinette Chatre <reinette.chatre@intel.com>,
 	fenghuay@nvidia.com,
 	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
 	Babu Moger <babu.moger@amd.com>
-Subject: [PATCH v8:for-boris 27/30] x86/resctrl: Move RFTYPE flags to be managed by resctrl
-Date: Tue, 11 Mar 2025 18:37:12 +0000
-Message-Id: <20250311183715.16445-28-james.morse@arm.com>
+Subject: [PATCH v8:for-boris 28/30] x86/resctrl: Handle throttle_mode for SMBA resources
+Date: Tue, 11 Mar 2025 18:37:13 +0000
+Message-Id: <20250311183715.16445-29-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250311183715.16445-1-james.morse@arm.com>
 References: <20250311183715.16445-1-james.morse@arm.com>
@@ -76,21 +76,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-resctrl_file_fflags_init() is called from the architecture specific code
-to make the 'thread_throttle_mode' file visible. The architecture specific
-code has already set the membw.throttle_mode in the rdt_resource.
+Now that the visibility of throttle_mode is being managed by resctrl, it
+should consider resources other than MBA that may have a throttle_mode.
+SMBA is one such resource.
 
-This forces the RFTYPE flags used by resctrl to be exposed to the
-architecture specific code.
+Extend thread_throttle_mode_init() to check SMBA for a throttle_mode.
 
-This doesn't need to be specific to the architecture, the throttle_mode
-can be used by resctrl to determine if the 'thread_throttle_mode' file
-should be visible. This allows the RFTYPE flags to be private to resctrl.
+Adding support for multiple resources means it is possible for a platform
+with both MBA and SMBA, but an undefined throttle_mode on one of them
+to make the file visible.
 
-Add thread_throttle_mode_init(), and use it to call
-resctrl_file_fflags_init() from resctrl_init(). This avoids
-publishing an extra function between the architecture and filesystem
-code.
+Add the 'undefined' case to rdt_thread_throttle_mode_show().
 
 Signed-off-by: James Morse <james.morse@arm.com>
 Tested-by: Peter Newman <peternewman@google.com>
@@ -102,63 +98,69 @@ Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
 ---
 Changes since v6:
- * Refer to resctrl_init() in the commit message.
- * Remove a space.
+ * Refer to thread_throttle_mode_init() in the commit message.
 
 Changes since v5:
- * Added checking for SMBA.
- * Added printing of undefined to rdt_thread_throttle_mode_show().
- * Major juggling around commit 2937f9c361f7 ("x86/resctrl: Introduce resctrl_file_fflags_init() to initialize fflags")
- * Dropped tags, split patch
+ * This change split out of the previous patch.
 ---
- arch/x86/kernel/cpu/resctrl/core.c     |  3 ---
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 12 ++++++++++++
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 33 +++++++++++++++++++++-----
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index b9b74f53b8ee..e590dd347fa7 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -227,9 +227,6 @@ static __init bool __get_mem_config_intel(struct rdt_resource *r)
- 	else
- 		r->membw.throttle_mode = THREAD_THROTTLE_MAX;
- 
--	resctrl_file_fflags_init("thread_throttle_mode",
--				 RFTYPE_CTRL_INFO | RFTYPE_RES_MB);
--
- 	r->alloc_capable = true;
- 
- 	return true;
 diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index e59271515a46..58feba3feefd 100644
+index 58feba3feefd..5fc60c9ce28f 100644
 --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
 +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -2064,6 +2064,16 @@ static struct rftype *rdtgroup_get_rftype_by_name(const char *name)
- 	return NULL;
+@@ -1188,10 +1188,19 @@ static int rdt_thread_throttle_mode_show(struct kernfs_open_file *of,
+ 	struct resctrl_schema *s = of->kn->parent->priv;
+ 	struct rdt_resource *r = s->res;
+ 
+-	if (r->membw.throttle_mode == THREAD_THROTTLE_PER_THREAD)
++	switch (r->membw.throttle_mode) {
++	case THREAD_THROTTLE_PER_THREAD:
+ 		seq_puts(seq, "per-thread\n");
+-	else
++		return 0;
++	case THREAD_THROTTLE_MAX:
+ 		seq_puts(seq, "max\n");
++		return 0;
++	case THREAD_THROTTLE_UNDEFINED:
++		seq_puts(seq, "undefined\n");
++		return 0;
++	}
++
++	WARN_ON_ONCE(1);
+ 
+ 	return 0;
+ }
+@@ -2066,12 +2075,24 @@ static struct rftype *rdtgroup_get_rftype_by_name(const char *name)
+ 
+ static void thread_throttle_mode_init(void)
+ {
+-	struct rdt_resource *r_mba;
++	enum membw_throttle_mode throttle_mode = THREAD_THROTTLE_UNDEFINED;
++	struct rdt_resource *r_mba, *r_smba;
+ 
+ 	r_mba = resctrl_arch_get_resource(RDT_RESOURCE_MBA);
+-	if (r_mba->membw.throttle_mode != THREAD_THROTTLE_UNDEFINED)
+-		resctrl_file_fflags_init("thread_throttle_mode",
+-					 RFTYPE_CTRL_INFO | RFTYPE_RES_MB);
++	if (r_mba->alloc_capable &&
++	    r_mba->membw.throttle_mode != THREAD_THROTTLE_UNDEFINED)
++		throttle_mode = r_mba->membw.throttle_mode;
++
++	r_smba = resctrl_arch_get_resource(RDT_RESOURCE_SMBA);
++	if (r_smba->alloc_capable &&
++	    r_smba->membw.throttle_mode != THREAD_THROTTLE_UNDEFINED)
++		throttle_mode = r_smba->membw.throttle_mode;
++
++	if (throttle_mode == THREAD_THROTTLE_UNDEFINED)
++		return;
++
++	resctrl_file_fflags_init("thread_throttle_mode",
++				 RFTYPE_CTRL_INFO | RFTYPE_RES_MB);
  }
  
-+static void thread_throttle_mode_init(void)
-+{
-+	struct rdt_resource *r_mba;
-+
-+	r_mba = resctrl_arch_get_resource(RDT_RESOURCE_MBA);
-+	if (r_mba->membw.throttle_mode != THREAD_THROTTLE_UNDEFINED)
-+		resctrl_file_fflags_init("thread_throttle_mode",
-+					 RFTYPE_CTRL_INFO | RFTYPE_RES_MB);
-+}
-+
  void resctrl_file_fflags_init(const char *config, unsigned long fflags)
- {
- 	struct rftype *rft;
-@@ -4277,6 +4287,8 @@ int __init resctrl_init(void)
- 
- 	rdtgroup_setup_default();
- 
-+	thread_throttle_mode_init();
-+
- 	ret = resctrl_mon_resource_init();
- 	if (ret)
- 		return ret;
 -- 
 2.39.5
 
