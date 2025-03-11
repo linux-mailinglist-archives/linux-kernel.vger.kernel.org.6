@@ -1,97 +1,160 @@
-Return-Path: <linux-kernel+bounces-555611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B4CA5BA3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:52:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ABAEA5BA2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:51:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB9EB1895C70
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 478E41892846
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF4622758F;
-	Tue, 11 Mar 2025 07:52:02 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB63222593;
+	Tue, 11 Mar 2025 07:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBlgToLC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C5E225A31
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86C5146593;
+	Tue, 11 Mar 2025 07:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741679521; cv=none; b=GQHWIeCaC5Dz6cY+LcHOUiGma5nOblCnHjfhm+06oIt2ofPvxmNBEn0oA6sTu0cEc0rZg6VIIAK8VcMX5VamYiSqPP68NKdYYIpfBhiLw7JKn4st+Y7p2L9zXUejl6sdtvRNwtzBI0jpfFGBqRojxHpM5dFGpnruwBFUom1erdg=
+	t=1741679511; cv=none; b=XI5raFM0iSmJA0HIGUumFgOAn+Ua475xisOF8PGVuQy6Tgu1zvV8gOrQgC2UOmd1zLVecPY27xPvm+euF06uH5WVgc1HtC4HzCV9CF0lb/sz67+0ejm06f2QCwu14Rd/SeLzWAMYua6yvJYBohFFICebeXc8rlDfq8nZmzqXMeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741679521; c=relaxed/simple;
-	bh=aWcjSk5WjyGune3zDqpWr2kG8EqYv6U3hMSupvMIVUw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fVX7yYZXxj/OHfkLIOGrfo9JcBOXCb76exIHplh6kqQKQVaIP7krrUKLVmexKc8HJzPiYbHpcIhjp3YgtPrmjboT/+EqAYgwzwwF49YvdOQCLkDqAD+aA5yhxUBEvM9bGOnCEkcR9EiFuWflZVJnfQYBfCim1oPH1RPYW0UC1Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZBmBn2YZDz1R6GT;
-	Tue, 11 Mar 2025 15:50:09 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 03DF31A0188;
-	Tue, 11 Mar 2025 15:51:50 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 11 Mar 2025 15:51:48 +0800
-From: Yicong Yang <yangyicong@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <sudeep.holla@arm.com>,
-	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
-	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <pierre.gondois@arm.com>,
-	<dietmar.eggemann@arm.com>
-CC: <linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
-	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
-	<linuxarm@huawei.com>, <yangyicong@hisilicon.com>, <xuwei5@huawei.com>,
-	<guohanjun@huawei.com>, <sshegde@linux.ibm.com>
-Subject: [PATCH v12 4/4] arm64: Kconfig: Enable HOTPLUG_SMT
-Date: Tue, 11 Mar 2025 15:51:43 +0800
-Message-ID: <20250311075143.61078-5-yangyicong@huawei.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20250311075143.61078-1-yangyicong@huawei.com>
-References: <20250311075143.61078-1-yangyicong@huawei.com>
+	s=arc-20240116; t=1741679511; c=relaxed/simple;
+	bh=sgPc3Qvg0vgmi1gbRN19F9lZOqeVer1XVd9n2oDi5Nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2FK899EcazCp62VWHZLjID8J1oBCYwSMjJytd8kYuugLJ7puPpfh2ghuH+ZpdEdbeb/cYar+Wkv5LfNyMMaxi+i7ovsqZpMJRWE6jA6WTto3BBZl9zJ81G/fVArkMSKYi/PdNYDN6/Et75s0c0rGwInr+5mZ+hvKHa9aRp7hKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBlgToLC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B819EC4CEE9;
+	Tue, 11 Mar 2025 07:51:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741679511;
+	bh=sgPc3Qvg0vgmi1gbRN19F9lZOqeVer1XVd9n2oDi5Nk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hBlgToLCWNhHLQM49b0jfSigvXzWgDtpL4wroyDom0phMXBTPN/44Iqyvdw1dr4He
+	 48/fKjrsIbLP82a0DaqlamJ6Nc/ZXp9W8dUS2g3AV2dD4ufXMyyed9zWq4jsaQ5R30
+	 wP+MyCVPxyX0eqD9FGpOiROcux4u3HxxeHRiw3KVuquuzbphqV62qdPjBs7AA/aCvX
+	 1uyVADxfKpDtjqwCXCqmYAr0F98W0y+XQbWI/ASI+Tyf+r0caRUDXQnCddp36vyFiy
+	 4C/huKSzMg593dmW4vrZJZRhvSIBf3utvIDxILeOHV0x68VWaTgjb6JEGjG7u40wJK
+	 Fix209mp90HcQ==
+Date: Tue, 11 Mar 2025 08:51:48 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Matt Coster <matt.coster@imgtec.com>
+Cc: Frank Binns <frank.binns@imgtec.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>, 
+	Alessio Belle <alessio.belle@imgtec.com>, Alexandru Dadu <alexandru.dadu@imgtec.com>
+Subject: Re: [PATCH v3 02/18] dt-bindings: gpu: img: Add BXS-4-64 devicetree
+ bindings
+Message-ID: <20250311-bizarre-debonair-macaque-451c4f@krzk-bin>
+References: <20250310-sets-bxs-4-64-patch-v1-v3-0-143b3dbef02f@imgtec.com>
+ <20250310-sets-bxs-4-64-patch-v1-v3-2-143b3dbef02f@imgtec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250310-sets-bxs-4-64-patch-v1-v3-2-143b3dbef02f@imgtec.com>
 
-From: Yicong Yang <yangyicong@hisilicon.com>
+On Mon, Mar 10, 2025 at 01:10:26PM +0000, Matt Coster wrote:
+> Unlike AXE-1-16M, BXS-4-64 uses two power domains.
+> 
+> Like the existing AXE-1-16M integration, BXS-4-64 uses the single clock
+> integration in the TI k3-j721s2.
+> 
+> Signed-off-by: Matt Coster <matt.coster@imgtec.com>
+> ---
+> Changes in v3:
+> - Include adding the second power domain so it's in context
+> - Remove unnecessary example
+> - Link to v2: https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-8-3fd45d9fb0cf@imgtec.com
+> Changes in v2:
+> - Use normal reg syntax for 64-bit values
+> - Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-8-4ed30e865892@imgtec.com
+> ---
+>  .../devicetree/bindings/gpu/img,powervr-rogue.yaml | 34 +++++++++++++++++++++-
+>  1 file changed, 33 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> index 5c16b2881447c9cda78e5bb46569e2f675d740c4..d9409d33154d429019776ddbf9d123b33f8c9740 100644
+> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> @@ -18,6 +18,11 @@ properties:
+>                - ti,am62-gpu
+>            - const: img,img-axe-1-16m
+>            - const: img,img-rogue
+> +      - items:
+> +          - enum:
+> +              - ti,j721s2-gpu
+> +          - const: img,img-bxs-4-64
+> +          - const: img,img-rogue
+>  
+>        # This legacy combination of compatible strings was introduced early on
+>        # before the more specific GPU identifiers were used.
+> @@ -49,6 +54,7 @@ properties:
+>    power-domain-names:
+>      items:
+>        - const: a
+> +      - const: b
 
-Enable HOTPLUG_SMT for SMT control.
+No, you just affected old device claiming it has two items. What's more,
+it's not synced with power-domains. Both properties must have the same
+constraints, but above power domains have "anything".
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Pierre Gondois <pierre.gondois@arm.com>
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
----
- arch/arm64/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+>  
+>    dma-coherent: true
+>  
+> @@ -74,12 +80,38 @@ allOf:
+>          - power-domains
+>          - power-domain-names
+>  
+> +  # Cores with one power domain
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 940343beb3d4..65fe00b1922c 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -250,6 +250,7 @@ config ARM64
- 	select HAVE_KRETPROBES
- 	select HAVE_GENERIC_VDSO
- 	select HOTPLUG_CORE_SYNC_DEAD if HOTPLUG_CPU
-+	select HOTPLUG_SMT if HOTPLUG_CPU
- 	select IRQ_DOMAIN
- 	select IRQ_FORCED_THREADING
- 	select KASAN_VMALLOC if KASAN
--- 
-2.24.0
+Drop
+
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: img,img-axe-1-16m
+> +    then:
+> +      properties:
+> +        power-domain-names:
+> +          minItems: 1
+
+Drop
+
+> +          maxItems: 1
+> +
+> +  # Cores with two power domains
+
+Drop
+
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: img,img-bxs-4-64
+> +    then:
+> +      properties:
+> +        power-domain-names:
+> +          minItems: 2
+> +          maxItems: 2
+
+Missing constraints for power-domains.
+
+Best regards,
+Krzysztof
 
 
