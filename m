@@ -1,157 +1,131 @@
-Return-Path: <linux-kernel+bounces-556968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1649EA5D1B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:26:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B016A5D1B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18E83B7E4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:25:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0BAA189E03A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63238264F99;
-	Tue, 11 Mar 2025 21:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF15C264A7F;
+	Tue, 11 Mar 2025 21:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gp6x/oTB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="NG79b0uv"
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02882641F1;
-	Tue, 11 Mar 2025 21:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321C2229B18;
+	Tue, 11 Mar 2025 21:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741728346; cv=none; b=iemZTWPU7cAngJqaMlNkTnjwwYwmjdBHkIyGE2YeujBhCulQylDyhsIgWeAMKtPnGP267T4BndYv3RW2zGmLaS+XAl5uqGAo8xReXH5Y9L48LcBZbe6AD3mxTMVY6cWSouWlnqHRCTdfvwZHKFOtjFau1E1k7Ng46JrzOTLkTk0=
+	t=1741728346; cv=none; b=VrxtEWmnFScK5vYcQESMmKsXusfQg4dlmh7gobxgqLY5VIMbyFX9K/FUfgiF2YuwQEHhFDa0W1Eab7xqfzp5dvGpgQX9hA0TXS/qpjfO8gd6dgOHCL8R5RG17jWmd/Krp0Ew6o+JES39tBR4znqgjk6l+hDPXcE+/sSy9GzOyWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741728346; c=relaxed/simple;
-	bh=Bg9VsBBRHOfLmNm09EUWZrCfteZ85VpMbsFjxXqE9Xc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gfDRMSlgOkBVLuRwWd0XJFiBbY1f+4Cr4Yoi9IBHPFB6lsODpdomKbLu/jk6MDdlFuEKCIE128+7ieTA8TA32DpwNdgtKA9fzn7JVGvS6rknVHVP9vPT3oJDJuNvhR8K4B6BDLCmtRpbezQR+zRmT8KZ12Y5j1mXLDwf3m9BQCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gp6x/oTB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25301C4CEE9;
-	Tue, 11 Mar 2025 21:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741728346;
-	bh=Bg9VsBBRHOfLmNm09EUWZrCfteZ85VpMbsFjxXqE9Xc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gp6x/oTBcq4h/M/tDtiZMKq+Up6etA9mewfOZDWZgTbOh2TejYyQtfD9Isi3H+R7J
-	 OPpbZQpOfUwNFJjZ+CKmYMRLlHjnu76LucC6u+x1//NOq2jrKauQI8pj7/q0AHAmhf
-	 1qnkHLljpt6na9/k7F/T8YlvK2JNqvjsKYOtpOCY7gFlFLsSCpJROPPHYwXx07NRsz
-	 CYF/+boqQ1AiLdhBziqOrCGNfrNxTzlVf42fEK5zBdsOFRqzF9dvBiW95dNLM9HtL1
-	 NHUl6WRgvCK2v6htLW4Qzt1LzvUcfPPnsezgm9SbypcK3ZPUlvvpNcIT9VC3NxxgiX
-	 D5T08rLPwlbNg==
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-8670fd79990so2497204241.3;
-        Tue, 11 Mar 2025 14:25:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU/VkRlfGP7qeZeQ2TyanrzCmlZyi8N8anEAZatIBxolhs7255q+m5nmn3NDhgSxSR+mfBJLm/eaz1sXLs=@vger.kernel.org, AJvYcCUklD4KK0Ifu+r40FRRKUPzBcqe6sM+Pd2zVw5bnVa4ZrHKFTShQaILc6Nv0BY8hlf1XiDplwrS98eWvuM=@vger.kernel.org, AJvYcCVqwJhJAQEz1C2QIjRHy6DOQFH7HUza79SpfuU5TMHTCqOKIKbqg3eMU6rPSydlDEDTqAcWd9vzgjjSLmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz12CzuOeaqZ6E7594bShKaxMMz/HTDZib5E1O32FFzxVfO55JS
-	rc3YFeYfeGGkYz7P+aJe2T8iPIYlkMqN6CuiI1X4FRpmHladxGHByzo8Wp/PK4IJvXrFKZidutm
-	Pb4v9/EhpHemImPybdCio/I5M0KE=
-X-Google-Smtp-Source: AGHT+IFFdWHYFEZEhxswLplJ46GlbaNVr+3GvHhID/nT4pmSOUIKlHfxaUq5alVyQXDiyvrTNKCOnVk5cPlwC3Pblc8=
-X-Received: by 2002:a05:6102:578f:b0:4bb:e8c5:b172 with SMTP id
- ada2fe7eead31-4c30a5e4f1fmr14782892137.8.1741728345318; Tue, 11 Mar 2025
- 14:25:45 -0700 (PDT)
+	bh=OcjTRdDfTy9z/5Ut/8Y7X1Cm6KzGic8f8bEjZ7yCPKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Irsxj891t6WA0p21ngAge6eR0TKFh9eZr3yTB8rQP0Uvp/zRV7qQbSEn6/L7a9DEux5HqYfjk+/ql1dslYCYc2+NChDZSAUDiNDVrYFVAYHfSYDvYbEo9gAC/iYibNo81Hof1/di6SdZ7eALZrdPuvHuxg+P8EifN6ZB/1FZWmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=NG79b0uv; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=dYfijsKRkDi3VDGlOSu79wAwgSd8W8dIZLzw9V1UFSk=; b=NG79b0uvn/YcMp+J7vQ0p2IF2N
+	P3rAfd6sCvZblvzFzouD39ah5/WMRmRIakmPrgtpioJcX6bL6iMpGk8C+zntYLo6aS5fm4ynhh4pR
+	T2I2rTEHVDGqr+oT/KWZzsjPPS91KxXAkMSCcAdbvhIEJn6li8Ka1RiHsoLX6+uArets=;
+Received: from p5b206ef1.dip0.t-ipconnect.de ([91.32.110.241] helo=Maecks.lan)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1ts76R-00G2NA-2A;
+	Tue, 11 Mar 2025 22:25:31 +0100
+From: Felix Fietkau <nbd@nbd.name>
+To: netdev@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Willem de Bruijn <willemb@google.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH net v3] net: ipv6: fix TCP GSO segmentation with NAT
+Date: Tue, 11 Mar 2025 22:25:30 +0100
+Message-ID: <20250311212530.91519-1-nbd@nbd.name>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu> <20250308-imx214_clk_freq-v1-4-467a4c083c35@apitzsch.eu>
-In-Reply-To: <20250308-imx214_clk_freq-v1-4-467a4c083c35@apitzsch.eu>
-From: Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date: Tue, 11 Mar 2025 22:25:28 +0100
-X-Gmail-Original-Message-ID: <CAPybu_1R_Ph7ELfX8gTgJi0E2YebjZj90eUc1KhAFhL_dfe6pg@mail.gmail.com>
-X-Gm-Features: AQ5f1JqPL65RgOB7xkGUhaaVr-uGZ7Hzaai7x5nmm0SNIeiCwkaDnQLif3Cd0lA
-Message-ID: <CAPybu_1R_Ph7ELfX8gTgJi0E2YebjZj90eUc1KhAFhL_dfe6pg@mail.gmail.com>
-Subject: Re: [PATCH RESEND 4/4] media: i2c: imx214: Add support for 23.88MHz clock
-To: git@apitzsch.eu
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 8, 2025 at 10:48=E2=80=AFPM Andr=C3=A9 Apitzsch via B4 Relay
-<devnull+git.apitzsch.eu@kernel.org> wrote:
->
-> From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
->
-> Qualcomm MSM8916 devices only provide an external clock of 23.88MHz.
-> Make the sensor usable by those devices by adding support for this
-> frequency.
->
+When updating the source/destination address, the TCP/UDP checksum needs to
+be updated as well.
 
-Acked-by: Ricardo Ribalda <ribalda@chromium.org>
-and after this patch  imx214->clk_params =3D &imx214_clk_params[1];
+Fixes: bee88cd5bd83 ("net: add support for segmenting TCP fraglist GSO packets")
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+v2: move code to make it similar to __tcpv4_gso_segment_list_csum
+v3: fix uninitialized variable
 
-Thanks for the set!
+ net/ipv6/tcpv6_offload.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
+diff --git a/net/ipv6/tcpv6_offload.c b/net/ipv6/tcpv6_offload.c
+index a45bf17cb2a1..ae2da28f9dfb 100644
+--- a/net/ipv6/tcpv6_offload.c
++++ b/net/ipv6/tcpv6_offload.c
+@@ -94,14 +94,23 @@ INDIRECT_CALLABLE_SCOPE int tcp6_gro_complete(struct sk_buff *skb, int thoff)
+ }
+ 
+ static void __tcpv6_gso_segment_csum(struct sk_buff *seg,
++				     struct in6_addr *oldip,
++				     const struct in6_addr *newip,
+ 				     __be16 *oldport, __be16 newport)
+ {
+-	struct tcphdr *th;
++	struct tcphdr *th = tcp_hdr(seg);
++
++	if (!ipv6_addr_equal(oldip, newip)) {
++		inet_proto_csum_replace16(&th->check, seg,
++					  oldip->s6_addr32,
++					  newip->s6_addr32,
++					  true);
++		*oldip = *newip;
++	}
+ 
+ 	if (*oldport == newport)
+ 		return;
+ 
+-	th = tcp_hdr(seg);
+ 	inet_proto_csum_replace2(&th->check, seg, *oldport, newport, false);
+ 	*oldport = newport;
+ }
+@@ -129,10 +138,10 @@ static struct sk_buff *__tcpv6_gso_segment_list_csum(struct sk_buff *segs)
+ 		th2 = tcp_hdr(seg);
+ 		iph2 = ipv6_hdr(seg);
+ 
+-		iph2->saddr = iph->saddr;
+-		iph2->daddr = iph->daddr;
+-		__tcpv6_gso_segment_csum(seg, &th2->source, th->source);
+-		__tcpv6_gso_segment_csum(seg, &th2->dest, th->dest);
++		__tcpv6_gso_segment_csum(seg, &iph2->saddr, &iph->saddr,
++					 &th2->source, th->source);
++		__tcpv6_gso_segment_csum(seg, &iph2->daddr, &iph->daddr,
++					 &th2->dest, th->dest);
+ 	}
+ 
+ 	return segs;
+-- 
+2.47.1
 
-> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> ---
->  drivers/media/i2c/imx214.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index c3d55259d6fd1c4ca96f52833864bdfe6bedf13a..e24c76e01ab5070c073d082b1=
-a2969cff3e17f9f 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -30,7 +30,10 @@
->
->  #define IMX214_REG_FAST_STANDBY_CTRL   CCI_REG8(0x0106)
->
-> +#define IMX214_CLK_FREQ_23880KHZ       23880000
->  #define IMX214_CLK_FREQ_24000KHZ       24000000
-> +
-> +#define IMX214_LINK_FREQ_597MHZ                597000000
->  #define IMX214_LINK_FREQ_600MHZ                600000000
->  /* Keep wrong link frequency for backward compatibility */
->  #define IMX214_DEFAULT_LINK_FREQ_LEGACY        480000000
-> @@ -233,6 +236,7 @@ static const char * const imx214_supply_name[] =3D {
->  #define IMX214_NUM_SUPPLIES ARRAY_SIZE(imx214_supply_name)
->
->  static const s64 link_freq[] =3D {
-> +       IMX214_LINK_FREQ_597MHZ,
->         IMX214_LINK_FREQ_600MHZ,
->  };
->
-> @@ -242,6 +246,10 @@ struct imx214_clk_params {
->  };
->
->  static const struct imx214_clk_params imx214_clk_params[] =3D {
-> +       {
-> +               .clk_freq =3D IMX214_CLK_FREQ_23880KHZ,
-> +               .link_freq =3D IMX214_LINK_FREQ_597MHZ,
-> +       },
->         {
->                 .clk_freq =3D IMX214_CLK_FREQ_24000KHZ,
->                 .link_freq =3D IMX214_LINK_FREQ_600MHZ,
-> @@ -1320,8 +1328,7 @@ static int imx214_parse_fwnode(struct device *dev, =
-struct imx214 *imx214)
->
->         if (i =3D=3D bus_cfg.nr_of_link_frequencies)
->                 ret =3D dev_err_probe(dev, -EINVAL,
-> -                                   "link-frequencies %d not supported, p=
-lease review your DT\n",
-> -                                   IMX214_LINK_FREQ_600MHZ);
-> +                                   "provided link-frequencies not suppor=
-ted, please review your DT\n");
->
->  done:
->         v4l2_fwnode_endpoint_free(&bus_cfg);
-> @@ -1359,6 +1366,7 @@ static int imx214_probe(struct i2c_client *client)
->         }
->
->         switch (xclk_freq) {
-> +       case IMX214_CLK_FREQ_23880KHZ:
->         case IMX214_CLK_FREQ_24000KHZ:
->                 if (imx214->clk_params->clk_freq !=3D xclk_freq)
->                         return dev_err_probe(imx214->dev, -EINVAL,
->
-> --
-> 2.48.1
->
->
 
