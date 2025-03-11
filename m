@@ -1,131 +1,195 @@
-Return-Path: <linux-kernel+bounces-555676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B26AA5BB25
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:51:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9188A5BB21
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:51:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1302A18945E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:51:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4876E18960B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36D6227BA2;
-	Tue, 11 Mar 2025 08:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B41227E8A;
+	Tue, 11 Mar 2025 08:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=4sigma.it header.i=@4sigma.it header.b="dFIVocYG"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XHGK8/Ee"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45300226CF7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF201EB184;
+	Tue, 11 Mar 2025 08:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741683079; cv=none; b=gZtyH4cDPV+8c93JQTgsQjXDYrIFlm9RA4jSHfQ9PsjNa+2KXewpzGKjA44WKTHAP4KWvMIRVYPn2JtNawDiHhMsVU81NUEK4QautDMe9wXKrrLwoLB0qXrf+hkI++QHTUbobsZjCbatmOCnwGLRC27TD9CjppU2RbcSdJ/psZ4=
+	t=1741683063; cv=none; b=lHVHMvH5rXaWlGyeiXlKsLHCDLtmHh+hn+J8AI2Kbf3WUck2wBP6+0vNdnhZ8W9oOWIfkA8lywG63SYDJeJDZQufZTULLiIaUHWAK9XAeVgPwJtXuFCT9mlpTDLm+v3KZxaH3dClv71eFoh0iHMDwA432+zNKi/orKLnA7fBmUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741683079; c=relaxed/simple;
-	bh=epZ57SOX5YzHnFy/WkFcRwDgjbiMWrHimD4P10IE+Lk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=goaOGb2DDfb4a70ke0idYq3seWhbLitsJjWjsni/hSq1kBA8YYQ2PZfZGX3WHsDoEEnNT55oi4S8feMcSn73oYvKcoZ3H49edDinRJXKmG7T2Y0uWigmmQXJTV89pWH4ppc0WxAhtaN+caOqfYrt6N9b4HFxxIijkwp9Y4Sju/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=4sigma.it; spf=pass smtp.mailfrom=4sigma.it; dkim=pass (1024-bit key) header.d=4sigma.it header.i=@4sigma.it header.b=dFIVocYG; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=4sigma.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4sigma.it
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so2768668f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 01:51:16 -0700 (PDT)
+	s=arc-20240116; t=1741683063; c=relaxed/simple;
+	bh=HB3Zy1gU28m4kK/S0bB95ApFHZ/cYoMFfJxnYvIe3NY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UtUuXa/5VbJOLNgy/kzMHqZAesLF7lgG2t0oQI3U/GWvyjDIx/r29wkKecE3K3KzZ9dGgOsAfanH1f3dJLNEYchz4tYmtGtlnHMQDR3NlStr0yOpp9Hp3DdH8kqnPb4A1tedZa3Tg9D9E7idVK3o/c/T9Q2JN0ia18n/JnLBOlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XHGK8/Ee; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-523f670ca99so1193538e0c.1;
+        Tue, 11 Mar 2025 01:51:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=4sigma.it; s=google; t=1741683075; x=1742287875; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741683061; x=1742287861; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ta529X7Ec9Pad2vo9YncNZsmhmxGAhn1X/QNcXk60qQ=;
-        b=dFIVocYGa1Vyt0kXvyBJIFO6wKMX/V2nTVe9RgKQ9NZjZ8B1Fr8/YnxJkGP3gNtAbu
-         zJ89TC4NRkeGREUvzDRtZRRCujsN3gYKDrGJflzlM3cMNglujkMgS6ZuDY/C3itmRaIr
-         ZiufEgzKOuKmGzPGNZQVQ8kIZGWMqPOlwzicM=
+        bh=YwlKUmCIxRBb8ELz2q2Z4eNbzAimAiIA1z1E81e3a6E=;
+        b=XHGK8/EeIvETJAIb6KP/+65N83+IAaSakmKL4AeeKLZGYA1sLmwL2cqOFNb8DwZFAP
+         tazwIE3Xybn02xCH+Abvzb/LU45seiH3v4SxOkTW0PU5y8rT7VFx4S3p1HG/B1Ydnm5k
+         WGktHu9fzWBeVED7mIdOUcoEJXX3roZZBM1PP4crZuJeVPW+qrGbPsC5L0BtYbGo1ypZ
+         cosjSXUhNjvxMfpaNWjie6qdaw+eLKjTkMuqccZHx+Cuv2mAvGMErry1hCyJJTcc9mEg
+         FRXu77KoUJ6QKKGuQPisclvF+tldvXqWcuzVmo5+phVbWZILGfpw8y9hnVb0FOCaxlpo
+         Wx+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741683075; x=1742287875;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741683061; x=1742287861;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ta529X7Ec9Pad2vo9YncNZsmhmxGAhn1X/QNcXk60qQ=;
-        b=vcmkOvAjztMs0LZyAMHoch90Sk4RkYhpE2UIN1JJiPDkbFfIOf6bRPN/esVqag7BDV
-         5ZAqbObY4r6tZFmEySYauRCb1pp5h6vX+RUPpkchaSKpenuCet6pDhMCGDpUOLNTwckp
-         sKGxJrdn5Rdqhuqj12TmeE0O7fTK9/X1m6UQLx6kD1Wb7WbT6p9wDH+eui93eT+wgUSQ
-         kLFWRwG3YOFkdgE2KBYKyO7EaBgI0M/aPRDTs8ymOsyMDw9qOHV8oDxonjIKKQcK0G0r
-         NjITvqWEAu1Nlo1rxIi4DjFBCDLSjgubRBRbG6zuoQ0w0plQjM+JWQBdfEJFgG8u+Odv
-         I41g==
-X-Forwarded-Encrypted: i=1; AJvYcCVi5HkMLL1jKdcUm0PwRDjnyiHcsZt6UIViRs2R0mZ/64rm6Ugm2VWNGxL6XIsjEUpiKnkipOYWTJMdNhI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMoQvo5s2N5YY8sSr/lwAjEMJyKRXJkjX0eUErFAW1pfRdaDyn
-	pTJh7C+91JVgs4qwIteaGfmJpYOdAsYpAYRFumzW4XgWi1QiNU/ihY+Yi0DTDcrs+/i2UQwdXHp
-	baQ==
-X-Gm-Gg: ASbGnctkLzHTSaK9yTB0+nh+aKJurJrizsIOXo982lpAbg9nx4G/8OKGio1jfuo8G1/
-	sbCkviGFyJJOIONk02VmRfaku0ZEpzmI9tLUoqcQ6bSirYyLM5xdIVVpIMXT5giQQk6H8QYpvzq
-	AitK+mBXTtHwBx+qsx+vpf6032pZOiA1h5SAMh5NyXumTnCSN5SVQH7A1OtMe6uO8ZXXzPFA3Mn
-	XSWJmbfXiVFkrzx/DYjQdfl2/5d2MUHLTCvIkDYu2dF+lza+fXqh9Ged8hBXv25/aWiH8TM1MH0
-	Hbt6IjSYLavYB72ohDKvXGEvGzhwI0XfaT7Ubd8kzjHJ/JIkNX8Y5YK069A5ghw9hg4xqCq4VoA
-	jYpSTADM=
-X-Google-Smtp-Source: AGHT+IFdw+TlvJni9KvGZu3iaRvW4wpiEd8GOvdZeIqppNlFn1Z9pxj7+SuF2DYXmjUR1ceR3bTYEw==
-X-Received: by 2002:a5d:6daa:0:b0:391:2d61:453f with SMTP id ffacd0b85a97d-39132d71099mr11193196f8f.24.1741683075439;
-        Tue, 11 Mar 2025 01:51:15 -0700 (PDT)
-Received: from marvin.localdomain (83-103-103-194.ip.fastwebnet.it. [83.103.103.194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c01cdd7sm17746333f8f.56.2025.03.11.01.51.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 01:51:15 -0700 (PDT)
-From: Silvano Seva <s.seva@4sigma.it>
-To: jic23@kernel.org
-Cc: a.greco@4sigma.it,
-	Silvano Seva <s.seva@4sigma.it>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] iio: imu: st_lsm6dsx: fix possible lockup in st_lsm6dsx_read_tagged_fifo
-Date: Tue, 11 Mar 2025 09:49:49 +0100
-Message-ID: <20250311085030.3593-4-s.seva@4sigma.it>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250311085030.3593-2-s.seva@4sigma.it>
-References: <20250311085030.3593-2-s.seva@4sigma.it>
+        bh=YwlKUmCIxRBb8ELz2q2Z4eNbzAimAiIA1z1E81e3a6E=;
+        b=sF+El0iuCbWW+oULypla+UVfkRrHYaRGKBqHRcjT+gsbYnCfLbD+I2zVOZwpwUzDgQ
+         MoZSXEv7Z5yG0eSgoQ5ckBu3Eqp1B1RTtQ3+LpjkdcoMyBWcBazXv8j8avwG6+7+W1UO
+         zT5ZYEjzyM0JXYtwbNLdFWQV09WZn8emTtI8IARy3gu1wWjYyPXaXvWjO/AogiBKJPA7
+         gJhqNoySqNUiaBvYpTfW3FV0/d95y1hwMHmu9gmI2Y8JA6Qlv4LrVQ5BbIdZ5Lsz5MrU
+         gRxU640Zu/oilPw409ySCZql32seeRILcMj+35llrLCOMf2bWU7+/RwRdO3HYjxaGWZ9
+         /gxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVB6libishqZbcCXLjT2U/ZBg9lLFRKBXCgK+EPDgVq7yYWGUYb/NluYPC97ikTqISYTrAeEaZE@vger.kernel.org, AJvYcCVmY4ZiuAkrB4DrG7V7y47ACHDawoP9JplwbnJDn1Ek5n4y7t5xVZLM6UFFffiOT4foBI+gUqW/J5EyLM0D@vger.kernel.org, AJvYcCWDmF/vcQRTiPGhxatiRPDKxsLa/s8nyHSyONDLllFfh9btmgfcjRVLxkvIPTVz+2XAeJ1zzQV4Z++e@vger.kernel.org, AJvYcCX2etKFNJQsPfrweNC24mx26y9Ekg+PM5olexlDHC29r12ipGGWHNtIB2b43znuyJlE+jtWSFmyJbyR6f0fCYO8V5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQVQb/V6ZQNaWKvIMUvwu0NqRJ7N0TxtsJDAYLs3onRPvxaMYv
+	oQw7TSkISb5sQnndqYyUsrSvfeicKTvyZoJ/ZFdId+AVWbdnl8IHeN1mVRE3VTSkqSg8+/umfSB
+	QuH9M+ovQLiNGHltmdaqR+//HWU0=
+X-Gm-Gg: ASbGncuU5uouqjNf1/j1jV0KcAInyv/ViQI9DGnCFbAikkRjVdY6aEEwv8JjxXx9rs1
+	04el+B3FnuxCYfONJJYS1hf7BIIh8JIPAwykxEEFx0LbLKWgPLMgLV/vnbgvNkwgXFvy6tYAvd0
+	GW55IOCFgToqzvho4KIXT3GH2N/XRQ5b8QMHTf
+X-Google-Smtp-Source: AGHT+IFGrKexk2feh/g4AfZm+74DwDdS0TYifRv6+ZHmhZYsDPNrr70+NaB9JFJj6JVsuEewgbKE9y58HXVcfK0UqmU=
+X-Received: by 2002:a05:6122:319b:b0:520:9b05:4cb6 with SMTP id
+ 71dfb90a1353d-524195c60cbmr1473579e0c.0.1741683060635; Tue, 11 Mar 2025
+ 01:51:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250308200921.1089980-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250308200921.1089980-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250310213056.GA904881-robh@kernel.org> <CA+V-a8uinTxr8FheR5-Pbv37j9wFR1cfrFDX6gExA5dW8WWPSA@mail.gmail.com>
+In-Reply-To: <CA+V-a8uinTxr8FheR5-Pbv37j9wFR1cfrFDX6gExA5dW8WWPSA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 11 Mar 2025 08:50:34 +0000
+X-Gm-Features: AQ5f1JqlUV-XTA6x64ZwVgrVHcqYL_lO68H10alDV6JE3jPjNjWM6p7bkmkYfY0
+Message-ID: <CA+V-a8v=q1aN_+4jQz3=StAXYP1-==OX5xZDrGXe8WWR4XbCKQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 1/3] dt-bindings: net: dwmac: Increase
+ 'maxItems' for 'interrupts' and 'interrupt-names'
+To: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Prevent st_lsm6dsx_read_tagged_fifo from falling in an infinite loop in
-case pattern_len is equal to zero and the device FIFO is not empty.
+Hi Russell,
 
-Fixes: 801a6e0af0c6 ("iio: imu: st_lsm6dsx: add support to LSM6DSO")
-Signed-off-by: Silvano Seva <s.seva@4sigma.it>
----
+On Tue, Mar 11, 2025 at 7:16=E2=80=AFAM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+>
+> Hi Rob,
+>
+> Thank you for the review.
+>
+> On Mon, Mar 10, 2025 at 9:30=E2=80=AFPM Rob Herring <robh@kernel.org> wro=
+te:
+> >
+> > On Sat, Mar 08, 2025 at 08:09:19PM +0000, Prabhakar wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Increase the `maxItems` value for the `interrupts` and `interrupt-nam=
+es`
+> > > properties to accommodate the Renesas RZ/V2H(P) SoC, which features t=
+he
+> > > `snps,dwmac-5.20` IP with 11 interrupts.
+> > >
+> > > Also add `additionalItems: true` to allow specifying extra interrupts
+> > > beyond the predefined ones. Update the `interrupt-names` property to
+> > > allow specifying extra `interrupt-names`.
+> > >
+> > > Also refactor the optional `interrupt-names` property by consolidatin=
+g
+> > > repeated enums into a single enum list.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> > > ---
+> > > Note, for this change I will be sending a sperate patch for vendor
+> > > bindings to add constraints.
+> > >
+> > > v1->v2
+> > > - No change
+> > > ---
+> > >  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 6 ++++--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/=
+Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > > index 3f0aa46d798e..fad0d611a75c 100644
+> > > --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > > +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > > @@ -114,6 +114,8 @@ properties:
+> > >
+> > >    interrupts:
+> > >      minItems: 1
+> > > +    maxItems: 11
+> > > +    additionalItems: true
+> > >      items:
+> > >        - description: Combined signal for various interrupt events
+> > >        - description: The interrupt to manage the remote wake-up pack=
+et detection
+> > > @@ -122,11 +124,11 @@ properties:
+> > >
+> > >    interrupt-names:
+> > >      minItems: 1
+> > > +    maxItems: 11
+> > > +    additionalItems: true
+> > >      items:
+> > >        - const: macirq
+> > >        - enum: [eth_wake_irq, eth_lpi, sfty]
+> > > -      - enum: [eth_wake_irq, eth_lpi, sfty]
+> > > -      - enum: [eth_wake_irq, eth_lpi, sfty]
+> >
+> > I think this should be structured similar to the DWC PCIe binding where
+> > we define all possible names, but not the order:
+> >
+> > minItems: 1
+> > maxItems: 11
+> > items:
+> >   oneOf:
+> >     - const: macirq
+> >       description: ...
+> >     - const: eth_wake_irq
+> >       description: ...
+> >     - pattern: '^rx-queue-[0-3]$'
+> >       description: ...
+> >     - pattern: '^tx-queue-[0-3]$'
+> >       description: ...
+> >
+> > And so on. Move the descriptions from 'interrupts' and drop 'items' and
+> > 'additionalItems' from it.
+> >
+> Thanks for the pointer, I'll do as suggested above.
+>
+> @Russel, are you OK from me to add rx-queue/tx-queue in this binding
+Apologies for the typo in your name.
 
-Changes since v1:
-* st_lsm6dsx_read_fifo: moved check for zero pattern_len before fifo_len assignment
-* st_lsm6dsx_read_fifo: dropped check for zero fifo_len
-* added Fixes tags in commit message
-
-Changes since v2:
-* split patch in two parts, one fixing st_lsm6dsx_read_fifo and one fixing
-st_lsm6dsx_read_tagged_fifo
-
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-index 480a9b31065c..8a9d2593576a 100644
---- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-+++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-@@ -626,6 +626,9 @@ int st_lsm6dsx_read_tagged_fifo(struct st_lsm6dsx_hw *hw)
- 	if (!fifo_len)
- 		return 0;
- 
-+	if (!pattern_len)
-+		pattern_len = ST_LSM6DSX_TAGGED_SAMPLE_SIZE;
-+
- 	for (read_len = 0; read_len < fifo_len; read_len += pattern_len) {
- 		err = st_lsm6dsx_read_block(hw,
- 					    ST_LSM6DSX_REG_FIFO_OUT_TAG_ADDR,
--- 
-2.48.1
-
+Cheers,
+Prabhakar
 
