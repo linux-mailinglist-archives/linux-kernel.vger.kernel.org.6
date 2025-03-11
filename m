@@ -1,109 +1,78 @@
-Return-Path: <linux-kernel+bounces-555440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E14A5B753
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:40:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9E4A5B748
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:37:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A756169D26
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD75B1892906
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11C71EB1B2;
-	Tue, 11 Mar 2025 03:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE07B1EB1B9;
+	Tue, 11 Mar 2025 03:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BJqogdby"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C517F9D6;
-	Tue, 11 Mar 2025 03:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="FipnhvAy"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968861E0B9C;
+	Tue, 11 Mar 2025 03:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741664404; cv=none; b=AawgrWxQgOaXhVz2SN6SIsjZQntP8TUviRWjL56b4XfyWfIf4divFR3zLf4cCSgiqTzZbQSFpevx3tacIPR5ly8XsmUe8jqj6YG3NnQaioCH89Yindd8j1Rmud64FR8u/UKNBEK3oAfQ0RA+WY+5nggavNGQXxiukwzZQ6G03fA=
+	t=1741664218; cv=none; b=aZNoBpPrk8h0ugMblN3kwIFHDpDig7X9RUNR6o6C99rIHTYcxZC9UqLwdFkCzvVXa/qpIZJq0JkBtwLh3TV7TkIHDYFwNx40F+E4OZvHgIT5b/PFz1FUSxswVGFe5upQUfW38R+232lCqPwvPNbI7nE3MrKAvwGiriyqUE/kRpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741664404; c=relaxed/simple;
-	bh=pMgpc6HC7nxifpscxz3EGmrjoCJUYcrNonuhhGwdVeg=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=DBd6mT6+rtbeAALhZdfptKiR9pLLb/29L+bBrdjX1kbz19BGwe887OD2byV5du+6RKiuAXxm5iY0Jxarj+7hI0/+tB75xLVOrX2bvHoYkvrnwVK9CRT44fPjNIHzOmxQ3onmijlvPNM4H5AskVOZiHbi5suc+lstAt1iiaBaBaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BJqogdby; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741664403; x=1773200403;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=pMgpc6HC7nxifpscxz3EGmrjoCJUYcrNonuhhGwdVeg=;
-  b=BJqogdbyyZJ8xfH+mXnBpQIk6jNfQrRX9kB81mpMp2w1m46U7kh1M8fk
-   903tBTp+p2LxGWVdPh2TF+JeVlHNplyg0PDHASNzxGKPJIpG7bK6WF+Eu
-   PuQ7TwZ6GNQfOq4tWwvHC/KCOTenBpD4x3QmSUyhhK34FWdn3OnkBTQac
-   c7Zk+eTGuCRd1FaL0milVOm99DCVFKNNISRrD0MKYpg/O/r7IqIScsvQu
-   zZxo/wArU9Yz8WdUSmyAQA0Zwxqt83Dc4aMqCXOXjLC/86+lO7OZqB9vq
-   kTNvydngwXZqSaiN2Y43tTkWpYU6qpPLDEhGvUWBM92Gc/hXuz/qbGqhY
-   Q==;
-X-CSE-ConnectionGUID: BGVr7c+0SMqGm9OKxeZ1kQ==
-X-CSE-MsgGUID: BJS3E3QSScSRHHzwqbjRiQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="68042245"
-X-IronPort-AV: E=Sophos;i="6.14,237,1736841600"; 
-   d="scan'208";a="68042245"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 20:40:00 -0700
-X-CSE-ConnectionGUID: tVuMo/dXTSO4WZpIKx/95w==
-X-CSE-MsgGUID: bAy02E9YTl6TpeHpgUJ97Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,237,1736841600"; 
-   d="scan'208";a="125392660"
-Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
-  by orviesa005.jf.intel.com with ESMTP; 10 Mar 2025 20:39:57 -0700
-From: niravkumar.l.rabara@intel.com
-To: Dinh Nguyen <dinguyen@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	niravkumar.l.rabara@intel.com,
-	nirav.rabara@altera.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] arm64: dts: socfpga: agilex5: add VGIC maintenance interrupt
-Date: Tue, 11 Mar 2025 11:36:01 +0800
-Message-Id: <20250311033601.1940199-1-niravkumar.l.rabara@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741664218; c=relaxed/simple;
+	bh=s4H+Y9we62fXCCnHrxBU9pSXlTEJIEszZhIBpsmMnU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tbqXpGz4s/RAcKCQMQVC/lhNFRWlpE352HPA1AVaDEXsyLWbg5BGGBm1ii+y/HIukVxtiXsPxtzruOXFWvST+KWSB5IbIypp+egTfD2pzciZ+hsaTO3nRBi6tOca0f7g8lXtI1BuFb8uJwLVeNLUVymhZrbYo2SFO1rnc1MO0FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=FipnhvAy; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=IOD/8eH6MReKw3gPdZRtk1Rage4HyTQ3t3nqYrwuxj4=;
+	b=FipnhvAyKOlglU6eH1sX5EopfIT2wQOpNzsc5WZ/Daaq6TRRIKLz4NgrU0Zm1u
+	ePyg6ojedl9PaG7h0gPt1e/qc/C6KLMfce7dtkbrmz435V/FIFwP039HJyQ+j5Qp
+	n4Sa4k4rbZwW5qA6mF1OwkBmjq6CZdW3G3IfpfRpdlYZU=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDnUiKzr89nKi21AA--.48775S3;
+	Tue, 11 Mar 2025 11:36:21 +0800 (CST)
+Date: Tue, 11 Mar 2025 11:36:19 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Antonin Godard <antonin.godard@bootlin.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v4 0/3] Add Variscite i.MX6UL SoM and Concerto board
+ support
+Message-ID: <Z8+vs+0dKyBDMU5b@dragon>
+References: <20250310-varsom6ul-concerto-dts-v4-0-6034fda6ec64@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310-varsom6ul-concerto-dts-v4-0-6034fda6ec64@bootlin.com>
+X-CM-TRANSID:Ms8vCgDnUiKzr89nKi21AA--.48775S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUsHUqUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEhANZWfPpLE8DAAAsn
 
-From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+On Mon, Mar 10, 2025 at 05:39:47PM +0100, Antonin Godard wrote:
+> Antonin Godard (3):
+>       dt-bindings: arm: fsl: Add VAR-SOM-MX6UL SoM and Concerto board
+>       ARM: dts: imx6ul: Add Variscite VAR-SOM-MX6UL SoM support
+>       ARM: dts: imx6ul: Add Variscite Concerto board support
 
-Add VGIC maintenance interrupt and interrupt-parent property for
-interrupt controller, required to run Linux in virtualized environment.
-
-Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
----
- arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-index 51c6e19e40b8..75397e84bd2c 100644
---- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-@@ -75,8 +75,11 @@ intc: interrupt-controller@1d000000 {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 		interrupt-controller;
-+		interrupt-parent = <&intc>;
- 		#redistributor-regions = <1>;
- 		redistributor-stride = <0x0 0x20000>;
-+		/* VGIC maintenance interrupt */
-+		interrupts = <GIC_PPI 25 IRQ_TYPE_LEVEL_HIGH>;
- 
- 		its: msi-controller@1d040000 {
- 			compatible = "arm,gic-v3-its";
--- 
-2.25.1
+Applied all, thanks!
 
 
