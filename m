@@ -1,97 +1,113 @@
-Return-Path: <linux-kernel+bounces-556214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C474A5C28A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:25:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB92A5C28B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:25:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E0253B2AD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:24:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27BB7188EF9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA8B1BD01F;
-	Tue, 11 Mar 2025 13:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A542A1B87EE;
+	Tue, 11 Mar 2025 13:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5NRkki0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kC67s6y9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DC474BED;
-	Tue, 11 Mar 2025 13:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082B474BED
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741699496; cv=none; b=EvwF14v5v49pEwSBrVZN9qzBT7c6wb9sFohSHiaqTRBu+xudOl3qf3P80u3fnD/z2EvBM46rcjjzitBl3lBDPkpH8qscy68KjcdZIdDt3+AquZkq2ql2d9T+eMMMT1pt/X5ewqKDuJYucj6CxulVrSgKhfMn5xply67nStN0laI=
+	t=1741699517; cv=none; b=oy1ZRd+GW0XaGN4rpg2fkWNFUmeOU7dXyxM7y5jdYUkVB6wVC5b6h0usQjIovFAiZv1BznH3zL717SfGRECtkYcwLPkOy/JBitzmgchAbWePaqwnaQSe/aXKvgunoxp1My868AmKGXzRojjM5nmfi1l2OEkC10WVkC0wNtvZJ20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741699496; c=relaxed/simple;
-	bh=3U3sXolew/0p9nYG+5bY523XgOvSKWX4Cw5YTp0Qzx8=;
+	s=arc-20240116; t=1741699517; c=relaxed/simple;
+	bh=r8dAyKr09d9sgVGtfDd2r8dutIVr92zadXXa1IRD+EE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=awUZjq5bubSwFncDc6grSrQ+HQrrxWu9Mil/q+DSSXHV3iDUUVxnOJ4u8LDrEMgoj13BbSb9l1N2aZn7A5lx4rawrVxZQhHwyg2if1zLsAETPyAPbkYTWeJMijGhEJvJ2Q0/82cDVgGKgv2zWE5eOv2qAEu/Sc0nXiJ/5pk1uD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5NRkki0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A27C4CEEC;
-	Tue, 11 Mar 2025 13:24:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QgEac9cfw9RD0K2CrRQ/vLsVJ4IVPH/RdLqwGV2nGwGjmsdXna5zt0+rgxRelDogj3OLsmVTQqFKjRvIsw89D1LE1DFKQevSNU1ggOtKq+gHaiaj7NM1y/Cu0HGOXf6HCy5qnHzC5hu5WDcRhyAZVA/FB6tPJiU7o8tCLQ4rskQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kC67s6y9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A0DC4CEE9;
+	Tue, 11 Mar 2025 13:25:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741699495;
-	bh=3U3sXolew/0p9nYG+5bY523XgOvSKWX4Cw5YTp0Qzx8=;
+	s=k20201202; t=1741699516;
+	bh=r8dAyKr09d9sgVGtfDd2r8dutIVr92zadXXa1IRD+EE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M5NRkki0ygn6wSg7TPl+Q530qmJcq7mlk0lGMS9dUKKY5jOGdGFlNeCO5PFfksT5M
-	 gFMTMoKTUV3lYAXkrZcRi6Fw37VXM/SUYnf0erQT84bgrzxxxaUiBFoMEeNMFfFpPl
-	 FDRceo8TVhf6h6S1jun2/+VQUhIUtX7TWa5OvRmfrWrEUqWrKsBo+niBVtNMTteUPp
-	 s/CxkYevD3z2kYO3Jlb740pUx69fqnoev2M4e8iSS/vI+b3tTOJaVqrPVr4XYbJiC5
-	 T8fjCl8Lc8I4HiaoQJZ8uJ7HpZiDeCn+xdgoYeYcK9NBWSTrrPu1gCsBGtiS27XfgU
-	 fW3vXAKWWElTQ==
-Date: Tue, 11 Mar 2025 13:24:49 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.12 000/269] 6.12.19-rc1 review
-Message-ID: <228c1998-f3e9-4ceb-9c31-c3e1a632b872@sirena.org.uk>
-References: <20250310170457.700086763@linuxfoundation.org>
+	b=kC67s6y9TS5wa4Sr6AjLTs2nLSXNIuL7cR+fLhXTakZAkI11qNQvUMIhP8PpIPvfn
+	 6fsJY2xFe5/n9gH6nuTfHy8sDUOnMbv+/xKCStGFlPhiW7kLMauKY6e+4FZGtyyDDI
+	 9vZwGWGaRSQRK3e8eWW4MMfNB49Eclac+qrR9tbWIwfAK7t501KW5bgA2n1i7rfgDm
+	 dT55/m4xm5zbrYwER8i1cK0cEZvkDNCrwBEXF8VFhC5KL24aG6kFIXkUkNwTaahNJy
+	 90NE+uu0MU75FkCguvZwSHTYr2V3JmVQB+7JnnBJR72Oww/bv0P9LjPJTlqa3FRw9I
+	 /nJ0akDojHPIA==
+Date: Tue, 11 Mar 2025 14:25:14 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Benjamin Segall <bsegall@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrey Vagin <avagin@openvz.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: Re: [patch V3 02/18] posix-timers: Initialise timer before adding it
+ to the hash table
+Message-ID: <Z9A5uixC_Tjk308w@localhost.localdomain>
+References: <20250308155501.391430556@linutronix.de>
+ <20250308155623.572035178@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HkjIJg/X01LzvYP3"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250310170457.700086763@linuxfoundation.org>
-X-Cookie: Androphobia:
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250308155623.572035178@linutronix.de>
 
+Le Sat, Mar 08, 2025 at 05:48:14PM +0100, Thomas Gleixner a écrit :
+>  kernel/time/posix-timers.c |   56 +++++++++++++++++++++++++++++++++------------
+>  1 file changed, 42 insertions(+), 14 deletions(-)
+> 
+> --- a/kernel/time/posix-timers.c
+> +++ b/kernel/time/posix-timers.c
+> @@ -72,13 +72,13 @@ static int hash(struct signal_struct *si
+>  	return hash_32(hash32_ptr(sig) ^ nr, HASH_BITS(posix_timers_hashtable));
+>  }
+>  
+> -static struct k_itimer *__posix_timers_find(struct hlist_head *head,
+> -					    struct signal_struct *sig,
+> -					    timer_t id)
+> +static struct k_itimer *posix_timer_by_id(timer_t id)
+>  {
+> +	struct signal_struct *sig = current->signal;
+> +	struct hlist_head *head = &posix_timers_hashtable[hash(sig, id)];
+>  	struct k_itimer *timer;
+>  
+> -	hlist_for_each_entry_rcu(timer, head, t_hash, lockdep_is_held(&hash_lock)) {
+> +	hlist_for_each_entry_rcu(timer, head, t_hash) {
+>  		/* timer->it_signal can be set concurrently */
+>  		if ((READ_ONCE(timer->it_signal) == sig) && (timer->it_id == id))
+>  			return timer;
+> @@ -86,12 +86,26 @@ static struct k_itimer *__posix_timers_f
+>  	return NULL;
+>  }
+>  
+> -static struct k_itimer *posix_timer_by_id(timer_t id)
+> +static inline struct signal_struct *posix_sig_owner(const struct k_itimer *timer)
+>  {
+> -	struct signal_struct *sig = current->signal;
+> -	struct hlist_head *head = &posix_timers_hashtable[hash(sig, id)];
+> +	unsigned long val = (unsigned long)timer->it_signal;
 
---HkjIJg/X01LzvYP3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+When used from posix_timer_add() -> posix_timer_hashed(), it can race
+with another do_timer_create() that clears the BIT 0. It's fine but
+KCSAN is going to warn sooner or later.
 
-On Mon, Mar 10, 2025 at 06:02:33PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.19 release.
-> There are 269 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+It looks like a good candidate for data_race() ? Well, READ_ONCE() is
+fine too.
 
-Tested-by: Mark Brown <broonie@kernel.org>
-
---HkjIJg/X01LzvYP3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfQOaEACgkQJNaLcl1U
-h9Bvqwf9HUCUt3TxDeZS3lrbNRd8E83K8I7IP+2S9gpC8GKJ28QTuI65MXYX1Lv0
-JmqExnxHLv+o+R2l3FcfpRzwqzxdJNplFgABY9WQihhjc5ZF6lI1OBk2a3N4zlVn
-NFfEQKMegBGN3zMGlz3WCTaPQqgDKYdXnUwyG7tWb8PZSr9B8NPRo8RrFrkWWKBM
-kYkVuGnLSHlY0XN8LBEwvqUGcRJCwT1EpVNOHG2o3tuDGNBS4p77QwKtGGNuC4Iu
-+XflKpxOg/BXA5/W7gyW6sbCDmtEdOuSL7iZQT1ua8mkJn6hNPLHbOHN9PJGxnE9
-e6NGPeYshiG1/iWTp/tsPwtv33b+yg==
-=oYbb
------END PGP SIGNATURE-----
-
---HkjIJg/X01LzvYP3--
+Thanks.
 
