@@ -1,265 +1,280 @@
-Return-Path: <linux-kernel+bounces-557007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C1EA5D253
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:10:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF93A5D254
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:10:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 094887A61DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:09:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFF1C17C332
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E01264FBC;
-	Tue, 11 Mar 2025 22:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC232264FB5;
+	Tue, 11 Mar 2025 22:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZeROWN3j"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NCZcg+tW"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2069.outbound.protection.outlook.com [40.107.100.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15178264F93
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741731021; cv=none; b=OVm3cLD/9nJy37GjFg7g8iI6Ub0Yy6rEXCPAOAVobK2o3EeLPbQhTSx5T00NYQM/ANOg3+am/ZD6pwsNb+2kpWTfuV/a1i/vn/4yBkcFcN7LuXLwCFUZOBuSmzoivhe+SxdaL1uAV8qBoLn/7b6MjeVB+HFwQ6IT/GdcRIOEFD4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741731021; c=relaxed/simple;
-	bh=s82bErdX4EnYnwudyQnjNihkbyWdccqlmxsD8uaxjzA=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=VR9xZujRip+IJpeXW22yOYgrMAmok4wndRcy9NOIqzv0W1C0YQXeafaCUG+gLYb5Z4g7lfir396L8n/Afmi0XaXQG8GA3s127+GAYgtGkfTWXF87WVt8EiTm5BHYtGsJ38BtMzcn59j6x/st7A1bxhSz9LIMx9oO0nh4b3jA7/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZeROWN3j; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e89a2501a0so53283636d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:10:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741731018; x=1742335818; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MZbs1+jjEWPFGCPeM1YxxvgtUsuRoKlEODhhpfoVXGs=;
-        b=ZeROWN3jxcSN1N2oDgGI0CHcg5m1zZONDG63Jyfdl4nFb6YC+fQBNckLgn8fvi1ijP
-         +Bdl+G2m0ECx2iMRSRLQ+sBwJL81HvvRVyY6ibvryIMi5Q0kFu1zcCG9QlYeX1Hm6tUN
-         u8W6ezTN4tx5cPYMgALEIBH9B3VsAvlt1gVTGPwmuE+XzH+i/eg85unVEY5IHyS1W74e
-         YSZFA6/RtJbpU5DII/f0azB5iUbEP040NWEqx7RKg7+YWgXkuCEP2Co/0s3APoSJJVrd
-         j/Zty6iG60HyJYYjmZdZteFJdA3/xr6jNFCOiug6ppNVvUKVY9Cx5Oc6MTq+Sld0nYNc
-         okXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741731018; x=1742335818;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MZbs1+jjEWPFGCPeM1YxxvgtUsuRoKlEODhhpfoVXGs=;
-        b=DbfT7WTTKRbP4giBp4K7QFUAHjKgMmvQVxL1P2el8v9Wdhe82kSnMqMyPbar3TNB1H
-         017uTouJrOrjHyCNZQksjV2OVRXEQlZVZI7fAuLcBMuCKD94Lhwvh/tZZT7jdk01Gk4b
-         SHVDckFI1ZlqotGPwCnN/pLim5nO5Cn5bibqR+vK6DHMK+/bE8LRn48PWQCc4x3uSsiW
-         xp/wbztJZrXw8G5B9ltrX9ZDkHMoLTlGgkMfXjhjI2ozexVaCE7NhPKII7jvVEnyQ4l1
-         DzVA5lmZZ6+1g5plxqsfsS5zW/1USfJHAuyilkiG0wBIdJqs1Y3J1QbRirR7rU/U+3gU
-         kh1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXPfEFnUa0+XcGpCmY5tTHcr2wfuURI+GzpxuzN+WL8PlVoWZ6FEy/erRM1/JptyCrtwGVXEG5pwjEIUrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTlalN4KyZ54idp60bSqZbeYU8g4Ihidr54K0UCIvCdKo7djhr
-	wzp67Av42VwVvDd9Pw3Cd9MHUUL3Py3BUBYbbZNLosl7/waKXFuEDKYmCOyn6w==
-X-Gm-Gg: ASbGncsUGyX/UgctzN935TeIHbRVJGUUz/VxYAAqy5FqFB8FfwFk8hMl25Yr/kf23zl
-	H9hPmTKw6Y9SQfZXPFnnoPz8H4/QaLFH3+VFAPDG2j6DnnFWI8CqKF54csXDKntBVg7KWYqF3Pd
-	5XJfPtnFTbj8TSIdXFz2vnCfxM3KCXv1ytYWqT2ioUnmhS/KhQmJYwThsfvH0jZ0vmv118GsV52
-	/bEJ6IFRMq0TIHuczlYT7VmZjpJil8oJwcV/u4zSDLz89AxEj2NKTDCrL3vPFa9WVo7rRi/vuns
-	HDe7kMsd6xM2ikBGBhTal1qHWQOHQzImqsv34Fbao9TEsiXtUphCdi662dU9nAJbapKceHnTlYu
-	H3bd8VxzW3o/MIA==
-X-Google-Smtp-Source: AGHT+IGFZPAT0kHC3BGKnrQivfKI9s04TeiLH9YTKILncNYseYqOotHyhPpnjK2DmpS6MSuaSilbUw==
-X-Received: by 2002:a05:6214:250e:b0:6e8:f3c3:9806 with SMTP id 6a1803df08f44-6e9005bc9camr276668786d6.4.1741731017866;
-        Tue, 11 Mar 2025 15:10:17 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e8f716ee35sm76607796d6.96.2025.03.11.15.10.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 15:10:17 -0700 (PDT)
-Date: Tue, 11 Mar 2025 18:10:16 -0400
-Message-ID: <005f7425114b4e6b82dacdaf4dd37777@paul-moore.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059CD262819
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741731028; cv=fail; b=oNBfrqE3ZqM9GeTdpQHWFDM7cYTKJKPTGOlMy+PQTvm65HZZQZYAdJyAHrtmUnsRgtWhbD0AGTJ+iJzsVdRzYqFmELFSYbnQBevEu+fppAAJ5Vn2sreGIBuSsiL3oWHeXb7y1JWliM6Y8m6BwUKK4wqppoe5oJ3cSwJ9y8u24Nw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741731028; c=relaxed/simple;
+	bh=cHgDcv8XcOIt+Gh/oVYLRX/XwuPq9gVnvYQ2hf8/jjM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Pbp+yNpWVFvzv2J499yJz4kQJblf0hwsJlFUk9vk3IJEDBZklsOpZGCuO80rJzxyonXJNLCmzrZjZlcHgWijAf/T/SSdR42VDddTi/Xb3iFyTjbVDBLiTyrt33ZSmXbEmgh/jcDwXApfUa9vKB5VcIIQtNKBCB15WCB7mUs2TaU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NCZcg+tW; arc=fail smtp.client-ip=40.107.100.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aSHKv2p2KrUAlycMlEiXgq+QqrJm+9Dhv+koJPeHNLV88qvcr0M3ctoxGnsiA6DfaDZHU2x5P/8DeTsceGn2RhL7rdDdByR/uCGhMeD1qhR3qJf40KKFfX9ifkwvkBQoY/kZ+UjNBgSqRG955r+TxuQqhbGYzESW15YwqRz72sMxbgle0aNjENJ5t6W/bgd5yq19Ql7gtMCoJiSlGhbrUI6R06s5OXWmoQm5KuoLpF55S1FSu2sZRVDgY11fgYKxyNDiDnZNssFHlHSk5p9xKZ7kDGoSG7/zsITU+6tBpK5ZIXBbW8gcNObj621bWua8xNKFTYPGPhugQobKouh+aA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h4DSjHkgMFDa82M44V+KW/0aXCJyWtQvsW9GnBSlCGI=;
+ b=gZEpL0NX+IzqRNs2prAW7cPwMKqIjOV1oH8uzamYb7lYQhSHUxDsHR6NLFI5PeVA+3we9GDuJ1NS0z51r0M+59mV++rTP5XyzHyW7t2itBi6ENZqU/ZTBXRW70u4MU6Dv2NkffUKB8J60fX/c/0NeghoU3pyTAETAQ9xl6TIzRzQpdiGdlPT57/SqDKjuJJS9I+09O3KPJZcRn40vAcc4ISvmHWCsHlBy2sxCNegHD26cQIoG0SdslyReNAlQMkaExn3gwsFxT6wQSCAm4qqqB2gV52tp2lMO1d/fgla8CFF60+xlaEZWJnP7ay1xNgBL5XMJikSWw61SRMlhn0jpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h4DSjHkgMFDa82M44V+KW/0aXCJyWtQvsW9GnBSlCGI=;
+ b=NCZcg+tWVzxWppST742uP4Boy/xrdoVnZJzPccVV1lgkkBj8Q4mq46f5sujXEUx15MkkWfJgfWNhgZ3SExgJ7DytK+ShWIY5rlrckJp/Lc6L89CkbfH0NyDBpW6ba2Qh13gBHZF7YtJ72/6jOjtzy6e1IigkKB1nuhV6JYwsELZsPnGSJb2adXd6Z0MITjBiEFhmhCrnEYG0AnlH2bVekzRCBtZwmCOKb1e3TUuQZPywYr4gQeXo7rs3qNvYYIsXuI3xd8JG43Y4o01/r4gM9LHfOct2zrw4OcO6qOj5FqqgdzOEYYuSd58hpdKV7rRYYXz9XX4h3UYFy23ZffFpjw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SA1PR12MB7272.namprd12.prod.outlook.com (2603:10b6:806:2b6::7)
+ by CY5PR12MB6552.namprd12.prod.outlook.com (2603:10b6:930:40::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
+ 2025 22:10:24 +0000
+Received: from SA1PR12MB7272.namprd12.prod.outlook.com
+ ([fe80::a970:b87e:819a:1868]) by SA1PR12MB7272.namprd12.prod.outlook.com
+ ([fe80::a970:b87e:819a:1868%7]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
+ 22:10:24 +0000
+Message-ID: <fdea59fe-f570-489f-bf88-1ffd47119cac@nvidia.com>
+Date: Wed, 12 Mar 2025 09:10:19 +1100
+User-Agent: Mozilla Thunderbird
+Subject: Re: commit 7ffb791423c7 breaks steam game
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Andy Lutomirski <luto@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20250310112206.4168-1-spasswolf@web.de>
+ <951f9d13-72e4-41c3-9ace-8639e2a9485d@nvidia.com>
+ <ce940e2a-632d-41be-9f13-e5b11d49b0db@nvidia.com>
+ <09131c563332c892284ec7fb4ce706996131db8c.camel@web.de>
+ <9a5df5627d3d72b2a97f501dfb7d944cc1e9920f.camel@web.de>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <9a5df5627d3d72b2a97f501dfb7d944cc1e9920f.camel@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR01CA0070.prod.exchangelabs.com (2603:10b6:a03:94::47)
+ To SA1PR12MB7272.namprd12.prod.outlook.com (2603:10b6:806:2b6::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250311_1754/pstg-lib:20250311_1754/pstg-pwork:20250311_1754
-From: Paul Moore <paul@paul-moore.com>
-To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>, corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, eparis@redhat.com
-Cc: linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-Subject: Re: [PATCH RFC v4 1/1] ipe: add errno field to IPE policy load  auditing
-References: <1741385035-22090-2-git-send-email-jasjivsingh@linux.microsoft.com>
-In-Reply-To: <1741385035-22090-2-git-send-email-jasjivsingh@linux.microsoft.com>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR12MB7272:EE_|CY5PR12MB6552:EE_
+X-MS-Office365-Filtering-Correlation-Id: b910edd2-cfe7-4942-5562-08dd60e98555
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TkNubDl5d0RGRVZjdm1PbHUxcURRZXpjNXVJQnJrYXZHbDZTYnBHTEZJWVg3?=
+ =?utf-8?B?OU5xdGs0ajZnelMrMDdkbzh2V2NKVG9tL1lZRlp0U0l4QkhmUkowcmZpajR0?=
+ =?utf-8?B?MHNISHhRdUtUZ0NLMmdFQTZqYklzby9hVDI5RnFzYTlsRGxWV3JoR3gyUk02?=
+ =?utf-8?B?VndoRG04REtyVWg0eWxCNnBLMWZ0YVc3RXZjK0QveEI4RXVaUEJTTDNnVHlX?=
+ =?utf-8?B?eW9KQWFOYW9GVkY3SFpRc3Y2OFlOb2RZWExuSFhESmxLbGlxWE9BeTllb2ZX?=
+ =?utf-8?B?UUVNSEJQbWd1SG0wWEVMcWE2OFd2Ky9JV2dLOW9LV3BFVmRRUmNMengyNjNQ?=
+ =?utf-8?B?bWZINCtPTFV2L3RYS3d3aVJUYXhYTXRibng3KzhQcmplS2RXSENpcFh3Y1ln?=
+ =?utf-8?B?WjBJRlZnNlluQzRaVjlWZDBDL0txOFVqOFYxZTcxNE15VGF5YkM5aDNVL0Mz?=
+ =?utf-8?B?bXlDdHg0eW1talh0YXlQNE9aTXFXSTRyS1dpQTZFdUtabFFuTDhIWUF3Smd5?=
+ =?utf-8?B?ck5XcENtUVJhY1F0Y3hTRGh3ck5wellXaGlScE4yQ1cwYWQzZWZONEovRXNV?=
+ =?utf-8?B?UVRRMXY0WlVOamQ3emR1MHl1Tks1RURzcGxpZWlXRmlGUXM0bVZQdEV2clJO?=
+ =?utf-8?B?QVVXRGt0OTE3S0VRc0RrTlRXdkNISWMvcHVuSkFKUW5SSGpwSUhpcFUzYlk2?=
+ =?utf-8?B?UmtCdFBhU3E3N25jTlRhejRYNFRUQUpZQk9nbWRMdU0rZVF0dWJJMnBGc0ho?=
+ =?utf-8?B?MFJDeGNEckdZUlBoY1V4R1lXNit6MXA4ZjRnSGNWWWg4QWdQYUlSUjlwSldK?=
+ =?utf-8?B?L29tbHZOdGhIWmpLZ013VzJ3YndPdHBFeVBTejFGa21CN0ZpRHY3NnNjMVBn?=
+ =?utf-8?B?ck1xdkdxRXYrOHlPbFdnN2tRZVdmb014NmNYdWY1SHFtTGtQU2RGblJLZTdT?=
+ =?utf-8?B?TUtWY01rQnBySU9wL1QxenNhN0c4SWRnOTVnUS9SeE8rN1FhUEJQL2tTK09O?=
+ =?utf-8?B?WkYxNEc4cC9JRmhGRSt2cS92dHBGT0djVTZQWW1FN1NHVzFUbmlJb1hJWXdp?=
+ =?utf-8?B?WFduREljbTZlZGU5WndWcHRKYUhEUVNFTmQ4eG5HMFJVbVpsK0d3M28zVU1Y?=
+ =?utf-8?B?QS9IYk92MDR2NE9DYkwxMjdqaU8rRCtGdkJwbUZJQUtOOW5PbjY4QkY4alc3?=
+ =?utf-8?B?OTdwWDJYSTBPRXVpUEx1NFUxWXQyYkZBZXpiQkxvRXd5eUtadGdDeEFpaFpq?=
+ =?utf-8?B?R0VuWHoycHgySFc0dkJEeVBqU2Y0MzU5QzNaczU3a2FPVGVEU0ovQ0NsUkxV?=
+ =?utf-8?B?MnlpeG53SVRNS2xQbjgwR1Z2NHBkVDJ1eGJBQW5xdVh4K09KWmtjWVVUakZ6?=
+ =?utf-8?B?aUU4bzJ4WW5XZWVxcE0ySm9xNHUzUzNJL25XZGNsSE83YitLLzJZNExiVXVw?=
+ =?utf-8?B?bFhTOEFGcUJvMEVHQ09uZTZPaEVRNU0vaHVaV3FqSURlbHo3YVY4TWhXVUdN?=
+ =?utf-8?B?M2ZQenBaUVRkRVk5S0doL3FHTjQ3OHliZnV2cGMxVWM4TXhzenhYZjhPM09C?=
+ =?utf-8?B?ZUF1bVY4UW11bW96UUFGam5uV1h4YXdOSkJUMXNHdnQzVG45T1V4ZlpvN2ZN?=
+ =?utf-8?B?UWI2Q1dVUi8zZDRLTFp1RkxicHFCWUUwaXgxYmN5SGg3U0Z3SkxMNXNFbmVL?=
+ =?utf-8?B?ZFNUTmw1T1BHQjQvNkkyM25LVzN0QXBGNmxXc2Zuc1FUcEl1dUJFUVUzRDVN?=
+ =?utf-8?B?Vk5MS1NoaDFSYnNWdGhPeXZKZ3JpRERqY0M3ODNkMmd0NTlkVmYreGhBU0N3?=
+ =?utf-8?B?Q0s3cjUzVTVrSEhFM09OVCs3UGs1Q3Eya29UZWx4TEVPdlVRbEFWSWpRRjFK?=
+ =?utf-8?Q?W+ISq8txBhUAY?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB7272.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VUpCQTc2SktSRmlrTFVQSm9MNlBpYjM3Yk1NVXRHczRMMkRpOWFydHFUN0pp?=
+ =?utf-8?B?Q090Wk5CYXRVMk9NVjVrUGlFc1F3TjFkWE9HVzdCS2FWeFh3eHZmV0VpbVBv?=
+ =?utf-8?B?TkVqWUdpL3p0VVRVRFBRZitkUE1zRExOczBNK000U1cyaXlTdVBhbU94SEds?=
+ =?utf-8?B?L0ZPbVBIdVhocEJaeWxLUHI1bHZHRUZoZGRON0ttL1g2UE5NaTQ3RFU3SHRE?=
+ =?utf-8?B?SVEycjlKMlEwbzNqVlpwTy90YWJoampOTXJ0Y1dkTTVTRTdVcnN6MUUvSWIr?=
+ =?utf-8?B?aW12RnJFM2J3ZlR2V2RyQzRCeCtBQmtkbUhNZndJczVtQTFobEVMeWJjL3Qz?=
+ =?utf-8?B?MkFyR3JjVFhDR05KTEtaN0JpR2VjeVJmOXlpUUVtZFJHd1BScHFCMUgxS09o?=
+ =?utf-8?B?QWRGUU1IMGJtUENFeEtIaHhnTC9DcnJXSGQwdlZUVlBuaDNkcFlVWmdFVGJE?=
+ =?utf-8?B?THVveitMY2k0cDgxK2cxRlloaFFUdjBNZmUwSnh0YWtsMThCTmMwWXd5S1Rx?=
+ =?utf-8?B?WkxhTngzR2U1YmVUTVJUNCtLYm91ZzRGb1hKMHY4ZHpxS2NZTnloaU9YcE8x?=
+ =?utf-8?B?dlNyYkVIaE8vek9qUERzQ0VOeXB2MEhSaXQ4WUpKZXVwL0hNL0xzK3VtMVNr?=
+ =?utf-8?B?VjFKZE1iUHgzOHV2Zk1iTzA4bi95ek5mTGZyay9RcWpnamh1a0h1c1hPQ2lK?=
+ =?utf-8?B?bmdqMmRtY1UxcnhwVWtqYUhrZ3h5ZTQ4bE1QSkxUUW4wb0kzZGVnNEFFeDJY?=
+ =?utf-8?B?VUtDYU5UUjdxVnNMU1ExSWh0eVNFb2FJcmxsQ0pWQVVpRXIvT1NkVEU4aEJ5?=
+ =?utf-8?B?TFFBYk9QQnJVUG05QmVnNXhIRUFjY2FEa3ozdVJ0WHllbWpJVkJscHJuRHlH?=
+ =?utf-8?B?YVVGb2JZNEZiNkdyWlo0RG5iS2FRM0JQQ0hVQlZDV3kzNFpGWVUrWlNmUW1x?=
+ =?utf-8?B?dEhZL3JRWVVXZGo5OU9ZcXhtZ3IyTU9IUExXZ21GdmorZmxhMlBjY1dFTWZq?=
+ =?utf-8?B?VFZQVEU1STVQaUZTS3VDNitSUndNVmNkWlp0Q1NNbGdaVTc1emRZTDNkTWxP?=
+ =?utf-8?B?WDlOUG9WZmN3b1FWSHd5bmlkVSs4b2ZwV2xHb1VXQUE4WmZ4d3JSM3AwK0Fz?=
+ =?utf-8?B?aTljRm9SeG5yTzNTVFljVXoyUmVrNmpOMzJDdEJ1aS91cHA4OXIwWnB0OGVN?=
+ =?utf-8?B?SkNjc3B1S1JWd1ZPdFVZeE1RMk5OL0pzaUEvbTBGUDdIemxneXYwWlg2RmhQ?=
+ =?utf-8?B?WmEwbTJzREJNTzVVbjVyWUg4SDhvUWZuSjJ2RUVrVHFsUjBPTlhyalJtVFBW?=
+ =?utf-8?B?R1pZQ0YwYUlSb3BTTmRIVVYwb2Q1cFRPMmRaUjVLbk9McjdJSGxrRnYraTk5?=
+ =?utf-8?B?bko2aENKeUw0UzkzMkVMYTVHSk9HaE5HRU50WkdCYXUvcDZFVW1mYUhFV1Bw?=
+ =?utf-8?B?WlloNnRxTnl1NmtRcy9QMVRONnpmS3BNaUpGWG9kd3hFY244QzdRazFuZUdp?=
+ =?utf-8?B?VVBpaldYQ1ZmbTNZL2ZaSm80N3RUVXpMaGVOZVFiNW1LellBWk1zMUZmMnpE?=
+ =?utf-8?B?M2ErdmUxUmZMTWlrYW9RSDVWWC85OTJ3UWNFSEcrU2N0bU5tUW9EM0lBaEpi?=
+ =?utf-8?B?NVJNMWdmQWVmc0tUcXRzU0tMcWxPdGhPbEIvdXBBbnRtdWluSm5wcS9pTGF6?=
+ =?utf-8?B?R2tBOTVLYStDTm94K3owb3pEREI2UThJekMyTWpmSDRGVGxyQ3VVUG5vSk8y?=
+ =?utf-8?B?dHV6c3RVUkh5b3VNMnZtdmhzOUR2V29veTNDTGtiVDYxSFNLa3ZEb3BLUzBy?=
+ =?utf-8?B?L2g4dS9DeVNlZHY3Njc2bVNvVjVReWYzeDV5OXM1V0NacGZGZmZVNGlBUkUw?=
+ =?utf-8?B?SjBTQXY1MkZkMjhNN0MzeFQvNmVCSVNEVEZnR1VqSzVxN3E4enh6cFZCcnZB?=
+ =?utf-8?B?NEo1SEFPVzIwalBYMUpNVEwwRS8wVVppSFV3ZWxLSlBjMUYyS0o1ajA5OVF2?=
+ =?utf-8?B?VlFHZ2pjMit3VmpBZHFBMHIxcElqZS9LWlFpaEdnVG1QTXNMUDRzTjZZM3V3?=
+ =?utf-8?B?QjRPdWNiWVBLeEZGNFRUbFZvd3pXMGw5eEVNMTQxbXBtY0hXb2dsYXkwQ1ov?=
+ =?utf-8?Q?PzMHeV/LHTqCRwCUWztybVjAi?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b910edd2-cfe7-4942-5562-08dd60e98555
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB7272.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 22:10:23.8875
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: asZk8wYeMo5ft1YJIdhQoTt+popNEKQ0oTLjIIdOEVSKT4hHcQT1umJQ4pAjdXOCq9rKn4syuN0jFtYx8FsxNw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6552
 
-On Mar  7, 2025 Jasjiv Singh <jasjivsingh@linux.microsoft.com> wrote:
-> 
-> Users of IPE require a way to identify when and why an operation fails,
-> allowing them to both respond to violations of policy and be notified
-> of potentially malicious actions on their systems with respect to IPE.
-> 
-> This patch introduces a new error field to the AUDIT_IPE_POLICY_LOAD event
-> to log policy loading failures. Currently, IPE only logs successful policy
-> loads, but not failures. Tracking failures is crucial to detect malicious
-> attempts and ensure a complete audit trail for security events.
-> 
-> The new error field will capture the following error codes:
-> 
-> * -ENOKEY: Key used to sign the IPE policy not found in the keyring
-> * -ESTALE: Attempting to update an IPE policy with an older version
-> * -EKEYREJECTED: IPE signature verification failed
-> * -ENOENT: Policy was deleted while updating
-> * -EEXIST: Same name policy already deployed
-> * -ERANGE: Policy version number overflow
-> * -EINVAL: Policy version parsing error
-> * -EPERM: Insufficient permission
-> * -ENOMEM: Out of memory (OOM)
-> * -EBADMSG: Policy is invalid
-> 
-> Here are some examples of the updated audit record types:
-> 
-> AUDIT_IPE_POLICY_LOAD(1422):
-> audit:  AUDIT1422 policy_name="Test_Policy" policy_version=0.0.1
-> policy_digest=sha256:84EFBA8FA71E62AE0A537FAB962F8A2BD1053964C4299DCA
-> 92BFFF4DB82E86D3 auid=1000 ses=3 lsm=ipe res=1 errno=0
-> 
-> The above record shows a new policy has been successfully loaded into
-> the kernel with the policy name, version, and hash with the errno=0.
-> 
-> AUDIT_IPE_POLICY_LOAD(1422) with error:
-> 
-> audit: AUDIT1422 policy_name=? policy_version=? policy_digest=?
-> auid=1000 ses=3 lsm=ipe res=0 errno=-74
-> 
-> The above record shows a policy load failure due to an invalid policy
-> (-EBADMSG).
-> 
-> Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-> ---
->  Documentation/admin-guide/LSM/ipe.rst | 69 +++++++++++++++++++--------
->  security/ipe/audit.c                  | 21 ++++++--
->  security/ipe/fs.c                     | 19 ++++++--
->  security/ipe/policy.c                 | 11 ++++-
->  security/ipe/policy_fs.c              | 29 ++++++++---
->  5 files changed, 111 insertions(+), 38 deletions(-)
+On 3/12/25 05:24, Bert Karwatzki wrote:
+> Am Dienstag, dem 11.03.2025 um 12:15 +0100 schrieb Bert Karwatzki:
+>> Am Dienstag, dem 11.03.2025 um 18:19 +1100 schrieb Balbir Singh:
+>>> On 3/11/25 08:48, Balbir Singh wrote:
+>>>> On 3/10/25 22:22, Bert Karwatzki wrote:
+>>>>> Using linux next-20250307 to play the game stellaris via steam I noticed that
+>>>>> loading the game gets sluggish with the progress bar getting stuck at 100%.
+>>>>> In this situation mouse and keyboard inputs don't work properly anymore.
+>>>>> Switching to a VT and killing stellaris somewhat fixes the situation though in
+>>>>> one instance the touchpad did not work after that. I bisected this between
+>>>>> v6.14-rc5 and next-20250307 and got this as the first bad commit:
+>>>>>
+>>>>> 7ffb791423c7c518269a9aad35039ef824a40adb is the first bad commit
+>>>>> commit 7ffb791423c7c518269a9aad35039ef824a40adb (HEAD)
+>>>>> Author: Balbir Singh <balbirs@nvidia.com>
+>>>>> Date:   Fri Feb 7 10:42:34 2025 +1100
+>>>>>
+>>>>>     x86/kaslr: Reduce KASLR entropy on most x86 systems
+>>>>>
+>>>>> Reverting commit 7ffb791423c7 in next-20250307 fixes the issue for me.
+>>>>>
+>>>>
+>>>> Thanks for the report! Could you also share the dmesg? Do you have any proprietary
+>>>> modules loaded? Could you also share the output of /proc/iomem (captured as sudo)?
+>>>> The lspci output is useful, lspci -vvv (captured with sudo) would help see where
+>>>> the BAR regions are, specifically before and after the patch. Could you also share
+>>>> the kernel config?
+>>>>
+>>>> I assume your config has CONFIG_PCI_P2PDMA enabled. Did the system ever work with
+>>>> nokaslr for you?
+>>>>
+>>>> I am a little surprised that reducing the entropy causes these issues and having
+>>>> a larger direct map causes these issues.
+>>>
+>>> Hi, Bert
+>>>
+>>> I tried to reproduce the issue at my end, but could not. I am new to Steam and my
+>>> hardware/games are also different. From what I could gather, Steam is a 32 bit
+>>> application that uses SDL. For my testing I used Xorg, not wayland
+>>>
+>>> In addition to the above?
+>>>
+>>> 1. Could you confirm if the mouse/keyboard work outside of Steam?
+>>> 2. Does evtest /dev/input/<mouse device> show anything?
+>>> 3. We could run the kernel with nokaslr and see if the issue reproduces?
+>>> 4. As a test, we could try disabling CONFIG_PCI_P2PDMA in the kernel config,
+>>> build boot and test, this has the same effect has not having the patch
+>>>
+>>> Balbir
+>>>
+>>
+>> 1. The problem is not with steam but specifically with the game stellaris (which
+>> can be started without steam). As long as stellaris is running there is a ~2s
+>> delay in keyboard and mouse input (for everything), killing stellaris restores
+>> input to normal.
+>> 2 evtest /dev/input/event{1,3,4} (keyboard, touchpad, mouse) seems to show the
+>> same output whether stellaris is running or not, only if it's running there's
+>> the mentioned delay.
 
-...
+Thanks, so the issue is specific to the game and running it?
 
-> diff --git a/security/ipe/audit.c b/security/ipe/audit.c
-> index f05f0caa4850..ac9d68b68b8b 100644
-> --- a/security/ipe/audit.c
-> +++ b/security/ipe/audit.c
-> @@ -21,6 +21,8 @@
->  
->  #define AUDIT_POLICY_LOAD_FMT "policy_name=\"%s\" policy_version=%hu.%hu.%hu "\
->  			      "policy_digest=" IPE_AUDIT_HASH_ALG ":"
-> +#define AUDIT_POLICY_LOAD_FAIL_FMT "policy_name=? policy_version=? "\
-> +				   "policy_digest=?"
+>> 3. For some weird reason my kernel does not recongnize the nokaslr cmdline
+>> parameter, so I build a kernel without CONFIG_RANDOMIZE_BASE and this does NOT
+>> fix the issue.
 
-This should probably be AUDIT_POLICY_LOAD_NULL_FMT to be consistent with
-the other IPE audit format macros, e.g. AUDIT_OLD_ACTIVE_POLICY_NULL_FMT.
+Can you clarify if you're booting with the compressed image bzImage/vmlinuz or
+with vmlinux?
 
-> diff --git a/security/ipe/fs.c b/security/ipe/fs.c
-> index 5b6d19fb844a..db18636470bf 100644
-> --- a/security/ipe/fs.c
-> +++ b/security/ipe/fs.c
-> @@ -133,6 +133,8 @@ static ssize_t getenforce(struct file *f, char __user *data,
->   * * %-ERANGE			- Policy version number overflow
->   * * %-EINVAL			- Policy version parsing error
->   * * %-EEXIST			- Same name policy already deployed
-> + * * %-ENOKEY			- Key used to sign the IPE policy not found in the keyring
-> + * * %-EKEYREJECTED		- IPE signature verification failed
->   */
->  static ssize_t new_policy(struct file *f, const char __user *data,
->  			  size_t len, loff_t *offset)
-> @@ -141,12 +143,17 @@ static ssize_t new_policy(struct file *f, const char __user *data,
->  	char *copy = NULL;
->  	int rc = 0;
->  
-> -	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
-> -		return -EPERM;
-> +	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
-> +		rc = -EPERM;
-> +		goto out;
-> +	}
->  
->  	copy = memdup_user_nul(data, len);
-> -	if (IS_ERR(copy))
-> -		return PTR_ERR(copy);
-> +	if (IS_ERR(copy)) {
-> +		rc = PTR_ERR(copy);
-> +		copy = NULL;
-> +		goto out;
-> +	}
->  
->  	p = ipe_new_policy(NULL, 0, copy, len);
->  	if (IS_ERR(p)) {
-> @@ -161,8 +168,10 @@ static ssize_t new_policy(struct file *f, const char __user *data,
->  	ipe_audit_policy_load(p);
->  
->  out:
-> -	if (rc < 0)
-> +	if (rc < 0) {
->  		ipe_free_policy(p);
-> +		ipe_audit_policy_load(ERR_PTR(rc));
-> +	}
->  	kfree(copy);
->  	return (rc < 0) ? rc : len;
->  }
+>> 4. Most surprisingly removing CONFIG_PCI_P2PDMA also does NOT fix the issue.
+>>
 
-I'm going to suggest putting the audit calls closer together to help
-ease maintainence, e.g.:
 
-  out:
-    if (rc) {
-	    ipe_audit_policy_load(ERR_PTR(rc));
-	    ipe_free_policy(p);
-    } else
-	    ipe_audit_policy_load(p);
+> 
+> I've done more experimenting regarding 4.:
+> next-20250307 with "CONFIG_RANDOMIZE_BASE=y" AND "CONFIG_PCI_P2PDMA is not set"
+> works as expected (i.e. no input lag when stellaris is running)
+> 
+> next-20250307 with "CONFIG_RANDOMIZE_BASE is not set" AND "CONFIG_PCI_P2PDMA is
+> not set" also shows the buggy behaviour (i.e. input lag when stellaris is
+> running) (this was the configuration I tested before)
 
-> diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
-> index 3bcd8cbd09df..b70d2518b182 100644
-> --- a/security/ipe/policy_fs.c
-> +++ b/security/ipe/policy_fs.c
-> @@ -292,21 +299,29 @@ static ssize_t update_policy(struct file *f, const char __user *data,
->  	char *copy = NULL;
->  	int rc = 0;
->  
-> -	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
-> -		return -EPERM;
-> +	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
-> +		rc = -EPERM;
-> +		goto out;
-> +	}
->  
->  	copy = memdup_user(data, len);
-> -	if (IS_ERR(copy))
-> -		return PTR_ERR(copy);
-> +	if (IS_ERR(copy)) {
-> +		rc = PTR_ERR(copy);
-> +		copy = NULL;
-> +		goto out;
-> +	}
->  
->  	root = d_inode(f->f_path.dentry->d_parent);
->  	inode_lock(root);
->  	rc = ipe_update_policy(root, NULL, 0, copy, len);
->  	inode_unlock(root);
->  
-> +out:
->  	kfree(copy);
-> -	if (rc)
-> +	if (rc) {
-> +		ipe_audit_policy_load(ERR_PTR(rc));
->  		return rc;
-> +	}
->  
->  	return len;
->  }
+This is an interesting experiment, I am beginning to wonder if the system relies
+on a reduced direct map for the game to work correctly. Can you also check in this
+scenario if CONFIG_RANDOMIZE_MEMORY is disabled?
 
-I don't really like how your auditing failure in one function and
-success in a different function, that looks fragile.  Unfortunately,
-I don't see a quick/easy fix for that right now so I guess this is
-okay, but something to keep in mind for the future.
+Can you please share the dmesg
+1. output before and after the changes?
+2. Do you see any warnings/errors in journalctl or game specific log files?
+3. lspci -vvv output before and after the changes?
 
---
-paul-moore.com
+
+> 
+> As a sidenote, I've tested several kernel with nokaslr as command line parameter
+> (6.1.128, 6.8.12, 6.12.17 (the debian sid distributional kernel)) and nokaslr is
+> not recognized as a command line parameter in any of them
+> 
+
+Please see my comment above about booting. How did you check if nokaslr is being
+recognized, is it via looking up dmesg?
+
+Thanks!
+Balbir Singh
 
