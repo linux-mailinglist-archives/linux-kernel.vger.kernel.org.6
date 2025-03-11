@@ -1,179 +1,110 @@
-Return-Path: <linux-kernel+bounces-556642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F85A5CCC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:52:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD69A5CC65
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:39:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516D8189EEC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:52:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C4FC3B7B03
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC99526462A;
-	Tue, 11 Mar 2025 17:50:06 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EAF263F3F;
-	Tue, 11 Mar 2025 17:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E93262817;
+	Tue, 11 Mar 2025 17:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cH/02nWr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F7E1D514A;
+	Tue, 11 Mar 2025 17:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741715406; cv=none; b=E2t0FJ6cF0YvrrKvRLe/Q3bC+MUfyuZWmGKqcKmkOr+AbPjKTPggKyJcHsUt1KUPoYgKG6oFu6c9Nv08G4VIdroXzmSTIs6MeysfJBewNuzY7373POgxnoPn6TPR6LpZnUUKnh8AclTKqvfdTFGsfowBx7X3++NodAzltyFYhMk=
+	t=1741714781; cv=none; b=tEI9KbvsGMc20Ehv9ujmuU+U8UP4sxyER3/B6YkNcWlNZm2t3tV1pO9yxVvOrdB6D2WC9uW7YM5GqSGkJknziPGhF8PnjYnN8YlRvY/48RNxCc4BhuCmIN5ky25bwxtKeGNyaooqqiCt06D9CkGUwher2sPG13gDpFK8gVZE+Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741715406; c=relaxed/simple;
-	bh=IQgyv713wKOnG600Vb8w3N5JVPkyAyOIQlT6Xh1de2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Spucia9RTOg1gu7ZrbUwKb0fiadqkfNcNKwCG9X9GaTug+VLPax9Fq6OhrSMjOSdImjZIWHAjZVsuEHFSkuSF159W0c548rNDnq5yJUBtaMCPEkBcAcdZIQagY1Zfa8uWVQmWL2MPNzlV0s0sFONkiFXEKYEVlzqaMAX+wgRZ8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4ZC1FZ17WZz9sgH;
-	Tue, 11 Mar 2025 18:38:26 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id kFuG1knKSIsb; Tue, 11 Mar 2025 18:38:26 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZC1FY6qB7z9sVm;
-	Tue, 11 Mar 2025 18:38:25 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CF7678B768;
-	Tue, 11 Mar 2025 18:38:25 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id VRYLasL8g2vh; Tue, 11 Mar 2025 18:38:25 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 887658B763;
-	Tue, 11 Mar 2025 18:38:24 +0100 (CET)
-Message-ID: <ab2a370d-3e71-41f1-9afc-6e2c47db87d9@csgroup.eu>
-Date: Tue, 11 Mar 2025 18:38:23 +0100
+	s=arc-20240116; t=1741714781; c=relaxed/simple;
+	bh=kv+WwmqbGUNvAZ6GSHtKuPsxWSYd7YbvpRYthTPZg+M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=pZeHnQ55nLoL4fWHxmPPW4UwFKba2ZXeZNPX57oAh9FQgzu79N/KQKTazrefjyfd0VnJO4HSGoSbOligQrGdQZQWbTPp5dAsqs37fbCIpLFz7qoqLZ5+97ZWJISYp49IoRM/gY99Ae7gjPWW+ehTeUW9R5/AMBd+tcyXqF89M4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cH/02nWr; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741714780; x=1773250780;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=kv+WwmqbGUNvAZ6GSHtKuPsxWSYd7YbvpRYthTPZg+M=;
+  b=cH/02nWrJ5/0trGF3xk5H31DCm9kiMXtf0KJprTtsMC3T/BzQ98XQqhV
+   zbjy6cYj++Mr+jf02AKyjfTcKmBvj1/a1iUJvxo0EOdF9jaOtbrWDELqv
+   lrTRHqhEFldQ1NRBzw4FmRJwBle8d0ehfpGVWmZlkSGakdqqoF0H4U4Fj
+   IKzrMBCW7T5n3oiRTsFUj8HNCKYKHI2T3Y5bNI4Vr9H6YT9WHIfGiJlos
+   oOe3WlzP5j05NAjhDCpNx42X7K8qMghwLiSd/Lof5V0amvR1No8cf/vD6
+   zT+WJ/GI1pKknCrigXPb3je0oRPNOXbhVKVbtNzLksKNwkpVAf8/mfeYY
+   g==;
+X-CSE-ConnectionGUID: 1eNGaYU4QCypM6VAm/4K6Q==
+X-CSE-MsgGUID: w3lOysZGQ+evXyLkHiRQpw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="54151993"
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="54151993"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 10:39:39 -0700
+X-CSE-ConnectionGUID: lukZ3jFvQKqbjZc2kJGWfw==
+X-CSE-MsgGUID: 81yNK9BARMSc9B197TEYsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="143583704"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.251])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 10:39:32 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, 
+ Patil Rajesh Reddy <Patil.Reddy@amd.com>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <232231fc-6a71-495e-971b-be2a76f6db4c@stanley.mountain>
+References: <232231fc-6a71-495e-971b-be2a76f6db4c@stanley.mountain>
+Subject: Re: [PATCH v2] platform/x86/amd/pmf: fix cleanup in
+ amd_pmf_init_smart_pc()
+Message-Id: <174171476741.1715.12385728122456798855.b4-ty@linux.intel.com>
+Date: Tue, 11 Mar 2025 19:39:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] powerpc, bpf: Support internal-only MOV instruction
- to resolve per-CPU addrs
-To: Saket Kumar Bhaskar <skb99@linux.ibm.com>, bpf@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc: ast@kernel.org, hbathini@linux.ibm.com, andrii@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, eddyz87@gmail.com,
- song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- naveen@kernel.org, maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com
-References: <20250311160955.825647-1-skb99@linux.ibm.com>
- <20250311160955.825647-2-skb99@linux.ibm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250311160955.825647-2-skb99@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
+On Mon, 10 Mar 2025 22:48:29 +0300, Dan Carpenter wrote:
 
-
-Le 11/03/2025 à 17:09, Saket Kumar Bhaskar a écrit :
-> [Vous ne recevez pas souvent de courriers de skb99@linux.ibm.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> There are a few problems in this code:
 > 
-> With the introduction of commit 7bdbf7446305 ("bpf: add special
-> internal-only MOV instruction to resolve per-CPU addrs"),
-> a new BPF instruction BPF_MOV64_PERCPU_REG has been added to
-> resolve absolute addresses of per-CPU data from their per-CPU
-> offsets. This update requires enabling support for this
-> instruction in the powerpc JIT compiler.
+> First, if amd_pmf_tee_init() fails then the function returns directly
+> instead of cleaning up.  We cannot simply do a "goto error;" because
+> the amd_pmf_tee_init() cleanup calls tee_shm_free(dev->fw_shm_pool);
+> and amd_pmf_tee_deinit() calls it as well leading to a double free.
+> I have re-written this code to use an unwind ladder to free the
+> allocations.
 > 
-> As of commit 7a0268fa1a36 ("[PATCH] powerpc/64: per cpu data
-> optimisations"), the per-CPU data offset for the CPU is stored in
-> the paca.
-> 
-> To support this BPF instruction in the powerpc JIT, the following
-> powerpc instructions are emitted:
-> 
-> mr dst_reg, src_reg             //Move src_reg to dst_reg, if src_reg != dst_reg
-> ld tmp1_reg, 48(13)             //Load per-CPU data offset from paca(r13) in tmp1_reg.
-> add dst_reg, dst_reg, tmp1_reg  //Add the per cpu offset to the dst.
-
-Why not do:
-
-   add dst_reg, src_reg, tmp1_reg
-
-instead of a combination of 'mr' and 'add' ?
+> [...]
 
 
-> 
-> To evaluate the performance improvements introduced by this change,
-> the benchmark described in [1] was employed.
-> 
-> Before Change:
-> glob-arr-inc   :   41.580 ± 0.034M/s
-> arr-inc        :   39.592 ± 0.055M/s
-> hash-inc       :   25.873 ± 0.012M/s
-> 
-> After Change:
-> glob-arr-inc   :   42.024 ± 0.049M/s
-> arr-inc        :   55.447 ± 0.031M/s
-> hash-inc       :   26.565 ± 0.014M/s
-> 
-> [1] https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Fanakryiko%2Flinux%2Fcommit%2F8dec900975ef&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Ca4bc35a9cb49457fb5cc08dd60b73783%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638773062200197453%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=1t2Bc3w6Ye0u33UNEjsSAv114HDOGNXmk1I%2Fxt7K2sc%3D&reserved=0
-> 
-> Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-> ---
->   arch/powerpc/net/bpf_jit_comp.c   | 5 +++++
->   arch/powerpc/net/bpf_jit_comp64.c | 8 ++++++++
->   2 files changed, 13 insertions(+)
-> 
-> diff --git a/arch/powerpc/net/bpf_jit_comp.c b/arch/powerpc/net/bpf_jit_comp.c
-> index 2991bb171a9b..3d4bd45a9a22 100644
-> --- a/arch/powerpc/net/bpf_jit_comp.c
-> +++ b/arch/powerpc/net/bpf_jit_comp.c
-> @@ -440,6 +440,11 @@ bool bpf_jit_supports_far_kfunc_call(void)
->          return IS_ENABLED(CONFIG_PPC64);
->   }
-> 
-> +bool bpf_jit_supports_percpu_insn(void)
-> +{
-> +       return true;
-> +}
-> +
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
 
-What about PPC32 ?
+The list of commits applied:
+[1/1] platform/x86/amd/pmf: fix cleanup in amd_pmf_init_smart_pc()
+      commit: 5b1122fc4995f308b21d7cfc64ef9880ac834d20
 
->   void *arch_alloc_bpf_trampoline(unsigned int size)
->   {
->          return bpf_prog_pack_alloc(size, bpf_jit_fill_ill_insns);
-> diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
-> index 233703b06d7c..06f06770ceea 100644
-> --- a/arch/powerpc/net/bpf_jit_comp64.c
-> +++ b/arch/powerpc/net/bpf_jit_comp64.c
-> @@ -679,6 +679,14 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
->                   */
->                  case BPF_ALU | BPF_MOV | BPF_X: /* (u32) dst = src */
->                  case BPF_ALU64 | BPF_MOV | BPF_X: /* dst = src */
-> +                       if (insn_is_mov_percpu_addr(&insn[i])) {
-> +                               if (dst_reg != src_reg)
-> +                                       EMIT(PPC_RAW_MR(dst_reg, src_reg));
-
-Shouldn't be needed except for the non-SMP case maybe.
-
-> +#ifdef CONFIG_SMP
-> +                               EMIT(PPC_RAW_LD(tmp1_reg, _R13, offsetof(struct paca_struct, data_offset)));
-> +                               EMIT(PPC_RAW_ADD(dst_reg, dst_reg, tmp1_reg));
-
-Can use src_reg as first operand instead of dst_reg
-
-> +#endif
-
-data_offset always exists in paca_struct, please use 
-IS_ENABLED(CONFIG_SMP) instead of #ifdef
-
-> +                       }
->                          if (imm == 1) {
->                                  /* special mov32 for zext */
->                                  EMIT(PPC_RAW_RLWINM(dst_reg, dst_reg, 0, 0, 31));
-> --
-> 2.43.5
-> 
+--
+ i.
 
 
