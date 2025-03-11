@@ -1,129 +1,127 @@
-Return-Path: <linux-kernel+bounces-556292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC39A5C3BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:26:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59032A5C3B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF7C416E381
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A25BE3B4756
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797E525C70A;
-	Tue, 11 Mar 2025 14:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3454225B696;
+	Tue, 11 Mar 2025 14:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="EQMHbEiA"
-Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InI0GoQz"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5459025B662;
-	Tue, 11 Mar 2025 14:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5351917C9F1;
+	Tue, 11 Mar 2025 14:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741703148; cv=none; b=W99Fdm8JN3h1Tk+IKE51+TArk1vAgp+rOB8HdymCzP1NmJq+3UjipAx809MBgT1dac/JaAvO2JhFEVuAZToOdo3q5B/627iRmzISlg4BZ/D7Qmp2/Z+Q15SFDELrrSyjDwU+/JI3rkwRYE3LcQtqyxNuMR0m/jhT6O3hW95Gbsw=
+	t=1741703018; cv=none; b=J2UUdfXCCTtMDsB502KF8xIpOPKrFxSxJDMvgRNmTKNP1+P+tmcXOt3lOPZFNAxUtYZCoKZDoKJEh++gWQWNWEYzymmyCxedjTv1ByRV5GaQRztlX1azGW/0FwK7B6F4YmNCevAiy7HPuVZubfinJj4NMxMVH8UP3WNHB/Ejzqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741703148; c=relaxed/simple;
-	bh=Ab9WMOjfiwMqqFBSOoR1r2KAdu/+Oo3bObQRNjmyphM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pIhUpsmvaHwFRoHCCaYlo6QLDLojR3hLUyu521JQ7wjrm+yKcTmWcN+jN0oMVGF4+FyH1/W/clqwQDn/0pBY0p/nkRFsNpPv93Shs7hw5EX5KQT9Dh4vop/YFVxLZxz4cXmwCY9g+a0O2n3M+rzOP0ME1/eOJgki7NfekqAyX6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=EQMHbEiA; arc=none smtp.client-ip=81.200.124.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
-	by ksmg02.maxima.ru (Postfix) with ESMTP id 2F4B61E001B;
-	Tue, 11 Mar 2025 17:25:45 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru 2F4B61E001B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1741703145; bh=Kv8ydK+O3gTte/jeAEnlroRg/U3IVqGbyAKr3GGGwtk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=EQMHbEiAYWqUdoR01iN5qfja+GuT2ZpInAIOz52ofPmSH29DonO2U3qJwoMuB9XzG
-	 K3w07IHGbUyEGF+nvhY3X5YyFgYZw2WBL0Tg9iZ4WobXUBd9/BjZ1G9MahTxuouz8q
-	 VO+tYaSUhynkkFDeZzJ715NBzCNVoh/gBkimWk8fseZMxODvRGvVGY5JGfQMXR7vnG
-	 PgNgPOLba0jVRyFCXH/Xx1VOaiB33XzBIlslNcKm/1kQc2doe/XcCupyfRR6U2X0vi
-	 1Z/AfwslSpWpH7Db5yKH6+FxG+CL+E7/Ceh6ObpyNEXv45pgE6OBtlw4ihPG37OgiT
-	 YwfopwtVbu23A==
-Received: from ksmg02.maxima.ru (mail.maxima.ru [81.200.124.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg02.maxima.ru (Postfix) with ESMTPS;
-	Tue, 11 Mar 2025 17:25:45 +0300 (MSK)
-Received: from GS-NOTE-190.mt.ru (10.0.246.70) by mmail-p-exch02.mt.ru
- (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Tue, 11 Mar
- 2025 17:25:42 +0300
-From: Murad Masimov <m.masimov@mt-integration.ru>
-To: Steve French <sfrench@samba.org>
-CC: Paulo Alcantara <pc@manguebit.com>, Ronnie Sahlberg
-	<ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, Tom
- Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, Jeff Layton
-	<jlayton@kernel.org>, Suresh Jayaraman <sjayaraman@suse.de>, "Paulo Alcantara
- (SUSE)" <pc@cjr.nz>, <linux-cifs@vger.kernel.org>,
-	<samba-technical@lists.samba.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, Murad Masimov <m.masimov@mt-integration.ru>
-Subject: [PATCH 4/4] cifs: Fix integer overflow while processing closetimeo mount option
-Date: Tue, 11 Mar 2025 17:22:06 +0300
-Message-ID: <20250311142206.2045-5-m.masimov@mt-integration.ru>
-X-Mailer: git-send-email 2.46.0.windows.1
-In-Reply-To: <20250311142206.2045-1-m.masimov@mt-integration.ru>
-References: <20250311142206.2045-1-m.masimov@mt-integration.ru>
+	s=arc-20240116; t=1741703018; c=relaxed/simple;
+	bh=bVsNey6nqpLgc9wuzfwetyTPGy3g4G0YH24pC9RLxqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VjYpMnGXTsXt3bz0XGw7piYV6RFZBba/BLmD9/YhFopJbhZVj2ygqnLZxsP0mCil7jVyL/HEja7S7A/APb9SKj5/x7DozJ4IuJzYkQm189V5LOKNlHyZqAH6JtUgtVeM6wNG7nyE+OmK6Xs/w4p09bZsNBeSudsBFvKX1jLbOZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=InI0GoQz; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-225a28a511eso7144475ad.1;
+        Tue, 11 Mar 2025 07:23:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741703016; x=1742307816; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bVsNey6nqpLgc9wuzfwetyTPGy3g4G0YH24pC9RLxqM=;
+        b=InI0GoQzsNjF6suEIDz9jLS+cBs6zHcmm9E5uAzcHucpUIEPT/cgBMAt9imUlTMvrr
+         ctvWClFb4XMkEoJxSCjnjtyIMkKoG8Z0ZkeNmsIhZ/Ykj+/xyEnNAbgNn+/G6rSapXQo
+         qrWfkeV+Z53io1xB2sXFXuM68Jqpgdl1Mkzxl0reZXtNHegyyFt4pOxRszmeuz0jsvit
+         TRCOj+pge+gA/wSo/9mBIpUJIuUrKe/Rx8vefK7TI3auVthkcsdsiFdrrEskbT2fhhvp
+         usxvTmNHzeIUgze39udWtDuWHAMopsZrWVwXbbs8kgJ1AGlkaflOQE++Ujel0yKeEhh8
+         jGiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741703016; x=1742307816;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bVsNey6nqpLgc9wuzfwetyTPGy3g4G0YH24pC9RLxqM=;
+        b=VJ+DIdxCrgd5YVzJI7VssWAvF+gTBTCCCvmkxb0lag9pRsXshN/1f+zU4vnd7T8DdA
+         acvpw4slh+mvYPgCYadt9kGZLdDwWHl5i6NQAetdV94DYH/F5uRxUOFymjQOQp3uET2W
+         tQWS1Brqdr6XEheu81eN5fuaUkcNzvOR/ML+AEQ7+9mho3Zv6Tx3N7b3BeA67T8kri4P
+         7tew5wsj1d8xxV5SrCFoYWhegRmeqyoPZgWq7FklFqDzJ4K1J2EzoYjDsaH69/9NmOZM
+         CWlvwcJmZIKoUI2EL1ygjfzvVehLoo9sOBbd8vNDtx/AeJuO14aBaYAg6UMoFY7h4tc+
+         vReQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULR4L8PdrtywudHR4hdQFc2nAer07zYp8YwaXaActwS92+zOu7dQmV+CFzwckfRMl51y88CFjuDYcnmEnw@vger.kernel.org, AJvYcCV98p9f05b5yEP0OhsGl4fvG558y/W+GSrLHkxRcjm97ZyITR/ee8MzKVgREMb34IAMZDSmHoa4870=@vger.kernel.org, AJvYcCWWliUuheWGda6d7PpEUmrHChqls4beYiT24fScqateDOf2CrOEn8YmrlbrAFc3Z2TcB5XEr7Z6KseiwGV9QasWYe20@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOwNynN+c271tfwoGtNIZWXQZ5ab+ovaXAy2Y5+3X1lGShEbcP
+	SZgIeNipMH29cHVdxKkPUW7TRjWwDhIWIRLmPkyhAJkJxuYVaaPp
+X-Gm-Gg: ASbGnctBboH2a1BNi5l6dygs2kDhFiOsvn/kinwp1Dp9zAgFAHACM5tOJ0uOXc5NXoW
+	yGJEt0kFFeU14lLgJz0X1BBiO3LFdsI6YhCcVEvTcf+o5suWxL8j14/ToIOEOELU2hunM6cUwor
+	F4V3g7CzeZxQkEXjOzCmV/03bceph6k/VZjuUB3veprBubagFZX2wARJBNmfjqpla+GHc++OeoU
+	jmIj/kSeenev1zGUvAK+tkC7HT+ru/OUZXUVAHU2XM3EsWn2cerELS7/YS6fmUHnvU1NVISgVXq
+	KIFsfu/HZ3zx8JUAlu+si78cDU+xf95ETMFiydIg3pYw
+X-Google-Smtp-Source: AGHT+IHqrPFh17Cmi1OZseYWRYA77dEJerZdXXiZoErlG8RlygvpGsCvt+XYSvfs8p54D3Zlh1fLkw==
+X-Received: by 2002:a17:902:f686:b0:224:1ec0:8a1d with SMTP id d9443c01a7336-22428ab535bmr240669445ad.30.1741703016149;
+        Tue, 11 Mar 2025 07:23:36 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a91985sm98340635ad.194.2025.03.11.07.23.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 07:23:34 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id CAC7A41F562C; Tue, 11 Mar 2025 21:23:31 +0700 (WIB)
+Date: Tue, 11 Mar 2025 21:23:31 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Purva Yeshi <purvayeshi550@gmail.com>, rostedt@goodmis.org,
+	mhiramat@kernel.org, corbet@lwn.net
+Cc: mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 0/3] docs: tracing: Refactor index.rst documentation
+Message-ID: <Z9BHY1UH1Q3fET4P@archie.me>
+References: <20250311124158.22950-1-purvayeshi550@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
- (81.200.124.62)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: m.masimov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;81.200.124.62:7.1.2;ksmg02.maxima.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.62
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191671 [Mar 11 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/11 08:08:00 #27707391
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IDclmnVtmqF5WZTo"
+Content-Disposition: inline
+In-Reply-To: <20250311124158.22950-1-purvayeshi550@gmail.com>
 
-User-provided mount parameter closetimeo of type u32 is intended to have
-an upper limit, but before it is validated, the value is converted from
-seconds to jiffies which can lead to an integer overflow.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+--IDclmnVtmqF5WZTo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 5efdd9122eff ("smb3: allow deferred close timeout to be configurable")
-Signed-off-by: Murad Masimov <m.masimov@mt-integration.ru>
----
- fs/smb/client/fs_context.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Tue, Mar 11, 2025 at 06:11:58PM +0530, Purva Yeshi wrote:
+> Refactor Documentation/trace/index.rst to improve clarity, structure,
+> and organization. Reformat sections and add appropriate headings for
+> better readability.
+>=20
+> Improve section grouping and refine descriptions for better usability.
 
-diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-index 89e54cf238f8..da5973c228ed 100644
---- a/fs/smb/client/fs_context.c
-+++ b/fs/smb/client/fs_context.c
-@@ -1366,11 +1366,11 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
- 		ctx->acdirmax = ctx->acregmax = HZ * result.uint_32;
- 		break;
- 	case Opt_closetimeo:
--		ctx->closetimeo = HZ * result.uint_32;
--		if (ctx->closetimeo > SMB3_MAX_DCLOSETIMEO) {
-+		if (result.uint_32 > SMB3_MAX_DCLOSETIMEO / HZ) {
- 			cifs_errorf(fc, "closetimeo too large\n");
- 			goto cifs_parse_mount_err;
- 		}
-+		ctx->closetimeo = HZ * result.uint_32;
- 		break;
- 	case Opt_echo_interval:
- 		ctx->echo_interval = result.uint_32;
---
-2.39.2
+Where are patches [2/3] and [3/3]?
 
+Confused...
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--IDclmnVtmqF5WZTo
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ9BHXgAKCRD2uYlJVVFO
+o5uoAQCj+toCQB1w4pPX2Y08OQjlVmrltaLUyZYWdezv2/Rz2AD/UnpRB4fxSlqU
+EWbYci2rNEeq10P541gFEii25XTTRAY=
+=QEAM
+-----END PGP SIGNATURE-----
+
+--IDclmnVtmqF5WZTo--
 
