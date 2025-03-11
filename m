@@ -1,108 +1,109 @@
-Return-Path: <linux-kernel+bounces-555542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C987A5B951
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:37:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D1AA5B950
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:37:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDFA47A64AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:36:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A301189270F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9301F09AC;
-	Tue, 11 Mar 2025 06:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428E01F4C96;
+	Tue, 11 Mar 2025 06:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QyYU6EqG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SzpIgjZk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72CB20B22
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2947D20B22;
+	Tue, 11 Mar 2025 06:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741675062; cv=none; b=aiuyItjbqRoynVXbfwsdjoBH5ksKuDS68afxf8TMJ5rSu5A9m19vZXEz+qEXHrlf0EoEv7Ymr0EdRnm8hJb/gjz3aZS5FlrNOnz671XzfwjName7e9p84Utw3DbPeEo4HHR9MW8mopmnvJ86nJ2WOnSDxWHCpaw+aivQJSeYXvg=
+	t=1741675054; cv=none; b=s6fa2YDAEFmPEC6r8ZXtWkTdHu83m66FQ57ZaPR9pW755qfUcClklQcKesl1Ce9yVPoAT/DAUuJTb7mc+6XsPEsagXjegU7UD6vsV9JajCu0eSUbaxDeOhizrIj2kxkiP+egkHYnXAnP9SR5izeI0p5rNwFbJS0OA/pOrKx04SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741675062; c=relaxed/simple;
-	bh=7Dx/02eJ/SX/h6USt8YYSv8WT2B5bIjFotP82bWP5Z8=;
+	s=arc-20240116; t=1741675054; c=relaxed/simple;
+	bh=ElT+BAOxpAUwbci6cH2/IoskBbgd/MKv7IgFu5NltY8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z1GYVYdxG17pk429aCWQZKWetnhJEk/h2Q3PyaFHrbrwXlfaXgrmarGfKuNP3LLgOeA6DJDJ3g98RSOm/syhBzv3FjbIhyqT+mbE50VVN8WjoRvfQXVHIbIrotXT53qe0TLuaXhThe5PVv5qgtB/GMs2ikqY6d0o9F+QUN4y/lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QyYU6EqG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBF6CC4CEE9;
-	Tue, 11 Mar 2025 06:37:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741675061;
-	bh=7Dx/02eJ/SX/h6USt8YYSv8WT2B5bIjFotP82bWP5Z8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QyYU6EqGfITDsG/KrDr3tfVA1JWz7h/yXLRt045l76yrCPFNauVphJmBhCpM/0zDe
-	 RdE40RaGszT4wsAU8y4rd7fwfNAoi3LT/W7DZ/AHiKKQ36GJ7suVTPjlIke+0yzcB2
-	 Fs54wpo131/EddZceDvd7ZFqgOuyCMuVJQ7hc7fc=
-Date: Tue, 11 Mar 2025 07:36:24 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Barry Song <21cnbao@gmail.com>
-Cc: conduct@kernel.org, Nhat Pham <nphamcs@gmail.com>,
-	Hillf Danton <hdanton@sina.com>,
-	Qun-Wei Lin <qun-wei.lin@mediatek.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 2/2] kcompressd: Add Kcompressd for accelerated zram
- compression
-Message-ID: <2025031104-ovary-uncommon-2007@gregkh>
-References: <20250307120141.1566673-3-qun-wei.lin@mediatek.com>
- <CAGsJ_4xtp9iGPQinu5DOi3R2B47X9o=wS94GdhdY-0JUATf5hw@mail.gmail.com>
- <CAKEwX=OP9PJ9YeUvy3ZMQPByH7ELHLDfeLuuYKvPy3aCQCAJwQ@mail.gmail.com>
- <20250309010541.3152-1-hdanton@sina.com>
- <CAKEwX=Mwh9SKWfmaS9q4fym7L-v5m6GmvJrQF8eFizJJd904rA@mail.gmail.com>
- <CAGsJ_4wFfqFZQw-TOM83gUEV_rN6uio1sujXdjCRKTOipPM2SQ@mail.gmail.com>
- <20250310103427.3216-1-hdanton@sina.com>
- <CAGsJ_4w8cFgdPmHH5KLeKoEEVN1LT4-z0sX_2vtV5sc7yOQb8g@mail.gmail.com>
- <20250310230902.3282-1-hdanton@sina.com>
- <CAGsJ_4xFxLxX0=DrbiO3Mi5yCjCfZiDuJrbhTEra=rOnrD-W7A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DyWf1Z+pbYYKyDFhiAeDcmJf6uT8MWVKz3zzPvg942WhQTtf9w8W5gbuTMcjCxMl2lAIs6PnEWB5O9B/Ejiobrt4DzVPB0xPDG3nmLFnR7THoYfS/t69mHnREGxiyEvK266AAYHgkbmKG01P78qSihSHClyjPWRMqEv1hb9ZQJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SzpIgjZk; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741675053; x=1773211053;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ElT+BAOxpAUwbci6cH2/IoskBbgd/MKv7IgFu5NltY8=;
+  b=SzpIgjZk6oROpEtjIlm1NPknobIb7zmZyroZNiH4KWYpU29WAUPT0b2p
+   68111WMDKudDa7+Zp1aOPzbGcRWC9E+jiXRLc1qpLJvl6N8t67c1oa1Jf
+   aR3l3v057QwT/KsFCZgkzcZFiaaOCTEcBY6ZyMLsb1dKZkhF0517fUlUV
+   9apsMHniQmGAXzDJM4FTSWE0m98C/jPXVJ3zmFC5DRPTZ6tdVh6jWn4JY
+   lQTgUxbsQxZLiouq8IuyRn3As0DvO2vuAOD2mKR8DHhfdaJ/mJQ8NukR0
+   /2UnZCM1OkTXHlYCwFIRA4HbpEmU/vKprFa+4VnNW0Si1dIMPWFlmhVa8
+   g==;
+X-CSE-ConnectionGUID: nszGvnQTTymjxyKhCh44iQ==
+X-CSE-MsgGUID: oJ4LJQ3nSxup3pEpKvE8ew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="68057925"
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="68057925"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 23:37:32 -0700
+X-CSE-ConnectionGUID: wjoxnnKbRd69CEZJBrt4lQ==
+X-CSE-MsgGUID: MwmQjN6kRjqvlvrNR6cq+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="124399077"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 23:37:29 -0700
+Date: Tue, 11 Mar 2025 08:37:26 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
+	andriy.shevchenko@linux.intel.com, raymond.tan@intel.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] gpio: elkhartlake: depend on
+ MFD_INTEL_EHL_PSE_GPIO
+Message-ID: <Z8_aJqNKK9AgBnK8@black.fi.intel.com>
+References: <20250307052231.551737-1-raag.jadav@intel.com>
+ <20250307052231.551737-3-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGsJ_4xFxLxX0=DrbiO3Mi5yCjCfZiDuJrbhTEra=rOnrD-W7A@mail.gmail.com>
+In-Reply-To: <20250307052231.551737-3-raag.jadav@intel.com>
 
-On Tue, Mar 11, 2025 at 04:57:19PM +1300, Barry Song wrote:
-> On Tue, Mar 11, 2025 at 12:09 PM Hillf Danton <hdanton@sina.com> wrote:
-> >
-> > On Tue, 11 Mar 2025 01:44:27 +0800 Barry Song <21cnbao@gmail.com>
-> > > On Mon, Mar 10, 2025 at 6:34 PM Hillf Danton <hdanton@sina.com> wrote:
-> > > > On Mon, 10 Mar 2025 09:44:24 +1300 Barry Song <21cnbao@gmail.com>
-> > > > > I also feel extremely uncomfortable. In Eastern culture, this is an extremely
-> > > > > vulgar word, more offensive than any others.
-> > > > >
-> > > > If culture is not abused, feel free to show us how it is defined to be
-> > > > more offensive than any others in Eastern culture.
-> > > >
-> > > Having no manners is not your fault. The ignorant fear nothing.
-> > >
-> > Oh lad, just tell us anything true. It is not difficult.
+On Fri, Mar 07, 2025 at 10:52:28AM +0530, Raag Jadav wrote:
+> Now that we have Intel MFD driver for PSE GPIO, depend on it.
 > 
-> +Code of conduct.
-> 
-> I know there is already a ban for this person in another thread [1],
-> but I am also
-> officially requesting an additional ban. Having contributed to the
-> Linux kernel for
-> over 15+ years, both professionally and out of personal interest, I have never
-> encountered a developer who engages in random and irrational personal
-> attacks[2] and persistently did this despite clear requests to stop. This is
-> utterly bizarre.
-> 
-> Please give serious consideration to extending this guy’s ban on a
-> case-by-case basis.
-> 
-> [1] https://lore.kernel.org/all/67cf7499597e9_1198729450@dwillia2-xfh.jf.intel.com.notmuch/
-> [2] https://lore.kernel.org/all/20250309010541.3152-1-hdanton@sina.com/
+> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+> ---
 
-We will consider it, thank you for letting us know.
+Andy, any guidance on GPIO?
 
-greg k-h
+Raag
+
+>  drivers/gpio/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 98b4d1633b25..232ef211ef38 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -1372,7 +1372,7 @@ config HTC_EGPIO
+>  
+>  config GPIO_ELKHARTLAKE
+>  	tristate "Intel Elkhart Lake PSE GPIO support"
+> -	depends on X86 || COMPILE_TEST
+> +	depends on (X86 || COMPILE_TEST) && MFD_INTEL_EHL_PSE_GPIO
+>  	select GPIO_TANGIER
+>  	help
+>  	  Select this option to enable GPIO support for Intel Elkhart Lake
+> -- 
+> 2.34.1
+> 
 
