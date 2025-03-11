@@ -1,55 +1,94 @@
-Return-Path: <linux-kernel+bounces-556784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E104EA5CE9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:03:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B0FA5CE90
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:02:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3A9C3B8C60
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:02:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CE5D7A0FC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BCA2641F0;
-	Tue, 11 Mar 2025 19:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3C525EF8E;
+	Tue, 11 Mar 2025 19:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hpN+QqzA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcIYL7Pd"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D7E2641E3;
-	Tue, 11 Mar 2025 19:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0613E262D37;
+	Tue, 11 Mar 2025 19:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741719738; cv=none; b=bH0/JL5hiYKSnNBRlI7FWvBvr324L6EX3hsBjEQ54z4cd+cIJQXvJAzhAUHBhlHmxKdPt1ZFI7ElLHmckR91WbuP2ZQjvswIofNvuzJgxSi79R06gsX3ZnqYFipAUr/wwGFugAsUCJBuUmW7nltQzAGpQjXubXpJg/jzadLtWh4=
+	t=1741719727; cv=none; b=HLVWzsI3v9k8jzi6jrqpi13c4FMFIxppTwihX7OrvVVZzof731KLT0iTTkz7aGnoHSFRpLnxzB6nQSexre35nb53etNOsS3VJcon6eWPpSuatYG9TaFqjCKMqII7trRgHP4cWgwzDUXx3iF5PAacmlg2DQOT0UGFaiC4HVH2ghA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741719738; c=relaxed/simple;
-	bh=s+zyL0W+ZVLDk60GQXXqVimEk+8o11ddCaQA5gPslWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uGgbcTxLg94lEcH51xfF/MRyJ8Md6bSbw6Ngr3eVEIbNHfkPMkAJzfTe3nw8IEH+1GWSiH/3Po+5mKz73loZcVWzEucVIpRR5f/tbcTcy3RxhgfoX9gnRas4pShKoaVrl/QkIRb2U6XWJa2FeaiFOEBrARWnU/EOZ4KchHA828o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hpN+QqzA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D69F5C4CEE9;
-	Tue, 11 Mar 2025 19:02:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741719738;
-	bh=s+zyL0W+ZVLDk60GQXXqVimEk+8o11ddCaQA5gPslWU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hpN+QqzActWSMKGdXh2GDOZEviPxHshzk95Dn3HHslkOB0qc5A4Fhtox4A+Tx3qN8
-	 CiATauxKQJj4ethtQaa36TNhDWiD63xFyFmYUb4Obg1AM54sM0jpyXSc7GAZ/EZpGj
-	 ArfpNaRb2PNbJwnAWPbLPJ5Scu7RLgSU9mVDMfNqoRSNzY6jh7ZJaKjdYAy2426JPx
-	 3eIkIk+wB6oq1bFlOZC9aT4g/NYtRdGjIdneNQ20bzunWQKg3/UVgCDdtYDNZrgV++
-	 hOnW7CNVac91fJBe/bWWhfKxstlu+TicJjoui6ll7Bn3eU3fxopL2SWVs5t/GEpg73
-	 YlIT+21tK+93g==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ben Hutchings <ben@decadent.org.uk>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: [PATCH] kbuild: deb-pkg: fix versioning for -rc releases
-Date: Wed, 12 Mar 2025 04:01:33 +0900
-Message-ID: <20250311190212.634123-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741719727; c=relaxed/simple;
+	bh=ZyKzSu+s1wOfR3oHKYaz0cQlG4dgr/gjkEwJavyClh0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dFKV/D/HtDD7SmdTStmHYl/n3NNydLi9K2yMzNWm73XoQhM9ZOWSTwIyBZQ4AdeRUdrErkCPf93yqAvWm5vj9UEbHWH4TGwjuln5yjOXj/WJH4AVb4bGUj153MKagaGAQy3NMwRM3447854LX2TUrtW94RlCvMXopI4FWFrgw4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NcIYL7Pd; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so14350285e9.2;
+        Tue, 11 Mar 2025 12:02:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741719719; x=1742324519; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZM/C0Y6KtCo6GXxz4sTkdCklkA06E/YKrVilZFUzRyI=;
+        b=NcIYL7Pda1XBjInNUJICIMj7kAsZqWoRQXgY04wjFQ5m44DueBKzx85gPe2cubln/O
+         rt7o+9mA3ChGCPHbr4ymf/xI7Sv35GyLzbKejLJiEI4xEPCyPEvHuQJuPRPiKNFwLjz4
+         EuJMjl76er6Zhgw6k6OSq+94x2JlOA7A2SVFhSR4wKJuw8ajnHAFioB/+JRFJxFF4dcp
+         olI7vGu0Wu6VtUpWTpKx1prMbJAADTH9tlqMtuRSR01o5FRViM+TZmCrQYpi7Vmq0gvO
+         BXC6ndPsdCWoJYptrE5CiiwlNzfJZ7XK6UHW1QOj7M21Mai+sC05/fQ0EHuQF6E9kHCq
+         3EMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741719719; x=1742324519;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZM/C0Y6KtCo6GXxz4sTkdCklkA06E/YKrVilZFUzRyI=;
+        b=J71HXE3ToejnpKNijdzuFPX35ptOJRzAWmKEois8GsoE9ZfoF8n1KK8EfQfLrIiZ+f
+         /O3BFIZ8Yqx39Ivy4YaafFMGtGBhrHO1X31Y/2PlvgHs2Y+vmQocqJzPr4DNwXgCrJNI
+         1d9cH8Hk9mNW3EIA8g3j/p1YHckys2NlEw6vfaMOrdU0p3ryll/O4kV6oJe8Si3w6e0/
+         RicEoHDV8g0RPsJk4Spwq7E6AjK+J6tLECsE4ai4qeMcvbEccUro3iOa0oqYyobunC7z
+         LfFCrh8aW19GpCLyTdtx/RnUrFppBfDPIQ25lFvIMCmejfmoa2u7DAg3Uui9LZP4fHRt
+         zRdw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5036/7UGGl2yvhEOYNpaImj4QJQggymaL7y/WC7cN77+Q5g3LAb2ExRniutwWknmN+WQOuxIevi1sct0=@vger.kernel.org, AJvYcCWwJf/3tvbqBDfitKkqhpPj3a6s7CONgSCQe4zKL1GzWvMf0hAy4PkU+XQDNiK9s8G75900Z3U2@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmHGITXqfXD+B26v994t+5vHO4JjWXKk39Ik4LD6mHtt35HFGe
+	3b9bQcbk0jdCIXsN5/zvYIZP27bKPrq5Jy/8xiKbD3ckBJ1GPpOY
+X-Gm-Gg: ASbGncsLU+0P6R4RuA/hAdRStklHLNLLfaoUOmomtLS4XVEMtcol3Ou+RLE7SSBABgg
+	g9LABeiVmuQ6icxf9v9DCr7AraQ2J8zoyL5IWDGAAKsy+9idNmtmvnelQWtFsqaJkRw+sYDlWRX
+	jOILxtfOFzm14O5YAlqYOFmq7N5bkofDCKkvfzJtGiBzqB3tPcMYf+EawIbzE3CrthwTff4i8ea
+	RpGP857tT7xcMr+T0Awnky1Q7Ahw0cmQVUSQl8/Qbt0DPSmI8uavgUMgKKzJDRJSPKfMfOegtzo
+	5GfwEZh+foYq+U+XIHT1Y/i8dEXOS0pmfkxIOHzaft3CGQ==
+X-Google-Smtp-Source: AGHT+IF8L17vBaDo66fasMWl6iiHkxzIXdBOdv+IvwdgmD89ZI0aTDkON53jTbr9t1d4zfPaflVzqA==
+X-Received: by 2002:a05:600c:4ecb:b0:43c:eeee:b70f with SMTP id 5b1f17b1804b1-43ceeeeba17mr82834005e9.24.1741719718920;
+        Tue, 11 Mar 2025 12:01:58 -0700 (PDT)
+Received: from qasdev.Home ([2a02:c7c:6696:8300:e969:4b33:5aa2:11e7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cfcbdd0a7sm64617655e9.11.2025.03.11.12.01.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 12:01:58 -0700 (PDT)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: christian.koenig@amd.com,
+	ray.huang@amd.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	thomas.hellstrom@linux.intel.com,
+	Arunpravin.PaneerSelvam@amd.com,
+	karolina.stolarek@intel.com,
+	jeff.johnson@oss.qualcomm.com,
+	bigeasy@linutronix.de
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] drm/ttm/tests: fix potential null pointer dereference in ttm_bo_unreserve_bulk()
+Date: Tue, 11 Mar 2025 19:01:38 +0000
+Message-Id: <20250311190138.17276-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,41 +97,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The version number with -rc should be considered older than the final
-release.
+In the ttm_bo_unreserve_bulk() test function, resv is allocated 
+using kunit_kzalloc(), but the subsequent assertion mistakenly 
+verifies the ttm_dev pointer instead of checking the resv pointer. 
+This mistake means that if allocation for resv fails, the error will 
+go undetected, resv will be NULL and a call to dma_resv_init(resv) 
+will dereference a NULL pointer. 
 
-For example, 6.14-rc1 should be older than 6.14, but to handle this
-correctly (just like Debian kernel), "-rc" must be replace with "~rc".
+Fix the assertion to properly verify the resv pointer.
 
-  $ dpkg --compare-versions 6.14-rc1 lt 6.14
-  $ echo $?
-  1
-  $ dpkg --compare-versions 6.14~rc1 lt 6.14
-  $ echo $?
-  0
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Fixes: 588c4c8d58c4 ("drm/ttm/tests: Fix a warning in ttm_bo_unreserve_bulk")
+Cc: stable@vger.kernel.org
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
 ---
+ drivers/gpu/drm/ttm/tests/ttm_bo_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- scripts/package/mkdebian | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index 193e33bcb989..80ed96561993 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -167,7 +167,9 @@ version=$KERNELRELEASE
- if [ "${KDEB_PKGVERSION:+set}" ]; then
- 	packageversion=$KDEB_PKGVERSION
- else
--	packageversion=$(${srctree}/scripts/setlocalversion --no-local ${srctree})-$($srctree/scripts/build-version)
-+	upstream_version=$("${srctree}/scripts/setlocalversion" --no-local "${srctree}" | sed 's/-\(rc[1-9]\)/~\1/')
-+	debian_revision=$("${srctree}/scripts/build-version")
-+	packageversion=${upstream_version}-${debian_revision}
- fi
- sourcename=${KDEB_SOURCENAME:-linux-upstream}
+diff --git a/drivers/gpu/drm/ttm/tests/ttm_bo_test.c b/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
+index f8f20d2f6174..e08e5a138420 100644
+--- a/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
++++ b/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
+@@ -340,7 +340,7 @@ static void ttm_bo_unreserve_bulk(struct kunit *test)
+ 	KUNIT_ASSERT_NOT_NULL(test, ttm_dev);
  
+ 	resv = kunit_kzalloc(test, sizeof(*resv), GFP_KERNEL);
+-	KUNIT_ASSERT_NOT_NULL(test, ttm_dev);
++	KUNIT_ASSERT_NOT_NULL(test, resv);
+ 
+ 	err = ttm_device_kunit_init(priv, ttm_dev, false, false);
+ 	KUNIT_ASSERT_EQ(test, err, 0);
 -- 
-2.43.0
+2.39.5
 
 
