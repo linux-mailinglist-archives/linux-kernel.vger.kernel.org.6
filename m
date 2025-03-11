@@ -1,214 +1,212 @@
-Return-Path: <linux-kernel+bounces-555906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4D9A5BE2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:45:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFD2A5BE2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:45:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18F83170321
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:45:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EB237A4792
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1652424168F;
-	Tue, 11 Mar 2025 10:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D458124EF9C;
+	Tue, 11 Mar 2025 10:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P7hPtugr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8YxJCI4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66661DE2BB;
-	Tue, 11 Mar 2025 10:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7E524EF8E;
+	Tue, 11 Mar 2025 10:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741689910; cv=none; b=tuxVwO809KjhvM8ccaDqoweH2byMFflsgNztUavxltmHdoBFpglmQGD8hA0eNBCJDzpFgmLK6A3RmqaEA4GRvn3iNKT1k2c5/jRfmZArDgPmY2ynnjEzP2WWqB5mkvmNejEwAmBEB6ZQBBH7TqTfauyASLHHrjpLhPAl9VTiI9o=
+	t=1741689944; cv=none; b=fTg9xx0YmeVsl5uo+StE/9eXWdyAuu6IF4G8gtTwuedoBQ8e/PV3oMUJ/AEo3mBVj+OyOyGfCQUvzqVliOPjAUqYDPi0vIqRK+cHWH03ywo7sz6L0zoRcmCT1BvvUOmjJMmvJyJ7d4l4GgudvoAS7kq8ieSDKjhTlvSr+S21j88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741689910; c=relaxed/simple;
-	bh=2qtZx71hOP7XTKnjKVCGoxZv4RprBeHFFlw7SOTHDCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UYiuBSefdq202vHzVbMphTxrihmHxupU2jsAZLWYDTa16tcil0kEXjVPZTlDIOyQxexeMsr7ZujXjDioHFdoPw6cR3tfz7g/umSLx7utyptCcasNasXa3ool/oyBuNRwhXgOtclwbNWp0WxdHjOGjWaJgXXXRUMZNmUmaY/GGOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P7hPtugr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BA4P1Z015125;
-	Tue, 11 Mar 2025 10:44:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	S2i6mRK0jajy0u0bUB2Z9AQTcwRxDHV/B/HG8iEiju8=; b=P7hPtugr6omYfGnF
-	DqAmVqW5Ec8QzF4iWGD/4Og9HQB5DAx/IavD+obS5gb5CdS5ikvpibXWZIF2RUVg
-	ezwUl16GdE9am/hNnwpU02HFbxGistvoPJNuov/DqWMw3eZM6cZo+Yv+IUTCH7fh
-	K3NO0eaoFqkNAhglRxQZSMooooPlLCQjOZYqZqnscMHrpCpDYANy1uzMm1zHrM0i
-	CmBM42HYPXIvxe3u7vfSo871QPqEs2QnTlI9OVAhc8pE97Wefe8ZZJ7cgDtRuATQ
-	C+0xq7slbdU6VCbxS3qpzrMXpkrGIt0jaeLMutPVO9UizqYf+9Pi6pJacA5lms1G
-	Dlk5uQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ab8m1hhm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 10:44:50 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52BAinNJ018053
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 10:44:49 GMT
-Received: from [10.253.38.132] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Mar
- 2025 03:44:42 -0700
-Message-ID: <4c24723a-1773-4034-95fb-47748f6e8982@quicinc.com>
-Date: Tue, 11 Mar 2025 18:44:40 +0800
+	s=arc-20240116; t=1741689944; c=relaxed/simple;
+	bh=fD3r6z7e6HcfQgOi10wve1Oi9uKtT2jOA0L0pllcXKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bkDpaMiWDhCIWkS/oNMAk2dfAUhqobafBIIqLTpa0VC0Qary63J4bggiReZRR23+u3dlTeWvfunYYg+3b77lcOd9nEEyzk8y9JMZ/NK7/kNNqxCsdxnZewnKm1YLS3ER1FChnAkd74E78NWDzdU9/xO306rZfYVQE5n61tyzej8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8YxJCI4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78603C4CEE9;
+	Tue, 11 Mar 2025 10:45:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741689943;
+	bh=fD3r6z7e6HcfQgOi10wve1Oi9uKtT2jOA0L0pllcXKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O8YxJCI42PaqFVX9Q9s1084n/qJWyZBTw3N+2jpU7rgzhecH6fKpmoHqhgK99vYLr
+	 MV7cqTxOvR57m+9wAQtv+TZ+HX5w61bRYrMIrELi9FQ5136avq1Zwxw/snCwuVa5Mr
+	 d/zW+9YDNBqnvVaF+r+ff2n4/G8SJwRgMKzxzy0laZUd4Xh8I0nMfIrmew4412lovZ
+	 jqjEPNKxhflAIVvgIcgaV5uEYX2km8esC1KmDpUNiCy6apJ1D/DyHZjE3J99NO6Vdg
+	 uUBV0qzweOE1MDcIggZvp76FKd5Z8lZch2FUJCrrtxrIajyE3f+yM3PhIri3KsPyNm
+	 s+Ie2c2dx/tFQ==
+Date: Tue, 11 Mar 2025 11:45:38 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
+	Yuli Wang <wangyuli@uniontech.com>, Jie Fan <fanjie@uniontech.com>,
+	Erpeng Xu <xuerpeng@uniontech.com>
+Subject: Re: [PATCH V2] ahci: Marvell 88SE9215 controllers prefer DMA for
+ ATAPI
+Message-ID: <Z9AUUvfId9J66zWS@ryzen>
+References: <20250311030217.4177569-1-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 04/14] net: ethernet: qualcomm: Initialize PPE
- buffer management for IPQ9574
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Lei Wei <quic_leiwei@quicinc.com>,
-        Suruchi Agarwal
-	<quic_suruchia@quicinc.com>,
-        Pavithra R <quic_pavir@quicinc.com>,
-        "Simon
- Horman" <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook
-	<kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        "Philipp
- Zabel" <p.zabel@pengutronix.de>,
-        <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
-        <srinivas.kandagatla@linaro.org>, <bartosz.golaszewski@linaro.org>,
-        <john@phrozen.org>
-References: <20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com>
- <20250209-qcom_ipq_ppe-v3-4-453ea18d3271@quicinc.com>
- <a79027ed-012c-4771-982c-b80b55ab0c8a@lunn.ch>
- <c592c262-5928-476f-ac2a-615c44d67277@quicinc.com>
- <33529292-00cd-4a0f-87e4-b8127ca722a4@lunn.ch>
- <cffdd8e8-76bc-4424-8cdb-d48f5010686d@quicinc.com>
- <74f89e1e-c440-42cb-9d8e-be213a3d83a4@lunn.ch>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <74f89e1e-c440-42cb-9d8e-be213a3d83a4@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: txnyqolXEKgHcYx5KUazcWu3fq0FVdnZ
-X-Authority-Analysis: v=2.4 cv=K9nYHzWI c=1 sm=1 tr=0 ts=67d01422 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=IKtIH902HmA1w457l2kA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: txnyqolXEKgHcYx5KUazcWu3fq0FVdnZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_01,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 spamscore=0 mlxlogscore=999 clxscore=1015
- priorityscore=1501 mlxscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503110070
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311030217.4177569-1-chenhuacai@loongson.cn>
+
+Hello Huacai Chen,
+
+On Tue, Mar 11, 2025 at 11:02:17AM +0800, Huacai Chen wrote:
+> We use CD/DVD drives under Marvell 88SE9215 SATA controller on many
+> Loongson-based machines. We found its PIO doesn't work well, and on the
+> opposite its DMA seems work very well. We don't know the detail of the
+> 88SE9215 SATA controller, but we have tested different CD/DVD drives
+> and they all have problems under 88SE9215 (but they all work well under
+> an Intel SATA controller). So we can define a new AHCI board id named
+> board_ahci_atapi_dma, and for this id we set the ATA_FLAG_ATAPI_DMA and
+> ATA_QUIRK_ATAPI_MOD16_DMA flags on the SATA controller to prefer ATAPI
+> DMA.
+
+This patch does not apply.
+It conflicts with:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/libata/linux.git/commit/?h=for-6.15&id=885251dc35767b1c992f6909532ca366c830814a
+
+Please add Daniel to CC when you respin, so that he might also be able
+to test.
 
 
-
-On 3/6/2025 11:29 PM, Andrew Lunn wrote:
->> Thanks for the suggestion. Just to clarify, we preferred
->> u32p_replace_bits() over FIELD_PREP() because the former does
->> a clear-and-set operation against a given mask, where as with
->> FIELD_PREP(), we need to clear the bits first before we use the
->> macro and then set it. Due to this, we preferred using
->> u32_replace_bits() since it made the macro definitions to modify
->> the registers simpler. Given this, would it be acceptable to
->> document u32p_replace_bits() better, as it is already being used
->> by other drivers as well?
 > 
-> I suggest you submit a patch to those who maintain that file and see
-> what they say.
+> BTW, return -EOPNOTSUPP instead of 1 if ATAPI DMA is not supported in
+> atapi_check_dma().
+
+Please create a separate patch (e.g patch 1/2) for this with a proper
+commit log. (A proper commit log should always answer the question: Why?)
+
+
 > 
-> But maybe also look at how others are using u32p_replace_bits() and
-> should it be wrapped up in a macro? FIELD_MOD()? These macros do a lot
-> of build time checking that you are not overflowing the type. It would
-> be good to have that to catch bugs at build time, rather than years
-> later at runtime.
+> Reported-by: Yuli Wang <wangyuli@uniontech.com>
+> Tested-by: Jie Fan <fanjie@uniontech.com>
+> Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
+> Tested-by: Yuli Wang <wangyuli@uniontech.com>
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
+>  drivers/ata/ahci.c        | 12 ++++++++++++
+>  drivers/ata/libata-core.c |  6 +++++-
+>  include/linux/libata.h    |  1 +
+>  3 files changed, 18 insertions(+), 1 deletion(-)
 > 
->        Andrew
+> diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+> index f813dbdc2346..a64db28549d8 100644
+> --- a/drivers/ata/ahci.c
+> +++ b/drivers/ata/ahci.c
+> @@ -49,6 +49,7 @@ enum board_ids {
+>  	/* board IDs by feature in alphabetical order */
+>  	board_ahci,
+>  	board_ahci_43bit_dma,
+> +	board_ahci_atapi_dma,
+>  	board_ahci_ign_iferr,
+>  	board_ahci_no_debounce_delay,
+>  	board_ahci_no_msi,
+> @@ -137,6 +138,12 @@ static const struct ata_port_info ahci_port_info[] = {
+>  		.udma_mask	= ATA_UDMA6,
+>  		.port_ops	= &ahci_ops,
+>  	},
+> +	[board_ahci_atapi_dma] = {
+> +		.flags		= AHCI_FLAG_COMMON,
+> +		.pio_mask	= ATA_PIO4,
+> +		.udma_mask	= ATA_UDMA6,
+> +		.port_ops	= &ahci_ops,
+> +	},
+>  	[board_ahci_ign_iferr] = {
+>  		AHCI_HFLAGS	(AHCI_HFLAG_IGN_IRQ_IF_ERR),
+>  		.flags		= AHCI_FLAG_COMMON,
+> @@ -591,6 +598,8 @@ static const struct pci_device_id ahci_pci_tbl[] = {
+>  	  .driver_data = board_ahci_yes_fbs },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9230),
+>  	  .driver_data = board_ahci_yes_fbs },
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9215),
+> +	  .driver_data = board_ahci_atapi_dma },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9235),
+>  	  .driver_data = board_ahci_no_debounce_delay },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_TTI, 0x0642), /* highpoint rocketraid 642L */
+> @@ -1917,6 +1926,9 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+>  	/* save initial config */
+>  	ahci_pci_save_initial_config(pdev, hpriv);
+>  
+> +	if (board_id == board_ahci_atapi_dma)
+> +		pi.flags |= ATA_FLAG_ATAPI_DMA;
+> +
 
-OK, understand. I will submit the patch by adding the FIELD_MODIFY()
-with required build time checking included.
+No need for these three lines, just rename your board_ahci_atapi_dma
+board to board_ahci_atapi_dma_quirk_yes_fbs
 
-Below is a draft of the macro, please take a look if possible before
-it is posted to maintainers. I will update the driver to use this macro
-if it can be accepted. Thanks.
+and in the initialization of ahci_atapi_dma_quirk_yes_fbs, set:
+AHCI_HFLAGS     (AHCI_HFLAG_ATAPI_DMA_QUIRK |
+		 AHCI_HFLAG_YES_FBS),
+.flags          = AHCI_FLAG_COMMON,
 
-/** 
-  
-  
 
-  * FIELD_MODIFY() - modify a bitfield element 
-  
-  
+And rename ATA_FLAG_ATAPI_DMA to AHCI_HFLAG_ATAPI_DMA_QUIRK and put it in
+AHCI_HFLAGS instead.
 
-  * @_mask: shifted mask defining the field's length and position 
-  
-  
 
-  * @_reg_p: point to the memory that should be updated 
-  
-  
 
-  * @_val: value to store in the bitfield 
-  
-  
+>  	/* prepare host */
+>  	if (hpriv->cap & HOST_CAP_NCQ) {
+>  		pi.flags |= ATA_FLAG_NCQ;
+> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+> index c085dd81ebe7..87a3dbf3ac93 100644
+> --- a/drivers/ata/libata-core.c
+> +++ b/drivers/ata/libata-core.c
+> @@ -3029,6 +3029,10 @@ int ata_dev_configure(struct ata_device *dev)
+>  		dev->max_sectors = ATA_MAX_SECTORS;
+>  	}
+>  
+> +	if ((dev->class == ATA_DEV_ATAPI) &&
+> +	    (ap->flags & ATA_FLAG_ATAPI_DMA))
+> +		dev->quirks |= ATA_QUIRK_ATAPI_MOD16_DMA;
+> +
+>  	if ((dev->class == ATA_DEV_ATAPI) &&
+>  	    (atapi_command_packet_set(id) == TYPE_TAPE)) {
+>  		dev->max_sectors = ATA_MAX_SECTORS_TAPE;
+> @@ -4544,7 +4548,7 @@ int atapi_check_dma(struct ata_queued_cmd *qc)
+>  	 */
+>  	if (!(qc->dev->quirks & ATA_QUIRK_ATAPI_MOD16_DMA) &&
+>  	    unlikely(qc->nbytes & 15))
+> -		return 1;
+> +		return -EOPNOTSUPP;
+>  
+>  	if (ap->ops->check_atapi_dma)
+>  		return ap->ops->check_atapi_dma(qc);
+> diff --git a/include/linux/libata.h b/include/linux/libata.h
+> index c1c57f814b98..67d374279a65 100644
+> --- a/include/linux/libata.h
+> +++ b/include/linux/libata.h
+> @@ -194,6 +194,7 @@ enum {
+>  					    /* (doesn't imply presence) */
+>  	ATA_FLAG_SATA		= (1 << 1),
+>  	ATA_FLAG_NO_LPM		= (1 << 2), /* host not happy with LPM */
+> +	ATA_FLAG_ATAPI_DMA	= (1 << 4), /* ATAPI use DMA */
 
-  * 
-  
-  
+s/ATAPI use DMA/force ATAPI to use DMA/
 
-  * FIELD_MODIFY() modifies the set of bits in @_reg_p specified
-  * by @_mask, by replacing them with the bitfield value passed
-  * in as @_val. 
-  
-  
-  
-  
 
-  */ 
-  
-  
+>  	ATA_FLAG_NO_LOG_PAGE	= (1 << 5), /* do not issue log page read */
+>  	ATA_FLAG_NO_ATAPI	= (1 << 6), /* No ATAPI support */
+>  	ATA_FLAG_PIO_DMA	= (1 << 7), /* PIO cmds via DMA */
+> -- 
+> 2.47.1
+> 
 
-#define FIELD_MODIFY(_mask, _reg_p, _val)              		      \ 
-  
-  
-
-         ({                                  			      \ 
-  
-  
-
-                 __BF_FIELD_CHECK(_mask, *_reg_p, _val, "FIELD_MODIFY: 
-"); \ 
-  
-
-                 *_reg_p &= ~(_mask);                                  \ 
-  
-  
-
-                 *_reg_p |= (_val) << __bf_shf(_mask) & (_mask);       \ 
-  
-  
-
-         })
-
+Kind regards,
+Niklas
 
