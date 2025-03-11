@@ -1,98 +1,132 @@
-Return-Path: <linux-kernel+bounces-556072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8BCA5C0A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:21:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D85A5C094
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:19:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5E9C189C905
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:15:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE45B177EE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AA225B67A;
-	Tue, 11 Mar 2025 12:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2hm2Lw/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87D725A648;
-	Tue, 11 Mar 2025 12:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E20025A635;
+	Tue, 11 Mar 2025 12:08:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A13256C6D;
+	Tue, 11 Mar 2025 12:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741694853; cv=none; b=Cm59c3MXBjC4s9V91gOGLbEdtzSc4qO1zLBo/9R4I1dJ/xK37DtG5m2g3bBGHNpGtKwGFkKSMs4WG/GXmy3sIf0Ycmn9620u1s7ep/QTPU5EjMbcrWwUMBUv2ycf9+CfhmMMvMyV0vLB3SWpeJYLJlxT8PjUrKPHeX1ojk35dCU=
+	t=1741694904; cv=none; b=i6B/cXyuJOPB6ZCEz6xoEQCnAry2fkTxmuKIvKyCmouM3MdHFEZQNGAMHUmPpW2gNjMKZuJu7wnIODzdIPguT62VNWj5JuyMdYmDYN1aiyveg18bKpQmguNC8odYpV3obiMhA3Ml9JyQDRTJlo0KGcsphH6fSY91DsCA1byyjvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741694853; c=relaxed/simple;
-	bh=jmQ7nPvDWPX4ysCzL3zjUSbc5owtj/SgCViNOxWXCg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=To9lI9WlT2AxwWymwSVhGdOLo0FbYCq7herkc5ulIYUIooeChpeZnE1kPZ4/Fd0fnA14rxiG7KkVGq2uYTR0f7ZmLzxFEwiaU1v7aoHGSqwIVQJDJWQOhTYTFAC6jBqGJapJwJLMf8ozAUOVBrhZN40yufzLhDJQwyuaRfjQ4YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2hm2Lw/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE4FC4CEE9;
-	Tue, 11 Mar 2025 12:07:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741694853;
-	bh=jmQ7nPvDWPX4ysCzL3zjUSbc5owtj/SgCViNOxWXCg0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V2hm2Lw/aCNAksho3mLJw/PIJCA0dLQer0MnGVMEdTNxgEtMGJ3IdknFxcV4XMaD2
-	 ns4jN6ivLRPEWzleRqOcMP30B/FXkPFTiKerD/iPuNh4lfHXplJzPduuFbvw5ZMIi4
-	 9hB6Gue9Fmty1TVxVLbJgtErHwpgkpunZ3KjTzLUJ4SOe5+8x7MTO1ymQfwYkS6m6c
-	 LD5ku7xybWG3N6BdPrO0X+QqtIhn3BxmxJ1xQ5R4WX2fk9OEGMcVl2L9D9lySL1i+T
-	 gTO8jV8EB7b8xDE0ALvY2U7Ca0LUgLux7/58j+KZPA33tyucPEKSyCyeoX0DMT5HSz
-	 8XxDBwPJWjhKw==
-From: Christian Brauner <brauner@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>,
-	Kees Cook <kees@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Brahmajit Das <brahmajit.xyz@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] vboxsf: Add __nonstring annotations for unterminated strings
-Date: Tue, 11 Mar 2025 13:07:26 +0100
-Message-ID: <20250311-daran-einige-e64c81600277@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250310222530.work.374-kees@kernel.org>
-References: <20250310222530.work.374-kees@kernel.org>
+	s=arc-20240116; t=1741694904; c=relaxed/simple;
+	bh=azxGg4L7apOOz1PTr017NZZrbSpCOqvvTzNDvGn4wO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pmYjNQlVo9Bvahfqii55GIf0TbJKByzPczCvPQ0LTmVru4QPllu3L6NVaxUxqArz1rwgNrh+LM2R6QRt6CLVyppUegpPGX77q0bdumAkI96AVm+t5/olP0rPe2zbhm62Z8Vg9j/zyU4nRnyv1aZ97ch5pxVGW4r9GTrAWE+I7/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF0A8152B;
+	Tue, 11 Mar 2025 05:08:32 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A01F3F673;
+	Tue, 11 Mar 2025 05:08:20 -0700 (PDT)
+Date: Tue, 11 Mar 2025 12:08:17 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: "lihuisong (C)" <lihuisong@huawei.com>
+Cc: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Adam Young <admiyo@os.amperecomputing.com>,
+	Robbie King <robbiek@xsightlabs.com>
+Subject: Re: [PATCH v2 08/13] mailbox: pcc: Refactor and simplify
+ check_and_ack()
+Message-ID: <Z9AnsaoxypL6qult@bogus>
+References: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
+ <20250305-pcc_fixes_updates-v2-8-1b1822bc8746@arm.com>
+ <34bdfee2-4780-f45b-7891-e845b13fdd2f@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1388; i=brauner@kernel.org; h=from:subject:message-id; bh=jmQ7nPvDWPX4ysCzL3zjUSbc5owtj/SgCViNOxWXCg0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRfUK9PKr4euCnMqv+//Y68A+IS9fzr0475cpSl6E9eJ L3sp/+5jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImoHWD4pxoYsbF1i3njql6W RheT9pnX2qy+3v+2NsXRNvlJve5SPUaGs59qDv19k+zD1egmWZqUcSLi9938tjdWmq/exs/0v6n HDgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <34bdfee2-4780-f45b-7891-e845b13fdd2f@huawei.com>
 
-On Mon, 10 Mar 2025 15:25:31 -0700, Kees Cook wrote:
-> When a character array without a terminating NUL character has a static
-> initializer, GCC 15's -Wunterminated-string-initialization will only
-> warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
-> with __nonstring to and correctly identify the char array as "not a C
-> string" and thereby eliminate the warning.
-> 
-> This effectively reverts the change in 4e7487245abc ("vboxsf: fix building
-> with GCC 15"), to add the annotation that has other uses (i.e. warning
-> if the string is ever used with C string APIs).
-> 
-> [...]
+On Tue, Mar 11, 2025 at 07:47:39PM +0800, lihuisong (C) wrote:
+>
+> 在 2025/3/6 0:38, Sudeep Holla 写道:
+> > The existing check_and_ack() function had unnecessary complexity. The
+> > logic could be streamlined to improve code readability and maintainability.
+> >
+> > The command update register needs to be updated in order to acknowledge
+> > the platform notification through type 4 channel. So it can be done
+> > unconditionally. Currently it is complicated just to make use of
+> > pcc_send_data() which also executes the same updation.
+> >
+> > In order to simplify, let us just ring the doorbell directly from
+> > check_and_ack() instead of calling into pcc_send_data(). While at it,
+> > rename it into pcc_chan_check_and_ack() to maintain consistency in the
+> > driver.
+> LGTM except for some trivial,
+> Acked-by: Huisong Li <lihuisong@huawei.com>
+> >
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > ---
+> >   drivers/mailbox/pcc.c | 37 +++++++++++++------------------------
+> >   1 file changed, 13 insertions(+), 24 deletions(-)
+> >
+> > diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+> > index b3d133170aac7f8acfd1999564c69b7fe4f6d582..90d6f5e24df7e796f8c29705808eb6df2806c1f2 100644
+> > --- a/drivers/mailbox/pcc.c
+> > +++ b/drivers/mailbox/pcc.c
+> > @@ -117,8 +117,6 @@ struct pcc_chan_info {
+> >   static struct pcc_chan_info *chan_info;
+> >   static int pcc_chan_count;
+> > -static int pcc_send_data(struct mbox_chan *chan, void *data);
+> > -
+> >   /*
+> >    * PCC can be used with perf critical drivers such as CPPC
+> >    * So it makes sense to locally cache the virtual address and
+> > @@ -288,33 +286,24 @@ static int pcc_mbox_error_check_and_clear(struct pcc_chan_info *pchan)
+> >   	return 0;
+> >   }
+> > -static void check_and_ack(struct pcc_chan_info *pchan, struct mbox_chan *chan)
+> > +static void pcc_chan_check_and_ack(struct pcc_chan_info *pchan)
+> How about use pcc_chan_ack?
+> >   {
+> > -	struct acpi_pcct_ext_pcc_shared_memory pcc_hdr;
+> > +	struct acpi_pcct_ext_pcc_shared_memory __iomem *pcc_hdr;
+> >   	if (pchan->type != ACPI_PCCT_TYPE_EXT_PCC_SLAVE_SUBSPACE)
+> >   		return;
+> > -	/* If the memory region has not been mapped, we cannot
+> > -	 * determine if we need to send the message, but we still
+> > -	 * need to set the cmd_update flag before returning.
+> > -	 */
+> > -	if (pchan->chan.shmem == NULL) {
+> > -		pcc_chan_reg_read_modify_write(&pchan->cmd_update);
+> > -		return;
+> > -	}
+> > -	memcpy_fromio(&pcc_hdr, pchan->chan.shmem,
+> > -		      sizeof(struct acpi_pcct_ext_pcc_shared_memory));
+> > +
+> > +	pcc_chan_reg_read_modify_write(&pchan->cmd_update);
+> > +
+> > +	pcc_hdr = pchan->chan.shmem;
+>
+> Should use the original code?
+>
+> memcpy_fromio(&pcc_hdr, pchan->chan.shmem,
+> 		      sizeof(struct acpi_pcct_ext_pcc_shared_memory));
+>
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+ioread32(&pcc_hdr->flags) just reads 4 byte flag instead of copying entire
+header for no reason. It should be same as memcpy_fromio(.., .., 4)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] vboxsf: Add __nonstring annotations for unterminated strings
-      https://git.kernel.org/vfs/vfs/c/986a6f5eacb9
+--
+Regards,
+Sudeep
 
