@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-556608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E929EA5CC46
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:34:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B88FEA5CC4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:35:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36AC016EEB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:34:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75C8E189BA0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AA42627E4;
-	Tue, 11 Mar 2025 17:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA9E262802;
+	Tue, 11 Mar 2025 17:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hy7flkrU"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SR6DmOGD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F96F26039B;
-	Tue, 11 Mar 2025 17:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA75C1D514A;
+	Tue, 11 Mar 2025 17:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741714470; cv=none; b=L6Csj8MHybSqKTM5MpJ7hSXOdpV3HGrcmVV/T4BY1tbxBLtlHIBImS1+TofS1DGviB6k7iI0Mdm5S4PdNpmhggppW1xMu1Go2Ssq91Yv/b+6GmcsRayKmCYNgkmMPWa6WdLDrQaeqvMarAmHyGPb0mU3EBEcAUlnMZFfLwy/VjI=
+	t=1741714496; cv=none; b=WkRq6cNJSuTZAWMA4S6GVQ1EXPa9hU5uYOunMNTlUM3yAX30fggp58Zqdj9O9AHPz+YaLmcFOu4idAeUhSTAom155/HQWxO/oHsXh+XOT/Vrpxzo2/4ew4fLYc7PDl9TeOJafSpzR4Q+nOGIWJQZKIecqkc7s8BwiVT6AbLr+Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741714470; c=relaxed/simple;
-	bh=FYR5p1YX8aGi/KqE25+xJQ1RPhbTI2Blq3jqxZem+PQ=;
+	s=arc-20240116; t=1741714496; c=relaxed/simple;
+	bh=hO+ZWV3c02739h2EmWuf5jS4BdGdx7DrCGtd7Xchzck=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U2Tzecx5RZ0+AEscEnvGBgxTlVS3KRJs6ZBD8bmIQW5s2VRHumAhIrTM2N/RnL1Qvc1D76u3vx7tWetHb9zgIrUhqG3hgQO8JQaNI7zcwIHCIMXglw7s1b5cs36m4ucEMqbTrmMPkivAOy2UwpMu6QizcJvt5q2kxpE9vdFAP/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hy7flkrU; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2bdea5a38so172253866b.0;
-        Tue, 11 Mar 2025 10:34:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741714467; x=1742319267; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uF1UtyMLzd/FNPDV0GABgsjA1Fxs5QvrOIcxO2UeUh0=;
-        b=Hy7flkrUY6Np2fml4HFago6S8SzG3SOTwOE+oUKrAOHIuuwoNtXEAI2+c/3y+fW8xq
-         6H0qXWgyuOArAJKMMOMzAOnRmqGk+LXGPnb6Pu5IQUldZCFCeUirGDfOHB9vtyVesVlI
-         JNqlXJ4ADJtYe+Fy4n8oztCe/Us3vz++Ppuaha64C7YueUwm0E6gC0aqRRa4bHp4rgp+
-         m++WZIyQy5k+3i9e2Bx5yr2k4tLRLVR7LApBsQyyZCDYToUQtfLAgRTOf379AjKSMkHJ
-         4CNa4o4nGVEcORI2eaDWyBAU8A96ANYPJxvU9mb6RUh2QuWEUuBxx+jEzmdsxrfi93bE
-         jYqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741714467; x=1742319267;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uF1UtyMLzd/FNPDV0GABgsjA1Fxs5QvrOIcxO2UeUh0=;
-        b=RoMxk2vO43hZtVl8LlYJWbV1BcFuyugh2IW7oGZh4n/rkzAMOAq5lQQUyhBMKDaeZ8
-         IvKiwvuxm2RyZiTZjEII9HqWuSP06NPOxmrm7PjpROwvXVjnFXSupelgEKO56aMQxPmX
-         muKfTMUeZr7yimRitQxWVXWKd5tQ9j98yQTNRQnK8DC9lXZVV8W6p2F3wmTmXAb8BdGK
-         yQD1DoYgjODsFmcrAlfcLbvcjJ9rE6eAJ0NZHAywcGNGYqwblr13soeF0r6him+sJohN
-         qgjeAzHJpF17rYwZ4yeRjugoaFqKetqLqMR7NF3bSOpZuGMaXlvPxTDTttSpAul9I9hF
-         OSKA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/m9LPMNCHjcGveSF38Z26VQGyZRjy51ekzu3Qrs/go758pWQjt1HFtL0l0ZW8NWeg1yXE/ycIaZH0cziw@vger.kernel.org, AJvYcCX5RghF39QY1ISqWwCnCc6ZGtqATVyQru2wxNBWNshYbkBdCrtYvRT7ZS50cIiPoezsiFx3v+h7yN/qfIOm4/Y=@vger.kernel.org, AJvYcCXJ+iO9NGpGb/Lq0idfrDNRbsofqzpWefQep1DzqJTwqi0lwT65bknb1FHOa8UM2lWZQnQzG39SBDloWA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQRRoMP0ir5gBSjER+YBRQGsNRNgfKHzRMFZUvF5392GFf9sHw
-	WNYg0yo5KSTYtvMtyAD+tiA9R6g1qrFFVbi9Nziiga8qXLwogY6EAs2qRg==
-X-Gm-Gg: ASbGncusc2bXRZN4jgTetx2EM4XwD8YG9ZNsnB9r8W3jK32gLoZ/jqk7JNGjF4EtoGS
-	didRiSfvxq4aBC5bGnLpcGe3gsl8poyTJtTvNUYeXqw0fz5YM5QfzOnsVuePY/d15xMWizIwwqf
-	KSxjxhAMhO8ZdRNzfaDRz9Fb7c/DUDXGQ0n3mgk2nMTMZO/On0EDvdeLaTVq/5hihGQ5Pe/1T4x
-	MFRj1eVpKf6je++xEuuLJjCcuhgRXGq0yYHHSiXsF3tJNQbcFIB0vAB28YcSJAjHqGWod5ZG4bl
-	jtCtPICl+MQn+Ypd4abwSl4Gq+ohHh3vATM/crRz0qcxOwksNCZMskSAdDXx2du2jNJHBgOalxf
-	69wdR9NO1o6P5G4Rp26447w==
-X-Google-Smtp-Source: AGHT+IF1cEXKSEStwKqwH/g7+VlE7YBwRrOlCvluK30s9+aYFAfsg1dGkVTnUYOyp9nlYt++njiE0Q==
-X-Received: by 2002:a17:907:970d:b0:ac2:b9c8:b7ba with SMTP id a640c23a62f3a-ac2b9c8b83cmr642529266b.10.1741714467029;
-        Tue, 11 Mar 2025 10:34:27 -0700 (PDT)
-Received: from [192.168.50.244] (83.11.221.132.ipv4.supernova.orange.pl. [83.11.221.132])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac282c69e89sm540028866b.167.2025.03.11.10.34.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 10:34:26 -0700 (PDT)
-Message-ID: <8b8b9074-8828-4477-93e0-32be63688d05@gmail.com>
-Date: Tue, 11 Mar 2025 18:34:25 +0100
+	 In-Reply-To:Content-Type; b=IxoelIjytL5YYKfnZxDhuCneJQNPMRC5YVIt3TBsVGHbWMhCQSCtFbDzvNnQ0VPcLtZWS2B3kG62PEnoctbkzIvgP5RZV+vutg0nDMgwo4Xv6Skin1NVpSBJE0HM1DZFBCF45HZlP22PW6Cv8ArWU4BDonzvFXriJZpOWuyiIlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SR6DmOGD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5112AC4CEE9;
+	Tue, 11 Mar 2025 17:34:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741714496;
+	bh=hO+ZWV3c02739h2EmWuf5jS4BdGdx7DrCGtd7Xchzck=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SR6DmOGDFDAl7Q3urxGjgjTRmUoSn4P5garJmxng2MTzIEIr5IQDKFP2DCuGrdzar
+	 oFxkBKtmo5ydwbvtq0YpeWihllHcboP7XQaVWhNj4sRVTi6BEE9uU6b5WgokIymFLn
+	 BC0XbtXcHCNP459XQWJT+epHuvxYlYsJvg/7/1Kn1MMKDdvj8JyY7v7CM4QWhhXPm/
+	 AH3FWd+TejOeQVDm/cDyiQ5zXKc1Mkb+fkbOo00N8/Mi2hNqy3eXnAdLT03EDngAbP
+	 WxpfsO9UWurEcepbM1DRlg+Ko464cMZwL/IuScDdnR8m/8+cj2MJhnf+JHURR7npto
+	 aTkXT8plXDq/Q==
+Message-ID: <058546d4-d180-439f-9f30-d01e66cac438@kernel.org>
+Date: Tue, 11 Mar 2025 18:34:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,33 +49,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] pinctrl: bcm281xx: Add missing assignment in
- bcm21664_pinctrl_lock_all()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <dfc15d59-7fa9-4f96-aacb-37c3df6d420d@stanley.mountain>
+Subject: Re: [PATCH 4/4] media: iris: add compatible string for sa8775p
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
+ <20250311-dtbinding-v1-4-5c807d33f7ae@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Artur Weber <aweber.kernel@gmail.com>
-In-Reply-To: <dfc15d59-7fa9-4f96-aacb-37c3df6d420d@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20250311-dtbinding-v1-4-5c807d33f7ae@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10.03.2025 11:48, Dan Carpenter wrote:
-> The next line checks if this regmap_write() failed, but it doesn't
-> work because the assignment was accidentally left out.  Add the
-> assignment.
+On 11/03/2025 13:03, Vikash Garodia wrote:
+> Add required compatible string to enable video hardware
+> acceleration on sa8775p.
+
+
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+
 > 
-> Fixes: 60d69769c851 ("pinctrl: bcm281xx: Add support for BCM21664 pinmux")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_probe.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
+> index aca442dcc153830e6252d1dca87afb38c0b9eb8f..23c9e76a68013399b0fc1d68c1ccf0f8b0ddb037 100644
+> --- a/drivers/media/platform/qcom/iris/iris_probe.c
+> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
+> @@ -324,6 +324,10 @@ static const struct of_device_id iris_dt_match[] = {
+>  		.compatible = "qcom,sm8550-iris",
+>  		.data = &sm8550_data,
+>  	},
+> +	{
+> +		.compatible = "qcom,sa8775p-iris",
+Drop. Not needed.
 
-Acked-by: Artur Weber <aweber.kernel@gmail.com>
-
-Best regards
-Artur
+Best regards,
+Krzysztof
 
