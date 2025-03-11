@@ -1,93 +1,94 @@
-Return-Path: <linux-kernel+bounces-555948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6AAA5BEA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:15:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA48FA5BEAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:16:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D1053B196D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:14:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B5217A3D79
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDB5253F0E;
-	Tue, 11 Mar 2025 11:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ef+fzoWO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427FF250C1D;
+	Tue, 11 Mar 2025 11:16:18 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03BC22D4FD;
-	Tue, 11 Mar 2025 11:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D08B250BF7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741691687; cv=none; b=l7BBH7oVCMR1pniGnIUFUr2MgV1ERgcC3VHyAD1ftfCzHIWqs8mdfJJ6NNG2jmh1qL9V3QBXGpNKZvNhu7Y1xAn+oBO491nMlb2TmgTBUGN0fWqUWSf+sb9iOLpqjStFhKmOZFZoFhyE+XydpIbe/2BWdVDEd9Mc/eZlwTqcrrU=
+	t=1741691777; cv=none; b=bmzGlct8gOaE9zjN26+eyTN9ebOsYYar+xG3juisAsFmKb4FbtwhDKWMerklhnNl+WPcbO6oYJkDfBOw+Tv+nH0l6O1bjEW2IgA1b334wvZnvW9F2bGqdNqL2AT7RfwU3OOZ/srvNnrJA66yQyt57S6LyNNC8sXmK46PuHBn6A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741691687; c=relaxed/simple;
-	bh=NsbwoYuOc8TjNu/BedDdrpYil/xgrNL/Le/UmwKzotw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e3mHTv98avQJZJEwT2i88rCtuUT/GeMPzcql+43b7e4dZffeznu+o7+HyDLXmdh63d8JRqMj/2otNTiJmsBdEsn6GVYqP+w3g8HaHxbecKe0shtv9xaqx3IXh53hKZ0aRDI/ghap0hKLylQ62I2/fMPPT8xJlsuRAY4eulflgMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ef+fzoWO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3F4EC4CEED;
-	Tue, 11 Mar 2025 11:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741691686;
-	bh=NsbwoYuOc8TjNu/BedDdrpYil/xgrNL/Le/UmwKzotw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ef+fzoWOncZwpPmM3cZy2wEnuwm0HwpMRV2bvPqkhV2C0hDzghYYk4F+0LH/Hluty
-	 Ql8y/F5regP7c2S803DdzE7ojlTt4D7YC+qOgnb6U31DVLEto+WTlxhTcL3WmlrdbJ
-	 0WKAD24nWNEYQmjStm/oosm1OXWmonCkf6VcilWU=
-Date: Tue, 11 Mar 2025 12:14:43 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Chen Linxuan <chenlinxuan@deepin.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
-	Sasha Levin <sashal@kernel.org>, Jann Horn <jannh@google.com>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>, stable@vger.kernel.org,
-	Eduard Zingerman <eddyz87@gmail.com>, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH stable 6.6] lib/buildid: Handle memfd_secret() files in
- build_id_parse()
-Message-ID: <2025031100-impromptu-pastrami-925c@gregkh>
-References: <05D0A9F7DE394601+20250311100555.310788-2-chenlinxuan@deepin.org>
+	s=arc-20240116; t=1741691777; c=relaxed/simple;
+	bh=XG/rSXLaOcL6k7H140eanA/VEB364+N4FRu/KpUN/64=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HPuVD6Jweh51wJQXZgHA6+szH7Q67GCmc0jHAMRA+HLGtZcyI8iK01P0+N3pTL/k9b/4ZVHYtgRshUFT+co/scskYrnGo/kM03c5xwfUcfXNXdc8Q1MHCSEhc4GRnUSTqQ6CObYN8p3QRpmVthtjhqXZN/JG0htOa46sZ244WDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Tue, 11 Mar
+ 2025 14:15:01 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Tue, 11 Mar
+ 2025 14:15:01 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Alex Deucher <alexander.deucher@amd.com>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, Xinhui Pan
+	<Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, <amd-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] drm/radeon: fix uninitialized size issue in radeon_vce_cs_parse()
+Date: Tue, 11 Mar 2025 14:14:59 +0300
+Message-ID: <20250311111501.9190-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <05D0A9F7DE394601+20250311100555.310788-2-chenlinxuan@deepin.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Tue, Mar 11, 2025 at 06:05:55PM +0800, Chen Linxuan wrote:
-> Backport of a similar change from commit 5ac9b4e935df ("lib/buildid:
-> Handle memfd_secret() files in build_id_parse()") to address an issue
-> where accessing secret memfd contents through build_id_parse() would
-> trigger faults.
-> 
-> Original report and repro can be found in [0].
-> 
->   [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
-> 
-> This repro will cause BUG: unable to handle kernel paging request in
-> build_id_parse in 5.15/6.1/6.6.
-> 
-> Some other discussions can be found in [1].
-> 
->   [1] https://lore.kernel.org/bpf/20241104175256.2327164-1-jolsa@kernel.org/T/#u
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 88a16a130933 ("perf: Add build id data in mmap2 event")
-> Signed-off-by: Chen Linxuan <chenlinxuan@deepin.org>
+On the off chance that command stream passed from userspace via
+ioctl() call to radeon_vce_cs_parse() is weirdly crafted and
+first command to execute is to encode (case 0x03000001), the function
+in question will attempt to call radeon_vce_cs_reloc() with size
+argument that has not been properly initialized. Specifically, 'size'
+will point to 'tmp' variable before the latter had a chance to be
+assigned any value.
 
-You dropped all the original signed-off-by and changelog text.  Just
-provide a backport with all of the original information, and then if you
-had to do something "different", put that in the signed-off-by area.
-THere are loads of examples on the list for how that was done.
+Play it safe and init 'tmp' with 0, thus ensuring that
+radeon_vce_cs_reloc() will catch an early error in cases like these.
 
-thanks,
+Found by Linux Verification Center (linuxtesting.org) with static
+analysis tool SVACE.
 
-greg k-h
+Fixes: 2fc5703abda2 ("drm/radeon: check VCE relocation buffer range v3")
+Cc: stable@vger.kernel.org
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+---
+ drivers/gpu/drm/radeon/radeon_vce.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/radeon/radeon_vce.c b/drivers/gpu/drm/radeon/radeon_vce.c
+index d1871af967d4..2355a78e1b69 100644
+--- a/drivers/gpu/drm/radeon/radeon_vce.c
++++ b/drivers/gpu/drm/radeon/radeon_vce.c
+@@ -557,7 +557,7 @@ int radeon_vce_cs_parse(struct radeon_cs_parser *p)
+ {
+ 	int session_idx = -1;
+ 	bool destroyed = false, created = false, allocated = false;
+-	uint32_t tmp, handle = 0;
++	uint32_t tmp = 0, handle = 0;
+ 	uint32_t *size = &tmp;
+ 	int i, r = 0;
+ 
 
