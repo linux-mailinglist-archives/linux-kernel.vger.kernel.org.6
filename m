@@ -1,63 +1,56 @@
-Return-Path: <linux-kernel+bounces-556455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754CEA5C9F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:59:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA63BA5C9FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:59:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAAA23AE98C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:59:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69CCE3A4639
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604B4260A32;
-	Tue, 11 Mar 2025 15:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3116F25FA34;
+	Tue, 11 Mar 2025 15:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYrFmUvf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wP6guSR/"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3203BE67;
-	Tue, 11 Mar 2025 15:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F152325F96B;
+	Tue, 11 Mar 2025 15:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741708643; cv=none; b=oJt630bvsM/dfK4G+Wup5I2ssXDhMB51+qwuZ68zU7He9A9vwJNTPr8CJ0iz2w85Zn7B7JfQGxzBmqORSboZjthWqlPhQEN/A0RHcMfzzH0BSPvfOBpZ5OcqpaTmTgF7xnrnf/y9rX9tw0sc6/RmanVKshiJjIhx26n79ihu4TI=
+	t=1741708689; cv=none; b=aBgJT+q+nmcbCyhVIFLopfT22hnhTRUi8y+ZIOenae3OHtwwXze7FWln/HXlVtBFY6uFgHxWVxGTK40cgAftkagfykgLLmAtySAKe36pQ6GehsRVWChtPYYN6U5Z4KseOwmnm+QfW68KFoms+w7dpfLJiADhbgvdHKJNne8vZRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741708643; c=relaxed/simple;
-	bh=BZTxXXA67zvcYZUPAms2o1IQhwkgm/4LnFmDVxI2ONs=;
+	s=arc-20240116; t=1741708689; c=relaxed/simple;
+	bh=3+3TUVaFm9GEfB3rySJJ0OyIZLVSm0fUt+m+Qs961/M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JYr2aIlSTN/o94qzp9Rn4W0d1sHMmab2lCeBi5Z9jMR6tiuuE4yuIkSfgICtV3+OFV4a8OsfOKKu3+MBMfHHpQgsAnC6RcNoz9RKWA3zPoOYLxY/EU9K2w5lmQgId9TMuiz4JQk8nRjlnYKlvzZd5a5LZGsIBoHGJMYMhWmboGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYrFmUvf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D941C4CEEC;
-	Tue, 11 Mar 2025 15:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741708643;
-	bh=BZTxXXA67zvcYZUPAms2o1IQhwkgm/4LnFmDVxI2ONs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NYrFmUvfLJTnTAUuNsvf7jl110FlX1XQjHYJv6UtMkxM487T1UwPjrJnb/KFOOXDY
-	 4c/FTYEtU3qswKyPGejNRtq9L4QnNxy+rDETa8i1IAL2MhiMEW+6PJnE6ajqGYLfL8
-	 JHDnS7kP7oW2bNHPkridid0tOs53GJHG9msqCSX/ReUA415polcodWwWksAHJXoQwk
-	 Q7zbpaLmB369VDgojkiXPq1kNn+gICyoTQ0g91wrOQkty74sa2qKd3by0RjZGS6WNw
-	 fqrMTu3Rb7/NHMMay2gFyahQ3CSkmM+sNuZejCnSqzmPMrrEf+Q4+Prhg3OjPWvlZH
-	 XOobXYZ3D+D9g==
-Date: Tue, 11 Mar 2025 15:57:16 +0000
-From: Will Deacon <will@kernel.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, joro@8bytes.org,
-	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
-	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
-	mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
-	smostafa@google.com, ddutile@redhat.com, yi.l.liu@intel.com,
-	praan@google.com, patches@lists.linux.dev
-Subject: Re: [PATCH v8 12/14] iommu/arm-smmu-v3: Introduce struct
- arm_smmu_vmaster
-Message-ID: <20250311155714.GC5138@willie-the-truck>
-References: <cover.1740504232.git.nicolinc@nvidia.com>
- <f205a4e2f5971cd4b1033d7cac41683e10ebabfb.1740504232.git.nicolinc@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LZmn0BzvHB49s7KBnlscAfkKI9zp1cQgkOmrU5IYWN3Dcad+ewoCTACkt2PH6Zlg4hAXc5+ETazjujI5rWq5L9AhPY8tr7KpM1tBgk8H/k7lOgfrKI7H6kVL3E08hwPwLhL4E9Oc6y68OAGCsvsrG3JR7+CrOnh3fUxuzWgW4SI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wP6guSR/; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 11 Mar 2025 08:57:54 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741708683;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cdi2NahSTQHVLLkiZwH5MHDxGkaNYRgi4IHLpPvMnQA=;
+	b=wP6guSR/EbtSQ0x/8Lw8512ytFiiLJPbotNAEXGZcmfcR9f+56DDzKK3bLO1NJxjsw0V29
+	aXQip9EAzwEydHE22SRhlTlNAgK46mh4OsIL9vMWQW6jKmJWMxjdTO58K7QFjH6Oz3t9se
+	1AJozzYmj3Bj0SV84Kw6CWkxagNZbjU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] memcg: drain obj stock on cpu hotplug teardown
+Message-ID: <orewawh6kpgrbl4jlvpeancg4s6cyrldlpbqbd7wyjn3xtqy5y@2edkh5ffbnas>
+References: <20250310230934.2913113-1-shakeel.butt@linux.dev>
+ <20250311153032.GB1211411@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,91 +59,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f205a4e2f5971cd4b1033d7cac41683e10ebabfb.1740504232.git.nicolinc@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20250311153032.GB1211411@cmpxchg.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Feb 25, 2025 at 09:25:40AM -0800, Nicolin Chen wrote:
-> Use it to store all vSMMU-related data. The vsid (Virtual Stream ID) will
-> be the first use case. Since the vsid reader will be the eventq handler
-> that already holds a streams_mutex, reuse that to fenche the vmaster too.
-
-"fenche"?
-
-> Also add a pair of arm_smmu_attach_prepare/commit_vmaster helpers to set
-> or unset the master->vmaster point. Put these helpers inside the existing
-
-s/point/pointer/
-
-> arm_smmu_attach_prepare/commit().
+On Tue, Mar 11, 2025 at 11:30:32AM -0400, Johannes Weiner wrote:
+> On Mon, Mar 10, 2025 at 04:09:34PM -0700, Shakeel Butt wrote:
+> > Currently on cpu hotplug teardown, only memcg stock is drained but we
+> > need to drain the obj stock as well otherwise we will miss the stats
+> > accumulated on the target cpu as well as the nr_bytes cached. The stats
+> > include MEMCG_KMEM, NR_SLAB_RECLAIMABLE_B & NR_SLAB_UNRECLAIMABLE_B. In
+> > addition we are leaking reference to struct obj_cgroup object.
+> > 
+> > Fixes: bf4f059954dc ("mm: memcg/slab: obj_cgroup API")
+> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > Cc: <stable@vger.kernel.org>
 > 
-> For identity/blocked ops that don't call arm_smmu_attach_prepare/commit(),
-> add a simpler arm_smmu_master_clear_vmaster helper to unset the vmaster.
+> Wow, that's old. Good catch.
 > 
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Pranjal Shrivastavat <praan@google.com>
+> > ---
+> >  mm/memcontrol.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> > 
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 4de6acb9b8ec..59dcaf6a3519 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -1921,9 +1921,18 @@ void drain_all_stock(struct mem_cgroup *root_memcg)
+> >  static int memcg_hotplug_cpu_dead(unsigned int cpu)
+> >  {
+> >  	struct memcg_stock_pcp *stock;
+> > +	struct obj_cgroup *old;
+> > +	unsigned long flags;
+> >  
+> >  	stock = &per_cpu(memcg_stock, cpu);
+> > +
+> > +	/* drain_obj_stock requires stock_lock */
+> > +	local_lock_irqsave(&memcg_stock.stock_lock, flags);
+> > +	old = drain_obj_stock(stock);
+> > +	local_unlock_irqrestore(&memcg_stock.stock_lock, flags);
+> > +
+> >  	drain_stock(stock);
+> > +	obj_cgroup_put(old);
+> 
+> It might be better to call drain_local_stock() directly instead. That
+> would prevent a bug of this type to reoccur in the future.
 
-(per Pranjal: please fix his mis-spelling of his own name here and in
-the other patches too!)
+The issue is drain_local_stock() works on the local cpu stock while here
+we are working on a remote cpu cpu which is dead (memcg_hotplug_cpu_dead
+is in PREPARE section of hotplug teardown which runs after the cpu is
+dead).
 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   | 28 ++++++++++++
->  .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     | 45 +++++++++++++++++++
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 18 +++++++-
->  3 files changed, 90 insertions(+), 1 deletion(-)
+We can safely call drain_stock() on remote cpu stock here but
+drain_obj_stock() is a bit tricky as it can __refill_stock() to local cpu
+stock and can call __mod_objcg_mlstate to flush stats. Both of these
+requires irq disable for NON-RT kernels and thus I added the local_lock
+here.
 
-[...]
+Anyways I wanted a simple fix for the backports and in parallel I am
+working on cleaning up all the stock functions as I plan to add multi
+memcg support.
 
-> @@ -1055,9 +1062,30 @@ struct iommufd_viommu *arm_vsmmu_alloc(struct device *dev,
->  				       struct iommu_domain *parent,
->  				       struct iommufd_ctx *ictx,
->  				       unsigned int viommu_type);
-> +int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
-> +				    struct arm_smmu_nested_domain *nested_domain);
-> +void arm_smmu_attach_commit_vmaster(struct arm_smmu_attach_state *state);
-> +void arm_smmu_master_clear_vmaster(struct arm_smmu_master *master);
->  #else
->  #define arm_smmu_hw_info NULL
->  #define arm_vsmmu_alloc NULL
-> +
-> +static inline int
-> +arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
-> +				struct arm_smmu_nested_domain *nested_domain)
-> +{
-> +	return 0; /* NOP */
-> +}
-
-Please drop this comment.
-
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> index 5aa2e7af58b4..6b712b1ab429 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> @@ -85,6 +85,51 @@ static void arm_smmu_make_nested_domain_ste(
->  	}
->  }
->  
-> +int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
-> +				    struct arm_smmu_nested_domain *nested_domain)
-> +{
-> +	struct arm_smmu_vmaster *vmaster;
-> +	unsigned long vsid;
-> +	int ret;
-> +
-> +	iommu_group_mutex_assert(state->master->dev);
-> +
-> +	/* Skip invalid vSTE */
-> +	if (!(nested_domain->ste[0] & cpu_to_le64(STRTAB_STE_0_V)))
-> +		return 0;
-
-Ok, and we don't need to set 'state->vmaster' in this case because we
-only report stage-1 faults back to the vSMMU?
-
-With the nits fixed:
-
-Acked-by: Will Deacon <will@kernel.org>
-
-Thanks,
-
-Will
+Thanks for taking a look.
 
