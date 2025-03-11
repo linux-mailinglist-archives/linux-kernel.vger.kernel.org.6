@@ -1,229 +1,157 @@
-Return-Path: <linux-kernel+bounces-556090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EF8A5C10E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:28:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11760A5C0FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:26:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE2BD189FE30
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:21:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C0691790F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C0D25A2B7;
-	Tue, 11 Mar 2025 12:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98E825BAA0;
+	Tue, 11 Mar 2025 12:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EsZKCOQe"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgZmrIA/"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A720259C8D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BE625A333
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741695551; cv=none; b=ltxUZdPC4td70SvsOi6Vh8DT3NklSHdRxw4IyJNUHikzoLorne80NN8YSBcXGxDSo6AidPe/iD6GKZ6ekcsj7cNXFybWnFTIcjL2JfrwGaSwhTwaRLOdKzz+4cIURl2wUzNyaBvgTy7c+xm9CW1BiStCdLeF0LbVV2Hr5j0hNUo=
+	t=1741695559; cv=none; b=TR9oUM4q0sYfz7529mnaCkoAMfQXn3e8/azIzjJUCLtPo7pkjagug19Qux4mLoCQwuRrWZcQl/Es3wBugrmeVqhGUTFJ8cWNCK/C0shtwO0Z20QTEWqcZ4zucgqvQPDPWClBTEAT37QBnqIZsONFvo+iSHb7bSG/PPV+MqWyqa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741695551; c=relaxed/simple;
-	bh=1OR2ddn1OIKSZBuhlTLk9r24MJQoupMsoAjoOy/4a4Q=;
+	s=arc-20240116; t=1741695559; c=relaxed/simple;
+	bh=Sr06KeKxyQ+IPj7DnSLod1tmtyl7tAXPjqMKObaBApQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nbNlJztjIDcGeMzhFM9KnYnaigV6xI3hjz8vAJSgrGOMaHRHAfnugz/ltFXKR6nYJkQBOsKqgnwQwpnyScIWfeF9d07viPSOc+HmFh9acsbfvaU+DlapE0esdxYhP5fnD/DIlGDGC+x3MjUmCoOosiVCxQHGN8lP58iX/uVKvEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EsZKCOQe; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-52403e39a23so2183878e0c.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:19:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=ARNLSshsp4GevDhIS5eq5g/jOcIbQYvY+5XA0IAwLc9lSFZLcLS1G+Ejb+Gnz8DX/cB5UymK1NPhDaZkEA74UR+UKkiNvzleJJJ9CfxpEO57KT0MGacLiXiYoGy4AVRGUhq3J2LbCto7NPTnc03w8H4opXbaLHx5uB+pDAQx348=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgZmrIA/; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39123d2eb7fso397390f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:19:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741695549; x=1742300349; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741695555; x=1742300355; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=y+pu4SKQgTYhhnwI1KV/Zn+Ls8AA/0w/uChTjZPaWZ4=;
-        b=EsZKCOQeFnxoVrA4NzV9M+THiWshBKqzgV+8acKQyI7VWKoL9M3MaogZHlGrl1p4Cc
-         om0A7yA7RVxubkexYk0JsZz0SwByxqeRcQshXrq+hxMcVuarT+7hodqDqfS4JU5BMNt3
-         0hkAI9eBdan4YVLfGnn4Cr335tWian2Hq4jPx8W19c/lqEAkTCtnhIEUHtv/SRjwIHj/
-         lgSbo/Rp/t1R0SEAEzZUxURPR0/f6EOpkKvaOTJLZon1RTcLrI0savIfdSE64v4OpHPu
-         iqcoYFfFOp732Z0uIotVQOCWccPXF1ZkUNMJOuVXCnMIx2CpkVMRvbrnp1j9Zt5nK2Eb
-         2vzg==
+        bh=uMdqx5IAy5RwkV48z9EOvdZc6wlr4q4CS/HOkuwTfFI=;
+        b=jgZmrIA/+6iLhGCoXJ/KzYQ/m9S13EfX9aN1bQdB8O93Y53Li7MdzpZ8+nJ1w4lo1w
+         NrJWvi4jDU3+A/VIsyaseclEzWEwkqSLW8WrUdcyc6tUshtOWNa8eCVVMpVy+mkamINy
+         q3sh7VNoHBrtC/qPfJpK90liFuhOZ0kYq1wm65Xowus5CA90+M/H4L8dd9huH+W+VyeE
+         F05Autvw/HPqTdrdU4UKcAGrqHzcNWmwkg6eooX+0tPJcg6A7cJYoca9sq4DWeAysdX/
+         +ufYKw5dXb++kbRndSNNW/xGfMNR+Fyqm39P8mSZYJ/F5cpb1sUGs5LebUNaDJw+xz8Y
+         ax3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741695549; x=1742300349;
+        d=1e100.net; s=20230601; t=1741695555; x=1742300355;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=y+pu4SKQgTYhhnwI1KV/Zn+Ls8AA/0w/uChTjZPaWZ4=;
-        b=UJJ9Jv+7YBD2YPyPNFORsgXh95QD4R5Yhcz2jjc0tisadMiIgAqlJL9q19nJ/lrXRC
-         ezuwX8F1YGQJuvWfOiTG43gXLgFI8eLYJADBaZj1e26JVLBj5rIhp7/XG3LRXsKOHHXU
-         A8KTQI8jMwbvh4XrQZc5uQUy9xqO9TT1EgXRxSdAOpyM3taHJelDQChkCo9FG65H9vKP
-         nEym1jVC0hmzOxG+9Mpj/xS+uASeWifLIzZoM6bLz/XmuZZ00QSpXVK+HgEkit0etiFR
-         fOBJTTwk2UAZj4Lv3ICfMbZZv8FjMjNFEyMRL5k/PPwckkTvXF6X/wSnyTgn9izyQsQ+
-         8giA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNvEedANCEudZG0pfxmiSJGiS2uYwKhCtJBJ7dwSzpY22FCdov3sfbzb87tV3yboI16T6Z5ZYin1N8p70=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydoFSAn76HQFwEpi2NNfLkk1p1RujolhZUfLEiVdXjyERGinGv
-	WcxkU7UoWCTw3hFqRWp/FYtSoX8ZKSj1AL1xxhKKb60CufJrN2rfEbxsVUTOUg9JYGKquUVAYVe
-	to9Y7dNbRgeygBRaofkL99ygVJuyWAcLqFj2yEg==
-X-Gm-Gg: ASbGncuSv/wWbZcteKMTSL9eVkBCqa+08LuETFbNzFnnBPYeu+Yb2CbQ/4H+TYwgiic
-	sVHblrkxsNF0YWG6RmQ728jKDUIfbl+1+5Qq/wsaa42ixHsjzC85Mj4SKvMdDiNpagi10zXza+H
-	s2JAZcbAUlKzFHSCt8z3j8RjLzaZPv+/VHUPDjAAop65RHtzxe6JInUv43oBA=
-X-Google-Smtp-Source: AGHT+IH45qk9E8UldXiFsm8nAVB3hcZwGPmx3+QCspv+0WyVSGg/7iMHvqU5qLYxficHb8Ss/KzF6a/WHqkSJz6+F8o=
-X-Received: by 2002:a05:6122:468e:b0:520:5a87:66ff with SMTP id
- 71dfb90a1353d-524195bb061mr1862180e0c.0.1741695548982; Tue, 11 Mar 2025
- 05:19:08 -0700 (PDT)
+        bh=uMdqx5IAy5RwkV48z9EOvdZc6wlr4q4CS/HOkuwTfFI=;
+        b=ucn0rUq6BT+gki2tvWWidEDmDd6YhKiDhOZo21KobjzoytOzzr0higdG3vNlXuIoTX
+         IaxOEn+S9z8npBBTX2d67LNV3la8wv0P/dbgHyyIl5rGmGzb4S7mxd64cq4naUGLs8cn
+         7J2D+2Av98hifYwZXoIimHKIIF1Cb71Fh5dW1lK73Vqm+VoUYEUfE9BkAfuI67iFEtZD
+         OeoNsA9UtVdzyHEkw71GjBtb2z2aP++ja4NpGQrVLzyG7UccGNPKrq2mu4xCMBjABqlw
+         0HC7tApmH+lbeRXyhW0hkAjNXNQG8RAhAaw91NMdP0BvVuIoJ5OeQHJu6fY9o/oVl+R/
+         azdw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/ycS+/r059Iv7xm0PmzXqtrLzKyvpFdf1wG8P0GjF511tMp8J5HNve/toMxtSXl2U3lHod40bf6yA9I4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFzz2IdzyDC3Il7fmC86DRTG39yAbWD1uBtA7wAIjcH5/nWvvi
+	UYuGeYosjXRVai0tN1lfK8ZqUVYu1e3w4LwJReUGNaL7TdvMotM0iBzruF7ENNf+A/rReQlLRBI
+	BcoDF44BB3hf3gK/Un8pG7aC2gCU=
+X-Gm-Gg: ASbGncvTw7zyRXWqEfi3FVX+Aamx+hdkxKVntiHpm+vqMqCHUsbjkF56QmiQBfxFkdT
+	iGhTkxIU5wW0mhxUwTLewjFvIch6A4twW7AbOxMFhUE9/TyWQzeyRmtiaXe7p7XYNoyDBmfzqIy
+	YTUFqSijb8mzIE5r08U9yHHvSHZB2QZxbQ9kp5epO9SfVJGLt1c/o7L4+b
+X-Google-Smtp-Source: AGHT+IGz6yyYStQwXScQVA2NmPU6agIBdpm9T+QAnp5+AsC3//dJ8lHkSh1/zt7aSeT4AfjpaJGHgRPiVMRftVNRVSw=
+X-Received: by 2002:a5d:5f90:0:b0:38a:615c:8266 with SMTP id
+ ffacd0b85a97d-3913bb2fac5mr4151795f8f.1.1741695555258; Tue, 11 Mar 2025
+ 05:19:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310170457.700086763@linuxfoundation.org>
-In-Reply-To: <20250310170457.700086763@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 11 Mar 2025 17:48:57 +0530
-X-Gm-Features: AQ5f1JqTHciVwmwj3kmllmiGi1ojMeOEj69Bqu4RztEVFb6rtzOUgOeaY70MDqg
-Message-ID: <CA+G9fYsKDYoKUWp2BPOLmRL-cpcao=y-vJSU479E+cn_vFAK2Q@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/269] 6.12.19-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
+References: <20250310120318.2124-1-arbn@yandex-team.com> <CAM_iQpWewprQzQgMWk0yMr=LCFUCGztJ4+G-NFt8gqe81XuUcg@mail.gmail.com>
+In-Reply-To: <CAM_iQpWewprQzQgMWk0yMr=LCFUCGztJ4+G-NFt8gqe81XuUcg@mail.gmail.com>
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Date: Tue, 11 Mar 2025 13:19:02 +0100
+X-Gm-Features: AQ5f1Jp-4WIS7zgwSRZD9fIZPznfBSfecmUex3m3QdtGpEpLMxmRqOA6DAx82aU
+Message-ID: <CAPAsAGyOcyi1PLK_mjdf9STX4HOxNnBU8t3d20fSS3QO+znwNg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] KSTATE: a mechanism to migrate some part of the
+ kernel state across kexec
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Andrey Ryabinin <arbn@yandex-team.com>, linux-kernel@vger.kernel.org, 
+	Alexander Graf <graf@amazon.com>, James Gowans <jgowans@amazon.com>, Mike Rapoport <rppt@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, Eric Biederman <ebiederm@xmission.com>, kexec@lists.infradead.org, 
+	Pratyush Yadav <ptyadav@amazon.de>, Jason Gunthorpe <jgg@nvidia.com>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, David Rientjes <rientjes@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 10 Mar 2025 at 22:48, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Tue, Mar 11, 2025 at 3:28=E2=80=AFAM Cong Wang <xiyou.wangcong@gmail.com=
+> wrote:
 >
-> This is the start of the stable review cycle for the 6.12.19 release.
-> There are 269 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> Hi Andrey,
 >
-> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
-> Anything received after that time might be too late.
+> On Mon, Mar 10, 2025 at 5:04=E2=80=AFAM Andrey Ryabinin <arbn@yandex-team=
+.com> wrote:
+> >     Each driver/subsystem has to solve this problem in their own way.
+> >     Also if we use fdt properties for individual fields, that might be =
+wastefull
+> >     in terms of used memory, as these properties use strings as keys.
+> >
+> >    While with KSTATE solves the same problem in more elegant way, with =
+this:
+> >         struct kstate_description a_state =3D {
+> >                 .name =3D "a_struct",
+> >                 .version_id =3D 1,
+> >                 .id =3D KSTATE_TEST_ID,
+> >                 .state_list =3D LIST_HEAD_INIT(test_state.state_list),
+> >                 .fields =3D (const struct kstate_field[]) {
+> >                         KSTATE_BASE_TYPE(i, struct a, int),
+> >                         KSTATE_BASE_TYPE(s, struct a, char [10]),
+> >                         KSTATE_POINTER(p_ulong, struct a),
+> >                         KSTATE_PAGE(page, struct a),
+> >                         KSTATE_END_OF_LIST()
+> >                 },
+> >         };
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.12.19-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.12.y
-> and the diffstat can be found below.
+> Hmm, this still requires manual efforts to implement this, so potentially
+> a lot of work given how many drivers we have in-tree.
 >
-> thanks,
+
+We are not going to have every possible driver to be able to persist its st=
+ate.
+I think the main target is VFIO driver which also implies PCI/IOMMU.
+
+Besides, we'll need to persist only some fields of the struct, not the
+entire thing.
+There is no way to automate such decisions, so there will be some
+manual effort anyway.
+
+
+> And those KSTATE_* stuffs look a lot similar to BTF:
+> https://docs.kernel.org/bpf/btf.html
 >
-> greg k-h
+> So, any possibility to reuse BTF here?
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Perhaps, but I don't see it right away. I'll think about it.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Note, BTF is automatically generated by pahole, no manual effort is requi=
+red.
 
-## Build
-* kernel: 6.12.19-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 53db7cb59db64055714b1a7fd1cadd8d5ef6e2be
-* git describe: v6.12.18-270-g53db7cb59db6
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
-.18-270-g53db7cb59db6
-
-## Test Regressions (compared to v6.12.15-529-g7d0ba26d4036)
-
-## Metric Regressions (compared to v6.12.15-529-g7d0ba26d4036)
-
-## Test Fixes (compared to v6.12.15-529-g7d0ba26d4036)
-
-## Metric Fixes (compared to v6.12.15-529-g7d0ba26d4036)
-
-## Test result summary
-total: 77388, pass: 61961, fail: 2961, skip: 12426, xfail: 40
-
-## Build Summary
-* arc: 6 total, 5 passed, 1 failed
-* arm: 143 total, 137 passed, 6 failed
-* arm64: 58 total, 54 passed, 4 failed
-* i386: 22 total, 19 passed, 3 failed
-* mips: 38 total, 33 passed, 5 failed
-* parisc: 5 total, 3 passed, 2 failed
-* powerpc: 44 total, 43 passed, 1 failed
-* riscv: 27 total, 24 passed, 3 failed
-* s390: 26 total, 22 passed, 4 failed
-* sh: 6 total, 5 passed, 1 failed
-* sparc: 5 total, 3 passed, 2 failed
-* x86_64: 50 total, 49 passed, 1 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-crypto
-* ltp-cve
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Nothing will save us from manual efforts of what parts of data we want to s=
+ave,
+so there has to be some way to mark that data.
+Also same C types may represent different kind of data, e.g.
+we may have an address to some persistent data (in linear mapping)
+stored as an 'unsigned long address'.
+Because of KASLR we can't copy 'address' by value, we'll need to save
+it as an offset from PAGE_OFFSET
+and add PAGE_OFFSET of the new kernel on restore.
 
