@@ -1,190 +1,129 @@
-Return-Path: <linux-kernel+bounces-555728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF04EA5BBE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:19:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6976A5BBF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:21:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BFD43A7522
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:19:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84A15172CF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7397822B5A8;
-	Tue, 11 Mar 2025 09:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BD62236E9;
+	Tue, 11 Mar 2025 09:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JFjTCSy8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o9p83flX"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24722221DA5
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2038422CBD5;
+	Tue, 11 Mar 2025 09:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741684780; cv=none; b=C/ttxLn6Jd6XwxCSDGilboVNbvg9ayMuOQji5DdLnUEyJKmjYPh9vKHzHEIQAWjR1uyMpL3swVqXztpb8qiYGgWsyG8frDLZDZ2nVMdJUM53jisLZIjOZ+zj7i+VVbjh+Xiof2OJIfcHeT2wRtdDZvm8acqo8KAle3s1qQGC8Gs=
+	t=1741684896; cv=none; b=LAkgTU93YsubOAygzJuK9ACfvsalUbZWSmimHrqGcUtv01Zc2RV1VA0CCIdSSDpoZF7PNEpKeAo9AEWW1SLv4TWkn9RMWZ8gX6rErNoB0A+E5cZZ2dvByL2dqzDRokKC8lX9XBWVDYGRvUHlAEkjsMTEG/xkU+7kpwfhNKhhzKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741684780; c=relaxed/simple;
-	bh=uYAXlhhmrR6aYhD1Dtku56EVWjgcSXvI6gGyiutoebE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i/lRz4Z5aee34wiMFlR8TMG8VPvIRYFynUZOdkOFliA6r8w7EteXePcZ2rdjpSHHd75upqAimKsOHL4fiENdfBhPZtxqLOJmuIRsqiJGHPyYu19cxxg+7//T2xyZ+475DlDjZZw187dPXYsgDVx1FlpLj+Sa8D4sBTSsYo9NT9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JFjTCSy8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741684777;
+	s=arc-20240116; t=1741684896; c=relaxed/simple;
+	bh=D3oDrA/DYZsV2ZD9WpsoFM6T5ClnWVYJe1My0WXo2Xs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CZ9GIE104jKsHTS6Qd+9E/5JbPE+MGbZLuY19cQR2CyZgVE5SfeTIT2kxdSihHOgU8KzhYQSeensQD788RUFue7Kv4kmUpjC5wAvJtMBDtemsnrukU2CO8Rd8mZWGXY47x+AVW0Tk9B/dWsBCJ3wTtVY3AHar+KF5m3/MyfEjLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o9p83flX; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9D8E3432FA;
+	Tue, 11 Mar 2025 09:21:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741684892;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HYrmKhtPai2LPdacEcsqL3kmpFFiX3Wa+ZrPyUQ9258=;
-	b=JFjTCSy8XPJYDCCNyL56VOEvRvVHT3rudhnI127mMMJLd2GIzBmd/r4T1yWfUid3c+Zl0r
-	9dK+i4e+629cnpek7nA4SI5EBtEovw5PXfr610WAa3S0WvWGZEaC9i47K1PgYpq6WIi4Mu
-	Gm3pm+MCWCmKdgrr+DsetQPm8eft3ZQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-18-2mb5ZJN6MXSX6jqrrMGk5w-1; Tue, 11 Mar 2025 05:19:35 -0400
-X-MC-Unique: 2mb5ZJN6MXSX6jqrrMGk5w-1
-X-Mimecast-MFC-AGG-ID: 2mb5ZJN6MXSX6jqrrMGk5w_1741684774
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43ce8f82e66so13893355e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 02:19:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741684774; x=1742289574;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HYrmKhtPai2LPdacEcsqL3kmpFFiX3Wa+ZrPyUQ9258=;
-        b=nV0tZ4jhjtEjzHtS0udLnbgjDpo/3uLOGRvp0XU5mAsk1VY8gpXaCooZTzHK6/JcCr
-         4rGF6fA6Og3xNhWKb2bf8sOH+LhWLxxGFuHHuQoQWcl2fYXsu1DCn2amrLPOu2IQ+suI
-         eSTS/P2KmUxF7phZTxApvaqKQP+0OxEGPOdV4qvjHeW/7PADhtsdkkzTnS+iS4KwGPEc
-         aut0Z/7xCIfWqpUQ01k3QQNmGp/26mYvCjZPrJ6PFZAZiYcPOvhkfNVyyppwzSocL/ze
-         XHpiQ/+fn9SPtUSofERe8o+xHqaUz2uPmPUZ2106I1f1KWkGgg1DVvX8jviQVXJjVk8V
-         zEhg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6+6UWXbfztAIWgTbWBh0GHJrsZVk19kd027dRH8B6agrdHr85n9hB/b6vDysppo9O1qjwzzT1lv1/n2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+Od6cQDZ7FK+OyhI6fU0mXOXwfd4dU8ny5vePs8sWjvXfHcR/
-	nwjtS59dx8eGAYVk+dH5GNP+NmLifTQklZGnOivjlCvnphgVqsY20BpL25v3sBY8oG9zBYwXz5d
-	hnz4522tsEt6LcxFKiyDdon2rDvRJo74olmpJkR+/wMqGoKxz649cBjDshWqrZQ==
-X-Gm-Gg: ASbGncvMS/FbpdeFFvZ4CLyQIe1o5Xv5uU3TgsiL9OWsSasCDjwsvdpm82ps7q27QZO
-	OegrMT4hl81gzDpTsdeHj9FliCttBrErFct2CSVfDLkFfoV6aX2B4JnkAZa74y/zpNqh5JIQhxv
-	MsvmhyAEh+soEd+6QellKL9vGt+iYVXHn3TOF+PIPvsvjmrVbOKXDN87UevdNm8UoybkzkUD9k7
-	xKEDYRpsLIc6K2eOZ7zHokzL+fPiM+0Ivjkf4ajN6pk8uhgkjjLtcfVHlujjo0O7NE+hC7SNnT0
-	7tD4ATyD5l9S/6rJZyxWzjij0lXm/KuDMcB3qNriMn8abij342Qi9iq3ZozgqjBwsUYFekvtMCx
-	lL+ce0u6GTZtOZNguZfATlmklCPsJR60NGrR93ODz7h4=
-X-Received: by 2002:a05:600c:470c:b0:43c:f050:fed3 with SMTP id 5b1f17b1804b1-43cf051022dmr92517675e9.11.1741684774355;
-        Tue, 11 Mar 2025 02:19:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0Lxs5i27MDjud5TrhD9KawVefCONxScQwN/Kn4gcIWpRE2Eeb/bg06AHrefH2S3zDLbi60g==
-X-Received: by 2002:a05:600c:470c:b0:43c:f050:fed3 with SMTP id 5b1f17b1804b1-43cf051022dmr92517295e9.11.1741684773950;
-        Tue, 11 Mar 2025 02:19:33 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c720:ed00:a9b3:5954:823e:3427? (p200300cbc720ed00a9b35954823e3427.dip0.t-ipconnect.de. [2003:cb:c720:ed00:a9b3:5954:823e:3427])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cf595a771sm71598245e9.36.2025.03.11.02.19.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 02:19:33 -0700 (PDT)
-Message-ID: <4a068856-328f-48ae-9b1c-0ec7d65dde6b@redhat.com>
-Date: Tue, 11 Mar 2025 10:19:32 +0100
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6VTqHFVqHMv5npZuUyKgDinGie6VAE2hr7CtUFwYLSY=;
+	b=o9p83flXRMrRQuTLg6n/HGont2VUgB6/lw/4w2fAvirJUilLCqThl8RIPLmtWw9vEW95eX
+	envhk4s2MbLlzGsQ27DidxfRYMN44+3RIPG6IjBlPdfTXNQOOivGfzTqKEm6d9e+tL6QUp
+	dtDRYnr3/mG9lUC2rJD/UMAfkIh6l/+H9vQhU3fyvb4zD2QkhuytKMs3Nq2/wnfcbWBuZJ
+	SsRtZocmVaX+Juk8O43qF2q6E+QMN3fbet6gpazai6Dc4JcUXZ90pZioTpeucWr/sYw9MJ
+	LBNJAENxwSNN4bTC7qANAYjPilyUpYrUUyAvCtwKLM5hvCJ6vxwl5hU2Hh1Zfg==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v2 0/2] vsprintf: remove redundant %pCn format specifier
+Date: Tue, 11 Mar 2025 10:21:21 +0100
+Message-Id: <20250311-vsprintf-pcn-v2-0-0af40fc7dee4@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mm/cow: Fix the incorrect error handling
-To: Cyan Yang <cyan.yang@sifive.com>, akpm@linux-foundation.org,
- shuah@kernel.org
-Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250311023730.56658-1-cyan.yang@sifive.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250311023730.56658-1-cyan.yang@sifive.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJEA0GcC/3WMywrCMBBFf6XM2pFJ4gtX/od00bzsgCYlCUEp+
+ Xdj964u58I5K2SX2GW4DiskVzlzDB3kbgAzT+HhkG1nkCSPpOiMNS+JQ/G4mICX6aCc0mT7QFe
+ W5Dy/t9x97DxzLjF9tnoVv/dPqAoktJ60NMafBPmbjrE8OexNfMHYWvsC41q6JaoAAAA=
+X-Change-ID: 20250307-vsprintf-pcn-8a43e3b0d43e
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, 
+ Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, Liu Ying <victor.liu@nxp.com>, 
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddukeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefgieetkeekgfdtudevueffueffveekheeiudfhfedvhfeukeeuhffhtddtvdekfeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegludelvddrudeikedrudejkedrjeehngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeftddprhgtphhtthhopehflhhorhhirghnrdhfrghinhgvlhhlihessghrohgruggtohhmrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhpihdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggur
+ dhorhhgpdhrtghpthhtohepiihhohhusghinhgsihhnsehlohhonhhgshhonhdrtghnpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepphhmlhgruggvkhesshhushgvrdgtohhmpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On 11.03.25 03:37, Cyan Yang wrote:
-> There are two error handlings did not check the correct return value.
-> This patch will fix them.
-> 
-> Fixes: f4b5fd6946e244cdedc3bbb9a1f24c8133b2077a ("selftests/vm: anon_cow: THP tests")
-> Signed-off-by: Cyan Yang <cyan.yang@sifive.com>
-> ---
->   tools/testing/selftests/mm/cow.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/mm/cow.c b/tools/testing/selftests/mm/cow.c
-> index 9446673645eb..16fcadc090a4 100644
-> --- a/tools/testing/selftests/mm/cow.c
-> +++ b/tools/testing/selftests/mm/cow.c
-> @@ -876,13 +876,13 @@ static void do_run_with_thp(test_fn fn, enum thp_run thp_run, size_t thpsize)
->   		mremap_size = thpsize / 2;
->   		mremap_mem = mmap(NULL, mremap_size, PROT_NONE,
->   				  MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-> -		if (mem == MAP_FAILED) {
-> +		if (mremap_mem == MAP_FAILED) {
->   			ksft_test_result_fail("mmap() failed\n");
->   			goto munmap;
->   		}
+There are two printk format specifiers for clocks: %pC and %pCn, and they
+print exactly the same string. Geert confirmed the intended reason for
+having two was that %pC would act as a default, like some (but not all)
+formats do. However there seem to be no advantage in having two instead of
+one, especially now that there is no other %pC specifier since commit
+666902e42fd8 ("lib/vsprintf: Remove atomic-unsafe support for %pCr").
 
-Yes, that check is wrong.
+Definitely having two without properly documenting they do the same creates
+misunderstandings [0].
 
->   		tmp = mremap(mem + mremap_size, mremap_size, mremap_size,
->   			     MREMAP_MAYMOVE | MREMAP_FIXED, mremap_mem);
-> -		if (tmp != mremap_mem) {
-> +		if (tmp == MAP_FAILED) {
->   			ksft_test_result_fail("mremap() failed\n");
->   			goto munmap;
->   		}
+Since %pCn is used in a single place, replace it with %pC and remove %pCn
+to simplify such format specifiers implementation and avoid
+misunderstandings.
 
-As Dev says, this one is just fine. Leave it as it is.
+[0] https://lore.kernel.org/dri-devel/f8df2b5e-b005-4ada-8108-159b2b94a72e@nxp.com/
 
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Changes in v2:
+- Add Chinese translation
+- Link to v1: https://lore.kernel.org/r/20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com
+
+---
+Luca Ceresoli (2):
+      thermal: bcm2835: use %pC instead of %pCn
+      vsprintf: remove redundant and unused %pCn format specifier
+
+ Documentation/core-api/printk-formats.rst                    |  3 +--
+ Documentation/translations/zh_CN/core-api/printk-formats.rst |  3 +--
+ drivers/thermal/broadcom/bcm2835_thermal.c                   |  2 +-
+ lib/vsprintf.c                                               | 10 ++--------
+ 4 files changed, 5 insertions(+), 13 deletions(-)
+---
+base-commit: 4d872d51bc9d7b899c1f61534e3dbde72613f627
+change-id: 20250307-vsprintf-pcn-8a43e3b0d43e
+
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 
