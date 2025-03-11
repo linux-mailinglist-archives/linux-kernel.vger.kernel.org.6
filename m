@@ -1,262 +1,157 @@
-Return-Path: <linux-kernel+bounces-555622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92158A5BA60
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:03:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DF5A5BA61
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A82E01895EDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242DB3A53D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4CF224243;
-	Tue, 11 Mar 2025 08:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04B8224227;
+	Tue, 11 Mar 2025 08:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="QQmUUnGw"
-Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QHS3BQUq"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D4B1EA7FD;
-	Tue, 11 Mar 2025 08:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3971EB9E8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741680175; cv=none; b=s/bUKdnPYWfeKIIXqKpC5N6MUIAL0l0/Tq0W8e0F9iUzD04uRlldvnsvihaEb3zSFFPglUh53OcN7aQc8KSVlIIzqRvamzwKEnv0cf3r28IDtdBHt9o8dt3bGHk9sInAVyhuVmUfhpwNXKJaDzjT4086rKtorGFYkeOXb8oofbg=
+	t=1741680236; cv=none; b=MMPE1PDFqXQgHSGSLIR+ezJJOYbfXAhLj6pkHXU4xJ9r8o9SioDO2RoOlAQ4iUn58V036bSqwr9hwDFxchWgwurH+xJn/cZnWjfqtC+rCbSUD5exaAHYR0t2UqwB/anTlkfEBIOlnD+vcR+7F7Q3/QmTyyhEpdNaGkH2ciVwsvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741680175; c=relaxed/simple;
-	bh=LSjdvaAkpe0Pmc07F6X/Q7yeIReLFdX+62wcHomTM84=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U8gUWWmAwCq7mFgIFFfAwR0fBjVEIQSHLlzPFhxP1oauwk9VpIPucz1QEDNZ1krOoA7NMzmnjMmN1KcQ5gUw5tFXq52XSkNQWzg4+r4UBdRZJnT/6JTOMXCwPOqurkkNXGzHn706hhsIBJBqNNp+k8HvLWSM4LXhIwX9U2KPow4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=QQmUUnGw; arc=none smtp.client-ip=72.21.196.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1741680236; c=relaxed/simple;
+	bh=2hLZWnCv2EtDgjR8+K6vyZNyIgHxNMcWJXvdlO7Zh1s=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hFrE+c4f3WlSMVAINK+KvsBmBU2CtPQcNK2rXm/BW4kFqaipMeyhJJulZ2bOGx9s/JjuXqxN7TJPSC+SdbPzPG30CzYSEgtH3LBi1OhabNYtol9SgbMRH5kOXaJGSSJFJSwi+FR0WMbQlsCSS8M3v6LDq/DQAc2fONhtu5PdHzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QHS3BQUq; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43bc97e6360so25267325e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 01:03:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1741680174; x=1773216174;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=dUt3LEoSvOjSrsb26MD+fECZCawYRKXBOLzP/h4uqJU=;
-  b=QQmUUnGwVpUki+9/ShMCMX7HSkiV460YicdjobNiT7gUL+CzV94T9MJ2
-   dm5aUUXt0w+MPe24AyI7x8UVG1groxn2hEoG9M32VGq5j1uisTDWQTNe8
-   Ysq7qLsOpM4exJTYbUoKoXwAwtu9NUbM2VD4YCe7PUxG3ZSaGs7ADXBx8
-   w=;
-X-IronPort-AV: E=Sophos;i="6.14,238,1736812800"; 
-   d="scan'208";a="473988847"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 08:02:47 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:22259]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.235:2525] with esmtp (Farcaster)
- id 316f76c8-51bd-48b1-bb20-93ea36c10044; Tue, 11 Mar 2025 08:02:45 +0000 (UTC)
-X-Farcaster-Flow-ID: 316f76c8-51bd-48b1-bb20-93ea36c10044
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 11 Mar 2025 08:02:45 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.88.128.133) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 11 Mar 2025 08:02:41 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <aleksandr.mikhalitsyn@canonical.com>
-CC: <arnd@arndb.de>, <bluca@debian.org>, <brauner@kernel.org>,
-	<cgroups@vger.kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
-	<hannes@cmpxchg.org>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<leon@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <mkoutny@suse.com>,
-	<mzxreary@0pointer.de>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<shuah@kernel.org>, <tj@kernel.org>, <willemb@google.com>
-Subject: Re: [PATCH net-next 4/4] tools/testing/selftests/cgroup: add test for SO_PEERCGROUPID
-Date: Tue, 11 Mar 2025 01:02:32 -0700
-Message-ID: <20250311080233.11136-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250309132821.103046-5-aleksandr.mikhalitsyn@canonical.com>
-References: <20250309132821.103046-5-aleksandr.mikhalitsyn@canonical.com>
+        d=google.com; s=20230601; t=1741680233; x=1742285033; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2hLZWnCv2EtDgjR8+K6vyZNyIgHxNMcWJXvdlO7Zh1s=;
+        b=QHS3BQUq/XB/hr0supueIRd2pAyWRf71yj3CD+95AWlBPh3Lc/dt+r7BB92DQ4jPsS
+         6CJ6gTmkZ3mkR2WDbx9aYpdc+LitYCzYQnhG4kLISupSgAqq3rkeMPkrl11arsOv3/Xd
+         At4BRijtBZqsITFTkDGGv9yW8z+mEaFL3I8MyN8zTkC6FqJ2BlQUoy5TS5Wy4ShpNWla
+         ZRBEnsQeF3ohlsvNIvpk2Ms4xCQaBVjW+fTxIlGTdNsau1ohwHPho3mbnn2LiQBPvW0i
+         K9cVmW6Ybtq1wacXURCM7TczepXj35WNWx1FjhpjL/1LZ+ZWboeS/XP8pwfl1zMhHzUj
+         HMCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741680233; x=1742285033;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2hLZWnCv2EtDgjR8+K6vyZNyIgHxNMcWJXvdlO7Zh1s=;
+        b=tRMOkvaMtyVVwqcc2yImuoA+wvszd8/gQbHdMTut3TS5ObpI243ylbw/2MUEY24wjE
+         5oXomu32Kycd0PNKuM79JCtImEFI9XyQhQpPBs3+lkNMhMyiEhRPluKgigAMKZt5fiaA
+         yXihUa0+RbcB1nyZKpL7JIvfM2ovsqViWE5t/7dz8xxgItSGxCp06vcbmg2iuaHgu9xW
+         hz7gvea72L/2hOzMS2r/OLobIKXuycRxtWPvBZ2nJ90TTF6cUQkXfRjxNqphlMq+bsOj
+         7be3xsit1MkRjEDMUneb18liM3yEE+VAXWho+N36FwdkvI3FRFb3M60LwGlrfonur5XR
+         JAhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVz8rgTpi8XBHgcaFjCQpjAWz7kd5Xf1sxAAH1uxhAqPE5SL83UZa4qyF/WdWyuBBgezxO9feKWxIz0HMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+wahB99aVzMsjJ3ofWQ6e7gkLWiUwBDoHZgWQgwS/ILNg7Gsf
+	bS7Is/8/fhnrh/aAeungQEbL/Nj9gxfBPT4dvJDzASKVaM+s9Czj7o2g5wrZAIpLOJjUOthFtCi
+	1Yq5j3DOYGZq+vg==
+X-Google-Smtp-Source: AGHT+IH2MIRvfpH4CFKMRuL5h1TKTG/FHun9wu65UOLvGgc4pnBQqob4uGqZMxl5J5g5i+cSWeiIdjJ5Uemv4L4=
+X-Received: from wmbay8.prod.google.com ([2002:a05:600c:1e08:b0:43c:f482:222])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1c9d:b0:43b:ca39:6c7d with SMTP id 5b1f17b1804b1-43cb91c5830mr108693685e9.3.1741680233073;
+ Tue, 11 Mar 2025 01:03:53 -0700 (PDT)
+Date: Tue, 11 Mar 2025 08:03:50 +0000
+In-Reply-To: <87725b0d-42e9-4273-a51f-90c82aad2254@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D037UWB004.ant.amazon.com (10.13.138.84) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Mime-Version: 1.0
+References: <20250310-inline-c-wrappers-v1-1-d726415e6332@posteo.net>
+ <CAH5fLgi1YOP9gbXEmYfBtjWeMaqsYpNrrC1fd2rGABCKWYVcbg@mail.gmail.com> <87725b0d-42e9-4273-a51f-90c82aad2254@posteo.net>
+Message-ID: <Z8_uZnW_0T24z1sn@google.com>
+Subject: Re: [PATCH] rust: task: mark Task methods inline
+From: Alice Ryhl <aliceryhl@google.com>
+To: Panagiotis Foliadis <pfoliadis@posteo.net>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Sun,  9 Mar 2025 14:28:15 +0100
-> +static void client(FIXTURE_DATA(so_peercgroupid) *self,
-> +		   const FIXTURE_VARIANT(so_peercgroupid) *variant)
-> +{
-> +	int cfd, err;
-> +	socklen_t len;
-> +	uint64_t peer_cgroup_id = 0, test_cgroup1_id = 0, test_cgroup2_id = 0;
-> +	char state;
-> +
-> +	cfd = socket(AF_UNIX, variant->type, 0);
-> +	if (cfd < 0) {
-> +		log_err("socket");
-> +		child_die();
-> +	}
-> +
-> +	if (variant->type == SOCK_DGRAM) {
-> +		fill_sockaddr(self->client_addr, variant->abstract);
-> +
-> +		if (bind(cfd, (struct sockaddr *)&self->client_addr->listen_addr, self->client_addr->addrlen)) {
-> +			log_err("bind");
-> +			child_die();
-> +		}
-> +	}
-> +
-> +	/* negative testcase: no peer for socket yet */
-> +	len = sizeof(peer_cgroup_id);
-> +	err = getsockopt(cfd, SOL_SOCKET, SO_PEERCGROUPID, &peer_cgroup_id, &len);
-> +	if (!err || (errno != ENODATA)) {
-> +		log_err("getsockopt must fail with errno == ENODATA when socket has no peer");
-> +		child_die();
-> +	}
-> +
-> +	if (connect(cfd, (struct sockaddr *)&self->server_addr.listen_addr,
-> +		    self->server_addr.addrlen) != 0) {
-> +		log_err("connect");
-> +		child_die();
-> +	}
-> +
-> +	state = 'R';
-> +	write(self->sync_sk[1], &state, sizeof(state));
+On Mon, Mar 10, 2025 at 04:09:09PM +0000, Panagiotis Foliadis wrote:
+>=20
+>=20
+> On 10/3/25 12:23, Alice Ryhl wrote:
+> > On Mon, Mar 10, 2025 at 10:40=E2=80=AFAM Panagiotis Foliadis
+> > <pfoliadis@posteo.net> wrote:
+> > > When you build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+> > > toolchain provided by kernel.org, the following symbols are generated=
+:
+> > >=20
+> > > $ nm vmlinux | grep ' _R'.*Task | rustfilt
+> > > ffffffff817b2d30 T <kernel::task::Task>::get_pid_ns
+> > > ffffffff817b2d50 T <kernel::task::Task>::tgid_nr_ns
+> > > ffffffff817b2c90 T <kernel::task::Task>::current_pid_ns
+> > > ffffffff817b2d00 T <kernel::task::Task>::signal_pending
+> > > ffffffff817b2cc0 T <kernel::task::Task>::uid
+> > > ffffffff817b2ce0 T <kernel::task::Task>::euid
+> > > ffffffff817b2c70 T <kernel::task::Task>::current
+> > > ffffffff817b2d70 T <kernel::task::Task>::wake_up
+> > > ffffffff817b2db0 T <kernel::task::Task as kernel::types::AlwaysRefCou=
+nted>::dec_ref
+> > > ffffffff817b2d90 T <kernel::task::Task as kernel::types::AlwaysRefCou=
+nted>::inc_ref
+> > >=20
+> > > Most of these Rust symbols are trivial wrappers around the C function=
+s
+> > > signal_pending, uid, euid, wake_up, dec_ref and inc_ref.It doesn't
+> > > make sense to go through a trivial wrapper for these functions, so
+> > > mark them inline.
+> > There's no C function called dec_ref or inc_ref? Please use the C
+> > function names instead of the Rust ones.
+> >=20
+> > > After applying this patch, the above command will produce this output=
+:
+> > >=20
+> > > ffff8000805aa004 T <kernel::task::Task>::get_pid_ns
+> > > ffff8000805aa01c T <kernel::task::Task>::tgid_nr_ns
+> > > ffff8000805a9fe8 T <kernel::task::Task>::current_pid_ns
+> > > ffff8000805a9fd0 T <kernel::task::Task>::current
+> > I think it'd be nice with an explanation of why you did not mark these
+> > #[inline].
+>=20
+> Since the issue focuses on the functions that are trivial wrappers around
+> c and `do nothing that call a C function` I thought i would leave this ou=
+t
+> since there is some other functionality (albeit sometimes minimal) other
+> that being just a c-wrapper.
 
-nit: This looks unnecessary ?
+As far as I can tell, all four functions will compile down to a simple
+call to a C function.
 
+get_pid_ns, tgid_nr_ns: These functions have a pointer where they say
+"if the pointer is null, replace it with null, otherwise just use the
+pointer". The optimizer can optimize that to "just use the pointer", and
+in fact I checked that this optimization happens when we wrote
+tgid_nr_ns.
 
-> +
-> +	read(self->sync_sk[1], &test_cgroup1_id, sizeof(uint64_t));
-> +	read(self->sync_sk[1], &test_cgroup2_id, sizeof(uint64_t));
-> +
-> +	len = sizeof(peer_cgroup_id);
-> +	if (getsockopt(cfd, SOL_SOCKET, SO_PEERCGROUPID, &peer_cgroup_id, &len)) {
-> +		log_err("Failed to get SO_PEERCGROUPID");
-> +		child_die();
-> +	}
-> +
-> +	/*
-> +	 * There is a difference between connection-oriented sockets
-> +	 * and connectionless ones from the perspective of SO_PEERCGROUPID.
-> +	 *
-> +	 * sk->sk_cgrp_data is getting filled when we allocate struct sock (see call to cgroup_sk_alloc()).
-> +	 * For DGRAM socket, self->server socket is our peer and by the time when we allocate it,
-> +	 * parent process sits in a test_cgroup1. Then it changes cgroup to test_cgroup2, but it does not
-> +	 * affect anything.
-> +	 * For STREAM/SEQPACKET socket, self->server is not our peer, but that one we get from accept()
-> +	 * syscall. And by the time when we call accept(), parent process sits in test_cgroup2.
-> +	 *
-> +	 * Let's ensure that it works like that and if it get changed then we should detect it
-> +	 * as it's a clear UAPI change.
-> +	 */
-> +	if (variant->type == SOCK_DGRAM) {
-> +		/* cgroup id from SO_PEERCGROUPID should be equal to the test_cgroup1_id */
-> +		if (peer_cgroup_id != test_cgroup1_id) {
-> +			log_err("peer_cgroup_id != test_cgroup1_id: %" PRId64 " != %" PRId64, peer_cgroup_id, test_cgroup1_id);
-> +			child_die();
-> +		}
-> +	} else {
-> +		/* cgroup id from SO_PEERCGROUPID should be equal to the test_cgroup2_id */
-> +		if (peer_cgroup_id != test_cgroup2_id) {
-> +			log_err("peer_cgroup_id != test_cgroup2_id: %" PRId64 " != %" PRId64, peer_cgroup_id, test_cgroup2_id);
-> +			child_die();
-> +		}
-> +	}
-> +}
-> +
-> +TEST_F(so_peercgroupid, test)
-> +{
-> +	uint64_t test_cgroup1_id, test_cgroup2_id;
-> +	int err;
-> +	int pfd;
-> +	char state;
-> +	int child_status = 0;
-> +
-> +	if (cg_find_unified_root(self->cgroup_root, sizeof(self->cgroup_root), NULL))
-> +		ksft_exit_skip("cgroup v2 isn't mounted\n");
-> +
-> +	self->test_cgroup1 = cg_name(self->cgroup_root, "so_peercgroupid_cg1");
-> +	ASSERT_NE(NULL, self->test_cgroup1);
-> +
-> +	self->test_cgroup2 = cg_name(self->cgroup_root, "so_peercgroupid_cg2");
-> +	ASSERT_NE(NULL, self->test_cgroup2);
-> +
-> +	err = cg_create(self->test_cgroup1);
-> +	ASSERT_EQ(0, err);
-> +
-> +	err = cg_create(self->test_cgroup2);
-> +	ASSERT_EQ(0, err);
-> +
-> +	test_cgroup1_id = cg_get_id(self->test_cgroup1);
-> +	ASSERT_LT(0, test_cgroup1_id);
-> +
-> +	test_cgroup2_id = cg_get_id(self->test_cgroup2);
-> +	ASSERT_LT(0, test_cgroup2_id);
-> +
-> +	/* enter test_cgroup1 before allocating a socket */
-> +	err = cg_enter_current(self->test_cgroup1);
-> +	ASSERT_EQ(0, err);
-> +
-> +	self->server = socket(AF_UNIX, variant->type, 0);
-> +	ASSERT_NE(-1, self->server);
-> +
-> +	/* enter test_cgroup2 after allocating a socket */
-> +	err = cg_enter_current(self->test_cgroup2);
-> +	ASSERT_EQ(0, err);
-> +
-> +	fill_sockaddr(&self->server_addr, variant->abstract);
-> +
-> +	err = bind(self->server, (struct sockaddr *)&self->server_addr.listen_addr, self->server_addr.addrlen);
-> +	ASSERT_EQ(0, err);
-> +
-> +	if (variant->type != SOCK_DGRAM) {
-> +		err = listen(self->server, 1);
-> +		ASSERT_EQ(0, err);
-> +	}
-> +
-> +	err = socketpair(AF_UNIX, SOCK_DGRAM | SOCK_CLOEXEC, 0, self->sync_sk);
-> +	EXPECT_EQ(err, 0);
-> +
-> +	self->client_pid = fork();
-> +	ASSERT_NE(-1, self->client_pid);
-> +	if (self->client_pid == 0) {
-> +		close(self->server);
-> +		close(self->sync_sk[0]);
-> +		client(self, variant);
-> +		exit(0);
-> +	}
-> +	close(self->sync_sk[1]);
-> +
-> +	if (variant->type != SOCK_DGRAM) {
-> +		pfd = accept(self->server, NULL, NULL);
-> +		ASSERT_NE(-1, pfd);
+current_pid_ns: If you add #[inline] to PidNamespace::from_ptr, then
+this is just a call to task_active_pid_ns.
 
-nit: close(self->server) here ?
+current: This is just a call to Task::current_raw which in turn is just
+a call to `get_current`.
 
-It's close()d anyway when the process exits.
-
-
-> +	} else {
-> +		pfd = self->server;
-> +	}
-> +
-> +	/* wait until the child arrives at checkpoint */
-> +	read(self->sync_sk[0], &state, sizeof(state));
-> +	ASSERT_EQ(state, 'R');
-
-The client will wait two write()s without this synchronisation.
-
-
-> +
-> +	write(self->sync_sk[0], &test_cgroup1_id, sizeof(uint64_t));
-> +	write(self->sync_sk[0], &test_cgroup2_id, sizeof(uint64_t));
-> +
-> +	close(pfd);
-> +	waitpid(self->client_pid, &child_status, 0);
-> +	ASSERT_EQ(0, WIFEXITED(child_status) ? WEXITSTATUS(child_status) : 1);
-> +}
-> +
-> +TEST_HARNESS_MAIN
+Alice
 
