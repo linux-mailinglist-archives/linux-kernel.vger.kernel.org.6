@@ -1,157 +1,293 @@
-Return-Path: <linux-kernel+bounces-555623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5DF5A5BA61
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:04:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C874EA5BA6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:05:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242DB3A53D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:03:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D14E3A614F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04B8224227;
-	Tue, 11 Mar 2025 08:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022C5223324;
+	Tue, 11 Mar 2025 08:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QHS3BQUq"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jLxCzslc"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3971EB9E8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6815F1EB9E8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741680236; cv=none; b=MMPE1PDFqXQgHSGSLIR+ezJJOYbfXAhLj6pkHXU4xJ9r8o9SioDO2RoOlAQ4iUn58V036bSqwr9hwDFxchWgwurH+xJn/cZnWjfqtC+rCbSUD5exaAHYR0t2UqwB/anTlkfEBIOlnD+vcR+7F7Q3/QmTyyhEpdNaGkH2ciVwsvE=
+	t=1741680330; cv=none; b=mfhq3OzqbfP36SbcxTU0ndlLEL9s3yfdUe8appnsp6mTmri5smP/8Ru5ET7bE14SBNZQWBAwwE0kMO9ZWSh6eGhS2IjoudFFLsTKroFom97GhpCCh2wASGWXv9+jPkqJ80btTVTLpt/w8Hf+iu2DwXQxsBmPHJLGcIfnRoxy7Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741680236; c=relaxed/simple;
-	bh=2hLZWnCv2EtDgjR8+K6vyZNyIgHxNMcWJXvdlO7Zh1s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hFrE+c4f3WlSMVAINK+KvsBmBU2CtPQcNK2rXm/BW4kFqaipMeyhJJulZ2bOGx9s/JjuXqxN7TJPSC+SdbPzPG30CzYSEgtH3LBi1OhabNYtol9SgbMRH5kOXaJGSSJFJSwi+FR0WMbQlsCSS8M3v6LDq/DQAc2fONhtu5PdHzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QHS3BQUq; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43bc97e6360so25267325e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 01:03:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741680233; x=1742285033; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2hLZWnCv2EtDgjR8+K6vyZNyIgHxNMcWJXvdlO7Zh1s=;
-        b=QHS3BQUq/XB/hr0supueIRd2pAyWRf71yj3CD+95AWlBPh3Lc/dt+r7BB92DQ4jPsS
-         6CJ6gTmkZ3mkR2WDbx9aYpdc+LitYCzYQnhG4kLISupSgAqq3rkeMPkrl11arsOv3/Xd
-         At4BRijtBZqsITFTkDGGv9yW8z+mEaFL3I8MyN8zTkC6FqJ2BlQUoy5TS5Wy4ShpNWla
-         ZRBEnsQeF3ohlsvNIvpk2Ms4xCQaBVjW+fTxIlGTdNsau1ohwHPho3mbnn2LiQBPvW0i
-         K9cVmW6Ybtq1wacXURCM7TczepXj35WNWx1FjhpjL/1LZ+ZWboeS/XP8pwfl1zMhHzUj
-         HMCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741680233; x=1742285033;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2hLZWnCv2EtDgjR8+K6vyZNyIgHxNMcWJXvdlO7Zh1s=;
-        b=tRMOkvaMtyVVwqcc2yImuoA+wvszd8/gQbHdMTut3TS5ObpI243ylbw/2MUEY24wjE
-         5oXomu32Kycd0PNKuM79JCtImEFI9XyQhQpPBs3+lkNMhMyiEhRPluKgigAMKZt5fiaA
-         yXihUa0+RbcB1nyZKpL7JIvfM2ovsqViWE5t/7dz8xxgItSGxCp06vcbmg2iuaHgu9xW
-         hz7gvea72L/2hOzMS2r/OLobIKXuycRxtWPvBZ2nJ90TTF6cUQkXfRjxNqphlMq+bsOj
-         7be3xsit1MkRjEDMUneb18liM3yEE+VAXWho+N36FwdkvI3FRFb3M60LwGlrfonur5XR
-         JAhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVz8rgTpi8XBHgcaFjCQpjAWz7kd5Xf1sxAAH1uxhAqPE5SL83UZa4qyF/WdWyuBBgezxO9feKWxIz0HMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+wahB99aVzMsjJ3ofWQ6e7gkLWiUwBDoHZgWQgwS/ILNg7Gsf
-	bS7Is/8/fhnrh/aAeungQEbL/Nj9gxfBPT4dvJDzASKVaM+s9Czj7o2g5wrZAIpLOJjUOthFtCi
-	1Yq5j3DOYGZq+vg==
-X-Google-Smtp-Source: AGHT+IH2MIRvfpH4CFKMRuL5h1TKTG/FHun9wu65UOLvGgc4pnBQqob4uGqZMxl5J5g5i+cSWeiIdjJ5Uemv4L4=
-X-Received: from wmbay8.prod.google.com ([2002:a05:600c:1e08:b0:43c:f482:222])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1c9d:b0:43b:ca39:6c7d with SMTP id 5b1f17b1804b1-43cb91c5830mr108693685e9.3.1741680233073;
- Tue, 11 Mar 2025 01:03:53 -0700 (PDT)
-Date: Tue, 11 Mar 2025 08:03:50 +0000
-In-Reply-To: <87725b0d-42e9-4273-a51f-90c82aad2254@posteo.net>
+	s=arc-20240116; t=1741680330; c=relaxed/simple;
+	bh=f9GgyKlgz40K7OCYckltu7XNEMChc55zyDT/Pqpng3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mlU43py4QY+w6zYxdi5l6wNmQ/lawr3TqkOcXsG2X7O+zmE2hWYePFjqtCPz7QqkbJ231YpTz9WlQlZjpfUjmZtYe0moGWpuAuQWkz9wc2HK7MF3aLDbonmocqn6PKuIdGnttP7Dg2wM8f5DOeOkeyzrUlhn0jIuQD209aT0XJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jLxCzslc; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 11 Mar 2025 01:05:06 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741680316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RAYFqIJlHKyWKw1zT75h7lHBHX+DTmxUr/wIvnOdyrw=;
+	b=jLxCzslcec0OsCOjhfULLAcEuIzEXocTLubSRZU/3vUw9+V04MLn0CDiJpn8y/UDUQTjcM
+	F0x5lUrgtOVBgvhQdSd5XwGyt41o2YYaT69wqIUhUi8I2Uf778+xbFbeOBwM0r2VB6O08H
+	tLdmKd+OjG4x7OEMdOrRxpHNCf6drp8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Zhenyu Ye <yezhenyu2@huawei.com>
+Cc: maz@kernel.org, yuzenghui@huawei.com, will@kernel.org,
+	catalin.marinas@arm.com, joey.gouly@arm.com,
+	linux-kernel@vger.kernel.org, xiexiangyou@huawei.com,
+	zhengchuan@huawei.com, wangzhou1@hisilicon.com,
+	linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v1 3/5] arm64/kvm: using ioctl to enable/disable the
+ HDBSS feature
+Message-ID: <Z8_usklidqnerurc@linux.dev>
+References: <20250311040321.1460-1-yezhenyu2@huawei.com>
+ <20250311040321.1460-4-yezhenyu2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250310-inline-c-wrappers-v1-1-d726415e6332@posteo.net>
- <CAH5fLgi1YOP9gbXEmYfBtjWeMaqsYpNrrC1fd2rGABCKWYVcbg@mail.gmail.com> <87725b0d-42e9-4273-a51f-90c82aad2254@posteo.net>
-Message-ID: <Z8_uZnW_0T24z1sn@google.com>
-Subject: Re: [PATCH] rust: task: mark Task methods inline
-From: Alice Ryhl <aliceryhl@google.com>
-To: Panagiotis Foliadis <pfoliadis@posteo.net>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311040321.1460-4-yezhenyu2@huawei.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Mar 10, 2025 at 04:09:09PM +0000, Panagiotis Foliadis wrote:
->=20
->=20
-> On 10/3/25 12:23, Alice Ryhl wrote:
-> > On Mon, Mar 10, 2025 at 10:40=E2=80=AFAM Panagiotis Foliadis
-> > <pfoliadis@posteo.net> wrote:
-> > > When you build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
-> > > toolchain provided by kernel.org, the following symbols are generated=
-:
-> > >=20
-> > > $ nm vmlinux | grep ' _R'.*Task | rustfilt
-> > > ffffffff817b2d30 T <kernel::task::Task>::get_pid_ns
-> > > ffffffff817b2d50 T <kernel::task::Task>::tgid_nr_ns
-> > > ffffffff817b2c90 T <kernel::task::Task>::current_pid_ns
-> > > ffffffff817b2d00 T <kernel::task::Task>::signal_pending
-> > > ffffffff817b2cc0 T <kernel::task::Task>::uid
-> > > ffffffff817b2ce0 T <kernel::task::Task>::euid
-> > > ffffffff817b2c70 T <kernel::task::Task>::current
-> > > ffffffff817b2d70 T <kernel::task::Task>::wake_up
-> > > ffffffff817b2db0 T <kernel::task::Task as kernel::types::AlwaysRefCou=
-nted>::dec_ref
-> > > ffffffff817b2d90 T <kernel::task::Task as kernel::types::AlwaysRefCou=
-nted>::inc_ref
-> > >=20
-> > > Most of these Rust symbols are trivial wrappers around the C function=
-s
-> > > signal_pending, uid, euid, wake_up, dec_ref and inc_ref.It doesn't
-> > > make sense to go through a trivial wrapper for these functions, so
-> > > mark them inline.
-> > There's no C function called dec_ref or inc_ref? Please use the C
-> > function names instead of the Rust ones.
-> >=20
-> > > After applying this patch, the above command will produce this output=
-:
-> > >=20
-> > > ffff8000805aa004 T <kernel::task::Task>::get_pid_ns
-> > > ffff8000805aa01c T <kernel::task::Task>::tgid_nr_ns
-> > > ffff8000805a9fe8 T <kernel::task::Task>::current_pid_ns
-> > > ffff8000805a9fd0 T <kernel::task::Task>::current
-> > I think it'd be nice with an explanation of why you did not mark these
-> > #[inline].
->=20
-> Since the issue focuses on the functions that are trivial wrappers around
-> c and `do nothing that call a C function` I thought i would leave this ou=
-t
-> since there is some other functionality (albeit sometimes minimal) other
-> that being just a c-wrapper.
+On Tue, Mar 11, 2025 at 12:03:19PM +0800, Zhenyu Ye wrote:
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index d919557af5e5..bd73ee92b12c 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -787,6 +787,12 @@ struct kvm_vcpu_arch {
+>  
+>  	/* Per-vcpu CCSIDR override or NULL */
+>  	u32 *ccsidr;
+> +
+> +	/* HDBSS registers info */
+> +	struct {
+> +		u64 br_el2;
+> +		u64 prod_el2;
+> +	} hdbss;
 
-As far as I can tell, all four functions will compile down to a simple
-call to a C function.
+I'm not a fan of storing the raw system register values in the vCPU
+struct. I'd rather we kept track of the buffer base address, size, and
+index as three separate fields.
 
-get_pid_ns, tgid_nr_ns: These functions have a pointer where they say
-"if the pointer is null, replace it with null, otherwise just use the
-pointer". The optimizer can optimize that to "just use the pointer", and
-in fact I checked that this optimization happens when we wrote
-tgid_nr_ns.
+>  };
+>  
+>  /*
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index b98ac6aa631f..ed5b68c2085e 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -330,6 +330,18 @@ static __always_inline void __load_stage2(struct kvm_s2_mmu *mmu,
+>  	asm(ALTERNATIVE("nop", "isb", ARM64_WORKAROUND_SPECULATIVE_AT));
+>  }
+>  
+> +static __always_inline void __load_hdbss(struct kvm_vcpu *vcpu)
+> +{
+> +	if (!vcpu->kvm->enable_hdbss)
+> +		return;
+> +
+> +	write_sysreg_s(vcpu->arch.hdbss.br_el2, SYS_HDBSSBR_EL2);
+> +	write_sysreg_s(vcpu->arch.hdbss.prod_el2, SYS_HDBSSPROD_EL2);
+> +
+> +	dsb(sy);
+> +	isb();
 
-current_pid_ns: If you add #[inline] to PidNamespace::from_ptr, then
-this is just a call to task_active_pid_ns.
+What are you synchronizing against here? dsb(sy) is a *huge* hammer. A
+dsb() in this context would only make sense if there were pending stores
+to the dirty tracking structure, which ought not be the case at load.
 
-current: This is just a call to Task::current_raw which in turn is just
-a call to `get_current`.
+Also keep in mind the EL1&0 regime is out of context...
 
-Alice
+> +}
+> +
+>  static inline struct kvm *kvm_s2_mmu_to_kvm(struct kvm_s2_mmu *mmu)
+>  {
+>  	return container_of(mmu->arch, struct kvm, arch);
+> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+> index b727772c06fb..3040eac74f8c 100644
+> --- a/arch/arm64/include/asm/sysreg.h
+> +++ b/arch/arm64/include/asm/sysreg.h
+> @@ -1105,6 +1105,18 @@
+>  #define GCS_CAP(x)	((((unsigned long)x) & GCS_CAP_ADDR_MASK) | \
+>  					       GCS_CAP_VALID_TOKEN)
+>  
+> +/*
+> + * Definitions for the HDBSS feature
+> + */
+> +#define HDBSS_MAX_SIZE		HDBSSBR_EL2_SZ_2MB
+> +
+> +#define HDBSSBR_EL2(baddr, sz)	(((baddr) & GENMASK(55, 12 + sz)) | \
+> +				 ((sz) << HDBSSBR_EL2_SZ_SHIFT))
+> +#define HDBSSBR_BADDR(br)	((br) & GENMASK(55, (12 + HDBSSBR_SZ(br))))
+> +#define HDBSSBR_SZ(br)		(((br) & HDBSSBR_EL2_SZ_MASK) >> HDBSSBR_EL2_SZ_SHIFT)
+> +
+> +#define HDBSSPROD_IDX(prod)	(((prod) & HDBSSPROD_EL2_INDEX_MASK) >> HDBSSPROD_EL2_INDEX_SHIFT)
+> +
+>  #define ARM64_FEATURE_FIELD_BITS	4
+>  
+>  /* Defined for compatibility only, do not add new users. */
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index 0160b4924351..825cfef3b1c2 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -80,6 +80,70 @@ int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
+>  	return kvm_vcpu_exiting_guest_mode(vcpu) == IN_GUEST_MODE;
+>  }
+>  
+> +static int kvm_cap_arm_enable_hdbss(struct kvm *kvm,
+> +				    struct kvm_enable_cap *cap)
+> +{
+> +	unsigned long i;
+> +	struct kvm_vcpu *vcpu;
+> +	struct page *hdbss_pg;
+> +	int size = cap->args[0];
+> +
+> +	if (!system_supports_hdbss()) {
+> +		kvm_err("This system does not support HDBSS!\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (size < 0 || size > HDBSS_MAX_SIZE) {
+> +		kvm_err("Invalid HDBSS buffer size: %d!\n", size);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Enable the HDBSS feature if size > 0, otherwise disable it. */
+> +	if (size) {
+> +		kvm->enable_hdbss = true;
+> +		kvm->arch.mmu.vtcr |= VTCR_EL2_HD | VTCR_EL2_HDBSS;
+
+Nothing prevents a vCPU from using a VTCR value with HDBSS enabled
+before a tracking structure has been allocated.
+
+> +		kvm_for_each_vcpu(i, vcpu, kvm) {
+> +			hdbss_pg = alloc_pages(GFP_KERNEL, size);
+
+GFP_KERNEL_ACCOUNT
+
+> +			if (!hdbss_pg) {
+> +				kvm_err("Alloc HDBSS buffer failed!\n");
+> +				return -EINVAL;
+> +			}
+
+enable_hdbss and vtcr aren't cleaned up in this case, and EINVAL is an
+inappopriate return for a failed memory allocation.
+
+> +			vcpu->arch.hdbss.br_el2 = HDBSSBR_EL2(page_to_phys(hdbss_pg), size);
+> +			vcpu->arch.hdbss.prod_el2 = 0;
+> +
+> +			/*
+> +			 * We should kick vcpus out of guest mode here to
+> +			 * load new vtcr value to vtcr_el2 register when
+> +			 * re-enter guest mode.
+> +			 */
+> +			kvm_vcpu_kick(vcpu);
+
+VTCR_EL2 is configured on vcpu_load() for VHE. How is this expected to
+work?
+
+> +		}
+> +
+> +		kvm_info("Enable HDBSS success, HDBSS buffer size: %d\n", size);
+
+Drop the debugging printks.
+
+> +	} else if (kvm->enable_hdbss) {
+> +		kvm->arch.mmu.vtcr &= ~(VTCR_EL2_HD | VTCR_EL2_HDBSS);
+> +
+> +		kvm_for_each_vcpu(i, vcpu, kvm) {
+> +			/* Kick vcpus to flush hdbss buffer. */
+> +			kvm_vcpu_kick(vcpu);
+> +
+> +			hdbss_pg = phys_to_page(HDBSSBR_BADDR(vcpu->arch.hdbss.br_el2));
+> +			if (hdbss_pg)
+> +				__free_pages(hdbss_pg, HDBSSBR_SZ(vcpu->arch.hdbss.br_el2));
+> +
+> +			vcpu->arch.hdbss.br_el2 = 0;
+> +			vcpu->arch.hdbss.prod_el2 = 0;
+> +		}
+> +
+> +		kvm->enable_hdbss = false;
+> +		kvm_info("Disable HDBSS success\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+>  			    struct kvm_enable_cap *cap)
+>  {
+> @@ -125,6 +189,9 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+>  		}
+>  		mutex_unlock(&kvm->slots_lock);
+>  		break;
+> +	case KVM_CAP_ARM_HW_DIRTY_STATE_TRACK:
+> +		r = kvm_cap_arm_enable_hdbss(kvm, cap);
+> +		break;
+>  	default:
+>  		break;
+>  	}
+> @@ -393,6 +460,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>  	case KVM_CAP_ARM_SUPPORTED_REG_MASK_RANGES:
+>  		r = BIT(0);
+>  		break;
+> +	case KVM_CAP_ARM_HW_DIRTY_STATE_TRACK:
+> +		r = system_supports_hdbss();
+> +		break;
+
+I'm not sure this is creating the right abstraction for userspace. At
+least for the dirty bitmap, this is exposing an implementation detail to
+the VMM.
+
+You could, perhaps, associate the dirty tracking structure with a
+similar concept (e.g. vCPU dirty rings) available to userspace.
+
+>  	default:
+>  		r = 0;
+>  	}
+> diff --git a/arch/arm64/kvm/hyp/vhe/switch.c b/arch/arm64/kvm/hyp/vhe/switch.c
+> index 647737d6e8d0..6b633a219e4d 100644
+> --- a/arch/arm64/kvm/hyp/vhe/switch.c
+> +++ b/arch/arm64/kvm/hyp/vhe/switch.c
+> @@ -256,6 +256,7 @@ void kvm_vcpu_load_vhe(struct kvm_vcpu *vcpu)
+>  	__vcpu_load_switch_sysregs(vcpu);
+>  	__vcpu_load_activate_traps(vcpu);
+>  	__load_stage2(vcpu->arch.hw_mmu, vcpu->arch.hw_mmu->arch);
+> +	__load_hdbss(vcpu);
+>  }
+>  
+>  void kvm_vcpu_put_vhe(struct kvm_vcpu *vcpu)
+> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> index 1f55b0c7b11d..9c11e2292b1e 100644
+> --- a/arch/arm64/kvm/mmu.c
+> +++ b/arch/arm64/kvm/mmu.c
+> @@ -1703,6 +1703,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	if (writable)
+>  		prot |= KVM_PGTABLE_PROT_W;
+>  
+> +	if (kvm->enable_hdbss && logging_active)
+> +		prot |= KVM_PGTABLE_PROT_DBM;
+> +
+
+We should set DBM if the mapping is PTE sized. That way you can
+potentially avoid faults for pages that precede the dirty tracking
+enable.
+
+Thanks,
+Oliver
 
