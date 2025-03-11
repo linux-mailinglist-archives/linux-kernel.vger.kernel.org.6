@@ -1,52 +1,60 @@
-Return-Path: <linux-kernel+bounces-556467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2A0A5CA18
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:02:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE86AA5CA21
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:02:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC9461747ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:02:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 074343A606D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F9B3594E;
-	Tue, 11 Mar 2025 16:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D5F260364;
+	Tue, 11 Mar 2025 16:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgIaJz8G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="We0KcTLt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B765EC5;
-	Tue, 11 Mar 2025 16:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F30510E5;
+	Tue, 11 Mar 2025 16:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741708892; cv=none; b=blqa5SKf8ewcUS7hAKteTHLB2/fRPE1YVz/cgJ0wM5qpZJX0N7ZHzQwdSxJ2EorAdPxwtr46qxogiKlJ4pRkGvtpRTIflGypsfpR2ZOQVHaIbhP/gZ1F5R9r+C0FP0Yy32rxvv6zx0HfKSKHeSFec7CIXP09/5X4g67nLrDDiJY=
+	t=1741708930; cv=none; b=O4ZkOzaSGrIojRHJSaLJZvW3PmK/3hdgv9jqtXU34LjNSvEP0C10roKlb5fqPt6NpDRi1SecIIVqg9Cq8HzCMzpoV2oZeHEf0HVLdrJak5RybMIQCYMj0dNgfSpB7LaZj/8CFJEYhfE8pW3eTieTjhDcyScV1i6y4adsv6kgE+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741708892; c=relaxed/simple;
-	bh=j9FC6CQbngxhHd3AnN4lYjaaHBAXRWlEahyYBKS1F6k=;
+	s=arc-20240116; t=1741708930; c=relaxed/simple;
+	bh=pTO0oEqPOMpJ+F6xgXl9453/01qXaTv34Qd/NHTo5js=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cDBsTjcXRUpq72P8MOb+Uzhla7/BHH3ednkGiGldc/u0QAOFRLCwk9bysRKBWl/0SoFH/3/NA59XGj0gfwTXoNhlz2GkH5fUPyjNEsH1wU7//RJxIqjn8fgP446hPR5NIA4yb4y86g0bTGNenuP8oMtxtv7p3CrT0vn6Xe2i1tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgIaJz8G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00DF4C4CEE9;
-	Tue, 11 Mar 2025 16:01:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvCs3xjDfqpDWafi5ERDa7OWVX+MMBlAgcwM5kEb8Efv54m+bH5oR//5yaPxZ0Ifgr4X6SqJ1IbKukfNqdC5QDW0yCNp0cTQ+lbfxNqc4KWbS1RlQ8deWOELJd40B4Rehf/nQKphuk8y/NdtN1PQzDwy+q40Ii0XPzCuZ2dpf1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=We0KcTLt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F16DDC4CEE9;
+	Tue, 11 Mar 2025 16:02:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741708892;
-	bh=j9FC6CQbngxhHd3AnN4lYjaaHBAXRWlEahyYBKS1F6k=;
+	s=k20201202; t=1741708930;
+	bh=pTO0oEqPOMpJ+F6xgXl9453/01qXaTv34Qd/NHTo5js=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OgIaJz8GJgp1/aDUubByLEcCXp63vE+1RVtXaqaaMWEHDT2V/uhX5EPuQamFJY+nZ
-	 GfdzuLoo8Ol6SyOqbBNaNZ/yLFHdhR9SVivzUlle9fDDwMM1ER63sPbvZlRYvMWzge
-	 0iSUXuSziqpX2a8OFWN/iMuHIuNeN6MpCqKu+9CvKfvjmr6fa/juav19jbMuTkd6OF
-	 eTnW/QUZULkLMzo1Yc8xbaeinmtcCB9DdeaRDDDckd0vgK4EcrMtl7Hl9c3Y53BDSL
-	 okd5+0DAwksoGgpHpXDLsvwk0EkcWDsN44sZPbi3lYCD2NxidVv6hB5SfZAcgqCxDN
-	 WUUG32E2lGyQw==
-Date: Tue, 11 Mar 2025 09:01:31 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: cem@kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: remove unnecessary NULL check before kvfree()
-Message-ID: <20250311160131.GW2803749@frogsfrogsfrogs>
-References: <20250311071114.1037911-1-nichen@iscas.ac.cn>
+	b=We0KcTLtFqa262LOKD5ujKR9E95p2fDi04W/Y0TXcTpqeLNt4dfMPAAth8XBcB2e5
+	 VMWfb/PT7/gxp7ZsmPIlgoDFh+l4XN5xXA+sygR0vOMafHCUf3p27UFExXLZjoSiVc
+	 Q302Gh5XePHcUi96sERI7Menw8c3Vu0YTB/4iMPQcZOtzQoVmPURsUfxpTIHu+QXgH
+	 LAwwXF/k0CkVphtiH1lvYcNKLdbNmre6sSUIOvOzAQGKw+9C0C0qfjyl3YSgE7LyeW
+	 s1AHIifRh5Bh1ulrke5IRFYvkKejSTdCrqarARMdZN13O/B0uYf2LI+MJ2PkkNkuPm
+	 Gh3GrRe/Y0PvQ==
+Date: Tue, 11 Mar 2025 18:02:04 +0200
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thara Gopinath <thara.gopinath@gmail.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Vinod Koul <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Md Sadre Alam <quic_mdalam@quicinc.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v7 3/8] dmaengine: qcom: bam_dma: add bam_pipe_lock flag
+ support
+Message-ID: <da4u6uceevf264ycemxvutkvmw77z6vlt6td2vtwuz7zm2csqk@4km3vnletgky>
+References: <20250311-qce-cmd-descr-v7-0-db613f5d9c9f@linaro.org>
+ <20250311-qce-cmd-descr-v7-3-db613f5d9c9f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,42 +63,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250311071114.1037911-1-nichen@iscas.ac.cn>
+In-Reply-To: <20250311-qce-cmd-descr-v7-3-db613f5d9c9f@linaro.org>
 
-On Tue, Mar 11, 2025 at 03:11:14PM +0800, Chen Ni wrote:
-> Remove unnecessary NULL check before kvfree() reported by
-> Coccinelle/coccicheck and the semantic patch at
-> scripts/coccinelle/free/ifnullfree.cocci.
+On Tue, Mar 11, 2025 at 10:25:34AM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> Extend the device match data with a flag indicating whether the IP
+> supports the BAM lock/unlock feature. Set it to true on BAM IP versions
+> 1.4.0 and above.
 
-Probably fine, though the line numbers have moved around a lot in
-for-next...
+This is obvious from the patch itself. I think this might be a good
+place for the description that you had in patch 1.
 
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-
---D
-
+> 
+> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
->  fs/xfs/xfs_rtalloc.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/dma/qcom/bam_dma.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/xfs/xfs_rtalloc.c b/fs/xfs/xfs_rtalloc.c
-> index 57bef567e011..9688e8ca6915 100644
-> --- a/fs/xfs/xfs_rtalloc.c
-> +++ b/fs/xfs/xfs_rtalloc.c
-> @@ -1144,8 +1144,7 @@ xfs_growfs_rtg(
->  			goto out_error;
->  	}
+> diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
+> index 8861245314b1..737fce396c2e 100644
+> --- a/drivers/dma/qcom/bam_dma.c
+> +++ b/drivers/dma/qcom/bam_dma.c
+> @@ -58,6 +58,8 @@ struct bam_desc_hw {
+>  #define DESC_FLAG_EOB BIT(13)
+>  #define DESC_FLAG_NWD BIT(12)
+>  #define DESC_FLAG_CMD BIT(11)
+> +#define DESC_FLAG_LOCK BIT(10)
+> +#define DESC_FLAG_UNLOCK BIT(9)
 >  
-> -	if (old_rsum_cache)
-> -		kvfree(old_rsum_cache);
-> +	kvfree(old_rsum_cache);
->  	xfs_rtgroup_rele(rtg);
->  	return 0;
+>  struct bam_async_desc {
+>  	struct virt_dma_desc vd;
+> @@ -113,6 +115,7 @@ struct reg_offset_data {
 >  
+>  struct bam_device_data {
+>  	const struct reg_offset_data *reg_info;
+> +	bool bam_pipe_lock;
+>  };
+>  
+>  static const struct reg_offset_data bam_v1_3_reg_info[] = {
+> @@ -179,6 +182,7 @@ static const struct reg_offset_data bam_v1_4_reg_info[] = {
+>  
+>  static const struct bam_device_data bam_v1_4_data = {
+>  	.reg_info = bam_v1_4_reg_info,
+> +	.bam_pipe_lock = true,
+>  };
+>  
+>  static const struct reg_offset_data bam_v1_7_reg_info[] = {
+> @@ -212,6 +216,7 @@ static const struct reg_offset_data bam_v1_7_reg_info[] = {
+>  
+>  static const struct bam_device_data bam_v1_7_data = {
+>  	.reg_info = bam_v1_7_reg_info,
+> +	.bam_pipe_lock = true,
+>  };
+>  
+>  /* BAM CTRL */
+> @@ -707,8 +712,15 @@ static struct dma_async_tx_descriptor *bam_prep_slave_sg(struct dma_chan *chan,
+>  		unsigned int curr_offset = 0;
+>  
+>  		do {
+> -			if (flags & DMA_PREP_CMD)
+> +			if (flags & DMA_PREP_CMD) {
+>  				desc->flags |= cpu_to_le16(DESC_FLAG_CMD);
+> +				if (bdev->dev_data->bam_pipe_lock) {
+> +					if (flags & DMA_PREP_LOCK)
+> +						desc->flags |= cpu_to_le16(DESC_FLAG_LOCK);
+> +					else if (flags & DMA_PREP_UNLOCK)
+> +						desc->flags |= cpu_to_le16(DESC_FLAG_UNLOCK);
+
+Should it fail if there is no support for those flags?
+Is it an error to set the UNLOCK flag if there was no LOCK set
+beforehand?
+
+> +				}
+> +			}
+>  
+>  			desc->addr = cpu_to_le32(sg_dma_address(sg) +
+>  						 curr_offset);
+> 
 > -- 
-> 2.25.1
+> 2.45.2
 > 
-> 
+
+-- 
+With best wishes
+Dmitry
 
