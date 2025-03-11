@@ -1,207 +1,117 @@
-Return-Path: <linux-kernel+bounces-556669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560A4A5CD2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:06:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1040A5CD30
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3E2F3B362B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:05:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 461913B4AF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A9A262D23;
-	Tue, 11 Mar 2025 18:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3D2262D2E;
+	Tue, 11 Mar 2025 18:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ft4oGmHe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3D8qMqzI"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522CA2620C3;
-	Tue, 11 Mar 2025 18:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B982620C3;
+	Tue, 11 Mar 2025 18:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716357; cv=none; b=lWQuvLeQaN1sFDuI/Ul/xBxvwL7SUPSOjtEp1g6GHoQCnNpBc/nbf4fdsQUfkCjie7cS5LLRZbqHfS4LpwmkmsB9J+wILteSUH3DaCa3NSiK/otefuD92/j0Kdp0bQpcHT0fySVzRV/rFWIS5Q6kdzJXViSaWMGGEcceXNfiWCI=
+	t=1741716389; cv=none; b=uIVO5mY407xFIUjMN3Hn4jb1WjH5f9IWsTUoWkRo+/rkGB+cTng69Tq1tbK5V8rGOrnBoNQvhhXhP3Xus60t7BVxIJnG0sSJj1bVzWVYkgq0xiX5DDVjlQblpsZi6jBQ0i/AB/msFJ9TaH4P/NewnCPT+Tiow8N8nXG79Si/SMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716357; c=relaxed/simple;
-	bh=11Irf0tEDIGV3dK6QbQ3UhX4UB4z39GWrpYACLCFReI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AYKSf8IJOChQkqzMFzli2m9uXRlJnovU+/naUdln0aORtCKxqRKBTdmUdy24B2iFI9ZnByEgDEaSrNeWfnY3QtIOcELaUJmdoaCKEbycFsD71CXwzRTwJ/vHLuhEqYkzLSnsNhcfbdP7ZO/eyPWzfKmdOhL3yzE7/o/zDmbqk4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ft4oGmHe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C35A7C4CEEA;
-	Tue, 11 Mar 2025 18:05:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741716356;
-	bh=11Irf0tEDIGV3dK6QbQ3UhX4UB4z39GWrpYACLCFReI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ft4oGmHeMCF/4B+JBUtZYLqh+mH7iNMfPsnD8+PVP4LH2/yJxsKXVJRsFX8MoRAnd
-	 W5BBYZt+U7DVFNdazggqUYWTo+DU2Cd3WzG5+2/EzhG3Ao4kkyP4udHAns9oLorFvR
-	 o66jFrU0igSRo6DDKTVvwPmeNfOIeH3znuEOOGkYywUwIjhTTRCiyHRKbq5Rnst39K
-	 jy4YRgwG1nB+SC3+UM0YcGgozV9Upb0F0AvYXQI7xn8gRIA5NOeuuv7/f4zAED6/Hk
-	 dFz+hZB5DBq9lY0t66R7ZZHViJdFmIoPdz+ZsLufQc6Sg4hijTqOxTS7L3IJhaipJi
-	 A5EnzzFvUyNSg==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5495c1e1b63so5964877e87.0;
-        Tue, 11 Mar 2025 11:05:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVBQz5m+FHk1vk5hSafFSlu90CZ4SdYTQ7r6AQuuVHdXO3T5vTZ8ULxIVQlR/3Rdw8eEv4iCk3p@vger.kernel.org, AJvYcCVgywyawW+HfaMEv2YScYYzZknImp465tNgCx0AcVa9+7FHAy1Yb/twEdBAJUQsgalLE2liJJQsHxuPHqdM@vger.kernel.org, AJvYcCXraUh5HCRg+c6fGqc8WzizFlZ2fcLXrIJTUGALhk4PbI9qpQoav5BvsgkphhD/FIJnzrwbJ/PO41AzfYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywydc1Mzombz4p6xc+26yLiBRuvYzPs8a0hkcSmR68kBDTc2+/v
-	0aqKUupDHiYoWFNMDwrjck+zsVn3m8mp4o/EdC0Ipxh7jF87SQ6SuBFvxhMg9VVmWyTz3IluqJR
-	O7usERv7MTP349fU+rImBt+Pdweg=
-X-Google-Smtp-Source: AGHT+IE1DhdzUxYfeRm9Qc57aIFuhnE1fxuQD7rqwy5wQRfpLpQIss0yR5vEY9Km1clMnMeURrvlVLa2n0ApHcBINmw=
-X-Received: by 2002:a05:6512:114f:b0:549:8963:eaf0 with SMTP id
- 2adb3069b0e04-549abae96f7mr1803311e87.39.1741716355424; Tue, 11 Mar 2025
- 11:05:55 -0700 (PDT)
+	s=arc-20240116; t=1741716389; c=relaxed/simple;
+	bh=DippBqC0BBU0qH1E5vSEMORAFTY5N4fiUMqRFBzB8mQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C+kEAc1lA3DDFhRSC2stkZHm7/p/V32oIibUZDZ2bTmzw4j1eGxCGKUGlCZOWv9Ce51lh3J+/5vESWivRV9PMyv8TYITPDEDyqCgBuuFxycFCZFLDBJYRLjqc2uEuIyXmCa6n9RQDj/9J8pbtBroXx806+HwlyEXix2ETRbkNjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3D8qMqzI; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=3OLyNSn1WdzXXSydJk+U4Xqnh9AkjR3NtHdm4uHlg2I=; b=3D8qMqzI2hLyJ4OmXTqaru27Sj
+	yuWdbwj4lnjwq0ZZyrOZmsml2cahvtrLvdfCwPVJf+fO//6p/cWAEJwc+Mm80x2NsDSdInA99QL6b
+	HEydjaVzn9+FbbYMbYCpHs6cAC2QFKgEF6jtqplLpjylWi09wQVpS/aSaQSpH2BkjSd0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ts3zV-004Ppo-Ho; Tue, 11 Mar 2025 19:06:09 +0100
+Date: Tue, 11 Mar 2025 19:06:09 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rob Herring <robh@kernel.org>
+Cc: Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dimitri Fedrau <dima.fedrau@gmail.com>
+Subject: Re: [PATCH net-next 1/3] dt-bindings: net: ethernet-phy: add
+ property mac-series-termination-ohms
+Message-ID: <de68ea7e-1ca5-4983-9824-3fb432b00e82@lunn.ch>
+References: <20250307-dp83822-mac-impedance-v1-0-bdd85a759b45@liebherr.com>
+ <20250307-dp83822-mac-impedance-v1-1-bdd85a759b45@liebherr.com>
+ <20250311173344.GA3802548-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305192536.1673099-1-alexandru.gagniuc@hp.com>
-In-Reply-To: <20250305192536.1673099-1-alexandru.gagniuc@hp.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 12 Mar 2025 03:05:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQzheUCQN031sJekqDR8AVVjqi_A0nW8cSZmnG1ZAENNQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JpI_YJkfwIj1l5KI9YrTRH_tJ6-D90WQK3RndmobfKn6geow3CzLRLYN50
-Message-ID: <CAK7LNAQzheUCQN031sJekqDR8AVVjqi_A0nW8cSZmnG1ZAENNQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: deb-pkg: don't set KBUILD_BUILD_VERSION indiscriminately
-To: Alexandru Gagniuc <alexandru.gagniuc@hp.com>
-Cc: nathan@kernel.org, linux-kbuild@vger.kernel.org, nicolas@fjasle.eu, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311173344.GA3802548-robh@kernel.org>
 
-On Thu, Mar 6, 2025 at 4:27=E2=80=AFAM Alexandru Gagniuc
-<alexandru.gagniuc@hp.com> wrote:
->
-> In ThinPro, we use the convention <upstream_ver>+hp<patchlevel> for
-> the kernel package. This does not have a dash in the name or version.
+On Tue, Mar 11, 2025 at 12:33:44PM -0500, Rob Herring wrote:
+> On Fri, Mar 07, 2025 at 11:30:01AM +0100, Dimitri Fedrau wrote:
+> > Add property mac-series-termination-ohms in the device tree bindings for
+> > selecting the resistance value of the builtin series termination resistors
+> > of the PHY. Changing the resistance to an appropriate value can reduce
+> > signal reflections and therefore improve signal quality.
+> > 
+> > Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> > ---
+> >  Documentation/devicetree/bindings/net/ethernet-phy.yaml | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> > index 824bbe4333b7ed95cc39737d3c334a20aa890f01..4a710315a83ccf15bfc210ae432ae988cf31e04c 100644
+> > --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> > +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> > @@ -238,6 +238,11 @@ properties:
+> >        peak-to-peak specified in ANSI X3.263. When omitted, the PHYs default
+> >        will be left as is.
+> >  
+> > +  mac-series-termination-ohms:
+> 
+> A property of the MAC (or associated with it) should be in the MAC's 
+> node.
 
-So, the kernel is a native package in ThinPro, in contrast to
-Debian and Ubuntu, where the kernel is a non-native package.
+But it is the PHY which uses the property, and the PHY which is
+implementing the resistor.
 
-I think it is a little odd, but if you want to use a version number
-without a hyphen, we can support this only for bindeb-pkg.
+Also, a PHY has two sides, one towards the MAC and a second media side
+to the network peer via the Ethernet cable. Both sides need
+termination resistors. So we need something in the name to make it
+clear which side of the PHY we are talking about. So we might end up
+with something like mac-termination-ohms and media-termination-ohms,
+in the PHY node.
 
-Please keep in mind that you still cannot do
-"make deb-pkg" or "make srcdeb-pkg" in your way.
+> Also, sounds like either either end could have a property.
 
+True, the MAC could also need a similar property, since the outputs
+from the MAC to the PHY needs termination resistors.  For the MAC,
+termination-ohms is probably sufficient, or phy-termination-ohms to
+indicate it is towards the PHY?
 
-In Debian Policy [1], the version format is:
-
-    [epoch:]upstream_version[-debian_revision]
-
-[1]: https://www.debian.org/doc/debian-policy/ch-controlfields.html#version
-
-
-Here, the absence of the debian_revision indicates that the package is
-a native package.
-
-Because Kbuild uses the debian format 3.0 (quilt),
-the debian_revision portion must be appended with a hyphen
-when you generate a source package.
-
-
-
-> This is built by editing ".version" before a build, and setting
-> EXTRAVERSION=3D"+hp" and KDEB_PKGVERSION make variables:
->
->     echo 68 > .version
->     make -j<n> EXTRAVERSION=3D"+hp" bindeb-pkg KDEB_PKGVERSION=3D6.6.6+hp=
-69
-
-So, you are doing math.
-
-You write a smaller number into .version by one
-("68" into the .version file and set "+hp69" to the variable)
-as the number in the .version file is incremented
-during the kernel build.
-
-Tricky, but seems to work.
-
-
-
-
-
-
->     .deb name: linux-image-6.6.6+hp_6.6.6+hp69_amd64.deb
->
-> Since commit 7d4f07d5cb71 ("kbuild: deb-pkg: squash
-> scripts/package/deb-build-option to debian/rules"), this no longer
-> works. The deb build logic changed, even though, the commit message
-> implies that the logic should be unmodified.
->
-> Before, KBUILD_BUILD_VERSION was not set if the KDEB_PKGVERSION did
-> not contain a dash. After the change KBUILD_BUILD_VERSION is always
-> set to KDEB_PKGVERSION. Since this determines UTS_VERSION,the uname
-> output to look off:
->
->     (now)      uname -a: version 6.6.6+hp ... #6.6.6+hp69
->     (expected) uname -a: version 6.6.6+hp ... #69
->
-> Update the debian/rules logic to restore the original behavior.
->
-> Cc: <stable@vger.kernel.org> # v6.12+
-> Fixes: 7d4f07d5cb71 ("kbuild: deb-pkg: squash scripts/package/deb-build-o=
-ption to debian/rules")
-> Signed-off-by: Alexandru Gagniuc <alexandru.gagniuc@hp.com>
-> ---
->  scripts/package/debian/rules | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/scripts/package/debian/rules b/scripts/package/debian/rules
-> index ca07243bd5cd..bbc214f2e6bd 100755
-> --- a/scripts/package/debian/rules
-> +++ b/scripts/package/debian/rules
-> @@ -21,9 +21,13 @@ ifeq ($(origin KBUILD_VERBOSE),undefined)
->      endif
->  endif
->
-> -revision =3D $(lastword $(subst -, ,$(shell dpkg-parsechangelog -S Versi=
-on)))
-> +debian_revision =3D $(shell dpkg-parsechangelog -S Version)
-> +revision =3D $(lastword $(subst -, ,$(debian_revision)))
->  CROSS_COMPILE ?=3D $(filter-out $(DEB_BUILD_GNU_TYPE)-, $(DEB_HOST_GNU_T=
-YPE)-)
-> -make-opts =3D ARCH=3D$(ARCH) KERNELRELEASE=3D$(KERNELRELEASE) KBUILD_BUI=
-LD_VERSION=3D$(revision) $(addprefix CROSS_COMPILE=3D,$(CROSS_COMPILE))
-> +make-opts =3D ARCH=3D$(ARCH) KERNELRELEASE=3D$(KERNELRELEASE) $(addprefi=
-x CROSS_COMPILE=3D,$(CROSS_COMPILE))
-> +ifneq ($(revision), $(debian_revision))
-
-dpkg-parsechangelog is invoked multiple times,
-even for 'debian/rules clean'.
-
-
-I would write the code like this:
-
-revision =3D $(shell dpkg-parsechangelog -S Version | sed -n 's/.*-//p')
-CROSS_COMPILE ?=3D $(filter-out $(DEB_BUILD_GNU_TYPE)-, $(DEB_HOST_GNU_TYPE=
-)-)
-make-opts =3D ARCH=3D$(ARCH) KERNELRELEASE=3D$(KERNELRELEASE) $(addprefix
-KBUILD_BUILD_VERSION=3D,$(revision)) $(addprefix
-CROSS_COMPILE=3D,$(CROSS_COMPILE))
-
-
-
-WIth this, dpkg-parsechangelog is invoked just one time
-only when building the package.
-
-
-
-
-> +    make-opts+=3DKBUILD_BUILD_VERSION=3D$(revision)
-> +endif
->
->  binary-targets :=3D $(addprefix binary-, image image-dbg headers libc-de=
-v)
->
-> --
-> 2.48.1
->
-
-
---
-Best Regards
-
-Masahiro Yamada
+	Andrew
 
