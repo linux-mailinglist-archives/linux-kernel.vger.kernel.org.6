@@ -1,149 +1,159 @@
-Return-Path: <linux-kernel+bounces-556021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B481A5BFE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:00:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFD4A5BFE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:00:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB5B3A530F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:00:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A66C03A6181
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C115253F13;
-	Tue, 11 Mar 2025 12:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751871E47A5;
+	Tue, 11 Mar 2025 12:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TW2bYuQn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vBIeQqR9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kuoDrVEn";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vBIeQqR9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kuoDrVEn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7F3221F3C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F963597C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741694433; cv=none; b=p7W0nqPEw5QHfjtZfUNIer1C4ODcMjGwh6RLXUOoCZBdoxRv0zmruYrtlGtUnOfXs3KkVm87f8EyCAXEnupRYjwsD7lc1hoOd3YmXMUzwuc4LayZdyd2IgwE984Fy8mt8iqU924DvyDJ91Haq4BPalxDwABzaepQnp6Mcx/02Gk=
+	t=1741694431; cv=none; b=ABG4HwK12W4dajhellfHtU/ugF0hkFLSlGq/CYzgCXAIzsLCl2LFkAc+EGQWEpiG24HAU+xBLP0Bp3rzuOtXMTBJOujo8PxoKTrixylxbV3hWhyQ1PHX2Gq8+RCC/XapqdGTaG/toKa5rN367s9UQ8hdCdBrwjd9FxPiKvqeA3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741694433; c=relaxed/simple;
-	bh=UUkiOgx3l9K4c/V4+FZ1/gOMX9QIDKDarArDS8WEx9M=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ccZPOM7iHW2tGdr5WQ2AGxd966oJp6MZllaRJBCH8NaP3JTz7zum0zN2N3NCskNd3jKcsoh/9DDOS/bTV5Sii5FR/sXnBz9OdvOCSlEiQxqlQ0/IXFq4LRpDe7wDA4DrMC7HMtXFF17h4MFt8L7JG2CxnGpWhh6WEI/zqg5dMDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TW2bYuQn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0426C4CEEC;
-	Tue, 11 Mar 2025 12:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741694433;
-	bh=UUkiOgx3l9K4c/V4+FZ1/gOMX9QIDKDarArDS8WEx9M=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=TW2bYuQnuLjiIIhKubGCj7e0KKKz/2eN9gynz5I27Ev8DqUTQiUJfySH2UqnuImLn
-	 g+zw7sMkPyytdcZUMMEHFB+mN39UyPm8eDm9eRZZvGAbegCfRvoj5qPMsqgnWA9Bna
-	 gS1J+FFV6hBsRhnjbxXdkKvNKKG7mQh19QJepnZ1ZA3T1JsG0a6H0QBXNo1MXMyshl
-	 EKYTNtLeB1YUgJnkWMn1x9cpWY+XbpvoioeWGJ94O2C8Lew8i2GbjdOwkyYsyaVnx0
-	 H8S5Ch03TTR0UjYV3Amsq2kEmZ/BH7o+BqsXIDW0AgqMiSJ3WK8Ss0YHOJEfxEkVhc
-	 lJphfKu5aMasA==
-Message-ID: <936351d5-e99c-4c5b-bd8b-8d541122f709@kernel.org>
-Date: Tue, 11 Mar 2025 20:00:28 +0800
+	s=arc-20240116; t=1741694431; c=relaxed/simple;
+	bh=JzkrOFhGkENMK4Rg1p53WvrgcmmdMId0Tsg3pBQf8Ck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNaOOu/pGWfcT8DUSYOJ/fvBpuhllueaAJOnj+rMI/iTdio3I7WHgcvWvPeA/iqO20LJ9RKBVyxJjxM23LUtJpnluzSVHNiqhrsIgc4wpwWW5T5nuwc+BEay0mW/Yj6WupRn5JUAKeH/258s8OwSt9jzfyjBz4w6tlfT4WSII9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vBIeQqR9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kuoDrVEn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vBIeQqR9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kuoDrVEn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from localhost (unknown [10.100.12.32])
+	by smtp-out1.suse.de (Postfix) with ESMTP id 1060D2117D;
+	Tue, 11 Mar 2025 12:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741694428; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x8WkA39bFX3GqqFALG3OsmUN05f4JXXHMUC4Yp+Z/J4=;
+	b=vBIeQqR9gJGCprOzJvE8U38YdIcTjjSKjKx09YIiqEc/VFCj9oVYGWtFbhuR4MYobQeV0S
+	vKZr050O4csrIn3QPrZq7p1YmnnRN4jKmUMSH/G7c2vPNlK5dg+GTYwkmf7tFvrYKO9I+u
+	reom673AlFCk5A5fEmKBatc4hkPySj8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741694428;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x8WkA39bFX3GqqFALG3OsmUN05f4JXXHMUC4Yp+Z/J4=;
+	b=kuoDrVEno3+Qe8velVwmuLL+SaoaDe8p6or5q+nTiq/09nKhZYx0xK2CpQ9Mtz1Iza+NhR
+	XsfLA47NwE4U3xBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741694428; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x8WkA39bFX3GqqFALG3OsmUN05f4JXXHMUC4Yp+Z/J4=;
+	b=vBIeQqR9gJGCprOzJvE8U38YdIcTjjSKjKx09YIiqEc/VFCj9oVYGWtFbhuR4MYobQeV0S
+	vKZr050O4csrIn3QPrZq7p1YmnnRN4jKmUMSH/G7c2vPNlK5dg+GTYwkmf7tFvrYKO9I+u
+	reom673AlFCk5A5fEmKBatc4hkPySj8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741694428;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x8WkA39bFX3GqqFALG3OsmUN05f4JXXHMUC4Yp+Z/J4=;
+	b=kuoDrVEno3+Qe8velVwmuLL+SaoaDe8p6or5q+nTiq/09nKhZYx0xK2CpQ9Mtz1Iza+NhR
+	XsfLA47NwE4U3xBA==
+Date: Tue, 11 Mar 2025 13:00:28 +0100
+From: Jiri Bohac <jbohac@suse.cz>
+To: Baoquan He <bhe@redhat.com>
+Cc: Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	kexec@lists.infradead.org, Philipp Rudo <prudo@redhat.com>,
+	Donald Dutile <ddutile@redhat.com>, Pingfan Liu <piliu@redhat.com>,
+	Tao Liu <ltao@redhat.com>, linux-kernel@vger.kernel.org,
+	David Hildenbrand <dhildenb@redhat.com>,
+	Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH v2 4/5] kdump: wait for DMA to finish when using CMA
+Message-ID: <Z9Al3DI_PsWPN83k@dwarf.suse.cz>
+References: <Z7dc9Cd8KX3b_brB@dwarf.suse.cz>
+ <Z7demEmgm-D_fqi2@dwarf.suse.cz>
+ <Z8UNvvEF2Ow/qigk@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, Yohan Joung <yohan.joung@sk.com>
-Subject: Re: [PATCH] f2fs: optimize f2fs DIO overwrites
-To: Yohan Joung <jyh429@gmail.com>, jaegeuk@kernel.org, daeho43@gmail.com
-References: <20250307145650.568-1-yohan.joung@sk.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250307145650.568-1-yohan.joung@sk.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8UNvvEF2Ow/qigk@MiWiFi-R3L-srv>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ZERO(0.00)[0];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[localhost:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On 3/7/25 22:56, Yohan Joung wrote:
-> this is unnecessary when we know we are overwriting already allocated
-> blocks and the overhead of starting a transaction can be significant
-> especially for multithreaded workloads doing small writes.
-
-Hi Yohan,
-
-So you're trying to avoid f2fs_map_lock() in dio write path, right?
-
-Thanks,
-
+On Mon, Mar 03, 2025 at 10:02:38AM +0800, Baoquan He wrote:
+> On 02/20/25 at 05:55pm, Jiri Bohac wrote:
+> > +static void crash_cma_clear_pending_dma(void)
+> > +{
+> > +	if (!crashk_cma_cnt)
+> > +		return;
+> > +
+> > +	mdelay(CMA_DMA_TIMEOUT_MSEC);
+> > +}
+> > +
+> >  /*
+> >   * No panic_cpu check version of crash_kexec().  This function is called
+> >   * only when panic_cpu holds the current CPU number; this is the only CPU
+> > @@ -116,6 +125,7 @@ void __noclone __crash_kexec(struct pt_regs *regs)
+> >  		if (kexec_crash_image) {
+> >  			struct pt_regs fixed_regs;
+> >  
+> > +			crash_cma_clear_pending_dma();
 > 
-> Signed-off-by: Yohan Joung <yohan.joung@sk.com>
-> ---
->  fs/f2fs/data.c | 20 ++++++++++++++++++++
->  fs/f2fs/f2fs.h |  1 +
->  fs/f2fs/file.c |  5 ++++-
->  3 files changed, 25 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 09437dbd1b42..728630037b74 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -4267,6 +4267,26 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  	return 0;
->  }
->  
-> +static int f2fs_iomap_overwrite_begin(struct inode *inode, loff_t offset,
-> +		loff_t length, unsigned flags, struct iomap *iomap,
-> +		struct iomap *srcmap)
-> +{
-> +	int ret;
-> +
-> +	/*
-> +	 * Even for writes we don't need to allocate blocks, so just pretend
-> +	 * we are reading to save overhead of starting a transaction.
-> +	 */
-> +	flags &= ~IOMAP_WRITE;
-> +	ret = f2fs_iomap_begin(inode, offset, length, flags, iomap, srcmap);
-> +	WARN_ON_ONCE(!ret && iomap->type != IOMAP_MAPPED);
-> +	return ret;
-> +}
-> +
->  const struct iomap_ops f2fs_iomap_ops = {
->  	.iomap_begin	= f2fs_iomap_begin,
->  };
-> +
-> +const struct iomap_ops f2fs_iomap_overwrite_ops = {
-> +	.iomap_begin	= f2fs_iomap_overwrite_begin,
-> +};
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index c6cc2694f9ac..0511ab5ed42a 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3936,6 +3936,7 @@ void f2fs_destroy_post_read_processing(void);
->  int f2fs_init_post_read_wq(struct f2fs_sb_info *sbi);
->  void f2fs_destroy_post_read_wq(struct f2fs_sb_info *sbi);
->  extern const struct iomap_ops f2fs_iomap_ops;
-> +extern const struct iomap_ops f2fs_iomap_overwrite_ops;
->  
->  static inline struct page *f2fs_find_data_page(struct inode *inode,
->  		pgoff_t index, pgoff_t *next_pgofs)
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 82b21baf5628..bb2fe6dac9b6 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -4985,6 +4985,7 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
->  	const ssize_t count = iov_iter_count(from);
->  	unsigned int dio_flags;
->  	struct iomap_dio *dio;
-> +	const struct iomap_ops *iomap_ops = &f2fs_iomap_ops;
->  	ssize_t ret;
->  
->  	trace_f2fs_direct_IO_enter(inode, iocb, count, WRITE);
-> @@ -5025,7 +5026,9 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
->  	dio_flags = 0;
->  	if (pos + count > inode->i_size)
->  		dio_flags |= IOMAP_DIO_FORCE_WAIT;
-> -	dio = __iomap_dio_rw(iocb, from, &f2fs_iomap_ops,
-> +	else if (f2fs_overwrite_io(inode, pos, count))
-> +		iomap_ops = &f2fs_iomap_overwrite_ops;
-> +	dio = __iomap_dio_rw(iocb, from, iomap_ops,
->  			     &f2fs_iomap_dio_write_ops, dio_flags, NULL, 0);
->  	if (IS_ERR_OR_NULL(dio)) {
->  		ret = PTR_ERR_OR_ZERO(dio);
+> This could be too ideal, I am not sure if it's a good way. When crash
+> triggered, we need do the urgent and necessary thing as soon as
+> possible, then shutdown all CPU to avoid further damage. This one second
+> of waiting could give the strayed system too much time. My personal
+> opinion.
+
+Good point! I think it makes sense to move the call to crash_cma_clear_pending_dma()
+past the call of machine_crash_shutdown where all the shutdown
+happens, like this:
+
+> >  			crash_setup_regs(&fixed_regs, regs);
+> >  			crash_save_vmcoreinfo();
+> >  			machine_crash_shutdown(&fixed_regs);
+
++			crash_cma_clear_pending_dma();
+
+I'll post a v3 with this change included.
+
+-- 
+Jiri Bohac <jbohac@suse.cz>
+SUSE Labs, Prague, Czechia
 
 
