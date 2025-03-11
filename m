@@ -1,195 +1,143 @@
-Return-Path: <linux-kernel+bounces-555654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE274A5BAD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:30:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3821AA5BAE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63C6717042E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:30:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E58AF18967F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14352224251;
-	Tue, 11 Mar 2025 08:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5A3224B07;
+	Tue, 11 Mar 2025 08:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CjAJA3HS"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="Gd/rDyrb"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDE11DE2A4;
-	Tue, 11 Mar 2025 08:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F25224251;
+	Tue, 11 Mar 2025 08:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741681826; cv=none; b=dP4IYr/pVhTXv3vnVzQA9SHdIH9LVMx2C7zKw5/uzzhLzWp72ejK1arQypm/8ZbYIPTodDVIL4pzSL5Fz5+M010dkAmDKVNNKp2swlC+EoVcEdcv0st38lkoP7hLfUPeNaW6cuq6S01rV8RvYFt1Y5834sV1n2WhqAgqtOsiIDU=
+	t=1741681880; cv=none; b=mZUYha5LUbEql+kj9kmC34CyFd/moR6OLN3gnMcxcJNOFg1q7zHjfTKnHxqu/isLQJC9WudP9lYJO7KesZ4xdN/PnxWa4MD8j8VY1y47Wldaqk0tO3ALzmh9XMbVGTIndE7WhmYElD21qpNNdKmPHwIH6H/Uug7X/Dr374Htu9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741681826; c=relaxed/simple;
-	bh=SlVTnK3vDqccU6cZFFpsWdMPhd31kMhyhL/i7QCcsvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jEHCH+YpnQ7nUjU5AtFak9N11XzZXG+w4O70c7FU/oEXV/YplzS5RzQLBhd2jq3OjF56Xuv4VM+drRKdzYY3aDWsNPEsNV15lD87xpogrlMY1ZcqaogVjWz69Vltzi4wG7EVEcRKGspql/WDqHRjycXEWeFBEiOtXXKlopfIvag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CjAJA3HS; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so339925766b.0;
-        Tue, 11 Mar 2025 01:30:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741681823; x=1742286623; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/wBUIzbfRjL8cYbjpKbIUr1nM3k/ZT4ERi+YMbxa2AA=;
-        b=CjAJA3HSlme6BdE9gcZK81tfe2Ez+al+pm9zrdtyxhJ8Q0Qowr+iAH62vT7M/Y1Fhl
-         UfsSpneGbPSXhgkg1IkXuUxpgRLbaRjDTMwIBvnLd3b8VYYCdNIyTZEUbZrVIzn+Db/Z
-         wHxt2YP1nkErqsBtgaAMVky2/XEt8/cxswXJTgrp6IzVV+R+BcpYG7FcXjCS3bA9Anqz
-         Ebn7ruFZDFxSdBgRbZs++0rtizSLapCKQL7tlW2sDEwPqfiYok8cbTUB1rEXdIwhyk/+
-         LFJv001hiuTiNeF8iFoK6qIvFOE4wSAr2w0ZD5PHGiUMae1zvmS9r7SPR5Nd+7JZF8Y+
-         U7Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741681823; x=1742286623;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/wBUIzbfRjL8cYbjpKbIUr1nM3k/ZT4ERi+YMbxa2AA=;
-        b=edCbec+MzXqXFO38QB8d6XPOCTakR94zGsgD2sSU+UrDPHTI9PMmseVDMKxIzqkfAs
-         iiVo4TnW/uF7H648kehKGEtEMNfv9ZxCIv+4ofh5zdisvU3JsF59ACUl8n1WioInZiFb
-         ir9oWwaApz7Rjes7aGby2V4xHJzVjCl/SK1vHUuar+qRy2nCQmZTxnXLynNN8PFvNT1f
-         1NOGS6u+3JpoAa5FqFSV++AfiJInWPuNoNoZi3JK+kfvCiQReZ/3G8lKyLcDrBDQ+rB6
-         yNecj2knQin9J0mtwGEAOlhKcxnDnrNh+YmOjsQyW3CX0NHGvmJv7nxsLCV3N9uM8gPf
-         nQXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUa9NXCdQaen9h7VETqErOs+wYrLdpBoA7/JDH7GsqBGtPro2JD7MYsAi+Fot+C6berbSCVDwPS3YVzuz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwuQLTcwT76KGxttP/Um6fvCy92PfNWSAQ48lSZUohF3deMI9U
-	PoM0KnPy6mJqtuEsF4o69fv3Bn36wXpzQkxL6DjhpqbUe7QYeiJ/
-X-Gm-Gg: ASbGncsA9kztCH5/Z6/HCOxFoN9a2TF8FFwWsX2brp+p4u544Nh1ZwpcdOuzCiwl7r+
-	/s9HLGSpTzvvB/jMlxEZNWmG4LrLLtuVQ2b4O569J/bjwJpdm1wKeiY/TisVUOeFNFrJXvXYulB
-	XqD1OXMfYXmez7emkRxueF561lWJ4erTeuFQ8FXR1ANxAE9I4Yyub7byhVGCLtQ2DUWRbp/mGV4
-	VGVWn+URDW70nf7pnByKWDF6Ym+IOaHjyMjcb4Pxr8CjZoFROvTfTlGbUow7uOvIloBY6EONNuH
-	8WUBNftT0NnY3ClIyEpe+AJm7yzAkPo1DojDzFsVcP81/VU/TjAmEw==
-X-Google-Smtp-Source: AGHT+IED4/BdBzDJtL90V4GvyA5vlzRx5/AdyTSCLrwu2fkiBvJHxCgGCstqtAFDn9HSo6VY65AMJw==
-X-Received: by 2002:a17:907:6d08:b0:abf:742e:1fd7 with SMTP id a640c23a62f3a-ac253096a6amr2126965266b.57.1741681822638;
-        Tue, 11 Mar 2025 01:30:22 -0700 (PDT)
-Received: from [192.168.1.130] ([188.193.103.108])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2394825efsm877216566b.45.2025.03.11.01.30.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 01:30:22 -0700 (PDT)
-Message-ID: <23c708ef-c52d-40c1-a9e8-b05555b21667@gmail.com>
-Date: Tue, 11 Mar 2025 09:30:20 +0100
+	s=arc-20240116; t=1741681880; c=relaxed/simple;
+	bh=uq4l37xY33wQzcIfykqADPximmfzxDVqSGBzJxov3Hs=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=htgGcxfL7ScNDatgKimQarhdR4yxhulU1eQHpBs1xxLB+p1CUbAfgMisHaEMPd5yPXWNI+j3LGNJpwW7sEmBH/5HXNCbC+pQ5lZWKVxoEePC50pzCGIp4mUAj0hHZav9+2LpiPzuPg56e/ExAk6+ZuSC/Wyv1O38Bv3TFPKF8wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=Gd/rDyrb; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 52B8UNm94588832, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1741681823; bh=uq4l37xY33wQzcIfykqADPximmfzxDVqSGBzJxov3Hs=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=Gd/rDyrbry8LtNamFACFIsvZLvXEXmqgZf1xFMZ++hkasL8aC5NgQYB3N2HNjByPT
+	 oXLBbxkDRvyjAL6rYZ8806Sqpg9F3+WYWZCCi2FssVikLhhwYXo14aE/oxpTBWRxT+
+	 wEb3wuXwwt1BByDzJ2aduKpcdfGCdh/FqhJrUlQ6wkzasuiycvN1q0KFwE6qq8neKk
+	 5C/hv2iMjdtcLSXdgLMk8KYlqJ6LOrZWUCBJwXBC7hSk10XJ3/SUY/x4c8DKYqI6lU
+	 r9L0Q6R+e9cqcXJY0dgx8Gf/0RGeDEG7XItGQRNF5QcGFZBONpSv2FqptfACsBoYBD
+	 UAE5TmFYlc3+g==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 52B8UNm94588832
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 16:30:23 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 11 Mar 2025 16:30:22 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 11 Mar 2025 16:30:22 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Tue, 11 Mar 2025 16:30:22 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Shengyu Qu <wiagn233@outlook.com>, "nbd@nbd.name" <nbd@nbd.name>,
+        "lorenzo@kernel.org" <lorenzo@kernel.org>,
+        "ryder.lee@mediatek.com"
+	<ryder.lee@mediatek.com>,
+        "shayne.chen@mediatek.com"
+	<shayne.chen@mediatek.com>,
+        "sean.wang@mediatek.com"
+	<sean.wang@mediatek.com>,
+        "johannes@sipsolutions.net"
+	<johannes@sipsolutions.net>,
+        "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>,
+        "angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>,
+        "miriam.rachel.korenblit@intel.com" <miriam.rachel.korenblit@intel.com>,
+        "greearb@candelatech.com" <greearb@candelatech.com>,
+        "michael-cy.lee@mediatek.com" <michael-cy.lee@mediatek.com>,
+        "nicolas.cavallari@green-communications.fr"
+	<nicolas.cavallari@green-communications.fr>,
+        "emmanuel.grumbach@intel.com"
+	<emmanuel.grumbach@intel.com>,
+        "christophe.jaillet@wanadoo.fr"
+	<christophe.jaillet@wanadoo.fr>,
+        "mingyen.hsieh@mediatek.com"
+	<mingyen.hsieh@mediatek.com>,
+        "chui-hao.chiu@mediatek.com"
+	<chui-hao.chiu@mediatek.com>,
+        "quic_adisi@quicinc.com"
+	<quic_adisi@quicinc.com>,
+        "gustavoars@kernel.org" <gustavoars@kernel.org>,
+        "sujuan.chen@mediatek.com" <sujuan.chen@mediatek.com>,
+        "bo.jiao@mediatek.com"
+	<bo.jiao@mediatek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>
+Subject: RE: [PATCH v10] wifi: mt76: mt7915: add wds support when wed is enabled
+Thread-Topic: [PATCH v10] wifi: mt76: mt7915: add wds support when wed is
+ enabled
+Thread-Index: AQHbkkaLU9jfzMwpsUyUi0gFPwPxsrNtmuMA
+Date: Tue, 11 Mar 2025 08:30:22 +0000
+Message-ID: <f469eccfb2344a6098267a1ebd2a3eb6@realtek.com>
+References: <TYCPR01MB84376878FE505F773182062B98D12@TYCPR01MB8437.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYCPR01MB84376878FE505F773182062B98D12@TYCPR01MB8437.jpnprd01.prod.outlook.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] ARM: dts: stm32: add initial support for
- stm32mp157-ultra-fly-sbc board
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?B?R29yYW4gUmHEkWVub3ZpxIc=?=
- <gradenovic@ultratronik.de>, =?UTF-8?B?QsO2cmdlIFN0csO8bXBmZWw=?=
- <bstruempfel@ultratronik.de>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250310154804.326943-1-goran.radni@gmail.com>
- <20250310154804.326943-5-goran.radni@gmail.com>
- <6af3a9fe-0c0b-497d-b143-77edc12f0c1e@kernel.org>
-Content-Language: en-US
-From: Goran Radenovic <goran.radni@gmail.com>
-In-Reply-To: <6af3a9fe-0c0b-497d-b143-77edc12f0c1e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Thank You for the feedback. I will fix this. I have to solve the problem 
-with my e-mails in MAINTAINERS first, because I cannot use them to send 
-e-mails "inline".
+Shengyu Qu <wiagn233@outlook.com> wrote:
+>=20
+> The current WED only supports 256 wcid, whereas mt7986 can support up to
+> 512 entries, so firmware provides a rule to get sta_info by DA when wcid
+> is set to 0x3ff by txd. Also, WED provides a register to overwrite txd
+> wcid, that is, wcid[9:8] can be overwritten by 0x3 and wcid[7:0] is set
+> to 0xff by host driver.
+>=20
+> However, firmware is unable to get sta_info from DA as DA !=3D RA for
+> 4addr cases, so firmware and wifi host driver both use wcid (256 - 271)
+> and (768 ~ 783) for sync up to get correct sta_info.
+>=20
+> Currently WDS+WED config is completely broken on MT7986/7981 devices if
+> without this patch.
+>=20
+> Tested-by: Sujuan Chen <sujuan.chen@mediatek.com>
+> Co-developed-by: Bo Jiao <bo.jiao@mediatek.com>
+> Signed-off-by: Bo Jiao <bo.jiao@mediatek.com>
+> Signed-off-by: Sujuan Chen <sujuan.chen@mediatek.com>
+> Signed-off-by: Shengyu Qu <wiagn233@outlook.com>
 
-Best regards
-Goran
+Reviewed-by: Ping-Ke Shih <pkshih@realtek.com>
 
-
-On 10.03.25 17:08, Krzysztof Kozlowski wrote:
-> On 10/03/2025 16:48, Goran Rađenović wrote:
->> +&gpioj {
->> +	gpio-line-names =
->> +	"", "", "", "", "", "", "", "",
->> +	"", "", "", "", "", "", "", "";
->> +};
->> +
->> +&gpiok {
->> +	gpio-line-names =
->> +	"", "", "", "", "", "", "", "",
->> +	"", "", "", "", "", "", "", "";
->> +};
->> +
->> +&gpioz {
->> +	gpio-line-names =
->> +	"", "", "", "#SPI_CS2", "", "", "", "",
->> +	"", "", "", "", "", "", "", "";
->> +};
->> +
->> +&gpu {
->> +	status = "okay";
->> +};
->> +
->> +&i2c1 {
->> +	pinctrl-names = "default", "sleep";
->> +	pinctrl-0 = <&i2c1_ux_pins_a>;
->> +	pinctrl-1 = <&i2c1_ux_pins_sleep_a>;
->> +	i2c-scl-rising-time-ns = <100>;
->> +	i2c-scl-falling-time-ns = <7>;
->> +	status = "okay";
->> +	/delete-property/dmas;
->> +	/delete-property/dma-names;
->> +
->> +	rtc@32 {
->> +		compatible = "epson,rx8900";
->> +		reg = <0x32>;
->> +		epson,vdet-disable;
->> +		trickle-diode-disable;
->> +	};
->> +};
->> +
->> +&i2c4 {
->> +	pinctrl-names = "default", "sleep";
->> +	pinctrl-0 = <&i2c4_ux_pins_a>;
->> +	pinctrl-1 = <&i2c4_ux_pins_sleep_a>;
->> +	i2c-scl-rising-time-ns = <185>;
->> +	i2c-scl-falling-time-ns = <20>;
->> +	status = "okay";
->> +	/delete-property/dmas;
->> +	/delete-property/dma-names;
->> +
->> +	pmic: stpmic@33 {
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
->
-> pmic?
->
->> +		compatible = "st,stpmic1";
->> +		reg = <0x33>;
->> +		interrupts-extended = <&exti 0 IRQ_TYPE_EDGE_FALLING>;
->> +		interrupt-controller;
->> +		#interrupt-cells = <2>;
->> +		status = "okay";
-> Does not look disabled
->
->
-> ...
->
->
->> +	dac_ux_ch2_pins_a: dac_ux-ch2-0 {
-> No underscores in node names.
->
->> +		pins {
->> +			pinmux = <STM32_PINMUX('A', 5, ANALOG)>;
->> +		};
->> +	};
->> +
->
->
->
-> Best regards,
-> Krzysztof
 
