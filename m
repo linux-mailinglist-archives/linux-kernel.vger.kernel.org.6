@@ -1,212 +1,211 @@
-Return-Path: <linux-kernel+bounces-556400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54218A5C646
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:23:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22428A5C70D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:31:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51C2D7A9012
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:22:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C3E23B3F7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A147E25F782;
-	Tue, 11 Mar 2025 15:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AEA25E804;
+	Tue, 11 Mar 2025 15:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y5zCKpAA"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fRjSfXde"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291D725DD08
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCFE25D8FF;
+	Tue, 11 Mar 2025 15:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741706558; cv=none; b=kcq2xiyQTvZs48+fOlirULlsmKQszxuPakKjGyLI98tY3RuxnN53PHo8R1mXvC+4OrXPFeBR+Sj2z7j8VTR+r01D4cBtZd4KeT1ILjwFwFZpL3i2yZJqxzrzN95oC7Uaak74PEjaN25O0m5nfQu/Lp+z9uZ9nsXASCw5n+zw4E0=
+	t=1741706731; cv=none; b=bzR7JXpXFHfzlKMDu27150hkJTukTgPJmi6CC/kpwhZe6WcZBq/M2GPRQt2Mo3XeVEM7h84m6E9vHYoxWqzM6RDT/LRfvS8do1cEUXsZYvYNMpKJ1pcYJeKCytIaYRTCYhUwJtgXLcEfvbBXDZ+9PlnMdcDzdpyD2KUiu/UWAZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741706558; c=relaxed/simple;
-	bh=UxtYwYns0MvhCa2m5ObZdAnlsKQGOnGlpHac9oEyev4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lcPoJsP0XxlDPVjFftAmaxGd8ReZIjSJdqKdk8KFJpmZlxE9JVY8itV3tqAzItqJYfzZB6MuaUzZi4zpIALe+ijM5auh2Fk7KSWyQydPMixhH211JaE0RxS5UXQY05ljVmoy566aLcu5BIK7bBAbEJCG5OHrYJBVGiBi02rr5zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y5zCKpAA; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6fd8be1e534so52935377b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741706555; x=1742311355; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HdiaqU+kYXkNBNnpqC5PVQou0G4lEwUYRv6GT9pOGpI=;
-        b=Y5zCKpAAqvWWdwWu3jfhumpmdT2BGNTxA4Pm54r6smnlF0Eyvj6uRToq4TXKY/r6nL
-         sO7XcgyWOp/djAQjvurj2fhezVxcxIKfOts9SzpvpF6KTyUm2A8pIAhPV8qHUTp/4XA/
-         wpF3+pLFVig7ddquS7HSTFK2hKxfm2wIXK7B6N7T3xTLPnbRiQXTiMvgkSbi9wEAGuTz
-         BxOdl1y+89pkyoaGAo6ZdpcKaj8H9f9SStR1Tf6AykwsEq3iJxbGsjoOwdnoVuV2cOAL
-         xt9wU1gg4Gs7AULsLI/dePUBD6xlLWsD8QpGjSu/+nXInCInULD0DeXg7uEBTBECL1np
-         qckw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741706555; x=1742311355;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HdiaqU+kYXkNBNnpqC5PVQou0G4lEwUYRv6GT9pOGpI=;
-        b=mvs4GORdyb9yL2lDdTbKD+HKDHlQCGlv6QzKtazrTn1j/NSX8iTxhPzPfkL3H9577i
-         NixgiI6Fk1Cxl6FMBcvteggKUmmOsSEznFocqB8Xv4crjqd600A1V4ezy/DQoWMCDk/8
-         s8IQKpqQLfVGv57CC8BHPLRaYNNUeAvMhvbqO32rvqDDIoHPU0IkUFeUuv9P04TUbRgE
-         L8tOy4Wql+m9oOdRCFBvxnZN+j1oqs+tRDpXoiU9Qag0oznEEh25N7WVIK8RB/R7SHfm
-         Jo80TjAgfw3JG39OY6cJNAc2PZ++tooJ7YYn6MaTpSvN+62aosQ1Zj8bl00T+pRCC49/
-         9nEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdEVZRo0gRiEFGNBgnuH+RG7LNHVLKNCFYt69FjMb/dOXQ/xiKm+/upvwD0bjmV49qUjYE7Q9lkraYYRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeKAcO4XhvTUMOYTv9Z5UrlmLEvhVPwtr5ANo+X1r25jEt/dvy
-	dFAjaxPqa+nzLQaMn9MLOgUqEfc1rmZT2W448n28oRuX1tPyk1zx5K/Xj4RTt/ks/U3Q6VGk5A4
-	WFS0jM30q4xaQzprm+Y0Giy8wW2i7xbW1GXdIag==
-X-Gm-Gg: ASbGnctfh0/1S7BXFbnHS4EwaMvByS0Jvt79SfelRZ1gFEsuzmOVpLaEV1hS/83Z9xv
-	k6gqiQ0t3oifEOk7YBLBx/VbtuRM68McqIArNn9HuSijfp2QPdQjt0QjucbC3vLbQOE3Exr+kdy
-	huhdDadjh0jYzF8MaUnzqqtQJFJOc=
-X-Google-Smtp-Source: AGHT+IGAy6+55/xUbWPLWAhWa/JJEH75eRRXo5nC8iwxe2xNn2XBzu/ByvzI/h9Bw5amhUiPp08ireVcbtB30aKD1pc=
-X-Received: by 2002:a05:690c:688f:b0:6f9:88b7:b6b7 with SMTP id
- 00721157ae682-6febf3e990dmr252844457b3.37.1741706554935; Tue, 11 Mar 2025
- 08:22:34 -0700 (PDT)
+	s=arc-20240116; t=1741706731; c=relaxed/simple;
+	bh=0d/Gu3/APzhUJteM1bMDC9zyxYeK89YVxBBNE7L0FII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LrTbooPDXo22l6Ci13NcPh9mX265TLhyJBZUVfN/XbIRn+08CT1c2GUrQGiwiQeZo6g5lgTzps2KKMMV9zzuBypBXsRGnu7T+GHIPd5NKse+cGspgdsgtqFzLqbuUOvdKI6WMgBeDfbIoHjYLS1gQLa1RgpT8QzoaNRTbYFxS7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fRjSfXde; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741706729; x=1773242729;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0d/Gu3/APzhUJteM1bMDC9zyxYeK89YVxBBNE7L0FII=;
+  b=fRjSfXdeTrGa5uq2DeWRQ2zBf8QRzdNTFHIZ79LYahSUfJV/5fNZoI8N
+   z2SmiFjXf74TbGI2ayP2WS4BqV9pIT2Ly/70qjkmKoZxelO0lalfsrT/P
+   h/PUKQvImWuIPyPFAH7YWgMSqXCRz0uIDjPr6D6opySE073yecp4vSAJa
+   RaNsN16hgu/KU50IK+44RYbaUo6qX1Vbf5oPpYbDJiyqtqMGucht6FaKF
+   RPeO9MjOA226aE3qQvzb4bP9j2X5ZoyTaPuI+bxQQISS7iXTJoy3oZor7
+   KuEx0LP1hBUpzE6JAG+AmTTt2YiNbjFfu0IBE8HGF93187j3r3HkJ4Ny0
+   A==;
+X-CSE-ConnectionGUID: OIgVmH2XQ9CUD2Po3/Bicg==
+X-CSE-MsgGUID: arf9xS36TCiqJjWyWoCylg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="60299279"
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="60299279"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 08:25:28 -0700
+X-CSE-ConnectionGUID: EL4W8WxNRSmNJGf5gIwKvQ==
+X-CSE-MsgGUID: t2xX6LR3SGWu+dMe6leO0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="151295515"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 11 Mar 2025 08:25:26 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ts1Tw-00077C-1C;
+	Tue, 11 Mar 2025 15:25:24 +0000
+Date: Tue, 11 Mar 2025 23:24:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v3] tracing: Show last module text symbols in the
+ stacktrace
+Message-ID: <202503112303.D7g66VSd-lkp@intel.com>
+References: <174161444691.1063601.16690699136628689205.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250310090220eucas1p1d5cf6a56935e21b5854f77fdc22236b1@eucas1p1.samsung.com>
- <20250310090211.286549-1-m.wilczynski@samsung.com> <20250310090211.286549-5-m.wilczynski@samsung.com>
-In-Reply-To: <20250310090211.286549-5-m.wilczynski@samsung.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 11 Mar 2025 16:21:59 +0100
-X-Gm-Features: AQ5f1JoXRXq5ucc-B5U0o3JR0rVlad9-RVtJACjXjl-xVuXRu_bgY0MVKH5Qe8E
-Message-ID: <CAPDyKFpAxkVgscMQpe2MZFCmNyaFq9YqiPQknLDf3CJ9zMdZ6g@mail.gmail.com>
-Subject: Re: [PATCH v7 4/5] pmdomain: thead: Add power-domain driver for TH1520
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, 
-	guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, jszhang@kernel.org, 
-	m.szyprowski@samsung.com, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174161444691.1063601.16690699136628689205.stgit@devnote2>
 
-On Mon, 10 Mar 2025 at 10:02, Michal Wilczynski
-<m.wilczynski@samsung.com> wrote:
->
-> The T-Head TH1520 SoC contains multiple power islands that can be
-> programmatically turned on and off using the AON (Always-On) protocol
-> and a hardware mailbox [1]. The relevant mailbox driver has already been
-> merged into the mainline kernel in commit 5d4d263e1c6b ("mailbox:
-> Introduce support for T-head TH1520 Mailbox driver");
->
-> Introduce a power-domain driver for the TH1520 SoC, which is using AON
-> firmware protocol to communicate with E902 core through the hardware
-> mailbox. This way it can send power on/off commands to the E902 core.
->
-> The interaction with AUDIO power island e.g trying to turn it OFF proved
-> to crash the firmware running on the E902 core. Introduce the workaround
-> to disable interacting with the power island.
->
-> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [1]
->
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
+Hi Masami,
 
-[...]
+kernel test robot noticed the following build errors:
 
-> +
-> +static int th1520_pd_probe(struct platform_device *pdev)
-> +{
-> +       struct generic_pm_domain **domains;
-> +       struct genpd_onecell_data *pd_data;
-> +       struct th1520_aon_chan *aon_chan;
-> +       struct device *dev = &pdev->dev;
-> +       int i;
-> +
-> +       aon_chan = th1520_aon_init(dev);
-> +       if (IS_ERR(aon_chan))
-> +               return dev_err_probe(dev, PTR_ERR(aon_chan),
-> +                                    "Failed to get AON channel\n");
-> +
-> +       platform_set_drvdata(pdev, aon_chan);
-> +
-> +       domains = devm_kcalloc(dev, ARRAY_SIZE(th1520_pd_ranges),
-> +                              sizeof(*domains), GFP_KERNEL);
-> +       if (!domains)
-> +               return -ENOMEM;
-> +
-> +       pd_data = devm_kzalloc(dev, sizeof(*pd_data), GFP_KERNEL);
-> +       if (!pd_data)
-> +               return -ENOMEM;
-> +
-> +       for (i = 0; i < ARRAY_SIZE(th1520_pd_ranges); i++) {
-> +               struct th1520_power_domain *pd;
-> +
-> +               if (th1520_pd_ranges[i].disabled)
-> +                       continue;
-> +
-> +               pd = th1520_add_pm_domain(dev, &th1520_pd_ranges[i]);
-> +               if (IS_ERR(pd))
-> +                       return PTR_ERR(pd);
-> +
-> +               pd->aon_chan = aon_chan;
-> +               domains[i] = &pd->genpd;
-> +               dev_dbg(dev, "added power domain %s\n", pd->genpd.name);
-> +       }
-> +
-> +       pd_data->domains = domains;
-> +       pd_data->num_domains = ARRAY_SIZE(th1520_pd_ranges);
-> +       pd_data->xlate = th1520_pd_xlate;
-> +
-> +       /*
-> +        * Initialize all power domains to off to ensure they start in a
-> +        * low-power state. This allows device drivers to manage power
-> +        * domains by turning them on or off as needed.
-> +        */
-> +       th1520_pd_init_all_off(domains, dev);
-> +
-> +       return of_genpd_add_provider_onecell(dev->of_node, pd_data);
+[auto build test ERROR on trace/for-next]
+[cannot apply to linus/master v6.14-rc6 next-20250311]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If this fails, we should clean-up properly, not just returning an error code.
+url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-Show-last-module-text-symbols-in-the-stacktrace/20250310-214849
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/174161444691.1063601.16690699136628689205.stgit%40devnote2
+patch subject: [PATCH v3] tracing: Show last module text symbols in the stacktrace
+config: i386-buildonly-randconfig-001-20250311 (https://download.01.org/0day-ci/archive/20250311/202503112303.D7g66VSd-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250311/202503112303.D7g66VSd-lkp@intel.com/reproduce)
 
-> +}
-> +
-> +static void th1520_pd_remove(struct platform_device *pdev)
-> +{
-> +       struct th1520_aon_chan *aon_chan = platform_get_drvdata(pdev);
-> +
-> +       th1520_aon_deinit(aon_chan);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503112303.D7g66VSd-lkp@intel.com/
 
-The genpd providers need to be cleaned-up here too.
+All errors (new ones prefixed by >>):
 
-Or, as I said before, if you think doing a proper clean-up is going to
-be a problem (in most cases it is), we can also make this a
-builtin_platform_driver() with "suppress_bind_attrs = true".
+   kernel/trace/trace.c: In function 'save_mod':
+   kernel/trace/trace.c:6072:45: error: invalid use of undefined type 'struct module'
+    6072 |         entry->mod_addr = (unsigned long)mod->mem[MOD_TEXT].base;
+         |                                             ^~
+   kernel/trace/trace.c:6072:51: error: 'MOD_TEXT' undeclared (first use in this function)
+    6072 |         entry->mod_addr = (unsigned long)mod->mem[MOD_TEXT].base;
+         |                                                   ^~~~~~~~
+   kernel/trace/trace.c:6072:51: note: each undeclared identifier is reported only once for each function it appears in
+   In file included from arch/x86/include/asm/page_32.h:18,
+                    from arch/x86/include/asm/page.h:14,
+                    from arch/x86/include/asm/thread_info.h:12,
+                    from include/linux/thread_info.h:60,
+                    from include/linux/spinlock.h:60,
+                    from include/linux/mmzone.h:8,
+                    from include/linux/gfp.h:7,
+                    from include/linux/mm.h:7,
+                    from include/linux/ring_buffer.h:5,
+                    from kernel/trace/trace.c:15:
+   kernel/trace/trace.c:6073:37: error: invalid use of undefined type 'struct module'
+    6073 |         strscpy(entry->mod_name, mod->name);
+         |                                     ^~
+   include/linux/string.h:80:28: note: in definition of macro '__strscpy0'
+      80 |         sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) +    \
+         |                            ^~~
+   kernel/trace/trace.c:6073:9: note: in expansion of macro 'strscpy'
+    6073 |         strscpy(entry->mod_name, mod->name);
+         |         ^~~~~~~
+   In file included from include/asm-generic/bug.h:5,
+                    from arch/x86/include/asm/bug.h:99,
+                    from include/linux/bug.h:5,
+                    from include/linux/mmdebug.h:5,
+                    from include/linux/mm.h:6:
+   kernel/trace/trace.c:6073:37: error: invalid use of undefined type 'struct module'
+    6073 |         strscpy(entry->mod_name, mod->name);
+         |                                     ^~
+   include/linux/compiler.h:197:79: note: in definition of macro '__BUILD_BUG_ON_ZERO_MSG'
+     197 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+         |                                                                               ^
+   include/linux/compiler.h:211:33: note: in expansion of macro '__annotated'
+     211 |         __BUILD_BUG_ON_ZERO_MSG(__annotated(p, nonstring), "must be cstr (NUL-terminated)")
+         |                                 ^~~~~~~~~~~
+   include/linux/string.h:81:55: note: in expansion of macro '__must_be_cstr'
+      81 |                                 __must_be_cstr(dst) + __must_be_cstr(src))
+         |                                                       ^~~~~~~~~~~~~~
+   include/linux/args.h:25:24: note: in expansion of macro '__strscpy0'
+      25 | #define __CONCAT(a, b) a ## b
+         |                        ^
+   kernel/trace/trace.c:6073:9: note: in expansion of macro 'strscpy'
+    6073 |         strscpy(entry->mod_name, mod->name);
+         |         ^~~~~~~
+   kernel/trace/trace.c: In function 'make_mod_delta':
+   kernel/trace/trace.c:9411:32: error: invalid use of undefined type 'struct module'
+    9411 |                 if (!strcmp(mod->name, entry->mod_name)) {
+         |                                ^~
+   kernel/trace/trace.c:9412:32: error: invalid use of undefined type 'struct module'
+    9412 |                         if (mod->state == MODULE_STATE_GOING)
+         |                                ^~
+>> kernel/trace/trace.c:9412:43: error: 'MODULE_STATE_GOING' undeclared (first use in this function)
+    9412 |                         if (mod->state == MODULE_STATE_GOING)
+         |                                           ^~~~~~~~~~~~~~~~~~
+   kernel/trace/trace.c:9415:69: error: invalid use of undefined type 'struct module'
+    9415 |                                 module_delta[i] = (unsigned long)mod->mem[MOD_TEXT].base
+         |                                                                     ^~
+   kernel/trace/trace.c:9415:75: error: 'MOD_TEXT' undeclared (first use in this function)
+    9415 |                                 module_delta[i] = (unsigned long)mod->mem[MOD_TEXT].base
+         |                                                                           ^~~~~~~~
 
-> +}
-> +
-> +static const struct of_device_id th1520_pd_match[] = {
-> +       { .compatible = "thead,th1520-aon" },
-> +       { /* Sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, th1520_pd_match);
-> +
-> +static struct platform_driver th1520_pd_driver = {
-> +       .driver = {
-> +               .name = "th1520-pd",
-> +               .of_match_table = th1520_pd_match,
-> +       },
-> +       .probe = th1520_pd_probe,
-> +       .remove = th1520_pd_remove,
-> +};
-> +module_platform_driver(th1520_pd_driver);
-> +
-> +MODULE_AUTHOR("Michal Wilczynski <m.wilczynski@samsung.com>");
-> +MODULE_DESCRIPTION("T-HEAD TH1520 SoC power domain controller");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.34.1
->
 
-Kind regards
-Uffe
+vim +/MODULE_STATE_GOING +9412 kernel/trace/trace.c
+
+  9398	
+  9399	static int make_mod_delta(struct module *mod, void *data)
+  9400	{
+  9401		struct trace_scratch *tscratch;
+  9402		struct trace_mod_entry *entry;
+  9403		struct trace_array *tr = data;
+  9404		long *module_delta;
+  9405		int i;
+  9406	
+  9407		tscratch = tr->scratch;
+  9408		module_delta = READ_ONCE(tscratch->module_delta);
+  9409		for (i = 0; i < tscratch->nr_entries; i++) {
+  9410			entry = &tscratch->entries[i];
+> 9411			if (!strcmp(mod->name, entry->mod_name)) {
+> 9412				if (mod->state == MODULE_STATE_GOING)
+  9413					module_delta[i] = 0;
+  9414				else
+  9415					module_delta[i] = (unsigned long)mod->mem[MOD_TEXT].base
+  9416							 - entry->mod_addr;
+  9417				break;
+  9418			}
+  9419		}
+  9420		return 0;
+  9421	}
+  9422	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
