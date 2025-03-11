@@ -1,88 +1,100 @@
-Return-Path: <linux-kernel+bounces-556652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89115A5CCE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:55:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D0CA5CCE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:56:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FCE3189F02E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:55:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983CE189E2C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E762638A4;
-	Tue, 11 Mar 2025 17:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B12263C78;
+	Tue, 11 Mar 2025 17:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/HOHbgc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPM+UPYp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25045262813;
-	Tue, 11 Mar 2025 17:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D287262D11;
+	Tue, 11 Mar 2025 17:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741715730; cv=none; b=tIibUlYSGo1a9CJP9CLBjgrnbwDVKtpWzkyL+OZytJ6QOYmzZdZSJpsw3fsYR59asbpY7jesUnK/mxr/lXIcbieiXn6Qesp0EwnORvsQ/g2nNs5R2VXhwXX1feiMTDaYCA7tSim5jHETg04zgWO6e5s8WaXDls9uo45Sq/qIA+4=
+	t=1741715736; cv=none; b=dzLKrDVzByZLmJFbFbvv6WBEXrq8SIJPWqW4JzJOnub9IYnHk6GeWbyAFLyYR0SPWREWMpBtfLX60YjboVIR8dAvECuVBXPCJthDDLzx9zKuZ9/i9D2MjijTSZNq7PfRBYpj4CSUy5009dEWlMATYfQKQT4Tv6yXrMhrxu+4WNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741715730; c=relaxed/simple;
-	bh=Rz9lyXxmaf/uzAfEKbd8SJdVtz9OIb9oURg/10eXquA=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=NTFSiGaiU/SFMskHbQFv/L7Y8YhLwyUoKao0RNWqLwphwkBb4heu4UdjW9tDqLkhXYn5YsuQ5BeMpB8YsIXMjai6qC2QObwEmbmvJ2vaMkk6+ZMkFkRW8TZptIYRjSa/sQCtIPaYW+OD2vS29YUA/ObDL2B16vuDToCIGsZNAig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/HOHbgc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 824D7C4CEE9;
-	Tue, 11 Mar 2025 17:55:29 +0000 (UTC)
+	s=arc-20240116; t=1741715736; c=relaxed/simple;
+	bh=8u4pLdHTIPFDK61uW8Pwmuh4P/pSUrHF80u1BGQPw1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rxNu9fn1/PYqpEsbg3Km9VKtoRUhOG4sGOZ35ldInTy1yfjVPekmqORNO0dgJvwmsYybFzcnY4jPs7xhvzjN9bfSh+JYf8jdcm+bhBjf0iDRDd8DJqYDhLBpXAyPiD8Hh58APYwt/sPoe8Cu/iqs9mZ1fg8tvW4Tm3bUQUrPvNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPM+UPYp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A55C4CEE9;
+	Tue, 11 Mar 2025 17:55:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741715729;
-	bh=Rz9lyXxmaf/uzAfEKbd8SJdVtz9OIb9oURg/10eXquA=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=i/HOHbgcZA3W7kQIsdjRhP5xRNu+hCUGvVBJX1Sx3YkUfVUaOgAw8KduexfZqjDU6
-	 DTpOus9iGsjyLbU2y3v9ILC/c6Wdf1/b3gtmAtq93p8SSrpT07a+x5mH0PeY18meYL
-	 qt4I38BV1GBRSCzq1Hy4xIMJA2duFRCgT2HdR+dqXUzV46k7gjFeTyolEGoNNpvMte
-	 K4gnp7Pi3gMMPSOXg89PxozYI+xWzS44J10/QNOWQhoAZKUH+zpHrNEv6KryLqGocp
-	 UBEq1ys/HMh6UlTaGj2Y34eHSfNqdusRzhz1JmM8Xi+3u9dmInC+9NvvVMOr7ZvbDR
-	 GfgOLuyV1gDCg==
-Message-ID: <3436f5e74321461507801ce5a405396b.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1741715736;
+	bh=8u4pLdHTIPFDK61uW8Pwmuh4P/pSUrHF80u1BGQPw1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hPM+UPYp+Dl9QmdvLVZP8/GlmuodV3AIhgCje1OSt7+3NoWS+fJHPJy17889lPa3a
+	 CG84EdQhEZW3BwePkfymcv95wgGXaD1vtQUdwOXMmhEqCV5hgxiikHjRjYJ2Y/v0E9
+	 WM5i/vw30jFFELw59CjhpP80sFQIfNiklgei14DqpgQQCn2/tpFtaGukHDvxOiTBLe
+	 DMewDLdlM8KBeWnfPKcatcsXN489qLe4brSdeMrSfrB2G9Yp2l6TmfciXHC8RSWi4H
+	 t5sU0vqoglfhHOiANV51YkT5bvJLYhIMPKAShrzcy9iUeCxVwEHSgFY+wVO8jfoSNg
+	 O4YnIeQ0R3Eyw==
+Date: Tue, 11 Mar 2025 17:55:30 +0000
+From: Will Deacon <will@kernel.org>
+To: robdclark@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+	jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org,
+	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com,
+	dmitry.baryshkov@linaro.org,
+	Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Cc: catalin.marinas@arm.com, kernel-team@android.com, iommu@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v18 0/5] iommu/arm-smmu: introduction of ACTLR
+ implementation for Qualcomm SoCs
+Message-ID: <20250311175528.GA5216@willie-the-truck>
+References: <20241212151402.159102-1-quic_bibekkum@quicinc.com>
+ <173625436399.258197.10961901698600591079.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250309175154.6701-1-krzysztof.kozlowski@linaro.org>
-References: <20250309175154.6701-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: Fixes for v6.14
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 11 Mar 2025 10:55:27 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <173625436399.258197.10961901698600591079.b4-ty@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Quoting Krzysztof Kozlowski (2025-03-09 10:51:53)
-> Hi,
->=20
-> Fixes for current RC.
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
-5b:
->=20
->   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-fixes-6.14
->=20
-> for you to fetch changes up to 53517a70873c7a91675f7244768aad5006cc45de:
->=20
->   clk: samsung: update PLL locktime for PLL142XX used on FSD platform (20=
-25-03-05 20:13:25 +0100)
->=20
-> ----------------------------------------------------------------
+On Tue, Jan 07, 2025 at 04:42:39PM +0000, Will Deacon wrote:
+> On Thu, 12 Dec 2024 20:43:57 +0530, Bibek Kumar Patro wrote:
+> > This patch series consist of six parts and covers the following:
+> > 
+> > 1. Provide option to re-enable context caching to retain prefetcher
+> >    settings during reset and runtime suspend.
+> > 
+> > 2. Remove cfg inside qcom_smmu structure and replace it with single
+> >    pointer to qcom_smmu_match_data avoiding replication of multiple
+> >    members from same.
+> > 
+> > [...]
+> 
+> Applied to iommu (arm/smmu/updates), thanks!
+> 
+> [1/5] iommu/arm-smmu: Re-enable context caching in smmu reset operation
+>       https://git.kernel.org/iommu/c/ef4144b1b47d
+> [2/5] iommu/arm-smmu: Refactor qcom_smmu structure to include single pointer
+>       https://git.kernel.org/iommu/c/445d7a8ed90e
+> [3/5] iommu/arm-smmu: Add support for PRR bit setup
+>       https://git.kernel.org/iommu/c/7f2ef1bfc758
+> [4/5] iommu/arm-smmu: Introduce ACTLR custom prefetcher settings
+>       https://git.kernel.org/iommu/c/9fe18d825a58
+> [5/5] iommu/arm-smmu: Add ACTLR data and support for qcom_smmu_500
+>       https://git.kernel.org/iommu/c/3e35c3e725de
 
-Thanks. Pulled into clk-fixes
+Hrm. I'm not seeing any user of the new ->set_prr*_() functions in
+linux-next yet. Is there something under review, or should I revert this
+for now?
+
+Will
 
