@@ -1,120 +1,161 @@
-Return-Path: <linux-kernel+bounces-556984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC68CA5D1DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:42:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F52A5D1EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:45:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58C3E3B11B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:42:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3B473B1112
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EDB264A89;
-	Tue, 11 Mar 2025 21:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B50228C8D;
+	Tue, 11 Mar 2025 21:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Te4cWT2k"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="YKUFZma5"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5727F14F117
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 21:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC6C22173D;
+	Tue, 11 Mar 2025 21:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741729369; cv=none; b=UycEtG/o6bB2pifp61NnA0iNsIAkfrk+7R5V3YqWLY/3B4NbIql7nvkhual1uUQkURocwMffFqCDoOlrwNjYwZIqI7UHi6SyybJhVsILfojBviunaNlGqcHRe9uvzWr0rWjCYVW2TegqySzEKaNZkTkBS5PsFhlpPBn3drvaXwU=
+	t=1741729519; cv=none; b=IYFynZ8Yv+0t+3ZVIPSscUGUylGKoypTiHhikPpeI+aMQ5ehQmBRFKLc473XLZntx2CyQ1hes3ekelslCT9h6+EwRGyn8qEQ824D8sASdh1of1jqq1YYMN4wtzMBhMjABHfxSO/vJ+myKH4O5p+O7T8eHl43tFZikyPaTc5mLzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741729369; c=relaxed/simple;
-	bh=xdPaaKYTBfBuQXU7Iw4F1+lRlibcD4hFIGVc8SxD9rk=;
+	s=arc-20240116; t=1741729519; c=relaxed/simple;
+	bh=SO7BYECJJp3ZJfyh3q2IgKPDPUTaqiPrXRwXDOHw2Gs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XXYKnisFgmgQqNDt7oGFHrD/coSFSedmlaqHqkPCjsYVqgH2t8RKCl/WN0nMjg8ewffa0pVeoSnH+iiLvk0Ke+/Hx3q3vGDoFgCZNLrn5JB6Cm0L9bwJdrg7IZQjU55M8AL0NCTnJ6WHzdoyKjomA9ZNidfZwj0fDOUdFox5ohw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Te4cWT2k; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741729367;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z/U9mOUKdfokgD0lQh/RII5JjLxKNIsIlpLNnxtSbPU=;
-	b=Te4cWT2kjwWe5GI0Jhcuf0H8GPD0ygDLbVz8BBwGYLFyrYox2hco8A5xMXKG1C/XixhMq5
-	SQtzRuoJbk2bzwMydx3n9rH+AyF6e75Clb3ebdfgh1KJT1Uh+k061EW2LtoQc7HDtvCNM1
-	h91A+RiCYzd7JK6hMRH3mWadP9AfCbg=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-550-V6JmDY0pMce2v4gjmJBt-A-1; Tue,
- 11 Mar 2025 17:42:43 -0400
-X-MC-Unique: V6JmDY0pMce2v4gjmJBt-A-1
-X-Mimecast-MFC-AGG-ID: V6JmDY0pMce2v4gjmJBt-A_1741729362
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 19BAF180AF78;
-	Tue, 11 Mar 2025 21:42:39 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.22.90.58])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B2DCB1828B37;
-	Tue, 11 Mar 2025 21:42:33 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 11 Mar 2025 22:42:07 +0100 (CET)
-Date: Tue, 11 Mar 2025 22:42:01 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Brian Gerst <brgerst@gmail.com>
-Cc: Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=S3SHlEZyNqxqs5egW5NWOy3+cb/Yie9Fmaj4ymk6eQCruwTEpzKzr/yXpbFbiUJHFfJNYTjOVMRFK09w5kqcTMvVEeeOPdwwBcTmC7vAsfLWXPc9k3NC3cCv0Ta9s48DWyIL42GA5wREQAZm3J/ta2+jkQeFEzEmgeLQByVZExg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=YKUFZma5; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ovx5QRchar4AgKbZmcUidnU1Sgp6hJ8J2mWjaBreQxQ=; b=YKUFZma5ooYbfPAxs2e8WpnWGr
+	ReBixcYtqsm8p9qp/V9IOpcOD3rDtkAOWoTp+rxRWoG5hAQb7JcEgBz9PjnmIx2B1UkY86AGEE8dA
+	vBMJ+HrwLU/e/BTg1Q0w6r/jVzrvxp9U4JLfTMsS9Fk7DOds9lm+Bzlif2BtGz+2KKZrH5q9XSKSr
+	0IcAmbvHcysiqhBGxEoiO3ydP+pavx2GPUBMUDLT5kb3QIVZkaXgEpT+S9xdlHJZXw/PiGccrR7QP
+	ga+uclZiwdICHah9QStnWzKC8lQo7WOlF+qgO+zqhsf6THT7hbqGpimkd2yAJxmeRlK+JidELtIKv
+	Wz1UWjfQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57706)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1ts7OX-0004di-0b;
+	Tue, 11 Mar 2025 21:44:13 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1ts7ON-0003qi-0R;
+	Tue, 11 Mar 2025 21:44:03 +0000
+Date: Tue, 11 Mar 2025 21:44:02 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Mark Brown <broonie@kernel.org>
+Cc: Mike Rapoport <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+	Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Stafford Horne <shorne@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org,
-	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH] x86/stackprotector: fix build failure with
- CONFIG_STACKPROTECTOR=n
-Message-ID: <20250311214159.GH3493@redhat.com>
-References: <20250311102326.GAZ9APHqe5aSQ1m5ND@fat_crate.local>
- <CAMj1kXHTLz4onmR5iyowptRE38RCK4jNT3BoURBkq2FoDOMTxQ@mail.gmail.com>
- <20250311112112.GEZ9AcqM2ceIQVUA0N@fat_crate.local>
- <20250311131356.GGZ9A3FNOxp32eGAgV@fat_crate.local>
- <20250311143724.GE3493@redhat.com>
- <20250311174626.GHZ9B28rDrfWKJthsN@fat_crate.local>
- <20250311181056.GF3493@redhat.com>
- <20250311190159.GIZ9CIp81bEg1Ny5gn@fat_crate.local>
- <20250311192405.GG3493@redhat.com>
- <CAMzpN2hb7uD6Z410YFPYiGQvsV6-9b8iMXXCtfJYJ7ATwO-L5g@mail.gmail.com>
+	Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>,
+	Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH 10/13] arch, mm: set high_memory in free_area_init()
+Message-ID: <Z9Cuoi7Aj7d_K8HF@shell.armlinux.org.uk>
+References: <20250306185124.3147510-1-rppt@kernel.org>
+ <20250306185124.3147510-11-rppt@kernel.org>
+ <cee346ec-5fa5-4d0b-987b-413ee585dbaa@sirena.org.uk>
+ <Z9Cl8JKkRGhaRrgM@kernel.org>
+ <5e40219b-f149-4e0f-aa10-c09fa183945e@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMzpN2hb7uD6Z410YFPYiGQvsV6-9b8iMXXCtfJYJ7ATwO-L5g@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <5e40219b-f149-4e0f-aa10-c09fa183945e@sirena.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 03/11, Brian Gerst wrote:
->
-> On Tue, Mar 11, 2025 at 3:24 PM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > OK. I'll update the subject/changelog to explain that this is only
-> > needed for the older binutils and send V2.
->
-> With it conditional on CONFIG_STACKPROTECTOR, you can also drop PROVIDES().
+On Tue, Mar 11, 2025 at 09:33:29PM +0000, Mark Brown wrote:
+> On Tue, Mar 11, 2025 at 11:06:56PM +0200, Mike Rapoport wrote:
+> > On Tue, Mar 11, 2025 at 05:51:06PM +0000, Mark Brown wrote:
+> 
+> > > This patch appears to be causing breakage on a number of 32 bit arm
+> > > platforms, including qemu's virt-2.11,gic-version=3.  Affected platforms
+> > > die on boot with no output, a bisect with qemu points at this commit and
+> > > those for physical platforms appear to be converging on the same place.
+> 
+> > Can you share how this can be reproduced with qemu?
+> 
+> https://lava.sirena.org.uk/scheduler/job/1184953
+> 
+> Turns out it's actually producing output on qemu:
+> 
+> [    0.000000] Booting Linux on physical CPU 0x0
+> [    0.000000] Linux version 6.14.0-rc6-next-20250311 (tuxmake@tuxmake) (arm-linux-gnueabihf-gcc (Debian 13.3.0-5) 13.3.0, GNU ld (GNU Binutils for Debian) 2.43.1) #1 SMP @1741691801
+> [    0.000000] CPU: ARMv7 Processor [414fc0f0] revision 0 (ARMv7), cr=10c5387d
+> [    0.000000] CPU: div instructions available: patching division code
+> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
+> [    0.000000] OF: fdt: Machine model: linux,dummy-virt
+> [    0.000000] random: crng init done
+> [    0.000000] earlycon: pl11 at MMIO 0x09000000 (options '')
+> [    0.000000] printk: legacy bootconsole [pl11] enabled
+> [    0.000000] Memory policy: Data cache writealloc
+> [    0.000000] efi: UEFI not found.
+> [    0.000000] cma: Reserved 64 MiB at 0x00000000
+> 
+> - I'd only been sampling the logs for the physical platforms, none of
+> which had shown anything.
+> 
+> (you dropped me from the CCs BTW!)
 
-Sorry Brian, I don't understand this magic even remotely...
+That's because your emails contain a "Mail-Followup-To:" header.
 
-Do you mean
+Please read:
 
-	-/* needed for Clang - see arch/x86/entry/entry.S */
-	-PROVIDE(__ref_stack_chk_guard = __stack_chk_guard);
-	+#ifdef CONFIG_STACKPROTECTOR
-	+__ref_stack_chk_guard = __stack_chk_guard;
-	+#endif
+https://datatracker.ietf.org/doc/html/draft-ietf-drums-mail-followup-to-00.txt
 
-?
+particularly 2.4.
 
-Oleg.
+In effect, by including this header, you asked to be dropped.
 
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
