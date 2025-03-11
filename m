@@ -1,129 +1,124 @@
-Return-Path: <linux-kernel+bounces-556356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72672A5C468
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:02:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB6EA5C463
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:02:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F17063A6FC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:02:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7A437A8828
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE6B25DD12;
-	Tue, 11 Mar 2025 15:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CE625DCE3;
+	Tue, 11 Mar 2025 15:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="o9mn6wcM"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F6JS0tpJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFC225D8E8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E07E25DB0B;
+	Tue, 11 Mar 2025 15:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741705346; cv=none; b=ZLn/wbLTK2Z9nd9CIDeDR/SZNCGZVcLbUX9rPKqCv4a2kknT8Hxfmop9MvGxUvPf5z3QbPpjqTUAsufqlbWuArAmr00fqPIFECJEJjgCEhHBpsgGNlPmNpwF9suN1K8IrAcvawZJKD3n5pZGMOGR7H4y5flW2vRzmy157Ubh1m0=
+	t=1741705329; cv=none; b=QjMLrBjqkRd+kfe2GDPcn/0/PBaX49uV+vP0y285vah9F9PYmY6xPgN5kqKE787xZ5nyzRwb6DITPiIo7abJT2TN1SKDiYMGcWelHw8H8qHSyeXskw/wdqAwlejmD5fA9Yrt+8snhUz/Fr5pUgFnY0WIpMJon1S8qpv8PdxG6a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741705346; c=relaxed/simple;
-	bh=i6FKgTj5MZo+UPVgwcnfUsz1yxRRIG3odNTlKaEDJJQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TtX+qkDREFLeXZcjqwl5pdmyAlvgiwyjKRhwX19rqqVfJKtY+F5q4Kl4ngsnnoDEuzJoZJHr904iAHsDn9PNiwgG/wa3UgGpabW9qTSLT99Uv8zLCwe7kORRY1grsZomDhG3EPtBnNG9nidxE+9E1JcdZF6XyiM+LaqNlfyVuOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=o9mn6wcM; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
-	by cmsmtp with ESMTPS
-	id rzdYt996oAfjws17dtQyeV; Tue, 11 Mar 2025 15:02:21 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id s17PtU4s7WjcTs17PtJVbL; Tue, 11 Mar 2025 15:02:07 +0000
-X-Authority-Analysis: v=2.4 cv=DOeJ4TNb c=1 sm=1 tr=0 ts=67d0507c
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=v1K_5SRFfWpoqNt-hKsA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Aza/48pLKQk3qyNSMWVp2QBHEFFNsEqbo0/L8MW1NJQ=; b=o9mn6wcME7gfsFdaHkK1twZ+/H
-	0JvL7escQeevADPGY5RAwDp3vqUjf4Ouoih+RpjMLearhrT3QAhgD2TDqGqNcXufvxoT+Sw1SokOn
-	d4vAhaeRK5LDsVBOocOoEHZlWi2fptwFp9IIuaWriNBxfwv09SqtWIeS0lusvjTPZitCuRjAOJ3Jw
-	L3/X1UTmhtBNFJiYa5eL3p7LhB8FdV7+mOwVVnNUDTdrsIE0EMHKWFUc/7yQk5+AEHHblEJ7P+LJn
-	md/lM4a+2WPYCvlZySBoVj/OyvPGrHIzc8edTh4wpVS6NXYvRdhcOYMtX+hdH+SWm6QnlbhiHNh3I
-	DeVgSMpw==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:41150 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1ts17M-00000003MkF-48At;
-	Tue, 11 Mar 2025 09:02:05 -0600
-Message-ID: <10d814df-e74f-4474-ba66-b08d94d03006@w6rz.net>
-Date: Tue, 11 Mar 2025 08:02:01 -0700
+	s=arc-20240116; t=1741705329; c=relaxed/simple;
+	bh=Gw274Q7YoUgbXnVwSweOM2+zHmkdsP+cM3iaEd6DPjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lWvnBC52q5AFJ456YoupLl8nYqhzejs6d8LXOuKSfB4MxAec+LsldaZ11fvBFflVV5SFoX3bz6A8OwFqrsxTDrVOjIWbB3/SrW94fmr/l2iKExj4fOcBIWF1nQn4uD2znZLKmN6NjtEWGDhpGqhgqf9wpIJLPL0TB0R6CjBgw1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F6JS0tpJ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741705327; x=1773241327;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Gw274Q7YoUgbXnVwSweOM2+zHmkdsP+cM3iaEd6DPjA=;
+  b=F6JS0tpJFVE2G6eYpmfZrEiwivfylX7viJBPztQz+9lqraWndgaUKKh1
+   tsa7uXMUsKO6cTtSDVvHruYO/z1xjehFXrdincenOwHYjhV9hRqrdLEib
+   b9fGHYeqvkHvDZfinXp/MXGaplnFNDYlaMNNdmcf5D0ek125NzJNkEKsu
+   5YHTpEbTVQf6EHs+WGrC6mOXZROFbkEeJje80YldigDqN01MSuSASHDTt
+   z20gkSDyscC6J8zU9ogG+f2GPkdWWHjUf9WxlELynML0rXu/EkUm+7trM
+   3lmHvJ54gws/rfIp9ZFczMcynUDKE2CXfhhynsfEKocJ5VsbElxdt0vsK
+   g==;
+X-CSE-ConnectionGUID: oCMSsQS+QROpiWht8Awmig==
+X-CSE-MsgGUID: HNNgdYKWQFG3gOSDF89Wtw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="41917407"
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="41917407"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 08:02:06 -0700
+X-CSE-ConnectionGUID: 98SD0B52SBGEi+F7wBrf4g==
+X-CSE-MsgGUID: jxdD4NWJR2GWsAT06arfBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="125388467"
+Received: from ghakimel-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.184])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 08:02:05 -0700
+Date: Tue, 11 Mar 2025 08:02:05 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH v8 1/5] x86/cpu: Fix the description of X86_MATCH_VFM_STEPS()
+Message-ID: <20250311-add-cpu-type-v8-1-e8514dcaaff2@linux.intel.com>
+X-Mailer: b4 0.14.1
+References: <20250311-add-cpu-type-v8-0-e8514dcaaff2@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/616] 5.15.179-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250311135758.248271750@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250311135758.248271750@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1ts17M-00000003MkF-48At
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:41150
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 16
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfEV1Mypg1C0WOSE+SdPwL14wtUuQkK6QHOIAnoWeFLzqGbxZCdbXPyyh6lewEDoaPZFzROyYHxH5ePIF8PGAYFiKDM4dD0B6/Zzu2F2628tcgBrjO2LX
- I69LEUv5pEbpAfw3/FIUGApHC9VJdl+ZF//drhac8YEiNTG3JgMhZwDtB1vETFh7uwTHKGL9ZzqSsiHzd8wL4vK/4UXdX+TUU1Y=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311-add-cpu-type-v8-0-e8514dcaaff2@linux.intel.com>
 
-On 3/11/25 07:02, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.179 release.
-> There are 616 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 13 Mar 2025 13:56:14 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.179-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+The comments needs to reflect an implementation change.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+No functional change.
 
-Tested-by: Ron Economos <re@w6rz.net>
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+ arch/x86/include/asm/cpu_device_id.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
+index ba32e0f44cba..9ebc263832ff 100644
+--- a/arch/x86/include/asm/cpu_device_id.h
++++ b/arch/x86/include/asm/cpu_device_id.h
+@@ -209,9 +209,11 @@
+ 
+ #define __X86_STEPPINGS(mins, maxs)    GENMASK(maxs, mins)
+ /**
+- * X86_MATCH_VFM_STEPPINGS - Match encoded vendor/family/model/stepping
++ * X86_MATCH_VFM_STEPS - Match encoded vendor/family/model and steppings
++ *			 range.
+  * @vfm:	Encoded 8-bits each for vendor, family, model
+- * @steppings:	Bitmask of steppings to match
++ * @min_step:	Lowest stepping number to match
++ * @max_step:	Highest stepping number to match
+  * @data:	Driver specific data or NULL. The internal storage
+  *		format is unsigned long. The supplied value, pointer
+  *		etc. is cast to unsigned long internally.
+
+-- 
+2.34.1
+
 
 
