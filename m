@@ -1,119 +1,103 @@
-Return-Path: <linux-kernel+bounces-556989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35B47A5D202
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:51:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D83A5D205
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:51:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E25217BD1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C781817BD4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD750264A8C;
-	Tue, 11 Mar 2025 21:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD11264A94;
+	Tue, 11 Mar 2025 21:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="L1OwFySP"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P22GLaP3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBFE228C8D;
-	Tue, 11 Mar 2025 21:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEEE228C8D;
+	Tue, 11 Mar 2025 21:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741729870; cv=none; b=bX3ZwO9d/HlB+qi8mc3W1gBhq5PK/W2t5eW+i/wZS2MV35UqjsVhi3rdDNElGNdC77wWO7jSBcFiE/1Wub+YCApDwfoG0PmVYRVhcMvK1iVvvvmgLXSTRxc8v2vPdR2zU3YI5DtRTPLdDtgV3Sfs+fTib6BFmoXPwW8ZPo67awA=
+	t=1741729885; cv=none; b=r6XI/qNhBwMzUxknw+J/lq+VGPNbIAIX+z653lRcYGNT6nFq3VxtrHoogRhKT2z2sP+y1D8N1sYyYTDbJW67kSFPQkVpgKCyHfQASzZvaRYAmPhIiuu5BHKK1pclSLn6STvCFx5SC/LxErC3R469rNhby2h6Ub9xYzsfc0PubnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741729870; c=relaxed/simple;
-	bh=iPijpG+Ein0l65BI0jDKoR2fUUogRl5NRwPh6/WZaI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yqseo+ndzNbf2NAvkNHeF7+kPEj4+b6COuRB44LXK2oocQwr4RJq35513kpKP3cq/FcTc2uSSzgqdyNYWZse9LOjsp3mPIoh7d9Qp6kptnRsWXtc2Fu0iuHAvIDTrpVrIoosgTDqLngHrNv27yIqC9tVfGaxFT/yRLE2lzDiOPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=L1OwFySP; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741729863;
-	bh=Jn9nRcpdljEQSc2Pubr9/mhILU/2Se6kmSyL0z/RxvA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=L1OwFySPcoRPj25ahpMT27FgIeAV5k7JdpXSIY/cgdjf5BiTeypCTsCJ5yiffwmUr
-	 5lyZpRH1gW9nH/0pgmNq79guntxK81z8vwKCz7kR0nut1hNSHjbsAb2lqKcsqb/xic
-	 Jmw6JelKXAMFEypUkJFpGe8Xh35yoRwxuw4MZgwQgjbH6xaF9HTtD8pJw4pqBzwx4N
-	 PzCFclANprpXoLaUP3oKczsu9aucsdufP3KHUODzAJ3I3EgGApMTrFjXnUsO5/98R5
-	 XtTi665uqqjnJSL+IkngD8B+pmepmlbZfFVo94P+ktcCBjKMC0G8cBWky1+XCBA9Tv
-	 z12LF+jc/DpEw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZC6s21ZXQz4xD9;
-	Wed, 12 Mar 2025 08:51:02 +1100 (AEDT)
-Date: Wed, 12 Mar 2025 08:51:01 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Heiko Stuebner
- <heiko@sntech.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Shawn Lin <shawn.lin@rock-chips.com>
-Subject: Re: linux-next: manual merge of the scsi tree with the rockchip
- tree
-Message-ID: <20250312085101.58cdd1e5@canb.auug.org.au>
-In-Reply-To: <6134949.lOV4Wx5bFT@earth>
-References: <20250311183524.38989e83@canb.auug.org.au>
-	<6134949.lOV4Wx5bFT@earth>
+	s=arc-20240116; t=1741729885; c=relaxed/simple;
+	bh=uU1stOxg+F3UDLnXvZQqIKLpgieaFxKvWC8fsbh+udI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y+h0mKuLyjOwQiF8kRW4VxQ04dJCsDIv/xgKXXOfIn1hj9KmLllNF9oVvBae9pwsnalu/LsbQXWrippBG4YUaobzXt0KHDg/Z723nof65lAUIm5srNkbUXf+twVJktvGlVK0CAVJAstHRRgfJgQrdjjSTGaaniw/f6Ms7IaAcsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P22GLaP3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29F46C4CEE9;
+	Tue, 11 Mar 2025 21:51:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741729885;
+	bh=uU1stOxg+F3UDLnXvZQqIKLpgieaFxKvWC8fsbh+udI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=P22GLaP3R01/FiUrduYE5ForhOECI3JYFJNCCTTpdN3sQ8D1te336ZXPTCGb47GVG
+	 nAZi7hq0r4fnDGeodrbvmUzTFOIJznGEeCGsWq1yXVFLgG+0SNXCa+lhWCIOxwANfU
+	 G6chTb3fsUdEkHE9qfRjTIZoxFKFdrK0aou21du2GaXTY/A3baA0qdnji62EE7XMAo
+	 9ueTb2U+lxMYC7W6oA9rJnSTnCttwRaCtRayoIpCpOt69iNIFMvdbk65lFhSIstFu7
+	 hkxOt1N84Slmzgy+QTofK2Jz9ozIzulkAYj/y5thUz9N2YF92XLtkZaqBe0zspnf3S
+	 UO7ssh0jX2vNg==
+Date: Tue, 11 Mar 2025 21:51:23 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Wei Liu <wei.liu@kernel.org>,
+	Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>, kys@microsoft.com,
+	haiyangz@microsoft.com, decui@microsoft.com
+Subject: [GIT PULL] Hyper-V fixes for v6.14-rc7
+Message-ID: <Z9CwWweWftt02ZWZ@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/FN7Hn/ikkX16Gy1WEVHGBJi";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---Sig_/FN7Hn/ikkX16Gy1WEVHGBJi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-Hi Detlev,
+The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
 
-On Tue, 11 Mar 2025 12:24:25 -0400 Detlev Casanova <detlev.casanova@collabo=
-ra.com> wrote:
->
-> Unfortunately, this fix is incorrect as nodes must be in address order, s=
-o=20
-> ufshc: ufshc@2a2d0000 must be above sfc1: spi@2a300000.
+  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
 
-OK, I have switched it around in my resolution.
+are available in the Git repository at:
 
-> As we are close the the merge window, I won't mind if the patches have to=
- be=20
-> postponed to the next cycle, but some device trees won't build anymore.
->=20
-> This can also be left as is with a new patch to fix the order (to be back=
-ported=20
-> if needed)
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed-20250311
 
-This merge resolution will be redone by Linus when the trees are merged
-during the merge window.  Someone just needs to mention it to him.
+for you to fetch changes up to 73fe9073c0cc28056cb9de0c8a516dac070f1d1f:
 
---=20
-Cheers,
-Stephen Rothwell
+  Drivers: hv: vmbus: Don't release fb_mmio resource in vmbus_free_mmio() (2025-03-10 16:54:06 +0000)
 
---Sig_/FN7Hn/ikkX16Gy1WEVHGBJi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+----------------------------------------------------------------
+hyperv-fixes for v6.14-rc7
+  - Patches to fix Hyper-v framebuffer code. (Michael Kelley and Saurabh
+    Sengar)
+  - Fix for Hyper-V output argument to hypercall that changes page
+    visibility. (Michael Kelley)
+  - Fix for Hyper-V VTL mode. (Naman Jain)
+----------------------------------------------------------------
+Michael Kelley (5):
+      fbdev: hyperv_fb: iounmap() the correct memory when removing a device
+      drm/hyperv: Fix address space leak when Hyper-V DRM device is removed
+      fbdev: hyperv_fb: Fix hang in kdump kernel when on Hyper-V Gen 2 VMs
+      x86/hyperv: Fix output argument to hypercall that changes page visibility
+      Drivers: hv: vmbus: Don't release fb_mmio resource in vmbus_free_mmio()
 
------BEGIN PGP SIGNATURE-----
+Naman Jain (1):
+      x86/hyperv/vtl: Stop kernel from probing VTL0 low memory
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfQsEUACgkQAVBC80lX
-0Gz7JAf8Cr8W6S71rnAzMEatJm4e/1EyZ4wa2VCifV0GXp8uDevRFwYDvTLvarLf
-DS+Z3zqv07TMkHaVTtonHloI+Kx52IC4PIvFa5S+98VJtQ2Uid56FHuMCwmsQm0U
-K6Ved+GpKYm2Kx7kxhHjcVhiePlMb1/ALbfzM009yORFFhKm1JrW1589tSXWYnr0
-VcVRzCSUaiFvFY26UOvlEWbyhlzSlTUyLMQZaFHqq0q/oKKUEZ6Ah+Z6Iv1aCMMe
-3YC/6l+FtPSVdVoeFDTxwN2C0cHN+K87bRXfEA6z+GEbckrCN9R6HbBU6YBXGgIq
-pz9ltSKtuCxknO6vTVZkdh5Zg6+Rlg==
-=EcRW
------END PGP SIGNATURE-----
+Saurabh Sengar (2):
+      fbdev: hyperv_fb: Simplify hvfb_putmem
+      fbdev: hyperv_fb: Allow graceful removal of framebuffer
 
---Sig_/FN7Hn/ikkX16Gy1WEVHGBJi--
+ arch/x86/hyperv/hv_vtl.c                |  1 +
+ arch/x86/hyperv/ivm.c                   |  3 +-
+ drivers/gpu/drm/hyperv/hyperv_drm_drv.c |  2 ++
+ drivers/hv/vmbus_drv.c                  | 13 +++++++++
+ drivers/video/fbdev/hyperv_fb.c         | 52 +++++++++++++++++++++------------
+ 5 files changed, 51 insertions(+), 20 deletions(-)
 
