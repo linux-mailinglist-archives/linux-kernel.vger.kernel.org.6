@@ -1,416 +1,196 @@
-Return-Path: <linux-kernel+bounces-555977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E0AA5BEFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:29:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED8DA5BEF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:28:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA633B1551
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:29:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E09B217108D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1888E224244;
-	Tue, 11 Mar 2025 11:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41D8254864;
+	Tue, 11 Mar 2025 11:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vu9pXIKG"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yhbDvEQn"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FB0254864
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A0E253F02
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741692548; cv=none; b=mYMC+neDanzT8F6HpzPu+9uNehB1NlQk7ViAdc9T72O9uC/+w2iyIiTG1UKzyWEbePyA49VRU6OewlWHt/V6XGqRa5EpZKJMusKg3xBhHcJkPATi8qlH8kzRFZFkQeLs/ezgy46xPR3rL4D3ZdujqlVLBdgeFMzFEGgmTWfGQNU=
+	t=1741692506; cv=none; b=L6+mLPLWotGvJMGb1Vn2i4D/jAEcisbZDrGnpl2gkrMP5eSnk+bqibqUJMgau5/R7xDpar9/kul3a4ZZOVtf5yIGJEuzwlymDcUdYS6c1EQehU/mD/Pj/zLgGfzCCoywmt375nej+pC7e6wvLXf+Ab8W4+G4P+AF+BhYSQAiRnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741692548; c=relaxed/simple;
-	bh=F9RDQgN7WG2Xt0jYuJ/ivpOFb4hbn9MZCX+EUo36wsI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=skdADNMpdpNAwisVjo2XBJFK23n1eSDA/3iqjr507mrXP0Lu1MDWWZY+ZGsYoIhXuYvT2PrLvRg5FvRBfKFR1FQUkJX9ZlDWdTXsdaw0M63hTAIHtrmiuo8zfbXJ8MSib13ElbW38RrT9eTtQnQUXq/UzTc+1m+LSUB+TxMLjQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vu9pXIKG; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741692542;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fnyykXLYvzo5JZvDkeDpwb0qnjXwYPaIFCYEA78J3UE=;
-	b=vu9pXIKGBb91PkVkgwKllCqpHJ00S5bZq0zwwyF1vVrsSZDAPfSeQd17CFuXsZqm7DiCFP
-	8z0smGKQSuNOi807daZGMNWZCK/ItaYx20Is2iIOpfmJ4YqKSZB2A/4yomvLRdSqjXarFY
-	tdBifNm0jKB0TXw+X3L3zjZjhIC6VEQ=
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: bpf@vger.kernel.org,
-	qmo@kernel.org
-Cc: daniel@iogearbox.net,
-	linux-kernel@vger.kernel.org,
-	ast@kernel.org,
-	davem@davemloft.net,
-	kuba@kernel.org,
-	hawk@kernel.org,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mrpre@163.com,
-	Jiayuan Chen <jiayuan.chen@linux.dev>
-Subject: [PATCH bpf-next v2 2/2] bpftool: Using the right format specifiers
-Date: Tue, 11 Mar 2025 19:28:09 +0800
-Message-ID: <20250311112809.81901-3-jiayuan.chen@linux.dev>
-In-Reply-To: <20250311112809.81901-1-jiayuan.chen@linux.dev>
-References: <20250311112809.81901-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1741692506; c=relaxed/simple;
+	bh=QKhCcFTOKZcxNwRQxkRN6jeyMESZi2oZbe8X5GsoGC8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TNU3yMcmZQI+xsCqWETS7cym5xac4GXew/FlQWkklqiOdaOIYcJVZQDREycjiF4dde0Q31aE4u7KK1xj7BF4/r5oU2L+NxGFL7j04g7dQnwez8EVP3Mri4mmbMruO9d+eN9j/hSB+vc+DuAMQYXzRT5s9iq0VRD3tO09LWtloMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yhbDvEQn; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-523d8c024dfso2015895e0c.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 04:28:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741692503; x=1742297303; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XGU9rCwd8wb7Zuc7IQ8VVHLLaLioxo+uOkF+No76Mwg=;
+        b=yhbDvEQncBFyIaH1oNff+eSGRhsSf38RCpnSIlZPOyIybLgJAsdIkYCkVycPm9ptTc
+         dJDW2I9Js9tI3a3dOfiNOIc0t5TSrdEW9LqRx3gHImF8a55nOrJnCSCz6tdz7UhtYUa0
+         EzDYO/JqujwYRQPzIW0FdfKlR9sGwLqBxtI9C6DnxzRAaK7GDBB6zhPuMdYU3y7cmywq
+         laUyTvQe/I8mf4TWlhEPEhGKDFQORJ/LuwJOxO2CyUY+rOvG5NC/wIeggsFLFMcEVvYl
+         Ernkw2aubfj6cDnWITm4g8TzkmcUhcjSdUJ3RHFresX63Iqyd8txOL+fBVT1nnsuJ3XS
+         pFpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741692503; x=1742297303;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XGU9rCwd8wb7Zuc7IQ8VVHLLaLioxo+uOkF+No76Mwg=;
+        b=djpEHsWsNJ1msDvVa6EfPpXZSeoBf5Z52qXkZtvGzMtYdfuOlR6g+vFZGP4A5iUPyo
+         6+THmX82l+YCsiwBat1rlR9rPFx8NTYGfOiF+oH8RqJY7/dzBdxaMYEnffyqWXuPvcc7
+         cdIzuw/hg4Xb5mr1PiOK9pvRNUmE9ppZFcP2PFYkSdn8IdIVobd5Rhoa1kRV7w2F8Dul
+         S+nwc7GYJ8gq/kEb3bTfth7SDziOW83ywCoqxz2Qd1/QEt5fOf3Gl0jNgMbtMj0w4dKR
+         ELr1eWyJwtLRIQLJuwoWvac0aGkV74TbMBxhPEAmidTcXoh4SeRdliJh/TtVH3TxUJdh
+         RpGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWu0gS+HaxAPck1bdHz2Eqg5k1Ok13Irk7aLpSdydkvrjWaWZSesGHnVr9CUlhsJ1zRVRz+CJopQFBaPvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1q7YN22vDvkS4BYQEIhwALnzXXQECMFxJcwSk3fJPfjOtnN8b
+	fRLPKwzsuACSVKJIeiWXly3L6SGA43L9xrlu1z9MmeAywXWZVPYtbYp5TRurn1hjeaVclhZ0XeC
+	1W5iyHKe21UaoD1YtHu6rlI2Ds2dOde2h4KkIAQ==
+X-Gm-Gg: ASbGncu+6CCtbnYlHSU+Z20OBq6gFoLotsFjLeOrF/B8FHh9TJjHHcGJP8CQdgzWjiB
+	h/FwGbrRS6aq/lANQXqsLPqDc3MRtmOGMTpcWQ1UNjQuvN6BhRrdFlQJkpAJx0zI2mBGgGn54AE
+	vrkAG2HbKhAKHO6bEaD9wJRCDrZOvQYBdsGC/nqXukujwsjk9qkV1jX+FAgYhlmrK0reBN
+X-Google-Smtp-Source: AGHT+IHIxUX3TDbI9Bj9oJA3tOu4WqU0PQypu14bFgLFUww4xYRu0IZmQmo6M3HEkW5aMwnVyGaVlltG5hRPnuZk/h8=
+X-Received: by 2002:a05:6122:54b:b0:50b:e9a5:cd7b with SMTP id
+ 71dfb90a1353d-523e4173295mr10467772e0c.9.1741692503175; Tue, 11 Mar 2025
+ 04:28:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250310170434.733307314@linuxfoundation.org>
+In-Reply-To: <20250310170434.733307314@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 11 Mar 2025 16:58:12 +0530
+X-Gm-Features: AQ5f1Joe9hxo4OYoho7kOI9yVsevhYRVxeCstqHW3mY7SICpOCxe6anJtQDqibQ
+Message-ID: <CA+G9fYsooQUTWh7RJ_Z7FauV0Oxr0TOqj6NRFKqrsRwRxZh_mw@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/145] 6.6.83-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Fixed some formatting specifiers errors, such as using %d for int and %u
-for unsigned int, as well as other byte-length types.
+On Mon, 10 Mar 2025 at 23:02, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.83 release.
+> There are 145 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.83-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Perform type cast using the type derived from the data type itself, for
-example, if it's originally an int, it will be cast to unsigned int if
-forced to unsigned.
+Regressions on riscv the defconfig builds failed with clang-20
+and gcc-13 the stable-rc 6.6.83-rc1.
 
-Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
----
- kernel/bpf/disasm.c                |  4 ++--
- tools/bpf/bpftool/btf.c            | 14 +++++++-------
- tools/bpf/bpftool/btf_dumper.c     |  2 +-
- tools/bpf/bpftool/cgroup.c         |  2 +-
- tools/bpf/bpftool/common.c         |  4 ++--
- tools/bpf/bpftool/jit_disasm.c     |  3 ++-
- tools/bpf/bpftool/map_perf_ring.c  |  6 +++---
- tools/bpf/bpftool/net.c            |  4 ++--
- tools/bpf/bpftool/netlink_dumper.c |  6 +++---
- tools/bpf/bpftool/prog.c           | 12 ++++++------
- tools/bpf/bpftool/tracelog.c       |  2 +-
- tools/bpf/bpftool/xlated_dumper.c  |  6 +++---
- 12 files changed, 33 insertions(+), 32 deletions(-)
+First seen on the  6.6.83-rc1
+ Good: v6.6.81
+ Bad:  v6.6.81-153-g70aba17a9467
 
-diff --git a/kernel/bpf/disasm.c b/kernel/bpf/disasm.c
-index 974d172d6735..20883c6b1546 100644
---- a/kernel/bpf/disasm.c
-+++ b/kernel/bpf/disasm.c
-@@ -202,7 +202,7 @@ void print_bpf_insn(const struct bpf_insn_cbs *cbs,
- 				insn->dst_reg, class == BPF_ALU ? 'w' : 'r',
- 				insn->dst_reg);
- 		} else if (is_addr_space_cast(insn)) {
--			verbose(cbs->private_data, "(%02x) r%d = addr_space_cast(r%d, %d, %d)\n",
-+			verbose(cbs->private_data, "(%02x) r%d = addr_space_cast(r%d, %u, %u)\n",
- 				insn->code, insn->dst_reg,
- 				insn->src_reg, ((u32)insn->imm) >> 16, (u16)insn->imm);
- 		} else if (is_mov_percpu_addr(insn)) {
-@@ -381,7 +381,7 @@ void print_bpf_insn(const struct bpf_insn_cbs *cbs,
- 				insn->code, class == BPF_JMP32 ? 'w' : 'r',
- 				insn->dst_reg,
- 				bpf_jmp_string[BPF_OP(insn->code) >> 4],
--				insn->imm, insn->off);
-+				(u32)insn->imm, insn->off);
- 		}
- 	} else {
- 		verbose(cbs->private_data, "(%02x) %s\n",
-diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
-index 2636655ac180..6b14cbfa58aa 100644
---- a/tools/bpf/bpftool/btf.c
-+++ b/tools/bpf/bpftool/btf.c
-@@ -253,7 +253,7 @@ static int dump_btf_type(const struct btf *btf, __u32 id,
- 				if (btf_kflag(t))
- 					printf("\n\t'%s' val=%d", name, v->val);
- 				else
--					printf("\n\t'%s' val=%u", name, v->val);
-+					printf("\n\t'%s' val=%u", name, (__u32)v->val);
- 			}
- 		}
- 		if (json_output)
-@@ -1022,7 +1022,7 @@ static int do_dump(int argc, char **argv)
- 			for (i = 0; i < root_type_cnt; i++) {
- 				if (root_type_ids[i] == root_id) {
- 					err = -EINVAL;
--					p_err("duplicate root_id %d supplied", root_id);
-+					p_err("duplicate root_id %u supplied", root_id);
- 					goto done;
- 				}
- 			}
-@@ -1132,7 +1132,7 @@ build_btf_type_table(struct hashmap *tab, enum bpf_obj_type type,
- 			break;
- 		default:
- 			err = -1;
--			p_err("unexpected object type: %d", type);
-+			p_err("unexpected object type: %u", type);
- 			goto err_free;
- 		}
- 		if (err) {
-@@ -1155,7 +1155,7 @@ build_btf_type_table(struct hashmap *tab, enum bpf_obj_type type,
- 			break;
- 		default:
- 			err = -1;
--			p_err("unexpected object type: %d", type);
-+			p_err("unexpected object type: %u", type);
- 			goto err_free;
- 		}
- 		if (fd < 0) {
-@@ -1188,7 +1188,7 @@ build_btf_type_table(struct hashmap *tab, enum bpf_obj_type type,
- 			break;
- 		default:
- 			err = -1;
--			p_err("unexpected object type: %d", type);
-+			p_err("unexpected object type: %u", type);
- 			goto err_free;
- 		}
- 		if (!btf_id)
-@@ -1254,12 +1254,12 @@ show_btf_plain(struct bpf_btf_info *info, int fd,
- 
- 	n = 0;
- 	hashmap__for_each_key_entry(btf_prog_table, entry, info->id) {
--		printf("%s%lu", n++ == 0 ? "  prog_ids " : ",", entry->value);
-+		printf("%s%lu", n++ == 0 ? "  prog_ids " : ",", (unsigned long)entry->value);
- 	}
- 
- 	n = 0;
- 	hashmap__for_each_key_entry(btf_map_table, entry, info->id) {
--		printf("%s%lu", n++ == 0 ? "  map_ids " : ",", entry->value);
-+		printf("%s%lu", n++ == 0 ? "  map_ids " : ",", (unsigned long)entry->value);
- 	}
- 
- 	emit_obj_refs_plain(refs_table, info->id, "\n\tpids ");
-diff --git a/tools/bpf/bpftool/btf_dumper.c b/tools/bpf/bpftool/btf_dumper.c
-index 527fe867a8fb..4e896d8a2416 100644
---- a/tools/bpf/bpftool/btf_dumper.c
-+++ b/tools/bpf/bpftool/btf_dumper.c
-@@ -653,7 +653,7 @@ static int __btf_dumper_type_only(const struct btf *btf, __u32 type_id,
- 	case BTF_KIND_ARRAY:
- 		array = (struct btf_array *)(t + 1);
- 		BTF_PRINT_TYPE(array->type);
--		BTF_PRINT_ARG("[%d]", array->nelems);
-+		BTF_PRINT_ARG("[%u]", array->nelems);
- 		break;
- 	case BTF_KIND_PTR:
- 		BTF_PRINT_TYPE(t->type);
-diff --git a/tools/bpf/bpftool/cgroup.c b/tools/bpf/bpftool/cgroup.c
-index 9af426d43299..93b139bfb988 100644
---- a/tools/bpf/bpftool/cgroup.c
-+++ b/tools/bpf/bpftool/cgroup.c
-@@ -191,7 +191,7 @@ static int show_bpf_prog(int id, enum bpf_attach_type attach_type,
- 		if (attach_btf_name)
- 			printf(" %-15s", attach_btf_name);
- 		else if (info.attach_btf_id)
--			printf(" attach_btf_obj_id=%d attach_btf_id=%d",
-+			printf(" attach_btf_obj_id=%u attach_btf_id=%u",
- 			       info.attach_btf_obj_id, info.attach_btf_id);
- 		printf("\n");
- 	}
-diff --git a/tools/bpf/bpftool/common.c b/tools/bpf/bpftool/common.c
-index 0a764426d935..ecfa790adc13 100644
---- a/tools/bpf/bpftool/common.c
-+++ b/tools/bpf/bpftool/common.c
-@@ -714,7 +714,7 @@ ifindex_to_arch(__u32 ifindex, __u64 ns_dev, __u64 ns_ino, const char **opt)
- 	int vendor_id;
- 
- 	if (!ifindex_to_name_ns(ifindex, ns_dev, ns_ino, devname)) {
--		p_err("Can't get net device name for ifindex %d: %s", ifindex,
-+		p_err("Can't get net device name for ifindex %u: %s", ifindex,
- 		      strerror(errno));
- 		return NULL;
- 	}
-@@ -739,7 +739,7 @@ ifindex_to_arch(__u32 ifindex, __u64 ns_dev, __u64 ns_ino, const char **opt)
- 	/* No NFP support in LLVM, we have no valid triple to return. */
- 	default:
- 		p_err("Can't get arch name for device vendor id 0x%04x",
--		      vendor_id);
-+		      (unsigned int)vendor_id);
- 		return NULL;
- 	}
- }
-diff --git a/tools/bpf/bpftool/jit_disasm.c b/tools/bpf/bpftool/jit_disasm.c
-index c032d2c6ab6d..8895b4e1f690 100644
---- a/tools/bpf/bpftool/jit_disasm.c
-+++ b/tools/bpf/bpftool/jit_disasm.c
-@@ -343,7 +343,8 @@ int disasm_print_insn(unsigned char *image, ssize_t len, int opcodes,
- {
- 	const struct bpf_line_info *linfo = NULL;
- 	unsigned int nr_skip = 0;
--	int count, i, pc = 0;
-+	int count, i;
-+	unsigned int pc = 0;
- 	disasm_ctx_t ctx;
- 
- 	if (!len)
-diff --git a/tools/bpf/bpftool/map_perf_ring.c b/tools/bpf/bpftool/map_perf_ring.c
-index 21d7d447e1f3..552b4ca40c27 100644
---- a/tools/bpf/bpftool/map_perf_ring.c
-+++ b/tools/bpf/bpftool/map_perf_ring.c
-@@ -91,15 +91,15 @@ print_bpf_output(void *private_data, int cpu, struct perf_event_header *event)
- 		jsonw_end_object(json_wtr);
- 	} else {
- 		if (e->header.type == PERF_RECORD_SAMPLE) {
--			printf("== @%lld.%09lld CPU: %d index: %d =====\n",
-+			printf("== @%llu.%09llu CPU: %d index: %d =====\n",
- 			       e->time / 1000000000ULL, e->time % 1000000000ULL,
- 			       cpu, idx);
- 			fprint_hex(stdout, e->data, e->size, " ");
- 			printf("\n");
- 		} else if (e->header.type == PERF_RECORD_LOST) {
--			printf("lost %lld events\n", lost->lost);
-+			printf("lost %llu events\n", lost->lost);
- 		} else {
--			printf("unknown event type=%d size=%d\n",
-+			printf("unknown event type=%u size=%u\n",
- 			       e->header.type, e->header.size);
- 		}
- 	}
-diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
-index d2242d9f8441..64f958f437b0 100644
---- a/tools/bpf/bpftool/net.c
-+++ b/tools/bpf/bpftool/net.c
-@@ -476,7 +476,7 @@ static void __show_dev_tc_bpf(const struct ip_devname_ifindex *dev,
- 	for (i = 0; i < optq.count; i++) {
- 		NET_START_OBJECT;
- 		NET_DUMP_STR("devname", "%s", dev->devname);
--		NET_DUMP_UINT("ifindex", "(%u)", dev->ifindex);
-+		NET_DUMP_UINT("ifindex", "(%u)", (unsigned int)dev->ifindex);
- 		NET_DUMP_STR("kind", " %s", attach_loc_strings[loc]);
- 		ret = __show_dev_tc_bpf_name(prog_ids[i], prog_name,
- 					     sizeof(prog_name));
-@@ -831,7 +831,7 @@ static void show_link_netfilter(void)
- 		if (err) {
- 			if (errno == ENOENT)
- 				break;
--			p_err("can't get next link: %s (id %d)", strerror(errno), id);
-+			p_err("can't get next link: %s (id %u)", strerror(errno), id);
- 			break;
- 		}
- 
-diff --git a/tools/bpf/bpftool/netlink_dumper.c b/tools/bpf/bpftool/netlink_dumper.c
-index 5f65140b003b..0a3c7e96c797 100644
---- a/tools/bpf/bpftool/netlink_dumper.c
-+++ b/tools/bpf/bpftool/netlink_dumper.c
-@@ -45,7 +45,7 @@ static int do_xdp_dump_one(struct nlattr *attr, unsigned int ifindex,
- 	NET_START_OBJECT;
- 	if (name)
- 		NET_DUMP_STR("devname", "%s", name);
--	NET_DUMP_UINT("ifindex", "(%d)", ifindex);
-+	NET_DUMP_UINT("ifindex", "(%u)", ifindex);
- 
- 	if (mode == XDP_ATTACHED_MULTI) {
- 		if (json_output) {
-@@ -74,7 +74,7 @@ int do_xdp_dump(struct ifinfomsg *ifinfo, struct nlattr **tb)
- 	if (!tb[IFLA_XDP])
- 		return 0;
- 
--	return do_xdp_dump_one(tb[IFLA_XDP], ifinfo->ifi_index,
-+	return do_xdp_dump_one(tb[IFLA_XDP], (unsigned int)ifinfo->ifi_index,
- 			       libbpf_nla_getattr_str(tb[IFLA_IFNAME]));
- }
- 
-@@ -168,7 +168,7 @@ int do_filter_dump(struct tcmsg *info, struct nlattr **tb, const char *kind,
- 		NET_START_OBJECT;
- 		if (devname[0] != '\0')
- 			NET_DUMP_STR("devname", "%s", devname);
--		NET_DUMP_UINT("ifindex", "(%u)", ifindex);
-+		NET_DUMP_UINT("ifindex", "(%u)", (unsigned int)ifindex);
- 		NET_DUMP_STR("kind", " %s", kind);
- 		ret = do_bpf_filter_dump(tb[TCA_OPTIONS]);
- 		NET_END_OBJECT_FINAL;
-diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-index e71be67f1d86..58791542515a 100644
---- a/tools/bpf/bpftool/prog.c
-+++ b/tools/bpf/bpftool/prog.c
-@@ -521,10 +521,10 @@ static void print_prog_header_plain(struct bpf_prog_info *info, int fd)
- 	print_dev_plain(info->ifindex, info->netns_dev, info->netns_ino);
- 	printf("%s", info->gpl_compatible ? "  gpl" : "");
- 	if (info->run_time_ns)
--		printf(" run_time_ns %lld run_cnt %lld",
-+		printf(" run_time_ns %llu run_cnt %llu",
- 		       info->run_time_ns, info->run_cnt);
- 	if (info->recursion_misses)
--		printf(" recursion_misses %lld", info->recursion_misses);
-+		printf(" recursion_misses %llu", info->recursion_misses);
- 	printf("\n");
- }
- 
-@@ -569,7 +569,7 @@ static void print_prog_plain(struct bpf_prog_info *info, int fd, bool orphaned)
- 	}
- 
- 	if (info->btf_id)
--		printf("\n\tbtf_id %d", info->btf_id);
-+		printf("\n\tbtf_id %u", info->btf_id);
- 
- 	emit_obj_refs_plain(refs_table, info->id, "\n\tpids ");
- 
-@@ -1164,7 +1164,7 @@ static int get_run_data(const char *fname, void **data_ptr, unsigned int *size)
- 		}
- 		if (nb_read > buf_size - block_size) {
- 			if (buf_size == UINT32_MAX) {
--				p_err("data_in/ctx_in is too long (max: %d)",
-+				p_err("data_in/ctx_in is too long (max: %u)",
- 				      UINT32_MAX);
- 				goto err_free;
- 			}
-@@ -2251,7 +2251,7 @@ static char *profile_target_name(int tgt_fd)
- 
- 	t = btf__type_by_id(btf, func_info.type_id);
- 	if (!t) {
--		p_err("btf %d doesn't have type %d",
-+		p_err("btf %u doesn't have type %u",
- 		      info.btf_id, func_info.type_id);
- 		goto out;
- 	}
-@@ -2329,7 +2329,7 @@ static int profile_open_perf_events(struct profiler_bpf *obj)
- 			continue;
- 		for (cpu = 0; cpu < obj->rodata->num_cpu; cpu++) {
- 			if (profile_open_perf_event(m, cpu, map_fd)) {
--				p_err("failed to create event %s on cpu %d",
-+				p_err("failed to create event %s on cpu %u",
- 				      metrics[m].name, cpu);
- 				return -1;
- 			}
-diff --git a/tools/bpf/bpftool/tracelog.c b/tools/bpf/bpftool/tracelog.c
-index bf1f02212797..31d806e3bdaa 100644
---- a/tools/bpf/bpftool/tracelog.c
-+++ b/tools/bpf/bpftool/tracelog.c
-@@ -78,7 +78,7 @@ static bool get_tracefs_pipe(char *mnt)
- 		return false;
- 
- 	/* Allow room for NULL terminating byte and pipe file name */
--	snprintf(format, sizeof(format), "%%*s %%%zds %%99s %%*s %%*d %%*d\\n",
-+	snprintf(format, sizeof(format), "%%*s %%%zus %%99s %%*s %%*d %%*d\\n",
- 		 PATH_MAX - strlen(pipe_name) - 1);
- 	while (fscanf(fp, format, mnt, type) == 2)
- 		if (strcmp(type, fstype) == 0) {
-diff --git a/tools/bpf/bpftool/xlated_dumper.c b/tools/bpf/bpftool/xlated_dumper.c
-index d0094345fb2b..5e7cb8b36fef 100644
---- a/tools/bpf/bpftool/xlated_dumper.c
-+++ b/tools/bpf/bpftool/xlated_dumper.c
-@@ -199,13 +199,13 @@ static const char *print_imm(void *private_data,
- 
- 	if (insn->src_reg == BPF_PSEUDO_MAP_FD)
- 		snprintf(dd->scratch_buff, sizeof(dd->scratch_buff),
--			 "map[id:%u]", insn->imm);
-+			 "map[id:%d]", insn->imm);
- 	else if (insn->src_reg == BPF_PSEUDO_MAP_VALUE)
- 		snprintf(dd->scratch_buff, sizeof(dd->scratch_buff),
--			 "map[id:%u][0]+%u", insn->imm, (insn + 1)->imm);
-+			 "map[id:%d][0]+%d", insn->imm, (insn + 1)->imm);
- 	else if (insn->src_reg == BPF_PSEUDO_MAP_IDX_VALUE)
- 		snprintf(dd->scratch_buff, sizeof(dd->scratch_buff),
--			 "map[idx:%u]+%u", insn->imm, (insn + 1)->imm);
-+			 "map[idx:%d]+%d", insn->imm, (insn + 1)->imm);
- 	else if (insn->src_reg == BPF_PSEUDO_FUNC)
- 		snprintf(dd->scratch_buff, sizeof(dd->scratch_buff),
- 			 "subprog[%+d]", insn->imm);
--- 
-2.47.1
+* riscv, build
+  - clang-20-allmodconfig
+  - clang-20-allyesconfig
+  - clang-20-defconfig
+  - clang-20-lkftconfig
+  - gcc-13-allmodconfig
+  - gcc-13-allyesconfig
+  - gcc-13-defconfig
+  - gcc-13-lkftconfig
+  - gcc-13-lkftconfig-libgpiod
+  - gcc-8-defconfig
+  - rv32-clang-20-allnoconfig
+  - rv32-clang-20-allyesconfig
+  - rv32-clang-20-defconfig
+  - rv32-clang-20-lkftconfig
+  - rv32-clang-20-tinyconfig
+  - rv32-gcc-13-lkftconfig
 
+Regression Analysis:
+ - New regression? Yes
+ - Reproducible? Yes
+
+Build regression: riscv 'RISCV_ISA_EXT_XLINUXENVCFG' undeclared
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build log
+arch/riscv/kernel/suspend.c: In function 'suspend_save_csrs':
+arch/riscv/kernel/suspend.c:14:66: error: 'RISCV_ISA_EXT_XLINUXENVCFG'
+undeclared (first use in this function); did you mean
+'RISCV_ISA_EXT_ZIFENCEI'?
+   14 |         if
+(riscv_cpu_has_extension_unlikely(smp_processor_id(),
+RISCV_ISA_EXT_XLINUXENVCFG))
+      |
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      |
+  RISCV_ISA_EXT_ZIFENCEI
+arch/riscv/kernel/suspend.c:14:66: note: each undeclared identifier is
+reported only once for each function it appears in
+arch/riscv/kernel/suspend.c: In function 'suspend_restore_csrs':
+arch/riscv/kernel/suspend.c:37:66: error: 'RISCV_ISA_EXT_XLINUXENVCFG'
+undeclared (first use in this function); did you mean
+'RISCV_ISA_EXT_ZIFENCEI'?
+   37 |         if
+(riscv_cpu_has_extension_unlikely(smp_processor_id(),
+RISCV_ISA_EXT_XLINUXENVCFG))
+      |
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      |
+  RISCV_ISA_EXT_ZIFENCEI
+
+## Source
+* Kernel version: 6.6.83-rc1
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* Git sha: 70aba17a9467a99637c9355a7eac2cc5e6b102cd
+* Git describe: v6.6.81-153-g70aba17a9467
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.81-153-g70aba17a9467
+
+## Build
+* Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.81-153-g70aba17a9467/testrun/27569234/suite/build/test/gcc-13-defconfig/log
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/tests/build/gcc-13-defconfig
+* Build details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.81-153-g70aba17a9467/testrun/27569234/suite/build/test/gcc-13-defconfig/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2u8VMDUVvHABJlsXGyG5COTPGZM/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2u8VMDUVvHABJlsXGyG5COTPGZM/config
+
+## Steps to reproduce
+ - tuxmake --runtime podman --target-arch riscv --toolchain gcc-13
+--kconfig defconfig
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
