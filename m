@@ -1,131 +1,109 @@
-Return-Path: <linux-kernel+bounces-556851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43340A5CF78
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:33:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034BCA5CF7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:34:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7908717BCA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:33:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1740418880EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1EA2641D5;
-	Tue, 11 Mar 2025 19:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DB92627E3;
+	Tue, 11 Mar 2025 19:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6ZF0rBC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="b1oBtj5e"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFCA1EBFFD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 19:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FDC25C6E9;
+	Tue, 11 Mar 2025 19:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741721608; cv=none; b=gpPN97IuWQ3pZBymLRoJ+cMpOaIgVwcc+p7X9XwUeJtDqU1W5Sq/A3LMVSa9lgHUrUMIFqVTzDX0KY8PXStfl2mmPeUbEMD/xngiC3vUj4aPN/YHkIJ1rcHFPteEDJwI0zx3XnczALQY6+Xfb6YtqRhJi3qt2qEimH067voJZyE=
+	t=1741721624; cv=none; b=RyEwOC3RAf4zmvNt2/sZ0UCdBOtqTNvyGhqm1Gnc0EvzDOWx+7CiCYMhRETQqnc+cWCNroLCzcJZ2b8iJIyQCe8Lzve1vg9KcBhIC/yOLtkCzbWpnU9nVaUmQn4+LJ/Xsb5DvseY9R64SYJ8noOUg+Z9GFYaFnX1M7BXGXZqDpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741721608; c=relaxed/simple;
-	bh=0eBZ3mKbc6FbHFU4M90DMSCxTvs8xVQcHIMudr/3iH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1ixVfvqUkjs4KMtKUlC0QekiTCfYmhJZ1S79Ry4ngIe0J3WQiWL4TgwkQe+diBF9cAEyLanvN136KWxQVILOAkoSrraa37hjeKOPEjoZpjv4qy/VxlLR/Y8Gikv7ByisYrz4C5nlGy/OPhW2O0XXsSeSGExrbz7kQXqXC3YPcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6ZF0rBC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2586C4CEE9;
-	Tue, 11 Mar 2025 19:33:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741721608;
-	bh=0eBZ3mKbc6FbHFU4M90DMSCxTvs8xVQcHIMudr/3iH8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G6ZF0rBC0uON6Bxk4pzSubjG+D7fEz5iFql20/A9fDOLyhhOz/epbP69jyqm0PVuW
-	 9Phr2qNIQDIwAmJHFJkhT7JGi54PqDXmdnQ5ync4Lg2z4I+zfI8e3lGS/YLWLk0waS
-	 uTzXwxKIOIVWlo0LR71FIrXaD7jKjlPzyc3vTXk4NfGdD2bNLjK9Jnbf5vmVEEO+D2
-	 mGqSjzh/KGehZeuwgXZ8xZE260ymuTUymhRAQyCKXLiLuZ/QhdKh044ZevNnv+BUJi
-	 3r63Go0jxaCgpNouGrpEz3JbB6QmMnZppk5h0cjGokhzSJveP6xEQtpR0b7EmxIjBE
-	 aiTXxBDpHb6MQ==
-Date: Tue, 11 Mar 2025 21:33:23 +0200
-From: Dmitry Baryshkov <lumag@kernel.org>
-To: Tejas Vipin <tejasvipin76@gmail.com>
-Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	lujianhua000@gmail.com, quic_jesszhan@quicinc.com, dianders@chromium.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, asrivats@redhat.com
-Subject: Re: [PATCH v3] drm/panel: novatek-nt36523: transition to mipi_dsi
- wrapped functions
-Message-ID: <7q7qdqh3my37uvvgl6ygo6amrw4nf57mbnscmxx6wwu5fsntny@a2uedhwg2a6p>
-References: <20250309040355.381386-1-tejasvipin76@gmail.com>
+	s=arc-20240116; t=1741721624; c=relaxed/simple;
+	bh=crIWXxpiTTenJI4NMZwEJ9fdFrkz5l9k/HVg53VTtqE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=e7poGTBAIZ10ny7LGtmJ8cIaJhkfkpmYzKBV0q9NCZxrsZn4QyDEzmBsXmnqEL2fxQtx1wCWTlC0dj2tQMJKzOqw/QAq2eiA/a5Hv7mO5Vt4JHf0/ozq8leruea45k0yfFdvRduNpDtGSLhtTwaxddV7WiJ+F7U9qab95030upU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=b1oBtj5e; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741721613; x=1742326413; i=markus.elfring@web.de;
+	bh=crIWXxpiTTenJI4NMZwEJ9fdFrkz5l9k/HVg53VTtqE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=b1oBtj5evIXNknb3NeEPV99kLUhqWyoT4lYI0S0Be4lpDQF5/nGiBkgwOJqlrZ8k
+	 SoW+8JENSO0T+rYSKR7UytO3bd5SxPgrC1iYNdT7uz7FAlW+vpUKQLbHa4I+io8vc
+	 Jfeu2Z4JKkZMvMu+NvD6c8GNz7MaBlv+3ZfpIegyWylSyxcLqR8zn9tThYBgDSdQw
+	 GOnaM7ATG/gf7uprFRC/9r3RW125Beg+X8Y8ULjIozEs5tyCvT0Kw6oueOMnzIPGr
+	 YHF9BfL70Q0FqjDNCLbApW23DBjJULwdNyaZfI8JUpzDtaWg7+a8WFFBeBpitCcMB
+	 VVCXMneUQeDtI7XXsg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.40]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdfCH-1tJ1if3fzl-00cquA; Tue, 11
+ Mar 2025 20:33:32 +0100
+Message-ID: <0a2e1d9f-4046-49ee-9513-dbb3af9cffe9@web.de>
+Date: Tue, 11 Mar 2025 20:33:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250309040355.381386-1-tejasvipin76@gmail.com>
+User-Agent: Mozilla Thunderbird
+To: =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <csokas.bence@prolan.hu>,
+ dmaengine@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Vinod Koul <vkoul@kernel.org>
+References: <20250311180254.149484-1-csokas.bence@prolan.hu>
+Subject: Re: [PATCH v4] dma-engine: sun4i: Use devm functions in probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250311180254.149484-1-csokas.bence@prolan.hu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:XqSKuVC0JiST6xXnkWzAX/+X8jnpz66Ha3o7kYN8HmTq1zoTzhs
+ /2wQcykvychlhAjfg83GeOlw3OlYrm1QfqtdKwlDF45cx4ubxiwMSk5eZ5GooeXwbvvuIJF
+ kAwQGRBNm+AMhDT51sD/URk41EP6gXdnIEA3XBoi15qZ5U9OOBqOHF7A/jkrh21qNoNn5dn
+ yyzKJLVuXdLgB2RWLhrHQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UdA59599wXk=;z7L1HARrJsNvNEBleC2wdhGduLT
+ 863Gmt71ISm98yn6cKUitonjZpb7yIUP/TaEhh3aE1gg6OYpdtNWWfxGrohH+FwIQ5muzyIqP
+ esSzDNkjrHK5CIknWZakDHOt/x7icrokAsOhR5BTg+kF5/LjzHtZdHS0rFYP2FRJzSOoLgN0n
+ 8KGA82PaIrTNdhWOq8k0m4jVCXtW1qEW/CCp1/tT3l4X/tym2CeqJhugX03HZrT33vnTy2U1M
+ 1WY/R80yXoQ2BTx9ZZTLPxHNfSud8kFFlQ0XYcrFl2qD68U/Swu4zf+sksn0DZQ9t/P5UQmeP
+ l2wQpsSb8X7XEnTfV0KtqmgKeYIhrsOHj5igrurJTKhgGX8yRvtIURT7XJIB+2wwALdt4HG/N
+ VmRuJHVCw3GTyeNGRuFeDHZ1BXCEyg3Nmt+xIEaJfBdPM1UlfLSzM+l8bd5mgebK5Ro/dFjY7
+ W8hMQktvN4R/KXy+GkrG/aUw26siL7Txg/i5536FK7atpsHq66wN1h/TVTagjxJK8EGIx8S46
+ 52NEp0EjSsuzy1zDZKVJ2q230XXNOXmVhHwnSvz344bLzsZtgUf4Zlaf/NeMZUPb0iMXbeWsu
+ Ii1Xm8G0c78CSnL/9luA2GDGZdr5gBBMhisINKq2w9OgBzDwQC4PKayQVURAIxY5qC4O2D/Er
+ bDJTIXJ4tRjYx9ZjerbyI3JIiThUrTZnbheScvjey4a4qxH3H4ss/ZJODX58h8aaU5EuYrRWk
+ UxEW0K4CrVpzu9SbJrS+3fzvnUvy+yHdoip8ZXHWDd8SIWX6kHO+jCixNgvSRlvxXVTbC67I/
+ WpyaeaTuEt+wyHKvyTQhnwslejUkfLz55vmCbDg9fvvt8rdcTMOXhCu+FScqYLMfdoW5Gjjdb
+ 62qWC0Afa2z1K70WrXRPgeJbM/VfeS+P528S6RO3n1QvSKw+JCMttznxKLBK1dLL/MgU28N3U
+ fmQBfiaaHAvR2I9MMFsomNSqIhA2V2OBY0rbClHdbKtGL/4dpofyUH54g4A5nBu6N03wxqCAR
+ ivBd5wp3evSjlWRc1+QCgrItuggeC9xCNjFf3ASedW2GVvxrxqCrFZaN8m16VJx2cPGthyen1
+ LIxAdhLE+GNQTkLS+v0KTVDyDS2haE7LPyQfhUrl8rC2zE+3u3YbFpcwMJmpWQ/lwnXNmchQc
+ wY3v6Twsm8jfGbTjd1xvNZfDEv2Op3XcvjrKuQdhv1xLMJaVrjcrLijamIKOsPZS9cBbxIVQO
+ VBaW9a2Iwp/ZfYhMhg3Qvz8uxSVBtxGwXl6ZxwghA+9YkZVe3m4b8raCEY9NJFQcgMmyvB9kS
+ NuxsOQtwhMcL0knI/pMzfOJrfTn+2gyMGOo+8GwqemqvfvYqu/I/+9Kz2xN9anLe6RYjOqfoS
+ 4YFqqBOLCBXKKXBcOLPOWGIIMQQ2Ng7sGqGo8P7bWataZiBa1ff61cbx7VVO4xL1/G+BRfhbY
+ 1M1bW3LdnDXt4iM3SYQFr+C97ESTxdQruYYdpPJqRm6Gzs2efZ0womck7UbTQSCvAUDwA9w==
 
-On Sun, Mar 09, 2025 at 09:33:55AM +0530, Tejas Vipin wrote:
-> Changes the novatek-nt36523 panel to use multi style functions for
-> improved error handling.
-> 
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
-> ---
-> Changes in v3:
->     - Remove mipi_dsi_dual_msleep
->     - Change mipi_dsi_dual_dcs_write_seq_multi to use the same dsi_ctx
->       by swapping the dsi accordingly.
-> 
-> Link to v2: https://lore.kernel.org/all/20250307091519.245889-1-tejasvipin76@gmail.com/
-> 
-> Changes in v2:
->     - Uses mipi_dsi_dual_msleep
->     - Changed mipi_dsi_dual_dcs_write_seq_multi to not equate accum_err
->       of either dsi_ctx.
-> 
-> Link to v1: https://lore.kernel.org/all/20250306134350.139792-1-tejasvipin76@gmail.com/
-> ---
->  drivers/gpu/drm/panel/panel-novatek-nt36523.c | 1681 ++++++++---------
->  1 file changed, 821 insertions(+), 860 deletions(-)
+> Clean up error handling by using devm functions
+> and dev_err_probe(). This should make it easier
+=E2=80=A6
 
+You may occasionally put more than 47 characters into text lines
+of such a change description.
 
-[..]
-
-> 
-> @@ -1063,18 +1026,16 @@ static int nt36523_prepare(struct drm_panel *panel)
->  static int nt36523_disable(struct drm_panel *panel)
->  {
->  	struct panel_info *pinfo = to_panel_info(panel);
-> -	int i, ret;
-> +	int i;
->  
->  	for (i = 0; i < DSI_NUM_MIN + pinfo->desc->is_dual_dsi; i++) {
-> -		ret = mipi_dsi_dcs_set_display_off(pinfo->dsi[i]);
-> -		if (ret < 0)
-> -			dev_err(&pinfo->dsi[i]->dev, "failed to set display off: %d\n", ret);
-> +		mipi_dsi_dcs_set_display_off_multi(
-
--:1726: CHECK:OPEN_ENDED_LINE: Lines should not end with a '('
-#1726: FILE: drivers/gpu/drm/panel/panel-novatek-nt36523.c:1032:
-+		mipi_dsi_dcs_set_display_off_multi(
-
-> +			&(struct mipi_dsi_multi_context){.dsi = pinfo->dsi[i]});
->  	}
->  
->  	for (i = 0; i < DSI_NUM_MIN + pinfo->desc->is_dual_dsi; i++) {
-> -		ret = mipi_dsi_dcs_enter_sleep_mode(pinfo->dsi[i]);
-> -		if (ret < 0)
-> -			dev_err(&pinfo->dsi[i]->dev, "failed to enter sleep mode: %d\n", ret);
-> +		mipi_dsi_dcs_enter_sleep_mode_multi(
-
-Same here. I think it might be cleaner to define a variable of struct
-mipi_dsi_multi_context type and pass it here.
-
-> +			&(struct mipi_dsi_multi_context){.dsi = pinfo->dsi[i]});
->  	}
->  
->  	msleep(70);
-> -- 
-> 2.48.1
-> 
-
--- 
-With best wishes
-Dmitry
+Regards,
+Markus
 
