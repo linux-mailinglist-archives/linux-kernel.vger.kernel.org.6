@@ -1,93 +1,99 @@
-Return-Path: <linux-kernel+bounces-556617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5BAA5CC6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:42:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A971BA5CC3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96D387AC473
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:41:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F8E9189BAC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5F8262813;
-	Tue, 11 Mar 2025 17:42:05 +0000 (UTC)
-Received: from mail.itouring.de (mail.itouring.de [85.10.202.141])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91812620E7;
+	Tue, 11 Mar 2025 17:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSfE7xhD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9462524EF6E;
-	Tue, 11 Mar 2025 17:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.202.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182F01925AF;
+	Tue, 11 Mar 2025 17:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741714925; cv=none; b=LLOPYeECJWj2L9VCRV0pYy17hjYto/aerxMULwI8cABdPp/rfYH7RqJvACy6XAr6oSphXLFxFAY4PUkW2EGbcN7sMN+GqSBXysJTiTTpBOEd314hneOJNCrB6yHizFXGe7lbcrdPabt1oUiZmOUDbDQfz1WjDPaHsbxqqPSa9vA=
+	t=1741714426; cv=none; b=EJ1cTzFnjktTkHSgipzz+8X3C2RMLZLmYAQ4qmeeX8eZDR4BPrbbaDUfD8QLqhPzFniKU/wKcfRPfyhIGZNMXFiIKbuuJx4Z2xUKPZRNknZ+FD3X+yDQqex5EWmmKac7YAPyR/FhrsQseoHuIen52tZn2Bhu5rsygPXnlsRIHh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741714925; c=relaxed/simple;
-	bh=hJlpa7qzIxdqn3x3F/DyyzikAdq8ql0x6CY4+XW6PdA=;
-	h=To:Cc:From:Subject:Message-ID:Date:MIME-Version:Content-Type; b=l4wmOx4noV+LJ5ugMuKJeAvRv8xyF0QFZ0PDlYW8fPJFPeUf8cHt14xctDTHsBdZT59kOFXf0RwfswH6v4r3laS01P/5Dfo5XyFmN1BrbPiblc+XzrKcXj1P6myul/JGB5en6t8EemV5NumFeBCkt1QVTd1/xc4yM6f8eitaDZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com; spf=pass smtp.mailfrom=applied-asynchrony.com; arc=none smtp.client-ip=85.10.202.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=applied-asynchrony.com
-Received: from tux.applied-asynchrony.com (p5b07e9b7.dip0.t-ipconnect.de [91.7.233.183])
-	by mail.itouring.de (Postfix) with ESMTPSA id 7603112560D;
-	Tue, 11 Mar 2025 18:33:10 +0100 (CET)
-Received: from [192.168.100.221] (hho.applied-asynchrony.com [192.168.100.221])
-	by tux.applied-asynchrony.com (Postfix) with ESMTP id CE0F960187F25;
-	Tue, 11 Mar 2025 18:33:09 +0100 (CET)
-To: linux-perf-users@vger.kernel.org,
- linux-kernel <linux-kernel@vger.kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Guilherme Amadio <amadio@gentoo.org>
-From: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
-Subject: [PATCH] perf build: filter all combinations of -flto for libbperl
-Organization: Applied Asynchrony, Inc.
-Message-ID: <fa1c3b38-6a23-af22-0e5e-280fa523d06a@applied-asynchrony.com>
-Date: Tue, 11 Mar 2025 18:33:09 +0100
+	s=arc-20240116; t=1741714426; c=relaxed/simple;
+	bh=MltOihUXzgv+EEBgM5uJkF4euy92dMq6NOYuBiqedKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TNe6G1lLrjYsGq/oG5eLwB7OouDCVHmzSeN3RgyYaezp60rquDiqG2vCAhgn/x69YH0DHXjErM7CMY5B2TSxnmpM3rJuTbxSbZERo6B2xbbC3BYNMnu1jNW/FIVPfx3xwmaT+/s4r/8Z04ddEnfiVu2tAxDBLhBUdr8KYHf3yy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WSfE7xhD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A89C4CEE9;
+	Tue, 11 Mar 2025 17:33:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741714425;
+	bh=MltOihUXzgv+EEBgM5uJkF4euy92dMq6NOYuBiqedKM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WSfE7xhDQ5slphlIJ3b6YsRdjT7deCO5YH9nFXoQff5CotLov5/c1oTKg+fwldIDs
+	 pz2TfTJ78V89pacdPueLsNWNWakRwHL8oroawm5npDcsC4t9yLkTLdmA+L6xq9XqR/
+	 gFKE6iDftPCNms4pGceW8h6/9AX8wkNRwIOt1CT7ruoIfqHjz1KDrRpkYea0zT/WeI
+	 GwsTMSAoqOZiEVb8KuobW/gWbTD5V9uI90bDkhVxCwlRZ2KYWmszP51ZYGQKc9Vko1
+	 IPjSR56YiQWeLlYYsIOVTFy2tjjvp44xaEQSzH0hnzUsNBNhA9zK7WERx8wiWXFNad
+	 oEXlbZhCE+zjQ==
+Date: Tue, 11 Mar 2025 12:33:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dimitri Fedrau <dima.fedrau@gmail.com>
+Subject: Re: [PATCH net-next 1/3] dt-bindings: net: ethernet-phy: add
+ property mac-series-termination-ohms
+Message-ID: <20250311173344.GA3802548-robh@kernel.org>
+References: <20250307-dp83822-mac-impedance-v1-0-bdd85a759b45@liebherr.com>
+ <20250307-dp83822-mac-impedance-v1-1-bdd85a759b45@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307-dp83822-mac-impedance-v1-1-bdd85a759b45@liebherr.com>
 
-When building the libperl feature the build uses perl's build flags
-(ccopts) but filters out various flags, e.g. for LTO.
-While this is conceptually correct, it is insufficient in practice,
-since only "-flto=auto" is filterd out. When perl itself is built with
-"-flto" this can cause parts of perf being built with LTO and others
-without, giving exciting build errors like e.g.:
+On Fri, Mar 07, 2025 at 11:30:01AM +0100, Dimitri Fedrau wrote:
+> Add property mac-series-termination-ohms in the device tree bindings for
+> selecting the resistance value of the builtin series termination resistors
+> of the PHY. Changing the resistance to an appropriate value can reduce
+> signal reflections and therefore improve signal quality.
+> 
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> ---
+>  Documentation/devicetree/bindings/net/ethernet-phy.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> index 824bbe4333b7ed95cc39737d3c334a20aa890f01..4a710315a83ccf15bfc210ae432ae988cf31e04c 100644
+> --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> @@ -238,6 +238,11 @@ properties:
+>        peak-to-peak specified in ANSI X3.263. When omitted, the PHYs default
+>        will be left as is.
+>  
+> +  mac-series-termination-ohms:
 
-   ../tools/perf/pmu-events/pmu-events.c:72851:(.text+0xb79): undefined
-   reference to `strcmp_cpuid_str' collect2: error: ld returned 1 exit status
+A property of the MAC (or associated with it) should be in the MAC's 
+node. Also, sounds like either either end could have a property. We 
+already have similar properties in other cases: 'termination-ohms' for 
+example. That appears to be for series term as well given a value of 
+120ohms. 
 
-Fix this by filtering all matching flag values of -flto{=n,auto,..}.
-
-Signed-off-by: Holger Hoffstätte <holger@applied-asynchrony.com>
----
-  tools/perf/Makefile.config | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index a148ca9ef..4f5a40ab8 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -820,7 +820,7 @@ else
-    PERL_EMBED_LIBADD = $(call grep-libs,$(PERL_EMBED_LDOPTS))
-    PERL_EMBED_CCOPTS = $(shell perl -MExtUtils::Embed -e ccopts 2>/dev/null)
-    PERL_EMBED_CCOPTS := $(filter-out -specs=%,$(PERL_EMBED_CCOPTS))
--  PERL_EMBED_CCOPTS := $(filter-out -flto=auto -ffat-lto-objects, $(PERL_EMBED_CCOPTS))
-+  PERL_EMBED_CCOPTS := $(filter-out -flto% -ffat-lto-objects, $(PERL_EMBED_CCOPTS))
-    PERL_EMBED_LDOPTS := $(filter-out -specs=%,$(PERL_EMBED_LDOPTS))
-    FLAGS_PERL_EMBED=$(PERL_EMBED_CCOPTS) $(PERL_EMBED_LDOPTS)
-  
--- 
-2.48.1
+Rob
 
