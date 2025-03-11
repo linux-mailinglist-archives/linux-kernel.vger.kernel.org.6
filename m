@@ -1,164 +1,193 @@
-Return-Path: <linux-kernel+bounces-555752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B989A5BC51
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:31:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE739A5BC59
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B6D13AEBB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181951684E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABCA222572;
-	Tue, 11 Mar 2025 09:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D28D22B590;
+	Tue, 11 Mar 2025 09:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EkfH7s7i"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amqzzKMB"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B18EC5
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1906C1F09AB;
+	Tue, 11 Mar 2025 09:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741685494; cv=none; b=Aida+18blAYFE6pe4RYIDauoUwvJa+OY+S/qFTV2wHN7rJEosoYveoF5pBNuReROyY40BYnttPNxAlXhFslwEdPnJXc1Hj04l1U+YZriN7Y6+8m+GWoj5DyK2artKcQOFKN/WErUU93STIdJ43LvmTQ8xhdoPGiL2Qd+ypkLbvE=
+	t=1741685598; cv=none; b=V0UofE11jq3iDTXJr29O+voAi1/xpwgz53V1TY2WEEyP173Nw1qQ6/oSBr6s8+qG4vjV8qp2tLxMKYG90dollojAkt+bIpZoqlOFDbavURDYgFE+wmd5g8LxfXNU+bHp59jqui69sGRrI1MCfqdxTHPJj4RPduwHnJAoo0ox9Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741685494; c=relaxed/simple;
-	bh=SuFytaqe0mIuhP1gOMXnQpz1y1JO6UWiQ/JvuQFiokk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BRBes0MGFrbUhRH4unXXywITRCK/0jD93vK6faFzw0WBDzyjmYC9xNvPiWp0wcDCw5vdgd84DT2mvSTOkf4KaiVH5yOVyOxD3Ty2C6uJi1AWGJW1sbOhBS+U637ATVwafOVAcuh5j3Y2ji++I/PWnrQ/vc1zT8GA+ElmgALoIRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EkfH7s7i; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741685491;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lBEVrMZwYFstbkVI0oojqkiH2WJqTcICPrqpXCC77d8=;
-	b=EkfH7s7iisJuroHm+DQSwTgJvy3rCBalN4VkwWh3G5pXeGMLmMXaSqCs+bM0tWiOwyz524
-	VCVNEa7QGlfA2l7EU7hjxWBsFuNGUFu7zW8vfhLBt+oSaV4o7HrJ5wT2vNqJaOunzIXtsw
-	Yx2WwfZvliXG9hfAuWDfhhUkoiu2g1M=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-1OU2P_DEOumyQroxRhL-Zw-1; Tue, 11 Mar 2025 05:31:30 -0400
-X-MC-Unique: 1OU2P_DEOumyQroxRhL-Zw-1
-X-Mimecast-MFC-AGG-ID: 1OU2P_DEOumyQroxRhL-Zw_1741685489
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43ceed237efso18810705e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 02:31:29 -0700 (PDT)
+	s=arc-20240116; t=1741685598; c=relaxed/simple;
+	bh=mRNEtQhgbvcG/c9JNeEVRUgWt852dyGn4ZIiE2lQQ4U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gp+/LjJLubwmBNg0qLkVetK9qOGM6OSzTyWexwdA1g2CPBV1BdJLNBgyr4BhGAI6OZmQR7CtkuxrlMiOvwzmOzN0lqzVv1La9Lo3+Z+IOdKmfkhSRqJGeNKtpvJaDUeYx1Y/Y26nOptzDBHL210eBAkCX1iEXg0el4g8rXKS7vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=amqzzKMB; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-86d5e3ddb66so960653241.2;
+        Tue, 11 Mar 2025 02:33:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741685596; x=1742290396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oci9eEq+toTA4eT0HbbNQG595NfpjyU1+E2PAns3Nzg=;
+        b=amqzzKMBOdZ7CthW8a15WwXR624z97plJGPwLXW1uZGgm+bxInNh75oMhdQBFa7X2u
+         rxXZFvvRspPGj/ftXh351aUcMI7awvLz4Y9oYfl6YaHwf+f1KQ4goqp7ORwdnDp0TbfG
+         k2GhzvaZjxBEjJCh/lzRsecBpoo6fyGdEDQgSVrtkyexVRL3dMuTBKXfVA1WjU6ILrBL
+         t02T527NV5l2TgWW4gkfpTSdCdsNvcS033pWy30zEjy4BFzv1F4zWg0IOtUpRUyUJW2E
+         D0U+tqD6vNLG1d/j+OcAqrM/9np0JNgotlqnEcozWqkLVFR8F24+IEoRk0E11pr9FbnC
+         ipEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741685489; x=1742290289;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lBEVrMZwYFstbkVI0oojqkiH2WJqTcICPrqpXCC77d8=;
-        b=Zwdad5hOS3s6U5rXt6i5IWe1Lb7LjBbhcqFxb11sNI9UCDmi7aIbpW9qPuBmkUQmm/
-         gBu7bT0RRcxG6RCH3+GjyGiYPG7boqy8P96F4qD9Rg6zSNASIorAWyMhzZkgoVsuTljO
-         iHBnMVJu0Dvh3gWGC5CwBv5jAb8SGpQO3aTsiWE+qKxGtS+CGvmIXA5mymq5qQFaiPOY
-         OH3nP7m/bmzur7B1yfuTuREr0uDZOt4YiXoFsmX1QOPpNs3aw4PS/EtgT9cbdYvnkYDL
-         LhwyiMeQEhoU6TrDN01wbWTvtP1Cf4hxETDeJBm8kArXOQKeOXCPCSb5yvQwRggMAMO8
-         ezeA==
-X-Gm-Message-State: AOJu0YwFCcZAzl/+cDaiquiCvDnjzkKOFy6pSj5mk/Zxe7SKfl9iYQyv
-	71ubPExtEaBlXItAi7ufQmHSIWQcVBJHlAI4AqQTypEHzLQPYT7kwNlJ0qrCzzPmf4R1afkxd71
-	TwV4Q61lzUkPs4CcHBL4eey1PK/XnZ1jialgADOv/s18O4GlJPzZP6rP5kCD3SQ==
-X-Gm-Gg: ASbGncsbaBVV1BNRfUx0/I/L6ulfeQ7EJ1Sa7KbNqgnUmpoQbjKBMa4yPh9xnVHy5Xm
-	YqnyD1GsqWXr0pzC2wmtUUmiM3bz2ObU1DEj6lByPNyWB15IRIuW1LuaCa5GJswqK2gdgaNLqac
-	/TfXkRDz6so1gbUT3pR4XEnwquX57hensXCdjtDZ9NBjJLAHZEu+WGcolBfhVEcpDKcbcnX3w2w
-	3l3Xh60IFzitBRbqSui1OpvHbLmT7IIpdykYLsHv5+M94LpwheD03AY2S3JKwOfAnL0ZsLmN+TE
-	DOH3G8lC+XG8TBTGnOotu65jOvbKz3teWlts5+rS8Qv0MdxJf3F54ZdCPOCwLIIpedpN6t6KBLr
-	zx+IiNk36wpkobbLH+LF05WM23RZYMn79gcZ07OeM9lI=
-X-Received: by 2002:a05:600c:190e:b0:439:9b2a:1b2f with SMTP id 5b1f17b1804b1-43d01bd2ee5mr35849745e9.3.1741685489029;
-        Tue, 11 Mar 2025 02:31:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxtn+VKnkgEk67xGTz5Ij05JwhrugvF7QQqQyGIFUDQNE5G7Ak4qbw8UXnaKImlKlqTeWSxw==
-X-Received: by 2002:a05:600c:190e:b0:439:9b2a:1b2f with SMTP id 5b1f17b1804b1-43d01bd2ee5mr35849465e9.3.1741685488723;
-        Tue, 11 Mar 2025 02:31:28 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c720:ed00:a9b3:5954:823e:3427? (p200300cbc720ed00a9b35954823e3427.dip0.t-ipconnect.de. [2003:cb:c720:ed00:a9b3:5954:823e:3427])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d07fd046esm581485e9.19.2025.03.11.02.31.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 02:31:28 -0700 (PDT)
-Message-ID: <e36bfe8a-fbf6-46b4-9f8f-c44b7352583e@redhat.com>
-Date: Tue, 11 Mar 2025 10:31:27 +0100
+        d=1e100.net; s=20230601; t=1741685596; x=1742290396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Oci9eEq+toTA4eT0HbbNQG595NfpjyU1+E2PAns3Nzg=;
+        b=fndz6A9tbjxOWXFWXOi5y1OLHicQiL+v3s+iHp1xZkdSxge2/cVJfIurorY00X+mpK
+         BJKnebvB3XA5k24m7AWGZREM7VQkGe9DEO9++f6kG296sQbdyecWgseYeaMRgeqvsp5N
+         wL0Io2R/oh4A1h3Qqp0sEFSxsq7xvkPpfUIJEyR3U6eImUs52gBu6il90VPhFKjkEk7S
+         vLd6wJskkYQ77dk86WlkU0LVNMM6FJ0di8Kub4JW7Y7a4pDOVKT7C/Fnv2oalVovMwDP
+         Ofssgs2E9tB0TIB1tdesZuXvWSvQxS1zlLXAHOyBEtnEKKJRB2dQjTHGgqgEfIjafpIR
+         5XrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgPhvL1KNKji/fq2igGO9Mc6PdTKXwOMJcP9l9rTBFBVhC/5XTd/j9lgVgGhLzq/Wj7wXEyM0MSzBUV5g8@vger.kernel.org, AJvYcCX6CYVg4b02LLGlL9ejC8mkGPE5sIzeFSvMXiDI2W0TDv8X30K5BW+9PShBDm+ljZDlYNiPuUDDGb6qsQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyek2sPeSWfwR8wAhfvHXxEJ68RFL/aIerd3YDOtdfd/5qiyNik
+	C/MGAXj2Ay50Qh62mSB1tE0Ut+ZgJPW/CXb86RWp2ON1NLxPhW74W0fvAWpnYZJfQofzqyVyY8m
+	kfaB5Nkq7swg6HH466J4GW35PVHQ=
+X-Gm-Gg: ASbGnctbmw4TtZWcnaKTBNfBWKwH+L8zQ5fSB2q0/6h7nah0owIvOom0Gx4fhRw6xNR
+	FjLLUX05gM9RBVpO29mgXtLUsgcS//UmAixURG2zQYw8dE+/PsTwBOKN2hVS/wVw/7PgfR5fg9d
+	8OqFQ/DsSNlaSQRZSvLL5KuCqrLcKSLMkayhh+
+X-Google-Smtp-Source: AGHT+IFjbF2BT/V8wuSBTDQZbf6t/hT/Znk/xR8O11b3YilMHbEGP/m6CvuSuPbsGl833OZDuyeAqkTBH4Ybr+MgCeE=
+X-Received: by 2002:a05:6102:509f:b0:4c1:9e65:f904 with SMTP id
+ ada2fe7eead31-4c30a718b91mr8809313137.23.1741685595784; Tue, 11 Mar 2025
+ 02:33:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] mm/sparse: Expose for_each_present_section_nr()
-To: Gavin Shan <gshan@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, osalvador@suse.de,
- gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
- akpm@linux-foundation.org, shan.gavin@gmail.com
-References: <20250311004657.82985-1-gshan@redhat.com>
- <20250311004657.82985-2-gshan@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250311004657.82985-2-gshan@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
+ <CAKEwX=NfKrisQL-DBcNxBwK2ErK-u=MSzHNpETcuWWNBh9s9Bg@mail.gmail.com>
+ <CAGsJ_4ysL1xV=902oNM3vBfianF6F_iqDgyck6DGzFrZCtOprw@mail.gmail.com> <dubgo2s3xafoitc2olyjqmkmroiowxbpbswefhdioaeupxoqs2@z3s4uuvojvyu>
+In-Reply-To: <dubgo2s3xafoitc2olyjqmkmroiowxbpbswefhdioaeupxoqs2@z3s4uuvojvyu>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 11 Mar 2025 22:33:04 +1300
+X-Gm-Features: AQ5f1JpaKY-TJruiEfKLncijqOvg19zgNrZm_fVI7uamNPGD1sBBaPT6nlX2PNg
+Message-ID: <CAGsJ_4wbgEGKDdUqa8Kpw952qiM_H5V-3X+BH6SboJMh8k2sRg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Improve Zram by separating compression context from kswapd
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Qun-Wei Lin <qun-wei.lin@mediatek.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Jens Axboe <axboe@kernel.dk>, Minchan Kim <minchan@kernel.org>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chris Li <chrisl@kernel.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kairui Song <kasong@tencent.com>, Dan Schatzberg <schatzberg.dan@gmail.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, nvdimm@lists.linux.dev, linux-mm@kvack.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Casper Li <casper.li@mediatek.com>, Chinwen Chang <chinwen.chang@mediatek.com>, 
+	Andrew Yang <andrew.yang@mediatek.com>, James Hsu <james.hsu@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11.03.25 01:46, Gavin Shan wrote:
-> Expose for_each_present_section_nr() to be used by drivers/base/memory
-> in the next patch.
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: Gavin Shan <gshan@redhat.com>
+On Tue, Mar 11, 2025 at 5:58=E2=80=AFPM Sergey Senozhatsky
+<senozhatsky@chromium.org> wrote:
+>
+> On (25/03/08 18:41), Barry Song wrote:
+> > On Sat, Mar 8, 2025 at 12:03=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> w=
+rote:
+> > >
+> > > On Fri, Mar 7, 2025 at 4:02=E2=80=AFAM Qun-Wei Lin <qun-wei.lin@media=
+tek.com> wrote:
+> > > >
+> > > > This patch series introduces a new mechanism called kcompressd to
+> > > > improve the efficiency of memory reclaiming in the operating system=
+. The
+> > > > main goal is to separate the tasks of page scanning and page compre=
+ssion
+> > > > into distinct processes or threads, thereby reducing the load on th=
+e
+> > > > kswapd thread and enhancing overall system performance under high m=
+emory
+> > > > pressure conditions.
+> > >
+> > > Please excuse my ignorance, but from your cover letter I still don't
+> > > quite get what is the problem here? And how would decouple compressio=
+n
+> > > and scanning help?
+> >
+> > My understanding is as follows:
+> >
+> > When kswapd attempts to reclaim M anonymous folios and N file folios,
+> > the process involves the following steps:
+> >
+> > * t1: Time to scan and unmap anonymous folios
+> > * t2: Time to compress anonymous folios
+> > * t3: Time to reclaim file folios
+> >
+> > Currently, these steps are executed sequentially, meaning the total tim=
+e
+> > required to reclaim M + N folios is t1 + t2 + t3.
+> >
+> > However, Qun-Wei's patch enables t1 + t3 and t2 to run in parallel,
+> > reducing the total time to max(t1 + t3, t2). This likely improves the
+> > reclamation speed, potentially reducing allocation stalls.
+>
+> If compression kthread-s can run (have CPUs to be scheduled on).
+> This looks a bit like a bottleneck.  Is there anything that
+> guarantees forward progress?  Also, if compression kthreads
+> constantly preempt kswapd, then it might not be worth it to
+> have compression kthreads, I assume?
 
-Please squash that into the patch that uses it.
+Thanks for your critical insights, all of which are valuable.
 
--- 
-Cheers,
+Qun-Wei is likely working on an Android case where the CPU is
+relatively idle in many scenarios (though there are certainly cases
+where all CPUs are busy), but free memory is quite limited.
+We may soon see benefits for these types of use cases. I expect
+Android might have the opportunity to adopt it before it's fully
+ready upstream.
 
-David / dhildenb
+If the workload keeps all CPUs busy, I suppose this async thread
+won=E2=80=99t help, but at least we might find a way to mitigate regression=
+.
 
+We likely need to collect more data on various scenarios=E2=80=94when
+CPUs are relatively idle and when all CPUs are busy=E2=80=94and
+determine the proper approach based on the data, which we
+currently lack :-)
+
+>
+> If we have a pagefault and need to map a page that is still in
+> the compression queue (not compressed and stored in zram yet, e.g.
+> dut to scheduling latency + slow compression algorithm) then what
+> happens?
+
+This is happening now even without the patch?  Right now we are
+having 4 steps:
+1. add_to_swap: The folio is added to the swapcache.
+2. try_to_unmap: PTEs are converted to swap entries.
+3. pageout: The folio is written back.
+4. Swapcache is cleared.
+
+If a swap-in occurs between 2 and 4, doesn't that mean
+we've already encountered the case where we hit
+the swapcache for a folio undergoing compression?
+
+It seems we might have an opportunity to terminate
+compression if the request is still in the queue and
+compression hasn=E2=80=99t started for a folio yet? seems
+quite difficult to do?
+
+Thanks
+Barry
 
