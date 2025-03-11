@@ -1,85 +1,89 @@
-Return-Path: <linux-kernel+bounces-555666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B89E9A5BB02
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:45:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51411A5BB0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:47:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B2AF3AF8AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:45:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7565D3AFAFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C59E22B590;
-	Tue, 11 Mar 2025 08:45:14 +0000 (UTC)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12C422686F;
+	Tue, 11 Mar 2025 08:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="V5Xc0PCN"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7115122758F;
-	Tue, 11 Mar 2025 08:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D05F22170A;
+	Tue, 11 Mar 2025 08:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741682713; cv=none; b=EgsrcFgWuuRXz1uRgnzHz+CYBS6/yBimdvik/DDKJqli1DeOYCyLsWPrMIx9I9+O9NXVPmciBTuFW89hFCbJW9mz7OPhyafY4oGmakwYAL5o0LKBoeS3Fcccz8ZS8cVJotFq4Z6T5R+CEd7fE0/2PN3HmMmSQ9N1pEZHGaeRv1A=
+	t=1741682850; cv=none; b=YfIH+ZVi2dVhOoN3omfxev8B8W3MVb74zKjMLID2Vzxdi3KLGVJvHVCgI7lwLljpRD4WwbbWCqaUmSO+vL4EG+AoO2T2pxfUy2rQoxxFGAzgs/AY3Xgd0rFKuOiJxDnKDv18FkJDrMVyViWuYDLmsXM4s6ZXfHWUXPTw+Kc9PYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741682713; c=relaxed/simple;
-	bh=1sanh8jjie80IrgFZO+EJzAeXhkykptI5pFrdV00Qp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IBA7YmYslryYBRI3P1etzOSybBHxhq+GCZ/YyDZPifuEMw9EMEz/tjHhjMvABOlRuv4tACpoUJopGpGhGY5288DoYTB7f0i2m4ukMm9Dv22fBdPFsg/+KKHZoevMyCplUPasQwt/ayybM4ShZ5TKdUVJuf5bjGxiP7RYbOMQyDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2254e0b4b79so5002675ad.2;
-        Tue, 11 Mar 2025 01:45:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741682711; x=1742287511;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k7uvH3SPe95immrywDPKZqa349k0bb6EQFc55cQu2l4=;
-        b=EjS+UJWjlnmuQBLOOfPE18elEQvai+kchGxfBMvu8fZ3RjwRku0hS5Ux5TEHAaSJWd
-         mIan0aeqjF0IdcJ2p2cY1DTlNYFUG2qrc2L5M6g5BHZAA8MEOhulZS7W/u3QuMsaza8N
-         hxy0NL8riM90CuOLQyEKaTFhnlEXYDTc4Uk7rN3i1T091BmsJ0jcPZYrZNQ667mvIlHv
-         0x6lj7coYgCv23kVRLp9QDUyKswwvpQ/8pDGGIhUTD0/NC4Pt94ECEZwJWT/a5bIxc6s
-         FJo3JV+X2zh3uffvH1jkpBeKIHHnLOkJ1CsBVsBkQluAew9+pg5j01GKHahb1Z4jBBhx
-         aGrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZitYOYq7W1g0drmEt698phc/pwYul73r4AwvEr8Hxsn+alHnZEfe4ZzMJ9w7lMPcwDRrzAbw9QgG+Ne8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnUHLbzzuciWbHHzHdY2tDkNwXe9ppXx39IsNzGq5oaEcV+gop
-	mulYyXknNa6pKDSiPz5eg4V2Uspt+XN2kXXuEgv4ZuM7JgsP1VaBcsuHkiaFbw==
-X-Gm-Gg: ASbGncs/E9dUm7nNrNnmL062fOZ+yofa5xGZhFVF5M37IM3TmnleYuyvF7S2zHZoJ7g
-	oVV/+MN+qsEfgSvefFX+Gl5RspvvGKvJvuB1j9c85eaAS7BzXc1mcsCnqBDXYgdUlfMo2dPdYfb
-	H6vjGs/u3hK2XXPKknV+uANLUrD7QpgvUq6vIb7T9P1/VbQVI7uZ/m+8woQdErD/ITi4ZaQNn5P
-	nMyFmc0zJXLYamM1f9DQKOq5+tOUtxIahDwnK5/m4dfVZYgDuE5iwsg2/25CV2Yro0o6IDp+3oK
-	VHY5lwo+b1aFWoeIzuI8v9CoEVX3io7uDdsnMGpvAXg3L9qSqL7Bbxc=
-X-Google-Smtp-Source: AGHT+IGYVOejIe92B6YTXwjCro6IbySS112X9WIKoG+Qkd4liqUwCruzsFXVoNMfpMFW/0Vl+rjVGQ==
-X-Received: by 2002:a05:6a21:7a4b:b0:1f5:931d:ca6d with SMTP id adf61e73a8af0-1f5931dd37bmr1333965637.1.1741682711438;
-        Tue, 11 Mar 2025 01:45:11 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736ac461fddsm8049562b3a.70.2025.03.11.01.45.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 01:45:11 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	willemdebruijn.kernel@gmail.com,
-	jasowang@redhat.com,
-	andrew+netdev@lunn.ch,
-	horms@kernel.org,
-	sdf@fomichev.me,
-	jdamato@fastly.com,
-	kory.maincent@bootlin.com,
-	atenart@kernel.org,
-	kuniyu@amazon.com,
-	Kohei Enju <enjuk@amazon.com>
-Subject: [PATCH net-next 2/2] net: reorder dev_addr_sem lock
-Date: Tue, 11 Mar 2025 01:45:07 -0700
-Message-ID: <20250311084507.3978048-3-sdf@fomichev.me>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250311084507.3978048-1-sdf@fomichev.me>
-References: <20250311084507.3978048-1-sdf@fomichev.me>
+	s=arc-20240116; t=1741682850; c=relaxed/simple;
+	bh=ol1f7hay/Z679BK2/QRFOO0VTI1OSCSa3+Q2+6uk9yg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fmxGQkd4h1r+zzjMvZuJYA9r7g1z2i/oGWZLPcDCOelffwLYp+u8ZbWkdspfkG4VGOeQPbjU4Vd66Vq0AOrhtYHEJ7vUx34EjpVYa2UugHNskrRO34m/05gZL118WafcGOeAloAthLL5bFUVl0cp9b5zPWJGoaHq54CX9Ca3YSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=V5Xc0PCN; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52AKFZHY028791;
+	Tue, 11 Mar 2025 08:46:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=edl4hfarrhj8RCsBI17w+uCiwTK8phxXIqIjOaB8q
+	wg=; b=V5Xc0PCN9W0iODXEodpYJpuNRihgplC4uBE3VEZ5VnAeyvnyfePNbWQtF
+	aYSbX5y8/+JlPM/+x7sFXrpYq3QM/cdxwVJmqztdWdOAkk6BkWawjlOPBK6ubUrE
+	1ax+qqSjbbRXkqUrfz4rI0xotNtIT2pi1ThXK9Ne7qPisRrDrlOkOcMhas7W5IDY
+	5SLRcqjiQCBIMWTKbTCNcTSY2JdMFLQBAL+MATTzf28Dyxpt82Vv10dQ8NSib8HJ
+	bjjh/PrOv81OOyIyImB5Dl4hhtZrpen1kqk7yUvl0rBanoSALGZSVKJOaTwEPWXh
+	5RsYeVwN+ZamLu+TAe4mFN0QTbKiA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45a042wcb2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 08:46:58 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52B8LlTJ002936;
+	Tue, 11 Mar 2025 08:46:57 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45a042wcas-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 08:46:57 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52B7bK5b014011;
+	Tue, 11 Mar 2025 08:46:56 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4592x1ttma-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 08:46:56 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52B8ksZP34538076
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 08:46:55 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D42052004D;
+	Tue, 11 Mar 2025 08:46:54 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1284320040;
+	Tue, 11 Mar 2025 08:46:50 +0000 (GMT)
+Received: from li-621bac4c-27c7-11b2-a85c-c2bf7c4b3c07.ibm.com.com (unknown [9.43.112.86])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 11 Mar 2025 08:46:49 +0000 (GMT)
+From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+To: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: ast@kernel.org, hbathini@linux.ibm.com, andrii@kernel.org,
+        daniel@iogearbox.net, mykolal@fb.com, martin.lau@linux.dev,
+        song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
+        kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+        jolsa@kernel.org, shuah@kernel.org, miaxu@meta.com
+Subject: [PATCH] selftests/bpf: Fix sockopt selftest failure on powerpc
+Date: Tue, 11 Mar 2025 14:16:47 +0530
+Message-ID: <20250311084647.3686544-1-skb99@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,166 +91,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: VPyMwzuXTjLqCJwbqKFCCgpkViq35HWO
+X-Proofpoint-ORIG-GUID: _tsnpUPWeg2Nlj8o_gcPPYdfxINmsmdD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_01,2025-03-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=902
+ impostorscore=0 clxscore=1011 mlxscore=0 priorityscore=1501 spamscore=0
+ adultscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503110057
 
-Lockdep complains about circular lock in 1 -> 2 -> 3 (see below).
+The SO_RCVLOWAT option is defined as 18 in the selftest header,
+which matches the generic definition. However, on powerpc,
+SO_RCVLOWAT is defined as 16. This discrepancy causes
+sol_socket_sockopt() to fail with the default switch case on powerpc.
 
-Change the lock ordering to be:
-- rtnl_lock
-- dev_addr_sem
-- netdev_ops (only for lower devices!)
-- team_lock (or other per-upper device lock)
+This commit fixes by defining SO_RCVLOWAT as 16 for powerpc.
 
-1. rtnl_lock -> netdev_ops -> dev_addr_sem
-
-rtnl_setlink
-  rtnl_lock
-    do_setlink IFLA_ADDRESS on lower
-      netdev_ops
-        dev_addr_sem
-
-2. rtnl_lock -> team_lock -> netdev_ops
-
-rtnl_newlink
-  rtnl_lock
-    do_setlink IFLA_MASTER on lower
-      do_set_master
-        team_add_slave
-          team_lock
-            team_port_add
-	      dev_set_mtu
-	        netdev_ops
-
-3. rtnl_lock -> dev_addr_sem -> team_lock
-
-rtnl_newlink
-  rtnl_lock
-    do_setlink IFLA_ADDRESS on upper
-      dev_addr_sem
-        netif_set_mac_address
-          team_set_mac_address
-            team_lock
-
-4. rtnl_lock -> netdev_ops -> dev_addr_sem
-
-rtnl_lock
-  dev_ifsioc
-    dev_set_mac_address_user
-
-__tun_chr_ioctl
-  rtnl_lock
-    dev_set_mac_address_user
-
-tap_ioctl
-  rtnl_lock
-    dev_set_mac_address_user
-
-dev_set_mac_address_user
-  netdev_lock_ops
-    netif_set_mac_address_user
-      dev_addr_sem
-
-Cc: Kohei Enju <enjuk@amazon.com>
-Fixes: df43d8bf1031 ("net: replace dev_addr_sem with netdev instance lock")
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
 ---
- include/linux/netdevice.h |  2 --
- net/core/dev.c            | 11 -----------
- net/core/dev_api.c        |  4 +++-
- net/core/rtnetlink.c      | 15 +++++++++++++--
- 4 files changed, 16 insertions(+), 16 deletions(-)
+ tools/testing/selftests/bpf/progs/bpf_tracing_net.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index 42c75cb028e7..2bf1f914f61a 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -4198,8 +4198,6 @@ int netif_set_mac_address(struct net_device *dev, struct sockaddr *sa,
- 			  struct netlink_ext_ack *extack);
- int dev_set_mac_address(struct net_device *dev, struct sockaddr *sa,
- 			struct netlink_ext_ack *extack);
--int netif_set_mac_address_user(struct net_device *dev, struct sockaddr *sa,
--			       struct netlink_ext_ack *extack);
- int dev_set_mac_address_user(struct net_device *dev, struct sockaddr *sa,
- 			     struct netlink_ext_ack *extack);
- int dev_get_mac_address(struct sockaddr *sa, struct net *net, char *dev_name);
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 5a64389461e2..66290c159ad8 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -9592,17 +9592,6 @@ int netif_set_mac_address(struct net_device *dev, struct sockaddr *sa,
- 
- DECLARE_RWSEM(dev_addr_sem);
- 
--int netif_set_mac_address_user(struct net_device *dev, struct sockaddr *sa,
--			       struct netlink_ext_ack *extack)
--{
--	int ret;
--
--	down_write(&dev_addr_sem);
--	ret = netif_set_mac_address(dev, sa, extack);
--	up_write(&dev_addr_sem);
--	return ret;
--}
--
- int dev_get_mac_address(struct sockaddr *sa, struct net *net, char *dev_name)
- {
- 	size_t size = sizeof(sa->sa_data_min);
-diff --git a/net/core/dev_api.c b/net/core/dev_api.c
-index 2e17548af685..8dbc60612100 100644
---- a/net/core/dev_api.c
-+++ b/net/core/dev_api.c
-@@ -89,9 +89,11 @@ int dev_set_mac_address_user(struct net_device *dev, struct sockaddr *sa,
- {
- 	int ret;
- 
-+	down_write(&dev_addr_sem);
- 	netdev_lock_ops(dev);
--	ret = netif_set_mac_address_user(dev, sa, extack);
-+	ret = netif_set_mac_address(dev, sa, extack);
- 	netdev_unlock_ops(dev);
-+	up_write(&dev_addr_sem);
- 
- 	return ret;
- }
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 9355058bf996..c9d44dad203d 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -3080,21 +3080,32 @@ static int do_setlink(const struct sk_buff *skb, struct net_device *dev,
- 		struct sockaddr *sa;
- 		int len;
- 
-+		netdev_unlock_ops(dev);
-+
-+		/* dev_addr_sem is an outer lock, enforce proper ordering */
-+		down_write(&dev_addr_sem);
-+		netdev_lock_ops(dev);
-+
- 		len = sizeof(sa_family_t) + max_t(size_t, dev->addr_len,
- 						  sizeof(*sa));
- 		sa = kmalloc(len, GFP_KERNEL);
- 		if (!sa) {
-+			up_write(&dev_addr_sem);
- 			err = -ENOMEM;
- 			goto errout;
- 		}
- 		sa->sa_family = dev->type;
- 		memcpy(sa->sa_data, nla_data(tb[IFLA_ADDRESS]),
- 		       dev->addr_len);
--		err = netif_set_mac_address_user(dev, sa, extack);
-+		err = netif_set_mac_address(dev, sa, extack);
- 		kfree(sa);
--		if (err)
-+		if (err) {
-+			up_write(&dev_addr_sem);
- 			goto errout;
-+		}
- 		status |= DO_SETLINK_MODIFIED;
-+
-+		up_write(&dev_addr_sem);
- 	}
- 
- 	if (tb[IFLA_MTU]) {
+diff --git a/tools/testing/selftests/bpf/progs/bpf_tracing_net.h b/tools/testing/selftests/bpf/progs/bpf_tracing_net.h
+index 59843b430f76..bcd44d5018bf 100644
+--- a/tools/testing/selftests/bpf/progs/bpf_tracing_net.h
++++ b/tools/testing/selftests/bpf/progs/bpf_tracing_net.h
+@@ -15,7 +15,11 @@
+ #define SO_KEEPALIVE		9
+ #define SO_PRIORITY		12
+ #define SO_REUSEPORT		15
++#if defined(__TARGET_ARCH_powerpc)
++#define SO_RCVLOWAT		16
++#else
+ #define SO_RCVLOWAT		18
++#endif
+ #define SO_BINDTODEVICE		25
+ #define SO_MARK			36
+ #define SO_MAX_PACING_RATE	47
 -- 
-2.48.1
+2.43.5
 
 
