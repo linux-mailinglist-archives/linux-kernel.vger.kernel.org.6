@@ -1,96 +1,114 @@
-Return-Path: <linux-kernel+bounces-556451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263CDA5C9E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:58:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9151CA5C9F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC3F63A566D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:57:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EE7F7A8EFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9C626156B;
-	Tue, 11 Mar 2025 15:56:08 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A9525F987;
+	Tue, 11 Mar 2025 15:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QcnlOA/q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231E5261396
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139ABBE67;
+	Tue, 11 Mar 2025 15:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741708567; cv=none; b=Xy6OcC/5CkegqCjbWx6G76a82Y9QK5LqFVKj39c3p3ghDMd7D6+G0ON6Howmc7ChU1C12syrr3MUjT60Xhlm6g26JncfHu7vXoPwsDaKgOsW+L+w3YwIYT/g8Iz1CnZlhWqcps+UPbh0A4c/tzmqBA/nGRR9+2CeQBGHUZZ5EYA=
+	t=1741708606; cv=none; b=Xnv5v2lZIstkepsSmg5TinbO4N1WekQEqvVbJsmxrpGOmxHRSfOJxnewR7HlmdlWC+03c9pZwH5vEz0T/iVdDMQfL7+3G1r6XVUr531ngkwuR9NKnfHGmgLTVFjE2impSWqVCQfRFHYMh3hgu2dGypUyIY24oadB8LTYPycQr4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741708567; c=relaxed/simple;
-	bh=sc10Pl/zyyF8BPF2JK1mZI7HV2hkrXbUl05fR/5+oFc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RZuDUGCi7zK98ck1dxLcR2zMlYpzf0PrTZoVJb8/8zBAo1ob0PK8tswHZ3xAxYTNHfjalYqQiI92UKlEw2oSxK8UcvAgenizsBRpKAk+4BmIBoSu1ujgEMaAohmeZmQeP9owEDXBSc96CjcoOgw98Ze0QVfbQgBp7M3APJ5j8Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-85aec8c9633so1156680439f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:56:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741708565; x=1742313365;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FRrgZHOV3bUp6D7hSoq5Vx4W3eVh7jENoQ0JRVmYyRo=;
-        b=UxggJNLmlTUxd65Fs4VnclL48bxHTKQ4/4aEnBZ3wRO6rY4Ary273Gmy7VsQyRV0qN
-         trjalfvVGCRkAnB/wOflASz+F026Jsl2e2Dq/uMt83eUWSlFrgLUbPXQo44KJu5y6srg
-         Oa+idZG81Juau1Wg24b2wdyVvtfo9GdwNrLaR3F+mZID8dcytTsgGSGfY19PLp7ZYdto
-         ruLFm2ZwJRGKgke1cunT8zNua5fgXqWUlo6ML/9QLfA5eTKhPCL6KawhAQNNu8AmL5wv
-         5lbvY8pDDNeNN9k537VRoS0a86yMnmwj+xNLNm8qauO6bU4ry0v/7s5M2wdCNkSWdDuc
-         kYlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrenIb9qMIUxtabXVk4lfKC48DD2DLKxOfS+MDXgToTjjy0WKM/g9aQJa4xksW3fwN6YSHgOQIXMFwlFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFW6K68a0QRcfBROfeKZb23dtgW7iv5cAuhU6Oj0I4VOcQOtrL
-	M1GnqjnTnuq44VGcTHNJfnD8vbWmXZ2raMWkXoJaQ5/Xt0Ue2hdeujBzRg6DmLOr8nNAf6dVHdL
-	d1JG9djHUztf0MzEbP2gC65jolCKxMu7klDCwT8g/8PC53sHT2UQfzOg=
-X-Google-Smtp-Source: AGHT+IHxXFdrlN/sWn5qmnyi6aWSNe1Tfz8GvTH5kIuQ4yiObhgacWvV92BKVdx3Qc4jr17Dky5O7qoBZ1EQgvO7cpheIb/kTS5Z
+	s=arc-20240116; t=1741708606; c=relaxed/simple;
+	bh=oEeQH0rYsSmg/7HCVUBRlhhmZdZyZi/GX5wONFWTHl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o5IWyWLGZGL06urENCSNfgap3/dT3yeZar5pEei+MNjDn16KmyhaJF3co/p0hjmi4Wt3TEYbdWQtO2ICpXEQu9qbaWubxGL0rLvTvYpWi14stsB5P00DAA2uWH9VaTXpKSh2DH2qeYQGhvmpNvsrtoVeGP08Mz54LaWTbiDMLMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QcnlOA/q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB9BC4CEE9;
+	Tue, 11 Mar 2025 15:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741708605;
+	bh=oEeQH0rYsSmg/7HCVUBRlhhmZdZyZi/GX5wONFWTHl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QcnlOA/qtl72u3TDbJ1lf5HzJDDK9/N8eROvzhHYwUPmLATxHcUICDp1hen1ndWir
+	 QGrBaBLrloZ7IFp6BYHm2IMG4+VwbkSBkGHF1qrshStzbv7DHNFg4gPXvE5fo3WjgX
+	 4/XlzVZI4/r1m57wwzgx1uduuvYjlhGsDCZay6LW5wp+DkG2HmyNbSQxmIJIC89jwU
+	 KtSVHfGnazLTFG1Efm66DhlGr+JHhimScQAV4myEuW1z+fZ4jqXKte9R2qSZ8AP7u4
+	 zeNzULL0UmeWh6K/LQUNjQTW/r6Hh4au+GPL0jwjnQaw2kET6KZh8AzKhc8f3SuZvL
+	 CwMtNKQ2dHnvQ==
+Date: Tue, 11 Mar 2025 15:56:38 +0000
+From: Will Deacon <will@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
+	mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
+	smostafa@google.com, ddutile@redhat.com, yi.l.liu@intel.com,
+	praan@google.com, patches@lists.linux.dev
+Subject: Re: [PATCH v8 13/14] iommu/arm-smmu-v3: Report events that belong to
+ devices attached to vIOMMU
+Message-ID: <20250311155637.GB5138@willie-the-truck>
+References: <cover.1740504232.git.nicolinc@nvidia.com>
+ <7f6813dc2b62f5f396ac3172dc2a7d9bf3b47536.1740504232.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:240b:b0:3d4:244b:db20 with SMTP id
- e9e14a558f8ab-3d4419296b0mr188445365ab.16.1741708565295; Tue, 11 Mar 2025
- 08:56:05 -0700 (PDT)
-Date: Tue, 11 Mar 2025 08:56:05 -0700
-In-Reply-To: <000000000000ba5cfd0609d55c40@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d05d15.050a0220.1939a6.001a.GAE@google.com>
-Subject: Re: [syzbot] [tipc?] [nfs?] INFO: rcu detected stall in sys_unshare (9)
-From: syzbot <syzbot+872bccd9a68c6ba47718@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, bristot@kernel.org, 
-	daniel@iogearbox.net, haoluo@google.com, jmaloy@redhat.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, juri.lelli@redhat.com, 
-	kpsingh@kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	martin.lau@linux.dev, netdev@vger.kernel.org, peterz@infradead.org, 
-	sdf@google.com, song@kernel.org, syzkaller-bugs@googlegroups.com, 
-	tipc-discussion@lists.sourceforge.net, vineeth@bitbyteword.org, 
-	yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7f6813dc2b62f5f396ac3172dc2a7d9bf3b47536.1740504232.git.nicolinc@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-syzbot suspects this issue was fixed by commit:
+On Tue, Feb 25, 2025 at 09:25:41AM -0800, Nicolin Chen wrote:
+> Aside from the IOPF framework, iommufd provides an additional pathway to
+> report hardware events, via the vEVENTQ of vIOMMU infrastructure.
+> 
+> Define an iommu_vevent_arm_smmuv3 uAPI structure, and report stage-1 events
+> in the threaded IRQ handler. Also, add another four event record types that
+> can be forwarded to a VM.
+> 
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Pranjal Shrivastavat <praan@google.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  7 +++
+>  include/uapi/linux/iommufd.h                  | 23 +++++++
+>  .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     | 17 ++++++
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 60 +++++++++++--------
+>  4 files changed, 82 insertions(+), 25 deletions(-)
 
-commit 5f6bd380c7bdbe10f7b4e8ddcceed60ce0714c6d
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Mon May 27 12:06:55 2024 +0000
+[...]
 
-    sched/rt: Remove default bandwidth control
+> @@ -1866,7 +1869,14 @@ static int arm_smmu_handle_event(struct arm_smmu_device *smmu,
+>  		goto out_unlock;
+>  	}
+>  
+> -	ret = iommu_report_device_fault(master->dev, &fault_evt);
+> +	if (event->stall) {
+> +		ret = iommu_report_device_fault(master->dev, &fault_evt);
+> +	} else {
+> +		if (master->vmaster && !event->s2)
+> +			ret = arm_vmaster_report_event(master->vmaster, evt);
+> +		else
+> +			ret = -EOPNOTSUPP; /* Unhandled events should be pinned */
+> +	}
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=176de7a8580000
-start commit:   45ec2f5f6ed3 Merge tag 'mtd/fixes-for-6.8-rc7' of git://gi..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fad652894fc96962
-dashboard link: https://syzkaller.appspot.com/bug?extid=872bccd9a68c6ba47718
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12b890ca180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154fbfe2180000
+nit: You don't need this extra indentation.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Patch looks fine:
 
-#syz fix: sched/rt: Remove default bandwidth control
+Acked-by: Will Deacon <will@kernel.org>
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Will
 
