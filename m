@@ -1,122 +1,194 @@
-Return-Path: <linux-kernel+bounces-556013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0730A5BFC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:52:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E78A5BFCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:54:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C526A3A4790
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2621C18959FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DB0254B10;
-	Tue, 11 Mar 2025 11:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020D2254AE2;
+	Tue, 11 Mar 2025 11:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GeUBodPy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QwnDcXYN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989CA241673
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1F8221F10
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741693941; cv=none; b=K0l23846JPIeviMTeaiQqExVYQTQM0NVAzsX9I9hiZl8B8/4Q+QQJ05vpGDlB3H43E5wWIErIGVZK4PiwstHqlnWrZy2EoI8g+uORKq7gWSmXv+jz6SPidDU7N+33XjECoqCTTmDx4sxtWc6aZ6w+FdhaElg0UIa+z6KLlKfyME=
+	t=1741694056; cv=none; b=mdlg+FVOGP41iCvFwhaiwnJ5Aqn9fruJfbFOvir3E4KKh6STQKndPYaf+gIRwRWrWHCY4iqPrbE3UYM5qlLAj9TWBAtEpaJZ1CXJNo7NO/RS6F4KJ+1LNG/QQSn2ApVoWHw7+B3IIirqkSvUlDWt+MExwwbPSN9ywZ4cvQOmPBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741693941; c=relaxed/simple;
-	bh=9IqtKEODNteuyBEfdYsxTudpbxaMaF4jvqN39c8GxZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lUsXAnVGew/ytQM8XX/grblQwTBP6fXWe+291vGaN8HobaxrXniNdWLnV/+EJMwSvPdX0bBHpp2NtybpCfF5NOphmt2y/lxhV08CSu2ghTGY2Y16PpFT8YUMTgAV9ziXAqf8vn+3iZjqAgRFE/uxvvwfnByrHE20+tSYm3P6ri0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GeUBodPy; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1741694056; c=relaxed/simple;
+	bh=trWid0dAdzDk4Urb65DINNXSCp4HE5Qgrt6rEgTlw40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JT7lkwwiGT8Z79v8ybSH8uti4Kcfrqg2neeNkn0BsLtxxpY2lV6SkfKpIFHn7I9MyuAlteDfC/E+0A4/Rz56hw2zycipVUsICLhA505iotRUhGJKpl5TGUpgc+9A0N7tT/0zNc/yXQHYkLI7ivwZVNaFVXfWR+2nR9Ogu0y2FtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QwnDcXYN; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741693938;
+	s=mimecast20190719; t=1741694053;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=k9s6bJNyvpW/J0wi25GDNc/BWEItVflufjwp7UtbTuU=;
-	b=GeUBodPyh4lXvQgp6ok6i1pmKG0a38VTcF4WsBVD2JPRBB3i8Dmhc8X8cRVE2DSbbvXx41
-	Di+o8vJeBrIqCVHnzmQ5EY5B4EJvJLwOCBsDFUpRH6hb4NPiN1L453E2xxA7LH5gF5t2W7
-	fUpsP1mpCYDhSC5s/eM8FjA217hhc+Q=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-691-9K0UEtr1MGO_fIDPqlWzpw-1; Tue, 11 Mar 2025 07:52:17 -0400
-X-MC-Unique: 9K0UEtr1MGO_fIDPqlWzpw-1
-X-Mimecast-MFC-AGG-ID: 9K0UEtr1MGO_fIDPqlWzpw_1741693936
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff78dd28ecso12843277a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 04:52:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741693936; x=1742298736;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k9s6bJNyvpW/J0wi25GDNc/BWEItVflufjwp7UtbTuU=;
-        b=l9Yty2qHiO+wRvbrzITfPB8CzVzpxNVa1k39GUKzL8rL0OR+Vnx+HOCRATC185yWDH
-         iOa3et6h66xyvxwLVBRoDsbpSxkgefloV995CA+J1bYRlFUbk1nGe/WJjPuPFxWRVBzk
-         Mrpf1kCkslkKeGIrJjTUuIx3ZMTs1pBNetY3hePcDN3C/gQF+VMIM6okAFWc32cg5lFa
-         qWRdc+K/vjwMMj0lUFVfzpRlFzqwkVF00yE+oqVUS5/t33RhySCQrl3Temmu4l5ekz+f
-         w1lm+AmC5/TRKGEFES90B/+likHt445KHKaQWGnndlcx7BlqkQlup+MVV8DeICSODK49
-         l7UA==
-X-Gm-Message-State: AOJu0YwHZWpiGkVv6r3eL+Zhn51AqhjbIOnifzRXelyHic/wEZ5fLFhP
-	3G0NMdIxH7bgTtPcDzLeNygEJKHYdkpun0+wuc2LaML3OVF0J9b9JZRqirHCDRM3ZorzqklFVEt
-	i1qHVROxZH/d4peub3LzuXLWaD7sVN6cznES3w6svZOdx/92roBNhdr6S+yV82g==
-X-Gm-Gg: ASbGncsetw3tl9KnxsvOx/suvxQmh7tZXtSBuc/oNA+hlzbFj3ZnxCLEKfLkyKPLt2C
-	f/SudKF7Ovoe11qQ99XLB5KfbEy8YkslNylBzalcxP7+KzTw8d8zyGpqgwEBMkjfWBxEoTd0+Ld
-	4Oc6vFSVWaM4y3ByVhYsC8UbysQFiNiCPEX4hmu1LjgmYTP/JiZPH3UC5eFDM3pCfga4Vhnpe8c
-	qRmAsduw+laD0J8a9Z+dX556XjZCPFZVZngKwBkCnlQq3gbQ0zAzPn/VjVlAQwZRQl3HHYMadi/
-	wLTW2QAy2xiKyvaP0Q==
-X-Received: by 2002:a17:90a:d605:b0:2ee:df70:1ff3 with SMTP id 98e67ed59e1d1-2ff7cd31b16mr32752569a91.0.1741693936142;
-        Tue, 11 Mar 2025 04:52:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEBpwRD+x0zzZgEHDqEbRF1SFOUV4P6CQelhBln/hk7UmOm79yg/I6ndvZAqUjRXJjCNKh0BQ==
-X-Received: by 2002:a17:90a:d605:b0:2ee:df70:1ff3 with SMTP id 98e67ed59e1d1-2ff7cd31b16mr32752537a91.0.1741693935785;
-        Tue, 11 Mar 2025 04:52:15 -0700 (PDT)
-Received: from [192.168.68.55] ([180.233.125.167])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7ffe18sm11696214a91.31.2025.03.11.04.52.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 04:52:15 -0700 (PDT)
-Message-ID: <cb351bda-06bd-44d0-907d-9baee76c0823@redhat.com>
-Date: Tue, 11 Mar 2025 21:52:09 +1000
+	bh=3nIsu8sZ9wwPd0FbImU6JO502ar/N3i2xNxuuWjp75I=;
+	b=QwnDcXYNGXZQ9hwzpCKHNApeWWff5kZ5dQqn0KRi42GBgHPRrhA9zTg8sFSs8x5tVHq8XT
+	zvR2p/CdF5MOHtbDKxy4C3N+6he6Bws7jKAjYkbni9dLE7wG6/WdhPg69JtdcwBF/P4CvX
+	39nPYbDcz7R4nX4i9Mv+m9C+l7ksMXA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-204-zBWGmjyFPeC0k0eWz4bq8A-1; Tue,
+ 11 Mar 2025 07:54:11 -0400
+X-MC-Unique: zBWGmjyFPeC0k0eWz4bq8A-1
+X-Mimecast-MFC-AGG-ID: zBWGmjyFPeC0k0eWz4bq8A_1741694050
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FC7F180049D;
+	Tue, 11 Mar 2025 11:54:09 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.22.90.58])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B72CE30001A2;
+	Tue, 11 Mar 2025 11:54:06 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 11 Mar 2025 12:53:38 +0100 (CET)
+Date: Tue, 11 Mar 2025 12:53:34 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250311115332.GA3493@redhat.com>
+References: <20250305224648.3058-1-hdanton@sina.com>
+ <20250307060827.3083-1-hdanton@sina.com>
+ <20250307104654.3100-1-hdanton@sina.com>
+ <20250307112920.GB5963@redhat.com>
+ <20250307235645.3117-1-hdanton@sina.com>
+ <20250310104910.3232-1-hdanton@sina.com>
+ <20250310113726.3266-1-hdanton@sina.com>
+ <20250310124341.GB26382@redhat.com>
+ <20250310233350.3301-1-hdanton@sina.com>
+ <20250311112922.3342-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] mm/sparse: Expose for_each_present_section_nr()
-To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, osalvador@suse.de,
- gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
- akpm@linux-foundation.org, shan.gavin@gmail.com
-References: <20250311004657.82985-1-gshan@redhat.com>
- <20250311004657.82985-2-gshan@redhat.com>
- <e36bfe8a-fbf6-46b4-9f8f-c44b7352583e@redhat.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <e36bfe8a-fbf6-46b4-9f8f-c44b7352583e@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311112922.3342-1-hdanton@sina.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 3/11/25 7:31 PM, David Hildenbrand wrote:
-> On 11.03.25 01:46, Gavin Shan wrote:
->> Expose for_each_present_section_nr() to be used by drivers/base/memory
->> in the next patch.
->>
->> No functional changes intended.
->>
->> Signed-off-by: Gavin Shan <gshan@redhat.com>
-> 
-> Please squash that into the patch that uses it.
-> 
+On 03/11, Hillf Danton wrote:
+>
+> On Mon, 10 Mar 2025 14:26:17 -1000 Linus Torvalds wrote:
+> > On Mon, 10 Mar 2025 at 13:34, Hillf Danton <hdanton@sina.com> wrote:
+> > >
+> > > The step-03 in my scenario [1] shows a reader sleeps at line-370 after
+> > > making the pipe empty, so after your change that cuts the chance for
+> > > waking up writer, who will wake up the sleeping reader? Nobody.
+> >
+> > But step-03 will wake the writer.
+> >
+> > And no, nobody will wake readers, because the pipe is empty. Only the
+> > next writer that adds data to the pipe should wake any readers.
+> >
+> > Note that the logic that sets "wake_writer" and "was_empty" is all
+> > protected by the pipe semaphore. So there are no races wrt figuring
+> > out "should we wake readers/writers".
+> >
+> > So I really think you need to very explicitly point to what you think
+> > the problem is. Not point to some other email. Write out all out in
+> > full and explain.
+> >
+> In the mainline tree, conditional wakeup [2] exists before a pipe writer
+> takes a nap, so scenario can be constructed based on the one in commit
+> 3d252160b818 to make pipe writer sleep with nobody woken up.
+>
+> step-00
+> 	pipe->head = 36
+> 	pipe->tail = 36
+>
+> step-01
+> 	task-118762 is a writer
+> 	pipe->head++;
+> 	wakes up task-118740 and task-118768
+>
+> step-02
+> 	task-118768 is a writer
+> 	makes pipe full;
+> 	sleeps without waking up any reader as
+> 	pipe was not empty after step-01
+>
+> Conditional wakeup also exists on the reader side [3], but Oleg cut it off [4].
+>
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -360,27 +360,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>  		}
+>  		mutex_unlock(&pipe->mutex);
+>
+> -		/*
+> -		 * We only get here if we didn't actually read anything.
+> -		 *
+> -		 * However, we could have seen (and removed) a zero-sized
+> -		 * pipe buffer, and might have made space in the buffers
+> -		 * that way.
+> -		 *
+> -		 * You can't make zero-sized pipe buffers by doing an empty
+> -		 * write (not even in packet mode), but they can happen if
+> -		 * the writer gets an EFAULT when trying to fill a buffer
+> -		 * that already got allocated and inserted in the buffer
+> -		 * array.
+> -		 *
+> -		 * So we still need to wake up any pending writers in the
+> -		 * _very_ unlikely case that the pipe was full, but we got
+> -		 * no data.
+> -		 */
+> -		if (unlikely(wake_writer))
+> -			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
+> -		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+> -
+> +		BUG_ON(wake_writer);
+>  		/*
+>  		 * But because we didn't read anything, at this point we can
+>  		 * just return directly with -ERESTARTSYS if we're interrupted,
+>
+>
+> step-03
+> 	task-118740 is reader
+> 	makes pipe empty
+> 	sleeps with no writer woken up
+>
+> After step-03, both reader(task-118740) and writer (task-118768) sleep
+> waiting for each other, with Oleg's change.
 
-Yes, but this series has been queued by Andrew Morton. Andrew, would
-you mind to squash PATCH[3/1] to PATCH[2/3]? Or I can respin to do that
-in v3.
+Well. I have already tried to explain this at least twice :/ Prateek too.
 
-Thanks,
-Gavin
+After step-03 task-118740 won't sleep. pipe_read() won't sleep if it has
+read even one byte. Since the pipe was full and this reader makes it empty,
+"wake_writer" must be true after the main loop before return from pipe_read().
+This means that the reader(task-118740) will wake the writer(task-118768)
+before it returns from pipe_read().
+
+Oleg.
+
+> PS Oleg, given no seperate reply to you, check the above scenario instead please.
+>
+> [2] https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/pipe.c#n576
+> [3] https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/pipe.c#n381
+> [4] https://lore.kernel.org/lkml/20250309170254.GA15139@redhat.com/
+>
 
 
