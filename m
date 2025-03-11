@@ -1,144 +1,270 @@
-Return-Path: <linux-kernel+bounces-555648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8780BA5BAC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:24:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F24A7A5BAC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:25:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD6E3A6F72
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:24:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971A73A6C4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD8B224AEB;
-	Tue, 11 Mar 2025 08:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD98224245;
+	Tue, 11 Mar 2025 08:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="sRPUNWMS"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kdnO2VvX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADA8221554
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741681465; cv=none; b=F+To6qMMl0eskUNm5Dsu3V3ZBg3KoE7OTZaI3RJEMHi1nmbqAZQw5hUV5j+UclWH9o8W2k3Q7piir+4td8vbwGtJFFhPdFL6kwuuN8OPTry3Ys5XYcBbIo6lpDjhv7yVCImukYg1iVD5B/fX7LO21kkvCJw+h4BXLs0WJklYa0A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741681465; c=relaxed/simple;
-	bh=xu3zP1HoofD6juWhjBldyocKjaXNqT0I+Ivbyr36UBk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aXu75jQZKONCVJ1BH6SRN7SCXadyhwVu2l/k7+pzeQCr3J4yphv8/EpStR4UM6MIFUpdL1gnMFwARiyIbTd/kiuqzaVw7pZZ4PQkVK9TohsuZfu4OqZG4xPPPZHWJSaPV2yWy29TZBxW4GtcDCtq2b/D5SveLbTifRANnoYy6iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=sRPUNWMS; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39104c1cbbdso2498456f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 01:24:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1741681460; x=1742286260; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MkuwlZJMUyuJz7nY/CVS9mePyWOIvMtEr4YIIpcR7vI=;
-        b=sRPUNWMSVCVA33WWr3T+aN6HEboHPmysl8eDIiLjY71lRrzl9PhVLh6+yEtIYeejjR
-         nsSsuNDNFAiic1lg12XPDRxEzsjI79f0/Qjg8KdzFdTkWz1AdJ0Qs9pJbRQIIt37zYGP
-         +ns/gnuwHufskOB+rINsa/DtIijImFioQubkppvCV7FvWwKdAE71YwzlJr8d9PRs3yMw
-         I3IMrPrw/68wkDm1vNfBnlEAzsoizbePairK6aB8wxZcXXcI2D+UnZ9wQ4ks1k2qeWLP
-         XOkOWreaBfvSu6ZH1BhzGQ/B45LXbhh7BqGDse8Oyc93qRHIAKFA2IukarzhsRSMip/9
-         JnGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741681460; x=1742286260;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MkuwlZJMUyuJz7nY/CVS9mePyWOIvMtEr4YIIpcR7vI=;
-        b=rTzsSgpcDTys6yC+++Jrbq/kg3e2CTRrTtalKUK1hasGOA+B4ibXCBHWSqgMJ+Zz2V
-         7uhH9ltivsMjD676NQ1qqJgI8UyB/nVaJBayjIBbl0W8Zip0HThKTDcACY6183b9MbcX
-         R5gqVW4m/EZJiQd0ydZAcb4JM/PKzimOuXlSKO6VSHW4izTvMgqg2rXQ7Ps/4ROF77ju
-         mVngKcJMmdHYgLqL+Xcq5LaXh5cNPhrt0WPqZr0CuHWZP03xQ8l4Nmqu5cvcZIOC5eOo
-         WDCuykUWFoAlo38Zq8u0pNPYc+P7IR/p188rg1ih9gCOpZCSli8QuvQE/F0MGbZZv2rq
-         Q1oA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZLDWNWhxhbP+asIHvCqg14pLBH/tbLpV0L8ejZtQAmHx6db16mXkOeW45wHF/AlQnX0vYHZqy8qpE1xs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhJg6rg4Mvy0M2ZoT/iJKxp2q/7xhnPMYTckAhicS8ahX2KTl/
-	+IH49kS29pA88EPwQRDzGEubUj1jrG9fVMQqIE3AqVW/bo70UcS0MBnr6zVToC4=
-X-Gm-Gg: ASbGnctCgT42ZtpzvBt35+sP0AGjBeW8eKrevlxNsffcLLSTrWov1DN/U2rK2OEfBAw
-	ci8jdHUK6RARQhb8knZMbNugKXaf1n32gl6NH94Q4k4dYNuA8ixlrb/D8CLsKHPelqW5WEN+MWN
-	8AIeNK8qQj6Tps8a4XuJjmtgvLkLw+hF97a2l+LUNCpl0jNfoOJ9QZlgX4dDcLkXwu2rhyagjxM
-	dAolPkHgjOnTPu9k2xQ8NWmm7UzG7kBBeskVmP405vBImXdgzKl5dl0dz1ciwvq0+X5cfCUc7i+
-	/f2yfiArpC6YuiUstR6pyMKYwC3X5IXNkhwajVGfBwHInTQXdgKpZ2YVrH8Zf6eTg4YWC4rKifW
-	pOQ+y6kUpjwH7gvVKKw==
-X-Google-Smtp-Source: AGHT+IGcMWouoW5czhBbn4yWMxCe7rFrkdK1wII/1naqJaluMq6AQhQYDYrv/8Bujg++Ac3Li9uWDQ==
-X-Received: by 2002:a05:6000:2a3:b0:390:efe7:20fa with SMTP id ffacd0b85a97d-3926c69b312mr3431264f8f.47.1741681460573;
-        Tue, 11 Mar 2025 01:24:20 -0700 (PDT)
-Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ceeb5995esm90826545e9.16.2025.03.11.01.24.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 01:24:20 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Tue, 11 Mar 2025 09:23:39 +0100
-Subject: [PATCH] arm64: dts: qcom: qcm6490-fairphone-fp5: Add touchscreen
- node
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677F71C6F55
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741681518; cv=fail; b=LqYuiMV6aHvFCAQNze0wYsBd89GOlMo2yF/1T51/4QRyr5hFYJI8xQqAU5ovBV8qaZCsG5Lbg4qh9fWa8cLPBFdSeYb0pvfwM11oWEc6qro4Ko5WhFhJjJaWjDMQxeeZjsNyGSoC8XnOoW72C2JpNUARLKzGtLCHY3wqo2+qZc0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741681518; c=relaxed/simple;
+	bh=6ySlVE8pZM+yvEj1Uv9CcNl8OeIF6yo4+E6AQBjmuGM=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NNyoxXeIEFQFwzsm06y4G+IGnoubaWGp0w/w3Can7A+36pB8vMxWd36Y/QjVfxHQITQJjkY+gyOYuc2nc9WYbqAT8F2NjHX9zqGEfF41Wg4yDRbBN1PPSUK3dHE9pdx1UgCcl0Vd1K0v5c2Z2ShsX6aJPkNNXkO7miwHfBYTPqY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kdnO2VvX; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741681517; x=1773217517;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=6ySlVE8pZM+yvEj1Uv9CcNl8OeIF6yo4+E6AQBjmuGM=;
+  b=kdnO2VvXzFJzK0Gb3H5AIckYzWp5hjR3A8MdZZJVMTlR8jLRqjp5BHt3
+   VYx+Z08/rV7lxQJpHUxLV7GVUXl5BmWV4DTUnhJxp7GPSOMT5pllhL8ZS
+   SObTmhMzN6QoeBr1tO9V6MlyZ3CviqsngCvljUHnkgJReAUN1WFUR1s8F
+   X9uiWM9vZNjeBAA/IImjUHpvTYrfEf/criJSPtjA43NWaTkaMFyvm9J1Q
+   LkvWGeBBpd7J2hbDl1W/50WA/1L/dSkaYFyYOsamDTpVS6XtflWGE7Dkf
+   KZJ4OVadl1J7mjr+Whx4r2Ai82xv5biIMitq67GFUjcTs+VxBkdzyi10t
+   Q==;
+X-CSE-ConnectionGUID: uxx9C3noRuC84HMMNeJEXQ==
+X-CSE-MsgGUID: us4DgtaOSP6kDE8BdYn4QA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42423240"
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="42423240"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 01:25:15 -0700
+X-CSE-ConnectionGUID: nHTlPvkyQ2qAxAV3KIHEog==
+X-CSE-MsgGUID: P1iKG2JdSmubH+5PFlK2kg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="125445510"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Mar 2025 01:25:14 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 11 Mar 2025 01:25:14 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Tue, 11 Mar 2025 01:25:14 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.175)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 11 Mar 2025 01:25:14 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=njzpPrXW6dm2RDqAjUgZt0aW77BwXH5beGmVw+5hDxCbpfom8SJiaKR1xD25R/zEVyB7Y+tB03Rdh5p9YK5hWI/8C0aUvfh56tQHLSAQe2EqT2w1TXJHQEaNGb0vVNxL3dXOQFgTVhg7s4/LalAG3aIL7SwYuwWokNs3vcb9cL0JzqbixHkmHYAdV4b6cAhWFC0m9/ZMD0WhNba+VXi02GZA+AzOdAiBhjYNN3512GkIKzQVWxDtAY/eCzUkp65M4zGJOzlHQqRMiuPS/o+GtP8GIgM7ruq3Viwau+T2Plnp9RyUOWRdTmybLB2zuUYTsgSw87OgcTOcgtRtSohSSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3woGJbLw5Z3bIWN6gb15cx3yj38pNGkMheXwobrOMUU=;
+ b=aWGv7N8kThrIbyIiKuH3f1/vbscBG5qxEQL3h4ABY0Vo9V0ktaRMAy8m1vnqYv5r1Sk/ZouF2itgFMXYEFLZd/pnh7pWFXDMSiyPS24SDbzso4nOlV+KXXyEqDAIxJM8G6lAKL1cZdjF+6JvvKUFRde84Kg4EaxWjpG7+3SPf8xdWvk/BtsqJrpGu3DITn21318TA1TGAm0Glowss1fY/Ia7rx4ygtBvzoBcrocvJP4VPkK3Pu24sw/Fo1vlfPzBWymZLOI0Rb+7xrMz+y9tTDflFQ3nhVGQeeJLacZBjeAUaM4xnCQcZbg/3G/YGHVAHUXuT2OLlca95xLUlDD3rw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB5549.namprd11.prod.outlook.com (2603:10b6:5:388::7) by
+ CH3PR11MB8316.namprd11.prod.outlook.com (2603:10b6:610:17b::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.27; Tue, 11 Mar 2025 08:25:12 +0000
+Received: from DM4PR11MB5549.namprd11.prod.outlook.com
+ ([fe80::6c31:ab8a:d70:2555]) by DM4PR11MB5549.namprd11.prod.outlook.com
+ ([fe80::6c31:ab8a:d70:2555%5]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
+ 08:25:11 +0000
+Message-ID: <be353276-3dce-49c1-8a35-164a33ddb9f9@intel.com>
+Date: Tue, 11 Mar 2025 10:25:05 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] MAINTAINERS: Change habanalabs maintainer
+To: Oded Gabbay <ogabbay@kernel.org>
+CC: Jani Nikula <jani.nikula@linux.intel.com>, Ofir Bitton
+	<obitton@habana.ai>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "airlied@gmail.com" <airlied@gmail.com>,
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "sfr@canb.auug.org.au"
+	<sfr@canb.auug.org.au>, "jgg@nvidia.com" <jgg@nvidia.com>,
+	<koby.elbaz@intel.com>, <konstantin.sinyuk@intel.com>
+References: <20240729121718.540489-1-obitton@habana.ai>
+ <20240729121718.540489-2-obitton@habana.ai>
+ <dc139f06-3f5a-4216-93c2-1e8b3b9c27ba@intel.com> <87cyevy9k0.fsf@intel.com>
+ <f543ec81-1092-4700-b695-c4126f122444@intel.com> <Z8q6pCmCnVCCvBJK@GABBAY.>
+Content-Language: en-US
+From: "Avizrat, Yaron" <yaron.avizrat@intel.com>
+In-Reply-To: <Z8q6pCmCnVCCvBJK@GABBAY.>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TL0P290CA0009.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:5::6)
+ To DM4PR11MB5549.namprd11.prod.outlook.com (2603:10b6:5:388::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250311-fp5-touchscreen-v1-1-4d80ad3e4dfc@fairphone.com>
-X-B4-Tracking: v=1; b=H4sIAAvzz2cC/x3MQQqAIBBA0avErBNMK6irRAsbx5qNilYE4d2Tl
- m/x/wuZElOGuXkh0c2Zg6/o2gbwMH4nwbYalFSDVFILFwdxhguPjInIC8RxGmWne2s2qFVM5Pj
- 5j8taygcnJb1iYQAAAA==
-X-Change-ID: 20250203-fp5-touchscreen-cc6960134dab
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jens Reidel <adrian@mainlining.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB5549:EE_|CH3PR11MB8316:EE_
+X-MS-Office365-Filtering-Correlation-Id: fdd2fdce-af01-487f-5ec0-08dd60763d62
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MjFRYVRkTFZvTlpPZWRyOXprTjRDR3V2bnlxeDdwMUdaWTRaV2dldU40QS9x?=
+ =?utf-8?B?bXRhOGQ1WUYreDNZejZmTWNyaVhFcVpHZU5QemNDT1pyOHJLSU1RcmpCaWVX?=
+ =?utf-8?B?Z0FHQlNJalM3Qm01U3pPMGNDTjhDODZaclFFNE5COE04NStoSlIrY085Ny85?=
+ =?utf-8?B?OVVCa01wSG9MQUF5anp5TmZ2eXFqWGxRV1o1Q0pPTUlvbk9OczBES1ZOOGJU?=
+ =?utf-8?B?MlRYMlRaWEZxWHlDOG5QdXA3azZDdU9TSVlDbmlnUjdmVm5nN3F6L2NnQ3Ur?=
+ =?utf-8?B?allsYjRVYUZocFpmQzgwTUZ6cThhZ0NEbWFvZFFXNHF3VG9UcU5QRTA0bmZp?=
+ =?utf-8?B?bzFhdEJ4YjVxRnk4U25WMFoxbThnd0ZOSmZ6MXNRdXVWS1hiZmFLVFpuVGlL?=
+ =?utf-8?B?TU9mdnlTQkpsUTBaS2pxVW9jbWJ4NG1YdGttamRyd0IvaHN3NG5ZOHh2R2F3?=
+ =?utf-8?B?bVNIZkkrLzZ3SWJUNmdxTXVKSlRXeDFlUkxBOWxhN25JNmFiZC9JQkRKb1pZ?=
+ =?utf-8?B?ekxYbEhadzNvblg4bktFeUdQenBscEVTT1YzbkthSE8ydEVPd0tlNTZnanRY?=
+ =?utf-8?B?VW1rUFExenRDYXBXSCs4TXgvZmY4bVhubS8vSkV2R0RkdnZ1bnJ6SEY0T01U?=
+ =?utf-8?B?cTQ1NW5mclBCOWg1MzdEZDBJdVora3BhUTBZRVVkd2djeVNqbWxZQitaQkdS?=
+ =?utf-8?B?TXY0b3VMYUx5MmRXOXRDQUFCRGhLejgrSWdzUmxXV3hJeCtwT1ZDZjI4STVL?=
+ =?utf-8?B?d1BSeEhwS1Q3M3Z6Ym90TlRUOUNpM0RtRkxvdkpydW9aWkFVYktjclhWWTRs?=
+ =?utf-8?B?Q3VrUk9BL3RLK0dDZzEzNWZoN1JxWFplWEdVRkRqbmNrSm1WdFF6K1NVNEFU?=
+ =?utf-8?B?ME1rKzFzSmJ3SWpTekRwRTlYcE1vc2FQeFNoTW5iVFhnYTFlWG5PNTRXSCs2?=
+ =?utf-8?B?eXQ2Q2prb3JoMnZSQkxramxWUnlwY0U3S28vb3c4UzBaWkR5MkMrcjd4L3RO?=
+ =?utf-8?B?TDQ5aHNIc0lqeUtnRHRYYmNRR0NERGtMeDRsSzdaRjIxMWh4VUpnSWw3emxs?=
+ =?utf-8?B?MVRKQXhsb2lHbDFuUjJ4WFFqNW9QaEpNYlp3QTdGV1h5V0swVUxYWjRQalFT?=
+ =?utf-8?B?U0wyb2FVdHBmUE1NVk53UG9mck9HbnZ4ODRjQzlPZEZPMFFaTGQ2R1NDZXpT?=
+ =?utf-8?B?MHJUMTkwckFKa2tKU3VWRlJRSERFV1V5K0p1SWc2bGpoK05zQzJsell4eGxW?=
+ =?utf-8?B?UXlLWFp4bFhPVjlsV0NhQTdqRTN4d3RIZllrSHIyRk5JaWlvMFg0RVdHWUZD?=
+ =?utf-8?B?aERML1cyRk1PZ2VMQVh4c3FWeXhGTHZKV1dXaytHUG5yVmpWdU9RSzRvMFAw?=
+ =?utf-8?B?ZDN2aVhQaFlib0NOd3pNNWFSTnJYbTRVZXVDckErZ0NkSXN6bWdKYU14WlZM?=
+ =?utf-8?B?T2pnVlF1clZUS1dMZVg2cFhzd0txaW9XSFVIK1lSdE16b0dkbE9FdFlYYzFY?=
+ =?utf-8?B?Y1djZUhhVXJrN3J5RHBVZE5GOThoWXZxckRSdEoyUStVcXYvVlg0c2MyMFlJ?=
+ =?utf-8?B?ZXorQ0gzVlhJYWZPditpM2dRRXRhU1F6aWkzUGxKdytXMWtxektNWlozRnUr?=
+ =?utf-8?B?aWw5dUV1bXpuUmtHc0o4ejlHYUQ0TmZxcUhaWTVpUlNTNGFwekxKK3NSSUc2?=
+ =?utf-8?B?MDhCL2hzbHUyc2RBclI3Z3NYNytSbHNmcS9YZmtkRXVlQkVHQ1RIeUEyZ2cy?=
+ =?utf-8?B?YVExQ1JSa0k0K2YxZktvd1dpR2VJYkwvYzc2S2VzRzBuTEZ5RW41Nk9pRWxw?=
+ =?utf-8?B?YzN4TC9CZTJnREF6TFBxb013Qm5ZS3BqSTdjOU5JY1pmYU0xQ1FsOGpGU1Ro?=
+ =?utf-8?Q?QZnD31qLto6CL?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5549.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Z2lvS29xblZOdTB1Mi8wR2ZJYjgxVnEvTjRNTWlEQ3VWOVF5M2toZ25kREQx?=
+ =?utf-8?B?L1QrdVJ5UTl4VFIzTFZrTWJOVVVpRElxcjdKYTJURzRJNWFodHJIL2FEWmVp?=
+ =?utf-8?B?RlQwOG9qaXpYdm1PSnMvdHhZMm5WRGpReEw3bkNzTzY5RyttL0lMZTdGbmc4?=
+ =?utf-8?B?Y21mb24zbmZlSXUwZ2hDQTdIZ0tzc3NOS1hHSkpNWlZTR1IxUE4wVmdTcnJB?=
+ =?utf-8?B?M1BDeHNBNWRSbXpFNm14YWVyekw5aEF2S2Y3S3A1eVpIZHZOS2UxZ2gxcTRZ?=
+ =?utf-8?B?M20vY0I0NTNVWkRRajJ2YmJXNDh6cXF0d1o1MVp1elBhZnR2cmhjcnNqQTBx?=
+ =?utf-8?B?WHB4NHorS01kNEwzWk5hZEtDZWVRS2pxbjZyeEg4Rlpndk9MSVdCbUNnTjhX?=
+ =?utf-8?B?K3dMMXFnSTJ1NXpyeVFMU2krekYvU2hnOXA0SjhnOGF4UVlndHNYZGhBTENw?=
+ =?utf-8?B?S3Yxd2hLV2FqR2ZabkxoQkR1V1duZUJxbFZaYlNidzBZeWIvSHk4U0wvN24y?=
+ =?utf-8?B?UUxhejNtekJBdUw1YklUdExDcGQvZVh2VlNkQjA2bFpnMFRoS0hQYkQybzdV?=
+ =?utf-8?B?SE5ZUTNTNG9lMHZEaXpId3FvV1dYWXllMG1PSEZCYzE2b2FTZ21aVXVqeWtq?=
+ =?utf-8?B?WE1XU3lyRlBNb202WnVmbS81Nm0reHpOcUgxRS8rbGt6UW5XRFFDMWtvSU5Y?=
+ =?utf-8?B?SFVqU0NrR3V5MGlvMTdtVFlHajN2VnpQUTlGc1V5WG1kdWV2K1U0eklyOW1r?=
+ =?utf-8?B?WnFSVkRnc1JITTY3ZTVuSGZCRk9DaHZJN1pIUFp4NXhqeWVlTzh2WCs5V0dM?=
+ =?utf-8?B?dU5wQU8zV0p4S2I1R1kvV1B3dHZOUGNYbHpFN3JpOEFyZThFNjZINnNxV3RZ?=
+ =?utf-8?B?VkVGZTBJeGVvVzFHNUczM29UL1NibG1YZnNIalpCMmJJaXpocEc2Zm9tR0JE?=
+ =?utf-8?B?ZDJFNDNhT2ZkOFpVbCswVlhrbTRlRElJMVY0OVh6NUdkNURFUFF2ZTY2RjhH?=
+ =?utf-8?B?ZGdVcEgxREZEdEtDUDM4RnVzS2Jzd1U1UlpVbURaYTZYK0dNQkhZSGFHMzFt?=
+ =?utf-8?B?c2R0Z1ZOcWVNWjI1Wk9GVkJDT0FDdm04OXlpZHlPZ1grMWp2N3NORXprMkph?=
+ =?utf-8?B?aVROZDVtbDRBa3NRVUR3ZWpWUys3Sk5QaXFnUHZ0SXpsYktlTm9wWEd0bmZQ?=
+ =?utf-8?B?dUQ0RWZhRlJQQndYTEpuTzBKYitYSkQrbWFzUEdvMWRPdlMyemlFT0NVLzl4?=
+ =?utf-8?B?QklBNjFJY2t0OExyRDdRbld2SlhxaUVobVVMdWhnVjBJMXRZZ0ZaTmp5aVBM?=
+ =?utf-8?B?NGYyRk5yRXFKUFRYTE5lTFNoU1VIQzJxaHhKbW9qL1ViNDlLWEQzU0lMdXFp?=
+ =?utf-8?B?YmZoaDFJRWQwTG9PU2xmTDVaZ1I1bWROZVU2VFUxTHlHYUZpYk15c3BIM1JW?=
+ =?utf-8?B?ekpWNkdYSHIycHg0NDlVOENBRnZSK0hlczVFU2dUNFh0SEhHS2l5cmQwY01p?=
+ =?utf-8?B?aldOajVFLzVTU0IraTlweXBrbjBPM0xtdWlOanhZdGlGTWo3dlR6L3pSTWdN?=
+ =?utf-8?B?cURldnMzamFldFF5Zm1nMEUyZ3RHOTFVZkI3a25oMFVuZjhLN0cwMGR4L1Nn?=
+ =?utf-8?B?cVcydXZDZDd3bmwyQVRaNlRNZkoxNW1qMnR0Z0Znd2JuaFRGNVkveDliS0JZ?=
+ =?utf-8?B?RWc1U2hmVXNtR0w0bEo4a3I5WDg3WjVlWmRudlVnVzVEN3pnMFRIN2xTZ1J3?=
+ =?utf-8?B?emk4cG9jSCtuS2kxUTRoNStCUG9GS0pPUlV5Wk1LOFZiZTZWakd1YlJOL1Nk?=
+ =?utf-8?B?ZU5UZFRueWRMNTR4KzNveXZteWJ2cHlXOWpRTXhZTjZIdzd1Y1g4c2Y2akRj?=
+ =?utf-8?B?MG9kVnorR1BGc1dTb2FkeXloWFNsc2JmRFdybkxOb0JGQXVkTnYwN0kzQW9z?=
+ =?utf-8?B?WjZwMnV2VGg5OTBCY0Y1N1haN0JWSDlxR2xwQzI2WFEzRThRUDlodExsRUZO?=
+ =?utf-8?B?S1lFdDFJUkJ3ZzN1QmcyeDdIbmdKRXRzOGgrZkJPNGsrQzk1RkdER1NUNVFm?=
+ =?utf-8?B?YVhTRWowQ0V5Rkk5RU1KUjMyb08wckJaeWg0L2NiOFM2UzJIU3p0R0xNdml3?=
+ =?utf-8?B?WS81R3VyQmFncy9rYVRtSVBkaXZDZ0xaZmltUVRqUnpWZWZQWmNHQWw3Z0Mv?=
+ =?utf-8?B?Mnc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdd2fdce-af01-487f-5ec0-08dd60763d62
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5549.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 08:25:11.7010
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cG7LpQSVH4tBo2cu7oh2lr1tqfSJNw3rFVjwphyvxbfBGPBObYVsbIL4SNo06ZYmzlv8dvXXjk7v3AxOefCDQQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8316
+X-OriginatorOrg: intel.com
 
-Add a node for the GT9897 touchscreen found on this smartphone connected
-via SPI.
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
-The series adding support for this chip (incl. dt-bindings) has been
-applied on 2025-03-10 to the input tree:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git/log/?h=next
----
- arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+On 07/03/2025 11:21, Oded Gabbay wrote:
+> On Thu, Mar 06, 2025 at 03:51:24PM +0200, Avizrat, Yaron wrote:
+>> On 05/03/2025 13:57, Jani Nikula wrote:
+>>> On Wed, 05 Mar 2025, "Avizrat, Yaron" <yaron.avizrat@intel.com> wrote:
+>>>> On 29/07/2024 15:17, Ofir Bitton wrote:
+>>>>> I will be leaving Intel soon, Yaron Avizrat will take the role
+>>>>> of habanalabs driver maintainer.
+>>>>>
+>>>>> Signed-off-by: Ofir Bitton <obitton@habana.ai>
+>>>>> ---
+>>>>>  MAINTAINERS | 2 +-
+>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>>>> index ed2d2dbcec81..a4b36590061e 100644
+>>>>> --- a/MAINTAINERS
+>>>>> +++ b/MAINTAINERS
+>>>>> @@ -9599,7 +9599,7 @@ S:	Maintained
+>>>>>  F:	block/partitions/efi.*
+>>>>>
+>>>>>  HABANALABS PCI DRIVER
+>>>>> -M:	Ofir Bitton <obitton@habana.ai>
+>>>>> +M:	Yaron Avizrat <yaron.avizrat@intel.com>
+>>>>>  L:	dri-devel@lists.freedesktop.org
+>>>>>  S:	Supported
+>>>>>  C:	irc://irc.oftc.net/dri-devel
+>>>> Acked-by: Yaron Avizrat <yaron.avizrat@intel.com>
+>>>>
+>>>> Apologies for the long silence — it’s been a challenging period with
+>>>> the Habanalabs-Intel merger, but we're back and ready to continue
+>>>> contributing.
+>>>>
+>>>> We'll be moving forward with our roadmap — upstreaming the latest
+>>>> HabanaLabs driver, including recent changes and full support for the
+>>>> entire GaudiX series.
+>>>>
+>>>> To support this effort, Koby Elbaz and Konstantin Sinyuk will join me
+>>>> as co-maintainers on a regular basis.
+>>> Should they be added as maintainers in the MAINTAINERS entry too?
+>>>
+>>> Are you going to pick this up and apply to the Habanalabs repo, and send
+>>> a pull request with it? Or how do you propose to proceed?
+>>>
+>>>
+>>> BR,
+>>> Jani.
+>>>
+>> Yes, in a later patch, they would be added as maintainers in the MAINTAINERS entry too.
+>> Regarding your second question, we should start with merging Ofir's initial patch.
+>> Any additional/upcoming changes will be initially merged into the official HabanaLabs repo as you mentioned above.
+>>
+>> Regards,
+>> Yaron
+>>
+> Acked-by: Oded Gabbay <ogabbay@kernel.org>
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-index 356cee8aeba90e21c11f46df924ed180bfce3160..35ce9dfca6f092a88d8873673ff57b591e210b02 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-@@ -1069,7 +1069,18 @@ &sdhc_2 {
- &spi13 {
- 	status = "okay";
- 
--	/* Goodix touchscreen @ 0 */
-+	touchscreen@0 {
-+		compatible = "goodix,gt9897";
-+		reg = <0>;
-+		interrupt-parent = <&tlmm>;
-+		interrupts = <81 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&tlmm 105 GPIO_ACTIVE_LOW>;
-+		avdd-supply = <&vreg_l3c>;
-+		vddio-supply = <&vreg_l2c>;
-+		spi-max-frequency = <1000000>;
-+		touchscreen-size-x = <1224>;
-+		touchscreen-size-y = <2700>;
-+	};
- };
- 
- &tlmm {
-
----
-base-commit: 93498f5ea4d0415cb5a95680224335651580cf08
-change-id: 20250203-fp5-touchscreen-cc6960134dab
-
-Best regards,
--- 
-Luca Weiss <luca.weiss@fairphone.com>
+Reminder: can someone pick it up, please?
 
 
