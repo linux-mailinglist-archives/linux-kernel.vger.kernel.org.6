@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-556979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E109A5D1D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:37:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B39A5D1D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:38:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7969E3AEA03
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:37:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F16A3B5318
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1CB26563B;
-	Tue, 11 Mar 2025 21:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007B0265CC1;
+	Tue, 11 Mar 2025 21:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="07Z0mbgx"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DZWUnlNa"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5EF26561B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 21:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A5C265CAA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 21:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741729013; cv=none; b=Ox24sgXa8WJZlGsxY2ieFbYmBgGoMGDl1nix/dTr4cTEAhegjRbc5+4nShfl/2nEVMggBJfAqamzRGSqhMKsZgwNM6OC2+kLcqEYCu0jNRga/4CFnb8aUgPx5zbnBd/eTWcjZFHrVoxmQMCxIj8jLy4dzjlhe0Kp5tXh0l7+FEE=
+	t=1741729016; cv=none; b=g6jxO/NE7x0EyDhzlsswpiJudmwB+Nro1R7XwRExXPK13afj84t5kBS9J9bNzqx0HFkVZTsWpf1ooRYN9lCY3eHdEAlOmErfoqJEPgu0X26hLoK6/BoQ440j+gDbnvwBLadW5KS+SLe18VBLXC4P36TbbELZonxE0ZQWrMuhwrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741729013; c=relaxed/simple;
-	bh=prFPYctpMfMxXw8YsBRXlFw6WjUGqFtw2PRPkyMQJC8=;
+	s=arc-20240116; t=1741729016; c=relaxed/simple;
+	bh=H5KlZ/3j12Z08b+bvKiJZqtJDPyp9/HVMV5Qiv4l5dE=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=jWVEwpPvo/t2kBb14rIt6FTQr84XEBb8KqSYAFWIxtvW9NP5MNxt0O6L4dm2oSIzfsgYE/MT7eZ9Y9+lI+5SQ6LG6I0tnjI7UepczZiHK9MZrcmBqEWVADcSHAcfdpbCwXf9IR3pRuMHPpNHPRx2Q+9zX1tR/Aj+33SQNEo7Gtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=07Z0mbgx; arc=none smtp.client-ip=209.85.219.201
+	 To:Content-Type; b=RE10Z4S1N1oR7j2aLkd65TpuavaqQVGzfZiWstsIE7RtJzX7x3qicy4PewtQtY6rQFFHuS7Qw/iGdxYKZH3J6e4curKrkQN4TuA9d0aG2JmEczQIrRQcWF6p3EjTehkQ9i80Ypn5Ib67Z2CyFe32lj+mReCJSI5zKHPxchY6b8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DZWUnlNa; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e54cb50c3baso501329276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:36:51 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6fef68ecc8eso36767837b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:36:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741729010; x=1742333810; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741729013; x=1742333813; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7leD7T+ctFgDCp3PQfIKE2njcEEfQzDszwWeOPPtNYs=;
-        b=07Z0mbgxmy4vqF7BT+8eZAcRoqSnJC0+dchw+0ClKd1AqspHCdJ3hyce5zjC2hCQ23
-         Jgc9sD9eNUHi2Al+JoJhmuWP0vKNqPpIl0fQ8ruMIBMOrBzZxyJkUtwTQwTnQpkUnOca
-         JhJOcFZt3KbK4BolvAklJCP8snYk/Q2EOmOSSoQ8YVLHiJy04B1GwIBcitGKa9iDMfGd
-         XNdCywGtzvSEeujDtmVbR/krcTb1lyvjRkgO7jn6nLBLJyS2kT0XwVaU1vrCbci+sAaG
-         OLWaV9DDN/6kPd9BfTUR1zpGKQypblJ6r+b2jBhi79eS6Qkn1JG/u6Q62kpT8tXfFRIH
-         lR/A==
+        bh=x49RrI+y8H8e2leJnO29XuD2sUnGFNr6Kwf4AQYViPU=;
+        b=DZWUnlNaCNCquVIc5nwt+bsNrXuNop6icM+/RW3fXmpaqZc28h1t5tCp1RK9cDg5Ee
+         JTLkd4bHpwK3aENDpN1/b/tnsV5GKqTHyGTlLsf5MfetXHzu4rF4pLAbdfFOcRV1lIXF
+         ilJHVXCGMn4HEuwCgsdH4x3pWjh8/Uzp34OrbERfvwjMIDbqi5DNb4eoMF5QuIb9TYCY
+         LOiQeuXggoecva5IloHvrODVEoRXWxQft/ogZ31QRLrFwWMvcO0BUmDJ/ny2tYHT6vCf
+         c7MVcNATPbtrM2slCafZG2uzKQeU9+xMdWaGcK36Zw+dE0qGOfexhRkJXw/k+8GPknFd
+         7Pnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741729010; x=1742333810;
+        d=1e100.net; s=20230601; t=1741729013; x=1742333813;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7leD7T+ctFgDCp3PQfIKE2njcEEfQzDszwWeOPPtNYs=;
-        b=UmDEF+oEW8n9AT09bgckKJUuLXXRlZqxOok6A43L8F53NCb3anJS9dbGJcSG3ia3B2
-         a51RjIR6R813JQ+vkVs/UkBhZtSiky8CKAjei1MGlJywoKZ2blH9ywzXO5ihVswLxVIh
-         OXboVoIsBf/9Xt995zH13gtW3gAJORU+lmR9+v+grP137eLFV8fBZ8c2uZbU0b11heH7
-         LvPl93RdXugPyMRNwy8Sndh+jLyBPHXUYjUYpdqbFAgmwRRBm0Av5ohR0dIg79iESRFB
-         rpoRUM1ZXxF+CRPRuW69RsSTIXCE0YBP6OIcVd660uv9i91DqbleC1CGxj08ICKac2vU
-         fyCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKJnxReADpTU9Vj6QTF7b4BJyjLvj24C24rN/1pCb9LtolPg0kBCpb1cMlmQNjSqop3NtBuxi+yeRMeZw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLKxb0b0BCO3QniNdIgiNOaTuY+hJMBAsI6uOShkVmIxKYFJZa
-	tJE1WPyhUzS5gDum5i+MUMypmu6FCcUo1/ux+h5SsSLwM2usIsBMnkUucn9QsMBRcV5vWcjwqut
-	t+AxSjw==
-X-Google-Smtp-Source: AGHT+IFeP7v/iSDazRmZSu0vFcSGIP6luGjDf3wXpCxNFnO3naR5HkBjUWpMrt8qh8sR4Voc+6jL30QnFn1j
+        bh=x49RrI+y8H8e2leJnO29XuD2sUnGFNr6Kwf4AQYViPU=;
+        b=Zdr0fgDxrNxsgfiFII+rqAOWYA9n8UP182HygYrswaINR6+wBSW3T5MPFQoZ3kvjHG
+         CPZ4bfIQiyblt0uuhhdH0BPPRKb/3EowDcSJzilmYxqr2N2k8iCLQLhBWCV7Ed4eoKzu
+         rl19Bu58iwKv75qMjmNPN6xet8EULsa+e1KBCPBscZ5KgW6ZpIdxMRq/takQjQ8lVErG
+         CKFSyWQF3Ssw4h9b1/7eyfSSP89k3G/7o/d+UBvoNZu81MUYR4YfpLlgHRUoCPC5tSHO
+         3hrpWnOy1dnM27a7yxu0xRTB8dwfKqGAawaKYlQuiCHhbd8iv00CJIGeO6Snrt2XbpEC
+         2YMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBI1dUAu7ArvPy7hRGmTs5yBQH/Zicpo+K5KICKY8H3kDtgeGdA+t2MfVZHYltvYxNm1cqhn6hAHiV3b0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt2/YL0RGu/og2qBWthYsld220iWw8+QRJke2MFC+Z8ALChVBG
+	GEeHjy/DxuGkQe1v61O6Z/H6ZNNjJOaRPuXgp1rLinePmM2tpoYHMbUggSSRXxDxrSlCKAGCfXk
+	/HdrdQw==
+X-Google-Smtp-Source: AGHT+IF707m7mSPSEPJ18g9nVYQMveMRUqzHp/qCqbZlWYKZv4DrdCbj7BwpwXO+5c3lZla+2IjBtWNsAMmF
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:8bc2:942f:1b93:42dd])
- (user=irogers job=sendgmr) by 2002:a25:d8c7:0:b0:e63:c634:aded with SMTP id
- 3f1490d57ef6-e63c634afe7mr23838276.2.1741729010338; Tue, 11 Mar 2025 14:36:50
- -0700 (PDT)
-Date: Tue, 11 Mar 2025 14:36:26 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:48c5:b0:6fb:45b7:3b41 with SMTP
+ id 00721157ae682-6febef7c8f6mr24077917b3.0.1741729012842; Tue, 11 Mar 2025
+ 14:36:52 -0700 (PDT)
+Date: Tue, 11 Mar 2025 14:36:27 -0700
 In-Reply-To: <20250311213628.569562-1-irogers@google.com>
-Message-Id: <20250311213628.569562-5-irogers@google.com>
+Message-Id: <20250311213628.569562-6-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250311213628.569562-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-Subject: [PATCH v2 4/6] perf build: Add pylint build tests
+Subject: [PATCH v2 5/6] perf test: Address attr.py mypy error
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -87,178 +87,41 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-If PYLINT=1 is passed to the build then run pylint over python code in
-perf. Unlike shellcheck this isn't default on as there are currently
-too many errors.
-
-An example of an error:
-```
-************* Module setup
-util/setup.py:19:0: C0301: Line too long (127/100) (line-too-long)
-util/setup.py:20:0: C0301: Line too long (138/100) (line-too-long)
-util/setup.py:63:0: C0301: Line too long (106/100) (line-too-long)
-util/setup.py:1:0: C0114: Missing module docstring (missing-module-docstring)
-util/setup.py:24:4: W0622: Redefining built-in 'vars' (redefined-builtin)
-util/setup.py:11:4: C0103: Constant name "cc_options" doesn't conform to UPPER_CASE naming style (invalid-name)
-util/setup.py:13:4: C0103: Constant name "cc_options" doesn't conform to UPPER_CASE naming style (invalid-name)
-util/setup.py:15:34: R1732: Consider using 'with' for resource-allocating operations (consider-using-with)
-util/setup.py:18:0: C0116: Missing function or method docstring (missing-function-docstring)
-util/setup.py:19:16: R1732: Consider using 'with' for resource-allocating operations (consider-using-with)
-util/setup.py:44:0: C0413: Import "from setuptools import setup, Extension" should be placed at the top of the module (wrong-import-position)
-util/setup.py:46:0: C0413: Import "from setuptools.command.build_ext import build_ext as _build_ext" should be placed at the top of the module (wrong-import-position)
-util/setup.py:47:0: C0413: Import "from setuptools.command.install_lib import install_lib as _install_lib" should be placed at the top of the module (wrong-import-position)
-util/setup.py:49:0: C0115: Missing class docstring (missing-class-docstring)
-util/setup.py:49:0: C0103: Class name "build_ext" doesn't conform to PascalCase naming style (invalid-name)
-util/setup.py:52:8: W0201: Attribute 'build_lib' defined outside __init__ (attribute-defined-outside-init)
-util/setup.py:53:8: W0201: Attribute 'build_temp' defined outside __init__ (attribute-defined-outside-init)
-util/setup.py:55:0: C0115: Missing class docstring (missing-class-docstring)
-util/setup.py:55:0: C0103: Class name "install_lib" doesn't conform to PascalCase naming style (invalid-name)
-util/setup.py:58:8: W0201: Attribute 'build_dir' defined outside __init__ (attribute-defined-outside-init)
-
-*-----------------------------------------------------------------
-Your code has been rated at 6.67/10 (previous run: 6.51/10, +0.16)
-
-make[4]: *** [util/Build:442: util/setup.py.pylint_log] Error 1
-```
+ConfigParser existed in python2 but not in python3 causing mypy to
+fail.
+Whilst removing a python2 workaround remove reference to __future__.
 
 Reviewed-by: James Clark <james.clark@linaro.org>
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/Build            | 13 +++++++++++++
- tools/perf/Makefile.perf    |  7 ++++++-
- tools/perf/pmu-events/Build | 13 ++++++++++++-
- tools/perf/scripts/Build    | 13 +++++++++++++
- tools/perf/tests/Build      | 13 +++++++++++++
- tools/perf/util/Build       | 12 ++++++++++++
- 6 files changed, 69 insertions(+), 2 deletions(-)
+ tools/perf/tests/shell/lib/attr.py | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/tools/perf/Build b/tools/perf/Build
-index 312914994c89..06107f1e1d42 100644
---- a/tools/perf/Build
-+++ b/tools/perf/Build
-@@ -89,3 +89,16 @@ $(OUTPUT)%.mypy_log: %
- 	$(Q)$(call echo-cmd,test)mypy "$<" > $@ || (cat $@ && rm $@ && false)
+diff --git a/tools/perf/tests/shell/lib/attr.py b/tools/perf/tests/shell/lib/attr.py
+index 3db9a7d78715..bfccc727d9b2 100644
+--- a/tools/perf/tests/shell/lib/attr.py
++++ b/tools/perf/tests/shell/lib/attr.py
+@@ -1,7 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
  
- perf-y += $(MYPY_TEST_LOGS)
-+
-+ifdef PYLINT
-+  PY_TESTS := $(shell find python -type f -name '*.py')
-+  PYLINT_TEST_LOGS := $(PY_TESTS:python/%=python/%.pylint_log)
-+else
-+  PYLINT_TEST_LOGS :=
-+endif
-+
-+$(OUTPUT)%.pylint_log: %
-+	$(call rule_mkdir)
-+	$(Q)$(call echo-cmd,test)pylint "$<" > $@ || (cat $@ && rm $@ && false)
-+
-+perf-y += $(PYLINT_TEST_LOGS)
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index c773f0dd8226..367746e3c9b0 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -311,8 +311,13 @@ ifeq ($(MYPY),1)
-   MYPY := $(shell which mypy 2> /dev/null)
- endif
+-from __future__ import print_function
+-
++import configparser
+ import os
+ import sys
+ import glob
+@@ -13,11 +12,6 @@ import re
+ import shutil
+ import subprocess
  
-+# Runs pylint on perf python files
-+ifeq ($(PYLINT),1)
-+  PYLINT := $(shell which pylint 2> /dev/null)
-+endif
-+
- export srctree OUTPUT RM CC CXX LD AR CFLAGS CXXFLAGS V BISON FLEX AWK
--export HOSTCC HOSTLD HOSTAR HOSTCFLAGS SHELLCHECK MYPY
-+export HOSTCC HOSTLD HOSTAR HOSTCFLAGS SHELLCHECK MYPY PYLINT
- 
- include $(srctree)/tools/build/Makefile.include
- 
-diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
-index fc1dc810ffb6..32f387d48908 100644
---- a/tools/perf/pmu-events/Build
-+++ b/tools/perf/pmu-events/Build
-@@ -52,8 +52,19 @@ $(OUTPUT)%.mypy_log: %
- 	$(call rule_mkdir)
- 	$(Q)$(call echo-cmd,test)mypy "$<" > $@ || (cat $@ && rm $@ && false)
- 
-+ifdef PYLINT
-+  PMU_EVENTS_PY_TESTS := $(wildcard *.py)
-+  PMU_EVENTS_PYLINT_TEST_LOGS := $(JEVENTS_PY_TESTS:%=%.pylint_log)
-+else
-+  PMU_EVENTS_PYLINT_TEST_LOGS :=
-+endif
-+
-+$(OUTPUT)%.pylint_log: %
-+	$(call rule_mkdir)
-+	$(Q)$(call echo-cmd,test)pylint "$<" > $@ || (cat $@ && rm $@ && false)
-+
- $(PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY) $(METRIC_TEST_LOG) \
--    $(EMPTY_PMU_EVENTS_TEST_LOG) $(PMU_EVENTS_MYPY_TEST_LOGS)
-+    $(EMPTY_PMU_EVENTS_TEST_LOG) $(PMU_EVENTS_MYPY_TEST_LOGS) $(PMU_EVENTS_PYLINT_TEST_LOGS)
- 	$(call rule_mkdir)
- 	$(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) $(JEVENTS_ARCH) $(JEVENTS_MODEL) pmu-events/arch $@
- endif
-diff --git a/tools/perf/scripts/Build b/tools/perf/scripts/Build
-index a5350dc6ac50..91229a1fe3ff 100644
---- a/tools/perf/scripts/Build
-+++ b/tools/perf/scripts/Build
-@@ -15,3 +15,16 @@ $(OUTPUT)%.mypy_log: %
- 	$(Q)$(call echo-cmd,test)mypy "$<" > $@ || (cat $@ && rm $@ && false)
- 
- perf-y += $(MYPY_TEST_LOGS)
-+
-+ifdef PYLINT
-+  PY_TESTS := $(shell find python -type f -name '*.py')
-+  PYLINT_TEST_LOGS := $(PY_TESTS:python/%=python/%.pylint_log)
-+else
-+  PYLINT_TEST_LOGS :=
-+endif
-+
-+$(OUTPUT)%.pylint_log: %
-+	$(call rule_mkdir)
-+	$(Q)$(call echo-cmd,test)pylint "$<" > $@ || (cat $@ && rm $@ && false)
-+
-+perf-y += $(PYLINT_TEST_LOGS)
-diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-index 0d4af485bf55..934f32090553 100644
---- a/tools/perf/tests/Build
-+++ b/tools/perf/tests/Build
-@@ -104,3 +104,16 @@ $(OUTPUT)%.mypy_log: %
- 	$(Q)$(call echo-cmd,test)mypy "$<" > $@ || (cat $@ && rm $@ && false)
- 
- perf-test-y += $(MYPY_TEST_LOGS)
-+
-+ifdef PYLINT
-+  PY_TESTS := $(shell find tests/shell -type f -name '*.py')
-+  PYLINT_TEST_LOGS := $(PY_TESTS:tests/shell/%=shell/%.pylint_log)
-+else
-+  PYLINT_TEST_LOGS :=
-+endif
-+
-+$(OUTPUT)%.pylint_log: %
-+	$(call rule_mkdir)
-+	$(Q)$(call echo-cmd,test)pylint "$<" > $@ || (cat $@ && rm $@ && false)
-+
-+perf-test-y += $(PYLINT_TEST_LOGS)
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index 583f425713eb..946bce6628f3 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -430,3 +430,15 @@ $(OUTPUT)%.mypy_log: %
- 	$(Q)$(call echo-cmd,test)mypy "$<" > $@ || (cat $@ && rm $@ && false)
- 
- perf-util-y += $(MYPY_TEST_LOGS)
-+
-+ifdef PYLINT
-+  PYLINT_TEST_LOGS := $(PY_TESTS:%=%.pylint_log)
-+else
-+  PYLINT_TEST_LOGS :=
-+endif
-+
-+$(OUTPUT)%.pylint_log: %
-+	$(call rule_mkdir)
-+	$(Q)$(call echo-cmd,test)pylint "$<" > $@ || (cat $@ && rm $@ && false)
-+
-+perf-util-y += $(PYLINT_TEST_LOGS)
+-try:
+-    import configparser
+-except ImportError:
+-    import ConfigParser as configparser
+-
+ def data_equal(a, b):
+     # Allow multiple values in assignment separated by '|'
+     a_list = a.split('|')
 -- 
 2.49.0.rc0.332.g42c0ae87b1-goog
 
