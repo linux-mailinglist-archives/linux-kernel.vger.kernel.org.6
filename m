@@ -1,55 +1,79 @@
-Return-Path: <linux-kernel+bounces-556992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B816DA5D209
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:54:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9E6A5D20E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:54:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C258188A2DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:54:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9EC53B18CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3C2264A94;
-	Tue, 11 Mar 2025 21:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D00C264633;
+	Tue, 11 Mar 2025 21:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="afZqlG7E"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f/yhf+Ow"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675561F4CA8;
-	Tue, 11 Mar 2025 21:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9603F264F93
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 21:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741730038; cv=none; b=tM02XpX4EgT4JTjCLNz/1aWsyJBT+O5B0ZdRhDO0cnOwzCmw7Nee+U9TPLeojAT/j3Ruz8P/ls+XjCC+5m65nmvFit5iZ1+yKvUpOInHzjBgq4H84SLG99+771rrDpBQk8tzaFicBEY91Gm3BrlOLeqx3+cPyPvDG+KVhyKl230=
+	t=1741730042; cv=none; b=RzgMgUa7VTxGk2j9UhaCHh1j/ropHUfG+BAfeMYEy3Kdppey230RHdazfUlS8Et/fYaqOzT86zO6EcJUKjoXooKPNmabZERBoB/blZd5kRXEGtakxskTTEWAPtI0lg6FPWQ47WHp8/en/KjVDLuUXJTYZWpIZjJxHpt6ww+vs84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741730038; c=relaxed/simple;
-	bh=mKzUkYarQ3/as3AfYs4QM3zv9D62ramYgUOYVFHQHwA=;
+	s=arc-20240116; t=1741730042; c=relaxed/simple;
+	bh=ZgzE4thBCoSTa+dcViXPcQn5/G3IUHp1o/3wzyNpJ6I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZbcVzh16kozCgDZ5j6eWrOFOYZWaHkE8a/zud+1J9GbB/BxvwYFAgqf8lW0CdODQegOOAxBKtF14UTObTjHQ/G7UaTgOKg7ChVXoIoji2ND4lEHt/vuXDoECtatCQGrpUUkKAkmcyLoGiGCUj5jeFAj0kuH9OZ3IjxkkOdrGycw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=afZqlG7E; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1741730027; x=1742334827; i=w_armin@gmx.de;
-	bh=nWUREZG/uL3Q8iXD257aVJlTPH4Kp+WWUMzCY7ya+AU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=afZqlG7EYF2UOAer8QKxpX4XYORRhM9YjvE+d8ieEwQQYDukmIgKztll8nfQ9d2t
-	 M6vgVDZIAankjFAbIy/NLeMg9nvI6M9LFL5S4yl/7RHo+x+H7WvR1XoKGh1L/Aqfr
-	 861ViXVrX+mRVdIkjmw9tab6B/h7FSuTCZVlcjOJJaVwvLMHe0hObgb22uEG15yh6
-	 jTVMZcjrSSkB6xCvC+aewA72s6ZXsanY1hulYSX6dNloOQljWvg7vxWOlkGMEFhP4
-	 BeoULyipsxySTK2xGpseEKy49U5TBaVtcYzyQTTKRic9Lkc2TkmbWNwhr7zMQFcxo
-	 YSnJIxbBfw5nnBPaGw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mof9P-1tPcLT3cXx-00imgH; Tue, 11
- Mar 2025 22:53:47 +0100
-Message-ID: <eaeaef7a-570e-4738-a420-4d5f61adf0bf@gmx.de>
-Date: Tue, 11 Mar 2025 22:53:44 +0100
+	 In-Reply-To:Content-Type; b=LnOzZsjWgTwjQE20aDJzhMd+XuRyOrFOXxjDIr+vle7A/yGSVM68iFLFwGZwy2gTV2gZYBpE0/k/rnFKY1UVS+Ecms1CvFc4UXj0MAghP62zfR9ukqFei+MFhnwoa0fuUN3M12xwwhIXF/KRAPP4AZAj9Em69lxL3D0CkxWvLKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f/yhf+Ow; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54995620c02so520373e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:53:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741730038; x=1742334838; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=X5gsB+0yYh8xE9yPNlTczFYo/dqiaFhvnnAdkeUoWJg=;
+        b=f/yhf+Ow6qLnHeu7fpBARK6iQQyRmHWvFObl/a0hci1teamJW+UNUazoTQxxo7esNl
+         arQvnfnn6Eq+GUuglGzFjCRxlPy3bGNrmpA7ZWCmnuNPB9lsq6CTUuQn/n6i1o4XdJpZ
+         WYP7WVSZou2lt+5F8OHTinmJSjsNNe/IaaQ2XeS7BNvGbr4MUehdokjGbMjXFobxE1qL
+         cwTYeXwwdp9u+Kz/q5/1SuPIPxv3hIvJwvOTEHOTzO8tYdmtCoYFq/nw8w7PxTh9YWrg
+         R25eUG17re6Scd0jjMyQ6S5xoM6tAYGXlJn4JyxKoFswjSCyDehZf/Dg9nsICyE0UNn+
+         wQtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741730038; x=1742334838;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X5gsB+0yYh8xE9yPNlTczFYo/dqiaFhvnnAdkeUoWJg=;
+        b=Pc4fcU4sO2jr6BvQRECU6Tvlul/MkTm9ORcyZu93Ddu0QnhJOTbh3jEMW/WutNzYeQ
+         KjeZBLkn24dd0Qf+8imzvu4+FKobVuVAquVf39/wzcU9p8G9bFLwWLNukVZgni92GXPg
+         Bk8LCuQFoPYaq98lpZaI+WmTa47uX8N7eMpPfUpdk7YOFubjsIZI4GdKQPoAW4+OO5Cw
+         f6YIuQQoHC09YZVe9hbSp1WUNxWza8eBr8RSv8adH3EtnXwmL5dDlej/2+MjkZcFmBbB
+         /3Ds94+AcrOvEyOtCulSQvC1J0A9XYYG45K9sYy2Vr3aC2A+zH0MT3BEJs6lzgpe+fZU
+         AxGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUK+Pfck52NTxz4uiggKhAZRZES6j2Ah2WESGGVjPJMt79s249PahfBjRLEk32zYEZrEXXaXNdcqk8hp0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNE/scdt22XdICbBagJ2ESldEcw6AzJOpgsMobvSoyulCA+v9r
+	ShF0n4tsN9JHg9jIFHchG2hbjl4ptqTVWyYHdZqfnIBc7dqM4nsYVB1mI+VhPpM=
+X-Gm-Gg: ASbGnctqIBLxByG5qPcxN/+ZKQdasrNLBeSmetrCxbWWhAHHH3HDMUAzfW81KDRcF8M
+	VfaLj9iSJuabVfJF+9+aStqwhtq/NJnYKI4T8HB7f0/n4QbI3BEHdJnVODlv0vBcwDfv3T/YVSc
+	eohjUMQBmWlt64s71ypw5TS6UfaQ1NiaWwYXpIpruq9NwbZQbXyaSIslhcmGyd9HzCrVKRCZhcf
+	umDSB7v/52ExEKd1tBh3QrgCygwIOZRTUPWDAdNTrRyINc8mzh+/2B5P86dWyVvLVhumw329Fbk
+	OC2A9Zm3qD989fCJUAxiTbo6LCSi6Dtra96a3uQMUT6D1dug9D9lVRb+X6QsdxijTH7k4CwLPtg
+	uowhR6ANrzcDFsUcME4oZ2IsPfEInPzQqYQ==
+X-Google-Smtp-Source: AGHT+IFMqD7MP0QO68gqxLROvT5NFpnEwxTOzpskeLzkJrA9xPbwOTw4OmpOx0RaAr9lWptyIlaMyw==
+X-Received: by 2002:a05:6512:3b10:b0:545:6f1:948d with SMTP id 2adb3069b0e04-549abacc9e6mr613771e87.7.1741730037032;
+        Tue, 11 Mar 2025 14:53:57 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae462c6sm1910515e87.4.2025.03.11.14.53.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 14:53:55 -0700 (PDT)
+Message-ID: <70d6acfc-739a-4c0a-9087-77e16c6ac989@linaro.org>
+Date: Tue, 11 Mar 2025 23:53:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,98 +81,162 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/3] platform/x86: acer-wmi: Add fan control
- support
-To: Rayan Margham <rayanmargham4@gmail.com>
-Cc: jlee@suse.com, basak.sb2006@gmail.com, kuurtb@gmail.com,
- hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <f5d8b82d-c711-4611-b257-b4297f172bb1@gmx.de>
- <637B90F3-58C6-43B6-9822-5314C62138C6@gmail.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <637B90F3-58C6-43B6-9822-5314C62138C6@gmail.com>
+Subject: Re: [PATCH v4 1/4] dt-bindings: media: Add qcom,x1e80100-camss
+Content-Language: ru-RU
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-0-c2964504131c@linaro.org>
+ <20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-1-c2964504131c@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-1-c2964504131c@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:BpoaWhM25TZXLWdOo3ZH3+Ng5tiC6+Fh/krIQmFSDspIrrVGMTZ
- +SkBpKT3Nt6ovOTGdof002huNyvyUyl1yokiEoyS1eC7vwJdBaW8TSzF/eLtd9Bs2oBXHBg
- AqypRQwMz45EseNcIzAr8fUwjEkBnWYAfNOoCFjv54Fxscip2cQF2amPWT151Y4hGG3fiti
- DzsOvtnnAYFgFq9h8NYkQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:veyu5uVBUhc=;TduTV3tq0v9/5mWBTYbqkcHuqCz
- KQWjoqN4DUyq2+06Mdm5E2Ts0JaaPJ4P5WI/dViELCR6V4YWLDxEh+80ZO+HHU/4lbaWOuAsW
- nr4wlgynBCDfltbfh9j2cuksR3LFr74Co5InES87SHZnSb9G3ncudffqL3Qfpcq+8T8cXPALs
- os2kpEuTtcilpKd4kUj8sTZbmBIb+I1xtMg7onIY28nYgvnDyhPEfrG0jx21ZHizveRykpYRE
- WGjGJF4yF/uzzazYstfbcvmZ5rcliEZGL9YcAHcib04FKeinfLL/uXQN+4wN3fp4dBcvhmISg
- NXBX04b7ZLyDLv/KqRH4WNDviCqndVbLjLJ1ks8yiZQ0cqoYGHPqYs+o1+Myf/0NuO8eH05Mi
- 92o35CPpdOJ3Kka71YSIlfj0senNa0DkxL2+akTkhh6A47A4dqYNJycvORScAFGW+kcI9wwkk
- faDn9RsgctsOph0oCOwOOtx7Ltpq2mdkHDrPcTeDr6P/a26JSJ4hW51evyP8sd1oGf9bEKfCt
- TH/zTZm9p7YS/8Zwi3R7NE4zMt4xdcSRdXVLUw/22kwAMiM/Szkp5VYfE02j3p2z6RkVYEo87
- JJ+0hsDeZS6CvXF2qXCBwHW6djOdQ6BmIpHXz5GFXqD959X4zmhrKcGFvs5i9jYX3+d2ZAjQY
- 3OMDJy3jBsjII2DNApbc6cUE5TISW+xHr5OJH/+miIHFc9nD2nxlB4bXycRH7xsT1EGuuaowu
- ZYWUcx3DkvoexAEjpuEwXphx0pFhRvwUVB+nKao37TwNtNg0QVoOqQu0zEl7YRg4ckKtHGSxn
- isC1vS6MqhsKqrItwrd8RA77Wbn4PkpacjU1NKBaBPTWH5Wmw5NGvx2r5jCZUEKmJlJZNwcUS
- Djn/wHzm5KKhNYY2yPRTGjxQUlY8nTCIf6lCdBtWxYQH/cLLPNtJuhwmVF56TrNeLktru4wVV
- TRBpaJqIbTdBEUGjc1f3A9vBMXgEFT9zNH2+/IAK4+SBEa15rrjEBl3GykudiNP/G3HwEsTVd
- pLyX9czmJvF9emO3fQnZ+haFfBa7vjE2DA/3yJpg83zw6xYQRWYF/zZ99R4XBnKb+FugKcG/T
- +AZS+LPlvif67/7SJGdT9S8LSihivDQpdm2PXQMTtc54hqHmSTQ6zShvturnRuykE0Mvxi42Y
- 2xZYWe5MrBk8maetRbLJAlQMKSWK1WiYiBz9k78zxzslgAFM5+ryDV0Netj+7t/2dWTcHU+cQ
- lhhjjCL/DMwBkkcX8c30/dNJLPICsTQbXb3TD1d0tOwXh+tr7Zurl4CQhv0LSkNLkPyZREcsp
- 3qaiVJdAmDAmrU4P7VQ1bF7HpOFshyFjzHY6naZO6DaDA40Uu+z65n+7NMAFXYn1ZMWnyjYsL
- u3kmBr00GDqhaR6MoP4R46hKQ2DZRu8pZxGaoVzwAiWww0iy3YWsxNTGLv9p9QvjqoNxMDiKA
- wzMg2Vr+Yn9FiVsCPa5ZM0yQiIrc=
+Content-Transfer-Encoding: 7bit
 
-Am 09.03.25 um 13:51 schrieb Rayan Margham:
+Hi Bryan.
 
-> I=E2=80=99m so sorry I=E2=80=99ve been in a mental health unit for the p=
-ast month, are you still working on the driver I would love to test anythi=
-ng you provide me now
->
-> Bestest regards
-> Rayan Margham
+On 1/19/25 02:54, Bryan O'Donoghue wrote:
+> Add bindings for qcom,x1e80100-camss in order to support the camera
+> subsystem for x1e80100 as found in various Co-Pilot laptops.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-Oh my, i wish you all the best for recovery.
+<snip>
 
-Can you compile the current -rc kernel with this patch series applied? If =
-no then i can give you a .deb package containing the kernel and the
-modified acer-wmi driver.
+> +
+> +  reg-names:
+> +    items:
+> +      - const: csid_wrapper
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csid_lite0
+> +      - const: csid_lite1
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy4
+> +      - const: csitpg0
+> +      - const: csitpg1
+> +      - const: csitpg2
+> +      - const: vfe_lite0
+> +      - const: vfe_lite1
+> +      - const: vfe0
+> +      - const: vfe1
 
-Thanks,
-Armin Wolf
+Here I'm a bit lost about the selected ordering rule, I kindly
+ask for a clarification.
 
->> On 5 Mar 2025, at 00:24, Armin Wolf <W_Armin@gmx.de> wrote:
->>
->> =EF=BB=BFAm 15.02.25 um 18:45 schrieb Armin Wolf:
->>
->>> This experimental patch series aims to add fan control support to the
->>> acer-wmi driver. The patches are compile-tested only and need to be
->>> tested on real hardware to verify that they actually work.
->>>
->>> I CCed two users who requested support for this feature. I would be
->>> very happy if both of you could test those patches and report back.
->>>
->>> I am ready to help you both with compiling a custom linux kernel for
->>> testing this series.
->> Any updates from the two people with Acer hardware?
->>
->> Thanks,
->> Armin Wolf
->>
->>> Changes since v2:
->>> - remove duplicate include and replace hwmon_pwm_mode with
->>>    hwmon_pwm_enable in second patch
->>>
->>> Armin Wolf (3):
->>>    platform/x86: acer-wmi: Fix setting of fan behavior
->>>    platform/x86: acer-wmi: Add fan control support
->>>    platform/x86: acer-wmi: Enable fan control for PH16-72 and PT14-51
->>>
->>>   drivers/platform/x86/acer-wmi.c | 298 +++++++++++++++++++++++++++++-=
+In ASCII the underscore symbol '_' goes way after any 7-bit symbols
+including '0' and other digits, but this is violated in the sorting
+order above.
+
+The expected sorting order would rather be like this one:
+
+   - const: csid0
+   - const: csid1
+   - const: csid2
+   - const: csid_lite0
+   - const: csid_lite1
+   - const: csid_wrapper
+   - const: csiphy0
+   - const: csiphy1
+   - const: csiphy2
+   - const: csiphy4
+   - const: csitpg0
+   - const: csitpg1
+   - const: csitpg2
+   - const: vfe0
+   - const: vfe1
+   - const: vfe_lite0
+   - const: vfe_lite1
+
+> +
+> +  clocks:
+> +    maxItems: 29
+> +
+> +  clock-names:
+> +    items:
+> +      - const: camnoc_rt_axi
+> +      - const: camnoc_nrt_axi
+
+Okay, there might be some explanations about the underscore symbol,
+anyway I would appreciate to get them, but here it's definitely
+incorrect, it's very unlikely that the symbol 'r' precedes 'n'.
+
+> +      - const: core_ahb
+> +      - const: cpas_ahb
+> +      - const: cpas_fast_ahb
+> +      - const: cpas_vfe0
+> +      - const: cpas_vfe1
+> +      - const: cpas_vfe_lite
+> +      - const: cphy_rx_clk_src
+> +      - const: csid
+> +      - const: csid_csiphy_rx
+> +      - const: csiphy0
+> +      - const: csiphy0_timer
+> +      - const: csiphy1
+> +      - const: csiphy1_timer
+> +      - const: csiphy2
+> +      - const: csiphy2_timer
+> +      - const: csiphy4
+> +      - const: csiphy4_timer
+> +      - const: gcc_axi_hf
+> +      - const: gcc_axi_sf
+> +      - const: vfe0
+> +      - const: vfe0_fast_ahb
+> +      - const: vfe1
+> +      - const: vfe1_fast_ahb
+> +      - const: vfe_lite
+> +      - const: vfe_lite_ahb
+> +      - const: vfe_lite_cphy_rx
+> +      - const: vfe_lite_csid
+> +
+> +  interrupts:
+> +    maxItems: 13
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csid_lite0
+> +      - const: csid_lite1
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy4
+> +      - const: vfe0
+> +      - const: vfe1
+> +      - const: vfe_lite0
+> +      - const: vfe_lite1
+
+Same as above.
+
+> +  interconnects:
+> +    maxItems: 4
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: cam_ahb
+> +      - const: cam_hf_mnoc
+> +      - const: cam_sf_mnoc
+> +      - const: cam_sf_icp_mnoc
+> +
+
 --
->>>   1 file changed, 273 insertions(+), 25 deletions(-)
->>>
->>> --
->>> 2.39.5
->>>
->>>
+Best wishes,
+Vladimir
 
