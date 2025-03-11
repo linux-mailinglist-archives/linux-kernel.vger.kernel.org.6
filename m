@@ -1,85 +1,70 @@
-Return-Path: <linux-kernel+bounces-556836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BCA7A5CF49
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:25:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F0DA5CF4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DCD117BF95
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:25:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BC0117C010
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A432641C4;
-	Tue, 11 Mar 2025 19:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAB32641E8;
+	Tue, 11 Mar 2025 19:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DOpsfz7P"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBM4xUAk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10107263F3F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 19:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481C7263F57;
+	Tue, 11 Mar 2025 19:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741721094; cv=none; b=c0RrkB2vEHKOP9YSVlrURQXZVz+bbFnTNdUeEyXtBts5RCO7/ob45c6ZUyVnOV8ZPZCSOPqfZVgPQpVX73I8ip4ReMFrodXLcc0RzZ5nsc9+t30cLXp0MqTKZUF2CixhhU7w0AcaNS2uFmT0YNfXbQTGfF5E6B9kmplhwuZ/rZk=
+	t=1741721119; cv=none; b=abROye+OCffiLMotP32hyHLKajECzkn4SnKT3ebgyVNTrIvkmjgVFmTtOUB90VfsG67fpjkD1dRTK2YR+xhsrwARgauYCCKa9pbY1rEK3gqinK5m0HrV+Ki6CHUa6hRSyhFquMEuUQcMsL3QvwiFgyO/ygk2ivU55Ny1xphDbQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741721094; c=relaxed/simple;
-	bh=l48ePkX07jt/Dy2NQli1RjdHXntbwEXbAp0TLcnmM4U=;
+	s=arc-20240116; t=1741721119; c=relaxed/simple;
+	bh=vD3EacD3StgEcdCEuMUQ5gzplQWLkIqq1FTPEZvPzfg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EpRZW93rHW4hlMIzo+RxWd51heGSbE59FeyBi4xNgLTLfV4IMLx3awD3hsKdt0Bmc2lSB3j/+zYG9oKxuADVb/KPDcqroIAXpAj87/sCLjjcAMrlPd2ubKSZa+eC5cuORhaf0wuaYDkofW2rzDwHBHjN9KbHcOsrc+vTWqGw0tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DOpsfz7P; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741721091;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KcYxt6lKlQkGEaI+wYIlW5PAOr/JWvJEjCeftUnJOe4=;
-	b=DOpsfz7PLRTj8rb7dd42N7Hj1oG/hXM8TttL+djFxZ0+m0VIwAzr+RyrI+g1p/O6OSETw/
-	pjK740bY0/7A29wsGz+iYmBV7J9MiDnUpKXu9YV0NmoUfsoa8/jAfv/UkBvE9OxoX5Dw/k
-	mE/om2OMqRlxVRXaoLIt+dh7jyrxZZc=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-694-7F1u8v5PNvK6JRj9bi_e3g-1; Tue,
- 11 Mar 2025 15:24:46 -0400
-X-MC-Unique: 7F1u8v5PNvK6JRj9bi_e3g-1
-X-Mimecast-MFC-AGG-ID: 7F1u8v5PNvK6JRj9bi_e3g_1741721084
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9807919560A3;
-	Tue, 11 Mar 2025 19:24:43 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.22.90.58])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 17A6618001EF;
-	Tue, 11 Mar 2025 19:24:38 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 11 Mar 2025 20:24:12 +0100 (CET)
-Date: Tue, 11 Mar 2025 20:24:06 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org,
-	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH] x86/stackprotector: fix build failure with
- CONFIG_STACKPROTECTOR=n
-Message-ID: <20250311192405.GG3493@redhat.com>
-References: <20250310214402.GBZ89dIo_NLF4zOSKh@fat_crate.local>
- <CAMj1kXEK0Kgx-C8sOvWJ9rkmC0ioWDEb+tpM9BTeWVwOWyGNog@mail.gmail.com>
- <20250311102326.GAZ9APHqe5aSQ1m5ND@fat_crate.local>
- <CAMj1kXHTLz4onmR5iyowptRE38RCK4jNT3BoURBkq2FoDOMTxQ@mail.gmail.com>
- <20250311112112.GEZ9AcqM2ceIQVUA0N@fat_crate.local>
- <20250311131356.GGZ9A3FNOxp32eGAgV@fat_crate.local>
- <20250311143724.GE3493@redhat.com>
- <20250311174626.GHZ9B28rDrfWKJthsN@fat_crate.local>
- <20250311181056.GF3493@redhat.com>
- <20250311190159.GIZ9CIp81bEg1Ny5gn@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3TYis5yYbOD8T3ZFlWKhyVGjDvRn6mw7hPVZB85sByCp/tueOBSUUzYCu/g4MijmlVRAJE7ed8IPv9wF5otVj47noC05R/aCJeNfzsY/biEpsmaCB7EW89ekOxHttgJ32spD6SrPkPX9KObyg+pmbI6Mc9TJU8wXwP/BhmlKv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBM4xUAk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E9D2C4CEEA;
+	Tue, 11 Mar 2025 19:25:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741721117;
+	bh=vD3EacD3StgEcdCEuMUQ5gzplQWLkIqq1FTPEZvPzfg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mBM4xUAkTUSoMvHUEAgRz6yN/W5RI7I4V2p83akIVmnAM7QsIcAQaLXlHr1vNn+QI
+	 5ETwOeuCX4I/89nK2A3vphN/bUIz+tf2148c+5xZ3vXPv6lgLe5v+vHHHDmsBwj3si
+	 WoVutHIgmQxZJY4o1F7Csp/tbW73xacT4HqG/1aCzmKtHyOp+KUJ/ZVwun/V1yNyIw
+	 QtJygu4ryRR69VbveplcuNR3T4RwYAuI8Eu/J5EIRDoBt1I03+2WF5O2z88ny9J4iB
+	 7vKswfiVOdbxC0slpftaFCpGE7eYEI9pqM7AUQtJ86jQsD0xpcSZQ8cvUZiTvbTNGf
+	 mGuBLNFZmp07g==
+Date: Tue, 11 Mar 2025 14:25:16 -0500
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v12 04/13] dt-bindings: net: Document support
+ for AN8855 Switch Internal PHY
+Message-ID: <20250311192516.GA4115176-robh@kernel.org>
+References: <20250309172717.9067-1-ansuelsmth@gmail.com>
+ <20250309172717.9067-5-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,37 +73,144 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250311190159.GIZ9CIp81bEg1Ny5gn@fat_crate.local>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250309172717.9067-5-ansuelsmth@gmail.com>
 
-On 03/11, Borislav Petkov wrote:
->
-> On Tue, Mar 11, 2025 at 07:10:57PM +0100, Oleg Nesterov wrote:
-> > See the "older binutils?" above ;)
-> >
-> > my toolchain is quite old,
-> >
-> > 	$ ld -v
-> > 	GNU ld version 2.25-17.fc23
-> >
-> > but according to Documentation/process/changes.rst
-> >
-> > 	binutils               2.25             ld -v
-> >
-> > it should be still supported.
->
-> So your issue happens because of older binutils? Any other ingredient?
+On Sun, Mar 09, 2025 at 06:26:49PM +0100, Christian Marangi wrote:
+> Document support for AN8855 Switch Internal PHY.
+> 
+> Airoha AN8855 is a 5-port Gigabit Switch that expose the Internal
+> PHYs on the MDIO bus.
+> 
+> Each PHY might need to be calibrated to correctly work with the
+> use of the eFUSE provided by the Switch SoC. This can be enabled by
+> defining in the PHY node the "airoha,ext-surge" property.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/net/airoha,an8855-phy.yaml       | 93 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 94 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/airoha,an8855-phy.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/airoha,an8855-phy.yaml b/Documentation/devicetree/bindings/net/airoha,an8855-phy.yaml
+> new file mode 100644
+> index 000000000000..301c46f84904
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/airoha,an8855-phy.yaml
+> @@ -0,0 +1,93 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/airoha,an8855-phy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Airoha AN8855 Switch Internal PHY
+> +
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
+> +
+> +description: >
+> +  Airoha AN8855 is a 5-port Gigabit Switch that expose the Internal
+> +  PHYs on the MDIO bus.
+> +
+> +  Each PHY might need to be calibrated to correctly work with the
+> +  use of the eFUSE provided by the Switch SoC.
+> +
+> +allOf:
+> +  - $ref: ethernet-phy.yaml#
+> +
+> +select:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - ethernet-phy-idc0ff.0410
+> +  required:
+> +    - compatible
+> +
+> +properties:
+> +  reg:
+> +    maxItems: 1
+> +
+> +  airoha,ext-surge:
+> +    description: enable PHY calibration with the use of SoC eFUSE.
 
-Yes, I think so.
+Wouldn't nvmem-cells presence enable this?
 
-> I'd like for the commit message to contain *exactly* what we're fixing here so
-> that anyone who reads this, can know whether this fix is needed on her/his
-> kernel or not...
+> +
+> +  nvmem-cells:
+> +    items:
+> +      - description: phandle to SoC eFUSE tx_a
+> +      - description: phandle to SoC eFUSE tx_b
+> +      - description: phandle to SoC eFUSE tx_c
+> +      - description: phandle to SoC eFUSE tx_d
+> +
+> +  nvmem-cell-names:
+> +    items:
+> +      - const: tx_a
+> +      - const: tx_b
+> +      - const: tx_c
+> +      - const: tx_d
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +if:
+> +  required:
+> +    - airoha,ext-surge
+> +then:
+> +  required:
+> +    - nvmem-cells
+> +    - nvmem-cell-names
 
-OK. I'll update the subject/changelog to explain that this is only
-needed for the older binutils and send V2.
+dependentRequired:
+  airoha,ext-surge: [ nvmem-cells, nvmem-cell-names ]
 
-Oleg.
-
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    mdio {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        ethernet-phy@1 {
+> +            compatible = "ethernet-phy-idc0ff.0410",
+> +                         "ethernet-phy-ieee802.3-c45";
+> +
+> +            reg = <1>;
+> +        };
+> +
+> +        ethernet-phy@2 {
+> +            compatible = "ethernet-phy-idc0ff.0410",
+> +                         "ethernet-phy-ieee802.3-c45";
+> +
+> +            reg = <2>;
+> +
+> +            airoha,ext-surge;
+> +
+> +            nvmem-cells = <&shift_sel_port0_tx_a>,
+> +                <&shift_sel_port0_tx_b>,
+> +                <&shift_sel_port0_tx_c>,
+> +                <&shift_sel_port0_tx_d>;
+> +            nvmem-cell-names = "tx_a", "tx_b", "tx_c", "tx_d";
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 696ad8465ea8..45f4bb8deb0d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -726,6 +726,7 @@ L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+>  L:	netdev@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/net/airoha,an8855-mdio.yaml
+> +F:	Documentation/devicetree/bindings/net/airoha,an8855-phy.yaml
+>  F:	Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
+>  F:	Documentation/devicetree/bindings/nvmem/airoha,an8855-efuse.yaml
+>  
+> -- 
+> 2.48.1
+> 
 
