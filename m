@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-556519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92098A5CB09
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:41:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00410A5CB0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:43:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD6D03B8B8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:41:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36A5917AB46
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14025260A39;
-	Tue, 11 Mar 2025 16:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3C026039E;
+	Tue, 11 Mar 2025 16:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YKNNXU8d"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="EZIC0svS"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48F1260A32
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207A0260383
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741711267; cv=none; b=EEzfdiGlLKql/ieTWTeRZ/NSlqQStAA/Iwzs6I8Dm5QKqkupZ7Y5Fb787MwA967efB39j5iOD8x4rwCpjsSWSwmZhN29fD+rkZwaGJmsQpFS5ZRP3Gk1lgT9ttKtmJ32GEtgagnl8Ug0whEndrdNPeqquCAQb0Wu4JJXovLlRc4=
+	t=1741711430; cv=none; b=hnRetsMfqUxBi07D98YDGj6HP/9NHq1AqkJx4gkNgG47yPsYCKn+J90n3CZSaOgrO6hvqZxOLBH21EMJ9ogfPqEmaZ3my7tRTMWo7WS3jRbDn33Yplev7O4uZ8kOWUBvDZh8xOAEe2cUp+U88TBcgN0LYcQh1PsbTUhXRzFoiqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741711267; c=relaxed/simple;
-	bh=QyJt0OO5pmJH9V2UvRhRXrU2TWNoCtI9OvSlO4HN5o0=;
+	s=arc-20240116; t=1741711430; c=relaxed/simple;
+	bh=9gA/bdnk8ZzHPCFp68QBpPozxpHS5U6govbbmsu7pSY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uIPnq3GDfgUtekrLsfM2Uad0Q45X7LO+JlpBl4a5Euv6MEX88kJAqukXypzib4s0H0jIE2eo1muY1FrGvbbpIVDExLDxoi5dg/yJMbvIuacDBuWoZHnv4nTrcxgF4eZvE8oHN3UusQ4ykGt08GvhH83UIUfjjIKNu8uFGuzWtss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YKNNXU8d; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso26311575e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:41:04 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=oGnM43FRd2p7d9T8OqYm3pjo/3SoZqX4s0W3MaW5HsPr4SiUB/tDT8F4cvp5l1lUDYUQPQYAkn9KYP/UHR3ddsEE9b7Tn7+eVJMZX0VoTyCTyCXB2YmyLBdmDerS0igIzuYtBkFm0wqiIz/82qhaIWuTCp+IIVUpRhODb7CzBHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=EZIC0svS; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2240ff0bd6eso12065955ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:43:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741711263; x=1742316063; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1741711427; x=1742316227; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fk2mxgnNybKLjQhWtJ1SHXhrETin8pYENyUeQqOMkNA=;
-        b=YKNNXU8d7sKjMGUMUhpcBxNUmdr8ic2u+NIbLricFlh9RUrGBAFYjyB9GN7z1jJo00
-         WpdeVkx1GzIonBRa5CWYPPm1FtqKXj61mwsNGgwXStzCWssoMUK0MANo4i6y1IqxeybS
-         tG2Arycx1TVxs410OgP0CY+2cObTMfiwNSnZ5S/+lyG9xvJ/Ogqucn0uEHrgg/zmymqM
-         lwiZXEysBLLErrzP0Ryg7ByCbyX5IasIAT2L2lF/BmdlLkVos6Np/DYv8iQu6NWL1syD
-         jyor18lfvZu8iwE07/o6rYvsfIY21j+/PlAm+/cAYH0KebmpXIKtnSJSEUZW4yNYfgXi
-         xxPQ==
+        bh=qtDPI8Ma8CKYJvSmsJ89yrdXIJa4yOEuJo/99lfQz24=;
+        b=EZIC0svSR6MWnSjckLg68b8g20goY4sbGrmI879M9KlfkGsx/jVTxOpjwehMUbCN5M
+         wqZzTL4IefKG67AOmSFW1sDhaLudOqyHx/Oyv0CFP1o0VrAXIAvSBVsjz7Lc+tuObOZS
+         T49savGL74khGm2lAsJW8lkPUs9tC9M6YUOQzwt0frRQ6z0UxFBzjpC5LNUwLn1BWulE
+         4aT8dcZMfd8Skh6SED5mmWjGLvp2ViPHcDXMwmmkh+i0E77OgzM9+N2Qo+YYWXsYpiAc
+         UdK3Ygc3hpOQGHAEFQ1Wy0BUhZThLDaBXUPv7Vqi+LrCcmF5UdieNjsFhllNvBjjThtt
+         uRGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741711263; x=1742316063;
+        d=1e100.net; s=20230601; t=1741711427; x=1742316227;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fk2mxgnNybKLjQhWtJ1SHXhrETin8pYENyUeQqOMkNA=;
-        b=Fy23I1JBU/XqLThXcZP6D92Okphx6EF7M3rV3lqciccYwpnude67gyk047IMUEQVCt
-         fKyWAs376UY3aBOWcUtVoHyzOQI8SYC7wy+/bjX5eDr6CbP3XiCDMIBf8wVibChli3wj
-         QPF1CyXm2zgIc/vJpRsTZUqIDi2MNj1BVd8Gxku8gU4ZKQy4ZnpYDk7+iOCZwiSSEewp
-         EON4ExPGcnPZKHE2BCWGJd6ci/jPTTMKzL1NkmvUHZisNY4Hr6UySxJVkiy1WORl1Zs2
-         lpyw+OEkXwNoZ0UFsEm2X0phoWnOpNZ8fQz0p3/VqX5CxOuphgNho4CW5U/YNNUPosGl
-         RAuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpAqtlRAGknnApjrHJSan8K50HT+3Bjce2LziUlrZmpAbLVw90ty1VLiMN4uV8IYpk3gCIkxWB4H6TahE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpC52JJMxwZeQ4xltz/h0dhH68oxFUoRq1IrJJAYvyqlgczxNr
-	ASt71cbz5soBDi6zavHacBCIlTajFOgEmBlHJwEAh1E2tsFqkbNPgDfucGGt4XM=
-X-Gm-Gg: ASbGncv/GaCbi2Qk5n5fcl3LM4NYjud2NfczHXPgDdQikn3wY4hmYcV4SWRcmEbdm+0
-	ntHFeDY5ExWyhwktQqlGAo3i6zl/NyQslVakfV3R5n3CWNTJVwkZ9Ynb222uZgwSjf4sgxfucS2
-	6ilfhPaETxdjnQVyrdzNsud81wIocJi8wJH0sHR5uwDl5ZiOpCz8g2P6dqRekiM4kIA/xdpMWIW
-	FETL9G0wsWfsXtXE4jKiw8yk+fOzX098kVoBYYzitLootpteyYpGz5R6fPcetN6+MdmSDE/4Mhz
-	RRZZBbA2amIkNHLp/VWmi2cSYRgxfYgUUU8C8ueI8guR/fwkEhIh
-X-Google-Smtp-Source: AGHT+IE8o/3Q+XaiODgAikjAiV03ym4Bfmrkd/dvbae0xbgZy7IED5uwuHXUUbta0XTP7Ubz90GQ9A==
-X-Received: by 2002:a05:600c:b95:b0:43c:ec97:75db with SMTP id 5b1f17b1804b1-43cec97779fmr130648945e9.11.1741711262812;
-        Tue, 11 Mar 2025 09:41:02 -0700 (PDT)
-Received: from [192.168.1.247] ([145.224.65.43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d073555e5sm16064985e9.4.2025.03.11.09.41.01
+        bh=qtDPI8Ma8CKYJvSmsJ89yrdXIJa4yOEuJo/99lfQz24=;
+        b=jfzWc0yAjDLooSPWZlbMKnGpDc41O0X7RfzqC2rGt+oxKPf4BXxcdKz4k+KwiCDhAc
+         6bXOLfI8uDbtqY/xwo+uGD5NyVfGKJD6hjEvdlM1cDJ5eymeg826UMg9n/RpxWfu0qAl
+         D6da5IEg0bIR/ChIkHy1fd0rYp4usKXLTdLG6FFDHTNhL6allAhFGwti3ctAcLDqLMB0
+         QnyIhtzHoxZiGLSfppVWYkXXRpiqO8apvS3IhM35SuutDnttRybb8cmJ21BI1uxpN1Bl
+         JFKPMYBFUa0ozWunx6Q63NKfkuzVkh4d5YTH9m2J6zwRqW+pgc4DNH5HTc/lE5ZYCw95
+         WQfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSqlf3v7MpAVrBIgtY11BbgqfteCqcP0afMo5saDub2pLrNkgOH4Eaalz2Siu6wpHzo13+VsjJWynJCyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3oO8/E2UZx2MkGKyfqnsiO+3DPKYskUmKrLTPB5x9Itoa+WEC
+	L/Lt3Sy/sBxMbVIv6bb3bi8qgQdkNNCEt7k3S6/wvYEii8QIniqSbrJmi++H0+w=
+X-Gm-Gg: ASbGnctBgaswl9vcpj9SnAK++oY3lCAk4TpMhSm89teNBr7wGIf7iHU0eOqaZrsQ5kN
+	qvyr/ty5EqikfMfB9CwvdOGhE55c7tzPbI0ob8tePMkvKBxpDsZaOEvUS8mtXnWUbGL1psEeJGa
+	Ux+wNgabniUfVD+3ne15fAVByp3gJdWnyO9rGDg0QYyFajOuvRlASdO+15GNHvwc/wd26ZKfmZU
+	ujT765PSujKjdNLqtjsJeRdCJo9CeHIO3m3eZpZ3yS9t+4W693T7imSAXdpuoanHbBeFySMwKO5
+	2b4QHHLCVetLW/KonZfyg+NwOMqE23hE9lU2r4keBmPqCyFQkrGEvYGVEj3TcBprGm4=
+X-Google-Smtp-Source: AGHT+IEN5y7M/lLL/f/eXFIg9hXlsHue3V3G+/HMpNFBFFNQHPhNFW6PBTNRv2DgtDGLsbOAdBBaGg==
+X-Received: by 2002:a17:902:f610:b0:216:30f9:93c5 with SMTP id d9443c01a7336-2259326ed23mr23288955ad.6.1741711427268;
+        Tue, 11 Mar 2025 09:43:47 -0700 (PDT)
+Received: from [10.254.33.33] ([139.177.225.226])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a91be9sm100010845ad.179.2025.03.11.09.43.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 09:41:02 -0700 (PDT)
-Message-ID: <7047e241-95dd-46e5-b573-6ab5982a6a1f@linaro.org>
-Date: Tue, 11 Mar 2025 16:41:00 +0000
+        Tue, 11 Mar 2025 09:43:46 -0700 (PDT)
+Message-ID: <2c8c4cdb-e9b7-40f3-aa83-d82676641162@bytedance.com>
+Date: Wed, 12 Mar 2025 00:43:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,283 +80,172 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] perf list: Collapse similar events across PMUs
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Robin Murphy <robin.murphy@arm.com>, Leo Yan <leo.yan@arm.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250304-james-perf-hybrid-list-v1-0-a363ffac283c@linaro.org>
- <20250304-james-perf-hybrid-list-v1-2-a363ffac283c@linaro.org>
- <CAP-5=fX+aSDLMDL3DMNCQ4tDuhaZPv-L6OgfOso3q5wf7anoGg@mail.gmail.com>
- <12da919e-5674-4b12-a51d-ed767cc0b1ac@linaro.org>
- <CAP-5=fWVw499hZ7WM7A+vUmxALX7M-kYXoEehQkv-fh6qHOoOg@mail.gmail.com>
- <39f7e3ae-d274-4de4-8b8e-bcf1ad6f0932@linaro.org>
- <CAP-5=fU8LWyKrxn==ieO+dOCyvDML5Qnf23K=5bqHdHMvGx-eA@mail.gmail.com>
+Subject: Re: Re: [RFC PATCH 2/2] sched/fair: Do not specialcase SCHED_IDLE
+ cpus in select slowpath
+To: Josh Don <joshdon@google.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Tianchen Ding <dtcccc@linux.alibaba.com>,
+ "open list:SCHEDULER" <linux-kernel@vger.kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
+References: <20250310074044.3656-1-wuyun.abel@bytedance.com>
+ <20250310074044.3656-3-wuyun.abel@bytedance.com>
+ <CABk29Ns9wq+mB5mAfu72gi3RZkNdwzXmkZSq3FQpKkTEH23dgw@mail.gmail.com>
 Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAP-5=fU8LWyKrxn==ieO+dOCyvDML5Qnf23K=5bqHdHMvGx-eA@mail.gmail.com>
+From: Abel Wu <wuyun.abel@bytedance.com>
+In-Reply-To: <CABk29Ns9wq+mB5mAfu72gi3RZkNdwzXmkZSq3FQpKkTEH23dgw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+Hi Josh,
 
-
-On 11/03/2025 3:14 pm, Ian Rogers wrote:
-> On Tue, Mar 11, 2025 at 7:13 AM James Clark <james.clark@linaro.org> wrote:
->>
->>
->>
->> On 07/03/2025 5:35 pm, Ian Rogers wrote:
->>> On Fri, Mar 7, 2025 at 6:08 AM James Clark <james.clark@linaro.org> wrote:
->>>>
->>>>
->>>>
->>>> On 05/03/2025 9:40 pm, Ian Rogers wrote:
->>>>> On Tue, Mar 4, 2025 at 5:50 AM James Clark <james.clark@linaro.org> wrote:
->>>>>>
->>>>>> Instead of showing multiple line items with the same event name and
->>>>>> description, show a single line and concatenate all PMUs that this
->>>>>> event can belong to.
->>>>>>
->>>>>> Don't do it for json output. Machine readable output doesn't need to be
->>>>>> minimized, and changing the "Unit" field to a list type would break
->>>>>> backwards compatibility.
->>>>>>
->>>>>> Before:
->>>>>>     $ perf list -v
->>>>>>     ...
->>>>>>     br_indirect_spec
->>>>>>           [Branch speculatively executed,indirect branch. Unit: armv8_cortex_a53]
->>>>>>     br_indirect_spec
->>>>>>           [Branch speculatively executed,indirect branch. Unit: armv8_cortex_a57]
->>>>>>
->>>>>> After:
->>>>>>
->>>>>>     $ perf list -v
->>>>>>     ...
->>>>>>     br_indirect_spec
->>>>>>           [Branch speculatively executed,indirect branch. Unit: armv8_cortex_a53,armv8_cortex_a57]
->>>>>>
->>>>>> Signed-off-by: James Clark <james.clark@linaro.org>
->>>>>> ---
->>>>>>     tools/perf/builtin-list.c      |  2 ++
->>>>>>     tools/perf/util/pmus.c         | 75 +++++++++++++++++++++++++++++++++++++-----
->>>>>>     tools/perf/util/print-events.h |  1 +
->>>>>>     3 files changed, 70 insertions(+), 8 deletions(-)
->>>>>>
->>>>>> diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
->>>>>> index fed482adb039..aacd7beae2a0 100644
->>>>>> --- a/tools/perf/builtin-list.c
->>>>>> +++ b/tools/perf/builtin-list.c
->>>>>> @@ -516,6 +516,7 @@ int cmd_list(int argc, const char **argv)
->>>>>>                    .print_event = default_print_event,
->>>>>>                    .print_metric = default_print_metric,
->>>>>>                    .skip_duplicate_pmus = default_skip_duplicate_pmus,
->>>>>> +               .collapse_events = true
->>>>>
->>>>> So collapse_events is put in the callbacks but isn't a callback. I
->>>>> think skipping duplicates and collapsing are the same thing, I'd
->>>>> prefer it if there weren't two terms for the same thing. If you prefer
->>>>> collapsing as a name then default_skip_duplicate_pmus can be
->>>>> default_collapse_pmus.
->>>>>
->>>>
->>>> I can use the existing callback and rename it. That does have the effect
->>>> of disabling this behavior in verbose mode which may be useful or may be
->>>> unexpected to some people. But it seems pretty 50/50 so fewer callbacks
->>>> are probably better.
->>>>
->>>>>>            };
->>>>>>            const char *cputype = NULL;
->>>>>>            const char *unit_name = NULL;
->>>>>> @@ -574,6 +575,7 @@ int cmd_list(int argc, const char **argv)
->>>>>>                            .print_event = json_print_event,
->>>>>>                            .print_metric = json_print_metric,
->>>>>>                            .skip_duplicate_pmus = json_skip_duplicate_pmus,
->>>>>> +                       .collapse_events = false
->>>>>>                    };
->>>>>>                    ps = &json_ps;
->>>>>>            } else {
->>>>>> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
->>>>>> index 4d60bac2d2b9..cb1b14ade25b 100644
->>>>>> --- a/tools/perf/util/pmus.c
->>>>>> +++ b/tools/perf/util/pmus.c
->>>>>> @@ -453,17 +453,50 @@ static int cmp_sevent(const void *a, const void *b)
->>>>>>            /* Order by PMU name. */
->>>>>>            if (as->pmu == bs->pmu)
->>>>>>                    return 0;
->>>>>> -       return strcmp(as->pmu_name ?: "", bs->pmu_name ?: "");
->>>>>> +       ret = strcmp(as->pmu_name ?: "", bs->pmu_name ?: "");
->>>>>> +       if (ret)
->>>>>> +               return ret;
->>>>>> +
->>>>>> +       /* Order by remaining displayed fields for purposes of deduplication later */
->>>>>> +       ret = strcmp(as->scale_unit ?: "", bs->scale_unit ?: "");
->>>>>> +       if (ret)
->>>>>> +               return ret;
->>>>>> +       ret = !!as->deprecated - !!bs->deprecated;
->>>>>> +       if (ret)
->>>>>> +               return ret;
->>>>>> +       ret = strcmp(as->desc ?: "", bs->desc ?: "");
->>>>>> +       if (ret)
->>>>>> +               return ret;
->>>>>> +       return strcmp(as->long_desc ?: "", bs->long_desc ?: "");
->>>>>>     }
->>>>>>
->>>>>> -static bool pmu_alias_is_duplicate(struct sevent *a, struct sevent *b)
->>>>>> +enum dup_type {
->>>>>> +       UNIQUE,
->>>>>> +       DUPLICATE,
->>>>>> +       SAME_TEXT
->>>>>> +};
->>>>>> +
->>>>>> +static enum dup_type pmu_alias_duplicate_type(struct sevent *a, struct sevent *b)
->>>>>>     {
->>>>>>            /* Different names -> never duplicates */
->>>>>>            if (strcmp(a->name ?: "//", b->name ?: "//"))
->>>>>> -               return false;
->>>>>> +               return UNIQUE;
->>>>>> +
->>>>>> +       /* Duplicate PMU name and event name -> hide completely */
->>>>>> +       if (strcmp(a->pmu_name, b->pmu_name) == 0)
->>>>>> +               return DUPLICATE;
->>>>>> +
->>>>>> +       /* Any other different display text -> not duplicate */
->>>>>> +       if (strcmp(a->topic ?: "", b->topic ?: "") ||
->>>>>> +           strcmp(a->scale_unit ?: "", b->scale_unit ?: "") ||
->>>>>> +           a->deprecated != b->deprecated ||
->>>>>> +           strcmp(a->desc ?: "", b->desc ?: "") ||
->>>>>> +           strcmp(a->long_desc ?: "", b->long_desc ?: "")) {
->>>>>> +               return UNIQUE;
->>>>>> +       }
->>>>>>
->>>>>> -       /* Don't remove duplicates for different PMUs */
->>>>>> -       return strcmp(a->pmu_name, b->pmu_name) == 0;
->>>>>> +       /* Same display text but different PMU -> collapse */
->>>>>> +       return SAME_TEXT;
->>>>>>     }
->>>>>>
->>>>>>     struct events_callback_state {
->>>>>> @@ -501,6 +534,21 @@ static int perf_pmus__print_pmu_events__callback(void *vstate,
->>>>>>            return 0;
->>>>>>     }
->>>>>>
->>>>>> +static void concat_pmu_names(char *pmu_names, size_t size, const char *a, const char *b)
->>>>>> +{
->>>>>> +       size_t len = strlen(pmu_names);
->>>>>> +       size_t added;
->>>>>> +
->>>>>> +       if (len)
->>>>>> +               added = snprintf(pmu_names + len, size - len, ",%s", b);
->>>>>> +       else
->>>>>> +               added = snprintf(pmu_names, size, "%s,%s", a, b);
->>>>>> +
->>>>>> +       /* Truncate with ... */
->>>>>> +       if (added > 0 && added + len >= size)
->>>>>> +               sprintf(pmu_names + size - 4, "...");
->>>>>> +}
->>>>>> +
->>>>>>     void perf_pmus__print_pmu_events(const struct print_callbacks *print_cb, void *print_state)
->>>>>>     {
->>>>>>            struct perf_pmu *pmu;
->>>>>> @@ -510,6 +558,7 @@ void perf_pmus__print_pmu_events(const struct print_callbacks *print_cb, void *p
->>>>>>            struct events_callback_state state;
->>>>>>            bool skip_duplicate_pmus = print_cb->skip_duplicate_pmus(print_state);
->>>>>>            struct perf_pmu *(*scan_fn)(struct perf_pmu *);
->>>>>> +       char pmu_names[128] = {0};
->>>>>>
->>>>>>            if (skip_duplicate_pmus)
->>>>>>                    scan_fn = perf_pmus__scan_skip_duplicates;
->>>>>> @@ -539,12 +588,21 @@ void perf_pmus__print_pmu_events(const struct print_callbacks *print_cb, void *p
->>>>>>            qsort(aliases, len, sizeof(struct sevent), cmp_sevent);
->>>>>>            for (int j = 0; j < len; j++) {
->>>>>>                    /* Skip duplicates */
->>>>>> -               if (j < len - 1 && pmu_alias_is_duplicate(&aliases[j], &aliases[j + 1]))
->>>>>> -                       goto free;
->>>>>> +               if (j < len - 1) {
->>>>>> +                       enum dup_type dt = pmu_alias_duplicate_type(&aliases[j], &aliases[j + 1]);
->>>>>> +
->>>>>> +                       if (dt == DUPLICATE) {
->>>>>> +                               goto free;
->>>>>> +                       } else if (print_cb->collapse_events && dt == SAME_TEXT) {
->>>>>> +                               concat_pmu_names(pmu_names, sizeof(pmu_names),
->>>>>> +                                                aliases[j].pmu_name, aliases[j+1].pmu_name);
->>>>>> +                               goto free;
->>>>>> +                       }
->>>>>> +               }
->>>>>
->>>>> I think a label called 'free' is a little unfortunate given the
->>>>> function called free.
->>>>> When I did things with sevent I was bringing over previous `perf list`
->>>>> code mainly so that the perf list output before and after the changes
->>>>> was identical. I wonder if this logic would be better placed in the
->>>>> callback like default_print_event which already maintains state
->>>>> (last_topic) to optionally print different things. This may better
->>>>> encapsulate the behavior rather than the logic being in the PMU code.
->>>>>
->>>>
->>>> Yeah I can have a look at putting it in one of the callbacks. But in the
->>>> end builtin-list.c is the only user of perf_pmus__print_pmu_events()
->>>> anyway so makes you wonder if the whole thing can be moved to
->>>> builtin-list and open coded without the callbackyness.
->>>
->>> I wanted to hide some of the innards of pmus, so I think that's the
->>> reason it is as it is. The whole `sevent` was pre-existing and
->>> maintained so that the output was the same.
->>>
->>
->> Looking at this a bit more it is possible to move all of
->> perf_pmus__print_pmu_events() (including its dependencies and perf list
->> specifics) out of pmus.c into print-events.c without exposing any new
->> innards of pmus. Only struct pmu_event_info would be used, but that's
->> not private and is already used elsewhere.
->>
->> It's difficult to do this change only in the print_event callback
->> because it relies on having the _next_ event, not the previous event.
->> We're already tracking last_topic, and if we start passing all the
->> next_* items too it gets a bit unmanageable.
->>
->> If it's all moved then doing display specific processing across the
->> whole list becomes quite easy.
+On 3/11/25 6:38 AM, Josh Don wrote:
+> Thanks Abel,
 > 
-> I'm not sure I follow all of this. If things can be moved to a more
-> obvious location, printing code in print-events.c, and we maintain
-> encapsulation then that sounds great to me.
-
-I'll give it a go, I think I can come up with something.
-
-> I'm not clear on the next event issue.
-
-For example, pmu_alias_is_duplicate() needs the current and next event, 
-so it's not easy to move that behavior to builtin-list.c. And my change 
-to collapse similar events across PMUs also requires the next rather 
-than previous event.
-
-> My hope with the print routines in builtin-list.c was
-> that anyone could come along and add another for whatever rendering
-> took their fancy. I didn't want it to be like the logic in
-> stat-display.c, where there are multiple levels of call backs, global
-> state, odd things like passing NULL meaning display column headers,
-> and the whole thing being a confusing rats nest where a change nearly
-> always ripples through and breaks something somewhere. Particularly
-> compare the json output in stat-display.c and builtin-list.c, my hope
-> was that builtin-list.c would be the model for reimplementing the
-> stat-display.c one. Others may have different opinions.
+>> @@ -7481,12 +7481,13 @@ sched_balance_find_dst_group_cpu(struct sched_group *group, struct task_struct *
+>>                                  latest_idle_timestamp = rq->idle_stamp;
+>>                                  shallowest_idle_cpu = i;
+>>                          }
+>> -               } else if (shallowest_idle_cpu == -1 && si_cpu == -1) {
+>> -                       if (sched_idle_cpu(i)) {
+>> -                               si_cpu = i;
+>> -                               continue;
+>> -                       }
+>> -
+>> +               } else if (shallowest_idle_cpu == -1) {
+>> +                       /*
+>> +                        * The SCHED_IDLE cpus do not necessarily means anything
+>> +                        * to @p due to the cgroup hierarchical behavior. But it
+>> +                        * is almost certain that the wakee will get better served
+>> +                        * if the cpu is less loaded.
+>> +                        */
+>>                          load = cpu_load(cpu_rq(i));
+>>                          if (load < min_load) {
+>>                                  min_load = load;
 > 
-> Thanks,
-> Ian
+> This seems reasonable due to the case you describe. However, I'm
+> wondering if you considered any heuristics here to help identify when
+> a target cpu should really be considered sched_idle from the
+> perspective of the incoming task. For example, in your cgroup
+> hierarchy, if you have a cpu currently only running tasks in your
+> besteffort container (and all cpus in the system are busy running
+> something), then that cpu should be considered as a good target for a
+> waking task in the "guaranteed" container, and not a good target for a
+> waking task in the "containerd" container.  A simple way to do this
 
-Makes sense. If I make pmus.c return a list then anyone can loop over 
-the list and do whatever display they want. It removes the need for the 
-callback but does require that the consumer know the type of the list 
-item. It could be struct sevent or even drop that and directly use 
-struct pmu_event_info.
+Yes, it actually did cost me several days trying hard to figure out
+whether there is a proper way to achieve what you're suggesting.
 
-Having the whole list gives you a lot more flexibility than just the 
-small window that the print event callback gives you.
 
+Solution A
+----------
+
+Mark all the hierarchically idle task_groups by assigning a unique
+prime, and define a tree walk starts from @n to root that contains
+all the preemptable nodes.
+
+	struct task_group {
+		/*
+		 * Set to a unique prime if at least 1 ancestor is idle,
+		 * otherwise set to 1.
+		 */
+		u64	prime;
+		u64	mul;
+	};
+
+	/* Called by sched_group_set_idle() */
+	static void calculate_mul(struct task_group *tg)
+	{
+		struct task_group *curr, *iter;
+
+		lockdep_assert_held(&shares_mutex);
+		for (curr = tg; curr->parent; curr = curr->parent) {
+			list_for_each_entry(iter, &curr->parent->children, siblings) {
+				/* Can't preempt non-idle siblings */
+				if (!iter->idle)
+					continue;
+				/*
+				 * For each node in the subtree rooted at @iter do:
+				 *	tg->mul *= node->prime;
+				 */
+				traverse_subtree(tg, iter);
+			}
+		}
+	}
+
+	int sched_idle_cpu(int cpu, struct task_struct *p)
+	{
+		/* rq::cached_mul caches rq->donor's tg::mul */
+		return p->sched_task_group.mul % cpu_rq(cpu)->cached_mul == 0;
+	}
+
+With this we even can drop find_matching_se(), since it's quite easy
+to know whether or not a sched_entity can preempt another. But sadly
+task_group::mul will quickly get overflowed.
+
+
+Solution B
+----------
+
+Since we do not require 100% accurate, solution A can be shifted to
+using bloom filters.
+
+	struct task_group {
+		u64	key; /* A random number used for hashing */
+		u64	filter;
+	};
+
+	/* Called by sched_group_set_idle() */
+	static void calculate_filter(struct task_group *tg)
+	{
+		struct task_group *curr, *iter;
+
+		lockdep_assert_held(&shares_mutex);
+		for (curr = tg; curr->parent; curr = curr->parent) {
+			list_for_each_entry(iter, &curr->parent->children, siblings) {
+				/* Can't preempt non-idle siblings */
+				if (!iter->idle)
+					continue;
+				/*
+				 * For each node in the subtree rooted at @iter do:
+				 * 	set_bit(bloom_hash(node->key), &tg->filter);
+				 */
+				traverse_subtree(tg, iter);
+			}
+		}
+	}
+
+	int sched_idle_cpu(int cpu, struct task_struct *p)
+	{
+		u64 filter = p->sched_task_group.filter;
+		u64 cached = cpu_rq(cpu)->cached_filter;
+
+		return filter & cached == cached;
+	}
+
+False positives are possible, but the possibility can be reduced by
+optimizing blooming setup.
+
+I chose the simplest way for now to workaround the issue we encountered,
+while I am still trying to do something to get rid of sched_idle_cpu().
+Thoughts?
+
+> would be to do a find_matching_se on the incoming task and the current
+> on_cpu task. That does have a drawback of cgroup pointer chasing in a
+> hot wakeup path, so I don't love it.
+
+Neither do I. But if we go through find_matching_se(), I think we need
+this rq locked.
+
+> 
+> In any case, I'm fine with the change as-is, mostly curious if you
+> gave any additional thought to the case mentioned above.
+
+Thanks!
+	Abel
 
 
