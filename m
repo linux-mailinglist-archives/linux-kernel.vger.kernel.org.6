@@ -1,83 +1,108 @@
-Return-Path: <linux-kernel+bounces-556725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96274A5CDFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:35:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F98A5CDFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:36:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3623D3B3C0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:34:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4B591773F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F5E262D2F;
-	Tue, 11 Mar 2025 18:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F602263C72;
+	Tue, 11 Mar 2025 18:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lNtft3sY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b52VM4lN"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7AC1DE3CE;
-	Tue, 11 Mar 2025 18:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6A11DE3CE;
+	Tue, 11 Mar 2025 18:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741718101; cv=none; b=T4dH9c70s7kJCXKPLXUYb457pBfPNTCDnJLfGNLIxdu8O1KONvortzOFJQ91OEEURLToRo9VZIAYeA10B30dlGgmXYJ9JYcnO9gYY48U6DBFZU6AHrRxCBQj+88BS5NWsjSmXLuD7bUzu6GSnh0jN3MmfEuIE8M2OQbNTwQOdXc=
+	t=1741718163; cv=none; b=rB4E4iTj8PfZkC7IUKvoWOPLU7Y4JFVAALnbZLhWlMNxvF9MUNeMgZg3uNinKn4Gg83Qm4aM8x674GjqED3/hIm2Pm6esSNe+Kgwvhw5nTEsIeUUHkYKGFzYuG/LM1hgDTwXHtRZuShuDjnnO7jyDHuqMc34yd0YRtHpLkcFRFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741718101; c=relaxed/simple;
-	bh=sVHNbdJnau3K6ieK5h764cFOUI/8Mm9xtddYsKbK+KQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JfGboSJLdaYs2Wc223s60N/N6iepRYKYqcdebDB9Q8+sAU3uPjjnaLvGLt5VOL8u5x0Tj7BdcTFz8g24/mhvFP2oGYtA7gCiMWKHIk/HrRvxsdFXxojoUTR+A6Zk1wv/QPzjOzMoTextf9fTiISFFSq3nQ75kk9fZjAFseadjTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lNtft3sY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71747C4CEE9;
-	Tue, 11 Mar 2025 18:35:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741718100;
-	bh=sVHNbdJnau3K6ieK5h764cFOUI/8Mm9xtddYsKbK+KQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lNtft3sY19IiVuoDzWfgWESJrNn8CH/auzECap2rnCrOyzG33cEo99oc2alPIEy/f
-	 cfy5T3Uj0QvfOnC9Z8Z7W61KLNXyeCfSdqIICG4pUe/lynRsu/ubZghRKuRRf2g/v5
-	 VNPXnEL/LCImE+wpS4xk1EZps/FDDPFe2bezUc5M=
-Date: Tue, 11 Mar 2025 14:34:56 -0400
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Antonin Godard <antonin.godard@bootlin.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: arm: fsl: Add VAR-SOM-MX6UL SoM and
- Concerto board
-Message-ID: <20250311-omniscient-fiery-bison-8e7feb@lemur>
-References: <20250310-varsom6ul-concerto-dts-v3-0-551e60713523@bootlin.com>
- <20250310-varsom6ul-concerto-dts-v3-1-551e60713523@bootlin.com>
- <63f8aa7d-fcd4-450f-b3a1-44886a29fc7e@kernel.org>
- <cd2f3c97-53bb-42f5-a3cd-4385bfda5dc7@kernel.org>
- <D8CQAAKOZ1O5.8JVESQPJSSM8@bootlin.com>
+	s=arc-20240116; t=1741718163; c=relaxed/simple;
+	bh=mbgW0kUEsZezmUj5Gi6W94Hy08T0mYNvtx4ZiLvWeKc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fB4w14iO1vhtw38x4e/R35HQpmXhQi0aYL7JVQzkB7hIAtQSy/TaBIeljl2hg1+U1cI+Br3HyLREVOjQ+SaVpiEt5Eu9gtynQLwvt2V5keZ5+3Yie3fOX9A9SR0EP6xOXbq8q1W8g26MtPKY8VJ0DrMe4N5DeHNM2xq6jrsdnHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b52VM4lN; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2f74e6c6cbcso1524510a91.2;
+        Tue, 11 Mar 2025 11:36:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741718161; x=1742322961; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mbgW0kUEsZezmUj5Gi6W94Hy08T0mYNvtx4ZiLvWeKc=;
+        b=b52VM4lNvo3IwcuSCyd2QkG6cPa/wgW8eIacQ65XrWec36+DESRBtqTbv8UMJ973i6
+         6cUYXZ2JSXk/9QdO+LqMJwDHvH/qT1Sov9LsEGITZemxp3+mFeTRudI8psIw/jBbZaTB
+         Vrh2THKK0PG224L7CoBN8hEqcbNlX1gPey4ylYCj3POhNffJLBRcOxljiSWO2rvjwlHE
+         8MrwGum3gCzsT6u8VXWpiOvDtGezfBWzV1ljxVt6jkbMzfm+mrlZe5K7grlOooZSttaR
+         TSapj4KND7l6jIoznjXxHGjyZDf8vSpN7MCZIzmYYqlNNQxrEI4ckjaQ+SpWlHWFT8ei
+         /0OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741718161; x=1742322961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mbgW0kUEsZezmUj5Gi6W94Hy08T0mYNvtx4ZiLvWeKc=;
+        b=OU4xXiJ7Nv75JQA5l727u2Zqvzu1f8leyJWvpyTuM5tqmzCM5wwFlgynY1hSCycZpa
+         /Ug0m2rzKHaLuovldMvKWRlv3RtuVN9NVG1dAHymyB7pnJ849126siMk+5m2GnhXKMUy
+         WhlKWfxF1NF2Yhc5TkPh9qGLlbnyiLzCaT2HUuTFm5D2AnfJVmpD/wzxpoTnLNNF6yHl
+         QFc2uk+qsgPfU8FfHeniZINNw93HTMXwFeuNJZ56ok/h5xrEVWlrnjeehnAOnmYj5G+C
+         SB8hSNaPfqJJ1+vw2hCZwgcTD+E7HLy2oxWfl3GYKbJczpvRsXjKZWSagmBkCfyojA0B
+         qm8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVKXzGuV/h5e9AMqG0NrZOoQYRnIYTGyoKN0Sa/smX3h3TeWwlinBTDB9PEfezElzi/tnGsp/X0rVlfTgs=@vger.kernel.org, AJvYcCW982lSqiXfcDHPjedoziTcE6RqQfFLl5nwfLhADWSi6SQ+bfuDSyEX/FEq3EXewmkxd1UoiqLeYnm8S4Q2VoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhBt2/QYPynAaD+Kgrqc1Jr/IhrOMpnyVcppkjvNBt1IFE9gA/
+	PiVtp29MzS/TWJNWXTciYyLLrLKk2ZZ8hLxSFBRMOpcWfYfCm6KWwIsql2cmEb3hQHDbtIOWIOV
+	hEl6IjfEYe7kMkiKXUarD9Q0QjhQCXB8Zew8=
+X-Gm-Gg: ASbGncvXUYTRtV4E5XASoSY6EUqeeb61Grm/rezZGLnritN9K+7tcZ9vSl6ioajvfMR
+	fJz0SNUKIzpS+yPzYE/4JxK01zP0UeuWr7gXF5chxWMvUCXauvhPT2VErplkiSAJh31BnlQ5ein
+	WwEStc8FdSqn4RFu/AaBxtdq8tLQ==
+X-Google-Smtp-Source: AGHT+IH2cmOQn/pJuzKnwPkPIwdfjpLEtIQAgPQbajD24xzlPRIR8bojQrzEWciYOytCML/zIjTHthACjDXzOuP0bg4=
+X-Received: by 2002:a17:90b:224d:b0:2ff:4e90:3c47 with SMTP id
+ 98e67ed59e1d1-300ff897fd9mr2311534a91.4.1741718160973; Tue, 11 Mar 2025
+ 11:36:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <D8CQAAKOZ1O5.8JVESQPJSSM8@bootlin.com>
+References: <20250307110821.1703422-1-abdiel.janulgue@gmail.com>
+ <nxaaNW1XIbhf7dSf8aRLVF5Se-0maF6BhX8GaUXlsOL-QOste8OMQxtmhYe_BYI6FYFEMeHEzy1s4OEy7PdGKw==@protonmail.internalid>
+ <20250307110821.1703422-5-abdiel.janulgue@gmail.com> <877c5038i1.fsf@kernel.org>
+ <902d6f21-a6c9-4776-9e55-26f089acd0da@gmail.com>
+In-Reply-To: <902d6f21-a6c9-4776-9e55-26f089acd0da@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 11 Mar 2025 19:35:48 +0100
+X-Gm-Features: AQ5f1Jr5sFbT-pH3JLPyk4NOyAg6b8WWNgBaCLmj8KNaO5CgUCk4fq4OzPnifXc
+Message-ID: <CANiq72njoQbMrBioohDQaUHixLa4u+1PKpQCoDPWTw0X5EhmAw@mail.gmail.com>
+Subject: Re: [PATCH v13 4/7] rust: device: add dma addressing capabilities
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, rust-for-linux@vger.kernel.org, 
+	daniel.almeida@collabora.com, dakr@kernel.org, robin.murphy@arm.com, 
+	aliceryhl@google.com, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Trevor Gross <tmgross@umich.edu>, 
+	Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org, 
+	Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com, 
+	iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 05:31:32PM +0100, Antonin Godard wrote:
-> > And now I noticed you used b4, so I really do not get how the tags can
-> > be missing here. :/
-> 
-> Sorry, that's totally my fault here, I forgot to run 'b4 trailers -u' before
-> sending... :/ And I don't think it's part of the prep checks?
+On Tue, Mar 11, 2025 at 6:45=E2=80=AFPM Abdiel Janulgue
+<abdiel.janulgue@gmail.com> wrote:
+>
+> This already uses `Error::from_errno`?
 
-Mostly, because there's no clear picture of how this would work reliably. All
-other checks are on a "ran since modifications to the series" basis, but this
-one would have to be time-based.
+Maybe Andreas meant `to_result`?
 
-Should it check if the trailer updates have been run in the past XX minutes
-(and how long should that XX be?).
-
-
--K
+Cheers,
+Miguel
 
