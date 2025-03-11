@@ -1,78 +1,160 @@
-Return-Path: <linux-kernel+bounces-555759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D4EA5BC70
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:39:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34EDAA5BC75
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:41:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9517C1713AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:39:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30CB67A9538
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348CA22B8D9;
-	Tue, 11 Mar 2025 09:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C75E22D7A3;
+	Tue, 11 Mar 2025 09:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QcAzJZM6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SsJLQwkg"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B3C1684AC;
-	Tue, 11 Mar 2025 09:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE0B22A819
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741685943; cv=none; b=iMZ8WTxDFYJhsqFqQb3t2zl21ZnrKUP4JJzQp6VIV+9zbWrTYKobyTm/twSkB1jDknuE6Iiq7m6Yy1MEMMAj+lhHQMcJhhHw/XPV0s+4KQNZxXQNy6sGGrmIWH8gvfZoBBwA/m7cMlEsix7ZHizKYnvIxKZjgewrVoK74nIsJks=
+	t=1741686069; cv=none; b=SRpOj1CzbnnBV+dsdfAgldIwOgX6hc1XSvHkDNjLAaMzUTn998h+P7UglcHcKZiwMK09a7oJovAvxcONMxTNCdhCr28ziFKE3A5EDn3CiAqAagqU1hWcchDmcaceUioULJcT+ZywBbcMbnxvAaWDB/YobnFyw6xc7/A1ztVBQP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741685943; c=relaxed/simple;
-	bh=gRg/q8twr+YTzW4cUcFF5SHIADqji6e2NwvbHE9FGlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hqTcolmzPOdEBI2lsUYr7LY8MlFQLama2xE4X0bUmwkn+g5Oh7huMqabcocSgEQRhrD/OSSoI8xh8al3rVC8JSCCVuxN0PzjUHmgFB2C2SxQQUEfhONCYWOPw2o4EosptKqwuvwYnRDJd3juTbh2wDJwnnHNtPZ2MPdkaMic2Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QcAzJZM6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8EC0C4CEEB;
-	Tue, 11 Mar 2025 09:39:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741685943;
-	bh=gRg/q8twr+YTzW4cUcFF5SHIADqji6e2NwvbHE9FGlY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QcAzJZM6aOsnUyIZ5c4HCXWZIjfLMqv20qbfNM/zp4tW6quk+v3Al10YqW/5MkVXH
-	 HkafMEQ7Twu86uDAkvs50YSQdvE8FDO4Px01EsdPD8BKWjVirU0708s337gDIAWwb3
-	 9G1ef2DJRTz0+1Imymb83DVDWPNKuPpKcgo2x5S3V/jqpLJ42+Q6S4Tjuqd7r4Cn6U
-	 QY1HRQ5BejSs91Sdl41PsonAwC6VYA7OBP7ajgYbpc58nTKj7VbCnEcniyo27F7YFX
-	 0FK3wAJso8t4KBRp7k4lqkQNnJ4vklb/tG3a4qUoKNpDMAPUWmdK7De+UmpWwkK4HC
-	 KibIqj/Pxlpdw==
-Date: Tue, 11 Mar 2025 11:38:59 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the tpmdd tree
-Message-ID: <Z9AEs_VgFBrl9WS9@kernel.org>
-References: <20250311081120.499c3326@canb.auug.org.au>
+	s=arc-20240116; t=1741686069; c=relaxed/simple;
+	bh=6491brca1dhhRqh+Gmo02QI6HQyhg1OUaBUY0ywpbFk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=LSgjLtrMSBem7klm1TdiBzppqzlc98L5z1lhCSPKBWGe088fK7NrTewKpFsmDnFup2bEsv50rH+f0LRoipzQ2gG9zEW9CkgBd77k9pDZmzl6vpgNB/b7/UPs0gTYwbzeGc+dKe0Mc1ET8sPXlYVhZ6F8OFiQ7/N7HLwZ11EQihA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SsJLQwkg; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B3kS8V002310;
+	Tue, 11 Mar 2025 09:40:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=6I1b0T
+	Cf0861eUg0j1bG0JIXQ0cQRlMRhcps9J6sxtY=; b=SsJLQwkgvh8isfsMPCQHrt
+	hDZid+Nr+rEUHXY7rcMrGVcAZce1RrwlC3mQ20PZIWKkLwZW9dYcgfE/DVTYKaa8
+	qoPxR/Q2vYDlSRf6RxTC4iCjYzkbjqXBy0s1rJEsECRUy4+VWnol4NpIQ2PWOBTZ
+	fxDUXE94IEEnd3ZxJj9kEz8ojwtkwCjgk4sH3c3SqVf3P7tgC4IrzaL0Ccf4f3kW
+	BpM6++k4Ny0+IUrzGT2n4SPqHxZbHtyc0Fo6Q2ZFkJAJQiacUdPqwxMyHMUyP15T
+	CRy06biemw/FqjBFisEXtQz9Q7aC81Vx7Oqr4YWkU1inZv5QG1Wwe+P9taSQJV2g
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45adjb1nnh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 09:40:51 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52B7Z4e1014483;
+	Tue, 11 Mar 2025 09:40:50 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4592ekb5ny-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 09:40:50 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52B9eoRv65470974
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 09:40:50 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 07C765805E;
+	Tue, 11 Mar 2025 09:40:50 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3347458056;
+	Tue, 11 Mar 2025 09:40:48 +0000 (GMT)
+Received: from [9.204.206.207] (unknown [9.204.206.207])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 11 Mar 2025 09:40:47 +0000 (GMT)
+Message-ID: <601912e0-e257-4f3f-9c41-6d957d42b746@linux.ibm.com>
+Date: Tue, 11 Mar 2025 15:10:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311081120.499c3326@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next-20250307] Build Failure
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>
+References: <70ba4e80-53c4-4583-82f3-2851e0829aa6@linux.ibm.com>
+ <5cd65d1f-37ea-4051-82ea-e6879bfc288a@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <5cd65d1f-37ea-4051-82ea-e6879bfc288a@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: QufTZr0CAMkhLyVmBox5kbEIR-2L574Q
+X-Proofpoint-GUID: QufTZr0CAMkhLyVmBox5kbEIR-2L574Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_01,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0 suspectscore=0
+ adultscore=0 phishscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503110064
 
-On Tue, Mar 11, 2025 at 08:11:20AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   e2a88fcd249c ("tpm: Lazily flush auth session when getting random data")
-> 
-> is missing a Signed-off-by from its committer.
 
-Oops, sorry. I fixed it up.
 
+On 3/11/25 2:17 PM, Madhavan Srinivasan wrote:
 > 
-> -- 
-> Cheers,
-> Stephen Rothwell
+> 
+> On 3/9/25 6:08 PM, Venkat Rao Bagalkote wrote:
+>> Greetings!!,
+>>
+>> I see linux-next-20250307 fails to build on IBM Power9 and Power10 servers.
+>>
+>>
+>> Errors:
+>>
+>> In file included from ^[[01m^[[K<command-line>^[[m^[[K:
+>> ^[[01m^[[K./usr/include/cxl/features.h:11:10:^[[m^[[K ^[[01;31m^[[Kfatal error: ^[[m^[[Kuuid/uuid.h: No such file or directory
+>>    11 | #include ^[[01;31m^[[K<uuid/uuid.h>^[[m^[[K
+>>       |          ^[[01;31m^[[K^~~~~~~~~~~~~^[[m^[[K
+>> compilation terminated.
 
-BR, Jarkko
+This is new report, needs to debug 
+Fixes i was pointing out is for the objtool errors.
+
+Maddy
+
+
+>> make[4]: *** [usr/include/Makefile:85: usr/include/cxl/features.hdrtest] Error 1
+>> make[3]: *** [scripts/Makefile.build:461: usr/include] Error 2
+>> make[2]: *** [scripts/Makefile.build:461: usr] Error 2
+>> make[2]: *** Waiting for unfinished jobs....
+>> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
+>> arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: unannotated intra-function call
+>> arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: intra_function_call not a direct call
+>> make[1]: *** [/home/linux_src/linux/Makefile:1997: .] Error 2
+>> make: *** [Makefile:251: __sub-make] Error 2
+>>
+>> Please add below tag, if you happen to fix this issue.
+>>
+> 
+> Fixes has been posted to handle these errors 
+> 
+> https://patchwork.ozlabs.org/project/linuxppc-dev/patch/88876fb4e412203452e57d1037a1341cf15ccc7b.1741128981.git.christophe.leroy@csgroup.eu/
+> https://patchwork.ozlabs.org/project/linuxppc-dev/patch/7aa7eb73fe6bc95ac210510e22394ca0ae227b69.1741128786.git.christophe.leroy@csgroup.eu/
+> 
+> and these are already part of powerpc/next-test, will be moved to powerpc/next soon
+> 
+> Maddy
+> 
+>> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+>>
+>>
+>> Regards,
+>>
+>> Venkat.
+>>
+>>
+> 
+> 
+
 
