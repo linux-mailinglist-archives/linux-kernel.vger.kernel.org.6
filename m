@@ -1,80 +1,133 @@
-Return-Path: <linux-kernel+bounces-555792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A20BA5BCDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:54:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F75EA5BCD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:54:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1BE53B3D4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:53:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4298165DC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD922356A3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408BC23535A;
 	Tue, 11 Mar 2025 09:53:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxiyeziF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B9922DFAD;
-	Tue, 11 Mar 2025 09:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A5D22F14C;
+	Tue, 11 Mar 2025 09:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741686786; cv=none; b=IVpZWYPGlOiZOYYQerEp00HPJ/TruTxPgUujehP8uQaSvh1M6OJ3dVAxd+V6KgNnD8E//SijrSwYmVRM+24CUVtzaNOH63EsYEkoCy3FeuawznAumvW0D1kqt8/QKXqocT38+T289JagYEPcwwuyjPb9Ebz4e5bmTQYzhfFgGIU=
+	t=1741686785; cv=none; b=dVwY7cVP2WHkiTyjc3GUATuo38ODYBUupZcwfiLqDc9DGL126dhqgSQzKtg0GKALs3NvZq4TPxmVJEO7jdU6WXx6GjXd+gReKRfrCnD4Cmd/Ee4ON0XAwaFlCyWBvhX6Q40BKr1pjGaA/1V7tqoG2uTCHd5827UbQPVLekFRYtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741686786; c=relaxed/simple;
-	bh=XlRIUEmg7ePrZSczJQNPWZA2VCpkNf/KZaqoOHLetlY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GRlrmPguR51urlK9HQQzrH7RlHYyS7Qp5s625voHJSRNE7FG4C4mWPetMT7zrEmAsx2rHwmy3erj84IZB+4gQLB6/+T/TirUEuPEJ4/ozCDAJH0nasfym0lEUrLmMbPujAmnb53TXBZSpNTfHqRTjVxxI112sGjzj2qKHz9OPFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZBpqT4TzMz6J6Bc;
-	Tue, 11 Mar 2025 17:48:37 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 959FD1404FC;
-	Tue, 11 Mar 2025 17:53:02 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Mar
- 2025 10:53:01 +0100
-Date: Tue, 11 Mar 2025 09:52:59 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rob Herring (Arm)"
-	<robh@kernel.org>, Markus Elfring <elfring@users.sourceforge.net>, "Jakob
- Riepler" <jakob+lkml@paranoidlabs.org>, Heikki Krogerus
-	<heikki.krogerus@linux.intel.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>, Daniel Scally <djrscally@gmail.com>, "Sakari
- Ailus" <sakari.ailus@linux.intel.com>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Lee Jones
-	<lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Matti Vaittinen
-	<mazziesaccount@gmail.com>, Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v1 2/4] leds: pwm-multicolor: Use
- fwnode_get_child_node_count()
-Message-ID: <20250311095259.000068d2@huawei.com>
-In-Reply-To: <20250310150835.3139322-3-andriy.shevchenko@linux.intel.com>
-References: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
-	<20250310150835.3139322-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741686785; c=relaxed/simple;
+	bh=puyoyj48u72UZ6m1NRBLfHoQqzns49w+qNQn7nb7V7A=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uvDo2UAC+tsWDC8zrtBGh/Hgc6LGJLBC9gM/ykCL8KocuWRodzLzhKbIY7T+aDYYzh819NjC4NJkAcdJ0yrvbGZj8GiqcUWdoj95vt8CmESWnWmLj38Rj91oifbMbNfRgrCRK6p973OEeLlnpxNJi5CsjeW0ZtyaFuKfyVMkoLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxiyeziF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10EF8C4CEE9;
+	Tue, 11 Mar 2025 09:53:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741686785;
+	bh=puyoyj48u72UZ6m1NRBLfHoQqzns49w+qNQn7nb7V7A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uxiyeziFlgVTAxJ6UMoTvU3+3gRs1QGJSXs6u5p0kDCEPxJY07V6a7UHcZmc3HLWR
+	 o0LvSkRs8Oc7SFB9DMX4djmb2CfxJhylWnn3Ysng8cHHwxdq6Hj4EDPcvWBBZiLL46
+	 5/JL5ou2ooqHiVxWy+h3LcnAlnDwVwCgmspobVSOfY3szjvn3YzIJ2bfcNZD+S05NF
+	 aNEYAds7LJjFrnfrLdEvO9eJyjJ02sNieybvoub7Van/yBEid4KKy6Q1FW8Q1DUTpq
+	 1av0JFnFShWfrj2Qm6QOrs77RpRomopLdoTiEsa+9gMte7GSleULOyYdW+rhCNLJpP
+	 cwNusTVGHtFKA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1trwIJ-00CTlY-4o;
+	Tue, 11 Mar 2025 09:53:03 +0000
+Date: Tue, 11 Mar 2025 09:53:02 +0000
+Message-ID: <86v7sfopvl.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Zhenyu Ye <yezhenyu2@huawei.com>
+Cc: <yuzenghui@huawei.com>,
+	<will@kernel.org>,
+	<oliver.upton@linux.dev>,
+	<catalin.marinas@arm.com>,
+	<joey.gouly@arm.com>,
+	<linux-kernel@vger.kernel.org>,
+	<xiexiangyou@huawei.com>,
+	<zhengchuan@huawei.com>,
+	<wangzhou1@hisilicon.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<kvm@vger.kernel.org>,
+	<kvmarm@lists.linux.dev>
+Subject: Re: [PATCH v1 5/5] arm64/config: add config to control whether enable HDBSS feature
+In-Reply-To: <20250311040321.1460-6-yezhenyu2@huawei.com>
+References: <20250311040321.1460-1-yezhenyu2@huawei.com>
+	<20250311040321.1460-6-yezhenyu2@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- frapeml500008.china.huawei.com (7.182.85.71)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: yezhenyu2@huawei.com, yuzenghui@huawei.com, will@kernel.org, oliver.upton@linux.dev, catalin.marinas@arm.com, joey.gouly@arm.com, linux-kernel@vger.kernel.org, xiexiangyou@huawei.com, zhengchuan@huawei.com, wangzhou1@hisilicon.com, linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, 10 Mar 2025 16:54:52 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+On Tue, 11 Mar 2025 04:03:21 +0000,
+Zhenyu Ye <yezhenyu2@huawei.com> wrote:
+>=20
+> From: eillon <yezhenyu2@huawei.com>
+>=20
+> The HDBSS feature introduces new assembly registers
+> (HDBSSBR_EL2 and HDBSSPROD_EL2), which depends on the armv9.5-a
+> compilation support. So add ARM64_HDBSS config to control whether
+> enable the HDBSS feature.
+>=20
+> Signed-off-by: eillon <yezhenyu2@huawei.com>
+> ---
+>  arch/arm64/Kconfig                  | 19 +++++++++++++++++++
+>  arch/arm64/Makefile                 |  4 +++-
+>  arch/arm64/include/asm/cpufeature.h |  3 +++
+>  3 files changed, 25 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 940343beb3d4..3458261eb14b 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -2237,6 +2237,25 @@ config ARM64_GCS
+> =20
+>  endmenu # "v9.4 architectural features"
+> =20
+> +menu "ARMv9.5 architectural features"
+> +
+> +config ARM64_HDBSS
+> +	bool "Enable support for Hardware Dirty state tracking Structure (HDBSS=
+)"
+> +	default y
+> +	depends on AS_HAS_ARMV9_5
+> +	help
+> +	  Hardware Dirty state tracking Structure(HDBSS) enhances tracking
+> +	  translation table descriptors=E2=80=99 dirty state to reduce the cost=
+ of
+> +	  surveying for dirtied granules.
+> +
+> +	  The feature introduces new assembly registers (HDBSSBR_EL2 and
+> +	  HDBSSPROD_EL2), which depends on AS_HAS_ARMV9_5.
 
-> Since fwnode_get_child_node_count() was split from its device property
-> counterpart, we may utilise it in the driver and drop custom implementation.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Why? You seem to be using the generated accessors everywhere, and I
+can't see a need for this compiler dependency.
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
