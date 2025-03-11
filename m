@@ -1,124 +1,248 @@
-Return-Path: <linux-kernel+bounces-556304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41ADAA5C3D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:31:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD8AAA5C3D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:31:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8F8F3A5D62
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:31:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB9F3A5810
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F76825A65A;
-	Tue, 11 Mar 2025 14:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F06425BAAE;
+	Tue, 11 Mar 2025 14:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OriaTBmT"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YNJ+NeZK"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7585D84D2B;
-	Tue, 11 Mar 2025 14:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAE2158A13
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741703493; cv=none; b=iXRPmBoVzgnHLRzsaEPpAH6S2s1oIyNFpw+TrqO2xaL7CN+467q29eLLMzk1cDR8FMh6qjBLQCt2wmvPUX6SzOXW8n1/WBhM1Czhhf/87WhsMkBASbRtWuesS7RzN5oZlqgDgZ0gt7m7mHOZWMUL/Rm9DyuypeB+BhiYjzgTb9g=
+	t=1741703508; cv=none; b=L5EaVekNqopuMmk9CDgAQ3fIXB52XoiPRKYhFzTFlEuQ+Dbq1NdZ9qpGHb2/iTPK32Ks8xXayYoCU8nY5hnR1QwiBP89lGKOmu+2qoWQj0yhz6EyqwMgjdY9neyRVdNcO2+f+zQiV2KVWiCiWpBV3L7lRd6XJJTbYlmQCKmPD0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741703493; c=relaxed/simple;
-	bh=MwX+hLj+eMLpZm23lEQkZzA3/IGcokUB7SIroirMLmY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Zjr8u9pKsO78nAlbIJllrrc9cNLHH+TX9w+nXy4nGQf+y5DTLn7HXtxO17dRZOlzJn5eTbdyaXG8feGJD0znLvklBU5VoPKaMP9i2QLy5GuoKp7QWpjplSf3R0mGtgSZLi/vzphiwB4pvcxVis61KPQo+QHn5G8Na14dJeKuD64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OriaTBmT; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ff1814102aso1190217b3.1;
-        Tue, 11 Mar 2025 07:31:32 -0700 (PDT)
+	s=arc-20240116; t=1741703508; c=relaxed/simple;
+	bh=YXJNy14cVHUzFFk8z8wOVv+d2MzQCdgH6KsYK+IdEB8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EP5/KQll90IOZPN0Kzmz7JLOEsKRivvnHEKK8co5/tHb+mmshEL57F6KRLkaYM9rPdAtaviGMW3VCkS9xPS+JdIjdJKc8sBQsPMfWiuWvrxWt1Ch9Re9gaZAJAsCa58A4HincKuegGQWgRyFvnL0ZAP/zQMI4CBPuIGYe2z0sbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YNJ+NeZK; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38dcac27bcbso4320550f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:31:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741703491; x=1742308291; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MwX+hLj+eMLpZm23lEQkZzA3/IGcokUB7SIroirMLmY=;
-        b=OriaTBmTvYoKQy0yrUcPLJW+QkZM0A75vA1kqRqcQ4eWZxjA4N7+cOMh/vcSqB2dsp
-         ho2+eANm51G9IWI5ASMNVXJPVzq/sD9i4LKbwN19CUxffV5G11loa7yAdsH5LbxpAEen
-         hL7jd76k1UACGqEPyOn6HFJ+UMybB2Xs/AB3dUU5CZ3er81WgKj7D/KFycrZLZrRE/Cu
-         8XvRvqvIHhHQ5BcbnW5QbYK+uysBdomqwFTJxvGPKaUXy+CYtMsWacKP7EVe7tvo0wSi
-         um6nghA9RAfFyHg/l7Xp0H6bTG3cCdbF+EKQMyKMVfa/bKwjZIh6yp8Na4Sqe+vT4l3Y
-         rBOw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741703505; x=1742308305; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SSH0YMdf+S5QjCHcC5ZZ6jS3iz9vBV0qYNcsmg4sNcQ=;
+        b=YNJ+NeZKhcX7cLnMct8k5Am4BYZIW/JaIW/ujUlnuTpdLTAxVLqdfYGoTBxIgOiWsj
+         z7wnQH4vYTFxsPRblewRWh6oU3MlN7412Oee6BVcI+eSK8CD05T1Hu8pgyiMbCcJYmbt
+         Tk46bzYJ8UXCR6Z8ZbZPEqxb2zyjl/8a/40NYymEqtJqGmmUOv8gd8ZbeGw4673WCFw0
+         ZayshuFl3lRKBvKZxUMXts9qlbzLhkiVTXc71CrgoVzdipO5nlicRNp71FXPed1S/rTu
+         Q6jAlAmtTmePDWFxD/mjKH2wKXXVQT2MmEoTqATBSaQO7nxKr2ukqqSuugJLPCE4ieLg
+         nmyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741703491; x=1742308291;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MwX+hLj+eMLpZm23lEQkZzA3/IGcokUB7SIroirMLmY=;
-        b=cycPqqNCzY0DavnVzp9KRvzjBONFllU72/5sVq5uivJmSlP0RXBcqAf+dVeJn3DxIk
-         AOWmF2niy8gjw2ifPvvoWTrZ7c/4QYmk312aj+23fI3iEjw0KmgWpGsARNtwgHrVDTbc
-         Ybtyy3wqR/cCwj1TezApEF4UGbRQWm+s6Vzp3nApaGTOnp3oqhgoR016u0vVcE/X6B+U
-         twB+eCVDh79FT38qy7CmAc9OfSOFDl513YCgN/ppmslkHGn2lfSBWajwXzjbFKuF4ho3
-         edxVuBS6E7xi6CBQd0tApn9633N89tY7pbJtee1MJH9AWgsMIsJ6HjZrXoNOlirAmUhW
-         T8OA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEzTzOcll/+A2dQ34ke/CbXjJDIrCcGas09Vo/eBWo9GHNF8JtJoTNKCXOpAZkqKTD0o3lCVE+mcc=@vger.kernel.org, AJvYcCWLOkgOrdr0RYTV+FBhj7H+K+GyIm+xyNTSolYS1BLLCuAy+w1cicV+/TdtVE6navvMHLI3Wd4QnK/I9J2M@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkeHHh4Yx/XYfAmtb6XXj8Fv4Vpg3EwjFtXf7t2omz+7cRdPMc
-	Wxb3PmV8Us/rdXgJCXCJ93Y/e5HU7zoBFNB7PfI0DO+GqW5pTVfg5+bbvRKA
-X-Gm-Gg: ASbGnctl9ZeKNPTgowdmok7dCm35r/NPxwbRK/+rQlRfPct7dsjEM4H4kl3KKW7ntWA
-	SSpdD9+N+OMoGcdiF3oGRz1XSz847jNZHG5lMwgsPDQ6BR76gE+Gf8ug6giX78BWEh7XM1yZVHL
-	pZx4Z1IdU50WB0UdRZLDH3XI6BFl0jxTrEud4CWuUksvO80/wjyi43waB1arKdW1+X0/8ruJ1f5
-	X5+AyHvThWMXJqikopBc///N6TUKN054AcKRT18kmVUJoF59F0i95mU0Oe4Xodf/aZPZXYH1s7V
-	mZLHZ9z/g2KJPhtAdeaqqZVWvQRVxITNyzbu1tZkgTNZkrM=
-X-Google-Smtp-Source: AGHT+IHXo+gvCNYGwhhU02hRiXRZX+gNdRnjc2unpyj5Akje5bMKFUZmi5UTG9Ks/gqPNNuQoFj0uQ==
-X-Received: by 2002:a05:6902:4893:b0:e63:6b50:5cdf with SMTP id 3f1490d57ef6-e63b5181cf8mr4640025276.9.1741703491426;
-        Tue, 11 Mar 2025 07:31:31 -0700 (PDT)
-Received: from localhost ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e634b8ff7a6sm2719087276.57.2025.03.11.07.31.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 07:31:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741703505; x=1742308305;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SSH0YMdf+S5QjCHcC5ZZ6jS3iz9vBV0qYNcsmg4sNcQ=;
+        b=pGG7FWrXUiSx0K9waS1qvCIiDgaPZ2vzLeGAwzffigXv6eW06FGfXkqgDz3/+Tobmt
+         GEHBZ9L25xqgTn2BXykRnJt9f6BpmNQ9O/kvb+GKrhI5uNF6fEZvk92PJsAqzLZVoSlt
+         iP/37XevON0kjwX3U6IgQtdM7O96UbQAdaUQmUmcF5tJAVFMKYnThbu73BNWEJSzCD+K
+         kFlNwKEQsktMl0N2S39oI6+9gz95kAXIGnICPh6vbMAsg5YegkKuUhn2lwZEwKjMYxwA
+         wlGjD1EdgtUgPl32obzzJaURDAo2bUzDCD+JhxGLprKA134Hj2+VIwtBPRTYnbHsguyE
+         OLyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUq5nAJnSuoFoJqzzoDyAtRPtHRfHwqcbJ+lnucXp2yDI3/49Tf/nMOPd+x4svSS0IbIH7rChN0XbR6xh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPHNjew2Y6F647TpuRlO2PxpbLNH4ArZELIEoHgMluDD60Nfd5
+	OXq7YhnNEzmWsVVS6FbUPc50Vx1DN2J2fdoMgx1msviAnrkt2GYnQm8TVcIwDqk=
+X-Gm-Gg: ASbGnctP1eG0jZZOgepJ5+xiqMPnigqKdHmuOJYeO6VcOoEsIIXfR7Hdsu4xBMvlWRA
+	/XArD2ikWroD8LeKMRVBy/8zzFZYZUIhOwHSUViKfg+bAnczSz9kCDJRpwmq4YylvNNYIB9CV51
+	W6/vJbleD8Um04GIFNFWBEkyOgYz7a+VpH1Eq6JbsBEOkTfXsYBRsXHY0GAIk5SU2LEBIdv1zR2
+	NCstMTvb5N/+6WLLdtZZcIVMhy2WUjGYhhZoiczN4bUYS/gA23lZD6Md3zhZD73UsiDgbY8bjIW
+	C6v86sx0cmsw/ojkT1Q4biVGN3o0Z2XqruOH
+X-Google-Smtp-Source: AGHT+IEewd5vJWcLEPWmjko9Zz5+N5/mn4+GPzdtk7A1sEmca5MuhRsJixiaCVtsJrabR8Ta34E1bw==
+X-Received: by 2002:a05:6000:1fac:b0:38f:3224:65e5 with SMTP id ffacd0b85a97d-3926c69a085mr4238352f8f.12.1741703505133;
+        Tue, 11 Mar 2025 07:31:45 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:5946:3143:114d:3f3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfe0004sm17835055f8f.40.2025.03.11.07.31.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 07:31:44 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 11 Mar 2025 15:31:43 +0100
+Subject: [PATCH RFT v2] gpio: cdev: use raw notifier for line state events
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 11 Mar 2025 09:31:29 -0500
-Message-Id: <D8DICX20T6AI.3CFMJMR1W0SGF@gmail.com>
-Cc: <linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Jean Delvare" <jdelvare@suse.com>,
- "Jonathan Corbet" <corbet@lwn.net>, =?utf-8?q?Pali_Roh=C3=A1r?=
- <pali@kernel.org>
-Subject: Re: [PATCH v1 1/1] hwmon: (dell-smm) Increment the number of fans
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Guenter Roeck" <linux@roeck-us.net>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250304055249.51940-2-kuurtb@gmail.com>
- <bfb70a81-2ac1-428c-a327-d5098a8d3ce8@roeck-us.net>
-In-Reply-To: <bfb70a81-2ac1-428c-a327-d5098a8d3ce8@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250311-gpiolib-line-state-raw-notifier-v2-1-138374581e1e@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAE5J0GcC/42NQQ6CMBBFr2Jm7ZgWUIIrVx7AuDMsSjvAJKQl0
+ wY1hLvbcAKX7/+f/1aIJEwRrocVhBaOHHyG4ngAOxo/ELLLDIUqzqrUGoeZw8QdTuwJYzKJUMw
+ bfUjcMwnWymrjSmoa6iC/zEI9f3bDCx73J7Q5HDmmIN/duui9+luwaNToVG+qqneX2tpbXhoJp
+ yADtNu2/QD8xlSb1AAAAA==
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, David Jander <david@protonic.nl>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5563;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=oIgxL81JZJSAphrl0iSZ6Y1kmJ/6uw9EQxoAW5GQxSQ=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn0ElQ9tBN2SdLWHuMmLSQZMKGdI9/MJJQoYW9D
+ onhtjxeG0+JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ9BJUAAKCRARpy6gFHHX
+ cv1yD/9OLRcUeMT3V5LYGvlaObOQyRpiep5/CNTYeHyBbeWAV/iHDw/AtXcx+os3sXRTa5WOX5p
+ 6kfayzvCbKyxetvp+zvFBVwaziTa6JdZZUs+CAQyiWI8UoJt0JCcoqkUsP8LuSdX+d6B0yKmWfG
+ xhW8uMQhWpdFXpMb9oXU5fbj0Zlh5ogDf1mFabtS8qPYSu5dkdpjSwCS8FG/tBv2foJ4NidAz0j
+ pGZT5eY+HRqyNqN5q4cAQ4lR8I068fIAh3DuVKUb5glgfMwfofU92/gcOARGPwdag85hGc2Cz5a
+ 2/9mUc4pwPJ0VF+MsWu403aRVGkYF29IK0eOR6e2Ez6JVI3+hWxR//pg4YAcaL8T18cCnLh6kLp
+ iTK8VZoRJucYyiM/ZN2j+YmFMt756K1mFUHvC7LjSMBqmXy84ZSzb+m6H4tRI0YZdLZjxiIq5x+
+ HbKap1kgOa1vuVPXHOyrTAzB4Ozb0U9Qm7ddMsBAhaEk+dUHLzF3Pa3ryredH0NOz/LVwnsuK59
+ ciNjhXl2O12nn2Gcrz5HvB0qDtCj2U7iZ6jd6/I+drK9vhwThOXpwgwZk4joJU3oF8D9g6uJVMA
+ OJav9kojZcMK7QLKZnkzLubT29xbl+pQSLs/dwhyZIEF9wgwdKkdgXbIzjW3AivJC9LlRSwuOzR
+ hFUTk6xsqZn17Jw==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Hi Guenter,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-On Tue Mar 11, 2025 at 9:13 AM -05, Guenter Roeck wrote:
-> On Tue, Mar 04, 2025 at 12:52:50AM -0500, Kurt Borja wrote:
->> Some Alienware laptops that support the SMM interface, may have up to 4
->> fans.
->>=20
->> Tested on an Alienware x15 r1.
->>=20
->> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
->
-> Oh, never mind, I'll apply this patch. If it causes trouble on older mach=
-ines,
-> we may have to make it conditional, but that is not a reason to hold it u=
-p.=20
->
-> Guenter
+We use a notifier to implement the mechanism of informing the user-space
+about changes in GPIO line status. We register with the notifier when
+the GPIO character device file is opened and unregister when the last
+reference to the associated file descriptor is dropped.
 
-Thank you!
+Since commit fcc8b637c542 ("gpiolib: switch the line state notifier to
+atomic") we use the atomic notifier variant. Atomic notifiers call
+rcu_synchronize in atomic_notifier_chain_unregister() which caused a
+significant performance regression in some circumstances, observed by
+user-space when calling close() on the GPIO device file descriptor.
 
-AFAIK most systems have < 2 fans, so this driver already probes fans
-until failure for these systems.
+Replace the atomic notifier with the raw variant and provide
+synchronization with a read-write spinlock.
 
-If I get notified about problems, I'll amend it with a quirk approach.
+Fixes: fcc8b637c542 ("gpiolib: switch the line state notifier to atomic")
+Reported-by: David Jander <david@protonic.nl>
+Closes: https://lore.kernel.org/all/20250311110034.53959031@erd003.prtnl/
+Tested-by: David Jander <david@protonic.nl>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes in v2:
+- improve the commit message
+- collect tags
+- Link to v1: https://lore.kernel.org/r/20250311-gpiolib-line-state-raw-notifier-v1-1-d0fa44fd67cc@linaro.org
+---
+ drivers/gpio/gpiolib-cdev.c | 15 +++++++++------
+ drivers/gpio/gpiolib.c      |  8 +++++---
+ drivers/gpio/gpiolib.h      |  5 ++++-
+ 3 files changed, 18 insertions(+), 10 deletions(-)
 
---=20
- ~ Kurt
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index 40f76a90fd7d..107d75558b5a 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
+@@ -2729,8 +2729,9 @@ static int gpio_chrdev_open(struct inode *inode, struct file *file)
+ 	cdev->gdev = gpio_device_get(gdev);
+ 
+ 	cdev->lineinfo_changed_nb.notifier_call = lineinfo_changed_notify;
+-	ret = atomic_notifier_chain_register(&gdev->line_state_notifier,
+-					     &cdev->lineinfo_changed_nb);
++	scoped_guard(write_lock_irqsave, &gdev->line_state_lock)
++		ret = raw_notifier_chain_register(&gdev->line_state_notifier,
++						  &cdev->lineinfo_changed_nb);
+ 	if (ret)
+ 		goto out_free_bitmap;
+ 
+@@ -2754,8 +2755,9 @@ static int gpio_chrdev_open(struct inode *inode, struct file *file)
+ 	blocking_notifier_chain_unregister(&gdev->device_notifier,
+ 					   &cdev->device_unregistered_nb);
+ out_unregister_line_notifier:
+-	atomic_notifier_chain_unregister(&gdev->line_state_notifier,
+-					 &cdev->lineinfo_changed_nb);
++	scoped_guard(write_lock_irqsave, &gdev->line_state_lock)
++		raw_notifier_chain_unregister(&gdev->line_state_notifier,
++					      &cdev->lineinfo_changed_nb);
+ out_free_bitmap:
+ 	gpio_device_put(gdev);
+ 	bitmap_free(cdev->watched_lines);
+@@ -2779,8 +2781,9 @@ static int gpio_chrdev_release(struct inode *inode, struct file *file)
+ 
+ 	blocking_notifier_chain_unregister(&gdev->device_notifier,
+ 					   &cdev->device_unregistered_nb);
+-	atomic_notifier_chain_unregister(&gdev->line_state_notifier,
+-					 &cdev->lineinfo_changed_nb);
++	scoped_guard(write_lock_irqsave, &gdev->line_state_lock)
++		raw_notifier_chain_unregister(&gdev->line_state_notifier,
++					      &cdev->lineinfo_changed_nb);
+ 	bitmap_free(cdev->watched_lines);
+ 	gpio_device_put(gdev);
+ 	kfree(cdev);
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e5eb3f0ee071..b8197502a5ac 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1075,7 +1075,8 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 		}
+ 	}
+ 
+-	ATOMIC_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
++	rwlock_init(&gdev->line_state_lock);
++	RAW_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
+ 	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->device_notifier);
+ 
+ 	ret = init_srcu_struct(&gdev->srcu);
+@@ -4361,8 +4362,9 @@ EXPORT_SYMBOL_GPL(gpiod_set_array_value_cansleep);
+ 
+ void gpiod_line_state_notify(struct gpio_desc *desc, unsigned long action)
+ {
+-	atomic_notifier_call_chain(&desc->gdev->line_state_notifier,
+-				   action, desc);
++	guard(read_lock_irqsave)(&desc->gdev->line_state_lock);
++
++	raw_notifier_call_chain(&desc->gdev->line_state_notifier, action, desc);
+ }
+ 
+ /**
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index a738e6c647d8..58f64056de77 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -16,6 +16,7 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/notifier.h>
++#include <linux/spinlock.h>
+ #include <linux/srcu.h>
+ #include <linux/workqueue.h>
+ 
+@@ -47,6 +48,7 @@
+  * @list: links gpio_device:s together for traversal
+  * @line_state_notifier: used to notify subscribers about lines being
+  *                       requested, released or reconfigured
++ * @line_state_lock: RW-spinlock protecting the line state notifier
+  * @line_state_wq: used to emit line state events from a separate thread in
+  *                 process context
+  * @device_notifier: used to notify character device wait queues about the GPIO
+@@ -75,7 +77,8 @@ struct gpio_device {
+ 	const char		*label;
+ 	void			*data;
+ 	struct list_head        list;
+-	struct atomic_notifier_head line_state_notifier;
++	struct raw_notifier_head line_state_notifier;
++	rwlock_t		line_state_lock;
+ 	struct workqueue_struct	*line_state_wq;
+ 	struct blocking_notifier_head device_notifier;
+ 	struct srcu_struct	srcu;
+
+---
+base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
+change-id: 20250311-gpiolib-line-state-raw-notifier-70c1ad3e99eb
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
