@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-556196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B271BA5C250
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:20:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC3EA5C252
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:20:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E986716E4C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:19:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDB247A8F0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C7F2222BE;
-	Tue, 11 Mar 2025 13:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034522566F4;
+	Tue, 11 Mar 2025 13:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k2yLkTxQ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yu471ND5"
 Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7B51D86FF
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FCF2222BC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741699115; cv=none; b=G1dX6M11lxkhkX/8U9fZVmKpTsdP7jlyIVUKkd5wiECUEyAsXoei88QU83gMYb4ffSFtBXCTDyGGxfvGv8LEBcZjvxBUXR3aiK60d9BrtuOnFBvKLyh3Z8Q1MNYeQT+pgJVoc2qgKm32H9ZpIfGSlsNk4nkBDIfE9fwXBpmSKEc=
+	t=1741699117; cv=none; b=Pdnur/mYPpDLRHoaVh/tyKA9DCVcfHQVKbR3v0ENAGBRdgfPPLuIycn37Ba0K7OvAdV/+BGZeS7/C1vQxlntFa4qe3NTFB/xmDH2AkgVIzvZADwj/gnOZctvFzfWdLkZLDrWnJxbGDFLJz9z09tfZO8ZFXSOy+pTfR1z+draB/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741699115; c=relaxed/simple;
-	bh=oSXuPp+IUOl5G2aP9gTCdmTe3j7rVMOxHg2aJoo6Efg=;
+	s=arc-20240116; t=1741699117; c=relaxed/simple;
+	bh=0ffvNk6pyNEvDSJ71JGiz95WEqGo3Pzu7Vx603nXPak=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=a2YC6HhZxZ3FXYSmYb/pkDLvhPcsfhAh7PY1vJ2FpCBQqZPS+GPHo5CT5nUayxzs+YbABsymZAHst9R9NYNGytBaQ5CGcUZuyf3O79rA46CbMjqvKWhPE9jFEabvpTG50GxaS9T6DaIQt9Oc2I49PWrU2976gpsYDXOdthFvrLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k2yLkTxQ; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=Da94of0uo1eLjB5KQt70zmEaf/29txrscNSQPswrzb6o17x0UD4wMqU1RzwWLLilDvOzeseS6haAQbMGdnVgn4lEneMEeodQfUxuvDnBQdF48DGzklZLN83UauoPqd0e3CrLj5ZXNPVAReiTUoATX8p4DLtL5PFJ6w/joSldYbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yu471ND5; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43bd8fd03a2so26654925e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:18:33 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-438da39bb69so38726525e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:18:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741699112; x=1742303912; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741699114; x=1742303914; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vce7eh8mPMitMWqdtTQW3Xgxbt0OG8W7iuQCUiRo4Hc=;
-        b=k2yLkTxQ2K7t2n59+V3hFbYpdZD6A/EB8ugtx/QgGx4dtG91o0lsNwbTBFftlyrDcG
-         ePsgnqUCvkeAkHYrhj6BwgbSa1fWnDN+qRvKnxU9L6jlBvk3otMVj1HvPhoXhtWyXQ2i
-         VnNoWZWUXpyDWrhcPhsM7OZgIqBeGCdoRw6VENCQQ+HI2VtPi8iGMoaeHQQxj1iSlLDS
-         DlyBQHd70iZw9jkzdb4vocACpbwwOi1JEoZl5ogskJJeLzl5L4ANuY7D/R5CreBMEvnl
-         GeuBxaep58xgXsyCeYvf+UsrFyfl8qKBcDJDNLNEn9iJQQw6u45ttvXHX9FzaUvz7aOB
-         lXRg==
+        bh=vEpPGTTI1xwsz2Fyvp18/EwqSXfTpjR75q3+Kl9ryQ0=;
+        b=yu471ND5enBTBqHrJbxY8o/M7TppQgg9d+D0V12Zxwykl9xD1ialBSGin3kbi5NWpd
+         2b23svAeQEQY/mP1iC1+pahEfXx/nvQUHMnK+A0gquSZwGApqdNXkbmW88P1qmHJhbw4
+         uGTtn1MNsoS5GGwlfPVxJO49kirfmqg9/3hTVTbeCfsFsaSUYiYmJ21EpS2ikFg0a7+9
+         mlssHdfiimWgVZNzWf8Uv2QxYhmt6T6CvkczgNFacudosMfBLVlopW+6SuJCznZJ8ZwV
+         oP/6rKQdZnhE2oqTJsnhv8qkJq6wAl/I8eL6ie8eIACrvrYd2Q+83gdmoY9yUX4h6pDm
+         j/gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741699112; x=1742303912;
+        d=1e100.net; s=20230601; t=1741699114; x=1742303914;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vce7eh8mPMitMWqdtTQW3Xgxbt0OG8W7iuQCUiRo4Hc=;
-        b=eN+lZN5MgyVDHGgzugUSbHwNrtm3jUJKq55qZNzFgIvyBl2G+7hmAAAWVsQQlf/4fH
-         IPukOm2XhvloOE5kQyU18gMdp3/JCcZmC0i74/fX47HosEKLO62xFrfCvpf2b/eYZ//t
-         lAFqZzphyaKNZhbUVUxJ6AjIrdWIbgntkw2Np2ZKxTcwo5cwCgaAZu3gfDvSuHAcYlMi
-         nantEpW8IDkNuyfcYUJcnnM1ALey6C2wxvpSQq46XVI3sqwmhTAa/FMJeOiwqSALdDZ7
-         qvnDCVK6Eyt6BGfRHV+Q0piJlsW9yY0VlRYS0RB9Qu3f9xRRgwImNdrRBoqsksdq6qt5
-         rIcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjDxyZ7Y+XzIkrIpttHqLRy+4+QcrGwHFuN05wrQi6Imj5mOuBv/SiyORyYgnF88i2RDcknQ33X0BJZtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd8ZET/sJL9NP0VlTMGzCQOube/YF+dPqJkZ/hAX7sTdsK6ZKY
-	IwHGylsXeuKzGlKw0vFQ1cS4jtLREn+RKrnkwqbpBKOPP5L+DyXpqWBkw6Igw6fH9Yysv+AMuKI
-	Bsw+VFMfS4Q==
-X-Google-Smtp-Source: AGHT+IH0f6ArUDAT+Z1aqU0gEtWgWP4WVJVxUFx2+ko5jUv3CK2PIBB6GlZGbkJUJj1SHrJwdvtnC7ZX3WPGDQ==
-X-Received: from wmbbi10.prod.google.com ([2002:a05:600c:3d8a:b0:43d:7e5:30f0])
+        bh=vEpPGTTI1xwsz2Fyvp18/EwqSXfTpjR75q3+Kl9ryQ0=;
+        b=c7owYc6J7hA4IbESbnQCkYYdcJa1ytd/NwA2W2xI9CPJbm4mQj2OFKrV19Y4WnLfeP
+         dXYrZ6R9Xo2bq2KJkFmsDq363cjXoAfx5XDkGe5NFs8qLMD28nkPNkb9ppddQarN0Wn7
+         tJeT88X2dKBm/Ex153IV00pAVS1SM8RD7C7vh2P1zLMqI4UgC/Toy7NJP/VAzJVGPfIj
+         zxrFRmSuFEIePfyu7ZpMCJgLopHXSrLr36WdDTo985Yz7iCIA95S73OzYS8OGZWIqPCY
+         LgHeBg34DPb/whMJSjzXC/gCFEzBr1+VHIQiv5elE1yJwqyMg+90XPLebI9FoXoroJD6
+         CfCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuWk7bk0T9C0mqvq6n8aySbg7m+gjm7FwjW5PNIE4PIQsSAZ0zmbwcZytEqSuSyaKZ4GvoG3CD3rgEPbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1qhvZ73QO3yNIdyXGv1SG0AlpKgy5Ueq0LQCemRtmdUThOo+q
+	bfhim4kvVku+3BRrZcVJPoNmbc/79zjFxrrVR1s4ClNTbSKQLy3vIrSr2C2at5ezvtxS4aQr5Aw
+	FmiMa8FxQGw==
+X-Google-Smtp-Source: AGHT+IF4wKnonit+EpSv5UW7OYNEJNWqpKGUxuJH1HQv+WZ5yf0iB3xBzk58+Z6A+0FjREeEmIvwD2nZ9cCRYA==
+X-Received: from wmgg10.prod.google.com ([2002:a05:600d:a:b0:43d:10b:2c42])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:45c6:b0:43c:e7ae:4bcf with SMTP id 5b1f17b1804b1-43ce7ae4f6cmr119062035e9.0.1741699112009;
- Tue, 11 Mar 2025 06:18:32 -0700 (PDT)
-Date: Tue, 11 Mar 2025 13:18:18 +0000
+ 2002:a05:600c:1547:b0:43c:fceb:91f with SMTP id 5b1f17b1804b1-43cfceb0aedmr83968355e9.11.1741699114176;
+ Tue, 11 Mar 2025 06:18:34 -0700 (PDT)
+Date: Tue, 11 Mar 2025 13:18:19 +0000
 In-Reply-To: <20250311-mm-selftests-v4-0-dec210a658f5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250311-mm-selftests-v4-0-dec210a658f5@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20250311-mm-selftests-v4-7-dec210a658f5@google.com>
-Subject: [PATCH v4 07/12] selftests/mm: Skip map_populate on weird filesystems
+Message-ID: <20250311-mm-selftests-v4-8-dec210a658f5@google.com>
+Subject: [PATCH v4 08/12] selftests/mm: Skip gup_longterm tests on weird filesystems
 From: Brendan Jackman <jackmanb@google.com>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
 	Shuah Khan <shuah@kernel.org>
@@ -82,36 +82,35 @@ Cc: Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org, linux-kselftest@vger.kernel
 	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-It seems that 9pfs does not allow truncating unlinked files, Mark Brown
-has noted that NFS may also behave this way.
-
-It doesn't seem quite right to call this a "bug" but it's probably a
-special enough case that it makes sense for the test to just SKIP if it
-happens.
+Some filesystems don't support ftruncate()ing unlinked files. They return
+ENOENT. In that case, skip the test.
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- tools/testing/selftests/mm/map_populate.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ tools/testing/selftests/mm/gup_longterm.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/mm/map_populate.c b/tools/testing/selftests/mm/map_populate.c
-index 5c8a53869b1bd287b09a250edf628a66c25c2439..433e54fb634f793f2eb4c53ba6b791045c9f4986 100644
---- a/tools/testing/selftests/mm/map_populate.c
-+++ b/tools/testing/selftests/mm/map_populate.c
-@@ -87,6 +87,13 @@ int main(int argc, char **argv)
- 	BUG_ON(!ftmp, "tmpfile()");
+diff --git a/tools/testing/selftests/mm/gup_longterm.c b/tools/testing/selftests/mm/gup_longterm.c
+index 15335820656b1c143b440b8a1065a025378e22a2..03271442aae5aed060fd44010df552a2eedcdafc 100644
+--- a/tools/testing/selftests/mm/gup_longterm.c
++++ b/tools/testing/selftests/mm/gup_longterm.c
+@@ -96,7 +96,15 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
+ 	int ret;
  
- 	ret = ftruncate(fileno(ftmp), MMAP_SZ);
-+	if (ret < 0 && errno == ENOENT) {
-+		/*
-+		 * This probably means tmpfile() made a file on a filesystem
-+		 * that doesn't handle temporary files the way we want.
-+		 */
-+		ksft_exit_skip("ftruncate(fileno(tmpfile())) gave ENOENT, weird filesystem?\n");
-+	}
- 	BUG_ON(ret, "ftruncate()");
+ 	if (ftruncate(fd, size)) {
+-		ksft_test_result_fail("ftruncate() failed (%s)\n", strerror(errno));
++		if (errno == ENOENT) {
++			/*
++			 * This can happen if the file has been unlinked and the
++			 * filesystem doesn't support truncating unlinked files.
++			 */
++			ksft_test_result_skip("ftruncate() failed with ENOENT\n");
++		} else {
++			ksft_test_result_fail("ftruncate() failed (%s)\n", strerror(errno));
++		}
+ 		return;
+ 	}
  
- 	smap = mmap(0, MMAP_SZ, PROT_READ | PROT_WRITE,
 
 -- 
 2.49.0.rc0.332.g42c0ae87b1-goog
