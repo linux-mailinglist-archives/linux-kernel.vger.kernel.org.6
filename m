@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-555914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD555A5BE4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:58:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD26DA5BE4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:58:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74C603AF6DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:57:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674D51897895
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CF2250C0E;
-	Tue, 11 Mar 2025 10:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330E62512E3;
+	Tue, 11 Mar 2025 10:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Rav6C5HJ"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BbFsu31j"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74A822422E
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C7322F163
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741690682; cv=none; b=DJpmmCnXGsy5gs5vMjDmxky8iA4F3656cCeOYdS4wJjwFkgoi/62LvCthV0YS753gkRN0M9Inwm57uWFiOxXRmtOIT4eE/ESG3T1tjnEtdR7C78gnjk3zF0/sdOtfcQ/UXYzeizOwL1BSXMXA+Z0fVYLgNC+2C/jW7siQFhG6vM=
+	t=1741690683; cv=none; b=ZT/i+CW3XedEZQZ8qcHmHsya6RbKLVKQt0E4tBPbx66vR1j1Dkv204J/H5qdKpWV91WavaCih5gqZvi6puGrCxBoTgHjJG02X/tRGGK/pV1NIV7QUfIcokYClvZnLLZGIcOu7QZEONjJJkYWVhDbpJpdfZJu4hNWAKSPFycnJwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741690682; c=relaxed/simple;
-	bh=+mKgffAaxj4n9s5N2ZleDY350EAzzSm1xnGJ5jxB6K8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eYMXp/sjFDKOfsSxYXUPo1uOdPbiEwd8H0TCypTwnfcehobVZKWYS5Y8zdJtw3xKJXUpPLYtWXXkpy4ETHdq+MidTgIVG6vKGzVwaFQ6cU+xuUI5j76h2N90vMakoaO5/PuvUV1yVAV0Uq9iOTTnO5efO7U+u8CAIB2Akcx7QzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Rav6C5HJ; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1741690683; c=relaxed/simple;
+	bh=eUTUFtS8Nktp9rKcRss9kYcMfJ0/9ybWHArlzdKrdNc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GG1jSN2Mm5CZ+ayAoNieQxNikyShssldWFITRFbDbucoCI3+/Pe92Q3+wLn5+iCBp0i2n6A4C869kw+2LSFARE3PlJT+mW2Ij1qUeYaMHZLRadOwo44uryZ4L1QXjMmlK5oyd3hfqoOgepRHkKJwWtYNEZHM1astjqM/Q74Gyag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BbFsu31j; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741690679;
-	bh=+mKgffAaxj4n9s5N2ZleDY350EAzzSm1xnGJ5jxB6K8=;
-	h=From:Subject:Date:To:Cc:From;
-	b=Rav6C5HJkLMcIp7aZrtxIBy/ultfremmSpwpDzX7WUN/Cj0adE3qc+ELUYGtj+kO7
-	 VgQrT6Lb0cPQ3AsVT60rAOqpMo9rpS4prYiINTGV3uY/3lys1RocXieVfCoUDLFbvb
-	 BZpHuf4jR2HV6OJc3FKDjYapGns6PdFzHonfPVnwtkAUrmy+zgPgHQTnk3aYHDMjBR
-	 OoH0ZHSvqCaxjgDDlRY7r/OjKjI0z9ENzWpAX03gbPQy4YK70gjkwxhC2zGztJU+BA
-	 oFK16ePb67xF50IPaF3l81T0rFUsQNsf7Z94zXAn7+xfzFY4VEBhErQJtNlfnloGyz
-	 ZsF0TkaQ3z2Gg==
+	s=mail; t=1741690680;
+	bh=eUTUFtS8Nktp9rKcRss9kYcMfJ0/9ybWHArlzdKrdNc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=BbFsu31jQ4vmn8GMqW58a6I0NP47h+H8awJA0kLjeXJ5te3qAQ8lt+8WjsUPagYqW
+	 G4J2KVxtCNu/Uo18UqWtsZj51x1Mbumznl/jInS3Jz/AIqR7gd6EmIKdwUxYLcDI6O
+	 XJWaB74ni8N3oShohalM2DFetZgOE4kr32zzqBn/H0h6HRcacJoeXUZxMYypiSWBhy
+	 Np63po1dfvaVASlaZEhEhnes9auIt9T/fb+WmUwVd6Saei+lbQC96lt5ejR40yz9D5
+	 gvq4E96WCnyLUVXVwpI9hdQUqcMi5eC1i+KrpLiDgkScZhw4E7IU8WunQIEyOme5Dh
+	 h1C+UrXS899kQ==
 Received: from localhost (unknown [84.232.140.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id BD7F117E0B25;
-	Tue, 11 Mar 2025 11:57:58 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id EB4C917E13A2;
+	Tue, 11 Mar 2025 11:57:59 +0100 (CET)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Subject: [PATCH v2 0/7] drm/connector: hdmi: Allow using the YUV420 output
- format
-Date: Tue, 11 Mar 2025 12:57:32 +0200
-Message-Id: <20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com>
+Date: Tue, 11 Mar 2025 12:57:33 +0200
+Subject: [PATCH v2 1/7] drm/connector: hdmi: Evaluate limited range after
+ computing format
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,11 +59,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABwX0GcC/3XMQQ6DIBCF4auYWXcaoIraVe/RuKAIdRIFAy2pM
- dy91H2X/0vet0M0gUyEa7VDMIkieVdCnCrQk3JPgzSWBsFEzfmF4TQuhNo7h9s7oeFWNb0cbSs
- 7KJ81GEufw7sPpSeKLx+2g0/8t/6TEkeGoqlF2yvWyZbftJ9n9fBBnbVfYMg5fwFzzbckrgAAA
- A==
-X-Change-ID: 20241130-hdmi-conn-yuv-e1fa596df768
+Message-Id: <20250311-hdmi-conn-yuv-v2-1-fbdb94f02562@collabora.com>
+References: <20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com>
+In-Reply-To: <20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -73,40 +71,41 @@ Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
 
-Provide the basic support to enable using YUV420 as an RGB fallback when
-computing the best output format and color depth.
+Evaluating the requirement to use a limited RGB quantization range
+involves a verification of the output format, among others, but this is
+currently performed before actually computing the format, hence relying
+on the old connector state.
 
+Move the call to hdmi_is_limited_range() after hdmi_compute_config() to
+ensure the verification is done on the updated output format.
+
+Fixes: 027d43590649 ("drm/connector: hdmi: Add RGB Quantization Range to the connector state")
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
-Changes in v2:
-- Provided the missing Fixes tag on first patch (Dmitry)
-- Added patch "drm/connector: hdmi: Improve debug message for supported
-  format"
-- Reworked "drm/connector: hdmi: Use YUV420 output format as an RGB
-  fallback" so that the fallback to YUV420 will be attempted only when
-  RGB cannot be supported for any of the available color depths (Maxime)
-- Added a patch to simplify EDID setup in KUnit cases
-- Added two patches extending KUnit coverage for YUV420 by providing
-  tests for limited range and max TMDS rate fallback
-- Rebased series onto drm-misc-next-2025-03-06
-- Link to v1: https://lore.kernel.org/r/20241130-hdmi-conn-yuv-v1-0-254279a08671@collabora.com
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
----
-Cristian Ciocaltea (7):
-      drm/connector: hdmi: Evaluate limited range after computing format
-      drm/connector: hdmi: Add support for YUV420 format verification
-      drm/connector: hdmi: Improve debug message for supported format
-      drm/connector: hdmi: Use YUV420 output format as an RGB fallback
-      drm/tests: hdmi: Add macros to simplify EDID setup
-      drm/tests: hdmi: Add limited range tests for YUV420 mode
-      drm/tests: hdmi: Add max TMDS rate fallback tests for YUV420 mode
+diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+index c205f37da1e12b11c384670db83e43613e031340..6bc96d5d1ab9115989e208d9899e16cd22254fb6 100644
+--- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
++++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+@@ -506,12 +506,12 @@ int drm_atomic_helper_connector_hdmi_check(struct drm_connector *connector,
+ 	if (!new_conn_state->crtc || !new_conn_state->best_encoder)
+ 		return 0;
+ 
+-	new_conn_state->hdmi.is_limited_range = hdmi_is_limited_range(connector, new_conn_state);
+-
+ 	ret = hdmi_compute_config(connector, new_conn_state, mode);
+ 	if (ret)
+ 		return ret;
+ 
++	new_conn_state->hdmi.is_limited_range = hdmi_is_limited_range(connector, new_conn_state);
++
+ 	ret = hdmi_generate_infoframes(connector, new_conn_state);
+ 	if (ret)
+ 		return ret;
 
- drivers/gpu/drm/display/drm_hdmi_state_helper.c    | 115 +++--
- drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 479 ++++++++++++++-------
- drivers/gpu/drm/tests/drm_kunit_edid.h             | 222 ++++++++++
- 3 files changed, 615 insertions(+), 201 deletions(-)
----
-base-commit: 4423e607ff50157aaf088854b145936cbab4d560
-change-id: 20241130-hdmi-conn-yuv-e1fa596df768
+-- 
+2.48.1
 
 
