@@ -1,104 +1,92 @@
-Return-Path: <linux-kernel+bounces-555427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57DF1A5B737
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:30:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E11A5B734
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06A4E3AFE7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:30:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E16F171251
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183C01DF733;
-	Tue, 11 Mar 2025 03:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141461E9B20;
+	Tue, 11 Mar 2025 03:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aC3s4kOz"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dCYr6Yph"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB7029A5;
-	Tue, 11 Mar 2025 03:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A3E1E25EB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 03:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741663831; cv=none; b=UArKa9ODE73S9lLNbMkev0S+A1Lk/mTfxEArQGGsUQb413+M9U+ThNsQDMsat2yoGDQnvxZ3OWBA/FVr7/V5ZOLSoalVNqxuDeIJA1Wad7MU+VjRkf3+W+jQXjaQ4dP6R8Fen2cBKEsEj1g8nFU99/BCIVrl4X+5tqjsycb+nBA=
+	t=1741663798; cv=none; b=uUGl20YJP+uJjlD0E1rNsirT8BtUhzzMa1kT6i69/tLvM4F1oGI1MbaSrN/BBnEBvMqORYD8TS5NCq/wiYcLcTZGg18rGGlDWINoZ/awRBb7/blny3B0dMqlKHUfJ14CX+wHxRZGyenEu43pRYDjyhy5Q2ljHScRR2NZaJbePcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741663831; c=relaxed/simple;
-	bh=ZwlHK79J9MRZ8GAjNji2yf54K0qSzD0Bnew96CWQ67Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BZ3gENW1UFjhDCPDGAj+O/oannQlfKtOJWOw2OnP8ct4dE9H1EfhsNt5nrCU7a6gZR6njNg5LLvMDpMmBlcma5JFLzRCUBti7PrsiQNo0vV809qa2KKeNe8pX8Osz5JmSzCHqwMTNCO1lBHM5yk8i6zujMqL7j1F6eOh2VrdQV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aC3s4kOz; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741663823;
-	bh=VrA8PNa9ZyfbBtfKogV1XjtYw0Uaew9jDpjWMnVpYbA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=aC3s4kOzgejSodTWOo4/7suz2CmWJ7n5agPKJlU2exKsyq2RB2y/cgNO/T8PKCJlc
-	 uK9NFkYDl3WU/QMzywR20aaadV3U96uaN3GJrsKD5TadP+1F1aEIjHe9i1lt7taevz
-	 1PQOwZNQS3DQleIeofmpG264OwJ/mPFm/13kqZBSgia0iCxvsnJmboqymc9u057Ihq
-	 gwQLwzp1IIS9ny8FYt7aa/aeadhrloCQm88K9605dtZS2ai75+N1Sel/1CFK6K7Try
-	 xQA0UTl2QFVcrUD9ir787z7fIG4S/AE7FxHMfwxwlMMkNOrcci27ZbDNmCnVt7sLKZ
-	 hn2YgQ77Kn/9w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBfR32XNPz4x2g;
-	Tue, 11 Mar 2025 14:30:22 +1100 (AEDT)
-Date: Tue, 11 Mar 2025 14:30:21 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Helge Deller <deller@gmx.de>, Wei Liu <wei.liu@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the fbdev tree
-Message-ID: <20250311143021.0cc40c0e@canb.auug.org.au>
+	s=arc-20240116; t=1741663798; c=relaxed/simple;
+	bh=WWxAhaRyLLk+xBVfpWcu3+Ywmw8Hlr2w5bUud1h5QkI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=J/pgyWgr8x7GuLxJ6MrrpaJB/x0oPwzt8oXBOBBjaN2HnBVb6QF88yBAY5bMI6fKoSIoVHWoGMgxpVNP+dk/BKw82djqfRXrNpImtAeNFtBK0j05Yyb1KCPkOxI5Rsxo0jR7ZE2p/b6qwKaqaCKfJUSmPC0uLje5RdhevqteUZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dCYr6Yph; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B7FC4CEE9;
+	Tue, 11 Mar 2025 03:29:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741663797;
+	bh=WWxAhaRyLLk+xBVfpWcu3+Ywmw8Hlr2w5bUud1h5QkI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=dCYr6YphytjUHkJsvbhC+0GKywhOOmawkZvlN2HC0uOMsT7MTuzOEcTReh7kc5PoH
+	 ZJS9ngEBlSQ96imcw6uvqNpQcmuu15RddT68zlRsXkeIU6OnOsBp1evkU4cJ29A/BK
+	 SMqXut5iwgubL1/QfE+pfc/JBBBdMCOEWMxdZaSaT3EN86NWBT0JSYS41pJSeBF5uF
+	 1XKWx9GuE+xuMQsObOmcmt4jM0imdOlPLEG2VwmCGXkieEoKqibDnMOobYIVgFQspk
+	 1Y5nwZIPMHdI79Fmyn4gPMJLr8/zY89WVnrQc0W9dRCXr3Ag2vxf5Wmz/mDKlOVX5D
+	 EZ2GrdCIBvhTQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33EC0380AAD1;
+	Tue, 11 Mar 2025 03:30:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/sFifZ.i3FC_wKdJpDqQqC7m";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH] f2fs: control nat_bits feature via mount option
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <174166383201.3785903.5420256276801883297.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Mar 2025 03:30:32 +0000
+References: <20250308051846.29079-1-chao@kernel.org>
+In-Reply-To: <20250308051846.29079-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 
---Sig_/sFifZ.i3FC_wKdJpDqQqC7m
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello:
 
-Hi all,
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-The following commit is also in the hyperv-fixes tree as a different
-commit (but the same patch):
+On Sat,  8 Mar 2025 13:18:46 +0800 you wrote:
+> Introduce a new mount option "nat_bits" to control nat_bits feature,
+> by default nat_bits feature is disabled.
+> 
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  Documentation/filesystems/f2fs.rst |  2 ++
+>  fs/f2fs/f2fs.h                     |  1 +
+>  fs/f2fs/node.c                     |  3 +++
+>  fs/f2fs/super.c                    | 15 +++++++++++++++
+>  4 files changed, 21 insertions(+)
 
-  f2b558988c7d ("fbdev: hyperv_fb: Fix hang in kdump kernel when on Hyper-V=
- Gen 2 VMs")
+Here is the summary with links:
+  - [f2fs-dev] f2fs: control nat_bits feature via mount option
+    https://git.kernel.org/jaegeuk/f2fs/c/c2ecba026586
 
-This is comment
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-  304386373007 ("fbdev: hyperv_fb: Fix hang in kdump kernel when on Hyper-V=
- Gen 2 VMs")
 
-in the hyperv-fixes tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/sFifZ.i3FC_wKdJpDqQqC7m
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfPrk0ACgkQAVBC80lX
-0GyVDAgApglYHJihrS6svQEk6Oopn1hn0njljUjcgLZmbB1xuGJsJP/Jpd/Ygwz+
-voGgvls3x0TnGLbff2stUpbo/cskXnKreweKB8usNFxmsYvxKD8cnYQY8bIY7VW0
-qCZFen96wuPT1bCAP2OrGjqDF6yBNJQov+okzpa9PPPyIJW62LysgJi05APRMed1
-uVuJIaueyxWfYX3OW6kbftHhvUx6NgmbW3zJFzXOtkZPLPaJ5ZCovkRrCTV0Hlhu
-WEbCg2R4fNX5Mf5zdJKXaE3BA6k7+ginqfFbUirHvD1bmwLeq6iHbSRKlHf8UH7K
-j1hewWN5vAUpVFeipaXSRyhMLrHGZQ==
-=VzzT
------END PGP SIGNATURE-----
-
---Sig_/sFifZ.i3FC_wKdJpDqQqC7m--
 
