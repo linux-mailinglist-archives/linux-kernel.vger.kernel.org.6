@@ -1,177 +1,156 @@
-Return-Path: <linux-kernel+bounces-556856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E2FA5CF89
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:36:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75329A5CF8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:37:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801D03B61A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:36:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE00E7A39D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8643264612;
-	Tue, 11 Mar 2025 19:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC28264607;
+	Tue, 11 Mar 2025 19:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxdC68on"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPHR3Y1e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225862641D8;
-	Tue, 11 Mar 2025 19:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17D217591;
+	Tue, 11 Mar 2025 19:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741721793; cv=none; b=p/4U4oXz27tjtqvftN1pcRmeSFUkt+rnQo3N6tkgkeT0/oOERHmoY4KKZ64F+o2KIVI9jsH4Sy1Xcer0dqQKplJTMP2J+RxuuRDTwVSNoN3ba1QQZOXLNF9fkPgkUxrbB53d8DdENIsocHdqh2I+OV7z/6Vuy5CqWuZNGHvlAGI=
+	t=1741721854; cv=none; b=E/0rne3FAJz9AbP+b+xw32fvzl7HFaQ7nu79QjcgjqMdPXSxlEhcLx98K270L9MALUIz4JK4dcr5+G0U0hKP4+xOTleUtMLNStkQGvR7aPd36NwIVN771q5F6JCDgwIP0uVACLLEGnqD60v2GINjf4fA5scNfkqjnAegbDt3RxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741721793; c=relaxed/simple;
-	bh=HzBNDlXMTztZoutzNhdPP6DcQ+A1fzUrUCvrBZMcus4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nNLEw/FwHp8B9gd40LBPhktcJNWJj3Y3Vzj21dzIcgxYorT+3xy1XRRPZ4CUL3kMBdeHOY6ROez1MkHXWibw6STaoCzLCokH8XAr7BhMeIQLqojMrNkAdxcrC0ReDmcynO6+rOR4UUZJ5l1vw59fL5Bc34h53ECaioGMlruUPzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VxdC68on; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC05C4CEE9;
-	Tue, 11 Mar 2025 19:36:28 +0000 (UTC)
+	s=arc-20240116; t=1741721854; c=relaxed/simple;
+	bh=Yc2i634TtfKAU01+EBlX/aQoXrMwveeOrOozCJkjfiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KzYVaNa060oLYsMZ4OxnLfGH6urXx9MfCvGcjpnVjbJBwi+FyBMlpFgO0xiM1ZWznEWcgjCrFAbQit/rCblPcjOWX96FV0Lyj0ptNY/jaV6NMUlJKyV0251mrzBQnJY6OBhAUD9rlo4KMIG0tdfC3INeS7iHl99I8nGmb3viXNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPHR3Y1e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFF55C4CEE9;
+	Tue, 11 Mar 2025 19:37:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741721792;
-	bh=HzBNDlXMTztZoutzNhdPP6DcQ+A1fzUrUCvrBZMcus4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VxdC68onNvMSFdA0jMYGsDR36mn7TceaTkqhc7sM3+znQU7VNMqJiFMPp177ICwyH
-	 sAeaFVFMRD+6bkUoEpbUqhVSx5iQ8Lp8q9Wyz/45vGAmj4uXST6tPKOWySjltSzxc5
-	 90tG+TSoS5lkHXvq4ytuTrBe1vMMcjAZ1R3kUbkryItzo7p4Rr1tCiJQLaIAiT5jDn
-	 roz+nNjNCYD28L6bvK7EfJ1mwQIS+tshFt9XH+Y7FH4XfZWNwovKaFtZ7gN6V8V91y
-	 DetS5l2xs/kZsIEcPnwfDW9KbWfb97K1a0vv0X+e92otmakn7+Ei6qOI3qelmMBZ7K
-	 3GEPHzvdgPEPg==
-Message-ID: <59a1a6eb-d719-49bd-a4b5-bfb9c2817f08@kernel.org>
-Date: Tue, 11 Mar 2025 20:36:26 +0100
+	s=k20201202; t=1741721854;
+	bh=Yc2i634TtfKAU01+EBlX/aQoXrMwveeOrOozCJkjfiY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TPHR3Y1egQONi48/xm/BuFYagZfsmreotCtMwE7G4o6s2ME2E6/ydVRDZ2yenrczm
+	 9nmPFc9K/O0gecZI8q5+XcS4JPAx9RX89FStrEuxRqCzcCVGb+XEc47UUbBhCe8WOv
+	 toUP8ck5dxlyiuL7f7m5MN4rAJW2NmCPwITO230xYvq5f1zZqHxlxSEA7uJUqd3INK
+	 wLoU2wu+bz4OhG6S4lAoEBkjBl4OYnHqRstfBl7Tv3z0sZiFDkKI7cAU95qtwMnObJ
+	 C+WYDwGowLNGjTi42mjWe2EN4F3EN9tsvKl/KnmtZNrT9X0fxoWHVOJZDsi91Fhwmm
+	 rxFKfTwCv9SgA==
+Date: Tue, 11 Mar 2025 14:37:32 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: power: supply: Document Maxim
+ MAX8971 charger
+Message-ID: <20250311193732.GA4183071-robh@kernel.org>
+References: <20250310080237.7400-1-clamor95@gmail.com>
+ <20250310080237.7400-2-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] pinctrl: samsung: add gs101 specific eint
- suspend/resume callbacks
-To: Peter Griffin <peter.griffin@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com,
- semen.protsenko@linaro.org, kernel-team@android.com,
- jaewon02.kim@samsung.com, stable@vger.kernel.org
-References: <20250307-pinctrl-fltcon-suspend-v4-0-2d775e486036@linaro.org>
- <20250307-pinctrl-fltcon-suspend-v4-3-2d775e486036@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250307-pinctrl-fltcon-suspend-v4-3-2d775e486036@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310080237.7400-2-clamor95@gmail.com>
 
-On 07/03/2025 11:29, Peter Griffin wrote:
-> gs101 differs to other SoCs in that fltcon1 register doesn't
-> always exist. Additionally the offset of fltcon0 is not fixed
-> and needs to use the newly added eint_fltcon_offset variable.
+On Mon, Mar 10, 2025 at 10:02:36AM +0200, Svyatoslav Ryhel wrote:
+> Add bindings for Maxim MAX8971 charger.
 > 
-> Fixes: 4a8be01a1a7a ("pinctrl: samsung: Add gs101 SoC pinctrl configuration")
-> Cc: stable@vger.kernel.org
-
-It looks this depends on previous commit, right? That's really not
-optimal, although I understand that if you re-order patches this code
-would be soon changed, just like you changed other suspend/resume
-callbacks in patch #2?
-
-
-> Reviewed-by: André Draszik <andre.draszik@linaro.org>
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
-> Changes since v2:
-> * make it clear exynos_set_wakeup(bank) is conditional on bank type (Andre)
-> * align style where the '+' is placed (Andre)
-> * remove unnecessary braces (Andre)
-> ---
-
-...
-
-> +void gs101_pinctrl_suspend(struct samsung_pin_bank *bank)
-> +{
-> +	struct exynos_eint_gpio_save *save = bank->soc_priv;
-> +	const void __iomem *regs = bank->eint_base;
+>  .../bindings/power/supply/maxim,max8971.yaml  | 64 +++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml
+> new file mode 100644
+> index 000000000000..d7b3e6ff6906
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml
+> @@ -0,0 +1,64 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/power/supply/maxim,max8971.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	if (bank->eint_type == EINT_TYPE_GPIO) {
-> +		save->eint_con = readl(regs + EXYNOS_GPIO_ECON_OFFSET
-> +				       + bank->eint_offset);
+> +title: Maxim MAX8971 IC charger
 > +
-> +		save->eint_fltcon0 = readl(regs + EXYNOS_GPIO_EFLTCON_OFFSET
-> +					   + bank->eint_fltcon_offset);
+> +maintainers:
+> +  - Svyatoslav Ryhel <clamor95@gmail.com>
 > +
-> +		/* fltcon1 register only exists for pins 4-7 */
-> +		if (bank->nr_pins > 4)
-> +			save->eint_fltcon1 = readl(regs +
-> +						EXYNOS_GPIO_EFLTCON_OFFSET
-> +						+ bank->eint_fltcon_offset + 4);
+> +description:
+> +  The MAX8971 is a compact, high-frequency, high-efficiency switch-mode charger
+> +  for a one-cell lithium-ion (Li+) battery.
 > +
-> +		save->eint_mask = readl(regs + bank->irq_chip->eint_mask
-> +					+ bank->eint_offset);
+> +allOf:
+> +  - $ref: power-supply.yaml#
 > +
-> +		pr_debug("%s: save     con %#010x\n",
-> +			 bank->name, save->eint_con);
-> +		pr_debug("%s: save fltcon0 %#010x\n",
-> +			 bank->name, save->eint_fltcon0);
-> +		if (bank->nr_pins > 4)
-> +			pr_debug("%s: save fltcon1 %#010x\n",
-> +				 bank->name, save->eint_fltcon1);
-> +		pr_debug("%s: save    mask %#010x\n",
-> +			 bank->name, save->eint_mask);
-> +	} else if (bank->eint_type == EINT_TYPE_WKUP)
-> +		exynos_set_wakeup(bank);
+> +properties:
+> +  compatible:
+> +    const: maxim,max8971
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  monitored-battery: true
+> +
+> +  maxim,usb-connector:
 
-Missing {}. Run checkpatch --strict.
+Just 'connector', so when we have a 3rd case, we don't have a 3rd 
+vendor.
 
+> +    description:
+> +      Phandle to a USB connector according to usb-connector.yaml. The connector
+> +      should be a child of the extcon device.
 
-Best regards,
-Krzysztof
+'extcon' is a Linuxism. Is there an actual requirement here that's not 
+*current* Linux requirements (which could change)? I assume the 
+requirement is to have vbus or some supply?
+
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        charger@35 {
+> +            compatible = "maxim,max8971";
+> +            reg = <0x35>;
+> +
+> +            interrupt-parent = <&gpio>;
+> +            interrupts = <74 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +            monitored-battery = <&battery>;
+> +            maxim,usb-connector = <&usb_con>;
+> +        };
+> +    };
+> +...
+> -- 
+> 2.43.0
+> 
 
