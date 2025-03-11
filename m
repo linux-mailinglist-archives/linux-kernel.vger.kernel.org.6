@@ -1,219 +1,239 @@
-Return-Path: <linux-kernel+bounces-555314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6233EA5B58E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:01:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5883A5B592
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:02:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD0F818915DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:01:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFAE516FD2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7731DE4C5;
-	Tue, 11 Mar 2025 01:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB298821;
+	Tue, 11 Mar 2025 01:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="m0jVRpBw"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xz2fz5O1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70BD8821;
-	Tue, 11 Mar 2025 01:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8F61DF728
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 01:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741654903; cv=none; b=UejcTvmd1weEWpLg4G4TT5Ockj2m+zDYs3a7Z4LwHK+rrbRW54hQMzNP7w6AuyxzdLBRQBe/EkHrVVf9iNbm2aeSKcScAZw9/GIe7qcvF1powACnoomh8pisrkSn23+ydngHY2XwCGZYblZzMFYbe1x7DCWafzQrVQCUs5vN+tY=
+	t=1741654907; cv=none; b=KXVJ1vkwZk8pDgY4zjlRRmU/mkzhMLO+umiZNUCUXmUqeirH68PsLqVBg8HIvWNtCQTBDU8TCrcuB8XoDbVW4qlUQWneib+Up2bYmclOzBQJzBetMOyEBVZJ+RMSOjM96lFcCPaqAqhqK9lC6PkoQJrM5I/NQQ/2R9J+14zp24k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741654903; c=relaxed/simple;
-	bh=Px6F9ON1pjo6q6KXwJoGy0uBKtP1AWMX0+rxczJf60c=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=WsXDEet2XR23ZkCDQQvWSsxDJ/bdawxlAhiGWiEal262uwTyd9+r7hII2aR8675S0jrhQCnRWSMW/KVHnmDJcEWMna5iCbD5mrg7j/B1FU5n4C9zFJhsTzV4JFcUYJCsqMwNQiMv7lT/4mMQU4/uUDd0hi5o3OP668pFCqNdkrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=m0jVRpBw; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1741654895; bh=ei8rH3OT+OOmMK/GwYB8HX24LjWbDXNQC90n7LwCqG0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=m0jVRpBw39e7oxfh+0wSws2UDA/dPhldO+hNw5MgUII3TPrIXeqdeeZpR8ZEflsts
-	 j7vlKSmRKe30L38PLnGP4OjW5iOV1NQGXDii6tTRc99S7ikKpvYT9cOm0+JS3AB75T
-	 zxywmquzkqwtRvRF3hIgLyG9RhNkXu/9x4dn18Vc=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
-	id 23F83A; Tue, 11 Mar 2025 09:00:02 +0800
-X-QQ-mid: xmsmtpt1741654802tuk7p7scu
-Message-ID: <tencent_97C074C976B367CE3D9D36A0968E361A4B09@qq.com>
-X-QQ-XMAILINFO: NJRsSVeNb6U+zOKwe0Ommr7GJCislKbmnKmdPmrQo6nDrrgv5TbU1yBq/yLb34
-	 BxsB67vMG1LLpIpVqH8TJt5125XfiuzOPzvWdmjlsi2VRj4r3VuOVvC/2BLZq4BLqx2gZE3klwrg
-	 Q9unaE1rRlhuVZEgWMlmpsIV0MOXY/MCGhW2p/9C02sonbOahkV7B60P+w426AoKTo73/Ulc/ISh
-	 QOuFzsGT4q05ebVCV29saUhUzQPeDLIr6QejCru8CcftlwkU0ry4qfsgzjeimW8wXFGiCB0omu6w
-	 qeNGY1QY/nv82Wz0PxWWukYodva0jRErsc7l1ZFN8nanXcisQaNL9GfNYkT+6musRruCMyy9WELm
-	 fM5MJW+8E7EzhHCMAV4nMPuYnMwh0yNWOoYoLXSUCs6TEPBo7qsDcE9hLBPUljchx2jpTxMVkdOd
-	 oEJqknkecxmyFbfZrR7VdpAN4eYxb337bBM+O6JMw+I1sB7/PA8Pv9mHmJBG8aIlr4t53NrVkLBk
-	 Klpr0x903ipkQEPMFWqCq6KRzbxIm0n7d6DDVyN6Bqoi73f19WNiJPhZ2HVG4FkUH8HO0Zdz5JLv
-	 sbexyhENGOEXTKcIO0G8FLw0r0x+THmPd2h2ZARkx1lvV3/vW0XjtD3coLq4KA67VBa7TKoNWwpN
-	 38BdrVp9UCalTmGCGUoO2tPsPzWtVBbVaDTC1/QTAdfUy+CGnygXRRHgp0fySvX88c3FMGqDHtE3
-	 OHRhhVLaQSzJ1aouX+r/TadtLtJNcAMpZ0pVeD4Spjcl7sAl2oNS7jseY5inrt1Svx/6tHzQ0mzz
-	 f6uagz5030zHgp4Pjt8MAaeipE+Uu9K9opLoBWxLdhV/Xv6Q8s5N3k2CYvkul2pnK9isDiPDpW47
-	 lA8kah0DTQSf3gsF2X34ZqqeXivx1h4MDxOuqXhEYU5qWJ685bl54=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0d33ab192bd50b6c91e6@syzkaller.appspotmail.com
-Cc: dwlsalmeida@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	mchehab@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] media/vidtv: Terminating the subsequent process of initialization failure
-Date: Tue, 11 Mar 2025 09:00:03 +0800
-X-OQ-MSGID: <20250311010002.3474850-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67cee9e2.050a0220.1939a6.0004.GAE@google.com>
-References: <67cee9e2.050a0220.1939a6.0004.GAE@google.com>
+	s=arc-20240116; t=1741654907; c=relaxed/simple;
+	bh=54oJMjM8shiRn1OnZ1JipCpRhpImJA6xO8ic278ve44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mgmhqNkCzX2rBmWXHJYscuZblTKwIfIO/tndF77rmYlG50XJCzHXKbUfNX+byql+lEC8rUW5MKW66Y7kzmq6A88WzOMZlBNSUjiijGrTTdXxl7cEkg1hsBuVOl4aQmk3a8RXJcbkKJEyNWb1VGZmUlGcpWLqiZwSDDdn0zyfaTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xz2fz5O1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741654903;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=otxChvBJUIl3nIMsETvBBdmY0LiFzMWWzPwOK3dbDlk=;
+	b=Xz2fz5O1t0Q9Rl8C8RQSJK2j9p6+F6EslrPSWQ2SbGaEN9Djf0QFaSwJYRlFQ+09d515nj
+	a9R9vqcZJj2pnoDVwZ5GJI136gqMcuOfLB2BDhXHEVQJTlozr+/Zl9tiSucBSbe8hIb8fP
+	aTI2LaYcRQHHs07nIgbm1aWa8KTLdH0=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-282--zuSSewsOSu5xc6xSN_AIA-1; Mon, 10 Mar 2025 21:01:40 -0400
+X-MC-Unique: -zuSSewsOSu5xc6xSN_AIA-1
+X-Mimecast-MFC-AGG-ID: -zuSSewsOSu5xc6xSN_AIA_1741654899
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff581215f7so8052401a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 18:01:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741654899; x=1742259699;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=otxChvBJUIl3nIMsETvBBdmY0LiFzMWWzPwOK3dbDlk=;
+        b=LhskImZoTr2540JEk+AOsvYjgAgwbAR3cbUIRT2tqgp/yL4U43FrAsNBm5/gFKQus4
+         7GjjVmyfVauCSv7vd3iv0iwtxSeVmyzK6k/gCG5UHyc9h/uR7aNGin0jyCuf8X/Y4w9V
+         zcxPVrTLJxM7cdf2enftKrpk4cGmWWJbBgO2SKWzWv3n9oZ0yfY1GfTv13gjdT+8SdGj
+         7KG0RvPItoOoMRRMi+0EpSogLUqdBsKnF2DPbqqQpvDAV6eyvY/qyiuBxw7PwXXVJiAX
+         BE5dst9aIuP9x4j2kL4iq8YS3AUedIFneIHHS/6ad0vAE2tTjI9O5djgm/lCpwLYML9L
+         k8eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Cb6gRyoUmLJupvYTghcdXwWoBI0G8WwDjd5sTAd4EKyFYWUrDFYXzYHRE0DiyIxyB6YRVcxUQuMyDR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+saTP0yyiQ1/I7nSQu6Q5Rsc65+ffqiXWZR6KDpNi422uVhv0
+	LyKNotpmq8bZmk9Hkmk/LNrI+iEydk/knuxWQdpPF6wZFX8A53nZN0JP/EwVVhOtpdg0atweTCi
+	F2kwgZW9JA+MtL+HAhfFjbblZmQUJHjlUyv2sSy1sI5qzoo/vtCdV5b2Lqb/LFL1apz85a5vhKG
+	NG6gGI0zcFxxBXieerZvq6jD8kFKBAvfpRa879
+X-Gm-Gg: ASbGnctCHYs+CPlq6mF5p4dStuGX0scg+iqVc/cRM93NRhc3/KSvDWTyL2oy37WnYmU
+	iYYipgsG4ek//8Agg/K3qU0e3vRjgV4xiXPVi1hXsCt+K7br3uRU28YHZNcOauiTz56hsoA==
+X-Received: by 2002:a17:90b:4ad2:b0:2fa:137f:5c5c with SMTP id 98e67ed59e1d1-2ff7ce59712mr22326101a91.1.1741654899127;
+        Mon, 10 Mar 2025 18:01:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFB3szA9e+qiTUX8D32Hw8wb313r3j65QyUK27BPoTVTn9q4ojSxaDQDQ9rIzvrEtlrS+WS7n5EOVmcp56KXhk=
+X-Received: by 2002:a17:90b:4ad2:b0:2fa:137f:5c5c with SMTP id
+ 98e67ed59e1d1-2ff7ce59712mr22326069a91.1.1741654898757; Mon, 10 Mar 2025
+ 18:01:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200116172428.311437-1-sgarzare@redhat.com> <20200427142518.uwssa6dtasrp3bfc@steredhat>
+ <224cdc10-1532-7ddc-f113-676d43d8f322@redhat.com> <20200428160052.o3ihui4262xogyg4@steredhat>
+ <Z8edJjqAqAaV3Vkt@devvm6277.cco0.facebook.com> <20250305022248-mutt-send-email-mst@kernel.org>
+ <v5c32aounjit7gxtwl4yxo2q2q6yikpb5yv3huxrxgfprxs2gk@b6r3jljvm6mt>
+ <CACGkMEvms=i5z9gVRpnrXXpBnt3KGwM4bfRc46EztzDi4pqOsw@mail.gmail.com>
+ <CAGxU2F7SWG0m0KwODbKsbQipz6WzrRSuE1cUe6mYxZskqkbneQ@mail.gmail.com> <CACGkMEtptFWx_v-14e1LM31XH+fOh4U-VO7gZKyqb1J1KM4uag@mail.gmail.com>
+In-Reply-To: <CACGkMEtptFWx_v-14e1LM31XH+fOh4U-VO7gZKyqb1J1KM4uag@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 11 Mar 2025 09:01:23 +0800
+X-Gm-Features: AQ5f1JryFKyYz4Qy5Qu0hBDkTUXYULGfbK0w_lAdgtos8tIuW3BVNWh2Ym_c4Mw
+Message-ID: <CACGkMEsgRZr=FZLrMkkyDbEzDvUHNHsEK8y7_cGL16gLZh1+Nw@mail.gmail.com>
+Subject: Re: [PATCH net-next 0/3] vsock: support network namespace
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Bobby Eshleman <bobbyeshleman@gmail.com>, 
+	Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net, 
+	Stefan Hajnoczi <stefanha@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-hyperv@vger.kernel.org, 
+	Dexuan Cui <decui@microsoft.com>, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot reported a slab-use-after-free Read in vidtv_mux_init. [1]
+On Tue, Mar 11, 2025 at 8:54=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> On Mon, Mar 10, 2025 at 10:15=E2=80=AFPM Stefano Garzarella <sgarzare@red=
+hat.com> wrote:
+> >
+> > On Thu, 6 Mar 2025 at 01:17, Jason Wang <jasowang@redhat.com> wrote:
+> > >
+> > > On Wed, Mar 5, 2025 at 5:30=E2=80=AFPM Stefano Garzarella <sgarzare@r=
+edhat.com> wrote:
+> > > >
+> > > > On Wed, Mar 05, 2025 at 02:27:12AM -0500, Michael S. Tsirkin wrote:
+> > > > >On Tue, Mar 04, 2025 at 04:39:02PM -0800, Bobby Eshleman wrote:
+> > > > >> I think it might be a lot of complexity to bring into the pictur=
+e from
+> > > > >> netdev, and I'm not sure there is a big win since the vsock devi=
+ce could
+> > > > >> also have a vsock->net itself? I think the complexity will come =
+from the
+> > > > >> address translation, which I don't think netdev buys us because =
+there
+> > > > >> would still be all of the work work to support vsock in netfilte=
+r?
+> > > > >
+> > > > >Ugh.
+> > > > >
+> > > > >Guys, let's remember what vsock is.
+> > > > >
+> > > > >It's a replacement for the serial device with an interface
+> > > > >that's easier for userspace to consume, as you get
+> > > > >the demultiplexing by the port number.
+> > >
+> > > Interesting, but at least VSOCKETS said:
+> > >
+> > > """
+> > > config VSOCKETS
+> > >         tristate "Virtual Socket protocol"
+> > >         help
+> > >          Virtual Socket Protocol is a socket protocol similar to TCP/=
+IP
+> > >           allowing communication between Virtual Machines and hypervi=
+sor
+> > >           or host.
+> > >
+> > >           You should also select one or more hypervisor-specific tran=
+sports
+> > >           below.
+> > >
+> > >           To compile this driver as a module, choose M here: the modu=
+le
+> > >           will be called vsock. If unsure, say N.
+> > > """
+> > >
+> > > This sounds exactly like networking stuff and spec also said somethin=
+g similar
+> > >
+> > > """
+> > > The virtio socket device is a zero-configuration socket communication=
+s
+> > > device. It facilitates data transfer between the guest and device
+> > > without using the Ethernet or IP protocols.
+> > > """
+> > >
+> > > > >
+> > > > >The whole point of vsock is that people do not want
+> > > > >any firewalling, filtering, or management on it.
+> > >
+> > > We won't get this, these are for ethernet and TCP/IP mostly.
+> > >
+> > > > >
+> > > > >It needs to work with no configuration even if networking is
+> > > > >misconfigured or blocked.
+> > >
+> > > I don't see any blockers that prevent us from zero configuration, or =
+I
+> > > miss something?
+> > >
+> > > >
+> > > > I agree with Michael here.
+> > > >
+> > > > It's been 5 years and my memory is bad, but using netdev seemed lik=
+e a
+> > > > mess, especially because in vsock we don't have anything related to
+> > > > IP/Ethernet/ARP, etc.
+> > >
+> > > We don't need to bother with that, kernel support protocols other tha=
+n TCP/IP.
+> >
+> > Do we have an example of any other non-Ethernet device that uses
+> > netdev? Just to see what we should do.
+>
+> Yes, I think can device is one example and it should have others.
+>
+> >
+> > I'm not completely against the idea, but from what I remember when I
+> > looked at it five years ago, it wasn't that easy and straightforward
+> > to use.
+>
+> Can just hook the packets into its own stack, maybe vsock can do the same=
+.
+>
+> >
+> > >
+> > > >
+> > > > I see vsock more as AF_UNIX than netdev.
+> > >
+> > > But you have a device in guest that differs from the AF_UNIX.
+> >
+> > Yes, but the device is simply for carrying messages.
+> > Another thing that makes me think of AF_UNIX is the hybrid-vsock
+> > developed by Firecracker [1] that we also reused in vhost-user-vsock
+> > [2], where the mapping between AF_VSOCK and AF_UNIX is really
+> > implemented.
+>
+> I see. But the main difference is that vsock can work across the
+> boundary of guest and host. This makes it hard to be a 100% socket
+> implementation in the guest.
 
-After PSI initialization fails, the si member is accessed again, resulting
-in this uaf.
+Or inventing a protocol to make vsosk can be transported via ethernet
+(not sure this is possible then).
 
-After si initialization fails, the subsequent process needs to be exited.
+Thanks
 
-[1]
-BUG: KASAN: slab-use-after-free in vidtv_mux_pid_ctx_init drivers/media/test-drivers/vidtv/vidtv_mux.c:78 [inline]
-BUG: KASAN: slab-use-after-free in vidtv_mux_init+0xac2/0xbe0 drivers/media/test-drivers/vidtv/vidtv_mux.c:524
-Read of size 8 at addr ffff88802fa42acc by task syz.2.37/6059
-
-CPU: 0 UID: 0 PID: 6059 Comm: syz.2.37 Not tainted 6.14.0-rc5-syzkaller-00039-g848e07631744 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xc3/0x670 mm/kasan/report.c:521
- kasan_report+0xd9/0x110 mm/kasan/report.c:634
- vidtv_mux_pid_ctx_init drivers/media/test-drivers/vidtv/vidtv_mux.c:78 [inline]
- vidtv_mux_init+0xac2/0xbe0 drivers/media/test-drivers/vidtv/vidtv_mux.c:524
- vidtv_start_streaming drivers/media/test-drivers/vidtv/vidtv_bridge.c:194 [inline]
- vidtv_start_feed+0x334/0x4c0 drivers/media/test-drivers/vidtv/vidtv_bridge.c:239
- dmx_section_feed_start_filtering+0x3a5/0x660 drivers/media/dvb-core/dvb_demux.c:973
- dvb_dmxdev_feed_start drivers/media/dvb-core/dmxdev.c:508 [inline]
- dvb_dmxdev_feed_restart.isra.0+0x457/0x530 drivers/media/dvb-core/dmxdev.c:537
- dvb_dmxdev_filter_stop+0x2b4/0x3a0 drivers/media/dvb-core/dmxdev.c:564
- dvb_dmxdev_filter_free drivers/media/dvb-core/dmxdev.c:840 [inline]
- dvb_demux_release+0x92/0x550 drivers/media/dvb-core/dmxdev.c:1246
- __fput+0x3ff/0xb70 fs/file_table.c:464
- task_work_run+0x14e/0x250 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xad8/0x2d70 kernel/exit.c:938
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
- __do_sys_exit_group kernel/exit.c:1098 [inline]
- __se_sys_exit_group kernel/exit.c:1096 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
- x64_sys_call+0x151f/0x1720 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f871d58d169
-Code: Unable to access opcode bytes at 0x7f871d58d13f.
-RSP: 002b:00007fff4b19a788 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f871d58d169
-RDX: 0000000000000064 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00007fff4b19a7ec R08: 0000000b4b19a87f R09: 00000000000927c0
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000003
-R13: 00000000000927c0 R14: 000000000001d553 R15: 00007fff4b19a840
- </TASK>
-
-Allocated by task 6059:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kmalloc_noprof include/linux/slab.h:901 [inline]
- kzalloc_noprof include/linux/slab.h:1037 [inline]
- vidtv_psi_pat_table_init+0x46/0x2c0 drivers/media/test-drivers/vidtv/vidtv_psi.c:970
- vidtv_channel_si_init+0x67/0x1a90 drivers/media/test-drivers/vidtv/vidtv_channel.c:423
- vidtv_mux_init+0x526/0xbe0 drivers/media/test-drivers/vidtv/vidtv_mux.c:519
- vidtv_start_streaming drivers/media/test-drivers/vidtv/vidtv_bridge.c:194 [inline]
- vidtv_start_feed+0x334/0x4c0 drivers/media/test-drivers/vidtv/vidtv_bridge.c:239
- dmx_section_feed_start_filtering+0x3a5/0x660 drivers/media/dvb-core/dvb_demux.c:973
- dvb_dmxdev_feed_start drivers/media/dvb-core/dmxdev.c:508 [inline]
- dvb_dmxdev_feed_restart.isra.0+0x457/0x530 drivers/media/dvb-core/dmxdev.c:537
- dvb_dmxdev_filter_stop+0x2b4/0x3a0 drivers/media/dvb-core/dmxdev.c:564
- dvb_dmxdev_filter_free drivers/media/dvb-core/dmxdev.c:840 [inline]
- dvb_demux_release+0x92/0x550 drivers/media/dvb-core/dmxdev.c:1246
- __fput+0x3ff/0xb70 fs/file_table.c:464
- task_work_run+0x14e/0x250 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xad8/0x2d70 kernel/exit.c:938
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
- __do_sys_exit_group kernel/exit.c:1098 [inline]
- __se_sys_exit_group kernel/exit.c:1096 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
- x64_sys_call+0x151f/0x1720 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 6059:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2353 [inline]
- slab_free mm/slub.c:4609 [inline]
- kfree+0x2c4/0x4d0 mm/slub.c:4757
- vidtv_channel_si_init+0x34a/0x1a90 drivers/media/test-drivers/vidtv/vidtv_channel.c:499
- vidtv_mux_init+0x526/0xbe0 drivers/media/test-drivers/vidtv/vidtv_mux.c:519
- vidtv_start_streaming drivers/media/test-drivers/vidtv/vidtv_bridge.c:194 [inline]
- vidtv_start_feed+0x334/0x4c0 drivers/media/test-drivers/vidtv/vidtv_bridge.c:239
- dmx_section_feed_start_filtering+0x3a5/0x660 drivers/media/dvb-core/dvb_demux.c:973
- dvb_dmxdev_feed_start drivers/media/dvb-core/dmxdev.c:508 [inline]
- dvb_dmxdev_feed_restart.isra.0+0x457/0x530 drivers/media/dvb-core/dmxdev.c:537
- dvb_dmxdev_filter_stop+0x2b4/0x3a0 drivers/media/dvb-core/dmxdev.c:564
- dvb_dmxdev_filter_free drivers/media/dvb-core/dmxdev.c:840 [inline]
- dvb_demux_release+0x92/0x550 drivers/media/dvb-core/dmxdev.c:1246
- __fput+0x3ff/0xb70 fs/file_table.c:464
- task_work_run+0x14e/0x250 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xad8/0x2d70 kernel/exit.c:938
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
- __do_sys_exit_group kernel/exit.c:1098 [inline]
- __se_sys_exit_group kernel/exit.c:1096 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
- x64_sys_call+0x151f/0x1720 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Reported-by: syzbot+0d33ab192bd50b6c91e6@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=0d33ab192bd50b6c91e6
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- drivers/media/test-drivers/vidtv/vidtv_channel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/test-drivers/vidtv/vidtv_channel.c b/drivers/media/test-drivers/vidtv/vidtv_channel.c
-index 7838e6272712..f3023e91b3eb 100644
---- a/drivers/media/test-drivers/vidtv/vidtv_channel.c
-+++ b/drivers/media/test-drivers/vidtv/vidtv_channel.c
-@@ -497,7 +497,7 @@ int vidtv_channel_si_init(struct vidtv_mux *m)
- 	vidtv_psi_sdt_table_destroy(m->si.sdt);
- free_pat:
- 	vidtv_psi_pat_table_destroy(m->si.pat);
--	return 0;
-+	return -EINVAL;
- }
- 
- void vidtv_channel_si_destroy(struct vidtv_mux *m)
--- 
-2.43.0
+>
+> Thanks
+>
+> >
+> > Thanks,
+> > Stefano
+> >
+> > [1] https://github.com/firecracker-microvm/firecracker/blob/main/docs/v=
+sock.md#firecracker-virtio-vsock-design
+> > [2] https://github.com/rust-vmm/vhost-device/tree/main/vhost-device-vso=
+ck
+> >
 
 
