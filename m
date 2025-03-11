@@ -1,129 +1,75 @@
-Return-Path: <linux-kernel+bounces-555869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B77AA5BD9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:20:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42625A5BD9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:20:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CC9C1899025
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:20:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 831991762BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C17233140;
-	Tue, 11 Mar 2025 10:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFFF235BE1;
+	Tue, 11 Mar 2025 10:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="e6DEZLDh"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cTIHO+ic"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC3D22F3A8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5CC235377;
+	Tue, 11 Mar 2025 10:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741688365; cv=none; b=a0K18GFZuL4ytxfoPEA70/GkaufnCDi9Zq1/0RMUUNyERd8IBbAgZOCSBHa2Zz+8BymWwQcs+juvOanumllwzlhmuWJJUa7HEa2ugZTTbLZm9C9ZZxQzyCKZHMVp9pp6/Xf9ylZKv4R+HC5GNulgd2uslrS66f1UIOGBQTArnwM=
+	t=1741688374; cv=none; b=JYNHs6QLxRGeqnYOOz4snGa0DI6jvyJcIt/WSM/86Ue01ugZuYXnKQ0VxM/Ty7t1Ry2s8IBR6AprBQDqXizEfbBZmu1Qo9NwGtckX02fzyhYXdKUBulOLLvPyDQmxCdYmyn+Xz3jGzbveAUtfIZqIUCGyYXIOBEcT0YPmgs7mig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741688365; c=relaxed/simple;
-	bh=79qhmXbbTGpMFrXPo7q28fHNDo3c6ZvhTXXHWLU4bEw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h4ZhmBYYVu7JMP2Vl8cIEUFpd4wytDaKazfdyWlnoICj0WKnx2U3lF9ayDQZGMyZ/wvJQgHvemEEVgvKQGxspATXbr50g0yJqekj/YKgM51tzsy8MLrwZkBMyFl7X6ldYABvZH2lFHgKFD6aID6RBDfiPE81ynQicwsvd/jk1d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=e6DEZLDh; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6001a.ext.cloudfilter.net ([10.0.30.140])
-	by cmsmtp with ESMTPS
-	id rvLot7rx8AfjwrwhmtOQyd; Tue, 11 Mar 2025 10:19:22 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id rwhltW9mqsTV2rwhltRRfn; Tue, 11 Mar 2025 10:19:22 +0000
-X-Authority-Analysis: v=2.4 cv=GquJ+V1C c=1 sm=1 tr=0 ts=67d00e2a
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=TRiU9yirtu/jI1IpYly3+NIJknA+txu8Be0yyLNZ7RU=; b=e6DEZLDhqtQcPKkVxNfXmVY7Gx
-	7qSQuRW1AnpvUbAbDNdsRIFj+qv8V/8Yag+adoHIHD2dtRf0WMB6v8vfSS0wE1tclcMLuVw8TdbKy
-	1UZhz2xBPLhOX4M5Z9SZdSRv/h5mYG4Qaf7js2kJVRvdtY4sMJTrJuGQWaACVy/GXRfjC+R/4z9xV
-	aGGN1BQ1U5cUvWelr/AxEa9k9MHw2AY8bm9NBJhylbkrZT2eqZMHpHfR8TXAYOyrYiOlxHcm8EnbD
-	26FQkYEHNYd3SSCaAHtHXXxqrJ+nG08c6QSONeG0neCpbmt07VX3XnxtcDcU+IYLc31fvpS2ujflP
-	QMP4DL4g==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:47726 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1trwhj-00000001YoV-2liw;
-	Tue, 11 Mar 2025 04:19:19 -0600
-Message-ID: <8f5a78ff-1c9d-4d33-884a-af231613398f@w6rz.net>
-Date: Tue, 11 Mar 2025 03:19:16 -0700
+	s=arc-20240116; t=1741688374; c=relaxed/simple;
+	bh=+xPZ7oJ1rK0sJIEnJAfAEcYAAynz/asIz+7ZTOxdeOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U+l4k9tz+0xp3zVP8L6BZWxoyq49p1bneCkCzqb8poFvVbhFZuGQ72aGCJP8YPcFLn6g3jQ6D8eI0EGo3jLevkMHqhr68tle6/DvrruZQw48bcA6daX800vfFVZvr9n07u33PULrI+iRxP47p2prM8SKMr3RUYTcM7+kpf9CP3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cTIHO+ic; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 053EFC4CEEB;
+	Tue, 11 Mar 2025 10:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741688373;
+	bh=+xPZ7oJ1rK0sJIEnJAfAEcYAAynz/asIz+7ZTOxdeOE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cTIHO+icwb75SEpVaz+5aU9okABktvtSt1vV/wVPmnE7l2V5h2nY0+hvCyNOiruf9
+	 bPVcOGFG+PSk3yoVEmWcMEmCIS2+0kqhWkCBNAML4kvm3tvSITW1zgL+vKCGNk3SP0
+	 Pgk/IuWZ8hGqb367a300CDsAYi6xX4Q5TXbGjyoOm37ss8HKYJCBpolRS/2EqjuIau
+	 PORjW1Asx2UdgCpKxT16avleH//trR79dmzcQ9Em6shK9Wis1b739Mx6DgfF7FA4yA
+	 SMfPZurowDB8MMJLcMDDXjQKw4g860Goa/aulabYA7/Vd/4ltjuCS/8bFlhLuaKTQp
+	 nO0cM0O0AdQHA==
+Date: Tue, 11 Mar 2025 11:19:27 +0100
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] wireguard: noise: Add __nonstring annotations for
+ unterminated strings
+Message-ID: <20250311111927.06120773@kernel.org>
+In-Reply-To: <20250310222249.work.154-kees@kernel.org>
+References: <20250310222249.work.154-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/109] 6.1.131-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250310170427.529761261@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250310170427.529761261@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1trwhj-00000001YoV-2liw
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:47726
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 54
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfAw/TPU9daoZ8jDIG1eL6YMD+W75I2AO8nW3jl0N5ovkeT2ssNUso6FQdEJ6gIWeF+biQk/s2CLBIYK5FWOHmEg1MYpaUfy1ddD19QdiYfBTGoPSxQgO
- vDIFfLc0gCSojKSeWwmbNZnuFzoQrFvH3S0KpnmkkdGyb7Lu4uoYsjFA1cUnW8EV9EaknMsO1D0wmHwjDoSlQTg8gp78jZDmA6g=
 
-On 3/10/25 10:05, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.131 release.
-> There are 109 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.131-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Mon, 10 Mar 2025 15:22:50 -0700 Kees Cook wrote:
+> When a character array without a terminating NUL character has a static
+> initializer, GCC 15's -Wunterminated-string-initialization will only
+> warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
+> with __nonstring to and correctly identify the char array as "not a C
+> string" and thereby eliminate the warning.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
-
-Tested-by: Ron Economos <re@w6rz.net>
-
+Hi! Would marking all of u8 as non-string not be an option? How many 
+of such warnings do we have in the tree? Feel free to point me to a
+previous conversation.
 
