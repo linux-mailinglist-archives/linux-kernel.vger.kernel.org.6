@@ -1,54 +1,63 @@
-Return-Path: <linux-kernel+bounces-557020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC517A5D288
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:29:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2846BA5D293
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 130207A9116
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:27:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B731C3B8641
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5549265607;
-	Tue, 11 Mar 2025 22:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A27265611;
+	Tue, 11 Mar 2025 22:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLKeIpbL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BiHPJ+nw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3319C2620C6;
-	Tue, 11 Mar 2025 22:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37211E7C2B;
+	Tue, 11 Mar 2025 22:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741732130; cv=none; b=EAvecU8Ya2Q71WysSfEabexvrZo6J7umXlHjopbmvWNWw3P6w+NOiFsk6aPWsBrES7W4Lt1WkZUPevd0iHHtXpMD21CZKJa12cIt3M1AgBG5minB9aF0GLRc4KQRA4P4iGDasUiC1EgBe7q3UxCQTTEtjzFm5COl2/yIvzLBotk=
+	t=1741732211; cv=none; b=t0lteMztZZ1w6liDouJ/Arlm9Z2X9ClBBVP+zTUsHUJPLSImv33FwFptIb1Nqkaf4T5n9dg4k8sYU4GNd0dx6rRr1Dx7L0n+8NEbKVuJ/zGDPRVDBDd89EJCxz2aEzyfqmTrVhw5FWJ/b29kcToCh5GPSv7LnQtMP9TZrvjFwps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741732130; c=relaxed/simple;
-	bh=JYosVfXJ9HZ+hIIsL9NZHNAXWycCtZAVMG2NAMGdNMc=;
+	s=arc-20240116; t=1741732211; c=relaxed/simple;
+	bh=D/ejxuliKp47/6IzAc6WRsye4a+L+qynFv35lbKIaLc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HmkrM2vcgThbcmU7/HLxegJdrdlafjpAknrvKY+bPSObfln3D5wKA66a2SD3nGvpostKqM80ma6AN+/akwPrQO+5qnm/spnwq6FS0eU8n42AsY7RtLsK0hqnaPPSMy6xEH1Tx2cYA1Hnfh6imlFG+sTbpSyPmC3v8Il1V2BW4ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jLKeIpbL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADBF2C4CEE9;
-	Tue, 11 Mar 2025 22:28:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EWKNRcc7hKd3x9zqr8LqaTkiKj4pm3WDFSjTgTLI2dGlSwRT3blE/2rkNdr6iZ2Kc/MHsuGluYtY1n0xayePh7nNb0ogr3eu9jkMdCKmiPkmZZSMJpKUlSyM2rGhoAkim088vn7vc/IlvohChaHqOjCdHx0WcadiYfyr2BKe3Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BiHPJ+nw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 184DEC4CEE9;
+	Tue, 11 Mar 2025 22:30:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741732129;
-	bh=JYosVfXJ9HZ+hIIsL9NZHNAXWycCtZAVMG2NAMGdNMc=;
+	s=k20201202; t=1741732211;
+	bh=D/ejxuliKp47/6IzAc6WRsye4a+L+qynFv35lbKIaLc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jLKeIpbLHImvJrRSbwC7JoYZMLpc5MeMzADXNpSnRGwHDQHqMjhAwMn6ExJ7k1Szb
-	 xdyP1KAxSbAAAEGyurYuCpFQgKbOaRKdMk19+YgN87BmU/QOS4l0yiGHBIFUG8+i26
-	 cZrEeZbRgGdvL9d4GIfAxRNCk5uB7bwilwYMYjIa304CDanc5/zP5vCClSHiXI9oWy
-	 TuvjgaXU+dVx1cAngLA3zwaA8T39BBmJ4aSI/yr8pWDbAnZgCdr6pn8bOwZToKJies
-	 HLfr51/7H1TSGH7EQYez48S9xZqu37rjgljX+Z8ktzS9gVShtoWZDWA4ZjVkSoFsSP
-	 GuVOUj+q0Wkrw==
-Date: Tue, 11 Mar 2025 23:28:39 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Anindya Sundar Gayen <anindya.sg@samsung.com>
-Cc: wsa+renesas@sang-engineering.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, aswani.reddy@samsung.com
-Subject: Re: [PATCH] i2c: i2c-exynos5: fixed a spelling error
-Message-ID: <xyty5zgtvvbi56cgdl4k72dsjb37ksqrwiur2osfezmwnqmw7d@dzvmfwiaqsic>
-References: <CGME20250228142018epcas5p463b70b48a1dd36016c26dcf66f8b489d@epcas5p4.samsung.com>
- <20250228133745.35053-1-anindya.sg@samsung.com>
+	b=BiHPJ+nwPHlDdP4oXGhcORfHsgcM4ttc+mb2rBRh9CEOhFHvfUmTjedK8SwgymQYZ
+	 VXr1mo/6dJmpfC/SS0yu8oGrfspuKU2JoWJtf7EyjQlIJO0/rx6ZfoZNpDtVRoIfB+
+	 oa0dmgJsTxfJppmd3CrGnagsijeotxf2wVZkocApISLbvIrdmWPf9O7PogNI8EXBlc
+	 CSFaokKeoGkJTff4kus1apfzx+ay5JfinNkLd/VtICfuf64gg+Nyx69btjpKMHWniM
+	 u8JDqy50+SPaO7hv6QqeI6gRzALAuH5PJTdjtTJd+Hj/13RNAaxCCJO72eZ+BeJ/0r
+	 jluTKlrfvKbtQ==
+Date: Tue, 11 Mar 2025 15:30:07 -0700
+From: Kees Cook <kees@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jack Wang <jinpu.wang@cloud.ionos.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] wireguard: noise: Add __nonstring annotations for
+ unterminated strings
+Message-ID: <202503111520.CF7527A@keescook>
+References: <20250310222249.work.154-kees@kernel.org>
+ <20250311111927.06120773@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,18 +66,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250228133745.35053-1-anindya.sg@samsung.com>
+In-Reply-To: <20250311111927.06120773@kernel.org>
 
-Hi Anindya,
-
-On Fri, Feb 28, 2025 at 07:07:45PM +0530, Anindya Sundar Gayen wrote:
-> Corrected a spelling mistake in the i2c-exynos5 driver to improve code
-> readability. No functional changes were made.
+On Tue, Mar 11, 2025 at 11:19:27AM +0100, Jakub Kicinski wrote:
+> On Mon, 10 Mar 2025 15:22:50 -0700 Kees Cook wrote:
+> > When a character array without a terminating NUL character has a static
+> > initializer, GCC 15's -Wunterminated-string-initialization will only
+> > warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
+> > with __nonstring to and correctly identify the char array as "not a C
+> > string" and thereby eliminate the warning.
 > 
-> Signed-off-by: Anindya Sundar Gayen <anindya.sg@samsung.com>
+> Hi! Would marking all of u8 as non-string not be an option? How many 
+> of such warnings do we have in the tree? Feel free to point me to a
+> previous conversation.
 
-merged to i2c/i2c-host.
+*thread merge*
 
-Thanks,
-Andi
+On Mon, Mar 10, 2025 at 06:38:01PM -0400, James Bottomley wrote[1]:
+> This looks a bit suboptimal ... is there anywhere in the kernel u8[] is
+> actually used for real strings?  In which case it would seem the better
+> place to put the annotation is in the typedef for u8 arrays.
+
+So both of you asked basically same question, and I think the simple answer
+is "no we can't mark u8 as nonstring". The use of u8 has become
+synonymous with "char" for a long while now, and it's gotten even more
+common after we made char unsigned by default.
+
+The number of warning sources is pretty small. I think I have identified
+and proposed fixes most of them already[2]. ACPICA needs an upstream
+change, which I've submitted[3]. And ACPI needed multidimensional
+nonstring annotation support, which had the last needed bit added to GCC
+today[4], and I've proposed support for it in the kernel[5]. With 4 and 5
+ready, I can send the final patch, which is basically just this (and
+actually accounts for the vast majority of warnings emitted):
+
+-static const char table_sigs[][ACPI_NAMESEG_SIZE] __initconst = {
++static const char table_sigs[][ACPI_NAMESEG_SIZE] __nonstring_array __initconst = {
+
+-Kees
+
+[1] https://lore.kernel.org/lkml/98ca3727d65a418e403b03f6b17341dbcb192764.camel@HansenPartnership.com/
+[2] https://lore.kernel.org/lkml/?q=f%3AKees+%22-Wunterminated-string-initialization%22
+[3] https://github.com/acpica/acpica/pull/1006
+[4] https://github.com/gcc-mirror/gcc/commit/afb46540d3921e96c4cd7ba8fa2c8b0901759455
+[5] https://lore.kernel.org/lkml/20250310214244.work.194-kees@kernel.org/
+
+-- 
+Kees Cook
 
