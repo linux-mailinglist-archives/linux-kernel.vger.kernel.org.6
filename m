@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-555576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CEDA5B9D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:31:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B50BA5B9C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:29:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5E81894C5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:31:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7128B1892A0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCFC2222DE;
-	Tue, 11 Mar 2025 07:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2E32222C4;
+	Tue, 11 Mar 2025 07:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eARvd6Ww"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="clqEGs7D"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA231EB195;
-	Tue, 11 Mar 2025 07:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189A32222CA;
+	Tue, 11 Mar 2025 07:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741678301; cv=none; b=ECUhzEl1RxotJYT1tMQrqAPibaPNtFA/1cXI4iUn/HRAbTMa8SRxBc31JojU4HL6MqeAHmqk97Xsdfqf0Of1Ox0bs9i7QQ5DAyLJoTp3WXZldsctdiXxQ57B2C/j9PzsojTHpRbEFoTlqN+SWybqedBNPI60WpgJ5eNDJaWP2MI=
+	t=1741678131; cv=none; b=EUxKxtmclnhpU1nwGXDuk3DDuXOD4ZcXQSwPELXfF1rbNXGS7l5pgXn36CAU/zcqp1o45AKdvIG8yTcoBq7M7xCl51uVQXiMnT/5qM7sVCkARxyfOJWuTXEZcIDkNStK8CJJClbOBOzBf0HgP+gwZk8oa/5pDAUKqC15ppCu9K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741678301; c=relaxed/simple;
-	bh=Hq9oj7wLpWMy8mr3CBZv+PzeXcEG672QxLovOqz+Mco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z6t3iwyPgrJSRe6Q005I3nuRdEHPx2wbjH5MCTSBKns3dIpNmHCdnpY4IibQC2sDWXy9dTqgvNN0OXbg+rAhDQik+vKyriCluBzjTUSeeKNi2JMFjJAe2cXRY1rYjMww3S1zXhp43QLooNHX+DNWyz/YOIo4sjZUnEPknfV9c2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eARvd6Ww; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741678300; x=1773214300;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Hq9oj7wLpWMy8mr3CBZv+PzeXcEG672QxLovOqz+Mco=;
-  b=eARvd6WwoBHVoDyX97WM0ZB1H6QPqhqOnIoWBJyUIjvOgIvByXZH/rUF
-   fmmBcol8C+lLnzX2kZXJ5OcgLFpgdz/7umy81TZStjWd1RIUXXbwE+enK
-   /dztaOLso6XgxKQMtSLwOmMaSfd/co5k2HY+k2wkowgy2DGMd7M+wXAZz
-   /FgIPBBdjuqcxfDq/lYCef2CQoB6sPSHzPDBsIOUWoSt+DVNd9FE1bDMH
-   0EuFh1Hl7O28lacpnQHb9fpF6+KJw+/yf6U0aAi04yXup+qS6RG665A5G
-   A2mhF0YwPyRDParhy3dzXVfu/1OHx7XNi/TcSOFFlwIAKKFxD15s2+EE0
-   Q==;
-X-CSE-ConnectionGUID: 6ss0DhYZTMeXfqIIaaiouQ==
-X-CSE-MsgGUID: FiDQXVD7QoaM/VBP+XhlbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="46350713"
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="46350713"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 00:31:40 -0700
-X-CSE-ConnectionGUID: NTagemLOSlibh4jwNKS8ng==
-X-CSE-MsgGUID: u9trQ7IgS0q9Htl59JSXvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="125283253"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 00:31:37 -0700
-Date: Tue, 11 Mar 2025 08:27:45 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] net: macb: Truncate TX1519CNT for trailing NUL
-Message-ID: <Z8/l8eM5u7QeUROt@mev-dev.igk.intel.com>
-References: <20250310222415.work.815-kees@kernel.org>
+	s=arc-20240116; t=1741678131; c=relaxed/simple;
+	bh=tS59wv2oRJS3ZEDR20fU+3B7NhAcIQZIUM+9nIVYeMA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BQykO7Y3WOB5H74eJd06caZ3UGWPEp+PnC1zEv4pE2TWaziGNBP1F7nhsLTszdpnLKeEWRnDegA/Fj38ORVFismq+spktbmYGpiqGdNPV8PhB9KZtwVlVzi/jbdxm95lw+dUQ9QaRvM5sD8CcPGxaQ1h130aCSvFypthiBZFv1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=clqEGs7D; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52B7S0Ds644784
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 02:28:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741678080;
+	bh=PbzRBzD4zy1+woI1kw2/XmxJI77CaWyhRb9Se95W7PI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=clqEGs7DEHEsKaeENmPF1f7pqFSp3QgVfxlDlCYu/oVNDolvtnCKDqdbHlSjPzb95
+	 2m1ZsLm7e+NylWm0dsInjHa0bGykRmvn14PvWYpEgJ3mVs6VfL2j/g63VPdbSrpOJh
+	 6LMluOUQDRQVTnJ8DlqkCR5Ah1rH4kg0/PugVLvM=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52B7S0kc061754
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 11 Mar 2025 02:28:00 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
+ Mar 2025 02:27:59 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 11 Mar 2025 02:28:00 -0500
+Received: from [10.24.68.192] (dhcp-10-24-68-192.dhcp.ti.com [10.24.68.192])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52B7RuHV002607;
+	Tue, 11 Mar 2025 02:27:56 -0500
+Message-ID: <8f03c097-e2c1-452a-85e2-90accbac7443@ti.com>
+Date: Tue, 11 Mar 2025 12:57:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310222415.work.815-kees@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] Add J722S CSI support
+To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Vaishnav Achath <vaishnav.a@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <jai.luthra@linux.dev>,
+        <y-abhilashchandra@ti.com>
+References: <20250218185452.600797-1-vaishnav.a@ti.com>
+ <174133309362.1072814.5440404016847301624.b4-ty@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <174133309362.1072814.5440404016847301624.b4-ty@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Mar 10, 2025 at 03:24:16PM -0700, Kees Cook wrote:
-> GCC 15's -Wunterminated-string-initialization saw that this string was
-> being truncated. Adjust the initializer so that the needed final NUL
-> character will be present.
+
+
+On 07/03/25 16:06, Vignesh Raghavendra wrote:
+> Hi Vaishnav Achath,
 > 
-> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> Cc: Andrew Lunn <andrew+netdev@lunn.ch>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: netdev@vger.kernel.org
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
->  drivers/net/ethernet/cadence/macb.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> On Wed, 19 Feb 2025 00:24:47 +0530, Vaishnav Achath wrote:
+>> This series adds support for CSI2RX capture on J722S EVM
+>> and enables IMX219 and OV5640 overlays to enables
+>> 4 sensors on EVM, this provides a reference for a user to
+>> enable a different sensor on any of the ports.
+>>
+>> Test logs:
+>> IMX219: https://gist.github.com/vaishnavachath/60cc2ef257601f27f28a315f8cf669c4
+>> OV5640: https://gist.github.com/vaishnavachath/648202286d4d34d4d25f7c8c9db8b8bd
+>>
+>> [...]
+> I have applied the following to branch ti-k3-dts-next on [1].
+> Thank you!
 > 
-> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-> index 2847278d9cd4..9a6acb97c82d 100644
-> --- a/drivers/net/ethernet/cadence/macb.h
-> +++ b/drivers/net/ethernet/cadence/macb.h
-> @@ -1067,7 +1067,8 @@ static const struct gem_statistic gem_statistics[] = {
->  	GEM_STAT_TITLE(TX256CNT, "tx_256_511_byte_frames"),
->  	GEM_STAT_TITLE(TX512CNT, "tx_512_1023_byte_frames"),
->  	GEM_STAT_TITLE(TX1024CNT, "tx_1024_1518_byte_frames"),
-> -	GEM_STAT_TITLE(TX1519CNT, "tx_greater_than_1518_byte_frames"),
-> +	GEM_STAT_TITLE(TX1519CNT, "tx_greater_than_1518_byte_frame"),
-> +
->  	GEM_STAT_TITLE_BITS(TXURUNCNT, "tx_underrun",
->  			    GEM_BIT(NDS_TXERR)|GEM_BIT(NDS_TXFIFOERR)),
->  	GEM_STAT_TITLE_BITS(SNGLCOLLCNT, "tx_single_collision_frames",
+> [1/5] arm64: dts: ti: k3-j722s-main: Add BCDMA CSI overrides
+>       commit: fb1b230bf9c45f5d6579dc329c2aafcd1263b70a
+> [2/5] arm64: dts: ti: k3-j722s-main: Add CSI2RX nodes
+>       commit: 8fea4519f625e6c1b05078f2ecea252b7b28b06e
+> [3/5] arm64: dts: ti: k3-j722s-evm: Add camera peripherals
+>       commit: ce553288ad2368f0d27e47b39a23121a825a2b33
 
-"rx_greater_than_1518_byte_frames" is also 32, probably you should fix
-that too.
+> [4/5] arm64: dts: ti: k3-j722s-evm: Add overlay for quad IMX219
+>       commit: c24ccb1cd77fb44087b2f7008d99626796b33ca4
+> [5/5] arm64: dts: ti: k3-j722s-evm: Add overlay for TEVI OV5640
+>       commit: 938806652b0a3c90d67e7137c91708d06940b03d
 
-Thanks
+I have dropped 4 and 5 due to issues Rob pointed out in the other thread.
 
-> -- 
-> 2.34.1
-> 
+-- 
+Regards
+Vignesh
+https://ti.com/opensource
+
 
