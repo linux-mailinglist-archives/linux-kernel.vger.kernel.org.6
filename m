@@ -1,271 +1,449 @@
-Return-Path: <linux-kernel+bounces-556085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2B1A5C08D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:19:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B822A5C092
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:19:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9A987A5429
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:18:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 270087A1C30
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0399325A331;
-	Tue, 11 Mar 2025 12:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E6C254AE7;
+	Tue, 11 Mar 2025 12:17:48 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D68256C7A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390F511CBA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741695381; cv=none; b=I2V0SxyWcrBer0eOoWEr+oBtR4UGS2qvC/4OwuKsMnZTyge+gd6w36qF8M+iKmFMA6Zx7hV94itbEUwP+ibB/uRnHDiYtfo7YOAAHN449znRG2j1vn3boKyogqcCcODHHDk6qkdpEfi0XWcOZnTUzbgXyEhsWsAG/Q9uT2vXWBA=
+	t=1741695468; cv=none; b=p0u6DFtRfYQ3m3O5+nZGjAI+bvLtOowAD1a6qYTDB0nMf7GFYc5WgxQdqgWaGzoTfy7Hdj/4fwBXIUaL3Ufeco/mr++Zo8PGuMmFof/canvkjXsIWpznH/FCXiZRg07Gf7N3JqtomJ6Olk7Ehn+O9aqj5pyvm73CR/kmWOUqLns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741695381; c=relaxed/simple;
-	bh=Ar2cJr3FYM+YA0cBeFq7bf+EFgQEVYzNAHoHBA6A8HM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=iQlZydB4XUkgfiE++7pXBzasg47HU5bbcp1khrdGSa2G5mBAPx/lut8vIZqZyidyb2A2gIW+D1jYX6jhETdd7QMVDIxX1+7NmphYE1nt8QMZy9tQiXfCAnxSetEy5B4RQemmSQrq5SFP6ilJB0uPJXR6H/oo3TEn+5ua8dxzIOo=
+	s=arc-20240116; t=1741695468; c=relaxed/simple;
+	bh=qnNzqIw9mHz+ZCwY1ylpImE5cwabst4DaeSzA1fv8Ag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CavRT77MHnVCT+Zz84Yp+BHeKruh1bTMM1AmV9Qpk3XciytmSYQCBdRJGzBgFRTUS12HAS4kMOI8e1nNh1wr0E8C5SO2DsOP4brDmLFc0i/DV3USrdk9+gPf7sQS7Pi2gyydAtKNfebJgo6b6jz4r3ujg57qRvXTIpOCEYFT4y8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06A4F152B;
-	Tue, 11 Mar 2025 05:16:30 -0700 (PDT)
-Received: from [10.57.40.127] (unknown [10.57.40.127])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0D6B13F7BD;
-	Tue, 11 Mar 2025 05:16:14 -0700 (PDT)
-Message-ID: <0ac0f1f5-e4a0-46ae-8ea0-2eba7e21a7e1@arm.com>
-Date: Tue, 11 Mar 2025 12:16:14 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF364152B
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:17:56 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3A90C3F673
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:17:45 -0700 (PDT)
+Date: Tue, 11 Mar 2025 12:17:29 +0000
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Ashley Smith <ashley.smith@collabora.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Heiko Stuebner <heiko@sntech.de>, kernel@collabora.com,
+	Daniel Stone <daniels@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/panthor: Make the timeout per-queue instead of
+ per-job
+Message-ID: <Z9Ap2S6VAqZ6w4NI@e110455-lin.cambridge.arm.com>
+References: <20250310133050.280614-1-ashley.smith@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
-Content-Language: en-GB
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Yang Shi <yang@os.amperecomputing.com>,
- =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
- catalin.marinas@arm.com, will@kernel.org, joro@8bytes.org,
- jean-philippe@linaro.org, mark.rutland@arm.com, joey.gouly@arm.com,
- oliver.upton@linux.dev, james.morse@arm.com, broonie@kernel.org,
- maz@kernel.org, david@redhat.com, akpm@linux-foundation.org, jgg@ziepe.ca,
- nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
- smostafa@google.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
- <20250228182403.6269-6-miko.lenczewski@arm.com>
- <b46dc626-edc9-4d20-99d2-6cd08a01346c@os.amperecomputing.com>
- <43732270-8fd0-4a18-abec-096e383a6a4d@arm.com>
- <5ff34bd0-7823-4f31-9f13-bf60d3345b99@arm.com>
- <7cca1edf-fd1b-4622-999e-8e0ca098dfe2@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <7cca1edf-fd1b-4622-999e-8e0ca098dfe2@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250310133050.280614-1-ashley.smith@collabora.com>
 
-On 11/03/2025 10:58, Ryan Roberts wrote:
-> On 11/03/2025 10:17, Suzuki K Poulose wrote:
->> On 03/03/2025 10:17, Ryan Roberts wrote:
->>> On 01/03/2025 01:32, Yang Shi wrote:
->>>>
->>>>
->>>>
->>>> On 2/28/25 10:24 AM, Mikołaj Lenczewski wrote:
->>>>> For supporting BBM Level 2 for userspace mappings, we want to ensure
->>>>> that the smmu also supports its own version of BBM Level 2. Luckily, the
->>>>> smmu spec (IHI 0070G 3.21.1.3) is stricter than the aarch64 spec (DDI
->>>>> 0487K.a D8.16.2), so already guarantees that no aborts are raised when
->>>>> BBM level 2 is claimed.
->>>>>
->>>>> Add the feature and testing for it under arm_smmu_sva_supported().
->>>>>
->>>>> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
->>>>> ---
->>>>>     arch/arm64/kernel/cpufeature.c                  | 7 +++----
->>>>>     drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c | 3 +++
->>>>>     drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c     | 3 +++
->>>>>     drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h     | 4 ++++
->>>>>     4 files changed, 13 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->>>>> index 63f6d356dc77..1022c63f81b2 100644
->>>>> --- a/arch/arm64/kernel/cpufeature.c
->>>>> +++ b/arch/arm64/kernel/cpufeature.c
->>>>> @@ -2223,8 +2223,6 @@ static bool has_bbml2_noabort(const struct
->>>>> arm64_cpu_capabilities *caps, int sco
->>>>>                 if (!cpu_has_bbml2_noabort(__cpu_read_midr(cpu)))
->>>>>                     return false;
->>>>>             }
->>>>> -
->>>>> -        return true;
->>>>>         } else if (scope & SCOPE_LOCAL_CPU) {
->>>>>             /* We are a hot-plugged CPU, so only need to check our MIDR.
->>>>>              * If we have the correct MIDR, but the kernel booted on an
->>>>> @@ -2232,10 +2230,11 @@ static bool has_bbml2_noabort(const struct
->>>>> arm64_cpu_capabilities *caps, int sco
->>>>>              * we have an incorrect MIDR, but the kernel booted on a
->>>>>              * sufficient CPU, we will not bring up this CPU.
->>>>>              */
->>>>> -        return cpu_has_bbml2_noabort(read_cpuid_id());
->>>>> +        if (!cpu_has_bbml2_noabort(read_cpuid_id()))
->>>>> +            return false;
->>>>>         }
->>>>>     -    return false;
->>>>> +    return has_cpuid_feature(caps, scope);
->>>>
->>>> Do we really need this? IIRC, it means the MIDR has to be in the allow list
->>>> *AND* MMFR2 register has to be set too. AmpereOne doesn't have MMFR2 register
->>>> set.
->>>
->>> Miko, I think this should have been squashed into patch #1? It doesn't belong in
->>> this patch.
->>>
->>> Yang, we discussed this internally and decided that we thought it was best to
->>> still require BBML2 being advertised in the feature register. That way if trying
->>> to use KVM to emulate a CPU that is in the allow list but doesn't really support
->>> BBML2, we won't try to use it.
->>>
->>> But we still end up with the same problem if running on a physical CPU that
->>> supports BBML2 with conflict aborts, but emulating a CPU in the allow list. So
->>
->> I don't understand the problem here ? In the worst case, if we want to disable
->> the BBML2 feature on a given CPU, we could provide an id-
->> override to reset the value of BBML2. Or provide a kernel parameter to
->> disable this in case we want to absolutely disable the feature on a
->> "distro" kernel.
+On Mon, Mar 10, 2025 at 01:30:09PM +0000, Ashley Smith wrote:
+> The timeout logic provided by drm_sched leads to races when we try
+> to suspend it while the drm_sched workqueue queues more jobs. Let's
+> overhaul the timeout handling in panthor to have our own delayed work
+> that's resumed/suspended when a group is resumed/suspended. When an
+> actual timeout occurs, we call drm_sched_fault() to report it
+> through drm_sched, still. But otherwise, the drm_sched timeout is
+> disabled (set to MAX_SCHEDULE_TIMEOUT), which leaves us in control of
+> how we protect modifications on the timer.
 > 
-> Hi Suzuki,
+> One issue seems to be when we call drm_sched_suspend_timeout() from
+> both queue_run_job() and tick_work() which could lead to races due to
+> drm_sched_suspend_timeout() not having a lock. Another issue seems to
+> be in queue_run_job() if the group is not scheduled, we suspend the
+> timeout again which undoes what drm_sched_job_begin() did when calling
+> drm_sched_start_timeout(). So the timeout does not reset when a job
+> is finished.
 > 
-> Sorry perhaps I'm confusing everyone; As I recall, we had a conversation before
-> Miko posted this series where you were suggesting we should check BOTH that all
-> the CPUs' MIDRs are in the allow list AND that BBML2 is advertised in MMFR2 in
-> order to decide to enable the CPU feature. My understanding was that without the
-> MMFR2 check, you were concerned that in a virtualization scenario, a CPU's MIDR
-> could be overridden to emulate a CPU that is in the allow list, but in reality
-> the CPU does not support BBML2. We would then enable BBML2 and BadThings (TM)
-> will happen. So additionally checking the MMFR2 would solve this.
+> Co-developed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Tested-by: Daniel Stone <daniels@collabora.com>
+> Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")
+> Signed-off-by: Ashley Smith <ashley.smith@collabora.com>
+
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+
+Best regards,
+Liviu
+
+> ---
+>  drivers/gpu/drm/panthor/panthor_sched.c | 233 +++++++++++++++++-------
+>  1 file changed, 167 insertions(+), 66 deletions(-)
 > 
-> But Yang is saying that he plans to add the AmpereOne to the allow list because
-> it does support BBML2+NOCONFLICT semantics and we want to benefit from that. But
-> AmpereOne does not advertise BBML2 in it's MMFR2. So with the current approach,
-> adding AmpereOne to the allow list is not sufficient to enable the feature.
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index 4d31d1967716..5f02d2ec28f9 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -360,17 +360,20 @@ struct panthor_queue {
+>  	/** @entity: DRM scheduling entity used for this queue. */
+>  	struct drm_sched_entity entity;
+>  
+> -	/**
+> -	 * @remaining_time: Time remaining before the job timeout expires.
+> -	 *
+> -	 * The job timeout is suspended when the queue is not scheduled by the
+> -	 * FW. Every time we suspend the timer, we need to save the remaining
+> -	 * time so we can restore it later on.
+> -	 */
+> -	unsigned long remaining_time;
+> +	/** @timeout: Queue timeout related fields. */
+> +	struct {
+> +		/** @timeout.work: Work executed when a queue timeout occurs. */
+> +		struct delayed_work work;
+>  
+> -	/** @timeout_suspended: True if the job timeout was suspended. */
+> -	bool timeout_suspended;
+> +		/**
+> +		 * @timeout.remaining: Time remaining before a queue timeout.
+> +		 *
+> +		 * When the timer is running, this value is set to MAX_SCHEDULE_TIMEOUT.
+> +		 * When the timer is suspended, it's set to the time remaining when the
+> +		 * timer was suspended.
+> +		 */
+> +		unsigned long remaining;
+> +	} timeout;
+>  
+>  	/**
+>  	 * @doorbell_id: Doorbell assigned to this queue.
+> @@ -1031,6 +1034,82 @@ group_unbind_locked(struct panthor_group *group)
+>  	return 0;
+>  }
+>  
+> +static bool
+> +group_is_idle(struct panthor_group *group)
+> +{
+> +	struct panthor_device *ptdev = group->ptdev;
+> +	u32 inactive_queues;
+> +
+> +	if (group->csg_id >= 0)
+> +		return ptdev->scheduler->csg_slots[group->csg_id].idle;
+> +
+> +	inactive_queues = group->idle_queues | group->blocked_queues;
+> +	return hweight32(inactive_queues) == group->queue_count;
+> +}
+> +
+> +static void
+> +queue_suspend_timeout(struct panthor_queue *queue)
+> +{
+> +	unsigned long qtimeout, now;
+> +	struct panthor_group *group;
+> +	struct panthor_job *job;
+> +	bool timer_was_active;
+> +
+> +	spin_lock(&queue->fence_ctx.lock);
+> +
+> +	/* Already suspended, nothing to do. */
+> +	if (queue->timeout.remaining != MAX_SCHEDULE_TIMEOUT)
+> +		goto out_unlock;
+> +
+> +	job = list_first_entry_or_null(&queue->fence_ctx.in_flight_jobs,
+> +				       struct panthor_job, node);
+> +	group = job ? job->group : NULL;
+> +
+> +	/* If the queue is blocked and the group is idle, we want the timer to
+> +	 * keep running because the group can't be unblocked by other queues,
+> +	 * so it has to come from an external source, and we want to timebox
+> +	 * this external signalling.
+> +	 */
+> +	if (group && (group->blocked_queues & BIT(job->queue_idx)) &&
+> +	    group_is_idle(group))
+> +		goto out_unlock;
+> +
+> +	now = jiffies;
+> +	qtimeout = queue->timeout.work.timer.expires;
+> +
+> +	/* Cancel the timer. */
+> +	timer_was_active = cancel_delayed_work(&queue->timeout.work);
+> +	if (!timer_was_active || !job)
+> +		queue->timeout.remaining = msecs_to_jiffies(JOB_TIMEOUT_MS);
+> +	else if (time_after(qtimeout, now))
+> +		queue->timeout.remaining = qtimeout - now;
+> +	else
+> +		queue->timeout.remaining = 0;
+> +
+> +	if (WARN_ON_ONCE(queue->timeout.remaining > msecs_to_jiffies(JOB_TIMEOUT_MS)))
+> +		queue->timeout.remaining = msecs_to_jiffies(JOB_TIMEOUT_MS);
+> +
+> +out_unlock:
+> +	spin_unlock(&queue->fence_ctx.lock);
+> +}
+> +
+> +static void
+> +queue_resume_timeout(struct panthor_queue *queue)
+> +{
+> +	spin_lock(&queue->fence_ctx.lock);
+> +
+> +	/* When running, the remaining time is set to MAX_SCHEDULE_TIMEOUT. */
+> +	if (queue->timeout.remaining != MAX_SCHEDULE_TIMEOUT) {
+> +		mod_delayed_work(queue->scheduler.timeout_wq,
+> +				 &queue->timeout.work,
+> +				 queue->timeout.remaining);
+> +
+> +		queue->timeout.remaining = MAX_SCHEDULE_TIMEOUT;
+> +	}
+> +
+> +	spin_unlock(&queue->fence_ctx.lock);
+> +}
+> +
+>  /**
+>   * cs_slot_prog_locked() - Program a queue slot
+>   * @ptdev: Device.
+> @@ -1069,10 +1148,8 @@ cs_slot_prog_locked(struct panthor_device *ptdev, u32 csg_id, u32 cs_id)
+>  			       CS_IDLE_EMPTY |
+>  			       CS_STATE_MASK |
+>  			       CS_EXTRACT_EVENT);
+> -	if (queue->iface.input->insert != queue->iface.input->extract && queue->timeout_suspended) {
+> -		drm_sched_resume_timeout(&queue->scheduler, queue->remaining_time);
+> -		queue->timeout_suspended = false;
+> -	}
+> +	if (queue->iface.input->insert != queue->iface.input->extract)
+> +		queue_resume_timeout(queue);
+>  }
+>  
+>  /**
+> @@ -1099,14 +1176,7 @@ cs_slot_reset_locked(struct panthor_device *ptdev, u32 csg_id, u32 cs_id)
+>  			       CS_STATE_STOP,
+>  			       CS_STATE_MASK);
+>  
+> -	/* If the queue is blocked, we want to keep the timeout running, so
+> -	 * we can detect unbounded waits and kill the group when that happens.
+> -	 */
+> -	if (!(group->blocked_queues & BIT(cs_id)) && !queue->timeout_suspended) {
+> -		queue->remaining_time = drm_sched_suspend_timeout(&queue->scheduler);
+> -		queue->timeout_suspended = true;
+> -		WARN_ON(queue->remaining_time > msecs_to_jiffies(JOB_TIMEOUT_MS));
+> -	}
+> +	queue_suspend_timeout(queue);
+>  
+>  	return 0;
+>  }
+> @@ -1888,19 +1958,6 @@ tick_ctx_is_full(const struct panthor_scheduler *sched,
+>  	return ctx->group_count == sched->csg_slot_count;
+>  }
+>  
+> -static bool
+> -group_is_idle(struct panthor_group *group)
+> -{
+> -	struct panthor_device *ptdev = group->ptdev;
+> -	u32 inactive_queues;
+> -
+> -	if (group->csg_id >= 0)
+> -		return ptdev->scheduler->csg_slots[group->csg_id].idle;
+> -
+> -	inactive_queues = group->idle_queues | group->blocked_queues;
+> -	return hweight32(inactive_queues) == group->queue_count;
+> -}
+> -
+>  static bool
+>  group_can_run(struct panthor_group *group)
+>  {
+> @@ -2888,35 +2945,50 @@ void panthor_fdinfo_gather_group_samples(struct panthor_file *pfile)
+>  	xa_unlock(&gpool->xa);
+>  }
+>  
+> -static void group_sync_upd_work(struct work_struct *work)
+> +static bool queue_check_job_completion(struct panthor_queue *queue)
+>  {
+> -	struct panthor_group *group =
+> -		container_of(work, struct panthor_group, sync_upd_work);
+> +	struct panthor_syncobj_64b *syncobj = NULL;
+>  	struct panthor_job *job, *job_tmp;
+> +	bool cookie, progress = false;
+>  	LIST_HEAD(done_jobs);
+> -	u32 queue_idx;
+> -	bool cookie;
+>  
+>  	cookie = dma_fence_begin_signalling();
+> -	for (queue_idx = 0; queue_idx < group->queue_count; queue_idx++) {
+> -		struct panthor_queue *queue = group->queues[queue_idx];
+> -		struct panthor_syncobj_64b *syncobj;
+> +	spin_lock(&queue->fence_ctx.lock);
+> +	list_for_each_entry_safe(job, job_tmp, &queue->fence_ctx.in_flight_jobs, node) {
+> +		if (!syncobj) {
+> +			struct panthor_group *group = job->group;
+>  
+> -		if (!queue)
+> -			continue;
+> +			syncobj = group->syncobjs->kmap +
+> +				  (job->queue_idx * sizeof(*syncobj));
+> +		}
+>  
+> -		syncobj = group->syncobjs->kmap + (queue_idx * sizeof(*syncobj));
+> +		if (syncobj->seqno < job->done_fence->seqno)
+> +			break;
+>  
+> -		spin_lock(&queue->fence_ctx.lock);
+> -		list_for_each_entry_safe(job, job_tmp, &queue->fence_ctx.in_flight_jobs, node) {
+> -			if (syncobj->seqno < job->done_fence->seqno)
+> -				break;
+> +		list_move_tail(&job->node, &done_jobs);
+> +		dma_fence_signal_locked(job->done_fence);
+> +	}
+>  
+> -			list_move_tail(&job->node, &done_jobs);
+> -			dma_fence_signal_locked(job->done_fence);
+> -		}
+> -		spin_unlock(&queue->fence_ctx.lock);
+> +	if (list_empty(&queue->fence_ctx.in_flight_jobs)) {
+> +		/* If we have no job left, we cancel the timer, and reset remaining
+> +		 * time to its default so it can be restarted next time
+> +		 * queue_resume_timeout() is called.
+> +		 */
+> +		cancel_delayed_work(&queue->timeout.work);
+> +		queue->timeout.remaining = msecs_to_jiffies(JOB_TIMEOUT_MS);
+> +
+> +		/* If there's no job pending, we consider it progress to avoid a
+> +		 * spurious timeout if the timeout handler and the sync update
+> +		 * handler raced.
+> +		 */
+> +		progress = true;
+> +	} else if (!list_empty(&done_jobs)) {
+> +		mod_delayed_work(queue->scheduler.timeout_wq,
+> +				 &queue->timeout.work,
+> +				 msecs_to_jiffies(JOB_TIMEOUT_MS));
+> +		progress = true;
+>  	}
+> +	spin_unlock(&queue->fence_ctx.lock);
+>  	dma_fence_end_signalling(cookie);
+>  
+>  	list_for_each_entry_safe(job, job_tmp, &done_jobs, node) {
+> @@ -2926,6 +2998,27 @@ static void group_sync_upd_work(struct work_struct *work)
+>  		panthor_job_put(&job->base);
+>  	}
+>  
+> +	return progress;
+> +}
+> +
+> +static void group_sync_upd_work(struct work_struct *work)
+> +{
+> +	struct panthor_group *group =
+> +		container_of(work, struct panthor_group, sync_upd_work);
+> +	u32 queue_idx;
+> +	bool cookie;
+> +
+> +	cookie = dma_fence_begin_signalling();
+> +	for (queue_idx = 0; queue_idx < group->queue_count; queue_idx++) {
+> +		struct panthor_queue *queue = group->queues[queue_idx];
+> +
+> +		if (!queue)
+> +			continue;
+> +
+> +		queue_check_job_completion(queue);
+> +	}
+> +	dma_fence_end_signalling(cookie);
+> +
+>  	group_put(group);
+>  }
+>  
+> @@ -3173,17 +3266,6 @@ queue_run_job(struct drm_sched_job *sched_job)
+>  	queue->iface.input->insert = job->ringbuf.end;
+>  
+>  	if (group->csg_id < 0) {
+> -		/* If the queue is blocked, we want to keep the timeout running, so we
+> -		 * can detect unbounded waits and kill the group when that happens.
+> -		 * Otherwise, we suspend the timeout so the time we spend waiting for
+> -		 * a CSG slot is not counted.
+> -		 */
+> -		if (!(group->blocked_queues & BIT(job->queue_idx)) &&
+> -		    !queue->timeout_suspended) {
+> -			queue->remaining_time = drm_sched_suspend_timeout(&queue->scheduler);
+> -			queue->timeout_suspended = true;
+> -		}
+> -
+>  		group_schedule_locked(group, BIT(job->queue_idx));
+>  	} else {
+>  		gpu_write(ptdev, CSF_DOORBELL(queue->doorbell_id), 1);
+> @@ -3192,6 +3274,7 @@ queue_run_job(struct drm_sched_job *sched_job)
+>  			pm_runtime_get(ptdev->base.dev);
+>  			sched->pm.has_ref = true;
+>  		}
+> +		queue_resume_timeout(queue);
+>  		panthor_devfreq_record_busy(sched->ptdev);
+>  	}
+>  
+> @@ -3241,6 +3324,11 @@ queue_timedout_job(struct drm_sched_job *sched_job)
+>  
+>  	queue_start(queue);
+>  
+> +	/* We already flagged the queue as faulty, make sure we don't get
+> +	 * called again.
+> +	 */
+> +	queue->scheduler.timeout = MAX_SCHEDULE_TIMEOUT;
+> +
+>  	return DRM_GPU_SCHED_STAT_NOMINAL;
+>  }
+>  
+> @@ -3283,6 +3371,17 @@ static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
+>  	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
+>  }
+>  
+> +static void queue_timeout_work(struct work_struct *work)
+> +{
+> +	struct panthor_queue *queue = container_of(work, struct panthor_queue,
+> +						   timeout.work.work);
+> +	bool progress;
+> +
+> +	progress = queue_check_job_completion(queue);
+> +	if (!progress)
+> +		drm_sched_fault(&queue->scheduler);
+> +}
+> +
+>  static struct panthor_queue *
+>  group_create_queue(struct panthor_group *group,
+>  		   const struct drm_panthor_queue_create *args)
+> @@ -3298,7 +3397,7 @@ group_create_queue(struct panthor_group *group,
+>  		 * their profiling status.
+>  		 */
+>  		.credit_limit = args->ringbuf_size / sizeof(u64),
+> -		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
+> +		.timeout = MAX_SCHEDULE_TIMEOUT,
+>  		.timeout_wq = group->ptdev->reset.wq,
+>  		.name = "panthor-queue",
+>  		.dev = group->ptdev->base.dev,
+> @@ -3321,6 +3420,8 @@ group_create_queue(struct panthor_group *group,
+>  	if (!queue)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> +	queue->timeout.remaining = msecs_to_jiffies(JOB_TIMEOUT_MS);
+> +	INIT_DELAYED_WORK(&queue->timeout.work, queue_timeout_work);
+>  	queue->fence_ctx.id = dma_fence_context_alloc(1);
+>  	spin_lock_init(&queue->fence_ctx.lock);
+>  	INIT_LIST_HEAD(&queue->fence_ctx.in_flight_jobs);
 > 
-> But back to your original justification for checking the MMFR2; I don't think
-> that really solves the problem in general, because we don't just require BBML2,
-> we require BBML2+NOCONFLICT. And we can only determine that from the MIDR. So
-> why bother checking MMFR2?
-
-My concerns are not around enabling a CPU, but having a damage control 
-with a "kernel" that a user has no control over (Read, standard 
-distribution kernel).
-
-1. If the combination of the above causes problem (in Virtualization)
-2. If the combination of the above is detected to have problems in 
-baremetal.
-
-In (1), VMM could control the ID register and disable the feature.
-
-For (2) we could provide an id-override on command line to disable it in
-the worst case.
-
-So, having the id register case is a good way to get the system running
-with a given kernel (in either world). Without that, we don't have a 
-tunable to control the behavior at runtime.
-
-May be I am being over paranoid about this.
-
-> 
-> I guess we could provide an id-override on the kernel command line to *enable*
-> BBML2 for AmpereOne, but that's not going to be suitable for mass deployment, I
-
-Unfortunately, we can't override to provide the "feature" that is 
-missing (at least today).
-
-One option is, run with a whitelist, but provide a kernel parameter to 
-disable bbml2 feature.
-
-Something like, arm64.bbml2=0
-
-So the decision is based on the parameter && MIDR list.
-
-
-Cheers
-Suzuki
-
-> don't think?
-> 
-> Thanks,
-> Ryan
-> 
->>
->> Suzuki
->>
->>
->>> given AmpereOne doesn't advertise BBML2 but does support it, I'd be happy to
->>> remove this check.
->>>
->>> Thanks,
->>> Ryan
->>>
->>>
->>>>
->>>> Thanks,
->>>> Yang
->>>>
->>>>>     }
->>>>>       #ifdef CONFIG_ARM64_PAN
->>>>> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c b/drivers/iommu/
->>>>> arm/arm-smmu-v3/arm-smmu-v3-sva.c
->>>>> index 9ba596430e7c..6ba182572788 100644
->>>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
->>>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
->>>>> @@ -222,6 +222,9 @@ bool arm_smmu_sva_supported(struct arm_smmu_device *smmu)
->>>>>             feat_mask |= ARM_SMMU_FEAT_VAX;
->>>>>         }
->>>>>     +    if (system_supports_bbml2_noabort())
->>>>> +        feat_mask |= ARM_SMMU_FEAT_BBML2;
->>>>> +
->>>>>         if ((smmu->features & feat_mask) != feat_mask)
->>>>>             return false;
->>>>>     diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/
->>>>> arm/arm-smmu-v3/arm-smmu-v3.c
->>>>> index 358072b4e293..dcee0bdec924 100644
->>>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->>>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->>>>> @@ -4406,6 +4406,9 @@ static int arm_smmu_device_hw_probe(struct
->>>>> arm_smmu_device *smmu)
->>>>>         if (FIELD_GET(IDR3_RIL, reg))
->>>>>             smmu->features |= ARM_SMMU_FEAT_RANGE_INV;
->>>>>     +    if (FIELD_GET(IDR3_BBML, reg) == IDR3_BBML2)
->>>>> +        smmu->features |= ARM_SMMU_FEAT_BBML2;
->>>>> +
->>>>>         /* IDR5 */
->>>>>         reg = readl_relaxed(smmu->base + ARM_SMMU_IDR5);
->>>>>     diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/
->>>>> arm/arm-smmu-v3/arm-smmu-v3.h
->>>>> index bd9d7c85576a..85eaf3ab88c2 100644
->>>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
->>>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
->>>>> @@ -60,6 +60,9 @@ struct arm_smmu_device;
->>>>>     #define ARM_SMMU_IDR3            0xc
->>>>>     #define IDR3_FWB            (1 << 8)
->>>>>     #define IDR3_RIL            (1 << 10)
->>>>> +#define IDR3_BBML            GENMASK(12, 11)
->>>>> +#define IDR3_BBML1            (1 << 11)
->>>>> +#define IDR3_BBML2            (2 << 11)
->>>>>       #define ARM_SMMU_IDR5            0x14
->>>>>     #define IDR5_STALL_MAX            GENMASK(31, 16)
->>>>> @@ -754,6 +757,7 @@ struct arm_smmu_device {
->>>>>     #define ARM_SMMU_FEAT_HA        (1 << 21)
->>>>>     #define ARM_SMMU_FEAT_HD        (1 << 22)
->>>>>     #define ARM_SMMU_FEAT_S2FWB        (1 << 23)
->>>>> +#define ARM_SMMU_FEAT_BBML2        (1 << 24)
->>>>>         u32                features;
->>>>>       #define ARM_SMMU_OPT_SKIP_PREFETCH    (1 << 0)
->>>>
->>>
->>
+> base-commit: b72f66f22c0e39ae6684c43fead774c13db24e73
+> -- 
+> 2.43.0
 > 
 
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
