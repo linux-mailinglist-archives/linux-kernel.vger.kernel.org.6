@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-555836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E03EA5BD4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:12:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E152A5BD4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:12:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB31A189841B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:12:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36B28169D67
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4F9233D99;
-	Tue, 11 Mar 2025 10:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD040235364;
+	Tue, 11 Mar 2025 10:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9mWPN3F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdI5AykA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264C5233727
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179A422FE06
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741687909; cv=none; b=rvsm4LxsUlfMnMdM5McclZONBbhZyhdWH4WkzzAuGoV51yzuEXm1hLaUqYq9SRGe7b/wWuvkLvl9DZogzpFhUyz9ALIJgGjfBXL/LdOVaK0y1Dr6CCxaKwv+7Fv/HOH6/E8rS8bBcFVudlPX9t8szUWAaEBuGg4YEfOAJnQ53+g=
+	t=1741687912; cv=none; b=OxrZZvswJ+Cz/TlymUECOcI1WE5YjkJxXfN/lFcwhNtGewaOFfQVBOF7GiHVMmyLUjqCB0V0LE6d3Mpv8SHL2Mfg5OHFJNRGGBkGcciO8q9Bicl+8zmZKZwTHq4WM9K1kYqqPzPeMSxI3SvNFl9lA8ldGtsnSkWBRy+Flwvl/6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741687909; c=relaxed/simple;
-	bh=nXaB5vvPFCz2xSu00c+z/SDRSsoqIHfuwDLjamISevU=;
+	s=arc-20240116; t=1741687912; c=relaxed/simple;
+	bh=ttHsf1Cp3kWkMpKs7Yki9ujpeh8h5ibAcZN4inUerX8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MURQIElX1DBI1cOzAx5DjqbUs6yYhsXOkf949H/amKPaCmDMxdtjxOPIb8AvJwiIMnJ/4JgVGlMbaW8JeZNd1AbcaTLVAiz5eNoyM+pxaEAkaa2z7RgwaqUL2pTmJenzgwjRNCFIz6ckud0H1MfYNQ57UwVT38yQJZ6UHInDMHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9mWPN3F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3939C4CEEB;
-	Tue, 11 Mar 2025 10:11:48 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=g6GkEockAKZbPC2ZI0cqq5pQRk2q5pJ+knvDfFSsM0oQP1ioa//LaQOUkC0w+PwBclT2DPo2XPdIo0kZ7538F3fLPjw51S+KKl541V20JA+RdJhlvoP+Ifsq/bQi0X1f1uKWfC0jwa6VY+HwLqLtej+l1fUUgNFFhpO3yMNKfj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdI5AykA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28607C4CEED;
+	Tue, 11 Mar 2025 10:11:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741687909;
-	bh=nXaB5vvPFCz2xSu00c+z/SDRSsoqIHfuwDLjamISevU=;
+	s=k20201202; t=1741687911;
+	bh=ttHsf1Cp3kWkMpKs7Yki9ujpeh8h5ibAcZN4inUerX8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=p9mWPN3FkMNQ7Hs0jzoIWSyYB1srGj4Naei5AY8JcFHGDTJD9lFLC0nHUIBojKxrY
-	 +sq0vh76OGFfkNRJgXdR6RXU20JKCTI2Zsln/s0fAPCQrb5svSGQ+IvZ1nx1EOhPrV
-	 l2LahPqw0/w3v2Qrj1qTHAZW2f4ZBV9JuwrJZ9vY7Ypaw0mXM3yzSuJsPSFW3DuoV6
-	 X9R1MfjsLibW8Vq7Cba/4EYAIHwcXlHCXlpf4AiU1EUFyVXB+j2srB1RSpYas3feHd
-	 h5uNxBkoyrOAioOrwnwaHs+seSRlKcHHaGqPLCeexuOSJI/Z2aRqS9/jgbl4hNdbl+
-	 KDEsPXzZSJpxw==
+	b=PdI5AykA3Sz5ZzViY4Mh2sRv14UEcF6FBrDx0lkqv/L1OD8FmTjV66KFLoj2LzbEO
+	 4kj3Xta3m5GaHaKLsnujVRY/H/s6h/TkmY3SjVLfuCn1ESSG74DdGAmm+U8sTTV97q
+	 49mVTCLaFKxxmJNO1eb97kitxXijutyTpCjHbJ96GtpjwRmiRUuBwfAdfdYI2Fagpm
+	 mAaHGs6Gt+I6G5o4nfn760T0gHJOpxbkvly4mIF4xGvovlT7Lmj0c/SYG1jK6pUgV7
+	 5r4gLfN4Q8lVhnvraYUQCnUBn4gU9NI1PppLFfP7jm7ygbAHo3pxThh65bBfLzmlQC
+	 JObIiJihebE/g==
 From: Daniel Wagner <wagi@kernel.org>
-Date: Tue, 11 Mar 2025 11:11:29 +0100
-Subject: [PATCH v2 03/15] nvmet-fcloop: add ref counting to lport
+Date: Tue, 11 Mar 2025 11:11:30 +0100
+Subject: [PATCH v2 04/15] nvmet-fcloop: refactor fcloop_nport_alloc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250311-nvmet-fcloop-v2-3-fc40cb64edea@kernel.org>
+Message-Id: <20250311-nvmet-fcloop-v2-4-fc40cb64edea@kernel.org>
 References: <20250311-nvmet-fcloop-v2-0-fc40cb64edea@kernel.org>
 In-Reply-To: <20250311-nvmet-fcloop-v2-0-fc40cb64edea@kernel.org>
 To: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
@@ -61,138 +61,238 @@ Cc: Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>,
  Daniel Wagner <wagi@kernel.org>
 X-Mailer: b4 0.14.2
 
-The fcloop_lport objects live time is controlled by the user interface
-add_local_port and del_local_port. nport, rport and tport objects are
-pointing to the lport objects but here is no clear tracking. Let's
-introduce an explicit ref counter for the lport objects and prepare the
-stage for restructuring how lports are used.
+There are many different operations done under the spin lock. Since the
+lport and nport are ref counted it's possible to use the spin lock only
+for the list insert and lookup.
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+This allows us to untangle the setup steps into a more linear form which
+reduces the complexity of the functions.
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Daniel Wagner <wagi@kernel.org>
 ---
- drivers/nvme/target/fcloop.c | 44 +++++++++++++++++++++++++++++++-------------
- 1 file changed, 31 insertions(+), 13 deletions(-)
+ drivers/nvme/target/fcloop.c | 156 +++++++++++++++++++++++--------------------
+ 1 file changed, 84 insertions(+), 72 deletions(-)
 
 diff --git a/drivers/nvme/target/fcloop.c b/drivers/nvme/target/fcloop.c
-index 762ba908130b37bbd41f6888c9cb2a56ef3b7afe..f02b5d7d9d56f1c91ea8ace254a51654777968b3 100644
+index f02b5d7d9d56f1c91ea8ace254a51654777968b3..6e5408d59141158059cfe6b74c0924763c0c6b1d 100644
 --- a/drivers/nvme/target/fcloop.c
 +++ b/drivers/nvme/target/fcloop.c
-@@ -208,6 +208,7 @@ struct fcloop_lport {
- 	struct nvme_fc_local_port *localport;
- 	struct list_head lport_list;
- 	struct completion unreg_done;
-+	refcount_t ref;
- };
+@@ -1028,6 +1028,8 @@ fcloop_nport_put(struct fcloop_nport *nport)
+ 	list_del(&nport->nport_list);
+ 	spin_unlock_irqrestore(&fcloop_lock, flags);
  
- struct fcloop_lport_priv {
-@@ -994,6 +995,27 @@ fcloop_fcp_abort(struct nvme_fc_local_port *localport,
- 	}
++	if (nport->lport)
++		fcloop_lport_put(nport->lport);
+ 	kfree(nport);
  }
  
-+static void
-+fcloop_lport_put(struct fcloop_lport *lport)
-+{
-+	unsigned long flags;
-+
-+	if (!refcount_dec_and_test(&lport->ref))
-+		return;
-+
-+	spin_lock_irqsave(&fcloop_lock, flags);
-+	list_del(&lport->lport_list);
-+	spin_unlock_irqrestore(&fcloop_lock, flags);
-+
-+	kfree(lport);
-+}
-+
-+static int
-+fcloop_lport_get(struct fcloop_lport *lport)
-+{
-+	return refcount_inc_not_zero(&lport->ref);
-+}
-+
- static void
- fcloop_nport_put(struct fcloop_nport *nport)
- {
-@@ -1023,6 +1045,8 @@ fcloop_localport_delete(struct nvme_fc_local_port *localport)
- 
- 	/* release any threads waiting for the unreg to complete */
- 	complete(&lport->unreg_done);
-+
-+	fcloop_lport_put(lport);
- }
- 
- static void
-@@ -1134,6 +1158,7 @@ fcloop_create_local_port(struct device *dev, struct device_attribute *attr,
- 
- 		lport->localport = localport;
- 		INIT_LIST_HEAD(&lport->lport_list);
-+		refcount_set(&lport->ref, 1);
- 
- 		spin_lock_irqsave(&fcloop_lock, flags);
- 		list_add_tail(&lport->lport_list, &fcloop_lports);
-@@ -1150,13 +1175,6 @@ fcloop_create_local_port(struct device *dev, struct device_attribute *attr,
- 	return ret ? ret : count;
- }
- 
--
--static void
--__unlink_local_port(struct fcloop_lport *lport)
--{
--	list_del(&lport->lport_list);
--}
--
- static int
- __wait_localport_unreg(struct fcloop_lport *lport)
- {
-@@ -1169,8 +1187,6 @@ __wait_localport_unreg(struct fcloop_lport *lport)
- 	if (!ret)
- 		wait_for_completion(&lport->unreg_done);
- 
--	kfree(lport);
--
+@@ -1190,33 +1192,63 @@ __wait_localport_unreg(struct fcloop_lport *lport)
  	return ret;
  }
  
-@@ -1193,8 +1209,9 @@ fcloop_delete_local_port(struct device *dev, struct device_attribute *attr,
- 	list_for_each_entry(tlport, &fcloop_lports, lport_list) {
- 		if (tlport->localport->node_name == nodename &&
- 		    tlport->localport->port_name == portname) {
-+			if (!fcloop_lport_get(tlport))
-+				break;
- 			lport = tlport;
--			__unlink_local_port(lport);
- 			break;
- 		}
- 	}
-@@ -1204,6 +1221,7 @@ fcloop_delete_local_port(struct device *dev, struct device_attribute *attr,
++static struct fcloop_lport *
++fcloop_lport_lookup(u64 node_name, u64 port_name)
++{
++	struct fcloop_lport *lp, *lport = NULL;
++	unsigned long flags;
++
++	spin_lock_irqsave(&fcloop_lock, flags);
++	list_for_each_entry(lp, &fcloop_lports, lport_list) {
++		if (lp->localport->node_name != node_name ||
++		    lp->localport->port_name != port_name)
++			continue;
++
++		if (fcloop_lport_get(lp))
++			lport = lp;
++
++		break;
++	}
++	spin_unlock_irqrestore(&fcloop_lock, flags);
++
++	return lport;
++}
++
++static struct fcloop_nport *
++fcloop_nport_lookup(u64 node_name, u64 port_name)
++{
++	struct fcloop_nport *np, *nport = NULL;
++	unsigned long flags;
++
++	spin_lock_irqsave(&fcloop_lock, flags);
++	list_for_each_entry(np, &fcloop_nports, nport_list) {
++		if (np->node_name != node_name ||
++		    np->port_name != port_name)
++			continue;
++
++		if (fcloop_nport_get(np))
++			nport = np;
++
++		break;
++	}
++	spin_unlock_irqrestore(&fcloop_lock, flags);
++
++	return nport;
++}
+ 
+ static ssize_t
+ fcloop_delete_local_port(struct device *dev, struct device_attribute *attr,
+ 		const char *buf, size_t count)
+ {
+-	struct fcloop_lport *tlport, *lport = NULL;
++	struct fcloop_lport *lport;
+ 	u64 nodename, portname;
+-	unsigned long flags;
+ 	int ret;
+ 
+ 	ret = fcloop_parse_nm_options(dev, &nodename, &portname, buf);
+ 	if (ret)
+ 		return ret;
+ 
+-	spin_lock_irqsave(&fcloop_lock, flags);
+-
+-	list_for_each_entry(tlport, &fcloop_lports, lport_list) {
+-		if (tlport->localport->node_name == nodename &&
+-		    tlport->localport->port_name == portname) {
+-			if (!fcloop_lport_get(tlport))
+-				break;
+-			lport = tlport;
+-			break;
+-		}
+-	}
+-	spin_unlock_irqrestore(&fcloop_lock, flags);
+-
++	lport = fcloop_lport_lookup(nodename, portname);
+ 	if (!lport)
  		return -ENOENT;
  
- 	ret = __wait_localport_unreg(lport);
-+	fcloop_lport_put(lport);
+@@ -1229,9 +1261,9 @@ fcloop_delete_local_port(struct device *dev, struct device_attribute *attr,
+ static struct fcloop_nport *
+ fcloop_alloc_nport(const char *buf, size_t count, bool remoteport)
+ {
+-	struct fcloop_nport *newnport, *nport = NULL;
+-	struct fcloop_lport *tmplport, *lport = NULL;
+ 	struct fcloop_ctrl_options *opts;
++	struct fcloop_nport *nport;
++	struct fcloop_lport *lport;
+ 	unsigned long flags;
+ 	u32 opts_mask = (remoteport) ? RPORT_OPTS : TGTPORT_OPTS;
+ 	int ret;
+@@ -1245,79 +1277,59 @@ fcloop_alloc_nport(const char *buf, size_t count, bool remoteport)
+ 		goto out_free_opts;
  
- 	return ret ? ret : count;
- }
-@@ -1629,17 +1647,17 @@ static void __exit fcloop_exit(void)
- 	for (;;) {
- 		lport = list_first_entry_or_null(&fcloop_lports,
- 						typeof(*lport), lport_list);
--		if (!lport)
-+		if (!lport || !fcloop_lport_get(lport))
- 			break;
+ 	/* everything there ? */
+-	if ((opts->mask & opts_mask) != opts_mask) {
+-		ret = -EINVAL;
++	if ((opts->mask & opts_mask) != opts_mask)
+ 		goto out_free_opts;
+-	}
  
--		__unlink_local_port(lport);
--
- 		spin_unlock_irqrestore(&fcloop_lock, flags);
- 
- 		ret = __wait_localport_unreg(lport);
- 		if (ret)
- 			pr_warn("%s: Failed deleting local port\n", __func__);
- 
+-	newnport = kzalloc(sizeof(*newnport), GFP_KERNEL);
+-	if (!newnport)
++	lport = fcloop_lport_lookup(opts->wwnn, opts->wwpn);
++	if (lport) {
++		/* invalid configuration */
 +		fcloop_lport_put(lport);
-+
- 		spin_lock_irqsave(&fcloop_lock, flags);
+ 		goto out_free_opts;
++	}
+ 
+-	INIT_LIST_HEAD(&newnport->nport_list);
+-	newnport->node_name = opts->wwnn;
+-	newnport->port_name = opts->wwpn;
+-	if (opts->mask & NVMF_OPT_ROLES)
+-		newnport->port_role = opts->roles;
+-	if (opts->mask & NVMF_OPT_FCADDR)
+-		newnport->port_id = opts->fcaddr;
+-	refcount_set(&newnport->ref, 1);
++	nport = fcloop_nport_lookup(opts->wwnn, opts->wwpn);
++	if (nport && ((remoteport && nport->rport) ||
++		      (!remoteport && nport->tport))) {
++		/* invalid configuration */
++		goto out_put_nport;
++	}
+ 
+-	spin_lock_irqsave(&fcloop_lock, flags);
++	if (!nport) {
++		nport = kzalloc(sizeof(*nport), GFP_KERNEL);
++		if (!nport)
++			goto out_free_opts;
+ 
+-	list_for_each_entry(tmplport, &fcloop_lports, lport_list) {
+-		if (tmplport->localport->node_name == opts->wwnn &&
+-		    tmplport->localport->port_name == opts->wwpn)
+-			goto out_invalid_opts;
++		INIT_LIST_HEAD(&nport->nport_list);
++		nport->node_name = opts->wwnn;
++		nport->port_name = opts->wwpn;
++		refcount_set(&nport->ref, 1);
+ 
+-		if (tmplport->localport->node_name == opts->lpwwnn &&
+-		    tmplport->localport->port_name == opts->lpwwpn)
+-			lport = tmplport;
++		spin_lock_irqsave(&fcloop_lock, flags);
++		list_add_tail(&nport->nport_list, &fcloop_nports);
++		spin_unlock_irqrestore(&fcloop_lock, flags);
  	}
  
++	if (opts->mask & NVMF_OPT_ROLES)
++		nport->port_role = opts->roles;
++	if (opts->mask & NVMF_OPT_FCADDR)
++		nport->port_id = opts->fcaddr;
++
+ 	if (remoteport) {
++		lport = fcloop_lport_lookup(opts->lpwwnn, opts->lpwwpn);
+ 		if (!lport)
+-			goto out_invalid_opts;
+-		newnport->lport = lport;
+-	}
+-
+-	list_for_each_entry(nport, &fcloop_nports, nport_list) {
+-		if (nport->node_name == opts->wwnn &&
+-		    nport->port_name == opts->wwpn) {
+-			if ((remoteport && nport->rport) ||
+-			    (!remoteport && nport->tport)) {
+-				nport = NULL;
+-				goto out_invalid_opts;
+-			}
+-
+-			fcloop_nport_get(nport);
++			goto out_put_nport;
+ 
+-			spin_unlock_irqrestore(&fcloop_lock, flags);
+-
+-			if (remoteport)
+-				nport->lport = lport;
+-			if (opts->mask & NVMF_OPT_ROLES)
+-				nport->port_role = opts->roles;
+-			if (opts->mask & NVMF_OPT_FCADDR)
+-				nport->port_id = opts->fcaddr;
+-			goto out_free_newnport;
+-		}
++		nport->lport = lport;
+ 	}
+ 
+-	list_add_tail(&newnport->nport_list, &fcloop_nports);
+-
+-	spin_unlock_irqrestore(&fcloop_lock, flags);
+-
+ 	kfree(opts);
+-	return newnport;
++	return nport;
+ 
+-out_invalid_opts:
+-	spin_unlock_irqrestore(&fcloop_lock, flags);
+-out_free_newnport:
+-	kfree(newnport);
++out_put_nport:
++	fcloop_nport_put(nport);
+ out_free_opts:
+ 	kfree(opts);
+-	return nport;
++	return NULL;
+ }
+ 
+ static ssize_t
 
 -- 
 2.48.1
