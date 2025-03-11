@@ -1,76 +1,115 @@
-Return-Path: <linux-kernel+bounces-556411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95BEA5C745
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:33:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BD7A5C768
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:34:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E6E168977
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:29:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62F27188DE5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D994F25E831;
-	Tue, 11 Mar 2025 15:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9F925EF99;
+	Tue, 11 Mar 2025 15:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFXJSCqX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x3k55r90"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4656B25E807
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D82F25B69D;
+	Tue, 11 Mar 2025 15:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741706954; cv=none; b=lSFyA8FECPPoEAEzrk8xqjfORfSaUDtWOjAyV7ElZQ2O7RdaaUhliRBiSGvP8AYudJSrMsJTUBGjs4RzvhUGAa9dZDxcscSzF07kGoLyr2wAjN8NePXHadMZGV5senNvmwRZLC7u2uUBn7oTvP6hwSqp/hcbZ9vbnH80V/UtSIA=
+	t=1741706976; cv=none; b=TyBnhCbAYss5CX16dIq5P85s5aVZsOazXpbThvPy+JUtp3xEdnXaBHVBDdtla3q5DOEv3RU71F+1mIN0mrd+k79dlt44t3JO8s9fkOsemP43LKuZVd1X8jH3NLRR8BYbHy91XRIwTxZVANWI1E1EfCcZdYStruNYKMsvWwNP67U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741706954; c=relaxed/simple;
-	bh=8oiatXWxAmC7tZxULK3TGWZXmbO8bRFrzxBhwwq00Iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MAwNWW8nk9cx9lKDKDo5BUHPM8zjC8I9Qrmy9LuWns/X/+RyPABcA0iVYTKeUn8+XhCnAUAgBsQCbpr1N3Ctc//or3oAk/tkAqtHr9OD9QXsrB91w4EdXfVkM7FWS4GMHhzgCX1C9MCRqch1js0PsPbryvpa9JE+Q5H8775MmoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFXJSCqX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A16DFC4CEE9;
-	Tue, 11 Mar 2025 15:29:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741706954;
-	bh=8oiatXWxAmC7tZxULK3TGWZXmbO8bRFrzxBhwwq00Iw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CFXJSCqXYmfBAkVsFSvQUlq4Sp/zHRaGfRikxXmvz7p8DWntE3IWm2kJ/u04p6hWa
-	 8YHia5MgojilHSmEmAo9m6HA7FTSvwBBVF0oWUFBNmXzH7Exofq4l9HwSKKwNzE/3Z
-	 +k77paad/jDwQ4l/9iSykFtBZjCT4Dxc7nrsYu8aMUdpZC8wk86eSC3Hb4lYiKrfiP
-	 5CXjEIgdguzpbA5KDn1NvjF1MWzoFqJtVJ/TkJSb4tXeBa4TkZHBFVuz0Jqpmv7zUK
-	 wut9LVm8maZ5VcU3lE07ykJy9/D2YUUs2MgcQdzqISulQjL97bowhweruRkiKS2Qnr
-	 6N+v9lrlaa59A==
-Date: Tue, 11 Mar 2025 16:29:11 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Benjamin Segall <bsegall@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrey Vagin <avagin@openvz.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>
-Subject: Re: [patch V3 15/18] posix-timers: Make per process list RCU safe
-Message-ID: <Z9BWx1eyo2gPzHyJ@localhost.localdomain>
-References: <20250308155501.391430556@linutronix.de>
- <20250308155624.403223080@linutronix.de>
+	s=arc-20240116; t=1741706976; c=relaxed/simple;
+	bh=qbsyL+UEeBCHOjUpWQIpphC96Qt1s7uj+6YFkvQVOuk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A3q97+pgsiDH8XugNZzhC7u+ZY8LLl+xIBJqCa2qBVxxkZ+5cl2CzoqEI2e08llXIkX2ZMNac6iv5zbjveRHprVs14FuNc7CGsMW4cMTJ/r0oaiXKSdt2zr0Y1jNJZry8xm5flx83L1FXdz0+db6cCBjnSmje9bukH5G73A6DrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=x3k55r90; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52BFTNKP1221695
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 10:29:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741706963;
+	bh=WaIUReCTcoh94jk11jEfjg06go62dK/AeBJ/ZKOUjCc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=x3k55r90Ny5iSVvvY6DGis99lOaOFRjbcemB+DWEmOnmPme+Y4b0T6Je8gMsSvmK8
+	 ZqAIkpn5zd47QXlKoJCDXXpya8b7T+Fzm9kAechpBUK8B2OTDTaoXNkwDMab2Q/KKl
+	 KvL8p9j3QGyrHI7zkd4eqztaPIIqHfd4Oz/QYCqY=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52BFTNgY124191
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 11 Mar 2025 10:29:23 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
+ Mar 2025 10:29:22 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 11 Mar 2025 10:29:22 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52BFTLT3014640;
+	Tue, 11 Mar 2025 10:29:22 -0500
+Date: Tue, 11 Mar 2025 20:59:21 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
+        <vigneshr@ti.com>, <manivannan.sadhasivam@linaro.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <rogerq@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+Subject: Re: [PATCH] PCI: j721e: Fix the value of linkdown_irq_regfield for
+ J784S4
+Message-ID: <20250311152921.cwb7obw5bmlrhvsi@uda0492258>
+References: <20250305132018.2260771-1-s-vadapalli@ti.com>
+ <20250310210746.GA2377483@rocinante>
+ <20250311051806.smcu4o4dxpngimth@uda0492258>
+ <20250311072546.GA277060@rocinante>
+ <20250311073216.ynw7rzmu36dwywij@uda0492258>
+ <20250311152133.GC1381004@rocinante>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250308155624.403223080@linutronix.de>
+In-Reply-To: <20250311152133.GC1381004@rocinante>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Le Sat, Mar 08, 2025 at 05:48:43PM +0100, Thomas Gleixner a écrit :
-> Preparatory change to remove the sighand locking from the /proc/$PID/timers
-> iterator.
+On Wed, Mar 12, 2025 at 12:21:33AM +0900, Krzysztof WilczyÅ„ski wrote:
+> Hello,
 > 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> [...]
+> > > No need to send a new version.
+> > > 
+> > > I will update the branch directly when I pull the patch.  Not to worry.
+> > 
+> > Thank you Krzysztof :)
+> 
+> Done.  Have a look at:
+> 
+>   https://web.git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/j721e&id=01d04dcd6e80f63ca5e97324ec17c20553947e35
+> 
+> Let me know if there is anything else to update.
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+The changes look good to me. There seems to be a minor typo in the
+commit message:
+[kwilczynski: add a issing .linkdown_irq_regfield member set to
+
+You probably meant "missing".
+
+Thank you once again for fixing it without the need for a new patch.
+
+Regards,
+Siddharth.
 
