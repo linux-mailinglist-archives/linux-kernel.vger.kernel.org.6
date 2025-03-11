@@ -1,274 +1,271 @@
-Return-Path: <linux-kernel+bounces-556531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031D7A5CB69
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:57:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 410B0A5CB78
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:59:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F8697AAA8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:56:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF1D47AB6C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E81261376;
-	Tue, 11 Mar 2025 16:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A0C2620E1;
+	Tue, 11 Mar 2025 16:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="lbjV6Vna"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nXfytj9d";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="CSWCKROa"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C953184F;
-	Tue, 11 Mar 2025 16:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741712220; cv=none; b=IkloNwa0A3QujEplnpPJk+PZH54gMMm4b+Qpq5lKmOer4hO88nANbFuQIyVSspSbkb+btRL0ZZrzmIiQeM0RWY2725oVii7FuqPvMZGfjtuYhtjE0gU0AB/zALFmk8T13bX2Q8nY4DL3/hDznYThvabti2FUuPzEqIRqur0XEpQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741712220; c=relaxed/simple;
-	bh=nDMt8eiwz7+zam9WwPXd2KG0XnvM1fHkqQ7RgCtM+vA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZNST/oMdN0+akNSbFu7MfKLU8PoTxJqokakPIPwJ0TBUaRRfv7hMjyz1RK5bFu2FfFDLYoEElbhrQNwL0QJwBF/OiRrHq8vJvftCk6bNDanhlNeGIu/ooBZW+Xaujfm6U0gMvWdiED6R/fqiT7KoQM5CleJ7zIofLhdCpIH/LVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=lbjV6Vna; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616FF184F;
+	Tue, 11 Mar 2025 16:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741712340; cv=fail; b=JNlcx5p0Cu+HgIvyYIkDZ53ui7rPHipX5YBP9S7cm5IJOlbk8vmp2hGDDDkJB64HhAaY5Jjc8tUkFGYySA7SoRk4eXbcQS95tBAdWykoon4K5Vg+HF9isyGn/VVMIF0vQOg6zX6haojjGaNKuoqs7PqCziSIm0VdfrKSl9Ns990=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741712340; c=relaxed/simple;
+	bh=emXXwb0fYHJ6R9nSZHxmSIxxs1Ph3mHeS7tQEq8nnjc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=l/fzuzBv5wA8ulK3FXpFvUulNBLuAVRusf6kZIbLMIxmb0Xgskl8yyBn4oEhc1IdyUl1KrIfXRcZj4fuSc7YkYk9WeSmYNYuqdgXtUkTHbsotamNeNMbEqhMhzZthaFfWRfFo6OUI7iJ0xywcK+FQ2kerGSIWoFGBhFlrK2ZdcI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nXfytj9d; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=CSWCKROa; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BGQlcb012974;
+	Tue, 11 Mar 2025 16:58:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=4ggL9zdT32hZPM33GhBntu0muthxXF90xSQja0voprU=; b=
+	nXfytj9doze2xB3FsjkwQ/3sASABo/N25E27n03cGP06hOLSjRWUeZkqSCzaNw+l
+	ZpFs3jHI8D3s5XAIHlQU2uaRIdglkDPacD7g5WBNlwi3JK8/NmMCncE9fU/9T1BP
+	MLGzsK47Wh5rqpQqrDL/+FcbqkvZlMNmzQT3mxSdME164pG+2xyyZKCFMc1rOFjh
+	dan7RnqPVMmqdP0I5fKYaDbMinU0knN2QexaxKMvebcWA6t3rDmX9sASPwRSHkrf
+	ddrbUXGkxRZVGNb5hx5CpQ4h17FYnfeCc9rSYupUg5tYerLZwaOXM0UEQlCjJiLQ
+	PFg2yb+AxJQ178KeRXmWIQ==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 458cp35cea-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 16:58:37 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52BGCcG4017585;
+	Tue, 11 Mar 2025 16:58:36 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2169.outbound.protection.outlook.com [104.47.57.169])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 458cb9aaya-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 16:58:36 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xCCcb8YAGNOff+IxtcseAYV8ax0s6eG6EmQR9ZJxiHNuKsjVyNJ+XYq7z9XpwL+j/ugtkAufqnoBAxcNEWTuK6evaqyrHR3eyfe0OqU/SMaEQHV+w3ONa8/ePCSmhtJk7dJhiCO9V4+d6lulQcikiD/3bpgLFnqAaKBcrzO4c62p9lhdYtqKaFiLZ+EyHWH14B/oCXsKJ0EUU0L0HnUsgh2aaWJZvHI+IG5pn5QXCvHEQoueIhPIJ9WwpawrsQuHaG3q6VOiLArtW8nPwFC1TQlNT04VjlPwqRpQe+Ak6Bsq0adv1jS5o+GNO3XY75cEtA4XbiFS83VKSNONEnTikQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4ggL9zdT32hZPM33GhBntu0muthxXF90xSQja0voprU=;
+ b=sz8LbOv6/DXi6b/bdoUyDbO3jhkmESMykeRnfgPCne3biaSt3WcnpwUfY/ZZwEu7G2dHN/GjDiJom3l9P8RzU8U2RUXWz4mhffQFz0ZPyftahL3WPAS7bnB8UcDKhwyPdA6GjV5UvVKp6E4xfHy53sgNbfVxDJq1lWXx7YR8RYKYhg2gaGXkEmA+eZ4W4vlZy1JFM8b5wGX4AGxbCEP15moeWgu+6QyFasCt4tgaO8avrW4k8wdltwPPDTsFic8thMnwL+CwK9cWBgb2/eO7XiJUTYxJX7QvgCrWzAJhXOhFTOU4r+BpoWTP+gIETwHsDzJ4Uv1FHVeXOic3Y7yP8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1741712219; x=1773248219;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=tlV9Mo9aek/qm0du1iKz9kkFBfH6SyE9Qgk2PjqxtjE=;
-  b=lbjV6VnaIXFhjHX8QYJsT9wL0C7i3XdJzLBucFTccLiaqePr6YNfELW+
-   vKhWBa0V5M2L39XbwgJc9gqU+3P8MGbY1gTJxdQsnIIYA26ri5r9cRAnS
-   IbnDJqKAAVcZ/0ZPhUwMob0ebmjzq3sUBsbb+MRzvFwyGfkLFtMYR5SrV
-   E=;
-X-IronPort-AV: E=Sophos;i="6.14,239,1736812800"; 
-   d="scan'208";a="385729533"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 16:56:50 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.17.79:6023]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.26.251:2525] with esmtp (Farcaster)
- id f548cd40-c792-49af-ad1d-1f5d23f80cf5; Tue, 11 Mar 2025 16:56:49 +0000 (UTC)
-X-Farcaster-Flow-ID: f548cd40-c792-49af-ad1d-1f5d23f80cf5
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 11 Mar 2025 16:56:49 +0000
-Received: from [10.95.111.253] (10.95.111.253) by
- EX19D022EUC002.ant.amazon.com (10.252.51.137) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 11 Mar 2025 16:56:48 +0000
-Message-ID: <9e7536cc-211d-40ca-b458-66d3d8b94b4d@amazon.com>
-Date: Tue, 11 Mar 2025 16:56:47 +0000
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4ggL9zdT32hZPM33GhBntu0muthxXF90xSQja0voprU=;
+ b=CSWCKROapK7S9zJRO9FS2tNe+3/lNNcvidsLiFCILfd2gsQ8GcSd/QWqirhNUQHCTqCT6bVb72N/5jArr6UbfPDCHacXbbkr3uXfBSozHNzDGKn7NTkYTO9prjQGMtJEvGP/CkkEFE1hWoLnZX4RhGIUxAm7QovW1KG5EXDkoOQ=
+Received: from MW5PR10MB5738.namprd10.prod.outlook.com (2603:10b6:303:19b::14)
+ by PH0PR10MB5596.namprd10.prod.outlook.com (2603:10b6:510:f8::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
+ 2025 16:58:32 +0000
+Received: from MW5PR10MB5738.namprd10.prod.outlook.com
+ ([fe80::187b:b241:398b:50eb]) by MW5PR10MB5738.namprd10.prod.outlook.com
+ ([fe80::187b:b241:398b:50eb%5]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
+ 16:58:32 +0000
+Message-ID: <d121240d-f755-4b1c-b1cb-b62db21ce7d7@oracle.com>
+Date: Tue, 11 Mar 2025 11:58:30 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] jfs: add index corruption check to DT_GETPAGE()
+To: Roman Smirnov <r.smirnov@omp.ru>
+Cc: Ghanshyam Agrawal <ghanshyam1898@gmail.com>,
+        Edward Adam Davis <eadavis@qq.com>,
+        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        lvc-project@linuxtesting.org,
+        syzbot <syzbot+9120834fc227768625ba@syzkaller.appspotmail.com>,
+        stable@vger.kernel.org
+References: <20250226082523.112081-1-r.smirnov@omp.ru>
+Content-Language: en-US
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
+In-Reply-To: <20250226082523.112081-1-r.smirnov@omp.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CH5PR04CA0004.namprd04.prod.outlook.com
+ (2603:10b6:610:1f4::10) To MW5PR10MB5738.namprd10.prod.outlook.com
+ (2603:10b6:303:19b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [RFC PATCH 0/5] KVM: guest_memfd: support for uffd missing
-To: Peter Xu <peterx@redhat.com>
-CC: James Houghton <jthoughton@google.com>, <akpm@linux-foundation.org>,
-	<pbonzini@redhat.com>, <shuah@kernel.org>, <kvm@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <lorenzo.stoakes@oracle.com>, <david@redhat.com>,
-	<ryan.roberts@arm.com>, <quic_eberman@quicinc.com>, <graf@amazon.de>,
-	<jgowans@amazon.com>, <roypat@amazon.co.uk>, <derekmn@amazon.com>,
-	<nsaenz@amazon.es>, <xmarcalx@amazon.com>
-References: <20250303133011.44095-1-kalyazin@amazon.com>
- <Z8YfOVYvbwlZST0J@x1.local>
- <CADrL8HXOQ=RuhjTEmMBJrWYkcBaGrqtXmhzPDAo1BE3EWaBk4g@mail.gmail.com>
- <Z8i0HXen8gzVdgnh@x1.local> <fdae95e3-962b-4eaf-9ae7-c6bd1062c518@amazon.com>
- <Z89EFbT_DKqyJUxr@x1.local>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
- CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
- i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <Z89EFbT_DKqyJUxr@x1.local>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D010EUA004.ant.amazon.com (10.252.50.94) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW5PR10MB5738:EE_|PH0PR10MB5596:EE_
+X-MS-Office365-Filtering-Correlation-Id: 645c4ecb-1eea-4b96-4da9-08dd60bdf490
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N0xDMDR5QzJjd01pLzMySnpKcklkQUovdDhuS0xBRWFxRWx6dHp3WnVNeTQ4?=
+ =?utf-8?B?RnNtZFFEcklyVFU4RmRmekJjYVpEQXRhdnEzWG51cUx5OEk3bVJYbE1acENt?=
+ =?utf-8?B?T0JkRk1XL3IyVy9KejlRT292Tm04dnZqWXdIUHF1RXJuOFhxbVUvc0w1czNO?=
+ =?utf-8?B?NUZnRWFTSElrS0tFNzBmN1l1NHdlcS9tcmJDdGhaeks0T0J2UWErT3Q4Z0wr?=
+ =?utf-8?B?VDMxa24xU1FlWXpNVGlwbmM3cHhJTG12QmxuNVlNRlM5eng2NkVFUlZtV0VH?=
+ =?utf-8?B?TTRwTFNUWnV1N2dGWHVZSkwxdVRrYmZsRGlHR0tkUjF6NmU5eEpJZFlON21v?=
+ =?utf-8?B?Z3h2ZytZQVRSVWFyRzZ4OTA5QlhDQWFhMUt0QkF3OFplMExOSWsrWGF3aGh0?=
+ =?utf-8?B?ekV3Sk9XaVlNZmxYU2NqeG9Pb25CWkpYNFdlWFhNQTcwMG90UjdyMzUyWDRN?=
+ =?utf-8?B?UmFIbjZvOWEyZDVkdktoWEt4SVBUK21zSGcxT1JJdzJ2YWpORjBxc1hFV2xP?=
+ =?utf-8?B?a3ZPd0NCUUdZYVYrOURRUmkzQXptd1hMUzdrNUQwTmc1WHBhc1R4THdMTEJT?=
+ =?utf-8?B?YzZpanFFRjJqTGxkdUVja0M3U01wTTJvRmF3Wm10Z1dtaVM1a2JHbDZJTEpz?=
+ =?utf-8?B?VlJITDN6elIwR1hRVVhDU3BYYUhBUklkMmZpM3RrUGFDNFo4dFlDNVh1cTlW?=
+ =?utf-8?B?ZHhxTjJvKzRzUFMwMzI1NzJvZ0dxYld0YnNQRHgranNmWHpnMjkxRXBUcHVC?=
+ =?utf-8?B?Tkl5anQ4ZzBmTVZtczR5Yk1rWVdCSld6MnhCTjYvMjBraVJyVzloU3gzS2Fq?=
+ =?utf-8?B?WldrZ0MyTUhaNzJ4UE5YYVg5aEd4OXJua01DUTk2NDdZQlNrS25uUjNDK044?=
+ =?utf-8?B?UU5iTmZKb0s4WENHd240VHhFZU5XeDdNdHBPeXFDcm80eWxzeit6YjdTUjVi?=
+ =?utf-8?B?c0x0bXh6aTBuYW9ld0dPWENSa1l1cU55WUw2QVhGSmV5MUllclZRbmViZFVz?=
+ =?utf-8?B?WkFLc0Z1bVBzekNXUXEvSmU2WWtHc1J4ZnQwYzVqTmZNa1JRT0l3NTcrNHhU?=
+ =?utf-8?B?RytJZzhWT0xnM0xhVlNnVFZmbFNKTzhFRGVYRmxwUDduYkhBblhYeXNXT1c5?=
+ =?utf-8?B?SER3WVp4NFhGdThybUQrN2J0Y20zcnJYSUEzVUNZUWxLOEJQaDhYamhBZjJC?=
+ =?utf-8?B?S29LRC9UWWpXUFNpeHJjaW1JYXlKTFVGKzBxcVVZR3BzQ1dhTlUwY0wyQ3Fm?=
+ =?utf-8?B?enJ1ZXNUditFbjVuL0lvQUpWWDRMbUt0bUJNbWdVZ3JPWjREa0drc0dyZEYw?=
+ =?utf-8?B?UEVWZXdvMEc1OEUrMjBUZ1NtWklTQzh6N2lTR3NqWjBVRkE5bjdHcGhUcG40?=
+ =?utf-8?B?VW9qVk0vdUJZODFIVjZQSjRXb2xVRk0yZUhNa05KV2VlbHhrR1JhVG13L3Fp?=
+ =?utf-8?B?RGQ2dnJxQ3F1a0ZIb1U1ZHFmUUcxTVc2YXd0cU5LQkJWZDdHRHBpYXBQZzdr?=
+ =?utf-8?B?elBMK2FPZ1hYMWZrRWFVME1OdVVRSVVqWmZaeldFVERtWGtYT01pcHdiTWxF?=
+ =?utf-8?B?VXFJRzBVZnUva1N6VW8rdGZwdUlxR3dtVFVkNURwL0piR0tIekQyWHRXeW8z?=
+ =?utf-8?B?TVdiUWNyVmlDMkZGMFBEdWlkcDUrenJmcmNEbWhrYzNSMHFxWkJ3QkQwZHBu?=
+ =?utf-8?B?a2EwR01pUVhpUFJ5WExxbjRrY1MwSFViaXNjNzlvL0hZamVXTEJ4VE04RlJD?=
+ =?utf-8?B?ZDZkblFJUS9aR2tiNm14KzJLZWJLZ1dadTdUQm9lMEp4NGxIWjVQQ1lHaHdu?=
+ =?utf-8?B?Nncyd3RSQXRJMTV0Wm1JZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR10MB5738.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QkVsVkE3b1MyTyt3c3JXd29SUlZ0U1AwWGxxYVdnakh4ZlpvTG1mWVZPTWRo?=
+ =?utf-8?B?MWxOUW4rUGpIb3RSeWVnaXU1RGo3VTR1UkROQlpXQjlhN0pNUUt2WjExS0xF?=
+ =?utf-8?B?Q1JOZTB1aE82OGc2OTlCU043a0xFaGZRTGVhbWl0R2NBQVNRbkk1WExtRDJq?=
+ =?utf-8?B?SkdPN1VRd1RnVnk4S1E0UlphZGdTUDQrWGt2MkpreDBsVlJrWmhGVHdod3lV?=
+ =?utf-8?B?ZjdhMDRIRXIxWmo5WFFTRGMyVmxrZ25MTkxYeVZZampnOUZIUGE1M2F5a0c4?=
+ =?utf-8?B?NFl2cnpDQlFLcFZyS1VzbU53OTdLaE1ReUd2cWhzRzZRSW9QR2J5cWhWejJi?=
+ =?utf-8?B?S1dKVTBSczBjUVFtcWpvV25CcnpBc2tab0F5dXJ5M0JSOVN1RjhqVVQ3Y0tU?=
+ =?utf-8?B?eVhuaGQ5NHhnUWZWaGRhK1k3blFTMFZ4cmI2aFkxMDlQUFBQakxpV2RiU0Ja?=
+ =?utf-8?B?ckJhUzVybDNFV3l3YXlCRi9CRVYyRGJ3cVdQSlBzNSs0dGJiMGpnMko2citX?=
+ =?utf-8?B?WnlCSlo2TEpEcHB0VDJuN01KN1Zsc28yUDV2UzMwb2FnVXl3ODlhYmZqUGNH?=
+ =?utf-8?B?bDIrNEZJRVBtN29iZG9ZM1ZwN0VNQ3hqUWlVN0dDbllHdDFITHJDTDRwWWI3?=
+ =?utf-8?B?WkR4UW9uVGtlSEk1WWZiOTVyT3lzdGZSNlF2eGlJUnE4MGlTUEwxS1N6aitC?=
+ =?utf-8?B?R0ZzYVE3QzkvUTI5N3ZNVlc4aUNIek4xWGMyYURlOXFXRVVac0xvb0pFcWgx?=
+ =?utf-8?B?UXMyc0JGSE9lSHRoMmFEaENBeVE4NGdPT3A0bGtVV3crMWFlTFFsbWNyMTZy?=
+ =?utf-8?B?QkU3eHdlTUl2SjIrNElyc1NDbGhwWWp1a0JMUzhNWVlUMk1YbjU5dDFmakRO?=
+ =?utf-8?B?Y2F5bkdCV1c0d1NVc1BDUFoyNzJ2WjJNbkYxajRvdjljSnQvK3BuSS81MVp5?=
+ =?utf-8?B?UmVJUi9hZGIwY1FpbDBmRUlLam9jd1hDbDEvclhrQURDYXFMSFI1K203NDU3?=
+ =?utf-8?B?b3MwMXB2ajVuSm82NENlYm9Rbm1TNHc5dGltWHFERVU3bSs4WE5qQXpuR0Ez?=
+ =?utf-8?B?UDdPYjlVbnZMQ2JNdHBMc1FZUXZ2R1NwZWpYWDdpUk5LWGN4Skg0VHRUcDR2?=
+ =?utf-8?B?TVBSbEx3SU1pVXBoMEZJL0QwNHB1RkhZUmJhem1JQk5qSjNmYmpTZ2pHeTZM?=
+ =?utf-8?B?aGNnaFNXTWRqcnY5cms5NGpzTnJDM0dzYkRvTFQ3R2ZkQWxNM2FEd1BHc0dY?=
+ =?utf-8?B?cnNZb1p6bThpYWM5QzNQTHkzQm5MSCs4bDRTRGZoSmJjelJVdHJTWno2NlVk?=
+ =?utf-8?B?MVRKYjhBMFZlUEhDSTdGSDNkSVdyQytZRzBGTHR2OW1rUklDK01PUlo0VTFa?=
+ =?utf-8?B?eXBSUk51OW9ISlpWbEZENGxTUDhDQW50RnExOW5OT3hBSWkrQ0l2VTFkWVJk?=
+ =?utf-8?B?cVNLb2tLNjNlSFNXUlFkVG5GaFoxOE9tdGphZG9scTRkOHIwbFM1NHZySGZF?=
+ =?utf-8?B?enVYbWYxc2YrRGlNVXUwZGlpRDVyd05MaVlvbFBUWlhBR280VjVObzF2UDVG?=
+ =?utf-8?B?OEx4N3pjc0JLQWN4NGMwVGFEOTE4bUxJLzRHanV4b3BQRlpSamJJWEVad1c1?=
+ =?utf-8?B?N3F3VUl3M3hhbW1EU0VUSTNzZ2c5citOeEhmcU91c2xtZHIzVjBWTVY5UHZN?=
+ =?utf-8?B?eTBuaWlJQTVVck5ScHZMa1QvY2tER1FIQ3djU0hERmE4aVZqM0dZSis1ZjFD?=
+ =?utf-8?B?cmtSM29uMWx1TEVaNnRucFpuWmlmYU01Y09kV1VYcURPdE03cnBFSFNHSGxj?=
+ =?utf-8?B?bGVCd2lHVzBob0FITFEyaDRxN1NVbks4eDNwZkEvejBBdUNmNlRXM0RlRFVN?=
+ =?utf-8?B?Mmg4YW8vY240MkhzVzlKVnFRVUZrRUdIenYrcXdYOU5NYXNQM3ovRG9FMStW?=
+ =?utf-8?B?MjRUbjU4bDNqOVNMZ2pKdXhtTVY5eTNZRnlVWXl1UG9KRFVoZ3hxS0d2OHBI?=
+ =?utf-8?B?VWNDRVI0QSswREtzTlBsL0p3VUVCTG1jQ2tqak9LUXR6bkhBQjkzQ2dydng4?=
+ =?utf-8?B?UU1zdU0wZzFZQW51TVptY29vL2lrMFkzcFc2LzVOeTN1Z3VoM1hYU2RmazRZ?=
+ =?utf-8?B?dmt2dWZLeks5UlJkRFg3Rjl1aHJMS0ducTk1MjhlcUh0cW5TQjdPSE1wMDVH?=
+ =?utf-8?B?ZkE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	vmhHKhvOgHWG4Q+8Mo7AdxjqV/QRf0g7ktMtKZz0AR6NuWJYd3WF75tugSH7+RPmymqYuOXCUkDJqhYejVhELLFsYTFq6QGwOKZf6++tkO7nFyR026KhXAz1Y54knLtYOV2UocRBCrXhQSG4+bwl2+9ioeTWP6+xwh9WhUZnXmQB7zeLT49hfIjW5IUGpKJiP0IQ/GufzCHH17+fGY44eiitZRhX2tk9heT+rfr3lcPQdWjj4ZbAQlCksBl7qFIbYZL6xRU6Ro9rUReE3wiAw+8BGAHYVXIRct5JAemxnoH2DgUaDgqMdvEt4KqUfTDOuVBcqHJ+qtm3GuY5c6x2y+jMCrEmeT272lkS1QKegx/7QQGXWKb5sNzwt+O8RZYoAXAqGXL5rYn5J+sKgVsIHMz3szpcFLrxFnVHIl7UIzR/e8YDrv6B9GjstaVK3YJbO0R993e1qOYmI0yfrWQW0BrDrXRlU8ODSlsL8AgUhd/ZdQ3EiYKd8zFZdJVoqgUu6qLwhT+w15Emcpnnv8goRUaGtbvwsdyFaELE82PAEqnkD0vsjOLBBEiI+3wW+85lyluKklUQwDyvZZpyO+o9yYK2gDMIKXwRWkhOb5Kra7I=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 645c4ecb-1eea-4b96-4da9-08dd60bdf490
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR10MB5738.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 16:58:32.6394
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1+Y6uB/xfEGEjK0i3pg4FPJMpaQ0v0TgDQHGmuZ5nK6P1U+TPoTFSkGzYV0JQ849vlhHkY4fCriAd50/c4zMM3IfCPYbXd/LoTiVJlvdafs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5596
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_04,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=729
+ suspectscore=0 phishscore=0 adultscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502100000 definitions=main-2503110108
+X-Proofpoint-GUID: AIHMTWwf8gB0A1GKueJPWOZVHRy--1oq
+X-Proofpoint-ORIG-GUID: AIHMTWwf8gB0A1GKueJPWOZVHRy--1oq
 
-
-
-On 10/03/2025 19:57, Peter Xu wrote:
-> On Mon, Mar 10, 2025 at 06:12:22PM +0000, Nikita Kalyazin wrote:
->>
->>
->> On 05/03/2025 20:29, Peter Xu wrote:
->>> On Wed, Mar 05, 2025 at 11:35:27AM -0800, James Houghton wrote:
->>>> I think it might be useful to implement an fs-generic MINOR mode. The
->>>> fault handler is already easy enough to do generically (though it
->>>> would become more difficult to determine if the "MINOR" fault is
->>>> actually a MISSING fault, but at least for my userspace, the
->>>> distinction isn't important. :)) So the question becomes: what should
->>>> UFFDIO_CONTINUE look like?
->>>>
->>>> And I think it would be nice if UFFDIO_CONTINUE just called
->>>> vm_ops->fault() to get the page we want to map and then mapped it,
->>>> instead of having shmem-specific and hugetlb-specific versions (though
->>>> maybe we need to keep the hugetlb specialization...). That would avoid
->>>> putting kvm/gmem/etc. symbols in mm/userfaultfd code.
->>>>
->>>> I've actually wanted to do this for a while but haven't had a good
->>>> reason to pursue it. I wonder if it can be done in a
->>>> backwards-compatible fashion...
->>>
->>> Yes I also thought about that. :)
->>
->> Hi Peter, hi James.  Thanks for pointing at the race condition!
->>
->> I did some experimentation and it indeed looks possible to call
->> vm_ops->fault() from userfault_continue() to make it generic and decouple
->> from KVM, at least for non-hugetlb cases.  One thing is we'd need to prevent
->> a recursive handle_userfault() invocation, which I believe can be solved by
->> adding a new VMF flag to ignore the userfault path when the fault handler is
->> called from userfault_continue().  I'm open to a more elegant solution
->> though.
+On 2/26/25 2:25AM, Roman Smirnov wrote:
+> If the file system is corrupted, the header.stblindex variable
+> may become greater than 127. Because of this, an array access out
+> of bounds may occur:
 > 
-> It sounds working to me.  Adding fault flag can also be seen as part of
-> extension of vm_operations_struct ops.  So we could consider reusing
-> fault() API indeed.
-
-Great!
-
->>
->> Regarding usage of the MINOR notification, in what case do you recommend
->> sending it?  If following the logic implemented in shmem and hugetlb, ie if
->> the page is _present_ in the pagecache, I can't see how it is going to work
+> ------------[ cut here ]------------
+> UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dtree.c:3096:10
+> index 237 is out of range for type 'struct dtslot[128]'
+> CPU: 0 UID: 0 PID: 5822 Comm: syz-executor740 Not tainted 6.13.0-rc4-syzkaller-00110-g4099a71718b0 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Call Trace:
+>   <TASK>
+>   __dump_stack lib/dump_stack.c:94 [inline]
+>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>   ubsan_epilogue lib/ubsan.c:231 [inline]
+>   __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+>   dtReadFirst+0x622/0xc50 fs/jfs/jfs_dtree.c:3096
+>   dtReadNext fs/jfs/jfs_dtree.c:3147 [inline]
+>   jfs_readdir+0x9aa/0x3c50 fs/jfs/jfs_dtree.c:2862
+>   wrap_directory_iterator+0x91/0xd0 fs/readdir.c:65
+>   iterate_dir+0x571/0x800 fs/readdir.c:108
+>   __do_sys_getdents64 fs/readdir.c:403 [inline]
+>   __se_sys_getdents64+0x1e2/0x4b0 fs/readdir.c:389
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>   </TASK>
+> ---[ end trace ]---
 > 
-> It could be confusing when reading that chunk of code, because it looks
-> like it notifies minor fault when cache hit. But the critical part here is
-> that we rely on the pgtable missing causing the fault() to trigger first.
-> So it's more like "cache hit && pgtable missing" for minor fault.
+> Add a stblindex check for corruption.
 
-Right, but the cache hit still looks like a precondition for the minor 
-fault event?
+Looks reasonable. I'll pick this up.
 
->> with the write syscall, as we'd like to know when the page is _missing_ in
->> order to respond with the population via the write.  If going against
->> shmem/hugetlb logic, and sending the MINOR event when the page is missing
->> from the pagecache, how would it solve the race condition problem?
-> 
-> Should be easier we stick with mmap() rather than write().  E.g. for shmem
-> case of current code base:
-> 
->          if (folio && vma && userfaultfd_minor(vma)) {
->                  if (!xa_is_value(folio))
->                          folio_put(folio);
->                  *fault_type = handle_userfault(vmf, VM_UFFD_MINOR);
->                  return 0;
->          }
-> 
-> vma is only availble if vmf!=NULL, aka in fault context.  With that, in
-> write() to shmem inodes, nothing will generate a message, because minor
-> fault so far is only about pgtable missing.  It needs to be mmap()ed first,
-> and has nothing yet to do with write() syscalls.
+Shaggy
 
-Yes, that's true that write() itself isn't going to generate a message. 
-My idea was to _respond_ to a message generated by the fault handler 
-(vmf != NULL) with a write().  I didn't mean to generate it from write().
-
-What I wanted to achieve was send a message on fault + cache miss and 
-respond to the message with a write() to fill the cache followed by a 
-UFFDIO_CONTINUE to set up pagetables.  I understand that a MINOR trap 
-(MINOR + UFFDIO_CONTINUE) is preferable, but how does it fit into this 
-model?  What/how will guarantee a cache hit that would trigger the MINOR 
-message?
-
-To clarify, I would like to be able to populate pages _on-demand_, not 
-only proactively (like in the original UFFDIO_CONTINUE cover letter 
-[1]).  Do you think the MINOR trap could still be applicable or would it 
-necessarily require the MISSING trap?
-
-[1] 
-https://lore.kernel.org/linux-fsdevel/20210301222728.176417-1-axelrasmussen@google.com/T/
-
->>
->> Also, where would the check for the folio_test_uptodate() mentioned by James
->> fit into here?  Would it only be used for fortifying the MINOR (present)
->> against the race?
->>
->>> When Axel added minor fault, it's not a major concern as it's the only fs
->>> that will consume the feature anyway in the do_fault() path - hugetlbfs has
->>> its own path to take care of.. even until now.
->>>
->>> And there's some valid points too if someone would argue to put it there
->>> especially on folio lock - do that in shmem.c can avoid taking folio lock
->>> when generating minor fault message.  It might make some difference when
->>> the faults are heavy and when folio lock is frequently taken elsewhere too.
->>
->> Peter, could you expand on this?  Are you referring to the following
->> (shmem_get_folio_gfp)?
->>
->>        if (folio) {
->>                folio_lock(folio);
->>
->>                /* Has the folio been truncated or swapped out? */
->>                if (unlikely(folio->mapping != inode->i_mapping)) {
->>                        folio_unlock(folio);
->>                        folio_put(folio);
->>                        goto repeat;
->>                }
->>                if (sgp == SGP_WRITE)
->>                        folio_mark_accessed(folio);
->>                if (folio_test_uptodate(folio))
->>                        goto out;
->>                /* fallocated folio */
->>                if (sgp != SGP_READ)
->>                        goto clear;
->>                folio_unlock(folio);
->>                folio_put(folio);
->>        }
->>
->> Could you explain in what case the lock can be avoided?  AFAIC, the function
->> is called by both the shmem fault handler and userfault_continue().
 > 
-> I think you meant the UFFDIO_CONTINUE side of things.  I agree with you, we
-> always need the folio lock.
+> Reported-by: syzbot <syzbot+9120834fc227768625ba@syzkaller.appspotmail.com>
+> Closes: https://syzkaller.appspot.com/bug?extid=9120834fc227768625ba
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+> ---
+>   fs/jfs/jfs_dtree.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> What I was saying is the trapping side, where the minor fault message can
-> be generated without the folio lock now in case of shmem.  It's about
-> whether we could generalize the trapping side, so handle_mm_fault() can
-> generate the minor fault message instead of by shmem.c.
-> 
-> If the only concern is "referring to a module symbol from core mm", then
-> indeed the trapping side should be less of a concern anyway, because the
-> trapping side (when in the module codes) should always be able to reference
-> mm functions.
-> 
-> Actually.. if we have a fault() flag introduced above, maybe we can
-> generalize the trap side altogether without the folio lock overhead.  When
-> the flag set, if we can always return the folio unlocked (as long as
-> refcount held), then in UFFDIO_CONTINUE ioctl we can lock it.
-
-Where does this locking happen exactly during trapping?  I was thinking 
-it was only done when the page was allocated.  The trapping part (quoted 
-by you above) only looks up the page in the cache and calls 
-handle_userfault().  Am I missing something?
-
->>
->>> It might boil down to how many more FSes would support minor fault, and
->>> whether we would care about such difference at last to shmem users. If gmem
->>> is the only one after existing ones, IIUC there's still option we implement
->>> it in gmem code.  After all, I expect the change should be very under
->>> control (<20 LOCs?)..
->>>
->>> --
->>> Peter Xu
->>>
->>
-> 
-> --
-> Peter Xu
-> 
+> diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
+> index 8f85177f284b..93db6eec4465 100644
+> --- a/fs/jfs/jfs_dtree.c
+> +++ b/fs/jfs/jfs_dtree.c
+> @@ -117,7 +117,8 @@ do {									\
+>   	if (!(RC)) {							\
+>   		if (((P)->header.nextindex >				\
+>   		     (((BN) == 0) ? DTROOTMAXSLOT : (P)->header.maxslot)) || \
+> -		    ((BN) && ((P)->header.maxslot > DTPAGEMAXSLOT))) {	\
+> +		    ((BN) && (((P)->header.maxslot > DTPAGEMAXSLOT) ||	\
+> +		    ((P)->header.stblindex >= DTPAGEMAXSLOT)))) {	\
+>   			BT_PUTPAGE(MP);					\
+>   			jfs_error((IP)->i_sb,				\
+>   				  "DT_GETPAGE: dtree page corrupt\n");	\
 
 
