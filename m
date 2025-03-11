@@ -1,186 +1,181 @@
-Return-Path: <linux-kernel+bounces-555596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16CCCA5BA11
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:41:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58EF0A5BA17
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:42:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95616189472F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:41:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98CBB16DA37
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B752222DE;
-	Tue, 11 Mar 2025 07:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131FB2236FF;
+	Tue, 11 Mar 2025 07:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="Z9If5mae"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="W9KLok0V"
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45765360
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741678889; cv=pass; b=Db7MbPbq92b251ZDUOLiShH+icPnqV9B1igzEyyZWlwBknBYNKb5Mr2dqU4Rdy5DqZsjQyn2RffHHdtSHIUiwI34vL0EMfxznuQe9xKHw0JF6Th7RfrPGzY8TBQSsrPXg5sf5uHDbPvi4WYkmWf0HoFC9vjFH7eAQ+7XkDHm9bk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741678889; c=relaxed/simple;
-	bh=n4VtiVMz1fhevfF11inn+T7Qptnh4eFwvGobtv2LxVA=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V14AEADW9E0sL3A5cWHKyLYmbrYGmEaUgmcT7OYFuHDvUBC3n/b6PZ7rumSog0cTUpEY2ebTnA/uGLbdWx/9KdCRM/lGmA5MR9XzfOWqHa9lygrp5xeKNqVtYi0wmbll1UQWWZticYdjY0ahSYjug7d2Am9h/13SYtG5oMuk4ng=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=Z9If5mae; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741678872; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MJhSiQKukPtTuShQejA0RSWV7KKFmxqUrfq/CsZhbzBAJzMIS9hkibtJfIWN4KX1qvuXh3QFp83els47mloBQ+GXqjUrmKlgNH3+5DkQa9PTTnWcIp362dcno3tKSbbj+nui+JMAkoJR+7/dq3iHHDL2ILkv6+Xqkcp0QRUyoPU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741678872; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=rUxu9n8PWJK8TIneFd17PvzeUgHqtOvu2tZv8yp40q0=; 
-	b=VhquqaV+T7/RkZdjXbx+nFpkn6Eu1ZFXBTCGteIroX8Py4NRkWBz6pmcieXmhwOtjZa5E0LBIx5xvBtuVkwHv/4DXWmeoKnLXttyY1qQVeNZN9+Tyva/x0duz+0aYd/7AThDTj+SryJ9Oo0vBGYp3BVj7C1mfFOte5FiGgnQy/M=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741678872;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To:Cc;
-	bh=rUxu9n8PWJK8TIneFd17PvzeUgHqtOvu2tZv8yp40q0=;
-	b=Z9If5maeCv7yGZ/Xsg08ZcvYTveoMcZhhSAopHPvcoCY7JWGhF3P+tzvjFWRI2yF
-	9mTIGlkobmpUrMSvQUJOi3s7myhb4gcMKjOJ0/FHokoadlNjoGktX7UTajD8dmDCvZG
-	/mDaZ6+Iwh/PQXFJgWsPGYdvISHmkVX4L2a0L41A=
-Received: by mx.zohomail.com with SMTPS id 1741678868033939.9054328647139;
-	Tue, 11 Mar 2025 00:41:08 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
- Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
- Michael Ellerman <mpe@ellerman.id.au>, heiko@sntech.de,
- srinivas.kandagatla@linaro.org, Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Subject: Re: [linux-next-20250307] Build Failure
-Date: Tue, 11 Mar 2025 08:41:04 +0100
-Message-ID: <5867354.DvuYhMxLoT@workhorse>
-In-Reply-To: <25306d01-db9d-42aa-9c26-2e18dfc30241@linux.ibm.com>
-References:
- <70ba4e80-53c4-4583-82f3-2851e0829aa6@linux.ibm.com>
- <25306d01-db9d-42aa-9c26-2e18dfc30241@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A791E7C06;
+	Tue, 11 Mar 2025 07:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741678955; cv=none; b=AKPqqDEUpfiXXQDwTf9or1C/LbcktzG6ZZjtOLkS/e3KprfBLISOXS4bv81tKQMVofoaP5SgNEBIidtUjYTuNAFZr/4+KkFg9t0WEHO5y4PlPgasEPOoOmnckosSeP06+hxUEK0UpuN2qkGxquKxtvZZJEqQxBLYV+8iSj85Uis=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741678955; c=relaxed/simple;
+	bh=L/NDgxw3YHKa+KVzRO3zkwKugc1tQexZX5ChQyB505s=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uSiJtxaM4dzMLsMicCBz2KQ6XyW7Vbpbixv0PMUymHtj4VzKKTRH92E1CzBg9cW+j/rl9bB7Wnsd2ylibyS/rDbZZEkrYU/BO0kOsbFSwucZu2sqx1w//rkyanCbk7QFq7T3chjKw6CF0OjW3yYB2dC+A7SrX4dFAXNBmgdDye4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=W9KLok0V; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1741678954; x=1773214954;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=KwD7hDAnu1A18zDbCEL7ul6iQjiTgi0DciwxyZLKzks=;
+  b=W9KLok0VGfnBm3q7pMy7ZQi7G549vpGuqPUcqMsl8qDFG9ITDl+d0AQW
+   t8ZwK/6OlmnmQu3Ax3Y4KIiBRH9YayCfmoF0laWVSRTlHc9Lko3pOQmjo
+   Io6ycQzn3ULYBNSWJvt9MTp7qxeuIsFw7nr6zKiZsQWibij1VExLs3ZQc
+   8=;
+X-IronPort-AV: E=Sophos;i="6.14,238,1736812800"; 
+   d="scan'208";a="385499441"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 07:42:32 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:12921]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.62.245:2525] with esmtp (Farcaster)
+ id b43a4ebb-f7de-4780-ab81-2f1fd88f4d97; Tue, 11 Mar 2025 07:42:31 +0000 (UTC)
+X-Farcaster-Flow-ID: b43a4ebb-f7de-4780-ab81-2f1fd88f4d97
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 11 Mar 2025 07:42:31 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.88.128.133) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 11 Mar 2025 07:42:26 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <aleksandr.mikhalitsyn@canonical.com>
+CC: <arnd@arndb.de>, <bluca@debian.org>, <brauner@kernel.org>,
+	<cgroups@vger.kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
+	<hannes@cmpxchg.org>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<leon@kernel.org>, <linux-kernel@vger.kernel.org>, <mkoutny@suse.com>,
+	<mzxreary@0pointer.de>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<tj@kernel.org>, <willemb@google.com>
+Subject: Re: [PATCH net-next 1/4] net: unix: print cgroup_id and peer_cgroup_id in fdinfo
+Date: Tue, 11 Mar 2025 00:41:54 -0700
+Message-ID: <20250311074218.5629-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250309132821.103046-2-aleksandr.mikhalitsyn@canonical.com>
+References: <20250309132821.103046-2-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D037UWC003.ant.amazon.com (10.13.139.231) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Tuesday, 11 March 2025 05:23:23 Central European Standard Time Venkat Rao 
-Bagalkote wrote:
-> Git Bisect is poinitng to commit:
-> 3e081aa132bbefe31ac95dd6dfc8d787ffa83d0b as first bad commit.
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date: Sun,  9 Mar 2025 14:28:12 +0100
 
-That does not seem like a correct bisection to me. The build error isn't even 
-in the same translation unit as the change the commit you landed on touches, 
-much less any subsystem even remotely related to it.
+Please add few sentences here, why this interface is needed,
+why accessing peer sk's sk_cgrp_data is not racy (e.g. sk_cgrp_data
+never changes after creation (I'm not sure this is the case though)),
+etc.
 
+In case this interface is racy for the use case, please drop the patch.
+
+
+> Cc: linux-kernel@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: cgroups@vger.kernel.org
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Willem de Bruijn <willemb@google.com>
+> Cc: Leon Romanovsky <leon@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
+> Cc: Lennart Poettering <mzxreary@0pointer.de>
+> Cc: Luca Boccassi <bluca@debian.org>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: "Michal Koutný" <mkoutny@suse.com>
+> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> ---
+>  net/unix/af_unix.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
-> Git bisect log:
-> 
-> git bisect start
-> # status: waiting for both good and bad commits
-> # bad: [0a2f889128969dab41861b6e40111aa03dc57014] Add linux-next
-> specific files for 20250307
-> git bisect bad 0a2f889128969dab41861b6e40111aa03dc57014
-> # status: waiting for good commit(s), bad commit known
-> # good: [7eb172143d5508b4da468ed59ee857c6e5e01da6] Linux 6.14-rc5
-> git bisect good 7eb172143d5508b4da468ed59ee857c6e5e01da6
-> # good: [7eb172143d5508b4da468ed59ee857c6e5e01da6] Linux 6.14-rc5
-> git bisect good 7eb172143d5508b4da468ed59ee857c6e5e01da6
-> # good: [80ec13b98c6378cbf9b29d7ee7d3db930ddbd858] Merge branch 'master'
-> of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec-next.git
-> git bisect good 80ec13b98c6378cbf9b29d7ee7d3db930ddbd858
-> # good: [6c60220c45270869a7c5f791f6e0197b1f0d0388] Merge branch
-> 'driver-core-next' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
-> git bisect good 6c60220c45270869a7c5f791f6e0197b1f0d0388
-> # good: [187734f508b0a9a00ccaaf7d8ba05874b624ac73] Merge branch
-> 'for-next' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git
-> git bisect good 187734f508b0a9a00ccaaf7d8ba05874b624ac73
-> # good: [316ff3a28679b82eb2bf17c02dbca970e7433182] Merge branch
-> 'for-next/seccomp' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
-> git bisect good 316ff3a28679b82eb2bf17c02dbca970e7433182
-> # bad: [69759c9d8dd7df716dcca3601b82e5618332cef7] Merge branch
-> 'rust-next' of https://github.com/Rust-for-Linux/linux.git
-> git bisect bad 69759c9d8dd7df716dcca3601b82e5618332cef7
-> # bad: [1e4eee5176c91b00e73cee90712a995668020a9c] Merge branch
-> 'mhi-next' of git://git.kernel.org/pub/scm/linux/kernel/git/mani/mhi.git
-> git bisect bad 1e4eee5176c91b00e73cee90712a995668020a9c
-> # bad: [962bc2aae4f4295314d4a5f5c59a465f97f8b59a] Merge branch
-> 'for-next' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git
-> git bisect bad 962bc2aae4f4295314d4a5f5c59a465f97f8b59a
-> # bad: [612fd001319aae2b514fc234939806cf3294dbba] Merge branch 'main' of
-> git://git.infradead.org/users/willy/xarray.git
-> git bisect bad 612fd001319aae2b514fc234939806cf3294dbba
-> # bad: [f5175dd69428ab517c8d68e772c4d287b6570d8e] dt-bindings: nvmem:
-> fixed-cell: increase bits start value to 31
-> git bisect bad f5175dd69428ab517c8d68e772c4d287b6570d8e
-> # bad: [8c94337ebbfb840944574f82df0cbe35930d8df8] dt-bindings: nvmem:
-> rockchip,otp: Add compatible for RK3576
-> git bisect bad 8c94337ebbfb840944574f82df0cbe35930d8df8
-> # bad: [024e21343f3cbcde0343473fcaf094d2c19cc7bf] nvmem: rockchip-otp:
-> Move read-offset into variant-data
-> git bisect bad 024e21343f3cbcde0343473fcaf094d2c19cc7bf
-> # bad: [3e081aa132bbefe31ac95dd6dfc8d787ffa83d0b] clk: rockchip: rk3576:
-> define clk_otp_phy_g
-> git bisect bad 3e081aa132bbefe31ac95dd6dfc8d787ffa83d0b
-> # first bad commit: [3e081aa132bbefe31ac95dd6dfc8d787ffa83d0b] clk:
-> rockchip: rk3576: define clk_otp_phy_g
-> 
-> On 09/03/25 6:08 pm, Venkat Rao Bagalkote wrote:
-> > Greetings!!,
-> > 
-> > I see linux-next-20250307 fails to build on IBM Power9 and Power10
-> > servers.
-> > 
-> > 
-> > Errors:
-> > 
-> > In file included from ^[[01m^[[K<command-line>^[[m^[[K:
+> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> index 7f8f3859cdb3..2b2c0036efc9 100644
+> --- a/net/unix/af_unix.c
+> +++ b/net/unix/af_unix.c
+> @@ -117,6 +117,7 @@
+>  #include <linux/file.h>
+>  #include <linux/btf_ids.h>
+>  #include <linux/bpf-cgroup.h>
+> +#include <linux/cgroup.h>
+>  
+>  static atomic_long_t unix_nr_socks;
+>  static struct hlist_head bsd_socket_buckets[UNIX_HASH_SIZE / 2];
+> @@ -861,6 +862,11 @@ static void unix_show_fdinfo(struct seq_file *m, struct socket *sock)
+>  	int nr_fds = 0;
+>  
+>  	if (sk) {
+> +#ifdef CONFIG_SOCK_CGROUP_DATA
+> +		struct sock *peer;
+> +		u64 sk_cgroup_id = 0;
 
-"In file included from <command-line>" seems a little suspicious.
+Please keep reverse xmas tree order for net patches.
+https://docs.kernel.org/process/maintainer-netdev.html#local-variable-ordering-reverse-xmas-tree-rcs
 
-> > ^[[01m^[[K./usr/include/cxl/features.h:11:10:^[[m^[[K
-> > ^[[01;31m^[[Kfatal error: ^[[m^[[Kuuid/uuid.h: No such file or directory
-> >    11 | #include ^[[01;31m^[[K<uuid/uuid.h>^[[m^[[K
-> >       |          ^[[01;31m^[[K^~~~~~~~~~~~~^[[m^[[K
-> > compilation terminated.
-> > make[4]: *** [usr/include/Makefile:85:
-> > usr/include/cxl/features.hdrtest] Error 1
-> > make[3]: *** [scripts/Makefile.build:461: usr/include] Error 2
-> > make[2]: *** [scripts/Makefile.build:461: usr] Error 2
-> > make[2]: *** Waiting for unfinished jobs....
-> > arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4:
-> > intra_function_call not a direct call
-> > arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c:
-> > unannotated intra-function call
-> > arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool:
-> > .text+0xe84: intra_function_call not a direct call
-> > make[1]: *** [/home/linux_src/linux/Makefile:1997: .] Error 2
-> > make: *** [Makefile:251: __sub-make] Error 2
-> > 
-> > Please add below tag, if you happen to fix this issue.
-> > 
-> > Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-> > 
-> > 
-> > Regards,
-> > 
-> > Venkat.
+Also, no need to initialise sk_cgroup_id, so it should be:
 
-Regards,
-Nicolas Frattaroli
+	struct sock *peer;
+	u64 sk_cgroup_id;
 
 
+> +#endif
+> +
+>  		s_state = READ_ONCE(sk->sk_state);
+>  		u = unix_sk(sk);
+>  
+> @@ -874,6 +880,21 @@ static void unix_show_fdinfo(struct seq_file *m, struct socket *sock)
+>  			nr_fds = unix_count_nr_fds(sk);
+>  
+>  		seq_printf(m, "scm_fds: %u\n", nr_fds);
+> +
+> +#ifdef CONFIG_SOCK_CGROUP_DATA
+> +		sk_cgroup_id = cgroup_id(sock_cgroup_ptr(&sk->sk_cgrp_data));
+> +		seq_printf(m, "cgroup_id: %llu\n", sk_cgroup_id);
+> +
+> +		peer = unix_peer_get(sk);
+> +		if (peer) {
+> +			u64 peer_cgroup_id = 0;
+
+Same here, no need to initialise peer_cgroup_id.
 
 
+> +
+> +			peer_cgroup_id = cgroup_id(sock_cgroup_ptr(&peer->sk_cgrp_data));
+> +			sock_put(peer);
+> +
+> +			seq_printf(m, "peer_cgroup_id: %llu\n", peer_cgroup_id);
+> +		}
+> +#endif
+>  	}
+>  }
+>  #else
+> -- 
+> 2.43.0
+
+Thanks!
 
