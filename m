@@ -1,226 +1,230 @@
-Return-Path: <linux-kernel+bounces-556244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7538AA5C313
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:55:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE77A5C318
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:56:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FCEC17720C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:54:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD30F166B92
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EC61D5CCD;
-	Tue, 11 Mar 2025 13:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1521E2566C0;
+	Tue, 11 Mar 2025 13:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="RwdRgjPw"
-Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="etkLWdkO"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FE5241682
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B730E1D5ADC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741701255; cv=none; b=nx3gmhOjGCaCFIiAZYSWMvl4n2mxv8KTs2WAGfwBC7gK4eTyofCMf7YfXi4zFXLI9WfZtRLDz2HWqBZVdBGHHakAiQkCjGov/vZb991OBxLI45iXVGDSKF+LwMOUeCbx1Z/SNN953h1xD3Y5FMStcyVe2FcrGlpxkWWWajJLYmk=
+	t=1741701401; cv=none; b=U1z2dQfYcRdx+Idhiju3OOTPfx/0MMhVXqTQ0EwM6qjX2ftbm+YcCHxs/XEpzWFhbVXNFtJll1q+ldt4kiX+FN9vovq8EvILajrmoO4IfeNv0f169zdx3Gxi9lvK7sypulXTamQrMR1k6QDe4GivJ1SOMEBD+Jik0KqR9a9vOM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741701255; c=relaxed/simple;
-	bh=AGcHUb372Qb4xp3PIIbgqrFpbsdhvyHF+3MvUWkEIUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LG0VHTCQY3e04IvrDcP9v79ZHVDcsiNPiE9QHqEQnu+6dSSx4HNzZbSXyuoA851avwDd99YnymSCSeBjWgvMqsXtQ4QsnnIklMIi998hS2nc7RNB+W0Ur1oGx1dLP1PAS2gMEaU1iM+IcTGiQ8eGGeyp2tNDlOZDYWWQZxKxb9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=RwdRgjPw; arc=none smtp.client-ip=94.124.121.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+	s=arc-20240116; t=1741701401; c=relaxed/simple;
+	bh=8IiP310D7e4ansyuaQQM1xov8Mvy6oaQfxyIgMszHD0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DW6OS2eLI/9/VoPmF0wQP04VPxYNIuATT6gZJLJgNrmxE771pTE/wE+m6WwRUvt7sU+P1zi/hCg2fIxk6zgjRs/cpMBzXy6DQLle9PZo6295fcFXerOt5xR2qVa7LS5Vt5YgPWjgFjJUBHA42rwM74MlrehyBCibso7lPB80Cnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=etkLWdkO; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-524038ba657so2449485e0c.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:56:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=protonic.nl; s=202111;
-	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
-	 message-id:subject:cc:to:from:date:from;
-	bh=xus23xtK3M/qRjR6KMXHiICpWAcFs8WV4zaduJRJqis=;
-	b=RwdRgjPw84rYbU0uTbR5bXlPAUGBNjN0JVROqGEG+jZACXgHamTSYK22FqvqEXyMXbYLeGPp7r71v
-	 UVDxvkIaqvmG+ofG70jSoQ7Cr8QS3HZo6zc/rcxe+Wy8tQo5Ucmbhp/fvQeU5CiTMVnUKHHN/D/OA1
-	 dTUybv0heA5IJbWYz4KfXpZguGUFOy3nZ3j5IiGjdmGGjOX9MtBW7cB1k9NJUsV7hyZKUNTuKGaLkg
-	 qKDByLICJDRTBCi8EI1hgKjBmsAA8nQGfe9NmEUq7IKvbMwjgNMSWkYOzy1HKj6BWC7DMGRdiHLLuE
-	 bbvyyXZd3XPpO/PYw1hUr8mlqedJf6A==
-X-MSG-ID: 4da3203a-fe80-11ef-a3a3-00505681446f
-Date: Tue, 11 Mar 2025 14:54:07 +0100
-From: David Jander <david@protonic.nl>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kent Gibson <warthog618@gmail.com>, Linus Walleij
- <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH RFT] gpio: cdev: use raw notifier
-Message-ID: <20250311145407.7e05b5d9@erd003.prtnl>
-In-Reply-To: <20250311-gpiolib-line-state-raw-notifier-v1-1-d0fa44fd67cc@linaro.org>
-References: <20250311-gpiolib-line-state-raw-notifier-v1-1-d0fa44fd67cc@linaro.org>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+        d=linaro.org; s=google; t=1741701398; x=1742306198; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U2N+Aak+CIPeIHj0r29UVuXvGehh5FWJExHuvJuMJuw=;
+        b=etkLWdkO/1PgqBwcW5eaB5PLHcGmnst+3iiJHOzt/FYjqdDcP5I7AJyg6Jxj5sX6VV
+         NaK/i9S3aksxXqsQBYfLcWnLv9tcQ/wl7G2NeaxnZ64SDUqf9mUFWG4Q5wddsplgMnt4
+         qippK+2PM8x1Cim9PfJlj767FKfxLekedTzpim4mZfGNjFmXCy4vi1wTOn6phweWjWDe
+         LqbBz4Ro7gJuZM9MAGxoefJLIRFxFAVhQal11/Gts0wsY5YOP+DkIHP6psaS/63QBvTW
+         ZOPJg9Bxkfa3JpJNBL2ytX9471G3pJWPVasuHXxnBAOrKLJAvz62YkzJrD5gTcyR/k+Z
+         ftmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741701398; x=1742306198;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U2N+Aak+CIPeIHj0r29UVuXvGehh5FWJExHuvJuMJuw=;
+        b=T3bM/YnfpV5nTlFjsc6tyzlQ45pJZj5nWeBFNbPDiu3kOX6uv0YljyG8OGsVB5vikD
+         3W6fYs3+RmiAoHUmsbXwaeFIcYuRMawZGL1vsqQYBPHN19c0ijeFsSf7KX22dzwIMS5Z
+         zA9VfeKpzNOYYOP7/4jU27FLHwa9IF8wjmTXobOL5EgU22ysUmlvQoR6WfL1qPgwPX54
+         zVTlgjkabxVvp7+3uOjeuPQpZGIyxZbrqrwRR4QK5kHReD7mehF2hk+V2t49/LJRMDm6
+         viuElTPDElh33lt44FII1KqFWRN47MLqaDzRJ07XgzexdIH5LOsxHWtQVHHTBU7q9vZM
+         v5Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmNSizYl+WfcbRfg1zFviqParqFhdR64/Jy5JhkulJgZeuKm3r+8+eeHsTufpNkxdfyG6pKmX1YTYSuuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb5iTCqrqIsPKWKm3liRf+I6CfZgz6SrShrxmQl1olvwULoJMF
+	qGQzwOlEBGtgpIURKlBu9l6ROWNI/aG3cX3hGAd2QVFsOl5XPnBctti+9My6kCdRKEikvwTKDGa
+	j2xRxwDiVwx2/otKN0wdCXuHVM3+YjejDH1WQUw==
+X-Gm-Gg: ASbGncusINmq94wxUYEsMBDX0luTZOl+i4Mi3Q85a4sbaOdQZA8sc8UaVr9oA3rrqfi
+	HAH9ojPExYRYWhkbPad4eVcg9OaTLMmbd4H+R+FvY75leFHGzh1QxCK+1Ng8AXMWQwy5cclHvg/
+	H5DP2+qHnMtHoGs2WMTAHHzBYQme3Sb2/IVGcH8Cocs2bnNSa/UmHdMgjfGFY=
+X-Google-Smtp-Source: AGHT+IEFerF36HL1rGh4auPc7CBLh70p65CcQmhmyY6oaALXU6swyvZCI0BvNaOEVhtsxQeTQfLD2Hu11+otSm5zxMY=
+X-Received: by 2002:a05:6122:3d47:b0:523:dbd5:4e7f with SMTP id
+ 71dfb90a1353d-52419754983mr2484522e0c.3.1741701398495; Tue, 11 Mar 2025
+ 06:56:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250310170447.729440535@linuxfoundation.org>
+In-Reply-To: <20250310170447.729440535@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 11 Mar 2025 19:26:26 +0530
+X-Gm-Features: AQ5f1JpJScIVXTIFtt-TDzw-VZFe3PYeUikQXgKwV-72D77COTTUyRM5ws7x7v4
+Message-ID: <CA+G9fYtzO4bv8ij+x7yV5YDbSr+wsHRQCzfzjXUA29oQmvTsvg@mail.gmail.com>
+Subject: Re: [PATCH 6.13 000/207] 6.13.7-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 11 Mar 2025 14:19:40 +0100
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Mon, 10 Mar 2025 at 22:38, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.13.7 release.
+> There are 207 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.13.7-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.13.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Atomic notifiers call rcu_synchronize() in
-> atomic_notifier_chain_unregister() causing a considerable delay in some
-> circumstances. Replace the atomic notifier with the raw variant and
-> provide synchronization with a read-write spinlock.
-> 
-> Fixes: fcc8b637c542 ("gpiolib: switch the line state notifier to atomic")
-> Reported-by: David Jander <david@protonic.nl>
-> Closes: https://lore.kernel.org/all/20250311110034.53959031@erd003.prtnl/
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/gpio/gpiolib-cdev.c | 15 +++++++++------
->  drivers/gpio/gpiolib.c      |  8 +++++---
->  drivers/gpio/gpiolib.h      |  5 ++++-
->  3 files changed, 18 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> index 40f76a90fd7d..107d75558b5a 100644
-> --- a/drivers/gpio/gpiolib-cdev.c
-> +++ b/drivers/gpio/gpiolib-cdev.c
-> @@ -2729,8 +2729,9 @@ static int gpio_chrdev_open(struct inode *inode, struct file *file)
->  	cdev->gdev = gpio_device_get(gdev);
->  
->  	cdev->lineinfo_changed_nb.notifier_call = lineinfo_changed_notify;
-> -	ret = atomic_notifier_chain_register(&gdev->line_state_notifier,
-> -					     &cdev->lineinfo_changed_nb);
-> +	scoped_guard(write_lock_irqsave, &gdev->line_state_lock)
-> +		ret = raw_notifier_chain_register(&gdev->line_state_notifier,
-> +						  &cdev->lineinfo_changed_nb);
->  	if (ret)
->  		goto out_free_bitmap;
->  
-> @@ -2754,8 +2755,9 @@ static int gpio_chrdev_open(struct inode *inode, struct file *file)
->  	blocking_notifier_chain_unregister(&gdev->device_notifier,
->  					   &cdev->device_unregistered_nb);
->  out_unregister_line_notifier:
-> -	atomic_notifier_chain_unregister(&gdev->line_state_notifier,
-> -					 &cdev->lineinfo_changed_nb);
-> +	scoped_guard(write_lock_irqsave, &gdev->line_state_lock)
-> +		raw_notifier_chain_unregister(&gdev->line_state_notifier,
-> +					      &cdev->lineinfo_changed_nb);
->  out_free_bitmap:
->  	gpio_device_put(gdev);
->  	bitmap_free(cdev->watched_lines);
-> @@ -2779,8 +2781,9 @@ static int gpio_chrdev_release(struct inode *inode, struct file *file)
->  
->  	blocking_notifier_chain_unregister(&gdev->device_notifier,
->  					   &cdev->device_unregistered_nb);
-> -	atomic_notifier_chain_unregister(&gdev->line_state_notifier,
-> -					 &cdev->lineinfo_changed_nb);
-> +	scoped_guard(write_lock_irqsave, &gdev->line_state_lock)
-> +		raw_notifier_chain_unregister(&gdev->line_state_notifier,
-> +					      &cdev->lineinfo_changed_nb);
->  	bitmap_free(cdev->watched_lines);
->  	gpio_device_put(gdev);
->  	kfree(cdev);
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index e5eb3f0ee071..b8197502a5ac 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1075,7 +1075,8 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
->  		}
->  	}
->  
-> -	ATOMIC_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
-> +	rwlock_init(&gdev->line_state_lock);
-> +	RAW_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
->  	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->device_notifier);
->  
->  	ret = init_srcu_struct(&gdev->srcu);
-> @@ -4361,8 +4362,9 @@ EXPORT_SYMBOL_GPL(gpiod_set_array_value_cansleep);
->  
->  void gpiod_line_state_notify(struct gpio_desc *desc, unsigned long action)
->  {
-> -	atomic_notifier_call_chain(&desc->gdev->line_state_notifier,
-> -				   action, desc);
-> +	guard(read_lock_irqsave)(&desc->gdev->line_state_lock);
-> +
-> +	raw_notifier_call_chain(&desc->gdev->line_state_notifier, action, desc);
->  }
->  
->  /**
-> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-> index a738e6c647d8..58f64056de77 100644
-> --- a/drivers/gpio/gpiolib.h
-> +++ b/drivers/gpio/gpiolib.h
-> @@ -16,6 +16,7 @@
->  #include <linux/gpio/driver.h>
->  #include <linux/module.h>
->  #include <linux/notifier.h>
-> +#include <linux/spinlock.h>
->  #include <linux/srcu.h>
->  #include <linux/workqueue.h>
->  
-> @@ -47,6 +48,7 @@
->   * @list: links gpio_device:s together for traversal
->   * @line_state_notifier: used to notify subscribers about lines being
->   *                       requested, released or reconfigured
-> + * @line_state_lock: RW-spinlock protecting the line state notifier
->   * @line_state_wq: used to emit line state events from a separate thread in
->   *                 process context
->   * @device_notifier: used to notify character device wait queues about the GPIO
-> @@ -75,7 +77,8 @@ struct gpio_device {
->  	const char		*label;
->  	void			*data;
->  	struct list_head        list;
-> -	struct atomic_notifier_head line_state_notifier;
-> +	struct raw_notifier_head line_state_notifier;
-> +	rwlock_t		line_state_lock;
->  	struct workqueue_struct	*line_state_wq;
->  	struct blocking_notifier_head device_notifier;
->  	struct srcu_struct	srcu;
-> 
-> ---
-> base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
-> change-id: 20250311-gpiolib-line-state-raw-notifier-70c1ad3e99eb
-> 
-> Best regards,
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Tested-by: David Jander <david@protonic.nl>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Thanks!
+## Build
+* kernel: 6.13.7-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 2fe515e18cbae9a204a7662d4b3b5760633f31fa
+* git describe: v6.13.6-208-g2fe515e18cba
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13=
+.6-208-g2fe515e18cba
 
-Seems to work correctly under some basic testing.
+## Test Regressions (compared to v6.13.3-552-g3244959bfa6b)
 
-$ time gpiofind LPOUT0
-gpiochip7 9
-real    0m 0.02s
-user    0m 0.00s
-sys     0m 0.01s
+## Metric Regressions (compared to v6.13.3-552-g3244959bfa6b)
 
-$ time gpiodetect
-gpiochip0 [GPIOA] (16 lines)
-gpiochip1 [GPIOB] (16 lines)
-gpiochip10 [GPIOK] (8 lines)
-gpiochip11 [GPIOZ] (8 lines)
-gpiochip12 [unknown] (22 lines)
-gpiochip13 [mcp23s17.0] (16 lines)
-gpiochip14 [0-0020] (16 lines)
-gpiochip15 [0-0021] (16 lines)
-gpiochip2 [GPIOC] (16 lines)
-gpiochip3 [GPIOD] (16 lines)
-gpiochip4 [GPIOE] (16 lines)
-gpiochip5 [GPIOF] (16 lines)
-gpiochip6 [GPIOG] (16 lines)
-gpiochip7 [GPIOH] (16 lines)
-gpiochip8 [GPIOI] (16 lines)
-gpiochip9 [GPIOJ] (16 lines)
-real    0m 0.03s
-user    0m 0.00s
-sys     0m 0.01s
+## Test Fixes (compared to v6.13.3-552-g3244959bfa6b)
 
-Best regards,
+## Metric Fixes (compared to v6.13.3-552-g3244959bfa6b)
 
--- 
-David Jander
+## Test result summary
+total: 74660, pass: 60565, fail: 2624, skip: 11471, xfail: 0
+
+## Build Summary
+* arc: 6 total, 5 passed, 1 failed
+* arm: 143 total, 137 passed, 6 failed
+* arm64: 58 total, 56 passed, 2 failed
+* i386: 22 total, 19 passed, 3 failed
+* mips: 38 total, 33 passed, 5 failed
+* parisc: 5 total, 3 passed, 2 failed
+* powerpc: 44 total, 42 passed, 2 failed
+* riscv: 27 total, 24 passed, 3 failed
+* s390: 26 total, 25 passed, 1 failed
+* sh: 6 total, 5 passed, 1 failed
+* sparc: 5 total, 3 passed, 2 failed
+* x86_64: 50 total, 49 passed, 1 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-crypto
+* ltp-cve
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
