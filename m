@@ -1,93 +1,84 @@
-Return-Path: <linux-kernel+bounces-555987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F4CA5BF23
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:35:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17163A5BF40
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C79DA3B29E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:35:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79E6D7A97B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5938253F0E;
-	Tue, 11 Mar 2025 11:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2A2254851;
+	Tue, 11 Mar 2025 11:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xbb8eFP8"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PdlCoJyk"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EFF221F11;
-	Tue, 11 Mar 2025 11:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0FB2505AC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741692938; cv=none; b=Ewtq861pK1oTu121rRX/wvEgBBJBUoWL4hSTCMx9zbgJ0Qa5wEDVvWdA/K9lsLEAo3MOaQrtnAz9+WJGZD0yKcq0Fks4LVxv/WI02+791mKIT2+0rUkVTXDrJwZJOPYiRPoD+lq42NmX5yHwLwCNZTqmVanmX5RBDSsq64cZQz0=
+	t=1741693017; cv=none; b=AsJEMsiVjBiTke6lhXt0NZC4XuinSHkT4yICzBvIDQWu4HXEbPZdNEFBqf/GkiqKoRbn4eeoUqNwMohR2ctCkxNMXzsJ0xbF8lVEI9R1pNXNv1KUzZZ1vigOB+EseUaoaLTTyttr+8qslLvrytSO2om+l1pX3VJDnIhbKcSdtmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741692938; c=relaxed/simple;
-	bh=N8NL/qaRq4a+Nf+VD9g9xmrsZpw1DnhUqY03RO5WZA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IlxSh7tZOBoX5f/ElaJyEoDXFNV2CeXLdSQtyBmkMbYaPo3NHBYnnzOKcTvKVc2KSsWXQm0N8aARS+sj/luUTeWPrpraeCcKXEbY3Zqgf8GvxnGdt6CBkyX9DYTfIZJtknIGw444u5m1zeUndxQQJexNSJYSjGZi8IM7ei6NeDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Xbb8eFP8; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=fRHIjCyQ/PiBBvxdoAc2u4R5/Wp/k6YbQ2LIfCHzQ6U=; b=Xbb8eFP8WKMU6pPMHzrwRD3zcz
-	1YInEF1jdvWWpQpk7wfSujd4RLlLu4i26vK5cCW61YjrlYPc0YgFHSUczx1Yy741YZ7ELzUpp9MnZ
-	+2RPzVN7s9wDQMYEypiHXSGmbyGzH7/ZBCDtPNGEktjX4LlrCT/9mo6Kh8NbXJ3shpY+m+Pb2U7J7
-	DopRK4fBm2JZCEqy00xvCEOthBO/fowl3DHQzYAQCdCZnwAaVFon6nL0ofqjDH35XNmNTrrf7Q9pv
-	qTk5bqjjp0B5/yRihUltc424AuwQoQd3BCznH/a5s7bdrs68BpujxOFMX7E8Cm3xDaPfU82bCU7SN
-	gK99Q09Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1trxtS-000000028WB-2LuY;
-	Tue, 11 Mar 2025 11:35:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 252CE3002C7; Tue, 11 Mar 2025 12:35:30 +0100 (CET)
-Date: Tue, 11 Mar 2025 12:35:30 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: mark.barnett@arm.com
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	irogers@google.com, ben.gainey@arm.com, deepak.surti@arm.com,
-	ak@linux.intel.com, will@kernel.org, james.clark@arm.com,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, adrian.hunter@intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 3/5] perf: Allow adding fixed random jitter to the
- alternate sampling period
-Message-ID: <20250311113530.GA9968@noisy.programming.kicks-ass.net>
-References: <20250307202247.648633-1-mark.barnett@arm.com>
- <20250307202247.648633-4-mark.barnett@arm.com>
- <20250311113128.GD19424@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1741693017; c=relaxed/simple;
+	bh=oi7lV/lrHT+EHF4OxEPCf+t4jtrbHvMpeUS9/w8MW9o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dSUcArL0ViqwRHS8UBjNIzFxCV7QPZu4Bl/QQammAfunP89ayAyLu3oP8BAXA6m73VaVGSyg5zJqbeF9OecYlrB8ilE0WKdaEYtj/WGcUXopWuuZ9jxTEgcGI8HnBuPnlNdgjzbTaPqncTivapqvhK+93i4D6Z6gdBYRWnep3fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PdlCoJyk; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741693013;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hR+XlzJzGTiqSgbWiAdN0TiNYvqq5BOnYBxudITTpnY=;
+	b=PdlCoJykbgkrfdXx1n82f5X4d+dTQ5hRn2zlYHv6wjRN9nUlblJ0Nhy5XAf7K2HkCWJNd4
+	7xz7wBTFaeW1FUhFQ/K3qNooFfVOPB5y1qKphKI8EO0DEKJ51Dyn8QlPk4hgX+tu3ZIivB
+	EaJ25BfXkB/4GBf7kxqLIPTFbi/+DP0=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	sparclinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] sbus: envctrl: Fix typo in comment
+Date: Tue, 11 Mar 2025 12:36:29 +0100
+Message-ID: <20250311113632.496905-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250311113128.GD19424@noisy.programming.kicks-ass.net>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Mar 11, 2025 at 12:31:29PM +0100, Peter Zijlstra wrote:
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index b87a5ac42ce2..e5a93edf3b5f 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -8,6 +8,7 @@
->   *  Copyright  ©  2009 Paul Mackerras, IBM Corp. <paulus@au1.ibm.com>
->   */
->  
-> +#include "linux/random.h"
->  #include <linux/fs.h>
->  #include <linux/mm.h>
->  #include <linux/cpu.h>
+s/disinguish/distinguish/
 
-Argh, this is neovim trying to be 'helpful'. If anybody reading this
-knows how to make it stop adding headers, please let me know, its
-driving me nuts.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/sbus/char/envctrl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/sbus/char/envctrl.c b/drivers/sbus/char/envctrl.c
+index 81918aa67109..69e49da93b8b 100644
+--- a/drivers/sbus/char/envctrl.c
++++ b/drivers/sbus/char/envctrl.c
+@@ -734,7 +734,7 @@ static void envctrl_set_mon(struct i2c_child_t *pchild,
+ {
+ 	/* Firmware only has temperature type.  It does not distinguish
+ 	 * different kinds of temperatures.  We use channel description
+-	 * to disinguish them.
++	 * to distinguish them.
+ 	 */
+ 	if (!(strcmp(chnl_desc,"temp,cpu")) ||
+ 	    !(strcmp(chnl_desc,"temp,cpu0")) ||
+-- 
+2.48.1
+
 
