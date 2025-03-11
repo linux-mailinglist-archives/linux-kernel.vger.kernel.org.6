@@ -1,86 +1,97 @@
-Return-Path: <linux-kernel+bounces-555280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 061A6A5B04F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:58:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F49A5B077
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:00:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185A418801FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:58:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA84A1894E80
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B387C2222C9;
-	Mon, 10 Mar 2025 23:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A2E2222D8;
+	Tue, 11 Mar 2025 00:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZXxaa+B0"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJOb4IHl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016CE1CAA8D;
-	Mon, 10 Mar 2025 23:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437BA1CAA8D;
+	Mon, 10 Mar 2025 23:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741651116; cv=none; b=n4Mz7Q7JcdyzxcI5QsI0qkQn7/wtyOAl06rX9Y1auRCyMs2to5/hoTyboKPfHoXPC+1KP2oO2xkZZQ2BCtBxYcEfrY4XbDJCLp3eBhfy8o6soyOibSgDRE43FW3I9JF0Q6TyZGme4pVLPv1kvDcyi0Vcg3Q6EE+0PtrtJ5NCFhk=
+	t=1741651200; cv=none; b=Je1J+TfH2Mq0V/GKzXbpa2V2+hz4ZurbkApvlKzTr0rSJXIoFA0w6gURlfMDNsQB/IRRAIukz6kD0wBfYIo6jf/qYs62o8ahE3Axy3zhop3LBglloLIxPxn/H2pegso4+NWUsksWEHBEJE4Av/ZpN2f8tnv4xGnI+Dfn7uLQu2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741651116; c=relaxed/simple;
-	bh=HRL9dvhLGHgZ+t15fYgJdlkg9n7P/vSyCsVNBTwdSM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bAVv2NsR3jyVnje4oR7i+VCjG+nZHZSuBdEsDrjz4HMbXL8DUmDCb8Srj7hOlkegfbTTvBEbTim9SDwgYv/Xr9WPHzcGExYFP2oPb9e8+uPt6GyGcy6zaMAHEDiwDIuZfEWEMyCpXnkSquvrHHxFrjKxFVeHoGfOrRTUWWHtJn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ZXxaa+B0; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=O6tK3nGR9KVemkXaRkWRrwdgE+3x50H2PRIQcPyhrvo=; b=ZXxaa+B0/9a66QMHGuH2l4nkZ2
-	M4zkg/q7zAYTmX6PBs1NOhDVV6YH91BM48dIe4VSD6vLIQ4BMiDJgbTRms6c0OvFw1QlTWUIKJLbM
-	xiY4VaLuqMKlllfgRQZDb15WXl8F5xxQ/K9ZboE+Bi+xUJwLS34oO5zB/iyMEq28JuxyJRQ4WpxI2
-	kF5PL6n8epgUirusUxs8k7l8ZFihWvRomDR6yZ/jS2nPXjkyhLBda2N6/NFc7tUx/cYkt2o4H6pEw
-	XGSotvNcz1AuuKVjtdNYGafNGjTxHRxEtzrPBJAX5b5T83GSMBdrOcuOVP6FoFnQqBUe5qUKhllfm
-	Xto2AsOA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1trn0x-00000002rRM-0zDw;
-	Mon, 10 Mar 2025 23:58:31 +0000
-Date: Mon, 10 Mar 2025 23:58:31 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
-	syzbot <syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com>,
-	jk@ozlabs.org, linux-efi@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [efi?] [fs?] possible deadlock in efivarfs_actor
-Message-ID: <20250310235831.GL2023217@ZenIV>
-References: <67cd0276.050a0220.14db68.006c.GAE@google.com>
- <8cf7d7efdc069772d69f913b02e5f67feadce18e.camel@HansenPartnership.com>
- <CAMj1kXH0Myy3bV-hFNWnoUk6ZAa6MAd1zFTM-X6dXiJPx==w0A@mail.gmail.com>
+	s=arc-20240116; t=1741651200; c=relaxed/simple;
+	bh=CJ7jTSxee4pxv4sjymxB6XfJRq88ZKOOdxIoYQUNPTQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Mc0RrMuHKnSx48VJBVcK4CXicWCJyRWbA+shrFWWcRg8W9C1l+rL55RlI6CsL03IBvGpocCX+nZO3EiK0FG+tjKbaf4OoEMQpAzqIFq7rl0W26fAqSLAIu6bTHgak8rLYUeRnfToy7bb1EweCSws6dFHkuh3q9FW+jegKJIJj78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJOb4IHl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6914C4CEE5;
+	Mon, 10 Mar 2025 23:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741651199;
+	bh=CJ7jTSxee4pxv4sjymxB6XfJRq88ZKOOdxIoYQUNPTQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=rJOb4IHlJt22B1UmAe05Pka8ARNc28gUIpTeQxb1dhmLdikArXXgaUQyBR8pEABGx
+	 EIzN/jen8xtGgmxy81bIyVCl1qAF0dMwdaJzKQIcBdMHxbG4a8JFdK6OUUI0Ug68CH
+	 qXGHNGf61WlRkDIQumDX7TgdSMjAYqgS5jHFmzuoFHJsWJL7sbL9lLO1h/kznHwb7N
+	 wxt3INZxY3ivhn2bEYskujaBvSyD3Tkak/L8Rq4+2uogyFtSjC3bU94WzFq545lnCg
+	 anMyQ3N1uJ0iAeRERNmwMJT4XJkZI2FeVGrEA8eTJgvnztjWfPKn/QYw94kdNMMg5L
+	 RKDx75X9CsAHg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE7F380AACB;
+	Tue, 11 Mar 2025 00:00:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXH0Myy3bV-hFNWnoUk6ZAa6MAd1zFTM-X6dXiJPx==w0A@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] selftests/bpf: Convert comma to semicolon
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174165123376.3738644.9187639852892920480.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Mar 2025 00:00:33 +0000
+References: <20250310032045.651068-1-nichen@iscas.ac.cn>
+In-Reply-To: <20250310032045.651068-1-nichen@iscas.ac.cn>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ aspsk@isovalent.com, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Mon, Mar 10, 2025 at 07:21:53PM +0100, Ard Biesheuvel wrote:
+Hello:
 
-> The repro log also has
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
+
+On Mon, 10 Mar 2025 11:20:45 +0800 you wrote:
+> Replace comma between expressions with semicolons.
 > 
-> program crashed: BUG: unable to handle kernel paging request in
-> efivarfs_pm_notify
+> Using a ',' in place of a ';' can have unintended side effects.
+> Although that is not the case here, it is seems best to use ';'
+> unless ',' is intended.
 > 
-> preceding the other log output regarding the locks, so the deadlock
-> might be a symptom of another problem.
+> Found by inspection.
+> No functional change intended.
+> Compile tested only.
+> 
+> [...]
 
-This:
-        struct path path = { .mnt = NULL, .dentry = sfi->sb->s_root, };
+Here is the summary with links:
+  - selftests/bpf: Convert comma to semicolon
+    https://git.kernel.org/bpf/bpf-next/c/233732b289f6
 
-_What_ .mnt = NULL?  That's already a bug.  There is no such thing
-as mountless open file; how would the kernel know not to shut the
-damn thing down right under you?
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
