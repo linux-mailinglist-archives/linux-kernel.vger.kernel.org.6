@@ -1,133 +1,115 @@
-Return-Path: <linux-kernel+bounces-555414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00867A5B715
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:08:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62003A5B721
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:09:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78CB1891E04
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:08:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4C3018923F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BC01E9901;
-	Tue, 11 Mar 2025 03:08:15 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365E71E9915;
+	Tue, 11 Mar 2025 03:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="JyXyZUid"
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784321C5799;
-	Tue, 11 Mar 2025 03:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F96919007D;
+	Tue, 11 Mar 2025 03:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741662494; cv=none; b=kcNVauMN4wiylfJImIkbinFn/EbMcAMM5P+KaWxdmwSEZSA1RZYr+iXbpmGfxpwWKpZK2HtrgxoAO5UioTdSakQhqOV5hJdlxEhjVlUo4UjXrGyhbi4kKnNBLneSKQg9lLQ75ErIQfiGg5ULCs9hdsWjjYS5fSog0ReutYjmaFI=
+	t=1741662557; cv=none; b=LmeSOab15Th1vv1V+wkTber3fwi/v9bHySwwWpKtk4EQRTQ3wiX+e5s5dOwX7eu21mYCTAz1Jj+Z/Ufyd9/yW9VbBBCy+YYFrpNoh7PYzXEBGsbRhr24u8apl/nYeUieZWbq++agePTPzhDywG6CDzzg/v+zynjK3v6TNyKMibs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741662494; c=relaxed/simple;
-	bh=SEjKj02X+kopJyS649zkKcEN6zxqJ1THnjbFT3fKYRc=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=axI+LdnZfZ8yjW5struJR1FRuyJFNyJ0EnQTgkGCZ0p1jMksTsWQX3m6VNuwYo40QZRrFfAYrjCuRjxMIAKBzWentezNtafn3WmbQPx2du7XXKtMhHVTo2P0UGSoIMNsaOquiS65Sf3hHY2xEud/HmYcnfnq3onlVWiUWH6ljEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZBdwq6Pjxz4f3jcm;
-	Tue, 11 Mar 2025 11:07:39 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3911B1A06D7;
-	Tue, 11 Mar 2025 11:08:02 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAXe18Qqc9nUbWWGA--.13861S3;
-	Tue, 11 Mar 2025 11:08:02 +0800 (CST)
-Subject: Re: [PATCH] blk-throttle: support io merge over iops_limit
-To: Tejun Heo <tj@kernel.org>, Ming Lei <ming.lei@redhat.com>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, josef@toxicpanda.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250307090152.4095551-1-yukuai1@huaweicloud.com>
- <Z8sZyElaHQQwKqpB@slm.duckdns.org>
- <5fc124c9-e202-99ca-418d-0f52d027640f@huaweicloud.com>
- <Z85LjhvkCzlqBVZy@fedora> <Z88K5JtR4rhhIFsY@slm.duckdns.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <baba2f82-6c35-8c24-847c-32a002009b63@huaweicloud.com>
-Date: Tue, 11 Mar 2025 11:08:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1741662557; c=relaxed/simple;
+	bh=jpF7nF3TOxCImalYkQUW1dnGf4zCL9LpRq+kndEXvcQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gF7/UA/jYPdg96lgd0MtGNC1teEGhu4sG1NGFCzihjvD6+6GLXSPMFoTPhlM2oett+pRQYC19eax0EZn8/S3wBKp6grjpHhzGqyBA1ZqG42g72xAnLtVn5peUxRQmsRTWEllBpYkrEO4kETN7X09a5ZnNPGUZYOftMqeYsQl6D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=JyXyZUid; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1741662530;
+	bh=URGpqlmXm/gPdMSb/V6zyT1v5OpXsXe6QBAf5N53/HA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=JyXyZUidOCSAHMInO0RzYM0IlPF4UxV0khWQtd4pXk72F/g8tPiPgaZnA7PddxK7J
+	 tDKhkWNuY6XWHQukPulWeP2jNLZPW80oAZBCVzJshFgNyGTNb+Ck7d/ru0EUs2pt+j
+	 xlri6r71a2n4y0Dwp/kzPV1UDIO8qRfhaPTq/lw0=
+X-QQ-mid: bizesmtpip4t1741662517tgfbwwo
+X-QQ-Originating-IP: xvxneow0DBdsfSSOmoup5niZ/oqQn8R/tK9JRLfrlBE=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 11 Mar 2025 11:08:35 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 11756624125615866169
+From: WangYuli <wangyuli@uniontech.com>
+To: hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	borntraeger@linux.ibm.com,
+	svens@linux.ibm.com
+Cc: wangyuli@uniontech.com,
+	linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	chenlinxuan@uniontech.com
+Subject: [PATCH] s390/boot: Ignore vmlinux.map
+Date: Tue, 11 Mar 2025 11:08:24 +0800
+Message-ID: <F884C733016D6715+20250311030824.675683-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z88K5JtR4rhhIFsY@slm.duckdns.org>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXe18Qqc9nUbWWGA--.13861S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr43GF13WFyfCw1Dur1xXwb_yoW8Wr4Dpa
-	yS93WDKrn7Xr17Kwn7Zws2q3yvy34xWryrCryrtry09rs8JrnxtrWfZr45uFWDurWxuw12
-	va42qF1ruw4DAw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MDN2VRNR2P4wLboSgBu+93mRK0luZ7A0kqCAVkJOsXxyb71sZ6qO9jAC
+	7TMCBLugyVtUyp9r9f3YVtMoB/TppNO9p5HcfKLaY3Xg5KUFS5ibNnnagV60PMpM1SEYGAe
+	bVN1/FY/+PvyYY9invFLO7UbPE7BPfnzMYzC3//vwWLEZEuSN70QvyDsDmPYIKAP4ysEyGW
+	dDWvoii9PIBDmkyilbvQaFiigeMy4dI/T0h4LGlhi6cC0T8mA/S1nXY7UEKHjVMBkzpb1Kk
+	HBvEMOCp9b16kPhwelHVL2N8LEbd/lWM06M3WQUEtscoxsPyDLVM3Gyt/8sDY9yIawT7lWf
+	tGhlQ8JNSVbtxTj6YXV10rIO95wMmKf0thDz9R6dqKdqUBbXyfGJqF46ILLOVz4Dmskh9xK
+	ANyNjqlt0e/NWeqQdKmJsR9maXpY4Dn4gMlo/2dFUb5IvEpePIlBDi5vD9opxeSlwaCGNuB
+	1Q/1wyKGOYDuWLJDlQAcMyNdz87+3+IddimVSNz954zFBR9gORMfJKmUHsH36UR71g25ulS
+	aZ8I/varEb3Mexx1Lmzc/JtllFscJgbg3W7J72cVLBKSE9UCveRlV3MCB30SRQEwJrHFJ/A
+	okhs7yCiw0F5RSKFv37kriulBEk77eeCpF6JiV5IeAKqGJX8RuIcswLMjZ4+SNYFGSZ8o44
+	r0Ki2TswvDE4wvtrqQN6XKHh6v9/+I17UDRSQRg4j3FkwsWCHq2QxF12jza8aL4Tf2ob7Qv
+	e4nwBGHLKaOl3Y0SIuX5sENnTdhoEpNET7MA8bWjgCRL4JRYIbfS9nGWbb0YEkxNesKt8nD
+	fdf2GDctcepSGKTvYTPBaS7n+ruaspo4mCCgL4+kJ/D1sjohkXHjIDWTPpNb+se+7iZSq7N
+	dbDwd1iTG5KUfHkVUKzgqSrJbazsZvzTozNtVXwCqaD3MtFzoKP/rSx9A1JisyDR0MvkuA/
+	yGOvRNRteC3mwLLhwQvuuTMjRqaSDGuOCwOK6tF/k5mSXViU55pB6oTXvQk7yaiFrKjiesN
+	RN85Ij27jfNG3QMOaYKbucaDA3aB4=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-Hi,
+Upon compiling an s390 kernel, a vmlinux.map file might be generated
+in the current directory.
 
-ÔÚ 2025/03/10 23:53, Tejun Heo Ð´µÀ:
-> Hello,
-> 
-> On Mon, Mar 10, 2025 at 10:16:46AM +0800, Ming Lei wrote:
-> ...
->>> Yes, but it's a litter hard to explain to users the differece between IO
->>> split and IO merge, they just think IO split is the numer of IOs issued
->>> to disk, and IO merge is the number of IOs issued from user.
->>
->> Here it is really one trouble.
->>
->> a) Sometimes people think IOs wrt. IOPS means that the read/write IO
->> submitted from application, one typical example is `fio`.
->>
->> b) Sometimes people think it is the data observed from `iostat`.
->>
->> In a), io merge/split isn't taken into account, but b) does cover io
->> merge and split.
->>
->> So question is that what is the correct way for user to observe IOPS
->> wrt. iops throttle?
-> 
-> If we could go back in time, I think the right metric to use is
-> hardware-seen IOPS as that's better correlated with the actual capacity
-> available (the correlation is very flawed but still better) and the number
-> of issued bio's can easily change depending on kernel implementation
-> details.
+Append it to the .gitignore file so that Git does not track it.
 
-Yes, I agree the right metric is to use b), which cover IO merge and
-split(and also filesystem meta and log).
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/s390/boot/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> That said, I'm not sure about changing the behavior now. blk-throtl has
-> mostly used the number of bios as long as it has existed and given that
-> there can be a signficant difference between the two metrics, I'm not sure
-> the change is justified at this point.
-
-If we really concern about the behavior change, can we consider a new
-flag that can switch to the old behavior? We'll see if any user will
-complain.
-
-Thanks,
-Kuai
-
-> 
-> Thanks.
-> 
+diff --git a/arch/s390/boot/.gitignore b/arch/s390/boot/.gitignore
+index f5ef099e2fd3..af2a6a7bc028 100644
+--- a/arch/s390/boot/.gitignore
++++ b/arch/s390/boot/.gitignore
+@@ -5,4 +5,5 @@ relocs.S
+ section_cmp.*
+ vmlinux
+ vmlinux.lds
++vmlinux.map
+ vmlinux.syms
+-- 
+2.47.2
 
 
