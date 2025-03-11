@@ -1,78 +1,99 @@
-Return-Path: <linux-kernel+bounces-557037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7055DA5D2C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:54:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F9FA5D2C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:55:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB263B291E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:54:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C324F17A8FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89BA2253F8;
-	Tue, 11 Mar 2025 22:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB122248B4;
+	Tue, 11 Mar 2025 22:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BY4Gt4fM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bzASpKvK"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D871E832A;
-	Tue, 11 Mar 2025 22:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581C41E832A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741733654; cv=none; b=aQbkacWtM040SBsPUJULJkzOCbqSYShR1OIPLWqVUu9VMW/Em6t/aVakspe0lsofnIBnmSSliTtmAaVZCeHdBNXjvKeWxDG6ZsFTljoXKIFN+TM1WkgTnVuLnAuTA32m6shi4Q4SMucP7STsDftsT1HVaCOxPIgmwlp8x2kl7Ko=
+	t=1741733697; cv=none; b=bRolyGfnVYyri3RxvJfdxRH51GO/WGspj/SAQyzSoHHGBVNUZaAZTwyIbIw+xIi9AToy5aQ+vOETeDAJwb1tgkbww4+OboMJqU2xbfU+M2eImg2VfAL0rv68B1pwZ72l88VButOph0KMO0o+gSIihP8czRQAly8J9/bbAFaL4B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741733654; c=relaxed/simple;
-	bh=K2Ws8G2BwfOhbzPCCjGplxBpqc2i8mGF0Qamx1ZX4OU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=g7DgVOtf68/hfy4nNKsBk2+QIF9N8JJCj298rpiCfIBzUs+VburgLLgDY+jhCqEItv3muC4Chv8BYK8au3Kf/X+zFUdin5BzmpV+/yxa1WWVF4NKUSbaxua85x2fP6kKCCGEtZi/iL/J2t9H72J8uMA/HFkPB5looXMhDtqaQZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BY4Gt4fM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0259CC4CEE9;
-	Tue, 11 Mar 2025 22:54:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741733654;
-	bh=K2Ws8G2BwfOhbzPCCjGplxBpqc2i8mGF0Qamx1ZX4OU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=BY4Gt4fMVvQsjk7zP7kv8wx5imn97akJh0EM1ViE9qtehX1wDv1or5D0BsGc+H+SR
-	 130pivb+r+8myv7ieplJeAsRTvRJcx2kilZVZElEwftmmEQHyLkFWXNy2Kk/cC3xzg
-	 nEh26fhMvTQ9zHfGEcueNAQh/Rwb9OFJJk3rn82uE6TWpYFA+l6UwdxAwFwVlOSdIs
-	 pjk5fG+70UCrnepgnHPJ1L6OSySqVSXzGO1esbhyzGRzl8TqjeA57hItyjeosUdPtw
-	 5DZhBe8/WRTReo8QBFvEHkpQc5cwjZawflE5CViCHdJPK1bjU/prz9ppd+YKRJZwR0
-	 Jl5lDMNl/fPmg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71221380DBD2;
-	Tue, 11 Mar 2025 22:54:49 +0000 (UTC)
-Subject: Re: [GIT PULL] Hyper-V fixes for v6.14-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Z9CwWweWftt02ZWZ@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <Z9CwWweWftt02ZWZ@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Z9CwWweWftt02ZWZ@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed-20250311
-X-PR-Tracked-Commit-Id: 73fe9073c0cc28056cb9de0c8a516dac070f1d1f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0fed89a961ea851945d23cc35beb59d6e56c0964
-Message-Id: <174173368803.261972.6643664486774360071.pr-tracker-bot@kernel.org>
-Date: Tue, 11 Mar 2025 22:54:48 +0000
-To: Wei Liu <wei.liu@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Wei Liu <wei.liu@kernel.org>, Linux on Hyper-V List <linux-hyperv@vger.kernel.org>, Linux Kernel List <linux-kernel@vger.kernel.org>, kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com
+	s=arc-20240116; t=1741733697; c=relaxed/simple;
+	bh=5uCN2gUnMqBRLUI12+yMuoFkydjgSvocO+L4xvTi56s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WEEKDmdtWEYBvyuq0DsgBABQos8Xq1ICQ7J43+KUapibXfgdEW5yzL1Rqze7q1F62ZHGbnPdAG4FzAF3JN3/KX0lGDC6CpXL5YmPeUuAL3I07Lcw74GTTRJ+BtWPoq+Hk+gEJOfVIyrFsA7XFbak6viiofue24M0fa/YU1XAkm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bzASpKvK; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741733693;
+	bh=5uCN2gUnMqBRLUI12+yMuoFkydjgSvocO+L4xvTi56s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bzASpKvK25uoUGW+Pws4jdhJSUP40zBblTM5G3N0hBfzA5HHc0WLhyoSWFjPrw1bF
+	 fcqVuipGmxTyWCYsNECQ2YLt+N6q9kLJi0l1LqzCoqmQp6rGLoG6EOQ/EZZfsSZvbr
+	 X8in7klZsQUKfYsSF7cwD0CvFenZWpLA0+QW+HYnino5c0Md10YqfTVZoSimK3jBQG
+	 4/BTyQOcUMXDHfhkz5gzhPLZRzr+JnPFAB/2h93gRvVBWxGYyIY68/6CH+xFAdT4Mr
+	 x912XA8P1E6ti8RLOTvF5EZs3ooE1sSpj+0oPqI4DLPmDOeq4wlXxMHFsBTtbpGlX5
+	 qjbngGQfzW34w==
+Received: from [192.168.1.90] (unknown [84.232.140.93])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 10CC117E05A6;
+	Tue, 11 Mar 2025 23:54:53 +0100 (CET)
+Message-ID: <dca413e0-bad5-485d-9c77-402d806e97a5@collabora.com>
+Date: Wed, 12 Mar 2025 00:54:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] drm/tests: hdmi: Add limited range tests for
+ YUV420 mode
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com>
+ <20250311-hdmi-conn-yuv-v2-6-fbdb94f02562@collabora.com>
+ <20250311-burgundy-cat-of-diversity-b89681@houat>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20250311-burgundy-cat-of-diversity-b89681@houat>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Tue, 11 Mar 2025 21:51:23 +0000:
+On 3/11/25 6:17 PM, Maxime Ripard wrote:
+> On Tue, Mar 11, 2025 at 12:57:38PM +0200, Cristian Ciocaltea wrote:
+>> Provide tests to verify that drm_atomic_helper_connector_hdmi_check()
+>> helper behaviour when using YUV420 output format is to always set the
+>> limited RGB quantization range to 'limited', no matter what the value of
+>> Broadcast RGB property is.
 
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed-20250311
+[...]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0fed89a961ea851945d23cc35beb59d6e56c0964
+> We need more tests than that to test the various combinations, whether
+> the fallback to YUV420 should work or not depending on the EDID, the
+> driver capabilities, YUV420-only vs YUV420-also, etc.
 
-Thank you!
+Some fallback tests were provided in the next patch, including checks like:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+  KUNIT_ASSERT_TRUE(test, drm_mode_is_420_only(info, yuv420_only_mode));
+  KUNIT_ASSERT_TRUE(test, drm_mode_is_420_also(info, preferred));
+
+I'll try to further extend the test coverage.
+
+Regards,
+Cristian
 
