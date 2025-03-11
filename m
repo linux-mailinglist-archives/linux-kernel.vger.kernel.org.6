@@ -1,85 +1,88 @@
-Return-Path: <linux-kernel+bounces-556148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5407CA5C16D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:39:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E16A5C173
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B44DA164251
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:39:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E31C1632CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E8925BAA0;
-	Tue, 11 Mar 2025 12:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB2125C6F5;
+	Tue, 11 Mar 2025 12:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EkycBGfH"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Gj6+wHTo"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0B425A34F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE16025B673
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741696629; cv=none; b=S5MX1ZjG9R+Kbvg562Z5MeFJVvIekSTfNWucsP9UqLwobv0l9ojn6lzG1TkEUk7sPUW/CjGvFpZFdVPXygJLEQvPuY1OYN0znzsP7utZ/GzdOusyE9YvkNfRifrFwRd3ERPFpUmGKbneHCctaqdT9+G76YsvhPnfDRvL3P0hwPI=
+	t=1741696631; cv=none; b=UvBU1KS14afAfujWXpTkQJSyy1kKpTtFDXjJ5adleto2MZYpBptoj+pZXYkjPNORJzc4+UxJrtZfabIYCC6V+CguwwYrsJb7pAHgkOdPNp8e56NL6WDWdRcD+PgzObA2ZkWW5hYKMA2RqcKTwpt2SNhaXXWDwtdihJ2eChRZcOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741696629; c=relaxed/simple;
-	bh=H9SzSxgPt+9gHiJ2NrDb4AnmWvevwAa4/H9YK0jc134=;
+	s=arc-20240116; t=1741696631; c=relaxed/simple;
+	bh=eOYfV3hkQJ4COrJVGB6V6NB92ZYbl7TFTpc5f+sHq+A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HEUqUp0jPR1rn5dbi4cXs+Jxjo2uKAYtMqCIQXfiKE+aFaOW/41m5hNusgYbKAMACuWffxZRuddJ/cEW0of1YD3JjSctBi6uD5OY12CIMcfSP1XvW0QOQwXFkUIjcYdvngYxOZttkm0VLGC9GsigJZKN4k3skB0NE+v+gBt82jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EkycBGfH; arc=none smtp.client-ip=209.85.128.42
+	 MIME-Version:Content-Type; b=fFvAaBQ1rrFVrUwxPqjvFYSDgWK2VL0mxuSWPk6pDTRGbRCmlLk7mY8VjycNVFZbt9j7j+Gf9imQtdF9qhkv7lFOT1/QJateB1yaB03V2ZGl+2ptxq6FQhS10UMKVphOWeZGaTqEyiMeHawi2IDl1Qw3maZnI11wlUrSHNnSZWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Gj6+wHTo; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43bdf0cbb6bso31565985e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:37:07 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso17326755e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:37:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741696626; x=1742301426; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1741696627; x=1742301427; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cg2GfKNIBA0xBc9t5SMBYlXXu+7/ZD43VLJh0o8WZ/4=;
-        b=EkycBGfH1Q7dgMH5Ky2wMxRih9ADLtEI3vRC9GxRro1BghsZVAwOS/pnrAdpoVAV6c
-         0lgYXd52YOjfiWbJJuNYPvpK27h82lpyhBPzm0GSCU4OuWfrcDtByaVkmJ5SyUqB4yg8
-         gWv9nuCbi6J4gAJ+P8CesyUaMcuvn9PWrMGCKvqSn1UCk6WUsxCw/BxPCaWCZ/6yUJHa
-         5HzHoR4qzNfYjA3xGWAGrdcfuE0dZEv5Fi8NvsQbAAjWIyICsyvLlvYpMa2J8dn6+v7I
-         ISrCeEqUb6+4/MstXQhtTEvhVKAz9dH7+pv45Msz9R7DKdmck7PdAeMc0nMyd/2omE62
-         otHA==
+        bh=DXKXrFA2VlkBneAZZTTJT0fgxthnXkiDyglv3h81Of0=;
+        b=Gj6+wHTolGFeAgq22JiafPqm8VHBHP0h/rnlt1cfsS+rrHR0pO6waVKh7/+5iZh3Qx
+         qphA3U9dDmz+ZLsJc7gR46WS4WOoqTCuJu5nYw6OVlbHxZWMkVIAcD1OEVhdQZnaKYmf
+         HGVOUqLmmM34MGVI0ziF4AZOZwLshw0t3B2SJLyWrFx/d75zL3HRtNx0ZA0xDzn9UvPa
+         gcUEl2MDR6Tccapij03aYYIktHjH2hA+TNV7LR0HTDaQtb5WuPiwveoOXxQT4ySGBW6R
+         fgM7u7kVfMzSWo6QPHImJxQ3UnzZ/AqQHhp3eepAYj0dNJTy1lwgpidVvOpCBLF3hYgn
+         +MmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741696626; x=1742301426;
+        d=1e100.net; s=20230601; t=1741696627; x=1742301427;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cg2GfKNIBA0xBc9t5SMBYlXXu+7/ZD43VLJh0o8WZ/4=;
-        b=ZxhiOhsB3lrFSfUPzGp3Gs4xDEe91ddYNI8xM04/h1Kr+vp74siGQTmirZzeLjO5TQ
-         PcGd8dhGrK8mPnqzhfEoEyceICm+bLk7jlSMNAikk1AobXC07IFOPeY71A0j/RD5sYK1
-         je1uwB3hnkESWPk76VVBlsjSfEDUJ4JAsiB3dRtGNCvMHcjMGXdsYK/Z7T3quXKpNuzI
-         lb/abZ3XqdEV6WpMyQ9N8jb173WG4w3/Ul/FtdLAesk7gglL8La8Xx2JUDAn6RJTelyE
-         /o9XbyIQ5cxtA6gc50ycHG6O00gDZip6GxDnk8KQLQkrgbjOuwgppPSyKsXsj5+DOiEF
-         ZsRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlGaadQ617scGLkwn5Kcshs6ChfNhqiQRyD7blgMDjkj6fqJRosYi2HLK9NGuPFDUzoHdporiFjoYS/yE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ2tivvEtNQyJ2swDjbPUIcVlBZb33Mpu0JUG3vEe8F95dSKnT
-	gPng06vq1cIDDvd6qS8VTbF45IdlVgP2TEuuv/GDYP59x2xtW+wjL2ksQ9E1G7I=
-X-Gm-Gg: ASbGncvkVZdhpsol0m2fui+oE8O2QCCNLqRAnnmAqUshnvD5CEocaZObavr/Q+PXxYH
-	nA80A3FoB8SFvUp0XIS0X8EdJSdIsgrv0gpgxfhNfwHAqSfraFNKhWxrEJkbyPtnPDf8UkEGyHP
-	TNztesa6u97t2vHYs1HdOQsktFLkyu1bZ0FFCv6u5R8UbLAbxGB4H+3CEvN00HeGwxmDxx328wO
-	R1eE2VhZiTi0GZ5idw23t7EDXixDD/UzcIGEX1pdwGD59IY7DoSRrrzkz6BY+iG7i4b66v907E7
-	da02wmQYDYg1F0/Fr7W+IUZGSfXAAwONDRaHVaGuzUW/QFc=
-X-Google-Smtp-Source: AGHT+IFEs+y18tASfJQzBfnAofD11tP4m/kDNfpZXGz4WBh7pK/QCx+Nx6gHTTMr15yKyEisGcj1Ng==
-X-Received: by 2002:a05:600c:474c:b0:43d:209:21fd with SMTP id 5b1f17b1804b1-43d02092256mr45422675e9.30.1741696625747;
-        Tue, 11 Mar 2025 05:37:05 -0700 (PDT)
+        bh=DXKXrFA2VlkBneAZZTTJT0fgxthnXkiDyglv3h81Of0=;
+        b=JA9vPuGt0q4LGqKp0g7mpt40NX+uz5uZcX+9oAoXg9ui/tVVR4xZNMWPZ6nPf6cXde
+         cRLqdahquwZftI/nKJOKYOh9v62YKkK/0V249jTez1s/zVT3VnDSSw2l2YFjXrv+Zocu
+         JbULY+bE6Dinciu9xQoM3zFtpGHjnh7F0hL0e3znoXC0pPESkypTJfsvjxOQF1SHAlij
+         SpnCQ5qsIby/pXXBNfg/71s+q3MRwyiV45O8uyZKUUutDu58WYtNsugyaWz9seXYAKH3
+         g0Ofz859tGshZxsfSI0dpbuH4LPqT9tRkzMkL3x2HWGb0DCtUdTHeD1l7/q+FZG9HauA
+         pIrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtZ8mndzpsKoLuoy+jUZcWJroFz4bt/9tTJTmptI/3d2gxS8d4B19JmIJVclt50QDrHDV198yBG7PeJfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYbh9S11t7ccOo2gnElmri3GTq8a9N+6Jg4AdWPd3WuyawCOyY
+	NhmVI5efzyEdjncSE7loA0UsxJVikxu/v5FpHfrhFa3k13NSQHPHVkiLGWPXzN8=
+X-Gm-Gg: ASbGncuMqBNvkmSqWDLHpCVNOxX5D3QG81eERYC4VH7iGN3l3Uci+zRvj7nXkEeOoq1
+	DyCNx88GmRWblv6t9IgOEaE5q7EiliZBSC96PBSu1KyWCCGW2TkXoAtdYIzCh36CxEeAnYg9M8v
+	2lIb1VsfF4r0FS/MSGs+AqzNqkppqHWhKXgzZ2M1lEcIx+AjVFmFhER3XetgZx9zIyvTMBRVzp1
+	7FKNp2kogU+IAUSP5z5hXNXX1CLjYNCqd+fM0D0jIOBK9nHwcjoG1Sl3mNQhNr4UXb3EK9FzFHG
+	rU/E+vyTfq0hqhAoxREOJvtf7kkcvfaXh52AhlgJflw4rFU=
+X-Google-Smtp-Source: AGHT+IGxtVT4Mv/MwWFfw1GFVyifXbknAcM7hLfQYB/ggvVos7rNOTA6kXKjciYRQIAM+TQeTmsWVw==
+X-Received: by 2002:a05:600c:46cf:b0:43c:e8ca:5140 with SMTP id 5b1f17b1804b1-43ce8ca528dmr93497435e9.23.1741696627217;
+        Tue, 11 Mar 2025 05:37:07 -0700 (PDT)
 Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d04004240sm9742265e9.3.2025.03.11.05.37.05
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d04004240sm9742265e9.3.2025.03.11.05.37.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 05:37:05 -0700 (PDT)
+        Tue, 11 Mar 2025 05:37:07 -0700 (PDT)
 From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
 To: cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
 	Tejun Heo <tj@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Jens Axboe <axboe@kernel.dk>,
 	Johannes Weiner <hannes@cmpxchg.org>
-Subject: [PATCH v2 10/11] cgroup: Update file naming comment
-Date: Tue, 11 Mar 2025 13:36:27 +0100
-Message-ID: <20250311123640.530377-11-mkoutny@suse.com>
+Subject: [PATCH v2 11/11] blk-cgroup: Simplify policy files registration
+Date: Tue, 11 Mar 2025 13:36:28 +0100
+Message-ID: <20250311123640.530377-12-mkoutny@suse.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250311123640.530377-1-mkoutny@suse.com>
 References: <20250311123640.530377-1-mkoutny@suse.com>
@@ -92,30 +95,104 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This changed long time ago in commit 8d7e6fb0a1db9 ("cgroup: update
-cgroup name handling").
+Use one set of files when there is no difference between default and
+legacy files, similar to regular subsys files registration. No
+functional change.
 
 Signed-off-by: Michal Koutný <mkoutny@suse.com>
 ---
- include/linux/cgroup-defs.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ block/blk-cgroup.c     |  7 +++++--
+ block/blk-ioprio.c     | 23 +++++++----------------
+ include/linux/cgroup.h |  1 +
+ kernel/cgroup/cgroup.c |  2 +-
+ 4 files changed, 14 insertions(+), 19 deletions(-)
 
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index 17960a1e858db..485b651869d9b 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -619,9 +619,8 @@ struct cgroup_root {
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 1464c968eeb0c..1994a11ff9034 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -1771,12 +1771,15 @@ int blkcg_policy_register(struct blkcg_policy *pol)
+ 	mutex_unlock(&blkcg_pol_mutex);
+ 
+ 	/* everything is in place, add intf files for the new policy */
+-	if (pol->dfl_cftypes)
++	if (pol->dfl_cftypes == pol->legacy_cftypes) {
++		WARN_ON(cgroup_add_cftypes(&io_cgrp_subsys,
++					   pol->dfl_cftypes));
++	} else {
+ 		WARN_ON(cgroup_add_dfl_cftypes(&io_cgrp_subsys,
+ 					       pol->dfl_cftypes));
+-	if (pol->legacy_cftypes)
+ 		WARN_ON(cgroup_add_legacy_cftypes(&io_cgrp_subsys,
+ 						  pol->legacy_cftypes));
++	}
+ 	mutex_unlock(&blkcg_pol_register_mutex);
+ 	return 0;
+ 
+diff --git a/block/blk-ioprio.c b/block/blk-ioprio.c
+index 8fff7ccc0ac73..13659dc15c3ff 100644
+--- a/block/blk-ioprio.c
++++ b/block/blk-ioprio.c
+@@ -113,27 +113,18 @@ static void ioprio_free_cpd(struct blkcg_policy_data *cpd)
+ 	kfree(blkcg);
+ }
+ 
+-#define IOPRIO_ATTRS						\
+-	{							\
+-		.name		= "prio.class",			\
+-		.seq_show	= ioprio_show_prio_policy,	\
+-		.write		= ioprio_set_prio_policy,	\
+-	},							\
+-	{ } /* sentinel */
+-
+-/* cgroup v2 attributes */
+ static struct cftype ioprio_files[] = {
+-	IOPRIO_ATTRS
+-};
+-
+-/* cgroup v1 attributes */
+-static struct cftype ioprio_legacy_files[] = {
+-	IOPRIO_ATTRS
++	{
++		.name		= "prio.class",
++		.seq_show	= ioprio_show_prio_policy,
++		.write		= ioprio_set_prio_policy,
++	},
++	{ } /* sentinel */
+ };
+ 
+ static struct blkcg_policy ioprio_policy = {
+ 	.dfl_cftypes	= ioprio_files,
+-	.legacy_cftypes = ioprio_legacy_files,
++	.legacy_cftypes = ioprio_files,
+ 
+ 	.cpd_alloc_fn	= ioprio_alloc_cpd,
+ 	.cpd_free_fn	= ioprio_free_cpd,
+diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
+index f8ef47f8a634d..8e7415c64ed1d 100644
+--- a/include/linux/cgroup.h
++++ b/include/linux/cgroup.h
+@@ -113,6 +113,7 @@ int cgroup_transfer_tasks(struct cgroup *to, struct cgroup *from);
+ 
+ int cgroup_add_dfl_cftypes(struct cgroup_subsys *ss, struct cftype *cfts);
+ int cgroup_add_legacy_cftypes(struct cgroup_subsys *ss, struct cftype *cfts);
++int cgroup_add_cftypes(struct cgroup_subsys *ss, struct cftype *cfts);
+ int cgroup_rm_cftypes(struct cftype *cfts);
+ void cgroup_file_notify(struct cgroup_file *cfile);
+ void cgroup_file_show(struct cgroup_file *cfile, bool show);
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 3a5af0fc544a6..e93b0563a8964 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -4447,7 +4447,7 @@ int cgroup_rm_cftypes(struct cftype *cfts)
+  * function currently returns 0 as long as @cfts registration is successful
+  * even if some file creation attempts on existing cgroups fail.
   */
- struct cftype {
- 	/*
--	 * By convention, the name should begin with the name of the
--	 * subsystem, followed by a period.  Zero length string indicates
--	 * end of cftype array.
-+	 * Name of the subsystem is prepended in cgroup_file_name().
-+	 * Zero length string indicates end of cftype array.
- 	 */
- 	char name[MAX_CFTYPE_NAME];
- 	unsigned long private;
+-static int cgroup_add_cftypes(struct cgroup_subsys *ss, struct cftype *cfts)
++int cgroup_add_cftypes(struct cgroup_subsys *ss, struct cftype *cfts)
+ {
+ 	int ret;
+ 
 -- 
 2.48.1
 
