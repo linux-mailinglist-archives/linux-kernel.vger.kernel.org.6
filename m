@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-556626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE97FA5CC9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:47:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D9CA5CCA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 286C37AC312
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:46:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE60C3B8F3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2B925BAC2;
-	Tue, 11 Mar 2025 17:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E321EC01E;
+	Tue, 11 Mar 2025 17:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IjQQwbbx"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aaj7vdOh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8093111A8;
-	Tue, 11 Mar 2025 17:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F6F1E9B26;
+	Tue, 11 Mar 2025 17:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741715220; cv=none; b=lkcRNtwuMO7PU0e9XdKz/brcFXPhgyNLoj16vpX5obIgQcXlnhMtlrDh4bfdTmA5cldJngDbE4MhROCbtjzCihaMW9t0au9O/KRHS7Zt0y+TrGHF5L0a3XthTdwtchosE+zvfnMwdKUDexthqnRiFI4Nfe6nvTjcJ6vL5gFtAB4=
+	t=1741715231; cv=none; b=qibQWqG3SJZOxRKjtqYn9gnt/cC1/QF1p7z7VDim5KbEaflhdfjcDI+ViLQShVJnp9Kwg5+2DUfX18jJNVrZUUxT+I0CZuOU2siA0naV35peouA7rF4DgZDhEgC9+OMz0SfiIihGzOwEwnnc54q2zzm525IPzjE6JI+T0xGodbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741715220; c=relaxed/simple;
-	bh=nwhWEGzoioVXQi3pcbBlfOFcFxaPTcq0t/BPzrgTP2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=brCkzF0THPGB/U49mJxbp9Wi6OSWrPRusGS81FLxpl5ZSXmbPO/0J+XiOAXWC/iGqQI65YhXYk6Xo191cM0OnvYy0XayIlSXk/jPvUHTRsaNC46CnXbTnkeBKx4IOTG/n7EOl+KtaQYhUIAJhNzf8rMe/moxhGebZZXaS5Xmpd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IjQQwbbx; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2336C40E0202;
-	Tue, 11 Mar 2025 17:46:52 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 39_9nZ-X5WDN; Tue, 11 Mar 2025 17:46:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741715207; bh=Bl+D5XXLoZoFwC3dCvraUavAmTgnsUaFJpUWZH1nq3o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IjQQwbbx9+24eu2UN+Hn3aBDS4i9gO18Vp0gXH1DNEBP1/aav8evh4VgxBA/1YuaO
-	 SDCoLXTkwITxXZYDyjpdB6qfKle739gAypZbdGSTAbtxuEKFWDKLp6kmrXrW74nLsF
-	 7Yf5A2YAQNsqIDoSUe/6tTT+Itf7shSgKcZDwQyTWb27Tq48Sq80l3Kv4ZbkK0nwIF
-	 RgV1IjXyxG02TM3zQ5d2u9eXVZEfO8XJ978DWnc5yD8DDhs2BkiVlZJzO/O7s6ug7x
-	 z4ZE+dBN2qMq6+XpFoICLThZkNqJAAS8mFZgWQ4KvHm76PpJ51c5AzuJkt83xBBf6d
-	 Lr4HsvmALsbACIQyufSyfhDVH+qoG7Xt76VJlskNgdJ4SjbQcp5uuD3Ec7B9oAE1TL
-	 EP7sqHDWHY4/ARirLWSYJIIFGN1hrDeU9mCg2sZwT6Hgengn0OC9HfnDjoVv4kdmwO
-	 6fFRrRxfE0gl3+VhlHY932QHOgphqK+QigcSJdy4I+05LwzDa8isvM4V+KHzmZgioM
-	 TGqZfTpwk65EVhOSIZH829zes+EuTjOhmunUuBnv7JfMU59CDINk+Z5x4lN9zAyVK+
-	 5mgwid+OVigqUG3UyH7hiR8/M4LNyEBolOse/fW6+QzEfvneT2u1WCswmUx5JN+qin
-	 nu1hYfP8gG7qa8P4GNv2byPQ=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0CD7E40E01A5;
-	Tue, 11 Mar 2025 17:46:33 +0000 (UTC)
-Date: Tue, 11 Mar 2025 18:46:26 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org,
-	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH] x86/stackprotector: fix build failure with
- CONFIG_STACKPROTECTOR=n
-Message-ID: <20250311174626.GHZ9B28rDrfWKJthsN@fat_crate.local>
-References: <CAMj1kXGo5yv56VvNMvYBohxgyoyDtZhr4d4kjRdGTDQchHW0Gw@mail.gmail.com>
- <CAMzpN2iUi_q_CfDa53H8MEV_zkb8NRtXtQPvOwDrEks58=3uAg@mail.gmail.com>
- <CAMj1kXF8PZq4660mzNYcT=QmWywB1gOOfZGzZhi1sQxQacUX=g@mail.gmail.com>
- <20250310214402.GBZ89dIo_NLF4zOSKh@fat_crate.local>
- <CAMj1kXEK0Kgx-C8sOvWJ9rkmC0ioWDEb+tpM9BTeWVwOWyGNog@mail.gmail.com>
- <20250311102326.GAZ9APHqe5aSQ1m5ND@fat_crate.local>
- <CAMj1kXHTLz4onmR5iyowptRE38RCK4jNT3BoURBkq2FoDOMTxQ@mail.gmail.com>
- <20250311112112.GEZ9AcqM2ceIQVUA0N@fat_crate.local>
- <20250311131356.GGZ9A3FNOxp32eGAgV@fat_crate.local>
- <20250311143724.GE3493@redhat.com>
+	s=arc-20240116; t=1741715231; c=relaxed/simple;
+	bh=dQMNvPwr30uRdcikX37ZIEUV+onSGkBkVN+Ew8Cp57Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mR8LXQ3l0F6s8UB82ZMijfmG0anj2px44XABgJMVPjPeE7jVTIode9FdwtAT6t01yPUnVBIgSbfbJvyUVM6jHKuIuRq3AVMM348kPQbmuamO8BClovwHmFLZ8tSG6vBI5a1jowvsUW5WBSejG4dAEshyP3ZHsFE2irkh5CIyayo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aaj7vdOh; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741715230; x=1773251230;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=dQMNvPwr30uRdcikX37ZIEUV+onSGkBkVN+Ew8Cp57Y=;
+  b=aaj7vdOhxbMgMUjC4DXlJ2Io4eWKJwOczqzvk5Lk1NLAxr5l2W7wKZtv
+   As/U3P764GZLyDUIi3zevziaIIAeQA0hqLPfW6i0fVOeton7PgEkD2eIZ
+   M0AHakpJeXFHyRIlHdMBpD9/2czBnE6b0QokUOmMR46qjgv5EwpfB0DZY
+   BE+PRbMJWg7n5NVy7FBYAR/SqW3U+gHgiCpC6WOer19cFbURmOFylZ5xO
+   UYcbBWAjBSeVmLv9ACQj77JRs/cTOV71HCxqa2Nb7TVyB8JBeD5LFhVti
+   AgkkBWmI+9YVKMSD9RKhNfTETjvE+EEzjkRTmYaPoqm9WCB+HR5I8zswe
+   A==;
+X-CSE-ConnectionGUID: OTk5xFXbTb2RT2M/i6cfXQ==
+X-CSE-MsgGUID: Vf2UoIuhTMia0OtXYkbafg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="46550713"
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="46550713"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 10:47:10 -0700
+X-CSE-ConnectionGUID: ePXCid82RJ+Rd9kyerh/cw==
+X-CSE-MsgGUID: ZijMnOdZT+GmXSQoZ4kqBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="124563336"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.251])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 10:47:07 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH 1/4] PCI: Move pci_rescan_bus_bridge_resize() declaration to pci/pci.h
+Date: Tue, 11 Mar 2025 19:46:58 +0200
+Message-Id: <20250311174701.3586-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250311143724.GE3493@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 11, 2025 at 03:37:25PM +0100, Oleg Nesterov wrote:
-> sorry for the off-topic noise, but what about the
-> 
-> 	[PATCH] x86/stackprotector: fix build failure with CONFIG_STACKPROTECTOR=n
-> 	https://lore.kernel.org/all/20241206123207.GA2091@redhat.com/
-> 
-> fix for the older binutils? It was acked by Ard.
-> 
-> Should I resend it?
+pci_rescan_bus_bridge_resize() is only used by code inside PCI
+subsystem. The comment also falsely advertizes it to be for hotplug
+drivers, yet the only caller is from sysfs store function. Move the
+function declaration into pci/pci.h.
 
-Can you pls explain how you trigger this?
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ drivers/pci/pci.h   | 2 ++
+ include/linux/pci.h | 1 -
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-I just did a 
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 01e51db8d285..be2f43c9d3b0 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -309,6 +309,8 @@ enum pci_bar_type {
+ struct device *pci_get_host_bridge_device(struct pci_dev *dev);
+ void pci_put_host_bridge_device(struct device *dev);
+ 
++unsigned int pci_rescan_bus_bridge_resize(struct pci_dev *bridge);
++
+ int pci_configure_extended_tags(struct pci_dev *dev, void *ign);
+ bool pci_bus_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *pl,
+ 				int rrs_timeout);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 47b31ad724fa..d788acf2686a 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1455,7 +1455,6 @@ void set_pcie_port_type(struct pci_dev *pdev);
+ void set_pcie_hotplug_bridge(struct pci_dev *pdev);
+ 
+ /* Functions for PCI Hotplug drivers to use */
+-unsigned int pci_rescan_bus_bridge_resize(struct pci_dev *bridge);
+ unsigned int pci_rescan_bus(struct pci_bus *bus);
+ void pci_lock_rescan_remove(void);
+ void pci_unlock_rescan_remove(void);
 
-# CONFIG_STACKPROTECTOR is not set
-
-build here and it was fine.
-
-So there's something else I'm missing.
-
-Thx.
-
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
 -- 
-Regards/Gruss,
-    Boris.
+2.39.5
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
