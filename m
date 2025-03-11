@@ -1,128 +1,228 @@
-Return-Path: <linux-kernel+bounces-556226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91D2A5C2D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:38:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138DAA5C2E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:41:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A05891893F8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:38:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C003AC4D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B9E1C5D46;
-	Tue, 11 Mar 2025 13:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C515B1CAA8F;
+	Tue, 11 Mar 2025 13:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PvaCAfVG"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQmvbkQ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD28B78F5D;
-	Tue, 11 Mar 2025 13:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7751917F4;
+	Tue, 11 Mar 2025 13:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741700276; cv=none; b=Px8+dC+vInRxX91KLFYgVFLsuX+26zMN5+PNt+LDBu+VU/DNxtCAjCZ4QOR4C85GIQyX1pXjvxeeKtS3rQalryMoqFmFloiFrQPCHkojzkQr7t0yHCUzplP2dXE0R4zo/Bb4cmBFZHje2T+FZEQ8FR6EVtqcdS9gY7dOReAYEHI=
+	t=1741700455; cv=none; b=FbATwkyBlH01sJKsMBsFyelmwZ+J83U9PdbgmbRnn8lsuhjMByaNySW1m0+esV8u0dNTTff4yMgWuplXqP6RpUGo3M7tmy39kk+S8sYcfVBF5yrhIGa+sJJ0LKy4kWt9/TiQYN2jYr6YLaMw90Ba0zxGLs/X8hWyrly+CbE7zSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741700276; c=relaxed/simple;
-	bh=vMtFSGIfzr6HiyZrNZ57TvdsNiX98vzFydxHX92eMyw=;
+	s=arc-20240116; t=1741700455; c=relaxed/simple;
+	bh=Gf0R7gditoYzuwPdbW2qqyMvm9Ccy9LeE68JuPxBAD0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CtYQQrfF4+261kybJ3CjRndszSIsV0nzr2ogD5XU8ymqDa8uqALlodyvEqhRfnjJ/sfPKg8tIATcJbrL43AmDbMDmbAW1N06GSccF5O+k9ibnDLI0W5QfIjN8Z8mjs7xBFkMo6dEnOpp6NWe6zzZwuQ52NeEGgTK8OJQsHorPwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PvaCAfVG; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B9O9BJ026567;
-	Tue, 11 Mar 2025 13:37:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=JJMEVRMgBysG/rCdU5xkas/lYQi1X1
-	Or+Niq8x80GmQ=; b=PvaCAfVGCIetcTtPsGzyClf2gkop1ZbF8debTPYGGmoCa/
-	zE3CFkUWcEWZqMKckJ66vWFVxBkGV490JtjrbA6mR0zg2TznGxRSMn31K304Lxmy
-	/22kc//XQzcPDKa4xrq7hYQQCImktbO/c05jqTGSHpkRDBGDjRM6vrYS7JxURmY7
-	iJRXOmYyGgCUDyC+AkSRhNLdlpnYPxYft6pHStMEdG0Y/y2dWEnnyaFlF2G841wW
-	W9asmSZ7csJRoGyrMKNuLGakc6Xf/BRgSi0UoZsA3BT3/rsias/Tu516Kb0c7NRW
-	MSHR66chT8+yJGgF0xcI16hrnlkrslFH7U+nz90Q==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45a7a1c4ny-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 13:37:42 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52BCBJrY006957;
-	Tue, 11 Mar 2025 13:37:41 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45907t4m2n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 13:37:41 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52BDbcEp50659614
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Mar 2025 13:37:38 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4CFAC20043;
-	Tue, 11 Mar 2025 13:37:38 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9ACE520040;
-	Tue, 11 Mar 2025 13:37:37 +0000 (GMT)
-Received: from osiris (unknown [9.179.21.35])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 11 Mar 2025 13:37:37 +0000 (GMT)
-Date: Tue, 11 Mar 2025 14:37:36 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Kees Cook <kees@kernel.org>,
-        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-hardening@vger.kernel.org
-Subject: Re: [PATCH mm-unstable 0/2] mseal system mappings fix + s390
- enablement
-Message-ID: <20250311133736.12846D42-hca@linux.ibm.com>
-References: <20250311123326.2686682-1-hca@linux.ibm.com>
- <a326735d-ca3e-4aee-9f98-4e742dfc15f5@lucifer.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E/47Mv/Y9jwWtFZRcjbzY7cI3Ur4QWLh6Ko6Unxr7ghRIpeepAjlL3UmzIlf8bR6hkex73IbSLd9Oc5aMGGVGHawQC5rom/ml98PJo64+6QeJpkJat3QORwSDoQ/CLGxSqkgtdMtt9zr9AaGcYdXU54Jfwj5wobvnEGv2ZcTnyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQmvbkQ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A681C4CEE9;
+	Tue, 11 Mar 2025 13:40:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741700454;
+	bh=Gf0R7gditoYzuwPdbW2qqyMvm9Ccy9LeE68JuPxBAD0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NQmvbkQ+bgaQDX3OpuW57y4xyHeLysL04t7l+qbl2gQwaq+6lFkGniI2kgXzNfDGr
+	 6XxC+R1it1TlfnrxXjxdC3JsN8NLxU+BoOf9Wz/tJfUV6QQjZzwYER2KUAhzP08sK6
+	 rFGmsQB2TJl3RO7eR6hNfNWh+gl5rNJDJMPUM1Jsa2nwZ05Cjw954c7Aqazl8WxhA1
+	 aQGqZNl5BuXlrrJV/g5rOZCux0HvpgX4hPYkDIhaLA04KJqNqevslxdzSqmeW4WUuk
+	 dFAQlMyXvPMhIl4a0DPXGAyw/oeP2lZcAWoP4ckSogqhn3YxKQdudaTiavuPj8Dj1q
+	 fh5X6tdu43v+A==
+Date: Tue, 11 Mar 2025 13:40:48 +0000
+From: Lee Jones <lee@kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] mfd: lm3533: convert to use OF
+Message-ID: <20250311134048.GI8350@google.com>
+References: <20250224114815.146053-1-clamor95@gmail.com>
+ <20250224114815.146053-3-clamor95@gmail.com>
+ <20250228085927.GM824852@google.com>
+ <CAPVz0n0jaR=UM7WbBs3zM-cZzuaPVWBjf4Q7i82hvxtXg2oCzQ@mail.gmail.com>
+ <20250305134455.2843f603@jic23-huawei>
+ <CAPVz0n3Qt00my1ejoyEgxTRi-mQszHybwhPq70eO=94oxMfECQ@mail.gmail.com>
+ <20250308171932.2a5f0a9b@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a326735d-ca3e-4aee-9f98-4e742dfc15f5@lucifer.local>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ZhUvvsniQwUCumfJ9wijChu1grlkgigb
-X-Proofpoint-GUID: ZhUvvsniQwUCumfJ9wijChu1grlkgigb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=2 priorityscore=1501
- phishscore=0 lowpriorityscore=0 mlxlogscore=181 malwarescore=0
- clxscore=1015 mlxscore=2 impostorscore=0 bulkscore=0 spamscore=2
- suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2503110086
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250308171932.2a5f0a9b@jic23-huawei>
 
-On Tue, Mar 11, 2025 at 01:02:47PM +0000, Lorenzo Stoakes wrote:
-> On Tue, Mar 11, 2025 at 01:33:24PM +0100, Heiko Carstens wrote:
-> > When rebasing the mseal series on top of the generic vdso data storage
-> > the VM_SEALED_SYSMAP vm flag for the vvar mapping got lost. Add that again.
-> 
-> I'm confused by this? Some merge patch resolution thing?
+On Sat, 08 Mar 2025, Jonathan Cameron wrote:
 
-See my other mail.
+> On Wed, 5 Mar 2025 16:18:38 +0200
+> Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> 
+> > ср, 5 бер. 2025 р. о 15:45 Jonathan Cameron <jic23@kernel.org> пише:
+> > >
+> > > On Fri, 28 Feb 2025 11:30:51 +0200
+> > > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> > >  
+> > > > пт, 28 лют. 2025 р. о 10:59 Lee Jones <lee@kernel.org> пише:  
+> > > > >
+> > > > > On Mon, 24 Feb 2025, Svyatoslav Ryhel wrote:
+> > > > >  
+> > > > > > Remove platform data and fully relay on OF and device tree
+> > > > > > parsing and binding devices.
+> > > > > >
+> > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > > ---
+> > > > > >  drivers/iio/light/lm3533-als.c      |  40 ++++---
+> > > > > >  drivers/leds/leds-lm3533.c          |  46 +++++---
+> > > > > >  drivers/mfd/lm3533-core.c           | 159 ++++++++--------------------
+> > > > > >  drivers/video/backlight/lm3533_bl.c |  71 ++++++++++---
+> > > > > >  include/linux/mfd/lm3533.h          |  35 +-----
+> > > > > >  5 files changed, 164 insertions(+), 187 deletions(-)
+> > > > > >  
+> > ...
+> > > > > >       /* ALS input is always high impedance in PWM-mode. */
+> > > > > > -     if (!pdata->pwm_mode) {
+> > > > > > -             ret = lm3533_als_set_resistor(als, pdata->r_select);
+> > > > > > +     if (!als->pwm_mode) {
+> > > > > > +             ret = lm3533_als_set_resistor(als, als->r_select);  
+> > > > >
+> > > > > You're already passing 'als'.
+> > > > >
+> > > > > Just teach lm3533_als_set_resistor that 'r_select' is now contained.
+> > > > >  
+> > > >
+> > > > This is not scope of this patchset. I was already accused in too much
+> > > > changes which make it unreadable. This patchset is dedicated to
+> > > > swapping platform data to use of the device tree. NOT improving
+> > > > functions, NOT rewriting arbitrary mechanics. If you feed a need for
+> > > > this change, then propose a followup. I need from this driver only one
+> > > > thing, that it could work with device tree. But it seems that it is
+> > > > better that it just rots in the garbage bin until removed cause no one
+> > > > cared.  
+> > >
+> > > This is not an unreasonable request as you added r_select to als.
+> > > Perhaps it belongs in a separate follow up patch.  
+> > 
+> > I have just moved values used in pdata to private structs of each
+> > driver. Without changing names or purpose.
+> > 
+> > > However
+> > > it is worth remembering the motivation here is that you want get
+> > > this code upstream, the maintainers don't have that motivation.  
+> > 
+> > This driver is already upstream and it is useless and incompatible
+> > with majority of supported devices. Maintainers should encourage those
+> > who try to help and instead we have what? A total discouragement. Well
+> > defined path into nowhere.
+> 
+> That is not how I read the situation. A simple request was made to
+> result in more maintainable code as a direct result of that
+> improvement being enabled by code changes you were making.
+> I'm sorry to hear that discouraged you.
+> 
+> > 
+> > >
+> > > Greg KH has given various talks on the different motivations in the
+> > > past. It maybe worth a watch.
+> > >
+> > >  
+> > > >  
+> > > > > >               if (ret)
+> > > > > >                       return ret;
+> > > > > >       }
+> > > > > > @@ -828,22 +833,16 @@ static const struct iio_info lm3533_als_info = {
+> > > > > >
+> > > > > >  static int lm3533_als_probe(struct platform_device *pdev)
+> > > > > >  {
+> > > > > > -     const struct lm3533_als_platform_data *pdata;
+> > > > > >       struct lm3533 *lm3533;
+> > > > > >       struct lm3533_als *als;
+> > > > > >       struct iio_dev *indio_dev;
+> > > > > > +     u32 val;  
+> > > > >
+> > > > > Value of what, potatoes?
+> > > > >  
+> > > >
+> > > > Oranges.  
+> > >
+> > > A well named variable would avoid need for any discussion of
+> > > what it is the value of.
+> > >  
+> > 
+> > This is temporary placeholder used to get values from the tree and
+> > then pass it driver struct.
+> 
+> Better if it is a temporary placeholder with a meaningful name.
+> 
+> > 
+> > > >  
+> > > > > >       int ret;
+> > > > > >
+> > > > > >       lm3533 = dev_get_drvdata(pdev->dev.parent);
+> > > > > >       if (!lm3533)
+> > > > > >               return -EINVAL;
+> > > > > >
+> > > > > > -     pdata = dev_get_platdata(&pdev->dev);
+> > > > > > -     if (!pdata) {
+> > > > > > -             dev_err(&pdev->dev, "no platform data\n");
+> > > > > > -             return -EINVAL;
+> > > > > > -     }
+> > > > > > -
+> > > > > >       indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*als));
+> > > > > >       if (!indio_dev)
+> > > > > >               return -ENOMEM;
+> > > > > > @@ -864,13 +863,21 @@ static int lm3533_als_probe(struct platform_device *pdev)
+> > > > > >
+> > > > > >       platform_set_drvdata(pdev, indio_dev);
+> > > > > >
+> > > > > > +     val = 200 * KILO; /* 200kOhm */  
+> > > > >
+> > > > > Better to #define magic numbers; DEFAULT_{DESCRIPTION}_OHMS
+> > > > >  
+> > > >
+> > > > Why? that is not needed.  
+> > > If this variable had a more useful name there would be no need for
+> > > the comment either.
+> > >
+> > >         val_resitor_ohms = 200 * KILLO;
+> > >
+> > > or similar.
+> > >  
+> > 
+> > So I have to add a "reasonably" named variable for each property I
+> > want to get from device tree? Why? It seems to be a bit of overkill,
+> > no? Maybe I am not aware, have variables stopped being reusable?
+> 
+> Lets go with yes if you want a definitive answer. In reality it's
+> a question of how many are needed.  If 10-100s sure reuse is fine,
+> if just a few sensible naming can remove the need for comments
+> and improve readability.
+> 
+> Jonathan
 
-> > Also add s390 support for MSEAL_SYSTEM_MAPPINGS.
-> 
-> 'Also' = the whole thing this series does?
-> 
-> Can you confirm that s390 absolutely does not rely upon
-> moving/manipulating/etc. the VDSO, VVAR, etc. mappings?
-> 
-> You should say that here.
+You clearly have more patience for this than I do!  =;-)
 
-Just like for arm64, and x86_64 the s390 part is just adding the new
-vm flag to the _install_mappings() call in vdso code. Otherwise there
-is nothing to be considered.
+-- 
+Lee Jones [李琼斯]
 
