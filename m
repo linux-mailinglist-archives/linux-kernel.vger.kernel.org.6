@@ -1,195 +1,135 @@
-Return-Path: <linux-kernel+bounces-556717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438FAA5CDE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:27:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E0FA5CDF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:30:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18D61189515C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:27:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 969FD3A56BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCA1263F43;
-	Tue, 11 Mar 2025 18:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C538263C77;
+	Tue, 11 Mar 2025 18:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Jofegoxr"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5w30VCq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97532263C6B;
-	Tue, 11 Mar 2025 18:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8867E156F3C;
+	Tue, 11 Mar 2025 18:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741717629; cv=none; b=ax8s7aH00fWpztW4MpWSa9aqkSaw2nruPOTrEx+KGLWNKQEN/B+w/D8bBFXDuJMKIA+r1VwWy1plNGwKVM7ICeWxRb1yrIbxSYivAOwsMfIq3xM4qdpQj6QEF9Qv1yvPoimXWy7nBvv1rGM0mojpym5Od6AkILA4XhOU+iaOKck=
+	t=1741717831; cv=none; b=gyC+DaCefS2t+/C90wSBicjQ92zI7cGVfeclMOnukYXBPHcK+nJa8oObE7RYoLE26SSk7wsOxazZ5uKPb9U6DOmBHKL0RR6bpU/GIX4y+T/eZnPKuJlDAb8sPrc+poqk7prhcyJ5GlcAv8E+tItG0KmXEI3Q9HSijFTbksl8tPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741717629; c=relaxed/simple;
-	bh=gRS9jKtKUzfHkoSdI6Gem96zAZ50zZcSJT5d8SgUYWI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tEj+c3K4NhKyQeI6Pqnz+TmsGPnoF+qAiKRCt0SsT3KOus7t6CdTJTZD+GR44RDgV0GzCAwHQRYTg3TNke0RbmL1NJkCwMjReifglW2Ki1OvDdlvCQ6A1ZEU8L2K3F91b8K9UL6uCK7pt7kkRXyp4P0Olv8dKfaK22gWluSWGks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Jofegoxr; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BB5mva008060;
-	Tue, 11 Mar 2025 11:26:54 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=l
-	ZliaUORo2mS+3tGSox9M93MAPhOgwb28gKvGOyD+WI=; b=JofegoxrbcyEfkTyT
-	gTVLh0uWIM7BytI0wwr/H3DK+U8ApG5uSUJ6sExAlqDjeeDrxc4S9wwJBFNj5NMM
-	imleVpvIF/AKgHV+d7OLyPMXiNf+f4i+p98G6W6GgavuWbQftnf27bkEmOe2FxlD
-	m4ZWPZCuyzlL44O9gUm7KnOILhoJ6s6j8qbsf7V/FfKJyZACoV6J/Ty8+TU5YtBo
-	Llon+sTmuWLHV0ICJHjtr5WuGkKLRHusW4e5h0awtcY6lp06SdhQ2M2yWSKIqWFS
-	4tcFWBJ9jNGOctR5/Af+rsM1lsjwQ0BwlgjFLC5Us7Svc18gp9DLH9E4iEjhDAHp
-	dJeZQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 45akyv10g6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 11:26:54 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 11 Mar 2025 11:26:53 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 11 Mar 2025 11:26:53 -0700
-Received: from hyd1425.marvell.com (unknown [10.29.37.152])
-	by maili.marvell.com (Postfix) with ESMTP id 86A9E3F705D;
-	Tue, 11 Mar 2025 11:26:47 -0700 (PDT)
-From: Sai Krishna <saikrishnag@marvell.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
-        <gakula@marvell.com>, <lcherian@marvell.com>, <jerinj@marvell.com>,
-        <hkelam@marvell.com>, <sbhatta@marvell.com>, <andrew+netdev@lunn.ch>,
-        <bbhushan2@marvell.com>, <nathan@kernel.org>,
-        <ndesaulniers@google.com>, <morbo@google.com>,
-        <justinstitt@google.com>, <llvm@lists.linux.dev>, <horms@kernel.org>
-CC: Sai Krishna <saikrishnag@marvell.com>
-Subject: [net-next PATCH v3 2/2] octeontx2-af: fix compiler warnings flagged by Sparse
-Date: Tue, 11 Mar 2025 23:56:31 +0530
-Message-ID: <20250311182631.3224812-3-saikrishnag@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250311182631.3224812-1-saikrishnag@marvell.com>
-References: <20250311182631.3224812-1-saikrishnag@marvell.com>
+	s=arc-20240116; t=1741717831; c=relaxed/simple;
+	bh=LfsP1qD1UixHyLWZ+BVqcc7KJb/AoO47XMtQU9zN91U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lbSrdBLee+takxefujRq5kFqZ2aftCZN6iASkUNOVQqBjmJFR6qyogwKQfy0oggQ8DpnL0Id7Dvb8utBDI05nVWTyFx0ShvFhc8fdizclKNDHlscx7PNNAYMYdbOZakPQ2w0XTVKjGj9ZavLM17cEDlECyo+rAVyXyfMN+oCsVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5w30VCq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86D87C4CEEB;
+	Tue, 11 Mar 2025 18:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741717831;
+	bh=LfsP1qD1UixHyLWZ+BVqcc7KJb/AoO47XMtQU9zN91U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P5w30VCq3PkMpKSWE5/3EWYD1W9vpCIoatlFxl35rE5UabEOZHWhQ//an4RBbs72V
+	 tOiAdDKyID0cT0PqoSo+FBxKHjNjH9+zcUjtE8+pCCuOxCwiKNRmU588sNAJSfUX7u
+	 CmSrBZUENaNraghVqc4b4ROIRXnfI2ARvCDLVaKR3peh2O01RYTm1C3QAFgkzQvZOi
+	 j45PaaT32l5jMyIxeohinGAQ9Sqm/1iSEuh5btVnz5LFKGU3+l/Mp5TgWA1i57hSe2
+	 zvBuAu0q1jCBR5o0+5AvNQhKeTNjbPE92gBmHklCugPBSjzvSwssXnPv4eB0UtoDa9
+	 W4aJl288c7wug==
+Date: Tue, 11 Mar 2025 13:28:13 -0500
+From: Rob Herring <robh@kernel.org>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Julien Massot <julien.massot@collabora.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Taniya Das <quic_tdas@quicinc.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Javier Carrasco <javier.carrasco@wolfvision.net>,
+	Ross Burton <ross.burton@arm.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Zhi Mao <zhi.mao@mediatek.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Ihor Matushchak <ihor.matushchak@foobox.net>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
+Subject: Re: [RFC PATCH v2 05/16] dt-bindings: media: i2c: max96717: add
+ support for MAX9295A
+Message-ID: <20250311182813.GA3934398-robh@kernel.org>
+References: <20250309084814.3114794-1-demonsingur@gmail.com>
+ <20250309084814.3114794-6-demonsingur@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: Y1HYLJbtlNAy1R1iF17vu3t8d7Nq5JKs
-X-Proofpoint-ORIG-GUID: Y1HYLJbtlNAy1R1iF17vu3t8d7Nq5JKs
-X-Authority-Analysis: v=2.4 cv=Rsc/LDmK c=1 sm=1 tr=0 ts=67d0806e cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=Vs1iUdzkB0EA:10 a=M5GUcnROAAAA:8 a=R40iJ15ohJ1Iz6L5NAgA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_05,2025-03-11_02,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250309084814.3114794-6-demonsingur@gmail.com>
 
-Sparse flagged a number of warnings while typecasting iomem
-type to required data type.
+On Sun, Mar 09, 2025 at 10:47:57AM +0200, Cosmin Tanislav wrote:
+> MAX9295A is an older variant of the MAX96717 which does not support
+> tunnel mode.
+> 
+> Document the compatibility.
+> 
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> ---
+>  .../devicetree/bindings/media/i2c/maxim,max96717.yaml          | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> index 0a43582168a8..31fb62debdc7 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> @@ -24,11 +24,14 @@ description:
+>  
+>    The GMSL2 serial link operates at a fixed rate of 3Gbps or 6Gbps in the
+>    forward direction and 187.5Mbps in the reverse direction.
+> +
+>    MAX96717F only supports a fixed rate of 3Gbps in the forward direction.
+> +  MAX9295A only supports pixel mode.
+>  
+>  properties:
+>    compatible:
+>      oneOf:
+> +      - const: maxim,max9295a
+>        - const: maxim,max96717f
 
-For example, fwdata is just a shared memory data structure used
-between firmware and kernel, thus remapping and typecasting
-to required data type may not cause issue.
+Make these 2 a single 'enum'.
 
-Signed-off-by: Sai Krishna <saikrishnag@marvell.com>
----
- drivers/net/ethernet/marvell/octeontx2/af/rvu.c      | 12 +++++++-----
- .../net/ethernet/marvell/octeontx2/nic/otx2_common.c | 10 +++++-----
- 2 files changed, 12 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-index cd0d7b7774f1..c3a346cff05e 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-@@ -819,13 +819,14 @@ static int rvu_fwdata_init(struct rvu *rvu)
- 		goto fail;
- 
- 	BUILD_BUG_ON(offsetof(struct rvu_fwdata, cgx_fw_data) > FWDATA_CGX_LMAC_OFFSET);
--	rvu->fwdata = ioremap_wc(fwdbase, sizeof(struct rvu_fwdata));
-+	rvu->fwdata = (__force struct rvu_fwdata *)
-+		ioremap_wc(fwdbase, sizeof(struct rvu_fwdata));
- 	if (!rvu->fwdata)
- 		goto fail;
- 	if (!is_rvu_fwdata_valid(rvu)) {
- 		dev_err(rvu->dev,
- 			"Mismatch in 'fwdata' struct btw kernel and firmware\n");
--		iounmap(rvu->fwdata);
-+		iounmap((void __iomem *)rvu->fwdata);
- 		rvu->fwdata = NULL;
- 		return -EINVAL;
- 	}
-@@ -838,7 +839,7 @@ static int rvu_fwdata_init(struct rvu *rvu)
- static void rvu_fwdata_exit(struct rvu *rvu)
- {
- 	if (rvu->fwdata)
--		iounmap(rvu->fwdata);
-+		iounmap((void __iomem *)rvu->fwdata);
- }
- 
- static int rvu_setup_nix_hw_resource(struct rvu *rvu, int blkaddr)
-@@ -2384,7 +2385,8 @@ static int rvu_get_mbox_regions(struct rvu *rvu, void **mbox_addr,
- 				bar4 = rvupf_read64(rvu, RVU_PF_VF_BAR4_ADDR);
- 				bar4 += region * MBOX_SIZE;
- 			}
--			mbox_addr[region] = (void *)ioremap_wc(bar4, MBOX_SIZE);
-+			mbox_addr[region] = (__force void *)
-+				ioremap_wc(bar4, MBOX_SIZE);
- 			if (!mbox_addr[region])
- 				goto error;
- 		}
-@@ -2407,7 +2409,7 @@ static int rvu_get_mbox_regions(struct rvu *rvu, void **mbox_addr,
- 					  RVU_AF_PF_BAR4_ADDR);
- 			bar4 += region * MBOX_SIZE;
- 		}
--		mbox_addr[region] = (void *)ioremap_wc(bar4, MBOX_SIZE);
-+		mbox_addr[region] = (__force void *)ioremap_wc(bar4, MBOX_SIZE);
- 		if (!mbox_addr[region])
- 			goto error;
- 	}
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-index 2b49bfec7869..e0e592fd02f7 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-@@ -29,10 +29,10 @@ static void otx2_nix_rq_op_stats(struct queue_stats *stats,
- 	u64 incr = (u64)qidx << 32;
- 	u64 *ptr;
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_OCTS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_OCTS);
- 	stats->bytes = otx2_atomic64_add(incr, ptr);
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_PKTS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_PKTS);
- 	stats->pkts = otx2_atomic64_add(incr, ptr);
- }
- 
-@@ -42,10 +42,10 @@ static void otx2_nix_sq_op_stats(struct queue_stats *stats,
- 	u64 incr = (u64)qidx << 32;
- 	u64 *ptr;
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_OCTS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_OCTS);
- 	stats->bytes = otx2_atomic64_add(incr, ptr);
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_PKTS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_PKTS);
- 	stats->pkts = otx2_atomic64_add(incr, ptr);
- }
- 
-@@ -853,7 +853,7 @@ void otx2_sqb_flush(struct otx2_nic *pfvf)
- 	struct otx2_snd_queue *sq;
- 	u64 incr, *ptr, val;
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_STATUS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_STATUS);
- 	for (qidx = 0; qidx < otx2_get_total_tx_queues(pfvf); qidx++) {
- 		sq = &pfvf->qset.sq[qidx];
- 		if (!sq->sqb_ptrs)
--- 
-2.25.1
-
+>        - items:
+>            - enum:
+> -- 
+> 2.48.1
+> 
 
