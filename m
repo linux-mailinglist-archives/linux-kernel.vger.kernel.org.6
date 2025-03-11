@@ -1,117 +1,92 @@
-Return-Path: <linux-kernel+bounces-556670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1040A5CD30
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:06:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 203AFA5CD34
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 461913B4AF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:06:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B05E7A8666
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3D2262D2E;
-	Tue, 11 Mar 2025 18:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F103C262D3A;
+	Tue, 11 Mar 2025 18:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3D8qMqzI"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="WWdzzWs5"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B982620C3;
-	Tue, 11 Mar 2025 18:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D2A262D0D;
+	Tue, 11 Mar 2025 18:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716389; cv=none; b=uIVO5mY407xFIUjMN3Hn4jb1WjH5f9IWsTUoWkRo+/rkGB+cTng69Tq1tbK5V8rGOrnBoNQvhhXhP3Xus60t7BVxIJnG0sSJj1bVzWVYkgq0xiX5DDVjlQblpsZi6jBQ0i/AB/msFJ9TaH4P/NewnCPT+Tiow8N8nXG79Si/SMU=
+	t=1741716411; cv=none; b=ByPaF9RElo1f3hnCa65/xM1SZHqNuwJ+XDiaQiXKsfM4W4i2VGTy9ZXJIad9oGFAcDCMDKZCod2KJMxTHM3r9GabTEgjq/QAWohGzDtRv9pVArVyufjaRKZ6FvuKfBsAqPyuDJTcP7nZ4lmi9Kt7w/9w7dEkLCq/Yks7MvDWWjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716389; c=relaxed/simple;
-	bh=DippBqC0BBU0qH1E5vSEMORAFTY5N4fiUMqRFBzB8mQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C+kEAc1lA3DDFhRSC2stkZHm7/p/V32oIibUZDZ2bTmzw4j1eGxCGKUGlCZOWv9Ce51lh3J+/5vESWivRV9PMyv8TYITPDEDyqCgBuuFxycFCZFLDBJYRLjqc2uEuIyXmCa6n9RQDj/9J8pbtBroXx806+HwlyEXix2ETRbkNjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3D8qMqzI; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=3OLyNSn1WdzXXSydJk+U4Xqnh9AkjR3NtHdm4uHlg2I=; b=3D8qMqzI2hLyJ4OmXTqaru27Sj
-	yuWdbwj4lnjwq0ZZyrOZmsml2cahvtrLvdfCwPVJf+fO//6p/cWAEJwc+Mm80x2NsDSdInA99QL6b
-	HEydjaVzn9+FbbYMbYCpHs6cAC2QFKgEF6jtqplLpjylWi09wQVpS/aSaQSpH2BkjSd0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ts3zV-004Ppo-Ho; Tue, 11 Mar 2025 19:06:09 +0100
-Date: Tue, 11 Mar 2025 19:06:09 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rob Herring <robh@kernel.org>
-Cc: Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH net-next 1/3] dt-bindings: net: ethernet-phy: add
- property mac-series-termination-ohms
-Message-ID: <de68ea7e-1ca5-4983-9824-3fb432b00e82@lunn.ch>
-References: <20250307-dp83822-mac-impedance-v1-0-bdd85a759b45@liebherr.com>
- <20250307-dp83822-mac-impedance-v1-1-bdd85a759b45@liebherr.com>
- <20250311173344.GA3802548-robh@kernel.org>
+	s=arc-20240116; t=1741716411; c=relaxed/simple;
+	bh=XC3XlkziQO1Wl6P1RY85pKtUM4AO04hn0K7ztXOgPj8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZCyJF7PhQd1ud/K8wAlKs6i28Smqgoje+13scSNZKWRjo3nEECTcmOgLOs6WsR3KQmyQmjRFGEnjZssDQ7gj9gHu9AlbxKVbBs/joGRFwskiuMVQl5E7Bj4Ih7CHg0kGwfmLfMyP4UHT9GwzYe6sXZNVIEnvGEXoQ0+NTx/N7Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=WWdzzWs5; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from wse-pc.fritz.box (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 35A2F2FC0187;
+	Tue, 11 Mar 2025 19:06:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1741716405;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Rj71V9cX/09jpVUCtVRITKGWUzt6/3pszBTJ+XqhBw4=;
+	b=WWdzzWs5wb842qZa9YzJPyaDtS6qpFscdOj+lgDV040b5o6LscKiKdmouNkF4RoK4ckjrC
+	IOaHb+LJraF1r1mzwIfAMnjMyAREvYnpkVN2Dw3kU9kYveTad0RypTlRxGikqy2SG9uDXY
+	+rsyqTWPJ5bIUhnh1vCfbsP5Smmf8PM=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: hdegoede@redhat.com,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Werner Sembach <wse@tuxedocomputers.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] Input: atkbd - Map FN-key for TongFang barebones
+Date: Tue, 11 Mar 2025 19:06:23 +0100
+Message-ID: <20250311180643.1107430-1-wse@tuxedocomputers.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311173344.GA3802548-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 11, 2025 at 12:33:44PM -0500, Rob Herring wrote:
-> On Fri, Mar 07, 2025 at 11:30:01AM +0100, Dimitri Fedrau wrote:
-> > Add property mac-series-termination-ohms in the device tree bindings for
-> > selecting the resistance value of the builtin series termination resistors
-> > of the PHY. Changing the resistance to an appropriate value can reduce
-> > signal reflections and therefore improve signal quality.
-> > 
-> > Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> > ---
-> >  Documentation/devicetree/bindings/net/ethernet-phy.yaml | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > index 824bbe4333b7ed95cc39737d3c334a20aa890f01..4a710315a83ccf15bfc210ae432ae988cf31e04c 100644
-> > --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > @@ -238,6 +238,11 @@ properties:
-> >        peak-to-peak specified in ANSI X3.263. When omitted, the PHYs default
-> >        will be left as is.
-> >  
-> > +  mac-series-termination-ohms:
-> 
-> A property of the MAC (or associated with it) should be in the MAC's 
-> node.
+TongFangs firmware sends scancode 0xe0 0x78 upon pressing the FN key.
 
-But it is the PHY which uses the property, and the PHY which is
-implementing the resistor.
+This patch maps this scancode to avoid a dmesg warning printed every FN-keypress
+and to enable userspace to use they key in other shortcuts than the firmware
+builtin ones.
 
-Also, a PHY has two sides, one towards the MAC and a second media side
-to the network peer via the Ethernet cable. Both sides need
-termination resistors. So we need something in the name to make it
-clear which side of the PHY we are talking about. So we might end up
-with something like mac-termination-ohms and media-termination-ohms,
-in the PHY node.
+Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+---
+ drivers/input/keyboard/atkbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Also, sounds like either either end could have a property.
+diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+index adf0f311996c9..3598a21d9d014 100644
+--- a/drivers/input/keyboard/atkbd.c
++++ b/drivers/input/keyboard/atkbd.c
+@@ -98,7 +98,7 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
+ 	173,114,  0,113,  0,  0,  0,126,128,  0,  0,140,  0,  0,  0,127,
+ 	159,  0,115,  0,164,  0,  0,116,158,  0,172,166,  0,  0,  0,142,
+ 	157,  0,  0,  0,  0,  0,  0,  0,155,  0, 98,  0,  0,163,  0,  0,
+-	226,  0,  0,  0,  0,  0,  0,  0,  0,255, 96,  0,  0,  0,143,  0,
++	226,  0,  0,464,  0,  0,  0,  0,  0,255, 96,  0,  0,  0,143,  0,
+ 	  0,  0,  0,  0,  0,  0,  0,  0,  0,107,  0,105,102,  0,  0,112,
+ 	110,111,108,112,106,103,  0,119,  0,118,109,  0, 99,104,119,  0,
+ 
+-- 
+2.43.0
 
-True, the MAC could also need a similar property, since the outputs
-from the MAC to the PHY needs termination resistors.  For the MAC,
-termination-ohms is probably sufficient, or phy-termination-ohms to
-indicate it is towards the PHY?
-
-	Andrew
 
