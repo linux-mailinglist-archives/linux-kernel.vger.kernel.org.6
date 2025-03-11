@@ -1,55 +1,64 @@
-Return-Path: <linux-kernel+bounces-555496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A08A5B88E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:33:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE1AA5B893
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:33:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37E6F1891447
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:33:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC6618915B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C181EDA03;
-	Tue, 11 Mar 2025 05:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420271EDA1A;
+	Tue, 11 Mar 2025 05:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="WX/zuHV1"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OPNJQ9WO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C77320F;
-	Tue, 11 Mar 2025 05:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094BF320F;
+	Tue, 11 Mar 2025 05:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741671185; cv=none; b=nK8vRzxmUjvpfWdoibyR/L8xWIGkKYKQwAvc9n2SXqFDorPeW8v7YufVYfkvprlzRRYRy+sGgAbR+9xA0mIVQ7z0co1saj4jS7kBFPtnymy5VgGt35lvI7FcKzeWgfE42F/5ttNAkMYrhSxTbT9Fu/M23R4xRS6dW8QVNkDc4fQ=
+	t=1741671230; cv=none; b=XZiwXdRMdgkl9RmbpszxDZYYA/DovCi+EtcRwvBm2FY44vezRSDYQ4ZD/LfMUduh25riE4PXml9k1n/6t45un3bfXVkdeL6dAn3eg9csE8NTx9zMkQIeNmMkv/e0Roov7e1fVdjviNLCJxw1qZYgbAjwVJZ345p44DQ8ciTQ08k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741671185; c=relaxed/simple;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	s=arc-20240116; t=1741671230; c=relaxed/simple;
+	bh=DLYuGmG8iFWf5LcT050MwmMyWf6njd/yrSqW870b0NQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N122fIlvN63reXPtMwsSzv5ATMmRtYiwKBwGVZlqP9XbLK5anrnWTcBtSUiR4gK56442jvw8YhLzbZUxthpxzTNzNlFZgTTJwPLVbCBEZcS0RRTvsgYXS1LWLHsHcs1/XIbgjzvJeJQGvUTQa1pcKvek6jmXUfjr82daeRSpx3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=WX/zuHV1; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1741671163; x=1742275963; i=rwarsow@gmx.de;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=WX/zuHV1O3vXsHGxeNFX3Gt7RQv69DhQx/5lRM/HDol9otPBXQFgimwkp8RyK1c4
-	 yY04ClikGE5TKyNdmcKd9X/aUrQdbxODD8WS2f2Hfx4ZK+XIsZ0E87gVEjT3D0QxW
-	 7Rot/FnWXH7B1uM90b8U/Bg5fMQa0faWxoRyYOp6zfBGVLyCO2XYn8fLkJc5E6AHX
-	 ywRC0F2Kdmrz0M1fByOOztYfiLaoYc+C/naL33bH5HLOhWbf976jX4/Ej2MPJnfhN
-	 J1SKH4s3VsIFcY5qPA0MbxKp9TJxFmF+2gbNdP7eD6KLbnO94paz+AoESmCqLxinN
-	 GbtYVdJDNAyPFDWrHg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.200.20] ([46.142.32.160]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MhlGq-1tMxFz0lFo-00gUm5; Tue, 11
- Mar 2025 06:32:43 +0100
-Message-ID: <c7a12b21-56e3-451e-82a4-2fab8466fa2e@gmx.de>
-Date: Tue, 11 Mar 2025 06:32:41 +0100
+	 In-Reply-To:Content-Type; b=kq+7V+qIMUaOck/6JqMh6gwNSgTnfnCXlIw+JPCjIwPWbgewxrOXmmYf3sfCXJuwRq5KG5ICpYUA8YW+Kq6UoAIpOi3UFfZJF7TNARjiS/fKgDsBIU9lhMB8SyCUlyeB/Ce8Lxuoz/3QTzjy7dfylP/ciieI0nzoJTxf/ejZQU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OPNJQ9WO; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741671229; x=1773207229;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=DLYuGmG8iFWf5LcT050MwmMyWf6njd/yrSqW870b0NQ=;
+  b=OPNJQ9WO6owtRiG51u+pD9WpnMUnZXJcfsF0Hk+kBgMbWLk+TX6xHMbJ
+   OHZwngz3pK/euluvYvI2LYYlDfBuFsDg20l9BTlkrQc7agvabwmp1jnJW
+   K5evkPWdt6RQRkXCQ/y0FFDRTUHZ7qN7Wyc1bQn80brjeAUPwGX0dHzxm
+   Iq0SvZgtvTpKvfIrGwoBD3Ji9owwXECjPC9lRJ7WopeZN4MY8ugcnbkBR
+   I1W0E4gjLhdl9eE9RYJpqs4h3G06mTBbqrGivQF90Pjd+rSPGuOrc6U/4
+   apk5PIuTFsK9wx8ru41YAx0Sh7+OroLMGufMotJwHLDOJFBgmhl5bu2Yx
+   g==;
+X-CSE-ConnectionGUID: IfEg6M00RiGDIwGV+PMVHg==
+X-CSE-MsgGUID: luwnjhpdRSaWxN3gEvg08g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42602730"
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="42602730"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 22:33:47 -0700
+X-CSE-ConnectionGUID: CWULG/1UQUuYYhAiVQ7Zew==
+X-CSE-MsgGUID: nO6dDApWTfWOLHIaR7SBuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="143395086"
+Received: from choongyo-mobl.gar.corp.intel.com (HELO [10.247.21.123]) ([10.247.21.123])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 22:33:44 -0700
+Message-ID: <3bc2cc11-3a87-479e-a0e0-c593e3214540@linux.intel.com>
+Date: Tue, 11 Mar 2025 13:33:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,52 +66,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.13 000/207] 6.13.7-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250310170447.729440535@linuxfoundation.org>
-From: Ronald Warsow <rwarsow@gmx.de>
-Content-Language: de-DE, en-US
-In-Reply-To: <20250310170447.729440535@linuxfoundation.org>
+Subject: Re: [PATCH net-next v1 1/1] stmmac: intel: Fix warning message for
+ return value in intel_tsn_lane_is_available()
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Dan Carpenter <dan.carpenter@linaro.org>,
+ netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250310050835.808870-1-yong.liang.choong@linux.intel.com>
+ <20250310152014.1d593255@kmaincent-XPS-13-7390>
+Content-Language: en-US
+From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+In-Reply-To: <20250310152014.1d593255@kmaincent-XPS-13-7390>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:e/+fAeIthUFrCiS8rIf1k0Op/NvcWJlw/balAxubc+c6YW6rb5A
- VQoxtG/0NwlCiBmIGLrgkL0mz8+6zrB3rQ4JBgg09Pbe+vcJgJMFjFNnlWz99kj3afNgi/Z
- h16Vg6xLji+munHfgw0n2AnGzg8JJNTV4DmSDjbIoWybF1lWa0fMkMh3QckWWwbW/s5GCNJ
- +ohrPddTFBlh7OUUlMSyg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xjY6WPyGQXk=;alCr/hPyla8pTh3wuXMwBCJF8E9
- BIkeiL4FZi9u7qhsI664r8ir6N/6XTJM14emZJT20VTNWKRtt6ugTP/ZFxcsbmY3rA2EnAQ0R
- gJSHgr6RKuoe3m1VupftP0n5J1bNxX1HmhEo5W+TL1vuNzv7g/oi0TQtdKs0niKk6NBmLEiCo
- cgtXGJTt7dP8nqpIm6qRJ+nH/UqmBCi6EcsT9STMUvZgh0Fm/L3Yp7Ybtb4mB0KQVO3wTJikY
- avHQyCO5dtFKanLFqgM0SF8cs3ntZc519MntJyhBzmDnike8nJByQdYXIEnZAAVDju7/4XJDv
- DroE83A+CM1OJIWIPkvCP+Xm/cdbOAe2O5tc3+66JYc6sFCZBOj77NaV/jxj4XVce7vpvvJ6N
- JGIrvmN86xCz7nD9olkXrW+oW1p+bVGK9tu4M6ilnm+iaqOy0JgtYkyDxzd5wHLGnIfPxNyud
- XFGo74pIBgw00LCeHFCRKWnsa7cI/IuLnOCOeJze9HgxyyttPZ48/XTZEt9AENpokyNG/QQxn
- dnpjZdXbPU8XvwrRyQ8NhdxF+cXNYQwFly5arKvK+LbL9Z9qdThmPX6u9S3E07B+e5G51LTqa
- aVxD9jK9yKPYOF5ovQHAyAK7yFCOfn4La+BizM/XxSnqDBGgo0deM4KuyI5qdEcsyElSFNpHV
- qLEd9pdU9CbPZZQ/obgnsX2wORaMw2Dd16aIH2Sc5OBPvc55NDHhXbT/1QIQY/iYhbYHPtAvs
- JfWBVyM4nUPNL7E9g8Yfx8qsSQcV7K+2Hw4lrpumcsRboqxFjxGy6j/7v6jGavRcpKHw36QiY
- +Mvr8joPDx3NrZQNdiNKSPl6JKl9CxA8IpQQM7W+oEvsi2rEuMLvUIzgN32D4/VKo/pBNzFdr
- O4wKZDujpdArMYxtoxOi5U+YSABA+sxjjxJuibPqNPgqtewdiNEFk5W+UHVZCiuSolbK+g6XE
- LTrDWGcUYCStnShJF3dC84UFazCB/v8ALVU2ud5OsSCCnqOmwzusypR0p8Rer7pZf7vDOkR8s
- Sk0kivHBZQndn2hekWbKag7cX2fz1j8GGCLb/TIPKlIH4s8eMCXPoQOoieTcU6IjD6NURlc/m
- eduAwCBvU2HadHBy3BuiWDd1ED2JJ8adh8KxNvnebL+GOkLM5zicCFE9AysNuEHTaTE+TqVQ1
- 75BVZTIh/K3598aESdosUP59WTeDH/dXWoqcqUcddze8E/xIHXY1S5c+Fi2foxlaqCffHF1xj
- 7LT5/eoYRvLv0N5xS2UcRFyy1uo0BchO/EQ1czMuyBQVyPLjdOvGR5MxQTwopKfluzrE5vEB5
- eemZNsr90O8WH0AOPIC/fHx5RsSPO5jed1FYfX/Qx4HMMIa4b7/JUhF3nUiPcZ+/ICYR/UOPY
- C1lKUQfwsRo0WfFGUXE/Yhd5WIpTsFkSKmEQRVVeB0mzfUOhxrH/KOizVE
 
-Hi Greg
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-Thanks
+On 10/3/2025 10:20 pm, Kory Maincent wrote:
+> On Mon, 10 Mar 2025 13:08:35 +0800
+> Choong Yong Liang <yong.liang.choong@linux.intel.com> wrote:
+> 
+>> Fix the warning "warn: missing error code? 'ret'" in the
+>> intel_tsn_lane_is_available() function.
+>>
+>> The function now returns 0 to indicate that a TSN lane was found and
+>> returns -EINVAL when it is not found.
+>>
+>> Fixes: a42f6b3f1cc1 ("net: stmmac: configure SerDes according to the
+>> interface mode")
+>> Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+> 
+> This patch is a fix it should go net instead net-next.
+> Could you resend the patch with net prefix?
+> 
+> Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+> 
+> Thank you!
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+Hi Kory,
+
+Thank you for your feedback. I understand that the patch is a fix. However, 
+since the code is not yet in the 'net' tree, we are unable to apply the fix 
+there.
+
+I'm not sure if there is another way to handle this fix other than sending 
+it to the 'net-next' tree. I would appreciate any guidance you might have 
+on this matter.
 
