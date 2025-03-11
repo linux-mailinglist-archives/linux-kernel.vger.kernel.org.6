@@ -1,109 +1,89 @@
-Return-Path: <linux-kernel+bounces-556852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034BCA5CF7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:34:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F6CA5CF80
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1740418880EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60E74188A5EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DB92627E3;
-	Tue, 11 Mar 2025 19:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930D92641F8;
+	Tue, 11 Mar 2025 19:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="b1oBtj5e"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OlsVUps8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FDC25C6E9;
-	Tue, 11 Mar 2025 19:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA6D17591;
+	Tue, 11 Mar 2025 19:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741721624; cv=none; b=RyEwOC3RAf4zmvNt2/sZ0UCdBOtqTNvyGhqm1Gnc0EvzDOWx+7CiCYMhRETQqnc+cWCNroLCzcJZ2b8iJIyQCe8Lzve1vg9KcBhIC/yOLtkCzbWpnU9nVaUmQn4+LJ/Xsb5DvseY9R64SYJ8noOUg+Z9GFYaFnX1M7BXGXZqDpY=
+	t=1741721661; cv=none; b=WUrvzCtC+sH8NGZqLE5F/yfm/5LxmYTd5wGey46j20E5zVDEii2SqB6Lqdc8pIsxrdEPEaykVTvM+b5teVMAD4mEUlKS8t+Zojriiu/ebcq0glnbPYhaLRkSkt3JXsI2R5jA9pdwSnmw7cNBVXpIdFKUJQWPPiX56poXJbND80Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741721624; c=relaxed/simple;
-	bh=crIWXxpiTTenJI4NMZwEJ9fdFrkz5l9k/HVg53VTtqE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=e7poGTBAIZ10ny7LGtmJ8cIaJhkfkpmYzKBV0q9NCZxrsZn4QyDEzmBsXmnqEL2fxQtx1wCWTlC0dj2tQMJKzOqw/QAq2eiA/a5Hv7mO5Vt4JHf0/ozq8leruea45k0yfFdvRduNpDtGSLhtTwaxddV7WiJ+F7U9qab95030upU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=b1oBtj5e; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741721613; x=1742326413; i=markus.elfring@web.de;
-	bh=crIWXxpiTTenJI4NMZwEJ9fdFrkz5l9k/HVg53VTtqE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=b1oBtj5evIXNknb3NeEPV99kLUhqWyoT4lYI0S0Be4lpDQF5/nGiBkgwOJqlrZ8k
-	 SoW+8JENSO0T+rYSKR7UytO3bd5SxPgrC1iYNdT7uz7FAlW+vpUKQLbHa4I+io8vc
-	 Jfeu2Z4JKkZMvMu+NvD6c8GNz7MaBlv+3ZfpIegyWylSyxcLqR8zn9tThYBgDSdQw
-	 GOnaM7ATG/gf7uprFRC/9r3RW125Beg+X8Y8ULjIozEs5tyCvT0Kw6oueOMnzIPGr
-	 YHF9BfL70Q0FqjDNCLbApW23DBjJULwdNyaZfI8JUpzDtaWg7+a8WFFBeBpitCcMB
-	 VVCXMneUQeDtI7XXsg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.40]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdfCH-1tJ1if3fzl-00cquA; Tue, 11
- Mar 2025 20:33:32 +0100
-Message-ID: <0a2e1d9f-4046-49ee-9513-dbb3af9cffe9@web.de>
-Date: Tue, 11 Mar 2025 20:33:29 +0100
+	s=arc-20240116; t=1741721661; c=relaxed/simple;
+	bh=p87FX0SnpPxZ9l1ZBDNa6QJprc90RiIs0UOFXGZGDxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EKCF8Ga4tJWNW9LyOFMe7HjZvSglD3uG4JOA4VQS2yuKW0LNU/wXcSK3cL0/Cyf4g3n6HSIU8dfQnJhYLEFj3ynJ9LzFUK9VzyTM+tBRrSW10d8MXQ3pc46c7SlDTUHb+gwA7rJwmjDHasJzn9ZWj/KrH6DpQgQbjTkczOiPib0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OlsVUps8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C8FC4CEE9;
+	Tue, 11 Mar 2025 19:34:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741721659;
+	bh=p87FX0SnpPxZ9l1ZBDNa6QJprc90RiIs0UOFXGZGDxM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OlsVUps8vrLIXM3DGWSr6KQfKDIbTTZV/i2KsDQ5w74YasGSAPZHdgYEGSpXG6eoI
+	 AaFU3I652y/uAms2zTuP9rNq3cMsg+a4jnD/fZw9AZ3QhXuOGTUkSZ6fRhZWpENM8l
+	 XpgfnHMC9vuPV1u8s+qXmCpY7hxwCWPOQPKXz/G2SteMk0H3kP+NraT4IL3ZkI++Qm
+	 exbdtkzmMl1Uw9ylgaCthmVlxvVTYqeYG+yGeZwjjm3HzBEj21QN8nM5C2E3FVda8m
+	 X+gGPUbFzXnM3FB+7pfM8uoucLf6jKBZzdHqHjNHxIP4G3sahe5GqbR4+G71yUk+Pz
+	 Rt01Cw+xFgd2A==
+Date: Tue, 11 Mar 2025 09:34:18 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Ming Lei <ming.lei@redhat.com>, axboe@kernel.dk, josef@toxicpanda.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+	"yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH] blk-throttle: support io merge over iops_limit
+Message-ID: <Z9CQOuJA-bo4xZkH@slm.duckdns.org>
+References: <20250307090152.4095551-1-yukuai1@huaweicloud.com>
+ <Z8sZyElaHQQwKqpB@slm.duckdns.org>
+ <5fc124c9-e202-99ca-418d-0f52d027640f@huaweicloud.com>
+ <Z85LjhvkCzlqBVZy@fedora>
+ <Z88K5JtR4rhhIFsY@slm.duckdns.org>
+ <baba2f82-6c35-8c24-847c-32a002009b63@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <csokas.bence@prolan.hu>,
- dmaengine@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Vinod Koul <vkoul@kernel.org>
-References: <20250311180254.149484-1-csokas.bence@prolan.hu>
-Subject: Re: [PATCH v4] dma-engine: sun4i: Use devm functions in probe()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250311180254.149484-1-csokas.bence@prolan.hu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XqSKuVC0JiST6xXnkWzAX/+X8jnpz66Ha3o7kYN8HmTq1zoTzhs
- /2wQcykvychlhAjfg83GeOlw3OlYrm1QfqtdKwlDF45cx4ubxiwMSk5eZ5GooeXwbvvuIJF
- kAwQGRBNm+AMhDT51sD/URk41EP6gXdnIEA3XBoi15qZ5U9OOBqOHF7A/jkrh21qNoNn5dn
- yyzKJLVuXdLgB2RWLhrHQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UdA59599wXk=;z7L1HARrJsNvNEBleC2wdhGduLT
- 863Gmt71ISm98yn6cKUitonjZpb7yIUP/TaEhh3aE1gg6OYpdtNWWfxGrohH+FwIQ5muzyIqP
- esSzDNkjrHK5CIknWZakDHOt/x7icrokAsOhR5BTg+kF5/LjzHtZdHS0rFYP2FRJzSOoLgN0n
- 8KGA82PaIrTNdhWOq8k0m4jVCXtW1qEW/CCp1/tT3l4X/tym2CeqJhugX03HZrT33vnTy2U1M
- 1WY/R80yXoQ2BTx9ZZTLPxHNfSud8kFFlQ0XYcrFl2qD68U/Swu4zf+sksn0DZQ9t/P5UQmeP
- l2wQpsSb8X7XEnTfV0KtqmgKeYIhrsOHj5igrurJTKhgGX8yRvtIURT7XJIB+2wwALdt4HG/N
- VmRuJHVCw3GTyeNGRuFeDHZ1BXCEyg3Nmt+xIEaJfBdPM1UlfLSzM+l8bd5mgebK5Ro/dFjY7
- W8hMQktvN4R/KXy+GkrG/aUw26siL7Txg/i5536FK7atpsHq66wN1h/TVTagjxJK8EGIx8S46
- 52NEp0EjSsuzy1zDZKVJ2q230XXNOXmVhHwnSvz344bLzsZtgUf4Zlaf/NeMZUPb0iMXbeWsu
- Ii1Xm8G0c78CSnL/9luA2GDGZdr5gBBMhisINKq2w9OgBzDwQC4PKayQVURAIxY5qC4O2D/Er
- bDJTIXJ4tRjYx9ZjerbyI3JIiThUrTZnbheScvjey4a4qxH3H4ss/ZJODX58h8aaU5EuYrRWk
- UxEW0K4CrVpzu9SbJrS+3fzvnUvy+yHdoip8ZXHWDd8SIWX6kHO+jCixNgvSRlvxXVTbC67I/
- WpyaeaTuEt+wyHKvyTQhnwslejUkfLz55vmCbDg9fvvt8rdcTMOXhCu+FScqYLMfdoW5Gjjdb
- 62qWC0Afa2z1K70WrXRPgeJbM/VfeS+P528S6RO3n1QvSKw+JCMttznxKLBK1dLL/MgU28N3U
- fmQBfiaaHAvR2I9MMFsomNSqIhA2V2OBY0rbClHdbKtGL/4dpofyUH54g4A5nBu6N03wxqCAR
- ivBd5wp3evSjlWRc1+QCgrItuggeC9xCNjFf3ASedW2GVvxrxqCrFZaN8m16VJx2cPGthyen1
- LIxAdhLE+GNQTkLS+v0KTVDyDS2haE7LPyQfhUrl8rC2zE+3u3YbFpcwMJmpWQ/lwnXNmchQc
- wY3v6Twsm8jfGbTjd1xvNZfDEv2Op3XcvjrKuQdhv1xLMJaVrjcrLijamIKOsPZS9cBbxIVQO
- VBaW9a2Iwp/ZfYhMhg3Qvz8uxSVBtxGwXl6ZxwghA+9YkZVe3m4b8raCEY9NJFQcgMmyvB9kS
- NuxsOQtwhMcL0knI/pMzfOJrfTn+2gyMGOo+8GwqemqvfvYqu/I/+9Kz2xN9anLe6RYjOqfoS
- 4YFqqBOLCBXKKXBcOLPOWGIIMQQ2Ng7sGqGo8P7bWataZiBa1ff61cbx7VVO4xL1/G+BRfhbY
- 1M1bW3LdnDXt4iM3SYQFr+C97ESTxdQruYYdpPJqRm6Gzs2efZ0womck7UbTQSCvAUDwA9w==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <baba2f82-6c35-8c24-847c-32a002009b63@huaweicloud.com>
 
-> Clean up error handling by using devm functions
-> and dev_err_probe(). This should make it easier
-=E2=80=A6
+Hello,
 
-You may occasionally put more than 47 characters into text lines
-of such a change description.
+On Tue, Mar 11, 2025 at 11:08:00AM +0800, Yu Kuai wrote:
+...
+> > That said, I'm not sure about changing the behavior now. blk-throtl has
+> > mostly used the number of bios as long as it has existed and given that
+> > there can be a signficant difference between the two metrics, I'm not sure
+> > the change is justified at this point.
+> 
+> If we really concern about the behavior change, can we consider a new
+> flag that can switch to the old behavior? We'll see if any user will
+> complain.
 
-Regards,
-Markus
+Yeah, that may be the right way to go about this, but let me turn this
+around and ask you why adding a new behavior would be a good idea. What
+problems are you trying to solve?
+
+Thanks.
+
+-- 
+tejun
 
