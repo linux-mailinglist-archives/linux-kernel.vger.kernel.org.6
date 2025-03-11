@@ -1,167 +1,128 @@
-Return-Path: <linux-kernel+bounces-557079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F28A5D354
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:45:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B547DA5D36A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:58:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A8163B8944
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:45:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E16A917A214
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF36235BF0;
-	Tue, 11 Mar 2025 23:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58225235371;
+	Tue, 11 Mar 2025 23:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QbnG89nP"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D6D233159;
-	Tue, 11 Mar 2025 23:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=antoniohickey.com header.i=@antoniohickey.com header.b="2cNXV4WV";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="UoYVnyIr"
+Received: from a8-95.smtp-out.amazonses.com (a8-95.smtp-out.amazonses.com [54.240.8.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F96A233D89;
+	Tue, 11 Mar 2025 23:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.8.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741736714; cv=none; b=D237k7aFQksmWsW99kPWBADvjxdZnPk1ojY1WoUIrNh+0xiBCMqg5cn1FwrctVMaEUdnRv6l0q1/t7A5m+eFo8CHmyprcNMurLkpLX5MbmRzmZoKce8Q5XVuBtE4iqz3rXxhUzGL0QvEyYq6PakgcZHj/vvRxFks0Nzi+9EUSGo=
+	t=1741737528; cv=none; b=UVepzrs16sRe527T5cH+ClBLOAAgljr2P++2Ri18ymMKQg49LtirIEtujfYGxQQARXsfunYlH2CZWtGU/oif6ISMK7zlP2ToZNYnUitti6Q5XNl330NpE+IL+kTIj7qQjNZ3I3VaL95vrr+Gp8VMnHtDZaRhTQeKlan6RizIZUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741736714; c=relaxed/simple;
-	bh=WJxfrA9P0lTPif/rSZgxPJY3TmY+1BcIVavMPTrLyVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ij5EaZs87/9g0yVwflHTvtJ0qKRfCt7UhiwfyYXmKGAdMid1+XIqINAKSb3qlrnsS5eOQePUvyrhqZcxoBN+KZwrl0bslz17ppoCyhZ5x7U9kwt6D3x1ejud4yV5mVfEDyY5hup7pNHgdQgX7+jvve9hvF4smm4Zb8XGJUMe+8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=QbnG89nP; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.17.64.106] (unknown [131.107.1.170])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 31B3D2045FE6;
-	Tue, 11 Mar 2025 16:45:12 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 31B3D2045FE6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741736712;
-	bh=glSiauzVyj5TpLPTPm8NokxVZzNbbmHbEu15WDGOzEM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QbnG89nPuznMR4y1um2+WpeUgFAWN+cSKpbbFCY0CZ6BbVtYRj36XwUOl2La2ZtgM
-	 qHDla5pUHmQcAVc3ubJSgLl1id0h/ReIkhzSDMOu2kmXmu5NZaeDI/EzqlGPhjmgld
-	 jRd56jOpbDqDoh9kSebk1g7Khjhgqd1s/amhakBw=
-Message-ID: <a952eaa2-faf4-4312-87bd-7cb6a9100df5@linux.microsoft.com>
-Date: Tue, 11 Mar 2025 16:45:11 -0700
+	s=arc-20240116; t=1741737528; c=relaxed/simple;
+	bh=S89VYiNjTrAawzR8pDNsckPg14WX/oNcDQkKjNu0KPc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lN6Y37EjeFPG1tN0vezwUIAnlt1ua43uLUXw14+bsUSmu+sONF5aVJ49e9nkbtQUCYGrsA+jb0Qz9ljg/RUsouaPg1lroZk03KYOBIQ38IlmAfaM567hxPkbZL/PqyHQNVxNpCjjK1/id7cu4K2wZYoziiFgy4uXTontTja23Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (2048-bit key) header.d=antoniohickey.com header.i=@antoniohickey.com header.b=2cNXV4WV; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=UoYVnyIr; arc=none smtp.client-ip=54.240.8.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antoniohickey.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=cgcwyxycg75iw36cao5ku2ksreqpjkvc; d=antoniohickey.com;
+	t=1741737526;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=S89VYiNjTrAawzR8pDNsckPg14WX/oNcDQkKjNu0KPc=;
+	b=2cNXV4WVUh0BE51JLrfSf+4fdWdlgJ9QJYZ+3MJR9psS5FDJhXmyPU/htyhtEv5u
+	S4gm1z87X9wMuV1kMizprRD4MwHzjHGa3glXTd6O5vkjKWy6UX4RI1iwRFy+Bi/Ij2N
+	xTJDWafRJfjEOfgnbLPRay+HGsT5hwTerr2lmABIgRgro0puw+n/o+XBA/9Twx5Zn1o
+	fknYiaYNTkLz3AkzrpMxlZL9uruLXGjm3U0cErnn9z9Ei0NoE/tbUgWEl04rT4/v6+m
+	4H+0F1dh4z0Uj/abO7gJcu5NXWE2QoN0fSoOaCAf+tZ4w1ZSUG7ZslZ27M5WWyTIKxE
+	vwb8KtxL6g==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1741737526;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=S89VYiNjTrAawzR8pDNsckPg14WX/oNcDQkKjNu0KPc=;
+	b=UoYVnyIrpN96davRcwMWnJySD49emQU1HoHu+xreGg2Eqvzb9fJsVclZd4bODTa4
+	cv2PD6EFbiMy4LqPJ043QrhDdq/4N8i33mRNEXZzD15FYnMitQahR9lR4dz5tRB0HmP
+	6t0racLtAVr+6F/Xld/hs5jKiWuajfM7W4Kc6zv4=
+From: Antonio Hickey <contact@antoniohickey.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>
+Cc: Antonio Hickey <contact@antoniohickey.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Subject: [PATCH v2] rust: uaccess: mark UserSliceReader methods inline
+Date: Tue, 11 Mar 2025 23:58:45 +0000
+Message-ID: <0100019587a58230-1aed0f55-60a5-48c1-8791-10f28ce74cb3-000000@email.amazonses.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <0100019582fc6956-3b420cce-f122-4a26-8fea-94000b22bc90-000000@email.amazonses.com>
+References: <0100019582fc6956-3b420cce-f122-4a26-8fea-94000b22bc90-000000@email.amazonses.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/7] ima: copy only complete measurement records across
- kexec
-To: Mimi Zohar <zohar@linux.ibm.com>, Baoquan He <bhe@redhat.com>
-Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
- roberto.sassu@huawei.com, eric.snowberg@oracle.com, ebiederm@xmission.com,
- paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
- linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@hansenpartnership.com, vgoyal@redhat.com, dyoung@redhat.com
-References: <20250304190351.96975-1-chenste@linux.microsoft.com>
- <20250304190351.96975-2-chenste@linux.microsoft.com>
- <Z8g+uhZQ6totYLmp@MiWiFi-R3L-srv>
- <fe6e3c1333a50d66dc876b5a196d3491170802a8.camel@linux.ibm.com>
- <8bc74dd8-ecd0-44ad-88a2-8b36fa61100a@linux.microsoft.com>
- <69f43be0ed70eee45d3d9d9ac2aeaf39def5770a.camel@linux.ibm.com>
- <631f326006226e23f4f755fd32255792f6514a90.camel@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <631f326006226e23f4f755fd32255792f6514a90.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.us-east-1.3SHHfi5Rh4c+NdtIv+pxNWeqDT0J3zAhYZLMebdhE9o=:AmazonSES
+X-SES-Outgoing: 2025.03.11-54.240.8.95
 
-On 3/11/2025 5:44 AM, Mimi Zohar wrote:
-> On Thu, 2025-03-06 at 21:51 -0500, Mimi Zohar wrote:
->> On Thu, 2025-03-06 at 14:45 -0800, steven chen wrote:
->>> On 3/5/2025 4:27 AM, Mimi Zohar wrote:
->>>> On Wed, 2025-03-05 at 20:08 +0800, Baoquan He wrote:
->>>>> On 03/04/25 at 11:03am, steven chen wrote:
->>>>>> Carrying the IMA measurement list across kexec requires allocating a
->>>>>> buffer and copying the measurement records.  Separate allocating the
->>>>>> buffer and copying the measurement records into separate functions in
->>>>>> order to allocate the buffer at kexec 'load' and copy the measurements
->>>>>> at kexec 'execute'.
->>>>>>
->>>>>> This patch includes the following changes:
->>>>> I don't know why one patch need include so many changes. From below log,
->>>>> it should be split into separate patches. It may not need to make one
->>>>> patch to reflect one change, we should at least split and wrap several
->>>>> kind of changes to ease patch understanding and reviewing. My personal
->>>>> opinion.
->>>> Agreed, well explained.
->>>>
->>>> Mimi
->>>>
->>>>>>    - Refactor ima_dump_measurement_list() to move the memory allocation
->>>>>>      to a separate function ima_alloc_kexec_file_buf() which allocates
->>>>>>      buffer of size 'kexec_segment_size' at kexec 'load'.
->>>>>>    - Make the local variable ima_kexec_file in ima_dump_measurement_list()
->>>>>>      a local static to the file, so that it can be accessed from
->>>>>>      ima_alloc_kexec_file_buf(). Compare actual memory required to ensure
->>>>>>      there is enough memory for the entire measurement record.
->>>>>>    - Copy only complete measurement records.
->>>>>>    - Make necessary changes to the function ima_add_kexec_buffer() to call
->>>>>>      the above two functions.
->>>>>>    - Compared the memory size allocated with memory size of the entire
->>>>>>      measurement record. Copy only complete measurement records if there
->>>>>>      is enough memory. If there is not enough memory, it will not copy
->>>>>>      any IMA measurement records, and this situation will result in a
->>>>>>      failure of remote attestation.
->>>>>>
->>>>>> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
->>>>>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->>>>>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->>> I will split this patch into the following two patches:
->>>
->>>       ima: define and call ima_alloc_kexec_file_buf
->>>       ima: copy measurement records as much as possible across kexec
->> Steven, breaking up code into patches is in order to simplify patch review.
->> This is done by limiting each patch to a single "logical change" [1].  For
->> example, the change below has nothing to do with "separate allocating the buffer
->> and copying the measurement records into separate functions".
->>
->>          /* This is an append-only list, no need to hold the RCU read lock */
->>          list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
->> -               if (file.count < file.size) {
->> +               entry_size += ima_get_binary_runtime_entry_size(qe->entry);
->> +               if (entry_size <= segment_size) {
->>                          khdr.count++;
->> -                       ima_measurements_show(&file, qe);
->> +                       ima_measurements_show(&ima_kexec_file, qe);
->>                  } else {
->>                          ret = -EINVAL;
->> +                       pr_err("IMA log file is too big for Kexec buf\n");
->>                          break;
->>                  }
->>          }
->>
->> The original code potentially copied a partial last measurement record, not a
->> complete measurement record.  For ease of review, the above change is fine, but
->> it needs to be a separate patch.
->>
->> Patches:
->> 1. ima: copy only complete measurement records across kexec
->> 2. ima: define and call ima_alloc_kexec_file_buf()
-> Steven,
->
-> The alternative would be to revert using ima_get_binary_runtime_entry_size() and
-> simply use "ima_kexec_file.count < ima_kexec_file.size".  Only
-> ima_kexec_file.size would be initialized in ima_alloc_kexec_buf().  The rest
-> would remain in ima_dump_measurement_list().  get_binary_runtime_size() wouldn't
-> need to be made global.
->
-> To further simplify the patch review, first define a separate patch to just
-> rename the seq_file "file" to "ima_kexec_file".
->
-> Mimi
+When you build the kernel using the llvm-19.1.4-rust-1.83.0-x86_64
+toolchain provided by kernel.org with ARCH=x86_64, the following symbols
+are generated:
 
-Hi Mimi,
+$nm vmlinux | grep ' _R'.*UserSliceReader | rustfilt
+ffffffff817c3320 T <kernel::uaccess::UserSliceReader>::read_slice
+ffffffff817c32b0 T <kernel::uaccess::UserSliceReader>::read_raw
 
-I will work on it.
+However, these Rust symbols are trivial wrappers around the functions
+copy_from_user, _copy_from_user respectively. It doesn't
+make sense to go through a trivial wrapper for these functions, so mark
+them inline.
 
-Thanks,
+After applying this patch, the above command will produce no output.
 
-Steven
+Link: https://github.com/Rust-for-Linux/linux/issues/1145
+Suggested-by: https://github.com/Rust-for-Linux/linux/issues/1145
+Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
+---
+ rust/kernel/uaccess.rs | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
+index 719b0a48ff55..3d8a08aeed89 100644
+--- a/rust/kernel/uaccess.rs
++++ b/rust/kernel/uaccess.rs
+@@ -218,6 +218,7 @@ pub fn is_empty(&self) -> bool {
+     /// # Guarantees
+     ///
+     /// After a successful call to this method, all bytes in `out` are initialized.
++    #[inline]
+     pub fn read_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> Result {
+         let len = out.len();
+         let out_ptr = out.as_mut_ptr().cast::<c_void>();
+@@ -239,6 +240,7 @@ pub fn read_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> Result {
+     ///
+     /// Fails with [`EFAULT`] if the read happens on a bad address, or if the read goes out of
+     /// bounds of this [`UserSliceReader`]. This call may modify `out` even if it returns an error.
++    #[inline]
+     pub fn read_slice(&mut self, out: &mut [u8]) -> Result {
+         // SAFETY: The types are compatible and `read_raw` doesn't write uninitialized bytes to
+         // `out`.
+-- 
+2.48.1
 
 
