@@ -1,86 +1,83 @@
-Return-Path: <linux-kernel+bounces-556724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9EDBA5CDF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:33:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96274A5CDFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:35:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C5B47A2BB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:32:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3623D3B3C0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314F62620F9;
-	Tue, 11 Mar 2025 18:33:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EF31EF361
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F5E262D2F;
+	Tue, 11 Mar 2025 18:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lNtft3sY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7AC1DE3CE;
+	Tue, 11 Mar 2025 18:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741718021; cv=none; b=Vq1d8973kQWsTi9OD6whb+bJRocYYo7aUCfZjUy6yA8L6R3cWSUMxkthUrtrxKDQ2/iBlbNEm+v8GpAEjDsJoiblwsqs3jaco8shGLDQ5pCXoMVHSPbWNYua4VbyoaLX6u1iLvR4Bh9/2EtBqjxQX0EAHMwmP6SbGuE7+rJU158=
+	t=1741718101; cv=none; b=T4dH9c70s7kJCXKPLXUYb457pBfPNTCDnJLfGNLIxdu8O1KONvortzOFJQ91OEEURLToRo9VZIAYeA10B30dlGgmXYJ9JYcnO9gYY48U6DBFZU6AHrRxCBQj+88BS5NWsjSmXLuD7bUzu6GSnh0jN3MmfEuIE8M2OQbNTwQOdXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741718021; c=relaxed/simple;
-	bh=HAg0brZjYZBmF/cz8Bw/dPL5gjDO+oOBDkSYN6yMXLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aZOl/buoJbqmbMkSAzWoiWipG8+GEVb2ru/lYU/q/z+TsZbZqNaiyz7QCm+g1yxoK2krVGbRJHyAQfxPrVfOWmLB+8clp+rEO7nimMyoNdqFRZVXtJslQyAoVz5pkmVnSo9pDTvWzZzujUO0aGdrysh4AhL6E2s9XGMYObTtbxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 471791713;
-	Tue, 11 Mar 2025 11:33:50 -0700 (PDT)
-Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0340A3F694;
-	Tue, 11 Mar 2025 11:33:31 -0700 (PDT)
-Message-ID: <4629144c-8a52-4f0e-aac8-7139a0fcd883@arm.com>
-Date: Tue, 11 Mar 2025 18:33:30 +0000
+	s=arc-20240116; t=1741718101; c=relaxed/simple;
+	bh=sVHNbdJnau3K6ieK5h764cFOUI/8Mm9xtddYsKbK+KQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfGboSJLdaYs2Wc223s60N/N6iepRYKYqcdebDB9Q8+sAU3uPjjnaLvGLt5VOL8u5x0Tj7BdcTFz8g24/mhvFP2oGYtA7gCiMWKHIk/HrRvxsdFXxojoUTR+A6Zk1wv/QPzjOzMoTextf9fTiISFFSq3nQ75kk9fZjAFseadjTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lNtft3sY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71747C4CEE9;
+	Tue, 11 Mar 2025 18:35:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741718100;
+	bh=sVHNbdJnau3K6ieK5h764cFOUI/8Mm9xtddYsKbK+KQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lNtft3sY19IiVuoDzWfgWESJrNn8CH/auzECap2rnCrOyzG33cEo99oc2alPIEy/f
+	 cfy5T3Uj0QvfOnC9Z8Z7W61KLNXyeCfSdqIICG4pUe/lynRsu/ubZghRKuRRf2g/v5
+	 VNPXnEL/LCImE+wpS4xk1EZps/FDDPFe2bezUc5M=
+Date: Tue, 11 Mar 2025 14:34:56 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Antonin Godard <antonin.godard@bootlin.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: arm: fsl: Add VAR-SOM-MX6UL SoM and
+ Concerto board
+Message-ID: <20250311-omniscient-fiery-bison-8e7feb@lemur>
+References: <20250310-varsom6ul-concerto-dts-v3-0-551e60713523@bootlin.com>
+ <20250310-varsom6ul-concerto-dts-v3-1-551e60713523@bootlin.com>
+ <63f8aa7d-fcd4-450f-b3a1-44886a29fc7e@kernel.org>
+ <cd2f3c97-53bb-42f5-a3cd-4385bfda5dc7@kernel.org>
+ <D8CQAAKOZ1O5.8JVESQPJSSM8@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/49] x86/resctrl: Move the resctrl filesystem code to
- /fs/resctrl
-To: Shanker Donthineni <sdonthineni@nvidia.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
- Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, David Hildenbrand <david@redhat.com>,
- Rex Nie <rex.nie@jaguarmicro.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, fenghuay@nvidia.com
-References: <20250228195913.24895-1-james.morse@arm.com>
- <5436632b-cdc8-4a55-8766-0cc2aec0b807@marvell.com>
- <5f3171e0-d96e-47ea-92d7-0a3e3e3f8147@marvell.com>
- <956a210d-1883-477a-9c90-9667031610e6@nvidia.com>
- <18057287-42b3-4743-bd85-c12c098e98ea@nvidia.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <18057287-42b3-4743-bd85-c12c098e98ea@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <D8CQAAKOZ1O5.8JVESQPJSSM8@bootlin.com>
 
-Hi Shanker,
+On Mon, Mar 10, 2025 at 05:31:32PM +0100, Antonin Godard wrote:
+> > And now I noticed you used b4, so I really do not get how the tags can
+> > be missing here. :/
+> 
+> Sorry, that's totally my fault here, I forgot to run 'b4 trailers -u' before
+> sending... :/ And I don't think it's part of the prep checks?
 
-On 07/03/2025 16:50, Shanker Donthineni wrote:
-> On 3/7/25 10:38, Shanker Donthineni wrote:
->> I have tested this patch series w/ MPAM patches on the Grace server platform.
->> Validated both the features CPOR and MBW, results as expected.
+Mostly, because there's no clear picture of how this would work reliably. All
+other checks are on a "ran since modifications to the series" basis, but this
+one would have to be time-based.
 
-> Typo, tested with MPAM patches.
-
->> Tested-by: Shanker Donthineni <sdonthineni@nvidia.com>
+Should it check if the trailer updates have been run in the past XX minutes
+(and how long should that XX be?).
 
 
-Thanks! (as noted elsewhere - I've added an '# arm64' suffix to this)
-
-James
+-K
 
