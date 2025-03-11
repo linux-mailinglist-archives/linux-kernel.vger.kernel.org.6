@@ -1,188 +1,274 @@
-Return-Path: <linux-kernel+bounces-556532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63652A5CB6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:57:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031D7A5CB69
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:57:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A477C7AA6DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:56:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F8697AAA8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F5A261370;
-	Tue, 11 Mar 2025 16:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E81261376;
+	Tue, 11 Mar 2025 16:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G4Ki6spx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="lbjV6Vna"
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E47255E20;
-	Tue, 11 Mar 2025 16:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C953184F;
+	Tue, 11 Mar 2025 16:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741712228; cv=none; b=LMZuuTUW+7kU30xBkO/u5pudWymtsHM2uRVYHroQW4SURDuckP0bXH66Yqhqt5UeBaem3Cidc7JLvJZ9pZJcYDrBMEQaD/qSK4+r0tOYfWK0EVwFmt4F01dQQYhZvJC2naPDuGAKMVWmkK06qF2C1qcl/PPWjE26BFLY2jLvaKU=
+	t=1741712220; cv=none; b=IkloNwa0A3QujEplnpPJk+PZH54gMMm4b+Qpq5lKmOer4hO88nANbFuQIyVSspSbkb+btRL0ZZrzmIiQeM0RWY2725oVii7FuqPvMZGfjtuYhtjE0gU0AB/zALFmk8T13bX2Q8nY4DL3/hDznYThvabti2FUuPzEqIRqur0XEpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741712228; c=relaxed/simple;
-	bh=yFwxyB/vYM+QVK1Xvi2YhsAyqzx7H7T2HfW55Y8XdJs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EjpzunBIwwJaQD+qp4b2MfCu4hCtZhBcXl96cHLIjqnRoe5Q9C/iea+tLU0gUF0wvpcp9wIG+d8nqF70iyBiQtd9ykVzHQNvuwH2hffDC1J0UUEg46vcwxJ2QdtypbTeCdyPx+wxnpmQisJ3boBkIgkfY68+5tpC+75g1omaGJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G4Ki6spx; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741712227; x=1773248227;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yFwxyB/vYM+QVK1Xvi2YhsAyqzx7H7T2HfW55Y8XdJs=;
-  b=G4Ki6spx8ssB1+sYwNO6jl8JbPSVtLOeFsZVYcaf+Z+/AnOWxeV5v9Wr
-   P5h0ofbTszUOTqwU16BFFOUM1o2G1VGHqbsopPIxriY2p8dzAv8+0IdZi
-   g/J9FLdl6vXrVtBoYwwk8CuyfH4IQr5edrmbL7P12e/jRiQZQOia89Jrh
-   IblJeVNQnvMiHKO0chIL8/cG04n6uY6wi0KxWDDB0TW786puMgBhAO7SE
-   fjFfzFvOAA5BPI1EJvZW01K4hCM5neUiypZgqbKs5CHO0xgE9TECUoQOH
-   foopq3J7AUkYJ8MwvmPcLSE/lFX5FmaTYqJ31kiaj6c3F7Tv7yVgjIFeN
-   g==;
-X-CSE-ConnectionGUID: YP9GigpOQUOziHEfPnu+5w==
-X-CSE-MsgGUID: dYOfLcfRT8SOmUaBHUM/Ag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="54135119"
-X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
-   d="scan'208";a="54135119"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 09:57:06 -0700
-X-CSE-ConnectionGUID: 2SAKFf+bRjqV6NWtJsv0PQ==
-X-CSE-MsgGUID: 2Zumsmh6TS+qw2vv8LVAyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
-   d="scan'208";a="125438958"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 11 Mar 2025 09:57:03 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ts2ub-0007eW-1H;
-	Tue, 11 Mar 2025 16:57:01 +0000
-Date: Wed, 12 Mar 2025 00:56:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Anand Moon <linux.amoon@gmail.com>,
-	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH v4 4/4] drivers/thermal/exymos: Use guard notation when
- acquiring mutex
-Message-ID: <202503120028.ZL9zhHXe-lkp@intel.com>
-References: <20250310143450.8276-5-linux.amoon@gmail.com>
+	s=arc-20240116; t=1741712220; c=relaxed/simple;
+	bh=nDMt8eiwz7+zam9WwPXd2KG0XnvM1fHkqQ7RgCtM+vA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZNST/oMdN0+akNSbFu7MfKLU8PoTxJqokakPIPwJ0TBUaRRfv7hMjyz1RK5bFu2FfFDLYoEElbhrQNwL0QJwBF/OiRrHq8vJvftCk6bNDanhlNeGIu/ooBZW+Xaujfm6U0gMvWdiED6R/fqiT7KoQM5CleJ7zIofLhdCpIH/LVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=lbjV6Vna; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1741712219; x=1773248219;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=tlV9Mo9aek/qm0du1iKz9kkFBfH6SyE9Qgk2PjqxtjE=;
+  b=lbjV6VnaIXFhjHX8QYJsT9wL0C7i3XdJzLBucFTccLiaqePr6YNfELW+
+   vKhWBa0V5M2L39XbwgJc9gqU+3P8MGbY1gTJxdQsnIIYA26ri5r9cRAnS
+   IbnDJqKAAVcZ/0ZPhUwMob0ebmjzq3sUBsbb+MRzvFwyGfkLFtMYR5SrV
+   E=;
+X-IronPort-AV: E=Sophos;i="6.14,239,1736812800"; 
+   d="scan'208";a="385729533"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 16:56:50 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [10.0.17.79:6023]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.26.251:2525] with esmtp (Farcaster)
+ id f548cd40-c792-49af-ad1d-1f5d23f80cf5; Tue, 11 Mar 2025 16:56:49 +0000 (UTC)
+X-Farcaster-Flow-ID: f548cd40-c792-49af-ad1d-1f5d23f80cf5
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 11 Mar 2025 16:56:49 +0000
+Received: from [10.95.111.253] (10.95.111.253) by
+ EX19D022EUC002.ant.amazon.com (10.252.51.137) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 11 Mar 2025 16:56:48 +0000
+Message-ID: <9e7536cc-211d-40ca-b458-66d3d8b94b4d@amazon.com>
+Date: Tue, 11 Mar 2025 16:56:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310143450.8276-5-linux.amoon@gmail.com>
-
-Hi Anand,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 80e54e84911a923c40d7bee33a34c1b4be148d7a]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Anand-Moon/drivers-thermal-exynos-Refactor-clk_sec-initialization-inside-SOC-specific-case/20250310-223732
-base:   80e54e84911a923c40d7bee33a34c1b4be148d7a
-patch link:    https://lore.kernel.org/r/20250310143450.8276-5-linux.amoon%40gmail.com
-patch subject: [PATCH v4 4/4] drivers/thermal/exymos: Use guard notation when acquiring mutex
-config: s390-randconfig-001-20250311 (https://download.01.org/0day-ci/archive/20250312/202503120028.ZL9zhHXe-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250312/202503120028.ZL9zhHXe-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503120028.ZL9zhHXe-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/thermal/samsung/exynos_tmu.c:721:3: error: cannot jump from this goto statement to its label
-                   goto out;
-                   ^
-   drivers/thermal/samsung/exynos_tmu.c:723:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
-           guard(mutex)(&data->lock);
-           ^
-   include/linux/cleanup.h:309:15: note: expanded from macro 'guard'
-           CLASS(_name, __UNIQUE_ID(guard))
-                        ^
-   include/linux/compiler.h:166:29: note: expanded from macro '__UNIQUE_ID'
-   #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-                               ^
-   include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
-   #define __PASTE(a,b) ___PASTE(a,b)
-                        ^
-   include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
-   #define ___PASTE(a,b) a##b
-                         ^
-   <scratch space>:78:1: note: expanded from here
-   __UNIQUE_ID_guard398
-   ^
-   drivers/thermal/samsung/exynos_tmu.c:718:3: error: cannot jump from this goto statement to its label
-                   goto out;
-                   ^
-   drivers/thermal/samsung/exynos_tmu.c:723:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
-           guard(mutex)(&data->lock);
-           ^
-   include/linux/cleanup.h:309:15: note: expanded from macro 'guard'
-           CLASS(_name, __UNIQUE_ID(guard))
-                        ^
-   include/linux/compiler.h:166:29: note: expanded from macro '__UNIQUE_ID'
-   #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-                               ^
-   include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
-   #define __PASTE(a,b) ___PASTE(a,b)
-                        ^
-   include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
-   #define ___PASTE(a,b) a##b
-                         ^
-   <scratch space>:78:1: note: expanded from here
-   __UNIQUE_ID_guard398
-   ^
-   2 errors generated.
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [RFC PATCH 0/5] KVM: guest_memfd: support for uffd missing
+To: Peter Xu <peterx@redhat.com>
+CC: James Houghton <jthoughton@google.com>, <akpm@linux-foundation.org>,
+	<pbonzini@redhat.com>, <shuah@kernel.org>, <kvm@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <lorenzo.stoakes@oracle.com>, <david@redhat.com>,
+	<ryan.roberts@arm.com>, <quic_eberman@quicinc.com>, <graf@amazon.de>,
+	<jgowans@amazon.com>, <roypat@amazon.co.uk>, <derekmn@amazon.com>,
+	<nsaenz@amazon.es>, <xmarcalx@amazon.com>
+References: <20250303133011.44095-1-kalyazin@amazon.com>
+ <Z8YfOVYvbwlZST0J@x1.local>
+ <CADrL8HXOQ=RuhjTEmMBJrWYkcBaGrqtXmhzPDAo1BE3EWaBk4g@mail.gmail.com>
+ <Z8i0HXen8gzVdgnh@x1.local> <fdae95e3-962b-4eaf-9ae7-c6bd1062c518@amazon.com>
+ <Z89EFbT_DKqyJUxr@x1.local>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <Z89EFbT_DKqyJUxr@x1.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D010EUA004.ant.amazon.com (10.252.50.94) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
 
-vim +721 drivers/thermal/samsung/exynos_tmu.c
 
-285d994a51e45ca drivers/thermal/samsung/exynos_tmu.c Bartlomiej Zolnierkiewicz 2014-11-13  711  
-7ea98f70c73ea37 drivers/thermal/samsung/exynos_tmu.c Daniel Lezcano            2022-08-05  712  static int exynos_tmu_set_emulation(struct thermal_zone_device *tz, int temp)
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  713  {
-5f68d0785e5258a drivers/thermal/samsung/exynos_tmu.c Daniel Lezcano            2023-03-01  714  	struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  715  	int ret = -EINVAL;
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  716  
-ef3f80fc7f79c32 drivers/thermal/samsung/exynos_tmu.c Bartlomiej Zolnierkiewicz 2014-11-13  717  	if (data->soc == SOC_ARCH_EXYNOS4210)
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  718  		goto out;
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  719  
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  720  	if (temp && temp < MCELSIUS)
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11 @721  		goto out;
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  722  
-0c7c68a34f7d0f7 drivers/thermal/samsung/exynos_tmu.c Anand Moon                2025-03-10  723  	guard(mutex)(&data->lock);
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  724  	clk_enable(data->clk);
-285d994a51e45ca drivers/thermal/samsung/exynos_tmu.c Bartlomiej Zolnierkiewicz 2014-11-13  725  	data->tmu_set_emulation(data, temp);
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  726  	clk_disable(data->clk);
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  727  	return 0;
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  728  out:
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  729  	return ret;
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  730  }
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  731  #else
-285d994a51e45ca drivers/thermal/samsung/exynos_tmu.c Bartlomiej Zolnierkiewicz 2014-11-13  732  #define exynos4412_tmu_set_emulation NULL
-7ea98f70c73ea37 drivers/thermal/samsung/exynos_tmu.c Daniel Lezcano            2022-08-05  733  static int exynos_tmu_set_emulation(struct thermal_zone_device *tz, int temp)
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  734  	{ return -EINVAL; }
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  735  #endif /* CONFIG_THERMAL_EMULATION */
-bffd1f8ac87a798 drivers/thermal/exynos_thermal.c     Amit Daniel Kachhap       2013-02-11  736  
+On 10/03/2025 19:57, Peter Xu wrote:
+> On Mon, Mar 10, 2025 at 06:12:22PM +0000, Nikita Kalyazin wrote:
+>>
+>>
+>> On 05/03/2025 20:29, Peter Xu wrote:
+>>> On Wed, Mar 05, 2025 at 11:35:27AM -0800, James Houghton wrote:
+>>>> I think it might be useful to implement an fs-generic MINOR mode. The
+>>>> fault handler is already easy enough to do generically (though it
+>>>> would become more difficult to determine if the "MINOR" fault is
+>>>> actually a MISSING fault, but at least for my userspace, the
+>>>> distinction isn't important. :)) So the question becomes: what should
+>>>> UFFDIO_CONTINUE look like?
+>>>>
+>>>> And I think it would be nice if UFFDIO_CONTINUE just called
+>>>> vm_ops->fault() to get the page we want to map and then mapped it,
+>>>> instead of having shmem-specific and hugetlb-specific versions (though
+>>>> maybe we need to keep the hugetlb specialization...). That would avoid
+>>>> putting kvm/gmem/etc. symbols in mm/userfaultfd code.
+>>>>
+>>>> I've actually wanted to do this for a while but haven't had a good
+>>>> reason to pursue it. I wonder if it can be done in a
+>>>> backwards-compatible fashion...
+>>>
+>>> Yes I also thought about that. :)
+>>
+>> Hi Peter, hi James.  Thanks for pointing at the race condition!
+>>
+>> I did some experimentation and it indeed looks possible to call
+>> vm_ops->fault() from userfault_continue() to make it generic and decouple
+>> from KVM, at least for non-hugetlb cases.  One thing is we'd need to prevent
+>> a recursive handle_userfault() invocation, which I believe can be solved by
+>> adding a new VMF flag to ignore the userfault path when the fault handler is
+>> called from userfault_continue().  I'm open to a more elegant solution
+>> though.
+> 
+> It sounds working to me.  Adding fault flag can also be seen as part of
+> extension of vm_operations_struct ops.  So we could consider reusing
+> fault() API indeed.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Great!
+
+>>
+>> Regarding usage of the MINOR notification, in what case do you recommend
+>> sending it?  If following the logic implemented in shmem and hugetlb, ie if
+>> the page is _present_ in the pagecache, I can't see how it is going to work
+> 
+> It could be confusing when reading that chunk of code, because it looks
+> like it notifies minor fault when cache hit. But the critical part here is
+> that we rely on the pgtable missing causing the fault() to trigger first.
+> So it's more like "cache hit && pgtable missing" for minor fault.
+
+Right, but the cache hit still looks like a precondition for the minor 
+fault event?
+
+>> with the write syscall, as we'd like to know when the page is _missing_ in
+>> order to respond with the population via the write.  If going against
+>> shmem/hugetlb logic, and sending the MINOR event when the page is missing
+>> from the pagecache, how would it solve the race condition problem?
+> 
+> Should be easier we stick with mmap() rather than write().  E.g. for shmem
+> case of current code base:
+> 
+>          if (folio && vma && userfaultfd_minor(vma)) {
+>                  if (!xa_is_value(folio))
+>                          folio_put(folio);
+>                  *fault_type = handle_userfault(vmf, VM_UFFD_MINOR);
+>                  return 0;
+>          }
+> 
+> vma is only availble if vmf!=NULL, aka in fault context.  With that, in
+> write() to shmem inodes, nothing will generate a message, because minor
+> fault so far is only about pgtable missing.  It needs to be mmap()ed first,
+> and has nothing yet to do with write() syscalls.
+
+Yes, that's true that write() itself isn't going to generate a message. 
+My idea was to _respond_ to a message generated by the fault handler 
+(vmf != NULL) with a write().  I didn't mean to generate it from write().
+
+What I wanted to achieve was send a message on fault + cache miss and 
+respond to the message with a write() to fill the cache followed by a 
+UFFDIO_CONTINUE to set up pagetables.  I understand that a MINOR trap 
+(MINOR + UFFDIO_CONTINUE) is preferable, but how does it fit into this 
+model?  What/how will guarantee a cache hit that would trigger the MINOR 
+message?
+
+To clarify, I would like to be able to populate pages _on-demand_, not 
+only proactively (like in the original UFFDIO_CONTINUE cover letter 
+[1]).  Do you think the MINOR trap could still be applicable or would it 
+necessarily require the MISSING trap?
+
+[1] 
+https://lore.kernel.org/linux-fsdevel/20210301222728.176417-1-axelrasmussen@google.com/T/
+
+>>
+>> Also, where would the check for the folio_test_uptodate() mentioned by James
+>> fit into here?  Would it only be used for fortifying the MINOR (present)
+>> against the race?
+>>
+>>> When Axel added minor fault, it's not a major concern as it's the only fs
+>>> that will consume the feature anyway in the do_fault() path - hugetlbfs has
+>>> its own path to take care of.. even until now.
+>>>
+>>> And there's some valid points too if someone would argue to put it there
+>>> especially on folio lock - do that in shmem.c can avoid taking folio lock
+>>> when generating minor fault message.  It might make some difference when
+>>> the faults are heavy and when folio lock is frequently taken elsewhere too.
+>>
+>> Peter, could you expand on this?  Are you referring to the following
+>> (shmem_get_folio_gfp)?
+>>
+>>        if (folio) {
+>>                folio_lock(folio);
+>>
+>>                /* Has the folio been truncated or swapped out? */
+>>                if (unlikely(folio->mapping != inode->i_mapping)) {
+>>                        folio_unlock(folio);
+>>                        folio_put(folio);
+>>                        goto repeat;
+>>                }
+>>                if (sgp == SGP_WRITE)
+>>                        folio_mark_accessed(folio);
+>>                if (folio_test_uptodate(folio))
+>>                        goto out;
+>>                /* fallocated folio */
+>>                if (sgp != SGP_READ)
+>>                        goto clear;
+>>                folio_unlock(folio);
+>>                folio_put(folio);
+>>        }
+>>
+>> Could you explain in what case the lock can be avoided?  AFAIC, the function
+>> is called by both the shmem fault handler and userfault_continue().
+> 
+> I think you meant the UFFDIO_CONTINUE side of things.  I agree with you, we
+> always need the folio lock.
+> 
+> What I was saying is the trapping side, where the minor fault message can
+> be generated without the folio lock now in case of shmem.  It's about
+> whether we could generalize the trapping side, so handle_mm_fault() can
+> generate the minor fault message instead of by shmem.c.
+> 
+> If the only concern is "referring to a module symbol from core mm", then
+> indeed the trapping side should be less of a concern anyway, because the
+> trapping side (when in the module codes) should always be able to reference
+> mm functions.
+> 
+> Actually.. if we have a fault() flag introduced above, maybe we can
+> generalize the trap side altogether without the folio lock overhead.  When
+> the flag set, if we can always return the folio unlocked (as long as
+> refcount held), then in UFFDIO_CONTINUE ioctl we can lock it.
+
+Where does this locking happen exactly during trapping?  I was thinking 
+it was only done when the page was allocated.  The trapping part (quoted 
+by you above) only looks up the page in the cache and calls 
+handle_userfault().  Am I missing something?
+
+>>
+>>> It might boil down to how many more FSes would support minor fault, and
+>>> whether we would care about such difference at last to shmem users. If gmem
+>>> is the only one after existing ones, IIUC there's still option we implement
+>>> it in gmem code.  After all, I expect the change should be very under
+>>> control (<20 LOCs?)..
+>>>
+>>> --
+>>> Peter Xu
+>>>
+>>
+> 
+> --
+> Peter Xu
+> 
+
 
