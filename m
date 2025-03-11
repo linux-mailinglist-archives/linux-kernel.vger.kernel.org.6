@@ -1,119 +1,124 @@
-Return-Path: <linux-kernel+bounces-555282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5356EA5B0EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:04:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E02A5B1CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:13:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91F9F170804
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:04:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2FE23AE2D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABEE29A5;
-	Tue, 11 Mar 2025 00:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685833C0B;
+	Tue, 11 Mar 2025 00:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHX8JHDQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZN3pMG9Z"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83495360;
-	Tue, 11 Mar 2025 00:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4CB360;
+	Tue, 11 Mar 2025 00:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741651458; cv=none; b=kfBzDJR9TbeHpM0G6LY+Vks9SRPhGk5QYYcWcSl7N557sIck3g7ZcqB/j5g07dZ4IGcEHhHN7CyXce76RJsSbaF4qhuuj8LfV1Jj5VPYxqkq66dpTL0T5cGikvETSE6/0TyETQAbBi8GtR2Z3cwLxUz6MG0sZ1PUGAKeNs1lu40=
+	t=1741652003; cv=none; b=IffH7xF3pTF5OoqjVfE3DfpNafadsLtjVHzhJxohgYppajlLYgP4Pm/posupyITmTHPzjP9TTj7HBeE+tmKb5mDaoKCIhDEPWDrOCyCJKdbnoxqieHN2xZMiU8XT1MOkMrwNsS34hoQmTh7E7cAkk8khhdFecwddVS9XxkuT4QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741651458; c=relaxed/simple;
-	bh=+V8XkjwMNZECAlP3eoWn4pmYdoCXLcxMDNGLphlTtoM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WgVDKkGOIXt58ShKukgrYSAhbnYPqR6qzmEp0vZhywI02+i4EUGKuMHS/rYdcMG5K7Qa3Qgrgdupym8KRKJD15YLoY/vFmkYaT8qrIagPMGPPU6phD5TJU4joXPO71qGExCTbldl3+yjSclsLRngJX2jnJ67v84emdUVOuPnm+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHX8JHDQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE1BC4CEE5;
-	Tue, 11 Mar 2025 00:04:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741651457;
-	bh=+V8XkjwMNZECAlP3eoWn4pmYdoCXLcxMDNGLphlTtoM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sHX8JHDQYj1uSZJPZXtKVaw9dZ0Hadn1yeoz9+8lJwjOXbVv1UP1s4i7jM25bmKXM
-	 rqdD05Gm5nRtBkCm1+hOZzyNSRx3KZub084a+Wo47SmKKN8IskBsfq5L1TMGZ1Vwp/
-	 hp+aXdHlZTQeAl/zHDCM8hfj750hw36pbLHt6aSG5IVZ77bsxlGL/ZU1ElkXZa3MJP
-	 Xmvj82/TaHFrD5D0UBYCfcoVdK4F4SqS6zPHHC18txZZHq/n6nWDNnosM8Rw6qGrdo
-	 TXUB7Y8sOeI3EauVJt4l/AgY2u3idJ+n2V3/2d7n2x05GbG52yJQQspYa6Z6rI2UXY
-	 GBA/xIg65Y8jw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>
-Subject: [PATCH] perf report: Fix a memory leak for perf_env on AMD
-Date: Mon, 10 Mar 2025 17:04:16 -0700
-Message-ID: <20250311000416.817631-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
+	s=arc-20240116; t=1741652003; c=relaxed/simple;
+	bh=kzvAE9rkC0BaUIFVLg3gP7gcqs+gIUGEHk2OpCg+0f0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F9o58luS0yO5iWaSpQIX0Rf4NBMId5ieAy+fECsGJ3lz9673hHwwZEHFX0/a1+Jxj2RHcWDFCO7+00mYIsvl9KrIxV+vNLZJQlL9CXQOU7ABgMN1EcPnhxrGoR5fSaSDLfLBgIYbXwVPndaauika9u55/5MeYYpvFuR8qo7JdHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZN3pMG9Z; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5c7d6b96fso7802924a12.3;
+        Mon, 10 Mar 2025 17:13:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741652000; x=1742256800; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EXwnIJXW3efUwD1JuKOIjFDSE0Lnv/lNewJCUEgk+Vo=;
+        b=ZN3pMG9ZYs2QQkkQnBawNYSWio+33cuWYNBjej85zFkiGwEX98NanBQYunMK5CAtxV
+         f/T9+FitqoT4xrplDpPMkgtAoexvG5KBzn0cr9jMUtwUvGDFWCQecibYb4bqeN5ZJpmt
+         1lFt+vvxQ2Kgi4pje7UZJ+R5pGvlZLR6BCCbJAO3A5mF2uDTmpqErzWUOZyzYBcpm0bJ
+         hv7qvAvXF5i6JrpGKk5OkdV7Ux2uMw94NAbu2tJiT4qDZeZF8e4FgGQq90SsfT+E7A82
+         O9HcEIFXFYxFNn+SbSMUT3vPume7y8Knd8+HbWKJYtlBq2tzmOk8bSD2D7dRK7MAcHvz
+         UUzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741652000; x=1742256800;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EXwnIJXW3efUwD1JuKOIjFDSE0Lnv/lNewJCUEgk+Vo=;
+        b=LcPu80eefQZDI+D9u+KV+BGy+r1WyUWOSzfg1fmu5MmGyReYV7Y01wCHQl2/CFufi7
+         Q6BaBo+a3CTZWJUH1Z7y5qY0q7R9NSUQncAarym8zl2GeeYYava0Dke+fkf0kLDDVf+I
+         3HFatv5nfzPFL04Ccg6CT0vBpE1FAH3DkO7sZa53mBJZj78WkQlfB4rNsrE0T+tRpYfV
+         fkbwmkVCkRObNTw2IObLD4h69n0kIWACw4xEbPrfOWzZgIAUtpvnODkjHzT2Jk+izL7B
+         vQffntT+HaMvjxo9JyAL5P76WFM5WxX9Vu/89S7htEVti3RmMBUaT1023Fkj/FNupbx0
+         FJAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgDipVokuBYWGZELkhUT3VrTG5SKl4gZDJioHX1StoVz2sengxoMntoDyhT4EuHE56H6NqJmQDoJBe@vger.kernel.org, AJvYcCXfThCvCsPFH8rRJCfDAcfdkPe/LXGGBP24J10W9hnHdyYT1ppCspMByjKORuWBUPFcwmsrHFK1SJDWitU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCQpl+pdtGub9pgviXzevi2302AurA2IDRjum7YiInkZFj8v+i
+	Z/0CGqDfHdW43/bcKxcMrA9W+oHNAryKOG81S/0fcUQy9oDiYPSC
+X-Gm-Gg: ASbGncuec/dkoTUVbud5wDnq6VDdAmxFVr2DlNZd5YUFju2chjlDDqoi5mNT2lGSfYY
+	xMs9uvL2DDjH3i5VZTiKvIE1tdyd/gyD3A/gnEvoYKxaqO00N8mxbyqhCN57crDxv661/GKM+wG
+	gg3hJEE7zNmLBF8H0mxnqp1m8qK084XIuA9kd0xYUYLtHHvaNKFGfw0HGr84yBQGhGSDtQ3B254
+	FoAMkvTNRfozLINYZah/Cv/8sAiA0oNbbH8Mv7QDfAwvfuNdbjqzE7Npq4b7Cy6m/BQhGGUNdWr
+	dYrBk5ZII9HWFsKo8Bip6aFu7oj/3EL1ggFkVoty+DPa7x3/030I3c/aUuxA8Bz/NR2scKEy
+X-Google-Smtp-Source: AGHT+IFbZ+/+BB3T1PKNtpO4SqdvqZ/ZhrscBb34h5uigf+A2bGn64uE7LAut4lL+QsFjZON9rB3xg==
+X-Received: by 2002:a05:6402:278a:b0:5e5:ebc7:f63 with SMTP id 4fb4d7f45d1cf-5e5ebc71081mr14273970a12.2.1741652000202;
+        Mon, 10 Mar 2025 17:13:20 -0700 (PDT)
+Received: from foxbook (adts246.neoplus.adsl.tpnet.pl. [79.185.230.246])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c74a9303sm7639065a12.42.2025.03.10.17.13.18
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 10 Mar 2025 17:13:19 -0700 (PDT)
+Date: Tue, 11 Mar 2025 01:13:15 +0100
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] usb: xhci: Deduplicate some endpoint state flag
+ lists
+Message-ID: <20250311011315.4b3efbfe@foxbook>
+In-Reply-To: <dabb1140-b26e-4f90-8e65-85e16d99aa49@linux.intel.com>
+References: <20250310093605.2b3d0425@foxbook>
+	<20250310093748.201e87cd@foxbook>
+	<dabb1140-b26e-4f90-8e65-85e16d99aa49@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The env.pmu_mapping can be leaked when it reads data from a pipe on AMD.
-For a pipe data, it reads the header data including pmu_mapping from
-PERF_RECORD_HEADER_FEATURE runtime.  But it's already set in:
+On Mon, 10 Mar 2025 11:51:30 +0200, Mathias Nyman wrote:
+> Not sure this helps readability
+> 
+> It defines even more macros to abstract away something that is not
+> complex enough.
 
-  perf_session__new()
-    __perf_session__new()
-      evlist__init_trace_event_sample_raw()
-        evlist__has_amd_ibs()
-          perf_env__nr_pmu_mappings()
+It was less about readability, but keeping these lists in one place
+so that they don't get out of sync and trigger the double-stop bug.
 
-Then it'll overwrite that when it processes the HEADER_FEATURE record.
-Here's a report from address sanitizer.
+With this change, a new flag like EP_STALLED only needs to be added
+in one place and it's picked up by both functions which need it.
 
-  Direct leak of 2689 byte(s) in 1 object(s) allocated from:
-    #0 0x7fed8f814596 in realloc ../../../../src/libsanitizer/lsan/lsan_interceptors.cpp:98
-    #1 0x5595a7d416b1 in strbuf_grow util/strbuf.c:64
-    #2 0x5595a7d414ef in strbuf_init util/strbuf.c:25
-    #3 0x5595a7d0f4b7 in perf_env__read_pmu_mappings util/env.c:362
-    #4 0x5595a7d12ab7 in perf_env__nr_pmu_mappings util/env.c:517
-    #5 0x5595a7d89d2f in evlist__has_amd_ibs util/amd-sample-raw.c:315
-    #6 0x5595a7d87fb2 in evlist__init_trace_event_sample_raw util/sample-raw.c:23
-    #7 0x5595a7d7f893 in __perf_session__new util/session.c:179
-    #8 0x5595a7b79572 in perf_session__new util/session.h:115
-    #9 0x5595a7b7e9dc in cmd_report builtin-report.c:1603
-    #10 0x5595a7c019eb in run_builtin perf.c:351
-    #11 0x5595a7c01c92 in handle_internal_command perf.c:404
-    #12 0x5595a7c01deb in run_argv perf.c:448
-    #13 0x5595a7c02134 in main perf.c:556
-    #14 0x7fed85833d67 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+OTOH, maybe such flags aren't being added very often...
 
-Let's free the existing pmu_mapping data if any.
+> It also gives false impression that EP_HALTED would somehow be more
+> part of cancelling a TD than EP_STALLED, when both of those are about
+> returning a TD with an error due to transfer issues detected by host,
+> not class driver cancelling URBs.
 
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/header.c | 2 ++
- 1 file changed, 2 insertions(+)
+I think EP_HALTED is about cancellation (among other things), because
+it indicates that Reset EP handler will run and finish cancellation of
+the halted TD and also any other TDs unlinked by class driver.
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 1900965f87527948..e3cdc3b7b4ab2409 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -2770,6 +2770,8 @@ static int process_pmu_mappings(struct feat_fd *ff, void *data __maybe_unused)
- 		free(name);
- 		pmu_num--;
- 	}
-+	/* AMD may set it by evlist__has_amd_ibs() from perf_session__new() */
-+	free(ff->ph->env.pmu_mappings);
- 	ff->ph->env.pmu_mappings = strbuf_detach(&sb, NULL);
- 	return 0;
- 
--- 
-2.49.0.rc0.332.g42c0ae87b1-goog
+EP_STALLED and EP_CLEARING_TT are less about the halted TD and more
+about ensuring full reset of the pipe before new TDs are executed.
 
+
+Michal
 
