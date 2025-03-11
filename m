@@ -1,170 +1,282 @@
-Return-Path: <linux-kernel+bounces-556812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBDFFA5CF01
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:10:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF2FA5CEFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:09:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CBB03B390E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:09:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4E97189AB03
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633F0264F8E;
-	Tue, 11 Mar 2025 19:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C65F2641E3;
+	Tue, 11 Mar 2025 19:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBnUNgfm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bdb9Gojx"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDDE2641C2;
-	Tue, 11 Mar 2025 19:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6960A25EF8E;
+	Tue, 11 Mar 2025 19:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741720090; cv=none; b=Komp9NGweSD/BjbhgTVhDJkvZZDAjVCl5peCP/4vkbTD1McAu48K/Jl7dxT9F9emn3us4sL7IMIcgWu/8qPGXE2H/yrlMv6UCCOwMpaDboZqfZ3bm5igDOBXBjtALg46x5qBHLUzAK5wALTe1+HywmtxBPX4ekn1NbD6X+hy5fA=
+	t=1741720148; cv=none; b=hS535lED0TFYd6Beq4cReG+b0gi/m0VygtRzdL5zqNctwFtl8KrlBA55KAzy6asVlfQpxujAAPzHJ1LFVKmppNoR5Ttf09ju3sTsf9/mqu9Ke81xC0aTdbC9+2lptpz7RsGVqk+7BH42retDmOvuBDwhQWUqtf2FmIY+CyRUXXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741720090; c=relaxed/simple;
-	bh=xeRfUAD1jft9a1eCHnyKsJSSNEwpqQuywYP7E6aXL8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dlh0YelimhWKhcXN5R+f7bK0CEPeG7jAqs/UhJjKX8AH1EINu+ydPwkfHcMYQaWVs+e5wbGXAW60P1S/b1By6u8hgoYbbO3yNhjEzv0TFNULCTSqIlHXRwo0HjMW9cBRoPUsTHJk0ImbhWtUdWHPQdddAL4U6cPUb/FNTbDtljE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBnUNgfm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98DB3C4CEE9;
-	Tue, 11 Mar 2025 19:08:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741720090;
-	bh=xeRfUAD1jft9a1eCHnyKsJSSNEwpqQuywYP7E6aXL8w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JBnUNgfmOjojfJTGUs1AUZ73VM/aPmDrhcsqHEU4HxcC4t1WOioQye7pi+Mu+G93l
-	 TmMoUl06bBaFGVE3TGxluVpDlzHF3885P1AjRuTyrid3sZ2pAAIgBT+0Kf9ndxs4lf
-	 GTPkVDFlHFXUh6hSRGKjWtoLWfur7+SAxvvSoDEUL77sLCZki20Faf53G4t58P/JgT
-	 /eU5qTBa1A94P2yA6y+1SsmQLygkdmy6RN9qkSZBSQgZJGlRRkahPNxkFQxH1hQWto
-	 A4wD56WDxvfHvE47nxeVIH4jPVdZ1gKhDKc8j6fb1ki9/4wg2phTsA3QeOw0cRxzPY
-	 UrPfKyf8R7WzQ==
-Date: Tue, 11 Mar 2025 21:08:04 +0200
-From: Dmitry Baryshkov <lumag@kernel.org>
-To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Odelu Kukatla <quic_okukatla@quicinc.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
-	Mike Tipton <mdtipton@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V9 4/7] interconnect: qcom: icc-rpmh: Add dynamic icc
- node id support
-Message-ID: <pumodlsgqa43tq6c7hmk4eimf5u26dm3wvra2y27lmu3l6rhks@pjpnhp72pggo>
-References: <20250227155213.404-1-quic_rlaggysh@quicinc.com>
- <20250227155213.404-5-quic_rlaggysh@quicinc.com>
- <gxqjfabcqafqjzzwc3seadfuldqfxlfappsotjbhkbirvorcyd@mahdpv6klwn5>
- <5278cb2e-6111-4e57-86b3-987f6f9eabf6@quicinc.com>
+	s=arc-20240116; t=1741720148; c=relaxed/simple;
+	bh=ALgeYULD97jCKLsl3qy0loXJ7HEmXrOCIreJopYWrd0=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oqc71rPC9M4VvCrrjvqV1y+6XKmDeqwrjS2j6qV3GXZo/PHs6EU7GD9RwOQ5MyvIrtNOYiBEOeS/oxJoTKgMQqqV0C4B+D36DkrNdrNGXrUX3c7WytaCgGsOYY9AcDBTU0vkeA7qcu7XrNmaUkrOYDRsDb+AyV6X2GZYvZVitvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bdb9Gojx; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso64989455e9.1;
+        Tue, 11 Mar 2025 12:09:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741720144; x=1742324944; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=QBYt0BHsxul+nTaYflhpms2js1nZoTfEFczz9ZKES00=;
+        b=Bdb9GojxgdD60vEMRrrtiwfHwxC19pjYgxqZwImc5G5a/vqAzrE+bJ7ecly9Hb8uFA
+         3ojZyy0N3iBcp2RIfTY6tuzWEY8Q7653C4qM8W9UfJ6LKcOGNXfy4qwZYs2w/1qPViqG
+         1S5+BZGDMMfPZf6kLLCdusbFZU/Fr5uN5N/ZA3MgypUzIz+Wnd9v8hWiKBBVlYvQAPlC
+         wRwN+VJc39VuhHTQm9kPZOWpce7/X9IViJdGKWSZMwnrB4ks7IYYw1cvBG1mbpdFashF
+         PwKZOHa5a+3RF1pM4dwOpX+U8iWWwhhj+XYPEs4jGSksxV0HulFz9gfyuCfdL4NSaMxf
+         YTQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741720144; x=1742324944;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QBYt0BHsxul+nTaYflhpms2js1nZoTfEFczz9ZKES00=;
+        b=ah6kPeVsFfVX9agZOAVsgiMrYHT49GqgzL5O3+cPTcV55fW2mnDEIJVcp03c+BT51Q
+         EBsQDmhN7+Bj+d9ESuAFnzvU9OuS8FxXs2WMECHAiWNh4u9aHpIlP3aKM52kN3nv+lah
+         JDzUBi3UG2PEG79mcFVxztlQr1W7Mt/ZCfu20JoC39+NAknaLEpx+u0vUxA+nfCz+yhA
+         6SdXkNnrVBA98oqChvNUMX8M5XJoN1Y+LOcQAaVfGpordX4hWrEbP3eQu9jJOyM69qMP
+         kbl8VpOEr+NOqZx8VxOtsbH8CTSvtGqbJTQ/PPgAcPRNceSikvb5xW2FhYDUxC9j1874
+         xRlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxYndxkIvm7H52a3qSE3zG1ZlIfxpv2jVM2BgY5+WJHHSTwLtzLfgZu4g+eSFJYXrNzZOiDiiaIKaYNaO7@vger.kernel.org, AJvYcCVQxtuQ6+9QucF+0mz95tBTzX95TmyxuKQZnhF3B3jzakcGLcCPZuibsitenK/Uyw66H1P1kHG7lWgx@vger.kernel.org, AJvYcCX+yEikgLk+V7jQG/w7xvfZt5MB/D/yV4ccVylpOR7NoEleURQ8lAHmH3pNDZ8IAqlVHfHn7rVLT+SL@vger.kernel.org, AJvYcCXPCFziVBOqeZgYHigfXaELkOcGR1n6+gB0/SkT93eBAAxz8wRHD0hxlDGcXDe9qUmn8arm+QceAr5g@vger.kernel.org
+X-Gm-Message-State: AOJu0YynmZsfBxd3vtFNj2FnLOM2PXfjGYvbZw5cXTvQh2QiSpURq5gH
+	QQgmFYr/jxRIMfOi4uJNRBlG1FIbhUtBr8QJ9Go4EPu31EsvWU8C
+X-Gm-Gg: ASbGnctLpXKShySXuoVvElfJFf2M3yxFwOWZ3NHRVI6LL76UhhMheXjgsfMsKAEoQ8Y
+	8Ct9BpQIFU7/yWHZF/19juUEF9GaqFj4vdZU/nXQViGmBNpzGJz7Z5M3y+0ztIPEClimeYNYb9h
+	N5lNWdrXLa4dFeL4Lhx3yHopI89MRV7tz6EosLWt9O/ynfoWTJe/0IoQ3NaOdepUbyo51qBqs5C
+	OuvZkzA8BNXxIuDvporxJP76KaDNSwydlhfDOBYpvfQMxWteNOzX2v4Y0DxBQkT63Lza98NCQIk
+	tzJabLlgSis08jJNf7XoOcOxkiIjjM0vZOz5UmstYmEwfv8Mgc+ZBznofgAdNQNYhuRPNub0tZl
+	gfqxNV5MJE9/H
+X-Google-Smtp-Source: AGHT+IEVvLB1J5PdZXBMZwLdi5Sfx5U8w2F5CDI5YD3a5o/Tqdo42jSaYp7CF55JMp1UKEuKA0N/8w==
+X-Received: by 2002:a05:600c:5618:b0:439:9a40:aa0b with SMTP id 5b1f17b1804b1-43cdfb7e4b1mr144023345e9.25.1741720144407;
+        Tue, 11 Mar 2025 12:09:04 -0700 (PDT)
+Received: from Ansuel-XPS. (58.43.196.178.dynamic.cust.swisscom.net. [178.196.43.58])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cf7c8249bsm81906155e9.7.2025.03.11.12.09.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 12:09:03 -0700 (PDT)
+Message-ID: <67d08a4f.7b0a0220.8fe9e.44fd@mx.google.com>
+X-Google-Original-Message-ID: <Z9CKTrERYllmbczJ@Ansuel-XPS.>
+Date: Tue, 11 Mar 2025 20:09:02 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Guo Ren <guoren@kernel.org>, Yangyu Chen <cyy@cyyself.name>,
+	Ben Hutchings <ben@decadent.org.uk>, Felix Fietkau <nbd@nbd.name>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org, linux-mediatek@lists.infradead.org,
+	linux-usb@vger.kernel.org, upstream@airoha.com
+Subject: Re: [PATCH 05/13] dt-bindings: mfd: add Documentation for Airoha
+ EN7581 SCU
+References: <20250309132959.19045-1-ansuelsmth@gmail.com>
+ <20250309132959.19045-6-ansuelsmth@gmail.com>
+ <c1227083-a4ea-4dac-a9db-d6a5386c0437@kernel.org>
+ <67cec328.170a0220.27ecbc.9c6e@mx.google.com>
+ <026296c8-a460-43ca-a423-0fa38269fbc2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5278cb2e-6111-4e57-86b3-987f6f9eabf6@quicinc.com>
+In-Reply-To: <026296c8-a460-43ca-a423-0fa38269fbc2@kernel.org>
 
-On Mon, Mar 10, 2025 at 07:54:15AM +0530, Raviteja Laggyshetty wrote:
-> 
-> 
-> On 2/27/2025 9:46 PM, Dmitry Baryshkov wrote:
-> > On Thu, Feb 27, 2025 at 03:52:10PM +0000, Raviteja Laggyshetty wrote:
-> >> To facilitate dynamic node ID support, the driver now uses
-> >> node pointers for links instead of static node IDs.
-> >> Additionally, the default node ID is set to -1 to prompt
-> >> the ICC framework for dynamic node ID allocation.
+On Mon, Mar 10, 2025 at 12:41:06PM +0100, Krzysztof Kozlowski wrote:
+> On 10/03/2025 11:47, Christian Marangi wrote:
+> > On Mon, Mar 10, 2025 at 10:21:45AM +0100, Krzysztof Kozlowski wrote:
+> >> On 09/03/2025 14:29, Christian Marangi wrote:
+> >>> Add Documentation for Airoha EN7581 SCU.
+> >>>
+> >>> Airoha EN7581 SoC expose registers to control miscellaneous pheriperals
+> >>> via the SCU (System Controller Unit).
+> >>>
+> >>> Example of these pheriperals are reset-controller, clock-controller,
+> >>> PCIe line speed controller and bits to configure different Serdes ports
+> >>> for USB or Ethernet usage.
+> >>>
+> >>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> >>> ---
+> >>>  .../mfd/airoha,en7581-scu-sysctl.yaml         | 68 +++++++++++++++++++
+> >>>  1 file changed, 68 insertions(+)
+> >>>  create mode 100644 Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml b/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
+> >>> new file mode 100644
+> >>> index 000000000000..d7dc66f912c1
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
+> >>> @@ -0,0 +1,68 @@
+> >>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> >>> +%YAML 1.2
+> >>> +---
+> >>> +$id: http://devicetree.org/schemas/mfd/airoha,en7581-scu-sysctl.yaml#
+> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>> +
+> >>> +title: Airoha EN7581 SCU (System Controller Unit)
+> >>> +
+> >>> +maintainers:
+> >>> +  - Christian Marangi <ansuelsmth@gmail.com>
+> >>> +
+> >>> +description:
+> >>> +  Airoha EN7581 SoC expose registers to control miscellaneous
+> >>> +  pheriperals via the SCU (System Controller Unit).
+> >>> +
+> >> One more comment - there is no such thing as "sysctl" in your hardware.
+> >> Look at the SCU binding which clearly says that it is the hardware you
+> >> are duplicating here, so the "System Control Unit".
 > >>
-> >> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> >> ---
-> >>  drivers/interconnect/qcom/icc-rpmh.c | 16 ++++++++++++++--
-> >>  drivers/interconnect/qcom/icc-rpmh.h |  3 ++-
-> >>  2 files changed, 16 insertions(+), 3 deletions(-)
+> >> So you have existing "This node defines the System Control Unit of the
+> >> EN7523 SoC" and you add one more node which defines the "System Control
+> >> Unit", so you have two "System Control Unit" device nodes?
 > >>
-> >> diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
-> >> index f2d63745be54..2e654917f535 100644
-> >> --- a/drivers/interconnect/qcom/icc-rpmh.c
-> >> +++ b/drivers/interconnect/qcom/icc-rpmh.c
-> >> @@ -285,13 +285,25 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
-> >>  			ret = PTR_ERR(node);
-> >>  			goto err_remove_nodes;
-> >>  		}
-> >> +		qn->id = node->id;
-> >>  
-> >>  		node->name = qn->name;
-> >>  		node->data = qn;
-> >>  		icc_node_add(node, provider);
-> >>  
-> >> -		for (j = 0; j < qn->num_links; j++)
-> >> -			icc_link_create(node, qn->links[j]);
-> >> +		for (j = 0; j < qn->num_links; j++) {
-> >> +			struct qcom_icc_node *qn_link_node = qn->link_nodes[j];
-> >> +			struct icc_node *link_node;
-> >> +
-> >> +			if (qn_link_node) {
-> >> +				link_node = icc_node_create(qn_link_node->id);
-> >> +				qn_link_node->id = link_node->id;
-> >> +				icc_link_create(node, qn_link_node->id);
-> > 
-> > I really don't like the idea of reading the ->id back. I think in the
-> > last cycle I have already asked to add an API to link two nodes instead
-> > of linking a node and an ID. Is there an issue with such an API?
-> 
-> Yes, the link pointer may or may not be initialized during the link
-> creation as the link can belong to other provider which is yet to probe.
-> So, it is not possible to pass two node pointers as arguments for linking.
-
-Obviously, this needs to be handled. e.g. by specifying external
-provider + ID from dt-bindings. Yes, it requires a thought on how to
-solve it properly. No, in my opinion, reading the ID back is not a
-viable option. Ideally after converting to dynamic IDs we should be able
-to declare the ID to be an internal detail, which is of no concern to
-ICC providers (or even drop it completely). Historically we have had
-several subsystems which were using single-list IDs. Most of them have
-migrated from using those IDs.
-
-> RPMh driver has multiple providers and during the creation of links,
-> nodes associated with other providers are created in the icc_link_create
-> API. When the actual provider to which the link belongs is probed, its
-> initialization/node creation is skipped by checking the ID. To ensure
-> proper tracking of node initialization and prevent re-initialization, it
-> is essential to read back and store the node’s ID in qnode.
-> 
-> 
-> > 
-> >> +			} else {
-> >> +				/* backward compatibility for target using static IDs */
-> >> +				icc_link_create(node, qn->links[j]);
-> >> +			}
-> >> +		}
-> >>  
-> >>  		data->nodes[i] = node;
-> >>  	}
-> >> diff --git a/drivers/interconnect/qcom/icc-rpmh.h b/drivers/interconnect/qcom/icc-rpmh.h
-> >> index 82344c734091..cf4aa69c707c 100644
-> >> --- a/drivers/interconnect/qcom/icc-rpmh.h
-> >> +++ b/drivers/interconnect/qcom/icc-rpmh.h
-> >> @@ -95,7 +95,8 @@ struct qcom_icc_qosbox {
-> >>  struct qcom_icc_node {
-> >>  	const char *name;
-> >>  	u16 links[MAX_LINKS];
-> >> -	u16 id;
-> >> +	struct qcom_icc_node *link_nodes[MAX_LINKS];
-> >> +	int id;
-> >>  	u16 num_links;
-> >>  	u16 channels;
-> >>  	u16 buswidth;
-> >> -- 
-> >> 2.43.0
+> >> Look also what Stephen asked for:
+> >>
+> >> https://lore.kernel.org/all/20220106013100.842FCC36AEB@smtp.kernel.org/
+> >>
+> >> so how system-controller can now became clock-controller? Now, it was
+> >> the system controller since the beginning.
 > >>
 > > 
+> > The main problem here (and we had a similar problem with GPIO and PWM)
+> > is that the Vendor (Airoha) wasn't so bright in placing the different
+> > registers for the SoC so we have case where everything is mixed and not
+> > one after another... 
+> > 
+> > Example we have 
+> > - CLK register part 1
+> > - Some bits that configure PCIe
+> > - CLK register part 2
+> > - GPIO
+> > - CLK register part 3
+> > - ...
 > 
+> This does not explain that binding said "This node defines the System
+> Control Unit".
+> 
+> So what are you adding here if not SCU?
+>
+
+With "This node defines the System Control Unit" I mean, the entire
+register space of the IP block is defined and each child specifically
+define each part of the IP block.
+
+> > 
+> > The driver solution for this is syscon and the simple-mfd node
+> > structure.
+> 
+> Let's keep driver entirely separate, we don't talk about them and mixing
+> arguments won't make it easier.
+> 
+
+Ok.
+
+> > 
+> > Now the main problem is how to modle this in DT. There are lots of case
+> > where the simple-mfd model is used (like the one proposed) but probably
+> > this is not accepted anymore. But again this should be clearly stated or
+> > we have a chicken-egg problem when other devs implement similar thing and
+> > have to implement simple MFD driver to handle this. (and driver
+> > maintainers say "Use the simple-mfd model like it was already done)
+> 
+> simple-mfd has nothing to do here. Describe the hardware - what is the SCU?
+> 
+> 
+
+As I said below, SCU is just the name used in Airoha Documentation for
+this IP block. In this register space there are multiple things so it's
+not strictly a clock-controller (as it's currently defined)
+
+It was proposed as clock-controller previously as we weren't aware this
+IP block was used also for other usage that a strict clock controller.
+
+> > 
+> > For this specific case (and to give an answer to the clock patch after
+> > this) the problem is that this register space was originally used only
+> > to control the clock and I wasn't aware that it was also used to control
+> > USB. Now that I'm implementing support for it, the disaster happened.
+> > 
+> > So In short SCU is lots of thing, both a system-controller, a
+> > clock-controller and even a reset-controller.
+> 
+> And you have bindings for that already. Done.
+> 
+
+It's currently defined in DTS as clock-controller, should we change it
+to system-controller to make it more clear?
+
+> > 
+> > To make it short, 2 different solution:
+> > 1. We can keep the current node structure of the node-controller and add a
+> > child node for the SSR part (with a dedicated compatible).
+> 
+> No, you do not add child nodes just because you want some drivers.
+> 
+> What is SSR? How is it a device?
+
+SSR is the name used in Documentation for the register used to configure
+the Serdes and PCIe port.
+
+> 
+> > 2. Those property need to be be defined in the clock-controller node?
+> 
+> In the SCU node. Do you have only one SCU or more?
+
+Strictly speaking it's one register space. One clock-controller, one
+reset-controller and one set of SSR registers, and from what I can
+understand it's ALWAYS "One device/compatible for Register space"
+
+The simple-mfd pattern can't really work for case like this where in one
+register space there are multiple stuff.
+
+Is everything clear now?
+
+To summarize:
+- no child nodes
+- add additional property for SSR in the SCU .yaml
+
+> 
+> > 
+> > The ideal solution is 1. Does it work for you?
+> > 
+> > Sorry for the long post and hope you understand why this mess of
+> > reworking the binding.
+> > 
+> 
+> 
+> Best regards,
+> Krzysztof
 
 -- 
-With best wishes
-Dmitry
+	Ansuel
 
