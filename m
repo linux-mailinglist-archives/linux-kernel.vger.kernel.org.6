@@ -1,172 +1,212 @@
-Return-Path: <linux-kernel+bounces-556399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9722BA5C6BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:28:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54218A5C646
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:23:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB2AA3AB571
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:22:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51C2D7A9012
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C2525F965;
-	Tue, 11 Mar 2025 15:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A147E25F782;
+	Tue, 11 Mar 2025 15:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="bLKeJfqL"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y5zCKpAA"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCB0249F9;
-	Tue, 11 Mar 2025 15:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291D725DD08
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741706509; cv=none; b=cGT+wFlekQDI31cs5rAkyaZp5sznKKXbFdLklfi3l9ZP9Xq7KY8V8m0VFSZkWVDJdXo44brzpUDz5sauWrgZs4PI86qKD5TkPIcantcRqghWm5ZRmZmsyYFaTVr8n/pIsbC/Ry6Tb4HOuXzeF7VYfhoQSrKvorr1/1jEGtDnwmQ=
+	t=1741706558; cv=none; b=kcq2xiyQTvZs48+fOlirULlsmKQszxuPakKjGyLI98tY3RuxnN53PHo8R1mXvC+4OrXPFeBR+Sj2z7j8VTR+r01D4cBtZd4KeT1ILjwFwFZpL3i2yZJqxzrzN95oC7Uaak74PEjaN25O0m5nfQu/Lp+z9uZ9nsXASCw5n+zw4E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741706509; c=relaxed/simple;
-	bh=BRIerRhMDBgnyf720IdQcAp71wVmGDkhMc0a+8VEsT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NQvFzBwxH999xdGo4FhOx+Eatdln6Y10b37PbCk9twEz93Y5aFkzdTim109ppL2J5CMZsbIwRa0Pzw79dnvwd3JKDEVkbS1nnSrFjL8OPndSD/Qjqi0pTY7FVN0J14v+y2gbfy6XY/QPbfvzodN4QI8fb5fUvOQsDiZfcGuqQJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=bLKeJfqL; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=Ool8GRiW/HZCPfD4470uVk0ukB9vkhzB98xjnc0KA8k=; t=1741706506;
-	x=1742138506; b=bLKeJfqL95WWPAZ+gWrkBNis/avoF5mLHlEObMO+1fXtuL3W6QgMeKPojggz1
-	qvjfpRl5rh4B2TOlxt6jY6MTASKa0i9HgouORwBRBPOaMElKk+Q07nfpAbdLHrUElpHMsrEcK1i/Z
-	/0wmSjOsj0St/YXscaxgPR/zRym3XbNdCp/sTV136O7B0n+AFMnU9QG8yZGEVeiaqlM3KktH9Ddg2
-	7RMFe6RFxkFof8sd2qiYiF/H29i7yE+c1Osq2TT/MRP2rWvJ6mx/T2Lf5oFHEN2/AJqeA49msGFQ5
-	gmnvz8EPhyJjPUxXtHcVkUMXMYdyTdVLNGpqB10BVeZJ7xbWJA==;
-Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	id 1ts1QI-0048RR-2z;
-	Tue, 11 Mar 2025 16:21:39 +0100
-Message-ID: <0ad035ff-400e-4b15-8b8f-40b69152ec46@leemhuis.info>
-Date: Tue, 11 Mar 2025 16:21:38 +0100
+	s=arc-20240116; t=1741706558; c=relaxed/simple;
+	bh=UxtYwYns0MvhCa2m5ObZdAnlsKQGOnGlpHac9oEyev4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lcPoJsP0XxlDPVjFftAmaxGd8ReZIjSJdqKdk8KFJpmZlxE9JVY8itV3tqAzItqJYfzZB6MuaUzZi4zpIALe+ijM5auh2Fk7KSWyQydPMixhH211JaE0RxS5UXQY05ljVmoy566aLcu5BIK7bBAbEJCG5OHrYJBVGiBi02rr5zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y5zCKpAA; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6fd8be1e534so52935377b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:22:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741706555; x=1742311355; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HdiaqU+kYXkNBNnpqC5PVQou0G4lEwUYRv6GT9pOGpI=;
+        b=Y5zCKpAAqvWWdwWu3jfhumpmdT2BGNTxA4Pm54r6smnlF0Eyvj6uRToq4TXKY/r6nL
+         sO7XcgyWOp/djAQjvurj2fhezVxcxIKfOts9SzpvpF6KTyUm2A8pIAhPV8qHUTp/4XA/
+         wpF3+pLFVig7ddquS7HSTFK2hKxfm2wIXK7B6N7T3xTLPnbRiQXTiMvgkSbi9wEAGuTz
+         BxOdl1y+89pkyoaGAo6ZdpcKaj8H9f9SStR1Tf6AykwsEq3iJxbGsjoOwdnoVuV2cOAL
+         xt9wU1gg4Gs7AULsLI/dePUBD6xlLWsD8QpGjSu/+nXInCInULD0DeXg7uEBTBECL1np
+         qckw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741706555; x=1742311355;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HdiaqU+kYXkNBNnpqC5PVQou0G4lEwUYRv6GT9pOGpI=;
+        b=mvs4GORdyb9yL2lDdTbKD+HKDHlQCGlv6QzKtazrTn1j/NSX8iTxhPzPfkL3H9577i
+         NixgiI6Fk1Cxl6FMBcvteggKUmmOsSEznFocqB8Xv4crjqd600A1V4ezy/DQoWMCDk/8
+         s8IQKpqQLfVGv57CC8BHPLRaYNNUeAvMhvbqO32rvqDDIoHPU0IkUFeUuv9P04TUbRgE
+         L8tOy4Wql+m9oOdRCFBvxnZN+j1oqs+tRDpXoiU9Qag0oznEEh25N7WVIK8RB/R7SHfm
+         Jo80TjAgfw3JG39OY6cJNAc2PZ++tooJ7YYn6MaTpSvN+62aosQ1Zj8bl00T+pRCC49/
+         9nEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdEVZRo0gRiEFGNBgnuH+RG7LNHVLKNCFYt69FjMb/dOXQ/xiKm+/upvwD0bjmV49qUjYE7Q9lkraYYRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeKAcO4XhvTUMOYTv9Z5UrlmLEvhVPwtr5ANo+X1r25jEt/dvy
+	dFAjaxPqa+nzLQaMn9MLOgUqEfc1rmZT2W448n28oRuX1tPyk1zx5K/Xj4RTt/ks/U3Q6VGk5A4
+	WFS0jM30q4xaQzprm+Y0Giy8wW2i7xbW1GXdIag==
+X-Gm-Gg: ASbGnctfh0/1S7BXFbnHS4EwaMvByS0Jvt79SfelRZ1gFEsuzmOVpLaEV1hS/83Z9xv
+	k6gqiQ0t3oifEOk7YBLBx/VbtuRM68McqIArNn9HuSijfp2QPdQjt0QjucbC3vLbQOE3Exr+kdy
+	huhdDadjh0jYzF8MaUnzqqtQJFJOc=
+X-Google-Smtp-Source: AGHT+IGAy6+55/xUbWPLWAhWa/JJEH75eRRXo5nC8iwxe2xNn2XBzu/ByvzI/h9Bw5amhUiPp08ireVcbtB30aKD1pc=
+X-Received: by 2002:a05:690c:688f:b0:6f9:88b7:b6b7 with SMTP id
+ 00721157ae682-6febf3e990dmr252844457b3.37.1741706554935; Tue, 11 Mar 2025
+ 08:22:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Build error on -next due to tpm_crb.c changes? (was: Re: [PATCH v6
- 0/5] Add support for the TPM FF-A start method)
-To: Stuart Yoder <stuart.yoder@arm.com>, jarkko@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- lenb@kernel.org, rafael@kernel.org, jgg@ziepe.ca, peterhuewe@gmx.de,
- sudeep.holla@arm.com, linux-integrity@vger.kernel.org,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250305173611.74548-1-stuart.yoder@arm.com>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: de-DE, en-US
-Autocrypt: addr=linux@leemhuis.info; keydata=
- xsFNBFJ4AQ0BEADCz16x4kl/YGBegAsYXJMjFRi3QOr2YMmcNuu1fdsi3XnM+xMRaukWby47
- JcsZYLDKRHTQ/Lalw9L1HI3NRwK+9ayjg31wFdekgsuPbu4x5RGDIfyNpd378Upa8SUmvHik
- apCnzsxPTEE4Z2KUxBIwTvg+snEjgZ03EIQEi5cKmnlaUynNqv3xaGstx5jMCEnR2X54rH8j
- QPvo2l5/79Po58f6DhxV2RrOrOjQIQcPZ6kUqwLi6EQOi92NS9Uy6jbZcrMqPIRqJZ/tTKIR
- OLWsEjNrc3PMcve+NmORiEgLFclN8kHbPl1tLo4M5jN9xmsa0OZv3M0katqW8kC1hzR7mhz+
- Rv4MgnbkPDDO086HjQBlS6Zzo49fQB2JErs5nZ0mwkqlETu6emhxneAMcc67+ZtTeUj54K2y
- Iu8kk6ghaUAfgMqkdIzeSfhO8eURMhvwzSpsqhUs7pIj4u0TPN8OFAvxE/3adoUwMaB+/plk
- sNe9RsHHPV+7LGADZ6OzOWWftk34QLTVTcz02bGyxLNIkhY+vIJpZWX9UrfGdHSiyYThHCIy
- /dLz95b9EG+1tbCIyNynr9TjIOmtLOk7ssB3kL3XQGgmdQ+rJ3zckJUQapLKP2YfBi+8P1iP
- rKkYtbWk0u/FmCbxcBA31KqXQZoR4cd1PJ1PDCe7/DxeoYMVuwARAQABzSdUaG9yc3RlbiBM
- ZWVtaHVpcyA8bGludXhAbGVlbWh1aXMuaW5mbz7CwZQEEwEKAD4CGwMFCwkIBwMFFQoJCAsF
- FgIDAQACHgECF4AWIQSoq8a+lZZX4oPULXVytubvTFg9LQUCX31PIwUJFmtPkwAKCRBytubv
- TFg9LWsyD/4t3g4i2YVp8RoKAcOut0AZ7/uLSqlm8Jcbb+LeeuzjY9T3mQ4ZX8cybc1jRlsL
- JMYL8GD3a53/+bXCDdk2HhQKUwBJ9PUDbfWa2E/pnqeJeX6naLn1LtMJ78G9gPeG81dX5Yq+
- g/2bLXyWefpejlaefaM0GviCt00kG4R/mJJpHPKIPxPbOPY2REzWPoHXJpi7vTOA2R8HrFg/
- QJbnA25W55DzoxlRb/nGZYG4iQ+2Eplkweq3s3tN88MxzNpsxZp475RmzgcmQpUtKND7Pw+8
- zTDPmEzkHcUChMEmrhgWc2OCuAu3/ezsw7RnWV0k9Pl5AGROaDqvARUtopQ3yEDAdV6eil2z
- TvbrokZQca2808v2rYO3TtvtRMtmW/M/yyR233G/JSNos4lODkCwd16GKjERYj+sJsW4/hoZ
- RQiJQBxjnYr+p26JEvghLE1BMnTK24i88Oo8v+AngR6JBxwH7wFuEIIuLCB9Aagb+TKsf+0c
- HbQaHZj+wSY5FwgKi6psJxvMxpRpLqPsgl+awFPHARktdPtMzSa+kWMhXC4rJahBC5eEjNmP
- i23DaFWm8BE9LNjdG8Yl5hl7Zx0mwtnQas7+z6XymGuhNXCOevXVEqm1E42fptYMNiANmrpA
- OKRF+BHOreakveezlpOz8OtUhsew9b/BsAHXBCEEOuuUg87BTQRSeAENARAAzu/3satWzly6
- +Lqi5dTFS9+hKvFMtdRb/vW4o9CQsMqL2BJGoE4uXvy3cancvcyodzTXCUxbesNP779JqeHy
- s7WkF2mtLVX2lnyXSUBm/ONwasuK7KLz8qusseUssvjJPDdw8mRLAWvjcsYsZ0qgIU6kBbvY
- ckUWkbJj/0kuQCmmulRMcaQRrRYrk7ZdUOjaYmjKR+UJHljxLgeregyiXulRJxCphP5migoy
- ioa1eset8iF9fhb+YWY16X1I3TnucVCiXixzxwn3uwiVGg28n+vdfZ5lackCOj6iK4+lfzld
- z4NfIXK+8/R1wD9yOj1rr3OsjDqOaugoMxgEFOiwhQDiJlRKVaDbfmC1G5N1YfQIn90znEYc
- M7+Sp8Rc5RUgN5yfuwyicifIJQCtiWgjF8ttcIEuKg0TmGb6HQHAtGaBXKyXGQulD1CmBHIW
- zg7bGge5R66hdbq1BiMX5Qdk/o3Sr2OLCrxWhqMdreJFLzboEc0S13BCxVglnPqdv5sd7veb
- 0az5LGS6zyVTdTbuPUu4C1ZbstPbuCBwSwe3ERpvpmdIzHtIK4G9iGIR3Seo0oWOzQvkFn8m
- 2k6H2/Delz9IcHEefSe5u0GjIA18bZEt7R2k8CMZ84vpyWOchgwXK2DNXAOzq4zwV8W4TiYi
- FiIVXfSj185vCpuE7j0ugp0AEQEAAcLBfAQYAQoAJgIbDBYhBKirxr6Vllfig9QtdXK25u9M
- WD0tBQJffU8wBQkWa0+jAAoJEHK25u9MWD0tv+0P/A47x8r+hekpuF2KvPpGi3M6rFpdPfeO
- RpIGkjQWk5M+oF0YH3vtb0+92J7LKfJwv7GIy2PZO2svVnIeCOvXzEM/7G1n5zmNMYGZkSyf
- x9dnNCjNl10CmuTYud7zsd3cXDku0T+Ow5Dhnk6l4bbJSYzFEbz3B8zMZGrs9EhqNzTLTZ8S
- Mznmtkxcbb3f/o5SW9NhH60mQ23bB3bBbX1wUQAmMjaDQ/Nt5oHWHN0/6wLyF4lStBGCKN9a
- TLp6E3100BuTCUCrQf9F3kB7BC92VHvobqYmvLTCTcbxFS4JNuT+ZyV+xR5JiV+2g2HwhxWW
- uC88BtriqL4atyvtuybQT+56IiiU2gszQ+oxR/1Aq+VZHdUeC6lijFiQblqV6EjenJu+pR9A
- 7EElGPPmYdO1WQbBrmuOrFuO6wQrbo0TbUiaxYWyoM9cA7v7eFyaxgwXBSWKbo/bcAAViqLW
- ysaCIZqWxrlhHWWmJMvowVMkB92uPVkxs5IMhSxHS4c2PfZ6D5kvrs3URvIc6zyOrgIaHNzR
- 8AF4PXWPAuZu1oaG/XKwzMqN/Y/AoxWrCFZNHE27E1RrMhDgmyzIzWQTffJsVPDMQqDfLBhV
- ic3b8Yec+Kn+ExIF5IuLfHkUgIUs83kDGGbV+wM8NtlGmCXmatyavUwNCXMsuI24HPl7gV2h n7RI
-In-Reply-To: <20250305173611.74548-1-stuart.yoder@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1741706507;6cfd430a;
-X-HE-SMSGID: 1ts1QI-0048RR-2z
+References: <CGME20250310090220eucas1p1d5cf6a56935e21b5854f77fdc22236b1@eucas1p1.samsung.com>
+ <20250310090211.286549-1-m.wilczynski@samsung.com> <20250310090211.286549-5-m.wilczynski@samsung.com>
+In-Reply-To: <20250310090211.286549-5-m.wilczynski@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 11 Mar 2025 16:21:59 +0100
+X-Gm-Features: AQ5f1JoXRXq5ucc-B5U0o3JR0rVlad9-RVtJACjXjl-xVuXRu_bgY0MVKH5Qe8E
+Message-ID: <CAPDyKFpAxkVgscMQpe2MZFCmNyaFq9YqiPQknLDf3CJ9zMdZ6g@mail.gmail.com>
+Subject: Re: [PATCH v7 4/5] pmdomain: thead: Add power-domain driver for TH1520
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, 
+	guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, jszhang@kernel.org, 
+	m.szyprowski@samsung.com, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 05.03.25 18:36, Stuart Yoder wrote:
-> Firmware Framework for Arm A-profile (FF-A) is a messaging framework
-> for Arm-based systems, and in the context of the TPM CRB driver is used
-> to signal 'start' to a CRB-based TPM service which is hosted in an
-> FF-A secure partition running in TrustZone.
-> 
-> These patches add support for the CRB FF-A start method defined
-> in the TCG ACPI specification v1.4 and the FF-A ABI defined
-> in the Arm TPM Service CRB over FF-A (DEN0138) specification:
-> https://developer.arm.com/documentation/den0138/latest/
-> [...]
-> Stuart Yoder (5):
->   tpm_crb: implement driver compliant to CRB over FF-A
->   tpm_crb: clean-up and refactor check for idle support
->   ACPICA: add start method for Arm FF-A
->   tpm_crb: add support for the Arm FF-A start method
->   Documentation: tpm: add documentation for the CRB FF-A interface
-> 
->  Documentation/security/tpm/tpm_ffa_crb.rst |  65 ++++
->  drivers/char/tpm/Kconfig                   |   9 +
->  drivers/char/tpm/Makefile                  |   1 +
->  drivers/char/tpm/tpm_crb.c                 | 105 +++++--
->  drivers/char/tpm/tpm_crb_ffa.c             | 348 +++++++++++++++++++++
->  drivers/char/tpm/tpm_crb_ffa.h             |  25 ++
->  include/acpi/actbl3.h                      |   1 +
-> [...]
+On Mon, 10 Mar 2025 at 10:02, Michal Wilczynski
+<m.wilczynski@samsung.com> wrote:
+>
+> The T-Head TH1520 SoC contains multiple power islands that can be
+> programmatically turned on and off using the AON (Always-On) protocol
+> and a hardware mailbox [1]. The relevant mailbox driver has already been
+> merged into the mainline kernel in commit 5d4d263e1c6b ("mailbox:
+> Introduce support for T-head TH1520 Mailbox driver");
+>
+> Introduce a power-domain driver for the TH1520 SoC, which is using AON
+> firmware protocol to communicate with E902 core through the hardware
+> mailbox. This way it can send power on/off commands to the E902 core.
+>
+> The interaction with AUDIO power island e.g trying to turn it OFF proved
+> to crash the firmware running on the E902 core. Introduce the workaround
+> to disable interacting with the power island.
+>
+> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [1]
+>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
 
-My daily linux-next builds for Fedora failed building on ARM64 today. I did
-not bisect, but from the error message I suspect it's du to  patches in this
-series touching drivers/char/tpm/tpm_crb.c :
+[...]
 
-ld: Unexpected GOT/PLT entries detected!
-ld: Unexpected run-time procedure linkages detected!
-ld: drivers/char/tpm/tpm_crb.o: in function `crb_cancel':
-/builddir/foo//drivers/char/tpm/tpm_crb.c:496:(.text+0x2c0): undefined reference to `tpm_crb_ffa_start'
-ld: drivers/char/tpm/tpm_crb.o: in function `__crb_request_locality':
-/builddir/foo/drivers/char/tpm/tpm_crb.c:285:(.text+0x768): undefined reference to `tpm_crb_ffa_start'
-ld: drivers/char/tpm/tpm_crb.o: in function `__crb_relinquish_locality':
-/builddir/foo/drivers/char/tpm/tpm_crb.c:319:(.text+0x81c): undefined reference to `tpm_crb_ffa_start'
-ld: drivers/char/tpm/tpm_crb.o: in function `__crb_request_locality':
-/builddir/foo/drivers/char/tpm/tpm_crb.c:285:(.text+0x8bc): undefined reference to `tpm_crb_ffa_start'
-ld: drivers/char/tpm/tpm_crb.o: in function `__crb_relinquish_locality':
-/builddir/foo/drivers/char/tpm/tpm_crb.c:319:(.text+0x958): undefined reference to `tpm_crb_ffa_start'
-ld: drivers/char/tpm/tpm_crb.o:/builddir/foo/drivers/char/tpm/tpm_crb.c:474: more undefined references to `tpm_crb_ffa_start' follow
-ld: drivers/char/tpm/tpm_crb.o: in function `crb_acpi_add':
-/builddir/foo/drivers/char/tpm/tpm_crb.c:830:(.text+0x1518): undefined reference to `tpm_crb_ffa_init'
-make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error 1
-make[1]: *** [/builddir/foo/Makefile:1242: vmlinux] Error 2
-make: *** [Makefile:259: __sub-make] Error 2
+> +
+> +static int th1520_pd_probe(struct platform_device *pdev)
+> +{
+> +       struct generic_pm_domain **domains;
+> +       struct genpd_onecell_data *pd_data;
+> +       struct th1520_aon_chan *aon_chan;
+> +       struct device *dev = &pdev->dev;
+> +       int i;
+> +
+> +       aon_chan = th1520_aon_init(dev);
+> +       if (IS_ERR(aon_chan))
+> +               return dev_err_probe(dev, PTR_ERR(aon_chan),
+> +                                    "Failed to get AON channel\n");
+> +
+> +       platform_set_drvdata(pdev, aon_chan);
+> +
+> +       domains = devm_kcalloc(dev, ARRAY_SIZE(th1520_pd_ranges),
+> +                              sizeof(*domains), GFP_KERNEL);
+> +       if (!domains)
+> +               return -ENOMEM;
+> +
+> +       pd_data = devm_kzalloc(dev, sizeof(*pd_data), GFP_KERNEL);
+> +       if (!pd_data)
+> +               return -ENOMEM;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(th1520_pd_ranges); i++) {
+> +               struct th1520_power_domain *pd;
+> +
+> +               if (th1520_pd_ranges[i].disabled)
+> +                       continue;
+> +
+> +               pd = th1520_add_pm_domain(dev, &th1520_pd_ranges[i]);
+> +               if (IS_ERR(pd))
+> +                       return PTR_ERR(pd);
+> +
+> +               pd->aon_chan = aon_chan;
+> +               domains[i] = &pd->genpd;
+> +               dev_dbg(dev, "added power domain %s\n", pd->genpd.name);
+> +       }
+> +
+> +       pd_data->domains = domains;
+> +       pd_data->num_domains = ARRAY_SIZE(th1520_pd_ranges);
+> +       pd_data->xlate = th1520_pd_xlate;
+> +
+> +       /*
+> +        * Initialize all power domains to off to ensure they start in a
+> +        * low-power state. This allows device drivers to manage power
+> +        * domains by turning them on or off as needed.
+> +        */
+> +       th1520_pd_init_all_off(domains, dev);
+> +
+> +       return of_genpd_add_provider_onecell(dev->of_node, pd_data);
 
-Full log:
-https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-41-aarch64/08750241-next-next-all/builder-live.log.gz
+If this fails, we should clean-up properly, not just returning an error code.
 
-Same problem on Fedora 40, 42 and 43. 
+> +}
+> +
+> +static void th1520_pd_remove(struct platform_device *pdev)
+> +{
+> +       struct th1520_aon_chan *aon_chan = platform_get_drvdata(pdev);
+> +
+> +       th1520_aon_deinit(aon_chan);
 
-Ciao, Thorsten
+The genpd providers need to be cleaned-up here too.
+
+Or, as I said before, if you think doing a proper clean-up is going to
+be a problem (in most cases it is), we can also make this a
+builtin_platform_driver() with "suppress_bind_attrs = true".
+
+> +}
+> +
+> +static const struct of_device_id th1520_pd_match[] = {
+> +       { .compatible = "thead,th1520-aon" },
+> +       { /* Sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, th1520_pd_match);
+> +
+> +static struct platform_driver th1520_pd_driver = {
+> +       .driver = {
+> +               .name = "th1520-pd",
+> +               .of_match_table = th1520_pd_match,
+> +       },
+> +       .probe = th1520_pd_probe,
+> +       .remove = th1520_pd_remove,
+> +};
+> +module_platform_driver(th1520_pd_driver);
+> +
+> +MODULE_AUTHOR("Michal Wilczynski <m.wilczynski@samsung.com>");
+> +MODULE_DESCRIPTION("T-HEAD TH1520 SoC power domain controller");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.34.1
+>
+
+Kind regards
+Uffe
 
