@@ -1,146 +1,227 @@
-Return-Path: <linux-kernel+bounces-555519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0BAA5B8F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:01:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 545E7A5B8FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:01:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 285E93A9924
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:00:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444F91891098
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838952222CC;
-	Tue, 11 Mar 2025 05:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A95222596;
+	Tue, 11 Mar 2025 05:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmTErZmr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LttAcm9D"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2057.outbound.protection.outlook.com [40.107.243.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEC81E7C2F;
-	Tue, 11 Mar 2025 05:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741672666; cv=none; b=kdC0VLOm6T49XH4TMxoYAZchwl4zN0HmEjOP7RIQpp6pYsPfwxrHL/Jg9bAuQnIJ8yMXHE1WMOQMJ9kAtjdbbbdQqCjbROSB77m3Vy0FQIha5amzSf1XI2JnuKFbTGuGk1JnmQ6aCXO4VzL5CjE4L+WiXZCb5VtvNustkejzcBA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741672666; c=relaxed/simple;
-	bh=BYwU/E93/QHnTs75zXL/K5KaaL59dt5dqcEKsspSbzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6dpsoZ0VxKAuWORjIO9mpfXc0gdRGAi9S5JNsG2g3jXhohwF4Yp/vrR7td22L8hutpf9LHTrZtfYLGSlJleL96yUhPuljyeLLe+21NbjtX2F4mZDN88MIfNhfHUygaU3mdaWrvYoGLiSJzqpOtq18t4E2gbHcxIWhViUxQeAbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmTErZmr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B78FCC4CEE9;
-	Tue, 11 Mar 2025 05:57:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741672666;
-	bh=BYwU/E93/QHnTs75zXL/K5KaaL59dt5dqcEKsspSbzo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dmTErZmrStaJuWPq1Y2KiGUlkJyWnCTthhB4B91JAVbdcH9I2nMKyf/7Fd4sug/pB
-	 N7nEu2kNBk1O0Ul+w/IBo19oXH5glyY2bbtD6tCtn0BJHbkHTd1iWoNnx2w3T9m+7H
-	 IxxQVA4Y4Lv0jGi6PXT0q9QqF5s7ZqRI2g89QBdwAFMPmOQwhOa9TxU3xtlxsqpRqF
-	 lYy7nKRBTlEc1vamVRBquPAmfL9PiTgEWIBb6xcf97y28M06V5hY0PpqPM3HaTZw4K
-	 HfU+XsvU0VemNSiwuoybyIXmF+A+kWMDABoLN29HvFjqUrPbxMBmNFc1zs7FVelcPG
-	 fJ1v7DiVKuKeg==
-Date: Tue, 11 Mar 2025 07:57:23 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-	Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>,
-	Stafford Horne <shorne@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>,
-	Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH 05/13] MIPS: make setup_zero_pages() use memblock
-Message-ID: <Z8_Qw9Soe5bzWJ44@kernel.org>
-References: <20250306185124.3147510-1-rppt@kernel.org>
- <20250306185124.3147510-6-rppt@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4F71EFF88;
+	Tue, 11 Mar 2025 05:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741672685; cv=fail; b=WIxDtHtENtHexuKGr6IscuU7szpSZ1I+wVRbCsYt3pdiXiuwFkgR3YiltacURoiIY6SpSyNJrFvso5/iUo0nku8dlW8UBdQsbbm/aQvkZEEWEO6qWRePEPKLwLmfBGnIsayIM118ed3sBOqE314eEQmTULRMpm2O5YWZO0XKC58=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741672685; c=relaxed/simple;
+	bh=k0eIq7RYkOrEq4YjGpihOyPX1a90gIteNjnoeUMPVLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LeaRV6kY3x5UIp1XKj30QPG9Sq6/vlWB57qD4FM+l+ytDFsaGp6Pgk7Ng1+dNdIgp0bL31eLT1YI7/JDhhEtW75LcsVsZ9ZzJJ4Sl9qYGE8N+J9OF9jn6IpHIlijgw4iJ4WRwFE3S7CyzCsZHUBxpVr4sClXsT8M9AziMihMRHY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LttAcm9D; arc=fail smtp.client-ip=40.107.243.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RJYSoxdmGqct8NQpYEUs+N/YC1lPq0q+A9aJy7khsM70k6cg7w001eU+0lLWjSMSED3F70+jnLh/wGBC6XeS8SKiPv/XeDCmzRAxZGgYfNclNtzpRhRysWPOYZi7Hh5fQlt9AIXwQ5fFb0NvclKar8q19B9y54i2vaOQG+UAlZ+g8+dHS+edw+uPnmNH2xG6CXxWpVh8FN4qDBg+736cw2hqCUBRr87v9HRkNny7HQk2y5txY+zf2tctWaceeyn9n/yymvoXVLsZV/ibgHXHKkdcJSI04b1YmsAwVQHHrPFNb8SGh5Xxv/UvsEQ+R6BOnF/9QhbbnAnEX5Wk98kBkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=54adK4GQMIVneA7wT+l2vGzVk0FH6mmIiF3divPfbuA=;
+ b=hFMom3i8B/Rj7QKc72ZItL+NUU8SR6HLjX3tC3/tJduk46amBCXwgQIfIUeOm5KjNcNKqjBxphLCOSiJYHaxnHM5TJ9Dw5tHuw0mJE7tUNnOrbt2mcnIsfyFM/jeirr0Sm8gt128QjR5Wlwr//YpQ0HlQhkq2hTff+Q1DrUKPJKRUm1LMpSDOknD3CJ6ncKxj3Vk27IXQFJtPK1jy3YeJL7l94H9kZlZlx9Sths56OC3SBCCzNvZsuhoKLaO5xh2Q/3/dV7XeWt0eSBJGxjg4MGCW5VmPEumg1sXY+NsMFszgX5P9AnW5ohWfBc0th/g45QlxWH0Avso0ADoj+cDcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=54adK4GQMIVneA7wT+l2vGzVk0FH6mmIiF3divPfbuA=;
+ b=LttAcm9DwZyWhSRAS/LaBrW/RjgrLtNDHPyE6gKQREpE7AuOoPo2m/XKmR0/TwAH1CDzw3h8I2j9AF1jO9Su43qY0vFXiUTjcPU5p8UGHG1mUv6PWlgkWUPKaESLmRdaW5GDeKDWy1XUBCtnC5YeGWbwB+du7Ekigr3h1HXcg4mHvWNNOh4bZ8RLkwa9F4fNB2WFO6O3Q74WCXEGllGgE8TfMMnp1TayxtPbXpzBSW00wrbFBv5I3UL+DPxYt6dN5kKQiSlFIyLr6ZnI6dZUFetvHB29CPi/kt6JW1SI2b4Ox1cU2aUPmLTNmzmz6qIR6pXdk83Ogvq63aIZXDgSIg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ SN7PR12MB7955.namprd12.prod.outlook.com (2603:10b6:806:34d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
+ 2025 05:58:01 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%6]) with mapi id 15.20.8511.025; Tue, 11 Mar 2025
+ 05:58:00 +0000
+Date: Tue, 11 Mar 2025 16:57:49 +1100
+From: Alistair Popple <apopple@nvidia.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Dave Airlie <airlied@redhat.com>, Lucas De Marchi <lucas.demarchi@intel.com>, 
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, DRM XE List <intel-xe@lists.freedesktop.org>, 
+	Balbir Singh <balbirs@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
+	DRI <dri-devel@lists.freedesktop.org>
+Subject: Re: linux-next: manual merge of the drm-xe tree with the mm tree
+Message-ID: <kk4fmefhwnis4lwlvssgu6t54o5mkahgyz4cm3wjh2hgtriexh@x3xseg5v7nrm>
+References: <20250307122954.1ab65809@canb.auug.org.au>
+ <20250311131214.530934a4@canb.auug.org.au>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311131214.530934a4@canb.auug.org.au>
+X-ClientProxiedBy: MEVPR01CA0003.ausprd01.prod.outlook.com
+ (2603:10c6:220:204::12) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306185124.3147510-6-rppt@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SN7PR12MB7955:EE_
+X-MS-Office365-Filtering-Correlation-Id: 49068d9d-793c-4c1e-3f57-08dd6061ae26
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?V7iVb75IxU+2uVLSdkd9iJASdwtPqHm4Q0FK6UE7LV2zsAQboGmNEPiiu3rx?=
+ =?us-ascii?Q?clt+cEJalM6SU8yWH10D+Ks/Vy6QT5Au+qOTy3mSEYGOoxcCAXpw9NtfMnKZ?=
+ =?us-ascii?Q?ir+v0G0GMGWYCsEhxBcD1eDYpDRv07gYYXyZxWBLSsfk+VLr1MXR0tvXqPHx?=
+ =?us-ascii?Q?AE8u7SRZVJ0K4x6oN++70agPqlj/lAARUe8MePJZ++ku4f6tJyrriutgmCj2?=
+ =?us-ascii?Q?MY62VMpjqroIf4DF+Vaf48f6jfmMG4YbhKSlKDfs2jkHJAx0ZskuUcmTMBb0?=
+ =?us-ascii?Q?q9qeflbIoZ9NEdcSFKLFs3SSpiRom74a9d83qPbkGCWikh09yiOPXfYHvRzb?=
+ =?us-ascii?Q?OqPzF39YlzPx0hfhjLEDYCcAznL5aG5v9CSSBz0KYrFXpugyj/hCiq2dV4Dy?=
+ =?us-ascii?Q?udRC1X762asxOM+jUEVtaQFE8JCprNWMf5y5jSvpcqJuRFHMHgiobEMGfgKF?=
+ =?us-ascii?Q?3+361BGSUqHrodhjgSq8LAPLdkEUCYMtGnqTRhFLTEX9fisGVQqESpJN3k9T?=
+ =?us-ascii?Q?s0jMaBgde3im6QaTtPgckZA7/qwN9s24Hr3fw7e4hyYd7N9Xpe2FPI5FCOaH?=
+ =?us-ascii?Q?cq9dTxWSlK5BIPK8ze68DHqISYpw93O3WZfKH3+ptt1rq/HU5CYsnqukIFjX?=
+ =?us-ascii?Q?BcU43f6VVl0CkpsqoLdT0gvQbR7zAADIIPnKDJ6kB+dpy67pGgJ2iUBUnXrt?=
+ =?us-ascii?Q?A96q04Zb1Mofsdj/GzRAdldu1d+OXHSIld7SHOsd0c3PFU/YAJGD3nMcylYC?=
+ =?us-ascii?Q?tGtngAjdXCgiiuPbLn/xQB4rAjOGxaFlZurZKo8PlMnAt0/ls99lR074MAS9?=
+ =?us-ascii?Q?BU27oc5dbGldJAiLgYrrYR9bodTCyJQy+Nm/lpuGSYdtUnhPo36vokgPN2/O?=
+ =?us-ascii?Q?XcCCs/SBeA1knLFm1vpa5yOkjgFFu7whktiE+JqKZNrGluinJf8CoylemF2/?=
+ =?us-ascii?Q?4Gx85mV99NZdYTFth60lVbk21SlhH0JK4f/Zrn6IkvZCfu2SRY8MkYOpRlps?=
+ =?us-ascii?Q?RxRHUAmc2/D2rIwQvimsqpSAC7NESKN3zxc9RmkKQLSmcdEFRKNKF+WLE3JO?=
+ =?us-ascii?Q?BsxW3ZiRHnMAPtPDHUt0XzB8ennsQc0ABxbZqbWL9UJgVXnSuZ7u745T/dUH?=
+ =?us-ascii?Q?lKApS4x7uJGH26v4nxcxDdmBNWXewa3zBJj1SDJGnOlefsg8VHI0nYiwwHuM?=
+ =?us-ascii?Q?u9nSS/D76p/tDus41x+udJh0JXCEgBfnAZwGydQZKmjv7+rpI4lbA22yhPnS?=
+ =?us-ascii?Q?0fSbVn33WlIPgnEoI34IyCqn5ujwIt+STrjT9J7Zua9WzIoyHQwgto2SNVNz?=
+ =?us-ascii?Q?ZFUORYihMs1fj0yE04eH6mL0qtyv8+Qd9W56tlKy9dI5KM8whst0oPR7EuSV?=
+ =?us-ascii?Q?OzgnHURunThg/iXSSmwPc+eQEylw?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Pexou/Eu/wPkez/DJYpjegEm9XMfZa5gLdl+09Kls99jW9fRxoV6YCKdbUiv?=
+ =?us-ascii?Q?NjelrBAOpCQQ9+4C6QCM2y+cVq5ucQvxYn70m5wCtWNiPcDfq5EVi4daeT+J?=
+ =?us-ascii?Q?cQVSJjVi6Mk7FxULHSOa7kIZPcW14dqPYgnAWYm1waVCXa9TtxoxY5DjuR1Y?=
+ =?us-ascii?Q?VoDeDKkIXZCeg0w+6iYUyhD90zueQTWeLf3z6SU+IfwUSNUfdbkWJJv4xprA?=
+ =?us-ascii?Q?easW/pbbGB1vZ1VRsyM60wrpLR3m1u1/Ye0dCTk2r914G7xk1TTGvvdctEzK?=
+ =?us-ascii?Q?qRhGxjdqSC/IyRLaqerzjvEdWzH4XR1Mh+DWSnTjtoYklT/G3l1M89aa6ADe?=
+ =?us-ascii?Q?T5jzb831uAdtPbxPPAiD86F8SRMUYySBQQ9LXj0fM83ZpDiDl7vj1z3lP91M?=
+ =?us-ascii?Q?ysQn0FzVfXxbuQ8fmziuB0Vaws9AEAgnd6AV/lGl0zIln9bRM0Nq3yne8XDu?=
+ =?us-ascii?Q?Qjsp+U6+FhlFVXgISVByHOb8idfkz0MSGm16tgl5aWJ7HASlWQ3gWTgP+csQ?=
+ =?us-ascii?Q?LLsDba9pSfJ40vgyjCnFNK1Bn2QYzbFiS44MbawAb/CaLBy+btyaGwjGrRSL?=
+ =?us-ascii?Q?onlTe2BRG6GnzOBGmj8s8omcCEzPzHhDmrp2rxT0cbqe95zgqy24dgz5nF9p?=
+ =?us-ascii?Q?edjtaiWpNlF1soR+bh2d6JwLIEW1uXuZxaEOpWsGbwmq/ZuHT1n4ZA13NoBT?=
+ =?us-ascii?Q?AtZVxtWno8zhvpNQYwqOxaBJDzu2OLctx8jIn6QhuPtR+nuRi2Ho+nQYKpun?=
+ =?us-ascii?Q?EMhN1W5wyftQwqklF4+wBMsHLqPhDAndSNd4OJTqohsbp71vXJ7VM/4tTsGp?=
+ =?us-ascii?Q?0QxsZ3r0BGndujyhmkuLm56Xyf2VSb4q9w136MIpyZdp8iPAwCdX1rLOQtZb?=
+ =?us-ascii?Q?SA38cwCLGun0kx9qboMaLLFBto43fT/vworj4nODwh9NbVQHRuUtFyUNnfAZ?=
+ =?us-ascii?Q?cysbfQuPxdgLSjr6RLDGjHr1j9r+hyGrv+S6GgJPYWqowSa3anYCV/uFnk3v?=
+ =?us-ascii?Q?UPFxHD9jCR3y4ZAtIe+aaQGsMlthXvKZSVQA6iSZLcqw2BYl6Bm3eCgQrmBv?=
+ =?us-ascii?Q?CGTiWV5p68p77WpKQZjXGJETC6GsDPxFrpEsKb33ukMTwTMFem/Nr1tXhp3i?=
+ =?us-ascii?Q?8qicoB32AGegB6yrjxSMaD/gEPa0+yfT2R5clsnLhl/bjjyt6AUmi2eniz3Q?=
+ =?us-ascii?Q?U0OeWi4kZ3EgkKTSpPWLvDvwvs6D+GUGi91h3ivy3W85mbG/TATWuOHu63yc?=
+ =?us-ascii?Q?KbcyTjqkLjT+8klIC4r75d15CH9V9JpmIR0ZhUBCkBUTieyUObPwPjRS5bhI?=
+ =?us-ascii?Q?d8Pzwrb4ZB43L6y5b6tx1P6zll29m+LkDYccjPcQGL9EfyLPsf+cjokwmvpm?=
+ =?us-ascii?Q?gAx4uA7dEO6hWtuM7U8iroadwL+2Ext7znLiHPuZKtqixHhvkCwqXhaJ2We/?=
+ =?us-ascii?Q?q6rJghGcsUryW+a5250mIFGsnReujKa8V5dPOgGn9oszIr48UxveUAevaaf/?=
+ =?us-ascii?Q?BQouwIhty4neeRsfuTqK1wWsczdKTb07jyecyFOFOrr64CQFIZah5mmDjOA5?=
+ =?us-ascii?Q?dHaO+P3+JuPYUhAxhZHMHIfehlZxm8THdJNAaWBZ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 49068d9d-793c-4c1e-3f57-08dd6061ae26
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 05:58:00.8622
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6hFSTMVgJR8sVIFgPaCSpSR1iiBcHDvvS2i135lVsY/5wLzq19iqTlB6Ip6lpPpzqXoFKHTEcYeRCxJ/2mlO4Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7955
 
-On Thu, Mar 06, 2025 at 08:51:15PM +0200, Mike Rapoport wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On Tue, Mar 11, 2025 at 01:12:14PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Allocating the zero pages from memblock is simpler because the memory is
-> already reserved.
+> On Fri, 7 Mar 2025 12:29:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi all,
+> > 
+> > Today's linux-next merge of the drm-xe tree got a conflict in:
+> > 
+> >   mm/memory.c
+> > 
+> > between commit:
+> > 
+> >   089b22f60a0f ("mm: allow compound zone device pages")
+> > 
+> > from the mm-unstable branch of the mm tree and commit:
+> > 
+> >   1afaeb8293c9 ("mm/migrate: Trylock device page in do_swap_page")
+> > 
+> > from the drm-xe tree.
+
+I'm not sure what the process is here, but having either reviewed or authored
+these patches I can add that the fix up carried below looks correct.
+
+ - Alistair
+
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> > 
+> > diff --cc mm/memory.c
+> > index d21f6cded7e3,59b804f4bf3f..000000000000
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@@ -4473,11 -4348,15 +4473,16 @@@ vm_fault_t do_swap_page(struct vm_faul
+> >   			 * Get a page reference while we know the page can't be
+> >   			 * freed.
+> >   			 */
+> > - 			get_page(vmf->page);
+> > - 			pte_unmap_unlock(vmf->pte, vmf->ptl);
+> > - 			pgmap = page_pgmap(vmf->page);
+> > - 			ret = pgmap->ops->migrate_to_ram(vmf);
+> > - 			put_page(vmf->page);
+> > + 			if (trylock_page(vmf->page)) {
+> > + 				get_page(vmf->page);
+> > + 				pte_unmap_unlock(vmf->pte, vmf->ptl);
+> >  -				ret = vmf->page->pgmap->ops->migrate_to_ram(vmf);
+> > ++				pgmap = page_pgmap(vmf->page);
+> > ++				ret = pgmap->ops->migrate_to_ram(vmf);
+> > + 				unlock_page(vmf->page);
+> > + 				put_page(vmf->page);
+> > + 			} else {
+> > + 				pte_unmap_unlock(vmf->pte, vmf->ptl);
+> > + 			}
+> >   		} else if (is_hwpoison_entry(entry)) {
+> >   			ret = VM_FAULT_HWPOISON;
+> >   		} else if (is_pte_marker_entry(entry)) {
 > 
-> This will also help with pulling out memblock_free_all() to the generic
-> code and reducing code duplication in arch::mem_init().
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  arch/mips/include/asm/mmzone.h |  2 --
->  arch/mips/mm/init.c            | 16 +++++-----------
->  2 files changed, 5 insertions(+), 13 deletions(-)
- 
-Andrew can you please pick this as a fixup?
+> This is now conflict between the mm tree and the drm tree.
+>
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-From 148713d17cbdf7a3ad08f18ba203185b70c0e7c2 Mon Sep 17 00:00:00 2001
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-Date: Tue, 11 Mar 2025 07:51:27 +0200
-Subject: [PATCH] MIPS: use memblock_alloc_or_panic() in setup_zero_page()
 
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- arch/mips/mm/init.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/mips/mm/init.c b/arch/mips/mm/init.c
-index 6ea27bbd387e..a673d3d68254 100644
---- a/arch/mips/mm/init.c
-+++ b/arch/mips/mm/init.c
-@@ -68,9 +68,7 @@ static void __init setup_zero_pages(void)
- 	else
- 		order = 0;
- 
--	empty_zero_page = (unsigned long)memblock_alloc(PAGE_SIZE << order, PAGE_SIZE);
--	if (!empty_zero_page)
--		panic("Oh boy, that early out of memory?");
-+	empty_zero_page = (unsigned long)memblock_alloc_or_panic(PAGE_SIZE << order, PAGE_SIZE);
- 
- 	zero_page_mask = ((PAGE_SIZE << order) - 1) & PAGE_MASK;
- }
--- 
-2.47.2
-
--- 
-Sincerely yours,
-Mike.
 
