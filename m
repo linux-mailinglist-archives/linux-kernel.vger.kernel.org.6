@@ -1,114 +1,135 @@
-Return-Path: <linux-kernel+bounces-555445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 830E8A5B77A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:49:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FE6A5B783
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:50:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8743AF5E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:48:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0A43AF200
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8621E9B35;
-	Tue, 11 Mar 2025 03:48:57 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997AA259C;
-	Tue, 11 Mar 2025 03:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54A11E9B23;
+	Tue, 11 Mar 2025 03:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cdjv7F9Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482C6259C;
+	Tue, 11 Mar 2025 03:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741664937; cv=none; b=jy/jxsRHdsQD5QzkMnyvGZxuMC/O28D3A654JniVQ1TnaoZF2airB3HDRQT3X3bATa9kjTxFP/Xufq4c81j8YuSqHY644b7wmI65YrFoeYeYxufDDVoYiNjRNxZbIAVyPDHsTxHSapGa9lB1Rr1sv+WLsiGeBVIt93goREbBkis=
+	t=1741665045; cv=none; b=tXuz775Ct51ji8N09AQJV8nPu+TmewbXjpNDy8i/008el9SIW2H8gn+zCY277I01Xj+mh4hez99Y49f6d7tyn98u3NmUvT1Uf2vjqMYopsRDstKvpWltpMwoyt7w06c0Giip/ukBZwL+udojLMeO59HzDz83Yc3isR2OB85CoPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741664937; c=relaxed/simple;
-	bh=5vukZrG8OAo4CAMfv6ndpFPJrij07acQ5HVzF3j8ASo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TdtgUnP0A+RKx9bCm6zTiRxGZcQghQ0BM26wxVYbELl82kCfHV7+ZxII93O5ryyu5AXiYr0x1ckl7bkyfxkKZ5d+Mqk2NfzDSwtx6uNYFOdfBfsxzogezlYjxcOBtUGmoka8SDv+Xig84vOEd8hhnEb8i0afdIKP4aj/BtfBA60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=209.97.181.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwC3PC2Wss9n7JOOCA--.1414S2;
-	Tue, 11 Mar 2025 11:48:38 +0800 (CST)
-Received: from localhost (unknown [123.150.8.50])
-	by mail (Coremail) with SMTP id AQAAfwBnaoaSss9nXsdCAA--.19578S2;
-	Tue, 11 Mar 2025 11:48:35 +0800 (CST)
-Date: Tue, 11 Mar 2025 11:48:18 +0800
-From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: rafael@kernel.org, lenb@kernel.org, Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com, rrichter@amd.com, bfaccini@nvidia.com,
-	haibo1.xu@intel.com, dave.jiang@intel.com, rppt@kernel.org,
-	gourry@gourry.net, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	chenbaozi@phytium.com.cn
-Subject: Re: [PATCH] ACPI: NUMA: debug invalid unused PXM value for CFMWs
-Message-ID: <Z8+yggwrcYZXmnd0@phytium.com.cn>
-References: <20250310093910.1752126-1-wangyuquan1236@phytium.com.cn>
- <Z88rzKHrqlCXQOTb@aschofie-mobl2.lan>
+	s=arc-20240116; t=1741665045; c=relaxed/simple;
+	bh=g38SPJz6l7CQ6ZyZLTsOe0KvKxHvh1gz8m1lvtYzsVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DmNnHBvaRInLYhpn+bdh+JC2HG1UGQDBvxFSrj9wXXgTbG2LUbZ0EMpygHFhoJa8jJl2SQBzgZ/fjaUhIu4ai/CQKiP7wS/2jiKYcs1mP/zM9U57BUgtYEB9jR+1z2M8GdmoaN5oLn+iQxaLxRx6rH50W/r3gNOoA4n+YOWc07I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cdjv7F9Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FE63C4CEE9;
+	Tue, 11 Mar 2025 03:50:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741665044;
+	bh=g38SPJz6l7CQ6ZyZLTsOe0KvKxHvh1gz8m1lvtYzsVs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Cdjv7F9QzVO8k0fza4YBIM1B6mrJfixT6RDaBAWNtL6Ra4uTPHH+2L/PusS1I5ioQ
+	 t6m6uqWTT7dlsYPlO/Zf6TcjR6ytHWFebAavoe2jyJMsI3FWESzT4LFlIbT60LED4a
+	 vkIhylwqp8Mg/LfuYzP7SDWKu3b3G82B2gG6BnHmhJ5NjHCjMKEVNsgc4PHriD3ddz
+	 TsIL44JybnTaHYbzw2ErqCenkyoLgpj6CFKg+wT2OzqAf0TcUiRiefKdMFjc5qWkml
+	 IVKR3fo7RpEk1oSQHPVBOlHLdw+wjljMl2A/1+lqbiPMhqLMC6BVROFWLQ5YE4mXCm
+	 tJeUAKIhXACMw==
+Message-ID: <7b0bfff1-7398-4236-9579-7fc2cd450c44@kernel.org>
+Date: Tue, 11 Mar 2025 04:50:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z88rzKHrqlCXQOTb@aschofie-mobl2.lan>
-X-CM-TRANSID:AQAAfwBnaoaSss9nXsdCAA--.19578S2
-X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQAFAWfN84QGSAAjs1
-Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=wangyuquan
-	1236@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoW7Kry7GryrJF47Jw4kXrWUurg_yoW8XFWrpF
-	W8Ka4Ykrs2y3yxC3Wvvw17XFyrKw10kFW5KasrWr9xWanI9rn7ZFZ7KayY9FyDXw4UCr1I
-	yanYqF15WF18ZFDanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
-	UUUUU
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 3/3] tty: serial: lpuart: rename register variables
+ more specifically
+To: Sherry Sun <sherry.sun@nxp.com>, gregkh@linuxfoundation.org
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, shenwei.wang@nxp.com
+References: <20250311033336.1254842-1-sherry.sun@nxp.com>
+ <20250311033336.1254842-4-sherry.sun@nxp.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250311033336.1254842-4-sherry.sun@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 11:13:32AM -0700, Alison Schofield wrote:
-> On Mon, Mar 10, 2025 at 05:39:10PM +0800, Yuquan Wang wrote:
-> > The absence of SRAT would cause the fake_pxm to be -1 and increment
-> > to 0, then send to acpi_parse_cfmws(). If there exists CXL memory
-> > ranges that are defined in the CFMWS and not already defined in the
-> > SRAT, the new node (node0) for the CXL memory would be invalid, as
-> > node0 is already in "used".
+On 11. 03. 25, 4:33, Sherry Sun wrote:
+> There are many fuzzy register variables in the lpuart driver, such as
+> temp, tmp, val, reg. Let's give these register variables more specific
+> names.
 > 
+> Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
+> ---
+>   drivers/tty/serial/fsl_lpuart.c | 220 ++++++++++++++++----------------
+>   1 file changed, 110 insertions(+), 110 deletions(-)
 > 
-> If no SRAT or bad SRAT, then all memory is at node:0, and first fake
-> node for CFMWs should start at 1. Right?
-Yes.
-> 
-> If so, might it be safest to always start the the CFMWS fake nodes at
-> at a minimum of node[1]. Maybe srat_disabled() can be used to decide.
-> 
-> > 
-> > Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-> > ---
-> >  drivers/acpi/numa/srat.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-> > index 00ac0d7bb8c9..eb8628e217fa 100644
-> > --- a/drivers/acpi/numa/srat.c
-> > +++ b/drivers/acpi/numa/srat.c
-> > @@ -646,6 +646,9 @@ int __init acpi_numa_init(void)
-> >  		if (node_to_pxm_map[i] > fake_pxm)
-> >  			fake_pxm = node_to_pxm_map[i];
-> >  	}
-> > +	if (fake_pxm == PXM_INVAL)
-> > +		pr_warn("Failed to find the next unused PXM value for CFMWs\n");
-> > +
-> 
-> How come it is sufficient to just warn?
-> As per my comment above, can we adjust?
->
-Sure. Thanks for your suggestion.
-> 
-> 
-> >  	last_real_pxm = fake_pxm;
-> >  	fake_pxm++;
-> >  	acpi_table_parse_cedt(ACPI_CEDT_TYPE_CFMWS, acpi_parse_cfmws,
-> > -- 
-> > 2.34.1
-> > 
+> diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+> index f830b5a3ba8e..901c83461bfc 100644
+> --- a/drivers/tty/serial/fsl_lpuart.c
+> +++ b/drivers/tty/serial/fsl_lpuart.c
+> @@ -441,36 +441,36 @@ static unsigned int lpuart_get_baud_clk_rate(struct lpuart_port *sport)
+>   
+>   static void lpuart_stop_tx(struct uart_port *port)
+>   {
+> -	unsigned char temp;
+> +	unsigned char cr2;
 
+Overall looks good. In cases like these (there are many), you should 
+have switched this to u8 in patch 1/3 too ;).
+
+thanks,
+-- 
+js
+suse labs
 
