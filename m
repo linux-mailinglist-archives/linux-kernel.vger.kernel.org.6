@@ -1,162 +1,129 @@
-Return-Path: <linux-kernel+bounces-555868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E97CDA5BD98
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:19:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B77AA5BD9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:20:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3555C16EDBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:19:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CC9C1899025
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39A5231A30;
-	Tue, 11 Mar 2025 10:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C17233140;
+	Tue, 11 Mar 2025 10:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TIEYayfL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="e6DEZLDh"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56831EE7CB;
-	Tue, 11 Mar 2025 10:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC3D22F3A8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741688333; cv=none; b=lZi6ISKPXtt0Bn5uRvjPh6oULCSQOWfq4YaRsbLtctLM1tgTetLgj0UCu0S9sIU5RXdJTxmOhz9FByV8z0g92hI23X5DJ7sj8+xIGp+j0JnSai70viMRpcjzwF95wIsPdNcM6b+LV1c6SJ4W6WeCnMqVst9Ec8F/HWzPbaEIFD0=
+	t=1741688365; cv=none; b=a0K18GFZuL4ytxfoPEA70/GkaufnCDi9Zq1/0RMUUNyERd8IBbAgZOCSBHa2Zz+8BymWwQcs+juvOanumllwzlhmuWJJUa7HEa2ugZTTbLZm9C9ZZxQzyCKZHMVp9pp6/Xf9ylZKv4R+HC5GNulgd2uslrS66f1UIOGBQTArnwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741688333; c=relaxed/simple;
-	bh=01sOVUPbNeWequzCM14Vb8FmyT9+hZ83vgLe53UwStg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BLgasnAehX6esl5XdqQCrSj3sO2CJqxtABlopc2HL3bhw0OO4D/ieK11z7/Hxof4ZBWYWTMU0/22fKMFSmZ6NBSRJHI93Rx0iKNQLCddRWiY00WjBg1H6haDsruwuZqiOkWt5518d7Q0tT3wm0Jfb/oAS7MFlcpcjs/JhtnGgTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TIEYayfL; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741688332; x=1773224332;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=01sOVUPbNeWequzCM14Vb8FmyT9+hZ83vgLe53UwStg=;
-  b=TIEYayfLIat6SzOXwo/SzPthDmM5LU1nL15rvmitaN5zp67GEL5jS/lB
-   877xPGWQ0yk6PoISfI+ALt4Uzw985LC/kM2FSTSF3fRsNSQld+6qwTrAM
-   MjqgG/cjSq1vZLoHLFPPLaJdMB6t9J6e2Tarogg40CcgD0hxUC0zsDEiT
-   qaeLs0kuocssCcsVJTQtkrKZwaiFTHDatDrB2XX7Rq2nSjM8ng31HUtnE
-   253WZSlS0M82a6Y8+ieiOyLR2YoLIoq7JRgp1Ob177w1c/NetaaJQ1USQ
-   AlDBVxCo9FP/OxXLi7r0c3EUz9hcMsHcAekgP3PLDk0v//2rQhGB73XSv
-   w==;
-X-CSE-ConnectionGUID: hc0RGJgtSXiCOsiFe3GYyw==
-X-CSE-MsgGUID: qydtmDvxQma5nQ+0wsKKmw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="45503494"
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="45503494"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 03:18:50 -0700
-X-CSE-ConnectionGUID: wviOlQuzQGGl9dl+J9CknQ==
-X-CSE-MsgGUID: lfjkY8ClS0+uA3DYnP5lZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="120004427"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 03:18:41 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 7FAFD11F7E5;
-	Tue, 11 Mar 2025 12:18:38 +0200 (EET)
-Date: Tue, 11 Mar 2025 10:18:38 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Sebastian LaVine <slavine@d3embedded.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Achath Vaishnav <vaishnav.a@ti.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Javier Carrasco <javier.carrasco@wolfvision.net>,
-	Jianzhong Xu <xuj@ti.com>,
-	Julien Massot <julien.massot@collabora.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Mikhail Rudenko <mike.rudenko@gmail.com>,
-	Nishanth Menon <nm@ti.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stuart Burtner <sburtner@d3embedded.com>,
-	Tero Kristo <kristo@kernel.org>, Thakkar Devarsh <devarsht@ti.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Will Deacon <will@kernel.org>, Zhi Mao <zhi.mao@mediatek.com>
-Subject: Re: [PATCH 2/4] media: i2c: Add driver for Sony IMX728
-Message-ID: <Z9AN_lo5T5VfshT9@kekkonen.localdomain>
-References: <20250212195656.69528-1-slavine@d3embedded.com>
- <20250212195656.69528-3-slavine@d3embedded.com>
- <20250213101903.GH5888@pendragon.ideasonboard.com>
- <D8CU9UT1XQV9.3NFZ4OAQOKQG0@d3embedded.com>
+	s=arc-20240116; t=1741688365; c=relaxed/simple;
+	bh=79qhmXbbTGpMFrXPo7q28fHNDo3c6ZvhTXXHWLU4bEw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h4ZhmBYYVu7JMP2Vl8cIEUFpd4wytDaKazfdyWlnoICj0WKnx2U3lF9ayDQZGMyZ/wvJQgHvemEEVgvKQGxspATXbr50g0yJqekj/YKgM51tzsy8MLrwZkBMyFl7X6ldYABvZH2lFHgKFD6aID6RBDfiPE81ynQicwsvd/jk1d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=e6DEZLDh; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6001a.ext.cloudfilter.net ([10.0.30.140])
+	by cmsmtp with ESMTPS
+	id rvLot7rx8AfjwrwhmtOQyd; Tue, 11 Mar 2025 10:19:22 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id rwhltW9mqsTV2rwhltRRfn; Tue, 11 Mar 2025 10:19:22 +0000
+X-Authority-Analysis: v=2.4 cv=GquJ+V1C c=1 sm=1 tr=0 ts=67d00e2a
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TRiU9yirtu/jI1IpYly3+NIJknA+txu8Be0yyLNZ7RU=; b=e6DEZLDhqtQcPKkVxNfXmVY7Gx
+	7qSQuRW1AnpvUbAbDNdsRIFj+qv8V/8Yag+adoHIHD2dtRf0WMB6v8vfSS0wE1tclcMLuVw8TdbKy
+	1UZhz2xBPLhOX4M5Z9SZdSRv/h5mYG4Qaf7js2kJVRvdtY4sMJTrJuGQWaACVy/GXRfjC+R/4z9xV
+	aGGN1BQ1U5cUvWelr/AxEa9k9MHw2AY8bm9NBJhylbkrZT2eqZMHpHfR8TXAYOyrYiOlxHcm8EnbD
+	26FQkYEHNYd3SSCaAHtHXXxqrJ+nG08c6QSONeG0neCpbmt07VX3XnxtcDcU+IYLc31fvpS2ujflP
+	QMP4DL4g==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:47726 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1trwhj-00000001YoV-2liw;
+	Tue, 11 Mar 2025 04:19:19 -0600
+Message-ID: <8f5a78ff-1c9d-4d33-884a-af231613398f@w6rz.net>
+Date: Tue, 11 Mar 2025 03:19:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8CU9UT1XQV9.3NFZ4OAQOKQG0@d3embedded.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/109] 6.1.131-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250310170427.529761261@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250310170427.529761261@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1trwhj-00000001YoV-2liw
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:47726
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 54
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfAw/TPU9daoZ8jDIG1eL6YMD+W75I2AO8nW3jl0N5ovkeT2ssNUso6FQdEJ6gIWeF+biQk/s2CLBIYK5FWOHmEg1MYpaUfy1ddD19QdiYfBTGoPSxQgO
+ vDIFfLc0gCSojKSeWwmbNZnuFzoQrFvH3S0KpnmkkdGyb7Lu4uoYsjFA1cUnW8EV9EaknMsO1D0wmHwjDoSlQTg8gp78jZDmA6g=
 
-Hi Sebastian,
+On 3/10/25 10:05, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.131 release.
+> There are 109 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.131-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On Mon, Mar 10, 2025 at 03:39:02PM -0400, Sebastian LaVine wrote:
-> On Thu Feb 13, 2025 at 5:19 AM EST, Laurent Pinchart wrote:
-> >
-> > ...
-> >
-> >> +static const struct cci_reg_sequence imx728_wdr_12bit_3856x2176[] = {
-> >
-> > This table is way too big, with over 8000 entries. Some are even
-> > duplicated, with identical or different values for the same register. It
-> > will take more than a second at 400kHz to program this.
-> >
-> > At the very least I would expect a way to compact the table and make use
-> > of I2C register address auto-increment. Default power-up values should
-> > also likely be just dropped.
-> >
-> > I haven't checked in details, but doesn't this table also contain tuning
-> > data for your specific camera ?
-> >
-> 
-> In my testing, it takes around two seconds to write this table to the sensor.
-> 
-> I can investigate how to condense the table further, though the
-> registers for this sensor are more complex than just writing values to
-> addresses. The meaning of certain address writes depend on previous
-> writes -- thus the "duplicated" writes you mentioned.
-> 
-> I do not believe this table contains tuning information for our camera
-> module in particular.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-The amount of the data is significantly higher than what sensors mostly
-have for configuring the analogue processing and does not look like
-executable code either (I've seen that, too).
+Tested-by: Ron Economos <re@w6rz.net>
 
-Any idea what that data is?
-
--- 
-Kind regards,
-
-Sakari Ailus
 
