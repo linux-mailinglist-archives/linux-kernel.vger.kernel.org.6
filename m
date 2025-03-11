@@ -1,217 +1,106 @@
-Return-Path: <linux-kernel+bounces-556233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BFFA5C2F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:44:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0DECA5C2F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:46:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52573A7B11
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:44:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5A7172D2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859651CAA63;
-	Tue, 11 Mar 2025 13:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E9D1CAA63;
+	Tue, 11 Mar 2025 13:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILyfvOlp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="ZFBWUtaO"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CDE1F94D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA38B1C695;
+	Tue, 11 Mar 2025 13:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741700688; cv=none; b=Jx6TZArtW4puiSbkXpdEdpegWI/bPUyUERo6IeVx8TYlT6KHBjRADaEiSsH3ZKa0YU2vM71MyfITCnP2gI04SyXBIQr31Taex05OJiKqSGPqwepGqTHiZdAdAGUXWga8FNha5+cbpcuhxy7L6xT5laElX3ZqpG3Gb372te8az4k=
+	t=1741700764; cv=none; b=YROxB1slXx1RZDTJD3aNJyt6Ehek8HXnp/hKvYWENIMxfgIjGtifTgWUvDaq5P+cveAyTbNe/fZTxXBKA+vc0+SfLj3vEYWMJSuwxyPA2qc15iguQXK3HQW05+j1H9YvEEKU25SPWqBRb5U2rXc4kcMYtju3u7u/qS1Iz3HCDgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741700688; c=relaxed/simple;
-	bh=cm+iF+aGtZjkYIMhVaaxWe+vQ2fbA3j5p5hkXA2Xykc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eOkozq3mHSFwIjivlX3nKBvt+/XRvff4p1rlH8F02Z2jcI2ngPC6RUxg41pDVweW7KRkK2IZYaBu9j3zYmh10W6/+5dGSFY1DsyBh3so6CU6YFDetoAUNrVCEjK6PvNwVD0M6s+HSq4eNjbt3h/FBsGhSx4qxfywNYfB4XEP0OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILyfvOlp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3D1CC4CEEC;
-	Tue, 11 Mar 2025 13:44:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741700688;
-	bh=cm+iF+aGtZjkYIMhVaaxWe+vQ2fbA3j5p5hkXA2Xykc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ILyfvOlp7Z4I6SodkTKdJSTYTf5kKzu2EEv9pN1husrXOrgF2akBtG6g+MNz/rxie
-	 RzAbnegiFIfGxduyPmKiW9RMB73pBf+6e5Ty4N1B0blcCSXTejRkxuCryjIBbENypv
-	 n+KySCDsA3+5iyTqQ6WyT1M3GZ6zOsINXm3LM/N4bd0xKqIGFnUV+dwN0OuW9ocSp/
-	 tpySPlbORbf3pMslyXbTApSQKrYP7Amusz9hbdgQov+wgHFWFmtJa4XXQxRFLSvtqU
-	 YPnOsTD5mLZwctcJf2wVCpFjDG99uKkvrn1NvTl7fc7DHm4/EvjxDymdN+PXbVRExn
-	 UISIxty4l4o7w==
-Date: Tue, 11 Mar 2025 14:44:45 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Benjamin Segall <bsegall@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrey Vagin <avagin@openvz.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>
-Subject: Re: [patch V3 12/18] posix-timers: Improve hash table performance
-Message-ID: <Z9A-TWTX9Yl6zlst@localhost.localdomain>
-References: <20250308155501.391430556@linutronix.de>
- <20250308155624.216091571@linutronix.de>
+	s=arc-20240116; t=1741700764; c=relaxed/simple;
+	bh=7487bNMx0KLZfinFW+iJ0bt5bL0K6pEGLja26xALGF0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NVDeW/sgJYcvxKjZUc/rQPKK921WG6z3xGjamH5Knvq+yFBVyB9nwhNnypLkup22auer6SdoZp5l3D8PJQcVojS1CxP6yHvYwOS1p4/KfYvDWloVmLJiCGwiwktGA4ziSxxQ14l6qvPh6eRQUtG6W12NrvwrQnLhLJtv6/lkrLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=ZFBWUtaO; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B8Uhfw012652;
+	Tue, 11 Mar 2025 08:45:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=zCVBQr7oDz/bG0Iam1
+	7TXUvWhByBDOd4UeH308Vq6zw=; b=ZFBWUtaOmw/wUF0PRxDai/ndKkZmglpnyx
+	LVHBv2N/fjxnaTrNRm56ngNCuWdCbnGBdn/7nLQNtpFfRdxn9Ywc9g67+lhS0hSU
+	9m7x54xzizwS0oFYGIEBqs/vz6/A5MMvCRnctYhdu6Pl35L5s2rtbJgzlY1LdCOk
+	xaA2c89NaXnajexCzxaOdb8Sa4Xvgz+nYOf/9NB83i6rr5U0ZJwx3o4CSI6TJ/fg
+	wcgHZWYy6ZBkLUsmJBKGM6lwhewz+U9CmLxk1EYFvM8cOlaoI9F3IXTMCGWv2JtL
+	t2/mIaFFz5KmXJa4550U67mk1u5CAA8ZsDOrjb1R4zwYDD08U6bA==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 458m65xmup-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 08:45:43 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 11 Mar
+ 2025 13:45:41 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Tue, 11 Mar 2025 13:45:41 +0000
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 7E22982255A;
+	Tue, 11 Mar 2025 13:45:41 +0000 (UTC)
+Date: Tue, 11 Mar 2025 13:45:40 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC: <amadeuszx.slawinski@linux.intel.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela
+	<perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Dimitris Papastamos
+	<dp@opensource.wolfsonmicro.com>,
+        Charles Keepax
+	<ckeepax@opensource.wolfsonmicro.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Mark Brown
+	<broonie@opensource.wolfsonmicro.com>,
+        <patches@opensource.cirrus.com>, <linux-sound@vger.kernel.org>
+Subject: Re: [PATCH v2] ASoC: codecs: wm0010: Fix error handling path in
+ wm0010_spi_probe()
+Message-ID: <Z9A+hNeL6s9Dibzu@opensource.cirrus.com>
+References: <5139ba1ab8c4c157ce04e56096a0f54a1683195c.1741549792.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250308155624.216091571@linutronix.de>
+In-Reply-To: <5139ba1ab8c4c157ce04e56096a0f54a1683195c.1741549792.git.christophe.jaillet@wanadoo.fr>
+X-Authority-Analysis: v=2.4 cv=CuVFcm4D c=1 sm=1 tr=0 ts=67d03e87 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=w1d2syhTAAAA:8 a=kdJoGvSddbJ0Pk3_t30A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: YlTXEfG3T37icTgxjzL37mZ2-Q5dbxNI
+X-Proofpoint-GUID: YlTXEfG3T37icTgxjzL37mZ2-Q5dbxNI
+X-Proofpoint-Spam-Reason: safe
 
-Le Sat, Mar 08, 2025 at 05:48:38PM +0100, Thomas Gleixner a écrit :
-> Eric and Ben reported a significant performance bottleneck on the global
-> hash, which is used to store posix timers for lookup.
+On Mon, Mar 10, 2025 at 06:45:36PM +0100, Christophe JAILLET wrote:
+> Free some resources in the error handling path of the probe, as already
+> done in the remove function.
 > 
-> Eric tried to do a lockless validation of a new timer ID before trying to
-> insert the timer, but that does not solve the problem.
-> 
-> For the non-contended case this is a pointless exercise and for the
-> contended case this extra lookup just creates enough interleaving that all
-> tasks can make progress.
-> 
-> There are actually two real solutions to the problem:
-> 
->   1) Provide a per process (signal struct) xarray storage
-> 
->   2) Implement a smarter hash like the one in the futex code
-> 
-> #1 works perfectly fine for most cases, but the fact that CRIU enforced a
->    linear increasing timer ID to restore timers makes this problematic.
-> 
->    It's easy enough to create a sparse timer ID space, which amounts very
->    fast to a large junk of memory consumed for the xarray. 2048 timers with
->    a ID offset of 512 consume more than one megabyte of memory for the
->    xarray storage.
-> 
-> #2 The main advantage of the futex hash is that it uses per hash bucket
->    locks instead of a global hash lock. Aside of that it is scaled
->    according to the number of CPUs at boot time.
-> 
-> Experiments with artifical benchmarks have shown that a scaled hash with
-> per bucket locks comes pretty close to the xarray performance and in some
-> scenarios it performes better.
-> 
-> Test 1:
-> 
->      A single process creates 20000 timers and afterwards invokes
->      timer_getoverrun(2) on each of them:
-> 
->             mainline        Eric   newhash   xarray
-> create         23 ms       23 ms      9 ms     8 ms
-> getoverrun     14 ms       14 ms      5 ms     4 ms
-> 
-> Test 2:
-> 
->      A single process creates 50000 timers and afterwards invokes
->      timer_getoverrun(2) on each of them:
-> 
->             mainline        Eric   newhash   xarray
-> create         98 ms      219 ms     20 ms    18 ms
-> getoverrun     62 ms       62 ms     10 ms     9 ms
-> 
-> Test 3:
-> 
->      A single process creates 100000 timers and afterwards invokes
->      timer_getoverrun(2) on each of them:
-> 
->             mainline        Eric   newhash   xarray
-> create        313 ms      750 ms     48 ms    33 ms
-> getoverrun    261 ms      260 ms     20 ms    14 ms
-> 
-> Erics changes create quite some overhead in the create() path due to the
-> double list walk, as the main issue according to perf is the list walk
-> itself. With 100k timers each hash bucket contains ~200 timers, which in
-> the worst case need to be all inspected. The same problem applies for
-> getoverrun() where the lookup has to walk through the hash buckets to find
-> the timer it is looking for.
-> 
-> The scaled hash obviously reduces hash collisions and lock contention
-> significantly. This becomes more prominent with concurrency.
-> 
-> Test 4:
-> 
->      A process creates 63 threads and all threads wait on a barrier before
->      each instance creates 20000 timers and afterwards invokes
->      timer_getoverrun(2) on each of them. The threads are pinned on
->      seperate CPUs to achive maximum concurrency. The numbers are the
->      average times per thread:
-> 
->             mainline        Eric   newhash   xarray
-> create     180239 ms    38599 ms    579 ms   813 ms
-> getoverrun   2645 ms     2642 ms     32 ms     7 ms
-> 
-> Test 5:
-> 
->      A process forks 63 times and all forks wait on a barrier before each
->      instance creates 20000 timers and afterwards invokes
->      timer_getoverrun(2) on each of them. The processes are pinned on
->      seperate CPUs to achive maximum concurrency. The numbers are the
->      average times per process:
-> 
->             mainline        eric   newhash   xarray
-> create     157253 ms    40008 ms     83 ms    60 ms
-> getoverrun   2611 ms     2614 ms     40 ms     4 ms
-> 
-> So clearly the reduction of lock contention with Eric's changes makes a
-> significant difference for the create() loop, but it does not mitigate the
-> problem of long list walks, which is clearly visible on the getoverrun()
-> side because that is purely dominated by the lookup itself. Once the timer
-> is found, the syscall just reads from the timer structure with no other
-> locks or code paths involved and returns.
-> 
-> The reason for the difference between the thread and the fork case for the
-> new hash and the xarray is that both suffer from contention on
-> sighand::siglock and the xarray suffers additionally from contention on the
-> xarray lock on insertion.
-> 
-> The only case where the reworked hash slighly outperforms the xarray is a
-> tight loop which creates and deletes timers.
-> 
-> Test 4:
-> 
->      A process creates 63 threads and all threads wait on a barrier before
->      each instance runs a loop which creates and deletes a timer 100000
->      times in a row. The threads are pinned on seperate CPUs to achive
->      maximum concurrency. The numbers are the average times per thread:
-> 
->             mainline        Eric   newhash   xarray
-> loop	    5917  ms	 5897 ms   5473 ms  7846 ms
-> 
-> Test 5:
-> 
->      A process forks 63 times and all forks wait on a barrier before each
->      each instance runs a loop which creates and deletes a timer 100000
->      times in a row. The processes are pinned on seperate CPUs to achive
->      maximum concurrency. The numbers are the average times per process:
-> 
->             mainline        Eric   newhash   xarray
-> loop	     5137 ms	 7828 ms    891 ms   872 ms
-> 
-> In both test there is not much contention on the hash, but the ucount
-> accounting for the signal and in the thread case the sighand::siglock
-> contention (plus the xarray locking) contribute dominantly to the overhead.
-> 
-> As the memory consumption of the xarray in the sparse ID case is
-> significant, the scaled hash with per bucket locks seems to be the better
-> overall option. While the xarray has faster lookup times for a large number
-> of timers, the actual syscall usage, which requires the lookup is not an
-> extreme hotpath. Most applications utilize signal delivery and all syscalls
-> except timer_getoverrun(2) are all but cheap.
-> 
-> So implement a scaled hash with per bucket locks, which offers the best
-> tradeoff between performance and memory consumption.
-> 
-> Reported-by: Eric Dumazet <edumazet@google.com>
-> Reported-by: Benjamin Segall <bsegall@google.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Fixes: e3523e01869d ("ASoC: wm0010: Add initial wm0010 DSP driver")
+> Fixes: fd8b96574456 ("ASoC: wm0010: Clear IRQ as wake source and include missing header")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+
+Thanks,
+Charles
 
