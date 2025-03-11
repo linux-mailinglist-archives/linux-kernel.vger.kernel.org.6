@@ -1,52 +1,62 @@
-Return-Path: <linux-kernel+bounces-556963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4052A5D1AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:17:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AFFCA5D1AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:22:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21C2317CC47
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:17:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 548707AAA2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C56263F21;
-	Tue, 11 Mar 2025 21:17:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58BC226545;
-	Tue, 11 Mar 2025 21:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1E126389D;
+	Tue, 11 Mar 2025 21:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5Cwa0BlJ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F60199FBA;
+	Tue, 11 Mar 2025 21:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741727828; cv=none; b=c8y0f+yFUY0KgPpMPgUPZZvkQk1b4DZFr1c0lfhAPfAz4bHIG2Sr3fg9MjOLS7i+BUoeQ34EDAQ3RtY+VsQEHOmbIXDX250qIhcQ1Rk4yT11RB+mvNFqu7y8xGDsUsn1SIc+CMPCGrClVgxfZHmMgZtrW/4jaZGmbqCxYMAbpIU=
+	t=1741728147; cv=none; b=K+oQcXiwiFAY/lTV7uchvDE0GaUcsz94oMtOgOBeaQy3/J2PtsLev8w1x9oPjQzoxvH5rzFfTCkL53Oz0Pro3TtzdG4Q3YjMPacGxMjng92ud+No6hbtH5s1uLRES4/UU7sdtQ3DlWKzxTq9iqjsPHZYkn2X8a3+trgd54eiA24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741727828; c=relaxed/simple;
-	bh=mZDR/Pcsay1EeTp2DTUelSVI1Nq0MB+aAtVqD7intt0=;
+	s=arc-20240116; t=1741728147; c=relaxed/simple;
+	bh=6FmHrZ28nxIM9+DQ++GJcTP+dTBWDxQyO+o6uzF7GO4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fl4/+iYR3aPeszd9Gq/R4FhMFf3Tgjr4N84GopA0DXa8mOfREYzRMOAj91na7JSfcqI8/E3mIvb7QJVPashQ2P7Ll487JN7W1kpVnuG/9+jnGFeJqOckYbR4Dvwtv2gE2GE47xLpbPhhEN6G+byw7E90eybPC34oPc2D92J9xCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27CBB152B;
-	Tue, 11 Mar 2025 14:17:17 -0700 (PDT)
-Received: from bogus (unknown [10.57.39.33])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4F3D3F673;
-	Tue, 11 Mar 2025 14:17:03 -0700 (PDT)
-Date: Tue, 11 Mar 2025 21:17:00 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Stuart Yoder <stuart.yoder@arm.com>
-Cc: Thorsten Leemhuis <linux@leemhuis.info>, jarkko@kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lenb@kernel.org, rafael@kernel.org, jgg@ziepe.ca, peterhuewe@gmx.de,
-	linux-integrity@vger.kernel.org,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: Build error on -next due to tpm_crb.c changes?
-Message-ID: <20250311211700.bwizwecxyxorrwql@bogus>
-References: <20250305173611.74548-1-stuart.yoder@arm.com>
- <0ad035ff-400e-4b15-8b8f-40b69152ec46@leemhuis.info>
- <92bc0a65-608f-4307-bb1c-16d8836d42e5@arm.com>
- <77fb9077-f598-4308-8862-6d09b23688bb@leemhuis.info>
- <23c77291-7c6e-45ea-b1ad-952c01882579@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKpDCHtdME90ECWO9NzhMd5zUsZ7VOrv2GDg9QczF0syu4bU/3GiDvGhPZsBAhQ3zer9ZAqO2jTW2C+hdf32GP1Vvv/EZQZOq2/jreHHhXlnN6VmaRUyqEIb/ROIrC5o2qQo7IlJDdpOb4zafESAWsFktRZPlSpfdLcglOSx9jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5Cwa0BlJ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=zHOpgl0ZDBsyqGRYxODkAkcWkAATucDMx8mPREh5p6Q=; b=5Cwa0BlJ3ukKnoZ3ZNphT12BRT
+	fkyZeCdsWNr62Uyyl73vQlHTbQEa+4f6eSGunOOrpZkbXsY0QSM5saAtURZsWepBBKckRD3zjf5rr
+	QVE+54Ck6OX9iI7CSeke2OehbcH084VB8+ktkYXljabuhDJZCKjxsUwPeQ8ed71OP9oI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ts73I-004Sku-QD; Tue, 11 Mar 2025 22:22:16 +0100
+Date: Tue, 11 Mar 2025 22:22:16 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sai Krishna <saikrishnag@marvell.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sgoutham@marvell.com,
+	gakula@marvell.com, lcherian@marvell.com, jerinj@marvell.com,
+	hkelam@marvell.com, sbhatta@marvell.com, andrew+netdev@lunn.ch,
+	bbhushan2@marvell.com, nathan@kernel.org, ndesaulniers@google.com,
+	morbo@google.com, justinstitt@google.com, llvm@lists.linux.dev,
+	horms@kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [net-next PATCH v3 1/2] octeontx2-af: correct __iomem
+ annotations flagged by Sparse
+Message-ID: <7009d4cc-a008-49ea-8f50-1e9aec63b592@lunn.ch>
+References: <20250311182631.3224812-1-saikrishnag@marvell.com>
+ <20250311182631.3224812-2-saikrishnag@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,65 +65,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <23c77291-7c6e-45ea-b1ad-952c01882579@arm.com>
+In-Reply-To: <20250311182631.3224812-2-saikrishnag@marvell.com>
 
-On Tue, Mar 11, 2025 at 01:25:50PM -0500, Stuart Yoder wrote:
-> 
-> 
-> On 3/11/25 11:51 AM, Thorsten Leemhuis wrote:
-> > On 11.03.25 16:53, Stuart Yoder wrote:
-> > > On 3/11/25 10:21 AM, Thorsten Leemhuis wrote:
-> > > > On 05.03.25 18:36, Stuart Yoder wrote:
-> > > [...]
-> > > So, it should not be possible on one had have
-> > > CONFIG_TCG_ARM_CRB_FFA being true when building tpm_crb.c
-> > > and false resulting in the tpm_crb_ffa.o not being
-> > > picked up in the build.
-> > 
-> > Many thx for the answer. Maybe Fedora's way to prepare the .config files
-> > (which my package builds use to be close to Fedora's official packages)
-> > is doing something odd/wrong. Will take a closer look and report back.
-> 
-> I've been experimenting with some different build config combinations
-> and have reproduced what must be the issue.
-> 
-> This works fine:
-> <*>   TPM 2.0 CRB Interface                                         < >
-> TPM CRB over Arm FF-A Transport
-> 
-> This works fine:
-> < >   TPM 2.0 CRB Interface                                         <*>
-> TPM CRB over Arm FF-A Transport
-> 
-> This works fine:
-> <*>   TPM 2.0 CRB Interface                                         <*>
-> TPM CRB over Arm FF-A Transport
-> 
-> This works fine:
-> <M>   TPM 2.0 CRB Interface                                         <M>
-> TPM CRB over Arm FF-A Transport
-> 
-> This fails:
-> <*>   TPM 2.0 CRB Interface                                         <M>
-> TPM CRB over Arm FF-A Transport
-> 
-> The 2 drivers are coupled, so we can't have one built as a module
-> and the other built-in.
-> 
-> I'm not a Kconfig expert, and need to do some fiddling to see
-> if I can find a Kconfig syntax that prevents that failure scenario.
-> 
+>  	if (mbox->mbox.hwbase)
+> -		iounmap(mbox->mbox.hwbase);
+> +		iounmap((void __iomem *)mbox->mbox.hwbase);
 
-	default y if (TCG_CRB && ARM_FFA_TRANSPORT)
+This looks wrong. If you are unmapping it, you must of mapped it
+somewhere. And that mapping would of returned an __iomem value. So
+mbox.hwbase should be an __iomem value and you would not need this
+cast.
 
-is the issue here. You can select it as built-in if either or one of the
-TCG_CRB and ARM_FFA_TRANSPORT is a module, but that is exactly what happens.
-Not sure if default value is a must for you. But just depends on each of
-these should be good enough and enable it in defconfig if needed. Or
-you can have multiple default at least 4 combinations I can see. Both
-are =y and either and both are =m
+>  	for (qidx = 0; qidx < pf->qset.cq_cnt; qidx++) {
+> -		ptr = otx2_get_regaddr(pf, NIX_LF_CQ_OP_INT);
+> +		ptr = (__force u64 *)otx2_get_regaddr(pf, NIX_LF_CQ_OP_INT);
+>  		val = otx2_atomic64_add((qidx << 44), ptr);
 
---
-Regards,
-Sudeep
+This also looks questionable. You should be removing casts, not adding
+them. otx2_get_regaddr() returns an __iomem. So maybe
+otx2_atomic64_add() is actually broken here?
+
+    Andrew
+
+---
+pw-bot: cr
 
