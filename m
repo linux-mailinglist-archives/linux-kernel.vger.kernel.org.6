@@ -1,63 +1,127 @@
-Return-Path: <linux-kernel+bounces-556707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB802A5CDBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:21:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5C8A5CDC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:22:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE373A402A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:20:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3478F189EABC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EBD262D20;
-	Tue, 11 Mar 2025 18:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60100262D1B;
+	Tue, 11 Mar 2025 18:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aiSdc+/u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E751F78F5D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D3478F5D;
+	Tue, 11 Mar 2025 18:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741717261; cv=none; b=R2ho5uw+SInNMFBJ58r7VZXWY+4iU/EQGMET8QZqlxK/qwC21Al/0PnBeEKLx4xL/dxv/KJihGmejf/XWhWa2KA7rsKY2juneHvX9yd70dE+hMDL9e1cq9VGLY/3/Qs6rUovbkYc+IO0ntuauQje6lZzlFKwMFMG5zmo/wt7QD4=
+	t=1741717333; cv=none; b=fE7+J2ZHvVX+8dbNxQD9qigeMnSTheARK3LrNpTNHG6ZwIHCvUkIbimwePuyvAQwH44mvW4Mn77EKOFh/oIAna1Tw1SwDL/pVH/ggq9g7wqdlI3Ka9rNgX90q1hlIi0Yc2oQCaQQtFUEguN0Qao8EoNZ8IJHQktPWCcZFmh9xHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741717261; c=relaxed/simple;
-	bh=9/lxu0cPDdRd0qP0yqkSacCPiZMMWrbjDYPz48QpZoE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=acREEfpVLngHmxFtmVjb0ynf/mYkW87swY2U50CljTwYasmIlBmt5yqOrHGUiFakd37zNU+i/ikDma6EvWQ79QStwKMK1fhGvXwu1Rplc3lZcaAfkJ9P5ThM6vZ9ibmRLe8SMVatc8VG2fsBnkTZTe3Y9MSP/r4Nc7ih3ksC3Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F8EC4CEE9;
-	Tue, 11 Mar 2025 18:21:00 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: will@kernel.org,
-	Yue Haibing <yuehaibing@huawei.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] arm64/fpsimd: Remove unused declaration fpsimd_kvm_prepare()
-Date: Tue, 11 Mar 2025 18:20:58 +0000
-Message-Id: <174171719963.3723629.1526900223897615698.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250309070723.1390958-1-yuehaibing@huawei.com>
-References: <20250309070723.1390958-1-yuehaibing@huawei.com>
+	s=arc-20240116; t=1741717333; c=relaxed/simple;
+	bh=twBnHx5MxmQiJsuf5M4X8oH5jsM0d98je1kAJCezQRc=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=V4ezzyUpAg/aQTbq9/YybkrRx40JHfh+sUSSfhIEI/z+yh+Rkr2481L0s6chS5gxphhMiywhrrthwla1tBWD3u5bVZCDZ4EY4lgPFdVUW+5NbrcipnMwKIiat8PaY8Y/fiBRasdvWyPwXitKkC6zYdG9cSS7XKh3ijDXlTQZUs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aiSdc+/u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A4AC4CEE9;
+	Tue, 11 Mar 2025 18:22:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741717333;
+	bh=twBnHx5MxmQiJsuf5M4X8oH5jsM0d98je1kAJCezQRc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aiSdc+/unKajtealI06ykugefgVZcMCiFo47wIxDcaoT17jRxCFqaSQxZpmcVtR7U
+	 9hXlu6BKOnmmFAqgNaD0dzPhdyNZa3pZk3XMHk8Rw6iyjN7Ru0XKoa2Ic2MV8I2aOK
+	 q31II4o92W4aBpvDg4xVZ3w7M+cm/F8q2tSAbJnAFbA3q5H2TFbYeDP1LbNbkvqNsc
+	 TwQQbEfpemoj2ec04SeAvuKvNlAOPZjTsUqqgzjBLruVHMdchJMvcx/4/JPmSxbWgu
+	 21uWULjuZJ2LgEM6qlL4xQzkYb7mnjt2Qvh0kZx7c2433MH0hjhLDX+c/vF17VA/mH
+	 78wY9P7AXwDEA==
+Received: from disco-boy.misterjones.org ([217.182.43.188] helo=www.loen.fr)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ts4F0-00CeC6-Ni;
+	Tue, 11 Mar 2025 18:22:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Date: Tue, 11 Mar 2025 18:22:10 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Anshuman Khandual
+ <anshuman.khandual@arm.com>, arm-kernel@lists.infradead.org, James Morse
+ <james.morse@arm.com>, Will Deacon <will@kernel.org>, Ard Biesheuvel
+ <ardb@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>, Mark Rutland
+ <mark.rutland@arm.com>, kvmarm@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 1/8] KVM: arm64: ptdump: Test PMD_TYPE_MASK for block
+ mapping
+In-Reply-To: <Z9B8lyYEtL62ZzVb@arm.com>
+References: <20250221044227.1145393-1-anshuman.khandual@arm.com>
+ <20250221044227.1145393-2-anshuman.khandual@arm.com>
+ <Z9B8lyYEtL62ZzVb@arm.com>
+User-Agent: Roundcube Webmail/1.4.15
+Message-ID: <43e4dd905ebc6424511bd230ceb47ac1@kernel.org>
+X-Sender: maz@kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 217.182.43.188
+X-SA-Exim-Rcpt-To: catalin.marinas@arm.com, oliver.upton@linux.dev, anshuman.khandual@arm.com, arm-kernel@lists.infradead.org, james.morse@arm.com, will@kernel.org, ardb@kernel.org, ryan.roberts@arm.com, mark.rutland@arm.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sun, 09 Mar 2025 15:07:23 +0800, Yue Haibing wrote:
-> Commit fbc7e61195e2 ("KVM: arm64: Unconditionally save+flush host
-> FPSIMD/SVE/SME state") removed the implementation but leave declaration.
+On 2025-03-11 18:10, Catalin Marinas wrote:
+> On Fri, Feb 21, 2025 at 10:12:20AM +0530, Anshuman Khandual wrote:
+>> Test given page table entries against PMD_TYPE_SECT on PMD_TYPE_MASK 
+>> mask
+>> bits for identifying block mappings in stage 2 page tables.
+>> 
+>> Cc: Marc Zyngier <maz@kernel.org>
+>> Cc: Oliver Upton <oliver.upton@linux.dev>
+>> Cc: James Morse <james.morse@arm.com>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: kvmarm@lists.linux.dev
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>  arch/arm64/kvm/ptdump.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
+>> index e4a342e903e2..098416d7e5c2 100644
+>> --- a/arch/arm64/kvm/ptdump.c
+>> +++ b/arch/arm64/kvm/ptdump.c
+>> @@ -52,8 +52,8 @@ static const struct ptdump_prot_bits 
+>> stage2_pte_bits[] = {
+>>  		.set	= "AF",
+>>  		.clear	= "  ",
+>>  	}, {
+>> -		.mask	= PTE_TABLE_BIT | PTE_VALID,
+>> -		.val	= PTE_VALID,
+>> +		.mask	= PMD_TYPE_MASK,
+>> +		.val	= PMD_TYPE_SECT,
+>>  		.set	= "BLK",
+>>  		.clear	= "   ",
+>>  	},
+> 
+> Marc, Oliver - are you ok with this patch going in through the arm64
+> tree?
 
-Applied to arm64 (for-next/misc), thanks!
+Yup, looks OK to me.
 
-[1/1] arm64/fpsimd: Remove unused declaration fpsimd_kvm_prepare()
-      https://git.kernel.org/arm64/c/31208bad3937
+Acked-by: Marc Zyngier <maz@kernel.org>
 
+         M.
 -- 
-Catalin
-
+Jazz is not dead. It just smells funny...
 
