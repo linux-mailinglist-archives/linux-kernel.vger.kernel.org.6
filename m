@@ -1,240 +1,99 @@
-Return-Path: <linux-kernel+bounces-556510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC027A5CAE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:32:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD6ACA5CAED
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:33:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 923673B31C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:31:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8B93B833D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2943426039A;
-	Tue, 11 Mar 2025 16:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2515525FA34;
+	Tue, 11 Mar 2025 16:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K7Gao5kP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Eb6QomPg"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC1A25C6F9;
-	Tue, 11 Mar 2025 16:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7588825BACF
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741710720; cv=none; b=tSofEbn0k7ohgVJ/Wptsz5bNVBPGjeUITbMBs1epVqpH5dGIgg/FKYWDIB4NpcONl/Uv6GgdQCjaHx5ybYgSqLVEETEj7AYbj7KyKLMJ6FtHuTUz3HUWsu6SrHw1lbCwit+hA/ShfFx4QFvmcLgOnDAAEjqnyoiJm8iFy2DR6SA=
+	t=1741710805; cv=none; b=fhvBI7ZSZpMadFPMi3uf31Ox/yW2r9KUt8X7v8K660J5Eqlj3aC2OQgZumti1l2sGzdI1I5zisTUK/CYp3jFocV0mBRSUeEnL1l+NTUDpJRZgGOMpwViiSMljz+LBasM6My9fu0nedekCGy9NPTcFMbfi1crZvLon7gek4rGXB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741710720; c=relaxed/simple;
-	bh=kli/27tDi+RYlPqX2bhJ2TuIz1lPgxcKET8b517wpPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ew75n/+5mug6xL++uicplo4bNRyGJ5+2G7E7WoYGF241zoOecWMK7yYl6Wqv5ENVL1rwOlcSjGn9ydat9hukMdJZpra5hBmrI9NH/1VUrOnwaflEFAnY9AAkgqSFjNJ4vwUG+kR50BzLatb+upuxMUOI0r2D45jRQ3LaYJRpOLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K7Gao5kP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C97FBC4CEE9;
-	Tue, 11 Mar 2025 16:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741710719;
-	bh=kli/27tDi+RYlPqX2bhJ2TuIz1lPgxcKET8b517wpPs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K7Gao5kPaA2Z4H2TPZS1Ntt7tL+9AIYfDWmotpIX17gNI/61K9bGuQ+orPb0zA1Dv
-	 KWVz+OxIoVE4vTPBEn5GDhgrXZzzXpCz4GHsS4lcrI1skdxqjMwVtrYCvnhshs8UPK
-	 vNm6akE20cBs/KuAM2eZhE9sW2KTxUfTRO4FoynhMjoZeCxucaMLIn1j1FG5bmWZ+9
-	 E0nVETzp9hJy2TcNcrm20y8bBDCSUjskSgpOiGCkHx3CE+sTaqZXnSPkee15x1kdp1
-	 6zSMfkP7pNu1hQ7nCq4Lcq/eUo7TCkvl0IUhnzO3mC3+5dd+WFSgFsfhdn2+frn05U
-	 SoWzI8+3zj0Rg==
-Date: Tue, 11 Mar 2025 18:31:54 +0200
-From: Dmitry Baryshkov <lumag@kernel.org>
-To: david@ixit.cz
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, Ivan Belokobylskiy <belokobylskij@gmail.com>
-Subject: Re: [PATCH v4] ARM: dts: nexus4: Initial dts
-Message-ID: <6bgnui5ygiw5c6erf4mhtod4ww645ntgy267snhrf5efgetajy@kbi6aw23knqe>
-References: <20250311-lg-nexus4-mako-v4-1-3916c8ec7edb@ixit.cz>
+	s=arc-20240116; t=1741710805; c=relaxed/simple;
+	bh=KXZfn+E+1UOPS6s6xjPmbs9/5t+fveiBOai0moxW8jA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mQOYymVINTsH0aFTGQU2xsQHieNhuIxh5T7vc4PaId+ppjbSI4/UXGglvIATP2fOm4VvV2jcRXVgLurdEtdGFyvOm9yUQ+Y7tBNHqR4MZEe18Sv7KDji+hhfcz/oOmqi+2yjxEWxGMf6xWewxcj1d2tmV51ZYlGXxsjwasXSJqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Eb6QomPg; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=ark2rwdxgbgn7jyg7trvov3zxe.protonmail; t=1741710801; x=1741970001;
+	bh=KXZfn+E+1UOPS6s6xjPmbs9/5t+fveiBOai0moxW8jA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Eb6QomPgRoUkiUbVXTyTXTzkIRdUpicXNtrQgACu6wNF7q6skb1Sf2YlqD7Rju1kR
+	 oqZWPUfpTxjGHafGjn6pU5G8NImsXBC2xLR4XfrCPUkM65OkhTGC0rHYiZyqUErS1X
+	 W4rYuRYqHUOkald9coOVF9MKZm/nF+C8lnJcmiuoWC6CIWwGOcqNk1rhlGJxTPZ0MR
+	 8ZGGciIvUK46Aiv//t/wWUpPjDeRH/J8wdDnlAoK5HyfgPBwLYp6xv/4MmneLH8hPR
+	 RIsHBov4eFCLDpHXulDY92A2/azIkU6Xlc6rvovIxjtN8QwvTpkrkJHHheemYOsrK3
+	 tUjMdIrL5EDqA==
+Date: Tue, 11 Mar 2025 16:33:16 +0000
+To: Panagiotis Foliadis <pfoliadis@posteo.net>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2] rust: task: mark Task methods inline
+Message-ID: <D8DKY3QWDX9P.1V1M6JXQ1NCSS@proton.me>
+In-Reply-To: <20250311-inline-c-wrappers-v2-1-72c99d35ff33@posteo.net>
+References: <20250311-inline-c-wrappers-v2-1-72c99d35ff33@posteo.net>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 0768b22bbf1dc2a7566b643e75c5d7b61f955053
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311-lg-nexus4-mako-v4-1-3916c8ec7edb@ixit.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 11, 2025 at 05:10:02PM +0100, David Heidelberg via B4 Relay wrote:
-> From: Ivan Belokobylskiy <belokobylskij@gmail.com>
-> 
-> Add initial support for LG Nexus 4 (mako).
-> 
-> Features currently working: regulators, eMMC, and volume keys.
-> 
-> Signed-off-by: Ivan Belokobylskiy <belokobylskij@gmail.com>
-> Co-developed-by: David Heidelberg <david@ixit.cz>
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
-> Changes in v4:
-> - Sorted regulators and added regulators compatible.
-> - Corrected pmic include and references.
-> - Moved &rpm outside of / node.
-> - Moved and simplify pm8921 keypad.
-> - Added chasis-type.
-> - Dropped incomplete WiFi node, will be provided in future
->   contributions.
-> - Link to v3: https://lore.kernel.org/r/20250309-lg-nexus4-mako-v3-1-1dc2807df296@ixit.cz
-> 
-> Changes in v3:
-> - rebased against next-20250307
-> - dropped backlight until driver gets converted to DT
-> 
-> Changes in v2:
-> - lge vendor doesn't exist anymore, rename to lg
-> - sdcc@ to mmc@ to comply with dt-schema
-> ---
->  arch/arm/boot/dts/qcom/Makefile                    |   1 +
->  .../boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts  | 344 +++++++++++++++++++++
->  2 files changed, 345 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/qcom/Makefile b/arch/arm/boot/dts/qcom/Makefile
-> index f06c6d425e91dd73c2b453d15543d95bd32383b9..0c1d116f6e84f76994aa8c8286350bdcd1657a42 100644
-> --- a/arch/arm/boot/dts/qcom/Makefile
-> +++ b/arch/arm/boot/dts/qcom/Makefile
-> @@ -12,6 +12,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
->  	qcom-apq8064-ifc6410.dtb \
->  	qcom-apq8064-sony-xperia-lagan-yuga.dtb \
->  	qcom-apq8064-asus-nexus7-flo.dtb \
-> +	qcom-apq8064-lg-nexus4-mako.dtb \
->  	qcom-apq8074-dragonboard.dtb \
->  	qcom-apq8084-ifc6540.dtb \
->  	qcom-apq8084-mtp.dtb \
-> diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts b/arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..51edd661e4bd903a32445d15955585a194574f30
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts
-> @@ -0,0 +1,344 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/mfd/qcom-rpm.h>
-> +#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-> +
-> +#include "qcom-apq8064-v2.0.dtsi"
-> +#include "pm8821.dtsi"
-> +#include "pm8921.dtsi"
-> +
-> +/ {
-> +	model = "LG Nexus 4 (mako)";
-> +	compatible = "lg,nexus4-mako", "qcom,apq8064";
-> +	chassis-type = "handset";
-> +
-> +	aliases {
-> +		serial0 = &gsbi7_serial;
-> +		serial1 = &gsbi6_serial;
-> +		serial2 = &gsbi4_serial;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial2:115200n8";
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		ramoops@88d00000{
-> +			compatible = "ramoops";
-> +			reg = <0x88d00000 0x100000>;
-> +			record-size = <0x20000>;
-> +			console-size = <0x20000>;
-> +			ftrace-size = <0x20000>;
-> +		};
-> +	};
-> +
-> +	battery_cell: battery-cell {
-> +		compatible = "simple-battery";
-> +		constant-charge-current-max-microamp = <900000>;
-> +		operating-range-celsius = <0 45>;
-> +	};
+On Tue Mar 11, 2025 at 4:05 PM CET, Panagiotis Foliadis wrote:
+> When you build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+> toolchain provided by kernel.org, the following symbols are generated:
+>
+> $ nm vmlinux | grep ' _R'.*Task | rustfilt
+> ffffffff817b2d30 T <kernel::task::Task>::get_pid_ns
+> ffffffff817b2d50 T <kernel::task::Task>::tgid_nr_ns
+> ffffffff817b2c90 T <kernel::task::Task>::current_pid_ns
+> ffffffff817b2d00 T <kernel::task::Task>::signal_pending
+> ffffffff817b2cc0 T <kernel::task::Task>::uid
+> ffffffff817b2ce0 T <kernel::task::Task>::euid
+> ffffffff817b2c70 T <kernel::task::Task>::current
+> ffffffff817b2d70 T <kernel::task::Task>::wake_up
+> ffffffff817b2db0 T <kernel::task::Task as kernel::types::AlwaysRefCounted=
+>::dec_ref
+> ffffffff817b2d90 T <kernel::task::Task as kernel::types::AlwaysRefCounted=
+>::inc_ref
+>
+> These Rust symbols are trivial wrappers around the C functions
+> get_pid_ns, task_tgid_nr_ns, task_active_pid_ns, signal_pending, uid,
+> euid, get_current, wake_up, get_task_struct and put_task_struct.It
+> doesn't make sense to go through a trivial wrapper for these
+> functions, so mark them inline.
+>
+> After applying this patch, the above command will produce no output.
+>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+> Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
 
-Ideally this should also be sorted, although I don't feel like putting
-it before /chosen/.
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-> +};
-> +
-> +&rpm {
+---
+Cheers,
+Benno
 
-Please sort nodes alphabetically. &rpm definitely comes after &gsbi1.
-
-> +	regulators {
-
-[...]
-
-> +};
-> +
-> +&gsbi1 {
-> +	qcom,mode = <GSBI_PROT_I2C>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&gsbi1_i2c {
-> +	clock-frequency = <200000>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&gsbi4 {
-> +	qcom,mode = <GSBI_PROT_I2C_UART>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&gsbi4_serial {
-> +	status = "okay";
-> +};
-> +
-> +&pm8821 {
-> +	interrupts-extended = <&tlmm_pinmux 76 IRQ_TYPE_LEVEL_LOW>;
-> +};
-> +
-> +&pm8921 {
-> +	interrupts-extended = <&tlmm_pinmux 74 IRQ_TYPE_LEVEL_LOW>;
-> +};
-> +
-> +&pm8921_keypad {
-> +	linux,keymap = <
-> +		MATRIX_KEY(0, 0, KEY_VOLUMEDOWN)
-> +		MATRIX_KEY(0, 1, KEY_VOLUMEUP)
-> +	>;
-> +
-> +	keypad,num-rows = <1>;
-> +	keypad,num-columns = <5>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +
-> +/* eMMC */
-> +&sdcc1 {
-> +	vmmc-supply = <&pm8921_l5>;
-> +	vqmmc-supply = <&pm8921_s4>;
-> +
-> +	status = "okay";
-> +};
-> 
-> ---
-> base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
-> change-id: 20250309-lg-nexus4-mako-da0833885b26
-> 
-> Best regards,
-> -- 
-> David Heidelberg <david@ixit.cz>
-> 
-> 
-
--- 
-With best wishes
-Dmitry
 
