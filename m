@@ -1,191 +1,95 @@
-Return-Path: <linux-kernel+bounces-556380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D966AA5C57B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:15:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4520A5C556
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:14:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCAA2188D558
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:12:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FB2717A5D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6045C25EF81;
-	Tue, 11 Mar 2025 15:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E670325DCFA;
+	Tue, 11 Mar 2025 15:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mss7qbqp"
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EZGofefi"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2003125E820;
-	Tue, 11 Mar 2025 15:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA0225C715
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741705905; cv=none; b=OSXxxFufgnqMdEXHZnr3RbJNLo9gT8j5zCdhueWXdhC6DLnYkYzTuazMmlmErtKM7g3gYIxlbxjOQ3WFmXpOILuHwOsIObth0emBzIASwkAYLgGKqJUL+yscV8oXLiWSCSmklYAmxc3czBUvSiU4EY4n2Nr20XYVLLL2vdHA0uk=
+	t=1741705904; cv=none; b=N/6IjK6b3OFyjuLE+WZXwNAg2gsMYt6Oai7tlLBOFegoTjxJO6NLTCLUOygteiOBI4pn3MKVvP5GizrRIk1c3q47r1ZXTB8BqyhT2Hzt75xdmzouzZs8b7nRJXfVnhkLpyC5m/16ajvyhmme0f25zZYi28lIbAUpYdfA22oSOFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741705905; c=relaxed/simple;
-	bh=zu/L7+HG6HCLqSThKKvejHwz7q04O4o7/CbXHL+MeOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BlziOqiULFoqel2H35UYJ2lwH2GLFQ9qwLHwhZQ696+vCHHPyMOtxPMbUdokk/Z/mRD1cZj9SUuXyU7O50+3M0prFJf3vyWOsjP/PTnd88pWbdSNgxVWoE91Ubqov8ElrUaq9QZJi+MWsyBjQHdvVdBjaOmH1pIqIkXqVVSSoJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mss7qbqp; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-867129fdb0aso5038603241.1;
-        Tue, 11 Mar 2025 08:11:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741705903; x=1742310703; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DTuA7YSQf6BTENhRE44x2ahXNAujiJZaMhILjLcujAA=;
-        b=Mss7qbqpDDXbAP5nmPTtXEUlCGPNMUKCWAsmmQIEKxcYw5P9SGpLeckaurYCHOGI6S
-         ZbmsmIAAvalt5OjRgN9pbUP4cybR8hq1FMbNhgwIeTBlV3VzyMfZX/J3MRX2qQdBy0o0
-         ib+6YpRS5mXU68OeSZ7Zd910NP1n9Oxs6hZXwPtSjjNIjuanaxP/hW9yL/HDUle7xJRb
-         JMSsPuqXHzGIvjVrYt5iWVZv5M88XyZhOs+ywI+nkieihVHyQPNm8+q54FA4+SlkBizq
-         1731sHUwxXQUmLOjSKFUbeMCCT8T+gojA0Eri4TdCD/UfCJT37HGjrn2r8IZP9gHvUeS
-         7u9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741705903; x=1742310703;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DTuA7YSQf6BTENhRE44x2ahXNAujiJZaMhILjLcujAA=;
-        b=QfdVmK89ZAZ3ox3bS/MS3RiQy/7eIyISkmKm8OY3r2JQwWEu4969mVoWrQ3tU0EjQY
-         9aaxVd3I15LJQPX/jdrp81CnRQu57lHx1Hl77+9yVVnMVWY9uN6JbKMLtrzCBczXyo6T
-         5//xriQ/igQus4UV9zSWXnq933tsfbYaB3xhotazk25jBJ/GbQO3jlYMcDVOgJY1Ni43
-         6qszwFKq4Zm8UVGYQXnbmwJBhHLyGWSKVwAbdqhrJJ5zMv+L1FoAtY7v/GLgcvIJ163q
-         9dk4qH7DTJFvG3fTsci+2RvlvgzzH806hFjJS1wprUTJqYm6ndl/EFMfEEx+PezJ5vzt
-         3N9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVqo2mnDHkxu8Nzy7R58qoz2WTXQ9g6nDd6d80LZjlXuwOOBuUFw2Tk34xkfweQSJSUR/yqp0nu1iMRZ+E=@vger.kernel.org, AJvYcCWI2pyYwPOCL9rAgamdN7OHva2I2Sb/cbxVursi12l5TySNCelLpoy8Dk7wUHOPtNW6JdacUUxbfpY9EuWsCl1cuU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5+2oaF+0KUCOPed2xUweZ+hNezWq5E5IsdcF9FRALVrrRFLZR
-	BvH2TEL37XXQ23de0wd1Y9s4OCcn8yuJYc3kX4BhOxrft6bbOJnxaVc8uVIfEh9/uMn81SWFNWU
-	/8C6V15aBPlaLrcvMm+Wg/cndHCM=
-X-Gm-Gg: ASbGncvTfh4AiDke79Uaf1SQOR8w8UeB4BVYG1Pd+C8C+v1DqqbAYv/Ax1FkWNY3MY9
-	ymwivzVZH7a2riQbhkgwTonBRZotLyEh6M3c93nael6eRdAmyTEdgtkxHQf4HPrqYIcxfo1nCnq
-	y05uCazjyabeCbsAyNkyBRAOUIog==
-X-Google-Smtp-Source: AGHT+IGrRBAfEL4AxUiuseuyI92pGLRtD/JII/C+DL6HvPbEkqygZtUt+JWnvwrEiMJgIWvk5rmcyl+90xCH5yInaRw=
-X-Received: by 2002:a05:6102:5793:b0:4bb:e14a:9451 with SMTP id
- ada2fe7eead31-4c34d31add4mr3130230137.20.1741705902795; Tue, 11 Mar 2025
- 08:11:42 -0700 (PDT)
+	s=arc-20240116; t=1741705904; c=relaxed/simple;
+	bh=2pEPfQnKkMXf9qYdroi+mcyKZJi/SHxzLO3DOgfFtmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nUvJS+2nu0Gpqb962n1Qgd1Uos2FtbtJMXSxsjOV0YRJdZ+fY3lV0ofpj/YWUwKolRVRgm3nNs5JlYKlMxwxmQvP/4Y1crKOFQhYzY00ZwvkjdKBh9WoMozvE3sNmCzGP8iSyLjbm7gTJpb1e99V7NrvfW6jBb3LT9OVYMErfyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EZGofefi; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 11 Mar 2025 11:11:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741705899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W7fUA0Qx0rj71WggZBm7d9GiJYyJrD9OSJTohMrCes4=;
+	b=EZGofefiPSvaJgZqOsBlLgl+SXB4lbosnWiafYxegnktNiM8WegWnKcs12Sx3dGKzI21+O
+	FXtSExHb1zSCjXSpoTMt1h5gzeFMhs7ZvdfW52monrgEbvF6tIALnJULLC+Gzu4D+ScRVd
+	MGDTwmM5S6Z4Clixu8QbWgY0Cqru088=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Roxana Nicolescu <nicolescu.roxana@protonmail.com>
+Cc: syzbot+c17ad4b4367b72a853cb@syzkaller.appspotmail.com, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] bcachefs: Initialize from_inode members for bhc_io_opts
+Message-ID: <pzcsn7bkeaneadjpv5wudfvjeivukq36dzfobq5apjmr5blqew@txii3klkqstk>
+References: <20250311150606.127577-1-nicolescu.roxana@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c499234d559a0d95ad9472883e46077311051cd8.1741612208.git.geert+renesas@glider.be>
-In-Reply-To: <c499234d559a0d95ad9472883e46077311051cd8.1741612208.git.geert+renesas@glider.be>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 11 Mar 2025 15:11:16 +0000
-X-Gm-Features: AQ5f1Jpx2fGdbJPdj5FDcS5GoLqqOGLJlYzfmSg2SJ8trxO8w9qoL6dJAOW-mek
-Message-ID: <CA+V-a8tGuxgan7Zx0YedSByfFSgrg5gmR6Fy3dMDXwU+TscZzg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: shmobile: smp: Enforce shmobile_smp_* alignment
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Nicolas Pitre <nico@fluxnic.net>, Simon Horman <horms+renesas@verge.net.au>, 
-	Kees Cook <kees@kernel.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311150606.127577-1-nicolescu.roxana@protonmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Geert,
+On Tue, Mar 11, 2025 at 03:06:10PM +0000, Roxana Nicolescu wrote:
+> When there is no inode source, all "from_inode" members in the structure
+> bhc_io_opts should be set false.
+> 
+> Fixes: 7a7c43a0c1ecf ("bcachefs: Add bch_io_opts fields for indicating whether the opts came from the inode")
+> Reported-by: syzbot+c17ad4b4367b72a853cb@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=c17ad4b4367b72a853cb
+> Signed-off-by: Roxana Nicolescu <nicolescu.roxana@protonmail.com>
 
-Thank you for the patch.
+Indeed, we're not zero initializing opts prior to passing it in -
+applied, thanks.
 
-On Mon, Mar 10, 2025 at 1:14=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> When the addresses of the shmobile_smp_mpidr, shmobile_smp_fn, and
-> shmobile_smp_arg variables are not multiples of 4 bytes, secondary CPU
-> bring-up fails:
->
->     smp: Bringing up secondary CPUs ...
->     CPU1: failed to come online
->     CPU2: failed to come online
->     CPU3: failed to come online
->     smp: Brought up 1 node, 1 CPU
->
-> Fix this by adding the missing alignment directive.
->
-> Fixes: 4e960f52fce16a3b ("ARM: shmobile: Move shmobile_smp_{mpidr, fn, ar=
-g}[] from .text to .bss")
-I wonder if this fixes tag should go back a bit far as I was able to
-reproduce this on 5.10-cip BSP kernel on RZ/G1E this was only seen
-when CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE was enabled,
-
-RZ/G1E failure logs:
---------------------------
-[    0.006719] smp: Bringing up secondary CPUs ...
-[    1.040749] CPU1: failed to come online
-[    1.041014] smp: Brought up 1 node, 1 CPU
-[    1.041038] SMP: Total of 1 processors activated (65.00 BogoMIPS).
-[    1.041063] CPU: All CPU(s) started in SVC mode.
-[    1.041904] devtmpfs: initialized
-[    1.050811] VFP support v0.3: implementor 41 architecture 2 part 30
-variant 7 rev 5
-[    1.051143] clocksource: jiffies: mask: 0xffffffff max_cycles:
-0xffffffff, max_idle_ns: 19112604462750000 ns
-[    1.051197] futex hash table entries: 512 (order: 3, 32768 bytes, linear=
-)
-[    1.060510] pinctrl core: initialized pinctrl subsystem
-[    1.063139] NET: Registered protocol family 16
-
-$ grep shmobile_smp_ System.map-notworking
-c021caa0 t shmobile_smp_apmu_cpu_kill
-c021cb20 t shmobile_smp_apmu_enter_suspend
-c021cb54 t shmobile_smp_apmu_boot_secondary
-c021cbc0 t shmobile_smp_apmu_cpu_shutdown
-c021cc18 t shmobile_smp_apmu_do_suspend
-c021cc60 t shmobile_smp_apmu_cpu_die
-c021cc84 T shmobile_smp_hook
-c021ccd8 T shmobile_smp_cpu_can_disable
-c021d050 t shmobile_smp_continue_gen2
-c021d0c4 T shmobile_smp_boot
-c021d0e4 t shmobile_smp_boot_find_mpidr
-c021d0fc t shmobile_smp_boot_next
-c021d10c t shmobile_smp_boot_found
-c021d114 T shmobile_smp_sleep
-c021d380 T shmobile_smp_scu_cpu_die
-c021d3b4 T shmobile_smp_scu_cpu_kill
-c120a87c t shmobile_smp_apmu_prepare_cpus_dt
-c120aab8 T shmobile_smp_apmu_suspend_init
-c120aad0 T shmobile_smp_init_fallback_ops
-c120b0f0 T shmobile_smp_scu_prepare_cpus
-c1262778 t __cpu_method_of_table_shmobile_smp_apmu
-c154d5fd B shmobile_smp_mpidr
-c154d61d B shmobile_smp_fn
-c154d63d B shmobile_smp_arg
-
-
-> Closes: https://lore.kernel.org/r/CAMuHMdU=3DQR-JLgEHKWpsr6SbaZRc-Hz9r91J=
-fpP8c3n2G-OjqA@mail.gmail.com
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> To be queued in renesas-fixes-for-v6.14.
-> ---
->  arch/arm/mach-shmobile/headsmp.S | 1 +
+>  fs/bcachefs/inode.c | 1 +
 >  1 file changed, 1 insertion(+)
->
-Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Cheers,
-Prabhakar
-
-> diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/he=
-adsmp.S
-> index a956b489b6ea12ca..2bc7e73a8582d2b3 100644
-> --- a/arch/arm/mach-shmobile/headsmp.S
-> +++ b/arch/arm/mach-shmobile/headsmp.S
-> @@ -136,6 +136,7 @@ ENDPROC(shmobile_smp_sleep)
->         .long   shmobile_smp_arg - 1b
->
->         .bss
-> +       .align  2
->         .globl  shmobile_smp_mpidr
->  shmobile_smp_mpidr:
->         .space  NR_CPUS * 4
-> --
-> 2.43.0
->
->
+> 
+> diff --git a/fs/bcachefs/inode.c b/fs/bcachefs/inode.c
+> index 04ec05206f8c..339b80770f1d 100644
+> --- a/fs/bcachefs/inode.c
+> +++ b/fs/bcachefs/inode.c
+> @@ -1198,6 +1198,7 @@ void bch2_inode_opts_get(struct bch_io_opts *opts, struct bch_fs *c,
+>  		opts->_name##_from_inode = true;			\
+>  	} else {							\
+>  		opts->_name = c->opts._name;				\
+> +		opts->_name##_from_inode = false;			\
+>  	}
+>  	BCH_INODE_OPTS()
+>  #undef x
+> -- 
+> 2.34.1
+> 
+> 
 
