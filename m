@@ -1,122 +1,122 @@
-Return-Path: <linux-kernel+bounces-555573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B50BA5B9C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:29:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B87A5B9C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:28:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7128B1892A0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:29:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E5257A8446
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2E32222C4;
-	Tue, 11 Mar 2025 07:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9122222B4;
+	Tue, 11 Mar 2025 07:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="clqEGs7D"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t35DdyXS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189A32222CA;
-	Tue, 11 Mar 2025 07:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDCD1E0DDC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741678131; cv=none; b=EUxKxtmclnhpU1nwGXDuk3DDuXOD4ZcXQSwPELXfF1rbNXGS7l5pgXn36CAU/zcqp1o45AKdvIG8yTcoBq7M7xCl51uVQXiMnT/5qM7sVCkARxyfOJWuTXEZcIDkNStK8CJJClbOBOzBf0HgP+gwZk8oa/5pDAUKqC15ppCu9K0=
+	t=1741678098; cv=none; b=ZApD+Dk3lGSblgdSirUanKGmV3aJ0IEgOE/RIftygmNBc0GfaPDZJpAjZB2G5H3mj6AU1OK0OnlKvOGWLAAaHWpRsnUU3Jiuu/45MDu73jDUL4yK4KhpyJZFoJwV8pYCkVRES5S2BLak0nHn6ngY8Mxw8cUik3i8LK2YXCvWjuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741678131; c=relaxed/simple;
-	bh=tS59wv2oRJS3ZEDR20fU+3B7NhAcIQZIUM+9nIVYeMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BQykO7Y3WOB5H74eJd06caZ3UGWPEp+PnC1zEv4pE2TWaziGNBP1F7nhsLTszdpnLKeEWRnDegA/Fj38ORVFismq+spktbmYGpiqGdNPV8PhB9KZtwVlVzi/jbdxm95lw+dUQ9QaRvM5sD8CcPGxaQ1h130aCSvFypthiBZFv1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=clqEGs7D; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52B7S0Ds644784
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Mar 2025 02:28:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741678080;
-	bh=PbzRBzD4zy1+woI1kw2/XmxJI77CaWyhRb9Se95W7PI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=clqEGs7DEHEsKaeENmPF1f7pqFSp3QgVfxlDlCYu/oVNDolvtnCKDqdbHlSjPzb95
-	 2m1ZsLm7e+NylWm0dsInjHa0bGykRmvn14PvWYpEgJ3mVs6VfL2j/g63VPdbSrpOJh
-	 6LMluOUQDRQVTnJ8DlqkCR5Ah1rH4kg0/PugVLvM=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52B7S0kc061754
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 11 Mar 2025 02:28:00 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
- Mar 2025 02:27:59 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 11 Mar 2025 02:28:00 -0500
-Received: from [10.24.68.192] (dhcp-10-24-68-192.dhcp.ti.com [10.24.68.192])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52B7RuHV002607;
-	Tue, 11 Mar 2025 02:27:56 -0500
-Message-ID: <8f03c097-e2c1-452a-85e2-90accbac7443@ti.com>
-Date: Tue, 11 Mar 2025 12:57:55 +0530
+	s=arc-20240116; t=1741678098; c=relaxed/simple;
+	bh=cDeaKhsAblOqbe1pQfxWDuLhNshQnyKnykqiFdidVYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UglmhKfwpYEDdBftZHK1mjzOdOspp4Fl+gNuKhQkhpOeJmiNLPuhwLWgVobv/e5aCla25TpI3PSy/94tkrYpba6485DMOqW1XBCnmg1L9LDN+YxB78Y2WEMkYs08V0PnOMgftif6GlmXfuTk92kCeAJ0tT03CDPiNnr5PK0xQlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t35DdyXS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA7C7C4CEE9;
+	Tue, 11 Mar 2025 07:28:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741678096;
+	bh=cDeaKhsAblOqbe1pQfxWDuLhNshQnyKnykqiFdidVYs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t35DdyXSdyDN7wDspuyXbyGcBe8rDdR0PGDwxtuwpYaq+s9ExXFHNNpudQanlkHm0
+	 ZGq5NARqiFQoUYsqiOCvFqwx8VvWqm+ogioT2ZuuXn03vqUBcFOqB52QZkB4Rwemnf
+	 92Un0HABjmEq4G2UtCNgsHUfWTJTMVoa7ueXCLtIf6bMx9dozWV7VcYmjajHIwEQsK
+	 XIs/J52gOZKxqn6fu2l0Tq0cjx/1tfPw0Y2bjkcaPD3WG5nO8wPwoB+2IPjUxROpBh
+	 uw6+QNaVPPBg8TmXXHOMHFuLcI+aDu3c41zOCOyqumrCExYLoYksxwOq2imc+waHKd
+	 E2z+w+G4YKucg==
+Date: Tue, 11 Mar 2025 08:28:12 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Balbir Singh <balbirs@nvidia.com>
+Cc: Bert Karwatzki <spasswolf@web.de>, Kees Cook <kees@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: commit 7ffb791423c7 breaks steam game
+Message-ID: <Z8_mDOpoB5FloreP@gmail.com>
+References: <20250310112206.4168-1-spasswolf@web.de>
+ <951f9d13-72e4-41c3-9ace-8639e2a9485d@nvidia.com>
+ <ce940e2a-632d-41be-9f13-e5b11d49b0db@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] Add J722S CSI support
-To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Vaishnav Achath <vaishnav.a@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <jai.luthra@linux.dev>,
-        <y-abhilashchandra@ti.com>
-References: <20250218185452.600797-1-vaishnav.a@ti.com>
- <174133309362.1072814.5440404016847301624.b4-ty@ti.com>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <174133309362.1072814.5440404016847301624.b4-ty@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce940e2a-632d-41be-9f13-e5b11d49b0db@nvidia.com>
 
 
+* Balbir Singh <balbirs@nvidia.com> wrote:
 
-On 07/03/25 16:06, Vignesh Raghavendra wrote:
-> Hi Vaishnav Achath,
+> On 3/11/25 08:48, Balbir Singh wrote:
+> > On 3/10/25 22:22, Bert Karwatzki wrote:
+> >> Using linux next-20250307 to play the game stellaris via steam I noticed that
+> >> loading the game gets sluggish with the progress bar getting stuck at 100%.
+> >> In this situation mouse and keyboard inputs don't work properly anymore.
+> >> Switching to a VT and killing stellaris somewhat fixes the situation though in
+> >> one instance the touchpad did not work after that. I bisected this between
+> >> v6.14-rc5 and next-20250307 and got this as the first bad commit:
+> >>
+> >> 7ffb791423c7c518269a9aad35039ef824a40adb is the first bad commit
+> >> commit 7ffb791423c7c518269a9aad35039ef824a40adb (HEAD)
+> >> Author: Balbir Singh <balbirs@nvidia.com>
+> >> Date:   Fri Feb 7 10:42:34 2025 +1100
+> >>
+> >>     x86/kaslr: Reduce KASLR entropy on most x86 systems
+> >>
+> >> Reverting commit 7ffb791423c7 in next-20250307 fixes the issue for me.
+> >>
+> > 
+> > Thanks for the report! Could you also share the dmesg? Do you have any proprietary
+> > modules loaded? Could you also share the output of /proc/iomem (captured as sudo)?
+> > The lspci output is useful, lspci -vvv (captured with sudo) would help see where
+> > the BAR regions are, specifically before and after the patch. Could you also share
+> > the kernel config?
+> > 
+> > I assume your config has CONFIG_PCI_P2PDMA enabled. Did the system ever work with
+> > nokaslr for you?
+> > 
+> > I am a little surprised that reducing the entropy causes these issues and having
+> > a larger direct map causes these issues.
 > 
-> On Wed, 19 Feb 2025 00:24:47 +0530, Vaishnav Achath wrote:
->> This series adds support for CSI2RX capture on J722S EVM
->> and enables IMX219 and OV5640 overlays to enables
->> 4 sensors on EVM, this provides a reference for a user to
->> enable a different sensor on any of the ports.
->>
->> Test logs:
->> IMX219: https://gist.github.com/vaishnavachath/60cc2ef257601f27f28a315f8cf669c4
->> OV5640: https://gist.github.com/vaishnavachath/648202286d4d34d4d25f7c8c9db8b8bd
->>
->> [...]
-> I have applied the following to branch ti-k3-dts-next on [1].
-> Thank you!
+> Hi, Bert
 > 
-> [1/5] arm64: dts: ti: k3-j722s-main: Add BCDMA CSI overrides
->       commit: fb1b230bf9c45f5d6579dc329c2aafcd1263b70a
-> [2/5] arm64: dts: ti: k3-j722s-main: Add CSI2RX nodes
->       commit: 8fea4519f625e6c1b05078f2ecea252b7b28b06e
-> [3/5] arm64: dts: ti: k3-j722s-evm: Add camera peripherals
->       commit: ce553288ad2368f0d27e47b39a23121a825a2b33
+> I tried to reproduce the issue at my end, but could not. I am new to Steam and my
+> hardware/games are also different. From what I could gather, Steam is a 32 bit
+> application that uses SDL. For my testing I used Xorg, not wayland
+> 
+> In addition to the above?
+> 
+> 1. Could you confirm if the mouse/keyboard work outside of Steam?
+> 2. Does evtest /dev/input/<mouse device> show anything?
+> 3. We could run the kernel with nokaslr and see if the issue reproduces?
+> 4. As a test, we could try disabling CONFIG_PCI_P2PDMA in the kernel config,
+> build boot and test, this has the same effect has not having the patch
 
-> [4/5] arm64: dts: ti: k3-j722s-evm: Add overlay for quad IMX219
->       commit: c24ccb1cd77fb44087b2f7008d99626796b33ca4
-> [5/5] arm64: dts: ti: k3-j722s-evm: Add overlay for TEVI OV5640
->       commit: 938806652b0a3c90d67e7137c91708d06940b03d
+[ Just a side note: disabling CONFIG_PCI_P2PDMA will have the same 
+  effect *on KASRL* memory layout as reverting 7ffb791423c, but 
+  disabling support for the P2P DMA PCI feature may have other side 
+  effects. ]
 
-I have dropped 4 and 5 due to issues Rob pointed out in the other thread.
+Thanks,
 
--- 
-Regards
-Vignesh
-https://ti.com/opensource
-
+	Ingo
 
