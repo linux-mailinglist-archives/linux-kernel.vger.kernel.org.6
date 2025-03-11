@@ -1,401 +1,125 @@
-Return-Path: <linux-kernel+bounces-555625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFACA5BA6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:06:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCFBA5BA71
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:06:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1FF47A262E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:05:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23995170F0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B667322257B;
-	Tue, 11 Mar 2025 08:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC9522423A;
+	Tue, 11 Mar 2025 08:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aCYOCUFh"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eZdIfRay"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5FF1EB9E8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4221EB9E8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741680357; cv=none; b=h2ciVZlW7a2m03BaMucwoMc4G0/4S/lj/Er7jWkWREoeBiZPa5w6RFLlny8b3vicAUEXZqwhw6EkoVPPSom/N1uh39vHXTjw70Bj+F2lzy1i3Qey9s1gB2rZcUiVlk9fKdW69R9w0UKRG/xZFhBdieyf8WiOS8gTIcH6u4ylI5M=
+	t=1741680403; cv=none; b=dShk0WYyZmkuz11c1hHp6gcCCuxB6R/5VddXTWHpSJAes/LjAaCfHg9DKXlXDMNDHfUmjN+RBpyTgRTS0mq8OCmHpC9QcdVb5S0X9p8kbpvh/pAODwi73VW1sGyP5bPAJleEl8QdU0im70mmjqjxmrL2VB/svJc3r3pq3Capo7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741680357; c=relaxed/simple;
-	bh=iICklwo3wPiDgAanlTEiuQP54zlT8s9UHiMdSWjKFLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=svsTY8NiK0oaR5OTgGIy9/AZjXXXXv/MEzGuUhGW+u2ggMDsu0VtG/e+SlZIznUr44iBWCmmkBczIBvNuP5OHpQ6aQEFFBk6jZxOZP0rq9kP5I7T+IRuBLH/PIb4kXm0Ws+ZKSwC6wMBUB406v8RpbCe5oqhqP40Fr5qiaRPv2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aCYOCUFh; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741680353;
-	bh=iICklwo3wPiDgAanlTEiuQP54zlT8s9UHiMdSWjKFLw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aCYOCUFhrZpqxb2zlHECvjEKY8WrLHHHcuNOcbGuOdMWLahQBo1g/C+p+gW8PFBpv
-	 /OS6Gsb98smbVUjTIMa/T81++aNLJ5AbySz6bqJt3cHZrYCG3VaKVW2a+0d1q+Rnib
-	 SHLWHVeUu5hcJN7oVmMRX3FyZ4zlqXQZbvF/EJylFIp54OEPSSHbVFWwxK14Aiv5zt
-	 SdySo9VcBqeRow6ra1s3o1fn+erTf/VcZwlNv7NT4RhmOfvZDyr9ZxlpaxjU+rqI/s
-	 0P2kFbU+rOVI8vp+JBkyAg4L+FqJs47koRaNxQLcEeoNN8iGnhRaTKX/rqOEZeTTOg
-	 NapYbQoTMUpvg==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0E67117E0237;
-	Tue, 11 Mar 2025 09:05:53 +0100 (CET)
-Date: Tue, 11 Mar 2025 09:05:45 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch, kernel@collabora.com, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com
-Subject: Re: [PATCH v1 4/6] drm/panfrost: Add support for AARCH64_4K page
- table format
-Message-ID: <20250311090545.3b941567@collabora.com>
-In-Reply-To: <20250310195921.157511-5-ariel.dalessandro@collabora.com>
-References: <20250310195921.157511-1-ariel.dalessandro@collabora.com>
-	<20250310195921.157511-5-ariel.dalessandro@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741680403; c=relaxed/simple;
+	bh=GqsHdypcLuJf8lTVxKP4YCkbR9d4MU9dFUFykzw15j8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jECydEc52+c9bivdiO9KGjp14wwW2fKdU5G5Drw+ZBuxI9SIKDt4Bs03w4aHYmkf1JsHSCCGL2Mljwfoe2QfiCGLKhnElrZzCBDQar1X1VTI6qTjmLhKpbYiSFjZXQg1y5SNw515T+nbULDJTyll+M0CfqkGOzsS5X6UUZvbusI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eZdIfRay; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43cf5196c25so10683085e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 01:06:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741680400; x=1742285200; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+xcm0K1L7sxdR65HoWG0zR/e3ats9JqNWJReeEzbxwI=;
+        b=eZdIfRaydJldutouRnhboKjmJt3txSO5ejItY67ZgKeyGB17410Rci9Rfq7vrgvNQQ
+         9N/easXZw0AIVzNm+yoTcL7mTr4nbwZTbfkXtQWNtuzfaA95FpGKbhAfwzGxkyExnuUO
+         EO8KmPgzKom9oZ1GeM3UXgPIK3579KKA7adl1RbXzjQRLwRJXYm+uui8yWsMfHY2gmj0
+         ifhOSzN1DBvSifC+I0ZV0OOuCG9D34iDlcy4jkXwzMR8uVyWm9kJGlc+Xs6JQUx1fl/l
+         7bvmbUS8oBKP/npM5HdabPUxR2sfrFrthUhLBqg7jVbUE5+omZCkYzsIhbyI7UcoGZIY
+         PeFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741680400; x=1742285200;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+xcm0K1L7sxdR65HoWG0zR/e3ats9JqNWJReeEzbxwI=;
+        b=GSbEsijuCgnU2BJ9kX2uDePP5xyPHCj9o7T1Zl8kZsG8jc8QVvV08pWcVEFDJri2Dg
+         u/AeeQvECsIGjlCqiLu1VZMClBLSD29etrRpYyqW+K+TRqoDDLCGhYYC7unyGA5dqGHQ
+         +CN6O7bwUnlerxgBPbHu56rhxHltzn7+lo8QQ4s35R+Rwob1gJKMkKsg9UIRVI1UpyaZ
+         Lt29DtksGu5jZJGiqmFKGXy7uLKQ6FkuZovTW/SiDvfF99fbLkrs6hyZSQY7EdAT0yV5
+         FiL/6X3NuVMQXPvTA0xCL4YgwPJesyICEIfzrkPHzixO3n7ND1ZSpqV95eHojXWOmSUm
+         yj3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWweUNwABkB9Bk6/wKav23xHmSwgSjlbqdZxmDXJfstZHXqMaHJeCBspNy5sHtqFIcO+1VP5sU24PxewC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyweN+Wi+HW8YoYqT4dufitUVwjbCQhioOJ+upK2k8SG3B7vO7q
+	H90X8ceRhJiPoc2EFCnsAswHPD2xsMEfnaF+FCqjV7h2yimVaUs9C6BdYFr7jbpq2eqQ2yfwXjY
+	lm79Y9QrbnLuHdA==
+X-Google-Smtp-Source: AGHT+IGcrrTZTG+W6fZIwGjmzmkf4h8EJ1uAraxQiM1Mg0fkq2kWsZ8HARHFOyd2xy638gr8elcSnBE/hFQsuNY=
+X-Received: from wmsp32.prod.google.com ([2002:a05:600c:1da0:b0:43c:f3b7:f2d7])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:64cb:0:b0:391:40b8:e890 with SMTP id ffacd0b85a97d-39140b8e9f4mr9380366f8f.22.1741680399906;
+ Tue, 11 Mar 2025 01:06:39 -0700 (PDT)
+Date: Tue, 11 Mar 2025 08:06:37 +0000
+In-Reply-To: <jesg4yu7m6fvzmgg5tlsktrrjm36l4qsranto5mdmnucx4pvf3@nhvt4juw5es3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <jesg4yu7m6fvzmgg5tlsktrrjm36l4qsranto5mdmnucx4pvf3@nhvt4juw5es3>
+Message-ID: <Z8_vDWjk2LpBqLre@google.com>
+Subject: Re: [PATCH v2] rust/kernel/faux: mark Registration methods inline
+From: Alice Ryhl <aliceryhl@google.com>
+To: Ethan Carter Edwards <ethan@ethancedwards.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?PT91dGYtOD9xP0JqPUMzPUI2cm5fUm95X0Jhcm9uPz0=?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, 10 Mar 2025 16:59:19 -0300
-Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
+On Mon, Mar 10, 2025 at 03:51:38PM -0400, Ethan Carter Edwards wrote:
+> When building the kernel on Arch Linux using on x86_64 with tools:
+> $ rustc --version
+> rustc 1.84.0 (9fc6b4312 2025-01-07)
+> $ cargo --version
+> cargo 1.84.0 (66221abde 2024-11-19)
 
-> Currently, Panfrost only supports MMU configuration in "LEGACY" (as
-> Bifrost calls it) mode, a (modified) version of LPAE "Large Physical
-> Address Extension", which in Linux we've called "mali_lpae".
+Is there a reason you didn't drop this from the commit message?
+
+> $ clang --version
+> clang version 19.1.7
+> Target: x86_64-pc-linux-gnu
 > 
-> This commit adds support for conditionally enabling AARCH64_4K page
-> table format. To achieve that, a "GPU optional configurations" field was
-> added to `struct panfrost_features` with the related flag.
+> The following symbols are generated:
+> $ nm vmlinux | rg ' _R' | rustfilt | rg faux
+> ffffffff81959ae0 T <kernel::faux::Registration>::new
+> ffffffff81959b40 T <kernel::faux::Registration as core::ops::drop::Drop>::drop
 > 
-> Note that, in order to enable AARCH64_4K mode, the GPU variant must have
-> the HW_FEATURE_AARCH64_MMU feature flag present.
+> However, these Rust symbols are wrappers around bindings in the C faux
+> code. Inlining these functions removes the middle-man wrapper function
+> After applying this patch, the above function signatures disappear.
 > 
-> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> ---
->  drivers/gpu/drm/panfrost/panfrost_device.h |  16 +++
->  drivers/gpu/drm/panfrost/panfrost_mmu.c    | 132 +++++++++++++++++++--
->  drivers/gpu/drm/panfrost/panfrost_regs.h   |  34 ++++++
->  3 files changed, 169 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
-> index cffcb0ac7c111..0385702aa43c7 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
-> @@ -42,6 +42,14 @@ enum panfrost_gpu_pm {
->  	GPU_PM_VREG_OFF,
->  };
->  
-> +/**
-> + * enum panfrost_gpu_config - GPU optional configurations
-> + * @GPU_CONFIG_AARCH64_4K: Use AARCH64_4K page table format
-> + */
-> +enum panfrost_gpu_config {
-> +	GPU_CONFIG_AARCH64_4K,
-> +};
-> +
->  struct panfrost_features {
->  	u16 id;
->  	u16 revision;
-> @@ -95,6 +103,9 @@ struct panfrost_compatible {
->  
->  	/* Allowed PM features */
->  	u8 pm_features;
-> +
-> +	/* GPU features */
-> +	u8 gpu_configs;
+> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
 
-I would probably name this gpu_quirks, with the GPU_CONFIG_AARCH64_4K
-flag renamed GPU_QUIRK_FORCE_AARCH64_PAGE_TABLE.
+On v1 I replied with:
 
->  };
->  
->  struct panfrost_device {
-> @@ -162,6 +173,11 @@ struct panfrost_mmu {
->  	int as;
->  	atomic_t as_count;
->  	struct list_head list;
-> +	struct {
-> +		u64 transtab;
-> +		u64 memattr;
-> +		u64 transcfg;
-> +	} cfg;
->  };
->  
->  struct panfrost_engine_usage {
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> index 31df3a96f89bd..4a9b8de2ff987 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> @@ -26,6 +26,48 @@
->  #define mmu_write(dev, reg, data) writel(data, dev->iomem + reg)
->  #define mmu_read(dev, reg) readl(dev->iomem + reg)
->  
-> +static u64 mair_to_memattr(u64 mair, bool coherent)
-> +{
-> +	u64 memattr = 0;
-> +	u32 i;
-> +
-> +	for (i = 0; i < 8; i++) {
-> +		u8 in_attr = mair >> (8 * i), out_attr;
-> +		u8 outer = in_attr >> 4, inner = in_attr & 0xf;
-> +
-> +		/* For caching to be enabled, inner and outer caching policy
-> +		 * have to be both write-back, if one of them is write-through
-> +		 * or non-cacheable, we just choose non-cacheable. Device
-> +		 * memory is also translated to non-cacheable.
-> +		 */
-> +		if (!(outer & 3) || !(outer & 4) || !(inner & 4)) {
-> +			out_attr = AS_MEMATTR_AARCH64_INNER_OUTER_NC |
-> +				   AS_MEMATTR_AARCH64_SH_MIDGARD_INNER |
-> +				   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(false, false);
-> +		} else {
-> +			out_attr = AS_MEMATTR_AARCH64_INNER_OUTER_WB |
-> +				   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(inner & 1, inner & 2);
-> +			/* Use SH_MIDGARD_INNER mode when device isn't coherent,
-> +			 * so SH_IS, which is used when IOMMU_CACHE is set, maps
-> +			 * to Mali's internal-shareable mode. As per the Mali
-> +			 * Spec, inner and outer-shareable modes aren't allowed
-> +			 * for WB memory when coherency is disabled.
-> +			 * Use SH_CPU_INNER mode when coherency is enabled, so
-> +			 * that SH_IS actually maps to the standard definition of
-> +			 * inner-shareable.
-> +			 */
-> +			if (!coherent)
-> +				out_attr |= AS_MEMATTR_AARCH64_SH_MIDGARD_INNER;
-> +			else
-> +				out_attr |= AS_MEMATTR_AARCH64_SH_CPU_INNER;
-> +		}
-> +
-> +		memattr |= (u64)out_attr << (8 * i);
-> +	}
-> +
-> +	return memattr;
-> +}
-> +
->  static int wait_ready(struct panfrost_device *pfdev, u32 as_nr)
->  {
->  	int ret;
-> @@ -121,9 +163,57 @@ static int mmu_hw_do_operation(struct panfrost_device *pfdev,
->  	return ret;
->  }
->  
-> +static void mmu_cfg_init_mali_lpae(struct panfrost_mmu *mmu)
-> +{
-> +	struct io_pgtable_cfg *pgtbl_cfg = &mmu->pgtbl_cfg;
-> +
-> +	/* TODO: The following fields are duplicated between the MMU and Page
-> +	 * Table config structs. Ideally, should be kept in one place.
-> +	 */
-> +	mmu->cfg.transtab = pgtbl_cfg->arm_mali_lpae_cfg.transtab;
-> +	mmu->cfg.memattr = pgtbl_cfg->arm_mali_lpae_cfg.memattr;
-> +	mmu->cfg.transcfg = AS_TRANSCFG_ADRMODE_LEGACY;
-> +}
-> +
-> +static void mmu_cfg_init_aarch64_4k(struct panfrost_mmu *mmu)
-> +{
-> +	struct io_pgtable_cfg *pgtbl_cfg = &mmu->pgtbl_cfg;
-> +
-> +	mmu->cfg.transtab = pgtbl_cfg->arm_lpae_s1_cfg.ttbr &
-> +				AS_TRANSTAB_AARCH64_4K_ADDR_MASK;
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-Silently masking the low 4bits is not the solution, it's just papering
-over a real issue. If pgtbl_cfg->arm_lpae_s1_cfg.ttbr is not aligned on
-16 bytes (PAGE_SIZE even) we have a problem, so I would drm_WARN_ON()
-here, and return an error so we can fail the probe.
+So you should add that to the commit message when you send a new
+version. :)
 
-> +
-> +	mmu->cfg.memattr = mair_to_memattr(pgtbl_cfg->arm_lpae_s1_cfg.mair,
-> +					   pgtbl_cfg->coherent_walk);
-> +
-> +	mmu->cfg.transcfg = AS_TRANSCFG_PTW_MEMATTR_WB |
-> +			    AS_TRANSCFG_PTW_RA |
-> +			    AS_TRANSCFG_ADRMODE_AARCH64_4K |
-> +			    AS_TRANSCFG_INA_BITS(55 - pgtbl_cfg->ias);
-> +	if (pgtbl_cfg->coherent_walk)
-> +		mmu->cfg.transcfg |= AS_TRANSCFG_PTW_SH_OS;
-> +}
-> +
-> +static void panfrost_mmu_cfg_init(struct panfrost_mmu *mmu,
-> +				  enum io_pgtable_fmt fmt)
-> +{
-> +	struct panfrost_device *pfdev = mmu->pfdev;
-> +
-> +	switch (fmt) {
-> +	case ARM_64_LPAE_S1:
-> +		mmu_cfg_init_aarch64_4k(mmu);
-> +		break;
-> +	case ARM_MALI_LPAE:
-> +		mmu_cfg_init_mali_lpae(mmu);
-> +		break;
-> +	default:
-> +		dev_WARN_ONCE(pfdev->dev, 1, "Unhandled page table format\n");
-> +		break;
-> +	}
-> +}
-> +
->  static void
->  _panfrost_mmu_as_control_write(struct panfrost_device *pfdev, u32 as_nr,
-> -			       u64 transtab, u64 memattr)
-> +			       u64 transtab, u64 memattr, u64 transcfg)
->  {
->  	mmu_hw_do_operation_locked(pfdev, as_nr, 0, ~0ULL, AS_COMMAND_FLUSH_MEM);
->  
-> @@ -133,25 +223,28 @@ _panfrost_mmu_as_control_write(struct panfrost_device *pfdev, u32 as_nr,
->  	mmu_write(pfdev, AS_MEMATTR_LO(as_nr), lower_32_bits(memattr));
->  	mmu_write(pfdev, AS_MEMATTR_HI(as_nr), upper_32_bits(memattr));
->  
-> +	mmu_write(pfdev, AS_TRANSCFG_LO(as_nr), lower_32_bits(transcfg));
-> +	mmu_write(pfdev, AS_TRANSCFG_HI(as_nr), upper_32_bits(transcfg));
-> +
->  	write_cmd(pfdev, as_nr, AS_COMMAND_UPDATE);
-> +
-> +	dev_dbg(pfdev->dev, "mmu_as_control: as=%d, transtab=0x%016llx, memattr=0x%016llx, transcfg=0x%016llx",
-> +		as_nr, transtab, memattr, transcfg);
->  }
->  
->  static void panfrost_mmu_enable(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
->  {
-> -	int as_nr = mmu->as;
-> -	struct io_pgtable_cfg *cfg = &mmu->pgtbl_cfg;
-> -	u64 transtab = cfg->arm_mali_lpae_cfg.transtab;
-> -	u64 memattr = cfg->arm_mali_lpae_cfg.memattr;
-> -
->  	/* Need to revisit mem attrs.
->  	 * NC is the default, Mali driver is inner WT.
->  	 */
-> -	_panfrost_mmu_as_control_write(pfdev, as_nr, transtab, memattr);
-> +	_panfrost_mmu_as_control_write(pfdev, mmu->as, mmu->cfg.transtab,
-> +				       mmu->cfg.memattr, mmu->cfg.transcfg);
->  }
->  
->  static void panfrost_mmu_disable(struct panfrost_device *pfdev, u32 as_nr)
->  {
-> -	_panfrost_mmu_as_control_write(pfdev, as_nr, 0, 0);
-> +	_panfrost_mmu_as_control_write(pfdev, as_nr, 0, 0,
-> +				       AS_TRANSCFG_ADRMODE_UNMAPPED);
->  }
->  
->  u32 panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
-> @@ -616,6 +709,7 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
->  {
->  	u32 va_bits = GPU_MMU_FEATURES_VA_BITS(pfdev->features.mmu_features);
->  	u32 pa_bits = GPU_MMU_FEATURES_PA_BITS(pfdev->features.mmu_features);
-> +	enum io_pgtable_fmt fmt = ARM_MALI_LPAE;
->  	struct panfrost_mmu *mmu;
->  
->  	mmu = kzalloc(sizeof(*mmu), GFP_KERNEL);
-> @@ -641,16 +735,28 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
->  		.iommu_dev	= pfdev->dev,
->  	};
->  
-> -	mmu->pgtbl_ops = alloc_io_pgtable_ops(ARM_MALI_LPAE, &mmu->pgtbl_cfg,
-> -					      mmu);
-> -	if (!mmu->pgtbl_ops) {
-> -		kfree(mmu);
-> -		return ERR_PTR(-EINVAL);
-> +	if (pfdev->comp->gpu_configs & BIT(GPU_CONFIG_AARCH64_4K)) {
-> +		if (!panfrost_has_hw_feature(pfdev, HW_FEATURE_AARCH64_MMU)) {
-> +			dev_err_once(pfdev->dev,
-> +				     "AARCH64_4K page table not supported\n");
-> +			goto err_free_mmu;
-> +		}
-> +		fmt = ARM_64_LPAE_S1;
->  	}
+(Unless there are changes that require me to review it again.)
 
-How about moving this check before allocating the mmu object, so you
-don't have to free it if it fails?
-
->  
-> +	mmu->pgtbl_ops = alloc_io_pgtable_ops(fmt, &mmu->pgtbl_cfg, mmu);
-> +	if (!mmu->pgtbl_ops)
-> +		goto err_free_mmu;
-> +
-> +	panfrost_mmu_cfg_init(mmu, fmt);
-> +
->  	kref_init(&mmu->refcount);
->  
->  	return mmu;
-> +
-> +err_free_mmu:
-> +	kfree(mmu);
-> +	return ERR_PTR(-EINVAL);
->  }
->  
->  static const char *access_type_name(struct panfrost_device *pfdev,
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_regs.h b/drivers/gpu/drm/panfrost/panfrost_regs.h
-> index b5f279a19a084..2b8f1617b8369 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_regs.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_regs.h
-> @@ -301,6 +301,17 @@
->  #define AS_TRANSTAB_HI(as)		(MMU_AS(as) + 0x04) /* (RW) Translation Table Base Address for address space n, high word */
->  #define AS_MEMATTR_LO(as)		(MMU_AS(as) + 0x08) /* (RW) Memory attributes for address space n, low word. */
->  #define AS_MEMATTR_HI(as)		(MMU_AS(as) + 0x0C) /* (RW) Memory attributes for address space n, high word. */
-> +#define   AS_MEMATTR_AARCH64_INNER_ALLOC_IMPL		(2 << 2)
-> +#define   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(w, r)	((3 << 2) | \
-> +							 ((w) ? BIT(0) : 0) | \
-> +							 ((r) ? BIT(1) : 0))
-> +#define   AS_MEMATTR_AARCH64_SH_MIDGARD_INNER		(0 << 4)
-> +#define   AS_MEMATTR_AARCH64_SH_CPU_INNER		(1 << 4)
-> +#define   AS_MEMATTR_AARCH64_SH_CPU_INNER_SHADER_COH	(2 << 4)
-> +#define   AS_MEMATTR_AARCH64_SHARED			(0 << 6)
-> +#define   AS_MEMATTR_AARCH64_INNER_OUTER_NC		(1 << 6)
-> +#define   AS_MEMATTR_AARCH64_INNER_OUTER_WB		(2 << 6)
-> +#define   AS_MEMATTR_AARCH64_FAULT			(3 << 6)
->  #define AS_LOCKADDR_LO(as)		(MMU_AS(as) + 0x10) /* (RW) Lock region address for address space n, low word */
->  #define AS_LOCKADDR_HI(as)		(MMU_AS(as) + 0x14) /* (RW) Lock region address for address space n, high word */
->  #define AS_COMMAND(as)			(MMU_AS(as) + 0x18) /* (WO) MMU command register for address space n */
-> @@ -311,6 +322,24 @@
->  /* Additional Bifrost AS registers */
->  #define AS_TRANSCFG_LO(as)		(MMU_AS(as) + 0x30) /* (RW) Translation table configuration for address space n, low word */
->  #define AS_TRANSCFG_HI(as)		(MMU_AS(as) + 0x34) /* (RW) Translation table configuration for address space n, high word */
-> +#define   AS_TRANSCFG_ADRMODE_LEGACY			(0 << 0)
-> +#define   AS_TRANSCFG_ADRMODE_UNMAPPED			(1 << 0)
-> +#define   AS_TRANSCFG_ADRMODE_IDENTITY			(2 << 0)
-> +#define   AS_TRANSCFG_ADRMODE_AARCH64_4K		(6 << 0)
-> +#define   AS_TRANSCFG_ADRMODE_AARCH64_64K		(8 << 0)
-> +#define   AS_TRANSCFG_INA_BITS(x)			((x) << 6)
-> +#define   AS_TRANSCFG_OUTA_BITS(x)			((x) << 14)
-> +#define   AS_TRANSCFG_SL_CONCAT				BIT(22)
-> +#define   AS_TRANSCFG_PTW_MEMATTR_NC			(1 << 24)
-> +#define   AS_TRANSCFG_PTW_MEMATTR_WB			(2 << 24)
-> +#define   AS_TRANSCFG_PTW_SH_NS				(0 << 28)
-> +#define   AS_TRANSCFG_PTW_SH_OS				(2 << 28)
-> +#define   AS_TRANSCFG_PTW_SH_IS				(3 << 28)
-> +#define   AS_TRANSCFG_PTW_RA				BIT(30)
-> +#define   AS_TRANSCFG_DISABLE_HIER_AP			BIT(33)
-> +#define   AS_TRANSCFG_DISABLE_AF_FAULT			BIT(34)
-> +#define   AS_TRANSCFG_WXN				BIT(35)
-> +#define   AS_TRANSCFG_XREADABLE				BIT(36)
->  #define AS_FAULTEXTRA_LO(as)		(MMU_AS(as) + 0x38) /* (RO) Secondary fault address for address space n, low word */
->  #define AS_FAULTEXTRA_HI(as)		(MMU_AS(as) + 0x3C) /* (RO) Secondary fault address for address space n, high word */
->  
-> @@ -326,6 +355,11 @@
->  #define AS_TRANSTAB_LPAE_READ_INNER		BIT(2)
->  #define AS_TRANSTAB_LPAE_SHARE_OUTER		BIT(4)
->  
-> +/*
-> + * Begin AARCH64_4K MMU TRANSTAB register values
-> + */
-> +#define AS_TRANSTAB_AARCH64_4K_ADDR_MASK	0xfffffffffffffff0
-> +
->  #define AS_STATUS_AS_ACTIVE			0x01
->  
->  #define AS_FAULTSTATUS_ACCESS_TYPE_MASK		(0x3 << 8)
-
+Alice
 
