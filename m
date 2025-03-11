@@ -1,167 +1,183 @@
-Return-Path: <linux-kernel+bounces-556327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A02EA5C418
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:41:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D36A5C413
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:41:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E57A18996E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:41:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CD1F3A8A7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A72A25D8F1;
-	Tue, 11 Mar 2025 14:40:35 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C2425D205;
+	Tue, 11 Mar 2025 14:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTRouv4T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412A125D213;
-	Tue, 11 Mar 2025 14:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D8025CC7F;
+	Tue, 11 Mar 2025 14:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741704034; cv=none; b=FXM+b8NJgiFtZsnytexPovTErCaarWx2mjVcR7OAgclIHEsT0S+g4NXQ2c57POD9qSmBTbFoqFSK8bgscOgnAfRWHHEXys+prdE9mcpJIQAauqE3flxYVki4bnhb4bsNkTVRbf5lLC7YlLCVRYN4lOCEh7lb4lHeGW0U/tTXNYo=
+	t=1741704032; cv=none; b=caH/q/zSt97bvidNHLp3+f15JRKPKgLFkPIOJFCsMK5bQ5kFqH3uCfDUUIA+6dfw+SplDu5quHFKR5rI2lAvkkerqk+xKYLHuZtQ1BptpAbieuMfe9C186lHeVVXRrlsA8aVFfr3nV15XCG95qxK+ZpXV1oQnGHahGNVghfUYl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741704034; c=relaxed/simple;
-	bh=N1mIZ5aHIAdEIQ9Xu004oo+tEjwnQH70IfbsiDMnVes=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jVv0APY1h2yupxEVNZmQx3Z7gTddZdSEgdo2WfCr9Lms0L27W1EU5N2d/M09mEBqA0sFyrN7iCo0z4ap2tNgU5IfZvhXwRgxNTuJ02My+65xK1vO9CLophksP7cvBodCu1kiWc87OvwhhYegl9ud1H5NgaeeR1Gj58ZeqL+qK6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-223fd89d036so109190855ad.1;
-        Tue, 11 Mar 2025 07:40:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741704032; x=1742308832;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ANCxA7+p0eA4GCg1Qm9ypPlb2PsgQIC2MSDt7WmnMdg=;
-        b=pDRBoWEoBd0SC9+93lH1o6bB/lNUlO6kIo3scBxHRpptmB0tMhLWfsJRmIvbOM7cLz
-         uqJzNmo1jmUWknZuwR2lebywJBIPGCmfWt7lRTp+XWGtHA6alYUXNwouNE8I8inuNhfh
-         Da0cy3tLDQ7rg1zoDT1iUNWL38YKYhH9nqdGCjn/AdOgqVkZn36dD11bmKL3EuXPnyXt
-         CHjwUxSfsroR3L3uaVByVGY+kLHy7frRXes+E0PLFXGtbCL89grbglTYkMYVDiZk6j7d
-         u8FsqXbLFl5W0KWc+aNFwMpjBN0nj5rQM3NzHzpGYUZDONztQlVGfs6rfzt9dHBY1BXy
-         Fg8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVyT+htCmt4aecIHdgZ81kNLZv+Df4DdGEKkMUub1dIXoljILquTFy0E5eVuMhJe88npe3b5KjbWtj1oZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxRg744Zc2qST+0MrFYsrgBg5j2fGaj6i2yHrLeTrKu9/QP3qv
-	84DYKC3JpYKcDEhy2lJB8ydN5ME1U5hyMr16Z2BB+RNGfo5ZRVI8BGnin+Bmaw==
-X-Gm-Gg: ASbGncsv7HUhlT+VG+JnMivGUlL+7T+xRTTfJVQcY7A2Qq9RvSmS86cWv6QOWnQaApm
-	UdnvR4pKDIYdSjwuoFLJ5Lvt3EDTMqAQ1g6zo4jvkQdS6O2BWzMyGvTP33OJcm2i7i5RBpPPzdt
-	DeAUUEB4BOVFQxjX+LUPHrYQSZtApiyAQPl0TmXhucK38bwDiSl8L03ZToXVcGtw1b2Hbe+Pk6w
-	UQTLtFlclK9BAxzeBDHdm3U8HSxaf7w82cT5VVdJtitLqbsLH1fqJIC1GIu0XQKbjLoQXBqdKjZ
-	7MqPUJLhfgTNTMh3ppARtwnUrjorKb1Dlnp+vug7e7Wx
-X-Google-Smtp-Source: AGHT+IHoNcyH+Ck8bVIbkVAcxYdZo4TmYd5vae8vnKHE+ufqswy1zQuq39qQts/9s6WJMohsW24FVg==
-X-Received: by 2002:a05:6a21:2d04:b0:1f1:b69:9bdd with SMTP id adf61e73a8af0-1f544c87e20mr30237463637.37.1741704030753;
-        Tue, 11 Mar 2025 07:40:30 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73698246387sm10382649b3a.72.2025.03.11.07.40.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 07:40:30 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	donald.hunter@gmail.com,
-	horms@kernel.org,
-	michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com,
-	andrew+netdev@lunn.ch,
-	jdamato@fastly.com,
-	xuanzhuo@linux.alibaba.com,
-	sdf@fomichev.me,
-	almasrymina@google.com,
-	asml.silence@gmail.com,
-	dw@davidwei.uk
-Subject: [PATCH net-next v2 2/3] net: add granular lock for the netdev netlink socket
-Date: Tue, 11 Mar 2025 07:40:25 -0700
-Message-ID: <20250311144026.4154277-3-sdf@fomichev.me>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250311144026.4154277-1-sdf@fomichev.me>
-References: <20250311144026.4154277-1-sdf@fomichev.me>
+	s=arc-20240116; t=1741704032; c=relaxed/simple;
+	bh=/xp/6HGmVHuJ9t0K5UdunC1SKMJXjXVR53BOxX7lfpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DbFb9tYkpC+B2+nCzJHtwzLwah5WOlZeodgrXqRM61Xjt1ZINb/0B/aZll3D5OOVZbfHzAKApHrfeWC/hRiPc5mF9uk/5Viw2+IMu0bD6n1V/o5G3SNtiM7qiBD1Av6nVx3KwslcJm2jd8sLYcvFQL9YbBatDNJVFq5F43Q4kZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTRouv4T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 848A0C4CEEA;
+	Tue, 11 Mar 2025 14:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741704031;
+	bh=/xp/6HGmVHuJ9t0K5UdunC1SKMJXjXVR53BOxX7lfpg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nTRouv4TnJNQ+smiVKW04Op9R+uck/TFzOhmfTYyeCEP5qMA6iWmCT6Hg1ID9ZCmR
+	 F3b4P1Q+ZerGMUoH7GW1DTiETm+lhrrBmQyWSRFJsvfmnSQBKDdnoaSHAodCFX5VCD
+	 PVv4ZpsOzBtvxZ/DKUXfH2hAMNMH97poxMXyTg9yAE8cTPX7ztt9uc72cqX4xaNiTo
+	 ZsuJPREXSmL4cz5oYpSqVmOQLB4wYU7fqUqU8RYn1DpV5+0oGXA7P0bbfVOm7gCVwE
+	 tEYc/w8vWIdASWcZCttwA7WP4BDdsonWAJzELkhcOffghN6LR4GC19sV27X5zF5BeR
+	 luELcfaGLQJVg==
+Date: Tue, 11 Mar 2025 15:40:26 +0100
+From: Carlos Maiolino <cem@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, 
+	ritesh.list@gmail.com, martin.petersen@oracle.com
+Subject: Re: [PATCH v5 08/10] xfs: Update atomic write max size
+Message-ID: <fzco7qoicujxpar4zw7kgiqtmgsilslyrejle7txtjfuzdrs53@wctetg2lemjk>
+References: <20250310183946.932054-1-john.g.garry@oracle.com>
+ <KoecCbd1rVAyb-cHgSE9YBZJyRgJTlxN9I_xPcVGICEEU10pLEu8b75qYwrdS3yUSl6RKCR2K7BEqC7KxCfp4g==@protonmail.internalid>
+ <20250310183946.932054-9-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310183946.932054-9-john.g.garry@oracle.com>
 
-As we move away from rtnl_lock for queue ops, introduce
-per-netdev_nl_sock lock.
+Thanks for updating it John.
 
-Cc: Mina Almasry <almasrymina@google.com>
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
----
- include/net/netdev_netlink.h | 1 +
- net/core/netdev-genl.c       | 6 ++++++
- 2 files changed, 7 insertions(+)
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
 
-diff --git a/include/net/netdev_netlink.h b/include/net/netdev_netlink.h
-index 1599573d35c9..075962dbe743 100644
---- a/include/net/netdev_netlink.h
-+++ b/include/net/netdev_netlink.h
-@@ -5,6 +5,7 @@
- #include <linux/list.h>
- 
- struct netdev_nl_sock {
-+	struct mutex lock;
- 	struct list_head bindings;
- };
- 
-diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-index a219be90c739..63e10717efc5 100644
---- a/net/core/netdev-genl.c
-+++ b/net/core/netdev-genl.c
-@@ -859,6 +859,7 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
- 		goto err_genlmsg_free;
- 	}
- 
-+	mutex_lock(&priv->lock);
- 	rtnl_lock();
- 
- 	netdev = __dev_get_by_index(genl_info_net(info), ifindex);
-@@ -918,6 +919,7 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
- 		goto err_unbind;
- 
- 	rtnl_unlock();
-+	mutex_unlock(&priv->lock);
- 
- 	return 0;
- 
-@@ -925,6 +927,7 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
- 	net_devmem_unbind_dmabuf(binding);
- err_unlock:
- 	rtnl_unlock();
-+	mutex_unlock(&priv->lock);
- err_genlmsg_free:
- 	nlmsg_free(rsp);
- 	return err;
-@@ -933,6 +936,7 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
- void netdev_nl_sock_priv_init(struct netdev_nl_sock *priv)
- {
- 	INIT_LIST_HEAD(&priv->bindings);
-+	mutex_init(&priv->lock);
- }
- 
- void netdev_nl_sock_priv_destroy(struct netdev_nl_sock *priv)
-@@ -940,11 +944,13 @@ void netdev_nl_sock_priv_destroy(struct netdev_nl_sock *priv)
- 	struct net_devmem_dmabuf_binding *binding;
- 	struct net_devmem_dmabuf_binding *temp;
- 
-+	mutex_lock(&priv->lock);
- 	list_for_each_entry_safe(binding, temp, &priv->bindings, list) {
- 		rtnl_lock();
- 		net_devmem_unbind_dmabuf(binding);
- 		rtnl_unlock();
- 	}
-+	mutex_unlock(&priv->lock);
- }
- 
- static int netdev_genl_netdevice_event(struct notifier_block *nb,
--- 
-2.48.1
-
+On Mon, Mar 10, 2025 at 06:39:44PM +0000, John Garry wrote:
+> Now that CoW-based atomic writes are supported, update the max size of an
+> atomic write.
+> 
+> For simplicity, limit at the max of what the mounted bdev can support in
+> terms of atomic write limits. Maybe in future we will have a better way
+> to advertise this optimised limit.
+> 
+> In addition, the max atomic write size needs to be aligned to the agsize.
+> Limit the size of atomic writes to the greatest power-of-two factor of the
+> agsize so that allocations for an atomic write will always be aligned
+> compatibly with the alignment requirements of the storage.
+> 
+> For RT inode, just limit to 1x block, even though larger can be supported
+> in future.
+> 
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/xfs_iops.c  | 14 +++++++++++++-
+>  fs/xfs/xfs_mount.c | 28 ++++++++++++++++++++++++++++
+>  fs/xfs/xfs_mount.h |  1 +
+>  3 files changed, 42 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index de065cc2e7cf..16a1f9541690 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -607,12 +607,24 @@ xfs_get_atomic_write_attr(
+>  	unsigned int		*unit_min,
+>  	unsigned int		*unit_max)
+>  {
+> +	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
+> +	struct xfs_mount	*mp = ip->i_mount;
+> +
+>  	if (!xfs_inode_can_atomicwrite(ip)) {
+>  		*unit_min = *unit_max = 0;
+>  		return;
+>  	}
+> 
+> -	*unit_min = *unit_max = ip->i_mount->m_sb.sb_blocksize;
+> +	*unit_min = ip->i_mount->m_sb.sb_blocksize;
+> +
+> +	if (XFS_IS_REALTIME_INODE(ip)) {
+> +		/* For now, set limit at 1x block */
+> +		*unit_max = ip->i_mount->m_sb.sb_blocksize;
+> +	} else {
+> +		*unit_max =  min_t(unsigned int,
+> +					XFS_FSB_TO_B(mp, mp->m_awu_max),
+> +					target->bt_bdev_awu_max);
+> +	}
+>  }
+> 
+>  static void
+> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+> index e65a659901d5..414adfb944b9 100644
+> --- a/fs/xfs/xfs_mount.c
+> +++ b/fs/xfs/xfs_mount.c
+> @@ -665,6 +665,32 @@ xfs_agbtree_compute_maxlevels(
+>  	levels = max(levels, mp->m_rmap_maxlevels);
+>  	mp->m_agbtree_maxlevels = max(levels, mp->m_refc_maxlevels);
+>  }
+> +static inline void
+> +xfs_compute_awu_max(
+> +	struct xfs_mount	*mp)
+> +{
+> +	xfs_agblock_t		agsize = mp->m_sb.sb_agblocks;
+> +	xfs_agblock_t		awu_max;
+> +
+> +	if (!xfs_has_reflink(mp)) {
+> +		mp->m_awu_max = 1;
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * Find highest power-of-2 evenly divisible into agsize and which
+> +	 * also fits into an unsigned int field.
+> +	 */
+> +	awu_max = 1;
+> +	while (1) {
+> +		if (agsize % (awu_max * 2))
+> +			break;
+> +		if (XFS_FSB_TO_B(mp, awu_max * 2) > UINT_MAX)
+> +			break;
+> +		awu_max *= 2;
+> +	}
+> +	mp->m_awu_max = awu_max;
+> +}
+> 
+>  /* Compute maximum possible height for realtime btree types for this fs. */
+>  static inline void
+> @@ -751,6 +777,8 @@ xfs_mountfs(
+>  	xfs_agbtree_compute_maxlevels(mp);
+>  	xfs_rtbtree_compute_maxlevels(mp);
+> 
+> +	xfs_compute_awu_max(mp);
+> +
+>  	/*
+>  	 * Check if sb_agblocks is aligned at stripe boundary.  If sb_agblocks
+>  	 * is NOT aligned turn off m_dalign since allocator alignment is within
+> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+> index 799b84220ebb..1b0136da2aec 100644
+> --- a/fs/xfs/xfs_mount.h
+> +++ b/fs/xfs/xfs_mount.h
+> @@ -229,6 +229,7 @@ typedef struct xfs_mount {
+>  	bool			m_finobt_nores; /* no per-AG finobt resv. */
+>  	bool			m_update_sb;	/* sb needs update in mount */
+>  	unsigned int		m_max_open_zones;
+> +	xfs_extlen_t		m_awu_max;	/* data device max atomic write */
+> 
+>  	/*
+>  	 * Bitsets of per-fs metadata that have been checked and/or are sick.
+> --
+> 2.31.1
+> 
 
