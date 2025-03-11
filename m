@@ -1,228 +1,95 @@
-Return-Path: <linux-kernel+bounces-556227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138DAA5C2E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:41:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69403A5C2E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C003AC4D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:40:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52302176BF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C515B1CAA8F;
-	Tue, 11 Mar 2025 13:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9933F1C9DC6;
+	Tue, 11 Mar 2025 13:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQmvbkQ+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0EnLtd0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7751917F4;
-	Tue, 11 Mar 2025 13:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DC91917F4
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 13:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741700455; cv=none; b=FbATwkyBlH01sJKsMBsFyelmwZ+J83U9PdbgmbRnn8lsuhjMByaNySW1m0+esV8u0dNTTff4yMgWuplXqP6RpUGo3M7tmy39kk+S8sYcfVBF5yrhIGa+sJJ0LKy4kWt9/TiQYN2jYr6YLaMw90Ba0zxGLs/X8hWyrly+CbE7zSc=
+	t=1741700470; cv=none; b=TTfsLVdzSg4FoVYo9ptB7CWqcHQojbUVHLvd51DvqxROui7QvQv3CNYKiBApcaa4P/tJiNhPq3E8euLi/zSmVuBJM1SkWXpEkDhggBolYsmpfO6e/ehiY0JR/z/oP36jVPMzjZTj1HWLrDwVQEHiP2J6w5uctcVmSw+1+PWlFyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741700455; c=relaxed/simple;
-	bh=Gf0R7gditoYzuwPdbW2qqyMvm9Ccy9LeE68JuPxBAD0=;
+	s=arc-20240116; t=1741700470; c=relaxed/simple;
+	bh=Chh8DcIQeY7FNPlnkdwb8y4rimYXCFqGsE4KPdr8QjQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E/47Mv/Y9jwWtFZRcjbzY7cI3Ur4QWLh6Ko6Unxr7ghRIpeepAjlL3UmzIlf8bR6hkex73IbSLd9Oc5aMGGVGHawQC5rom/ml98PJo64+6QeJpkJat3QORwSDoQ/CLGxSqkgtdMtt9zr9AaGcYdXU54Jfwj5wobvnEGv2ZcTnyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQmvbkQ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A681C4CEE9;
-	Tue, 11 Mar 2025 13:40:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aJ5L+jseTIGxw7KfanLulYCOyT+BSXe8wCJhbaPiwpT08Vgb8Qr+MiSGKOt1xkG5eEFlFBDnUIP+AOcnmFDCwnJ6r0hLFDReeLi2CDnEBwc7/rFuvRO1f1icP5zrFcoSAStI05bUn4OipTOwcwYwDh+/07HW7oTBeAdv1z85aCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0EnLtd0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0414CC4CEE9;
+	Tue, 11 Mar 2025 13:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741700454;
-	bh=Gf0R7gditoYzuwPdbW2qqyMvm9Ccy9LeE68JuPxBAD0=;
+	s=k20201202; t=1741700469;
+	bh=Chh8DcIQeY7FNPlnkdwb8y4rimYXCFqGsE4KPdr8QjQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NQmvbkQ+bgaQDX3OpuW57y4xyHeLysL04t7l+qbl2gQwaq+6lFkGniI2kgXzNfDGr
-	 6XxC+R1it1TlfnrxXjxdC3JsN8NLxU+BoOf9Wz/tJfUV6QQjZzwYER2KUAhzP08sK6
-	 rFGmsQB2TJl3RO7eR6hNfNWh+gl5rNJDJMPUM1Jsa2nwZ05Cjw954c7Aqazl8WxhA1
-	 aQGqZNl5BuXlrrJV/g5rOZCux0HvpgX4hPYkDIhaLA04KJqNqevslxdzSqmeW4WUuk
-	 dFAQlMyXvPMhIl4a0DPXGAyw/oeP2lZcAWoP4ckSogqhn3YxKQdudaTiavuPj8Dj1q
-	 fh5X6tdu43v+A==
-Date: Tue, 11 Mar 2025 13:40:48 +0000
-From: Lee Jones <lee@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] mfd: lm3533: convert to use OF
-Message-ID: <20250311134048.GI8350@google.com>
-References: <20250224114815.146053-1-clamor95@gmail.com>
- <20250224114815.146053-3-clamor95@gmail.com>
- <20250228085927.GM824852@google.com>
- <CAPVz0n0jaR=UM7WbBs3zM-cZzuaPVWBjf4Q7i82hvxtXg2oCzQ@mail.gmail.com>
- <20250305134455.2843f603@jic23-huawei>
- <CAPVz0n3Qt00my1ejoyEgxTRi-mQszHybwhPq70eO=94oxMfECQ@mail.gmail.com>
- <20250308171932.2a5f0a9b@jic23-huawei>
+	b=G0EnLtd0N4mYipYIGTC6Xpx1RKK04QN9EPvqwNoa41DjeQ86hgFwU7pEE0lkaroVu
+	 8/Dq5T85JkrBeyNtXP2rGNlwPcMR31IUzox/Ti6wKB8+6gx+8ZuLRUVVPhvxMa2uGT
+	 I/RdQyqUbDsWSvwR42BIEoFxHPk21EXHefzH2ZKqQtTKb+Yr1t999ufRdYxu6ptMaa
+	 Xvp87RUnLbQ+a/Z8Gy0Ir+UUNUBjCjvj8vKhbN3IinYSU+0is1UfAeZN47HiqiPTXl
+	 mO9CwGY0ecZ00YEwWE4+aoTLMJK+TgMtfM51Ou/5Af2UeCuUtUlhjIuPNXQ9o6b428
+	 eCNT/dQgQtAow==
+Date: Tue, 11 Mar 2025 14:41:06 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Benjamin Segall <bsegall@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrey Vagin <avagin@openvz.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: Re: [patch V3 11/18] posix-timers: Make signal_struct::
+ Next_posix_timer_id an atomic_t
+Message-ID: <Z9A9ci9kh55q-ax_@localhost.localdomain>
+References: <20250308155501.391430556@linutronix.de>
+ <20250308155624.151545978@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250308171932.2a5f0a9b@jic23-huawei>
+In-Reply-To: <20250308155624.151545978@linutronix.de>
 
-On Sat, 08 Mar 2025, Jonathan Cameron wrote:
+Le Sat, Mar 08, 2025 at 05:48:36PM +0100, Thomas Gleixner a �crit :
+> From: Eric Dumazet <edumazet@google.com>
+> 
+> The global hash_lock protecting the posix timer hash table can be heavily
+> contended especially when there is an extensive linear search for a timer
+> ID.
+> 
+> Timer IDs are handed out by monotonically increasing next_posix_timer_id
+> and then validating that there is no timer with the same ID in the hash
+> table. Both operations happen with the global hash lock held.
+> 
+> To reduce the hash lock contention the hash will be reworked to a scaled
+> hash with per bucket locks, which requires to handle the ID counter
+> lockless.
+> 
+> Prepare for this by making next_posix_timer_id an atomic_t, which can be
+> used lockless with atomic_inc_return().
+> 
+> [ tglx: Adopted from Eric's series, massaged change log and simplified it ]
+> 
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Link: https://lore.kernel.org/all/20250219125522.2535263-2-edumazet@google.com
 
-> On Wed, 5 Mar 2025 16:18:38 +0200
-> Svyatoslav Ryhel <clamor95@gmail.com> wrote:
-> 
-> > ср, 5 бер. 2025 р. о 15:45 Jonathan Cameron <jic23@kernel.org> пише:
-> > >
-> > > On Fri, 28 Feb 2025 11:30:51 +0200
-> > > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
-> > >  
-> > > > пт, 28 лют. 2025 р. о 10:59 Lee Jones <lee@kernel.org> пише:  
-> > > > >
-> > > > > On Mon, 24 Feb 2025, Svyatoslav Ryhel wrote:
-> > > > >  
-> > > > > > Remove platform data and fully relay on OF and device tree
-> > > > > > parsing and binding devices.
-> > > > > >
-> > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > > ---
-> > > > > >  drivers/iio/light/lm3533-als.c      |  40 ++++---
-> > > > > >  drivers/leds/leds-lm3533.c          |  46 +++++---
-> > > > > >  drivers/mfd/lm3533-core.c           | 159 ++++++++--------------------
-> > > > > >  drivers/video/backlight/lm3533_bl.c |  71 ++++++++++---
-> > > > > >  include/linux/mfd/lm3533.h          |  35 +-----
-> > > > > >  5 files changed, 164 insertions(+), 187 deletions(-)
-> > > > > >  
-> > ...
-> > > > > >       /* ALS input is always high impedance in PWM-mode. */
-> > > > > > -     if (!pdata->pwm_mode) {
-> > > > > > -             ret = lm3533_als_set_resistor(als, pdata->r_select);
-> > > > > > +     if (!als->pwm_mode) {
-> > > > > > +             ret = lm3533_als_set_resistor(als, als->r_select);  
-> > > > >
-> > > > > You're already passing 'als'.
-> > > > >
-> > > > > Just teach lm3533_als_set_resistor that 'r_select' is now contained.
-> > > > >  
-> > > >
-> > > > This is not scope of this patchset. I was already accused in too much
-> > > > changes which make it unreadable. This patchset is dedicated to
-> > > > swapping platform data to use of the device tree. NOT improving
-> > > > functions, NOT rewriting arbitrary mechanics. If you feed a need for
-> > > > this change, then propose a followup. I need from this driver only one
-> > > > thing, that it could work with device tree. But it seems that it is
-> > > > better that it just rots in the garbage bin until removed cause no one
-> > > > cared.  
-> > >
-> > > This is not an unreasonable request as you added r_select to als.
-> > > Perhaps it belongs in a separate follow up patch.  
-> > 
-> > I have just moved values used in pdata to private structs of each
-> > driver. Without changing names or purpose.
-> > 
-> > > However
-> > > it is worth remembering the motivation here is that you want get
-> > > this code upstream, the maintainers don't have that motivation.  
-> > 
-> > This driver is already upstream and it is useless and incompatible
-> > with majority of supported devices. Maintainers should encourage those
-> > who try to help and instead we have what? A total discouragement. Well
-> > defined path into nowhere.
-> 
-> That is not how I read the situation. A simple request was made to
-> result in more maintainable code as a direct result of that
-> improvement being enabled by code changes you were making.
-> I'm sorry to hear that discouraged you.
-> 
-> > 
-> > >
-> > > Greg KH has given various talks on the different motivations in the
-> > > past. It maybe worth a watch.
-> > >
-> > >  
-> > > >  
-> > > > > >               if (ret)
-> > > > > >                       return ret;
-> > > > > >       }
-> > > > > > @@ -828,22 +833,16 @@ static const struct iio_info lm3533_als_info = {
-> > > > > >
-> > > > > >  static int lm3533_als_probe(struct platform_device *pdev)
-> > > > > >  {
-> > > > > > -     const struct lm3533_als_platform_data *pdata;
-> > > > > >       struct lm3533 *lm3533;
-> > > > > >       struct lm3533_als *als;
-> > > > > >       struct iio_dev *indio_dev;
-> > > > > > +     u32 val;  
-> > > > >
-> > > > > Value of what, potatoes?
-> > > > >  
-> > > >
-> > > > Oranges.  
-> > >
-> > > A well named variable would avoid need for any discussion of
-> > > what it is the value of.
-> > >  
-> > 
-> > This is temporary placeholder used to get values from the tree and
-> > then pass it driver struct.
-> 
-> Better if it is a temporary placeholder with a meaningful name.
-> 
-> > 
-> > > >  
-> > > > > >       int ret;
-> > > > > >
-> > > > > >       lm3533 = dev_get_drvdata(pdev->dev.parent);
-> > > > > >       if (!lm3533)
-> > > > > >               return -EINVAL;
-> > > > > >
-> > > > > > -     pdata = dev_get_platdata(&pdev->dev);
-> > > > > > -     if (!pdata) {
-> > > > > > -             dev_err(&pdev->dev, "no platform data\n");
-> > > > > > -             return -EINVAL;
-> > > > > > -     }
-> > > > > > -
-> > > > > >       indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*als));
-> > > > > >       if (!indio_dev)
-> > > > > >               return -ENOMEM;
-> > > > > > @@ -864,13 +863,21 @@ static int lm3533_als_probe(struct platform_device *pdev)
-> > > > > >
-> > > > > >       platform_set_drvdata(pdev, indio_dev);
-> > > > > >
-> > > > > > +     val = 200 * KILO; /* 200kOhm */  
-> > > > >
-> > > > > Better to #define magic numbers; DEFAULT_{DESCRIPTION}_OHMS
-> > > > >  
-> > > >
-> > > > Why? that is not needed.  
-> > > If this variable had a more useful name there would be no need for
-> > > the comment either.
-> > >
-> > >         val_resitor_ohms = 200 * KILLO;
-> > >
-> > > or similar.
-> > >  
-> > 
-> > So I have to add a "reasonably" named variable for each property I
-> > want to get from device tree? Why? It seems to be a bit of overkill,
-> > no? Maybe I am not aware, have variables stopped being reusable?
-> 
-> Lets go with yes if you want a definitive answer. In reality it's
-> a question of how many are needed.  If 10-100s sure reuse is fine,
-> if just a few sensible naming can remove the need for comments
-> and improve readability.
-> 
-> Jonathan
-
-You clearly have more patience for this than I do!  =;-)
-
--- 
-Lee Jones [李琼斯]
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
 
