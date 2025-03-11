@@ -1,113 +1,574 @@
-Return-Path: <linux-kernel+bounces-555662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A123EA5BAF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:42:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83AC6A5BAF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:41:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4153AE8A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:41:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B506E7A8215
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C6122577E;
-	Tue, 11 Mar 2025 08:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B34B224AEB;
+	Tue, 11 Mar 2025 08:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MAF5BcII"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDD0223704;
-	Tue, 11 Mar 2025 08:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MtJLWk6j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6937B1386DA;
+	Tue, 11 Mar 2025 08:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741682521; cv=none; b=lyd9EpM+Ya73J5m52l2UVl72L2/CoZwCXsui2e2ywzYYqHv8Op+L4HyDjX0a9VYLSynBLE/7X+lMH9iLbCN9b7DCrDbkGcwYt/LJRaw2zhasBj0acahbUOQfHvFWgF9I3UyouZKifQcU/6d7Bdn7yIfntkansTM4onFWs/qZegc=
+	t=1741682479; cv=none; b=bMuWcJ/I8SavpKVris8BLGU8I2bePpEYU+X67re+WWKCHNlFg7s53lQB0IReWd3qPmdnhmYsbyal+EG0OSzKTewN3iWfO2R6AG/BZQ9bqs7ocxO4YF2CjGtRx6euPGJzYMUvaQVPIo8e5+41oY7QAYTRoKcGYKHFvrPZzvRn9w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741682521; c=relaxed/simple;
-	bh=1nrLmnGlm1+0YYFQ6DxqrnnhJZkHgndItSvq7Q+Cjnw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MWOr0Mfq3ab4NYyq/zn9LHPX7yuB5wBOqZtAXcwiOpkNfsHQAHSv1oQe4+41A2J7l4Tg0HsoXTXyp14Frpp0Afn9p4kqKDeAW4K0xUnUtLQFOXkYzWnfugzmE3U+rLUUrsUqtaFUsTYYTtYhYARpjjPTY3eQrMSSPDSK52wBEis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MAF5BcII; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=o+FJF
-	a5kaj7HLyvn685I1Z/X9V0EfvMQq597XWpW6uI=; b=MAF5BcIIFECKGLeW2TjsT
-	hVoos6jT8K2WOERLHASzg6y0xVaSQSGH31p6SYJJB9CL3wUTFxeLs6w3pZcKl7MM
-	Fe2ZNGenZ+8OePZH/HqjDPx1X9b4S6axlPAcjA3h23EYmJLn9fHbtvI58OEXjztH
-	6h+WwdpbZsk6RPtCjrZkK8=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wAH3uJJ989nKrBDRA--.23607S2;
-	Tue, 11 Mar 2025 16:41:47 +0800 (CST)
-From: Xin Dai <daixin_tkzc@163.com>
-To: stern@rowland.harvard.edu
-Cc: linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org,
-	Xin Dai <daixin_tkzc@163.com>
-Subject: [PATCH] usb: storage: Fix `us->iobuf` size for BOT transmission to prevent memory overflow
-Date: Tue, 11 Mar 2025 16:41:11 +0800
-Message-Id: <20250311084111.322351-1-daixin_tkzc@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741682479; c=relaxed/simple;
+	bh=nsKp0FaCqyCblKdikU4ufSWim0sjNi7wV749YbtqzT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hcFIYaDyMQ5cVAGdtX+t1utCTucsVwdQzAr8ARH108vj86yCcidPJ6FVgqZWsMT2wjWpZE3dWZgpDoGMSfGdIB6E3hQMdBUrKWMNL5CBssd1wYzXYzAG1hDFuIWTQYQ5aspyMksIqTvt4dLDCEqBFxVTiicYAbn4LoZzIZ1l+HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MtJLWk6j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54176C4CEE9;
+	Tue, 11 Mar 2025 08:41:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741682475;
+	bh=nsKp0FaCqyCblKdikU4ufSWim0sjNi7wV749YbtqzT4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MtJLWk6jDN2ps4iqIgxhixtjAcezPBc1vyhTStYtP9QwDSAAUpi8wnD57oKAqG8fZ
+	 yH2FnObvFrwISYGPiseovOaS0mZUzuxQ/bnl+MLQZihs5/LBiqOcrefDIAmAgcT56w
+	 c8kim847DmWP98sjSzmCy3XQ+6JIjx1hcs3MnJsAje9XeWk99S4fgbzZuxKOlf6Ox3
+	 +tvDFOva8LVmWmbLuthV34DhOIwoJ+ZEmd2HYB55dpk7A/B+tb83MBkPVhzT53Rfg1
+	 UWF31zkfBDy+d2rPUEs/06nqIMoAjou5AMHMEbAJA30LHal1CJ0r/slbGN/i+yx43S
+	 u1Fhht18Dg31Q==
+Date: Tue, 11 Mar 2025 09:41:13 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dbaryshkov@gmail.com>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Hermes Wu <Hermes.wu@ite.com.tw>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v5 2/2] drm/msm/dp: reuse generic HDMI codec
+ implementation
+Message-ID: <20250311-vivid-almond-elk-83fda5@houat>
+References: <20250307-dp-hdmi-audio-v5-0-f3be215fdb78@linaro.org>
+ <20250307-dp-hdmi-audio-v5-2-f3be215fdb78@linaro.org>
+ <20250310-daft-bittern-of-foundation-67c657@houat>
+ <CALT56yMSs7K_0b5YtkCW5Ypyt9Hu_YLkitFFJwTtBkwUJk-NHA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAH3uJJ989nKrBDRA--.23607S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uFy7trWrtF1kAFyxGr1DAwb_yoW8tF18pF
-	WYgFZ0yryDXFWS9r17Ww40vFyrXasxJry7K3ykt3s8ZFs8Ca48Wr17tFyYqa4xGr1fu3WF
-	vrn09ryUWF1DXFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ptjgo8UUUUU=
-X-CM-SenderInfo: xgdl5xpqbwy6rf6rljoofrz/xtbB0hUN1WfP7sX50QAAs0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6cekqwm32uwscwmv"
+Content-Disposition: inline
+In-Reply-To: <CALT56yMSs7K_0b5YtkCW5Ypyt9Hu_YLkitFFJwTtBkwUJk-NHA@mail.gmail.com>
 
-When the DWC2 controller detects a packet Babble Error, where a device
-transmits more data over USB than the host controller anticipates for a
-transaction. It follows this process:
 
-1. The interrupt handler marks the transfer result of the URB as
-   `OVERFLOW` and returns it to the USB storage driver.
-2. The USB storage driver interprets the data phase transfer result of
-   the BOT (Bulk-Only Transport) as `USB_STOR_XFER_LONG`.
-3. The USB storage driver initiates the CSW (Command Status Wrapper)
-   phase of the BOT, requests an IN transaction, and retrieves the
-   execution status of the corresponding CBW (Command Block Wrapper)
-   command.
-4. The USB storage driver evaluates the CSW and finds it does not meet
-   expectations. It marks the entire BOT transfer result as
-   `USB_STOR_XFER_ERROR` and notifies the SCSI layer that a `DID_ERROR`
-   has occurred during the transfer.
-5. The USB storage driver requests the DWC2 controller to initiate a
-   port reset, notifying the device of an issue with the previous
-   transmission.
-6. The SCSI layer implements a retransmission mechanism.
+--6cekqwm32uwscwmv
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 2/2] drm/msm/dp: reuse generic HDMI codec
+ implementation
+MIME-Version: 1.0
 
-In step 3, the device remains unaware of the Babble Error until the
-connected port is reset. We observed that the device continues to send
-512 bytes of data to the host (according to the BBB Transport protocol,
-it should send only 13 bytes). However, the USB storage driver
-pre-allocates a default buffer size of 64 bytes for CBW/CSW, posing a
-risk of memory overflow. To mitigate this risk, we have adjusted the
-buffer size to 512 bytes to prevent potential errors.
+Hi,
 
-Signed-off-by: Xin Dai <daixin_tkzc@163.com>
----
- drivers/usb/storage/usb.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Mar 10, 2025 at 08:53:24PM +0200, Dmitry Baryshkov wrote:
+> On Mon, 10 Mar 2025 at 17:08, Maxime Ripard <mripard@kernel.org> wrote:
+> >
+> > On Fri, Mar 07, 2025 at 07:55:53AM +0200, Dmitry Baryshkov wrote:
+> > > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > >
+> > > The MSM DisplayPort driver implements several HDMI codec functions
+> > > in the driver, e.g. it manually manages HDMI codec device registratio=
+n,
+> > > returning ELD and plugged_cb support. In order to reduce code
+> > > duplication reuse drm_hdmi_audio_* helpers and drm_bridge_connector
+> > > integration.
+> > >
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > ---
+> > >  drivers/gpu/drm/msm/Kconfig         |   1 +
+> > >  drivers/gpu/drm/msm/dp/dp_audio.c   | 131 ++++----------------------=
+----------
+> > >  drivers/gpu/drm/msm/dp/dp_audio.h   |  27 ++------
+> > >  drivers/gpu/drm/msm/dp/dp_display.c |  28 ++------
+> > >  drivers/gpu/drm/msm/dp/dp_display.h |   6 --
+> > >  drivers/gpu/drm/msm/dp/dp_drm.c     |   8 +++
+> > >  6 files changed, 31 insertions(+), 170 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+> > > index 974bc7c0ea761147d3326bdce9039d6f26f290d0..7f127e2ae44292f8f5c7f=
+f6a9251c3d7ec8c9f58 100644
+> > > --- a/drivers/gpu/drm/msm/Kconfig
+> > > +++ b/drivers/gpu/drm/msm/Kconfig
+> > > @@ -104,6 +104,7 @@ config DRM_MSM_DPU
+> > >  config DRM_MSM_DP
+> > >       bool "Enable DisplayPort support in MSM DRM driver"
+> > >       depends on DRM_MSM
+> > > +     select DRM_DISPLAY_HDMI_AUDIO_HELPER
+> > >       select RATIONAL
+> > >       default y
+> > >       help
+> > > diff --git a/drivers/gpu/drm/msm/dp/dp_audio.c b/drivers/gpu/drm/msm/=
+dp/dp_audio.c
+> > > index 70fdc9fe228a7149546accd8479a9e4397f3d5dd..f8bfb908f9b4bf93ad548=
+0f0785e3aed23dde160 100644
+> > > --- a/drivers/gpu/drm/msm/dp/dp_audio.c
+> > > +++ b/drivers/gpu/drm/msm/dp/dp_audio.c
+> > > @@ -13,13 +13,13 @@
+> > >
+> > >  #include "dp_catalog.h"
+> > >  #include "dp_audio.h"
+> > > +#include "dp_drm.h"
+> > >  #include "dp_panel.h"
+> > >  #include "dp_reg.h"
+> > >  #include "dp_display.h"
+> > >  #include "dp_utils.h"
+> > >
+> > >  struct msm_dp_audio_private {
+> > > -     struct platform_device *audio_pdev;
+> > >       struct platform_device *pdev;
+> > >       struct drm_device *drm_dev;
+> > >       struct msm_dp_catalog *catalog;
+> > > @@ -160,24 +160,11 @@ static void msm_dp_audio_enable(struct msm_dp_a=
+udio_private *audio, bool enable)
+> > >       msm_dp_catalog_audio_enable(catalog, enable);
+> > >  }
+> > >
+> > > -static struct msm_dp_audio_private *msm_dp_audio_get_data(struct pla=
+tform_device *pdev)
+> > > +static struct msm_dp_audio_private *msm_dp_audio_get_data(struct msm=
+_dp *msm_dp_display)
+> > >  {
+> > >       struct msm_dp_audio *msm_dp_audio;
+> > > -     struct msm_dp *msm_dp_display;
+> > > -
+> > > -     if (!pdev) {
+> > > -             DRM_ERROR("invalid input\n");
+> > > -             return ERR_PTR(-ENODEV);
+> > > -     }
+> > > -
+> > > -     msm_dp_display =3D platform_get_drvdata(pdev);
+> > > -     if (!msm_dp_display) {
+> > > -             DRM_ERROR("invalid input\n");
+> > > -             return ERR_PTR(-ENODEV);
+> > > -     }
+> > >
+> > >       msm_dp_audio =3D msm_dp_display->msm_dp_audio;
+> > > -
+> > >       if (!msm_dp_audio) {
+> > >               DRM_ERROR("invalid msm_dp_audio data\n");
+> > >               return ERR_PTR(-EINVAL);
+> > > @@ -186,68 +173,16 @@ static struct msm_dp_audio_private *msm_dp_audi=
+o_get_data(struct platform_device
+> > >       return container_of(msm_dp_audio, struct msm_dp_audio_private, =
+msm_dp_audio);
+> > >  }
+> > >
+> > > -static int msm_dp_audio_hook_plugged_cb(struct device *dev, void *da=
+ta,
+> > > -             hdmi_codec_plugged_cb fn,
+> > > -             struct device *codec_dev)
+> > > -{
+> > > -
+> > > -     struct platform_device *pdev;
+> > > -     struct msm_dp *msm_dp_display;
+> > > -
+> > > -     pdev =3D to_platform_device(dev);
+> > > -     if (!pdev) {
+> > > -             pr_err("invalid input\n");
+> > > -             return -ENODEV;
+> > > -     }
+> > > -
+> > > -     msm_dp_display =3D platform_get_drvdata(pdev);
+> > > -     if (!msm_dp_display) {
+> > > -             pr_err("invalid input\n");
+> > > -             return -ENODEV;
+> > > -     }
+> > > -
+> > > -     return msm_dp_display_set_plugged_cb(msm_dp_display, fn, codec_=
+dev);
+> > > -}
+> > > -
+> > > -static int msm_dp_audio_get_eld(struct device *dev,
+> > > -     void *data, uint8_t *buf, size_t len)
+> > > -{
+> > > -     struct platform_device *pdev;
+> > > -     struct msm_dp *msm_dp_display;
+> > > -
+> > > -     pdev =3D to_platform_device(dev);
+> > > -
+> > > -     if (!pdev) {
+> > > -             DRM_ERROR("invalid input\n");
+> > > -             return -ENODEV;
+> > > -     }
+> > > -
+> > > -     msm_dp_display =3D platform_get_drvdata(pdev);
+> > > -     if (!msm_dp_display) {
+> > > -             DRM_ERROR("invalid input\n");
+> > > -             return -ENODEV;
+> > > -     }
+> > > -
+> > > -     mutex_lock(&msm_dp_display->connector->eld_mutex);
+> > > -     memcpy(buf, msm_dp_display->connector->eld,
+> > > -             min(sizeof(msm_dp_display->connector->eld), len));
+> > > -     mutex_unlock(&msm_dp_display->connector->eld_mutex);
+> > > -
+> > > -     return 0;
+> > > -}
+> > > -
+> > > -int msm_dp_audio_hw_params(struct device *dev,
+> > > -     void *data,
+> > > -     struct hdmi_codec_daifmt *daifmt,
+> > > -     struct hdmi_codec_params *params)
+> > > +int msm_dp_audio_prepare(struct drm_connector *connector,
+> > > +                      struct drm_bridge *bridge,
+> > > +                      struct hdmi_codec_daifmt *daifmt,
+> > > +                      struct hdmi_codec_params *params)
+> > >  {
+> > >       int rc =3D 0;
+> > >       struct msm_dp_audio_private *audio;
+> > > -     struct platform_device *pdev;
+> > >       struct msm_dp *msm_dp_display;
+> > >
+> > > -     pdev =3D to_platform_device(dev);
+> > > -     msm_dp_display =3D platform_get_drvdata(pdev);
+> > > +     msm_dp_display =3D to_dp_bridge(bridge)->msm_dp_display;
+> > >
+> > >       /*
+> > >        * there could be cases where sound card can be opened even
+> > > @@ -262,7 +197,7 @@ int msm_dp_audio_hw_params(struct device *dev,
+> > >               goto end;
+> > >       }
+> > >
+> > > -     audio =3D msm_dp_audio_get_data(pdev);
+> > > +     audio =3D msm_dp_audio_get_data(msm_dp_display);
+> > >       if (IS_ERR(audio)) {
+> > >               rc =3D PTR_ERR(audio);
+> > >               goto end;
+> > > @@ -281,15 +216,14 @@ int msm_dp_audio_hw_params(struct device *dev,
+> > >       return rc;
+> > >  }
+> > >
+> > > -static void msm_dp_audio_shutdown(struct device *dev, void *data)
+> > > +void msm_dp_audio_shutdown(struct drm_connector *connector,
+> > > +                        struct drm_bridge *bridge)
+> > >  {
+> > >       struct msm_dp_audio_private *audio;
+> > > -     struct platform_device *pdev;
+> > >       struct msm_dp *msm_dp_display;
+> > >
+> > > -     pdev =3D to_platform_device(dev);
+> > > -     msm_dp_display =3D platform_get_drvdata(pdev);
+> > > -     audio =3D msm_dp_audio_get_data(pdev);
+> > > +     msm_dp_display =3D to_dp_bridge(bridge)->msm_dp_display;
+> > > +     audio =3D msm_dp_audio_get_data(msm_dp_display);
+> > >       if (IS_ERR(audio)) {
+> > >               DRM_ERROR("failed to get audio data\n");
+> > >               return;
+> > > @@ -311,47 +245,6 @@ static void msm_dp_audio_shutdown(struct device =
+*dev, void *data)
+> > >       msm_dp_display_signal_audio_complete(msm_dp_display);
+> > >  }
+> > >
+> > > -static const struct hdmi_codec_ops msm_dp_audio_codec_ops =3D {
+> > > -     .hw_params =3D msm_dp_audio_hw_params,
+> > > -     .audio_shutdown =3D msm_dp_audio_shutdown,
+> > > -     .get_eld =3D msm_dp_audio_get_eld,
+> > > -     .hook_plugged_cb =3D msm_dp_audio_hook_plugged_cb,
+> > > -};
+> > > -
+> > > -static struct hdmi_codec_pdata codec_data =3D {
+> > > -     .ops =3D &msm_dp_audio_codec_ops,
+> > > -     .max_i2s_channels =3D 8,
+> > > -     .i2s =3D 1,
+> > > -};
+> > > -
+> > > -void msm_dp_unregister_audio_driver(struct device *dev, struct msm_d=
+p_audio *msm_dp_audio)
+> > > -{
+> > > -     struct msm_dp_audio_private *audio_priv;
+> > > -
+> > > -     audio_priv =3D container_of(msm_dp_audio, struct msm_dp_audio_p=
+rivate, msm_dp_audio);
+> > > -
+> > > -     if (audio_priv->audio_pdev) {
+> > > -             platform_device_unregister(audio_priv->audio_pdev);
+> > > -             audio_priv->audio_pdev =3D NULL;
+> > > -     }
+> > > -}
+> > > -
+> > > -int msm_dp_register_audio_driver(struct device *dev,
+> > > -             struct msm_dp_audio *msm_dp_audio)
+> > > -{
+> > > -     struct msm_dp_audio_private *audio_priv;
+> > > -
+> > > -     audio_priv =3D container_of(msm_dp_audio,
+> > > -                     struct msm_dp_audio_private, msm_dp_audio);
+> > > -
+> > > -     audio_priv->audio_pdev =3D platform_device_register_data(dev,
+> > > -                                             HDMI_CODEC_DRV_NAME,
+> > > -                                             PLATFORM_DEVID_AUTO,
+> > > -                                             &codec_data,
+> > > -                                             sizeof(codec_data));
+> > > -     return PTR_ERR_OR_ZERO(audio_priv->audio_pdev);
+> > > -}
+> > > -
+> > >  struct msm_dp_audio *msm_dp_audio_get(struct platform_device *pdev,
+> > >                       struct msm_dp_catalog *catalog)
+> > >  {
+> > > diff --git a/drivers/gpu/drm/msm/dp/dp_audio.h b/drivers/gpu/drm/msm/=
+dp/dp_audio.h
+> > > index beea34cbab77f31b33873297dc454a9cee446240..58fc14693e48bff2b57ef=
+7278983e5f21ee80ac7 100644
+> > > --- a/drivers/gpu/drm/msm/dp/dp_audio.h
+> > > +++ b/drivers/gpu/drm/msm/dp/dp_audio.h
+> > > @@ -35,23 +35,6 @@ struct msm_dp_audio {
+> > >  struct msm_dp_audio *msm_dp_audio_get(struct platform_device *pdev,
+> > >                       struct msm_dp_catalog *catalog);
+> > >
+> > > -/**
+> > > - * msm_dp_register_audio_driver()
+> > > - *
+> > > - * Registers DP device with hdmi_codec interface.
+> > > - *
+> > > - * @dev: DP device instance.
+> > > - * @msm_dp_audio: an instance of msm_dp_audio module.
+> > > - *
+> > > - *
+> > > - * Returns the error code in case of failure, otherwise
+> > > - * zero on success.
+> > > - */
+> > > -int msm_dp_register_audio_driver(struct device *dev,
+> > > -             struct msm_dp_audio *msm_dp_audio);
+> > > -
+> > > -void msm_dp_unregister_audio_driver(struct device *dev, struct msm_d=
+p_audio *msm_dp_audio);
+> > > -
+> > >  /**
+> > >   * msm_dp_audio_put()
+> > >   *
+> > > @@ -61,10 +44,12 @@ void msm_dp_unregister_audio_driver(struct device=
+ *dev, struct msm_dp_audio *msm
+> > >   */
+> > >  void msm_dp_audio_put(struct msm_dp_audio *msm_dp_audio);
+> > >
+> > > -int msm_dp_audio_hw_params(struct device *dev,
+> > > -     void *data,
+> > > -     struct hdmi_codec_daifmt *daifmt,
+> > > -     struct hdmi_codec_params *params);
+> > > +int msm_dp_audio_prepare(struct drm_connector *connector,
+> > > +                      struct drm_bridge *bridge,
+> > > +                      struct hdmi_codec_daifmt *daifmt,
+> > > +                      struct hdmi_codec_params *params);
+> > > +void msm_dp_audio_shutdown(struct drm_connector *connector,
+> > > +                        struct drm_bridge *bridge);
+> > >
+> > >  #endif /* _DP_AUDIO_H_ */
+> > >
+> > > diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/ms=
+m/dp/dp_display.c
+> > > index bbc47d86ae9e67245c87a8365df366cce0dc529e..ece184d20c0f8bffa3c2a=
+48216015185d6cbc99e 100644
+> > > --- a/drivers/gpu/drm/msm/dp/dp_display.c
+> > > +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+> > > @@ -13,6 +13,7 @@
+> > >  #include <linux/delay.h>
+> > >  #include <linux/string_choices.h>
+> > >  #include <drm/display/drm_dp_aux_bus.h>
+> > > +#include <drm/display/drm_hdmi_audio_helper.h>
+> > >  #include <drm/drm_edid.h>
+> > >
+> > >  #include "msm_drv.h"
+> > > @@ -288,13 +289,6 @@ static int msm_dp_display_bind(struct device *de=
+v, struct device *master,
+> > >               goto end;
+> > >       }
+> > >
+> > > -
+> > > -     rc =3D msm_dp_register_audio_driver(dev, dp->audio);
+> > > -     if (rc) {
+> > > -             DRM_ERROR("Audio registration Dp failed\n");
+> > > -             goto end;
+> > > -     }
+> > > -
+> > >       rc =3D msm_dp_hpd_event_thread_start(dp);
+> > >       if (rc) {
+> > >               DRM_ERROR("Event thread create failed\n");
+> > > @@ -316,7 +310,6 @@ static void msm_dp_display_unbind(struct device *=
+dev, struct device *master,
+> > >
+> > >       of_dp_aux_depopulate_bus(dp->aux);
+> > >
+> > > -     msm_dp_unregister_audio_driver(dev, dp->audio);
+> > >       msm_dp_aux_unregister(dp->aux);
+> > >       dp->drm_dev =3D NULL;
+> > >       dp->aux->drm_dev =3D NULL;
+> > > @@ -626,9 +619,9 @@ static void msm_dp_display_handle_plugged_change(=
+struct msm_dp *msm_dp_display,
+> > >                       struct msm_dp_display_private, msm_dp_display);
+> > >
+> > >       /* notify audio subsystem only if sink supports audio */
+> > > -     if (msm_dp_display->plugged_cb && msm_dp_display->codec_dev &&
+> > > -                     dp->audio_supported)
+> > > -             msm_dp_display->plugged_cb(msm_dp_display->codec_dev, p=
+lugged);
+> > > +     if (dp->audio_supported)
+> > > +             drm_connector_hdmi_audio_plugged_notify(msm_dp_display-=
+>connector,
+> > > +                                                     plugged);
+> > >  }
+> > >
+> > >  static int msm_dp_hpd_unplug_handle(struct msm_dp_display_private *d=
+p, u32 data)
+> > > @@ -907,19 +900,6 @@ static int msm_dp_display_disable(struct msm_dp_=
+display_private *dp)
+> > >       return 0;
+> > >  }
+> > >
+> > > -int msm_dp_display_set_plugged_cb(struct msm_dp *msm_dp_display,
+> > > -             hdmi_codec_plugged_cb fn, struct device *codec_dev)
+> > > -{
+> > > -     bool plugged;
+> > > -
+> > > -     msm_dp_display->plugged_cb =3D fn;
+> > > -     msm_dp_display->codec_dev =3D codec_dev;
+> > > -     plugged =3D msm_dp_display->link_ready;
+> > > -     msm_dp_display_handle_plugged_change(msm_dp_display, plugged);
+> > > -
+> > > -     return 0;
+> > > -}
+> > > -
+> > >  /**
+> > >   * msm_dp_bridge_mode_valid - callback to determine if specified mod=
+e is valid
+> > >   * @bridge: Pointer to drm bridge structure
+> > > diff --git a/drivers/gpu/drm/msm/dp/dp_display.h b/drivers/gpu/drm/ms=
+m/dp/dp_display.h
+> > > index ecbc2d92f546a346ee53adcf1b060933e4f54317..cc6e2cab36e9c0b1527ff=
+292e547cbb4d69fd95c 100644
+> > > --- a/drivers/gpu/drm/msm/dp/dp_display.h
+> > > +++ b/drivers/gpu/drm/msm/dp/dp_display.h
+> > > @@ -7,7 +7,6 @@
+> > >  #define _DP_DISPLAY_H_
+> > >
+> > >  #include "dp_panel.h"
+> > > -#include <sound/hdmi-codec.h>
+> > >  #include "disp/msm_disp_snapshot.h"
+> > >
+> > >  #define DP_MAX_PIXEL_CLK_KHZ 675000
+> > > @@ -15,7 +14,6 @@
+> > >  struct msm_dp {
+> > >       struct drm_device *drm_dev;
+> > >       struct platform_device *pdev;
+> > > -     struct device *codec_dev;
+> > >       struct drm_connector *connector;
+> > >       struct drm_bridge *next_bridge;
+> > >       bool link_ready;
+> > > @@ -25,14 +23,10 @@ struct msm_dp {
+> > >       bool is_edp;
+> > >       bool internal_hpd;
+> > >
+> > > -     hdmi_codec_plugged_cb plugged_cb;
+> > > -
+> > >       struct msm_dp_audio *msm_dp_audio;
+> > >       bool psr_supported;
+> > >  };
+> > >
+> > > -int msm_dp_display_set_plugged_cb(struct msm_dp *msm_dp_display,
+> > > -             hdmi_codec_plugged_cb fn, struct device *codec_dev);
+> > >  int msm_dp_display_get_modes(struct msm_dp *msm_dp_display);
+> > >  bool msm_dp_display_check_video_test(struct msm_dp *msm_dp_display);
+> > >  int msm_dp_display_get_test_bpp(struct msm_dp *msm_dp_display);
+> > > diff --git a/drivers/gpu/drm/msm/dp/dp_drm.c b/drivers/gpu/drm/msm/dp=
+/dp_drm.c
+> > > index cca57e56c906255a315e759e85a5af5982c80e9c..20b24eea0a4b619598079=
+fbe4a32188485852b04 100644
+> > > --- a/drivers/gpu/drm/msm/dp/dp_drm.c
+> > > +++ b/drivers/gpu/drm/msm/dp/dp_drm.c
+> > > @@ -12,6 +12,7 @@
+> > >
+> > >  #include "msm_drv.h"
+> > >  #include "msm_kms.h"
+> > > +#include "dp_audio.h"
+> > >  #include "dp_drm.h"
+> > >
+> > >  /**
+> > > @@ -114,6 +115,9 @@ static const struct drm_bridge_funcs msm_dp_bridg=
+e_ops =3D {
+> > >       .hpd_disable  =3D msm_dp_bridge_hpd_disable,
+> > >       .hpd_notify   =3D msm_dp_bridge_hpd_notify,
+> > >       .debugfs_init =3D msm_dp_bridge_debugfs_init,
+> > > +
+> > > +     .hdmi_audio_prepare =3D msm_dp_audio_prepare,
+> > > +     .hdmi_audio_shutdown =3D msm_dp_audio_shutdown,
+> > >  };
+> > >
+> > >  static int msm_edp_bridge_atomic_check(struct drm_bridge *drm_bridge,
+> > > @@ -320,9 +324,13 @@ int msm_dp_bridge_init(struct msm_dp *msm_dp_dis=
+play, struct drm_device *dev,
+> > >        */
+> > >       if (!msm_dp_display->is_edp) {
+> > >               bridge->ops =3D
+> > > +                     DRM_BRIDGE_OP_HDMI_AUDIO |
+> > >                       DRM_BRIDGE_OP_DETECT |
+> > >                       DRM_BRIDGE_OP_HPD |
+> > >                       DRM_BRIDGE_OP_MODES;
+> > > +             bridge->hdmi_audio_dev =3D &msm_dp_display->pdev->dev;
+> > > +             bridge->hdmi_audio_max_i2s_playback_channels =3D 8;
+> > > +             bridge->hdmi_audio_dai_port =3D -1;
+> > >       }
+> >
+> > I think I'd prefer the toggle to be OP_DP_AUDIO, even if the
+> > implementation is exactly the same. That way, we'll be able to condition
+> > it to the DP support when that arrives, and we have the latitude to
+> > rework it to accomodate some DP subtleties without affecting the drivers
+> > later on.
+>=20
+> I don't think that there is a point in having OP_DP_AUDIO. There is
+> not so much difference in the driver. Also currently OP_HDMI_AUDIO
+> follows existing approach (which was pointed out by Laurent) - that
+> OP_foo should guard a particular set of callbacks. From this
+> perspective, OP_HDMI_AUDIO is fine - it guards usage of
+> hdmi_audio_foo(). OP_DP_AUDIO would duplicate that.
 
-diff --git a/drivers/usb/storage/usb.h b/drivers/usb/storage/usb.h
-index 97c6196d639b..fd8dcb21137a 100644
---- a/drivers/usb/storage/usb.h
-+++ b/drivers/usb/storage/usb.h
-@@ -71,7 +71,7 @@ struct us_unusual_dev {
-  * size we'll allocate.
-  */
+HDMI and DP are two competing standards, with different governing
+bodies. I don't think either have claimed that they will strictly adhere
+to what the other is doing, and I don't have the will to cross-check
+every given audio feature in both HDMI and DP right now.
 
--#define US_IOBUF_SIZE		64	/* Size of the DMA-mapped I/O buffer */
-+#define US_IOBUF_SIZE		512	/* Size of the DMA-mapped I/O buffer */
- #define US_SENSE_SIZE		18	/* Size of the autosense data buffer */
+However, I think we should really have the flexibility to deal with that
+situation if it happens, and without having to do any major refactoring.
+That means providing an API that is consistent to the drivers, and
+provides what the driver needs. Here, it needs DP audio support, not
+HDMI's.
 
- typedef int (*trans_cmnd)(struct scsi_cmnd *, struct us_data*);
---
-2.34.1
+How we plumb it is an implementation detail, and I do agree we can use
+the same functions under the hood right now. But the driver is a DP
+driver, it wants DP infrastructure and DP audio support.
 
+Maxime
+
+--6cekqwm32uwscwmv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ8/3KAAKCRDj7w1vZxhR
+xYUIAP9UqyNxqYgHwmpg8m8f7J0LSkNLfozO32eeNPPmoB/WAQD+LFh8dWKLQU+Z
+Jsx41BBzWwkg+Ct95v2lVjIeWMwQWQA=
+=H4PU
+-----END PGP SIGNATURE-----
+
+--6cekqwm32uwscwmv--
 
