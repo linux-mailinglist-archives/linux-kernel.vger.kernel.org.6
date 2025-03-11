@@ -1,133 +1,108 @@
-Return-Path: <linux-kernel+bounces-556004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C713BA5BF85
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:45:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13824A5BF96
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:46:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA4C18986EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:45:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 705A83B3395
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E380254AF1;
-	Tue, 11 Mar 2025 11:45:27 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6270C25485D;
+	Tue, 11 Mar 2025 11:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RvJd4iHc"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C0F1D514E;
-	Tue, 11 Mar 2025 11:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBFD221F10
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741693527; cv=none; b=cqkV4Cvvz3hJsIqsnabD86hS7fcW3U1hXOGqUkrREMihUSiZCgr7roUBkigV7s8dGjSRjSyynCBeQGGr/dff7xswhp/mpPJVGKeFddKQGHBLeqd3EQWUkirMeAFhXaVbzR3wymje2bfdiQyy4V64kBWzDPeUj2F3MYqcNygLzKk=
+	t=1741693567; cv=none; b=QBTWP0q29/tP0q85qckvJ2hL2Ku/veUKgH9Fz0M+djG+ZzsaHwGk+etqqWhBLvdhjvL0gYOMSfEyRgzNhbBCzLaxxsOrNvczQsLj9LDZupRHym3AQiKuoG9GZ4ZIHuMUgm0S9m4gSF/qq3YmxVZA0EV6IlO0r/WTLbeReeF5IUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741693527; c=relaxed/simple;
-	bh=iBNg5mEvsajHG4sU2bcGfllId35XtLdM5A9w2n+8DnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=peYPW5KHZo84xHZ4cofB/s+E9iW0+zY0F0ju4dXyPd2ny5EH0kIqgSANWu/Dv0Z5sGO/zPp7jz7iADI4CXTiuagXiQaDdItuPCVM/+i0ZZeMgetodBopqixMh4MmxkrS4+wtIv+xlTOi9YUDSTBKGTd6ayhMqQ1Kgg182THq0gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 249CBC4CEE9;
-	Tue, 11 Mar 2025 11:45:23 +0000 (UTC)
-Date: Tue, 11 Mar 2025 11:45:21 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Kees Cook <kees@kernel.org>, Peter Collingbourne <pcc@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH] string: Disable read_word_at_a_time() optimizations if
- kernel MTE is enabled
-Message-ID: <Z9AiUQdC4o0g8sxu@arm.com>
-References: <20250308023314.3981455-1-pcc@google.com>
- <202503071927.1A795821A@keescook>
- <Z88jbhobIz2yWBbJ@arm.com>
- <Z88r5qFLOSo0itaq@J2N7QTR9R3.cambridge.arm.com>
- <Z88yC7Oaj9DGaswc@arm.com>
- <Z88_fFgr23_EtHMf@J2N7QTR9R3>
+	s=arc-20240116; t=1741693567; c=relaxed/simple;
+	bh=HlzzY05BWtlJR2koHJrBJ3eDmc59baWY962o/k5YXK4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n9gmlXhw3FVj1sGzPjyZuU8pDQD4RBgDTHjDcQpsRyL6aVHNxDDms2BHcUkZo38l3tV6hJf+BPDgjDmteav5ldNBIqDuPWo3Fvb8xgY0aydg9H/5+c730l00NvKbbrv8irv5NKq8ZdN6C+XxCsCVg0zD5ExeMiKqsg+QGWBFHhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RvJd4iHc; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-549644ae382so6391863e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 04:46:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741693563; x=1742298363; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HlzzY05BWtlJR2koHJrBJ3eDmc59baWY962o/k5YXK4=;
+        b=RvJd4iHcAz/8woGSfMGsuvVEttUlbLjBCQfSKSZs6gZzByjAdeRe910poRUOq+t6fe
+         /4ZdYtTXa8/BA2DuWUeeMln3ugJw6U0hjoLZkBG67Utj4roV+34Byim5sDpcRV5mWZuR
+         4Z7KP/n7FdHRP3VfdnbACljDt8gY4SrIO04oHAxScdGum8Tu1qyAwXVzIK0ZJMunziHd
+         na24RM+1Uk4AkBkaIXeSiW8Rz6uG7q9e5c3QaF0vgNt2RsuyzF+GwMv1ooiUotdh4jJI
+         ZH5SsmL5l7oSdd7wJSSw62LYT6q9J0e3Q8s/7qTX4/IDZbfMLQuP7PXlKxjXq9uEAF21
+         8Z8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741693563; x=1742298363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HlzzY05BWtlJR2koHJrBJ3eDmc59baWY962o/k5YXK4=;
+        b=iqb0IM+VpUFnYVDCn0yEQCk5MIwf4Ze3Ww5X9ZFNVd8q6awrbyNvqwDtzAhx0l3rnt
+         hbisaQbEPama+EEGLBtoXapV0O5CKLW+752ROL3uFawjTpUPbMgjcExSNd9hJChcNm1L
+         JqDFVu9zFSz1vhhxcLit/RF0Mv5pctvKmQl+5bhVKzYuTQkYh2cSdKA5TXFCpS1rPHFG
+         Lo0FwpHvm5ersPzSMH9+vQSsbT6dbKLz8aPqfZuNmA4d4zXy76V0NCc6fI5lbXoRCKYI
+         kbQii+bZO7tJbF9UDKT3yUNvYqpeEXxqnCS+qlLwC8wFUIIMSWybcNLUqVxfhz9bTFW9
+         VzxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW86nDkcYIJalHYLZ4L83bVw2iAGw4bGNAAOx55Qg6Zgw9EaD4+cGHCVCyh5uHbjI7MDZxAOBva1zD0zzE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD8M0yBgQrS2oxBT2dWs+ufQIg9s/zda1WmOGHWG73DB16sRq4
+	LvcuMUsLupHU+MRtl+uIdn4VyVwngkjzg9CeHRu25M4j09LNaZtEcY2IEqoqHrWKyaOdWIERNbZ
+	om+wFXxcLyKYo2wM62JGHhlDzDq5KU6hyto7bMw==
+X-Gm-Gg: ASbGncuDX7BHyr6J9FyJZ4THUmc8fyhMSVTH6LrrAnVcHjCiEYpKcgG4ok5A/iBmu/A
+	tPQ1XdxLDx/OIaAsELWezERQ7cA16/dijUmTaQK0GcinrvC3pEdgv/j51EWxemQGuYDKr4FV6Bf
+	nzUvL4v9mBFIvAcT+TwhLamH9lK9R4PxQnnSojH0JT7mA2AhcjqLbrh3g3
+X-Google-Smtp-Source: AGHT+IG4TTEqvKKmU2492g+AukZb45PJtvegal8h8Xen11Z8QtCphiS4Y8oNyA46u4GkRFEnjLMwklQP0xpWjgnldJM=
+X-Received: by 2002:a05:6512:ba6:b0:545:f4b:ed66 with SMTP id
+ 2adb3069b0e04-54990e5e270mr5969176e87.21.1741693562644; Tue, 11 Mar 2025
+ 04:46:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z88_fFgr23_EtHMf@J2N7QTR9R3>
+References: <20250311110034.53959031@erd003.prtnl>
+In-Reply-To: <20250311110034.53959031@erd003.prtnl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 11 Mar 2025 12:45:51 +0100
+X-Gm-Features: AQ5f1Jq_7RVi4eqH6I3J4FQSDCj7bjjh65GU3qe_TbZeAh-Mej8_AfvoQOJZwNE
+Message-ID: <CAMRc=MewC-7XFfWxPS7cmMycxo-62NDrUKFyjnnCbwqXQXWuZw@mail.gmail.com>
+Subject: Re: regression: gpiolib: switch the line state notifier to atomic
+ unexpected impact on performance
+To: David Jander <david@protonic.nl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 07:37:32PM +0000, Mark Rutland wrote:
-> On Mon, Mar 10, 2025 at 06:40:11PM +0000, Catalin Marinas wrote:
-> > On Mon, Mar 10, 2025 at 06:13:58PM +0000, Mark Rutland wrote:
-> > > On Mon, Mar 10, 2025 at 05:37:50PM +0000, Catalin Marinas wrote:
-> > > > On Fri, Mar 07, 2025 at 07:36:31PM -0800, Kees Cook wrote:
-> > > > > On Fri, Mar 07, 2025 at 06:33:13PM -0800, Peter Collingbourne wrote:
-> > > > > > The optimized strscpy() and dentry_string_cmp() routines will read 8
-> > > > > > unaligned bytes at a time via the function read_word_at_a_time(), but
-> > > > > > this is incompatible with MTE which will fault on a partially invalid
-> > > > > > read. The attributes on read_word_at_a_time() that disable KASAN are
-> > > > > > invisible to the CPU so they have no effect on MTE. Let's fix the
-> > > > > > bug for now by disabling the optimizations if the kernel is built
-> > > > > > with HW tag-based KASAN and consider improvements for followup changes.
-> > > > > 
-> > > > > Why is faulting on a partially invalid read a problem? It's still
-> > > > > invalid, so ... it should fault, yes? What am I missing?
-> > > > 
-> > > > read_word_at_a_time() is used to read 8 bytes, potentially unaligned and
-> > > > beyond the end of string. The has_zero() function is then used to check
-> > > > where the string ends. For this uses, I think we can go with
-> > > > load_unaligned_zeropad() which handles a potential fault and pads the
-> > > > rest with zeroes.
-> > > 
-> > > If we only care about synchronous and asymmetric modes, that should be
-> > > possible, but that won't work in asynchronous mode. In asynchronous mode
-> > > the fault will accumulate into TFSR and will be detected later
-> > > asynchronously where it cannot be related to its source and fixed up.
-> > > 
-> > > That means that both read_word_at_a_time() and load_unaligned_zeropad()
-> > > are dodgy in async mode.
-> > 
-> > load_unaligned_zeropad() has a __mte_enable_tco_async() call to set
-> > PSTATE.TCO if in async mode, so that's covered. read_word_at_a_time() is
-> > indeed busted and I've had Vincezo's patches for a couple of years
-> > already, they just never made it to the list.
-> 
-> Sorry, I missed the __mte_{enable,disable}_tco_async() calls. So long as
-> we're happy to omit the check in that case, that's fine.
+On Tue, Mar 11, 2025 at 11:01=E2=80=AFAM David Jander <david@protonic.nl> w=
+rote:
+>
+> On kernel 6.13, after git revert -n fcc8b637c542 time is back to what it =
+was
+> on 6.12.
+>
 
-That was the easiest. Alternatively we can try to sync the TFSR before
-and after the load but with the ISBs, that's too expensive. We could
-also do a dummy one byte load before setting TCO. read_word_at_a_time()
-does have an explicit kasan_check_read() but last time I checked it has
-no effect on MTE.
+Interestingly: I cannot reproduce it. Obviously gpiofind doesn't exist
+in libgpiod v2 but I'm running gpiodetect with and without reverting
+these changes and am getting roughly the same results: ~0.050s real
+time for 1 up to 4 chips.
 
-> I was worried that ex_handler_load_unaligned_zeropad() might not do the
-> right thing in response to a tag check fault (e.g. access the wrong 8
-> bytes), but it looks as though that's ok due to the way it generates the
-> offset and the aligned pointer.
-> 
-> If load_unaligned_zeropad() is handed a string that starts with an
-> unexpected tag (and even if that starts off aligned),
-> ex_handler_load_unaligned_zeropad() will access that and cause another
-> tag check fault, which will be reported.
+Any idea why that could be? Can you reproduce it with libgpiod v2 (I
+don't know why that wouldn't be the case but worth double checking).
 
-Yes, it will report an async tag check fault on the
-exit_to_kernel_mode() path _if_ load_unaligned_zeropad() triggered the
-fault for other reasons (end of page). It's slightly inconsistent, we
-could set TCO for the async case in ex_handler_load_unaligned_zeropad()
-as well.
-
-For sync checks, we'd get the first fault ending up in
-ex_handler_load_unaligned_zeropad() and a second tag check fault while
-processing the first. This ends up in do_tag_recovery and we disable tag
-checking after the report. Not ideal but not that bad. We could adjust
-ex_handler_load_unaligned_zeropad() to return false if the pointer is
-already aligned but we need to check the semantics of
-load_unaligned_zeropad(), is it allowed to fault on the first byte?
-
--- 
-Catalin
+Bart
 
