@@ -1,158 +1,129 @@
-Return-Path: <linux-kernel+bounces-556268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3CBA5C367
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:13:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1CB0A5C366
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:12:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF283B0FA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:12:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67A71897C94
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4188525B69A;
-	Tue, 11 Mar 2025 14:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4039025BAC8;
+	Tue, 11 Mar 2025 14:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gcEVavJK"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="wQfCsdhL"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29292253F13;
-	Tue, 11 Mar 2025 14:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2138E25B679
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741702352; cv=none; b=p17cYpLyFbF5gzJsuT5uAKv3MRBUfMseDU+0GpIO/MLB6JbgJKfwXBY3uuISC2H78ITc4+I4hBSzBgCz4JVsT8QhGKnjzSpaiNntjd1xH1YlSQ5rQF4gdAnaL+egmGyfXESdNAAPELrX5UEeyHVW/4KGXb/9qsHBsVaem0RYG7I=
+	t=1741702360; cv=none; b=YalRWmCri4qEZAtpN394R/2ISSNXjt1UJ1Ilaz8P1JXcQMmOayUL7EWgk3jfNvoAXHeCzA5rDsKz0ikOFnuJGa/0/ldGcisVx1LjSefcLegEZjrPqKmCts0LxoTYzOaUF0Qxf0s5HfWMCfTqmo6yp8vl2SxUzHPvyhygUn5AxDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741702352; c=relaxed/simple;
-	bh=6OvbwuzOWKYXpLAf1Dy2SXJ1sbx6q35dy6gQZJhEhRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BLA5Rul/R0kBBg9Qi6D2QeeU997Ijc4uvTebTqqMNnxLFPqNpUPSXmbRuRrczhvTwg0fWFuPhv3Cp5cCOdJD2Pf7S1XIuomZxC+3cRjyhsacNZKifLs4EUcvp82xej6kovPBWuWqQq343TVhavZrLYnyG30zSGCAaKXVNa8OcY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gcEVavJK; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B9ekm2004460;
-	Tue, 11 Mar 2025 14:12:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=IQAsIs
-	PVOeO7xHxkLefhX6FU940USDwYv1EuiLuMx8c=; b=gcEVavJKZohuC5u1TPOweT
-	izEyvrrRLdB/4LDaf8mFzD1v1BGBekdd7i0QP69xYR3PMSw+05DwerW57nsJw3JK
-	GNh+fmw4KdnBjBmx0LAmpx2GYm65+13MUMdyUc3BTSVLBmWno+B6ydWGtytOeAsJ
-	j4pA+7fHEZEGrCsIwEkVwPTS8hKwMqjH3l3NcRmnQvOmIzWXeaLRZw9EGW838I43
-	2RIHrB6+XdWg1UAIjOLgcYWn8krF3eL+k6nmbipeMDYTBULBw7HztFsKAC9jqmVE
-	Q9lqlwHhA7OjNaUTpXh+PYAGuQ8rABaH4XI+QkyWZYbBFvazufyOrJYFeZrwz/dQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45a78qvchy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 14:12:23 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52BE9wf9010167;
-	Tue, 11 Mar 2025 14:12:22 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45a78qvchu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 14:12:22 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52BDJo4C022294;
-	Tue, 11 Mar 2025 14:12:22 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45917ncj8m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 14:12:22 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52BECKXQ19595818
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Mar 2025 14:12:21 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B11775805F;
-	Tue, 11 Mar 2025 14:12:20 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 26F6958053;
-	Tue, 11 Mar 2025 14:12:18 +0000 (GMT)
-Received: from [9.204.204.161] (unknown [9.204.204.161])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 11 Mar 2025 14:12:17 +0000 (GMT)
-Message-ID: <7e47814f-37de-417d-a84b-de21147e372f@linux.ibm.com>
-Date: Tue, 11 Mar 2025 19:42:16 +0530
+	s=arc-20240116; t=1741702360; c=relaxed/simple;
+	bh=aSiRFGz9D35mrAPWQkuBnfHc989qYrNXBTYMoWctP7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oTgOoFcrrjw1PVJHWTQoeLFPVgDzJOsIeR7lZSgvxMKT4s2sL5ODdO5fDqI2cAioHPNf3L0VWvYrfvW8yBaadutdQSodv8tYRbVnAI0ht3VoW4j0/CI09P6UFBk5vbFYXssqOzzi6Fa+Jmg/tLzPpUE1QnC5WPd/n2iihSijOjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=wQfCsdhL; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-47662449055so16714761cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:12:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1741702358; x=1742307158; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kqS90eFGJ7/q/06uqKRGMnqOqUkTAtZXlVsfnwLorTA=;
+        b=wQfCsdhLiwERXFdv6X6BsxDRjN7B6y6gxFpkIbbfNEGZOn5ivp5LJ4GquzHbL3y0kg
+         jZ2aACKE+SJts4+SV8yQbCbJFaqXrM8wMeAsXBQwl0CrYH1ULC9tUUBJGh5Dl+coQ1uT
+         hl1KLrUZPnaT1PV7aX/2qqpkmeJxr7//Y/yyLsdYk0WsXQRphb45T9A4htaBOKCidDrK
+         jE6RX/eTn49A8PpDf5np0hQwG6Yk0CdgSA/Iv3nsxTAff7G4ejg3e19F+0txXKH5XO+3
+         BzZ/ZJJI+gZONWbKgyGwiKs6tReZb4DHwkAMDDJH81nRGZSXmq6jilOZHXHux1hTWFN2
+         c4Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741702358; x=1742307158;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kqS90eFGJ7/q/06uqKRGMnqOqUkTAtZXlVsfnwLorTA=;
+        b=aoB706pPBV18vFnFdewxdItFRs+90YJq6seAqii01CdqLv+00FI77qokozHqDu+HQ2
+         qb9TntBiittq1JzBjGwhaIRtnf4OstEWXe1FG7b8sIS0yZ8stGvh4J+cGuvl6+JLLaTw
+         OLe6NbT42Gr+HR9EqYiOKDWABzLhq9mzAlvShGTJnPbIggyS6yedZO0B/nq6hI8zUfzX
+         S6d1KFHiuk9UIpnD4NdH/wTolHsnRMPec4oarFV3l/VxmIvaxfNXzJsYODdhRICAfRqi
+         1eXIK8yugH6kCjr2tFQPnqg5BRogWgX1AQ0w3Ojxd+/7L+SWX0awS10kN8xAQFhrjxIj
+         qRkA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6WCEVkjV8tb35t5l17/EJXN7eMr8FVmONKiwu2HNBCuI+7oiyTYEx9u7DVnmrIWTmyhaN2FVVcJ32hwc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO+2+iFVE4B0/cUwTniquYDwIHJceQF5Zrx8DrMRmT1+FErdta
+	JjbHTO4DLjbKWJBksFH/mBaTweGUzaxTxGVVGtRZ9sf/CadCBZzdwf0PuPvHgw==
+X-Gm-Gg: ASbGncsdIVrwZbaGY3Pw2n4AyOCy1tQcjRCqNvqWzKGqzeS7CdMwsa6FgRdyvHnBxjI
+	cvRxmLotw2ITyGOY7dlVSdsEkTnFgz2fg4QQ6vofKyaWsSQpLUhEFbUh727WFWvPG50xtWukMTt
+	CvsoXfCeZhAHami5YitEBfFEDmqCVW/hVr/NLyWwrzyui4Ocz39Voku7C5Jg0F+BV41OKs+Gs8/
+	wePArLDGm1azsAPpH4DHeOjqYe4u/vWOotjdfFeiM99D5jd+AnbLBrpqdpRLteM2BUPR4c9WGLK
+	LMmiPnWy4QN1FOIKRmDBGBGWL9gO4P6yvZ0akv9f5Sl5ZbdZCwK2uvF/e1zKI2M=
+X-Google-Smtp-Source: AGHT+IG9OcRAVr85+6mryYW0AABpehp6sfpdYUxay7oilkgQGXomiBnCuZqNDdPtDuWmRcmZHyKWsw==
+X-Received: by 2002:a05:6214:4113:b0:6e8:f60b:9bf8 with SMTP id 6a1803df08f44-6e9006c8774mr209755866d6.33.1741702357937;
+        Tue, 11 Mar 2025 07:12:37 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f707bf47sm73501706d6.25.2025.03.11.07.12.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 07:12:37 -0700 (PDT)
+Date: Tue, 11 Mar 2025 10:12:35 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Xin Dai <daixin_tkzc@163.com>
+Cc: linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: storage: Fix `us->iobuf` size for BOT transmission
+ to prevent memory overflow
+Message-ID: <6a266eb7-0150-43e9-a712-b9e6fe8c71ea@rowland.harvard.edu>
+References: <20250311084111.322351-1-daixin_tkzc@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bpf-next] selftests/bpf fails to compile
-Content-Language: en-GB
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Saket Kumar Bhaskar <skb99@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>
-References: <7bc80a3b-d708-4735-aa3b-6a8c21720f9d@linux.ibm.com>
- <CAADnVQLUxTjYuvwyO0CMS5=e0YqmP525+EDfJX-=dH55g8XTXg@mail.gmail.com>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <CAADnVQLUxTjYuvwyO0CMS5=e0YqmP525+EDfJX-=dH55g8XTXg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: jo8lA2tCn4PNfblyIMeFbTqWoNTGWH_w
-X-Proofpoint-ORIG-GUID: o-iuy06kM4PdEdJaaIKWNsMwvN_XcyvR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- spamscore=0 adultscore=0 mlxlogscore=709 phishscore=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 bulkscore=0 suspectscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503110089
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311084111.322351-1-daixin_tkzc@163.com>
 
+On Tue, Mar 11, 2025 at 04:41:11PM +0800, Xin Dai wrote:
+> When the DWC2 controller detects a packet Babble Error, where a device
+> transmits more data over USB than the host controller anticipates for a
+> transaction. It follows this process:
+> 
+> 1. The interrupt handler marks the transfer result of the URB as
+>    `OVERFLOW` and returns it to the USB storage driver.
+> 2. The USB storage driver interprets the data phase transfer result of
+>    the BOT (Bulk-Only Transport) as `USB_STOR_XFER_LONG`.
+> 3. The USB storage driver initiates the CSW (Command Status Wrapper)
+>    phase of the BOT, requests an IN transaction, and retrieves the
+>    execution status of the corresponding CBW (Command Block Wrapper)
+>    command.
+> 4. The USB storage driver evaluates the CSW and finds it does not meet
+>    expectations. It marks the entire BOT transfer result as
+>    `USB_STOR_XFER_ERROR` and notifies the SCSI layer that a `DID_ERROR`
+>    has occurred during the transfer.
+> 5. The USB storage driver requests the DWC2 controller to initiate a
+>    port reset, notifying the device of an issue with the previous
+>    transmission.
+> 6. The SCSI layer implements a retransmission mechanism.
+> 
+> In step 3, the device remains unaware of the Babble Error until the
+> connected port is reset. We observed that the device continues to send
+> 512 bytes of data to the host (according to the BBB Transport protocol,
+> it should send only 13 bytes). However, the USB storage driver
+> pre-allocates a default buffer size of 64 bytes for CBW/CSW, posing a
+> risk of memory overflow. To mitigate this risk, we have adjusted the
+> buffer size to 512 bytes to prevent potential errors.
 
-On 10/03/25 2:15 pm, Alexei Starovoitov wrote:
-> On Mon, Mar 10, 2025 at 8:32 AM Venkat Rao Bagalkote
-> <venkat88@linux.ibm.com> wrote:
->> Greetings!!!
->>
->> selftests/bpf fails to compile with below error on bpf-next repo with
->> commit head: f28214603dc6c09b3b5e67b1ebd5ca83ad943ce3
->>
->> Repo link:
->> https://web.git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/
->>
->> Reverting below commit resolves the issue.
->>
->> Commit ID: 48b3be8d7f82bea6affe6b9f11ee67380b55ede8
-> ...
->
->> If you happen to fix the issue, please add below tag.
->>
->> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-> Not quite. The issue is likely that your llvm is too old.
-> Please upgrade.
+There is no risk of memory overflow.  The length of the transfer for the 
+CSW is limited to US_BULK_CS_WRAP_LEN, which is 13.  And the length of a 
+CBW transfer is limited to US_BULK_CB_WRAP_LEN, which is 31 (or to 32 
+if the US_FL_BULK32 quirk flag is set).  Therefore a 64-byte buffer is 
+more than enough.
 
-
-Thanks for the feedback.
-
-I did try the compilation on fedora41, with linux-mainline kernel and 
-/sefltests/bpf compiled successfully. But on the same set-up 
-/selftests/bpf failed to compile on bpf-next kernel.
-
-
-OS: Fedora Linux 41 (Server Edition)
-LLVM: llvm-19.1.7-3.fc41.ppc64le
-
-gcc version 14.2.1 20250110 (Red Hat 14.2.1-7) (GCC)
-
-Passing repo: 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-Failing repo: 
-https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/
-
-Regards,
-
-Venkat.
-
->
+Alan Stern
 
