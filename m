@@ -1,298 +1,129 @@
-Return-Path: <linux-kernel+bounces-556987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F21A5D1EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:46:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22F3A5D1F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:48:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3806A3B1992
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:45:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74623189E110
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901532253F8;
-	Tue, 11 Mar 2025 21:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8B9264A68;
+	Tue, 11 Mar 2025 21:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZCM5RdD6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0tn05P+/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="irmHBhpo"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFEF22A1CD;
-	Tue, 11 Mar 2025 21:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA12221720;
+	Tue, 11 Mar 2025 21:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741729548; cv=none; b=ptO2D8blygTjAzjHsvEI/r9BoD5gzlF+K4YT7AJgt9vGAzIEuj1kpRLFGoaDyHpQ5f24CSnIdWA3yhP3hkkxo3G+bH8QSwxblBJIyI1ZSaJ6PF/hn73APg9FC0QXvcKfAyjs0qmDdA/Z18kAdXQ6Ay91QJ48VhpxsH8zyZl8Wok=
+	t=1741729677; cv=none; b=FrgLeKlzq9yUvXR3ImGWqI9ya+uMjaPjbtLGbiBMJRb9Hvu5ZjH1kxLoXlx4x73hWFjxG6LBC1eY4or6n9gqgRy1OZZAdC2X5ZNzLTfZMqxSIE7VjfvSQpmJmGts2ESgk32ERRxEB3eS1+IK4JuAreHMt0I8HFn8l2g0x64C3ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741729548; c=relaxed/simple;
-	bh=KdwnFgazTOlEUUpfswtvuAmPmqCiafpW6cQd/XfAcsI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RCLrSqUARDeUou5VyVAHWNS8CzsTCYn/8lc3zgMIEOveQkD/kHizo4489ut7HtULm22+RnoBDu3YjFYegrDsaaPi7pquv0SzebmTl1C0kG+R+4dyOp5D34H2spdV0KtvLt1oFYNoG19nJKhzykk+4LyAzVL46XfCbaMhccebdUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZCM5RdD6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0tn05P+/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741729545;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GbLxnYEkh+uuZQU6ekQIoI6Bdh306BbbZFiZNHD5ix0=;
-	b=ZCM5RdD6C5Mwv3W05htRYbcC8103FrHDDF+55t9hhAL7UpCj8pzCXk+kMhpQO/Vom9X91J
-	huw7GuM0H/yn4Ir6PTddThNXe1oNFoPFs/EM7A1RGoCt6DZKwD7dO0IAc7kNOA/0/oZAxp
-	s/wchwubHYIi+y4C0AVERN4xzwZpkhalqYgnC0VxlAZjWYeycPUKyLWQgkYKKhXYUHGqu5
-	Dz/DoPxqJkcuwhh9/G6fBRMr3JTAqZ+96cAYrmlcDveuL41veJYJDhTrnOJIL0wWvRahpd
-	Y/L0oHHMVJF+JX/YgkMZ3e2qHOHVwvY5/uo/tI9DFP3e7dnzuBs9StLDsjDjfA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741729545;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GbLxnYEkh+uuZQU6ekQIoI6Bdh306BbbZFiZNHD5ix0=;
-	b=0tn05P+/99JbK5GPkWo9nBabKzsQZ7WtennjSeYOGTRbXvEgKPAKfq+6ez6IaefY/Pjmyv
-	IKjKiKrJqioRAtDQ==
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>, Bjorn
- Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Nishanth Menon
- <nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
- <ssantosh@kernel.org>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
- <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
- ntb@lists.linux.dev, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
- <wei.liu@kernel.org>, linux-hyperv@vger.kernel.org, Wei Huang
- <wei.huang2@amd.com>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Subject: Re: [patch 05/10] PCI/MSI: Switch to MSI descriptor locking to guard()
-In-Reply-To: <20250311181018.0000477f@huawei.com>
-References: <20250309083453.900516105@linutronix.de>
- <20250309084110.458224773@linutronix.de>
- <20250311181018.0000477f@huawei.com>
-Date: Tue, 11 Mar 2025 22:45:44 +0100
-Message-ID: <87plinz1fb.ffs@tglx>
+	s=arc-20240116; t=1741729677; c=relaxed/simple;
+	bh=3T4DbaFg18rciOHzFePVLDz+eAOpKoSoMMwqeyCCDOE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NgGyh31DPpBVMEJ5nwjLwV9qeDR113Ite1FZxqZmcEIfGhrjkGAzJhPolTF0He35iJU4widsUP2f0QK7xr+YvwL4di8qY2W/FMKDZbIZ2WbcHfwA3AwrJK/CzPZwkKBcR/y8/giQ1DospuTmUQu/J99j8yWBCfqK7m6a40gHcZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=irmHBhpo; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30b83290b7bso65344021fa.1;
+        Tue, 11 Mar 2025 14:47:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741729674; x=1742334474; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K9vgzU+eZVFcSIn6w6E51XRuCiWeRmIlJU64r3csFlU=;
+        b=irmHBhpoBTXb8D1lNc4V6sNlKpnIJoJIetQV0FOiN/pLaxIhk8SDypN7h0yPsJn9P5
+         f/oPVUVe+amLczKCOlGOze46MKDkXw2skuAfS2GTP9+qbaaFEwsJ5MBaqsCu0wnUsU6K
+         CWte74prQbmAIBBplPzvGRbMMy3qlKA2kkwWRMPTtXiZCSQTViLoBGy9VoHbD4XcPIUU
+         L7YQxfNeuG7+igJUxTc7kEeLo7SKcWpO8of2/im6xIY5mfxRFG2WMHTpGBmK3HelzBTD
+         bkJU/2uqFxWdgymL09ESNlkIKv0CEGbS+TfBOrnvwS1F2yAZVGnkbHNfZR3B9Xid7S1+
+         Bopw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741729674; x=1742334474;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K9vgzU+eZVFcSIn6w6E51XRuCiWeRmIlJU64r3csFlU=;
+        b=iVYTnY4TshFDn8C4QFmJzGO5ySkSf1XtSAcZL4GO7toG/qAncSBAUAwy1USYNBqwQi
+         Vwoqq6eeyJgUctb9d3oQjnAm3d0OiToo9MPdEB5o0mTYXVdZbhRRsiWG3j/sTkAQTX1U
+         7YN0bP7bESqyNh2shtuBfytP5mKOT6w/c7P2gfDPbPxx4Y3yAaq6XPUBEuuD/5J3gSA4
+         50snV+5mhfhfbpf9oeGOD0LfigREblf7WS02UXMnIKWdJL6BFxhpVnVo+ZKPtT+RMjuE
+         lic7//F1pWXVYRYCsDLTgIjC//Pe4md0lZPOyMxwpjHB54xq0Hbes3Wu3effQmTM01Ct
+         BYew==
+X-Forwarded-Encrypted: i=1; AJvYcCWJV9sFoEIjv2gYNg8C224Q8sQNcryB4lPp2+ODsa0DctA1Uy/Dua5WZo0Jxh27Lz5Xg2p2cWRz@vger.kernel.org, AJvYcCXvOJsQko2p+Fjlyj9irCKAFQ0xfXHcmvFTTiIUuduIe+ps5i2MIDL7d4dMfuorE3de0Uq8Qi9M40/GIes=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbpzehByr9Ms1Kgz0XaEhwT97ixVYjhIcmCr84tko4sAn4Re6X
+	3MBEHexcxBrUsOFKaY950sYKAinXUbMQCuTADBpAbgLWwTXXuKEcIn0jn6Ky4BU3CiohRseT64Y
+	kmaBLWQhIXh9ba5GYuZIqRaUXCQ==
+X-Gm-Gg: ASbGncs7rl4wfHNblkZcxkR+ydsxX7HGNBwvJ6sVqFsi0Q2YoOT5VzxUdITXKildAMe
+	4xeJwW0ofBCMfc31hOhLmwR2gcPmJrOJpjlkmVkhGOAHNUARA/VCUgFjCs6dCHbh6mlUffCbLwd
+	EbUpQFYJw4KgDME/cVhTkdhS+eeT13pEWi6tV4Nq0/
+X-Google-Smtp-Source: AGHT+IF8xESdXJHMqJ/D9UyFzEiq2RloDH6VkP8Bza5VBEIJMeohMMuQFJRHBfaH+sCixf8rzrKmdEY9nafjRASdd64=
+X-Received: by 2002:a05:6512:3d15:b0:545:60b:f394 with SMTP id
+ 2adb3069b0e04-54990e2bcdbmr6813537e87.4.1741729674090; Tue, 11 Mar 2025
+ 14:47:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250311102326.GAZ9APHqe5aSQ1m5ND@fat_crate.local>
+ <CAMj1kXHTLz4onmR5iyowptRE38RCK4jNT3BoURBkq2FoDOMTxQ@mail.gmail.com>
+ <20250311112112.GEZ9AcqM2ceIQVUA0N@fat_crate.local> <20250311131356.GGZ9A3FNOxp32eGAgV@fat_crate.local>
+ <20250311143724.GE3493@redhat.com> <20250311174626.GHZ9B28rDrfWKJthsN@fat_crate.local>
+ <20250311181056.GF3493@redhat.com> <20250311190159.GIZ9CIp81bEg1Ny5gn@fat_crate.local>
+ <20250311192405.GG3493@redhat.com> <CAMzpN2hb7uD6Z410YFPYiGQvsV6-9b8iMXXCtfJYJ7ATwO-L5g@mail.gmail.com>
+ <20250311214159.GH3493@redhat.com>
+In-Reply-To: <20250311214159.GH3493@redhat.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Tue, 11 Mar 2025 17:47:42 -0400
+X-Gm-Features: AQ5f1JoR5bIlFE8s6b_lH2efo_DiDc9TYiwcTayS_CBM6l0T4F9nszPzkfD95g4
+Message-ID: <CAMzpN2iDOdn_r2aFipfyx3yKSKcSkQ5U6BpZ84L7i_Q6LmXgbA@mail.gmail.com>
+Subject: Re: [PATCH] x86/stackprotector: fix build failure with CONFIG_STACKPROTECTOR=n
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org, 
+	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>, Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 11 2025 at 18:10, Jonathan Cameron wrote:
-> On Sun,  9 Mar 2025 09:41:49 +0100 (CET)
-> Thomas Gleixner <tglx@linutronix.de> wrote:
+On Tue, Mar 11, 2025 at 5:42=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wro=
+te:
 >
-> This one runs into some of the stuff that the docs say
-> to not do.  I don't there there are bugs in here as such
-> but it gets harder to reason about and fragile in the long
-> run.  Easy enough to avoid though - see inline.
+> On 03/11, Brian Gerst wrote:
+> >
+> > On Tue, Mar 11, 2025 at 3:24=E2=80=AFPM Oleg Nesterov <oleg@redhat.com>=
+ wrote:
+> > >
+> > > OK. I'll update the subject/changelog to explain that this is only
+> > > needed for the older binutils and send V2.
+> >
+> > With it conditional on CONFIG_STACKPROTECTOR, you can also drop PROVIDE=
+S().
+>
+> Sorry Brian, I don't understand this magic even remotely...
+>
+> Do you mean
+>
+>         -/* needed for Clang - see arch/x86/entry/entry.S */
+>         -PROVIDE(__ref_stack_chk_guard =3D __stack_chk_guard);
+>         +#ifdef CONFIG_STACKPROTECTOR
+>         +__ref_stack_chk_guard =3D __stack_chk_guard;
+>         +#endif
+>
+> ?
+>
+> Oleg.
 
-Right. Updated variant below.
+Yes.  Also keep the comment about Clang.
 
-Thanks,
 
-        tglx
----
---- a/drivers/pci/msi/api.c
-+++ b/drivers/pci/msi/api.c
-@@ -53,10 +53,9 @@ void pci_disable_msi(struct pci_dev *dev
- 	if (!pci_msi_enabled() || !dev || !dev->msi_enabled)
- 		return;
- 
--	msi_lock_descs(&dev->dev);
-+	guard(msi_descs_lock)(&dev->dev);
- 	pci_msi_shutdown(dev);
- 	pci_free_msi_irqs(dev);
--	msi_unlock_descs(&dev->dev);
- }
- EXPORT_SYMBOL(pci_disable_msi);
- 
-@@ -196,10 +195,9 @@ void pci_disable_msix(struct pci_dev *de
- 	if (!pci_msi_enabled() || !dev || !dev->msix_enabled)
- 		return;
- 
--	msi_lock_descs(&dev->dev);
-+	guard(msi_descs_lock)(&dev->dev);
- 	pci_msix_shutdown(dev);
- 	pci_free_msi_irqs(dev);
--	msi_unlock_descs(&dev->dev);
- }
- EXPORT_SYMBOL(pci_disable_msix);
- 
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -336,41 +336,11 @@ static int msi_verify_entries(struct pci
- 	return !entry ? 0 : -EIO;
- }
- 
--/**
-- * msi_capability_init - configure device's MSI capability structure
-- * @dev: pointer to the pci_dev data structure of MSI device function
-- * @nvec: number of interrupts to allocate
-- * @affd: description of automatic IRQ affinity assignments (may be %NULL)
-- *
-- * Setup the MSI capability structure of the device with the requested
-- * number of interrupts.  A return value of zero indicates the successful
-- * setup of an entry with the new MSI IRQ.  A negative return value indicates
-- * an error, and a positive return value indicates the number of interrupts
-- * which could have been allocated.
-- */
--static int msi_capability_init(struct pci_dev *dev, int nvec,
--			       struct irq_affinity *affd)
-+static int __msi_capability_init(struct pci_dev *dev, int nvec, struct irq_affinity_desc *masks)
- {
--	struct irq_affinity_desc *masks = NULL;
-+	int ret = msi_setup_msi_desc(dev, nvec, masks);
- 	struct msi_desc *entry, desc;
--	int ret;
--
--	/* Reject multi-MSI early on irq domain enabled architectures */
--	if (nvec > 1 && !pci_msi_domain_supports(dev, MSI_FLAG_MULTI_PCI_MSI, ALLOW_LEGACY))
--		return 1;
--
--	/*
--	 * Disable MSI during setup in the hardware, but mark it enabled
--	 * so that setup code can evaluate it.
--	 */
--	pci_msi_set_enable(dev, 0);
--	dev->msi_enabled = 1;
--
--	if (affd)
--		masks = irq_create_affinity_masks(nvec, affd);
- 
--	msi_lock_descs(&dev->dev);
--	ret = msi_setup_msi_desc(dev, nvec, masks);
- 	if (ret)
- 		goto fail;
- 
-@@ -399,19 +369,48 @@ static int msi_capability_init(struct pc
- 
- 	pcibios_free_irq(dev);
- 	dev->irq = entry->irq;
--	goto unlock;
--
-+	return 0;
- err:
- 	pci_msi_unmask(&desc, msi_multi_mask(&desc));
- 	pci_free_msi_irqs(dev);
- fail:
- 	dev->msi_enabled = 0;
--unlock:
--	msi_unlock_descs(&dev->dev);
--	kfree(masks);
- 	return ret;
- }
- 
-+/**
-+ * msi_capability_init - configure device's MSI capability structure
-+ * @dev: pointer to the pci_dev data structure of MSI device function
-+ * @nvec: number of interrupts to allocate
-+ * @affd: description of automatic IRQ affinity assignments (may be %NULL)
-+ *
-+ * Setup the MSI capability structure of the device with the requested
-+ * number of interrupts.  A return value of zero indicates the successful
-+ * setup of an entry with the new MSI IRQ.  A negative return value indicates
-+ * an error, and a positive return value indicates the number of interrupts
-+ * which could have been allocated.
-+ */
-+static int msi_capability_init(struct pci_dev *dev, int nvec,
-+			       struct irq_affinity *affd)
-+{
-+	/* Reject multi-MSI early on irq domain enabled architectures */
-+	if (nvec > 1 && !pci_msi_domain_supports(dev, MSI_FLAG_MULTI_PCI_MSI, ALLOW_LEGACY))
-+		return 1;
-+
-+	/*
-+	 * Disable MSI during setup in the hardware, but mark it enabled
-+	 * so that setup code can evaluate it.
-+	 */
-+	pci_msi_set_enable(dev, 0);
-+	dev->msi_enabled = 1;
-+
-+	struct irq_affinity_desc *masks __free(kfree) =
-+		affd ? irq_create_affinity_masks(nvec, affd) : NULL;
-+
-+	guard(msi_descs_lock)(&dev->dev);
-+	return __msi_capability_init(dev, nvec, masks);
-+}
-+
- int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 			   struct irq_affinity *affd)
- {
-@@ -666,37 +665,37 @@ static void msix_mask_all(void __iomem *
- 		writel(ctrl, base + PCI_MSIX_ENTRY_VECTOR_CTRL);
- }
- 
--static int msix_setup_interrupts(struct pci_dev *dev, struct msix_entry *entries,
--				 int nvec, struct irq_affinity *affd)
-+static int __msix_setup_interrupts(struct pci_dev *dev, struct msix_entry *entries,
-+				   int nvec, struct irq_affinity_desc *masks)
- {
--	struct irq_affinity_desc *masks = NULL;
--	int ret;
-+	int ret = msix_setup_msi_descs(dev, entries, nvec, masks);
- 
--	if (affd)
--		masks = irq_create_affinity_masks(nvec, affd);
--
--	msi_lock_descs(&dev->dev);
--	ret = msix_setup_msi_descs(dev, entries, nvec, masks);
- 	if (ret)
--		goto out_free;
-+		return ret;
- 
- 	ret = pci_msi_setup_msi_irqs(dev, nvec, PCI_CAP_ID_MSIX);
- 	if (ret)
--		goto out_free;
-+		return ret;
- 
- 	/* Check if all MSI entries honor device restrictions */
- 	ret = msi_verify_entries(dev);
- 	if (ret)
--		goto out_free;
-+		return ret;
- 
- 	msix_update_entries(dev, entries);
--	goto out_unlock;
-+	return 0;
-+}
- 
--out_free:
--	pci_free_msi_irqs(dev);
--out_unlock:
--	msi_unlock_descs(&dev->dev);
--	kfree(masks);
-+static int msix_setup_interrupts(struct pci_dev *dev, struct msix_entry *entries,
-+				 int nvec, struct irq_affinity *affd)
-+{
-+	struct irq_affinity_desc *masks __free(kfree) =
-+		affd ? irq_create_affinity_masks(nvec, affd) : NULL;
-+
-+	guard(msi_descs_lock)(&dev->dev);
-+	int ret = __msix_setup_interrupts(dev, entries, nvec, masks);
-+	if (ret)
-+		pci_free_msi_irqs(dev);
- 	return ret;
- }
- 
-@@ -871,13 +870,13 @@ void __pci_restore_msix_state(struct pci
- 
- 	write_msg = arch_restore_msi_irqs(dev);
- 
--	msi_lock_descs(&dev->dev);
--	msi_for_each_desc(entry, &dev->dev, MSI_DESC_ALL) {
--		if (write_msg)
--			__pci_write_msi_msg(entry, &entry->msg);
--		pci_msix_write_vector_ctrl(entry, entry->pci.msix_ctrl);
-+	scoped_guard (msi_descs_lock, &dev->dev) {
-+		msi_for_each_desc(entry, &dev->dev, MSI_DESC_ALL) {
-+			if (write_msg)
-+				__pci_write_msi_msg(entry, &entry->msg);
-+			pci_msix_write_vector_ctrl(entry, entry->pci.msix_ctrl);
-+		}
- 	}
--	msi_unlock_descs(&dev->dev);
- 
- 	pci_msix_clear_and_set_ctrl(dev, PCI_MSIX_FLAGS_MASKALL, 0);
- }
+Brian Gerst
 
