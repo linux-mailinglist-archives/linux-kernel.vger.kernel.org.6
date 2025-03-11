@@ -1,172 +1,88 @@
-Return-Path: <linux-kernel+bounces-555320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB49EA5B59F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:11:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD8CA5B5A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:12:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 312697A596D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D90BD3ACC2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6281DEFE7;
-	Tue, 11 Mar 2025 01:11:36 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B0C1DE4CD;
-	Tue, 11 Mar 2025 01:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B601DED63;
+	Tue, 11 Mar 2025 01:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5MrgNZV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740154207F;
+	Tue, 11 Mar 2025 01:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741655496; cv=none; b=U2h64pHSf6Txh09vCVYzF3m33/gJD1mzq/Gw7RtfWNdjKQ9hm762n28zoECSmPPZa/sb4Wexbh7ayKbaE61wJDu4C3cKGn7wP5cm8D0rjNcZpdlUO2kc+9rx7W86sXeW/v9j5RtO5/dMcmxlixEubyWs+lfm4vX0lj7ntQnrM58=
+	t=1741655528; cv=none; b=hJagCgYaJJm0cTbYH1NYARhIDsQgeL/9E1kNNXH1CWPLefSNNE05RzBkzkRSB6Etx/CL8eRBTw3M12FDpKF/OdGdqq394abCZiO1MfLnswS7BD43YV4+UovTdUz28JoK6hhT6b6gqtC/ZYVMq9F+bMKJcJ5/UP/DiHooz1APPH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741655496; c=relaxed/simple;
-	bh=57JqbP0QgPnQSB1yMtAl+y1UXG7/HiZ+JnktlUA8j9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NwPliEzfd/Q27pVhu18DkIxZldgn83jHERP7c4P4qDqGG/7c/fRu+f7rwD0/+7eusjd8pKV5KcEvXZ8F+FnJneKUKdA+5rl9eiXhY+TYmL8SEE1hne//F0PPIstPrPSd1HCha8Lmisyi4LHZeijyfgZ1VJXCLsr00WMAcy1NA10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=209.97.181.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-6 (Coremail) with SMTP id AQAAfwD39VW4jc9nG9dxCA--.6446S2;
-	Tue, 11 Mar 2025 09:11:20 +0800 (CST)
-Received: from localhost (unknown [219.142.137.151])
-	by mail (Coremail) with SMTP id AQAAfwAXHYm0jc9npJdCAA--.9065S2;
-	Tue, 11 Mar 2025 09:11:16 +0800 (CST)
-Date: Tue, 11 Mar 2025 09:11:14 +0800
-From: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: ilpo.jarvinen@linux.intel.com, bhelgaas@google.com, cassel@kernel.org,
- christian.koenig@amd.com, kw@linux.com, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4] PCI: Update Resizable BAR Capability Register fields
-Message-ID: <20250311091114.0000524b@phytium.com.cn>
-In-Reply-To: <20250307173245.GA414123@bhelgaas>
-References: <20250307053535.44918-1-daizhiyuan@phytium.com.cn>
-	<20250307173245.GA414123@bhelgaas>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741655528; c=relaxed/simple;
+	bh=sA3uuPl/teMtJ6q0xGdImhvwtK/2w9QzGAf/f3PMDiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OUya9NVhg5SIpkLHoHyp4diBLAwERVG1j6aoDdBp3LqaxNEckek3yzUIMD0gizrMG8nkbtlW3Kqq2HwWMpqTlxIjOnasif5tKEMAWqKUS4NaTxQWMhKgH5IGxLWT72PJy8MwShUuSdiZ1U/uTsuE1JkFgUzxaFRwS34G+7wkfbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5MrgNZV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC75C4CEEB;
+	Tue, 11 Mar 2025 01:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741655527;
+	bh=sA3uuPl/teMtJ6q0xGdImhvwtK/2w9QzGAf/f3PMDiY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f5MrgNZV2LPXCnE6+ZN5NRLph4KTVqWX85H0TzapP/p03/z4O/Pw3XwFa7E10pLOb
+	 M42fJfco2LUzTMsaGvgiNUi3LLdXkoKFRVN+62iVlMJalY5Cw4M9ACDSbIKU317QnL
+	 YBDi2v3EW4+/rSbWS9an41aonnqKC9mlog2wU+VWBwX5T+72KLCYJA+Vpnu8SgR15w
+	 AGm4BrTPiCXS2L4NFsriCVIiEC7+Qtb6FnOzBKDCbI6oH4Qtl4UWdjgJq62jMnLrxx
+	 yafYTngLtgH6SEudFho423mNzWuw/IQbA103CKnBA+tMZJH4p49FCmXlF3Ptu/v1FN
+	 hzelfFRSgDRzw==
+Date: Tue, 11 Mar 2025 02:12:03 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, Krzysztof Adamski <krzysztof.adamski@nokia.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Kamal Dasu <kamal.dasu@broadcom.com>, Stefan Roese <sr@denx.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH v2 00/10] i2c: busses: Introduce and use
+ i2c_10bit_addr_*_from_msg()
+Message-ID: <c6xszdhx5ztexlqlmhvdn4dyz5ilzxsm7c62cvkmnwy2y3gaqc@owk2ani2emys>
+References: <20250213141045.2716943-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=GB18030
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAfwAXHYm0jc9npJdCAA--.9065S2
-X-CM-SenderInfo: hgdl6xpl1xt0o6sk53xlxphulrpou0/
-Authentication-Results: hzbj-icmmx-6; spf=neutral smtp.mail=daizhiyuan
-	@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoWxAr1rXr18Jw4xZrWrCw45Wrg_yoWrAFyxpr
-	WkAa95GrW8JFW7uwsFv3W8ZrWYgwsrXFyrCrWfG3s3uFn09F1SqF1UGFy5Ka4kJr4kAF4I
-	qFnFvw15Zr98JaDanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
-	UUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213141045.2716943-1-andriy.shevchenko@linux.intel.com>
 
-Thank you very much for everyone's comments and guidance.
+Hi Andy,
 
-On Fri, 7 Mar 2025 11:32:45 -0600
-Bjorn Helgaas <helgaas@kernel.org> wrote:
+> Andy Shevchenko (10):
+>   i2c: Introduce i2c_10bit_addr_*_from_msg() helpers
+>   i2c: axxia: Use i2c_10bit_addr_*_from_msg() helpers
+>   i2c: bcm-kona: Use i2c_10bit_addr_*_from_msg() helpers
+>   i2c: brcmstb: Use i2c_10bit_addr_*_from_msg() helpers
+>   i2c: eg20t: Use i2c_10bit_addr_*_from_msg() helpers
+>   i2c: kempld: Use i2c_10bit_addr_*_from_msg() helpers
+>   i2c: mt7621: Use i2c_10bit_addr_*_from_msg() helpers
+>   i2c: rzv2m: Use i2c_10bit_addr_*_from_msg() helpers
+>   i2c: ibm_iic: Use i2c_*bit_addr*_from_msg() helpers
+>   i2c: mv64xxx: Use i2c_*bit_addr*_from_msg() helpers
 
-> On Fri, Mar 07, 2025 at 01:35:29PM +0800, Zhiyuan Dai wrote:
-> > PCI Express Base Spec r6.0 defines BAR size up to 8 EB (2^63 bytes),
-> > but supporting anything bigger than 128TB requires changes to
-> > pci_rebar_get_possible_sizes() to read the additional Capability
-> > bits from the Control register.
-> > 
-> > If 8EB support is required, callers will need to be updated to
-> > handle u64 instead of u32. For now, support is limited to 128TB,
-> > and support for sizes greater than 128TB can be deferred to a later
-> > time.
-> > 
-> > Expand the alignment array of `pbus_size_mem` to support up to
-> > 128TB.
-> > 
-> > Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-> > Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> > Reviewed-by: Christian König <christian.koenig@amd.com>
-> > Reviewed-by: Niklas Cassel <cassel@kernel.org>  
-> 
-> Replaced the v3 patch that was already applied with this v4 patch,
-> thanks.
-> 
-> Please:
-> 
->   - Include a changelog below the "---" marker to tell me what changed
->     between v3 and v4.
-> 
->   - Don't include Reviewed-by from people who haven't explicitly
->     replied with that tag.  In this case, arguably you could retain
->     those from Christian and Niklas, because they did give that tag
->     for v3, and you only added the pbus_size_mem() change.
-> 
->     But Ilpo only gave you a comment on v3, and did *not* supply his
->     Reviewed-by.  You should never create a Reviewed-by tag in that
->     event.
-> 
->     I dropped all the Reviewed-by tags for now; happy to add them
->     if/when the reviewers actually supply them.
-> 
-> > ---
-> >  drivers/pci/pci.c             | 4 ++--
-> >  drivers/pci/setup-bus.c       | 2 +-
-> >  include/uapi/linux/pci_regs.h | 2 +-
-> >  3 files changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > index 661f98c6c63a..77b9ceefb4e1 100644
-> > --- a/drivers/pci/pci.c
-> > +++ b/drivers/pci/pci.c
-> > @@ -3752,7 +3752,7 @@ static int pci_rebar_find_pos(struct pci_dev
-> > *pdev, int bar)
-> >   * @bar: BAR to query
-> >   *
-> >   * Get the possible sizes of a resizable BAR as bitmask defined in
-> > the spec
-> > - * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
-> > + * (bit 0=1MB, bit 31=128TB). Returns 0 if BAR isn't resizable.
-> >   */
-> >  u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
-> >  {
-> > @@ -3800,7 +3800,7 @@ int pci_rebar_get_current_size(struct pci_dev
-> > *pdev, int bar)
-> >   * pci_rebar_set_size - set a new size for a BAR
-> >   * @pdev: PCI device
-> >   * @bar: BAR to set size to
-> > - * @size: new size as defined in the spec (0=1MB, 19=512GB)
-> > + * @size: new size as defined in the spec (0=1MB, 31=128TB)
-> >   *
-> >   * Set the new size of a BAR as defined in the spec.
-> >   * Returns zero if resizing was successful, error code otherwise.
-> > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> > index 5e00cecf1f1a..edb64a6b5585 100644
-> > --- a/drivers/pci/setup-bus.c
-> > +++ b/drivers/pci/setup-bus.c
-> > @@ -1059,7 +1059,7 @@ static int pbus_size_mem(struct pci_bus *bus,
-> > unsigned long mask, {
-> >  	struct pci_dev *dev;
-> >  	resource_size_t min_align, win_align, align, size, size0,
-> > size1;
-> > -	resource_size_t aligns[24]; /* Alignments from 1MB to 8TB
-> > */
-> > +	resource_size_t aligns[28]; /* Alignments from 1MB to
-> > 128TB */ int order, max_order;
-> >  	struct resource *b_res = find_bus_resource_of_type(bus,
-> >  					mask |
-> > IORESOURCE_PREFETCH, type); diff --git
-> > a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> > index 1601c7ed5fab..ce99d4f34ce5 100644 ---
-> > a/include/uapi/linux/pci_regs.h +++ b/include/uapi/linux/pci_regs.h
-> > @@ -1013,7 +1013,7 @@
-> >  
-> >  /* Resizable BARs */
-> >  #define PCI_REBAR_CAP		4	/* capability
-> > register */ -#define  PCI_REBAR_CAP_SIZES		0x00FFFFF0
-> >  /* supported BAR sizes */ +#define  PCI_REBAR_CAP_SIZES
-> > 	0xFFFFFFF0  /* supported BAR sizes */ #define
-> > PCI_REBAR_CTRL		8	/* control register */
-> > #define  PCI_REBAR_CTRL_BAR_IDX		0x00000007  /* BAR
-> > index */ #define  PCI_REBAR_CTRL_NBAR_MASK	0x000000E0  /* #
-> > of resizable BARs */ -- 2.43.0
-> >   
+merged to i2c/i2c-host.
 
+Thanks,
+Andi
 
