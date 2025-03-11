@@ -1,185 +1,120 @@
-Return-Path: <linux-kernel+bounces-555775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2768A5BC99
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:47:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B3AA5BC9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:48:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3719188842F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:47:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B38B93A4A88
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228FA21B9F4;
-	Tue, 11 Mar 2025 09:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D311F09AB;
+	Tue, 11 Mar 2025 09:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JN9I+Z/Q"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lLlapSMF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749FD1DDC1D;
-	Tue, 11 Mar 2025 09:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8671DDC1D;
+	Tue, 11 Mar 2025 09:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741686448; cv=none; b=QpQJTaJ0G/Y4H62VBNTVR3jxs138lDQmoem6wjzwaYr7WWXvo5y4ws9qkIICnfF8Xxk7XxATguV2pPOBaRidBXCpd0N+tvTBOa0otCWeBiKJNVEhsyImna+8sn3aB5/9UGhynG8ceapkSGLNnLm3Sx+oZrDdovfUSWjtK/dUjWg=
+	t=1741686488; cv=none; b=oHfaLItbHbeovph804hGk4d/GOe4PfvSrqYxKNEbijfD2COqDPjmLoMyi1BlFVb9/zGFCXwY57yxxkU056fsa5mO3zAkLXfCSDyAVpss52KHyWV4HwjHURvxjnr1a2Q3H17taqH03QQyNs21r2+Ar/pDd8k8KArZfIOLHsctmco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741686448; c=relaxed/simple;
-	bh=2y0BgM8k6LyEGSxamKC+4zLWW/hmmLsnmqOuELJkL3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k5ej85zqlijIQV8gJfsNcuDMgr5j1Jg9Z7AkIRImSPWkpOd/dfMpofPcMa793KANslbX6Kma6yyFeeTwjvw7FxZbQXZv+zowLHPKStgx0ojiw/66z3WqXy2PY8EgwvJz5bPVxF/4IojVPug3DbvhknNfWwzjOvEljdEk2qgwg1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JN9I+Z/Q; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741686444;
-	bh=2y0BgM8k6LyEGSxamKC+4zLWW/hmmLsnmqOuELJkL3w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JN9I+Z/QGiPLB+q1sP4gpy2p3ZCdttcYv8IsfYhNTL/EoCqIQT3gyLvfbCYrbAUa+
-	 4pxYhYBjMBqh7SjGxUr5ROj8CLxkfjFLGx7iF0Nyu4XLxdYuPlz76tpODlFgHX9q3v
-	 kvaVvC6OW73QT/o9NFKnN/1tWxhuiMgRco+1VxjWIuF9LTeCO0y/agCAtcjFGP4YeQ
-	 Nnk5eOpYVjerhu3bxGXXqDWsbkYvmlVTztt0F3P2WVRTCtEVaEaeNTtqMzO61GUcKc
-	 gbb1CZTjPPw9g8V/WpWKJgJG3amwSRv9rQRTUhQ29aozCWFNJc8i7H3CtrgJoXZg0g
-	 xHCnFSLjMoNqg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A443317E0FB8;
-	Tue, 11 Mar 2025 10:47:23 +0100 (CET)
-Message-ID: <b09f618a-eaf9-4258-ae2d-67eff1cb249f@collabora.com>
-Date: Tue, 11 Mar 2025 10:47:23 +0100
+	s=arc-20240116; t=1741686488; c=relaxed/simple;
+	bh=X8Lq5Nc+lcKUd1ahVl/hf0cTUAUK19srf04e+JxmWow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b+jTz7x60BmKjQbvEq+xV5+RaX4fDujiAqdF8+Ddhi/7ZMDmoMzXh8jR9doepbCe4PQvjaSHP+8twnsLZ8ZRtLMfB5yWS2JPY42jqfbko9dRQSKOWiXqIrTFNGPi71NpBkCPkfC7SlSK8ptxeQnLr3tvmf60Z4UiaAGVBx9xz+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lLlapSMF; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741686487; x=1773222487;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X8Lq5Nc+lcKUd1ahVl/hf0cTUAUK19srf04e+JxmWow=;
+  b=lLlapSMFMLKPzyZISf7mDBwY2jLbAkuaizlrCIGqkiYk0MqE4YP2+SCr
+   Krr3/e4Vt8p07MBoZuikjO3orAHbbUXg7LUVZkE1Ceva/RBuuqomXy49A
+   IO1qUmymxjHXDMPfBdm0+a6Nq3R7CeEEHmsLcCeThMmqXanUm5l5vzqt7
+   OdKO6W8sDW3zMif8CJg24TstmUKRzLWLFvFKm1LwyIBmtAMpgK+XMAkl/
+   +5UG70uMsZ13EAiIBfFxYvIARqm3imnRLgqzsJh6ioFInDtvTf0dxiT+x
+   17weqKsXOgs6HUgHlFio1Hc4D6CpIbO51hM7IhStpVRwSz9oH9fjfHthZ
+   Q==;
+X-CSE-ConnectionGUID: ztz/WL7mRW6H3g96rBsGOQ==
+X-CSE-MsgGUID: qCx+mXgnRmqPkkM6IwbkmA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42569559"
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="42569559"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 02:47:52 -0700
+X-CSE-ConnectionGUID: sIaWXje/TKS0/s7n8j2nLA==
+X-CSE-MsgGUID: uvyFR+/ARRqxhlFwHqvXQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="119990044"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 02:47:50 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 1962F11F7F2;
+	Tue, 11 Mar 2025 11:47:48 +0200 (EET)
+Date: Tue, 11 Mar 2025 09:47:48 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: shravan kumar <shravan.chippa@microchip.com>
+Cc: mchehab@kernel.org, kieran.bingham@ideasonboard.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	conor.dooley@microchip.com, valentina.fernandezalanis@microchip.com,
+	praveen.kumar@microchip.com
+Subject: Re: [PATCH V7 2/4] media: i2c: imx334: common reg value correction
+Message-ID: <Z9AGxJuk7V-QPKW1@kekkonen.localdomain>
+References: <20250305051442.3716817-1-shravan.chippa@microchip.com>
+ <20250305051442.3716817-3-shravan.chippa@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: mmc: mtk-sd: add single burst switch
-To: =?UTF-8?B?QXhlIFlhbmcgKOadqOejiik=?= <Axe.Yang@mediatek.com>,
- =?UTF-8?B?V2VuYmluIE1laSAo5qKF5paH5b2sKQ==?= <Wenbin.Mei@mediatek.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- =?UTF-8?B?Q2hhb3RpYW4gSmluZyAo5LqV5pyd5aSpKQ==?=
- <Chaotian.Jing@mediatek.com>, "robh@kernel.org" <robh@kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
- =?UTF-8?B?QW5keS1sZCBMdSAo5Y2i5LicKQ==?= <Andy-ld.Lu@mediatek.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- =?UTF-8?B?WW9uZyBNYW8gKOavm+WLhyk=?= <yong.mao@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- =?UTF-8?B?UWluZ2xpYW5nIExpICjpu47mmbTkuq4p?= <Qingliang.Li@mediatek.com>
-References: <20250306085028.5024-1-axe.yang@mediatek.com>
- <20250306085028.5024-2-axe.yang@mediatek.com>
- <3e84fda8-2566-4f18-8ef9-850c84789c34@collabora.com>
- <f84800fac589429157cd84034ef2f4541d3486a7.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <f84800fac589429157cd84034ef2f4541d3486a7.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305051442.3716817-3-shravan.chippa@microchip.com>
 
-Il 07/03/25 07:59, Axe Yang (杨磊) ha scritto:
-> On Thu, 2025-03-06 at 10:19 +0100, AngeloGioacchino Del Regno wrote:
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>
->>
->> Il 06/03/25 09:48, Axe Yang ha scritto:
->>> Add 'mediatek,disable-single-burst' setting. This property can be
->>> used to switch bus burst type, from single burst to INCR, which is
->>> determined by the bus type within the IP. Some versions of the IP
->>> are using AXI bus, thus this switch is necessary as 'single' is not
->>> the burst type supported by the bus.
->>>
->>> Signed-off-by: Axe Yang <axe.yang@mediatek.com>
->>
->> I am mostly sure that this is not something to put in devicetree, but
->> as
->> platform data for specific SoC(s), as much as I'm mostly sure that
->> all of
->> the instances of the MSDC IP in one SoC will be *all* using either
->> single
->> or INCR.
-> 
-> No, actually MSDC IPs in one SoC are using different versions.
-> Usually MSDC1 (index from 1) is used as eMMC host, the left hosts are
-> used as SD/SDIO hosts. They have similar designs, but there are still
-> difference.
-> 
->>
->> So, I think I know the answer but I'll still ask just to be extremely
->> sure:
->>
->> is there any MediaTek SoC that has different IP versions for
->> different MSDC
->> instances, and that hence require single burst on one instance and
->> INCR on
->> another instance?
-> 
-> Yes. Actually every SoC has different IP versions for eMMC and SD/SDIO
-> host as I said.
-> e.g. For MT8168, signel burst bit should be set to 1 for eMMC Host, but
-> 0 for SD/SDIO Host.
-> 
->>
->> And if there is - is there a pattern? Is it always SDIO requiring
->> INCR or
->> always eMMC/SD requiring it?
->>
->>
-> 
-> No, there is no pattern. Both eMMC and SD/SDIO hosts need to be
-> configured base on IP version. There is no binding relationship between
-> eMMC/SD/SDIO and the burst type. eMMC burst type might be INCR or
-> single, same as SD/SDIO.
-> 
+Hi Shravan,
 
-Okay but if there are different IP versions, and AXI/AHB is determined
-by the IP version, why aren't you parsing the MAIN_VER/ECO_VER registers of
-the MSDC IP to check whether to use INCR or SINGLE?
-
-Cheers,
-Angelo
-
+On Wed, Mar 05, 2025 at 10:44:40AM +0530, shravan kumar wrote:
+> From: Shravan Chippa <shravan.chippa@microchip.com>
 > 
-> Regards,
-> Axe
+> correcting the CPWAIT_TIME value as per the data sheet
+> for the link frequency and input clock
 > 
-> 
->>
->>> ---
->>>    Documentation/devicetree/bindings/mmc/mtk-sd.yaml | 8 ++++++++
->>>    1 file changed, 8 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
->>> b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
->>> index 0debccbd6519..6076aff0a689 100644
->>> --- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
->>> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
->>> @@ -100,6 +100,14 @@ properties:
->>>        minimum: 0
->>>        maximum: 0xffffffff
->>>
->>> +  mediatek,disable-single-burst:
->>> +    $ref: /schemas/types.yaml#/definitions/flag
->>> +    description:
->>> +      Burst type setting. For some versions of the IP that do not
->>> use
->>> +      AHB bus, the burst type need to be switched to INCR.
->>> +      If present, use INCR burst type.
->>> +      If not present, use single burst type.
->>> +
->>>      mediatek,hs200-cmd-int-delay:
->>>        $ref: /schemas/types.yaml#/definitions/uint32
->>>        description:
->>
->>
->>
+> Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
 
+I've postponed applying this one once we have a better understanding what
+that change actually is and why Tarang would seem to want to revert it.
+
+> ---
+>  drivers/media/i2c/imx334.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
+> index db61b298ceb3..0b42bc0470a1 100644
+> --- a/drivers/media/i2c/imx334.c
+> +++ b/drivers/media/i2c/imx334.c
+> @@ -191,7 +191,7 @@ static const struct imx334_reg common_mode_regs[] = {
+>  	{0x31a0, 0x20},
+>  	{0x31a1, 0x0f},
+>  	{0x300c, 0x3b},
+> -	{0x300d, 0x29},
+> +	{0x300d, 0x2a},
+>  	{0x314c, 0x29},
+>  	{0x314d, 0x01},
+>  	{0x315a, 0x06},
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
