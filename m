@@ -1,119 +1,102 @@
-Return-Path: <linux-kernel+bounces-557637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E9EA5DBD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:44:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D5EA5DBD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:44:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D7751898F7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:44:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDFC37AA4BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D85823F40C;
-	Wed, 12 Mar 2025 11:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8A923F381;
+	Wed, 12 Mar 2025 11:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fwCA+hTv"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0346E23E23F;
-	Wed, 12 Mar 2025 11:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="wgy90SDO"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99194125B9
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741779863; cv=none; b=r+yN1G6dxM89BEgxQ0cj45oqnAx2YHxIXTXfeuRNTaVVqcOtUOQI0IeqGFocaVf8X800Ef39ZseLiVFTuOxKb8EZTW7sUKFI8KeHFnO17wMcqS1wQ+yBR+zt4E+c42kclhLlGPg76Fn9YyRqqXaFy33FATktjIFtYmglUiqEL+E=
+	t=1741779861; cv=none; b=CmEs2j/iJKmEov4DLMt5O4aC140HcP1sSxak0SKwrE6oEquOM2KYNynRpRkXbBvuA/RlX9nPd1gFcglVS2Tl8GhGg3q0TkVznkDYsK8UpVYMIcgCnmW4BiOvjRf9+n+c2LJdwFoJ3rtYqiI/UqOFKNFXx6H0V65q9rw7NGRSJZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741779863; c=relaxed/simple;
-	bh=MLnKan3lFYDD+jvzhQNITIAxq798Ip34clQk5vThoys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JlKvKc2wWvkhJ91awgyOIcelbWcT9voqmlgt/U3zxvEIka2ZeMMc2AewujwsnSaNBIwDZ2uq/MAnN6J9LW0DYGgQoMjN6t40KJzpxrnx1vVO5O6GSXB/hNUr+ZLVf1eUIem3FO9fVu7J2mpPD77MdVZdePXW3wBZfspXel9nZxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fwCA+hTv; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741779856; x=1742384656; i=markus.elfring@web.de;
-	bh=MLnKan3lFYDD+jvzhQNITIAxq798Ip34clQk5vThoys=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=fwCA+hTv+xevWhkTQGzqZY54XO6nMElzeJc1/orgz60gpX4gGPsEy3THUzP2JCL8
-	 uATjwFM9g8qat/TJbX+g7G1THZP1MA5MeHU6nSi1X/u8vBXf9npIopEpxmq6LwaIS
-	 2CtcslgwC3F97QMnSc3rR1k19fB+56zD8GJum7845m4JJDrEpR0CdTBowzPJhaumm
-	 vVWYiSMZ4Njfg77aU6rlvOx7a6hBMIJy6kM/EoTZbFdiPPxOJdLcVJwOo8i5n0epa
-	 KaEyAZxe56MFUdzDPbXo9jLGEA0eM5BP/9JMx7wBwS4LBV5BQNej0Ugsw1EAj5523
-	 7LqDuVYMMHgNrOHEGQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MoNZM-1tPpFo1ODw-00fcM3; Wed, 12
- Mar 2025 12:44:16 +0100
-Message-ID: <9ef781b0-8a63-42b7-91a2-fa8a8ea3c0b4@web.de>
-Date: Wed, 12 Mar 2025 12:44:05 +0100
+	s=arc-20240116; t=1741779861; c=relaxed/simple;
+	bh=ZFCKMFVYzNpv0Ew3/PBCQCLnP7czEt7QhS7DeQ/FVnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pXi7nhT8hR1wEbYn8kj7s01Pppa2PGUK+S/p0SBkXzNHvw2w1LUhUr0M/QJKGulJdxyBiQ13No1pE24riQXiDDLyEQdMOH7ZH9sAEey2o4d2odGYvDn0dHPuGWYVCoZ9nh7OuXMGlXFkIbwW4As8JIbNMKtSnFJhdMuXFkdOh5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=wgy90SDO; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 2F9D445400;
+	Wed, 12 Mar 2025 12:44:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1741779858;
+	bh=ZFCKMFVYzNpv0Ew3/PBCQCLnP7czEt7QhS7DeQ/FVnA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wgy90SDOHbnwylACo48iC7a/GjY8Siktpl4WZtm43XqQV8AEKn7TCEXZT5a/p8NUC
+	 kyniPxTK/pzTXGElQA2LO7gprjHA+AMQPmyGnN0TKSLYSEFVKsPqOjblZONx+pvzmO
+	 BJ3APIceceMn7sdaBcB8nK58tsdn1WEDK0QKEG7cGMlPaMFlYeFrhM0q9bNSwkz0Bv
+	 AUnVLadqsDDdgBqxQ97EWBa7Oe4J3Mm1hK3ou+qd46nCHJ/IwijZjQLYaI11KXY0zw
+	 jKlX6hubXcz1NpMd/B/8cr54Epvy/3y35Mn1sbfc3j1Mkt74ryvmcGbH0ZO2D3hrFn
+	 sGkJCBkOMRu9w==
+Date: Wed, 12 Mar 2025 12:44:17 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Joerg Roedel <jroedel@suse.de>, Alexey Gladkov <legion@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	=?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+	"Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
+	Dave Hansen <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>,
+	x86@kernel.org, hpa@zytor.com,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+	Larry.Dewey@amd.com
+Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
+Message-ID: <Z9Fzkbc-5JmOOa_N@8bytes.org>
+References: <Z9AFyG7798M4VNJQ@suse.de>
+ <29fa0d10-0d3d-47a0-8832-b2c7fc04f637@suse.com>
+ <20250311110748.GCZ9AZhPYYAz-MXErv@fat_crate.local>
+ <Z9B_yS_d8ny9hYUX@example.org>
+ <Z9CDjecpydOsRhUy@suse.de>
+ <dzs3mxfvac2t7itqcv2vnz3cidspwvjinimkbn3ddygxunc2q3@akdoea7e2gon>
+ <Z9FEcYssvcaZab1c@8bytes.org>
+ <pskj4f5fitd5ytb7gq4negloioihl2rfbpfwa47fnw74gxmlvh@vpoijhxcee64>
+ <Z9FO1CefzO89syGg@8bytes.org>
+ <2eopafgnsx7pktqfqhu2nye44ib7ifz2cppqt7gunrltpxrnj6@i7jwe6jrun73>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v4] dma-engine: sun4i: Use devm functions in probe()
-To: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>,
- dmaengine@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
- Samuel Holland <samuel@sholland.org>, Vinod Koul <vkoul@kernel.org>
-References: <20250311180254.149484-1-csokas.bence@prolan.hu>
- <885ceb3e-d6c6-4e7b-a3b6-585d2d110ccf@web.de>
- <81f87d39-d3f8-4b6a-91cb-b0177d34171b@prolan.hu>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <81f87d39-d3f8-4b6a-91cb-b0177d34171b@prolan.hu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:80YpDH0o3hUHkweOLLEIn/ZK5SDX0jpLC2Q+zbRQrqjKibA/0ho
- NbKKWd8SOUb18XeqaK4CFWgRzmMNdV+5QRagLrkle67BCLcpV2u8fwvo6RcLmDZmJiXKZ/Q
- 727i6hAL6RhEmYRmjeNpRINEwCdFOBlhf+KsJzcgS5TFt6ohZfpEIoMt1YxkFS2kCZce+9h
- J+GzvoTvhZoM7eyZdcPUA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:AV80ruHJYxs=;dZeG8Z3LKpqUsPmFKaUNL3FOj3i
- JTXsrn9BP9hHyIulU9qz8iv24czCZwqjFT5FJ2IbPMIaxFD1njxdP1gyClAOqkvA/eyaaQxtg
- HHv4ERWXjJG61uWD5mG0SiNv9y6fwrtmBbaROCl+f52TkQDdwHLumuNp7IRBqcfVEWVrJPy9Z
- 2OQNrmyHsMnQCniE9Yi+vHd4Sx/+4ZFWkQFvCsrLk7iSczyVNKRYqGruKCZ8DJYqhfaWBBO1d
- OFCKC40T5lfPxWBdYZdw94/0N/MOAxxc8N/0xRVyASE0RRXCayhk0qGWN5GE7QC+Be3tVoyQo
- FiDt27/FgkM0jooz8FK/r9Qxd/fj5aemv58iRvJ+F5TNdggpBQ30k7TShiP5N3dPBogufQ5ii
- FHdWIuf35zk8KOLGuXMUIDo2sZTgCRfjmOL7rytrCqJSdUeq8kBjQWn+X9r1sqS9eqsVj000A
- hH02//eHL6Ohw14cwo368Tmt9EQkPhxDHz/tYMIBOF/6hkJfOOSQXvlKIDG4eVBxU/NNTLZl0
- OPBmFWuF4cbk0Bwjw6C85/gJRGStHJ2d02NB9bj7dmlfOB0Nm+kk2Fuuty/sB5emCm9mY7Kg2
- lgPetwHF7Kt/5zKZmqRtQUf0yI2MsaO/F7VWvFEE4+aojjjIp29K5ChJxVyykgLlRK9EjhSFn
- 0MaH/Q/JxrWXK3R7eeY6J8SkAb4eaTWCXMSP7Y8xjISitwnGdmQnIt7epJP6zW8VCZm9ON1bS
- fddlbe6Vct6TL1F2jIpATEGtRsQ3o+vKMlezDY+Qrt+lVomocTB5YQ2c+3/t40wIPUniRpNJt
- w10O9p7e6j3dXZlBI7YM9kM8pk4oKGjPEEu9KTeQS+RkDB17TW9jQ/Fi1zw+LZedr6qknA5Wj
- edKjYr/l0uVuyZQp2W1ICDnzTPWX+mvZpgnSLdXfD/WGqwV/E0/a8/EG2DiZO6JE+gKhkRM7u
- hJ5QvazDMa+f+zFhMmDA4bbqSwvNX21ItGxElC9XevECHHwJxKiSQkHPKlSz1Bt+15UNHSnVN
- bUqya6rF4/K46GqAvrS7Tk3lNpzGXHupHQYXbVxHXFRQF/UY4S6HtX7o0OOh3h9t/u5l5o/Jk
- 8cpbyFnO+ls+tUEuCY+3KBsYbI5YvRWI3ToY8aDFPsHz9cw7c90qbXkUNVroMqwCx2VNFONDP
- NWMGr0SMtoGKNlO8MC/T/EBgMuPgPmpGeeM6ev9JvRinbWADLkw9wfpY8+a318gv7yPzSMfGH
- bfWNLxyyXdFkh9IXuEA1El9iHIuCGX3nm/4GeFZNcDJcxVJp0Ee8GF4nykQWnhTuLo9rjuY9z
- V/LuSbrQgbEHy2k/d7yJHFZ+s8yk78YbmpnOdAoqU0wnH4I37Wlhrp7+f3d/hMI6Vu2h+/D3J
- aubt/z3jPkabRZR0xPONPeBH3gJjRHqat1V5HsUe9QX/rkxMEDVFzKiHr/d50ybpUDUiOvaEe
- yhKJ7nw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2eopafgnsx7pktqfqhu2nye44ib7ifz2cppqt7gunrltpxrnj6@i7jwe6jrun73>
 
->> How good does such a change combination fit to the patch requirement
->> according to separation of concerns?
->> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-tree/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc6#n81
->
-> It is a general refactor patch, it shouldn't change any functionality. I=
- could split it to one part introducing `devm_clk_get_enabled()` and the o=
-ther `dmaenginem_async_device_register()`, but I don't feel that to be nec=
-essary, nor does it bring any advantages I believe.
-Can it matter a bit more to separate changes for the application of devm f=
-unctions
-and the adjustment of corresponding exception handling with dev_err_probe(=
-) calls?
+On Wed, Mar 12, 2025 at 12:59:50PM +0200, Kirill A. Shutemov wrote:
+> I am not sure I understand your point.
+> 
+> In TDX case it is as trusted as the kernel itself. If the system is
+> attested, this info is going to accurate too as kernel gets information
+> from trusted TDX module.
+> 
+> But nobody suggested to use this information to judge the security of the
+> system.
+
+Version information about the TDX module is required for the security
+evaluation at the verifier. The question is whether it makes sense to
+expose this information in an untrusted way in the guest (even alongside
+a trusted way), or if that makes tooling prefer the untrusted source
+because it is easier.
+
+The guest kernel is also only trusted after (runtime) verification.
 
 Regards,
-Markus
+
+	Joerg
 
