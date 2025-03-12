@@ -1,133 +1,240 @@
-Return-Path: <linux-kernel+bounces-558407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFBAA5E571
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:33:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29735A5E575
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8927D7A4223
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:32:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E275179659
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C141EE7DC;
-	Wed, 12 Mar 2025 20:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D27E1EDA17;
+	Wed, 12 Mar 2025 20:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LHDSJj3z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y2WoKmEB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB451F03FF;
-	Wed, 12 Mar 2025 20:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741811529; cv=none; b=R/QtDZIfowx5nyh1imvk2Am9X8JAh98KqrvDmsw2A3alErkW31STubWHwCXv6xjUMxLWIaULBXhXdCMQePnUp/+qOW7s25jr+m30mUhL5YnXGu37d++UjrKJhWelUhncTMZe5yLxeNx19PY7SBErXcxKy1/arlBAAFR1e1hbr0U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741811529; c=relaxed/simple;
-	bh=bG71zNV61ysbJQuURYe3/BCP5KtjkN8yw4XRMtq78Zc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KYTY+C6K9buwhbH31UQkghk+gRhDeIEYpOMlytF5IIw0VN2L7msllqajZGi8utZ5TZaqtqAWbnTL8LuCmTygumwlya3uFECW59D7EJTxTPO0EOMxM1d3xtKeW8dbHkN+yMcfuLS8LFUw7BEqwLrTAvy/uOW3bVb0SLRsT6v+T24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LHDSJj3z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 998AEC4CEDD;
-	Wed, 12 Mar 2025 20:32:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741811528;
-	bh=bG71zNV61ysbJQuURYe3/BCP5KtjkN8yw4XRMtq78Zc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LHDSJj3zi/nSzuPfr8jlE/wePR9231Mcm/brkDwpA7bmXu1Fgj3KZ8CkXGTzrod5W
-	 +c9VOmAa1C2YYgv6bSRWQ1UnU1I92FskAtu0ImEBKGWkQB3rgjFiVPoLcZAo3kbLoV
-	 zGPIhS+TdlUK3vpX1CFyFXR3ufyYS8xFilWmrV7KKw+RH93u1PKcNILb2FTSxVlwr9
-	 KgJr3KkFVJ1OUWFybsjLByFIEB7U0ETzE9oyRzO4VSjH3dofi6yE0uxIAgCU2QJ9vD
-	 Hf9wjnQ7hs+J622Q/Z5SerSFZJsr9t/vQosPmwU9JIXS4v2rLxGRH1/d9Z0cyjI1Ob
-	 /bhNFmIqPQm5A==
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	James Clark <james.clark@linaro.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 6/6] perf python: Check if there is space to copy all the event
-Date: Wed, 12 Mar 2025 17:31:41 -0300
-Message-ID: <20250312203141.285263-7-acme@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250312203141.285263-1-acme@kernel.org>
-References: <20250312203141.285263-1-acme@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC6B1EB9E1;
+	Wed, 12 Mar 2025 20:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741811620; cv=fail; b=iJdBAAq+lr2Arn+vjag4UXALp9NQw69gvwWG2dLKR1Bqc4X3uZzUfSA+eV7kik9BW69pmRRlnbXEJ7jXnx7eX5LPed5B04qiOCFA+7wmJ1BFb99nMjTb/gFZMbmrh3DrHZbJVHYEqqjseF+JFYcGUfU0XQI6IyfT0CDZQAF7Uxs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741811620; c=relaxed/simple;
+	bh=H9Y3xd0c8E5IGZXpDhRRtD49I/GrTpIsfeq+4XuRl24=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qo5bEHYKqlK0jfKyzZO2/t25NNpZPGNpwisfAAlHZ9cDhH9VSauqgyfqGqPEJWAJm12iacI2tbPS7TSoKDwiGyZxWhJ5m2cFa37OxNSFUUSUPdRmmA5LAPOf7p7j5NFEB5PK1cwvRjwAef9ZVbpCDk/eBHtZGCZ44VBdCznD00A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y2WoKmEB; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741811619; x=1773347619;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=H9Y3xd0c8E5IGZXpDhRRtD49I/GrTpIsfeq+4XuRl24=;
+  b=Y2WoKmEBvbQzJb8fDBbVCiGqsv0ksFkz2YlBHGqH4SnEyT5/pcS9Z9E8
+   uqPW9yLyvf5d2B2VPWpZpVjQKno+BSbnQ5ygj83EvzBUodSgf8BIkewom
+   r5bFNtdu2BKyoCCQcapMWz4/U78GYnN/e7gZlwTuirLsDg66V02XEIbMc
+   gpX+WVE0p/Jvv28tIscn7yrMmoXHUsCem4Iu/OBcgpG8s13W0O98e0NYd
+   fNuYcx6dcK25/CU+penJ52bhDrLDgP+wsmGDoOjSa3+xpKMl8EUUO5/JL
+   mdBJ1Q0q538LFsHK+h1yJMaJ5Npi3SrpZjp90XERk1Rd6awhfql8WVL7a
+   A==;
+X-CSE-ConnectionGUID: e2e6ZT+hTW6lnzxLZBNs9A==
+X-CSE-MsgGUID: +D5lC2HXQcSo2eNu8kNByw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="53118790"
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="53118790"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 13:33:38 -0700
+X-CSE-ConnectionGUID: gSZdfrGzSv+J52KrVX8AnA==
+X-CSE-MsgGUID: cLbW3ZOQRSquWUeqUqGYMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="120703167"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 13:33:37 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Wed, 12 Mar 2025 13:33:37 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Wed, 12 Mar 2025 13:33:37 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 12 Mar 2025 13:33:34 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Jql97tG7zqUlNZTUkOD7jlJH8mTOtThGP0qoubP/+iB1Jnl/UiidV4dSZAzM5O3H//EWOcUXRG4DKGDLb54m5fT1WPvm5bcFntj7RvjUA6RC6R8Szz3JF9vd7WSasUPrpiNXrgokxcgg0ykYfAL2gCZRdKhMI0PLISqkJw0Uat9KceqaS9vGYFbiF7Mep6yOYsdPecMmxr8J3kpxV1FQnHFcWXjz/GsTQdjnrzbTuPxAO2QiZmpI1tWI+uTS1yzFlfTwn8SX7FOBhuyK14ZTphG+wO1UX8zZBGVVCGWKVnmHBimDS08xRV+tboTYtK0RGRu+JxVWoSM0s4vwOyQ0sQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H9Y3xd0c8E5IGZXpDhRRtD49I/GrTpIsfeq+4XuRl24=;
+ b=zAN4sA2oIjSnyoATqRhMf6+ykivslTOz12koOra9S5Rdghn5T9r1XmAME0adGa4rWsEqY0MxYarwsci8iE5OpJ0Z6LHzJ1Nj/EecwtxC4w5MR86QdP5JPM5+ZUwRUkOrnuJEAc+5KLBML7/e5Js7zuyVsM1Nx2UoL/4RFjxMXm2ddQ6y+3tq4Vyu3zJzZHchuVPswgT4TRcC3TJ5erYF6pS6EOV0w43cz+RcoXOAfXJ81fGl4fARxbSMtZGyasjuxtIVKhz2bZ4m640imkvdYU9aMMe1cDv+oBjOEvPwNdO8poXBn8NpVG/cuufyvjIa+PKZo2gSrmXkt5BSM02y7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MW5PR11MB5810.namprd11.prod.outlook.com (2603:10b6:303:192::22)
+ by DS0PR11MB7558.namprd11.prod.outlook.com (2603:10b6:8:148::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
+ 2025 20:32:51 +0000
+Received: from MW5PR11MB5810.namprd11.prod.outlook.com
+ ([fe80::3a48:8c93:a074:a69b]) by MW5PR11MB5810.namprd11.prod.outlook.com
+ ([fe80::3a48:8c93:a074:a69b%5]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
+ 20:32:51 +0000
+From: "Korenblit, Miriam Rachel" <miriam.rachel.korenblit@intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>, Dan Carpenter
+	<dan.carpenter@linaro.org>, "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>
+CC: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, "Anjaneyulu, Pagadala Yesu"
+	<pagadala.yesu.anjaneyulu@intel.com>, "Stern, Avraham"
+	<avraham.stern@intel.com>, "Gabay, Daniel" <daniel.gabay@intel.com>,
+	"Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>, Jeff Johnson
+	<jeff.johnson@oss.qualcomm.com>, "Berg, Johannes" <johannes.berg@intel.com>,
+	"Ben Shimol, Yedidya" <yedidya.ben.shimol@intel.com>
+Subject: RE: wifi: iwlwifi: Fix uninitialized variable with __free()
+Thread-Topic: wifi: iwlwifi: Fix uninitialized variable with __free()
+Thread-Index: AQHbk4u+7Ys+GoLojEuM1xAItCzrlLNv8nUA
+Date: Wed, 12 Mar 2025 20:32:51 +0000
+Message-ID: <MW5PR11MB5810D96B62BB3F8DD82FB656A3D02@MW5PR11MB5810.namprd11.prod.outlook.com>
+References: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
+ <1b32cd5b-aa46-4a23-bd21-908196c4bab3@web.de>
+ <MW5PR11MB5810329D2D44A188239D3093A3D02@MW5PR11MB5810.namprd11.prod.outlook.com>
+ <7ea83bd5-b19b-4bd8-ac2a-8fb2ad616f8b@web.de>
+In-Reply-To: <7ea83bd5-b19b-4bd8-ac2a-8fb2ad616f8b@web.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MW5PR11MB5810:EE_|DS0PR11MB7558:EE_
+x-ms-office365-filtering-correlation-id: b21fc1fa-2bba-40ce-83d9-08dd61a50f72
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?MFNNRlVINnMveDZiVkF1Z3d2WDlXYkhwdjNhbUZkMzdFRTc0YlIvQmgvZSsr?=
+ =?utf-8?B?ZFpid1ExRGdmam9WcnpSRWdMQU1qOGZIL282QmJiS3Z1bnUrbnRQT01DUEd6?=
+ =?utf-8?B?NTBkeDBld1o2MXlOM1NlTEtkdFZxeVhwdnJiOTdTMXZXM0hmd3h1K2lZRWRY?=
+ =?utf-8?B?cTdiaXNzSnl1VXdkdGdtK1l3RmRaRnFPald1MTAvZkdMeGFiMklMNERuSXR3?=
+ =?utf-8?B?WDdpaXJHWkFBZlVaeHR6RGtJUFJjVzJPOTBIc2MxSVVpek0vNGNUcnBlbHBu?=
+ =?utf-8?B?VkQvazRDdmZvMGFFcDN6bW5EQ3JPY0dPTlE4L01yOC9iVEN6c2t4WjdTYWh5?=
+ =?utf-8?B?TzlWTmx3YzFaa3VtMmcvUHZBR3l0MUd4RkJETFY3RDRvZ1R5ZzVCeVNGclF0?=
+ =?utf-8?B?RFlHVmpwTE9mTWZoNmdUNEswRmZqVzFrcTRXcUg5S0RXd3RMUnFmVHBXVjA5?=
+ =?utf-8?B?dnp5ZXpUNTRneUEzWXluOHNoOGVuZzd4T3Q4eTlQMGFQRFRzT056VytrblV6?=
+ =?utf-8?B?Y0tUcDd1STdrbUxleDlmTHZ0Q2F3bTh3NE91QUZ2Zkw0S2Q0Ymg3OHRoZ0Zx?=
+ =?utf-8?B?YW0vVStleUNUVU0wQTRXNm1QNVFBVE9TWVRuODlpY21iTXhGb2JLVGdKaytK?=
+ =?utf-8?B?aStEVm9pYmxrSldNWVVrVkxmc1hKcVlzWUFydjUzdW5mUkpOaDhqWWhqZmlk?=
+ =?utf-8?B?Q0Q1R1hWbXRQNFFGQVpkcDNoclZMZWkyT1R1cEorWXhod0wrc3RnNnVxTnBa?=
+ =?utf-8?B?cFY4NVp3TC9iQUIzVmdBbjQralVlYkJTUkd6S2daTVJyNUdrYUFEb1IzUkNF?=
+ =?utf-8?B?QWJEZDhBT0FWNFhkZ05CZ1psZk1pMEJiSUFNeWFiQ252Yk8wTmQ2RENPOFVF?=
+ =?utf-8?B?a0lOS1NiTzZvNUdYMjBiNkxNeTVhSmo5ZVIyWW1Oc28zQUo2eUdqTnZmd0Q2?=
+ =?utf-8?B?NzlMNklNaHhWNjJseGJzaTZWc0xJUXRsN2FjU1gxNTFOWDVDU3RaTVNhM1Nz?=
+ =?utf-8?B?Snoxb2c4amRxQWRnVndsZHhCZncxa29FUWVGVHhIdTVJRzMwZ0p3S3VNMXlX?=
+ =?utf-8?B?QTJ2MGhkMHdnVEtjT2ljdmUyTDh0Q3RMUUFhQVA0ZXRZUEtVNTN2SEphSU9B?=
+ =?utf-8?B?T3BFUmRyUno4bDNBa01Zc0ZuRThrd0Q2S2RXNllpd0pYSXc0V2p2NXluMEQ4?=
+ =?utf-8?B?RFBTL0VHWFRyY3dSb1BRTndDMzFLV1JVazVRU3F3YzBLYWpUQTNVcmJCR3p5?=
+ =?utf-8?B?YnZMbGFqazIreko3SWtOaWgxRlFjUnZVbE85VTgwRmpPNTNzc3oyZWxTMHVt?=
+ =?utf-8?B?YTVReFcxVmpCU09sbFdaSUtGdEVUSFZ0dnRZN0xIdktlVC83SHRrTCtjOVlR?=
+ =?utf-8?B?QjNMYTE5WUs1NTg5a3B2V1FhRnRkUEZiRGxYc1hSSElKckwrNGw5bnJtZkdz?=
+ =?utf-8?B?aStSL0lGYVBqeDJOakdTTVdUcFRiTUpIcGJ2dkZNUlZjQzY1QTZzdlpvMkdZ?=
+ =?utf-8?B?cWh6SlF4R2QvZWRKVDVNQ3g4L1JsSzY0YU1xTWZaNEZLS01WOEZnbjlZRklW?=
+ =?utf-8?B?alpqR1RRNDk1d2RhUTNKRUh6OG0yYk5rc2dnOGRFZnk4ZHVPZVZ3TEwzZ3Ix?=
+ =?utf-8?B?V1N5aWM0Sm5Jc0R0NkU5S2pNMkl6VkJxQjZ1QlNMWE1kZGN3K1FPM0VJR0Ri?=
+ =?utf-8?B?WGQ4TzN0ZDc3QzJpOCtkL1ozZUJTc2t0Q2xmY0NucFpaUDVTeUZ6OW0zQmRs?=
+ =?utf-8?B?ek5TVkpyejYzZHhZaEtVc0lrSnd1NjN2cTZ1Nkd4RGZiM0FEaE5qaEw3ekd0?=
+ =?utf-8?B?UjdUVkk0b0k0MmE5eGF6Qy9wQi9rM2o3czNiRnFYQkYvdFBZNkdjdkFqRjJW?=
+ =?utf-8?B?Wm1Oc0wwWTNqSmx4dXIySWZzODQzMHJnMlFSVVhWYWYyVkE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5810.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aTFFNU1FVGdQS3daL1l0Z2hVVHJlVGsveDhQdXMrVm5WVm1rRzYvL1dnMzB4?=
+ =?utf-8?B?SmUxK1VHMlUzTXE4RCtIZlBsTmtyWXZQNWRNL3VrK3pndTRkc2VIN1JmaGRG?=
+ =?utf-8?B?OXJrV1NXNnVlb1ZQUnd5bHFacTNyUVU2TE8vTlBPbGhtZ2JHTGNleWtNbk9Y?=
+ =?utf-8?B?d1UwMkNLaS9IemZGNTRpak1aOGV6VTgvWGdrV2xoVFBJdHBIN3RtVWQzWkFZ?=
+ =?utf-8?B?cHZLT3VNRjZKOHQ2TjZOcGhVNm93OE1WL0tzOG5OT1huQ2o4cHUzYUU2Vmg4?=
+ =?utf-8?B?Y2Y4T2hGeXlXN2YwR0tNc0Rocmp3a1l0NkNrd1dhUmdLZmJJRDMrUkNBODJB?=
+ =?utf-8?B?WkZEUlFzTFJmL2hETUV6NzV3ZDl2R1ZWTTMvUXJsSy84NmxTN0o4QkNOOVNq?=
+ =?utf-8?B?TEpqV2RJRVNwUW85OFpGNG41NXNwZEx5VDZiVnBZZ2RadmU0dndjU0paNlNa?=
+ =?utf-8?B?aDRtK3J6Z3dxVlA2cHNlbHpvbjNnWTRBU3lSbDRiMUkyWS9zakZsQnRGa0lF?=
+ =?utf-8?B?SmJLbExFUlczeEJ6UDFMQUlTK01Tazl2OWNXaVY1VmVPWUtwRFgrTG5IRVN1?=
+ =?utf-8?B?UXcrOGpSMjY5M0w0WCtoOEtpa2l1ajY1cnFhZGprZmRiOVQ2RUp0cVZrTlNX?=
+ =?utf-8?B?OFpOWkJGSUU3UEhta242aXgwdEFVT0FzbkVudTYveEEyWFhXZGNEYWJ3K3Bl?=
+ =?utf-8?B?Nk94MzVSMDhxSjBrYnZlQU9UcWh2dDA0KzE1Y3ZnNUwrc0dBODN3Sm9uWmhu?=
+ =?utf-8?B?V3ZWaFpjUXJnWFlNNm1JOUh5OGphTmlJSk9kc2M2anRRRTA5T1NCeml3S2pT?=
+ =?utf-8?B?cE51VXo5QnRJSENhQXlyWUVlOFMwLzJYaER5YXhaREExbis2UGJGSUV3c2s3?=
+ =?utf-8?B?bDlsREVmN0tsUUYzTzRZZE8yWkwzMFU0T2R5amUxQk9HZ1cxZjZrZGNKNi9G?=
+ =?utf-8?B?Z1dpUjd3OSs0UFJxeFFZeHhLZXdHR0JMT2NyOVM4U2JyMDhxWHZvcUV5WUtY?=
+ =?utf-8?B?ZFhXTmEzbTFsRElybmVMcE8vYTFTQjVmTUVGODMvMVlCelJuWWdtLzlYbGZw?=
+ =?utf-8?B?L3c2RGpaZm53Wm01anNSTEtWSVdSMXJhTlcyTDdpMkdQMzdyQmp6V3d0SGRT?=
+ =?utf-8?B?cFFLeTRQSC9zMzRqek5zZCtGUjZ6V1J5eXhoekVWbmlBRWFGTmRCYkpiNWNm?=
+ =?utf-8?B?bDh3SjlOTHFBM3dHeE52cWFvSmdsenNJek5CVUJSV0kzbUtuWFNaamZ3UU9j?=
+ =?utf-8?B?YW9Mai9UT3BYR1kwUjZuMGpOMEIybUNxdEpuUU1OVEVSelFycjEzQkYyTFBm?=
+ =?utf-8?B?RXNrNEpIWG1xOXJyNUJMNnhWMHEyQjlMaTdvUzMySk9yRE52eDBseDloRG95?=
+ =?utf-8?B?L3lNV1Mrb00zcTNXNStOZmtCRG05RGhJWDUwd2lUQ3duNTEyS0YxT0kxTS9i?=
+ =?utf-8?B?ckVRR3ZFTjZ6cjkzRW83UC9iQytOM0orUWpRb3cvcXJmK0VOZWswMTI0L21J?=
+ =?utf-8?B?ZmVQYmJORTl1a2VabnQwMDZBRUFBL1ZHQzROdXFqVmxEejZXODArNG4zbUVj?=
+ =?utf-8?B?WkZSZHU3QmV0b294V1JyZkd3dVdlT09IMG5OK2pkVWsxMzFTb3hsQXYwVUNn?=
+ =?utf-8?B?b1dreno2anNVOHY4MGR3M1ViWkdCZHVKaHNkZFlQVlE3VnJJWFJ3eHdnZUxo?=
+ =?utf-8?B?T0k2VTdiQ0FaUGc1WkNBcS9WLzd1M2hLQ3NmOEZ0NkJOKzRWNkdEakR6dmxx?=
+ =?utf-8?B?YnFkc3VzQThieWVKUHB0THVQVjJFZVZsNWNhVDJTM1FmekowazRQOGFXdW1H?=
+ =?utf-8?B?djVjbFBTaTE2a1I1R2JJVXE1UUlyR2Q1UFd1ek1MbnhHQUxCekJaNU0wM1ND?=
+ =?utf-8?B?alMweFUwKzhtc085ZENRRExrdXh5Q1FkRndKellHOTFBbUFwV3VVTGhiODky?=
+ =?utf-8?B?RC9jbFBFalNDSCtjL3lSN2tZaHdqeWkyTXIwaTNrbFc5VkJJOTlPMzE4VTV3?=
+ =?utf-8?B?NTk1d0hiQ1d2VzNBOE1Dd3ExS0tZKythV1RpL1MwdU1XQ3RWMjFiRmpVTkpQ?=
+ =?utf-8?B?RHlEN0p2aGRSdVdBZzdKVG1oQUlJeTkvY0l5a0w5K1k4VW14NkpiSGpmN05n?=
+ =?utf-8?B?Tll5M2o3RDZ0dWJtUThjK3cwaTNxTHJKYjR3MDk0VjdWKzJ4YW9XYS9tb09I?=
+ =?utf-8?Q?mIHEVhKrrt46miItHJ2DodM=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5810.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b21fc1fa-2bba-40ce-83d9-08dd61a50f72
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2025 20:32:51.2695
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NOZCjl7ur0ECo1CcxEBioS+wndSbBGC/8DtFprtdRp8n1aPSKYqQ+Wi+s8hz7A+VtfcSD+FjIlzagNM/dorcDVT3G3gQu/AgORQRXpmokWX8mU5E78ztd8vpIRiovIzY
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7558
+X-OriginatorOrg: intel.com
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-The pyrf_event__new() method copies the event obtained from the perf
-ring buffer to a structure that will then be turned into a python object
-for further consumption, so it copies perf_event.header.size bytes to
-its 'event' member:
-
-  $ pahole -C pyrf_event /tmp/build/perf-tools-next/python/perf.cpython-312-x86_64-linux-gnu.so
-  struct pyrf_event {
-  	PyObject                   ob_base;              /*     0    16 */
-  	struct evsel *             evsel;                /*    16     8 */
-  	struct perf_sample         sample;               /*    24   312 */
-
-  	/* XXX last struct has 7 bytes of padding, 2 holes */
-
-  	/* --- cacheline 5 boundary (320 bytes) was 16 bytes ago --- */
-  	union perf_event           event;                /*   336  4168 */
-
-  	/* size: 4504, cachelines: 71, members: 4 */
-  	/* member types with holes: 1, total: 2 */
-  	/* paddings: 1, sum paddings: 7 */
-  	/* last cacheline: 24 bytes */
-  };
-
-  $
-
-It was doing so without checking if the event just obtained has more
-than that space, fix it.
-
-This isn't a proper, final solution, as we need to support larger
-events, but for the time being we at least bounds check and document it.
-
-Fixes: 877108e42b1b9ba6 ("perf tools: Initial python binding")
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/python.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 6a03341e17881337..f3c05da25b4af8c0 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -476,6 +476,11 @@ static PyObject *pyrf_event__new(const union perf_event *event)
- 	      event->header.type == PERF_RECORD_SWITCH_CPU_WIDE))
- 		return NULL;
- 
-+	// FIXME this better be dynamic or we need to parse everything
-+	// before calling perf_mmap__consume(), including tracepoint fields.
-+	if (sizeof(pevent->event) < event->header.size)
-+		return NULL;
-+
- 	ptype = pyrf_event__type[event->header.type];
- 	pevent = PyObject_New(struct pyrf_event, ptype);
- 	if (pevent != NULL)
--- 
-2.48.1
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFya3VzIEVsZnJpbmcg
+PE1hcmt1cy5FbGZyaW5nQHdlYi5kZT4NCj4gU2VudDogV2VkbmVzZGF5LCAxMiBNYXJjaCAyMDI1
+IDIyOjE3DQo+IFRvOiBLb3JlbmJsaXQsIE1pcmlhbSBSYWNoZWwgPG1pcmlhbS5yYWNoZWwua29y
+ZW5ibGl0QGludGVsLmNvbT47IERhbg0KPiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAbGluYXJv
+Lm9yZz47IGxpbnV4LXdpcmVsZXNzQHZnZXIua2VybmVsLm9yZw0KPiBDYzoga2VybmVsLWphbml0
+b3JzQHZnZXIua2VybmVsLm9yZzsgTEtNTCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47
+DQo+IEFuamFuZXl1bHUsIFBhZ2FkYWxhIFllc3UgPHBhZ2FkYWxhLnllc3UuYW5qYW5leXVsdUBp
+bnRlbC5jb20+OyBTdGVybiwNCj4gQXZyYWhhbSA8YXZyYWhhbS5zdGVybkBpbnRlbC5jb20+OyBH
+YWJheSwgRGFuaWVsIDxkYW5pZWwuZ2FiYXlAaW50ZWwuY29tPjsNCj4gR3J1bWJhY2gsIEVtbWFu
+dWVsIDxlbW1hbnVlbC5ncnVtYmFjaEBpbnRlbC5jb20+OyBKZWZmIEpvaG5zb24NCj4gPGplZmYu
+am9obnNvbkBvc3MucXVhbGNvbW0uY29tPjsgQmVyZywgSm9oYW5uZXMgPGpvaGFubmVzLmJlcmdA
+aW50ZWwuY29tPjsNCj4gQmVuIFNoaW1vbCwgWWVkaWR5YSA8eWVkaWR5YS5iZW4uc2hpbW9sQGlu
+dGVsLmNvbT4NCj4gU3ViamVjdDogUmU6IHdpZmk6IGl3bHdpZmk6IEZpeCB1bmluaXRpYWxpemVk
+IHZhcmlhYmxlIHdpdGggX19mcmVlKCkNCj4gDQo+ID4+IENhbiBpdCBiZSByZWNvbW1lbmRlZCB0
+byByZWR1Y2UgdGhlIHNjb3BlIGZvciB0aGUgYWZmZWN0ZWQgbG9jYWwgdmFyaWFibGUNCj4gaW5z
+dGVhZD8NCj4gPj4gaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjYuMTQtcmM2L3Nv
+dXJjZS9pbmNsdWRlL2xpbnV4L2NsZWFuDQo+ID4+IHVwLmgjTDEyOS1MMTMzDQo+ID4NCj4gPiBB
+cyBzYWlkIGluIHJlcGx5IHRvIEplZmYncyByZXZpZXcgLQ0KPiA+IFRoaXMgaXMgcmVjb21tZW5k
+ZWQgaWYgeW91IGhhdmUgbXVsdGlwbGUgX19rZnJlZSB2YXJpYWJsZXMgKGFuZCB0aGUNCj4gPiBv
+cmRlciBvZiBmcmVlaW5nIG1hdHRlcnMpIE9yIGlmIHRoZXJlIGlzIGEgZ3VhcmQoKSBsYXRlciBp
+biB0aGUgZnVuY3Rpb24uDQo+IEhvdyBkb2VzIHN1Y2ggYSB2aWV3IGZpdCB0byB0aGUgZG9jdW1l
+bnRhdGlvbiBvZiB0aGlzIHByb2dyYW1taW5nIGludGVyZmFjZT8NCg0KRGlkIHlvdSByZWFkIGFi
+b3V0IHRoZSBwb3NzaWJsZSBidWcgdGhhdCBsZWFkcyB0byB0aGlzIHJlY29tbWVuZGF0aW9uPw0K
+aHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjYuMTQtcmM2L3NvdXJjZS9pbmNsdWRl
+L2xpbnV4L2NsZWFudXAuaCNMNjQtTDEyNw0KDQo=
 
