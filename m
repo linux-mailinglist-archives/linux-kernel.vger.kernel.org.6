@@ -1,135 +1,111 @@
-Return-Path: <linux-kernel+bounces-558205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 815E1A5E2C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:29:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D919FA5E2C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:30:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 143FA7AB514
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:28:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B7CA7ADFB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2466225CC6A;
-	Wed, 12 Mar 2025 17:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D352225CC93;
+	Wed, 12 Mar 2025 17:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enAwAT42"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRr4R0RH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9942512EC;
-	Wed, 12 Mar 2025 17:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363B325D1F5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741800214; cv=none; b=mcQAJrC+BrhyPgWJA2jT3WUfkR8XZnjoQaeAjACR8kfZOWh5wxKB6rzVhbKjNcQZItyK/2yiBaBQBLjBtIESI/RenMCHJ1ZTlJvBdJ4xTGOpjYSYS34i1c6lOFjBPdOmdA5Hb6vVTG5XWIJUchIIspiwheMhGAFI0o6BZ3/UXQw=
+	t=1741800234; cv=none; b=FWpdhUZJZI5fZAL5XqwxL5EywTGUdsc010vG5VaK7xiqW278jnhC0yT/+GOFkF1OxtOV51u2QOMNXvOtlIRonzwmKfU4UHKTwrsBJZyzFc61/akhlGdaSlA2jc3L5LDCzchoOgVFCoXhgy/ZVw6wiG++6ifSlNJJ+GNDAQYS6ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741800214; c=relaxed/simple;
-	bh=HRP31qOf8ZjL4WrltY8eJhifWwmnmgiDUdOBxrGEvD4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RBPEdK2Lk6qYQBm4SaW26dG1CR0sU8MCU/ufAldyyrT87AUs9ZfNV4swgB4VosTAX/OF6Y4yUGVwbm4mqH0X2rCG5BgfraY8asW1CPEr//itkrvEdJKPZccQPY4JnSLc4k6IV6iav3El4fk7Vmkdf28d6W1emj7MILppmTPjxNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enAwAT42; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D3D42C116C6;
-	Wed, 12 Mar 2025 17:23:33 +0000 (UTC)
+	s=arc-20240116; t=1741800234; c=relaxed/simple;
+	bh=wh1Fxnshp8oLvMCLtrPIX0gzdOI/IeVWj1yLkdb7azE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KPGSMmcwPwS8INuJQAUsGFmg/TqloncgXFtwG/3P3j9Y78sH/gjhUdN8SLodpSaqEui5PgZ8utrb7LctmVZkk91PtyD20NqOZ0Q2X/l3rIbdxIma3KK2KXBZJjv2adbWW+3Csz83tF+oGW5uEXaYrKuYN/ildmTSmAclnvje37g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRr4R0RH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D129C4CEDD;
+	Wed, 12 Mar 2025 17:23:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741800213;
-	bh=HRP31qOf8ZjL4WrltY8eJhifWwmnmgiDUdOBxrGEvD4=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=enAwAT42yvxtwbdSEVY3AGIifGdvmaR0YtbkhxAYgzYT/20MNwqiLY6dzrQk97gi1
-	 MpM90pxrXg8j3Mj2KksotOtDg6lLJ0RgnbxaRJHl9/rpzU+xGck3BN9FslovMi+C9F
-	 gkoBvfKIvq9CqaNm0zSiJwNv/7ekp8y1ep+/4F3SDcPSqcydgWxIGlbjyN+TrErWtq
-	 R8JSIyD+/LtqdmFGuLSIWZ4o072cfE9WLWdgYbo79++NwZeBC84awg7EZdhFPfynQb
-	 sRx/Fksrr+OYj9PXNgYLFiEVVQvP1GEf59/GUQlr1hLmD+x4HyMxZ9pbYgzb9mN5Ru
-	 bSHxk569r5Fkw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA752C28B28;
-	Wed, 12 Mar 2025 17:23:33 +0000 (UTC)
-From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
-Date: Wed, 12 Mar 2025 18:23:32 +0100
-Subject: [PATCH] net: phy: dp83822: fix transmit amplitude if
- CONFIG_OF_MDIO not defined
+	s=k20201202; t=1741800232;
+	bh=wh1Fxnshp8oLvMCLtrPIX0gzdOI/IeVWj1yLkdb7azE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=NRr4R0RHiZhCC3DDkz4iudYArYbHByGgGONNO9lO1z4AeK9haFC9nUSo0tIMk4uZg
+	 PtqIG3RrzgNEsNYlPUF+8SuPcE6YvNMaWZfBJL1R+W5nLVBxeddIFFHvMC2X5y6wge
+	 SRpwX++BHv/19EwajZMqXWaGN9RZtqDtcMEDGqwvQia2IoBa9CHEnuLeYEjlyHmpUZ
+	 rnSvqBIIsZbh3gVtcMl6y/Z1kdqVFLcGfDgJBbmn5Iy006ATxFpCazAeQSE8J+KrZe
+	 qAyGhA8xuTnoaX1gGeEda7nUwK8DmldMlGVIK/qNrthZ50QjB0FpyWRUAsrxm+mFeM
+	 JfWfkxAxCdaKA==
+From: SeongJae Park <sj@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <howlett@gmail.com>,
+	David Hildenbrand <david@redhat.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 5/9] mm/madvise: define and use madvise_behavior struct for madvise_do_behavior()
+Date: Wed, 12 Mar 2025 10:23:50 -0700
+Message-Id: <20250312172350.59632-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <2a2eb9de-c8d5-4be0-afec-2efd334dbab9@lucifer.local>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250312-dp83822-fix-transceiver-mdio-v1-1-7b69103c5ab0@liebherr.com>
-X-B4-Tracking: v=1; b=H4sIABPD0WcC/x3MQQqDMBBG4avIrB1IJ6ixV5EugvnVWTTKpEhBv
- HtDlx883kUFpij0bC4ynFp0zxWPtqF5i3kFa6omcdI57wZOR/BBhBf98sdiLjP0hPE76c4RMix
- IwfXjSHVxGGr330+v+/4Bv2o46W4AAAA=
-X-Change-ID: 20250307-dp83822-fix-transceiver-mdio-ae27fed80699
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dimitri Fedrau <dima.fedrau@gmail.com>, 
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741800212; l=1832;
- i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
- bh=mTFreHX34pBc+oU2pNBg+ke78ROdzLxTH0hZJ0yVXyw=;
- b=E2EFw8PtEHMY2cU2EAObFNnLPVJSmYdJUHq4B1GKMusIPHWH28S+jC1WuDKZDUqDG8IEnSYiD
- b5VmYCuMFNbBaB+pnQkyQHGHSVBtAjeCgfanKaHVq5O9lZLUOwCHkG+
-X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
- pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
-X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
- with auth_id=290
-X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Reply-To: dimitri.fedrau@liebherr.com
+Content-Transfer-Encoding: 8bit
 
-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+On Wed, 12 Mar 2025 05:47:02 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-When CONFIG_OF_MDIO is not defined the index for selecting the transmit
-amplitude voltage for 100BASE-TX is set to 0, but it should be -1, if there
-is no need to modify the transmit amplitude voltage. Add a flag to make
-sure there is a need to modify it.
+> On Tue, Mar 11, 2025 at 01:56:17PM -0700, SeongJae Park wrote:
+> > On Tue, 11 Mar 2025 12:17:40 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+> >
+> > > On Mon, Mar 10, 2025 at 10:23:14AM -0700, SeongJae Park wrote:
+[...]
+> > > (I wonder if that'd be better as a typedef tbh?)
+> >
+> > Something like below?
+> >
+> >     typedef void *madvise_walk_arg;
+> >
+> > I think that could make the code easier to read.  But I feel the void pointer
+> > is also not very bad for the current simple static functions use case, so I'd
+> > like keep this as is if you don't mind.
+> >
+> > Please let me know if I'm missing your point.
+> 
+> No to be clear I meant the:
+> 
+> int (*visit)(struct vm_area_struct *vma,
+> 				   struct vm_area_struct **prev, unsigned long start,
+> 				   unsigned long end, unsigned long arg)
+> 
+> Function pointer.
 
-Fixes: 4f3735e82d8a ("net: phy: dp83822: Add support for changing the transmit amplitude voltage")
-Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
----
- drivers/net/phy/dp83822.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Thanks for clarifying!  And I agree this is a good idea.
 
-diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
-index 3662f3905d5ade8ad933608fcaeabb714a588418..d69000cb0ceff28e8288ba24e0af1c960ea9cc97 100644
---- a/drivers/net/phy/dp83822.c
-+++ b/drivers/net/phy/dp83822.c
-@@ -201,6 +201,7 @@ struct dp83822_private {
- 	bool set_gpio2_clk_out;
- 	u32 gpio2_clk_out;
- 	bool led_pin_enable[DP83822_MAX_LED_PINS];
-+	bool tx_amplitude_100base_tx_modify;
- 	int tx_amplitude_100base_tx_index;
- };
- 
-@@ -527,7 +528,7 @@ static int dp83822_config_init(struct phy_device *phydev)
- 			       FIELD_PREP(DP83822_IOCTRL2_GPIO2_CLK_SRC,
- 					  dp83822->gpio2_clk_out));
- 
--	if (dp83822->tx_amplitude_100base_tx_index >= 0)
-+	if (dp83822->tx_amplitude_100base_tx_modify)
- 		phy_modify_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_LDCTRL,
- 			       DP83822_100BASE_TX_LINE_DRIVER_SWING,
- 			       FIELD_PREP(DP83822_100BASE_TX_LINE_DRIVER_SWING,
-@@ -851,6 +852,8 @@ static int dp83822_of_init(struct phy_device *phydev)
- 				   val);
- 			return -EINVAL;
- 		}
-+
-+		dp83822->tx_amplitude_100base_tx_modify = true;
- 	}
- 
- 	return dp83822_of_init_leds(phydev);
+> 
+> But this is not a big deal and let's leave it as-is for now, we can address
+> this later potentially! :)
 
----
-base-commit: c62e6f056ea308d6382450c1cb32e41727375885
-change-id: 20250307-dp83822-fix-transceiver-mdio-ae27fed80699
+Agreed, either! :)
 
-Best regards,
--- 
-Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+[...]
+> Thanks for being so flexible on the feedback! Appreciated :>)
+
+Thank you for your nice and helpful reviews :)
 
 
+Thanks,
+SJ
 
