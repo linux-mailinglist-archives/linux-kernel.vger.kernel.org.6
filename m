@@ -1,92 +1,118 @@
-Return-Path: <linux-kernel+bounces-557134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F77A5D408
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:32:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EA1A5D412
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:33:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB911897EE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:32:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D249018980BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878FC7DA6C;
-	Wed, 12 Mar 2025 01:32:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD7135973;
+	Wed, 12 Mar 2025 01:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bSLn3ipt"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C2F2A1D1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 01:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCDE2F24;
+	Wed, 12 Mar 2025 01:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741743125; cv=none; b=XAG3/iZvs8ahbBNQ7x96KHJ1rMKqSrGv/V+Xe8saXUMu1ypg82R/7Kqy5LjDkV0095xT57/xEpn8V+rjFL5wuvRdN59XULh7VrdAFmH93MouoWwzFChs/KKd4U+78qy2OA1BLHIGbVlDoLq81z7dSYIpKH+fCjS0uOdHGYAYu+U=
+	t=1741743184; cv=none; b=oayohCS2HxC5jwF2VXmp9Q3C48G8iSk0iTufYns/yjzIxpVbwIW+sSXFgUlj1oyYpAVcNtrdsFI46xaxbd77sHKWKFbTjTG+cU4HSqGx8JnaunHu90t2fWg+Khg9TJb/QLXOI4DJCFj5CN/cKYi4k2v9/HwAq+5EaXc23YxWddQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741743125; c=relaxed/simple;
-	bh=F4l7NZLB0Rm6adwPa4hHZJV6NQ9v9upadFqBynFDWg0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UKAMAoZgw/1HdGhu0SYlvgggviBrnKEe7Gn7Tv7ms/1Oz78XuGfRgHFjo147xmLwiV2m1zUrP7wYSKxQyBMF2vptuIvbhYceXpDz7iH9SjTeGzOu4IjI2swXuO+o70cur8XcKou15Ev5JbiennQEE4plh/8OPKD5mvTRITaykI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85b4ee2e69bso330733439f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:32:03 -0700 (PDT)
+	s=arc-20240116; t=1741743184; c=relaxed/simple;
+	bh=4Nqdi/0VCHNIVz9BN8lkGJcdrKBXGtpua/GeXemw2Tk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m3LVVEyR3vE3mg1Ly2sB6fWezfIKriKJP8ubXP/DsHHlq/Y9qOMl3FuGo7rCvTqm1SqOXuPi+eNX8VPY1qvVV0r/Kw2liv87Le+6AiQkRbvTz9xf6FfwK6RzmwyFeOxe7eXlndPAPEEqe/6B22PBmPBmgGQ+RA67phDme0IxyyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bSLn3ipt; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22337bc9ac3so118093245ad.1;
+        Tue, 11 Mar 2025 18:33:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741743182; x=1742347982; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EkS88HqgPHnaSuKJ1PQxAF78tCiWoO+UmZZjeELikMQ=;
+        b=bSLn3iptjDav3KyZT7ZSLTzkTEtKdPG4sbx4X3N064zYaJHjJLDl+yNiQzpWIfVDLf
+         Pvm7rTuY7Y6fDK4F31otRiji+CXumWFsxTOIC9AspoKjlnUw6DExSevoK9e1LUx2bM1Q
+         oLtVWWuuCtaxhm536pvjU4oG0iNZl6qzJbRByfy2ErccwotTXVcI/9CHohTkVJqDVygz
+         7xN6uOp0gOxdZGQXJKVJmbl/CL6FkW+NocNX4C6NkyoCUwLJgCJapx/7JIePaTl9eXyw
+         QthHm5MMWaOGJCg9FBCq5OKva+fgx1m7TEHfdI5b2AUHEYq09rRJBSIAKjjsfiQWiNp8
+         R0lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741743123; x=1742347923;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XAb8u3Wz9Zo/YhLhIkXP826nMoU4uGw8wY7NG1Aw4u0=;
-        b=f5liNlPEDkvn2jNmR0nkiHNJO/Km/6QzJ77SvABBvDr0s2i72Vo8d58qlp8tWE9yOg
-         lX4eiw+z9sHFtIvarQN5IMsZEQinFCiLcI3yhO0Nao7uKhmpMQ0MUpKmyfcbMoRwm2GF
-         CLqa0uU3sslO/2Qy+RpQC3CXa+7aYMYdFi2mlqUx8iUsrH77NMKjcOwP34UCKi6VPI9Q
-         jmOtAVHo57mETlKCxrfuIP2C17HscuUD8ZfUhzGGpGKqnHDaU4DgOabmtGYN5/1EoUzC
-         q1dCXvpg7RMPb/Qpj/+4NqG5iSp+Rui5MO4aefyWWxRurUH2IXnS1eBO+/n5fZHG54tf
-         zNOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGFRKo0C+a7sOxCA3CL7hri9qOIEdl3AVTMf3D+f1FzQ6SOLhAOdG4/OW1qudq1jWZr30IUtzIUPELOAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwsB6zzYFhieersXmQNO2MRar6g/MtzTYHNc4lj+z37f7r4S1v
-	Cb4kiuaEpDFnnqLqhQFunN/AnDioRXM4xHjbbEZDxwO5vLaW4M7DgRTz4+tZK9wZRFTOu9c+SVW
-	oTLXkuc7yFlXdSxRyRqlB0rJNIAN+Pfa9FkdSV6I5p7KZ+L9V+AJuxVc=
-X-Google-Smtp-Source: AGHT+IFVesQKcXqzbhSDZRVb3dMC47FpyAhRu+PzTx/pQcJli2sL7nUnmtuGIpcf1Zg9eOmXXDj12iJY4Jv6k1EUegT7+Z6OEBJa
+        d=1e100.net; s=20230601; t=1741743182; x=1742347982;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EkS88HqgPHnaSuKJ1PQxAF78tCiWoO+UmZZjeELikMQ=;
+        b=f2KXtP+5FKN6PGUHi46ddSJ1SIy1iXkn3iEcQDYLbwAr9tgqgzrBpfTRGS3jQcQRRF
+         70VUMuu5Q6rRbYn3daJWWoogwVmkDfgA6ma+CqnQHYgmqN8Se3cEPuUx03ZAV5D58Qan
+         Y5e8/Tg/dFEjyDOKY12sp3Xx7/D2Dd5a/7ENHm0aiM9pte1kQvy2uY50sxhu2WbaQgrb
+         L1SaI38gJ/UH506D4Uz3t5gHgvpEpEjQ+droqUZ1PCKz60yp8RiUPcs3E69VrQIla7sj
+         CXIyyBY167A0RzWkwT1FRL/rMoyASEmz3DWR61h7EsyBYuJ2EJ8PVlqIgc3hJXIZQanJ
+         sXbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTPseOJZEJtCRifCRFnx2b88auQfz4BT7knukeqykjBhElyyaNn6/TA/JX6l1dSJ6sjmQbdaZQooJN@vger.kernel.org, AJvYcCVkOpAv7AgiX+zXgvIyWdEtLR6k+8PjcyLxvNiSNKH4nfIdxjHkOvWyjAlXv0aTKrKwugOBNFhCsmpZ/WTy@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeMw73hvSw8scxBKTiR1mTDyI0IIHyMGqL1ENZqq7cpbIVhjaZ
+	i0dm799Yd89R3M7Mh0y2yCznpGCLDcoOIjPBWWZfaSrSi1zwqNWpMfF/aTYH
+X-Gm-Gg: ASbGncuiJnMGvFxf4fwZVO5A7+wmKu9v5YpFFoTbhyOPF7g8OC6HzuliGnUMER8btUh
+	b4sXyhv3cAMM5PQYCjbQQg0jOPBQZLpS3i8tSX7DX7TQkwNw2TVJVMyJsAm49tyk1ik3UjKHTl7
+	FJIjaYfpLIHf7DsmIK/tvcDVbSLFzBFTSCz4LRskt1VD4p1Q4IXlLueWTgL3p/dUraY/lpPlvYS
+	0S+zlfi9dnZkJVZDY/7VoemH6tQLfwOKtcB9sJnmf9HbxbFxnV14LJSz7BYhoqnpbFA2ugnwh2p
+	VrE2T1OieVwug9Wi7DSm5/5W8lwQ1Q2lktcrbPBHZ4W53o2L3BkLAoa/um9DsgrORHkBKJcg4Nq
+	/63I=
+X-Google-Smtp-Source: AGHT+IFXo/Rh6dVC/MDmpQKqWlNEYEzqY/2RqVyvK553LTqZxg767rMRqB9EAcmKmaQhF9KLC6uxww==
+X-Received: by 2002:a05:6a00:1395:b0:736:476b:fcd3 with SMTP id d2e1a72fcca58-736eb8a2cfemr8241746b3a.24.1741743181876;
+        Tue, 11 Mar 2025 18:33:01 -0700 (PDT)
+Received: from rigel (27-32-83-166.static.tpgi.com.au. [27.32.83.166])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736a80853d1sm10111562b3a.91.2025.03.11.18.32.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 18:33:01 -0700 (PDT)
+Date: Wed, 12 Mar 2025 09:32:56 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: David Jander <david@protonic.nl>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: regression: gpiolib: switch the line state notifier to atomic
+ unexpected impact on performance
+Message-ID: <20250312013256.GB27058@rigel>
+References: <20250311110034.53959031@erd003.prtnl>
+ <CAMRc=MeWp=m1Bi_t_FCrxFOtiv3s8fSjiBjDk4pOB+_RuN=KGg@mail.gmail.com>
+ <20250311120346.21ba086d@erd003.prtnl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2142:b0:3cf:c7d3:e4b with SMTP id
- e9e14a558f8ab-3d441a12ceemr254723385ab.21.1741743122823; Tue, 11 Mar 2025
- 18:32:02 -0700 (PDT)
-Date: Tue, 11 Mar 2025 18:32:02 -0700
-In-Reply-To: <67923cb2.050a0220.2eae65.0006.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d0e412.050a0220.14e108.0020.GAE@google.com>
-Subject: Re: [syzbot] [usb?] [input?] WARNING: ODEBUG bug in devres_release_group
-From: syzbot <syzbot+cf5f2dd02bbd4d2d411c@syzkaller.appspotmail.com>
-To: bentiss@kernel.org, gregkh@linuxfoundation.org, jikos@kernel.org, 
-	jkosina@suse.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, lizhi.xu@windriver.com, rafael@kernel.org, 
-	stuart.a.hayhurst@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311120346.21ba086d@erd003.prtnl>
 
-syzbot suspects this issue was fixed by commit:
+On Tue, Mar 11, 2025 at 12:03:46PM +0100, David Jander wrote:
+>
+>
+> Indeed, it does. My application is written in python and uses the python gpiod
+> module. Even in such an environment the impact is killing.
+>
 
-commit 48e487b002891eb0aeaec704c9bed51f028deff1
-Author: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
-Date:   Tue Jan 21 20:00:07 2025 +0000
+Interesting - the only reason I could think of for an application
+requesting/releasing GPIOs at a high rate was it if was built on top of
+the libgpiod tools and so was unable to hold the request fd.
+Generally an application should request the lines it requires once and hold
+them for the duration.  Similarly functions such as find_line() should be
+performed once per line.
+From a performance perspective, NOT having to re-request a line is
+considerably faster than requesting it - even with Bart's fix.
 
-    HID: corsair-void: Add missing delayed work cancel for headset status
+Is there something unusual about your app that requires the lines be
+released?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16abd478580000
-start commit:   c4b9570cfb63 Merge tag 'audit-pr-20250121' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d46425e33fe266e
-dashboard link: https://syzkaller.appspot.com/bug?extid=cf5f2dd02bbd4d2d411c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1233c9f8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147eb618580000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: HID: corsair-void: Add missing delayed work cancel for headset status
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Cheers,
+Kent.
 
