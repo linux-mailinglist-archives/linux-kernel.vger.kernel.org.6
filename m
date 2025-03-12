@@ -1,94 +1,110 @@
-Return-Path: <linux-kernel+bounces-557335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72509A5D77E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:43:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD92A5D782
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:44:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CDC53B1EF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:42:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63FC6189D0FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BE220CCE6;
-	Wed, 12 Mar 2025 07:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wpOMS/Jt"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E13F20C038;
+	Wed, 12 Mar 2025 07:44:16 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D87820C02F;
-	Wed, 12 Mar 2025 07:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8391F4E59;
+	Wed, 12 Mar 2025 07:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741765361; cv=none; b=j4Jlhiu1v2q0w2vXN7SRsS90XEip4Wa7CJoKZaQ7sSbHyUgT/XFkN6J9KgjchQHYuQ1khLQIOKnP15ApKHNyjj6aqGRCk0UBKNI0SqHZHwrH4nPEBDVl9Ij56hhZies/cZ3RUNuJeguYNCPrewaNU1RDEYupIk+U/Ltuj/yXKyc=
+	t=1741765456; cv=none; b=fnSN6Q6npbAjV0rSK6V3vCq8CwW7h2Cl7H8Eskxj6UcrQ37mLkoYoD5lmLiJ9qycEMGABJSt5YYoZkD24VHCRqzwGwpKEMFtnRrcctSVOfAFiprrAbRGIQC4GKRrZDYJ4oOzAbZtjiFMU9YwC978XMiV3nxiRA7Joly7AQzbAEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741765361; c=relaxed/simple;
-	bh=64jUVBNN8zBl8PcQfs9Hre/DkbIOQF/e5JcRTVM860Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tqGq7hd79PHrIdSdBzASbXjldTqq3Po4mlDkX7F+JRcySeFDK8Jk45HsitOySVCiC7u6CIOViMT3pltxvzgyKPcHwxuEbSKLIZQXCkeSz4bQb0n34ioRy4nRC/iWE5Pvlk9EG4e4I5zQSWbsvC0DYLsBrSEjeI0nbgRTKNHEt8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wpOMS/Jt; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jzjlaQ2yiJZW1GJ8cWDufGSTRSx8+XILMBlzlDXKGH8=; b=wpOMS/JtqEYO9t+inFHH5suQQd
-	0/bjBJmDNqrdmvuNmcAKOTnC8LVk6CZo13g7Sway11UPXVoJZWlz4xV8apWEcN3NCFIJ0SiHKQW94
-	bkZ1jv2nOIZArVW4WvnxviLKFv3ViqnFmpI8CK1ETAz1ul8bsj9HOOv+BrBXTGEbtFd7q1JlRVUEZ
-	ng5MNOgLxoYhjVdR5Z0Ci6+4RlBZJ7wVicST/NHjBJUnQyUKIG6YLgj3agpgDtVGCmI8cSBsYhIT6
-	2SulRdYWKqoz4KBsSxgNqQaRvVB/qCwnRSVi8qg519E3JMlBu9nbY04seRzGt4+yya7wcRckhPNO4
-	GHm6SvwQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsGjf-00000007jNR-1QyL;
-	Wed, 12 Mar 2025 07:42:39 +0000
-Date: Wed, 12 Mar 2025 00:42:39 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com
-Subject: Re: [PATCH v5 09/10] xfs: Allow block allocator to take an alignment
- hint
-Message-ID: <Z9E679YhzP6grfDV@infradead.org>
-References: <20250310183946.932054-1-john.g.garry@oracle.com>
- <20250310183946.932054-10-john.g.garry@oracle.com>
+	s=arc-20240116; t=1741765456; c=relaxed/simple;
+	bh=Cyo9tjCjexIlydA6S9GkYP/NMqyLRkxul3n6aO2tyLg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bpO6mh7ibq/8Gfrl6kQTubaxLp6ix32K/MHc2ZATExWK+UiZ53QH0mJ16qst7qEcMMLjzdCtvkkHxXK0+QzmVHNbAtGBVz6L1kHw2zmsULOHvVrFrAIcaPART+zK2yuG9npk/3w8KrbxiYdkt+AwcuLl1ALNT4wyPUvOWX6IfHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowAAnr_hEO9FnpZt9FA--.4136S2;
+	Wed, 12 Mar 2025 15:44:04 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: satishkh@cisco.com,
+	sebaddel@cisco.com,
+	kartilak@cisco.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] scsi: fnic: Remove redundant 'flush_workqueue()' calls
+Date: Wed, 12 Mar 2025 15:43:20 +0800
+Message-Id: <20250312074320.1430175-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310183946.932054-10-john.g.garry@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAnr_hEO9FnpZt9FA--.4136S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKF1xZFy7tr1DuryrtFyxZrb_yoWkCrg_Wr
+	WxtFnFkrWUtw1IkryUtr4rZFZ3Za9FvFnxKF4Fga4fAryUZwn0yF1DuFs5ZrWUXw4UCF17
+	u34qq34Yvr47CjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbV8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r1q6r43MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x0JUHuWLUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
->  	else if (ap->datatype & XFS_ALLOC_USERDATA)
->  		align = xfs_get_extsz_hint(ap->ip);
-> +
-> +	if (align > 1 && (ap->flags & XFS_BMAPI_EXTSZALIGN))
-> +		args->alignment = align;
-> +
+'destroy_workqueue()' already drains the queue before destroying it, so
+there is no need to flush it explicitly.
 
-Add a comment please.
+Remove the redundant 'flush_workqueue()' calls.
 
-> +/* Try to align allocations to the extent size hint */
-> +#define XFS_BMAPI_EXTSZALIGN	(1u << 11)
+This was generated with coccinelle:
 
-Shouldn't we be doing this by default for any extent size hint
-based allocations?
+@@
+expression E;
+@@
+- flush_workqueue(E);
+  destroy_workqueue(E);
 
->  	bool			found;
->  	bool			atomic_sw = flags & XFS_REFLINK_ATOMIC_SW;
-> +	uint32_t		bmapi_flags = XFS_BMAPI_COWFORK |
-> +					      XFS_BMAPI_PREALLOC;
-> +
-> +	if (atomic_sw)
-> +		bmapi_flags |= XFS_BMAPI_EXTSZALIGN;
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/scsi/fnic/fnic_main.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Please add a comment why you are doing this.
+diff --git a/drivers/scsi/fnic/fnic_main.c b/drivers/scsi/fnic/fnic_main.c
+index 0b20ac8c3f46..3dd06376e97b 100644
+--- a/drivers/scsi/fnic/fnic_main.c
++++ b/drivers/scsi/fnic/fnic_main.c
+@@ -1365,10 +1365,9 @@ static void __exit fnic_cleanup_module(void)
+ 	if (pc_rscn_handling_feature_flag == PC_RSCN_HANDLING_FEATURE_ON)
+ 		destroy_workqueue(reset_fnic_work_queue);
+ 
+-	if (fnic_fip_queue) {
+-		flush_workqueue(fnic_fip_queue);
++	if (fnic_fip_queue)
+ 		destroy_workqueue(fnic_fip_queue);
+-	}
++
+ 	kmem_cache_destroy(fnic_sgl_cache[FNIC_SGL_CACHE_MAX]);
+ 	kmem_cache_destroy(fnic_sgl_cache[FNIC_SGL_CACHE_DFLT]);
+ 	kmem_cache_destroy(fnic_io_req_cache);
+-- 
+2.25.1
 
 
