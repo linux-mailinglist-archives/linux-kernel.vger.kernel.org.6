@@ -1,62 +1,78 @@
-Return-Path: <linux-kernel+bounces-557999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D9DA5E038
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:23:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD439A5E036
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:23:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4783018893DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:23:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 798A47A4F9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CC4252906;
-	Wed, 12 Mar 2025 15:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE7B254865;
+	Wed, 12 Mar 2025 15:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uAx3Sg8D"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F782528F5
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="xgUseHpf"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB2F24C668;
+	Wed, 12 Mar 2025 15:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741792867; cv=none; b=IrVmc8H9n22y0FXgPgd+zkXbQQed8ZbLTjNYZ7zqpmSPvCKSEtQ3c8MFjnOykRYw7v567nzECWUPZe+udukwbcNNCo8VLi9gFKsDjm311NGxKcMFn5dJslyZZrOb9RpIY9/fHNaNV1jzy89PO8Nk8f548PrOIO/Sq5GCC6Ak4Ko=
+	t=1741792882; cv=none; b=eqpEN5IBWDjV4i46We8mT9cyb9M46IBph+acnt0/R2AZf46LN3IxA6rCDvDQ2dhllWLIJWXHvkTU2FZ36kc9SC8iKA2PbcQFAoqJXjB8GnQf4DqFNq6KpItP2wJGSLe+9ZZnJYrN+Jz8rjqXicUJNfKRfgrGnfomU46ZTwAKmHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741792867; c=relaxed/simple;
-	bh=g33keADMtBTqLGGeUZPNTEZup2ruOa4uwufaq/VDLLQ=;
+	s=arc-20240116; t=1741792882; c=relaxed/simple;
+	bh=4sQmwkxed47J1yAVFY1M8IrVAON5A+0JqlWOAYiAt0g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h7K3ciCiC/lNQff1O5skQoVKcWZDOhCoy3n3nMpXsIhSqwokwUCzo+0YQFQ0NoZM93wrD+TqZHV0eYqMXVqPJWT+ftrTBB62+uqEP8S/517wlOiHngKT+kGz/4NVa5DqGydIELuWXe7698iyaXptsKi0Kdb4/vO5sW+da6apUsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uAx3Sg8D; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XIdDKUptq8/xr7ZlXrpuZGXg2rNejNyZjWJ17UFWXoA=; b=uAx3Sg8DEVn2bO+FLZ2H/E0FXN
-	pN7+jJ0z2ZGvmfweRPXTkRsVwZasFYeNeahstq3t6wIyzQlKCwfcAF3kPiqipF4dJtxxOStaF5MZ3
-	j3E8fvMo7erQpBjN9R2cSyF2QXQL63JYCTRluKyq82oFEB4iZ934PrrfA9BqPZapMGotudMjuXgZn
-	EyIWu+COxuWyU8iQjvbZCXHLUyzLy7OOrAJXCKqsdOrkeFdJcd1fJAdaO1NGPaGtymlJ1pRO1JyUy
-	w8teCd0fLAyBuTA5wtDyVlKljiyadacOPpg0fgwGOyMzFOicDVGWDqa+ssXxiursKSAki0yo1/83G
-	pIBCz7Zg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsNtJ-00000008q5u-1zfY;
-	Wed, 12 Mar 2025 15:21:05 +0000
-Date: Wed, 12 Mar 2025 08:21:05 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Sooyong Suk <s.suk@samsung.com>,
-	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, linux-mm@kvack.org,
-	jaewon31.kim@gmail.com, spssyr@gmail.com
-Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct
- IO
-Message-ID: <Z9GmYe-bdOZ8LQV5@infradead.org>
-References: <CGME20250306074101epcas1p4b24ac546f93df2c7fe3176607b20e47f@epcas1p4.samsung.com>
- <20250306074056.246582-1-s.suk@samsung.com>
- <Z8m-vJ6mP1Sh2pt3@infradead.org>
- <Z8tVrOezU2q_0ded@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kuhWWdqZgeDhxFlKVXs/fj44LA8EdOSpz3C4jEID2cUxUP5jSZELwdCzD09CzIBOTLHn7a5aOziOLQnkv4dEW4oIeydBZj1RyzTkfo+gVBhYhflfCPlBRQLi/SIagODU4gdZGn1kQHml/bSUWoTc6kPIq4rpf7zdU02+zwSwREE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=xgUseHpf; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 39B93457EA;
+	Wed, 12 Mar 2025 16:21:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1741792879;
+	bh=4sQmwkxed47J1yAVFY1M8IrVAON5A+0JqlWOAYiAt0g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xgUseHpfm/duHTEwQRTgX7/pauJE0Oh8fZ2kNPDxNy4/6mY9AGXU20bYatRDGiRFC
+	 2XLH9+jFCs8YySrzCSPu9SQgWGSribYev3e1rQ+pwqqyN1mqPJVu/ga9Vn74BA+J3H
+	 UiyzKeGKERMvEZHmat4/khRc4SaEi1wdKZDg2XifJe4ljlAwPT69QcrPko87TXxxkQ
+	 IHWTxAmwmKNFxYLYPVgWu/YHImYGBRl75RPl+uE9B9qlgJ1rBoX1F46qGH1sRbTTFZ
+	 YBvFflm9hrsYcn3+iyZG/zm5sNDFxrm3QO+dMzCUZ9rBy0T7d0kQHMtsNOzdZtNKZk
+	 E8iOdVUM4QuoQ==
+Date: Wed, 12 Mar 2025 16:21:18 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Baolu Lu <baolu.lu@linux.intel.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Stuart Yoder <stuyoder@gmail.com>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Charan Teja Kalla <quic_charante@quicinc.com>
+Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe
+ path
+Message-ID: <Z9GmbgYKr0VepQZZ@8bytes.org>
+References: <cover.1740753261.git.robin.murphy@arm.com>
+ <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
+ <Z9CEIlXoQJ-A0t-d@8bytes.org>
+ <d55240a4-fe4a-48ea-b3a8-9a997bb7267c@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,36 +81,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8tVrOezU2q_0ded@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <d55240a4-fe4a-48ea-b3a8-9a997bb7267c@arm.com>
 
-On Fri, Mar 07, 2025 at 08:23:08PM +0000, Matthew Wilcox wrote:
-> Howver, the problem is real.
+Hi Robin,
 
-What is the problem?
+On Wed, Mar 12, 2025 at 10:10:04AM +0000, Robin Murphy wrote:
+> Argh! When I moved the dma_configure call into iommu_init_device() for
+> v2 I moved the warning with it, but of course that needs to stay where
+> it was, *after* the point that ops->probe_device has had a chance to
+> filter out irrelevant devices. Does this make it behave?
 
-> What I've been asking for and don't have the answer to yet is:
-> 
->  - What latency is acceptable to reclaim the pages allocated from CMA
->    pageblocks?
->     - Can we afford a TLB shootdown?  An rmap walk?
->  - Is the problem with anonymous or pagecache memory?
-> 
-> I have vaguely been wondering about creating a separate (fake) NUMA node
-> for the CMA memory so that userspace can control "none of this memory is
-> in the CMA blocks".  But that's not a great solution either.
+Okay, thanks for the patch. I am currently building a kernel to test it
+and will report back.
 
-Maybe I'm misunderstanding things, but CMA basically provides a region
-that allows for large contiguous allocations from it, but otherwise
-is used as bog normal kernel memory.  But anyone who wants to allocate
-from it needs to move all that memory.  Which to me implies that:
+Regards,
 
- - latency can be expected to be horrible because a lot of individual
-   allocations need to possibly be moved, and all of them could
-   be temporarily pinned for I/O
- - any driver using CMA better do this during early boot time, or
-   at least under the expectation that doing a CMA allocation
-   temporarily causes a huge performance degradation.
-
-If a caller can't cope with that it better don't use CMA.
+	Joerg
 
