@@ -1,201 +1,125 @@
-Return-Path: <linux-kernel+bounces-557306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE786A5D70C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:13:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1202A5D71B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:13:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 145FA7A760E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:12:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB1EC1702CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7E41E9B32;
-	Wed, 12 Mar 2025 07:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F8E1E9B04;
+	Wed, 12 Mar 2025 07:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ffHeZJMa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RYPjBWmU"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA7618FC75;
-	Wed, 12 Mar 2025 07:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A0A1E9B03;
+	Wed, 12 Mar 2025 07:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741763603; cv=none; b=I5t/KQFrZpB2mKJDFcKCFzXmo076m1x9cxDoHkzKLCngxNbU9XAFq8COkDQrstMuOFvjJN9lvUr+28T9SbtzRnvhBWqGu8vFzM59iN93pFGaklF73pCIJAI1BR3v4G0P02QIverpMZNgxZ5DSa9Wy67blScJXJRHHOTx53eWlEI=
+	t=1741763624; cv=none; b=nU0ncxz3C9MaIf4CwoecA2vMu3Xrz32radpx7zSlDOvImwokRf5ud7poggm4XaAcPtNTQ/LpQ1Y2L+2ROqSz/G8YNQcRwSFlbxGZMR4eV1YbnBaPhjv/xwAvhztPHyKaR0rePKvAWjo3cnPkePOofK1KhzFkvANQ3TM/PqP+9PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741763603; c=relaxed/simple;
-	bh=z4Q7b3C6wTUPMC5kCAvjtgiJ+iyfnpo2KBw2odAcM6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BrjNmKgDaiLRPvDnU/hNDW1ycO8FIpynt1mbMq/4p+svQW1l7SE7pDajiVaDpR95LoNHaQX4QsuiCWIYlqhkGTKVvPa7zddYJSW4IifACd4GOGhf3H1reZLMcWskvco63Z+HiLOo3ZO4BQostSsaFtz9G/aciJd89eamRneMMnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ffHeZJMa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BMHDBc017694;
-	Wed, 12 Mar 2025 07:13:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oxGp/9F1znkwlSIvliYFcd2DEGvSXkzd9Km8furHq8U=; b=ffHeZJMa78wA+ZQR
-	CknUbBonlOukr+Js5CCO6TQpO/c0WyI/tbiy0ApyMRdRjNvNwveluZVRAhqV4ND2
-	VZhmhdPlXj9JkQbQGNaN+xOMxQZo2LnL/1BtdRh41hqGiRqbcFdafOvVA6t7x2if
-	L7+N5xor7YpIT19K1DMoDPiNt2BvOblq7nly0GoIQqnx6kSED+EOjCB06R7ohwCh
-	0SPYEDE3TKPjxbxeue0ruQlFPUB3/LbQvS/ww5Mfbay3OjDh1it/NduXd2H+v+fo
-	vTx6l98ysJEQhYj/iy3NiL/xbIdpC2N74VgJHyaj+eSmuj9ub5YPQfeIdE52lhaf
-	pGJrzw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au509fb9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 07:13:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52C7DFBK010952
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 07:13:15 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Mar
- 2025 00:13:09 -0700
-Message-ID: <4ab44b17-5077-4090-9e34-3e508b08f4f9@quicinc.com>
-Date: Wed, 12 Mar 2025 12:43:06 +0530
+	s=arc-20240116; t=1741763624; c=relaxed/simple;
+	bh=KqBpjelnFqR7IYQV3qZ7nR8rsGn6f0+jyxydzmKvmfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJ1/gX7mRfvCdt5AzZTVNkkgOyYFwdKiiZIla4WJc/5zFQ/z4VfbVG5IjL1krcr1m5uL3fcv1IyL+T5RvzAYl//HH2+DiMO1B6dTyaqqQXrOnImF3EE2XpcHJPqzD4l4KdCP1GuK8WdI2IUBO7Uz2694AGL2kXulDwYHowH/g0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RYPjBWmU; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wC1y5D3fhfw2mX05dkCvjFc+X6ljXrZsVRIT6DJwfRo=; b=RYPjBWmUccgbZ2bEVCNKDp7ojS
+	OFLrDSNDuxXA+8lJp7icp+NAQtc5djoZFvgR0hXBqi7xEUmKANVlTY79Od02zwyBBc9JU8Ri2GCAm
+	G4pdTP7+9bfWhW5FXtJy0UuBkkqTeS0w3iCNc3GqovHEfzB68wMnlQERBs87rUylJPlEGcz2P2kt8
+	lel3tBSJN/FBxcrBxRn/kJGQRLVqPD9m0+GeNEPyFNazWTgxRXxzGdxL2DveWi0qQERUdGRmmqmx9
+	paxVMF84lBmx+MT8O8UwTPcyTQRynbVu5HaRXD8A9KqOgeeTefz+XwU8E4U8WTXn5jNbnMxYT5eW6
+	xfjAaypg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsGHe-00000007g6a-2IJ0;
+	Wed, 12 Mar 2025 07:13:42 +0000
+Date: Wed, 12 Mar 2025 00:13:42 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com
+Subject: Re: [PATCH RFC v5 10/10] iomap: Rename ATOMIC flags again
+Message-ID: <Z9E0JqQfdL4nPBH-@infradead.org>
+References: <20250310183946.932054-1-john.g.garry@oracle.com>
+ <20250310183946.932054-11-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] clk: qcom: Add support to attach multiple power
- domains in cc probe
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Satya Priya
- Kakitapalli" <quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-References: <CMTYKKilQJYeHUYYKvlqnwv4Q2P-58Ic1v1ndS9HQ8Yhq2xpHuNThibFDjXDEQ1PyNbx__f9BVBr0peoTUdvPg==@protonmail.internalid>
- <20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com>
- <5a45fd25-74ed-46e3-b0e3-5adf92b5e9f7@linaro.org>
- <46d4f090-3e31-414f-abfc-3d1018913c56@linaro.org>
- <9e6fdcfe-3c6d-44c7-95a3-7652c0650bf4@linaro.org>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <9e6fdcfe-3c6d-44c7-95a3-7652c0650bf4@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Cj0rMxQ_jUR2IhBK787Ft3AnjoKz7Z-n
-X-Proofpoint-ORIG-GUID: Cj0rMxQ_jUR2IhBK787Ft3AnjoKz7Z-n
-X-Authority-Analysis: v=2.4 cv=a4ow9VSF c=1 sm=1 tr=0 ts=67d1340c cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=5qUKsjWsxUhzIGqX9SEA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_02,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- clxscore=1011 spamscore=0 malwarescore=0 impostorscore=0 phishscore=0
- priorityscore=1501 mlxscore=0 lowpriorityscore=0 bulkscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503120047
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310183946.932054-11-john.g.garry@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-
-
-On 3/11/2025 5:40 PM, Bryan O'Donoghue wrote:
-> On 11/03/2025 10:12, Vladimir Zapolskiy wrote:
->> On 3/11/25 11:52, Bryan O'Donoghue wrote:
->>> On 06/03/2025 08:55, Jagadeesh Kona wrote:
->>>> In some of the recent chipsets, PLLs require more than one power domain
->>>> to be kept ON to configure the PLL. But the current code doesn't enable
->>>> all the required power domains while configuring the PLLs, this leads
->>>> to functional issues due to suboptimal settings of PLLs.
->>>>
->>>> To address this, add support for handling runtime power management,
->>>> configuring plls and enabling critical clocks from qcom_cc_really_probe.
->>>> The clock controller can specify PLLs, critical clocks, and runtime PM
->>>> requirements in the descriptor data. The code in qcom_cc_really_probe()
->>>> ensures all necessary power domains are enabled before configuring PLLs
->>>> or critical clocks.
->>>>
->>>> This series updates SM8450 & SM8550 videocc drivers to handle rpm,
->>>> configure PLLs and enable critical clocks from within qcom_cc_really_probe()
->>>> using above support, so video PLLs are configured properly.
->>>>
->>>> This series fixes the below warning reported in SM8550 venus testing due
->>>> to video_cc_pll0 not properly getting configured during videocc probe
->>>>
->>>> [   46.535132] Lucid PLL latch failed. Output may be unstable!
->>>>
->>>> The patch adding support to configure the PLLs from common code is
->>>> picked from below series and updated it.
->>>> https://lore.kernel.org/all/20250113-support-pll-reconfigure- v1-0-1fae6bc1062d@quicinc.com/
->>>>
->>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>>> ---
->>>> Changes in v2:
->>>>    - Added support to handle rpm, PLL configuration and enable critical
->>>>      clocks from qcom_cc_really_probe() in common code as per v1 commments
->>>>      from Bryan, Konrad and Dmitry
->>>>    - Added patches to configure PLLs from common code
->>>>    - Updated the SM8450, SM8550 videocc patches to use the newly
->>>>      added support to handle rpm, configure PLLs from common code
->>>>    - Split the DT change for each target separately as per
->>>>      Dmitry comments
->>>>    - Added R-By and A-By tags received on v1
->>>> - Link to v1: https://lore.kernel.org/r/20250218-videocc-pll-multi- pd-voting-v1-0-cfe6289ea29b@quicinc.com
->>>>
->>>> ---
->>>> Jagadeesh Kona (7):
->>>>         dt-bindings: clock: qcom,sm8450-videocc: Add MXC power domain
->>>>         clk: qcom: common: Manage rpm, configure PLLs & AON clks in really probe
->>>>         clk: qcom: videocc-sm8450: Move PLL & clk configuration to really probe
->>>>         clk: qcom: videocc-sm8550: Move PLL & clk configuration to really probe
->>>>         arm64: dts: qcom: Add MXC power domain to videocc node on SM8450
->>>>         arm64: dts: qcom: Add MXC power domain to videocc node on SM8550
->>>>         arm64: dts: qcom: Add MXC power domain to videocc node on SM8650
->>>>
->>> This list looks sparse.
->>>
->>> - camcc is missing
->>> - x1e is missing
->>> - sm8650 and sm8750 and both also missing
->>>
->>
->> Since there are concerns about DT bindings ABI change of CAMCC given by
->> Krzysztof, likely CAMCC changes shall not be inserted into this series.
->>
->> -- 
->> Best wishes,
->> Vladimir
+On Mon, Mar 10, 2025 at 06:39:46PM +0000, John Garry wrote:
+> Dave Chinner thought that names IOMAP_ATOMIC_HW and IOMAP_ATOMIC_SW were
+> not appropopiate. Specifically because IOMAP_ATOMIC_HW could actually be
+> realised with a SW-based method in the block or md/dm layers.
 > 
-> drivers/clk/qcom/camcc-sm8650.c
-> drivers/clk/qcom/camcc-x1e80100.c
-> 
-> In fact we appear to be amending the dts but not the driver for the 8650 here.
-> 
-> @Jagadeesh please follow up.
-> 
+> So rename to IOMAP_ATOMIC_BIO and IOMAP_ATOMIC_FS.
 
-SM8650 videocc is just reusing the SM8550 videocc driver, so no separate changes
-are required for SM8650. Will add support for above camcc drivers in next series.
+Looking over the entire series and the already merged iomap code:
+there should be no reason at all for having IOMAP_ATOMIC_FS.
+The only thing it does is to branch out to
+xfs_atomic_write_sw_iomap_begin from xfs_atomic_write_iomap_begin.
 
-Thanks,
-Jagadeesh
- 
-> ---
-> bod
+You can do that in a much simpler and nicer way by just having
+different iomap_ops for the bio based vs file system based atomics.
+
+I agree with dave that bio is a better term for the bio based
+atomic, but please use the IOMAP_ATOMIC_BIO name above instead
+of the IOMAP_BIO_ATOMIC actually used in the code if you change
+it.
+
+>   */
+>  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> -		const struct iomap *iomap, bool use_fua, bool atomic_hw)
+> +		const struct iomap *iomap, bool use_fua, bool bio_atomic)
+
+Not new here, but these two bools are pretty ugly.
+
+I'd rather have a
+
+    blk_opf_t extra_flags;
+
+in the caller that gets REQ_FUA and REQ_ATOMIC assigned as needed,
+and then just clear 
+
+>  
+> -	if (atomic_hw && length != iter->len)
+> +	if (bio_atomic && length != iter->len)
+>  		return -EINVAL;
+
+This could really use a comment explaining what the check is for.
+
+> -		if (WARN_ON_ONCE(atomic_hw && n != length)) {
+> +		if (WARN_ON_ONCE(bio_atomic && n != length)) {
+
+Same.
+
+> -#define IOMAP_ATOMIC_HW		(1 << 9) /* HW-based torn-write protection */
+> -#define IOMAP_DONTCACHE		(1 << 10)
+> -#define IOMAP_ATOMIC_SW		(1 << 11)/* SW-based torn-write protection */
+> +#define IOMAP_DONTCACHE		(1 << 9)
+> +#define IOMAP_BIO_ATOMIC	(1 << 10) /* Use REQ_ATOMIC on single bio */
+> +#define IOMAP_FS_ATOMIC		(1 << 11) /* FS-based torn-write protection */
+
+Please also fix the overly long lines here by moving the comments
+above the definitions.  That should also give you enough space to
+expand the comment into a full sentence describing the flag fully.
+
 
