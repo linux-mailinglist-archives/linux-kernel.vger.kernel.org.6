@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-558626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0531A5E8C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:51:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 713EBA5E8C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:51:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A109B18988CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:52:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE40317C8B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C52E1F3D53;
-	Wed, 12 Mar 2025 23:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E842C1F3BAA;
+	Wed, 12 Mar 2025 23:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aagWl5ht"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="J/MYX0CG"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C261F2B90
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621671F30A8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741823499; cv=none; b=R6zodF03b0rqXyEf8G82f98x56eAZhDIZ8KBt5lRArLZI/+KOHFuOHTfgcL9ueFkhiim/VwuemtAKgK2nMLjbtzwonVxLboE5NuUFmH8c1/KvHfL1uCyXmzpXZJpO4+4nMbKFoxoqVGk9zM4f0EqHVx/OrHJifPIrO7QNCNzTA0=
+	t=1741823499; cv=none; b=lpbKACt2Fll8XRp6mwvu5mSZbVkVuAn3vnHcAobbRT6H0DrcPkhcktMXTnyhxB9a6+ezkdh6FRqL757u56uDW2YMo173tIhCcLwxR4kIpv9EzERUxw27en3NZtU4KKOF+wB7ZMbZ4UChqRwxQgKbL1iRw2QVSsA8g+N/acrCEZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741823499; c=relaxed/simple;
-	bh=y6im2FC9RnrBK0DsITVVl0clIoDEu4fT57zPgo7oKQI=;
+	bh=Ut8mJ3k+V5R8KikZm3AWOWmMzt+8Gms0zA9wZlAf0DA=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=QP/YJ7zAj1uUHbJ4JQuYqpi7q/OGCbHkVaDGadZMv6QtKB+VWrez5igaq+4cYGljwJ1w0G4rqEKPrR8IQ3fgUvGFbwsgLShkNkrF6CndVSVOwdw+Peo+2ek40SBSeUzuJu/Hx1wUrlqdnuQ2uOO0QkQScU7qdlEVPf6ADifiaIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aagWl5ht; arc=none smtp.client-ip=209.85.222.176
+	 References:In-Reply-To; b=Vz3WeEzY/BTMSvrO8pFO3u8ndgXNsUUhBcI2FjU5xxrNF8MKcqrDbQQAblFU0BEECLJFKdaiuUhA5oxvLDL2DAqSIeo+W4JHC1bo2STfKPw+KEgof8amfZHPp6DVFyvOHxGafTEN82Ypu6WbfgauJgcWVxoY/Ydul10DJuhyuo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=J/MYX0CG; arc=none smtp.client-ip=209.85.222.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c56321b22cso45023685a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:51:36 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c0848d475cso41929285a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:51:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741823495; x=1742428295; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1741823496; x=1742428296; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qEHvEcO4NOg0YRDF2fNEp3c9gsS6yXYNEicVD7ca+jg=;
-        b=aagWl5htvm96U1T2VDK+wTQWnB3Os1O1B4Smq1jlsN18q5uwQA1ye/O7YN9OFTgSYL
-         Q+5F76wxKqehkXX2JLKFrrPcUFOEhyaS/xp+ARN/5ANK6NAe5KtqkkNhq0cS275kr5ET
-         cfFb/pGJ4yCTm/8OFF3b9Cd2GdS+CrDaiHpmQ3ktrtByR2ZIC238a6tZgpeBAY2MXROo
-         gKhuRVk+lCXBzwjypUwZFPWGreAN41yWzjA10hNffGY3/YxPC2nqDvyaqR/rqn7xWX3J
-         Arc/43oUVhEoAcDOOEOwE12DI2UXwFlbJ+UnfSruPN8xj1jekQUB7+5h0PJB+yskVL58
-         Uv+g==
+        bh=Vi6U+/B8XHKyRS0Jmev6UCKkajT85JqRoKosOZ0orgU=;
+        b=J/MYX0CGKllQKkUk3OLXjuLN8WJ5ZUiunVH/BBYM9VQI2i4Wylg2tEt2o9w+I+sMI/
+         a2hN7YKA4uOkHbmeWJ0XAcUfyyn2v3odG14IlXSwz/l4+Eo7lxJfhKmgyieCeSjBgZhu
+         dfDSqb+NLWQInF9Y7fZBPCoa+uwj05SpOOhvUfJl0d3cdVRNRG1pYa3JNe4Rj66z1WYb
+         w5SytroKKtxYsLydCVozB9U8YmainI7fmkk0Zq2z1rTsBRx7/DeoALnbozOGmyRV5zJ8
+         SIdi4R/RYdgwCopKJuxDksGQYcmxrRrZBNfQ93DAS6HJOfQCHgfY9iPt/i/yqqX0zowM
+         NTLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741823495; x=1742428295;
+        d=1e100.net; s=20230601; t=1741823496; x=1742428296;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=qEHvEcO4NOg0YRDF2fNEp3c9gsS6yXYNEicVD7ca+jg=;
-        b=RMVqrJlltmQwh1oVijCGoFGDHx2C6ssaMa410wlfKRTC7zWAPUJG2wssGb1PAwHiKQ
-         3XeyiP8y/s6wJka6YlyMo4eCXdUp4zUr54ta8kR5lJ791+l35f4V0OUYnydLhMnTEWna
-         2F0lrgKiNBbKXX0Ef07Bk6rKaZgv/HKqjrUqUcJADx6tUxTVwoekCnoPw74qTcSKO1sM
-         6e5RJmBN+8aiUxoHqq9ba7pulOxOpYo5n3ThVXJivqtdMF25KjlcJQCwVRyRTEp4TDft
-         yTJxIShgE1vgNmk3m0WH+kLQfY5lX/O92j7dGoS7mr2NfrtO5kVKiMYSEndLkxOyIhV9
-         6J+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXZUuWsfK3CHDwAR7hPCkPaS6qheWnpbEvLMaWCphFEcJ05dyPPkAiNr1b5mUlziE2i5tZ+8SOiNgIY09Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziRlRD1EIm9cWMnfhvZq0N4EoLeqQNZhjXjKZ1cwPE+RIVhKXb
-	S06Reb9qzi9/MQV4bNyqZC6mO92pWkYeVHGrssgnzuIj+GEYIoMIuaO6RB6J1A==
-X-Gm-Gg: ASbGncs6Qa2a9YZBlV6gX6hCid7yWMeVQG447Icsw3Z+A8k9Sa2RByY9Mz2w41yK9zF
-	R1EjhylUcQfPDcf7F/cZDHAeU47dYFtSnbVhY2/pPdetdwVRe3GbaJyl1u/GjewFlKNhli186Kt
-	M6LWjnkFXklq6MMshV839mE4hN4bxXWz0QPvIA/uCZysV9BVvJ1NKOboPFVnhSsvEjVsMStLTCu
-	4jgYd8reS0RVI9bt2n0LaVWCc3lqaLgn5SDVdtHRJKVYGZxMhN8Z6uCDs1pYTGddV+VQeDN5nD+
-	1lBwnspwozfiqlGbpY6QkiJLmD+p4M/M/C7VeagLnmNvQ9EjycFkFmmrYBVbT3zhxSFPKdAowMw
-	5OrsqTZyliB540g==
-X-Google-Smtp-Source: AGHT+IEW0E6G8sFUJZrXjgx8IgIO7dCL/me5AKtsty8GXdCJQbxSmByGBM0HaBvG1kOgomgjfgPzCw==
-X-Received: by 2002:a05:620a:13d0:b0:7c0:add8:1759 with SMTP id af79cd13be357-7c5737b8c7dmr71231985a.18.1741823495217;
-        Wed, 12 Mar 2025 16:51:35 -0700 (PDT)
+        bh=Vi6U+/B8XHKyRS0Jmev6UCKkajT85JqRoKosOZ0orgU=;
+        b=i5IJuG//H7CITR9xs3CHIXVb4uBvXUbnPqss4NrAewfMaOGV6+jW+yD/cmjTRWG4mf
+         ESHRCyhe9XJeSP8N00vPJUrNoK9cnt3RN/a1zWJ08sBkcOi42LEIE6fuiMUhMgnPamuu
+         9UiLhcvuqeo8JkYS63kzZ0WFG2oNn4A4NmOBoeU1knuXNZVezSb/BxYlWC12O0ODoP1k
+         VNb2vu9FYCUQLbWyXiErGABjp1roajRS3ih9GZQdzoqCXzjJYnOeQ0AHFORe5uzBm/ww
+         bVM1p9c/Rb505U7a4kwy8UO4rC/v/88y8rzBM8t5a2798En/jSgBID3SYiqcxANb3Ln9
+         bwyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXYrOrutD0wJM3ID+xskSf5RuGlJLb387g4jgbFf7z7KcbaAvrDk/3IUo9zCqb9WLQb2Q+WII3OaDqWqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywfrx/sguWNO3RpuzijQspTDP9YxenJ/dLbLrzbsfyDoED/D2er
+	1TAYZ2ew87GMLKtJvfFejRy6Fe34gOQIBsspfmeeHDz65Y8squYyBp5AgiNdJQ==
+X-Gm-Gg: ASbGnctr8PeVaYRPPKKHtiWsM71qsgjabPpTyehD+St0/aDSqyLeenDoDV+2ecQtU06
+	h/ojG2g0fRhk5kFus9M6HQWewCdbDZTFQ7M0jKQwLFwgFwlyVnSyC9+tdRJBrlWxhtFhTusDwWs
+	4v01veer4CJzgoauIpbiiQAf9iMcDDhHYNRcafBi7ab+9YIiHtvkuwoBjX6h89wpVL6Ys8dHV4/
+	2zva2x6sMoHK/PR9TtgIIdT1rWo94AtJoaUSprEdyc59LHjnoz1p9lA6jBCNjcrwT+5ITGiFsy8
+	xV+BU9o3Tsalh4raqY4cRynzJCwnFZE1wU0ycAPTGKHiaDnxP6vsGoppt9FUfQjksQv3WTcdkuK
+	tI1bn44k2DQ7cgw==
+X-Google-Smtp-Source: AGHT+IFz+Ql5l9a0k7whlaB+u7Ab1OaGXxcSzFd8PxxyofE58NI5fVrN685DtdC5WBfCUDuiBPqKlg==
+X-Received: by 2002:a05:620a:2b89:b0:7c5:47c6:b888 with SMTP id af79cd13be357-7c547c6bc04mr2824280285a.40.1741823496118;
+        Wed, 12 Mar 2025 16:51:36 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c573c9d8b8sm18772585a.53.2025.03.12.16.51.34
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c573c4f731sm19255585a.13.2025.03.12.16.51.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 16:51:34 -0700 (PDT)
-Date: Wed, 12 Mar 2025 19:51:34 -0400
-Message-ID: <69ee16ce82a564e09b2060d46fa2be0d@paul-moore.com>
+        Wed, 12 Mar 2025 16:51:35 -0700 (PDT)
+Date: Wed, 12 Mar 2025 19:51:35 -0400
+Message-ID: <5838489ecd5186900315f8f6c6e02f22@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,99 +86,50 @@ X-Mailer: pstg-pwork:20250312_1930/pstg-lib:20250312_1930/pstg-pwork:20250312_19
 From: Paul Moore <paul@paul-moore.com>
 To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, eparis@redhat.com, linux-security-module@vger.kernel.org, audit@vger.kernel.org
 Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] Audit: Allow multiple records in an audit_buffer
-References: <20250307183701.16970-3-casey@schaufler-ca.com>
-In-Reply-To: <20250307183701.16970-3-casey@schaufler-ca.com>
+Subject: Re: [PATCH v2 3/6] LSM: security_lsmblob_to_secctx module selection
+References: <20250307183701.16970-4-casey@schaufler-ca.com>
+In-Reply-To: <20250307183701.16970-4-casey@schaufler-ca.com>
 
 On Mar  7, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
 > 
-> Replace the single skb pointer in an audit_buffer with
-> a list of skb pointers. Add the audit_stamp information
-> to the audit_buffer as there's no guarantee that there
-> will be an audit_context containing the stamp associated
-> with the event. At audit_log_end() time create auxiliary
-> records (none are currently defined) as have been added
-> to the list. Functions are created to manage the skb list
-> in the audit_buffer.
+> Add a parameter lsmid to security_lsmblob_to_secctx() to identify which
+> of the security modules that may be active should provide the security
+> context. If the value of lsmid is LSM_ID_UNDEF the first LSM providing
+> a hook is used. security_secid_to_secctx() is unchanged, and will
+> always report the first LSM providing a hook.
 > 
-> Suggested-by: Paul Moore <paul@paul-moore.com>
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->  kernel/audit.c | 111 +++++++++++++++++++++++++++++++++++++++----------
->  1 file changed, 89 insertions(+), 22 deletions(-)
+>  include/linux/security.h     |  6 ++++--
+>  kernel/audit.c               |  4 ++--
+>  kernel/auditsc.c             |  8 +++++---
+>  net/netlabel/netlabel_user.c |  3 ++-
+>  security/security.c          | 13 +++++++++++--
+>  5 files changed, 24 insertions(+), 10 deletions(-)
 
-This may need to be squashed with a later patch as I get
-"defined but not used" warnings/errors for audit_buffer_aux_{new,end}().
+...
 
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 2a567f667528..a4945f1c3ec0 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -2412,26 +2471,14 @@ int audit_signal_info(int sig, struct task_struct *t)
->  }
->  
->  /**
-> - * audit_log_end - end one audit record
-> - * @ab: the audit_buffer
-> - *
-> - * We can not do a netlink send inside an irq context because it blocks (last
-> - * arg, flags, is not set to MSG_DONTWAIT), so the audit buffer is placed on a
-> - * queue and a kthread is scheduled to remove them from the queue outside the
-> - * irq context.  May be called in any context.
-> + * __audit_log_end - enqueue one audit record
-> + * @skb: the buffer to send
+> diff --git a/security/security.c b/security/security.c
+> index 143561ebc3e8..55f9c7ad3f89 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -4338,9 +4339,17 @@ EXPORT_SYMBOL(security_secid_to_secctx);
+>   *
+>   * Return: Return length of data on success, error on failure.
 >   */
-> -void audit_log_end(struct audit_buffer *ab)
-> +static void __audit_log_end(struct sk_buff *skb)
+> -int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp)
+> +int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp,
+> +			       int lsmid)
 >  {
-> -	struct sk_buff *skb;
->  	struct nlmsghdr *nlh;
->  
-> -	if (!ab)
-> -		return;
-> -
->  	if (audit_rate_check()) {
-> -		skb = ab->skb;
-> -		ab->skb = NULL;
-> -
->  		/* setup the netlink header, see the comments in
->  		 * kauditd_send_multicast_skb() for length quirks */
->  		nlh = nlmsg_hdr(skb);
-> @@ -2442,6 +2489,26 @@ void audit_log_end(struct audit_buffer *ab)
->  		wake_up_interruptible(&kauditd_wait);
-
-We should probably move the kauditd thread wake into audit_log_end()
-so we don't end up poking the scheduler multiple times.
-
->  	} else
->  		audit_log_lost("rate limit exceeded");
-> +}
+> -	return call_int_hook(lsmprop_to_secctx, prop, cp);
+> +	struct lsm_static_call *scall;
 > +
-> +/**
-> + * audit_log_end - end one audit record
-> + * @ab: the audit_buffer
-> + *
-> + * We can not do a netlink send inside an irq context because it blocks (last
-> + * arg, flags, is not set to MSG_DONTWAIT), so the audit buffer is placed on a
-> + * queue and a kthread is scheduled to remove them from the queue outside the
-> + * irq context.  May be called in any context.
-> + */
-> +void audit_log_end(struct audit_buffer *ab)
-> +{
-> +	struct sk_buff *skb;
-> +
-> +	if (!ab)
-> +		return;
-> +
-> +	while ((skb = skb_dequeue(&ab->skb_list)))
-> +		__audit_log_end(skb);
+> +	lsm_for_each_hook(scall, lsmprop_to_secctx) {
+> +		if (lsmid != 0 && lsmid != scall->hl->lsmid->id)
 
-Put the kauditd thread wake here.
-
->  	audit_buffer_free(ab);
->  }
-> -- 
-> 2.47.0
+Let's use LSM_ID_UNDEF instead of 0 here to add some clarity on how an
+undefined ID is handled.  The function header comment should also
+explain the special handling when LSM_ID_UNDEF is specified.
 
 --
 paul-moore.com
