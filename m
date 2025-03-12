@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-557620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41FCA5DBA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:34:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25863A5DBA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:35:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27D9F174888
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:34:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F7E7189B4C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6987D1E51EE;
-	Wed, 12 Mar 2025 11:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEA023F279;
+	Wed, 12 Mar 2025 11:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mf5Tf8j6"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+2/v8u0"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1190C23F38A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7549923E348
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741779284; cv=none; b=ZkNBSlC8Chc8so3zD2bHuHGK2Z4qt2wZ03PmJUirQtl4YflA2g/wDe7NKWQe8cmcWWCXYG1zpvkITdPreijvkl4Z+BRcDTOHG4pqnew0eEI7m94qobrqtFFQ5KzxswkUBG6k6tz1WXvgfRv5t7zH+gnPgRkFteRF7feJrxA7FS0=
+	t=1741779290; cv=none; b=IrjykgBrRwrltooEeDJXVNKydkcfiRdkyMAZg/urrfwuOGI5xn3nxEqC8Io8VYra+sh05euH4i6GGH9/bPryf6W/aewdx6v/v0B5jW4CDE75T3jt5KM1f2a/rVOK6SWuxlTNyOkvxScauiVjd2oYBrbZAUX+Ly58NGKl9clplN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741779284; c=relaxed/simple;
-	bh=EfG/g3ntDBqLTUOmxcrU8a+zoCSn9m09nTwIQsOjBis=;
+	s=arc-20240116; t=1741779290; c=relaxed/simple;
+	bh=aD+jjzZjn1ZZwgNbkBqMyfBNePvy2KuzSsLhnBYx060=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=foIb27Bdw+B1W9sp6iMFJuxbSyg5JIfNXLwxdRBLYmYFkny4IxR+W8Vv6Cutda50INEAmv7oJOAdU4GRaLYE2bercaq0pYMQbJGw1YTPOqszrSbVWtxgUwVPeb0crfpiW+c4uv5UKYna0F/CLRX2QFsq6WiCOeIgDG8X3hVPj2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mf5Tf8j6; arc=none smtp.client-ip=192.198.163.15
+	 MIME-Version; b=lJ+lbT1eea7Jp2OE9zpMiRKkV2NEgEMx841i4ARgTgQPYWgQxnPjUoHoD1pLICEIWH570/oszI1EJvAw2pZyenyGMQ9kxoVurvh/D+IidS6+fP3Mzrb7JpX0p87QJ74wSXvt3miPRNN+2kOfMXxMAmgfmNKDgclXs3i+PxW6ngs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+2/v8u0; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741779283; x=1773315283;
+  t=1741779288; x=1773315288;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=EfG/g3ntDBqLTUOmxcrU8a+zoCSn9m09nTwIQsOjBis=;
-  b=mf5Tf8j6cg8UPKCClduE0odXEf7Yylwoeo758YRHoDI2ZeMonBNscDRp
-   fp6wsivs52BhNwXloa9/VFJOQ3Tvt7O8nur2Suau9geGTDC3pk2OaOjF7
-   Q6UNZshu7vBiO74haoRBtLh5T6/Cs5JTMY+/HLk3Mr77daB01ixgzZKk2
-   SYuypCTsbJj0ZYxqkqMN/eSa523vf+SNj1ieaYDmeQW7+9WgE5FBjQQGx
-   Gt+kkbpDn7AbGT8nxNOfP5vqrvcFPqKM/QMdqpTOeBKnemR4OxOnNowbK
-   9IFCCzj5R1znE50WtKK357wSEQ3e87eq7fHkRDpklg8+CYKCyyRFYQkke
+  bh=aD+jjzZjn1ZZwgNbkBqMyfBNePvy2KuzSsLhnBYx060=;
+  b=n+2/v8u0C+vk4hOqz0mhrQdD7XLfZhDom25TY1neJLlylbFwJE0369uv
+   BEt8DJy+IRUIwfymRPVfkBXHqvocd6hGnnjYjBQzN6HuXGnxFXggGlFrD
+   MQMhOLXru0xAB/XH2bnEh3zS0sXqbBU/jUkWRQvpTERkPbEfQ5MomiV7e
+   zYoIBtehQhdlRMgZinIPprRSh9HC/E2DteFKGaSBdo1Gfc2+IzMOTohXH
+   ffYgTxvk39iQMHuMhu8NUGJ6Mzq0S8fdReau8k4GKMthGp8b3Gi/wzObr
+   DFXLW8z5xkr4qLADrOfEyl9x4KyPhTX1PRqISYWfkLvRcjq9l4gOHlvmN
    Q==;
-X-CSE-ConnectionGUID: G8Nj4U3aQiinA6W7qyezQw==
-X-CSE-MsgGUID: 3Isk6VHiT4uURUs4n4wQZQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="42985135"
+X-CSE-ConnectionGUID: yK1KO/5JTVO9DMGQi/4WBg==
+X-CSE-MsgGUID: KVqTUtdQQJGC42nEv5uSxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="42985153"
 X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="42985135"
+   d="scan'208";a="42985153"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 04:34:42 -0700
-X-CSE-ConnectionGUID: 0TdLM2mxTsaS+ye9OUh2Tw==
-X-CSE-MsgGUID: iW2MqBzpSdeN0peTCAChNw==
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 04:34:48 -0700
+X-CSE-ConnectionGUID: uzJc9TCpQKmxQ1WZ02lg9g==
+X-CSE-MsgGUID: hX4NAt5ARWuITPiNLawTNg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="124775987"
+   d="scan'208";a="124776008"
 Received: from iweiny-desk3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.221.164])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 04:34:37 -0700
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 04:34:43 -0700
 From: Kai Huang <kai.huang@intel.com>
 To: dave.hansen@intel.com,
 	bp@alien8.de,
@@ -79,10 +79,11 @@ Cc: hpa@zytor.com,
 	bhe@redhat.com,
 	nik.borisov@suse.com,
 	sagis@google.com,
-	Dave Young <dyoung@redhat.com>
-Subject: [RFC PATCH 1/5] x86/kexec: Do unconditional WBINVD for bare-metal in stop_this_cpu()
-Date: Thu, 13 Mar 2025 00:34:13 +1300
-Message-ID: <e9ee3c7ffc3ba6feb97247faa40789684e39ffd0.1741778537.git.kai.huang@intel.com>
+	Dave Young <dyoung@redhat.com>,
+	David Kaplan <david.kaplan@amd.com>
+Subject: [RFC PATCH 2/5] x86/kexec: Do unconditional WBINVD for bare-metal in relocate_kernel()
+Date: Thu, 13 Mar 2025 00:34:14 +1300
+Message-ID: <ebe4c0e8fe1b78c014bbc18832ae0eec8fef419d.1741778537.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1741778537.git.kai.huang@intel.com>
 References: <cover.1741778537.git.kai.huang@intel.com>
@@ -94,125 +95,151 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-TL;DR:
+For both SME and TDX, dirty cachelines with and without the encryption
+bit(s) of the same physical memory address can coexist and the CPU can
+flush them back to memory in random order.  During kexec, the caches
+must be flushed before jumping to the new kernel to avoid silent memory
+corruption to the new kernel.
 
-Change to do unconditional WBINVD in stop_this_cpu() for bare metal to
-cover kexec support for both AMD SME and Intel TDX.  Previously there
-_was_ some issue preventing from doing so but now it has been fixed.
+The WBINVD in stop_this_cpu() flushes caches for all remote CPUs when
+they are being stopped.  For SME, the WBINVD in relocate_kernel()
+flushes the cache for the last running CPU (which is doing kexec).
 
-Long version:
+Similarly, to support kexec for TDX host, after stopping all remote CPUs
+with cache flushed, the kernel needs to flush cache for the last running
+CPU.
 
-AMD SME uses the C-bit to determine whether to encrypt the memory or
-not.  For the same physical memory address, dirty cachelines with and
-without the C-bit can coexist and the CPU can flush them back to memory
-in random order.  To support kexec for SME, the old kernel uses WBINVD
-to flush cache before booting to the new kernel so that no stale dirty
-cacheline are left over by the old kernel which could otherwise corrupt
-the new kernel's memory.
+Use the existing WBINVD in relocate_kernel() to cover TDX host as well.
 
-TDX uses 'KeyID' bits in the physical address for memory encryption and
-has the same requirement.  To support kexec for TDX, the old kernel
-needs to flush cache of TDX private memory.
-
-Currently, the kernel only performs WBINVD in stop_this_cpu() when SME
-is supported by hardware.  Perform unconditional WBINVD to support TDX
-instead of adding one more vendor-specific check.  Kexec is a slow path,
-and the additional WBINVD is acceptable for the sake of simplicity and
+Just do unconditional WBINVD to cover both SME and TDX instead of
+sprinkling additional vendor-specific checks.  Kexec is a slow path, and
+the additional WBINVD is acceptable for the sake of simplicity and
 maintainability.
 
-Only do WBINVD on bare-metal.  Doing WBINVD in guest triggers unexpected
-exception (#VE or #VC) for TDX and SEV-ES/SEV-SNP guests and the guest
-may not be able to handle such exception (e.g., TDX guests panics if it
-sees such #VE).
+But only do WBINVD for bare-metal because TDX guests and SEV-ES/SEV-SNP
+guests will get unexpected (and yet unnecessary) exception (#VE or #VC)
+which the kernel is unable to handle at the time of relocate_kernel()
+since the kernel has torn down the IDT.
 
-History of SME and kexec WBINVD:
+Remove the host_mem_enc_active local variable and directly use
+!cpu_feature_enabled(X86_FEATURE_HYPERVISOR) as an argument of calling
+relocate_kernel().  cpu_feature_enabled() is always inline but not a
+function call, thus it is safe to use after load_segments() when call
+depth tracking is enabled.
 
-There _was_ an issue preventing doing unconditional WBINVD but that has
-been fixed.
-
-Initial SME kexec support added an unconditional WBINVD in commit
-
-  bba4ed011a52: ("x86/mm, kexec: Allow kexec to be used with SME")
-
-This commit caused different Intel systems to hang or reset.
-
-Without a clear root cause, a later commit
-
-  f23d74f6c66c: ("x86/mm: Rework wbinvd, hlt operation in stop_this_cpu()")
-
-fixed the Intel system hang issues by only doing WBINVD when hardware
-supports SME.
-
-A corner case [*] revealed the root cause of the system hang issues and
-was fixed by commit
-
-  1f5e7eb7868e: ("x86/smp: Make stop_other_cpus() more robust")
-
-See [1][2] for more information.
-
-Further testing of doing unconditional WBINVD based on the above fix on
-the problematic machines (that issues were originally reported)
-confirmed the issues couldn't be reproduced.
-
-See [3][4] for more information.
-
-Therefore, it is safe to do unconditional WBINVD for bare-metal now.
-
-[*] The commit didn't check whether the CPUID leaf is available or not.
-Making unsupported CPUID leaf on Intel returns garbage resulting in
-unintended WBINVD which caused some issue (followed by the analysis and
-the reveal of the final root cause).  The corner case was independently
-fixed by commit
-
-  9b040453d444: ("x86/smp: Dont access non-existing CPUID leaf")
-
-Link: https://lore.kernel.org/lkml/28a494ca-3173-4072-921c-6c5f5b257e79@amd.com/ [1]
-Link: https://lore.kernel.org/lkml/24844584-8031-4b58-ba5c-f85ef2f4c718@amd.com/ [2]
-Link: https://lore.kernel.org/lkml/20240221092856.GAZdXCWGJL7c9KLewv@fat_crate.local/ [3]
-Link: https://lore.kernel.org/lkml/CALu+AoSZkq1kz-xjvHkkuJ3C71d0SM5ibEJurdgmkZqZvNp2dQ@mail.gmail.com/ [4]
 Signed-off-by: Kai Huang <kai.huang@intel.com>
-Suggested-by: Borislav Petkov <bp@alien8.de>
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Dave Young <dyoung@redhat.com>
+Cc: David Kaplan <david.kaplan@amd.com>
 Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Tested-by: David Kaplan <david.kaplan@amd.com>
 ---
- arch/x86/kernel/process.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ arch/x86/include/asm/kexec.h         |  2 +-
+ arch/x86/kernel/machine_kexec_64.c   | 14 ++++++--------
+ arch/x86/kernel/relocate_kernel_64.S | 15 ++++++++++-----
+ 3 files changed, 17 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 9c75d701011f..8475d9d2d8c4 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -819,18 +819,19 @@ void __noreturn stop_this_cpu(void *dummy)
- 	mcheck_cpu_clear(c);
+diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
+index 8ad187462b68..48c313575262 100644
+--- a/arch/x86/include/asm/kexec.h
++++ b/arch/x86/include/asm/kexec.h
+@@ -123,7 +123,7 @@ relocate_kernel_fn(unsigned long indirection_page,
+ 		   unsigned long pa_control_page,
+ 		   unsigned long start_address,
+ 		   unsigned int preserve_context,
+-		   unsigned int host_mem_enc_active);
++		   unsigned int bare_metal);
+ #endif
+ extern relocate_kernel_fn relocate_kernel;
+ #define ARCH_HAS_KIMAGE_ARCH
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index a68f5a0a9f37..0e9808eeb63e 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -346,16 +346,9 @@ void __nocfi machine_kexec(struct kimage *image)
+ {
+ 	unsigned long reloc_start = (unsigned long)__relocate_kernel_start;
+ 	relocate_kernel_fn *relocate_kernel_ptr;
+-	unsigned int host_mem_enc_active;
+ 	int save_ftrace_enabled;
+ 	void *control_page;
  
- 	/*
--	 * Use wbinvd on processors that support SME. This provides support
--	 * for performing a successful kexec when going from SME inactive
--	 * to SME active (or vice-versa). The cache must be cleared so that
--	 * if there are entries with the same physical address, both with and
--	 * without the encryption bit, they don't race each other when flushed
--	 * and potentially end up with the wrong entry being committed to
--	 * memory.
-+	 * Use wbinvd to support kexec for both SME (from inactive to active
-+	 * or vice-versa) and TDX.  The cache must be cleared so that if there
-+	 * are entries with the same physical address, both with and without
-+	 * the encryption bit(s), they don't race each other when flushed and
-+	 * potentially end up with the wrong entry being committed to memory.
+-	/*
+-	 * This must be done before load_segments() since if call depth tracking
+-	 * is used then GS must be valid to make any function calls.
+-	 */
+-	host_mem_enc_active = cc_platform_has(CC_ATTR_HOST_MEM_ENCRYPT);
+-
+ #ifdef CONFIG_KEXEC_JUMP
+ 	if (image->preserve_context)
+ 		save_processor_state();
+@@ -398,6 +391,11 @@ void __nocfi machine_kexec(struct kimage *image)
  	 *
--	 * Test the CPUID bit directly because the machine might've cleared
--	 * X86_FEATURE_SME due to cmdline options.
-+	 * stop_this_cpu() isn't a fast path, just do unconditional WBINVD for
-+	 * bare-metal to cover both SME and TDX.  Do not do WBINVD in a guest
-+	 * since performing one will result in an exception (#VE or #VC) for
-+	 * TDX or SEV-ES/SEV-SNP guests which the guest may not be able to
-+	 * handle (e.g., TDX guest panics if it sees #VE).
+ 	 * I take advantage of this here by force loading the
+ 	 * segments, before I zap the gdt with an invalid value.
++	 *
++	 * load_segments() resets GS to 0.  Don't make any function call
++	 * after here since call depth tracking uses per-CPU variables to
++	 * operate (relocate_kernel() is explicitly ignored by call depth
++	 * tracking).
  	 */
--	if (c->extended_cpuid_level >= 0x8000001f && (cpuid_eax(0x8000001f) & BIT(0)))
-+	if (!boot_cpu_has(X86_FEATURE_HYPERVISOR))
- 		wbinvd();
+ 	load_segments();
+ 	/*
+@@ -412,7 +410,7 @@ void __nocfi machine_kexec(struct kimage *image)
+ 					   virt_to_phys(control_page),
+ 					   image->start,
+ 					   image->preserve_context,
+-					   host_mem_enc_active);
++					   !cpu_feature_enabled(X86_FEATURE_HYPERVISOR));
+ 
+ #ifdef CONFIG_KEXEC_JUMP
+ 	if (image->preserve_context)
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index b44d8863e57f..dc1a59cd8139 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -50,7 +50,7 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
+ 	 * %rsi pa_control_page
+ 	 * %rdx start address
+ 	 * %rcx preserve_context
+-	 * %r8  host_mem_enc_active
++	 * %r8  bare_metal
+ 	 */
+ 
+ 	/* Save the CPU context, used for jumping back */
+@@ -107,7 +107,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	/*
+ 	 * %rdi	indirection page
+ 	 * %rdx start address
+-	 * %r8 host_mem_enc_active
++	 * %r8 bare_metal
+ 	 * %r9 page table page
+ 	 * %r11 preserve_context
+ 	 * %r13 original CR4 when relocate_kernel() was invoked
+@@ -156,14 +156,19 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	movq	%r9, %cr3
  
  	/*
+-	 * If SME is active, there could be old encrypted cache line
++	 * If SME/TDX is active, there could be old encrypted cache line
+ 	 * entries that will conflict with the now unencrypted memory
+ 	 * used by kexec. Flush the caches before copying the kernel.
++	 *
++	 * Do WBINVD for bare-metal only to cover both SME and TDX. Doing
++	 * WBINVD in guest results in an unexpected exception (#VE or #VC)
++	 * for TDX and SEV-ES/SNP guests which then crashes the guest (the
++	 * kernel has torn down the IDT).
+ 	 */
+ 	testq	%r8, %r8
+-	jz .Lsme_off
++	jz .Lno_wbinvd
+ 	wbinvd
+-.Lsme_off:
++.Lno_wbinvd:
+ 
+ 	call	swap_pages
+ 
 -- 
 2.48.1
 
