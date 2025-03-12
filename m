@@ -1,199 +1,114 @@
-Return-Path: <linux-kernel+bounces-557562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEC68A5DAD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:47:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CCBA5DAD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A4416B70D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:47:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01AC7189F9EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635E523CEE5;
-	Wed, 12 Mar 2025 10:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B09D23E32D;
+	Wed, 12 Mar 2025 10:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a8NswOF9"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dEDMSpUP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B956B1E3DDE
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7A71E51EE
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741776416; cv=none; b=kkV+rlvjxZwsQaYP7ADfypruUkvRTXFKFZ2VP8GkdRzgpEo+0ARIrobgvgS9FyRH2idNpw77PPRYzX6boHMHsB/tuly+JPVOJH9FWFrdhUCYSC1o3IPqCp4+BMNrpOWqevtxut2gsv1N/M7voM12HdNBim2iawZo4U3Jco/csZs=
+	t=1741776443; cv=none; b=WhgO7qEXpNCRKITQ/Z6b2yspCsqxXhBZAeo3eGUCh866DKCe8MDCtScR2asaxTHE5eIJBy8BzWeJRipBBwFgPucS8leAN6iUtjcCJKLhnABDPbKirzQCFi1bNnN5v8A/r3rdhLxNTgJ2QbjAd7tjHxsocpYBEYtmljjQ4na4oZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741776416; c=relaxed/simple;
-	bh=DNEcuPsj+qi3Wnj8L4nF8fNAnK0CaTO8BtviCLKYIc4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OmMiZn5Fb4ibp5d5dbCqdz6QUGygkl5ABDJnuxpGo5np27YFzwBE2UYhiFO2Yn4H1+do7QfllsMSRPXPVUwC6+M9XQDvgZlNHAZFhO9tiIjM7QexHdVvFjmI8oTj8rAI7t1pvjqaTaeD/C1TsYjMS2dJwioH6qwHvPQiY5qjHrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a8NswOF9; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso70321145e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741776412; x=1742381212; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PlCdoqnuy1rzQZsJE5kNcyighHEqrB9PSElkNCee3L8=;
-        b=a8NswOF9m72UOcPpIEabVkHIJICCSLi+frTGSsxGN9+4AxirUXptKiQdYwgHau8WqQ
-         Nqx2C+UaicUrUnxCp6Yxo1tZuTeWV1A34rFoHW5edY76Q4E/ZXLdFY15U0eqpIknqQZv
-         fFHn9ACF2NK+ci/jim8ZIOS51gnSIT7/1Mq4KP8ntuXQ4v3j+nbmV9hHxvrrDXHTwM4X
-         PKdkavfvkHZYWRGFZ1pH5t6bIvN2LiaZf3ivrfmSbB+A9bqkeCl61kDSXbPNjnmcJ5B0
-         zh87p4tfbvhH6AtJhlrdbJx5udOAHDSk+7pG17kPtVzzNZuADWvH9ucbVMw9VxMqhElT
-         Sujw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741776412; x=1742381212;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PlCdoqnuy1rzQZsJE5kNcyighHEqrB9PSElkNCee3L8=;
-        b=v5ue7cEMC6fusBCxRwRcIPbEupFnpv6qlE2hByPxoTa6SsM3kVNfBBCGAqqKhvUCDF
-         jkv45N4nGcDKaAmXWut46yoNlrPzX0q/1QOoYhnJxZm8TQjGGF84ZhlTXHivdUaJICPO
-         EeO187OwEIqLTn3P3gWB0s6P23A+u2JoXCbKjKFbJBOO8CxSP7EAktpruMkNgIW5z3he
-         xuQfTKjTRVu8WWpUVuYyIeGPvAntBzFnLTtZcbftBrrMg11OL5Mum/uztXhJgt6WxTkf
-         jQySyO6TjLgRKtSOqNQ0Xj2hPPdXLNcmMhxSHd3VwXcqUt2UBpIarDFqhJ13MVUBMtU3
-         qIBA==
-X-Gm-Message-State: AOJu0YzbCMfjj1X5Nv5miB1cS2LANpw9tXpCiiIEDIiypjRIzuJkXTVH
-	KnqzLr2EEdnP3hZzS85tvvWpihnXCgFZCFNs9gnvYM9a85JOzNRS8eJjeWZsg5c=
-X-Gm-Gg: ASbGncvfJ88bvQ1RVBJJCR2Yds4LpZVuk+FuKzy/UG09J+hEYqcNU+QqC93cCR666M0
-	j0NA8LFE775KPmiBIGKqeMVZuc+rBN7mmZqw6R9jaYqyif4hJKDVWDI8pjubuUecWg+nQ4i4OfI
-	M7p5pgJ5IzZjJ1F6tsTROlyKdLBOn2umj2MPXJ+7PoObt0Pwe9DjnEGpZQtYShq9JQ5N5zNNY3w
-	b33DLfFz7qYKPll/l19avwTscYo0tamW9rycOvn5VKQ3qbMQGLFUzeDTwkXo7apVUVA6BMvjO7O
-	JWibgEJRP1IHJq3wQDVc0QH/2hnjQe0s9v7dqRv1al9GrxtXFr8uNQ==
-X-Google-Smtp-Source: AGHT+IHEYJN4xPkzICEY1jso6wVewx65u7jQrXPP1xJLeTxQL55K5z0VSuFkgMOyPntNnn+Hd4A7Gw==
-X-Received: by 2002:a05:600c:5618:b0:439:9a40:aa0b with SMTP id 5b1f17b1804b1-43cdfb7e4b1mr156156805e9.25.1741776411989;
-        Wed, 12 Mar 2025 03:46:51 -0700 (PDT)
-Received: from [192.168.1.247] ([209.198.129.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e2f44sm20474280f8f.76.2025.03.12.03.46.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 03:46:51 -0700 (PDT)
-Message-ID: <bed04866-a477-498a-b33a-a631759733e2@linaro.org>
-Date: Wed, 12 Mar 2025 10:46:50 +0000
+	s=arc-20240116; t=1741776443; c=relaxed/simple;
+	bh=R5rLCfIh3wkA1X4M48P9ltJ/JGLhQy59LLBsp6c/nSo=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=kMu1zJqe5KhG1jutG2oBi0LOVJkYqMjJLOiNmHZmq4NFjM7628y3/ZxUThGiZkTow9iSjSH7ETdtfmBn/eFttBrD+4rXbnVBy+3jcqxdclH1IH0dD8e5G5RIQzDFhbPms8WgzWU+oFO6uz0yjyBHtqblkYlWcowCT75s8XK6T6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dEDMSpUP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741776440;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=C6XL4x7UtP7FT0DII+3H1l0/E12h2d8rNjwlhWXdZe0=;
+	b=dEDMSpUPECTJKDHdnQbe+lH9fTciluHW5ZL3LL2dzBCD05yRz1dFO/XhY7HUHpmxDic+fX
+	+qqwwxpyjTyGo/aN6hN9A2YXnQ9yuRvZl5MeLKornVSaxS84Dv6nsTllQQhdkPZrhCnKPT
+	EcZZavmpuGbkUtH+vgo4sZmcTwsJ/6c=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-135--aI8Gc-YNEOsSDpQxbe5Nw-1; Wed,
+ 12 Mar 2025 06:47:17 -0400
+X-MC-Unique: -aI8Gc-YNEOsSDpQxbe5Nw-1
+X-Mimecast-MFC-AGG-ID: -aI8Gc-YNEOsSDpQxbe5Nw_1741776435
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7971C180AF55;
+	Wed, 12 Mar 2025 10:47:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 116BE1801752;
+	Wed, 12 Mar 2025 10:47:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
+    Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+    Christian Brauner <brauner@kernel.org>, ceph-devel@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ceph: Fix incorrect flush end position calculation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] coresight: configfs: Constify struct config_item_type
-From: James Clark <james.clark@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- "coresight@lists.linaro.org" <coresight@lists.linaro.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Mike Leach <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-References: <1011717e5ed35ec12113a0d8c233823e820fb524.1723368522.git.christophe.jaillet@wanadoo.fr>
- <d8164311-83e7-4fb0-ab82-90e1a2762b01@linaro.org>
-Content-Language: en-US
-In-Reply-To: <d8164311-83e7-4fb0-ab82-90e1a2762b01@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1243043.1741776431.1@warthog.procyon.org.uk>
+Date: Wed, 12 Mar 2025 10:47:11 +0000
+Message-ID: <1243044.1741776431@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+In ceph, in fill_fscrypt_truncate(), the end flush position is calculated
+by:
 
+                loff_t lend = orig_pos + CEPH_FSCRYPT_BLOCK_SHIFT - 1;
 
-On 12/08/2024 10:12 am, James Clark wrote:
-> 
-> 
-> On 11/08/2024 10:30 am, Christophe JAILLET wrote:
->> 'struct config_item_type' is not modified in this driver.
->>
->> These structures are only used with config_group_init_type_name() which
->> takes a "const struct config_item_type *" as a 3rd argument or with
->> struct config_group.cg_item.ci_type which is also a "const struct
->> config_item_type    *".
->>
->> Constifying this structure moves some data to a read-only section, so
->> increase overall security, especially when the structure holds some
->> function pointers.
->>
->> On a x86_64, with allmodconfig:
->> Before:
->> ======
->>     text       data        bss        dec        hex    filename
->>     4904       1376        136       6416       1910    drivers/ 
->> hwtracing/coresight/coresight-syscfg-configfs.o
->>
->> After:
->> =====
->>     text       data        bss        dec        hex    filename
->>     5264       1120         16       6400       1900    drivers/ 
->> hwtracing/coresight/coresight-syscfg-configfs.o
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Compile tested-only.
->> ---
->>   .../hwtracing/coresight/coresight-syscfg-configfs.c  | 12 ++++++------
->>   1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-syscfg-configfs.c 
->> b/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
->> index 433ede94dd63..213b4159b062 100644
->> --- a/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
->> +++ b/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
->> @@ -160,7 +160,7 @@ static struct configfs_attribute 
->> *cscfg_config_view_attrs[] = {
->>       NULL,
->>   };
->> -static struct config_item_type cscfg_config_view_type = {
->> +static const struct config_item_type cscfg_config_view_type = {
->>       .ct_owner = THIS_MODULE,
->>       .ct_attrs = cscfg_config_view_attrs,
->>   };
->> @@ -170,7 +170,7 @@ static struct configfs_attribute 
->> *cscfg_config_preset_attrs[] = {
->>       NULL,
->>   };
->> -static struct config_item_type cscfg_config_preset_type = {
->> +static const struct config_item_type cscfg_config_preset_type = {
->>       .ct_owner = THIS_MODULE,
->>       .ct_attrs = cscfg_config_preset_attrs,
->>   };
->> @@ -272,7 +272,7 @@ static struct configfs_attribute 
->> *cscfg_feature_view_attrs[] = {
->>       NULL,
->>   };
->> -static struct config_item_type cscfg_feature_view_type = {
->> +static const struct config_item_type cscfg_feature_view_type = {
->>       .ct_owner = THIS_MODULE,
->>       .ct_attrs = cscfg_feature_view_attrs,
->>   };
->> @@ -309,7 +309,7 @@ static struct configfs_attribute 
->> *cscfg_param_view_attrs[] = {
->>       NULL,
->>   };
->> -static struct config_item_type cscfg_param_view_type = {
->> +static const struct config_item_type cscfg_param_view_type = {
->>       .ct_owner = THIS_MODULE,
->>       .ct_attrs = cscfg_param_view_attrs,
->>   };
->> @@ -380,7 +380,7 @@ static struct config_group 
->> *cscfg_create_feature_group(struct cscfg_feature_desc
->>       return &feat_view->group;
->>   }
->> -static struct config_item_type cscfg_configs_type = {
->> +static const struct config_item_type cscfg_configs_type = {
->>       .ct_owner = THIS_MODULE,
->>   };
->> @@ -414,7 +414,7 @@ void cscfg_configfs_del_config(struct 
->> cscfg_config_desc *config_desc)
->>       }
->>   }
->> -static struct config_item_type cscfg_features_type = {
->> +static const struct config_item_type cscfg_features_type = {
->>       .ct_owner = THIS_MODULE,
->>   };
-> 
-> Reviewed-by: James Clark <james.clark@linaro.org>
+but that's using the block shift not the block size.
 
-Ping. Just found this one hanging in my coresight branch. Still applies 
-cleanly.
+Fix this to use the block size instead.
 
-Thanks
+Fixes: 5c64737d2536 ("ceph: add truncate size handling support for fscrypt")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Xiubo Li <xiubli@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: ceph-devel@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/ceph/inode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index ab63c7ebce5b..ec9b80fec7be 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -2363,7 +2363,7 @@ static int fill_fscrypt_truncate(struct inode *inode,
+ 
+ 	/* Try to writeback the dirty pagecaches */
+ 	if (issued & (CEPH_CAP_FILE_BUFFER)) {
+-		loff_t lend = orig_pos + CEPH_FSCRYPT_BLOCK_SHIFT - 1;
++		loff_t lend = orig_pos + CEPH_FSCRYPT_BLOCK_SIZE - 1;
+ 
+ 		ret = filemap_write_and_wait_range(inode->i_mapping,
+ 						   orig_pos, lend);
 
 
