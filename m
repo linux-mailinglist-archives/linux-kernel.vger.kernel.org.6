@@ -1,188 +1,110 @@
-Return-Path: <linux-kernel+bounces-558259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C5F1A5E395
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:23:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB47AA5E3BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:36:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC0D17742F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:23:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53699189FC13
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062A1253B47;
-	Wed, 12 Mar 2025 18:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6F225745F;
+	Wed, 12 Mar 2025 18:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qlP7DBFH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AZy9K+qb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qlP7DBFH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AZy9K+qb"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b="IHs3ILwn"
+Received: from www522.your-server.de (www522.your-server.de [195.201.215.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6732A188583
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409022528E3;
+	Wed, 12 Mar 2025 18:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.215.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741803809; cv=none; b=YZxgBVu/jgCLpk5VCQVNYRKLQ58Ih0OBv38jgNjqMa29paihExITDChujyRGW6CTyjE54xAJXk0XPl+U2fIi+6NicUIERL7o/53alklsb+joA+6DdxkG2C6GOV1rmKv57QIpvsvf8XLDozREhmp2P9ot+1QMOXuLLqxIBhFg0W0=
+	t=1741804578; cv=none; b=UDrspqS6nVgwZAvLuukaAh+i3nKR6WbIz6JmbMeXtW4Jin0yovX6qoxgOloZNLfLutPO50t5mqG5WVjm6evd9B3L0QGVeC9FeXbUyRHcyHtgHD3X9BSZz54CSgjjsM1J7RhHJ7R7ECcNMo2O7AyzohhPh3DTMxHOykNiZq7jpVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741803809; c=relaxed/simple;
-	bh=3PPQ+75E6TglwrFDfWrjRnFrp70iSJ8+4+dt1b50oJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uoVxnn46w7vdiiZyM/SayXUGh+gyQ93ECsus6iR6TbBoUU8u/v3OwOAq+xtHp/lxJTNsBHb7pB+YTTnddUKda/bxAvqCzvPAhPsn+ywMPsp/UHGSik0dR1Wg8+MewXXkstKfQMt0NAxuoExopuN/4J9tw+z3L1Ltr9O8gMhodEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qlP7DBFH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AZy9K+qb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qlP7DBFH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AZy9K+qb; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 661032118B;
-	Wed, 12 Mar 2025 18:23:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741803804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yb0sF00gbdRjC6paR/sbSBa+p4aGat82DdohFtfUyYM=;
-	b=qlP7DBFHl0sDx9NrdOob33f7SvEL1snKf2YvNik7fLHQ8DQ0863yPEz+zC5iXiCoobkL1O
-	1soLve52Z80akP10NTdihQV18nZCIqI5hTSVfEsy3t4SVPjmCDgnMgNxBDRJUSeu7w2X9O
-	4BcqtRZeaqe88BmeZ+Jm8P5/+EUMTas=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741803804;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yb0sF00gbdRjC6paR/sbSBa+p4aGat82DdohFtfUyYM=;
-	b=AZy9K+qboxjfGPjxdaktp+DS4Hm21tNw7zOUk87YaxQgl+xbVX5QVVmsherj3G0CRtF3S9
-	JtZ2tnEDFS6cbiCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qlP7DBFH;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=AZy9K+qb
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741803804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yb0sF00gbdRjC6paR/sbSBa+p4aGat82DdohFtfUyYM=;
-	b=qlP7DBFHl0sDx9NrdOob33f7SvEL1snKf2YvNik7fLHQ8DQ0863yPEz+zC5iXiCoobkL1O
-	1soLve52Z80akP10NTdihQV18nZCIqI5hTSVfEsy3t4SVPjmCDgnMgNxBDRJUSeu7w2X9O
-	4BcqtRZeaqe88BmeZ+Jm8P5/+EUMTas=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741803804;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yb0sF00gbdRjC6paR/sbSBa+p4aGat82DdohFtfUyYM=;
-	b=AZy9K+qboxjfGPjxdaktp+DS4Hm21tNw7zOUk87YaxQgl+xbVX5QVVmsherj3G0CRtF3S9
-	JtZ2tnEDFS6cbiCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4A3421377F;
-	Wed, 12 Mar 2025 18:23:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CwzEERzR0Wd1QQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 12 Mar 2025 18:23:24 +0000
-Message-ID: <f495fc2a-00e1-4c76-a562-1e7f42a5fbea@suse.cz>
-Date: Wed, 12 Mar 2025 19:23:24 +0100
+	s=arc-20240116; t=1741804578; c=relaxed/simple;
+	bh=USQyrSayfOtqTw7Yn797LuXa1nzYIEzNYb2576ydQlo=;
+	h=In-Reply-To:Message-Id:Cc:To:From:Date:Subject; b=Q2E83wj/M+pdC54MthKrjEeV8svgrhkp9XMxDGKSfYqrYsW8hg+96htki9915f/U5EPEqcFD4MzuGiAaAOvVeQxgZCS2I7Nm6e+vsoAW8yji5Npe5qf4MCeRf3NvdgC8bXkA/07RKaVKqBJqqv+AOXiuEbjX0Bdxr8olDKfWHCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de; spf=pass smtp.mailfrom=folker-schwesinger.de; dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b=IHs3ILwn; arc=none smtp.client-ip=195.201.215.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=folker-schwesinger.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=folker-schwesinger.de; s=default2212; h=Subject:Date:From:To:Cc:Message-Id:
+	In-Reply-To:Sender:Reply-To:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References;
+	bh=PvD8g/iHmVDM+dWVh5jAN+ccAMhC2v2ZHCMkMzBxqQU=; b=IHs3ILwnUjRJjDXQPTt0DSuIJA
+	ehk51ivm59UhUeZGijZUyxHQzKNS6g/KsrrBX8lVKSg9ogW0z52d07amM8pCic4YPjfRwsYoMV03p
+	Fbha6ZgF4YEbyfusLWQOD+IjPx8aTfSawc/+mdm/HnB5gRPHRmcDqZKGt0Aw+Fj4m2FEw4VEET0aE
+	QvO3+SqYCg2sZ7QkfSXeLja/vfq3StgeVsHVCbJ0ku4JatolvVVyJ/X+z9ubPgr/0R/ONNh0WWNW/
+	3lcnoLqLD4KpDujU6pvH26sOjWYz4Omg1D3CTjyWfoGRMxMwqbGudyEgV64Sc/ZXNPDO50wp/TR8e
+	mfTqwMeA==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www522.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <dev@folker-schwesinger.de>)
+	id 1tsQw8-000IGQ-1y;
+	Wed, 12 Mar 2025 19:36:12 +0100
+Received: from [185.209.196.170] (helo=localhost)
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <dev@folker-schwesinger.de>)
+	id 1tsQw8-000JzK-29;
+	Wed, 12 Mar 2025 19:36:12 +0100
+In-Reply-To: <D8EI6SI5E4PE.3GOBCNHV38K03@folker-schwesinger.de>
+Message-Id: <D8EI6SI5EIUY.2JD240P96ZZSS@folker-schwesinger.de>
+Cc: "Kedareswara rao Appana" <appanad@xilinx.com>,
+ <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Vinod Koul" <vkoul@kernel.org>, "Michal Simek" <michal.simek@amd.com>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Manivannan Sadhasivam"
+ <manivannan.sadhasivam@linaro.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@linaro.org>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>, "Marek Vasut" <marex@denx.de>
+From: "Folker Schwesinger" <dev@folker-schwesinger.de>
+Date: Wed, 12 Mar 2025 19:23:49 +0100
+Subject: [PATCH 1/1] dmaengine: xilinx_dma: Set dma_device.directions
+X-Authenticated-Sender: dev@folker-schwesinger.de
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27575/Wed Mar 12 09:37:42 2025)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 07/10] slab: determine barn status racily outside
- of lock
-Content-Language: en-US
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter
- <cl@linux.com>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
- <20250214-slub-percpu-caches-v2-7-88592ee0966a@suse.cz>
- <Z72FPj_FzhCZpRsk@harry>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <Z72FPj_FzhCZpRsk@harry>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 661032118B
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[google.com,oracle.com,linux.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On 2/25/25 09:54, Harry Yoo wrote:
-> On Fri, Feb 14, 2025 at 05:27:43PM +0100, Vlastimil Babka wrote:
->> The possibility of many barn operations is determined by the current
->> number of full or empty sheaves. Taking the barn->lock just to find out
->> that e.g. there are no empty sheaves results in unnecessary overhead and
->> lock contention. Thus perform these checks outside of the lock with a
->> data_race() annotated variable read and fail quickly without taking the
->> lock.
->> 
->> Checks for sheaf availability that racily succeed have to be obviously
->> repeated under the lock for correctness, but we can skip repeating
->> checks if there are too many sheaves on the given list as the limits
->> don't need to be strict.
->> 
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> Looks good to me,
-> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-> 
-> in kmem_cache_return_sheaf:
->> if (!pcs->spare) {                                                      
->> 	pcs->spare = sheaf;                                             
->>	sheaf = NULL;                                                   
->> } else if (pcs->barn->nr_full >= MAX_FULL_SHEAVES) {                    
->>	/* racy check */                                                
->>	barn = pcs->barn;                                               
->>	keep = true;                                                    
->> }  
-> 
-> By the way this code also needs data_race()?
+When using the dma_get_slave_caps() API, it checks the directions fields of
+the dma_device structure. Currently, the Xilinx DMA driver does not set
+this, which causes dma_get_slave_caps() to return -ENXIO.
 
-Right, will add, thanks.
+Fix this issue by setting the directions field of the dma_device
+structure during DMA channel probe.
 
+Signed-off-by: Folker Schwesinger <dev@folker-schwesinger.de>
+---
+ drivers/dma/xilinx/xilinx_dma.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+index 3ad44afd0e74..63c308f2ae81 100644
+--- a/drivers/dma/xilinx/xilinx_dma.c
++++ b/drivers/dma/xilinx/xilinx_dma.c
+@@ -2864,6 +2864,7 @@ static int xilinx_dma_chan_probe(struct xilinx_dma_device *xdev,
+ 	    of_device_is_compatible(node, "xlnx,axi-dma-mm2s-channel") ||
+ 	    of_device_is_compatible(node, "xlnx,axi-cdma-channel")) {
+ 		chan->direction = DMA_MEM_TO_DEV;
++		xdev->common.directions |= BIT(DMA_MEM_TO_DEV);
+ 		chan->id = xdev->mm2s_chan_id++;
+ 		chan->tdest = chan->id;
+ 
+@@ -2881,6 +2882,7 @@ static int xilinx_dma_chan_probe(struct xilinx_dma_device *xdev,
+ 		   of_device_is_compatible(node,
+ 					   "xlnx,axi-dma-s2mm-channel")) {
+ 		chan->direction = DMA_DEV_TO_MEM;
++		xdev->common.directions |= BIT(DMA_DEV_TO_MEM);
+ 		chan->id = xdev->s2mm_chan_id++;
+ 		chan->tdest = chan->id - xdev->dma_config->max_channels / 2;
+ 		chan->has_vflip = of_property_read_bool(node,
+-- 
+2.48.1
 
