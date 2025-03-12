@@ -1,278 +1,218 @@
-Return-Path: <linux-kernel+bounces-558589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99938A5E834
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:17:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEAA3A5E83C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:17:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C54CC17A18C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:17:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86140189D02E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076D11F0E38;
-	Wed, 12 Mar 2025 23:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9344C1F2B90;
+	Wed, 12 Mar 2025 23:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Ehc7Dvcw"
-Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazolkn19010002.outbound.protection.outlook.com [52.103.67.2])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ChrNTiDY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD111F1517;
-	Wed, 12 Mar 2025 23:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741821438; cv=fail; b=fdO6T1LApLTjhO4VbfIhsU6IwoH7daDRSXTXnCSr2xi81AtKk5I5jdFB2b7TTQXco4sp8EBT/HSKM4XSW5UvkfDa1GjZW4HAF9fckByYarS5gxikpUlfVyMiZmNi1eR4a49Jq10vKb/KeiIla5iwS96ywSiLuapqJll/92UbE48=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741821438; c=relaxed/simple;
-	bh=K6WukhTjalWsQe+n+6Tv76rm5LNZab1hitRba/6uCiw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mxObQSjGteHSbUAiTnHF0Hki2HRZD7NYP3eX2T1Vxhzo7ScVTG8StcCfgIu2vBFwEDgMrpMnO5tNuTAgnI+nbM6e7dznbWS57KDd2kt/bMkV2U1z24XullzUvLYmj5fK7zqTN47rjDSJnOlaTVHNCt6K3fghyamZYyzeDvvTwfw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Ehc7Dvcw; arc=fail smtp.client-ip=52.103.67.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r5GsU2RAqf0DFCTi/p09FgqFUQolQHoIyPFlI2rxM2xX+wkm6eHZp9KN/h969i3+6zzH8zBsOFcjcsDMgk2XMc4WpDoKiOZ64/15BV8vYhix+MpZtFwW9erdPbiX7vmrDarx6HJVYzykS9YNduVqYkaGPSi1PFdLKx6N1BUWogFo1V6RDP7mpk7Vily0u7QErqebkUvEYOQXMQJuLyQMeMdGGBThFgLG1REz3H3sRDqzf3tHhkUUqf6XSlw0dLP6ld+SpTyJPbckMg6JnlDBW+3A2FEQhDSj3awd8RkDHLvKtu6oEuQmAyj3Y1DCGFNLk2jTSPcFWEVdzupXU5pXEw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f4vvww9v+SacrEJKoTdJITLehYVwNp6+vV6KFBSSwMw=;
- b=SBDaUiJzNDpONLoOM3N9ixnA/iRz/Q8FMg51YHueaQzdcpBNjFU9/+V/WU4FQ6k/mlhHcKwc5r6JFTkkk2S49QJWuuvlr6mdTNgjbHuirFuF1Et4fbXpguUP/CaSa2R3l1s/VuQctPGaxAqjp0ERteb+nwpaYz9bW7RplruUIpbv4n3zfo/jlufmYqDxv+69W/Eo41eDatyI2Jy0cqxhflc9whAI++H04pnppK6DcTSJElKlXTejdXvwFd+75BmpEF23/NUX1Ajy1gTivEj+1sCHILedTFCgN6Rwmw4UOcC+5jHhBN640PxjCUsivIibXY2AUTC4L7eFXs4MZnE2Sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f4vvww9v+SacrEJKoTdJITLehYVwNp6+vV6KFBSSwMw=;
- b=Ehc7DvcwQo6y9Z6XAYRWETM9aQfnbYLw16xWXy5p6BLnqPAGCuRTUeYFCPf8yBCf3+vBrMg2Argta/ZtF/J4sSyqdMPdggk5JKgL/eswjRZhx1bflF2gZ0UbN+SNu4rvNTJhLVyUIYXvO1ItL3xa/2PxmVg23OzQW18gUYbxZ2BCxTB+a/R8pG67Xc7LcfWc2m9ACHSr2X6WEu1Oel3q92tGf373cjwFKFhobnjzMPrnGI+uQ0yJKjcyZ2NJj9cOR4I6NPJxytpn95f37pVTkaot3nOSKlzUXnPbpC5deUCvU4O3qnughSlaz8ZIw9T1Lml6/Dl46i+pJl2CKqNMQQ==
-Received: from PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:1eb::14) by MAZPR01MB8163.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:84::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.27; Wed, 12 Mar
- 2025 23:17:08 +0000
-Received: from PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::1b4f:5587:7637:c5a5]) by PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::1b4f:5587:7637:c5a5%3]) with mapi id 15.20.8511.028; Wed, 12 Mar 2025
- 23:17:08 +0000
-Message-ID:
- <PN0PR01MB10393C19522C3D75500E770B1FED02@PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM>
-Date: Thu, 13 Mar 2025 07:17:04 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: cadence: Fix NULL pointer error for ops
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: "lpieralisi@kernel.org >> Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Chen Wang <unicornxw@gmail.com>,
- kw@linux.com, robh@kernel.org, s-vadapalli@ti.com,
- thomas.richard@bootlin.com, bwawrzyn@cisco.com,
- wojciech.jasko-EXT@continental-corporation.com, kishon@kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- sophgo@lists.linux.dev
-References: <20250312153346.GA678711@bhelgaas>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20250312153346.GA678711@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG3P274CA0014.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::26)
- To PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:1eb::14)
-X-Microsoft-Original-Message-ID:
- <52cfd0bf-3139-40c6-aa73-85fa11b2af23@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17CA1EE7A5;
+	Wed, 12 Mar 2025 23:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741821453; cv=none; b=anWoRJuHgb/HgFeuJiF6hVCD1q1W4cr/ukCQVSWEzrYZym9vegQiEIRL7MnLm2HadlGBCX9NyDaEL3Ysf84t3qUOhEpx8EwHtOyO4hiGWHyABUhUjqytEFTgmVkcMODaIGeUKoAkyFfWq5ig7dfz4IVHOL/z0vP0zsBZdGJxolY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741821453; c=relaxed/simple;
+	bh=02EX/DMIDDWf9CWuaXFpleHjT8LOS9O+SlqdOnu+alw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HR3iW8kFuQE2VlP9VE+s09qsXHwjKaNyDuzBKiUEqEq7qjA4ndBYlJjRTZemJmThb+4z+EC/7m9uGMU89KRM5vt9sfDPFiwTmC2JJpxbhiNdn++BCQoWR6HnZHKjlBPTyJUs9JRNzprQwHXkngIV102tKpWEHf/OkObd/siuYCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ChrNTiDY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CAKruW008924;
+	Wed, 12 Mar 2025 23:17:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YxUIuMuJ8heLhO7n/roAvP6nMwwqgMTF3z65WOJS+lE=; b=ChrNTiDYUmKKJ9k9
+	hCg7bnLOrdkfpkLnzpcBOu5c23KEXV6ZtlDTPJAm7VBVXmSXfYrlOeP5axy78QEK
+	z4FvrlFZavYX+cN4j3T8v4LrGZv9t2aWdVRLgbxYubwM5gayeIWfAd7HMX03KLin
+	REYq3AiPN53E1FXrJL11U1ItwJPIpjTPiSYGob/+tME0y2tDcs7QWYjcKeYt6dLv
+	TywjcyDAAusMShc/0n483ZSLr0tBbYT/DelahZ/MGmUcw6MR3nWCiE5qWIpBMp6k
+	/Ek4EmNQZlompprZgCIgKAIsua9bB2+8KVfSoH9aFgQfVImby64n4/SLxJ3TP0lM
+	8YZIfA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2rbvkv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 23:17:13 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52CNHC01030751
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 23:17:12 GMT
+Received: from [10.110.30.156] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Mar
+ 2025 16:17:11 -0700
+Message-ID: <9d30efc3-3315-4ff5-8eb0-c50bccc0a725@quicinc.com>
+Date: Wed, 12 Mar 2025 16:17:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN0PR01MB10393:EE_|MAZPR01MB8163:EE_
-X-MS-Office365-Filtering-Correlation-Id: 87556c5b-c28e-4ec5-1553-08dd61bc0279
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|15080799006|7092599003|461199028|8060799006|5072599009|19110799003|6090799003|1602099012|3412199025|10035399004|4302099013|440099028|41001999003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VUN3d2IvVUp0NUpSS3pvbGRoR0JMKzlQZFRPVEhFSmZaN3N5ZVJoZ2RjTDgw?=
- =?utf-8?B?SU5GVnlVc0o4WUE2QWxEYjZDUzVJa1BMZkJ4dmFxMmpFbGwyRmk4MWJFQTds?=
- =?utf-8?B?aUY1QzhReFM1REZINnBueElvWHcxQTBvemZPTGJnUmhPSWlaVjhxSnB1SWFn?=
- =?utf-8?B?cWZJb3ZKaXZLNlhtNm5lamx4dDQ0UlQxOThaL1UzdUJMWnF0Z0xacU5EcWRY?=
- =?utf-8?B?aCtEVGMxMmd2cUdIWkd4elhWRWthdk45WlpSdFhDY1FnMUoxWFl4YktlUnFI?=
- =?utf-8?B?Mm5nQm5iamlrbzRVVVVjeXZ0Mi9TSSs2Z0ZDMjQyRWt5WUNVN0Jwd2Vta3d2?=
- =?utf-8?B?TEpsR3VYUjBJd3hDMlBRRnpjb2c3aFdtVWljNms2R1BQWTZiNm1KU01Wbmta?=
- =?utf-8?B?NThZUCtlNm1ZL2YwWStpYkg3ZlBzMWdpaVh1ZDZhZERHU3U3M3QxMG11SG4r?=
- =?utf-8?B?R29mbDQ0VEtudWRUYm5DZUZ6YzJiWU5US29iMzlUK2xXazRBZTRDNDQrQVFU?=
- =?utf-8?B?SnVNL3RTSDZOWHN6eUhGaHVOUnp5eC9SZW9oaThIK0N4c2FRRUtQKzZIRU5N?=
- =?utf-8?B?ZEpFZVdkVCtFa3JLZS9ZeW4zRFErRm5ZcGp6QVVwSnBDWFhWZVVxQ1ZHOWhJ?=
- =?utf-8?B?bUZkbXJFWHArdDlLRzJUM1BIYWRTUUR4NE5SelF4ZDNpNXJ2RDJlWkFUTGo4?=
- =?utf-8?B?M1YxdzE5ajhRRVBnRVJxcHZlZWthc0Q3VUtZMm1IRTFZZUpuZ0E3UkpBcmJx?=
- =?utf-8?B?NDJUSEhjSzJQeXdDYXdRRTZ3N004eGx2aE40RFVaMHdhRUVBOVpQRzMwQVVE?=
- =?utf-8?B?RTZSaDdBRzRIS1JDTXlSYzBsWWM2elF6dGZGYXpqWlJVOXhSbC9BUmlyc3Vn?=
- =?utf-8?B?TDl3dHRhNFN5NHF2MC9DcE94b3hYQVhNUDdYU2dwNmNEamhvaGFtY1Y1WVdq?=
- =?utf-8?B?SXdBQ0wzeUxUVml1akdoRktpa255c29KSzF1emE3aWhCYWxRRkZKTzF5Smc4?=
- =?utf-8?B?MzRpQ3hTaENzN245VjI1b2xYdFZPVnZyVWJDTHB5Q2hxeUdid01sa3hKNFkz?=
- =?utf-8?B?RHlpRlRTTGRnQVpuekJJeHdhUVJzWjdQWitLVDBWd3M0Q0Qyc25PcEZWK3VQ?=
- =?utf-8?B?Ym9lUzZnUHFJb29NM0VFM0t1NXkybXdiSndzY3h4MEYreDduNm1NWnBCeFBm?=
- =?utf-8?B?ckFOc2ovZlVnSnExZ0JBUFhzVzZNSnR6UVA3M0Z0NjdSb0hybExKWHFxamNS?=
- =?utf-8?B?SHVHUmg0bzBRL3hnTHZUcEdNdHhzM1llZjN3cHZFU05mY3JXSEJpT3pHWVF2?=
- =?utf-8?B?MHRqV1VXS1ZmYkJWdGF5aUE5ZFVMcEtHSzU2MjFoMTBtVTZYaUEwd2lCNFFO?=
- =?utf-8?B?eUxGQTQ0WURsV0xLUXJsdWpydGQ0MDkzd2NtZGFGekw3M0wxSGl1dmlWZS8z?=
- =?utf-8?B?Yks3Y0c5TmdTdWd4OUkrTjJBY2JJbWI3YURjQ0lDV3ZOdzN2VnFQWDUySXhY?=
- =?utf-8?B?YUtiUGRWWlRtTmJjay9NbUZNUGZ0aTVXM3pKVzdTRVkyYmhDZkFUd0ZFUllX?=
- =?utf-8?B?aDN3cElZaVpMVk5OeFJNWUpwOWJ3ZjdBTjhIOXhCTU5uWS80NGgrZHRPWmpn?=
- =?utf-8?B?SG5VQ0Q1Vk84U2NsVWM5K2pVKzVsaHFBM0FncFpHQ0JLSFVma3RNbFoxZWxs?=
- =?utf-8?B?d2p6T21HRFpVbXlSSUV4Z1VyZ3FxbXg1cSt0OWYyRDF3SWF0ZUY1dlpxVFZT?=
- =?utf-8?Q?oDV9KN8jcPW3RULxnel+AboygF6pXIMsPNrTGkU?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dkIwUVY2SWVSQWVhdDNQeFJRODFiV2h0cnc5M1Z3bTc3R0pQVzRQa0ZQZmpi?=
- =?utf-8?B?N1EyWDQxaUxkUGlkMWNpY2RSUTBoQUtIazlPampyalhEVjJCY3Y2MmI0clhR?=
- =?utf-8?B?eXQ3d2tnR205Q0Z0Y0k1aUpwL2FiWUpJSXlxMk1mYklpbm9xZUw3TTdRZHlS?=
- =?utf-8?B?L0JrQ3FXZHZYUTYxM201dk1xVFNjaXI0NVVsWm1KMzlZZWpnODJwRUVCN3Fw?=
- =?utf-8?B?cEJNSStpTXpyd2FUa2tXcnRaREhKd2JoZ1owbEV6c3hLeFp2WmF4Wms0d3VB?=
- =?utf-8?B?RVhEMkpOTW5kdTN4NVh3R2hLa3lhQnJ5THBOb0hhQzRwNEU5cC8zc1dGZ21j?=
- =?utf-8?B?eDJMRzZkYWpYc3NsOVVhVklRSXRjK01iQlI2elYySFdFTmJuQWp2RXBBbGdL?=
- =?utf-8?B?SGVLT3loMFNZS2FhNVJiaDlKM3hFa0l2cWU1SWVVeVcrOC9tQmNPMzVmNkha?=
- =?utf-8?B?dSttZURKQVBubGFSVXhyRkV4am9Nd2NFSE5BQnN6bHM1WXM0TkJkRTlyUlRv?=
- =?utf-8?B?T3QzOU1RQ2JlNWZKbXViOE0vWHI1bzZHRHN3S1hKdU5Mbk8xYVF1eURZMmpL?=
- =?utf-8?B?N2ZNUmdORlVMdzU2S2dXM21kYWVwclBhN1kwckRxbWFacTJsdWpRY1FZVU0r?=
- =?utf-8?B?UCtMbGR2dHNIbk42TXVCSVgxWTdFTk9MS1NzblVSSzNqNExaZWNCVTZwalpK?=
- =?utf-8?B?NnFUU25sWHFEUzExYjRDN2NSYW5qSDNoK0FTTW1CUU10anNmb01CWnkyK29G?=
- =?utf-8?B?MnhzNkVVQXEvVFpFZ2NPN1h0WVdORU5WZGw3cFlPMkFYWFdZK2ZOZ21PQ1cr?=
- =?utf-8?B?dDVDMjJRRitmLzg5US9PRm9OT1dHSTF4b0M4T3dMYjdWc3JxeGw5dVhiSmpz?=
- =?utf-8?B?ZDRLZ1lBaGw3TUFrNGJOYnNvYWMxWHNwUmJsWnV3djBqL3hRdFdWbFJQWWg3?=
- =?utf-8?B?TFlPcERhWUZoMkQxMUkwZVZyMTdmQmo4d3lLanVpL3dFRGk4R3ZBbWoyMkpu?=
- =?utf-8?B?VHB2NTdVajNncVNhRElaeE80VnpXK1BYa3FFRWRidGF0SzdEWHVMcHV6NlNC?=
- =?utf-8?B?ZFo1N2NhaktZM0VFNWRtaCtGR3YzcDFCNW1tcmlicG5pTkE2cG9KQ3NVTVhV?=
- =?utf-8?B?NlRMOUswdG5DWTBWbldMeithL3dnT0NXWmNweFBKdll1UUhxM2lwRExiM2ZX?=
- =?utf-8?B?R2JlR25WUjFhVzBEYXFnZEtjUmRxT2FwejNtN3lJNzNXMFAwczMrUldqTmtQ?=
- =?utf-8?B?a1c5VGF2TWk2eTliWlA4dmVBYWo5SGxhRXJBZm5hdjlpU0xLaVhBbWRqSXM0?=
- =?utf-8?B?K1FVZVdOZ0VaZXgvaEdPcnd2aEtVdUZXYWFIdnFFQWxWejdKRU5Yd1JFRVVC?=
- =?utf-8?B?ZFB0aWJpZzdkMzBlUkxhQ0owNG9SOHlKOWVMZ1hxTzBoVTNUNmk3UVRmMlJ0?=
- =?utf-8?B?dGZnMHpVUDUyQkhHMllaWDhSb0tUU3o1M01UNmhYdm1uRVlwc1E3Z1RGVngx?=
- =?utf-8?B?UG5lZGpJcHBJbXl6eUs1cU1lQ0NwMktuTWJFeFcxU1pVbjc1SnJPcUV2dFlC?=
- =?utf-8?B?OHhSY1psUmNxV3FoMndrdmZMMWpvclp6bzdGb3NWdnlzNytzZWhObWFZZE9U?=
- =?utf-8?B?L1FJSWNSendNYzQ4UG5KbkQ1QUtkMVRNdXJOS2U0THB6NjVyWTVLWTZudlNk?=
- =?utf-8?B?S0ZhcENYM1RIdk5kcTBTV0taamxRcEJyblZvRk1hdzB1NFh3WlZyNk50V0l0?=
- =?utf-8?Q?PfnP3oXysgEC1THCA966UdWRQx52WvT7fojVCBs?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87556c5b-c28e-4ec5-1553-08dd61bc0279
-X-MS-Exchange-CrossTenant-AuthSource: PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 23:17:08.2843
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAZPR01MB8163
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v35 00/31] Introduce QC USB SND audio offloading support
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+CC: Greg KH <gregkh@linuxfoundation.org>, <srinivas.kandagatla@linaro.org>,
+        <mathias.nyman@intel.com>, <perex@perex.cz>, <conor+dt@kernel.org>,
+        <dmitry.torokhov@gmail.com>, <corbet@lwn.net>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <tiwai@suse.com>, <krzk+dt@kernel.org>,
+        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
+        <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>
+References: <20250219004754.497985-1-quic_wcheng@quicinc.com>
+ <Z7W_Vz_kVDjIcp5N@linaro.org>
+ <82ce69a3-d248-494f-6ddb-098f392c78a0@quicinc.com>
+ <Z8a4WYq4GqWBVNyX@linaro.org>
+ <ee5cb6bc-963a-4e31-8ac4-07120fb9ff70@quicinc.com>
+ <Z8ikt2K0uekU2dVZ@linaro.org>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <Z8ikt2K0uekU2dVZ@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=D6NHKuRj c=1 sm=1 tr=0 ts=67d215f9 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=qC_FGOx9AAAA:8 a=HTecfl5s7U67J0CcF8QA:9 a=QEXdDO2ut3YA:10
+ a=fsdK_YakeE02zTmptMdW:22
+X-Proofpoint-GUID: SH3MPeN7uBXWUDXli7heUJQlcykyMSVV
+X-Proofpoint-ORIG-GUID: SH3MPeN7uBXWUDXli7heUJQlcykyMSVV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_06,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
+ adultscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 impostorscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120166
 
+Hi Stephan,
 
-On 2025/3/12 23:33, Bjorn Helgaas wrote:
-> On Wed, Mar 12, 2025 at 10:08:43AM +0800, Chen Wang wrote:
->> Hello, Bjorn, Lorenzo & Manivannan,
+On 3/5/2025 11:23 AM, Stephan Gerhold wrote:
+> On Tue, Mar 04, 2025 at 02:46:28PM -0800, Wesley Cheng wrote:
+>> On 3/4/2025 12:22 AM, Stephan Gerhold wrote:
+>>> On Mon, Mar 03, 2025 at 06:39:52PM -0800, Wesley Cheng wrote:
+>>>> On 2/19/2025 3:24 AM, Stephan Gerhold wrote:
+>>>>> On Tue, Feb 18, 2025 at 04:47:23PM -0800, Wesley Cheng wrote:
+>>>>>> Requesting to see if we can get some Acked-By tags, and merge on usb-next.
+>>>>>>
+>>>>>> Several Qualcomm based chipsets can support USB audio offloading to a
+>>>>>> dedicated audio DSP, which can take over issuing transfers to the USB
+>>>>>> host controller.  The intention is to reduce the load on the main
+>>>>>> processors in the SoC, and allow them to be placed into lower power modes.
+>>>>>> There are several parts to this design:
+>>>>>>   1. Adding ASoC binding layer
+>>>>>>   2. Create a USB backend for Q6DSP
+>>>>>>   3. Introduce XHCI interrupter support
+>>>>>>   4. Create vendor ops for the USB SND driver
+>>>>>>
+>>>>>>       USB                          |            ASoC
+>>>>>> --------------------------------------------------------------------
+>>>>>>                                    |  _________________________
+>>>>>>                                    | |sm8250 platform card     |
+>>>>>>                                    | |_________________________|
+>>>>>>                                    |         |           |
+>>>>>>                                    |      ___V____   ____V____
+>>>>>>                                    |     |Q6USB   | |Q6AFE    |
+>>>>>> |     |"codec" | |"cpu"    |
+>>>>>>                                    |     |________| |_________|
+>>>>>>                                    |         ^  ^        ^
+>>>>>>                                    |         |  |________|
+>>>>>>                                    |      ___V____    |
+>>>>>>                                    |     |SOC-USB |   |
+>>>>>>    ________       ________               |        |   |
+>>>>>>   |USB SND |<--->|QC offld|<------------>|________|   |
+>>>>>>   |(card.c)|     |        |<----------                |
+>>>>>>   |________|     |________|___     | |                |
+>>>>>>       ^               ^       |    | |    ____________V_________
+>>>>>>       |               |       |    | |   |APR/GLINK             |
+>>>>>>    __ V_______________V_____  |    | |   |______________________|
+>>>>>>   |USB SND (endpoint.c)     | |    | |              ^
+>>>>>>   |_________________________| |    | |              |
+>>>>>>               ^               |    | |   ___________V___________
+>>>>>>               |               |    | |->|audio DSP              |
+>>>>>>    ___________V_____________  |    |    |_______________________|
+>>>>>>   |XHCI HCD                 |<-    |
+>>>>>>   |_________________________|      |
+>>>>>>
+>>>>>
+>>>>> As I noted on v34 [1], this version is still missing instructions and
+>>>>> changes needed for testing this series. The device tree changes don't
+>>>>> need to be part of the same series, but there should be at least a link
+>>>>> provided to give other people the chance to provide Tested-by tags.
+>>>>>
+>>>>> IMO we shouldn't merge this series without those instructions, otherwise
+>>>>> we risk that this just ends up being dead code that no one can use.
+>>>>>
+>>>>> Can you please share the device tree changes for a board upstream and
+>>>>> any other changes needed to be able to test this series? E.g. for
+>>>>> sm8250-mtp.dts, based on the examples in your cover letter.
+>>>>>
+>>>>
+>>>> To clarify I'm testing this on sm8350 in recent times, but utilizing sm8250
+>>>> definitions for the ASoC platform card, as the platform sound card is more
+>>>> or less the same between the two SoCs.  Back
+>>>> when I started this series, sm8350 was missing a bunch of dependent
+>>>> components, such as aDSP not being loaded, and missing platform sound card
+>>>> definition, so I had to define and enable those on my own, which required a
+>>>> slew of new DT nodes, hence why it wasn't as straight forward to include
+>>>> the DT definitions yet for sm8350.  Not thinking that this series would
+>>>> take as long as it did, I was planning on separating out the DT changes in
+>>>> a different series to enable offloading for the devices I have tested with.
+>>>> (sm8150, sm8250 and sm8350)
+>>>>
+>>>> There's still a pretty big chunk of dependencies missing from sm8350, so
+>>>> those would also be handled in the follow up DT submission.  For now, its a
+>>>> much bigger hurdle to get the main/functional changes in, and that was
+>>>> taking a significant amount of time from my end to manage.
+>>>>
+>>>> If you want, I can give you the changes I have offline to enable this for
+>>>> sm8350, since I haven't spent time formatting/prepping the changes for
+>>>> submission yet.
+>>>>
+>>>
+>>> Can you push it to a public branch somewhere (e.g. on CodeLinaro)? I was
+>>> talking to some people from the community about testing this on some of
+>>> the smartphones we have in upstream, so it wouldn't help if I just have
+>>> the changes privately.
 >>
->> I find your names in MAINTAINERS for PCI controllers, could you please pick
->> this patch for v6.15?
+>> Which CLO project/branch did you want me to push it to?  Sorry, I haven't
+>> worked too much with the CLO open branches.  I have an account though.
 >>
->> Or who else should I submit a PR for this patch to?
->>
->> BTW, Siddharth signed the review for this patch (see [1]). Please add this
->> when submitting, thanks in advance.
->>
->> Link:
->> https://lore.kernel.org/linux-pci/20250307151949.7rmxl22euubnzzpj@uda0492258/
->> [1]
->> On 2025/3/4 16:17, Chen Wang wrote:
->>> From: Chen Wang <unicorn_wang@outlook.com>
->>>
->>> ops of struct cdns_pcie may be NULL, direct use
->>> will result in a null pointer error.
->>>
->>> Add checking of pcie->ops before using it.
->>>
->>> Fixes: 40d957e6f9eb ("PCI: cadence: Add support to start link and verify link status")
-> AFAICT this does not fix a problem in 40d957e6f9eb, since there is no
-> driver that calls cdns_pcie_host_setup() or cdns_pcie_ep_setup() with
-> a NULL pcie->ops pointer, so I think you should drop this Fixes: tag.
->
-> I see that you probably want to *add* an sg2042 driver [2] where you
-> don't need a pcie->ops pointer (although the current patch at [2]
-> *does* supply a valid pointer).
->
-> So there's no urgency to apply this until you post an sg2042 driver
-> that doesn't fill in the pcie->ops pointer.  The best way to do this
-> would be to include this patch in the series that adds the sg2042
-> driver.
->
-> Then the commit log can explain exactly why we need it (because the
-> sg2042 in the next patch of the series doesn't need a pcie->ops
-> pointer), and it will be easy to review.
->
-> [2] https://lore.kernel.org/r/ddedd8f76f83fea2c6d3887132d2fe6f2a6a02c1.1736923025.git.unicorn_wang@outlook.com
+> 
+> Any project/branch is fine for me, I suggested CLO only because I
+> assumed you already have an account there.
+> 
+> You should be able to create a personal project and push it there. You
+> could also use the fork button on
+> https://git.codelinaro.org/linaro/linux/kernel/torvalds/linux to avoid
+> having to push the full history yourself. It should result in a project
+> similar to mine: https://git.codelinaro.org/stephan.gerhold/linux
+> 
 
-OK, I'll do as you say.
+Can you access the following branch?
+https://git.codelinaro.org/clo/linux-kernel/kernel-qcom/-/commits/usb_audio_offload/?ref_type=heads
 
-Regards,
+Should have the DT change I'm using to verify.
 
-Chen
-
->>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
->>> ---
->>>    drivers/pci/controller/cadence/pcie-cadence-host.c | 2 +-
->>>    drivers/pci/controller/cadence/pcie-cadence.c      | 4 ++--
->>>    drivers/pci/controller/cadence/pcie-cadence.h      | 6 +++---
->>>    3 files changed, 6 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
->>> index 8af95e9da7ce..9b9d7e722ead 100644
->>> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
->>> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
->>> @@ -452,7 +452,7 @@ static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
->>>    	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_PCI_ADDR1(0), addr1);
->>>    	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(0), desc1);
->>> -	if (pcie->ops->cpu_addr_fixup)
->>> +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
->>>    		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
->>>    	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(12) |
->>> diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
->>> index 204e045aed8c..56c3d6cdd70e 100644
->>> --- a/drivers/pci/controller/cadence/pcie-cadence.c
->>> +++ b/drivers/pci/controller/cadence/pcie-cadence.c
->>> @@ -90,7 +90,7 @@ void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 busnr, u8 fn,
->>>    	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(r), desc1);
->>>    	/* Set the CPU address */
->>> -	if (pcie->ops->cpu_addr_fixup)
->>> +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
->>>    		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
->>>    	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(nbits) |
->>> @@ -120,7 +120,7 @@ void cdns_pcie_set_outbound_region_for_normal_msg(struct cdns_pcie *pcie,
->>>    	}
->>>    	/* Set the CPU address */
->>> -	if (pcie->ops->cpu_addr_fixup)
->>> +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
->>>    		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
->>>    	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(17) |
->>> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
->>> index f5eeff834ec1..436630d18fe0 100644
->>> --- a/drivers/pci/controller/cadence/pcie-cadence.h
->>> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
->>> @@ -499,7 +499,7 @@ static inline u32 cdns_pcie_ep_fn_readl(struct cdns_pcie *pcie, u8 fn, u32 reg)
->>>    static inline int cdns_pcie_start_link(struct cdns_pcie *pcie)
->>>    {
->>> -	if (pcie->ops->start_link)
->>> +	if (pcie->ops && pcie->ops->start_link)
->>>    		return pcie->ops->start_link(pcie);
->>>    	return 0;
->>> @@ -507,13 +507,13 @@ static inline int cdns_pcie_start_link(struct cdns_pcie *pcie)
->>>    static inline void cdns_pcie_stop_link(struct cdns_pcie *pcie)
->>>    {
->>> -	if (pcie->ops->stop_link)
->>> +	if (pcie->ops && pcie->ops->stop_link)
->>>    		pcie->ops->stop_link(pcie);
->>>    }
->>>    static inline bool cdns_pcie_link_up(struct cdns_pcie *pcie)
->>>    {
->>> -	if (pcie->ops->link_up)
->>> +	if (pcie->ops && pcie->ops->link_up)
->>>    		return pcie->ops->link_up(pcie);
->>>    	return true;
->>>
->>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+Thanks
+Wesley Cheng
 
