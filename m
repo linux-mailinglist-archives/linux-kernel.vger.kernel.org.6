@@ -1,189 +1,116 @@
-Return-Path: <linux-kernel+bounces-557856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 303FBA5DEA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:09:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE37A5DEA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3F0C1883AEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:09:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE583A22CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA2B24CEEA;
-	Wed, 12 Mar 2025 14:09:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63016245013
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E4124BC1C;
+	Wed, 12 Mar 2025 14:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aFpeO10C"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F9722DFB4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741788547; cv=none; b=gwjdBmCustE+EkGi49SOPD7kXFxrp8P7t+O3FaJu1W2kXMv8v3tP/eBDcHF8IQqhrXRTjVhfLP2c36gbu7BXKCU7zs5SAUpwWKRgydgGDAanF//4TXnfLyUvF3PHEx7/Q/MXR1IqMZyPPwoSca26NXchyvApLD7a3ZgfjBfdrac=
+	t=1741788576; cv=none; b=iqMipXkiZfvE2hlwTF47kxn+lUJuovwK5KZBWDOb/D8q48rl/s+K+ZSzbJdoKYdK6dZyfs4ORiTL5PJKlGYOJi2qNJZJ2UsqmKOEmpWVJZnG/J6otdjwoO3ToY5SLyeFXpc7+5EanNcU6Xl2GN0Sr1y0EHC53VU10mHoR+Z+DEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741788547; c=relaxed/simple;
-	bh=xTbMTL7WEs0BFVycF0m7F9W9YWnDQyVH/eFGlm0GWwQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h+ab+HWke+rMTdhi7beGpWo+Csg7gQX4EBNw9PuElUG35I0EUQ9IMRf2OQ7ehcdAfJBlXN8skcPV6GV7qj2Fh5f9uHopLhUSlQoOgeRQv4CEGvt3lMWhEqqPmdUV0jXFQat1Qy7LoU6/Y3HHxh3VrL884rdfAIyIUhR6/YAKmJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D65F152B;
-	Wed, 12 Mar 2025 07:09:11 -0700 (PDT)
-Received: from [10.34.111.154] (e126645.nice.Arm.com [10.34.111.154])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E7533F5A1;
-	Wed, 12 Mar 2025 07:08:57 -0700 (PDT)
-Message-ID: <24bc804e-305f-4273-922a-a24070aa3e56@arm.com>
-Date: Wed, 12 Mar 2025 15:08:51 +0100
+	s=arc-20240116; t=1741788576; c=relaxed/simple;
+	bh=WOtEqvsTAlWvvP5rpIOeUjc+MqZj+OxBToAOp2fiQkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SgiU3ys9e8o77IlrNzW1UoZCyx3QU4JSGXqV6t5LriXh6YiQtVSNYmv4wmkA4QbMrssNPw0nq51h/GLfZJSF9UFSHMPWVQMjj95v4wIina2EY86GhWXYgxrQrxyvn8Bznv8au8MD85biUBEa5P4DghHjdI7pFSRocXfTYg4GbCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aFpeO10C; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741788574;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rpJ4Bp2vaPkKMLBIs0XU/8MrkCeKduDmY2mvsnVWvGk=;
+	b=aFpeO10CRyrPR66R2Jno3BROrfdi3v6VdRfrstN+uF6qhzZbkTKIo3VblcMT+anNNCrmMm
+	fMlbYrWk2wh86sn/WbuhU96FhSQwMzeCwHBA1bWG88DbPmX9Km/ctt+teygdixnodSyHiV
+	eDFX0fowzyqDRGkZrZNYpFXQCv72d5g=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-673-dhtiEiVbPvulbnmBjEoPVA-1; Wed, 12 Mar 2025 10:09:33 -0400
+X-MC-Unique: dhtiEiVbPvulbnmBjEoPVA-1
+X-Mimecast-MFC-AGG-ID: dhtiEiVbPvulbnmBjEoPVA_1741788572
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c53b4b0d69so1268257385a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:09:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741788572; x=1742393372;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rpJ4Bp2vaPkKMLBIs0XU/8MrkCeKduDmY2mvsnVWvGk=;
+        b=f17Ouw81Hlpp0k1OUAtP/DE4DBzDYTzKd8ITt1AuKNcK3JKOXutFLheKst68sYSgvs
+         yMMH1SmpypGJ0DfWjiQExZ760jWm4B8OfNTOwHSnV3RpqqAxRGa6SDyTLtoH2VeKqaDR
+         EHF2TVR4+XffsuQcsHN45BItHpOSnDy94ke0dgG/ziM1fRTlpQQ6br9zFSOm+KgYoJc0
+         UAkZId+EWrJQEZ21x/W14czkHG1QP4tmmPUY9dh6wUf70X/kXRhgQ7Ml3EwpU2JCE9kW
+         4BEijUvzto81Ly7CFjx0rUvgcYWrSu7odAieXYZg4VrdaOEExYUcG2nNIanvhE1hiXVI
+         jhQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVo0xSuG+R9swwyW/WmkKXO0qUFKPciDVoNlgxd0/SxQO8lOZ5E9VPpKkuPBHkgYhSYm9gKYz4Itb01Zhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7m3NGgkyBHx8WOmvX6pMc5kke2BcP6g9aGUK2GgGXc7Wyiott
+	YlKTtcIqs4mDfs3jIhmZ5Axu8VylxUHBlQcSn4o9Ss2hCCmPTw9xxoq1IMdav9NjU1DJV7ox1LS
+	ExM0QZQfvPfoHDQ84WpxJNkXaHEFHaTgnBJOQ9HbDwTT5v7G/t/yRLQJozLxM6g==
+X-Gm-Gg: ASbGncsidNZz/xaGpSHCsYOMMhzpjvZZyUf30zSpCy1BsGQpZEqXaKEh1g6HcenqYDn
+	YUQu+uvXHwgzLCB9gW3vu4zozMChLPODzAbHcdpUVqvyVdBAVZXogQm0x/qcXwbUSlg9EiqpdQu
+	r66STVSQ1dK2oLBLEtFca6y07okCgN+OQ89g/HFYCQHwU7A8PDbD2lJBYg/aJxPBxdWrOn/9Rqu
+	MEfblNlSvD1rfrmp2OMRtA8DzNPaPLUoArnkpPQnQR6rFxENxc+gdESLYWq5cTshdxsBD5d9qmn
+	vc3r+tI=
+X-Received: by 2002:a05:620a:1b85:b0:7c5:4b24:468d with SMTP id af79cd13be357-7c54b244796mr1835005285a.2.1741788572685;
+        Wed, 12 Mar 2025 07:09:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZVAVnFr8TuudXs0D2kTM0FEywRnFo1M8MBCogN3k6/Xg3Qw7mBw/qIldth+aY3HnE9WFX8Q==
+X-Received: by 2002:a05:620a:1b85:b0:7c5:4b24:468d with SMTP id af79cd13be357-7c54b244796mr1835003585a.2.1741788572459;
+        Wed, 12 Mar 2025 07:09:32 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c53c07b645sm727548385a.77.2025.03.12.07.09.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 07:09:31 -0700 (PDT)
+Date: Wed, 12 Mar 2025 10:09:29 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Jinjiang Tu <tujinjiang@huawei.com>
+Cc: jimsiak <jimsiak@cslab.ece.ntua.gr>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+	linux-mm@kvack.org, wangkefeng.wang@huawei.com
+Subject: Re: Using userfaultfd with KVM's async page fault handling causes
+ processes to hung waiting for mmap_lock to be released
+Message-ID: <Z9GVmeHJSftfQPPF@x1.local>
+References: <79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr>
+ <20250307072133.3522652-1-tujinjiang@huawei.com>
+ <46ac83f7-d3e0-b667-7352-d853938c9fc9@huawei.com>
+ <dee238e365f3727ab16d6685e186c53c@cslab.ece.ntua.gr>
+ <Z8t2Np8fOM9jWmuu@x1.local>
+ <bb6eb768-2e3b-0419-6a7d-9ed9165a2024@huawei.com>
+ <Z880ejmfqjY1cuX7@x1.local>
+ <bb6bba1d-fabe-cc14-2521-ffbf2e31ac63@huawei.com>
+ <20a6b1c1-389e-b57a-7a5c-d1b0a7185412@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7 v5] sched/fair: Rework feec() to use cost instead of
- spare capacity
-To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, lukasz.luba@arm.com, rafael.j.wysocki@intel.com,
- linux-kernel@vger.kernel.org
-Cc: qyousef@layalina.io, hongyan.xia2@arm.com, christian.loehle@arm.com,
- luis.machado@arm.com, qperret@google.com
-References: <20250302210539.1563190-1-vincent.guittot@linaro.org>
- <20250302210539.1563190-4-vincent.guittot@linaro.org>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <20250302210539.1563190-4-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20a6b1c1-389e-b57a-7a5c-d1b0a7185412@huawei.com>
 
-Hello Vincent,
+On Wed, Mar 12, 2025 at 05:18:26PM +0800, Jinjiang Tu wrote:
+> Since this patch works, could you please send a formal patch to maillist?
 
-On 3/2/25 22:05, Vincent Guittot wrote:
-> feec() looks for the CPU with highest spare capacity in a PD assuming that
-> it will be the best CPU from a energy efficiency PoV because it will
-> require the smallest increase of OPP. Although this is true generally
-> speaking, this policy also filters some others CPUs which will be as
-> efficients because of using the same OPP.
-> In fact, we really care about the cost of the new OPP that will be
-> selected to handle the waking task. In many cases, several CPUs will end
-> up selecting the same OPP and as a result using the same energy cost. In
-> these cases, we can use other metrics to select the best CPU for the same
-> energy cost.
-> 
-> Rework feec() to look 1st for the lowest cost in a PD and then the most
-> performant CPU between CPUs. The cost of the OPP remains the only
-> comparison criteria between Performance Domains.
-> 
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->   kernel/sched/fair.c | 466 +++++++++++++++++++++++---------------------
->   1 file changed, 246 insertions(+), 220 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index d3d1a2ba6b1a..a9b97bbc085f 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
+Will do it later today, thanks.
 
-[...]
+-- 
+Peter Xu
 
-> +static bool update_best_cpu(struct energy_cpu_stat *target,
-> +			    struct energy_cpu_stat *min,
-> +			    int prev, struct sched_domain *sd)
->   {
-> -	unsigned long max_util = eenv_pd_max_util(eenv, pd_cpus, p, dst_cpu);
-> -	unsigned long busy_time = eenv->pd_busy_time;
-> -	unsigned long energy;
-> -
-> -	if (dst_cpu >= 0)
-> -		busy_time = min(eenv->pd_cap, busy_time + eenv->task_busy_time);
-> +	/*  Select the one with the least number of running tasks */
-> +	if (target->nr_running < min->nr_running)
-> +		return true;
-> +	if (target->nr_running > min->nr_running)
-> +		return false;
->   
-> -	energy = em_cpu_energy(pd->em_pd, max_util, busy_time, eenv->cpu_cap);
-> +	/* Favor previous CPU otherwise */
-> +	if (target->cpu == prev)
-> +		return true;
-> +	if (min->cpu == prev)
-> +		return false;
->   
-> -	trace_sched_compute_energy_tp(p, dst_cpu, energy, max_util, busy_time);
-> +	/*
-> +	 * Choose CPU with lowest contention. One might want to consider load
-> +	 * instead of runnable but we are supposed to not be overutilized so
-> +	 * there is enough compute capacity for everybody.
-> +	 */
-
-I'm not sure I understand the comment. With UCLAMP_MAX tasks, a CPU can lack
-compute capacity while not being tagged as overutilized. IIUC this is actually
-the goal of UCLAMP_MAX.
-
-With the following workload:
-- 2 tasks A with duty_cycle=30%, UCLAMP_MIN/MAX=(0,1), niceness=0
-- 2 tasks B with duty_cycle=70%, UCLAMP_MIN/MAX=(0,1), niceness=-10
-The workload runs on a Pixel6 with a reduced cpuset of [1,2,7], i.e. 2 little
-CPUs (1,2) capa=160 and one big CPU (7) capa=1024.
-CPU7 is avoided by the tasks as their UCLAMP_MAX setting make them fit on the
-little CPUs.
-
-select_best_cpu() prefers to place tasks based on nr_running. If the 2 tasks A
-end up being placed on one little CPU, and the 2 tasks B are placed on the
-other little CPU, feec() is theoretically unable to balance the workload.
-In practice, a kworker ends up spawning on one of these 2 little CPUs and tasks
-are shuffled, so the pattern breaks after ~30ms.
-
-This pattern seems problematic as tasks A are:
-- smaller (30% < 70%)
-- nicer (0 > -10)
-than tasks B. So I assume the correct task placement should be one task of each
-type on each little CPU.
-
-------
-
-There are some comments in the load balancer code:
-1.
-/* Computing avg_load makes sense only when group is overloaded */
-2.
-/*
-* Computing avg_load makes sense only when group is fully busy or
-* overloaded
-*/
-
-IIUC, the load is only meaningful when there is not enough compute capacity
-to estimate the task size, otherwise util_avg makes more sense. It seems that
-when it comes to UCLAMP_MAX task, CPUs are placed in this exact situation:
-load_avg makes more sense that util_avg.
-However, in this situation, energy computations also lose sense since they
-are based on the util_avg values.
-
-------
-
-select_best_cpu() could check the CPU load before checking nr_running, but it
-would be meaningless if there is enough CPU time for all the tasks.
-
-Maybe CPU load should then be checked only if the system doesn't have enough
-CPU time. But this would be equivalent to:
-- remove UCLAMP_MAX in cpu_overutilized()
-- when the system is overutilized (no UCLAMP_MAX involved), go back to the
-   load balancer
-
-In other words, I don't really see how it is possible to reconciliate UCLAMP_MAX
-tasks with EAS as EAS relies on util_avg values, and UCLAMP_MAX forces to
-rely on load_avg value rather than util_avg.
-
-Regards,
-Pierre
-
-
-> +	if ((target->runnable * min->capa * sd->imbalance_pct) >=
-> +			(min->runnable * target->capa * 100))
-> +		return false;
->   
-> -	return energy;
-> +	return true;
->   }
 
