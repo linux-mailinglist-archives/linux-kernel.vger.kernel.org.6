@@ -1,443 +1,127 @@
-Return-Path: <linux-kernel+bounces-557312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8C0A5D72F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:18:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D9B4A5D732
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:19:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDA4189D3FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:18:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93FBA3B8B8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2E31E9B3F;
-	Wed, 12 Mar 2025 07:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FE01E9B19;
+	Wed, 12 Mar 2025 07:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SKxlu+sP"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IhiQYPQV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF93D1C8628;
-	Wed, 12 Mar 2025 07:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8B619D087
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741763889; cv=none; b=pJSRV8kYuYRRKHB96NafBhOAFS6Ru5S+jOm8G+8TH432uDH9eFK1nklC3POHbT10g/XWXSKbALBHjPzpvLP2AtjYZdL0Ongw/vFtDpPx3uB/JjteghCqQk9970raXfWagrA+bRkM5J87bbX40R8GgRAWHZTxjw65B4mQm7kjP/U=
+	t=1741763977; cv=none; b=D3yppifHbev7EZd6NK+TVypI2N9R99tip3i7jpf8qyyDvfe+4X9PbsiFyIAwTO6h64by6AFhkGyTDf10Bsl6nM2580q9JkDohVLznh2wmUOqqeS3DQN/eQe29O2bbbvDnrv5q5Dnr2vZ+XImZk8BW/EYlI8G0IkjtMq+c+mTetQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741763889; c=relaxed/simple;
-	bh=4rqV3oBvxm0/qDJ0ZOaANRfeB8c6RO4+mTqqNxr54S4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dLFErn2/PQ0hl6OaNt4e5O+cGCfGhFTmTdPB/T091HInGDqJGPa1yZONZz+rHx8XuC7cB67ngL7yxkWEaLxfY+dRO2bLfsk8AC1pxdGwjl1CSOMBulXBKQ4ZoLpLSacGYJM5f689R8EzNL3s7amB6nexn8qavELeaqIav1drPfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SKxlu+sP; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BKa626007033;
-	Wed, 12 Mar 2025 07:17:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=p9zABO
-	oKZ3EWVV/pag03HMCyagJaHfs03y4vdzUeiTc=; b=SKxlu+sPHeG4HBAOGA77Dq
-	ywmhCySaN1OsGMlqoAl3Sw03vZ0UcrJmziwMAYbfqnbpItS6piTf0oCPpWUXHWYD
-	xEIUuA20Og0b6DyuttqlbdBdsG/XveOkTkDvFg8sCMzg8EuaAFpPU2SAkg5Z2CTG
-	yNYR/GIQ1JJuzOyuQOqdMK6hgzpTKS0/vh933WTlgM1qaCWUxCNu/N7UHgOLkXnw
-	5l0hKPvFFiVpyIdZHwmU1ftgdN8jI/YZhFWj9BMogXW+2xG9PEaL8/+OdJ2H+UK6
-	4d4LyuBUZtJRpahUP0V4dVmzP2+rvkrgpGTO2bLk9GwpfbHkBiwx/uAr+S5Tm0/Q
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45avbpj8f1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 07:17:37 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52C73g0r024657;
-	Wed, 12 Mar 2025 07:17:36 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45avbpj8ex-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 07:17:36 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52C6NuXd026064;
-	Wed, 12 Mar 2025 07:17:35 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atspauyr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 07:17:35 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52C7HXqx18743736
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Mar 2025 07:17:34 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AF77758059;
-	Wed, 12 Mar 2025 07:17:33 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0991A58043;
-	Wed, 12 Mar 2025 07:17:27 +0000 (GMT)
-Received: from [9.61.240.129] (unknown [9.61.240.129])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Mar 2025 07:17:26 +0000 (GMT)
-Message-ID: <ba66843b-1732-43dc-8296-aee5eb387293@linux.ibm.com>
-Date: Wed, 12 Mar 2025 12:47:25 +0530
+	s=arc-20240116; t=1741763977; c=relaxed/simple;
+	bh=j1MmPAJrCJiyEHj5wHX6rQ9J+oKq+bu9LCn1BxNo39c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+MmFonzaXCOU70bkVMlU5U1aFupOh+y95/GNrn532G2t3YuwqTErzA5tuhvQLgfXoRU/BcY82rsrY+cx6kzntXjnAk+a/PfkW+mKE9UqsttNcg6K3iYJCEEQdQ/PKRT7BeNlECd7tOqRKH+4bhwinrRJUppTxoiE0yngM/jaWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IhiQYPQV; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741763976; x=1773299976;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=j1MmPAJrCJiyEHj5wHX6rQ9J+oKq+bu9LCn1BxNo39c=;
+  b=IhiQYPQV/K68zpvGcjpoTtm4u2CyKJ21ZwucFB0DrECUtTKiqGfOOStq
+   GLBP15pG7Wa/AGWjirhupnz0fg6h9GFIV4Wq3F0tzQfCvI8+arQoeC07h
+   u5gRwu22PY23wiShbjPvCfLq/EGb6UOFA+deCl+Ros9BvUSL3jUF+7Z44
+   PSBWHbW0vcx0NaGkfPxWdiAwJnompqd4tthBH8gjCkYxU0vxB4Z4NJeLu
+   fixum1Z+D/8dBVNBdIxNqwqfD5jSKYUPb7q+il7fRVWzxqN0jdckBe0VE
+   qlePPApeQ6PRaaAbXoC5gv27sCWV3HWMntk5xRr01VJPHFKV5JZi2ttBg
+   g==;
+X-CSE-ConnectionGUID: Gix7ZoGCSpuZUbL5Kcnl9Q==
+X-CSE-MsgGUID: 4YErzOK0QmaYC9tnSWz/BQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="42552054"
+X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
+   d="scan'208";a="42552054"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 00:19:35 -0700
+X-CSE-ConnectionGUID: NV311y7mS8Kwc1SBdy3/8g==
+X-CSE-MsgGUID: gKryZ21NStm1k3nTkaYWmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
+   d="scan'208";a="151368636"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa002.jf.intel.com with ESMTP; 12 Mar 2025 00:19:32 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 9DC581FC; Wed, 12 Mar 2025 09:19:30 +0200 (EET)
+Date: Wed, 12 Mar 2025 09:19:30 +0200
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Joerg Roedel <jroedel@suse.de>
+Cc: Alexey Gladkov <legion@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	=?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Joerg Roedel <joro@8bytes.org>, 
+	"Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>, Dave Hansen <dave.hansen@intel.com>, 
+	Ingo Molnar <mingo@kernel.org>, x86@kernel.org, hpa@zytor.com, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org, 
+	Larry.Dewey@amd.com
+Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
+Message-ID: <dzs3mxfvac2t7itqcv2vnz3cidspwvjinimkbn3ddygxunc2q3@akdoea7e2gon>
+References: <20250310133833.GHZ87rWfuV6WgQTsoh@fat_crate.local>
+ <Z878IRbbzIbUDQvj@example.org>
+ <20250310151154.GOZ88BOinZVkbYEx0w@fat_crate.local>
+ <104b6d4f-2848-42f4-a134-3373d12d9424@suse.com>
+ <Z88Iv0w8_l9i7_8l@example.org>
+ <Z9AFyG7798M4VNJQ@suse.de>
+ <29fa0d10-0d3d-47a0-8832-b2c7fc04f637@suse.com>
+ <20250311110748.GCZ9AZhPYYAz-MXErv@fat_crate.local>
+ <Z9B_yS_d8ny9hYUX@example.org>
+ <Z9CDjecpydOsRhUy@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/bpf: Fix sockopt selftest failure on powerpc
-Content-Language: en-GB
-To: Saket Kumar Bhaskar <skb99@linux.ibm.com>, bpf@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ast@kernel.org, hbathini@linux.ibm.com, andrii@kernel.org,
-        daniel@iogearbox.net, mykolal@fb.com, martin.lau@linux.dev,
-        song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
-        kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-        jolsa@kernel.org, shuah@kernel.org, miaxu@meta.com
-References: <20250311084647.3686544-1-skb99@linux.ibm.com>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <20250311084647.3686544-1-skb99@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: va6jlByc_HjrOfEJacSFo0vhXa4k_jnU
-X-Proofpoint-GUID: u7S7954LJyzvu2_TNl-Dos5hKotEdZQI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_02,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
- mlxlogscore=999 malwarescore=0 impostorscore=0 bulkscore=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 mlxscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503120045
+In-Reply-To: <Z9CDjecpydOsRhUy@suse.de>
 
+On Tue, Mar 11, 2025 at 07:40:13PM +0100, Joerg Roedel wrote:
+> On Tue, Mar 11, 2025 at 07:24:09PM +0100, Alexey Gladkov wrote:
+> > On Tue, Mar 11, 2025 at 12:07:48PM +0100, Borislav Petkov wrote:
+> > > On Tue, Mar 11, 2025 at 11:22:23AM +0100, J�rgen Gro� wrote:
+> > > > I can live with that, as long as we make it possible to make e.g.
+> > > > /sys/guest/xen a link to /sys/hypervisor (if xen is the hypervisor
+> > > > the guest is directly running on). This means that /sys/guest/*/type
+> > > > should not conflict with /sys/hypervisor/type.
+> > > 
+> > > Yeah, so Joerg and I came up with this on IRC:
+> > > 
+> > > /sys/hypervisor/{sev,tdx}
+> > 
+> > This directory is for guest-side information, right ?
+> > 
+> > > 
+> > > * It should not disturb the current hierarchy there
+> > > 
+> > > * No need for a new hierarchy like /sys/guest - we haz enough and besides,
+> > > /sys/hypervisor sounds like the right place already
+> > 
+> > The /sys/hypervisor is for host-side information ?
+> 
+> No, all under /sys/hypervisor is for guest-side information. There is
+> not directory for host-side information yet. The question is whether a
+> directory in SYSFS is needed, or whether there are other means to expose
+> the same information.
 
-On 11/03/25 2:16 pm, Saket Kumar Bhaskar wrote:
-> The SO_RCVLOWAT option is defined as 18 in the selftest header,
-> which matches the generic definition. However, on powerpc,
-> SO_RCVLOWAT is defined as 16. This discrepancy causes
-> sol_socket_sockopt() to fail with the default switch case on powerpc.
->
-> This commit fixes by defining SO_RCVLOWAT as 16 for powerpc.
->
-> Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-> ---
->   tools/testing/selftests/bpf/progs/bpf_tracing_net.h | 4 ++++
->   1 file changed, 4 insertions(+)
->
-> diff --git a/tools/testing/selftests/bpf/progs/bpf_tracing_net.h b/tools/testing/selftests/bpf/progs/bpf_tracing_net.h
-> index 59843b430f76..bcd44d5018bf 100644
-> --- a/tools/testing/selftests/bpf/progs/bpf_tracing_net.h
-> +++ b/tools/testing/selftests/bpf/progs/bpf_tracing_net.h
-> @@ -15,7 +15,11 @@
->   #define SO_KEEPALIVE		9
->   #define SO_PRIORITY		12
->   #define SO_REUSEPORT		15
-> +#if defined(__TARGET_ARCH_powerpc)
-> +#define SO_RCVLOWAT		16
-> +#else
->   #define SO_RCVLOWAT		18
-> +#endif
->   #define SO_BINDTODEVICE		25
->   #define SO_MARK			36
->   #define SO_MAX_PACING_RATE	47
+TDX module information (version, supported features, etc) is crucial for
+bug reporting. I think it makes sense to present it in sysfs.
 
-
-Applied this patch on linux-mainline and tested. It fixes the issue.
-
-Without this patch:
-
-#define SO_RCVBUF               8
-#define SO_KEEPALIVE            9
-#define SO_PRIORITY             12
-#define SO_REUSEPORT            15
-#define SO_RCVLOWAT             18
-#define SO_BINDTODEVICE         25
-#define SO_MARK                 36
-
-
-  ./test_progs -t sockopt
-#20      bpf_iter_setsockopt:OK
-#21      bpf_iter_setsockopt_unix:OK
-create_netns:PASS:create netns 0 nsec
-create_netns:PASS:set lo up 0 nsec
-create_netns:PASS:add veth 0 nsec
-create_netns:PASS:bring veth up 0 nsec
-test_setget_sockopt:PASS:open skel 0 nsec
-test_setget_sockopt:PASS:if_nametoindex 0 nsec
-test_setget_sockopt:PASS:load skel 0 nsec
-test_setget_sockopt:PASS:attach cgroup 0 nsec
-test_setget_sockopt:PASS:attach_cgroup 0 nsec
-test_tcp:PASS:start_server 0 nsec
-test_tcp:PASS:connect_to_fd_server 0 nsec
-test_tcp:FAIL:nr_listen unexpected nr_listen: actual 0 != expected 1
-test_tcp:FAIL:nr_connect unexpected nr_connect: actual 0 != expected 1
-test_tcp:FAIL:nr_active unexpected nr_active: actual 0 != expected 1
-test_tcp:FAIL:nr_passive unexpected nr_passive: actual 0 != expected 1
-test_tcp:FAIL:nr_socket_post_create unexpected nr_socket_post_create: 
-actual 0 != expected 2
-test_tcp:PASS:nr_bind 0 nsec
-test_tcp:PASS:start_server 0 nsec
-test_tcp:PASS:connect_to_fd_server 0 nsec
-test_tcp:FAIL:nr_listen unexpected nr_listen: actual 0 != expected 1
-test_tcp:FAIL:nr_connect unexpected nr_connect: actual 0 != expected 1
-test_tcp:FAIL:nr_active unexpected nr_active: actual 0 != expected 1
-test_tcp:FAIL:nr_passive unexpected nr_passive: actual 0 != expected 1
-test_tcp:FAIL:nr_socket_post_create unexpected nr_socket_post_create: 
-actual 0 != expected 2
-test_tcp:PASS:nr_bind 0 nsec
-test_udp:PASS:start_server 0 nsec
-test_udp:FAIL:nr_socket_post_create unexpected nr_socket_post_create: 
-actual 0 < expected 1
-test_udp:PASS:nr_bind 0 nsec
-test_udp:PASS:start_server 0 nsec
-test_udp:FAIL:nr_socket_post_create unexpected nr_socket_post_create: 
-actual 0 < expected 1
-test_udp:PASS:nr_bind 0 nsec
-test_ktls:PASS:start_server 0 nsec
-test_ktls:PASS:connect_to_fd 0 nsec
-test_ktls:PASS:accept 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:read 0 nsec
-test_ktls:FAIL:nr_listen unexpected nr_listen: actual 0 != expected 1
-test_ktls:FAIL:nr_connect unexpected nr_connect: actual 0 != expected 1
-test_ktls:FAIL:nr_active unexpected nr_active: actual 0 != expected 1
-test_ktls:FAIL:nr_passive unexpected nr_passive: actual 0 != expected 1
-test_ktls:FAIL:nr_socket_post_create unexpected nr_socket_post_create: 
-actual 0 != expected 2
-test_ktls:PASS:nr_bind 0 nsec
-test_ktls:FAIL:nr_fin_wait1 unexpected nr_fin_wait1: actual 0 != expected 1
-test_ktls:PASS:start_server 0 nsec
-test_ktls:PASS:connect_to_fd 0 nsec
-test_ktls:PASS:accept 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:read 0 nsec
-test_ktls:FAIL:nr_listen unexpected nr_listen: actual 0 != expected 1
-test_ktls:FAIL:nr_connect unexpected nr_connect: actual 0 != expected 1
-test_ktls:FAIL:nr_active unexpected nr_active: actual 0 != expected 1
-test_ktls:FAIL:nr_passive unexpected nr_passive: actual 0 != expected 1
-test_ktls:FAIL:nr_socket_post_create unexpected nr_socket_post_create: 
-actual 0 != expected 2
-test_ktls:PASS:nr_bind 0 nsec
-test_ktls:FAIL:nr_fin_wait1 unexpected nr_fin_wait1: actual 0 != expected 1
-test_nonstandard_opt:PASS:start_server 0 nsec
-test_nonstandard_opt:PASS:connect_to_fd_server 0 nsec
-test_nonstandard_opt:PASS:getsockopt prog 0 nsec
-test_nonstandard_opt:PASS:accept 0 nsec
-test_nonstandard_opt:PASS:getsockopt_flags 0 nsec
-test_nonstandard_opt:PASS:cb_flags_set 0 nsec
-test_nonstandard_opt:PASS:start_server 0 nsec
-test_nonstandard_opt:PASS:connect_to_fd_server 0 nsec
-test_nonstandard_opt:PASS:getsockopt prog 0 nsec
-test_nonstandard_opt:PASS:accept 0 nsec
-test_nonstandard_opt:PASS:getsockopt_flags 0 nsec
-test_nonstandard_opt:PASS:cb_flags_set 0 nsec
-#303     setget_sockopt:FAIL
-#326/1   sockopt/getsockopt: no expected_attach_type:OK
-#326/2   sockopt/getsockopt: wrong expected_attach_type:OK
-#326/3   sockopt/getsockopt: bypass bpf hook:OK
-#326/4   sockopt/getsockopt: return EPERM from bpf hook:OK
-#326/5   sockopt/getsockopt: no optval bounds check, deny loading:OK
-#326/6   sockopt/getsockopt: read ctx->level:OK
-#326/7   sockopt/getsockopt: deny writing to ctx->level:OK
-#326/8   sockopt/getsockopt: read ctx->optname:OK
-#326/9   sockopt/getsockopt: read ctx->retval:OK
-#326/10  sockopt/getsockopt: deny writing to ctx->optname:OK
-#326/11  sockopt/getsockopt: read ctx->optlen:OK
-#326/12  sockopt/getsockopt: deny bigger ctx->optlen:OK
-#326/13  sockopt/getsockopt: ignore >PAGE_SIZE optlen:OK
-#326/14  sockopt/getsockopt: support smaller ctx->optlen:OK
-#326/15  sockopt/getsockopt: deny writing to ctx->optval:OK
-#326/16  sockopt/getsockopt: deny writing to ctx->optval_end:OK
-#326/17  sockopt/getsockopt: rewrite value:OK
-#326/18  sockopt/setsockopt: no expected_attach_type:OK
-#326/19  sockopt/setsockopt: wrong expected_attach_type:OK
-#326/20  sockopt/setsockopt: bypass bpf hook:OK
-#326/21  sockopt/setsockopt: return EPERM from bpf hook:OK
-#326/22  sockopt/setsockopt: no optval bounds check, deny loading:OK
-#326/23  sockopt/setsockopt: read ctx->level:OK
-#326/24  sockopt/setsockopt: allow changing ctx->level:OK
-#326/25  sockopt/setsockopt: read ctx->optname:OK
-#326/26  sockopt/setsockopt: allow changing ctx->optname:OK
-#326/27  sockopt/setsockopt: read ctx->optlen:OK
-#326/28  sockopt/setsockopt: ctx->optlen == -1 is ok:OK
-#326/29  sockopt/setsockopt: deny ctx->optlen < 0 (except -1):OK
-#326/30  sockopt/setsockopt: deny ctx->optlen > input optlen:OK
-#326/31  sockopt/setsockopt: ignore >PAGE_SIZE optlen:OK
-#326/32  sockopt/setsockopt: allow changing ctx->optlen within bounds:OK
-#326/33  sockopt/setsockopt: deny write ctx->retval:OK
-#326/34  sockopt/setsockopt: deny read ctx->retval:OK
-#326/35  sockopt/setsockopt: deny writing to ctx->optval:OK
-#326/36  sockopt/setsockopt: deny writing to ctx->optval_end:OK
-#326/37  sockopt/setsockopt: allow IP_TOS <= 128:OK
-#326/38  sockopt/setsockopt: deny IP_TOS > 128:OK
-#326/39  sockopt/can attach only BPF_CGROUP_SETSOCKOP:OK
-#326/40  sockopt/can attach only BPF_CGROUP_GETSOCKOP:OK
-#326     sockopt:OK
-#327     sockopt_inherit:OK
-#328     sockopt_multi:OK
-#329     sockopt_qos_to_cc:OK
-#330     sockopt_sk:OK
-
-All error logs:
-create_netns:PASS:create netns 0 nsec
-create_netns:PASS:set lo up 0 nsec
-create_netns:PASS:add veth 0 nsec
-create_netns:PASS:bring veth up 0 nsec
-test_setget_sockopt:PASS:open skel 0 nsec
-test_setget_sockopt:PASS:if_nametoindex 0 nsec
-test_setget_sockopt:PASS:load skel 0 nsec
-test_setget_sockopt:PASS:attach cgroup 0 nsec
-test_setget_sockopt:PASS:attach_cgroup 0 nsec
-test_tcp:PASS:start_server 0 nsec
-test_tcp:PASS:connect_to_fd_server 0 nsec
-test_tcp:FAIL:nr_listen unexpected nr_listen: actual 0 != expected 1
-test_tcp:FAIL:nr_connect unexpected nr_connect: actual 0 != expected 1
-test_tcp:FAIL:nr_active unexpected nr_active: actual 0 != expected 1
-test_tcp:FAIL:nr_passive unexpected nr_passive: actual 0 != expected 1
-test_tcp:FAIL:nr_socket_post_create unexpected nr_socket_post_create: 
-actual 0 != expected 2
-test_tcp:PASS:nr_bind 0 nsec
-test_tcp:PASS:start_server 0 nsec
-test_tcp:PASS:connect_to_fd_server 0 nsec
-test_tcp:FAIL:nr_listen unexpected nr_listen: actual 0 != expected 1
-test_tcp:FAIL:nr_connect unexpected nr_connect: actual 0 != expected 1
-test_tcp:FAIL:nr_active unexpected nr_active: actual 0 != expected 1
-test_tcp:FAIL:nr_passive unexpected nr_passive: actual 0 != expected 1
-test_tcp:FAIL:nr_socket_post_create unexpected nr_socket_post_create: 
-actual 0 != expected 2
-test_tcp:PASS:nr_bind 0 nsec
-test_udp:PASS:start_server 0 nsec
-test_udp:FAIL:nr_socket_post_create unexpected nr_socket_post_create: 
-actual 0 < expected 1
-test_udp:PASS:nr_bind 0 nsec
-test_udp:PASS:start_server 0 nsec
-test_udp:FAIL:nr_socket_post_create unexpected nr_socket_post_create: 
-actual 0 < expected 1
-test_udp:PASS:nr_bind 0 nsec
-test_ktls:PASS:start_server 0 nsec
-test_ktls:PASS:connect_to_fd 0 nsec
-test_ktls:PASS:accept 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:read 0 nsec
-test_ktls:FAIL:nr_listen unexpected nr_listen: actual 0 != expected 1
-test_ktls:FAIL:nr_connect unexpected nr_connect: actual 0 != expected 1
-test_ktls:FAIL:nr_active unexpected nr_active: actual 0 != expected 1
-test_ktls:FAIL:nr_passive unexpected nr_passive: actual 0 != expected 1
-test_ktls:FAIL:nr_socket_post_create unexpected nr_socket_post_create: 
-actual 0 != expected 2
-test_ktls:PASS:nr_bind 0 nsec
-test_ktls:FAIL:nr_fin_wait1 unexpected nr_fin_wait1: actual 0 != expected 1
-test_ktls:PASS:start_server 0 nsec
-test_ktls:PASS:connect_to_fd 0 nsec
-test_ktls:PASS:accept 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:setsockopt 0 nsec
-test_ktls:PASS:read 0 nsec
-test_ktls:FAIL:nr_listen unexpected nr_listen: actual 0 != expected 1
-test_ktls:FAIL:nr_connect unexpected nr_connect: actual 0 != expected 1
-test_ktls:FAIL:nr_active unexpected nr_active: actual 0 != expected 1
-test_ktls:FAIL:nr_passive unexpected nr_passive: actual 0 != expected 1
-test_ktls:FAIL:nr_socket_post_create unexpected nr_socket_post_create: 
-actual 0 != expected 2
-test_ktls:PASS:nr_bind 0 nsec
-test_ktls:FAIL:nr_fin_wait1 unexpected nr_fin_wait1: actual 0 != expected 1
-test_nonstandard_opt:PASS:start_server 0 nsec
-test_nonstandard_opt:PASS:connect_to_fd_server 0 nsec
-test_nonstandard_opt:PASS:getsockopt prog 0 nsec
-test_nonstandard_opt:PASS:accept 0 nsec
-test_nonstandard_opt:PASS:getsockopt_flags 0 nsec
-test_nonstandard_opt:PASS:cb_flags_set 0 nsec
-test_nonstandard_opt:PASS:start_server 0 nsec
-test_nonstandard_opt:PASS:connect_to_fd_server 0 nsec
-test_nonstandard_opt:PASS:getsockopt prog 0 nsec
-test_nonstandard_opt:PASS:accept 0 nsec
-test_nonstandard_opt:PASS:getsockopt_flags 0 nsec
-test_nonstandard_opt:PASS:cb_flags_set 0 nsec
-#303     setget_sockopt:FAIL
-Summary: 7/40 PASSED, 0 SKIPPED, 1 FAILED
-
-
-With this patch:
-
-
-#if defined(__TARGET_ARCH_powerpc)
-#define SO_RCVLOWAT             16
-#else
-#define SO_RCVLOWAT             18
-#endif
-#define SO_BINDTODEVICE         25
-#define SO_MARK                 36
-#define SO_MAX_PACING_RATE      47
-
-
-./test_progs -t sockopt
-#20      bpf_iter_setsockopt:OK
-#21      bpf_iter_setsockopt_unix:OK
-#303     setget_sockopt:OK
-#326/1   sockopt/getsockopt: no expected_attach_type:OK
-#326/2   sockopt/getsockopt: wrong expected_attach_type:OK
-#326/3   sockopt/getsockopt: bypass bpf hook:OK
-#326/4   sockopt/getsockopt: return EPERM from bpf hook:OK
-#326/5   sockopt/getsockopt: no optval bounds check, deny loading:OK
-#326/6   sockopt/getsockopt: read ctx->level:OK
-#326/7   sockopt/getsockopt: deny writing to ctx->level:OK
-#326/8   sockopt/getsockopt: read ctx->optname:OK
-#326/9   sockopt/getsockopt: read ctx->retval:OK
-#326/10  sockopt/getsockopt: deny writing to ctx->optname:OK
-#326/11  sockopt/getsockopt: read ctx->optlen:OK
-#326/12  sockopt/getsockopt: deny bigger ctx->optlen:OK
-#326/13  sockopt/getsockopt: ignore >PAGE_SIZE optlen:OK
-#326/14  sockopt/getsockopt: support smaller ctx->optlen:OK
-#326/15  sockopt/getsockopt: deny writing to ctx->optval:OK
-#326/16  sockopt/getsockopt: deny writing to ctx->optval_end:OK
-#326/17  sockopt/getsockopt: rewrite value:OK
-#326/18  sockopt/setsockopt: no expected_attach_type:OK
-#326/19  sockopt/setsockopt: wrong expected_attach_type:OK
-#326/20  sockopt/setsockopt: bypass bpf hook:OK
-#326/21  sockopt/setsockopt: return EPERM from bpf hook:OK
-#326/22  sockopt/setsockopt: no optval bounds check, deny loading:OK
-#326/23  sockopt/setsockopt: read ctx->level:OK
-#326/24  sockopt/setsockopt: allow changing ctx->level:OK
-#326/25  sockopt/setsockopt: read ctx->optname:OK
-#326/26  sockopt/setsockopt: allow changing ctx->optname:OK
-#326/27  sockopt/setsockopt: read ctx->optlen:OK
-#326/28  sockopt/setsockopt: ctx->optlen == -1 is ok:OK
-#326/29  sockopt/setsockopt: deny ctx->optlen < 0 (except -1):OK
-#326/30  sockopt/setsockopt: deny ctx->optlen > input optlen:OK
-#326/31  sockopt/setsockopt: ignore >PAGE_SIZE optlen:OK
-#326/32  sockopt/setsockopt: allow changing ctx->optlen within bounds:OK
-#326/33  sockopt/setsockopt: deny write ctx->retval:OK
-#326/34  sockopt/setsockopt: deny read ctx->retval:OK
-#326/35  sockopt/setsockopt: deny writing to ctx->optval:OK
-#326/36  sockopt/setsockopt: deny writing to ctx->optval_end:OK
-#326/37  sockopt/setsockopt: allow IP_TOS <= 128:OK
-#326/38  sockopt/setsockopt: deny IP_TOS > 128:OK
-#326/39  sockopt/can attach only BPF_CGROUP_SETSOCKOP:OK
-#326/40  sockopt/can attach only BPF_CGROUP_GETSOCKOP:OK
-#326     sockopt:OK
-#327     sockopt_inherit:OK
-#328     sockopt_multi:OK
-#329     sockopt_qos_to_cc:OK
-#330     sockopt_sk:OK
-Summary: 8/40 PASSED, 0 SKIPPED, 0 FAILED
-
-Please add below tag.
-
-Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-
-
-Regards,
-
-Venkat.
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
