@@ -1,170 +1,192 @@
-Return-Path: <linux-kernel+bounces-557540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A41A5DA8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:38:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7CFA5DA8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:38:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D2F618966FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:38:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 230FB3AEBE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E21523E343;
-	Wed, 12 Mar 2025 10:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DCF23E331;
+	Wed, 12 Mar 2025 10:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vATPkzFD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NfWsYtWn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4A8233D85;
-	Wed, 12 Mar 2025 10:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD1C233D85
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741775899; cv=none; b=tKZ5zRTS/fRbzU1N7tSjvRDaLHLKG2eXYBxOT7x/DgmYOhWLreqYQwEno0qkhSuiGnGjEcdKKNUkoYXqLIgZzo+IKiYEANmzqL8XqgmLrNeaMaancT+gev1PbWEgxDh764lSxH6b4kpWNugi1e4CmKFKtAkOQ9wbv3ocu8mylyM=
+	t=1741775915; cv=none; b=uZFhJoA299KHxl9mrEsVrJiyAbb6aDOxNo1QV+zh1Agh5s2vOSVfxcqKb2BLuHUPVgCYiRqRFDFO4JWV5xYuhGXrxb1HMOe6JYFE8CBGlUqbHl+iLNRXhX6Fzl+EM/8Vcd/dLFzvXmFaLT5fIOJONh9hJkYf3ImQDo+mLqqOggA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741775899; c=relaxed/simple;
-	bh=bCeCT0ekEY01oH6fjXfZhEActp17j78VQ1OXq1k5gNA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gp1LC71s0wtdx10ICR/6FDmgZ3U0iWGlbL7jzJeqg0JY+xsIRhbzh59Bg3CrAqi5lukz4MBKV9UHMYB7A/+9lAIlDLisXGukV637sc+PdBgON6RdDLu3+zZ2AWNKTYcDjTiKPohId+7WzrSLDs4DH4Clcmp9Wus6dSYgHX62zWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vATPkzFD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF095C4CEE3;
-	Wed, 12 Mar 2025 10:38:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741775897;
-	bh=bCeCT0ekEY01oH6fjXfZhEActp17j78VQ1OXq1k5gNA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vATPkzFDEDNpKHPD82kpz4lxsP5oMtOY1IyZLAneSgx48OxT9R88c3YPoBqB9TzX+
-	 mAYEGb9p4eVFKOhV/yCtOSyyx2QCQ7wV5ad25YKAdLmGdnY8NPCl/jleoiwgDOIsCl
-	 FbVjF/80WNhCmaZAXAg38718NLVbi3ftM+yFkKin2y2/D+0eYunS6m3I7z2XadWbit
-	 LLow3VPRaIhj2P2lOBxA67dDe7/VwnA52PUtQbPjCGpYVcUzefq5enqRuZ06JpUl6M
-	 4BQuaOVybanzEnlKPL6GvnurY5JUUZut+OlCcaLi4PcUiwPuGOryxGTjndlKjGnhO3
-	 roUQi4DHkM4DA==
-Message-ID: <243b62df-7a0a-4197-9cf4-10ad73a9f421@kernel.org>
-Date: Wed, 12 Mar 2025 11:38:04 +0100
+	s=arc-20240116; t=1741775915; c=relaxed/simple;
+	bh=Y1DCnKwtrKu45SK1HF0hxZWSohkpoJ/OwarjTCL4xEE=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=AYpdHEgMfN74Qlx82RN1evijeIHWD7ypAO1a7+1OrOs9F7necq0E+TPCx/Xy8/Uknjv4D+0diwn35hqzd8sDy1/dlisaBTLQXIeQFqb/Wwzz/72rTglWfG8jkVDIicz4nr2qnr3Oyfa2sLe3+MctkFcCq7Xo1ncRsx2AGTDyO68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NfWsYtWn; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741775914; x=1773311914;
+  h=date:from:to:cc:subject:message-id;
+  bh=Y1DCnKwtrKu45SK1HF0hxZWSohkpoJ/OwarjTCL4xEE=;
+  b=NfWsYtWnkeJfdVkeQ4pkZbzvva1vMZvl5fzp5omMhN+SA5/TOoWSGoY3
+   WsBWmKtpAnXtHFgCMETNj1R9S0m9HgWCNYo0rACJZdZypZ037oW6uA/aN
+   c7IKfg9F8nMKYjcyA5Ml9yrG6mqLu2LTUs81IuaGlXxxO+t0L4y2H07zL
+   dX9+V5NkRUWWOcFUGS4asddixCP/GDL1QIYXR/y9wnpbFtLGMEO4VIjuM
+   l8Xjxp//40dr96AV2LT33hpq0uP+ZMQsCTX+mEtawA7r1VFpcbh8pmKYD
+   OxfIpdPOjZ4jh7o+DDeXxvRD9Uu17McqQgfPx1VvysWHlFuP7+i+SW2x9
+   w==;
+X-CSE-ConnectionGUID: 8oCoOMOfTWO75pdgejrBIQ==
+X-CSE-MsgGUID: NHXJHUi3Txai97JIMXDLMg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="60390645"
+X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
+   d="scan'208";a="60390645"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 03:38:33 -0700
+X-CSE-ConnectionGUID: 2e+7U+ZfTBizo89GV6TLQQ==
+X-CSE-MsgGUID: Et0S++2ARvq+CRSmTdncGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
+   d="scan'208";a="151562859"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 12 Mar 2025 03:38:32 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tsJTq-0008P0-25;
+	Wed, 12 Mar 2025 10:38:30 +0000
+Date: Wed, 12 Mar 2025 18:38:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 4227d39b7deb8704672442894abdd6f1e48caa91
+Message-ID: <202503121820.CMeqFph7-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 1/4] dt-bindings: PCI: qcom: Add MHI registers for
- IPQ9574
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
- quic_srichara@quicinc.com, quic_devipriy@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250312084330.873994-1-quic_varada@quicinc.com>
- <20250312084330.873994-2-quic_varada@quicinc.com>
- <7b2d7f14-4274-4ff0-87a6-ac3dd649df4e@kernel.org>
- <Z9FWVh1NinKOsRNq@hu-varada-blr.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Z9FWVh1NinKOsRNq@hu-varada-blr.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 12/03/2025 10:39, Varadarajan Narayanan wrote:
-> On Wed, Mar 12, 2025 at 09:46:41AM +0100, Krzysztof Kozlowski wrote:
->> On 12/03/2025 09:43, Varadarajan Narayanan wrote:
->>> Append the MHI register range to IPQ9574.
->>
->> Why?
-> 
-> This is needed for ipq5332 to use ipq9574 as fallback compatible.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 4227d39b7deb8704672442894abdd6f1e48caa91  Merge branch into tip/master: 'x86/sev'
 
-This sounds like you incorrect hardware description, because some other
-device needs this.
+elapsed time: 1457m
 
-Your commit msg must explain why you do things, not me keep asking the
-same question over and over.
+configs tested: 100
+configs skipped: 1
 
-In the same time reason "ipq5332 needs it" is not correct reason.
-ipq5332 is not related anyhow to this hardware. Write bindings matching
-the hardware, not some other patches.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-13.2.0
+arc                              allyesconfig    gcc-13.2.0
+arc                   randconfig-001-20250311    gcc-13.2.0
+arc                   randconfig-002-20250311    gcc-13.2.0
+arc                        vdk_hs38_defconfig    gcc-13.2.0
+arm                              allmodconfig    gcc-14.2.0
+arm                              allyesconfig    gcc-14.2.0
+arm                       aspeed_g4_defconfig    clang-21
+arm                   randconfig-001-20250311    gcc-14.2.0
+arm                   randconfig-002-20250311    clang-16
+arm                   randconfig-003-20250311    gcc-14.2.0
+arm                   randconfig-004-20250311    gcc-14.2.0
+arm                         socfpga_defconfig    gcc-14.2.0
+arm64                            allmodconfig    clang-18
+arm64                 randconfig-001-20250311    gcc-14.2.0
+arm64                 randconfig-002-20250311    gcc-14.2.0
+arm64                 randconfig-003-20250311    gcc-14.2.0
+arm64                 randconfig-004-20250311    gcc-14.2.0
+csky                  randconfig-001-20250311    gcc-14.2.0
+csky                  randconfig-002-20250311    gcc-14.2.0
+hexagon                          allmodconfig    clang-21
+hexagon                          allyesconfig    clang-18
+hexagon               randconfig-001-20250311    clang-21
+hexagon               randconfig-002-20250311    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250311    gcc-12
+i386        buildonly-randconfig-002-20250311    clang-19
+i386        buildonly-randconfig-003-20250311    clang-19
+i386        buildonly-randconfig-004-20250311    clang-19
+i386        buildonly-randconfig-005-20250311    clang-19
+i386        buildonly-randconfig-006-20250311    gcc-11
+i386                                defconfig    clang-19
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch             randconfig-001-20250311    gcc-14.2.0
+loongarch             randconfig-002-20250311    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250311    gcc-14.2.0
+nios2                 randconfig-002-20250311    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                randconfig-001-20250311    gcc-14.2.0
+parisc                randconfig-002-20250311    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-16
+powerpc               randconfig-001-20250311    clang-21
+powerpc               randconfig-002-20250311    clang-16
+powerpc               randconfig-003-20250311    gcc-14.2.0
+powerpc64             randconfig-001-20250311    gcc-14.2.0
+powerpc64             randconfig-002-20250311    clang-18
+powerpc64             randconfig-003-20250311    gcc-14.2.0
+riscv                            allmodconfig    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-21
+riscv                 randconfig-001-20250311    gcc-14.2.0
+riscv                 randconfig-002-20250311    gcc-14.2.0
+s390                             allmodconfig    clang-19
+s390                              allnoconfig    clang-15
+s390                             allyesconfig    gcc-14.2.0
+s390                  randconfig-001-20250311    clang-15
+s390                  randconfig-002-20250311    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                    randconfig-001-20250311    gcc-14.2.0
+sh                    randconfig-002-20250311    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250311    gcc-14.2.0
+sparc                 randconfig-002-20250311    gcc-14.2.0
+sparc64               randconfig-001-20250311    gcc-14.2.0
+sparc64               randconfig-002-20250311    gcc-14.2.0
+um                               allmodconfig    clang-21
+um                                allnoconfig    clang-18
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250311    gcc-12
+um                    randconfig-002-20250311    gcc-12
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20250311    gcc-12
+x86_64      buildonly-randconfig-002-20250311    gcc-12
+x86_64      buildonly-randconfig-003-20250311    clang-19
+x86_64      buildonly-randconfig-004-20250311    clang-19
+x86_64      buildonly-randconfig-005-20250311    gcc-12
+x86_64      buildonly-randconfig-006-20250311    gcc-12
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250311    gcc-14.2.0
+xtensa                randconfig-002-20250311    gcc-14.2.0
 
-> 
->>> Fixes: e0662dae178d ("dt-bindings: PCI: qcom: Document the IPQ9574 PCIe controller")
->>
->> What is being fixed here?
-> 
-> Ok, will remove this.
-> 
->>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->>> ---
->>> New patch introduced in this patchset. MHI range was missed in the
->>> initial post
->>> ---
->>>  Documentation/devicetree/bindings/pci/qcom,pcie.yaml | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
->>> index 8f628939209e..77e66ab8764f 100644
->>> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
->>> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
->>> @@ -175,7 +175,7 @@ allOf:
->>>        properties:
->>>          reg:
->>>            minItems: 5
->>> -          maxItems: 5
->>> +          maxItems: 6
->>
->> Why qcom,pcie-ipq6018 gets mhi? Nothing in commit msg mentions ipq6018.
-> 
-> Didn't mention ipq6018 as I was under the impression that 'minItems: 5' would
-> apply for ipq6018.
-
-items=5 applies to all of them and there is nothing here claiming that
-items=6 does not apply...
-
-Best regards,
-Krzysztof
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
