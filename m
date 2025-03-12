@@ -1,129 +1,170 @@
-Return-Path: <linux-kernel+bounces-557302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF39DA5D6D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:08:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008F9A5D6D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:08:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56C4E3B8646
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:08:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C80189C58D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C1D1E98E1;
-	Wed, 12 Mar 2025 07:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B641B1EB186;
+	Wed, 12 Mar 2025 07:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="kJ9OTHo/"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D6D1E9B03;
-	Wed, 12 Mar 2025 07:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741763289; cv=pass; b=OnGQf0KIrMt4vdaPpx4GDwMxTkU66Ze5ww2QYHMbTTu/jpHNZIHXdtt/cSkApjjyE5fBJF4BzLl1du+Zzq2TODWQB4c5lZjg+qktXpu4EzsJuFDBqkMPidDFCbfX2mVXDkkd+yOjQ99SD6O/tl1ffWO8X9XFWOLGPctcVQbr8Ug=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741763289; c=relaxed/simple;
-	bh=7p+oikyacJJiwMe3yE4e0yhCjIBDfQdiAL3MxFy3S8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e2SGUQdCLjx9dmwlHlxByIP7+fSd4V8ZnL0SO59Emd3rlIKztFbP3Ba1MrZ8iQWYajXfKILQ4ae9zUT+/IeZm1tQ2liJaslBMU62T9BHoXlq4RxHOAwaXOtShfYEAtC4VIqkTTHw0Cb96qX2VbGazqSUD0dZTztO920cQvJ29Fo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=kJ9OTHo/; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741763271; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZEgAhjA9ROguLoLURQbtlk4kKj3eGazq/UZu/KQIVZBFgfKgZDN7g0T4Pd85wAG6vYGaVBbMt4YR63Hrt1hjvSrAyza6DgEukNFAkCfydDrTYrcoYRWBtl0VZq5/gqtSWQqIzfpNJNmgXv599t4zCy2I+8h44mfzNqDtP1fCDRE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741763271; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=q9IvHI9mqvEQpha6UampmBD0VpGntMKKcQNMy0X+zKY=; 
-	b=gNWddLqyTzcWYVSXNBfLmfW0NSONHfv9MkjqTABcuKHiGTfvypaB/sdlV0Q7YYYdr7hnBJP8CGSX1M7HhJTf63Qp4GNLsDPDNuw5f+KCDA5xxbBSR02RkK201PXmSsgjy99GKt5xSgnNbhkAclUuPpUFU7AjDd7ZtR8A1axzI30=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741763271;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=q9IvHI9mqvEQpha6UampmBD0VpGntMKKcQNMy0X+zKY=;
-	b=kJ9OTHo/2qpO1zlIl5ERCIJ9qmhWJp7trS5Dq9bqjcHXqhN7J1glBEeW9RXQXsRO
-	hawHn1Y/zk2UCXmEOjx/wtYjThJQP/3IuyPxqvX7YqC65M1DdUeoGYTDzkESBVrQ0qo
-	OKDbFX6pQ6Wyw/GlCZX8vLjV4VsACA0K96/YJGGc=
-Received: by mx.zohomail.com with SMTPS id 1741763268591919.6531374825976;
-	Wed, 12 Mar 2025 00:07:48 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 4FB3C1806F4; Wed, 12 Mar 2025 08:07:40 +0100 (CET)
-Date: Wed, 12 Mar 2025 08:07:40 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Anthony Ruhier <aruhier@mailbox.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] power: supply: qcom_battmgr: abs() on POWER_NOW
- property
-Message-ID: <tncsjn6qbcq4ybot3iwbljozrqby4m7xsvo57cod7alojtayos@x4iag47r6tp2>
-References: <20250213-patch-qcomm-bat-uint-power-v1-1-16e7e2a77a02@mailbox.org>
- <yfbgbdugk4xdjpemozdzcuxczx4xd5aphykuksf3lhn22dsgkf@fcfgddu6gpyt>
- <ioiy4ixlvx5gxl3f4pqshwxz35ktrqghju2circpnd3qicgemc@oohazfsfvuag>
- <p5tszocxa7mcazgxsnt3gnv547m523gde2hj2yekiuoimm6rsy@pzofvxngb4ul>
- <7wbot7sxm3y5y7in5ashcn5lpx3mi55abnbfrkz2jta7nm6jep@zk6zvocd3tuz>
- <ycz7kwtr5d6bnrjjfmauktq2s7vtwsunpg7nfunfywxu5uou34@gfgoeeyarh46>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="C6+vpoH2"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919011E9B34;
+	Wed, 12 Mar 2025 07:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741763273; cv=none; b=QOOHp6Gjj7LQiqcHqolDkIUbALbJd4E6TJSKi4mFGl3YG5w3jwnqHQw40BPjV13q/LHq8Sf0/GZZ8joFY73jOLwEND9O6fwlo6gys+HJL8IvI1eylmJmhc2Pa0f/IHqjazy/zz8+8CrYa94bVTq6yHo3OSseBV9btODTim6DzTg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741763273; c=relaxed/simple;
+	bh=p+8NQyptigK6LSXRY0dhiA9xz9BOW4cmtkxmZpnpj7I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dGEgqRlm7SkrV0WrMAv0Q5HJZ3XNpxzspsXpZNG/cSouhGphCahnT/HSnHjTGzAjgIeHhx9y1+XNGyrw2scxSr5tGAmPSDmF189icJSywMQi24B47U12RHeOhT0HuMPQ/WXPnbZzBaI9bvocg61cIii98dBzA4Mnj4cQzkt3gZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=C6+vpoH2; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.162.36] (unknown [4.194.122.162])
+	by linux.microsoft.com (Postfix) with ESMTPSA id EB7A72045FF0;
+	Wed, 12 Mar 2025 00:07:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EB7A72045FF0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741763270;
+	bh=K3+hbNRBuhKGQ5kI6/gUAGXIu2sJtNpSgo5MWwBx36U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=C6+vpoH24BuGgZQRrJkibK/XKfmr0bbe6cDCHyiYXPah3Ft4OZuDr3XzRlzbmgNqi
+	 mE3NC1MT8rR7rqVVvO7gj1AxydY5rD9896Rw9dXwJPMuw51sGpMFZXXCU1gey96IHu
+	 J79bVD0hIrtThp7q4mr9iG9Q58avOdnKaBvb3v6g=
+Message-ID: <16004c77-de73-4208-9a10-feee7225e738@linux.microsoft.com>
+Date: Wed, 12 Mar 2025 12:37:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ycz7kwtr5d6bnrjjfmauktq2s7vtwsunpg7nfunfywxu5uou34@gfgoeeyarh46>
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] sched/topology: Enable topology_span_sane check only
+ for debug builds
+To: Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>
+Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Steve Wahl <steve.wahl@hpe.com>,
+ Saurabh Singh Sengar <ssengar@linux.microsoft.com>, srivatsa@csail.mit.edu,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ Michael Kelley <mhklinux@outlook.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>
+References: <20250310052509.1416-1-namjain@linux.microsoft.com>
+ <xhsmh34fjr3av.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <xhsmh34fjr3av.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
 
-On Fri, Feb 28, 2025 at 04:25:47PM +0100, Anthony Ruhier wrote:
-> On Sat, Feb 15, 2025 at 04:08:25AM +0100, Sebastian Reichel wrote:
-> > There are other drivers reporting negative values as documented.
-> > Most of the embedded ones do this actually and there surely are
-> > (embedded) userspace programs relying on this by now. But the
-> > most used driver - generic ACPI battery - does not. That's why
-> > quite a few userspace tools handle it wrong without anyone
-> > noticing for quite some time. Fixing it to follow the ABI would
-> > obviously end up in a bunch of regression reports, so things are
-> > a bit messy :(
-> >
-> > > I think it is a problem of the 'acpi' tool. At least 'upower -d' uses
-> > > fabs internally since the initial commit in 2008.
-> >
-> > It's definitely sensible to fix the userspace tools. We can't change
-> > the documented ABI for current_now after that many years and while
-> > documentation for power_now is missing, it would be quite unexpected
-> > to have it behave differently than current_now. Also userspace
-> > tooling needs to handle current_now and power_now anyways. And we
-> > surely can't change the behaviour for all drivers reporting signed
-> > data. So let's keep qcom_battmgr as is. It follows the documented
-> > ABI and hopefully helps giving this more exposure (I'm typing this
-> > on a X1E laptop right now and can see your problem with waybar).
-> >
-> > But we should document the power_now property. It somehow fell
-> > through the cracks :)
-> >
-> > -- Sebastian
+
+On 3/11/2025 9:02 PM, Valentin Schneider wrote:
+> On 10/03/25 10:55, Naman Jain wrote:
+>> From: Saurabh Sengar <ssengar@linux.microsoft.com>
+>>
+>> On a x86 system under test with 1780 CPUs, topology_span_sane() takes
+>> around 8 seconds cumulatively for all the iterations. It is an expensive
+>> operation which does the sanity of non-NUMA topology masks.
+>>
+>> CPU topology is not something which changes very frequently hence make
+>> this check optional for the systems where the topology is trusted and
+>> need faster bootup.
+>>
+>> Restrict this to sched_verbose kernel cmdline option so that this penalty
+>> can be avoided for the systems who want to avoid it.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap")
+>> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+>> Co-developed-by: Naman Jain <namjain@linux.microsoft.com>
+>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+>> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+>> ---
+>> Changes since v4:
+>> https://lore.kernel.org/all/20250306055354.52915-1-namjain@linux.microsoft.com/
+>>        - Rephrased print statement and moved it to sched_domain_debug.
+>>          (addressing Valentin's comments)
+>> Changes since v3:
+>> https://lore.kernel.org/all/20250203114738.3109-1-namjain@linux.microsoft.com/
+>>        - Minor typo correction in comment
+>>        - Added Tested-by tag from Prateek for x86
+>> Changes since v2:
+>> https://lore.kernel.org/all/1731922777-7121-1-git-send-email-ssengar@linux.microsoft.com/
+>>        - Use sched_debug() instead of using sched_debug_verbose
+>>          variable directly (addressing Prateek's comment)
+>>
+>> Changes since v1:
+>> https://lore.kernel.org/all/1729619853-2597-1-git-send-email-ssengar@linux.microsoft.com/
+>>        - Use kernel cmdline param instead of compile time flag.
+>>
+>> Adding a link to the other patch which is under review.
+>> https://lore.kernel.org/lkml/20241031200431.182443-1-steve.wahl@hpe.com/
+>> Above patch tries to optimize the topology sanity check, whereas this
+>> patch makes it optional. We believe both patches can coexist, as even
+>> with optimization, there will still be some performance overhead for
+>> this check.
+>>
+>> ---
+>>   kernel/sched/topology.c | 9 ++++++++-
+>>   1 file changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+>> index c49aea8c1025..d7254c47af45 100644
+>> --- a/kernel/sched/topology.c
+>> +++ b/kernel/sched/topology.c
+>> @@ -132,8 +132,11 @@ static void sched_domain_debug(struct sched_domain *sd, int cpu)
+>>   {
+>>        int level = 0;
+>>
+>> -	if (!sched_debug_verbose)
+>> +	if (!sched_debug_verbose) {
+>> +		pr_info_once("%s: Scheduler topology debugging disabled, add 'sched_verbose' to the cmdline to enable it\n",
+>> +			     __func__);
+>>                return;
+>> +	}
+>>
 > 
-> Hi,
-> As an update around this topic, I sent some patches in the different tools I'm
-> using to correctly handle negative values in current_now and power_now:
+> Nit: I've been told not to break warnings over multiple lines so they can
+> be grep'ed, but given this has the "sched_domain_debug:" prefix I think we
+> could get away with the below.
 > 
->   * Waybar (included in release 0.12.0): https://github.com/Alexays/Waybar/pull/3942
->   * Powertop (merged): https://github.com/fenrus75/powertop/pull/173
->   * acpi-client (included in release 1.8): https://sourceforge.net/p/acpiclient/code/merge-requests/1/
+> Regardless:
+> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
 > 
-> It was quicker to get this merged than what I expected, which is good news!
-> 
-> There's probably other tools to fix, I just fixed the tools I'm using. I
-> encounter the issue on other tools, I'll send a patch.
+> ---
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index d7254c47af455..b4dc7c7d2c41c 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -133,7 +133,8 @@ static void sched_domain_debug(struct sched_domain *sd, int cpu)
+>   	int level = 0;
+>   
+>   	if (!sched_debug_verbose) {
+> -		pr_info_once("%s: Scheduler topology debugging disabled, add 'sched_verbose' to the cmdline to enable it\n",
+> +		pr_info_once("%s: Scheduler topology debugging disabled, "
+> +			     "add 'sched_verbose' to the cmdline to enable it\n",
+>   			     __func__);
+>   		return;
+>   	}
 
-Thanks, appreciated.
 
-Greetings,
+Thanks for reviewing. I'll wait a couple more days to push the next
+version.
 
--- Sebastian
+Thanks,
+Naman
 
