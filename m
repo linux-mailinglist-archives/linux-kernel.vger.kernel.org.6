@@ -1,39 +1,46 @@
-Return-Path: <linux-kernel+bounces-558245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D89A5E363
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:04:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53087A5E36B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:05:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C7B43B75C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:04:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21F11789B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8FF241C8B;
-	Wed, 12 Mar 2025 18:04:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544F87083C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D74124FC1B;
+	Wed, 12 Mar 2025 18:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jYKT7aaV"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7357C256C9E;
+	Wed, 12 Mar 2025 18:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741802686; cv=none; b=T5oI6b+W1aiLGumgXNAtMRUxrkdkaHcj9Sg1AkxodvKdQNFR8Fz7Nc2BPYBzIOSG7SRN8w5PlUFgI08SluaoocDhf0NJtRSFCRZccDiLKsadAgMMPd6Yw/yJCDSLjrdz1UWmsbS0XVHjsse9M2CIvRC2d/m3Ee9T5OmeO0RcKvM=
+	t=1741802704; cv=none; b=s6PazNnIEa54gWJi0sH5QWweHMuWx+E29brjn4k/kp4PspGCnMKdQRkyKW4/TxHcbNEB3o0NXB/buJvNZkqLdCQCrzb7KsBsn73PKbYihpHMgK4sDTI4qV5sDCwip4/wEhl6yD6aBVBg8oXg+fxZwx0TRAVJpuypR09J2lkNshs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741802686; c=relaxed/simple;
-	bh=WhRXuXbQmYH99kTnAyfQVFA21V+mkdtazVpNNpLTA5o=;
+	s=arc-20240116; t=1741802704; c=relaxed/simple;
+	bh=YRkqEDAnEJO9uif9D8gYv3G3QiocUg9KYSfoxRMiepo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XMRb5SPOXsACPxsvOfMnwczlVlubP3UDeH3kGNOOZVhmG1wuCuE+TELNYpdEI5XDCC4+dCVVx9dX7DXKRJsU7tH2l2QkUYbvAxLGJvXbyDPrYdJwtepkIZbX67Z1xM6pPmQ7Lk9usObpFWQsXaX1ewkQ//dXGHL6h5X+2kjOe6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48F311516;
-	Wed, 12 Mar 2025 11:04:54 -0700 (PDT)
-Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 29FD43F5A1;
-	Wed, 12 Mar 2025 11:04:38 -0700 (PDT)
-Message-ID: <75244728-bc16-4657-9cab-9e931399e766@arm.com>
-Date: Wed, 12 Mar 2025 18:04:31 +0000
+	 In-Reply-To:Content-Type; b=dX1QvFhfCwvnePpZDqCpbRNUj7skYFkHrAT5EboN8FIQda7LwZ0mHNamJsJ/p1XOgvPvfTsLKYKc7XSmM+7sN7dJkbOtQNZEVlwrkEEtv3veHiz4xBRl+iCVsPNVJrl09EaxBzJEDWRCeCaS0cMctrzQB2h0DfVXDcRMfDnc9U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jYKT7aaV; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 1B63C210B155;
+	Wed, 12 Mar 2025 11:05:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1B63C210B155
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741802702;
+	bh=3LuHCHpuveXkpSQUcYt/4aNBi7uFbOG/3oEGn8E8LXY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jYKT7aaV5gspSop8H5hJDvSoYzQZSeYlg64Ifr722u0Nb9Lg5Imcrfh9r7PIfD5lT
+	 6Gx7WdXYzK5Qkk74C6o++r7isZrfq5nwtn1HQ8mbeg+mlVaPIh0Da7Nxn0zjSmQ6i1
+	 ISWSMrdAV6mX4SniwmTsX/jUZuFL1ANTVkqQw/UY=
+Message-ID: <8520ef42-6cb4-4e14-9700-de7ae8a99ae8@linux.microsoft.com>
+Date: Wed, 12 Mar 2025 11:04:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,130 +48,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 37/49] x86/resctrl: Expand the width of dom_id by
- replacing mon_data_bits
-To: Amit Singh Tomar <amitsinght@marvell.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
- Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, David Hildenbrand <david@redhat.com>,
- Rex Nie <rex.nie@jaguarmicro.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com
-References: <20250228195913.24895-1-james.morse@arm.com>
- <20250228195913.24895-38-james.morse@arm.com>
- <072e82c2-97c2-429f-a0e3-10eb0bd00b1e@marvell.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <072e82c2-97c2-429f-a0e3-10eb0bd00b1e@marvell.com>
+Subject: Re: [PATCH v5 02/10] x86/mshyperv: Add support for extended Hyper-V
+ features
+To: Michael Kelley <mhklinux@outlook.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>,
+ "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+ "joro@8bytes.org" <joro@8bytes.org>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>, "arnd@arndb.de"
+ <arnd@arndb.de>,
+ "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+ "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+ "mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+ "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+ "apais@linux.microsoft.com" <apais@linux.microsoft.com>,
+ "Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
+ "stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "vkuznets@redhat.com" <vkuznets@redhat.com>,
+ "prapal@linux.microsoft.com" <prapal@linux.microsoft.com>,
+ "muislam@microsoft.com" <muislam@microsoft.com>,
+ "anrayabh@linux.microsoft.com" <anrayabh@linux.microsoft.com>,
+ "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
+ <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-3-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB4157CBBC2D186E1944E6773AD4CA2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157CBBC2D186E1944E6773AD4CA2@SN6PR02MB4157.namprd02.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Amit,
-
-On 07/03/2025 10:17, Amit Singh Tomar wrote:
->> MPAM platforms retrieve the cache-id property from the ACPI PPTT table.
->> The cache-id field is 32 bits wide. Under resctrl, the cache-id becomes
->> the domain-id, and is packed into the mon_data_bits union bitfield.
->> The width of cache-id in this field is 14 bits.
+On 3/6/2025 10:30 AM, Michael Kelley wrote:
+> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, February 26, 2025 3:08 PM
 >>
->> Expanding the union would break 32bit x86 platforms as this union is
->> stored as the kernfs kn->priv pointer. This saved allocating memory
->> for the priv data storage.
+>> From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
 >>
->> The firmware on MPAM platforms have used the PPTT cache-id field to
->> expose the interconnect's id for the cache, which is sparse and uses
->> more than 14 bits. Use of this id is to enable PCIe direct cache
->> injection hints. Using this feature with VFIO means the value provided
->> by the ACPI table should be exposed to user-space.
+>> Extend the "ms_hyperv_info" structure to include a new field,
+>> "ext_features", for capturing extended Hyper-V features.
+>> Update the "ms_hyperv_init_platform" function to retrieve these features
+>> using the cpuid instruction and include them in the informational output.
 >>
->> To support cache-id values greater than 14 bits, convert the
->> mon_data_bits union to a structure. This is allocated for the default
->> control group when the kernfs event files are created, and free'd when
->> the monitor directory is rmdir'd when the domain goes offline.
->> All other control and monitor groups lookup the struct mon_data allocated
->> for the default control group, and use this.
->> This simplifies the lifecycle of this structure as the default control
->> group cannot be rmdir()d by user-space, so only needs to consider
->> domain-offline, which removes all the event files corresponding to a
->> domain while holding rdtgroup_mutex - which prevents concurrent
->> readers. mkdir_mondata_subdir_allrdtgrp() must special case the default
->> control group to ensure it is created first.
-
-
->> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/
->> rdtgroup.c
->> index aecd3fa734cd..443635d195f0 100644
->> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> @@ -3114,6 +3114,110 @@ static struct file_system_type rdt_fs_type = {
->>       .kill_sb        = rdt_kill_sb,
->>   };
->>   +/**
->> + * mon_get_default_kn_priv() - Get the mon_data priv data for this event from
->> + *                             the default control group.
->> + * Called when monitor event files are created for a domain.
->> + * When called with the default control group, the structure will be allocated.
->> + * This happens at mount time, before other control or monitor groups are
->> + * created.
->> + * This simplifies the lifetime management for rmdir() versus domain-offline
->> + * as the default control group lives forever, and only one group needs to be
->> + * special cased.
->> + *
->> + * @r:      The resource for the event type being created.
->> + * @d:        The domain for the event type being created.
->> + * @mevt:   The event type being created.
->> + * @rdtgrp: The rdtgroup for which the monitor file is being created,
->> + *          used to determine if this is the default control group.
->> + * @do_sum: Whether the SNC sub-numa node monitors are being created.
->> + */
->> +static struct mon_data *mon_get_default_kn_priv(struct rdt_resource *r,
->> +                        struct rdt_mon_domain *d,
->> +                        struct mon_evt *mevt,
->> +                        struct rdtgroup *rdtgrp,
->> +                        bool do_sum)
->> +{
->> +    struct kernfs_node *kn_dom, *kn_evt;
->> +    struct mon_data *priv;
->> +    bool snc_mode;
->> +    char name[32];
->> +
->> +    lockdep_assert_held(&rdtgroup_mutex);
->> +
->> +    snc_mode = r->mon_scope == RESCTRL_L3_NODE;
->> +    if (!do_sum)
->> +        sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci->id : d->hdr.id);
-
-> This change triggered a minor report during compilation.
+>> Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>> ---
+>>  arch/x86/kernel/cpu/mshyperv.c | 6 ++++--
+>>  include/asm-generic/mshyperv.h | 1 +
+>>  2 files changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+>> index 4f01f424ea5b..2c29dfd6de19 100644
+>> --- a/arch/x86/kernel/cpu/mshyperv.c
+>> +++ b/arch/x86/kernel/cpu/mshyperv.c
+>> @@ -434,13 +434,15 @@ static void __init ms_hyperv_init_platform(void)
+>>  	 */
+>>  	ms_hyperv.features = cpuid_eax(HYPERV_CPUID_FEATURES);
+>>  	ms_hyperv.priv_high = cpuid_ebx(HYPERV_CPUID_FEATURES);
+>> +	ms_hyperv.ext_features = cpuid_ecx(HYPERV_CPUID_FEATURES);
+>>  	ms_hyperv.misc_features = cpuid_edx(HYPERV_CPUID_FEATURES);
+>>  	ms_hyperv.hints    = cpuid_eax(HYPERV_CPUID_ENLIGHTMENT_INFO);
+>>
+>>  	hv_max_functions_eax = cpuid_eax(HYPERV_CPUID_VENDOR_AND_MAX_FUNCTIONS);
+>>
+>> -	pr_info("Hyper-V: privilege flags low 0x%x, high 0x%x, hints 0x%x, misc 0x%x\n",
+>> -		ms_hyperv.features, ms_hyperv.priv_high, ms_hyperv.hints,
+>> +	pr_info("Hyper-V: privilege flags low 0x%x, high 0x%x, ext 0x%x, hints 0x%x, misc 0x%x\n",
+>> +		ms_hyperv.features, ms_hyperv.priv_high,
+>> +		ms_hyperv.ext_features, ms_hyperv.hints,
+>>  		ms_hyperv.misc_features);
+>>
+>>  	ms_hyperv.max_vp_index = cpuid_eax(HYPERV_CPUID_IMPLEMENT_LIMITS);
+>> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+>> index dc4729dba9ef..c020d5d0ec2a 100644
+>> --- a/include/asm-generic/mshyperv.h
+>> +++ b/include/asm-generic/mshyperv.h
+>> @@ -36,6 +36,7 @@ enum hv_partition_type {
+>>  struct ms_hyperv_info {
+>>  	u32 features;
+>>  	u32 priv_high;
+>> +	u32 ext_features;
+>>  	u32 misc_features;
+>>  	u32 hints;
+>>  	u32 nested_features;
+>> --
+>> 2.34.1
 > 
-> fs/resctrl/rdtgroup.c: In function ‘mon_get_default_kn_priv’:
-> fs/resctrl/rdtgroup.c:2931:28: warning: format ‘%d’ expects argument of type ‘int’, but
-> argument 4 has type ‘long unsigned int’ [-Wformat=]
->  2931 |   sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci->id : d->hdr.id);
->       |                         ~~~^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       | |                                 |
->       | int                               long unsigned int
->       |                         %02ld
+> Are any of the extended features available on arm64? This code is obviously x86 specific,
+> so ms_hyperv.ext_features will be zero on arm64. From what I can see, ext_features is
+> referenced only in Patch 10 of this series, and in code that is under #ifdef CONFIG_X86_64,
+> so that should be OK.
 
-Heh, not yet its not! You must have rebased the MPAM tree on-top, its a patch in there
-that causes this:
-This is because of the device-tree folk want to make cache-id an unsigned long so they can
-use the arm CPU's affinity id as a cache-id. That patch already has to cleanup this
-pattern elsewhere in resctrl, I need to add this one to it.
+Just checked - yes ARM64 has features in ECX, but they are different to the x86_64 ones.
+We can add the ARM64 ones when needed.
 
-That thing is a discussion for the DT folk to drive ... I think they could just as easily
-use the CPU number - only it wouldn't be a hardware-derived value. (the upshot is
-cache-ids could change over a firmware update - which I think is fine)
+Thanks
+Nuno
 
+> 
+> The pr_info() line will now be slightly different on x86 and arm64 since arm64 won't have
+> the "ext" field, but I think that's OK too.
+> 
+> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
-Thanks,
-
-James
 
