@@ -1,398 +1,176 @@
-Return-Path: <linux-kernel+bounces-558107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44916A5E1BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:26:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BF3A5E1B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:26:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0B9D1899D81
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:26:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E441E1899C41
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572351D5CC7;
-	Wed, 12 Mar 2025 16:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7791D5CC7;
+	Wed, 12 Mar 2025 16:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="FauwdEbY"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BWulS/s2"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54951BB6BA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F2C1BB6BA;
+	Wed, 12 Mar 2025 16:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741796769; cv=none; b=prdtjTqL76pYRM854IZj68S21tycQi6VKUJbzGqPvZAgyZr1EiJSaiOtutwyVJDGpiQY5BegKh/y0FoT6SHl/PVndVapcOaBdC8ZG3lyvgZ3vi1CXcuN6vQGjSnw+4y3TCDquHMeBTtYEg9twD6Qbap9OMVKL830uyxomGofzPo=
+	t=1741796753; cv=none; b=UmMONqlHkca3YEY+/lKljJO0gh9uAKGNd2/gq48Lv6ad0WG0EX7WSNkiXT6gTyEPrFPCD9wEfxJKOhE3kZhEGdifs+65p/qgZawTsfhW8NhSqHRwBLSKgP2oYHcBdiKq9sRCdPwd6Xr25M5S1WTJqSs/JCOgM1QNbZCPCmnsjAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741796769; c=relaxed/simple;
-	bh=U1XVOdO9/0517sogOaX7LwQhrIbSTS84Uwq1TUGYogQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NLmLj2ys7iimCcS1FyD0VqVSwCHmauZM/MBj3lxzF9l3KBcS8T1JMu4+juIeXojCo3sfh4JDk1GSoizUb8NCqq56D9W8IPBDXG/1a4H9XU6g4EdSlL4EmRvQXoxNmFMxvp8mAmQrhw4BIZ/QwTzAjuwEXzIOwJK8xYcj5tHyRww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=FauwdEbY; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so7158525e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:26:05 -0700 (PDT)
+	s=arc-20240116; t=1741796753; c=relaxed/simple;
+	bh=rY90rxIHmvPsvvolgFWb7qVxE7QcpDDHoiyqQQmLaAE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k2rRdt2QAxnPpYLdSXeSsDwka2asAs1/sp79EMViQn3d+DKJKKdF/vEiPtS9BU0LTwBaGi4bgUEJrgmytY4z01oX4C55vY6f/ffKhDu5UwJpHR6xSc0W599kzgKcMmbA/T4Xm5e05Z6LevHCCfN469B2Xwuy3WPxl/3v2LgL/Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BWulS/s2; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ff797f8f1bso106111a91.3;
+        Wed, 12 Mar 2025 09:25:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1741796764; x=1742401564; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4gXcPZeObi6yJciefRIfYmMTBvloyXiUV7+3fAfw3Vc=;
-        b=FauwdEbYfrgUN1rYSrzOcsgddqvXqWbMRa4qM2pKHq/Y/nIvsp9qH3yIxNeQaJeAIZ
-         jZe9hvVfesXbvcIFXfSivi42ZGOwMXhlTRlCJDn0xqEeOLPwXe+NJZc9+GTfgR4mgYMh
-         Fo6B1lsxVYeT8c7uwLSTYaOZUF+oAHrIgO7kGdl0dk3aELemoJoxlBkei70r58e4a5gz
-         LbV/SXPOYHQ/EKFdvP1CrX4vEfw04QwpyNBLv9HcxwV3fFxguPh+rV8BHFZXxNbtgd15
-         YuicWpZKLmYJ+WdhASsmTEWuHB6ppVNrRujbZQt7i2ak1YoXCE3pi3BydGURFmRXWfyu
-         ErFw==
+        d=gmail.com; s=20230601; t=1741796751; x=1742401551; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+/i7DPvhWab5Hq2eXZ422jNKr+4Oovnt6cmD31Zbe+M=;
+        b=BWulS/s2zVKh1rPSBmOqRtYWaxGoa1VNySRBy7NUK26Q0pu59p1Jv9TOUFW1+uRqm5
+         YW3T9f2LHZl6ULsxLY9bYrEOVUKTqhzssHo5WDScPvhF04UOnhivAAmwr3G1l5eJQWN1
+         wchVt76yHwI3G6cfYhsrCWHDyF1XtKIsBiQtGoDKTUte0j7XHWYDrXqdLSOP/u9AiErz
+         ha+80uOEsBF44aaeGkPUOTDRFl4KQ5TpOCyzbVtpYuymrRsJlN48VbPdzc9CX6kqBtFc
+         aTKoblLw7PAbGLKEuIP/viKgS7uWbHaPilzVneaaz4VHD+eO/FNIspRJAXHcMqioz2am
+         RxZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741796764; x=1742401564;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4gXcPZeObi6yJciefRIfYmMTBvloyXiUV7+3fAfw3Vc=;
-        b=ve1VpczpEhPvzNN5oNEnpN8bpbg+UPdp46bpO+g2ftY8RS6XSri/V7IjlvukA1bPXH
-         MqImvur1CgYedJeH2j2inTkLchjS2rpAOEkIceBtrT0hXZzIkBfTy7uWXsznjS7BB1kH
-         EdNz+Jlncmpbp7Hibk5TZRmjCgFYUsvpLoaTxSKH8AxRBGIMtTsME+rpcnS/K3hGgPuI
-         GCXI32A2UVquj7Ofbn9wNXNuobzsuoeiFsaAWrdp9FyeT3jzfJzsa7HAjhfXYMewPhc+
-         /GtH99zh+Tm5i+icn5836UJybdl9KY/PfDCI0+LD1MirNUyRwYSMZdnq945qC5G75yj3
-         rKOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQnUkf/OgjtcKxWsJ3G3sLxkdbpWlTTg1Sij1aPXl/8jFf56UcszOPbD1VLU32vV/MxLlbL0gRdC6J1bg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRXLRqa6duEGp7pyWtOglPswc+pS4072vO8ISMMoI6mPt1D+a0
-	K68Av1WgOxEIGgvtPfGyX3Pptv7v7a4HzgNPAQnxZ3/AY6iV+7UkkwBIHsEt6jYRKFqdxL2yiyY
-	s2so=
-X-Gm-Gg: ASbGnctKFJyHRdMWW+k/PGLczavO8GK4y16ggOd924XgTCts2sBLOWdctKoQ2Odqmv+
-	xhGCKmcizeUR3Nxxn152JJfyqBIYxjRN1nExUO3257mWuobENTrc9j4YGCbHOpINfUgN/v3a7NC
-	WlXSp7ftxRZAXEgVhCBX78lY+i/Y65ZIG13HTz++BdAcHIqRb1e72P6BwrD3RSpjXWyZq51VBFL
-	DVNjxwmX9gOvzuDT3zeKP0NBB4ss4qZ38odhN0TB1UV6RPjRpNSK4yFjIbdhP5UjgPwfrCrHtfV
-	mLJCgRckmSS7ciQAD0Sv0ygncw5mS3cLp6oABhDTJV1CyuvgJqTloDbeIivTtZNR7zKj2mACsJM
-	fXVYAU7ZB1QrOcuySJKdTXyyf0CTDwGDGE77PrHpKcj0lyWJ8tOs=
-X-Google-Smtp-Source: AGHT+IHvYoVz9zAIRqFJIYNnzOyZa5TsOXIZd8XIocFqIh/lVGBn7UsxPOBoiuMGZAUDmKWT+SGlnw==
-X-Received: by 2002:a05:6000:1449:b0:391:2a79:a110 with SMTP id ffacd0b85a97d-3956e1f6b4fmr174000f8f.29.1741796763780;
-        Wed, 12 Mar 2025 09:26:03 -0700 (PDT)
-Received: from stroh80.lab.9e.network (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e2f10sm21672019f8f.65.2025.03.12.09.26.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 09:26:03 -0700 (PDT)
-From: Naresh Solanki <naresh.solanki@9elements.com>
-To: openembedded-devel@lists.openembedded.org,
-	linux-kernel@vger.kernel.org
-Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Naresh Solanki <naresh.solanki@9elements.com>
-Subject: [meta-oe][PATCH v2] meta-openembedded: flashrom: Update to v1.4.0
-Date: Wed, 12 Mar 2025 21:55:05 +0530
-Message-ID: <20250312162505.3021308-1-naresh.solanki@9elements.com>
-X-Mailer: git-send-email 2.42.0
+        d=1e100.net; s=20230601; t=1741796751; x=1742401551;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+/i7DPvhWab5Hq2eXZ422jNKr+4Oovnt6cmD31Zbe+M=;
+        b=OcRJNy8RzC4R66ttdg/zxWMLMOZD6wXrLtD8aOSFIhaS0e1AKJK+/BNDZcFz3uXS6l
+         zmDn82Q15973PwSby8QDsGgYGjtBeDULIxleGl6qTRvEVZToFnUxIgNhRM+4oGg4wv67
+         2BRMU/JeyikYgkHXVmOk6n+b4UXwd00iV4p6lWghrFJ17pqoxlIHfrHqpAjpoAK/Fb9w
+         BPcOBlVQ09Q35bWt+shzibDWSxWZp3Cei5MBCHc6JDJUx0ZeOetnEMoI1ut7oNnGYrkL
+         kInfDVDmGRXUOgafea9hZYcTmUO4ZIg3siYk+65NsXDkP4h8F3pqdf27H25FKXIOMrI2
+         XSQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlzzJEsRM7DrpJCddFmEMcawMh+rNW25uXF3opbilXtTWUpwoUFtIU+3kC5t8dYPur52RSvBro4quD@vger.kernel.org, AJvYcCX5CFmi2VjcOL+795KomqHnlWU2TWXT7+0IJAHK0RSc98VlQvgd4R1bIPqPNQBmPo7vuip6v/KdV5YLptQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXt4gErhzUEFKqGeM5EQhPYQR0KR1If0do9yAJdFTl+4vjjdyX
+	7RsfXTeGOp51LGt42FjcjcQudUUZoGDY0+rCbYDcULeCzY4fgsxYy2E0J5n7ZnMBjxi9f3jIUir
+	BqQl+mTtRGVc2TRwA3ciaBRguEbI=
+X-Gm-Gg: ASbGncsnY0zpGvH27fOlibiZKddG5nph0PYQ+phK3W+riqzCEv6rzIIhJxFgDMx+/WF
+	UVp3r5OxCLOoq+iqqv4Cy3to+sqJ4FCLwUh/3b3VijqVhFssM958z1YOSL2pyas6C+/fqZldF9g
+	5m0hjJw5UQiaTsuSAoBY3VWCav0l+ozNJCJ6cuDg==
+X-Google-Smtp-Source: AGHT+IGGNvtDVGbaRdv7e3eXGPnCVv/thHnNgRe3wqpo/kD9EOMG3yTX/dEe0Mfvgr4Yj+X9oUJuXKjRW1qd0l/98tY=
+X-Received: by 2002:a05:6a21:2d8d:b0:1f3:48d5:7303 with SMTP id
+ adf61e73a8af0-1f58cbc54b8mr14596645637.31.1741796749230; Wed, 12 Mar 2025
+ 09:25:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAEzXK1qwHf5no6B2eCX1U7NGe-BoJYFLTHPkbM=_XpgrMAE2dw@mail.gmail.com>
+ <20250311162407.GA630741@bhelgaas>
+In-Reply-To: <20250311162407.GA630741@bhelgaas>
+From: =?UTF-8?B?THXDrXMgTWVuZGVz?= <luis.p.mendes@gmail.com>
+Date: Wed, 12 Mar 2025 16:25:37 +0000
+X-Gm-Features: AQ5f1Jqh0CCuMTOHdwiQU-EqZBpshIAwzoCDcB9ApKgmCrO6S2HMibkvZtBdmQE
+Message-ID: <CAEzXK1o52evH1RhQpe3CuD=MoHiMk0gC32Gxw7RpSMMGWzyH8Q@mail.gmail.com>
+Subject: Re: [PATCH] PCI: mvebu: Use devm_request_irq() for registering
+ interrupt handler
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
+Hi Bjron,
 
-Flashrom Release note:
-https://www.flashrom.org/release_notes/v_1_4.html
+Yes, I had trouble finding PCIe cards to test with Solidrun Clearfog
+Base mPCIe slot and indeed the Coral Edge TPU card does not have an
+open-source driver and the proprietary one that exists does not work
+in 32-bit architectures. So, yes it had no driver.
 
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-Tested-by: Naresh Solanki <naresh.solanki@9elements.com>
----
- ...SCV-as-non-memory-mapped-I-O-archite.patch | 54 ++++++---------
- ...ess-use-__asm__-as-is-done-elsewhere.patch | 52 --------------
- ...-meson-Add-options-pciutils-ftdi-usb.patch | 48 +++++++++++++
- .../flashrom/flashrom/meson-fixes.patch       | 68 -------------------
- .../{flashrom_1.2.1.bb => flashrom_1.4.0.bb}  | 10 +--
- 5 files changed, 74 insertions(+), 158 deletions(-)
- delete mode 100644 meta-oe/recipes-bsp/flashrom/flashrom/0001-hwaccess-use-__asm__-as-is-done-elsewhere.patch
- create mode 100644 meta-oe/recipes-bsp/flashrom/flashrom/0002-meson-Add-options-pciutils-ftdi-usb.patch
- delete mode 100644 meta-oe/recipes-bsp/flashrom/flashrom/meson-fixes.patch
- rename meta-oe/recipes-bsp/flashrom/{flashrom_1.2.1.bb => flashrom_1.4.0.bb} (74%)
+I have now connected a mPCIe to PCIe extender and installed a Marvell
+4-port SATA controller card and I will also include my Armada Duo
+system which is based on a Solidrun A388 SoM anyway and the Clearfog
+Base logs hope this  information further helps with the analysis,
 
-diff --git a/meta-oe/recipes-bsp/flashrom/flashrom/0001-flashrom-Mark-RISCV-as-non-memory-mapped-I-O-archite.patch b/meta-oe/recipes-bsp/flashrom/flashrom/0001-flashrom-Mark-RISCV-as-non-memory-mapped-I-O-archite.patch
-index e481c5a161..58f1aa4d43 100644
---- a/meta-oe/recipes-bsp/flashrom/flashrom/0001-flashrom-Mark-RISCV-as-non-memory-mapped-I-O-archite.patch
-+++ b/meta-oe/recipes-bsp/flashrom/flashrom/0001-flashrom-Mark-RISCV-as-non-memory-mapped-I-O-archite.patch
-@@ -1,44 +1,30 @@
--From 2c777126765b4095bf481d5cfe4a21470374d940 Mon Sep 17 00:00:00 2001
--From: Khem Raj <raj.khem@gmail.com>
--Date: Tue, 30 Mar 2021 15:12:09 -0700
--Subject: [PATCH] flashrom: Mark RISCV as non memory-mapped I/O architecture
-+From bf5a30ef30818973eb2cfac792b80c642df8a721 Mon Sep 17 00:00:00 2001
-+From: Patrick Rudolph <patrick.rudolph@9elements.com>
-+Date: Mon, 14 Oct 2024 11:01:37 +0200
-+Subject: [PATCH 1/2] flashrom: Mark RISCV as non memory-mapped I/O
-+ architecture
- 
--Upstream-Status: Submitted [https://review.coreboot.org/c/flashrom/+/51960]
--Signed-off-by: Khem Raj <raj.khem@gmail.com>
--Change-Id: I55c4e8529d36f0850dd56441c3fb8602c5d889fd
-+Upstream-Status: Inactive-Upstream
-+
-+Change-Id: I46d7ede7af61e7fca631e1d465100e65c6ddeee9
-+Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
- ---
-- Makefile   | 2 +-
-- hwaccess.h | 4 ++++
-- 2 files changed, 5 insertions(+), 1 deletion(-)
-+ Makefile | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
- 
- diff --git a/Makefile b/Makefile
--index 6d37d55..203e04b 100644
-+index 97f56b83..08e4c595 100644
- --- a/Makefile
- +++ b/Makefile
--@@ -559,7 +559,7 @@ endif
-- # Disable all drivers needing raw access (memory, PCI, port I/O) on
-- # architectures with unknown raw access properties.
-+@@ -372,7 +372,7 @@ endif
-+ # Additionally disable all drivers needing raw access (memory, PCI, port I/O)
-+ # on architectures with unknown raw access properties.
-  # Right now those architectures are alpha hppa m68k sh s390
---ifneq ($(ARCH),$(filter $(ARCH),x86 mips ppc arm sparc arc))
--+ifneq ($(ARCH),$(filter $(ARCH),x86 mips ppc arm sparc arc riscv))
-- ifeq ($(CONFIG_RAYER_SPI), yes)
-- UNSUPPORTED_FEATURES += CONFIG_RAYER_SPI=yes
-- else
--diff --git a/hwaccess.h b/hwaccess.h
--index 5602c15..e79988a 100644
----- a/hwaccess.h
--+++ b/hwaccess.h
--@@ -295,6 +295,10 @@ int libpayload_wrmsr(int addr, msr_t msr);
-- 
-- /* Non memory mapped I/O is not supported on ARC. */
-- 
--+#elif IS_RISCV
--+
--+/* Non memory mapped I/O is not supported on RISCV. */
--+
-- #else
-+-ifneq ($(ARCH), $(filter $(ARCH), x86 mips ppc arm sparc arc e2k))
-++ifneq ($(ARCH), $(filter $(ARCH), x86 mips ppc arm sparc arc e2k riscv))
-+ $(call mark_unsupported,$(DEPENDS_ON_RAW_MEM_ACCESS))
-+ endif
-  
-- #error Unknown architecture, please check if it supports PCI port IO.
- -- 
--2.31.1
-+2.46.2
- 
-diff --git a/meta-oe/recipes-bsp/flashrom/flashrom/0001-hwaccess-use-__asm__-as-is-done-elsewhere.patch b/meta-oe/recipes-bsp/flashrom/flashrom/0001-hwaccess-use-__asm__-as-is-done-elsewhere.patch
-deleted file mode 100644
-index f3316aa264..0000000000
---- a/meta-oe/recipes-bsp/flashrom/flashrom/0001-hwaccess-use-__asm__-as-is-done-elsewhere.patch
-+++ /dev/null
-@@ -1,52 +0,0 @@
--From 3334dd4e9fc34c79c3925c3c24869939d8955f21 Mon Sep 17 00:00:00 2001
--From: Rosen Penev <rosenp@gmail.com>
--Date: Sat, 18 Jul 2020 12:16:00 -0700
--Subject: [PATCH] hwaccess: use __asm__ as is done elsewhere
--
--Fixes compilation under powerpc platform. Made the change for the SPARC
--platform as well.
--
--../hwaccess.c: In function 'sync_primitive':
--../hwaccess.c:74:2: warning: implicit declaration of function 'asm'
-- [-Wimplicit-function-declaration]
--   74 |  asm("eieio" : : : "memory");
--      |  ^~~
--../hwaccess.c:74:13: error: expected ')' before ':' token
--   74 |  asm("eieio" : : : "memory");
--
--Upstream-Status: Submitted [https://github.com/flashrom/flashrom/pull/155]
--Signed-off-by: Rosen Penev <rosenp@gmail.com>
--Signed-off-by: Khem Raj <raj.khem@gmail.com>
-----
-- hwaccess.c | 6 +++---
-- 1 file changed, 3 insertions(+), 3 deletions(-)
--
--diff --git a/hwaccess.c b/hwaccess.c
--index 48ccb34..2a39989 100644
----- a/hwaccess.c
--+++ b/hwaccess.c
--@@ -71,18 +71,18 @@ static inline void sync_primitive(void)
--  * See also https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/memory-barriers.txt
--  */
-- #if IS_PPC // cf. http://lxr.free-electrons.com/source/arch/powerpc/include/asm/barrier.h
---	asm("eieio" : : : "memory");
--+	__asm__ ("eieio" : : : "memory");
-- #elif IS_SPARC
-- #if defined(__sparc_v9__) || defined(__sparcv9)
-- 	/* Sparc V9 CPUs support three different memory orderings that range from x86-like TSO to PowerPC-like
-- 	 * RMO. The modes can be switched at runtime thus to make sure we maintain the right order of access we
-- 	 * use the strongest hardware memory barriers that exist on Sparc V9. */
---	asm volatile ("membar #Sync" ::: "memory");
--+	__asm__ volatile ("membar #Sync" ::: "memory");
-- #elif defined(__sparc_v8__) || defined(__sparcv8)
-- 	/* On SPARC V8 there is no RMO just PSO and that does not apply to I/O accesses... but if V8 code is run
-- 	 * on V9 CPUs it might apply... or not... we issue a write barrier anyway. That's the most suitable
-- 	 * operation in the V8 instruction set anyway. If you know better then please tell us. */
---	asm volatile ("stbar");
--+	__asm__ volatile ("stbar");
-- #else
-- 	#error Unknown and/or unsupported SPARC instruction set version detected.
-- #endif
---- 
--2.32.0
--
-diff --git a/meta-oe/recipes-bsp/flashrom/flashrom/0002-meson-Add-options-pciutils-ftdi-usb.patch b/meta-oe/recipes-bsp/flashrom/flashrom/0002-meson-Add-options-pciutils-ftdi-usb.patch
-new file mode 100644
-index 0000000000..bc43f17e9a
---- /dev/null
-+++ b/meta-oe/recipes-bsp/flashrom/flashrom/0002-meson-Add-options-pciutils-ftdi-usb.patch
-@@ -0,0 +1,48 @@
-+From 3ea99c117aa4c7a3502c93e4e4df50b3623e46c3 Mon Sep 17 00:00:00 2001
-+From: Patrick Rudolph <patrick.rudolph@9elements.com>
-+Date: Tue, 15 Oct 2024 10:42:05 +0200
-+Subject: [PATCH 2/2] meson: Add options pciutils, ftdi, usb
-+
-+The options have been dropped in favor of an array option called programmer.
-+Since this doesn't integrate well into yocto add back the old options.
-+
-+Upstream-Status: Inappropriate Just to fix yocto build system
-+
-+Change-Id: Ib697b9f7cc7fc553cfdeb75ae9d49a367badd286
-+Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-+---
-+ meson.build       | 6 +++---
-+ meson_options.txt | 3 +++
-+ 2 files changed, 6 insertions(+), 3 deletions(-)
-+
-+diff --git a/meson.build b/meson.build
-+index ae56b26c..21093a7f 100644
-+--- a/meson.build
-++++ b/meson.build
-+@@ -151,9 +151,9 @@ systems_serial     = [ 'linux', 'openbsd', 'freebsd', 'dragonfly', 'netbsd', 'da
-+ 
-+ cpus_port_io = [ 'x86', 'x86_64' ]
-+ 
-+-group_ftdi   = get_option('programmer').contains('group_ftdi')
-+-group_pci    = get_option('programmer').contains('group_pci')
-+-group_usb    = get_option('programmer').contains('group_usb')
-++group_ftdi   = get_option('programmer').contains('group_ftdi') or get_option('ftdi')
-++group_pci    = get_option('programmer').contains('group_pci') or get_option('pciutils')
-++group_usb    = get_option('programmer').contains('group_usb') or get_option('usb')
-+ group_i2c    = get_option('programmer').contains('group_i2c')
-+ group_serial = get_option('programmer').contains('group_serial')
-+ group_jlink  = get_option('programmer').contains('group_jlink')
-+diff --git a/meson_options.txt b/meson_options.txt
-+index 8a04114d..ae722509 100644
-+--- a/meson_options.txt
-++++ b/meson_options.txt
-+@@ -25,3 +25,6 @@ option('ni845x_search_path', type : 'string', value : 'C:\Program Files (x86)\Na
-+ option('delay_minimum_sleep_us', type : 'integer', min : 0, value : 100000,
-+        description : 'Minimum time in microseconds to suspend execution for (rather than polling) when a delay is required.'
-+                    + ' Larger values may perform better on machines with low timer resolution, at the cost of increased power.')
-++option('pciutils', type : 'boolean', value : false, description : 'Select programmer group pci')
-++option('usb', type : 'boolean', value : false, description : 'Select programmer group usb')
-++option('ftdi', type : 'boolean', value : false, description : 'Select programmer group ftdi')
-+-- 
-+2.46.2
-+
-diff --git a/meta-oe/recipes-bsp/flashrom/flashrom/meson-fixes.patch b/meta-oe/recipes-bsp/flashrom/flashrom/meson-fixes.patch
-deleted file mode 100644
-index e45236ee07..0000000000
---- a/meta-oe/recipes-bsp/flashrom/flashrom/meson-fixes.patch
-+++ /dev/null
-@@ -1,68 +0,0 @@
--Add a ftdi option alongside USB and PCI to control the external dependency, and
--ensure that the build is successful in all combinations of options.
--
--Upstream-Status: Pending
--Signed-off-by: Ross Burton <ross.burton@arm.com>
--
--diff --git a/meson.build b/meson.build
--index 375089c..0df9d69 100644
----- a/meson.build
--+++ b/meson.build
--@@ -91,6 +91,8 @@ else
--   config_digilent_spi = false
--   config_developerbox_spi = false
--   config_pickit2_spi = false
--+  config_stlinkv3_spi = false
--+  config_usbblaster_spi = false
-- endif
-- 
-- # some programmers require libpci
--@@ -118,6 +120,21 @@ else
--   config_satasii = false
-- endif
-- 
--+# some programmers require libftdi
--+if get_option('ftdi')
--+  deps += dependency('libftdi1')
--+else
--+  config_ft2232_spi = false
--+  config_usbblaster_spi = false
--+endif
--+
--+if not (target_machine.cpu_family() == 'x86' or target_machine.cpu_family() == 'x86_64')
--+  config_satamv = false
--+  config_nic3com = false
--+  config_rayer_spi = false
--+  config_nicrealtek = false
--+endif
--+
-- # set defines for configured programmers
-- if config_atahpt
--   srcs += 'atahpt.c'
--@@ -163,7 +180,6 @@ endif
-- if config_ft2232_spi
--   srcs += 'ft2232_spi.c'
--   cargs += '-DCONFIG_FT2232_SPI=1'
---  deps += dependency('libftdi1')
--   cargs += '-DHAVE_FT232H=1'
-- endif
-- if config_gfxnvidia
--@@ -216,6 +232,7 @@ endif
-- if config_nicintel
--   srcs += 'nicintel.c'
--   cargs += '-DCONFIG_NICINTEL=1'
--+  need_raw_access = true
-- endif
-- if config_nicintel_eeprom
--   srcs += 'nicintel_eeprom.c'
--diff --git a/meson_options.txt b/meson_options.txt
--index ea87311..b6b842d 100644
----- a/meson_options.txt
--+++ b/meson_options.txt
--@@ -1,5 +1,6 @@
-- option('pciutils', type : 'boolean', value : true, description : 'use pciutils')
-- option('usb', type : 'boolean', value : true, description : 'use libusb1')
--+option('ftdi', type : 'boolean', value : true, description : 'use libftdi')
-- 
-- option('config_atahpt', type : 'boolean', value : false, description : 'Highpoint (HPT) ATA/RAID controllers')
-- option('config_atapromise', type : 'boolean', value : false, description : 'Promise ATA controller')
-diff --git a/meta-oe/recipes-bsp/flashrom/flashrom_1.2.1.bb b/meta-oe/recipes-bsp/flashrom/flashrom_1.4.0.bb
-similarity index 74%
-rename from meta-oe/recipes-bsp/flashrom/flashrom_1.2.1.bb
-rename to meta-oe/recipes-bsp/flashrom/flashrom_1.4.0.bb
-index b2592d294b..98447809cf 100644
---- a/meta-oe/recipes-bsp/flashrom/flashrom_1.2.1.bb
-+++ b/meta-oe/recipes-bsp/flashrom/flashrom_1.4.0.bb
-@@ -3,12 +3,12 @@ LICENSE = "GPL-2.0-or-later"
- HOMEPAGE = "http://flashrom.org"
- 
- LIC_FILES_CHKSUM = "file://COPYING;md5=751419260aa954499f7abaabaa882bbe"
--SRC_URI = "https://download.flashrom.org/releases/flashrom-v${PV}.tar.bz2 \
--           file://meson-fixes.patch \
-+SRC_URI = "https://download.flashrom.org/releases/flashrom-v${PV}.tar.xz \
-            file://0001-flashrom-Mark-RISCV-as-non-memory-mapped-I-O-archite.patch \
--           file://0001-hwaccess-use-__asm__-as-is-done-elsewhere.patch \
-+           file://0002-meson-Add-options-pciutils-ftdi-usb.patch \
-            "
--SRC_URI[sha256sum] = "89a7ff5beb08c89b8795bbd253a51b9453547a864c31793302296b56bbc56d65"
-+
-+SRC_URI[sha256sum] = "eb0eb3e61a57fd1926c66f08664cf04a96f92cee23b600cf563087c2178d70d8"
- 
- S = "${WORKDIR}/flashrom-v${PV}"
- 
-@@ -18,3 +18,5 @@ PACKAGECONFIG ??= "pci usb ftdi"
- PACKAGECONFIG[pci] = "-Dpciutils=true,-Dpciutils=false,pciutils"
- PACKAGECONFIG[usb] = "-Dusb=true,-Dusb=false,libusb"
- PACKAGECONFIG[ftdi] = "-Dftdi=true,-Dftdi=false,libftdi"
-+
-+EXTRA_OEMESON = "-Dbash_completion=disabled -Dtests=disabled"
--- 
-2.42.0
+So for Solidrun Clearfog Base with Kernel 6.14-rc5 we have:
+dmesg output: https://pastebin.com/aw0X9Fb5
+lspci -vv: https://pastebin.com/5mDHJZ2C
+cat /proc/interrupts: https://pastebin.com/ASHN8cx7
+grep -r . /proc/irq: https://pastebin.com/mskASwYL
+decompiled armada-388-clearfog-base.dtb: https://pastebin.com/KuNFDmYP
 
+------------------------------------------------------
+For PowerInno ArmadaDuo (2-slots PCIe) with Kernel 6.8.9 we have:
+dmesg output: https://pastebin.com/54HHrPVP
+lspci -vv: https://pastebin.com/KpE6Hc0r
+cat /proc/interrupts: https://pastebin.com/6L64ztse
+grep -r . /proc/irq: https://pastebin.com/raPkRBVk
+
+Best Regards,
+Lu=C3=ADs
+
+On Tue, Mar 11, 2025 at 4:24=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
+wrote:
+>
+> On Sun, Mar 09, 2025 at 11:10:58PM +0000, Lu=C3=ADs Mendes wrote:
+> > All logs presented were obtained from a SolidRun A388 ClearFog Base,
+> > if more detailed PCI logs are needed I have the other machine, the
+> > Armada Duo that has 2 PCIe slots and handles an AMD RX 550 GPU. Just
+> > let me know.
+> >
+> > - Complete dmesg log, booted with "pci=3Dnomsi"  is available here:
+> > https://pastebin.com/wDj0NGFN
+> > - Complete output of "sudo lspci -vv" is available here:
+> > https://pastebin.com/f4yHRhLr
+> > - Contents of /proc/interrupts is available here: https://pastebin.com/=
+ejDUuhbJ
+> > - Output of "grep -r . /proc/irq/" is available here:
+> > https://pastebin.com/4jvFBBhy
+>
+> Thank you very much for these.
+>
+> It looks like the only PCI device is 01:00.0: [1ac1:089a], a Coral
+> Edge TPU, and I don't see any evidence of a driver for it or any IRQ
+> usage.  Do you have any other PCI device you could try there?
+> Something with a driver that uses interrupts?
+>
+> Not critical right now, but I'm puzzled by this part of the dmesg log:
+>
+>   mvebu-pcie soc:pcie: host bridge /soc/pcie ranges:
+>   mvebu-pcie soc:pcie:      MEM 0x00f1080000..0x00f1081fff -> 0x000008000=
+0
+>   mvebu-pcie soc:pcie:      MEM 0x00f1040000..0x00f1041fff -> 0x000004000=
+0
+>   mvebu-pcie soc:pcie:      MEM 0x00f1044000..0x00f1045fff -> 0x000004400=
+0
+>   mvebu-pcie soc:pcie:      MEM 0x00f1048000..0x00f1049fff -> 0x000004800=
+0
+>   pci_bus 0000:00: root bus resource [mem 0xf1080000-0xf1081fff] (bus add=
+ress [0x00080000-0x00081fff])
+>   pci_bus 0000:00: root bus resource [mem 0xf1040000-0xf1041fff] (bus add=
+ress [0x00040000-0x00041fff])
+>   pci_bus 0000:00: root bus resource [mem 0xf1044000-0xf1045fff] (bus add=
+ress [0x00044000-0x00045fff])
+>   pci_bus 0000:00: root bus resource [mem 0xf1048000-0xf1049fff] (bus add=
+ress [0x00048000-0x00049fff])
+>   pci_bus 0000:00: root bus resource [mem 0xe0000000-0xe7ffffff]
+>
+> The first four mvebu-pcie lines make good sense and match the
+> first four pci_bus lines.  But I don't know where the
+> [mem 0xe0000000-0xe7ffffff] aperture came from.  It should be
+> described in the devicetree, but I don't see it mentioned in the
+> /soc/pcie ranges.
+>
+> Can you include the devicetree as well?
 
