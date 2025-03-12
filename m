@@ -1,53 +1,61 @@
-Return-Path: <linux-kernel+bounces-557427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A550A5D8C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:01:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322B4A5D8CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:03:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 985877A4673
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:00:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0D0A189EFB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5168623645D;
-	Wed, 12 Mar 2025 09:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dt+DtEI/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E9822E01E;
+	Wed, 12 Mar 2025 09:02:55 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC61522259A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40EB1487D1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741770094; cv=none; b=LOR3ro1opZARkfei/6p94MAhIC7jiXQmuyOUCUd9S4XTV0nAf/P6f9czQjB6PDkj2IiFBydh3lE8d8OYxRvEg1cTrXgyJFCHH4/6yBbZCtNFAmkbbFh+MvRnbxEGrsPB5s8zSlDKjZsvin86t000Ew5qV0IxcmO2WCsE4Pb3jpg=
+	t=1741770175; cv=none; b=tedAcepJax8XLLZ9z4wEVxpkAWJK1sTuetnuBPKUDTD0uz3riirULJbPO3mn5KnB+eH8zcKYZPJTv0e3Ph5+CkVlXMSY+JLfjbCfpiURK8cbbYmpMvQL0dnVgYsJCzhqq9+zQFxuJAGN3MDDs1lar0RgmTtnHcZDFSyzNlI6KWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741770094; c=relaxed/simple;
-	bh=G93hOZvkeNxGPS2XIgjqVw8Ob92awPEw3CcYOqVE6c4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nTYHK8Csytz8XGnKOU0b6+7Os7SHPsI2FalEqpSidNnmApX4c8RaojLxjqt2XMb3rZoKop60JeOzgu8tqqFCTu6knGY5gj6ESbjfcGaMcCxFx9gp+vckF6/81qa+PBdtDHo88zie5+nG2Knrg9mGgKbLyIKTlBJ4aoI2X5CIfr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dt+DtEI/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5746C4CEE3;
-	Wed, 12 Mar 2025 09:01:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741770094;
-	bh=G93hOZvkeNxGPS2XIgjqVw8Ob92awPEw3CcYOqVE6c4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Dt+DtEI/BGMJ3YXHbQ2mwDitKcrND2sYa6535UOEieueRhYMkDGc7tDu6nYsv2XsB
-	 o5KHaXLSch+srvb3f3O9uB2L4lAhU9hept0pwg0HpLR7G6u5yI0SjqDCSx8YyJ8V8P
-	 ZdFvLP28XOTK3Bckmn80w6jycFp0ukM45wtWCJj7jCiMKIlE86BMGTAhCt9EMt44xK
-	 h4za0Ws4pSGZQxiBcBNGJkKXI2N4h9dAC5MoxRS4Q4t9AjA9Fn+Mfxv8J8FvDMLNkS
-	 c9JYAVL3Vos5JgZV+CuAKxnPNCwRisYuF7dfafGFVkEHP27IZko2uIXkwq6WsEDCpu
-	 eVVjCiJ+1F7Yw==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to avoid running out of free segments
-Date: Wed, 12 Mar 2025 17:01:25 +0800
-Message-ID: <20250312090125.4014447-1-chao@kernel.org>
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
+	s=arc-20240116; t=1741770175; c=relaxed/simple;
+	bh=KEgqH4uCWByO3qiSiBOBHpT0xsOI53oeZ/qYgdsHM94=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LFyWDxG4aQ/mxUFJt1wjhxOvg8SM5hn2cgW2I1yMSkCtvc/ol4bDpqQ+jDP3wSlZYNvIRFEpac1AHPBFXjdyWRapVN65lm6N/8Qlg5lhKvSyKvAOAU0pz5cV3nIieSv5WEAuJ69N6aJbJUl6zdLcEfv8eYPPudsTHSQ0lQtTikQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowAAnr_ikTdFnCLuCFA--.4994S2;
+	Wed, 12 Mar 2025 17:02:29 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	lumag@kernel.org,
+	dianders@chromium.org,
+	yuanhsinte@chromium.org,
+	jani.nikula@intel.com,
+	xji@analogixsemi.com,
+	robh@kernel.org,
+	sui.jingfeng@linux.dev,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] drm/bridge: anx7625: Remove redundant 'flush_workqueue()' calls
+Date: Wed, 12 Mar 2025 17:01:32 +0800
+Message-Id: <20250312090132.1624445-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,57 +63,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAnr_ikTdFnCLuCFA--.4994S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKF1xZFy7tr1DuryrtFyxZrb_yoWDJrc_CF
+	ZakF43KFW8Cr1v9a47Wr15Zas2vwn8uFWxWayYqa9Iq3y7Aw1jvF47ZFWqvw1UZw45GFy2
+	9w1q9a47ZrnxGjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb6AFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE
+	5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx
+	8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
+	xwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE14v_GF
+	Wl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWU
+	JVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7V
+	AKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42
+	IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7sR_g18DUUUUU=
+	=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-If checkpoint is disabled, GC can not reclaim any segments, we need
-to detect such condition and bail out from fallocate() of a pinfile,
-rather than letting allocator running out of free segment, which may
-cause f2fs to be shutdown.
+'destroy_workqueue()' already drains the queue before destroying it, so
+there is no need to flush it explicitly.
 
-reproducer:
-mkfs.f2fs -f /dev/vda 16777216
-mount -o checkpoint=disable:10% /dev/vda /mnt/f2fs
-for ((i=0;i<4096;i++)) do { dd if=/dev/zero of=/mnt/f2fs/$i bs=1M count=1; } done
-sync
-for ((i=0;i<4096;i+=2)) do { rm /mnt/f2fs/$i; } done
-sync
-touch /mnt/f2fs/pinfile
-f2fs_io pinfile set /mnt/f2fs/pinfile
-f2fs_io fallocate 0 0 4201644032 /mnt/f2fs/pinfile
+Remove the redundant 'flush_workqueue()' calls.
 
-cat /sys/kernel/debug/f2fs/status
-output:
-  - Free: 0 (0)
+This was generated with coccinelle:
 
-Fixes: f5a53edcf01e ("f2fs: support aligned pinned file")
-Signed-off-by: Chao Yu <chao@kernel.org>
+@@
+expression E;
+@@
+- flush_workqueue(E);
+  destroy_workqueue(E);
+
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- fs/f2fs/file.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/gpu/drm/bridge/analogix/anx7625.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 2ddb93d1a10c..abbcbb5865a3 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1838,6 +1838,18 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
- next_alloc:
- 		f2fs_down_write(&sbi->pin_sem);
+diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
+index 0b97b66de577..591ec8e5b642 100644
+--- a/drivers/gpu/drm/bridge/analogix/anx7625.c
++++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
+@@ -2771,7 +2771,6 @@ static void anx7625_i2c_remove(struct i2c_client *client)
  
-+		if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-+			if (has_not_enough_free_secs(sbi, 0, 0)) {
-+				f2fs_up_write(&sbi->pin_sem);
-+				err = -ENOSPC;
-+				f2fs_warn_ratelimited(sbi,
-+					"ino:%lu, start:%lu, end:%lu, need to trigger GC to "
-+					"reclaim enough free segment when checkpoint is enabled",
-+					inode->i_ino, pg_start, pg_end);
-+				goto out_err;
-+			}
-+		}
-+
- 		if (has_not_enough_free_secs(sbi, 0, f2fs_sb_has_blkzoned(sbi) ?
- 			ZONED_PIN_SEC_REQUIRED_COUNT :
- 			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi)))) {
+ 	if (platform->hdcp_workqueue) {
+ 		cancel_delayed_work(&platform->hdcp_work);
+-		flush_workqueue(platform->hdcp_workqueue);
+ 		destroy_workqueue(platform->hdcp_workqueue);
+ 	}
+ 
 -- 
-2.48.1
+2.25.1
 
 
