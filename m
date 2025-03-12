@@ -1,122 +1,108 @@
-Return-Path: <linux-kernel+bounces-557709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F73A5DCBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:33:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31BDA5DCC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:34:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12BD518989F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:33:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24DD37A40F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B20242928;
-	Wed, 12 Mar 2025 12:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39A5242909;
+	Wed, 12 Mar 2025 12:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oWTp6Zv1"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QcMq3x2m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1EF1E489;
-	Wed, 12 Mar 2025 12:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AD21E489
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741782811; cv=none; b=cjBDX6EdWDiyCiV74DFFIAQVOOooGyVm7HtXDYQRUshSX4a97fQC0eUaBsBb3lBlqDHprZhn9rtcXHZHsDyhZ4TtNJPMfuyxIQMyEUy+l5pTuA1t82b49s11nbF+trjJmAKH46IMxb7wWJOTeRVLfaPPNqPIkqQnfjfIoYYfoCY=
+	t=1741782881; cv=none; b=OkEhMTwREauzTl2F3VKStKKMiV1HPNusT8WPBNHAuW9Mq1nu+Xw23Q2xiM+NJzz9Zi+4S8XwxhCX/x/fHIbMxpMznMtspDiYCCYVJzA0RsOiKDkMa5xmaivvK0agpo8/m5MCjO8SBIh6GgOv2LRGEl8/7YiJbhtEyGXk/CE+V7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741782811; c=relaxed/simple;
-	bh=YRkj4sqSqQQgNr59IaP83gwr/KbDIvv0V3DJyw6R3qw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Ymc0GpizyXxBKaEqlbyNtXouYSXOjun/jyYFmrHOZBlmE/lxRS3rYpq0UlqK1aVdnoh8OKpKUxgFHtJqOpFzHCfAuwvvD6qoeAHmv6hQokppXk4N6HW0zXm2qkhkDYIt26rijPE8k7g7sjJ73MDhNVo3fTWRJn7JocjTCAO5qlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oWTp6Zv1; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741782805; x=1742387605; i=markus.elfring@web.de;
-	bh=hh5c+Zd/kuAhAL/TqLeBv/5gR6i+du8FtsJSY8grQxo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=oWTp6Zv1VJUeIQsrL85La3RFRFzx9BQg+RwFBAoGGdziUzn69ak1M9IDngQIlez3
-	 AyFRYIXY7021i2jz/9WUurtj8+0aXgVEz38tkMf1qAH1tHBXEbMT1eTTzYODKnTLG
-	 HHt6ZHll0IpT+MQTDMd7LDz9IPVJq4FTgHHWchyW1A48gELkKctz37kaToArMaVKo
-	 Sy2Rli5vmzOLJFQnq2EPhQQAULok5vLuw5z1NcnPWFTW3Wne2IdgM8CpCJ+TWt+2o
-	 eXs/OT6ObTPy+WziW30mvKmvfrpSegZymbafrHQtje45fLqU5+kgReSpV+mBj2Lqx
-	 89p5bZuotyNQM8yoHg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MsaWF-1t44uF3V9v-00siwh; Wed, 12
- Mar 2025 13:33:24 +0100
-Message-ID: <b7821109-e0b6-441d-a15a-580bd7bd4c50@web.de>
-Date: Wed, 12 Mar 2025 13:33:21 +0100
+	s=arc-20240116; t=1741782881; c=relaxed/simple;
+	bh=z3lAKg1EBo5CrGDmv4+82VtP1/Cec7fMzvE95Lww3OM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eVw2qJDFsYKtu0DZeQ8Nai1n9bCeft4zISUAd5o85UZR96dvnA+6c7/xoyWSE0KSzZvZUSCfX7Nso87eBz0k2014SbKpywT2RRJTI99Mgno/JA2nguEpAqH6CHS6EzPRf5khDJ4ClfGqV/fT086taiW5RXbnCxSHDZVKQOwNncw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QcMq3x2m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAECBC4CEE3;
+	Wed, 12 Mar 2025 12:34:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741782880;
+	bh=z3lAKg1EBo5CrGDmv4+82VtP1/Cec7fMzvE95Lww3OM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QcMq3x2mcsT1/IhZZQGtJLDE187pAyU0hqHsMI5pz28uEJRXIZPmzhtdz9uEBnuAf
+	 /bjo9EOJyibrIiDwD4tvWDcpEzeedt7bDQ1evAYi+NdHBwJg6A9WL6Dz+AoUa9np+i
+	 7YwR32r8yAR1tRv38P7OSTIcNggqVR0TFyRGE9/4MMmAyzYqW14p5ryKiVhsa1zXjQ
+	 4CQ6wPI45w/WS4H/Y3xuYIhfpN5uOo18YQBMZZslTA/mA+JtmSHegxR9XcHu+bn67u
+	 Or3WUBaAC7WP5Y/+CdQcjOS/icObs7dhgrle1718DOQTBP+iEfcJcUrTHnQOF1nVPM
+	 qbV0K/oHpPHFQ==
+Date: Wed, 12 Mar 2025 12:34:37 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] regulator: act8865-regulator: switch psy_cfg from
+ of_node to fwnode
+Message-ID: <4fd63a7e-e22c-4f7e-b6e4-25412eaeaebe@sirena.org.uk>
+References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
+ <20250225-psy-core-convert-to-fwnode-v1-2-d5e4369936bb@collabora.com>
+ <clovsoj2joegkabhzsbjre5adj7qwo6vmf47urnam6xnlh3cm3@jcitrknzomvf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: vulab@iscas.ac.cn, linux-sctp@vger.kernel.org, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Xin Long <lucien.xin@gmail.com>
-References: <20250312032146.674-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] sctp: handle error of sctp_sf_heartbeat() in
- sctp_sf_do_asconf()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250312032146.674-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TaioqsGsno/YeuoR"
+Content-Disposition: inline
+In-Reply-To: <clovsoj2joegkabhzsbjre5adj7qwo6vmf47urnam6xnlh3cm3@jcitrknzomvf>
+X-Cookie: You will outgrow your usefulness.
+
+
+--TaioqsGsno/YeuoR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mWcFtUCxvmz9Gb74Yp8WaL/ErrzkTk2RefOaUE0nkbRlU8XpM0+
- LTdl9LUhZx6mnPtK2eQKMG6qwgSItnYQx+12XVUUuCsHI9G2ysBHXMcfHTb42P0yLo4p00M
- jmQYFvZvLdUYLlmAaSi6eoXOWckJgpGzJJ5WS0Uw5NTTWwykK5E8ImeZ7HDpdynh0ikrkKn
- ylFKlwX2rkZYZ27hnXu9g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Hkz3EDrPPW0=;nTgY/D+sLpMHv6vElkVQvVfcrTg
- d2+uzk43jo1EEjsMXcli6jBXwe1MYwlraSxEFmJ/NAPL3cKNVGd7FS46/faUTsJMKcMf6aE2H
- eR6PUTw4O+S/3KxTgDPCm4qseuD0mYTEY5sfuf3LrjC8LginXoEY1UX6YJM4Mv3WJFGISbyjs
- AUBMyBJQVif1nkcYIYBH7mvC2f+Evkla+kQ/aGm0ujV6LGbp2vqxC094AwsFsZsEP0MCmDDu4
- p1oR6i7+LtFB5Up+a4TqZ+N35cv7PxnxlX32xRwrlG0/m/WRF83TlpvGFa14k2slRA8gQfLOq
- 5nLwUo1oWkqKRa0mHR+y+dHZ7ho0w1q/Rmj5TgvkC6UjtZMzSR7XaxdzFiTBStyWUbOwxxc6t
- r30qwQPWxUbYdxqUAzE2sIQ9duUYOBHR5f9H0Cs9eEyYBOwPmChXzRW3sJnhVK9iwgUwMaj98
- aFrKoU6OLoUGQz7kh12CWTkQgshoGSS1HGbkhJXNnjymJ45nq243FF7YCCqxp3rl0y++ibPAR
- MqMw91z0mu04Nl1OeLGecXa+olWg2mknkMXEFDZPF2gd+ngORFjfPjziIiMqNlZOWUML3EzPE
- 9xXbKBykPPIsnsnPn6YNB0t9o0Wy5s5+ZX9+NriEaZH7+Zp5d4OQD1CpaMqRaN3XaNLtouYq6
- KPzpf8lsrPrCknyO2utj8ikfQcvltIfIronxQPVYxHmx6Uh+vY4PVuuq/Yyoe0p1H9yInuqHZ
- UxpTTTTyzydjdOGdpH2tdeqA4UAcbwYEkk1EyA8ynDl/8fHOHqjnFXOrnOiYrRXqtPZJftuXp
- 52U/sg21cJyIGPQoz0qtqJXvZF18qlFMb0de3O3LLFOe6oBQ4P015JzqMraTnOdK8BGKFkD40
- O4tDCxxmm6nJSVY1u/4WpG8ykOY0kKYqFin26NJdLGp4EzRoQ797rBhGyvouBqkNZq4rxTjZ6
- z6pZhaBaj90E+lYMV7m8dqZoY3vE2ICHl0ua+gGZf2FCQLl37Efj4mSCnHNltczWOrBayKv8g
- 5wZHpvM+IwVW8/2dNKPGaZ92MqTnq29GRdWvZnh3w8M/EctfIZW+r9+Ocr3mgQ8Lflm9vw5vX
- 8xLUTmmEDbvPTeJ+lh6tyCwHEnGQF/XuCZ4XEUMwuSI3Z9mpAoThrgwOio8XxsqhZPqUScDFR
- FpxumDCQmnUjoomPIFnLTupxw1y+mk5r10HdXNXTKLoRCLwHSryDhRihtuAOBW0KjHye+eoRL
- 8MS/wyKdDt89OoQ/naPLvuXezjV0AfFItzRHotEp4pTIVr5ou+4BO2Ur22w6OKiYyHEEejwmT
- /aY93/eox2M1uA2UoyEvkkVcjp8Oo6rpg6ltPD2b/onFtP4JMHDbw1s57nhFyqzujSK5omRSW
- r0/kBrOJVSSTqMgwuVLsTvyGKpBRu138M9AiRSyybPaoOS9eTjipqxeOhIRtSqC5AKVw+AY6Z
- EtO+F9fFJuASs7VTkUuc//8Mugq/f0jX45w8jhc1UKuQ8iY0t
 
-> In sctp_sf_do_asconf(), SCTP_DISPOSITION_NOMEM error code returned
-> from sctp_sf_heartbeat() represent a failure of sent HEARTBEAT. The
+On Wed, Mar 12, 2025 at 01:12:14AM +0100, Sebastian Reichel wrote:
 
-                                                       heartbeat?
+> Can you apply this trivial patch for 6.15, so that we don't have to
+> bother with an immutable branch for the remaining series in the 6.16
+> cycle? In case the patch itself did not reach you for some reason:
 
-Would the error predicate =E2=80=9Creturn value !=3D SCTP_DISPOSITION_CONS=
-UME=E2=80=9D be safer?
-https://elixir.bootlin.com/linux/v6.14-rc6/source/include/net/sctp/sm.h#L4=
-3
+I have no idea what the story with dependencies is here...
 
+Please don't send content free pings and please allow a reasonable time
+for review.  People get busy, go on holiday, attend conferences and so=20
+on so unless there is some reason for urgency (like critical bug fixes)
+please allow at least a couple of weeks for review.  If there have been
+review comments then people may be waiting for those to be addressed.
 
-> return value of sctp_sf_heartbeat() needs to be checked and propagates
-> to caller function.
+Sending content free pings adds to the mail volume (if they are seen at
+all) which is often the problem and since they can't be reviewed
+directly if something has gone wrong you'll have to resend the patches
+anyway, so sending again is generally a better approach though there are
+some other maintainers who like them - if in doubt look at how patches
+for the subsystem are normally handled.
 
-Will imperative wordings be more desirable for such a change description?
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc6#n94
+--TaioqsGsno/YeuoR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Markus
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfRf1wACgkQJNaLcl1U
+h9Bf4Af/Z6tJrpuOBCeHF0MpQdokzHgfbQAHKKr4fBN5OGzwERLzvuwxjiKWL6aF
+jcsxMffqa7cYPpVmxMRZYUcWCP8JPTbp2Ci8F7noqn+nxoDf7kjFgQdC1UG0f1xx
+tthMY9RslcgtRPRi4odbiV8r1XcDv5LS9F5zKrLPYuLCgaDtcGmTMT34b0d3p8XY
+fBlOwM9Q8mFHxRXAP+m+3EkKgQhBYtCwxXemnV2uGZYB7rlHm28IP80JURC6iXcj
+aKsTOGeJOoyqMcL0lcPsazGUeQROKCRM5TssjMCXyEe7w3tbiKuAZNxkDx5Lup59
+oPgi7GReAyHxScjf9SSdxG8NKDRDkQ==
+=rntj
+-----END PGP SIGNATURE-----
+
+--TaioqsGsno/YeuoR--
 
