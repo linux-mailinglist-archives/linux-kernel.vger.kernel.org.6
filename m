@@ -1,115 +1,100 @@
-Return-Path: <linux-kernel+bounces-558058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13855A5E113
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:52:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EA5A5E115
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:52:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 898593A4309
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD385167769
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8B8257AE4;
-	Wed, 12 Mar 2025 15:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C178256C6B;
+	Wed, 12 Mar 2025 15:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ku1CaqAp"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fxMytm9d";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yxo63xRQ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fxMytm9d";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yxo63xRQ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FED3256C9F;
-	Wed, 12 Mar 2025 15:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A419C2561CA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741794677; cv=none; b=h/l7URj87hRJ5v32bDVAl9uqOuAeLkUi+GZyO9KBYEGQDO8u5PEYBiS+T45PufS63OlFGK6R/WtnScrRJWrQsovHRK9CdJCCjacx342zP6vijhoo8UE2aknis+7yVATSMsDT6UQBFs/mhSZxgif/0tK6a3w+N8oBfkcNbOb15a0=
+	t=1741794690; cv=none; b=SzEFCGlC+LG/nSa2QT44pncORw6I8FV2LSRFNiRWZ0o9SRlekh7RRTZo5wfaoeIF78KV/+WM63G+acXHhIn08FjyWE9UvhSNgg0ypJSck9QRwl/xGiuQfEM+pc9rRJykIuCdPKifg3ma6JLYQB4u+wNTGZjjlmL7FGfyT0WHMLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741794677; c=relaxed/simple;
-	bh=1QU3OH9eZMlUtmRDEa6htdxVgD9Uk7DCLYLxId7vWJM=;
+	s=arc-20240116; t=1741794690; c=relaxed/simple;
+	bh=x0bzaDEk8aQvniRaJxUgWv0R2t78KM+JXoY5XWMzc4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xjwgn6Fi/qK7nVLlJsRug35hZ/8m7U8ovdqGeR8WNILlolbTG8P5+Q2MUKezO28q7Yh/baKU4rJRVTBBpWZVZ5wtprTQyvupdOF0gZ25azpYFe+IWAMBhB9Y5GltFp4PDpa57TnFjCRmQ5nnSy9s+dDKcgPORDTGRE0spD1R78I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ku1CaqAp; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3012a0c8496so52316a91.2;
-        Wed, 12 Mar 2025 08:51:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741794675; x=1742399475; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s6kcU/jqWnvmgUYRTSnCwjipLLOVfnhjvRKH7bJe2iA=;
-        b=ku1CaqApDn9TZbEXxhcVjZzdCiuKdlgYHb/ilKYb1GqZSZQvDqAep+Nmy++xG6NxfA
-         NIFTgTMLc5gdWTpWQ93lOprH+YWYWNSwEKftsuIHXpb80wuwZk0kCikeOOs6Soi1A+CO
-         k2NzChZl7u6SHe4HiLmXpO2V8OofmB7KWK6hgXehrxb+lEXdn4iQkYAER6fR+pRZqW/r
-         iIzYn2yxMxg9veRWtCjn90Q8cJAY4SkuX1xdZeh4EdrXY66FjMHDzLSQZUmqackKD5B4
-         tID5onghKylmxDUcHtZb0P7H1ioLvolQa5x+ECQW9OqOVU+rbfKh/Un6IuSPuu0LTqOY
-         DWfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741794675; x=1742399475;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s6kcU/jqWnvmgUYRTSnCwjipLLOVfnhjvRKH7bJe2iA=;
-        b=Z3rddGnGJIfU+/kLCdpS8QyGmL0wRVq44KhUKQUpY8mqkCr4M9f1h8DNl8fJH8a+3H
-         zQKAeGQVGUTXJwq7GNZEzF3Vp7P37z+Ma7OAV1QjMw3cBSjQkTDfa/ytd8kpA9PtPr/7
-         ZaMAf6bdo7Sb6IaN+UORnXF+87QdcwdFzfRYUXChiq+iWO/8FX2Qg6C3IYnnboip6Le7
-         nE6AONYNG7WTTsrUTrBtU6nQ8nKpM0cvxVLkdBJ90lsiatr/5oDJ5pbN5hJ2B375hClh
-         pg8Rj/Ipj+tgNjltoSK5a96AA4FjDO6kNEeLPQ4JNGQ/QHdVgztvfRFdvbztwFfqoHbS
-         F5xw==
-X-Forwarded-Encrypted: i=1; AJvYcCUECT6zF4SY3xnqYMZEsE4+gjTz9pb60f1fLBSz9Aiqit9FLVQG8i9G25sKlxwIktBxTHLM/DIAY6nx5FA=@vger.kernel.org, AJvYcCVIG6tLwQ7CGKtqN+9dfaxcJLyKQuKfvijhN5IkI6QEEXcGRQzees10q9YsUk5A9jQLnyp4nBio@vger.kernel.org, AJvYcCVOLLsTb2OkLp9yg+gbk+XHVEDCl9pf21z7EK0Eft0+h002NbDb55/FBdGbI8rlA8P36wgUqxCKG65LzImA@vger.kernel.org, AJvYcCVvVGONArjqFf03JPGH5lES/D0RZSJIMpg3NWbk4OE1VaacsUuHmlY8PpRJtgvsrOo6HVe9hv9lSA68ZzJV@vger.kernel.org, AJvYcCVvocK4QfSNPJjraH2k0HiyHEn4LFMlW/rgYPn4J4gpbuVcEU/yz0czk2a/7M5xEDGgfz4KhYL6az8nsyE=@vger.kernel.org, AJvYcCWpaZaevMY5O21dQaEOGycsKPthwaUguQH2innjiR7Rom7lQnlsZmdNwhOxQYNRP0ZTPTYFoxNOpd/5SldIGeI=@vger.kernel.org, AJvYcCXDJ8H6Ub6T2kMrpB5dgVxsR6CNiolRtGSbWliCIkdztWhItcUNNjY+wqrY1Glxu024PVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoHA6EttNblWzqBpxF2OQdL/0SddDTdlwY8tEwm/tQmRNkBvJM
-	CggjF1DSINJd0+y2bApLvGqWg77MkEBSl3stQoMbYQ1NR+CzfvkD
-X-Gm-Gg: ASbGncvxWJ1sq2qXjJ4Y9CJYDJ0RnXpDQ57a7U2zUJTil11e4W/FbxRSLE2o0mtifq1
-	pRavI5IqKPvwrsXkky4Lb6oUdmBpAHdmWHrxbpnpQxmSxamwOLS1flsoQ4Q7tOqjy0LRswvXphi
-	IHlvfY/0nKPMYQA8Vph2ztVxI+eX/V9Q0raFmwF1PpuLrDGuhDdNL+am/2wJQpMrDIoHUTFzpb1
-	0Yx1pIz3/TQpQ5Nbc58glJGFIaQQ15KHE52WY7MQhfMcrMYQG9yJKflwv40u4Y+wPeZTrgarB+B
-	l3HOTYlYqMkFWrSiWvrqDhB7GudJ8AzFnsR5O3nXmCUA
-X-Google-Smtp-Source: AGHT+IGK1wYMGzHFc5cibW/rOHObEUL/txoAjaO3YQm2mzlBBY39pOgAZq4ZVPE3dzf2E+KcMNlzyw==
-X-Received: by 2002:a17:90a:a009:b0:301:1d03:93cd with SMTP id 98e67ed59e1d1-3011d039a52mr3747173a91.24.1741794675252;
-        Wed, 12 Mar 2025 08:51:15 -0700 (PDT)
-Received: from localhost ([216.228.125.130])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301182181c3sm1955502a91.5.2025.03.12.08.51.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 08:51:14 -0700 (PDT)
-Date: Wed, 12 Mar 2025 11:51:12 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
-	akpm@linux-foundation.org, alistair@popple.id.au,
-	andrew+netdev@lunn.ch, andrzej.hajda@intel.com,
-	arend.vanspriel@broadcom.com, awalls@md.metrocast.net, bp@alien8.de,
-	bpf@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
-	brcm80211@lists.linux.dev, dave.hansen@linux.intel.com,
-	davem@davemloft.net, dmitry.torokhov@gmail.com,
-	dri-devel@lists.freedesktop.org, eajames@linux.ibm.com,
-	edumazet@google.com, eleanor15x@gmail.com,
-	gregkh@linuxfoundation.org, hverkuil@xs4all.nl,
-	jernej.skrabec@gmail.com, jirislaby@kernel.org, jk@ozlabs.org,
-	joel@jms.id.au, johannes@sipsolutions.net, jonas@kwiboo.se,
-	jserv@ccns.ncku.edu.tw, kuba@kernel.org, linux-fsi@lists.ozlabs.org,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-serial@vger.kernel.org, linux-wireless@vger.kernel.org,
-	linux@rasmusvillemoes.dk, louis.peens@corigine.com,
-	maarten.lankhorst@linux.intel.com, mchehab@kernel.org,
-	mingo@redhat.com, miquel.raynal@bootlin.com, mripard@kernel.org,
-	neil.armstrong@linaro.org, netdev@vger.kernel.org,
-	oss-drivers@corigine.com, pabeni@redhat.com,
-	parthiban.veerasooran@microchip.com, rfoss@kernel.org,
-	richard@nod.at, simona@ffwll.ch, tglx@linutronix.de,
-	tzimmermann@suse.de, vigneshr@ti.com, x86@kernel.org
-Subject: Re: [PATCH v3 00/16] Introduce and use generic parity16/32/64 helper
-Message-ID: <Z9GtcNJie8TRKywZ@thinkpad>
-References: <4732F6F6-1D41-4E3F-BE24-E54489BC699C@zytor.com>
- <efc2ee9d-5382-457f-b471-f3c44b81a190@citrix.com>
- <5A790652-1B22-4D13-AAC5-5D9931E90903@zytor.com>
- <20250307195310.58abff8c@pumpkin>
- <EB85C3C1-8A0D-4CB9-B501-BFEABDF3E977@zytor.com>
- <Z824SgB9Dt5zdWYc@visitorckw-System-Product-Name>
- <Z9CyuowYsZyez36c@thinkpad>
- <80771542-476C-493E-858A-D2AF6A355CC1@zytor.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N376Lad152QhEapzDRYRdGcww0ZF83eeGv+uQKcWxbildzL85gqo69XNv86Xb6rpa/rYuS7dqn+pvHTATfonu6n/AQhpsiN3J2IfHzt5umXnl27/NQGJWW6V2okH2Nj2mR+I43FnlPqdkwehTDTWuXWlghF7xd9/5gWiK+YMEtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fxMytm9d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yxo63xRQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fxMytm9d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yxo63xRQ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BEDEB21195;
+	Wed, 12 Mar 2025 15:51:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741794686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAolITJtosWbgnrc4Sl1gW+rHyFKKmQ+Fk910mjL86Q=;
+	b=fxMytm9dRWRHCGHtl03ouUJ/RAM32u41BjH5yWb28VwBeyGiIo3THR55jxsgi//yujU/3h
+	MOlKmPR591vXtv1Abv73AKMvfFsVnQsYK+8PiKNoqORrr8pY7CAQuBZ0NjvqX+7MaI6vrm
+	bB8XcjTb+z7Y+cm7LU07iE5w+daL9ww=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741794686;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAolITJtosWbgnrc4Sl1gW+rHyFKKmQ+Fk910mjL86Q=;
+	b=Yxo63xRQgDxrt9B4y5UvKmUR34SS4Cs8MVqymB2MqaJUVmcrFeA6ivRuYCb/ilRM+74DEe
+	t68JcSrFQne43BBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fxMytm9d;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Yxo63xRQ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741794686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAolITJtosWbgnrc4Sl1gW+rHyFKKmQ+Fk910mjL86Q=;
+	b=fxMytm9dRWRHCGHtl03ouUJ/RAM32u41BjH5yWb28VwBeyGiIo3THR55jxsgi//yujU/3h
+	MOlKmPR591vXtv1Abv73AKMvfFsVnQsYK+8PiKNoqORrr8pY7CAQuBZ0NjvqX+7MaI6vrm
+	bB8XcjTb+z7Y+cm7LU07iE5w+daL9ww=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741794686;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAolITJtosWbgnrc4Sl1gW+rHyFKKmQ+Fk910mjL86Q=;
+	b=Yxo63xRQgDxrt9B4y5UvKmUR34SS4Cs8MVqymB2MqaJUVmcrFeA6ivRuYCb/ilRM+74DEe
+	t68JcSrFQne43BBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B389313AA9;
+	Wed, 12 Mar 2025 15:51:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VcPOK36t0WenFAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 12 Mar 2025 15:51:26 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 65CB5A0908; Wed, 12 Mar 2025 16:51:22 +0100 (CET)
+Date: Wed, 12 Mar 2025 16:51:22 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+	audit@vger.kernel.org, axboe@kernel.dk
+Subject: Re: [PATCH] fs: dodge an atomic in putname if ref == 1
+Message-ID: <naalmvyvolpfkwxoztkskhz2kyoznjjhm5y4zmfd44tyf5d24k@2jap6ty4nkwz>
+References: <20250311181804.1165758-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -118,122 +103,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <80771542-476C-493E-858A-D2AF6A355CC1@zytor.com>
+In-Reply-To: <20250311181804.1165758-1-mjguzik@gmail.com>
+X-Rspamd-Queue-Id: BEDEB21195
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Mar 11, 2025 at 03:24:14PM -0700, H. Peter Anvin wrote:
-> On March 11, 2025 3:01:30 PM PDT, Yury Norov <yury.norov@gmail.com> wrote:
-> >On Sun, Mar 09, 2025 at 11:48:26PM +0800, Kuan-Wei Chiu wrote:
-> >> On Fri, Mar 07, 2025 at 12:07:02PM -0800, H. Peter Anvin wrote:
-> >> > On March 7, 2025 11:53:10 AM PST, David Laight <david.laight.linux@gmail.com> wrote:
-> >> > >On Fri, 07 Mar 2025 11:30:35 -0800
-> >> > >"H. Peter Anvin" <hpa@zytor.com> wrote:
-> >> > >
-> >> > >> On March 7, 2025 10:49:56 AM PST, Andrew Cooper <andrew.cooper3@citrix.com> wrote:
-> >> > >> >> (int)true most definitely is guaranteed to be 1.  
-> >> > >> >
-> >> > >> >That's not technically correct any more.
-> >> > >> >
-> >> > >> >GCC has introduced hardened bools that intentionally have bit patterns
-> >> > >> >other than 0 and 1.
-> >> > >> >
-> >> > >> >https://gcc.gnu.org/gcc-14/changes.html
-> >> > >> >
-> >> > >> >~Andrew  
-> >> > >> 
-> >> > >> Bit patterns in memory maybe (not that I can see the Linux kernel using them) but
-> >> > >> for compiler-generated conversations that's still a given, or the manager isn't C
-> >> > >> or anything even remotely like it.
-> >> > >> 
-> >> > >
-> >> > >The whole idea of 'bool' is pretty much broken by design.
-> >> > >The underlying problem is that values other than 'true' and 'false' can
-> >> > >always get into 'bool' variables.
-> >> > >
-> >> > >Once that has happened it is all fubar.
-> >> > >
-> >> > >Trying to sanitise a value with (say):
-> >> > >int f(bool v)
-> >> > >{
-> >> > >	return (int)v & 1;
-> >> > >}    
-> >> > >just doesn't work (see https://www.godbolt.org/z/MEndP3q9j)
-> >> > >
-> >> > >I really don't see how using (say) 0xaa and 0x55 helps.
-> >> > >What happens if the value is wrong? a trap or exception?, good luck recovering
-> >> > >from that.
-> >> > >
-> >> > >	David
-> >> > 
-> >> > Did you just discover GIGO?
-> >> 
-> >> Thanks for all the suggestions.
-> >> 
-> >> I don't have a strong opinion on the naming or return type. I'm still a
-> >> bit confused about whether I can assume that casting bool to int always
-> >> results in 0 or 1.
-> >> 
-> >> If that's the case, since most people prefer bool over int as the
-> >> return type and some are against introducing u1, my current plan is to
-> >> use the following in the next version:
-> >> 
-> >> bool parity_odd(u64 val);
-> >> 
-> >> This keeps the bool return type, renames the function for better
-> >> clarity, and avoids extra maintenance burden by having just one
-> >> function.
-> >> 
-> >> If I can't assume that casting bool to int always results in 0 or 1,
-> >> would it be acceptable to keep the return type as int?
-> >> 
-> >> Would this work for everyone?
-> >
-> >Alright, it's clearly a split opinion. So what I would do myself in
-> >such case is to look at existing code and see what people who really
-> >need parity invent in their drivers:
-> >
-> >                                     bool      parity_odd
-> >static inline int parity8(u8 val)       -               -
-> >static u8 calc_parity(u8 val)           -               -
-> >static int odd_parity(u8 c)             -               +
-> >static int saa711x_odd_parity           -               +
-> >static int max3100_do_parity            -               -
-> >static inline int parity(unsigned x)    -               -
-> >static int bit_parity(u32 pkt)          -               -
-> >static int oa_tc6_get_parity(u32 p)     -               -
-> >static u32 parity32(__le32 data)        -               -
-> >static u32 parity(u32 sample)           -               -
-> >static int get_parity(int number,       -               -
-> >                      int size)
-> >static bool i2cr_check_parity32(u32 v,  +               -
-> >                        bool parity)
-> >static bool i2cr_check_parity64(u64 v)  +               -
-> >static int sw_parity(__u64 t)           -               -
-> >static bool parity(u64 value)           +               -
-> >
-> >Now you can refer to that table say that int parity(uXX) is what
-> >people want to see in their drivers.
-> >
-> >Whichever interface you choose, please discuss it's pros and cons.
-> >What bloat-o-meter says for each option? What's maintenance burden?
-> >Perf test? Look at generated code?
-> >
-> >I personally for a macro returning boolean, something like I
-> >proposed at the very beginning.
-> >
-> >Thanks,
-> >Yury
+On Tue 11-03-25 19:18:04, Mateusz Guzik wrote:
+> While the structure is refcounted, the only consumer incrementing it is
+> audit and even then the atomic operation is only needed when it
+> interacts with io_uring.
 > 
-> Also, please at least provide a way for an arch to opt in to using the builtins, which seem to produce as good results or better at least on some architectures like x86 and probably with CPU options that imply fast popcnt is available.
+> If putname spots a count of 1, there is no legitimate way for anyone to
+> bump it.
+> 
+> If audit is disabled, the count is guaranteed to be 1, which
+> consistently elides the atomic for all path lookups. If audit is
+> enabled, it still manages to elide the last decrement.
+> 
+> Note the patch does not do anything to prevent audit from suffering
+> atomics. See [1] and [2] for a different approach.
+> 
+> Benchmarked on Sapphire Rapids issuing access() (ops/s):
+> before: 5106246
+> after:  5269678 (+3%)
+> 
+> Link 1:	https://lore.kernel.org/linux-fsdevel/20250307161155.760949-1-mjguzik@gmail.com/
+> Link 2: https://lore.kernel.org/linux-fsdevel/20250307164216.GI2023217@ZenIV/
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-Yeah. And because linux/bitops.h already includes asm/bitops.h
-the simplest way would be wrapping generic implementation with
-the #ifndef parity, similarly to how we handle find_next_bit case.
+Yeah, I like this much more than the original. Feel free to add:
 
-So:
-1. Kuan-Wei, please don't invent something like ARCH_HAS_PARITY;
-2. This may, and probably should, be a separate follow-up series,
-   likely created by corresponding arch experts.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Thanks,
-Yury
+								Honza
+
+> This is an alternative to the patch I linked above.
+> 
+> I think the improved commit message should also cover the feedback
+> Christian previously shared concerning it.
+> 
+> This is a trivial win until the atomic issue gets resolved, I don't see
+> any reason to NOT include it. At the same time I don't have that much
+> interest arguing about it either.
+> 
+> That is to say, here is a different take, if you don't like it, I'm
+> dropping the subject.
+> 
+> cheers
+> 
+>  fs/namei.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 06765d320e7e..add90981cfcd 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -275,14 +275,19 @@ EXPORT_SYMBOL(getname_kernel);
+>  
+>  void putname(struct filename *name)
+>  {
+> +	int refcnt;
+> +
+>  	if (IS_ERR_OR_NULL(name))
+>  		return;
+>  
+> -	if (WARN_ON_ONCE(!atomic_read(&name->refcnt)))
+> -		return;
+> +	refcnt = atomic_read(&name->refcnt);
+> +	if (refcnt != 1) {
+> +		if (WARN_ON_ONCE(!refcnt))
+> +			return;
+>  
+> -	if (!atomic_dec_and_test(&name->refcnt))
+> -		return;
+> +		if (!atomic_dec_and_test(&name->refcnt))
+> +			return;
+> +	}
+>  
+>  	if (name->name != name->iname) {
+>  		__putname(name->name);
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
