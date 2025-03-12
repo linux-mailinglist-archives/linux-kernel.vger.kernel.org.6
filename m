@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-557952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A01AA5DFBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:07:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C288CA5DFC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:07:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC61418992A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:07:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3E7A177610
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498E62505BB;
-	Wed, 12 Mar 2025 15:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A6E2505DF;
+	Wed, 12 Mar 2025 15:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="J3V/qstg"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IyEoDS2b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B66183CD9;
-	Wed, 12 Mar 2025 15:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDF72505B7;
+	Wed, 12 Mar 2025 15:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741792030; cv=none; b=gl6TRJ2cZQ4c+DWBbQzflBqI+sORBbKr0RuAEUGdjm6t0Ap1IgutaruICCwE7T3w1HxfzS9QYz/E2wWc6rLAFlmqZsn+ICMemZEScMYU/0p4IKMa0FmIsVGrUDikEnbgoNnGj2BAHJMoGs+2VPCDXopATt0XJkVIBBv32ZZaE1U=
+	t=1741792039; cv=none; b=AcrrXzKjXzKtXVXCgkKenUcV/B/64a5VXsX6kXdVi7vdSpZ+kkJ+847f0QDRwRvCu5szI6TbIlmUOKmmS0wkRTxlEOidIyPxb+HqdzuPFJazcwRk/MRA/8bEYLAlOCaePTGrZZYGkK1xI80pEBlxLMnBIZ+cv8y4Xsv6sQ7WL3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741792030; c=relaxed/simple;
-	bh=np+WIadGU74rpJjwWWZpkyFqUUgRYo8QS1bZY8rt66Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LuKz37Ivq3KOrJ15trsuy/Z3L6ohAMDsf69N56VPBGvdCNlh8Fu+JeZbNuEDMTecTPgsPgWHZXe1nNpNk7a8J8+w74hfQZdvdcHJWyw8ZhvSYBL/Dc2om8GXbhFgcAp6o/g7yI9VEd0z3/4JEZFwtPBBLEfEp11FVeND1X9RTv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=J3V/qstg; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741792026; x=1742051226;
-	bh=np+WIadGU74rpJjwWWZpkyFqUUgRYo8QS1bZY8rt66Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=J3V/qstg7dXBTPPUV/CHvZLEUogJaMJszagAnoFuQE5zGlpT5QzwGWMM3x5c/APr3
-	 2RWeU1TZX97KgxfBJDkZJAWF+6rGaCnCAwY9C0CqNR9khJhgLkgKdo/fRxH2GewwJR
-	 qU1TpFaIcwEKrhaSyA7eVO4BpFFO57qmjX01UOwQ/tCPmV0a39W4YKbNGQAhDEU3Kt
-	 8dPhFy9uX7hCWQS+Z7gLrHMU+9qd+uK3h+D3Z20EgmU2i9ObK5Ypr/p3/TSOfK4Aya
-	 oYxqYNIB15ZxH30nwvUROver467jBFhvsL9t+RmhhI2HCig0nxqlc6j8XpPRG3uh7Q
-	 mGD1khMVS20+A==
-Date: Wed, 12 Mar 2025 15:07:01 +0000
-To: Tamir Duberstein <tamird@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] rust: reduce pointer casts, enable related lints
-Message-ID: <D8EDQLZPDO48.1FXHY80CWMXJ1@proton.me>
-In-Reply-To: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com>
-References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: c73bebe457e912f6fdcb06fff3fb73df91fb0eb0
+	s=arc-20240116; t=1741792039; c=relaxed/simple;
+	bh=Se7dJCOHygh/Ix4OxsOUpCvp5TXO6X3D/g2L8B6xnpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRuRp7T7tvf+2uHE+wp9D3ccK74m4yYxgS0T+8Y3sV3dG4BUWPjKpOkLnRWrvP547XjJC4168Faw0CHuW8PUTAb/jjf+BMeQBu0uZAWcdDZaErS2nzPpI45FMiPnnLlKP/r7iwOM00HDTL1rNafZH8kvDqsM9CAiTfDtVRHS5uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IyEoDS2b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDC5FC4CEDD;
+	Wed, 12 Mar 2025 15:07:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741792038;
+	bh=Se7dJCOHygh/Ix4OxsOUpCvp5TXO6X3D/g2L8B6xnpo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IyEoDS2bz1WD6BjY34unecgaTfdLyNJPi7H27yB0XxJo5MCRDbla05lmA3/23J5tM
+	 ECa5SNFKAaftjsXvGma1PkcH4EmLSCL0cYCs2mNSNY4aKPH5GkGXdQms+bQWKRiNdm
+	 mO9hYYtOPvNLlAiGtpPNDfH/7je04eyUvpEfwiXs=
+Date: Wed, 12 Mar 2025 16:07:15 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Qasim Ijaz <qasdev00@gmail.com>, linux-fpga@vger.kernel.org,
+	stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	Marco Pagani <marpagan@redhat.com>, Moritz Fischer <mdf@kernel.org>,
+	Russ Weight <russ.weight@linux.dev>, Tom Rix <trix@redhat.com>,
+	Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>
+Subject: Re: [PATCH] fpga: fix potential null pointer deref in
+ fpga_mgr_test_img_load_sgt()
+Message-ID: <2025031209-provider-docile-fbc3@gregkh>
+References: <20250311234509.15523-1-qasdev00@gmail.com>
+ <27efccdc-3400-46b9-9359-4b2a6c8254e9@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,30 +57,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <27efccdc-3400-46b9-9359-4b2a6c8254e9@web.de>
 
-Hi Tamir,
+On Wed, Mar 12, 2025 at 02:01:48PM +0100, Markus Elfring wrote:
+> …
+> > zero it out. If the allocation fails then sgt will be NULL and the
+> …
+>                                  failed?
+> 
+> 
+> Can a summary phrase like “Prevent null pointer dereference
+> in fpga_mgr_test_img_load_sgt()” be nicer?
+> 
+> Regards,
+> Markus
+> 
 
-On Sun Mar 9, 2025 at 5:00 PM CET, Tamir Duberstein wrote:
-> This started with a patch that enabled `clippy::ptr_as_ptr`. Benno
-> Lossin suggested I also look into `clippy::ptr_cast_constness` and I
-> discovered `clippy::as_ptr_cast_mut`. This series now enables all 3
-> lints. It also enables `clippy::as_underscore` which ensures other
-> pointer casts weren't missed. The first commit reduces the need for
-> pointer casts and is shared with another series[1].
->
-> Link: https://lore.kernel.org/all/20250307-no-offset-v1-0-0c728f63b69c@gm=
-ail.com/ [1]
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Hi,
 
-Thanks for this series! Did you encounter any instances of `$val as $ty`
-where you couldn't convert them due to unsizing? I remember that we had
-some cases back then (maybe Alice remembers them too?). If not then no
-worries :)
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
----
-Cheers,
-Benno
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
 
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
+
+thanks,
+
+greg k-h's patch email bot
 
