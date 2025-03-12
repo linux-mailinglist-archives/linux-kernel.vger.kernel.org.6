@@ -1,134 +1,84 @@
-Return-Path: <linux-kernel+bounces-557843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E9EA5DE7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:57:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9711A5DE80
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:58:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06E50189C3D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:57:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75BBA189E359
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBC324BC07;
-	Wed, 12 Mar 2025 13:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4208624BBEF;
+	Wed, 12 Mar 2025 13:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="FBYlemFF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nmXe00dM"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EVC17fCw"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D331DE4F3;
-	Wed, 12 Mar 2025 13:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6E61DE4F3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741787859; cv=none; b=U54w6Qlr5OeuXsZ4gOQiQc4yO6w9kdCKCHEYH9vPkxbao5RUYzqIHOuYD4U7l20smkDzE97GvvMEI4gfIuggRStju7d/aBtcczX1lyEGSgoFsMrdrLTJZ8E4MYIeAk5iiw/aLvS8jdSULedcjuOX5Jxj56STgNCPZcIBNXzgXC8=
+	t=1741787876; cv=none; b=nGAlytGE+H6Ep1siWvHwecIP9Z9Nwb95b/qvLNyz4ajL3Rv9s3QKom/PV0xvJ64c3+6izUKty4LXQK/4MjZxFZCHHewEhOFbeN6zWh0xrzCLF49UDyg1MZrZ1h08IiKDHiKb139yYkaVvcLYwEk7txS4KxndUUh3aov1qmw87hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741787859; c=relaxed/simple;
-	bh=ODfDxg+tJTObsFCxO5VxPB3pMoZ4NauYRdbR4yGqBt0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BQB5gY3DXqFuIBaVWXLHlV/mcPzGqhrXNSy+mc2viZ5R+0IUZSGXrt+vf4jV7KkBL3nH2Q5Tp+vE5AwemqN80mja0vxRv/vFHu1MeM//iL9dmcl0Qj4NVIj0PH0GYpiu+a+0BKSr8ggjGAuC0oXa33raTNQOaqVvli58rRtWiyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=FBYlemFF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nmXe00dM; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 26CF61140214;
-	Wed, 12 Mar 2025 09:57:36 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Wed, 12 Mar 2025 09:57:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1741787856;
-	 x=1741874256; bh=aGA08pOCa7PBqVAWzUWhvC49r5KkslXTwLJRmZ2UPZU=; b=
-	FBYlemFF3lv5nt9mxup3bFOgYf+pzRpYUDoQL8rSwFXacWiltDPypNEzIf3vJ5vk
-	3210tGVU0oovG4ZD+Dk0qCrFy8EqqYDwzOczZsqtvJAI9+MpVcorkIAN1Cnut+cR
-	QL0/ga0KKhMmN1OE17tVqdeVJHGBpZI28TL2vh7xvbw7XfEQu9gGah/Eqvk8zvJj
-	rxPRW0RAkPXIhmLL5TuStkwzRvoBPOnHxawyXRMbc4/9pLqtecF8DgFELltTLq03
-	+7rdSNMh+AY1L5eqY2kCP9tZeCNmf2q01/uCUFN7bS00axZzMfoSwjQZAVm1Xogp
-	08CobRy+PeYC/9WeCRfKeQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741787856; x=
-	1741874256; bh=aGA08pOCa7PBqVAWzUWhvC49r5KkslXTwLJRmZ2UPZU=; b=n
-	mXe00dMQG7jAFCCIOtU1z1PLyszJw1f9d1BFH4+BjfYdGnQ2NDeEl4u+dcTalJod
-	7tZ0bhH75mh/fbjhJ5TS7UN8tyq1gbImYMlZJdrxsNW0yKQCwe0zqV8HsdASUiR1
-	8epfgKGMc6Jsy8xUylsniV9nqyQan8pm8vxwonWvYQpP0K03ENJJ/CPWSqTtVwiw
-	cYm2ALZL6hRPp5XsjEBQbjP0cqWArtbKOd9/TusdqftjA7MJjRQSWgGDlk79sdM3
-	jY7tcpdFqrs3JhBGTFoT8T9j8CrgSZFrLdTw90b0D018Bb5Ia1mUcBhV3yKbnWq2
-	w7S4c/yRMn0FkT3Yt2gwA==
-X-ME-Sender: <xms:z5LRZ6N-H2Dv0HeWghV_VjP4hVbxVS9L0HhUsjHnKqygM8NSGfVOKQ>
-    <xme:z5LRZ495aZn_0X1ZYewX1riGbiIDSCyAep1mXgNk39adFbzz5xnzSm1Uaodyz2aj-
-    hErlAja5_jS1OVKRDw>
-X-ME-Received: <xmr:z5LRZxSUUx4hLkEUbLsZ6UKQWLlAuCgBymDyVv4QkHTa4EyoSnc-3XS3afNnJA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdehvdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpefgrhhitgcuufgrnhguvggvnhcuoehsrghnuggvvghnsehsrghnug
-    gvvghnrdhnvghtqeenucggtffrrghtthgvrhhnpeevieekueetfeeujedtheeffedvgeff
-    iedvjeejleffhfeggeejuedtjeeulefhvdenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehsrghnuggvvghnsehsrghnuggvvghnrdhnvghtpdhn
-    sggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehojhgrsh
-    ifihhnsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtoheplhhinhhugidqvgigtheg
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthihthhsohesmhhithdrvg
-    guuhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehlihgsrgho
-    khhunhdusehhuhgrfigvihdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghhvghshhhkuhhmrghr
-    ieehjehgsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:z5LRZ6tw8x9KeaJ3cCng-0PASmOc0jHW3LhDUROiA3rsbpyMxWvrlA>
-    <xmx:z5LRZydfyLWQsoLUGRnhVDyFka2e2MHZV1lHHlCgA5JwA5mQ2KG6tQ>
-    <xmx:z5LRZ-0pqHZbfRoB42ooC1GLrfk94Okdn-2OUkJBwCyMcVwQA3NUrg>
-    <xmx:z5LRZ29ZXjrJInFAnj3qdXGP0Fg13Bw38voT0qgkIo9IB06KSlnR4g>
-    <xmx:0JLRZ4uF8G0_cWifODNA6oJa4pzMZDb9TxQiuyaOYDZ9VDdgGa_d5HcH>
-Feedback-ID: i2b59495a:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Mar 2025 09:57:34 -0400 (EDT)
-Message-ID: <ad999fb3-51a5-4a76-9783-cf2053c031c1@sandeen.net>
-Date: Wed, 12 Mar 2025 08:57:34 -0500
+	s=arc-20240116; t=1741787876; c=relaxed/simple;
+	bh=CmSI5em6oxIXG2cCcSIgttPPA089g81BOGUtW0LQxvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QjOhbCMUtX81dTbc71CQ8AQ5xoc+bnfdMCRHmzv7S7P1XqhQkzN7lm4ryso3HAdo/J/WwTYD3SsX/NQJ7FmSlSe3YWFVH7SGjjeQ3c8gPkMjx9vrU3Wv9uQnagdyCON70OVQgluck9Na6Dzh7FNhcG7y/7VLYqX1AVadyOkM8W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EVC17fCw; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UC8ja4bi2zkQs9yjpiBbFRplNDLI5Q4FRsFiw1TCd7A=; b=EVC17fCwy+8fUcB1srFwWEzsmL
+	78Xe9YBeBGZjFF9bW0VJ4Dzuotm8iunLhhX+cpL9RkRC7/wA8zUaUnBkvEvR8aFKSi8+BvfAujIPM
+	dt3lHnJ14XRzrmpxCWw5W0hABJ7wxMXZsT0t7gb+rF9Px+myXx1O8xG4XYPv1CIHxJSTMlLO0SZpj
+	p8GG8m0mWmo0V2b3ni2nDBIYzdq2l54efjlWhShmlGVWFlsOdS+H5zInQU5CYh8KpQBN26/nNo+ZV
+	7MFcmhfXlbXfleOvmLsQjrrJr9AqKCTjeAG8fVL328JvTfsRxHKPt8yA7hp6EjZ21xdFnea47AE6W
+	RoJzoelQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsMak-0000000CvGa-0xO6;
+	Wed, 12 Mar 2025 13:57:50 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A6A79300599; Wed, 12 Mar 2025 14:57:49 +0100 (CET)
+Date: Wed, 12 Mar 2025 14:57:49 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@redhat.com, tglx@linutronix.de, bp@alien8.de, acme@kernel.org,
+	namhyung@kernel.org, irogers@google.com,
+	linux-kernel@vger.kernel.org, ak@linux.intel.com,
+	eranian@google.com
+Subject: Re: [PATCH V7 1/6] perf: Save PMU specific data in task_struct
+Message-ID: <20250312135749.GD9968@noisy.programming.kicks-ass.net>
+References: <20250312130424.3863916-1-kan.liang@linux.intel.com>
+ <20250312135423.GM19424@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] ext4: avoid journaling sb update on error if
- journal is destroying
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
- Theodore Ts'o <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
- linux-kernel@vger.kernel.org, Mahesh Kumar <maheshkumar657g@gmail.com>
-References: <cover.1741270780.git.ojaswin@linux.ibm.com>
- <1bf59095d87e5dfae8f019385ba3ce58973baaff.1741270780.git.ojaswin@linux.ibm.com>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@sandeen.net>
-In-Reply-To: <1bf59095d87e5dfae8f019385ba3ce58973baaff.1741270780.git.ojaswin@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312135423.GM19424@noisy.programming.kicks-ass.net>
 
-On 3/6/25 8:28 AM, Ojaswin Mujoo wrote:
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 2b7d781bfcad..d48e93bd5690 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -1728,6 +1728,8 @@ struct ext4_sb_info {
->  	 */
->  	struct work_struct s_sb_upd_work;
->  
-> +	bool s_journal_destorying;
+On Wed, Mar 12, 2025 at 02:54:23PM +0100, Peter Zijlstra wrote:
+> > The whole patch set was posted several years ago. But it's buried in the
+> > LKML without merging. I've received several requests recently to fix the
+> > LBR issue with system-wide events. Rebase and repost it.
+> > 
+> > - Rebase on top of Peter's perf/core branch.
+> 
+> That branch is older than tip/perf/core, as such things don't apply
+> anymore :/
 
-Just a late nitpick and noted that Jan suggested making this a flag,
-but just in case, this is a typo: s_journal_destorying -> s_journal_destroying
+I've pushed out a new queue/perf/core, based on tip/perf/core + your
+patch from yesterday.
 
-Thanks,
--Eric
-
->  	/* Atomic write unit values in bytes */
->  	unsigned int s_awu_min;
->  	unsigned int s_awu_max;
 
 
