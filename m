@@ -1,178 +1,167 @@
-Return-Path: <linux-kernel+bounces-557487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C1FA5D9EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:53:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04DEDA5D9F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:54:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5990416784E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:53:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3823616960F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8BE23BF91;
-	Wed, 12 Mar 2025 09:53:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C541E3DFC;
-	Wed, 12 Mar 2025 09:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741773215; cv=none; b=fZqntCRknm+hEYbyyPAjiK5PAHHvKLkzOuLGnfroCjwb376sPPBRqLXiQfEExzPm5IRBqbk+TVAZ1TDBUS4EstwnpOhqQ/gth1xvRsJhLfhrPO7yS0wEWgkBHss3mIIWLGVXcvlLRd1kE5spml8LUII8hJkCVsyik3OSOFMNshU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741773215; c=relaxed/simple;
-	bh=WFOi1DBsVVjuQ0WjnTCWrENVLWLA6uv3mISED+ocbAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OUAYPXNdAalqES1R1FJr9+/5O5xqnZzLtkZynnapW/k00Jc+x/kedUIDn0ML98gBGp00gFH73JCXqlzHLCjVNav9UouLorsJoFEX2gGCKJEbSvI8OXDJr+A21NZXWh0Mdw5Hi6/hb5LBZ5xuFfG8Tcj5vQQgMM9+Z8aredwFzmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26968152B;
-	Wed, 12 Mar 2025 02:53:43 -0700 (PDT)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 47F213F5A1;
-	Wed, 12 Mar 2025 02:53:29 -0700 (PDT)
-Message-ID: <724e00ea-eb27-46f1-acc3-465c04ffc84d@arm.com>
-Date: Wed, 12 Mar 2025 10:53:22 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D2B23C8B7;
+	Wed, 12 Mar 2025 09:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lvGw2fmT"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2056.outbound.protection.outlook.com [40.107.236.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BE21E3DFC;
+	Wed, 12 Mar 2025 09:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741773264; cv=fail; b=Lq0/IkGDPq/Sk8Z0T05E1fo5DdWA83r+NKa23I5RAtPpUt+1guug8+vEWIdvWabLrYbPoSFicBMucHfHm9QzvsRXgEsa06wu5pytK6uDaeX+WEwUksnb0ugaAcd+T5PFJ5qWypl0wb4Jca9T9ABwHftnxUaXOdqnC6DdnIWyfOM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741773264; c=relaxed/simple;
+	bh=cIqikaqUF0Zq/+1WhBa1YOVM/PINA+S34YdCCbNNmLI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S1BS6tiqmMa91EDmwkxKEHmkAc2DSXCXHm5Q/G7urYPngC9I2l/YlGfzCGvTZN9jeSA4GAzjCXTXGV4sCfcLB6thwTNbjook1dA2XU1SRCwJK+i9a7oj4LweqS/dJO3WFECQmXSwhdQpzs4ToWoT5tz72kVoyiOUkH4o4Orwpf4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lvGw2fmT; arc=fail smtp.client-ip=40.107.236.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g7CzbapKDHHCpiddP+2KPpnhqpt94KpXQQXcXRFFX6/90ugVwU78Ey+2t/ChvohKELLa40XmwsMw5PAkfPuV+VHTdFzwN4Jq8HoNCbs1dzVCXPs2n9C4SQC7WhlrFE+Anekobc1jRxgp9GQeKxP/FE5Zk+pNUxIQzJocRL0AZrUcZrb9jesEBoFORiLIt9R9V857l8EEF93A10cInAA+goGqu8ROvOWTl2RZBqPnaC+nJP0VYHOkCKptz/bZsmYfWIlFWQOXaSAAoNxHRjLLCSd+dGiusQqQKsaHk4zGjCuW8PMN7vNlfkxl+V2Q3OO37qvBzy2Rd5lGRIKTdtVgYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kI/enS/gSnthKs4EEBRXflgdsBsnnOZvJqwo6z0T2ko=;
+ b=TXJBKKyxuom4fXmOXWcG4MzHnAZ3dyWK+kSoLyp0+YqzI5DnTu+//bBQIP1C5C5jPjic5ppmR6500kgMgCJlcOOp8W6VkRQaNKjNKgwDZajGJSWPnM09PMQ+dz7ytDi41NTiPZQ4eRPZjyqZpP2P2f40bUMOTvkuUFA/5vaFlz/p4lVDvanNv/fhJOpm6enTgZSb3VYgYtc+BuE/DV62OoPTIc/79E760NbUO2kKwu9h+9LIwh7ljWuPL+Iyhrh0gZ8ti3k44fHB2mKIvjt/NYpWpd2vWR1g+KxPx1E0/KHXTLRAmtx71ZVatUdNo8yzuR62MBBPshnUbKMg7UwXsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lunn.ch smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kI/enS/gSnthKs4EEBRXflgdsBsnnOZvJqwo6z0T2ko=;
+ b=lvGw2fmTMCIlWy3eO60UbLCFN3yiDNZBZRBf823Va7MEjzgDT5jM8BOTpWlHuyZu+rW0R+GY8onNlNTiNnPzR38DLiitF7wDy6Qzoh1cVzNmuw4oIPOOawHwovUw7BRI5jjozJDP1ucQrljYeOUGcuQjg6IJiSbSk/lmyBNcYn0=
+Received: from PH7P220CA0175.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:33b::16)
+ by CH0PR12MB8485.namprd12.prod.outlook.com (2603:10b6:610:193::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
+ 2025 09:54:19 +0000
+Received: from SN1PEPF00036F3C.namprd05.prod.outlook.com
+ (2603:10b6:510:33b:cafe::b3) by PH7P220CA0175.outlook.office365.com
+ (2603:10b6:510:33b::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.24 via Frontend Transport; Wed,
+ 12 Mar 2025 09:54:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SN1PEPF00036F3C.mail.protection.outlook.com (10.167.248.20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Wed, 12 Mar 2025 09:54:18 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 12 Mar
+ 2025 04:54:16 -0500
+Received: from xhdsuragupt40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 12 Mar 2025 04:54:12 -0500
+From: Suraj Gupta <suraj.gupta2@amd.com>
+To: <radhey.shyam.pandey@amd.com>, <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <michal.simek@amd.com>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<git@amd.com>, <harini.katakam@amd.com>
+Subject: [PATCH net-next V2 0/2] Add support for 2500Base-X only configuration
+Date: Wed, 12 Mar 2025 15:24:09 +0530
+Message-ID: <20250312095411.1392379-1-suraj.gupta2@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/8] sched/deadline: Rebuild root domain accounting
- after every update
-To: Waiman Long <llong@redhat.com>, Juri Lelli <juri.lelli@redhat.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Swapnil Sapkal <swapnil.sapkal@amd.com>,
- Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
- luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
- Jon Hunter <jonathanh@nvidia.com>
-References: <20250310091935.22923-1-juri.lelli@redhat.com>
- <Z86yxn12saDHLSy3@jlelli-thinkpadt14gen4.remote.csb>
- <797146a4-97d6-442e-b2d3-f7c4f438d209@arm.com>
- <398c710f-2e4e-4b35-a8a3-4c8d64f2fe68@redhat.com>
- <fd4d6143-9bd2-4a7c-80dc-1e19e4d1b2d1@redhat.com>
- <Z9Alq55RpuFqWT--@jlelli-thinkpadt14gen4.remote.csb>
- <be2c47b8-a5e4-4591-ac4d-3cbc92e2ce5d@redhat.com>
- <e6731145-5290-41f8-aafb-1d0f1bcc385a@arm.com>
- <7fb20de6-46a6-4e87-932e-dfc915fff3dc@redhat.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <7fb20de6-46a6-4e87-932e-dfc915fff3dc@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: suraj.gupta2@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F3C:EE_|CH0PR12MB8485:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c8d8906-9cb8-48c2-dbfa-08dd614bdb15
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|7416014|36860700013|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PVkKtbJQSsOBOWQMtvBDeiPNI8LJXl5ix5nSYaSkUsgfzAa/k5QOhcNIpfxS?=
+ =?us-ascii?Q?EsaGZlt9S7uhJoSJsJvwZSsDKwcWD1KM99GfEXBt/vruvqbZ83nvzJ9BBC5m?=
+ =?us-ascii?Q?Q521WC84qvJeRzFkEljoyQLkf+HJJoDjiMPIkkzOHyPIpz16ySS9o9Tf+1Hj?=
+ =?us-ascii?Q?jAQvtjJu71FdWzSouvgDeDaw3t2jznIuWUaMNya3ovTlc6JdlGNIzz+tD2dW?=
+ =?us-ascii?Q?JHZ2xnSJ4Oee8ny+bi/jMRvpzijBdaCEp6v9U86shlY5O1n2EZ20pjBSp3qV?=
+ =?us-ascii?Q?l10BVW9UV3yLVTOvBpOeIhrRmPQpYxZ0ZRXLNbiTZlSC0nb0JB1PuTg+7rsp?=
+ =?us-ascii?Q?s/Nqr8GiQQOOuoh38pLhdRe+sQAdxn4w4lybn5HSwFKgulBLMogRyYp+Kl4W?=
+ =?us-ascii?Q?bpvN1KgAcEqhGMwIZIsRdQOxRea2IlbUH4g8eHSigJpwD2oZwu5IHL+JdAY9?=
+ =?us-ascii?Q?mOPR866ECcJvU2AYiyNfciIhHkBRbhZZBIANIRdOtnzCrTbm0lW1+SBduy50?=
+ =?us-ascii?Q?zi5i/E25M/xFrchcikNujwBY4OWQnDbcSzyv9Bm4BnN2zrAGtKsyxMaGZySy?=
+ =?us-ascii?Q?YrJKuTwwZeKA04jh5p/zAD7a2v4lmU530gCzy1m4tMGiBgFd5lllOWGfHTyM?=
+ =?us-ascii?Q?zIR0m2o6LOi9P1FM5RKaFpnpTZT8XzUWfwSiHoknvtEVQCqprOWPyD5u9+pg?=
+ =?us-ascii?Q?OUbN8jB0uY14Wvi3NJkyO+P48I9UTcrOpJl5d53q9Fj1Pa4VbB8K75w3Rgrr?=
+ =?us-ascii?Q?xsf+5IrVuo7XL+ADMk3EUzNNo05vzxeWq6QoDn/SJf14Gqe1VkaWL0Jpzw3P?=
+ =?us-ascii?Q?LBW0biKTb7Giu+J5w4hRanzJM0BkTwOEi70O9x5n9bX7mxaKvtMpG3x4IL58?=
+ =?us-ascii?Q?zQAw5xj6E34kVA3cusLwWL7ku7Xp3wvTr1kTs6aC/vi4dJiDgR3h9LP9SUT0?=
+ =?us-ascii?Q?I52CMJyi8xmxNTf8jSj4uaayfYGWtWSaweA6k8JamKFnQqgJRnwTmMalAN7C?=
+ =?us-ascii?Q?/35VNLOVwHYYQ1lpi8fhp94lTE0zEpenhDofEUTfDgCE3FHsH7zC0OeW3skq?=
+ =?us-ascii?Q?wbZ8zJcCnws0Tlh+logSGqTt/lV1qJTOOIG24l9zjelee//Don0xqjl7h+5v?=
+ =?us-ascii?Q?gJy0WU78I36nKGONkylmDPDIPmTSZGzI+5uwCSrWSUJ2kzcpSSqMP9gTWEwx?=
+ =?us-ascii?Q?ezYnq9nGVzJw9f7UxAhYcF0VD9To2HMyvGh106S1Fdg8R8chtj8CMUDl9lxe?=
+ =?us-ascii?Q?6gAK+9vDucBDf4EFIEL3dQTRWnyxw6/wILYetc12ApUxFKnEX61xgBv77n/t?=
+ =?us-ascii?Q?cuY8QgV7BKSt98GuTCdD/WzDJ6TZNXyzfg184JXE/AGWGkKDRjxiNYzvftAC?=
+ =?us-ascii?Q?V5L9MipIJfKlYMaUS5Jxy2r2aWO7ZXAxAlAyw1WOkFXywWkuKIOiBcNG3XAp?=
+ =?us-ascii?Q?/TVKsrveg2EHMX6mvd8ue5vMduQNO5fgou45XewNIWbKCRVxJ0wA8pTQ7ZVo?=
+ =?us-ascii?Q?oPJKkkIW+/MZUeNTH+bIO9h562OAx7+1nDde?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(36860700013)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 09:54:18.1625
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c8d8906-9cb8-48c2-dbfa-08dd614bdb15
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00036F3C.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8485
 
-On 11/03/2025 15:51, Waiman Long wrote:
-> On 3/11/25 9:29 AM, Dietmar Eggemann wrote:
->> On 11/03/2025 13:34, Waiman Long wrote:
->>> On 3/11/25 7:59 AM, Juri Lelli wrote:
->>>> On 10/03/25 20:16, Waiman Long wrote:
->>>>> On 3/10/25 3:18 PM, Waiman Long wrote:
->>>>>> On 3/10/25 2:54 PM, Dietmar Eggemann wrote:
->>>>>>> On 10/03/2025 10:37, Juri Lelli wrote:
+Add support for 2500Base-X only configuration, which is a
+synthesis option of AXI 1G/2.5G IP.
 
-[...]
+Changes in V2:
+- Read 2.5G ability from Temac ability register and remove
+max-speed DT property.
+- Mentioned all 3 IP configurations in comment and commit description.
+- Mention this series is for 2.5G only configuration.
 
->> Testcase: suspend/resume
->>
->> on Arm64 big.LITTLE cpumask=[LITTLE][big]=[0,3-5][1-2]
->> plus cmd line option 'isolcpus=3,4'.
->>
->> with Waiman's snippet:
->> https://lkml.kernel.org/r/fd4d6143-9bd2-4a7c-80dc-1e19e4d1b2d1@redhat.com
->>
->> ...
->> [  234.831675] --- > partition_sched_domains_locked() reset_domain=1
->> [  234.835966] psci: CPU4 killed (polled 0 ms)
->> [  234.838912] Error taking CPU3 down: -16
->> [  234.838952] Non-boot CPUs are not disabled
->> [  234.838986] Enabling non-boot CPUs ...
->> ...
->>
->> IIRC, that's the old DL accounting issue.
-> 
-> You are right. cpuhp_tasks_frozen will be set in the suspend/resume
-> case. In that case, we do need to add a cpuset helper to acquire the
-> cpuset_mutex. A test patch as follows (no testing done yet):
-> 
-> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-> index c414daa7d503..ef1ffb9c52b0 100644
-> --- a/include/linux/cpuset.h
-> +++ b/include/linux/cpuset.h
-> @@ -129,6 +129,7 @@ extern void dl_rebuild_rd_accounting(void);
->  extern void rebuild_sched_domains(void);
-> 
->  extern void cpuset_print_current_mems_allowed(void);
-> +extern void cpuset_reset_sched_domains(void)
-> 
->  /*
->   * read_mems_allowed_begin is required when making decisions involving
-> @@ -269,6 +270,11 @@ static inline void rebuild_sched_domains(void)
->         partition_sched_domains(1, NULL, NULL);
->  }
-> 
-> +static inline void cpuset_reset_sched_domains(void)
-> +{
-> +       partition_sched_domains(1, NULL, NULL);
-> +}
-> +
->  static inline void cpuset_print_current_mems_allowed(void)
->  {
->  }
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 7995cd58a01b..a51099e5d587 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1076,6 +1076,13 @@ void rebuild_sched_domains(void)
->         cpus_read_unlock();
->  }
-> 
-> +void cpuset_reset_sched_domains(void)
-> +{
-> +       mutex_lock(&cpuset_mutex);
-> +       partition_sched_domains(1, NULL, NULL);
-> +       mutex_unlock(&cpuset_mutex);
-> +}
-> +
->  /**
->   * cpuset_update_tasks_cpumask - Update the cpumasks of tasks in the
-> cpuset.
->   * @cs: the cpuset in which each task's cpus_allowed mask needs to be
-> changed
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 58593f4d09a1..dbf44ddbb6b4 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -8183,7 +8183,7 @@ static void cpuset_cpu_active(void)
->                  * operation in the resume sequence, just build a single
-> sched
->                  * domain, ignoring cpusets.
->                  */
-> -               partition_sched_domains(1, NULL, NULL);
-> +               cpuset_reset_sched_domains();
->                 if (--num_cpus_frozen)
->                         return;
->                 /*
-> @@ -8202,7 +8202,7 @@ static void cpuset_cpu_inactive(unsigned int cpu)
->                 cpuset_update_active_cpus();
->         } else {
->                 num_cpus_frozen++;
-> -               partition_sched_domains(1, NULL, NULL);
-> +               cpuset_reset_sched_domains();
->         }
->  }
+Suraj Gupta (2):
+  dt-bindings: net: xlnx,axi-ethernet: Modify descriptions and phy-mode
+    value to support 2500base-X only configuration
+  net: axienet: Add support for 2500base-X only configuration.
 
-This seems to work. But what about a !CONFIG_CPUSETS build. In this case
-we won't have this DL accounting update during suspend/resume since
-dl_rebuild_rd_accounting() is empty.
+ .../bindings/net/xlnx,axi-ethernet.yaml       |  9 ++++---
+ drivers/net/ethernet/xilinx/xilinx_axienet.h  |  2 +-
+ .../net/ethernet/xilinx/xilinx_axienet_main.c | 24 +++++++++++++++----
+ 3 files changed, 26 insertions(+), 9 deletions(-)
+
+-- 
+2.25.1
+
 
