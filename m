@@ -1,163 +1,162 @@
-Return-Path: <linux-kernel+bounces-558356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC063A5E4C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:51:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1CDFA5E4C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:52:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02EAC17AE12
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1309117B565
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CEC1F0E33;
-	Wed, 12 Mar 2025 19:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E405258CCB;
+	Wed, 12 Mar 2025 19:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LBJFa6O0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="XKBh4GFt"
+Received: from mail-pl1-f227.google.com (mail-pl1-f227.google.com [209.85.214.227])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD3E1DE3AF;
-	Wed, 12 Mar 2025 19:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BF21E8823
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 19:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741809077; cv=none; b=hRJAsCHtdcf4KJK3C+a1FpdUKui0gf8l5/PbPzd4dbp6DVxSf/cP9+h3IVsqk3vfEMM52zElkpMmmKXWmqLOdEICDFZ7Mg/DDwwUP2I3XfZrK4m+4TTLFVI/SfIOUX7okandZsWfgFnL0q6e3W31akQyDnHMAxuLOf6mjRfA5pw=
+	t=1741809120; cv=none; b=VCw0kIDjxx91xL5Mw6rvokkxEr7gTu8JyBHn9fH+vn2LqzrSa1iiyNg7u3CgzQ1ZjnREzFRLieH28COl2o1B1A/XMuxQsT+ifGwdBtvxbO58/buDgp83HdNwUeBWP4PpiO6rSwWQIn5qOTIfZVpQKULhvHZpXPSaWvckLU0r2mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741809077; c=relaxed/simple;
-	bh=SRoUV3eMk6edbVaDQv5PueMlnjvLSGvEzLVeIeX4V/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rU9tcE4YyKWHc10AQeItnw1XbDO+PHYXyFCJVDzHv8qM4/oaOcnCGUp2Owfa9721MKCZ/l3Efk5BKw5k2tZKoHbtrW/MtFtFDb5DcsdNa6zBJgT+vKyANAs7fyA62GlHylrnixu0GB6rf0FIYlsbWPQ3t/jfJSXlLZd/13vEiyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LBJFa6O0; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741809076; x=1773345076;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=SRoUV3eMk6edbVaDQv5PueMlnjvLSGvEzLVeIeX4V/Q=;
-  b=LBJFa6O0Gq94pnFFdaC6Xx0MPiGbABjmgQQmNlj6THt+bDeRwhFuPojv
-   kOIh8bQhsMLACeViSVxHg1urWWbnpsbZlrNu3DIhFzVaF7MrGvMPke6qh
-   GWJ88/Q3jgxhpwJU0Sbm9iIZEGsaCG5Ezpsmn3gRvFhCHUWaJeGOKrVXM
-   2s6xtoelTunjV3gOfZchm9eAHqjbwMet8suIlvMONyvGRqx0YuDWtj//c
-   PRqG4VmQzt/5gbFzHFWl6lBqK4+CvmN4t01D7GSY1seXReFvAkkzBDlMZ
-   jEKiJNrLv6S6v3MpQDgu2ZWQB0mLBDsDc5H9juQjYO/5P01s1vNybaPaL
-   w==;
-X-CSE-ConnectionGUID: Nsyi+gLOSgaJlqXrhDoMNg==
-X-CSE-MsgGUID: HfgrZareQsSgJl9E6TXptw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42815589"
-X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="42815589"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 12:51:15 -0700
-X-CSE-ConnectionGUID: mAuhRIanQJCNL6HZOC82OA==
-X-CSE-MsgGUID: 6kKyUx38RoKGvr2m8InV2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="125804140"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 12:51:10 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tsS6d-00000001yNT-0W8I;
-	Wed, 12 Mar 2025 21:51:07 +0200
-Date: Wed, 12 Mar 2025 21:51:06 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: Sven Peter <sven@svenpeter.dev>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Aun-Ali Zaidi <admin@kodeit.net>,
-	Maxime Ripard <mripard@kernel.org>,
-	"airlied@redhat.com" <airlied@redhat.com>,
-	Simona Vetter <simona@ffwll.ch>, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"apw@canonical.com" <apw@canonical.com>,
-	"joe@perches.com" <joe@perches.com>,
-	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
-	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	Hector Martin <marcan@marcan.st>,
-	"asahi@lists.linux.dev" <asahi@lists.linux.dev>
-Subject: Re: [PATCH 1/2] lib/vsprintf: Add support for generic FourCCs by
- extending %p4cc
-Message-ID: <Z9Hlqh7opZHvkSX0@smile.fi.intel.com>
-References: <ABAEA9D0-97CB-4ADD-9606-A12D5815335A@live.com>
- <376C9BD3-2F41-4511-BE52-1B8468FE2CB3@live.com>
- <b74df4b5-ecda-45ba-a98a-c84b0a29e380@suse.de>
- <PN3PR01MB9597AC6A02B0BF873920D94CB8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <9092a9ed-aecf-40bd-9d15-b53d60d035b5@suse.de>
- <PN3PR01MB959715C19BCEA54426D24934B8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <ff3a9c58-5c7a-4c48-8a9e-cc828a43baed@app.fastmail.com>
- <PN3PR01MB9597E5C609290DB1A967263CB8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <Z9HgVn-XELC065w0@smile.fi.intel.com>
- <PN3PR01MB959786A68923B2D471C129E6B8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1741809120; c=relaxed/simple;
+	bh=Q2k9GPayWeUHQsXcs/86RclA5d1uasfKBhsFAaw3N6I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=L8PSV2dDzArl1226gs4E0anFNyDosEJ3z7B28dPe5MS2GL+j7q2su0wOvsXWDXznfnhe4W4flLZyUSc/Jgz9WB3xbmGYuJSwOfLoILi88lHXlPtgw4MrGWjOFMtaLmG0os6m0j+snPoMesrHlbfSlbnTTTE/3D2NHit6Zkh9LyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=XKBh4GFt; arc=none smtp.client-ip=209.85.214.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f227.google.com with SMTP id d9443c01a7336-2254e0b4b79so6064275ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:51:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1741809118; x=1742413918; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TUXQmTabTFlJQTznKZdaGRe9l01Y+yauh4zh2Ba8guo=;
+        b=XKBh4GFtQCYph1TcPaoHMx/aS0kPOPGy2bz3gEQfe7/Am5jsZSqu2HIx3lm3sN8Qbt
+         BYRTRqeMBEPJhg7bbdHL2mmOfojYsV05s56KcpqY3N/MvjMKvVs4DxzALnDYb3wPOZiF
+         /hO3Bpn0YmPt0Svnob5N9iwjmB23DFfA8Sqf0AkOhvS6weuCK8DyRDm4PG/5cPs0loMu
+         CExrPDjVbwwbtJ+jAF1FDm5aMzQQRpGvIKNv1jMji6zdVC7eqXQbDdCjBlKT9fgVWrng
+         tIiNshqy5NTKtRLmcb9WpqyryGmzqhFBMmu1CYgdyUkiZmSP6K6YaPVUSPy49ewEfoln
+         NYeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741809118; x=1742413918;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TUXQmTabTFlJQTznKZdaGRe9l01Y+yauh4zh2Ba8guo=;
+        b=s1tPxHuF/d4G3aA9C999zYUKAmqKmdhXSMOJ0SSU5wN9rwLmQXK2RZs6pCGMlKFMOR
+         xPUF/YewL2UUIO5zqwfi/IHs0JnNM/BLoKn7byTieUx0hnyJmX8aR9Zh3IBtRPjQjmiG
+         jQKOsQne5nyRc+Ja/fi5SknXuI0ckp9uoRs3RL2fUIshHKI1yhmAG17k8s+HvKiYLA4p
+         uogDBdEicgkVW8iTuGcj7c04SK1S/PAuID9cPS47PQ2b+wb1n/q7Zn3weURDiVwKK+Cv
+         5PSKCvS3290BJo9Y0fotvhExjOC53qoMZlinD1RZ0YQTeOne6XPz2EwugOhRNhsW4dK3
+         9nTA==
+X-Forwarded-Encrypted: i=1; AJvYcCX01qkx+kG6vTzDa29LRqJqyw/lW6XWKWvKHWNJRoLCjZkAr9ZCLbxiuXrgqMvp839OQp/x+ifuNtDjvBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfboRTH+Wahs/88a/RlKkuJStqvuIzdnKNWdaD9zqiz57dIQkq
+	XA1JHMQ7YP2TBkaJHoBApgmBRGCW5JYrMpm0G/jiFEwrfCTKVMty3MzYos1yTsBpeFpVxfAlnQM
+	kZ3DzuU1M+MVhlyx9wjlQn/hNXXq0IdqSMzOxBXo7ypGtYlA+
+X-Gm-Gg: ASbGnctGA34aqL3lb9dYnt+crqvNcUe+LxWUwOSRvJPO71PGBPjWUKpbstv9opB6Iyx
+	NNLuhBYYagz99j+tc/XVMULRu1y/YUl/GZo3Kh5m8yEddR4j7LAeMp42Rb3PdmNVGT+ZExz2m73
+	z90DTXp/sW7byiZhy+zvCohvo1q9n8Vh3Ml6kQ3TMkJmASekR6L9kixKk65gKlqwA7qv7l85R7U
+	Ykq0JuZbYvhaFgV9SVvSvOHRXX/EeeL4iWm73+T5ketLLVQ7GqRBIiVCh0AwxVcgh9+RdPVrJJJ
+	UZ5nM1ks99j+mAs8FFELq8wbCSbwOwXxlek=
+X-Google-Smtp-Source: AGHT+IFzTFpDmJydmC2PtlCdpNTNUDU0mgSO+UfsIg00y4eEivOM8oFExNu431q+A3hE23lAesqPTs6l6uBP
+X-Received: by 2002:a17:903:283:b0:224:194c:6942 with SMTP id d9443c01a7336-22428bded4amr373642295ad.34.1741809118152;
+        Wed, 12 Mar 2025 12:51:58 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id d2e1a72fcca58-736c8d701absm632789b3a.12.2025.03.12.12.51.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 12:51:58 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [10.7.70.36])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 3CF97340328;
+	Wed, 12 Mar 2025 13:51:57 -0600 (MDT)
+Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
+	id 2C718E4044C; Wed, 12 Mar 2025 13:51:57 -0600 (MDT)
+From: Uday Shankar <ushankar@purestorage.com>
+Subject: [PATCH net-next v6 0/2] netconsole: allow selection of egress
+ interface via MAC address
+Date: Wed, 12 Mar 2025 13:51:45 -0600
+Message-Id: <20250312-netconsole-v6-0-3437933e79b8@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3PR01MB959786A68923B2D471C129E6B8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANHl0WcC/23NTQ6CMBAF4KuYrq3plP6oK+9hXJQy1SZKSYtEY
+ 7i7IyuILF/evG8+rGCOWNhx82EZh1hiaimY7Yb5m2uvyGNDmUkhtZBC8RZ7n9qS7siVNyBQhr0
+ Fz2jQZQzxNWFnRnd0++rZhZpbLH3K7+nLIKd+DRwkF1xj0FjrYIQ2p+6Z8Td1V9z59JiwoZoDe
+ gFUBEAlXQUBLBwO64CaAWAXgCJAeLMHj8ESsg7oGSDFAtAEKIcuOAsN1uEfGMfxCzHJLj93AQA
+ A
+X-Change-ID: 20250204-netconsole-4c610e2f871c
+To: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Simon Horman <horms@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+ Johannes Berg <johannes@sipsolutions.net>, Jonathan Corbet <corbet@lwn.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-wireless@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Uday Shankar <ushankar@purestorage.com>, 
+ Michal Swiatkowski <michal.swiatkowski@linux.intel.com>, 
+ Simon Horman <horms@verge.net.au>
+X-Mailer: b4 0.14.2
 
-On Wed, Mar 12, 2025 at 07:35:54PM +0000, Aditya Garg wrote:
-> > On 13 Mar 2025, at 12:58 AM, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Wed, Mar 12, 2025 at 07:14:36PM +0000, Aditya Garg wrote:
-> >>>> On 12 Mar 2025, at 9:05 PM, Sven Peter <sven@svenpeter.dev> wrote:
-> >>> On Wed, Mar 12, 2025, at 13:03, Aditya Garg wrote:
+This series adds support for selecting a netconsole egress interface by
+specifying the MAC address (in place of the interface name) in the
+boot/module parameter.
 
-...
+Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+---
+Changes in v6:
+- No changes, just rebase on net-next/main and repost for patchwork
+  automation
+- Link to v5: https://lore.kernel.org/r/20250220-netconsole-v5-0-4aeafa71debf@purestorage.com
 
-> >>> I don't have a strong opinion either way: for SMC I just need to print
-> >>> FourCC keys for debugging / information in a few places.
-> >>> 
-> >>> I'm preparing the SMC driver for upstreaming again (after a two year delay :-()
-> >>> and was just going to use macros to print the SMC FourCC keys similar to
-> >>> DRM_MODE_FMT/DRM_MODE_ARG for now to keep the series smaller and revisit
-> >>> the topic later.
-> >>> 
-> >>> Right now I have these in my local tree (only compile tested so far):
-> >>> 
-> >>> #define SMC_KEY_FMT "%c%c%c%c (0x%08x)"
-> >>> #define SMC_KEY_ARG(k) (k)>>24, (k)>>16, (k)>>8, (k), (k)
-> >> 
-> >> That seems to be a nice alternative, which I guess Thomas was also suggesting.
-> > 
-> > I don't think it's "nice". Each of the approaches has pros and cons.
-> 
-> I would prefer vsprintf, but if it's not there, that remains as nice right?
+Changes in v5:
+- Drop Breno Leitao's patch to add (non-RCU) dev_getbyhwaddr from this
+  set since it has landed on net-next (Jakub Kicinski)
+- Link to v4: https://lore.kernel.org/r/20250217-netconsole-v4-0-0c681cef71f1@purestorage.com
 
-Nope, it remains us with the only approach (besides copy'n'paste everywhere
-which is error prone).
+Changes in v4:
+- Incorporate Breno Leitao's patch to add (non-RCU) dev_getbyhwaddr and
+  use it (Jakub Kicinski)
+- Use MAC_ADDR_STR_LEN in ieee80211_sta_debugfs_add as well (Michal
+  Swiatkowski)
+- Link to v3: https://lore.kernel.org/r/20250205-netconsole-v3-0-132a31f17199@purestorage.com
 
-> > You can start from bloat-o-meter here and compare it with your %p extension.
-> > 
-> > Also, can you show the bloat-o-meter output for the vsprintf.c?
-> 
-> vsprintf isn't a kernel module, is it? I'll have to compile a new kernel I guess.
+Changes in v3:
+- Rename MAC_ADDR_LEN to MAC_ADDR_STR_LEN (Johannes Berg)
+- Link to v2: https://lore.kernel.org/r/20250204-netconsole-v2-0-5ef5eb5f6056@purestorage.com
 
-You can just compile one file. We need an object out of it, we don't it to be
-linked.
+---
+Uday Shankar (2):
+      net, treewide: define and use MAC_ADDR_STR_LEN
+      netconsole: allow selection of egress interface via MAC address
 
-> >>> which are then used like this:
-> >>> 
-> >>>   dev_info(dev,
-> >>>       "Initialized (%d keys " SMC_KEY_FMT " .. " SMC_KEY_FMT ")\n",
-> >>>        smc->key_count, SMC_KEY_ARG(smc->first_key),
-> >>>        SMC_KEY_ARG(smc->last_key));
+ Documentation/networking/netconsole.rst |  6 +++-
+ drivers/net/netconsole.c                |  2 +-
+ drivers/nvmem/brcm_nvram.c              |  2 +-
+ drivers/nvmem/layouts/u-boot-env.c      |  2 +-
+ include/linux/if_ether.h                |  3 ++
+ include/linux/netpoll.h                 |  6 ++++
+ lib/net_utils.c                         |  4 +--
+ net/core/netpoll.c                      | 51 +++++++++++++++++++++++++--------
+ net/mac80211/debugfs_sta.c              |  7 +++--
+ 9 files changed, 61 insertions(+), 22 deletions(-)
+---
+base-commit: 0ea09cbf8350b70ad44d67a1dcb379008a356034
+change-id: 20250204-netconsole-4c610e2f871c
 
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Uday Shankar <ushankar@purestorage.com>
 
 
