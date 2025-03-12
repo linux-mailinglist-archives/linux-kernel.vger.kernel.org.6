@@ -1,122 +1,113 @@
-Return-Path: <linux-kernel+bounces-558130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28222A5E203
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:48:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AABA5E209
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:51:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F11E178C0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:48:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5D6C189FB0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5687256C6A;
-	Wed, 12 Mar 2025 16:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ny47xZvm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0905D23C8D8;
+	Wed, 12 Mar 2025 16:51:33 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CF7255E23
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE391D5CCC
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741798080; cv=none; b=hgfjObVYrjBDQX6YHm+SsJRDEongO7y054RAuJYtEoQb+ACIuaUWmqINOGjF3BNMKd8kz6Gui0pbOgPInGVhnGkQx85eq6sF6pDusrkUbM9YUbnNsEwR8z7RFTyvMh9lYK8AijjuUvvYqSHorn4FmxTK/TnjBxujP40+1LsFLqk=
+	t=1741798292; cv=none; b=pDubRRDye+EOxNAwnFQc6qsO+OCO+0X8wuf1Wps6HpDjg5Ws5ipe8t6pGBr9UyFS8AAWmhOhwhZ8w8hINa3nRh9bLiayUqJtdl0drI4qERvqEz51cHIbV5TrKsaPecf/wzpectgNqSPeZ43FLdmmVfNQN6sx35LMoZ0kSCAcfLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741798080; c=relaxed/simple;
-	bh=rKIbFCwS48nnM6gxh3wFYLS526gq2KkVNyyi1h5+1tk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r4aMhEbJMHMwkbkPNbLiP4q4y09Ps4Hg9Jc5AHAJ0zMHXq432Ugk4wmSeF0QwAO4zDLTb14p75ZA3OydEW547bkBm1mzRC9igoI0p3Z1ovapxwIHIGLBZilTuoTBGWDwSVDrf3XV1P5x0HFdsfkOr8YVwW2uMO/1uE7FlfczmGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ny47xZvm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D44FBC4CEF0;
-	Wed, 12 Mar 2025 16:47:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741798080;
-	bh=rKIbFCwS48nnM6gxh3wFYLS526gq2KkVNyyi1h5+1tk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ny47xZvmQKh38wEZdbd3uE0N8ConIG5EFPo1F10FYLNBMl2IB7y1AwcvcMRRJNiCN
-	 6DsaZj+4A+UAe1nWjY/dJ0cEkcnv2ElAewCEm5yRbK0LJ43cOpTWGMc3DLvjIVuwGZ
-	 C4CjRpAl0cXtZCgpM0ZJTk0XgnENCfBZNf1f08D3wl7jRV5okrmFCDVt9FKQ37CqxV
-	 ie/m5SCf8rDIfPHAr2XDJ5enChHf6IQ8fy6VADpoYh7VuZWaEBgQ6LKivy8SdaDysn
-	 sJU5R5O8Qm6vfYacjyZ2KlaOsDamPhHJmb2N0i+USWfjhepz+7RyyS9jm+RB1cUKl9
-	 ktIavjNMuGU+A==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	"Liam R. Howlett" <howlett@gmail.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 4/4] mm/madvise: remove len parameter of madvise_do_behavior()
-Date: Wed, 12 Mar 2025 09:47:50 -0700
-Message-Id: <20250312164750.59215-5-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250312164750.59215-1-sj@kernel.org>
-References: <20250312164750.59215-1-sj@kernel.org>
+	s=arc-20240116; t=1741798292; c=relaxed/simple;
+	bh=ir1E6OfRFFfst/93jxijvA00MYGvJ0qUp7cTZfOcZ3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FjoIQTZIu1wHf3DiIhRGiKlMNJ84hLPmRySTMg9g06uj4bMiH4wh0DfZP4//UOenTQ3qkAy72sb3HnKG5cD0czXeHCHzkLkG8dX6nYRVqEaBgfok+h2EWu3GuiFUXkZOAL1xP7+fpfPkT6aqLfE/dylYGAmq/OYY0pGAWevqacc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tsPIb-00010B-Bz; Wed, 12 Mar 2025 17:51:17 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tsPIa-005OKC-0P;
+	Wed, 12 Mar 2025 17:51:16 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tsPIa-009a8e-00;
+	Wed, 12 Mar 2025 17:51:16 +0100
+Date: Wed, 12 Mar 2025 17:51:15 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?utf-8?B?U8O4cmVu?= Andersen <san@skov.dk>
+Subject: Re: [PATCH v4 7/7] thermal: core: Record PSCR before
+ hw_protection_shutdown()
+Message-ID: <Z9G7g5fr8DkJtcLI@pengutronix.de>
+References: <20250306093900.2199442-1-o.rempel@pengutronix.de>
+ <20250306093900.2199442-8-o.rempel@pengutronix.de>
+ <726c6ffc-a8d4-4328-a849-2d59f3a0a1c9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <726c6ffc-a8d4-4328-a849-2d59f3a0a1c9@linaro.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Because madise_should_skip() logic is factored out, making
-madvise_do_behavior() calculates 'len' on its own rather then receiving
-it as a parameter makes code simpler.  Remove the parameter.
+Hi Daniel,
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- mm/madvise.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+On Wed, Mar 12, 2025 at 04:35:51PM +0100, Daniel Lezcano wrote:
+> > @@ -380,6 +381,8 @@ static void thermal_zone_device_halt(struct thermal_zone_device *tz, bool shutdo
+> >   	dev_emerg(&tz->device, "%s: critical temperature reached\n", tz->type);
+> > +	set_power_state_change_reason(PSCR_OVERTEMPERATURE);
+> > +
+> >   	if (shutdown)
+> >   		hw_protection_shutdown(msg, poweroff_delay_ms);
+> >   	else
+> 
+> In the future could you add me as recipient to the series instead of this
+> one ? so I can get more context.
 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index ba006d05c7ea..b17f684322ad 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -1677,7 +1677,7 @@ static bool is_madvise_populate(int behavior)
- }
+ack.
+
+> Given there are no so much hw_protection_shutdown() users in the kernel, it
+> could be more interesting to change the function to receive a enum
+> pscr_reason and then in the hw_protection_shutdown() call
+> pscrr_reason_to_str().
  
- static int madvise_do_behavior(struct mm_struct *mm,
--		unsigned long start, size_t len_in, size_t len, int behavior)
-+		unsigned long start, size_t len_in, int behavior)
- {
- 	struct blk_plug plug;
- 	unsigned long end;
-@@ -1686,7 +1686,7 @@ static int madvise_do_behavior(struct mm_struct *mm,
- 	if (is_memory_failure(behavior))
- 		return madvise_inject_error(behavior, start, start + len_in);
- 	start = untagged_addr_remote(mm, start);
--	end = start + len;
-+	end = start + PAGE_ALIGN(len_in);
- 
- 	blk_start_plug(&plug);
- 	if (is_madvise_populate(behavior))
-@@ -1779,8 +1779,7 @@ int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int beh
- 	error = madvise_lock(mm, behavior);
- 	if (error)
- 		return error;
--	error = madvise_do_behavior(mm, start, len_in, PAGE_ALIGN(len_in),
--			behavior);
-+	error = madvise_do_behavior(mm, start, len_in, behavior);
- 	madvise_unlock(mm, behavior);
- 
- 	return error;
-@@ -1812,8 +1811,7 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
- 		if (madvise_should_skip(start, len_in, behavior, &error))
- 			ret = error;
- 		else
--			ret = madvise_do_behavior(mm, start, len_in,
--					PAGE_ALIGN(len_in), behavior);
-+			ret = madvise_do_behavior(mm, start, len_in, behavior);
- 		/*
- 		 * An madvise operation is attempting to restart the syscall,
- 		 * but we cannot proceed as it would not be correct to repeat
+Do you mean, make it work with CONFIG_PSCRR=n?
+
+Beside, the latest version is v5:
+https://lore.kernel.org/all/20250310103732.423542-1-o.rempel@pengutronix.de/
+
 -- 
-2.39.5
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
