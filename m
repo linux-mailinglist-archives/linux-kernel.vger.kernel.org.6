@@ -1,126 +1,184 @@
-Return-Path: <linux-kernel+bounces-557696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40B2A5DC8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:26:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D5DA5DC94
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:28:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2CFC3AA9DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:26:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F2D5162688
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B8C242910;
-	Wed, 12 Mar 2025 12:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA99D242907;
+	Wed, 12 Mar 2025 12:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNMvr/ac"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VF8Hbs57"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC60F23C8A5;
-	Wed, 12 Mar 2025 12:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE58924168E;
+	Wed, 12 Mar 2025 12:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741782386; cv=none; b=OF5/EDO7C+oLSBQf+JENRsDjiOeqncLavDkIGh/H9y2G63mIZNO3RkpkpYYS9LmrjAG5EdKGSZIEcP7dTKoWYIxNJCRMNNL9DfNNg4RMGJJCoTPIiRZDqI/RZVTiA3XkIYu5fAPdRl1zss2xfKfvkWBfCcKMUiImNo0QiHOHbyA=
+	t=1741782488; cv=none; b=ZNyHFwUOOL1BdwbTy3k3VFrtde/NKOlykCiHdRaMfS8NSPxmiII5VtdLWAMVx+aqXcHjahyVjKmQA4uz2K63VEomDf20cFOucwjDyq7sM76WRTXgiqiuZ9DWtsV2AqXxdmlq/CC6BmX1hO2mfWnt11tvYdF7+AQP5SpU9wiEj60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741782386; c=relaxed/simple;
-	bh=60bX5leRriG/PeHiLZJbUxrTQl+YufpehzKSr66mctg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GMPYFy0GO0j6ZCv0cMeglqOX+C5ua8ovcm0V1z4fq0IGh7/Ssk+r4G0KqRQMrW+1Y5aJ5T2IYU0JEm4qcSOltCwrWakdUn0qtFvbEmSlB2+b/cUe5T1V5Bs7kkE+RAvohdhe7bZ/dGRmxHKyhci38NXokZKKETYvn7fysQD2w7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNMvr/ac; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C3CC4CEEE;
-	Wed, 12 Mar 2025 12:26:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741782385;
-	bh=60bX5leRriG/PeHiLZJbUxrTQl+YufpehzKSr66mctg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KNMvr/acQGeA/HLm6Z+vWXcPJ1u8hwYgLNeYP7Gm1gXQLbn+hBMAof8LCTHLneBZz
-	 S8sGj8uvuJbxUrsxqyZIVKIPWG863KyuV945bXCD2C3LxNYT4Qp8yThZxr118bTuTH
-	 oJRvZqYgs0X+VvMMj9opBOqnkbprwMvk396VmAgX0y4qLjvINMowOcy4lCtrR9dyEF
-	 Gba7nhypKj+1jcprxn0mbtYuD1YW+ZPJQnl+kFAmCVsZTWjSkK5wWGnIbJUv4BpKrw
-	 oCFESDa85MjjvS8+oyBmXDmMDffmuKY4gkPOXfsrsU6BRTmFlRg9OhGGKXGX+gkHb0
-	 WRdw365rHpT5A==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54954fa61c8so6924469e87.1;
-        Wed, 12 Mar 2025 05:26:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUOF115/yZ4NgjkdrlBxabeli19E3t4wScF+kYAQF1i3ddegmeZcz+YuQ3Rqlkzoc57MJLDx9twby5xOKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKnK7mCVN504vOGwbLSOfLxm+ex9fdH4NoOunHGsFdr2+3Aeeq
-	dBNOtqbayqgFfnvq/ZnKktrQaOJB6P8888m5qaVA2pQCwD0qfIBjvmcxhZEt+83GVAyJTQAkoQO
-	s9uIhixlyGUqinQRcvcDD7N/rSc0=
-X-Google-Smtp-Source: AGHT+IEfcz8Z8RBun5aDzMJh/iWeeqlDwaeZQ8mtO44hMbOvcvI/StuAQz9lvME4/cxmWxEJLOgv9z1TSGm4eX6tssM=
-X-Received: by 2002:a05:6512:1597:b0:545:1db5:f224 with SMTP id
- 2adb3069b0e04-54990e2989dmr7039884e87.11.1741782383985; Wed, 12 Mar 2025
- 05:26:23 -0700 (PDT)
+	s=arc-20240116; t=1741782488; c=relaxed/simple;
+	bh=eLI8ZQpDeHJjUFJmDAEO+qwnlSA/Gq6OLz6UDxl1fsU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GJtL/AggcI3baguyAedlAQLHO5qVY6d83NXBzbpTLiF13QAQopB+CvsabqevJsb/1zrxB+EpiupA9TYSVqMkVPDGz5W1syOyNYHw+O2F1/LukPBt1S2hyNyK2VA2retsYh8us1SFnxobLlaXyQayad8Fi4X+iSjFcVMC74NAPng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VF8Hbs57; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-223f4c06e9fso13614475ad.1;
+        Wed, 12 Mar 2025 05:28:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741782486; x=1742387286; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IxUbYz05EixkTPFqKStUgtk6UPZfDa5JQwQa/HwWCZ0=;
+        b=VF8Hbs57zgutOPomxXSsVJMx/FUgDAPNv0wCpNmKel1OWdHO69qbZCsOywHSpl7f3k
+         C574BOZRLhb7Q3TyW0Dw+ol3Vy0Mu6t2GzTakOz9uYR+a6eNLYX7CYfGjAYh7vTe26Yp
+         r7X6Q752J/zQlIGBoQWn6NRZr3rc+ulpx9nDfEI8dt7x/9+k72QmXHCuGvoMzPoD3Jqr
+         +OlH9KcU9KUFWYRCljyMr8obl7sskFVBFUfVKqgq5BIJmwbHl55eNNymR46j+WhepNNy
+         nj7EGr7H/gO4bSxjCWNMgt1Zik/ApZEcwgTxVngUkt4pBfa/ezcFTtbcJH0qg3cfiNNh
+         AU1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741782486; x=1742387286;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IxUbYz05EixkTPFqKStUgtk6UPZfDa5JQwQa/HwWCZ0=;
+        b=tYHtYncIaXCil1lBLCgTtEyWl4+5cYTn/xRLVAvOA8w/UYLNR5K9D35zLKAvXXOg6B
+         cM27B2cxMtJImf3avV+dVTvOUB1W6ckSx1bushOjGQ9tQQsVPGmgqZRNbJwiukst0ij+
+         OTtTWKR1QqSLTBeOVoZVI6IMtsImuHLeY0dSGttUAUWTQ94JZiTHrHigD2xXNPlwzFU6
+         k3Exw0wqALijK/vbLAKVlGcxvuWsudaE0fjuLKIiAghdim64GxKMjDJxwfbnxN0+Sqlg
+         O4d88rM5Pjs8P7zjABq6WBdwACv5ERnoG95BrlGrhh7Z34uArcRGCikAWSQP9AlzZcT3
+         STow==
+X-Forwarded-Encrypted: i=1; AJvYcCW2PajoKHAS1bl1KzwArlWyDn5Y2LrEwJZTLBSfAfADDqj+aYponSSp/wk74sU5inA1azr0TXRVMGMwZU4b@vger.kernel.org, AJvYcCX5fxeRPcXmvRTnKuirpWKR10Vs8bcbhYqKpx4YgD92PKnedTTL3TtLQckzvutPxsexre7U5RRqKmsF@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvETTj5hHRaqPlMEJ/RX5cs8sKYFlvwAJ+G2/aMiVIilPImhZq
+	7yUlsnQYSRruD5jx4I00sMZ3PSTaZlG1mM1RUJGDsveSGiyFXc5IDuicKphQzHs=
+X-Gm-Gg: ASbGncsk4lhoaGhhcJXE135eVZ/CoPR+Sr0BNppKOvlFIfIhYJA0XztxwQvqaVUFfGO
+	WfuzaxHNKwpj2ueb4ctJkd47YCVRp24ElMyM82/M9PtjNE+yJd15sQmx/WxsCXKqukGvV35aiPG
+	dIFSTceggGDOUXv6bkZhBPwuLUgzBcgi/INuQk+jmFz/e4L//CHKoGQEGQfg/ezSgzHChEthExl
+	uZVcKrsQbboZ2dMmbkwNi7jjvB5Z+11BgwfqbEd6vyhE4qoK3TM4wy1M/bl7YXRfX8cVszyIw7w
+	SWH88cg5Imh+G7fCjgNHQxkizl+j+EKtuSpencikmVOLQzqcDVMMdrdrgMl5RLNvF+BOvB7zOAM
+	=
+X-Google-Smtp-Source: AGHT+IGMRstxw7VlBWo5AclJnc80nudS0j2DV/XKis75x33MKdrmONuUAwxabjmT8wMAvLHS9LgnmA==
+X-Received: by 2002:a17:902:cf0d:b0:215:6c5f:d142 with SMTP id d9443c01a7336-22593d9e8dcmr90162505ad.20.1741782485826;
+        Wed, 12 Mar 2025 05:28:05 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e8532sm114691035ad.56.2025.03.12.05.28.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 05:28:05 -0700 (PDT)
+From: Purva Yeshi <purvayeshi550@gmail.com>
+To: ukleinek@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	vz@mleia.com,
+	piotr.wojtaszczyk@timesys.com
+Cc: linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Purva Yeshi <purvayeshi550@gmail.com>
+Subject: [PATCH v2] dt-bindings: pwm: Convert lpc32xx-pwm.txt to YAML
+Date: Wed, 12 Mar 2025 17:57:50 +0530
+Message-Id: <20250312122750.6391-1-purvayeshi550@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311190212.634123-1-masahiroy@kernel.org> <20250311192036.GC1958594@ax162>
-In-Reply-To: <20250311192036.GC1958594@ax162>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 12 Mar 2025 21:25:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATwnW_uHZr2CPTKMb2ETm9WxOqTGvWN8GHxXuEAP=Po_Q@mail.gmail.com>
-X-Gm-Features: AQ5f1Jp4aTYYfbev7A0r71dgTS2TXIeKs0gpqiNVgyajTXPjL2SsfxA0Wky9G1Q
-Message-ID: <CAK7LNATwnW_uHZr2CPTKMb2ETm9WxOqTGvWN8GHxXuEAP=Po_Q@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: deb-pkg: fix versioning for -rc releases
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ben Hutchings <ben@decadent.org.uk>, Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 12, 2025 at 4:20=E2=80=AFAM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
->
-> On Wed, Mar 12, 2025 at 04:01:33AM +0900, Masahiro Yamada wrote:
-> > The version number with -rc should be considered older than the final
-> > release.
-> >
-> > For example, 6.14-rc1 should be older than 6.14, but to handle this
-> > correctly (just like Debian kernel), "-rc" must be replace with "~rc".
-> >
-> >   $ dpkg --compare-versions 6.14-rc1 lt 6.14
-> >   $ echo $?
-> >   1
-> >   $ dpkg --compare-versions 6.14~rc1 lt 6.14
-> >   $ echo $?
-> >   0
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
->
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
->
-> > ---
-> >
-> >  scripts/package/mkdebian | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> > index 193e33bcb989..80ed96561993 100755
-> > --- a/scripts/package/mkdebian
-> > +++ b/scripts/package/mkdebian
-> > @@ -167,7 +167,9 @@ version=3D$KERNELRELEASE
-> >  if [ "${KDEB_PKGVERSION:+set}" ]; then
-> >       packageversion=3D$KDEB_PKGVERSION
-> >  else
-> > -     packageversion=3D$(${srctree}/scripts/setlocalversion --no-local =
-${srctree})-$($srctree/scripts/build-version)
-> > +     upstream_version=3D$("${srctree}/scripts/setlocalversion" --no-lo=
-cal "${srctree}" | sed 's/-\(rc[1-9]\)/~\1/')
->
-> I don't think there has ever been an -rc10 but would it hurt to make it
-> [1-9]+?
+Convert the existing `lpc32xx-pwm.txt` bindings documentation into a
+YAML schema (`nxp,lpc3220-pwm.yaml`).
 
+Set `"#pwm-cells"` to `const: 3` for expected PWM cell properties.
 
-The current code should work with -rc10 as well.
+Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+---
+V1 - https://lore.kernel.org/all/20250311125756.24064-1-purvayeshi550@gmail.com/
+V2 - Correct filename to match the compatible string, remove unnecessary
+quotes in maintainers, and refine commit message.
 
-$ echo 6.14-rc10 | sed 's/-\(rc[1-9]\)/~\1/'
-6.14~rc10
+ .../devicetree/bindings/pwm/lpc32xx-pwm.txt   | 17 ---------
+ .../bindings/pwm/nxp,lpc3220-pwm.yaml         | 38 +++++++++++++++++++
+ 2 files changed, 38 insertions(+), 17 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pwm/lpc32xx-pwm.txt
+ create mode 100644 Documentation/devicetree/bindings/pwm/nxp,lpc3220-pwm.yaml
 
+diff --git a/Documentation/devicetree/bindings/pwm/lpc32xx-pwm.txt b/Documentation/devicetree/bindings/pwm/lpc32xx-pwm.txt
+deleted file mode 100644
+index 74b5bc5dd..000000000
+--- a/Documentation/devicetree/bindings/pwm/lpc32xx-pwm.txt
++++ /dev/null
+@@ -1,17 +0,0 @@
+-LPC32XX PWM controller
+-
+-Required properties:
+-- compatible: should be "nxp,lpc3220-pwm"
+-- reg: physical base address and length of the controller's registers
+-
+-Examples:
+-
+-pwm@4005c000 {
+-	compatible = "nxp,lpc3220-pwm";
+-	reg = <0x4005c000 0x4>;
+-};
+-
+-pwm@4005c004 {
+-	compatible = "nxp,lpc3220-pwm";
+-	reg = <0x4005c004 0x4>;
+-};
+diff --git a/Documentation/devicetree/bindings/pwm/nxp,lpc3220-pwm.yaml b/Documentation/devicetree/bindings/pwm/nxp,lpc3220-pwm.yaml
+new file mode 100644
+index 000000000..432a5e9d4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pwm/nxp,lpc3220-pwm.yaml
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pwm/nxp,lpc3220-pwm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: LPC32XX PWM controller
++
++maintainers:
++  - Vladimir Zapolskiy <vz@mleia.com>
++  - Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
++
++allOf:
++  - $ref: pwm.yaml#
++
++properties:
++  compatible:
++    const: nxp,lpc3220-pwm
++
++  reg:
++    maxItems: 1
++
++  "#pwm-cells":
++    const: 3
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    pwm@4005c000 {
++        compatible = "nxp,lpc3220-pwm";
++        reg = <0x4005c000 0x4>;
++        #pwm-cells = <3>;
++    };
+-- 
+2.34.1
 
-
---=20
-Best Regards
-Masahiro Yamada
 
