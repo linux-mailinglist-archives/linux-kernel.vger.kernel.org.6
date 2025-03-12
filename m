@@ -1,183 +1,119 @@
-Return-Path: <linux-kernel+bounces-557507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165F0A5DA1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:05:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7183A5D9A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479E8179156
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:05:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E84E07A9240
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331C223C8C9;
-	Wed, 12 Mar 2025 10:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7A623A9BA;
+	Wed, 12 Mar 2025 09:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="rjoyd4mQ"
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEBzLpcb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841B71DF735;
-	Wed, 12 Mar 2025 10:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4997423A9B1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741773909; cv=none; b=nvHVDXKYixPuJ+AQTzDIdkRWTBr7T6VW7yBPbpSQWnm4S3saq8uUQGWl3WbPZZb8dXhPOBgGAb9bSSDV93mrlE2E28ayV6qGAYthJawGihE9FxyXl3jt8Pm7UCM3zya6MVKw9ljp8m62kbA58zy5Ya/aeYeamEb4UBRTj51At6Y=
+	t=1741772189; cv=none; b=pDkBoLvb0lpyGmUGtNSpppxw4Fn95bBmoxAdnOfJHXCDSoIE2Y9iyYbMTY0b80Brmz1eTw3YmZ2TAgK+D8SCMyFGgu9CTZMCb3ZNdtcz+iiqRpJ5h010dm+I900kTYVluxrEPdqHNRKaDcUZSj5E/nvSpXrr0wfM4jIaJnVK7Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741773909; c=relaxed/simple;
-	bh=W17geC8O76oOSoaemmRBa62PV0mRbp043YTD+HRUYnM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tUPCeZVQ7PZWakM57S/dHBoRnk0twlS6vKhcqNRuzMkXkw/lyoHt7kOZmWurwFjPZJgypXfwzbmWF4dqv+dtwdpVwo+p8J9J9p6y9cd3hMi7YUVHKPWMRGcOPStYQEoKcBzgGndbamUuJlPoEobzB/U5ZuyVYMmz3NpmYKzhaX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=rjoyd4mQ; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:To:From:Cc:
-	Content-ID:Content-Description;
-	bh=soJ+7cSs0XAkqlkvlTIv9267QzTdaow+9b6Ns8vHX1g=; b=rjoyd4mQbsvG1wumRuzw7+XhRI
-	uri5qMZzLMJsTOPq26FLWFyjGPhQgsfBoNunxpOcY+JAasvyZxDP0wEj630LPQoLINI43/yoAjaxr
-	zf6VVeFm3QZ+AuV8NEWePIcCw/87TcoRn+tpG4onShV8vxiueN34cKT41DyvkvYRBQRRTnBHsLJ+i
-	sje0/GuYuSCAfIz6Qu+g/hrEzLVJXIGVKyO0Kwd/hhN21YtdNM/MRuyDgIr49H8v3A23VNpeoOrFE
-	LRk2xvHtVwyRDjm0Jg+tjol5ILNHv3gMoWTt4+R+svWaGQ+Lp30HRda2imMOOnsuJ7wJXgZH+8OsR
-	dbIYbe/N+4xEV7e5JHvcWCQwvMFP+Sdwgb19nUTdoL8AbdNSlf3phFGnHmN6Z/1X10JGmcKtT87JX
-	/WMsZoBUSxp3IuaT1KpF/EBg/M7b0Qz58h7efOnLbk39Ck18wNi4Rdfah0/mnSceNCrsI5Fm9ese6
-	yiWMgld7nvUxJtUo1Hdklk9XeIXDknlELkn9L8/NTBYSfI4vzGFKYrWZlHCbMIT2gxoubxCD6gTDg
-	0XrZOHn9y2hImNRLYEcvhIspd+HEp6X9to8yv6jxzu3Y5Wq1j0BBwCLVQaB9x1Ka7npdsPLNrb/wh
-	+wtcwhfm1W7GUtShwqibRywu0Xy2V55lzOt+2qT6s=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org,
- lucho@ionkov.net, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev,
- syzbot <syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [v9fs?] general protection fault in p9_client_walk
-Date: Wed, 12 Mar 2025 10:36:15 +0100
-Message-ID: <34836920.9mNPFRc1x4@silver>
-In-Reply-To: <67d12512.050a0220.14e108.0024.GAE@google.com>
-References: <67d12512.050a0220.14e108.0024.GAE@google.com>
+	s=arc-20240116; t=1741772189; c=relaxed/simple;
+	bh=8PCB/qX+omXHOsFHBh6+ImDcq7aHjwbUaKNYTgAx65M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OiXTNHMIBxRYVZz9hk8QrKEybnnAoBBJKs55B7k42t+ylSDjNZeI+jbw4X3fJPqcRV3fLyTpZ37VPzeCamWV7I0LjbR/gYg17s4KxJfPseMgLzj3aAC0iqetQYP1SD3wj0LDIDtaeRI7bw2s71VkcpPZdeeSihussPOWlb05Jcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEBzLpcb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA38CC4CEFA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:36:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741772188;
+	bh=8PCB/qX+omXHOsFHBh6+ImDcq7aHjwbUaKNYTgAx65M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZEBzLpcbPuj4e5LEPxjlMn5ET6BzLahR0WZPFffQnWR0rtFt8wO6JlM9UtruojUPn
+	 p/NW6fh1grHD0hWfmEwgleZcXQSatUauD+3F2xfYIBLoOb9l/EVqGGrNr8ttO3XVTh
+	 kwZgRoB214xmiw4XZtRf2D5ndjGqyTxwSeRRcqU0p9qWrlNOv4I3c2l3nO3LbPnNhz
+	 dvHyaaJl6J+VqV3LCLN2WI4HU+O0m3z1vcNkGGHD7/XpOSyhkSmPiR/jjV6f9Liv+S
+	 SN+fcz/eZYE20DMy/RaG89CGZiddoH6Ua9eGCBb67ggGOkOn0jsJm4roxLD5WTCbpk
+	 +B8B+DyNYVt8Q==
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6fedf6aaed2so7024047b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 02:36:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUrK0ejIjHD26xhDRUeybJfiNbDZVZhd13bMGXf2r0O5PL5rUDMhKJYTuILpvh8Wx/WPUJVYJhy++X+Gz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5nT7a75dSvbTcLs5Cfq7QoxAbKqJZL7AqMsYyn4ugzd6Xs8gz
+	Fq8VPa9qH73DNvLTS1V8vHr2tipEzlPaeolFLyJajsVp6hNSDNGCmPQPfvNPBP3s4bmA7zl2Fvw
+	9YSB5V6veN637Rxyy7pMkn9VSJsPPTNH80gyhNw==
+X-Google-Smtp-Source: AGHT+IHS3can8YTqoJneu0xqWWYflo47tYvjFtQtHgO34GoAaFcy5Te+GS9aJB6DmOJN+G2yDVqsacbPbmbCFOL5/7M=
+X-Received: by 2002:a05:690c:2e0a:b0:6fe:8fe:f5c2 with SMTP id
+ 00721157ae682-6ff0a2ab572mr69759157b3.8.1741772187605; Wed, 12 Mar 2025
+ 02:36:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20250312090132.1624445-1-nichen@iscas.ac.cn>
+In-Reply-To: <20250312090132.1624445-1-nichen@iscas.ac.cn>
+From: Robert Foss <rfoss@kernel.org>
+Date: Wed, 12 Mar 2025 10:36:16 +0100
+X-Gmail-Original-Message-ID: <CAN6tsi7k=fo6V5Mqp_yOkaW25rhTYEgAdC+fCfB_72q9ObKuxw@mail.gmail.com>
+X-Gm-Features: AQ5f1JqTE66ahaBB-lj6ixl6TplWwGh5gTDicN8Z2hQ9Cq7gqe8waoTJ4QjaNVY
+Message-ID: <CAN6tsi7k=fo6V5Mqp_yOkaW25rhTYEgAdC+fCfB_72q9ObKuxw@mail.gmail.com>
+Subject: Re: [PATCH] drm/bridge: anx7625: Remove redundant 'flush_workqueue()' calls
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org, 
+	yuanhsinte@chromium.org, jani.nikula@intel.com, xji@analogixsemi.com, 
+	robh@kernel.org, sui.jingfeng@linux.dev, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wednesday, March 12, 2025 7:09:22 AM CET syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    0fed89a961ea Merge tag 'hyperv-fixes-signed-20250311' of g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=173fa654580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f71f17a9b92472b2
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5b667f9a1fee4ba3775a
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177b6874580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=138b17a8580000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-0fed89a9.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/178c4c7fb0b4/vmlinux-0fed89a9.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/97ef169a8fde/bzImage-0fed89a9.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com
-> 
-> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> CPU: 3 UID: 0 PID: 5936 Comm: syz-executor316 Not tainted 6.14.0-rc6-syzkaller-00016-g0fed89a961ea #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:p9_client_walk+0x9a/0x530 net/9p/client.c:1165
-> Code: 28 00 00 00 48 89 84 24 88 00 00 00 31 c0 e8 3d 44 b0 f6 48 89 d8 31 f6 48 c1 e8 03 66 89 74 24 40 48 c7 44 24 50 00 00 00 00 <42> 80 3c 30 00 0f 85 3e 04 00 00 31 ff 89 ee 4c 8b 33 e8 0f 3f b0
-> RSP: 0018:ffffc9000380faa0 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000001
-> RDX: ffff88802a9bc880 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000001 R08: 0000000000000007 R09: fffffffffffff000
-> R10: 0000000000000000 R11: 0000000000000002 R12: 0000000000000000
-> R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff92000701f56
-> FS:  000055558c345380(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f412d1932a9 CR3: 000000002107c000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  clone_fid fs/9p/fid.h:23 [inline]
->  v9fs_fid_xattr_set+0x119/0x2d0 fs/9p/xattr.c:121
->  v9fs_set_acl+0xe6/0x150 fs/9p/acl.c:276
->  v9fs_set_create_acl+0x4b/0x70 fs/9p/acl.c:306
->  v9fs_vfs_mkdir_dotl+0x517/0x6e0 fs/9p/vfs_inode_dotl.c:411
->  vfs_mkdir+0x57d/0x860 fs/namei.c:4313
->  do_mkdirat+0x301/0x3a0 fs/namei.c:4336
->  __do_sys_mkdir fs/namei.c:4356 [inline]
->  __se_sys_mkdir fs/namei.c:4354 [inline]
->  __x64_sys_mkdir+0xef/0x140 fs/namei.c:4354
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Just had a glimpse on it so far. IIUIC the trigger is in
-v9fs_vfs_mkdir_dotl() [fs/9p/vfs_inode_dotl.c:411] ?
-
-    // NULLs out fid (since dafbe6897)
-    v9fs_fid_add(dentry, &fid);
-    // expects fid being non-NULL
-    v9fs_set_create_acl(inode, fid, dacl, pacl);
-
-/Christian
-
-> RIP: 0033:0x7fd26f335429
-> Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fff6d918e28 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
-> RAX: ffffffffffffffda RBX: 00004000000000c0 RCX: 00007fd26f335429
-> RDX: 00007fd26f335429 RSI: 0000000000000040 RDI: 00004000000000c0
-> RBP: 0000000000000073 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> R13: 00007fff6d919008 R14: 0000000000000001 R15: 0000000000000001
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:p9_client_walk+0x9a/0x530 net/9p/client.c:1165
-> Code: 28 00 00 00 48 89 84 24 88 00 00 00 31 c0 e8 3d 44 b0 f6 48 89 d8 31 f6 48 c1 e8 03 66 89 74 24 40 48 c7 44 24 50 00 00 00 00 <42> 80 3c 30 00 0f 85 3e 04 00 00 31 ff 89 ee 4c 8b 33 e8 0f 3f b0
-> RSP: 0018:ffffc9000380faa0 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000001
-> RDX: ffff88802a9bc880 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000001 R08: 0000000000000007 R09: fffffffffffff000
-> R10: 0000000000000000 R11: 0000000000000002 R12: 0000000000000000
-> R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff92000701f56
-> FS:  000055558c345380(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f412d1932a9 CR3: 000000002107c000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> ----------------
-> Code disassembly (best guess):
->    0:	28 00                	sub    %al,(%rax)
->    2:	00 00                	add    %al,(%rax)
->    4:	48 89 84 24 88 00 00 	mov    %rax,0x88(%rsp)
->    b:	00
->    c:	31 c0                	xor    %eax,%eax
->    e:	e8 3d 44 b0 f6       	call   0xf6b04450
->   13:	48 89 d8             	mov    %rbx,%rax
->   16:	31 f6                	xor    %esi,%esi
->   18:	48 c1 e8 03          	shr    $0x3,%rax
->   1c:	66 89 74 24 40       	mov    %si,0x40(%rsp)
->   21:	48 c7 44 24 50 00 00 	movq   $0x0,0x50(%rsp)
->   28:	00 00
-> * 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
->   2f:	0f 85 3e 04 00 00    	jne    0x473
->   35:	31 ff                	xor    %edi,%edi
->   37:	89 ee                	mov    %ebp,%esi
->   39:	4c 8b 33             	mov    (%rbx),%r14
->   3c:	e8                   	.byte 0xe8
->   3d:	0f 3f                	(bad)
->   3f:	b0                   	.byte 0xb0
-> 
-> 
+On Wed, Mar 12, 2025 at 10:02=E2=80=AFAM Chen Ni <nichen@iscas.ac.cn> wrote=
+:
+>
+> 'destroy_workqueue()' already drains the queue before destroying it, so
+> there is no need to flush it explicitly.
+>
+> Remove the redundant 'flush_workqueue()' calls.
+>
+> This was generated with coccinelle:
+>
+> @@
+> expression E;
+> @@
+> - flush_workqueue(E);
+>   destroy_workqueue(E);
+>
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 > ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
+>  drivers/gpu/drm/bridge/analogix/anx7625.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/=
+bridge/analogix/anx7625.c
+> index 0b97b66de577..591ec8e5b642 100644
+> --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
+> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
+> @@ -2771,7 +2771,6 @@ static void anx7625_i2c_remove(struct i2c_client *c=
+lient)
+>
+>         if (platform->hdcp_workqueue) {
+>                 cancel_delayed_work(&platform->hdcp_work);
+> -               flush_workqueue(platform->hdcp_workqueue);
+>                 destroy_workqueue(platform->hdcp_workqueue);
+>         }
 
+Reviewed-by: Robert Foss <rfoss@kernel.org>
 
+>
+> --
+> 2.25.1
+>
 
