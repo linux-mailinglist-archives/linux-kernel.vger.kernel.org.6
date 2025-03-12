@@ -1,137 +1,97 @@
-Return-Path: <linux-kernel+bounces-557720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC5B5A5DCD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:40:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC05A5DCB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:32:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11CBA17856D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:40:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE401897100
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E101243399;
-	Wed, 12 Mar 2025 12:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B61B1E4A9;
+	Wed, 12 Mar 2025 12:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mixaill.net header.i=@mixaill.net header.b="tkA3Ff7n"
-Received: from mail.mixaill.net (mail.mixaill.net [144.76.234.135])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPyjx508"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF86E24293F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.234.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EFD1F949;
+	Wed, 12 Mar 2025 12:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741783210; cv=none; b=AKlKQK9Cx4IRI35+k84UOGTFzwqb2QKvwETAcXcsyOwQQRo5ETuGshKMQmcM1BT7//09LkdhU716dEhqSVwX6kypCcfT+XfdUggMe8hHSDPU1OVBlsr3z+Da1k64lvuF7It1o4Zg/0d3Kb5ggMPJE711sN55rRmI+k1UGTeEHp0=
+	t=1741782711; cv=none; b=oKF8DVfoiEtE6KF1Nrl4h102/esShstFc+kZ+1FQqEVO4B9oPNhpg8GcVwl93XvsamdSVQSHdBmmtxNf7eKwwQ7+UhbVxDxtYy8rrphjwIF7zZ9oSIa7YrEd9wTXh3qawbLMj7P434jYWdJnwHAwN+fdAaNkkiFiBqeTyw45OfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741783210; c=relaxed/simple;
-	bh=jMT9AsMuwXF1APi4NbcUAZSoszB8NSVVnpmjQkxw23k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CbdJKL7oB3OTQrXLvzmpzBxAaos+eMwVNPjzTEw+FQuFIcU4dB/SHZh7jYoS7vFFmwmqyUlpicSiOe0QVHuT0wumHI2oyXZpKtd4sXzqBgdVjVpLgNdjIOUBWx0biMLzNZZrbK3NxJbMfyClxz3bVv8qASIEKDC3xCyCN7KEH8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mixaill.net; spf=pass smtp.mailfrom=mixaill.net; dkim=pass (2048-bit key) header.d=mixaill.net header.i=@mixaill.net header.b=tkA3Ff7n; arc=none smtp.client-ip=144.76.234.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mixaill.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mixaill.net
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 23978615E2;
-	Wed, 12 Mar 2025 12:32:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mixaill.net; s=dkim;
-	t=1741782741; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=F5Rmm+CnhuT5tHMtHkTvsAOQTGz1NZaJrStAC8PQUF8=;
-	b=tkA3Ff7nq7L6d6/QZEHqxutLXpeazHekpRJQTR/sl4x2REpVQI0Cxd9t1djgN3aBthwXwa
-	V6Jkdf3ksU15e7x2MF4U8k1EVz03t51YD10NqoQxVgEmPlqZ0ITPy7Ze0p37glRrZOClxb
-	8TKFu+mPVikQ1cDu87W5PmeVuhP+HfAAR9r5jbReUEzguDNVBzHASKVjyG5Wasw87a9Heb
-	Ras4oNTq+jfDrwqwCMVrqr/yjN1cq/nAVlVZXCscziK/ctgKdfnVu94AKtAD0AFoyUde0r
-	tqd8GaHZmdBcsVsyy4LBhjvdQIo9MsbZDE7YSzFeP3uCSrNOIehDr2S3bU/6Mw==
-From: Mikhail Paulyshka <me@mixaill.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mikhail Paulyshka <me@mixaill.net>
-Subject: [PATCH 2/2] x86/rdrand: hide RDRAND and RDSEED from CPUID in case of a malfunction
-Date: Wed, 12 Mar 2025 15:31:30 +0300
-Message-ID: <20250312123130.8290-3-me@mixaill.net>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250312123130.8290-1-me@mixaill.net>
-References: <20250312123130.8290-1-me@mixaill.net>
+	s=arc-20240116; t=1741782711; c=relaxed/simple;
+	bh=lTnfEWDBOzjItKvRO9R9+2m5pkw77wQmdkJic8WtmOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jqsrLGVCEHUpQOr8uJ6X/Q33ohV2F1fKm4UpMEXeQjjur/w6AVSsQCXbihkMNqa+LMXDLZ/4HxnZDyUssplLzhsgu4X3KSHQMyt/2JGuyrlleALQG/wP+wY6IZ36QNZYqxJ3jAYmepbBQgYi8VdtnXK7biUg0qZCQ/ddjiKo188=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPyjx508; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5132BC4CEEC;
+	Wed, 12 Mar 2025 12:31:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741782710;
+	bh=lTnfEWDBOzjItKvRO9R9+2m5pkw77wQmdkJic8WtmOo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jPyjx5080nfCZmHv3rnXAt8oxNnpcbzh2PkRuJIAfYd3T/pY3V3fplzOGNZqb/2BT
+	 G8DTrZ2vigokz9BlFWu3d7sMPr6G4aFYSMk7OyiBFci8Adrg+v5UDVSTye2q0Ch1Gn
+	 2O8KcqJoJ9czAaOvCcAB+pLSeZtnkTDUeXiEWikt8FS2RvF4RG4w0DjyWvK+yYflNw
+	 FKCF0fGbNFgqbB/8Q74cwkaom9cFuVJk9uqQyEGn8UJVK6m/mqwViYvREe42sXigy2
+	 XNMH6IzB3ndUYF7l/DcJlWbzO5UHcVBZGG9+cighgGzajVaXST0wrh2vjlfDrgB9fY
+	 4I1EiCmHbY8Kg==
+Date: Wed, 12 Mar 2025 12:31:44 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.6 000/144] 6.6.83-rc2 review
+Message-ID: <90104f80-e50b-4c86-8a03-5ee9edfb613a@sirena.org.uk>
+References: <20250311135648.989667520@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WcgnR0/KBYLKm9Hc"
+Content-Disposition: inline
+In-Reply-To: <20250311135648.989667520@linuxfoundation.org>
+X-Cookie: You will outgrow your usefulness.
 
-Some applications use the CPUID call instead of /proc/cpuinfo to get
-CPU capabilities. In this case, they will still try to use non-functional
-RDRAND/RDSEED implementations.
 
-Disables visibility of RDRAND and RDSEED on AMD platforms.
+--WcgnR0/KBYLKm9Hc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Mikhail Paulyshka <me@mixaill.net>
----
- arch/x86/include/asm/msr-index.h       | 1 +
- arch/x86/kernel/cpu/rdrand.c           | 5 +++++
- tools/arch/x86/include/asm/msr-index.h | 1 +
- 3 files changed, 7 insertions(+)
+On Tue, Mar 11, 2025 at 03:02:03PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.83 release.
+> There are 144 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 72765b2fe0d8..bc5ef95cf0cb 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -614,6 +614,7 @@
- #define MSR_AMD64_OSVW_STATUS		0xc0010141
- #define MSR_AMD_PPIN_CTL		0xc00102f0
- #define MSR_AMD_PPIN			0xc00102f1
-+#define MSR_AMD64_CPUID_FN_7		0xc0011002
- #define MSR_AMD64_CPUID_FN_1		0xc0011004
- #define MSR_AMD64_LS_CFG		0xc0011020
- #define MSR_AMD64_DC_CFG		0xc0011022
-diff --git a/arch/x86/kernel/cpu/rdrand.c b/arch/x86/kernel/cpu/rdrand.c
-index e9f7ef5dfe25..031c4297a54a 100644
---- a/arch/x86/kernel/cpu/rdrand.c
-+++ b/arch/x86/kernel/cpu/rdrand.c
-@@ -11,6 +11,7 @@
- #include <asm/processor.h>
- #include <asm/archrandom.h>
- #include <asm/sections.h>
-+#include <asm/msr.h>
- 
- 
- enum { SAMPLES = 8, MIN_CHANGE = 5 };
-@@ -46,6 +47,8 @@ void x86_init_rdrand(struct cpuinfo_x86 *c)
- 
- 	if (failure) {
- 		clear_cpu_cap(c, X86_FEATURE_RDRAND);
-+		if (c->x86_vendor == X86_VENDOR_AMD || c->x86_vendor == X86_VENDOR_HYGON)
-+			msr_clear_bit(MSR_AMD64_CPUID_FN_1, 62);
- 		pr_emerg("RDRAND is not reliable on this platform; disabling.\n");
- 	}
- }
-@@ -82,6 +85,8 @@ void x86_init_rdseed(struct cpuinfo_x86 *c)
- 
- 	if (failure) {
- 		clear_cpu_cap(c, X86_FEATURE_RDSEED);
-+		if (c->x86_vendor == X86_VENDOR_AMD || c->x86_vendor == X86_VENDOR_HYGON)
-+			msr_clear_bit(MSR_AMD64_CPUID_FN_7, 18);
- 		pr_emerg("RDSEED is not reliable on this platform; disabling.\n");
- 	}
- }
-diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
-index 3ae84c3b8e6d..3deb6c11f134 100644
---- a/tools/arch/x86/include/asm/msr-index.h
-+++ b/tools/arch/x86/include/asm/msr-index.h
-@@ -612,6 +612,7 @@
- #define MSR_AMD64_OSVW_STATUS		0xc0010141
- #define MSR_AMD_PPIN_CTL		0xc00102f0
- #define MSR_AMD_PPIN			0xc00102f1
-+#define MSR_AMD64_CPUID_FN_7		0xc0011002
- #define MSR_AMD64_CPUID_FN_1		0xc0011004
- #define MSR_AMD64_LS_CFG		0xc0011020
- #define MSR_AMD64_DC_CFG		0xc0011022
--- 
-2.48.1
+Tested-by: Mark Brown <broonie@kernel.org>
 
+--WcgnR0/KBYLKm9Hc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfRfq8ACgkQJNaLcl1U
+h9CZJAf/Xcdn/uy4pwECUOe0KPAaxsp4cFoklcv/0FcmHarokWx2Hcip7hakjym7
+c3sOOi5+gNbQ1L8Jykkx5cF254KWRdaIt9OOZw0aK3OSsxqAgfn6b5JK0BLzzlQt
+lyB2Sh6vW3eP1oqFnfw/a53EHhSdj71JWEVww4uUgeSbEsZfUI8bAkb0C2yosVEL
+V/9gwMwIXZ0iGCmKcXyQq0U6MKNraXcsZULRMttzOOZ6OHLDwU9JRWSArb2I3L5/
+jUhX2OePg6ToBqzaIDr5wnRJ3JSe56MuXH5gYPMPdlWE4FKCtQyx+59XP+3rC+/F
+wYmM+XLy8ej5+quvJcWsyv4PlxZt3A==
+=9xaJ
+-----END PGP SIGNATURE-----
+
+--WcgnR0/KBYLKm9Hc--
 
