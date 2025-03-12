@@ -1,78 +1,137 @@
-Return-Path: <linux-kernel+bounces-558519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EEFAA5E705
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:09:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF7AA5E708
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:11:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B539D3BB310
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:09:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A04189D98B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F6B1EFFBD;
-	Wed, 12 Mar 2025 22:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CAFD1EFF93;
+	Wed, 12 Mar 2025 22:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E44FLZko"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CUJjtxBi"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732E61EFF81
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 22:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EB31D5CD4;
+	Wed, 12 Mar 2025 22:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741817384; cv=none; b=Ith6gAksZI12JWFypEfwrrcI/slILyUf492gI6Dv7vtisB/wFGnr5QrF4+gPMJS0qr/aXPQCzLOkFMonZmHPgiNlhsVw3Ywntqna4r2XNeHZTZqG0tZm5lySoeUS6Ksaaxnu0CY7v2L4/n8YiiUshh2KRFNWjUnXZQ9ucyS/c8s=
+	t=1741817469; cv=none; b=J77B48AAfpIcEZogHJpvgY4ezUaNTPeuaLpv0ECtqfBN3w5TDBKMw1mPAk65MYS+ezhpAWXb0LZLIHwxrdmgzdU69ekTMNe7j8/WhlO2GEP9jcf0zxol3Q8tmsylxFqVz2mK9kgbcv6asF48FpmZRE9UZiaNferHDhi3e+vxuUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741817384; c=relaxed/simple;
-	bh=2p/Mvj5hsjGWyRmJ3lcv7yD69WG2sVEN9vWFWMRBX1Y=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=gBylqehHtV+22xXe8SwB9RkcvbHtWpk4BcfYnA8rjVwkibcmZ9wxB7QVXO7C2eCFuo8vnIttWEz1gcsSiJ30sIGVd4TFUYIYfLIqB9ZDfS3jpA9AVuoGWovQ6qbEuuLy5Y5Qw31hmemc/G4F76uSiGAzgwRyp3g2ZFYD058it20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E44FLZko; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47941C4CEEA;
-	Wed, 12 Mar 2025 22:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741817384;
-	bh=2p/Mvj5hsjGWyRmJ3lcv7yD69WG2sVEN9vWFWMRBX1Y=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=E44FLZkoFDfhJ1BHnmU9+WEstwTTKDQNf9wmUoVdbr45BzzUZHTn32ug/hZ2xxTYh
-	 0M/p/XMk4uS/YgGaTBh6Y4Ph6NHNbg+NtATy/BD2xn2BIwn9EuRMislyAbIkAC8yXt
-	 R9L+x8rNXOgnb39VjsV7RMXonlfksyj0ym94x9y1ewrdGXwLnRyTfWGz6iGgk1GvMl
-	 uSoVTRpxhUmvZP0s00woeEHIon+CLXP0SjnWfmQnG/spKknwtCbvhXBooIFUkB1yLN
-	 ig1KHHEvnpTTtAeXcVB9EsH5aUowP/FgcTkRrSZmB33MR5Ycf38RHtJchn6Pl0J3mQ
-	 OBqWPsbt6ycIg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ECE60380DBDF;
-	Wed, 12 Mar 2025 22:10:19 +0000 (UTC)
-Subject: Re: [GIT PULL] sched_ext: A fix for v6.14-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Z9H5G3I7A477CRuP@slm.duckdns.org>
-References: <Z9H5G3I7A477CRuP@slm.duckdns.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Z9H5G3I7A477CRuP@slm.duckdns.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.14-rc6-fixes
-X-PR-Tracked-Commit-Id: 9360dfe4cbd62ff1eb8217b815964931523b75b3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b7f94fcf55469ad3ef8a74c35b488dbfa314d1bb
-Message-Id: <174181741841.948496.9786650234398591289.pr-tracker-bot@kernel.org>
-Date: Wed, 12 Mar 2025 22:10:18 +0000
-To: Tejun Heo <tj@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>
+	s=arc-20240116; t=1741817469; c=relaxed/simple;
+	bh=/1XozE0/vIquYjFMnDWf+X78e+cGMvn6tYV+FrUbuaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Avq8cTF0VdjddMq0dG1hS0M6/klgQzDlgLDYqFNbEs4tPMWdB9rfPy85S1WNdp9rF+0zi2TFKkx48lhk+cbxVOvd7JkhO0PsYh15sPASq59NpVU4M/8v+mK6k4Ni1S5sEHWi9EyZvKSYSbZClhSSZMRcgR2dRZi3t7FE55laVXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CUJjtxBi; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=IlkU+vvOpVkWxTXBaPN8dTl7vOj74Nbxp/MBIBuSI/E=; b=CUJjtxBinEu+HCHR0pkQ66sNLG
+	zBCFxcd/c9xGd/TtgT9ArE8qGMycLVSOHNcBlApCiYDnKvkOQCsVIkMBdTGwlOf/C2zRO2x2s9IxY
+	K9O+45c1LO++pQ1hBQB8N9fAAV2RJU0DjPuaz7idRlb5OVKyF8QUy8aJoXjocSFtX8YU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tsUHx-004nYU-QD; Wed, 12 Mar 2025 23:10:57 +0100
+Date: Wed, 12 Mar 2025 23:10:57 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: "Gupta, Suraj" <Suraj.Gupta2@amd.com>,
+	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"Simek, Michal" <michal.simek@amd.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"git (AMD-Xilinx)" <git@amd.com>,
+	"Katakam, Harini" <harini.katakam@amd.com>
+Subject: Re: [PATCH net-next V2 2/2] net: axienet: Add support for 2500base-X
+ only configuration.
+Message-ID: <186bf47a-04af-4bfb-a6d3-118b844c9ba8@lunn.ch>
+References: <20250312095411.1392379-1-suraj.gupta2@amd.com>
+ <20250312095411.1392379-3-suraj.gupta2@amd.com>
+ <ad1e81b5-1596-4d94-a0fa-1828d667b7a2@lunn.ch>
+ <Z9GWokRDzEYwJmBz@shell.armlinux.org.uk>
+ <BL3PR12MB6571795DA783FD05189AD74BC9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
+ <34ed11e7-b287-45c6-8ff4-4a5506b79d17@lunn.ch>
+ <BL3PR12MB6571540090EE54AC9743E17EC9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
+ <fd686050-e794-4b2f-bfb8-3a0769abb506@lunn.ch>
+ <BL3PR12MB6571959081FC8DDC5D509560C9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
+ <Z9HjOAnpNkmZcoeo@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9HjOAnpNkmZcoeo@shell.armlinux.org.uk>
 
-The pull request you sent on Wed, 12 Mar 2025 11:14:03 -1000:
+> This is not an approach that works with the Linux kernel, sorry.
+> 
+> What we have today is a driver that works for people's hardware - and
+> we don't know what the capabilities of that hardware is.
+> 
+> If there's hardware out there today which has XAE_ABILITY_2_5G set, but
+> defaults to <=1G mode, this will work with the current driver. However,
+> with your patch applied, it stops working because instead of the driver
+> indicating MAC_10FD | MAC_100FD | MAC_1000FD, it only indicates
+> MAC_2500FD. If this happens, it will regress users setups, and that is
+> something we try not to do.
+> 
+> Saying "someone else needs to add the code for their FPGA logic" misses
+> the point - there may not be "someone else" to do that, which means
+> the only option is to revert your change if it were merged. That in
+> itself can cause its own user regressions because obviously stuff that
+> works with this patch stops working.
+> 
+> This is why we're being cautious, and given your responses, it's not
+> making Andrew or myself feel that there's a reasonable approach being
+> taken here.
+> 
+> >From everything you have said, I am getting the feeling that using
+> XAE_ABILITY_2_5G to decide which of (1) or (2) is supported is just
+> wrong. Given that we're talking about an implementation that has been
+> synthesized at 2.5G and can't operate slower, maybe there's some way
+> that could be created to specify that in DT?
+> 
+> e.g. (and I'm sure the DT folk aren't going to like it)...
+> 
+> 	xlnx,axi-ethernet-X.YY.Z-2.5G
+> 
+> (where X.YY.Z is the version) for implementations that can _only_ do
+> 2.5G, and leave all other implementations only doing 1G and below.
+> 
+> Or maybe some DT property. Or something else.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.14-rc6-fixes
+Given that AMD has been talking about an FPGA, not silicon, i actually
+think it would be best to change the IP to explicitly enumerate how it
+has been synthesised. Make use of some register bits which currently
+read as 0. Current IP would then remain as 1000BaseX/SGMII,
+independent of how they have been synthesised. Newer versions of the
+IP will then set the bits if they have been synthesised as 2) or 3),
+and the driver can then enable that capability, without breaking
+current generation systems. Plus there needs to be big fat warning for
+anybody upgrading to the latest version of the IP for bug fixes to
+ensure they correctly set the synthesis options because it now
+actually matters.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b7f94fcf55469ad3ef8a74c35b488dbfa314d1bb
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+	 Andrew
 
