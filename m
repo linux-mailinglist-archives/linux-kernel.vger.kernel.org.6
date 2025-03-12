@@ -1,100 +1,93 @@
-Return-Path: <linux-kernel+bounces-558000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD439A5E036
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:23:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90BC9A5E03E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:25:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 798A47A4F9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17AD43A39C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE7B254865;
-	Wed, 12 Mar 2025 15:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3596124CEE4;
+	Wed, 12 Mar 2025 15:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="xgUseHpf"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB2F24C668;
-	Wed, 12 Mar 2025 15:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741792882; cv=none; b=eqpEN5IBWDjV4i46We8mT9cyb9M46IBph+acnt0/R2AZf46LN3IxA6rCDvDQ2dhllWLIJWXHvkTU2FZ36kc9SC8iKA2PbcQFAoqJXjB8GnQf4DqFNq6KpItP2wJGSLe+9ZZnJYrN+Jz8rjqXicUJNfKRfgrGnfomU46ZTwAKmHI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741792882; c=relaxed/simple;
-	bh=4sQmwkxed47J1yAVFY1M8IrVAON5A+0JqlWOAYiAt0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kuhWWdqZgeDhxFlKVXs/fj44LA8EdOSpz3C4jEID2cUxUP5jSZELwdCzD09CzIBOTLHn7a5aOziOLQnkv4dEW4oIeydBZj1RyzTkfo+gVBhYhflfCPlBRQLi/SIagODU4gdZGn1kQHml/bSUWoTc6kPIq4rpf7zdU02+zwSwREE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=xgUseHpf; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Yyt9NHql"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 39B93457EA;
-	Wed, 12 Mar 2025 16:21:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1741792879;
-	bh=4sQmwkxed47J1yAVFY1M8IrVAON5A+0JqlWOAYiAt0g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xgUseHpfm/duHTEwQRTgX7/pauJE0Oh8fZ2kNPDxNy4/6mY9AGXU20bYatRDGiRFC
-	 2XLH9+jFCs8YySrzCSPu9SQgWGSribYev3e1rQ+pwqqyN1mqPJVu/ga9Vn74BA+J3H
-	 UiyzKeGKERMvEZHmat4/khRc4SaEi1wdKZDg2XifJe4ljlAwPT69QcrPko87TXxxkQ
-	 IHWTxAmwmKNFxYLYPVgWu/YHImYGBRl75RPl+uE9B9qlgJ1rBoX1F46qGH1sRbTTFZ
-	 YBvFflm9hrsYcn3+iyZG/zm5sNDFxrm3QO+dMzCUZ9rBy0T7d0kQHMtsNOzdZtNKZk
-	 E8iOdVUM4QuoQ==
-Date: Wed, 12 Mar 2025 16:21:18 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Baolu Lu <baolu.lu@linux.intel.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Stuart Yoder <stuyoder@gmail.com>,
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-	Nipun Gupta <nipun.gupta@amd.com>,
-	Nikhil Agarwal <nikhil.agarwal@amd.com>,
-	Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Charan Teja Kalla <quic_charante@quicinc.com>
-Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe
- path
-Message-ID: <Z9GmbgYKr0VepQZZ@8bytes.org>
-References: <cover.1740753261.git.robin.murphy@arm.com>
- <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
- <Z9CEIlXoQJ-A0t-d@8bytes.org>
- <d55240a4-fe4a-48ea-b3a8-9a997bb7267c@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F53F1422DD;
+	Wed, 12 Mar 2025 15:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741793093; cv=none; b=jDx7bGw4ggurCqgKpzyP4a3WTl3bMV/oK/DTwL5ywj9G2n5xHleJO4AiwX5yf5nE5Daf4O99v/pRcijQSP8VWuw+wpCASZ+qzegfJYGgkPcV4pGGVPY3DSh+/H16LtF9n+5Ycmc4myqTJajwJf7OTbQaD7DwRWGGyq0GA3bPHgk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741793093; c=relaxed/simple;
+	bh=mEoDUVPPutgutXY1Vzi7nEKf5bB8dmOAKFe3iaVICh8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=rotdI9FCLTMhlON5HPnSw6xMop0ueqKLCMHmBLX+5BLL4u0Fb7kHTlBfCBe0sVVXmrBcG6Plz+nQG2KnHCT/mME8UFdT536cvjk+96EKWbUpgCm7fXcGbkv/8vRR5OEvaUWnppsWjL7XJr9hcFxHmiXmHenPJTbSXrPArigk7Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Yyt9NHql; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC20BC4CEEF;
+	Wed, 12 Mar 2025 15:24:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1741793092;
+	bh=mEoDUVPPutgutXY1Vzi7nEKf5bB8dmOAKFe3iaVICh8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Yyt9NHqlBvi1bxR3t/vaSfVWiH3aX6Rxmw8yamzc2tohbz9cqewH3+lFfn1e1LtAv
+	 +LFoi2w+EEGEGofpMQeB2/uXTCQv1DxwRddH6e+LQFAevPYVMj6NSWufjidBw/jlf5
+	 w1oivhJ2Ud/53c+b9jKofDEQAmqGJVJVx4UGlWGw=
+Date: Wed, 12 Mar 2025 08:24:52 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Wei Yang <richard.weiyang@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Shuah Khan <shuah@kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm tree
+Message-Id: <20250312082452.604def384a3adf379625cacb@linux-foundation.org>
+In-Reply-To: <20250312113612.31ac808e@canb.auug.org.au>
+References: <20250312113612.31ac808e@canb.auug.org.au>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d55240a4-fe4a-48ea-b3a8-9a997bb7267c@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Robin,
+On Wed, 12 Mar 2025 11:36:12 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Wed, Mar 12, 2025 at 10:10:04AM +0000, Robin Murphy wrote:
-> Argh! When I moved the dma_configure call into iommu_init_device() for
-> v2 I moved the warning with it, but of course that needs to stay where
-> it was, *after* the point that ops->probe_device has had a chance to
-> filter out irrelevant devices. Does this make it behave?
+> After merging the mm tree, today's linux-next build (native powerpc perf)
+> failed like this:
+> 
+> In file included from arch/powerpc/util/../../../util/pmu.h:5,
+>                  from arch/powerpc/util/pmu.c:5:
+> tools/include/linux/bitmap.h: In function 'bitmap_alloc':
+> tools/include/linux/bitmap.h:83:69: error: unused parameter 'flags' [-Werror=unused-parameter]
+>    83 | static inline unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
+>       |                                                               ~~~~~~^~~~~
+> cc1: all warnings being treated as errors
 
-Okay, thanks for the patch. I am currently building a kernel to test it
-and will report back.
+Maybe we should turn off -Wno-unused-parameter for tools/.  The rest of
+the kernel extensively expects that unused parameters to inlined
+functions are acceptable, for stuff like this:
 
-Regards,
+#else /* CONFIG_SWAP */
+static inline struct swap_info_struct *swp_swap_info(swp_entry_t entry)
+{
+	return NULL;
+}
 
-	Joerg
+static inline struct swap_info_struct *get_swap_device(swp_entry_t entry)
+{
+	return NULL;
+}
+
+static inline void put_swap_device(struct swap_info_struct *si)
+{
+}
+
+so why do we make tools/ different?
 
