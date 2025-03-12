@@ -1,56 +1,51 @@
-Return-Path: <linux-kernel+bounces-557276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3041A5D64C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:31:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD007A5D604
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:24:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B50FC189ABB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:31:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7276F18996EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087821E51FF;
-	Wed, 12 Mar 2025 06:31:38 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3FE1E4929;
+	Wed, 12 Mar 2025 06:23:57 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516731E4929;
-	Wed, 12 Mar 2025 06:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5931D86F2;
+	Wed, 12 Mar 2025 06:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741761097; cv=none; b=bVjU0PLx+TcenSDd2bE64GB4usfNxn+TD65Jn+/SZRcDiq1mtfRZE/RSndthg4O2Sladd3d8hbljuru8FTg3ssF2A22Y/f9N/0cgn/KpwzwTJRsgh3/jSf/h6Cye7CrXuJjNEAAwJPzfMpAt/l+PsxRgYROLEi6m/Nd10I1S8sE=
+	t=1741760636; cv=none; b=gXdDH4YCYnM8hNy8p2udqI+PNsI+Rb9QzmeszatBOf41ue/PJAu14ErpxPo9KFvINlY9+Kx8dbdygkaShuouKaJs3ok7qpxlOES2l6uU9S35p9FZ+F6dQZANCEzFxYkREyvL5sPQ3jx7c8Wj6BnaD7yLMQtMQxy7PIOO/06DrJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741761097; c=relaxed/simple;
-	bh=1GGLTSO/cCsSpoGDptYKoajR+ZwOpgbJKrvikdoOCRs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j+vdR1fMvR+vu5svVbGi6sLIZiHhJpGraCp2XaeURlluJkLuz1pYRoX+pYRAEVv/Aqoh90tpsXvVA/k7r9JCvJg62s5lzbKBuL443201kctF8VSMeNtC9+4X5G5HLw0+ydLFGfW75Edlin7Gp0Vr3pJBEq9UtrHPOILBAbogQoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowABXhPs6KtFneEl5FA--.37073S2;
-	Wed, 12 Mar 2025 14:31:23 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: Hawking.Zhang@amd.com,
-	Likun.Gao@amd.com,
-	sunil.khatri@amd.com,
-	kenneth.feng@amd.com,
-	Jack.Xiao@amd.com,
-	marek.olsak@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/amdgpu/gfx12: correct cleanup of 'me' field with gfx_v12_0_me_fini()
-Date: Wed, 12 Mar 2025 14:31:06 +0800
-Message-ID: <20250312063106.772-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1741760636; c=relaxed/simple;
+	bh=mml8n8fGPf3faaPFSXbVSSAyj/LWLLVVRLIZLQHPhjg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LdwO0KH6OTqHqZxi2OvX9eBOAKT2QBBRk1WG/v9WOIKnJ7QOoo71xD0kKDDaYX3z0MyFgchQDa7OjbuYlLDdmAaOSw/vwWMaDcQXRZrWgN0qD1SaGkMwc18rEj0lfJ5m47tBmFbeYgeNjTZQZUzfalVUfJQh18xtauoQRid+wG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZCLBt45w7zqVTs;
+	Wed, 12 Mar 2025 14:22:14 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id D7B781402C1;
+	Wed, 12 Mar 2025 14:23:43 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 12 Mar
+ 2025 14:23:43 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: skbuff: Remove unused skb_add_data()
+Date: Wed, 12 Mar 2025 14:34:50 +0800
+Message-ID: <20250312063450.183652-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,51 +53,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABXhPs6KtFneEl5FA--.37073S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtw17Aw17Kw4xtw4UZFyfCrg_yoWkGFX_CF
-	4UJr93Wr4UCF1qqw1xZr1YvasFkF15ZF48Ka1aqas5GrZ8Z343Kry8Kr95WF4fuan3C3Wk
-	XFyUWF1ftasxWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbf8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
-	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r47MxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
-	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
-	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb7Ks5UUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwsTA2fQ4meNigABso
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-In gfx_v12_0_cp_gfx_load_me_microcode_rs64(), gfx_v12_0_pfp_fini() is
-incorrectly used to free 'me' field of 'gfx', since gfx_v12_0_pfp_fini()
-can only release 'pfp' field of 'gfx'. The release function of 'me' field
-should be gfx_v12_0_me_fini().
+Since commit a4ea4c477619 ("rxrpc: Don't use a ring buffer for call Tx
+queue") this function is not used anymore.
 
-Fixes: 52cb80c12e8a ("drm/amdgpu: Add gfx v12_0 ip block support (v6)")
-Cc: stable@vger.kernel.org # 6.11+
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/skbuff.h | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-index da327ab48a57..02bc2eddf0c0 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-@@ -2413,7 +2413,7 @@ static int gfx_v12_0_cp_gfx_load_me_microcode_rs64(struct amdgpu_device *adev)
- 				      (void **)&adev->gfx.me.me_fw_data_ptr);
- 	if (r) {
- 		dev_err(adev->dev, "(%d) failed to create me data bo\n", r);
--		gfx_v12_0_pfp_fini(adev);
-+		gfx_v12_0_me_fini(adev);
- 		return r;
- 	}
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 14517e95a46c..bbc3b656c856 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -3865,25 +3865,6 @@ static inline int __must_check skb_put_padto(struct sk_buff *skb, unsigned int l
+ bool csum_and_copy_from_iter_full(void *addr, size_t bytes, __wsum *csum, struct iov_iter *i)
+ 	__must_check;
  
+-static inline int skb_add_data(struct sk_buff *skb,
+-			       struct iov_iter *from, int copy)
+-{
+-	const int off = skb->len;
+-
+-	if (skb->ip_summed == CHECKSUM_NONE) {
+-		__wsum csum = 0;
+-		if (csum_and_copy_from_iter_full(skb_put(skb, copy), copy,
+-					         &csum, from)) {
+-			skb->csum = csum_block_add(skb->csum, csum, off);
+-			return 0;
+-		}
+-	} else if (copy_from_iter_full(skb_put(skb, copy), copy, from))
+-		return 0;
+-
+-	__skb_trim(skb, off);
+-	return -EFAULT;
+-}
+-
+ static inline bool skb_can_coalesce(struct sk_buff *skb, int i,
+ 				    const struct page *page, int off)
+ {
 -- 
-2.42.0.windows.2
+2.34.1
 
 
