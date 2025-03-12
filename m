@@ -1,107 +1,111 @@
-Return-Path: <linux-kernel+bounces-557320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54612A5D750
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:27:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B4DA5D74E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:27:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3623189DF8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:27:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CDB03B93DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3FE38384;
-	Wed, 12 Mar 2025 07:27:23 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5598C1EA7F0;
+	Wed, 12 Mar 2025 07:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aGDzSarI"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7B11E9B2B;
-	Wed, 12 Mar 2025 07:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A58338384;
+	Wed, 12 Mar 2025 07:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741764443; cv=none; b=jxOBKnN6Lzo612T1Co03rDaTW6B5R/icf990bFRH7L9UxSdno/svB+AWy0JWS4w3dNtJiEBHzegt69acprU2wb2F/mw3qhMYQgo3MhLl7vosk9ihjS48z+QhHuUDq4K/MiF/rucbO8XXOSdOx0Ks11KQ9ORj8FfPx3LhVp81qRc=
+	t=1741764426; cv=none; b=oyTGwXMOWf6D41/9yqYT+9Kw+kAwwomMCVCWMHTUw57VgLCnpuMZ6f5ZbnTxG2azzeilsjVjeY+z87wlcFDfMVEAFQn3dCfRQ12GhkepcBkhaDmmDax3zTS7cn+wgWck9D0merIvq6VFFKSIpDAg9cJ7UoSY/R1mbEoZpIWQS+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741764443; c=relaxed/simple;
-	bh=7Brta7cV5mT7dkBIpMftggggYa6TMZGrN7f114qDyuU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h8SvNBG8GzpkELHnyc5qrRyTulV+Ucq/IgEaG2Mh1kdW3lp9+Rr3yh+hXclxBSnR/y7DuiGA1d24LklS8TvH4P+G9EdhsLTuQwNcbCbnhrELv9H4enAYuF2c0cqOlxcja1g0BdYhuDbaz8lblAJxtYf1cQzYIBpnApX7eAFAEic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowAAHDVVLN9Fn1Yp8FA--.880S2;
-	Wed, 12 Mar 2025 15:27:08 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: david.rhodes@cirrus.com,
-	rf@opensource.cirrus.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org
-Cc: Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ASoC: cs35l56: Remove redundant 'flush_workqueue()' calls
-Date: Wed, 12 Mar 2025 15:26:35 +0800
-Message-Id: <20250312072635.1429870-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741764426; c=relaxed/simple;
+	bh=EJWcZKl14sOGNK87BgWsbQmDdWUjTGsyLMZfs33dNy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hSwC+Atf3Z0wdgbg7N89fqWk7cQzDaokcHWFoVorAc/E4enuTfYElItyLvb8QUBsGwdoZN8cCCAf/qA33L/t3FMYDUgsNUjAjuu5b2TiaJfB+dQw2ghRPsMraT+qiWqYe1iEhMEqtcrjn8UP15di5lpb7r+fWNLvZEWdCo0WXeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aGDzSarI; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vvfcmR4pSSX2yPAtHod4c3BswObDKgvYGKNGYlizF1E=; b=aGDzSarI9YPsMKAkR8aC6OCGYp
+	9uIQThO/OlR6d5S5AzzP3ZtsZbX/NdMgATAXzuTguzx8LQymeQQvqStwSUjuijrOvamOKSWwpeqSF
+	kiJGuQJTeM23FNqn+E+wMrdfhUrMHzFnyL1ISTXZM5qE1iC6eM7h6cIdlFMnkEo0RzsO/6UVXwDdP
+	GtUeGkQBMHEKuFJyGMgyDGaatVDmlRRrl9G/zwl0cafFjpX7blxSELJxpwpAfLl8AdDmdHz6QE3sZ
+	V9jXlsVgfiZnPTcDzq1dzMKeBhc4vOouE+Gd7WaL1IwXHIiEvZ5Ys9du/Tg8KtSdbPfvETD21hgAS
+	9fnUaQFQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsGUb-00000007hQg-0cuX;
+	Wed, 12 Mar 2025 07:27:05 +0000
+Date: Wed, 12 Mar 2025 00:27:05 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com
+Subject: Re: [PATCH v5 04/10] xfs: Reflink CoW-based atomic write support
+Message-ID: <Z9E3Sbh4AWm1C1IQ@infradead.org>
+References: <20250310183946.932054-1-john.g.garry@oracle.com>
+ <20250310183946.932054-5-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAHDVVLN9Fn1Yp8FA--.880S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKF1xZFy7tr1DuryrtFyxZrb_yoWfurb_G3
-	9F9F40gFWYyF1Ik34UJr1YyF40vF1xAF4rZFsxtr9xJa42vw4Yyr4DAFnrZrW5u34rCa47
-	uas7WFW2gr97CjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
-	628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GF4l42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOE_MDUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310183946.932054-5-john.g.garry@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-'destroy_workqueue()' already drains the queue before destroying it, so
-there is no need to flush it explicitly.
+On Mon, Mar 10, 2025 at 06:39:40PM +0000, John Garry wrote:
+> Base SW-based atomic writes on CoW.
+> 
+> For SW-based atomic write support, always allocate a cow hole in
+> xfs_reflink_allocate_cow() to write the new data.
 
-Remove the redundant 'flush_workqueue()' calls.
+What is a "COW hole"?
 
-This was generated with coccinelle:
+> The semantics is that if @atomic_sw is set, we will be passed a CoW fork
+> extent mapping for no error returned.
 
-@@
-expression E;
-@@
--flush_workqueue(E);
- destroy_workqueue(E);
+This commit log feels extremely sparse for a brand new feature with
+data integrity impact.  Can you expand on it a little?
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- sound/soc/codecs/cs35l56.c | 1 -
- 1 file changed, 1 deletion(-)
+> +	bool			atomic_sw = flags & XFS_REFLINK_ATOMIC_SW;
 
-diff --git a/sound/soc/codecs/cs35l56.c b/sound/soc/codecs/cs35l56.c
-index 735a1e487c6f..b3158a84b87a 100644
---- a/sound/soc/codecs/cs35l56.c
-+++ b/sound/soc/codecs/cs35l56.c
-@@ -1441,7 +1441,6 @@ void cs35l56_remove(struct cs35l56_private *cs35l56)
- 	if (cs35l56->base.irq)
- 		devm_free_irq(cs35l56->base.dev, cs35l56->base.irq, &cs35l56->base);
- 
--	flush_workqueue(cs35l56->dsp_wq);
- 	destroy_workqueue(cs35l56->dsp_wq);
- 
- 	pm_runtime_dont_use_autosuspend(cs35l56->base.dev);
--- 
-2.25.1
+atomic_sw is not a very descriptive variable name.
+
+>  
+>  	resaligned = xfs_aligned_fsb_count(imap->br_startoff,
+>  		imap->br_blockcount, xfs_get_cowextsz_hint(ip));
+> @@ -466,7 +467,7 @@ xfs_reflink_fill_cow_hole(
+>  	*lockmode = XFS_ILOCK_EXCL;
+>  
+>  	error = xfs_find_trim_cow_extent(ip, imap, cmap, shared, &found);
+> -	if (error || !*shared)
+> +	if (error || (!*shared && !atomic_sw))
+
+And it's pnly used once.  Basically is is used to force COW, right?
+Maybe use that fact as it describes the semantics at this level
+instead of the very high level intent?
+
+> @@ -10,6 +10,7 @@
+>   * Flags for xfs_reflink_allocate_cow()
+>   */
+>  #define XFS_REFLINK_CONVERT	(1u << 0) /* convert unwritten extents now */
+> +#define XFS_REFLINK_ATOMIC_SW	(1u << 1) /* alloc for SW-based atomic write */
+
+Please expand what this actually means at the xfs_reflink_allocate_cow.
+Of if it is just a force flag as I suspect speel that out.  And
+move the comment up to avoid the overly long line as well as giving
+you space to actually spell the semantics out.
 
 
