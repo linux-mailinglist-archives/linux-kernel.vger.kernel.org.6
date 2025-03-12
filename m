@@ -1,182 +1,161 @@
-Return-Path: <linux-kernel+bounces-558005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5E8A5E055
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:26:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9919A5E056
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 261567AE48B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:25:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD551895B59
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC2C2528E3;
-	Wed, 12 Mar 2025 15:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302CD23F38A;
+	Wed, 12 Mar 2025 15:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ky/BCax3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LNPHEaG9"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D581F23E33F;
-	Wed, 12 Mar 2025 15:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186A11422DD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741793180; cv=none; b=aqil8AIHOJDD1Km5UqTL/ph0h2l6lzt8KRkfKj5UCCVWxUS5Qck+E/RzuNsUTID9x38DqjObD9G4N0w9Fx2FWqtxYiu2Jl7HffQ8SaRScfCYVgCZgLppM1kp1/ZKTtCT4sBZ0CJne26G5mmisGwVziSsrlkAzdnfs8zq34FEyVI=
+	t=1741793245; cv=none; b=LOPsdd7app/PFEY4l1kXWcovApIm86rgu177ZdoXn0ziMdB8Q+gw5kkB393oN51MTN4u8p6C+RpUHyn74b+QJXc44sOTT//zE43NwCchIqV3QQrwgadIklKxxItb9vC70fkWjXi0WEMKDaPeVnRRQqfD42SjklDelN1d5dZKrSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741793180; c=relaxed/simple;
-	bh=Q7awIL7HKUND4G5BgT8sxgfvPYxZ5dldw9MgDhs69ls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvlOj8xDiy39wtexLiuc8/e4guuSZNCJajkCPIUiGsXCuvTJfAvU/OqX55lXa7SLnO0gg7EmZ0Y7gquwiS8n/T+OPIng0G1VLYGngXzlpdLRJ431baq8zeUnUXeqTNzXFZu+jLknrh9LrbUGdSTVNkFiT+zrWb/sDtI7jwFGOk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ky/BCax3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E2A9C4CEDD;
-	Wed, 12 Mar 2025 15:26:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741793179;
-	bh=Q7awIL7HKUND4G5BgT8sxgfvPYxZ5dldw9MgDhs69ls=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ky/BCax3DFeowvZEZBaSvHz/FRjz1Ff2w3mZvorveefBQ9QItq7spH+9lPk04kMHc
-	 XFcWV+q8BLDxTsMg3kWEEMrJvLlM02Ov9qT4y5J6eushhPAVsWOV5ed7v5on6xpI5H
-	 t1Jida96hvmMXnQmaaYU62DS/XhHnkqgw1xy5aAbcXTY7h92ihBZ7RpuPzMnvvZIID
-	 4Llux6n6amMPvoDVic/J1BHmAr19Dq0COPgBWULz9Gberd6x0wlqoRfavURfSg5lJv
-	 0Xm3eB6wpryKJveHw8pu/I7JXnt8N5CGgjBp/ANgLyo/AFa/GXs+sbZv0RiHoWV9rf
-	 Q6NAbrOOruTNw==
-Date: Wed, 12 Mar 2025 15:26:05 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-	Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>,
-	Stafford Horne <shorne@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>,
-	Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-	Mike Rapoport <rppt@kernel.org>
-Subject: Re: [PATCH 10/13] arch, mm: set high_memory in free_area_init()
-Message-ID: <6d3be692-3dc3-400c-8eeb-3d378adc8dbe@sirena.org.uk>
-Mail-Followup-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-	Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>,
-	Stafford Horne <shorne@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>,
-	Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-	Mike Rapoport <rppt@kernel.org>
-References: <20250306185124.3147510-1-rppt@kernel.org>
- <20250306185124.3147510-11-rppt@kernel.org>
- <cee346ec-5fa5-4d0b-987b-413ee585dbaa@sirena.org.uk>
- <Z9Cl8JKkRGhaRrgM@kernel.org>
- <5e40219b-f149-4e0f-aa10-c09fa183945e@sirena.org.uk>
- <CAMuHMdUGnBeo69NkYsv35YHp6H9GJSu-hoES2A8_0WhpX1zFhQ@mail.gmail.com>
+	s=arc-20240116; t=1741793245; c=relaxed/simple;
+	bh=wiTciTG7c0gbv9O4jp5k8kB2u1ZVph3PvRvBPEV6tas=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RrU4bbfLckuR8YMYJD6SvKOxByIa/My3YPBhkPjFJQBv2buZBlBm/GD8A2cSCdicfqmXjt7BZ6KoZW/TLjaxEdrbIv08fINXsbouEVcZjNNGw6TQ+XIY9OkJka9Db9I7tAAeemHJMJDWkCjfWvUWctkciOBnk1rXMDnwGY+Z/Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LNPHEaG9; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CCdpoA002855;
+	Wed, 12 Mar 2025 15:27:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=SSN6kl
+	QU3Lfa89SnGqZVCjQNXAaPadcQkryGW51WD28=; b=LNPHEaG9CCLUyol0cYsSf1
+	Vjd7HHc1x/ZgFemjUnLqhwEw69ieadVX1w7tSxO84w1KLnjMGc1Wb7Po1cAtZ9mG
+	+33hdKrPrBbQp+tiZjIfzbgYssyCzkILHE8Ye2KCTpJqoekGYF6ExEIOc7A3ueX2
+	GZ1AH5OOWvzMfFwPicLqbAH1J1KPUju/wvwL56ogm/CcTQsOAk7feTAoak71/Iqa
+	QgBbRy3dF9c0QfGbh4KDz8ZZ/LaOFwZ99JdDkZ8/+uRHz5Y5FRlpGoRMv4k/cmmX
+	OYQTT7hmogguE/3oQBh0CA6FwpZN7ipeV7Ta2ZiG5OXQ3WJL/R+17DWcXcW2Wj5A
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45avbpmps7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 15:27:06 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52CDfCRY026099;
+	Wed, 12 Mar 2025 15:27:05 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atspct10-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 15:27:05 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52CFR4QO57868552
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Mar 2025 15:27:04 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3244458052;
+	Wed, 12 Mar 2025 15:27:04 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 738675805A;
+	Wed, 12 Mar 2025 15:27:00 +0000 (GMT)
+Received: from [9.61.69.177] (unknown [9.61.69.177])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 12 Mar 2025 15:27:00 +0000 (GMT)
+Message-ID: <d7d284ac-a8d1-4f9d-901c-424dccc5a1b1@linux.ibm.com>
+Date: Wed, 12 Mar 2025 20:56:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="auPMsTU3HApbt9PI"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUGnBeo69NkYsv35YHp6H9GJSu-hoES2A8_0WhpX1zFhQ@mail.gmail.com>
-X-Cookie: You will outgrow your usefulness.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+To: John Meneghini <jmeneghi@redhat.com>, Keith Busch <kbusch@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
+        Sagi Grimberg <sagi@grimberg.me>, bmarzins@redhat.com,
+        Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
+        axboe@kernel.dk, Randy Jennings <randyj@purestorage.com>
+References: <Z8hrJ5JVqi7TgFCn@kbusch-mbp> <20250305235119.GB896@lst.de>
+ <Z8jk-D3EjEdyBIU5@kbusch-mbp> <20250306000348.GA1233@lst.de>
+ <1ffebf60-5672-4cd0-bb5a-934376c16694@suse.de>
+ <20250306141837.GA21353@lst.de> <Z8m4vzE36UHWjwep@kbusch-mbp>
+ <20250306151654.GA22810@lst.de> <Z8pB9jQALxMN6WaA@kbusch-mbp>
+ <b2c9df64-0afc-46cd-9e8d-6a3f41a4f1c7@linux.ibm.com>
+ <Z8sUB2bbbMsurZmu@kbusch-mbp>
+ <69cdaf9d-2fb4-4ee0-9c32-cc946405a23a@linux.ibm.com>
+ <01d799d1-fc93-4285-aa8f-89ac2d01478b@redhat.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <01d799d1-fc93-4285-aa8f-89ac2d01478b@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: r6vJbcw2bvB4WlR3SZtMe9f1qxIekOde
+X-Proofpoint-GUID: r6vJbcw2bvB4WlR3SZtMe9f1qxIekOde
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_05,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
+ mlxlogscore=999 malwarescore=0 impostorscore=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 mlxscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120105
 
 
---auPMsTU3HApbt9PI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Mar 11, 2025 at 10:41:28PM +0100, Geert Uytterhoeven wrote:
-> On Tue, 11 Mar 2025 at 22:33, Mark Brown <broonie@kernel.org> wrote:
+On 3/12/25 9:17 AM, John Meneghini wrote:
+> On 3/9/25 1:23 PM, Nilay Shroff wrote:
+>>> It honestly has potential to solve some real problems, like
+>>> re-enumeration triggered by a link reset on an in-use drive. You'd
+>>> currently need to close the old handle and open a new on, even though
+>>> it's the same device. It may not even be possible to do that if that
+>>> device contains your root partition, and then you can only power cycle.
+>>>
+>>> The downside is we wouldn't get the short cut to blk_mq_submit_bio. We'd
+>>> instead stack that atop an indirect call, so it's not free.
+>>>
+>> Yes agreed however it seems advantages of using an indirect call outweighs
+>> using the short cut to blk_mq_submit_bio. Moreover it seems the cost of
+>> indirect call is trivial because we already cache the nexthop.
+>>
+>> I integrated your proposed patch (with few trivial additional changes on top)
+>> and I see that it's coming out nicely. I ran few tests and confirmed it's
+>> working well. However, in the proposed patch we*always* delay (~10 sec) the
+> Have you tested this with a NVMe-oF controller... yet?
+Not on real target. But tested it against blktests which has few NVMeOF 
+test cases though it uses loopback interface.
+> 
+> Where did the number 10 seconds come from?
+That was probably used as hard coded value for POC. However, we shall be able to
+configure that.
+> 
+>> removal of multipath head node. That means that even while removing the
+>> nvme module (rmmod nvme) or if user delete/detache the namespace, we delay
+>> the removal of head node but that may not be what we want. So I'd suggest
+>> instead, delayed removal of multipath head not shall be configurable using a
+>> sysfs attribute. With this attribute then we shall let user opt for pinning
+>> the head node (with optional delayed time as well?). And it's only when user
+> 
+> So be aware the TP-4129 is adding a CQT parameter which does almost exactly this.
+> 
+>> shows the intent to pin the node we should delay its removal. This is what
+>> exactly (pinning of head node) Christoph's proposed patch implements. So I'd
+>> suggest a bit of amalgamation of yours as well as Christoph patch to implement
+>> this change.
+> 
+> Please cc: me on your patches Nilay, I'd like to test them with my NVMe-oF testbed.
+> 
+Sure, I will keep you in Cc when I send the patch. 
 
-> > [    0.000000] efi: UEFI not found.
-> > [    0.000000] cma: Reserved 64 MiB at 0x00000000
+Thanks,
+--Nilay
 
-> > - I'd only been sampling the logs for the physical platforms, none of
-> > which had shown anything.
-
-> Hangs that early need "earlycon", which the qemu boot above does have.
-
-Indeed, the physical platforms either don't support earlycon or I just
-don't wire it up as standard in my CI.  I see a fix should already be on
-the way, but FWIW the physical platforms do seem to have bisected to the
-same commit.
-
---auPMsTU3HApbt9PI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfRp40ACgkQJNaLcl1U
-h9ClrAf9FHrCQNmJXN4iyTK9lTj/btaMWsS34HTwQo5atjLix3MlaM4Oe1X8wWdQ
-rSJgppPAE2cv7YjUDvJGyXeNJEiBsMtnourIYIcXwHIlSknwUTW93aLuOShlc+KF
-iC2gJoynMVm1M0mcCvUSxVXjQXN1rxY3pcXLx99UJqFnR+uWkHqfKq18AdWJzzrD
-MwKz6EmBguL6eE0EstxjYPLlpJ3iYWORVdj2/2h3DYrRMLDlV+dm/xW9xGlq5sxJ
-c/3bxdgHyKWQqTxjQsPQKSz99U2Amjx1VloV+6yG9htGbdo+yNQv+tUP20dHw9c8
-ECZ91Jtf4LTcMPjk/IfIVIr0Hu3V3w==
-=0Ulf
------END PGP SIGNATURE-----
-
---auPMsTU3HApbt9PI--
 
