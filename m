@@ -1,109 +1,100 @@
-Return-Path: <linux-kernel+bounces-557847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31565A5DE89
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:01:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F03FA5DE91
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:02:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA02E189BE95
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:01:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E924F3A4E5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C141C242918;
-	Wed, 12 Mar 2025 14:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E97024BBE7;
+	Wed, 12 Mar 2025 14:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="apy/J+F5"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtTdam5q"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C321F4CB7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2BE1CF8B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741788075; cv=none; b=V1+yjcEfmfZb7L5TwVLaDwjzZguHfVD6lpKvNE+8p4IGKW9hRwkYRSXD/ZyqbEMGxNu+9r/D2k+RirEiVhTRB8a5H6+iiWPCRn3ONqeO4kVWIwFDPU41j7pjxIVgebmIT17O5hg/6whhFQkmBRlVHsCrJ2iBcjQLWBHBlcKq46Y=
+	t=1741788141; cv=none; b=UVATRMCzt/9DtNUftiBaGl9a34YlX377IST1NZTvdqufktI6LlWY4aXVB/0u0PqkUFvlc6c7rfHKdTZwR427450sd2Zfw41bU5kp9KNzZ0kTDmkl1jviOgxcfwPREh+1hnC/kKBAYF+s+vV8fvHnLtuNVewgtFkuU1MrMm+yU2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741788075; c=relaxed/simple;
-	bh=4sgumaYPXZCwRHncJELoOrDevUSg6yqopo5ifhPZcBI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fAH/ipHrvSgieHwOxqK6xnfhaJ+vQJmJsddmmaXmN8v3ifBcxLkYWw7obBU7ATklSm77qnVGQF8tkL+1SevgHb/s1yZUIH3zrOt/1sjzSO5RVGa+ZwzMcIwI+uhbo49p1kK9opjxfY7DYGvywoq7WS1n5x511wjrHYATGjN4PqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=apy/J+F5; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1741788066;
- bh=FK77bkIxkuIQ2RaZVUX+w+kEVUOJvqyQlYfCNDo4oio=;
- b=apy/J+F53lEE6ZXXi5L1hKUb/Udt8pKv5i8UuLcH/PMdmUhnOM6LARCufHgSXLgkzbm7X3pFi
- wIvu7uKIwB3fi8Q+Zae2QMFP+f+mxxm1g/LdjI/fGf+P11lT/7ASIoBLJoTbH1uDyXugegVDhmG
- S3nT+lzQnRhS0zetkuh5bEgTjj3NjPggK+XlGihDpCqcOmKkzVr69+mqYtwn/77Hwq31o/ftsfX
- W8oFh+K58PeuwIxL3bJT2dIAiFBCZ7qCZNwDxVmsc596rGzPKKmOnjOSO+gvS3fznoZApRdd64r
- t7UIxO/wQzBCUJ4MnzY6efxI8ZVl/yRSN2R8a/AFIPFg==
-X-Forward-Email-ID: 67d1939ea3842b4a6f18c3e1
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <a5ec9062-ca57-4748-8c0f-fb5b9c75fa28@kwiboo.se>
-Date: Wed, 12 Mar 2025 15:00:57 +0100
+	s=arc-20240116; t=1741788141; c=relaxed/simple;
+	bh=437Zn3x4neBC+xCUcLE2UHJW3omN4txaE2+F70T5Qp8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dtohIXyz6ETt8IG0qWdxTZLt+NB0J84J2iaex4PmmzUHBvGlfyULSqSg5YaTt7/agU8qT6xdATuJAsFSIHih7pkAgyVQZLohmKV3Epm2ylec5XulT4WHjsfuj2CKTAZa0yiv/UDKe8sfbHuXX4ryTRLDCp8YFVGFxjD1sSOE7E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtTdam5q; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5499b18d704so4406068e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:02:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741788136; x=1742392936; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=437Zn3x4neBC+xCUcLE2UHJW3omN4txaE2+F70T5Qp8=;
+        b=YtTdam5q3qsdhQKQLdH+GUvpiZmrVyZqYMLTioz43lIOTbx/KJ1XKw5EegfD1UuwLJ
+         3RvvukH4WOAtvsIZxHDLNy+eIcDZcFZYpxkI0R5a4O5iheZZSNHHmuLcN1xUhWifWsDP
+         qUFBU7jy0c6HS3/MppO/wXDvXOVkpEkIJ+fBbvNZjNPigMnlj28Sr3wUPPkHK+b6tnWl
+         XpeXmjnKyGkgMjsKXh6/yWwZ5v4WgG7yrO5PnbbWtzbkDJOYHu4MrfCtfSYBK1G0VrE6
+         onGN411BdikwM4jLdcW+ogNs2wFAbUCwFtNuHSmSGB4BpmyB5yQqZ5z+wuZEbSogo3p0
+         GRag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741788136; x=1742392936;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=437Zn3x4neBC+xCUcLE2UHJW3omN4txaE2+F70T5Qp8=;
+        b=UsHxfhRFQ/GByuPNyK3RzDxJrmio0hprkTU504EoQ2urVef9FkBiM9fCj7b10rlL/3
+         yIcHfyGQMhCd1R1yzvbLvB8tmSw9+KbdufgT1G2e08dPE6Yw4rRJsFHaqMx4nKXbVapd
+         B4knyohnRElVZwWZ1Y8LYVtro8nJorYPHYdVQiW2+f+k1p4r4pPmIY5RTdE1pG8J3So6
+         NXjZmMk30001LY5/UvuDz7QxTTwNLtCXEcFpUPXSK8YrzA5Ism6ldB70oIz+8vs284ly
+         YbQdW0I9X/vDjdLqATwoHMqmA7oHOJj5AH0noB28F5oYuDEJaYjQ7sTkSI2M8VEArO4b
+         Z4HA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8UzFogwTRFHofrvRet3IojbHiKp4ymKJUz0E28t5v2U+pyn4Vp4FTa06tNr1AMlZ64w28pGpqKNC3Otk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXblQ1OkMkAa4Dyn+6XK0phCw8YdixhOA5bEXY8taEu+MkcVLu
+	wMRQhYLp6MXR8/xjafkUUaPNDVujLwOxgoUf33YK7oox9iO4DrbzdCP2wM2r7fqlpe4hN5AuK1x
+	W/LWMMP7jplQoaM8VJvrqzlQGan4=
+X-Gm-Gg: ASbGncu+XPobetb8vv2erITxKLnxg3Jj/4rsKwjysLdl1UmAIRA722GVQ2qxU86SK5r
+	xw3d64kRq64TOC2pqm+2u4I65EHrp+fjenVSFsgtq/ALM7XoeqIJ0uAJ8MEVBVDzGJIj76W8EQj
+	B0fxfzNP+xSlbdCz2spJUGW4jOCQxZbmZXoJ7FUzTEaivuL2SZ2frr+/+9dw==
+X-Google-Smtp-Source: AGHT+IES9MRtVBJGIf3uaFiDmcTHRHJ1Tz/y7CI96FKA+qwRFJjbPQ679borrFKUcnbPg+cs5kYVM3GySsyQiNz0Eyw=
+X-Received: by 2002:a05:6512:3c9e:b0:549:5866:6489 with SMTP id
+ 2adb3069b0e04-54990ec654dmr7358475e87.47.1741788135371; Wed, 12 Mar 2025
+ 07:02:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH 0/2] arm64: dts: rockchip: Add pwm nodes for
- RK3528
-To: Heiko Stuebner <heiko@sntech.de>, Chukun Pan <amadeus@jmu.edu.cn>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Yao Zi <ziyao@disroot.org>, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pwm@vger.kernel.org
-References: <20250307120004.959980-1-amadeus@jmu.edu.cn>
- <174176555637.249409.2785731072183565436.b4-ty@sntech.de>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <174176555637.249409.2785731072183565436.b4-ty@sntech.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250312111915.2970032-1-naresh.solanki@9elements.com>
+In-Reply-To: <20250312111915.2970032-1-naresh.solanki@9elements.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 12 Mar 2025 11:02:03 -0300
+X-Gm-Features: AQ5f1JpciHVWFRomOcoZuMN99CiqjtQxpLaObbaR3c272u59VIpf0Q44vUTW2lQ
+Message-ID: <CAOMZO5DaZbRXuv4vgWk9evNcV4iW6gXy2Vjv7oWsnMo_R9ku4Q@mail.gmail.com>
+Subject: Re: [oe] [meta-oe][PATCH] meta-openembedded: flashrom: Update to v1.4.0
+To: naresh.solanki@9elements.com
+Cc: openembedded-devel@lists.openembedded.org, linux-kernel@vger.kernel.org, 
+	"Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Heiko,
+On Wed, Mar 12, 2025 at 10:52=E2=80=AFAM Naresh Solanki via
+lists.openembedded.org
+<naresh.solanki=3D9elements.com@lists.openembedded.org> wrote:
+>
+> From: "Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>
 
-On 2025-03-12 08:45, Heiko Stuebner wrote:
-> 
-> On Fri, 07 Mar 2025 20:00:02 +0800, Chukun Pan wrote:
->> Add pwm nodes for RK3528. Most rk3528 boards use pwm-regulator to
->> supply to CPU, add node to enable them. The PWM core on RK3528 is
->> the same as RK3328, but the driver doesn't support interrupts yet.
->>
->> Unlike other SoCs, pinctrl-names need to be in "active" state,
->> I'm not sure about this, but otherwise the pwm-regulator will
->> not work properly.
->>
->> [...]
-> 
-> Applied, thanks!
+This From line is incorrect.
 
-The pinctrl-names should be changed to "default" and not "active",
-something you can fixup or do you want a patch?
+It should be:
 
-In commit 96d8d3253246 ("arm64: dts: rockchip: Fix PWM pinctrl names")
-similar issue was corrected for current rockchip boards.
-
-Regards,
-Jonas
-
-> 
-> [2/2] arm64: dts: rockchip: Add pwm nodes for RK3528
->       commit: 2973d077aedfc114affab96c3b2c7286163cc8c9
-> 
-> Best regards,
-
+From: Patrick Rudolph <patrick.rudolph@9elements.com>
 
