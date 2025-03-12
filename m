@@ -1,102 +1,81 @@
-Return-Path: <linux-kernel+bounces-558418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D61A5E59F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:50:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97054A5E5A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:52:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48948178C26
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E4683B0AC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40941EF082;
-	Wed, 12 Mar 2025 20:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF121EE7BC;
+	Wed, 12 Mar 2025 20:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jhz91nWV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eIkdQi1k"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2C91EEA47;
-	Wed, 12 Mar 2025 20:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAF13D81
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 20:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741812600; cv=none; b=R2ZZZNOtZuCQBHIBoYyGLeYjPqcjAYVSDG/wud0NpuRyaV5iGmw/OlipnZFIPxvaElshQpTNJ80gawcz+UDkBNH3U0d2cOCJl3UylulLfdZoDTlow8xdbHJXWknCfIQ4NoyK1VSGjlcTVCiRGPa6BG9NW1Zsdxqt8b84BxdbXlw=
+	t=1741812749; cv=none; b=IidSptabzdoMyWi7ngvhaLOi82+Fi4p0cGsWs3aVxPE5nNt/g1cCmvbqNLdQ8g+qo7n5HXo1MpFeIlHoyTuYxPiYzFIjAvmVjpOKLifSW8bOIEzygPTODFFlyZ4JN4+9MC5YrrAIZQRGBIHu+Jqa8rdoLQylxAbG3n8aZnT86D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741812600; c=relaxed/simple;
-	bh=FfGBxFWtcBfVcTWHwKl6PVZwoahFegz5oSW5Abn0QXU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=LT2h3NT1pF7m5zgttwrhUhRlm4rWtg+V/XYtH1ZaBjzDthM3TtIE8FfBTuJbb9RthRA8xsn0q2VO447KiN0uZa8X78ptKCinb0x6gvZwF53mBu8HjQHIUZqewo/Ia/U5m33cQJ9oU/VbeaCN4OSWvU1dL+jflYzdXc05UzzTFF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jhz91nWV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 844E4C4CEDD;
-	Wed, 12 Mar 2025 20:49:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741812599;
-	bh=FfGBxFWtcBfVcTWHwKl6PVZwoahFegz5oSW5Abn0QXU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Jhz91nWVNWTPbsAxteS/s5JchdXPQ9MhuH05vLj1s2g2Ojpazr0AkeAz9NcMn4DFv
-	 HX85UfenKv5Rmj6XqYQHj3He1hQgn4WbvmTJb2MJbL5fXCFE4LJDfhYxDmiTH7hORO
-	 tf9oDp2fF5cW85Mb2f1Wg1FudrtnMtm4MmrHBzjTbMfAs4EZrXBLHQLcvZLEaIViSj
-	 WmlyiG0lDz2DquaYgq3c/DRAlxBo/wwvk/zrflSBCehVNsTOJrJ6GI68WguUYM/sbc
-	 b8oLgKXdnXWhowYOG4dBjOHHEoF8K9S+H/nx/pHDOlHBKSfYWNcUnBqM9x4dwKjOzK
-	 o59+KT7FPrX0Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B54380DBDF;
-	Wed, 12 Mar 2025 20:50:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1741812749; c=relaxed/simple;
+	bh=ir2UybPUqCKYV9t3MSFSJiPzuTBrAAz14LckMHOB4IE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nIRFP+SuvU5jNtrPFmQtZtR3taEA26gHYRmUjBhIziHYLG5XGkB2NSu6Z63XorBxwTroS3lY+WiucRGpDneqLL0q6KB6a7bB8tgpOVjQy9nzV6N9H0AStZtEPOpLLq8Z99DSDUSplTn/DY3tFheX9vdDH0Uz+T17s8UuhsEt3fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eIkdQi1k; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 12 Mar 2025 13:52:18 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741812744;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U0xZZm/MliMhDloN5dyyQOH2WRuwx6QmF4AcEDs+rzY=;
+	b=eIkdQi1kwcAGaEi9IHef/FQl3k+1zNdGSvIN0X/haUAVj7yGFrhN+HnstIuuspDmzDHo9C
+	e8nJzDhVfbOy4cJXSmjtb/HL4sMs9XZ4kLCci8aAt5uBmbncpklHHUjQ9WaEAVVwTU2Rzr
+	73DEzT8r2EX2yUjkYaI79skssXDyhjE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <howlett@gmail.com>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/4] mm/madvise: use is_memory_failure() from
+ madvise_do_behavior()
+Message-ID: <5mgpezzqrr6xzmp6w27ggmv4f2gydyeuhejwmnxsvcw43mcf5x@rxw2zcnjqfuc>
+References: <20250312164750.59215-1-sj@kernel.org>
+ <20250312164750.59215-2-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 0/3] net: remove rtnl_lock from the callers of
- queue APIs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174181263398.928071.13904102204365438144.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Mar 2025 20:50:33 +0000
-References: <20250311144026.4154277-1-sdf@fomichev.me>
-In-Reply-To: <20250311144026.4154277-1-sdf@fomichev.me>
-To: Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
- donald.hunter@gmail.com, horms@kernel.org, michael.chan@broadcom.com,
- pavan.chebbi@broadcom.com, andrew+netdev@lunn.ch, jdamato@fastly.com,
- xuanzhuo@linux.alibaba.com, almasrymina@google.com, asml.silence@gmail.com,
- dw@davidwei.uk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312164750.59215-2-sj@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 11 Mar 2025 07:40:23 -0700 you wrote:
-> All drivers that use queue management APIs already depend on the netdev
-> lock. Ultimately, we want to have most of the paths that work with
-> specific netdev to be rtnl_lock-free (ethtool mostly in particular).
-> Queue API currently has a much smaller API surface, so start with
-> rtnl_lock from it:
+On Wed, Mar 12, 2025 at 09:47:47AM -0700, SeongJae Park wrote:
+> To reduce redundant open-coded checks of CONFIG_MEMORY_FAILURE and
+> MADV_{HWPOISON,SOFT_OFFLINE} in madvise_[un]lock(), is_memory_failure()
+> is introduced.  madvise_do_behavior() is still doing the same open-coded
+> check, though.  Use is_memory_failure() instead.
 > 
-> - add mutex to each dmabuf binding (to replace rtnl_lock)
-> - move netdev lock management to the callers of netdev_rx_queue_restart
->   and drop rtnl_lock
+> To avoid build failure on !CONFIG_MEMORY_FAILURE case, implement an
+> empty madvise_inject_error() under the config.  Also move the definition
+> of is_memory_failure() inside #ifdef CONFIG_MEMORY_FAILURE clause for
+> madvise_inject_error() definition, to reduce duplicated ifdef clauses.
 > 
-> [...]
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Here is the summary with links:
-  - [net-next,v2,1/3] net: create netdev_nl_sock to wrap bindings list
-    https://git.kernel.org/netdev/net-next/c/b6b67141d6f1
-  - [net-next,v2,2/3] net: add granular lock for the netdev netlink socket
-    https://git.kernel.org/netdev/net-next/c/10eef096be25
-  - [net-next,v2,3/3] net: drop rtnl_lock for queue_mgmt operations
-    https://git.kernel.org/netdev/net-next/c/1d22d3060b9b
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
 
