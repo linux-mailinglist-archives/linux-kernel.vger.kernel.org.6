@@ -1,218 +1,170 @@
-Return-Path: <linux-kernel+bounces-558590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEAA3A5E83C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:17:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD58A5E847
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:22:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86140189D02E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:18:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BE133AD54E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9344C1F2B90;
-	Wed, 12 Mar 2025 23:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C9E1F152E;
+	Wed, 12 Mar 2025 23:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ChrNTiDY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kbE9NeWK"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17CA1EE7A5;
-	Wed, 12 Mar 2025 23:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89531F12F8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741821453; cv=none; b=anWoRJuHgb/HgFeuJiF6hVCD1q1W4cr/ukCQVSWEzrYZym9vegQiEIRL7MnLm2HadlGBCX9NyDaEL3Ysf84t3qUOhEpx8EwHtOyO4hiGWHyABUhUjqytEFTgmVkcMODaIGeUKoAkyFfWq5ig7dfz4IVHOL/z0vP0zsBZdGJxolY=
+	t=1741821713; cv=none; b=FSrOHTwbtWYMGnCZh9374K7BY5rrx/EtVlg+w6G+CQpolFHsmF43hb4+f5iArSe5Dud6pgW86TGzayEcZMTnLkjGfw5Dv0oHvp+1wwT0o8XvCBJEw0DjDqnsWFH6FfYnGrgIlcod6vgQjEgC0dRvZnOd8PSv+/YKTtwov5raTJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741821453; c=relaxed/simple;
-	bh=02EX/DMIDDWf9CWuaXFpleHjT8LOS9O+SlqdOnu+alw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HR3iW8kFuQE2VlP9VE+s09qsXHwjKaNyDuzBKiUEqEq7qjA4ndBYlJjRTZemJmThb+4z+EC/7m9uGMU89KRM5vt9sfDPFiwTmC2JJpxbhiNdn++BCQoWR6HnZHKjlBPTyJUs9JRNzprQwHXkngIV102tKpWEHf/OkObd/siuYCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ChrNTiDY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CAKruW008924;
-	Wed, 12 Mar 2025 23:17:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YxUIuMuJ8heLhO7n/roAvP6nMwwqgMTF3z65WOJS+lE=; b=ChrNTiDYUmKKJ9k9
-	hCg7bnLOrdkfpkLnzpcBOu5c23KEXV6ZtlDTPJAm7VBVXmSXfYrlOeP5axy78QEK
-	z4FvrlFZavYX+cN4j3T8v4LrGZv9t2aWdVRLgbxYubwM5gayeIWfAd7HMX03KLin
-	REYq3AiPN53E1FXrJL11U1ItwJPIpjTPiSYGob/+tME0y2tDcs7QWYjcKeYt6dLv
-	TywjcyDAAusMShc/0n483ZSLr0tBbYT/DelahZ/MGmUcw6MR3nWCiE5qWIpBMp6k
-	/Ek4EmNQZlompprZgCIgKAIsua9bB2+8KVfSoH9aFgQfVImby64n4/SLxJ3TP0lM
-	8YZIfA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2rbvkv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 23:17:13 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52CNHC01030751
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 23:17:12 GMT
-Received: from [10.110.30.156] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Mar
- 2025 16:17:11 -0700
-Message-ID: <9d30efc3-3315-4ff5-8eb0-c50bccc0a725@quicinc.com>
-Date: Wed, 12 Mar 2025 16:17:07 -0700
+	s=arc-20240116; t=1741821713; c=relaxed/simple;
+	bh=KO5+hLhzIN8kvpj0M8Cwc3VnNOjAqYesBx0JGoOsFa0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nrRqFMce4uxLmcbK272UnsTLwpquvmpE5qEcWKNOHfLTnkocZwoAWl/Byfz4G/+mRRh4QfWCRzb6HEoAuxqk+Rlkk79SYQkrj5BDVmFbZ3xewDkTFrOjjG/vDn6RKgKAWDLTRYhZu8joXk0UCXw2eEKfbgE2CNN9NJzrWvwpdmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kbE9NeWK; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5dbfc122b82so2326a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:21:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741821710; x=1742426510; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l+b6fdIPax+pzIkRD3BnHujwRfnqX8wKkJzQB9q9UFM=;
+        b=kbE9NeWKT5WsN9wxzUrMeg2ANgKc9VmzVsyXKl/uWLof8AE9txxjc/bJYn6f+EHi/C
+         y1XCGM+eYGQfHuM4YXjEqwep7hkkbxpijCR2QyVLrZODPOXrs9z7tM6KdYqGMBEBJX8K
+         9O/i35g+bDqzRAgpi59jshEFn2VIu596Fn0oN0O0+XO1O7ruKSjmJ1QtpUeI7x1B4b7E
+         YsO0kc1AAQDmvgTFbVVgZm70R6gptpgAZUuO4RhSt5cjNCaOjMAEMHCT7aYbfybo68Zc
+         3URz2btxd8bqK8hTh9NrWVxTHvNteI+eU1CNFCSZLSddxU/a5xNcZD23KzyujzGoqonl
+         /aMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741821710; x=1742426510;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l+b6fdIPax+pzIkRD3BnHujwRfnqX8wKkJzQB9q9UFM=;
+        b=OWIPWWGSk5H3TEj50PxyLEBG2nVbEs5qsznSLT+QLfGV0s+XEay30P4nooRGFfn5vt
+         KjIdiUXsj3HERlAtqHuQRDUuTjnpyKYKVvfOGZPzjMcRrH5z/d8LysoNle/v/KXNfTto
+         2jVRua7bIe+ArucFTt9WqVSAvLttLD0BfvubbtpY/D0/3YU65m7HISfjFNTBvQvc6+M9
+         PsTmMlAF59bo9b1bsFIHyJfj7WC9H3tdDUJW2otRdxz204QR7maFwJgpnrhmn8lNZAQu
+         t/mTQ3VIGslF9aoC3QCiTsfxo91xQ82P5Q2tYOqhSuXVe1HaMcf5aGUdCNDDHyfGd/bM
+         d43g==
+X-Forwarded-Encrypted: i=1; AJvYcCUwZwpm6HBtb+IghxSfmiezT/8dm8iw4E/5LOLUlK/Ys6uEwyUl+hKLG6yDSfeDpEyj9yaJBmkx4Kaqpcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5cJE0AUk9AK7UWzYVOgISwAVzVeHXHH2nz7P5YdL8QTbtloVK
+	CPoQPUV6prlRpICTMVt4okUBYMdJFYLzGYiSw+cfFCAG0X2XCe1qsqsW9OOoSEXzwOIC8ohxU+y
+	fooi7CRSh5Ih/ggxw7Z/LtGnvQXLWBLPz+r9h
+X-Gm-Gg: ASbGncviSqHoGZsmDPN+ur2IvFUekW2qBqmDEugZiM7JtvpStEd6yZTvCRYS0bgBpLp
+	Ktt4SZ6KulYdhaTwQ7TFvjmOL2AiSFQmetWrfUW3sKp36JkWKqTbRcKojd1IKxNDRwOPfETxWcF
+	+xjlzqZ+b350b87yRpfIrXWAk=
+X-Google-Smtp-Source: AGHT+IH79vozYd4/WLqPX8Goq+GK4FfkzqzmlxJ3W5zNK+xmu62XVxLg5WSlxN4V7nHHFtpmI1I1d+oCy92duCht4Zg=
+X-Received: by 2002:aa7:c144:0:b0:5e4:afad:9a83 with SMTP id
+ 4fb4d7f45d1cf-5e80ca2adc2mr28084a12.2.1741821710118; Wed, 12 Mar 2025
+ 16:21:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v35 00/31] Introduce QC USB SND audio offloading support
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-CC: Greg KH <gregkh@linuxfoundation.org>, <srinivas.kandagatla@linaro.org>,
-        <mathias.nyman@intel.com>, <perex@perex.cz>, <conor+dt@kernel.org>,
-        <dmitry.torokhov@gmail.com>, <corbet@lwn.net>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <tiwai@suse.com>, <krzk+dt@kernel.org>,
-        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
-        <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>
-References: <20250219004754.497985-1-quic_wcheng@quicinc.com>
- <Z7W_Vz_kVDjIcp5N@linaro.org>
- <82ce69a3-d248-494f-6ddb-098f392c78a0@quicinc.com>
- <Z8a4WYq4GqWBVNyX@linaro.org>
- <ee5cb6bc-963a-4e31-8ac4-07120fb9ff70@quicinc.com>
- <Z8ikt2K0uekU2dVZ@linaro.org>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <Z8ikt2K0uekU2dVZ@linaro.org>
+References: <20250306131430.7016-1-petr.pavlu@suse.com> <20250306131430.7016-4-petr.pavlu@suse.com>
+ <481a3ef9-6d4e-4e29-9d50-a6338604c873@csgroup.eu> <20250307001256.GA2276503@google.com>
+ <3ad23825-d249-4108-b5c3-693e359fd12e@suse.com>
+In-Reply-To: <3ad23825-d249-4108-b5c3-693e359fd12e@suse.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Wed, 12 Mar 2025 16:21:13 -0700
+X-Gm-Features: AQ5f1Jrul7dK96zz3eAp-8XZZFpc7URZPt6V3a2TFr60XJn20E8S6oxTA8N0_kU
+Message-ID: <CABCJKudevAT5PK09Gu_j_m-oaULumwXab4EkPdv=ZdSu6-PpJQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] module: Make .static_call_sites read-only after init
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jason Baron <jbaron@akamai.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ardb@kernel.org>, linux-modules@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=D6NHKuRj c=1 sm=1 tr=0 ts=67d215f9 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=qC_FGOx9AAAA:8 a=HTecfl5s7U67J0CcF8QA:9 a=QEXdDO2ut3YA:10
- a=fsdK_YakeE02zTmptMdW:22
-X-Proofpoint-GUID: SH3MPeN7uBXWUDXli7heUJQlcykyMSVV
-X-Proofpoint-ORIG-GUID: SH3MPeN7uBXWUDXli7heUJQlcykyMSVV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_06,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
- adultscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 impostorscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503120166
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephan,
+Hi Petr,
 
-On 3/5/2025 11:23 AM, Stephan Gerhold wrote:
-> On Tue, Mar 04, 2025 at 02:46:28PM -0800, Wesley Cheng wrote:
->> On 3/4/2025 12:22 AM, Stephan Gerhold wrote:
->>> On Mon, Mar 03, 2025 at 06:39:52PM -0800, Wesley Cheng wrote:
->>>> On 2/19/2025 3:24 AM, Stephan Gerhold wrote:
->>>>> On Tue, Feb 18, 2025 at 04:47:23PM -0800, Wesley Cheng wrote:
->>>>>> Requesting to see if we can get some Acked-By tags, and merge on usb-next.
->>>>>>
->>>>>> Several Qualcomm based chipsets can support USB audio offloading to a
->>>>>> dedicated audio DSP, which can take over issuing transfers to the USB
->>>>>> host controller.  The intention is to reduce the load on the main
->>>>>> processors in the SoC, and allow them to be placed into lower power modes.
->>>>>> There are several parts to this design:
->>>>>>   1. Adding ASoC binding layer
->>>>>>   2. Create a USB backend for Q6DSP
->>>>>>   3. Introduce XHCI interrupter support
->>>>>>   4. Create vendor ops for the USB SND driver
->>>>>>
->>>>>>       USB                          |            ASoC
->>>>>> --------------------------------------------------------------------
->>>>>>                                    |  _________________________
->>>>>>                                    | |sm8250 platform card     |
->>>>>>                                    | |_________________________|
->>>>>>                                    |         |           |
->>>>>>                                    |      ___V____   ____V____
->>>>>>                                    |     |Q6USB   | |Q6AFE    |
->>>>>> |     |"codec" | |"cpu"    |
->>>>>>                                    |     |________| |_________|
->>>>>>                                    |         ^  ^        ^
->>>>>>                                    |         |  |________|
->>>>>>                                    |      ___V____    |
->>>>>>                                    |     |SOC-USB |   |
->>>>>>    ________       ________               |        |   |
->>>>>>   |USB SND |<--->|QC offld|<------------>|________|   |
->>>>>>   |(card.c)|     |        |<----------                |
->>>>>>   |________|     |________|___     | |                |
->>>>>>       ^               ^       |    | |    ____________V_________
->>>>>>       |               |       |    | |   |APR/GLINK             |
->>>>>>    __ V_______________V_____  |    | |   |______________________|
->>>>>>   |USB SND (endpoint.c)     | |    | |              ^
->>>>>>   |_________________________| |    | |              |
->>>>>>               ^               |    | |   ___________V___________
->>>>>>               |               |    | |->|audio DSP              |
->>>>>>    ___________V_____________  |    |    |_______________________|
->>>>>>   |XHCI HCD                 |<-    |
->>>>>>   |_________________________|      |
->>>>>>
->>>>>
->>>>> As I noted on v34 [1], this version is still missing instructions and
->>>>> changes needed for testing this series. The device tree changes don't
->>>>> need to be part of the same series, but there should be at least a link
->>>>> provided to give other people the chance to provide Tested-by tags.
->>>>>
->>>>> IMO we shouldn't merge this series without those instructions, otherwise
->>>>> we risk that this just ends up being dead code that no one can use.
->>>>>
->>>>> Can you please share the device tree changes for a board upstream and
->>>>> any other changes needed to be able to test this series? E.g. for
->>>>> sm8250-mtp.dts, based on the examples in your cover letter.
->>>>>
->>>>
->>>> To clarify I'm testing this on sm8350 in recent times, but utilizing sm8250
->>>> definitions for the ASoC platform card, as the platform sound card is more
->>>> or less the same between the two SoCs.  Back
->>>> when I started this series, sm8350 was missing a bunch of dependent
->>>> components, such as aDSP not being loaded, and missing platform sound card
->>>> definition, so I had to define and enable those on my own, which required a
->>>> slew of new DT nodes, hence why it wasn't as straight forward to include
->>>> the DT definitions yet for sm8350.  Not thinking that this series would
->>>> take as long as it did, I was planning on separating out the DT changes in
->>>> a different series to enable offloading for the devices I have tested with.
->>>> (sm8150, sm8250 and sm8350)
->>>>
->>>> There's still a pretty big chunk of dependencies missing from sm8350, so
->>>> those would also be handled in the follow up DT submission.  For now, its a
->>>> much bigger hurdle to get the main/functional changes in, and that was
->>>> taking a significant amount of time from my end to manage.
->>>>
->>>> If you want, I can give you the changes I have offline to enable this for
->>>> sm8350, since I haven't spent time formatting/prepping the changes for
->>>> submission yet.
->>>>
->>>
->>> Can you push it to a public branch somewhere (e.g. on CodeLinaro)? I was
->>> talking to some people from the community about testing this on some of
->>> the smartphones we have in upstream, so it wouldn't help if I just have
->>> the changes privately.
->>
->> Which CLO project/branch did you want me to push it to?  Sorry, I haven't
->> worked too much with the CLO open branches.  I have an account though.
->>
-> 
-> Any project/branch is fine for me, I suggested CLO only because I
-> assumed you already have an account there.
-> 
-> You should be able to create a personal project and push it there. You
-> could also use the fork button on
-> https://git.codelinaro.org/linaro/linux/kernel/torvalds/linux to avoid
-> having to push the full history yourself. It should result in a project
-> similar to mine: https://git.codelinaro.org/stephan.gerhold/linux
-> 
+On Wed, Mar 12, 2025 at 5:05=E2=80=AFAM Petr Pavlu <petr.pavlu@suse.com> wr=
+ote:
+>
+> On 3/7/25 01:12, Sami Tolvanen wrote:
+> > On Thu, Mar 06, 2025 at 06:28:58PM +0100, Christophe Leroy wrote:
+> >> Le 06/03/2025 =C3=A0 14:13, Petr Pavlu a =C3=A9crit :
+> >>> Section .static_call_sites holds data structures that need to be sort=
+ed and
+> >>> processed only at module load time. This initial processing happens i=
+n
+> >>> static_call_add_module(), which is invoked as a callback to the
+> >>> MODULE_STATE_COMING notification from prepare_coming_module().
+> >>>
+> >>> The section is never modified afterwards. Make it therefore read-only=
+ after
+> >>> module initialization to avoid any (non-)accidental modifications.
+> >>
+> >> Maybe this suggestion is stupid, I didn't investigate the feasability =
+but:
+> >> why don't we group everything that is ro_after_init in a single sectio=
+n just
+> >> like we do in vmlinux ? That would avoid having to add every new possi=
+ble
+> >> section in the C code.
+> >>
+> >> Like we have in asm-generic/vmlinux.lds.h:
+> >>
+> >> #define RO_AFTER_INIT_DATA                                           \
+> >>      . =3D ALIGN(8);                                                  =
+ \
+> >>      __start_ro_after_init =3D .;                                     =
+ \
+> >>      *(.data..ro_after_init)                                         \
+> >>      JUMP_TABLE_DATA                                                 \
+> >>      STATIC_CALL_DATA                                                \
+> >>      __end_ro_after_init =3D .;
+> >
+> > I like this idea. Grouping the sections in the module linker script
+> > feels cleaner than having an array of section names in the code. To be
+> > fair, I think this code predates v5.10, where scripts/module.lds.S was
+> > first added.
+>
+> I agree in principle. I like that the information about ro_after_init
+> sections for vmlinux and modules would be in the same source form, in
+> linker scripts. This could eventually allow us to share the definition
+> of ro_after_init sections between vmlinux and modules.
+>
+> The problem is however how to find the location of the __jump_table and
+> static_call_sites data. In vmlinux, as a final binary, they are
+> annotated with start and end symbols. In modules, as relocatable files,
+> the approach is to rely on them being separate sections, see function
+> find_module_sections().
+>
+> I could add start+end symbols for __jump_table and static_call_sites
+> data in scripts/module.lds.S and use them by the module loader, but this
+> would create an inconsistency in how various data is looked up.
 
-Can you access the following branch?
-https://git.codelinaro.org/clo/linux-kernel/kernel-qcom/-/commits/usb_audio_offload/?ref_type=heads
+That's a fair point. Perhaps it makes sense to keep these sections
+separate for consistency, and look into cleaning this up later if
+needed.
 
-Should have the DT change I'm using to verify.
+> Another problem is that I can't find a way to tell the linker to add thes=
+e
+> symbols only if the specific data is actually present.
 
-Thanks
-Wesley Cheng
+You can use the preprocessor to add the symbols only if the relevant
+kernel config is present, similarly to how STATIC_CALL_DATA is defined
+in include/asm-generic/vmlinux.lds.h.
+
+In any case, the code looks correct to me. For the series:
+
+Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+
+Sami
 
