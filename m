@@ -1,111 +1,216 @@
-Return-Path: <linux-kernel+bounces-557837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCCA0A5DE72
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:54:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5973A5DE75
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:54:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6345C3A99E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:54:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACA5A7AACF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082C424A065;
-	Wed, 12 Mar 2025 13:54:12 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9A324BCFD;
+	Wed, 12 Mar 2025 13:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VdJNfrI7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1095F241678;
-	Wed, 12 Mar 2025 13:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B98524397A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741787651; cv=none; b=pfCVJBG2u7a03xvOTdzxa6FC5kzewV8Xekwubqv7RIaPIweZb0e+fOSuZ5sa7iKlCguc4dt5C8SdKumE6svALMxODtxgfQEPvASA4eBPOqjB2aShUn9mIXHMBsGzTxLWeRGWWkpDbgHc0zFKSopX5Kc7W8KPg6w3LdvXAyU4dVg=
+	t=1741787666; cv=none; b=io/KGEcpucdM+fPgsEK+vYMk+nxuNyVi0mW/UAga7Ob0OoMj+Sh/yERmYIUZ3s5aRvM6A0AS+WOEwlGbd1y6nFR6kq/ww0xcd3M03Q6/Yq75c/iLHmLjpSNUK5hy45dRplFIA678JEwR87exTEPE6SdTUhLWAeZXF+4izr2GVlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741787651; c=relaxed/simple;
-	bh=WilnYsgmRQ6RNc8BTHDueAu/uq9UrT2BQLCheOaHbE8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ouhF7TSwqvpvm+EUYdjk6iTmqPf5Pkxs875Vw8d3ooHNlFhIPDMDPfz9tzbulo+CEbwi2RfykpBEDvNCLAukhgsekPygT7WROUDX0JK3TDd+JbXFiXT+HVBs1Qcmntjbcy1ILrnIn5vAMC7f6+F7dGj01b1w4kkWVhetDEYGIn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 524141A246B;
-	Wed, 12 Mar 2025 14:54:02 +0100 (CET)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 06F931A0420;
-	Wed, 12 Mar 2025 14:54:02 +0100 (CET)
-Received: from lsv03121.swis.in-blr01.nxp.com (lsv03121.swis.in-blr01.nxp.com [92.120.146.118])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 201841800088;
-	Wed, 12 Mar 2025 21:53:59 +0800 (+08)
-From: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
-To: miquel.raynal@bootlin.com,
-	conor.culhane@silvaco.com,
-	alexandre.belloni@bootlin.com,
-	linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org,
-	manjunatha.venkatesh@nxp.com,
-	rvmanjumce@gmail.com
-Subject: [PATCH v4] svc-i3c-master: Fix read from unreadable memory at svc_i3c_master_ibi_work()
-Date: Wed, 12 Mar 2025 19:23:56 +0530
-Message-ID: <20250312135356.2318667-1-manjunatha.venkatesh@nxp.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1741787666; c=relaxed/simple;
+	bh=MTxzFzJAx/eqOtf5ZgCjpJreJapwUOMTPwjTZldZRJg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jW0DqNaeghNUahA986k5l0ksJgXpAiTb7zmAwoPupBOiWr/Dhi52uDZ4zsb/hOH88O2qoKggr7PcMifxeH8MHEm7b8HNciUC4f90nUqt29cPHw44KSa7UNFYEhzoQsVAXCNpR7OzdnsK06U9gbU+ktQ2OZs72h2zMmO4XoWa9/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VdJNfrI7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741787664;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eFwm1nMH+DRuInUQnP79CbqtW8nzgj6PlBIv/iYicss=;
+	b=VdJNfrI7F+aJLAIsVkjQUbi4INxzTSzRwun8OayrzQ4McO46PvmogJCgKCaBpm2c7eRtVd
+	g8w0s0mUtJIZz3+NPTP/bS1hVGdjItGs7qiC4hOkasF9oQtoHaoZYDbS6mjj9z/TTL9Fgv
+	cc1d3DG5SDiy8RdBJLeoysyoXpabQvY=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-472-g4teWHfzPde8vDXRnb90aA-1; Wed,
+ 12 Mar 2025 09:54:18 -0400
+X-MC-Unique: g4teWHfzPde8vDXRnb90aA-1
+X-Mimecast-MFC-AGG-ID: g4teWHfzPde8vDXRnb90aA_1741787656
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B278219560AB;
+	Wed, 12 Mar 2025 13:54:15 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.90.92])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 10CCF18001E9;
+	Wed, 12 Mar 2025 13:54:11 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Ilya Maximets <i.maximets@ovn.org>
+Cc: netdev@vger.kernel.org,  "David S. Miller" <davem@davemloft.net>,  Eric
+ Dumazet <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo
+ Abeni <pabeni@redhat.com>,  Simon Horman <horms@kernel.org>,
+  dev@openvswitch.org,  linux-kernel@vger.kernel.org,  Pravin B Shelar
+ <pshelar@ovn.org>,  Eelco Chaudron <echaudro@redhat.com>
+Subject: Re: [PATCH net] net: openvswitch: remove misbehaving actions length
+ check
+In-Reply-To: <573e20ec-5b85-4b11-b479-d149e5c434b0@ovn.org> (Ilya Maximets's
+	message of "Mon, 10 Mar 2025 13:25:19 +0100")
+References: <20250308004609.2881861-1-i.maximets@ovn.org>
+	<f7tmsdv2ssx.fsf@redhat.com>
+	<573e20ec-5b85-4b11-b479-d149e5c434b0@ovn.org>
+Date: Wed, 12 Mar 2025 09:54:09 -0400
+Message-ID: <f7ty0xa1hj2.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-As part of I3C driver probing sequence for particular device instance,
-While adding to queue it is trying to access ibi variable of dev which is
-not yet initialized causing "Unable to handle kernel read from unreadable
-memory" resulting in kernel panic.
+Ilya Maximets <i.maximets@ovn.org> writes:
 
-Below is the sequence where this issue happened.
-1. During boot up sequence IBI is received at host  from the slave device
-   before requesting for IBI, Usually will request IBI by calling
-   i3c_device_request_ibi() during probe of slave driver.
-2. Since master code trying to access IBI Variable for the particular
-   device instance before actually it initialized by slave driver,
-   due to this randomly accessing the address and causing kernel panic.
-3. i3c_device_request_ibi() function invoked by the slave driver where
-   dev->ibi = ibi; assigned as part of function call
-   i3c_dev_request_ibi_locked().
-4. But when IBI request sent by slave device, master code  trying to access
-   this variable before its initialized due to this race condition
-   situation kernel panic happened.
+> On 3/8/25 21:03, Aaron Conole wrote:
+>> Ilya Maximets <i.maximets@ovn.org> writes:
+>> 
+>>> The actions length check is unreliable and produces different results
+>>> depending on the initial length of the provided netlink attribute and
+>>> the composition of the actual actions inside of it.  For example, a
+>>> user can add 4088 empty clone() actions without triggering -EMSGSIZE,
+>>> on attempt to add 4089 such actions the operation will fail with the
+>>> -EMSGSIZE verdict.  However, if another 16 KB of other actions will
+>>> be *appended* to the previous 4089 clone() actions, the check passes
+>>> and the flow is successfully installed into the openvswitch datapath.
+>>>
+>>> The reason for a such a weird behavior is the way memory is allocated.
+>>> When ovs_flow_cmd_new() is invoked, it calls ovs_nla_copy_actions(),
+>>> that in turn calls nla_alloc_flow_actions() with either the actual
+>>> length of the user-provided actions or the MAX_ACTIONS_BUFSIZE.  The
+>>> function adds the size of the sw_flow_actions structure and then the
+>>> actually allocated memory is rounded up to the closest power of two.
+>>>
+>>> So, if the user-provided actions are larger than MAX_ACTIONS_BUFSIZE,
+>>> then MAX_ACTIONS_BUFSIZE + sizeof(*sfa) rounded up is 32K + 24 -> 64K.
+>>> Later, while copying individual actions, we look at ksize(), which is
+>>> 64K, so this way the MAX_ACTIONS_BUFSIZE check is not actually
+>>> triggered and the user can easily allocate almost 64 KB of actions.
+>>>
+>>> However, when the initial size is less than MAX_ACTIONS_BUFSIZE, but
+>>> the actions contain ones that require size increase while copying
+>>> (such as clone() or sample()), then the limit check will be performed
+>>> during the reserve_sfa_size() and the user will not be allowed to
+>>> create actions that yield more than 32 KB internally.
+>>>
+>>> This is one part of the problem.  The other part is that it's not
+>>> actually possible for the userspace application to know beforehand
+>>> if the particular set of actions will be rejected or not.
+>>>
+>>> Certain actions require more space in the internal representation,
+>>> e.g. an empty clone() takes 4 bytes in the action list passed in by
+>>> the user, but it takes 12 bytes in the internal representation due
+>>> to an extra nested attribute, and some actions require less space in
+>>> the internal representations, e.g. set(tunnel(..)) normally takes
+>>> 64+ bytes in the action list provided by the user, but only needs to
+>>> store a single pointer in the internal implementation, since all the
+>>> data is stored in the tunnel_info structure instead.
+>>>
+>>> And the action size limit is applied to the internal representation,
+>>> not to the action list passed by the user.  So, it's not possible for
+>>> the userpsace application to predict if the certain combination of
+>>> actions will be rejected or not, because it is not possible for it to
+>>> calculate how much space these actions will take in the internal
+>>> representation without knowing kernel internals.
+>>>
+>>> All that is causing random failures in ovs-vswitchd in userspace and
+>>> inability to handle certain traffic patterns as a result.  For example,
+>>> it is reported that adding a bit more than a 1100 VMs in an OpenStack
+>>> setup breaks the network due to OVS not being able to handle ARP
+>>> traffic anymore in some cases (it tries to install a proper datapath
+>>> flow, but the kernel rejects it with -EMSGSIZE, even though the action
+>>> list isn't actually that large.)
+>>>
+>>> Kernel behavior must be consistent and predictable in order for the
+>>> userspace application to use it in a reasonable way.  ovs-vswitchd has
+>>> a mechanism to re-direct parts of the traffic and partially handle it
+>>> in userspace if the required action list is oversized, but that doesn't
+>>> work properly if we can't actually tell if the action list is oversized
+>>> or not.
+>>>
+>>> Solution for this is to check the size of the user-provided actions
+>>> instead of the internal representation.  This commit just removes the
+>>> check from the internal part because there is already an implicit size
+>>> check imposed by the netlink protocol.  The attribute can't be larger
+>>> than 64 KB.  Realistically, we could reduce the limit to 32 KB, but
+>>> we'll be risking to break some existing setups that rely on the fact
+>>> that it's possible to create nearly 64 KB action lists today.
+>>>
+>>> Vast majority of flows in real setups are below 100-ish bytes.  So
+>>> removal of the limit will not change real memory consumption on the
+>>> system.  The absolutely worst case scenario is if someone adds a flow
+>>> with 64 KB of empty clone() actions.  That will yield a 192 KB in the
+>>> internal representation consuming 256 KB block of memory.  However,
+>>> that list of actions is not meaningful and also a no-op.  Real world
+>>> very large action lists (that can occur for a rare cases of BUM
+>>> traffic handling) are unlikely to contain a large number of clones and
+>>> will likely have a lot of tunnel attributes making the internal
+>>> representation comparable in size to the original action list.
+>>> So, it should be fine to just remove the limit.
+>>>
+>>> Commit in the 'Fixes' tag is the first one that introduced the
+>>> difference between internal representation and the user-provided action
+>>> lists, but there were many more afterwards that lead to the situation
+>>> we have today.
+>>>
+>>> Fixes: 7d5437c709de ("openvswitch: Add tunneling interface.")
+>>> Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
+>>> ---
+>> 
+>> Thanks for the detailed explanation.  Do you think it's useful to
+>> check with selftest:
+>> 
+>>    # python3 ./ovs-dpctl.py add-dp flbr
+>>    # python3 ./ovs-dpctl.py add-flow flbr \
+>>      "in_port(0),eth(),eth_type(0x806),arp()" \
+>>      $(echo 'print("clone(),"*4089)' | python3)
+>> 
+>> I think a limit test is probably a good thing to have anyway (although
+>> after this commit we will rely on netlink limits).
+>
+> I had a similar thought, but as you said, this commit will remove the limit
+> so we'll not really be testing OVS code at this point.  So, I thought it
+> may be better to not include such a test for easier backporting to older
+> kernels (given the Fixes tag goes far back).   But I agree that it's a good
+> thing in general to have tests that cover maximum size cases, so maybe we
+> can add something like this to net-next instead, once the fix is accepted?
 
-Fixes: dd3c52846d595 ("i3c: master: svc: Add Silvaco I3C master driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
----
-Changes since v3:
-  - Description  updated typo "Fixes:"
+Yes, that makes sense to me, especially as we don't have any bounds
+checking currently, and as you note we're not really exercising an OVS
+specific code path.
 
- drivers/i3c/master/svc-i3c-master.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> Note: 4089 is too small for such a test, it should be somewhere around 16K.
 
-diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-index d6057d8c7dec..98c4d2e5cd8d 100644
---- a/drivers/i3c/master/svc-i3c-master.c
-+++ b/drivers/i3c/master/svc-i3c-master.c
-@@ -534,8 +534,11 @@ static void svc_i3c_master_ibi_work(struct work_struct *work)
- 	switch (ibitype) {
- 	case SVC_I3C_MSTATUS_IBITYPE_IBI:
- 		if (dev) {
--			i3c_master_queue_ibi(dev, master->ibi.tbq_slot);
--			master->ibi.tbq_slot = NULL;
-+			data = i3c_dev_get_master_data(dev);
-+			if (master->ibi.slots[data->ibi]) {
-+				i3c_master_queue_ibi(dev, master->ibi.tbq_slot);
-+				master->ibi.tbq_slot = NULL;
-+			}
- 		}
- 		svc_i3c_master_emit_stop(master);
- 		break;
--- 
-2.46.1
+Yes, but 4089 would fail before this patch ;)
+
+>> 
+>> 
+>> Reviewed-by: Aaron Conole <aconole@redhat.com>
+>> 
+>
+> Thanks for review!
+>
+> Best regards, Ilya Maximets.
 
 
