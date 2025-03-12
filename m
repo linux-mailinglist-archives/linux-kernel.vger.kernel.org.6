@@ -1,108 +1,155 @@
-Return-Path: <linux-kernel+bounces-558387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB81A5E52B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:17:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21062A5E52F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:17:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E90053A3FD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:17:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6C73B09F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767D01E990B;
-	Wed, 12 Mar 2025 20:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF8F1DE3A7;
+	Wed, 12 Mar 2025 20:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="icDHNfyl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cPp6tt1W"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3991EE7DD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 20:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E111E5B9B;
+	Wed, 12 Mar 2025 20:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741810617; cv=none; b=uB052s5v4wqdNEsSLRRHEUO8Wy9v20lZM458XZ5fU/qoRUzFseavzhcsdFpe/r14B4SiskqmeFCqKWiryFSH7/JQx7LUC+v1DG4gpnGjwL9gDQZbebdDApegkY/8qYBu0vwriDSR+ML5KtIP+hB8Iq2inx3XN/Uve/Shx2xT8ZI=
+	t=1741810666; cv=none; b=KjRzpRDGptzkbTD+DoUNUPDonrwdCGz24BhUSorJWBqHtFdXnSAWU5+tYN2Pfy2zbliTFHyGiGfG50G82ynQneD9cOGet/ZltOQc0qRI8BlcDd7miFdZRhUG1HUxkLUjbM74eGrrDmzsdUqC6n0NxKN2tKgwvuG78oQYX37KXfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741810617; c=relaxed/simple;
-	bh=LdXPczmAvLFOtdsRAuqJEfZQmT1DM6lFW14qyWC1FHo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZZQZOFI8KFBaU/mbrmHHiJnBq45cUDSN5fKlXl3sFKLaRPU2nbUoGyuib2blnGyrPKQRVUvoNIOGwr8WdzbkA0k7jHQD2+dkNExNWAML9j3xkQmsddv6a/2keOzDjOVflEhER2q4Y8Gg6hmuDs/h7cfTrqW3qKISQt24uOthYbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=icDHNfyl; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1741810666; c=relaxed/simple;
+	bh=v+BY+g55F6T5NMcwLkcGpN4Z2yA59ha5GDHqdirKEVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HWnqWRxOL3QLxD3uYYhkmCvPYBvGcYYiB6g/ttMJyAccjDnSBK3AcqWUvM4/3pXKby+63MXONGPanIVGhuqZxF8JGQHkh+VRq5nmeQKVX+yvYuZTDowsGF250+7/keQVYaH8z1vaD/S5COOAobaqfvvr72nEmNOw1lSfF7daJuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cPp6tt1W; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741810616; x=1773346616;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=LdXPczmAvLFOtdsRAuqJEfZQmT1DM6lFW14qyWC1FHo=;
-  b=icDHNfylFkOMWyhi45M+zDl/BvkaeCwSU9WKHuo7AvC36bfWJ9oB0mp9
-   dR2Ec7A9kEVxLTZTUbKvGc+RRPiVGwMy4PQfzQzzfmW/Y25371HXRcsxu
-   m+W5Xpi9Jfhif/FBuWIGu9RVOn23k+gtuKyDejijJiF3Eq1jb+klTMxa3
-   sAWVDRWeGbQEAmcBiaXS95LQznnepx7gI2+ip98pOBUrG4lRXf2M9NSlg
-   5IhHI/K5yfiK9kn+NC9cUn2PJZNA/rPfll9js0UpCqyc6uIt7nfRBGwku
-   jaxk/6CsuPSNJx5Z6MAY+mGXCkAoi4VXkWahZ8yjaBkRTPR09um3r8yTb
-   w==;
-X-CSE-ConnectionGUID: mtNe+iGlS+SkjsHo4Dclcw==
-X-CSE-MsgGUID: Wrfn2kQnQy23a01awh5ywA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="60451918"
+  t=1741810664; x=1773346664;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=v+BY+g55F6T5NMcwLkcGpN4Z2yA59ha5GDHqdirKEVw=;
+  b=cPp6tt1WzSKd2MCxN8MlUTjxEmjZxzSx6uz48v1Kb0UEU0iykDHbERNn
+   TYYCqjInHnt2nu+miZrVaG28AVPR7lbhwzW7O9HeDjpEGN1CTlDwZks5z
+   kczy4suBh7LNtqIJCgfsW40VwkHfw2fmvLgZjnmCSAgRccG1OjcWEl+pk
+   qUX4wBZBmeGnMXtZwZDrJFEkY0IjcXBi2Z5m3T5QA0g3rGlD49EL0dDPy
+   fz+w5UMiTs5EjDA7FpSF+zuQnyuNXcDHYa2LFfZ1iWgtx8LtUW8jQCe+7
+   AVty6TF3NJxlsqLmzt1+BKdSc8JLFUVJPYA+M2Ypa7GYkeE/USn4n9QYT
+   g==;
+X-CSE-ConnectionGUID: Po8MfTCDTvuULi84s/lPsg==
+X-CSE-MsgGUID: iTwIkpkdSq66z/KksrHpCg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="53117508"
 X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="60451918"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 13:16:56 -0700
-X-CSE-ConnectionGUID: 2GApYVQCRt6Zs/NzK1RSlQ==
-X-CSE-MsgGUID: 1TuaK3NvT6evsUOJYk6neQ==
+   d="scan'208";a="53117508"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 13:17:43 -0700
+X-CSE-ConnectionGUID: JTTkifBISISmGQpCwqs/oQ==
+X-CSE-MsgGUID: WlY3h+hsT3OFna6ZjLLUfg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="121242351"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 12 Mar 2025 13:16:53 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 5A33D1F2; Wed, 12 Mar 2025 22:16:52 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Subject: [PATCH v1 1/1] mtd: mtdpart: Do not supply NULL to printf()
-Date: Wed, 12 Mar 2025 22:16:49 +0200
-Message-ID: <20250312201649.217555-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+   d="scan'208";a="120698425"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 12 Mar 2025 13:17:39 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tsSWG-0008rs-2S;
+	Wed, 12 Mar 2025 20:17:36 +0000
+Date: Thu, 13 Mar 2025 04:17:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Haylen Chu <heylenay@4d2.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+Subject: Re: [PATCH v5 3/5] clk: spacemit: Add clock support for Spacemit K1
+ SoC
+Message-ID: <202503130314.Y8KFKZWW-lkp@intel.com>
+References: <20250306175750.22480-5-heylenay@4d2.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306175750.22480-5-heylenay@4d2.org>
 
-Compiler is not happy about NULL being supplied as printf() parameter:
+Hi Haylen,
 
-drivers/mtd/mtdpart.c:693:34: error: ‘%s’ directive argument is null [-Werror=format-overflow=]
+kernel test robot noticed the following build warnings:
 
-Replace that with "(null)" to fix compilation error.
+[auto build test WARNING on spacemit/for-next]
+[also build test WARNING on spacemit/fixes clk/clk-next robh/for-next linus/master v6.14-rc6 next-20250312]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/mtd/mtdpart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Haylen-Chu/dt-bindings-soc-spacemit-Add-spacemit-k1-syscon/20250307-020635
+base:   https://github.com/spacemit-com/linux for-next
+patch link:    https://lore.kernel.org/r/20250306175750.22480-5-heylenay%404d2.org
+patch subject: [PATCH v5 3/5] clk: spacemit: Add clock support for Spacemit K1 SoC
+config: powerpc64-randconfig-r131-20250312 (https://download.01.org/0day-ci/archive/20250313/202503130314.Y8KFKZWW-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce: (https://download.01.org/0day-ci/archive/20250313/202503130314.Y8KFKZWW-lkp@intel.com/reproduce)
 
-diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
-index 6811a714349d..6f7e250ef710 100644
---- a/drivers/mtd/mtdpart.c
-+++ b/drivers/mtd/mtdpart.c
-@@ -691,7 +691,7 @@ int parse_mtd_partitions(struct mtd_info *master, const char *const *types,
- 			if (!parser && !request_module("%s", *types))
- 				parser = mtd_part_parser_get(*types);
- 			pr_debug("%s: got parser %s\n", master->name,
--				parser ? parser->name : NULL);
-+				parser ? parser->name : "(null)");
- 			if (!parser)
- 				continue;
- 			ret = mtd_part_do_parse(parser, master, &pparts, data);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503130314.Y8KFKZWW-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/clk/spacemit/ccu_pll.c:110:9: sparse: sparse: cast truncates bits from constant value (ffffffff7fffffff becomes 7fffffff)
+
+vim +110 drivers/clk/spacemit/ccu_pll.c
+
+    85	
+    86	/*
+    87	 * PLLs must be gated before changing rate, which is ensured by
+    88	 * flag CLK_SET_RATE_GATE.
+    89	 */
+    90	static int ccu_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+    91				    unsigned long parent_rate)
+    92	{
+    93		struct ccu_pll *p = hw_to_ccu_pll(hw);
+    94		struct ccu_common *common = &p->common;
+    95		struct ccu_pll_config *params = &p->pll;
+    96		const struct ccu_pll_rate_tbl *entry = NULL;
+    97		int i;
+    98	
+    99		for (i = 0; i < params->tbl_size; i++) {
+   100			if (rate == params->rate_tbl[i].rate) {
+   101				entry = &params->rate_tbl[i];
+   102				break;
+   103			}
+   104		}
+   105	
+   106		if (WARN_ON_ONCE(!entry))
+   107			return -EINVAL;
+   108	
+   109		ccu_update(swcr1, common, entry->swcr1, entry->swcr1);
+ > 110		ccu_update(swcr3, common, (u32)~PLL_SWCR3_EN, entry->swcr3);
+   111	
+   112		return 0;
+   113	}
+   114	
+
 -- 
-2.47.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
