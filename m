@@ -1,173 +1,144 @@
-Return-Path: <linux-kernel+bounces-557943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C135A5DF9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:59:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C270A5DF9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62BF7189619E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:59:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57C661738F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F173D24500F;
-	Wed, 12 Mar 2025 14:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE3924EF75;
+	Wed, 12 Mar 2025 15:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3juhabp"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="OmXS0mYB"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910912441A6;
-	Wed, 12 Mar 2025 14:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD36374C4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741791582; cv=none; b=mnmjx84cyeQguZ8KU69WromOXwe1Lpzdc7VXMaXrTC+jsJDpqSKkLOzYWFfTv6h7FwSd8G3ETFHEGq7zaK/u5hW6O6I5EsqeWaq6lsREROa2amZdFcblpFoeZbMrHall5QVpNlei1KcIrk3owKZgLmkAX1e++pJCSsYtm0pSJeA=
+	t=1741791614; cv=none; b=JburuANFggdX1S/K08Ppproo3q+Xjq+2MRDRbrnJ6y8B8P1B2ce0gHNsCZfVMbNjLv6CBDAQwYAxhZYvBUnc+P1EOldAN6Wk6hyySmDprjaxDjtdysOIHL3XxiCoXPkq539PaQwh2Vw6rSY7GEfMPQM+98/ZO2OEqSg6BHPp8p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741791582; c=relaxed/simple;
-	bh=qKHl4440qk1/HT376ckRtihAJqb0O/rQGW0XFo0QqFU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fbY4eQTwAIEDPoasOmesWAPBH7kzGsT91jUCSKSkzY+fCKOSc0akuhkJF9kLgGQUobryxH5kEFaurX+si8keOMsvv1eFJC0QZGIoHxA4IoEjsJSJAHRQOThUALDaN7PuisDrznISatoZ30MqxMPkMCdqmejrSWT+HTTS78E/fMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3juhabp; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac25313ea37so1048596366b.1;
-        Wed, 12 Mar 2025 07:59:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741791579; x=1742396379; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=a3SyTg0NCa9lvne6z+mxZp19Z0gaaai+gw+VCvsnLk4=;
-        b=G3juhabp87I2qIYj9Tm+PJTdQ5NT6A6JoLOXBeSAWjJI2E6Js+sUMR8joswOeuQlQ2
-         dN9GlD2ItSQtDT7qBpAAjU3usDy8PsWzUrnx/FyMBoDTZypxqGcc7Gy1jYBjb/9F+oik
-         ihsDBzzYR/TBc/c+2jKCuLcLfwKZUxW0mhBL8o3ucFwgo0yIWbJpMpL+9SLg6zH43d/d
-         gdIcUwDaJ39GBdtYvX4sKPP0KfV7QdZdDibP86WxtzZNdUqsONVsjS9t0rB2YN3XK32z
-         bI4hqVIqS1MOKO3jzReiCv2kHarFu+qDnlJ74DuC4BJc090HGRW+acLV9Ic4f9TMaPYs
-         LPiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741791579; x=1742396379;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a3SyTg0NCa9lvne6z+mxZp19Z0gaaai+gw+VCvsnLk4=;
-        b=XDC2llfL/8ZipWn9wwpr7dKnKjdoTxs3s+T07nLCG2WeP2eNuxGOlNqw4IXvjS2aDo
-         F4K63mb69/7Z+4pA5KlNbymv6t01fZdHZQHNdXu22o6mnNOemRj8XHmArOmHjjAoaCY/
-         WInpoOiHQF6kqKocWut0igZNJpFEXFh3tESqsdox34XMhK+NtUlCb78zcke8Ug7cHM99
-         K9npzSxMKtEDU9xZvHuadr2H+RzV3M2KJQG9+oZKMON86SO9d81OhtEu/+1BaMuU6QEU
-         Hz0GQduU4hcX0yfWelGK5t3J9YYqT9U0cXRFc8tsNRjtlt2I+v3ZhDD1PCJ9SmknYtuI
-         3K7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWOe5M/EJ1mneUEHEVeS3hzvgvJ70jb77WNEVjMmTM1lYpmPhmeH9TifQMEWthhqJADUs5xurH70Zfk8DdF6+2R3Z0=@vger.kernel.org, AJvYcCX4GXX67v3dx57YNbEa+ygeZCcL93eZ8WOkGRzh2IUoXPIcHKGqOKruwUm+iRQrQ2SXNbnY0OVMDJk=@vger.kernel.org, AJvYcCXPPzFLQhMHEgtOlNUjA56oCp0qYuc9jArRra8TUSYqD2+Q61U1aWKs1enxBFaT9XqOeP0vB6RHyAKU3SA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoVQF9rCKAh3KogQakPrsf5LZ/E/RY+Crg7SWAdOGRJDlnTF9J
-	RwEc/8PaFDx7Djit+MgjUIV70pif432OWaQQDuQFVHrSZnbcaHnnLKEExMk8lbTPw2h74U3ZUwC
-	Haqgrc0jONBZwHzwXDkmKL94Xx5s=
-X-Gm-Gg: ASbGncu73FlRskrNqQk2delyL3+yiyzoGjEWI6e/TIjQXrK/kQl4uKh0T6z65FM+0KZ
-	APyn5zWb05/uMSc85zJEf3sF8GcC9HtImA1BFOnfYK8mMhBmMzr/Kri8iqhvp9wxCWDfBBOB5ly
-	IS6OigPJE7zv45U/ZGEX7Ik7uxpg==
-X-Google-Smtp-Source: AGHT+IFTAmDUJKde03belOS5TpsnGBNkDmHNjKJjx3vvZcaqf4MLygWUc5G7PDzAqFfXGdcNUzcQs/ObOp1WKsP+o/k=
-X-Received: by 2002:a17:907:a0c8:b0:abf:497d:a23d with SMTP id
- a640c23a62f3a-ac252ed8d17mr2752406566b.53.1741791578586; Wed, 12 Mar 2025
- 07:59:38 -0700 (PDT)
+	s=arc-20240116; t=1741791614; c=relaxed/simple;
+	bh=0TDjfpWLM0KOf/+ikJ3p43z3rnLgL6wjBL/u1rSaBcs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rwxpww5yf+p7nB2V8+QCA3UO3pxwhHMqFAx7YKwrO6xn9Pvbh5HR1gL0zWcnSzTeJ2JUIGS/tjyMgDdwsf/4fLkQKQp73yT/OGOimwvvfElcW829W6F6HCe6jCwy7LMBxmaZdTwCH8ZFiawkaulHN3MtAU1fleGuvLsBY/6fEy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=OmXS0mYB; arc=none smtp.client-ip=121.127.44.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1741791606;
+ bh=wS+iW3PEgK6vQzywICkq9SarBtHISre1FPGbp4FqxEg=;
+ b=OmXS0mYBt14pXFm2+nFXpFk14Gn5nyHGZFdN9gpWdSf1VtVx6G+wwfQ5qAzRfZ+xSQyE1KlAl
+ fYhED4lakq0Cxin1TjwS/gf42Jx98ZqbV7HTODkLl+SD7y7jhPUHQPcSaDTP9Md4hylmhG05w0/
+ Z9ROJDk7dE1V068X975Ce1uWMl9hg/ha+8Cw1+6RieQThpkgud2JCqKJrxNxi35eG1a6KDFB1LC
+ NGccoHTPsoREHlRrCahfYVGbH7zV6M7zwey7nelzRicYzEo9tOxhSLzkeMsWf3oa23ggE39/Jk2
+ ZqjqmpCZGR29+WRAUtjCJ4ubwz8seQIO3BcKYwzssHSw==
+X-Forward-Email-ID: 67d1a174a3842b4a6f18d3d1
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.59
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <b7d8d385-81ee-4947-ab8f-1da43843464b@kwiboo.se>
+Date: Wed, 12 Mar 2025 16:00:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310143450.8276-1-linux.amoon@gmail.com> <20250310143450.8276-5-linux.amoon@gmail.com>
- <25fa661b-98e4-468b-bb4d-4a2c95f32b71@kernel.org>
-In-Reply-To: <25fa661b-98e4-468b-bb4d-4a2c95f32b71@kernel.org>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Wed, 12 Mar 2025 20:29:19 +0530
-X-Gm-Features: AQ5f1JpuXbrfqSfBZqHZuJa8hQ7PpVO1Aj4Wg9PCbJZj7yO22_n9i_FjkfaFgs4
-Message-ID: <CANAwSgTeZ83oqatrsWQxT+4RYwEtEqma=R4XX_iGrP2N=phz9Q@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] drivers/thermal/exymos: Use guard notation when
- acquiring mutex
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] arm64: dts: rockchip: Add pwm nodes for RK3528
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+References: <a5ec9062-ca57-4748-8c0f-fb5b9c75fa28@kwiboo.se>
+ <20250312143515.1225171-1-amadeus@jmu.edu.cn>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250312143515.1225171-1-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+Hi Chukun,
 
-Thanks for your review comments.
+On 2025-03-12 15:35, Chukun Pan wrote:
+> Hi,
+> 
+>> The pinctrl-names should be changed to "default" and not "active",
+>> something you can fixup or do you want a patch?
+> 
+> Sorry I've been a bit busy this week and forgot to send the v2 patch.
+> In rk3528.dtsi, the uart and upcoming i2c nodes do not have pinctrl,
+> so I prefer to remove them.
+> 
+>>> Unlike other SoCs, pinctrl-names need to be in "active" state,
+>>> I'm not sure about this, but otherwise the pwm-regulator will
+>>> not work properly.
+> 
+> BTW, setting the pinctrl of pwm corresponding to pwm-regulator
+> to "default" will cause kernel boot suspended.
+> Sorry but do you know why?
 
-On Tue, 11 Mar 2025 at 23:00, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 10/03/2025 15:34, Anand Moon wrote:
-> > Using guard notation makes the code more compact and error handling
-> > more robust by ensuring that mutexes are released in all code paths
-> > when control leaves critical section.
-> >
->
-> Subject: typo, exynos
-Ok.
->
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> > v4: used DEFINE_GUARD macro to guard exynos_tmu_data structure.
-> >     However, incorporating guard(exynos_tmu_data)(data); results
-> >     in a recursive deadlock with the mutex during initialization, as this
-> >     data structure is common to all the code configurations of Exynos TMU
-> > v3: New patch
->
-> If you ever use cleanup or guards, you must build your code with recent
-> clang and W=1. Failure to do so means you ask reviewers manually to spot
-> issues not visible in the context, instead of using tools. It's a NAK
-> for me.
- Ok, I will check this next time before submitting the changes.
->
-> > ---
-> >  drivers/thermal/samsung/exynos_tmu.c | 25 +++++++++++--------------
-> >  1 file changed, 11 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> > index a71cde0a4b17e..85f88c5e0f11c 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > @@ -12,6 +12,7 @@
-> >   */
-> >
-> >  #include <linux/clk.h>
-> > +#include <linux/cleanup.h>
-> >  #include <linux/io.h>
-> >  #include <linux/interrupt.h>
-> >  #include <linux/module.h>
-> > @@ -199,6 +200,9 @@ struct exynos_tmu_data {
-> >       void (*tmu_clear_irqs)(struct exynos_tmu_data *data);
-> >  };
-> >
-> > +DEFINE_GUARD(exynos_tmu_data, struct exynos_tmu_data *,
->
-> I do not understand why do you need custom guard.
+Not an issue I have seen, do you have any more logs or details? E.g.
+what board you use, full regulator node, do you have operating points
+defined etc.
 
-I thought this should add a global guard to exynos_tmu_data using
-mutex_lock and mutex_unlock.
-I'll drop this if it turns out to be unnecessary.
->
-> > +          mutex_lock(&_T->lock), mutex_unlock(&_T->lock))
-> > +
-> >  /*
-> >   * TMU treats temperature as a mapped temperature code.
-> >   * The temperature is converted differently depending on the calibration type.
-> > @@ -256,7 +260,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
-> >       unsigned int status;
-> >       int ret = 0;
-> >
-> > -     mutex_lock(&data->lock);
-> > +     guard(mutex)(&data->lock);
->
-> Which you do not use... Please don't use cleanup.h if you do not know
-> it. It leads to bugs.
->
-Ok, I will drop this include of cleanup.h.
->
-> Best regards,
-> Krzysztof
+I have runtime tested a branch at [1], that use pinctrl-names = default,
+have vdd_arm and vdd_logic defined, also an opp table for cpu and gpu.
 
-Thanks
--Anand
+For E20C there is a commit to enable the vdd_logic, however without gpu
+enabled and a mali-supply the pwm-regulator is initialized to
+max-microvolt by Linux. Have instead updated U-Boot to initialize the
+pwm-regulator's:
+
+```
+&vdd_arm {
+	regulator-init-microvolt = <953000>;
+};
+
+&vdd_logic {
+	regulator-init-microvolt = <900000>;
+};
+```
+
+[1] https://github.com/Kwiboo/linux-rockchip/commits/next-20250311-rk3528/
+
+Regards,
+Jonas
+
+> 
+> e.g.
+> ```
+> vdd_arm: regulator-vdd-arm {
+> 	compatible = "pwm-regulator";
+> 	pwms = <&pwm1 0 5000 1>;
+> 	...
+> };
+> 
+> &pwm1 {
+> 	pinctrl-0 = <&pwm1m0_pins>;
+> 	pinctrl-names = "default";
+> 	status = "okay";
+> };
+> ```
+> 
+> Thanks,
+> Chukun
+> 
+> --
+> 2.25.1
+> 
+
 
