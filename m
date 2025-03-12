@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-557871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 836CFA5DEE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:25:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 970FDA5DEEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:26:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A7FD189F490
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:26:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76B477AD554
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE2524EF9A;
-	Wed, 12 Mar 2025 14:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB9E24E009;
+	Wed, 12 Mar 2025 14:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="lGHVO7V1"
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Tl3nEoNd"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8057D24EF95;
-	Wed, 12 Mar 2025 14:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6C7245039
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741789533; cv=none; b=j/UWQf0Bn1aB8R5cgCATCK/187Db67yn3XHaFBWGlPnnTkLcaTqIkNW8ubI8AEt7S7224SN31jAkZ9aHm2FUf9KODjssXuQ7QWQ/oj/PujNZu5Sxl7JVXmeJfqH3DuQPcJUeS6kKFLK2kqvJUCq4qA9SlIvKmOdhSaAT4PzybwI=
+	t=1741789565; cv=none; b=JVG97NCgVblOnbcZmMZg84yN1jgX7kPswi7V78E/VsBbb3LEZxi/vGvWCnPiUveivNVQfqba0PfW7+gKuKwxiS6+w7K3D+qnqrToukB7RXLWXeikSymvtzPfr2wXSeLhmFgS+6c10I9bGpxF3xLKK+ZAwm9ov/GgSEWX/UD5nqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741789533; c=relaxed/simple;
-	bh=x6T9aD4BdJmQwzEvC4ijUHZvSUttTlpvmtjHr0kVh38=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oNx/w7EAAYhssb1reIoebiKDaW8emrdGafuHfm6VtWQJnhd9ChFE309lyE1Si3pMVQyMfGGIS3J9oR44P3C4yT0ropmIpDcMjHki/rq3sdwv//wITXxq/AUQtr1lEHQ9e0l5+NRuqPoWBrWhjx9rmsaLItgUP4B8nhEGZIro5ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=lGHVO7V1; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=N1M5VC4eWrmyPabJyPrA1ksFNZYpzAlILTwOn36W+dg=; b=lGHVO7V1tb/YMji3+1EX36VaJL
-	v+AOTW81qBDvA97wvJEfWmSmtS5sdGUEkfD58wxTIRN0Dwfuh0A63BNqh5VbLqf4hrz9yA3Skf+JJ
-	r6Mt6uLkNRE5ZxyLDTnEZ4rRRW6fzK+xMtdAN3tmmH5391er4lbQvm1CGns+cT4hxx7JyDzkBam5H
-	vb13dEvzNrVjh2ybJ0LmgOyDCas9X5Fl591QoESqOrjb0xG+EbZxWqaCcL6dDuD9aJ7yUceVSZaUF
-	gPbmSGVnm69bbYBz5l8+54Pz2+HBvurjVh0MDaXuIWvxNwMEn5zAfhvsgz9E22aao6qnM49J9x2Cz
-	fNG06sKA/cLKndhoXCfnpk+pv3h1QAc6OaGlPkemvLwALWm4WXyJ10Tmv9cGZm4NtDF/rAuO8Nl0V
-	gKNmizQHkSHDa0fU4ziz4yKPGx6+VdU4CDHFmnACl9B5iJhyyFLXFmtGwyhVrzXsc+yc4KYW7ep0n
-	4BGG8y1LWdLEHs4M98gjgwEtsiZ+flC1zeSQhlb+25y050Ka6Elv71Br6rGRsYFnJpe+uiLKDK37s
-	2waWRPyt0lX6CIfqp+VlMpSOnm8sAY60XJy5JpGmwsPROAayvSKaY23DyGkGmSiWppqlS/A0nLuaW
-	a6CrsZBlPaVgM9lYhp1kSzWyzPp43ZIfkO/9gDwNw=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: asmadeus@codewreck.org
-Cc: ericvh@kernel.org, linux-kernel@vger.kernel.org, lucho@ionkov.net,
- syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev,
- syzbot <syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [v9fs?] general protection fault in p9_client_walk
-Date: Wed, 12 Mar 2025 15:25:27 +0100
-Message-ID: <2115265.hiCNZqmPJN@silver>
-In-Reply-To: <Z9F6cakkpF26_KJu@codewreck.org>
-References:
- <67d12512.050a0220.14e108.0024.GAE@google.com> <34836920.9mNPFRc1x4@silver>
- <Z9F6cakkpF26_KJu@codewreck.org>
+	s=arc-20240116; t=1741789565; c=relaxed/simple;
+	bh=D30yYcLGzCKJP0xV33q/0S+ufxFtV0zBn7R8mUrRc9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=odl+Lb2QuPV3BF1fxIEzz8s2/IUCq/NmALq4Z45SpdMMpA8RrSqEsPeCwmXHKgXi9jyvW09QOg7CbbBTj28EOMe6zTTEbisRjxHhb1u8zg3zEJwpxwSpWtkNP77N8tQVo/pfuHQvVyxTWD0OVRQ5ovBL2KHBAmBk1V3Ld9Ras2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Tl3nEoNd; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741789559;
+	bh=D30yYcLGzCKJP0xV33q/0S+ufxFtV0zBn7R8mUrRc9M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tl3nEoNdxDokHqsqyV8dCb3k39ooik8vJ4denOVETXReAYKWE06x+vVqe32mEGkyM
+	 /dnJqbP4i//hctFThaVzNPfIFYkRpQhWFaIeAI5izl173G5cPZu9QCFq9cPgmwXaPZ
+	 WwXb+tH+xvAlia5PWDVFrKenP3JkcdafO5U4j3/7HRcAi0bHYfLD38zfiqpXXylWTf
+	 sRzFBu6uOYskRDnQadlKCPhDsII0MsENDzj6AbhfeOLYGkw2G2u++8Jq1XCGlaEugP
+	 Msl6PAhIu4WTkNN8nn2Yx9DsCrskwlLCttJc4S/p+BrGS9sonRFgt9Lvr3OStHraEY
+	 YZywoGLxZ0/ng==
+Received: from notapiano (unknown [70.107.117.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8F59517E1134;
+	Wed, 12 Mar 2025 15:25:57 +0100 (CET)
+Date: Wed, 12 Mar 2025 11:25:54 -0300
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, chunkuang.hu@kernel.org,
+	p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
+	krzk@kernel.org, daniels@collabora.com, airlied@gmail.com,
+	simona.vetter@ffwll.ch, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: defconfig: mediatek: enable PHY drivers
+Message-ID: <5706c76e-7558-4405-a4c6-cab9cb5ddf65@notapiano>
+References: <20250312041943.25676-1-vignesh.raman@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250312041943.25676-1-vignesh.raman@collabora.com>
 
-On Wednesday, March 12, 2025 1:13:37 PM CET asmadeus@codewreck.org wrote:
-> Christian Schoenebeck wrote on Wed, Mar 12, 2025 at 10:36:15AM +0100:
-> > > RIP: 0010:p9_client_walk+0x9a/0x530 net/9p/client.c:1165
-> > >  clone_fid fs/9p/fid.h:23 [inline]
-> > >  v9fs_fid_xattr_set+0x119/0x2d0 fs/9p/xattr.c:121
-> > >  v9fs_set_acl+0xe6/0x150 fs/9p/acl.c:276
-> > >  v9fs_set_create_acl+0x4b/0x70 fs/9p/acl.c:306
-> > >  v9fs_vfs_mkdir_dotl+0x517/0x6e0 fs/9p/vfs_inode_dotl.c:411
-> > >  vfs_mkdir+0x57d/0x860 fs/namei.c:4313
-> > >  do_mkdirat+0x301/0x3a0 fs/namei.c:4336
-> > >  __do_sys_mkdir fs/namei.c:4356 [inline]
-> > >  __se_sys_mkdir fs/namei.c:4354 [inline]
-> > >  __x64_sys_mkdir+0xef/0x140 fs/namei.c:4354
-> > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > >  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > 
-> > Just had a glimpse on it so far. IIUIC the trigger is in
-> > v9fs_vfs_mkdir_dotl() [fs/9p/vfs_inode_dotl.c:411] ?
-> > 
-> >     // NULLs out fid (since dafbe6897)
-> >     v9fs_fid_add(dentry, &fid);
-> >     // expects fid being non-NULL
-> >     v9fs_set_create_acl(inode, fid, dacl, pacl);
+On Wed, Mar 12, 2025 at 09:49:26AM +0530, Vignesh Raman wrote:
+> The mediatek display driver fails to probe on mt8173-elm-hana and
+> mt8183-kukui-jacuzzi-juniper-sku16 in v6.14-rc4 due to missing PHY
+> configurations.
 > 
-> Sounds about right, inverting the two calls probably makes sense?
+> Enable the following PHY drivers for MediaTek platforms:
+> - CONFIG_PHY_MTK_HDMI=m for HDMI display
+> - CONFIG_PHY_MTK_MIPI_DSI=m for DSI display
+> - CONFIG_PHY_MTK_XSPHY=m for USB
+> 
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+> ---
+> 
+> v2:
+>   - Include board details in the commit message.  
+>   - Sort newly added PHY configs in defconfig.
+> 
+> ---
+>  arch/arm64/configs/defconfig | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 1f25423de383..87e8cbd3fd26 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -1572,7 +1572,10 @@ CONFIG_PHY_HI6220_USB=y
+>  CONFIG_PHY_HISTB_COMBPHY=y
+>  CONFIG_PHY_HISI_INNO_USB2=y
+>  CONFIG_PHY_MVEBU_CP110_COMPHY=y
+> +CONFIG_PHY_MTK_HDMI=m
+> +CONFIG_PHY_MTK_MIPI_DSI=m
 
-Yeah, that was also my first though. Just didn't have time yet to check
-whether that dentry was needed somewhere downwards that v9fs_set_create_acl()
-call stack.
+This isn't the expected ordering. I imagine you manually added these configs in
+the defconfig.
 
-> OTOH I don't get why all mkdirs don't hit that.. ah, it's only a problem
-> if the parent directory has some ACL and none of our tests hit that :/
+To get the right ordering, after you've added the configs anywhere in this
+defconfig, do a 'make defconfig', then a 'make savedefconfig', and copy the
+generated 'defconfig' file at the root to this location, then you can add just
+this hunk to the commit, and it'll be in the correct order.
 
-There are test cases now?
-
-> Well, it shouldn't be too hard to trigger & fix anyway, since you've
-> done this much want to send the patch?
-
-If it is not super urgent then I'll schedule some cycles. Not worried if
-anyone is faster of course.
-
-/Christian
-
-
+Thanks,
+Nícolas
 
