@@ -1,241 +1,131 @@
-Return-Path: <linux-kernel+bounces-557878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC882A5DEFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:31:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B218CA5DEFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61C593B26E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:31:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736D9189EA7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A8E15DBBA;
-	Wed, 12 Mar 2025 14:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC442156653;
+	Wed, 12 Mar 2025 14:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="asrTPuoj"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jwx+kk77"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530EB1F949
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA99824E01A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741789875; cv=none; b=A9A39TzxTVNZNnE5LSx1B0los2BrGw7upokb3jFc5iLILxujuJxY5I102CYO0Tlsx117jbWvP4RPgUiqZKU4nCXmVFvCfhTp0EAozzXaKLNuSt3wTkwj8meyunVglr6SJCNOuhknkCY9+r0epL5dKJ/3HL6z5Jqatf/IqwE7Mp8=
+	t=1741789880; cv=none; b=c0gQmke64lzbhDBSG74uHLmzHIPy5NzBXMWXVHwbti1+LfG+XDLH+mTIDMKeqBNILJZ5aJEchU8V0UWqg6MKNQUmthcrNGK+t2K9vJq6J6DrQtOXzbSow66tB8QasDk55pHHBcmib9Ye0MkOIygMuQMQoAJitEd6+D9B37I+T68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741789875; c=relaxed/simple;
-	bh=gaLQEB0SodFsAMFUf7U0XOJDsFQAXxh4Qwrquyn+gOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=C55Pqm41BARE/RAqlcFfcsP2S7oPV5XzC61BR/e0vGBwP7Q19D2ReZJreKuvrAUhapMSqJGP9Cgg54XyfwrKz6VVXvUIBDspvrXA1pEFk1FxlZbAmPKjTHlVtvSdrSbthTET/YKakk2lZmM7RjojjgFcZbUzabu07W4NGz6bUy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=asrTPuoj; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250312143106euoutp018be5a59d8836face69307ea526ef6aa8~sFKe1aUzW1410114101euoutp01a
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:31:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250312143106euoutp018be5a59d8836face69307ea526ef6aa8~sFKe1aUzW1410114101euoutp01a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1741789866;
-	bh=HnNcfwuXLGzsfvb6BDDyoiMjkg8CaNMTx1t8raBxs8w=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=asrTPuojlI5fCuvw5P8zGLgaOyB9y8r+a0SHRhZ+kdHTcswwOVwR9XoqC8a4U6ja6
-	 JngZiqX/74HATy5urvzMhSUKgBmcZndewwGkrVyGTr0Na4aI/vm0/QYr0esK5tJ+jc
-	 CaXbPwLo04tObtNjo7jLKz4L95gW8dgUOzmAhK4U=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250312143106eucas1p10573c9cfc8a335a17c7693e49baae594~sFKedJ3_F2225522255eucas1p1I;
-	Wed, 12 Mar 2025 14:31:06 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 36.05.20409.9AA91D76; Wed, 12
-	Mar 2025 14:31:05 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250312143105eucas1p28e084a13846ec3a228745ffea6f12dbf~sFKd5EkDa2675626756eucas1p2Z;
-	Wed, 12 Mar 2025 14:31:05 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250312143105eusmtrp1ca1951535f7ffd1b4ac1436b1cb77495~sFKd4UBcp2360523605eusmtrp1O;
-	Wed, 12 Mar 2025 14:31:05 +0000 (GMT)
-X-AuditID: cbfec7f4-c39fa70000004fb9-71-67d19aa9baec
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id C6.2F.19920.9AA91D76; Wed, 12
-	Mar 2025 14:31:05 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250312143104eusmtip2ee3c4f1dba47a901cfe23aae17ecfa4a~sFKdERw6m2544525445eusmtip2i;
-	Wed, 12 Mar 2025 14:31:04 +0000 (GMT)
-Message-ID: <4b45236e-8252-4dd5-b3f7-3595b0924182@samsung.com>
-Date: Wed, 12 Mar 2025 15:31:04 +0100
+	s=arc-20240116; t=1741789880; c=relaxed/simple;
+	bh=K1NuAEngcPclmCzbSgtaq+RrDGOZqTUJu3ZdtBcGZ2M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BePiCuQReLzfHCCAhi1zWSt2Lg7BzCcw0eChPMkAybhJuXYEm+sMntjimpzeXYH0lk4LLNAbyi+KZe4tI0+ZeAM/fQoid6vJ6ud8KRXcq8AP4oOPUPQJ86iaYAsT5m/yExMXPmwjlTGGlF9RxiqSbUW6mF16w+Hn1ym0zJf7TV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jwx+kk77; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22185cddbffso18032155ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:31:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741789878; x=1742394678; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7wHVeTdcbD/lMPZ+7RVnSVzW4Yy+8n9avYr5uzJiRKg=;
+        b=jwx+kk77FolmhrTxmZxn/WcsnAr+FgFEGtF4C6eZqAN1rfsUeSCRmOkxmBxEYF0p5C
+         yMmAryUn5rYQNQ0Q/O6HyTbE8WEwIs80vB3Mei2QCnZQ/vSvw+B8/RyqjRDBwgj0jAij
+         QgHPpGQdjEDVlo7xy81bdMv9cQ8nRD847+lC8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741789878; x=1742394678;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7wHVeTdcbD/lMPZ+7RVnSVzW4Yy+8n9avYr5uzJiRKg=;
+        b=wet1RzEh/d2240GAIXd4CzRKgperUnGvCJ5ZFuk7WLs+3uTGcnxBzgaGdQ0lLCYnHS
+         8D3Mf/t8JYDRWhow9ZjDHMeVhyxDICMg369VkiL7Brl2E2GRwrnKqg1M+3hnp2CjbJaf
+         i2z/EbdEg6Ifj7BQXb0Nv/Xo1XvOGqKiTbeXvEMcGFmQW4VEIMPsQBE11OmSwilmrVMM
+         27H3oUHzqFaKbIpLasGxhl6pqbtUfW65Dibd8T7uIEeJVfVzFSU9C1SkEOG6uu0Knj1Y
+         i7Ym7JzR85/HNl9gnkqDjiW17adylDfqMdKL9vasYnNQeCECM4gLi6cDbiep/PAVvxSV
+         Jztw==
+X-Forwarded-Encrypted: i=1; AJvYcCXllopbiCUFowQ5pStq2xJ1GZ+DxwH6Czrrvfm3BXVbbvM5wHt1fxGejGRX5CJwPDMzNRRyiti34XwASHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCskrifM2jlyrSrrZyOXcCuDw+kIsIAggTHQGP2VUjff9Aops6
+	cywbiyHXE2XOrlkSxHYR5QlxgcEGTLhvJGbG/ug8duvcdpxwaS0988xpEu6B3ZP0l9Pf6hPWgUg
+	=
+X-Gm-Gg: ASbGncuw9aKWzfpYmCIqpWN4bJPCs7NFYJ/XXOF9oaSsuP6hCSnmZeogDZLHXJx5k75
+	xg+BpynWvnsgD2xE04OUP9syDIcoyJd3e9MRBObrS3F5OJGBvrlPLrToV96fgTBnfRaCSwkDY1m
+	ubY4joZRZLXpxdbt9J2p0bZRYTsGhV2x6yQprSHZ43WxpU/ZWexH35o4uD0NgZxXb2vKXbkCVt0
+	3fYeEZbioTHwDvLctsobgx25JrkDJ3xxoYWE72FsOxZPBce/FDqsHtc6rZZxEvVKruyemx9HhGR
+	tJ2IgzAkfRKrB61HOPWaKdlhxUzoRxKugpFfx5Qmx9+uDg/i2lcv3WNoKaoowdONRueQWOln5OV
+	JrxofzQGvUL6+EUcIOpqr883+
+X-Google-Smtp-Source: AGHT+IGso4VXNf4LaA6gyp5gDGaLztOCm9ys3zkim+c3BRQl8gd7egffGxKYj+WJgPgAHh1RMcUppg==
+X-Received: by 2002:aa7:8449:0:b0:736:b400:b58f with SMTP id d2e1a72fcca58-736ec417889mr10251381b3a.0.1741789877798;
+        Wed, 12 Mar 2025 07:31:17 -0700 (PDT)
+Received: from zipper.pdx.corp.google.com ([2a00:79e0:2e13:6:ea1:ba82:2605:7d4e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736af3a69b2sm10408708b3a.6.2025.03.12.07.31.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 07:31:17 -0700 (PDT)
+From: Fritz Koenig <frkoenig@chromium.org>
+Date: Wed, 12 Mar 2025 07:31:16 -0700
+Subject: [PATCH v2] Documentation: ocxl.rst: Update consortium site
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 0/5] TH1520 SoC: Add AON firmware & power-domain
- support
-To: Ulf Hansson <ulf.hansson@linaro.org>, drew@pdp7.com, guoren@kernel.org,
-	wefu@redhat.com
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, jszhang@kernel.org, m.szyprowski@samsung.com,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <CAPDyKFqeaq5xVNA=0CpMWSt_78qXJsY6+mpE1CSmLrVMQazAjg@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFKsWRmVeSWpSXmKPExsWy7djP87orZ11MN7h00tTi2Z2vrBZbf89i
-	t1iz9xyTxfwj51gt7l3awmTxYm8ji0XzsfVsFi9n3WOzuLxrDpvF594jjBbbPrewWaw9cpfd
-	4uXlHmaLtln8Fv/37GC3OL423KJl/xQWB0GPNy9fsngc7vjC7nHvxDRWj02rOtk87lzbw+ax
-	eUm9R8vaY0we7/ddZfPo27KK0eNS83V2j8+b5AK4o7hsUlJzMstSi/TtErgyWiYcYC3YrlJx
-	sfMGawPjCZkuRk4OCQETibV9Cxi7GLk4hARWMEr8v/mbCcL5wijROnk7lPOZUeLh+l2MMC39
-	zf/YIRLLGSXO/r7NDOG8ZZSY8beDCaSKV8BOYsq3XawgNouAqsTr/U/ZIOKCEidnPmEBsUUF
-	5CXu35rBDmILCwRKbJ+5B2yDiECsxMwJs8FWMwvsZpJ42nUUrIhZQFzi1pP5YAvYBIwkHiyf
-	D7SAg4MTqPn0q2SIEnmJ7W/ngB0kIXCJU2JN02I2iLNdJLZee8kMYQtLvDq+hR3ClpE4PbmH
-	BcLOl3iw9RNUTY3Ezp7jULa1xJ1zv9hAdjELaEqs36UPEXaUeHi5gQkkLCHAJ3HjrSDECXwS
-	k7ZNZ4YI80p0tAlBVKtJTO3phVt6bsU2pgmMSrOQAmUWkh9nIXlmFsLeBYwsqxjFU0uLc9NT
-	i43yUsv1ihNzi0vz0vWS83M3MQKT4+l/x7/sYFz+6qPeIUYmDsZDjBIczEoivKttL6QL8aYk
-	VlalFuXHF5XmpBYfYpTmYFES5120vzVdSCA9sSQ1OzW1ILUIJsvEwSnVwDTN/Ui1Qazkh/MX
-	+r41T+J8eabff7uVSMGSrODeW3elg36wcp1RYtWNuOOiP1spu/VXwi0jp2Aj1btMck+zdlz+
-	lCQ3R6dgdoX+MY6pbLGbf0WLbPj/7uVFRvvbtS9+ft+zsOSEv8qSPyIf/MMuZIXt8b0n8CTF
-	nulg4bx9zvFnlv38d89aa/OKpHsOgWkl0f4TrKbpVG4K+D/LafmC/yFiF68wnrr3qVPzplJz
-	+UqxzuPVr999l+5Y0lxlyuL4Zd8qD84pf08m6yssex5lefurZeyZOw8fnY1jkOncpnO56fDT
-	N+GMK5a22jAvtnHsZT6cuEBx2Z0i94sblzxNlDum0dGT3ikxZWr48+2SJ7iUWIozEg21mIuK
-	EwGJLdmU/QMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDIsWRmVeSWpSXmKPExsVy+t/xe7orZ11MN9jzUNji2Z2vrBZbf89i
-	t1iz9xyTxfwj51gt7l3awmTxYm8ji0XzsfVsFi9n3WOzuLxrDpvF594jjBbbPrewWaw9cpfd
-	4uXlHmaLtln8Fv/37GC3OL423KJl/xQWB0GPNy9fsngc7vjC7nHvxDRWj02rOtk87lzbw+ax
-	eUm9R8vaY0we7/ddZfPo27KK0eNS83V2j8+b5AK4o/RsivJLS1IVMvKLS2yVog0tjPQMLS30
-	jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyWiYcYC3YrlJxsfMGawPjCZkuRk4OCQETif7m
-	f+xdjFwcQgJLGSVufD3CBJGQkbjW/ZIFwhaW+HOtiw2i6DWjxJ+G5YwgCV4BO4kp33axgtgs
-	AqoSr/c/ZYOIC0qcnPkErFlUQF7i/q0Z7CC2sECgxPaZe8B6RQRiJT50bmEEGcossJtJ4szm
-	P4wQG24xSpxc1AN2BrOAuMStJ/PBbDYBI4kHy+cDbePg4ASadPpVMojJLKAusX6eEES1vMT2
-	t3OYJzAKzUJyxiwkg2YhdMxC0rGAkWUVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYDLYduzn
-	5h2M81591DvEyMTBeIhRgoNZSYR3te2FdCHelMTKqtSi/Pii0pzU4kOMpsCgmMgsJZqcD0xH
-	eSXxhmYGpoYmZpYGppZmxkrivG6Xz6cJCaQnlqRmp6YWpBbB9DFxcEo1MDleYitUrsh0m9qZ
-	3PY7wcfUJ8Ht97Yjuk7HJqRuuGWqtX3qptN/2J64RGsFyE747fRS77ZyrbXruYk1tQy5X28G
-	HJBWOment055o0O8/Rmxtxs3Vh2fKCBR2ZV1wLvH/Nb1gFe5/a4prRer1l/eHTBh97kC1p5N
-	rfMac7X9121ffTm94Ls139GjlcscLHfL3dnG8PrT1SmfxbbV+p/kWf5o80PeST53w643712j
-	tP3AxYfbuX7WmantcHTbr1Y3OaT78cGteYm9Oj4/tT294pO1RN65nz2qtVlm+97cfqZXxv67
-	+zPbEnT2Ln+34VbAHdHyZSHqG7a8NGHOTq9xytI9fYLbIbX/9fSTdqz3NJRYijMSDbWYi4oT
-	AW71z36PAwAA
-X-CMS-MailID: 20250312143105eucas1p28e084a13846ec3a228745ffea6f12dbf
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250311172030eucas1p12dda42760f751174e774b8d1a3d3f4cd
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250311172030eucas1p12dda42760f751174e774b8d1a3d3f4cd
-References: <CGME20250311172030eucas1p12dda42760f751174e774b8d1a3d3f4cd@eucas1p1.samsung.com>
-	<20250311171900.1549916-1-m.wilczynski@samsung.com>
-	<CAPDyKFqeaq5xVNA=0CpMWSt_78qXJsY6+mpE1CSmLrVMQazAjg@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250312-dead_site-v2-1-920a313743ee@chromium.org>
+X-B4-Tracking: v=1; b=H4sIALOa0WcC/23MSw7CIBSF4a00dyyGR6XWkfswjUG4LXfQYqAST
+ cPexY4d/icn3wYJI2GCS7NBxEyJwlJDHhqw3iwTMnK1QXJ54koI5tC4e6IVGfb6rNpecK0V1P8
+ z4kjv3boNtT2lNcTPTmfxW/8pWTDBOvNQFo3q2lFerY9hptd8DHGCoZTyBbJ8ivOlAAAA
+To: Frederic Barrat <fbarrat@linux.ibm.com>, 
+ Andrew Donnellan <ajd@linux.ibm.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Fritz Koenig <frkoenig@chromium.org>
+X-Mailer: b4 0.15-dev-37811
 
+Point to post-merger site.
 
+Signed-off-by: Fritz Koenig <frkoenig@chromium.org>
+---
+Changes in v2:
+- Update link per feedback
+- Update commit message to reflect sureness in corectness
+- Link to v1: https://lore.kernel.org/r/20250311-dead_site-v1-1-7ab3cea374f2@chromium.org
+---
+ Documentation/userspace-api/accelerators/ocxl.rst | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-On 3/12/25 14:40, Ulf Hansson wrote:
-> On Tue, 11 Mar 2025 at 18:20, Michal Wilczynski
-> <m.wilczynski@samsung.com> wrote:
->>
->> This patch series introduces and documents power management (PM) support and
->> the AON firmware driver for the T-Head TH1520 SoC, as used on the LicheePi 4A
->> board. While part of a larger effort to enable the Imagination BXM-4-64 GPU
->> upstream, these patches can merge independently.
->>
->> Bigger series cover letter:
->> https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung.com/
->>
->> This series is versioned to maintain continuity with the bigger patchset it is
->> a subseries of. Please find below a changelog for the AON & power-domain:
-> 
-> I can pick up patch1 -> patch4 via my pmdomain tree, assuming I can
-> get an ack from some of the thead-SoC maintainers.
-> 
-> Patch5 is probably better to be routed through the SoC maintainers
-> tree, but let me know if you prefer me to take this one too.
+diff --git a/Documentation/userspace-api/accelerators/ocxl.rst b/Documentation/userspace-api/accelerators/ocxl.rst
+index db7570d5e50d..4e213af70237 100644
+--- a/Documentation/userspace-api/accelerators/ocxl.rst
++++ b/Documentation/userspace-api/accelerators/ocxl.rst
+@@ -3,8 +3,11 @@ OpenCAPI (Open Coherent Accelerator Processor Interface)
+ ========================================================
+ 
+ OpenCAPI is an interface between processors and accelerators. It aims
+-at being low-latency and high-bandwidth. The specification is
+-developed by the `OpenCAPI Consortium <http://opencapi.org/>`_.
++at being low-latency and high-bandwidth.
++
++The specification was developed by the OpenCAPI Consortium, and is now
++available from the `Compute Express Link Consortium
++<https://computeexpresslink.org/resource/opencapi-specification-archive/>`_.
+ 
+ It allows an accelerator (which could be an FPGA, ASICs, ...) to access
+ the host memory coherently, using virtual addresses. An OpenCAPI
 
-Thanks, I don't have a preference, I'll leave it up to SoC maintainers.
-I haven't included the device tree changes in this mini-series, as then
-the PM & firmware, clock, and reset mini-series might conflict with each
-other in th1520.dtsi file, but SoC maintainers might also find it useful
-to pick this commit [1], along with the patch5.
+---
+base-commit: 0b46b049d6eccd947c361018439fcb596e741d7a
+change-id: 20250311-dead_site-e96834910663
 
-[1] - https://lore.kernel.org/all/20250219140239.1378758-20-m.wilczynski@samsung.com/
+Best regards,
+-- 
+Fritz Koenig <frkoenig@chromium.org>
 
-> 
-> Kind regards
-> Uffe
-> 
-> 
->>
->> v8:
->> - add proper cleanup in the th1520_pd_probe()
->> - add "suppress_bind_attrs = true", since there is no need to unbound the driver
->>   during runtime. This simplifies the code by eliminating the remove function
->>
->> v7:
->> - add '#include <linux/slab.h", due to kernel robot issue
->>
->> v6:
->> - split the firmware & power-domain patches into a separate series
->>
->> v5:
->> - changed the AON driver to be a set of library functions rather than a
->>   standalone driver
->>
->> v4:
->> - added workaround to disable AUDIO power domain to prevent firmware crashes
->>
->> v3:
->>  - consolidated device tree representation by merging aon and power-domain nodes
->>    while maintaining separate drivers internally
->>  - power-domain driver is now instantiated from within the aon driver
->>  - fixed optional module dependencies in Kconfig
->>  - added kernel-doc comments for all exported functions
->>  - implemented th1520_aon_remove() to properly clean up mailbox channel
->>    resources
->>
->> v2:
->>  - introduced a new firmware driver to manage power-related operations.
->>  - rewrote the power-domain driver to function alongside the firmware driver.
->>    These nodes in the device tree lack direct address spaces, despite
->>    representing HW blocks. Control is achieved via firmware protocol messages
->>    transmitted through a mailbox to the E902 core.
->>  - added new dt-bindings for power and firmware nodes.
->>  - ran dtbs_check and dt_binding_check to ensure compliance.
->>
->> Michal Wilczynski (5):
->>   dt-bindings: firmware: thead,th1520: Add support for firmware node
->>   firmware: thead: Add AON firmware protocol driver
->>   dt-bindings: power: Add TH1520 SoC power domains
->>   pmdomain: thead: Add power-domain driver for TH1520
->>   riscv: Enable PM_GENERIC_DOMAINS for T-Head SoCs
->>
->>  .../bindings/firmware/thead,th1520-aon.yaml   |  53 ++++
->>  MAINTAINERS                                   |   5 +
->>  arch/riscv/Kconfig.socs                       |   1 +
->>  drivers/firmware/Kconfig                      |   9 +
->>  drivers/firmware/Makefile                     |   1 +
->>  drivers/firmware/thead,th1520-aon.c           | 248 ++++++++++++++++++
->>  drivers/pmdomain/Kconfig                      |   1 +
->>  drivers/pmdomain/Makefile                     |   1 +
->>  drivers/pmdomain/thead/Kconfig                |  12 +
->>  drivers/pmdomain/thead/Makefile               |   2 +
->>  drivers/pmdomain/thead/th1520-pm-domains.c    | 218 +++++++++++++++
->>  .../dt-bindings/power/thead,th1520-power.h    |  19 ++
->>  .../linux/firmware/thead/thead,th1520-aon.h   | 200 ++++++++++++++
->>  13 files changed, 770 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
->>  create mode 100644 drivers/firmware/thead,th1520-aon.c
->>  create mode 100644 drivers/pmdomain/thead/Kconfig
->>  create mode 100644 drivers/pmdomain/thead/Makefile
->>  create mode 100644 drivers/pmdomain/thead/th1520-pm-domains.c
->>  create mode 100644 include/dt-bindings/power/thead,th1520-power.h
->>  create mode 100644 include/linux/firmware/thead/thead,th1520-aon.h
->>
->> --
->> 2.34.1
->>
-> 
 
