@@ -1,293 +1,163 @@
-Return-Path: <linux-kernel+bounces-557698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73107A5DC99
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:28:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D30A5DC9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:28:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22CD93B5E3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:28:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A5EC188C374
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F4724291B;
-	Wed, 12 Mar 2025 12:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947CD24290F;
+	Wed, 12 Mar 2025 12:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QNHqDjlL"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jnbn6wNv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9/wq7m8r"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5533F24168E;
-	Wed, 12 Mar 2025 12:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749E6242904;
+	Wed, 12 Mar 2025 12:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741782499; cv=none; b=G8awYEPUj/B/zOiwgaYJE8L8n8ZnfEzipxeB5XY+Ur/xC8ty/1eccyCGsUnoQFWyQb95I7wo5IkK/0v57AYa6mSTS2qf5KenW4+VeQf1vxcov685kkhux75zv+7NpseYlBIKUUI/jbRCDR7UoJcQ6CJHrupFZwdqbDklUvVeueE=
+	t=1741782523; cv=none; b=oz/h5EYgxnYPzWph+GmBnmPLMayeHvwlYZLjB2I1tibd+j1g/2+f7m9VkAv77qPxQQ47OkLN+kIOKqHGOT05i/3F8ntaBENGULWNbMTyb73YTh72ESGrdRxuvILr5KOn3M9y/2fFBictloOhm/qMGrBgJ418m7+Xg8+ud0faLg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741782499; c=relaxed/simple;
-	bh=ScMo6cxu9GAUKKMkRreSUwJHaKc/7+d2xJ+MUTi+tb8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L2Z1IDZuMW98EH0FXfJFtXKFGGh6CsnSEgZZgSXVm/Dg7YLdon/DhDFoQ5ATLE2gsQrNf0dMO5n7rTtW7spe9aQduWiXYicRwrLfofHh0yhoGkJ8qnW3yNUiSaneC56ro94ATmSg5pKoc1X8eAJL+e0ET4QjePk5mqY9KKjau/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QNHqDjlL; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-390e3b3d3f4so3285819f8f.2;
-        Wed, 12 Mar 2025 05:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741782495; x=1742387295; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=whTPFNzffZEytuTs/4Y0GBzNv+sq0yVAXgQvl7RTfWI=;
-        b=QNHqDjlLDFnGguIxUklscWxzG00GLrD2SRNoskxHzNv+JcPEtn+sBNYmHmR6Zvz8jK
-         l4BIyMEFofbuVfVImq88+Mnq+yNhhxC0mArlj1bZvLAgT+ud8Kt4d8S9rX9U2dnQI3D1
-         +NEpy7gRH8mNMsBI7G+kpMZSezwcLkTBPlHyUBJDNcK5ZT1dtEbHRspQwLqunaXIVNNb
-         +LSRgP9ZcVVUlFlMY/SzoUn2GXrDsmlX6e+TBxunjG9CedJmsTPv5XJZEE9eS/zhA2hs
-         wsLPHGOlmcdBAfaKDVLVYBYo7Z1qQDRVQqzx6NuihK8kWKFWWW5nxsTQ+Xcds4LONSS4
-         pxrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741782495; x=1742387295;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=whTPFNzffZEytuTs/4Y0GBzNv+sq0yVAXgQvl7RTfWI=;
-        b=PSaJ9SZUwP49GfJo5onVs/dOGAFzueGRRn7NEouFdu/QS8HvHcGpblPGtuCNS833sa
-         wyiVxIk9tlyHvNMwxGjkchqeYfa5+uL/+X6SIMBFWALA5JiJibk+tnRq+nN+HdNB+pT5
-         sEGelWVI4vBfYKPxCk/+XtRJ9MZEbyA9QajBJK+ACa6wiM799DIlrs+77PJeZ+StdXhO
-         1Cxyod9jBAo0FHlgAAgwGswAa6dukTs/5PmI+Hbh2BtyYJ9JLqGBmh+3CwvwyXJduXfO
-         Iv0bA4JoSsTzesJ4Bwmy4+5D80JiIu0ctxlcaMnT80/b8QG5Ro1aWleTVa68HJqGHzaM
-         5DGw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7y3k4dljHRjz7nfCpgk7ekLhqLd1ci3IYMvxCp+xng8xr7DfW38KSA/ODXaBZFKBjWH3N4a4G+ys9Mkh0@vger.kernel.org, AJvYcCVSHz5DFfGUykKpT1sJkDiVL1bdNRTMuJ9npQhA2de6ZNtsrekROa8xXD8w2A60pwpuSSueArqb/kO+@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO9HVFbe+z8KxLQQRY016m7hik50OjKJ8/1/3NYa8694CnbPjc
-	p4t3bLmcNE6sS6OyuPHFsQ33uu176k08Z1j/kK9AboQT7fq69CbWy9WjuzLIioZ6UUtMr/qWr7R
-	GwB+rPkMOKY+qJ+9+u5rtqrFaRKjVILm7
-X-Gm-Gg: ASbGnctXfLgdW60ZBJ+FmEAgwEYxhbe9BSg5XeSH2/0a3E5HjHyHmNLHqRnE3cbSFY1
-	xs5xvQBMvcH1sD6+nDj8rZArXUp0UFS/waQFyESiHeeJBhA3fSteIQsRGtkjVHJrPzYx79e62TB
-	Nqw7Y7pRSIvXzNwFI2oKjEM7gGF/8=
-X-Google-Smtp-Source: AGHT+IG18Hd4qUNRFWk+M7OjaiZaUNfiMsN8okVKRXKKrQIS8pFMNuH8q+FXCe6V3qTKm6gehcD++eKjLYKejG6OcGI=
-X-Received: by 2002:a5d:6d8c:0:b0:390:e48a:3869 with SMTP id
- ffacd0b85a97d-39132d774a1mr16118020f8f.11.1741782495248; Wed, 12 Mar 2025
- 05:28:15 -0700 (PDT)
+	s=arc-20240116; t=1741782523; c=relaxed/simple;
+	bh=fwrc6M4qXhaEOVjR4JqH4N0wgiIUdIuiVJj3fQdySx0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=R7JpSq/0Iqsu6tMhxUBKshS96mmx/kKCK8ZVPJ2Mly99gFY6qd2Qb+NUuSHf7/8FM0l69HQYZYpsOeuoFdhTdUv7N1QP+75zGWGN60xxSSby73AYPb3ZZdBFQHRBXAro1OKIUdlDEyqGFYadCAYlKfgNMiqaz7wNVtZDAZ2T2K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jnbn6wNv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9/wq7m8r; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 12 Mar 2025 12:28:38 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741782519;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A1k30LnTqDxFUV7OJnGma3P9w7ZhDeZEpwubjz4wnmg=;
+	b=Jnbn6wNv12CUhwD4cOXJSS+Pw2LKd/cI5UR1CYFRPT2LeQSdnnH7V43P6N1ZR730RYhz3H
+	pQ72g+37Kzyz3IfASm5B5xMl3zPo2dP/TKUKBPSUUiiV8AU4JO+WqWLYXf/PBsuzLXoHAg
+	DaTH3rvSyK/TlFa912UGmkmuooHgyB1zdbiErI6+6GQTPLmWsyzwWdFAz8wNhTSe7VgEHl
+	2upPpwMbJtQidRwDZzrMqB2f/eBD66Ez9UI3nwkaz/VVpreik0YdcRNZ/W3dHPJf6VVUbj
+	z87w7DapmZ1dV4lEyPgyEwzJzbY6KAR0RC/jXIUuFUBgqKQfnHenN9w0euCzXw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741782519;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A1k30LnTqDxFUV7OJnGma3P9w7ZhDeZEpwubjz4wnmg=;
+	b=9/wq7m8rEfOP3hPeyYWC233Ry7/RYPdh44YoyTHQ0AICciHdLZwYmGuuLLqQ1uuL4LiqO0
+	nWpPlrirv1QNGeCQ==
+From: "tip-bot2 for Michael Jeanson" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] rseq/selftests: Ensure the rseq ABI TLS is actually
+ 1024 bytes
+Cc: Michael Jeanson <mjeanson@efficios.com>, Ingo Molnar <mingo@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250311192222.323453-1-mjeanson@efficios.com>
+References: <20250311192222.323453-1-mjeanson@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310080237.7400-1-clamor95@gmail.com> <20250310080237.7400-3-clamor95@gmail.com>
- <axqbrwdkkuztwrz67hke2nwqgz2ifpedpypas7nuohohzlzkt4@i4d2np6vclwb> <CAPVz0n10HskS+khCm58F7UUPu6XcYRs69dQtLPOQqoQS9MEL0g@mail.gmail.com>
-In-Reply-To: <CAPVz0n10HskS+khCm58F7UUPu6XcYRs69dQtLPOQqoQS9MEL0g@mail.gmail.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 12 Mar 2025 14:28:04 +0200
-X-Gm-Features: AQ5f1JppyVER9nAeNBd5d3p10n8zIEqgWAW-Q6YKsv3G3qCC_v4Z1v7eH1W5yKc
-Message-ID: <CAPVz0n1HG2qw6qgtEe0ok+9MVkzVhHkaO2vkoELwQAGpm-045w@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] power: supply: Add support for Maxim MAX8971 charger
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <174178251820.14745.7415205705924432545.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-=D1=81=D1=80, 12 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 11:15 Svya=
-toslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> =D1=81=D1=80, 12 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 10:50 Se=
-bastian Reichel
-> <sebastian.reichel@collabora.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > Hi,
-> >
-> > I have a couple of comments inline.
-> >
-> > On Mon, Mar 10, 2025 at 10:02:37AM +0200, Svyatoslav Ryhel wrote:
-> > > The MAX8971 is a compact, high-frequency, high-efficiency switch-mode
-> > > charger for a one-cell lithium-ion (Li+) battery.
-> > >
-> ...
-> > > +
-> > > +static int max8971_get_health(struct max8971_data *priv, int *val)
-> > > +{
-> > > +     u32 regval;
-> > > +     int err;
-> > > +
-> > > +     err =3D regmap_field_read(priv->rfield[THM_DTLS], &regval);
-> > > +     if (err)
-> > > +             return err;
-> > > +
-> > > +     switch (regval) {
-> > > +     case MAX8971_HEALTH_COLD:
-> > > +             *val =3D POWER_SUPPLY_HEALTH_COLD;
-> > > +             break;
-> > > +     case MAX8971_HEALTH_COOL:
-> > > +             *val =3D POWER_SUPPLY_HEALTH_COOL;
-> > > +             break;
-> > > +     case MAX8971_HEALTH_WARM:
-> > > +             *val =3D POWER_SUPPLY_HEALTH_GOOD;
-> > > +             break;
-> > > +     case MAX8971_HEALTH_HOT:
-> > > +             *val =3D POWER_SUPPLY_HEALTH_HOT;
-> > > +             break;
-> > > +     case MAX8971_HEALTH_OVERHEAT:
-> > > +             *val =3D POWER_SUPPLY_HEALTH_OVERHEAT;
-> > > +             break;
-> > > +     case MAX8971_HEALTH_UNKNOWN:
-> > > +     default:
-> > > +             *val =3D POWER_SUPPLY_HEALTH_UNKNOWN;
-> > > +     }
-> >
-> > I guess it makes sense to report POWER_SUPPLY_HEALTH_DEAD
-> > for MAX8971_CHARGING_DEAD_BATTERY?
-> >
->
-> It seems that I have missed that, thank you for pointing.
->
+The following commit has been merged into the sched/core branch of tip:
 
-MAX8971_CHARGING_DEAD_BATTERY is not same as POWER_SUPPLY_HEALTH_DEAD
-so we cannot use MAX8971_CHARGING_DEAD_BATTERY here. DEAD_BATTERY in
-charging context is state of deep discharge not the battery health
-overall. max8971_get_health returns charger state, not battery.
-Battery state is monitored by dedicated controller.
+Commit-ID:     e6644c967d3c076969336bd8a9b85ffb45f677f7
+Gitweb:        https://git.kernel.org/tip/e6644c967d3c076969336bd8a9b85ffb45f677f7
+Author:        Michael Jeanson <mjeanson@efficios.com>
+AuthorDate:    Tue, 11 Mar 2025 15:21:45 -04:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 12 Mar 2025 13:19:47 +01:00
 
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> ...
-> > > +
-> > > +static DEVICE_ATTR_RW(fast_charge_timer);
-> > > +static DEVICE_ATTR_RW(top_off_threshold_current);
-> > > +static DEVICE_ATTR_RW(top_off_timer);
-> > > +
-> > > +static struct attribute *max8971_attributes[] =3D {
-> > > +     &dev_attr_fast_charge_timer.attr,
-> > > +     &dev_attr_top_off_threshold_current.attr,
-> > > +     &dev_attr_top_off_timer.attr,
-> > > +     NULL
-> > > +};
-> >
-> > Missing ABI documentation. Also wondering if we can instead just
-> > configure sensible values without exposing them to userspace. For
-> > debugging things there is always the regmap debugfs API.
-> >
->
-> These values are exposed like in the other maxim charger
-> (max77693_charger to be exact) so I inspired with that plus dt
-> maintainers were extremely against these in the tree.
->
-> Would be nice to have those configurable at least in some way, if not
-> by tree then by userspace. I assume ABI documentation should be a
-> separate patch.
->
-> > > +static const struct attribute_group max8971_attr_group =3D {
-> > > +     .attrs =3D max8971_attributes,
-> > > +};
-> > > +
-> ...
-> > > +     err =3D devm_device_add_group(dev, &max8971_attr_group);
-> > > +     if (err)
-> > > +             return dev_err_probe(dev, err, "failed to create sysfs =
-attributes\n");
-> >
-> > Iff we need the custom properties they should be at least registered
-> > automatically at device creation time via 'cfg.attr_grp'.
-> >
->
-> I actually did not know this was an option. Thanks for pointing out.
->
-> > > +     err =3D devm_request_threaded_irq(dev, client->irq, NULL, &max8=
-971_interrupt,
-> > > +                                     IRQF_ONESHOT | IRQF_SHARED, cli=
-ent->name, priv);
-> > > +     if (err)
-> > > +             return dev_err_probe(dev, err, "failed to register IRQ =
-%d\n", client->irq);
-> > > +
-> > > +     /* Extcon support is not vital for the charger to work */
-> >
-> > The comment is a bit missleading, because the current code seems to
-> > make extcon support mandatory as far as I can tell.
-> >
->
-> Extcon is optional and charger interrupt will work fine without it,
-> but this charger can only detect the fact of plug event, not the type
-> of plug. So without extcon charging will always be done like from usb2
-> pc port (default mode). Hence I have added extcon support here (which
-> my device has and uses) to be able to set higher current if a
-> dedicated charger is connected.
->
-> > > +     connector =3D of_parse_phandle(dev->of_node, "maxim,usb-connect=
-or", 0);
-> > > +     extcon =3D of_get_parent(connector);
-> > > +     of_node_put(connector);
-> > > +
-> > > +     priv->edev =3D extcon_find_edev_by_node(extcon);
-> > > +     of_node_put(extcon);
-> > > +     if (IS_ERR(priv->edev))
-> > > +             return 0;
-> > > +
-> > > +     err =3D devm_delayed_work_autocancel(dev, &priv->extcon_work,
-> > > +                                        max8971_extcon_evt_worker);
-> > > +     if (err)
-> > > +             return dev_err_probe(dev, err, "failed to add extcon ev=
-t stop action\n");
-> > > +
-> > > +     priv->extcon_nb.notifier_call =3D extcon_get_charger_type;
-> > > +
-> > > +     err =3D devm_extcon_register_notifier_all(dev, priv->edev, &pri=
-v->extcon_nb);
-> > > +     if (err)
-> > > +             return dev_err_probe(dev, err, "failed to register noti=
-fier\n");
-> > > +
-> > > +     /* Initial configuration work with 1 sec delay */
-> > > +     schedule_delayed_work(&priv->extcon_work, msecs_to_jiffies(1000=
-));
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static int __maybe_unused max8971_resume(struct device *dev)
-> > > +{
-> > > +     struct i2c_client *client =3D to_i2c_client(dev);
-> > > +     struct max8971_data *priv =3D i2c_get_clientdata(client);
-> > > +
-> > > +     irq_wake_thread(client->irq, priv);
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static SIMPLE_DEV_PM_OPS(max8971_pm_ops, NULL, max8971_resume);
-> > > +
-> > > +static const struct of_device_id max8971_match_ids[] =3D {
-> > > +     { .compatible =3D "maxim,max8971" },
-> > > +     { /* sentinel */ }
-> > > +};
-> > > +MODULE_DEVICE_TABLE(of, max8971_match_ids);
-> > > +
-> > > +static const struct i2c_device_id max8971_i2c_id[] =3D {
-> > > +     { "max8971" },
-> > > +     { }
-> > > +};
-> > > +MODULE_DEVICE_TABLE(i2c, max8971_i2c_id);
-> > > +
-> > > +static struct i2c_driver max8971_driver =3D {
-> > > +     .driver =3D {
-> > > +             .name =3D "max8971-charger",
-> > > +             .of_match_table =3D max8971_match_ids,
-> > > +             .pm =3D &max8971_pm_ops,
-> > > +     },
-> > > +     .probe =3D max8971_probe,
-> > > +     .id_table =3D max8971_i2c_id,
-> > > +};
-> > > +module_i2c_driver(max8971_driver);
-> > > +
-> > > +MODULE_AUTHOR("Svyatoslav Ryhel <clamor95@gmail.com>");
-> > > +MODULE_DESCRIPTION("MAX8971 Charger Driver");
-> > > +MODULE_LICENSE("GPL");
-> >
-> > Otherwise LGTM.
-> >
->
-> Thank you for your suggestions, I will apply and test them.
->
-> > -- Sebastian
+rseq/selftests: Ensure the rseq ABI TLS is actually 1024 bytes
+
+Adding the aligned(1024) attribute to the definition of __rseq_abi did
+not increase its size to 1024, for this attribute to impact the size of
+__rseq_abi it would need to be added to the declaration of 'struct
+rseq_abi'. We only want to increase the size of the TLS allocation to
+ensure registration will succeed with future extended ABI. Use a union
+with a dummy member to ensure we allocate 1024 bytes.
+
+Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://lore.kernel.org/r/20250311192222.323453-1-mjeanson@efficios.com
+---
+ tools/testing/selftests/rseq/rseq.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/tools/testing/selftests/rseq/rseq.c b/tools/testing/selftests/rseq/rseq.c
+index 1e29db9..6d8997d 100644
+--- a/tools/testing/selftests/rseq/rseq.c
++++ b/tools/testing/selftests/rseq/rseq.c
+@@ -71,9 +71,20 @@ static int rseq_ownership;
+ /* Original struct rseq allocation size is 32 bytes. */
+ #define ORIG_RSEQ_ALLOC_SIZE		32
+ 
++/*
++ * Use a union to ensure we allocate a TLS area of 1024 bytes to accomodate an
++ * rseq registration that is larger than the current rseq ABI.
++ */
++union rseq {
++	struct rseq_abi abi;
++	char dummy[RSEQ_THREAD_AREA_ALLOC_SIZE];
++};
++
+ static
+-__thread struct rseq_abi __rseq_abi __attribute__((tls_model("initial-exec"), aligned(RSEQ_THREAD_AREA_ALLOC_SIZE))) = {
+-	.cpu_id = RSEQ_ABI_CPU_ID_UNINITIALIZED,
++__thread union rseq __rseq __attribute__((tls_model("initial-exec"))) = {
++	.abi = {
++		.cpu_id = RSEQ_ABI_CPU_ID_UNINITIALIZED,
++	},
+ };
+ 
+ static int sys_rseq(struct rseq_abi *rseq_abi, uint32_t rseq_len,
+@@ -149,7 +160,7 @@ int rseq_register_current_thread(void)
+ 		/* Treat libc's ownership as a successful registration. */
+ 		return 0;
+ 	}
+-	rc = sys_rseq(&__rseq_abi, get_rseq_min_alloc_size(), 0, RSEQ_SIG);
++	rc = sys_rseq(&__rseq.abi, get_rseq_min_alloc_size(), 0, RSEQ_SIG);
+ 	if (rc) {
+ 		/*
+ 		 * After at least one thread has registered successfully
+@@ -183,7 +194,7 @@ int rseq_unregister_current_thread(void)
+ 		/* Treat libc's ownership as a successful unregistration. */
+ 		return 0;
+ 	}
+-	rc = sys_rseq(&__rseq_abi, get_rseq_min_alloc_size(), RSEQ_ABI_FLAG_UNREGISTER, RSEQ_SIG);
++	rc = sys_rseq(&__rseq.abi, get_rseq_min_alloc_size(), RSEQ_ABI_FLAG_UNREGISTER, RSEQ_SIG);
+ 	if (rc)
+ 		return -1;
+ 	return 0;
+@@ -249,7 +260,7 @@ void rseq_init(void)
+ 	rseq_ownership = 1;
+ 
+ 	/* Calculate the offset of the rseq area from the thread pointer. */
+-	rseq_offset = (void *)&__rseq_abi - rseq_thread_pointer();
++	rseq_offset = (void *)&__rseq.abi - rseq_thread_pointer();
+ 
+ 	/* rseq flags are deprecated, always set to 0. */
+ 	rseq_flags = 0;
 
