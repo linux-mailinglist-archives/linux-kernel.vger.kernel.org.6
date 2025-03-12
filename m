@@ -1,102 +1,89 @@
-Return-Path: <linux-kernel+bounces-558350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF578A5E4A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:41:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA09A5E4A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 244CB17B250
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:41:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 765B53A90F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D799C258CCB;
-	Wed, 12 Mar 2025 19:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0066258CF2;
+	Wed, 12 Mar 2025 19:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UDilVDFu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KtN+MmIK"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E861BD9DD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 19:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95C51BD9DD;
+	Wed, 12 Mar 2025 19:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741808495; cv=none; b=O0DbF0LDlg9Lhl3AoaSQ9j38lyrF+binGkfgavE7RyeRZNjTngbd78HdR6/WSqDf3Ww31Gwi1AfzgITZwpVb6lCervtG6VkLhx5Heagbk1wi+gWr74DOOtIcf8qZML5f0594hNcCD6pYQj7gMvI4f2xEWos3Dcx17N9p5BJoH9o=
+	t=1741808459; cv=none; b=PFeklE6elcICiRMDpLMOfEgTDdlQ7VGg123a/I4GgN0LsTBaiumyr/jRCVN0fmqyEnRkwV66YOAB6eq/VeTA2vpYWxuhCCstlQTgefMuSx6ohHnJHywKdRrW4H8iwfQyy1rN7ECrfrCE05v7AfK3CGtFZA60b0oejmsq5iYmwnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741808495; c=relaxed/simple;
-	bh=chqaRTqy0/9wIACLkVCZlXVspE39+hFf13nQroISW9Q=;
+	s=arc-20240116; t=1741808459; c=relaxed/simple;
+	bh=ln3H3jQdCuiVM92t2vEUQn4yuJC8lu3CZ5HIpkqTiC8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TdCJUHQXaHy66Cuk0gJUlSuLzvqUAGOz21Mn1FtLwcIWvzXDmfAJMkNeSl8n6LiAb31GvGym7bdqZne4yTrsBb6RdZIVRyBwZ0rtObE0+JzN2XPx9RxzLT1v6QgUns9CzNSHlOld+3vi3cxKu30yLKIGlvU3i2h5rh5DoYkuBkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UDilVDFu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741808486;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=chqaRTqy0/9wIACLkVCZlXVspE39+hFf13nQroISW9Q=;
-	b=UDilVDFuzbMNKzhUWXas3HbaR9sr4LOyRc3bljAjR7IBmkvYk5viTB2FaLaTXL8I2LvP8G
-	Z8c2OMvA5QvQs9qMh3XQq+bFT+MdokIjAARIrVl8Iul06R21rzAoz5SdqJmbXLVdPc+DfW
-	7mIi9zKN4WriJpuU+b9hDvMeZlTG2ms=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-696-Eh6T5tWDMBiZlsaCD7KXlQ-1; Wed, 12 Mar 2025 15:40:43 -0400
-X-MC-Unique: Eh6T5tWDMBiZlsaCD7KXlQ-1
-X-Mimecast-MFC-AGG-ID: Eh6T5tWDMBiZlsaCD7KXlQ_1741808438
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c3b53373f7so35212985a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:40:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741808438; x=1742413238;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=chqaRTqy0/9wIACLkVCZlXVspE39+hFf13nQroISW9Q=;
-        b=kCrTjMQr67z/re7nMB2JIP8EcU7GPSadh52mcmfYYx63XEcJZ/+Z5IwbpzU7UHMW/g
-         fGKKxRkAhxJ1/9WSbKfETd+kF8f5j4AG7khtA69wz/RoYYeiguNskxEOHh9xRboq8xmO
-         Ni+tJ7GM3aFfdLxQLXw8LvtLwXHKnnpPMuPfdqKU4JGYmk4+HvBNnCBy88Uo9S/kdWEH
-         6aa5ulvC0JLPPcF15musjt6FBfDMKF0RzIHKEXHB8WkzVLZWg2UZYVqjkKImZRSnCoAf
-         L8X1T+ptLNM4QGBSFYxcmtaNcAtvAT84W+UjTGN1w/pRslLT3+nhk/R5ks+PN2UrPbLS
-         /O5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWOWp9VG7tnUrVeWCWZfzqSjhn8uTEkKhcopIw7amQsccjKJhA1a6Q7k6ac5w455+5OSBomKR8XhUgf2Bk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMoAu4yNE4lgZdJ/c8C4aaT15v4GrV1DMXgXcI8+YibwtEcAlb
-	pxrJvD9kcDDkmZgmAZFw6FVBRqhBDUvQlWfT31kwCUkA5jgiPX6Yp3JAT+TzfkCzukwvAcuRsZB
-	BoHt97YapKrH86yNhRlmGi4Ygnn7FVkMnjZFDAsY/kjZhVC67+qV/c/5JnOwHLA==
-X-Gm-Gg: ASbGncthByzqkHq2d1cbGlHFSVFaiBrId6O0Q6+tn/A4ZH9Vz980ylqn6DSfmHLJ3uf
-	ICoOpr1kspc7zJnGDhcWczLU2rK5caiwlOnglm8d4tu5SDifNcobJ1B8A09AZcIrhA3BztbmDQ+
-	Zyq5dqXX9Fa/MxQQaW3QLz06ghgBiZ+wJgPcrKkCElQvD34F5gK9dFaYwgJTHJnP+RJdNIBdltI
-	3cfaPJx0Um659+ynhVIVr4dz/MHTa6+wtzeQoQ2KVCv9ZJXaaCa4NgSL530mTfluAKvIrse24TH
-	uccFMtnWLWLvcPx5NBB89Cp2hKUML3rbbrJ4yGk=
-X-Received: by 2002:a05:620a:271c:b0:7c5:544e:2ccf with SMTP id af79cd13be357-7c5544e2e11mr1931051185a.57.1741808438026;
-        Wed, 12 Mar 2025 12:40:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEFtjXSl18V3cVDW3uvVcF7AOwZPDm8P35ziMG/2MMADWgaMpNEr9E4j/T7ipIz220mu+4PBA==
-X-Received: by 2002:a05:620a:271c:b0:7c5:544e:2ccf with SMTP id af79cd13be357-7c5544e2e11mr1931048685a.57.1741808437783;
-        Wed, 12 Mar 2025 12:40:37 -0700 (PDT)
-Received: from x1 (c-98-219-206-88.hsd1.pa.comcast.net. [98.219.206.88])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5568480d8sm476215785a.91.2025.03.12.12.40.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 12:40:36 -0700 (PDT)
-Date: Wed, 12 Mar 2025 15:40:35 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Christopher Obbard <christopher.obbard@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm interconnects as
- built-in
-Message-ID: <Z9HjMyjzE9XlqrEj@x1>
-References: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
- <CACr-zFC=mPNeeHMp9XnSby+cMQaPWt_3s8iUiCN+EnVPeGad8Q@mail.gmail.com>
- <uljqxwfgl26txrfqvkvzzpj6qurgmwcbuot7gu2u6rwjaqgncb@jeuyi4mexjff>
- <CACr-zFDSFizYmrVN-dV334n1kq17UB9k4FxrV20NNQCQMhzrwg@mail.gmail.com>
- <92dd35a2-d1cc-4f2b-b3a8-5752ec33b0d3@kernel.org>
- <CACr-zFCYWEFPO8yExp_8hOQdVtC9Zwu1ZOZNksSeyyS6Ht0e9A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fBaBPN0QF6Jh5qnZqXQvHghfCyiTdmXOTbCyOHCoQfKiUR2woSmZZdFjWDLRneX2QKg8Nbg2Av4tPMKJR663UnhRFfdoeqjMX95/SBLr9Naw30cO7aV6PFwdQALkAvU1Xa1Agnttp6G3y/PlbyJwxroceXBZ6m2mGm7a3HqLKiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KtN+MmIK; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=F33ePOWArlXRReOL+ROoU2zMPCNTE1WroPgaIoYuTZ4=; b=KtN+MmIK5oqH/DVENgXBtOHXPl
+	ltCNMiJ+zxb5qPcZ1udz+U4sLwA3Oa1S+wAb8vS1PLc4CdiW4lAJLqTkoszXIcYbi/eT/rS+uBM9a
+	fs0gCOztnapuKDeAejq8miFq3rReKS8hF9Wn2VWBHhes7gY+UUf5BhVsiXVgZ9HS9tjXnNpax3vht
+	QjlaqYF9CpL6Bl3HrJrkfRvIYz1/V6MM7c6pDuMVINuSjkDfawXFkE+uggePUgoIvQ1GDMQcyVx8L
+	coaQO3hQfyil1uyfkvotzqTmuyxtEPRXppQGvfBx0e0BaW1FENu06qrqUR4TlF/c0oFMDTIlL0rhF
+	RB3ba9Vg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40360)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tsRwZ-00063Y-1c;
+	Wed, 12 Mar 2025 19:40:43 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tsRwW-0004oj-3A;
+	Wed, 12 Mar 2025 19:40:41 +0000
+Date: Wed, 12 Mar 2025 19:40:40 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"Simek, Michal" <michal.simek@amd.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"git (AMD-Xilinx)" <git@amd.com>,
+	"Katakam, Harini" <harini.katakam@amd.com>
+Subject: Re: [PATCH net-next V2 2/2] net: axienet: Add support for 2500base-X
+ only configuration.
+Message-ID: <Z9HjOAnpNkmZcoeo@shell.armlinux.org.uk>
+References: <20250312095411.1392379-1-suraj.gupta2@amd.com>
+ <20250312095411.1392379-3-suraj.gupta2@amd.com>
+ <ad1e81b5-1596-4d94-a0fa-1828d667b7a2@lunn.ch>
+ <Z9GWokRDzEYwJmBz@shell.armlinux.org.uk>
+ <BL3PR12MB6571795DA783FD05189AD74BC9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
+ <34ed11e7-b287-45c6-8ff4-4a5506b79d17@lunn.ch>
+ <BL3PR12MB6571540090EE54AC9743E17EC9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
+ <fd686050-e794-4b2f-bfb8-3a0769abb506@lunn.ch>
+ <BL3PR12MB6571959081FC8DDC5D509560C9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,37 +92,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACr-zFCYWEFPO8yExp_8hOQdVtC9Zwu1ZOZNksSeyyS6Ht0e9A@mail.gmail.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+In-Reply-To: <BL3PR12MB6571959081FC8DDC5D509560C9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Christopher,
+On Wed, Mar 12, 2025 at 04:08:02PM +0000, Gupta, Suraj wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
+> 
+> > -----Original Message-----
+> > From: Andrew Lunn <andrew@lunn.ch>
+> > Sent: Wednesday, March 12, 2025 9:03 PM
+> > To: Gupta, Suraj <Suraj.Gupta2@amd.com>
+> > Cc: Russell King <linux@armlinux.org.uk>; Pandey, Radhey Shyam
+> > <radhey.shyam.pandey@amd.com>; andrew+netdev@lunn.ch;
+> > davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+> > pabeni@redhat.com; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+> > Simek, Michal <michal.simek@amd.com>; netdev@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; git (AMD-Xilinx) <git@amd.com>; Katakam, Harini
+> > <harini.katakam@amd.com>
+> > Subject: Re: [PATCH net-next V2 2/2] net: axienet: Add support for 2500base-X only
+> > configuration.
+> >
+> > Caution: This message originated from an External Source. Use proper caution
+> > when opening attachments, clicking links, or responding.
+> >
+> >
+> > On Wed, Mar 12, 2025 at 03:06:32PM +0000, Gupta, Suraj wrote:
+> > > [AMD Official Use Only - AMD Internal Distribution Only]
+> > >
+> > > > -----Original Message-----
+> > > > From: Andrew Lunn <andrew@lunn.ch>
+> > > > Sent: Wednesday, March 12, 2025 8:29 PM
+> > > > To: Gupta, Suraj <Suraj.Gupta2@amd.com>
+> > > > Cc: Russell King <linux@armlinux.org.uk>; Pandey, Radhey Shyam
+> > > > <radhey.shyam.pandey@amd.com>; andrew+netdev@lunn.ch;
+> > > > davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+> > > > pabeni@redhat.com; robh@kernel.org; krzk+dt@kernel.org;
+> > > > conor+dt@kernel.org; Simek, Michal <michal.simek@amd.com>;
+> > > > netdev@vger.kernel.org; devicetree@vger.kernel.org;
+> > > > linux-kernel@vger.kernel.org; linux-arm- kernel@lists.infradead.org;
+> > > > git (AMD-Xilinx) <git@amd.com>; Katakam, Harini
+> > > > <harini.katakam@amd.com>
+> > > > Subject: Re: [PATCH net-next V2 2/2] net: axienet: Add support for
+> > > > 2500base-X only configuration.
+> > > >
+> > > > Caution: This message originated from an External Source. Use proper
+> > > > caution when opening attachments, clicking links, or responding.
+> > > >
+> > > >
+> > > > > > On Wed, Mar 12, 2025 at 02:25:27PM +0100, Andrew Lunn wrote:
+> > > > > > > > +   /* AXI 1G/2.5G ethernet IP has following synthesis options:
+> > > > > > > > +    * 1) SGMII/1000base-X only.
+> > > > > > > > +    * 2) 2500base-X only.
+> > > > > > > > +    * 3) Dynamically switching between (1) and (2), and is not
+> > > > > > > > +    * implemented in driver.
+> > > > > > > > +    */
+> > > >
+> > > > > - Keeping previous discussion short, identification of (3) depends
+> > > > > on how user implements switching logic in FPGA (external GT or RTL
+> > > > > logic). AXI 1G/2.5G IP provides only static speed selections and
+> > > > > there is no standard register to communicate that to software.
+> > > >
+> > > > So if anybody has synthesised it as 3) this change will break their system?
+> > > >
+> > > >         Andrew
+> > >
+> > > It will just restrict their system to (2)
+> >
+> > Where as before, it was doing SGMII/1000base-X only. So such systems break?
+> >
+> >         Andrew
+> 
+> If the user wants (3), they need to add their custom FPGA logic which anyway will require additional driver changes. (3) was not completely supported by existing driver.
 
-On Wed, Mar 12, 2025 at 12:10:56PM +0100, Christopher Obbard wrote:
-> For reference, I am working on updating initramfs generation tools in
-> Debian/Fedora to include the required interconnect modules. Currently
-> the interconnect drivers are built as modules in these distros, but
-> are not included in the initrd. That is where my confusion initially
-> stemmed from.
+This is not an approach that works with the Linux kernel, sorry.
 
-From a Fedora and centos-stream-9/10 perspective, we have dracut
-updated so that the interconnect modules are included in the initramfs
-by default.
+What we have today is a driver that works for people's hardware - and
+we don't know what the capabilities of that hardware is.
 
-https://github.com/dracutdevs/dracut/blob/master/modules.d/90kernel-modules/module-setup.sh#L74
+If there's hardware out there today which has XAE_ABILITY_2_5G set, but
+defaults to <=1G mode, this will work with the current driver. However,
+with your patch applied, it stops working because instead of the driver
+indicating MAC_10FD | MAC_100FD | MAC_1000FD, it only indicates
+MAC_2500FD. If this happens, it will regress users setups, and that is
+something we try not to do.
 
-Let me know if you are seeing a specific issue with the initramfs on
-Fedora and I can help you.
+Saying "someone else needs to add the code for their FPGA logic" misses
+the point - there may not be "someone else" to do that, which means
+the only option is to revert your change if it were merged. That in
+itself can cause its own user regressions because obviously stuff that
+works with this patch stops working.
 
-We also configured all of the QC pinctrl drivers to be modules in
-Fedora, and this causes a large number of probe deferrals on boot up.
-One of the boots I measured was about a half second:
+This is why we're being cautious, and given your responses, it's not
+making Andrew or myself feel that there's a reasonable approach being
+taken here.
 
-https://lore.kernel.org/linux-embedded/Z6J3WpeJKIKENC81@x13s/
+From everything you have said, I am getting the feeling that using
+XAE_ABILITY_2_5G to decide which of (1) or (2) is supported is just
+wrong. Given that we're talking about an implementation that has been
+synthesized at 2.5G and can't operate slower, maybe there's some way
+that could be created to specify that in DT?
 
-Everything eventually loads and works as expected though. The upstream
-defconfig configures most of the pinctrl drivers to be built in for
-Qualcomm.
+e.g. (and I'm sure the DT folk aren't going to like it)...
 
-Brian
+	xlnx,axi-ethernet-X.YY.Z-2.5G
 
+(where X.YY.Z is the version) for implementations that can _only_ do
+2.5G, and leave all other implementations only doing 1G and below.
+
+Or maybe some DT property. Or something else.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
