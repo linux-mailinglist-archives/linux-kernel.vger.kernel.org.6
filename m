@@ -1,102 +1,87 @@
-Return-Path: <linux-kernel+bounces-557636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D5EA5DBD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:44:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2035BA5DBDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:45:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDFC37AA4BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:43:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 634C017A17B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8A923F381;
-	Wed, 12 Mar 2025 11:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA59423F294;
+	Wed, 12 Mar 2025 11:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="wgy90SDO"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99194125B9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741779861; cv=none; b=CmEs2j/iJKmEov4DLMt5O4aC140HcP1sSxak0SKwrE6oEquOM2KYNynRpRkXbBvuA/RlX9nPd1gFcglVS2Tl8GhGg3q0TkVznkDYsK8UpVYMIcgCnmW4BiOvjRf9+n+c2LJdwFoJ3rtYqiI/UqOFKNFXx6H0V65q9rw7NGRSJZc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741779861; c=relaxed/simple;
-	bh=ZFCKMFVYzNpv0Ew3/PBCQCLnP7czEt7QhS7DeQ/FVnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pXi7nhT8hR1wEbYn8kj7s01Pppa2PGUK+S/p0SBkXzNHvw2w1LUhUr0M/QJKGulJdxyBiQ13No1pE24riQXiDDLyEQdMOH7ZH9sAEey2o4d2odGYvDn0dHPuGWYVCoZ9nh7OuXMGlXFkIbwW4As8JIbNMKtSnFJhdMuXFkdOh5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=wgy90SDO; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sVH6zzSB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 2F9D445400;
-	Wed, 12 Mar 2025 12:44:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1741779858;
-	bh=ZFCKMFVYzNpv0Ew3/PBCQCLnP7czEt7QhS7DeQ/FVnA=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBB423E35E;
+	Wed, 12 Mar 2025 11:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741779903; cv=none; b=ihvjISfRjzEMTJLfOXFLxrXggfLu/XW5eHMPpqMqyLtTyTHhIrZKVeUux+VIqQET3YPdmMSoRddVCKpk5snxkqPR3AYO7CaO1YzoXtwuoC5WjUErfaKQH7grxJ/4WORSN11qzLYA8dg5qonAtip0RAlYOPNcNSl+Kf6oAr4X214=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741779903; c=relaxed/simple;
+	bh=HZn6RlsOswkW3adjrj5XUZr0KS0DHc4suL0U/KWEGIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dakkj4VgZwEH7sI9GHJGAx0n70yLjXXmyQjUoMYeNuE8YjiDJODsTsCohyUKtp2exyE3g9LwQbMERcBP7onUgw3rozpYflR/ThwZTvhS3afR6uM7RSR+tVY/4+4PdE7wQuxpyuvuhud/4qfeWOfKrcRuZrS37o41CMhXOorfJzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sVH6zzSB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80962C4CEE3;
+	Wed, 12 Mar 2025 11:45:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741779902;
+	bh=HZn6RlsOswkW3adjrj5XUZr0KS0DHc4suL0U/KWEGIM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wgy90SDOHbnwylACo48iC7a/GjY8Siktpl4WZtm43XqQV8AEKn7TCEXZT5a/p8NUC
-	 kyniPxTK/pzTXGElQA2LO7gprjHA+AMQPmyGnN0TKSLYSEFVKsPqOjblZONx+pvzmO
-	 BJ3APIceceMn7sdaBcB8nK58tsdn1WEDK0QKEG7cGMlPaMFlYeFrhM0q9bNSwkz0Bv
-	 AUnVLadqsDDdgBqxQ97EWBa7Oe4J3Mm1hK3ou+qd46nCHJ/IwijZjQLYaI11KXY0zw
-	 jKlX6hubXcz1NpMd/B/8cr54Epvy/3y35Mn1sbfc3j1Mkt74ryvmcGbH0ZO2D3hrFn
-	 sGkJCBkOMRu9w==
-Date: Wed, 12 Mar 2025 12:44:17 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Joerg Roedel <jroedel@suse.de>, Alexey Gladkov <legion@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	=?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
-	"Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
-	Dave Hansen <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	Larry.Dewey@amd.com
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <Z9Fzkbc-5JmOOa_N@8bytes.org>
-References: <Z9AFyG7798M4VNJQ@suse.de>
- <29fa0d10-0d3d-47a0-8832-b2c7fc04f637@suse.com>
- <20250311110748.GCZ9AZhPYYAz-MXErv@fat_crate.local>
- <Z9B_yS_d8ny9hYUX@example.org>
- <Z9CDjecpydOsRhUy@suse.de>
- <dzs3mxfvac2t7itqcv2vnz3cidspwvjinimkbn3ddygxunc2q3@akdoea7e2gon>
- <Z9FEcYssvcaZab1c@8bytes.org>
- <pskj4f5fitd5ytb7gq4negloioihl2rfbpfwa47fnw74gxmlvh@vpoijhxcee64>
- <Z9FO1CefzO89syGg@8bytes.org>
- <2eopafgnsx7pktqfqhu2nye44ib7ifz2cppqt7gunrltpxrnj6@i7jwe6jrun73>
+	b=sVH6zzSBQV0fLi3kMCD38aHo2hizX92nAlToTw5pulOgOLzOhmz6r3r+aRlRjomDR
+	 kDg0euFdnsr3JXZk6KE6i5cjFxMiOKmngf7YWmpJf2bHFSdsPrySFo2PvMkiTgIi6U
+	 dXBZOQK14P8JDWwrYFN1m7WMMBhxq/HCaa0BswvzFZ25JS8kFcTekLvOVdKokumRjj
+	 OrqzZSNti+0SbDgVe+CxEFUW9SLFPOjVAzIDKCgX4vtHUpOyMlG8seqc3SSp64BNvv
+	 OGVDmK3kI8qVNIl0bKalnEv/LwT86+4wk7WkGVo7eKnaBQwMXQDwoioYQitRlkH1rU
+	 g98jGwo+tH2lA==
+Date: Wed, 12 Mar 2025 12:44:58 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ayushi Makhija <quic_amakhija@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	robdclark@gmail.com, dmitry.baryshkov@linaro.org, sean@poorly.run, 
+	marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org, robh+dt@kernel.org, 
+	krzk+dt@kernel.org, konradybcio@kernel.org, conor+dt@kernel.org, 
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	quic_abhinavk@quicinc.com, quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com, 
+	quic_jesszhan@quicinc.com
+Subject: Re: [PATCH v2 02/10] dt-bindings: msm: dsi-controller-main: document
+ the SA8775P DSI CTRL
+Message-ID: <20250312-fine-vermilion-grebe-bdd5c9@krzk-bin>
+References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
+ <20250311122445.3597100-3-quic_amakhija@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2eopafgnsx7pktqfqhu2nye44ib7ifz2cppqt7gunrltpxrnj6@i7jwe6jrun73>
+In-Reply-To: <20250311122445.3597100-3-quic_amakhija@quicinc.com>
 
-On Wed, Mar 12, 2025 at 12:59:50PM +0200, Kirill A. Shutemov wrote:
-> I am not sure I understand your point.
-> 
-> In TDX case it is as trusted as the kernel itself. If the system is
-> attested, this info is going to accurate too as kernel gets information
-> from trusted TDX module.
-> 
-> But nobody suggested to use this information to judge the security of the
-> system.
+On Tue, Mar 11, 2025 at 05:54:37PM +0530, Ayushi Makhija wrote:
+> diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+> index ffbd1dc9470e..3621e3f12b65 100644
+> --- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+> @@ -23,6 +23,7 @@ properties:
+>                - qcom,msm8996-dsi-ctrl
+>                - qcom,msm8998-dsi-ctrl
+>                - qcom,qcm2290-dsi-ctrl
+> +              - qcom,sa8775p-dsi-ctrl
 
-Version information about the TDX module is required for the security
-evaluation at the verifier. The question is whether it makes sense to
-expose this information in an untrusted way in the guest (even alongside
-a trusted way), or if that makes tooling prefer the untrusted source
-because it is easier.
+That's incomplete, where is the rest of updates in the file? Not
+needed?
 
-The guest kernel is also only trusted after (runtime) verification.
+Best regards,
+Krzysztof
 
-Regards,
-
-	Joerg
 
