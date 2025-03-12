@@ -1,133 +1,111 @@
-Return-Path: <linux-kernel+bounces-557751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F94A5DD39
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:59:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E995AA5DD42
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:02:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1968E189873E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:00:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B25D179B4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68E3243965;
-	Wed, 12 Mar 2025 12:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCBB241CB7;
+	Wed, 12 Mar 2025 13:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZlxhnSb"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XzToS2AL"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D0042A82
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3275112E7F;
+	Wed, 12 Mar 2025 13:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741784387; cv=none; b=NUl+lm3cvNIPGZSPjMyuCXJD4G791/YtttIH5FZ1gtsqtbcIEDaW3BpvYX/k/FohVuT5muJIrPjXhfApFip+e8Lu1yVTURd3FWXOQzDWDgx+pymsuqUfWIgZW73P4LIcUmjyIx7tsdMLaw8Z3WUmUtvUZg3hd7Ud3Y6BnqRIKB8=
+	t=1741784518; cv=none; b=gJH3oVIE7jeyTeKzC29WCbKQjNtKZW8vr6NkTwKPuVU6u8VVcaeGjCphjzAxRqeltSRW3DBKH7RkAclpS1nf980xzfygkusX/WxRuRYpoYHC3yzwwbhcaYCExGYyCjwo7I5zLDs46iphbVV7EocoFuAZhuqKESk5mECeIF1FD4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741784387; c=relaxed/simple;
-	bh=s8sASPOMo47S253so280vz3MGuiVi9Z3hXJHZwVeryw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PyiDoYijPXbrEMqTMiIyA2N7rOoKh7p6kmaU4OvKvQsp1WP6ZDPk1RIvMJ6Ae7jQGFv1eT1fRfrmnuUjVzk6TZGdJEjU4FQVuTYkCOwTbE5xA+Qc83+oT96WfKB3VrC7Ellpa2ghVce8EAa96ro3q22ejx+82p/1R+751TybWl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZlxhnSb; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30c091b54aaso41956571fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:59:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741784383; x=1742389183; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fggELxQLCLR7eKf5JPdKHRjsa56C6Hwmky6kSd6ySn8=;
-        b=ZZlxhnSbP4mAL3UMX3O5SE13wNMaRLbkLiO1Ds68yBPVP3u7/1RWEkhWNOVP6LnSFk
-         FHqwuHKVetFhQgQi4hFm20TgdhqpCE/tIzkMOVKJwC2Lm3gRoyLAxbE2foXngBbbxHmw
-         tTSevTI7AfsQyak+COqtOFmE7gWytUQDEiD3wfjmGbfjq06Kc83dtgqj/qLev8njpmh6
-         JIa2UU03H6dN7NQGoz9xj88ic/gG4S/d9uegYuCCub2tmXAo2D89SCxkMU1hI7NvRHEe
-         Bm2jHxGu90E0My8y8caORaafYXlws0UaSMxP8uHuEBZTeH3BIgDdmJZPhSOmRTUSI/mO
-         U2EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741784383; x=1742389183;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fggELxQLCLR7eKf5JPdKHRjsa56C6Hwmky6kSd6ySn8=;
-        b=Nl2jV5/MxutbtDcMVAfqOYwwtioh7ilNryAqLqQga97IPLqncmXm72wSW7c40X6NGf
-         XYqz/353lxHdaSyKndFZAZmV8zC2SCO/amuS5oFgZz4dsAHcVafnKo5v2Kbry4JTkvCq
-         7P6qYZMq1/CbDMUnz3P8AmE5ue/rKrTGjbi3acJ8FIaYWPBFM6H9lPMPXFfiTq7MiB2e
-         NeWchyi/7c8QAsRaIBVvdSzilkNUjYxihIi5z9w6qABBL9J/cdDqo1nxK+Zg/oEzH9Cp
-         2AQHYbL0bmik7+Wpsw82gitMxJRZ9Uv219hMZspIpL34GgTf0pHn9uU8+8TstgopE0uX
-         YQeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRdjgdA0ukBgbQK3XgEa0ME/mgMEglwyCnIHu7JTjNsLq8gbiagDim2of2taTpJlbRJyiIjprubinXbGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFgWntYF1xBwyMh3uWJSLRNnJmcQGSHc7JZSEnGKcPFb4qigGA
-	vI4fhxWe2u1HWX2WyuqU6sGTp+I+kcdi83WLOydJ4m4vxPGWxmlD
-X-Gm-Gg: ASbGncvZpbHb+exKj/unzBDdPJO75dYand+THva6nsBpEtkm86DupnF1MVMJHwm3XKJ
-	cPnDcwwJuiCOP6vQ9qbiQVP/UpX42qIwNxfGZVnUz3K4HkLY3zBAxyHbx9+ar4QC9rI8G1kY4At
-	HKccL+oXsofJXoidBtsSr82Ur/U86RzD3Dj+MvbXp1uFwdEiA+ruQx5EAxUzzz7xCb9J1enGURT
-	jYQO0/dcBk3pu56qN4tR8qUfXjOxQwi02OGdzRQvSne5vbyrxwlUcGk2VXi1CrixdIFlJ5T6wPj
-	2dKZq5AcIGXJ0Hs/WkDyyGCr/38yFvpviMP+q/SmXVXvjJI=
-X-Google-Smtp-Source: AGHT+IEyBPHGeACQEApQfi8+oQCGxoTXwlLbnBHsRBzsrMCG2vEyKvZtIi/gjtQmBXPP25F0ryjivg==
-X-Received: by 2002:a2e:be08:0:b0:308:e803:1180 with SMTP id 38308e7fff4ca-30bf4632c5dmr71240791fa.31.1741784383276;
-        Wed, 12 Mar 2025 05:59:43 -0700 (PDT)
-Received: from grain.localdomain ([5.18.255.97])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30bfb9f900csm19410771fa.84.2025.03.12.05.59.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 05:59:42 -0700 (PDT)
-Received: by grain.localdomain (Postfix, from userid 1000)
-	id AB29E5A0044; Wed, 12 Mar 2025 15:59:41 +0300 (MSK)
-Date: Wed, 12 Mar 2025 15:59:41 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Benjamin Segall <bsegall@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrey Vagin <avagin@openvz.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [patch V3 17/18] posix-timers: Provide a mechanism to allocate a
- given timer ID
-Message-ID: <Z9GFPffpN81va8bl@grain>
-References: <20250308155501.391430556@linutronix.de>
- <20250308155624.526740902@linutronix.de>
- <Z9CsstMf-EVZpsiH@pavilion.home>
+	s=arc-20240116; t=1741784518; c=relaxed/simple;
+	bh=BHGEqUBsRjSctZb37VInW2MFE8xUzgQxm0wCEbT3a8o=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=g4BU2kh7/TDo9+mP7KfwDHPJlYVOiW50X808Fsqqil347e3wv9Y/JkCqZL+IFl52RPAKx3MytFT0PLUMTVwVF79RIJPV0t+MM3owYjqK2QDZ1hvWk3uYN6SQBq0UHUXtWF47YQVkI9e6aQACJ0IUruJBZXprNxu1OtkF1lWnP50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XzToS2AL; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741784511; x=1742389311; i=markus.elfring@web.de;
+	bh=wa2E+e8YKnG1Xs+YxlyJJXzQdlJ5kCk+NRUrDAih9V4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=XzToS2ALHajoqXEtPD37x05suc523bwy0gv0fldiMPnf2IVYlmwQ/N7IIFMjS1zY
+	 9xuLyBJtplgx6Z+zkyDkYJI79vBny7rymvCJxXSP50SswUquYNisRB2H71l1S+OLC
+	 np1WTpA8qV3kVO5oykBAuRiEkpGigsaGGAitGoSoTJKxQE9WlxxJD7st+a4BkG21f
+	 2JX8BbD2L4zwcKsqrgxHBayXjwbc2WNrWVuSftr40OXT6/DdnjJZKQP6UcZb+tdxa
+	 G7XFMlkwlnRZogpzD3EAF5qt1o11Tjdno863AtpPDjS1Kb4pYvwQqw4ebZpVA7jjA
+	 IMfLzrgNCZGmv40uLg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MC0LJ-1u4D8k2HrZ-000oJ9; Wed, 12
+ Mar 2025 14:01:51 +0100
+Message-ID: <27efccdc-3400-46b9-9359-4b2a6c8254e9@web.de>
+Date: Wed, 12 Mar 2025 14:01:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9CsstMf-EVZpsiH@pavilion.home>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+To: Qasim Ijaz <qasdev00@gmail.com>, linux-fpga@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Marco Pagani <marpagan@redhat.com>, Moritz Fischer <mdf@kernel.org>,
+ Russ Weight <russ.weight@linux.dev>, Tom Rix <trix@redhat.com>,
+ Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>
+References: <20250311234509.15523-1-qasdev00@gmail.com>
+Subject: Re: [PATCH] fpga: fix potential null pointer deref in
+ fpga_mgr_test_img_load_sgt()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250311234509.15523-1-qasdev00@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qRHTGPqNceH8IbA4YcipsJ6jRqi7gyRXpJ/J5IJMJ/4oZLWb+sV
+ OuoaGdXteDQMl5G626O/Ne+2E07/FJBJcuS1hO1NYqJwceA7ag+i9f8JutLJtWcPEidcDW2
+ cQ+wGcF6HXYTxGgeqnoOWi2CD/FAKdQT2vyXhNPgKJdCvdZ1yCTYnSuqEu2xHG77OiBZP8l
+ eoqUr1NLoizc7ezDxRhWw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mEMseo+PhIY=;V0O/wxhwV2ei7Wbe26EVhEYz2Vf
+ 5yheAmTS1xiTVfpdwjTb8KRJ7w01LyQlrMTjTGRqqdNONvomlNm/Y29sBE+7Xxdvc8OrLjRL7
+ XtGpZyBDmn4h3P/NCDnJh2UgEf15Xrjn7136zmCYBe1htg4hcC/zFLx7FzXi3OIx1scuGRByf
+ +N/hkxGzM+PZd5rQfO4hciRkdwk+YxhvID9zn/+hfpXi96khz7to63qrOGWQe5ErpiKQxMTEn
+ s7XnTaM1/tRnVRUcP1l3QVJVc8oH2ZrZW3WD/fr6/7mazR5HON3Nbdxsguc63ytRbX4T0oUDy
+ Z9oVWqOhWeLyoGBkmSnKowkEKcgy8pnchY+FKvQmWzoccFfnz+/n6mDh4HlCOVnNqxkRztC3M
+ okKnX8F3gds7QJEELQVyppCe/AYu3ddjXHB6FSAKDLag+0czj8Vsnt2B1Fz2S24/TNzJ/NndY
+ kkcBKGxzcuSgmLZOycKyEkOFMkber6stepfODSzjr9ToObq2J9+h5TmYcl4ZIeF97IKDz0lxr
+ oo9OyTK02d03AXrYNfssxktF3n/IiMvVlqkQvziqmMysofSgphW84fx5A2GWi9iqFOR/EbVXn
+ I9aBZsi3GuPhvtu1sxjL1z1DeMmg9vbldd5A7rn+xN5FwTHaEvKTiS6Z/xLiF6JQL5xMIaOwv
+ pfsc9Ay7op3DP/S3/xA5LiRuAqkszh4qseWOYZX4JaoZ6DAvq2prbojZK9InF7gChRZzCbrgg
+ szxhwBKEXW5vJtiLXcqRO9HIiYFR53sMxzL0sSM3QUhqttdoUgfH7p+ey7oHz4XA3XTgdPMSK
+ /19TaFMxRsGBqPE1RygQ1xdEUm9mSaUJc1MZnBqtcaRnh3FZcslRGMNb2cKzVZPel+wOpCyMj
+ 1AZXEz4iSbYnCKTEAiE3sqA6QV2aZTtv932+d89zXY//5cFrrijTsJpRvG+8We2cE7DRM9cY1
+ rB0QqJ9adGvb9sebTXa+9RJMj3BJv/kDlEzvcmT5angAwOUzBU/pwGhbnKQe5yjKvnua4TL8b
+ 5eoWIhRj0xPEzzMKIINVDG0/RYxUJ9gklMNlWAPfDkYhci2E7cctTBongCaI1HU8okNDEj4M8
+ WQ2EzgiqZ6N6/95aga4WuBZCOmon/Dxbuwipxp6zooTsCt2TLLw0Vz5+dY9BFpyzshcgOjpLO
+ DgWDnTvDLs8zV9tqzNmZTKbncgsKAnq3giuH1mgE0CyRRrv/FiHzcx4kUGKlKxS3/F2BjDUjE
+ sH7zyO+W07rdeQpyLGYfFSOSpW+KoT7nooqJohhPQrhuyo2h/5S8OtG/HHeT7Et+Tes+CHlAq
+ RwICmtGBK+afoFREBaU+YBAhHC0aXHwhwGDl5o6Y2EA5wtDHDgDS3mAAr1fPCLSMRvXFZ04M8
+ j/v1W8AoTvQCoFYD0xN7uaCRmmoeKXojJpvR/5do0Od8SgXaHCwb/+b7YhDmNv7KH4dQ88dF4
+ VI8U6ki0wl5ifZk1i78JaQEihhfk=
 
-On Tue, Mar 11, 2025 at 10:35:46PM +0100, Frederic Weisbecker wrote:
-> Le Sat, Mar 08, 2025 at 05:48:47PM +0100, Thomas Gleixner a écrit :
-> > @@ -364,6 +389,16 @@ static enum hrtimer_restart posix_timer_
-> >  	return HRTIMER_NORESTART;
-> >  }
-> >  
-> > +long posixtimer_create_prctl(unsigned long ctrl)
-> > +{
-> > +	if (ctrl > PR_TIMER_CREATE_RESTORE_IDS_ON)
-> > +		return -EINVAL;
-> > +
-> > +	guard(spinlock_irq)(&current->sighand->siglock);
-> > +	current->signal->timer_create_restore_ids = ctrl == PR_TIMER_CREATE_RESTORE_IDS_ON;
-> 
-> Is the locking necessary here? It's not used on the read side.
-> It only makes sense if more flags are to be added later in struct signal and the
-> fields write can race.
+=E2=80=A6
+> zero it out. If the allocation fails then sgt will be NULL and the
+=E2=80=A6
+                                 failed?
 
-Actually this is a very subtle moment. The @timer_create_restore_ids is a bit field and
-updating them without a lock already lead into hard to catch bugs in the past especially
-when we have close bits members such as is_child_subreaper/has_child_subreaper near it.
-I thought of fork(clone_vm) calls in multithreaded application where real_parent may
-point into our task which is doing prctl but didn't find any problem so far (though
-internal feeling says that this is not hot path call and better would be to keep Thomas'
-original lock code :-). Anyway, seems to be safe without it.
 
-	Cyrill
+Can a summary phrase like =E2=80=9CPrevent null pointer dereference
+in fpga_mgr_test_img_load_sgt()=E2=80=9D be nicer?
+
+Regards,
+Markus
 
