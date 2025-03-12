@@ -1,142 +1,120 @@
-Return-Path: <linux-kernel+bounces-557142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7979A5D432
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:47:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACAD0A5D436
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:51:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 756CF189A968
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 389E93AA850
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A159E145A03;
-	Wed, 12 Mar 2025 01:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9XtLSkI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E381422DD;
+	Wed, 12 Mar 2025 01:51:38 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C6D13B58A;
-	Wed, 12 Mar 2025 01:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FBB5684;
+	Wed, 12 Mar 2025 01:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741744034; cv=none; b=InDkSzaXC70Gb0nqnTTcWI6fLPnX+70o2amTYlAVJPTBT8UfbiBSPoOM3Lz3mNIqa19MM3Ad+HspgTJ2/DAmuhRE91Cuqr3N/OrkVkhhj+tXxT3FsnuD6mv9iAhfwInT6nxQG7sfOWpIpCdnK5KScrFP+LwM87DzjgKfPakXIhw=
+	t=1741744298; cv=none; b=BrQU/S2wXHLmpduUtX5V0PQRDbEDkGGbkcp6lImrhEAKxbYF3sgaP0dTvgxsSbtJKphKVqQdjACxklyCxVVwK86cWxczlGCzRpiS2St5koR98mr2n8t9S/VJK3OhEIBQ2fSSL0NkR5eSpnqyVUISlC8/GwdJdakrK7olWrCXacw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741744034; c=relaxed/simple;
-	bh=SnkbAMpzp9910fdInL477n0gyulfqfI41ZGog+JM9A8=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=a4ZdSEGPtasp8cMdIZuqd4NOsuv2cVPP1J2lNNGc17Nvdwp0mNclSzSJAXx6hWHKFKOyWGlCpw6RvKXwGVhqp1QINUcA33Da1fMwq1EZ5fbqlkWWFEzeCR+gN5I1uz+j14bYCtSgA1CgLwCTTd9iTcua7tEU8y/6wblL0jh/pHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9XtLSkI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 543E6C4CEED;
-	Wed, 12 Mar 2025 01:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741744033;
-	bh=SnkbAMpzp9910fdInL477n0gyulfqfI41ZGog+JM9A8=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=K9XtLSkIAAkkmMMbkpC+eN7MsCEL5wkZK+GQE7KhFNaJI/+b/H3ALzPnRaafKCTCs
-	 FzSYts4NTlyKO7ktquUmErIjAwAg348ax8jZEWZhnkgcZGe7d6y8b+RedUe0qhZwOh
-	 vBex57VaYRjjSBGIWOFnTcjp9/1Cavg9K21ksjMTWN/wFo1G4RI4O6kRtUTCF1qev5
-	 Y9Uoy0hWiynEV14IXCXQwq5LBNuK9NlQ54EMb2NNYx5FgyZW7u0gYLQPaFXJ79U+5O
-	 8vtwSvHSxbdN0yE2ctqy2YdDh54D3S6KJYwjO+STxLniC3L4wubI4JhJ0C9hDwwtbA
-	 T/ubrT4+iDi+g==
-Date: Tue, 11 Mar 2025 20:47:11 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1741744298; c=relaxed/simple;
+	bh=kBuOWzKazd0QJN+2VfW1BelVrTxdYN+lsa1A1d0T5FI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ChXXT3j9qxSc5jAgQHw3EQmsBK0ENFUW+hVNwbhB2B0Jo7MEjSj3Zv4c3I5t3B/xDb37vdDzgC9jYiJtOde0mpAi1qLMCTqVek0xc9GAlb+UR34jnO1p/u3NmSfWvxDdnfVuEbG4dr157lu+WMAtTdYk+S2VNC97vJAgL3ix060=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZCDB51JFwz4f3lgM;
+	Wed, 12 Mar 2025 09:51:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 0386F1A1546;
+	Wed, 12 Mar 2025 09:51:33 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgB32l6j6NBncivzGA--.24749S3;
+	Wed, 12 Mar 2025 09:51:32 +0800 (CST)
+Subject: Re: [PATCH] blk-throttle: support io merge over iops_limit
+To: Tejun Heo <tj@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Ming Lei <ming.lei@redhat.com>, axboe@kernel.dk, josef@toxicpanda.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250307090152.4095551-1-yukuai1@huaweicloud.com>
+ <Z8sZyElaHQQwKqpB@slm.duckdns.org>
+ <5fc124c9-e202-99ca-418d-0f52d027640f@huaweicloud.com>
+ <Z85LjhvkCzlqBVZy@fedora> <Z88K5JtR4rhhIFsY@slm.duckdns.org>
+ <baba2f82-6c35-8c24-847c-32a002009b63@huaweicloud.com>
+ <Z9CQOuJA-bo4xZkH@slm.duckdns.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <c1e467a9-7499-e42b-88ed-b8e34b831515@huaweicloud.com>
+Date: Wed, 12 Mar 2025 09:51:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-arm-msm@vger.kernel.org, 
- Ivan Belokobylskiy <belokobylskij@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, Tony Luck <tony.luck@intel.com>, 
- devicetree@vger.kernel.org
-To: David Heidelberg <david@ixit.cz>
-In-Reply-To: <20250311-lg-nexus4-mako-v4-1-3916c8ec7edb@ixit.cz>
-References: <20250311-lg-nexus4-mako-v4-1-3916c8ec7edb@ixit.cz>
-Message-Id: <174174398220.182780.15077964368844189000.robh@kernel.org>
-Subject: Re: [PATCH v4] ARM: dts: nexus4: Initial dts
+In-Reply-To: <Z9CQOuJA-bo4xZkH@slm.duckdns.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB32l6j6NBncivzGA--.24749S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrur15tFWrCryDuFW5Wr48JFb_yoWkGwc_uF
+	Z2kF48ua1Yv3Wktay3JryagrZIqay8WryUJrZ2qwsxW340yFWDuFW3Kr98Zw1rGFs7JFn0
+	kwn8Zr43ArW29jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+Hi,
 
-On Tue, 11 Mar 2025 17:10:02 +0100, David Heidelberg wrote:
-> From: Ivan Belokobylskiy <belokobylskij@gmail.com>
+ÔÚ 2025/03/12 3:34, Tejun Heo Ð´µÀ:
+> Hello,
 > 
-> Add initial support for LG Nexus 4 (mako).
+> On Tue, Mar 11, 2025 at 11:08:00AM +0800, Yu Kuai wrote:
+> ...
+>>> That said, I'm not sure about changing the behavior now. blk-throtl has
+>>> mostly used the number of bios as long as it has existed and given that
+>>> there can be a signficant difference between the two metrics, I'm not sure
+>>> the change is justified at this point.
+>>
+>> If we really concern about the behavior change, can we consider a new
+>> flag that can switch to the old behavior? We'll see if any user will
+>> complain.
 > 
-> Features currently working: regulators, eMMC, and volume keys.
+> Yeah, that may be the right way to go about this, but let me turn this
+> around and ask you why adding a new behavior would be a good idea. What
+> problems are you trying to solve?
+
+In the case of dirty pages writeback, BIO is 4k, while RQ can be up to
+hw_sectors_kb. Our user are limiting iops based on real disk capacity
+and they found BIO merge will be broken.
+
+The idea way really is rq-qos based iops limit, which is after BIO merge
+and BIO merge is ensured not borken. In this case, I have to suggest
+them set a high iops limit or just remove the iops limit.
+
+Thanks,
+Kuai
+
 > 
-> Signed-off-by: Ivan Belokobylskiy <belokobylskij@gmail.com>
-> Co-developed-by: David Heidelberg <david@ixit.cz>
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
-> Changes in v4:
-> - Sorted regulators and added regulators compatible.
-> - Corrected pmic include and references.
-> - Moved &rpm outside of / node.
-> - Moved and simplify pm8921 keypad.
-> - Added chasis-type.
-> - Dropped incomplete WiFi node, will be provided in future
->   contributions.
-> - Link to v3: https://lore.kernel.org/r/20250309-lg-nexus4-mako-v3-1-1dc2807df296@ixit.cz
+> Thanks.
 > 
-> Changes in v3:
-> - rebased against next-20250307
-> - dropped backlight until driver gets converted to DT
-> 
-> Changes in v2:
-> - lge vendor doesn't exist anymore, rename to lg
-> - sdcc@ to mmc@ to comply with dt-schema
-> ---
->  arch/arm/boot/dts/qcom/Makefile                    |   1 +
->  .../boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts  | 344 +++++++++++++++++++++
->  2 files changed, 345 insertions(+)
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/qcom/' for 20250311-lg-nexus4-mako-v4-1-3916c8ec7edb@ixit.cz:
-
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: hwmutex: 'reg' is a required property
-	from schema $id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: hwmutex: 'syscon' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: soc: replicator: 'ranges' is a required property
-	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: syscon@1200000: compatible: ['syscon'] is too short
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: timer@200a000: 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/watchdog/qcom-wdt.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: sps-sic-non-secure@12100000: compatible: ['syscon'] is too short
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: rpm@108000: 'clock-controller' does not match any of the regexes: '^regulators(-[01])?$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpm.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: syscon@5700000: compatible: ['syscon'] is too short
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: replicator: 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/arm/arm,coresight-static-replicator.yaml#
-
-
-
-
 
 
