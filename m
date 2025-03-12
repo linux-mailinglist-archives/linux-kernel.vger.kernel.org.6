@@ -1,181 +1,194 @@
-Return-Path: <linux-kernel+bounces-557519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3BBBA5DA51
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:17:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB75A5DA52
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:19:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B9F43B8802
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:17:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A93EE171918
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D71223E23F;
-	Wed, 12 Mar 2025 10:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810D123C8B3;
+	Wed, 12 Mar 2025 10:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iTIl3s0X"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f1O5eBbc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AB31E7C03;
-	Wed, 12 Mar 2025 10:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE69221D59F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741774657; cv=none; b=uGVFsHdG7VH8fWCe32EkMBWDAteLInMrVllUJ38Bp3PNGHPwc+kBKhU/3za5aaBDDCy3dWWSV9CKsT+CflF8BPGi4ZOqZ31v06ixL4t8uStCzDk+BqBM3Dr9Eq0dCsTMSdDghct6n5qCS3RUDZTOUZXcpLigIPxzPBZ9sb9N1tc=
+	t=1741774742; cv=none; b=cvbJ2RydEF/zcUJYkqEzLqaHWvBedmRTp4wUxhrCsA+yjWxnd1L/EKAIhg5sX8JaXnZDpvFg+VNfUlhUQ+Z9J5ab+HQFPVNTq9Y4fM4MMD943U5RlP5B5txQ5T5EYwbhGniZaDjxr0BDbgWA6COtSxdaIohaJsoG4Lwy6xZdM/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741774657; c=relaxed/simple;
-	bh=khIVvvPM63SZripAQJxgge0us1XyV4NC6idslFxchxQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nMbir5pEAJ7eSf6rDi4/ec/hKBesDt66RLaiiQztcNnEngU3BN7ILTasyyEF5sRjbhn9ZRRxHg5V7CDzCPxYSceSqzJmXGiKatZX8zHYhksJPa+bvdOIjsnLG5K8b5bNKPLgcDikk8h3aeWC8/VmuBB005FSRb5io1QyRlOwWuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iTIl3s0X; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-224191d92e4so113729005ad.3;
-        Wed, 12 Mar 2025 03:17:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741774655; x=1742379455; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j8K+cYY8a18S9R6p3y1Avimn06H8Fj9HbvffhzxH0lg=;
-        b=iTIl3s0XQO8eV47WJbhwVGK9iw2V6pYpz7MrMV8oMNvVxAqbDcZmErhU/A+F3wQD6M
-         SDZYKQ1GMUy7alCwLwlaeZLhEtuLgTlPPFokS24T0qpciNYeSp0R71wr9wo5/BUfuzlx
-         ZYOIfyQbMBcFE4Lp+NeH7zm8C2tW91ZTbxI1nj6NiVE1cw/lpUj4mYinwofzepaub81r
-         1gSgMyMfzHbnp2DC+8pFQkx+O9iA6uzo5QJzxfrxFW8BFLlaflExLvd1vjuOUD0UICEp
-         h8zeJXOV2jYmz5LJ54fsbuRXFv0mY7Q5OECRYrYi5AExmC5B43cKeXWxCz+4tHpolMHr
-         0lrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741774655; x=1742379455;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j8K+cYY8a18S9R6p3y1Avimn06H8Fj9HbvffhzxH0lg=;
-        b=KnSKsk7IL9cOaO02fP7EW9W/RsY5PBjcOGrkJNlBno03lQihbFA6PCx+NPbZHqvoNj
-         8eMAkSqhdUwYqw9kn58hwczkgaR8RARWi/AI9eIc79x9YgyO5BSLxQ/Myy9gBgzOpEh3
-         v8oE82qxX/s0ELE2eCbVboS9KIJPj+KMIEnK3h3JhHh0mXnEbiFyylvGku/53SBWRi2w
-         /LJk/vjPktMBAxQYt4441Ptz6CoqREPxtCZ8IY2S9++NjMtjME//Z1ZVfDNGOfAYpeM9
-         VBk3ReAclmehnYQyw6nkdF5gDpZk6Fw90h0vGo+yZ4eH4EBIWyXomSPiE+QJHFLycycF
-         IzJg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0yV8gdyo3YT/4M2C+zpr7xuXGGz7o0om2zMStllw+rlkyq+paUBFDY2gYt25esy+9M2yjpKyBFWLg2abTG2w=@vger.kernel.org, AJvYcCXRP1OMt61esYDSM80f2eEUmPb30ViKUlQKVM2Z1iSGVUPbWbF+ziTqn3NV+oyG1MR9SuKi@vger.kernel.org, AJvYcCXn4AOtjW1dBkMZnF749mN451CxlFVgY/dve8wdsJeNaI/J1TQpXp0Ij4y87wA1XzhVV/xGZL8iYV1iQpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8ypbEdKj/5XIyhaSRfFCkXJsvE4o1Bypd2oY21/6tXhdUdMOH
-	OHTu943B6zyPhqq1RFkQvmMdtKFKvpzBtJy5X5tfEJ8PPjUPqngP
-X-Gm-Gg: ASbGncvmuh5mB0DLsx56jebndepatdgB5z2Y2XkN9ttyzqbM7yTTvDSOzS0ehT5eNCK
-	jgU6LT0SwlcDOnZuPVJ9L6kWlsGeONE50R08MDK4JINIIkzvvJ57K6tW/UETxK1OOxF9V2qyZ1I
-	ioC47eB1ZN/ziPBHAyNY6mwC9PI1HWrcOl3HtICL1UzkW/2M8EKjefYvTdjGbOt2rhZeB6VAzUj
-	jO5vxCyXQa2XArAhy82rZygbI3E5ZTYHxtSqNynJtEEn4iyVUMzAW1ZKtBNK+ffwVBt1rrpP653
-	NkAVeVmqx3hVGDG5xCSImGURVAav+C/QjfyMSp6HX913XCwT9pFlBYR1LF7GYS7YXIgL/PzVFdE
-	=
-X-Google-Smtp-Source: AGHT+IFpBE7U7iik0fYQ+M+FGBImQq+8odhk1PWelYdIWPjOg2tdExe6wfLmeOD159AI/ZuDSx+GUw==
-X-Received: by 2002:a05:6a00:1703:b0:736:a682:deb8 with SMTP id d2e1a72fcca58-736aa9e54edmr36025132b3a.8.1741774655310;
-        Wed, 12 Mar 2025 03:17:35 -0700 (PDT)
-Received: from vaxr-ASUSPRO-D840MB-M840MB.. ([2001:288:7001:2703:6099:fcdd:8775:d642])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736c8e06336sm7398569b3a.58.2025.03.12.03.17.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 03:17:34 -0700 (PDT)
-From: I Hsin Cheng <richard120310@gmail.com>
-To: rostedt@goodmis.org
-Cc: paulmck@kernel.org,
-	frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	joel@joelfernandes.org,
-	josh@joshtriplett.org,
-	boqun.feng@gmail.com,
-	urezki@gmail.com,
-	mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com,
-	qiang.zhang1211@gmail.com,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	rcu@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	jserv@ccns.ncku.edu.tw,
-	I Hsin Cheng <richard120310@gmail.com>
-Subject: [PATCH] rust: sync: rcu: Mark Guard methods as inline
-Date: Wed, 12 Mar 2025 18:17:23 +0800
-Message-ID: <20250312101723.149135-1-richard120310@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741774742; c=relaxed/simple;
+	bh=I/meoAPstTkIHKdRwloxNDfcOzIK+pFIloRdc4WO7sw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kp8zlgOeJphReBWnLucTJhDS+JMyPlcs2V4+PQ0MbZ6oPVF8BcLFGYR9TfTMC4YB/EwwPHGr4nfl0uxGzxPPsDqcKvJ36+4Q/AjoBY/eCRyi8VStDiqNBl5XLGJ/tYDELEF1X7iSWeShPNMBPEC3w+lWVNitEmqS2jlzn+DeQgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f1O5eBbc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B44C2C4CEE3;
+	Wed, 12 Mar 2025 10:19:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741774742;
+	bh=I/meoAPstTkIHKdRwloxNDfcOzIK+pFIloRdc4WO7sw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f1O5eBbcrMtnFWQ7cjgryCAyW8hMY5UavUZGc4yAeo7z5LhT9EasqsXq2/BYCf863
+	 cTc6Pjdam3lAWwIgpkaN06nKlBPV5FOeyFLJCNTBpOpHNBviFJ1/tuA+gEx+AvkEg3
+	 LeCeimEkr8ejJQ4QBrofmhuqkULYtkE6TDF9BZgE=
+Date: Wed, 12 Mar 2025 11:18:59 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Nipun Gupta <nipun.gupta@amd.com>
+Cc: linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, derek.kiernan@amd.com, dragan.cvetic@amd.com,
+	arnd@arndb.de, praveen.jain@amd.com, harpreet.anand@amd.com,
+	nikhil.agarwal@amd.com, srivatsa@csail.mit.edu, code@tyhicks.com,
+	ptsm@linux.microsoft.com
+Subject: Re: [RFC PATCH 1/2] drivers/misc: add silex multipk driver
+Message-ID: <2025031256-accurate-tactics-1ff7@gregkh>
+References: <20250312095421.1839220-1-nipun.gupta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312095421.1839220-1-nipun.gupta@amd.com>
 
-Currenyly the implementation of "Guard" methods are basically wrappers
-around rcu's function within kernel. Building the kernel with llvm
-18.1.8 on x86_64 machine will generate the following symbols:
+On Wed, Mar 12, 2025 at 03:24:20PM +0530, Nipun Gupta wrote:
+> Silex MultiPK device provides a char device interface to interact
+> with Silex device for offloading asymmetric crypto operations.
+> 
+> Signed-off-by: Nipun Gupta <nipun.gupta@amd.com>
+> ---
+> 
+> Silex MultiPK device is a PKI offload device, which has multiple PK engines to
+> perform asymmetric crypto operations like ECDSA, RSA, Point Multiplication etc.
+> 
+> Following provides the brief overview of the device interface with the software:
+> 
+>  +------------------+
+>  |    Software      |
+>  +------------------+
+>      |          |
+>      |          v
+>      |     +-----------------------------------------------------------+
+>      |     |                     RAM                                   |
+>      |     |  +----------------------------+   +---------------------+ |
+>      |     |  |           RQ pages         |   |       CQ pages      | |
+>      |     |  | +------------------------+ |   | +-----------------+ | |
+>      |     |  | |   START (cmd)          | |   | | req_id | status | | |
+>      |     |  | |   TFRI (addr, sz)---+  | |   | | req_id | status | | |
+>      |     |  | | +-TFRO (addr, sz)   |  | |   | | ...             | | |
+>      |     |  | | | NTFY (req_id)     |  | |   | +-----------------+ | |
+>      |     |  | +-|-------------------|--+ |   |                     | |
+>      |     |  |   |                   v    |   +---------------------+ |
+>      |     |  |   |         +-----------+  |                           |
+>      |     |  |   |         | input     |  |                           |
+>      |     |  |   |         | data      |  |                           |
+>      |     |  |   v         +-----------+  |                           |
+>      |     |  |  +----------------+        |                           |
+>      |     |  |  |  output data   |        |                           |
+>      |     |  |  +----------------+        |                           |
+>      |     |  +----------------------------+                           |
+>      |     |                                                           |
+>      |     +-----------------------------------------------------------+
+>      |
+>      |
+>  +---|----------------------------------------------------+
+>  |   v                Silex MultiPK device                |
+>  |  +-------------------+     +------------------------+  |
+>  |  | New request FIFO  | --> |       PK engines       |  |
+>  |  +-------------------+     +------------------------+  |
+>  +--------------------------------------------------------+
+> 
+> To perform a crypto operation, the software writes a sequence of descriptors,
+> into the RQ memory. This includes input data and designated location for the
+> output data. After preparing the request, request offset (from the RQ memory
+> region) is written into the NEW_REQUEST register. Request is then stored in a
+> common hardware FIFO shared among all RQs. When a PK engine becomes available,
+> device pops the request from the FIFO and fetches the descriptors. It DMAs the
+> input data from RQ memory and executes the necessary computations. After
+> computation is complete, the device writes output data back to RAM via DMA.
+> Device then writes a new entry in CQ ring buffer in RAM, indicating completion
+> of the request. Device also generates an interrupt for notifying completion to
+> the software.
+> 
+> As Crypto AF_ALG does not support offloading asymmetric operations from 
+> user-space (which was attempted to be added earlier in Linux at:
+> https://lore.kernel.org/all/146672253157.23101.15291203749122389409.stgit@tstruk-mobl1.ra.intel.com/),
+> RQ memory is provided to the user-space via mmap, so that application can
+> directly write to the descriptors.
+> 
+> P.S. Most of the above text is also added as part of silex driver file.
 
-$ nm vmlinux | grep ' _R'.*Guard | rustfilt
-ffffffff817b6c90 T <kernel::sync::rcu::Guard>::new
-ffffffff817b6cb0 T <kernel::sync::rcu::Guard>::unlock
-ffffffff817b6cd0 T <kernel::sync::rcu::Guard as core::ops::drop::Drop>::drop
-ffffffff817b6c90 T <kernel::sync::rcu::Guard as core::default::Default>::default
+All of that should be in the changelog text, don't put it down here
+where it will never be seen again.
 
-These Rust symbols are basically wrappers around functions
-"rcu_read_lock" and "rcu_read_unlock". Marking them as inline can
-reduce the generation of these symbols, and saves the size of code
-generation for 100 bytes.
+> +static ssize_t hardware_show(struct device *dev, struct device_attribute *attr,
+> +			     char *buf)
+> +{
 
-$ ./scripts/bloat-o-meter vmlinux_old vmlinux_new
-add/remove: 0/8 grow/shrink: 0/0 up/down: 0/-100 (-100)
-Function                                     old     new   delta
-_RNvXs_NtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB4_5GuardNtNtCsdaXADs8PRFB_4core7default7Default7default       9       -      -9
-_RNvXs0_NtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB5_5GuardNtNtNtCsdaXADs8PRFB_4core3ops4drop4Drop4drop       9       -      -9
-_RNvMNtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB2_5Guard6unlock       9       -      -9
-_RNvMNtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB2_5Guard3new       9       -      -9
-__pfx__RNvXs_NtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB4_5GuardNtNtCsdaXADs8PRFB_4core7default7Default7default      16       -     -16
-__pfx__RNvXs0_NtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB5_5GuardNtNtNtCsdaXADs8PRFB_4core3ops4drop4Drop4drop      16       -     -16
-__pfx__RNvMNtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB2_5Guard6unlock      16       -     -16
-__pfx__RNvMNtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB2_5Guard3new      16       -     -16
-Total: Before=23385830, After=23385730, chg -0.00%
+Where is the Documentation/ABI/ entries for your new sysfs files?
 
-Link: https://github.com/Rust-for-Linux/linux/issues/1145
-Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
----
- rust/kernel/sync/rcu.rs | 4 ++++
- 1 file changed, 4 insertions(+)
+> +	int v, hwv, cnt, maxtotalreqs, rqmaxpending, mults;
+> +	struct multipk_dev *mpkdev = dev_get_drvdata(dev);
+> +
+> +	v = (int)sx_rdreg(mpkdev->regs, REG_SEMVER);
+> +	hwv = (int)sx_rdreg(mpkdev->regs, REG_HW_VERSION);
+> +	cnt = (int)sx_rdreg(mpkdev->regs, REQ_CFG_REQ_QUEUES_CNT);
+> +	maxtotalreqs = (int)sx_rdreg(mpkdev->regs, REQ_CFG_MAX_PENDING_REQ);
+> +	rqmaxpending = (int)sx_rdreg(mpkdev->regs, REQ_CFG_MAX_REQ_QUEUE_ENTRIES);
+> +	mults = (int)sx_rdreg(mpkdev->regs, REQ_CFG_PK_INST);
+> +
+> +	return sprintf(buf,
+> +		"Hardware interface version: %d.%d.%d\n"
+> +		"Hardware implementation version: %d.%d.%d\n"
+> +		"Count request queues: %d\n"
+> +		"Total max pending requests: %d\n"
+> +		"Max pending requests per request queue: %d\n"
+> +		"Pkcores 64 multipliers: %d\n"
+> +		"Pkcores 256 multipliers: %d\n",
+> +		MPK_SEMVER_MAJOR(v), MPK_SEMVER_MINOR(v), MPK_SEMVER_PATCH(v),
+> +		MPK_HWVER_MAJOR(hwv), MPK_HWVER_MINOR(hwv), MPK_HWVER_SVN(hwv),
+> +		cnt, maxtotalreqs, rqmaxpending,
+> +		mults >> 16, mults & 0xFFFF);
 
-diff --git a/rust/kernel/sync/rcu.rs b/rust/kernel/sync/rcu.rs
-index b51d9150ffe2..26df2a6cb09f 100644
---- a/rust/kernel/sync/rcu.rs
-+++ b/rust/kernel/sync/rcu.rs
-@@ -17,6 +17,7 @@
- 
- impl Guard {
-     /// Acquires the RCU read side lock and returns a guard.
-+    #[inline]
-     pub fn new() -> Self {
-         // SAFETY: An FFI call with no additional requirements.
-         unsafe { bindings::rcu_read_lock() };
-@@ -25,16 +26,19 @@ pub fn new() -> Self {
-     }
- 
-     /// Explicitly releases the RCU read side lock.
-+    #[inline]
-     pub fn unlock(self) {}
- }
- 
- impl Default for Guard {
-+    #[inline]
-     fn default() -> Self {
-         Self::new()
-     }
- }
- 
- impl Drop for Guard {
-+    #[inline]
-     fn drop(&mut self) {
-         // SAFETY: By the type invariants, the RCU read side is locked, so it is ok to unlock it.
-         unsafe { bindings::rcu_read_unlock() };
--- 
-2.43.0
+No!
 
+sysfs is "one value per file", which this is not at all.
+
+Also, did you run checkpatch.pl?  It should have told you that you
+should not be calling sprintf() here either.
+
+> +static int __init multipk_init(void)
+> +{
+> +	dev_t devt;
+> +	int ret;
+> +
+> +	multipk_class = class_create("multipk");
+
+Why do you need a whole new class?  Why not just use a misc device?
+
+> +	if (IS_ERR(multipk_class)) {
+> +		ret = PTR_ERR(multipk_class);
+> +		pr_err("can't register class\n");
+> +		goto err;
+> +	}
+> +	ret = alloc_chrdev_region(&devt, 0, MULTIPK_MAX_DEVICES, "multipk");
+
+Again, why not a dynamic misc device per device in the system?
+
+No need to make this harder than it is.
+
+But again, this really should use the in-kernel apis we already have for
+this type of hardware, don't make a custom user/kernel api at all.
+That's not going to scale or be easy to maintain for any amount of time.
+
+thanks,
+
+greg k-h
 
