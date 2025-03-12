@@ -1,156 +1,123 @@
-Return-Path: <linux-kernel+bounces-558117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16260A5E1E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:38:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC92BA5E1E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:39:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5787188BD14
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:38:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 646903A561F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43111D9A5F;
-	Wed, 12 Mar 2025 16:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EEC1D95A9;
+	Wed, 12 Mar 2025 16:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aDkUNrsm"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUJW1ZC5"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90063198E76
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAB0189913
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741797505; cv=none; b=omb5JvQZbzon81YuSEeQUa3MVxPajIDaKAf58SKMCjaRUzsibS76uHX9hEwR3fM7cePPY6ZJ4kP4+8Ea5zhlSyUHAOnMsVTiow0tLFbMTA3BzGF48wfKIebFu4atj8Zqq2h8GWZfXSGV2/gFOmeWoRY7v3HWKBZeArTsCKrzg0w=
+	t=1741797578; cv=none; b=kVY9x01Y5tDwIrsdqcullEqf0xvD/G6EWhFK98NJ8vKVqb8z/9deo9bphVSLlHxfbKG7EVwfehYe2xgVZ4OklOPUwoBTi5V4WjOG3AH233I2NHiJrCYhxBW/+0P8jN+fW0gVuIBG3nGG3vcUksbxSp6OWUyIYsoaGPi1G4hYMus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741797505; c=relaxed/simple;
-	bh=MYbPgsSSTbXHOKNCVsrBa+khgnS30trXHgGHOX7fpTo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AdwZuQwQo7MVY6gVxwYqSJp+d/PjcEYUJyC4SysGW2Oj7PafgW1JVBo6l/b5ubNnI4kxnP1TLjUFsWTLGTs/b+8to9BmVEP++9DAfaqJfKXJ5S1yPENZNVA6d1H/tZRGtmjn57JphkbcD18Bzxp5ASR0u8wU1XVBs78amZs0LWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aDkUNrsm; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6fd8be1e534so66592457b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:38:23 -0700 (PDT)
+	s=arc-20240116; t=1741797578; c=relaxed/simple;
+	bh=7Dr1MDyDQsGP0fniHjRmZwi5+c+l+mR+RPtDS8prI18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TjMchhCLZtdayt75IZ8JcRuI50YQUtPyRMIeIK2XKpMN+1ckoOEy7BpcYxRatx9b1NywzuiLrWKo5eNSfNtdxpFcSS4IyfdZzLQKS/vy35eHlS1ASho9CvLocLaF5IBf+hhsF669Hs9a6HSD5gkT+lB2X8jWwkUEJptUE8FlaPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lUJW1ZC5; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2a089fbbdso15264266b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:39:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741797502; x=1742402302; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PWMvjqoG4PmYMkFhFnwSTfw/41lcy/Yf+MPMJe1avQs=;
-        b=aDkUNrsmPPnjEHU8ld94Bmqx/26UVsUbIeCgdjjoKEFeZ1rHASokemDBciJ1fpgY40
-         Hp1lB7Po1vfNCOWUH6jWnhGHRZ3QiANniHIxSVnXjMr0NlJh5L0yWpuhj5p6Cidkd/Ng
-         eU2M7nc/Ef9A9T6FH87ctk4gz3n+SWO+WWYlNb59LKTQW50blOrE5O/1jbU5qxO9kI6s
-         f5mNTM8RiYAq/pswWf9YK0Sr1MzJGwWGfxH94Syi9+B05JfUl/Lpx1Lf9IBCBaDE7kUr
-         sSXJ1wTMEtpKUj+hJQqxwb733XWXD+sFtW3HJQQx1DSXVnvUNsFEfHwWy/tqW/Dlrn6e
-         2uUQ==
+        d=gmail.com; s=20230601; t=1741797575; x=1742402375; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7Dr1MDyDQsGP0fniHjRmZwi5+c+l+mR+RPtDS8prI18=;
+        b=lUJW1ZC5UYsOKowHd4OS+TqBPvNg/rRss04z1bOFVBgK9vVdErN6rqMVob17egFghQ
+         4jTb3ZroPMWQAkTmFykUzD25mrEC5B5kbwsh/bfYpbeVPIOdMRR1lNtEUc+G7k6HStQG
+         NlpdrsKYaozJQsxJ8rU8VDb/uw6sBv/VRT/GjssdbbbJZ0vlHq+4pGB1j+uF/nRaVPI2
+         mSmbiU0NHC7llhgA/7dODuKNAizqRPJVVn+qeMWCCRVCc0W9DFSIYniCk7Qw5HOybEW/
+         ZEcC8jnS3lMnfJCoCpWHfY9YqdnY1T0EcptiXsC5RdZlWDp37pDYUV6BkysmkEc8Vih9
+         izpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741797502; x=1742402302;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PWMvjqoG4PmYMkFhFnwSTfw/41lcy/Yf+MPMJe1avQs=;
-        b=YNBQjkiWTSe8pN4UZniL2GSbINdNp0A6due9XEROdD5sG0XCy3nBuQyMUyUeox/lOh
-         y9qMUbgl0LHR9/cOthGhCW7SNdFTkcYzc5FMow81y425MVMmBeUO3hWEuHXMNEDgcB1m
-         PnoYYfzU8k0utxiqBCah4RQdB/eeYPZvOw3T9hpYWhp8k60U1Obm2fr52cEJIvOI7lQu
-         vcJ/MwnPET8mWnX+wB6BQR5ZfFa7iFtOSJESypzhp8D/xF8vr6mHei6lpLG2WNtbHQlH
-         IkflVOUf6ghlsCnyJ38A0eeFxXIWPHVMBhIz1db2N59ixqzPt9kpCrUUsmE+7bhSxsiZ
-         w1pA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbvc41Ab3sI/LIoMdOe2s15z5/v0kmDh2xAXnAS3tVSjD/sAcjIO6Tm0E27DJmdgduP7YuEcjyErBUEjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6cgZ76KxxoVZRkxUR+JgV7FoSosdxM0rCRDlVJYg6gcac0xP4
-	x5QZ1dfl80OJ3mdQcuMyM1VqunOSarpi0Wbp9RAkVPe37u1RkQx83VoapZdjU85tiLU9lqLOr5X
-	rlsAKVVs5bYkE+Sbc5O/YB7KKlRujtrKHVGDdGA==
-X-Gm-Gg: ASbGncvWTrFV+yH8xxbkai+nduEHDHUY8zbw5aDG8MslQ3PrSKrIOS29b0x4eSYpTkL
-	4YDRrZjvGuJNclNE3KKHMYLtThVNsg7lHXxPkU+NncMGwyD1TFMefvrXwCIvSxp6YF2kYvIB/Yq
-	aFXiRkB40VWg0RYphWZ+9EELuH88g=
-X-Google-Smtp-Source: AGHT+IF2xEFWCrikZfliJNB2lM4hSiQmPAiCSkA5sRBCIxHIv16c9jysGet7Q4HogxcW0/+3QeUV+C91qICnBumZxN8=
-X-Received: by 2002:a05:690c:4a08:b0:6fb:b524:48bc with SMTP id
- 00721157ae682-6febf3c50eamr309529367b3.35.1741797502400; Wed, 12 Mar 2025
- 09:38:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741797575; x=1742402375;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Dr1MDyDQsGP0fniHjRmZwi5+c+l+mR+RPtDS8prI18=;
+        b=QgW5oLSJwPgPzLgfE0s7CIPDuK/I5hOyGDZ+le94vTNkoBJsBRtbOZHvLPM5viVeJc
+         Blr8Yr6YxwRzFVwBxUyVMWBPzCPKoGOVnKea1MuhV1Jsg01qVPzsG22ts+ct+LgDHkDg
+         zr1ArEnhctuCulEmk/5463OpBXOQhELq5M7lOcLO94HKTT1QnjrziNCLZvpfFFT3WHho
+         6m8NBUBdqgSQFb8Di/CXORHu8WoP4oPyNHd9+6+BEWjy72DpSR52WzIgdirspm/2wWGt
+         R2c/pwSz+YItf3pZuno+FyCHbluXF7OnpJ4+O11/joiqfkkKd9ax+Wr+ArF9zDcS+R35
+         aHhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX41HoOc3CVAc6rujH8FDbHCTlXqS/36796uIG46NtM3Wn/ObpV58vAGJhO76wgeg6vg+H4x5xpxvyKTZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1z/cc2mrLJUlpELJddA33S+lUZQXUYZANmI3ze/6PU0E3IF/g
+	/Yhx+p6hptSP6XxYhhV5umgnFyb08S8AUw1YEICP6TA+Avt+TNBWiOSZZnDq
+X-Gm-Gg: ASbGncv9CuhSpyaxeHVz+zMY18x7DOKW3OKStwPwsOTm1uZcFQhkzQlzVyKe//QzndS
+	wGbkYSCTueDrmZRxK43wid/RX6cPKzaGa/aW51ExAmG/lqSCOLo6wg6+XjryGBj65ODW94m1OJe
+	PhTVRE1LCls7vBQ3RrdV9tfEhADUJ1ey4tOWW5CkCTnyvNXvq2Nzpr5yfCG3hiFDJUJGhsMqZb9
+	2h/v7A+03hSdiZn9fJBRLMFXsgqMwMPKoBz9JUd1q+uI6rWI+QpvNLm/Y8z+ZosuKehyCS0Km40
+	zsA3eoeaHdhPGKS+fZigAPOXDzh0Apto0OzW8FXzFagG9fJYJ58j0xH7UsOP9CI=
+X-Google-Smtp-Source: AGHT+IGqUvt93yOKWrBv3nP61FwNocObvR/pqZ3oUF8K5pMzwkKTqAD3SGHTXTu393d+wegqjHGxuA==
+X-Received: by 2002:a17:906:478a:b0:ac2:f24e:1fa3 with SMTP id a640c23a62f3a-ac30b63a5famr24817866b.20.1741797574797;
+        Wed, 12 Mar 2025 09:39:34 -0700 (PDT)
+Received: from [192.168.1.106] ([51.154.145.205])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac25fae7d83sm905736966b.99.2025.03.12.09.39.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 09:39:34 -0700 (PDT)
+Message-ID: <130308e4-b9c5-4e6c-97d2-c36f9edc1f43@gmail.com>
+Date: Wed, 12 Mar 2025 17:39:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306115021.797426-1-ulf.hansson@linaro.org> <Z8_Fgx4YWwdpB1XK@google.com>
-In-Reply-To: <Z8_Fgx4YWwdpB1XK@google.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 12 Mar 2025 17:37:46 +0100
-X-Gm-Features: AQ5f1JoliOGPF-F0YWgpla13D9eZPFgX9P5KQ4-iPccTWglWP4z50wRhj4Ebo4g
-Message-ID: <CAPDyKFqp0874O500j1StQgVyr_fQud6eJTqzQW_GqEj49Yt6bA@mail.gmail.com>
-Subject: Re: [PATCH] Input: hisi_powerkey: Enable system-wakeup for s2idle
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [oe] [meta-oe][PATCH] meta-openembedded: flashrom: Update to
+ v1.4.0
+To: Naresh Solanki <naresh.solanki@9elements.com>
+Cc: openembedded-devel@lists.openembedded.org, linux-kernel@vger.kernel.org,
+ "Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>
+References: <20250312111915.2970032-1-naresh.solanki@9elements.com>
+ <66b24018-0b7e-42b6-ad86-d80f37538678@gmail.com>
+ <CABqG17im5hO7xv-r16mFhJwcXyXt-6OKA_vTaRdc7kuQrdZyzA@mail.gmail.com>
+Content-Language: en-US
+From: Gyorgy Sarvari <skandigraun@gmail.com>
+In-Reply-To: <CABqG17im5hO7xv-r16mFhJwcXyXt-6OKA_vTaRdc7kuQrdZyzA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 11 Mar 2025 at 06:09, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+On 12.03.25 17:03, Naresh Solanki wrote:
+> Hi Gyorgy,
 >
-> Hi Ulf,
+> On Wed, 12 Mar 2025 at 19:47, Gyorgy Sarvari <skandigraun@gmail.com> wrote:
+>> On 12.03.25 12:19, Naresh Solanki via lists.openembedded.org wrote:
+>>> -Upstream-Status: Submitted [https://review.coreboot.org/c/flashrom/+/51960]
+>>> -Signed-off-by: Khem Raj <raj.khem@gmail.com>
+>>> -Change-Id: I55c4e8529d36f0850dd56441c3fb8602c5d889fd
+>>> +Upstream-Status: Inactive-Upstream
+>> Is that really the case? I mean it is just being updated to a new
+>> version, it doesn't look that inactive. That PR seems to be abandoned by
+>> the submitter at the first superficial sight, is this not the case?
+> Yes. its being inactive for long time.
+The last commit date in the main branch of
+https://review.coreboot.org/flashrom is "Sat Mar 1 19:19:16 2025 +1100"
+- less than 2 weeks ago, with last release just before Christmas. It's
+not as busy as Yocto, but doesn't look abandoned.
+
+Or am I looking at a wrong repo?
+>>> +
+>>> +EXTRA_OEMESON="-Dbash_completion=disabled -Dtests=disabled"
+>> Nitpick: Could you please fix the whitespaces around the equal sign?
+> Sure.
 >
-> On Thu, Mar 06, 2025 at 12:50:21PM +0100, Ulf Hansson wrote:
-> > To wake up the system from s2idle when pressing the power-button, let's
-> > convert from using pm_wakeup_event() to pm_wakeup_dev_event(), as it allows
-> > us to specify the "hard" in-parameter, which needs to be set for s2idle.
->
-> I was looking at pm_wakeup_event() and pm_wakeup_dev_event() and I am
-> afraid I do not understand the distinction. Why would we want to
-> abort suspend by only by some wakeup sources and not by others? And why
-> does a driver need to know whether a system uses s2idle or some other
-> implementation of low power state?
-
-Good question!
-
-In regards to waking up. The CPU that wakes up from suspend-to-idle
-may actually decide to just go back to idle, without doing a full
-system resume - unless there is a wakeup that requires the system to
-resume.
-
-In suspend-to-ram a wakeup will always trigger a full system resume.
-
-In most cases a driver doesn't really need to distinguish between
-these cases, yet the wakeup APIs are designed to allow it. That's the
-reason why pm_system_wakeup() needs to be called (controlled by "hard"
-in-parameter to pm_wakeup_dev_event()).
-
->
-> FWIW we have Chromebooks that use S0ix and Chromebooks that use S3 as
-> well as ARM Chromebooks and I do not think they use
-> pm_wakeup_dev_event() variant.
->
-> I'm cc-ing Rafael to give us some guidance.
-
-Good, let's see if there is something I failed to explain.
-
->
-> >
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > ---
-> >  drivers/input/misc/hisi_powerkey.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/input/misc/hisi_powerkey.c b/drivers/input/misc/hisi_powerkey.c
-> > index d3c293a95d32..d315017324d9 100644
-> > --- a/drivers/input/misc/hisi_powerkey.c
-> > +++ b/drivers/input/misc/hisi_powerkey.c
-> > @@ -30,7 +30,7 @@ static irqreturn_t hi65xx_power_press_isr(int irq, void *q)
-> >  {
-> >       struct input_dev *input = q;
-> >
-> > -     pm_wakeup_event(input->dev.parent, MAX_HELD_TIME);
-> > +     pm_wakeup_dev_event(input->dev.parent, MAX_HELD_TIME, true);
-> >       input_report_key(input, KEY_POWER, 1);
-> >       input_sync(input);
-> >
-> > --
-> > 2.43.0
-> >
->
-> Thanks.
->
-> --
-> Dmitry
-
-Kind regards
-Uffe
+> Regards,
+> Naresh
 
