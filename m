@@ -1,192 +1,300 @@
-Return-Path: <linux-kernel+bounces-558585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E69A5E82A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:16:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15830A5E833
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:17:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57E853A7CEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:16:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49A581797F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E8E1F2B85;
-	Wed, 12 Mar 2025 23:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3CF1F1522;
+	Wed, 12 Mar 2025 23:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b="NEmgh6hJ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144291F190E;
-	Wed, 12 Mar 2025 23:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741821350; cv=none; b=N/5/+HotlbmsPH0F+V0M7g2pYzZ+2kAh61hpH7WpLl/F6rNy+8eJVEMChgIez2pbW5iiZl5ZAO4Bl4VkpAjMDj1md3g5h97FsIUMfowStNfn7TtTe2dhTIHtBM6cbAHfg1+Rn9NI0dcQvfE+9l0RO+SSTyiA/z8l5z4K27R8QMk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741821350; c=relaxed/simple;
-	bh=8dYBBUYS33H+cqMeAslgmhfxfMuxIn1RSvcSNZU/G4Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=dpyjttpzy+E+M2keH3bw4QP00SETdAPMRMhzcOr/mlyZKNrBg/zFd0ezErlXqLzEq6Ll91QPpFgxrbLHFGvzo+90uiZFxv7K6z5dWX45f1Hr8t4jIJQrVQTjDSeYnz7JSmE/dGExcgQSQFK+xLqJ942+pugFznMZZFfZIIFKkpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b=NEmgh6hJ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1202)
-	id B2551210B15B; Wed, 12 Mar 2025 16:15:48 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B2551210B15B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
-	s=default; t=1741821348;
-	bh=uz60Fu9C9YU+gq33nzkGQ6cX2ZfUeCkboeC0PjBrl3E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NEmgh6hJ4a2R55XxeHwk5Q/R72NpI8SPoNfM+Ac05nnFnazwHa1tQs4HV8BY3lsEF
-	 YgUMpmvtkcV91zroR3hOLjfaXQ7PRAzPRVQDgOH0aXAN959B4vTWXSh/NeWnEUezw5
-	 n7CSyb84butFIJSY9iod8Shbxiv7n6sbyskFwR0I=
-From: longli@linuxonhyperv.com
-To: Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: linux-rdma@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	Long Li <longli@microsoft.com>
-Subject: [patch rdma-next v6 2/2] RDMA/mana_ib: Handle net event for pointing to the current netdev
-Date: Wed, 12 Mar 2025 16:15:32 -0700
-Message-Id: <1741821332-9392-2-git-send-email-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1741821332-9392-1-git-send-email-longli@linuxonhyperv.com>
-References: <1741821332-9392-1-git-send-email-longli@linuxonhyperv.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DdIvUrKW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66681F1509
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741821428; cv=fail; b=pU04fu2TYrBMZYTiEheRm2+hlJQX59bGiVrzlH9tY3sN0GKTuTN3bDbqgz8m5B/p58HnjTpTXMZUVx3Odx3p+iVXnuxl7SS/NdW4sK0+HhZ+03x3wCt4574qf+cHcygAlL74DLXlKM9iSEg9THUNExkE4PJ+Bk3/BHk76PPlXo4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741821428; c=relaxed/simple;
+	bh=a2iozV0WtfnOdrejFJ4ixEmM+gIvWxQ2zsn4mZWA7SA=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=TR4tDuJQy1wDgamGdSO6TL2Edz7V4jarxeAeFFB7wgMUqIiD5W0S4FFC2TcdPFGf6tL8k681t6e5eb3FiK6pbRxEbqTZ/lB+15ACw+bqEYlwEPlCKHAtFxsIcUNp6cFIQoG48FZefWYH7GN81KO3IV8IZ+/cbKkb6PzfPf0yqIs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DdIvUrKW; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741821426; x=1773357426;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=a2iozV0WtfnOdrejFJ4ixEmM+gIvWxQ2zsn4mZWA7SA=;
+  b=DdIvUrKWmMS3+jybpOuqWG80O1l7qUV8yGC6WE/UxyCsLv6Ihrh3uMWr
+   eiIcsMCwa7EBXSIJtz01eYr71xrI19OpgLRR8bAmst3HPX0bjoBQEh5lL
+   6jv6WkNwr9HqiXDm7tGAz/bYkupT1Nzmm7nooNFG2HlLmRCnaCOwqsTNC
+   R/Wdrj6+K36np02UBsEO39Gx6lqbWHgpMokGbGobZ9JZWLlRqx6hAt138
+   JrcJ8SpwZLB90sEFGBOPm1AWtLSEcC4rEWTEHhPAFb8i8vq0yHMvhYZ/T
+   mAByDsF2Kghr0Oo50yBVcRZ6ZWmQTHvR6YWZCO9yxw195oluuZ97EMT9h
+   Q==;
+X-CSE-ConnectionGUID: XwoVWUdiTBOnFQtzacH+hg==
+X-CSE-MsgGUID: rhEmKSJdT/mWR+alF8X4Pg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="43027798"
+X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
+   d="scan'208";a="43027798"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 16:17:05 -0700
+X-CSE-ConnectionGUID: ciWGKVU+Ruijp94FZQXZ/A==
+X-CSE-MsgGUID: KlaU8RFhSfS6mYQDWWoqbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
+   d="scan'208";a="124947488"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Mar 2025 16:17:05 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 12 Mar 2025 16:17:04 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Wed, 12 Mar 2025 16:17:04 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.44) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 12 Mar 2025 16:17:03 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cKrKQ+6L84ztcgBpD23FMmIaZI+2IIMQH5YrgLIwGi3Eg9v7Ldi/tcpJ9D6dN8BRf4zxTKpgBlmdkedJ49mNosNqyfUcf1mJtjgWp7iMJ7+RgEoXY2gRA/7BmmFAhRPluCcKIrF7iFnjOq57pVgQG7irbFTH1eYSyN4YU5fwPtq8wvxxw/A3N/1gIJJJPhPlFf1YYHI8jp9HkA+lOv+WpKotn5hD2qhR2+WcMcMo98CUuJ1EwR/luj+qyXtEY+5g3IKI7DAQUr0o6ZRId37Y6KQaMXTHOYOqzIC4OaTO6Hak09n93Wn0WdQ09I6eKC7U3R9XRJmgpNy3NKlEgn+xBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4UCjpELYIXxwqw0s8ITmAgQISkFdxR9Vkw2kPI0G4xQ=;
+ b=g42CL8Ac38+Npnm53w4veIj4Of1Qsuy9ecCVtiI5KJrxNwKaed92e1/phOJRnMKnqSfKCAgrP7xdjk7HcpeuYYkbkzuC6cLtUCtzZ/VeNV2UeV37F4v8PQAVMl2Jz/RlwwqKyUR0qPErOGAxzPzA4V95N7srJTTdHIYQvXP+07DoRThg4mvabwdzsoQovECK7j5IU7fhQBrRPk8sza+GxLGlff/K2d7OUCYCu/VGkTGS/OuYn9YUB2ueuc/ctxhIdSqCZvp2Ds5O2/2yTGFEAulyEWWS8zShlMI8FRYpxHEybhVDvWg0RMPqnyqTUjoif9NQFaygLr5MNA1qsDECqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
+ by MW4PR11MB6957.namprd11.prod.outlook.com (2603:10b6:303:22a::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
+ 2025 23:16:33 +0000
+Received: from BYAPR11MB3320.namprd11.prod.outlook.com
+ ([fe80::e8c4:59e3:f1d5:af3b]) by BYAPR11MB3320.namprd11.prod.outlook.com
+ ([fe80::e8c4:59e3:f1d5:af3b%5]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
+ 23:16:33 +0000
+Message-ID: <ed81aa4e-6ebc-40ad-af45-289cc7138c0f@intel.com>
+Date: Wed, 12 Mar 2025 16:16:28 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] x86/cpufeature: Warn about unmet feature dependencies
+To: Ingo Molnar <mingo@kernel.org>
+CC: <x86@kernel.org>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, "H . Peter Anvin" <hpa@zytor.com>, Uros
+ Bizjak <ubizjak@gmail.com>, Sandipan Das <sandipan.das@amd.com>, Sean
+ Christopherson <seanjc@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vegard Nossum <vegard.nossum@oracle.com>, Tony Luck <tony.luck@intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Nikolay Borisov
+	<nik.borisov@suse.com>, Eric Biggers <ebiggers@google.com>, Xin Li
+	<xin3.li@intel.com>, "Alexander Shishkin" <alexander.shishkin@intel.com>,
+	Kirill Shutemov <kirill.shutemov@linux.intel.com>,
+	<linux-kernel@vger.kernel.org>
+References: <20250307000204.3581369-1-sohil.mehta@intel.com>
+ <Z8resWzgtZaTuzEN@gmail.com>
+Content-Language: en-US
+From: Sohil Mehta <sohil.mehta@intel.com>
+In-Reply-To: <Z8resWzgtZaTuzEN@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR07CA0078.namprd07.prod.outlook.com
+ (2603:10b6:a03:12b::19) To BYAPR11MB3320.namprd11.prod.outlook.com
+ (2603:10b6:a03:18::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB3320:EE_|MW4PR11MB6957:EE_
+X-MS-Office365-Filtering-Correlation-Id: a62f374c-5ca3-4257-e60e-08dd61bbed91
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?T0FYY01SSWE2eGQ0NnltNG9KSzlMakVzRTd6ZG1NWE5FeFMvUUJ3UkZINHUv?=
+ =?utf-8?B?bGV6dDFQK1FqMXRzdmEzL3NOOTk3Nm9CcnF2cWxKNFh0NGYrcStaK1E0OFFG?=
+ =?utf-8?B?VEwxYklnL3ZOSzhnNnIwOXlPc3RXNnMzMHZBZlhrQ2M5VEp2UWRqVDZxQWkw?=
+ =?utf-8?B?R1h3UVRQUGVURm1UMnFDT3NKeDh6UGJ4cGErN2RCMUdBc0Z2K2l2OG5SZCtm?=
+ =?utf-8?B?Q1A2cm9MTGdVV01xL2ZlU2tVNnlFTS9FWmdTdk9lUmJqL01VZUpQbUVJMzBJ?=
+ =?utf-8?B?TFRvQXRrSmxGMnFmK1VKWXdJeFRCZUdySjMxRGxweFQzSDA3N1gyK3EzTTRI?=
+ =?utf-8?B?Z3dMMzBaUXUydFhtOVNxOHJrVFdDcHY2cGFFaEdsS29jT0tzMXRWeCtmU3Jw?=
+ =?utf-8?B?dDV2MnJnaGhlYlFPWnFaMkJwOXluSU5Ia3FPcVdlL2tXcHNOQW1VcU1kdmg4?=
+ =?utf-8?B?clc3Y1BOc1pUSjEva0dPbmllcjVhWmFPN2tIMllqbk9mN0U3ckZRVFJZeW1S?=
+ =?utf-8?B?SkJJbnc3eDZGS3ovc1JsaEZuSGVPRitUN3JRMklkYjdtYjhSQ3kwUDZiektS?=
+ =?utf-8?B?c0VzUXh2RUhhWnNCK3EyK0VwSVN0ejU5NVY0U0NaUExhaVJ2aWZZUzY5cnh2?=
+ =?utf-8?B?SVQrWWJIN0lmUHh4QndnOEx1bGJDTTlUQW41akh0YVNQOUJxM0JYVXRaUkJx?=
+ =?utf-8?B?STd3RnRTRVh3QkdkWmNJTTYyQUs4c3V6NW03YmNUYmZhQUtBWHNPVlVLTTRm?=
+ =?utf-8?B?eUZ5SjEwVFZLTnk4YnNOa3k3UjRPMjg4MUt1VmltUEZGSFlyeTNkcEYvdkZY?=
+ =?utf-8?B?NGJ0QXQzeDBPaXlUWkpBalRKRkJGckZSbHFoMmdwSldYV1ZZbXRWUzJqSHFS?=
+ =?utf-8?B?R1lleUhMYXpzdVhMaWd6Ylc0Vkl1K0R0SnRPSkdzTnZRcVZXVlhPcHdFS0pR?=
+ =?utf-8?B?U1BDMG8rWktIVHRnMjV5aDBIckE5c1ZCaDhnMXMreGt3bzhhOWdrK2NxdEp5?=
+ =?utf-8?B?MXoybzYzaWRuQVhLVk1CTkZ6U3VsTTVpRzRWYmVBN1Y2Y29oS0Z6ZkdhRzVn?=
+ =?utf-8?B?MDd1REc3YWk5c1pVNDE4SVVyZGY5Slh3cmtTS3BVYVVrUFQrT21zSmJ5cmZ5?=
+ =?utf-8?B?cmlCYnBQem5GUEkwV2JBa2JTMlVWamwzaTdHaG14cHVBNUZIZmZ1Q0QzT1Fz?=
+ =?utf-8?B?UHAvUFozZi9GR0lMUCt0YXk2YVRUa1VSK2RwNGZDMVM0THNZMGF6VFZIWlRO?=
+ =?utf-8?B?U09hY3oxN0RxQzNxdDhaMUxCcmhBNHlKWk1STThxRkNmRWtCbWZSRndNOVY3?=
+ =?utf-8?B?UFFQeGNpYlgxTjBhODB6QVFoN3RKQ0l1Snd6Y2dwTm5nVWQ3UHVFaEFlaTZT?=
+ =?utf-8?B?TlZZUXhUdjBWN1U0bjUrbytOWmFWTXcwOFNSaXZqdTQyVitxc0xia3dXTmdM?=
+ =?utf-8?B?R2lDRHZaZkNuZ1lYVmszd1dXajRjaG40V2lUU3A4OGJNaFV2aEpZRFlmYk9w?=
+ =?utf-8?B?WGhqVVR0bWw3eXVIb3Fib3JNWDVOeHhNZGJEemZFS3Flb0N2ZGp1eDU5VEVW?=
+ =?utf-8?B?THA5VHc3WGJ1aC9XcnFGOEdTclJXRXE4cEViNzF4bHBNRXZvSkdpNlZGYlJB?=
+ =?utf-8?B?dVpjU3NjRnFMNW5KdWI1RVB0a0J6aFRDa2Z0NUZ1L3NJV1JwdFF1cHJJNE9Y?=
+ =?utf-8?B?THVVNnBzNnNKV2c1MWxRSjNqRVcvYlNJTDF3TGw4Y3hxOGJqSU5GS0twSDNW?=
+ =?utf-8?B?WDlpbGN4aisvcFkrclI0WHdGSENuS0tKQUhabVlmYkpYdHhjcjR2VjkyQmZq?=
+ =?utf-8?B?blpuczFwSldya0d6YzIwRUZma2U2aEdvSWxQK3VWSGM1cWhSb2lCZ2lDWHRH?=
+ =?utf-8?Q?K3EXF9yqtyk+s?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3320.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?b1VlYTIwcmxZYWg5bTVYdlBQczlrVDBmNmlyMmV1dWpQNzFqRmVYSUdoZjl3?=
+ =?utf-8?B?TUREQVJQMlh0SXU4b0FYd01XbktNTXFnODE0R0lnRVhRUEVHdHNRSGp3VjVj?=
+ =?utf-8?B?U2g0MHlYU05RZmw5cUpuQlIySXg0ZzRROUdleERoYkpjODk4VzlmS3NtR1Rs?=
+ =?utf-8?B?ZEZsQWdOWHRJQjBUNmZLRk9XU1JaNkVJTEp6cDhHc2FDV2NlS3IyaVJlYW4z?=
+ =?utf-8?B?UE9sZ1hKUnRHdDgwQnIxNjJnaExYeU84Y0x2N1RoZCsyYWVSZlJyc3dwZ0hs?=
+ =?utf-8?B?TnU2dmV2cnJHZHVPcDRjcWNJeVp6OHA4QlZWUC9vZWl0MDdNZHVpRXduZWQ5?=
+ =?utf-8?B?cjRSWksvUHpBMERtVnhMRFYzaEVvSnZoU3Z3aGRTNWQ1b29kSGtYT3M1S0lz?=
+ =?utf-8?B?V0wyOGNpZjltalArbU9TRWJIbVlQOVlTUjQvUmp6bW1sTHoyTmltRjYrNnYy?=
+ =?utf-8?B?M3ZjNTNtcCthZ3VUcmp5VFVrVks0Ky8xSmtjdmYrWFZJWmZFYitNbU1mcW1B?=
+ =?utf-8?B?L1RYdjZuSS9DMzdLVWVKQXozUEtlWXd2dXptUUoxUVFpN2w0RGxFL3NMSjJZ?=
+ =?utf-8?B?QVhSaGNMVmRac1NrelNHRjJqM1U2L3FRYW15aGlwN3BrMU9JU04rS05pRFRG?=
+ =?utf-8?B?V2FIQzlGNlRGeTJQY0poT1NIQS8xOU9SRjRlOTl0RldNV1dweERxbzA2NWli?=
+ =?utf-8?B?ZWw2Qmd1WnNKZGZDMzRQeVdzS0R5Y3BrNDdWQ0J0dlUzMWM3K2dJQXZFUjlQ?=
+ =?utf-8?B?L3kwMzArQ3FpZmVoVTExeEJFcDc3LzBaODVHNVUrcCtpUFpwV3ZZdkFFOFZs?=
+ =?utf-8?B?anFnSFpoZTFTbk5TUHo0Wi9SMUZmTXU5VHJZemVpU0RKejZOSmJwRGxYVG5u?=
+ =?utf-8?B?d1NldWprdDRid3FGbjVKVW5GSHFDdENLc1FWc2dESldXK3pCT1RYTFJ4U2Nk?=
+ =?utf-8?B?aE94dnVhNHYvMzVsRVM2T3hTS2lCeDd0Wm5jcDh4OEpUdzJpRjNEVVhROHFl?=
+ =?utf-8?B?Q21iTXl2Wmg3aDNlMlduTFpZQldicXZ3M1d3Y213UkpQODFtZ2RTaHBMSWZ0?=
+ =?utf-8?B?NmhxdGdXUWdNd1ArcVJTa050UmFrUit1MW5ZVkRaRXZ1MDJ0YmlYYWthVWRI?=
+ =?utf-8?B?N3JacStEQ2NtVTdORWVMSmNkejliMXJLZy9vREtYMVB2ZjBKbk9VK2hvT0lp?=
+ =?utf-8?B?R1hTd0hHdEROajJEODg2Zkc3V1dKck9TNjFkbFRqaEZMN1kyQy81T1RmdDVn?=
+ =?utf-8?B?cEVkTE9zQTdoKzZKQ21LTE1hL24xTzVmTkcvemtMMjRWOUZtTHJHdXZxeEhR?=
+ =?utf-8?B?RjM5M3lpVUZTSmpMS0FjSWo2ZUl6bkRVckZEUjJXMUQ5SzZCNW04dVEvak5u?=
+ =?utf-8?B?NjJMWFZoeCtESzNNYW83WHg5aDJxTGNac2JDNmlDS3VVT2hjRkMzVlZlWGJX?=
+ =?utf-8?B?K0VqWXNua0M4NUpFVDlsdkdZSnpMeVQ5bDRRaFNPWGx1Qkw2TnlNeWpCQW5i?=
+ =?utf-8?B?b3JlRVFuQ0N6ZzhBWlF4WE9uaUpVaVkxNGVVd3B1elg4MGV6OTdOWWJLV1Yx?=
+ =?utf-8?B?UDdIaDB0aVRycTRIcTBNai9jMjloSUdmWkNDV3pGR0pVdkZEY1ZLQkROeFd5?=
+ =?utf-8?B?bnlXV2lkVFVmdWY2OHYva00rZnpTVlZOUWJIVW1aS0tQZXJVeklBS3RVYjNi?=
+ =?utf-8?B?UDZDOHRtVlhMcnRyclh0OVZsNEszcnFFSzNtZG4rMElhSVQ2cTd3VE1QMzlU?=
+ =?utf-8?B?MWdlT0U3Z0xjMWdqeDAyekRUeGhaVXBGcHlrb1NOeXVwOVQvbllYZnhXL0RM?=
+ =?utf-8?B?eEY4d0s1c2hrYXpwUElvdjQ4dWpnR0hJdFArMjd0L2hCT01YL0JvNzlLTXZq?=
+ =?utf-8?B?aENtUERSd1diYllKL2pvd3NhUUlwazM2RXhISStIREVLQzdrcW1YTWRlRE9a?=
+ =?utf-8?B?QnFITnNNNnh6Qy9yNWp1d0gwZnRYUEtaY3MvNllXRDBOdnlPWklsVVdOV3c5?=
+ =?utf-8?B?K1pHRjM3R2FobnUycDQxVThpU3V5V05vUnBCbkxybktWTjNUREx2WHphVTI1?=
+ =?utf-8?B?WDBHSWlkWUNIRmRzNmdxZUcyS1JQM3ZxZ3djaDJrUXlNTGM4a2Z3T3ZPRnZ4?=
+ =?utf-8?Q?JJx7O7DdAfcDMxqEheAfDODd9?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a62f374c-5ca3-4257-e60e-08dd61bbed91
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3320.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 23:16:33.2936
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tFcJ73VoXrtC594YfhRQoMBVhGDmml61Ip2H60SmjKIfqiQzfwNghQVdk3ifg+0Vt42UGT83/mLzP5kwrsenkQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6957
+X-OriginatorOrg: intel.com
 
-From: Long Li <longli@microsoft.com>
+On 3/7/2025 3:55 AM, Ingo Molnar wrote:
 
-When running under Hyper-V, the master device to the RDMA device is always
-bonded to this RDMA device. This is not user-configurable.
+>>  
+>> +	/* Scan for unmet dependencies based on the CPUID dependency table */
+>> +	scan_feature_dependencies(c);
+> 
+> s/scane_feature_dependencies
+>  /x86_check_cpufeature_deps
+> 
 
-The master device can be unbind/bind from the kernel. During those events,
-the RDMA device should set to the current netdev to reflect the change of
-master device from those events.
+How about check_cpufeature_deps() without the "x86" prefix? It would
+blend in with the other function calls in early_identify_cpu() and
+identify_cpu().
 
-Signed-off-by: Long Li <longli@microsoft.com>
----
-Changes
-v2: Add missing error handling when register_netdevice_notifier() fails.
-v3: Change mana_get_primary_netdev() to return with netdev refcount held.
-v4: use netdev_put().
-v5: use netdevice_tracker for netdev_hold()/netdev_put().
-v6: rebase to latest rdma-next
+> 
+>> + */
+>> +static const char *x86_feature_name(unsigned int feature, char *buf)
+>> +{
+>> +	if (x86_cap_flags[feature])
+>> +		return x86_cap_flags[feature];
+>> +
+>> +	snprintf(buf, 16, "%d*32+%2d", feature / 32, feature % 32);
+>> +
+>> +	return buf;
+>> +}
+>> +
 
- drivers/infiniband/hw/mana/device.c  | 47 ++++++++++++++++++++++++++--
- drivers/infiniband/hw/mana/mana_ib.h |  1 +
- 2 files changed, 46 insertions(+), 2 deletions(-)
+I was wondering if it would be better to build the feature name using a
+macro and reusing it elsewhere? This is all I could come up with:
 
-diff --git a/drivers/infiniband/hw/mana/device.c b/drivers/infiniband/hw/mana/device.c
-index 9357a9845c2c..b31089320aa5 100644
---- a/drivers/infiniband/hw/mana/device.c
-+++ b/drivers/infiniband/hw/mana/device.c
-@@ -65,6 +65,38 @@ static const struct ib_device_ops mana_ib_stats_ops = {
- 	.get_hw_stats = mana_ib_get_hw_stats,
- };
- 
-+static int mana_ib_netdev_event(struct notifier_block *this,
-+				unsigned long event, void *ptr)
-+{
-+	struct mana_ib_dev *dev = container_of(this, struct mana_ib_dev, nb);
-+	struct net_device *event_dev = netdev_notifier_info_to_dev(ptr);
-+	struct gdma_context *gc = dev->gdma_dev->gdma_context;
-+	struct mana_context *mc = gc->mana.driver_data;
-+	struct net_device *ndev;
-+
-+	/* Only process events from our parent device */
-+	if (event_dev != mc->ports[0])
-+		return NOTIFY_DONE;
-+
-+	switch (event) {
-+	case NETDEV_CHANGEUPPER:
-+		ndev = mana_get_primary_netdev(mc, 0, &dev->dev_tracker);
-+		/*
-+		 * RDMA core will setup GID based on updated netdev.
-+		 * It's not possible to race with the core as rtnl lock is being
-+		 * held.
-+		 */
-+		ib_device_set_netdev(&dev->ib_dev, ndev, 1);
-+
-+		/* mana_get_primary_netdev() returns ndev with refcount held */
-+		netdev_put(ndev, &dev->dev_tracker);
-+
-+		return NOTIFY_OK;
-+	default:
-+		return NOTIFY_DONE;
-+	}
-+}
-+
- static int mana_ib_probe(struct auxiliary_device *adev,
- 			 const struct auxiliary_device_id *id)
- {
-@@ -122,11 +154,19 @@ static int mana_ib_probe(struct auxiliary_device *adev,
- 	}
- 	dev->gdma_dev = &mdev->gdma_context->mana_ib;
- 
-+	dev->nb.notifier_call = mana_ib_netdev_event;
-+	ret = register_netdevice_notifier(&dev->nb);
-+	if (ret) {
-+		ibdev_err(&dev->ib_dev, "Failed to register net notifier, %d",
-+			  ret);
-+		goto deregister_device;
-+	}
-+
- 	ret = mana_ib_gd_query_adapter_caps(dev);
- 	if (ret) {
- 		ibdev_err(&dev->ib_dev, "Failed to query device caps, ret %d",
- 			  ret);
--		goto deregister_device;
-+		goto deregister_net_notifier;
- 	}
- 
- 	ib_set_device_ops(&dev->ib_dev, &mana_ib_stats_ops);
-@@ -134,7 +174,7 @@ static int mana_ib_probe(struct auxiliary_device *adev,
- 	ret = mana_ib_create_eqs(dev);
- 	if (ret) {
- 		ibdev_err(&dev->ib_dev, "Failed to create EQs, ret %d", ret);
--		goto deregister_device;
-+		goto deregister_net_notifier;
- 	}
- 
- 	ret = mana_ib_gd_create_rnic_adapter(dev);
-@@ -172,6 +212,8 @@ static int mana_ib_probe(struct auxiliary_device *adev,
- 	mana_ib_gd_destroy_rnic_adapter(dev);
- destroy_eqs:
- 	mana_ib_destroy_eqs(dev);
-+deregister_net_notifier:
-+	unregister_netdevice_notifier(&dev->nb);
- deregister_device:
- 	mana_gd_deregister_device(dev->gdma_dev);
- free_ib_device:
-@@ -188,6 +230,7 @@ static void mana_ib_remove(struct auxiliary_device *adev)
- 	xa_destroy(&dev->qp_table_wq);
- 	mana_ib_gd_destroy_rnic_adapter(dev);
- 	mana_ib_destroy_eqs(dev);
-+	unregister_netdevice_notifier(&dev->nb);
- 	mana_gd_deregister_device(dev->gdma_dev);
- 	ib_dealloc_device(&dev->ib_dev);
- }
-diff --git a/drivers/infiniband/hw/mana/mana_ib.h b/drivers/infiniband/hw/mana/mana_ib.h
-index 81a7e7474462..6903946677e5 100644
---- a/drivers/infiniband/hw/mana/mana_ib.h
-+++ b/drivers/infiniband/hw/mana/mana_ib.h
-@@ -79,6 +79,7 @@ struct mana_ib_dev {
- 	struct mana_ib_adapter_caps adapter_caps;
- 	struct dma_pool *av_pool;
- 	netdevice_tracker dev_tracker;
-+	struct notifier_block nb;
- };
- 
- struct mana_ib_wq {
--- 
-2.34.1
+/*
+ * Use with a %s format specifier to print the feature name.
+ *
+ * Return the feature "name" if set, otherwise return the X86_FEATURE_*
+ * numerals to make it easier to identify the feature.
+ */
+#define x86_feature_name(feature) \
+	(x86_cap_flags[feature] ? x86_cap_flags[feature] : \
+	({ \
+		char buf[16]; \
+		snprintf(buf, 16, "%d*32+%2d", feature >> 5, feature & 31); \
+		buf; \
+	}) \
+	)
+
+
+This would remove the need for callers to explicitly define a buffer.
+Also, it would help reduce a few lines in the newly merged
+parse_set_clear_cpuid(). But overall, it doesn't seem worth it. Let me
+know if you think otherwise or have a better idea.
+
+>> +void scan_feature_dependencies(struct cpuinfo_x86 *c)
+>> +{
+>> +	char feature_buf[16], depends_buf[16];
+>> +	const struct cpuid_dep *d;
+>> +
+>> +	for (d = cpuid_deps; d->feature; d++) {
+>> +		if (cpu_has(c, d->feature) && !cpu_has(c, d->depends)) {
+>> +			/*
+>> +			 * Only warn about the first unmet dependency on the
+>> +			 * first CPU where it is encountered to avoid spamming
+>> +			 * the kernel log.
+>> +			 */
+>> +			pr_warn_once("CPU%d: feature:%s may not work properly without feature:%s\n",
+>> +				     smp_processor_id(),
+>> +				     x86_feature_name(d->feature, feature_buf),
+>> +				     x86_feature_name(d->depends, depends_buf));
+> 
+> I'd make this a bit less passive-aggressive, something like:
+> 
+>      x86 CPU feature dependency check failure: CPU%d has '%s' enabled but '%s' disabled. Kernel might be fine, but no guarantees.
+> 
+
+Sure! How about making it slightly shorter?
+
+"x86 CPU feature check: CPU%d has '%s' enabled but '%s' disabled. Kernel
+might be fine, but no guarantees."
+
+> Because initially most of these warnings will be about quirks and 
+> oddities that happen to work fine in the current code.
+> 
+
+Yeah, we can probably modify the check later based on how it goes.
+
+
 
 
