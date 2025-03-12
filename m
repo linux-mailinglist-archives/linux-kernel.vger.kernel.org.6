@@ -1,154 +1,169 @@
-Return-Path: <linux-kernel+bounces-558192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9EADA5E2AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:26:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B08C4A5E2B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7410C3BCA1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:26:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3909D3BC5FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99662620FF;
-	Wed, 12 Mar 2025 17:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B2725744E;
+	Wed, 12 Mar 2025 17:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G7n/vzGN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fj+rHpMB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="ESlNCfYp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oOLWqqPe"
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552CF261396;
-	Wed, 12 Mar 2025 17:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F66824BC09;
+	Wed, 12 Mar 2025 17:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741800047; cv=none; b=sOQSX+hHB4OkR7tURVHUpnNnHXXKaA2p1aHgpkLAyDFUeqDOXoSkL6BzNeQC6Xf3fnSlnaKcSSzxRGLwleaL62pLDszZPlqVWlUfUCHX96OXM4srTG5FM1SMCy/j54UW2cyogbBT8vUJ5aXngKgRLuF9uBXUqdojHQfpUiDw8yg=
+	t=1741800054; cv=none; b=gjByeObuccBZBt3mip5R8ShyvEzdzgRfkbg8DoVIelcNT9nx1186jM4uRX6uEF5/9BaBdfSIjXGN81A48QS61fIvZWgREm3j2DfPMgeep3D86vCtHjr88pjGTj6p/KLe7htwOmqN8eMGzR8QnqXEFX2GYAmps8jJsAI48QdVpZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741800047; c=relaxed/simple;
-	bh=zY/E3+MMfZT/Z6oKxlt3ZG+OX/yaxpNhbyP2yPPIoSI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ZBg0T8ARz8vRdEaYO4yiDLik7mh+TSEy8daVGsE4fZzfkV+x2JZDf/AxxS+7DGMydOvNMGXbPj5JqpeLnDs5svVqcTIyOSM+Nry0uFrJRkyTEKVZfwn5D/h/+hRua2Yu9ohaVZZuYd+40+T/hJty3svmAWRUxdqHR4YNEFENDBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G7n/vzGN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fj+rHpMB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 12 Mar 2025 17:20:41 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741800043;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RreJT1/950Dby68fooq9s1rkdrwZswaf+2hQ7LS+KUs=;
-	b=G7n/vzGNFFW90Y22CctVyg/OJ1M0gMnqkrGmgcjDk67e0B1eZFSWg39w2Np2DP5H7g1+18
-	ZiOdmOjGTGaRBoFym8UMbnKmvhWGqonN2Px/in9u/28N5ie8EbaRJpSjDuyogvAE7RrIff
-	jijHiA6LlAJE92Qw8U87L9yThPvlezu51MKdDN/lp67rAZBLW2ay2f2NqiKk20AkPntorO
-	hyh+zSN6ibTD7Ieoszkf0/e2Kwpmn1mNCM0srVgQfdQyIcyU0MhE3zCp31eKvX39KLxzG7
-	e3nPEKZ/+Xb13uin8+DLj0h5ohegoMkAvUOp6VkC7pkkaq4f5x72r/YzNsW/PA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741800043;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RreJT1/950Dby68fooq9s1rkdrwZswaf+2hQ7LS+KUs=;
-	b=fj+rHpMB5pn9RnomNnUTBt737kEOq3gOuVe8oKN3LMMM0Xu0G3xYoaIHLT4/zrbxFjajrM
-	sZch27JxI9r0cIAA==
-From: "tip-bot2 for James Morse" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cache] x86/resctrl: Fix allocation of cleanest CLOSID on
- platforms with no monitors
-Cc: James Morse <james.morse@arm.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
- David Hildenbrand <david@redhat.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Tony Luck <tony.luck@intel.com>,
- Fenghua Yu <fenghuay@nvidia.com>, Babu Moger <babu.moger@amd.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- Peter Newman <peternewman@google.com>,
- Amit Singh Tomar <amitsinght@marvell.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250311183715.16445-2-james.morse@arm.com>
-References: <20250311183715.16445-2-james.morse@arm.com>
+	s=arc-20240116; t=1741800054; c=relaxed/simple;
+	bh=5O13yplnFhNunuhJ3wr9SnEC4OAOFAhqMT5eu6N73PE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kd9OjFLRscck0CL2c9RnlNgheFaHnRbsd9V1HVtBi6vpC/qWcv93diPx9uEmUA/Rma6ExR60YATHJi6qXE06v1+GZ8TKIRez8W7HWZJ4SnYCkp9aLx3UBnqBreafBjcd8SmlOd4574EOcabQYXk2+Cwm5WIHccjH6S5yYVN8gsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=ESlNCfYp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oOLWqqPe; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 62EE125402DB;
+	Wed, 12 Mar 2025 13:20:50 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Wed, 12 Mar 2025 13:20:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1741800050; x=1741886450; bh=1/6diSKHHw
+	xZi7Q5f0dDcfiEIdTViztZvS+b3ZuEBj4=; b=ESlNCfYpliwTi2JDBB7PwCYBG4
+	nzmaU6WeWt3AkReAAsYyW15A6sjGyrEt7n23ZGbQXjQ1C9CGIXqlOLumP2JvT/bg
+	ddKclGfAIYBn2IawSrrNTSX6v3L3OL6MXLo7hKJRTDV6VSfQ8Rb0te3gwq9ByLXS
+	IpPkdSJf8vikV9gze7knWG9YCT1x8uVaVU4ioVSwmPkcAT9ZPrqQ6ewNd8JdV+jp
+	1nbxl04O7uFGbnIKzhROArhKG3cNZMVYCuHjdLE4giHNNesA+BGSUmEE4ibbPRZB
+	RgD34z5NYsuqxu2FFde/8wfA9zuYo58lN0xhqL7ODOThdj1zZyukgPTgoBBA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1741800050; x=1741886450; bh=1/6diSKHHwxZi7Q5f0dDcfiEIdTViztZvS+
+	b3ZuEBj4=; b=oOLWqqPel1N9bBe3316fSDcmCy1MYoAldK2Da47If9fuiiFOC7h
+	GBSWJOayA1Ma+9WqsOmlp8nLp3JQHP1saTstjXqK0/2CDt7wL0EtRW3vOA2zLSkH
+	uKgQL1hotGJ5ng7eALG5gYc0ag2NbbBhIIlhbife6y7sQcQSj+Vs0lVOny2xirAY
+	DBIwDVghg5Ue4kkSGwg4iXSEndF8D758syoYbR2Nioc7Z5Mn6CuTEkCGahg4vbRc
+	B8oNo8HKaLXMv9AYYe3hfs7R8xy4BDfqaCnEOyhwbzkdnHep1Db94yNiQgIWIJB7
+	vB2nkRi0scHA4O3s+eFTMwU0rsxyzvMOYjA==
+X-ME-Sender: <xms:cMLRZzVkCojzny6SeSOWfgK3IY8Vw-LnhxzERX62YgzrRhqCG6w_Qg>
+    <xme:cMLRZ7lkRuF0V6Yg3INZDebcAaZlQVKD0QjJ4cWneT7LeYx6YCgBaLVTVQ5QRxMD2
+    hSVfVN87alqhA>
+X-ME-Received: <xmr:cMLRZ_ZwY2l6sraCTCXYquckomQdLjpHohp3BIrjpS2g4iH6kueCf8wmUZUfNM8ojuJBhZ4R4ahQz3UKoPJwKMl5_Tnzk8sO5YDfog>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdehieehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecugg
+    ftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeu
+    fefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopedutddpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrg
+    hupdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmvges
+    khhlohgvnhhkrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
+    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:cMLRZ-WIf_IldB65gC4WVYA5MBZPczpfBIquCgXx4zGovduoCc6Cmg>
+    <xmx:cMLRZ9nLqtrwUzoAyBWG9VJRhcSUfM5ocW46qV5c6SdbPPRHvDGutA>
+    <xmx:cMLRZ7dd0CijYbC_nX_LTFrzVSdFVyjBahFQEjh33hmBSJObQhmphg>
+    <xmx:cMLRZ3HiOx5bKDGxibopUpsbiJ51FlLs7ycNM5WjR1CnaapF2prYiA>
+    <xmx:csLRZ2cGsCmrFjJlK6FFn_kROxkxmvuzoTBAyk2ly2XvAg1ZIHkeQsCi>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 12 Mar 2025 13:20:47 -0400 (EDT)
+Date: Wed, 12 Mar 2025 18:20:45 +0100
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Message-ID: <2025031235-trailside-unexpired-88c6@gregkh>
+References: <20250312220950.28ed9ad7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174180004175.14745.2700864391580765240.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312220950.28ed9ad7@canb.auug.org.au>
 
-The following commit has been merged into the x86/cache branch of tip:
+On Wed, Mar 12, 2025 at 10:09:50PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> error[E0599]: no method named `readl` found for reference `&Bar<8>` in the current scope
+>   --> drivers/gpu/nova-core/regs.rs:38:18
+>    |
+> 38 |         Self(bar.readl(BOOT0_OFFSET))
+>    |                  ^^^^^
+>    |
+> help: there is a method `read8` with a similar name
+>    |
+> 38 |         Self(bar.read8(BOOT0_OFFSET))
+>    |                  ~~~~~
+> 
+> error: aborting due to 1 previous error
+> 
+> For more information about this error, try `rustc --explain E0599`.
+> 
+> Caused by commit
+> 
+>   354fd6e86fac ("rust: io: rename `io::Io` accessors")
+> 
+> interacting with commit
+> 
+>   54e6baf123fd ("gpu: nova-core: add initial driver stub")
+> 
+> from the drm-nova tree.
+> 
+> I applied the following merge fix patch for today.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 12 Mar 2025 21:36:48 +1100
+> Subject: [PATCH] fix up for "rust: io: rename `io::Io` accessors"
+> 
+> interacting with "gpu: nova-core: add initial driver stub"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/gpu/nova-core/regs.rs | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
+> index 50aefb150b0b..b1a25b86ef17 100644
+> --- a/drivers/gpu/nova-core/regs.rs
+> +++ b/drivers/gpu/nova-core/regs.rs
+> @@ -35,7 +35,7 @@
+>  impl Boot0 {
+>      #[inline]
+>      pub(crate) fn read(bar: &Bar0) -> Self {
+> -        Self(bar.readl(BOOT0_OFFSET))
+> +        Self(bar.read32(BOOT0_OFFSET))
+>      }
+>  
+>      #[inline]
+> -- 
+> 2.45.2
+> 
 
-Commit-ID:     a121798ae669351ec0697c94f71c3a692b2a755b
-Gitweb:        https://git.kernel.org/tip/a121798ae669351ec0697c94f71c3a692b2a755b
-Author:        James Morse <james.morse@arm.com>
-AuthorDate:    Tue, 11 Mar 2025 18:36:46 
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 12 Mar 2025 12:21:48 +01:00
+Fix looks good to me, thanks!
 
-x86/resctrl: Fix allocation of cleanest CLOSID on platforms with no monitors
-
-Commit
-
-  6eac36bb9eb0 ("x86/resctrl: Allocate the cleanest CLOSID by searching closid_num_dirty_rmid")
-
-added logic that causes resctrl to search for the CLOSID with the fewest dirty
-cache lines when creating a new control group, if requested by the arch code.
-This depends on the values read from the llc_occupancy counters. The logic is
-applicable to architectures where the CLOSID effectively forms part of the
-monitoring identifier and so do not allow complete freedom to choose an unused
-monitoring identifier for a given CLOSID.
-
-This support missed that some platforms may not have these counters.  This
-causes a NULL pointer dereference when creating a new control group as the
-array was not allocated by dom_data_init().
-
-As this feature isn't necessary on platforms that don't have cache occupancy
-monitors, add this to the check that occurs when a new control group is
-allocated.
-
-Fixes: 6eac36bb9eb0 ("x86/resctrl: Allocate the cleanest CLOSID by searching closid_num_dirty_rmid")
-Signed-off-by: James Morse <james.morse@arm.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
-Reviewed-by: Babu Moger <babu.moger@amd.com>
-Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
-Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Tested-by: Peter Newman <peternewman@google.com>
-Tested-by: Amit Singh Tomar <amitsinght@marvell.com> # arm64
-Tested-by: Shanker Donthineni <sdonthineni@nvidia.com> # arm64
-Tested-by: Babu Moger <babu.moger@amd.com>
-Link: https://lore.kernel.org/r/20250311183715.16445-2-james.morse@arm.com
----
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 6419e04..04b653d 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -157,7 +157,8 @@ static int closid_alloc(void)
- 
- 	lockdep_assert_held(&rdtgroup_mutex);
- 
--	if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
-+	if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID) &&
-+	    is_llc_occupancy_enabled()) {
- 		cleanest_closid = resctrl_find_cleanest_closid();
- 		if (cleanest_closid < 0)
- 			return cleanest_closid;
+greg k-h
 
