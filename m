@@ -1,115 +1,159 @@
-Return-Path: <linux-kernel+bounces-557397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127D1A5D860
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:39:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323DCA5D85B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:39:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06DF73ABE32
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:39:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D4E717694A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0BF2356BC;
-	Wed, 12 Mar 2025 08:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="nKAI4Wwo"
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60321E260C;
-	Wed, 12 Mar 2025 08:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19742356B9;
+	Wed, 12 Mar 2025 08:38:59 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1CC1DE3A4;
+	Wed, 12 Mar 2025 08:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741768779; cv=none; b=qNonJhx+y0dHWFEGAPGjFhELu7GKv9MOyhEt8fLuSEr/rnEaFO2msydubSN4NEH1VFNDiQlw31QdKjbhQN6B8SbZ65H8Q31kx9/h8eZq85oHRHnsMwnrQUAAmdnAHgbuwTML/rktjw6BP3P0anlefyPG13DZnkp9hc/J+ROkSE0=
+	t=1741768739; cv=none; b=VnKNt62WCUqQzriZOMf5AiXsYfwi+v9YlaFz4dEIpPLDaG6MhNxPfh52RJWloEGLg8c2fiGIJZnrNofo+rJMCPBcCXVv0UwJd9SOpOnO7tiJrO0kXF0pgB06skYqFMyY5f8iE8s9/t8RbT+qmdDinqub+AfgeGnSjPk2uuOZVF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741768779; c=relaxed/simple;
-	bh=yNgoPSJjsf++4XSyvU8tPaX2ml30wu9PFCyRHSCM0U4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TVo/6tp9oy5GV4csKVu+i5tU8vU6sXmro2P5PYqp+7u2HHya30FvpF1rfrqeEigp+TXjByt1OPrSyRKwQVdEwKZhpOWAFuZoEjUt8cgApxH/I2GHdmwwKNFbt3tQXE1HMnalB2Z2wIBUdiJYxPjXPmthFMg8W13p9RbM+4lLYYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=fail (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=nKAI4Wwo reason="key not found in DNS"; arc=none smtp.client-ip=206.189.21.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=buaa.edu.cn; s=buaa; h=Received:From:To:Cc:Subject:Date:
-	Message-Id:MIME-Version:Content-Transfer-Encoding; bh=5oUDC6wsjZ
-	WnHqf8K3FBO9GrUnuvrcLdJ7o5wYqKLR8=; b=nKAI4WwoRHKZacWc5f2elxeBrL
-	PDPej3tHtOJL+dJnEapzHlHd4WCRk8RGA0vGYxc9eGVIl99l7un3aR8rPCVNTX0D
-	FU4CzOMjp87COAe5i5EEzknFiVehn0Mkk5UVCgsApchTPoNrlxnGZmsPBnYNnK0n
-	n5stb56fPGQKaX2HI=
-Received: from localhost.localdomain (unknown [10.193.111.103])
-	by coremail-app1 (Coremail) with SMTP id OCz+CgA3_lMaSNFnwCS_AA--.24657S2;
-	Wed, 12 Mar 2025 16:38:50 +0800 (CST)
-From: Si-Jie Bai <sy2239101@buaa.edu.cn>
-To: luiz.dentz@gmail.com
-Cc: marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	linux-bluetooth@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cuijianw@buaa.edu.cn,
-	sunyv@buaa.edu.cn,
-	baijiaju@buaa.edu.cn,
-	Si-Jie Bai <sy2239101@buaa.edu.cn>
-Subject: [PATCH] Bluetooth: HCI: Fix value of HCI_ERROR_UNSUPPORTED_REMOTE_FEATURE
-Date: Wed, 12 Mar 2025 16:38:47 +0800
-Message-Id: <20250312083847.7364-1-sy2239101@buaa.edu.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741768739; c=relaxed/simple;
+	bh=U33hEvHJjZLQGk9HJu8MWoqd1bx3vlt2f9SlenNSOKg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=J77HLuDAoLOiSFG6N1pX5KEcQ/DA4uuavOfeZJsnhRXT8p04YDisYO7jz624bmV5H7ee/t5MbDtNd1ZyMaw70p/aB1KyHVCgAv5dE0nyv2cORLIYDbP+1Qrk9vUaT/WY360nEuOYRw6F7uZmevmendSMu5sck6KCzD/9s96casY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.164])
+	by gateway (Coremail) with SMTP id _____8CxqmoXSNFnrymTAA--.54647S3;
+	Wed, 12 Mar 2025 16:38:47 +0800 (CST)
+Received: from [10.20.42.164] (unknown [10.20.42.164])
+	by front1 (Coremail) with SMTP id qMiowMDxesQTSNFnu51FAA--.16811S2;
+	Wed, 12 Mar 2025 16:38:46 +0800 (CST)
+Subject: Re: [PATCH v4 1/6] mfd: Add support for Loongson Security Module
+To: Lee Jones <lee@kernel.org>
+Cc: herbert@gondor.apana.org.au, davem@davemloft.net, peterhuewe@gmx.de,
+ jarkko@kernel.org, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-crypto@vger.kernel.org, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+ pmenzel@molgen.mpg.de, Yinggang Gu <guyinggang@loongson.cn>
+References: <20250226030358.15924-1-zhaoqunqin@loongson.cn>
+ <20250226030358.15924-2-zhaoqunqin@loongson.cn>
+ <20250307200031.GG8350@google.com>
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Message-ID: <5a3c49e7-3f80-25fe-6f08-a3a6ddc496d0@loongson.cn>
+Date: Wed, 12 Mar 2025 16:38:53 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250307200031.GG8350@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:OCz+CgA3_lMaSNFnwCS_AA--.24657S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Wr18uw15Gr4DXw15KF18AFb_yoWfurb_Aw
-	13ZF4kuryUAa4Sqr4qkan8Jw48ur1rZFykWFnxW347Jry29rs5J3sxWF4jq3W3Way7urWS
-	yF4IyFyfW343JjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbgxFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK
-	67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I
-	0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7Cj
-	xVAFwI0_GcCE3s1ln4kS14v26r1Y6r17M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcV
-	Aq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y
-	6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
-	vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26r126r1DMxkIecxEwVCm-wCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6c
-	x26F1DJr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s02
-	6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw
-	0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvE
-	c7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14
-	v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x
-	0JUDhLnUUUUU=
-X-CM-SenderInfo: tv1sjjizrqiqpexdthxhgxhubq/
+Content-Language: en-US
+X-CM-TRANSID:qMiowMDxesQTSNFnu51FAA--.16811S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxWFWrZr1kZFWfWFy5JF43urX_yoW5XF1fpa
+	yDJFyrCF48Jw42ka13W3WUuFy5Ga92grW3KFy7Wa4xuF9xZa47JrZ0kFy7GrZ7Jr1xXry2
+	gF95Za45CF1YyacCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
+	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUUU==
 
-HCI_ERROR_UNSUPPORTED_REMOTE_FEATURE is actually 0x1a not 0x1e:
 
-BLUETOOTH CORE SPECIFICATION Version 5.3 | Vol 1, Part F
-page 371:
+在 2025/3/12 下午4:08, Lee Jones 写道:
+> On Wed, 26 Feb 2025, Qunqin Zhao wrote:
+>
+>> This driver supports Loongson Security Module, which provides the control
+>> for it's hardware encryption acceleration child devices.
+>>
+>> Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
+>> Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
+>> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
+>> ---
+>> v3-v4: None
+>>
+>> v2: Removed "ls6000se-sdf" device, added "ls6000se-tpm" device.
+>>      Passed dmamem size to SE firmware in se_init_hw() function.
+>>
+>>   drivers/mfd/Kconfig          |  10 +
+>>   drivers/mfd/Makefile         |   2 +
+>>   drivers/mfd/ls6000se.c       | 374 +++++++++++++++++++++++++++++++++++
+>>   include/linux/mfd/ls6000se.h |  75 +++++++
+>>   4 files changed, 461 insertions(+)
+>>   create mode 100644 drivers/mfd/ls6000se.c
+>>   create mode 100644 include/linux/mfd/ls6000se.h
+>>
+>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+>> index d44c69bb3d..318fb113c1 100644
+>> --- a/drivers/mfd/Kconfig
+>> +++ b/drivers/mfd/Kconfig
+>> @@ -2439,5 +2439,15 @@ config MFD_UPBOARD_FPGA
+>>   	  To compile this driver as a module, choose M here: the module will be
+>>   	  called upboard-fpga.
+>>   
+>> +config MFD_LS6000SE
+>> +	tristate "Loongson Security Module Interface"
+>> +	depends on LOONGARCH && ACPI
+>> +	select MFD_CORE
+>> +	help
+>> +	  The Loongson security module provides the control for hardware
+>> +	  encryption acceleration devices. Each device uses at least one
+>> +	  channel to interact with security module, and each channel may
+>> +	  have its own buffer provided by security module.
+>> +
+>>   endmenu
+>>   endif
+>> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+>> index 9220eaf7cf..9556de7715 100644
+>> --- a/drivers/mfd/Makefile
+>> +++ b/drivers/mfd/Makefile
+>> @@ -294,3 +294,5 @@ obj-$(CONFIG_MFD_RSMU_I2C)	+= rsmu_i2c.o rsmu_core.o
+>>   obj-$(CONFIG_MFD_RSMU_SPI)	+= rsmu_spi.o rsmu_core.o
+>>   
+>>   obj-$(CONFIG_MFD_UPBOARD_FPGA)	+= upboard-fpga.o
+>> +
+>> +obj-$(CONFIG_MFD_LS6000SE)	+= ls6000se.o
+>> diff --git a/drivers/mfd/ls6000se.c b/drivers/mfd/ls6000se.c
+>> new file mode 100644
+>> index 0000000000..24d76c2ffc
+>> --- /dev/null
+>> +++ b/drivers/mfd/ls6000se.c
+> [...]
+>
+>> +static const struct mfd_cell se_devs[] = {
+>> +	{ .name = "ls6000se-sdf" },
+>> +	{ .name = "ls6000se-tpm" },
+>> +};
+> Where are the drivers for these devices?  I don't see them anywhere.
+>
+> I do see ls6000se-rng.  How is that registered?
 
-  0x1A  Unsupported Remote Feature
+Oh.... I made a slip of the pen and wrote that  "ls6000se-sdf" not  
+"ls6000se-rng".  Will fix it in next version.
 
-Signed-off-by: Si-Jie Bai <sy2239101@buaa.edu.cn>
----
- include/net/bluetooth/hci.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Driver for "ls6000se-tpm" is [PATCH v4 5/6].
 
-diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
-index 0d51970d8..3ec915738 100644
---- a/include/net/bluetooth/hci.h
-+++ b/include/net/bluetooth/hci.h
-@@ -683,7 +683,7 @@ enum {
- #define HCI_ERROR_REMOTE_POWER_OFF	0x15
- #define HCI_ERROR_LOCAL_HOST_TERM	0x16
- #define HCI_ERROR_PAIRING_NOT_ALLOWED	0x18
--#define HCI_ERROR_UNSUPPORTED_REMOTE_FEATURE	0x1e
-+#define HCI_ERROR_UNSUPPORTED_REMOTE_FEATURE	0x1a
- #define HCI_ERROR_INVALID_LL_PARAMS	0x1e
- #define HCI_ERROR_UNSPECIFIED		0x1f
- #define HCI_ERROR_ADVERTISING_TIMEOUT	0x3c
--- 
-2.25.1
+Thanks for your comments.
+
+BR, Qunqin.
+
+>
 
 
