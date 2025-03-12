@@ -1,143 +1,102 @@
-Return-Path: <linux-kernel+bounces-558417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C36A5E59B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:47:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D61A5E59F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:50:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CB273A534B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:47:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48948178C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EF31EEA3C;
-	Wed, 12 Mar 2025 20:47:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537E6258A;
-	Wed, 12 Mar 2025 20:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40941EF082;
+	Wed, 12 Mar 2025 20:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jhz91nWV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2C91EEA47;
+	Wed, 12 Mar 2025 20:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741812434; cv=none; b=MVG1jIR8uRJ9O1qlNDwd59MLRsRVjG7w4+nachT/H+8PJOxpU/gDBxC0gUZErDHWTbGD7oNw8DQiodOtRVG57nZG+IJ1/iRfsC+Qwei3qAitCz+ccrv1aH9p//EfVe4Bww4epBSCAIWkw87rH2oh5Wa0AtRiDCI5f6nYmpV3F84=
+	t=1741812600; cv=none; b=R2ZZZNOtZuCQBHIBoYyGLeYjPqcjAYVSDG/wud0NpuRyaV5iGmw/OlipnZFIPxvaElshQpTNJ80gawcz+UDkBNH3U0d2cOCJl3UylulLfdZoDTlow8xdbHJXWknCfIQ4NoyK1VSGjlcTVCiRGPa6BG9NW1Zsdxqt8b84BxdbXlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741812434; c=relaxed/simple;
-	bh=oHoaylZ0+e02kulPIew6Nn6BhlI26LCAOEVuoJmwZY4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qapxFJ8kRCzPJZczyJuxV2Hm5LqJ3A9gtjk4vejrWOEEw9LVQctoWcBoX3LipnKW42A+mqjjlU6e6+qQrn2Kz2uY2GJe2t9Yh5DO+zDyHJSciv9hWg3uJ62iUAcfegv1yjgGCPebkqiU+ZmfKRMzoMYERdEdoap2lcxo8yrBH/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E338015A1;
-	Wed, 12 Mar 2025 13:47:21 -0700 (PDT)
-Received: from [10.118.111.35] (G9L3377F54.austin.arm.com [10.118.111.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4ABA3F673;
-	Wed, 12 Mar 2025 13:47:10 -0700 (PDT)
-Message-ID: <25269252-e45f-4692-a519-a0703b6800a1@arm.com>
-Date: Wed, 12 Mar 2025 15:47:10 -0500
+	s=arc-20240116; t=1741812600; c=relaxed/simple;
+	bh=FfGBxFWtcBfVcTWHwKl6PVZwoahFegz5oSW5Abn0QXU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=LT2h3NT1pF7m5zgttwrhUhRlm4rWtg+V/XYtH1ZaBjzDthM3TtIE8FfBTuJbb9RthRA8xsn0q2VO447KiN0uZa8X78ptKCinb0x6gvZwF53mBu8HjQHIUZqewo/Ia/U5m33cQJ9oU/VbeaCN4OSWvU1dL+jflYzdXc05UzzTFF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jhz91nWV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 844E4C4CEDD;
+	Wed, 12 Mar 2025 20:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741812599;
+	bh=FfGBxFWtcBfVcTWHwKl6PVZwoahFegz5oSW5Abn0QXU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Jhz91nWVNWTPbsAxteS/s5JchdXPQ9MhuH05vLj1s2g2Ojpazr0AkeAz9NcMn4DFv
+	 HX85UfenKv5Rmj6XqYQHj3He1hQgn4WbvmTJb2MJbL5fXCFE4LJDfhYxDmiTH7hORO
+	 tf9oDp2fF5cW85Mb2f1Wg1FudrtnMtm4MmrHBzjTbMfAs4EZrXBLHQLcvZLEaIViSj
+	 WmlyiG0lDz2DquaYgq3c/DRAlxBo/wwvk/zrflSBCehVNsTOJrJ6GI68WguUYM/sbc
+	 b8oLgKXdnXWhowYOG4dBjOHHEoF8K9S+H/nx/pHDOlHBKSfYWNcUnBqM9x4dwKjOzK
+	 o59+KT7FPrX0Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B54380DBDF;
+	Wed, 12 Mar 2025 20:50:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Build error on -next due to tpm_crb.c changes?
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Thorsten Leemhuis <linux@leemhuis.info>, jarkko@kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, lenb@kernel.org,
- rafael@kernel.org, jgg@ziepe.ca, peterhuewe@gmx.de,
- linux-integrity@vger.kernel.org,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250305173611.74548-1-stuart.yoder@arm.com>
- <0ad035ff-400e-4b15-8b8f-40b69152ec46@leemhuis.info>
- <92bc0a65-608f-4307-bb1c-16d8836d42e5@arm.com>
- <77fb9077-f598-4308-8862-6d09b23688bb@leemhuis.info>
- <23c77291-7c6e-45ea-b1ad-952c01882579@arm.com>
- <20250311211700.bwizwecxyxorrwql@bogus>
-Content-Language: en-US
-From: Stuart Yoder <stuart.yoder@arm.com>
-In-Reply-To: <20250311211700.bwizwecxyxorrwql@bogus>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 0/3] net: remove rtnl_lock from the callers of
+ queue APIs
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174181263398.928071.13904102204365438144.git-patchwork-notify@kernel.org>
+Date: Wed, 12 Mar 2025 20:50:33 +0000
+References: <20250311144026.4154277-1-sdf@fomichev.me>
+In-Reply-To: <20250311144026.4154277-1-sdf@fomichev.me>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+ donald.hunter@gmail.com, horms@kernel.org, michael.chan@broadcom.com,
+ pavan.chebbi@broadcom.com, andrew+netdev@lunn.ch, jdamato@fastly.com,
+ xuanzhuo@linux.alibaba.com, almasrymina@google.com, asml.silence@gmail.com,
+ dw@davidwei.uk
 
+Hello:
 
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 3/11/25 4:17 PM, Sudeep Holla wrote:
-> On Tue, Mar 11, 2025 at 01:25:50PM -0500, Stuart Yoder wrote:
->>
->>
->> On 3/11/25 11:51 AM, Thorsten Leemhuis wrote:
->>> On 11.03.25 16:53, Stuart Yoder wrote:
->>>> On 3/11/25 10:21 AM, Thorsten Leemhuis wrote:
->>>>> On 05.03.25 18:36, Stuart Yoder wrote:
->>>> [...]
->>>> So, it should not be possible on one had have
->>>> CONFIG_TCG_ARM_CRB_FFA being true when building tpm_crb.c
->>>> and false resulting in the tpm_crb_ffa.o not being
->>>> picked up in the build.
->>>
->>> Many thx for the answer. Maybe Fedora's way to prepare the .config files
->>> (which my package builds use to be close to Fedora's official packages)
->>> is doing something odd/wrong. Will take a closer look and report back.
->>
->> I've been experimenting with some different build config combinations
->> and have reproduced what must be the issue.
->>
->> This works fine:
->> <*>   TPM 2.0 CRB Interface                                         < >
->> TPM CRB over Arm FF-A Transport
->>
->> This works fine:
->> < >   TPM 2.0 CRB Interface                                         <*>
->> TPM CRB over Arm FF-A Transport
->>
->> This works fine:
->> <*>   TPM 2.0 CRB Interface                                         <*>
->> TPM CRB over Arm FF-A Transport
->>
->> This works fine:
->> <M>   TPM 2.0 CRB Interface                                         <M>
->> TPM CRB over Arm FF-A Transport
->>
->> This fails:
->> <*>   TPM 2.0 CRB Interface                                         <M>
->> TPM CRB over Arm FF-A Transport
->>
->> The 2 drivers are coupled, so we can't have one built as a module
->> and the other built-in.
->>
->> I'm not a Kconfig expert, and need to do some fiddling to see
->> if I can find a Kconfig syntax that prevents that failure scenario.
->>
+On Tue, 11 Mar 2025 07:40:23 -0700 you wrote:
+> All drivers that use queue management APIs already depend on the netdev
+> lock. Ultimately, we want to have most of the paths that work with
+> specific netdev to be rtnl_lock-free (ethtool mostly in particular).
+> Queue API currently has a much smaller API surface, so start with
+> rtnl_lock from it:
 > 
-> 	default y if (TCG_CRB && ARM_FFA_TRANSPORT)
+> - add mutex to each dmabuf binding (to replace rtnl_lock)
+> - move netdev lock management to the callers of netdev_rx_queue_restart
+>   and drop rtnl_lock
 > 
-> is the issue here. You can select it as built-in if either or one of the
-> TCG_CRB and ARM_FFA_TRANSPORT is a module, but that is exactly what happens.
-> Not sure if default value is a must for you. But just depends on each of
-> these should be good enough and enable it in defconfig if needed. Or
-> you can have multiple default at least 4 combinations I can see. Both
-> are =y and either and both are =m
+> [...]
 
-I would like a default, because if someone enables both
-ARM_FFA_TRANSPORT and TPM_CRB I don't want them to forget to
-turn on TCG_ARM_CRB_FFA.
+Here is the summary with links:
+  - [net-next,v2,1/3] net: create netdev_nl_sock to wrap bindings list
+    https://git.kernel.org/netdev/net-next/c/b6b67141d6f1
+  - [net-next,v2,2/3] net: add granular lock for the netdev netlink socket
+    https://git.kernel.org/netdev/net-next/c/10eef096be25
+  - [net-next,v2,3/3] net: drop rtnl_lock for queue_mgmt operations
+    https://git.kernel.org/netdev/net-next/c/1d22d3060b9b
 
-I've experimented with a few ways of doing this and I think
-this is simplest and gives the behavior we want:
-
-config TCG_ARM_CRB_FFA
-         tristate "TPM CRB over Arm FF-A Transport"
-         depends on ARM_FFA_TRANSPORT && TCG_CRB
-         default TCG_CRB
-
-The TCG_ARM_CRB_FFA option only appears if both FFA and
-TPM_CRB are enabled. And the default tracks the value
-of TPM_CRB.
-
-Thanks,
-Stuart
-
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
