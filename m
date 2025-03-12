@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-557839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A39A5DE76
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:54:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EEDA5DE79
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:55:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A05AB3ABAC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:54:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612D2189DA25
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D876B24CEFE;
-	Wed, 12 Mar 2025 13:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D7424BBF5;
+	Wed, 12 Mar 2025 13:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="toNfX+21"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HfhH08SS"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDA124CEDF
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622F5241678;
+	Wed, 12 Mar 2025 13:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741787671; cv=none; b=trGGBm1s7j8o4snNc3CQrc+0mX1Y7a1FVwlzw9wm1zZLv+ZfPQ/C19mZ0G8UgFhfEQQACFuW0cSRRWkmXu+6qhu1PRuVmit9TjUgTx5U8/N4Flvk1max2ZrwHaxr0MqoJ/enlSKuUwCq3n5jiz4xTKvTBOBL9xKbLRwawXAbrH0=
+	t=1741787691; cv=none; b=aRb558i7/Bn3OeHy6doGwz9bQHnvy7DlTXQyJn7YBaNP0Scn3zAHVeJ8Xiufwx9t3EclXxx3lxJOCntXLyNVhcWPYcYZycU8ssD+tPk0T00Q2OyhnGfWCIFuANvXsiOZvT54d6Ixnr/Pdw8ZAuPbfUMQjdJmpuTez3uWh1fRAdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741787671; c=relaxed/simple;
-	bh=Ed0wdEeViwxIbMHQHz+oOPI+iFPQHy3GupPkYoL7b4k=;
+	s=arc-20240116; t=1741787691; c=relaxed/simple;
+	bh=s7HppErOuRAEfWoZvC9h8SjPc+omLVLEhgLC3zn/b5g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E/vjBcQ3pYcMI73UyFP52n3wKWnHqc0n69uglzmSVxpobTlfFycP03PNKoihFIIWldnaYr9CJlIbx1scAazqR2t9rrf/EiU+uA3u6Fm/aPQUgnvP4xD2ytADXadBghANx0+5xqOX99qQQ0m0AW/MGYCG7043D8s2jGpe2iQBVMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=toNfX+21; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=qUsmCd+IsB66Mb5k2gO5DquCGsvigUmRnyYF0iRh3o8tWA1ff6bsECZ4haLVu24Pd/ztiPJK7Foh/BkSzRALaarowNWzDCHljQDwo9OnXnCR2tlDmVNYyqVgM4s/NN9qJNGAvF3N1MTX/pfdCJCmWjwAWlGecQ4CJTGGiSzRfyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HfhH08SS; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=m1NzlSxeWSKjyMojK2bHdW++RcJCnvmr2KpHmhYq77s=; b=toNfX+21cchlW5V/GpsDXrIP66
-	vggJSO10e6fu/q6BtMwC+/rGI0YTKoWomkrBOefhG6w66HJoLjlWNFhz8RoscJNQPa6vO/gLrtkWF
-	BCyc2rprSpV7+z+39i6TmeFYAdaaQwfadUdJL2HntfkgeorRgqtP4C9ctkf4gVUTcaTcS3hRtn0Yz
-	24Ux2fM1MAw7UD0R8yeD6kHOdFRB6plamWyLtL0SBJe3QOA5vd/N2iG5upFVyVDMlnfADeupToBdd
-	5LTaRUDbwdBL/s01cwrs2GUCzH0DyqLduKa+y9zp5bbyRIDkSXQd2Lg1Es+Oen+5mKzHX+Unr0tc6
-	9AwhTvcA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsMXQ-0000000Cv32-0Ru0;
-	Wed, 12 Mar 2025 13:54:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 46E2A300599; Wed, 12 Mar 2025 14:54:23 +0100 (CET)
-Date: Wed, 12 Mar 2025 14:54:23 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: kan.liang@linux.intel.com
-Cc: mingo@redhat.com, tglx@linutronix.de, bp@alien8.de, acme@kernel.org,
-	namhyung@kernel.org, irogers@google.com,
-	linux-kernel@vger.kernel.org, ak@linux.intel.com,
-	eranian@google.com
-Subject: Re: [PATCH V7 1/6] perf: Save PMU specific data in task_struct
-Message-ID: <20250312135423.GM19424@noisy.programming.kicks-ass.net>
-References: <20250312130424.3863916-1-kan.liang@linux.intel.com>
+	bh=lfneeWODElFymFhQnucV3WL3Lau0GPYLjMhVhcnqKW8=; b=HfhH08SSMP3zY3OeXVKlQ3ZbtD
+	ASMEE5hDn5masctrOVgF4cgC5EpNYAB77QksrAgCFHdpJzMsbHkTTMUM6FwdzJmiss4zMryqtPdQB
+	xojhyVY1j+DMG870wbf+qKWdUh0W57WSV9F3/c4VkIcapXkB0QvTkNqnHFyKfhIolGZDS2MEq0Z9J
+	t2NbIASiMHHmR/lIQzzMN0rW4BA+67yGNabsnUopfPZLcHt9jEFr2PZSlMe/gz39DoHjsSW1mS+mo
+	Tlj1lWHOH3I2o8qgH0N35ZlkI+5ynaSPoAI7Na9ex7Ju3EHr5fbxZCjQtyaUFP2M7AOE59OpOG5Rn
+	+tjZnE9w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsMXp-00000008d2W-415a;
+	Wed, 12 Mar 2025 13:54:49 +0000
+Date: Wed, 12 Mar 2025 06:54:49 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
+	djwong@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v5 07/10] xfs: Commit CoW-based atomic writes atomically
+Message-ID: <Z9GSKbuollfpAZeX@infradead.org>
+References: <20250310183946.932054-1-john.g.garry@oracle.com>
+ <20250310183946.932054-8-john.g.garry@oracle.com>
+ <Z9E6LmV1PHOoEME7@infradead.org>
+ <63587581-17a5-431e-9fe3-a1a24ea4fa21@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,14 +65,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250312130424.3863916-1-kan.liang@linux.intel.com>
+In-Reply-To: <63587581-17a5-431e-9fe3-a1a24ea4fa21@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-> The whole patch set was posted several years ago. But it's buried in the
-> LKML without merging. I've received several requests recently to fix the
-> LBR issue with system-wide events. Rebase and repost it.
+On Wed, Mar 12, 2025 at 09:04:07AM +0000, John Garry wrote:
+> > As already mentioned in a previous reply:  "all" might be to much.
+> > The code can only support a (relatively low) number of extents
+> > in a single transaction safely.
 > 
-> - Rebase on top of Peter's perf/core branch.
+> Then we would need to limit the awu max to whatever can be guaranteed
+> (to fit).
 
-That branch is older than tip/perf/core, as such things don't apply
-anymore :/
+Yes.  And please add a testcase that creates a badly fragmented file
+and verifies that we can handle the worst case for this limit.
+
+(although being able to reproduce the worst case btree splits might
+be hard, but at least the worst case fragmentation should be doable)
+
+> > Assuming we could actually to the multi extent per transaction
+> > commit safely, what would be the reason to not always do it?
+> > 
+> 
+> Yes, I suppose that it could always be used. I would suggest that as a later
+> improvement, if you agree.
+
+I remember running into some problems with my earlier version, but I'd
+have to dig into it.  Maybe it will resurface with the above testing,
+or it was due to my optimizations for the extent lookups.
+
 
