@@ -1,191 +1,148 @@
-Return-Path: <linux-kernel+bounces-558252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB9EA5E37B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:09:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D72A5E357
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:00:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B98A189C362
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:09:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382281893047
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549D5257429;
-	Wed, 12 Mar 2025 18:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7606B2561C2;
+	Wed, 12 Mar 2025 18:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="iEquGJ60";
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="Cuboc5Sl"
-Received: from mail.mleia.com (mleia.com [178.79.152.223])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hkfrrJSp"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCEF256C62;
-	Wed, 12 Mar 2025 18:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.79.152.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D6F8635C;
+	Wed, 12 Mar 2025 18:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741802968; cv=none; b=IEqOr2ykvTVJyGq0gAJj0Ct/vX4HQvgb9eZ5SUVEfqJtAoaZlvkoUijC6AIBLZnM/DbdGqAO+e15n2TgNJvBu2n2TTrmMQZcWiISTlChpEW/z36xqmUVN0XFyZHiS03+KwNNE6rGwr+tGA569NRG51eW408zMfp73U1WUP2kpaQ=
+	t=1741802427; cv=none; b=JV3cdTXI80EZZfxudVg9FB2ciKVHp4bjmrl7S9kaqFQySIo5g3OQ15VbUJ3w3nk2XJ3gE+L8eQFMSCZtuACpbiMk1PS7Dq8kwv2kickuffJq3F8E2ZeYQk5xThl/NrCHihIEiBsvhLr6hx4PdqgHpYdUcVLwG+EhZiibD2WzHCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741802968; c=relaxed/simple;
-	bh=XvrF3yVE/G56SwGUDsatfsDt/hGysLL5ZnG+rclTcPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pMMimM6BYogAaXpDj8YCAeDK0XIxjt7IiMUl84hh583LGfKWGi8AO+LLfVuMxlnGpiYwFUMnzxgVYuOsHbWjKVGhROLzDybHiRQ+fscNb1ea7IksY2toS8N8Z7gVrk0FktAN8oqi3XmIu/ZNL1lLn+9yAzpU2yBHuSStr3+//Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com; spf=none smtp.mailfrom=mleia.com; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=iEquGJ60; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=Cuboc5Sl; arc=none smtp.client-ip=178.79.152.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mleia.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1741802366; bh=XvrF3yVE/G56SwGUDsatfsDt/hGysLL5ZnG+rclTcPo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iEquGJ608MXIhmBzMIp3HJ5OnIyCEK/PSn4JQTrOyTqydjE//gNb8KWbt040NjPqf
-	 8WT+C3BkM12w1O0s3i408LG+nKQF66SpcEwuDL5RhIJK1UDw4EGs4oAD5+irZ/+bWh
-	 3Ei4vMdSAHbB+7cro6QE1Sg1yd67aKVflNG3Cr1tlcWZ4rlHgV3ZuG0P+tT179eZMr
-	 PtMK3ARcv+qsKXGMbXdCJf6VMIDa3xKFNKt8Hxl2or630SpmAUPE9s9f4bLUM0lslA
-	 jZFenTmU3O+2LCq5muvEUiQ6yKNUvA41FYyLtlSXXuGAGr9onx2u5x+v/zEhDsDb15
-	 M85ErSBwOWfGw==
-Received: from mail.mleia.com (localhost [127.0.0.1])
-	by mail.mleia.com (Postfix) with ESMTP id 0BCCC3A8907;
-	Wed, 12 Mar 2025 17:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1741802365; bh=XvrF3yVE/G56SwGUDsatfsDt/hGysLL5ZnG+rclTcPo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cuboc5SlGsRp6FT/y7LhbsQjWc4HOSl86dMHlOApVkyHygph78l4/0ko/v58ziuT9
-	 WHsMHoJ8WgMqZvXNpncpVbq1DetkzymXnry/xat45BXOReL6OMVmK39IhzqOGDeA9W
-	 w9BK9jujkPEC9O+6JkzF3OEZSdo3bQz+zsS4hix2MpfvkiBS2E35zbB8vHuzo06pw/
-	 7d4g3aI+vXdj7yTitXZtrOuM3UNed4wWDY9rJcrPMP6NYFO2RJbAAoPMQLuQpCP4Nw
-	 98tQ0pWSaZqaGwfyTOdJQVE3AlRYVVvJCP9WXAotIjSEK0rxHGOMyY4mtnu80jPBlf
-	 hlxJ2PtcQdbOw==
-Received: from [192.168.1.228] (74-111-126-194.sta.estpak.ee [194.126.111.74])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.mleia.com (Postfix) with ESMTPSA id E524B3A86E9;
-	Wed, 12 Mar 2025 17:59:23 +0000 (UTC)
-Message-ID: <57ae63a2-544b-4241-a54d-8fa9917c1e44@mleia.com>
-Date: Wed, 12 Mar 2025 19:59:21 +0200
+	s=arc-20240116; t=1741802427; c=relaxed/simple;
+	bh=oV1jKXyKCcmGjWlSIr3cbhebDw/eEAZ7VyyVaXDSRPY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P9mIOXL7O08Hx9/x69r4/bQeEAfc0z572k4b9AtGD4YlrKqRn45LMPX/3hYk9PIhj/TF42V7rpGqzrCHzpsMw2SVWPYpVb2J05yRw6WgEvYHxUMRzfVjETtBVg6qpXP7QksLpOACEumETvsWHDult7AFdzUJ0R86fN3cWlSQbiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hkfrrJSp; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52CHxlo71652549
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Mar 2025 12:59:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741802387;
+	bh=1gu2hLHkw3oXjZ+lNcFWEL88KOjDXH3qbsIRgSuLXZg=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=hkfrrJSptdQGA2ajD0QInTrYQ0AvrhJbV/4wNXT71IyQVlLn7+gaicisEVPcNXdcj
+	 UpLXeNvJ4rG688hK+jp2dIm51qMfXCLsWxzVR1jad0tn7eR0dak1KDrrLukZWm6/3Y
+	 Sx0jdQ/CfwH5Fjq9k0hhO2WnFXZ4rjl6ho4NLS7g=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52CHxlZ9002568
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 12 Mar 2025 12:59:47 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
+ Mar 2025 12:59:46 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 12 Mar 2025 12:59:47 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52CHxk4p048636;
+	Wed, 12 Mar 2025 12:59:46 -0500
+Date: Wed, 12 Mar 2025 12:59:46 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+CC: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>,
+        Tero
+ Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>, Jon
+ Mason <jdmason@kudzu.us>,
+        Dave Jiang <dave.jiang@intel.com>, Allen Hubbe
+	<allenbh@gmail.com>,
+        <ntb@lists.linux.dev>, Bjorn Helgaas
+	<bhelgaas@google.com>,
+        <linux-pci@vger.kernel.org>, Haiyang Zhang
+	<haiyangz@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, <linux-hyperv@vger.kernel.org>,
+        Wei Huang <wei.huang2@amd.com>,
+        Manivannan
+ Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen"
+	<martin.petersen@oracle.com>,
+        <linux-scsi@vger.kernel.org>
+Subject: Re: [patch 03/10] soc: ti: ti_sci_inta_msi: Switch MSI descriptor
+ locking to guard()
+Message-ID: <20250312175946.mirwklpli45qsqd5@brittle>
+References: <20250309083453.900516105@linutronix.de>
+ <20250309084110.330984023@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: pwm: Convert lpc32xx-pwm.txt to YAML
-Content-Language: ru-RU
-To: Purva Yeshi <purvayeshi550@gmail.com>, ukleinek@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- piotr.wojtaszczyk@timesys.com
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250312122750.6391-1-purvayeshi550@gmail.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-In-Reply-To: <20250312122750.6391-1-purvayeshi550@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20250312_175926_066546_4494210E 
-X-CRM114-Status: GOOD (  17.83  )
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250309084110.330984023@linutronix.de>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello Purva.
-
-Thank you for your contribution.
-
-On 3/12/25 14:27, Purva Yeshi wrote:
-> Convert the existing `lpc32xx-pwm.txt` bindings documentation into a
-> YAML schema (`nxp,lpc3220-pwm.yaml`).
+On 09:41-20250309, Thomas Gleixner wrote:
+> Convert the code to use the new guard(msi_descs_lock).
 > 
-> Set `"#pwm-cells"` to `const: 3` for expected PWM cell properties.
-
-Actually it shall be set to 1.
-
+> No functional change intended.
 > 
-> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Tero Kristo <kristo@kernel.org>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
 > ---
-> V1 - https://lore.kernel.org/all/20250311125756.24064-1-purvayeshi550@gmail.com/
-> V2 - Correct filename to match the compatible string, remove unnecessary
-> quotes in maintainers, and refine commit message.
+>  drivers/soc/ti/ti_sci_inta_msi.c |   10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
 > 
->   .../devicetree/bindings/pwm/lpc32xx-pwm.txt   | 17 ---------
->   .../bindings/pwm/nxp,lpc3220-pwm.yaml         | 38 +++++++++++++++++++
->   2 files changed, 38 insertions(+), 17 deletions(-)
->   delete mode 100644 Documentation/devicetree/bindings/pwm/lpc32xx-pwm.txt
->   create mode 100644 Documentation/devicetree/bindings/pwm/nxp,lpc3220-pwm.yaml
+> --- a/drivers/soc/ti/ti_sci_inta_msi.c
+> +++ b/drivers/soc/ti/ti_sci_inta_msi.c
+> @@ -103,19 +103,15 @@ int ti_sci_inta_msi_domain_alloc_irqs(st
+>  	if (ret)
+>  		return ret;
+>  
+> -	msi_lock_descs(dev);
+> +	guard(msi_descs_lock)(dev);
+>  	nvec = ti_sci_inta_msi_alloc_descs(dev, res);
+> -	if (nvec <= 0) {
+> -		ret = nvec;
+> -		goto unlock;
+> -	}
+> +	if (nvec <= 0)
+> +		return nvec;
+>  
+>  	/* Use alloc ALL as it's unclear whether there are gaps in the indices */
+>  	ret = msi_domain_alloc_irqs_all_locked(dev, MSI_DEFAULT_DOMAIN, nvec);
+>  	if (ret)
+>  		dev_err(dev, "Failed to allocate IRQs %d\n", ret);
+> -unlock:
+> -	msi_unlock_descs(dev);
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(ti_sci_inta_msi_domain_alloc_irqs);
 > 
-> diff --git a/Documentation/devicetree/bindings/pwm/lpc32xx-pwm.txt b/Documentation/devicetree/bindings/pwm/lpc32xx-pwm.txt
-> deleted file mode 100644
-> index 74b5bc5dd..000000000
-> --- a/Documentation/devicetree/bindings/pwm/lpc32xx-pwm.txt
-> +++ /dev/null
-> @@ -1,17 +0,0 @@
-> -LPC32XX PWM controller
-> -
-> -Required properties:
-> -- compatible: should be "nxp,lpc3220-pwm"
-> -- reg: physical base address and length of the controller's registers
-> -
-> -Examples:
-> -
-> -pwm@4005c000 {
-> -	compatible = "nxp,lpc3220-pwm";
-> -	reg = <0x4005c000 0x4>;
-> -};
-> -
-> -pwm@4005c004 {
-> -	compatible = "nxp,lpc3220-pwm";
-> -	reg = <0x4005c004 0x4>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/pwm/nxp,lpc3220-pwm.yaml b/Documentation/devicetree/bindings/pwm/nxp,lpc3220-pwm.yaml
-> new file mode 100644
-> index 000000000..432a5e9d4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/nxp,lpc3220-pwm.yaml
-> @@ -0,0 +1,38 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pwm/nxp,lpc3220-pwm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: LPC32XX PWM controller
-> +
-> +maintainers:
-> +  - Vladimir Zapolskiy <vz@mleia.com>
-> +  - Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-> +
-> +allOf:
-> +  - $ref: pwm.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: nxp,lpc3220-pwm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#pwm-cells":
-> +    const: 3
 
-It shall be 1.
+Quick test of the series for basic NFS boot (which uses INTR/INTA MSI
+for Ethernet) on TI K3 platforms against linux-next:
+https://gist.github.com/nmenon/26ea6eb530de34808ab04b1958a0b28b
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
+Tested-by: Nishanth Menon <nm@ti.com>
 
-There is an error in the original lpc32xx-pwm.txt file, one more property
-"clocks" is strictly required, please add it along with the conversion.
-
-Thank you!
-
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    pwm@4005c000 {
-> +        compatible = "nxp,lpc3220-pwm";
-> +        reg = <0x4005c000 0x4>;
-> +        #pwm-cells = <3>;
-> +    };
-
---
-Best wishes,
-Vladimir
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
