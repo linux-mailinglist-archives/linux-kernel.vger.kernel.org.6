@@ -1,134 +1,148 @@
-Return-Path: <linux-kernel+bounces-557607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3888CA5DB7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:27:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17645A5DB81
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:28:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A651D178E80
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:27:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D964017878D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9E5248862;
-	Wed, 12 Mar 2025 11:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C494923F388;
+	Wed, 12 Mar 2025 11:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jxpRm+nE"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKhzzP19"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0162A24A059
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC5323F294;
+	Wed, 12 Mar 2025 11:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741778742; cv=none; b=QxqGqzHc8IIos+OGPd6pTm3Oqz9yCt9q+aGGIhY1FJ/Hf1Kt6a5yD7sBrNDOCyse229LoeNRQGxdwNNaP+AIC2k4vbA0qZ9QNqR1A7yFimtbsZsFBLuLWTKOY34TKPu9tktc5wLxr2ZZkVijVpoCy0eYVLJWS0/ojQiwjyXqFKk=
+	t=1741778802; cv=none; b=JdCe7K2F4uYJREOy+8hfWkwYQlF8r14o2fic6jtN3xg4Vkuk85ZmRQDFP3N2UneJTRMTJ/7l9IzH7S+pEgt9KoYLyBnciBxOZ9KUsHksKPta1SNBK4flP06LCH0mABnNaRWlmMhg8IcBrNz73W8Zo0jEKNW3hKQ3QqmremQZNJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741778742; c=relaxed/simple;
-	bh=2mAjhQ38xaV59CAo8Jko5V6MNwT7CgxOmLCldmytZvU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MNzQFNAtafDTv7o1PODsJC6PDkNiW2ge70a6QiEU9bcqoa+cD2hgcnbuUzSSFvs0l//4wf2GEg0NkSYSWIJnpgYZQ42ESiAbBudmbNb/U2jtxuKdrcNk2EmJVx+L5bONRR7SUCRSApfqgEwmpHD3M13ROjPwaBy7jyb6yyzQksc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jxpRm+nE; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6fd9d9ae47cso61426787b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:25:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741778738; x=1742383538; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CiJA8cEstxgkTU1mTKMy0JGKZ+R8iGVjaXw2iJxWSRI=;
-        b=jxpRm+nEkoXRMGyl6NreHJi5FcZFYUPeFG3nP0OILD3JnWXmlhFnwctheTqM52YIK7
-         84Vh/1Mr+0H6zJ0w8xmQ4roiTVEopTFZ1mD1TTLCbxuONE6Ob+RRTYq50dagGU5tvsZh
-         YNfxCwhAcovKC5WmUH4se0D1kCGWYVPYJ1I3hOn/YgNn5NHx+HVeImF+alRgDVYmcd7L
-         HAB+I3y33GKkl01wvMOQd8EsDVlxbWK0E3Dw9fuhI5h3RKuuH/wgD1kwm6zGczR5x+gU
-         ftAtJYUcY9Cq0KGLU0iEjSDlMbULqZ7A9MdNu0By+zp8ZQGV9ktavjvoCwZNgtB7ToEC
-         DXGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741778738; x=1742383538;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CiJA8cEstxgkTU1mTKMy0JGKZ+R8iGVjaXw2iJxWSRI=;
-        b=nGfxgexvuv5BT3NKPaT50e/N9OOqdeFG+U3Kqw1I6mam3xz4bhS/rpUUrsbYx0f3o1
-         CjRaEBrQx4DMfpPpU/9MVfVH1booo1SXtw28ar1ZnhFOiJU/svVrLUDKEKCvbiHaZ0Ij
-         x9CrDhyqLEXhoyYRKoH+krlG95E99C/Kh+hx3MtcE5DtIOyGsIP/KTCwYUwhdzuKDUE1
-         ztzVnPDKE7z+ad3zNQKsPd4MU6AcB2bPQS2Ddd9dNWLLsZBEldZGVRCqOKcZBlXCWO0S
-         DUwv9hn4LQCv/DhuFl5s236cN8PhT12u0sd9oDfgW9+H5DdxWcVBZy83PZW7MYIkvWaS
-         PNfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUW2tTcOgd6PTZygw9fjtluuF3ZVy9KZo5CVVNyPOp7BfqjSBaoDIDQA/KvjVZyHwpdl91fIseOywi6fb0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH9tU18Qy3N9XUx7iPySwS5er+v2KWY2SM6y73WsTum41jr5tx
-	ppTKZzVaS7MEEpEeD/cjrgHWg2kDy97YSxTCFJKGwNGOJd4YAGVtoZwcxw8cGPYrAKsSBFNglbU
-	UH7ZcwJ2SaV2FvSJ/dLpha65Y0ufDLiBodmP+Uw==
-X-Gm-Gg: ASbGncsNkW8ysd1Ld4z92OVwOQdFuvAk/jw9WXUBODlVd9iiD8/rLKb5fApKDVSLg+G
-	KlesxPR5AvIYt05pTUYXjVQAWbCV/TjH/i7Yz6yz8OKecau5JN/P1uq/Fet//K9HBl3B37BsojS
-	A9k62MCSxDzIR3TJV67g/tL1Xul3E=
-X-Google-Smtp-Source: AGHT+IFsXLs0G0P0sl4PUE6UPS3JqqtQHaqryQbTsh+V2XVD4bcZpoq0lGo1l4XslguvHjeCee00G9KHRf+J4fl/2ps=
-X-Received: by 2002:a05:690c:4b13:b0:6fd:33a5:59a with SMTP id
- 00721157ae682-6ff091eaa41mr105598827b3.18.1741778737979; Wed, 12 Mar 2025
- 04:25:37 -0700 (PDT)
+	s=arc-20240116; t=1741778802; c=relaxed/simple;
+	bh=tMLPpUCCR4aZ3XPZ5Gtf2u8Rq7BEMXY6q2dZbELeGBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dYdD17tXx0zB2pErqPSgItWawpuLeciZiU6YJFJSad/2iR07WJTTba3Bv/JBHxlCWrEGUdTmxNWUoyOLBEq5t9fXRTaHpuwb98O3q6cOzOeQ1TDQXzdg77P3Wlj9cdnRrWsLhJ8FAFlsC4xzMWo1x/MO5/PNB14Qpos0XhK+kLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKhzzP19; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91AAEC4CEEC;
+	Wed, 12 Mar 2025 11:26:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741778801;
+	bh=tMLPpUCCR4aZ3XPZ5Gtf2u8Rq7BEMXY6q2dZbELeGBE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IKhzzP19rJVZYx+nE87i4ijtjOfZEl+/FP+yIeXauMUIOwtVyNduf1FsQgq5Bt6Yt
+	 FrJ4MfpVsaGp8yap7hlnm9ybWm+zNJG+HkE6NbvV0djzCBXa0xykLM53udQ6J8WgWZ
+	 4hj4Pq61fBJXVFBnMBOGOr/QdS/bXOxRoRls5Q6Crm91TfmFyyueUx4RrYw/JEco77
+	 DJdDISbFl124gEOno9hAJhG5gcxd0Zv9nRugJjessFokiZBatteIzbRoYtDyUAUX9z
+	 DA7Mr3p9XhGypHQ3KiIphodzaibUM63Z/qxRNUfPhwh0PRbf20o4FKEMc4Fm+d2zs5
+	 AHb7PwIn7KFiA==
+Date: Wed, 12 Mar 2025 12:26:30 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Aniket Limaye <a-limaye@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Andreas Kemnade <andreas@kemnade.info>, 
+	vigneshr@ti.com, aaro.koskinen@iki.fi, khilman@baylibre.com, rogerq@kernel.org, 
+	tony@atomide.com, jmkrzyszt@gmail.com, reidt@ti.com, wsa@kernel.org, 
+	linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@kernel.org
+Subject: Re: [PATCH v2] i2c: omap: fix IRQ storms
+Message-ID: <k6rzimh2l72xpwpjecrmuqbmfv7pgzpp5uxysqdwvhwhakq4hu@pewez7dbb3mn>
+References: <20250228140420.379498-1-andreas@kemnade.info>
+ <20250311123947.jce4i5heeufzwmji@serotonin>
+ <t43j7wmwsqvs5f6utld72enobqwkendgtpzfu3mth3bdgpxhsh@qeok5d2ujdm2>
+ <91b9752c-38e9-453d-90cb-3466e18a15b6@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307005712.16828-1-andre.przywara@arm.com> <20250307005712.16828-3-andre.przywara@arm.com>
-In-Reply-To: <20250307005712.16828-3-andre.przywara@arm.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 12 Mar 2025 12:25:02 +0100
-X-Gm-Features: AQ5f1JpRnOY3arJkwpPqmP24JF8uLy0s3IwIKNA_9eLVMdzcVYtTB4PX7y_pSng
-Message-ID: <CAPDyKFoFesrcYPDNDsvU_mLdkTGE2=7TCFrYkdFW3bp_0fLSMg@mail.gmail.com>
-Subject: Re: [PATCH v3 02/15] dt-bindings: mmc: sunxi: add compatible strings
- for Allwinner A523
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <91b9752c-38e9-453d-90cb-3466e18a15b6@ti.com>
 
-On Fri, 7 Mar 2025 at 01:57, Andre Przywara <andre.przywara@arm.com> wrote:
->
-> The Allwinner A523 uses the same MMC IP as the D1.
->
-> Introduce the new specific compatible strings, and use them with
-> fallbacks to the D1 strings.
->
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Hi Aniket,
 
-Applied for next, thanks!
+On Wed, Mar 12, 2025 at 02:55:38PM +0530, Aniket Limaye wrote:
+> On 12/03/25 03:55, Andi Shyti wrote:
+> > On Tue, Mar 11, 2025 at 07:39:47AM -0500, Nishanth Menon wrote:
+> > > On 15:04-20250228, Andreas Kemnade wrote:
+> > > > On the GTA04A5 writing a reset command to the gyroscope causes IRQ
+> > > > storms because NACK IRQs are enabled and therefore triggered but not
+> > > > acked.
+> > > > 
+> > > > Sending a reset command to the gyroscope by
+> > > > i2cset 1 0x69 0x14 0xb6
+> > > > with an additional debug print in the ISR (not the thread) itself
+> > > > causes
+> > > > 
+> > > > [ 363.353515] i2c i2c-1: ioctl, cmd=0x720, arg=0xbe801b00
+> > > > [ 363.359039] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: 0x0, stop: 1
+> > > > [ 363.366180] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x1110)
+> > > > [ 363.371673] omap_i2c 48072000.i2c: IRQ (ISR = 0x0010)
+> > > > [ 363.376892] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> > > > [ 363.382263] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> > > > [ 363.387664] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> > > > repeating till infinity
+> > > > [...]
+> > > > (0x2 = NACK, 0x100 = Bus free, which is not enabled)
+> > > > Apparently no other IRQ bit gets set, so this stalls.
+> > > > 
+> > > > Do not ignore enabled interrupts and make sure they are acked.
+> > > > If the NACK IRQ is not needed, it should simply not enabled, but
+> > > > according to the above log, caring about it is necessary unless
+> > > > the Bus free IRQ is enabled and handled. The assumption that is
+> > > > will always come with a ARDY IRQ, which was the idea behind
+> > > > ignoring it, proves wrong.
+> > > > It is true for simple reads from an unused address.
+> > > > 
+> > > > To still avoid the i2cdetect trouble which is the reason for
+> > > > commit c770657bd261 ("i2c: omap: Fix standard mode false ACK readings"),
+> > > > avoid doing much about NACK in omap_i2c_xfer_data() which is used
+> > > > by both IRQ mode and polling mode, so also the false detection fix
+> > > > is extended to polling usage and IRQ storms are avoided.
+> > > > 
+> > > > By changing this, the hardirq handler is not needed anymore to filter
+> > > > stuff.
+> > > > 
+> > > > The mentioned gyro reset now just causes a -ETIMEDOUT instead of
+> > > > hanging the system.
+> > > > 
+> > > > Fixes: c770657bd261 ("i2c: omap: Fix standard mode false ACK readings").
+> > > > CC: <stable@kernel.org>
+> > > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > > > ---
+> > > > This needs at least to be tested on systems where false acks were
+> > > > detected.
+> > > 
+> > > At least on BeaglePlay, I have not been able to reproduce the original
+> > > bug which was the trigger for commit c770657bd261
+> > > 
+> > > I also ran basic boot tests on other K3 platforms and none seem to show
+> > > regressions at the very least.
+> > > 
+> > > Tested-by: Nishanth Menon <nm@ti.com>
+> > 
+> > Thanks for testing it! I asked some OMAP folks to check this
+> > patch, but no one took action. With Nishanth's test, I can now
+> > sleep soundly. :-)
+> > 
+> > Merged to i2c/i2c-host-fixes.
+> > 
+> > Thanks,
+> > Andi
+> > 
+> 
+> I see that the patch got merged so don't know if this is useful at all at
+> this point, but yeah looks good to me. Apologies for the slow response.
+> Nishanth, Thanks for testing it too!
+> 
+> Reviewed-by: Aniket Limaye <a-limaye@ti.com>
 
-Kind regards
-Uffe
+thanks for your review, I added it.
 
-
-> ---
->  .../devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml      | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml b/Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml
-> index 8e4c77b7e4ab9..9f3b1edacaa02 100644
-> --- a/Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml
-> @@ -50,10 +50,14 @@ properties:
->            - enum:
->                - allwinner,sun20i-d1-emmc
->                - allwinner,sun50i-h616-emmc
-> +              - allwinner,sun55i-a523-emmc
->            - const: allwinner,sun50i-a100-emmc
->        - items:
->            - const: allwinner,sun50i-h616-mmc
->            - const: allwinner,sun50i-a100-mmc
-> +      - items:
-> +          - const: allwinner,sun55i-a523-mmc
-> +          - const: allwinner,sun20i-d1-mmc
->
->    reg:
->      maxItems: 1
-> --
-> 2.46.3
->
+Andi
 
