@@ -1,144 +1,97 @@
-Return-Path: <linux-kernel+bounces-557283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6522EA5D66D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:40:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC51A5D672
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:43:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 292E4189B7C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 963153B5807
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9891E5B6F;
-	Wed, 12 Mar 2025 06:40:26 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A9E1E521E;
-	Wed, 12 Mar 2025 06:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BB71E7C07;
+	Wed, 12 Mar 2025 06:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="otuhekoT"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101741E5713
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 06:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741761626; cv=none; b=In269keQTGRztQk+KTVTxwlefHe4+08lDmEscz7WC4JGVOIGfrDbagkv70bITXQslTHK/QTwS9MI646sZhF+xIe0gr/x94B+XKJGHkqv87CLmO0eIe7yB8yIW9r5yIrmF9Hff9I4WmkiD02e7q5qJQleLjY5C9mYr0KFEDWdDOY=
+	t=1741761772; cv=none; b=V7qtO5skk6vvKUQkbx6QAQmtXAIPmq8+kn+rKM8q8saAihweDiAEbzqSGqub4ipC1r6lT8Eegb6os5MsRfVy7xEpfXKQP58m9S8KjuiW3LQZM9z+SBQfY0FtWHKjcYlAH6Ld0QHy3sLJsTHTKxVXVqOTI+TSOx1x5W0sQmsU86I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741761626; c=relaxed/simple;
-	bh=W0yrlDxUmG/ptS0/KM4gL5LJxNYGF17jnWcNxriVLbA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KlkIw27sf2gknUHnPPPqrZKpaMP0GShNXkGyEsLSdgm81LDJ6FFSCUQiTSHAJ9Ou1XjFOqDoPqXpT1uQudpupzITkyBwmLqhIZShKPmbXtTcNG/cHOHi77T92kKHYLSUaZPygWxRkbLqs2T2j5dftk1HA7nap409PBjFmkRp1OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.224] (ip5f5ae865.dynamic.kabel-deutschland.de [95.90.232.101])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 391EE61E646F9;
-	Wed, 12 Mar 2025 07:39:48 +0100 (CET)
-Message-ID: <24204a3f-836d-4767-a9ec-08b22a27b76b@molgen.mpg.de>
-Date: Wed, 12 Mar 2025 07:39:46 +0100
+	s=arc-20240116; t=1741761772; c=relaxed/simple;
+	bh=BXxmNwAR3XD+Lwcg6vWkjZWpbgVFft4baYm+h8YFV/Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LQBAAjP0XvcA0XMW31esSn5hTcs0wWVN90R+N6Vd3aa6hXvHnv5NGGA8IqhbEV/gh2ttL3JfaEcA8h2F5SavU69JiX14PkMPMLdq4UbWDVVOYspd2i3STLQw8bjsAOIHQX/JPXidzm4YjZ9now4YVmf8u+jATkLt78x0KlMgTJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=otuhekoT; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=Y9A+G
+	MGKN+/gUY1pm2Jf9qbSfuZPHc1NStiINtfiC4E=; b=otuhekoTwyJx+JqzGhknl
+	/Iv7vVn5kEHxqjM52cwGzgtak+d431j79xyTzrismLDKslKWhSqlTn2MS2U1hNdE
+	qYnxFLnpq1cDQLlFlXm4MJdqJO0UwhXd99Z+zVxZQ1jYNzw8O+d2KEc0SbRiX7Qc
+	nMcy8ciC2LTSJWZfaSDNak=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wAnro3MLNFnNsQBSQ--.34149S2;
+	Wed, 12 Mar 2025 14:42:23 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: hjc@rock-chips.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	piotr.oniszczuk@gmail.com,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH] drm/rockchip: vop2: Fix interface enable/mux setting of DP1 on rk3588
+Date: Wed, 12 Mar 2025 14:42:10 +0800
+Message-ID: <20250312064218.524143-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: btmtk: delay usb_autopm_put_interface until
- WMT event received
-To: Sean Wang <sean.wang@mediatek.com>, Yake Yang <yake.yang@mediatek.com>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250311231630.35255-1-sean.wang@kernel.org>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250311231630.35255-1-sean.wang@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAnro3MLNFnNsQBSQ--.34149S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw1rKFyDJrWUWr1DGFWfKrg_yoW8JFW7pr
+	s0yryYqrWkKrWjvF1fGF4Fyr4SkanFkayIka1fKa9xGa48tr1kGr98Ja1kAry7Xr17ZFyj
+	krZIyrW3uFW2yFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbwIDUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hYOXmfRJTn62wAAsf
 
-Dear Sean, dear Yake,
+From: Andy Yan <andy.yan@rock-chips.com>
 
+This is a copy-paste error, which affects DP1 usage.
 
-Thank you for the patch.
+Fixes: 328e6885996c ("drm/rockchip: vop2: Add platform specific callback")
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+---
 
-Am 12.03.25 um 00:16 schrieb sean.wang@kernel.org:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> Delay calling usb_autopm_put_interface until the WMT event response is
-> received to ensure proper synchronization and prevent premature power
-> management actions.
+ drivers/gpu/drm/rockchip/rockchip_vop2_reg.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Do you have a reproducer? It’d be great if you could add that to the 
-commit message.
-
-
-Kind regards,
-
-Paul
-
-
-> Co-developed-by: Yake Yang <yake.yang@mediatek.com>
-> Signed-off-by: Yake Yang <yake.yang@mediatek.com>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->   drivers/bluetooth/btmtk.c | 15 +++++++--------
->   1 file changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
-> index 68846c5bd4f7..01832bc6a259 100644
-> --- a/drivers/bluetooth/btmtk.c
-> +++ b/drivers/bluetooth/btmtk.c
-> @@ -620,17 +620,14 @@ static int btmtk_usb_hci_wmt_sync(struct hci_dev *hdev,
->   
->   	if (err < 0) {
->   		clear_bit(BTMTK_TX_WAIT_VND_EVT, &data->flags);
-> -		usb_autopm_put_interface(data->intf);
-> -		goto err_free_wc;
-> +		goto err_pm_put;
->   	}
->   
->   	/* Submit control IN URB on demand to process the WMT event */
->   	err = btmtk_usb_submit_wmt_recv_urb(hdev);
->   
-> -	usb_autopm_put_interface(data->intf);
-> -
->   	if (err < 0)
-> -		goto err_free_wc;
-> +		goto err_pm_put;
->   
->   	/* The vendor specific WMT commands are all answered by a vendor
->   	 * specific event and will have the Command Status or Command
-> @@ -646,18 +643,18 @@ static int btmtk_usb_hci_wmt_sync(struct hci_dev *hdev,
->   	if (err == -EINTR) {
->   		bt_dev_err(hdev, "Execution of wmt command interrupted");
->   		clear_bit(BTMTK_TX_WAIT_VND_EVT, &data->flags);
-> -		goto err_free_wc;
-> +		goto err_pm_put;
->   	}
->   
->   	if (err) {
->   		bt_dev_err(hdev, "Execution of wmt command timed out");
->   		clear_bit(BTMTK_TX_WAIT_VND_EVT, &data->flags);
->   		err = -ETIMEDOUT;
-> -		goto err_free_wc;
-> +		goto err_pm_put;
->   	}
->   
->   	if (data->evt_skb == NULL)
-> -		goto err_free_wc;
-> +		goto err_pm_put;
->   
->   	/* Parse and handle the return WMT event */
->   	wmt_evt = (struct btmtk_hci_wmt_evt *)data->evt_skb->data;
-> @@ -700,6 +697,8 @@ static int btmtk_usb_hci_wmt_sync(struct hci_dev *hdev,
->   err_free_skb:
->   	kfree_skb(data->evt_skb);
->   	data->evt_skb = NULL;
-> +err_pm_put:
-> +	usb_autopm_put_interface(data->intf);
->   err_free_wc:
->   	kfree(wc);
->   	return err;
+diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
+index a8b1ebfc5af5..de2da4f4e434 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
++++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
+@@ -1753,9 +1753,9 @@ static unsigned long rk3588_set_intf_mux(struct vop2_video_port *vp, int id, u32
+ 		dip |= FIELD_PREP(RK3588_DSP_IF_POL__DP0_PIN_POL, polflags);
+ 		break;
+ 	case ROCKCHIP_VOP2_EP_DP1:
+-		die &= ~RK3588_SYS_DSP_INFACE_EN_MIPI1_MUX;
+-		die |= RK3588_SYS_DSP_INFACE_EN_MIPI1 |
+-			   FIELD_PREP(RK3588_SYS_DSP_INFACE_EN_MIPI1_MUX, vp->id);
++		die &= ~RK3588_SYS_DSP_INFACE_EN_DP1_MUX;
++		die |= RK3588_SYS_DSP_INFACE_EN_DP1 |
++			   FIELD_PREP(RK3588_SYS_DSP_INFACE_EN_DP1_MUX, vp->id);
+ 		dip &= ~RK3588_DSP_IF_POL__DP1_PIN_POL;
+ 		dip |= FIELD_PREP(RK3588_DSP_IF_POL__DP1_PIN_POL, polflags);
+ 		break;
+-- 
+2.34.1
 
 
