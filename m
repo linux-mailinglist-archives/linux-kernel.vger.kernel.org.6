@@ -1,169 +1,288 @@
-Return-Path: <linux-kernel+bounces-558547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F65A5E772
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:29:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05686A5E776
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:29:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96371189C3A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:29:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31193BC82C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532A41F0E2C;
-	Wed, 12 Mar 2025 22:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D58F1F098A;
+	Wed, 12 Mar 2025 22:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFj1bo98"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="kdSKeqSL"
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11021110.outbound.protection.outlook.com [52.101.57.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B9419E96D;
-	Wed, 12 Mar 2025 22:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741818552; cv=none; b=OinrIyMTU3IuZ1jlZSO1ntPkKC1daybOczKiOWzbNVtLup/6XWugxrH9N27JAUT6lj09jHamoG3Vdv9TzTyMJHjXVz82vnezGg7Hb+m+oAhPlokNE+yfNiIHPatceWJ86LqrcNn5HghU33MpHdRRGgUmL4TkVTQrG4kWq5OqZGE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741818552; c=relaxed/simple;
-	bh=6PSD8Ihb5wqTIoMhe00VHOCE57HyMwiB7MEagGbuhZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DfSDN2V+AhDwl8spPzkdX142x96Qw2e6u2r6clM3eqWc2rjsJo5BS3IZa0ieF7VjybzQxLpCY9NhVE6rUOAbW8BOCwxM2SEYxkdHMMx4XcCwIIk5Zf2IIhX12ZvFwow8G7j0YSgCvtgafubXneHzl/pnaVM+950LYloch/hu4OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFj1bo98; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223fb0f619dso6501435ad.1;
-        Wed, 12 Mar 2025 15:29:10 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A71419E96D;
+	Wed, 12 Mar 2025 22:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.110
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741818569; cv=fail; b=Kc3gtaEU71pcVRqz/vDbcjLZsHxp60NZ5QpqVoW6QTQ2XnwyNiFAtgu6ECJA/BPhBl1WQTbJLGAP8TVFY9db+PK/ChzoNoKQasp4nUDQBBG1Nr3mxRxQQdLxzvcKUFHaSbnCrJI4qrqyCYr86YVUXux6+aqwfDBK2oztOEq71wo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741818569; c=relaxed/simple;
+	bh=CABVmJM+dBh+z4Pfs2v82vFKd4neFpw5976y/DZRSaY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qyDNLEXJSqAZQFQXGBGj2l15+TxnNlNHdQeYngXBoGLK5eBvCh5aKzdEnXdJHTtK70PHZF8FlRXA89VjV83C+rqoTvFSd/YPcTS1CnuZfOtkgp9d+SN76GxN8Lc6ChdOND068nRpEr0jKXEFaLzOCmvX+GJ3ryUJ9e2LRN5tGs8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=kdSKeqSL reason="key not found in DNS"; arc=fail smtp.client-ip=52.101.57.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B4AKNDQBSreEoiF/4BN46b+X9OLw25OA13kUPA2bs6tGQ77H3Ii4SSnmTvTC/FF3upvgH0yO+g96s3Npb8RqDzNx3/p7k0UpeGEG6KdEbkoAudafp08Sh1GqT4GlD9KLAz7oWxKuca8XuQ8DH04NStIqkwL9KLvBhbJjVRL90lGO4Mecd6/QpWgilpiRGm46PHh7XI+4O4ps+wS+iq4vyLRuIRrWuQQm+ArxbMERC74k+7mv4R3DdgKUd6Wylt+xQ45a1tOXwo8BPQ8LcMj1SNgOwdJexpNXNIECNpVet7FsdBoE77bHMfMrj+fkQCUYWO3SKoFicKhVi/O+sBghBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=14wLKePOP0Osn+wLD7uQhzmmgAbz+VHRCrlqcgtaAac=;
+ b=KMbA4oGO/rc6iAYZVzAUX5k6Dh/bdfvJu8xuUKiy0DbNUzvVkf8MTvhCJKEXv26HjytSFBFF1r2exi8cd9mvxk43mtCQGOzCawh2hxlhXXndrCrwOD0H01fLd2KqY/o2rrobsVzIOGe3O0qnwDXopjEhgP5OS+yNzjRs7BoAE1pp4NXlktklvVwMY6TI9O24wvIsyG43CyFIkcOBAGDQuqy9ELZgJPpHsjM/Rxyiuz+gRg01FnpLvVu0z1fUoKQnH6R4o/RTviuALNQE1XaCIr4FdSA8VKgO/lrdkQ5ca0n+S2zELixAEtgZk+8Uje1wWU0oYaihT+1tYVs1G8zLPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=amperemail.onmicrosoft.com; dkim=pass
+ header.d=amperemail.onmicrosoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741818550; x=1742423350; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7Zt5RBTdS4tu9y1ZkvHvMS6PvikbgYBd+xanSqGhaSs=;
-        b=LFj1bo98U5ofV7suHOs88OkZxgEoPC6S5uk1QIxc9pzu1VGMnTEQJIa9pqFlbbheo+
-         Em1bmkLPeUvqKMCAuj3lktGsy41LS8xJ62OlGnX+XcQopyeRtKsVgzBRKsAlXF2Cqw4T
-         uSiE9jCCNd5zqYE2e/u9bAPP+FlglAIBdufsyDnI8a15K15cS3wBWkQ9+Ktcg3FW/qVq
-         NKQ0zVmJDCD0Xs2wjn5kLXxQSvyZCpHDhdStUqrD4XWmXJugMemHmG99qaNq5oRpC4xD
-         k1z0MpMY/ZvavWFw1wXSNS/G3JyD1wdkX+uJpQi1zKDtFAez5jLOtkyOnmXn9SrgmcPJ
-         u9ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741818550; x=1742423350;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Zt5RBTdS4tu9y1ZkvHvMS6PvikbgYBd+xanSqGhaSs=;
-        b=M6REmIARnFB01wHvlC5WqT8nCkLI73to98bpjCn5SS/5gY013NBJ5+ntOyn9SfXBqQ
-         XmvWKYjEO9wmaWsQYPBwYUxJqHmxc6gosR7yvWyoPoJggp4NUzBupbzBj8cFvT+PUrsa
-         yVGZmPAOpmn598HgCZS5IBfm2lhV2HsxizjfgJVOnSJaRzhbZct5INLULu8WgfJdLJBO
-         R8rLEi3LoQ4gEnI79baN67sbKvaW0w5Z07hzM7mnH7x/eRCv8nDEJ+csr5UX0I1WBiRP
-         HdRBn4oFhfH0blQh4vFoafZ66l1JbAMsL5xeZnj98xTHnGHA+UJ4WCShcuyc3qQVrViH
-         myiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOb1ZyfhGJlQh46KJLimc2nFKmCdAKk9+f0dDjXl6dDjqy90pHuhpdLgrNBdvPpbVDOhPn7S4o@vger.kernel.org, AJvYcCV/i046aWP7ZL+eWK4FiK5omCi6DTmbCttUEjtBgw2sAmW+44HTi3cTk74tdsLHsyIwc4YrIzT6Ci0fGTLN@vger.kernel.org, AJvYcCVLqwZhSMWNJ2eB2TaIbB8jjc5Bkil1bsi0rlTMiFwzBfTlMTzyl16aGq8zWla2G3vmUvU=@vger.kernel.org, AJvYcCWGt0N4WZRhVu0x2llfkvwrIVPaZ6xnFd3xIX+SQ5fqrunYWg/ahR49F7Rlo0kSWE6RHbLRNaUTvMq1Mlu6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSAsqp8oGwmY22dRfT/BjW1g2g0yPYRTAFNyQpsw5N12wi80VI
-	DtcH1Xq44l0j2N5KLyo5zgucfo1voP6kfauSg/wrZtrGh+TORd2e
-X-Gm-Gg: ASbGncvscoeLH16Ju9H0DAln/lesHkz32J1wR7UI3upxFTyCIVuay83Z0VUhoI/d1cP
-	DJ9qOz3yMwPG2N7VJyrTNIOkK99+Ba4YiAOwJBya9k2NeHEUN+8pky2RdpbgGuVuaWJlDVJg02N
-	TwMjnFzMUXyBYY95+OHI0eFiUC5PQHCOjVwdUv2rUjlXt7dSfOAxnLpd045dOxLrfVMtnOoWwv7
-	55g4uUbtFTM3ZsDkj5Z1cvqWwCkAUYvm6SfKuDFeB2FTegp+TfGHdqRmkeeG8pwFphcsJBKEXN8
-	/WI4sjE5Ef+3QQlZGR5W+j3939uUqcZ1ftDU8Nmjp9zNOaXX5P4N8HCvz3PuASYLav2EZOdfLK8
-	g
-X-Google-Smtp-Source: AGHT+IG5eB7LsgG76qzryME3xovo7CXpCBzbsMGvNvGwS4V4Ch2lCvncSSjVtCrUYYynhYS0YR2b6g==
-X-Received: by 2002:a05:6a20:160c:b0:1f5:7007:9eb1 with SMTP id adf61e73a8af0-1f58cbc4a43mr14791625637.34.1741818550325;
-        Wed, 12 Mar 2025 15:29:10 -0700 (PDT)
-Received: from devvm6277.cco0.facebook.com ([2a03:2880:2ff:5::])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56ea7c87csm46437a12.57.2025.03.12.15.29.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 15:29:09 -0700 (PDT)
-Date: Wed, 12 Mar 2025 15:29:07 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>, davem@davemloft.net,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org,
-	Jorgen Hansen <jhansen@vmware.com>, kvm@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	linux-hyperv@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-	netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>
-Subject: Re: [PATCH net-next 0/3] vsock: support network namespace
-Message-ID: <Z9IKs15jhjaaj5px@devvm6277.cco0.facebook.com>
-References: <20200116172428.311437-1-sgarzare@redhat.com>
- <20200427142518.uwssa6dtasrp3bfc@steredhat>
- <224cdc10-1532-7ddc-f113-676d43d8f322@redhat.com>
- <20200428160052.o3ihui4262xogyg4@steredhat>
- <Z8edJjqAqAaV3Vkt@devvm6277.cco0.facebook.com>
- <CACGkMEtTgmFVDU+ftDKEvy31JkV9zLLUv25LrEPKQyzgKiQGSQ@mail.gmail.com>
- <Z89ILjEUU12CuVwk@devvm6277.cco0.facebook.com>
- <CACGkMEskp720d+UKm_aPUtGZC5NzH+mp_YKoY2NQV6_YBbRz9g@mail.gmail.com>
+ d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=14wLKePOP0Osn+wLD7uQhzmmgAbz+VHRCrlqcgtaAac=;
+ b=kdSKeqSL8cGFM4kf5or/dQuHlHY6PtZW8BLYfhgeAcyeY0w3qncnnJXWULKfSzcJ9ObY83jIWboAb7UWRKKcRcebDxO30AL+GZ/pCjKcqhiYTgD6QCEpg7P7Q3ZUDpPRnO4Sf9VlFDa3qODm5zyRa/kWcl49sDqDvOPcz8Et/KE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
+Received: from SA0PR01MB6171.prod.exchangelabs.com (2603:10b6:806:e5::16) by
+ SJ2PR01MB8402.prod.exchangelabs.com (2603:10b6:a03:536::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.27; Wed, 12 Mar 2025 22:29:13 +0000
+Received: from SA0PR01MB6171.prod.exchangelabs.com
+ ([fe80::b0e5:c494:81a3:5e1d]) by SA0PR01MB6171.prod.exchangelabs.com
+ ([fe80::b0e5:c494:81a3:5e1d%4]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
+ 22:29:13 +0000
+Message-ID: <4428c08c-4477-4053-ab30-81a9a075c10a@amperemail.onmicrosoft.com>
+Date: Wed, 12 Mar 2025 18:29:10 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/13] mailbox: pcc: Always map the shared memory
+ communication address
+To: Sudeep Holla <sudeep.holla@arm.com>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Huisong Li <lihuisong@huawei.com>,
+ Adam Young <admiyo@os.amperecomputing.com>,
+ Robbie King <robbiek@xsightlabs.com>
+References: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
+ <20250305-pcc_fixes_updates-v2-7-1b1822bc8746@arm.com>
+Content-Language: en-US
+From: Adam Young <admiyo@amperemail.onmicrosoft.com>
+In-Reply-To: <20250305-pcc_fixes_updates-v2-7-1b1822bc8746@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY3PR05CA0059.namprd05.prod.outlook.com
+ (2603:10b6:a03:39b::34) To SA0PR01MB6171.prod.exchangelabs.com
+ (2603:10b6:806:e5::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACGkMEskp720d+UKm_aPUtGZC5NzH+mp_YKoY2NQV6_YBbRz9g@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA0PR01MB6171:EE_|SJ2PR01MB8402:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75b35a8e-04ca-4242-afdf-08dd61b5511f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|10070799003|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TFpHODZ4OXZ6WjRMMzVnYmxaOStGWldYR3VzdmpEMGlqZVNYM0ZaVUtMRndZ?=
+ =?utf-8?B?Qm5JV2trUkFqdnA2OVVCQkFsY01CQVFZWmxtclQyMm1SSmFqVVROTnEzRmQ2?=
+ =?utf-8?B?RnRxaVB0UHgvS25GTHM3eFVkY1NIMFhlNUpjUmNMYldNQ2VsTFlFRHdtYTdl?=
+ =?utf-8?B?anZnd3diMUdoZ2ZiajRYYURoM0tpVHlGc0J2dzlXeE95cW00ZVRpOUNlOEpW?=
+ =?utf-8?B?VGNGaUFoVGNNTWFhN3BpWGNER0ROUkwzbXpONzZxMlNWYllmQzY1eXdSak1D?=
+ =?utf-8?B?UkRqenpzS0x3cjV1SVdSSVRQL3YwZ1dtVmJuYkN4Qm1hWWFuaTVURDhQeDhE?=
+ =?utf-8?B?cnFKbCtUZlRuc29RVms0dU5PNUdYZG9ENmJUMENqQjFkd2hHc2lrbFR6UHdK?=
+ =?utf-8?B?SklSUDdjSGJkaUE5cGliM2prTlFVcnNjOURsVWpkZDB6S1VTd3hqTS94Q2l3?=
+ =?utf-8?B?VU1HR1Z6bGJVOTJpcm9wRitPazZ4REdNOVZLNHdiWXN5bnNZeG52VmlJYWxB?=
+ =?utf-8?B?ekc0SlBHclNBVUFqRlVoOUdkQU96WlEwdG5LSXo2K1o1NzdYSTl0NVhUc2No?=
+ =?utf-8?B?bTJTZzhqY1hmdUJXbDViT1ByOXF6am0zeEdCMXMwMFZvaG9rcXM4eVUrRU1G?=
+ =?utf-8?B?UGVQd0tXNUJPZCtkMXkrTWV2QjUxcWdUTGNndkozbFNEai9BSXl1VllnMnpn?=
+ =?utf-8?B?MnpPNUhXR1FrcHpFckZsSlJXWHB3Tk1SRnQ4TURPcVE4U2sxbU1ZcEI3UEdr?=
+ =?utf-8?B?MVcxa0hzc3k2QytySGthaDZScXR3YjZzNXlOVlEvcWRyMGxNL3luYUVLQ0ZZ?=
+ =?utf-8?B?L1BSTzlsV2wweXovQmFET0xsNmQ5aG4vSSs5VFdUMk1wMm9yUWx5am9kUU9D?=
+ =?utf-8?B?ODBPNWRnSFFFS2k0L2N6MUxINmNHN3lkbHhlL1FuMWllQVJoeGoxbG9lSE5C?=
+ =?utf-8?B?Um5jQ1d5RjZPZDdSM2RMNlkrZUJwb2lEYUFzSWpUNmRkSm82L0xRekZsUW05?=
+ =?utf-8?B?dGdGZ0hWemd4SEdCaFpnWlZjMkJqcGNHSDNJS0xDemMvUkc5VkdTMWdCS3po?=
+ =?utf-8?B?b0lZRURlYWhmcW1RZnhKY05rR0g1NlR0djJDVmk2S3BUYXkvSTIydjJVbSts?=
+ =?utf-8?B?b24vOTNTR2pOQ042cmhUWHNkTEt2WlRyaE0xVlVRdkIxSXdqaG1HbkNaYndv?=
+ =?utf-8?B?K1FRamZKWGF3M0IvZW1QekZKUnYzU01vcHVlNlpUdUhrekhaVHZGdW1UNS85?=
+ =?utf-8?B?ZE9rSWF5SkFxM2p1SS9rZEwreE4wR0NzajNhNDg3djZqNkVMMXlWM28vdlFi?=
+ =?utf-8?B?UzlhVnlTdnNaRzVPNTFsNzJKYTVUTHZOTWxDUmNqTUtsNGprRmdURjZvdjlz?=
+ =?utf-8?B?M3JyYm5NUFlMMytPajNDbmMwTDJNKzZKdjk0ZzlpRnlrRFpQOUdtSFR1ZTRv?=
+ =?utf-8?B?TE93SjZ0WGQ2aDhHT0I0T2k5bjFzZ2JTa2Mzbm9KTkJvcmxmVXkvRldIcmhh?=
+ =?utf-8?B?ODl6UERhaW1YeEJKbXJaSHMrbXZ6dmQ4SUxGQTNhbTl2bDh6QU9LS25odWg0?=
+ =?utf-8?B?Z3AzTThSRzBESEQxRnh4T2pOZWZReTYwd2Z4UldQdytOUTZSSDRGSDJQbVNJ?=
+ =?utf-8?B?VXczeDExUW9IbnZyK0JwOS9Ebml0YkxNZkc5SDJ4TUJOOGhkMm9SQkRrazE3?=
+ =?utf-8?B?T0ZvS016cDVNdExJMjgzK0ROSmExd3g4U3kyWE1Yc3ZHZTB5WXc2djVacU5M?=
+ =?utf-8?B?MGtoRklCVGxHTjdRVEw3UnlQVUdKT0lJNWRNNWNXUUpWTEk0SExYS1FhYWVO?=
+ =?utf-8?B?bUkxWjJsSHJKaDdSc1ZYTU1XQkZBNHVVV3RDTVNjQWZVVU5Yc1VSRlR1aXJp?=
+ =?utf-8?Q?qCY0pfrii7846?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR01MB6171.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VUI2dGd5eVBvaDJGMmF6UlQxYXJzeFZJTUZzOVc4bndwUTc1OWdROE8xTno1?=
+ =?utf-8?B?a0NIVnZPekJ0Z3ZqTysrVFR0WmNDeW9ZcUpMcW5WMkpJTlRvV0RTditKZ0R6?=
+ =?utf-8?B?ZjQ0aXI3WDdUQzlKY3BjNjdiTlhENDBDLzBHVldNYUlIUDI3ZGpvWmpOblp2?=
+ =?utf-8?B?NHRDSDlUZXh0eHVjNUFtUFpENk9UZEhrUWNIeTBWVzNQUG80YWhXYWxORmpW?=
+ =?utf-8?B?RTgvWkxHSHBmSXVTRFEwRGZJU29ISVFMTkxCM1hZOGhLbDIxdW9BdTdtMzZh?=
+ =?utf-8?B?VzBraTJab01XZm1sZlVKQmFVR3E3bXZXMjZUeVQ2Wm1aaThHbTFySXkvSHla?=
+ =?utf-8?B?TG0vSEpEdXpLRFJFMTNXWUdvUFlyUCs2MGM4QnJnblp2KzludG9pMk9QMGJF?=
+ =?utf-8?B?blRwODVvV2oxOHd4R205aVcxVUlOeURwRDVaMGszLzgrdzJjSnltbVpsNDBi?=
+ =?utf-8?B?azNMVElaVVNyVzRXNmd0K1YvcUFWMXNCbXR0ZkJ0YVZSdnE3d0YrMzI1eklX?=
+ =?utf-8?B?TngxWW04KzFJQS94MjBWOS9GdzVaWWhYZ3pBQ3c0NW9nTVo1OUpDYi9ZWEhh?=
+ =?utf-8?B?U29JWmNrSmgrQU5Sa0d5V1JDQUg5STNidTVvdk9wY0VxRFpVd2pqTzBheVpl?=
+ =?utf-8?B?bnlhdjB1ajJFR3RvaDRiWURQdms5azdIVEtTTW5STWl0eXRPUStWY3M4TFNq?=
+ =?utf-8?B?MzBVbnFMckU0U3BIQnlKdFhveVRIb1BBUHMzcUZwVlRrazM4dnI3akFtbmtv?=
+ =?utf-8?B?dVJFRnpLaWtmMHpMK2NqVS82dUtYaUx2bVFtZS9teG5YNEI5bDYweG1KTFhD?=
+ =?utf-8?B?Q2ZndjRJNnRvbjhPWnBaMGtaSndmN09yS0VFdm9mY3VBSnY1eE52UU9iTXZM?=
+ =?utf-8?B?WUtyN1VkQmNKSU44SlpZTHIwbmhjY2NHS3d2ajFJM1FRZlRaUXdPU0wyeXNG?=
+ =?utf-8?B?V09vakpnYlBlcndDWW1kc20yUEhrTkh5TDNjV3hLZS9OZlJ2SE9rNmx1WEUx?=
+ =?utf-8?B?VE5ERStZeXY1ck0yU0lyc2dXbXdkQThnNnlOVUh5OHJMMTN6WGlqK0ZIM0hh?=
+ =?utf-8?B?a0wrVXBuRDVjRytzNTlXN1RaZndIWGEvTXpvWUlOakMvbzB4SjI1Rm9Hcm03?=
+ =?utf-8?B?bFhTa1RhUW0vdFdGY1pVeVNFeUVmZ2hkRUtERDFxNGRWTU9WUlVuT0l2RkdN?=
+ =?utf-8?B?WVpaYXJlTHNBVzNzY2R1QjB6dmRLaWZMeVZ1T1FsR2sxdHFxZXhZdTJmZ2xP?=
+ =?utf-8?B?TkdwNjA1d2YyRmFZVzhIODdmQmpPa0wwY1ZYbkhKcEVTRkhXVnhpbUZ2d0d6?=
+ =?utf-8?B?Ny9SbG9uWXcvMEZEdGJlZGxzV1g1Y2VLc2VEUFZ2TVhOMHdEWFFGZDNVWXFr?=
+ =?utf-8?B?U2t2TlhhOEI3alhYa3plRHZHWjlDZW84a0JjM2JzYW5KVUM3R3k5aXl4MUVi?=
+ =?utf-8?B?YjZCalIrZ2dySkZ1MFBVbDZkK3kwQ0NQbndvYWVLU3hYZVVkVFpRM2xvWHls?=
+ =?utf-8?B?NlkrSFRrNUc4c29xdjBIMXVQQStCOWJDRk8rdSs1eVZnL0MzMmpIeWZGbVIw?=
+ =?utf-8?B?dXY3MEpENFY0QllwT0YweEk1UHlVeFFzd2JVdWl2OVNyV3pIa1J4RFYwaG1D?=
+ =?utf-8?B?TTM1aStiN2VxbytvOU1KOVhHRzAvQ21jRG05dmNLRm9hNUhPWUtJTjBTYjQy?=
+ =?utf-8?B?Z2czYmhkN2c2ck54dFFKTHZ4OFFDS3dGNU55UDJVejRpYWZiazBaeDdlci9T?=
+ =?utf-8?B?b3ZqMHJYTEs5WXVqWkF5YTI3MEEvdWwrRm1RZ25NNzJQNlRmOFh2MncwOGYr?=
+ =?utf-8?B?QmpLU1k2ZlFvK25xcDNROVRSQ25ETERQRU41UmRzWWQ5OUtSczdKVHBNOGpO?=
+ =?utf-8?B?ZmpkY3hza1VmUFFyMmFJVmR6LzRIMTZBc2xFcGNydHVpQm5HbFhtcXhvT0VQ?=
+ =?utf-8?B?SkdHdHZCd2pMbjUrZ0wxSGN4ZXVob29TanJVKy80NzcweTRXL1BDNS9GL25u?=
+ =?utf-8?B?VTM0NkNPRktDRDBuNm5JQ3FiUDRpTmYwQThmMlRyRjMrWlhSa3gvUkovZ1pG?=
+ =?utf-8?B?NlB1UzNHM29WeExJcDREWHNkdTlGMXhJbHVNbjl0S3MrUUlDMXM2a3AxYXFP?=
+ =?utf-8?B?VEVXYzFNK3ZkUzJsSkxpVGJnbmJ2ZjNrYzhaemhkUnJvdkF4dlZvK2VYOUVF?=
+ =?utf-8?B?QnRHKy8raVVUOUJ0QXBTNjVDVkNJbkxRcFVnUGJ1NWEzY0JhNmdhRGtWcnhM?=
+ =?utf-8?Q?iViVT+NU3wvAqvXkWnpjjiCc8eKxV+dQ5kvdpw5MT8=3D?=
+X-OriginatorOrg: amperemail.onmicrosoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75b35a8e-04ca-4242-afdf-08dd61b5511f
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR01MB6171.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 22:29:13.5661
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JKtSBvZhl/PxlEsN+ilpUa9idwnXQDR2vUUa4q/3zbNAThsllHwJlZiVqzJbhxd5NqMjhoFlLqxDUs/zfVFqnW3xQNBGPcj81A40hs9yHxpoZFl5JbOWZ9YUs5QHb11l
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR01MB8402
 
-On Tue, Mar 11, 2025 at 08:59:44AM +0800, Jason Wang wrote:
-> On Tue, Mar 11, 2025 at 4:14 AM Bobby Eshleman <bobbyeshleman@gmail.com> wrote:
-> >
-> > On Wed, Mar 05, 2025 at 01:46:54PM +0800, Jason Wang wrote:
-> > > On Wed, Mar 5, 2025 at 8:39 AM Bobby Eshleman <bobbyeshleman@gmail.com> wrote:
-> > > >
-> > > > On Tue, Apr 28, 2020 at 06:00:52PM +0200, Stefano Garzarella wrote:
-> > > > > On Tue, Apr 28, 2020 at 04:13:22PM +0800, Jason Wang wrote:
-> > > >
-> > > > WRT netdev, do we foresee big gains beyond just leveraging the netdev's
-> > > > namespace?
-> > >
-> > > It's a leverage of the network subsystem (netdevice, steering, uAPI,
-> > > tracing, probably a lot of others), not only its namespace. It can
-> > > avoid duplicating existing mechanisms in a vsock specific way. If we
-> > > manage to do that, namespace support will be a "byproduct".
-> > >
-> > [...]
-> > >
-> > > Yes, it can. I think we need to evaluate both approaches (that's why I
-> > > raise the approach of reusing netdevice). We can hear from others.
-> > >
-> >
-> > I agree it is worth evaluating. If netdev is being considered, then it
-> > is probably also worth considering your suggestion from a few years back
-> > to add these capabilities by building vsock on top of virtio-net [1].
-> >
-> > [1] https://lore.kernel.org/all/2747ac1f-390e-99f9-b24e-f179af79a9da@redhat.com/
-> 
-> Yes. I think having a dedicated netdev might be simpler than reusing
-> the virito-net.
-> 
-> >
-> > Considering that the current vsock protocol will only ever be able to
-> > enjoy a restricted feature set of these other net subsystems due to its
-> > lack of tolerance for packet loss (e.g., no multiqueue steering, no
-> > packet scheduling), I wonder if it would be best to a) wait until a user
-> > requires these capabilities, and b) at that point extend vsock to tolerate
-> > packet loss (add a seqnum)?
-> 
-> Maybe, a question back to this proposal. What's the plan for the
-> userspace? For example, do we expect to extend iproute2 and other and
-> how (e.g having a new vsock dedicated tool)?
-> 
 
-If we were going to add a seqnum and start bringing in other systems, we
-would probably want to add support into iproute2. For example, when I
-played with qdisc, using ip seemed like the best from the user side.
-The iproute2 changes weren't bad at all[1]. We'd probably need the
-device to carry a new feature bit too.
+On 3/5/25 11:38, Sudeep Holla wrote:
+> Currently the shared memory communication address was mapped by the
+> mailbox client drivers leading to all sorts of inconsistencies.
+>
+> It also has resulted in the inconsistent attributes used while mapping
+> the shared memory regions.
+>
+> In order to remove/eliminate any issues, let us ensures the shared
+> memory address is always mapped and unmapped when the PCC channels are
+> requested and release.
+>
+> We need to map them as the ACPI PCCT associates these shared memory
+> with each channel subspace and may need use the status or the flags in
+> the headers of those shared memory communication address regions to
+> manage the transport/channel.
+>
+> Since there are no users of pcc_chan_ioremap() and also it is mapped
+> by default, we can stop exporting it and merge the functionality into
+> pcc_mbox_request_channel().
+>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>   drivers/mailbox/pcc.c | 29 +++++++++--------------------
+>   include/acpi/pcc.h    |  5 -----
+>   2 files changed, 9 insertions(+), 25 deletions(-)
+>
+> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+> index 41bd14851216e8c4f03052c81aaf938a5e5c5343..b3d133170aac7f8acfd1999564c69b7fe4f6d582 100644
+> --- a/drivers/mailbox/pcc.c
+> +++ b/drivers/mailbox/pcc.c
+> @@ -372,6 +372,7 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+>   struct pcc_mbox_chan *
+>   pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
+>   {
+> +	struct pcc_mbox_chan *pcc_mchan;
+>   	struct pcc_chan_info *pchan;
+>   	struct mbox_chan *chan;
+>   	int rc;
+> @@ -390,7 +391,14 @@ pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
+>   	if (rc)
+>   		return ERR_PTR(rc);
+>   
+> -	return &pchan->chan;
+> +	pcc_mchan = &pchan->chan;
+> +	pcc_mchan->shmem = acpi_os_ioremap(pcc_mchan->shmem_base_addr,
+> +					   pcc_mchan->shmem_size);
+> +	if (pcc_mchan->shmem)
+> +		return pcc_mchan;
+> +
+> +	mbox_free_channel(chan);
+> +	return ERR_PTR(-ENXIO);
+>   }
+>   EXPORT_SYMBOL_GPL(pcc_mbox_request_channel);
+>   
+> @@ -419,25 +427,6 @@ void pcc_mbox_free_channel(struct pcc_mbox_chan *pchan)
+>   }
+>   EXPORT_SYMBOL_GPL(pcc_mbox_free_channel);
+>   
+> -int pcc_mbox_ioremap(struct mbox_chan *chan)
+> -{
+> -	struct pcc_chan_info *pchan_info;
+> -	struct pcc_mbox_chan *pcc_mbox_chan;
+> -
+> -	if (!chan || !chan->cl)
+> -		return -1;
+> -	pchan_info = chan->con_priv;
+> -	pcc_mbox_chan = &pchan_info->chan;
+> -
+> -	pcc_mbox_chan->shmem = acpi_os_ioremap(pcc_mbox_chan->shmem_base_addr,
+> -					       pcc_mbox_chan->shmem_size);
+> -	if (!pcc_mbox_chan->shmem)
+> -		return -ENXIO;
+> -
+> -	return 0;
+> -}
+> -EXPORT_SYMBOL_GPL(pcc_mbox_ioremap);
+> -
+>   /**
+>    * pcc_send_data - Called from Mailbox Controller code. Used
+>    *		here only to ring the channel doorbell. The PCC client
+> diff --git a/include/acpi/pcc.h b/include/acpi/pcc.h
+> index d1e506f041c5a80857d4a025fa3c1803746ba4b9..840bfc95bae3329605da5f66cf37b7d2ca183f48 100644
+> --- a/include/acpi/pcc.h
+> +++ b/include/acpi/pcc.h
+> @@ -37,7 +37,6 @@ struct pcc_mbox_chan {
+>   extern struct pcc_mbox_chan *
+>   pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id);
+>   extern void pcc_mbox_free_channel(struct pcc_mbox_chan *chan);
+> -extern int pcc_mbox_ioremap(struct mbox_chan *chan);
+>   #else
+>   static inline struct pcc_mbox_chan *
+>   pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
+> @@ -45,10 +44,6 @@ pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
+>   	return ERR_PTR(-ENODEV);
+>   }
+>   static inline void pcc_mbox_free_channel(struct pcc_mbox_chan *chan) { }
+> -static inline int pcc_mbox_ioremap(struct mbox_chan *chan)
+> -{
+> -	return 0;
+> -};
+>   #endif
+>   
+>   #endif /* _PCC_H */
+>
+tested-by: Adam Young <admiyo@os.amperecomputing.com>
 
-That said, all of this still creates the problem of adding new
-system-level ways to disrupt AF_VSOCK users. I think we could offer this
-in a way that is orthogonal to prior vsock, possibly AF_VSOCK2, a
-sockopt, or ioctl to opt-in to using net features... so that we aren't
-violating commitment to existing users that vsock should work regardless
-of network configuration? letting the user that holds the fd of the
-socket make the choice might be the best way to safeguard the contract?
 
-[1]:	https://github.com/beshleman/iproute2/commit/55fd8a6c133335cda4ede6f8928eb3cea54534b8
 
-Best,
-Bobby
 
