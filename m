@@ -1,102 +1,106 @@
-Return-Path: <linux-kernel+bounces-557605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08807A5DB78
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:27:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF895A5DB7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:27:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F879189B44E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:27:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F3F4178424
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335262459DC;
-	Wed, 12 Mar 2025 11:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FECE24A064;
+	Wed, 12 Mar 2025 11:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iGnJ2JUZ"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gG+nA5gF"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D249241668
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0583248862
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741778734; cv=none; b=rDyXVDEDzZJSs6SijnJghB1H+MsEUMnplHrkIdhDyOUhwqZriMCDfotK5FmQbXjlrKQlBdqvHhNKP3KAKVwSM0ezVKxG9oxdPKqFShdAPF1oHf1COA96mylhog1Q1UHxsEolhiAcZU6oxqG6DlFZ8gv0DMjup8W5WFU9YPo4DE8=
+	t=1741778738; cv=none; b=X7oNI8YTU0MjkO/VYKI2UIEVKDTidzlRUdmtirlfF+4fblE0YgPWHTt0IUL8r7u8LHJZLbOZL3NWN2xg6lx5xel/1TIkXSWQrtlpqK6Vc/f9TomizIkAgQuKwmGFg6JdEX74p6tsSrb6S0IHVRPjq8BAOAZg1pWOWPexp6mzU24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741778734; c=relaxed/simple;
-	bh=u09mix5wsyGZEee0OTLlbwtp/i5wIT9Jdm2M0t59Fs8=;
+	s=arc-20240116; t=1741778738; c=relaxed/simple;
+	bh=zKSN1MPByApvA+OUlh27K1FJwz3QmJ32fWxe2xd1RGg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=buaDANcv0LQTLjW/EjOeCfM3qxApm6bVWw/FxLPS1KLr6FeKS7/yBT/TJoKZTXfBB5C5s4OA3DQn5JdMDETJqsZ8LKNPgRQf6HsCyGlImUBGBzfhuSMGmiuL86dixH9fVbkgxZTYaxPL9fMNSnnx3WbpE+RYk+M4O2fP+jaJBIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iGnJ2JUZ; arc=none smtp.client-ip=209.85.128.174
+	 To:Cc:Content-Type; b=fwNBNblJjM/AadQCw6WhFFP8+YS/jDH1aO5/PQ6ceFrUqkZkoOUVif5eKyGyjlgyTiWrjKN7dvCDkDbpKJOBveR3A+PFNjsHqE3Nkleh6M1LeVerRyT2uyiJkXWoM8z8kewuBVLWhN887m8qJNKeCMglzk7fhR3vRcwxgPcGxkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gG+nA5gF; arc=none smtp.client-ip=209.85.219.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ef60e500d7so54708057b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:25:32 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e639040ec74so737792276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:25:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741778732; x=1742383532; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741778736; x=1742383536; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/mrslkYIqtp2+mq8p2Qz5J6MxbjiXwBJqUTb8Ezm9o=;
-        b=iGnJ2JUZrW2FGn1w6nR37KHuN7NGjmwSWyi7AJDrE9Qcd7cugwvA3uEYLKURXg1VRK
-         BtMNQrdkfHUSiexHhD/qGXBlT7o05BYSvgZp1nQSnb2iKd32SncyaKMCBw18s9EeIZME
-         oxG8GAwy8X1O+VN0gZhKH90rtqhVT/UKcOb70ANL2m3zXoMgNe37tRnWsFKXlUog1FyG
-         s9bA/jPxa/FMobh4O0bDX8eYgMC9lPq5uKk+KgFvj4HiJbP4r0me9mGSW9NE/MHyMHf5
-         czsEi/kKjYQbngMZd+ny+0igy5rtaTmODqlPfe1RHgl/YOCmpcpc5+jbQuEfp66dzFx1
-         eG7A==
+        bh=oMmWW278S3Hwy+hLP82+XTpci0VAB4ee7BNXBj9aT9k=;
+        b=gG+nA5gFGMz2R4SdyWQuaCtp8g2v2CEodV1WJcKH+wGfbQCeSscdnGkGFVMsnZ1uLv
+         e/DOYpg1YEmS+ZtIPwPPosz0F+PIW2rFhhkqEgfwhEJzloohV9dpMxk1V5czDjLffHZc
+         6bEBKnLNRPZYpwtOEXuk7ToGAAmWCqq7Mp4e5GiYq4g2U1po+JiX/TQIGXTWBX6IPHpa
+         JVRi/Xen+ahRyvHQcsK2oCQxswMAA9lyPsYLS+pELkfRE0KBwNaOk2JpgDFssfgk+gEh
+         r0UZvU45kZA5DpgwmWLDAB54tmo8nU6iFmYGSB/8elSirMxLZaLSTmbL4v3fcZK9+fJJ
+         KyzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741778732; x=1742383532;
+        d=1e100.net; s=20230601; t=1741778736; x=1742383536;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6/mrslkYIqtp2+mq8p2Qz5J6MxbjiXwBJqUTb8Ezm9o=;
-        b=WpH6ehGSno6oF/bYUppJEQC3yuZcMkKeq5ksWOght+lnKerwVMHovGcBCd3fMDWlXD
-         0Bt5T1BLa+dKv4U1RtGxG6/6jvzxP2xm/+97tDwER6Zuo8unamWrF3YR68BcH2JNscj6
-         TscHPqolbKhe8rPo8PytlC0w8feiKKKmVngSkw08jjf+AXuRW3gbSzXley/fem7krK5d
-         9CEMBuxFgAUiHVw0zE33k3sQxMZWLHhsJEZWYp1ztrvx6TbufTNYccw4G4jRaG5HGsNw
-         SY5cpJsaNqqVBfo1qRsN8MBQN8FI3kZlLKRY01tufX0ZFRxwn0AMe2vc8IhRiKB2yO88
-         koBw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2PCArtWOpmF2j/QHOCssDnyQTlBgkAYUXBELQF5EGjZ/vZk6ceMzGVUBE+3lulGhdQ2I3WRsO0zw/FZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAggfkyJlYzuDltQgLJXrai1LPoaiXi0aU6mndj4VKCsUig9lu
-	OsD/jZksRY4IHjxPjFPX1dRaxXFOj1k+SStXX/t9ZYboA8BpGya2Q4nSAiyjFadcjOUg0bjGSAn
-	NlgLK1TiNJxZZ87+xXHnSnrtX0LChxcp6RsP96A==
-X-Gm-Gg: ASbGnctmYaHps4et/jXkYQmMUmTe/bBOlkJTS80XwRpu3JT1sVORCEeWlyWbFEKcDDj
-	0d5UnAwv+2Kw/6oXeoCM/99ygX2Ajwv/Iv4SFF8gZZYyOzsT/Ndg6DJ1A6J2N9eluPJ2hV65lXV
-	0dDN7RzR0+0XRvt3ELKF3sYSQoq9qLfjOnJlVMZg==
-X-Google-Smtp-Source: AGHT+IFk3gFp/cUReNnM9kzAsWOkTCM5MEQl/tCtb/z5liDbrUseKz74jkUx34wnEgejhu/lLK5rCnP3CIxzHqyLHXc=
-X-Received: by 2002:a05:690c:4c02:b0:6ef:652b:91cf with SMTP id
- 00721157ae682-6ff0927951fmr104983367b3.27.1741778731810; Wed, 12 Mar 2025
- 04:25:31 -0700 (PDT)
+        bh=oMmWW278S3Hwy+hLP82+XTpci0VAB4ee7BNXBj9aT9k=;
+        b=ug0uQC0Ihv79xJpexfVbj8ZsMKTwJdm9AvfBVq1IrxWNTA8QOb8C/AcPEJrI+bCosI
+         u8sCRivtBpzEDYRls606RqQhcAmePluYPw43e1azCCcutkFoK1cdnH1VlnbaNC8H2WTP
+         I9Ax3sjXIahKO5+SMsxa/NgWHkb2NjsJnvQfBmisjyj6pDg5mv1SOo6caZ/3T6h/1yOo
+         tHka/UYTAo3f8J6iKZGLmkjWJObYcUVVuXeOGnAw4eJk6KhJ7tAoOH2KMM/tWD5T4gCS
+         3YsEyOUShwyiNTbKWWQ4mptFBKPbQn2Vz8UiAUy80dchSUEuFRb9WdJcsAolwnvhN+2V
+         ek/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWczo0nV4BqIhOYNYsKrTVTabxbe2GVp3kUnBX9lz2oyVsaC7/8m9xFziJmucj+ggvdcUqUZrnH6gF62YE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwME42XX2vrKEfIjipcrsJ7UhW3K0z7MH6n4EfEGX7p8cnhNemb
+	SfumJJ9vTOydlI5yU4HSYLVKM/r9LiMMeFQj9hO3xacSBK9qAG0+nIGxxhRkynI1C3T65V/F6Wd
+	K8ECeKEqYo0oGMPxjuVn2IroyfbBY6xcavAEsPQ==
+X-Gm-Gg: ASbGncvNEODXgOoYmw3v7ytaFpdGngJ1RwRAoUZtCQ3DTcVdur+IefwOOl6iasmvTft
+	sCXwNuCmA1/5j4NjUNdmjObnwYH0bFW5wCr6d/6OXTN+u7R7EC3scpuuLGEhH1RRfyCDB6sYyYO
+	kS1vUFJyelj7VcqKkdULFvH9fVEK8=
+X-Google-Smtp-Source: AGHT+IF+2TUj0AijHF6r+vPxRqI/7rfE3ie+f/dBAlUG+gV7qBwbChu82fS6cFOmTtK6ezNyic5kn3RkBhCY6+/TI2Y=
+X-Received: by 2002:a05:690c:7207:b0:6fb:b38e:207e with SMTP id
+ 00721157ae682-6ff0a33c8f8mr83949777b3.14.1741778735829; Wed, 12 Mar 2025
+ 04:25:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305214108.1327208-1-jonas@kwiboo.se> <20250305214108.1327208-2-jonas@kwiboo.se>
-In-Reply-To: <20250305214108.1327208-2-jonas@kwiboo.se>
+References: <20250307005712.16828-1-andre.przywara@arm.com> <20250307005712.16828-2-andre.przywara@arm.com>
+In-Reply-To: <20250307005712.16828-2-andre.przywara@arm.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 12 Mar 2025 12:24:56 +0100
-X-Gm-Features: AQ5f1JqH2hRXUwfz_vQkPX8i5gK9j7RB0dP4G_O77fuesZmjypeV_Lu2vr_DSTs
-Message-ID: <CAPDyKFqY+0MGsdZDBJ1AoDaDGrnXN=Gu3JNjuK0LoHfjT9JxiA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: mmc: sdhci-of-dwcmhsc: Add compatible
- string for RK3528
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, Yao Zi <ziyao@disroot.org>, 
-	linux-rockchip@lists.infradead.org, linux-mmc@vger.kernel.org, 
+Date: Wed, 12 Mar 2025 12:24:59 +0100
+X-Gm-Features: AQ5f1JoiQnCX1EBg93UaXE5EJlbj1n7TONyL__Rgw9VQ-gzhs1UrEpRxnqBou7Y
+Message-ID: <CAPDyKFpFgNjy+Tu7ZKB05m55HAf5RQ+AFPgk+6Q8_g1xu0akng@mail.gmail.com>
+Subject: Re: [PATCH v3 01/15] dt-bindings: mmc: sunxi: Simplify compatible
+ string listing
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 5 Mar 2025 at 22:41, Jonas Karlman <jonas@kwiboo.se> wrote:
+On Fri, 7 Mar 2025 at 01:57, Andre Przywara <andre.przywara@arm.com> wrote:
 >
-> The SDHCI controller in Rockchip RK3528 is similar to the one included
-> in RK3588.
+> New Allwinner SoCs only occasionally update their MMC IP, leading to many
+> pairs of compatible strings, though there are sometimes a number of them
+> being compatible with one particular SoC.
 >
-> Add compatible string for the SDHCI controller in RK3528.
+> Collate the compatible string listing in the binding, to group those
+> being compatible together. This makes the list more readable, and allows
+> for easier addition of new SoC's MMC devices.
 >
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
 Applied for next, thanks!
 
@@ -105,25 +109,67 @@ Uffe
 
 
 > ---
->  Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  .../bindings/mmc/allwinner,sun4i-a10-mmc.yaml | 36 ++++++++-----------
+>  1 file changed, 14 insertions(+), 22 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> index c3d5e0230af1..fb2115e805f5 100644
-> --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> @@ -14,7 +14,9 @@ properties:
->    compatible:
->      oneOf:
+> diff --git a/Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml b/Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml
+> index 0ccd632d56200..8e4c77b7e4ab9 100644
+> --- a/Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml
+> @@ -30,38 +30,30 @@ properties:
+>        - const: allwinner,sun50i-a100-emmc
+>        - const: allwinner,sun50i-a100-mmc
 >        - items:
-> -          - const: rockchip,rk3576-dwcmshc
+> -          - const: allwinner,sun8i-a83t-mmc
 > +          - enum:
-> +              - rockchip,rk3528-dwcmshc
-> +              - rockchip,rk3576-dwcmshc
->            - const: rockchip,rk3588-dwcmshc
->        - enum:
->            - rockchip,rk3568-dwcmshc
+> +              - allwinner,sun8i-a83t-mmc
+> +              - allwinner,suniv-f1c100s-mmc
+>            - const: allwinner,sun7i-a20-mmc
+>        - items:
+> -          - const: allwinner,sun8i-r40-emmc
+> +          - enum:
+> +              - allwinner,sun8i-r40-emmc
+> +              - allwinner,sun50i-h5-emmc
+> +              - allwinner,sun50i-h6-emmc
+>            - const: allwinner,sun50i-a64-emmc
+>        - items:
+> -          - const: allwinner,sun8i-r40-mmc
+> +          - enum:
+> +              - allwinner,sun8i-r40-mmc
+> +              - allwinner,sun50i-h5-mmc
+> +              - allwinner,sun50i-h6-mmc
+>            - const: allwinner,sun50i-a64-mmc
+>        - items:
+> -          - const: allwinner,sun50i-h5-emmc
+> -          - const: allwinner,sun50i-a64-emmc
+> -      - items:
+> -          - const: allwinner,sun50i-h5-mmc
+> -          - const: allwinner,sun50i-a64-mmc
+> -      - items:
+> -          - const: allwinner,sun50i-h6-emmc
+> -          - const: allwinner,sun50i-a64-emmc
+> -      - items:
+> -          - const: allwinner,sun50i-h6-mmc
+> -          - const: allwinner,sun50i-a64-mmc
+> -      - items:
+> -          - const: allwinner,sun20i-d1-emmc
+> -          - const: allwinner,sun50i-a100-emmc
+> -      - items:
+> -          - const: allwinner,sun50i-h616-emmc
+> +          - enum:
+> +              - allwinner,sun20i-d1-emmc
+> +              - allwinner,sun50i-h616-emmc
+>            - const: allwinner,sun50i-a100-emmc
+>        - items:
+>            - const: allwinner,sun50i-h616-mmc
+>            - const: allwinner,sun50i-a100-mmc
+> -      - items:
+> -          - const: allwinner,suniv-f1c100s-mmc
+> -          - const: allwinner,sun7i-a20-mmc
+>
+>    reg:
+>      maxItems: 1
 > --
-> 2.48.1
+> 2.46.3
 >
 
