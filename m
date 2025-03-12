@@ -1,137 +1,124 @@
-Return-Path: <linux-kernel+bounces-558593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15707A5E84D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:23:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 115F7A5E822
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:14:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498BC17A636
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:23:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D8CE3B6DC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B4F1F1534;
-	Wed, 12 Mar 2025 23:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0631F1513;
+	Wed, 12 Mar 2025 23:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="uRaLHXom"
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAfLgmNJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526B41F12F8
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CCF4685;
+	Wed, 12 Mar 2025 23:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741821786; cv=none; b=f/WjYDo9BG4XS9koB4ewkdTVDtg79+whIdEeRpretc99kTy95+422vNyKfcUrqAfUoXpU0Sv0d15oWn3jefl9NpDPym8v4BK0OZGhaZlj1+L7DtFzc1XwF9UWtOeSo4sAu6KuXslJPAo5fZUxptuCtW6JfWlMq8v6YNWOTKxXSo=
+	t=1741821280; cv=none; b=fGlRsSwEZGwfLCL4bKsA5mYgXdyEPwqrNkK2G/YP/AwKB/qz0gOzkPjORK5hnV8i0RwKz+XiCQBCzywTYUo4NEUyoCkuYX/LyT3PxUA+BDdqr/ngkgxJJhRAPO8Zaeqy8FAUzHKzDH6UmYrYS9d0GqM15vtPFPlb04sNkMZYJDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741821786; c=relaxed/simple;
-	bh=vT6PAURo4MNN0PEl7mxHirVrCIwv91xowfPOi+urB3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UWH7wccFWH1oxT04soi9a77s0hAoa9uUdMiuvjvVrjZJkyRMuwa1MGB/jNvl/rFE5Ak6cteQ3A8jt+bRTDxdyon9xlagDnF8p8SM15+ihtzSwKdY+qUY9dexSFrZNPrhC+qAt/wNg269c8QGsCzRnQ+v/k1EHzYkBOCvSr2Ua+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=uRaLHXom; arc=none smtp.client-ip=66.163.184.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741821776; bh=GksvniJbV2RDtt/B/FzhP1sVZRmoi2tuT6NLJdfZJFE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=uRaLHXomKxZ2xrqisyy4h6jcl5pJo5XoPsUEbAptjkVuKkmpMvf8yQ8MbPEut0SflJKm+ta8AssYgNZCr7Em4KKU4Gb/19QzEhD2sk7Mk8tsvn/LvRwzaGwB/XzlxCHYqRHfa4/pC8XlwgN+po2qG53264YPlL5d+TibCd3cc+ZmDCQwAjCknvI16CnL8VwgSoiU6KsFrYzueSqLomjJ1d3ROEvRUR5j0lFOwLET4owaZIyTG0RiwrHwk0bHdBgoBNuJ6guy+ruUhb0x1jTshl6L58JEsBSxYnGabXoV4GiFYCXI7+5RIWsoSPH/I81qO28AqTKZnPv9pdlf9Q3R5Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741821776; bh=em3dtkZUluq5KMbA8rNiurn6EnGForQf8ywQE5VCz+2=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ThW+6XYJxn50pWEy7DHLfUvLHwawFwo1pd+fTZeoA6YQTka8tUONU8MhJcrGmdYbhBwlVEoV/4MbwivGJ+UuQSeDx+SKRL8vNNJBx/XiR9ND2xvsZG+YIriWSlcvHGkhGylPlBYVxeR4PeG5kvFq8m2kGYaBIAvTLIYpivLk2L5WTBCd0I7rPP7wsIPV6PlBpsfrFNPVKrUL6CYtKUY+qda8HU2STh9TeW5GGlvmjOCsg6Zpi21CyPa9KGl5sjiTDicoKNBvLSAUiiLDieHTD7XThqzORxBw0P7h8eLjBf+V9d5Q3VKdsxOtpFuWQn6IdHjPulSBDpJtuV/Quh8F0g==
-X-YMail-OSG: CblqW54VM1mlJoZ1Vh_N7qHqJXDbZX4uGEHXP1NHJeEbB4MozVPfLB92ulLKVaz
- mIh26SA02syEWkisYf_rAu.UGSdmizh9PqVHTSqJZ5n5b.uWLFaxtjTv1EmJHiIqUfAIixCm1Y1U
- 4LBp2MprB.UmA3ykYS.Fnkv6qAN_asM9FI60U8i0I2jeI2ceY4ldVMFo3mQFpwAoa3sl7wvxvJWX
- B41lf6w4xqGPLI6jf5KO.MktqaxW5wCHr323_nCNDIK80oYdiXq2rIXa9YGrtWg46VjNsYdjIguy
- kV85u0PcaTR2SVfBiiMEbvWHrvMDMrmmsFHSDKqVYnQs12RZnPUn0V7hvY6hgHKx2WD9xw1Gynb4
- wewbA30H7DCS15wzS3BIMaBmRAE0AX6WWmqsEA3Sbu8xyqj88qdBbIHn_i31b9lSq9qaOwtUcYnV
- GIslh4Mvabafz6Egik7YpiFdlXKdv4DhxtPSJE5wTqORlpRXM4NSqNebnp5QF.Tmyx95IqJxhepg
- Q10nm9b21_3zMMXdysiu3foRYCPoanoaPHfEhfcHauIVqpczR.WCcnYX4_Ybvw8d5qY8afipeuYU
- ECq_BmnQCmIS3u7te.7LvNOsxMSNrZ3FjDKf2GZTH_XG_jq7bPExa4tC0iMWApXRwUxHBpp3aE9e
- BZ4YEZiFh1WcpAPLjIjHRsFU9VvMz9JOuRDTj1sdo_qLALScOOMDeSr3gr1CLXHqo8diJbQ4p5xX
- vOy7sWjLIJ2QcL7pTs7B_G6jt_vLb_Fnnzh9U_QjP2V__uzhPfPsmkfDteF2mnhJPhG35TaDArgU
- _bvRCrHIY1iFeVjXa.WxKngFNV5whESnWOpTAaJ8D2xiIU91MHH5oIc.wjaSXRHtAuTcbG_J9kcM
- AA6jp8KiQ8l11PoYyh6Cyzae9mH6vMODdRaqAJ9W.IlYyeeqQPYTyT5ORcxg0_ZqvdfolJMBjDJB
- BJsvYfvWEtY.z4pcPGfhg32wiZ92WoShH1CRuGMraQ21M6fR01DSVTTnlpmqAHsZxUdw4hgTLjbG
- tDeES_ijWOMIpi6.55cWQ.pP1LbOLBnWInQ27fZVypXJ2OWVXTU7ku09mD0kKJeIRSqUdW.IrR2a
- odyV_GMwBoTXtaSm3D.7JWTviROUQwsovdIvJ_2TR1sbsR6Ei3uAVCsFfwwzPdNj52hAOwBXdJ2j
- IjmG.tsoOh17XMJCF4Dcg5LBlzFI9.VJT08AQ0csf0z22Fj9TeUWdAt2TpHcOoa9WdADbEbMuCW3
- AukpgJLGpRBY_eAARMVdjRUFYK8UOTdB6NvebCSWCEQ0NR1cZxacue64Dhf5RoXZ3YIiO9XCsPHO
- H0oWDI9CqHjf5gzE5sElKEps9wZW_fX12ouiK4f.4MfMBgSqr11R2fgdEkQSvnqAudSSmxkFYYgU
- 67n_uQY5NHui2cnblL_Tj6I.K_zjrclJ03v5abj92m8w1DjFD6ak2b5ovrTUAuZZ7Ta2.ME7sK.Y
- b5eCiLtaPnhxOrCzGf8lY5x9Nnq2icnVWbAvGeXSyWdMYK1z4K6o3d1eSw147sbAjot_ejG42oEN
- 8rQzvrsXWGrdD6R9Mil.jof5EPzwP.cWceS8EPinRzMQAaQCk0LknjFtUZjffWrAV87MJpeN2yP_
- v2A7YbHQH.NQgHMcSjGy3iWmRemiZrqBZpLoyHVs2trWFRcdmkQNiprbF3HRqjlMf3lo6mOFVSPt
- bLuBCXGG6g0QOyGI7pyIxYzHgCnRqELF8ZeRI.t.3lb.2BXDa8zLKxCCZVNYcDXwGMPLzZ7c0hkx
- fCAe_ZkXralxcDehrf5lUbbXa9zkfH_a5w21MJMdgLiBSWNr3znVhM3GrjOC.WVa.HELylfUXvYB
- 9AyqZ4.G.jxGQNBHq2lnhClOgK9_KOYbcJ5C7fA51vUHzzHvaWtbDO.a.RsfdtJyE6ySbvIO02W.
- VIONzjVQ6rQRHgRkGKMbUNncJBK3e9vkuT9o05LBh11DY8aGupVBxf.6w8hhjwqUuHBJv0gjU9xz
- P04sluQIUpezYH3PWBj3biyCSbzTYyXJcmBGeTS1yl1bImyNQQy2KSWBSAgvYFDr1_YJm1ys3RIv
- C0.GCqHvJW0pOfNWWfGPp25oer3S.N_mmXXJRhvPgQq_18zMOVeaYhbboujD3jfrqkJQzXdbGCv1
- Guzi3LIISknIt5_h6eIF5r5iAw7xnnv3uySgEtu_.ijM29O2KT03RsNAp397Sp6.2IaJ82iYVzVg
- TzjME8302.mLWNOzdzcve5RnKghz6EGnwcHp4YNwhhDNJA9LeWQOPT90Nbm.g1xYC99ipjnuArJC
- WDF1VToI-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: c231de60-f6ae-47b3-b766-6c39b1353092
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Wed, 12 Mar 2025 23:22:56 +0000
-Received: by hermes--production-gq1-7d5f4447dd-n5sg2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID fae0248b384e80f26af981590c55b4fe;
-          Wed, 12 Mar 2025 23:12:44 +0000 (UTC)
-Message-ID: <fdf0e86a-5ba3-4d28-8c63-b2019af009f1@schaufler-ca.com>
-Date: Wed, 12 Mar 2025 16:12:42 -0700
+	s=arc-20240116; t=1741821280; c=relaxed/simple;
+	bh=TKgowIo1WaTZUviCcRMak32azD2cFfVNTUXSGH8c1O0=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=syAnCL/iz5wvSZZFV6mtoXpmr7L1Nz/mtTWsRxJkE4C3ckwR3ew7KuOPmppu845lLu73UDBdTyxizsc/56OGhrNvDfl2P2V6h0V/QzZkYEFzEPbyawmGvLMgCU5vjrirhFn2shZfiID8cnrM74qgMIADGZFB5p3xNR12EcfWfgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAfLgmNJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F59DC4CEDD;
+	Wed, 12 Mar 2025 23:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741821280;
+	bh=TKgowIo1WaTZUviCcRMak32azD2cFfVNTUXSGH8c1O0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=eAfLgmNJBIhrzfTbBz15W2qXyisRuA+s0m0sbZ0DR4p5Yn/gYR7lffHji1Pi6aEKz
+	 iEYjHrI0Tt4Cjp8pteJK78+OVFmkwbGZq6yWcr6QMo8exhqx3K9GefpIMExXacDNRh
+	 KURQmUBu26eABgR5+fE6nmnvffrHsyK4SWEmBdjwmGVFmfDO2zE06KJnS0vqNXK2YH
+	 VrGqoDKtTRm4MkgZrY7LhY7SgtxAK9qMGNNgHvHYQJcDqrUXQJjf9Ce2rJDiEEY4+j
+	 ZNY/I0f84t/Yi407KIEBS2V77DWKo7zqJ8QXMrTL5tL3NSHZlSvQSL0tFB8WF2pqeO
+	 KNWFA5iJpPFMQ==
+Message-ID: <f1d5dc9b8f59b00fa21e8f9f2ac3794b.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 5/6] smack: explicitly skip mediation of O_PATH file
- descriptors
-To: Ryan Lee <ryan.lee@canonical.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- John Johansen <john.johansen@canonical.com>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,
- Kentaro Takeda <takedakn@nttdata.co.jp>,
- Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250312212148.274205-1-ryan.lee@canonical.com>
- <20250312212148.274205-6-ryan.lee@canonical.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250312212148.274205-6-ryan.lee@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23435 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <epnv7fp3s3osyxbqa6tpgbuxdcowahda6wwvflnip65tjysjig@3at3yqp2o3vp>
+References: <20250226232320.93791-1-inochiama@gmail.com> <20250226232320.93791-2-inochiama@gmail.com> <2c00c1fba1cd8115205efe265b7f1926.sboyd@kernel.org> <epnv7fp3s3osyxbqa6tpgbuxdcowahda6wwvflnip65tjysjig@3at3yqp2o3vp>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: sophgo: add clock controller for SG2044
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Chen Wang <unicorn_wang@outlook.com>, Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Richard Cochran <richardcochran@gmail.com>, Rob Herring <robh@kernel.org>
+Date: Wed, 12 Mar 2025 16:14:37 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-On 3/12/2025 2:21 PM, Ryan Lee wrote:
-> Now that O_PATH fds are being passed to the file_open hook,
-> unconditionally skip mediation of them to preserve existing behavior.
->
-> Signed-off-by: Ryan Lee <ryan.lee@canonical.com>
-> ---
->  security/smack/smack_lsm.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 2f65eb392bc0..c05e223bfb33 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -2062,6 +2062,10 @@ static int smack_file_open(struct file *file)
->  	struct smk_audit_info ad;
->  	int rc;
->  
-> +	/* Preserve the behavior of O_PATH fd creation not being mediated */
+Quoting Inochi Amaoto (2025-03-11 16:31:29)
+> On Tue, Mar 11, 2025 at 12:26:21PM -0700, Stephen Boyd wrote:
+> > Quoting Inochi Amaoto (2025-02-26 15:23:18)
+> > > diff --git a/Documentation/devicetree/bindings/clock/sophgo,sg2044-cl=
+k.yaml b/Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
+> > > new file mode 100644
+> > > index 000000000000..d55c5d32e206
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
+> > > @@ -0,0 +1,40 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/clock/sophgo,sg2044-clk.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Sophgo SG2044 Clock Controller
+> > > +
+> > > +maintainers:
+> > > +  - Inochi Amaoto <inochiama@gmail.com>
+> >=20
+> > No description?
+> >=20
+>=20
+> I am not sure the things to be described. Maybe just tell the
+> clock required and providing?
 
-In Smack the single line comment is discouraged. Please use
+Sure and point to the header file with the binding numbers?
 
-+	/*
-+	 * Preserve the behavior of O_PATH fd creation not being mediated
-+	 */
+> > > +  - |
+> > > +    clock-controller@50002000 {
+> > > +      compatible =3D "sophgo,sg2044-clk";
+> > > +      reg =3D <0x50002000 0x1000>;
+> > > +      #clock-cells =3D <1>;
+> > > +      clocks =3D <&osc>;
+> >=20
+> > I think you want the syscon phandle here as another property. Doing that
+> > will cause the DT parsing logic to wait for the syscon to be probed
+> > before trying to probe this driver. It's also useful so we can see if
+> > the clock controller is overlapping withe whatever the syscon node is,
+>=20
+> It sounds like a good idea. At now, it does not seem like a good idea
+> to hidden the device dependency detail. I will add a syscon property
+> like "sophgo,pll-syscon" to identify its pll needs a syscon handle.
 
-> +	if (file->f_flags & O_PATH)
-> +		return 0;
-> +
->  	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_PATH);
->  	smk_ad_setfield_u_fs_path(&ad, file->f_path);
->  	rc = smk_tskacc(tsp, smk_of_inode(inode), MAY_READ, &ad);
+Cool.
+
+>=20
+> > or if that syscon node should just have the #clock-cells property as
+> > part of the node instead.
+>=20
+> This is not match the hardware I think. The pll area is on the middle
+> of the syscon and is hard to be separated as a subdevice of the syscon
+> or just add  "#clock-cells" to the syscon device. It is better to handle
+> them in one device/driver. So let the clock device reference it.
+
+This happens all the time. We don't need a syscon for that unless the
+registers for the pll are both inside the syscon and in the register
+space 0x50002000. Is that the case? This looks like you want there to be
+one node for clks on the system because logically that is clean, when
+the reality is that there is a PLL block exposed in the syscon (someone
+forgot to put it in the clk controller?) and a non-PLL block for the
+other clks.
 
