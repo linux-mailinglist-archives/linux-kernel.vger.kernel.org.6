@@ -1,131 +1,160 @@
-Return-Path: <linux-kernel+bounces-557879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B218CA5DEFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:31:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8603A5DF07
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:33:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736D9189EA7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:31:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E2E7189EB9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC442156653;
-	Wed, 12 Mar 2025 14:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFAA23BCF6;
+	Wed, 12 Mar 2025 14:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jwx+kk77"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lLBEz6zr"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA99824E01A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A56E8635E
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741789880; cv=none; b=c0gQmke64lzbhDBSG74uHLmzHIPy5NzBXMWXVHwbti1+LfG+XDLH+mTIDMKeqBNILJZ5aJEchU8V0UWqg6MKNQUmthcrNGK+t2K9vJq6J6DrQtOXzbSow66tB8QasDk55pHHBcmib9Ye0MkOIygMuQMQoAJitEd6+D9B37I+T68=
+	t=1741789988; cv=none; b=XNLPyf8+DyrunoyapIMMj7B7wohjFUhi0894RqPIRgFgBeUWALXkwO//tJA4nsRxfc7ifrvY480XupWiO465JRJhxIsruK2bzrgLIgoS6Lwl+IuR5uOZjL2kezKg7SIElh5mgCDVI66x240gfwuRB/41ex6J60F6WxxWt3E2ATY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741789880; c=relaxed/simple;
-	bh=K1NuAEngcPclmCzbSgtaq+RrDGOZqTUJu3ZdtBcGZ2M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BePiCuQReLzfHCCAhi1zWSt2Lg7BzCcw0eChPMkAybhJuXYEm+sMntjimpzeXYH0lk4LLNAbyi+KZe4tI0+ZeAM/fQoid6vJ6ud8KRXcq8AP4oOPUPQJ86iaYAsT5m/yExMXPmwjlTGGlF9RxiqSbUW6mF16w+Hn1ym0zJf7TV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jwx+kk77; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1741789988; c=relaxed/simple;
+	bh=AixPktbXyhYgNZLL/XJCQek2JdSsnYFd9qTxfsG+zwM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TrC12ZgeWQHTOhlFGGZhtc7BnnBiZITfUF/VSqTwji2vcyA78EKn5wcREkvkMYM992+msRH+fWBTUd1MAvZMGGiD1sIhghrQ96kath4DCHHtsDa2jXUtW/fQCv4ud86/w8tEOMEN1AgqUx9oqjSqpUBxauJta7Ps5iGpI9hlfxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lLBEz6zr; arc=none smtp.client-ip=209.85.160.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22185cddbffso18032155ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:31:18 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-476b4c9faa2so3836951cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:33:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741789878; x=1742394678; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7wHVeTdcbD/lMPZ+7RVnSVzW4Yy+8n9avYr5uzJiRKg=;
-        b=jwx+kk77FolmhrTxmZxn/WcsnAr+FgFEGtF4C6eZqAN1rfsUeSCRmOkxmBxEYF0p5C
-         yMmAryUn5rYQNQ0Q/O6HyTbE8WEwIs80vB3Mei2QCnZQ/vSvw+B8/RyqjRDBwgj0jAij
-         QgHPpGQdjEDVlo7xy81bdMv9cQ8nRD847+lC8=
+        d=chromium.org; s=google; t=1741789985; x=1742394785; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BxLGV/gTabQc22y8Dfo+hpafOImuUut6Nenup2mQyaY=;
+        b=lLBEz6zrekSPYEoWuANzrY+WhNxqI+VKMWYWHM2ZSzfdeYMafuAMDabGC6sls33RRz
+         YpXUrkQOenLBPSm2XcR/n84oGLS9hRJP4RmpNzXdGVJXIXkV+A//CPYGxuhirXOM8YYl
+         S5aOU+PiA+0TlOSt9zJqob4pUtUpfRprp1sSs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741789878; x=1742394678;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7wHVeTdcbD/lMPZ+7RVnSVzW4Yy+8n9avYr5uzJiRKg=;
-        b=wet1RzEh/d2240GAIXd4CzRKgperUnGvCJ5ZFuk7WLs+3uTGcnxBzgaGdQ0lLCYnHS
-         8D3Mf/t8JYDRWhow9ZjDHMeVhyxDICMg369VkiL7Brl2E2GRwrnKqg1M+3hnp2CjbJaf
-         i2z/EbdEg6Ifj7BQXb0Nv/Xo1XvOGqKiTbeXvEMcGFmQW4VEIMPsQBE11OmSwilmrVMM
-         27H3oUHzqFaKbIpLasGxhl6pqbtUfW65Dibd8T7uIEeJVfVzFSU9C1SkEOG6uu0Knj1Y
-         i7Ym7JzR85/HNl9gnkqDjiW17adylDfqMdKL9vasYnNQeCECM4gLi6cDbiep/PAVvxSV
-         Jztw==
-X-Forwarded-Encrypted: i=1; AJvYcCXllopbiCUFowQ5pStq2xJ1GZ+DxwH6Czrrvfm3BXVbbvM5wHt1fxGejGRX5CJwPDMzNRRyiti34XwASHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCskrifM2jlyrSrrZyOXcCuDw+kIsIAggTHQGP2VUjff9Aops6
-	cywbiyHXE2XOrlkSxHYR5QlxgcEGTLhvJGbG/ug8duvcdpxwaS0988xpEu6B3ZP0l9Pf6hPWgUg
-	=
-X-Gm-Gg: ASbGncuw9aKWzfpYmCIqpWN4bJPCs7NFYJ/XXOF9oaSsuP6hCSnmZeogDZLHXJx5k75
-	xg+BpynWvnsgD2xE04OUP9syDIcoyJd3e9MRBObrS3F5OJGBvrlPLrToV96fgTBnfRaCSwkDY1m
-	ubY4joZRZLXpxdbt9J2p0bZRYTsGhV2x6yQprSHZ43WxpU/ZWexH35o4uD0NgZxXb2vKXbkCVt0
-	3fYeEZbioTHwDvLctsobgx25JrkDJ3xxoYWE72FsOxZPBce/FDqsHtc6rZZxEvVKruyemx9HhGR
-	tJ2IgzAkfRKrB61HOPWaKdlhxUzoRxKugpFfx5Qmx9+uDg/i2lcv3WNoKaoowdONRueQWOln5OV
-	JrxofzQGvUL6+EUcIOpqr883+
-X-Google-Smtp-Source: AGHT+IGso4VXNf4LaA6gyp5gDGaLztOCm9ys3zkim+c3BRQl8gd7egffGxKYj+WJgPgAHh1RMcUppg==
-X-Received: by 2002:aa7:8449:0:b0:736:b400:b58f with SMTP id d2e1a72fcca58-736ec417889mr10251381b3a.0.1741789877798;
-        Wed, 12 Mar 2025 07:31:17 -0700 (PDT)
-Received: from zipper.pdx.corp.google.com ([2a00:79e0:2e13:6:ea1:ba82:2605:7d4e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736af3a69b2sm10408708b3a.6.2025.03.12.07.31.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 07:31:17 -0700 (PDT)
-From: Fritz Koenig <frkoenig@chromium.org>
-Date: Wed, 12 Mar 2025 07:31:16 -0700
-Subject: [PATCH v2] Documentation: ocxl.rst: Update consortium site
+        d=1e100.net; s=20230601; t=1741789985; x=1742394785;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BxLGV/gTabQc22y8Dfo+hpafOImuUut6Nenup2mQyaY=;
+        b=CmWRUC6gfBoDdxYdRV3ZTLdor0ESeLiV3ZjFSNOSr4HNdaZzvMjQrTtLq0a+Vgr778
+         9HlcdyxiNub3ctcj+vbtiun1effOk//xDDed+TTPAboqymPA8731wxHgygkzcrOfO/5H
+         DJpu8apPRpHfTbkkyQ7qsUWy8+MMzxr2qqrbyw6cg5cjlWUZTBlU1k7+aDQAi8IupjBL
+         UPwPh6d/pkQ6Doyo63dYRBMDI7gmlKGLYopcAWx8GELEQxR6uTIKndNcj28/38dmUzQ6
+         55rJg9n9rodWAOtNsov/zqFVVNcLkDUNzTIcWzl9gVLoXCqUkmrsdfqSrACeI7Q9M1H0
+         hDSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPo43b4zPHjCOoYt12E2amXTZp8fk3jIX3m4GD/tx8V3HxJklrxF9TeNyB3BZq+2wiRoH8jbjYl6zXYMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYgpyVlZTRrFZVYzsMrMb8boANBGSpPjcPT0pf5VemmETUifrk
+	Yv0QcAkXlOoLzrnKjWkao2vxBASEx8H5XL1WS93VhI0A5V4z6UJu10UDMbJXfyof3GDplTEb5Aa
+	ISw==
+X-Gm-Gg: ASbGncvVMDFrZrJOzM/fEPiiauffdmHxUpeT9AeFOfqe5iivhQ+FhqSOv8QR0uZzXKG
+	E4nJhWkKFB8PWM4m4izcrcuytwJAXkNhDXl5a1CoO1jjQOGpszM6N4g9kv0w7Nztkznwe/bh/cD
+	aTRTIVg+X12ipSPm1VHwUDOyOaLsz6PXaFd/DUM7/DBSitQDOCdV/Iknt5ijcQE9fnVfuxNGQJi
+	Cvv0p1mye5pe3/i2guyriCRb0lb1kfKM4T9FBfrfxpd/4+SUOtLRMZq7GKgdasDxu0Bbg+ap4wF
+	0sP5ZnJChFKSKkiM5yZtNSy+qauCoKizI0tMOtgeQ7XzdNq/c3AGCLzx+0ta4kHGyfIE5wpJe7K
+	z4Uf0RXKrq3KA
+X-Google-Smtp-Source: AGHT+IGjvlSqc0zZc7Aij7M2xOcnVbm8HYZOu2WKhyL5y/B6w0ir/0WFDPvQODnEXefpXW32rWbw/Q==
+X-Received: by 2002:a05:622a:5b8a:b0:476:9dc9:3c2a with SMTP id d75a77b69052e-4769dc9444emr81634551cf.48.1741789985094;
+        Wed, 12 Mar 2025 07:33:05 -0700 (PDT)
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com. [209.85.160.177])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4768affa969sm41549571cf.73.2025.03.12.07.33.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 07:33:04 -0700 (PDT)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-476693c2cc2so263861cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:33:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWQBX0+5uZRFsLcb98taO9g5qwq+pturZ4mgH7CL0kSYAmZhOEB2qNQeEijT+gxiHMNut4At5+MbIVqvOk=@vger.kernel.org
+X-Received: by 2002:ac8:7d8a:0:b0:474:b44f:bb88 with SMTP id
+ d75a77b69052e-476adf0e170mr3551051cf.27.1741789983956; Wed, 12 Mar 2025
+ 07:33:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250312-dead_site-v2-1-920a313743ee@chromium.org>
-X-B4-Tracking: v=1; b=H4sIALOa0WcC/23MSw7CIBSF4a00dyyGR6XWkfswjUG4LXfQYqAST
- cPexY4d/icn3wYJI2GCS7NBxEyJwlJDHhqw3iwTMnK1QXJ54koI5tC4e6IVGfb6rNpecK0V1P8
- z4kjv3boNtT2lNcTPTmfxW/8pWTDBOvNQFo3q2lFerY9hptd8DHGCoZTyBbJ8ivOlAAAA
-To: Frederic Barrat <fbarrat@linux.ibm.com>, 
- Andrew Donnellan <ajd@linux.ibm.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Fritz Koenig <frkoenig@chromium.org>
-X-Mailer: b4 0.15-dev-37811
+References: <20250311-dead_site-v1-1-7ab3cea374f2@chromium.org> <b3df5e8178107b2a133126e1daf111d10f1b0333.camel@linux.ibm.com>
+In-Reply-To: <b3df5e8178107b2a133126e1daf111d10f1b0333.camel@linux.ibm.com>
+From: Fritz Koenig <frkoenig@chromium.org>
+Date: Wed, 12 Mar 2025 07:32:52 -0700
+X-Gmail-Original-Message-ID: <CAMfZQbxoO0QX=r6ECcVHBToR7jaqAz3HD6ZaOf-Z3nP2RuYFdw@mail.gmail.com>
+X-Gm-Features: AQ5f1JqjD2DWXGYq02-0yYL-x2rBYXh6GczZW-B2jC0-D-TCZJLFB5aqywzcsmw
+Message-ID: <CAMfZQbxoO0QX=r6ECcVHBToR7jaqAz3HD6ZaOf-Z3nP2RuYFdw@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: ocxl.rst: Update consortium site
+To: Andrew Donnellan <ajd@linux.ibm.com>
+Cc: Fritz Koenig <frkoenig@chromium.org>, Frederic Barrat <fbarrat@linux.ibm.com>, 
+	Jonathan Corbet <corbet@lwn.net>, linuxppc-dev@lists.ozlabs.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Point to post-merger site.
+On Tue, Mar 11, 2025 at 9:20=E2=80=AFPM Andrew Donnellan <ajd@linux.ibm.com=
+> wrote:
+>
+> On Tue, 2025-03-11 at 11:24 -0700, Fritz Koenig wrote:
+> > Old site no longer associated with consortium.
+>
+> Thanks for catching this!
+>
+> >
+> > Signed-off-by: Fritz Koenig <frkoenig@chromium.org>
+> > ---
+> > After mergers the OpenCAPI Consortium does not seem to exist.
+> > The github page is the only seemingly relevant site, but it
+> > has not been updated in 4 years.
+> > ---
+> >  Documentation/userspace-api/accelerators/ocxl.rst | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/userspace-api/accelerators/ocxl.rst
+> > b/Documentation/userspace-api/accelerators/ocxl.rst
+> > index db7570d5e50d..5fc86ead39f4 100644
+> > --- a/Documentation/userspace-api/accelerators/ocxl.rst
+> > +++ b/Documentation/userspace-api/accelerators/ocxl.rst
+> > @@ -3,8 +3,8 @@ OpenCAPI (Open Coherent Accelerator Processor
+> > Interface)
+> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> >  OpenCAPI is an interface between processors and accelerators. It
+> > aims
+> > -at being low-latency and high-bandwidth. The specification is
+> > -developed by the `OpenCAPI Consortium <http://opencapi.org/>`_.
+> > +at being low-latency and high-bandwidth. The specification is
+> > developed
+> > +by the `OpenCAPI Consortium
+> > <https://opencapi.github.io/oc-accel-doc/>`_.
+>
+> This link is to the OC-Accel framework documentation, which isn't the
+> core set of OpenCAPI specifications. Those specs are now hosted by CXL,
+> post-merger.
+>
+> I think I'd update this to say:
+>
+> The specification was developed by the OpenCAPI Consortium, and is now
+> available from the `Compute Express Link Consortium
+> <https://computeexpresslink.org/resource/opencapi-specification-archive/>=
+_.
+>
+Thanks for the feedback, V2 posted.
 
-Signed-off-by: Fritz Koenig <frkoenig@chromium.org>
----
-Changes in v2:
-- Update link per feedback
-- Update commit message to reflect sureness in corectness
-- Link to v1: https://lore.kernel.org/r/20250311-dead_site-v1-1-7ab3cea374f2@chromium.org
----
- Documentation/userspace-api/accelerators/ocxl.rst | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+-Fritz
 
-diff --git a/Documentation/userspace-api/accelerators/ocxl.rst b/Documentation/userspace-api/accelerators/ocxl.rst
-index db7570d5e50d..4e213af70237 100644
---- a/Documentation/userspace-api/accelerators/ocxl.rst
-+++ b/Documentation/userspace-api/accelerators/ocxl.rst
-@@ -3,8 +3,11 @@ OpenCAPI (Open Coherent Accelerator Processor Interface)
- ========================================================
- 
- OpenCAPI is an interface between processors and accelerators. It aims
--at being low-latency and high-bandwidth. The specification is
--developed by the `OpenCAPI Consortium <http://opencapi.org/>`_.
-+at being low-latency and high-bandwidth.
-+
-+The specification was developed by the OpenCAPI Consortium, and is now
-+available from the `Compute Express Link Consortium
-+<https://computeexpresslink.org/resource/opencapi-specification-archive/>`_.
- 
- It allows an accelerator (which could be an FPGA, ASICs, ...) to access
- the host memory coherently, using virtual addresses. An OpenCAPI
-
----
-base-commit: 0b46b049d6eccd947c361018439fcb596e741d7a
-change-id: 20250311-dead_site-e96834910663
-
-Best regards,
--- 
-Fritz Koenig <frkoenig@chromium.org>
-
+> Thanks,
+> Andrew
+>
+> --
+> Andrew Donnellan    OzLabs, ADL Canberra
+> ajd@linux.ibm.com   IBM Australia Limited
 
