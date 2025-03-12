@@ -1,159 +1,187 @@
-Return-Path: <linux-kernel+bounces-557967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5176A5DFF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:15:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E1B7A5E000
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:16:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 489553A6E1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A568A3AA183
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AE42512D0;
-	Wed, 12 Mar 2025 15:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A81F24E01B;
+	Wed, 12 Mar 2025 15:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZNiITNCF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b8xa5w2S";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N8lA2TPT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281C51EB1A9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0161E139579
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741792524; cv=none; b=F9yBVeN40/S3AgnNQl6F4bPK4kFBlsZbjYTxm0xTI9yDXLmfqYV5jNpw9dH4wofb02Yb9xJZ+fH8BqCRa/zePNroNAprDsw/fqK+tKZrv/CY4czhJGPa+Y7Dv7J/rwnxjjymZlC+jJ6LQAtgIGffQ9Fj+EsPZW/6jcliHTeAzBE=
+	t=1741792603; cv=none; b=unGkesRASnj6ukLe2rLWgprwIXMcNC3hX9iAChVF0IuEHwwrbF8nyK9GHbOJUE9uSLBvMT5fBMjVokXSYklrfK44r44xUGhqtubM+qYnsJpgYwqlsAJ+VtfkR/x+RcZXAcYcHOy+0982AqipEsA+2/5aVorkUG2kUtljoeYU5FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741792524; c=relaxed/simple;
-	bh=rQCyYo1q5LlHeQmc/jvBgqAwBqok1aeeDQVozDHX8OE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=in/a9VrCBv+udnocv07qspaKAdfioY0M3Wx8ueRROGYwv11shI6R/um0suAsj0Kq4G3ime72NC+u0+mJeO18iTJs3RjOK46I444yfABt3d8vwaV7M9/NtlLlGg+y9U1tDgF1e9PW2So0GK0IMmfv4hzyWwgEDHGT7+zQTs2qHIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZNiITNCF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CA9Pdo007562
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:15:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sX4AAf7m5Hmzy6uxAgPsldQmewUW0wWhuO0d0xDGmO8=; b=ZNiITNCFHf76RD2d
-	BJkcFBoTieDJGgtaZS2gQ2IZlTyTr5pKwG0dBaC9+MDHtzlXyajYlBG/DwOIvm6s
-	pIBfhL8TylWKsX6J49MiXrMFfDkqVRykdaZcG2hdMJuOMHW+ZdO5JSrbcOqaMo/C
-	EO3B64YRsoEMyk56ct9O8CZkbbPLqgQE0kb9bLU4ZRi9A/ZvCVQBMDDWBlI/ebBn
-	AldGDf1exSUTGX/hZh2eN/VHbsnP8om+07/D5DtYenSgPRns1XWrNLJHiGkP1Nq1
-	Au+trOHPDMvWDcwyNE+8zOyNiZoLyHOGJKFKOaba66q8+TkHKKhQJVZpfLohO4Ub
-	8R1u8A==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2qjtfp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:15:21 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2242ca2a4a5so70200285ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:15:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741792521; x=1742397321;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sX4AAf7m5Hmzy6uxAgPsldQmewUW0wWhuO0d0xDGmO8=;
-        b=JRfPw/uhqdL1beOb2CVF/NpQK14hTKCdIeQv0yjxj9OJi7Dxe9TnejLaky5N7duchR
-         /3yIp1BzxL6alUs1GaL/hnA9ABmhutLx9Wba8A5aoLZPkKVi17hdU811Tm5El/zDzxcH
-         dOisK4fAyDqrFZvlfhMXkLdD+9wNyZElJAXwjn9Klh0xxYmlo4ZKaV+JXgsXGnOQ8Dqt
-         mZMVKR1W0h6ct9W3aI3vHwdmNgMNFQdxbblB2YkI/zLRWmmrS74UI+FqWRbuHp4JztZK
-         kg8ACwJbQzffP8fckz1U+2bHADvPIpfLapcrMjrqUfkjZTaUxtx9DwBYjhdSLJyvhGcj
-         NyHw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3L1GxEcFD3PGFB4WKv+/bu5WEVV8K2GUhLr5PpgVAQxrkuBdYGmgp+HnzT5twmlKIEIYLes21IyXVuCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9pL3C8wx5cCns7f7402iNmIC/DhHn+HQ4VnAGwLgTgH9zcJ+H
-	Dezid2pBqxrvrcMf+yLV4DGkJU6mEu3/6i/WsTMFnQQJ+okXwU9XKTM6lNIhJchxjzkxfTWOgML
-	KtRLjFJYpyT8YKJPrc6LFoXlqC2LoNpm69f8CB+bzzVPT3g5+70n1Ru+/W5EydY0=
-X-Gm-Gg: ASbGncuMaoG65vMZFuSscp3nhvL1iFAqW9R1z6/SxIx83V+/zu+GXKcR6CELLnJfhtZ
-	U6wrchjEfLFaAsiDddRXyHExlyHrrtSmDDvcloF2BRyfQnyVTEOoVhy12v9uKuhuYGFdo7bYGpN
-	vSmQ8W2C6GvGAFKJd3OMNPuUw93lw8QywZ15cnK/jYKWtvLlkO0wwSVawgm/nMjHfnAnzOGaW0c
-	pDW4lCBBzqptb+1mc6OXIa4sqVX15LYdTuW3tRrgJ2gQbcSrt0i5MyjwraUOG5D/vAD2y6k6nwA
-	S28xo29GwjDr1pJRFyWv3X2ZWsNl4udMx/NDGhjwCCMRAKLYBQMWs3SNMjhv8tzUkNqkq/c=
-X-Received: by 2002:a17:903:32c5:b0:224:249f:9734 with SMTP id d9443c01a7336-2242887ecd7mr325197675ad.4.1741792520672;
-        Wed, 12 Mar 2025 08:15:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHOdNtgjzF0uLcKmrq8uktA9l8TaPAfGY6t6+ICMeOkLWYWs6gFJGHlW3ZY4NQTKvR6YiogdA==
-X-Received: by 2002:a17:903:32c5:b0:224:249f:9734 with SMTP id d9443c01a7336-2242887ecd7mr325197275ad.4.1741792520273;
-        Wed, 12 Mar 2025 08:15:20 -0700 (PDT)
-Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736c78389d7sm7863261b3a.4.2025.03.12.08.15.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 08:15:19 -0700 (PDT)
-Message-ID: <a21610ae-e155-44bc-bcc5-b9b8b1c8cbd1@oss.qualcomm.com>
-Date: Wed, 12 Mar 2025 08:15:18 -0700
+	s=arc-20240116; t=1741792603; c=relaxed/simple;
+	bh=DqF2qBWPmXl3h0/Vw8cSzVe+J068SL8tj2Gm3P5KphI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lTEBECbVuw02iBcx9Kumu2hOdvggvrwp+8SIO+Bdt7U7In9riIDxS7ezPmmxfbe3sHeN7XSn2SMWkTNP6/ych2QyD4NMbESMJHXSfRG/QrkKSm2ynl6ppKPOjAr+n1uWXWoDRkubPSFGxlXoT5C8rwJKRjkhhQKZLS6iuMXcB6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b8xa5w2S; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N8lA2TPT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741792600;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rNJDVzdEQR1XApdNl2anre1c4jIQklDJ/w+w9BbSv4M=;
+	b=b8xa5w2SyZYKqb0t/uyRnxL5cUdIdo9lP0/99q4r9psy8QGtg8dzccdiQ3FlitVRpYZc0Y
+	dBqes64R2Z6fRl2PRpaZp72Cdyqri98JE3rQl07VakvabBK9ssAFlt7U/pTzZ1r7zJn6FC
+	eg7KnD2kgESTZLeAokdakFYj1SvsqOw9cqH8IN7B0htHScWmjCsWtOPo+JNo04tK9F9RSk
+	HV2sL9sz4TLNhWJMZUtxAVfFSzniHI7N8s7Hw+CTqfhrvWTR/I6cV6OJDs6irdXlfYXU5d
+	g64P2A9sWXZ+agtqSp1qobz1vriOtTkkdh55cEuDaLRl6tWBL/nruSsvkCSqtw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741792600;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rNJDVzdEQR1XApdNl2anre1c4jIQklDJ/w+w9BbSv4M=;
+	b=N8lA2TPT9N+n3Mn9hVLz4u3/BDGj5l9AiEfbkLTh1O/Hf3jLNtcL15PlpWnO5j7Fxk0u3w
+	SGWlX2GSj+F0/8Bg==
+To: linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v10 00/21] futex: Add support task local hash maps, FUTEX2_NUMA and FUTEX2_MPOL
+Date: Wed, 12 Mar 2025 16:16:13 +0100
+Message-ID: <20250312151634.2183278-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] wifi: iwlwifi: Fix uninitialized variable with
- __free()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Cc: Johannes Berg <johannes.berg@intel.com>,
-        Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Avraham Stern <avraham.stern@intel.com>,
-        Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
-        Daniel Gabay <daniel.gabay@intel.com>, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: GxkrbrHQ2wwfxLe3axPFsSq1HTo5Pxfw
-X-Authority-Analysis: v=2.4 cv=G5ccE8k5 c=1 sm=1 tr=0 ts=67d1a509 cx=c_pps a=JL+w9abYAAE89/QcEU+0QA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=-Q16Wm--JIC0Ijc-Z3AA:9 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: GxkrbrHQ2wwfxLe3axPFsSq1HTo5Pxfw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_05,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 priorityscore=1501 mlxscore=0 bulkscore=0 impostorscore=0
- phishscore=0 clxscore=1015 adultscore=0 suspectscore=0 spamscore=0
- mlxlogscore=862 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503120104
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 3/12/2025 1:31 AM, Dan Carpenter wrote:
-> Pointers declared with the __free(kfree) attribute need to be initialized
-> because they will be passed to kfree() on every return path.  There are
-> two return statement before the "cmd" pointer is initialized so this
-> leads to an uninitialized variable bug.
-> 
-> Fixes: d1e879ec600f ("wifi: iwlwifi: add iwlmld sub-driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/net/wireless/intel/iwlwifi/mld/debugfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c b/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
-> index c759c5c68dc0..1d4b2ad5d388 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
-> @@ -556,8 +556,8 @@ iwl_dbgfs_vif_twt_setup_write(struct iwl_mld *mld, char *buf, size_t count,
->  	};
->  	struct ieee80211_vif *vif = data;
->  	struct iwl_mld_vif *mld_vif = iwl_mld_vif_from_mac80211(vif);
-> +	struct iwl_dhc_cmd *cmd __free(kfree) = NULL;
+Hi,
 
-hmm, I thought the recommended convention was to define __free() pointers at
-the point of allocation. cleanup.h explicitly says:
+this is a follow up on
+        https://lore.kernel.org/ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.rem=
+ote.csb
 
- * Given that the "__free(...) = NULL" pattern for variables defined at
- * the top of the function poses this potential interdependency problem
- * the recommendation is to always define and assign variables in one
- * statement and not group variable definitions at the top of the
- * function when __free() is used.
+and adds support for task local futex_hash_bucket.
 
->  	struct iwl_dhc_twt_operation *dhc_twt_cmd;
-> -	struct iwl_dhc_cmd *cmd __free(kfree);
->  	u64 target_wake_time;
->  	u32 twt_operation, interval_exp, interval_mantissa, min_wake_duration;
->  	u8 trigger, flow_type, flow_id, protection, tenth_param;
+This is the local hash map series based on v9 extended with PeterZ
+FUTEX2_NUMA and FUTEX2_MPOL plus a few fixes on top.
+
+The complete tree is at
+	https://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/staging.git/log/?h=
+=3Dfutex_local_v10
+	https://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/staging.git futex_=
+local_v10
+
+v9=E2=80=A6v10: https://lore.kernel.org/all/20250225170914.289358-1-bigeasy=
+@linutronix.de/
+  - The rcuref_read() check in __futex_hash_private() has been replaced
+    with rcuref_is_dead() which is added as part of the series.
+
+  - The local hash support depended on !CONFIG_BASE_SMALL which has been
+    replaced with CONFIG_FUTEX_PRIVATE_HASH. This is defined as
+    "!BASE_SMALL && MMU" because as part of the rework
+    futex_key::private::mm is used which is not set on !CONFIG_MMU builds
+
+  - Added CONFIG_FUTEX_MPOL to build on !NUMA configs.
+
+  - Replaced direct access of mm_struct::futex_phash with a RCU
+    accessor.
+=20
+  - futex_hash_allocate() for !CONFIG_FUTEX_PRIVATE_HASH returns an
+    error. This does not affect fork() but is noticed by
+    PR_FUTEX_HASH_SET_SLOTS.
+
+  - futex_init() ensures the computed hashsize is not less than 4 after
+    the divide by num_possible_nodes().
+
+  - futex_init() added info output about used hash table entries (in the
+    global hash) and occupied memory, allocation method. This vanished
+    after the removal of alloc_large_system_hash().
+
+  - There is a WARN_ON again in futex_hash_free() path if the task
+    failed to free all references (that would be a leak).
+
+  - vmalloc_huge_node_noprof():
+    - Replced __vmalloc_node_range() with __vmalloc_node_range_noprof()
+      to skip the alloc_hooks() layer which is already part of
+      vmalloc_huge_node().
+    - Added vmalloc_huge_node_noprof for !MMU.
+
+v8=E2=80=A6v9 https://lore.kernel.org/all/20250203135935.440018-1-bigeasy@l=
+inutronix.de
+  - Rebase on top PeterZ futex_class
+  - A few patches vanished due to class rework.
+  - struct futex_hash_bucket has now pointer to futex_private_hash
+    instead of slot number
+  - CONFIG_BASE_SMALL now removes support for the "futex local hash"
+    instead of restricting it to to 2 slots.
+  - Number of threads, used to determine the number of slots, is capped
+    at num_online_cpus.
+
+Peter Zijlstra (11):
+  futex: Move futex_queue() into futex_wait_setup()
+  futex: Pull futex_hash() out of futex_q_lock()
+  futex: Create hb scopes
+  futex: Create futex_hash() get/put class
+  futex: s/hb_p/fph/
+  futex: Remove superfluous state
+  futex: Untangle and naming
+  futex: Rework SET_SLOTS
+  mm: Add vmalloc_huge_node()
+  futex: Implement FUTEX2_NUMA
+  futex: Implement FUTEX2_MPOL
+
+Sebastian Andrzej Siewior (10):
+  rcuref: Provide rcuref_is_dead().
+  futex: Create helper function to initialize a hash slot.
+  futex: Add basic infrastructure for local task local hash.
+  futex: Hash only the address for private futexes.
+  futex: Allow automatic allocation of process wide futex hash.
+  futex: Decrease the waiter count before the unlock operation.
+  futex: Introduce futex_q_lockptr_lock().
+  futex: Acquire a hash reference in futex_wait_multiple_setup().
+  futex: Allow to re-allocate the private local hash.
+  futex: Resize local futex hash table based on number of threads.
+
+ include/linux/futex.h      |  34 +-
+ include/linux/mm_types.h   |   7 +-
+ include/linux/mmap_lock.h  |   4 +
+ include/linux/rcuref.h     |  22 +-
+ include/linux/vmalloc.h    |   3 +
+ include/uapi/linux/futex.h |  10 +-
+ include/uapi/linux/prctl.h |   5 +
+ init/Kconfig               |  10 +
+ io_uring/futex.c           |   4 +-
+ kernel/fork.c              |  24 ++
+ kernel/futex/core.c        | 746 +++++++++++++++++++++++++++++++++----
+ kernel/futex/futex.h       |  81 +++-
+ kernel/futex/pi.c          | 300 ++++++++-------
+ kernel/futex/requeue.c     | 480 ++++++++++++------------
+ kernel/futex/waitwake.c    | 203 +++++-----
+ kernel/sys.c               |   4 +
+ mm/nommu.c                 |   5 +
+ mm/vmalloc.c               |   7 +
+ 18 files changed, 1396 insertions(+), 553 deletions(-)
+
+--=20
+2.47.2
 
 
