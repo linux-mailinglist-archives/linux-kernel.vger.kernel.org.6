@@ -1,133 +1,194 @@
-Return-Path: <linux-kernel+bounces-558120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC02BA5E1ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:42:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D2DA5E1F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:44:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBD7172639
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:42:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E4811899E12
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7491D9A54;
-	Wed, 12 Mar 2025 16:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B311E9B30;
+	Wed, 12 Mar 2025 16:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYxtqT1n"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QNsr0Cee"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934FE15A856;
-	Wed, 12 Mar 2025 16:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EEF1D9A5F;
+	Wed, 12 Mar 2025 16:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741797741; cv=none; b=R/6s+m+3YFM1ncWkwAVKorQ6Jn33Ie7eE7Wn1U5yVQRk0XhRbUuFe/xFrzimyVgx8B7wx7uU56I64vnd5lNyU/UW7VHjGQOZfOlHdTDycMDzBq+jWEb243T+t1jDmsiRfXOZ6/P1CVkZJUjGXYCfCPdRJvmZLOHnlj8J+I3X7N0=
+	t=1741797841; cv=none; b=WyutPSpfHyqh2gbWmw/mcff50yi0BGW3O03Efpa3MEpwmE/dfsn/5tMwMEgM7X7shcFqapSf1pTFT2XNybhByd+kxsRKQooeGqwCq8lQzcyi7m9ZgLCycocHRgjEk9M9Lv+30H83S9iPCxqP+oDzCen/Bd8fcPUyDNGIs0nUFDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741797741; c=relaxed/simple;
-	bh=OAqVbmUII8u2wdK2eteSkh77IL8VXKjj9jBaL8mcBkk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rB8rUA4BPkerK7roqzwAJuDCJvQ5Q2hk6riDq/84cLxIbyqKhezha2b6NLJRJWRUZYS3P3nZAc0oy7ybxBC0/HG2mm1BI25yX68ZrGxiR119eELvVA4I09EA3oEKhP9EzgCQgUEKv0HA/FVX6TbCZBWq/W/mTw4yx/5YTyem2Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UYxtqT1n; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2240b4de10eso158735ad.1;
-        Wed, 12 Mar 2025 09:42:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741797740; x=1742402540; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fDo1mOrvYsr1Wor/NfjNciCcvytoLzSX/OlLcDkL+Vk=;
-        b=UYxtqT1nauGQUci9u4pyOhEQprs9dzOIpkjwNnmsn4K3oxeJ4CAFsNW4Bu0LJDTMGZ
-         btLBJuWghvunaTgWyb75qLnkvWMw5UwyPanbebrNkk3wsXp+ngufqmMLTtqOxyLJsIiq
-         gcgrz1Asp3JNedxgJaeJxHxSSLsETvOmvcwBNvL9qG9XulhoZbLZ1CZz4duEP36yUU/i
-         CX06w17d9NyeTXR4NIh2Op5PcalrY6pNS6t5+1LKMVlBtHQRIef099QfNhLzrF+kyNW6
-         SndidClHM498Nn265cAHuBp23MCcJDpLi1ABWqCDA5QEj1GsMXUl1aq21Dc3ufTbmzh0
-         b7Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741797740; x=1742402540;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fDo1mOrvYsr1Wor/NfjNciCcvytoLzSX/OlLcDkL+Vk=;
-        b=kuUVA6Arlq/dzQ/vlywHCatxulYvd+sLDru91NdJBf76iJ5+SoVhdfD7/BcF9gVmy9
-         a62Gu7G0078waMVKlE6pZbvyVg/8urFAmwcHjqdChQ0cxPIwbNB7FHZbuBXqYyYIV0Pr
-         6j6htM1FSjH6EMYbWb/oDjAhUu/RTYkfmzlUotQq2dXthN86Af8l61Gl3R8u1BpVxG+3
-         8mCqjhJ0cuIht0Y5k2SrkQj3iIL9j75C3RvdeUBNmWGRgJ/fr+Kf5MxPUu4cNnHd0tHU
-         5/iDSNbwsaz6Y7tb2ClcYOwfYhCaylsOBJ3TTRvull+SXic/iH9yQv5flJ2rK+1OcGui
-         oDxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDMl4vzZB0uLwqaQwtgp4TGDQEJujCd+Uxc3jlOBUZpZsw2t/I4keqJObGyXBvkztOvSOBubRHBItX@vger.kernel.org, AJvYcCX0dFSf3daJJExHmaQAn+v7O0W5c1K9qwRMJgmnw7eXygsw+4wSyDTaDfUq3ShFYYX4KBZDDle0QojfOPRs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1oLzMKQyuzHy85sBD1oqmRHTSVeQ997SN8LiSRoccP3X/EMsH
-	u+4e8W+solabBD62ef+TBpS75dyCRi3d6ggOg65BfyU/kQhF5QfJ
-X-Gm-Gg: ASbGncvGq1n50mx4P6QoVLmae8UIxnCRGqeOHkG3XAiNkTBwr8yoBvzjdtXEojFPP5x
-	FcJcOBYo6cs1ajPkxlrwTEhprMw/X9u8HIXthmJHFfuXN8KsLkdN6XkrtVobtEY/P1ZswMW8K+Y
-	7hv7lKlE96RKLBeRS4zz9kGjAOxAg9FjFAbYELz8oSwmV2TdFe9prm7L4EjrEYbKL67XbcT7X3S
-	7FjhY5E0Enr1W6eaQ/XtyYa77eC4xKwFWUsQOmKxEulBGUpakwuhM4ofP4pYhrJfd3EtU/qW5jR
-	wsXSP+b6dZUjlpRLzDM5B7HztzSEtF+sBnkqxkpAG/JAhw==
-X-Google-Smtp-Source: AGHT+IFm0JEzBi7UsabiIcrQjLIM22yD0b/DK/hkrICcjfxMd5Mxwm9emaajvbKq2S2Z2DtdbFKo3g==
-X-Received: by 2002:a17:902:eccc:b0:215:a96d:ec36 with SMTP id d9443c01a7336-2259326cb9bmr44059855ad.5.1741797739771;
-        Wed, 12 Mar 2025 09:42:19 -0700 (PDT)
-Received: from rock-5b.. ([45.32.55.39])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af28126e281sm11574509a12.47.2025.03.12.09.41.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 09:42:19 -0700 (PDT)
-From: Jianfeng Liu <liujianfeng1994@gmail.com>
-To: linux-rockchip@lists.infradead.org
-Cc: Jianfeng Liu <liujianfeng1994@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: rockchip: Enable HDMI audio output for ArmSoM Sige7
-Date: Thu, 13 Mar 2025 00:40:49 +0800
-Message-ID: <20250312164056.3998224-1-liujianfeng1994@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741797841; c=relaxed/simple;
+	bh=aB+fKBf4e/39ssSV8LODysl3QPBeZYXnSlKp30KzAZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUir0B/WKuSfS84VH9RawvxO+/Bwc3Yjtm6oZAraosVSYyNAUc9M/IOYAS2tC3zJ67eaNH/r3OxyDobdkhFEl4JzoZWxfDDYjzC53h8HYKL9P5r6zntHHHew6d9ZbXyWV6f8HB73MtkF4e9iiAYfaUJ1v4wQVbRVQ9aIzEAAfzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QNsr0Cee; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BDFDC4CEDD;
+	Wed, 12 Mar 2025 16:44:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741797840;
+	bh=aB+fKBf4e/39ssSV8LODysl3QPBeZYXnSlKp30KzAZ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QNsr0CeeK8TEi2ixz6hiv8ukZO6THXnZBB204xkkMpBr+51bI3qaeLVf0S3ZL4q2e
+	 GffB/uKwCOWF3uUavWusH7UUGxr4Y5PeICJ681WvjZrQjL5XSNae4P2z6z9eU5t+93
+	 ZmXvMOWC7ofl5pV0+IiXVDJ0zwfrlslYE/FTNRDrVuxrA1FJNlm6GYKMmyziW6VJqU
+	 gzLDvcoYe7+MvxWiBlg5jFtqf5NRX/m7w7KRuny++hEgkxayEDKDtLsUDF/3LYda/w
+	 1Trb4hs5ae5DLM0weY7YCWUTJFrxiSW+tuP188/BkGg9AUuD/Z4/8sNKi0DgqVTAtz
+	 qrK05t+pxByJQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tsPBU-000000008A2-3xed;
+	Wed, 12 Mar 2025 17:43:57 +0100
+Date: Wed, 12 Mar 2025 17:43:56 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Miaoqing Pan <quic_miaoqing@quicinc.com>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, johan+linaro@kernel.org
+Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
+ length
+Message-ID: <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
+References: <20250310010217.3845141-1-quic_miaoqing@quicinc.com>
+ <20250310010217.3845141-3-quic_miaoqing@quicinc.com>
+ <Z866cCj8SWyZjCoP@hovoldconsulting.com>
+ <7b1c5e40-b11d-421b-8c8b-117a2a53298b@quicinc.com>
+ <c0cdcaf2-655b-4d22-a949-1519c552e6a4@oss.qualcomm.com>
+ <72d95d77-674e-4ae7-83b0-ab58748b8251@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <72d95d77-674e-4ae7-83b0-ab58748b8251@quicinc.com>
 
-HDMI audio is available on the ArmSoM Sige7 HDMI TX port.
-Enable it for HDMI0 port.
+On Wed, Mar 12, 2025 at 09:11:45AM +0800, Miaoqing Pan wrote:
+> On 3/11/2025 11:20 PM, Jeff Johnson wrote:
+> > On 3/11/2025 1:29 AM, Miaoqing Pan wrote:
+> >> On 3/10/2025 6:09 PM, Johan Hovold wrote:
+> >>> I'm still waiting for feedback from one user that can reproduce the
+> >>> ring-buffer corruption very easily, but another user mentioned seeing
+> >>> multiple zero-length descriptor warnings over the weekend when running
+> >>> with this patch:
+> >>>
+> >>> 	ath11k_pci 0006:01:00.0: rxed invalid length (nbytes 0, max 2048)
+> >>>
+> >>> Are there ever any valid reasons for seeing a zero-length descriptor
+> >>> (i.e. unrelated to the race at hand)? IIUC the warning would only be
+> >>> printed when processing such descriptors a second time (i.e. when
+> >>> is_desc_len0 is set).
+> >>
+> >> That's exactly the logic, only can see the warning in a second time. For
+> >> the first time, ath12k_ce_completed_recv_next() returns '-EIO'.
+> > 
+> > That didn't answer Johan's first question:
+> > Are there ever any valid reasons for seeing a zero-length descriptor?
+>
+> The events currently observed are all firmware logs. The discarded 
+> packets will not affect normal operation. I will adjust the logging to 
+> debug level.
 
-Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
+That still does not answer the question whether there are ever any valid
+reasons for seeing zero-length descriptors. I assume there are none?
+
+> > We have an issue that there is a race condition where hardware updates the
+> > pointer before it has filled all the data. The current solution is just to
+> > read the data a second time. But if that second read also occurs before
+> > hardware has updated the data, then the issue isn't fixed.
+>  
+> Thanks for the addition.
+> 
+> > So should there be some forced delay before we read a second time?
+> > Or should we attempt to read more times?
+> 
+> The initial fix was to keep waiting for the data to be ready. The 
+> observed phenomenon is that when the second read fails, subsequent reads 
+> will continue to fail until the firmware's CE2 ring is full and triggers 
+> an assert after timeout. However, this situation is relatively rare, and 
+> in most cases, the second read will succeed. Therefore, adding a delay 
+> or multiple read attempts is not useful.
+
+The proposed fix is broken since ath11k_hal_ce_dst_status_get_length()
+not just reads the length but also sets it to zero so that the updated
+length may indeed never be seen.
+
+I've taken a closer look at the driver and it seems like we're missing a
+read barrier to make sure that the updated descriptor is not read until
+after the head pointer.
+
+Miaoqing, could you try the below patch with your reproducer and see if
+it is enough to fix the corruption?
+
+If so I can resend with the warning removed and include a corresponding
+fix for ath12k (it looks like there are further places where barriers
+are missing too).
+
+Johan
+
+
+From 656dbd0894741445aeb16ee8357e6fef51b6084c Mon Sep 17 00:00:00 2001
+From: Johan Hovold <johan+linaro@kernel.org>
+Date: Wed, 12 Mar 2025 16:49:20 +0100
+Subject: [PATCH] wifi: ath11k: fix ring-buffer corruption
+
+Users of the Lenovo ThinkPad X13s have reported that Wi-Fi sometimes
+breaks and the log fills up with errors like:
+
+	ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1484, expected 1492
+	ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
+
+which based on a quick look at the driver seemed to indicate some kind
+of ring-buffer corruption.
+
+Miaoqing Pan tracked it down to the host seeing the updated destination
+ring head pointer before the updated descriptor, and the error handling
+for that in turn leaves the ring buffer in an inconsistent state.
+
+Add the missing the read barrier to make sure that the descriptor is
+read after the head pointer to address the root cause of the corruption.
+
+The error handling can be fixed separately in case there can ever be
+actual zero-length descriptors.
+
+FIXME: remove WARN_ON_ONCE() added for verification purposes
+
+Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+
+Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218623
+Link: https://lore.kernel.org/20250310010217.3845141-3-quic_miaoqing@quicinc.com
+Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>
+Cc: stable@vger.kernel.org	# 5.6
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
+ drivers/net/wireless/ath/ath11k/ce.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts b/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts
-index 6a0fffaa26ee..0ef8ea76b0a8 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts
-@@ -192,6 +192,10 @@ hdmi0_out_con: endpoint {
- 	};
- };
+diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/ath/ath11k/ce.c
+index e66e86bdec20..423b970e288c 100644
+--- a/drivers/net/wireless/ath/ath11k/ce.c
++++ b/drivers/net/wireless/ath/ath11k/ce.c
+@@ -393,8 +393,12 @@ static int ath11k_ce_completed_recv_next(struct ath11k_ce_pipe *pipe,
+ 		goto err;
+ 	}
  
-+&hdmi0_sound {
-+	status = "okay";
-+};
++	/* Make sure descriptor is read after the head pointer. */
++	dma_rmb();
 +
- &hdptxphy0 {
- 	status = "okay";
- };
-@@ -290,6 +294,10 @@ i2s0_8ch_p0_0: endpoint {
- 	};
- };
- 
-+&i2s5_8ch {
-+	status = "okay";
-+};
-+
- /* phy1 - right ethernet port */
- &pcie2x1l0 {
- 	reset-gpios = <&gpio4 RK_PA5 GPIO_ACTIVE_HIGH>;
+ 	*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
+ 	if (*nbytes == 0) {
++		WARN_ON_ONCE(1);	// FIXME: remove
+ 		ret = -EIO;
+ 		goto err;
+ 	}
 -- 
-2.43.0
+2.48.1
 
 
