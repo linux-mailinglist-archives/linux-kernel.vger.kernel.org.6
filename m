@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-557881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C465A5DF0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:34:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83886A5DF0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:35:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C089F1665AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:34:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26E56189F0D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072DF23BCF6;
-	Wed, 12 Mar 2025 14:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C7A24DFFD;
+	Wed, 12 Mar 2025 14:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dzJI6DsR"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vr1wJXj2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05C71CF8B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD1D159596;
+	Wed, 12 Mar 2025 14:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741790081; cv=none; b=N7zz/5yiIKzX4sVmWOZ1BVfWI9XV1+t/fshUPMzi9rEZ3jXZPBnTNl1EfLte/ecwRjNVzl0vKWjU67hTblWhifRhMixFyNT05Vg7edDPtGxEZRDUyupqm5dj1jJOdu9lsXuFp0naFRSWj4WPDrOapZIDF3n5j+mlc80Mx4NF7Xk=
+	t=1741790095; cv=none; b=HUON+/dlxGvonDOSGiO2aGCXpzTJ5M5upQgs0ztmT/1DMBMbh0lQbf2HHL8i/pszVVAlcwa2yu6Jg0C8k980lOn5l9kjgRLD/ISzWpPqbbeSpYqLScTIwoiBA9r08VdVpFVQMK8/ZXyZUzZ6Sn/8SWkqNkQPgpJVom4qePYDDUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741790081; c=relaxed/simple;
-	bh=bxG9BCBbxHP4kGa6WKxlLIvod+Idzq2ikHSp25rlxz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=COt8BEy5iB+CAwEmAD9RKXO/oPTo3JjS+85BEs+uFjV716j7dCuNs5C6ebic+V1NA0orw9GugxzQRQFrRSnBGhBiBttzHO+CrblZExouX0U34wC3VhHCDfD862qLsdCiGceqYZwgTNPQdH4mJcKSPw+u8ZbMduUUuo73xsA+Tlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dzJI6DsR; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 504361E3;
-	Wed, 12 Mar 2025 15:32:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1741789974;
-	bh=bxG9BCBbxHP4kGa6WKxlLIvod+Idzq2ikHSp25rlxz4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dzJI6DsR6tRCtirUCHaU2mqUDRxliqKbUxXsNFWP1W6KfZ4t9Ma5corWsJ3zqBSqf
-	 N+2zGYplnB/t1jXxuLMoIBHsVQ/h5HwtwRL6df49zhDZ3csZEm/gdiac+KlIgwBaQR
-	 Ush/S00oq0OKdmjUYtuhlo/0+Au+M93IUiGRfCRY=
-Message-ID: <c13bf2d9-51c2-40b2-af3d-ad4d5f912489@ideasonboard.com>
-Date: Wed, 12 Mar 2025 16:34:27 +0200
+	s=arc-20240116; t=1741790095; c=relaxed/simple;
+	bh=ebScttk5wf21qkysq9N90DUvetPC+A0oagMmOoMp+8c=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JZm5ks5Q/cg62+yr2HUaATr8tj6dzrV5dBYJvFrhBt9HCXwRfkW7CE3gVyQFPrclHFMSAI7LeHlGf8ZqXHDQ80bgeUDtHl4P7j2ia7t9OrTYD1FmXKGlvIBssTfauSRBo+WxDY01TRk+4SkOsQMOb8qPkCqjtCg0DNNgr9qyIZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vr1wJXj2; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741790094; x=1773326094;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ebScttk5wf21qkysq9N90DUvetPC+A0oagMmOoMp+8c=;
+  b=Vr1wJXj2pLbXLnwyTPla68Pn05j5QJixXtBlrxRmSP7Ygd7O9h7qqGRa
+   xF97pnaMIhpk6TYA8cO0f0WH0J5bFKyzBj9bdDI/cnaokVeZbuo/5l5AL
+   kOsGebPsIVeBp5f3d3HYLkig+s0Tmz5OLDUZoHdeHm4TWQCXxbMFgKhSs
+   EUuhi/UYhDOZzk9bLD1iYv07zfejOu9FDexsPMzXcybAYjP8+ipQ6uzSM
+   EDEW0zFNn/mVJinxEPLJWm2/bW/Vlvu/SUAcyyvSuqiCh3A3URCkBCb6U
+   fJXRSb4JKkHegDikxgpA6ObV1mwlMt40b9KNS1FMQfOiLW1qKitxWrHhr
+   w==;
+X-CSE-ConnectionGUID: hrZc3Em2SYqWetGINSP81g==
+X-CSE-MsgGUID: XjReuxvpRJah+Q4VvOdFEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="43052915"
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="43052915"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 07:34:54 -0700
+X-CSE-ConnectionGUID: sFBG6gFDTvCWxZkjv8+Hiw==
+X-CSE-MsgGUID: 5A+2JwY4R8eOUGbmazHX+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="157828188"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.153]) ([10.124.240.153])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 07:34:47 -0700
+Message-ID: <f30eabf8-86dc-48f3-9f6c-0c1600527cac@linux.intel.com>
+Date: Wed, 12 Mar 2025 22:34:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,105 +66,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: xlnx: zynqmp_dpsub: fix Kconfig dependencies for
- ASoC
-To: Arnd Bergmann <arnd@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Vishal Sagar <vishal.sagar@amd.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Jani Nikula <jani.nikula@intel.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250227132036.1136600-1-arnd@kernel.org>
+Cc: baolu.lu@linux.intel.com, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Russell King <linux@armlinux.org.uk>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Stuart Yoder <stuyoder@gmail.com>,
+ Laurentiu Tudor <laurentiu.tudor@nxp.com>, Nipun Gupta
+ <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
+ Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+ Charan Teja Kalla <quic_charante@quicinc.com>
+Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe
+ path
+To: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>
+References: <cover.1740753261.git.robin.murphy@arm.com>
+ <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
+ <Z9CEIlXoQJ-A0t-d@8bytes.org> <d55240a4-fe4a-48ea-b3a8-9a997bb7267c@arm.com>
 Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250227132036.1136600-1-arnd@kernel.org>
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <d55240a4-fe4a-48ea-b3a8-9a997bb7267c@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Arnd,
+On 2025/3/12 18:10, Robin Murphy wrote:
+> On 2025-03-11 6:42 pm, Joerg Roedel wrote:
+>> Hi Robin,
+>>
+>> On Fri, Feb 28, 2025 at 03:46:33PM +0000, Robin Murphy wrote:
+>>> +    /*
+>>> +     * And if we do now see any replay calls, they would indicate 
+>>> someone
+>>> +     * misusing the dma_configure path outside bus code.
+>>> +     */
+>>> +    if (dev->driver)
+>>> +        dev_WARN(dev, "late IOMMU probe at driver bind, something 
+>>> fishy here!\n");
+>>
+>> This warning triggers on my workstation (with an AMD IOMMU), any ideas?
+> 
+> Argh! When I moved the dma_configure call into iommu_init_device() for
+> v2 I moved the warning with it, but of course that needs to stay where
+> it was, *after* the point that ops->probe_device has had a chance to
+> filter out irrelevant devices. Does this make it behave?
 
-On 27/02/2025 15:20, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The new audio code fails to build when sounds support is in a loadable
-> module but the GPU driver is built-in:
-> 
-> x86_64-linux-ld: zynqmp_dp_audio.c:(.text+0x6a8): undefined reference to `devm_snd_soc_register_card'
-> x86_64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x1bc): undefined reference to `snd_soc_info_volsw'
-> x86_64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x1f0): undefined reference to `snd_soc_get_volsw'
-> x86_64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x1f4): undefined reference to `snd_soc_put_volsw'
-> 
-> Change the Kconfig dependency to disallow the sound support in this
-> configuration.
-> 
-> Fixes: 3ec5c1579305 ("drm: xlnx: zynqmp_dpsub: Add DP audio support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   drivers/gpu/drm/xlnx/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/xlnx/Kconfig b/drivers/gpu/drm/xlnx/Kconfig
-> index dbecca9bdd54..cfabf5e2a0bb 100644
-> --- a/drivers/gpu/drm/xlnx/Kconfig
-> +++ b/drivers/gpu/drm/xlnx/Kconfig
-> @@ -22,6 +22,7 @@ config DRM_ZYNQMP_DPSUB_AUDIO
->   	bool "ZynqMP DisplayPort Audio Support"
->   	depends on DRM_ZYNQMP_DPSUB
->   	depends on SND && SND_SOC
-> +	depends on SND_SOC=y || DRM_ZYNQMP_DPSUB=m
->   	select SND_SOC_GENERIC_DMAENGINE_PCM
->   	help
->   	  Choose this option to enable DisplayPort audio support in the ZynqMP
+Yes. It works on my end.
 
-Thanks, pushing to drm-misc-next.
-
-  Tomi
-
+Thanks,
+baolu
 
