@@ -1,120 +1,134 @@
-Return-Path: <linux-kernel+bounces-557143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACAD0A5D436
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:51:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC4DA5D437
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:52:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 389E93AA850
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:51:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A4E13AFEC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E381422DD;
-	Wed, 12 Mar 2025 01:51:38 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA3413FD86;
+	Wed, 12 Mar 2025 01:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ex7AMCm3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FBB5684;
-	Wed, 12 Mar 2025 01:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662A35684;
+	Wed, 12 Mar 2025 01:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741744298; cv=none; b=BrQU/S2wXHLmpduUtX5V0PQRDbEDkGGbkcp6lImrhEAKxbYF3sgaP0dTvgxsSbtJKphKVqQdjACxklyCxVVwK86cWxczlGCzRpiS2St5koR98mr2n8t9S/VJK3OhEIBQ2fSSL0NkR5eSpnqyVUISlC8/GwdJdakrK7olWrCXacw=
+	t=1741744312; cv=none; b=LVZaWwvSaD8pffBay4mUANenH/kiTk8xqkLOkHOLjJLsoCND3cJHs3ncKzChPdDi0MkCLGox6SQgVU5CzV8BgXvjTBmEncq2cu6STYpm8icuLqWGBB3dIWvxRrQp/u1ycedp8Dt6bH6KT4Y53MokmKeE5Np5UaBvEs0HA+NeuFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741744298; c=relaxed/simple;
-	bh=kBuOWzKazd0QJN+2VfW1BelVrTxdYN+lsa1A1d0T5FI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ChXXT3j9qxSc5jAgQHw3EQmsBK0ENFUW+hVNwbhB2B0Jo7MEjSj3Zv4c3I5t3B/xDb37vdDzgC9jYiJtOde0mpAi1qLMCTqVek0xc9GAlb+UR34jnO1p/u3NmSfWvxDdnfVuEbG4dr157lu+WMAtTdYk+S2VNC97vJAgL3ix060=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZCDB51JFwz4f3lgM;
-	Wed, 12 Mar 2025 09:51:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 0386F1A1546;
-	Wed, 12 Mar 2025 09:51:33 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgB32l6j6NBncivzGA--.24749S3;
-	Wed, 12 Mar 2025 09:51:32 +0800 (CST)
-Subject: Re: [PATCH] blk-throttle: support io merge over iops_limit
-To: Tejun Heo <tj@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Ming Lei <ming.lei@redhat.com>, axboe@kernel.dk, josef@toxicpanda.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250307090152.4095551-1-yukuai1@huaweicloud.com>
- <Z8sZyElaHQQwKqpB@slm.duckdns.org>
- <5fc124c9-e202-99ca-418d-0f52d027640f@huaweicloud.com>
- <Z85LjhvkCzlqBVZy@fedora> <Z88K5JtR4rhhIFsY@slm.duckdns.org>
- <baba2f82-6c35-8c24-847c-32a002009b63@huaweicloud.com>
- <Z9CQOuJA-bo4xZkH@slm.duckdns.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <c1e467a9-7499-e42b-88ed-b8e34b831515@huaweicloud.com>
-Date: Wed, 12 Mar 2025 09:51:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1741744312; c=relaxed/simple;
+	bh=vWvE2SvrKfCPdEvgnbBDA9WtH46Jloiipmh4jDXTBTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JUNAeMEyhsvTboVAQhpkbFo2aiwl2GjJqmZlvx1Z73OsiA+US3yF6HeXCKkX4F2GkgBwe8KExBI8M8tvkxVu30w3hRDWr/mnDON/Vq09hCxKZErp3jEcABx64at+PKqxx4N8ZHmfhVTWk6r9ba/+oQ+fFwpjVemBLBHybaTZYvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ex7AMCm3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840BDC4CEE9;
+	Wed, 12 Mar 2025 01:51:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741744312;
+	bh=vWvE2SvrKfCPdEvgnbBDA9WtH46Jloiipmh4jDXTBTk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ex7AMCm3zMNJtLxS4mpgaSYWiv9sZZwVDY2/6SZED0Ak7FPwS9fMPPLEZfuwc5PK8
+	 utm0IyaG2dsy0/nny8Aeo1xbsay3n8BkT199hjowTfkvZD9ynA6+pgEQHZ2+zt6vek
+	 eWPm+C8hW7pYQMqhjpOx4kHj0fHENY8hMpy7MK3IXa/LBuKvevnKEJXnJhNb8iIfki
+	 oT3nP9wo3hZr/8cHJR0TwAdRzTBixI3Z4u6mrktZb+EgtJNbA8unPTtbH1oPbQa7cK
+	 aPR+2LuhGEB5tFu6B4fO71To/9unTzB0knwRGEKtna3GdfzbvM1VPamgBGeVU04XZT
+	 7FZ85BIZ+Avew==
+Date: Tue, 11 Mar 2025 18:51:49 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	James Clark <james.clark@linaro.org>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: Re: [PATCH v2 06/11] perf python: Add optional cpus and threads
+ arguments to parse_events
+Message-ID: <Z9DotccYb6WuhKJY@google.com>
+References: <20250228222308.626803-1-irogers@google.com>
+ <20250228222308.626803-7-irogers@google.com>
+ <Z89jxAMEpYea9Qom@google.com>
+ <CAP-5=fXniy+Ye=xYdGzr4NKMjh=zQpgZuL=X3Y4DC6ATM5t5Pw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z9CQOuJA-bo4xZkH@slm.duckdns.org>
-Content-Type: text/plain; charset=gbk; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB32l6j6NBncivzGA--.24749S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrur15tFWrCryDuFW5Wr48JFb_yoWkGwc_uF
-	Z2kF48ua1Yv3Wktay3JryagrZIqay8WryUJrZ2qwsxW340yFWDuFW3Kr98Zw1rGFs7JFn0
-	kwn8Zr43ArW29jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+In-Reply-To: <CAP-5=fXniy+Ye=xYdGzr4NKMjh=zQpgZuL=X3Y4DC6ATM5t5Pw@mail.gmail.com>
 
-Hi,
+Hi Ian,
 
-ÔÚ 2025/03/12 3:34, Tejun Heo Ð´µÀ:
-> Hello,
+On Mon, Mar 10, 2025 at 05:28:48PM -0700, Ian Rogers wrote:
+> On Mon, Mar 10, 2025 at 3:12â€¯PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Fri, Feb 28, 2025 at 02:23:03PM -0800, Ian Rogers wrote:
+> > > Used for the evlist initialization.
+> > >
+> > > Reviewed-by: Howard Chu <howardchu95@gmail.com>
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > ---
+> > >  tools/perf/util/python.c | 10 ++++++++--
+> > >  1 file changed, 8 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> > > index b600b6379b4e..4a3015e7dc83 100644
+> > > --- a/tools/perf/util/python.c
+> > > +++ b/tools/perf/util/python.c
+> > > @@ -1339,12 +1339,18 @@ static PyObject *pyrf__parse_events(PyObject *self, PyObject *args)
+> > >       struct evlist evlist = {};
+> > >       struct parse_events_error err;
+> > >       PyObject *result;
+> > > +     PyObject *pcpus = NULL, *pthreads = NULL;
+> > > +     struct perf_cpu_map *cpus;
+> > > +     struct perf_thread_map *threads;
+> > >
+> > > -     if (!PyArg_ParseTuple(args, "s", &input))
+> > > +     if (!PyArg_ParseTuple(args, "s|OO", &input, &pcpus, &pthreads))
+> > >               return NULL;
+> > >
+> > > +     threads = pthreads ? ((struct pyrf_thread_map *)pthreads)->threads : NULL;
+> > > +     cpus = pcpus ? ((struct pyrf_cpu_map *)pcpus)->cpus : NULL;
+> >
+> > I wonder if it needs any type checks before accessing them.
 > 
-> On Tue, Mar 11, 2025 at 11:08:00AM +0800, Yu Kuai wrote:
-> ...
->>> That said, I'm not sure about changing the behavior now. blk-throtl has
->>> mostly used the number of bios as long as it has existed and given that
->>> there can be a signficant difference between the two metrics, I'm not sure
->>> the change is justified at this point.
->>
->> If we really concern about the behavior change, can we consider a new
->> flag that can switch to the old behavior? We'll see if any user will
->> complain.
-> 
-> Yeah, that may be the right way to go about this, but let me turn this
-> around and ask you why adding a new behavior would be a good idea. What
-> problems are you trying to solve?
+> Agreed. We don't do it yet elsewhere:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/python.c?h=perf-tools-next#n769
+> although there keywords potentially avoid ambiguity. Given this I
+> think improving the typing is follow up work.
 
-In the case of dirty pages writeback, BIO is 4k, while RQ can be up to
-hw_sectors_kb. Our user are limiting iops based on real disk capacity
-and they found BIO merge will be broken.
-
-The idea way really is rq-qos based iops limit, which is after BIO merge
-and BIO merge is ensured not borken. In this case, I have to suggest
-them set a high iops limit or just remove the iops limit.
+Sounds good.
 
 Thanks,
-Kuai
+Namhyung
 
-> 
-> Thanks.
-> 
-
+> >
+> > > +
+> > >       parse_events_error__init(&err);
+> > > -     evlist__init(&evlist, NULL, NULL);
+> > > +     evlist__init(&evlist, cpus, threads);
+> > >       if (parse_events(&evlist, input, &err)) {
+> > >               parse_events_error__print(&err, input);
+> > >               PyErr_SetFromErrno(PyExc_OSError);
+> > > --
+> > > 2.48.1.711.g2feabab25a-goog
+> > >
 
