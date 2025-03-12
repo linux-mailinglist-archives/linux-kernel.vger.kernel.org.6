@@ -1,519 +1,177 @@
-Return-Path: <linux-kernel+bounces-558471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0515BA5E65B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:17:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6E5A5E65D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:17:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39863173B90
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:17:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD7113AB0EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AC21F099F;
-	Wed, 12 Mar 2025 21:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192E71EFF80;
+	Wed, 12 Mar 2025 21:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LD8eSAYQ"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="le1zkwAD"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C938E1F03DE
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 21:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CE41EE7C2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 21:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741814194; cv=none; b=hwBBFaA5QQzf44Cm8BI1IkVPJGrZzuCuqeXxs8y7MRC/hMxdhVS0Ee/XoR5riYdC1ImyJRClqxrtbQBrt0hCgxq9jT1vHnk9vwug5xSRnLveYTR7o1pIv3sM/kSUGfNmXNrqfZH7g7k5M4OVC5DIjTqtStAzO8u2b239Fw/mOHE=
+	t=1741814222; cv=none; b=j+2NBUznfoeAJ7iT1O3oSxho5tYp7tjOJbYhAG14mdkZbJ1S0AzmPpSamcfEMHKaeFaN9yzh9xu+8LEUPjk82DEHe0OV/Hp7gz9qbKMtZLOMya9Yd6WqE9fKlSFhu6nYXS8dP7DfSm66I/xkVy33hXRhKEewrF/mI/hjkfQiq6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741814194; c=relaxed/simple;
-	bh=XNnA41P2FkLgfB7dOkr7R5DdUKHwSszGuLTs53or31s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=hUdJCvnCqCeFoqgEIUmb3dk2E6bUqeOtfouImRE+dT8WKeQ3UivaekbODXd8GLHD076Ppt11Z4ECPTHVPLhxdAgDv6Np/2HiPwv/13yw2XPA2Gz6WWzSuZLghbxbeteCCTaHZ6iYnORyVCq9lpN2qDY9Q2btj7I1BfzumGXBLPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LD8eSAYQ; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2217a4bfcc7so4256145ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:16:32 -0700 (PDT)
+	s=arc-20240116; t=1741814222; c=relaxed/simple;
+	bh=wPzK4zBNUgtZDWoviPcVV3sisFQVwXRO4Clib2QCtvA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kRgvBn/jXy6N/0rNDdo9nsFeApLQ2r9MfhkQP5tIj7ubUbdVfocoEODkQzOf8qCKR69fbOShtMHL++hb8RgFmY6JJQGnun6Vb8TCRssen4Mslvc9mKsyeFXOm0ANjAxoUNJH7klHjdKzUwAdDrEWBR8S0PPHyxa158mybvjsPa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=le1zkwAD; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6e8ec399427so2631666d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:17:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741814192; x=1742418992; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Lj4yu52t3shvn/Ldpu0xRqMM7tXahE2Q6XdhAGVh+Cw=;
-        b=LD8eSAYQYhAofxwVf3jdTFKI9uuxsk5DpdmKaFleeAEDI2AG11KYnXCLrwKtMrJ6e4
-         I5fnkCW0fqySVmp8+uYN/7cQloMecA5pXRbQe/iCbp0ib3Elu0DBmAOiRgg/65QvcM06
-         Qcmu+npV1HThvvJ/v0deMXxnig1bAZQoy4uNLGEcHNF4hlRY8dskqsUa56K6OuOPSIc0
-         EGnofLqnJ6222Ym0yKinLDhNymJ+N9aFCcsDqNeTzd9xdWRxvdNmFpd0MuZo7cKEgYZb
-         p15TBpE8dv9pk7emyyR+shmE+w3/5fk9vpG+m6cuQ5fqJ5j8zq9k6DloTpBmU7byaWDN
-         H8Tg==
+        d=linaro.org; s=google; t=1741814219; x=1742419019; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XxDKgr5VuN6noi0Wfhw4cTV3jZ9TmVruadjdpxToKRg=;
+        b=le1zkwADDKWP8OkSlyweV1riHXhsqubTrAKSkyLsEdjZ4DnE15BzGDS7V+2V8kuqXy
+         esE2va7uYx3tRx4urUfkVsY5iuBuThpcPO567tEL4GdtNp2BBsTsPvoIQfOs0aoARwfz
+         FM/C+GBxe98A24/YWhFb3QFE/SdllVH8oeqtzNKv8MX1/RSZDwb1gPfVFyCrn2T8wftL
+         swrOV1xrmKeUbRe2GuJqwcD0VeiQYJsHqvYz25RTK4Clj3aO4imISdr222eXJus+0Yov
+         a1zW/QAhw1uivmWdvgHA8oBa6ixrEKnB/vuXySYayNiid2QNpDMUXchkgMdXPn2KY6tA
+         r9qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741814192; x=1742418992;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lj4yu52t3shvn/Ldpu0xRqMM7tXahE2Q6XdhAGVh+Cw=;
-        b=avb7T+DuhlUwcTB5csJPSwU36B2pnpLPt8ffiyvf/Ti6q2X+tZfhI4ydOqCYL2Tied
-         zt5eAv9RSkjpGjiSLRJQA8o8vTvr5qas3eA/9jq8YRC/QJx9vwkCXTpqT3uDnP+BIkXR
-         05BKWhhF+5WdarjkszmP/pSw3LPln6DNrVHigwUJyd5Omm4y8WkDVs0Wv3RNoV8wKN0B
-         nAP947NxEa0VgP+nVtFbhtNNwTCppB1g0CiJX7y3p8pwaEPDSK2T0kYNvbiOdrS7HiH0
-         e3nRcwP7h247UJTcy5nwsdgSHrvPkNGPXZnmAmH6x+P6h1nHu6AFeOZCd69JcFEqNo5e
-         jP8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWo676KIYOLo9xLN1mNngLU/k/5CRemOixYgZa6CvtE9mk9zo7m5mxy0alXqu45SDGz5G7z2uauWN0DCzE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVYuAh14ZTH5KTiu5yEzJg2X4IA6xEPWI1XGyKMA2TD2WNHMWU
-	yemxhE+MTCAJD9CS0HHQQvTioPQ/zxvpJxoVCuohuAyDmFXt2V/ZhVWxD/NLOfq0PHtt0dEl4B+
-	gHIAGvA==
-X-Google-Smtp-Source: AGHT+IGWjyPRq+gE/vBuek0eRRjGWfl/YQuMJFtLtMQfTEsQZSRX084w/tdOE04eklGuX9qVaRMKlyO29FQf
-X-Received: from pjbpb8.prod.google.com ([2002:a17:90b:3c08:b0:2fa:15aa:4d1e])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2283:b0:223:62f5:fd44
- with SMTP id d9443c01a7336-22593183e06mr136761175ad.40.1741814192023; Wed, 12
- Mar 2025 14:16:32 -0700 (PDT)
-Date: Wed, 12 Mar 2025 14:16:23 -0700
-In-Reply-To: <20250312211623.2495798-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1741814219; x=1742419019;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XxDKgr5VuN6noi0Wfhw4cTV3jZ9TmVruadjdpxToKRg=;
+        b=gbIubSPHsQmul046AvTekY0Zi34rYjUlP5V4xvv72qdf95CUEgMa0G3MPxAVvpW/4e
+         s+waHNDYkLHZKQXy8aQiCW9l8+Bx9PWerUznXuoytgUXXlSp+TULYSCzShEIw2W4aQQp
+         LnehYSb8cakzF7/p73pmN2bLc+JpLdZtBNNV9zZfGqFy3mUf+u4snWpX9gk+mT76HUm3
+         1npPzjYPCSDFJt2I1uiJt+3J/NCU7G+Mk4/9KfXdlQl34+Ds6i55w7xkYWGQwNoHKooh
+         b9W3FSrkGR7REbnL1HQ9H8Q7p7tJhuvSuvIhAVL3UwKs+zL732lL7vUYtNgf3tsIVpCj
+         vTLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWja1kSVfXk7z/rmdcQn+j84SQrVtT84SIRgeEgoeGInP4jb4b1cPpQi8jTLSQ95QoHiP3Zan1zxEy9hgA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYwZAWB6WXlj1RPn8Y4BPr16/P8bHhOMZeEr+HqeaE26v8Z0dK
+	i50WvVgpBRbSUAv9zVYxvEAuK0lnufD9kmNVquRTvr2SDZWHAQjDJqnXW5cfeNO2tBm4h3z0YLb
+	L7czOA6Ks9PS6ql2w8rNZTLmbJKIALBhvv9NNaA==
+X-Gm-Gg: ASbGncv88eF7FhV7HDRqLnpluYg42kaqKRdgwjuYoLR4+wBWrgifYXIewpjTB17l4ai
+	nHSM4V2oykZ4K/G2hmPmTM3hd0ygYVWVARtGAVQ6XVnQcDciRK76Vrdbmn3WAGU7NMAnh3nBWgO
+	SXvnLiikfDh3IiS25DJO2qR+djaw==
+X-Google-Smtp-Source: AGHT+IE8URVhSLvPJIFsnTX7Z5pSwgsdAxYcwLbP1+O/xS7LPEmPA9PmITKDBxz3rcylfz6xQGMlbZxbKqtozlnBWHY=
+X-Received: by 2002:ad4:5b84:0:b0:6e6:698f:cafd with SMTP id
+ 6a1803df08f44-6e900681c65mr390346036d6.37.1741814219178; Wed, 12 Mar 2025
+ 14:16:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250312211623.2495798-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-Message-ID: <20250312211623.2495798-3-irogers@google.com>
-Subject: [PATCH v2 2/2] Revert "perf evsel: Add alternate_hw_config and use in evsel__match"
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	James Clark <james.clark@linaro.org>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Yang Jihong <yangjihong@bytedance.com>, Yang Li <yang.lee@linux.alibaba.com>, 
-	Weilin Wang <weilin.wang@intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Leo Yan <leo.yan@arm.com>
+MIME-Version: 1.0
+References: <20250311234109.136510-1-alex.vinarskis@gmail.com>
+In-Reply-To: <20250311234109.136510-1-alex.vinarskis@gmail.com>
+From: Stefan Schmidt <stefan.schmidt@linaro.org>
+Date: Wed, 12 Mar 2025 22:16:48 +0100
+X-Gm-Features: AQ5f1JpPzCg_wcL5Oq5TpalUho1WYNfDBRHd08R0PtwUoX5vs0HUJe7LYQzHVM0
+Message-ID: <CAEvtbusre2PUwNiD42d-xTCVf4dV0npN-5UxxwrjriVOsbj0Fg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] drm/msm/dp: Introduce link training per-segment
+ for LTTPRs
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, laurentiu.tudor1@dell.com, abel.vesa@linaro.org, 
+	johan@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-This reverts commit 22a4db3c36034e2b034c5b88414680857fc59cf4.
+Hello Aleksandrs,
 
-Now legacy events are prioritized there is no need to worry about a
-sysfs/json event being used when trying to pattern match a legacy
-event.
+On Wed, 12 Mar 2025 at 00:41, Aleksandrs Vinarskis
+<alex.vinarskis@gmail.com> wrote:
+>
+> Recently added Initial LTTPR support in msm/dp has configured LTTPR(s)
+> to non-transparent mode to enable video output on X1E-based devices
+> that come with LTTPR on the motherboards. However, video would not work
+> if additional LTTPR(s) are present between sink and source, which is
+> the case for USB Type-C docks (eg. Dell WD19TB/WD22TB4), and at least
+> some universal Thunderbolt/USB Type-C monitors (eg. Dell U2725QE).
+>
+> First, take into account LTTPR capabilities when computing max link
+> rate, number of lanes. Take into account previous discussion on the
+> lists - exit early if reading DPCD caps failed. This also fixes
+> "*ERROR* panel edid read failed" on some monitors which seems to be
+> caused by msm_dp_panel_read_sink_caps running before LTTPR(s) are
+> initialized.
+>
+> Finally, implement link training per-segment. Pass lttpr_count to all
+> required helpers.
+> This seems to also partially improve UI (Wayland) hanging when
+> changing external display's link parameters (resolution, framerate):
+> * Prior to this series, via direct USB Type-C to display connection,
+>   attempt to change resolution or framerate hangs the UI, setting does
+>   not stick. Some back and forth replugging finally sets desired
+>   parameters.
+> * With this series, via direct USB Type-C to display connection,
+>   changing parameters works most of the time, without UI freezing. Via
+>   docking station/multiple LTTPRs the setting again does not stick.
+> * On Xorg changing link paramaters works in all combinations.
+>
+> These appear to be mainlink initialization related, as in all cases LT
+> passes successfully.
+>
+> Test matrix:
+> * Dell XPS 9345, Ubuntu 24.10, Gnome 47, Wayland
+>         * Left USB Type-C, Right USB Type-C
+>         * Direct monitor connection, Dell WD19TB, Dell WD22TB4, USB
+>           Type-C to HDMI dongle, USB Type-C to DP dongle
+>         * Dell AW3423DWF, Samsung LS24A600, dual Samsung LS24A600 (one
+>           monitor per USB Type-C connector)
+> * Dell XPS 9345, Ubuntu 24.10, Gnome 47, Wayland
+>         * Left USB Type-C, Right USB Type-C
+>         * Direct monitor connection
+>         * Samsung S34BG85 (USB Type-C), Dell U2725QE (universal
+>           Thunderbolt/USB Type-C, probes with an LTTPR when in USB
+>           Type-C/DP Alt mode)
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/builtin-diff.c      |  6 ++--
- tools/perf/util/evsel.c        | 21 -------------
- tools/perf/util/evsel.h        | 19 ++++++++++--
- tools/perf/util/parse-events.c | 55 +++++++++++++---------------------
- tools/perf/util/parse-events.h |  8 +----
- tools/perf/util/parse-events.y |  2 +-
- tools/perf/util/pmu.c          |  6 +---
- tools/perf/util/pmu.h          |  2 +-
- tools/perf/util/stat-display.c |  6 ----
- 9 files changed, 45 insertions(+), 80 deletions(-)
+You can  add the following:
+* Dell XPS 9345, Debian trixie/sid, Gnome 48, Wayland
+        * Left USB Type-C, Right USB Type-C
+        * Dell WD15 Dock with DisplayPort connected
+        * Dell HD22Q dock with HDMI connected
+        * USB Type-C to HDMI dongle
+        * Dell U3417W
 
-diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
-index ae490d58af92..b49c1dc1fd96 100644
---- a/tools/perf/builtin-diff.c
-+++ b/tools/perf/builtin-diff.c
-@@ -470,13 +470,13 @@ static int diff__process_sample_event(const struct perf_tool *tool,
- 
- static struct perf_diff pdiff;
- 
--static struct evsel *evsel_match(struct evsel *evsel, struct evlist *evlist)
-+static struct evsel *evsel_match(struct evsel *evsel,
-+				      struct evlist *evlist)
- {
- 	struct evsel *e;
- 
- 	evlist__for_each_entry(evlist, e) {
--		if ((evsel->core.attr.type == e->core.attr.type) &&
--		    (evsel->core.attr.config == e->core.attr.config))
-+		if (evsel__match2(evsel, e))
- 			return e;
- 	}
- 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 4a0ef095db92..5566232f9bb9 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -404,7 +404,6 @@ void evsel__init(struct evsel *evsel,
- 	evsel->collect_stat  = false;
- 	evsel->group_pmu_name = NULL;
- 	evsel->skippable     = false;
--	evsel->alternate_hw_config = PERF_COUNT_HW_MAX;
- 	evsel->script_output_type = -1; // FIXME: OUTPUT_TYPE_UNSET, see builtin-script.c
- }
- 
-@@ -551,8 +550,6 @@ struct evsel *evsel__clone(struct evsel *dest, struct evsel *orig)
- 	if (evsel__copy_config_terms(evsel, orig) < 0)
- 		goto out_err;
- 
--	evsel->alternate_hw_config = orig->alternate_hw_config;
--
- 	return evsel;
- 
- out_err:
-@@ -1848,24 +1845,6 @@ static int evsel__read_group(struct evsel *leader, int cpu_map_idx, int thread)
- 	return evsel__process_group_data(leader, cpu_map_idx, thread, data);
- }
- 
--bool __evsel__match(const struct evsel *evsel, u32 type, u64 config)
--{
--
--	u32 e_type = evsel->core.attr.type;
--	u64 e_config = evsel->core.attr.config;
--
--	if (e_type != type) {
--		return type == PERF_TYPE_HARDWARE && evsel->pmu && evsel->pmu->is_core &&
--			evsel->alternate_hw_config == config;
--	}
--
--	if ((type == PERF_TYPE_HARDWARE || type == PERF_TYPE_HW_CACHE) &&
--	    perf_pmus__supports_extended_type())
--		e_config &= PERF_HW_EVENT_MASK;
--
--	return e_config == config;
--}
--
- int evsel__read_counter(struct evsel *evsel, int cpu_map_idx, int thread)
- {
- 	if (evsel__is_tool(evsel))
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index aae431d63d64..c199481d3338 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -87,7 +87,6 @@ struct evsel {
- 		int			bpf_fd;
- 		struct bpf_object	*bpf_obj;
- 		struct list_head	config_terms;
--		u64			alternate_hw_config;
- 	};
- 
- 	/*
-@@ -370,10 +369,26 @@ u64 format_field__intval(struct tep_format_field *field, struct perf_sample *sam
- struct tep_format_field *evsel__field(struct evsel *evsel, const char *name);
- struct tep_format_field *evsel__common_field(struct evsel *evsel, const char *name);
- 
--bool __evsel__match(const struct evsel *evsel, u32 type, u64 config);
-+static inline bool __evsel__match(const struct evsel *evsel, u32 type, u64 config)
-+{
-+	if (evsel->core.attr.type != type)
-+		return false;
-+
-+	if ((type == PERF_TYPE_HARDWARE || type == PERF_TYPE_HW_CACHE)  &&
-+	    perf_pmus__supports_extended_type())
-+		return (evsel->core.attr.config & PERF_HW_EVENT_MASK) == config;
-+
-+	return evsel->core.attr.config == config;
-+}
- 
- #define evsel__match(evsel, t, c) __evsel__match(evsel, PERF_TYPE_##t, PERF_COUNT_##c)
- 
-+static inline bool evsel__match2(struct evsel *e1, struct evsel *e2)
-+{
-+	return (e1->core.attr.type == e2->core.attr.type) &&
-+	       (e1->core.attr.config == e2->core.attr.config);
-+}
-+
- int evsel__read_counter(struct evsel *evsel, int cpu_map_idx, int thread);
- 
- int __evsel__read_on_cpu(struct evsel *evsel, int cpu_map_idx, int thread, bool scale);
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 04bb70ba4292..a71492829c58 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -229,7 +229,7 @@ __add_event(struct list_head *list, int *idx,
- 	    bool init_attr,
- 	    const char *name, const char *metric_id, struct perf_pmu *pmu,
- 	    struct list_head *config_terms, bool auto_merge_stats,
--	    struct perf_cpu_map *cpu_list, u64 alternate_hw_config)
-+	    struct perf_cpu_map *cpu_list)
- {
- 	struct evsel *evsel;
- 	struct perf_cpu_map *cpus = perf_cpu_map__is_empty(cpu_list) && pmu ? pmu->cpus : cpu_list;
-@@ -264,7 +264,6 @@ __add_event(struct list_head *list, int *idx,
- 	evsel->core.is_pmu_core = pmu ? pmu->is_core : false;
- 	evsel->auto_merge_stats = auto_merge_stats;
- 	evsel->pmu = pmu;
--	evsel->alternate_hw_config = alternate_hw_config;
- 
- 	if (name)
- 		evsel->name = strdup(name);
-@@ -287,19 +286,16 @@ struct evsel *parse_events__add_event(int idx, struct perf_event_attr *attr,
- {
- 	return __add_event(/*list=*/NULL, &idx, attr, /*init_attr=*/false, name,
- 			   metric_id, pmu, /*config_terms=*/NULL,
--			   /*auto_merge_stats=*/false, /*cpu_list=*/NULL,
--			   /*alternate_hw_config=*/PERF_COUNT_HW_MAX);
-+			   /*auto_merge_stats=*/false, /*cpu_list=*/NULL);
- }
- 
- static int add_event(struct list_head *list, int *idx,
- 		     struct perf_event_attr *attr, const char *name,
--		     const char *metric_id, struct list_head *config_terms,
--		     u64 alternate_hw_config)
-+		     const char *metric_id, struct list_head *config_terms)
- {
- 	return __add_event(list, idx, attr, /*init_attr*/true, name, metric_id,
- 			   /*pmu=*/NULL, config_terms,
--			   /*auto_merge_stats=*/false, /*cpu_list=*/NULL,
--			   alternate_hw_config) ? 0 : -ENOMEM;
-+			   /*auto_merge_stats=*/false, /*cpu_list=*/NULL) ? 0 : -ENOMEM;
- }
- 
- /**
-@@ -423,7 +419,7 @@ bool parse_events__filter_pmu(const struct parse_events_state *parse_state,
- static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 				struct list_head *list, struct perf_pmu *pmu,
- 				const struct parse_events_terms *const_parsed_terms,
--				bool auto_merge_stats, u64 alternate_hw_config);
-+				bool auto_merge_stats);
- 
- int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
- 			   struct parse_events_state *parse_state,
-@@ -449,8 +445,7 @@ int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
- 			 */
- 			ret = parse_events_add_pmu(parse_state, list, pmu,
- 						   parsed_terms,
--						   perf_pmu__auto_merge_stats(pmu),
--						   /*alternate_hw_config=*/PERF_COUNT_HW_MAX);
-+						   perf_pmu__auto_merge_stats(pmu));
- 			if (ret)
- 				return ret;
- 			continue;
-@@ -481,8 +476,7 @@ int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
- 
- 		if (__add_event(list, idx, &attr, /*init_attr*/true, config_name ?: name,
- 				metric_id, pmu, &config_terms, /*auto_merge_stats=*/false,
--				/*cpu_list=*/NULL,
--				/*alternate_hw_config=*/PERF_COUNT_HW_MAX) == NULL)
-+				/*cpu_list=*/NULL) == NULL)
- 			return -ENOMEM;
- 
- 		free_config_terms(&config_terms);
-@@ -750,7 +744,7 @@ int parse_events_add_breakpoint(struct parse_events_state *parse_state,
- 	name = get_config_name(head_config);
- 
- 	return add_event(list, &parse_state->idx, &attr, name, /*mertic_id=*/NULL,
--			&config_terms, /*alternate_hw_config=*/PERF_COUNT_HW_MAX);
-+			 &config_terms);
- }
- 
- static int check_type_val(struct parse_events_term *term,
-@@ -1354,9 +1348,8 @@ static int __parse_events_add_numeric(struct parse_events_state *parse_state,
- 	name = get_config_name(head_config);
- 	metric_id = get_config_metric_id(head_config);
- 	ret = __add_event(list, &parse_state->idx, &attr, /*init_attr*/true, name,
--			  metric_id, pmu, &config_terms, /*auto_merge_stats=*/false,
--			  /*cpu_list=*/NULL, /*alternate_hw_config=*/PERF_COUNT_HW_MAX
--		) == NULL ? -ENOMEM : 0;
-+			metric_id, pmu, &config_terms, /*auto_merge_stats=*/false,
-+			/*cpu_list=*/NULL) ? 0 : -ENOMEM;
- 	free_config_terms(&config_terms);
- 	return ret;
- }
-@@ -1407,7 +1400,7 @@ static bool config_term_percore(struct list_head *config_terms)
- static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 				struct list_head *list, struct perf_pmu *pmu,
- 				const struct parse_events_terms *const_parsed_terms,
--				bool auto_merge_stats, u64 alternate_hw_config)
-+				bool auto_merge_stats)
- {
- 	struct perf_event_attr attr;
- 	struct perf_pmu_info info;
-@@ -1444,7 +1437,7 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 				    /*init_attr=*/true, /*name=*/NULL,
- 				    /*metric_id=*/NULL, pmu,
- 				    /*config_terms=*/NULL, auto_merge_stats,
--				    /*cpu_list=*/NULL, alternate_hw_config);
-+				    /*cpu_list=*/NULL);
- 		return evsel ? 0 : -ENOMEM;
- 	}
- 
-@@ -1465,8 +1458,7 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 
- 	/* Look for event names in the terms and rewrite into format based terms. */
- 	if (perf_pmu__check_alias(pmu, &parsed_terms,
--				  &info, &alias_rewrote_terms,
--				  &alternate_hw_config, err)) {
-+				  &info, &alias_rewrote_terms, err)) {
- 		parse_events_terms__exit(&parsed_terms);
- 		return -EINVAL;
- 	}
-@@ -1513,8 +1505,7 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 	evsel = __add_event(list, &parse_state->idx, &attr, /*init_attr=*/true,
- 			    get_config_name(&parsed_terms),
- 			    get_config_metric_id(&parsed_terms), pmu,
--			    &config_terms, auto_merge_stats, /*cpu_list=*/NULL,
--			    alternate_hw_config);
-+			    &config_terms, auto_merge_stats, /*cpu_list=*/NULL);
- 	if (!evsel) {
- 		parse_events_terms__exit(&parsed_terms);
- 		return -ENOMEM;
-@@ -1535,7 +1526,7 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- }
- 
- int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
--			       const char *event_name, u64 hw_config,
-+			       const char *event_name,
- 			       const struct parse_events_terms *const_parsed_terms,
- 			       struct list_head **listp, void *loc_)
- {
-@@ -1588,7 +1579,7 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 
- 		auto_merge_stats = perf_pmu__auto_merge_stats(pmu);
- 		if (!parse_events_add_pmu(parse_state, list, pmu,
--					  &parsed_terms, auto_merge_stats, hw_config)) {
-+					  &parsed_terms, auto_merge_stats)) {
- 			struct strbuf sb;
- 
- 			strbuf_init(&sb, /*hint=*/ 0);
-@@ -1601,7 +1592,7 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 
- 	if (parse_state->fake_pmu) {
- 		if (!parse_events_add_pmu(parse_state, list, perf_pmus__fake_pmu(), &parsed_terms,
--					  /*auto_merge_stats=*/true, hw_config)) {
-+					  /*auto_merge_stats=*/true)) {
- 			struct strbuf sb;
- 
- 			strbuf_init(&sb, /*hint=*/ 0);
-@@ -1642,15 +1633,13 @@ int parse_events_multi_pmu_add_or_add_pmu(struct parse_events_state *parse_state
- 	/* Attempt to add to list assuming event_or_pmu is a PMU name. */
- 	pmu = perf_pmus__find(event_or_pmu);
- 	if (pmu && !parse_events_add_pmu(parse_state, *listp, pmu, const_parsed_terms,
--					 /*auto_merge_stats=*/false,
--					 /*alternate_hw_config=*/PERF_COUNT_HW_MAX))
-+					/*auto_merge_stats=*/false))
- 		return 0;
- 
- 	if (parse_state->fake_pmu) {
- 		if (!parse_events_add_pmu(parse_state, *listp, perf_pmus__fake_pmu(),
- 					  const_parsed_terms,
--					  /*auto_merge_stats=*/false,
--					  /*alternate_hw_config=*/PERF_COUNT_HW_MAX))
-+					  /*auto_merge_stats=*/false))
- 			return 0;
- 	}
- 
-@@ -1663,8 +1652,7 @@ int parse_events_multi_pmu_add_or_add_pmu(struct parse_events_state *parse_state
- 
- 			if (!parse_events_add_pmu(parse_state, *listp, pmu,
- 						  const_parsed_terms,
--						  auto_merge_stats,
--						  /*alternate_hw_config=*/PERF_COUNT_HW_MAX)) {
-+						  auto_merge_stats)) {
- 				ok++;
- 				parse_state->wild_card_pmus = true;
- 			}
-@@ -1675,8 +1663,7 @@ int parse_events_multi_pmu_add_or_add_pmu(struct parse_events_state *parse_state
- 
- 	/* Failure to add, assume event_or_pmu is an event name. */
- 	zfree(listp);
--	if (!parse_events_multi_pmu_add(parse_state, event_or_pmu, PERF_COUNT_HW_MAX,
--					const_parsed_terms, listp, loc))
-+	if (!parse_events_multi_pmu_add(parse_state, event_or_pmu, const_parsed_terms, listp, loc))
- 		return 0;
- 
- 	if (asprintf(&help, "Unable to find PMU or event on a PMU of '%s'", event_or_pmu) < 0)
-diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
-index e176a34ab088..0edb8b14e522 100644
---- a/tools/perf/util/parse-events.h
-+++ b/tools/perf/util/parse-events.h
-@@ -128,12 +128,6 @@ struct parse_events_term {
- 	 * value is assumed to be 1. An event name also has no value.
- 	 */
- 	bool no_value;
--	/**
--	 * @alternate_hw_config: config is the event name but num is an
--	 * alternate PERF_TYPE_HARDWARE config value which is often nice for the
--	 * sake of quick matching.
--	 */
--	bool alternate_hw_config;
- };
- 
- struct parse_events_error {
-@@ -244,7 +238,7 @@ struct evsel *parse_events__add_event(int idx, struct perf_event_attr *attr,
- 				      struct perf_pmu *pmu);
- 
- int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
--			       const char *event_name, u64 hw_config,
-+			       const char *event_name,
- 			       const struct parse_events_terms *const_parsed_terms,
- 			       struct list_head **listp, void *loc);
- 
-diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-index f888cbb076d6..5c4669264177 100644
---- a/tools/perf/util/parse-events.y
-+++ b/tools/perf/util/parse-events.y
-@@ -290,7 +290,7 @@ PE_NAME sep_dc
- 	struct list_head *list;
- 	int err;
- 
--	err = parse_events_multi_pmu_add(_parse_state, $1, PERF_COUNT_HW_MAX, NULL, &list, &@1);
-+	err = parse_events_multi_pmu_add(_parse_state, $1, NULL, &list, &@1);
- 	if (err < 0) {
- 		struct parse_events_state *parse_state = _parse_state;
- 		struct parse_events_error *error = parse_state->error;
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 57450c73fb63..7b32b9638d5f 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -1662,7 +1662,7 @@ static int check_info_data(struct perf_pmu *pmu,
-  */
- int perf_pmu__check_alias(struct perf_pmu *pmu, struct parse_events_terms *head_terms,
- 			  struct perf_pmu_info *info, bool *rewrote_terms,
--			  u64 *alternate_hw_config, struct parse_events_error *err)
-+			  struct parse_events_error *err)
- {
- 	struct parse_events_term *term, *h;
- 	struct perf_pmu_alias *alias;
-@@ -1699,7 +1699,6 @@ int perf_pmu__check_alias(struct perf_pmu *pmu, struct parse_events_terms *head_
- 						NULL);
- 			return ret;
- 		}
--
- 		*rewrote_terms = true;
- 		ret = check_info_data(pmu, alias, info, err, term->err_term);
- 		if (ret)
-@@ -1708,9 +1707,6 @@ int perf_pmu__check_alias(struct perf_pmu *pmu, struct parse_events_terms *head_
- 		if (alias->per_pkg)
- 			info->per_pkg = true;
- 
--		if (term->alternate_hw_config)
--			*alternate_hw_config = term->val.num;
--
- 		list_del_init(&term->list);
- 		parse_events_term__delete(term);
- 	}
-diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-index b93014cc3670..71b979a4a9dc 100644
---- a/tools/perf/util/pmu.h
-+++ b/tools/perf/util/pmu.h
-@@ -231,7 +231,7 @@ __u64 perf_pmu__format_bits(struct perf_pmu *pmu, const char *name);
- int perf_pmu__format_type(struct perf_pmu *pmu, const char *name);
- int perf_pmu__check_alias(struct perf_pmu *pmu, struct parse_events_terms *head_terms,
- 			  struct perf_pmu_info *info, bool *rewrote_terms,
--			  u64 *alternate_hw_config, struct parse_events_error *err);
-+			  struct parse_events_error *err);
- int perf_pmu__find_event(struct perf_pmu *pmu, const char *event, void *state, pmu_event_callback cb);
- 
- void perf_pmu_format__set_value(void *format, int config, unsigned long *bits);
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index e852ac0d9847..289639a974bf 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -1699,12 +1699,6 @@ static void evsel__set_needs_uniquify(struct evsel *counter, const struct perf_s
- 		return;
- 	}
- 
--	if (counter->pmu && counter->pmu->is_core &&
--	    counter->alternate_hw_config != PERF_COUNT_HW_MAX) {
--		/* A sysfs or json event replacing a legacy event, don't uniquify. */
--		return;
--	}
--
- 	if (config->aggr_mode == AGGR_NONE) {
- 		/* Always unique with no aggregation. */
- 		counter->needs_uniquify = true;
--- 
-2.49.0.rc0.332.g42c0ae87b1-goog
+> In both cases, "Thunderbot Support"/"USB4 PCIE Tunneling" was disabled
+> in UEFI to force universal Thunderbolt/USB Type-C devices to work in
+> DP Alt mode.
+> In both cases laptops had HBR3 patches applied [1], resulting in
+> maximum successful link at 3440x1440@100hz and 4k@60hz respectively.
+> When using Dell WD22TB4/U2725QE, USB Type-C pin assigment D got enabled
+> and USB3.0 devices were working in parallel to video ouput.
+>
+> Known issues:
+> * As mentioned above, it appears that on Gnome+Wayland framerate and
+>   resolution parameter adjustment is not stable.
 
+I can confirm this on Gnome 48 + Wayland as well. Sometimes the resolution
+change from gnome settings gets stuck and does not apply. It normally works
+here around every third try or so when using a dock.
+
+> Due to lack of access to the official DisplayPort specfication, changes
+> were primarily inspired by/reverse engineered from Intel's i915 driver.
+>
+> [1] https://lore.kernel.org/all/20250226231436.16138-2-alex.vinarskis@gmail.com/
+>
+> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+
+Tested-by: Stefan Schmidt <stefan.schmidt@linaro.org>
+
+regards
+Stefan Schmidt
 
