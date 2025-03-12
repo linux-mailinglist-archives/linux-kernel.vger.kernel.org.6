@@ -1,78 +1,62 @@
-Return-Path: <linux-kernel+bounces-557303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C93A5D6DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:11:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E32A5D6E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:11:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352FA169F57
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:11:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01E46189C922
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71571E9B00;
-	Wed, 12 Mar 2025 07:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060B31E9B34;
+	Wed, 12 Mar 2025 07:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E9e6J/Zt"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yrex1V9P"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D4B1E5B89
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83E91E5B89;
+	Wed, 12 Mar 2025 07:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741763481; cv=none; b=lPJg8fJyPI0j6jwgZoSa7O2G9XFU9fQ4C+a+wsUaFjefTC7dTsGz5SH+KniOm2mKaut/2aPl5SVgIb5Hqiy6ND+ZEiPqPwlInsiUWwTpOKeBXQqLo/Wuu76jZVa5kXp/QBgulIeRkxHIJr0dzn8H0fJUbHOjz2jnXEqK4BBqlhU=
+	t=1741763505; cv=none; b=smvhNcokBgpnL+euOIKP4RRBy/Sw3gA4gXkHgSJVG26bhyg99eSy84BMchubV0fNM+qO2oQ3skJU63bRd59qeCAhg/0C/c2d+P2oXvL3YGbZDa7+lNOry8Rms55SR3OUPxMHyFGwzH20rUfBmobQt8aJQ9aOCN76XgkSrslMmfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741763481; c=relaxed/simple;
-	bh=e7YGaKCY83HR3H/M3ccJe04aTUf4UGlWCN3ibpzLC2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JBBHOg6xixn3/LR28U5vHNprCsIzpqbmd9ldDZVZFKXbw6UW0IvNGMnUfgqZXVncItyypfODR+yp9Dnyt3dTQTVMaz88wDiwyatn4kG3JeCZeTJuIytJ0myT22N45fLtpbG4/B9Kf0R5azVBBWyYVhkV3RszmOpFljVsZlnSXpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E9e6J/Zt; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so7517895e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:11:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741763478; x=1742368278; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5JQMc0JK4aWXwOcpwJILt54UlEg8yqOSNknC98xAh/4=;
-        b=E9e6J/ZtA0EFW+uH1BMp3I45Kvca4Cd+I4nwGuysQjsWBlyxxDe+J21idiZ8mubCvq
-         diDIntsZ6hBPcS36kGkCfT+9TR71SQx5AHwKrGzh7g3StH99XncP7aGhNqduq2zfa/3O
-         Ie3prybwpUrw5P6i8OCz0yIqwk+AcjAeRg7PrBhxKNdidvHgoNWJSMIX55NgT9I+aIZB
-         3CGjxRRbGy0jFBGKBnfXNQuE80zCy8C2hOoQ2w6KHgjKw97gQd1RT7plLEWkxBiRO5wM
-         niDZYaKLy63P5ZJQAu+Yx9CSwNebwn5XdRvcgZEWebTFwaZq1XJ7Imv4qKhpuC5HHJVQ
-         Cmrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741763478; x=1742368278;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5JQMc0JK4aWXwOcpwJILt54UlEg8yqOSNknC98xAh/4=;
-        b=BceW/1LFNFtRUGDMzDDAz1QSYsHS2DMPF/XggAAgPVNubHutzNRE4iefau7OUbnhNF
-         nqxjDV6KlhiSh89QTO9RHxmTbLqgqTRSxHYYhNhyFmw0jOWNWoAAeB3/LnSG2mvOe2NA
-         E6QdPwsA1JNQnNzLPxDJFxIX9nUS/e0KiceyRj8NYFPrGMcV60930VCnn6okYMWDGLpr
-         v3tBN1qTaV+poBUDX7pGsqogQ/a52u28zA08FZiq6wO8hL6vqjNv0lAlbtNra7Ri3DGd
-         R1sG8sFwTk7w3NS91iVCaFNk2o/3MsecPkKw2xg/NuKQriMVhHMqT7TDTc6Azw1x1Pxf
-         7cqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFYVig9BitfjO+6GCFAqCSuAvkQXdHrICVIx30IZ4V2/b+g55M1+m00CvekXjot+MKuQGV3FuJOTrN62s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAfB/HRUIvI2T92T5F2LXcDrAutQiSb2yTRW08yHDvjq7hl85s
-	YYRgVNOrbhxWUtrumWXs7K/60c344Ie/1G6Uq/lu/+oTRiUMXVhJD0KHBxJ3MhI=
-X-Gm-Gg: ASbGncsvgAjYjQ8iqkt5g4EqZVvLeAv2ea2G+be0DIjRkrQVAwHCEXRPaTibNx6FQ1V
-	q3zy0ya/QmRuhB+8JoxdWGK3hQOlbrQ49q14cvjDTt4mcLlWJsFy5aPfd0lZsy9DD1mb/8wsL+W
-	qkGnah8MFpUqSuaQCxBLuXY2fngF6bmvfUTF5YFXpCOVvH96F0+b/YTLdGxn2AiJLc3sznqw8B2
-	uiL+I/MMfMxT2XCR3q/6ASNvZZs8slpn+V0bVckL3N16Szx7p3Jbu/h631Id0A5kWUUjc/2oz3u
-	vZqyDzky9NB7zKC3hRfpCSSBSp7HcDJ0hLxtpNazvpdT2nvpiXMp6Q==
-X-Google-Smtp-Source: AGHT+IE7CFqZ+AbL0Q4cb87iC4MZdbphZY+v7bJCpcP2ShGQtgySl1i2tbL1wMwKn/N8LmsPbsCRyA==
-X-Received: by 2002:a05:600c:19cc:b0:43d:4e9:27ff with SMTP id 5b1f17b1804b1-43d04e92a66mr49813565e9.7.1741763469875;
-        Wed, 12 Mar 2025 00:11:09 -0700 (PDT)
-Received: from [192.168.0.14] ([79.115.63.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a72ec8bsm12210285e9.5.2025.03.12.00.11.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 00:11:09 -0700 (PDT)
-Message-ID: <696494b8-14e9-4b9b-bf26-2a94a915b2ec@linaro.org>
-Date: Wed, 12 Mar 2025 07:11:08 +0000
+	s=arc-20240116; t=1741763505; c=relaxed/simple;
+	bh=cV5x2phB6io5A1hcWRos+71eq2NS/nw+eOi9/yJjQLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VfKR8ZNOzoZ84ecdqZ709MYP35RGIJULLkVrV+6CLH5DjdUsQaZTjgCVTSf6fMi70/8MlZJ4thkA+5SpT+z4/s3uT7tntA0SFDMN7UHArfplBVJeVha922j2euX2Jo+NowPyoa7wPrfY+y0pN39AEWJ7VTrpa3CXCeUoPjXNxQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yrex1V9P; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BMHrsZ020069;
+	Wed, 12 Mar 2025 07:11:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PPXp+P7KdxayDRrDGIguU4QpwVn6HFUUreh4LJiEppw=; b=Yrex1V9PQqzf5Nwk
+	hMn/EiHqrLrkhsA4w/hTZ04jCu3nFKQKynMUR3J+JdXCRsg7p8+7pEB1ozFpoEke
+	Aa1JndyMCv95ApBI8B7+Rd2SNkoUfl9BY5qEX17gvQjWYZ3EtGzt91CLP+STbHqp
+	Sa08Oq/OAJYFh/7OnKw7egsos9o0r1JCBJRCkc823C/uV6Oxsd6DOmE//qyFfIIq
+	nQNW2gnfKfRT7q3MIVrZVQOAGQv6B26Q8fEWBBwYmQdg4vVLBHXXLS3XoghS4zV7
+	Kv2L3WtFRGwjqTj4y8/1sTMe/NcMqARrhqSJh7Pnl9t9L1WFKNOT/rdmoUW8bNFe
+	dNxG/w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2p1f2t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 07:11:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52C7BbIf008513
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 07:11:37 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Mar
+ 2025 00:11:31 -0700
+Message-ID: <cd092022-cf6d-421a-a29d-69f7f4f068b6@quicinc.com>
+Date: Wed, 12 Mar 2025 12:41:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,103 +64,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] firmware: samsung: add ACPM debugfs support
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: andre.draszik@linaro.org, peter.griffin@linaro.org,
- willmcvicker@google.com, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250224-acpm-debugfs-v1-0-2418a3ea1b17@linaro.org>
- <20250224-acpm-debugfs-v1-3-2418a3ea1b17@linaro.org>
- <005424c2-7fb7-48db-b38c-c62f9f8b3897@kernel.org>
+Subject: Re: [PATCH v2 0/8] clk: qcom: Add support to attach multiple power
+ domains in cc probe
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+References: <CMTYKKilQJYeHUYYKvlqnwv4Q2P-58Ic1v1ndS9HQ8Yhq2xpHuNThibFDjXDEQ1PyNbx__f9BVBr0peoTUdvPg==@protonmail.internalid>
+ <20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com>
+ <5a45fd25-74ed-46e3-b0e3-5adf92b5e9f7@linaro.org>
+ <46d4f090-3e31-414f-abfc-3d1018913c56@linaro.org>
+ <9e6fdcfe-3c6d-44c7-95a3-7652c0650bf4@linaro.org>
+ <caa00d62-b24d-4db7-9e12-170a10c073e3@linaro.org>
+ <b21b5f03-e328-4708-a854-1b3fa9c3dfa3@linaro.org>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <005424c2-7fb7-48db-b38c-c62f9f8b3897@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <b21b5f03-e328-4708-a854-1b3fa9c3dfa3@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=HP/DFptv c=1 sm=1 tr=0 ts=67d133aa cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=bU-rbE2s8JpbpfxL7skA:9
+ a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: akoicu-BERqGVOUIAtrrDukoc-ibhcGu
+X-Proofpoint-GUID: akoicu-BERqGVOUIAtrrDukoc-ibhcGu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_02,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=850
+ clxscore=1011 priorityscore=1501 adultscore=0 impostorscore=0
+ malwarescore=0 spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120046
 
-Hi, Krzysztof,
 
-On 3/5/25 7:37 PM, Krzysztof Kozlowski wrote:
-> On 24/02/2025 09:01, Tudor Ambarus wrote:
 
-cut
-> Please add something like above also as a comment to the driver, so the
-> interface will be documented.
-
-okay, will add.
-
-cut
-
->> +static struct dentry *rootdir;
+On 3/11/2025 11:41 PM, Bryan O'Donoghue wrote:
+> On 11/03/2025 17:55, Vladimir Zapolskiy wrote:
+>>
+>> I kindly ask to elaborate here.
+>>
+>> This series does not touch CAMCC at all, and if the series touches CAMCC,
+>> then it changes DT ABI, which is objected. Or is it for some reason
+>> objected only for SM8550 and not for the other platforms? More information
+>> is needed.
 > 
-> exynos-apcm.c is not a singleton, so neither should this be. You should
-> create entries per device (so with device name as subdirectory), just
-> for correctness.
+> No but it _should_ Vlad, that's the ask.
 > 
->> +
->> +static DEFINE_MUTEX(acpm_log_level_mutex);
+> Both of these clock controllers will require this same change to be implemented, that's what I'm asking Jagadeesh to do.
 > 
-> And this also looks per-device-instance.
-
-okay, will create per device instances.
-
->> +
->> +static void acpm_log_print_entry(struct acpm_info *acpm,
->> +				 const union acpm_log_entry *log_entry)
->> +{
-
-cut
-
->> +		dev_info(acpm->dev, "[ACPM_FW] : %llu id:%u, %s, %x\n", time,
->> +			 log_entry->plugin_id, (char *)&msg, log_entry->data);
-> 
-> 
-> I don't think these should be printed to dmesg - these are not system
-> logs. You either return the contents to the caller's read() on debugfs
-> entry or, if this is anyhow crashdump related, it goes to
-> pstore/minidump once triggered. Or to ramoops.
-> 
-> Depends what these logs are (so please also explain what do you find
-> there in the commit msg).
-> 
-> Maybe something like CHROMEOS_PSTORE?
-> 
-> IOW, if enabled, this should go to ramoops/pstore unconditionally. For
-> runtime debugging this should be returned somehow to the userspace
-> reading the file. I think usually debugfs and sysfs is not expected to
-> provide more than PAGE_SIZE data, so this second part has to be
-> rethinked still.
+> Certainly that's the case for x1e and asking Jagadeesh to also check that for sm8650.
 > 
 
-This is a logging feature, it's not oops/panic related. These logs are
-referred to as "block logs". A "block" is the start of a mailbox command
-to its end, so it logs every ACPM mailbox command issued to the
-firmware. After each end of a block, we see the state of all regulators,
-frequencies and devices up/down extracted from the block.
+Yes, similar changes are required for camcc on SM8450, SM8550, SM8650 and X1E80100. I will add them in the v3 series.
+For X1E80100 camcc, I see changes are already raised in dt-bindings[1] and DT[2] to add multi PD support, so I will just
+include the camcc driver change in v3 for X1E80100.
 
-These are indeed system logs, and using the dmesg ring buffer seems fine
-as we typically care about the recent logs, we don't care if the ring
-starts all over again.
-
->> +DEFINE_DEBUGFS_ATTRIBUTE(acpm_log_level_fops, acpm_log_level_get,
->> +			 acpm_log_level_set, "0%llu\n");
-> 
-> I also do not think debugfs is a knob to control loglevel of messages
-> going to dmesg.
-> 
-
-This debugfs entry controls which SRAM log ring buffers are queried -
-there are 2 SRAM buffers.
-
-I guess you thought about the "logb_gprio_level" entry, which controls
-the ACPM print verbosity. 0xf being ERR, and 0x0 all logs. The firmware
-defaults on printing all logs. I can't tell right now other way of
-controlling the logs verbosity, maybe via sysfs, but it's equivalent and
-with more restrictions. Or maybe you think that I shall always print all
-logs?
+[1]: https://lore.kernel.org/all/20250304143152.1799966-1-vladimir.zapolskiy@linaro.org/
+[2]: https://lore.kernel.org/all/20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-2-c2964504131c@linaro.org/
 
 Thanks,
-ta
+Jagadeesh
+
+> ---
+> bod
 
