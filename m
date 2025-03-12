@@ -1,227 +1,202 @@
-Return-Path: <linux-kernel+bounces-558461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 063D7A5E63B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:08:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44131A5E637
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:08:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F9717F46C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:06:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7430017D1AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804441EE7C6;
-	Wed, 12 Mar 2025 21:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA251EE005;
+	Wed, 12 Mar 2025 21:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gwYIHqoG"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cM4ooXJ9"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C3D1EF38E;
-	Wed, 12 Mar 2025 21:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92321D86F2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 21:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741813492; cv=none; b=R4wZHN2zaHFkiSPbXKBPjqL9Mi6azWcMOfy5qYNlfHFGFp92Tq4gOdonQRakUZkayjFwC4DwWhEOaEP4oQkAkivppv/07xzBCGssae8zDTG7XWTCT3FuPJpoSYxSMQMT570PqwfCr6Urxmp97YM2vCUg0IfY7T6e9d0JYgfqv8k=
+	t=1741813485; cv=none; b=a0MtFZCNQgvVq01ovOpP7gbgpycP+BuyDCM1jSjykRVPwBC8X5uhTOALZmbNBv+gpU3VllstZP0pb7PwNWOe0hhSdmqoq7ALw84vv8pMclpy6c7jHG3sDjZTppplv0bl2cQvr9UQakOxoSarkcMYiwoHOMlwWgW+EUZmS5Pn8WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741813492; c=relaxed/simple;
-	bh=+LGUaVivceWptpxAIWBUUKprgy/a0XLvVKd+sJ6qOOc=;
+	s=arc-20240116; t=1741813485; c=relaxed/simple;
+	bh=Ot0S7PtwawZf3AV7XLRs4qgCTdhjXmhj0iYA5pT0WQI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fA/wRZMA0jcw0ZZHAZnqnJoMLCcPzzY7es806h4y5mE/TsARKib6cQ63M3q23HiVBP8/EU+do0FlJPByH7/wdpZqG//6ZUSs+IzaKjOD9N+yXALQEaBxsOQRy2UXTpZ7Kyox7faRUxfcfyfwHU9VVl78MAoqH8nkBXuW5MbD8a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gwYIHqoG; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30bfed67e08so3221361fa.2;
-        Wed, 12 Mar 2025 14:04:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=a7yZDkBTHewZw8j8Ow5MeavDPZfeu2/wF23KM/Sl438xLjniWr/FXf0iposcKppIS0SW/OdST2fNj3alkd0rjJJZjLySwBlNmmpfkxMGEfriVanpGgvavwNx/r2c6ksXAFBixifAs9L2Tdp/hBYP9UHo7pPXHsmvNl9TWgtKJmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cM4ooXJ9; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2240aad70f2so19885ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:04:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741813489; x=1742418289; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741813482; x=1742418282; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9kZxK/2Q5hehdq6vdu9VftqHSqPJSU1J/P2JUB6zgGk=;
-        b=gwYIHqoGCNZTQ3ySiUpmlkDGm5v3Bo72Ya6/Rd3u1QBorCkX2IWzKnYlp4dj47RvGP
-         aB7rOinDtkkV62F7ytA9Lk80zVrmUfsimJ69dA026UMl596Mjt9u0lJpZHYItojR3+WL
-         w5gR8GjlJ+4zHiuCAsB92YoIXrFXqB/gOMjOJ9NPPmu5NElWf6qSVhVqLMhJ890VrcIV
-         iSXHbjasrLqdxpy/C6l6uRcancWSlnXIwaJAeuyWSR/ZucGx2/5wzTkEj/M94ErucKgV
-         bzQWiZOVtJzpC4s/LC9GP4Bi2+vvGYmxWfBlTWbPjGPf4WsMQagjB13pq53fEGPZaogQ
-         wrZw==
+        bh=y/NYFOGJx3+utedM/+JCynhnYYN1+cS/l3CV1O7uUWI=;
+        b=cM4ooXJ9gvYqcJ/XrO6LDQ3KryrwmSBO1HyUvcZS61JWEZNzhzULnonecB9KSUu31i
+         rMKlff2mt81hRppWsSvFJ4YECBAFk1AZmv91vFSgM+fzJIiTmeHE2Y/10xyCP5mDXlLO
+         C37hhbNgGfJym/1xtFRgBwc7iDEG/+klFVmQonEjdaOlHtcl6rm9qnlyjXnY+R6iiUYU
+         U4xFZQnE268Bytlt5qCcCAZExmlhFAcLC4uxh9GHzQJJtKKeQ9Lh642xRaj0BEvlg5FW
+         mES+4ayvZi76ZtkOK6weW7hRsQT+BTxmeYkqfAvqQug9JmtFNZOyuWDOrOhKNNY+RzBn
+         QeJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741813489; x=1742418289;
+        d=1e100.net; s=20230601; t=1741813482; x=1742418282;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9kZxK/2Q5hehdq6vdu9VftqHSqPJSU1J/P2JUB6zgGk=;
-        b=mHu873MOhqThNcRCkvyWGC1FhPHqFM+y8k9+r26wDE1h7yNLEFFBzvVGdKGU7EJ/vu
-         Uszl5AsS+83jlctj4gTRU0Gg3LnrYJrzPC6wu9XIDmsN5f1IlFs/efqPGhxBps4dtRXt
-         DSDSx5SCMeBEHwR3mx31zYzcveu+4L2w9PZAvTIfI68OKPRJULZIkjn2wxhmyctQ5U9V
-         A9C8DxDv9pYuHqOVPeux2tXB/HUv3ESIDwU8YQwCh6jCMVdiB2L/QhAUNJeClLGpLyV2
-         pZYZJNmRsVtaQfkB0njRX63fgybfFcu3GPeh72piDGV5ANKGU6LycFQRWt0IVr774N0t
-         X89g==
-X-Forwarded-Encrypted: i=1; AJvYcCUGUfxqWuG+fqklSWn0JDsDTP0Gegd4kjvEopBeSYQVBtBmCUg4ngU1OgGTlheQzLzh6kP19uucTgYAFExg@vger.kernel.org, AJvYcCUss6GCPnWZVNZphHW7EI3uBYmRpqkXmJX7BTIwYy7T3MTsngPIIe0F8WKcUg/MQAwzIQbBwLZvdSgw@vger.kernel.org, AJvYcCVWKMGfa3xeBG7SkrJKaTqOwdc77kkssbP8L/CGmDG9gEp7IiwfuZWTFHVbftQ74qCKUlAjDO7n8s5F2yPTun5F@vger.kernel.org, AJvYcCW2LpMGEPjwNRkpZNJzYeGJysOEmMwko+xXaU5gutUrZX5VdmcHJHvcMsZfioNq/mNzVnDV3KXkpRzpV2cI@vger.kernel.org, AJvYcCXQLn1gcZUnQaIkLv0hCTxpuqqHWncBIyZVejW3zE5WtUC3rPlaofOAHqSUYgU22W464fbD+mScuu18@vger.kernel.org, AJvYcCXVsiuCWL03QaxapTbeNKJWph3uNTJ7jJmtMPus57/2ezpSrKTll3JxdF/hBuCLPr8GiFbsAZMDlj5+sZE=@vger.kernel.org, AJvYcCXmvohTbj7CLXUNAESuY2LEmnmaNcA7BOA9epM3WMCEzgJt9t4bYgy/cTgFR/abbX+udqaJX2pzM9tHjgWHkeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb0Um29IRCcRoPXxikEgP0rNFIhlK3GzGM+cpiZBMZ0FPGHaLJ
-	eA195Aa+zQFWVUMcQp+4GlJLPnC5/tEx3fqsGOoUqq/15qPa4ZgV9WZcACZk+QlX1kYD6RHbdC5
-	42u/iWlB52b0v91lMaDeCq2C9PgA=
-X-Gm-Gg: ASbGncuYvB22BMXbLhhimtkNsJofKKdgqP2DRWCE7NNnMk2rASLJHotB5t/ginuXFFM
-	ZZw+bLIlBXKGhO5CHXoXgUWzm+M7F+HNVopXA5i3IIs6mlEyRaycLBiWYqtjb9yhVPxXVmiRdq9
-	LzNHCNjQyCI70W9jk7ZbbiFZ87jmMOQG0/3rw8TZyz/g==
-X-Google-Smtp-Source: AGHT+IHa+R1rvAMaQooEb8PCVQbXlUkUJjsQQodlQM3HWgy+TunL6fhJjqkj5E6QZhONq/5o1zkY/uhUY13Bk/SqCNg=
-X-Received: by 2002:a2e:7015:0:b0:30b:ee81:9622 with SMTP id
- 38308e7fff4ca-30bf466ce80mr71528251fa.31.1741813488633; Wed, 12 Mar 2025
- 14:04:48 -0700 (PDT)
+        bh=y/NYFOGJx3+utedM/+JCynhnYYN1+cS/l3CV1O7uUWI=;
+        b=CSc492LEjuQ9NbNjoD79nfHG6QANkwG4a77qz+SkCB+X4wCLxsWl4WNflggvlYzGvu
+         LdpUqrq0bK3/dXqmEfgzvS6L4wt33fJJeIrNwC6nNzzlwSwcK4e+xBwiGntco/aDKeJf
+         Q7JJx+QSMPOROMSs5WHqeJI7PmsS6rxBOkpAAoaGqSZtsLEi3Ig3/slmOenDHzUnDrx8
+         FhPmcEdJPawiHQX7fgZ9yxeCqUc9EzqG7l9g33wtDcBGYckT9WTkt/PR3YHN+93CC1Wd
+         spSQ9nzrzRqqHEbekzyR86hnDcQTj2gi2rHBORAySUCQpiDW8yfRMMnf2XzehVj3QYrG
+         1ArQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxU8L7Hkgxe3Bcz7tAdwfNYay0kk0/VZ0zpDyJYvXIBoQ3BMpyfc5X3wCKjfIgthaDHFGMoG0E1orq3Nk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSF2DuIMt3TPFiNnefouRWKwlcyiEftHgHGZjgbkWs+0KrkK2Z
+	bUba/l+jYUrWS9hWTxzsEodKK6RZnOfR6LSPSt0n37EIAhEup/XhVwNGrWcB9pwyt9UflQp5bz7
+	ERjMCfcS5ZkWlUqf355d5TvosLprsWoFaqTpZ
+X-Gm-Gg: ASbGncvPnH7ao3Z9/gNtRq7RbwBOk12em7SvNZcMAawBfcaaVa7PDtbcj2nPl8EWexs
+	EqnBWoHVyM7v79zL0ZVyDJ/eeSgc9qRdF1McbkWCa5m3/4unsYxS/tV2dA/xKqPFxhfaiv0C/kt
+	9s9bYJziQ0sq3YwZwHFpaCHc1dhVNCqqPg+XfcAdrALzCQDiQHgkdGL6Y=
+X-Google-Smtp-Source: AGHT+IG2QAgZZb2P1DnYtlbmBhHsH8IbYPaNLVy98uYUpBgu/L7LIECGJjf1D4pL5sBwMndKUFhgflstMybnPkqFZnA=
+X-Received: by 2002:a17:903:2311:b0:216:21cb:2e14 with SMTP id
+ d9443c01a7336-225c5b9ad33mr436225ad.21.1741813481661; Wed, 12 Mar 2025
+ 14:04:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com>
- <CAJ-ks9=K06OT6cutUABj2QDHJHJ70719c-eJ=F3n-_bhkYbZ3w@mail.gmail.com>
- <D8EG9EM9UU0B.2GLHXRU2XROZ3@proton.me> <CAJ-ks9=+3MQb-tp8TAwYvVj=GOFFFVKJxRMprc8YXZHKhqnDrg@mail.gmail.com>
- <D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me> <CAJ-ks9=zWAuPUM_61EA6i5QkUpwtNtsN8oF_MUerWGn39MRHhw@mail.gmail.com>
- <D8EJM4CJ4HAN.1PB2YV8DB77V7@proton.me> <CAJ-ks9mo-H46Wwcu_LOvDy0ncwMR9ii74Fyf3OX-aWNnrZ397g@mail.gmail.com>
- <CAJ-ks9kCgATKDE2qAuO3XpQfjVO2jGyq3D4sbUcVKyW6G1vuuQ@mail.gmail.com> <D8EL9QFS1XNT.JBSMRXD4D7GT@proton.me>
-In-Reply-To: <D8EL9QFS1XNT.JBSMRXD4D7GT@proton.me>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 12 Mar 2025 17:04:12 -0400
-X-Gm-Features: AQ5f1JqqQd3v2xiRI6ykASVSL1cdIxLsCz3uQjlsEDwmvIguhgD94ZHee5gDvtY
-Message-ID: <CAJ-ks9=TRDg3g=NG7k97P_5jXpZ4K4v0DxrmJFR+uF0-3zJkXw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
-	devicetree@vger.kernel.org
+References: <20250122062332.577009-1-irogers@google.com> <Z5K712McgLXkN6aR@google.com>
+ <CAP-5=fX2n4nCTcSXY9+jU--X010hS9Q-chBWcwEyDzEV05D=FQ@mail.gmail.com> <CAP-5=fUHLP-vtktodVuvMEbOd+TfQPPndkajT=WNf3Mc4VEZaA@mail.gmail.com>
+In-Reply-To: <CAP-5=fUHLP-vtktodVuvMEbOd+TfQPPndkajT=WNf3Mc4VEZaA@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 12 Mar 2025 14:04:30 -0700
+X-Gm-Features: AQ5f1Jrj8FttoWaX-jdga6H02EOp221HMf8mceTcXqVwlpfEOeFP0rT3a1IwFQk
+Message-ID: <CAP-5=fV_z+Ev=wDt+QDwx8GTNXNQH30H5KXzaUXQBOG1Mb8hJg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/17] Support dynamic opening of capstone/llvm remove BUILD_NONDISTRO
+To: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Aditya Gupta <adityag@linux.ibm.com>, "Steinar H. Gunderson" <sesse@google.com>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Changbin Du <changbin.du@huawei.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Kajol Jain <kjain@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Li Huafei <lihuafei1@huawei.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Andi Kleen <ak@linux.intel.com>, Chaitanya S Prakash <chaitanyas.prakash@arm.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	llvm@lists.linux.dev, Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
+	Daniel Xu <dxu@dxuuu.xyz>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 12, 2025 at 5:01=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
+On Mon, Feb 10, 2025 at 10:06=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
 >
-> On Wed Mar 12, 2025 at 9:41 PM CET, Tamir Duberstein wrote:
-> > On Wed, Mar 12, 2025 at 4:07=E2=80=AFPM Tamir Duberstein <tamird@gmail.=
-com> wrote:
-> >>
-> >> On Wed, Mar 12, 2025 at 3:43=E2=80=AFPM Benno Lossin <benno.lossin@pro=
-ton.me> wrote:
-> >> >
-> >> > On Wed Mar 12, 2025 at 8:19 PM CET, Tamir Duberstein wrote:
-> >> > > I tried using the strict provenance lints locally and I think we c=
-an't
-> >> > > until we properly bump MSRV due to `clippy::incompatible_msrv`:
-> >> > >
-> >> > > warning: current MSRV (Minimum Supported Rust Version) is `1.78.0`=
- but
-> >> > > this item is stable since `1.84.0`
-> >> > >    --> ../rust/kernel/str.rs:696:22
-> >> > >     |
-> >> > > 696 |             pos: pos.expose_provenance(),
-> >> > >     |                      ^^^^^^^^^^^^^^^^^^^
-> >> > >     |
-> >> > >     =3D help: for further information visit
-> >> > > https://rust-lang.github.io/rust-clippy/master/index.html#incompat=
-ible_msrv
-> >> >
-> >> > Oh this is annoying...
-> >> >
-> >> > > This is with `#![feature(strict_provenance)]`. I can file the issu=
-e
-> >> > > but I think it's blocked on MSRV >=3D 1.84.0. But maybe you know o=
-f a
-> >> > > path forward :)
-> >> >
-> >> > I think we should be able to just `allow(clippy::incompatible_msrv)`=
-,
-> >> > since Miguel & other maintainers will test with 1.78 (or at least ar=
-e
-> >> > supposed to :).
-> >>
-> >> Alright, you've sniped me. This is coming in v3.
-> >
-> > I just realized I only covered the kernel crate. In order to cover all
-> > Rust code, I need to move the lints and the features out to the root
-> > Makefile. I tried something like this:
-> >
-> >> diff --git a/Makefile b/Makefile
-> >> index 2af40bfed9ce..10af1e44370b 100644
-> >> --- a/Makefile
-> >> +++ b/Makefile
-> >> @@ -466,13 +466,21 @@ KBUILD_USERHOSTCFLAGS :=3D -Wall -Wmissing-proto=
-types -Wstrict-prototypes \
-> >>  KBUILD_USERCFLAGS  :=3D $(KBUILD_USERHOSTCFLAGS) $(USERCFLAGS)
-> >>  KBUILD_USERLDFLAGS :=3D $(USERLDFLAGS)
-> >>
-> >> +# Lints were moved to `strict_provenance_lints` when `strict_provenan=
-ce` was stabilized.
-> >> +#
-> >> +# See https://github.com/rust-lang/rust/commit/56ee492a6e7a917b2b3f88=
-8e33dd52a13d3ecb64.
-> >> +KBUILD_RUST_STRICT_PROVENANCE_FEATURE =3D $(if $(CONFIG_RUSTC_HAS_STA=
-BLE_STRICT_PROVENANCE),strict_provenance_lints,strict_provenance)
-> >> +
-> >>  # These flags apply to all Rust code in the tree, including the kerne=
-l and
-> >>  # host programs.
-> >>  export rust_common_flags :=3D --edition=3D2021 \
-> >>      -Zbinary_dep_depinfo=3Dy \
-> >> +     -Zcrate-attr=3D"feature($(KBUILD_RUST_STRICT_PROVENANCE_FEATURE)=
-)" \
-> >>      -Astable_features \
-> >>      -Dnon_ascii_idents \
-> >>      -Dunsafe_op_in_unsafe_fn \
-> >> +     -Wfuzzy_provenance_casts \
-> >> +     -Wlossy_provenance_casts \
-> >>      -Wmissing_docs \
-> >>      -Wrust_2018_idioms \
-> >>      -Wunreachable_pub \
-> >> diff --git a/rust/Makefile b/rust/Makefile
-> >> index ea3849eb78f6..d7d5be741245 100644
-> >> --- a/rust/Makefile
-> >> +++ b/rust/Makefile
-> >> @@ -435,8 +435,10 @@ $(obj)/helpers/helpers.o: $(src)/helpers/helpers.=
-c $(recordmcount_source) FORCE
-> >>  # symbol versions generated from Rust objects.
-> >>  $(obj)/exports.o: private skip_gendwarfksyms =3D 1
-> >>
-> >> +KBUILD_RUST_STRICT_PROVENANCE_FEATURE :=3D $(if $(CONFIG_RUSTC_HAS_ST=
-ABLE_STRICT_PROVENANCE),strict_provenance_lints,strict_provenance)
-> >> +
-> >>  $(obj)/core.o: private skip_clippy =3D 1
-> >> -$(obj)/core.o: private skip_flags =3D -Wunreachable_pub
-> >> +$(obj)/core.o: private skip_flags =3D -Zcrate-attr=3D"feature($(KBUIL=
-D_RUST_STRICT_PROVENANCE_FEATURE))" -Wunreachable_pub -Wfuzzy_provenance_ca=
-sts -Wlossy_provenance_casts
-> >>  $(obj)/core.o: private rustc_objcopy =3D $(foreach sym,$(redirect-int=
-rinsics),--redefine-sym $(sym)=3D__rust$(sym))
-> >>  $(obj)/core.o: private rustc_target_flags =3D $(core-cfgs)
-> >>  $(obj)/core.o: $(RUST_LIB_SRC)/core/src/lib.rs \
-> >
-> > but this doesn't work because
-> > `CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE` is not yet defined when I
-> > read it in the root Makefile. I can read it lower down and then append
-> > the feature flag to `KBUILD_RUSTFLAGS` but by then the rustdoc flags
-> > have been copied from `rust_common_flags` and so rustdoc doesn't get
-> > the feature flag, resulting in unknown lint warnings in rustdoc and
-> > kunit tests.
-> >
-> > Any ideas?
+> On Thu, Jan 23, 2025 at 3:36=E2=80=AFPM Ian Rogers <irogers@google.com> w=
+rote:
+> > On Thu, Jan 23, 2025 at 1:59=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
+rg> wrote:
+> > > I like changes up to this in general.  Let me take a look at the
+> > > patches.
 >
-> Always enable the features, we have `allow(stable_features)` for this
-> reason (then you don't have to do this dance with checking if it's
-> already stable or not :)
+> So it would be nice to make progress with this series given some level
+> of happiness, I don't see any actions currently on the patch series as
+> is. If I may be so bold as to recap the issues that have come up:
+>
+> 1) Andi Kleen mentions that dlopen is inferior to linking against
+> libraries and those libraries aren't a memory overhead if unused.
+>
+> I agree but pointed-out the data center use case means that saving
+> size on binaries can be important to some (me). We've also been trying
+> to reduce perf's dependencies for distributions as perf dragging in
+> say the whole of libLLVM can be annoying for making minimal
+> distributions that contain perf. Perhaps somebody (Arnaldo?) more
+> involved with distributions can confirm or deny the distribution
+> problem, I'm hoping it is self-evident.
+>
+> 2) Namhyung Kim was uncomfortable with the code defining
+> types/constants that were in header files as the two may drift over
+> time
+>
+> I agree but in the same way as a function name is an ABI for dlysym,
+> the types/constants are too. Yes a header file may change, but in
+> doing so the ABI has changed and so it would be an incompatible change
+> and everything would be broken. We'd need to fix the code for this,
+> say as we did when libbpf moved to version 1.0, but using a header
+> file would only weakly guard against this problem. The problem with
+> including the header files is that then the build either breaks
+> without the header or we need to support a no linking against a
+> library and not using dlopen case. I suspect a lot of distributions
+> wouldn't understand the build subtlety in this, the necessary build
+> options and things installed, and we'd end up not using things like
+> libLLVM even when it is known to be a large performance win. I also
+> hope one day we can move from parsing text out of forked commands, as
+> it is slower and more brittle, to just directly using libraries.
+> Making dlopen the fallback (probably with a warning on failure) seems
+> like the right direction for this except we won't get it if we need to
+> drag in extra dependency header files for the build to succeed (well
+> we could have a no library or dlopen option, but then we'd probably
+> find distributions packaging this and things like perf annotate
+> getting broken as they don't even know how to dlopen a library).
+>
+> 3) Namhyung Kim (and I) also raises that the libcapstone patch can be
+> smaller by dropping the print_capstone_detail support on x86
+>
+> Note, given the similarity between capstone and libLLVM for
+> disassembly, it is curious that only capstone gives the extra detail.
+>
+> I agree. Given the capstone disassembly output will be compromised we
+> should warn for this, probably in Makefile.config to avoid running
+> afoul of -Werror. It isn't clear that having a warning is a good move
+> given the handful of structs needed to support print_capstone_detail.
+> I'd prefer to keep the structs so that we haven't got a warning that
+> looks like it needs cleaning up.
+>
+> 4) Namhyung Kim raised concerns over #if placement
+>
+> Namhyung raised that he'd prefer:
+> ```
+> #if HAVE_LIBCAPSTONE_SUPPORT
+> // lots of code
+> #else
+> // lots of code
+> #endif
+> ```
+> rather than the #ifs being inside or around individual functions. I
+> raised that the large #ifs is a problem in the current code as you
+> lose context when trying to understand a function. You may look at a
+> function but not realize it isn't being used because of a #if 10s or
+> 100s of lines above. Namhyung raised that the large #ifs is closer to
+> kernel style, I disagreed as I think kernel style is only doing this
+> when it stubs out a bunch of API functions, not when more context
+> would be useful. Hopefully as the person writing the patches the style
+> choice I've made can be respected.
+>
+> 5) Daniel Xu raised issues with the removal of libbfd for Rust
+> support, as the code implies libbfd C++ demangling is a pre-requisite
+> of legacy rust symbol demangling
+>
+> A separate patch was posted adding Rust v0 symbol demangling with no
+> libbfd dependency:
+> https://lore.kernel.org/lkml/20250129193037.573431-1-irogers@google.com/
+> The legacy support should work with the non-libbfd demanglers as
+> that's what we have today. We should really clean up Rust demangling
+> and have tests. This is blocked on the Rust community responding to:
+> https://github.com/rust-lang/rust/issues/60705
 
-It's not so simple. In rustc < 1.84.0 the lints *and* the strict
-provenance APIs are behind `feature(strict_provenance)`. In rustc >=3D
-1.84.0 the lints are behind `feature(strict_provenance_lints)`. So you
-need to read the config to learn that you need to enable
-`feature(strict_provenance_lints)`.
+Ping.
+
+Thanks,
+Ian
 
