@@ -1,179 +1,159 @@
-Return-Path: <linux-kernel+bounces-557447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA75A5D905
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:14:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724B0A5D90A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377DD3B0EDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:14:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815F616A83D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95B5238D5A;
-	Wed, 12 Mar 2025 09:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BCC23816C;
+	Wed, 12 Mar 2025 09:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YT42fc2V"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jmBGBK3C"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D8A239089
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF73122FF2E;
+	Wed, 12 Mar 2025 09:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741770848; cv=none; b=J46E+AN11xkH1V5J5ZdQ+Jc3FI8Ryv5Cs2k5+3Ln8HnCAUcc4xLAIQddOeEAK4inlRIInZiyGZjkjq2lkpRpZXfnuoRF/F8LgOgbprIQk5gOe3xSxK6gSewtu0aODob3dj9hIp8SPwc9EPXAgnoh8h8eiaD/OOqRcZIGWnB/SKM=
+	t=1741770882; cv=none; b=NUZqsUZfMXUPj3RF7YJQgaSyY1J0ub0oshcjH/7MTSwQUc9gxVa8dwOBHFxpa4gBoL1UErsBrpR6XDF8D8DH+P3O46jA0gkGepSWmDssOwslUx1kDpcTlbkmsR9v3Fv2fzFhNqv7WkYgJR0NvN4IeeYa79wrFHMFhUslbzYSNwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741770848; c=relaxed/simple;
-	bh=dx7/YOg9MPlzfoNLAMhyKFjqJ0u98yPZNBqi1qTZamc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WOaLsv1+Mu0AA4pA5uBHKR4Zpcdxumghp7gXOAjR7OTwl5eeTEup1NFxUd+tgoS/6duXelbhcBSoAsyKr1s9pi+tIqojupgpoSQh0WgzWTgarQznTie2rnrUALSZJfhZgDeVteWm2xc/r8QlvnqMcWXq7k1VoTq0zhcbD2l1yYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YT42fc2V; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741770846; x=1773306846;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=dx7/YOg9MPlzfoNLAMhyKFjqJ0u98yPZNBqi1qTZamc=;
-  b=YT42fc2VV19Lt3zy8bwYA6qJ05+17YFQantkhyOjmLzWYg3fNTH4Fy7i
-   MOAX9Epa5afgnmdy0N+7KWI+N7tAOVbP2pScysVFvl5kGb0oezbIEOMMC
-   k8ykU7/K9jYwikm6zw3QmBej5zxinPHrBqZ5YWISkqhvCs/skR2ejSBjy
-   xLZF+1/g6BNK3ERuNOdHecWEnSlU8EqRBQ0/BK5vDZVnkt+kIyV0GhaI4
-   2J7ysX9m6cuRqAjEquSur4SYEyrW8zE/s2ptTLWVUNQDYqThxt7Uce7rM
-   bXU3s7a0zy8+oDifXyeF5w1RoRYx+07HsldgkjO6y8Zo4BMyQ2B+GQFU6
-   Q==;
-X-CSE-ConnectionGUID: yAHkfYfSTPqPBwZJbXbLSQ==
-X-CSE-MsgGUID: Kjfjmy0LShWdq4q5sAKIdQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="42947920"
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="42947920"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 02:14:05 -0700
-X-CSE-ConnectionGUID: CwolEVmeTxWSaGGdsfMEFQ==
-X-CSE-MsgGUID: SyJctsnwSoGOJcJTZZtGjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="120526988"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 02:14:01 -0700
-Date: Wed, 12 Mar 2025 11:13:58 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: Alex Deucher <alexdeucher@gmail.com>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	Alex Deucher <alexander.deucher@amd.com>, siqueira@igalia.com,
-	airlied@gmail.com, simona@ffwll.ch, rodrigo.vivi@intel.com,
-	jani.nikula@linux.intel.com, Xaver Hugl <xaver.hugl@kde.org>
-Subject: Re: [PATCH 2/2] drm/amdgpu: Make use of drm_wedge_app_info
-Message-ID: <Z9FQVpRF8-d7OPnV@black.fi.intel.com>
-References: <20250228121353.1442591-1-andrealmeid@igalia.com>
- <20250228121353.1442591-3-andrealmeid@igalia.com>
- <Z8HO-s_otb2u44V7@black.fi.intel.com>
- <38b9cc8b-2a55-4815-a19f-f5bdf0f7687c@igalia.com>
- <Z8KjZfLYjH6ehYwy@black.fi.intel.com>
- <73602c9b-74f6-4b4a-82c6-918292b13cf7@igalia.com>
- <CADnq5_PbZUoyxyqweqa=kUNsSXanjY=5mUJrn03aY3je6rER+w@mail.gmail.com>
- <Z9BvK55_Nim54eOu@black.fi.intel.com>
- <2c99f7a8-7f72-4959-88b5-d3137575640e@amd.com>
+	s=arc-20240116; t=1741770882; c=relaxed/simple;
+	bh=cEKd2zeZ03W0AvZfiQXuQHDW6ARtsp1IdpFeReEbqHs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aQ52WR3bfmdDyDuwUy2BgBKDd2h1QBkMxzRHd50eE7iKiTXlG/SBda2cKbWpxqVcyY5s8Mv4zZsRdKGNJ1dj7G14ucfRziedqtI+yOmMEmi4KR+aEnCYn+Qeb6lrcwROjj13CUYxeLlVTtACgfkEGI1jYRNNsv+f5iB1PzbNlNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jmBGBK3C; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BMHGuj017778;
+	Wed, 12 Mar 2025 09:14:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=8TmtBO5q52/HEosJi2z3Sf
+	AuxsDFYLPd1Yxz9r4Z7hk=; b=jmBGBK3Cl3eWB18rwgyQ02r+XokLvPrvEwH85p
+	3zZVboE7i2QcBOBmFjiYJtsng+DkUrEkfjINCUz7YA0r94MJ8AoifM/XTeroXzTA
+	pV/j/5ev5mq8c3J5BEOrJpIdS1tdXO5da5L9N9VyxDq/jd99aakbCc94tXhEN35p
+	dHI7MYFe2MU93iNaRpm/PKjPqqP/Xab/CCer31vrXucIy38o/vTPunEqZQEFSOly
+	W+jb2HadV2C5C8h8cV5pJ/bh4ybfU9X0/HszqkiVwcSR0+q/1zGQscd9/Rk6yqcK
+	gq7W46t7XH6hE/2i65e9ybN+ypNvEKaDGMMcY0rO8LbMd/Kg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au509t7n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 09:14:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52C9EZwF002387
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 09:14:35 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 12 Mar 2025 02:14:31 -0700
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <quic_srichara@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_varada@quicinc.com>
+Subject: [PATCH v1] arm64: dts: qcom: ipq5424: fix and relocate uart1 gpio configurations
+Date: Wed, 12 Mar 2025 14:44:18 +0530
+Message-ID: <20250312091418.3265352-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2c99f7a8-7f72-4959-88b5-d3137575640e@amd.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2qaKB0eA9gO_rc_KZ4Nx7rP-PJUIuHkW
+X-Proofpoint-ORIG-GUID: 2qaKB0eA9gO_rc_KZ4Nx7rP-PJUIuHkW
+X-Authority-Analysis: v=2.4 cv=a4ow9VSF c=1 sm=1 tr=0 ts=67d1507c cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=jqHd-jEL5zBjBWWoCB0A:9 a=3EaL8tvSfWgu6Hm8GeNu:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=671
+ clxscore=1015 spamscore=0 malwarescore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120062
 
-On Wed, Mar 12, 2025 at 09:25:08AM +0100, Christian König wrote:
->Am 11.03.25 um 18:13 schrieb Raag Jadav:
->> On Mon, Mar 10, 2025 at 06:03:27PM -0400, Alex Deucher wrote:
->>> On Mon, Mar 10, 2025 at 5:54 PM André Almeida <andrealmeid@igalia.com> wrote:
->>>> Em 01/03/2025 03:04, Raag Jadav escreveu:
->>>>> On Fri, Feb 28, 2025 at 06:49:43PM -0300, André Almeida wrote:
->>>>>> Hi Raag,
->>>>>>
->>>>>> On 2/28/25 11:58, Raag Jadav wrote:
->>>>>>> On Fri, Feb 28, 2025 at 09:13:53AM -0300, André Almeida wrote:
->>>>>>>> To notify userspace about which app (if any) made the device get in a
->>>>>>>> wedge state, make use of drm_wedge_app_info parameter, filling it with
->>>>>>>> the app PID and name.
->>>>>>>>
->>>>>>>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
->>>>>>>> ---
->>>>>>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 19 +++++++++++++++++--
->>>>>>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_job.c    |  6 +++++-
->>>>>>>>    2 files changed, 22 insertions(+), 3 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
->>>>>>>> index 00b9b87dafd8..e06adf6f34fd 100644
->>>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
->>>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
->>>>>>>> @@ -6123,8 +6123,23 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
->>>>>>>>            atomic_set(&adev->reset_domain->reset_res, r);
->>>>>>>> -  if (!r)
->>>>>>>> -          drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
->>>>>>>> +  if (!r) {
->>>>>>>> +          struct drm_wedge_app_info aux, *info = NULL;
->>>>>>>> +
->>>>>>>> +          if (job) {
->>>>>>>> +                  struct amdgpu_task_info *ti;
->>>>>>>> +
->>>>>>>> +                  ti = amdgpu_vm_get_task_info_pasid(adev, job->pasid);
->>>>>>>> +                  if (ti) {
->>>>>>>> +                          aux.pid = ti->pid;
->>>>>>>> +                          aux.comm = ti->process_name;
->>>>>>>> +                          info = &aux;
->>>>>>>> +                          amdgpu_vm_put_task_info(ti);
->>>>>>>> +                  }
->>>>>>>> +          }
->>>>>>> Is this guaranteed to be guilty app and not some scheduled worker?
->>>>>> This is how amdgpu decides which app is the guilty one earlier in the code
->>>>>> as in the print:
->>>>>>
->>>>>>      ti = amdgpu_vm_get_task_info_pasid(ring->adev, job->pasid);
->>>>>>
->>>>>>      "Process information: process %s pid %d thread %s pid %d\n"
->>>>>>
->>>>>> So I think it's consistent with what the driver thinks it's the guilty
->>>>>> process.
->>>>> Sure, but with something like app_info we're kind of hinting to userspace
->>>>> that an application was _indeed_ involved with reset. Is that also guaranteed?
->>>>>
->>>>> Is it possible that an application needlessly suffers from a false positive
->>>>> scenario (reset due to other factors)?
->>>>>
->>>> I asked Alex Deucher in IRC about that and yes, there's a chance that
->>>> this is a false positive. However, for the majority of cases this is the
->>>> right app that caused the hang. This is what amdgpu is doing for GL
->>>> robustness as well and devcoredump, so it's very consistent with how
->>>> amdgpu deals with this scenario even if the mechanism is still not perfect.
->>> It's usually the guilty one, but it's not guaranteed.  For example,
->>> say you have a ROCm user queue and a gfx job submitted to a kernel
->>> queue.  The actual guilty job may be the ROCm user queue, but the
->>> driver may not detect that the ROCm queue was hung until some other
->>> event (e.g., memory pressure).  However, the timer for the gfx job may
->>> timeout before that happens on the ROCm queue so in that case the gfx
->>> job would be incorrectly considered guilty.
->> So it boils down to what are the chances of that happening and whether
->> it's significant enough to open the door for API abuse.
-> 
-> We are also working on an enforce_isolation parameter for amdgpu which only allows one application at a time to use the hardware for the cost of performance.
-> 
-> The problem is simply that when you don't allow multiple applications to use the HW at the same time you also don't get full utilization of the different HW blocks.
-> 
-> It can also be that a crash only happens because two applications do something at the same time which is not supposed to happen at the same time. Those issue are then usually fixed by firmware updates, but are really really hard to debug.
-> 
-> I don't see much potential for abuse here since you can't easily control from userspace when a lockup happens. And the AMD Linux team has made quite a bunch of requirements to the HW/FW engineers recently which should improve the situation on future HW generations.
-> 
-> So I think we should probably just document that reliability of this information is driver and hardware specific and should be taken with a grain of salt and call it a day.
+Update the bias configuration for UART1 TX and RX pins to ensure correct
+settings for RDP466.
 
-Sounds reasonable. The new event string will need its own chapter anyway.
+Additionally, move the UART1 GPIO configurations from the common .dtsi
+file to the RDP-specific .dts files to account for differing bias
+configurations across RDPs of IPQ5424.
 
-Raag
+Fixes: 1a91d2a6021e ("arm64: dts: qcom: add IPQ5424 SoC and rdp466 board support")
+Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 16 +++++++++++++++-
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi       |  7 -------
+ 2 files changed, 15 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+index b6e4bb3328b3..7b85aaa11ee8 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
++++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+@@ -147,10 +147,24 @@ data-pins {
+ 			bias-pull-up;
+ 		};
+ 	};
++
++	uart1_tx_state: uart1-tx-state {
++		pins = "gpio44";
++		function = "uart1";
++		drive-strength = <8>;
++		bias-pull-down;
++	};
++
++	uart1_rx_state: uart1-rx-state {
++		pins = "gpio43";
++		function = "uart1";
++		drive-strength = <8>;
++		bias-pull-up;
++	};
+ };
+ 
+ &uart1 {
+-	pinctrl-0 = <&uart1_pins>;
++	pinctrl-0 = <&uart1_tx_state>, <&uart1_rx_state>;
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+index 7a7ad700a382..e190c43c1b11 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+@@ -262,13 +262,6 @@ tlmm: pinctrl@1000000 {
+ 			gpio-ranges = <&tlmm 0 0 50>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+-
+-			uart1_pins: uart1-state {
+-				pins = "gpio43", "gpio44";
+-				function = "uart1";
+-				drive-strength = <8>;
+-				bias-pull-up;
+-			};
+ 		};
+ 
+ 		gcc: clock-controller@1800000 {
+
+base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
+-- 
+2.34.1
+
 
