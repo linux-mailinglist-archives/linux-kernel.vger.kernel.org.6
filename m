@@ -1,137 +1,133 @@
-Return-Path: <linux-kernel+bounces-557422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CE0A5D8BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:58:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CAA8A5D8BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:59:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C3D016F8F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:58:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 298463A49C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C237236A8B;
-	Wed, 12 Mar 2025 08:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168AD236A73;
+	Wed, 12 Mar 2025 08:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FdPUjpQA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IrW9BSEU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E31236A68;
-	Wed, 12 Mar 2025 08:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712B322A7E9;
+	Wed, 12 Mar 2025 08:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741769896; cv=none; b=LDN5w4y4cgwSfbGQWeWxSlyovkgyqHsAgJgbE6zOet+N8IUWl4Q0s0UeXh0G+uvqGAzU3McAwXnX4b3TSsINU31/YtjAXMwn58dnZqLp3GbgCK8ib+g7OJSQf5sBpo/sSzU93wGOi4hzqa7Alq0EFVJ5XTm9PhdUikwGMS+Oawk=
+	t=1741769960; cv=none; b=OPZG0Fy1l0/j0KfF+YtVPMfvNnrfzhGNB3q0tyAZcJaHhpox/ibZHhkezKEED1/hZ94Movtv3McnB4FpyZyWQkqt+y/Ne6MawwJhfhSiOf7IjzbnmIPSsva1yzwysob/xTCySpHjQgSt/c9EGzp/C/LKI4dqTQnJcRGW6rBxnaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741769896; c=relaxed/simple;
-	bh=HttexNxW0KtxV4sJ29IXJAlxzJTo/xsJm31W440ao9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dy7ZBnBoarl+/ixpjnhlLPCwiPVipIzPD3k2W2OATaAuEN15o5WY/D2vmxe4/UF1fMts7GbOcTwJs+W44422iL7+VuZIpt57t7XwtXFjt49VcWxAe/rPojMcoget4QA9Fxj8fEQdAPZZYGH+djcl1QathAI2fRiOn6o6+ELEytY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FdPUjpQA; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741769895; x=1773305895;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HttexNxW0KtxV4sJ29IXJAlxzJTo/xsJm31W440ao9w=;
-  b=FdPUjpQAbK7rAoHy+AnxNXMAzZ6p9RMqzJVR05iYNvmdLTd9SnQpBiem
-   MdZPfbg5PqfhIp1oZfj0el78uNHDWjnTx13vn8+UD47zb81RZ7OXeRzJS
-   w44EM4qg9AwQFZG9cpCexnnvx7lxrWal27dwJMNGdzUVIQwmMqQh7de23
-   YR/QZIcCN3kABHJdp2B9hfXvmPsCsL+eNs9afN7CnSe/Iibo6JxaI+EzN
-   1RicCcYgfTUUsY8gYWiv3HvkThouDwmeE0tjzFv+B6OmYJFvNWI5G/3nb
-   jxl9pZ9Eymg2txTtDxojy6TL9NdRONB/khe3uLhpnqDaVF3mi5GG6zAep
-   A==;
-X-CSE-ConnectionGUID: c3sa/YkuRQmE7c17cBFpgw==
-X-CSE-MsgGUID: Ad2R05TKQLyuWpzAtzgTSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="45618593"
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="45618593"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 01:58:14 -0700
-X-CSE-ConnectionGUID: UzbWyRTKQ0+krqIOMX7qPw==
-X-CSE-MsgGUID: UBs0sv0gTUSLN+/Dr7g3Ww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="121475893"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 12 Mar 2025 01:58:09 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tsHug-0008Im-0k;
-	Wed, 12 Mar 2025 08:58:06 +0000
-Date: Wed, 12 Mar 2025 16:57:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: steven chen <chenste@linux.microsoft.com>, zohar@linux.ibm.com,
-	stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
-	roberto.sassu@huawei.com, eric.snowberg@oracle.com,
-	ebiederm@xmission.com, paul@paul-moore.com, code@tyhicks.com,
-	bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
-	kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, madvenka@linux.microsoft.com,
-	nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
-	bhe@redhat.com, vgoyal@redhat.com, dyoung@redhat.com
-Subject: Re: [PATCH v9 4/7] ima: kexec: define functions to copy IMA log at
- soft boot
-Message-ID: <202503121600.IMBKp2gC-lkp@intel.com>
-References: <20250304190351.96975-5-chenste@linux.microsoft.com>
+	s=arc-20240116; t=1741769960; c=relaxed/simple;
+	bh=IKNcjZBYeAxkRhWSJBPJs/lzHdI4VhmT0PC6QU1clQM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CKV38BImq43gF5R6NVgxOCrfcbTElU9SlLj8cgMLINvmvVnJ5Kzcd9OSxo4zvus89HmT5zMCCQWy7nLEGMKUUagzuOUTKemMp56oSMF+4ZJamJVy/fWQOAmlRusJGUYdMcme7Foi7YmF+iacx/ZKmLAQpACY1im4+1Jp23hthKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IrW9BSEU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 469C2C4CEE3;
+	Wed, 12 Mar 2025 08:59:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741769960;
+	bh=IKNcjZBYeAxkRhWSJBPJs/lzHdI4VhmT0PC6QU1clQM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IrW9BSEUC0TxrcsoX4eyTdLHK7QIQR26/ltW1TImz/p7JSKfD9wrAPp95B/ITF7RP
+	 dZf7pwGzPpVgwaRI4Dri5tnP5UfzKDp7iNGKxYqUOVoRhD4MrrLTtXx+H9benf8tbb
+	 Yn8bMyXrhNpd1VBs4M/l0N6Dn/WEeOUzto2ssBPWL4+jIt/ag1Mm+yAQl1qTWtFBD8
+	 +iDwpuooGCpAD/nnc8Vv8xfFVofjoCSLmpAOX70sUni9EZQuwhGUOpPIGZhXrXkn3G
+	 saQAvwbbiMd2NbHSqmslOugPhGMu9wGXoDo8G72vjW25LXDE7xKNk8VpBkNewEBd0Q
+	 KbMbDow1lxS2Q==
+Received: from 82-132-232-216.dab.02.net ([82.132.232.216] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tsHvp-00Cnoj-Sg;
+	Wed, 12 Mar 2025 08:59:18 +0000
+Date: Wed, 12 Mar 2025 08:59:15 +0000
+Message-ID: <87plim7hgc.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	qperret@google.com,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v3 2/3] KVM: arm64: Distinct pKVM teardown memcache for stage-2
+In-Reply-To: <20250307113411.469018-3-vdonnefort@google.com>
+References: <20250307113411.469018-1-vdonnefort@google.com>
+	<20250307113411.469018-3-vdonnefort@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304190351.96975-5-chenste@linux.microsoft.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 82.132.232.216
+X-SA-Exim-Rcpt-To: vdonnefort@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi steven,
+On Fri, 07 Mar 2025 11:34:10 +0000,
+Vincent Donnefort <vdonnefort@google.com> wrote:
+> 
+> In order to account for memory dedicated to the stage-2 page-tables, use
+> a separated memcache when tearing down the VM.
+> 
+> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> 
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 12691ae23d4c..ace3969e8106 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -246,6 +246,7 @@ typedef unsigned int pkvm_handle_t;
+>  struct kvm_protected_vm {
+>  	pkvm_handle_t handle;
+>  	struct kvm_hyp_memcache teardown_mc;
+> +	struct kvm_hyp_memcache stage2_teardown_mc;
+>  	bool enabled;
+>  };
+>  
+> diff --git a/arch/arm64/kvm/hyp/nvhe/pkvm.c b/arch/arm64/kvm/hyp/nvhe/pkvm.c
+> index 3927fe52a3dd..15f8d5315959 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/pkvm.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/pkvm.c
+> @@ -678,7 +678,7 @@ teardown_donated_memory(struct kvm_hyp_memcache *mc, void *addr, size_t size)
+>  
+>  int __pkvm_teardown_vm(pkvm_handle_t handle)
+>  {
+> -	struct kvm_hyp_memcache *mc;
+> +	struct kvm_hyp_memcache *mc, *stage2_mc;
+>  	struct pkvm_hyp_vm *hyp_vm;
+>  	struct kvm *host_kvm;
+>  	unsigned int idx;
+> @@ -706,7 +706,8 @@ int __pkvm_teardown_vm(pkvm_handle_t handle)
+>  
+>  	/* Reclaim guest pages (including page-table pages) */
+>  	mc = &host_kvm->arch.pkvm.teardown_mc;
+> -	reclaim_guest_pages(hyp_vm, mc);
+> +	stage2_mc = &host_kvm->arch.pkvm.stage2_teardown_mc;
+> +	reclaim_guest_pages(hyp_vm, stage2_mc);
 
-kernel test robot noticed the following build warnings:
+This looks odd. What counts as stage-2 pages here? Or is it that
+reclaim_guest_pages() is very badly named?
 
-[auto build test WARNING on zohar-integrity/next-integrity]
-[also build test WARNING on linus/master v6.14-rc6 next-20250311]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/steven-chen/ima-copy-only-complete-measurement-records-across-kexec/20250305-031719
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-patch link:    https://lore.kernel.org/r/20250304190351.96975-5-chenste%40linux.microsoft.com
-patch subject: [PATCH v9 4/7] ima: kexec: define functions to copy IMA log at soft boot
-config: powerpc64-randconfig-r133-20250312 (https://download.01.org/0day-ci/archive/20250312/202503121600.IMBKp2gC-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250312/202503121600.IMBKp2gC-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503121600.IMBKp2gC-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   security/integrity/ima/ima_kexec.c:107:30: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned short [addressable] [assigned] [usertype] version @@     got restricted __le16 [usertype] @@
-   security/integrity/ima/ima_kexec.c:107:30: sparse:     expected unsigned short [addressable] [assigned] [usertype] version
-   security/integrity/ima/ima_kexec.c:107:30: sparse:     got restricted __le16 [usertype]
-   security/integrity/ima/ima_kexec.c:108:28: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned long long [addressable] [assigned] [usertype] count @@     got restricted __le64 [usertype] @@
-   security/integrity/ima/ima_kexec.c:108:28: sparse:     expected unsigned long long [addressable] [assigned] [usertype] count
-   security/integrity/ima/ima_kexec.c:108:28: sparse:     got restricted __le64 [usertype]
-   security/integrity/ima/ima_kexec.c:109:34: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned long long [addressable] [assigned] [usertype] buffer_size @@     got restricted __le64 [usertype] @@
-   security/integrity/ima/ima_kexec.c:109:34: sparse:     expected unsigned long long [addressable] [assigned] [usertype] buffer_size
-   security/integrity/ima/ima_kexec.c:109:34: sparse:     got restricted __le64 [usertype]
->> security/integrity/ima/ima_kexec.c:209:23: sparse: sparse: symbol 'update_buffer_nb' was not declared. Should it be static?
-
-vim +/update_buffer_nb +209 security/integrity/ima/ima_kexec.c
-
-   208	
- > 209	struct notifier_block update_buffer_nb = {
-   210		.notifier_call = ima_update_kexec_buffer,
-   211		.priority = 1,
-   212	};
-   213	
+	M.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Without deviation from the norm, progress is not possible.
 
