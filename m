@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-557656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D22A5DC12
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:57:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6177A5DC14
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:57:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08FBC3B3602
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:56:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3EDF17A2D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFEF243370;
-	Wed, 12 Mar 2025 11:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F3D24397A;
+	Wed, 12 Mar 2025 11:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="cbeP0VEi"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="dx/65MS1"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F1324061F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5293B243376
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741780586; cv=none; b=mJTtiKB2FON491eBC131+2fwXOrY0eQkdS1zZbW2zoauOgWCGaOFqqFOVUbOkJ13ubqOBkr0WbwhpU2r+xpwXLnVPcRJ19jst9Kpip9gR8GUL7WHDq8JAfkaCVnM/ftz4taq2F57/qBSbS1gscH2vR111e4hKiHnqk7b+LGsCCI=
+	t=1741780590; cv=none; b=gXwT3nd/rqINCKL5ZHsGRf5CBFCnKTKXJ/Ab4/X/ewzkLMaNsz6ze25XFVnOmCVLwtROMALdQ5XdPBHJCcb5oXOHrHW89PR5GlD+5fXHmKrWzZDcN3U6+2ue3ALyinnoXrRDcwMbVWMkm0gR2K0eX4+dVbFzMwQe6wvg+d/0nGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741780586; c=relaxed/simple;
-	bh=T5ZrCuiwP99CKRJiyuMFvbhV9YXqT9moZhal0ysaEVQ=;
+	s=arc-20240116; t=1741780590; c=relaxed/simple;
+	bh=4v1s/durCkfELOZpL2W2ey0P23M5dti6CGsoLaBi280=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=R8WwGonIyXO6cFVoMHpdg6pxCgtejbyX7g63il2baAvf5O45jZVOFVJ7Wx4fxLEGvQvs18EKNGyDlKBHzTkd9zSw0bUgOIhKAx0ojKA1NtsRykVFF6+5StpP5VHwpFjRRqPPIPp4bB11CrcoY/JKYsMTL49aI9YUBZsji8DIWOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=cbeP0VEi; arc=none smtp.client-ip=209.85.214.180
+	 In-Reply-To:To:Cc; b=hqQlwJSjQ3ipCU66Ijk4B/4WCAycX3+a80pPQXP+qZUJjIB/k1M24/bFX6oy525My557+qIrAqEbho1GxcJOE+cl2YaCig7tKoUZGjLPEvU1y4jNbeNXQKOOSUzHKpIbog7RDKwGPn5GwjIbciXUagG4AjVh/fpywVEYFW974Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=dx/65MS1; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-225b5448519so4565615ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:56:24 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2240b4de12bso35933215ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:56:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741780584; x=1742385384; darn=vger.kernel.org;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741780588; x=1742385388; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LSsGsr3kAuFxcrtpSfRGA99t0k+DUOp8ehJUjKxyPeQ=;
-        b=cbeP0VEiezbAB3Y9Q8tV0xu/6MbjYoL/lvGCt3dcx88xeuneEEQ/B8Tcc8VRC08NbI
-         8X4dREl5viuiEwQcrQA16Awx95ahmqL1RzXlenGrOgsi/x8gpcWybz29fGKvzAy6RVX/
-         TM7LMhuM1vAXMXcyNU6ykHjSyjiQnoHmdc+WO5Y2gTWrdpEISFvcU/wLqbLf51CSoxpb
-         ux2KQbmbGf4/vx0zPPEuj4tEpNdyCv3yW+4+e/GDduqKT4OUTqCYdXXYuPifUFf5Bbrr
-         nuKnSdLONyk+OnOc6aqMXJ2AC4xNwiXLhlTobYp19NW+e9civkQp92s7uu3tYg5Bv6oD
-         xg1g==
+        bh=batJW7N99udsH5or2fGgRKZ12NqGfXHTrvw8DYDS8OY=;
+        b=dx/65MS1Ffjus05hWhBIKH4qVPJdYGygxxgbHUHZHStOt1li5mSeuxsy7sGk6ErF4O
+         8z6VnyDKcOZ3qZhE3oxCouI9M/Z6raZ2clFLd1OHZJ3+aEz/seWh5g9WFK51WbaCoLNf
+         wKsW2tMCHYJ4AnQEMptbwHmHEq9+yexf8veHibo6JWRGDS1OBABnp3rEaC48r8+AOyYF
+         wfFVNCFkn2lWYYI3WaeHoISzAfbADXx+KSavj6rC4ael56T8u16pm9zeUlZEe0u5PKhe
+         thC+HPyrVyzF5makbgTWBSj3Nl0bEKBCS+77CjZLm6n1O3hgtKRKQ/fa2lkqxtyAMEZ7
+         i/mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741780584; x=1742385384;
+        d=1e100.net; s=20230601; t=1741780588; x=1742385388;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LSsGsr3kAuFxcrtpSfRGA99t0k+DUOp8ehJUjKxyPeQ=;
-        b=MYguunEV94be/nW3RyjAJOUP0MLtSKBdI4Jl4M0z+LSK50sT5okjbTaVfDF+u6yzpI
-         ma0UNvZp0eW5GyqFIXyf+SLN9JaoRSCXyO6uu2DW7AvSkQ/D5hCFzhPF5yIefqVOqO3q
-         PuIW37PLewqAqmbO04MiQuX3Up4VCPgy8MEKXvqDTl+tJlbQZT1EZo/1hcrK3ZXpl6WW
-         bHRy40GJGpSwdDoD87ttEHZ1bhbRyjJa+pB+TNiEG3qz0Tc1r/KK3c1lkH5BqNfd3r7x
-         CUc60tlaEuyhtFDJ9ZoSxVqhfbTBKScIdDf4DOktIGgUdwG8gbYPe8C57rc04w+jfJ++
-         kA3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWxtGgy5lWrYmtmnGnrVdDgyiUwBP7JOqaQZk5kMTtEMzSmrItz8TUsQOh4BQVADyaKjuHCtdQc14tVoRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx68Iq2OJlPH96nAxZBN366mnTkIGK7oKt2OossTvkr2PVQDKc3
-	zoDGOzfpoqcbfsDnYmow+FUa4AHawRmbAvqHjMSRgpCe2x1lPK+YQJc5sjt3Q5I=
-X-Gm-Gg: ASbGncsnMSpwyWXwKouPXBPlGU7Fv2OaBoPdUgSvTIU9yXsdS7/7n37yC0iJFoyfmKy
-	XbS24151msJAWq6+g+46mdTRe4ArALHboeGXLS8LDBhERsK7l+SoqY5oIeAlBjKNOCipJVg1gmu
-	2lr+C1E1rWEqlTebBmkprHfQ1lfDjapFNrYVPm0Vh7AxpZPUzaw4ufTRVzmMsY5Q/GOJcuf6Ku/
-	N/ILNIceftYtkLT/iFyMTSnzDhlv/AyNgJ2syCqWppu75ZqnAdg0TiW2mA0/C6mQlVrFnjEpxH4
-	jMP89fvdR1NGg+zE1ga9yKSd5hA+Me2h3PtokBfn4dfJZrW66TsAAjeNOJE=
-X-Google-Smtp-Source: AGHT+IEySYB2KOvAVkEbdUGCk7PaLmynA5DtA3ifevnpQFe/NSoQ7IgcTUmRgz4PK00aGrJKKcPhDQ==
-X-Received: by 2002:a05:6a00:8e09:b0:736:ff65:3fcc with SMTP id d2e1a72fcca58-736ff65443emr3402126b3a.16.1741780584028;
-        Wed, 12 Mar 2025 04:56:24 -0700 (PDT)
+        bh=batJW7N99udsH5or2fGgRKZ12NqGfXHTrvw8DYDS8OY=;
+        b=a4S0xVb2dbgMV3bE3VauFIELClGtZA0z+DcmcykjxybC2RQVNcDdX9HM3o2mCOhpjY
+         HXJxNvwBVFW39I4Z6GdH4zkOVQMGdadJA10IZilEm8s4UbQgOvsdzD1Lk2eF1xGJCg/E
+         jZmEDbBrfQG8IBOb3Tv91UqitM+jA3Rv4WBbF11MuNNyx6Wiq8Aeo5O8eYfmwh0hbdeL
+         gdS/IuMG5+yxUk3YIrLrWtsaXFQRlUg7HW6DiQMum5AZmag2yOsrDQY6N434Qly27OxD
+         EwdeFujJzlyg4Dq4+LC6Qy6NyxcC706Mz/9T84wKeUXAixW5tcQUKCIdLRYsJlrtR1j8
+         yXog==
+X-Forwarded-Encrypted: i=1; AJvYcCXlKrWDrArzB+8+zozONUT6GbK66chTTfBBLyMqwx1RQn92jvYCxtakIqfEzCz2/9ovo6yOEFm68GFmQZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzczgSBsXYZkND5tC+fyJ70wlBDC61fWgAFvg9VqiTBlYJ6oJdN
+	fdsHzAS5guFu/qMeszva2vsdaiY5u97CmcIo/ILiu1Ss22rW23gW3/ijnyYK1zE=
+X-Gm-Gg: ASbGncs6XGUl+su/5OA+SNHxYYZYurpdfvYdk8jCLldnOzG++PAUGwknuXEhto2Dgin
+	7wiBy2LugPDcq5qW5E9vQUf7c4UnTepsRysmzI1aL1XKfYzkgvdaHZ7C2VzuXpGP0HfHE5KJu1R
+	AiKPkYzF9NNU5/oIMWNc+UOlfZ6N8V6NM4z8e9LVZcvEmFdDBw6Kg06fWk9y9wxUkBa24w7UqR5
+	l2yPGtjcJPL95phIQteE5aADNOui7u1LK3J7w6KJlvjRyEcnygfbwvL5zztgU3oQQJO5HBtUoE4
+	Rg774oVIrop2FEfaEZ5uLf/jt9l1KO00TGSuN+JYYQbyvc3m
+X-Google-Smtp-Source: AGHT+IFrXL/c2aUmiggWa0jbXOlzV9E33S5G3t7pznZh6+1oFT+Cw3t/yJk10DJ41f3H26UTFexAtg==
+X-Received: by 2002:a17:903:40cb:b0:21f:85ee:f2df with SMTP id d9443c01a7336-2242888adfemr319563085ad.15.1741780588669;
+        Wed, 12 Mar 2025 04:56:28 -0700 (PDT)
 Received: from localhost ([157.82.205.237])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736b7bb0bf2sm9336341b3a.42.2025.03.12.04.56.21
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22410aa457csm114113705ad.212.2025.03.12.04.56.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 04:56:23 -0700 (PDT)
+        Wed, 12 Mar 2025 04:56:28 -0700 (PDT)
 From: Akihiko Odaki <akihiko.odaki@daynix.com>
-Date: Wed, 12 Mar 2025 20:55:57 +0900
-Subject: [PATCH v3 3/6] KVM: arm64: PMU: Fix SET_ONE_REG for vPMC regs
+Date: Wed, 12 Mar 2025 20:55:58 +0900
+Subject: [PATCH v3 4/6] KVM: arm64: PMU: Reload when user modifies
+ registers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250312-pmc-v3-3-0411cab5dc3d@daynix.com>
+Message-Id: <20250312-pmc-v3-4-0411cab5dc3d@daynix.com>
 References: <20250312-pmc-v3-0-0411cab5dc3d@daynix.com>
 In-Reply-To: <20250312-pmc-v3-0-0411cab5dc3d@daynix.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
@@ -95,117 +96,73 @@ Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
  Akihiko Odaki <akihiko.odaki@daynix.com>
 X-Mailer: b4 0.15-dev-edae6
 
-Reload the perf event when setting the vPMU counter (vPMC) registers
-(PMCCNTR_EL0 and PMEVCNTR<n>_EL0). This is a change corresponding to
-commit 9228b26194d1 ("KVM: arm64: PMU: Fix GET_ONE_REG
-for vPMC regs to return the current value") but for SET_ONE_REG.
+Commit d0c94c49792c ("KVM: arm64: Restore PMU configuration on first
+run") added the code to reload the PMU configuration on first run.
 
-Values of vPMC registers are saved in sysreg files on certain occasions.
-These saved values don't represent the current values of the vPMC
-registers if the perf events for the vPMCs count events after the save.
-The current values of those registers are the sum of the sysreg file
-value and the current perf event counter value.  But, when userspace
-writes those registers (using KVM_SET_ONE_REG), KVM only updates the
-sysreg file value and leaves the current perf event counter value as is.
+It is also important to keep the correct state even if system registers
+are modified after first run, specifically when debugging Windows on
+QEMU with GDB; QEMU tries to write back all visible registers when
+resuming the VM execution with GDB, corrupting the PMU state. Windows
+always uses the PMU so this can cause adverse effects on that particular
+OS.
 
-It is also important to keep the correct state even if userspace writes
-them after first run, specifically when debugging Windows on QEMU with
-GDB; QEMU tries to write back all visible registers when resuming the VM
-execution with GDB, corrupting the PMU state. Windows always uses the
-PMU so this can cause adverse effects on that particular OS.
+The usual register writes are already handled independently, but
+register writes from userspace and ones for reset are not covered.
+Trigger the code to reload the PMU configuration in these code paths
+instead so that PMU configuration changes made by users will be applied
+also after the first run.
 
-Fix this by releasing the current perf event and trigger recreating one
-with KVM_REQ_RELOAD_PMU.
-
-Fixes: 051ff581ce70 ("arm64: KVM: Add access handler for event counter register")
 Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
 ---
- arch/arm64/kvm/pmu-emul.c | 13 +++++++++++++
- arch/arm64/kvm/sys_regs.c | 20 +++++++++++++++++++-
- include/kvm/arm_pmu.h     |  1 +
- 3 files changed, 33 insertions(+), 1 deletion(-)
+ arch/arm64/kvm/pmu-emul.c | 3 ---
+ arch/arm64/kvm/sys_regs.c | 6 ++++++
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
-index 3e5bf414447f..1cfe53b6353e 100644
+index 1cfe53b6353e..78cfa8b0964d 100644
 --- a/arch/arm64/kvm/pmu-emul.c
 +++ b/arch/arm64/kvm/pmu-emul.c
-@@ -185,6 +185,19 @@ void kvm_pmu_set_counter_value(struct kvm_vcpu *vcpu, u64 select_idx, u64 val)
- 	kvm_pmu_set_pmc_value(kvm_vcpu_idx_to_pmc(vcpu, select_idx), val, false);
- }
+@@ -862,9 +862,6 @@ int kvm_arm_pmu_v3_enable(struct kvm_vcpu *vcpu)
+ 		   return -EINVAL;
+ 	}
  
-+/**
-+ * kvm_pmu_set_counter_value_user - set PMU counter value from user
-+ * @vcpu: The vcpu pointer
-+ * @select_idx: The counter index
-+ * @val: The counter value
-+ */
-+void kvm_pmu_set_counter_value_user(struct kvm_vcpu *vcpu, u64 select_idx, u64 val)
-+{
-+	kvm_pmu_release_perf_event(kvm_vcpu_idx_to_pmc(vcpu, select_idx));
-+	__vcpu_sys_reg(vcpu, counter_index_to_reg(select_idx)) = val;
-+	kvm_make_request(KVM_REQ_RELOAD_PMU, vcpu);
-+}
-+
- /**
-  * kvm_pmu_release_perf_event - remove the perf event
-  * @pmc: The PMU counter pointer
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index 6e75557bea1d..26182cae4ac7 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -1035,6 +1035,22 @@ static int get_pmu_evcntr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
+-	/* One-off reload of the PMU on first run */
+-	kvm_make_request(KVM_REQ_RELOAD_PMU, vcpu);
+-
  	return 0;
  }
  
-+static int set_pmu_evcntr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
-+			  u64 val)
-+{
-+	u64 idx;
-+
-+	if (r->CRn == 9 && r->CRm == 13 && r->Op2 == 0)
-+		/* PMCCNTR_EL0 */
-+		idx = ARMV8_PMU_CYCLE_IDX;
-+	else
-+		/* PMEVCNTRn_EL0 */
-+		idx = ((r->CRm & 3) << 3) | (r->Op2 & 7);
-+
-+	kvm_pmu_set_counter_value_user(vcpu, idx, val);
-+	return 0;
-+}
-+
- static bool access_pmu_evcntr(struct kvm_vcpu *vcpu,
- 			      struct sys_reg_params *p,
- 			      const struct sys_reg_desc *r)
-@@ -1309,6 +1325,7 @@ static int set_pmcr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
- #define PMU_PMEVCNTR_EL0(n)						\
- 	{ PMU_SYS_REG(PMEVCNTRn_EL0(n)),				\
- 	  .reset = reset_pmevcntr, .get_user = get_pmu_evcntr,		\
-+	  .set_user = set_pmu_evcntr,					\
- 	  .access = access_pmu_evcntr, .reg = (PMEVCNTR0_EL0 + n), }
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index 26182cae4ac7..307ce37d0434 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -1143,6 +1143,7 @@ static bool access_pmu_evtyper(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+ static int set_pmreg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r, u64 val)
+ {
+ 	__vcpu_sys_reg(vcpu, r->reg) = val & kvm_pmu_valid_counter_mask(vcpu);
++	kvm_make_request(KVM_REQ_RELOAD_PMU, vcpu);
+ 	return 0;
+ }
  
- /* Macro to expand the PMEVTYPERn_EL0 register */
-@@ -2665,7 +2682,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 	  .access = access_pmceid, .reset = NULL },
- 	{ PMU_SYS_REG(PMCCNTR_EL0),
- 	  .access = access_pmu_evcntr, .reset = reset_unknown,
--	  .reg = PMCCNTR_EL0, .get_user = get_pmu_evcntr},
-+	  .reg = PMCCNTR_EL0, .get_user = get_pmu_evcntr,
-+	  .set_user = set_pmu_evcntr },
- 	{ PMU_SYS_REG(PMXEVTYPER_EL0),
- 	  .access = access_pmu_evtyper, .reset = NULL },
- 	{ PMU_SYS_REG(PMXEVCNTR_EL0),
-diff --git a/include/kvm/arm_pmu.h b/include/kvm/arm_pmu.h
-index 28b380ad8dfa..9c062756ebfa 100644
---- a/include/kvm/arm_pmu.h
-+++ b/include/kvm/arm_pmu.h
-@@ -41,6 +41,7 @@ bool kvm_supports_guest_pmuv3(void);
- #define kvm_arm_pmu_irq_initialized(v)	((v)->arch.pmu.irq_num >= VGIC_NR_SGIS)
- u64 kvm_pmu_get_counter_value(struct kvm_vcpu *vcpu, u64 select_idx);
- void kvm_pmu_set_counter_value(struct kvm_vcpu *vcpu, u64 select_idx, u64 val);
-+void kvm_pmu_set_counter_value_user(struct kvm_vcpu *vcpu, u64 select_idx, u64 val);
- u64 kvm_pmu_valid_counter_mask(struct kvm_vcpu *vcpu);
- u64 kvm_pmu_get_pmceid(struct kvm_vcpu *vcpu, bool pmceid1);
- void kvm_pmu_vcpu_init(struct kvm_vcpu *vcpu);
+@@ -1303,6 +1304,8 @@ static int set_pmcr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
+ 		val |= ARMV8_PMU_PMCR_LC;
+ 
+ 	__vcpu_sys_reg(vcpu, r->reg) = val;
++	kvm_make_request(KVM_REQ_RELOAD_PMU, vcpu);
++
+ 	return 0;
+ }
+ 
+@@ -4259,6 +4262,9 @@ void kvm_reset_sys_regs(struct kvm_vcpu *vcpu)
+ 	}
+ 
+ 	set_bit(KVM_ARCH_FLAG_ID_REGS_INITIALIZED, &kvm->arch.flags);
++
++	if (kvm_vcpu_has_pmu(vcpu))
++		kvm_make_request(KVM_REQ_RELOAD_PMU, vcpu);
+ }
+ 
+ /**
 
 -- 
 2.48.1
