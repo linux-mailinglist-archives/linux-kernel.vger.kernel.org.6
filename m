@@ -1,46 +1,78 @@
-Return-Path: <linux-kernel+bounces-557301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 008F9A5D6D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:08:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C93A5D6DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:11:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C80189C58D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:08:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352FA169F57
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B641B1EB186;
-	Wed, 12 Mar 2025 07:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71571E9B00;
+	Wed, 12 Mar 2025 07:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="C6+vpoH2"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919011E9B34;
-	Wed, 12 Mar 2025 07:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E9e6J/Zt"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D4B1E5B89
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741763273; cv=none; b=QOOHp6Gjj7LQiqcHqolDkIUbALbJd4E6TJSKi4mFGl3YG5w3jwnqHQw40BPjV13q/LHq8Sf0/GZZ8joFY73jOLwEND9O6fwlo6gys+HJL8IvI1eylmJmhc2Pa0f/IHqjazy/zz8+8CrYa94bVTq6yHo3OSseBV9btODTim6DzTg=
+	t=1741763481; cv=none; b=lPJg8fJyPI0j6jwgZoSa7O2G9XFU9fQ4C+a+wsUaFjefTC7dTsGz5SH+KniOm2mKaut/2aPl5SVgIb5Hqiy6ND+ZEiPqPwlInsiUWwTpOKeBXQqLo/Wuu76jZVa5kXp/QBgulIeRkxHIJr0dzn8H0fJUbHOjz2jnXEqK4BBqlhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741763273; c=relaxed/simple;
-	bh=p+8NQyptigK6LSXRY0dhiA9xz9BOW4cmtkxmZpnpj7I=;
+	s=arc-20240116; t=1741763481; c=relaxed/simple;
+	bh=e7YGaKCY83HR3H/M3ccJe04aTUf4UGlWCN3ibpzLC2U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dGEgqRlm7SkrV0WrMAv0Q5HJZ3XNpxzspsXpZNG/cSouhGphCahnT/HSnHjTGzAjgIeHhx9y1+XNGyrw2scxSr5tGAmPSDmF189icJSywMQi24B47U12RHeOhT0HuMPQ/WXPnbZzBaI9bvocg61cIii98dBzA4Mnj4cQzkt3gZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=C6+vpoH2; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.162.36] (unknown [4.194.122.162])
-	by linux.microsoft.com (Postfix) with ESMTPSA id EB7A72045FF0;
-	Wed, 12 Mar 2025 00:07:45 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EB7A72045FF0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741763270;
-	bh=K3+hbNRBuhKGQ5kI6/gUAGXIu2sJtNpSgo5MWwBx36U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=C6+vpoH24BuGgZQRrJkibK/XKfmr0bbe6cDCHyiYXPah3Ft4OZuDr3XzRlzbmgNqi
-	 mE3NC1MT8rR7rqVVvO7gj1AxydY5rD9896Rw9dXwJPMuw51sGpMFZXXCU1gey96IHu
-	 J79bVD0hIrtThp7q4mr9iG9Q58avOdnKaBvb3v6g=
-Message-ID: <16004c77-de73-4208-9a10-feee7225e738@linux.microsoft.com>
-Date: Wed, 12 Mar 2025 12:37:43 +0530
+	 In-Reply-To:Content-Type; b=JBBHOg6xixn3/LR28U5vHNprCsIzpqbmd9ldDZVZFKXbw6UW0IvNGMnUfgqZXVncItyypfODR+yp9Dnyt3dTQTVMaz88wDiwyatn4kG3JeCZeTJuIytJ0myT22N45fLtpbG4/B9Kf0R5azVBBWyYVhkV3RszmOpFljVsZlnSXpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E9e6J/Zt; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so7517895e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:11:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741763478; x=1742368278; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5JQMc0JK4aWXwOcpwJILt54UlEg8yqOSNknC98xAh/4=;
+        b=E9e6J/ZtA0EFW+uH1BMp3I45Kvca4Cd+I4nwGuysQjsWBlyxxDe+J21idiZ8mubCvq
+         diDIntsZ6hBPcS36kGkCfT+9TR71SQx5AHwKrGzh7g3StH99XncP7aGhNqduq2zfa/3O
+         Ie3prybwpUrw5P6i8OCz0yIqwk+AcjAeRg7PrBhxKNdidvHgoNWJSMIX55NgT9I+aIZB
+         3CGjxRRbGy0jFBGKBnfXNQuE80zCy8C2hOoQ2w6KHgjKw97gQd1RT7plLEWkxBiRO5wM
+         niDZYaKLy63P5ZJQAu+Yx9CSwNebwn5XdRvcgZEWebTFwaZq1XJ7Imv4qKhpuC5HHJVQ
+         Cmrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741763478; x=1742368278;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5JQMc0JK4aWXwOcpwJILt54UlEg8yqOSNknC98xAh/4=;
+        b=BceW/1LFNFtRUGDMzDDAz1QSYsHS2DMPF/XggAAgPVNubHutzNRE4iefau7OUbnhNF
+         nqxjDV6KlhiSh89QTO9RHxmTbLqgqTRSxHYYhNhyFmw0jOWNWoAAeB3/LnSG2mvOe2NA
+         E6QdPwsA1JNQnNzLPxDJFxIX9nUS/e0KiceyRj8NYFPrGMcV60930VCnn6okYMWDGLpr
+         v3tBN1qTaV+poBUDX7pGsqogQ/a52u28zA08FZiq6wO8hL6vqjNv0lAlbtNra7Ri3DGd
+         R1sG8sFwTk7w3NS91iVCaFNk2o/3MsecPkKw2xg/NuKQriMVhHMqT7TDTc6Azw1x1Pxf
+         7cqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFYVig9BitfjO+6GCFAqCSuAvkQXdHrICVIx30IZ4V2/b+g55M1+m00CvekXjot+MKuQGV3FuJOTrN62s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAfB/HRUIvI2T92T5F2LXcDrAutQiSb2yTRW08yHDvjq7hl85s
+	YYRgVNOrbhxWUtrumWXs7K/60c344Ie/1G6Uq/lu/+oTRiUMXVhJD0KHBxJ3MhI=
+X-Gm-Gg: ASbGncsvgAjYjQ8iqkt5g4EqZVvLeAv2ea2G+be0DIjRkrQVAwHCEXRPaTibNx6FQ1V
+	q3zy0ya/QmRuhB+8JoxdWGK3hQOlbrQ49q14cvjDTt4mcLlWJsFy5aPfd0lZsy9DD1mb/8wsL+W
+	qkGnah8MFpUqSuaQCxBLuXY2fngF6bmvfUTF5YFXpCOVvH96F0+b/YTLdGxn2AiJLc3sznqw8B2
+	uiL+I/MMfMxT2XCR3q/6ASNvZZs8slpn+V0bVckL3N16Szx7p3Jbu/h631Id0A5kWUUjc/2oz3u
+	vZqyDzky9NB7zKC3hRfpCSSBSp7HcDJ0hLxtpNazvpdT2nvpiXMp6Q==
+X-Google-Smtp-Source: AGHT+IE7CFqZ+AbL0Q4cb87iC4MZdbphZY+v7bJCpcP2ShGQtgySl1i2tbL1wMwKn/N8LmsPbsCRyA==
+X-Received: by 2002:a05:600c:19cc:b0:43d:4e9:27ff with SMTP id 5b1f17b1804b1-43d04e92a66mr49813565e9.7.1741763469875;
+        Wed, 12 Mar 2025 00:11:09 -0700 (PDT)
+Received: from [192.168.0.14] ([79.115.63.206])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a72ec8bsm12210285e9.5.2025.03.12.00.11.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 00:11:09 -0700 (PDT)
+Message-ID: <696494b8-14e9-4b9b-bf26-2a94a915b2ec@linaro.org>
+Date: Wed, 12 Mar 2025 07:11:08 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,123 +80,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] sched/topology: Enable topology_span_sane check only
- for debug builds
-To: Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
- Steve Wahl <steve.wahl@hpe.com>,
- Saurabh Singh Sengar <ssengar@linux.microsoft.com>, srivatsa@csail.mit.edu,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- Michael Kelley <mhklinux@outlook.com>,
- Shrikanth Hegde <sshegde@linux.ibm.com>
-References: <20250310052509.1416-1-namjain@linux.microsoft.com>
- <xhsmh34fjr3av.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Subject: Re: [PATCH 3/3] firmware: samsung: add ACPM debugfs support
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: andre.draszik@linaro.org, peter.griffin@linaro.org,
+ willmcvicker@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250224-acpm-debugfs-v1-0-2418a3ea1b17@linaro.org>
+ <20250224-acpm-debugfs-v1-3-2418a3ea1b17@linaro.org>
+ <005424c2-7fb7-48db-b38c-c62f9f8b3897@kernel.org>
 Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <xhsmh34fjr3av.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <005424c2-7fb7-48db-b38c-c62f9f8b3897@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+Hi, Krzysztof,
 
+On 3/5/25 7:37 PM, Krzysztof Kozlowski wrote:
+> On 24/02/2025 09:01, Tudor Ambarus wrote:
 
-On 3/11/2025 9:02 PM, Valentin Schneider wrote:
-> On 10/03/25 10:55, Naman Jain wrote:
->> From: Saurabh Sengar <ssengar@linux.microsoft.com>
->>
->> On a x86 system under test with 1780 CPUs, topology_span_sane() takes
->> around 8 seconds cumulatively for all the iterations. It is an expensive
->> operation which does the sanity of non-NUMA topology masks.
->>
->> CPU topology is not something which changes very frequently hence make
->> this check optional for the systems where the topology is trusted and
->> need faster bootup.
->>
->> Restrict this to sched_verbose kernel cmdline option so that this penalty
->> can be avoided for the systems who want to avoid it.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap")
->> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->> Co-developed-by: Naman Jain <namjain@linux.microsoft.com>
->> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
->> ---
->> Changes since v4:
->> https://lore.kernel.org/all/20250306055354.52915-1-namjain@linux.microsoft.com/
->>        - Rephrased print statement and moved it to sched_domain_debug.
->>          (addressing Valentin's comments)
->> Changes since v3:
->> https://lore.kernel.org/all/20250203114738.3109-1-namjain@linux.microsoft.com/
->>        - Minor typo correction in comment
->>        - Added Tested-by tag from Prateek for x86
->> Changes since v2:
->> https://lore.kernel.org/all/1731922777-7121-1-git-send-email-ssengar@linux.microsoft.com/
->>        - Use sched_debug() instead of using sched_debug_verbose
->>          variable directly (addressing Prateek's comment)
->>
->> Changes since v1:
->> https://lore.kernel.org/all/1729619853-2597-1-git-send-email-ssengar@linux.microsoft.com/
->>        - Use kernel cmdline param instead of compile time flag.
->>
->> Adding a link to the other patch which is under review.
->> https://lore.kernel.org/lkml/20241031200431.182443-1-steve.wahl@hpe.com/
->> Above patch tries to optimize the topology sanity check, whereas this
->> patch makes it optional. We believe both patches can coexist, as even
->> with optimization, there will still be some performance overhead for
->> this check.
->>
->> ---
->>   kernel/sched/topology.c | 9 ++++++++-
->>   1 file changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
->> index c49aea8c1025..d7254c47af45 100644
->> --- a/kernel/sched/topology.c
->> +++ b/kernel/sched/topology.c
->> @@ -132,8 +132,11 @@ static void sched_domain_debug(struct sched_domain *sd, int cpu)
->>   {
->>        int level = 0;
->>
->> -	if (!sched_debug_verbose)
->> +	if (!sched_debug_verbose) {
->> +		pr_info_once("%s: Scheduler topology debugging disabled, add 'sched_verbose' to the cmdline to enable it\n",
->> +			     __func__);
->>                return;
->> +	}
->>
+cut
+> Please add something like above also as a comment to the driver, so the
+> interface will be documented.
+
+okay, will add.
+
+cut
+
+>> +static struct dentry *rootdir;
 > 
-> Nit: I've been told not to break warnings over multiple lines so they can
-> be grep'ed, but given this has the "sched_domain_debug:" prefix I think we
-> could get away with the below.
+> exynos-apcm.c is not a singleton, so neither should this be. You should
+> create entries per device (so with device name as subdirectory), just
+> for correctness.
 > 
-> Regardless:
-> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
+>> +
+>> +static DEFINE_MUTEX(acpm_log_level_mutex);
 > 
-> ---
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index d7254c47af455..b4dc7c7d2c41c 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -133,7 +133,8 @@ static void sched_domain_debug(struct sched_domain *sd, int cpu)
->   	int level = 0;
->   
->   	if (!sched_debug_verbose) {
-> -		pr_info_once("%s: Scheduler topology debugging disabled, add 'sched_verbose' to the cmdline to enable it\n",
-> +		pr_info_once("%s: Scheduler topology debugging disabled, "
-> +			     "add 'sched_verbose' to the cmdline to enable it\n",
->   			     __func__);
->   		return;
->   	}
+> And this also looks per-device-instance.
 
+okay, will create per device instances.
 
-Thanks for reviewing. I'll wait a couple more days to push the next
-version.
+>> +
+>> +static void acpm_log_print_entry(struct acpm_info *acpm,
+>> +				 const union acpm_log_entry *log_entry)
+>> +{
+
+cut
+
+>> +		dev_info(acpm->dev, "[ACPM_FW] : %llu id:%u, %s, %x\n", time,
+>> +			 log_entry->plugin_id, (char *)&msg, log_entry->data);
+> 
+> 
+> I don't think these should be printed to dmesg - these are not system
+> logs. You either return the contents to the caller's read() on debugfs
+> entry or, if this is anyhow crashdump related, it goes to
+> pstore/minidump once triggered. Or to ramoops.
+> 
+> Depends what these logs are (so please also explain what do you find
+> there in the commit msg).
+> 
+> Maybe something like CHROMEOS_PSTORE?
+> 
+> IOW, if enabled, this should go to ramoops/pstore unconditionally. For
+> runtime debugging this should be returned somehow to the userspace
+> reading the file. I think usually debugfs and sysfs is not expected to
+> provide more than PAGE_SIZE data, so this second part has to be
+> rethinked still.
+> 
+
+This is a logging feature, it's not oops/panic related. These logs are
+referred to as "block logs". A "block" is the start of a mailbox command
+to its end, so it logs every ACPM mailbox command issued to the
+firmware. After each end of a block, we see the state of all regulators,
+frequencies and devices up/down extracted from the block.
+
+These are indeed system logs, and using the dmesg ring buffer seems fine
+as we typically care about the recent logs, we don't care if the ring
+starts all over again.
+
+>> +DEFINE_DEBUGFS_ATTRIBUTE(acpm_log_level_fops, acpm_log_level_get,
+>> +			 acpm_log_level_set, "0%llu\n");
+> 
+> I also do not think debugfs is a knob to control loglevel of messages
+> going to dmesg.
+> 
+
+This debugfs entry controls which SRAM log ring buffers are queried -
+there are 2 SRAM buffers.
+
+I guess you thought about the "logb_gprio_level" entry, which controls
+the ACPM print verbosity. 0xf being ERR, and 0x0 all logs. The firmware
+defaults on printing all logs. I can't tell right now other way of
+controlling the logs verbosity, maybe via sysfs, but it's equivalent and
+with more restrictions. Or maybe you think that I shall always print all
+logs?
 
 Thanks,
-Naman
+ta
 
