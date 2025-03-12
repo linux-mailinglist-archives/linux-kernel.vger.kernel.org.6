@@ -1,201 +1,345 @@
-Return-Path: <linux-kernel+bounces-558268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A30B2A5E3A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:28:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 249EFA5E3A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:29:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E063AEF09
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:28:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBB93AFED6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB0A2571D0;
-	Wed, 12 Mar 2025 18:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AF8257ACF;
+	Wed, 12 Mar 2025 18:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="S0ktZkoZ"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ucb7ME/c"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B789D78F29
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741804130; cv=pass; b=oip+03ZaY94qPhDbCNHrk5WveBpRvYMxhQR1lARZFlAqlCf9Gp2Oyp58lG9iZPHmk4yegbsK1CLZIL9G+JWxMQ7AEDxRqgzhZfjusWldolfMWz4xVWlAeaIoxaDIoVOtlqrN/8+z7qWs5yRtJmUJpFrjPoOgz4Us46Zykf6wIwk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741804130; c=relaxed/simple;
-	bh=+xHvCnjCZ+v10rmplQbok74IjofpjCgNo+8oPf/K74k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JNG4/ekfo8rIKHBfLp8CxIIvsqzMULhms4jyp+QcIkzlaoacu9OftFHUFZuuHb/+ej98n5AIKV0Vnn63rW7QLFuxTVv0iOJ+goLKOXze9lDRvD234cxdAD3CNOi3jUBYHKnhwuGLDOkY6IgK52qr9MwSL6V6PEst2JFsl+/AU+g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=S0ktZkoZ; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741804103; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=AuTl1uQ1Lgw0UYkKaUhCzMG5g/ayLnb1NnDhMnl4VY7GzGvAfDqWhUfEKGxhpbnPq3kVsMFuCT1Ab94ugojneIxMujXfCj0XtFTZcu0Y6Swcpc9zXbRbWHSQCL5qfecC9c97+WXQ/U1bzhEnJNJBox33cE3S8EFQm2KKcyLwgN4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741804103; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=So2DwX+qeOx/ayzmUN8pjesq547zGA2gdrPnOyqFs1I=; 
-	b=nq6SPOwFZk/fAB2TwrZ/iWsnbMXqKQlgynsUY8FKKVcdUPnRhwgPlibU5rfSVHKOjJw6yGUpu1eBbtmrzAwDzGdv+VWgydHZFlsovhocRGKyJUm4BAeSYeziS0pxwdjoqhUvcNwRNnsYe2z6V9ZRHofgOHs9NdjC7Vq02cQKpks=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741804103;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=So2DwX+qeOx/ayzmUN8pjesq547zGA2gdrPnOyqFs1I=;
-	b=S0ktZkoZPBXkSycwes9V0xyCbmuK9LmlX+KEo4s+v8UkhqGeohyiWJQJCj1A1/sp
-	5wwb3018w3YioS6iDpvnwXDdXsGNah+nJvSoc5dhNn4tWDfjViztgLGorLgMHT7ltAO
-	74pdwclJTmwlVaU6AzU5UT33KeLGmaYkrKX2OWc4=
-Received: by mx.zohomail.com with SMTPS id 174180410138425.066715854452468;
-	Wed, 12 Mar 2025 11:28:21 -0700 (PDT)
-Message-ID: <2a6eb940-95b3-4105-8998-5ec190ddaca3@collabora.com>
-Date: Wed, 12 Mar 2025 15:28:15 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A054A156C62
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741804131; cv=none; b=fyaEwzCkjh/X9VvD2Ej4iIr82T3LLiV5ZpKbptgZkApjgov7dHotKct4POc+2N04kdzEflit4PqqqQEyUa3Yo/a2g0ar4dG5TufEgLiXq2CPR3grNyL/26MdJFNepOaGjL9mBmQ9kJ/JII5Nu+83K4UdM4QI10KJ59D3ZQFFYEc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741804131; c=relaxed/simple;
+	bh=Ngpr1p1nbTglbSpAFKZZ5TvhJkrFCBN3/OXaMil2WNo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ovowC+0JMa7rSCqGWBX9cQ/zxjGR7Te+ozfJlv3cTp2Lhj8ZWrMDgD9U9rS7IWLaa0xhOuMqaqQ0MEGq2QRbsyikPr1descvBWONBMd3kYMt7A1+Yp4XS4Q9inpmBe2MEHRfw1bIu7BU0CsR+XM8dt7JCRyiQuYPfJCDg9u3jY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ucb7ME/c; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-601c46a92d1so50670eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:28:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741804128; x=1742408928; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CHwHQMJua3klBUMulVATkOY1QanUZb02DTdOUUD5AYw=;
+        b=Ucb7ME/coS8UnKdOMVLY1EAnoxCVr9xV9XtwJeuv9tNqs08zLXrDzdRhx5UNOhkw9X
+         0FFAV04sccP3PQPQtMCOD7kP8i3fW2et34awZoXXGhgB62dE/6KCO/HjepKZtOlEEKVI
+         TnYo0YZIFVCMzZTQWSu1Se4WrJoTHXwkr3cy4DMV4XLVSism0prm+Qlog9pxhCk+H1To
+         5aXihZvSEr6cYe+wr+5dTpa10DU/8XzDJe6PdgA4+dowqb5iJZL4FjonAGqap/cewhny
+         /emKVSK3+7p1DNtbOAlvnHIqTxiXCC39f5ZBVcLPUMB94gfPft4nn6d5D2dJlj+WnatJ
+         suDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741804128; x=1742408928;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CHwHQMJua3klBUMulVATkOY1QanUZb02DTdOUUD5AYw=;
+        b=e6VnywZaMpqCH3X7ngH8F+wP05Jss4DRnk4Twh/QnwKvputx+9XK1eaud/hFOQffpe
+         nFUSL5QqLOtuc25gXhxXyuDGLY/hCIOP0HPqxVJgFnOpUIYgXPHnJXgAyfuoeEX8109J
+         v/87MBayLVoDoh3BJERXgVBn9QlUqDPJJc4cT5yb4fM1+yYmCyZWFgzkCfPlPERS/tb8
+         p+bruq3Ruc7NbjphbT+lV9QkOprIPfnJiLYpbxndV3mMxhm3kdpJI1SsU2ANfKNUIG/a
+         8KmgwMXYfq3J1OoQkrnF+F2hSvJ3gTgnkTE+HGWL+EoitsPVZuSBfFtCxn40I0u39gvF
+         Iuag==
+X-Forwarded-Encrypted: i=1; AJvYcCW/mtlLyo6wyWkZQUmgwpf9NrXqkEO1oJL+qf1DTIZc3S1ulX7tFjYGP7HeJYzHcmSUs/HO3SM5H90rNXs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6xOjtah0W0S+S2+r5RsavwrEqJnGDO7ztVdmyRFlgccfUGSDi
+	Nt3Lu5Ses10xkncseROPogteYoEriYotUeFYwZy5wYtheH1K0bPShGTMmcuHxwpMeov3X1MC4/f
+	tqo32PiHIiHwajceUTtqc2fqSWDg=
+X-Gm-Gg: ASbGncvhPrslF/HkKfbFQZpCTsb9XvuM/HULegmuCZtBbpFGB0/mxJ20WH21WooASvO
+	Ajzd7jte//QRQPoxpguC2pkqCCVNlf1/rsEqCkvvrP+1Sr2R2UZuYoLP/O7lSF1ZAON1FhNhv1k
+	RwJV2QccFHxfdTCwIaN5JEdMVbOcSJWyN04tlHK7cjFvo=
+X-Google-Smtp-Source: AGHT+IFut0Zk09cK6vm0MnorvtHXYibBHad055rpS9o3iUhWRsYEptWFMswj4MDeB58uTmXwuVz4UcQoWo32oy2j6kw=
+X-Received: by 2002:a05:6820:8c6:b0:5fc:b7f4:c013 with SMTP id
+ 006d021491bc7-6004ab16543mr9411552eaf.5.1741804128391; Wed, 12 Mar 2025
+ 11:28:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/6] drm/panfrost: Add support for AARCH64_4K page
- table format
-To: Boris Brezillon <boris.brezillon@collabora.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- kernel@collabora.com, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com
-References: <20250310195921.157511-1-ariel.dalessandro@collabora.com>
- <20250310195921.157511-5-ariel.dalessandro@collabora.com>
- <20250311090545.3b941567@collabora.com>
- <16f6a6e2-4dce-4af9-bc0a-61c4d6213f02@collabora.com>
- <20250311110520.6b79e090@collabora.com>
-Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <20250311110520.6b79e090@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+References: <20250302191558.47180-1-suchitkarunakaran@gmail.com> <e495bf9c-9fba-44ce-99fe-04879f8dd0c2@oracle.com>
+In-Reply-To: <e495bf9c-9fba-44ce-99fe-04879f8dd0c2@oracle.com>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Wed, 12 Mar 2025 23:58:37 +0530
+X-Gm-Features: AQ5f1JoaH6gJd1xzn1mzi_Gxo7sc9H-m4gHwbkfSxFM4MV4CBQqsV2opbOYzVU8
+Message-ID: <CAO9wTFgMCsS9L1PwpkDr48t9R4hO2UvFRwbPu2mMQMP0aqD+cQ@mail.gmail.com>
+Subject: Re: [PATCH] jfs: jfs_xtree: replace XT_GETPAGE macro with
+ xt_getpage() function
+To: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Boris, Angelo,
+Hi Dave,
+Thanks for the comments. I=E2=80=99m still a beginner so I wanted to share =
+my
+thoughts and check with you. Almost all references to the xt_getpage
+function directly return the rc value obtained from it. I feel that
+changing its return type to (xtpage_t *) might not be ideal, as it
+would require modifying the code in multiple places. That said, if you
+think changing the return value is the better approach, I=E2=80=99ll try to
+change it. Also, I=E2=80=99ll update struct inode** ip to struct inode* ip.
+Thanks once again.
 
-On 3/11/25 7:05 AM, Boris Brezillon wrote:
-> On Tue, 11 Mar 2025 10:14:44 +0100
-> AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> wrote:
-> 
->> Il 11/03/25 09:05, Boris Brezillon ha scritto:
->>> On Mon, 10 Mar 2025 16:59:19 -0300
->>> Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
->>>    
->>>> Currently, Panfrost only supports MMU configuration in "LEGACY" (as
->>>> Bifrost calls it) mode, a (modified) version of LPAE "Large Physical
->>>> Address Extension", which in Linux we've called "mali_lpae".
->>>>
->>>> This commit adds support for conditionally enabling AARCH64_4K page
->>>> table format. To achieve that, a "GPU optional configurations" field was
->>>> added to `struct panfrost_features` with the related flag.
->>>>
->>>> Note that, in order to enable AARCH64_4K mode, the GPU variant must have
->>>> the HW_FEATURE_AARCH64_MMU feature flag present.
->>>>
->>>> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->>>> ---
->>>>    drivers/gpu/drm/panfrost/panfrost_device.h |  16 +++
->>>>    drivers/gpu/drm/panfrost/panfrost_mmu.c    | 132 +++++++++++++++++++--
->>>>    drivers/gpu/drm/panfrost/panfrost_regs.h   |  34 ++++++
->>>>    3 files changed, 169 insertions(+), 13 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
->>>> index cffcb0ac7c111..0385702aa43c7 100644
->>>> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
->>>> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
->>>> @@ -42,6 +42,14 @@ enum panfrost_gpu_pm {
->>>>    	GPU_PM_VREG_OFF,
->>>>    };
->>>>    
->>>> +/**
->>>> + * enum panfrost_gpu_config - GPU optional configurations
->>>> + * @GPU_CONFIG_AARCH64_4K: Use AARCH64_4K page table format
->>>> + */
->>>> +enum panfrost_gpu_config {
->>>> +	GPU_CONFIG_AARCH64_4K,
->>>> +};
->>>> +
->>>>    struct panfrost_features {
->>>>    	u16 id;
->>>>    	u16 revision;
->>>> @@ -95,6 +103,9 @@ struct panfrost_compatible {
->>>>    
->>>>    	/* Allowed PM features */
->>>>    	u8 pm_features;
->>>> +
->>>> +	/* GPU features */
->>>> +	u8 gpu_configs;
->>>
->>> I would probably name this gpu_quirks, with the GPU_CONFIG_AARCH64_4K
->>> flag renamed GPU_QUIRK_FORCE_AARCH64_PAGE_TABLE.
->>>    
->>
->> Boris, at this point the quirk should be LPAE, not AARCH64_4K, because the
->> former is legacy...
-> 
-> It's legacy, but it's also the default in this driver. And just because
-> it's legacy doesn't mean it's broken :P. As Steve mentioned, there are
-> perf considerations to take into account, and on some platforms (most?),
-> it's preferable to use the legacy format because of that.
-> 
->>
->> I think that Ariel is right in this, as in, that's a capability of the GPU
->> MMU, so if anything I would rather rename it to gpu_capabilities,
-> 
-> No, GPU capabilities are extracted from he GPU ID, and all Bifrost GPUs
-> support the aarch64 page table format. But what matters here is GPUs
-> that can't use the legacy page table format because it's to limited to
-> express the cacheability/shareability properties.
-> 
->> but then
->> that'd be confusing for other stuff - which means that gpu_configs is most
->> probably the least confusing and/or most appropriate name for this.
-> 
-> Again, it's not a random configuration decision, it's something we do
-> because the default (legacy page table format) doesn't work, so I keep
-> thinking quirk is an appropriate name in this context.
-
-Adding my humble bits here :)
-
-I'm not sure if it's preferable to use legacy mode, but can't prove the 
-opposite without a proper profiling. As legacy is the default at the 
-moment in panfrost, I think it makes sense to explicitly add _FORCE_ to 
-the flag name.
-
-Agreed that it's not a capability/feature, rather a config/quirk. Don't 
-really have a strong opinion here, so I'll just stick to Boris criteria 
-here, and name it as quirks. Will change it in v2.
-
-Just a side note, in the context of panfrost we already have a 
-`vendor_quirk` function. Alhough I understand it's vendor-specific, to 
-avoid confusions, would it be okay to add another quirk related field as 
-we're proposing here?
-
-     struct panfrost_compatible {
-         [...]
-         /* Vendor implementation quirks callback */
-         void (*vendor_quirk)(struct panfrost_device *pfdev);
-         [...]
-         u8 gpu_quirks;
-
-Thanks!
-
--- 
-Ariel D'Alessandro
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
-
+On Tue, 11 Mar 2025 at 22:19, Dave Kleikamp <dave.kleikamp@oracle.com> wrot=
+e:
+>
+> On 3/2/25 1:15PM, Suchit Karunakaran wrote:
+> > Replace legacy XT_GETPAGE macro with an inline function and update all
+> > instances of XT_GETPAGE in jfs_xtree.c file to use the new function.
+>
+> I like the idea, but as long as we are changing this to a function, I'd
+> like to simplify it to return the xtpage (xtpage_t *). A NULL return
+> would indicate a failure.
+>
+> Also, the first argument should just be "struct inode *ip". That should
+> eliminate your second patch.
+>   >
+> > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> > ---
+> >   fs/jfs/jfs_xtree.c | 86 ++++++++++++++++++++++++++++-----------------=
+-
+> >   1 file changed, 52 insertions(+), 34 deletions(-)
+> >
+> > diff --git a/fs/jfs/jfs_xtree.c b/fs/jfs/jfs_xtree.c
+> > index 5ee618d17e77..fb736a06ea58 100644
+> > --- a/fs/jfs/jfs_xtree.c
+> > +++ b/fs/jfs/jfs_xtree.c
+> > @@ -49,26 +49,6 @@
+> >
+> >   #define XT_PAGE(IP, MP) BT_PAGE(IP, MP, xtpage_t, i_xtroot)
+> >
+> > -/* get page buffer for specified block address */
+> > -/* ToDo: Replace this ugly macro with a function */
+> > -#define XT_GETPAGE(IP, BN, MP, SIZE, P, RC)                          \
+> > -do {                                                                 \
+> > -     BT_GETPAGE(IP, BN, MP, xtpage_t, SIZE, P, RC, i_xtroot);        \
+> > -     if (!(RC)) {                                                    \
+> > -             if ((le16_to_cpu((P)->header.nextindex) < XTENTRYSTART) |=
+| \
+> > -                 (le16_to_cpu((P)->header.nextindex) >               \
+> > -                  le16_to_cpu((P)->header.maxentry)) ||              \
+> > -                 (le16_to_cpu((P)->header.maxentry) >                \
+> > -                  (((BN) =3D=3D 0) ? XTROOTMAXSLOT : PSIZE >> L2XTSLOT=
+SIZE))) { \
+> > -                     jfs_error((IP)->i_sb,                           \
+> > -                               "XT_GETPAGE: xtree page corrupt\n");  \
+> > -                     BT_PUTPAGE(MP);                                 \
+> > -                     MP =3D NULL;                                     =
+ \
+> > -                     RC =3D -EIO;                                     =
+ \
+> > -             }                                                       \
+> > -     }                                                               \
+> > -} while (0)
+> > -
+> >   /* for consistency */
+> >   #define XT_PUTPAGE(MP) BT_PUTPAGE(MP)
+> >
+> > @@ -114,6 +94,44 @@ static int xtSplitPage(tid_t tid, struct inode *ip,=
+ struct xtsplit * split,
+> >   static int xtSplitRoot(tid_t tid, struct inode *ip,
+> >                      struct xtsplit * split, struct metapage ** rmpp);
+> >
+> > +/*
+> > + *   xt_getpage()
+> > + *
+> > + * function: get the page buffer for a specified block address.
+> > + *
+> > + * parameters:
+> > + *   ip      - pointer to the inode
+> > + *   bn      - block number (s64) of the xtree page to be retrieved;
+> > + *   mp      - pointer to a metapage pointer where the page buffer is =
+returned;
+> > + *   size    - size parameter to pass to BT_GETPAGE;
+> > + *   p       - pointer to an xtpage_t pointer mapping the page's data.
+> > + *
+> > + * returns:
+> > + *   0 on success, or -EIO if the page is corrupt or an error occurs.
+> > + */
+> > +
+> > +static inline int xt_getpage(struct inode **ip, s64 bn, struct metapag=
+e **mp,
+> > +                     unsigned int size, xtpage_t **p)
+> > +{
+> > +     int rc;
+> > +
+> > +     BT_GETPAGE(ip, bn, *mp, xtpage_t, size, *p, rc, i_xtroot);
+> > +
+> > +     if (!rc) {
+> > +             if ((le16_to_cpu((*p)->header.nextindex) < XTENTRYSTART) =
+||
+> > +                     (le16_to_cpu((*p)->header.nextindex) >
+> > +                             le16_to_cpu((*p)->header.maxentry)) ||
+> > +                     (le16_to_cpu((*p)->header.maxentry) >
+> > +                             ((bn =3D=3D 0) ? XTROOTMAXSLOT : PSIZE >>=
+ L2XTSLOTSIZE))) {
+> > +                     jfs_error(ip->i_sb, "xt_getpage: xtree page corru=
+pt\n");
+> > +                     BT_PUTPAGE(*mp);
+> > +                     *mp =3D NULL;
+> > +                     rc =3D -EIO;
+> > +             }
+> > +     }
+> > +     return rc;
+> > +}
+> > +
+> >   /*
+> >    *  xtLookup()
+> >    *
+> > @@ -252,7 +270,7 @@ static int xtSearch(struct inode *ip, s64 xoff,   s=
+64 *nextp,
+> >        */
+> >       for (bn =3D 0;;) {
+> >               /* get/pin the page to search */
+> > -             XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> > +             rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
+> >               if (rc)
+> >                       return rc;
+> >
+> > @@ -807,7 +825,7 @@ xtSplitUp(tid_t tid,
+> >                * insert router entry in parent for new right child page=
+ <rp>
+> >                */
+> >               /* get/pin the parent page <sp> */
+> > -             XT_GETPAGE(ip, parent->bn, smp, PSIZE, sp, rc);
+> > +             rc =3D xt_getpage(ip, parent->bn, &smp, PSIZE, &sp);
+> >               if (rc) {
+> >                       XT_PUTPAGE(rcmp);
+> >                       return rc;
+> > @@ -1062,7 +1080,7 @@ xtSplitPage(tid_t tid, struct inode *ip,
+> >        * update previous pointer of old next/right page of <sp>
+> >        */
+> >       if (nextbn !=3D 0) {
+> > -             XT_GETPAGE(ip, nextbn, mp, PSIZE, p, rc);
+> > +             rc =3D xt_getpage(ip, nextbn, &mp, PSIZE, &p);
+> >               if (rc) {
+> >                       XT_PUTPAGE(rmp);
+> >                       goto clean_up;
+> > @@ -1417,7 +1435,7 @@ int xtExtend(tid_t tid,         /* transaction id=
+ */
+> >                       return rc;
+> >
+> >               /* get back old page */
+> > -             XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> > +             rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
+> >               if (rc)
+> >                       return rc;
+> >               /*
+> > @@ -1433,7 +1451,7 @@ int xtExtend(tid_t tid,         /* transaction id=
+ */
+> >                       XT_PUTPAGE(mp);
+> >
+> >                       /* get new child page */
+> > -                     XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> > +                     rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
+> >                       if (rc)
+> >                               return rc;
+> >
+> > @@ -1711,7 +1729,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t *=
+ nxad)
+> >                       return rc;
+> >
+> >               /* get back old page */
+> > -             XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> > +             rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
+> >               if (rc)
+> >                       return rc;
+> >               /*
+> > @@ -1727,7 +1745,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t *=
+ nxad)
+> >                       XT_PUTPAGE(mp);
+> >
+> >                       /* get new child page */
+> > -                     XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> > +                     rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
+> >                       if (rc)
+> >                               return rc;
+> >
+> > @@ -1788,7 +1806,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t *=
+ nxad)
+> >               XT_PUTPAGE(mp);
+> >
+> >               /* get new right page */
+> > -             XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> > +             rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
+> >               if (rc)
+> >                       return rc;
+> >
+> > @@ -1864,7 +1882,7 @@ printf("xtUpdate.updateLeft.split p:0x%p\n", p);
+> >                       return rc;
+> >
+> >               /* get back old page */
+> > -             XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> > +             rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
+> >               if (rc)
+> >                       return rc;
+> >
+> > @@ -1881,7 +1899,7 @@ printf("xtUpdate.updateLeft.split p:0x%p\n", p);
+> >                       XT_PUTPAGE(mp);
+> >
+> >                       /* get new child page */
+> > -                     XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> > +                     rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
+> >                       if (rc)
+> >                               return rc;
+> >
+> > @@ -2268,7 +2286,7 @@ s64 xtTruncate(tid_t tid, struct inode *ip, s64 n=
+ewsize, int flag)
+> >        * first access of each page:
+> >        */
+> >         getPage:
+> > -     XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> > +     rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
+> >       if (rc)
+> >               return rc;
+> >
+> > @@ -2506,7 +2524,7 @@ s64 xtTruncate(tid_t tid, struct inode *ip, s64 n=
+ewsize, int flag)
+> >
+> >       /* get back the parent page */
+> >       bn =3D parent->bn;
+> > -     XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> > +     rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
+> >       if (rc)
+> >               return rc;
+> >
+> > @@ -2791,7 +2809,7 @@ s64 xtTruncate_pmap(tid_t tid, struct inode *ip, =
+s64 committed_size)
+> >                * first access of each page:
+> >                */
+> >         getPage:
+> > -             XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> > +             rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
+> >               if (rc)
+> >                       return rc;
+> >
+> > @@ -2836,7 +2854,7 @@ s64 xtTruncate_pmap(tid_t tid, struct inode *ip, =
+s64 committed_size)
+> >
+> >       /* get back the parent page */
+> >       bn =3D parent->bn;
+> > -     XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> > +     rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
+> >       if (rc)
+> >               return rc;
+> >
+>
 
