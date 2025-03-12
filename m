@@ -1,158 +1,126 @@
-Return-Path: <linux-kernel+bounces-558023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E454A5E097
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:39:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3312AA5E096
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:39:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 743E2165FCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD213B95FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA63156237;
-	Wed, 12 Mar 2025 15:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6596224419B;
+	Wed, 12 Mar 2025 15:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9YsWQ43"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K+5ySMTT"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD14256C84;
-	Wed, 12 Mar 2025 15:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3938D2505CA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741793864; cv=none; b=TURfuXGixw0aaFfHFbcvtFOUtxYmR75AzFkQqVqmtm2dVKqKrxuJ/GEnEGZ4pOPmiPndBdZyfC1TH7gDx5LsygViBKa2Iz7lXmn9zTuWywUVZ6RXfeNyW1ZYMcVsKlQci8VpQFWWJXZJbtpnemqnD+aJdHWs82SxVKfe32v0Q0E=
+	t=1741793901; cv=none; b=ZP9feVnTRgpb4+kZ+gGW3bhLI7ESJ6fwrH8gtMA1vdee0DuhM9UFN1bg7hdJu7cAj65R6bp/C9Ijk1+vXT7h23WcklEnbZXiG58sxaDaPhk3Tt3P/fv10ta3C207NP4Q/ejqnej7LCfFQzVacak4mGcyBKR1EZ3UCCM0D9dk5I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741793864; c=relaxed/simple;
-	bh=SDFKqepfa7fKYb89hzpnUMj8TGStA88aAw1BI2H78eM=;
+	s=arc-20240116; t=1741793901; c=relaxed/simple;
+	bh=mECECZUKyT8tJ1zfg2PNBtQFa78DsD3UR2qD52joMLQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r4q8tpmfi1raLJfeyErJKeT/hSqI++Rml7jIDYpYe5ZYG9lC0Jxt0RAGmrltg1eRDt6nL+d8uGaF+j1cYasD1GmuC/1/W/oddSqmYcrU/yiNR5qf+X2O4pJFjmt0EDoUMrNSx8flWdH/dRt1IlgHMOhD4ARxKP7WhTJypIodNkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g9YsWQ43; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-85ad83ba141so606939539f.2;
-        Wed, 12 Mar 2025 08:37:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=f4qIjLS2HXZZvv1cAAh6OVGREH9pmmYXxcqM/5N2Al+2j+z5yJVX6/EgD4fy5/ramKM7PgoAHaEUXTfP1cWQ0dxXIp2HChV/hIw1qRCCDAu+Z0Bhmf2V4LGX2a2vOvqZViAjkih8VZzHRFca3vSKCMBcZfp38iSzfJqHzX5m4KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K+5ySMTT; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-47666573242so337011cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:38:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741793860; x=1742398660; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741793899; x=1742398699; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WMrlZ7TtkaQuy37XoBmFTMRDwm8cFmyklhT5/AoAOS0=;
-        b=g9YsWQ43CAy29HjATcr4I8IDvSsgMXbq1FAhet32G13Y1hc0Age+PnO8WNC53Y0mDd
-         bCp0XQDYT7e9BaxJvVy/6EVJaEVaIo6bQo1CeEqcWWa+z4qhlQ3fx5UDz74A/Ic2WFoU
-         y0667HW6Hu6fFRfojVUWl4zn8AakOJWtboU4KF5PjSXSztB5vLObCNqggEb6z5BljhcZ
-         BSU0vV382d2+GV4NTQoTCGZWijIUCh2rkSq8t2KHWp+0v/7OJzpfusgnUoiTW4MKOC51
-         wX6whWMH8VL0Ufq1LDvnMH5R3v34HdtywCcfSinnBKqS7j5W7CPP0hw/qgvj45ght6Iz
-         zMzw==
+        bh=oad3olm2GEdFBtEEysjN3502N0ME3OM6JNCjW+ME63A=;
+        b=K+5ySMTTjBAxhjT9qopNvR6EZYDfWxMnt8IKrWiVBK6YWqeMh6/FU3jJA2dRgTx81U
+         SmiPCtQKidIlC2wfkRLADkfrmmZ79sD+a/4ayM0kHFy1ES3trxvXhfwsI5KU3JazqsH2
+         ZOQ+iL4b+3SVS6szaRL0mV3UHxt+TO5ZNCiMxcvoKuTDY+lQljrz4jpTD28CCk87VTv2
+         ykW6QmpsaUBynRldirFij0VSMQEDlsZ5Tj0QYEUjEfC4E9WW5ztGUUHfcHHEOaDbyCdE
+         qhKoYzZK19zaEBgJ03U2ViK5PumkXOOXPstRfkFe0lyJcjVyIrMOb5ZmIoyL4t8+Z0pW
+         pyCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741793860; x=1742398660;
+        d=1e100.net; s=20230601; t=1741793899; x=1742398699;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WMrlZ7TtkaQuy37XoBmFTMRDwm8cFmyklhT5/AoAOS0=;
-        b=RN+JPuwjLzEJO7v11isjhJiEDtxCo4pYxEVSd3Jdx7T15fxFdOJVopfhn2st1sM+Hr
-         72qHMtuqj1uygnHm0gXgQD+tw34QMUjbokR6jND6rh6UMK659TSDBGMyUWkRDSHMx5FO
-         smwnWr2jK+rNUDzUPG6M7rufT9+f8KRoNxanpJ+JjHyHefm+lzuYMpcUs6A3NqlKCGU+
-         f9k8JeCQhZLku/TSKsvXDnVRnkcetas5gaw7f8ANzLm2BvUOVoqdbr/DSw/MV1sTM9aK
-         55zHcWerzE+SINmGunlJvbw2hvsTfTJ5Z8eHuS2RuEte6dhj3ExUrRl84U/ftvANTsMm
-         uAYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvAf89Ly77Oq35aULl+ANxcBPtKvyYWuWKhoXsDqh6KMHyrYcdQCNEHq6MH4aSkxJrECLqQVGzFlg7YBX2@vger.kernel.org, AJvYcCXvetJT+/VljJXckQXx4q+RCciFCv1Cd38hZM0l9HsSXAtf+oimSzfknoy5YRUpmdWPbGZUoFHxnzIOUwp1@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHhY776gNKb7HueV7s5nGRSS9HPQktmNm5TUtHPZkYDCA5hAWP
-	gSvxJVAoSGHF7TpNALb9bbuRZnJBJygq2FmUrY27gpczGN6OypWDSo3+kNumbjx/ZIeSAAQIQtH
-	CNvXzC3Bm8NZjIJFUxYxZYJqka18=
-X-Gm-Gg: ASbGnctIhtUVEMIgTDQoz/q17nHl4XfHNJpQ6m7glj7GsqcsLUEHNGGWVZHcy9Gn/1m
-	dYoECqgl4BDdylCcJtbAGrGTPOVBlgp5n5kjmTma+qqXvCmmPyjvB5n5Xl5TNnlzyTUcFhQSeri
-	BTS2Guj5sxosbG0lZecbry9KF+YsrPkIL/SdpUkUjoDsRHpNd0AUaQSimbFkAQsHd2I3w=
-X-Google-Smtp-Source: AGHT+IH8sNbtyRtPBc86b6yqtNTtxLe+g14B50y3MAoRxzA6AkWmg3s1QxxNYTJ6OnJNaPf6hfx0HKWOAGJrh4dWDCY=
-X-Received: by 2002:a05:6e02:1a05:b0:3d3:d067:73f8 with SMTP id
- e9e14a558f8ab-3d4418d0596mr221485665ab.11.1741793859848; Wed, 12 Mar 2025
- 08:37:39 -0700 (PDT)
+        bh=oad3olm2GEdFBtEEysjN3502N0ME3OM6JNCjW+ME63A=;
+        b=qvQWlgpMpiwktUEhDrTmfmQRzTqCgKUeHtMzIQnqPLviG4sHPbuznapDKJ8sxN+Bbg
+         de8T0zfh18Qd6wwwnpymsPNCLEPu4ldyRRZKjeYltqz6xhpT2TEEbym4DTmF08sGgPRK
+         uXl7WjMSzhmn7uOoceo3ensCO5ox2XnAsWUZwvsTGhWPpP6f/pOrCXpNrg+9vnnGp16J
+         GIfWy8dB9C2vdHsNbPkRhfRZ8Je7zh/BHg/EZRI3K0HbCOF6Xl3YEs7cGpr1wfY9BBcP
+         aWtmI2vTfkBSP8KoluugSRdOCZEQ6LjRxf/vBVFhypAEV+fCaQIHqWcAweekNhvUeR/J
+         lVvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8fmpY0VmepXwtlFLifqYdG+wnn16YjXLmr8yMYHm71MmBp+dkuicXTan5OfmXgTrV3BHLrDkQVP1d02Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeW9VSGKL/vQkavUvHx84mMmp1MpFZAiB0kG8zA8m2ySZ8r+Wu
+	3F7I+1DAWYoxLHX6WZBNDD8HrqiKnC0D9GVeVgYHFthGT2HlqRrB0yRdoR6URMXhxIvqlnHo9H0
+	mL5QKjKva096nqah232BpAXVq7anF3gNWeMHK
+X-Gm-Gg: ASbGncvSBU7lILC4fScjrrXvEA9xviw3Fcg6e77lQxJ0mZW2D5USejXQ3wHr0sYqllS
+	dFDpqKXHn3pEQen0b7MJCk0b0cFU7Ji0Jf4w09ykMqn9zD6cHdndOzgVpaGEmIatDIK0uypn8QK
+	AJcuyNeTIJnD3MIVeBwH4WP8Ny4gn+HaXRqR1pU2wDoD5PlelmE2tTuigU2jkWQgSAWhk=
+X-Google-Smtp-Source: AGHT+IFQd7cFv173t000O1zcn+8wgPx4dJlGWMBi427eiMql7l9Xmf0NxuFYWlaUbMq6ERIxoPYFIgYpzBuguiARoR4=
+X-Received: by 2002:ac8:5a95:0:b0:472:538:b795 with SMTP id
+ d75a77b69052e-476b798f0admr328451cf.22.1741793898834; Wed, 12 Mar 2025
+ 08:38:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212151402.159102-1-quic_bibekkum@quicinc.com>
- <173625436399.258197.10961901698600591079.b4-ty@kernel.org>
- <20250311175528.GA5216@willie-the-truck> <CAF6AEGvDyPtXN7Cn98BKsTM9GjUzy1sTEOsLiz-cdvaZ14qWyA@mail.gmail.com>
- <20250312130846.GE6181@willie-the-truck>
-In-Reply-To: <20250312130846.GE6181@willie-the-truck>
-From: Rob Clark <robdclark@gmail.com>
-Date: Wed, 12 Mar 2025 08:37:28 -0700
-X-Gm-Features: AQ5f1JovmMWQD_O1PD6cpwLN-pH1HxH4w3bZZDBIgzK7Opj6tqGtZU_Fkjgi4xs
-Message-ID: <CAF6AEGtrUKybxPZMxkUgjg8JCxPr7-pRe0noS7=y6UrbHxDzZw@mail.gmail.com>
-Subject: Re: [PATCH v18 0/5] iommu/arm-smmu: introduction of ACTLR
- implementation for Qualcomm SoCs
-To: Will Deacon <will@kernel.org>
-Cc: robin.murphy@arm.com, joro@8bytes.org, jgg@ziepe.ca, jsnitsel@redhat.com, 
-	robh@kernel.org, krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com, 
-	dmitry.baryshkov@linaro.org, Bibek Kumar Patro <quic_bibekkum@quicinc.com>, 
-	catalin.marinas@arm.com, kernel-team@android.com, iommu@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <CGME20250306074101epcas1p4b24ac546f93df2c7fe3176607b20e47f@epcas1p4.samsung.com>
+ <20250306074056.246582-1-s.suk@samsung.com> <Z8m-vJ6mP1Sh2pt3@infradead.org>
+ <CAJrd-UuLvOPLC2Xr=yOzZYvOw9k8qwbNa0r9oNjne31x8Pmnhw@mail.gmail.com>
+ <848301db8f05$a1d79430$e586bc90$@samsung.com> <CAJuCfpHjV=nRmkAGrf-tyCxEEygZ0CuW-PRp+F_vHwFbfYS8dA@mail.gmail.com>
+ <Z9Gld_s3XYic8-dG@infradead.org> <CAJuCfpGa43OQHG9BmnvxROX1AneCvkuLxFwM+TdxAdR1v9kWSg@mail.gmail.com>
+ <Z9GnUaUD-iaFre_i@infradead.org>
+In-Reply-To: <Z9GnUaUD-iaFre_i@infradead.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 12 Mar 2025 08:38:07 -0700
+X-Gm-Features: AQ5f1Jpfs-45rUWpy4AjGITfWFgctjNpl6Oq04S9EIvxgwjOZng3y_psNvrHlmM
+Message-ID: <CAJuCfpEpWQV8y1RKb3hH+-kxczTUvpvCBNNzGJufsAxpkhB4_A@mail.gmail.com>
+Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct IO
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Sooyong Suk <s.suk@samsung.com>, Jaewon Kim <jaewon31.kim@gmail.com>, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	spssyr@gmail.com, axboe@kernel.dk, linux-block@vger.kernel.org, 
+	dhavale@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 12, 2025 at 6:08=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
-:
+On Wed, Mar 12, 2025 at 8:25=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
+g> wrote:
 >
-> On Tue, Mar 11, 2025 at 01:03:29PM -0700, Rob Clark wrote:
-> > On Tue, Mar 11, 2025 at 10:55=E2=80=AFAM Will Deacon <will@kernel.org> =
-wrote:
-> > >
-> > > On Tue, Jan 07, 2025 at 04:42:39PM +0000, Will Deacon wrote:
-> > > > On Thu, 12 Dec 2024 20:43:57 +0530, Bibek Kumar Patro wrote:
-> > > > > This patch series consist of six parts and covers the following:
-> > > > >
-> > > > > 1. Provide option to re-enable context caching to retain prefetch=
-er
-> > > > >    settings during reset and runtime suspend.
-> > > > >
-> > > > > 2. Remove cfg inside qcom_smmu structure and replace it with sing=
-le
-> > > > >    pointer to qcom_smmu_match_data avoiding replication of multip=
-le
-> > > > >    members from same.
-> > > > >
-> > > > > [...]
-> > > >
-> > > > Applied to iommu (arm/smmu/updates), thanks!
-> > > >
-> > > > [1/5] iommu/arm-smmu: Re-enable context caching in smmu reset opera=
-tion
-> > > >       https://git.kernel.org/iommu/c/ef4144b1b47d
-> > > > [2/5] iommu/arm-smmu: Refactor qcom_smmu structure to include singl=
-e pointer
-> > > >       https://git.kernel.org/iommu/c/445d7a8ed90e
-> > > > [3/5] iommu/arm-smmu: Add support for PRR bit setup
-> > > >       https://git.kernel.org/iommu/c/7f2ef1bfc758
-> > > > [4/5] iommu/arm-smmu: Introduce ACTLR custom prefetcher settings
-> > > >       https://git.kernel.org/iommu/c/9fe18d825a58
-> > > > [5/5] iommu/arm-smmu: Add ACTLR data and support for qcom_smmu_500
-> > > >       https://git.kernel.org/iommu/c/3e35c3e725de
-> > >
-> > > Hrm. I'm not seeing any user of the new ->set_prr*_() functions in
-> > > linux-next yet. Is there something under review, or should I revert t=
-his
-> > > for now?
+> On Wed, Mar 12, 2025 at 08:20:36AM -0700, Suren Baghdasaryan wrote:
+> > > Direct I/O pages are not unmovable.  They are temporarily pinned for
+> > > the duration of the direct I/O.
 > >
-> > It is WIP, part of a larger patchset adding sparse binding support in
-> > drm/msm.  Please do not revert.
+> > Yes but even temporarily pinned pages can cause CMA allocation
+> > failure. My point is that if we know beforehand that the pages will be
+> > pinned we could avoid using CMA and these failures would go away.
 >
-> Sure, if it's actively being worked on then I'll leave the hooks in
-> place.
+> Direct I/O (and other users of pin_user_pages) are designed to work
+> on all anonymous and file backed pages, which is kinda the point.
+> If you CMA user can't wait for the time of an I/O something is wrong
+> with that caller and it really should not use CMA.
+
+I might be wrong but my understanding is that we should try to
+allocate from CMA when the allocation is movable (not pinned), so that
+CMA can move those pages if necessary. I understand that in some cases
+a movable allocation can be pinned and we don't know beforehand
+whether it will be pinned or not. But in this case we know it will
+happen and could avoid this situation.
+
+Yeah, low latency usecases for CMA are problematic and I think the
+only current alternative (apart from solutions involving HW change) is
+to use a memory carveouts. Device vendors hate that since carved-out
+memory ends up poorly utilized. I'm working on a GCMA proposal which
+hopefully can address that.
+
 >
-> Do you have a link to the patchset so that I can follow along, please?
->
-> Will
-
-https://patchwork.freedesktop.org/series/142263/
-
-I'm currently working on resolving the shrinker hack, which is the
-remaining TODO.  So I'll hopefully be able to drop the RFC tag and
-post a new version in a couple of weeks.
-
-BR,
--R
 
