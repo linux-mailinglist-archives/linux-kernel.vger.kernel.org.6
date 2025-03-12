@@ -1,173 +1,193 @@
-Return-Path: <linux-kernel+bounces-557256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A59A5D5E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:09:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0FB4A5D5E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:15:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 130171732D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:09:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41AD018964FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305281E25EF;
-	Wed, 12 Mar 2025 06:09:25 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0FF1DE4E5;
+	Wed, 12 Mar 2025 06:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="afT6LRLA"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2084.outbound.protection.outlook.com [40.107.255.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294501DE3AF
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 06:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741759764; cv=none; b=V2kgQe4JdYQFB2TE8PlOs4G8BNlTAF2lwYx6tfRMmEQJ0ERxBDqBYxYMndtNPjYJw/31D2LHv/LVFSNzPgTEeSDdNhCvKpkd5aTw4PGA3h1t3652/yq5ZJ86jm71KX1LJC9I84eYEcB0v5EJLQKYX4foRH0AbbVnIkFSI4OPa2I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741759764; c=relaxed/simple;
-	bh=j3UuTTEVdawcWTa0Vkwivai05fETZmt7ecaAtna3sqY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=aX5OY8xDl+tc1cmg8v/zE2SNq74IU2DSB65YPgGPDlbgItDHTW166HVY2dL7wLd9S7z+juWMF3BqH6Ivnz5qyNh9L0y1HMAcoMrm6kVqlC2IEFyX0eNVPf84lji5W4A5jOFTvq2ZpEThNH4rdiwT0FJ+5snWg6ijhlCqJVm4vig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d451ad5b2dso6482385ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 23:09:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741759762; x=1742364562;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tlAhTF+CPuoAdJyBdKNcaFIo3UaoUqHUSXygs4JlGNY=;
-        b=xElydE2s9vfJ+xam1mHjIhhRavRD/gTcsGTrq8NU471L+adzz+SffwXDQGvf1ynK0i
-         KFpJqm2KLEFpZrNJJMrO74sQ7UdITDfktI/qsJ6jvsbPgnv/XPQ/WxWrwJTJ9RbZfN2d
-         DhGdTmK5B4pczmuO52KWMh/yflu0zsr7aifcN+wwYlNIn4UXjGokhJkw1i8HEqPotyI/
-         1bqwhnOfvlO3wmwVBtGfSqBJp8x8zfQjnjOlF1f49bvtDffo2VQpkvW/NqkzQsYZo2sV
-         bRXtL+Bmlnw3eS7uKdRXFi0GDhzMOP6HhkYZRRXYIKUgVdXZ6sRQB49Y5zDapITENMQb
-         3wzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNyPrJO9oYjaoEJgbhlEjkLw8DeRejFV8IChx6QMXmmzbu7hQQt6lh0YaDIpRsMr1b9eRKPEm1jl9e0eg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9xdz0pQWWwhkpRmjwQpi6ZgGjngfnvRRjUfRlBSiTFAPBoSo+
-	nO/Fx/ZxGRG/h4YXlDY9gwVHFXHjLkTEBkbkMyK3hrXiHYKS89U5lpflkjLDR/bqdwtGGoHWFaP
-	45LF9vXwqIQUrMPqZVC/IuumLSUdAe97Knd1CoueaBTTZSKrMWTVrtAw=
-X-Google-Smtp-Source: AGHT+IHP+t5+h0+k+9OMs8EyDKkmNW1S2EHpsqdJzpF52oqdt92JB08StTBwt52snubHmPXpfXVETq9qCGU83haWnauj7NuoePU5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84C478C9C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 06:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741760135; cv=fail; b=oA5TDs4u5CUQirsSjvaeJi/gEhShCBreZyeKqawdnr/rRcMpTN/h75c2p+dP+bocE1LbKHpY90nrb3fUjlL4vG7GB0C7TeR67Dm2NpPUHiZtFi00eBllHbkrDl1xNghHstcPnAV1H3JBVtfw88JwKmPDbO4XYjlv3jM33tbTZD0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741760135; c=relaxed/simple;
+	bh=OdWMkd9HpRFTXwX3zn39Sg59Ky28qM+wdqWoYgAVJ/0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=bZjK/EqL3/Okq8appng22boiBuDfLpOXRsNBw61jptBPli5Hw4y6Dws9yJZCkCwDr67pPAjUvoxTiMZCRXkYWu3MtXgIGYehhRWpaoB/MmJA/T3vdllKENutDtrjtwUx3YqIWIc4lJMM9XnxbDLCCkOrnR3P2StbIb0i2b0io3M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=afT6LRLA; arc=fail smtp.client-ip=40.107.255.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=imDQs1zRSZdayzDzY9CHOqEONFgIf7XRdcGvr8vCb6JDvzJYkajvZZXQjlTNhvvGZMC2bnk6qdAcc3Tczi9oUKyIfjNu6GElbe+MKdKs5jD8gRFNjzWKRZglw7/XKo6GblheTP686emE7isaQgRLhvq+SpE0NM5mfWXYi5DwmHxvmeF3kFzeSsROTzu1H33XSWG5tiRWsvSVQlAMih/jy6Adp+b4qZSVav5X34ZNyExNcK1N0bW8/jsUYSfopMDO2XU1m0jNOJUa9R3305bmgbYrIW4FqzPpxQ1FEjsw8jh7Hws6vpSA6wPnWWkCfMu5ChlXvUMyqqFEgRclV/s49g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u1Ta+4nadU/IzGq3CoVb8kLCJv+JpgVC9Mb0LBeeeqM=;
+ b=QVyIDwrwGj6W3s9yxc/Ocly77vOK8PC2ztEZ0Ce8ymuabYzKOjK1pOrmFBwC+r/MQXC2CUo9MwMTILRIPcPnFQ+VIdMvuAquLeyOFMVUDFvA0aaXPlulFl+053Sj7MyX7yJMP9szfOPLr27Y63hhar9fbCi+KdGwRhsaKoc/msHh0okq/xPBMr8e5zVqcnccA4DF+AB3HyuitRLgadVp7aCOmjhC84yOclox10u41/Mhxbu5iVDTgBiU5ARep4zWEgNG7rFPXBd7J2FgBA3uJlmej0qa2CkMe95nbTEdGvmdQpgr5RlHbL97B7T1qD/3O61YHLNKxdPCxFIpjvkyBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u1Ta+4nadU/IzGq3CoVb8kLCJv+JpgVC9Mb0LBeeeqM=;
+ b=afT6LRLAo3cI34nRDGA8i1QYvQjD8yL6OncOUjxbQ4PcBKKU15WgGGtam9J0ykIrW4u94UDc0zL1HGJ9lqBp/3g5jRAr2nNL0lJTmjYIFDXqJV3G7e75rubxeuA3nAig37q+J67zRXLFbJsf6CaKsbnTQ5Lz+aWuU9vq/iJWZqbNR2GSBKip6uS/OG0YfWfJYYh926eAqQ/BsxebsE5yQf7ruPRagCi3Q3jIu/a9WGn6Y4XGlTyWBkv+CMYji2tRwvR8tYZBpRGkn6rUJj/x04Jf8+ADTWlhpSMhROWMkEec7wX1sKwPT4m44TLuwMkWwdY5VRDBXbbGLzk/2TyAkA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by SE1PPFA7A817EB8.apcprd06.prod.outlook.com (2603:1096:108:1::424) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
+ 2025 06:15:26 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%3]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
+ 06:15:25 +0000
+From: Huan Yang <link@vivo.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Christoph Hellwig <hch@lst.de>,
+	Huan Yang <link@vivo.com>,
+	Bingbu Cao <bingbu.cao@linux.intel.com>
+Subject: [PATCH] mm/vmalloc: fix mischeck pfn valid in vmap_pfns
+Date: Wed, 12 Mar 2025 14:15:12 +0800
+Message-ID: <20250312061513.1126496-1-link@vivo.com>
+X-Mailer: git-send-email 2.48.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY2PR02CA0049.apcprd02.prod.outlook.com
+ (2603:1096:404:e2::13) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:148b:b0:3d4:2ea4:6b87 with SMTP id
- e9e14a558f8ab-3d4691f1f6dmr58336555ab.11.1741759762297; Tue, 11 Mar 2025
- 23:09:22 -0700 (PDT)
-Date: Tue, 11 Mar 2025 23:09:22 -0700
-In-Reply-To: <67ceb347.050a0220.3d01d1.000c.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d12512.050a0220.14e108.0024.GAE@google.com>
-Subject: Re: [syzbot] [v9fs?] general protection fault in p9_client_walk
-From: syzbot <syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
-	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
-	v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SE1PPFA7A817EB8:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce612d59-78b5-4616-4fc8-08dd612d4740
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PZUCbgrRu1CuUbZdLL7b0uRJGSFjVxGqqeloAxTDs6VjGHou654RWFoHqxZE?=
+ =?us-ascii?Q?7Rvh1AQqthi6LGFU9cRTirwCKIPmjCVujqWbFzwWLLyDCTSF1V1h8Zl8proy?=
+ =?us-ascii?Q?SPuxMYPhSFG1dKN7yKT4TqwxUJMMF0yufj6aMUPm+eTHQmHQJA5J+QF1W/Oe?=
+ =?us-ascii?Q?AdE1GXV6gJET3RUJ39zl6Sl+Q2Vs9/uNIskgK2sr+uOYNn9LuBAED/jDC8Hz?=
+ =?us-ascii?Q?ldEpPiXp7o3iKtkh2SN4EoKvJY2kjS1J87NujgX0S3KUPJ3r2WLUB14M9o1X?=
+ =?us-ascii?Q?/iTjMy6W36wpCutac87LkNSita81WSDN4UrBHQd82+uRKBefLJjJItm95EVa?=
+ =?us-ascii?Q?/juBOwtviSempEUqExINdtV07QlDbk7RmVxGrXBvSW/izN68Ty6jBvM2lfpp?=
+ =?us-ascii?Q?U8WiooJiHcmFxZZ/XU/vVbj1xRqJGblcUi0OeTgtea3E0xjCHIK3ImbqBtPF?=
+ =?us-ascii?Q?7gOsvJiLAhqyY8ARkB0vQAGNd6Jmi1dd5AR8EeH+eTwHtwKmzahEzCsak8YZ?=
+ =?us-ascii?Q?+od70546ku7Cg+b8vokvpFnhu5catcqOE37e5u14hXvHAL/CeC4MCoxLPi6v?=
+ =?us-ascii?Q?8fmjL2MlBWSJjo8haVu/jB1uBKL1/VjJu1WE05/x6N1kyM2LQQFqxy6BmaYl?=
+ =?us-ascii?Q?hY/h+HKe3BBW+lxbUF043kmTc1akHe0HsSzT3I14wxMmPB4pIvu2tlBphLZi?=
+ =?us-ascii?Q?5yZHlAGXnWxsMqrpSUSfeqBbYVxk5uvp7DK8v6+E0L/THI63zG5e/cPPqiSf?=
+ =?us-ascii?Q?KtMHLjr5DlLyGgYXDJGrpMF5NyRR37zG8d3ozobZS6w2dmLKaf/kOMW94KDt?=
+ =?us-ascii?Q?ps2vKkyNUid6OTmM4vJe0AB8CGl6GyIVWxc08+iODCwKD/ZyfW0U7/OhR/q9?=
+ =?us-ascii?Q?ll9x3Iz98jf5brJaoFA6yLuug8Jxhz3aQdX7QuxKW7WW9gIW1ARprZGticFN?=
+ =?us-ascii?Q?cljFdeRTc+AEKh6pH7WWX+6YmRrI+xtMGT3IwnGE1CjqpOOreJ7RA6tNSIUp?=
+ =?us-ascii?Q?PxuhcnyiPPwBa4MOaKX7/9k9diCt6AzMwl5xL8jqcih9A24ndq0JEoYfSU+Z?=
+ =?us-ascii?Q?y3b9B6nw1fWVTJ3bYi+ZKssiiWiCzm6U5R7y2FLFOnHvCtIkjclrPq/p9+i+?=
+ =?us-ascii?Q?gqRB6DELUkgcjAiMbr6wke4uiN/4JTDYZO1mf9V9VTV0EEPFZQQjccUxcJtO?=
+ =?us-ascii?Q?Ob753oeXaiVMHFiQrMNdgIt4whAWF7y+8j6Kp/ogJtZih/Is4LOOdh0tg7D0?=
+ =?us-ascii?Q?tbaMCemuWjlHATXv0mBjUioxEXEWX/L+1DXS6GEKH79AL8b7xntFGtvEuYxR?=
+ =?us-ascii?Q?OppF+bAdP1vbHMlzXKCI1aDoUW7ktnypd48yFdCMBJ3qoRufkGgTKV51v6V7?=
+ =?us-ascii?Q?bh/n6i4zroSE/b1ShqoUKsquW+eJ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PlqayNrlchJfS9jvZve8wERI/Lj2zj/h4eRbiozPjSRWHaXW7dtyTDvM6/IE?=
+ =?us-ascii?Q?Mql71QGAC7hEgq2ORk+VcOMkDSPmgWPIX/uhQwBhJL7Wq9uiCu6CVpUVreDY?=
+ =?us-ascii?Q?uz760N7O+Lk/wOzvdlzSm3KMGODVxN+/3QLGf7ZrpkPLR+54rFReXSsXXQOU?=
+ =?us-ascii?Q?/DrCj20C17P66lNPqnOXxqYJr0erAJ5kxx56XBz7DBOD6zNDw34k0DuSd+Dp?=
+ =?us-ascii?Q?XI6rfy5VR4uNYuKs4jqSDtY0pdSCQYNQMC+UymMvJuKFC9PbuGWcYsPpnZVa?=
+ =?us-ascii?Q?k6KjcxGVHhKCyqmmsRWcr6sg1iWSkqkKlmOY8lL0UzmfogjOXNjK7IPe0QT1?=
+ =?us-ascii?Q?1i88Mgm3bH6wr9XN7/COEDVelJX6VjXy2rJW2UOp0n2TqZxmqmeHpPi0+Xqr?=
+ =?us-ascii?Q?rUI0/kXeB9mnzKMWWysuEWJZ5h8tn0MClKvkxVl9EbFjF5nfYdeTUz2kULvk?=
+ =?us-ascii?Q?rETpGUvhxbWkhp7jPIYXJLt6U9JbjHEfezSapqU7DM4+hiYRHvRxM+jbyIIG?=
+ =?us-ascii?Q?iqZ48PpRgrVd2ACVNtoAaKpsTNmEk2eZmSVel72uDmHDyFNPCrtTin4iI/tD?=
+ =?us-ascii?Q?d5Ky6z0XzU9CWloumNze2WTOc5Wrg4fAjdWufIdt2+rQl4tpLTXoXV0nVP9S?=
+ =?us-ascii?Q?MXaKvUwbgKioj6bIEyplXtujiFgaCQgwAle2cdFIxD47NYIcf1fh4x7FK0iS?=
+ =?us-ascii?Q?8buQjRZ3k2wAJ5l1qcA3ni9VosUIHVdGcmfk/lqbR1LHFG2hSL5eADT16hR8?=
+ =?us-ascii?Q?os+LqbBR42WOq+v36ZWIuCdqGwsGBS7GjOwQ+IhQOBRbe3sHvDz3wRH5Vurp?=
+ =?us-ascii?Q?jUCTShemeeWC24p1sRyjWkfCU7Vc+1WYQAqmLIsVpbg6maCGFJ45oB9jpcOw?=
+ =?us-ascii?Q?1NC37t+gE/ZMBbLtgOXnd4bE6olWUiLgHzCS5SIbju6Dlhxj3PLjhVGPSRkh?=
+ =?us-ascii?Q?3gQjtKLZbQlhR/yFJr1ekV9Z9RhbW0Zi/tss/d5Wq8BZAl6s4//aDBDgnx4U?=
+ =?us-ascii?Q?m7bgGKMB1TyVSX7RXQd6+Fq3oHKIs6BaCBiZ6OxaQrcv3entPkKGFxmbM+mo?=
+ =?us-ascii?Q?DkxV+iYzu47HYAFwevuCU+jPn6TSGLMZSB3KHedEpLzPs6KbW4fsPimmgxwU?=
+ =?us-ascii?Q?qlqQNx9bMoWNYIWHG6BZJ6jyMY1Jxj98/IRFGzjPbPalam+TvXnH/Ff6QyXG?=
+ =?us-ascii?Q?WzTBN4og9LzO7ysouo06cOiZGYmIp+g79GNQEiUWtUfT+1tTH1Pfm8c6RNQ5?=
+ =?us-ascii?Q?OSI2z+ER+tmxmIHvx307uSOb1npjtO9C+qEiZSnqi6s1KaSHoaPqQ0iQq5kF?=
+ =?us-ascii?Q?8b61d55dW7KatX1r0xzgzerkxts56sJhkaRPClPoBkyG1hx0XLbKwW+eHCAH?=
+ =?us-ascii?Q?6DF451WxxDrywcyr9ZzSpHLfxagd9M17oB6nj74G8Lh8uS9Hbk4p/Wp6RxKb?=
+ =?us-ascii?Q?Y7YFl/1s17VBuPIxxiGH40HVgfVr641BYQzzXcj6n/fcjAJ0XoKeVK3JOjMB?=
+ =?us-ascii?Q?09FnADhzTqw+7BW8XbWJfZ1zN1XTeHxFP/Ga5tb5bPDrGS6dr89Eiu2S0nLS?=
+ =?us-ascii?Q?YSABopb83/0kDrwd6bsjLt50nookiKDljr/V2Xyw?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce612d59-78b5-4616-4fc8-08dd612d4740
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 06:15:25.6210
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sIkZIhLXWvpsCxMdvm3HGw5ksGyxZO0uqZj8WCvzNxiVaT96uU1zecK4Adwf4TiFazVM0+tXUGXPxm+ssQcyNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE1PPFA7A817EB8
 
-syzbot has found a reproducer for the following issue on:
+When invoke vmap_pfns, it call vmap_pfn_apply to set pfn into pte.
+It check pfn is valid, if true then warn and return.
 
-HEAD commit:    0fed89a961ea Merge tag 'hyperv-fixes-signed-20250311' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=173fa654580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f71f17a9b92472b2
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b667f9a1fee4ba3775a
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177b6874580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=138b17a8580000
+This is a mischeck, actually we need set a valid pfn into pte, not an
+invalid pfn.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-0fed89a9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/178c4c7fb0b4/vmlinux-0fed89a9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/97ef169a8fde/bzImage-0fed89a9.xz
+This patch fix it.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 3 UID: 0 PID: 5936 Comm: syz-executor316 Not tainted 6.14.0-rc6-syzkaller-00016-g0fed89a961ea #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:p9_client_walk+0x9a/0x530 net/9p/client.c:1165
-Code: 28 00 00 00 48 89 84 24 88 00 00 00 31 c0 e8 3d 44 b0 f6 48 89 d8 31 f6 48 c1 e8 03 66 89 74 24 40 48 c7 44 24 50 00 00 00 00 <42> 80 3c 30 00 0f 85 3e 04 00 00 31 ff 89 ee 4c 8b 33 e8 0f 3f b0
-RSP: 0018:ffffc9000380faa0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: ffff88802a9bc880 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000007 R09: fffffffffffff000
-R10: 0000000000000000 R11: 0000000000000002 R12: 0000000000000000
-R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff92000701f56
-FS:  000055558c345380(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f412d1932a9 CR3: 000000002107c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- clone_fid fs/9p/fid.h:23 [inline]
- v9fs_fid_xattr_set+0x119/0x2d0 fs/9p/xattr.c:121
- v9fs_set_acl+0xe6/0x150 fs/9p/acl.c:276
- v9fs_set_create_acl+0x4b/0x70 fs/9p/acl.c:306
- v9fs_vfs_mkdir_dotl+0x517/0x6e0 fs/9p/vfs_inode_dotl.c:411
- vfs_mkdir+0x57d/0x860 fs/namei.c:4313
- do_mkdirat+0x301/0x3a0 fs/namei.c:4336
- __do_sys_mkdir fs/namei.c:4356 [inline]
- __se_sys_mkdir fs/namei.c:4354 [inline]
- __x64_sys_mkdir+0xef/0x140 fs/namei.c:4354
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd26f335429
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff6d918e28 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
-RAX: ffffffffffffffda RBX: 00004000000000c0 RCX: 00007fd26f335429
-RDX: 00007fd26f335429 RSI: 0000000000000040 RDI: 00004000000000c0
-RBP: 0000000000000073 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff6d919008 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:p9_client_walk+0x9a/0x530 net/9p/client.c:1165
-Code: 28 00 00 00 48 89 84 24 88 00 00 00 31 c0 e8 3d 44 b0 f6 48 89 d8 31 f6 48 c1 e8 03 66 89 74 24 40 48 c7 44 24 50 00 00 00 00 <42> 80 3c 30 00 0f 85 3e 04 00 00 31 ff 89 ee 4c 8b 33 e8 0f 3f b0
-RSP: 0018:ffffc9000380faa0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: ffff88802a9bc880 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000007 R09: fffffffffffff000
-R10: 0000000000000000 R11: 0000000000000002 R12: 0000000000000000
-R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff92000701f56
-FS:  000055558c345380(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f412d1932a9 CR3: 000000002107c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	28 00                	sub    %al,(%rax)
-   2:	00 00                	add    %al,(%rax)
-   4:	48 89 84 24 88 00 00 	mov    %rax,0x88(%rsp)
-   b:	00
-   c:	31 c0                	xor    %eax,%eax
-   e:	e8 3d 44 b0 f6       	call   0xf6b04450
-  13:	48 89 d8             	mov    %rbx,%rax
-  16:	31 f6                	xor    %esi,%esi
-  18:	48 c1 e8 03          	shr    $0x3,%rax
-  1c:	66 89 74 24 40       	mov    %si,0x40(%rsp)
-  21:	48 c7 44 24 50 00 00 	movq   $0x0,0x50(%rsp)
-  28:	00 00
-* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
-  2f:	0f 85 3e 04 00 00    	jne    0x473
-  35:	31 ff                	xor    %edi,%edi
-  37:	89 ee                	mov    %ebp,%esi
-  39:	4c 8b 33             	mov    (%rbx),%r14
-  3c:	e8                   	.byte 0xe8
-  3d:	0f 3f                	(bad)
-  3f:	b0                   	.byte 0xb0
-
+Signed-off-by: Huan Yang <link@vivo.com>
+Reported-by: Bingbu Cao <bingbu.cao@linux.intel.com>
+Closes: https://lore.kernel.org/dri-devel/eb7e0137-3508-4287-98c4-816c5fd98e10@vivo.com/T/#mbda4f64a3532b32e061f4e8763bc8e307bea3ca8
+Fixes: b3f78e749865 ("mm: vmalloc must set pte via arch code")
 
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ mm/vmalloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 044af7088359..ebadb8ceeba7 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -3488,7 +3488,7 @@ static int vmap_pfn_apply(pte_t *pte, unsigned long addr, void *private)
+ 	unsigned long pfn = data->pfns[data->idx];
+ 	pte_t ptent;
+ 
+-	if (WARN_ON_ONCE(pfn_valid(pfn)))
++	if (WARN_ON_ONCE(!pfn_valid(pfn)))
+ 		return -EINVAL;
+ 
+ 	ptent = pte_mkspecial(pfn_pte(pfn, data->prot));
+-- 
+2.39.0
+
 
