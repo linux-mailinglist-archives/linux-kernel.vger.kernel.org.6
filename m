@@ -1,91 +1,141 @@
-Return-Path: <linux-kernel+bounces-557628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73CC9A5DBB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:37:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D29A5DBB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:37:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A984189CD5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:37:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEC337A9737
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5A923F387;
-	Wed, 12 Mar 2025 11:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B0F23F38A;
+	Wed, 12 Mar 2025 11:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Bv5Q+niz"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNKyjftN"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86FE1D63FF;
-	Wed, 12 Mar 2025 11:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BA123F38E;
+	Wed, 12 Mar 2025 11:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741779414; cv=none; b=b3ul+wAaUOD9nm/vJg1o0XC6IOXJQN2xEFGH2mio4Z1erV3gOg0Honq5U0BPWc5srH59K2V64Rzfa4ZagdxpDscXmnQMVBCmeTU2jeutAmstlg/QYs6ucAAlduiGE5pOjyEPc/mGH4Q6NaisEhXx642wryhSy4yFAM3ogX20x98=
+	t=1741779416; cv=none; b=CC8vn7Hch5flE+YsLw21vUUeQm2qtHyOdbCNOh9y9Vjk1sN4XZsbCZHP8wq0X3DvK3hfnO7uZkrm8QhbiR6gILA+LVWljWwwKnKRinXDaesb9OLiUPPM76DC7+gdNhPuw8YETsCb3FEfoSstK3b2t4BluHeRzaj3W6B4z6oPAFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741779414; c=relaxed/simple;
-	bh=1Fz8WhRnmBawJkwtKGHmqo+UYz5xPgWFag+s3Ew1uiM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ClF2aT5JqhUsE/6u0RYYYg2ypPFof2764mLVgxF8vsRC2hT18AsyLD4k+JOIZkx5bAo3u/DOXJ3u1vJoj5W+LAOWYA175rVGsHN7eCFNSp5moJ4P+NyGZr77Blt8tRueVFRlh/S8ygqB3jNe/eAMbSgbKG6mLGlYyoBgw5mjXTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Bv5Q+niz; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1741779402; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=1Fz8WhRnmBawJkwtKGHmqo+UYz5xPgWFag+s3Ew1uiM=;
-	b=Bv5Q+nizoNbtdUQx7QfHvFuGW6wTTEPs5/dnwisUOi7KyzDBJjQjYEWUQ2FNRdIcXcgOx0aUxPesF9kNgccy6Rqxs68jPmGnnAweRjzNLd6vafhHEUvl0HUf7T2gbZ0SO4agUHTpEKIqJhTKtHeBjSO+JEyfFIWw4dhfwDCfa/o=
-Received: from 30.221.65.55(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WRCdxxP_1741779400 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 12 Mar 2025 19:36:40 +0800
-Message-ID: <919fb668-35d4-42a8-8c28-082663e07f84@linux.alibaba.com>
-Date: Wed, 12 Mar 2025 19:36:39 +0800
+	s=arc-20240116; t=1741779416; c=relaxed/simple;
+	bh=gknEh2t/Je3Rn3xjD+1SZpU4HNy9nSnVGJ/aaMZ0Ecg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wx5Tp3ntLyWoe5aboAzjwNIs+jql4+BWFqhhuVVqzeW+suK+7lVfY6aBJVb3WUHc8joAfN35tANop/Ci0cqICWxrZv9pZut5FJ+gqVKiAWfoxfjU2+T46075ySp8KkrV0agy0zTdde2lhM2ASpQlbPu//vBWCCtsAiXpHtkDIvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNKyjftN; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ff5544af03so1751704a91.1;
+        Wed, 12 Mar 2025 04:36:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741779414; x=1742384214; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gknEh2t/Je3Rn3xjD+1SZpU4HNy9nSnVGJ/aaMZ0Ecg=;
+        b=lNKyjftNloIjlsjeTRPqp3XTG5gE4YWblcdl1DnnXlZATJVt4IVro1MZHd+D2kKyu2
+         dI/IuV0AB+VT/UDG0txP+tFHMMbuuh06gvhlsTmLR3Lc92UK3tSqDyI6VO9nynx2hCkt
+         cW1JGhLcPXEJZsQJnX8QFpj3XuXLE0y7qUvBbIc+fSX2Pc+LKKAUyPAYDlkPzI9+RGNl
+         LQeUofa1smf9DgZiNHlFpAbm3OJfjliA6r6udZKkPTy9p8gf+lAAfcKqYfaZhLTi4RSu
+         EmQNCv/RFqR+FpuCAuGjfI6wILK8MA2jYhKzjLT56lJ9TOINiv5xVCkuu7Y9YQGS0z3z
+         Sg/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741779414; x=1742384214;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gknEh2t/Je3Rn3xjD+1SZpU4HNy9nSnVGJ/aaMZ0Ecg=;
+        b=OMGORJuCkuJfH2voPpdkProV+1YVZvBLO4Z312LJVpEboVab+gfLl3cDYMlfhAEWyk
+         3JZx5zEw5tSeCfoUgQkpEAiC5mVDvoKEqE177c5t7EwG1nQkNMYPV2zk2TXLTT9MvCLa
+         qD9hqWptpbQZ0XdHd2QBfkCLnbSx+Jjs00ZetEarBiAM68vNFnGp8EZlg1zB4vIeLM5I
+         EnHrr8aKWFxLXKarmwI+Hvog2Kf/0oI0a+o7mk7hE10plV5wbDMDAlLwpH1HHP37r9p3
+         bV1M4O+VNKmPsd6h8B8V76hqnNHxFELOkeEqFg0KPvzm7sQV8KBbViI+4uvRzpqYHFwN
+         OTgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8LPTC6VkK0xkeXIvGPksYS5qB365eq3BehtIB2YrZA3qKNBGGXXXLt45D+netU9YEm2fqJkirMWrjiQAJ26pXaQI=@vger.kernel.org, AJvYcCWmhdh5/jwUIVWWAKwrfQjRG1E1sfK598EUGtrFZzcbGWo1/+tUJsrEmWbCTKN+anVNpk7c7xD4fal3szQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypiThAtP2dPVIlG32LqWw2p6tUSf35aS+3WaMwJDIjtjVMrHp1
+	nrPLO2cnFOJZBNrRnez5TZXDUTMv5FkzAtBt5hgzkjsq5JSE+6Yd2lmhbVAjMOvhEn3jU7JfSyn
+	Thdn+R/rAQIUFMRou0R8Z7+5GEyE=
+X-Gm-Gg: ASbGncvET9yYdf71a353J1JemeUdaS1TO/N1ksV1ar4Jwree8hLLfZJbUX9st+oC8cy
+	RV9IyxfLX6ZclXCqqj4t1aVbkSUJmi/Ra6BXAwUPen2E5yHK+PjMBeuiIas7o4H2h2zJvNxubBx
+	17ebKUsdeR6t6BQ2fwbtu2u7ngaA==
+X-Google-Smtp-Source: AGHT+IEDN2xmhNlHD/KpfAlbk7SO5pRX4Yth6unjvNI0fUm0BIoxX6m646b5DTRt63pZIvK66yoOhveOUoUHNzUZqQU=
+X-Received: by 2002:a17:90b:1d0b:b0:2ff:7970:d2bd with SMTP id
+ 98e67ed59e1d1-300ff9090d1mr3647168a91.5.1741779414383; Wed, 12 Mar 2025
+ 04:36:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] mm/hwpoison: Fix regressions in memory failure
- handling
-To: akpm@linux-foundation.org
-Cc: tony.luck@intel.com, bp@alien8.de, peterz@infradead.org,
- catalin.marinas@arm.com, yazen.ghannam@amd.com, tglx@linutronix.de,
- mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
- hpa@zytor.com, jpoimboe@kernel.org, linux-edac@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com,
- "nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
- "linmiaohe@huawei.com" <linmiaohe@huawei.com>
-References: <20250312112852.82415-1-xueshuai@linux.alibaba.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250312112852.82415-1-xueshuai@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250224124200.820402212@infradead.org> <174057447519.10177.9447726208823079202.tip-bot2@tip-bot2>
+ <20250226195308.GA29387@noisy.programming.kicks-ass.net> <CANiq72=3ghFxy8E=AU9p+0imFxKr5iU3sd0hVUXed5BA+KjdNQ@mail.gmail.com>
+ <20250310160242.GH19344@noisy.programming.kicks-ass.net> <CAOcBZOSPBsTvWFdpwE0-ZU76yMDGBEo3p9y614XYEu+ZSnQ6Sg@mail.gmail.com>
+ <CANiq72mcCEbeWb-RAXLcWRnJms2LA6xV=QqQ5=N3ii=3TC89fw@mail.gmail.com>
+ <CAOcBZOQnGCqKut-BTvfJNgB9Rz+f5DAANwMs9DU16Js+QDGOrw@mail.gmail.com> <20250312091633.GI19424@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250312091633.GI19424@noisy.programming.kicks-ass.net>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 12 Mar 2025 12:36:42 +0100
+X-Gm-Features: AQ5f1JoWE1IHsvmTAsXyQOhSft5_BwvvABh61PPokhGerXhpR6A5ZQumzZyMbRA
+Message-ID: <CANiq72mi62AkrKzre254DDd_VwUsZzEMqNuXpFeY_4AjObrNVw@mail.gmail.com>
+Subject: Re: [tip: x86/core] x86/ibt: Implement FineIBT-BHI mitigation
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ramon de C Valle <rcvalle@google.com>, Matthew Maurer <mmaurer@google.com>, linux-kernel@vger.kernel.org, 
+	ojeda@kernel.org, linux-tip-commits@vger.kernel.org, 
+	Scott Constable <scott.d.constable@intel.com>, Ingo Molnar <mingo@kernel.org>, 
+	Kees Cook <kees@kernel.org>, x86@kernel.org, Sami Tolvanen <samitolvanen@google.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Nathan Chancellor <nathan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Mar 12, 2025 at 10:16=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+>
+> The rust-log-analyzer seems to suggest the nightly build failed?
+>
+> Suppose it didn't fail, where do I find it?
 
+Ah, sorry for the confusion -- by "nightly" here I meant the toolchain
+that gets built and distributed by the Rust project.
 
-在 2025/3/12 19:28, Shuai Xue 写道:
-> changes since v4:
-> - fix typo and polish commit log for patch 1 per Borislav
-> - collect Acked-by tag from Borislav and Miaohe
-> - collect Tested-by tag from Tony
-> - No code changes
+To get one, we need the PR to land first, and then we can use the new
+flag. It is easy to land such a PR/feature because it lands as an
+"unstable feature", i.e. meant for testing and so on only. So we can
+get quickly "proper" toolchains (i.e. tested and built like the
+full/normal releases are), and if everything checks out, then upstream
+Rust can commit to stabilize the feature later on.
 
+That is why I suggested to wait for that, since the PR seemed
+straightforward to land to me, and thus it could land soon.
 
-Hi, Andrew,
+I don't know if there may be a way to pick up the toolchains that
+their CI built for testing PRs, though. It is not too hard to build
+from scratch anyway if you want to do so -- I can also build it for
+you if you want to test right away before it lands. Otherwise, I can
+ping you when the nightly toolchain is ready.
 
-I hope this mail finds you well.
+> I normally build llvm toolchains using tc-build, but it seems rust is
+> not actually part of llvm?
 
-Because this version has no code changes, but only collects
-ack tags, I did not bump version to v5.
+Yeah, Rust uses LLVM but is not part of the LLVM project.
 
-If you have more comments, please feel free to let me know.
+But I think we could have support to build Rust there easily -- I
+discussed it with Nathan (Cc'd) in the past. Currently, for the
+LLVM+Rust toolchains he provides in kernel.org, he just bundles the
+upstream Rust binaries AFAIR -- and IIRC he uses tc-build to drive
+that build, so if we do that we could also "easily" get the full chain
+in kernel.org too ("easily" if we ignore doing the PGO dance for the
+Rust side etc. and assuming the building time/resources makes it
+doable, which I don't know about).
 
-Thanks.
-Shuai
+If that is correct, I could take a look into adding a simple Rust
+build to tc-build (i.e. without PGO etc.).
 
-
-
+Cheers,
+Miguel
 
