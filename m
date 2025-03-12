@@ -1,81 +1,62 @@
-Return-Path: <linux-kernel+bounces-557391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC68CA5D84A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:35:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CB8A5D84D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:35:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C11A3A6A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:34:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C301699BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6512356B1;
-	Wed, 12 Mar 2025 08:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C59E2356B0;
+	Wed, 12 Mar 2025 08:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JUS9fE4Z"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IPIxNrN/"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F6A235360
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAD41E260C;
+	Wed, 12 Mar 2025 08:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741768497; cv=none; b=cbJJTRuZBRvSWKZGv81bZ1tLyGTZyLtGkUuw1vRBhnZkC/d4NOj0Z/3geM7ZnadRHAURfborhn+SuiDlNDS0SIVmZO71IaJZtXJnEg6xFgDMJbJiWOf6WNgIcKUiJejs7QGpH92zr2LBV8K3/aLODE1/EYr6FLD1JpNNGoU3THg=
+	t=1741768524; cv=none; b=XOg286h4jWk2XoNH1oagqdDQ9Fzcpmkfsou/txWndxo1k9PRzPp1h9Iq0lDGTLbZc0lHju6s/iAUvP8YTYCpKu+r2JkFB7BzC1dgGEhcno7bvnTVhJo3dW+7uARE1X51tx2Aju9oaV8y7AUyUN2cLH/Kz3e80OI/w7HzdpB3n0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741768497; c=relaxed/simple;
-	bh=osrEN2ym2yqpuL7B/cuo1QR3wOstyWvh9vv+cgRcDhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Qc4ZCEMMFbT45dLAyn7GBywbFkoDUpSS/9oJTPIJ2ocWLDEt1UVpjzQZKdGn3GUJBfWP7Ts9ouVIi+jjiLGz97E6GGZ3Avmp6Rl69mdLxGzUdFQQOuYiHgaGTqIuiwODnQQmLNsbVTf5D6S6UeqbduDcVByUxtetDQ3XMOXIq40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JUS9fE4Z; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso23490215e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 01:34:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741768494; x=1742373294; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fArFyg50PD5pydU5ZFimqktWgEs1OFGNquYCJqIcMD0=;
-        b=JUS9fE4Z4fGSyssMHCURjAcT4gA/5iV34Ji63WM7MSW1984wR+wL1s+PnRIQ6Ri2GT
-         fHKpJzzLRbUrDhJshPIoJ/2wt34a773ApWAv7qTV/H5WwY93hXpoUknBJ4rPwkKrfmBf
-         LJfEdI6EjaOD1B9/zPRhlYs7y4aoSZtPodBfMB4DNigWEFdIL2w/Vaj9WIoALSm4tcen
-         5OOu9ARQTmCZ9T3jTHS/1D+V2Eoe4kDLmq6qpmVM4h7mrO6V89prEfCZ5Y2gzGcVEFcL
-         2Q0V+CHQLLhmKNi9g9X3ySUEmRNbXjHXr1HAgUZIRhbZQKJzSQxQXwzy3IL/F62LoRou
-         DYww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741768494; x=1742373294;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fArFyg50PD5pydU5ZFimqktWgEs1OFGNquYCJqIcMD0=;
-        b=NHkqX0BzSzA8p103MNkIigpk9jgy40FpovhCmL20EhCMTEQtyefTmiCUJCakxzBP2x
-         89kHujdpsoC+Zj6g2yPfSFUZraOtapYZ08TEFmE6PSGRdzPKsCSHVhDJNE0HpP02jPhn
-         TkL3K6vLYnZuumiJ8GGQqc6nPfaXyG6x1lIdS+wOi0QrLB5mVMUMd7ghK+gb2C6xr5kl
-         fJr5DtHXlq8LbpALlL0kbEevfup/FyApqofWnw0N8f7yDsZS04gGBaf/P+wunX+udiUj
-         aMNHCmMoFB2tFgeBB22ZAtWP0oCn72t6GBgeUgiwMVIGtkUqhPkELzwhwTxQ6gzsQhBT
-         gtfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4/VYvhepSbyi0I3h66MpO/OLNDIpb3vfNm7htqDy0EwuniEqQpvExOVWYpJlDQYshrn0pL9KOufQV2fI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbqYJ+MULCLC4pPHC4wXjC8C8izhwguGXCNsXutNG55vSYoTN5
-	t2+UBSNiiKwh9WhgKqY2mhwGwTX/VPp9XAlASG7LzBxhk28R/Lyo7HSVfkmb/UY=
-X-Gm-Gg: ASbGncuammBxjOAvR/g8Rf28fHh3JggLi5HypHg9VWzeVHb6aRrAqOZkQOgER2gXz8i
-	N505Pc/kTjmwsO915sUw+2C/M6vdlQDYlAxXOD6c6LBsa9jAbAzLWcoUe0pRm7c38RkYJqsnXZW
-	btleli7WymRTfsvHBB6EULQXITh7O7KdSnsMqR9ykZLNbVxGI8tgvLJw2zrke6/amOJIQ0CyafP
-	UmIZ7NqPHeYw1vlY+vnfVhsdlxCL6PoHV3uYMkq5KjSPZay5ezXDcSPSpDPQwQ/Gine7d+/NGYI
-	qUqDivYtmGmXzQvAB9jw0/it2Iqx9B72EEN6eLdJ6FFyyMzkmg==
-X-Google-Smtp-Source: AGHT+IGHjBnjKqz7j0n2tGlwarxD7Uz84jTKBk1YUn+9ERyojr84A3D+g60nAnIQn0oMlwl9U3UJ+w==
-X-Received: by 2002:a05:600c:4f0c:b0:43c:eeee:b706 with SMTP id 5b1f17b1804b1-43ceeeeb95amr92425115e9.24.1741768494113;
-        Wed, 12 Mar 2025 01:34:54 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d0a74c59esm13832225e9.14.2025.03.12.01.34.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 01:34:53 -0700 (PDT)
-Date: Wed, 12 Mar 2025 11:34:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] mfd: cgbc-core: cleanup signedness in cgbc_session_request()
-Message-ID: <9e812dfa-e216-4e40-bbf0-d0b63b110bb0@stanley.mountain>
+	s=arc-20240116; t=1741768524; c=relaxed/simple;
+	bh=cjlL9nNN2yPGP/kloooKrkaWMEAFVfhowW7F0NqhLy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kp4Xoa32U8RDkRME0fmubqt8LG1CN3viw8j02qqXaoYcY4VjYnc3SeR0Jo0jeXA2nTOsOQdDzA2EYZisHfcp/4wqXlhsZ+DGKUDLCWhI8riA9P6e86kPdvevf7OW9jWOKyjfFfh2KfWVuUr0h2x7zqLwvlzniJus0uN0A0xcxe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IPIxNrN/; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=beUqkLQd1QVbxP8uqlvFsRgB3x+ojLfHpVlLDx3r8Ow=; b=IPIxNrN/ZKMiyqQBuEMM2Po15Q
+	IX6MvnGGuhTaB4pYM1LVywOrcrMjIbo4ZdiF+QEpBx00+AUO0nPZeaOV9BGdQktnWIIDzSCh2fSKh
+	yGAiWFMFxZJb44AMBU38iTNbLbIkh5IaoF/PzhCAQyQJb/oEgdwpX8dwxWsRoxVaiiiPNaIcyE/Jv
+	PCtyrjcLpT+c3wTnZK0HhacYp1J5rj+V9cH0qLvfP6DEp4fKfY+7atbSbqENP9WFjLEIjuguqO6sN
+	70N+OnJQL7nXtP0NXfg88zGlKpQKM3MOTcjJHssBlAEkJszR+QL10CT4x11LG11mgAutgdVuVh8hJ
+	pXPxn/EA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsHYh-00000007qNV-0xM2;
+	Wed, 12 Mar 2025 08:35:23 +0000
+Date: Wed, 12 Mar 2025 01:35:23 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
+	djwong@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v5 03/10] xfs: Refactor xfs_reflink_end_cow_extent()
+Message-ID: <Z9FHSyZ7miJL7ZQM@infradead.org>
+References: <20250310183946.932054-1-john.g.garry@oracle.com>
+ <20250310183946.932054-4-john.g.garry@oracle.com>
+ <Z9E2kSQs-wL2a074@infradead.org>
+ <589f2ce0-2fd8-47f6-bbd3-28705e306b68@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,33 +65,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <589f2ce0-2fd8-47f6-bbd3-28705e306b68@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-This doesn't affect how the code works because there are some implicit
-casts, but the "ret" variable is used to hold negative error codes so
-it should be type int.
+On Wed, Mar 12, 2025 at 08:27:05AM +0000, John Garry wrote:
+> On 12/03/2025 07:24, Christoph Hellwig wrote:
+> > On Mon, Mar 10, 2025 at 06:39:39PM +0000, John Garry wrote:
+> > > Refactor xfs_reflink_end_cow_extent() into separate parts which process
+> > > the CoW range and commit the transaction.
+> > > 
+> > > This refactoring will be used in future for when it is required to commit
+> > > a range of extents as a single transaction, similar to how it was done
+> > > pre-commit d6f215f359637.
+> > 
+> > Darrick pointed out that if you do more than just a tiny number
+> > of extents per transactions you run out of log reservations very
+> > quickly here:
+> > 
+> > https://urldefense.com/v3/__https://lore.kernel.org/all/20240329162936.GI6390@frogsfrogsfrogs/__;!!ACWV5N9M2RV99hQ!PWLcBof1tKimKUObvCj4vOhljWjFmjtzVHLx9apcU5Rah1xZnmp_3PIq6eSwx6TdEXzMLYYyBfmZLgvj$
+> > 
+> > how does your scheme deal with that?
+> > 
+> The resblks calculation in xfs_reflink_end_atomic_cow() takes care of this,
+> right? Or does the log reservation have a hard size limit, regardless of
+> that calculation?
 
-Declare it as "int" instead of "unsigned int".
-
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/mfd/cgbc-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/cgbc-core.c b/drivers/mfd/cgbc-core.c
-index 85283c8dde25..0b3788c2c1af 100644
---- a/drivers/mfd/cgbc-core.c
-+++ b/drivers/mfd/cgbc-core.c
-@@ -96,7 +96,7 @@ static int cgbc_session_command(struct cgbc_device_data *cgbc, u8 cmd)
- 
- static int cgbc_session_request(struct cgbc_device_data *cgbc)
- {
--	unsigned int ret;
-+	int ret;
- 
- 	ret = cgbc_wait_device(cgbc);
- 
--- 
-2.47.2
+The resblks calculated there are the reserved disk blocks and have
+nothing to do with the log reservations, which comes from the
+tr_write field passed in.  There is some kind of upper limited to it
+obviously by the log size, although I'm not sure if we've formalized
+that somewhere.  Dave might be the right person to ask about that.
 
 
