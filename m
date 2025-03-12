@@ -1,200 +1,104 @@
-Return-Path: <linux-kernel+bounces-557432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C10A5D8DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:07:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88151A5D8DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:07:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B459179E27
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:07:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB19D179D42
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCB523875A;
-	Wed, 12 Mar 2025 09:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF85238172;
+	Wed, 12 Mar 2025 09:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="FNQ0i+Y1"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011028.outbound.protection.outlook.com [52.103.68.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="vyW8G88A"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D301E8328
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741770457; cv=none; b=UM1aiK23fLU2WoceA6Q5fITgoy4h3106NCAZozZYBTJAhhwx1recwesdgFIGYOZSOvDeCbIcY+vQBB/nr+AWQ/wWsjIpU6KjbwxFwR72R90RPSRisJsoHYhXvj1/mE9mS7gqZ82XWUl7BnU2dK0UL3yfkLiQFP0fQDeqsKJVHpY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741770457; c=relaxed/simple;
+	bh=2xtik8ZNjcv8YFpKcN5TMzwZKRCzMaZ5Gi4/BrubDos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ou3x4HfU6DaIQ/hgR+hROLe1kKmGLxS12V/LpL0TOPzNDWCQZyLjTeEWDdpTIHBnqbcnh45ED92NbV6/NaSbwYG79HKD61dQzDFiRJaWlE4X//QldpNdc4YJRdgHxBaJRRrrrR5+WrnSXePAV9+GVGQGLkIBHkaz6LYax03mU+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=vyW8G88A; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7832523816A;
-	Wed, 12 Mar 2025 09:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741770413; cv=fail; b=TDS9YrSuTxiAg9lBgAWgPlW1c8hHA2ya63PMsDbUwDhVeWLp+I3Ti1x2dO67gZaNSSajYsAbiMxGIMIW7NZG/aSl3c2g/WE06BysdPAhDR6Lz5BdJCSAkBaNa83Uz0Q3TvSf0egvAbjsazSeHb+g1wqtTDVmHr5lR/cz1Z65Qes=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741770413; c=relaxed/simple;
-	bh=FzD4ilIILSrUotbDSNcjfZZbPdA2al85CGsyBL1j2XY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=mk8oNbG34EjEBO2hAtcUaQ0j51/nwH7o4WzSNPGIe/IGObmHkfJOlu9f3G3NSH5R1C/QJCGiNO3z9KWyUFe+TprR5Ip9zrXXtD071OZwNv5h74EcToj1pv0ZP/R/Ey9pt+sZnVOvG34ep7yVtpktnXdjLPuk3grYF/jwhj6VAow=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=FNQ0i+Y1; arc=fail smtp.client-ip=52.103.68.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rfd4gcQKLyZsTX2GifhnfLMTCv0svcL/BHpWIMxywoldifjm1k4+E3+vE9IYGo7mSsmEu0VqoTQlX4bNysRey1NqujdZQRt+dy0EGM5J3SKK48ROp16j2BYpkP9SIp8BuKH+8nnOMKzk8+bqqkUK1HBGyOw1jxL+qTJhp5DcDk3/REcWJkQPmQ/1+5vWKr4p+P7+HdKThASTIneNj0lhPu/WkK++AcZqXXmCtl/uhaOGOCBdk+jS/Fevd6T50+3EHCMTJf/XLaxfFEoQ5JU4NRWStu5KNokLD8qE3T1HQV7G+y33JPcaCVKfRmq+YzscrvAUkTjoKrcG/Z6NC5AV+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PWytK++w7efVge2S3HCDfNc7xFUv7xIt7O1G0q5iL4I=;
- b=vud2i8XGlyKDEVreERdC1LQgH3/BqHaKq4K//z/FJcEGopZiWBj4PJ1gtPfwIodlc7MApZSmtGRLks7Hp5AkjaVXj/X5CYTybDIfCYINHKb4oh86PLRxivU4O9VAzKYbkGeydrYeSV5McKE7GJLlyUMY4Ct7sL868EVhhovglG4mksOX8d/Qk8Pka69ACYSKYq5cpU8JmkOk9T2BFIqc/CBSLFdMaP8QwF19mOZAGbt8d+0fajqFysEu1QKl7GeDEncF1/wA0cgfYbDfJS3JW0vJPUuP0pKeeClw6rn8bv8exxbpkLgVdZTFaTgC+SxUDdTTP+wp0vPG0WkW+6SOlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PWytK++w7efVge2S3HCDfNc7xFUv7xIt7O1G0q5iL4I=;
- b=FNQ0i+Y1+VPVPkj7SHutnXpMR7w9CG55koqpQX3Uy09//9z3XUzhoteiyr01bbcM/kgSQOWw7xRZV1M7YE8kqf6KBTH6Nx2AXh5G9apOu2ZH1y4LKRZMr+FRK6FH2emHbjv9JLFkFvTSbA5DULJJmwWwRSwGw8sP8DOABSq9Z4tN5shpOqfTjr5By8ELvjRgSiQSicoXCrRgRkmIAAagbGYjw7L7IXmm92HXrcQMxBwuxmw3tU9eNOqo9ca6dWW32Fx2isqH+ocwLleUQwlldwWRjShJa7dOf14gKRdqq2nyPz1PuDwGXZuQ8Z711E/ti31/8t8lH6JbKJn9kIwE4A==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by PN3PR01MB9981.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:151::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
- 2025 09:06:42 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 09:06:42 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>, Aun-Ali Zaidi <admin@kodeit.net>,
-	Maxime Ripard <mripard@kernel.org>, "airlied@redhat.com"
-	<airlied@redhat.com>, Simona Vetter <simona@ffwll.ch>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, Petr
- Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Rasmus
- Villemoes <linux@rasmusvillemoes.dk>, "senozhatsky@chromium.org"
-	<senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Morton
-	<akpm@linux-foundation.org>, "apw@canonical.com" <apw@canonical.com>,
-	"joe@perches.com" <joe@perches.com>, "dwaipayanray1@gmail.com"
-	<dwaipayanray1@gmail.com>, "lukas.bulwahn@gmail.com"
-	<lukas.bulwahn@gmail.com>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Hector Martin
-	<marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, Asahi Linux Mailing List
-	<asahi@lists.linux.dev>
-Subject: [PATCH 2/2] drm/appletbdm: use %p4cl instead of %p4cc
-Thread-Topic: [PATCH 2/2] drm/appletbdm: use %p4cl instead of %p4cc
-Thread-Index: AQHbky4SdzBfIMQKI0KeiKFo673KWg==
-Date: Wed, 12 Mar 2025 09:06:42 +0000
-Message-ID: <33F3F7E2-24AE-4F29-9053-3B502D075BA8@live.com>
-References: <ABAEA9D0-97CB-4ADD-9606-A12D5815335A@live.com>
-In-Reply-To: <ABAEA9D0-97CB-4ADD-9606-A12D5815335A@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN3PR01MB9981:EE_
-x-ms-office365-filtering-correlation-id: d9a03da8-9340-4d3b-8bed-08dd614534d3
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799006|7092599003|19110799003|8060799006|8062599003|461199028|41001999003|12091999003|102099032|440099028|3412199025;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?0IkeCQEaT+5TqGNhQUnL9iwHKeCeEeMy6VBGJkLSKkFKh2YDEKSHCBwM3y/a?=
- =?us-ascii?Q?3FVDhbGEl5t2BdtM6YanjgKqd6CBOVDyR1Osly/1U5oJ92gBy6SgSeymN0+k?=
- =?us-ascii?Q?m/W8pfiIfzWP/eRpS0JDAGXHkNJe45IytVTVFyNZ6kx5/3bIuf5GekVp8iP2?=
- =?us-ascii?Q?cKH0vb7T2x0JqL2ASNBa/9f4jV9RUz8i7WM3VAYkG9bmnRQr8mxKqJOz8Om6?=
- =?us-ascii?Q?oar+8AdQjVIiPoQzhVRuBJdDDjgKYjc4e0LCgNeaIzp79Gvz89fzxlwTEoqZ?=
- =?us-ascii?Q?su4akItx89mzZnPkvGXnA8cXjdbayrsEgvg0VB0Pfqhva5j/R0Ckzf1GoHuo?=
- =?us-ascii?Q?kkPKz+G6d6htwPZGhntE0MRIiiQOVal0L7GivaXKivJBzAP2KT/MrA+msnJ1?=
- =?us-ascii?Q?4l8kIuawchYB0yXhrHQHitGlrylWvk6S1jRstgxTVjiHm5VeOYqDNmrPynh2?=
- =?us-ascii?Q?4o2FQNTchUhP5tg1yQKnOylaLrrgLdWFhp99Ugdz4NqtNCKVg6Q+95LV7Kqj?=
- =?us-ascii?Q?9gGMTyQhKqlEalGpzfWJSvF+/a18opYDP2ruJ6GPykmmCs7ij73Hox+wOhuO?=
- =?us-ascii?Q?w8Kr+LcW19EM7aeoNgC6AUUwNaiosJS3GzojnLaupCpcN4i1mcFhuTf01h0R?=
- =?us-ascii?Q?tvxLoPI+TA7cbnCH8fMOdd2eJVLpuYtwJWQcfRcfCykFbLUFC2Kq8XeYaRu7?=
- =?us-ascii?Q?tEfSp33Q3786CyWjg1vdxi47xrDBLnE1737992QUiUfE02IU+DAc8jfbcvrB?=
- =?us-ascii?Q?fMqPit89L312D5CXW56l/FCGE4deGb9hD+I8Xv0XHQm3Zx/OqgBxpFy3l3Ik?=
- =?us-ascii?Q?819BsbjbhBq+xGUFz6Y9PBlclx+twGgOmDIDfzfU46Ag/9c/7TvaoHsRRHXI?=
- =?us-ascii?Q?A2bad1r9rEVModzUu9GChmJuB5avX7/lmmzwfhEjqjoZAFN7yjYNjnSOWu/4?=
- =?us-ascii?Q?rvp5k6Cu8Zms+eEBz7lkcwmLxMDnQ6+LCd3z+M3WOEays3xSKMviA8qIs9Q2?=
- =?us-ascii?Q?ybmgBm9CQG7gj+x1iSU0MDareVmGg+jH0bKahSercmK/DuUmoIsDunITHPqv?=
- =?us-ascii?Q?hkFAnZKJuSsRAZU3QaKs34PHwl/nTm12IQA5SqMwlw+PEVaj8wI4HXRrOnh/?=
- =?us-ascii?Q?9+x29FbmteXA?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?6H8SSlEyPGktk2PXzl/SWqZVKsI/2VsZRE0kpSP2KZeJK9kEiw93jY8xHMNb?=
- =?us-ascii?Q?sFgSA1L9aP2j/Iu4aEAzcrAduZMp7rJDK865PjymIdZLGpeHOz9Ur4mQZFBs?=
- =?us-ascii?Q?RtVJH2hGVJ7AujRSRl+UkFYzSUVG2UDLXavYlXBqIvSYnbxVptLje0pd+ad8?=
- =?us-ascii?Q?gk0r7wz6XtDFW5ryAIIFZbj0eK6MBWZSjosWPs3AbLEohBKHVwXoL+APmDPU?=
- =?us-ascii?Q?3sV0kEJeqt73r52kw5V8ihXVa42SUkp2grD+HX0+KjKXh1TOvYCfTFWJFoYo?=
- =?us-ascii?Q?OtbbEntYrF2+thDW3I9RAPEKmqw6P7dhRP8ENJHoa4k2kT0ygnq2QIvuWJEm?=
- =?us-ascii?Q?Zca3R5kUO6iUSZPXjLtVQbqVN+ZITOPy5TsIAYwYDGW3w/PZAI1y2Lne9G2W?=
- =?us-ascii?Q?P5tXQMY1g8RqLg8ZWxZsz0VqgPpG6MdG+aWFLaUKnN4KX5+YFWfTN6NK9LnA?=
- =?us-ascii?Q?6mn1vBn0A9AGJPBqL2qk2CLpGp+zFKk7yf2ReKRZ2C3nDucOlZg28Kc2YHpc?=
- =?us-ascii?Q?ru6j0O0keK8KfP1PGZg0Bidn2ezxR4JAj2HD5L4G71FZa57QR3KD/soMpiMQ?=
- =?us-ascii?Q?ghj81zGPiZqfj6E3Nx9T92gNLZhyG9cTTFyl/lSsylO3GE9FLVEYOgWrgH31?=
- =?us-ascii?Q?l5O46hymoh7kGGrKCqCdrinKKWLDwZQgSEgvj/mhTGkLMR28gVwUW39EQSaz?=
- =?us-ascii?Q?++DyOPDfMldc9DjHEb0DO2nmHCAijCL+4d53mXCvs6RNnHGCb4Gyqr1l/Nls?=
- =?us-ascii?Q?Ez4dR0vTN4KssecsnFOdT2f1pU4wQuvDreORnILvqB3Zd7rsTswdxYsXt4PF?=
- =?us-ascii?Q?4G7Nj0+esWHK2KhCdyfk7zJqdaxoYvH4wtKZsYLOeSAa8ujrXXEoMV8IKMoq?=
- =?us-ascii?Q?KC1KA9F+ASVZXsYyrHE9grLAIzS2abAyujqDJqkf7Z2yOfC/OwKzPgGHKEb4?=
- =?us-ascii?Q?FyZ56ehUTBWUKEjthK9yjAvuipFuuDkwCaFaJsqfvl0X68iOMc0IL/9Wk9Af?=
- =?us-ascii?Q?447huUdZQ4AJ2uRL1HoZ1Y3fFeoP63MRCaVlPhccyV2b4FArjP2M35VFAPCe?=
- =?us-ascii?Q?xMfkj5IrovE7bk+jyfRylz5MyDGf+QQDWgiZyPfIkEhGLg0aas86fnr5EY7T?=
- =?us-ascii?Q?J7s0kb41SCp8eAn2J9CRnkU7kZiPIq32ybesTQQmb/vZdBCPEqYw9DO5vBle?=
- =?us-ascii?Q?+Qe0bQDTis29fDynmfyPpDAv8HbjmezrXoNMRHBrO3e9ZJDEvKaRb19WIUuw?=
- =?us-ascii?Q?CpESqMz1ZwO+YVVVN4aRwa6F3CynH8jE2OupB4M/3BPaIg6RSQk43WG1isYt?=
- =?us-ascii?Q?exEGc3IO8+j6tlfBYWza8Yje?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4831D0BA280B6E4697AE095A0C14C852@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by mail.8bytes.org (Postfix) with ESMTPSA id DBFEC40E03;
+	Wed, 12 Mar 2025 10:07:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1741770454;
+	bh=2xtik8ZNjcv8YFpKcN5TMzwZKRCzMaZ5Gi4/BrubDos=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vyW8G88Ak5OwKJQOIEjJbMtdayD3+0Ob3NUSFqxeEuLBPmBUKReBs7CAusxTNu8Q7
+	 FI04VSBsTnmD89Pmkiri/yxIrF7p7LJkaldLS+QKS8pgCvpogfR9TxpHXJbiCS6jk6
+	 bCiPPVdRpDFc3NLD1YXhf+rUt3Pzjawl4HpRDlaaaSSqNjR9j5xknlTxOvdbg9FLU1
+	 afUy/dd1YIdsZ/8235V5jFfD4KMADuUSMo+gPWmrpSI+PVvPaZtHBBaFDx9WaNPGzb
+	 gqMTWgiyTd/wokzr35Upcxgsi5wPlgrN7OVcjFZNjerTZ2RR46yXa5iItZ7bhgLOd1
+	 78nUK+2Eoy16A==
+Date: Wed, 12 Mar 2025 10:07:32 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Joerg Roedel <jroedel@suse.de>, Alexey Gladkov <legion@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	=?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+	"Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
+	Dave Hansen <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>,
+	x86@kernel.org, hpa@zytor.com,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+	Larry.Dewey@amd.com
+Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
+Message-ID: <Z9FO1CefzO89syGg@8bytes.org>
+References: <104b6d4f-2848-42f4-a134-3373d12d9424@suse.com>
+ <Z88Iv0w8_l9i7_8l@example.org>
+ <Z9AFyG7798M4VNJQ@suse.de>
+ <29fa0d10-0d3d-47a0-8832-b2c7fc04f637@suse.com>
+ <20250311110748.GCZ9AZhPYYAz-MXErv@fat_crate.local>
+ <Z9B_yS_d8ny9hYUX@example.org>
+ <Z9CDjecpydOsRhUy@suse.de>
+ <dzs3mxfvac2t7itqcv2vnz3cidspwvjinimkbn3ddygxunc2q3@akdoea7e2gon>
+ <Z9FEcYssvcaZab1c@8bytes.org>
+ <pskj4f5fitd5ytb7gq4negloioihl2rfbpfwa47fnw74gxmlvh@vpoijhxcee64>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9a03da8-9340-4d3b-8bed-08dd614534d3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2025 09:06:42.2799
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PR01MB9981
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <pskj4f5fitd5ytb7gq4negloioihl2rfbpfwa47fnw74gxmlvh@vpoijhxcee64>
 
-From: Aditya Garg <gargaditya08@live.com>
+On Wed, Mar 12, 2025 at 10:48:37AM +0200, Kirill A. Shutemov wrote:
+> There might be a value to have consistent structure for host and guest
+> information in sysfs, even if they are presented in different places under
+> /sys. There's subset of information that is common for both guest and
+> host, like version.
 
-Due to lack of a proper printk format, %p4cc was being used instead of
-%p4cl for the purpose of printing FourCCs. But the disadvange was that
-they were being printed in a reverse order. %p4cl should correct this
-issue.
+I agree for the host side, but for the guest side I am less convinced.
+Any information exposed via sysfs on the guest side can not be trusted.
+The only trusted way to get this information in the guest is a
+successfully verified attestation report.
 
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/gpu/drm/tiny/appletbdrm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The same is true for exposing SEV_STATUS, btw. This can also only be
+trusted together with a verified attestation. But the difference is that
+SEV_STATUS is not part of the attestation report.
 
-diff --git a/drivers/gpu/drm/tiny/appletbdrm.c b/drivers/gpu/drm/tiny/apple=
-tbdrm.c
-index 703b9a41a..751b05753 100644
---- a/drivers/gpu/drm/tiny/appletbdrm.c
-+++ b/drivers/gpu/drm/tiny/appletbdrm.c
-@@ -212,7 +212,7 @@ static int appletbdrm_read_response(struct appletbdrm_d=
-evice *adev,
- 	}
-=20
- 	if (response->msg !=3D expected_response) {
--		drm_err(drm, "Unexpected response from device (expected %p4cc found %p4c=
-c)\n",
-+		drm_err(drm, "Unexpected response from device (expected %p4cl found %p4c=
-l)\n",
- 			&expected_response, &response->msg);
- 		return -EIO;
- 	}
-@@ -286,7 +286,7 @@ static int appletbdrm_get_information(struct appletbdrm=
-_device *adev)
- 	}
-=20
- 	if (pixel_format !=3D APPLETBDRM_PIXEL_FORMAT) {
--		drm_err(drm, "Encountered unknown pixel format (%p4cc)\n", &pixel_format=
-);
-+		drm_err(drm, "Encountered unknown pixel format (%p4cl)\n", &pixel_format=
-);
- 		ret =3D -EINVAL;
- 		goto free_info;
- 	}
---=20
-2.47.1
+One might say that this does not matter much for debugging purposes, but
+the question stands whether it helps the security posture of the TEE to
+expose an untrusted interface which tooling then uses instead of the
+trusted variant.
 
+Regards,
+
+	Joerg
 
