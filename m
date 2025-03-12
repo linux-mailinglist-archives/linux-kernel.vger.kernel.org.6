@@ -1,140 +1,77 @@
-Return-Path: <linux-kernel+bounces-557175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA53FA5D485
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:53:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEABFA5D486
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:53:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29E3F189A117
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94008189A0B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EA9199FAC;
-	Wed, 12 Mar 2025 02:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A75165F13;
+	Wed, 12 Mar 2025 02:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jHvZ/WIX"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqoGY/xy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC5B7E107;
-	Wed, 12 Mar 2025 02:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B2C18991E
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 02:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741747993; cv=none; b=djFkl1pcfwRc2yXCa166xLehOwDbyWRa1TGbf0qvtZb48Tqiwwxn16jE6KWYhHAeK8PKRE3wwnUOz14YQ8GA4VL8hik1mCJVJThC7cvgIjnqDQJbyy28yToq/5c7o4RJDmtz3e/LzRLraE3qTh1FrySKBhGi/sVH1ScKr0YMxPg=
+	t=1741748013; cv=none; b=BcIEsJFpZ7FFFYwiUhmGauQXpVNYqrP0YcT5ZiIsQRQ+gIQuo5bU/IxmO0OJfXTp3q5FYAjhhz6bgpaMuWlQ2o5nDJVPzbScqfGxKOfMFYOtgiahiaMtzt+YCigg/Rda3jS/SuEdZLltHfVpLiiQgzFm3139PENKB/UbbOUtZcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741747993; c=relaxed/simple;
-	bh=mGmp/6rLQXNQ7sV5BTurEpkMGQe9WfCi9GE2Knd3SNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Lwfq1cBBgCm2XRG3nM7D1WS0ny1LNvSzoc8Td4g1Z1+EkIqAs7ZvJ0e8RHkydCrpA4xwseeKtlEjl9VHzZsc3EAtzXI8YldWpf722QklZm5fesN1ev7r8L9n60KFD1oQbJtNg2W+O4j89HYgfZw+XETNXSCQbb8OresG9NeS1C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jHvZ/WIX; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741747987;
-	bh=ocD8+DIcFrFjovCogZxWvHcJ/XR+gJFJJkV27YdINP4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jHvZ/WIXI1d7OSUuwkGPxzvetRINzrGfSbTNRXaTijUEirV9NEzoNCLcKu8gxQBDz
-	 xVf7kvBTV+GMykJjGZTQVYUzx+YMm424he6aLKKvhNrrDhwanPA2JZeNeb6hT6U4ND
-	 QrsNOtFYPIUMiCrJwyzIdpnE1f1jydWRyFMtsrFxJhOw3U4XrdWwdtcs8dFF4+1Liv
-	 0NNaPh8/SWJ/D/QjOxtq6h61bvEeHetWlQBCNt2sW9MttU4T5K7P9oD8gvEO5YZwjK
-	 kThja3vO2UazkFq4awpxtmkLEsEJAbXSio8u9FWCvoVlCUVfzXjyIQoRrz++vy5PX7
-	 VRGicuy6orZlQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCFYZ6tn9z4wgp;
-	Wed, 12 Mar 2025 13:53:06 +1100 (AEDT)
-Date: Wed, 12 Mar 2025 13:53:06 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes@sipsolutions.net>
-Cc: Johannes Berg <johannes.berg@intel.com>, Wireless
- <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Miri Korenblit
- <miriam.rachel.korenblit@intel.com>
-Subject: linux-next: manual merge of the wireless-next tree with Linus' and
- the wireless trees
-Message-ID: <20250312135306.2cd270b3@canb.auug.org.au>
+	s=arc-20240116; t=1741748013; c=relaxed/simple;
+	bh=c0nPNHMEj2EaB+IMjd+p9+tgLxA5qJUbIMyOKfrGB2I=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ehytY0XCe+L3+AEorHhWyfzIWtcfkgDRi2t/Osnf3soyA+Awcpm/gX0q5utiZHxG1LJuwH/n3uVhaWoXxy8nLIgpOBmEJhKJkMwcC6WTbS0cKg6rPUfIqm8r7OZbvhMeL8lFbsjKeBlq6FLKE3DquKYfweWI2eu1xdRX343oBzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqoGY/xy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6490C4CEE9;
+	Wed, 12 Mar 2025 02:53:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741748013;
+	bh=c0nPNHMEj2EaB+IMjd+p9+tgLxA5qJUbIMyOKfrGB2I=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=cqoGY/xy1CZSuwHMNm7+wcJRMr9dw75RK2vLwdY0xXWJSU+bhYoBY0Dzsu+9/+bqB
+	 HlUX8ofx31wB+3Tib/NN9pEfjUS6tfe50oy11L4KFpAkfEYcfsBu3aaVP22H8kE01y
+	 NErHMhVKZDFMV3kHCtDPfS3XqQHVNESNdkPeRorE4zCjIRAGSC3H3nC1a7i0YLHP4X
+	 504lcEBts1wOk/fO+NvvE72KjT1MKjtkTlup8CoKwmrj5rAkQ/aRFYKteLL4mljzFH
+	 ZEkt8M4qRbwjVsCeTcTJYcx/x6cU7DH8/rcsp4bFhcLWxMInsSNY4N/6xFJu5nLdvD
+	 oV6GtYJb7cOLg==
+Message-ID: <7de8de7c-4dc3-40c6-8435-122f72944850@kernel.org>
+Date: Wed, 12 Mar 2025 10:53:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/CODNmu9F1CFzIxmj5c1pl7o";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: add carve_out sysfs node
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20250311182931.1043290-1-daeho43@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250311182931.1043290-1-daeho43@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/CODNmu9F1CFzIxmj5c1pl7o
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 3/12/25 02:29, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> For several zoned storage devices, vendors will provide extra space
+> which was used for device level GC than specs and F2FS can use this
+> space for filesystem level GC. To do that, we can reserve the space
+> using reserved_blocks. However, it is not enough, since this extra
+> space should not be shown to users. So, with this new sysfs node,
+> we can hide the space by substracting reserved_blocks from total
+> bytes.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
 
-Hi all,
 
-Today's linux-next merge of the wireless-next tree got a conflict in:
-
-  net/wireless/nl80211.c
-
-between commits:
-
-  1f860eb4cdda ("wifi: nl80211: disable multi-link reconfiguration")
-
-from Linus' tree and
-
-  2e85829ac7fb ("wifi: nl80211: fix assoc link handling")
-
-from the wireless tree and commits:
-
-  a096a8602f4f ("wifi: cfg80211: move link reconfig parameters into a struc=
-t")
-  969241371f06 ("wifi: cfg80211: allow setting extended MLD capa/ops")
-
-from the wireless-next tree.
-
-I fixed it up (see below and I used the latter for the later hunk) and
-can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/wireless/nl80211.c
-index 34c0dfeeb7fc,aee49d43cf86..000000000000
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@@ -16512,10 -16518,7 +16524,10 @@@ static int nl80211_assoc_ml_reconf(stru
- =20
-  	add_links =3D 0;
-  	if (info->attrs[NL80211_ATTR_MLO_LINKS]) {
-- 		err =3D nl80211_process_links(rdev, links,
- -		err =3D nl80211_process_links(rdev, req.add_links, NULL, 0, info);
-++		err =3D nl80211_process_links(rdev, req.add_links,
- +					    /* mark as MLO, but not assoc */
- +					    IEEE80211_MLD_MAX_NUM_LINKS,
- +					    NULL, 0, info);
-  		if (err)
-  			return err;
- =20
-
---Sig_/CODNmu9F1CFzIxmj5c1pl7o
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfQ9xIACgkQAVBC80lX
-0GwhVwf/WeQFTELYbJ3He6NlIHLV6eD/IsbKmQiY5CMKHzY2tjMwfrjE4ll5EUyr
-3GKAd64sdd1d9MdqYP83GYmNnJfwd2cM0yXSPJzTcB3tn/ufqbUsFydD+qrK7i0K
-q+EnvL0K8L/GiO3CLPInIQfTUtfSRq8Q3YOUbxkS1oauw7INuhzpuhaxOvhDMH4j
-+dml7bRPkIKyUsv53zpaBcgI5FKp/U63fgB3sNHU9bBXhVE7r1zdQikacjhmFO3k
-RMhDKv2ZoLSVSIHLM1MXJCGQucfINuzWlsyzoElRGOmXZlq6ySWxGdvyya5NPAKf
-btXMM/+KWrotydtYo2XyThqTD6jE6Q==
-=3IZd
------END PGP SIGNATURE-----
-
---Sig_/CODNmu9F1CFzIxmj5c1pl7o--
 
