@@ -1,159 +1,284 @@
-Return-Path: <linux-kernel+bounces-557449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724B0A5D90A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:14:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F2DA5D913
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:16:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815F616A83D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:14:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E01A7A7B60
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BCC23816C;
-	Wed, 12 Mar 2025 09:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C99023A986;
+	Wed, 12 Mar 2025 09:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jmBGBK3C"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNkjDn2l"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF73122FF2E;
-	Wed, 12 Mar 2025 09:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D044F78F51;
+	Wed, 12 Mar 2025 09:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741770882; cv=none; b=NUZqsUZfMXUPj3RF7YJQgaSyY1J0ub0oshcjH/7MTSwQUc9gxVa8dwOBHFxpa4gBoL1UErsBrpR6XDF8D8DH+P3O46jA0gkGepSWmDssOwslUx1kDpcTlbkmsR9v3Fv2fzFhNqv7WkYgJR0NvN4IeeYa79wrFHMFhUslbzYSNwY=
+	t=1741770953; cv=none; b=Wb/BBm5uNhpKc71bVhI5jkgqyaS9Z1WjjwYiFhsp3YRKfJfnw1+2puCZcbLYC3YKc4qMwUGr/P+f6bb+ueGykPQBB8UGMfgvdW0lyAUe640s5MVLDkfYwTAbASQXcoAiyfi/OE9pKxgf+/Ybt8p99LX+/lGMYzDbUtQlfzvSU44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741770882; c=relaxed/simple;
-	bh=cEKd2zeZ03W0AvZfiQXuQHDW6ARtsp1IdpFeReEbqHs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aQ52WR3bfmdDyDuwUy2BgBKDd2h1QBkMxzRHd50eE7iKiTXlG/SBda2cKbWpxqVcyY5s8Mv4zZsRdKGNJ1dj7G14ucfRziedqtI+yOmMEmi4KR+aEnCYn+Qeb6lrcwROjj13CUYxeLlVTtACgfkEGI1jYRNNsv+f5iB1PzbNlNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jmBGBK3C; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BMHGuj017778;
-	Wed, 12 Mar 2025 09:14:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=8TmtBO5q52/HEosJi2z3Sf
-	AuxsDFYLPd1Yxz9r4Z7hk=; b=jmBGBK3Cl3eWB18rwgyQ02r+XokLvPrvEwH85p
-	3zZVboE7i2QcBOBmFjiYJtsng+DkUrEkfjINCUz7YA0r94MJ8AoifM/XTeroXzTA
-	pV/j/5ev5mq8c3J5BEOrJpIdS1tdXO5da5L9N9VyxDq/jd99aakbCc94tXhEN35p
-	dHI7MYFe2MU93iNaRpm/PKjPqqP/Xab/CCer31vrXucIy38o/vTPunEqZQEFSOly
-	W+jb2HadV2C5C8h8cV5pJ/bh4ybfU9X0/HszqkiVwcSR0+q/1zGQscd9/Rk6yqcK
-	gq7W46t7XH6hE/2i65e9ybN+ypNvEKaDGMMcY0rO8LbMd/Kg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au509t7n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 09:14:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52C9EZwF002387
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 09:14:35 GMT
-Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 12 Mar 2025 02:14:31 -0700
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <quic_srichara@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_varada@quicinc.com>
-Subject: [PATCH v1] arm64: dts: qcom: ipq5424: fix and relocate uart1 gpio configurations
-Date: Wed, 12 Mar 2025 14:44:18 +0530
-Message-ID: <20250312091418.3265352-1-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741770953; c=relaxed/simple;
+	bh=J7SVnfphE13eNn/jlvXmylH8Fs5GAsHcj180R4qjeYk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hcFmPjSSW+whdHNDQjX1o2ipQ5CCglm/ag9C9nl7GJLfCaWuL2J7kLnoJM26RQwmvPrXQo8yuvlvveCNWcCYbeAtNbMJGLJRXpoisPtULNpYAV6q/LmkBKWA3ulTNqPNbGt+YROSZYu7pkKatzedyhKE0+YRCwKpZaS+PJaGIQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNkjDn2l; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-390f5f48eafso3137790f8f.0;
+        Wed, 12 Mar 2025 02:15:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741770950; x=1742375750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L+Ynp9Lk3vtNpYTgOzF3jmTX4HieV5YXRXD817qkEag=;
+        b=NNkjDn2lkl4hRCoWUEJClVQeaYVSGYaPNyw5EzEO0axJs2uR+EG5KnF21B3kX5mRs+
+         hZd8vSGihQwfU+Edj8taK8EpspZRwGwmECHsRWIxvNaBLYIDrpW6INMi6nyJlvsGZSVJ
+         YRY2eHzTfnM0jQW78ROm7XdBORmt9nrQA84q5zwlUJoujJULpY6LxbKrTdvMh1YmGSAo
+         6VlDUbmZHsrIJhtnpY8ao41K1Uf5seQa0jEy1qQafOvB6I1hmNUcZSS4XrJwwpgDX5Xu
+         rkNRf882YPkAT7tnjF7BZgjzmYBSQHYas92xvX5yf/f/eOgZjmTYiUT1169u5gYDWuNQ
+         fb2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741770950; x=1742375750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L+Ynp9Lk3vtNpYTgOzF3jmTX4HieV5YXRXD817qkEag=;
+        b=qPtXRON3De9qQHactp5mdwU639jyLm0JT2FpA6E8KJn/Lqv+D20uoquvRnVzhzcogZ
+         7cC+iY2pZ+zJUgb+DxAQZ7pDyR5QptprikR1F0IXp+umVShDm7S+ZM8LTMXLFXHif8Kh
+         s8W7MzTQaEIFsO4d5ZLrWBp+hlU10p90NNuMlwGHQuiPB/GuoYRHw5S1RUwsUEGnc2M8
+         nfdQHy4Uyazr4UMMYJnAP8KeIV4O9f6RKsrqo0YzaODPoGW75i9ilEInwusVobBvQBbK
+         2v22mNCiWOx7SpZdvnPaW3yCOTggzls1FmQ30XFoN7XQo4MjWxI98khShNs+YOf88jhJ
+         3Otw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGgXvjn3p95UFP0oPyjFLf6FoXh5KHzSFR47onmwkmD7l4KuqrgjAPtXYxtIh8FQcTKntyGlJh8/xc@vger.kernel.org, AJvYcCWnBEctGf+vk8KTnhEyMTmOh9OmiRtt7BiTT2jaNcDpCSJLPneDmOdU8LBIwefnJtlNVUAAHCgYIAs=@vger.kernel.org, AJvYcCXYZDnGm0gMz3guklxsUGosmCUYx3SSSTng9EUyRadqZce4n9egcH1Bw6Vz6Lbcr+rlsv5OTL2zZhYR2L6D@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0EeM0LU0+0YsKYvHv8rT7242mvF8jY/SIv5krVjQmvoPRl6pD
+	LzJFjVUx3+TRx09nPoadKJe4SL4ziCq+tsAAg6RUIiEv6tcsYwbA0z0iTb0nlKd6uZD3EUwTYl2
+	iTkylB04GniS2Rf5MxNM17h6VGihiYfBo
+X-Gm-Gg: ASbGnctJAe41O7vDcITPmJvcIUEtU4QsILI/+l7szzG5PTZtvsGQsrR2Sxppe73IR+l
+	NdY4Kf6+Wqycvc5S3zvoAfbxVl10Yu5u1cSqi/x5hVjfSvoJeRfLuyDLhLicyOw0Rp0a4mZrg3w
+	IbKU3O9QeC+qSZ+wPCYUI9YAXkXnQ=
+X-Google-Smtp-Source: AGHT+IFXA2UUR+nQMWK3xJ5GflMfeO6cfGqyE/nmTqoQd3Jj2v0XgwnQJAagvZfS7KhzlLu0GWY+tZ6fy1RQlnid1Ls=
+X-Received: by 2002:a05:6000:2ac:b0:391:2f2f:818 with SMTP id
+ ffacd0b85a97d-39132d78446mr15394778f8f.9.1741770949843; Wed, 12 Mar 2025
+ 02:15:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2qaKB0eA9gO_rc_KZ4Nx7rP-PJUIuHkW
-X-Proofpoint-ORIG-GUID: 2qaKB0eA9gO_rc_KZ4Nx7rP-PJUIuHkW
-X-Authority-Analysis: v=2.4 cv=a4ow9VSF c=1 sm=1 tr=0 ts=67d1507c cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=jqHd-jEL5zBjBWWoCB0A:9 a=3EaL8tvSfWgu6Hm8GeNu:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=671
- clxscore=1015 spamscore=0 malwarescore=0 impostorscore=0 phishscore=0
- priorityscore=1501 mlxscore=0 lowpriorityscore=0 bulkscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503120062
+References: <20250310080237.7400-1-clamor95@gmail.com> <20250310080237.7400-3-clamor95@gmail.com>
+ <axqbrwdkkuztwrz67hke2nwqgz2ifpedpypas7nuohohzlzkt4@i4d2np6vclwb>
+In-Reply-To: <axqbrwdkkuztwrz67hke2nwqgz2ifpedpypas7nuohohzlzkt4@i4d2np6vclwb>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 12 Mar 2025 11:15:38 +0200
+X-Gm-Features: AQ5f1Jo_rUmBq46bqm7v3lRPc9UKpKjAC1mRBRtaXRnuKYAkcvTlgzSOmuRUpr0
+Message-ID: <CAPVz0n10HskS+khCm58F7UUPu6XcYRs69dQtLPOQqoQS9MEL0g@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] power: supply: Add support for Maxim MAX8971 charger
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Update the bias configuration for UART1 TX and RX pins to ensure correct
-settings for RDP466.
+=D1=81=D1=80, 12 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 10:50 Seba=
+stian Reichel
+<sebastian.reichel@collabora.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> Hi,
+>
+> I have a couple of comments inline.
+>
+> On Mon, Mar 10, 2025 at 10:02:37AM +0200, Svyatoslav Ryhel wrote:
+> > The MAX8971 is a compact, high-frequency, high-efficiency switch-mode
+> > charger for a one-cell lithium-ion (Li+) battery.
+> >
+...
+> > +
+> > +static int max8971_get_health(struct max8971_data *priv, int *val)
+> > +{
+> > +     u32 regval;
+> > +     int err;
+> > +
+> > +     err =3D regmap_field_read(priv->rfield[THM_DTLS], &regval);
+> > +     if (err)
+> > +             return err;
+> > +
+> > +     switch (regval) {
+> > +     case MAX8971_HEALTH_COLD:
+> > +             *val =3D POWER_SUPPLY_HEALTH_COLD;
+> > +             break;
+> > +     case MAX8971_HEALTH_COOL:
+> > +             *val =3D POWER_SUPPLY_HEALTH_COOL;
+> > +             break;
+> > +     case MAX8971_HEALTH_WARM:
+> > +             *val =3D POWER_SUPPLY_HEALTH_GOOD;
+> > +             break;
+> > +     case MAX8971_HEALTH_HOT:
+> > +             *val =3D POWER_SUPPLY_HEALTH_HOT;
+> > +             break;
+> > +     case MAX8971_HEALTH_OVERHEAT:
+> > +             *val =3D POWER_SUPPLY_HEALTH_OVERHEAT;
+> > +             break;
+> > +     case MAX8971_HEALTH_UNKNOWN:
+> > +     default:
+> > +             *val =3D POWER_SUPPLY_HEALTH_UNKNOWN;
+> > +     }
+>
+> I guess it makes sense to report POWER_SUPPLY_HEALTH_DEAD
+> for MAX8971_CHARGING_DEAD_BATTERY?
+>
 
-Additionally, move the UART1 GPIO configurations from the common .dtsi
-file to the RDP-specific .dts files to account for differing bias
-configurations across RDPs of IPQ5424.
+It seems that I have missed that, thank you for pointing.
 
-Fixes: 1a91d2a6021e ("arm64: dts: qcom: add IPQ5424 SoC and rdp466 board support")
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 16 +++++++++++++++-
- arch/arm64/boot/dts/qcom/ipq5424.dtsi       |  7 -------
- 2 files changed, 15 insertions(+), 8 deletions(-)
+> > +
+> > +     return 0;
+> > +}
+> > +
+...
+> > +
+> > +static DEVICE_ATTR_RW(fast_charge_timer);
+> > +static DEVICE_ATTR_RW(top_off_threshold_current);
+> > +static DEVICE_ATTR_RW(top_off_timer);
+> > +
+> > +static struct attribute *max8971_attributes[] =3D {
+> > +     &dev_attr_fast_charge_timer.attr,
+> > +     &dev_attr_top_off_threshold_current.attr,
+> > +     &dev_attr_top_off_timer.attr,
+> > +     NULL
+> > +};
+>
+> Missing ABI documentation. Also wondering if we can instead just
+> configure sensible values without exposing them to userspace. For
+> debugging things there is always the regmap debugfs API.
+>
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-index b6e4bb3328b3..7b85aaa11ee8 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-@@ -147,10 +147,24 @@ data-pins {
- 			bias-pull-up;
- 		};
- 	};
-+
-+	uart1_tx_state: uart1-tx-state {
-+		pins = "gpio44";
-+		function = "uart1";
-+		drive-strength = <8>;
-+		bias-pull-down;
-+	};
-+
-+	uart1_rx_state: uart1-rx-state {
-+		pins = "gpio43";
-+		function = "uart1";
-+		drive-strength = <8>;
-+		bias-pull-up;
-+	};
- };
- 
- &uart1 {
--	pinctrl-0 = <&uart1_pins>;
-+	pinctrl-0 = <&uart1_tx_state>, <&uart1_rx_state>;
- 	pinctrl-names = "default";
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index 7a7ad700a382..e190c43c1b11 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -262,13 +262,6 @@ tlmm: pinctrl@1000000 {
- 			gpio-ranges = <&tlmm 0 0 50>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
--
--			uart1_pins: uart1-state {
--				pins = "gpio43", "gpio44";
--				function = "uart1";
--				drive-strength = <8>;
--				bias-pull-up;
--			};
- 		};
- 
- 		gcc: clock-controller@1800000 {
+These values are exposed like in the other maxim charger
+(max77693_charger to be exact) so I inspired with that plus dt
+maintainers were extremely against these in the tree.
 
-base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
--- 
-2.34.1
+Would be nice to have those configurable at least in some way, if not
+by tree then by userspace. I assume ABI documentation should be a
+separate patch.
 
+> > +static const struct attribute_group max8971_attr_group =3D {
+> > +     .attrs =3D max8971_attributes,
+> > +};
+> > +
+...
+> > +     err =3D devm_device_add_group(dev, &max8971_attr_group);
+> > +     if (err)
+> > +             return dev_err_probe(dev, err, "failed to create sysfs at=
+tributes\n");
+>
+> Iff we need the custom properties they should be at least registered
+> automatically at device creation time via 'cfg.attr_grp'.
+>
+
+I actually did not know this was an option. Thanks for pointing out.
+
+> > +     err =3D devm_request_threaded_irq(dev, client->irq, NULL, &max897=
+1_interrupt,
+> > +                                     IRQF_ONESHOT | IRQF_SHARED, clien=
+t->name, priv);
+> > +     if (err)
+> > +             return dev_err_probe(dev, err, "failed to register IRQ %d=
+\n", client->irq);
+> > +
+> > +     /* Extcon support is not vital for the charger to work */
+>
+> The comment is a bit missleading, because the current code seems to
+> make extcon support mandatory as far as I can tell.
+>
+
+Extcon is optional and charger interrupt will work fine without it,
+but this charger can only detect the fact of plug event, not the type
+of plug. So without extcon charging will always be done like from usb2
+pc port (default mode). Hence I have added extcon support here (which
+my device has and uses) to be able to set higher current if a
+dedicated charger is connected.
+
+> > +     connector =3D of_parse_phandle(dev->of_node, "maxim,usb-connector=
+", 0);
+> > +     extcon =3D of_get_parent(connector);
+> > +     of_node_put(connector);
+> > +
+> > +     priv->edev =3D extcon_find_edev_by_node(extcon);
+> > +     of_node_put(extcon);
+> > +     if (IS_ERR(priv->edev))
+> > +             return 0;
+> > +
+> > +     err =3D devm_delayed_work_autocancel(dev, &priv->extcon_work,
+> > +                                        max8971_extcon_evt_worker);
+> > +     if (err)
+> > +             return dev_err_probe(dev, err, "failed to add extcon evt =
+stop action\n");
+> > +
+> > +     priv->extcon_nb.notifier_call =3D extcon_get_charger_type;
+> > +
+> > +     err =3D devm_extcon_register_notifier_all(dev, priv->edev, &priv-=
+>extcon_nb);
+> > +     if (err)
+> > +             return dev_err_probe(dev, err, "failed to register notifi=
+er\n");
+> > +
+> > +     /* Initial configuration work with 1 sec delay */
+> > +     schedule_delayed_work(&priv->extcon_work, msecs_to_jiffies(1000))=
+;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int __maybe_unused max8971_resume(struct device *dev)
+> > +{
+> > +     struct i2c_client *client =3D to_i2c_client(dev);
+> > +     struct max8971_data *priv =3D i2c_get_clientdata(client);
+> > +
+> > +     irq_wake_thread(client->irq, priv);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static SIMPLE_DEV_PM_OPS(max8971_pm_ops, NULL, max8971_resume);
+> > +
+> > +static const struct of_device_id max8971_match_ids[] =3D {
+> > +     { .compatible =3D "maxim,max8971" },
+> > +     { /* sentinel */ }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, max8971_match_ids);
+> > +
+> > +static const struct i2c_device_id max8971_i2c_id[] =3D {
+> > +     { "max8971" },
+> > +     { }
+> > +};
+> > +MODULE_DEVICE_TABLE(i2c, max8971_i2c_id);
+> > +
+> > +static struct i2c_driver max8971_driver =3D {
+> > +     .driver =3D {
+> > +             .name =3D "max8971-charger",
+> > +             .of_match_table =3D max8971_match_ids,
+> > +             .pm =3D &max8971_pm_ops,
+> > +     },
+> > +     .probe =3D max8971_probe,
+> > +     .id_table =3D max8971_i2c_id,
+> > +};
+> > +module_i2c_driver(max8971_driver);
+> > +
+> > +MODULE_AUTHOR("Svyatoslav Ryhel <clamor95@gmail.com>");
+> > +MODULE_DESCRIPTION("MAX8971 Charger Driver");
+> > +MODULE_LICENSE("GPL");
+>
+> Otherwise LGTM.
+>
+
+Thank you for your suggestions, I will apply and test them.
+
+> -- Sebastian
 
