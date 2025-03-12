@@ -1,88 +1,101 @@
-Return-Path: <linux-kernel+bounces-557331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55513A5D772
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:39:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A04A5D775
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EF701884DBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:39:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B6A0189EF19
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC96F1F4616;
-	Wed, 12 Mar 2025 07:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h4BhQC2Z"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD191F4285;
+	Wed, 12 Mar 2025 07:40:38 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C66F1F426C;
-	Wed, 12 Mar 2025 07:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457041F4189
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741765168; cv=none; b=XnjU4eQcC8Ww3+VgYm1+GxVlzv8LFaCha9kSGn1a4kpq0fUkCtOa1S5k+7dkqaNPiaJ/sNZtTG2cBSJMhHAECLGUPyrPWbey7glzegI0+gOvoaHEEc/cRDpdU83RqcXY58wjAPxBDxGj5/tLH32+0pzmQ2XLHVsmmhQ2K0Ua9Sk=
+	t=1741765238; cv=none; b=Jmh7BpEIYubrYwlGgY1XqvMAvdO91I7fObNqmwlWHGnrkBD4gGHRex4kcyY5kJbxgWZbVAMqTLTBQsHHDhkYXCFd0XAiTZ9eY01g9tHipqNEmeEMiXNGin5qck8C+1/dqXT8BQEVwU/Rcrkxb1r7oZZ4Dy0pfwLLJHjFPiGYiGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741765168; c=relaxed/simple;
-	bh=7+eQ/bxV/FsnyJfAPNsCIuzNkF8f1My+Qx/DwvN2qfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RtdSoGiQqtWaDCjlqqTSFRF3nNiKFF99IU0gMnWxa2PSkmzcZ5Yg8K/z1Q5GZqzwPRlhpp6tfsLn9I+Nxvfn7BUzdrb0mkFJVU54Px7uLQIyO4mLFswqqC7DLsq8DTi2ryOxLx/0j2WzxiVfMLa8jHyuAtzg9gNca4haAuoJ70Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h4BhQC2Z; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=SV+J3vjGNu8yosP3unAvnQxwC7lVZQJIuTPPqse8sjQ=; b=h4BhQC2ZNcoyI9VUbRp0/piVd6
-	v1ptmJFhsgZNHEEr0Jlsg1FCyLwugyumNlZGjo9xZvfig7PUj8iVi5NuQ/GeOJzRgvGgX5rb2oMAo
-	VQ5Ef1IlQNbAsF9nIMx+0q7hCyZ0YczxsyZwW+cHmr6irlyZvtQI/5plTmASVXHH80RxoiGb9tDYO
-	XWymJey2ZA/jrBiNandBfnSBT0da6qIj9VztLHtVfnmcFF9K2cd8pPautbX8i/a/16KE/yLP24zxW
-	8SkY33oRrfEAEG8pskTpCEiIqIjPqnpeEB6XfxoWAgRLGvk/oo58pKP71QbSJfc0ITrhV4ulfMlqs
-	xJLqr3AQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsGgY-00000007iqM-2hD8;
-	Wed, 12 Mar 2025 07:39:26 +0000
-Date: Wed, 12 Mar 2025 00:39:26 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com
-Subject: Re: [PATCH v5 07/10] xfs: Commit CoW-based atomic writes atomically
-Message-ID: <Z9E6LmV1PHOoEME7@infradead.org>
-References: <20250310183946.932054-1-john.g.garry@oracle.com>
- <20250310183946.932054-8-john.g.garry@oracle.com>
+	s=arc-20240116; t=1741765238; c=relaxed/simple;
+	bh=I8VeSuVWU7hBG97/XrhJeDb8Qe+2PoDcl4Ry8eqIDqk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=llLLSmId1nqrAiO3HUb161NkZ79TiRewo0UlEKXJ4YtQgAsZ61hYHCwk6+y/GCj3PnGT+XW1LvpUpoTZ0UfayUP07UmelS04UQ8UqTFR6mA+ekqc3270xj06nRu4cVsPegm1K2ZGyIbiuu4IXn+rGyd9cquQ6yzp8sMzeN4Ef+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowABnbW1xOtFn42F9FA--.41781S2;
+	Wed, 12 Mar 2025 15:40:33 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: mporter@kernel.crashing.org,
+	alex.bou9@gmail.com,
+	linux-kernel@vger.kernel.org
+Cc: Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] rapidio/rio_cm: remove redundant 'flush_workqueue()' calls
+Date: Wed, 12 Mar 2025 15:40:21 +0800
+Message-Id: <20250312074021.1430114-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310183946.932054-8-john.g.garry@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowABnbW1xOtFn42F9FA--.41781S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKF1xZFy7tr1DuryrtFyxZrb_yoW3Cwc_uF
+	W3JFZ7G3yDta1vkw1UXr1rXFZ2vaykZF1FvFWrKF98KryUZw1Fvr4DZr4kuw4UZw15GFnr
+	u34kX34UZrnrCjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbV8FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r126r1DMxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x0JUS38nUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Mon, Mar 10, 2025 at 06:39:43PM +0000, John Garry wrote:
-> When completing a CoW-based write, each extent range mapping update is
-> covered by a separate transaction.
-> 
-> For a CoW-based atomic write, all mappings must be changed at once, so
-> change to use a single transaction.
+'destroy_workqueue()' already drains the queue before destroying it, so
+there is no need to flush it explicitly.
 
-As already mentioned in a previous reply:  "all" might be to much.
-The code can only support a (relatively low) number of extents
-in a single transaction safely.
+Remove the redundant 'flush_workqueue()' calls.
 
-> +int
-> +xfs_reflink_end_atomic_cow(
-> +	struct xfs_inode		*ip,
-> +	xfs_off_t			offset,
-> +	xfs_off_t			count)
+This was generated with coccinelle:
 
-Assuming we could actually to the multi extent per transaction
-commit safely, what would be the reason to not always do it?
+@@
+expression E;
+@@
+- flush_workqueue(E);
+  destroy_workqueue(E);
+
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/rapidio/rio_cm.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/rapidio/rio_cm.c b/drivers/rapidio/rio_cm.c
+index 9135227301c8..c5662c6c52fd 100644
+--- a/drivers/rapidio/rio_cm.c
++++ b/drivers/rapidio/rio_cm.c
+@@ -2196,7 +2196,6 @@ static void riocm_remove_mport(struct device *dev)
+ 	if (!found)
+ 		return;
+ 
+-	flush_workqueue(cm->rx_wq);
+ 	destroy_workqueue(cm->rx_wq);
+ 
+ 	/* Release channels bound to this mport */
+-- 
+2.25.1
 
 
