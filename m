@@ -1,185 +1,185 @@
-Return-Path: <linux-kernel+bounces-557379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C884A5D803
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:22:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A67A5D809
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:22:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C601189693D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:22:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33B0C7A1453
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED94233737;
-	Wed, 12 Mar 2025 08:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF93233D87;
+	Wed, 12 Mar 2025 08:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ps3W89ZB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="NLaizaIT"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731C21DB356;
-	Wed, 12 Mar 2025 08:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E41D1CEACB;
+	Wed, 12 Mar 2025 08:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741767715; cv=none; b=frpE0obF7byAJPLuGvI6pSJpILK7SSQVYdXcuWu65Zol3NwrDE1OCJYwrFWAc8XrhAgmipmRD018804YJj4CF3s8WNfXKPVZm3BGc4DvXEILQCetwiriS+i/Jzmg6H4S+iCLeqvFRQBjKuAHGis48eTbtdSnJkmxZr2uWYaMHoU=
+	t=1741767726; cv=none; b=u5YrxPTIzMbXznZKNxF5HcGakP7+HAX0jYIDFVTD3pLLGsFEoiDvNhSqYt9WhWGzchjQzaJIDP5/hvdO+b+OqEe0yaMb5ux5wcq8sIWrjqYj9FqtMEDud2mmEewOHyXy16bJoUNXF/3/jJV5HOKCp6KFnA6/RjZpGsVf7IotrbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741767715; c=relaxed/simple;
-	bh=K3w+uvK/T33Sb7r/wuWcRSqZZjDSkSf+R1EUffld+B4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dULXqa/QlHNBVYihb/V8LjMWwmz0lv3bvl1S7hBPFszwaMuyBrilw1tCUlywYdwKPzw5gq05ldGbMF6VYBE1pys//LiiVROR/zbEEkIWoleUsu1a694uWqBC1G9toXcJDFoXi7icddpwqp7ujan6F2ypw78ECedsnS622egPs+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ps3W89ZB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEAD8C4CEE3;
-	Wed, 12 Mar 2025 08:21:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741767714;
-	bh=K3w+uvK/T33Sb7r/wuWcRSqZZjDSkSf+R1EUffld+B4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ps3W89ZBWzBgV5aqiLiYoLipNPLdjHTQNCngZ8dk+H/MBGCaW2rZSbp6BKT6OW2o7
-	 Z8dCp3BNbPLdQ7/ZXy4REwYgQA71kW5kw5DvEtt1QJtQJMyLFbj4Z8GZseurUKLlfZ
-	 yjMwPfQXOHYsFT4pjbsyaJM1DmWQTMQPEBQJwctkvgHWj852OLYPLF9hH9PV0gWh5A
-	 zgUQ2E7zCB4CGaVmeWGU7nOsETk3rZWFoOobGZDB6t1ogJSa1z53/w0fLDFHh/vyI9
-	 uL5Vga2L0c/sDJr8jQcHacaKxwxi3htynM60odIZEHqfch4NlpSgRSgorJQoSPCoAN
-	 Yn8alerznEKMw==
-Received: from 82-132-232-216.dab.02.net ([82.132.232.216] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tsHLb-00Cn8v-Jn;
-	Wed, 12 Mar 2025 08:21:51 +0000
-Date: Wed, 12 Mar 2025 08:21:48 +0000
-Message-ID: <87tt7y7j6r.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ankit Agrawal <ankita@nvidia.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
-	"oliver.upton@linux.dev"
-	<oliver.upton@linux.dev>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yuzenghui@huawei.com"
-	<yuzenghui@huawei.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"ryan.roberts@arm.com"
-	<ryan.roberts@arm.com>,
-	"shahuang@redhat.com" <shahuang@redhat.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"david@redhat.com"
-	<david@redhat.com>,
-	Aniket Agashe <aniketa@nvidia.com>,
-	Neo Jia
-	<cjia@nvidia.com>,
-	Kirti Wankhede <kwankhede@nvidia.com>,
-	"Tarun Gupta\
- (SW-GPU)" <targupta@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>,
-	Andy
- Currid <acurrid@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	John
- Hubbard <jhubbard@nvidia.com>,
-	Dan Williams <danw@nvidia.com>,
-	Zhi Wang
-	<zhiw@nvidia.com>,
-	Matt Ochs <mochs@nvidia.com>,
-	Uday Dhoke
-	<udhoke@nvidia.com>,
-	Dheeraj Nigam <dnigam@nvidia.com>,
-	Krishnakant Jaju
-	<kjaju@nvidia.com>,
-	"alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>,
-	"sebastianene@google.com"
-	<sebastianene@google.com>,
-	"coltonlewis@google.com" <coltonlewis@google.com>,
-	"kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"yi.l.liu@intel.com"
-	<yi.l.liu@intel.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"gshan@redhat.com"
-	<gshan@redhat.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"ddutile@redhat.com" <ddutile@redhat.com>,
-	"tabba@google.com"
-	<tabba@google.com>,
-	"qperret@google.com" <qperret@google.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using VMA flags
-In-Reply-To: <SA1PR12MB7199500A3683B15A64B663D6B0D12@SA1PR12MB7199.namprd12.prod.outlook.com>
-References: <20250310103008.3471-1-ankita@nvidia.com>
-	<20250310103008.3471-2-ankita@nvidia.com>
-	<861pv5p0c3.wl-maz@kernel.org>
-	<SA1PR12MB7199DD985C45943A663E7003B0D12@SA1PR12MB7199.namprd12.prod.outlook.com>
-	<86r033olwv.wl-maz@kernel.org>
-	<SA1PR12MB7199500A3683B15A64B663D6B0D12@SA1PR12MB7199.namprd12.prod.outlook.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1741767726; c=relaxed/simple;
+	bh=w7WzLN9n+4nSFJkSuWwgvFWWF1gNWe8awDV97BmeFes=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uwzXw6Qr72Mm1jvHJkFQs3DbVbk9KQ9BhoOZ/MmQQvApFboqgvM1a51f73sein4UD29wFn9eBiEGsFU5pfWuVzTDOTTGPt+vTI4t+nBLD+uQ8qn103X4lSpNdAckVW6OtGU6vuaWKZg6dnpPmFal0ChLoojCV530jaBqXTmlKGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=NLaizaIT; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ANRo1+lkY6D9I8jJBra+QPECjwVmHJ88jfKXDl+/AT4=; t=1741767723; x=1742372523; 
+	b=NLaizaIT+LvtmkwLdTlv950R3JhbYo3DikavFrvjkvkQ6ZHFs1ubBUxFGjeZJODl3ihhEQuoRMR
+	kJO4IbxCHfqaWns4Sq44omHnkyZLryWS0APfDf2J30cTMtGYOIgPGJ3r/zCpt1C0aipHH9P/soVpY
+	+DhLKeWCfc8O6aCP6BkedrGu/QRXfg/Nozuu3HUj2iyqelz9KiERGb2dz3AhpUu+HtTLZcD+a1K80
+	NEvZ26bZMeA6AzRR/4dgijIY4RK3Vo28u+9EKU781qHt4grVve2QkGp9cRzSx8LzapGJbQ/jyTILO
+	AwZDD3ybQB2inHxOFknxv02npFWpiVzz+4Nw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1tsHLg-00000002Zo1-3aIU; Wed, 12 Mar 2025 09:21:56 +0100
+Received: from p5dc5515a.dip0.t-ipconnect.de ([93.197.81.90] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1tsHLg-00000000BI8-2aFw; Wed, 12 Mar 2025 09:21:56 +0100
+Message-ID: <967e29681c8bc39edfdd9c645d943f17d341c2ae.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 1/2] sh: align .bss section padding to 8-byte boundary
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Artur Rojek <contact@artur-rojek.eu>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker
+ <dalias@libc.org>,  Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>,  Geert
+ Uytterhoeven <geert+renesas@glider.be>, "D . Jeff Dionne"
+ <jeff@coresemi.io>, Rob Landley <rob@landley.net>, 
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 12 Mar 2025 09:21:55 +0100
+In-Reply-To: <433bc8a0732bf8a63c64c4bf0e6ad4a7@artur-rojek.eu>
+References: <20250216175545.35079-1-contact@artur-rojek.eu>
+	 <20250216175545.35079-2-contact@artur-rojek.eu>
+	 <5365422a9715376c76a89e255c978fc39064e243.camel@physik.fu-berlin.de>
+	 <433bc8a0732bf8a63c64c4bf0e6ad4a7@artur-rojek.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 82.132.232.216
-X-SA-Exim-Rcpt-To: ankita@nvidia.com, jgg@nvidia.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, ryan.roberts@arm.com, shahuang@redhat.com, lpieralisi@kernel.org, david@redhat.com, aniketa@nvidia.com, cjia@nvidia.com, kwankhede@nvidia.com, targupta@nvidia.com, vsethi@nvidia.com, acurrid@nvidia.com, apopple@nvidia.com, jhubbard@nvidia.com, danw@nvidia.com, zhiw@nvidia.com, mochs@nvidia.com, udhoke@nvidia.com, dnigam@nvidia.com, kjaju@nvidia.com, alex.williamson@redhat.com, sebastianene@google.com, coltonlewis@google.com, kevin.tian@intel.com, yi.l.liu@intel.com, ardb@kernel.org, akpm@linux-foundation.org, gshan@redhat.com, linux-mm@kvack.org, ddutile@redhat.com, tabba@google.com, qperret@google.com, seanjc@google.com, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Tue, 11 Mar 2025 12:07:20 +0000,
-Ankit Agrawal <ankita@nvidia.com> wrote:
-> 
-> Thanks Marc for the feedback.
-> 
-> > No, I'm concerned that a well established API (populating a memslot)
-> > works in some case and doesn't work in another without a clear
-> > indication of *why* we have this behaviour.
-> >
-> > To me, this indicates that userspace needs to buy in this new
-> > behaviour, and that behaviour needs to be advertised by a capability,
-> > which is in turn conditional on FWB.
-> 
-> Yes, that makes sense.
-> 
-> >>> Perhaps we can gracefully fall back to the default device mapping
-> >>> in such case? But that would cause VM to crash as soon as it makes some
-> >>> access violating DEVICE_nGnRE.
-> >
-> > Which would now be a regression...
-> > 
-> > My take is that this cacheable PNFMAP contraption must only be exposed
-> > to a guest if FWB is available. We can't prevent someone to do an
-> > mmap() behind our back, but we can at least:
-> >
-> > - tell userspace whether this is supported
-> 
-> For my education, what is an accepted way to communicate this? Please let
-> me know if there are any relevant examples that you may be aware of.
+Hi Artur,
 
-A KVM capability is what is usually needed.
+On Wed, 2025-03-12 at 00:40 +0100, Artur Rojek wrote:
+> On 2025-03-11 18:28, John Paul Adrian Glaubitz wrote:
+> > Hi Artur,
+>=20
+> Hey Adrian,
+> thanks for looking into this patch.
 
-> 
-> I suppose just checking for FWB (for PFNMAP) and returning some sort of
-> an error on userspace mmap will not be enough of a hint here?
+Sure. I just want to understand what's going on before signing it with "Rev=
+iewed-by",
+I wouldn't dare that without fully understanding what the proposed change d=
+oes ;-).
 
-I don't think checking for FWB at mmap() time is correct. mmap()
-shouldn't care about FWB at all, because stage-2 is irrelevant to
-mmap(). You also want to be able t perform the same mmap() inside an
-EL1 guest, which by definition cannot consider FWB.
+> > What this effectively does is removing ". =3D ALIGN(sbss_align);" first=
+=20
+> > from BSS_SECTION().
+> >=20
+> > Then it inserts ". =3D ALIGN(PAGE_SIZE);" after the "SBSS(0)".
+> >=20
+> > If I understand this correctly, SBSS() inserts a zero-padding and if=
+=20
+> > I'm not mistaken,
+> > inserting ". =3D ALIGN(PAGE_SIZE);" will cause this padding to grow to =
+at=20
+> > least PAGE_SIZE
+> > due the alignment.
+> >=20
+> > Is this correct?
+> >=20
+> > > +	.bss : AT(ADDR(.bss) - LOAD_OFFSET) {
+> > > +		BSS_FIRST_SECTIONS
+> > > +		. =3D ALIGN(PAGE_SIZE);
+> > > +		*(.bss..page_aligned)
+> > > +		. =3D ALIGN(PAGE_SIZE);
+> > > +		*(.dynbss)
+> > > +		*(BSS_MAIN)
+> > > +		*(COMMON)
+> > > +		. =3D ALIGN(8);
+> >=20
+> > If my understanding above is correct, why do we will need an additional=
+=20
+> > ". =3D ALIGN(8)"
+> > here?
+>=20
+> I'll tackle both of the above questions at once.
+> I'm by no means an expert at GNU Linker syntax, but the intention of
+> this patch is to put . =3D ALIGN(8) inside the .bss : { ... } section
+> definition, so that the section itself grows by the requested padding.
 
-This must be checked at the point of memslot creation, and return an
-error at that point. Memslots are all about stage-2, so it makes sense
-to check it there.
+Makes sense.
 
-	M.
+> In the original BSS_SECTION(0, PAGE_SIZE, 4), the last argument inserts
+> a 4 byte padding after the closing brace of .bss section definition,
+> causing the __bss_stop symbol offset to grow, but not the .bss section
+> itself:
+>=20
+> #define BSS_SECTION(sbss_align, bss_align, stop_align)			\
+> 	. =3D ALIGN(sbss_align);						\
+> 	__bss_start =3D .;						\
+> 	SBSS(sbss_align)						\
+> 	BSS(bss_align)							\
+> 	. =3D ALIGN(stop_align);						\
+> 	__bss_stop =3D .;
 
--- 
-Without deviation from the norm, progress is not possible.
+OK, that's really odd. So, the __bss_stop would be moved to the desired
+position but the section itself still remains small? What exactly does the
+linker fill the region with? Sounds very strange.
+
+> TurtleBoard loader is only concerned with the .bss section size - it
+> doesn't care about any symbol offsets - and hence this seemingly cryptic
+> change (you can display the section size information with
+> readelf -t kernel_image).
+
+Looking at the actual kernel image with readelf is a very good suggestion!
+
+> The rest of the changes are simply to "inline" the BSS() macro (as I
+> needed to access that closing brace), and the former sbss_align,
+> bss_align (that's your PAGE_SIZE) and stop_align arguments are passed
+> accordingly, the same way they used to be passed before. The only
+> visible effect should be the move of ALIGN(stop_align) inside of .bss
+> section definition, and the change of stop_align value from 4 to 8.
+
+OK. FWIW, do you understand what SBSS is for? I couldn't find any explanati=
+on
+for it.
+
+> Arguably the TurtleBoard loader should read the __bss_stop symbol offset
+> instead, but in this patch I'm trying to solve the issue from kernel's
+> point of view.
+
+That's absolutely sensible as this avoids having to update the firmware.
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
