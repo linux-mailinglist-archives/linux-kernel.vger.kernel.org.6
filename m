@@ -1,111 +1,170 @@
-Return-Path: <linux-kernel+bounces-557954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B98A5DFC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:08:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC15A5DFC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:08:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B794C3BAA04
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:07:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E72D718996D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695852505DE;
-	Wed, 12 Mar 2025 15:08:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21359156F5E;
-	Wed, 12 Mar 2025 15:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038E2156F5E;
+	Wed, 12 Mar 2025 15:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AplTCqYk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SnHIz0QK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WI4LBhDJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="D7XUBvxW"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16C0142659
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741792085; cv=none; b=ke51TiIJDEfnS9uQfh0B9URjIYcU3IARkUb57Fstc0LR9uiObNUiKntXm+WMbEBue+H1N2faMlJ5ygDwN6Eqw0m7ENLavLPN70p+b377Xg6CpjKtE189DobedKdJlTWC9yB3IWH3Gyozdul/6bySAYTA9z2NypkrXkvFKw3kncc=
+	t=1741792087; cv=none; b=L70qjfsydLpDlgDhAVDKoe1JD/y0O+p8exrcR7Iuyra1uii3W+mh3vtBImoP45NF3ZuhC15rrBY8bEZfBPQ/+JPDq3LqAnC+g44hni+w/LiR6Rsw2+iXxXdX5pH0+afWqtdpAU+kocAjhEQ42fGanuQIvhhxVOVWwR1c8m3Iq60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741792085; c=relaxed/simple;
-	bh=EQNdua2VLd3U3jzo/wjMCIM4ze/LCO+NyUs4QsHvXao=;
+	s=arc-20240116; t=1741792087; c=relaxed/simple;
+	bh=wc8JbAP3PIt3Azoy9npzTYy9TnFtAoQqRXYhKLUUSbM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AF65pklj5UULujbmmXCikueLvt3dKAq296nrSF1vNtCQo40EEvegrP5XyOmXuTaCK+vg0nJWYmcqdGnm8C2t/U835zaiMRpX69SDiUx0mX1/vwbDAlElosagIfkx30EQ9rkOJpKUD5Fk5+Pm+ZtMW9NHRmGg8ujhJ/1EGHblO0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D0DF1515;
-	Wed, 12 Mar 2025 08:08:14 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C7A853F5A1;
-	Wed, 12 Mar 2025 08:07:59 -0700 (PDT)
-Date: Wed, 12 Mar 2025 15:07:50 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Abel Vesa <abelvesa@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH NOT APPLY v2 4/4] clk: scmi: Support spread spectrum
-Message-ID: <Z9GjRhQmsu0fBoWG@pluto>
-References: <20250205-clk-ssc-v2-0-fa73083caa92@nxp.com>
- <20250205-clk-ssc-v2-4-fa73083caa92@nxp.com>
- <Z6SqeNsAqbZM8nr1@pluto>
- <20250303041125.GC13236@nxa18884-linux>
- <Z8iKErarE0lHWxEy@pluto>
- <20250310081635.GA16799@nxa18884-linux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WYha6ieSGabNL9qv6HU96pI9MxQhbqpHAEg5zzJrA/H+qx9+SEvj6C1DkMJEJ+Y9vvU6Z0dhHYnoKkvVClKNle3r3q8vhSdioiCBbowDROfHt1ISrZresVTi4D3nyUZESTARUheqpjUOUhM0eGxmiKIEbkkG7bVwPpgZ7QYd5uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AplTCqYk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SnHIz0QK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WI4LBhDJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=D7XUBvxW; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E9FE71F394;
+	Wed, 12 Mar 2025 15:07:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741792082; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C7b3OyWlr6XkYpJCgvuDRuD07UMukpDEgYsj61ygyFw=;
+	b=AplTCqYkvL3DrhCJ0K4JRDsu0dBB/mwLwd+eMB+w2IkkBL9DhBEFkW+6oTSXKt/OvehcrM
+	pQzQ0OOhTynPDc+72IjuvZIPx3JoyIGy9a+lI6+56lNIlrLLD6u76h4H9VNPQPdudQ4ZwR
+	lPD1eIiqbZl/Sq24IYYaFG9XnhGz5A4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741792082;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C7b3OyWlr6XkYpJCgvuDRuD07UMukpDEgYsj61ygyFw=;
+	b=SnHIz0QK2y397iZAS9xI9+Ct8BseEn+I66mvSPWGqpcG1/2YBRpfNfFyamro0UJ2ER2HC3
+	6+lXrZ7iUbA8kWDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741792077; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C7b3OyWlr6XkYpJCgvuDRuD07UMukpDEgYsj61ygyFw=;
+	b=WI4LBhDJk4kQMJS8DHrFvUv6cj9RAkycOIM/OO0M2dPIYTWoKavBeBMVw4vhz8AfjtBist
+	scbGx/6uYutASd4JnBpbnr/BsVgWo0GapT/xUWnVajJ5Y1CsIjhLu+9iIWa1UMeKj7ricU
+	Lk+nWWabB6RbEd/AvyBJZ9XE7+TPJnQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741792077;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C7b3OyWlr6XkYpJCgvuDRuD07UMukpDEgYsj61ygyFw=;
+	b=D7XUBvxWYkgkPdEGGiL7U26j0zBMZLSYRYnl1UAo0Dfmce6JrkqsLBA3JijRHsbfhoYPh2
+	tFAlQzCxr/Y9K2CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9EDFB13A91;
+	Wed, 12 Mar 2025 15:07:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id is+XJU2j0WfvBQAAD6G6ig
+	(envelope-from <jroedel@suse.de>); Wed, 12 Mar 2025 15:07:57 +0000
+Date: Wed, 12 Mar 2025 16:07:56 +0100
+From: Joerg Roedel <jroedel@suse.de>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, x86@kernel.org, hpa@zytor.com,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>, Larry.Dewey@amd.com,
+	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+	Juergen Gross <jgross@suse.com>, kirill.shutemov@linux.intel.com,
+	alexey.gladkov@intel.com
+Subject: Re: [PATCH 2/2] x86/sev: Make SEV_STATUS available via SYSFS
+Message-ID: <Z9GjTBHBqXenCWYx@suse.de>
+References: <20250312144107.108451-1-joro@8bytes.org>
+ <20250312144107.108451-3-joro@8bytes.org>
+ <ef3f3117-6cd5-4b94-8ddb-e6d224efac60@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250310081635.GA16799@nxa18884-linux>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef3f3117-6cd5-4b94-8ddb-e6d224efac60@intel.com>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	SEM_URIBL_FRESH15_UNKNOWN_FAIL(0.00)[suse.de:server fail];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:url,suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Mar 10, 2025 at 04:16:35PM +0800, Peng Fan wrote:
-> On Wed, Mar 05, 2025 at 05:29:54PM +0000, Cristian Marussi wrote:
-> >On Mon, Mar 03, 2025 at 12:11:25PM +0800, Peng Fan wrote:
-> >> Hi Cristian,
-> >> 
-> >> On Thu, Feb 06, 2025 at 12:26:32PM +0000, Cristian Marussi wrote:
-> >> >On Wed, Feb 05, 2025 at 05:49:54PM +0800, Peng Fan (OSS) wrote:
-> >> >> From: Peng Fan <peng.fan@nxp.com>
-> >> >> 
-> >> >> Support Spread Spectrum with adding scmi_clk_set_spread_spectrum
-> >> >> 
-> >> >
-> >> >Hi,
-> >> >
-> >> >I forwarded ATG with our latest exchange on the possibility of using a
-> >> >standard OEM type instead of Vendor one if it is general enough....
-> >> 
-> >> Do you have any update?
-> >> 
-> >
-> >Yes I think you can go on with your original plan of using vendor OEM
-> >types: as of now we are not gonna standardize a new commmon SCMI type
-> >for Clock-SS, given there is really just one SCMI user of such clock
-> >features...maybe in the future if more users shows up...
-> 
-> Thanks for updating me. Back to how to add extensions in clk-scmi.c,
-> do you have any suggestions? I am thinking to provide vendor/sub-vendor
-> for clk-scmi.c and use vendor "NXP" sub-vedor "IMX" for spread spectrum.
-> 
+Hi Dave,
 
-Definitely based on vendors subvendors, not sure about how, I have not
-really though about the details: you also shoudl consider that the new
-clk ops for spread spectrum should be registered ONLY when you are on a
-supported platform (of course) AND the OEM types nnamespace is per-vendor:
-like vendor protocols your NXP OEM config type 0x80 must coexist with any
-future possible OTHER_VENDOR OEM ConfigType 0x80.
+On Wed, Mar 12, 2025 at 07:57:31AM -0700, Dave Hansen wrote:
+> Do we really want to just plumb the raw MSR out to userspace? Users
+> would still need to parse the thing, so it's not _really_ human readable.
 
-Thanks,
-Cristian
+I agree that this is not really human readable. On the other side SYSFS
+is more an interface targeted for tools than optimized for human
+readability (see the one-datum-per-file rule).
 
+The actual use-case (and the reason for these patches) of the sev_status
+file is to provide a better and more secure interface than /dev/msr to a
+tool named snpguest.
+
+A human readable form of this can be added as well, if needed. There is
+already a line in dmesg with the decoded features.
+
+Regards,
+
+-- 
+Jörg Rödel
+jroedel@suse.de
+
+SUSE Software Solutions Germany GmbH
+Frankenstraße 146
+90461 Nürnberg
+Germany
+https://www.suse.com/
+
+Geschäftsführer: Ivo Totev, Andrew McDonald, Werner Knoblich
+(HRB 36809, AG Nürnberg)
 
