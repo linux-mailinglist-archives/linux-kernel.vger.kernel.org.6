@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-557766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5220A5DD64
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:08:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C69A5DD62
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DAFD3B8E63
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:07:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04BED16DCCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F602459F0;
-	Wed, 12 Mar 2025 13:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDF02459D3;
+	Wed, 12 Mar 2025 13:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nb4HamWi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/WGy8Jn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7392824501B;
-	Wed, 12 Mar 2025 13:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3236224500B;
+	Wed, 12 Mar 2025 13:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741784855; cv=none; b=qKAYiL+fRqzIGvbZPDE0b21NJPrXM36fq8SKrTKP1wBGUY5I6KcvCmM9FUXJFYMtjJ+PDF0BenGFllca3NaNj/Mp8eg3GGT6ZbebBrs+HxJSTaVrlJArO3YKpGrrwGdUdPqn7ZsZASj/QdugC9gKIwp+a2+bbHm1s5vaalcNlA8=
+	t=1741784855; cv=none; b=htR2FP0dgSJCsErAB74lvYTpis39q4QMWhCBsCHshj3tseVxMN6L5uRyXWIjL5Jd2cCOPOsvV0llfVCfe82VAsXeeOqFuoboY/AgWrfNb3CCrNvA5joiDoCnOo9NtCJjfL+EY/vXLfTPKoSFJx5rvHqK9WrVn1nKqOpiDPmecpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741784855; c=relaxed/simple;
-	bh=zt0CCCq6A3ivEI2Ux/rska1P6Ejp+DeUw05Xy7GfCfc=;
+	bh=iRfFeBANOM2hUL7E2zRHWps4ofaq4IOnHQTovW0eFT4=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Kos24a34XhK+rSdYVOuqi2ckwIO/9PnblzKO4NPEq2SwVGDMOWiLAf5dcOYRDrfNfmlgbOVEAI5mLVsup9gPI/gkmSdRA5KoyNC/nzLs3i2rV4uICBnQZ52n/8LzJMspCdkUdI6Q5XDKTeWhU2g+oBTktoKJhHpek7/mxTYQIsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nb4HamWi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B239BC4CEE3;
-	Wed, 12 Mar 2025 13:07:33 +0000 (UTC)
+	 Message-Id:Subject; b=DcjtaWZLhJ7dQY3fhmxYqy1Uqe5HSpRd3azwRHD+zSRHg2WflPtjXJjPkeMx726ljk5oXq5mh4Osnn+DGUDwufN2HIHUj9V9eloGX2NaaiaFE97TzNzeyT4HN9B1X1MeoD9lm1OxRoNT0Z30Op2iKZ7vPr9dOvtqR0fNDJw+Jx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/WGy8Jn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E72C2C4CEED;
+	Wed, 12 Mar 2025 13:07:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741784853;
-	bh=zt0CCCq6A3ivEI2Ux/rska1P6Ejp+DeUw05Xy7GfCfc=;
+	s=k20201202; t=1741784855;
+	bh=iRfFeBANOM2hUL7E2zRHWps4ofaq4IOnHQTovW0eFT4=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Nb4HamWiaXhghNLktflxNBwiCgU75/TmcHpwLgZ1FLmJcwNAhYJRmwvYKz8QZ4JzT
-	 gNs07BbK0fe5wBOh7RS4E0dVOyRVNEI9eFT9mssCbeE2fJxLIyR7+iK/pcQNr0S3r7
-	 TVxt9t3DPUMGhqWf5RKr5v8rVP6H8YRaz5TuiwQiwoUfvwQ1qCrACwd4KqPROnzVCO
-	 BUwV0F7lDAJDLZ5V6kt6ptwltaaQGDWU0RaarFtlaR7OugXH2r5om+w2deG/H/bsF1
-	 HmRo6qTBMShLWStBbKIc+HFdi05YKBmJ0EZ1cBQUXJiGhnJ1sCdR8ZLn2u0vkyM67u
-	 7V2bD5GM9dMGw==
-Date: Wed, 12 Mar 2025 08:07:32 -0500
+	b=u/WGy8JnzjgFARu4QTlrYLqVyiB8cF/sKPT0p04wm36qe3i6b7f7akjITsx+I5Xzp
+	 wbOj1rjzZel+YvlZ6r5q7nUOOSqCGTby3jTOz2VrCmmTPv61XK/VTh03l8rqNfBnzn
+	 7Zg3h3LVbqFMaL1xtvMHR08zeTMcjmN24tuYl4ULZ5QMF0AiFVubjVat2RHPU1M+oI
+	 akiRsF4UFhQZFTewvZr6xMUytcmyLdXMfRfJlzqadOjJ0zOgtVZp/hRkJ6Jf+Bmggd
+	 P0W0zvneMf4QIUbj6sS12e6399Un3lAh+tcHwn259+Mlyuib2E+HZdPaoPQrGFgy+M
+	 pduEKQWW4NXQg==
+Date: Wed, 12 Mar 2025 08:07:34 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,171 +50,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, lpieralisi@kernel.org, 
- konradybcio@kernel.org, manivannan.sadhasivam@linaro.org, 
- quic_devipriy@quicinc.com, krzk+dt@kernel.org, bhelgaas@google.com, 
- conor+dt@kernel.org, quic_srichara@quicinc.com, 
- linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
- andersson@kernel.org, kw@linux.com, linux-kernel@vger.kernel.org
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-In-Reply-To: <20250312084330.873994-1-quic_varada@quicinc.com>
-References: <20250312084330.873994-1-quic_varada@quicinc.com>
-Message-Id: <174178473556.434326.10219966709558408088.robh@kernel.org>
-Subject: Re: [PATCH v12 0/4] Add PCIe support for Qualcomm IPQ5332
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Tzung-Bi Shih <tzungbi@kernel.org>, devicetree@vger.kernel.org, 
+ linux-mediatek@lists.infradead.org, linux-input@vger.kernel.org, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Benson Leung <bleung@chromium.org>, linux-arm-kernel@lists.infradead.org, 
+ chrome-platform@lists.linux.dev
+To: Chen-Yu Tsai <wenst@chromium.org>
+In-Reply-To: <20250312104344.3084425-1-wenst@chromium.org>
+References: <20250312104344.3084425-1-wenst@chromium.org>
+Message-Id: <174178473613.434362.5052831169970866580.robh@kernel.org>
+Subject: Re: [PATCH 0/8] arm64: mediatek: mt8186-corsola: Consolidate and
+ add new devices
 
 
-On Wed, 12 Mar 2025 14:13:26 +0530, Varadarajan Narayanan wrote:
-> Patch series adds support for enabling the PCIe controller and
-> UNIPHY found on Qualcomm IPQ5332 platform. PCIe0 is Gen3 X1 and
-> PCIe1 is Gen3 X2 are added.
+On Wed, 12 Mar 2025 18:43:34 +0800, Chen-Yu Tsai wrote:
+> Hi everyone,
 > 
-> This series combines [1] and [2]. [1] introduces IPQ5018 PCIe
-> support and [2] depends on [1] to introduce IPQ5332 PCIe support.
-> Since the community was interested in [2] (please see [3]), tried
-> to revive IPQ5332's PCIe support with v2 of this patch series.
+> Here's a follow up series of the I2C component probers for Chromebooks.
+> This series enables the component prober for the Corsola series of
+> devices, combines the two existing Voltorb SKUs, and adds a new
+> device, codename Squirtle.
 > 
-> v2 of this series pulled in the phy driver from [1] tried to
-> address comments/feedback given in both [1] and [2].
+> Patch 1 adds a new HID-over-I2C touchscreen from Elan.
 > 
-> 1. Enable IPQ5018 PCI support (Nitheesh Sekar) - https://lore.kernel.org/all/20231003120846.28626-1-quic_nsekar@quicinc.com/
-> 2. Add PCIe support for Qualcomm IPQ5332 (Praveenkumar I) - https://lore.kernel.org/linux-arm-msm/20231214062847.2215542-1-quic_ipkumar@quicinc.com/
-> 3. Community interest - https://lore.kernel.org/linux-arm-msm/20240310132915.GE3390@thinkpad/
+> Patch 2 merges the Voltorb entries in the device tree bindings into one.
 > 
-> v12: * Skipped the following (Vinod Koul has picked them)
-> 		dt-bindings: phy: qcom,uniphy-pcie: Document PCIe uniphy
-> 		phy: qcom: Introduce PCIe UNIPHY 28LP driver
+> Patch 3 adds a new entry for the Squirtle device to the bindings.
 > 
->      * Skipped this (merged)
-> 		dt-bindings: PCI: qcom: Document the IPQ5332 PCIe controller
+> Patch 4 fixes up the existing device trees for the component prober to
+> be active.
 > 
->      * Undo combining sdx55 & ipq9574. Discard the following
-> 		dt-bindings: PCI: qcom: Use sdx55 reg description for ipq9574
-> 		arm64: dts: qcom: ipq9574: Reorder reg and reg-names
+> Patch 5 merges the device trees for the Voltorb device.
 > 
->      * Append MHI registers to ipq9574 dt-bindings and dts
-> 		dt-bindings: PCI: qcom: Add MHI registers for IPQ9574
-> 		arm64: dts: qcom: ipq9574: Add MHI to pcie nodes
+> Patch 6 adds a device tree file for the Squirtle device, with I2C
+> components ready to be probed by the prober.
 > 
->      * ipq5332.dtsi:
-> 		Align reg-names order with ipq9574
-> 		Dropped R-b tag per feedback
+> Patch 7 enables the prober to probe trackpads on some devices in the
+> Corsola family.
 > 
->      * No new warnings/errors with dt_binding_check and dtbs_check
+> Patch 8 enables the prober to probe touchscreens on Squirtle.
 > 
-> v11: * phy-qcom-uniphy-pcie-28lp.c
-> 	 * Remove unused #define
-> 	 * Use "250 * MEGA" instead of 250000000
-> 
-> v10: * ipq5332.dtsi: Trim down the list of assigned clocks
-> 
->      * ipq9574 and ipq5332 DT
-> 	 * Fix 'simple-bus unit address format error' in ipq9574 and
-> 	   ipq5332 DTS
->          * Rearrange nodes w.r.t. address sort order
-> 
->      * Have spoken with 'Manikanta Mylavarapu' [1] for omitting similar
->        changes in qcom,pcie.yaml that are handled in this series.
-> 
->      * Reformat commit messages to 75 character limit
-> 
->      * controller bindings:
->        Fix maxItems for interrupts constraint of sdm845
-> 
->      1 - https://lore.kernel.org/linux-arm-msm/20250125035920.2651972-2-quic_mmanikan@quicinc.com/
-> 
-> v9: Dont have fallback for num-lanes in driver and return error
->     Remove superfluous ipq5332 constraint as the fallback is present
-> 
-> v8: Add reviewed by
->     Remove duplication in bindings due to ipq5424 code getting merged
-> 
-> v7: phy bindings:
->     * Include data type definition to 'num-lanes'
-> 
->     controller bindings:
->     * Split the ipq9574 and ipq5332 changes into separate patches
-> 
->     dtsi:
->     * Add root port definitions
-> 
-> v6: phy bindings:
->     * Fix num-lanes definition
-> 
->     phy driver:
->     * Fix num-lanes handling in probe to use generally followed pattern
-> 
->     controller bindings:
->     * Give more info in commit log
-> 
->     dtsi:
->     * Add assigned-clocks & assigned-clock-rates to controller nodes
->     * Add num-lanes to pcie0_phy
-> 
-> v5: phy bindings:
->     * Drop '3x1' & '3x2' from compatible string
->     * Use 'num-lanes' to differentiate instead of '3x1' or '3x2'
->       in compatible string
->     * Describe clocks and resets instead of just maxItems
-> 
->     phy driver:
->     * Get num-lanes from DTS
->     * Drop compatible specific init data as there is only one
->       compatible string
-> 
->     controller bindings:
->     * Re-arrange 5332 and 9574 compatibles to handle fallback usage in dts
-> 
->     dtsi:
->     * Add 'num-lanes' to "pcie1_phy: phy@4b1000"
->     * Make ipq5332 as main and ipq9574 as fallback compatible
->     * Sort controller nodes per address
-> 
->     misc:
->     Add R-B tag from Konrad to dts and dtsi patches
-> 
-> v4: * phy bindings - Create ipq5332 compatible instead of reusing ipq9574 for bindings
->     * phy bindings - Remove reset-names as the resets are handled with bulk APIs
->     * phy bindings - Fix order in the 'required' section
->     * phy bindings - Remove clock-output-names
->     * dtsi - Add missing reset for pcie1_phy
->     * dtsi - Convert 'reg-names' to a vertical list
->     * dts - Fix nodes sort order
->     * dts - Use property-n followed by property-names
-> 
-> v3: * Update the cover letter with the sources of the patches
->     * Rename the dt-bindings yaml file similar to other phys
->     * Drop ipq5332 specific pcie controllor bindings and reuse
->       ipq9574 pcie controller bindings for ipq5332
->     * Please see patches for specific changes
->     * Set GPL license for phy-qcom-uniphy-pcie-28lp.c
-> 
-> v2: Address review comments from V1
->     Drop the 'required clocks' change that would break ABI (in dt-binding, dts, gcc-ipq5332.c)
->     Include phy driver from the dependent series
-> 
-> v1: https://lore.kernel.org/linux-arm-msm/20231214062847.2215542-1-quic_ipkumar@quicinc.com/
+> Please take a look.
 > 
 > 
-> Praveenkumar I (2):
->   arm64: dts: qcom: ipq5332: Add PCIe related nodes
->   arm64: dts: qcom: ipq5332-rdp441: Enable PCIe phys and controllers
-> 
-> Varadarajan Narayanan (2):
->   dt-bindings: PCI: qcom: Add MHI registers for IPQ9574
->   arm64: dts: qcom: ipq9574: Add MHI to pcie nodes
-> 
->  .../devicetree/bindings/pci/qcom,pcie.yaml    |   3 +-
->  arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts   |  76 ++++++
->  arch/arm64/boot/dts/qcom/ipq5332.dtsi         | 252 +++++++++++++++++-
->  arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  40 ++-
->  4 files changed, 360 insertions(+), 11 deletions(-)
+> Thanks
+> ChenYu
 > 
 > 
-> base-commit: eea255893718268e1ab852fb52f70c613d109b99
-> prerequisite-patch-id: 56fe29d9207ac31ab08ca54712adc2a865b7be89
-> prerequisite-patch-id: f50f4b13ea072aea4beae5d5ecaf62336d9d2a31
+> Chen-Yu Tsai (8):
+>   dt-bindings: HID: i2c-hid: elan: Introduce Elan eKTH8D18
+>   dt-bindings: arm: mediatek: Merge MT8186 Voltorb entries
+>   dt-bindings: arm: mediatek: Add MT8186 Squirtle Chromebooks
+>   arm64: dts: mediatek: mt8186-steelix: Mark second source components
+>     for probing
+>   arm64: dts: mediatek: mt8186: Merge Voltorb device trees
+>   arm64: dts: mediatek: mt8186: Add Squirtle Chromebooks
+>   platform/chrome: of_hw_prober: Support trackpad probing on Corsola
+>     family
+>   platform/chrome: of_hw_prober: Support touchscreen probing on Squirtle
+> 
+>  .../devicetree/bindings/arm/mediatek.yaml     |   7 +-
+>  .../bindings/input/elan,ekth6915.yaml         |  29 ++++-
+>  arch/arm64/boot/dts/mediatek/Makefile         |   4 +-
+>  .../dts/mediatek/mt8186-corsola-squirtle.dts  | 107 ++++++++++++++++++
+>  .../dts/mediatek/mt8186-corsola-steelix.dtsi  |   9 +-
+>  .../mt8186-corsola-tentacool-sku327683.dts    |   2 +
+>  .../mt8186-corsola-tentacruel-sku262148.dts   |   2 +
+>  .../mt8186-corsola-voltorb-sku589824.dts      |  13 ---
+>  ...u589825.dts => mt8186-corsola-voltorb.dts} |   5 +-
+>  .../boot/dts/mediatek/mt8186-corsola.dtsi     |  10 +-
+>  .../platform/chrome/chromeos_of_hw_prober.c   |  29 +++++
+>  11 files changed, 185 insertions(+), 32 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-squirtle.dts
+>  delete mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-voltorb-sku589824.dts
+>  rename arch/arm64/boot/dts/mediatek/{mt8186-corsola-voltorb-sku589825.dts => mt8186-corsola-voltorb.dts} (76%)
+> 
 > --
-> 2.34.1
+> 2.49.0.rc0.332.g42c0ae87b1-goog
 > 
 > 
 > 
@@ -234,16 +151,14 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250312084330.873994-1-quic_varada@quicinc.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250312104344.3084425-1-wenst@chromium.org:
 
-arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dtb: pcie@20000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config'] is too short
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: pcie@20000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config'] is too short
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-arch/arm64/boot/dts/qcom/ipq8074-hk10-c1.dtb: pcie@20000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config'] is too short
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-arch/arm64/boot/dts/qcom/ipq8074-hk10-c2.dtb: pcie@20000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config'] is too short
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
+arch/arm64/boot/dts/mediatek/mt8186-corsola-voltorb.dtb: spmi@10015000: Unevaluated properties are not allowed ('interrupts' was unexpected)
+	from schema $id: http://devicetree.org/schemas/spmi/mtk,spmi-mtk-pmif.yaml#
+arch/arm64/boot/dts/mediatek/mt8186-corsola-voltorb.dtb: sound: 'model' is a required property
+	from schema $id: http://devicetree.org/schemas/sound/mt8186-mt6366-rt1019-rt5682s.yaml#
+arch/arm64/boot/dts/mediatek/mt8186-corsola-squirtle.dtb: spmi@10015000: Unevaluated properties are not allowed ('interrupts' was unexpected)
+	from schema $id: http://devicetree.org/schemas/spmi/mtk,spmi-mtk-pmif.yaml#
 
 
 
