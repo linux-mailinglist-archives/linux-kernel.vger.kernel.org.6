@@ -1,123 +1,135 @@
-Return-Path: <linux-kernel+bounces-558035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF6D0A5E0C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:42:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24820A5E0C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:43:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347EC3A9467
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:42:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E739F1882F3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E554254861;
-	Wed, 12 Mar 2025 15:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCD9252907;
+	Wed, 12 Mar 2025 15:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BD82QXbJ"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GdqnrBRD"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEEB252906;
-	Wed, 12 Mar 2025 15:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13A1156C6F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741794150; cv=none; b=KMhNx4TjYfJznXEfTqjMPlHKDyJH5qB4XeCygOAGGt9aGeZU1hYUQXju5Tk1+9zZYJRcpoMNCrfjDf3jC+qelkivJc/Kb9C9NWYGwSJ65jWDr5toCJgRErtXW6PYEa//BqHvPEpbFZLQQKWzvgm236mYw/NFwzY4OFY6/Q8zOug=
+	t=1741794179; cv=none; b=PUAe4Hd+4amM8nGQlsPfSxpXGvaa1tdREiCjEe8kqrzzDtG3JqMxWSiZ1phQAj8S4/d2E6lEd4//JHYDWoi52UIflHEyJ85SjV2HMjEQVGlv5Y6X/HQwmCw4JWCNRWvnex+W2ZBPeG4JMUZ34Ssl9np2X53gJDCy1DykCbIw7RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741794150; c=relaxed/simple;
-	bh=TPokZkAfZoE3j1ReraRUjF3yXEY6rHEC7KL8G+9L1lw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=tnsGhpUZiXAYllHYhNtm4zMONIeAdM+KLh0/q+H4i+nYPfwYxV8n/UZwwxWM6We1Z7qBVKHNslqCZdTcQiGYGiuGChE6lS4e3xHp6XJ6otekrBMCgkfvXyNxkkK6In6xmt8IoBKQ228l++Er0eE/Gxb4dFMkAJGsmXn5RIgM8xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BD82QXbJ; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741794142; x=1742398942; i=markus.elfring@web.de;
-	bh=WaZqZA26uQBOohPg9do+Xiwkxafj6Jb1roW9F5p+eoE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BD82QXbJxi0fCDcWS37HOPkwr/iWAfhVZqV526dK2+uABCh3Z+ghcf/1Eeq3hHaj
-	 l6MKsPWzIOepMZtK++I20m5JjOCMvC5NGmtVssX8c8MnOZqzhIDyiPSIueZ0zTLOy
-	 1YTmEGO2MB5i+MxW2u10zkNy95Y4M86ttRfOYK+KhJfOxFg7mf7Isn6uNWi3+5uPh
-	 7F0Ow9a+dWxSAAI7teMQgV5Z3OfCgrIuRKz1aGL1jpzyNVGAx+FBj4m9lRO9zFUdw
-	 UCrLReO1KfKzdWP6CpAfDfCK2IqMUIkkD2+9dWsofPinitDEgOLArZKxuGtjmFcAU
-	 1S1kMSSnf8IYbIXGuA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjgT9-1tUHcT1EQl-00iXt9; Wed, 12
- Mar 2025 16:42:22 +0100
-Message-ID: <1b32cd5b-aa46-4a23-bd21-908196c4bab3@web.de>
-Date: Wed, 12 Mar 2025 16:42:18 +0100
+	s=arc-20240116; t=1741794179; c=relaxed/simple;
+	bh=+ioIR9/OtnIM/ROKNhxo/w9cSOuoRECrzjeIXxMshMg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JqGlj1WKZi7Cm1Cc8cQGpMkx3k0MC6izxLzm6+myN1e+/xNaD44moFsv9lnA9tyVlx3PhTOfpDIspshDKJf9sR7+aZekdHc8z9kfh+77w4OkgN+L0OgEPSkBtqhqecsnpdWeRgXyPsrXJ3F3HELZr1KsSVvf9lBwDgwiEcJ2Y7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GdqnrBRD; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-549a4a4400aso3981719e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:42:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741794172; x=1742398972; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vw0KUaZ0b+JsqMU9c0Y3CKPGy3vo4F+iJFxyks2AXEc=;
+        b=GdqnrBRDixGASSVP60bltrh9DINRVazDiFkemvU2IqEmrRrXoe6zOS4ZnLd8KA1TJ4
+         qKJEMCunLYCiuoviTETJYBiG22m+0cSOa0xhM5FvKmo3K6CR3CaRzDCL/67FsXjBemsy
+         C3NKzKVrLcfz+E9LEEO5uxYdMQFouAU5LQbuk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741794172; x=1742398972;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vw0KUaZ0b+JsqMU9c0Y3CKPGy3vo4F+iJFxyks2AXEc=;
+        b=nrpJ92TMNHOLqjEpcaiDidFpcoxHDWoEDH0ziOZu/CTy7MUKoWkz1WJ6C6CvCHp+Yx
+         l27TV+DlKGUhyC6iZbOIGMyTzaiX6WhBVr9j00aTLRQVQWuv5x2vB6cIxR6DSHul7D8c
+         B1yBxSWxcVGwmXA8JsFJKqzrjSRcrpP/cD/RF072myJWz/09bORc3EX07vTQ4x75UK9k
+         yH/ky7/Rdm1wDyvGmGlA0VuQG5uUG3ZQsmd64UOWFPLoWsYgwepWK4ookoiBRxCzgldr
+         0DvUJqp8ao7QQSR6h0smpiFp+MsAxXdhWQ8qrx8esXy3cLleQA/2cawudc1Fh7Emykgr
+         QvPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXl4HSR0pMxrwS7igXakP+TBZtz/N0kcSsEUwMsGo28OV+3G93KED1/0QOZutKg6ZP8V7PYTAI+FNZtCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFq1siSw60W+9U9CGlfeVaa+e+pXkoI97nWcQN4o/wJfzSQfED
+	3HvpwhcwkH4BkxiRS8sATRYehzlOlXsRuvct9MSXYG3CKFVh07HAs/7XolDp60i5JZ33vdNmJ9Z
+	SI53f
+X-Gm-Gg: ASbGncsXWSx+Poo5PqYqOR7ZcXUPIy3w9JOlM+SjUAjwF65Ng9zk94dDvTx8fzDJbTi
+	s7kygFICHnAQo7Elb8vIB44WasqLL1jCWEBdWSGizV0GtBmmo6v1+BAW//WvSfMMQwzM4KsSMHj
+	U+cAhcXuCX0yRIQya6sV9eGP8SL5LUBxoX9DkXDnkeZk0jDgSMTP78DmuPpq3+gqgJkep2dzIkH
+	VTLWM0/07g/JHtHKG8zyVpDb0a2nfNP2tRwX5pbmdeXXYCMuHCLcXS+magTmveOomNyi5qCWxMb
+	saUz7IVTiUxLRDeEZkferXq+LsLDXquTQhPdCsbzK5SwaHAhzE+6oZvDEU+c7hyzCnTQvwROCxd
+	WeiSz8ol6SCTT
+X-Google-Smtp-Source: AGHT+IFYMmkk1eY/JyoRrkGhnsNFBqwZ2p+G02gvkThgGgnTS8s/J7UwMyM1RmQrvr3AuI+G6V+tmA==
+X-Received: by 2002:a05:6512:b1d:b0:545:60b:f382 with SMTP id 2adb3069b0e04-549abac01fdmr3276223e87.17.1741794172401;
+        Wed, 12 Mar 2025 08:42:52 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1c2bf1sm2163784e87.224.2025.03.12.08.42.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 08:42:51 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30613802a04so74983491fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:42:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXdA10TyJU+486gHGhnaGK0E7XfHs87RWXUOcdt/LTOfMr0i1QilQbcfivzgMo6t7PmAdUNQoNPtCS6uMM=@vger.kernel.org
+X-Received: by 2002:a05:6512:3d19:b0:549:4d78:2418 with SMTP id
+ 2adb3069b0e04-549abacd211mr2905563e87.27.1741794168636; Wed, 12 Mar 2025
+ 08:42:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dan Carpenter <dan.carpenter@linaro.org>, linux-wireless@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
- Avraham Stern <avraham.stern@intel.com>,
- Daniel Gabay <daniel.gabay@intel.com>,
- Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Johannes Berg <johannes.berg@intel.com>,
- Miriam Rachel Korenblit <miriam.rachel.korenblit@intel.com>,
- Yedidya Benshimol <yedidya.ben.shimol@intel.com>
-References: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
-Subject: Re: [PATCH] wifi: iwlwifi: Fix uninitialized variable with __free()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
+References: <20250310-mipi-synaptic-1-v2-1-20ee4397c670@redhat.com>
+ <CAD=FV=WW1ak-_MEBVks==Yr1tUdfFZ3K16_gcdJQ9rwE4ZduNg@mail.gmail.com> <CAN9Xe3RYgnELGymau=EoZQy54sM-WfnR-6dr-wmNaBr4ZLnROg@mail.gmail.com>
+In-Reply-To: <CAN9Xe3RYgnELGymau=EoZQy54sM-WfnR-6dr-wmNaBr4ZLnROg@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 12 Mar 2025 08:42:36 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XubjtTV70MMPBm2EwoLzoQPHKv6RzHXJgf44mu-h2o=w@mail.gmail.com>
+X-Gm-Features: AQ5f1JqXMzAvNqm-GDk-AEL8mokEJ4SfWD3DkXGx_CXDjIlY6tZpWWWd-O4t1JM
+Message-ID: <CAD=FV=XubjtTV70MMPBm2EwoLzoQPHKv6RzHXJgf44mu-h2o=w@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/panel/synaptics-r63353: Use _multi variants
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Michael Trimarchi <michael@amarulasolutions.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Tejas Vipin <tejasvipin76@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ZKn6UwdQ7UztrBsRGLjm+ca4mdIDBz6ZIt6nxP7D4JggU3nZlzw
- UEQUN/Wj98FPk9MV1N9kULAR77SHX9ppJEXhBTOTcs2xezzOtuXvKVQuFj0UMbXBMhLAtT3
- zQCc7BA4LdNpJaRa3mNWIXUU4GMzZezlcI5XVOxIqlvh9jzJ051Y/58SSUE1UlBRrOXcdbB
- mXComGHHd91yq/BSF8T4g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4YdC1FvAU2s=;FfUd+3nLn4V2x+hw2Q7N77b+awZ
- oog8iL0es+oX3MNBLgTbwYYcFf0XOXqYpBvFPQAbNO/PUm0yFgN9emfUPeSWjDTBXFSisLRXU
- Rmi/wm2xIqkhu8TCYug/Cd9+PIRrqi+1c6jiibiK2I6qQp5vcDxm+24AbF/N343PfzFtLAB9j
- 8dpYlJknJTuPV/bOi+oHJA2x0m4KVpJ9GxTxCYyj6BtP3SDQxzmJHZDd9gp9BfQoHyQbs6L20
- ovgx+UQIL6Rv3baHvDFGOsJkp+GsebwJ3zrZBr5tdef7kidb/b1slgIdr2AcP7ph1bcCPgagg
- CNFCegveB+dsNrdOIy3rlmNPOaWHlvazILo8d1jALg2D4pRyLoBH0PdagjTelpVuPn9L8Gblp
- 69fEeX8e0Fg8Zjpjjt/CxQJhTXzWTqetJwCu0+j6adpBe+hT6oz5Djn96CU7QPs5jdzE6kHWQ
- qexiJ9enWNfhVpMlKmfhUITPw8ny9zWHJo2bizUFLOIWrquK/aK/t0VW5JU3XDteFYQMXU+wP
- ZAHsBKqP4PT7Ra9KBS11sstqvMX0TY9McquNsaTZsNSPaU27B8scKqB7dL/3TYAamLGlkhsiv
- EhGv3ABeioWpmtyYLYBkbhH8h4aomKJd01WOHtFE5DraraxXYdwX3kLvDf1Tc3YgxeSf62ie3
- Y28onvGP+jVITvNk729NUDl7xf6peKmfua+tOdBrHS4kGXgNLcqwP3JB0Q7SPNdy5faMWfTKw
- BF+wRiVuBCQQgtxYhvkk+cWEjMQdxaBAuvEPRRXPf2SMyAI8adZPpdUoC3tVUr287jN3Spn9U
- STWSfunnZZETWeb7JrjZ3ZGt74rWV3MBjOqpZQZCPB1LMSYLOwIDlWsqR2bJ/begwGPBeKH59
- E5uiQdrLkcwtUHB+VvnH0rk0lagq3vU8zBkRyA26U80/aO//NV+tP/37JOkGZo7RRnsuem7ZG
- laM1u3ZIUixD5aCFgTm40JFkXVlZGREWimIs9Gpc2XqoOZONH7whnpxjueyl03/BPPELG5Y4d
- Ly1NGqSoQlBjvKgowph59KcWDRCZAsDrM+gTiNcLw4WD6ZM4/yzJ3iQKHtIn/Xy/IHdhVm6ZJ
- ONvcn5GzyGD8JydBWSrJWe4YwZ21hotuVq0/FONsDs2O4/wyXHZSZhtIhV7Y2beP88KkJTJPp
- ApZNymzCZ+vXy9aX6efTKZWMHaP6eyFa0V4nAMFfgYHRKZmC3PaNtac2H9hJ0C1GgSQBhLoHR
- YZDwQG06m9DY6ioEwq/k86owLvy72ffQztiy6VNw87dI8ypaqootCxyr8pHrTtXdNJtvojugD
- ++7ncx2Xaw+n4MgDEkHjpm9FtrpNmXEhlfnAPOUlf7kDzA8B1k7Yzwgiyowx837F+ntMSuoRs
- pbKaFLU0Nv13tkRh2oo1r+ORfz0zCJBKbTvzJglJinjxmbo42jht0YCuOmC4T3/XZrOvVvTQG
- ilfvNv0yp+VvEGi0ct6qqGfjdrAhksbYB93fV8W1ggR0uwNyT
 
-=E2=80=A6
-> +++ b/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
-> @@ -556,8 +556,8 @@ iwl_dbgfs_vif_twt_setup_write(struct iwl_mld *mld, c=
-har *buf, size_t count,
->  	};
->  	struct ieee80211_vif *vif =3D data;
->  	struct iwl_mld_vif *mld_vif =3D iwl_mld_vif_from_mac80211(vif);
-> +	struct iwl_dhc_cmd *cmd __free(kfree) =3D NULL;
->  	struct iwl_dhc_twt_operation *dhc_twt_cmd;
-> -	struct iwl_dhc_cmd *cmd __free(kfree);
-=E2=80=A6
+Hi,
 
-Can it be recommended to reduce the scope for the affected local variable =
-instead?
-https://elixir.bootlin.com/linux/v6.14-rc6/source/include/linux/cleanup.h#=
-L129-L133
+On Wed, Mar 12, 2025 at 7:54=E2=80=AFAM Anusha Srivatsa <asrivats@redhat.co=
+m> wrote:
+>
+>> > @@ -78,7 +79,7 @@ static int r63353_panel_power_on(struct r63353_panel=
+ *rpanel)
+>> >                 return ret;
+>> >         }
+>> >
+>> > -       usleep_range(15000, 25000);
+>> > +       mipi_dsi_usleep_range(&dsi_ctx, 15000, 25000);
+>>
+>> No. None of the conversions in this function are correct.
+>> mipi_dsi_usleep_range() is only for use when you're in the middle of a
+>> bunch of other "multi" calls and want the sleep to be conditional upon
+>> there being no error. Here there is no chance of an error because no
+>> _multi() are used. Go back to the normal usleep_range().
+>>
+>
+> OK. Then the approach to prefer mipi_dsi_usleep_range() over the previous=
+ly used usleep_range() everywhere is out the window. Sounds good. Is replac=
+ing msleep() with mipi_dsi_msleep() preferable?
 
-Regards,
-Markus
+Same rules there. If you're in the middle of a sequence of "multi"
+commands and only want the sleep if there is no error then use
+mipi_dsi_msleep(). If you're not then use a regular msleep().
+
+
+-Doug
 
