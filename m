@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-557123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3F7A5D3EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:18:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5FA1A5D3F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:18:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9F4617A5FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:17:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EE7D3B92E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8B713AA20;
-	Wed, 12 Mar 2025 01:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EC11487D1;
+	Wed, 12 Mar 2025 01:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L72ULtt8"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tf0hqtIr"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B20520EB;
-	Wed, 12 Mar 2025 01:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4A378F44;
+	Wed, 12 Mar 2025 01:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741742265; cv=none; b=GbDQ8LCth7hSKDUVaE+0WTIdccjfUAwgDXJoyGbAZ93l23hivPCNA9JXtYGmwMUPgzPLMsbmrOlJcRtiG5IuhH/3HUWtYhlMW+LcqjKYEpSLUD6/cMqg9T1Wqg1KdKMiLXZmzLsSgWyqGsSpf2Dgtw38MAs1S10jbcm36hs5oEo=
+	t=1741742267; cv=none; b=Xn10GNfcTvG+fVj86SRO8OAuL33IgqwTukODbAyyvKzlU8b70jzlsFFfgSGoBORcTCmmTO82bC/mJynk1mlAKxALV+mDHQfPbpe9jWPmv58usXHFACkPZBLtTnfyGwbw6iUNtBFt+mj9CA/QzQRn8ul+rOmm7079FwfiB/TTtec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741742265; c=relaxed/simple;
-	bh=BIEa1ejn9vUMvnxh83/Pfjv65SGkYNICYTRPB94OxDY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GJ+RbQpfCYWIN+FxydmPjp3pYh81hY683fuEdGbJ5KUqwsDsDoNcTpRGd7pcswGGZtjm5iITLnjxEPPi/CjCUFauyI6GACRs6CBb1D+vUGAVGVL1dk0JDvfXDmMQyFMzUxUwJheW9UCxxjIx58pfcBMdY9uajrgcZryAdH10wnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L72ULtt8; arc=none smtp.client-ip=209.85.219.44
+	s=arc-20240116; t=1741742267; c=relaxed/simple;
+	bh=7JsCd3EOBXCQwCMcOkbL4ce9rxRBvKLTXnVJe2yA+YU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hQ0tpKLqRhTj/kEtzVw4Ea4icqDWl09N4Q8f/hprz6cI30LYOtSpX6vOcu5jn0lpuW96CKbkisOeNIDZ3stfezzX678drPNTS/PGntdvPtIyDYP+55x4W94BfNjHetBK8G/crsu95DnS9uuBxqAGyDG1jaC5NY5av3F8Lk7H/Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tf0hqtIr; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6e90b8d4686so28381466d6.2;
-        Tue, 11 Mar 2025 18:17:43 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-475a77bbd8cso59639861cf.3;
+        Tue, 11 Mar 2025 18:17:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741742262; x=1742347062; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xvQKYHjgxU1wCfiqd43p8PZdXr56fxvuMpg073sHfxI=;
-        b=L72ULtt847ttHCZr0EU4iUVw8fx+JEMu5Lkf82DeIKlWi1Y+/2xS5hEn/rtf1Q/tXz
-         K+RYKRCr0Ph0V7eHWNlAwhS4VKzTwvyVhCpAy9JGbVTpUlTPr+L1Zw3+jDZiOagu4CSQ
-         zjqby4inbUMRI/UESs32mXtfVB/wuJcKg6uXSCOjv83wZeyjKBerPqVBw9Q09/Cdx188
-         Z+MmgFjiW4boC0pVBH7mG9kyDVOGOkU1GU8Y2VdZ0k+uqAA6NldpYd/xkc9rNUx03xHL
-         SYHgiiZX/3UGX7c5ltCYuzipVv7r023H2wG4MgvTYbnucC24cTd9eUKwK5BtEnocWJbD
-         x9BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741742262; x=1742347062;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1741742264; x=1742347064; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xvQKYHjgxU1wCfiqd43p8PZdXr56fxvuMpg073sHfxI=;
-        b=rQllZyUJQwsaHwM0eMMdUfczeuzL+NbKdinPpKu2TrJ+z/HmqiXIabUbzBTUKGjfLF
-         ZYg4PiRqP77AnS6mbqjZl/m6SRQVOaOU/75TQ91boG8WyQIo2cQyi60xInQ0WuJ86f7I
-         oSgT9GoGqnvYvgZ4ItmgUgV7OTuGzaLeny/raFfWt2wJYHQbOZy+IdH88u2iAP/lwYXc
-         ayxbp9f4Wu2zUiMKE+yUsNLeOoKuou0ADIa+70mv82CgVGuKEy0zhTaRWbmyBwsCQD8I
-         v4w7EFDkm7kutqxEtfWhdKo9dTBuiOlYr585DgGehIkmdlgnSD4dqbTdxl/PkCa/V5UW
-         dvSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqtp9/+K6C5jXiCLdzH36WE2tWqWuEtiQpEw7tliK5BMeW6gd/segQIIpb/dCONEVbdctURktJkJkNg+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwySAd1eE9pw8hjtw7/qwAf4n9KgmvUPQ/9vj4m9E0Pa5/ygOyj
-	6Ah35HQxJpDYkHX7UDYZk2H+CloBdUEAeezPJcsyKfajJSGuM7m5
-X-Gm-Gg: ASbGncsNEPTcrJZjPtn7nOn3No6sLYCM1cXjjPHNro0hwbJpkV5+2GCLiHMCp5zcGxj
-	C1TDlLN7Yjtv3tv6/pFblfvtZqR9V6nCGzbJJ+UCUw+flV957ZfaHCTgBlxSPKdeppRYaj9qWTm
-	DEYMQtDYeWimRZaMc1qjqBbregP5KuEM5awg1Scs30Q636aD2ovjvrL0RJd7ULSt4zm7L7vrmcQ
-	m0FSrSR5fS6bgrLCkJEOwsKuf9XpaW0jXTpqzG+5Ui5rYCJwmDS6ec6hi3+T1gV8R2thVfxYb+M
-	rDl+IEGxXeivZcmJobNTa6w9W852714AS/RHYxEKnA9mEZKvSEgVjamJU8iaJ6K3hgAo
-X-Google-Smtp-Source: AGHT+IFQmmH/sZYSi645oSe6oiCp5Sc7cqYWDz6oj+FoiTtTYxCqqpKOYdjsTgHu7RBXFFlNsh8uxA==
-X-Received: by 2002:a05:6214:2504:b0:6e4:269f:60fd with SMTP id 6a1803df08f44-6ea2dd26c2bmr95976936d6.23.1741742262004;
-        Tue, 11 Mar 2025 18:17:42 -0700 (PDT)
+        bh=G5Rh0FzO9cRqB5f6DNBFASVAyk0HPfSHAFbCNAH2RxU=;
+        b=Tf0hqtIrOgGs+niA/umr8WaiZo6lhSHzXcFzeeDvbRWML4gBjfbKd1BP0rPov3j7Ly
+         NwHXQ+xGrwGZWVOhoHv1WUE6lWQvQh6j+0W4fzyiw0NTnIldHwH7bn9y3LeD66N4jXs8
+         26E3g53lZfoEsmULdduW9H8pB5rjovu5JMmMEAXG2H34XTKwLwt/+Kpbi9HZWy19/ZWX
+         XplbjK37Gp1DZFRWO8l944GMohDSSPvxdgh8GCfzXFlrricRbW1LZLAswOUDcIaG5DiN
+         /EgEvzq1NQPIrOY/jIVu3QnwGuARCNMcGkZyEIWXtxDCIXhtKol8xBPg1+4HT3p4/vz6
+         l03A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741742264; x=1742347064;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G5Rh0FzO9cRqB5f6DNBFASVAyk0HPfSHAFbCNAH2RxU=;
+        b=jVrvBw1RIRR3Nr8N+ZAMJIq97Ow4Zl1WGAUeJ5Gh1NhZf3PcADhdia7IXHsLrHScZB
+         gzQFzazorqU2pKl/+tzCHGyxDlFbf1h2nrZTTLattxkokUlKfzlvAfkr6uHPVBabuUd9
+         g7dsGkFg5MLbiGZUzyhPRrhPVcOfHfeSG2fuVqakAegpHgowm/4IXf7rW25hlVZTwb1x
+         1qH/Ing1kkOjGD8VJqhrqVx2CcQSWPsoYa/pmwUkmqxhrVX6BOj3gxWDANihQMWUzhAY
+         mXXuRoU4b1MhEbnQxbrF238lGGRxJ2FOBj5Aq7cc8uQgeB3xpYgStZu5kD66EPtG73ca
+         69pg==
+X-Forwarded-Encrypted: i=1; AJvYcCVL8ih0F/JqWiUfTc+rd44L9zkVQ6fZHGIfw18Ni0iefvMkBbvJz0XpWl9fu5daAReEbYIYMWJ/csGtQ/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzwfdoDD/XqnvflYSbrJPZD/vySdCwbhrzyeQ/CH3ipVEp7aIQ
+	rWYtcdRQzcAKJnIKQfZSyMbGS4aaPmSM2MfXeeuD7oSAAdH1oguU
+X-Gm-Gg: ASbGnct3agjIV9CULbnP4ArvytU8qJuURjLIF1citGkTS3mVBYTJnI/6Q2m9ixekONj
+	ATjgaUWOZfoLrLosHMMgPFNrHxmoeInNfyl7NENIVZsc49zHXuhqLJ0ZNpHAGgJ9rn90gXrs/Q0
+	OnIHLEp6Zp/V0BABREd1yq0E1d+iplgmohMthtAVZwNQA/eViGzyQMmOUTM7cmm+crdehW6v2oF
+	mAladGua95Act6h5tnrGSsgSU0FhEZ37qQStjNfJlEIkeNBg3upe5C7X2eBAPUE8GP2lOsFazCB
+	T/oGTeDR0ky9YH+rHbsTBatIQh8xB5LPvSn0Q2iVHXrinKpAXS7OfRa8nKR8EZ0ArHWf
+X-Google-Smtp-Source: AGHT+IHWYnvrpKGUXD//62os29Qg48MfBZgnjZLZluSfIaQ6e/1FlaBNu9MsF6Sj8CWwqQJ/sps7iQ==
+X-Received: by 2002:a05:6214:d6d:b0:6e6:6a6e:7596 with SMTP id 6a1803df08f44-6e900694192mr289407166d6.39.1741742264121;
+        Tue, 11 Mar 2025 18:17:44 -0700 (PDT)
 Received: from tamird-mac.local ([2600:4041:5be7:7c00:2017:ee95:21ab:177f])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f70915ebsm78599976d6.49.2025.03.11.18.17.40
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f70915ebsm78599976d6.49.2025.03.11.18.17.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 18:17:40 -0700 (PDT)
+        Tue, 11 Mar 2025 18:17:43 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Subject: [PATCH v2 0/7] rust: generate_rust_analyzer.py: define host crates
-Date: Tue, 11 Mar 2025 21:17:21 -0400
-Message-Id: <20250311-rust-analyzer-host-v2-0-30220e116511@gmail.com>
+Date: Tue, 11 Mar 2025 21:17:22 -0400
+Subject: [PATCH v2 1/7] scripts: generate_rust_analyzer.py: add missing
+ whitespace
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,11 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKHg0GcC/33NQQ6CMBAF0KuQWVvTDhbRlfcwLEYsdBJoSYtEJ
- L27lQO4fD/5/28QTWAT4VpsEMzCkb3LwEMBrSXXG8HPbECJWqK8iPCKsyBHw/oxQVifdSofSta
- V1vpcQy5OwXT83kfvTbblOPuw7h+L+qV/5xYlpCDEuiIk7Ki89SPxcGz9CE1K6QtAZI97tAAAA
- A==
-X-Change-ID: 20250209-rust-analyzer-host-43b108655578
+Message-Id: <20250311-rust-analyzer-host-v2-1-30220e116511@gmail.com>
+References: <20250311-rust-analyzer-host-v2-0-30220e116511@gmail.com>
+In-Reply-To: <20250311-rust-analyzer-host-v2-0-30220e116511@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
  Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
  =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
@@ -99,47 +99,43 @@ Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
 
-This series updates rust-project.json to differentiate between host and
-target crates, where the former are used as dependencies of the `macros`
-crate. Please see individual commit messages for details.
+Add a space before the `/` operator for consistency with surrounding
+code and code formatting tools. Add a second newline between top-level
+items in accordance with PEP 8[1]:
 
-The first 3 commits contain mechanical formatting changes and are
-optional. The series can be taken without them.
+> Surround top-level function and class definitions with two blank
+lines.
 
-I avoided more significant formatting or changes where possible to
-reduce the diff. Unfortunately `scripts/generate_rust_analyzer.py` is
-not consistently formatted before nor after this series.
+This change was made by a code formatting tool.
 
-The 5th commit ("scripts: generate_rust_analyzer.py: use
-str(pathlib.Path)") can also be considered optional. It removes an
-inconsistency I noticed while working on this series and which occurs on
-a line which churns in this series anyway.
-
+Link: https://peps.python.org/pep-0008/ [1]
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
-Changes in v2:
-- Rebased on "rust: fix rust-analyzer configuration for generated files" [1]
-  Link: https://lore.kernel.org/all/CANiq72nv7nQ+1BinCHe2qsvwdUb-y9t7x=RGSppi_n9TBXNHpw@mail.gmail.com/ [1]
-- Link to v1: https://lore.kernel.org/r/20250209-rust-analyzer-host-v1-0-a2286a2a2fa3@gmail.com
+ scripts/generate_rust_analyzer.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
----
-Tamir Duberstein (7):
-      scripts: generate_rust_analyzer.py: add missing whitespace
-      scripts: generate_rust_analyzer.py: use double quotes
-      scripts: generate_rust_analyzer.py: add trailing comma
-      scripts: generate_rust_analyzer.py: add type hints
-      scripts: generate_rust_analyzer.py: use str(pathlib.Path)
-      scripts: generate_rust_analyzer.py: identify crates explicitly
-      scripts: generate_rust_analyzer.py: define host crates
+diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
+index adae71544cbd..15a690ae2edb 100755
+--- a/scripts/generate_rust_analyzer.py
++++ b/scripts/generate_rust_analyzer.py
+@@ -103,7 +103,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+     ):
+         append_crate(
+             display_name,
+-            srctree / "rust"/ display_name / "lib.rs",
++            srctree / "rust" / display_name / "lib.rs",
+             deps,
+             cfg=cfg,
+         )
+@@ -178,5 +178,6 @@ def main():
+ 
+     json.dump(rust_project, sys.stdout, sort_keys=True, indent=4)
+ 
++
+ if __name__ == "__main__":
+     main()
 
- scripts/generate_rust_analyzer.py | 177 ++++++++++++++++++++++++++------------
- 1 file changed, 121 insertions(+), 56 deletions(-)
----
-base-commit: 510570138476387532129cba425ea7a375308d87
-change-id: 20250209-rust-analyzer-host-43b108655578
-
-Best regards,
 -- 
-Tamir Duberstein <tamird@gmail.com>
+2.48.1
 
 
