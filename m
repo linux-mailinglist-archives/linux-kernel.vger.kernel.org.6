@@ -1,152 +1,133 @@
-Return-Path: <linux-kernel+bounces-557506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AADE8A5DA19
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:02:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A076A5DA20
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:06:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75930189DF6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:02:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0844C3A9542
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF7023C8D8;
-	Wed, 12 Mar 2025 10:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AD023C8B9;
+	Wed, 12 Mar 2025 10:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qqns4Kwp"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PHpXNVJq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DBF23A996
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352FA1DF735
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741773759; cv=none; b=A3k1V4FrwqNLGa9kjUnHbytFCO/5TNuFWhQpef+LU6OsYSIJktxOlBfT6BPzUpE4riFIeuiu2NrGXWBdAIOB+41JdMdg9fwijfFHfmVst8bs0BGPNmSM5SJqsMuf3g1xggIn1AEV3ynfB4nWJm6aAueEHl4CVaUPK1q+fW7z/Os=
+	t=1741773960; cv=none; b=BSE9yNQUKNyOYLW1+YHMMaFiieHCXVFtAANaaLlWAPbiVoghhccfxPvhdYcjQfA6N7CY9Ze6iOCM84pJnfDfzXG9uy8ay8tYAnt0U+hvIIGIRkfPK+MNalurFMHEXj85UelWoiQoUVXZKu5XdCQCJs9sFsZomej4nYbrxSLo9ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741773759; c=relaxed/simple;
-	bh=kjWvjaQQHnF7eoPYtX5uf54kvFANSjafAEnJ7s0W104=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fJ7fQo69RE6z7wrlAwSfDf6Ye+5xOFXsc8gwVTSmaLRwKSOSz7ysz0DDx+SXTvOdk6bDAZMdoNlKPf/ejqGJx0RXguMejy/43DWf3PGSAwKEalEuveG8GUkq24P6uMz5C1TTVVt4ExNZo3szjCXYdhHaXxwNZ8nNVwNz2SD5I2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qqns4Kwp; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-391211ea598so3557627f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741773756; x=1742378556; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pUHKQpxTCLmGn74czB9zdVmL8GuztD+1m1BAWrqdpyw=;
-        b=Qqns4Kwpx88PkRN131RElQbAYioRhFwayWd6xeAXl2oqzzLlpJngKu3hsPpo8viYbe
-         NgZ0tgSgHkw9RyMXBfHxExqlWbUtWY+/kADiMxz7EOKc1SIvgA8bZFSvodLZp2nR4ccu
-         pxxNXklFUkAAa/hGSH3qFFMq/bHTTtDx0kfbiZRteJfMjoJRZCb6WGO/w5OVj6CuBzLw
-         mFD2Kj2bG+ktvBcj19DRkKwbO2XEAkaEt0V7E0aejaGkkgXTngRjppG6/8PIVwjCMtkn
-         IwjC4pAZQyrQa2PTL9KWv93c7xCyPhKnXePObd5rPxbOem/FnvsG9s4d+1fMdOyoSkzi
-         IQAw==
+	s=arc-20240116; t=1741773960; c=relaxed/simple;
+	bh=TnV6haB5juXzLwYsnjfTeCliML9Uw7ciBtpPk7YGTJE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nmOpKnxmQcIgYBvUsYdqsOWGdT0V/wUzKhKDPbniO9w01O4qiWcieAnFcQ1TL447aFbzmvDarLZ2wuBvzUjOzeU6iXbOJ0R9hlYNtkE8C5SlvzZUz9x3YFA7ME1RFh9fGe8Tl7wQOeWj+9I+eLwdgA8oGzfnnJeqq1UbP3M9g3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PHpXNVJq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BMHFws015808
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:05:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=HgeWIhIMEhGODE3pVk6y8mTvnaewamGCGvX
+	6pDQJFHY=; b=PHpXNVJqqXprA0Vgw+XM7nNbkr16NUZ+BKsPkeG9YOZpBPZoLmh
+	M6NqRi800CD44xs1N4FNnjqZV21nFa7j5kEIFw8UwlE5IWyZKVxtpjN1ucAgszsj
+	VwIX459kY7yrj4vc4g+v15XxIX7xi0Y2MZZeu9lQGTCsAsQTap4jewJfVLJYt2D1
+	5f0XTyFciR1FbJZ0xWUgIVU03rauVX4xdZpDuySP+ERG7KtUCKtDhZ7U5DD0DHtx
+	KrFkv4J2UEhrJTyXjy72yHWDRLybP8uLy4AU97FFuBkqqckxiz+RMmdgMNIZ+mlf
+	Mml0HD/76/yh8RHBn+6Ny5W9PcIbhSzd61A==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2nt09a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:05:57 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-225505d1ca5so64239455ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:05:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741773756; x=1742378556;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pUHKQpxTCLmGn74czB9zdVmL8GuztD+1m1BAWrqdpyw=;
-        b=LjxROpVjudl1XlMrUDPilZ1QRFZglLbf3C4fyaCw9++cDj53K9y/n3KfqQnC7+dyJb
-         5Axd++zJ6j5rOeAdlflpDLTYlbl76dcPsoxmbKkcSANJRt8B/iucWdCBUbnnAD/DFVOj
-         KFKrECOsHPPDBmxWl5UmN3lmrU/UK2jGo2h3jcgVjyWiI7TTzKrCuFxnlnps4NwDHkI6
-         /5PnTrObIlSVz6Or9m9mbSh8GE7DTYpbfjwYbu2glGNvIZ2p3IOmf+zmbGwBkix/01BL
-         Q6YiEWpSEqrDTrQbTFHyLeuaHWlgq5TKx021+HVw4J9kmgQIprF+sXl/VlWy+sAyq3I2
-         Hb1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVxrEHczVphcK2Meu1xeRyC7U9ayy3En64QJ8P7L0APOZ1wS4tUFooavlC5v/3Ut+tRdLFD33fpZzbUlo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsJtEO4eiqxFhR5PAB/vqz1/wR0mgToY/SgppwuXVIPrhBaPQ4
-	4QrTJGXojbye83xD3Pdi+MYYlOPIcosQs7oG4uq7XlpG8YWoxBhio5vck/KNBIQ=
-X-Gm-Gg: ASbGnctG00FaSwfzz+FXWqaBJpC6WVtBtA37LU4viWr2yi0EMUl3iBNCdUg5OZEsJe9
-	R4Z4shh/Y76ZyxFuuMA662OSrcYXiqlhDZhrkjQfUQGvYO0Lfb7ZSMG/TolPP0Y+BEvd740RRP8
-	Kti5UKfYynSYMY+Vnbod1AKie/hdnrVLcJw0SG6bvKBJl9U2K08LhF85KW5D6uJgpwt0HShgrIC
-	s+FUI1iPGoPKv+FRYxjt+NdVsy2tXDt8JIklFQbzAKFdxJs0LPrv4PZgztffGaMpr/hOskSea1y
-	n6v9oDLWDc8QrnSOho5pu0dkwU1kC2Gl4WGptcvQP2NnNOr0BWbDrQ==
-X-Google-Smtp-Source: AGHT+IHsfLVyBWcJIJmx03S34iaHHCTkfZVaBtu1xexwTvJTh2AWPtnReHSIE67a3DSyc4chYw5jdw==
-X-Received: by 2002:a5d:5f8f:0:b0:391:2e0f:efec with SMTP id ffacd0b85a97d-39132d1faebmr14844096f8f.7.1741773755863;
-        Wed, 12 Mar 2025 03:02:35 -0700 (PDT)
-Received: from [192.168.1.247] ([209.198.129.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c015d2bsm20073216f8f.43.2025.03.12.03.02.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 03:02:35 -0700 (PDT)
-Message-ID: <6b43a3e5-b76f-45fc-bb2a-6c47a0a7c511@linaro.org>
-Date: Wed, 12 Mar 2025 10:02:33 +0000
+        d=1e100.net; s=20230601; t=1741773956; x=1742378756;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HgeWIhIMEhGODE3pVk6y8mTvnaewamGCGvX6pDQJFHY=;
+        b=sIenRR32tpWT2mFA+cLTUPgDm7eMkFJ6fomZYrNlMZeYjqDb1k+L3n0TsU4kZWIqVd
+         rpQkIM9fFWvdVstBJo8P+25+eRoCgnyiJol+XXsjW/OBVujbMlprWdfoY2iHDq0s+0qM
+         UitjzsqGFxiOj4KXmbRNbTixvZ67NPj+03aloa+f5dQHXkr4MqWkwnXeeiM2AQa6KOyl
+         rktmS/YUYoNNAA8MBhmEkZNJuAoaGaIfYH7WdBGrzcgfcpksk5V0blsFWKJra2YvrrdB
+         +2IX5zSjLMYkfUscgWZA29a8WfyOgq5ekQHOSFFSfvKaJPff4+EwTVJeoC2AVzyb7q6b
+         Cn6A==
+X-Gm-Message-State: AOJu0YwRtQOu7gDo3+PeDdkMWzRoQWnOxD5NqNOQNbTmGqkmhhmsTrEr
+	srUti/zSjfmNbt/DCOVJtA7REOucU0Zk0dPsapE+HTMEqGAmrbjqRaSNmS5RjPFlsViCdwzRaCu
+	9X2vxMjtApwvmqBtZzOPUgJ+/W+QMSWktVWpCXzZXe/dQqv+Jas6g7AqVuxq22OI=
+X-Gm-Gg: ASbGnctAoc/vwSMu3D87Fdsfh06QPt45lCCOCwZCSbfWrAwAnQ0Rhz9Pb4y5xxWuP60
+	8dniNN2bimzdXhU9P8wA5mrHaQ8TvUojA2TZ8Raal8wxoa7p73n7Dh6d+eXaZ1FVIAvsLesxyuj
+	SOltYkbANA7/We21XSe7ojLJZL/VZ+fJA8VIdCJCWjat+rs+vNc5rdMQBq1DEocn/+KURaoluCq
+	InujSct6TEreER5S86dgtZM324XYtqTl/I5y8M39iVm2ZK/OHoYn3599O5tE7zBsENcktG/InGO
+	AuYJoiOtzrKHOSed5veOb1gS79kluwwjqA3ikRXREjupPekfnexO6Q==
+X-Received: by 2002:a05:6a00:6c96:b0:737:9b:582a with SMTP id d2e1a72fcca58-737009b5927mr2847416b3a.24.1741773956423;
+        Wed, 12 Mar 2025 03:05:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGrpFM9aC2Ybs7x0lcdpTYriXhI+a8LEqu97S/o5XlAYzlpGRhYyyTMTdxU6ktmIfaIwEj/Wg==
+X-Received: by 2002:a05:6a00:6c96:b0:737:9b:582a with SMTP id d2e1a72fcca58-737009b5927mr2847376b3a.24.1741773956090;
+        Wed, 12 Mar 2025 03:05:56 -0700 (PDT)
+Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736ae7d24ccsm10023993b3a.48.2025.03.12.03.05.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 03:05:55 -0700 (PDT)
+From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Subject: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Add orientation gpio
+Date: Wed, 12 Mar 2025 15:35:44 +0530
+Message-Id: <20250312100544.1510190-1-krishna.kurapati@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf script: Fix typo in branch event mask
-To: Yujie Liu <yujie.liu@intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
- "Liang, Kan" <kan.liang@linux.intel.com>, Mark Rutland
- <mark.rutland@arm.com>, Will Deacon <will@kernel.org>,
- Mike Leach <mike.leach@linaro.org>, Graham Woodward
- <graham.woodward@arm.com>, Paschalis.Mpeis@arm.com
-References: <20250312075636.429127-1-yujie.liu@intel.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250312075636.429127-1-yujie.liu@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 559Z0RtCSeJg7KWdlZfIBooUOiXCz1nX
+X-Authority-Analysis: v=2.4 cv=ZObXmW7b c=1 sm=1 tr=0 ts=67d15c85 cx=c_pps a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=76Bs7J6LVpVJVXfC1mgA:9 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-ORIG-GUID: 559Z0RtCSeJg7KWdlZfIBooUOiXCz1nX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=888 mlxscore=0
+ suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120069
 
+Specify orientation GPIO to the PMIC GLINK node.
 
+Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 12/03/2025 7:56 am, Yujie Liu wrote:
-> BRACH -> BRANCH
-> 
-> Fixes: 88b1473135e4 ("perf script: Separate events from branch types")
-> Signed-off-by: Yujie Liu <yujie.liu@intel.com>
-> ---
->   tools/perf/util/event.h                 | 2 +-
->   tools/perf/util/trace-event-scripting.c | 4 ++--
->   2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-> index c7f4b4b841ca..664bf39567ce 100644
-> --- a/tools/perf/util/event.h
-> +++ b/tools/perf/util/event.h
-> @@ -91,7 +91,7 @@ enum {
->   	PERF_IP_FLAG_VMENTRY		|\
->   	PERF_IP_FLAG_VMEXIT)
->   
-> -#define PERF_IP_FLAG_BRACH_EVENT_MASK	\
-> +#define PERF_IP_FLAG_BRANCH_EVENT_MASK	\
->   	(PERF_IP_FLAG_BRANCH_MISS |	\
->   	 PERF_IP_FLAG_NOT_TAKEN)
->   
-> diff --git a/tools/perf/util/trace-event-scripting.c b/tools/perf/util/trace-event-scripting.c
-> index 29cc467be14a..72abb28b7b5a 100644
-> --- a/tools/perf/util/trace-event-scripting.c
-> +++ b/tools/perf/util/trace-event-scripting.c
-> @@ -347,7 +347,7 @@ static int sample_flags_to_name(u32 flags, char *str, size_t size)
->   
->   	flags &= ~(PERF_IP_FLAG_TRACE_BEGIN | PERF_IP_FLAG_TRACE_END);
->   
-> -	types = flags & ~PERF_IP_FLAG_BRACH_EVENT_MASK;
-> +	types = flags & ~PERF_IP_FLAG_BRANCH_EVENT_MASK;
->   	for (i = 0; sample_flags[i].name; i++) {
->   		if (sample_flags[i].flags != types)
->   			continue;
-> @@ -359,7 +359,7 @@ static int sample_flags_to_name(u32 flags, char *str, size_t size)
->   		break;
->   	}
->   
-> -	events = flags & PERF_IP_FLAG_BRACH_EVENT_MASK;
-> +	events = flags & PERF_IP_FLAG_BRANCH_EVENT_MASK;
->   	for (i = 0; branch_events[i].name; i++) {
->   		if (!(branch_events[i].flags & events))
->   			continue;
-> 
-> base-commit: b10f74308e1305275e69ddde711ec817cc69e306
-
-Reviewed-by: James Clark <james.clark@linaro.org>
+diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+index fa7c54f882a4..e6811a094332 100644
+--- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
++++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+@@ -177,6 +177,7 @@ pmic-glink {
+ 
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		orientation-gpios = <&tlmm 140 GPIO_ACTIVE_HIGH>;
+ 
+ 		connector@0 {
+ 			compatible = "usb-c-connector";
+-- 
+2.34.1
 
 
