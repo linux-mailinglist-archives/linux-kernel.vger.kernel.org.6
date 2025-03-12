@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-557398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95594A5D864
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:40:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E11DBA5D867
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:41:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8B81750F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:40:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9B01897BB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDD52356DF;
-	Wed, 12 Mar 2025 08:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEF5236442;
+	Wed, 12 Mar 2025 08:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJ7+TiBO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6iFhnvY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881EE236420;
-	Wed, 12 Mar 2025 08:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3512235C1E;
+	Wed, 12 Mar 2025 08:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741768809; cv=none; b=ADLtbJIbyZL8FwjEMDyqxSI+aHVrO+mFgXzt4Uk+thvaWq4zGwwMVcgTDlUDysPZdxXO4ZQMOPf86oqhLBUAaAUeQRyqurDqibnar6vJXdQcDTDL/7sgzzM/4r2mKGAp8ryoeTBr4sGMQ8KyptjIuBLXruyv5+n609g4cqFWHbc=
+	t=1741768896; cv=none; b=gH+PZx9xm7MyAEsguj2YK97R+UC6RGyDm3i9A/7VEY/A2ao5D0PtrNfVZYjePt5TV4Zu1m3NfreqREIAXIm81KhK30xRgkgfUX7HhBB3/yti9y68NP95JfdIYliLNxdKPEXDTq8GDMT/uS30xijhfGbmAoSDbYfmZ+e3utVx1Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741768809; c=relaxed/simple;
-	bh=vjrLKZqFmOgUUOhvEPy7JGLdtin8amu+im5/QhAzgfo=;
+	s=arc-20240116; t=1741768896; c=relaxed/simple;
+	bh=AJEYxyOtVrFZ3nXZfPSsRpVXddzQKsJIgqMyc1x0xhA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=orMWZftNCfXJq76h1TvIIjyYW1YZIGOyglMIs3fOT2hszuBgTYXOQBgmmsFSyffUR63lJ5ccyrnMUkRVxhKtqE3TE1Zw72APiIg1DUVMv0pIEnOqPvtjP6uAXrw10E5YaKYqXfdLBrisJ0jhOI/h8upOOxC1ZnA8u3cPHT/scnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJ7+TiBO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35223C4CEE3;
-	Wed, 12 Mar 2025 08:40:02 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=m73f5cR53vTPMJYomv3dBT9nBI38j1AxnM8Nts4EMLoU/YSUVdg0nb1qXBwrtnTxNf9EAekAeJ+XFqHVXkCbdPUgHMvNkekNQvFBpXM7KtB3tdah1Ne6tTPEIkykyelabNmk6AWAJ1X6HYxhRbWG5lFz8BSHW7IN+EXCQikHlo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6iFhnvY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6656C4CEE3;
+	Wed, 12 Mar 2025 08:41:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741768809;
-	bh=vjrLKZqFmOgUUOhvEPy7JGLdtin8amu+im5/QhAzgfo=;
+	s=k20201202; t=1741768896;
+	bh=AJEYxyOtVrFZ3nXZfPSsRpVXddzQKsJIgqMyc1x0xhA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gJ7+TiBOx9kiYATQSgNGpGTP0hsf97orKtjs2QJBgTWOcu1Oz5Pbx8T5uyVI0sXss
-	 5xiDdsRHRmoc0wTBPPaADb/HYxsUUCn4eEyo2yXAumcxRa2+YyXE64gBc5GKlMrUay
-	 DG1+S7wtGj8LV7AZB54np1yJfp1h/1UVlIgyGxK6vlCylZHT8y7h0Fe9u5TGSEABWq
-	 XOhjJOTgaCmZYbNXEd5lRxeFzHSAUcF37hwlYEoLXQurHSYsc3K7vDDEQot0OV+iTN
-	 PcqWQmA7LG2QcSo7ckUrZHuVGGCefuXNsHW6vxe7tPO7ij5wuqeE7KH2KmFMuGZMcB
-	 QFWo3udgv7vrQ==
-Message-ID: <faad00bf-0274-41b2-91dd-6b2d2dd59b2f@kernel.org>
-Date: Wed, 12 Mar 2025 09:39:59 +0100
+	b=N6iFhnvYqX6qWXtnRSkzucXrDVFrI/Pa/Gt5hvbkqDY6wJqk2cvrmplcQTbIG0aPV
+	 8Nz9EQf1Fjp9pzfxA0ZFG/YLfOTlB3tBJ0lm452gPDLHBjAJG3+IVCGYCnS1Xe1hJn
+	 UzlBpvzOJ6OEsZCxab1WBUlgDGdkuITy6geXVk9+zbyWsHre9e7nr0nA5Sog/NiZeO
+	 EGdke37JeS8OaMPx6WBsAphJoFXzQAxtuxMCyh727DMhSeIfrQcsSaMawmfAC6YQp7
+	 7evkRxhvAMJsIxYnyqNuGqT3ABh3ketg87y9f4kR2TnO3+QMd5vNbVaUkQGujpGlg2
+	 3AGVIL4uuUT8A==
+Message-ID: <bdad1b69-e992-4f87-a1ad-09bac2f015ee@kernel.org>
+Date: Wed, 12 Mar 2025 09:41:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,22 +51,19 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC and
  EQ support
-To: Rob Herring <robh@kernel.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
+To: Francesco Dolcini <francesco@dolcini.it>,
  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>,
  Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- patches@opensource.cirrus.com,
- Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
+ patches@opensource.cirrus.com
+Cc: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
  linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org,
  Francesco Dolcini <francesco.dolcini@toradex.com>,
  Charles Keepax <ckeepax@opensource.cirrus.com>
 References: <20250307135244.100443-1-francesco@dolcini.it>
  <20250307135244.100443-4-francesco@dolcini.it>
- <20250311-solid-poetic-camel-77a29b@krzk-bin>
- <20250311175931.GA3885406-robh@kernel.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,56 +109,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250311175931.GA3885406-robh@kernel.org>
+In-Reply-To: <20250307135244.100443-4-francesco@dolcini.it>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/03/2025 18:59, Rob Herring wrote:
-> On Tue, Mar 11, 2025 at 09:42:45AM +0100, Krzysztof Kozlowski wrote:
->> On Fri, Mar 07, 2025 at 02:52:42PM +0100, Francesco Dolcini wrote:
->>> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
->>>
->>> Add two properties to select the IN1L/DMICDAT1 and IN2R/DMICDAT2
->>> functionality:
->>> - wlf,in1l-as-dmicdat1
->>> - wlf,in1r-as-dmicdat2
->>>
->>> Add a property to describe the GPIO configuration registers, that can be
->>> used to set the four multifunction pins:
->>> - wlf,gpio-cfg
->>>
->>> Add a property to describe the mic bias control registers:
->>> - wlf,mic-cfg
->>>
->>> Add two properties to describe the Dynamic Range Controller (DRC),
->>> allowing multiple named configurations where each config sets the 4 DRC
->>> registers (R40-R43):
->>> - wlf,drc-cfg-regs
->>> - wlf,drc-cfg-names
->>>
->>> Add three properties to describe the equalizer (ReTune Mobile), allowing
->>> multiple named configurations (associated with a samplerate) that set
->>> the 24 (R134-R157) EQ registers:
->>> - wlf,retune-mobile-cfg-regs
->>> - wlf,retune-mobile-cfg-hz
->>> - wlf,retune-mobile-cfg-rates
-> 
-> 
->>> +             * Config registers per name, respectively:
->>> +             * KNEE_IP = 0,   KNEE_OP = 0,     HI_COMP = 1,   LO_COMP = 1
->>> +             * KNEE_IP = -24, KNEE_OP = -6,    HI_COMP = 1/4, LO_COMP = 1
->>> +             * KNEE_IP = -42, KNEE_OP = -3,    HI_COMP = 0,   LO_COMP = 1
->>> +             * KNEE_IP = -45, KNEE_OP = -9,    HI_COMP = 1/8, LO_COMP = 1
->>> +             * KNEE_IP = -30, KNEE_OP = -10.5, HI_COMP = 1/4, LO_COMP = 1
->>> +             */
->>> +            wlf,drc-cfg-regs = /bits/ 16 <0x01af 0x3248 0x0000 0x0000>,
->>
->> <number>, <number>, <number> ...
->>
->> unless you wanted 64-bit?
-> 
-> Why? You would need "/bits/ 16 <number>, /bits/ 16 <number>, ..."
-Uh, right.
+On 07/03/2025 14:52, Francesco Dolcini wrote:
+> +  wlf,in1l-as-dmicdat1:
+> +    type: boolean
+> +    description:
+> +      Use IN1L/DMICDAT1 as DMICDAT1, enabling the DMIC input path.
+> +
+> +  wlf,in1r-as-dmicdat2:
+> +    type: boolean
+> +    description:
+> +      Use IN1R/DMICDAT2 as DMICDAT2, enabling the DMIC input path.
+> +
+> +  wlf,gpio-cfg:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 4
+> +    maxItems: 4
+> +    description:
+> +      Default register values for R121/122/123/124 (GPIO Control).
+> +      If any entry has the value 0xFFFF, the related register won't be set.
+> +    default: [0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF]
+> +
+> +  wlf,mic-cfg:
+
+
+Isn't this the same as wlf,micbias-cfg from wm8994? If property matches,
+just use the same.
 
 Best regards,
 Krzysztof
