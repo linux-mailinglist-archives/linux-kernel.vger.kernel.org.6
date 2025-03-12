@@ -1,144 +1,150 @@
-Return-Path: <linux-kernel+bounces-557631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B021EA5DBBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:38:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F70A5DBBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:38:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C327189D298
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:38:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4F51881480
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0164623F367;
-	Wed, 12 Mar 2025 11:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CF423ED58;
+	Wed, 12 Mar 2025 11:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cqmfjosm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FJuhLKTU"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A331D63FF;
-	Wed, 12 Mar 2025 11:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15B91EB5E3;
+	Wed, 12 Mar 2025 11:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741779506; cv=none; b=sGt2V68ZoY7K3lCEMhs2/+9y7yyEM8UA7a3EBObNCwPnZ+7UtC59xIGaTwhpfHOOqXNca7bQFup/PCdCi34f06Am43pks+kTgGRjNUnVFad9mcri1HnPkzfy//iKLJISOoq9l5+w3YaTuGKtGR64f6+hMSYvxq1C7JmSWmrpcvQ=
+	t=1741779523; cv=none; b=XBbA7gy3M/JmGg/++fU+TTJLKlotDrbCCeR4JuHN3Ip+sWZoyViHB83RxH+SZUEiYPajH0EbTlQ0hxAxt5oJjBSeYDP7+vUQkD5K5uP1VkMgRsDpQ6vMLXki1qDzZ6znbvzXeRG4qGG8KXuZA8RoHuRyJYW3deP7T4iJPQ8BSOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741779506; c=relaxed/simple;
-	bh=SCeea2IRJiR43RYeMEeub5/6lUzFMZzZEgZTvdDWAhg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z6pW/I9oBnCzhOPLG3L/cU0bhZZoClEWQX4BmbiGhtJtifTq3Yt1Qap4zlq2lXnQ7VWrZmb0UokMYtAfzUkky+IHwDbwlUmi3K4ixJIHJjLLI62QoHC3vo6CoxGXn5scCSfyBJdV8siW48S9mlmjMzP1iJcTAstHTq84boVpsmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cqmfjosm; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741779505; x=1773315505;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SCeea2IRJiR43RYeMEeub5/6lUzFMZzZEgZTvdDWAhg=;
-  b=CqmfjosmFGmsBiwhpHnZa8fUWEpRj2GZtIQAhKURiTZ2DEiPb9/Qk8SK
-   g0wZgw2+3w6Yfn4U23R+AlawUASZgmFXtx0mM1J04CMfAikmSlM1D7ivd
-   HAHoi5A8/2xMbBR+rMMVfJFCgJVOOBBVJWYsvVhMftQ8bcLOtuCCVT9Il
-   SoCviKUxbyOrSHrZaU2Zo7eTRgk4oVEszZWkhPXs56HcdXT3mMB7d1x4C
-   YyjTdI0tr5pXK0yiMT9E0/vTMA0ZeLcjSmrDMrgFdK/GWqBJxfQM1OsXl
-   8HI18sGCrRzE1W/DfcW+yTK6ZhpeLBhSWwbPiuYTiL96p2udrPWvVJhkv
-   A==;
-X-CSE-ConnectionGUID: 6S/joLDPQiSuAz5wlRjcbg==
-X-CSE-MsgGUID: /UHQdmCmQMqILnIs67fICQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="42727961"
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="42727961"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 04:38:24 -0700
-X-CSE-ConnectionGUID: UnkrbVrbTZ2lpnbuvBUWTQ==
-X-CSE-MsgGUID: 3RX7qHIpQDqIVAKIXSM4mQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="120829136"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa008.fm.intel.com with SMTP; 12 Mar 2025 04:38:21 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 12 Mar 2025 13:38:20 +0200
-Date: Wed, 12 Mar 2025 13:38:20 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: amitsd@google.com
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Xu Yang <xu.yang_2@nxp.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: tcpm: fix state transition for
- SNK_WAIT_CAPABILITIES state in run_state_machine()
-Message-ID: <Z9FyLNcHHczSvpAq@kuha.fi.intel.com>
-References: <20250310-fix-snk-wait-timeout-v6-14-rc6-v1-1-5db14475798f@google.com>
+	s=arc-20240116; t=1741779523; c=relaxed/simple;
+	bh=p9vmPAJ+IfD7JfIpR1rDY4RWu0cMfzDiYKuZriZ0KCs=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=d2JMYMA23D/JKXTD25fz7klCwGiDC6XxesfY4JlUPehfwKOJ+Valodx86OJBu0NmcRo4sVY4MpaelLWW/x4MH8R0+4Zr8+McdL/vpU/I74r9cvmFwwZHVfNkxRrkK0vVqwDwrV0a3U1pSjXIZsnv5jAGH0OqN4FUJmjf7TXM4Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FJuhLKTU; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52CBcR7D1047265
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Mar 2025 06:38:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741779507;
+	bh=cyDhaKqlqsDkMfTnrMH67D5RQyLpYOtC8HL308/2ZoA=;
+	h=Date:From:To:CC:Subject;
+	b=FJuhLKTU1SrrTprGVp9zbhiLAdE1oVQVP4NpJtPmn0cFsayjxBZFBrW2pHTS7bqN0
+	 p/4am0f5yb0EJ7BJRAHFTf3gt+ZvX2rFb98lDIAM2u/3Xr4ZjcC2mLmtNdKwlt09pF
+	 ZTElQk3ZEjaxBnE/QQeqQONVPlyvUR5GFOBcmOUg=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52CBcRmx014034
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 12 Mar 2025 06:38:27 -0500
+Received: from flwvowa02.ent.ti.com (10.64.41.53) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
+ Mar 2025 06:38:27 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by flwvowa02.ent.ti.com
+ (10.64.41.53) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Wed, 12 Mar
+ 2025 06:38:26 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 12 Mar 2025 06:38:27 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52CBcQw1040494;
+	Wed, 12 Mar 2025 06:38:26 -0500
+Date: Wed, 12 Mar 2025 06:38:26 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Arnd <arnd@arndb.de>, SoC list <soc@lists.linux.dev>
+CC: SoC <soc@kernel.org>, <arm@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [GIT PULL] soc: ti: Driver updates for v6.15
+Message-ID: <20250312113826.ka63nijuftgs6h52@mocker>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r5zummcjnd24hbjs"
+Content-Disposition: inline
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+
+--r5zummcjnd24hbjs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310-fix-snk-wait-timeout-v6-14-rc6-v1-1-5db14475798f@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 07:19:07PM -0700, Amit Sunil Dhamne via B4 Relay wrote:
-> From: Amit Sunil Dhamne <amitsd@google.com>
-> 
-> A subtle error got introduced while manually fixing merge conflict in
-> tcpm.c for commit 85c4efbe6088 ("Merge v6.12-rc6 into usb-next"). As a
-> result of this error, the next state is unconditionally set to
-> SNK_WAIT_CAPABILITIES_TIMEOUT while handling SNK_WAIT_CAPABILITIES state
-> in run_state_machine(...).
-> 
-> Fix this by setting new state of TCPM state machine to `upcoming_state`
-> (that is set to different values based on conditions).
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 85c4efbe60888 ("Merge v6.12-rc6 into usb-next")
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+Hi,
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-> ---
->  drivers/usb/typec/tcpm/tcpm.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index 47be450d2be352698e9dee2e283664cd4db8081b..758933d4ac9e4e55d45940b068f3c416e7e51ee8 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -5117,16 +5117,16 @@ static void run_state_machine(struct tcpm_port *port)
->  		 */
->  		if (port->vbus_never_low) {
->  			port->vbus_never_low = false;
-> -			tcpm_set_state(port, SNK_SOFT_RESET,
-> -				       port->timings.sink_wait_cap_time);
-> +			upcoming_state = SNK_SOFT_RESET;
->  		} else {
->  			if (!port->self_powered)
->  				upcoming_state = SNK_WAIT_CAPABILITIES_TIMEOUT;
->  			else
->  				upcoming_state = hard_reset_state(port);
-> -			tcpm_set_state(port, SNK_WAIT_CAPABILITIES_TIMEOUT,
-> -				       port->timings.sink_wait_cap_time);
->  		}
-> +
-> +		tcpm_set_state(port, upcoming_state,
-> +			       port->timings.sink_wait_cap_time);
->  		break;
->  	case SNK_WAIT_CAPABILITIES_TIMEOUT:
->  		/*
-> 
-> ---
-> base-commit: 5c8c229261f14159b54b9a32f12e5fa89d88b905
-> change-id: 20250310-fix-snk-wait-timeout-v6-14-rc6-7b4d9fb9bc99
-> 
-> Best regards,
-> -- 
-> Amit Sunil Dhamne <amitsd@google.com>
-> 
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
--- 
-heikki
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git tags/ti-driv=
+er-soc-for-v6.15
+
+for you to fetch changes up to 9a9b7cd77b2427d0722fe52301fa270690928989:
+
+  firmware: config: ti-sci: Default set to ARCH_K3 for the ti sci driver (2=
+025-02-26 12:45:53 -0600)
+
+----------------------------------------------------------------
+TI SoC driver updates for v6.15
+
+- ti-sci: Default set to ARCH_K3 for the ti sci driver in preperation for
+  the driver to be default set as module in defconfig.
+- k3-socinfo: Explicitly build up regmap instead of depending on syscon
+  helper
+
+----------------------------------------------------------------
+Andrew Davis (1):
+      soc: ti: k3-socinfo: Do not use syscon helper to build regmap
+
+Guillaume La Roque (1):
+      firmware: config: ti-sci: Default set to ARCH_K3 for the ti sci driver
+
+ drivers/firmware/Kconfig    |  1 +
+ drivers/soc/ti/k3-socinfo.c | 13 ++++++++++++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+--=20
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5=
+ 849D 1736 249D
+
+--r5zummcjnd24hbjs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE+KKGk1TrgjIXoxo03bWEnRc2JJ0FAmfRciwACgkQ3bWEnRc2
+JJ2b3hAAll6igclF5cvAYpG52TUOQDPdUjfE4xC1qukOmbySKRxfES9LUDaV4Vsc
+swv6uBOhdxa/Rx44fEoS+VuNHUlyWcVvo2i1tqy13tlvfULEg/tXK0yEuYo4CBVq
+O4Z4GwESTzSG3BDdQNE7AeBrUXvZnIis1abcpkVvxBMaWPaIjBSkU9CkBryEocRb
+2P+pmEGZmsTo9+PLCcfh2rCR5qRup8Tn8urqP3BliUEQlOcJnXm0WsbUJbGjT8t1
+iVDTOoBm8WSpbJwWsL2PcC22N1uX2RVE36evnFlmhgO1UGECoUpN/8gBz2xIjjM9
+uGAW/j/1Y5gHz2MmnaajlgG8UPhFWrQsPqckY6sSxGC13Kb0At3PhxEF+p9Y+MNl
+elKSs+3ANhosdLRACurfR0yHlzrgnw3EJRhxVZ8NHPMlChXUIwIM/Gf/u8wtwCtJ
+z+IUf7VNosWzH1Bz6Cn6GCs4DLXM3f1RAcCgULcRcFbdgnmPomxPhJtt8nCHlRyO
+WnnX9AVZg70ixmYLdxMHPxS9ad8rzeWh4r1RXqKRR9WRerlEQAKdpD/FeRwQ/ZC/
+IgAjbYGhkX4efMKeSsGSkcUHAIcPwOAMwd/iJ0AuA9O1JshLB5Cc3OfCgNyixAkR
+dG1AbIYsJQClKkQp/QPf2OwmpK/7Ozcmy+H3/CXFAcHEbCTIPeo=
+=6rrW
+-----END PGP SIGNATURE-----
+
+--r5zummcjnd24hbjs--
 
