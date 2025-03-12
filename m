@@ -1,228 +1,237 @@
-Return-Path: <linux-kernel+bounces-557523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86057A5DA59
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:19:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D784A5DA17
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:02:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2936918976ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:20:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A8A07AB1A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BF723E357;
-	Wed, 12 Mar 2025 10:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEEE23BF93;
+	Wed, 12 Mar 2025 10:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Naa11bcb"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="FbUMbHqZ"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2058.outbound.protection.outlook.com [40.107.117.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4662A23E342
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741774776; cv=none; b=e1ZFyelN1ODVzZjM7ab1YdoLTK/RrTR54XgE0b8GuTpB+rsBxoM/4C/CzxIQ0ehVbfTqLKY6dP1Zh2vLD+bJ5dcGBV8J9V38WTI4v6qj0iWC+zmJH7rIdkuC68SzW894q8MnZ5KecQIx4pCM7gAAlpF71U69pA9b0AC15aeUX08=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741774776; c=relaxed/simple;
-	bh=4PnXVo/oullR/m+/uJCKBVHMjnOz39bvjEAJfAd50h0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tXKGjx5ZtDkstFeE3MLZhaBUr0hDSIhy93x0v2gYLyEU4my30A42K3c3aIlxv2hzpAJxOhtbUrAx+umA51mOqD4I0T0N83pqBjUq36nEnuDi5VxJu2ySwx9+t2dV+SHmiQfy2YdepQo8iiEBPfCUx2bJ2yZaPCXHQAzhRuhyrEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Naa11bcb; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-390fdaf2897so6084578f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:19:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741774772; x=1742379572; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bAnXaXan8q+eIeBPOO4LIWIu74EXVlerHh73XPW6Gr0=;
-        b=Naa11bcboIb5hmNqOHXNk8D0haVYHKB46w15qfRc3Fyx7xPDYqT4uwedUOVTgXDH8y
-         /eBnEQ8PBPY79PjkKQpu6+a1us+iogScLSkc9NB3r8psfz81PHKs2tySNJEgX9YwwfMW
-         xo9pN8xyM3kbYGH43SFWxX6aURr1kOJOYmds1PL7mYR26w1mtQ6YckvV4CmUSuibQxUO
-         sMUE+b95+6pp/xR6Syf0juwlsWGL99dwYphVDa0dHVBzk5IJ8gqWK/Y0H9lgkhdGADMj
-         HqSb8h4WgO+pwagE+rdO3KTbU1IOw0d2CYd6ldXOUmnRtyg742ab1a8xoa6+v737VJn1
-         QI0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741774772; x=1742379572;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bAnXaXan8q+eIeBPOO4LIWIu74EXVlerHh73XPW6Gr0=;
-        b=Yud23J8U2wtPs9ep2xLdxTF0a9qmu+Joa9shw73WK63eHs1FGpR2tYrqr8HRujI7BJ
-         yMcmFQ8IVRX5sozhxHMWK5tnezgkVVpxd4egvjH2I0l5pRJPnDYZz6FsZD35YfTQyECO
-         l0zuDDhYtGRlpzyEHrFtBuOY+dpUnreral4g11ujGXN+78NEDxoMsBlz/AZUs2FGOJas
-         15QG6GXlpwnUcNUlJxcyeMJ8rFCF6phZPH98Q9Gjrk1umpu6MKlo20cX29Xj8XVfe6zo
-         pMYrAbG+arc9SyRWbpz9b9Hfqw9DNxPHXsIDVfhUAeHRDqJ1ilv6tBjlun9oEuYG92XM
-         va9Q==
-X-Gm-Message-State: AOJu0Yyc2vc7VeXhLr8HVErCXp9nfZn5kY+GY+NIIcIp7EV6K2aq67OV
-	nENjczfzC9H5LmCtT1SuRtpS2RjKhxK2jBiobIgaR1nkTctrQC8kHolNGyQbHLFhDV50HtE0Ipu
-	g
-X-Gm-Gg: ASbGnctwCXqBbNV1sxn9lhy912gh3WM8HV7F21Hnd8y21n5lSnotn+n5QunXHfeYmzG
-	fpFZ0k7BjMYF9/ynzlZHQDLiFTLu3DaB5MsD+kiXJgNY8JL7JHxs1RLs5LRiOFrxVLrWTlhpkCr
-	XlTY+se5X1ypz+1CDm3fhxKDZQaFE+3DDtrxrzt2+RZcb8MIHnImtIrH2QY1GXS3BTLaIRjoeaS
-	2t7vpqbEKnaMJqBp3AYA9ad6SFyDTzYZ4BcysHYkBQP+VhaSj4qsaZnXzAmshFzMU37rywAzIht
-	0lMp3stLhOENNX1yKte+ZI3Pq7flGmcnYASzSj3U41pTzeuX6HMtiw==
-X-Google-Smtp-Source: AGHT+IGR/07Qmf9smabg6S6zn97UBtsm5Jw10Ieg0WIleNha8nV/NH57N3KXiYK+7r8Klg1AgUB0Eg==
-X-Received: by 2002:a5d:6d8f:0:b0:38d:d9e4:9ba6 with SMTP id ffacd0b85a97d-39132d090b1mr18246613f8f.3.1741774772405;
-        Wed, 12 Mar 2025 03:19:32 -0700 (PDT)
-Received: from [192.168.1.247] ([209.198.129.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfba686sm21058822f8f.19.2025.03.12.03.19.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 03:19:32 -0700 (PDT)
-Message-ID: <4d058a15-376a-4e9a-bfc0-06bd4ffbd71a@linaro.org>
-Date: Wed, 12 Mar 2025 10:19:30 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A907D3232
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741773738; cv=fail; b=eTHCDVFHdsVV6J6FqyNJq5vxRje6RNDkclPR9LGvHUZoPoWE6+F2urLj1wD9h0Gak//beQpiJ6d262u1EE21kYPjzWBLEmYai1cYzhYW5rxCMVY/QUjeZXIdr3xRh68i3lHOK3Zl0lIDlq17GVekQyqTkaMfjv2KaIOpjfER+m8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741773738; c=relaxed/simple;
+	bh=r4UCwjRdyRbSysiydzsPM/hXDVvmWi8naeiPnzMlGQA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FdRqOWB7iaManbkQmQsyv8aDKN5n6i/HJ0jTMkDU+ipNa70XakvpmRNJX68yrt8hYkAJtmZ9w5S7eifmXUp3hMafwO5sw+WA5PjMsc85GvnOICzHjqVQ5LExfbVu1eRM2OWS4tUC91JyKsaVRcRwv1xvfb7vSgM6Cm0Ul2dUezM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=FbUMbHqZ; arc=fail smtp.client-ip=40.107.117.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ivj76G5lMRlTEivDQWD11qLx5GQW1vWohoW5JtPotFtEri5D79xmdjxXqIpmEjy6uK53dXPg54LUl6PbGE2f5dAj25fX0nlS4JEsrAhalQvSfwpJKKWppd/CWv2Fmas9G6as2JRtM9aLkwWbp+HCoGMC0BA/k8Iys/kc+0N5iYV4zwDYHaHB2P8vRDA7MGNbxWMIG3RZ/pe8lKiGP5CZMHn24tA+Sw+PpzqZGP4DcgxVIV2KpRDAvUG4cE4JFXcKvqMd7dppFgfMCynxh25NvGNwC/dVpZuwfGidsO+nYFikVt9j0UlxP8gxdN8yo8ZGT72RcFV9dAFuGH8ziYKQ7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zi2kNaj0+gWPDFfJl4CNPjOVMArnGnCzfBecAOH141g=;
+ b=e6budn87ouDi3F01SsgOpvX2gBHe018dXcY/J3ktOirUhveYQE3xVfSYzfDWZk01L7Pi4hEGmevO4+Jfi7fBWcqgFkMLpJvJQmoHdYzShKgOhOfU48EEzR2eKBlPgt1Np23ImcpmKWSeFVFDza2gaOaBxBagmr/llbOS6xkDl+f4RrXTXCKqf9doEENv+QZDSYaYw9BRfa2BuRGM2pdZIXYjg7UTGrQwtEjVQJPD+M1e5AcYU9Cvn/xAZaYQBzIh0ZbI8Eo/c4uhL8WucX9B5e4xfW+RuFZ/brUBtVw9Wcdidro6cOPV2r/184EfI+18UPoCQWNRpfrlWMCkU6MZPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zi2kNaj0+gWPDFfJl4CNPjOVMArnGnCzfBecAOH141g=;
+ b=FbUMbHqZWSsGVZ+yusn4JJ/fvymzGsJXqtIHgAKw4jS/6dUBmxAPhxpJiDnF0X6xv3w73EYb/zKaKa3dpOV6zhfxeAuxVjUx+Og7eynPxxzbEYed04syV0L+zC5ts3lGhf0AbTukygFrck27hWQsEUeXO1VkiGRZ2KXUZYziAJXW1oU8iwWL4/iu1gW5W4EpG3vBVepyH1dDuteCci/7Jjo727ybnYEFzW6oa+HVvLvYQThSenjr9ySrA7zAky1ZI/0+iTTmH1ufxT+VrtI7uriGtSI2dgLF04/4UnQK3Dj/ubqi68SkHJ2buVFIjkDmwzkH41orHEmHpRfx/3X5Cw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB7096.apcprd06.prod.outlook.com (2603:1096:405:b5::13)
+ by SEYPR06MB6929.apcprd06.prod.outlook.com (2603:1096:101:1d9::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.24; Wed, 12 Mar
+ 2025 10:02:13 +0000
+Received: from TYZPR06MB7096.apcprd06.prod.outlook.com
+ ([fe80::6c3a:9f76:c4a5:c2b]) by TYZPR06MB7096.apcprd06.prod.outlook.com
+ ([fe80::6c3a:9f76:c4a5:c2b%5]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
+ 10:02:13 +0000
+From: Chunhai Guo <guochunhai@vivo.com>
+To: chao@kernel.org,
+	jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chunhai Guo <guochunhai@vivo.com>
+Subject: [PATCH v3] f2fs: fix missing discard candidates in fstrim
+Date: Wed, 12 Mar 2025 04:20:05 -0600
+Message-Id: <20250312102005.2893698-1-guochunhai@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SGAP274CA0007.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::19)
+ To TYZPR06MB7096.apcprd06.prod.outlook.com (2603:1096:405:b5::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] coresight: Add a KUnit test for
- coresight_find_default_sink()
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Leo Yan <leo.yan@arm.com>
-Cc: linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250312-james-cs-kunit-test-v3-1-dcfb69730161@linaro.org>
- <d6194071-bc52-4f67-a36e-fc8d9d1be94c@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <d6194071-bc52-4f67-a36e-fc8d9d1be94c@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB7096:EE_|SEYPR06MB6929:EE_
+X-MS-Office365-Filtering-Correlation-Id: c4617362-eb7e-490b-722c-08dd614cf5e6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kQUfcH3W0mxKRR4Z0NcZPXKJPIZQkcA2se/VuC37PpEAP+5gggTD8Yefb/ct?=
+ =?us-ascii?Q?Kv6zbG+wol03ELRLYlRDRJK3qrtqNh9k91QYiksjh5zlwwVcOCPJNr74quLn?=
+ =?us-ascii?Q?E3RQd1xBoxhU7m6JkYyeCNJOHHgFw0FGu6KLjuNzDP6yobEIJudXBeA9MqeI?=
+ =?us-ascii?Q?UPoB+ZRd1asV/aqBVQ/zNLZJf4HvA+2aOtxPb0xOKe1p+6wO+B9UtQdCrNI/?=
+ =?us-ascii?Q?q1gzxJBjlMKl7chVETkVU5LCsIRN2dJZCF4Vad5lrOTLuQkLzG9EIKcL3zpO?=
+ =?us-ascii?Q?3PdUa3CQI1w0mPNLGeWONTQVXAOheoH1jXlIFvUBKPG3UOUzabJGbrHN+Mz0?=
+ =?us-ascii?Q?KhWIasq691JpLBRjtNiTan5jN/ZQv8N4Vuy6UXn+/laIQqlxvXtZun6I+qN/?=
+ =?us-ascii?Q?86TUQOtH5fhiHJJazLJNdzBeTBG5XiLMirsLs8S0P3vqZ+2TRjRtmoH/QJsb?=
+ =?us-ascii?Q?C+of3FspKKbId/Ny7dZJH+VJ4F7nQjLXUFrWfNN0dvKT9lHze0XM5Q7oHcGv?=
+ =?us-ascii?Q?cesomJMpeWPgIItLT8NQo1T11CpiAJ/PG7PQ7yQ5i9M272feaC3UDhQYgb8a?=
+ =?us-ascii?Q?/wJhwNa0t9LaKzU0clBe9kLFdam46Q4pCinx1aje3XxLagRfwnBEXbxPeySG?=
+ =?us-ascii?Q?i0L+oujSePW44VbfSjpntbV/4u0gYuVkufElFmA1R7x3Yj2LE65B3oNGlEcg?=
+ =?us-ascii?Q?XpzvSVrVsrOXQkyLhL0pjCk0IpV+mKWdYCpK1YSpzRWJIfOgt7GTjg8Boxuc?=
+ =?us-ascii?Q?DhIS5/6K6Ufrg4NMnfK7rpNoJPC7DXlw5wsunsdiLF5nYjtW5TM+30TBaBfN?=
+ =?us-ascii?Q?DbHTgO3t4nJEs4RIgeamlRxZY7knuCGW3yltHe9q0wy2BeEfTJ5Roipqcnlk?=
+ =?us-ascii?Q?AxFbx64pTJ30poJ+N+2vSTEmpkij4ENsaodY5H+60mfuNgY5WRLy0KgoT8yL?=
+ =?us-ascii?Q?6OnAD/HVsSy4dp8dfFAPJCrwlAwKQH6F/IiDPtknp4oUXxf4s4hySoof0A+8?=
+ =?us-ascii?Q?irsgIsqJ0/I7/x5cTo6gcnX7Qlbnu+QdtVqtswtIIljP3cNDhFMFhH9XH2Wg?=
+ =?us-ascii?Q?5p81eCxXUTpPSPuoAvms9y2SMktGcEa2yQ4COgSKq9yf0EMyoTk5yYjY8uzU?=
+ =?us-ascii?Q?hlDJn2Q2lcR4cH8y3oqa97EAWEjH61sn7qspLj5x62/lhZQHKStmeqLO2aSg?=
+ =?us-ascii?Q?J4p6KRO8W699veXXr0az9aNgZmRrGFX9rgsdcekvSmu5ScdtKgSc/HLMbAFq?=
+ =?us-ascii?Q?Xpl/jvNuxDTX9YwomxnsOBkYVDlnt7ioGDE/JEQj7tqy61MEE8o5SMnuITgP?=
+ =?us-ascii?Q?PlBjpr/C1KjcwdU0exAAp2febKHPvSSV8dELkr+PpynzAEEkWbFeByubfOTi?=
+ =?us-ascii?Q?6GuSM1H25xzoGJqPR6MQziC4aSDixijzx0lsUMbIyi8MhA9xLmcDw04lq4hw?=
+ =?us-ascii?Q?JdqIDvs5YSut50O+H5BUMl8uLGbLoOQE?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB7096.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NnESFrRAFyiW/FKAL2XEPABLbGK8ISis/r0hEVsI6uY4S9Yfy+fSsRAXrgfK?=
+ =?us-ascii?Q?JdLmyTdlPSxfPofSHvYsLYOkPsRWRhbZipkwpUFlY1LzP9kIN5SzCG9IGQMA?=
+ =?us-ascii?Q?EBc04jlyt0P/C74I7idPXnSo1VnE0fe+zLDqH4beQz+HQdrG4se9DdRhWtf1?=
+ =?us-ascii?Q?sa8Ejst7XEBg9OF0MQbY3sx2jCSfqgFDABJJRAbOLntL856zV28VcpYrVvnf?=
+ =?us-ascii?Q?TPi6dRMIqeITKJdcKbR0yj2EDCGsH5Nb9kejOtI42Ed1qUQV4Ti5lx0k+cqM?=
+ =?us-ascii?Q?uSwgCmvCY8Yj9js4v4wTQqFFvVAqirRwW/B1XQ6IlJQgbZU4PalVu4V9+tBy?=
+ =?us-ascii?Q?DLPGTCk80VCtgzOIURtQQqxNjKCZRC8T+XtezLgaqCV2wk8zvPcbzhgeMxaV?=
+ =?us-ascii?Q?l5hkGJGjLTggitY56K5dWsRe5Oual60Nx1eD54A2DDal2ozTns1de29SgNBl?=
+ =?us-ascii?Q?oGIblamTmy+I08+MluyOdpAZIP1OukC6Hhhb702QzeaRN4Ib126E9qzZBHJO?=
+ =?us-ascii?Q?Qs0mlCrCNUwq/BcbLlBscamosq66xpuMRRv9mE2GNWuAq6vl8D3T7n8Kt3Hz?=
+ =?us-ascii?Q?OmJFswyeowi39mrqOZc6iOxf6jp2Bb9PUjKf1ySLVSy7vFZVj3W0oeHf263G?=
+ =?us-ascii?Q?w7YNKzs3JPmE6DHuRNJeQd98iY2K3yjw4jvoRvWgQKVZk108S9m5FfrvAf0D?=
+ =?us-ascii?Q?6TQNL+6QrWtzfhrfPGDuB/G4ahtScgmZLduN9J9P50hyPGtqA+cr8jCLXecP?=
+ =?us-ascii?Q?YyOYOqgmcvLQVAbtlI/S55tY6LaTcl29n7G35Z7wEisgjTNrtLJXXDQtUaai?=
+ =?us-ascii?Q?FROgJn18dXMf8VYivIp+bD8zwDD2lq0T8F8KmHj+y+QOsOKPhaV7wRky6QvQ?=
+ =?us-ascii?Q?VHicizdXKbGAMYLvzmCqCE6D8NmsLLUAyydpzD9eDdf7TuQcxgiC26kxMhUQ?=
+ =?us-ascii?Q?/eiYPPuYZwRnqToegYtenNi/WoTKCbr3qNur0X4vFPwE8bax6WbMUpaZR99H?=
+ =?us-ascii?Q?4AwSUjBPMYuKyfSVue1X4KQC8pAoKc7+A05p/qUXh6zEC4F2UufiU5W/F+oT?=
+ =?us-ascii?Q?C7bt/BXsehL6ExnByTSlIAWhK/C1AlYyTDHWho19Ck2QCTRTUcR0dnsdDeH8?=
+ =?us-ascii?Q?Q4+q5zt+fS90YubjXu856CW00TNfxPCmnUywVeYak4DOvgmPth5wPhOLverT?=
+ =?us-ascii?Q?dax5IbA6b/Vva4GAgVMZ/Isthx7jrbnp8XJq2DmDEfuTnRbL9VEr2szfT9Zd?=
+ =?us-ascii?Q?Jb0xY+b7HfvESWMUreou46g6kU/IJNzIR+5AVCti8T9Gy718xPJ2itB+8mYF?=
+ =?us-ascii?Q?k2yZ3sf32TnsYrQjRH++F0uJpVX822E6m2/d87P8OeRKFOOnLNRLntegLBqE?=
+ =?us-ascii?Q?i2nLr4OIHzztEv/4RtZCVQTVyxMBXJgm6PPaoFQBtih+0oU3swQv2gLg6hMz?=
+ =?us-ascii?Q?/r986k4s05vUtzxVVfEn0fB5Z4iWsWU33vMBuORwCgqDE9TDFRXP2IRmIP3Q?=
+ =?us-ascii?Q?E234kaTyXqPNAA150/VGzR121KlOHDmFpAxcYTB2WF/0n/vn/8KtXbkZdm+J?=
+ =?us-ascii?Q?DOPBigDD4DiKa6qm+FuE1axpqu8+eQBmAZLJtcsk?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4617362-eb7e-490b-722c-08dd614cf5e6
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB7096.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 10:02:12.9454
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OJCiUANLBcv0w3VssrEuGw4cko2XDP4VrmHvKpy2IyaDGOMDO7I44S6mqTOboaxKXNObGj7wPA9s0yzSO4r8zw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6929
 
+fstrim may miss candidates that need to be discarded, as shown in the
+examples below.
 
+The root cause is that when cpc->reason is set with CP_DISCARD,
+add_discard_addrs() expects that ckpt_valid_map and cur_valid_map have
+been synced by seg_info_to_raw_sit() [1], and it tries to find the
+candidates based on ckpt_valid_map and discard_map. However,
+seg_info_to_raw_sit() does not actually run before
+f2fs_exist_trim_candidates(), resulting in the failure.
 
-On 12/03/2025 10:14 am, Suzuki K Poulose wrote:
-> Hi James
-> 
-> 
-> On 12/03/2025 10:11, James Clark wrote:
->> Add a test to confirm that default sink selection skips over an ETF
->> and returns an ETR even if it's further away.
->>
->> This also makes it easier to add new unit tests in the future.
->>
->> Reviewed-by: Leo Yan <leo.yan@arm.com>
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->> Changes in v3:
->> - Use CORESIGHT_DEV_SUBTYPE_SOURCE_BUS type instead of the default
->>    (CORESIGHT_DEV_SUBTYPE_SOURCE_PROC) so that the test still works even
->>    when TRBE sinks are registered. This also removes the need for the
->>    fake CPU ID callback.
->> - Link to v2: https://lore.kernel.org/r/20250305-james-cs-kunit-test- 
->> v2-1-83ba682b976c@linaro.org
->>
->> Changes in v2:
->> - Let devm free everything rather than doing individual kfrees:
->>    "Like with managed drivers, KUnit-managed fake devices are
->>    automatically cleaned up when the test finishes, but can be manually
->>    cleaned up early with kunit_device_unregister()."
->> - Link to v1: https://lore.kernel.org/r/20250225164639.522741-1- 
->> james.clark@linaro.org
->> ---
->>   drivers/hwtracing/coresight/Kconfig                |  9 +++
->>   drivers/hwtracing/coresight/Makefile               |  3 +-
->>   drivers/hwtracing/coresight/coresight-core.c       |  1 +
->>   .../hwtracing/coresight/coresight-kunit-tests.c    | 77 ++++++++++++ 
->> ++++++++++
->>   4 files changed, 88 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/ 
->> coresight/Kconfig
->> index ecd7086a5b83..f064e3d172b3 100644
->> --- a/drivers/hwtracing/coresight/Kconfig
->> +++ b/drivers/hwtracing/coresight/Kconfig
->> @@ -259,4 +259,13 @@ config CORESIGHT_DUMMY
->>         To compile this driver as a module, choose M here: the module 
->> will be
->>         called coresight-dummy.
->> +
->> +config CORESIGHT_KUNIT_TESTS
->> +      tristate "Enable Coresight unit tests"
->> +      depends on KUNIT
->> +      default KUNIT_ALL_TESTS
->> +      help
->> +        Enable Coresight unit tests. Only useful for development and not
->> +        intended for production.
->> +
->>   endif
->> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/ 
->> coresight/Makefile
->> index 8e62c3150aeb..96f0dfedb1bf 100644
->> --- a/drivers/hwtracing/coresight/Makefile
->> +++ b/drivers/hwtracing/coresight/Makefile
->> @@ -51,5 +51,4 @@ coresight-cti-y := coresight-cti-core.o    
->> coresight-cti-platform.o \
->>              coresight-cti-sysfs.o
->>   obj-$(CONFIG_ULTRASOC_SMB) += ultrasoc-smb.o
->>   obj-$(CONFIG_CORESIGHT_DUMMY) += coresight-dummy.o
->> -obj-$(CONFIG_CORESIGHT_CTCU) += coresight-ctcu.o
->> -coresight-ctcu-y := coresight-ctcu-core.o
->> +obj-$(CONFIG_CORESIGHT_KUNIT_TESTS) += coresight-kunit-tests.o
->> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/ 
->> hwtracing/coresight/coresight-core.c
->> index bd0a7edd38c9..b101aa133ceb 100644
->> --- a/drivers/hwtracing/coresight/coresight-core.c
->> +++ b/drivers/hwtracing/coresight/coresight-core.c
->> @@ -959,6 +959,7 @@ coresight_find_default_sink(struct 
->> coresight_device *csdev)
->>       }
->>       return csdev->def_sink;
->>   }
->> +EXPORT_SYMBOL_GPL(coresight_find_default_sink);
->>   static int coresight_remove_sink_ref(struct device *dev, void *data)
->>   {
->> diff --git a/drivers/hwtracing/coresight/coresight-kunit-tests.c b/ 
->> drivers/hwtracing/coresight/coresight-kunit-tests.c
->> new file mode 100644
->> index 000000000000..87439769207c
->> --- /dev/null
->> +++ b/drivers/hwtracing/coresight/coresight-kunit-tests.c
->> @@ -0,0 +1,77 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +#include <kunit/test.h>
->> +#include <kunit/device.h>
->> +#include <linux/coresight.h>
->> +
->> +#include "coresight-priv.h"
->> +
->> +static struct coresight_device *coresight_test_device(struct device 
->> *dev)
->> +{
->> +    struct coresight_device *csdev = devm_kcalloc(dev, 1,
->> +                             sizeof(struct coresight_device),
->> +                             GFP_KERNEL);
->> +    csdev->pdata = devm_kcalloc(dev, 1,
->> +                   sizeof(struct coresight_platform_data),
->> +                   GFP_KERNEL);
->> +    return csdev;
->> +}
->> +
->> +static void test_default_sink(struct kunit *test)
->> +{
->> +    /*
->> +     * ETM -> ETF -> ETR -> CATU
->> +     *                ^
->> +     *                | default
-> 
-> minor nit: Using ETM here is going to be confusing, with the SUBTYPE we
-> are using. Please could we rename it something else and also rename the 
-> variable "etm" ? Say, "source" ?
-> 
-> Rest looks good to me.
-> 
-> Suzuki
-> 
-> 
+The code logic can be simplified for all cases by finding all the
+discard blocks based only on discard_map. This might result in more
+discard blocks being sent for the segment during the first checkpoint
+after mounting, which were originally expected to be sent only in
+fstrim. Regardless, these discard blocks should eventually be sent, and
+the simplified code makes sense in this context.
 
-Yeah good point, "Source" makes sense.
+root# cp testfile /f2fs_mountpoint
+
+root# f2fs_io fiemap 0 1 /f2fs_mountpoint/testfile
+Fiemap: offset = 0 len = 1
+        logical addr.    physical addr.   length           flags
+0       0000000000000000 0000000406a00000 000000003d800000 00001000
+
+root# rm /f2fs_mountpoint/testfile
+
+root# fstrim -v -o 0x406a00000 -l 1024M /f2fs_mountpoint -- no candidate is found
+/f2fs_mountpoint: 0 B (0 bytes) trimmed
+
+Relevant code process of the root cause:
+f2fs_trim_fs()
+    f2fs_write_checkpoint()
+        ...
+        if (cpc->reason & CP_DISCARD) {
+                if (!f2fs_exist_trim_candidates(sbi, cpc)) {
+                    unblock_operations(sbi);
+                    goto out; // No candidates are found here, and it exits.
+                }
+            ...
+        }
+
+[1] Please refer to commit d7bc2484b8d4 ("f2fs: fix small discards not
+to issue redundantly") for the relationship between
+seg_info_to_raw_sit() and add_discard_addrs().
+
+Fixes: 25290fa5591d ("f2fs: return fs_trim if there is no candidate")
+Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+---
+v2->v3: Add f2fs_bug_on() to make sure it never issues discard to valid data's block address.
+v1->v2: Find all the discard blocks based only on discard_map in add_discard_addrs().
+v1: https://lore.kernel.org/linux-f2fs-devel/20250102101310.580277-1-guochunhai@vivo.com/
+---
+ fs/f2fs/segment.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 86e547f008f9..c8ad8e3bfebb 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2075,7 +2075,6 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
+ 	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
+ 	struct seg_entry *se = get_seg_entry(sbi, cpc->trim_start);
+ 	unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
+-	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
+ 	unsigned long *discard_map = (unsigned long *)se->discard_map;
+ 	unsigned long *dmap = SIT_I(sbi)->tmp_map;
+ 	unsigned int start = 0, end = -1;
+@@ -2097,9 +2096,10 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
+ 	}
+ 
+ 	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
+-	for (i = 0; i < entries; i++)
+-		dmap[i] = force ? ~ckpt_map[i] & ~discard_map[i] :
+-				(cur_map[i] ^ ckpt_map[i]) & ckpt_map[i];
++	for (i = 0; i < entries; i++) {
++		dmap[i] = ~discard_map[i];
++		f2fs_bug_on(sbi, (cur_map[i] ^ discard_map[i]) & cur_map[i]);
++	}
+ 
+ 	while (force || SM_I(sbi)->dcc_info->nr_discards <=
+ 				SM_I(sbi)->dcc_info->max_discards) {
+-- 
+2.34.1
 
 
