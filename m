@@ -1,107 +1,93 @@
-Return-Path: <linux-kernel+bounces-558378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B674A5E502
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:08:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE25A5E50C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:10:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE07F16C9D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F19123A70BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA211EB5FC;
-	Wed, 12 Mar 2025 20:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544131EBFE3;
+	Wed, 12 Mar 2025 20:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IC6l+VBG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ic/dPZ2O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B2E1DB377;
-	Wed, 12 Mar 2025 20:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FAC1ADC6C;
+	Wed, 12 Mar 2025 20:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741810110; cv=none; b=GlDgCRy0nKYI2CvmiPljnhy+ztb9UeCTal1gBhi1Ut9DVPliQyXG7EIbTSmh2o2Pmf68KUGgznRm0mRbcwic9Ao0VTP4HGRmJmuN0eWmexgKDE9LB7L926OVBBfWG/2nVrU6OMJq1ORLhdPmpD+Sq6inDHsEUQG/mE8A7wtfjgY=
+	t=1741810193; cv=none; b=ZJ1SqTeYAJbQZMhoTzMq+8/TXTrP2Lvd4V1WIleurxnRKAl/zxckDpXraQzn01KCRhey/Lp7AlGb0WC9mBLXskclYaVZNrEAHjQEvlIjq/7d5aMh7+TaEjZA+Gz9z1n9A00Dzo+74kAijIJVA0Qvdl1c+/o9EwJ/V+rs4D5bTA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741810110; c=relaxed/simple;
-	bh=4nbhLrM4R3uCRysS/wOgPvMWhmlLUvMyPt285TlrSZg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VOo9ove6w4QuxnT1cgPtsHxGthqosL/M0dG2E7Bp8R9Q+2DXUojFYHykB0ZqKyTR1VoFFwf7vX7rBBG7/jyvXGTu7zyTLDM9bdsyJQjaA/x4dPOSlYwVWAHxSEkrHoazWs9j06o98k5QRYsvnrOUC+r+nTU2nyXOS/crLchdYB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IC6l+VBG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0AFAC4CEEA;
-	Wed, 12 Mar 2025 20:08:30 +0000 (UTC)
+	s=arc-20240116; t=1741810193; c=relaxed/simple;
+	bh=YqDU9IupWA2FXPNUCWAYnD1z65tgFicyvwqxqmBULbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B2Zi1XWgbHMZ35M0kX+xQfrG8fUvtpCO4NyU283JBdWg8RaPQFgahmDWAXMLv99h1rg8rfL2I4zPKZJK1pe6pWfLexhjIxnnToNw9TE6YkwdPuQszzf21YYDJPzQG1jecTGHi8nAvm+LLAymPflY4C7ImjW5eeoVtmvjf5+J/WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ic/dPZ2O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E57B7C4CEDD;
+	Wed, 12 Mar 2025 20:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741810110;
-	bh=4nbhLrM4R3uCRysS/wOgPvMWhmlLUvMyPt285TlrSZg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=IC6l+VBGXXsMnJHckbQnyRdl++3S2R+zv41eR3brzUVvUJKOIvz8XmQDXFdI+ybEB
-	 D1CQvAcK0m5M6SzzYWIbfz477KMaPnlAMcqRVX8Br5LVgRNFME2ghZDOosrzR5Y4qv
-	 axiTUDRpPfpaD3y0qwkYQi7kE7ROVHo2vtbuqHFvs7vvefcts0owBTULGVwdrvzwiL
-	 +LOcN8vfrxfCIpRlt3PQixHW8tBU9FJXTxiyRgX0wm/w0qedj6PivPDsEe0nDfqkYm
-	 qbQ+vitniFGQ0xjdaVaxp6k/xs6YRZ+fM0wlDktzceKt5LlyT84D/EltB+/KvLD4Pz
-	 iswnpxvhiBXJw==
-From: Kees Cook <kees@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Kees Cook <kees@kernel.org>,
-	netfs@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2] cachefiles: Add __nonstring annotations for unterminated strings
-Date: Wed, 12 Mar 2025 13:08:26 -0700
-Message-Id: <20250312200825.it.269-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=k20201202; t=1741810193;
+	bh=YqDU9IupWA2FXPNUCWAYnD1z65tgFicyvwqxqmBULbg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ic/dPZ2OIWnwEnIEQRaQ8bwdTDyqnmf5vw1EMDrKLQYJrt6LWogV6wxFFuhyoQufs
+	 7nn+KMSbjAcMLaWMn6QxkC8a6zG1RTtj9oBe5az/wtpY2jnLkVD3bz6Gww6LhYccvB
+	 RjKy3MBQ3ne8SEJKStSvcyDK0s9Ddx48WbLufBse4TTEaVTP6NNtfDbQL1sQi2lApc
+	 uS+OPM4XHZuBsBvEOh4TiJSHHw54DuSJdYDgv1bL/qon5lDifd3gyDXnmZ9DI973Vn
+	 BMEnMvSWgx8Nc15yhFTJhfn4VAS8LJl1qAgfC6b9fd1F/BbK8NcqFEDbQzEIPWECh1
+	 wuUr/wP82NNOg==
+Date: Wed, 12 Mar 2025 21:09:47 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, airlied@gmail.com, acourbot@nvidia.com,
+	jhubbard@nvidia.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 0/4] Auxiliary bus Rust abstractions
+Message-ID: <Z9HqC_EeiyScCaEL@cassiopeiae>
+References: <20250312002741.453350-1-dakr@kernel.org>
+ <2025031228-saline-preset-ba9b@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1880; i=kees@kernel.org; h=from:subject:message-id; bh=4nbhLrM4R3uCRysS/wOgPvMWhmlLUvMyPt285TlrSZg=; b=owGbwMvMwCVmps19z/KJym7G02pJDOkXX+5K3rN0gfKkmN1WLhvOncls3Ko5f5r1qW1vbip75 fr/3rgjoqOUhUGMi0FWTJElyM49zsXjbXu4+1xFmDmsTCBDGLg4BWAij1YxMny8IpN8cAVvmXHJ /XatH9cd5O8uUJl5TGBOlcd/i4ZVoi0M/x2VTQv5Q8+x8HlrOxQsOtnhm3qM68zlzaIN81c/Tlz zkRUA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025031228-saline-preset-ba9b@gregkh>
 
-When a character array without a terminating NUL character has a static
-initializer, GCC 15's -Wunterminated-string-initialization will only
-warn if the array lacks the "nonstring" attribute[1]. Mark the array
-with __nonstring to correctly identify the char array as "not a C string"
-and thereby eliminate the warning:
+On Wed, Mar 12, 2025 at 08:14:24AM +0100, Greg KH wrote:
+> On Wed, Mar 12, 2025 at 01:19:06AM +0100, Danilo Krummrich wrote:
+> > This series adds Rust abstractions for the auxiliary bus.
+> > 
+> > It implements the required abstractions to write auxiliary drivers and create
+> > auxiliary device registrations. A driver sample illustrates how the
+> > corresponding abstractions work.
+> > 
+> > The auxiliary abstractions are required for the Nova driver project, in order to
+> > connect nova-core with the nova-drm driver.
+> 
+> Nice!
+> 
+> > This patch series depends on [1] (taken through the nova tree for v6.15); a
+> > branch containing the patches, including the dependency can be found in [2].
+> > 
+> > [1] https://lore.kernel.org/rust-for-linux/20250306222336.23482-2-dakr@kernel.org/
+> > [2] https://web.git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/auxiliary
+> 
+> Do you want this to wait until that lands in 6.15-rc1 or do you want to
+> take this now through the nova tree?  Either is fine with me.
 
-../fs/cachefiles/key.c:12:9: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (65 chars into 64 available) [-Wunterminated-string-initialization]
-   12 |         "0123456789"                    /* 0 - 9 */
-      |         ^~~~~~~~~~~~
+Thanks! Let's wait for things to land in Linus' tree and give people some time
+to review.
 
-Since the array is used only for single character look-ups, use
-__nonstring:
-
-fs/cachefiles/key.c:123:                name[len++] = cachefiles_charmap[acc & 63];
-fs/cachefiles/key.c:125:                name[len++] = cachefiles_charmap[acc & 63];
-fs/cachefiles/key.c:127:                name[len++] = cachefiles_charmap[acc & 63];
-fs/cachefiles/key.c:129:                name[len++] = cachefiles_charmap[acc & 63];
-
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
----
- v2: improve commit log
- v1: https://lore.kernel.org/lkml/20250310222402.work.925-kees@kernel.org/
-Cc: David Howells <dhowells@redhat.com>
-Cc: netfs@lists.linux.dev
----
- fs/cachefiles/key.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/cachefiles/key.c b/fs/cachefiles/key.c
-index bf935e25bdbe..b48525680e73 100644
---- a/fs/cachefiles/key.c
-+++ b/fs/cachefiles/key.c
-@@ -8,7 +8,7 @@
- #include <linux/slab.h>
- #include "internal.h"
- 
--static const char cachefiles_charmap[64] =
-+static const char cachefiles_charmap[64] __nonstring =
- 	"0123456789"			/* 0 - 9 */
- 	"abcdefghijklmnopqrstuvwxyz"	/* 10 - 35 */
- 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"	/* 36 - 61 */
--- 
-2.34.1
-
+I will also send a v2 soon, fixing up a soundness issue I'm also working on
+a fix for platform and PCI.
 
