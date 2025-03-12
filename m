@@ -1,99 +1,85 @@
-Return-Path: <linux-kernel+bounces-557198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2E0A5D4D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:44:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF70A5D4D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:46:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 395DC3B31F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:44:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F121794DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FA41AF4E9;
-	Wed, 12 Mar 2025 03:44:40 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFF538FA3;
-	Wed, 12 Mar 2025 03:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B06C1D63D0;
+	Wed, 12 Mar 2025 03:46:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D5A146A68;
+	Wed, 12 Mar 2025 03:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741751079; cv=none; b=c+rF6bzPxPWUa2DHGATJMUf9JoMPYn+kJ43wliiV9qyLEgDLlguYcUF5p3kApC/VomfYDoSybzPq1Ig358FaTWwvV6hiU6N59SQv4B+zYMn/3gMJNQmKHl42cuuKfbs8ltQ3n2adPx3X6GQoFJ/G6dOU+dzxr5nhlcubT5SPOsM=
+	t=1741751202; cv=none; b=Dg58AnvWupkcPirMdQkF09onjdyylK0j0dBBfrJHZ5KP4a/OaGoSeBcmgUFGQEgaji/nhYqwUezrraGq1T6TmvXYSrhUf3QQGzcwNkIk8ejG43AIbmyWQ1/ZKoVCe6y9v7kZDwVCYmVw2oRcfL8Z/uL+AD7I7CTQV54RqTLfWiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741751079; c=relaxed/simple;
-	bh=r26RzrmcyIwwfK5053nO2QqbJbt9GQSCfmm9ooy8Vig=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rl2nevKmtWhQ3Bi9bYfZVx8Cyro81LjGR/OjXgYIK4VbAaZRqTcDUV5dpwddjY0y0xWpSIjrF37UHRzYN9QGLjsitgw7IsUIvfMxho7IaaHZC+0ml5ZBImyclcnHDJDZemuwpDzZritKXkFwEa1/m9DpAgtPzR93Yw/y1PYJAwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowAD3_dEdA9FnDwlwFA--.17058S2;
-	Wed, 12 Mar 2025 11:44:29 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: shenghao-ding@ti.com,
-	kevin-lu@ti.com,
-	baojun.xu@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ASoC: tlv320adc3xxx: remove unnecessary NULL check before clk_disable_unprepare()
-Date: Wed, 12 Mar 2025 11:43:37 +0800
-Message-Id: <20250312034337.1235378-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741751202; c=relaxed/simple;
+	bh=wSmsYXQwq2KIR0p4DlTdv2Vm5LsbunwE7dZD2K2TaAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=riVSjj+hEFm8c9WnBZqtLm/hV10KLS5M4LW30ynNLNktE0XicxCiJzaPq8R2ZcgzGX8h8JnwMHHECAX4rjdW+zhwj7PadcO8nYpjVZEJeg+N/rkneBLF32Uy/+8xN823Rne1D2ssBxMkzUdMgRHyariCpIFAkaXAcN5C44mtcdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C775C152B;
+	Tue, 11 Mar 2025 20:46:50 -0700 (PDT)
+Received: from [10.163.43.50] (unknown [10.163.43.50])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 570513F673;
+	Tue, 11 Mar 2025 20:46:36 -0700 (PDT)
+Message-ID: <ddeb3df1-995b-44f4-ad20-50edfb906a28@arm.com>
+Date: Wed, 12 Mar 2025 09:16:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAD3_dEdA9FnDwlwFA--.17058S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XFyrKrWkZry7try8Gw17Jrb_yoWfJwb_Jr
-	4kWrWvgFs8uFnIy34jqF45AF4vgw4kZF4DJw1Iyr48A34UXws5Zw4DAw1ru3WDA3yrJ3W3
-	trnFvryrJr1IvjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbV
-	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
-	xVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r48MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjM5l5UUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] arm64/boot: Enable EL2 requirements for FEAT_PMUv3p9
+To: Catalin Marinas <catalin.marinas@arm.com>,
+ linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, robh@kernel.org
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kvmarm@lists.linux.dev, stable@vger.kernel.org
+References: <20250227035119.2025171-1-anshuman.khandual@arm.com>
+ <174171335999.3659520.16613654046629962007.b4-ty@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <174171335999.3659520.16613654046629962007.b4-ty@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-clk_disable_unprepare() already checks NULL by using IS_ERR_OR_NULL.
-Remove unneeded NULL check for adc3xxx->mclk here.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- sound/soc/codecs/tlv320adc3xxx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320adc3xxx.c b/sound/soc/codecs/tlv320adc3xxx.c
-index 1a50ff675244..191e067ed1c9 100644
---- a/sound/soc/codecs/tlv320adc3xxx.c
-+++ b/sound/soc/codecs/tlv320adc3xxx.c
-@@ -1493,8 +1493,7 @@ static void adc3xxx_i2c_remove(struct i2c_client *client)
- {
- 	struct adc3xxx *adc3xxx = i2c_get_clientdata(client);
- 
--	if (adc3xxx->mclk)
--		clk_disable_unprepare(adc3xxx->mclk);
-+	clk_disable_unprepare(adc3xxx->mclk);
- 	adc3xxx_free_gpio(adc3xxx);
- 	snd_soc_unregister_component(&client->dev);
- }
--- 
-2.25.1
+On 3/11/25 22:47, Catalin Marinas wrote:
+> On Thu, 27 Feb 2025 09:21:19 +0530, Anshuman Khandual wrote:
+>> FEAT_PMUv3p9 registers such as PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1
+>> access from EL1 requires appropriate EL2 fine grained trap configuration
+>> via FEAT_FGT2 based trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2.
+>> Otherwise such register accesses will result in traps into EL2.
+>>
+>> Add a new helper __init_el2_fgt2() which initializes FEAT_FGT2 based fine
+>> grained trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2 (setting the
+>> bits nPMICNTR_EL0, nPMICFILTR_EL0 and nPMUACR_EL1) to enable access into
+>> PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1 registers.
+>>
+>> [...]
+> 
+> Applied to arm64 (for-next/el2-enable-feat-pmuv3p9), thanks!
+> 
+> [1/1] arm64/boot: Enable EL2 requirements for FEAT_PMUv3p9
+>       https://git.kernel.org/arm64/c/858c7bfcb35e
+> 
+> I removed Cc: stable since, if it gets backported automatically, it will
+> miss the sysreg updates and break the build. Please send it to stable
+> directly once it lands upstream, together with the dependencies.
 
+Sure, will do that.
 
