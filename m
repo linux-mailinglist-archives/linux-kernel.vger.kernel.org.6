@@ -1,80 +1,115 @@
-Return-Path: <linux-kernel+bounces-557500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6079A5DA07
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:57:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A90D3A5DA08
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:57:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228E21792F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1F73A4F5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9745423C8D0;
-	Wed, 12 Mar 2025 09:57:00 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012F623C8B7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0695023CF06;
+	Wed, 12 Mar 2025 09:57:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C395A23C8AE;
 	Wed, 12 Mar 2025 09:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741773420; cv=none; b=VyqG0CDugcNTQa43Htf3wrC3MGhy1EvieBhhATOUQMS+9MCUdX/rLNHfDZo7urHFySqqo28F77QbMKn8+ZxtdmAXV6jVrkhhMjMwqmmA1DJM2oAcnYRQX91S2T8+3hrOpv+kV3fZiqc+NzIZA1ZTuFyiDoi6aVdccC23Wweuqvs=
+	t=1741773421; cv=none; b=FKVGq50QeEJUle//dFIq5EO2xHcFLICkrkN1iPcPpIX/ArYrOrHkwggd4V1R/eYJx4ak3Ud267m518c6B+arn4paAxXZHWH0FqIzU2B5kjKPE97faMJjD5ri9+cVA9Ke7tP16JoDA6kFbiu9mXw+wFM8F7stLxDAx61BReygp28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741773420; c=relaxed/simple;
-	bh=hyx7eXc6N2QDMkI31SyQM4MiHmDWqcYPqS9p6z4tClE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Oc4cdAbT9+8eVP290n+a+NsIi/QTBeygmDmPfmghjnsTEpnofQLfKl6aSU1597zxcfDNdBvLzrQ5M7Eqd4EGDES3qN6Lmy6kdOWymCs/lgIRQCOtX4BaZhMTQfQAatMwJFmH7ykL8VfNN9DKMB7D+E1hHhGVYbTx6mG9ojLbP48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 491C8C4CEE3;
-	Wed, 12 Mar 2025 09:56:58 +0000 (UTC)
-Date: Wed, 12 Mar 2025 05:56:56 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Nam Cao <namcao@linutronix.de>, john.ogness@linutronix.de,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/10] rv: Add infrastructure for linear temporal logic
- monitor
-Message-ID: <20250312055656.556a5db1@batman.local.home>
-In-Reply-To: <035d1f1a92f15bfa60d2d133131dd8a25b3c78e4.camel@redhat.com>
-References: <cover.1741708239.git.namcao@linutronix.de>
-	<0b03a7d779707c598068d6ec00f3e5a19de336d8.1741708239.git.namcao@linutronix.de>
-	<035d1f1a92f15bfa60d2d133131dd8a25b3c78e4.camel@redhat.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741773421; c=relaxed/simple;
+	bh=h/0svnDzFfC36YTDA6ABydJ+DHLGj5Q9Nhr7nuAmPQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NgkeM3y4NGqQ2mKUQPuzZcS6ql8uEZvIKDGl2pEc98Ecg6DYjjm8q4pTjZhDSV83xUolxCF0M7onJVsvsQTjMlxI8LyWGChgnlRXsNP9C//2kp473eAGdP9RhoYwnRZbF0AkYg+4KsIr65h//blDbQsFGRTLNU6YmmXvYEaeh+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1957152B;
+	Wed, 12 Mar 2025 02:57:09 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B443A3F5A1;
+	Wed, 12 Mar 2025 02:56:58 -0700 (PDT)
+Date: Wed, 12 Mar 2025 09:56:57 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Yujie Liu <yujie.liu@intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Graham Woodward <graham.woodward@arm.com>, Paschalis.Mpeis@arm.com
+Subject: Re: [PATCH] perf script: Fix typo in branch event mask
+Message-ID: <20250312095657.GM9682@e132581.arm.com>
+References: <20250312075636.429127-1-yujie.liu@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312075636.429127-1-yujie.liu@intel.com>
 
-On Wed, 12 Mar 2025 07:47:50 +0100
-Gabriele Monaco <gmonaco@redhat.com> wrote:
+On Wed, Mar 12, 2025 at 03:56:36PM +0800, Yujie Liu wrote:
+> BRACH -> BRANCH
+> 
+> Fixes: 88b1473135e4 ("perf script: Separate events from branch types")
+> Signed-off-by: Yujie Liu <yujie.liu@intel.com>
 
->  -/*
-> > - * Futher monitor types are expected, so make this a union.
-> > - */
-> > =C2=A0union rv_task_monitor {
-> > -	struct da_monitor da_mon;
-> > +	struct da_monitor	da_mon;
-> > +	struct ltl_monitor	ltl_mon;
-> > =C2=A0}; =20
->=20
-> This adds quite some memory overhead if we have multiple per-task
-> monitors (we might in the future) and we don't use this ltl monitors.
-> What about keeping it conditionally compiled out?
-> You could define the struct only if e.g. CONFIG_RV_LTL_MONITORS is set,
-> select it with any LTL monitor via Kconfig, then glue it somehow to
-> have it readable.
+Reviewed-by: Leo Yan <leo.yan@arm.com>
 
-One thing to do if you compile it out, make it a stub structure, so you
-don't need to add #ifdef into the union.
-
-struct ltl_monitor { int unused; };
-
-Or something like that.
-
--- Steve
+> ---
+>  tools/perf/util/event.h                 | 2 +-
+>  tools/perf/util/trace-event-scripting.c | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
+> index c7f4b4b841ca..664bf39567ce 100644
+> --- a/tools/perf/util/event.h
+> +++ b/tools/perf/util/event.h
+> @@ -91,7 +91,7 @@ enum {
+>  	PERF_IP_FLAG_VMENTRY		|\
+>  	PERF_IP_FLAG_VMEXIT)
+>  
+> -#define PERF_IP_FLAG_BRACH_EVENT_MASK	\
+> +#define PERF_IP_FLAG_BRANCH_EVENT_MASK	\
+>  	(PERF_IP_FLAG_BRANCH_MISS |	\
+>  	 PERF_IP_FLAG_NOT_TAKEN)
+>  
+> diff --git a/tools/perf/util/trace-event-scripting.c b/tools/perf/util/trace-event-scripting.c
+> index 29cc467be14a..72abb28b7b5a 100644
+> --- a/tools/perf/util/trace-event-scripting.c
+> +++ b/tools/perf/util/trace-event-scripting.c
+> @@ -347,7 +347,7 @@ static int sample_flags_to_name(u32 flags, char *str, size_t size)
+>  
+>  	flags &= ~(PERF_IP_FLAG_TRACE_BEGIN | PERF_IP_FLAG_TRACE_END);
+>  
+> -	types = flags & ~PERF_IP_FLAG_BRACH_EVENT_MASK;
+> +	types = flags & ~PERF_IP_FLAG_BRANCH_EVENT_MASK;
+>  	for (i = 0; sample_flags[i].name; i++) {
+>  		if (sample_flags[i].flags != types)
+>  			continue;
+> @@ -359,7 +359,7 @@ static int sample_flags_to_name(u32 flags, char *str, size_t size)
+>  		break;
+>  	}
+>  
+> -	events = flags & PERF_IP_FLAG_BRACH_EVENT_MASK;
+> +	events = flags & PERF_IP_FLAG_BRANCH_EVENT_MASK;
+>  	for (i = 0; branch_events[i].name; i++) {
+>  		if (!(branch_events[i].flags & events))
+>  			continue;
+> 
+> base-commit: b10f74308e1305275e69ddde711ec817cc69e306
+> -- 
+> 2.34.1
+> 
 
