@@ -1,94 +1,111 @@
-Return-Path: <linux-kernel+bounces-557425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C116A5D8C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:01:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A550A5D8C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:01:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45D69189ED32
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:01:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 985877A4673
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B7623644D;
-	Wed, 12 Mar 2025 09:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5168623645D;
+	Wed, 12 Mar 2025 09:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lu7AD5CV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dt+DtEI/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B081487D1;
-	Wed, 12 Mar 2025 09:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC61522259A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741770067; cv=none; b=m09++tziaOqvc/7PkN5g6ODXSWUwMYBKv8ym5H8REAZdQEet8DBAyAEH3mBkTMkbGjiVOpzoI1VRF6IRWkH/bmchsbR4eVBEuRnyRol0M0eVPyPhMuJMrt/E2Io/uOrzREveKM6Tx8YE37f+A4q61hvAJMfu+IHk9FP0G8tG5wo=
+	t=1741770094; cv=none; b=LOR3ro1opZARkfei/6p94MAhIC7jiXQmuyOUCUd9S4XTV0nAf/P6f9czQjB6PDkj2IiFBydh3lE8d8OYxRvEg1cTrXgyJFCHH4/6yBbZCtNFAmkbbFh+MvRnbxEGrsPB5s8zSlDKjZsvin86t000Ew5qV0IxcmO2WCsE4Pb3jpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741770067; c=relaxed/simple;
-	bh=wHZxR/33XXmhkCVnhOoCATP/ki/uY/93+dhDbjI7xCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pdSBVwStku0mxn7BmaEjzMRg9j52O3hhQ03gjwtfzM8NUj0jGYJrYsYUEcDo/Dr2+sUmDj/ldemOi34P91umYZ15gRfqCeAGtO6YYIbmy8tbLRQsccG/EUrecl6SKJF7UFVzxfBo+Xd+E+FHTS98zHPZVwOWAX3JzMaMBt/R3pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lu7AD5CV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3EF0C4CEE3;
-	Wed, 12 Mar 2025 09:01:05 +0000 (UTC)
+	s=arc-20240116; t=1741770094; c=relaxed/simple;
+	bh=G93hOZvkeNxGPS2XIgjqVw8Ob92awPEw3CcYOqVE6c4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nTYHK8Csytz8XGnKOU0b6+7Os7SHPsI2FalEqpSidNnmApX4c8RaojLxjqt2XMb3rZoKop60JeOzgu8tqqFCTu6knGY5gj6ESbjfcGaMcCxFx9gp+vckF6/81qa+PBdtDHo88zie5+nG2Knrg9mGgKbLyIKTlBJ4aoI2X5CIfr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dt+DtEI/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5746C4CEE3;
+	Wed, 12 Mar 2025 09:01:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741770067;
-	bh=wHZxR/33XXmhkCVnhOoCATP/ki/uY/93+dhDbjI7xCc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lu7AD5CV2O/8Ey+5Su1mRPgOrxBa/KRPyTr+i5pkCb/2Fp6XOsjZXhZSARVuwvKix
-	 MmmFleLX7pwY3jq8iXLRJg9lip3QxRYwUpJ3D6VyRWzEztRDMH7YPIKe+tshi2JZrv
-	 Xx9n3sTdd1B1fBM18GtFobNTfXPEETat6bAgD08nNKkmso0uvh/N2bZ3ZvuAN8XxMS
-	 pD74q6L4CxgM1AtjTXZRnaf6kd1P4NgRkYLjNPORxnw1+HNUvO4mhKDAqxLbuSCUTE
-	 MzPnMzM6+jimEtrEIoe1FZPI/9Qeci8NoabQ3pf8gzVLyQMVomxnnAATv4waAqhqjz
-	 WueYBxP5L6oBQ==
-Date: Wed, 12 Mar 2025 10:01:02 +0100
-From: Carlos Maiolino <cem@kernel.org>
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: djwong@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next] xfs: Remove duplicate xfs_rtbitmap.h header
-Message-ID: <bdbq7ozwqgcde7zntvkhka3fksuvvzge2j5yr5lf42etkr3stq@zoniil6zmhfb>
-References: <YzvkMRRar3xemUncZt-_Xv4nHj7Ido5R9mMgNEr4OWSIn_XQ5QpUzpW-ByTDbnQE1ifB-gmmRFZ-iATh1b06pA==@protonmail.internalid>
- <20250312014451.101719-1-jiapeng.chong@linux.alibaba.com>
+	s=k20201202; t=1741770094;
+	bh=G93hOZvkeNxGPS2XIgjqVw8Ob92awPEw3CcYOqVE6c4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Dt+DtEI/BGMJ3YXHbQ2mwDitKcrND2sYa6535UOEieueRhYMkDGc7tDu6nYsv2XsB
+	 o5KHaXLSch+srvb3f3O9uB2L4lAhU9hept0pwg0HpLR7G6u5yI0SjqDCSx8YyJ8V8P
+	 ZdFvLP28XOTK3Bckmn80w6jycFp0ukM45wtWCJj7jCiMKIlE86BMGTAhCt9EMt44xK
+	 h4za0Ws4pSGZQxiBcBNGJkKXI2N4h9dAC5MoxRS4Q4t9AjA9Fn+Mfxv8J8FvDMLNkS
+	 c9JYAVL3Vos5JgZV+CuAKxnPNCwRisYuF7dfafGFVkEHP27IZko2uIXkwq6WsEDCpu
+	 eVVjCiJ+1F7Yw==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: fix to avoid running out of free segments
+Date: Wed, 12 Mar 2025 17:01:25 +0800
+Message-ID: <20250312090125.4014447-1-chao@kernel.org>
+X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312014451.101719-1-jiapeng.chong@linux.alibaba.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 12, 2025 at 09:44:51AM +0800, Jiapeng Chong wrote:
-> ./fs/xfs/libxfs/xfs_sb.c: xfs_rtbitmap.h is included more than once.
-> 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=19446
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+If checkpoint is disabled, GC can not reclaim any segments, we need
+to detect such condition and bail out from fallocate() of a pinfile,
+rather than letting allocator running out of free segment, which may
+cause f2fs to be shutdown.
 
-This fixes an issue on the zoned device series, so, I'm adding to the commit:
+reproducer:
+mkfs.f2fs -f /dev/vda 16777216
+mount -o checkpoint=disable:10% /dev/vda /mnt/f2fs
+for ((i=0;i<4096;i++)) do { dd if=/dev/zero of=/mnt/f2fs/$i bs=1M count=1; } done
+sync
+for ((i=0;i<4096;i+=2)) do { rm /mnt/f2fs/$i; } done
+sync
+touch /mnt/f2fs/pinfile
+f2fs_io pinfile set /mnt/f2fs/pinfile
+f2fs_io fallocate 0 0 4201644032 /mnt/f2fs/pinfile
 
-Fixes: 2167eaabe2fa ("xfs: define the zoned on-disk format")
+cat /sys/kernel/debug/f2fs/status
+output:
+  - Free: 0 (0)
 
-Thanks!
+Fixes: f5a53edcf01e ("f2fs: support aligned pinned file")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/file.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-> ---
->  fs/xfs/libxfs/xfs_sb.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
-> index e42bfd04a7c6..711e180f9ebb 100644
-> --- a/fs/xfs/libxfs/xfs_sb.c
-> +++ b/fs/xfs/libxfs/xfs_sb.c
-> @@ -30,7 +30,6 @@
->  #include "xfs_rtgroup.h"
->  #include "xfs_rtrmap_btree.h"
->  #include "xfs_rtrefcount_btree.h"
-> -#include "xfs_rtbitmap.h"
-> 
->  /*
->   * Physical superblock buffer manipulations. Shared with libxfs in userspace.
-> --
-> 2.32.0.3.g01195cf9f
-> 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 2ddb93d1a10c..abbcbb5865a3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1838,6 +1838,18 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
+ next_alloc:
+ 		f2fs_down_write(&sbi->pin_sem);
+ 
++		if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
++			if (has_not_enough_free_secs(sbi, 0, 0)) {
++				f2fs_up_write(&sbi->pin_sem);
++				err = -ENOSPC;
++				f2fs_warn_ratelimited(sbi,
++					"ino:%lu, start:%lu, end:%lu, need to trigger GC to "
++					"reclaim enough free segment when checkpoint is enabled",
++					inode->i_ino, pg_start, pg_end);
++				goto out_err;
++			}
++		}
++
+ 		if (has_not_enough_free_secs(sbi, 0, f2fs_sb_has_blkzoned(sbi) ?
+ 			ZONED_PIN_SEC_REQUIRED_COUNT :
+ 			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi)))) {
+-- 
+2.48.1
+
 
