@@ -1,98 +1,179 @@
-Return-Path: <linux-kernel+bounces-557477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31937A5D9BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:41:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 328D7A5D9C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:42:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B551C3AA27F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:41:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CEF83B2080
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7029323AE84;
-	Wed, 12 Mar 2025 09:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D1823BD14;
+	Wed, 12 Mar 2025 09:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lEiKlRFD"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HVbllWJm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDB815820C;
-	Wed, 12 Mar 2025 09:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CA823BCE8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741772494; cv=none; b=ipYJpxcNvNE07OgDG1RmcmtSXhfCvJcA25A+4qYk3U11zQDrSokjuJNoTB3WMuXyhFx+a4WmDcVdSjM+I0hVJJ2pMFUuoA1x+8c4pBvVsDAr3xJJ3VavEwgqDMPFbGJ1XhyjWfYsRtbktZQpYuXULnTVjq8GxKh7XUItPtPD9rs=
+	t=1741772566; cv=none; b=MPzO887BFw4w8zl+JBW6iNJCXSG+/7AD1S6e498pqRbf32XzVNcTmUBcwpQeBwgq+QVozgNs6ZxGsi34LDENa0bmyz6cwNOx72ZwojjNXFVSfsfhjdtyeo1HaaPFTNEg/6gNKd1P5mHDT71v9Kw0mGYYSUUeCM9JZO2SrzNd/AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741772494; c=relaxed/simple;
-	bh=v24X+KcAmfOoIB9ximESyJf7aIFviUTVJprNV7qMLmU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LmkPMWx1RFeD1u4aXIkEqCoX4kE5osdFvypINqtjwwdzah9fY91Dl976wyYlO7B7Ec4va7oI/WA4bSTNnXJBHbEqV9M/pePGNIvVrpGeVmjfC5GG+u5g+e7YK7+uVtpny1t9MswuGC2kU9W2fqg4HAftqBFiVn0zk74xEV2fhYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lEiKlRFD; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F25A24314D;
-	Wed, 12 Mar 2025 09:41:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741772490;
+	s=arc-20240116; t=1741772566; c=relaxed/simple;
+	bh=9BHi7R0N1e0m6MI3+SIcypO7xwKr1WoHcHLF3jQDUW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KIrpfg+acdjipS9Sza3FRIlIv7EPwfMbYRD/fgZ5KCWvUorTtm2FgctJNmPYYLOqXNUq63hslTCEbTQivzaEd0GvxxgYn8m0bofoN0iR9mKlYOwqBL5JUaeskSk/ovKFs6WVIC/162Nfgg0dY29lgnCu98tcnMTBjvWEHj7T0b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HVbllWJm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741772563;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UYd5syVLmKdM205IPiqRZrSysfgoPICXjHhl29L/kEQ=;
-	b=lEiKlRFDzkw8g2+H8Nm4fftbGYrCE92LfxOVzb+R7OkJzqCvjVFZZjpXcsztK6IU4JDrE9
-	DkEE5uR7w3lYDAIKvk8gmTyfln9g1j6tJbvS+WiJPrWGzyOAHFmt2CSuAStT1t4o62w7L9
-	Io0gsVJ28Iry2yl34jRLHc02pcLF7q03MSTu5RZ00+kcx0B96oYJa1hO8EDUoOKhH3B5dr
-	lpRqGVkJ7anV4F90i1IuRD+srpYfh2SKF2l7GBL08zSJW+5UrL6NeumIGgaMcmBwFCjyct
-	OtkCQadziDUVsTY1S7yCSzBSHBRT/ZHWSg5J1JXNW46KZl2Px1YQ7j16whkLbA==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Antonin Godard <antonin.godard@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-In-Reply-To: <20250311-add-powertip-ph128800t004-v1-0-7f95e6984cea@bootlin.com>
-References: <20250311-add-powertip-ph128800t004-v1-0-7f95e6984cea@bootlin.com>
-Subject: Re: [PATCH 0/2] Add POWERTIP PH128800T004-ZZA01 panel support
-Message-Id: <174177248888.2707180.3560466107849632577.b4-ty@bootlin.com>
-Date: Wed, 12 Mar 2025 10:41:28 +0100
+	bh=pFXifyzyx3TlWsPdUelbYNzLeb+XPxEQGzXrwyDafsQ=;
+	b=HVbllWJmvcnJ4ipNA4Ggx1Hty/bnm4YG7JmVJQcowpi3Dik+9B8rkP/6IJc3wwuiFlknpp
+	RmMEAXbUaM6k0Yaug5CV3GHNC4a9wvi7QzE8oTH6fN5UCG+wI77lzSaRvkQ8NgBqzs/76D
+	rZX6M0AboqmTK4D4F0JigjDXOI7jVCE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-595-sjSfhu9XN-qebOJgX-DCSQ-1; Wed, 12 Mar 2025 05:42:42 -0400
+X-MC-Unique: sjSfhu9XN-qebOJgX-DCSQ-1
+X-Mimecast-MFC-AGG-ID: sjSfhu9XN-qebOJgX-DCSQ_1741772561
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43cf172ff63so18578725e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 02:42:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741772559; x=1742377359;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pFXifyzyx3TlWsPdUelbYNzLeb+XPxEQGzXrwyDafsQ=;
+        b=Ip2h4KUOUf5ktAtupz/2/NTC45gYITybpgtNEb4CZIpBam7BuzN4KQzxClAyD3wyZP
+         oKg99R8E9kcAz7UWs0BtO9HmcWZmZTgnv3vJigknPN0DEabXKMmjZSkE0HlnufOCOO4a
+         BGKnIZsNqGqgaIVZ25SPKXTawFCFdZH85SPgw8D235OvmA+aG1cWFgTHDWXIkhY/+I5i
+         lNbb/oPhCKKWO6lJhIlQJYSBwdTCG+KE456kai9g47kfefv0azgrDFuX4QYIEpDaj/Bs
+         sn/lop11Rbp+MRGIpb3ki7PBlzTYgtcUY/3Hwe7do6y3EDbKmPfrm9FIOMyOPDeN/ahu
+         Z7WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpVbetgmJGWKntow3nEyZEvPzJw4Cmyy6SCO4UHtDQy3FZb/xQL9Uc8QtqPO0Ug3CaIx4dB23IYu5y26w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxLsykn02X5NLBpyoZvbTy75n+/ZWES9BtKumZUI9ePfaz8XtF
+	TmltF7E34ge2OfGfkv249DC7QZOGc61Hap3+Wm4yPggbktnyB6yPnKNbGfywRzxMFdmQEhxSGAD
+	pCeTLLKFUvTzvJODO9X1M935TdclekHyFvO9PzbAZwhM/tkqSvagozXaJY0A6OYtUfblKUg==
+X-Gm-Gg: ASbGncvKu/4PEetonRGPb72gW4s35MZSgtvgm997QcU7Sk1BdVRXo++uR+uJ+QdTh3I
+	bTDMdx5U+T8FY73o70tf469HSC/8OOT5j5Dw93rD+pOUu476JaQd4yEimt/kXvqNtg9qikQGeu5
+	Vc9pePQ2UNBwluMibDtj43qscYo297MJqNSHJHmEiyLvcRurGnQJTtXTZgUkoQKyg7GJJBRYh1/
+	Prj1z2HOn7/T7RjxULeD4pGPZCNCpRNE9SWC3y0rgPUjW7P5yumBxlLdg9w4gfyzz+NhI9R91cR
+	n0ybaFZZkJfwzNStICgKVysAMDshiElNKkDdIotZe7U=
+X-Received: by 2002:a05:600c:1548:b0:43c:f81d:34 with SMTP id 5b1f17b1804b1-43d01bdbc0cmr60348265e9.9.1741772559297;
+        Wed, 12 Mar 2025 02:42:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGIyoWUS2iyHpblJuK/FyfuGkvyqkX/245cGSIo/CYaKp2qCmaR23bGtQM/hs3jXJSEjN8Q1g==
+X-Received: by 2002:a05:600c:1548:b0:43c:f81d:34 with SMTP id 5b1f17b1804b1-43d01bdbc0cmr60348045e9.9.1741772558886;
+        Wed, 12 Mar 2025 02:42:38 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.49.7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c101febsm20045598f8f.81.2025.03.12.02.42.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 02:42:38 -0700 (PDT)
+Date: Wed, 12 Mar 2025 10:42:35 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Harshit Agarwal <harshit@nutanix.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] sched/deadline: Fix race in push_dl_task
+Message-ID: <Z9FXC7NMaGxJ6ai6@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250307204255.60640-1-harshit@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdegjeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevjghfuffkffggtgfgofesthejredtredtjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejheeiledvkeeigeeluddtleejvdfhleefleffffeitdetvdeltddttddtgfelteenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgdujedvrddujedrtddrudgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtoheprghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhihgvrhhrhidrrhgvughinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhim
- hhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepqhhuihgtpghjvghsshiihhgrnhesqhhuihgtihhntgdrtghomhdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307204255.60640-1-harshit@nutanix.com>
 
+Hi Harshit,
 
-On Tue, 11 Mar 2025 17:40:04 +0100, Antonin Godard wrote:
-> The POWERTIP PH128800T004-ZZA01 panel is close to the POWERTIP
-> PH128800T006-ZHC01, with different timings. Add a binding and a panel
-> entry under panel-simple.c.
+Thanks for this!
+
+On 07/03/25 20:42, Harshit Agarwal wrote:
+> This fix is the deadline version of the change made to the rt scheduler
+> here:
+> https://lore.kernel.org/lkml/20250225180553.167995-1-harshit@nutanix.com/
+> Please go through the original change for more details on the issue.
+
+I don't think we want this kind of URLs in the changelog, as URL might
+disappear while the history remains (at least usually a little longer
+:). Maybe you could add a very condensed version of the description of
+the problem you have on the other fix?
+ 
+> In this fix we bail out or retry in the push_dl_task, if the task is no
+> longer at the head of pushable tasks list because this list changed
+> while trying to lock the runqueue of the other CPU.
 > 
+> Signed-off-by: Harshit Agarwal <harshit@nutanix.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  kernel/sched/deadline.c | 25 +++++++++++++++++++++----
+>  1 file changed, 21 insertions(+), 4 deletions(-)
 > 
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 38e4537790af..c5048969c640 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -2704,6 +2704,7 @@ static int push_dl_task(struct rq *rq)
+>  {
+>  	struct task_struct *next_task;
+>  	struct rq *later_rq;
+> +	struct task_struct *task;
+>  	int ret = 0;
+>  
+>  	next_task = pick_next_pushable_dl_task(rq);
+> @@ -2734,15 +2735,30 @@ static int push_dl_task(struct rq *rq)
+>  
+>  	/* Will lock the rq it'll find */
+>  	later_rq = find_lock_later_rq(next_task, rq);
+> -	if (!later_rq) {
+> -		struct task_struct *task;
+> +	task = pick_next_pushable_dl_task(rq);
+> +	if (later_rq && (!task || task != next_task)) {
+> +		/*
+> +		 * We must check all this again, since
+> +		 * find_lock_later_rq releases rq->lock and it is
+> +		 * then possible that next_task has migrated and
+> +		 * is no longer at the head of the pushable list.
+> +		 */
+> +		double_unlock_balance(rq, later_rq);
+> +		if (!task) {
+> +			/* No more tasks */
+> +			goto out;
+> +		}
+>  
+> +		put_task_struct(next_task);
+> +		next_task = task;
+> +		goto retry;
 
-Applied, thanks!
+I fear we might hit a pathological condition that can lead us into a
+never ending (or very long) loop. find_lock_later_rq() tries to find a
+later_rq for at most DL_MAX_TRIES and it bails out if it can't.
 
-[1/2] dt-bindings: display: simple: Add POWERTIP PH128800T004-ZZA01 panel
-      commit: 36cb24049b911ed83d34441cd2e9adebfc999da8
-[2/2] drm/panel: simple: Add POWERTIP PH128800T004-ZZA01 panel entry
-      commit: 6374a1005f20c1c2f7bbcc1bc735c2be4910a685
+Maybe to discern between find_lock_later_rq() callers we can use
+dl_throttled flag in dl_se and still implement the fix in find_lock_
+later_rq()? I.e., fix similar to the rt.c patch in case the task is not
+throttled (so caller is push_dl_task()) and not rely on pick_next_
+pushable_dl_task() if the task is throttled.
 
-Best regards,
--- 
-Louis Chauvet <louis.chauvet@bootlin.com>
+What do you think?
+
+Thanks,
+Juri
 
 
