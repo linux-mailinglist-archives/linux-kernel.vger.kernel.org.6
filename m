@@ -1,153 +1,208 @@
-Return-Path: <linux-kernel+bounces-558504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84946A5E6DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:59:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15EAFA5E6E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:00:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DEF67AACDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5E90189C7DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D741B1F1508;
-	Wed, 12 Mar 2025 21:58:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB69F1F03DA;
-	Wed, 12 Mar 2025 21:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A081F03D6;
+	Wed, 12 Mar 2025 21:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HC5qg4Kz"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4FB1EFF99
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 21:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741816721; cv=none; b=qeY6svbym3sYBaYyzSbdvgGLza/KN2iGzpCOcAJ1qMhbNyeGGAPn6TISe7YFEwARbhcVQN//DtXeuLJd7yzXoaKu6vyFxIEuzA53bq+oKpOfKtWcisDIcmPFg2OXf5jCiiUOfOeczE5+lfX7tFSGuKyvgYI8EmRvIz0GpInbBr0=
+	t=1741816774; cv=none; b=GapcCjFn0nA3BRh8H19GHnmvW/oumOaRgJxnlo3Ik6DRBVxeV5q/IhDhcrDP3FFpGOjDiT7TJi525jT1RdjNJ6KhnaSPtjwYVlYBD11454TAkbSjvtuiNnYllj2q0aw4VCzYc4sgQgSA22ww2rmQVq/AoT4m+HVX+diSz0HkV24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741816721; c=relaxed/simple;
-	bh=txT6ecDe6SJc28gdi7DRBSzVeUr4dFoNyVNQOww37jI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZqecVfD4e/+OQ2Wrfqj4QSuayY1MDgXBoXQcfKmVNfJVQTry5Aymq+iUcTlaQ/y1WyWF2pKv4PIFHcKcIoQdab93iV2V2TXA8DQZ7b8lY1J8KcM2oO3Tpbcp7SDvJS8saVxTYSPyyepaqf8JqllbMLdSWD8vvVGRU+i0WkB6cug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED00B1F37;
-	Wed, 12 Mar 2025 14:58:47 -0700 (PDT)
-Received: from beelzebub.ast.arm.com (unknown [10.118.28.29])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 466EF3F86F;
-	Wed, 12 Mar 2025 14:58:37 -0700 (PDT)
-From: Stuart Yoder <stuart.yoder@arm.com>
-To: linux-integrity@vger.kernel.org,
-	jarkko@kernel.org,
-	peterhuewe@gmx.de,
-	jgg@ziepe.ca,
-	sudeep.holla@arm.com,
-	rafael@kernel.org,
-	lenb@kernel.org
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v8 5/5] Documentation: tpm: add documentation for the CRB FF-A interface
-Date: Wed, 12 Mar 2025 16:58:28 -0500
-Message-Id: <20250312215828.664402-6-stuart.yoder@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250312215828.664402-1-stuart.yoder@arm.com>
-References: <20250312215828.664402-1-stuart.yoder@arm.com>
+	s=arc-20240116; t=1741816774; c=relaxed/simple;
+	bh=l0UozGtl+Y+uEkNpfTzqCasIsn47QmX6u7sMKC5KqlE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=L7t4VuZ44g/zVdUlWWgLS2pCNnhWDWeaOTIFeadaqkXyu3pa4g5gaPc8feaUlLWUtA7mQmmHoOqeumRcMYZLdtab5goiMEpN+sC7tZF9InO/S9qmsYT71Z8+kM4ja0KwpOmYE/Xr5wZEro/c5Chh09B2WQRroKLeDjglMb4S93Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HC5qg4Kz; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso1606185e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:59:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741816768; x=1742421568; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Wfs7R8D9QwSoSk4j4eeFcrD9eVi/Rvc6fZx70N29Eo=;
+        b=HC5qg4KzWjJRgsXRJb0NGhEQh83K5kUydG0PL1b0oZCj6dVQltlsuSoSoyDjwg6Vnx
+         Bq4TZ0PkjdAV/Qy/CqWkVcYKf+9XpYWtmDbWvY9DnMexOtOoW17YrFGsZCWFK3bMnWCh
+         k6VLyzf76jieoDBTG0Rd2VnYoLBAIh6ArUMR9uM6zD2ckIm4+9BZifWFjkDU+uxmC8Bh
+         8MSPo5l5zuJEJzqTCW9T14G7qNfxI/xoYUmTcxlNCn+hHoea/xLBFwEOxhrLv5ym1qLO
+         OhPrGxfhLiO7/gv6mYC33LuIYS+0DfPIiNtfXD+WVHL2nGqYgOejXynfLEYZ8rb1LpOY
+         0LAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741816768; x=1742421568;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5Wfs7R8D9QwSoSk4j4eeFcrD9eVi/Rvc6fZx70N29Eo=;
+        b=M3MpZysrVAVaFL0IuowMJJp3pwQ1VBYIt1UvAoEe8JKo5ILQ+dFw3kHuCeXlOfrcGB
+         x2SLKzxWpYjgJAU6xmFbTQRhyG7O7jfI6gfCLGAvvTfy3vA085YbczndeLwaGX+TNgvO
+         iN1tZON3ZwqtKAw/C2vsTTNQsUTyu9xoKjup+gMu18cd5cdyEowGEH/2gzKxFTEq24N9
+         mPWn3sOxTwTDySkM78vSbMMs1MEW3MYw4ebwuUaqfiSP+34aq5PheBigm8dMTgEQg4Jr
+         LEuwS8RvqGeHT58DaA997yQFp6nK3n3QKQ0DpcVzw/cSDZlXjski8JiURf6HSQcxvX0A
+         e0RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcoIIa5+59n+0DBjuyKfdy9jHFyWvdpwPs70xRa84fakJtBV//2JT7YJQLCHk45N6rRKRFb3floKF92Fs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9/JCYpJCv6xOdia6HcETL7Dqsd1ORXOJSazdL4pyZG+X//ozK
+	+vDH6aXh7CsHG7GHsWsB93CxXp659haV7NKisDthxDwsHa3FI0sC7JTFDvh7VAk=
+X-Gm-Gg: ASbGncuF0c0mXg8hNKJKArja+abovhcBD7+LfW6f8c0aGU37GQ4pXJCBPaq4keRBhqB
+	BAQePVAoLTnPUfS9PDl5xaq30u5DcoC+ZJxYix1YnhNM1P9EgegyZ5a3EiyMjmIHWYSWMVwGX+A
+	U9JLq3Ja6JkzUDBWFNqlZxAXwI/M0ym0LJS9YyAL6rknqeckWJKJXDv6z5cm+IVC83CPVFGQbHM
+	kUacV4cRQqtsllHdiwGTkYogVYI7U9oNTNBrxn2WfgY6TZfv7SZgrgcK93pQkGC51FjVA82WDAw
+	6FNWGA4574OQrKOEfEMf/00pZ0kv1G7bGfU//MCVthGsh+Wl9ytPV9LyZokjr5GCyIIupeblU1Y
+	z
+X-Google-Smtp-Source: AGHT+IHAdfL/zWlkbA6vqBpxrWhT3/HDlChD0NizAlv3E0v+/+eyD0+OyUlagna7bf9tFfu5RFzWbQ==
+X-Received: by 2002:a05:600c:45c9:b0:43d:abd:ad0e with SMTP id 5b1f17b1804b1-43d0abdafa4mr32832175e9.18.1741816768649;
+        Wed, 12 Mar 2025 14:59:28 -0700 (PDT)
+Received: from gpeter-l.roam.corp.google.com ([209.198.129.214])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d188bb34asm110175e9.18.2025.03.12.14.59.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 14:59:27 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v5 0/5] samsung: pinctrl: Add support for
+ eint_fltcon_offset and filter selection on gs101
+Date: Wed, 12 Mar 2025 21:58:57 +0000
+Message-Id: <20250312-pinctrl-fltcon-suspend-v5-0-d98d5b271242@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKED0mcC/4XNQWrDMBCF4asErasizYytOKvco2Qh2aNEYCQjO
+ aYh+O5VsmlKMF3+D+abuyicAxdx2N1F5iWUkGKN5mMn+ouNZ5ZhqC1AQaM0KDmF2M95lH6c+xR
+ luZaJ4yABEa1G09NAoh5PmX34fsJfp9qXUOaUb88/i36s/5KLlkqyMZ1SDuy+oeMYos3pM+Wze
+ JgL/Dqo9KYD1bGG2XfOEaF7c/DVaTcdrI7vrCPvWwvEbw69OmbToerAYEzDtG8Vtn+cdV1/AMv
+ 6PyCVAQAA
+X-Change-ID: 20250120-pinctrl-fltcon-suspend-2333a137c4d4
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com, 
+ semen.protsenko@linaro.org, kernel-team@android.com, 
+ jaewon02.kim@samsung.com, Peter Griffin <peter.griffin@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3740;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=l0UozGtl+Y+uEkNpfTzqCasIsn47QmX6u7sMKC5KqlE=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBn0gO8OgG6r0K8vQpb5SkN9jCJ09+opexOXK13y
+ eXGSmxgaZ6JAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ9IDvAAKCRDO6LjWAjRy
+ utxED/9ySKmxy2469Mykx3Pzb3Ich58sN6sTBJEkGOFk7oaPe5s8v8klrqp+3KiLDqwx1/JJLwC
+ rCUcoVPd+CWHs/EcP9EF0cOp9BD0mImqZyJesQISJM/fibQj8DulO7IRikwfuErffh4jswvIdXS
+ ql5Wx9KlIXuwlbErExZlrY7slNsQeqoQMGt8Jozq4rTqWyxMJgjVSXFsuwS0f/fgyN/pim3sIxj
+ Flazsv5hdVkILIEZKrsXcidYxhrKBY5+56oSPLTVnQDkHxekyG6tEEsXO6ca/fL6zvDTnLnHwig
+ j7YeqvnQcc5AqWuj1LVAXfRO3PXNilBP2e2ACz2QaNQBMtAF9GGIzLfAMBMN1QIA/fQQ5OJa1Id
+ Bf+PWlZDesDmog81g6xNslh0Cu3jiZyxH28wvyTBDZnq6G++ToO+q2rKbmeSudeDZr+XCFFeJgw
+ 5lMG+sHDot+gnBLGKmwCe22xYt+LpvL3tuS0JT5g6qSkRm/x+TCx3M5N0vY68BsDu9alCrueW5+
+ zeg12YtJECaAYeBK1n3ZbhcbAPk+qTCrrSYmKVoPWxdnb6kQrSB7yakij27BZyefSsJZEzugui7
+ Ne2DOjLnV2pclrnUyV6scx31wur2M37sNP0pAvHhQZXsLImbw8NlvrIELMAL0FamSybTTCoLFSA
+ CzX23yLN1tqVtmw==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Add documentation providing details of how the CRB driver interacts
-with FF-A.
+Hi folks,
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
+This series fixes support for correctly saving and restoring fltcon0
+and fltcon1 registers on gs101 for non-alive banks where the fltcon
+register offset is not at a fixed offset (unlike previous SoCs).
+This is done by adding a eint_fltcon_offset and providing GS101
+specific pin macros that take an additional parameter (similar to
+how exynosautov920 handles it's eint_con_offset).
+
+Additionally the SoC specific suspend and resume callbacks are
+re-factored so that each SoC variant has it's own callback containing
+the peculiarities for that SoC.
+
+Finally support for filter selection on alive banks is added, this is
+currently only enabled for gs101. The code path can be excercised using
+`echo mem > /sys/power/state`
+
+regards,
+
+Peter
+
+To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: andre.draszik@linaro.org
+Cc: tudor.ambarus@linaro.org
+Cc: willmcvicker@google.com
+Cc: semen.protsenko@linaro.org
+Cc: kernel-team@android.com
+Cc: jaewon02.kim@samsung.com
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- Documentation/security/tpm/index.rst       |  1 +
- Documentation/security/tpm/tpm_ffa_crb.rst | 65 ++++++++++++++++++++++
- 2 files changed, 66 insertions(+)
- create mode 100644 Documentation/security/tpm/tpm_ffa_crb.rst
+Changes in v5:
+- Split drvdata suspend & resume callbacks into a dedicated patch (Krzysztof)
+- Add comment about stable dependency (Krzysztof)
+- Add back in {} braces (Krzysztof)
+- Link to v4: https://lore.kernel.org/r/20250307-pinctrl-fltcon-suspend-v4-0-2d775e486036@linaro.org
 
-diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
-index fa593d960040..deda952eacbe 100644
---- a/Documentation/security/tpm/index.rst
-+++ b/Documentation/security/tpm/index.rst
-@@ -10,3 +10,4 @@ Trusted Platform Module documentation
-    tpm_vtpm_proxy
-    xen-tpmfront
-    tpm_ftpm_tee
-+   tpm_ffa_crb
-diff --git a/Documentation/security/tpm/tpm_ffa_crb.rst b/Documentation/security/tpm/tpm_ffa_crb.rst
-new file mode 100644
-index 000000000000..0184193da3c7
---- /dev/null
-+++ b/Documentation/security/tpm/tpm_ffa_crb.rst
-@@ -0,0 +1,65 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+========================
-+TPM CRB over FF-A Driver
-+========================
-+
-+The TPM Command Response Buffer (CRB) interface is a standard TPM interface
-+defined in the TCG PC Client Platform TPM Profile (PTP) Specification [1]_.
-+The CRB provides a structured set of control registers a client uses when
-+interacting with a TPM as well as a data buffer for storing TPM commands and
-+responses. A CRB interface can be implemented in:
-+
-+- hardware registers in a discrete TPM chip
-+
-+- in memory for a TPM running in isolated environment where shared memory
-+  allows a client to interact with the TPM
-+
-+The Firmware Framework for Arm A-profile (FF-A) [2]_ is a specification
-+that defines interfaces and protocols for the following purposes:
-+
-+- Compartmentalize firmware into software partitions that run in the Arm
-+  Secure world environment (also know as TrustZone)
-+
-+- Provide a standard interface for software components in the Non-secure
-+  state, for example OS and Hypervisors, to communicate with this firmware.
-+
-+A TPM can be implemented as an FF-A secure service.  This could be a firmware
-+TPM or could potentially be a TPM service that acts as a proxy to a discrete
-+TPM chip. An FF-A based TPM abstracts hardware details (e.g. bus controller
-+and chip selects) away from the OS and can protect locality 4 from access
-+by an OS.  The TCG-defined CRB interface is used by clients to interact
-+with the TPM service.
-+
-+The Arm TPM Service Command Response Buffer Interface Over FF-A [3]_
-+specification defines FF-A messages that can be used by a client to signal
-+when updates have been made to the CRB.
-+
-+How the Linux CRB driver interacts with FF-A is summarized below:
-+
-+- The tpm_crb_ffa driver registers with the FF-A subsystem in the kernel
-+  with an architected TPM service UUID defined in the CRB over FF-A spec.
-+
-+- If a TPM service is discovered by FF-A, the probe() function in the
-+  tpm_crb_ffa driver runs, and the driver initializes.
-+
-+- The probing and initialization of the Linux CRB driver is triggered
-+  by the discovery of a TPM advertised via ACPI.  The CRB driver can
-+  detect the type of TPM through the ACPI 'start' method.  The start
-+  method for Arm FF-A was defined in TCG ACPI v1.4 [4]_.
-+
-+- When the CRB driver performs its normal functions such as signaling 'start'
-+  and locality request/relinquish it invokes the tpm_crb_ffa_start() funnction
-+  in the tpm_crb_ffa driver which handles the FF-A messaging to the TPM.
-+
-+References
-+==========
-+
-+.. [1] **TCG PC Client Platform TPM Profile (PTP) Specification**
-+   https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/
-+.. [2] **Arm Firmware Framework for Arm A-profile (FF-A)**
-+   https://developer.arm.com/documentation/den0077/latest/
-+.. [3] **Arm TPM Service Command Response Buffer Interface Over FF-A**
-+   https://developer.arm.com/documentation/den0138/latest/
-+.. [4] **TCG ACPI Specification**
-+   https://trustedcomputinggroup.org/resource/tcg-acpi-specification/
+Changes in v4:
+- save->eint_fltcon1 is an argument to pr_debug(), not readl() change alignment accordingly (Andre)
+- Link to v3: https://lore.kernel.org/r/20250306-pinctrl-fltcon-suspend-v3-0-f9ab4ff6a24e@linaro.org
+
+Changes in v3:
+- Ensure EXYNOS_FLTCON_DIGITAL bit is cleared (Andre)
+- Make it obvious that exynos_eint_set_filter() is conditional on bank type (Andre)
+- Make it obvious exynos_set_wakeup() is conditional on bank type (Andre)
+- Align style where the '+' is placed first (Andre)
+- Remove unnecessary braces (Andre)
+- Link to v2: https://lore.kernel.org/r/20250301-pinctrl-fltcon-suspend-v2-0-a7eef9bb443b@linaro.org
+
+Changes in v2:
+- Remove eint_flt_selectable bool as it can be deduced from EINT_TYPE_WKUP (Peter)
+- Move filter config register comment to header file (Andre)
+- Rename EXYNOS_FLTCON_DELAY to EXYNOS_FLTCON_ANALOG (Andre)
+- Remove misleading old comment (Andre)
+- Refactor exynos_eint_update_flt_reg() into a loop (Andre)
+- Split refactor of suspend/resume callbacks & gs101 parts into separate patches (Andre)
+- Link to v1: https://lore.kernel.org/r/20250120-pinctrl-fltcon-suspend-v1-0-e77900b2a854@linaro.org
+
+---
+Peter Griffin (5):
+      pinctrl: samsung: add support for eint_fltcon_offset
+      pinctrl: samsung: refactor drvdata suspend & resume callbacks
+      pinctrl: samsung: add dedicated SoC eint suspend/resume callbacks
+      pinctrl: samsung: add gs101 specific eint suspend/resume callbacks
+      pinctrl: samsung: Add filter selection support for alive bank on gs101
+
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 150 ++++++-------
+ drivers/pinctrl/samsung/pinctrl-exynos.c       | 294 +++++++++++++++----------
+ drivers/pinctrl/samsung/pinctrl-exynos.h       |  50 ++++-
+ drivers/pinctrl/samsung/pinctrl-samsung.c      |  12 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.h      |  12 +-
+ 5 files changed, 319 insertions(+), 199 deletions(-)
+---
+base-commit: 0761652a3b3b607787aebc386d412b1d0ae8008c
+change-id: 20250120-pinctrl-fltcon-suspend-2333a137c4d4
+
+Best regards,
 -- 
-2.34.1
+Peter Griffin <peter.griffin@linaro.org>
 
 
