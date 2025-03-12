@@ -1,87 +1,100 @@
-Return-Path: <linux-kernel+bounces-557724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45578A5DCE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:41:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0805A5DCE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:41:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74528178E6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:41:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9CE23B8F01
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4A8245021;
-	Wed, 12 Mar 2025 12:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803DB245013;
+	Wed, 12 Mar 2025 12:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="M5Shd+Wz"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c26iGCmI"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FBD244EA1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5320F245012
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741783269; cv=none; b=gyzVsGb9soXn2EE0M/LwDYhADspt2hGpp3fOlAYOKtqPVku+IaZzL1+bBFRdP/DHV1its0ih6gmkdhCe+dgciEjhRiX1wxt6zvYedHToG4hu2Azv0OwyZMXRZt231RPFQpEfevbzRTFSM7LGF97pQexUSA1BxEpstWe1hK/CE1o=
+	t=1741783269; cv=none; b=QkJVJLDvAG3jLtTVHij/btONqGGQXV94s2G0Dn9J6s3Ie+1IvFzdMTcaxTYD15oPXVIQ+6oZbqq6rVITFkW62A3Vvs9d0jnNOPDygOXiJulRlpmqjN9KO/PFbAnir54wJUo/ANcdqR2C0/mzaL8uAE+g5oanc4XZqSfTy31cufY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741783269; c=relaxed/simple;
-	bh=bUaSlUg3RSFBTsJCJQtMWIt/F/YS6Geb3jIJDsgvVi4=;
+	bh=bn69M2Gkq8RHaHtsLsqCouGFZNkU8lvwQGkB+OvdoD0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MxOyME1VRV1smu2mmkZjw2t3ksuVynC2F8LTwk3poTuGfDf0I3O/YwYBuM8cUgv2Gc2UwCtcAb4NrS7b0VCB1f2ay/zov2PTDAx6ISo2QMVMzCG8J38OPwIU6/VMSGJAMQMf7JgCtph8vEkpOS6vPrTK8rkAmTDbnp8BBWQ2+HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=M5Shd+Wz; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-85b5e49615aso255632439f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:41:05 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JJyo0XXdK3D0IeotnxGaAZJuCWJk1RVnzoAWjs3/ecBJw7Y30TOnTijXlXaSYTBawpqN1vN4vFgBdY+/onFeLENgcVQPJ8fuCvMhEWpO+IfPw9d7g16Ja2ClZsyTf/DdiupxCz/xirP6zdU1NyAvaDT4rl/b4baNFgjVfo0Sryw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c26iGCmI; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5499659e669so5787470e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:41:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxtx.org; s=google; t=1741783264; x=1742388064; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9dP4A1PaPKl7EUlUOAH0m0yidu5CcqdMAHhNJvQYeKs=;
-        b=M5Shd+WzC7GB6bjfp/h+Z0i3ZsVVuaO6Q2Lc9jxjclwprMYa4SWAUOzO9bYYvbLuVb
-         KsD0wvtMLDSqBoSonFnjrWLczXateIFvbARFkqGpbYwlDz+XowASRJj71wUIlhQlFMYK
-         iB3UYYWASs3XOJbPscVqBzgJiriwFQevWIlVk=
+        d=gmail.com; s=20230601; t=1741783265; x=1742388065; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=45O061CUNUxmAb67C2dioGcC+L0Loubx6IMZ4z4rDME=;
+        b=c26iGCmIbEO/ZRZ88uTqSmbRWWVW9X7u1wT+hKAfwG6cCe1Xp76RGNm+zkGZcD8iD+
+         Km2NUI0GgNGszkrQMvnM7i4KAnpuTDCJBF73xBGJsQ+IBbex/E+y8CTcgNHPeS7BmsLU
+         Beg4z9DKD99zf+ng7eEMtvlHP5HE0mVbdW80hJESAi8Nf0r2EBCc7s+/2o3AG6Cwp5up
+         3qRWau9sW66hji4ZWhZj/S4/LciPh1atxojQkr5vBHrqTBG+SHbT9DtBTtNicnh1B31C
+         5454UpNX9wMeQsOSw7rm5WuvGutS9NXBkQ2tVwPPbnkax84glGBIYt+XXO6d41oqEgNn
+         EkZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741783264; x=1742388064;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741783265; x=1742388065;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9dP4A1PaPKl7EUlUOAH0m0yidu5CcqdMAHhNJvQYeKs=;
-        b=tlb2my6OYqC1v54w3+r8WOG0yVssOfrz5GVTb9BjE1kZgdecSwDruAsLiTqzK7MPkr
-         uiX37ymh22cyjDMfQANAvq1PcF4fTXqyUhHIXuNr3IEsQgWMgBWgfNckb4rTJ8x3WjTP
-         Juoz3WIFCgM8OKSoKmD4BaePH9MI7DQLOzq28sQecedYeGG9WagqqhQcm5XmdkUTiQ49
-         XtGI9I0V5c+0Yivf49EhCartYtNsHCwQlx9m/T1iZAdOcw5uwTihb4n1NQfBmvwjWIp/
-         sGkILhH43dOUVR+5lIzjcZ5j0L/PjvUQk8qvVG7X4jNwPH5o62zP2RUN5njffgB/Om0C
-         L8aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJwR1isoRzxomTgl+Q/P6BUj5mgP7Peh43BTRBaz3sv+cpmZ4xKtLVz8W6zI7vDOMOEwMD2rOoPgyS0BE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCdxv9M3xFWfsQ0VxpWxc35ijYE+VGFMbyJVRYSpM/YRMwAenh
-	6mq5USPmMkGZbCMjoSFzIrIBZJs+iAjZCBR1DwQvW079je+Zruv5PssBP7Q/yQ==
-X-Gm-Gg: ASbGncuYzGDXKpZEL5C7wcRb4XMAphgnqWCY9ke7rjAVVlUOqJhPA8VPBNipMcFUeA4
-	y+IZQdhngX80oLNECpGAe42HwROixZ3edD21vhpEsX01eXxOZyoHUgniaMQWU7PbOI/4hUOdu7Q
-	tFF+ad+p/BTtb9RrHmighp+zBG1cypRU/Q3AUbeEbzdQ14cSzuY1T3rah74WLgMOhife0MejpvT
-	iv8ev9OM4l9NnAl/bRBaCa2MnfwVNkvndtAyhP+pXzWdpyi05lD37Y8fQIKWF28wEBNn1pHEwzg
-	yVf6vtDOB7wf6hRWtbcg78R9FXwJ43EjeWzKFZ2HsqwhK8TQgQfVEr2tvJQfMA==
-X-Google-Smtp-Source: AGHT+IFLQqpuypHSRNnz0zBPbGSRwBTTy9nuZ3EEUDWO1+xrScavLssIudJZMqoxc71JqTU36mYhUw==
-X-Received: by 2002:a05:6602:4008:b0:85b:577a:e419 with SMTP id ca18e2360f4ac-85d8e1ac1cfmr810913739f.1.1741783264692;
-        Wed, 12 Mar 2025 05:41:04 -0700 (PDT)
-Received: from fedora64.linuxtx.org ([72.42.103.70])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f209e15822sm3165046173.37.2025.03.12.05.41.03
+        bh=45O061CUNUxmAb67C2dioGcC+L0Loubx6IMZ4z4rDME=;
+        b=HknwR4BmuPiR5q0L8JaKzTaWbscMoc0zzN6PyDQocFENU9yNNIZNMJ3SInYWtc4ZzX
+         ga222ZcpeHMfKXmDjLF/oCdG5IxAy+h4D7KExq2PKaPinpXMttwHMKQJTwQicbT1hvYr
+         OQefPoCGJr4JvkD2lOs5gB/Fiu+os4rwgNlpIsgdusMbRzkVYMxVlNgQQzz6XUC8Xp+L
+         luzyIY+it7jLoU57KOkFPxlFtpq3j599IyKm6bL773Wen4+3v/h3+iLC4ZFdi3ye2zQ5
+         rXNv5rA07b0Pq/e3W7drZwegRBUnbddqscGZ5kqpCJfEFLGP3g/HzY6EZCiZiHX3hX5e
+         7vyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOqzj0WnDjUK/cUWksuTNBviQfgChsv+OjcXdXU9YcQugtjKeI9+VkUQpfb5at1Ck6ZTQ4wXm/58pbfVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTgyZHAiZDcce7EFUSWxLzcFA4/Akdms1GBjPmZ/cu8pC6TGg+
+	nVWVcMObHuQmB2i8bitsN06mgDpp5PPYtamatAAHtsCTJL+tskMJ
+X-Gm-Gg: ASbGncu9JEwmMbNschJY79j4oAoqZhoCDzF0X32Xt6b82vyfvkmqjsbW6YYnYJg+/cL
+	/6RZ/g/t0usSahUJuw9/W1acgJb6hUyaSeS3vKzOwT8ytYTxrmHeXczjaWQ3enW3VM0tp77rEJN
+	1GYmYfcXU6vlEOp1zIrCY+UjwS//sT3sc9VNxv2+8mSOoW007FZYskg69/t5i4RG40MNjowMfr3
+	Rw5Y5C2/bI3lHE9VcTbesxBO5d7vomddhiaArFZkR8bq2qcUGZJGsdVDXBrKCcjwDA+/CnZ4Uw4
+	boVMKPc1/nMzNZhFcIq6iT/EU2yqtkC8xGAEp2t7Yv5iqrY=
+X-Google-Smtp-Source: AGHT+IG55WSSAT/+Yyny325JTEi9ncIf1SaTm13YRvGas2xg2PdDyMUQdRQc/QVTmM4lURBeUumKuw==
+X-Received: by 2002:a05:6512:124c:b0:549:8db6:b2da with SMTP id 2adb3069b0e04-549abacc9damr2502652e87.30.1741783265112;
+        Wed, 12 Mar 2025 05:41:05 -0700 (PDT)
+Received: from grain.localdomain ([5.18.255.97])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1c3d73sm2105096e87.238.2025.03.12.05.41.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 12 Mar 2025 05:41:04 -0700 (PDT)
-Sender: Justin Forbes <jmforbes@linuxtx.org>
-Date: Wed, 12 Mar 2025 06:41:02 -0600
-From: Justin Forbes <jforbes@fedoraproject.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.13 000/197] 6.13.7-rc2 review
-Message-ID: <Z9GA3nNRacBJxmiX@fedora64.linuxtx.org>
-References: <20250311144241.070217339@linuxfoundation.org>
+Received: by grain.localdomain (Postfix, from userid 1000)
+	id 0B62A5A0044; Wed, 12 Mar 2025 15:41:03 +0300 (MSK)
+Date: Wed, 12 Mar 2025 15:41:03 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Benjamin Segall <bsegall@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrey Vagin <avagin@openvz.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [patch V3a 17/18] posix-timers: Provide a mechanism to allocate
+ a given timer ID
+Message-ID: <Z9GA35aiPFL1GaXW@grain>
+References: <20250308155501.391430556@linutronix.de>
+ <20250308155624.526740902@linutronix.de>
+ <Z9CsstMf-EVZpsiH@pavilion.home>
+ <87msdrz0i9.ffs@tglx>
+ <87jz8vz0en.ffs@tglx>
+ <Z9C6GpaB9WvNzvJS@pavilion.home>
+ <Z9E-L1pvl1j_4E3f@grain>
+ <87bju6ze2h.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,29 +103,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250311144241.070217339@linuxfoundation.org>
+In-Reply-To: <87bju6ze2h.ffs@tglx>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Tue, Mar 11, 2025 at 03:48:06PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.7 release.
-> There are 197 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 13 Mar 2025 14:41:52 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.7-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Wed, Mar 12, 2025 at 12:24:54PM +0100, Thomas Gleixner wrote:
+> +	switch (ctrl) {
+> +	case PR_TIMER_CREATE_RESTORE_IDS_OFF:
+> +		current->signal->timer_create_restore_ids = 0;
+> +		return 0;
+> +	case PR_TIMER_CREATE_RESTORE_IDS_ON:
+> +		current->signal->timer_create_restore_ids = 0;
 
-Tested rc2 against the Fedora build system (aarch64, ppc64le, s390x,
-x86_64), and boot tested x86_64. No regressions noted.
+Thanks a huge, Thomas! I suspect this might be a typo, you need "= 1;" here )
 
-Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
+	Cyrill
 
