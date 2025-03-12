@@ -1,164 +1,182 @@
-Return-Path: <linux-kernel+bounces-557482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0B3A5D9D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:47:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE862A5D9D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:48:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A434B189C49C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776393A51E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D68723817E;
-	Wed, 12 Mar 2025 09:47:20 +0000 (UTC)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31C723BCF6;
+	Wed, 12 Mar 2025 09:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bzOsvmh8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698881DC991;
-	Wed, 12 Mar 2025 09:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9AC22578E;
+	Wed, 12 Mar 2025 09:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741772839; cv=none; b=L7o+1nqSZahE4+/GMyzn+tNEYQTI5nce8kxEU049bavmbPQLK/yyHw3goqsKhPa7Ow2GVYON8rMZwwZSS/ZY65dzt5ZI8NhoJfL4dMVTBFVVjK3RDp7PJ36FxIxTzhWYX000WE+etd5hOcZZMggB/INZt7v6YiESa7o3NdtOtzo=
+	t=1741772887; cv=none; b=S8TeyeLlb9AunaMgKof7Zr6IZL08lylr8JRbccrUYirXFLfI53IPjGdS+z+ekpiSdmqPGWT3i3U+ykITGuHYUG/EshZfF0E1DoUorZJsft13nPZr1NCTebA7p6jZiPJxC4R1nuoMOH1lYO6PjNOvfqQ9CvFshT+sWyZ5C8fSVeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741772839; c=relaxed/simple;
-	bh=r58vrp2EstxFyN26G7F/QhcD0jYpTudGlXZLmZGjH6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pzfv/tzGIV4HqkYT574FvYOa7P2CNNUuBAjG7ur3mMVY2qb8Jph+nZ13bXYgaLYi/X+sXoo0Zl0dzth3CPkULmB+2ER2zpZdJm8GvIlLlgVZfdOSryP0yY9jaiqJKJB8duJrmCHQhcVH0O104Jt/z5O6ERA60MKRsrzqUl/cfX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-523ee30e0d4so2255038e0c.2;
-        Wed, 12 Mar 2025 02:47:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741772834; x=1742377634;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d62xAkjCjzvah8gGs20whVVYHb+UQ2bouE+wm1G9QwE=;
-        b=qg2RwtkW+IJ93WCGyOBZnQnUckkHWiOyzaErRf2xvCuLMDMWZ9E1cqH45R/41xHi1Y
-         1DwMGZ2Ot02bPDnCpuDhaOUtTcL+RAXZ4J2alqJ6eE6laj2rURADw5d28HTRwPdaHddU
-         dxyh4c8Z/yBPZ37gOdwdljUwjHm+z7prktUMkKXDO8k+Ryn0EQqH4CAAEDKAoUeJ4sXq
-         zwjDsdcv+lK24AkVLIwG+LVXs40EsUpELxGDlH0HUT3E1yIFa0ATq00luwHXMGEZ6fh7
-         OoSMNXSl7EPhQd3Yj18nZkVId0A5Mcs4viYcU8+o35NgkuqEfY6CckuYU3vcWkJhYXX1
-         0NbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULRETbo4BH9jhK+25FWjSBSM+cG2V8ZgUNiepR1VFHMIlRMUZMk9GKDYHj8LMSVIgyLFTqaCtZ2Go=@vger.kernel.org, AJvYcCWKBBbYkAdzKkyMIzlO2EZLp6f2vO0UqsT2VmbUVPorAYh4ig/SXBCfOwo2pcRig4RSR95N5qnFneTnKMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2OKPz68b9/tM+ds1yYHoQ/Mz4KrZDi8kZC73KycC32OG67P2M
-	Mo7G/govaTLUf980DaSPODpDzLGmKNj08XjfFgiXDhLfDrjXPNZNtjCpTE/J
-X-Gm-Gg: ASbGnctWCZ0oM+ITdZFLeavLZb6FCYNMnQhM2ETHwkJfjni1CksgXARJvYWXD/eArGn
-	zuCvssItiA0zzE31xlic+xtOb+SYycqLGjqallJ4sBNQ1/My5wvJ5H4So69leTsU652/6ihPJlC
-	YMAojk0D96g3eTneKSbMsaw0cm/qTqcTPqOj8oUS2aokFnOal8apFImdDsd0rTLUf+jF5Us44cg
-	duQnAO++jxW+8oDvuS++JzzddumJk1FiBNfXwVqfPNYClqhUBQoVJIda1UiZK2HiG1+DnqpzgMv
-	Xwmk1X7H8jvpG/qmkXdO6MB06PVaYvnitDtq+NSQRgEK++R3Dl1ZPV4Rtu2GOQhIpzhoBtlGBUE
-	UwgCt8NO3l0U=
-X-Google-Smtp-Source: AGHT+IHI/kwET4BOyIL5R8ogAYziQ1rhHQx4zxxfLuxMDVsHZun5c1zS0pE5P6WU4tJQ96taz5wzuA==
-X-Received: by 2002:a05:6122:3191:b0:520:61ee:c815 with SMTP id 71dfb90a1353d-523e4188194mr11709957e0c.10.1741772833709;
-        Wed, 12 Mar 2025 02:47:13 -0700 (PDT)
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8a84f06sm2119915e0c.10.2025.03.12.02.47.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 02:47:13 -0700 (PDT)
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-523ee30e0d4so2255015e0c.2;
-        Wed, 12 Mar 2025 02:47:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXBzyMh8JXK7p4kX9k5STXObBO1jyFo/lYwm3UDkxXU4I9dizf2c99qOt2qG5TXJaFpHti9WiRGfWnzs4U=@vger.kernel.org, AJvYcCXbpQntSui9KkdARckOJGRMCpwJWnLoVyc8Po9f0oBfzBkRBvA5FYxiX5cctmYBV8or7ZKs/NhwknY=@vger.kernel.org
-X-Received: by 2002:a05:6102:41a8:b0:4bb:e14a:944b with SMTP id
- ada2fe7eead31-4c30a6c0602mr13369838137.20.1741772832869; Wed, 12 Mar 2025
- 02:47:12 -0700 (PDT)
+	s=arc-20240116; t=1741772887; c=relaxed/simple;
+	bh=JOrOHrbt2BFPSmQEtqW8UEQvoNIFGhU91prX8z9DbQE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=H4yq0SNLh0Xy3sPCAWZfee6qcfmq8e9M/IJOtn+U8fHseIMNRKFZ9NrG7LFUo0w0OqSUo5xNMrmU3TiZziPZVPYFU0sNXdOaYd4xpCPK8fEGFWQI72gIvLv+dp294kzWVqWSWKq814LperKLxM9Te1NL5HuhPDH3bmVy8/QHz+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bzOsvmh8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BMHEeI023453;
+	Wed, 12 Mar 2025 09:47:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NX2y5PH7HHchSP6DInXoXFhLZo5b/x0gIOdI+IPKbg8=; b=bzOsvmh82eQ0eGbZ
+	bUdlIB3chv139IJn7Fm1/ThVFi460GvhJjpbzLppglz4WGer189gp4YjtgNV4zPN
+	/GniT5k3yDQ53B7a8p9ny1wmHg2Qi1ImQ3t/cFBAJl6lGNAIvzL7AT/qpfrq3Zbs
+	9trHjfwtkUdvhYbHjgWe5vfA8R5hMYYvgQk/GuxFYJDg4IAsJ7b06V4hf++lyG9g
+	Fxn//XUFIO3AAxJxjCpd1r36L2wLpYnvuCW8FqpVWz3yZEZawUGHZnpqspeh8A1V
+	s1r4LsqCwocDoaTQFGmxahHRO1f0qSNqB46TsSdoBcyAXfslSegaOH3x8j/xq3Jd
+	PJMgSw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2mhwj3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 09:47:49 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52C9lnUR007936
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 09:47:49 GMT
+Received: from [10.204.66.137] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Mar
+ 2025 02:47:41 -0700
+Message-ID: <da9f80e6-bb4e-4568-aa2c-d70383b12e3a@quicinc.com>
+Date: Wed, 12 Mar 2025 15:17:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250216175545.35079-1-contact@artur-rojek.eu>
- <20250216175545.35079-2-contact@artur-rojek.eu> <5365422a9715376c76a89e255c978fc39064e243.camel@physik.fu-berlin.de>
- <433bc8a0732bf8a63c64c4bf0e6ad4a7@artur-rojek.eu> <967e29681c8bc39edfdd9c645d943f17d341c2ae.camel@physik.fu-berlin.de>
- <CAFULd4b8+HsmJC2XkW50pxtw=fHNrL9gH1_WM90jh+rfLCbSHw@mail.gmail.com>
-In-Reply-To: <CAFULd4b8+HsmJC2XkW50pxtw=fHNrL9gH1_WM90jh+rfLCbSHw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Mar 2025 10:47:00 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXaw117mimN_7UgwbfbG9grVg09WfjKa2Lz4eGqM24EvA@mail.gmail.com>
-X-Gm-Features: AQ5f1JpmvV1WR8P4TSacSWlcg8eeK0249gT4jim4zcWy0MoFkMgE7kfgLifM39g
-Message-ID: <CAMuHMdXaw117mimN_7UgwbfbG9grVg09WfjKa2Lz4eGqM24EvA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] sh: align .bss section padding to 8-byte boundary
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Artur Rojek <contact@artur-rojek.eu>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, "D . Jeff Dionne" <jeff@coresemi.io>, 
-	Rob Landley <rob@landley.net>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/10] drm/bridge: anx7625: update bridge_ops and sink
+ detect logic
+To: Dmitry Baryshkov <lumag@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
+        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
+        <marijn.suijten@somainline.org>, <andersson@kernel.org>,
+        <robh@kernel.org>, <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
+        <konradybcio@kernel.org>, <conor+dt@kernel.org>,
+        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
+        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <quic_abhinavk@quicinc.com>, <quic_rajeevny@quicinc.com>,
+        <quic_vproddut@quicinc.com>, <quic_jesszhan@quicinc.com>
+References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
+ <20250311122445.3597100-10-quic_amakhija@quicinc.com>
+ <6gdd6p3ca6w2gb2nbl6ydw4j7y2j5eflelbwntpc6ljztjuwzt@dqwafrtod5m5>
+Content-Language: en-US
+From: Ayushi Makhija <quic_amakhija@quicinc.com>
+In-Reply-To: <6gdd6p3ca6w2gb2nbl6ydw4j7y2j5eflelbwntpc6ljztjuwzt@dqwafrtod5m5>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OCaLLDkZyziQl88JwuTVA-GTB1nk4AQ5
+X-Authority-Analysis: v=2.4 cv=aKnwqa9m c=1 sm=1 tr=0 ts=67d15845 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=oL8KTtbDxmmEcXVMUPcA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: OCaLLDkZyziQl88JwuTVA-GTB1nk4AQ5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1011
+ adultscore=0 malwarescore=0 priorityscore=1501 phishscore=0 spamscore=0
+ bulkscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120067
 
-Hi Uros,
+On 3/11/2025 9:11 PM, Dmitry Baryshkov wrote:
+> On Tue, Mar 11, 2025 at 05:54:44PM +0530, Ayushi Makhija wrote:
+>> The anx7625_link_bridge() checks if a device is not a panel
+>> bridge and add DRM_BRIDGE_OP_HPD and DRM_BRIDGE_OP_DETECT to
+>> the bridge operations. However, on port 1 of the anx7625
+>> bridge, any device added is always treated as a panel
+>> bridge, preventing connector_detect function from being
+>> called. To resolve this, instead of just checking if it is a
+>> panel bridge, verify the type of panel bridge
+>> whether it is a DisplayPort or eDP panel. If the panel
+>> bridge is not of the eDP type, add DRM_BRIDGE_OP_HPD and
+>> DRM_BRIDGE_OP_DETECT to the bridge operations.
+> 
+> Are/were there any devices using anx7625, eDP panel _and_ not using the
+> AUX bus? It would be better to use the precence of the 'aux' node to
+> determine whether it is an eDP or a DP configuration.
+> 
+>>
+>> In the anx7625_sink_detect(), the device is checked to see
+>> if it is a panel bridge, and it always sends a "connected"
+>> status to the connector. When adding the DP port on port 1 of the
+>> anx7625, it incorrectly treats it as a panel bridge and sends an
+>> always "connected" status. Instead of checking the status on the
+>> panel bridge, it's better to check the hpd_status for connectors
+>> like DisplayPort. This way, it verifies the hpd_status variable
+>> before sending the status to the connector.
+>>
+>> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
+>> ---
+>>  drivers/gpu/drm/bridge/analogix/anx7625.c | 10 ++++------
+>>  1 file changed, 4 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
+>> index 764da1c1dc11..ad99ad19653f 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
+>> @@ -1814,9 +1814,6 @@ static enum drm_connector_status anx7625_sink_detect(struct anx7625_data *ctx)
+>>  
+>>  	DRM_DEV_DEBUG_DRIVER(dev, "sink detect\n");
+>>  
+>> -	if (ctx->pdata.panel_bridge)
+>> -		return connector_status_connected;
+>> -
+>>  	return ctx->hpd_status ? connector_status_connected :
+>>  				     connector_status_disconnected;
+>>  }
+>> @@ -2608,9 +2605,10 @@ static int anx7625_link_bridge(struct drm_dp_aux *aux)
+>>  	platform->bridge.of_node = dev->of_node;
+>>  	if (!anx7625_of_panel_on_aux_bus(dev))
+>>  		platform->bridge.ops |= DRM_BRIDGE_OP_EDID;
+>> -	if (!platform->pdata.panel_bridge)
+>> -		platform->bridge.ops |= DRM_BRIDGE_OP_HPD |
+>> -					DRM_BRIDGE_OP_DETECT;
+>> +	if (!platform->pdata.panel_bridge ||
+>> +	    platform->pdata.panel_bridge->type != DRM_MODE_CONNECTOR_eDP) {
+>> +		platform->bridge.ops |= DRM_BRIDGE_OP_HPD | DRM_BRIDGE_OP_DETECT;
+>> +	}
 
-On Wed, 12 Mar 2025 at 09:32, Uros Bizjak <ubizjak@gmail.com> wrote:
-> On Wed, Mar 12, 2025 at 9:22=E2=80=AFAM John Paul Adrian Glaubitz
-> <glaubitz@physik.fu-berlin.de> wrote:
-> > > In the original BSS_SECTION(0, PAGE_SIZE, 4), the last argument inser=
-ts
-> > > a 4 byte padding after the closing brace of .bss section definition,
-> > > causing the __bss_stop symbol offset to grow, but not the .bss sectio=
-n
-> > > itself:
-> > >
-> > > #define BSS_SECTION(sbss_align, bss_align, stop_align)               =
-         \
-> > >       . =3D ALIGN(sbss_align);                                       =
-   \
-> > >       __bss_start =3D .;                                             =
-   \
-> > >       SBSS(sbss_align)                                               =
- \
-> > >       BSS(bss_align)                                                 =
- \
-> > >       . =3D ALIGN(stop_align);                                       =
-   \
-> > >       __bss_stop =3D .;
-> >
-> > OK, that's really odd. So, the __bss_stop would be moved to the desired
-> > position but the section itself still remains small? What exactly does =
-the
-> > linker fill the region with? Sounds very strange.
-> >
-> > > TurtleBoard loader is only concerned with the .bss section size - it
-> > > doesn't care about any symbol offsets - and hence this seemingly cryp=
-tic
-> > > change (you can display the section size information with
-> > > readelf -t kernel_image).
-> >
-> > Looking at the actual kernel image with readelf is a very good suggesti=
-on!
-> >
-> > > The rest of the changes are simply to "inline" the BSS() macro (as I
-> > > needed to access that closing brace), and the former sbss_align,
-> > > bss_align (that's your PAGE_SIZE) and stop_align arguments are passed
-> > > accordingly, the same way they used to be passed before. The only
-> > > visible effect should be the move of ALIGN(stop_align) inside of .bss
-> > > section definition, and the change of stop_align value from 4 to 8.
-> >
-> > OK. FWIW, do you understand what SBSS is for? I couldn't find any expla=
-nation
-> > for it.
->
-> Small BSS section. The compiler can put data objects under a certain
-> size threshold to the .sbss section. Looking at GCC sh config, sh does
-> not use this section.
+Hi Dmitry,
 
-Hence the moment gcc (or clang) starts using that section, the
-TurtleBoard loader is broken again...
+Thanks, for the review.
 
-Gr{oetje,eeting}s,
+Yes, it is better to check the presence of the 'aux' node for eDP or DP configuration.
+Will change it in next patch.
 
-                        Geert
+-	if (!platform->pdata.panel_bridge)
+-		platform->bridge.ops |= DRM_BRIDGE_OP_HPD |
+-					DRM_BRIDGE_OP_DETECT;
++	if (!platform->pdata.panel_bridge || !anx7625_of_panel_on_aux_bus(dev)) {
++		platform->bridge.ops |= DRM_BRIDGE_OP_HPD | DRM_BRIDGE_OP_DETECT;
++	}
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks,
+Ayushi
 
