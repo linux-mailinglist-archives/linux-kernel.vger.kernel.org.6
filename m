@@ -1,195 +1,192 @@
-Return-Path: <linux-kernel+bounces-558051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C88A5E0F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:49:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AAC0A5E0FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:49:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617D91882BD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:49:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 484951881D2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E100C2561A8;
-	Wed, 12 Mar 2025 15:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BF1254865;
+	Wed, 12 Mar 2025 15:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvCD+UwC"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="jJH+aorG"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7ED824BBFA;
-	Wed, 12 Mar 2025 15:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722B4156C62
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741794525; cv=none; b=PcY5NjnoNr+vmE65I9ZM95bKD5EbIXc7n7ojq3xFa8OxyW6LyAjKYCPWqqca4NkAyr2wdigVnc0J7S2H3bwja6ds8lxYDdTF+cg/qMWX6/p2CF1GG2AKfjeqtLxPJegPFM3sjrU2y5Ogg9PbGX2qCQq7Tu6lT9WwX/gW68YhLbc=
+	t=1741794553; cv=none; b=Jaz5fDf8l4s1Rjc9hp8go94t8yFvtqqiR2AeESMnJsQA7STelHKTbppb+IHjdbPnIMZPIlsFhjDBUa1ss5E3xYXdFfiLxp+NgiTrCCR5eaX7wWEYTpP76JVYecxnDpmaF0zMOkAFzgDNNdh8Ujr49nxJk47fWdNQ/zkvpX2HncU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741794525; c=relaxed/simple;
-	bh=KCLCWORRVefheQNdDvOR0SPuly0YIxWRFHekJNtrfY0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CMyyIaSQDm+7AHODHeCwDQ45mMkJPXzXP6xGqUb2FalE+l5Uu6R0uvnIkciobuuMiyF74xcsLeIp/tLvjxW1re42LDF/Poxh1wPiryLzlUnLBeQxH5A8GxrSScv/QgUowbtx6GzahOw8WyX4r3y7q7RmnxJHNdh26bMcdCm/FiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvCD+UwC; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-523fa0df55dso893921e0c.1;
-        Wed, 12 Mar 2025 08:48:43 -0700 (PDT)
+	s=arc-20240116; t=1741794553; c=relaxed/simple;
+	bh=lyu86/EH9by17rBAc9XiUsIwotdsGEea6rRN+fSn5Ps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WE7yI6Mw15xRdN7msZF3Kr3htghC1VTQTFrqEEh5xPu0iXZsmwy5RL9ZKC1bcY0n916EtWwRdgRk7bOjP80+AOS8tqjPtfSbIuKmHCLlDaIPVZ9OoVp2UdtmqzFWJrAJIBWh8DhwxXT1R70xuLrEKYOJLh8LZmkCUjmlI0z0vcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=jJH+aorG; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6e90b1b20c6so124546d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:49:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741794522; x=1742399322; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CA0E1+QIouT26J6b1C6kkNeaBYQ2U15SMRJrDpKVBNE=;
-        b=UvCD+UwCD4W8U8YZ8N9VbDlxYM6yLfb0qvq80PIPksoFfKQmEowms94ic08dT6dKrB
-         nsPU8OyX0X5NGiC2/Quc3zX9LX1V0bp8G+gCj9pq/2lkd5yWCk0m954hcw+s47JNzARX
-         6kY68KZ8XXerWK30jKKvHa+FHbJpNWLu2lPiXONSa46qVLbv7O5nbJlwH+8wHOQvpZJ8
-         IVg1rTVwTfm2eHpZnPxWtvetDW8ox/GMX3H1lA9a2ZKb1J17iuFneOq8X1q8rluar+58
-         OY3NpUyR0ZJRxC6cdwEJEU5SIrCMq/qlT//be3iB27v7L8KNHP92YQEC+a9Q4ii52Xu9
-         ZRxg==
+        d=gourry.net; s=google; t=1741794549; x=1742399349; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ofjgk4zuzVS+cwXy38yJsSZN8fRmew2OrhBauRs/AxI=;
+        b=jJH+aorGgEkiLX5+MWr3iM0TUBVkVY7PBu47LDABFRM/S08v61AGcX++2L9tpca5zv
+         VFNLzzvOh1Dc9M3P37iBonIJI5XkQ7Et/HTplSk4arltOTD9bkbPn+KDSO2GvvdgS0AX
+         hYsH4uPLAgeMGyxyTot3ifCogF6IBUkD+9QMl51dnf/pss6jhs5Z6YqiKGN/IElV8dNe
+         gOQSq2Xhp2xzp58aewMeaRtfyMV+/aqCJlOUP4jMmo1oSsZ2zS7JTHKcxi5/E6XToHbl
+         a3cGrWYF7by32q1dJpJkTDcMmdI2YNtQwZuv9eqVu9mufLy1mDj5HVSUkv/b/6IVMbmO
+         b9+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741794522; x=1742399322;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CA0E1+QIouT26J6b1C6kkNeaBYQ2U15SMRJrDpKVBNE=;
-        b=Fd820hhdrQiT0VYEaJCrkdnjifpNljkdDiBFCDlBHfgusoYFFAl+uFTVMhvltH48do
-         P4UXiIisDf6gxSE0PfYA2cZ9sMeRuTz0F0J9xDJHJT1qcd+TTTjeO/dzlqNBQ3bB957l
-         6B7cyU3mxeJdmEZlCgKXj+mpAVSM7dTV0M03g1exmUXWtlHemuGu4BcAG8L+bOFej8iu
-         SmrWyPtI4wemb5Bxb7kg5rlIJnvJAAsVEBP17skaS5thUWjbN6Mlu7FpmBzxqv5g8qhj
-         5AsqNcoms1UJe3z7K8E6rCsF3MZtgYfdd5jg8mw6FGkACgFr2v/HJfACOMhBmdaQsoKs
-         K/7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWBqOhHDBfDItUvpk42ymTWNhX7E9v9ZXqoZTxZn7d8tRGfdygbFihk/y5kUQBViPcuGDIinMsxYvRqafVLrpwo@vger.kernel.org, AJvYcCXJrxuhm1lGUqbjNH8uuoLqE1feALZBZtbpYJ9uJmpWnGwwRD2Wk/UEp8GPLZUZgOlw21rrZTJFjPp+mfugjYk=@vger.kernel.org, AJvYcCXsOYg9Ej/sjt5YULc889i4J0qYybThFVappaDPiNGazH9pnOoNvuADlF44pRgvw+TpBrdF0qLnL8M5XQz+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+7UrEaDuIuKCwWBjd4odBt4WXRcOcL3rC4xq2kxt7VPrK3GLF
-	Wkp8dAv185qi2mZ/3NWXjHKLcbp96uQx046SelUrXe2GO2v71I3Bj44OLKoN6pSkJRCvwCZv0Nh
-	m/HpoNre6bTE5OtSbZCCrGZIYvT4=
-X-Gm-Gg: ASbGncsGWFmNmDpQ0fmz7QkNZP9/n4reNdLSjSiGA6LEAHso4tJQrr2aXlTNtTA/E/c
-	rAaOA85jcwLIPuaQxz/UAfkqRiCx8dG74gbk0h/IRrLkkBS0GjPiVRrL4x8tEzs19QNhYFN0igv
-	XqmJZc+x+W0ytQ96uW+kR3EUETAYz5tLtRQxabXu0ZOhX8w2t1ZrLQ6jfHhA==
-X-Google-Smtp-Source: AGHT+IGgNahbxSbQna4G9Ni14R4KFZmtH4JnIZG+uLUGeQ1P4zqoNf+g/NrxbLm5rDHx4iRs96GD9OYdN2cqb4BzjTg=
-X-Received: by 2002:a05:6122:3c43:b0:518:8753:34b0 with SMTP id
- 71dfb90a1353d-52437de5a95mr97996e0c.4.1741794522420; Wed, 12 Mar 2025
- 08:48:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741794549; x=1742399349;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ofjgk4zuzVS+cwXy38yJsSZN8fRmew2OrhBauRs/AxI=;
+        b=FBiPJG9pIzSmTrc04SnMahFh2JzoSOzPuGqsG3ZpmfVvjag3E9fhrP59w7Ww+MQwGw
+         EPkKTYhwWkyBAw+FNnoRWrgWWhS1bfBZu5zvCuhK5kLr7jRdHkf4uZ7Ird47NyMwQ7No
+         2rFikoOqlybR1mPfsuDYXonApS04l6kx7LrFQyOsl4G+Au2zge5Qy/NFjcuk8EVyNkpU
+         weTcRj8I+eF+Jibjmk1fPaDAxJvwmYO0zE2/lNKE+ESN+NKX97OHfPqoCDNPHUZTrFUX
+         QvqP+hHk9nTOSJkJ4hhkmzYRjAWvYOWydjhUM1L5Nc8eiloejKdqlxekXNV3Hs6fRpq6
+         Onhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXveo77wjLW0hFG5JKWC1qzdS+2kj0/KATs8UTIpGLyp7os9Bm2nvumibrjyEvvZYcx4r81I1afzm5O2ak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrKLk+ecXcAjMPDpf7qVNFkKTsd9e2+evH8U1vKO1IbxO/jxIs
+	mC186BHb5E0uuelVHIAy6JTVMPJMCzEg70zz7m062TR1KEpcBIGaOWZRFTYBwsw=
+X-Gm-Gg: ASbGncvN4mN4ekiBQhxkQEv3rI/aj3o46cF7ldNXLqSwyHqPr+hvwDz6nSD2sxaDe90
+	rcdC+RLoV+IF5A+z9UiSb6cfURNbivxuHzNCsFgZefLg64EzxT6qS3dxUWNjxzBrOZ1Tw4ZOs1E
+	tm2kTq7fyjEeo8HK0DNDXtDwV3xw2UBN6r7nFNN/ym2fBDVj6zAUcAv+rW/+vnJbDKqanjLJ2BZ
+	g58nBQtbSE5MJu2s7nMGs5ThEkqi5JQzWXOvnQuOujEIyZqbppdJ4onPPpvP/t6c8BK6haDOLuM
+	e8WUR0MvLgz9lPJJUIRaS4BrWU4pPc81UqXlfeKhoXcroK7uVsOGapJZzWHL/B+wL97IO5fULwi
+	4FUMujTLl7gswwCbHwf8qB4tt+6Q=
+X-Google-Smtp-Source: AGHT+IHgLZkEvIln4jLLyfDar99K/dWJ5BxlXAP1djqq5pBtYYfVdlZnJt+v1rDagFjkM9RWUey0ww==
+X-Received: by 2002:a05:6214:500f:b0:6e6:6c7f:111a with SMTP id 6a1803df08f44-6e9007022f2mr241507726d6.40.1741794548627;
+        Wed, 12 Mar 2025 08:49:08 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f70a44adsm85938316d6.64.2025.03.12.08.49.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 08:49:08 -0700 (PDT)
+Date: Wed, 12 Mar 2025 11:49:06 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Rakie Kim <rakie.kim@sk.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com, dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com, kernel_team@skhynix.com,
+	honggyu.kim@sk.com, yunjeong.mun@sk.com
+Subject: Re: [PATCH v2 1/4] mm/mempolicy: Fix memory leaks in
+ mempolicy_sysfs_init()
+Message-ID: <Z9Gs8i1FhJJ0eaiA@gourry-fedora-PF4VCD3F>
+References: <20250312075628.648-1-rakie.kim@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312002117.2556240-1-jeffxu@google.com> <20250312002117.2556240-3-jeffxu@google.com>
- <c867bff9-2293-4890-af46-8a797cf512c2@lucifer.local> <64B6294F-B059-4744-8548-89D7B519BE72@kernel.org>
-In-Reply-To: <64B6294F-B059-4744-8548-89D7B519BE72@kernel.org>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Wed, 12 Mar 2025 15:48:31 +0000
-X-Gm-Features: AQ5f1JrWH_NUnvOlBfCLeU2iGn4bsAsglh4RBB13Bl-yre5HPY3wUm8KqBRNwZk
-Message-ID: <CAKbZUD0M-kfxqD+AxjYK0LjnZhsxyJbGwhL5CGKzfOsFQpnKtg@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 2/2] mseal: allow noop mprotect
-To: Kees Cook <kees@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, jeffxu@chromium.org, 
-	akpm@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com, 
-	broonie@kernel.org, skhan@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, jorgelo@chromium.org, keescook@chromium.org, 
-	rdunlap@infradead.org, jannh@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312075628.648-1-rakie.kim@sk.com>
 
-On Wed, Mar 12, 2025 at 3:28=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+On Wed, Mar 12, 2025 at 04:56:24PM +0900, Rakie Kim wrote:
+> Improper cleanup of sysfs attributes caused kobject and memory leaks when
+> initialization failed or nodes were removed.
+> 
+> This patch ensures proper deallocation of kobjects and memory, preventing
+> resource leaks and improving stability.
 >
->
->
-> On March 12, 2025 6:49:39 AM PDT, Lorenzo Stoakes <lorenzo.stoakes@oracle=
-.com> wrote:
-> >On Wed, Mar 12, 2025 at 12:21:17AM +0000, jeffxu@chromium.org wrote:
-> >> From: Jeff Xu <jeffxu@chromium.org>
-> >>
-> >> Initially, when mseal was introduced in 6.10, semantically, when a VMA
-> >> within the specified address range is sealed, the mprotect will be rej=
-ected,
-> >> leaving all of VMA unmodified. However, adding an extra loop to check =
-the mseal
-> >> flag for every VMA slows things down a bit, therefore in 6.12, this is=
-sue was
-> >> solved by removing can_modify_mm and checking each VMA=E2=80=99s mseal=
- flag directly
-> >> without an extra loop [1]. This is a semantic change, i.e. partial upd=
-ate is
-> >> allowed, VMAs can be updated until a sealed VMA is found.
-> >>
-> >> The new semantic also means, we could allow mprotect on a sealed VMA i=
-f the new
-> >> attribute of VMA remains the same as the old one. Relaxing this avoids=
- unnecessary
-> >> impacts for applications that want to seal a particular mapping. Doing=
- this also
-> >> has no security impact.
-> >>
-> >> [1] https://lore.kernel.org/all/20240817-mseal-depessimize-v3-0-d8d2e0=
-37df30@gmail.com/
-> >>
-> >> Fixes: 4a2dd02b0916 ("mm/mprotect: replace can_modify_mm with can_modi=
-fy_vma")
-> >> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> >> ---
-> >>  mm/mprotect.c | 6 +++---
-> >>  1 file changed, 3 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/mm/mprotect.c b/mm/mprotect.c
-> >> index 516b1d847e2c..a24d23967aa5 100644
-> >> --- a/mm/mprotect.c
-> >> +++ b/mm/mprotect.c
-> >> @@ -613,14 +613,14 @@ mprotect_fixup(struct vma_iterator *vmi, struct =
-mmu_gather *tlb,
-> >>      unsigned long charged =3D 0;
-> >>      int error;
-> >>
-> >> -    if (!can_modify_vma(vma))
-> >> -            return -EPERM;
-> >> -
-> >>      if (newflags =3D=3D oldflags) {
-> >>              *pprev =3D vma;
-> >>              return 0;
-> >>      }
-> >>
-> >> +    if (!can_modify_vma(vma))
-> >> +            return -EPERM;
-> >> +
-> >>      /*
-> >>       * Do PROT_NONE PFN permission checks here when we can still
-> >>       * bail out without undoing a lot of state. This is a rather
-> >> --
-> >> 2.49.0.rc0.332.g42c0ae87b1-goog
-> >>
-> >
-> >Hm I'm not so sure about this, to me a seal means 'don't touch', even if
-> >the touch would be a no-op. It's simpler to be totally consistent on thi=
-s
-> >and makes the code easier everywhere.
-> >
-> >Because if we start saying 'apply mseal rules, except if we can determin=
-e
-> >this to be a no-op' then that implies we might have some inconsistency i=
-n
-> >other operations that do not do that, and sometimes a 'no-op' might be
-> >ill-defined etc.
->
-> Does mseal mean "you cannot call mprotect on this VMA" or does it mean "y=
-ou cannot change this VMA". I've always considered it the latter since the =
-entry point to making VMA changes doesn't matter (mmap, mprotect, etc) it's=
- the VMA that can't change. Even the internal function name is "can_modify"=
-, and if the flags aren't changing then it's not a modification.
->
-> I think it's more ergonomic to check for _changes_.
 
-I think this is a slippery slope because some changes are not trivial
-to deal with e.g
-int fd =3D open("somefile")
-void *ptr =3D mmap(0, 4096, PROT_READ, MAP_SHARED, fd, 0);
-mmap(ptr, 4096, PROT_READ, MAP_FIXED | MAP_SHARED, fd, 0);
+This patch does multiple things, please split these changes into
+multiple patches.
 
+> Fixes: dce41f5ae253 ("mm/mempolicy: implement the sysfs-based weighted_interleave interface")
+> Signed-off-by: Rakie Kim <rakie.kim@sk.com>
+> ---
+>  mm/mempolicy.c | 29 +++++++++++++++--------------
+>  1 file changed, 15 insertions(+), 14 deletions(-)
+> 
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index bbaadbeeb291..1691748badb2 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -3541,39 +3541,40 @@ static int __init mempolicy_sysfs_init(void)
+>  	int err;
+>  	static struct kobject *mempolicy_kobj;
+>  
+> -	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
+> -	if (!mempolicy_kobj) {
+> +	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
+> +			     GFP_KERNEL);
+> +	if (!node_attrs) {
+>  		err = -ENOMEM;
+>  		goto err_out;
+>  	}
+>  
+> -	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
+> -			     GFP_KERNEL);
+> -	if (!node_attrs) {
+> +	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
+> +	if (!mempolicy_kobj) {
+>  		err = -ENOMEM;
+> -		goto mempol_out;
+> +		goto node_out;
+>  	}
 
-soooo on one hand, I don't really have grounds to say this patch is
-incorrect. On the other hand, I'd like to see either a particular
-problem or a consistent criteria we can apply to all VMA-related
-situations.
+It's not clear to me why you re-ordered these allocations, it seems
+superfluous.
 
---=20
-Pedro
+>  
+>  	err = kobject_init_and_add(mempolicy_kobj, &mempolicy_ktype, mm_kobj,
+>  				   "mempolicy");
+> -	if (err)
+> -		goto node_out;
+> +	if (err) {
+> +		kobject_put(mempolicy_kobj);
+
+Is this correct? If kobject_init_and_add fails, from other examples we
+need only free the mempolicy_kobj - because it failed to initialize and
+therefore should not have any references.  I think this causes an
+underflow.
+
+> +		goto err_out;
+> +	}
+>  
+>  	err = add_weighted_interleave_group(mempolicy_kobj);
+>  	if (err) {
+> -		pr_err("mempolicy sysfs structure failed to initialize\n");
+>  		kobject_put(mempolicy_kobj);
+> -		return err;
+> +		goto err_out;
+>  	}
+>  
+> -	return err;
+> +	return 0;
+> +
+
+Please keep functional changes and refactors separate.  There's more
+churn in this patch than is needed to accomplish what the changelog
+states is the intent.
+
+>  node_out:
+>  	kfree(node_attrs);
+> -mempol_out:
+> -	kfree(mempolicy_kobj);
+>  err_out:
+> -	pr_err("failed to add mempolicy kobject to the system\n");
+> +	pr_err("mempolicy sysfs structure failed to initialize\n");
+>  	return err;
+> +
+>  }
+>  
+>  late_initcall(mempolicy_sysfs_init);
+> 
+> base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
+> -- 
+> 2.34.1
+> 
 
