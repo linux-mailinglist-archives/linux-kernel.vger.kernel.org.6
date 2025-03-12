@@ -1,87 +1,69 @@
-Return-Path: <linux-kernel+bounces-558101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D860A5E1A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:20:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581CAA5E1A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE1873B9E43
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:20:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB2117609C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052471D5175;
-	Wed, 12 Mar 2025 16:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D77D1D5172;
+	Wed, 12 Mar 2025 16:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nlkuphmq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RJUJj0Zs"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37431C5F1E;
-	Wed, 12 Mar 2025 16:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B111422DD;
+	Wed, 12 Mar 2025 16:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741796425; cv=none; b=BWKG4UakTH66ZDrMxm0UAyGk3qIZMWXZOXvgYStQ19oBbtYWQD4kfD4d6vrr0x6L+OMo7dOEeeTrmMNjHVssHXHRNVZz7Wq8UtIpWBDGydv8SttFfzS+saGOmatXx1t5jzbOFJuJUuHAMB8NkZIToV3Jiem5Acp99eJ4Fz+XnwM=
+	t=1741796473; cv=none; b=X+GiAEHnwJPfwU3yTJuJ2J8HIqeKD4vnVWkYROx9Q/XyL+TlK4nNMNBsxc4rr8PtlBGcWBq7v+WUJw+Eu4/mQ+W5Xcu4GbCMlkBa5g1HK3Bj68bn6RLJmf0Yr1sITNvUxoOxFKiyd0dsHz27l0h1YZPq92LuFGO6U19aSxPRJZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741796425; c=relaxed/simple;
-	bh=dVocHVpBW+LBL15aYGRyDXL1g4TfZ+fwRCHVkR5W5Cs=;
+	s=arc-20240116; t=1741796473; c=relaxed/simple;
+	bh=Dc+zwomVFPomvxQGWavZde5MGx1opu1C/2LjqMLtCv0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pqmVQOYG6yxzk7OYdgf4hvgjJHtxoN84NWpKm6DYC17S7RmUDl7NxMiRyG3/3G0dV7UfByxbvwWuIkeJ8IPL1OWHZ2CxKS42ihjH7ztqJs+os2olqnyrosPfYuV4CxEMrmo2eQcZu+dYpxsipbYdbPgae2cyNlufAidJj0OjORk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nlkuphmq; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741796424; x=1773332424;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dVocHVpBW+LBL15aYGRyDXL1g4TfZ+fwRCHVkR5W5Cs=;
-  b=NlkuphmqN7NbcRLf9tXL1Zws0qO+L4Xj+ZKovwyMgpf2ADfu5WFWnrFy
-   sJ9GPNVbZSZBuALqwUUluLlZZX+MHTELM8kSVfWyJnpl+hBIcWafZdHFo
-   cHTT9mXKYWD7H/fGVAXtkk2aC7HmLBgSDpML88wmmubhHQEWrHKQOh2+F
-   f9BxbGCoHAMIAsjhPUlwhqCYYPaRVzDCnJjHxBMHc768qIpXeQUZClTAP
-   LL6mmoj77rPC17YCz9LFVhiMIdZY+ckjwejO5nHXsrUe0viQvp3kFSRk3
-   bJC/N2Cq7Y75a8CpmvayeMAKCRI4QFCu45Q2RijmypD7ncfllPVFq/8sa
-   Q==;
-X-CSE-ConnectionGUID: 68YgSO+PSV6z5OWjZ9wauQ==
-X-CSE-MsgGUID: SnbgzMV3T+a+csiU+NBo9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="46668505"
-X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="46668505"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 09:20:23 -0700
-X-CSE-ConnectionGUID: 38r3MANaTLOfTmQWKjlcow==
-X-CSE-MsgGUID: 7jO2IG3CSCiylrUpIxtlJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="120706886"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 09:20:20 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tsOob-00000001uod-47GW;
-	Wed, 12 Mar 2025 18:20:17 +0200
-Date: Wed, 12 Mar 2025 18:20:17 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Christoph Hellwig <hch@lst.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rasesh Mody <rmody@marvell.com>,
-	GR-Linux-NIC-Dev@marvell.com, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH net v1 1/1] bnx2: Fix unused data compilation warning
-Message-ID: <Z9G0QU5Ew3FusrJH@smile.fi.intel.com>
-References: <20250228100538.32029-1-andriy.shevchenko@linux.intel.com>
- <20250303172114.6004ef32@kernel.org>
- <Z8bcaR9MS7dk8Q0p@smile.fi.intel.com>
- <5ec0a2cc-e5f6-42dd-992c-79b1a0c1b9f5@redhat.com>
- <Z8bq6XJGJNbycmJ9@smile.fi.intel.com>
- <Z8cC_xMScZ9rq47q@smile.fi.intel.com>
- <20250304083524.3fe2ced4@kernel.org>
- <CGME20250305100010eucas1p1986206542bc353300aee7ac8d421807f@eucas1p1.samsung.com>
- <Z8ggoUoKpSPPcs5S@smile.fi.intel.com>
- <067bd072-eb3f-451a-b1c4-59eae777cf00@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VY7l5wE9dfWHLXMj9p7vZi/v0cmrRElFBcmyB7O3ZXBjYyq5hpfEO6eAdKCSifbrXEOfEqlKo6rL/tdPEa2QZhjCaQehvWGmLRu4+5bE1xjsRb+oaUds/T4zFwVreVPqJFw1Gs7FlcBk48X8WkBHHsVOaH6FEpVyG1ka9Rc861g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RJUJj0Zs; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mHKYNwmZLDPs2lstGBfQN00eNokieZO2KadeeVHtI9g=; b=RJUJj0ZsLjRFWboYON7273OO0w
+	gd41QRXUGa62CJqAvq+YdyF3rVOKmBYMVZFz/vOt6ShuB/v/0Ayu7A5TJx72KJBNnuoS3BcgKesYx
+	fmIhBcnNk+AgouJQ6tz5VieBDysBDoo+uNCv6aJ4P5AzN2RU7LAlKU3ucZI9pVedVCwz/r500fERv
+	zmQoS7ZcFWQRdjKmNfWR62ExQJLFHhGxKe4fEQbhOGpuv1mfTeySgEV2VjY661SrKI9qfE5t5rC9A
+	BUsoLmYtggTbwqMPgnpxCJ1rUhSuHUIKy0wNpG7ngvuOEto/7rUyUhSqToZT7Zo2ewAmkuzrYBw5h
+	LXexPaFg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsOpS-000000090vh-1ZX5;
+	Wed, 12 Mar 2025 16:21:10 +0000
+Date: Wed, 12 Mar 2025 09:21:10 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Sooyong Suk <s.suk@samsung.com>,
+	Jaewon Kim <jaewon31.kim@gmail.com>, viro@zeniv.linux.org.uk,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	linux-mm@kvack.org, spssyr@gmail.com, axboe@kernel.dk,
+	linux-block@vger.kernel.org, dhavale@google.com
+Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct
+ IO
+Message-ID: <Z9G0dm3bPgnM3AMa@infradead.org>
+References: <Z8m-vJ6mP1Sh2pt3@infradead.org>
+ <CAJrd-UuLvOPLC2Xr=yOzZYvOw9k8qwbNa0r9oNjne31x8Pmnhw@mail.gmail.com>
+ <848301db8f05$a1d79430$e586bc90$@samsung.com>
+ <CAJuCfpHjV=nRmkAGrf-tyCxEEygZ0CuW-PRp+F_vHwFbfYS8dA@mail.gmail.com>
+ <Z9Gld_s3XYic8-dG@infradead.org>
+ <CAJuCfpGa43OQHG9BmnvxROX1AneCvkuLxFwM+TdxAdR1v9kWSg@mail.gmail.com>
+ <Z9GnUaUD-iaFre_i@infradead.org>
+ <CAJuCfpEpWQV8y1RKb3hH+-kxczTUvpvCBNNzGJufsAxpkhB4_A@mail.gmail.com>
+ <Z9Gty3Ax-2RslqDX@infradead.org>
+ <CAJuCfpHG9EWAC9p7hcOH6oPMWMMSDr91HDt7ZuX2M7=j6bxuGw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,54 +72,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <067bd072-eb3f-451a-b1c4-59eae777cf00@samsung.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <CAJuCfpHG9EWAC9p7hcOH6oPMWMMSDr91HDt7ZuX2M7=j6bxuGw@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Mar 11, 2025 at 01:51:21PM +0100, Marek Szyprowski wrote:
-> On 05.03.2025 11:00, Andy Shevchenko wrote:
-> > On Tue, Mar 04, 2025 at 08:35:24AM -0800, Jakub Kicinski wrote:
-> >> On Tue, 4 Mar 2025 15:41:19 +0200 Andy Shevchenko wrote:
-
-...
-
-> >> I meant something more like (untested):
-> > We are starving for the comment from the DMA mapping people.
+On Wed, Mar 12, 2025 at 09:06:02AM -0700, Suren Baghdasaryan wrote:
+> > Any file or anonymous folio can be temporarily pinned for I/O and only
+> > moved once that completes.  Direct I/O is one use case for that but there
+> > are plenty others.  I'm not sure how you define "beforehand", but the
+> > pinning is visible in the _pincount field.
 > 
-> I'm really sorry for this delay. Just got back to the everyday stuff 
-> after spending a week in bed recovering from flu...
+> Well, by "beforehand" I mean that when allocating for Direct I/O
+> operation we know this memory will be pinned,
 
-Oh, I hope you feel much better now!
+Direct I/O is performed on anonymous (or more rarely) file backed pages
+that are allocated from the normal allocators.  Some callers might know
+that they are eventually going to perform direct I/O on them, but most
+won't as that information is a few layers removed from them or totally
+hidden in libraries.
 
-...
-
-> >>   #define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)
-> >>   #define DEFINE_DMA_UNMAP_LEN(LEN_NAME)
-> >> -#define dma_unmap_addr(PTR, ADDR_NAME)           (0)
-> >> -#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { } while (0)
-> >> -#define dma_unmap_len(PTR, LEN_NAME)             (0)
-> >> -#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { } while (0)
-> >> +#define dma_unmap_addr(PTR, ADDR_NAME)           ({ typeof(PTR) __p __maybe_unused = PTR; 0; )}
-> >> +#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { typeof(PTR) __p __maybe_unused = PTR; } while (0)
-> >> +#define dma_unmap_len(PTR, LEN_NAME)             ({ typeof(PTR) __p __maybe_unused = PTR; 0; )}
-> >> +#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { typeof(PTR) __p __maybe_unused = PTR; } while (0)
-
-> >> I just don't know how much code out there depends on PTR not
-> >> existing if !CONFIG_NEED_DMA_MAP_STATE
-> > Brief checking shows that only drivers/net/ethernet/chelsio/* comes
-> > with ifdeffery, the rest most likely will fail in the same way
-> > (note, overwhelming majority of the users is under the network realm):
-> 
-> Frankly speaking I wasn't aware of this API till now.
-> 
-> If got it right the above proposal should work fine. The addr/len names 
-> can be optimized out, but the pointer to the container should exist.
-
-Thanks for the reply, would you or Jakub will to send a formal patch?
-I can test it on my configuration and build.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+The same is true for other pin_user_pages operations.  If you want memory
+that is easily available for CMA allocations it better not be given out
+as anonymous memory, and probably also not as file backed memory.  Which
+just leaves you with easily migratable kernel allocations, i.e. not much.
 
