@@ -1,204 +1,220 @@
-Return-Path: <linux-kernel+bounces-557772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA26A5DD7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:11:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA95AA5DD7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:11:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFE967AC4EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:09:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57C847AD3E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20129243956;
-	Wed, 12 Mar 2025 13:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710492459FF;
+	Wed, 12 Mar 2025 13:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="0awkaYd9"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BO3UQ7h6"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39F324A043
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC28924338F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741784985; cv=none; b=YrXTUFH11NINnn0+TyRaMIjahRvOnOnoobimmU2Gxp4m9jdNn+ozk4wu+fJo4/T8RWXLjGGp9fiWYWLZtgu1WlH2DpMs5pM220E2rRP5lRctD1SJuxxNihh0n3ZXRXn1j4xQLByx2Y7j9PewHxfFiuZOe9PZ35L0hnRYE+aPKeI=
+	t=1741784982; cv=none; b=gnAS3Mau/L8vH7KIqzjDsBhfyIZ326mhnsksI7UVuMd0OnfRuy0wnOr6bzgf+oM2XCjBZvucFIi5hgJfpcQOg65yBnycNy/iyNrpoLb8WuZC9fd65XzIu/732PX+xTJxM7upOGWNqh11XfmVqOIvY5SyNodTVthsKMuedN29b1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741784985; c=relaxed/simple;
-	bh=ga2LSmT61md5n2p7rdCucn4O99aWE/jCY95aOOLVTH4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BGtfojqux31zbvKaDrUMJ01J2Vu/Fcxm+m0aDw0I2MNx8U4i8sG3K5/548mOgNA9BCBGhKqIiM08714V5j3Tg5xzcH8GkPL2HkC28TOSH84QAt0aY4VC4RwyUPH0a3CFLFUwAHePGHvhcva1ayyyKK4gBmQaqHDI4zW3ZTjiU8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=0awkaYd9; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22337bc9ac3so126921825ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 06:09:43 -0700 (PDT)
+	s=arc-20240116; t=1741784982; c=relaxed/simple;
+	bh=K34pYhqzQMWDB4Hcfdy839XuUYjnMXHCeK2rBDxCaKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VmwC8zLuRL++0BZVPGKYZ3MdABJ4odWrroySfPt94PYUhYNgxa+DbbOh6tcMbMBhyk6ogdh+FZ3j9TXdtNknPS4+AcVJva9O0azcyLxRFLActxbUqvh4MOW8mPa4rgCw2CadPJtRJcQpjO4w3KodWYkuaRP8xoNcmS2NKsR1iro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BO3UQ7h6; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso25127085e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 06:09:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1741784983; x=1742389783; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741784979; x=1742389779; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Sf5Mim88v1zsUv2CF9zajfgiTTZumS4UoXrfg/qlMyE=;
-        b=0awkaYd9We31IKpPedZDh3uvKNmfLqn9OtPI56bX2wSvlrJjNNEEkBqJ6EMF1bOdJu
-         81ukfkIqH7bM5vRz/c7MeCLDiYJdDotmswVhUcZnF/Zyr7rnaj3NF0tnrbBVJJKFJqRk
-         70P+fNaZNNZfrMl6arvVrn49RFaDB/1zmdl94VdKWhhCuBcFlBatDjWz9+VqaQqbi0BM
-         WZuX72wNZ74DnD1eruYlAWmZgjvW+T6Sd+aC9Sj8eM6HOCZzeezgoGH/nFOQO+OlHAcX
-         htWQG2U6cbNI/370ofEH7CyeAkZh4C+ZJOQtmkx9rsGvTPLfAYbGA3pdVDsiGtWjAA5s
-         +l1Q==
+        bh=BesuV5iUBr9H3CHJKVubwaztfZ8d7wDanwbVw8gGgQA=;
+        b=BO3UQ7h6ipaopEyMSf3d7+N3yuUJ3Pgrc66YT4CKy39vO+eHIDGkgNseomtfWydd7k
+         ogXW8pGJt9tUcZq4Bq3G+H/gKzA2BgvR5bGbryR/qtLxam8CoUk10amMNF95nD+iUBL8
+         22mmeVFNSpvv1fOXF8c1Do1wXckx8Bl42IYSMZqOXSFeFhgzkvPpd2LpKL66z6pxWDBw
+         QQzVD/O3EH+W/pxvukQDgBzif+x+hw9ju2HCqOIOJE9wn2SiVAo6TZdIa+3RlurPh1a/
+         tO7vqcMHAR4jyNEQXYu7jfxBKpzd4sYTzGQRXpBk7akzLk0DSBs9j9XGTp/MoF05mh5X
+         5FCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741784983; x=1742389783;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741784979; x=1742389779;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Sf5Mim88v1zsUv2CF9zajfgiTTZumS4UoXrfg/qlMyE=;
-        b=gpYmaNr6Krcxxo88/eNXlgEWDqCM5N2KXRlrs6k/77A7Lg0AEguFAGwb5rXVp2c3gN
-         or9DWKRpSY5Ba1L7ItK/Pu721NBGU/HOhny5MdW3GQZTDAsGdBmeMkOcoWs35iJTltXH
-         qlcrmFVI4y9cTmAceh2gH5AIGhJliqDWj8CNpLTDwbfWm5+XEF5P5/ZfdhVp3NaMhicv
-         lOJ6Emlh5RnFSu7LYgXzydkGpp4G6eaZkj3aSh3j8rgNZjD1eyrurL/rYFFKdX97aCfV
-         Sbj/h/2VGdNgarTTk+Y0TSW4R/SJbNm8nq5hCHqgww5KDwnW9sd7Ub52dsRAlZdFaPue
-         pquw==
-X-Forwarded-Encrypted: i=1; AJvYcCWU9Cx2ksruv3q/oviFVNZ479bbZOXRlHzejqU9CqFa2ER++HK72PwextjBVEiBZVnxTZznLCzL2WzHptU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLd5mZ7O7WYAt2OdPU2g2FWRrMq9FzicBrypsSy8Mb0qGp5KEU
-	ZV5H5FoFvxOnMqpDgXtochk4yasKJsqdeKDWZKvtIVJx3OJXOIi2NndFsPmk+zgOSZfIAdiIO+b
-	1
-X-Gm-Gg: ASbGncs4OVVfJQ9u5lC045cCy2QnYT4JhI+xjoAoBmtJPD0uDUNN+OvgEO9v2XLVCzv
-	rbqKwZ9+HQfnRK97GBEK4MXI3fAHPX6jiCE976S0Hmh162WortN/G7oNsdwX/qdcrHOUPk8LlZW
-	d2poQm4/ATrpM8taAf51m9frJTNA+xh0NWeCDbpNZnnOUKYtFwCD/xDZh7eoQU1VkQwy7Ynnsg8
-	DHUSZIUveV/kFg1r/duXRX1f0V3ZXSaTl+0wxsgdgHbTvaj8GTC/B/uuUuMBCfF522RzlVB3gX5
-	xnXVqljC15Kggo94PrVA8wpHZEvfxyzRjyPmZ7Y92HYoAuA84Wk1oitOyG1VOmRDBCDDXMFu7Md
-	5AHpw
-X-Google-Smtp-Source: AGHT+IHINSsNMXDf/ujoGNsvP22wMUl9hboDvbpyzHad1RW7/6Vo+ySwFx65tyhXFD9eKYlgsO5pNA==
-X-Received: by 2002:a05:6a20:b68a:b0:1f5:619a:7f4c with SMTP id adf61e73a8af0-1f58cbb5ebbmr11897051637.29.1741784983366;
-        Wed, 12 Mar 2025 06:09:43 -0700 (PDT)
-Received: from sidong.sidong.yang.office.furiosa.vpn ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af5053a85c2sm9432299a12.10.2025.03.12.06.09.41
+        bh=BesuV5iUBr9H3CHJKVubwaztfZ8d7wDanwbVw8gGgQA=;
+        b=Kas+bzCvuwCn6dlpwNdJc1Utmk6HmiYF0HQ07yJLaCJYzJMDhJIoHYZdE1zBJJD6pe
+         UB+qIVgtyN+tSJlhRZ8jIoP+eo6A66UzdI89jq0u97uhAqKM+0T66bTWPZPpppx2DFyR
+         gItQEXbkEooKRuLH7EylNyTC0l5LiTrjetrg/mzq1bB718rgoE75WVkoM4254FDpJmrL
+         0eilsRDSZDPCsbZcaaBizoZyVmy9ZAihq+ODgXdDBhVpyCNbK6ueonBEZSRFzjzkHvAw
+         xx6OY8JmtXGda/n8rKFM0vA9Y9FF8L0i6QSOoHQHcUSZ1QydgiHmB9E7SfG1jirpZihr
+         MFPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ5dCCQsJJt/f4awFKS3LxZNBaOa+TjXquN1SYGLgv97qmRV+siPwpHwd3F8DGs0F7rPe8/kgT3WY74nA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW/V7LuKPb3wBEJqbiMtrALuIVPAoUlTR8q8W2eOKdXjOOv2Td
+	aOr3uoBUkZAMCtRHEvQvqOFYJ3CaroAk2sSFuV3jMhNJ1R/6jcE8
+X-Gm-Gg: ASbGncux6iLd+MtV/gJE3XcdOM0E+3pHFlPnOAU78rH5foTUXYm6W0allJ0hkVqEJGq
+	YfLccl0STFMV3nEzLKMu73tp73fDl5txwLyC2hi9GpTR3NbslSDbWYaNN2ftfxVMxMDyTNK9RHk
+	qYHEJKBjs+UBj7CtmnUuaKagMdfn0K3y59G3CKOp6tfJZKnT03VSHP9Q3Ff2tHvbPKTZw7UZDjz
+	hMoU2+2EwTZjIhlmcdT96TnYrA3xdaasOVDxgKL9GTEU8WLn/z1N/eNGXKZnQXEfIueJbSGFp9q
+	iGzW1DMNj2CqEgIga50f7x1VKz//1BEhrP7iTepP1A71O5PIJM9dVckPwaD4W0c=
+X-Google-Smtp-Source: AGHT+IEWvAbnYEcsY0S3sZRK65NS9EF9SyTrlTuzSCKkbzoiPm9A0wySzWIsDJgR35ApeXwsRAGZhA==
+X-Received: by 2002:a05:600d:14:b0:43c:e2dd:98f3 with SMTP id 5b1f17b1804b1-43ce2dda00amr130086975e9.21.1741784979045;
+        Wed, 12 Mar 2025 06:09:39 -0700 (PDT)
+Received: from debian.local ([84.70.89.211])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8c5cbfsm20408135e9.30.2025.03.12.06.09.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 06:09:43 -0700 (PDT)
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>
-Cc: Sidong Yang <sidong.yang@furiosa.ai>,
-	linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org
-Subject: [RFC PATCH v2 2/2] btrfs: ioctl: use registered buffer for IORING_URING_CMD_FIXED
-Date: Wed, 12 Mar 2025 13:09:22 +0000
-Message-ID: <20250312130924.11402-3-sidong.yang@furiosa.ai>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250312130924.11402-1-sidong.yang@furiosa.ai>
-References: <20250312130924.11402-1-sidong.yang@furiosa.ai>
+        Wed, 12 Mar 2025 06:09:38 -0700 (PDT)
+Date: Wed, 12 Mar 2025 13:09:35 +0000
+From: Chris Bainbridge <chris.bainbridge@gmail.com>
+To: nouveau@lists.freedesktop.org
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	lyude@redhat.com, dakr@kernel.org, sumit.semwal@linaro.org,
+	christian.koenig@amd.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/nouveau: prime: fix ttm_bo_delayed_delete oops
+Message-ID: <Z9GHj-edWJmyzpdY@debian.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-This patch supports IORING_URING_CMD_FIXED flags in io-uring cmd. It
-means that user provided buf_index in sqe that is registered before
-submitting requests. In this patch, btrfs_uring_encoded_read() makes
-iov_iter bvec type by checking the io-uring cmd flag. And there is
-additional bvec field in btrfs_uring_priv for remaining bvec
-lifecycle.
+Fix an oops in ttm_bo_delayed_delete which results from dererencing a
+dangling pointer:
 
-Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+Oops: general protection fault, probably for non-canonical address 0x6b6b6b6b6b6b6b7b: 0000 [#1] PREEMPT SMP
+CPU: 4 UID: 0 PID: 1082 Comm: kworker/u65:2 Not tainted 6.14.0-rc4-00267-g505460b44513-dirty #216
+Hardware name: LENOVO 82N6/LNVNB161216, BIOS GKCN65WW 01/16/2024
+Workqueue: ttm ttm_bo_delayed_delete [ttm]
+RIP: 0010:dma_resv_iter_first_unlocked+0x55/0x290
+Code: 31 f6 48 c7 c7 00 2b fa aa e8 97 bd 52 ff e8 a2 c1 53 00 5a 85 c0 74 48 e9 88 01 00 00 4c 89 63 20 4d 85 e4 0f 84 30 01 00 00 <41> 8b 44 24 10 c6 43 2c 01 48 89 df 89 43 28 e8 97 fd ff ff 4c 8b
+RSP: 0018:ffffbf9383473d60 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: ffffbf9383473d88 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffbf9383473d78 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 6b6b6b6b6b6b6b6b
+R13: ffffa003bbf78580 R14: ffffa003a6728040 R15: 00000000000383cc
+FS:  0000000000000000(0000) GS:ffffa00991c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000758348024dd0 CR3: 000000012c259000 CR4: 0000000000f50ef0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ ? __die_body.cold+0x19/0x26
+ ? die_addr+0x3d/0x70
+ ? exc_general_protection+0x159/0x460
+ ? asm_exc_general_protection+0x27/0x30
+ ? dma_resv_iter_first_unlocked+0x55/0x290
+ dma_resv_wait_timeout+0x56/0x100
+ ttm_bo_delayed_delete+0x69/0xb0 [ttm]
+ process_one_work+0x217/0x5c0
+ worker_thread+0x1c8/0x3d0
+ ? apply_wqattrs_cleanup.part.0+0xc0/0xc0
+ kthread+0x10b/0x240
+ ? kthreads_online_cpu+0x140/0x140
+ ret_from_fork+0x40/0x70
+ ? kthreads_online_cpu+0x140/0x140
+ ret_from_fork_asm+0x11/0x20
+ </TASK>
+
+The cause of this is:
+
+- drm_prime_gem_destroy calls dma_buf_put(dma_buf) which releases the
+  reference to the shared dma_buf. The reference count is 0, so the
+  dma_buf is destroyed, which in turn decrements the corresponding
+  amdgpu_bo reference count to 0, and the amdgpu_bo is destroyed -
+  calling drm_gem_object_release then dma_resv_fini (which destroys the
+  reservation object), then finally freeing the amdgpu_bo.
+
+- nouveau_bo obj->bo.base.resv is now a dangling pointer to the memory
+  formerly allocated to the amdgpu_bo.
+
+- nouveau_gem_object_del calls ttm_bo_put(&nvbo->bo) which calls
+  ttm_bo_release, which schedules ttm_bo_delayed_delete.
+
+- ttm_bo_delayed_delete runs and dereferences the dangling resv pointer,
+  resulting in a general protection fault.
+
+Fix this by moving the drm_prime_gem_destroy call from
+nouveau_gem_object_del to nouveau_bo_del_ttm. This ensures that it will
+be run after ttm_bo_delayed_delete.
+
+Signed-off-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+Co-Developed-by: Christian König <christian.koenig@amd.com>
+Link: https://gitlab.freedesktop.org/drm/amd/-/issues/3937
 ---
- fs/btrfs/ioctl.c | 27 ++++++++++++++++++++++-----
- 1 file changed, 22 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/drm_prime.c           | 8 ++++++--
+ drivers/gpu/drm/nouveau/nouveau_bo.c  | 3 +++
+ drivers/gpu/drm/nouveau/nouveau_gem.c | 3 ---
+ 3 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 6c18bad53cd3..7ac5a387ae5d 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2007 Oracle.  All rights reserved.
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 32a8781cfd67..4b90fa8954d7 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -929,7 +929,9 @@ EXPORT_SYMBOL(drm_gem_prime_export);
+  * &drm_driver.gem_prime_import_sg_table internally.
+  *
+  * Drivers must arrange to call drm_prime_gem_destroy() from their
+- * &drm_gem_object_funcs.free hook when using this function.
++ * &ttm_buffer_object.destroy hook when using this function,
++ * to avoid the dma_buf being freed while the ttm_buffer_object can still
++ * dereference it.
   */
+ struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
+ 					    struct dma_buf *dma_buf,
+@@ -999,7 +1001,9 @@ EXPORT_SYMBOL(drm_gem_prime_import_dev);
+  * implementation in drm_gem_prime_fd_to_handle().
+  *
+  * Drivers must arrange to call drm_prime_gem_destroy() from their
+- * &drm_gem_object_funcs.free hook when using this function.
++ * &ttm_buffer_object.destroy hook when using this function,
++ * to avoid the dma_buf being freed while the ttm_buffer_object can still
++ * dereference it.
+  */
+ struct drm_gem_object *drm_gem_prime_import(struct drm_device *dev,
+ 					    struct dma_buf *dma_buf)
+diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
+index db961eade225..2016c1e7242f 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_bo.c
++++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
+@@ -144,6 +144,9 @@ nouveau_bo_del_ttm(struct ttm_buffer_object *bo)
+ 	nouveau_bo_del_io_reserve_lru(bo);
+ 	nv10_bo_put_tile_region(dev, nvbo->tile, NULL);
  
-+#include "linux/bvec.h"
- #include <linux/kernel.h>
- #include <linux/bio.h>
- #include <linux/file.h>
-@@ -4644,6 +4645,7 @@ struct btrfs_uring_priv {
- 	unsigned long nr_pages;
- 	struct kiocb iocb;
- 	struct iovec *iov;
-+	struct bio_vec *bvec;
- 	struct iov_iter iter;
- 	struct extent_state *cached_state;
- 	u64 count;
-@@ -4711,6 +4713,7 @@ static void btrfs_uring_read_finished(struct io_uring_cmd *cmd, unsigned int iss
- 
- 	kfree(priv->pages);
- 	kfree(priv->iov);
-+	kfree(priv->bvec);
- 	kfree(priv);
- }
- 
-@@ -4730,7 +4733,8 @@ static int btrfs_uring_read_extent(struct kiocb *iocb, struct iov_iter *iter,
- 				   struct extent_state *cached_state,
- 				   u64 disk_bytenr, u64 disk_io_size,
- 				   size_t count, bool compressed,
--				   struct iovec *iov, struct io_uring_cmd *cmd)
-+				   struct iovec *iov, struct io_uring_cmd *cmd,
-+				   struct bio_vec *bvec)
- {
- 	struct btrfs_inode *inode = BTRFS_I(file_inode(iocb->ki_filp));
- 	struct extent_io_tree *io_tree = &inode->io_tree;
-@@ -4767,6 +4771,7 @@ static int btrfs_uring_read_extent(struct kiocb *iocb, struct iov_iter *iter,
- 	priv->start = start;
- 	priv->lockend = lockend;
- 	priv->err = 0;
-+	priv->bvec = bvec;
- 
- 	ret = btrfs_encoded_read_regular_fill_pages(inode, disk_bytenr,
- 						    disk_io_size, pages, priv);
-@@ -4818,6 +4823,7 @@ static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned int issue
- 	u64 start, lockend;
- 	void __user *sqe_addr;
- 	struct btrfs_uring_encoded_data *data = io_uring_cmd_get_async_data(cmd)->op_data;
-+	struct bio_vec *bvec = NULL;
- 
- 	if (!capable(CAP_SYS_ADMIN)) {
- 		ret = -EPERM;
-@@ -4875,9 +4881,19 @@ static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned int issue
- 		}
- 
- 		data->iov = data->iovstack;
--		ret = import_iovec(ITER_DEST, data->args.iov, data->args.iovcnt,
--				   ARRAY_SIZE(data->iovstack), &data->iov,
--				   &data->iter);
++	if (bo->base.import_attach)
++		drm_prime_gem_destroy(&bo->base, bo->sg);
 +
-+		if (cmd && (cmd->flags & IORING_URING_CMD_FIXED)) {
-+			ret = io_uring_cmd_import_fixed_vec(
-+				cmd, data->args.iov, data->args.iovcnt,
-+				ITER_DEST, issue_flags, &data->iter, &bvec);
-+			data->iov = NULL;
-+		} else {
-+			ret = import_iovec(ITER_DEST, data->args.iov,
-+					   data->args.iovcnt,
-+					   ARRAY_SIZE(data->iovstack),
-+					   &data->iov, &data->iter);
-+		}
-+
- 		if (ret < 0)
- 			goto out_acct;
- 
-@@ -4929,13 +4945,14 @@ static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned int issue
- 		ret = btrfs_uring_read_extent(&kiocb, &data->iter, start, lockend,
- 					      cached_state, disk_bytenr, disk_io_size,
- 					      count, data->args.compression,
--					      data->iov, cmd);
-+					      data->iov, cmd, bvec);
- 
- 		goto out_acct;
+ 	/*
+ 	 * If nouveau_bo_new() allocated this buffer, the GEM object was never
+ 	 * initialized, so don't attempt to release it.
+diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
+index 9ae2cee1c7c5..67e3c99de73a 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_gem.c
++++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
+@@ -87,9 +87,6 @@ nouveau_gem_object_del(struct drm_gem_object *gem)
+ 		return;
  	}
  
- out_free:
- 	kfree(data->iov);
-+	kfree(bvec);
+-	if (gem->import_attach)
+-		drm_prime_gem_destroy(gem, nvbo->bo.sg);
+-
+ 	ttm_bo_put(&nvbo->bo);
  
- out_acct:
- 	if (ret > 0)
+ 	pm_runtime_mark_last_busy(dev);
 -- 
-2.43.0
+2.47.2
 
 
