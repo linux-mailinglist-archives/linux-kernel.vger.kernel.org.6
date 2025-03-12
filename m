@@ -1,85 +1,73 @@
-Return-Path: <linux-kernel+bounces-557120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74927A5D3E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:13:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0DFA5D3E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:14:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 387EC189D464
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:13:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C2A6171D8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0A61411EB;
-	Wed, 12 Mar 2025 01:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574C213A3F7;
+	Wed, 12 Mar 2025 01:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bXbu7UEJ"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KcLnhKmg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439A68635E;
-	Wed, 12 Mar 2025 01:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF505CB8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 01:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741741982; cv=none; b=laK41jl8lXImD3myl2jeoOCVdrxDx+quF+hsOLd9obI/hJhz/OtZub/JvYWnjJjWif7soCiWag8Aocoo1VIrQOWTCaU8/nZIbAoApafpOK7beQYJN4gsQZh6+AXfi/uUFVVEreC4UhEfxM0cYecNhG48d48Qk3UBGyQCZdju9jA=
+	t=1741742042; cv=none; b=ryfaI62oYfj7ODVF5fUjCb1h/pO+E0oONtNp7++965A2hXs7/eKEmtj8uR/08zMioc7LxGLHeSuolp11/grxwvctrtPlaMk2QWciWg8YBa2zz6t5RAWQMhfsqthA9Mj1m4WEOUAQTGHNckwvVyH4pwWqBvT4ZeI5ReZRVpm8s0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741741982; c=relaxed/simple;
-	bh=7as6cEWnontO8REkyRl+G5+QXXQ/DkzlBTqVXHL1rFk=;
+	s=arc-20240116; t=1741742042; c=relaxed/simple;
+	bh=cw+bu3HxlbNj06nDNyIU+XJthNYzbbahBS9eBPqp78Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i9rWDiHl367WDr3zJczGmPotlUm8ZUdr58SsCqkh4y80riXlzH05WL0/RlopcctWU9oLs3xJsdHe9VhgpMjBcoxaPEysHVSenMNFTvSq4fJu9LoIeq6EtRPf3/XDEruA4Ah3dW3Dxi5WJgJ5HEB9BPmT6OlsaFb523gi2rdz2QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bXbu7UEJ; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2232aead377so23539755ad.0;
-        Tue, 11 Mar 2025 18:13:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741741979; x=1742346779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7as6cEWnontO8REkyRl+G5+QXXQ/DkzlBTqVXHL1rFk=;
-        b=bXbu7UEJPIa/eNdoQiniBPe9h0CZcrDZqRYm+RvAOTmaUA1OPiBr3kezOZBGzPAB0k
-         NmaTXtQyUtpisnFDX51S3MsWafSFnR3EtCdB1zg0Aqe8jopU1mmDrRyvcyGW1lAPJKFL
-         JNor29cctE7/y8jeSlz9+MrxMndyBqQmIkGhYFd7Q9V4IlE53bkSu+6Z5qDbAmjW7Ubp
-         67vK7zaTxGT6WiMxJuyVBhUOzr3FAndqFK8Zpw7zK7V3IrH1QshIu0SEketEuuivc3LC
-         KSgfP5DW6rkgNz4+fK5CFsYY6jlrlPFC8LZT0jzKQDZ8PsR9/uzvNfbEokaToG7zG5UI
-         y+wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741741979; x=1742346779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7as6cEWnontO8REkyRl+G5+QXXQ/DkzlBTqVXHL1rFk=;
-        b=nNUxeaDGpC0o08aXdSU+iV7HwRJjs0RJbLMlz1qt+bWqqvTKPBvPDKq7OFwQJeRglk
-         5qWLmtSsh4lmauir5BoKGLErTrlbzRtOhZXEku1QZluQQ4wrZTx/1aGtEYIZXW8sNNJU
-         zaGEwsXFmZjO0hHci45CGvbIxyzfanOv5pifXTOcsFC9vL4GbcRaASykqmFnVP2fPyM8
-         iOsrVKuhIKeSdLOpTAlm9wYMBaWfsCgZFRZfzhUqj64fQ9IQG7rsP9MvIibC43VyT1vk
-         S63b02UgY+tz1fuoFEFboESvwnw/3CXSiIwvqOO3cTe/41U9lEjsccMuxQhbAIxwM9CQ
-         6ELg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSZY9Mc8ND659ZS/z+3/POIVXSWVYnp1qc82sfB2ewT8lGFDLtgmyTSZKiOs3+xonk+1CgBu2MzbQ23+pL@vger.kernel.org, AJvYcCW9/s7kcUQLtjrKdhH4oBxlOFa2lPUTnAJe5lhVm2LMayeyGB8SO1B0Ln9y9WIAv2VboIvBlSyBHgfx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcPdRjVYGLah6y4a05MbNiwoKeXt4RB0bDTC+7K4Qc3FVjvepX
-	yrRN2oGbPwnqH0bvyjcBauYz7zPndmBZSNO7f0RQqXbcVGlatGvkQt3FTLqw
-X-Gm-Gg: ASbGncu72e9WpgNpMbEs01Z37dca9P6ApuiuDnfJZW52pcmaN08gIpvq/e6nDn14yTA
-	eQco+ujBhg327x2S5u8Xc7b/xIHLKHBo2WEY+x8MOPTuL4/gDMTxQmw8v5nt8ZBvJ/fu9hrkWew
-	vVoMMIO3jgXQni56zcItnXsPKkGlqHEZ+T2JdvEotmk4uifSYjrxTavr6peaeVUYyxYG4kNrUtD
-	eCoFbAjUj+YRfvHQcKAUiafDZZuSiZKlOy15ZI0thKL8ZNRFaWo1c1BEzyS5Lv2wqcKSkdexZ2W
-	BOLYDRyTIYJ3GgSdW0E9AjB9bBmDutTmOuMzDaLTzcZ5ehBVnX7T+1f0Dqduwm7piqZl
-X-Google-Smtp-Source: AGHT+IFMxQ7CQkHp22Vze5uVk25KSZJX0xrmW5/1b7N5MElPuoMz/IAxU1uK0PuiClkEDqH0A1EyjA==
-X-Received: by 2002:a17:902:f648:b0:21b:b3c9:38ff with SMTP id d9443c01a7336-22428bdec84mr302680055ad.37.1741741979493;
-        Tue, 11 Mar 2025 18:12:59 -0700 (PDT)
-Received: from rigel (27-32-83-166.static.tpgi.com.au. [27.32.83.166])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e944csm104781515ad.74.2025.03.11.18.12.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 18:12:58 -0700 (PDT)
-Date: Wed, 12 Mar 2025 09:12:54 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	David Jander <david@protonic.nl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH RFT v2] gpio: cdev: use raw notifier for line state events
-Message-ID: <20250312011254.GA27058@rigel>
-References: <20250311-gpiolib-line-state-raw-notifier-v2-1-138374581e1e@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fFcPZj1LfVZRD1p5OGPULseOaAFyyBH3I8O68CBP609b04XqVYH2TjBqX4yd6NNEyyenH9mUF5mTcvRdT3kTMT7m/Hl+L2AXutcrmYJUTc1gYQn75kEpBUJ2eHM5aBKL3jVKXrkFdNhK1vHtiOsXK7J6oMjdshv5FomLf7BHeag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KcLnhKmg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741742039;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GTQ6FqeSGJWa4gXakFBln2Ru3c0CV8pFrUsBtR+Ub9U=;
+	b=KcLnhKmgrw+2GMkewoyx7p0ZEofgvFTxR+qs7uh3vT3D3HY94hpnnni5q32UlZuImmWVC5
+	JfToOJ2EFqNZngyXDFEaZsbXyg4ioatPjJ+JjDzibHqku5WLnFT7mLaSPSFdj5KnVUhwU8
+	nDgSmU1w/b/E74dZi6S1hPy7KOh7uTQ=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-498-34Xi6h_tNNSo5Tb8LP3Huw-1; Tue,
+ 11 Mar 2025 21:13:56 -0400
+X-MC-Unique: 34Xi6h_tNNSo5Tb8LP3Huw-1
+X-Mimecast-MFC-AGG-ID: 34Xi6h_tNNSo5Tb8LP3Huw_1741742034
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0DA7019560B4;
+	Wed, 12 Mar 2025 01:13:54 +0000 (UTC)
+Received: from tpad.localdomain (unknown [10.96.133.2])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C1A881955BCB;
+	Wed, 12 Mar 2025 01:13:52 +0000 (UTC)
+Received: by tpad.localdomain (Postfix, from userid 1000)
+	id 67841400DCFE8; Tue, 11 Mar 2025 22:13:30 -0300 (-03)
+Date: Tue, 11 Mar 2025 22:13:30 -0300
+From: Marcelo Tosatti <mtosatti@redhat.com>
+To: Isaku Yamahata <isaku.yamahata@intel.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com,
+	Sean Christopherson <seanjc@google.com>, chao.gao@intel.com,
+	rick.p.edgecombe@intel.com, yan.y.zhao@intel.com,
+	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
+	Nikunj A Dadhania <nikunj@amd.com>
+Subject: Re: [PATCH 0/2] KVM: kvm-coco-queue: Support protected TSC
+Message-ID: <Z9DfurM5LwR5fwX4@tpad>
+References: <cover.1728719037.git.isaku.yamahata@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,35 +76,184 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250311-gpiolib-line-state-raw-notifier-v2-1-138374581e1e@linaro.org>
+In-Reply-To: <cover.1728719037.git.isaku.yamahata@intel.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Mar 11, 2025 at 03:31:43PM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> We use a notifier to implement the mechanism of informing the user-space
-> about changes in GPIO line status. We register with the notifier when
-> the GPIO character device file is opened and unregister when the last
-> reference to the associated file descriptor is dropped.
->
-> Since commit fcc8b637c542 ("gpiolib: switch the line state notifier to
-> atomic") we use the atomic notifier variant. Atomic notifiers call
-> rcu_synchronize in atomic_notifier_chain_unregister() which caused a
-> significant performance regression in some circumstances, observed by
-> user-space when calling close() on the GPIO device file descriptor.
->
-> Replace the atomic notifier with the raw variant and provide
-> synchronization with a read-write spinlock.
->
-> Fixes: fcc8b637c542 ("gpiolib: switch the line state notifier to atomic")
-> Reported-by: David Jander <david@protonic.nl>
-> Closes: https://lore.kernel.org/all/20250311110034.53959031@erd003.prtnl/
-> Tested-by: David Jander <david@protonic.nl>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Sat, Oct 12, 2024 at 12:55:54AM -0700, Isaku Yamahata wrote:
+> This patch series is for the kvm-coco-queue branch.  The change for TDX KVM is
+> included at the last.  The test is done by create TDX vCPU and run, get TSC
+> offset via vCPU device attributes and compare it with the TDX TSC OFFSET
+> metadata.  Because the test requires the TDX KVM and TDX KVM kselftests, don't
+> include it in this patch series.
 
-Works for me.
+OK, previous results were incorrect. In fact, this patches (which apply
+cleanly to current kvm-coco-queue) reduce cyclictest latency from:
 
-Tested-by: Kent Gibson <warthog618@gmail.com>
+Max Latencies: 00167 00160
+Max Latencies: 00132 00151
+Max Latencies: 00138 00142
+Max Latencies: 02512 02582
+Max Latencies: 00139 00140
+Max Latencies: 00128 00131
+Max Latencies: 00131 00132
+Max Latencies: 00131 00134
+Max Latencies: 00136 00147
+Max Latencies: 00153 00135
+Max Latencies: 00138 00138
 
-Cheers,
-Kent.
+to:
+
+Max Latencies: 00134 00131                                                                                  
+Max Latencies: 00130 00129                                                                                  
+Max Latencies: 00126 00141                                                                                 
+Max Latencies: 00137 00138                                                                                  
+Max Latencies: 00123 00115                                                                                  
+Max Latencies: 00119 00127                                                                                  
+Max Latencies: 00131 00104                                                                                  
+Max Latencies: 00137 00127                                                                                  
+Max Latencies: 00135 00126                                                                                  
+Max Latencies: 00128 00142                                                                                  
+Max Latencies: 00135 00138         
+
+> 
+> 
+> Background
+> ----------
+> X86 confidential computing technology defines protected guest TSC so that the
+> VMM can't change the TSC offset/multiplier once vCPU is initialized and the
+> guest can trust TSC.  The SEV-SNP defines Secure TSC as optional.  TDX mandates
+> it.  The TDX module determines the TSC offset/multiplier.  The VMM has to
+> retrieve them.
+> 
+> On the other hand, the x86 KVM common logic tries to guess or adjust the TSC
+> offset/multiplier for better guest TSC and TSC interrupt latency at KVM vCPU
+> creation (kvm_arch_vcpu_postcreate()), vCPU migration over pCPU
+> (kvm_arch_vcpu_load()), vCPU TSC device attributes (kvm_arch_tsc_set_attr()) and
+> guest/host writing to TSC or TSC adjust MSR (kvm_set_msr_common()).
+> 
+> 
+> Problem
+> -------
+> The current x86 KVM implementation conflicts with protected TSC because the
+> VMM can't change the TSC offset/multiplier.  Disable or ignore the KVM
+> logic to change/adjust the TSC offset/multiplier somehow.
+> 
+> Because KVM emulates the TSC timer or the TSC deadline timer with the TSC
+> offset/multiplier, the TSC timer interrupts are injected to the guest at the
+> wrong time if the KVM TSC offset is different from what the TDX module
+> determined.
+> 
+> Originally the issue was found by cyclic test of rt-test [1] as the latency in
+> TDX case is worse than VMX value + TDX SEAMCALL overhead.  It turned out that
+> the KVM TSC offset is different from what the TDX module determines.
+> 
+> 
+> Solution
+> --------
+> The solution is to keep the KVM TSC offset/multiplier the same as the value of
+> the TDX module somehow.  Possible solutions are as follows.
+> - Skip the logic
+>   Ignore (or don't call related functions) the request to change the TSC
+>   offset/multiplier.
+>   Pros
+>   - Logically clean.  This is similar to the guest_protected case.
+>   Cons
+>   - Needs to identify the call sites.
+> 
+> - Revert the change at the hooks after TSC adjustment
+>   x86 KVM defines the vendor hooks when the TSC offset/multiplier are
+>   changed.  The callback can revert the change.
+>   Pros
+>   - We don't need to care about the logic to change the TSC offset/multiplier.
+>   Cons:
+>   - Hacky to revert the KVM x86 common code logic.
+> 
+> Choose the first one.  With this patch series, SEV-SNP secure TSC can be
+> supported.
+> 
+> 
+> Patches:
+> 1: Preparation for the next patch
+> 2: Skip the logic to adjust the TSC offset/multiplier in the common x86 KVM logic
+> 
+> [1] https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
+> 
+> Changes for TDX KVM
+> 
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 8785309ccb46..969da729d89f 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -694,8 +712,6 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
+>  	vcpu->arch.cr0_guest_owned_bits = -1ul;
+>  	vcpu->arch.cr4_guest_owned_bits = -1ul;
+>  
+> -	vcpu->arch.tsc_offset = kvm_tdx->tsc_offset;
+> -	vcpu->arch.l1_tsc_offset = vcpu->arch.tsc_offset;
+>  	/*
+>  	 * TODO: support off-TD debug.  If TD DEBUG is enabled, guest state
+>  	 * can be accessed. guest_state_protected = false. and kvm ioctl to
+> @@ -706,6 +722,13 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
+>  	 */
+>  	vcpu->arch.guest_state_protected = true;
+>  
+> +	/* VMM can't change TSC offset/multiplier as TDX module manages them. */
+> +	vcpu->arch.guest_tsc_protected = true;
+> +	vcpu->arch.tsc_offset = kvm_tdx->tsc_offset;
+> +	vcpu->arch.l1_tsc_offset = vcpu->arch.tsc_offset;
+> +	vcpu->arch.tsc_scaling_ratio = kvm_tdx->tsc_multiplier;
+> +	vcpu->arch.l1_tsc_scaling_ratio = kvm_tdx->tsc_multiplier;
+> +
+>  	if ((kvm_tdx->xfam & XFEATURE_MASK_XTILE) == XFEATURE_MASK_XTILE)
+>  		vcpu->arch.xfd_no_write_intercept = true;
+>  
+> @@ -2674,6 +2697,7 @@ static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
+>  		goto out;
+>  
+>  	kvm_tdx->tsc_offset = td_tdcs_exec_read64(kvm_tdx, TD_TDCS_EXEC_TSC_OFFSET);
+> +	kvm_tdx->tsc_multiplier = td_tdcs_exec_read64(kvm_tdx, TD_TDCS_EXEC_TSC_MULTIPLIER);
+>  	kvm_tdx->attributes = td_params->attributes;
+>  	kvm_tdx->xfam = td_params->xfam;
+>  
+> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+> index 614b1c3b8483..c0e4fa61cab1 100644
+> --- a/arch/x86/kvm/vmx/tdx.h
+> +++ b/arch/x86/kvm/vmx/tdx.h
+> @@ -42,6 +42,7 @@ struct kvm_tdx {
+>  	bool tsx_supported;
+>  
+>  	u64 tsc_offset;
+> +	u64 tsc_multiplier;
+>  
+>  	enum kvm_tdx_state state;
+>  
+> diff --git a/arch/x86/kvm/vmx/tdx_arch.h b/arch/x86/kvm/vmx/tdx_arch.h
+> index 861c0f649b69..be4cf65c90a8 100644
+> --- a/arch/x86/kvm/vmx/tdx_arch.h
+> +++ b/arch/x86/kvm/vmx/tdx_arch.h
+> @@ -69,6 +69,7 @@
+>  
+>  enum tdx_tdcs_execution_control {
+>  	TD_TDCS_EXEC_TSC_OFFSET = 10,
+> +	TD_TDCS_EXEC_TSC_MULTIPLIER = 11,
+>  };
+>  
+>  enum tdx_vcpu_guest_other_state {
+> 
+> ---
+> Isaku Yamahata (2):
+>   KVM: x86: Push down setting vcpu.arch.user_set_tsc
+>   KVM: x86: Don't allow tsc_offset, tsc_scaling_ratio to change
+> 
+>  arch/x86/include/asm/kvm_host.h |  1 +
+>  arch/x86/kvm/x86.c              | 21 ++++++++++++++-------
+>  2 files changed, 15 insertions(+), 7 deletions(-)
+> 
+> 
+> base-commit: 909f9d422f59f863d7b6e4e2c6e57abb97a27d4d
+> -- 
+> 2.45.2
+> 
+> 
+
 
