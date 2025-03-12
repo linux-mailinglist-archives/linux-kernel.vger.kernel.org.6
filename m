@@ -1,77 +1,74 @@
-Return-Path: <linux-kernel+bounces-557533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57137A5DA75
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:32:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B29AA5DA73
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:32:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85F1B1748C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:32:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC99317470E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F3123E345;
-	Wed, 12 Mar 2025 10:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B201E23E25B;
+	Wed, 12 Mar 2025 10:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TvzabY/j"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pAZAZIst"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7E21DF735
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE7915A858;
+	Wed, 12 Mar 2025 10:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741775567; cv=none; b=EAgpqEUMYK1ChmB30Z7vHYo4B2VFIxfpszJKd7SqI//xvCCAyhLM+izF2HPxiPgSEUlT3gCI6qK8dMfrLj3hMLl5HbWU4Weqt2htCi4NoGMUs6ZcXPAqDpc7ZCwhkG4Sny0TNP/WosSBWwQ3wSjsHwfsNjAVUMlTjFqlwBi4N+0=
+	t=1741775563; cv=none; b=eOyuej3ZtDolcKl0h43ZB1sNv8veoiRVYzwIsfPf7w7vQg0awDVXgVYCN8RzLkynKVKnzUj1LfaM4k5pGIkmwkmYwCHb9d1SaAZjHecmtQBeq9kd5OCX80MEEWwXlRnP7iebfl/tv1uWQzaCx4atzXxjYGuI1ho+P+v0KUlaehk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741775567; c=relaxed/simple;
-	bh=XGNhufp/P0Q8Q+TW0utBMugHRIX6fxVWb9Tf0tQVeGk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DUGMBk8xUSXXXM15eXEzfIYDQ5FFIIn1/VRdpt16Xt1vRY81n/6ZEpL5Ma2F70X6cw8mrcC4aSDvJwAuNbg7vxdaurekWTAdFL4BEr2Uo3Kwk0kNd1F8h1pIM3KLDv+3DjLg+cQQsbC3MV3BgKJaMQOVDPro63bGQbdL9Y8MqlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TvzabY/j; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39129fc51f8so5072281f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:32:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741775563; x=1742380363; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MLNYJfrGVFfqNPfPze2ZbdlHRTv6KQKhBtISRpzv4Gk=;
-        b=TvzabY/jZ+/WSOAJ5exe4rAtbVPt6Afy7Tw42ftSYNaHj31gsszeQWhUCqu3mZ7IRj
-         gVCrFan27/ZgQuKaLHbEGMqP8o3R07HTur+yZP28WvvtvRVd7OAtG6UK/heFXMFTCZ+3
-         Fk/m31J4MMx6yv2E0LdX0hfOK2SuJLJjjcil72CkAWr9wrRxjd/6RyYi5XL6DOxFWadd
-         S+bbMjWW6hMJH7/CBX/HmlkRmYXD0318j5LI61dNSJS9lDSsxIFO+xR2hdpJFMKeckDH
-         y0twanc5UdrmLl+2v1mHK2QM+ESvtTCp0/XMGRp6KHiRvCdmtxI4Zchl4YGo+aNRVnRU
-         0XXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741775563; x=1742380363;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MLNYJfrGVFfqNPfPze2ZbdlHRTv6KQKhBtISRpzv4Gk=;
-        b=CAFf0gGcyHJHjDc6olrq/5RpfLENzMhdakuRyIgjZB8an+GhmRYfOy4E3K6MIiSYHF
-         7XVu/Nu/hNNViQVE2e2bzFsujZ3ZThTWcOpjrAWPXk96/FnOfla7hKQR46MBwjeheJFg
-         xxPK3QOXD27KVitSjg11yxS+efo67D3XTWb7gchK+F/tX/zGS8B32gwr6XiV2hPp2sxt
-         vSL417Df0CeWuW5Wv+pE1vYPQFwYmBpxlXuG3N5rfO9enHQhRn5ww4zRJxiRyXi6aRgA
-         EVeZVSSZ88E+FXxsdC0Wwk4uxOsFCBAFeCHqJZbbBba3holVnYk+u7jOwAyf4S1IzP7W
-         Ex/A==
-X-Gm-Message-State: AOJu0Yw4U8wS5Sfv7qsrOmhmEAauBhd+NEEXIqhfKd6jzQ2WrJxZSspV
-	p6IY9a1e/mW0FXoXWhcyHmS0eFJbj7MBTPeQxfCb4gisM068bDrYaF7jgY+sI0w=
-X-Gm-Gg: ASbGncvq/GpkppXhimH90XSQcNPm9LCh/U48MjIcIKxS+F/DWSJeKAvf6eQYlYMQ1K9
-	nA+zLgpcVutUxrpVl+klzZmnjcj4Ae8n+SLZ3ZhycugVFaYzn0518dXHP31JrmCLMNU5Ub5NcF1
-	5zjuDms8QPzpecXaNRaPjBzcf4Fwst/wK1zHzB866Q0xlwmoeroasIwz5acZmQHV+sCJ2bjWRSd
-	cRUyigWKdssbld5Fkg+w8bbZJJqWmkWMlqcUboPxdBSzmGfNtN0lC0qUsSFg0dYw2QFQPcEtBdN
-	mdl+0E4JYTrY3omBPXBksM0TKn0dhvAIJBLe+LbBIq48ga4=
-X-Google-Smtp-Source: AGHT+IFstWyoNbU2Br602U//uo/eIeA/3WTixN2oQDEHm/zr4ekh3UaCUO2yHxeImVG1RDIzlOdHjA==
-X-Received: by 2002:a5d:64e4:0:b0:391:4889:5045 with SMTP id ffacd0b85a97d-391488951femr9589432f8f.36.1741775563279;
-        Wed, 12 Mar 2025 03:32:43 -0700 (PDT)
-Received: from pop-os.lan ([209.198.129.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfca1sm20313128f8f.22.2025.03.12.03.32.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 03:32:42 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-Date: Wed, 12 Mar 2025 10:31:57 +0000
-Subject: [PATCH v4] coresight: Add a KUnit test for
- coresight_find_default_sink()
+	s=arc-20240116; t=1741775563; c=relaxed/simple;
+	bh=1Zrl7XJlODTMn2xzf0QDsKnwExXLa7Dq6fAETI8+/Q4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dnhqoNRpHBAFuh2HE29+jppRz04KRRkl1GuItEWbaZvL5Yy3yDjo96qgxfJA+hDeAQ6DK4gPlGyAofCANpItwjCaXNecl1328418eBb95ZPKXcssCrgBGJE3Y+rfULNr6PPUXIsEFUAyFjKL4Wa1UkFz/cOFdMhZ2SqixRrYmSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pAZAZIst; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52C7vF5A008923;
+	Wed, 12 Mar 2025 10:32:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=UWvIREE7AL/FzZAsFF7hbrg0uAsb
+	UXJLdwxTI53a890=; b=pAZAZIstYQRwNWY+v8x/SOnEwcQpIWndlG3I0WD53TFm
+	qjwagVGIBe9cuU3Cy6ZkF4ZNe749v+SMI/qWaC76GUHepWUalJgHS4uqvpOarqIx
+	znC04KN697imJeBqDL41pCvo7MYVRAdGTD4OIZaaP78WHRn5FYrVPATARd8osfuH
+	1C9RwI1OgXIgZWeEX+ksk98GyDBNOb3w+6T+rktM0gIzoyDx7ACFeRhJCvRv/dzk
+	N+S7aEpbyQMuVPe0X8FIW8xda9xdcxJvLjmfKO/a/NgsEeTXeXqK0rqG3Lp7fXmE
+	jIlJOoXQ0askq5dcww8RcnUpUW1URxWJ8dUUjw82vw==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45avk4b3x6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 10:32:34 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52CAF22l003141;
+	Wed, 12 Mar 2025 10:32:31 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atstkjyf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 10:32:31 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52CAWSHC25559688
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Mar 2025 10:32:28 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 02207580AF;
+	Wed, 12 Mar 2025 10:32:30 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5D6F9580AC;
+	Wed, 12 Mar 2025 10:32:27 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 12 Mar 2025 10:32:27 +0000 (GMT)
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+Date: Wed, 12 Mar 2025 11:32:18 +0100
+Subject: [PATCH v2] s390/pci: Fix dev.dma_range_map missing sentinel
+ element
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,179 +77,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250312-james-cs-kunit-test-v4-1-ae3dd718a26a@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAJxi0WcC/3XOQQ6CMBAF0KuQri3pTKGAK+9hXJRSoIJgWiQaw
- t0tsFCjLv8k//2ZiNPWaEf2wUSsHo0zfedDtAuIqmVXaWoKnwkyjBlnMT3Li3ZUOdrcOjPQQbu
- BcllCUWLEQAvim1erS3Nf1ePJ59q4obePdWSE5bp5iDGISPAsjBGTCChsfKhaaZtDazpp+7C3F
- VmUEV/Nf5+M6I2U51KkmGeJUF8If0MAfyPcI4Uqc5ElnIGAD2Se5yfSVMziNgEAAA==
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Leo Yan <leo.yan@arm.com>
-Cc: linux-kernel@vger.kernel.org, coresight@lists.linaro.org, 
- linux-arm-kernel@lists.infradead.org
-X-Mailer: b4 0.14.0
+Message-Id: <20250312-fix_dma_map_alloc-v2-1-530108d9de21@linux.ibm.com>
+X-B4-Tracking: v=1; b=H4sIALFi0WcC/32NWwrDIBREtxLudw1GTaH96j5CCGpMc8FH0FZSg
+ nuvzQL6eYaZMwckE9EkuDcHRJMxYfAV2KUBvUr/NATnysAo6ymnV7LgPs1OTk5uk7Q2aKK4ov2
+ N8lkvCupui6aWTucwVl4xvUL8nBe5+6X/bLkjHVFikUJwKozUD4v+vbeoXKuDg7GU8gXxzattt
+ gAAAA==
+X-Change-ID: 20250306-fix_dma_map_alloc-b3b05903dcfb
+To: Matthew Rosato <mjrosato@linux.ibm.com>, Joerg Roedel <jroedel@suse.de>,
+        Will Deacon <will@kernel.org>, Gerd Bayer <gbayer@linux.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2375;
+ i=schnelle@linux.ibm.com; h=from:subject:message-id;
+ bh=1Zrl7XJlODTMn2xzf0QDsKnwExXLa7Dq6fAETI8+/Q4=;
+ b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGNIvJu3aEiNxcX/wHY4nb2fISMeUbI6xUNhu0qAbeWq/T
+ ZDCrJr3HaUsDGJcDLJiiiyLupz91hVMMd0T1N8BM4eVCWQIAxenAEzk1kWG/5XTWZZ9D2g43jAv
+ w4uB8ZW/5xunty+se83d9apuKsh+DGdkuHLBaIrXx8Xe+9nEA1L3SDc/WNA451mPSuA1XcOOK7k
+ LuAE=
+X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
+ fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 6y4N96oHAM06SXiSsYvxVeXjOfJeGrWo
+X-Proofpoint-GUID: 6y4N96oHAM06SXiSsYvxVeXjOfJeGrWo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_04,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 impostorscore=0 phishscore=0 mlxscore=0 mlxlogscore=999
+ lowpriorityscore=0 spamscore=0 malwarescore=0 adultscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503120072
 
-Add a test to confirm that default sink selection skips over an ETF
-and returns an ETR even if it's further away.
+The fixed commit sets up dev.dma_range_map but missed that this is
+supposed to be an array of struct bus_dma_region with a sentinel element
+with the size field set to 0 at the end. This would lead to overruns in
+e.g. dma_range_map_min(). It could also result in wrong translations
+instead of DMA_MAPPING_ERROR in translate_phys_to_dma() if the paddr
+were to not fit in the aperture. Fix this by using the
+dma_direct_set_offset() helper which creates a sentinel for us.
 
-This also makes it easier to add new unit tests in the future.
-
-Reviewed-by: Leo Yan <leo.yan@arm.com>
-Signed-off-by: James Clark <james.clark@linaro.org>
+Fixes: d236843a6964 ("s390/pci: store DMA offset in bus_dma_region")
+Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
 ---
-Changes in v4:
-- Rename etm to src now that it's not CORESIGHT_DEV_SUBTYPE_SOURCE_PROC
-- Remove the now empty src_ops too
-- Fix a rebase mistake in the Makefile that removed CTCU
-- Link to v3: https://lore.kernel.org/r/20250312-james-cs-kunit-test-v3-1-dcfb69730161@linaro.org
+Note: Based on iommu/next
 
-Changes in v3:
-- Use CORESIGHT_DEV_SUBTYPE_SOURCE_BUS type instead of the default
-  (CORESIGHT_DEV_SUBTYPE_SOURCE_PROC) so that the test still works even
-  when TRBE sinks are registered. This also removes the need for the
-  fake CPU ID callback.
-- Link to v2: https://lore.kernel.org/r/20250305-james-cs-kunit-test-v2-1-83ba682b976c@linaro.org
-
-Changes in v2:
-- Let devm free everything rather than doing individual kfrees:
-  "Like with managed drivers, KUnit-managed fake devices are
-  automatically cleaned up when the test finishes, but can be manually
-  cleaned up early with kunit_device_unregister()."
-- Link to v1: https://lore.kernel.org/r/20250225164639.522741-1-james.clark@linaro.org
+v1 -> v2:
+- Fixed typo, added trailers
+- Link to v1: https://lore.kernel.org/r/20250306-fix_dma_map_alloc-v1-1-b4fa44304eac@linux.ibm.com
 ---
- drivers/hwtracing/coresight/Kconfig                |  9 +++
- drivers/hwtracing/coresight/Makefile               |  1 +
- drivers/hwtracing/coresight/coresight-core.c       |  1 +
- .../hwtracing/coresight/coresight-kunit-tests.c    | 74 ++++++++++++++++++++++
- 4 files changed, 85 insertions(+)
+ arch/s390/pci/pci_bus.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-index ecd7086a5b83..f064e3d172b3 100644
---- a/drivers/hwtracing/coresight/Kconfig
-+++ b/drivers/hwtracing/coresight/Kconfig
-@@ -259,4 +259,13 @@ config CORESIGHT_DUMMY
- 
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called coresight-dummy.
-+
-+config CORESIGHT_KUNIT_TESTS
-+	  tristate "Enable Coresight unit tests"
-+	  depends on KUNIT
-+	  default KUNIT_ALL_TESTS
-+	  help
-+	    Enable Coresight unit tests. Only useful for development and not
-+	    intended for production.
-+
- endif
-diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
-index 8e62c3150aeb..4e6ea5b05b01 100644
---- a/drivers/hwtracing/coresight/Makefile
-+++ b/drivers/hwtracing/coresight/Makefile
-@@ -53,3 +53,4 @@ obj-$(CONFIG_ULTRASOC_SMB) += ultrasoc-smb.o
- obj-$(CONFIG_CORESIGHT_DUMMY) += coresight-dummy.o
- obj-$(CONFIG_CORESIGHT_CTCU) += coresight-ctcu.o
- coresight-ctcu-y := coresight-ctcu-core.o
-+obj-$(CONFIG_CORESIGHT_KUNIT_TESTS) += coresight-kunit-tests.o
-diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-index fb43ef6a3b1f..47af75ba7a00 100644
---- a/drivers/hwtracing/coresight/coresight-core.c
-+++ b/drivers/hwtracing/coresight/coresight-core.c
-@@ -959,6 +959,7 @@ coresight_find_default_sink(struct coresight_device *csdev)
- 	}
- 	return csdev->def_sink;
- }
-+EXPORT_SYMBOL_GPL(coresight_find_default_sink);
- 
- static int coresight_remove_sink_ref(struct device *dev, void *data)
+diff --git a/arch/s390/pci/pci_bus.c b/arch/s390/pci/pci_bus.c
+index 0e725039861f92925a38f7ff7cb6de6b0d965ac3..14310c3b48860a16de13536adf95ef99e6af21cc 100644
+--- a/arch/s390/pci/pci_bus.c
++++ b/arch/s390/pci/pci_bus.c
+@@ -287,23 +287,21 @@ static struct zpci_bus *zpci_bus_alloc(int topo, bool topo_is_tid)
+ static void pci_dma_range_setup(struct pci_dev *pdev)
  {
-diff --git a/drivers/hwtracing/coresight/coresight-kunit-tests.c b/drivers/hwtracing/coresight/coresight-kunit-tests.c
-new file mode 100644
-index 000000000000..c8f361767c45
---- /dev/null
-+++ b/drivers/hwtracing/coresight/coresight-kunit-tests.c
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <kunit/test.h>
-+#include <kunit/device.h>
-+#include <linux/coresight.h>
-+
-+#include "coresight-priv.h"
-+
-+static struct coresight_device *coresight_test_device(struct device *dev)
-+{
-+	struct coresight_device *csdev = devm_kcalloc(dev, 1,
-+						     sizeof(struct coresight_device),
-+						     GFP_KERNEL);
-+	csdev->pdata = devm_kcalloc(dev, 1,
-+				   sizeof(struct coresight_platform_data),
-+				   GFP_KERNEL);
-+	return csdev;
-+}
-+
-+static void test_default_sink(struct kunit *test)
-+{
-+	/*
-+	 * Source -> ETF -> ETR -> CATU
-+	 *                   ^
-+	 *                   | default
-+	 */
-+	struct device *dev = kunit_device_register(test, "coresight_kunit");
-+	struct coresight_device *src = coresight_test_device(dev),
-+				*etf = coresight_test_device(dev),
-+				*etr = coresight_test_device(dev),
-+				*catu = coresight_test_device(dev);
-+	struct coresight_connection conn = {};
-+
-+	src->type = CORESIGHT_DEV_TYPE_SOURCE;
-+	/*
-+	 * Don't use CORESIGHT_DEV_SUBTYPE_SOURCE_PROC, that would always return
-+	 * a TRBE sink if one is registered.
-+	 */
-+	src->subtype.source_subtype = CORESIGHT_DEV_SUBTYPE_SOURCE_BUS;
-+	etf->type = CORESIGHT_DEV_TYPE_LINKSINK;
-+	etf->subtype.sink_subtype = CORESIGHT_DEV_SUBTYPE_SINK_BUFFER;
-+	etr->type = CORESIGHT_DEV_TYPE_SINK;
-+	etr->subtype.sink_subtype = CORESIGHT_DEV_SUBTYPE_SINK_SYSMEM;
-+	catu->type = CORESIGHT_DEV_TYPE_HELPER;
-+
-+	conn.src_dev = src;
-+	conn.dest_dev = etf;
-+	coresight_add_out_conn(dev, src->pdata, &conn);
-+
-+	conn.src_dev = etf;
-+	conn.dest_dev = etr;
-+	coresight_add_out_conn(dev, etf->pdata, &conn);
-+
-+	conn.src_dev = etr;
-+	conn.dest_dev = catu;
-+	coresight_add_out_conn(dev, etr->pdata, &conn);
-+
-+	KUNIT_ASSERT_PTR_EQ(test, coresight_find_default_sink(src), etr);
-+}
-+
-+static struct kunit_case coresight_testcases[] = {
-+	KUNIT_CASE(test_default_sink),
-+	{}
-+};
-+
-+static struct kunit_suite coresight_test_suite = {
-+	.name = "coresight_test_suite",
-+	.test_cases = coresight_testcases,
-+};
-+
-+kunit_test_suites(&coresight_test_suite);
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("James Clark <james.clark@linaro.org>");
-+MODULE_DESCRIPTION("Arm CoreSight KUnit tests");
+ 	struct zpci_dev *zdev = to_zpci(pdev);
+-	struct bus_dma_region *map;
+-	u64 aligned_end;
++	u64 aligned_end, size;
++	dma_addr_t dma_start;
++	int ret;
+ 
+-	map = kzalloc(sizeof(*map), GFP_KERNEL);
+-	if (!map)
+-		return;
+-
+-	map->cpu_start = 0;
+-	map->dma_start = PAGE_ALIGN(zdev->start_dma);
++	dma_start = PAGE_ALIGN(zdev->start_dma);
+ 	aligned_end = PAGE_ALIGN_DOWN(zdev->end_dma + 1);
+-	if (aligned_end >= map->dma_start)
+-		map->size = aligned_end - map->dma_start;
++	if (aligned_end >= dma_start)
++		size = aligned_end - dma_start;
+ 	else
+-		map->size = 0;
+-	WARN_ON_ONCE(map->size == 0);
++		size = 0;
++	WARN_ON_ONCE(size == 0);
+ 
+-	pdev->dev.dma_range_map = map;
++	ret = dma_direct_set_offset(&pdev->dev, 0, dma_start, size);
++	if (ret)
++		pr_err("Failed to allocate DMA range map for %s\n", pci_name(pdev));
+ }
+ 
+ void pcibios_bus_add_device(struct pci_dev *pdev)
 
 ---
-base-commit: 3eadce8308bc8d808fd9e3a9d211c84215087451
-change-id: 20250305-james-cs-kunit-test-3af1df2401e6
+base-commit: e840414e5a73ac02ffba6299b46f535a0b7cba98
+change-id: 20250306-fix_dma_map_alloc-b3b05903dcfb
 
 Best regards,
 -- 
-James Clark <james.clark@linaro.org>
+Niklas Schnelle
 
 
