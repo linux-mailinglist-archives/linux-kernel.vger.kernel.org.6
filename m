@@ -1,177 +1,136 @@
-Return-Path: <linux-kernel+bounces-557753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80DD0A5DD45
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:03:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48BFDA5DD29
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:56:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 762997A5C7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:02:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2117E189B14F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7338024418E;
-	Wed, 12 Mar 2025 13:03:32 +0000 (UTC)
-Received: from birdy.pmhahn.de (birdy.pmhahn.de [88.198.22.186])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90BD244EA0;
+	Wed, 12 Mar 2025 12:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I2k8J8Dr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C7A1E7C2B;
-	Wed, 12 Mar 2025 13:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.198.22.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3F27083C;
+	Wed, 12 Mar 2025 12:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741784612; cv=none; b=kU4oU7zLwJ0v37mH6W0kbNZhWGFT6wGz6VbkbaXo3d9a0vDSyyxuZJBqFx9/hVYCN37Qs1owpFPafCcT34mi7TEGCv+LPYgRL8vbg9qmHgJfNkUkN8HFSS1mbulK9viLQ8C4HwvfAx/FmVcVUUj4CagoCO7PV5CEaNeb2iIEDdg=
+	t=1741784161; cv=none; b=c8qa8z0uIdOCU09AlRylCZwj8+1sikHaEBuOOfQb9PKnguoOm48kH/ZRy1PzCkd+pw6OZQWXmBNNu9tnmw4Do+NpHaOmm/3SvGhC4OjsefzaJvDdU72z+vh5QDdBEam+YQNGqV3pWFrT4YcLfG6L/qQd65knW6uqMKinyplgdOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741784612; c=relaxed/simple;
-	bh=urFl68uoAji+L/OZmu9MC+PGlUjZURSh42gOnWDdFzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jhKlx+K/SEp3eTO2dhQBkH+R4ZDB8QF50XDTX8q3Yqo1zIlzUraXULTbt/5/4jX9KX/mnbjXEqumcQERZGI1gRFBBO81y3+N1DvsAlqgLAsTjIcUZuBTGBGMUgSYujlna4rYhwZ6UUSjZ6DD99T9B5Dei6fODsQ9BwFN4iUfdl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=avm.de; spf=fail smtp.mailfrom=avm.de; arc=none smtp.client-ip=88.198.22.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=avm.de
-Received: from birdy.pmhahn.de (p200300e2774a7B00F7f5672D647b4c86.dip0.t-ipconnect.de [IPv6:2003:e2:774a:7b00:f7f5:672d:647b:4c86])
-	by birdy.pmhahn.de (Postfix) with ESMTPSA id 4565B220261D;
-	Wed, 12 Mar 2025 13:55:29 +0100 (CET)
-Date: Wed, 12 Mar 2025 13:55:27 +0100
-From: Philipp Hahn <phahn-oss@avm.de>
-To: netdev@vger.kernel.org
-Cc: Philipp Hahn <phahn-oss@avm.de>, Oliver Neukum <oliver@neukum.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Leon Schuermann <leon@is.currently.online>,
-	Kory Maincent <kory.maincent@bootlin.com>
-Subject: [PATCH net-next v3]: cdc_ether|r8152: ThinkPad Hybrid USB-C/A Dock
- quirk
-Message-ID: <Z9GEP/TksqEWFbkd@birdy.pmhahn.de>
-Mail-Followup-To: netdev@vger.kernel.org, Oliver Neukum <oliver@neukum.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Leon Schuermann <leon@is.currently.online>,
-	Kory Maincent <kory.maincent@bootlin.com>
+	s=arc-20240116; t=1741784161; c=relaxed/simple;
+	bh=cXKHm/RurkmSioL7RFlQcp51mjKyU/pOdfMXfLFR+ss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qDcRSKnnBcDITw0foje3b2e6Xghj0dQ4qTK8TdTV/sDA8Ci7vrNdM8bh3Kaj8GCDQf2VKBtrvo76mTGk1LOpOQ6cyhoxRLGiw+P0a+t+Un+e7GUwfKLcTnRgvZUUrhsagZpFBQiBc3cArc3eYlQd2jPkwPn1F6/tQv0Mssrwh9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I2k8J8Dr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CBDE05003523;
+	Wed, 12 Mar 2025 12:55:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Wx1Oq22ysa/s2ub9FhQ5ef7c03DnunFXLTLLRls0YU8=; b=I2k8J8DrzpljLjV9
+	/+p0KFsiWgFpDeI/4WLv04KF7MxpFBznZORi91+jjKSZGbrlWTcy9mKcqFNA7o/7
+	2Vdngkg6KU8wdK9wb6RYBJO+Y5yxD4LYQH/QhqRzKJaueoSqc/AipLWNu1H2L+L1
+	LvnSm0e9TQRI02htxGsN2V+JWUjhK/CvH3+Q8IY+N+8FfZUW6s777UGiSNNO5v0l
+	09yu/mIcpv5NpZq6qgSQldFdix+kbmj5lh817Ga/gNzAUNgrfGqLMtL4J+ZAazWq
+	eNrGOMR/LUTMM+FjwnO7yTNl0exBX/pbrcWvW9s8n30yBu1qrm3qy8OMcd8l8+MC
+	OuM+jA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45b96y88sj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 12:55:56 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52CCtu0n021430
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 12:55:56 GMT
+Received: from [10.216.38.182] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Mar
+ 2025 05:55:51 -0700
+Message-ID: <c6e601d1-28ff-2a24-0b98-e79006bd7a8e@quicinc.com>
+Date: Wed, 12 Mar 2025 18:25:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 1/4] dt-bindings: media: qcom,sm8550-iris: update power
+ domain name
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Dikshita Agarwal
+	<quic_dikshita@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
+ <20250311-dtbinding-v1-1-5c807d33f7ae@quicinc.com>
+ <607f842d-07b5-4c1f-ad26-0fd34e6e605b@kernel.org>
+ <40d1a27e-aee9-bd68-a82b-a51ef8ccde05@quicinc.com>
+ <85bd865b-71e7-40e1-9303-e970d338cb59@kernel.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <85bd865b-71e7-40e1-9303-e970d338cb59@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zeJWEIDs-dwcmYmAOJQehBnhTFz7VNsd
+X-Authority-Analysis: v=2.4 cv=I+llRMgg c=1 sm=1 tr=0 ts=67d1845c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=QJSAq4TcFel--fmAFxcA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: zeJWEIDs-dwcmYmAOJQehBnhTFz7VNsd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_05,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=752
+ lowpriorityscore=0 adultscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 spamscore=0 malwarescore=0 mlxscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120090
 
-Lenovo ThinkPad Hybrid USB-C with USB-A Dock (17ef:a359) is affected by
-the same problem as the Lenovo Powered USB-C Travel Hub (17ef:721e):
-Both are based on the Realtek RTL8153B chip used to use the cdc_ether
-driver. However, using this driver, with the system suspended the device
-constantly sends pause-frames as soon as the receive buffer fills up.
-This causes issues with other devices, where some Ethernet switches stop
-forwarding packets altogether.
 
-Using the Realtek driver (r8152) fixes this issue. Pause frames are no
-longer sent while the host system is suspended.
-
-Cc: Oliver Neukum <oliver@neukum.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: linux-usb@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Leon Schuermann <leon@is.currently.online>
-Link: https://git.kernel.org/netdev/net/c/cb82a54904a9
-Link: https://git.kernel.org/netdev/net/c/2284bbd0cf39
-Link: https://www.lenovo.com/de/de/p/accessories-and-software/docking/docking-usb-docks/40af0135eu
-Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
-Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
----
-V2 -> V3: Move `net-next` in subject.
-V1 -> V2: Prefix subject with `net-next:`
-V1 -> V2: Add additional Cc:s
- drivers/net/usb/cdc_ether.c | 7 +++++++
- drivers/net/usb/r8152.c     | 6 ++++++
- drivers/net/usb/r8153_ecm.c | 6 ++++++
- 3 files changed, 19 insertions(+)
-
-diff --git a/drivers/net/usb/cdc_ether.c b/drivers/net/usb/cdc_ether.c
-index a6469235d904..a032c1ded406 100644
---- a/drivers/net/usb/cdc_ether.c
-+++ b/drivers/net/usb/cdc_ether.c
-@@ -783,6 +783,13 @@ static const struct usb_device_id	products[] = {
- 	.driver_info = 0,
- },
- 
-+/* Lenovo ThinkPad Hybrid USB-C with USB-A Dock (40af0135eu, based on Realtek RTL8153) */
-+{
-+	USB_DEVICE_AND_INTERFACE_INFO(LENOVO_VENDOR_ID, 0xa359, USB_CLASS_COMM,
-+			USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
-+	.driver_info = 0,
-+},
-+
- /* Aquantia AQtion USB to 5GbE Controller (based on AQC111U) */
- {
- 	USB_DEVICE_AND_INTERFACE_INFO(AQUANTIA_VENDOR_ID, 0xc101,
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index 468c73974046..96fa3857d8e2 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -785,6 +785,7 @@ enum rtl8152_flags {
- #define DEVICE_ID_THINKPAD_USB_C_DONGLE			0x720c
- #define DEVICE_ID_THINKPAD_USB_C_DOCK_GEN2		0xa387
- #define DEVICE_ID_THINKPAD_USB_C_DOCK_GEN3		0x3062
-+#define DEVICE_ID_THINKPAD_HYBRID_USB_C_DOCK		0xa359
- 
- struct tally_counter {
- 	__le64	tx_packets;
-@@ -9787,6 +9788,7 @@ static bool rtl8152_supports_lenovo_macpassthru(struct usb_device *udev)
- 		case DEVICE_ID_THINKPAD_USB_C_DOCK_GEN2:
- 		case DEVICE_ID_THINKPAD_USB_C_DOCK_GEN3:
- 		case DEVICE_ID_THINKPAD_USB_C_DONGLE:
-+		case DEVICE_ID_THINKPAD_HYBRID_USB_C_DOCK:
- 			return 1;
- 		}
- 	} else if (vendor_id == VENDOR_ID_REALTEK && parent_vendor_id == VENDOR_ID_LENOVO) {
-@@ -10064,6 +10066,8 @@ static const struct usb_device_id rtl8152_table[] = {
- 	{ USB_DEVICE(VENDOR_ID_MICROSOFT, 0x0927) },
- 	{ USB_DEVICE(VENDOR_ID_MICROSOFT, 0x0c5e) },
- 	{ USB_DEVICE(VENDOR_ID_SAMSUNG, 0xa101) },
-+
-+	/* Lenovo */
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x304f) },
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3054) },
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3062) },
-@@ -10074,7 +10078,9 @@ static const struct usb_device_id rtl8152_table[] = {
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x720c) },
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x7214) },
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x721e) },
-+	{ USB_DEVICE(VENDOR_ID_LENOVO,  0xa359) },
- 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0xa387) },
-+
- 	{ USB_DEVICE(VENDOR_ID_LINKSYS, 0x0041) },
- 	{ USB_DEVICE(VENDOR_ID_NVIDIA,  0x09ff) },
- 	{ USB_DEVICE(VENDOR_ID_TPLINK,  0x0601) },
-diff --git a/drivers/net/usb/r8153_ecm.c b/drivers/net/usb/r8153_ecm.c
-index 20b2df8d74ae..8d860dacdf49 100644
---- a/drivers/net/usb/r8153_ecm.c
-+++ b/drivers/net/usb/r8153_ecm.c
-@@ -135,6 +135,12 @@ static const struct usb_device_id products[] = {
- 				      USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
- 	.driver_info = (unsigned long)&r8153_info,
- },
-+/* Lenovo ThinkPad Hybrid USB-C with USB-A Dock (40af0135eu, based on Realtek RTL8153) */
-+{
-+	USB_DEVICE_AND_INTERFACE_INFO(VENDOR_ID_LENOVO, 0xa359, USB_CLASS_COMM,
-+				      USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
-+	.driver_info = (unsigned long)&r8153_info,
-+},
- 
- 	{ },		/* END */
- };
--- 
-2.34.1
-
+On 3/12/2025 2:14 PM, Krzysztof Kozlowski wrote:
+> On 11/03/2025 18:47, Vikash Garodia wrote:
+>>
+>> On 3/11/2025 11:03 PM, Krzysztof Kozlowski wrote:
+>>> On 11/03/2025 13:03, Vikash Garodia wrote:
+>>>> Not all platforms has a collapsible mx, so use the more generic naming
+>>>> of mx in the binding.
+>>>>
+>>>
+>>> No, neither tested, nor justified. Read the file. How many platforms do
+>>> you have there? One. Out of this one platform you claim not all of them
+>>> have MX collapsible, so you want MX?
+>> Let say we have one which is non-collapsible, what should be the way in that
+>> case to use the bindings which differ only in the MX/MXC part ?
+> 
+> 
+> I don't care about imaginary things. Send patches for real hardware. How
+> does collapsibility of the domain change the real hardware interface?
+It does not. I am now thinking to drop this patch altogether, and continue to
+use MXC as defined in bindings, irrespective of connection to hardware as MX or
+MXC. For ex SM8550/SA8775P have MXC, while QCS8300 have MX, but again, as you
+mentioned, these difference just alters some property in DT, binding can remain
+same.
+Regards,
+Vikash
 
