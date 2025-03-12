@@ -1,207 +1,124 @@
-Return-Path: <linux-kernel+bounces-557352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1530A5D7AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:57:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D4DA5D7AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:56:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F79B17674D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:57:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA31189D7A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18C423236A;
-	Wed, 12 Mar 2025 07:56:50 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A891723026F;
-	Wed, 12 Mar 2025 07:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963F422DF9D;
+	Wed, 12 Mar 2025 07:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hz0Ybvgt"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E561D88A6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741766210; cv=none; b=bJyB52ry/+CsYO067rQwuRXSx452QG6IKAJa3EGwdUnz0ubzlxjeKHv08RRMD6EULRTuN9DZlT2EXJYy32srrwhZFpOSC8QhPRKx7nQWal8jx8cIXE4mc/mPy1RdZF7eafldDBQ7UjwgsaDyR8h+TDIPyXsQ6h66/9AsftS01mQ=
+	t=1741766198; cv=none; b=EAa3m0c1Xygylj/HVbu0snrReqySsw5rRr7I6LsEmv8knGpWKdXS5hBck7bLLNC/zo0TySsFzAv9+uKLtVuhHZtKrUiCEulX6ppLix62iT5oYG79NiwiCwad5v/rclD5xlx7G6W72XcJuHHA61pfkPTAZ0AuV4wzTlb3GNl3lpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741766210; c=relaxed/simple;
-	bh=GTPuNwymZ+04io2yMrPM0InKHZ4HpkEy8pbRYEMU+GI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J8kVhyqIEA7ZUuxgc83Z3T7AISwKYtB8e+n6gI7DCvcv7MZht+nnWdmeubUH65//jYmIpWkmo+HOBrvMZZpUWFjz5+ZS6k3P4dD6BMG6coDF7Z3LTdu5wOIJ/+pmV+gKgCyk7c0Yh7VfVyowHOGonVMt6TU2J4FdrlTo1eU6peI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-17-67d13e3b6a68
-From: Rakie Kim <rakie.kim@sk.com>
-To: gourry@gourry.net
-Cc: akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com,
-	dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com,
-	rakie.kim@sk.com
-Subject: [PATCH v2 4/4] mm/mempolicy: Fix duplicate node addition in sysfs for weighted interleave
-Date: Wed, 12 Mar 2025 16:56:27 +0900
-Message-ID: <20250312075628.648-4-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <20250312075628.648-1-rakie.kim@sk.com>
-References: <20250312075628.648-1-rakie.kim@sk.com>
+	s=arc-20240116; t=1741766198; c=relaxed/simple;
+	bh=35CZaj9e0EDEqpNnf5IVtlgWXdDQPbnOKfskpsFe6uc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L7eId2IslH5geKze7+CZfopcp8CVFkezatjCyXyAFivX4nefWzBKFhruoPpM9+AlYUJOQ2xvF/k1MW9g0rmM32Ol+M7TiCrBJnIdW7k2eIbCgY2UEeVr5lhy01agjJ7tDQPkOfMUeqXl07BxHiElLmpSa6Cra5pTVI4Gxzj9RjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hz0Ybvgt; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5495c1e1b63so6629672e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:56:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741766193; x=1742370993; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A3wyyfwOpoNsq0clOc6hSFVvZfLJtb8AcaIz2Ox+0V8=;
+        b=hz0Ybvgt0jq8t02yldqP9VnW7I5YgW2ZeXaln2Dqr9CpHQh+T+5KDW9MVghirW1Aqh
+         yeHPhNluxGvN+TNgkkabJ4TWNfJIOTRRGhyTNJLt4+kY5J3WcYGBzK/HKnAuUu5TVap4
+         sPoxf30yxxMpuNLc9tRZWQyM+C0pmXMmAzUDpMi8vhj6h0gCoZ+tXXrwoyyGP9w1kizf
+         lSE+9GPI2SgbL2WLp7kMGTe2Pc7pyNHf87slUIgEkTunVKhVkkmk40TZPyein4kAC3BH
+         LH7js3H998oI4XcO0kKOfidLrh8JZOvrbZvvT8CXk1BYxWFtN7TSsV4Cc5kyP//+vNCW
+         xNuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741766193; x=1742370993;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A3wyyfwOpoNsq0clOc6hSFVvZfLJtb8AcaIz2Ox+0V8=;
+        b=vywt+1GM7GCIHOzwmDWziVOBgrsp7zWkhkz/M+s04EFPsM91p0gPqhRRYNprf88tgs
+         WhhhAT8UHqBQi0ydLG9KwISZsweSSRphjQaSdUNEWh1ienB/JII4GkDBR3hlgmdDoZYb
+         zAuNJKR3rUVa+t9nOxq0mQnKWQPwJh3tcz5qIa/uuQHIQIGSCPEwIKJxUbdXXgAxej7t
+         8haeBTeVAFOmlBx6REyDTpYQMFm2quldHcM2C5CvC7oHKXEBSEKsDh1HrnsQQbaM+Jwg
+         ZSKvVVLHLDwjkNk9h4TsfRnHV8Z+mKQ7OV+A5AND9wX+HaJGQc7I2tY1/yZ2EHNCgqZu
+         1DEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUA9AFxWyyp8rtv1nzwg0hzhVlOhz/MJO1rlxbFqexIq8bzrtuuKNfbi+0kD6PYD8yJ/bPktQi/f/O1v4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1huJU1b9YF3jTBR22XGWAR4xhBIjDbJ1zcoNBZboxCPOjhNpk
+	fF4mIihyf3SsMVAiv8RfrUoGNUy4BQV4z1KM0OlwqSkch2HmVWMx
+X-Gm-Gg: ASbGncsyEOZzh/0UQV8tK9qYDtJf02ttfNq9bc9rmCZmYebWgyIpXfovCMrUA+5TGti
+	nUARR73Qut4FGt2r+3IQBw5KDH5vfDhB77mBLYUrnvPGRINUt9YUjkDhj/Q0Oh223mh3vXPy/HQ
+	aVPtQuOnaAdEa16Jdt72yKvQVcoH7p6jEHRxZxmAiez5GVGuhFBxSvf/n7+hEvJn+O+x0CmxQFv
+	+oSgZOw+pWcnjhS0IB+b1Q5XqXAk7RqD/S3HejRuqiUkk3tK0BTd/DUO7jlbs373ek44IypxGag
+	tQ36h2Lr4lKU8EtOj7riQa9Rd+GG2OPOpdWvcQ8w/UkiMws=
+X-Google-Smtp-Source: AGHT+IEjQaZs5T5ZDDjAKYJGVt1s6iYpZ8Lci0SjZKojtUFYU2/65513d3B9k+EdWSOZIVi3BNR3Hw==
+X-Received: by 2002:a05:6512:158e:b0:545:cd5:84d9 with SMTP id 2adb3069b0e04-549ababc3bcmr2484258e87.12.1741766193120;
+        Wed, 12 Mar 2025 00:56:33 -0700 (PDT)
+Received: from grain.localdomain ([5.18.255.97])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b0bd148sm2045714e87.139.2025.03.12.00.56.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 00:56:32 -0700 (PDT)
+Received: by grain.localdomain (Postfix, from userid 1000)
+	id 0AB565A0044; Wed, 12 Mar 2025 10:56:32 +0300 (MSK)
+Date: Wed, 12 Mar 2025 10:56:31 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Benjamin Segall <bsegall@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrey Vagin <avagin@openvz.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [patch V3a 17/18] posix-timers: Provide a mechanism to allocate
+ a given timer ID
+Message-ID: <Z9E-L1pvl1j_4E3f@grain>
+References: <20250308155501.391430556@linutronix.de>
+ <20250308155624.526740902@linutronix.de>
+ <Z9CsstMf-EVZpsiH@pavilion.home>
+ <87msdrz0i9.ffs@tglx>
+ <87jz8vz0en.ffs@tglx>
+ <Z9C6GpaB9WvNzvJS@pavilion.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsXC9ZZnka613cV0g3+LBCzmrF/DZjF96gVG
-	i593j7NbHN86j93i/KxTLBaXd81hs7i35j+rxeo1GQ4cHjtn3WX36G67zO6xeM9LJo9Nnyax
-	e5yY8ZvFY+dDS4/Pm+QC2KO4bFJSczLLUov07RK4Mv6fmMdc8Fym4kPrDPYGxjfiXYycHBIC
-	JhJtE66xwNjTHnYxdjFycLAJKEkc2xsDEhYREJWYd3Q2UAkXB7PAYiaJhYfXM4EkhAWSJHo/
-	P2cGsVkEVCUOPXrICGLzChhLXH47lxFipqZEw6V7YPWcQPNffL4GZgsB1SxfNx2qXlDi5Mwn
-	YDcwC8hLNG+dzQyyTELgBJvEw4u7WSEGSUocXHGDZQIj/ywkPbOQ9CxgZFrFKJSZV5abmJlj
-	opdRmZdZoZecn7uJERjIy2r/RO9g/HQh+BCjAAejEg+vQM6FdCHWxLLiytxDjBIczEoivKtt
-	gUK8KYmVValF+fFFpTmpxYcYpTlYlMR5jb6VpwgJpCeWpGanphakFsFkmTg4pRoYixdz5s00
-	Wtp58klRe+3XNcfVMltvqO1XXG6xts7o8mLGfnfNt2+E3mu9iY4/bn3w5uQTzysqPrF8maJ7
-	9q9vrX5Zw8V/l9R1PXb4trfO9Lq9NuPxvYZ9hzaHMC9flLCzuEUy+s+nR/4fHzfU9sTO2Lh3
-	8pKwDwsrrs6JfbnSwM5d89imdG6NI0osxRmJhlrMRcWJAM+avFBgAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOLMWRmVeSWpSXmKPExsXCNUNNS9fa7mK6wZXtHBZz1q9hs5g+9QKj
-	xc+7x9ktPj97zWxxfOs8dovDc0+yWpyfdYrF4vKuOWwW99b8Z7U4dO05q8XqNRkWv7etYHPg
-	8dg56y67R3fbZXaPxXteMnls+jSJ3ePEjN8sHjsfWnp8u+3hsfjFByaPz5vkAjijuGxSUnMy
-	y1KL9O0SuDL+n5jHXPBcpuJD6wz2BsY34l2MnBwSAiYS0x52MXYxcnCwCShJHNsbAxIWERCV
-	mHd0NksXIxcHs8BiJomFh9czgSSEBZIkej8/ZwaxWQRUJQ49esgIYvMKGEtcfjuXEWKmpkTD
-	pXtg9ZxA8198vgZmCwHVLF83HapeUOLkzCcsIDazgLxE89bZzBMYeWYhSc1CklrAyLSKUSQz
-	ryw3MTPHVK84O6MyL7NCLzk/dxMjMHiX1f6ZuIPxy2X3Q4wCHIxKPLwHVC+kC7EmlhVX5h5i
-	lOBgVhLhXW0LFOJNSaysSi3Kjy8qzUktPsQozcGiJM7rFZ6aICSQnliSmp2aWpBaBJNl4uCU
-	amAsc6q5P0t43c7S+AsqSelhaa7nfkwNNe4plGMv2V0jq/jpBE/xpUfia5cqfpNPdC/4LXDu
-	5YJo9kDm3uRnV5Mz56dVP2nfvKq34o7VhdjrR26sNVDaXirHOnv7HN1stewuFv7yvQ+SPNcs
-	62A8Jbaj0rZiY8uLWTV3FvxbzXav1WCRXM3d5lolluKMREMt5qLiRACMy050WgIAAA==
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9C6GpaB9WvNzvJS@pavilion.home>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Sysfs attributes for interleave control were registered both at initialization
-and when new nodes were detected via hotplug, leading to potential duplicates.
+On Tue, Mar 11, 2025 at 11:32:58PM +0100, Frederic Weisbecker wrote:
+...
+> > 
+> > Recreating two timers with IDs 1000000 and 2000000 takes 1.5 seconds with
+> > the create/delete method. With the prctl() it takes 3 microseconds.
+> > 
+> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> 
+> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
-This patch ensures that each node is registered only once, preventing conflicts
-and redundant sysfs entries.
+One thing which just popped up in my head -- this interface may be used not
+only by criu but any application which wants to create timer with specified
+id (hell know why, but whatever). As far as I understand we don't provide
+an interface to _read_ this property, don't we? Thus criu will restore such
+application which already has this bit set incorrectly.
 
-Signed-off-by: Rakie Kim <rakie.kim@sk.com>
----
- mm/mempolicy.c | 66 +++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 46 insertions(+), 20 deletions(-)
-
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 71aff1276d4d..5f20521036ec 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -3391,6 +3391,7 @@ struct iw_node_attr {
- 
- struct iw_node_group {
- 	struct kobject *wi_kobj;
-+	struct mutex kobj_lock;
- 	struct iw_node_attr **nattrs;
- };
- 
-@@ -3440,12 +3441,17 @@ static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *attr,
- 
- static void sysfs_wi_node_release(int nid)
- {
--	if (!ngrp->nattrs[nid])
-+	mutex_lock(&ngrp->kobj_lock);
-+	if (!ngrp->nattrs[nid]) {
-+		mutex_unlock(&ngrp->kobj_lock);
- 		return;
-+	}
- 
- 	sysfs_remove_file(ngrp->wi_kobj, &ngrp->nattrs[nid]->kobj_attr.attr);
- 	kfree(ngrp->nattrs[nid]->kobj_attr.attr.name);
- 	kfree(ngrp->nattrs[nid]);
-+	ngrp->nattrs[nid] = NULL;
-+	mutex_unlock(&ngrp->kobj_lock);
- }
- 
- static void sysfs_wi_release(struct kobject *wi_kobj)
-@@ -3464,35 +3470,54 @@ static const struct kobj_type wi_ktype = {
- 
- static int sysfs_wi_node_add(int nid)
- {
--	struct iw_node_attr *node_attr;
-+	int ret = 0;
- 	char *name;
- 
--	node_attr = kzalloc(sizeof(*node_attr), GFP_KERNEL);
--	if (!node_attr)
--		return -ENOMEM;
-+	if (nid < 0 || nid >= nr_node_ids) {
-+		pr_err("Invalid node id: %d\n", nid);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	mutex_lock(&ngrp->kobj_lock);
-+	if (!ngrp->nattrs[nid]) {
-+		ngrp->nattrs[nid] = kzalloc(sizeof(struct iw_node_attr), GFP_KERNEL);
-+	} else {
-+		mutex_unlock(&ngrp->kobj_lock);
-+		pr_info("Node [%d] is already existed\n", nid);
-+		goto out;
-+	}
-+	mutex_unlock(&ngrp->kobj_lock);
-+
-+	if (!ngrp->nattrs[nid]) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 
- 	name = kasprintf(GFP_KERNEL, "node%d", nid);
- 	if (!name) {
--		kfree(node_attr);
--		return -ENOMEM;
-+		kfree(ngrp->nattrs[nid]);
-+		ret = -ENOMEM;
-+		goto out;
- 	}
- 
--	sysfs_attr_init(&node_attr->kobj_attr.attr);
--	node_attr->kobj_attr.attr.name = name;
--	node_attr->kobj_attr.attr.mode = 0644;
--	node_attr->kobj_attr.show = node_show;
--	node_attr->kobj_attr.store = node_store;
--	node_attr->nid = nid;
-+	sysfs_attr_init(&ngrp->nattrs[nid]->kobj_attr.attr);
-+	ngrp->nattrs[nid]->kobj_attr.attr.name = name;
-+	ngrp->nattrs[nid]->kobj_attr.attr.mode = 0644;
-+	ngrp->nattrs[nid]->kobj_attr.show = node_show;
-+	ngrp->nattrs[nid]->kobj_attr.store = node_store;
-+	ngrp->nattrs[nid]->nid = nid;
- 
--	if (sysfs_create_file(ngrp->wi_kobj, &node_attr->kobj_attr.attr)) {
--		kfree(node_attr->kobj_attr.attr.name);
--		kfree(node_attr);
--		pr_err("failed to add attribute to weighted_interleave\n");
--		return -ENOMEM;
-+	ret = sysfs_create_file(ngrp->wi_kobj, &ngrp->nattrs[nid]->kobj_attr.attr);
-+	if (ret) {
-+		kfree(ngrp->nattrs[nid]->kobj_attr.attr.name);
-+		kfree(ngrp->nattrs[nid]);
-+		pr_err("failed to add attribute to weighted_interleave: %d\n", ret);
-+		goto out;
- 	}
- 
--	ngrp->nattrs[nid] = node_attr;
--	return 0;
-+out:
-+	return ret;
- }
- 
- static int wi_node_notifier(struct notifier_block *nb,
-@@ -3588,6 +3613,7 @@ static int __init mempolicy_sysfs_init(void)
- 		err = -ENOMEM;
- 		goto err_out;
- 	}
-+	mutex_init(&ngrp->kobj_lock);
- 
- 	ngrp->nattrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
- 			       GFP_KERNEL);
--- 
-2.34.1
-
+	Cyrill
 
