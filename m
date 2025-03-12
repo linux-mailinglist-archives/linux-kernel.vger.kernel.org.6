@@ -1,62 +1,57 @@
-Return-Path: <linux-kernel+bounces-557642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4E13A5DBEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:48:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A51B1A5DBEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:48:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901A718895D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:48:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC953A63E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4811123F381;
-	Wed, 12 Mar 2025 11:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB3E23F381;
+	Wed, 12 Mar 2025 11:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="slYiwfFl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nPrFlKfH"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E35623237C;
-	Wed, 12 Mar 2025 11:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F181F03EB;
+	Wed, 12 Mar 2025 11:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741780087; cv=none; b=hisWpYeQrH03RYEYU3l5fqxlb6KLjrFKVSsZZav828EPojl/zGsSUJPOlyolnmx9i+zULhvSAUoyFMbL/WskX51V/7P8B3rMFFzyI3ColMu+lmrRb9ZFn+CsJc4qF3LNZv2aVEa7YHq1eQwZ8g+QGgXGUuV089s2s++oFnJuUzk=
+	t=1741780118; cv=none; b=pE2lFxH+XB99EZ0k28IxmoLed0gkWWFbDmwbq9q+uw/HP3qwPBfa5WG0jZJgT0/cDzhyXAZw1lQA8zk7WeKtpJcFK0DVdf1edtrL+VCw0J2zl9P6ckXMqd0G1g0v6+aQNPN37HleS+WdlLDlMA4VWSesmi5mpp/wK/Citc0sw6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741780087; c=relaxed/simple;
-	bh=R8v6pS0pixsrHLGD3aftIutJXs5Es7Ccu+wDgrw5dfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EYjgTWE3GzNtgc5b0wM6KCxmVKVusRDG5ysQFbjQC/3VcmJOqE42DoQ3f4sWuye5pwjB5NgA0eVEWyKprC+E0KHHExkED3XJQ+5avf7uAcaj4tnRSEWo6gBq5SOG3VXsC4IYtUTx/RgGzmFd1gWzcLL5bNWwe7RH7zYjmkw5VcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=slYiwfFl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED828C4CEE3;
-	Wed, 12 Mar 2025 11:48:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741780087;
-	bh=R8v6pS0pixsrHLGD3aftIutJXs5Es7Ccu+wDgrw5dfQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=slYiwfFlETo+CSOzUJfEviQJA3id2tmJKLSvxzbMzg7HtHWPTHlVwz+LwX+GAWsCa
-	 xanbQiLQbbUIKSPUg/XZnlPtR1KZE8dDBmijAvmF2c+5REYDKdWVZFzNssdUTLJ040
-	 EjGuwT5BGAsHa+Ye/Lbgna9pDpkYewuCm4sJN5ZMsbt6JWXh37g43AHM4P95pH3T89
-	 QT4ZhxRODZzca56xRKeXQiDXENaoroZ0JGTuZU2sNMoGsbFQ0wkTvxKC+531zQ47Lk
-	 7c1n8hiTvqrg2dxnLAUX51w9PDk6uyj69r2dkH8mp/eMUtremxUvFPhnvxeJzT9fZo
-	 3aaVAnitvBnMg==
-Date: Wed, 12 Mar 2025 12:48:03 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ayushi Makhija <quic_amakhija@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	robdclark@gmail.com, dmitry.baryshkov@linaro.org, sean@poorly.run, 
-	marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org, robh+dt@kernel.org, 
-	krzk+dt@kernel.org, konradybcio@kernel.org, conor+dt@kernel.org, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	quic_abhinavk@quicinc.com, quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com, 
-	quic_jesszhan@quicinc.com
-Subject: Re: [PATCH v2 07/10] arm64: dts: qcom: sa8775p-ride: add anx7625 DSI
- to DP bridge nodes
-Message-ID: <20250312-athletic-cockle-of-happiness-e88a3a@krzk-bin>
-References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
- <20250311122445.3597100-8-quic_amakhija@quicinc.com>
+	s=arc-20240116; t=1741780118; c=relaxed/simple;
+	bh=Kgod/bkChKNvWAk+utLk+E9WE0pDt83VbwpFUw6HAuE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JSqEzuGvu5iJ+Z7aZmMlIhhtxjrc6s18I1QdxNpMqGRJ5Xbpsxys1aggLCrpQRmX/twmpfU3Hy0Fq2HhO3yBt+S/0e4rUbRmO6r4C8o4Xp8VE7FXD6Oa5C06XgnfspC3JovVca1T8xRECJh1Er5YBk6YCKwfeGUlAoKGph7LmOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nPrFlKfH; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741780114; x=1742039314;
+	bh=HInmDeSxbbW0+Qq88H4iBiYbF79g8W/WWDbF6VHeAnE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=nPrFlKfHATsp9T9XYxvfhNsagwXXy+2jJvTVHdrStntAMCzUqFQqNof/O597kmGeU
+	 avH7WI62wCyIcvjr9xtcQEnMsv+7x4JS91X+60k2zSoSacvqBwxAV19Ykzh5J1T3wu
+	 WN+qrlPwzvb6OPqxBW6YaaXqtLhry2iPFfYZP4lcyIPxTITHKf4uRB7X9qZgLa7Qg2
+	 2skcNSbDjzix9MEk/Aug5xNzOczueEI/hceBgAnXrTMELQlv9DlvuuL6f2CzuwJPJ0
+	 V+NCr4PDkxhv9BNmRSTuve4N3WN321mwixa/bga36uByrRbFr1Z3Vl7fNr5hMc0Dtk
+	 gsPf+JcPZ2M3w==
+Date: Wed, 12 Mar 2025 11:48:30 +0000
+To: I Hsin Cheng <richard120310@gmail.com>, rostedt@goodmis.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org, josh@joshtriplett.org, boqun.feng@gmail.com, urezki@gmail.com, mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com, qiang.zhang1211@gmail.com, ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org, rcu@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, jserv@ccns.ncku.edu.tw
+Subject: Re: [PATCH] rust: sync: rcu: Mark Guard methods as inline
+Message-ID: <D8E9IKGUUUJZ.2797G3WP1GVA3@proton.me>
+In-Reply-To: <20250312101723.149135-1-richard120310@gmail.com>
+References: <20250312101723.149135-1-richard120310@gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 6a5dbfa6befa34639ff2342d1efe2bf27311fbc5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,32 +59,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250311122445.3597100-8-quic_amakhija@quicinc.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 11, 2025 at 05:54:42PM +0530, Ayushi Makhija wrote:
-> Add anx7625 DSI to DP bridge device nodes.
-> 
-> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 208 ++++++++++++++++++++-
->  1 file changed, 207 insertions(+), 1 deletion(-)
+On Wed Mar 12, 2025 at 11:17 AM CET, I Hsin Cheng wrote:
+> Currenyly the implementation of "Guard" methods are basically wrappers
+> around rcu's function within kernel. Building the kernel with llvm
+> 18.1.8 on x86_64 machine will generate the following symbols:
 >
+> $ nm vmlinux | grep ' _R'.*Guard | rustfilt
+> ffffffff817b6c90 T <kernel::sync::rcu::Guard>::new
+> ffffffff817b6cb0 T <kernel::sync::rcu::Guard>::unlock
+> ffffffff817b6cd0 T <kernel::sync::rcu::Guard as core::ops::drop::Drop>::d=
+rop
+> ffffffff817b6c90 T <kernel::sync::rcu::Guard as core::default::Default>::=
+default
+>
+> These Rust symbols are basically wrappers around functions
+> "rcu_read_lock" and "rcu_read_unlock". Marking them as inline can
+> reduce the generation of these symbols, and saves the size of code
+> generation for 100 bytes.
+>
+> $ ./scripts/bloat-o-meter vmlinux_old vmlinux_new
+> add/remove: 0/8 grow/shrink: 0/0 up/down: 0/-100 (-100)
+> Function                                     old     new   delta
+> _RNvXs_NtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB4_5GuardNtNtCsdaXADs8PRFB_4co=
+re7default7Default7default       9       -      -9
+> _RNvXs0_NtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB5_5GuardNtNtNtCsdaXADs8PRFB_=
+4core3ops4drop4Drop4drop       9       -      -9
+> _RNvMNtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB2_5Guard6unlock       9       -=
+      -9
+> _RNvMNtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB2_5Guard3new       9       -   =
+   -9
+> __pfx__RNvXs_NtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB4_5GuardNtNtCsdaXADs8PR=
+FB_4core7default7Default7default      16       -     -16
+> __pfx__RNvXs0_NtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB5_5GuardNtNtNtCsdaXADs=
+8PRFB_4core3ops4drop4Drop4drop      16       -     -16
+> __pfx__RNvMNtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB2_5Guard6unlock      16  =
+     -     -16
+> __pfx__RNvMNtNtCsaYBeKL739Xz_6kernel4sync3rcuNtB2_5Guard3new      16     =
+  -     -16
+> Total: Before=3D23385830, After=3D23385730, chg -0.00%
+>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+> Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
 
-So you just gave up after one comment? Context of every email should be
-trimmed, so if it is not trimmed means something is still there. I know
-there are reviewers who respond with huge unrelated context, but that's
-just disrespectful to our time and don't take it as normal.
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
-
-Thank you.
-</form letter>
+---
+Cheers,
+Benno
 
 
