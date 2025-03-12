@@ -1,193 +1,121 @@
-Return-Path: <linux-kernel+bounces-557233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD916A5D568
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:14:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37FC7A5D56E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:18:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3804A3B4E57
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:14:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99D213B5A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9071EE028;
-	Wed, 12 Mar 2025 05:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32621DE2B5;
+	Wed, 12 Mar 2025 05:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHZQ6yHK"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Th7XfJRi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A591EC018;
-	Wed, 12 Mar 2025 05:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEA4645;
+	Wed, 12 Mar 2025 05:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741756347; cv=none; b=b6OPhveUPCV4XChJLIyo8BjUDRl41HCdnOwnv9vo01yz/V07hA5cNcoKUMRkZ1UrFqB5tAGFNPozB7AETrnXxqTmPBIqUoeiMSsW6MjlbQQMOSaOtdXHIqWEvROt8RPtCnWOWiUlr3h9+eiWOgDj9AmguepyFxtNA7nn+pAVphw=
+	t=1741756683; cv=none; b=YgTysjoI3Zp0Kjyfn50ApcmpjmhGuFHBabyrutrpxCRA7AlPTli9GEBBGkzucpOzw2uDUj7GpJhjNxzM0QebW8FBhlykKv1Ku8PV7kfkFCtubgpBJMD9/pbdtH6cEO8B785MSujSDA8/3xxjhMJCoUQ7p20ZX3XYTkRF+HMdUXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741756347; c=relaxed/simple;
-	bh=+UVctgMLCQI2qtTmv9h2RN5EXbGlaQr/uLpLO/ItiII=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c7lZ440eDGxmcEjwv0gpbSpIJHJxvJ56HX1V3sOjyNsYP9qwjS8DH6gXUy+RfdGi7Y25+IjVr2jSQs76PgekqmcYpNp1c+7mbk4KLqGdRzlr69QzrY6Z0tdM2zhMJLAF12sKx3uZ2aHEulXG87gl/qjRKFbpVtX2+IREcoVl/ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHZQ6yHK; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6feb0742878so59700497b3.2;
-        Tue, 11 Mar 2025 22:12:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741756344; x=1742361144; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=08INWI3mX8Qq+o80JMhCH1odycnPWIStSqHUAbKsMI8=;
-        b=RHZQ6yHKSB0kQK60MemsEh9bW4KRBjV0sAa2oGlj3yq2v3XWoy1noTSI1YUDQbA5wB
-         EHFxC99EAvUjuFDStP4/q9GAhSuiZRolKk0auNIhaCdb6aiisjs2pAj22WJ7vv7djdTS
-         AK2YiHBAvlz8S+Gyr2R7YUWdg7giC4h0m5OcqIewDYL1ltWRh5FtaN/CGBuEZjtUoxqR
-         PBeocIYswU37HQ28hMnnKbL4e0I23wuuM8XkIC12rcV9q0YMNdHMwPG6I3OmgO+vJ/NM
-         mxtECSmrbE3MsfbABnXlcrfw8id26A+ZW0CHPVIh/aICTTICi20z27/1ob0PeHGhsLW3
-         K7/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741756344; x=1742361144;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=08INWI3mX8Qq+o80JMhCH1odycnPWIStSqHUAbKsMI8=;
-        b=AhGaqXe51kMq5eLMZiCEQ0uGdRWu3+G3HkBIH4pC4J7n6Ru9xvDDhlrSMazocExi9u
-         3SWu6Q8mFLFC6yHWNUawYlOy4H3CsfbIcrNTgWIMNoR1ks8nbCTKBW0AHghQDEeq0H1+
-         aTjcqBw5IPTNNtS8LoBa3xcqy1/3MBh3t4lk2FH2EL6L1Mz6Y2CiqfIRlqrDRBtLZoHM
-         ugiQXO7Lx2qqlGTFCgbkdIOXpq2HjtBs1fIfpWzr593Myns2Z5bKihEOU2Kw9L6dr6vW
-         G7T3UhEVMlaKCSTx+CkGz6B4t/0mixbQYsH/Ot9cJmB6qlXd79KM6EqlTODXQgxUpm3M
-         G/Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzGGI2+2h4KtZS63BMJ/gbnRueEYy8Mb4jCmpvthZy8DEanUV3i1Iwj4Q4HOSCIrDG6ogcIHeABDiaoeobfLlYZt4p+Q==@vger.kernel.org, AJvYcCX9EOH3SJ0w5QEwVxkRQVky7dPWS5V0W3W2i09NkY3G+4SZVh/LTL0LdFFz1bFGqgR1dERcV71R27kp7Ac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylbJoKC6NpA+q9gMdoOac4qEYexHauBHF4u+4g7TMMH3RtgXkm
-	owNi7/1guQL4TcUNWhVheUTgstWkP1VZiGbBaoMa0+FBgEh9NUHHqSw5rXvG
-X-Gm-Gg: ASbGncszOL/0d1TURbV6uQMAfjXVu/jsyqa+9L01evOCDbkv+LA2gJsMbjxV1uxmXSf
-	QkE1NCbT4LWZhfHk9mRV86tIdNTmjucA+Bz2X2nkVgxY+NpZYoXze7URNZQ3yb8nWbnmtLUatCg
-	EMQ5MWD8/6xi56X1Dc8QHrQW7Vq9jiHPPkiu8mQ+fjMmgDw/n/l+FHrFln92ZRiCYSuPiXj79kS
-	52o8hBo2dZHJuRxk5DwxzYc+Bhs1DGwxb4mS1/UXfvF8nuRGyJZ2jgP1Po2fEXubPkHalIrMHDf
-	9M1n7dAFszx7E1OoWMjKOtCX1y9iq1Chy4LccshqTfgy3w==
-X-Google-Smtp-Source: AGHT+IFQ4JC8nq0hoD0bARgCw1bOg9w9D4MdkvqMH7tvMGdNG3W/XyzBLq+BSedGaBrQQJv8sc3pHw==
-X-Received: by 2002:a05:690c:4807:b0:6fe:af14:57f6 with SMTP id 00721157ae682-6febf2a3050mr269605847b3.5.1741756344545;
-        Tue, 11 Mar 2025 22:12:24 -0700 (PDT)
-Received: from [192.168.100.70] ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2c46defsm29811287b3.105.2025.03.11.22.12.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 22:12:24 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-Date: Wed, 12 Mar 2025 00:11:25 -0500
-Subject: [PATCH v5 12/12] Documentation: ABI: Add sysfs platform and
- debugfs ABI documentation for alienware-wmi
+	s=arc-20240116; t=1741756683; c=relaxed/simple;
+	bh=6zEfkQJTeCoVS1ITY6NC3OkHfYRDmhUdLUjFwUaqvqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HWe9onEgkpDWc6NsELRvsyeNvqbsz5fPcxvNjeAwVZf6liRpPb/3BAt6XX9yR2z5UNFb7vrTwLXL5cjQiUoymputG1Go9mYaPvZqpX9FKsTTx28wD3MQm4b6XNVidEVPVSmqPKPZTO102je9dQHyghsT87cQ5BRSQuDb3x+gktQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Th7XfJRi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41CF5C4CEE3;
+	Wed, 12 Mar 2025 05:18:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741756682;
+	bh=6zEfkQJTeCoVS1ITY6NC3OkHfYRDmhUdLUjFwUaqvqE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Th7XfJRiPLCwO5HkmFbZrbRwJQjxnWG0hh4A9EHDiNjKbP3o8hBFFz4M1NZaQZzOH
+	 YEnGVHEK6Q7+t3Zcpj6o6pfUm2Yl5IgcAYG2Emp/6Jd6Lugllh8OgDiJ35fu/wqUVi
+	 QQv8mxxdiv9xvCMndwoE1SCRA3HLQCv4TnWjFvqlti+fy7lYvk7NAAV421zLYVZBmy
+	 t363Yl+rPI22/MXFb5zRkL1IJHFakEkc5HJcwmnbtsk2ywuCZYvQAr+PMtEwz5kq8D
+	 CC7Hvc4nPgnFDX95fWOqerf189CvhX2FP6EHOwtBjUWvM7OjD1OZd8AD0EWNtk9l5Y
+	 yrWvNWx8eza9w==
+Date: Wed, 12 Mar 2025 05:17:59 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>, linux-rtc@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [RFC] rtc: Avoid a couple of -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <Z9EZByipsNmBoVea@google.com>
+References: <Z851qvkycepdNlBd@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250312-hwm-v5-12-deb15ff8f3c6@gmail.com>
-References: <20250312-hwm-v5-0-deb15ff8f3c6@gmail.com>
-In-Reply-To: <20250312-hwm-v5-0-deb15ff8f3c6@gmail.com>
-To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Armin Wolf <W_Armin@gmx.de>
-Cc: Kurt Borja <kuurtb@gmail.com>, Hans de Goede <hdegoede@redhat.com>, 
- platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z851qvkycepdNlBd@kspp>
 
-Add ABI description for the alienware-wmi driver.
+On Mon, Mar 10, 2025 at 03:46:26PM +1030, Gustavo A. R. Silva wrote:
+> Hi all,
+> 
+> As part of the efforts to globally enable -Wflex-array-member-not-at-end,
+> I'm currently trying to fix the following warnings:
+> 
+> drivers/rtc/rtc-cros-ec.c:62:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/rtc/rtc-cros-ec.c:40:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> The issue is that `struct cros_ec_command` is a flexible structure (which
+> means that it contains a flexible-array member), and there is an object
+> of this type (msg) declared within another structure but at the end.
+                                                          ^ not
 
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
----
- Documentation/ABI/testing/debugfs-alienware-wmi    | 44 ++++++++++++++++++++++
- .../ABI/testing/sysfs-platform-alienware-wmi       | 14 +++++++
- MAINTAINERS                                        |  2 +
- 3 files changed, 60 insertions(+)
+> It seems that the following patch would suffice, as long as the flex-array
+> member in `struct cros_ec_command` is not expected to be accessed and
+> overlap with `struct ec_response_rtc data` in a "controlled manner":
+> 
+> diff --git a/drivers/rtc/rtc-cros-ec.c b/drivers/rtc/rtc-cros-ec.c
+> index 865c2e82c7a5..7e9bbab47e4c 100644
+> --- a/drivers/rtc/rtc-cros-ec.c
+> +++ b/drivers/rtc/rtc-cros-ec.c
+> @@ -37,8 +37,8 @@ static int cros_ec_rtc_get(struct cros_ec_device *cros_ec, u32 command,
+>  {
+>         int ret;
+>         struct {
+> -               struct cros_ec_command msg;
+>                 struct ec_response_rtc data;
+> +               struct cros_ec_command msg;
+>         } __packed msg;
+>  
+>         memset(&msg, 0, sizeof(msg));
+> @@ -59,8 +59,8 @@ static int cros_ec_rtc_set(struct cros_ec_device *cros_ec, u32 command,
+>  {
+>         int ret;
+>         struct {
+> -               struct cros_ec_command msg;
+>                 struct ec_response_rtc data;
+> +               struct cros_ec_command msg;
+>         } __packed msg;
+>  
+>         memset(&msg, 0, sizeof(msg));
 
-diff --git a/Documentation/ABI/testing/debugfs-alienware-wmi b/Documentation/ABI/testing/debugfs-alienware-wmi
-new file mode 100644
-index 0000000000000000000000000000000000000000..48cfd4d0b002efd7b68d9c1d3aa91a3a05f49db5
---- /dev/null
-+++ b/Documentation/ABI/testing/debugfs-alienware-wmi
-@@ -0,0 +1,44 @@
-+What:		/sys/kernel/debug/alienware-wmi-<wmi_device_name>/system_description
-+Date:		March 2025
-+KernelVersion:	6.15
-+Contact:	Kurt Borja <kuurtb@gmail.com>
-+Description:
-+		This file exposes the raw ``system_description`` number reported
-+		by the WMAX device.
-+
-+		Only present on devices with the AWCC interface.
-+
-+		See Documentation/admin-guide/laptops/alienware-wmi.rst for
-+		details.
-+
-+		RO
-+
-+What:		/sys/kernel/debug/alienware-wmi-<wmi_device_name>/hwmon_data
-+Date:		March 2025
-+KernelVersion:	6.15
-+Contact:	Kurt Borja <kuurtb@gmail.com>
-+Description:
-+		This file exposes HWMON private data.
-+
-+		Includes fan sensor count, temperature sensor count, internal
-+		fan IDs and internal temp IDs.
-+
-+		See Documentation/admin-guide/laptops/alienware-wmi.rst for
-+		details.
-+
-+		RO
-+
-+What:		/sys/kernel/debug/alienware-wmi-<wmi_device_name>/pprof_data
-+Date:		March 2025
-+KernelVersion:	6.15
-+Contact:	Kurt Borja <kuurtb@gmail.com>
-+Description:
-+		This file exposes Platform Profile private data.
-+
-+		Includes internal mapping to platform profiles and thermal
-+		profile IDs.
-+
-+		See Documentation/admin-guide/laptops/alienware-wmi.rst for
-+		details.
-+
-+		RO
-diff --git a/Documentation/ABI/testing/sysfs-platform-alienware-wmi b/Documentation/ABI/testing/sysfs-platform-alienware-wmi
-new file mode 100644
-index 0000000000000000000000000000000000000000..4877b3745f4e5b503376d375bf48464250328ce2
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-platform-alienware-wmi
-@@ -0,0 +1,14 @@
-+What:		/sys/class/hwmon/hwmonX/fanY_boost
-+Date:		March 2025
-+KernelVersion:	6.15
-+Contact:	Kurt Borja <kuurtb@gmail.com>
-+Description:
-+		This file exposes fan boost control for Dell gaming laptops with
-+		the AWCC WMI interface.
-+
-+		See Documentation/admin-guide/laptops/alienware-wmi.rst for
-+		details.
-+
-+		Integer value in the range 0 to 255
-+
-+		RW
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c609bc321b8dc3ab0e8d92b04e42483be8cc171c..faa377126bda0b9c848760495dc893982f3a4c3a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -796,6 +796,8 @@ M:	Kurt Borja <kuurtb@gmail.com>
- L:	platform-driver-x86@vger.kernel.org
- L:	Dell.Client.Kernel@dell.com
- S:	Maintained
-+F:	Documentation/ABI/testing/debugfs-alienware-wmi
-+F:	Documentation/ABI/testing/sysfs-platform-alienware-wmi
- F:	Documentation/admin-guide/laptops/alienware-wmi.rst
- F:	Documentation/wmi/devices/alienware-wmi.rst
- F:	drivers/platform/x86/dell/alienware-wmi*
+This doesn't work.  The header (i.e. struct cros_ec_command) is expected to
+allocate right before the payload (e.g. struct ec_response_rtc)[1][2].
 
--- 
-2.48.1
+[1]: https://elixir.bootlin.com/linux/v6.14-rc1/source/drivers/platform/chrome/cros_ec_proto.c#L82
+[2]: https://elixir.bootlin.com/linux/v6.14-rc1/source/drivers/platform/chrome/cros_ec_i2c.c#L166
+
+> Otherwise, we probably need to use struct_group_tagged() as follows:
+
+I'm not a big fan of the solution.  How about using something similar to:
+
+struct cros_ec_command *msg = kzalloc(sizeof(*msg) +
+                                      sizeof(struct ec_response_rtc), ...);
 
 
