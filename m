@@ -1,142 +1,285 @@
-Return-Path: <linux-kernel+bounces-558141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 916C7A5E22D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:05:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9918DA5E233
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:06:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B4C41897EDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:05:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ADCA3B267B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B851F541E;
-	Wed, 12 Mar 2025 17:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AFD2505BB;
+	Wed, 12 Mar 2025 17:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TbhsNF87"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="b2jziJiR"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B80718E025
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0751918E025;
+	Wed, 12 Mar 2025 17:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741799101; cv=none; b=jC2egMcmJqkpgLZxidzO5Zf91UZMBMdMfzptYgeXw2zvHfayYSqXpmkcoEBWeYgrcEQugal3JBMej5g70nzfjK4rWEQmTFQv824+m13J5lBMAXtlja/9wn1yZ5oithOJsoUApz1wxZj3+oM8k8wrsBLh2Ph/6Cjl7BR8WHfHEps=
+	t=1741799153; cv=none; b=hzL7iTArs57j8mG550T8QplaI7N4AgF1GW3n5XU/s6Ftq2xX6giMPPVjKvF5Tx+JD1S6RMdM5J712laaOKrCzGt0RC+OG44WZPYnJ4XdVTJBZ81JfA374LS4zYpPRdq6zWaq/+wiWPQowMskEpdOR7nyGbYtNTKAUCPLUE7NdeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741799101; c=relaxed/simple;
-	bh=nX86hHp1qdiOkLNhsNCma9PDRneRB/+gKu1EhJWXeZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M2/vtIGf1HWJXVZX3+ehfRLpd946I0Z2PCx5wn/2EYHcrmp57T8r85/A9jB8Ts0vwEofosIP+b6aAMltvkEM2pOGgsaj+YEGhjyvS98R/xhLYLqCP4RLrg+2Vy2KyymSN6sLida4ksXWhhgikMGTzVLHE62atn0x6EBEAxUVlZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TbhsNF87; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2c663a3daso17686666b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741799098; x=1742403898; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nX86hHp1qdiOkLNhsNCma9PDRneRB/+gKu1EhJWXeZI=;
-        b=TbhsNF87hs2VFei+kokO2hGZlJnev97d4rTL3olEshERlLSQH70RTQW7vLeUCU2PLE
-         55ukX/9eXreT1A8QOPNNOF9JGR4upDojDNR9QUkIqATYgpSKObHZprCj67ra/QLtkttO
-         BQzAkoxhbrpEQjjfy/rJZiEFfWJZGVjs7BnitTi9a3n0howbjwdR5dXZrvhnV+pZ6yhv
-         Bm5nY4r/rKkIuKoaBHscdA6zLchmYVwPrjwCCQb7G3ciZql5U2WWQ2O79b3yj6vopGd/
-         qg++R1PzZS6zmduviSai/mOiZ0F3lCggXVgDI8VXdzDWN1lmCKn2pR3yIn0xULTn9xJn
-         3vkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741799098; x=1742403898;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nX86hHp1qdiOkLNhsNCma9PDRneRB/+gKu1EhJWXeZI=;
-        b=EQCeWQXxzOGp6FfpeuEobrHND6jOWVkgIhlR5SdpJswvbwAxzJ6/x/6Imz9Bkuer4F
-         rT0yXhAsSIauGMfLughapqpjD4uVvd/MbXpFOsw6AFpJiCUJ4ZtEjy+jfCejYnZZKQY3
-         gdvA+UOcZJLz3MjIvOJ5dVs2e8QL7oUfq7XXa/mxPnGxbLg+70aRqcYnzztETmaRyIEH
-         uBfvQXBywGW+7xM4/lDKbPWqAMuCgBal9P98G+/5cyoNq0Csy+HIbZ3P8juXsR34jVlt
-         5rNsrnUtWhWLfZwozGh9Us+ooO7kHHKXgyt4prnLteCoX4ywj35wJmS7NJL8vtL0dZ9m
-         G1fw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYIM1AIm2/HOYyTtojn0LH/Rcqke7bGJpYMsoI6caXOwY29E5xpgoKKuR1f9JPsfpe5uJnOlgnLtc0CD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK5bYdLHv6zHbYU0OyuhhX8UyuRs17OdKbdIXD3EKrt2umJr9v
-	jYRl+fEzYCeopc1K1Lsg7V6EaKUkG4B7EcKoRiNo3jX9OepGfM++
-X-Gm-Gg: ASbGncujj6x35mRwl4bYF6bUPw0nRNrgLnjnQbYopdJHrR0G1FLxEWWO3lqF8v7QuZo
-	HqUpgr5jqi6FAfYmTjMBtTtGiH983G3xqPgv1ENcZFHxywn7D8QH3spAoo3Ud/urmB8Lp65YUCS
-	Et71joguiR0dq4ag1K0QHfc18l5oGO7Z+xdWZbj8iRaBprKDpv+MgnqLF0lc1UX8eRUQAHN15PV
-	CkB7pxcDBoUeGD65Y80Ln85RsSrsKnh7muIhWMVkC024cdhXFXnNxuTlsmPRirNJeXT5ERg6RD9
-	WXNsqX+pcvvfAJUHSrtvmDO5PazgquroDInkCmkANQxXJe98pxMm
-X-Google-Smtp-Source: AGHT+IHr0VyU5sTMf/ZLGSagxgxpron7nn6L2XMbdy0O2tsLvGm/2LBGnY0KL6Sdx5iVf+sTBQbakA==
-X-Received: by 2002:a17:907:2d20:b0:ac3:aa7:fa0b with SMTP id a640c23a62f3a-ac30aa7fbf3mr59796866b.53.1741799097251;
-        Wed, 12 Mar 2025 10:04:57 -0700 (PDT)
-Received: from [192.168.1.106] ([51.154.145.205])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2a27d2613sm507862966b.12.2025.03.12.10.04.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 10:04:56 -0700 (PDT)
-Message-ID: <356a4c72-2155-47ef-9ee1-180b861b94b1@gmail.com>
-Date: Wed, 12 Mar 2025 18:04:56 +0100
+	s=arc-20240116; t=1741799153; c=relaxed/simple;
+	bh=AP2DarFxP1kHmbc1UQ9k/cTreCsRImTcUA6mVTmVGkY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C++DcwqaEl5Z0oUpJPDZ3ehSJO4jjCzvww1oywZ4bQnMZT3bYe4C6KeIuIC6gW9jFpO/6hsJ3UaYS6XzapTsC3xfJNErjfoV/hxkQarxV7DnSFCyt+cDxEpeiRCoo2ueqchlIGQRtbFL5QvQSnAKFU4eCQMcZBxwgQ9wzjDupds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=b2jziJiR; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741799147; x=1742058347;
+	bh=H5vl6p6VvHTW8KbGWXzE7B7/l993EE1hKM2A3P0sLhk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=b2jziJiRFsmsGXaAH/pfzEpF6rybEcf/p6HsH/3iuVY6V8RgfKPuIaPsdUqv/kk38
+	 jDaRI6UihnNYvD9eCeTozR9RJm6VOcspVF7Jv3U9v1rrWLyyvpcfbQajG+eAw/pa3+
+	 Qnkxgek2raHEZB6LkzhlfCmAp+aN5AQDN5bwptySMixAf84ZVG6nWirq03aKZDNfRO
+	 +A4MLcTa9PYJd8Whi1yfBdZ6is1iQMDwpkkuKIhIDmz5YHnpT4B+5qs4BHxSccRrkr
+	 TrSccll+fzpnzBOsr/6GIy/APpeqhW+YhhSRzBlglgXWLsVyStn9PTuqzMbg7s/56n
+	 MshHrVkdfD/hA==
+Date: Wed, 12 Mar 2025 17:05:42 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
+Message-ID: <D8EG9EM9UU0B.2GLHXRU2XROZ3@proton.me>
+In-Reply-To: <CAJ-ks9=K06OT6cutUABj2QDHJHJ70719c-eJ=F3n-_bhkYbZ3w@mail.gmail.com>
+References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com> <20250309-ptr-as-ptr-v2-5-25d60ad922b7@gmail.com> <D8EDP4SMQG2M.3HUNZGX8X0IL7@proton.me> <CAJ-ks9=K06OT6cutUABj2QDHJHJ70719c-eJ=F3n-_bhkYbZ3w@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: e4ddaa38df8cc192110bac9445ef586b5ce36b87
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [oe] [meta-oe][PATCH] meta-openembedded: flashrom: Update to
- v1.4.0
-To: Naresh Solanki <naresh.solanki@9elements.com>
-Cc: openembedded-devel@lists.openembedded.org, linux-kernel@vger.kernel.org,
- "Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>
-References: <20250312111915.2970032-1-naresh.solanki@9elements.com>
- <66b24018-0b7e-42b6-ad86-d80f37538678@gmail.com>
- <CABqG17im5hO7xv-r16mFhJwcXyXt-6OKA_vTaRdc7kuQrdZyzA@mail.gmail.com>
- <130308e4-b9c5-4e6c-97d2-c36f9edc1f43@gmail.com>
- <CABqG17hBviQ64jXgZ1fa5+ir37YPyK62LZvMgrSGADOxSTFo-w@mail.gmail.com>
-Content-Language: en-US
-From: Gyorgy Sarvari <skandigraun@gmail.com>
-In-Reply-To: <CABqG17hBviQ64jXgZ1fa5+ir37YPyK62LZvMgrSGADOxSTFo-w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-
-On 12.03.25 17:56, Naresh Solanki wrote:
-> Hi
->
-> On Wed, 12 Mar 2025 at 22:09, Gyorgy Sarvari <skandigraun@gmail.com> wrote:
->> On 12.03.25 17:03, Naresh Solanki wrote:
->>> Hi Gyorgy,
->>>
->>> On Wed, 12 Mar 2025 at 19:47, Gyorgy Sarvari <skandigraun@gmail.com> wrote:
->>>> On 12.03.25 12:19, Naresh Solanki via lists.openembedded.org wrote:
->>>>> -Upstream-Status: Submitted [https://review.coreboot.org/c/flashrom/+/51960]
->>>>> -Signed-off-by: Khem Raj <raj.khem@gmail.com>
->>>>> -Change-Id: I55c4e8529d36f0850dd56441c3fb8602c5d889fd
->>>>> +Upstream-Status: Inactive-Upstream
->>>> Is that really the case? I mean it is just being updated to a new
->>>> version, it doesn't look that inactive. That PR seems to be abandoned by
->>>> the submitter at the first superficial sight, is this not the case?
->>> Yes. its being inactive for long time.
->> The last commit date in the main branch of
->> https://review.coreboot.org/flashrom is "Sat Mar 1 19:19:16 2025 +1100"
->> - less than 2 weeks ago, with last release just before Christmas. It's
->> not as busy as Yocto, but doesn't look abandoned.
+On Wed Mar 12, 2025 at 4:35 PM CET, Tamir Duberstein wrote:
+> On Wed, Mar 12, 2025 at 11:05=E2=80=AFAM Benno Lossin <benno.lossin@proto=
+n.me> wrote:
 >>
->> Or am I looking at a wrong repo?
-> Your right.
-> I can work on flashrom 1.5.1 release. Please let me know.
+>> On Sun Mar 9, 2025 at 5:00 PM CET, Tamir Duberstein wrote:
+>> > diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+>> > index 598001157293..20159b7c9293 100644
+>> > --- a/rust/kernel/devres.rs
+>> > +++ b/rust/kernel/devres.rs
+>> > @@ -45,7 +45,7 @@ struct DevresInner<T> {
+>> >  /// # Example
+>> >  ///
+>> >  /// ```no_run
+>> > -/// # use kernel::{bindings, c_str, device::Device, devres::Devres, i=
+o::{Io, IoRaw}};
+>> > +/// # use kernel::{bindings, c_str, device::Device, devres::Devres, f=
+fi::c_void, io::{Io, IoRaw}};
+>> >  /// # use core::ops::Deref;
+>> >  ///
+>> >  /// // See also [`pci::Bar`] for a real example.
+>> > @@ -59,19 +59,19 @@ struct DevresInner<T> {
+>> >  ///     unsafe fn new(paddr: usize) -> Result<Self>{
+>> >  ///         // SAFETY: By the safety requirements of this function [`=
+paddr`, `paddr` + `SIZE`) is
+>> >  ///         // valid for `ioremap`.
+>> > -///         let addr =3D unsafe { bindings::ioremap(paddr as _, SIZE =
+as _) };
+>> > +///         let addr =3D unsafe { bindings::ioremap(paddr as u64, SIZ=
+E) };
+>>
+>> The argument of `ioremap` is defined as `resource_size_t` which
+>> ultimately maps to `u64` on 64 bit systems and `u32` on 32 bit ones. I
+>> don't think that we should have code like this... Is there another
+>> option?
+>>
+>> Maybe Gary knows something here, do we have a type that represents that
+>> better?
 >
-> Thanks,
-> Naresh
+> Ah yeah the problem is that this type is an alias rather than a
+> newtype. How do you feel about `as bindings::phys_addr_t`?
 
-I was mostly interested about the Upstream-Status, thank you for the
-confirmation.
+Yeah that's better.
 
-I have no strong opinion about the new version - please do as you see it
-fit.
+>> >  ///         if addr.is_null() {
+>> >  ///             return Err(ENOMEM);
+>> >  ///         }
+>> >  ///
+>> > -///         Ok(IoMem(IoRaw::new(addr as _, SIZE)?))
+>> > +///         Ok(IoMem(IoRaw::new(addr as usize, SIZE)?))
+>>
+>> This should be `addr.addr()` (requires `strict_provenance` on Rust 1.83
+>> & before).
+>>
+>> (I am assuming that we're never casting the usize back to a pointer,
+>> since otherwise this change would introduce UB)
+>
+> Yeah, we don't have strict provenance APIs (and we can't introduce
+> them without compiler tooling or bumping MSRV). I'm not sure if we are
+> casting back to a pointer, but either way this change doesn't change
+> the semantics - it is only spelling out the type.
 
->>>>> +
->>>>> +EXTRA_OEMESON="-Dbash_completion=disabled -Dtests=disabled"
->>>> Nitpick: Could you please fix the whitespaces around the equal sign?
->>> Sure.
->>>
->>> Regards,
->>> Naresh
+It's fine to enable the feature, since it's stable in a newer version of
+the compiler.
+
+>> >  ///     }
+>> >  /// }
+>> >  ///
+>> >  /// impl<const SIZE: usize> Drop for IoMem<SIZE> {
+>> >  ///     fn drop(&mut self) {
+>> >  ///         // SAFETY: `self.0.addr()` is guaranteed to be properly m=
+apped by `Self::new`.
+>> > -///         unsafe { bindings::iounmap(self.0.addr() as _); };
+>> > +///         unsafe { bindings::iounmap(self.0.addr() as *mut c_void);=
+ };
+>>
+>> Can't this be a `.cast::<c_void>()`?
+>
+> This is an integer-to-pointer cast. `addr` returns `usize`:
+
+Oh I missed the `*mut`... In that case, we can't use the `addr`
+suggestion that I made above, instead we should use `expose_provenance`
+above and `with_exposed_provenance` here.
+
+> impl<const SIZE: usize> IoRaw<SIZE> {
+>     [...]
+>
+>     /// Returns the base address of the MMIO region.
+>     #[inline]
+>     pub fn addr(&self) -> usize {
+>         self.addr
+>     }
+>
+>     [...]
+> }
+>
+>>
+>> >  ///     }
+>> >  /// }
+>> >  ///
+>>
+>> > diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+>> > index 8654d52b0bb9..eb8fa52f08ba 100644
+>> > --- a/rust/kernel/error.rs
+>> > +++ b/rust/kernel/error.rs
+>> > @@ -152,7 +152,7 @@ pub(crate) fn to_blk_status(self) -> bindings::blk=
+_status_t {
+>> >      /// Returns the error encoded as a pointer.
+>> >      pub fn to_ptr<T>(self) -> *mut T {
+>> >          // SAFETY: `self.0` is a valid error due to its invariant.
+>> > -        unsafe { bindings::ERR_PTR(self.0.get() as _).cast() }
+>> > +        unsafe { bindings::ERR_PTR(self.0.get() as isize).cast() }
+>>
+>> Can't this be a `.into()`?
+>
+> error[E0277]: the trait bound `isize: core::convert::From<i32>` is not sa=
+tisfied
+>    --> ../rust/kernel/error.rs:155:49
+>     |
+> 155 |         unsafe { bindings::ERR_PTR(self.0.get().into()).cast() }
+>     |                                                 ^^^^ the trait
+> `core::convert::From<i32>` is not implemented for `isize`
+
+That's a bummer... I wonder why that doesn't exist.
+
+>> >      }
+>> >
+>> >      /// Returns a string representing the error, if one exists.
+>>
+>> > @@ -119,7 +119,7 @@ pub fn $name(&self, offset: usize) -> $type_name {
+>> >              let addr =3D self.io_addr_assert::<$type_name>(offset);
+>> >
+>> >              // SAFETY: By the type invariant `addr` is a valid addres=
+s for MMIO operations.
+>> > -            unsafe { bindings::$name(addr as _) }
+>> > +            unsafe { bindings::$name(addr as *const c_void) }
+>>
+>> Also here, is `.cast::<c_void>()` enough? (and below)
+>
+> It's an integer-to-pointer cast. In the same `impl<const SIZE: usize>
+> IoRaw<SIZE>` as above:
+>
+>     fn io_addr_assert<U>(&self, offset: usize) -> usize {
+>         build_assert!(Self::offset_valid::<U>(offset, SIZE));
+>
+>         self.addr() + offset
+>     }
+
+I would prefer we use the strict_provenance API.
+
+>> >          }
+>> >
+>> >          /// Read IO data from a given offset.
+>>
+>> > diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
+>> > index 04f2d8ef29cb..40d1bd13682c 100644
+>> > --- a/rust/kernel/of.rs
+>> > +++ b/rust/kernel/of.rs
+>> > @@ -22,7 +22,7 @@ unsafe impl RawDeviceId for DeviceId {
+>> >      const DRIVER_DATA_OFFSET: usize =3D core::mem::offset_of!(binding=
+s::of_device_id, data);
+>> >
+>> >      fn index(&self) -> usize {
+>> > -        self.0.data as _
+>> > +        self.0.data as usize
+>>
+>> This should also be `self.0.data.addr()`.
+>
+> Can't do it without strict_provenance.
+>
+>>
+>> >      }
+>> >  }
+>> >
+>> > @@ -34,10 +34,10 @@ pub const fn new(compatible: &'static CStr) -> Sel=
+f {
+>> >          // SAFETY: FFI type is valid to be zero-initialized.
+>> >          let mut of: bindings::of_device_id =3D unsafe { core::mem::ze=
+roed() };
+>> >
+>> > -        // TODO: Use `clone_from_slice` once the corresponding types =
+do match.
+>> > +        // TODO: Use `copy_from_slice` once stabilized for `const`.
+>>
+>> This feature has just been stabilized (5 days ago!):
+>>
+>>     https://github.com/rust-lang/rust/issues/131415
+>
+> Yep! I know :)
+>
+>> @Miguel: Do we already have a target Rust version for dropping the
+>> `RUSTC_BOOTSTRAP=3D1`? If not, then I think we should use this feature
+>> now, since it will be stable by the time we bump the minimum version.
+>> (not in this patch [series] though)
+>>
+>> >          let mut i =3D 0;
+>> >          while i < src.len() {
+>> > -            of.compatible[i] =3D src[i] as _;
+>> > +            of.compatible[i] =3D src[i];
+>> >              i +=3D 1;
+>> >          }
+>>
+>> > @@ -317,7 +320,7 @@ unsafe fn do_release(pdev: &Device, ioptr: usize, =
+num: i32) {
+>> >          // `ioptr` is valid by the safety requirements.
+>> >          // `num` is valid by the safety requirements.
+>> >          unsafe {
+>> > -            bindings::pci_iounmap(pdev.as_raw(), ioptr as _);
+>> > +            bindings::pci_iounmap(pdev.as_raw(), ioptr as *mut kernel=
+::ffi::c_void);
+>>
+>> Again, probably castable.
+>
+> How? `ioptr` is a `usize` (you can see the prototype).
+
+Sorry, I missed all the `*mut`/`*const` prefixes here.
+
+---
+Cheers,
+Benno
+
 
