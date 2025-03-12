@@ -1,203 +1,124 @@
-Return-Path: <linux-kernel+bounces-558133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A3C9A5E211
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:53:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E5DA5E217
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:56:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14AA3B5D4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:53:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B831D7AA4DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC2924BC09;
-	Wed, 12 Mar 2025 16:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A92424BC09;
+	Wed, 12 Mar 2025 16:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bNyzO1jj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="VzFFFt+W"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0A623C8D8;
-	Wed, 12 Mar 2025 16:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B902451C3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741798391; cv=none; b=M91By3FJ/2bLszQd0+HDz6yESU+2+72OPFF/OoKOrc/vTb9bZuXVUomq7xnE8qNF/PFkVEYSG9d21mSl/5wvWyFA4z5ekUT11/z0dhJW3R7GKaC6KCZe/+ymQ1t/q4bbxKAz2edBjKr0e1z7le+rHy/fukNe11r97GU4qKognMs=
+	t=1741798583; cv=none; b=U2tw2VPAQAnx3iIf1B276gPWhZXM276b83cqkMjcQHS21VQeQU9i5hyvVW4D98lG8HQMF5W1lUHRg4PPNNzCZ49M/2pmIJGgo3Aio6+RsDGngAo4sc7I51dSHpwDCkLMzs2Gy16dHlohAAp3cKCpnhFcKaItq/KKVdiF8mbbd5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741798391; c=relaxed/simple;
-	bh=Rafds1S3QkKEajqTbOL/+tj3SV1csF1Cnk6XrXNWmtQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JvEOuBREwxUF0MAU4bChVyWK8/aQ+QcluQf77x4JGuIpfBBPGFpNG/zk+1z0nfLc790LssjJG/JtkTJtt5I/jo+3tCwt0uB83eJ9Au1zJZvQyPzg3THIq+qwLxylXiMKMXOw9RUqe4gQjB6Gwyq2I1YYswgxRhROyRXwfwnixjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bNyzO1jj; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741798390; x=1773334390;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Rafds1S3QkKEajqTbOL/+tj3SV1csF1Cnk6XrXNWmtQ=;
-  b=bNyzO1jjvvdcJcK6nYlQkNkMwTR9if/0CbZvorv11UhoBVXn35Q8EigJ
-   MXDd3ziY7logt3oaU8wzwavhyrIU0inFAJymjOlfNAOq7gYYSMYzW2X6s
-   Vta9tEpDYzcV5OFLNIb1Vin/nOritDwf+ts30IizAtZRuRHP8fzK9zcTD
-   fsBc1rekwm81J9BjvkjreL8rZL1ZM+GqyjEjmryxHH60ppfkL7x2oMGRp
-   +xIrCshettJfyFcfwKQjHMgUlga7S2VtQeY66Sti5K/zh1dvQ1lJ6G/Od
-   9BIsN5xJ9fNA4+hGL2ske+MXB99Z40Qs9E6xLaWMBsm70+hCObJxrl6RK
-   w==;
-X-CSE-ConnectionGUID: IT/6gMzOQmGDBmJxgAslgA==
-X-CSE-MsgGUID: nOwV3z93SomUhrEBmonY+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="45665239"
-X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="45665239"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 09:53:09 -0700
-X-CSE-ConnectionGUID: zyxy6B8hTM+qrbY2kgBgsQ==
-X-CSE-MsgGUID: HFOG3QH1QfmjPMWslolYtg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="125756446"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 12 Mar 2025 09:53:05 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tsPKI-0008jw-30;
-	Wed, 12 Mar 2025 16:53:02 +0000
-Date: Thu, 13 Mar 2025 00:52:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Antonio Quartulli <antonio@openvpn.net>, netdev@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <skhan@linuxfoundation.org>, sd@queasysnail.net,
-	ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-Subject: Re: [PATCH net-next v22 18/23] ovpn: implement peer
- add/get/dump/delete via netlink
-Message-ID: <202503130050.cIMoMcyw-lkp@intel.com>
-References: <20250311-b4-ovpn-v22-18-2b7b02155412@openvpn.net>
+	s=arc-20240116; t=1741798583; c=relaxed/simple;
+	bh=62b4R69fzdYFsgWE++tLyGqrH9930aSa4jMK+1iOmkU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rbe0ZtDO6+bVfPMACf7sQeI+rh5MZir8fp8g+PdKvpOCyNpNo8ugmpmRSG61JHp+IJkZuFALZRkeT1EwT1QRaEdBU9Q96bqAbROwldh1zty4Ms4Y47g6iXwpZ6UEJjQXvay0Xby5p1Rv/6aNcJ8Q2+mX83JcPtoMTRddUtuqOYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=VzFFFt+W; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-219f8263ae0so1899795ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:56:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1741798581; x=1742403381; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=62b4R69fzdYFsgWE++tLyGqrH9930aSa4jMK+1iOmkU=;
+        b=VzFFFt+Wg3blSMgnno+soRXAz3sTPDJK73cUlP6zmOKuwdvZGzusKGXvv6Y2aGtlM/
+         hlDQn4R+nuCQ8q2pq0DEfGWRkXgR4ZyDVYKvf/d2OqaY+t8jA5Fi6HpcUjm54iT58L+s
+         HCZHmFvgxBT60VTN+sk+Mdk9b420g8eja71OaC0t1ff5uhE9OxzJQ/DTLbtfsSyVka06
+         Yt82Uc7yoMfabHPLpZPpvumDgMMiYVITyxupM0vP+fU4HMFTJMCUEm86mV1fvY7igd1Y
+         nQvxM93xDrSnEe3GnYV5TNqj+7ZcOlYlYQ3aRpj5nBUqg6BiJS4LUBw0mAMNH/3GlsZo
+         UW2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741798581; x=1742403381;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=62b4R69fzdYFsgWE++tLyGqrH9930aSa4jMK+1iOmkU=;
+        b=wsQGcHz4un9MPziQoR+s/D5tYQJjytHykg4Fm4KqsT4pJT774luVEwOYM7LWPiPGa6
+         Qu/HCLD0n10tFLON4y6F/l13hHmSHnpMlNmF4Wfc6xp/TfGLGYbBLrJ/Ov7de88PE5Sw
+         Ipi/mDfHYra3anaIJLhKvp+E6TSlagdzKNSogpmpTwNbAoogrPiaEbq1cuIrt0r/6em8
+         T2q2MjhwPicCyCoj//PYx6ZK14XZ43WQYkxnMiKuoAM9fMPO9IIF9b/sLe5xFARRhLNJ
+         3nownfbImBEr9bq96nkX8UGkLjzkdZdOajWNxLifjVkzyDvYwdyqZ3WzKmiel7omLhm3
+         XQOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeCqrCdaxeWIDk8GXeq37EeM1y0Eaans3MUR3XWu+gJne8/a2ZFb4Iw7Yn6dVbWlupIwHn5x6DEvqxk0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXei2Q1zz/N/sNcKn9fKqjDCk2YP4vyy0rqXwKgcRX4/qnnCgd
+	cDZIZETnxj62C0j7cEOxaoQVSOcFbFgO4yHgItDxO3Biu53NB6kx2OYUxpSv2k0m6YF8G44onS7
+	BV6vLZcnP2m43HIg3MteqXqT7JA0fxtZxM/EcSvu6RwpUp2QRWxZEOw==
+X-Gm-Gg: ASbGncvCPbDWNuF3PNUpm+ogdJyF65wh81ENi6ZApfpvAlmyXpdmUlAyZ7Lz84VYL/K
+	dND21M5jxgiwZQLpbDEvA5rZC5goYDaDu6Q3CgRe7ar+AHDy8S4e2kaN3zQ5XQYediaJyML0k1o
+	sFTmhlkG3Ol8+3NlLa1CHeS9RKdA==
+X-Google-Smtp-Source: AGHT+IExbQYuCNBZPP1B6JIhiHxs93ZddF8J0UMzuxxb8jPFKIoz7ExYudY6AlveYxLwfAae8aP8+F6s3SlMqWdNuD0=
+X-Received: by 2002:a05:6a00:464f:b0:736:32d2:aa8e with SMTP id
+ d2e1a72fcca58-736eb7d74b7mr10791497b3a.6.1741798581312; Wed, 12 Mar 2025
+ 09:56:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311-b4-ovpn-v22-18-2b7b02155412@openvpn.net>
+References: <20250312111915.2970032-1-naresh.solanki@9elements.com>
+ <66b24018-0b7e-42b6-ad86-d80f37538678@gmail.com> <CABqG17im5hO7xv-r16mFhJwcXyXt-6OKA_vTaRdc7kuQrdZyzA@mail.gmail.com>
+ <130308e4-b9c5-4e6c-97d2-c36f9edc1f43@gmail.com>
+In-Reply-To: <130308e4-b9c5-4e6c-97d2-c36f9edc1f43@gmail.com>
+From: Naresh Solanki <naresh.solanki@9elements.com>
+Date: Wed, 12 Mar 2025 22:26:10 +0530
+X-Gm-Features: AQ5f1Jri6R9xF74D0GbMUnYCMb6VPU7r_RcAo1b9iZOD2_nQLzIyU_MqECihmvY
+Message-ID: <CABqG17hBviQ64jXgZ1fa5+ir37YPyK62LZvMgrSGADOxSTFo-w@mail.gmail.com>
+Subject: Re: [oe] [meta-oe][PATCH] meta-openembedded: flashrom: Update to v1.4.0
+To: Gyorgy Sarvari <skandigraun@gmail.com>
+Cc: openembedded-devel@lists.openembedded.org, linux-kernel@vger.kernel.org, 
+	"Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Antonio,
+Hi
 
-kernel test robot noticed the following build warnings:
+On Wed, 12 Mar 2025 at 22:09, Gyorgy Sarvari <skandigraun@gmail.com> wrote:
+>
+> On 12.03.25 17:03, Naresh Solanki wrote:
+> > Hi Gyorgy,
+> >
+> > On Wed, 12 Mar 2025 at 19:47, Gyorgy Sarvari <skandigraun@gmail.com> wrote:
+> >> On 12.03.25 12:19, Naresh Solanki via lists.openembedded.org wrote:
+> >>> -Upstream-Status: Submitted [https://review.coreboot.org/c/flashrom/+/51960]
+> >>> -Signed-off-by: Khem Raj <raj.khem@gmail.com>
+> >>> -Change-Id: I55c4e8529d36f0850dd56441c3fb8602c5d889fd
+> >>> +Upstream-Status: Inactive-Upstream
+> >> Is that really the case? I mean it is just being updated to a new
+> >> version, it doesn't look that inactive. That PR seems to be abandoned by
+> >> the submitter at the first superficial sight, is this not the case?
+> > Yes. its being inactive for long time.
+> The last commit date in the main branch of
+> https://review.coreboot.org/flashrom is "Sat Mar 1 19:19:16 2025 +1100"
+> - less than 2 weeks ago, with last release just before Christmas. It's
+> not as busy as Yocto, but doesn't look abandoned.
+>
+> Or am I looking at a wrong repo?
+Your right.
+I can work on flashrom 1.5.1 release. Please let me know.
 
-[auto build test WARNING on 40587f749df216889163dd6e02d88ad53e759e66]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Antonio-Quartulli/net-introduce-OpenVPN-Data-Channel-Offload-ovpn/20250311-202334
-base:   40587f749df216889163dd6e02d88ad53e759e66
-patch link:    https://lore.kernel.org/r/20250311-b4-ovpn-v22-18-2b7b02155412%40openvpn.net
-patch subject: [PATCH net-next v22 18/23] ovpn: implement peer add/get/dump/delete via netlink
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250313/202503130050.cIMoMcyw-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250313/202503130050.cIMoMcyw-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503130050.cIMoMcyw-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/net/ovpn/peer.c:10:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:10:
-   In file included from include/linux/mm.h:2224:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/net/ovpn/peer.c:152:6: warning: variable 'ip_len' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     152 |         if (local_ip) {
-         |             ^~~~~~~~
-   drivers/net/ovpn/peer.c:166:33: note: uninitialized use occurs here
-     166 |         memcpy(&bind->local, local_ip, ip_len);
-         |                                        ^~~~~~
-   include/linux/fortify-string.h:690:53: note: expanded from macro 'memcpy'
-     690 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-         |                                                     ^
-   include/linux/fortify-string.h:627:41: note: expanded from macro '__fortify_memcpy_chk'
-     627 |         const size_t __fortify_size = (size_t)(size);                   \
-         |                                                ^~~~
-   drivers/net/ovpn/peer.c:152:2: note: remove the 'if' if its condition is always true
-     152 |         if (local_ip) {
-         |         ^~~~~~~~~~~~~
-   drivers/net/ovpn/peer.c:143:15: note: initialize the variable 'ip_len' to silence this warning
-     143 |         size_t ip_len;
-         |                      ^
-         |                       = 0
-   4 warnings generated.
-
-
-vim +152 drivers/net/ovpn/peer.c
-
-   129	
-   130	/**
-   131	 * ovpn_peer_reset_sockaddr - recreate binding for peer
-   132	 * @peer: peer to recreate the binding for
-   133	 * @ss: sockaddr to use as remote endpoint for the binding
-   134	 * @local_ip: local IP for the binding
-   135	 *
-   136	 * Return: 0 on success or a negative error code otherwise
-   137	 */
-   138	int ovpn_peer_reset_sockaddr(struct ovpn_peer *peer,
-   139				     const struct sockaddr_storage *ss,
-   140				     const void *local_ip)
-   141	{
-   142		struct ovpn_bind *bind;
-   143		size_t ip_len;
-   144	
-   145		lockdep_assert_held(&peer->lock);
-   146	
-   147		/* create new ovpn_bind object */
-   148		bind = ovpn_bind_from_sockaddr(ss);
-   149		if (IS_ERR(bind))
-   150			return PTR_ERR(bind);
-   151	
- > 152		if (local_ip) {
-   153			if (ss->ss_family == AF_INET) {
-   154				ip_len = sizeof(struct in_addr);
-   155			} else if (ss->ss_family == AF_INET6) {
-   156				ip_len = sizeof(struct in6_addr);
-   157			} else {
-   158				net_dbg_ratelimited("%s: invalid family %u for remote endpoint for peer %u\n",
-   159						    netdev_name(peer->ovpn->dev),
-   160						    ss->ss_family, peer->id);
-   161				kfree(bind);
-   162				return -EINVAL;
-   163			}
-   164		}
-   165	
-   166		memcpy(&bind->local, local_ip, ip_len);
-   167	
-   168		/* set binding */
-   169		ovpn_bind_reset(peer, bind);
-   170	
-   171		return 0;
-   172	}
-   173	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Naresh
+> >>> +
+> >>> +EXTRA_OEMESON="-Dbash_completion=disabled -Dtests=disabled"
+> >> Nitpick: Could you please fix the whitespaces around the equal sign?
+> > Sure.
+> >
+> > Regards,
+> > Naresh
 
