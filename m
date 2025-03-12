@@ -1,84 +1,124 @@
-Return-Path: <linux-kernel+bounces-557315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D1AA5D73E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:24:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83B3EA5D745
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:25:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C2463B8E6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:23:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6E611796CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4729A1EA7CB;
-	Wed, 12 Mar 2025 07:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5D61EB192;
+	Wed, 12 Mar 2025 07:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VDaTM/QZ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GOgelmo4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA3D1E9B07;
-	Wed, 12 Mar 2025 07:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980EC38384;
+	Wed, 12 Mar 2025 07:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741764242; cv=none; b=oCBoMIXuRU+FTJCu7y/FJxSXr6ctv8wAKz8xYt9+hLTX0BwEQDD0WeTxqUnILKJqnDz/PCkBDJCF4zLD0aHtZP/i91NkD1WjX19vgwPYxCPSVugmsA8+e11ac85EHZvL/fpVVu8qJxkpOJ6nKGjgbGU1+4cNu3NNvriLb5fydXo=
+	t=1741764322; cv=none; b=ZVHEhT3/OHL2LESCgTQD08FsR5/kPA8QXXdv+51NC2S9357E2iDv83d2HB6bFRqYnXAoc8egPMukF4ITzq1J/BRNyljnfwHjRX5dXlRO/p7i7FP8+7pX9MuPKTML/JypjzEvx2moZErv12U/IYciB2dcHMMjeFLyPAVhfJGxalk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741764242; c=relaxed/simple;
-	bh=AJNGKMUYdkDKQJYNTNfZpN6r4y4CvwR+lnsI6mq05x8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NHAvbBjgeVq02vjTsWIO624dbjNrFpYQ2RqsM4DiG44aX6LYIC4uzyUxwxMbI4wwGHHvTweUAdvfbWpG4MeVLjIW1WsP5cyRs2KUN7RNRDJn0AMz74Qd4XXBlhHQ1meP21hyDVO6F+POOqFn/u3LBAdciya34Qs1Bt8oflYqGqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VDaTM/QZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+jDHe8GiMC72tdyv506IKhWnJAN4V5D48aavkbObk+I=; b=VDaTM/QZvChCk38bb1ZfhfzIjo
-	ikKpUDWn3KVgA5U/OmNhIQ6zfztIWd7s92PkgTWFT2QTAH2X/0HCt1TtF90pwYsIBZcx585h1nqjo
-	jkK7CANBRd29CivPqDP6HJAeU6iQXNKXD4CUelfzHSR4LlSIQ0p/QwDI+vVTRmvhnteKtH2gzopzO
-	A43tEIpOZbE5hffBo/OxmrKyJLtmgq7j5mD/ebOY1u5L5cQGdf1UfMkavx31lk6Nod7d8Pa4jxIZw
-	tHHvoA6o8q8DRW967IrZapxcquyMM/qdMuuuXH8iVWiCN+p6noiJOCCYRPNm4P0KHUJGHe4O4+JzN
-	sC/MjHKg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsGRd-00000007h7S-0SkS;
-	Wed, 12 Mar 2025 07:24:01 +0000
-Date: Wed, 12 Mar 2025 00:24:01 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com
-Subject: Re: [PATCH v5 03/10] xfs: Refactor xfs_reflink_end_cow_extent()
-Message-ID: <Z9E2kSQs-wL2a074@infradead.org>
-References: <20250310183946.932054-1-john.g.garry@oracle.com>
- <20250310183946.932054-4-john.g.garry@oracle.com>
+	s=arc-20240116; t=1741764322; c=relaxed/simple;
+	bh=QGGqbxYsTorCp79WPlPGb4ibYyYKjTBPoAiNsFNNTN8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MfX4hUgXJ9mTUUI8epOQcB0dJz0SatAb3YRKu88ubMEaCs3i879lfCKD7vIdIWm3YyCGvygZ4S8SJ/Ibvo7ENrSK82ESH00bVFpgmzJnuNx7OVlw8eYh5ZChW7KEtlnWrJ2fYlva5ri073+gnUoKSnwseGgP7anQaHZ1UWIakgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GOgelmo4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BMHivS016092;
+	Wed, 12 Mar 2025 07:25:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=e9g3VxcDTuzBTA7EXXJxOgT/EGIYLI7QniO
+	tI78XBXs=; b=GOgelmo4+ZaXKOjb4A5JiQRGTUmTy1zESLXyPPd8Q7A+Qkn9JvG
+	M/1aSYUB9kyX1NDtAvF38G7INYzF+IJrQzuRrsVfrXJv86vO1V/fChudOAh71hXu
+	lKC+fdMULD1eNy+OtdLcx4BdGzXaoy3WIeA18mq+nA69gzGQ5sNO6WM+nRVLCmiy
+	vAd7zDMC4qV2ivdHuIYIYf+zY626WI7Hw/B2rtErghB0rMnPumvCivrbVi8l4MD9
+	sCixu5/n/KI4JcO5WKyeZdgg+SSnq3pt+R62wagPm4WFF7BHLkEcOuLUkRPxwPGQ
+	49fPizz670qpD8zz2TrN//BRlA80e/JQt2g==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2nsgu7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 07:25:16 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 52C7PC0S032141;
+	Wed, 12 Mar 2025 07:25:12 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 458yn3ehmk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 07:25:12 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52C7PCYr032122;
+	Wed, 12 Mar 2025 07:25:12 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-wasimn-hyd.qualcomm.com [10.147.246.180])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 52C7PBCa032117
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 07:25:12 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3944840)
+	id 31C135A9; Wed, 12 Mar 2025 12:55:11 +0530 (+0530)
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@quicinc.com, Wasim Nazir <quic_wasimn@quicinc.com>
+Subject: [PATCH v2 0/2] pinctrl: qcom: Enable egpio function for sa8775p
+Date: Wed, 12 Mar 2025 12:55:07 +0530
+Message-ID: <20250312072509.3247885-1-quic_wasimn@quicinc.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310183946.932054-4-john.g.garry@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: uuMTmPaW1inf1967EuLQ4a3j9XjF46Gh
+X-Authority-Analysis: v=2.4 cv=ZObXmW7b c=1 sm=1 tr=0 ts=67d136dc cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=r8Ps2SIJjR79LDofT-oA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: uuMTmPaW1inf1967EuLQ4a3j9XjF46Gh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_02,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=665 mlxscore=0
+ suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120049
 
-On Mon, Mar 10, 2025 at 06:39:39PM +0000, John Garry wrote:
-> Refactor xfs_reflink_end_cow_extent() into separate parts which process
-> the CoW range and commit the transaction.
-> 
-> This refactoring will be used in future for when it is required to commit
-> a range of extents as a single transaction, similar to how it was done
-> pre-commit d6f215f359637.
+Add egpio function for GPIOs ranging from 126 to 148.
 
-Darrick pointed out that if you do more than just a tiny number
-of extents per transactions you run out of log reservations very
-quickly here:
+---
+Changelog:
 
-https://lore.kernel.org/all/20240329162936.GI6390@frogsfrogsfrogs/
+v2:
+  - Update dt-bindings for egpio function in sa8775p
+  - v1: https://lore.kernel.org/all/20250311095151.1581239-1-quic_wasimn@quicinc.com/
 
-how does your scheme deal with that?
+Wasim Nazir (2):
+  dt-bindings: pinctrl: qcom: Add egpio function for sa8775p
+  pinctrl: qcom: sa8775p: Enable egpio function
+
+ .../bindings/pinctrl/qcom,sa8775p-tlmm.yaml   |  2 +-
+ drivers/pinctrl/qcom/pinctrl-sa8775p.c        | 58 +++++++++++--------
+ 2 files changed, 35 insertions(+), 25 deletions(-)
+
+
+base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
+--
+2.48.1
 
 
