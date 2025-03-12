@@ -1,112 +1,170 @@
-Return-Path: <linux-kernel+bounces-558371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A2AA5E4EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:02:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F657A5E4EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:04:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2FB519C0735
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:02:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2F7B170793
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B771EA7C8;
-	Wed, 12 Mar 2025 20:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD19B1EB19D;
+	Wed, 12 Mar 2025 20:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QtWVupIO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTM0JBry"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFDEA31;
-	Wed, 12 Mar 2025 20:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BF51DE3AF;
+	Wed, 12 Mar 2025 20:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741809742; cv=none; b=awMXepvBK4E7JZic1YacRfJMcjOhGthm5b2GtZzdHWcgHZG/HLisj7P6+mf5gW8kL6RN+8I7cbKfDkvp3Q/TyQHPwMn3nk7/tE3kvioMxo+Iq4NFbCIS8Drc9snQPw9O21jiL5+cyGFBH4c+UKaE6UXQaV7TOaWf8sEi0D2w/vA=
+	t=1741809848; cv=none; b=GyYwhLTsJNwHfS+RwAbtmvrjdtka7bVSH3dS7ZyqESEcnTsU7X67Jy1HB5i6oYGNuzzz390wSXI2vV/uaew+1iG6Q92lWM3nHufaHG7LYJsMBnhXMY+qf/++dAsD6IDBJKFDwxKSI0ysRA0UjHw9LaGJid1x5tzWHY5qajwDVyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741809742; c=relaxed/simple;
-	bh=ItDqOk77PLUXv7BhsELB+snkm/+TLYev97kd8GODnxQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GOTt6cenoYkQvz/qmz8lUCNBddmM3YL2vwAXa7+jGiU/PJSHf1RpRK7/33ffyFAx6BQ8vPRYlVQZxTEhxFcPQZuP4Qk+uUOWSz/8UhjR8Lw045b+TtHX3OrOIOWpq+wx4i0FcExBMxY0DAjuq8NhUsgdNkpyono1sdyzRbl2Zuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QtWVupIO; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741809741; x=1773345741;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ItDqOk77PLUXv7BhsELB+snkm/+TLYev97kd8GODnxQ=;
-  b=QtWVupIO3gZxJl1CiW3eZnYQox92CfcdNasdGFDfUald/8/XjP++hYio
-   tSOtt2Rftgh5bZ9GIaJuIiCWuH7RnHc535kGE51/HVNWJeUXN8jck6UNV
-   j6k5qK+AwaolBux/3lAzwqb4qaRvaEuk5/IX3+JQj7IPSctqXPFpQzskN
-   i7olZeZaMzb3QP8ob5I6zVytosZ9OegDxMplq5B/z3cngboqFMrLphgP2
-   D6rEIyZShl9Yao39Gz5imTNToq6C8MA3IEy7gL1EuQAVJIkBPSgwCtVU4
-   XGrl2M+DTtAibu7EZjgU4hupxy1UnmH2DL/edpAk5sjTC005fMeINMXVU
-   w==;
-X-CSE-ConnectionGUID: 9dmb2YJXSqmWyUTUfCcw8w==
-X-CSE-MsgGUID: 9MD3ihOfQlGJfArPrYu0qw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="43089980"
-X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="43089980"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 13:02:20 -0700
-X-CSE-ConnectionGUID: 1l8MbU5fRdeh1Jb0s6A4uw==
-X-CSE-MsgGUID: VgvdJ77ITHSXUF1KB8SBfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="125808766"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 12 Mar 2025 13:02:18 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 7C10A1F2; Wed, 12 Mar 2025 22:02:17 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Paul Moore <paul@paul-moore.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Eric Paris <eparis@redhat.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] audit: Mark audit_log_vformat() with __printf() attribute
-Date: Wed, 12 Mar 2025 22:02:16 +0200
-Message-ID: <20250312200216.104986-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1741809848; c=relaxed/simple;
+	bh=wNuqf53XUH4jcdwH6C0CQTwH9roS7HOh4G+zIDNCoWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DPdtIPNLg36rOhnwVFFgfjOY4uX6X96cllZyu7MkL51LZ5Mq7GrI1E5Vf+q+6/7pze86RM8M+DHl+L0hd6x5+NlDMp8e+vV1GE1CdtLeuwLJMinB9ONG2njxLFrhqXESehynNs3OyDi91bBPpqFoEmarQwMeek/kE2pgkTihzfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTM0JBry; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0CAAC4AF0B;
+	Wed, 12 Mar 2025 20:04:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741809847;
+	bh=wNuqf53XUH4jcdwH6C0CQTwH9roS7HOh4G+zIDNCoWY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mTM0JBryU0uetVVV+cwk7RbNqcopRYfM+l0hJNW5gN/n2FUMH3WrbJUg46BwC4oFQ
+	 QaWGnYf9ruMYt2Txd/ekDGfWCTE+9rJmEim1uMdtmUyAYH30ZoGpvDgnA57AiqLsId
+	 Dqh7H9uj7NjvccuxYS8AiydrQVBZ2bUJUr9qhyHs8rn5AHAdnpoblLYTeMrO7cXqz6
+	 XsWapUqJ3R0Lljjfni/yc9JXWpMPlbD3050DTnYpAmc3I3Hrql+MdMDUHjgBtP2d+z
+	 Pki02SO8oVbFTHidWYjVLh2A1U++ZNVzsodtpn8PLAln4TOxJGhqdO0HoY2QkwV2xk
+	 WkCk1R/vnTnWA==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2bc66e26179so139737fac.2;
+        Wed, 12 Mar 2025 13:04:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVr4M7Zk0Y92U7vIxgKXsBg2UGIbQm7br4GyZD1aSxsZrC/X0w5PBL3goJiQKw0WyMADZNmD/MUHkwqOGI=@vger.kernel.org, AJvYcCVyFfDVIslNuigb+1aYPjhad+uiUPdCSPxZ28Gu36GjbGc3Ja0Dqx5tG+9owe79WjBW/1gwTAZ+GDM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuiMM0WP/el1wXBlQ6rFcbcb8kxRXPyEThOr6LrylLv7UMU0Ik
+	BQOTWUdvfGXF1JMel1GA1tZeAkV6pGXBDJHvAzgPn9oTBqw7zz7phAcr3bs7+CpnMb5YP9BKSUm
+	ran2DxsKMCEp1jZUBwxXFC+cj10I=
+X-Google-Smtp-Source: AGHT+IHnIBq7OWoc386zouTDRs+6+dYYWygUAwuAs+Djbha1sU5onLDD3P3mJ3eI3pD/3QYB5AA8rLJ87LgDqh2xxlM=
+X-Received: by 2002:a05:6870:819d:b0:29e:40f8:ad9b with SMTP id
+ 586e51a60fabf-2c261032b54mr13605881fac.14.1741809846947; Wed, 12 Mar 2025
+ 13:04:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250307021750.457600-1-linux@treblig.org>
+In-Reply-To: <20250307021750.457600-1-linux@treblig.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 12 Mar 2025 21:03:53 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hq-0yfinMG5=EHxqk4B=FfRvkaUuE9gjFgL9gfb35C7A@mail.gmail.com>
+X-Gm-Features: AQ5f1JrBuvQ0VlvbrZwfjzKvwWZOQUy1b2v1kE99vMI3SgvUovZSS0sOza7GoPg
+Message-ID: <CAJZ5v0hq-0yfinMG5=EHxqk4B=FfRvkaUuE9gjFgL9gfb35C7A@mail.gmail.com>
+Subject: Re: [PATCH] drivers: base: power: Remove unused pm_generic_ wrappers
+To: linux@treblig.org
+Cc: rafael@kernel.org, len.brown@intel.com, pavel@kernel.org, 
+	gregkh@linuxfoundation.org, dakr@kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-audit_log_vformat() is using printf() type of format, and compiler
-is not happy about this:
+On Fri, Mar 7, 2025 at 3:18=E2=80=AFAM <linux@treblig.org> wrote:
+>
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> pm_generic_thaw_early() has been unused since 2016's
+> commit 294f47ffd55c ("PM / Domains: Remove redundant system PM callbacks"=
+)
+>
+> pm_generic_freeze_late() has been unused since 2019's
+> commit 3cd7957e85e6 ("ACPI: PM: Simplify and fix PM domain hibernation
+> callbacks")
+>
+> Remove them.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  drivers/base/power/generic_ops.c | 24 ------------------------
+>  include/linux/pm.h               |  4 ----
+>  2 files changed, 28 deletions(-)
+>
+> diff --git a/drivers/base/power/generic_ops.c b/drivers/base/power/generi=
+c_ops.c
+> index 4fa525668cb7..6502720bb564 100644
+> --- a/drivers/base/power/generic_ops.c
+> +++ b/drivers/base/power/generic_ops.c
+> @@ -114,18 +114,6 @@ int pm_generic_freeze_noirq(struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(pm_generic_freeze_noirq);
+>
+> -/**
+> - * pm_generic_freeze_late - Generic freeze_late callback for subsystems.
+> - * @dev: Device to freeze.
+> - */
+> -int pm_generic_freeze_late(struct device *dev)
+> -{
+> -       const struct dev_pm_ops *pm =3D dev->driver ? dev->driver->pm : N=
+ULL;
+> -
+> -       return pm && pm->freeze_late ? pm->freeze_late(dev) : 0;
+> -}
+> -EXPORT_SYMBOL_GPL(pm_generic_freeze_late);
+> -
+>  /**
+>   * pm_generic_freeze - Generic freeze callback for subsystems.
+>   * @dev: Device to freeze.
+> @@ -186,18 +174,6 @@ int pm_generic_thaw_noirq(struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(pm_generic_thaw_noirq);
+>
+> -/**
+> - * pm_generic_thaw_early - Generic thaw_early callback for subsystems.
+> - * @dev: Device to thaw.
+> - */
+> -int pm_generic_thaw_early(struct device *dev)
+> -{
+> -       const struct dev_pm_ops *pm =3D dev->driver ? dev->driver->pm : N=
+ULL;
+> -
+> -       return pm && pm->thaw_early ? pm->thaw_early(dev) : 0;
+> -}
+> -EXPORT_SYMBOL_GPL(pm_generic_thaw_early);
+> -
+>  /**
+>   * pm_generic_thaw - Generic thaw callback for subsystems.
+>   * @dev: Device to thaw.
+> diff --git a/include/linux/pm.h b/include/linux/pm.h
+> index 78855d794342..7bf22ed4a1d5 100644
+> --- a/include/linux/pm.h
+> +++ b/include/linux/pm.h
+> @@ -838,10 +838,8 @@ extern int pm_generic_resume_early(struct device *de=
+v);
+>  extern int pm_generic_resume_noirq(struct device *dev);
+>  extern int pm_generic_resume(struct device *dev);
+>  extern int pm_generic_freeze_noirq(struct device *dev);
+> -extern int pm_generic_freeze_late(struct device *dev);
+>  extern int pm_generic_freeze(struct device *dev);
+>  extern int pm_generic_thaw_noirq(struct device *dev);
+> -extern int pm_generic_thaw_early(struct device *dev);
+>  extern int pm_generic_thaw(struct device *dev);
+>  extern int pm_generic_restore_noirq(struct device *dev);
+>  extern int pm_generic_restore_early(struct device *dev);
+> @@ -883,10 +881,8 @@ static inline void dpm_for_each_dev(void *data, void=
+ (*fn)(struct device *, void
+>  #define pm_generic_resume_noirq                NULL
+>  #define pm_generic_resume              NULL
+>  #define pm_generic_freeze_noirq                NULL
+> -#define pm_generic_freeze_late         NULL
+>  #define pm_generic_freeze              NULL
+>  #define pm_generic_thaw_noirq          NULL
+> -#define pm_generic_thaw_early          NULL
+>  #define pm_generic_thaw                        NULL
+>  #define pm_generic_restore_noirq       NULL
+>  #define pm_generic_restore_early       NULL
+> --
 
-kernel/audit.c:1978:9: error: function ‘audit_log_vformat’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
-kernel/audit.c:1987:17: error: function ‘audit_log_vformat’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
-
-Fix the compilation errors by adding __printf() attribute.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- kernel/audit.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/audit.c b/kernel/audit.c
-index 5f5bf85bcc90..f365e1bbeac6 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -1956,8 +1956,8 @@ static inline int audit_expand(struct audit_buffer *ab, int extra)
-  * will be called a second time.  Currently, we assume that a printk
-  * can't format message larger than 1024 bytes, so we don't either.
-  */
--static void audit_log_vformat(struct audit_buffer *ab, const char *fmt,
--			      va_list args)
-+static __printf(2, 0)
-+void audit_log_vformat(struct audit_buffer *ab, const char *fmt, va_list args)
- {
- 	int len, avail;
- 	struct sk_buff *skb;
--- 
-2.47.2
-
+Applied as 6.15 material, thanks!
 
