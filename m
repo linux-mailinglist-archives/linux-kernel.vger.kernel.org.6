@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-558513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23411A5E6F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:02:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CD9A5E6FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:04:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAC5D3BB13B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:02:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1773F1898CCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C921EC00C;
-	Wed, 12 Mar 2025 22:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D6E1EE7D9;
+	Wed, 12 Mar 2025 22:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="uXL3LVAD"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aSM/I7sz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC284685
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 22:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDE6800
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 22:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741816928; cv=none; b=kgqW66atnNOeS5rmI7Dl8qcCfOG4k5Fr7YXCjruzVpH1zS8rY9vinetc//gDUT4CU2x/0WCu9YnVPZDqtCPQ/4VQOvfXKogMevG52b+6OZceAswmZOC0CK1siq457G3sbf2+V985oP40njBr/+OA9ktSvokfQ544ejzzVWn9jNs=
+	t=1741817053; cv=none; b=on77s4BI8hfOZ3qVg6QJHuhhsekXC7Om17ensh62qWghTYpz72sC/099u1heEut23oW+rwE087idBY6o1lRC8O+nI2kZlDZggQXNelag48dxQaGQ7azwSeMRCo5TnnF+8CNDPiQs+pPG7dJesf0vfiNnFanTQZs8kP4p9Y0gbwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741816928; c=relaxed/simple;
-	bh=Eo6Eu8e360fJQvkuNRFhWM189X1XwXkzKCdWrCxAZRw=;
+	s=arc-20240116; t=1741817053; c=relaxed/simple;
+	bh=q7CxZcfZDMZ1MshmmrMaaEZTfn95aPXhl6ugjT4WvEc=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=KyfC6VreRFFaqYRlzMS0LTycMxhO84icEYp8msue9kqOidDcF3V1kfc3qHv8E5L4yPhvvvzsxlFxVUOC4xPBnaLs6hQalRzTGn3DmFRWhBXpCu6wYo4/jzYJybNSVJhTN8nstPi1Ch/+4Df71QwxhKAuKizsQLsGQagehKoKonk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=uXL3LVAD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A008C4CEDD;
-	Wed, 12 Mar 2025 22:02:07 +0000 (UTC)
+	 Mime-Version:Content-Type; b=dyMLU2eVTauoxIAPUv9sr8J8K/tniz7RlY9Q6ki5Y3iYz+r2O9PPZBFR9Cws9VK5YnP98r36pZE4LIuzbwcMoqIubPKaRtPfmTkzt4p/VVbdN9qzQtyL+9Ihobov+FglKI0hcGfSn+0v7QMjndvG+c2/BLnMhY4NfzPkdiS+cVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=aSM/I7sz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4460DC4CEDD;
+	Wed, 12 Mar 2025 22:04:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1741816928;
-	bh=Eo6Eu8e360fJQvkuNRFhWM189X1XwXkzKCdWrCxAZRw=;
+	s=korg; t=1741817052;
+	bh=q7CxZcfZDMZ1MshmmrMaaEZTfn95aPXhl6ugjT4WvEc=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uXL3LVAD3+MFrG+nB/yBh+3wFqjzEIzbsU/6mRJrWe8wH29REn8yCGTrQ4F8jnEyE
-	 VaGHdIAMHzzFmGEa1IftorEndl8I/j3XrbwbVTXRUu0A9fyCXtR/Nl+YWz9yd+S2/q
-	 FK9x9TvIkjcTi+fe1dmicekWQaJhgyAcBSnjv8a8=
-Date: Wed, 12 Mar 2025 15:02:06 -0700
+	b=aSM/I7szR+8FJOMRcznJG2VoqJxSryCaOUfcmTfD7X4vQIcWZyDIfWBSX2ljEQiJ+
+	 zjN31ndVUhzrg7wGmOy2oNPIla8OcqurfBd00hOc5kP8hPLXBxIdjnDVrOZkMF96PF
+	 5O+PI3K8XmzAaTgzdFMFzZybm9llA10Fiy33b7S4=
+Date: Wed, 12 Mar 2025 15:04:11 -0700
 From: Andrew Morton <akpm@linux-foundation.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, =?ISO-8859-1?Q?Andr=E9?= Almeida
- <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, Davidlohr
- Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, Juri Lelli
- <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>,
- Waiman Long <longman@redhat.com>, Uladzislau Rezki <urezki@gmail.com>,
- Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org, Christoph
- Hellwig <hch@lst.de>
-Subject: Re: [PATCH v10 19/21] mm: Add vmalloc_huge_node()
-Message-Id: <20250312150206.54afabcf993bbc55f0066886@linux-foundation.org>
-In-Reply-To: <20250312151634.2183278-20-bigeasy@linutronix.de>
-References: <20250312151634.2183278-1-bigeasy@linutronix.de>
-	<20250312151634.2183278-20-bigeasy@linutronix.de>
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, Kefeng Wang
+ <wangkefeng.wang@huawei.com>, Mike Rapoport <rppt@kernel.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, Axel Rasmussen <axelrasmussen@google.com>, Pavel
+ Emelyanov <xemul@virtuozzo.com>, Jinjiang Tu <tujinjiang@huawei.com>,
+ Dimitris Siakavaras <jimsiak@cslab.ece.ntua.gr>, Andrea Arcangeli
+ <aarcange@redhat.com>
+Subject: Re: [PATCH] mm/userfaultfd: Fix release hang over concurrent GUP
+Message-Id: <20250312150411.f4a5b406600742a49b46d04e@linux-foundation.org>
+In-Reply-To: <20250312145131.1143062-1-peterx@redhat.com>
+References: <20250312145131.1143062-1-peterx@redhat.com>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,35 +60,36 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 12 Mar 2025 16:16:32 +0100 Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+On Wed, 12 Mar 2025 10:51:31 -0400 Peter Xu <peterx@redhat.com> wrote:
 
-> From: Peter Zijlstra <peterz@infradead.org>
+> This patch should fix a possible userfaultfd release() hang during
+> concurrent GUP.
 > 
-> To enable node specific hash-tables.
+> This problem was initially reported by Dimitris Siakavaras in July 2023 [1]
+> in a firecracker use case.  Firecracker has a separate process handling
+> page faults remotely, and when the process releases the userfaultfd it can
+> race with a concurrent GUP from KVM trying to fault in a guest page during
+> the secondary MMU page fault process.
+> 
+> A similar problem was reported recently again by Jinjiang Tu in March 2025
+> [2], even though the race happened this time with a mlockall() operation,
+> which does GUP in a similar fashion.
+> 
+> In 2017, commit 656710a60e36 ("userfaultfd: non-cooperative: closing the
+> uffd without triggering SIGBUS") was trying to fix this issue.  AFAIU, that
+> fixes well the fault paths but may not work yet for GUP.  In GUP, the issue
+> is NOPAGE will be almost treated the same as "page fault resolved" in
+> faultin_page(), then the GUP will follow page again, seeing page missing,
+> and it'll keep going into a live lock situation as reported.
+> 
+> This change makes core mm return RETRY instead of NOPAGE for both the GUP
+> and fault paths, proactively releasing the mmap read lock.  This should
+> guarantee the other release thread make progress on taking the write lock
+> and avoid the live lock even for GUP.
+> 
+> When at it, rearrange the comments to make sure it's uptodate.
 
-"... using huge pages if possible"?
+It would be good to have a Fixes: target but this bug seems to be so
+old that a bare cc:stable should be OK?
 
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3966,6 +3966,13 @@ void *vmalloc_huge_noprof(unsigned long size, gfp_t gfp_mask)
->  }
->  EXPORT_SYMBOL_GPL(vmalloc_huge_noprof);
->  
-> +void *vmalloc_huge_node_noprof(unsigned long size, gfp_t gfp_mask, int node)
-> +{
-> +	return __vmalloc_node_range_noprof(size, 1, VMALLOC_START, VMALLOC_END,
-> +					   gfp_mask, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
-> +					   node, __builtin_return_address(0));
-> +}
-> +
-
-kerneldoc please?
-
-
-I suppose we can now simplify vmalloc_huge_noprof() to use this:
-
-static inline void *vmalloc_huge_noprof(unsigned long size, gfp_t gfp_mask)
-{
-	return vmalloc_huge_node_noprof(size, gfp_mask, NUMA_NO_NODE);
-}
 
