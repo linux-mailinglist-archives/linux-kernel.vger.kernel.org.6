@@ -1,166 +1,159 @@
-Return-Path: <linux-kernel+bounces-557715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 310FBA5DCCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:39:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F317A5DCD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:39:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7FA93B4740
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:38:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43A067A10FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DA72441A6;
-	Wed, 12 Mar 2025 12:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C38B243374;
+	Wed, 12 Mar 2025 12:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f2s0OuAT"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Df38IDxa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A331423F37C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71A924292E;
+	Wed, 12 Mar 2025 12:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741783135; cv=none; b=bpAzfOaemMyC9neiBEsi9HaUwhL7hKl5gIby6G8+fbdruMovL0p0sm9dvZWLl1C4xKkMWVGQPwqE5luIoqvwPymRulP4hA3BEMevEPlmCDYbqAfKEcCj4EOgKr8Q2/kwZdf++8nNUASR1+arZydHCjPHpeeLYif+9muv/U81vs4=
+	t=1741783164; cv=none; b=Pyr4J8E/wdX7NiEUYg/WitUE3J1fq+FccvH0lr8/ayYtU1qElnkG1j86/t0wobWa/bBhh1Ga7gigWmThKU3pkIQeyM+hRVrcmLP6pOAfIJY7BaNafLp3TUqodINxxeOHC1ZyV27BmKQsdS4IkhGNW8UPypZoRXGL4YbsdjAJMNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741783135; c=relaxed/simple;
-	bh=OfHcO9JZhXwZDjruvnxbdiRZ4GWlhm/tXZ7b85KX+9w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pHcUGu6KtStRkpiWwEP8C82+dGofOQCOQlIG2/dIAPLKfYc9Y31Nqv6TAr/4gM83OWl0KwLf7nInjjLszMyh2tqG/30Mn+PSOjbo+43iqJWag11W20DJuyUEMGyTfOo7jBHhaTiveVleivh+uI7pUctT4Tf/2L1e79cMT5gRp0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f2s0OuAT; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e5dce099f4so8857810a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:38:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741783132; x=1742387932; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kw0sogIKoGHWEqTyMEwfwYtaiWMe1RMeD9bIfoB4RU8=;
-        b=f2s0OuATh1gu19eL3GnqLH4k35lVHnlcqmEnGjfAypURyDSxLN4YpAbPHXC0Jovjic
-         H9e9dlxBl9O4qWKrDRwJVP+6phT5Ez7HfM28ptYC59EUBrbtQFqznyYEHVC7sVUVviVH
-         YoT4/KYgEFm76jDc1bBSGIo/WT76mIbKbdD63ImCvlpNSVYjy/pYnjhGi/1Y9ZVx/44p
-         wtFSykUey+hPMVt+F9A3NR/4oIMHKyXZIxZ6XUIGxa0pG/YBA1jJmPld7AyEj7G7E41c
-         jvrIbj9QgVp8laZ7ErUqZ3/xt7Pjkr6fQqomOAhMlTkPvBsnKXeMfOcI/u2wDtlsgiTU
-         trWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741783132; x=1742387932;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kw0sogIKoGHWEqTyMEwfwYtaiWMe1RMeD9bIfoB4RU8=;
-        b=idC4enPDl9s2yUlr72I5PpeuGu70Qfig/t9r69bk2NgNPQ4zd0glBNNDFhFH9C1FI2
-         XMfG569hk7X8Lwi11GwnNY7A+cQD1U+I2k9onrFLRO+HsPIsN+bUJJWYJSLexQRHyLR4
-         oRDZk/HglT0+LEJu0jppWQYtQbTxl9hxOVnSJAhDSyCfO2IzpLfH1u9vQUZuW1OlEG7q
-         2JabiqdZ5OIaQQdb/GHFRbjjjii+mkMkRmt/Cbnamy1+jWn7y0ML6M4qz458lyAyyBVN
-         ktbLVnU3dm9Ekj/WDlaPcWkQauTf+na+o0iTvOYHLimy6swcmRszK3NYoLX0pzEzs0hE
-         h7Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhJ7RGg0pNQUweMvWAylj7fq8/RZBno6Z/XyMVfIFN9HvjrbzCK0rEJsuJbv6jVCNUV9Rr6ruW7LgKfs4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0eO9mBlTxTcT2TGRQTMMLKiVCY3Ef4e24wHeftyFq+iEc0bH0
-	6haRtEM9bwGyQ+ReLYyUoU2KqvuNOlSh9ZnwwV8NLu4mtSoL/EYm
-X-Gm-Gg: ASbGnctoQrW6t9ZvasKg/mrqk/v0tmjY+OQybWvwil2Mwgl4z73wICRsUmmYwV4f6UX
-	D6UZxZPETEhVHEzjhgIXTKxTULc367IOEld+nEv01t7Uycqs2uiPbf33PannJ0iVk1NTGvTA2Vl
-	JDgG7wmoecPGzUZcmXDoohFq1UJNAoFssyjFjjZjmJi7cS6rbs2OGmo26I5lwNheentfcu1sGyD
-	QwGhf/eJDSjErJLRDbh1WrxMwJfhnlBuBx/OJbAKhAB/iiZmS0GKZfWAlrd5KNqVqPltHxuIV5O
-	VkIK9ynIwvpqSCWZXj4I8fJGn4TE1VhUB/vHzJjkUOr7imE=
-X-Google-Smtp-Source: AGHT+IGE3WocipPyc3gLGfzrTYztXQgdZduJaHBQSJ4U1Cp6WypRS4oz/M3jNSXdp0sOYXaY9eTrmQ==
-X-Received: by 2002:a05:6402:2793:b0:5e7:73ad:60a2 with SMTP id 4fb4d7f45d1cf-5e773ad622fmr8755106a12.30.1741783131757;
-        Wed, 12 Mar 2025 05:38:51 -0700 (PDT)
-Received: from fedora.. ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c733f4c3sm10077100a12.14.2025.03.12.05.38.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 05:38:51 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v3 3/3] x86/hweight: Use asm_inline in inline asm()
-Date: Wed, 12 Mar 2025 13:38:45 +0100
-Message-ID: <20250312123905.149298-3-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250312123905.149298-1-ubizjak@gmail.com>
-References: <20250312123905.149298-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1741783164; c=relaxed/simple;
+	bh=qXP7e9cKm6PJkk8q6/yjyEe53myvFFMcXHURqJ4AGdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GDj4UpAYYJ/Er7369o8DsHwoHo38lvQbR5TnirQVMY8o0yDRV+VhQ7NvqYKzXFxBhQw1zjFl7Fy8FI6I6yf2wJRp7YU4HAbQmcwSpgvrB1qXWyW7E5geeWP1lv76ZgWksK2s8aHctoELYCFCwo+9ixmlHSdx421DxLN+1CJhRQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Df38IDxa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 498D8C4CEEC;
+	Wed, 12 Mar 2025 12:39:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741783164;
+	bh=qXP7e9cKm6PJkk8q6/yjyEe53myvFFMcXHURqJ4AGdU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Df38IDxapPmYq0zj8nu7ZQSbnwY8pnZmSMx0hk57NPggET6m5SxqoxMxvXfCLiYbE
+	 7hSCkbEnTKrJYxlafMpI/CqdqAJG0QsoOrfR7kyQa6ClWUpNPrklWixAZ2P5LAYAO2
+	 f3O2VROq161I6dyFkTroLnTQIs5f2/G+PP6aH1JQ1WXw/b2t1QRqBT7pqoJtsAGakz
+	 VQxCAqC6tamSVx7P7/huVu/RjNohRfFOjijFn/TbbO8L9X2DikiCEGls1om9xW8zP3
+	 O2W7Y0MPNVHSxavqmiXHrAPqY9GFXEtQ8D/7/8bEpCjMkWaUEY0jDcBw0pwAl7Ixua
+	 6j18oVK5zQZiw==
+Date: Wed, 12 Mar 2025 14:39:17 +0200
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Andy Yan <andyshrk@163.com>
+Cc: heiko@sntech.de, hjc@rock-chips.com, mripard@kernel.org, 
+	cristian.ciocaltea@collabora.com, neil.armstrong@linaro.org, yubing.zhang@rock-chips.com, 
+	krzk+dt@kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	robh@kernel.org, sebastian.reichel@collabora.com, 
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH v2 7/7] arm64: dts: rockchip: Enable DP2HDMI for ROCK 5
+ ITX
+Message-ID: <q3y36jgswj4xa2g3hnptc6kgzphbqfg675r5paa2lwvdseytio@jysj4f2i6osu>
+References: <20250312104214.525242-1-andyshrk@163.com>
+ <20250312104214.525242-8-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312104214.525242-8-andyshrk@163.com>
 
-Use asm_inline to instruct the compiler that the size of asm()
-is the minimum size of one instruction, ignoring how many instructions
-the compiler thinks it is. ALTERNATIVE macro that expands to several
-pseudo directives causes instruction length estimate to count
-more than 20 instructions.
+On Wed, Mar 12, 2025 at 06:42:08PM +0800, Andy Yan wrote:
+> From: Andy Yan <andy.yan@rock-chips.com>
+> 
+> The HDMI Port next to Headphone Jack is drived by
+> DP1 on rk3588 via a dp2hdmi converter.
+> 
+> Add related dt nodes to enable it.
+> 
+> Note: ROCKCHIP_VOP2_EP_DP1 is defined as 11 in dt-binding header,
+> but it will trigger a dtc warning like "graph node unit address
+> error, expected "b"" if we use it directly after endpoint, so we
+> use "b" instead here.
+> 
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> ---
+> 
+> (no changes since v1)
+> 
+>  .../boot/dts/rockchip/rk3588-rock-5-itx.dts   | 37 +++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+> index 67b886329248..29f10ec9f0c1 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+> @@ -57,6 +57,18 @@ analog-sound {
+>  			  "Headphone", "Headphones";
+>  	};
+>  
+> +	dp-con {
+> +		compatible = "dp-connector";
 
-bloat-o-meter reports slight reduction of the code size
-for x86_64 defconfig object file, compiled with gcc-14.2:
+You've written that it is an HDMI connector. Could you possibly clarify,
+why is it being registered as a DP connector? Is there any kind of
+a bridge between the DP controller and the HDMI connector?
 
-add/remove: 6/12 grow/shrink: 59/50 up/down: 3389/-3560 (-171)
-Total: Before=22734393, After=22734222, chg -0.00%
+> +		label = "DP OUT";
+> +		type = "full-size";
+> +
+> +		port {
+> +			dp_con_in: endpoint {
+> +				remote-endpoint = <&dp1_out_con>;
+> +			};
+> +		};
+> +	};
+> +
+>  	gpio-leds {
+>  		compatible = "gpio-leds";
+>  		pinctrl-names = "default";
+> @@ -268,6 +280,24 @@ &cpu_l3 {
+>  	cpu-supply = <&vdd_cpu_lit_s0>;
+>  };
+>  
+> +&dp1 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&dp1m0_pins>;
+> +};
+> +
+> +&dp1_in {
+> +	dp1_in_vp2: endpoint {
+> +		remote-endpoint = <&vp2_out_dp1>;
+> +	};
+> +};
+> +
+> +&dp1_out {
+> +	dp1_out_con: endpoint {
+> +		remote-endpoint = <&dp_con_in>;
+> +	};
+> +};
+> +
+>  &gpu {
+>  	mali-supply = <&vdd_gpu_s0>;
+>  	status = "okay";
+> @@ -1262,3 +1292,10 @@ vp1_out_hdmi1: endpoint@ROCKCHIP_VOP2_EP_HDMI1 {
+>  		remote-endpoint = <&hdmi1_in_vp1>;
+>  	};
+>  };
+> +
+> +&vp2 {
+> +	vp2_out_dp1: endpoint@b {
+> +		reg = <ROCKCHIP_VOP2_EP_DP1>;
+> +		remote-endpoint = <&dp1_in_vp2>;
+> +	};
+> +};
+> -- 
+> 2.34.1
+> 
 
-where 29 instances of code blocks involving POPCNT now gets inlined,
-resulting in the removal of several functions:
-
-format_is_yuv_semiplanar.part.isra            41       -     -41
-cdclk_divider                                 69       -     -69
-intel_joiner_adjust_timings                  140       -    -140
-nl80211_send_wowlan_tcp_caps                 369       -    -369
-nl80211_send_iftype_data                     579       -    -579
-__do_sys_pidfd_send_signal                   809       -    -809
-
-One noticeable change is:
-
-pcpu_page_first_chunk                       1075    1060     -15
-
-Where the compiler now inlines 4 more instances of POPCNT insns,
-but still manages to compile to a function with smaller code size.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
-v2: Use bloat-o-meter to assess code size changes.
-v3: Split patch into three separate patches.
----
- arch/x86/include/asm/arch_hweight.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/arch_hweight.h b/arch/x86/include/asm/arch_hweight.h
-index f233eb00f41f..b5982b94bdba 100644
---- a/arch/x86/include/asm/arch_hweight.h
-+++ b/arch/x86/include/asm/arch_hweight.h
-@@ -16,7 +16,8 @@ static __always_inline unsigned int __arch_hweight32(unsigned int w)
- {
- 	unsigned int res;
- 
--	asm (ALTERNATIVE("call __sw_hweight32", "popcntl %[val], %[cnt]", X86_FEATURE_POPCNT)
-+	asm_inline (ALTERNATIVE("call __sw_hweight32",
-+				"popcntl %[val], %[cnt]", X86_FEATURE_POPCNT)
- 			 : [cnt] "=" REG_OUT (res), ASM_CALL_CONSTRAINT
- 			 : [val] REG_IN (w));
- 
-@@ -44,7 +45,8 @@ static __always_inline unsigned long __arch_hweight64(__u64 w)
- {
- 	unsigned long res;
- 
--	asm (ALTERNATIVE("call __sw_hweight64", "popcntq %[val], %[cnt]", X86_FEATURE_POPCNT)
-+	asm_inline (ALTERNATIVE("call __sw_hweight64",
-+				"popcntq %[val], %[cnt]", X86_FEATURE_POPCNT)
- 			 : [cnt] "=" REG_OUT (res), ASM_CALL_CONSTRAINT
- 			 : [val] REG_IN (w));
- 
 -- 
-2.48.1
-
+With best wishes
+Dmitry
 
