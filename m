@@ -1,142 +1,166 @@
-Return-Path: <linux-kernel+bounces-557625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070ADA5DBA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:35:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5AAA5DBA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:35:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B61C3B9CE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DBF73B4DCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5359B23DE80;
-	Wed, 12 Mar 2025 11:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A477C2405FD;
+	Wed, 12 Mar 2025 11:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JuXGipWS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UY2pjaft"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2AF233158
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED08B23F36D;
+	Wed, 12 Mar 2025 11:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741779305; cv=none; b=ONVfj/pJiTCAiIiwVt5aiQ1IqONQ5fCOJWVCnpTK3Tfjoc1sePmYCUNvoOozhKpAImBnaDD2y6/62AU1Zxj/WcSVEjFEuaknhap7Rb0xOAzIgiA23UvgFy9LSNjZOWrVWw2ojdjMoOjSl92x49Fl6Tb+nneZUb0Y3qvnvZ+Nrjw=
+	t=1741779292; cv=none; b=ilUi2+KAQAVjkLWxZkFSeec8sXJmgcO9eiKYeFTQg8AEIIl8eqC2IR7FxozpzbjfjgseRRR1ysHTkrYWEa+0Jr9JO9M828PJA9dep+6qVISCgsScngyF0tfvH4G8zk5pC93xCOToKRdm7mw5P5yzvEa4gmiq2YdrmCZ2S4leFC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741779305; c=relaxed/simple;
-	bh=G0MmR5iRxBh07af046kGj0hf2GwsQOPoKtevieu66rQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eWldBKabr/3U22DY3kh3Y+vAG+HduvluGSctulTX0n14QwDJoLVaas8N98brjs9v5Y/Mpj1tJE3zvLZT0qI/S9Ro4Vfvp4xO1Fd0lhB7lpWCjTZ1hc5NnnP2u+WDlyq8vGl8bASnhOC64Ve6HAAGlIztR7CZj7Mn47PNh+MYfRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JuXGipWS; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741779304; x=1773315304;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=G0MmR5iRxBh07af046kGj0hf2GwsQOPoKtevieu66rQ=;
-  b=JuXGipWSBrSMRqTKfPigXac7XulQL3d2LN5r7DzIhc0N92e964TskbFf
-   TsYfocWUy/QInWn7eP6yPSaqcbqhBCIiua2OyI9w0dwcBY4bivnjSyLsK
-   gTJ/vNrWOM2PlkaYbVc9+T7udGCzSSYbNIJy7vM2v14xiWtWhl7gnxuOg
-   umneOOfG9LBp8WMMC+EUKioAvlm4YQqTCBMX3GGSEwRtiH5vL4/oLuOpO
-   q00wYpmNjGFiDWbRj7+lfOrzikMK4B4+/HS7dZKDVDmVUrz+K7eXCcIMd
-   IDYljeHGxiMDNlvi4KL3tWcIeUxun4Xey73WR3KQ83d3q+uKMt2b8UiOj
-   w==;
-X-CSE-ConnectionGUID: ioalGvEwTOGzVq7YhLT0Zg==
-X-CSE-MsgGUID: JdSq7KvSSFSdN6I5XYK4DQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="42985198"
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="42985198"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 04:35:04 -0700
-X-CSE-ConnectionGUID: tYeeWgW8SNOS5zbhhCNt1Q==
-X-CSE-MsgGUID: 7n0YB7gcQmunXVsJtSyjRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="124776128"
-Received: from iweiny-desk3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.221.164])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 04:34:59 -0700
-From: Kai Huang <kai.huang@intel.com>
-To: dave.hansen@intel.com,
-	bp@alien8.de,
-	tglx@linutronix.de,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	kirill.shutemov@linux.intel.com
-Cc: hpa@zytor.com,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	pbonzini@redhat.com,
-	seanjc@google.com,
-	rick.p.edgecombe@intel.com,
-	reinette.chatre@intel.com,
-	isaku.yamahata@intel.com,
-	dan.j.williams@intel.com,
-	thomas.lendacky@amd.com,
-	ashish.kalra@amd.com,
-	dwmw@amazon.co.uk,
-	bhe@redhat.com,
-	nik.borisov@suse.com,
-	sagis@google.com
-Subject: [RFC PATCH 5/5] x86/virt/tdx: Update the kexec section in the TDX documentation
-Date: Thu, 13 Mar 2025 00:34:17 +1300
-Message-ID: <2e88fd265c88cb42cef505e89c466c5625f4a5b6.1741778537.git.kai.huang@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1741778537.git.kai.huang@intel.com>
-References: <cover.1741778537.git.kai.huang@intel.com>
+	s=arc-20240116; t=1741779292; c=relaxed/simple;
+	bh=XKZ84eMAWu1q6TS26A2iznKDdiE3rEMzgusYYtMYnIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FGQ3XH6b2PI22Rk2be+qIJ32Wufm9zstEEJhcPsA3trGJBb+O17zMrgHfrwkV9JVDjcR7q1Fvtaq8KL4whpMiIQuL5PVVJMzyV9AkTtxM+REj38JIfAUUO9vPUwItSWAxKO6CKlr7gInW/uB7Xa/Q310a12+8hldxqKXaekfYWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UY2pjaft; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC6FC4CEEC;
+	Wed, 12 Mar 2025 11:34:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741779291;
+	bh=XKZ84eMAWu1q6TS26A2iznKDdiE3rEMzgusYYtMYnIc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UY2pjaftQciujxcwek5uk5gM7/L4/SIwS8rWsrcV/qvGlLuhwvaQWfQcBcdqgc89B
+	 8hvg1wOpbc5xkncQzM2Lnc7tnBcSWyKuR1T3Wx6jf/HTBntrAJGJLNnsA0r7qFhJrF
+	 vSCdNn9Q2WpCTufhXY9L3x4PQGS0msMjvDG9X8vDE/ppv68MMz6tPYqbJ+HK1wOXUn
+	 egSEiciDBAT7/Hd8VKrSZyhSiLZksJSOdw3h3OxNEYmIlsEErFLonDUNsX0mcMluAW
+	 rzLkAmdzYK0YNWrvH0XETITsSndcxyF02t7imMxLun+8BbNY7hsD6Apb/UeXtJSmb0
+	 nyBcJbHcchTPQ==
+Message-ID: <5ecb69c9-c877-4c91-a1ae-0ef59d0ee3d6@kernel.org>
+Date: Wed, 12 Mar 2025 12:34:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm interconnects as
+ built-in
+To: Christopher Obbard <christopher.obbard@linaro.org>
+Cc: Dmitry Baryshkov <lumag@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
+ <CACr-zFC=mPNeeHMp9XnSby+cMQaPWt_3s8iUiCN+EnVPeGad8Q@mail.gmail.com>
+ <uljqxwfgl26txrfqvkvzzpj6qurgmwcbuot7gu2u6rwjaqgncb@jeuyi4mexjff>
+ <CACr-zFDSFizYmrVN-dV334n1kq17UB9k4FxrV20NNQCQMhzrwg@mail.gmail.com>
+ <92dd35a2-d1cc-4f2b-b3a8-5752ec33b0d3@kernel.org>
+ <CACr-zFCYWEFPO8yExp_8hOQdVtC9Zwu1ZOZNksSeyyS6Ht0e9A@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CACr-zFCYWEFPO8yExp_8hOQdVtC9Zwu1ZOZNksSeyyS6Ht0e9A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-TDX host kernel now supports kexec/kdump.  Update the documentation to
-reflect that.
+On 12/03/2025 12:10, Christopher Obbard wrote:
+> Hi Krzysztof,
+> 
+> On Wed, 12 Mar 2025 at 09:56, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 11/03/2025 20:15, Christopher Obbard wrote:
+>>> Hi Dmitry,
+>>>
+>>> On Tue, 11 Mar 2025 at 19:58, Dmitry Baryshkov <lumag@kernel.org> wrote:
+>>>>
+>>>> On Tue, Mar 11, 2025 at 07:10:06PM +0100, Christopher Obbard wrote:
+>>>>> I sent this patch to start the discussion, some things I found:
+>>>>>
+>>>>> 1) Some interconnects are missing from arm defconfig. Should they be =y too ?
+>>>>
+>>>> No, unless those are required for the UART console.
+>>>
+>>> OK, that makes sense. FWIW the cryptic (to me, at least) commit log on
+>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6eee808134ecf1c1093ff1ddfc056dc5e469d0c3
+>>> made me think that the interconnects should be built-in on all devices.
+>>>
+>>> Of course, the real problem here is RB3gen2 not actually finding the
+>>> UFS/eMMC device due to no interconnect driver.
+>>> Until now, I have been building that into the kernel. I will
+>>> investigate instead shoving into the initrd (in both debian and
+>>> fedora) which should solve my issue and render this patchset useless.
+>>
+>> For Qualcomm platforms you are expected to always have initramfs, thus
+>> you will have the modules for UFS/eMMC mounts. I don't understand the
+>> problem which you were trying to solve.
+>>
+>> The interconnects were built in *only* because of need for serial
+>> console. Only.
+> 
+> Thanks for confirming. It is all clear now.
+> 
+> Consider this patch dropped from my side.
+> 
+> For reference, I am working on updating initramfs generation tools in
+> Debian/Fedora to include the required interconnect modules. Currently
+> the interconnect drivers are built as modules in these distros, but
+> are not included in the initrd. That is where my confusion initially
+> stemmed from.
 
-Signed-off-by: Kai Huang <kai.huang@intel.com>
----
- Documentation/arch/x86/tdx.rst | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+Sure. This defconfig is anyway for us - developers, not for the distros
+to use directly. Distros have much bigger configs and use almost
+everything as module.
 
-diff --git a/Documentation/arch/x86/tdx.rst b/Documentation/arch/x86/tdx.rst
-index 719043cd8b46..8874c210e545 100644
---- a/Documentation/arch/x86/tdx.rst
-+++ b/Documentation/arch/x86/tdx.rst
-@@ -142,13 +142,6 @@ but depends on the BIOS to behave correctly.
- Note TDX works with CPU logical online/offline, thus the kernel still
- allows to offline logical CPU and online it again.
- 
--Kexec()
--~~~~~~~
--
--TDX host support currently lacks the ability to handle kexec.  For
--simplicity only one of them can be enabled in the Kconfig.  This will be
--fixed in the future.
--
- Erratum
- ~~~~~~~
- 
-@@ -171,6 +164,16 @@ If the platform has such erratum, the kernel prints additional message in
- machine check handler to tell user the machine check may be caused by
- kernel bug on TDX private memory.
- 
-+Kexec
-+~~~~~~~
-+
-+Kexec/kdump works normally when TDX is enabled in the kernel.  One
-+limitation is if the old kernel has ever enabled TDX the new kernel won't
-+be able to use TDX anymore.
-+
-+One exception is kexec/kdump are disabled on the platform with the TDX
-+"tdx_pw_mce" erratum.  This will be enhanced in the future.
-+
- Interaction vs S3 and deeper states
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--- 
-2.48.1
-
+Best regards,
+Krzysztof
 
