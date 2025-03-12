@@ -1,223 +1,258 @@
-Return-Path: <linux-kernel+bounces-557249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74201A5D5C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:59:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BCC8A5D5CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:59:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C673B79F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:58:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A92A817920D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D231E2007;
-	Wed, 12 Mar 2025 05:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54CE1E377F;
+	Wed, 12 Mar 2025 05:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tVdCO2ST"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="o5OuM1a7"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D550F1DE3D6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7023E1DFDA1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741759138; cv=none; b=ClvAQNrFNreBWFqYEpbw1KhgtYEZ5QpBXwk7KvHthL9ijfX/5xEfw5mS22qIMJrTvhjq24xy92OEE3lEdPSqeh66D3LPPTSzIIhCyXD8xIB15EYA2TuYIazRiMdl/jQLyVVeSJ2EFkbl16oqQb5oUavEDLYuID6DwLhm1w6Uv8Y=
+	t=1741759185; cv=none; b=bJQ6M8qkKQpbObCA7WlHhsAzqa+gdRMqBogcjJewtw13RcZEfhAkbJYjsls6V7b4OaOXHWQBeR5nI2YilTE0/C+5UFrjVMJdxYXP9+OorK68LlOUPOF++nRscr3/LUdMQZ+8unZUnt6T/s/7AWQYhamYwt4XsFdko4Fl9/1Zl74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741759138; c=relaxed/simple;
-	bh=upHWTKFMcqxCm8JdJ3Wu6zMTEP+FCj94qr0zrv4qZSQ=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=rV+ahNeVrA+cFqvoIkPBBu7FbIaK6CpKgFtOu+oQe8hW9RK06DFdghHgJiPoDBfpWut8J+8jA3+tqwQMpHPdXrc5/piKll5/FVCsppFbIAlgktXkHSjdcRG27OkybirtW2dLUM2dKO0AX5dppVUN7pm8BEgs8DchYO4ZOGGcWak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tVdCO2ST; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6fedcc61536so8508867b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:58:56 -0700 (PDT)
+	s=arc-20240116; t=1741759185; c=relaxed/simple;
+	bh=R7tuHjNoroVMo9h2O5mHayl7xY5IH0gYVy1+W3i+UMM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m5P+MU0wV7D7DzvPvA9P1e9tk1f0HiQGRIKxGBeHpxH+1TBIwOSTX9lflXI4VLWoZn4WHAnqfxPVkUKzIoaKlk/RCbePpcXKN2QzA3X8vYw4pkVFB5ZPJWRv2x/1aXidTxriJdTSGc1z8THAoIk7AbJ8OAjIx10XyCkFCNQTFr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=o5OuM1a7; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-224019ad9edso141212965ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:59:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741759136; x=1742363936; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yVziTp6318IK4oEwMW2HlG8kz999ZqIs5QGLtSSa1UM=;
-        b=tVdCO2STt/CBZtMTdpE55iaGUdgx1UfMv1HzDgb8XJXVoqB3LylFE++Ii3vvshDSHP
-         Vah3KD33k86b+JYZy55X0MK2Oo3u8Npxj4MRFDDCn74HRHtSrvxr6SjcW0E/AhsoXljs
-         Z7vxtzogSkBoustrfjVSwE9gmXcwLl1RWtzrqS1FG9zl6ZWz3qZFn6pTaaWizTcggIyH
-         nZwOQTIhFjDuqhjnyqL5tkhhzMJ6LoRMfoR/6SerSAfiRZl7pO7gh65erv0FhcBAJolo
-         raNYXVITxXuNDGEb4WeWsZ7VMYJLQvmFbGYNIvVDIlM9I8iAEWRoxAzvmkHIvfQOcH2b
-         3M/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741759136; x=1742363936;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741759183; x=1742363983; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yVziTp6318IK4oEwMW2HlG8kz999ZqIs5QGLtSSa1UM=;
-        b=sy4KAPQew4IudiPIJd+v3V7R7j+eQbHHRhIlOSNR3L1D0HYEiE0G3JCky9TbNL4nLE
-         rcftIPBVBVY2gjeR/8tLX9HpdLCjXgu/qessJ7g80YXqVQPTGD8zBRwdEudFOH1hzGBK
-         +lA6muUbG5jRviXHRC9U0gYU8uc94OIDIzUlot1D070Y5z/rjT4B5G+zQVHSwiL8ds2f
-         sVql5L7TCPgWHfZwmcbrGCbLtgDNe3OXEFnakDXelmPXr/NFqRu8/tTiJvBe23A7dqzA
-         hJSb7fj5/6Z82r1WKmr1F7FluLg4KTS56mozfstqFAuU3mbav630KqYs8V6hUIXvnOjr
-         QTzg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5OHhLoDjJ/UJNwgfy/59OK8S155usDzcY9ORHnRDXRLsfFlw/T39d0AfFuEltEB66r/y/VeZI9N62qFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmcqmlXdeoUGtj+3qtabisT8IFKcNOQJZaI99ULmCbxKukGzdw
-	ZcmbgFADviihzNutEPIwuOcsaK0Gep0sicaJ/13/OU9tDNIiZx9RrUSr9RvpR6uKus5fsC83npz
-	FuDN1Zw==
-X-Google-Smtp-Source: AGHT+IEL92yy0pvHOGED+dLCRbbetGoDWCIZy3wkzaEPbjyqGE4mqp793eqhvDBNpOqQvq2yXjWDaD0dWRTy
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:8bc2:942f:1b93:42dd])
- (user=irogers job=sendgmr) by 2002:a05:690c:2a88:b0:6fb:afe0:f186 with SMTP
- id 00721157ae682-6ff0a28f56emr6059927b3.2.1741759135826; Tue, 11 Mar 2025
- 22:58:55 -0700 (PDT)
-Date: Tue, 11 Mar 2025 22:58:46 -0700
-Message-Id: <20250312055846.671522-1-irogers@google.com>
+        bh=CZESZje65E8gcTEnwSqTnH4kGbDuL6yGOWt5IOmRc30=;
+        b=o5OuM1a7MsxUaa/+Kj3bg6yjWWmMRwpGf06ilI1R46thRszBmt0NH1WmBS3yVYkhLe
+         XANaURsDOkS48zqsILYuEDQws7yeZqC7JwEofk5b7EIgJOt8LCIJ8zCQ7dUzFJikFjpC
+         O+gKcpr8zJCsjyOKdJ00ikdaF210BQvkF2UkVLjsnL7T0WwZvF5+9KeQ4Ck4iGr9W9lT
+         AYZ2XLYqShATzJ093rXavMpyWmjYKx723dxqk/pGVVY+80P4fX++jQPLWQPujw6oShPk
+         17bfIC3TvTLE47SgrKVWBsunUc5p9CNL3JQiigZtSWLFFyjX12gspYRn/mZxz7PokQ91
+         g7Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741759183; x=1742363983;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CZESZje65E8gcTEnwSqTnH4kGbDuL6yGOWt5IOmRc30=;
+        b=OU6kvygTWmK8UUJxTbdiv7/76qbgk8SKMt4E6y4cwDtDT36X11RSOs8V28UR/oe1AX
+         qmExI9AeWntOyHnAA27EAwlXbmFn85TyEyPUPQ+qMIsTGGT0gwzIheonqOOGk76Vkyqo
+         eelsl5Vf1W1lilqomIzVXVECrOzNRvBks5FhntGYFeF/1gsCbnXoWbl1+I1qERbtGUu+
+         1lrElAeWLrCEwl8mpyCPfat0oHK533HBiwx0Tq2EOmii0Md3tjAGR5wBo6nxfvngWumb
+         GWCVe7bSn7dgveaj1InZz02+7K9z0ietLEKfPj+Q3VReYZtLGy9c++E/tGvyP6dpWIg6
+         JYiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5bHdc2I06eKfG2CSjix09h4ienb0C0o7ib5PimViipe95veGXcSGo0dBNHda8GgXQM5geof49R6FT5Vg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT6dD0y53U/brcIXtc1Z4L2dkCyJF4WWGq53LXdCa9Rx5uYjwv
+	ETvIEOVMCZsWfm0LfkwOI0k7lhzaL7x/BPKi1K8K6/sTHdHwmD0NuhjEljKkeUA=
+X-Gm-Gg: ASbGncur0t+38Tfoy4pw4D2cOXXhGVLI3uDAOnLSbjua+VfGp1RkZNpWzmK9VrezDPD
+	uEcQwf++jgPBeS8mFOJJH8ZtAlbg0yKF4TBgQONuAS2iViMjCToeyciz0ztE45ZZrHWE8cmcgI1
+	s3AYmSyB3+2gP/4FcnD2I4rh++7kmCUUdB8UKQX/fWY2VLcjHKudDROk00a6jMyKW3LRtydO4Zz
+	SE/Brrgm8oa66BuYJW2ALH+Txea6/ANItgcp4A3P8A0vNeQHCe4ZiqGjzSMQZ3v5FWKfLfK7j5c
+	Iuc1f928/6TOso1z9aIrVpCZzgZIJoX5xd2rbqnd7EbqIaUesSBt9KJvlw==
+X-Google-Smtp-Source: AGHT+IHNxn8E8ipTo8o+6AGn7pM/bGpbwkMrzPK64AMoQJ3BPQiT3yi57XUpV2Dk7/oIOt6/kYhYhQ==
+X-Received: by 2002:a17:902:f541:b0:224:c76:5e57 with SMTP id d9443c01a7336-22428ab7665mr257241305ad.39.1741759183662;
+        Tue, 11 Mar 2025 22:59:43 -0700 (PDT)
+Received: from [157.82.205.237] ([157.82.205.237])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e848csm107914775ad.63.2025.03.11.22.59.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 22:59:43 -0700 (PDT)
+Message-ID: <77c21953-b850-4962-8673-6effb593d819@daynix.com>
+Date: Wed, 12 Mar 2025 14:59:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-Subject: [PATCH v1] perf tests: Harden branch stack sampling test
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, German Gomez <german.gomez@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 6/6] vhost/net: Support
+ VIRTIO_NET_F_HASH_REPORT
+To: Jason Wang <jasowang@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
+ Yuri Benditovich <yuri.benditovich@daynix.com>,
+ Andrew Melnychenko <andrew@daynix.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com,
+ Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+References: <20250307-rss-v9-0-df76624025eb@daynix.com>
+ <20250307-rss-v9-6-df76624025eb@daynix.com>
+ <CACGkMEuccQ6ah-aZ3tcW1VRuetEoPA_NaLxLT+9fb0uAab8Agg@mail.gmail.com>
+ <2e550452-a716-4c3f-9d5a-3882d2c9912a@daynix.com>
+ <CACGkMEu9tynRgTh__3p_vSqOekSirbVgS90rd5dUiJru9oV1eg@mail.gmail.com>
+ <1dd2417a-3246-44b0-b4ba-feadfd6f794e@daynix.com>
+ <CACGkMEthfj0KJvOHhnc_ww7iqtmhHUy9f9EGOoR-n0OwHOBrvQ@mail.gmail.com>
+Content-Language: en-US
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <CACGkMEthfj0KJvOHhnc_ww7iqtmhHUy9f9EGOoR-n0OwHOBrvQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On continuous testing the perf script output can be empty, or nearly
-empty, causing tr/grep to exit and due to "set -e" the test traps and
-fails. Add some empty file handling that sets the test to skip and
-make grep and other text rewriting failures non-fatal by adding
-"|| true".
+On 2025/03/12 12:36, Jason Wang wrote:
+> On Tue, Mar 11, 2025 at 2:24 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>
+>> On 2025/03/11 9:42, Jason Wang wrote:
+>>> On Mon, Mar 10, 2025 at 3:04 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>
+>>>> On 2025/03/10 13:43, Jason Wang wrote:
+>>>>> On Fri, Mar 7, 2025 at 7:02 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>>>
+>>>>>> VIRTIO_NET_F_HASH_REPORT allows to report hash values calculated on the
+>>>>>> host. When VHOST_NET_F_VIRTIO_NET_HDR is employed, it will report no
+>>>>>> hash values (i.e., the hash_report member is always set to
+>>>>>> VIRTIO_NET_HASH_REPORT_NONE). Otherwise, the values reported by the
+>>>>>> underlying socket will be reported.
+>>>>>>
+>>>>>> VIRTIO_NET_F_HASH_REPORT requires VIRTIO_F_VERSION_1.
+>>>>>>
+>>>>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+>>>>>> Tested-by: Lei Yang <leiyang@redhat.com>
+>>>>>> ---
+>>>>>>     drivers/vhost/net.c | 49 +++++++++++++++++++++++++++++--------------------
+>>>>>>     1 file changed, 29 insertions(+), 20 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+>>>>>> index b9b9e9d40951856d881d77ac74331d914473cd56..16b241b44f89820a42c302f3586ea6bb5e0d4289 100644
+>>>>>> --- a/drivers/vhost/net.c
+>>>>>> +++ b/drivers/vhost/net.c
+>>>>>> @@ -73,6 +73,7 @@ enum {
+>>>>>>            VHOST_NET_FEATURES = VHOST_FEATURES |
+>>>>>>                             (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
+>>>>>>                             (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
+>>>>>> +                        (1ULL << VIRTIO_NET_F_HASH_REPORT) |
+>>>>>>                             (1ULL << VIRTIO_F_ACCESS_PLATFORM) |
+>>>>>>                             (1ULL << VIRTIO_F_RING_RESET)
+>>>>>>     };
+>>>>>> @@ -1097,9 +1098,11 @@ static void handle_rx(struct vhost_net *net)
+>>>>>>                    .msg_controllen = 0,
+>>>>>>                    .msg_flags = MSG_DONTWAIT,
+>>>>>>            };
+>>>>>> -       struct virtio_net_hdr hdr = {
+>>>>>> -               .flags = 0,
+>>>>>> -               .gso_type = VIRTIO_NET_HDR_GSO_NONE
+>>>>>> +       struct virtio_net_hdr_v1_hash hdr = {
+>>>>>> +               .hdr = {
+>>>>>> +                       .flags = 0,
+>>>>>> +                       .gso_type = VIRTIO_NET_HDR_GSO_NONE
+>>>>>> +               }
+>>>>>>            };
+>>>>>>            size_t total_len = 0;
+>>>>>>            int err, mergeable;
+>>>>>> @@ -1110,7 +1113,6 @@ static void handle_rx(struct vhost_net *net)
+>>>>>>            bool set_num_buffers;
+>>>>>>            struct socket *sock;
+>>>>>>            struct iov_iter fixup;
+>>>>>> -       __virtio16 num_buffers;
+>>>>>>            int recv_pkts = 0;
+>>>>>>
+>>>>>>            mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_RX);
+>>>>>> @@ -1191,30 +1193,30 @@ static void handle_rx(struct vhost_net *net)
+>>>>>>                            vhost_discard_vq_desc(vq, headcount);
+>>>>>>                            continue;
+>>>>>>                    }
+>>>>>> +               hdr.hdr.num_buffers = cpu_to_vhost16(vq, headcount);
+>>>>>>                    /* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET_HDR */
+>>>>>>                    if (unlikely(vhost_hlen)) {
+>>>>>> -                       if (copy_to_iter(&hdr, sizeof(hdr),
+>>>>>> -                                        &fixup) != sizeof(hdr)) {
+>>>>>> +                       if (copy_to_iter(&hdr, vhost_hlen,
+>>>>>> +                                        &fixup) != vhost_hlen) {
+>>>>>>                                    vq_err(vq, "Unable to write vnet_hdr "
+>>>>>>                                           "at addr %p\n", vq->iov->iov_base);
+>>>>>>                                    goto out;
+>>>>>
+>>>>> Is this an "issue" specific to RSS/HASH? If it's not, we need a separate patch.
+>>>>>
+>>>>> Honestly, I'm not sure if it's too late to fix this.
+>>>>
+>>>> There is nothing wrong with the current implementation.
+>>>
+>>> Note that I meant the vhost_hlen part, and the current code is tricky.
+>>>
+>>> The comment said:
+>>>
+>>> """
+>>> /* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET_HDR */
+>>> """
+>>>
+>>> So it tries to only offer virtio_net_hdr even if vhost_hlen is the set
+>>> to mrg_rxbuf len.
+>>>
+>>> And this patch changes this behaviour.
+>>
+>> mrg_rxbuf only adds the num_buffers field, which is always set for
+>> mrg_rxbuf.
+>>
+>> The num_buffers was not set for VIRTIO_F_VERSION_1 in the past, but this
+>> was also fixed with commit a3b9c053d82a ("vhost/net: Set num_buffers for
+>> virtio 1.0")
+>>
+>> So there is no behavioral change for existing features with this patch.
+> 
+> I meant this part.
+> 
+>>>>> +                       if (copy_to_iter(&hdr, vhost_hlen,
+>>>>> +                                        &fixup) != vhost_hlen) {
+> 
+> We should copy only sizeof(hdr) instead of vhost_hlen.> > Anything I miss?
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/shell/test_brstack.sh | 79 +++++++++++++++++++-------
- 1 file changed, 59 insertions(+), 20 deletions(-)
+sizeof(hdr) will be greater than vhost_hlen when neither 
+VIRTIO_NET_F_MRG_RXBUF or VIRTIO_F_VERSION_1 is negotiated.
 
-diff --git a/tools/perf/tests/shell/test_brstack.sh b/tools/perf/tests/shell/test_brstack.sh
-index e01df7581393..6f5ae227b3e8 100755
---- a/tools/perf/tests/shell/test_brstack.sh
-+++ b/tools/perf/tests/shell/test_brstack.sh
-@@ -1,4 +1,4 @@
--#!/bin/sh
-+#!/bin/bash
- # Check branch stack sampling
- 
- # SPDX-License-Identifier: GPL-2.0
-@@ -17,35 +17,54 @@ fi
- 
- skip_test_missing_symbol brstack_bench
- 
-+set -x
-+err=0
- TMPDIR=$(mktemp -d /tmp/__perf_test.program.XXXXX)
- TESTPROG="perf test -w brstack"
- 
- cleanup() {
- 	rm -rf $TMPDIR
-+	trap - EXIT TERM INT
- }
- 
--trap cleanup EXIT TERM INT
-+trap_cleanup() {
-+	set +e
-+	echo "Unexpected signal in ${FUNCNAME[1]}"
-+	cleanup
-+	exit 1
-+}
-+trap trap_cleanup EXIT TERM INT
- 
- test_user_branches() {
- 	echo "Testing user branch stack sampling"
- 
--	perf record -o $TMPDIR/perf.data --branch-filter any,save_type,u -- ${TESTPROG} > /dev/null 2>&1
--	perf script -i $TMPDIR/perf.data --fields brstacksym | tr -s ' ' '\n' > $TMPDIR/perf.script
-+	perf record -o "$TMPDIR/perf.data" --branch-filter any,save_type,u -- ${TESTPROG} > "$TMPDIR/record.txt" 2>&1
-+	perf script -i "$TMPDIR/perf.data" --fields brstacksym > "$TMPDIR/perf.script"
- 
- 	# example of branch entries:
- 	# 	brstack_foo+0x14/brstack_bar+0x40/P/-/-/0/CALL
- 
--	set -x
--	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"	$TMPDIR/perf.script
--	grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
--	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
--	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
--	grep -E -m1 "^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"		$TMPDIR/perf.script
--	grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"	$TMPDIR/perf.script
--	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"	$TMPDIR/perf.script
--	grep -E -m1 "^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"		$TMPDIR/perf.script
--	set +x
--
-+	expected=(
-+		"^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"
-+		"^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
-+		"^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"
-+		"^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
-+		"^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"
-+		"^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"
-+		"^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"
-+		"^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"
-+	)
-+	for x in "${expected[@]}"
-+	do
-+		if ! tr -s ' ' '\n' < "$TMPDIR/perf.script" | grep -E -m1 -q "$x"
-+		then
-+			echo "Branches missing $x"
-+			if [ "x$err" == "x0" ]
-+			then
-+				err=2
-+			fi
-+		fi
-+	done
- 	# some branch types are still not being tested:
- 	# IND COND_CALL COND_RET SYSCALL SYSRET IRQ SERROR NO_TX
- }
-@@ -57,14 +76,31 @@ test_filter() {
- 	test_filter_expect=$2
- 
- 	echo "Testing branch stack filtering permutation ($test_filter_filter,$test_filter_expect)"
--
--	perf record -o $TMPDIR/perf.data --branch-filter $test_filter_filter,save_type,u -- ${TESTPROG} > /dev/null 2>&1
--	perf script -i $TMPDIR/perf.data --fields brstack | tr -s ' ' '\n' | grep '.' > $TMPDIR/perf.script
-+	perf record -o "$TMPDIR/perf.data" --branch-filter "$test_filter_filter,save_type,u" -- ${TESTPROG}  > "$TMPDIR/record.txt" 2>&1
-+	perf script -i "$TMPDIR/perf.data" --fields brstack > "$TMPDIR/perf.script"
- 
- 	# fail if we find any branch type that doesn't match any of the expected ones
- 	# also consider UNKNOWN branch types (-)
--	if grep -E -vm1 "^[^ ]*/($test_filter_expect|-|( *))/.*$" $TMPDIR/perf.script; then
--		return 1
-+	if [ ! -s "$TMPDIR/perf.script" ]
-+	then
-+		echo "Empty script output"
-+		if [ "x$err" == "x0" ]
-+		then
-+			err=2
-+		fi
-+		return
-+	fi
-+        # Look for lines not matching test_filter_expect ignoring issues caused
-+        # by empty output
-+	tr -s ' ' '\n' < "$TMPDIR/perf.script" | grep '.' | \
-+          grep -E -vm1 "^[^ ]*/($test_filter_expect|-|( *))/.*$" \
-+          > "$TMPDIR/perf.script-filtered" || true
-+	if [ -s "$TMPDIR/perf.script-filtered" ]
-+	then
-+		echo "Unexpected branch filter in script output"
-+		cat "$TMPDIR/perf.script"
-+		err=1
-+		return
- 	fi
- }
- 
-@@ -80,3 +116,6 @@ test_filter "any_ret"	"RET|COND_RET|SYSRET|ERET"
- test_filter "call,cond"		"CALL|SYSCALL|COND"
- test_filter "any_call,cond"		"CALL|IND_CALL|COND_CALL|IRQ|SYSCALL|COND"
- test_filter "cond,any_call,any_ret"	"COND|CALL|IND_CALL|COND_CALL|SYSCALL|IRQ|RET|COND_RET|SYSRET|ERET"
-+
-+cleanup
-+exit $err
--- 
-2.49.0.rc0.332.g42c0ae87b1-goog
+Regards,
+Akihiko Odaki
+
+> 
+> Thanks
+> 
+>>
+>> Regards,
+>> Akihiko Odaki
+>>
+>>>
+>>> Thanks
+>>>
+>>>> The current
+>>>> implementation fills the header with zero except num_buffers, which it
+>>>> fills some real value. This functionality is working fine with
+>>>> VIRTIO_NET_F_MRG_RXBUF and VIRTIO_F_VERSION_1, which change the header size.
+>>>>
+>>>> Now I'm adding VIRTIO_NET_F_HASH_REPORT and it adds the hash_report
+>>>> field, which also needs to be initialized with zero, so I'm making sure
+>>>> vhost_net will also initialize it.
+>>>>
+>>>> Regards,
+>>>> Akihiko Odaki
+>>>>
+>>>>>
+>>>>> Others look fine.
+>>>>>
+>>>>> Thanks
+>>>>>
+>>>>
+>>>
+>>
+> 
 
 
