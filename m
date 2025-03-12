@@ -1,356 +1,227 @@
-Return-Path: <linux-kernel+bounces-558458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 483D1A5E636
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:08:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 063D7A5E63B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:08:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E4C3BC3CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:05:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F9717F46C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B19C1EDA17;
-	Wed, 12 Mar 2025 21:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804441EE7C6;
+	Wed, 12 Mar 2025 21:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="igNDsUhA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RnZmJeOi";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="igNDsUhA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RnZmJeOi"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gwYIHqoG"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1891BD9DD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 21:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C3D1EF38E;
+	Wed, 12 Mar 2025 21:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741813392; cv=none; b=O8c8WU6Og5SmGdmorF/f6Da1mw8CIOYGKLoDo5nl8YYwjPjz0H18mTz49+9pWHJ8394ur9gNzHo/SJTN+dnILHitBtznzbNh/jMEa1dqc0ZrI+397qSrVPhU/cDYccO2eU6fTuIscHPvVD9KsSj1Ol/ZaYQOTkm8r4Iql6QQuSc=
+	t=1741813492; cv=none; b=R4wZHN2zaHFkiSPbXKBPjqL9Mi6azWcMOfy5qYNlfHFGFp92Tq4gOdonQRakUZkayjFwC4DwWhEOaEP4oQkAkivppv/07xzBCGssae8zDTG7XWTCT3FuPJpoSYxSMQMT570PqwfCr6Urxmp97YM2vCUg0IfY7T6e9d0JYgfqv8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741813392; c=relaxed/simple;
-	bh=GtbQVyI9HOTpjy93ppZfMLbvExGyUWM3I66gXtg1ggQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CTu5DQNSLC9YfBaO69nSqSt2mvkdiTQ0IZ9RaBczLoh3mod5GTA6FH7dUN918EfH0LU35TpWY23Bjh8T5MHuVbcwvxBsQtc2JjpEzlguXt6kmouZbaibmTHwsiIzmKBswk8md9KBMwfgbsnAc7vOmWI3apKrDqqW9byJb0HP4Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=igNDsUhA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RnZmJeOi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=igNDsUhA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RnZmJeOi; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from localhost (unknown [10.100.12.32])
-	by smtp-out1.suse.de (Postfix) with ESMTP id 8D41B21169;
-	Wed, 12 Mar 2025 21:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741813387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QYPVIjuXtyEWnSA0TQuv2Z6ecwvOqLWWeLHzxxVGJgo=;
-	b=igNDsUhAvWy+YUiNrJnRnQDC0ArpaeNtUrBmYcEDdZh0wFR5Mw+Z0QJPNh0c1VmD991fT8
-	Z27g/xiL303sApjcrXhDO7pYq/1pv0NCnNFfPYU7Ug5kwXcLk0nWYqohQo8sLNCwz29nnL
-	GT2k+s4++ck5iMyka2t8MQIigcIBSvg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741813387;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QYPVIjuXtyEWnSA0TQuv2Z6ecwvOqLWWeLHzxxVGJgo=;
-	b=RnZmJeOiBjydxZ1YIiLlUR6JHiXCnzJo3F+DNMqrOOuWb5QsVONJODP/7AS5aYljf6Sgeg
-	bHzUN6KCtJewJ2Bw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741813387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QYPVIjuXtyEWnSA0TQuv2Z6ecwvOqLWWeLHzxxVGJgo=;
-	b=igNDsUhAvWy+YUiNrJnRnQDC0ArpaeNtUrBmYcEDdZh0wFR5Mw+Z0QJPNh0c1VmD991fT8
-	Z27g/xiL303sApjcrXhDO7pYq/1pv0NCnNFfPYU7Ug5kwXcLk0nWYqohQo8sLNCwz29nnL
-	GT2k+s4++ck5iMyka2t8MQIigcIBSvg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741813387;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QYPVIjuXtyEWnSA0TQuv2Z6ecwvOqLWWeLHzxxVGJgo=;
-	b=RnZmJeOiBjydxZ1YIiLlUR6JHiXCnzJo3F+DNMqrOOuWb5QsVONJODP/7AS5aYljf6Sgeg
-	bHzUN6KCtJewJ2Bw==
-Date: Wed, 12 Mar 2025 22:03:07 +0100
-From: Jiri Bohac <jbohac@suse.cz>
-To: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org
-Cc: Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>,
-	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	David Hildenbrand <dhildenb@redhat.com>,
-	Michal Hocko <mhocko@suse.cz>
-Subject: [PATCH v3 1/5] Add a new optional ",cma" suffix to the crashkernel=
- command line option
-Message-ID: <Z9H2iw83e7eXD8JB@dwarf.suse.cz>
-References: <Z9H10pYIFLBHNKpr@dwarf.suse.cz>
+	s=arc-20240116; t=1741813492; c=relaxed/simple;
+	bh=+LGUaVivceWptpxAIWBUUKprgy/a0XLvVKd+sJ6qOOc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fA/wRZMA0jcw0ZZHAZnqnJoMLCcPzzY7es806h4y5mE/TsARKib6cQ63M3q23HiVBP8/EU+do0FlJPByH7/wdpZqG//6ZUSs+IzaKjOD9N+yXALQEaBxsOQRy2UXTpZ7Kyox7faRUxfcfyfwHU9VVl78MAoqH8nkBXuW5MbD8a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gwYIHqoG; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30bfed67e08so3221361fa.2;
+        Wed, 12 Mar 2025 14:04:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741813489; x=1742418289; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9kZxK/2Q5hehdq6vdu9VftqHSqPJSU1J/P2JUB6zgGk=;
+        b=gwYIHqoGCNZTQ3ySiUpmlkDGm5v3Bo72Ya6/Rd3u1QBorCkX2IWzKnYlp4dj47RvGP
+         aB7rOinDtkkV62F7ytA9Lk80zVrmUfsimJ69dA026UMl596Mjt9u0lJpZHYItojR3+WL
+         w5gR8GjlJ+4zHiuCAsB92YoIXrFXqB/gOMjOJ9NPPmu5NElWf6qSVhVqLMhJ890VrcIV
+         iSXHbjasrLqdxpy/C6l6uRcancWSlnXIwaJAeuyWSR/ZucGx2/5wzTkEj/M94ErucKgV
+         bzQWiZOVtJzpC4s/LC9GP4Bi2+vvGYmxWfBlTWbPjGPf4WsMQagjB13pq53fEGPZaogQ
+         wrZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741813489; x=1742418289;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9kZxK/2Q5hehdq6vdu9VftqHSqPJSU1J/P2JUB6zgGk=;
+        b=mHu873MOhqThNcRCkvyWGC1FhPHqFM+y8k9+r26wDE1h7yNLEFFBzvVGdKGU7EJ/vu
+         Uszl5AsS+83jlctj4gTRU0Gg3LnrYJrzPC6wu9XIDmsN5f1IlFs/efqPGhxBps4dtRXt
+         DSDSx5SCMeBEHwR3mx31zYzcveu+4L2w9PZAvTIfI68OKPRJULZIkjn2wxhmyctQ5U9V
+         A9C8DxDv9pYuHqOVPeux2tXB/HUv3ESIDwU8YQwCh6jCMVdiB2L/QhAUNJeClLGpLyV2
+         pZYZJNmRsVtaQfkB0njRX63fgybfFcu3GPeh72piDGV5ANKGU6LycFQRWt0IVr774N0t
+         X89g==
+X-Forwarded-Encrypted: i=1; AJvYcCUGUfxqWuG+fqklSWn0JDsDTP0Gegd4kjvEopBeSYQVBtBmCUg4ngU1OgGTlheQzLzh6kP19uucTgYAFExg@vger.kernel.org, AJvYcCUss6GCPnWZVNZphHW7EI3uBYmRpqkXmJX7BTIwYy7T3MTsngPIIe0F8WKcUg/MQAwzIQbBwLZvdSgw@vger.kernel.org, AJvYcCVWKMGfa3xeBG7SkrJKaTqOwdc77kkssbP8L/CGmDG9gEp7IiwfuZWTFHVbftQ74qCKUlAjDO7n8s5F2yPTun5F@vger.kernel.org, AJvYcCW2LpMGEPjwNRkpZNJzYeGJysOEmMwko+xXaU5gutUrZX5VdmcHJHvcMsZfioNq/mNzVnDV3KXkpRzpV2cI@vger.kernel.org, AJvYcCXQLn1gcZUnQaIkLv0hCTxpuqqHWncBIyZVejW3zE5WtUC3rPlaofOAHqSUYgU22W464fbD+mScuu18@vger.kernel.org, AJvYcCXVsiuCWL03QaxapTbeNKJWph3uNTJ7jJmtMPus57/2ezpSrKTll3JxdF/hBuCLPr8GiFbsAZMDlj5+sZE=@vger.kernel.org, AJvYcCXmvohTbj7CLXUNAESuY2LEmnmaNcA7BOA9epM3WMCEzgJt9t4bYgy/cTgFR/abbX+udqaJX2pzM9tHjgWHkeI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb0Um29IRCcRoPXxikEgP0rNFIhlK3GzGM+cpiZBMZ0FPGHaLJ
+	eA195Aa+zQFWVUMcQp+4GlJLPnC5/tEx3fqsGOoUqq/15qPa4ZgV9WZcACZk+QlX1kYD6RHbdC5
+	42u/iWlB52b0v91lMaDeCq2C9PgA=
+X-Gm-Gg: ASbGncuYvB22BMXbLhhimtkNsJofKKdgqP2DRWCE7NNnMk2rASLJHotB5t/ginuXFFM
+	ZZw+bLIlBXKGhO5CHXoXgUWzm+M7F+HNVopXA5i3IIs6mlEyRaycLBiWYqtjb9yhVPxXVmiRdq9
+	LzNHCNjQyCI70W9jk7ZbbiFZ87jmMOQG0/3rw8TZyz/g==
+X-Google-Smtp-Source: AGHT+IHa+R1rvAMaQooEb8PCVQbXlUkUJjsQQodlQM3HWgy+TunL6fhJjqkj5E6QZhONq/5o1zkY/uhUY13Bk/SqCNg=
+X-Received: by 2002:a2e:7015:0:b0:30b:ee81:9622 with SMTP id
+ 38308e7fff4ca-30bf466ce80mr71528251fa.31.1741813488633; Wed, 12 Mar 2025
+ 14:04:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9H10pYIFLBHNKpr@dwarf.suse.cz>
-X-Spam-Score: -4.29
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.19)[-0.950];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com>
+ <CAJ-ks9=K06OT6cutUABj2QDHJHJ70719c-eJ=F3n-_bhkYbZ3w@mail.gmail.com>
+ <D8EG9EM9UU0B.2GLHXRU2XROZ3@proton.me> <CAJ-ks9=+3MQb-tp8TAwYvVj=GOFFFVKJxRMprc8YXZHKhqnDrg@mail.gmail.com>
+ <D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me> <CAJ-ks9=zWAuPUM_61EA6i5QkUpwtNtsN8oF_MUerWGn39MRHhw@mail.gmail.com>
+ <D8EJM4CJ4HAN.1PB2YV8DB77V7@proton.me> <CAJ-ks9mo-H46Wwcu_LOvDy0ncwMR9ii74Fyf3OX-aWNnrZ397g@mail.gmail.com>
+ <CAJ-ks9kCgATKDE2qAuO3XpQfjVO2jGyq3D4sbUcVKyW6G1vuuQ@mail.gmail.com> <D8EL9QFS1XNT.JBSMRXD4D7GT@proton.me>
+In-Reply-To: <D8EL9QFS1XNT.JBSMRXD4D7GT@proton.me>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 12 Mar 2025 17:04:12 -0400
+X-Gm-Features: AQ5f1JqqQd3v2xiRI6ykASVSL1cdIxLsCz3uQjlsEDwmvIguhgD94ZHee5gDvtY
+Message-ID: <CAJ-ks9=TRDg3g=NG7k97P_5jXpZ4K4v0DxrmJFR+uF0-3zJkXw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a new cma_size parameter to parse_crashkernel().
-When not NULL, call __parse_crashkernel to parse the CMA
-reservation size from "crashkernel=size,cma" and store it
-in cma_size.
+On Wed, Mar 12, 2025 at 5:01=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On Wed Mar 12, 2025 at 9:41 PM CET, Tamir Duberstein wrote:
+> > On Wed, Mar 12, 2025 at 4:07=E2=80=AFPM Tamir Duberstein <tamird@gmail.=
+com> wrote:
+> >>
+> >> On Wed, Mar 12, 2025 at 3:43=E2=80=AFPM Benno Lossin <benno.lossin@pro=
+ton.me> wrote:
+> >> >
+> >> > On Wed Mar 12, 2025 at 8:19 PM CET, Tamir Duberstein wrote:
+> >> > > I tried using the strict provenance lints locally and I think we c=
+an't
+> >> > > until we properly bump MSRV due to `clippy::incompatible_msrv`:
+> >> > >
+> >> > > warning: current MSRV (Minimum Supported Rust Version) is `1.78.0`=
+ but
+> >> > > this item is stable since `1.84.0`
+> >> > >    --> ../rust/kernel/str.rs:696:22
+> >> > >     |
+> >> > > 696 |             pos: pos.expose_provenance(),
+> >> > >     |                      ^^^^^^^^^^^^^^^^^^^
+> >> > >     |
+> >> > >     =3D help: for further information visit
+> >> > > https://rust-lang.github.io/rust-clippy/master/index.html#incompat=
+ible_msrv
+> >> >
+> >> > Oh this is annoying...
+> >> >
+> >> > > This is with `#![feature(strict_provenance)]`. I can file the issu=
+e
+> >> > > but I think it's blocked on MSRV >=3D 1.84.0. But maybe you know o=
+f a
+> >> > > path forward :)
+> >> >
+> >> > I think we should be able to just `allow(clippy::incompatible_msrv)`=
+,
+> >> > since Miguel & other maintainers will test with 1.78 (or at least ar=
+e
+> >> > supposed to :).
+> >>
+> >> Alright, you've sniped me. This is coming in v3.
+> >
+> > I just realized I only covered the kernel crate. In order to cover all
+> > Rust code, I need to move the lints and the features out to the root
+> > Makefile. I tried something like this:
+> >
+> >> diff --git a/Makefile b/Makefile
+> >> index 2af40bfed9ce..10af1e44370b 100644
+> >> --- a/Makefile
+> >> +++ b/Makefile
+> >> @@ -466,13 +466,21 @@ KBUILD_USERHOSTCFLAGS :=3D -Wall -Wmissing-proto=
+types -Wstrict-prototypes \
+> >>  KBUILD_USERCFLAGS  :=3D $(KBUILD_USERHOSTCFLAGS) $(USERCFLAGS)
+> >>  KBUILD_USERLDFLAGS :=3D $(USERLDFLAGS)
+> >>
+> >> +# Lints were moved to `strict_provenance_lints` when `strict_provenan=
+ce` was stabilized.
+> >> +#
+> >> +# See https://github.com/rust-lang/rust/commit/56ee492a6e7a917b2b3f88=
+8e33dd52a13d3ecb64.
+> >> +KBUILD_RUST_STRICT_PROVENANCE_FEATURE =3D $(if $(CONFIG_RUSTC_HAS_STA=
+BLE_STRICT_PROVENANCE),strict_provenance_lints,strict_provenance)
+> >> +
+> >>  # These flags apply to all Rust code in the tree, including the kerne=
+l and
+> >>  # host programs.
+> >>  export rust_common_flags :=3D --edition=3D2021 \
+> >>      -Zbinary_dep_depinfo=3Dy \
+> >> +     -Zcrate-attr=3D"feature($(KBUILD_RUST_STRICT_PROVENANCE_FEATURE)=
+)" \
+> >>      -Astable_features \
+> >>      -Dnon_ascii_idents \
+> >>      -Dunsafe_op_in_unsafe_fn \
+> >> +     -Wfuzzy_provenance_casts \
+> >> +     -Wlossy_provenance_casts \
+> >>      -Wmissing_docs \
+> >>      -Wrust_2018_idioms \
+> >>      -Wunreachable_pub \
+> >> diff --git a/rust/Makefile b/rust/Makefile
+> >> index ea3849eb78f6..d7d5be741245 100644
+> >> --- a/rust/Makefile
+> >> +++ b/rust/Makefile
+> >> @@ -435,8 +435,10 @@ $(obj)/helpers/helpers.o: $(src)/helpers/helpers.=
+c $(recordmcount_source) FORCE
+> >>  # symbol versions generated from Rust objects.
+> >>  $(obj)/exports.o: private skip_gendwarfksyms =3D 1
+> >>
+> >> +KBUILD_RUST_STRICT_PROVENANCE_FEATURE :=3D $(if $(CONFIG_RUSTC_HAS_ST=
+ABLE_STRICT_PROVENANCE),strict_provenance_lints,strict_provenance)
+> >> +
+> >>  $(obj)/core.o: private skip_clippy =3D 1
+> >> -$(obj)/core.o: private skip_flags =3D -Wunreachable_pub
+> >> +$(obj)/core.o: private skip_flags =3D -Zcrate-attr=3D"feature($(KBUIL=
+D_RUST_STRICT_PROVENANCE_FEATURE))" -Wunreachable_pub -Wfuzzy_provenance_ca=
+sts -Wlossy_provenance_casts
+> >>  $(obj)/core.o: private rustc_objcopy =3D $(foreach sym,$(redirect-int=
+rinsics),--redefine-sym $(sym)=3D__rust$(sym))
+> >>  $(obj)/core.o: private rustc_target_flags =3D $(core-cfgs)
+> >>  $(obj)/core.o: $(RUST_LIB_SRC)/core/src/lib.rs \
+> >
+> > but this doesn't work because
+> > `CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE` is not yet defined when I
+> > read it in the root Makefile. I can read it lower down and then append
+> > the feature flag to `KBUILD_RUSTFLAGS` but by then the rustdoc flags
+> > have been copied from `rust_common_flags` and so rustdoc doesn't get
+> > the feature flag, resulting in unknown lint warnings in rustdoc and
+> > kunit tests.
+> >
+> > Any ideas?
+>
+> Always enable the features, we have `allow(stable_features)` for this
+> reason (then you don't have to do this dance with checking if it's
+> already stable or not :)
 
-Set cma_size to NULL in all calls to parse_crashkernel().
-
-Signed-off-by: Jiri Bohac <jbohac@suse.cz>
----
- arch/arm/kernel/setup.c              |  2 +-
- arch/arm64/mm/init.c                 |  2 +-
- arch/loongarch/kernel/setup.c        |  2 +-
- arch/mips/kernel/setup.c             |  2 +-
- arch/powerpc/kernel/fadump.c         |  2 +-
- arch/powerpc/kexec/core.c            |  2 +-
- arch/powerpc/mm/nohash/kaslr_booke.c |  2 +-
- arch/riscv/mm/init.c                 |  2 +-
- arch/s390/kernel/setup.c             |  2 +-
- arch/sh/kernel/machine_kexec.c       |  2 +-
- arch/x86/kernel/setup.c              |  2 +-
- include/linux/crash_reserve.h        |  3 ++-
- kernel/crash_reserve.c               | 16 ++++++++++++++--
- 13 files changed, 27 insertions(+), 14 deletions(-)
-
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index a41c93988d2c..0bfd66c7ada0 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -1004,7 +1004,7 @@ static void __init reserve_crashkernel(void)
- 	total_mem = get_total_mem();
- 	ret = parse_crashkernel(boot_command_line, total_mem,
- 				&crash_size, &crash_base,
--				NULL, NULL);
-+				NULL, NULL, NULL);
- 	/* invalid value specified or crashkernel=0 */
- 	if (ret || !crash_size)
- 		return;
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 9c0b8d9558fc..06bf216a4b0d 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -107,7 +107,7 @@ static void __init arch_reserve_crashkernel(void)
- 
- 	ret = parse_crashkernel(cmdline, memblock_phys_mem_size(),
- 				&crash_size, &crash_base,
--				&low_size, &high);
-+				&low_size, NULL, &high);
- 	if (ret)
- 		return;
- 
-diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
-index edcfdfcad7d2..ffdfb5407043 100644
---- a/arch/loongarch/kernel/setup.c
-+++ b/arch/loongarch/kernel/setup.c
-@@ -266,7 +266,7 @@ static void __init arch_reserve_crashkernel(void)
- 		return;
- 
- 	ret = parse_crashkernel(cmdline, memblock_phys_mem_size(),
--				&crash_size, &crash_base, &low_size, &high);
-+				&crash_size, &crash_base, &low_size, NULL, &high);
- 	if (ret)
- 		return;
- 
-diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-index fbfe0771317e..11b9b6b63e19 100644
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -458,7 +458,7 @@ static void __init mips_parse_crashkernel(void)
- 	total_mem = memblock_phys_mem_size();
- 	ret = parse_crashkernel(boot_command_line, total_mem,
- 				&crash_size, &crash_base,
--				NULL, NULL);
-+				NULL, NULL, NULL);
- 	if (ret != 0 || crash_size <= 0)
- 		return;
- 
-diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
-index 4b371c738213..f90aaa2263aa 100644
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -334,7 +334,7 @@ static __init u64 fadump_calculate_reserve_size(void)
- 	 * memory at a predefined offset.
- 	 */
- 	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
--				&size, &base, NULL, NULL);
-+				&size, &base, NULL, NULL, NULL);
- 	if (ret == 0 && size > 0) {
- 		unsigned long max_size;
- 
-diff --git a/arch/powerpc/kexec/core.c b/arch/powerpc/kexec/core.c
-index 58a930a47422..35f92427d282 100644
---- a/arch/powerpc/kexec/core.c
-+++ b/arch/powerpc/kexec/core.c
-@@ -66,7 +66,7 @@ void __init reserve_crashkernel(void)
- 	total_mem_sz = memory_limit ? memory_limit : memblock_phys_mem_size();
- 	/* use common parsing */
- 	ret = parse_crashkernel(boot_command_line, total_mem_sz,
--			&crash_size, &crash_base, NULL, NULL);
-+			&crash_size, &crash_base, NULL, NULL, NULL);
- 	if (ret == 0 && crash_size > 0) {
- 		crashk_res.start = crash_base;
- 		crashk_res.end = crash_base + crash_size - 1;
-diff --git a/arch/powerpc/mm/nohash/kaslr_booke.c b/arch/powerpc/mm/nohash/kaslr_booke.c
-index 5c8d1bb98b3e..5e4897daaaea 100644
---- a/arch/powerpc/mm/nohash/kaslr_booke.c
-+++ b/arch/powerpc/mm/nohash/kaslr_booke.c
-@@ -178,7 +178,7 @@ static void __init get_crash_kernel(void *fdt, unsigned long size)
- 	int ret;
- 
- 	ret = parse_crashkernel(boot_command_line, size, &crash_size,
--				&crash_base, NULL, NULL);
-+				&crash_base, NULL, NULL, NULL);
- 	if (ret != 0 || crash_size == 0)
- 		return;
- 	if (crash_base == 0)
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 15b2eda4c364..9634a800629b 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -1405,7 +1405,7 @@ static void __init arch_reserve_crashkernel(void)
- 
- 	ret = parse_crashkernel(cmdline, memblock_phys_mem_size(),
- 				&crash_size, &crash_base,
--				&low_size, &high);
-+				&low_size, NULL, &high);
- 	if (ret)
- 		return;
- 
-diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
-index d78bcfe707b5..4d9b5b5d0cb2 100644
---- a/arch/s390/kernel/setup.c
-+++ b/arch/s390/kernel/setup.c
-@@ -607,7 +607,7 @@ static void __init reserve_crashkernel(void)
- 	int rc;
- 
- 	rc = parse_crashkernel(boot_command_line, ident_map_size,
--			       &crash_size, &crash_base, NULL, NULL);
-+			       &crash_size, &crash_base, NULL, NULL, NULL);
- 
- 	crash_base = ALIGN(crash_base, KEXEC_CRASH_MEM_ALIGN);
- 	crash_size = ALIGN(crash_size, KEXEC_CRASH_MEM_ALIGN);
-diff --git a/arch/sh/kernel/machine_kexec.c b/arch/sh/kernel/machine_kexec.c
-index 8321b31d2e19..37073ca1e0ad 100644
---- a/arch/sh/kernel/machine_kexec.c
-+++ b/arch/sh/kernel/machine_kexec.c
-@@ -146,7 +146,7 @@ void __init reserve_crashkernel(void)
- 		return;
- 
- 	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
--			&crash_size, &crash_base, NULL, NULL);
-+			&crash_size, &crash_base, NULL, NULL, NULL);
- 	if (ret == 0 && crash_size > 0) {
- 		crashk_res.start = crash_base;
- 		crashk_res.end = crash_base + crash_size - 1;
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index cebee310e200..853afde761a7 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -481,7 +481,7 @@ static void __init arch_reserve_crashkernel(void)
- 
- 	ret = parse_crashkernel(cmdline, memblock_phys_mem_size(),
- 				&crash_size, &crash_base,
--				&low_size, &high);
-+				&low_size, NULL, &high);
- 	if (ret)
- 		return;
- 
-diff --git a/include/linux/crash_reserve.h b/include/linux/crash_reserve.h
-index 5a9df944fb80..a681f265a361 100644
---- a/include/linux/crash_reserve.h
-+++ b/include/linux/crash_reserve.h
-@@ -16,7 +16,8 @@ extern struct resource crashk_low_res;
- 
- int __init parse_crashkernel(char *cmdline, unsigned long long system_ram,
- 		unsigned long long *crash_size, unsigned long long *crash_base,
--		unsigned long long *low_size, bool *high);
-+		unsigned long long *low_size, unsigned long long *cma_size,
-+		bool *high);
- 
- #ifdef CONFIG_ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
- #ifndef DEFAULT_CRASH_KERNEL_LOW_SIZE
-diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-index a620fb4b2116..4969d60c00d6 100644
---- a/kernel/crash_reserve.c
-+++ b/kernel/crash_reserve.c
-@@ -172,17 +172,19 @@ static int __init parse_crashkernel_simple(char *cmdline,
- 
- #define SUFFIX_HIGH 0
- #define SUFFIX_LOW  1
--#define SUFFIX_NULL 2
-+#define SUFFIX_CMA  2
-+#define SUFFIX_NULL 3
- static __initdata char *suffix_tbl[] = {
- 	[SUFFIX_HIGH] = ",high",
- 	[SUFFIX_LOW]  = ",low",
-+	[SUFFIX_CMA]  = ",cma",
- 	[SUFFIX_NULL] = NULL,
- };
- 
- /*
-  * That function parses "suffix"  crashkernel command lines like
-  *
-- *	crashkernel=size,[high|low]
-+ *	crashkernel=size,[high|low|cma]
-  *
-  * It returns 0 on success and -EINVAL on failure.
-  */
-@@ -298,9 +300,11 @@ int __init parse_crashkernel(char *cmdline,
- 			     unsigned long long *crash_size,
- 			     unsigned long long *crash_base,
- 			     unsigned long long *low_size,
-+			     unsigned long long *cma_size,
- 			     bool *high)
- {
- 	int ret;
-+	unsigned long long __always_unused cma_base;
- 
- 	/* crashkernel=X[@offset] */
- 	ret = __parse_crashkernel(cmdline, system_ram, crash_size,
-@@ -331,6 +335,14 @@ int __init parse_crashkernel(char *cmdline,
- 
- 		*high = true;
- 	}
-+
-+	/*
-+	 * optional CMA reservation
-+	 * cma_base is ignored
-+	 */
-+	if (cma_size)
-+		__parse_crashkernel(cmdline, 0, cma_size,
-+			&cma_base, suffix_tbl[SUFFIX_CMA]);
- #endif
- 	if (!*crash_size)
- 		ret = -EINVAL;
-
--- 
-Jiri Bohac <jbohac@suse.cz>
-SUSE Labs, Prague, Czechia
-
+It's not so simple. In rustc < 1.84.0 the lints *and* the strict
+provenance APIs are behind `feature(strict_provenance)`. In rustc >=3D
+1.84.0 the lints are behind `feature(strict_provenance_lints)`. So you
+need to read the config to learn that you need to enable
+`feature(strict_provenance_lints)`.
 
