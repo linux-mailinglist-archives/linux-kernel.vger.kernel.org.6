@@ -1,144 +1,168 @@
-Return-Path: <linux-kernel+bounces-558111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19582A5E1D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:30:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D64C8A5E1D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:30:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EA211779A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:30:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B102E189F344
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651322451C3;
-	Wed, 12 Mar 2025 16:29:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4211DB12D;
-	Wed, 12 Mar 2025 16:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405861C5D7A;
+	Wed, 12 Mar 2025 16:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KArYPLzY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9564E1482F2;
+	Wed, 12 Mar 2025 16:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741796988; cv=none; b=O/kVSMhEo6jG+/dnVe3Tp1CrU5XACnfO4UYSHc6ZZzYegLFP7jdbN+dulhviBK+E6m7o8OSybrGNbpkfWK5C/atK4eXNYOCcwd7hJfZG/0J2ow4o/L80OgGtbv9fHfJVK7r8CAveOJDYd2HZLVZX00/0rE/dbEWd77ZqBr5kNsM=
+	t=1741797034; cv=none; b=SToVgcr15GIEcFYkuaf+YtwSLozKrp2wN3kWnWStpPIk5wPwAivvK+flOWfP3/vEOimzYrak1qTQjw0j8hRSK75Rt5O9hGjhD/bRbj7VN66icd2DNSJSUadZ2TZY5KV0PF27b6GrP5T+Dgvyp4DnpetIBlplmDv3rsBIW6YdJGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741796988; c=relaxed/simple;
-	bh=8nIEQw2kIR/hUK5MFQbGwUVMT7zzoKsY2rtqO689kv4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mMD5Zv8ONeeRi6zma+o1t9AgDH+8gqIav8MdsRtI6xxoRyfEs6Q9DUY0ObFkd23jvYSvCJHRC8kDDJz+wbUw+Qq1Q4KAg46UdwsgUonixDCPmeXMoue/CuTexyidx+p1i0eh0TLYhdTSWNl0jQSCAh8YaVfncD+eGPrUxdpUFlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 652AD1515;
-	Wed, 12 Mar 2025 09:29:54 -0700 (PDT)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A115F3F694;
-	Wed, 12 Mar 2025 09:29:40 -0700 (PDT)
-Message-ID: <78bc0eda-7471-404d-a816-bd5f1a8d4b27@arm.com>
-Date: Wed, 12 Mar 2025 17:29:39 +0100
+	s=arc-20240116; t=1741797034; c=relaxed/simple;
+	bh=T4USTpbiJBU+Mo+Fc8Gyg6DEW4C5PZ2fzKc4tIFb8DA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AXA0ilqe928ATToGfiZOMV68n4Nis8i9Nuo7qcMev0kwo212I4oOklEUBoMazt61UhWaFNiTQBxYLaIbnaYPtiOrjqUU3vbARybAjs1inAYD7dX30OFyoFjAIyecUdm9+6+DyeE2pHXYfj/oAp96TTshVTiqgED/rN1uG9kO7kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KArYPLzY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 000A1C4CEDD;
+	Wed, 12 Mar 2025 16:30:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741797034;
+	bh=T4USTpbiJBU+Mo+Fc8Gyg6DEW4C5PZ2fzKc4tIFb8DA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KArYPLzYeStq7Oz7/PRzKy3002H7u7RQTP11qkabSqoZzH9slWvs7PVg1sr37MTVO
+	 zwo+jrKI1gR/6grBKGbSPcA4QhNPMCaqlq8CxLOvf3cDC8W5Tokd305ycEJqqz6pxF
+	 l+1OGFAsb0B8mgYStsBpm3hNOWtnIAWT482zOIAs0mNBRAA1ObZL7KXKUG1i5wG6Fd
+	 2uWIReEV5UBFcLcZ+TWxrMUH2Yi58XVfZ5Ua9EM59YsQwLugLvs1QkILxTUgQAJ+qx
+	 MXTDhEPo0t8tpZlVUfHQ441pgSMM+b9rIEkvYcJ060a3ycScZhKxoTFLuVorzxU6RU
+	 rlOCS+nE/Ui6A==
+Date: Wed, 12 Mar 2025 09:30:28 -0700
+From: Kees Cook <kees@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, Petr Mladek <pmladek@suse.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-mm <linux-mm@kvack.org>, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] module: Taint the kernel when write-protecting
+ ro_after_init fails
+Message-ID: <202503120923.199D458CB@keescook>
+References: <20250306103712.29549-1-petr.pavlu@suse.com>
+ <Z8nT8PCPThnfb3Cq@bombadil.infradead.org>
+ <c25939c5-d6e8-4450-873b-0a9c774b845b@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/8] sched/deadline: Rebuild root domain accounting
- after every update
-To: Juri Lelli <juri.lelli@redhat.com>, Waiman Long <llong@redhat.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Swapnil Sapkal <swapnil.sapkal@amd.com>,
- Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
- luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
- Jon Hunter <jonathanh@nvidia.com>
-References: <797146a4-97d6-442e-b2d3-f7c4f438d209@arm.com>
- <398c710f-2e4e-4b35-a8a3-4c8d64f2fe68@redhat.com>
- <fd4d6143-9bd2-4a7c-80dc-1e19e4d1b2d1@redhat.com>
- <Z9Alq55RpuFqWT--@jlelli-thinkpadt14gen4.remote.csb>
- <be2c47b8-a5e4-4591-ac4d-3cbc92e2ce5d@redhat.com>
- <e6731145-5290-41f8-aafb-1d0f1bcc385a@arm.com>
- <7fb20de6-46a6-4e87-932e-dfc915fff3dc@redhat.com>
- <724e00ea-eb27-46f1-acc3-465c04ffc84d@arm.com>
- <Z9FdWZsiI9riBImL@jlelli-thinkpadt14gen4.remote.csb>
- <d38df868-bc65-4186-8ce4-12d8f37a16b5@redhat.com>
- <Z9GWAbxuddrTzCS9@jlelli-thinkpadt14gen4.remote.csb>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <Z9GWAbxuddrTzCS9@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c25939c5-d6e8-4450-873b-0a9c774b845b@suse.cz>
 
-On 12/03/2025 15:11, Juri Lelli wrote:
-> On 12/03/25 09:55, Waiman Long wrote:
->> On 3/12/25 6:09 AM, Juri Lelli wrote:
->>> On 12/03/25 10:53, Dietmar Eggemann wrote:
->>>> On 11/03/2025 15:51, Waiman Long wrote:
-
-[...]
-
->>> I unfortunately very much suspect !CPUSETS accounting is broken. But if
->>> that is indeed the case, it has been broken for a while. :(
->> Without CONFIG_CPUSETS, there will be one and only one global sched domain.
->> Will this still be a problem?
+On Wed, Mar 12, 2025 at 04:45:24PM +0100, Vlastimil Babka wrote:
+> On 3/6/25 17:57, Luis Chamberlain wrote:
+> > + linux-mm since we're adding TAINT_BAD_PAGE
+> > 
+> > On Thu, Mar 06, 2025 at 11:36:55AM +0100, Petr Pavlu wrote:
+> >> In the unlikely case that setting ro_after_init data to read-only fails, it
+> >> is too late to cancel loading of the module. The loader then issues only
+> >> a warning about the situation. Given that this reduces the kernel's
+> >> protection, it was suggested to make the failure more visible by tainting
+> >> the kernel.
+> >> 
+> >> Allow TAINT_BAD_PAGE to be set per-module and use it in this case. The flag
+> >> is set in similar situations and has the following description in
+> >> Documentation/admin-guide/tainted-kernels.rst: "bad page referenced or some
+> >> unexpected page flags".
+> >> 
+> >> Adjust the warning that reports the failure to avoid references to internal
+> >> functions and to add information about the kernel being tainted, both to
+> >> match the style of other messages in the file. Additionally, merge the
+> >> message on a single line because checkpatch.pl recommends that for the
+> >> ability to grep for the string.
+> >> 
+> >> Suggested-by: Kees Cook <kees@kernel.org>
+> >> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> >> ---
+> >> I opted to use TAINT_BAD_PAGE for now because it seemed unnecessary to me
+> >> to introduce a new flag only for this specific case. However, if we end up
+> >> similarly checking set_memory_*() in the boot context, a separate flag
+> >> would be probably better.
+> >> ---
+> >>  kernel/module/main.c | 7 ++++---
+> >>  kernel/panic.c       | 2 +-
+> >>  2 files changed, 5 insertions(+), 4 deletions(-)
+> >> 
+> >> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> >> index 1fb9ad289a6f..8f424a107b92 100644
+> >> --- a/kernel/module/main.c
+> >> +++ b/kernel/module/main.c
+> >> @@ -3030,10 +3030,11 @@ static noinline int do_init_module(struct module *mod)
+> >>  	rcu_assign_pointer(mod->kallsyms, &mod->core_kallsyms);
+> >>  #endif
+> >>  	ret = module_enable_rodata_ro_after_init(mod);
+> >> -	if (ret)
+> >> -		pr_warn("%s: module_enable_rodata_ro_after_init() returned %d, "
+> >> -			"ro_after_init data might still be writable\n",
+> >> +	if (ret) {
+> >> +		pr_warn("%s: write-protecting ro_after_init data failed with %d, the data might still be writable - tainting kernel\n",
+> >>  			mod->name, ret);
+> >> +		add_taint_module(mod, TAINT_BAD_PAGE, LOCKDEP_STILL_OK);
+> >> +	}
+> >>  
+> >>  	mod_tree_remove_init(mod);
+> >>  	module_arch_freeing_init(mod);
+> >> diff --git a/kernel/panic.c b/kernel/panic.c
+> >> index d8635d5cecb2..794c443bfb5c 100644
+> >> --- a/kernel/panic.c
+> >> +++ b/kernel/panic.c
+> >> @@ -497,7 +497,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+> >>  	TAINT_FLAG(CPU_OUT_OF_SPEC,		'S', ' ', false),
+> >>  	TAINT_FLAG(FORCED_RMMOD,		'R', ' ', false),
+> >>  	TAINT_FLAG(MACHINE_CHECK,		'M', ' ', false),
+> >> -	TAINT_FLAG(BAD_PAGE,			'B', ' ', false),
+> >> +	TAINT_FLAG(BAD_PAGE,			'B', ' ', true),
+> >>  	TAINT_FLAG(USER,			'U', ' ', false),
+> >>  	TAINT_FLAG(DIE,				'D', ' ', false),
+> >>  	TAINT_FLAG(OVERRIDDEN_ACPI_TABLE,	'A', ' ', false),
+> > 
+> > Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> > 
+> > For our needs this makes sense, however I am curious if TAINT_BAD_PAGE
+> > is too broadly generic, and also if we're going to add it, if there are
+> > other mm uses for such a thing.
 > 
-> Still need to double check. But I have a feeling we don't restore
-> accounting correctly (at all?!) without CPUSETS. Orthogonal to this
-> issue though, as if we don't, we didn't so far. :/
+> I'm not sure BAD_PAGE is a good fit. If there was a new flag that meant "a
+> hardening measure failed", would that have other possible uses? The
+> semantics would be that the kernel self-protection was weakened wrt
+> expectations, even if not yet a corruption due to attack would be detected.
+> Some admins could opt-in to panic in such case anyway, etc. Any other
+> hardening features where such "failure to harden" is possible and could use
+> this too? Kees?
 
-As expected:
+Yeah, it could certainly be used. The direction the hardening stuff has
+taken is to use WARN() (as Linus requires no direct BUG() usage), and to
+recommend that end users tune their warn_limit sysctl as needed.
 
-Since dl_rebuild_rd_accounting() is empty with !CONFIG_CPUSETS, the same
-issue happens.
+Being able to TAINT might be useful, but I don't have any places that
+immediately come to mind that seem appropriate for it (besides this
+case). Hm, well, maybe in the case of a W^X test failure? (I note that
+this is also a "safe memory permission" failure...)
 
-Testcase: suspend/resume
+How about TAINT_WEAKENED_PROTECTION ? Or something that carries that
+idea?
 
-Test machine: Arm64 big.LITTLE cpumask=[LITTLE][big]=[0,3-5][1-2]
-plus cmd line option 'isolcpus=3,4'.
+-Kees
 
-...
-
-[ 2250.898771] PM: suspend entry (deep)
-[ 2250.902566] Filesystems sync: 0.000 seconds
-[ 2250.908704] Freezing user space processes
-[ 2250.914379] Freezing user space processes completed (elapsed 0.001
-seconds)
-[ 2250.921433] OOM killer disabled.
-[ 2250.924702] Freezing remaining freezable tasks
-[ 2250.930497] Freezing remaining freezable tasks completed (elapsed
-0.001 seconds)
-...
-[ 2251.060052] Disabling non-boot CPUs ...
-[ 2251.060426] CPU0 attaching NULL sched-domain.
-[ 2251.060455] CPU1 attaching NULL sched-domain.
-[ 2251.060478] CPU2 attaching NULL sched-domain.
-[ 2251.060499] CPU5 attaching NULL sched-domain.
-[ 2251.060712] CPU0 attaching sched-domain(s):
-[ 2251.060723]  domain-0: span=0-2 level=PKG
-[ 2251.060750]   groups: 0:{ span=0 cap=503 }, 1:{ span=1-2 cap=2048 }
-[ 2251.060829] CPU1 attaching sched-domain(s):
-[ 2251.060838]  domain-0: span=1-2 level=MC
-[ 2251.060859]   groups: 1:{ span=1 }, 2:{ span=2 }
-[ 2251.060906]   domain-1: span=0-2 level=PKG
-[ 2251.060926]    groups: 1:{ span=1-2 cap=2048 }, 0:{ span=0 cap=503 }
-[ 2251.061000] CPU2 attaching sched-domain(s):
-[ 2251.061009]  domain-0: span=1-2 level=MC
-[ 2251.061030]   groups: 2:{ span=2 }, 1:{ span=1 }
-[ 2251.061077]   domain-1: span=0-2 level=PKG
-[ 2251.061097]    groups: 1:{ span=1-2 cap=2048 }, 0:{ span=0 cap=503 }
-[ 2251.061221] root domain span: 0-2
-[ 2251.061270] root_domain 0-2: pd1:{ cpus=1-2 nr_pstate=5 } pd0:{
-cpus=0,3-5 nr_pstate=5 }
-[ 2251.064976] psci: CPU5 killed (polled 0 ms)
-[ 2251.066211] Error taking CPU4 down: -16
-[ 2251.066226] Non-boot CPUs are not disabled
-[ 2251.066234] Enabling non-boot CPUs ...
-
-[...]
-
+-- 
+Kees Cook
 
