@@ -1,171 +1,314 @@
-Return-Path: <linux-kernel+bounces-558360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5830A5E4D2
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A6F7A5E4D1
 	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:53:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AAF93BB528
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:52:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19D1816266C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF3E25C6E5;
-	Wed, 12 Mar 2025 19:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE289258CEB;
+	Wed, 12 Mar 2025 19:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="GOGJO3C2"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k849Rvsf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BC625A346
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 19:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E73F1E8346
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 19:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741809126; cv=none; b=W3g4kEwk7bmYeD1PKlkbgbQFsxStzvLpUoVrhGYQGbNH5jk4y4uiKMwgLEVdQRRNgPfWFgMcVCkzDaVNdWov8eGn8A8Mj6K/EkWqoZug+2T4B1HlBj7hUkS7E5ooFyg/bOQG5rLof4qPSpXc1y2QJBUgiryqOwcZVRHzwG5Vdtg=
+	t=1741809142; cv=none; b=Lm3eHvIhmErS7oyFnQhM25w4d85/PAgdBMz9YGQuIqX7W263N1oVRbI2LMl0JQ11pI1ulA075sbdpGKjB3+9j5FYtqCXoWdMndjAIrvHqSm9dGevmiJA9iPf0uPfL4PFs+17p9r2qmOvyTeK671L60znoTyhdzZRZUPRMy0wgFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741809126; c=relaxed/simple;
-	bh=9nCebzwQcT7vsmLoqvflspQkiwpll02VlnYPMm4lKOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h1ZI2Vom6G3IKX8QIpLZ7GWM4vumsQZcoK0Uywc0Splzu3ZBVINU3t1GKaYTgg0iarA/snDJJQrT7Y6ROs/wg29NNsBlIW6lMDvMr5bj2kbCeSVsS3jPHabr7pD/seena9oVan2hiSTSIzKSurUZzZ92YCRKVCaGy6wLc8lnxSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=GOGJO3C2; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-223fb0f619dso4670075ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:52:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1741809123; x=1742413923; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IZXks1yCL59Hzx10jJaOlAET0rV27Iyc9SiIzk3nPyM=;
-        b=GOGJO3C2/wlKBsCli3wHpFSOAwpXN67Fhww6AHNXYt6ZpwFMGx0mwROgOHuRh31IsN
-         XMYFA56eCx/vM/UTdDzC2NI8M2998h9Uwk3pdfw7BIdhyCXy+qL8JGnSRQFNo4u+89O7
-         ACbwFNWCtPHgj/g+5zdJIKSwNc2W0hJYYTMOG9ybHwEwyM5G8RvLELZntsHfU7/dEYL1
-         8IantO9rfNEihePEb018gGVDovaRq/eiz6zb8BanToOTCBKOWkh6X/IV3pK8dUAziGqa
-         Vy8in57gtB5Q3gDxLDCyihkhXEARr3IHWvdHZyC+QbCi+iYQQ1nDkOWrs0wv23WRgqPC
-         aflQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741809123; x=1742413923;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IZXks1yCL59Hzx10jJaOlAET0rV27Iyc9SiIzk3nPyM=;
-        b=hbXnaLr7Cg+MhKIiOjS80aoe9oY9jhMYU3nATrWmjxpRfC39RSHd+F9P3iBpq8uIho
-         vpsxskiJojRxcHe3F7x4t3cXxePg54eVjj/A6EAzR+jikE4yYRG6JQteuO4KMpyc/793
-         eszxKFFig3Y6JlszLJMXTE34B7bYUv6p8S/FQc9yBG9NdLf6S4f4VnNVn9ShpNZnA1rx
-         6+6reOrv7/OPPDFyuQYLmFp/HgdISJUHkTI88AMLU7jQbYou5KK8Oylqq8xs/2oc1wE7
-         fje5ACexabt6tv8/8Knzenc/uJMWoYLtG2met4uY9hBZBHJMXxoi3krK+T4Ez4ZMtjlF
-         fhIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXZas1bAxklSRAsMW52bmecS1EDNFJP6MFGLUNFX8iDmpj/aEUZjukG48Qy8/UCmIv7eTrxb4HQkXrrtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFEDhgivRUAkQBH1oBgpbxOC+iWNCVsG6fd7/7hdtiZk8CLNQX
-	+TcngXhvO7eOWNi2rvibEiClTqOMQBiq61eixkkwkoY6l7dNcysC6K03ZM8chw0=
-X-Gm-Gg: ASbGncvitJB4eXwX3V+oDI6CMCess/sN4zXNdq6bskskk3D9bSx1LbE7tVU/LAG3YRI
-	GzmVFBI4j+RfcR4z+jK1o+1tGL6GoNEXI0InOMcZ0gDeLZjse+kTSYrccQO9suYJQs9elc949v9
-	0tM1ZxDWrYDWUgsAZ6WjsSZRieyHMPfzmG5NyN8VQAFVOkYATFllrtl/grNuKQV/0UEVh0/bKlf
-	8uC8ZM0k7zvRBZAfxZbojJqkevnh3K6eu8Iqna2JNKt/rCYQ7xmU64sXRQ+cLy/Hqh7slDMWFcA
-	TfjxAV3nxpSunjus9hFvCPyCI2RQckisWknl0IuNuIzIlkshXa0OSZWlfWvfHBKraPFoIRTd8Tq
-	jpg49+kD57/32kA8LtMYn
-X-Google-Smtp-Source: AGHT+IEE2EJW9ndEG7Y/L7HAyUCKmqOhXbnMCG+N60tA8rq5IwDA5m81XvtvYTp7j4ChVG457AtQ1g==
-X-Received: by 2002:a17:903:228e:b0:224:b60:3cd3 with SMTP id d9443c01a7336-22592e2d676mr134144265ad.19.1741809122629;
-        Wed, 12 Mar 2025 12:52:02 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e99dfsm120190275ad.91.2025.03.12.12.52.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 12:52:02 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tsS7T-0000000CHVL-0aXe;
-	Thu, 13 Mar 2025 06:51:59 +1100
-Date: Thu, 13 Mar 2025 06:51:59 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 12/12] xfs: Allow block allocator to take an alignment
- hint
-Message-ID: <Z9Hl39cS-V2r-5mY@dread.disaster.area>
-References: <20250303171120.2837067-1-john.g.garry@oracle.com>
- <20250303171120.2837067-13-john.g.garry@oracle.com>
- <Z84QRx_yEDEDUxr5@dread.disaster.area>
- <ad152fa0-0767-45cb-921e-c3e9f5eac110@oracle.com>
+	s=arc-20240116; t=1741809142; c=relaxed/simple;
+	bh=wMBJKRI1jgs1UA7UuLcMi4YOteNf8/9ao2RduXR/UMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=djYuYonEBAcz6yqv8rVipbGF6gkcBHKOFsivmguU0/owsKwy1U9t1IWtkVIRI7rZQo93i7Gh2DYNsUavnq4KGiFmcaLXfnhTiF5+3FwS5sX3+ttkye2HE1hN1obchbw8lAEw8KgEHIR972fvSj1Mke0bkWxVY8sLAFIeXPA2+f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k849Rvsf; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741809140; x=1773345140;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wMBJKRI1jgs1UA7UuLcMi4YOteNf8/9ao2RduXR/UMo=;
+  b=k849RvsfL3c4Rrz4o7u1RH2odfQrQHzja/WgLZ7ub358dbRSr4fwqroF
+   soKQl+wlLolcNfiS0BZvmq9dvb0PrRRv6W9H6IXfpz10FLIYt90dweKKh
+   X/jNm9TTzrJPcKraNHfxa4Lz6p53kmVkQ77eI7LQJOTgw7rRMR7FG8nja
+   9YT5GFXSCOjae+/fAVdDbOlYVSJpCpAmuga623u0G1Ktt6dX6WNcpa+pa
+   C/VOsB17FYeH/R98NgqTqw5+WiSSXSeFqxszyTm9uyZysQalV+u6j3O3y
+   Qp+ljHePJSn1qBl6fUX9uoiZXRkY4RImnHj+XzzwkJzXEimJQrTIG3rCS
+   A==;
+X-CSE-ConnectionGUID: GAeboWCIQ4606JBU0OmhyQ==
+X-CSE-MsgGUID: g3GeQZ16SrO8h0uvVTWKwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="60450188"
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="60450188"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 12:52:18 -0700
+X-CSE-ConnectionGUID: 0DfzXucPTiaNc46tXUS6/A==
+X-CSE-MsgGUID: qMkYS50FQBS/F1qU19ZHyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="121236045"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 12:52:09 -0700
+Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 41B4F20B5736;
+	Wed, 12 Mar 2025 12:52:07 -0700 (PDT)
+Message-ID: <29655aae-e1fd-4f3a-88f9-033034943ddd@linux.intel.com>
+Date: Wed, 12 Mar 2025 15:52:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ad152fa0-0767-45cb-921e-c3e9f5eac110@oracle.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V8 2/6] perf: attach/detach PMU specific data
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, tglx@linutronix.de, bp@alien8.de, acme@kernel.org,
+ namhyung@kernel.org, irogers@google.com, linux-kernel@vger.kernel.org,
+ ak@linux.intel.com, eranian@google.com
+References: <20250312182525.4078433-1-kan.liang@linux.intel.com>
+ <20250312182525.4078433-2-kan.liang@linux.intel.com>
+ <20250312191823.GB10453@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250312191823.GB10453@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 12:10:44PM +0000, John Garry wrote:
-> On 09/03/2025 22:03, Dave Chinner wrote:
-> > On Mon, Mar 03, 2025 at 05:11:20PM +0000, John Garry wrote:
-> > > diff --git a/fs/xfs/libxfs/xfs_bmap.h b/fs/xfs/libxfs/xfs_bmap.h
-> > > index 4b721d935994..e6baa81e20d8 100644
-> > > --- a/fs/xfs/libxfs/xfs_bmap.h
-> > > +++ b/fs/xfs/libxfs/xfs_bmap.h
-> > > @@ -87,6 +87,9 @@ struct xfs_bmalloca {
-> > >   /* Do not update the rmap btree.  Used for reconstructing bmbt from rmapbt. */
-> > >   #define XFS_BMAPI_NORMAP	(1u << 10)
-> > > +/* Try to align allocations to the extent size hint */
-> > > +#define XFS_BMAPI_EXTSZALIGN	(1u << 11)
-> > 
-> > Don't we already do that?
-> > 
-> > Or is this doing something subtle and non-obvious like overriding
-> > stripe width alignment for large atomic writes?
-> > 
-> 
-> stripe alignment only comes into play for eof allocation.
-> 
-> args->alignment is used in xfs_alloc_compute_aligned() to actually align the
-> start bno.
-> 
-> If I don't have this, then we can get this ping-pong affect when overwriting
-> atomically the same region:
-> 
-> # dd if=/dev/zero of=mnt/file bs=1M count=10 conv=fsync
-> # xfs_bmap -vp mnt/file
-> mnt/file:
-> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
->   0: [0..20479]:      192..20671        0 (192..20671)     20480 000000
-> # /xfs_io -d -C "pwrite -b 64k -V 1 -A -D 0 64k" mnt/file
-> wrote 65536/65536 bytes at offset 0
-> 64 KiB, 1 ops; 0.0525 sec (1.190 MiB/sec and 19.0425 ops/sec)
-> # xfs_bmap -vp mnt/file
-> mnt/file:
-> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
->   0: [0..127]:        20672..20799      0 (20672..20799)     128 000000
->   1: [128..20479]:    320..20671        0 (320..20671)     20352 000000
-> # /xfs_io -d -C "pwrite -b 64k -V 1 -A -D 0 64k" mnt/file
-> wrote 65536/65536 bytes at offset 0
-> 64 KiB, 1 ops; 0.0524 sec (1.191 MiB/sec and 19.0581 ops/sec)
-> # xfs_bmap -vp mnt/file
-> mnt/file:
-> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
->   0: [0..20479]:      192..20671        0 (192..20671)     20480 000000
-> # /xfs_io -d -C "pwrite -b 64k -V 1 -A -D 0 64k" mnt/file
-> wrote 65536/65536 bytes at offset 0
-> 64 KiB, 1 ops; 0.0524 sec (1.191 MiB/sec and 19.0611 ops/sec)
-> # xfs_bmap -vp mnt/file
-> mnt/file:
-> EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
->   0: [0..127]:        20672..20799      0 (20672..20799)     128 000000
->   1: [128..20479]:    320..20671        0 (320..20671)     20352 000000
-> 
-> We are never getting aligned extents wrt write length, and so have to fall
-> back to the SW-based atomic write always. That is not what we want.
 
-Please add a comment to explain this where the XFS_BMAPI_EXTSZALIGN
-flag is set, because it's not at all obvious what it is doing or why
-it is needed from the name of the variable or the implementation.
 
--Dave.
+On 2025-03-12 3:18 p.m., Peter Zijlstra wrote:
+> On Wed, Mar 12, 2025 at 11:25:21AM -0700, kan.liang@linux.intel.com wrote:
+> 
+>> +static int
+>> +attach_global_ctx_data(struct kmem_cache *ctx_cache)
+>> +{
+>> +	if (refcount_inc_not_zero(&global_ctx_data_ref))
+>> +		return 0;
+>> +
+>> +	percpu_down_write(&global_ctx_data_rwsem);
+>> +	if (!refcount_inc_not_zero(&global_ctx_data_ref)) {
+>> +		struct task_struct *g, *p;
+>> +		struct perf_ctx_data *cd;
+>> +		int ret;
+>> +
+>> +again:
+>> +		/* Allocate everything */
+>> +		rcu_read_lock();
+>> +		for_each_process_thread(g, p) {
+>> +			cd = rcu_dereference(p->perf_ctx_data);
+>> +			if (cd && !cd->global) {
+>> +				cd->global = 1;
+>> +				if (!refcount_inc_not_zero(&cd->refcount))
+>> +					cd = NULL;
+>> +			}
+>> +			if (!cd) {
+>> +				get_task_struct(p);
+>> +				rcu_read_unlock();
+>> +
+>> +				ret = attach_task_ctx_data(p, ctx_cache, true);
+>> +				put_task_struct(p);
+>> +				if (ret) {
+>> +					__detach_global_ctx_data();
+>> +					return ret;
+> 
+> AFAICT this returns with global_ctx_data_rwsem taken, no?
 
--- 
-Dave Chinner
-david@fromorbit.com
+Ah, yes
+
+> 
+>> +				}
+>> +				goto again;
+>> +			}
+>> +		}
+>> +		rcu_read_unlock();
+>> +
+>> +		refcount_set(&global_ctx_data_ref, 1);
+>> +	}
+>> +	percpu_up_write(&global_ctx_data_rwsem);
+>> +
+>> +	return 0;
+>> +}
+> 
+> Can we rework this with guards? A little something like so?
+> 
+
+Yes. I will do more test and send a V9.
+
+Thanks,
+Kan
+
+> ---
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -5233,18 +5233,20 @@ static refcount_t global_ctx_data_ref;
+>  static int
+>  attach_global_ctx_data(struct kmem_cache *ctx_cache)
+>  {
+> +	struct task_struct *g, *p;
+> +	struct perf_ctx_data *cd;
+> +	int ret;
+> +
+>  	if (refcount_inc_not_zero(&global_ctx_data_ref))
+>  		return 0;
+>  
+> -	percpu_down_write(&global_ctx_data_rwsem);
+> -	if (!refcount_inc_not_zero(&global_ctx_data_ref)) {
+> -		struct task_struct *g, *p;
+> -		struct perf_ctx_data *cd;
+> -		int ret;
+> +	guard(percpu_write)(&global_ctx_data_rwsem);
+> +	if (refcount_inc_not_zero(&global_ctx_data_ref))
+> +		return 0;
+>  
+>  again:
+> -		/* Allocate everything */
+> -		rcu_read_lock();
+> +	/* Allocate everything */
+> +	scoped_guard (rcu) {
+>  		for_each_process_thread(g, p) {
+>  			cd = rcu_dereference(p->perf_ctx_data);
+>  			if (cd && !cd->global) {
+> @@ -5254,24 +5256,23 @@ attach_global_ctx_data(struct kmem_cache
+>  			}
+>  			if (!cd) {
+>  				get_task_struct(p);
+> -				rcu_read_unlock();
+> -
+> -				ret = attach_task_ctx_data(p, ctx_cache, true);
+> -				put_task_struct(p);
+> -				if (ret) {
+> -					__detach_global_ctx_data();
+> -					return ret;
+> -				}
+> -				goto again;
+> +				goto alloc;
+>  			}
+>  		}
+> -		rcu_read_unlock();
+> -
+> -		refcount_set(&global_ctx_data_ref, 1);
+>  	}
+> -	percpu_up_write(&global_ctx_data_rwsem);
+> +
+> +	refcount_set(&global_ctx_data_ref, 1);
+>  
+>  	return 0;
+> +
+> +alloc:
+> +	ret = attach_task_ctx_data(p, ctx_cache, true);
+> +	put_task_struct(p);
+> +	if (ret) {
+> +		__detach_global_ctx_data();
+> +		return ret;
+> +	}
+> +	goto again;
+>  }
+>  
+>  static int
+> @@ -5338,15 +5339,12 @@ static void detach_global_ctx_data(void)
+>  	if (refcount_dec_not_one(&global_ctx_data_ref))
+>  		return;
+>  
+> -	percpu_down_write(&global_ctx_data_rwsem);
+> +	guard(perpcu_write)(&global_ctx_data_rwsem);
+>  	if (!refcount_dec_and_test(&global_ctx_data_ref))
+> -		goto unlock;
+> +		return;
+>  
+>  	/* remove everything */
+>  	__detach_global_ctx_data();
+> -
+> -unlock:
+> -	percpu_up_write(&global_ctx_data_rwsem);
+>  }
+>  
+>  static void detach_perf_ctx_data(struct perf_event *event)
+> @@ -8776,9 +8774,9 @@ perf_event_alloc_task_data(struct task_s
+>  	if (!ctx_cache)
+>  		return;
+>  
+> -	percpu_down_read(&global_ctx_data_rwsem);
+> +	guard(percpu_read)(&global_ctx_data_rwsem);
+> +	guard(rcu)();
+>  
+> -	rcu_read_lock();
+>  	cd = rcu_dereference(child->perf_ctx_data);
+>  
+>  	if (!cd) {
+> @@ -8787,21 +8785,16 @@ perf_event_alloc_task_data(struct task_s
+>  		 * when attaching the perf_ctx_data.
+>  		 */
+>  		if (!refcount_read(&global_ctx_data_ref))
+> -			goto rcu_unlock;
+> +			return;
+>  		rcu_read_unlock();
+>  		attach_task_ctx_data(child, ctx_cache, true);
+> -		goto up_rwsem;
+> +		return;
+>  	}
+>  
+>  	if (!cd->global) {
+>  		cd->global = 1;
+>  		refcount_inc(&cd->refcount);
+>  	}
+> -
+> -rcu_unlock:
+> -	rcu_read_unlock();
+> -up_rwsem:
+> -	percpu_up_read(&global_ctx_data_rwsem);
+>  }
+>  
+>  void perf_event_fork(struct task_struct *task)
+> @@ -13845,9 +13838,8 @@ void perf_event_exit_task(struct task_st
+>  	/*
+>  	 * Detach the perf_ctx_data for the system-wide event.
+>  	 */
+> -	percpu_down_read(&global_ctx_data_rwsem);
+> +	guard(percpu_read)(&global_ctx_data_rwsem);
+>  	detach_task_ctx_data(child);
+> -	percpu_up_read(&global_ctx_data_rwsem);
+>  }
+>  
+>  static void perf_free_event(struct perf_event *event,
+> diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
+> index c012df33a9f0..36f3082f2d82 100644
+> --- a/include/linux/percpu-rwsem.h
+> +++ b/include/linux/percpu-rwsem.h
+> @@ -8,6 +8,7 @@
+>  #include <linux/wait.h>
+>  #include <linux/rcu_sync.h>
+>  #include <linux/lockdep.h>
+> +#include <linux/cleanup.h>
+>  
+>  struct percpu_rw_semaphore {
+>  	struct rcu_sync		rss;
+> @@ -125,6 +126,13 @@ extern bool percpu_is_read_locked(struct percpu_rw_semaphore *);
+>  extern void percpu_down_write(struct percpu_rw_semaphore *);
+>  extern void percpu_up_write(struct percpu_rw_semaphore *);
+>  
+> +DEFINE_GUARD(percpu_read, struct perpcu_rw_semaphore *,
+> +	     perpcu_down_read(_T), percpu_up_read(_T))
+> +DEFINE_GUARD_COND(perpcu_read, _try, percpu_down_read_trylock(_T))
+> +
+> +DEFINE_GUARD(percpu_write, struct percpu_rw_semaphore *,
+> +	     percpu_down_write(_T), perpcu_up_write(_T))
+> +
+>  static inline bool percpu_is_write_locked(struct percpu_rw_semaphore *sem)
+>  {
+>  	return atomic_read(&sem->block);
+> 
+
+
 
