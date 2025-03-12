@@ -1,114 +1,81 @@
-Return-Path: <linux-kernel+bounces-558132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3F94A5E20C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:51:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A3C9A5E211
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69295189FC53
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14AA3B5D4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D856C24419B;
-	Wed, 12 Mar 2025 16:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC2924BC09;
+	Wed, 12 Mar 2025 16:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KqvfYYhr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bNyzO1jj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFE11D5CCC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0A623C8D8;
+	Wed, 12 Mar 2025 16:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741798306; cv=none; b=bR6gzqL/k+fGPlke+rfDVAxcQmkfCSoUAO1MBxDbN4LGUQ+uaFx2+NUUcqZahr5xHX3d+IM74HeyiXtADuHX6t0HJnYgjsp/Bh0hZ0b7kgmYNDzXjwKLh7Mis2QXwv+FazUI6BpI1PnPEb2CUt4EPScSBJm/s4HR3OoZ+r8+YRw=
+	t=1741798391; cv=none; b=M91By3FJ/2bLszQd0+HDz6yESU+2+72OPFF/OoKOrc/vTb9bZuXVUomq7xnE8qNF/PFkVEYSG9d21mSl/5wvWyFA4z5ekUT11/z0dhJW3R7GKaC6KCZe/+ymQ1t/q4bbxKAz2edBjKr0e1z7le+rHy/fukNe11r97GU4qKognMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741798306; c=relaxed/simple;
-	bh=/xk9BSbVzT8YdrZU+8qu2kEBkOWLWjLBT09+jVAfDSk=;
+	s=arc-20240116; t=1741798391; c=relaxed/simple;
+	bh=Rafds1S3QkKEajqTbOL/+tj3SV1csF1Cnk6XrXNWmtQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hou3STYwajK2Uw1XwVpyOwejE/PS9PkkXNLJkQFVQ3/ZVaH7savLHqiVPc3szBNaCcDVTnMgwmcK52ULfeODG63VBAtrgf6lCqrhSJTjnnvmAIOyCxiRDMf94npa72/0T1vbZkH/45mkd6+AWBQ7Rags5wveY+rjl3pv65e628Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KqvfYYhr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741798303;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DhC3dGei2rmob1KmMR9I6J8XiZcIS7aiLPCRejPFAkg=;
-	b=KqvfYYhrrXaDGDEKtAJkERWJLTuQ9qPePMZLIoPVjhX/82GcXcyMUHZZha7o7/RPl5ZQgZ
-	vxGMrJ2KuAQ/bwSoZt6ITEmf59+w8hey7DcpoQAANxN/L22LsB7sQqt845FrEv/ysfqQDA
-	YsU+1sRo9HWBw8rfsFrkNE2g5D853xw=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-136-Z_xmygbtOISzXr183CHgug-1; Wed, 12 Mar 2025 12:51:42 -0400
-X-MC-Unique: Z_xmygbtOISzXr183CHgug-1
-X-Mimecast-MFC-AGG-ID: Z_xmygbtOISzXr183CHgug_1741798301
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43941ad86d4so5945e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:51:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741798299; x=1742403099;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DhC3dGei2rmob1KmMR9I6J8XiZcIS7aiLPCRejPFAkg=;
-        b=i95/mMDu3oan8X8cG7lxVAxd4eGf/sITFJrHoKoyyXjOgpdvV3egGFPk2JsWGiUA2Y
-         72JOnobM6jHtDjKaewR0ngP+zF/mIkvlokHHLiyWW0vKBAHAC20E85cCRQdWO0kyuWb8
-         gfyF6q0nq0axbk+wjQ84+mmJCTkocZNE53d2HocW4XEg12K7CvE02Le+AgQUfKeUTEJX
-         JS09BkZVFcB6Ly/S6Wsw18Vs0jSPnll0tMsG6gGKGIEaWMgaqumcgfh6AFc5h3WxH34z
-         1/j/Gzy7D1WixarBslGIATLCzvgDMJhSQ3R8TQ7CWW/569GgoMvyP+SA59JcL66FQrkQ
-         dqFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVA1cgUQvShVIxiPZKKUiSZiY+Q0z9Ims242bJ/3HVstuJgaaYnlkNOXNZBu81gWqh84jCoWWhKNnJA1BI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn2fnqAjQ5q/oND0xkg/UtYn/NwJ4YvlrF/Is9qAPo1GJuQmJn
-	czT8KDoSmrDD9t5nlljoHdfiuXvOv1JGL1HwXyLSrvy4VhYX1OvP6BLrO0xgck51UunoeaCYZ2x
-	0pfgQKvntOoh9codkB9FEV9oNlf+YmzTicF6x6a61wxhJDJOMVQ8SG0ShW56Z/oJaXIXm6A==
-X-Gm-Gg: ASbGnctDmfksmW28sRKCAgnuz4hR7HPNm0BAPoBSJN8yjwSp2adsXVVlqO5VzwrsqKE
-	rqrvgGQJBPP8k5QPcXy94kBFcOPSTjuQLtvn4nJJRjLH8ardZSnAFT6AbwOREANnDV+IZLyFPLZ
-	SuAMMacnWl+PQS09MLfIjJ8NoAiv8N5fkQMxEyd6/N1Y3q8GsBSyxw7XATiTgBFifAKxF0OwMgq
-	VOcxypFLjm9tXNM2LIVfCJHZ9f5rUPw2NlaIJpeRcQcU3sTMh3yR2nGv1+dMtxn0iUejF1SRqKA
-	he6erTMDXt1Fu3YvokfGOhTTByOoAeoS4sJpKQic/BY=
-X-Received: by 2002:a05:600c:4589:b0:43d:5ec:b2f4 with SMTP id 5b1f17b1804b1-43d05ecc145mr65274735e9.10.1741798299632;
-        Wed, 12 Mar 2025 09:51:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHuP4Gn6dH73Db2O+BlcqpNQGP2AydhiF2o9YtbaI8drJWF4RsJmiH3wOi6KmOdX07GL/JZGg==
-X-Received: by 2002:a05:600c:4589:b0:43d:5ec:b2f4 with SMTP id 5b1f17b1804b1-43d05ecc145mr65274405e9.10.1741798299266;
-        Wed, 12 Mar 2025 09:51:39 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.49.7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a74d4bbsm26286775e9.13.2025.03.12.09.51.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 09:51:38 -0700 (PDT)
-Date: Wed, 12 Mar 2025 17:51:36 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Waiman Long <llong@redhat.com>, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
-	tommaso.cucinotta@santannapisa.it,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 4/8] sched/deadline: Rebuild root domain accounting
- after every update
-Message-ID: <Z9G7mMQ3xG15FmLy@jlelli-thinkpadt14gen4.remote.csb>
-References: <fd4d6143-9bd2-4a7c-80dc-1e19e4d1b2d1@redhat.com>
- <Z9Alq55RpuFqWT--@jlelli-thinkpadt14gen4.remote.csb>
- <be2c47b8-a5e4-4591-ac4d-3cbc92e2ce5d@redhat.com>
- <e6731145-5290-41f8-aafb-1d0f1bcc385a@arm.com>
- <7fb20de6-46a6-4e87-932e-dfc915fff3dc@redhat.com>
- <724e00ea-eb27-46f1-acc3-465c04ffc84d@arm.com>
- <Z9FdWZsiI9riBImL@jlelli-thinkpadt14gen4.remote.csb>
- <d38df868-bc65-4186-8ce4-12d8f37a16b5@redhat.com>
- <Z9GWAbxuddrTzCS9@jlelli-thinkpadt14gen4.remote.csb>
- <78bc0eda-7471-404d-a816-bd5f1a8d4b27@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JvEOuBREwxUF0MAU4bChVyWK8/aQ+QcluQf77x4JGuIpfBBPGFpNG/zk+1z0nfLc790LssjJG/JtkTJtt5I/jo+3tCwt0uB83eJ9Au1zJZvQyPzg3THIq+qwLxylXiMKMXOw9RUqe4gQjB6Gwyq2I1YYswgxRhROyRXwfwnixjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bNyzO1jj; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741798390; x=1773334390;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Rafds1S3QkKEajqTbOL/+tj3SV1csF1Cnk6XrXNWmtQ=;
+  b=bNyzO1jjvvdcJcK6nYlQkNkMwTR9if/0CbZvorv11UhoBVXn35Q8EigJ
+   MXDd3ziY7logt3oaU8wzwavhyrIU0inFAJymjOlfNAOq7gYYSMYzW2X6s
+   Vta9tEpDYzcV5OFLNIb1Vin/nOritDwf+ts30IizAtZRuRHP8fzK9zcTD
+   fsBc1rekwm81J9BjvkjreL8rZL1ZM+GqyjEjmryxHH60ppfkL7x2oMGRp
+   +xIrCshettJfyFcfwKQjHMgUlga7S2VtQeY66Sti5K/zh1dvQ1lJ6G/Od
+   9BIsN5xJ9fNA4+hGL2ske+MXB99Z40Qs9E6xLaWMBsm70+hCObJxrl6RK
+   w==;
+X-CSE-ConnectionGUID: IT/6gMzOQmGDBmJxgAslgA==
+X-CSE-MsgGUID: nOwV3z93SomUhrEBmonY+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="45665239"
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="45665239"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 09:53:09 -0700
+X-CSE-ConnectionGUID: zyxy6B8hTM+qrbY2kgBgsQ==
+X-CSE-MsgGUID: HFOG3QH1QfmjPMWslolYtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="125756446"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 12 Mar 2025 09:53:05 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tsPKI-0008jw-30;
+	Wed, 12 Mar 2025 16:53:02 +0000
+Date: Thu, 13 Mar 2025 00:52:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Antonio Quartulli <antonio@openvpn.net>, netdev@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>, sd@queasysnail.net,
+	ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
+Subject: Re: [PATCH net-next v22 18/23] ovpn: implement peer
+ add/get/dump/delete via netlink
+Message-ID: <202503130050.cIMoMcyw-lkp@intel.com>
+References: <20250311-b4-ovpn-v22-18-2b7b02155412@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -117,40 +84,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <78bc0eda-7471-404d-a816-bd5f1a8d4b27@arm.com>
+In-Reply-To: <20250311-b4-ovpn-v22-18-2b7b02155412@openvpn.net>
 
-On 12/03/25 17:29, Dietmar Eggemann wrote:
-> On 12/03/2025 15:11, Juri Lelli wrote:
-> > On 12/03/25 09:55, Waiman Long wrote:
-> >> On 3/12/25 6:09 AM, Juri Lelli wrote:
-> >>> On 12/03/25 10:53, Dietmar Eggemann wrote:
-> >>>> On 11/03/2025 15:51, Waiman Long wrote:
-> 
-> [...]
-> 
-> >>> I unfortunately very much suspect !CPUSETS accounting is broken. But if
-> >>> that is indeed the case, it has been broken for a while. :(
-> >> Without CONFIG_CPUSETS, there will be one and only one global sched domain.
-> >> Will this still be a problem?
-> > 
-> > Still need to double check. But I have a feeling we don't restore
-> > accounting correctly (at all?!) without CPUSETS. Orthogonal to this
-> > issue though, as if we don't, we didn't so far. :/
-> 
-> As expected:
-> 
-> Since dl_rebuild_rd_accounting() is empty with !CONFIG_CPUSETS, the same
-> issue happens.
+Hi Antonio,
 
-Right, suspicion confirmed. :)
+kernel test robot noticed the following build warnings:
 
-But, as I was saying, I believe it has been broken for a while/forever.
-Not only suspend/resume, the accounting itself.
+[auto build test WARNING on 40587f749df216889163dd6e02d88ad53e759e66]
 
-Would you be OK if we address the !CPUSETS case with a separate later
-series?
+url:    https://github.com/intel-lab-lkp/linux/commits/Antonio-Quartulli/net-introduce-OpenVPN-Data-Channel-Offload-ovpn/20250311-202334
+base:   40587f749df216889163dd6e02d88ad53e759e66
+patch link:    https://lore.kernel.org/r/20250311-b4-ovpn-v22-18-2b7b02155412%40openvpn.net
+patch subject: [PATCH net-next v22 18/23] ovpn: implement peer add/get/dump/delete via netlink
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250313/202503130050.cIMoMcyw-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250313/202503130050.cIMoMcyw-lkp@intel.com/reproduce)
 
-Thanks!
-Juri
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503130050.cIMoMcyw-lkp@intel.com/
 
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/net/ovpn/peer.c:10:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:10:
+   In file included from include/linux/mm.h:2224:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/net/ovpn/peer.c:152:6: warning: variable 'ip_len' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     152 |         if (local_ip) {
+         |             ^~~~~~~~
+   drivers/net/ovpn/peer.c:166:33: note: uninitialized use occurs here
+     166 |         memcpy(&bind->local, local_ip, ip_len);
+         |                                        ^~~~~~
+   include/linux/fortify-string.h:690:53: note: expanded from macro 'memcpy'
+     690 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
+         |                                                     ^
+   include/linux/fortify-string.h:627:41: note: expanded from macro '__fortify_memcpy_chk'
+     627 |         const size_t __fortify_size = (size_t)(size);                   \
+         |                                                ^~~~
+   drivers/net/ovpn/peer.c:152:2: note: remove the 'if' if its condition is always true
+     152 |         if (local_ip) {
+         |         ^~~~~~~~~~~~~
+   drivers/net/ovpn/peer.c:143:15: note: initialize the variable 'ip_len' to silence this warning
+     143 |         size_t ip_len;
+         |                      ^
+         |                       = 0
+   4 warnings generated.
+
+
+vim +152 drivers/net/ovpn/peer.c
+
+   129	
+   130	/**
+   131	 * ovpn_peer_reset_sockaddr - recreate binding for peer
+   132	 * @peer: peer to recreate the binding for
+   133	 * @ss: sockaddr to use as remote endpoint for the binding
+   134	 * @local_ip: local IP for the binding
+   135	 *
+   136	 * Return: 0 on success or a negative error code otherwise
+   137	 */
+   138	int ovpn_peer_reset_sockaddr(struct ovpn_peer *peer,
+   139				     const struct sockaddr_storage *ss,
+   140				     const void *local_ip)
+   141	{
+   142		struct ovpn_bind *bind;
+   143		size_t ip_len;
+   144	
+   145		lockdep_assert_held(&peer->lock);
+   146	
+   147		/* create new ovpn_bind object */
+   148		bind = ovpn_bind_from_sockaddr(ss);
+   149		if (IS_ERR(bind))
+   150			return PTR_ERR(bind);
+   151	
+ > 152		if (local_ip) {
+   153			if (ss->ss_family == AF_INET) {
+   154				ip_len = sizeof(struct in_addr);
+   155			} else if (ss->ss_family == AF_INET6) {
+   156				ip_len = sizeof(struct in6_addr);
+   157			} else {
+   158				net_dbg_ratelimited("%s: invalid family %u for remote endpoint for peer %u\n",
+   159						    netdev_name(peer->ovpn->dev),
+   160						    ss->ss_family, peer->id);
+   161				kfree(bind);
+   162				return -EINVAL;
+   163			}
+   164		}
+   165	
+   166		memcpy(&bind->local, local_ip, ip_len);
+   167	
+   168		/* set binding */
+   169		ovpn_bind_reset(peer, bind);
+   170	
+   171		return 0;
+   172	}
+   173	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
