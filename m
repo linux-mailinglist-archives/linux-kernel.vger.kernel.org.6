@@ -1,179 +1,158 @@
-Return-Path: <linux-kernel+bounces-557502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDECA5DA0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:57:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E20A5DA0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 932DA189D37A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:57:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B803AF537
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C79323E227;
-	Wed, 12 Mar 2025 09:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F67C23C8CE;
+	Wed, 12 Mar 2025 09:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X45fVYL8"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hN7zTksC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB9423C8AE;
-	Wed, 12 Mar 2025 09:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18E123C376;
+	Wed, 12 Mar 2025 09:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741773440; cv=none; b=Prm0PWPTCR8/Z4TYn2mM6MTuBAvl6yp1feAaVT8EmLOlV+OjUK4VVBE6W1H8jSlzfH+ooz8qjf0p5ZoEi3eXTcnBMIEKyhoumwHPicEqxPSEnUSFAiJhG76PCikETkjHBYQGTQaQWOi/kqqflUzJqao513ajf29vvU3MRr5lB3E=
+	t=1741773476; cv=none; b=QTW0/KKp4p/3SNWpcxWcEwdMwIiI6ZtvyGHOSZQ2bKi5PoJUJO26buoJ/NbqRH0vBKlGeZ2eaGFwKlzjmY2NRekQqDtIkltlQIIvIXAgL86czsZpgZsP4doZUlTQ9oSlsjpSrGb9HtLor6aXhkG9KXrmZBFDkZ4JIE9Gz4JdV8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741773440; c=relaxed/simple;
-	bh=MRFFW5+5MiGjJoDsl30p/S9DIYlDXxeob2SpJmgOj20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F/fPiaVJj7fn2bUE5lPZFHAMxTFVQuJ++sYzHKUdilZETCZ+Jrl6vZ+q6ympEHlzo48Rttvjr1rjLuwimo78xKsm06n+OipHP2EacZFXM0w7JuvYJ+UjT3d+6vuxf71n0V8szokVVNCCp4dzq2s8GSKUBFwmTvcOfL/Tri+xM14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X45fVYL8; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-388cae9eb9fso3137961f8f.3;
-        Wed, 12 Mar 2025 02:57:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741773436; x=1742378236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Bk0+6TyveDnhFSN4ubd8Ki6PyJoMe7ilhOG2b+TwmQ=;
-        b=X45fVYL8XICL1l6ywaSE1eqgfpdcam5LDM7s68g8pWjQqLO8RuoezvG0YxjBhlokVh
-         zmmi6KKi+/VxkqoyV5WNoaV57zhlJhyZbDKk3k4X/IHh1ud9qqk9KX/c3R3Eklay8+8+
-         jTBcvA78NUYnEAoobiOqvrIHcxfLs5IeA8K1olnHqebwcNv/Ml2ltkWkLDNaaJd1hh6e
-         GETl/xyK4gKbso282Wq+gzpT+qG77M5CkKp6AkCcuSZvomTZz7nVYhSPtuFS93QEAlJf
-         qkpcE9w3G1BCNTQXYcoKR3DpBY9vTMTUkJDzwIZbsmvRTQSDostTGWFCNSfyBb/7ktjL
-         PAnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741773436; x=1742378236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Bk0+6TyveDnhFSN4ubd8Ki6PyJoMe7ilhOG2b+TwmQ=;
-        b=BJ6Ha3SdH7i7Cf/oLOimmDhGQdBTyusUNea996JZ7h+VOig80EEW7lk3YiaLgQhCJ/
-         DkNawpxgOn5d2qiYuUEcP3NCjmRt+dc/Qt6aUf8wGd34Y7QfecX8FjQYc385kJIub9I6
-         vGj3d44FHXAlGY0xsJhBBscrzrSgWOrg/KWqrTFDTQcwcDDteEHF2isYx/sbrtAY8A2D
-         Guczj2ZKG4CHy6NK4kSf2QDQ2QsUoHPS6ffJklhsC8GwIVslCbByy9qAMYhLA7QWvr+m
-         UBxU3IgAk68qvDd+PkRv/OqJuqWBcqjTrXqRa47X6nT74WOFdw1H+XVOlt2HiBoRLUx3
-         xJGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjdIRt9LwRLJVy2B0N2ooDzXua+fopIwKQnMIC3XHYuOpL6yCYmwny5pmq1qKQy5WALhmSKoy+RNGD@vger.kernel.org, AJvYcCWLqQVTxInTLcS/DlBhxF6kpB/fDWHIiuWlnFdE7DypBatQFIekpmSyARMtrC4VS+CilD4ViadMj44=@vger.kernel.org, AJvYcCWtbTHWZrf2xBBfNQ++l/oXSa9lQ/higtrKnvHGD3uYQzCmZ7aO6uI4oyZrFzJYtReFC7kF4rZcHnOmnvnW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9JisPx9XBjxnYIxUc0HknTCRa7wS4GVlx/7m0sAUNItpO32oM
-	Dh9mOmnscSlTfTeczpVRHieUi1waY/Uo2M86B0Z3slxNFuFqGCxurV7mf6DxTRgNdQN+xJ3/EFv
-	kZ54z7I5+sKpI43NdAK+pX9mX0Z0=
-X-Gm-Gg: ASbGncs8LypCNKmcj9nUtLGDYHK3ezZdcVi90RBUxASe7W33m3aADLIH+eHFuruin34
-	hXeBmPkaOR6jXa3w2f+dZFgCHHzxfXD06Rl2s/oMcIEuwYK9wcg9c7AwGMPDAulmHRHQIl6g08G
-	xJWcwDJ4p0hrL3XBb9MCRjsaI4IN0=
-X-Google-Smtp-Source: AGHT+IGRG52MpBzZ4/Ng/tlPI9MLq485xsY5jmMJ52FzXP3WMdFQYzendKxMCVxYqZZI46lbWuSnkeYAQUzI9fNbrlk=
-X-Received: by 2002:a05:6000:1a8e:b0:390:d6ab:6c49 with SMTP id
- ffacd0b85a97d-39132da9221mr16952047f8f.35.1741773436350; Wed, 12 Mar 2025
- 02:57:16 -0700 (PDT)
+	s=arc-20240116; t=1741773476; c=relaxed/simple;
+	bh=WPKZgWXS6TO2Pkm4H5Q0EXYryaAnMa+J46vPcty7+I8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gy2AZeSBKAr3zu/Vw9YlFRbeZAf80NCwYY/htgnKzNHOZvkUtvtyNPAHy/8QhwNAhosq580hxRVrmFF2PJrKKzcko+0LGDlxlA21IbmeoZanFK4B+QeHd8YgU4zkScxo6NNlvjnu6lGLIcIFH8OCTBjJHQCx3RBmsfVHONRjMfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hN7zTksC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EDA9C4CEE3;
+	Wed, 12 Mar 2025 09:57:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741773476;
+	bh=WPKZgWXS6TO2Pkm4H5Q0EXYryaAnMa+J46vPcty7+I8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hN7zTksClow5IIOcuncjzOHxvDCtnmKmgDHs1uD6jDzBa7Nktfiy0aQmjWsV3EfnE
+	 i7326JV1MpsxmC9oOU/pJ8oBd71VDSuzWdlme346oxXzL2Z5xjraNYgt9cbalogv7d
+	 tmPZLDXBwbhE0NzN7OQbfBKelb/McZfXyt6IM358SnCe9+qgz3vq2pFJ/hZH2YyGVT
+	 z0cKbLH/JlEH4Y8CDxSnBMAgO4d9u0pmEG012L0iXk9CHq7ZkHLAN8c/dS7CpdpAQi
+	 1Pw7oUN/8TAt71zzbvPLFBEtypIpOCinURBvBMm2ZwrIWVR5+qGjRevOUDd66KeisW
+	 nJicsFd95j5uA==
+Date: Wed, 12 Mar 2025 10:57:49 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	rust-for-linux@vger.kernel.org, daniel.almeida@collabora.com,
+	robin.murphy@arm.com, aliceryhl@google.com,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v14 06/11] rust: dma: add dma addressing capabilities
+Message-ID: <Z9FanUCUZAuBgQwk@cassiopeiae>
+References: <20250311174930.2348813-1-abdiel.janulgue@gmail.com>
+ <20250311174930.2348813-7-abdiel.janulgue@gmail.com>
+ <D8DZ2XP3AI2Z.76W9FKGRNM92@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310080237.7400-1-clamor95@gmail.com> <20250310080237.7400-2-clamor95@gmail.com>
- <20250311193732.GA4183071-robh@kernel.org> <CAPVz0n09ZP1i2tasdTvnt8RvjhALvUYjv9u_EGRtnXPOYQtuqQ@mail.gmail.com>
- <4d1c3eb1-5c42-490f-83e5-60de05ffad06@kernel.org>
-In-Reply-To: <4d1c3eb1-5c42-490f-83e5-60de05ffad06@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 12 Mar 2025 11:57:05 +0200
-X-Gm-Features: AQ5f1Jqlx7t3_cSR4R8CS335M--auL7SEwcqufZDylqnzlIg_zB0GKJZ2cFtMKg
-Message-ID: <CAPVz0n2rxpk=KrsC2GOkBD=WZQSdVbd0tOYgow4miPz+3owsCA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: power: supply: Document Maxim MAX8971 charger
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D8DZ2XP3AI2Z.76W9FKGRNM92@nvidia.com>
 
-=D1=81=D1=80, 12 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 11:49 Krzy=
-sztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On 12/03/2025 07:02, Svyatoslav Ryhel wrote:
-> >>> +
-> >>> +  reg:
-> >>> +    maxItems: 1
-> >>> +
-> >>> +  interrupts:
-> >>> +    maxItems: 1
-> >>> +
-> >>> +  monitored-battery: true
-> >>> +
-> >>> +  maxim,usb-connector:
-> >>
-> >> Just 'connector', so when we have a 3rd case, we don't have a 3rd
-> >> vendor.
-> >>
-> >
-> > Please, please be explicit and specific, you could not tell me this in
->
-> git grep -C 3 connector:
->
-> > v3, you could but you decided to fuck up v4 as well. So wise.
->
-> We got a lot to review thus we make reviews concise. I understand that
-> it might lead to insufficient guidance, so more help in removing
-> workload from maintainers is always appreciated.
->
-> Instead of using vulgar words towards us, please put a bit more effort
-> and look at other recent bindings how they do it.
->
-> Review is provided in good faith and if it is by any chance incorrect,
-> it is enough to disagree instead of throwing things like above. That's
-> not acceptable.
->
-> > Additionally, if you want a generic 'connector' which can be
-> > referenced as 'connector: true' then add one, ATM this is classified
-> > under your own terms as 'vendor property' and needs a vendor prefix.
->
-> richtek,usb-connector is not the good example here. Your previous code he=
-re:
+On Wed, Mar 12, 2025 at 12:37:45PM +0900, Alexandre Courbot wrote:
+> On Wed Mar 12, 2025 at 2:48 AM JST, Abdiel Janulgue wrote:
+> > @@ -18,7 +18,35 @@
+> >  /// The [`Device`] trait should be implemented by bus specific device representations, where the
+> >  /// underlying bus has potential support for DMA, such as [`crate::pci::Device`] or
+> >  /// [crate::platform::Device].
+> > -pub trait Device: AsRef<device::Device> {}
+> > +pub trait Device: AsRef<device::Device> {
+> > +    /// Inform the kernel about the device's DMA addressing capabilities.
+> > +    ///
+> > +    /// Set both the DMA mask and the coherent DMA mask to the same value.
+> > +    ///
+> > +    /// Note that we don't check the return value from the C `dma_set_coherent_mask` as the DMA API
+> > +    /// guarantees that the coherent DMA mask can be set to the same or smaller than the streaming
+> > +    /// DMA mask.
+> > +    fn dma_set_mask_and_coherent(&mut self, mask: u64) -> Result {
+> > +        // SAFETY: By the type invariant of `device::Device`, `self.as_ref().as_raw()` is valid.
+> > +        let ret = unsafe { bindings::dma_set_mask_and_coherent(self.as_ref().as_raw(), mask) };
+> > +        if ret != 0 {
+> > +            Err(Error::from_errno(ret))
+> > +        } else {
+> > +            Ok(())
+> > +        }
+> > +    }
+> > +
+> > +    /// Same as [`Self::dma_set_mask_and_coherent`], but set the mask only for streaming mappings.
+> > +    fn dma_set_mask(&mut self, mask: u64) -> Result {
+> > +        // SAFETY: By the type invariant of `device::Device`, `self.as_ref().as_raw()` is valid.
+> > +        let ret = unsafe { bindings::dma_set_mask(self.as_ref().as_raw(), mask) };
+> > +        if ret != 0 {
+> > +            Err(Error::from_errno(ret))
+> > +        } else {
+> > +            Ok(())
+> > +        }
+> > +    }
+> > +}
+> 
+> I'm not quite sure why this trait is needed.
+> 
+> The default implementations of the methods are not overridden in this
+> patchset and I don't see any scenario where they would need to be. Why
+> not do it the simple way by just adding an implementation block for
+> device::Device?
+> 
+> This also introduces a `&dyn Device` trait object as parameter to the
+> coherent allocation methods - not a big deal, but still inelegant IMHO.
 
-Then what is a good example? This is the only example with binding Rob
-requested,
+There are mainly two reasons:
 
-> https://lore.kernel.org/all/20250225090014.59067-2-clamor95@gmail.com/
->
-> looks correct - you have there port. So where does charger_input point?
->
+(1) The dma_set_mask() function famility modifies the underlying struct device
+    without a lock. Therefore, we'd need a mutable reference to the
+    device::Device. However, we can't give out a mutable reference to a
+    device::Device, since it'd be prone to mem::swap().
 
-It pointed to the port I have removed because Rob in v3 said it was
-overkill and connector phandle was enough. May you resolve this inside
-and not to contradict one another. Thank you.
+    Besides that - and I think that's even more important - we can't claim for a
+    generic device::Device in general, that we own it to an extend that we can
+    modify unprotected fields.
 
->
-> >
-> >>> +    description:
-> >>> +      Phandle to a USB connector according to usb-connector.yaml. Th=
-e connector
-> >>> +      should be a child of the extcon device.
-> >>
-> >> 'extcon' is a Linuxism. Is there an actual requirement here that's not
-> >> *current* Linux requirements (which could change)? I assume the
-> >> requirement is to have vbus or some supply?
-> >>
-> >
-> > Pardon me, this schema is part of Linux kernel, no? I have no clue why
->
-> Bindings are used by other projects as well and they live here because
-> of possibility of review by skilled people and due to size of the
-> community. It does not make them, in general, Linux specific.
->
-> > you collectively decided to just ignore external connector detection
-> > devices. Ignorance does not affect the fact that such devices exist.
->
-> We didn't. They are described.
->
-> >
-> > And no, it does not need vbus not supply, it needs EXTCON
->
-> There is no such thing as "extcon" from hardware point of view. Point us
-> to any standard or even wikipedia article describing it.
->
->
-> Best regards,
-> Krzysztof
+    However, we can claim this for bus specific devices in probe()[1]. Hence the
+    trait, such that the DMA mask functions can be easily derived by bus
+    specific devices.
+
+(2) Setting a DMA mask only makes sense for devices that sit on a (potentially)
+    DMA capable bus. Having this trait implemented for only the applicable
+    device types prevents setting the DMA mask and allocating DMA memory for the
+    wrong device.
+
+    This isn't necessary for safety reasons, but I think it's still nice to
+    catch.
+
+---
+
+[1] Gotcha with bus specific devices.
+
+Currently bus specific devices are implemented as Device<ARef<device::Device>>.
+
+This was a bad idea and is on my list to fix. As convinient as it is, it is
+unsound, since this means that driver can always derive a mutable reference to a
+bus specific device.
+
+I think that the upcoming Ownable stuff would be a good solution, but maybe I
+should wait any longer and fix it right away without Ownable.
 
