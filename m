@@ -1,135 +1,110 @@
-Return-Path: <linux-kernel+bounces-557114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40129A5D3D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:07:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2378A5D3DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:09:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03440189A3D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:07:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A93E3B7D00
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC488635C;
-	Wed, 12 Mar 2025 01:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37A213635C;
+	Wed, 12 Mar 2025 01:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EU0/hkaU"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=one-eyed-alien.net header.i=@one-eyed-alien.net header.b="o6io00gU"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E405CB8;
-	Wed, 12 Mar 2025 01:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F0980034
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 01:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741741661; cv=none; b=b+Sb4QJVO55oTsuBgaUOW9qwbZu4SCqWnM8Ec7kRtOQwIGdangE5Q/2dJxhSI5dZkihNIo9i5AxpYhE8fYxeH8B/moQMzVSa9BW86A0x15CoorWszEV3ekZSopNv8/QulEbh3e8bjfnlvyUS0iHi+dNHxCwewthUTvFsswEdees=
+	t=1741741759; cv=none; b=p+fB9GgYG5w/s+jX/y/X7g+Lu91V/W9KIhPsAU/w873LBQOZUCv3mA92CcPVQWXcUho19R67vM+8435qfgQ3tiMdd9K6I383spGCRRhBZQ/tsc0niuNZiBLpU7wKUtZ1Q3KBBdoZ6S8yp3JIA2SXmT0uirQOSJN2rPLWiQ6wAZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741741661; c=relaxed/simple;
-	bh=Joh3mnqFYvDlURYYepLFTcvaoKCp/tu48+jZgsGJKWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=b8L4i2sX5iMgGOytcW7cP+AmNtI8mzs/NjX43N23ATkDEPtoYXbOZ1tC201Yani6qD3WbodR2372tegGEaQc+0z0NnG6aTp805OSDP38ls6zAqZLL3t+GmyVxvS+9DeP32nyd0C2apzeSb350eOMu2i0KlpVcFB8B5Yivh2/AzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EU0/hkaU; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741741655;
-	bh=PjXSvNEtn6yf+ZQErdpdfvOTqvcfj0nwEHUqP4Yc6/g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=EU0/hkaUvXMOokYn4Ez4+SgwEIr6rxKRuf10EwEDE8BmSkjtN8Oijv78ES02rp1ia
-	 I+7FUmvz4IKz9rLfneFnYt94oLPm1hcBuiH5qYVlEYSj4oxnSrEzA8CMp+uUmIAXfg
-	 l9xk2brQ0b6UK/UWlLBCEvonv05TvW8c6BczSBmWiwrifOYiKKOHKjvldMa127+YRZ
-	 3E1oSJyrj4hDTEGjp/COjARtLrQ+EE3snMcqElWXe0pn4+oJx640+PUdRfVdRyWgsc
-	 nKH+3qJ80RUGL7GF5vtNogCxDZ9RsiGMe6vsheFZslsAufDH6LpOKIhqG0f/DFHdIk
-	 Dn6bUBwsle0qw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCCCq1vRdz4wyh;
-	Wed, 12 Mar 2025 12:07:35 +1100 (AEDT)
-Date: Wed, 12 Mar 2025 12:07:34 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@de.ibm.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Niklas Schnelle <schnelle@linux.ibm.com>,
- Ryan Roberts <ryan.roberts@arm.com>
-Subject: linux-next: manual merge of the s390 tree with the mm tree
-Message-ID: <20250312120734.4a1e4f4f@canb.auug.org.au>
+	s=arc-20240116; t=1741741759; c=relaxed/simple;
+	bh=8v10IauO9+ZYWShfiIg8lWU0cAyNhQMaXPvPDC9VdPM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X4GACNokIgh1ZB+DrMF2JmMERS/e1WzH9F+T1vRn1x8NSFL4FN5lmhPUMKEZnwmt6VOc8wJTIs4580ry+WpysxSWufp1UVobsopCcOwGVD/TnrSMXAQE8htOOKgtVgUQw8juXUs1EWIXbbzbpFfnNdkqBCC012D247Alz74rdvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=one-eyed-alien.net; spf=pass smtp.mailfrom=one-eyed-alien.net; dkim=pass (1024-bit key) header.d=one-eyed-alien.net header.i=@one-eyed-alien.net header.b=o6io00gU; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=one-eyed-alien.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=one-eyed-alien.net
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso18371805e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:09:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=one-eyed-alien.net; s=google; t=1741741753; x=1742346553; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MA1s+CFJcoptHGHTr4whY7uZy+Mb8KOq82ve4XvNd6U=;
+        b=o6io00gUxRHmtE7NO/pMvwq/rJ2XppfTXupRns3Fs2A9g5ug/HR5bIXfrKiErix2T3
+         Upnx1WWjESXB1wuQ6YXs3jeqeJzyWL1f7ZPp8zncwxzo0b3r8ysoxskiqOfaiOzHHw7e
+         RNXkS2V4bwurkLqUUE4n0wJYtyknxiB4xWQSs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741741753; x=1742346553;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MA1s+CFJcoptHGHTr4whY7uZy+Mb8KOq82ve4XvNd6U=;
+        b=eHLBsdH6gAxR2LYjs8Lp3DDm3d1zeIwQrPbARHaWk5Ol9hziY9dnLObA/YzC+/UXZk
+         uxGVyHpcsIBLu1qm0x2Ah/LQ+86WqpKFN3mXng11y52tG0GIe0OzTclKfqn2jZ1CBUwD
+         pU6M+zR9lfL+i3kuPhlPdrSZgtEsW3Zl1INhHoK14mlvv87ArxgYRme36gL/KLEhDU49
+         +SgcJ0mP6eoXUQQGfkQua/s7x4V9GeAF06gQAn7s8O4mTXK8di24XI3nz2gUM7bLqdV4
+         NoyDhrU4EcVTD2VGMnIXTp/1rFCeIAuNzS926E2QqBOOv14vMv2gDVeoh+/f+8IURCpT
+         aE+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUuqzXRnO+oxIaSQOXaTzbtMaoFMCY6o7+0A2xIwkUR+Cyxg6yHyYoQKSJwckmTGQc3E0L2Wvv2IbKBh9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDMjkXlbHVdDkRazFcaZY9r7ZME/NmoLsxglZ2a5LPnljCN4D0
+	tQDtTjUHlfkgWGBIbRZJ5XNKmXj8vfb5cE5jBbXbHFRIaz/5/UAZqYoHeSIlpJI5iJtdxGKIdcK
+	HvVQs1gk218z19tA+Y26MdMb9YcbgO46kRkuLmQ==
+X-Gm-Gg: ASbGnctq++e3xwE88U77vEQ7YqNT7eDXy7/hludF1TvP+IN+3BG5MvJTCaV3nWuU3eQ
+	uiVerU+tOYNiiZyoP8qFzFUC6nm8ga7gb5+8Y3JOQkGdDI1c0OjUdJpfLl55gOqsEG7u9/tPwTa
+	XuMWDsAbt0H7Grdh658lsLjU4=
+X-Google-Smtp-Source: AGHT+IEzF0ireum6/FPbkjs402SHBM0UMUqmkV5EVVKUF1OpBtqyx/4FZi728uAGKSmhUDjUErnfEpjvsDzmXXOOq/s=
+X-Received: by 2002:a05:600c:198e:b0:43c:e478:889 with SMTP id
+ 5b1f17b1804b1-43d01b85209mr71117685e9.0.1741741753407; Tue, 11 Mar 2025
+ 18:09:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/a8G8jVE=yFJrdvXJQEEJ6kk";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/a8G8jVE=yFJrdvXJQEEJ6kk
-Content-Type: text/plain; charset=US-ASCII
+References: <20250311084111.322351-1-daixin_tkzc@163.com> <6a266eb7-0150-43e9-a712-b9e6fe8c71ea@rowland.harvard.edu>
+In-Reply-To: <6a266eb7-0150-43e9-a712-b9e6fe8c71ea@rowland.harvard.edu>
+From: Matthew Dharm <mdharm-usb@one-eyed-alien.net>
+Date: Tue, 11 Mar 2025 18:09:02 -0700
+X-Gm-Features: AQ5f1JrKnODlP4cRLeJ-QLQyz0b3tuL4cGZxHXaD9UPY5m6VAbrBbZF7y7QAN1A
+Message-ID: <CAA6KcBDjRPjrfQpYYHtqc6tnpFoLz9QAESqkaOLK5Hi1HbpQHw@mail.gmail.com>
+Subject: Re: [usb-storage] Re: [PATCH] usb: storage: Fix `us->iobuf` size for
+ BOT transmission to prevent memory overflow
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Xin Dai <daixin_tkzc@163.com>, linux-usb@vger.kernel.org, 
+	usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Mar 11, 2025 at 7:12=E2=80=AFAM Alan Stern <stern@rowland.harvard.e=
+du> wrote:
+>
+> On Tue, Mar 11, 2025 at 04:41:11PM +0800, Xin Dai wrote:
+> > When the DWC2 controller detects a packet Babble Error, where a device
+> > transmits more data over USB than the host controller anticipates for a
+> > transaction. It follows this process:
+> >
+> There is no risk of memory overflow.  The length of the transfer for the
+> CSW is limited to US_BULK_CS_WRAP_LEN, which is 13.  And the length of a
+> CBW transfer is limited to US_BULK_CB_WRAP_LEN, which is 31 (or to 32
+> if the US_FL_BULK32 quirk flag is set).  Therefore a 64-byte buffer is
+> more than enough.
 
-Today's linux-next merge of the s390 tree got a conflict in:
+There is no risk of memory overflow *unless* the DWC controller
+doesn't respect the buffer length as given in the URB.  If there is an
+overflow issue here, it is an issue with the controller level.
+Matt
 
-  arch/s390/include/asm/io.h
-
-between commit:
-
-  08a7874a8e6f ("mm/ioremap: pass pgprot_t to ioremap_prot() instead of uns=
-igned long")
-
-from the mm-unstable branch of the mm tree and commit:
-
-  c94bff63e493 ("s390: Remove ioremap_wt() and pgprot_writethrough()")
-
-from the s390 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
 
 --=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/s390/include/asm/io.h
-index 82f1043a4fc3,251e0372ccbd..000000000000
---- a/arch/s390/include/asm/io.h
-+++ b/arch/s390/include/asm/io.h
-@@@ -33,9 -33,7 +33,7 @@@ void unxlate_dev_mem_ptr(phys_addr_t ph
-  #define _PAGE_IOREMAP pgprot_val(PAGE_KERNEL)
- =20
-  #define ioremap_wc(addr, size)  \
- -	ioremap_prot((addr), (size), pgprot_val(pgprot_writecombine(PAGE_KERNEL)=
-))
- +	ioremap_prot((addr), (size), pgprot_writecombine(PAGE_KERNEL))
-- #define ioremap_wt(addr, size)  \
-- 	ioremap_prot((addr), (size), pgprot_writethrough(PAGE_KERNEL))
- =20
-  static inline void __iomem *ioport_map(unsigned long port, unsigned int n=
-r)
-  {
-
---Sig_/a8G8jVE=yFJrdvXJQEEJ6kk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfQ3lYACgkQAVBC80lX
-0GxnXAf+IyqH34mjr/D4ORD7qi0Yr5eA410Yr6NtpsLQRdA1VMFlmaXF1aayxaeW
-IPm+parWr0sfMplKUf8JAhUPCuQCUwL8tdl/gTFftZjt+gPmUDGx77B+AXuCkPKG
-K02rYuXZ2xbButC876tBwrMwmux77mJrUCmNM7uBelgu/3pVAIDcSVI0Pu0yzZLx
-kgfcF2tv0Q+SMJ/TRBuRREmttYVeoOGaHooMtFof4Q46vAHJejKSOjTxYhNfjh9Y
-ys6oDBazIgJ9gfWrDXJiIjjZvJqTnJYGTD/MbGXly3A3rm7kJl6SsffrYijT1g2C
-ITZrDjEiyUkS8UY+2FVbxemh+aEy8A==
-=4yMT
------END PGP SIGNATURE-----
-
---Sig_/a8G8jVE=yFJrdvXJQEEJ6kk--
+Matthew Dharm
+Former Maintainer, USB Mass Storage driver for Linux
 
