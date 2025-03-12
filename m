@@ -1,70 +1,66 @@
-Return-Path: <linux-kernel+bounces-558492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F49A5E6B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:37:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC19A5E6B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:38:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA503B167F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:37:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99E117A4B5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085B31EEA3C;
-	Wed, 12 Mar 2025 21:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFDF1EEA59;
+	Wed, 12 Mar 2025 21:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="lyIhEG7r"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDGGa/Jv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A2E800;
-	Wed, 12 Mar 2025 21:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B0270810;
+	Wed, 12 Mar 2025 21:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741815444; cv=none; b=Jg0Kj4svFT2gX97zAg5BqizI1azRrask684UMdkmZIeN0od0aUCJlm32qkpdcR/umMTCZMLWIE5wd4oxfj3/V/mUrYIqtyrtzk38P9/EtNx9rfVh28wXaB7YdX0Bu97FLegpUFoqaZEB1Zx7SmZDwNbAcMqSry2W9laz9+ueH4M=
+	t=1741815480; cv=none; b=m6W8zs/ndqONq9lgEyomI+wGrEXU2BpxgZLREfqwpQRHQq6TNrfm91mmQCgoGIYw4VlIKjwqjzTGdJ0ffPP79tVRG6BcLbIPglPitgB8auVHC4xFBfcDQ2/g9Cjf/gO39KuwqSM7wyHj0MeCDEe6i0ao+Gwm/33qJvWQX7J20PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741815444; c=relaxed/simple;
-	bh=YEOsTv/3Rk5HL7f05j3mnNxYWt1EcBEuyP5yA7kNio4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F+zNAzWDb+pVK3btqIMlRoKdelplDI1pCqcaKYzjoDSkFToMqCCzXHcmi+ffZBmBr60D3o1vGrdgmxeUW2jMfMiib9CASmiMAH22sG0Zs+79btY4YQIntI1da/4XWGLhxFy8v6GbzxzhG9sZYPXHMl/ZPVwgY421DUtK0dJikkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=lyIhEG7r; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+hrzzcbZtwBejj7oHmGYCjEV3UN63affo+vq1YAU5sI=; b=lyIhEG7rqLgc4X5puzZi6b/PK1
-	wI1ncM8GJ91GTjYbW2MRP+5GE6eoRyGgX1i3RN/Etwl8l+n9kk5Nd164Nz/5iY51i/ceoHl1iDd0Y
-	CqHErZb41hTuw92FB2cTBak5dQlRyaSg1lKAkluQLy+MzvNX1gajWKxJ+l2mLoW8SI7vsK546BGLI
-	7t5GSCRZFlOMiLjmTE/FZ/qtjo+lGdv3wkKYfvxnAEgsxCyMFsfc1bJ7+cwXpsjRFCTtSPd38Uc2b
-	GA4HNyvIo8+ky4IlVtZR4DtPvTdvlEYBQ9HJxOF+NbOQahBoNzs/8JxtYBMR9u0Au0/JhVIcJvZ8X
-	nsx3NS5Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1tsTlK-0000000859M-3E32;
-	Wed, 12 Mar 2025 21:37:14 +0000
-Date: Wed, 12 Mar 2025 21:37:14 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Ryan Lee <ryan.lee@canonical.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: [RFC PATCH 1/6] fs: invoke LSM file_open hook in do_dentry_open
- for O_PATH fds as well
-Message-ID: <20250312213714.GT2023217@ZenIV>
-References: <20250312212148.274205-1-ryan.lee@canonical.com>
- <20250312212148.274205-2-ryan.lee@canonical.com>
+	s=arc-20240116; t=1741815480; c=relaxed/simple;
+	bh=IpQ0kTcSTHlo9xweNH6Hk4r0BhULhn+PB1miZjUBO1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=gs/WAqLQBbb5c5e6zo/3VUvvuBqoK5C8LZDN/1POsA6O3hya2bcwpelEMR0+eEytve95CHLRG98q2yGCXY3tPGqLSA0497ikqwB9da0GfiaReP24IQ5XmuWzDlnecBlLYsihfCLcvb+9fKxjd/hYgNnkNHQnurI+ETudNTr2lTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDGGa/Jv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CDB7C4CEDD;
+	Wed, 12 Mar 2025 21:37:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741815479;
+	bh=IpQ0kTcSTHlo9xweNH6Hk4r0BhULhn+PB1miZjUBO1A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=MDGGa/Jv/K0Tp8ERu+/t3wzW7sjaxvdm9hxpl+5UoReGjOfXsZEUMLmJ8i5MVeMlV
+	 XeA2C97XH7anXUQGlEE6SVvRhIpLBl6pFfLAthj7lAZp2C/dYWR+GBTD8nDhKwCYgq
+	 tqZrUMIgKxpAaqBqF7lZbO2x/MYwf3dUppQaR+iG91sfhT26Xvv+Dolr56QGJTzjWK
+	 L14bZ23veCU1pLPH6jgX33hOxtSCx0yGUzkww9EokaA9s7HtG6sFGbrpf0+QH0d1ly
+	 vjv1AmRcos0k3ivTC+xpEoQzszFTjEn4n8//t5lilrs56r1+8LwrvgJlXovRdze1/b
+	 +qD7qbsLoY/zg==
+Date: Wed, 12 Mar 2025 16:37:57 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH v10 05/10] PCI: dwc: Use devicetree 'ranges' property to
+ get rid of cpu_addr_fixup() callback
+Message-ID: <20250312213757.GA709739@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,49 +69,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250312212148.274205-2-ryan.lee@canonical.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250310-pci_fixup_addr-v10-5-409dafc950d1@nxp.com>
 
-On Wed, Mar 12, 2025 at 02:21:41PM -0700, Ryan Lee wrote:
-> Currently, opening O_PATH file descriptors completely bypasses the LSM
-> infrastructure. Invoking the LSM file_open hook for O_PATH fds will
-> be necessary for e.g. mediating the fsmount() syscall.
+On Mon, Mar 10, 2025 at 04:16:43PM -0400, Frank Li wrote:
+> parent_bus_offset in resource_entry can indicate address information just
+> ahead of PCIe controller. Most system's bus fabric use 1:1 map between
+> input and output address. but some hardware like i.MX8QXP doesn't use 1:1
+> map. See below diagram:
+
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -478,6 +478,15 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  	bridge->ops = &dw_pcie_ops;
+>  	bridge->child_ops = &dw_child_pcie_ops;
+>  
+> +	/*
+> +	 * visconti_pcie_cpu_addr_fixup() use pp->io_base,
+> +	 * so have to call dw_pcie_init_parent_bus_offset() after init
+> +	 * pp->io_base.
+> +	 */
+> +	ret = dw_pcie_init_parent_bus_offset(pci, "config", pp->cfg0_base);
+> +	if (ret)
+> +		return ret;
+
+The ordering in dw_pcie_host_init() doesn't look right to me.  We have
+this:
+
+  dw_pcie_host_init
+    dw_pcie_get_resources
+    dw_pcie_cfg0_setup
+    devm_pci_alloc_host_bridge
+    win = resource_list_first_type(&bridge->windows, IORESOURCE_IO)
+    pp->io_base = pci_pio_to_address(win->res->start)
+    bridge->ops = ...
+    bridge->child_ops = ...
+    dw_pcie_init_parent_bus_offset
+    pp->ops->init
+
+devm_pci_alloc_host_bridge() is generic, so it obviously can't depend
+on any dwc-specific things.  I think the ordering should be more like
+this:
+
+  dw_pcie_host_init
+    devm_pci_alloc_host_bridge             # generic
+    dw_pcie_get_resources                  # dwc RP and EP
+
+    dw_pcie_cfg0_setup
+    win = resource_list_first_type(&bridge->windows, IORESOURCE_IO)
+    pp->io_base = pci_pio_to_address(win->res->start)
+    dw_pcie_init_parent_bus_offset
+
+    bridge->ops = ...
+    bridge->child_ops = ...
+    pp->ops->init
+
+and everything in the second block (dw_pcie_cfg0_setup() through
+dw_pcie_init_parent_bus_offset()) is strictly DT-related resource
+setup and could all go in a dw_pcie_host_get_resources() or similar.
+
+>  	if (pp->ops->init) {
+>  		ret = pp->ops->init(pp);
+>  		if (ret)
 > 
-> Signed-off-by: Ryan Lee <ryan.lee@canonical.com>
-> ---
->  fs/open.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> -- 
+> 2.34.1
 > 
-> diff --git a/fs/open.c b/fs/open.c
-> index 30bfcddd505d..0f8542bf6cd4 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -921,8 +921,13 @@ static int do_dentry_open(struct file *f,
->  	if (unlikely(f->f_flags & O_PATH)) {
->  		f->f_mode = FMODE_PATH | FMODE_OPENED;
->  		file_set_fsnotify_mode(f, FMODE_NONOTIFY);
->  		f->f_op = &empty_fops;
-> -		return 0;
-> +		/*
-> +		 * do_o_path in fs/namei.c unconditionally invokes path_put
-> +		 * after this function returns, so don't path_put the path
-> +		 * upon LSM rejection of O_PATH opening
-> +		 */
-> +		return security_file_open(f);
-
-Unconditional path_put() in do_o_path() has nothing to do with that -
-what gets dropped there is the reference acquired there; the reference
-acquired (and not dropped) here is the one that went into ->f_path.
-Since you are leaving FMODE_OPENED set, you will have __fput() drop
-that reference.
-
-Basically, you are simulating behaviour on the O_DIRECT open of
-something that does not support O_DIRECT - return an error, with
-->f_path and FMODE_OPENED left in place.
-
-Said that, what I do not understand is the point of that exercise -
-why does LSM need to veto anything for those and why is security_file_open()
-the right place for such checks?
-
-The second part is particularly interesting...
 
