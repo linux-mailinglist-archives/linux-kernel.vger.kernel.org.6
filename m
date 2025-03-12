@@ -1,187 +1,199 @@
-Return-Path: <linux-kernel+bounces-557532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B29AA5DA73
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:32:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB11A5DA7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:33:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC99317470E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CE3F3B8AF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B201E23E25B;
-	Wed, 12 Mar 2025 10:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71B023E326;
+	Wed, 12 Mar 2025 10:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pAZAZIst"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XoYi4Wph"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE7915A858;
-	Wed, 12 Mar 2025 10:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1085023496B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741775563; cv=none; b=eOyuej3ZtDolcKl0h43ZB1sNv8veoiRVYzwIsfPf7w7vQg0awDVXgVYCN8RzLkynKVKnzUj1LfaM4k5pGIkmwkmYwCHb9d1SaAZjHecmtQBeq9kd5OCX80MEEWwXlRnP7iebfl/tv1uWQzaCx4atzXxjYGuI1ho+P+v0KUlaehk=
+	t=1741775616; cv=none; b=dda/UmuAJ8GbmEO3iP36vJzt3FVeDxrmyI+d7CyznI7aEzYwCOTTD1tmvY5SXXL1yjVBE52RqdOpENYnNsW7KS7Nu4PYX3OSAIDSspzBQSJUh8Ldu0IrdQ0qpCrwnLrgvqRLCXQQtUETxNyDLnsEs8TejTFt1NudNV1T55Z5HMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741775563; c=relaxed/simple;
-	bh=1Zrl7XJlODTMn2xzf0QDsKnwExXLa7Dq6fAETI8+/Q4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dnhqoNRpHBAFuh2HE29+jppRz04KRRkl1GuItEWbaZvL5Yy3yDjo96qgxfJA+hDeAQ6DK4gPlGyAofCANpItwjCaXNecl1328418eBb95ZPKXcssCrgBGJE3Y+rfULNr6PPUXIsEFUAyFjKL4Wa1UkFz/cOFdMhZ2SqixRrYmSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pAZAZIst; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52C7vF5A008923;
-	Wed, 12 Mar 2025 10:32:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=UWvIREE7AL/FzZAsFF7hbrg0uAsb
-	UXJLdwxTI53a890=; b=pAZAZIstYQRwNWY+v8x/SOnEwcQpIWndlG3I0WD53TFm
-	qjwagVGIBe9cuU3Cy6ZkF4ZNe749v+SMI/qWaC76GUHepWUalJgHS4uqvpOarqIx
-	znC04KN697imJeBqDL41pCvo7MYVRAdGTD4OIZaaP78WHRn5FYrVPATARd8osfuH
-	1C9RwI1OgXIgZWeEX+ksk98GyDBNOb3w+6T+rktM0gIzoyDx7ACFeRhJCvRv/dzk
-	N+S7aEpbyQMuVPe0X8FIW8xda9xdcxJvLjmfKO/a/NgsEeTXeXqK0rqG3Lp7fXmE
-	jIlJOoXQ0askq5dcww8RcnUpUW1URxWJ8dUUjw82vw==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45avk4b3x6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 10:32:34 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52CAF22l003141;
-	Wed, 12 Mar 2025 10:32:31 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atstkjyf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 10:32:31 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52CAWSHC25559688
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Mar 2025 10:32:28 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 02207580AF;
-	Wed, 12 Mar 2025 10:32:30 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5D6F9580AC;
-	Wed, 12 Mar 2025 10:32:27 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Mar 2025 10:32:27 +0000 (GMT)
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-Date: Wed, 12 Mar 2025 11:32:18 +0100
-Subject: [PATCH v2] s390/pci: Fix dev.dma_range_map missing sentinel
- element
+	s=arc-20240116; t=1741775616; c=relaxed/simple;
+	bh=Lu3o8fM/Acuzi2zTVCVuxwBJ//tlyEq3749eXR0EwoI=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=AojX2OkMFe4g8HZ2Wfgl5zaYc6qUoZmcz640uaZMenHEr+i53UOW7vD9kUD25s4Dja4x+kJyDmkg7zbsvaB+/A/mUZTb07kL9Y2t8s+ghiAtfld5WP1EXai7heL3WkW+ZRCOMs3A/c9rMiVJIKqpEaY1cbO1rIgE7VPjRNHwg+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XoYi4Wph; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741775615; x=1773311615;
+  h=date:from:to:cc:subject:message-id;
+  bh=Lu3o8fM/Acuzi2zTVCVuxwBJ//tlyEq3749eXR0EwoI=;
+  b=XoYi4WphB9o53NwmVfjJ+0vqOx3kYix6LLTIHNX1XQzVJx5qfWBCjd44
+   bh2AxDolziknhiu19ttuQjm7fF5tAHIE2S0ZJ6m54bQF2lMXhZfuxNfS2
+   T7ehwjqvpJg/RASWMGbDWK7oZWB3taBTsUv+Tq5cRHxiwcRZTvCwoeYpd
+   zDqbM/js6+oEhFAHrpGzOPDsi5Stm2s3GK9toNRscKDt3IZWveL0WFtUI
+   SE0OPA9n/zZixPXMh0phWeoV3DvKgGHjLUE5zpm3D72v3zQX9ZdsXEREo
+   vm12L3IVU9e+5SkWwgl1XDcTTkPaA/3d5W4BGM22nu+Nnpgmzy8Qf/Ugz
+   g==;
+X-CSE-ConnectionGUID: 9QCSS2erRda0/JBlJNFWNQ==
+X-CSE-MsgGUID: ZRumeO4TTvqTI+pvxTNhnQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="54230976"
+X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
+   d="scan'208";a="54230976"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 03:33:35 -0700
+X-CSE-ConnectionGUID: xvgdCU4ZQbCm6DY91ekHcA==
+X-CSE-MsgGUID: M119qpDITjOLuli2QZK8cQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
+   d="scan'208";a="125646298"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 12 Mar 2025 03:33:34 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tsJP0-0008Oi-0u;
+	Wed, 12 Mar 2025 10:33:30 +0000
+Date: Wed, 12 Mar 2025 18:32:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:tip/urgent] BUILD SUCCESS
+ 841f1fadc7d9f5472aca0448b332aa817cbc4da3
+Message-ID: <202503121827.puMpRG4R-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250312-fix_dma_map_alloc-v2-1-530108d9de21@linux.ibm.com>
-X-B4-Tracking: v=1; b=H4sIALFi0WcC/32NWwrDIBREtxLudw1GTaH96j5CCGpMc8FH0FZSg
- nuvzQL6eYaZMwckE9EkuDcHRJMxYfAV2KUBvUr/NATnysAo6ymnV7LgPs1OTk5uk7Q2aKK4ov2
- N8lkvCupui6aWTucwVl4xvUL8nBe5+6X/bLkjHVFikUJwKozUD4v+vbeoXKuDg7GU8gXxzattt
- gAAAA==
-X-Change-ID: 20250306-fix_dma_map_alloc-b3b05903dcfb
-To: Matthew Rosato <mjrosato@linux.ibm.com>, Joerg Roedel <jroedel@suse.de>,
-        Will Deacon <will@kernel.org>, Gerd Bayer <gbayer@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        Niklas Schnelle <schnelle@linux.ibm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2375;
- i=schnelle@linux.ibm.com; h=from:subject:message-id;
- bh=1Zrl7XJlODTMn2xzf0QDsKnwExXLa7Dq6fAETI8+/Q4=;
- b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGNIvJu3aEiNxcX/wHY4nb2fISMeUbI6xUNhu0qAbeWq/T
- ZDCrJr3HaUsDGJcDLJiiiyLupz91hVMMd0T1N8BM4eVCWQIAxenAEzk1kWG/5XTWZZ9D2g43jAv
- w4uB8ZW/5xunty+se83d9apuKsh+DGdkuHLBaIrXx8Xe+9nEA1L3SDc/WNA451mPSuA1XcOOK7k
- LuAE=
-X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
- fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 6y4N96oHAM06SXiSsYvxVeXjOfJeGrWo
-X-Proofpoint-GUID: 6y4N96oHAM06SXiSsYvxVeXjOfJeGrWo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_04,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 impostorscore=0 phishscore=0 mlxscore=0 mlxlogscore=999
- lowpriorityscore=0 spamscore=0 malwarescore=0 adultscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503120072
 
-The fixed commit sets up dev.dma_range_map but missed that this is
-supposed to be an array of struct bus_dma_region with a sentinel element
-with the size field set to 0 at the end. This would lead to overruns in
-e.g. dma_range_map_min(). It could also result in wrong translations
-instead of DMA_MAPPING_ERROR in translate_phys_to_dma() if the paddr
-were to not fit in the aperture. Fix this by using the
-dma_direct_set_offset() helper which creates a sentinel for us.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tip/urgent
+branch HEAD: 841f1fadc7d9f5472aca0448b332aa817cbc4da3  Merge branch into tip/master: 'sched/urgent'
 
-Fixes: d236843a6964 ("s390/pci: store DMA offset in bus_dma_region")
-Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
-Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
----
-Note: Based on iommu/next
+elapsed time: 1451m
 
-v1 -> v2:
-- Fixed typo, added trailers
-- Link to v1: https://lore.kernel.org/r/20250306-fix_dma_map_alloc-v1-1-b4fa44304eac@linux.ibm.com
----
- arch/s390/pci/pci_bus.c | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+configs tested: 107
+configs skipped: 3
 
-diff --git a/arch/s390/pci/pci_bus.c b/arch/s390/pci/pci_bus.c
-index 0e725039861f92925a38f7ff7cb6de6b0d965ac3..14310c3b48860a16de13536adf95ef99e6af21cc 100644
---- a/arch/s390/pci/pci_bus.c
-+++ b/arch/s390/pci/pci_bus.c
-@@ -287,23 +287,21 @@ static struct zpci_bus *zpci_bus_alloc(int topo, bool topo_is_tid)
- static void pci_dma_range_setup(struct pci_dev *pdev)
- {
- 	struct zpci_dev *zdev = to_zpci(pdev);
--	struct bus_dma_region *map;
--	u64 aligned_end;
-+	u64 aligned_end, size;
-+	dma_addr_t dma_start;
-+	int ret;
- 
--	map = kzalloc(sizeof(*map), GFP_KERNEL);
--	if (!map)
--		return;
--
--	map->cpu_start = 0;
--	map->dma_start = PAGE_ALIGN(zdev->start_dma);
-+	dma_start = PAGE_ALIGN(zdev->start_dma);
- 	aligned_end = PAGE_ALIGN_DOWN(zdev->end_dma + 1);
--	if (aligned_end >= map->dma_start)
--		map->size = aligned_end - map->dma_start;
-+	if (aligned_end >= dma_start)
-+		size = aligned_end - dma_start;
- 	else
--		map->size = 0;
--	WARN_ON_ONCE(map->size == 0);
-+		size = 0;
-+	WARN_ON_ONCE(size == 0);
- 
--	pdev->dev.dma_range_map = map;
-+	ret = dma_direct_set_offset(&pdev->dev, 0, dma_start, size);
-+	if (ret)
-+		pr_err("Failed to allocate DMA range map for %s\n", pci_name(pdev));
- }
- 
- void pcibios_bus_add_device(struct pci_dev *pdev)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
----
-base-commit: e840414e5a73ac02ffba6299b46f535a0b7cba98
-change-id: 20250306-fix_dma_map_alloc-b3b05903dcfb
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-13.2.0
+arc                              allyesconfig    gcc-13.2.0
+arc                   randconfig-001-20250311    gcc-13.2.0
+arc                   randconfig-002-20250311    gcc-13.2.0
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-17
+arm                              allyesconfig    gcc-14.2.0
+arm                   randconfig-001-20250311    gcc-14.2.0
+arm                   randconfig-002-20250311    clang-16
+arm                   randconfig-003-20250311    gcc-14.2.0
+arm                   randconfig-004-20250311    gcc-14.2.0
+arm64                            allmodconfig    clang-18
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250311    gcc-14.2.0
+arm64                 randconfig-002-20250311    gcc-14.2.0
+arm64                 randconfig-003-20250311    gcc-14.2.0
+arm64                 randconfig-004-20250311    gcc-14.2.0
+csky                  randconfig-001-20250311    gcc-14.2.0
+csky                  randconfig-002-20250311    gcc-14.2.0
+hexagon                          allmodconfig    clang-21
+hexagon                          allyesconfig    clang-18
+hexagon               randconfig-001-20250311    clang-21
+hexagon               randconfig-002-20250311    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250311    gcc-12
+i386        buildonly-randconfig-002-20250311    clang-19
+i386        buildonly-randconfig-003-20250311    clang-19
+i386        buildonly-randconfig-004-20250311    clang-19
+i386        buildonly-randconfig-005-20250311    clang-19
+i386        buildonly-randconfig-006-20250311    gcc-11
+i386                                defconfig    clang-19
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch             randconfig-001-20250311    gcc-14.2.0
+loongarch             randconfig-002-20250311    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                           ip28_defconfig    gcc-14.2.0
+nios2                         10m50_defconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250311    gcc-14.2.0
+nios2                 randconfig-002-20250311    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                randconfig-001-20250311    gcc-14.2.0
+parisc                randconfig-002-20250311    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-16
+powerpc                        fsp2_defconfig    gcc-14.2.0
+powerpc               randconfig-001-20250311    clang-21
+powerpc               randconfig-002-20250311    clang-16
+powerpc               randconfig-003-20250311    gcc-14.2.0
+powerpc64             randconfig-001-20250311    gcc-14.2.0
+powerpc64             randconfig-002-20250311    clang-18
+powerpc64             randconfig-003-20250311    gcc-14.2.0
+riscv                            allmodconfig    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-21
+riscv                 randconfig-001-20250311    gcc-14.2.0
+riscv                 randconfig-002-20250311    gcc-14.2.0
+s390                             allmodconfig    clang-19
+s390                              allnoconfig    clang-15
+s390                             allyesconfig    gcc-14.2.0
+s390                  randconfig-001-20250311    clang-15
+s390                  randconfig-002-20250311    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                          r7780mp_defconfig    gcc-14.2.0
+sh                    randconfig-001-20250311    gcc-14.2.0
+sh                    randconfig-002-20250311    gcc-14.2.0
+sh                            shmin_defconfig    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250311    gcc-14.2.0
+sparc                 randconfig-002-20250311    gcc-14.2.0
+sparc                       sparc32_defconfig    gcc-14.2.0
+sparc64               randconfig-001-20250311    gcc-14.2.0
+sparc64               randconfig-002-20250311    gcc-14.2.0
+um                               allmodconfig    clang-21
+um                                allnoconfig    clang-18
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250311    gcc-12
+um                    randconfig-002-20250311    gcc-12
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20250311    gcc-12
+x86_64      buildonly-randconfig-002-20250311    gcc-12
+x86_64      buildonly-randconfig-003-20250311    clang-19
+x86_64      buildonly-randconfig-004-20250311    clang-19
+x86_64      buildonly-randconfig-005-20250311    gcc-12
+x86_64      buildonly-randconfig-006-20250311    gcc-12
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250311    gcc-14.2.0
+xtensa                randconfig-002-20250311    gcc-14.2.0
 
-Best regards,
--- 
-Niklas Schnelle
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
