@@ -1,117 +1,158 @@
-Return-Path: <linux-kernel+bounces-557154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3738BA5D44F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:12:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4185EA5D451
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:14:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2D4C3B73E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:12:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318761796D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC435145A03;
-	Wed, 12 Mar 2025 02:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C52B14601C;
+	Wed, 12 Mar 2025 02:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1PzqSQ00"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GoBygWKA"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28395684
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 02:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD003A31;
+	Wed, 12 Mar 2025 02:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741745533; cv=none; b=YBhxwZNcTQG8niz8Mm9iAIdbq+xxvR9itWfWZzpaDWQNoZHlXQb32A4PeLT7zmcv3963RsBln9iox+jsntkDW+yv5XaQc4jsFEFWctRgNQVLLmWGv3yZvR75CyInsrTh26047MFKVNRxd5It576W8/43u2cWAt2zaIaa5Q7KvAk=
+	t=1741745666; cv=none; b=qvS3iN9ZGT7nv6KwPanGuOGcgi7mBQxSVAEs3BUGgkvSi6iSeqxLFIY7ZjhPKT77fgPinlr8mZyvWiqj+Tami9EqGcD9B0saj6cnTXiF+o5DG616LFbE6CnFF6q3NMkpBwFb7JHvwXTLb+hlH591zxoaJTOtwDtg6U1Qk1avsUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741745533; c=relaxed/simple;
-	bh=hSVQhdZ4pcaTXi8WujkuLi21M2hXtG1UnOBrQGdjTro=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rs6P8wLH93zvAZjNfyqLuLV0F9oHudcVpZkL5UCEIQ+EV08UbZBoRGcDouqsduikfffxttjAAtPQosj1i88zyhNPZtWl32qkCJ+gfCbPvM3vA6yOe2biffzRr7rtszQkiTrtQbGjnE9OKN5heX86Ku2Iis+o2dkeh+Th3Mqwgxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elsk.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1PzqSQ00; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elsk.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff6167e9ccso16756658a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 19:12:10 -0700 (PDT)
+	s=arc-20240116; t=1741745666; c=relaxed/simple;
+	bh=Jgrd0IOFwXKx5cNRpIxdOiA/PFUhH1ns7IDEhYrycpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tZxG+TlYyWBp8jqWFbuslmUakOAQWsThD7LMugk3KaXHv+9ebXy20fB/77JST9tupbQBXlHdQSZ3Jki+jZJo/Aej/Amus7ObWTy1Jv640PZrX464IkfVjTNv9KaHpRBJTg4TVCNdFBCqdPoUNMB0S53RCLXaOBmKW7QKD5c8tDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GoBygWKA; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso1264862766b.3;
+        Tue, 11 Mar 2025 19:14:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741745530; x=1742350330; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dL1+gxzev0XtD2Z0UuOLlz+T+qpC8rSy8gjN4glIZ9E=;
-        b=1PzqSQ00Z1Wp4eYWLyksuP11WrdcHOGyVg6LniILD89l3PZFFfzbynIQsmsiYDLRaK
-         oT51Cz50YWDd7IgTd19BgkEx+rFst4AsNbIOUwZEqb+9UTvvCwGll7XcX/EpDLxgyFaY
-         JO/030iF4wYiO87FhKi+PqnkpCKsjqxQMFN+zsezAEMAs7jyhnA+4yRXyhPF9s7xhPMx
-         kiAj/etoRcUWSZ/1vN44EUl8Rp4zfIL7HMgpNWNjXW2tN4EcK7S4CGpI7aePGQhICG0p
-         75suJgtGd5GnZDruTqEhnCC1ye1eKIx4/se+UU7CljNe9RWNHwkv809VumS5VvBLoU9V
-         +Lgg==
+        d=gmail.com; s=20230601; t=1741745663; x=1742350463; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uTiXVRvMHChmcGEHZioU5jJb39saCQAlzyWRmTIBmcw=;
+        b=GoBygWKA6v5Sbq/V1JWXUKIBU2wZV4bqXzLGa5jXClLVOj+LIrQbApoQdv3QV5Mycj
+         D/1eZLZaXYdbLeQI4/6GYSGWUQKltgWr5rwyhcuPlZu2pQ3LRxBNY9VyqFEZuRfvI9m2
+         FEdBTUmI2zfS+cy/eFHLHCTi4h/LRAPHM5M8JkL3RaCjHn0/IwCBzhXxyK5bYTua2hp8
+         u6RjwAnPqGNTw/sAWzZvMNsqS+Flly5XlfwPu14Xb76Bs3HjNVV6Zyz3FJQ/OQu4YsgM
+         NrrWSuCX0H78KyjyyQlTkdHs+U3i9eki98yPsxtKAdVUpCznhvTx6JIWzAMy4y4Wsvtk
+         9aEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741745530; x=1742350330;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dL1+gxzev0XtD2Z0UuOLlz+T+qpC8rSy8gjN4glIZ9E=;
-        b=iUrpFOr14FXOb1RQu9JnfsbYMA7cLOsXJNQOpkSNTz7+8GcmCixJw8Q1iSZJ0uOM+U
-         /o9aOKODWxPr8d5n1R1KYl4LpF0auZ+R49xnenfopMzWljGzG+wF2ZbNENY2m3icpCQL
-         e8knMQsVJgnumsrfpmCFrAodC6GO9wvBY4Kfe1tFIDPLk0Y2+iRTMaKX64Z7ysLDO7B0
-         7DiStTP6qCJz9pZ1q4w2rl6EceH4nr5ePoWK9nzj38bD5J68KnoaWZsTJbE/Q50Akp4F
-         Iu5sHtzepfS09Jb+/rCxoWgff3Sckl8TS1Mtml0vGOb1UeSn0Uq2SyvsaI7yqZAqvZIG
-         8Z5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXUfRTRqLF31+mi9083/Ucd9Hw1/0s6apbAp/i45BD3RkMt//Ig3LQ1hegx3ikjMVfcq03PL9mNwm7qJaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk7E33Z49koSiqlW1TbGYmy/NEHZoheMjZxsblrkJUeilltauF
-	Kyt4sM2Bfakd8SSvaoXO9gewOiW97C9v/rU4Wpc9sG2fYe7MjhGuhbVfIjwGVWwHAfRwXg==
-X-Google-Smtp-Source: AGHT+IG/VBPxbBcaru6ycm8/KwheisJ94/ITI6u5b+sVpdpQf774Gwv6a3lVIJn+qhyyXYenb6Qa2ukT
-X-Received: from pjbsh15.prod.google.com ([2002:a17:90b:524f:b0:2fc:3022:36b8])
- (user=elsk job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:bb8d:b0:2fe:b016:a6ac
- with SMTP id 98e67ed59e1d1-2ff7cf5f7aemr31009808a91.15.1741745529975; Tue, 11
- Mar 2025 19:12:09 -0700 (PDT)
-Date: Wed, 12 Mar 2025 02:11:45 +0000
+        d=1e100.net; s=20230601; t=1741745663; x=1742350463;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uTiXVRvMHChmcGEHZioU5jJb39saCQAlzyWRmTIBmcw=;
+        b=BU3ozLuJ1T1KNh3T2haSxhedrInvrwMab97jh32C9sWVzMqm77+wVqk3nJpmxP8x/H
+         t3lt+THzBq1JB8QRMXDEDqdVRqXWmP3mIzACUWQvfVuh+wf/QKdu8daMFbLW05CN5dsh
+         CVtctdhofbgDePtTBGB8dievhrw9mdfiZqk5KEiF0JscuXhX/ikn0pwPgqFd1ohY1eVp
+         cSTEKcUr/QGtqdAy1yzq9W3DtIecc7Hwdd5LZ+qCwdQv+m78Wkblxg6ld8XGpaY58pBh
+         zli2TWXaemdv+8R/ZcYAuNreoILRqaoT3hAjyaUITo6Q3KqXQ3/xZpub88jO7UdxQSNT
+         8U1A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4ADvUBuZrDp+K0SYQw8n6d3ZPVjEHtN9O1jfg6aeqsNZziKWWFLIrUojwfD5RXQZEr6MpmwCUMBmEwHE=@vger.kernel.org, AJvYcCXH5oVWDgiWtEiUtUIRuR1WyMc+r4XV76avizEuVEdQkQIBiBTiTXPY3k3Kc+aCOREjBQJ+9GeLWhgtiQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzAmmzUM2w/CEaAhgf65OXQFBxbSCKitRw2H7r45FLKf9LHNuZ
+	+burl+zbaEMjQmuxctxnknAEu0YTCeCzVeHNF6b22mAr1fliOrpx
+X-Gm-Gg: ASbGncuqqlI/T4HnscZoto3y6J4YjtNtC4v3nyiX4pCY0AA/QKTRhSlSsvj3fWUblqZ
+	clDyztjMuFFQKbJbwIDix0JePNt/2PUvQdl4XdA0Sw1scX7Xwx6CfdCmhmegsISTtnDQHNLihhS
+	utQMoq0hJs0g9KqaIO2GJMfaCx2GFrj6ht2dw6s8ca7dtz+pLmp2qZegemswrble25krXKQ/fOm
+	XxiLEWXNAvrNVd5Akwi58/Ob3teVM/LJqFCv5Uj8QCrGORDF/T741Qt/922AJahm87g8lwsZ65y
+	e93zJPuAFhnTvAdkupJUapyTinOhvSRVcX21fyfrnEQo
+X-Google-Smtp-Source: AGHT+IFpuckntFRU94gzQKS40CPGh7+LcQhV5oVsN1Pw4hkYEpjcbn2x+WlJs/tRiExwspesuWqOQQ==
+X-Received: by 2002:a17:906:4fcd:b0:ac1:e1da:8744 with SMTP id a640c23a62f3a-ac2b9ea197amr708883666b.38.1741745662847;
+        Tue, 11 Mar 2025 19:14:22 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac287653e64sm564607566b.136.2025.03.11.19.14.20
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Mar 2025 19:14:21 -0700 (PDT)
+Date: Wed, 12 Mar 2025 02:14:20 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm tree
+Message-ID: <20250312021420.nvkahcd3enlt3i6s@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250312113612.31ac808e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-Message-ID: <20250312021154.102262-2-elsk@google.com>
-Subject: [PATCH v1] setlocalversion: use ${objtree}/include/config/auto.conf
-From: HONG Yifan <elsk@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: HONG Yifan <elsk@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312113612.31ac808e@canb.auug.org.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-setlocalversion reads include/config/auto.conf, which is located below
-$(objtree) with commit 214c0eea43b2 ("kbuild: add $(objtree)/ prefix to
-some in-kernel build artifacts").
+On Wed, Mar 12, 2025 at 11:36:12AM +1100, Stephen Rothwell wrote:
+>Hi all,
+>
+>After merging the mm tree, today's linux-next build (native powerpc perf)
+>failed like this:
+>
+>In file included from arch/powerpc/util/../../../util/pmu.h:5,
+>                 from arch/powerpc/util/pmu.c:5:
+>tools/include/linux/bitmap.h: In function 'bitmap_alloc':
+>tools/include/linux/bitmap.h:83:69: error: unused parameter 'flags' [-Werror=unused-parameter]
+>   83 | static inline unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
+>      |                                                               ~~~~~~^~~~~
+>cc1: all warnings being treated as errors
+>
+>Caused by commit
+>
+>  351b9e493b09 ("lib/interval_tree: add test case for interval_tree_iter_xxx() helpers")
+>
+>I have applied the following hack for today.
+>
+>From: Stephen Rothwell <sfr@canb.auug.org.au>
+>Date: Wed, 12 Mar 2025 11:03:37 +1100
+>Subject: [PATCH] hack for "lib/interval_tree: add test case for
+> interval_tree_iter_xxx() helpers"
+>
+>Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>---
+> tools/include/linux/bitmap.h | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/tools/include/linux/bitmap.h b/tools/include/linux/bitmap.h
+>index 8166719178f7..d4d300040d01 100644
+>--- a/tools/include/linux/bitmap.h
+>+++ b/tools/include/linux/bitmap.h
+>@@ -80,7 +80,7 @@ static inline void bitmap_or(unsigned long *dst, const unsigned long *src1,
+> 		__bitmap_or(dst, src1, src2, nbits);
+> }
+> 
+>-static inline unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
+>+static inline unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags __maybe_unused)
+> {
+> 	return malloc(bitmap_size(nbits));
+> }
 
-Hence, the setlocalversion script needs to use
-$(objtree)/include/config/auto.conf as well.
+Hi, Stephen
 
-Note that $(objtree) is not necessarily `.` when O (aka KBUILD_OUTPUT)
-is set, because of commit 13b25489b6f8 ("kbuild: change working
-directory to external module directory with M=").
+Thanks for your fix. It looks good to me.
 
-Signed-off-by: HONG Yifan <elsk@google.com>
----
-Implementation note: Should I test -z ${objtree} before using it? Otherwise it
-looks at /include/config/auto.conf which is wrong.
-Or should I fall back to `.` if objtree is not found in the environment
-variables?
-I could also `exit 1` if $objtree is not set. Please let me know what you think.
+If it is ok to you, I would like to merge this into the original commit.
 
- scripts/setlocalversion | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>-- 
+>2.45.2
+>
+>-- 
+>Cheers,
+>Stephen Rothwell
 
-diff --git a/scripts/setlocalversion b/scripts/setlocalversion
-index 28169d7e143b..88f54eb5a7c2 100755
---- a/scripts/setlocalversion
-+++ b/scripts/setlocalversion
-@@ -186,7 +186,7 @@ if ${no_local}; then
- 	exit 0
- fi
 
--if ! test -e include/config/auto.conf; then
-+if ! test -e ${objtree}/include/config/auto.conf; then
- 	echo "Error: kernelrelease not valid - run 'make prepare' to update it" >&2
- 	exit 1
- fi
---
-2.49.0.rc0.332.g42c0ae87b1-goog
 
+-- 
+Wei Yang
+Help you, Help me
 
