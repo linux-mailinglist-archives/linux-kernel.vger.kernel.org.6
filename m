@@ -1,497 +1,99 @@
-Return-Path: <linux-kernel+bounces-557939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 904A5A5DF8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:58:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACDA9A5DF93
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:59:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 764721680C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791883B97BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198FF24CEDF;
-	Wed, 12 Mar 2025 14:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB6F24E002;
+	Wed, 12 Mar 2025 14:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bUAecovx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SMYvXAmW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pXsFZoM5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="scuwjW2o"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sAbZoGCA"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4866C245001
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0259F24500F;
+	Wed, 12 Mar 2025 14:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741791486; cv=none; b=qd6UOB2+Cy7Sxgz1J4A4uX550wzEBLUIznvttGERmno///Z0C3PAhcgYey6KWi+s+uQYsAduPY51EhnKWAKUa3UWqMt5jGbNNgUBFRrjSAIWr8aJpf/XBs7a6qSoF56zfawgXxIWLq3Rdwdp7Y+a2PozB+HO38QBRXISof1+LWI=
+	t=1741791544; cv=none; b=jzqUS2U3KDqI4yKp48HZxWnB7HkkwFyWunQ0kqApAlQ8NZrALPvAqMJkjHRJLF/Fl65M8iJrO7+LstAGKTgaMrl67yHLvFANaRi14MBNTepZJCRpJXDC6As8yHxxbkxUVc2dUCkaiuwvc5R3dbbsQzhb1QJn6VzAsoXiVv1EOeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741791486; c=relaxed/simple;
-	bh=cd4WBhUHKfcc5EID31IvjjhuqQ0bx++CKGLdmXt7td8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eHg7bz1uK6XxR/npg7v1+mk170UFOPMaikfpYDsScHZyeT8yd1xlJoThz9DbCNrz0vfS74483xtdHMXWeVnNLiaatyr2VXrWCPO4kBSCTB9kDnsS2vO0uZA/NeTg3WWiYQTu/D1Q3WUPVxjQPstVoOR9hV1lI1JuokHGPrGRXL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bUAecovx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SMYvXAmW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pXsFZoM5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=scuwjW2o; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 410451F388;
-	Wed, 12 Mar 2025 14:58:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741791481; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x7WD2XsTpzTFKoZOc3nhZIXrM4cIYiYfZH3pyvx6hMI=;
-	b=bUAecovxufFsvQxggDCCx8Y3DyZk+rNGotjoDo6HIb0ITUEkWAQgEMt8zcVqvu8fuj8/Kx
-	Bt0wotsAJFBMx0hr8DyJXQk/rRZ+aZYybsiqR26MIO4F78tNSn4Bzn2VvJyFr1+wpol0AT
-	cT0AzVn23PX7NG2Qj3QI0fxlg2KF9W8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741791481;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x7WD2XsTpzTFKoZOc3nhZIXrM4cIYiYfZH3pyvx6hMI=;
-	b=SMYvXAmW1g3TNwwTc4XM8onhkEEi2xT9rKWJCM6PiUASWWYirgzwKlOVhyBF+1ulO+1Y0k
-	0p7IEvNggRmYj3CA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=pXsFZoM5;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=scuwjW2o
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741791480; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x7WD2XsTpzTFKoZOc3nhZIXrM4cIYiYfZH3pyvx6hMI=;
-	b=pXsFZoM5XCoHDOisVf0wbfSWsX/ZkkbLTWW1KnH2cqkTVDWQvkeoQWAMZujvwWRqFhVwx+
-	Nkql1e2hcyKK+tnZmyLCCfoZBWcYijaQpiK3UXe4vm3j4kAElqhKQLplCGpqKMOAruhKgX
-	Ul13dIjsNLL0L6QzMztH6UgDIObajcc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741791480;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x7WD2XsTpzTFKoZOc3nhZIXrM4cIYiYfZH3pyvx6hMI=;
-	b=scuwjW2o9N+zQ6gvHgqJ11+GAWNBVKBW1YbwQpB1ElgyO9+YR4CoOtVwGcYKy1IqpdzasI
-	yqjYVUlIzLgE4OCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 26061132CB;
-	Wed, 12 Mar 2025 14:58:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bmnNCPig0WdOAgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 12 Mar 2025 14:58:00 +0000
-Message-ID: <befd17b0-160e-4933-96d9-8d5c4a774162@suse.cz>
-Date: Wed, 12 Mar 2025 15:57:59 +0100
+	s=arc-20240116; t=1741791544; c=relaxed/simple;
+	bh=rqtsorVxeT/UcYbtW74hOajsi/kKskf3UdlHs8QdsIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aPcEu7Y4M2bEMpJrRRnQWGcO6wEmgLWuSy9wCBo0c684N/WLmsfFVWF1d2v09TU+u9tLJuykcf+E/38p4Nyc9mb2QJK1svlJH5hRD2YatbHVLTbObQ2TlAbTQ6BJx9JkHEpD38SDvfCf1CMRqGKGW4jWx4ylw5PxixjQRXiT9Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sAbZoGCA; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+T/w2/VBo7X+S3ivNqnFFzhypZQMklkKS536n+tlnR0=; b=sAbZoGCAsXA1U0VGKX4h7NMH5y
+	BxIMWJFCCoxUos0ItYNQvQh2ZgR13vyahlJ7AkASJFxCxweNjM6Vlb/PKwrv7PnN+mrWvoEkhkcYR
+	ZMgmm/SBTTilJ4p4gHbDFHA4IunP+alIVPwJUYSs1BFdr7f81QijJv+8S39IOGD1l5O4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tsNXp-004hII-20; Wed, 12 Mar 2025 15:58:53 +0100
+Date: Wed, 12 Mar 2025 15:58:53 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"Simek, Michal" <michal.simek@amd.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"git (AMD-Xilinx)" <git@amd.com>,
+	"Katakam, Harini" <harini.katakam@amd.com>
+Subject: Re: [PATCH net-next V2 2/2] net: axienet: Add support for 2500base-X
+ only configuration.
+Message-ID: <34ed11e7-b287-45c6-8ff4-4a5506b79d17@lunn.ch>
+References: <20250312095411.1392379-1-suraj.gupta2@amd.com>
+ <20250312095411.1392379-3-suraj.gupta2@amd.com>
+ <ad1e81b5-1596-4d94-a0fa-1828d667b7a2@lunn.ch>
+ <Z9GWokRDzEYwJmBz@shell.armlinux.org.uk>
+ <BL3PR12MB6571795DA783FD05189AD74BC9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 01/10] slab: add opt-in caching layer of percpu
- sheaves
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
- <20250214-slub-percpu-caches-v2-1-88592ee0966a@suse.cz>
- <CAJuCfpG4BYNWM24_Jha-SapfeaGdO0GKuteHwNE1hDdWXRS+1Q@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <CAJuCfpG4BYNWM24_Jha-SapfeaGdO0GKuteHwNE1hDdWXRS+1Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 410451F388
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,linux.com,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid,suse.cz:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BL3PR12MB6571795DA783FD05189AD74BC9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
 
-On 2/22/25 23:46, Suren Baghdasaryan wrote:
-> On Fri, Feb 14, 2025 at 8:27 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->> Specifying a non-zero value for a new struct kmem_cache_args field
->> sheaf_capacity will setup a caching layer of percpu arrays called
->> sheaves of given capacity for the created cache.
->>
->> Allocations from the cache will allocate via the percpu sheaves (main or
->> spare) as long as they have no NUMA node preference. Frees will also
->> refill one of the sheaves.
->>
->> When both percpu sheaves are found empty during an allocation, an empty
->> sheaf may be replaced with a full one from the per-node barn. If none
->> are available and the allocation is allowed to block, an empty sheaf is
->> refilled from slab(s) by an internal bulk alloc operation. When both
->> percpu sheaves are full during freeing, the barn can replace a full one
->> with an empty one, unless over a full sheaves limit. In that case a
->> sheaf is flushed to slab(s) by an internal bulk free operation. Flushing
->> sheaves and barns is also wired to the existing cpu flushing and cache
->> shrinking operations.
->>
->> The sheaves do not distinguish NUMA locality of the cached objects. If
->> an allocation is requested with kmem_cache_alloc_node() with a specific
->> node (not NUMA_NO_NODE), sheaves are bypassed.
->>
->> The bulk operations exposed to slab users also try to utilize the
->> sheaves as long as the necessary (full or empty) sheaves are available
->> on the cpu or in the barn. Once depleted, they will fallback to bulk
->> alloc/free to slabs directly to avoid double copying.
->>
->> Sysfs stat counters alloc_cpu_sheaf and free_cpu_sheaf count objects
->> allocated or freed using the sheaves. Counters sheaf_refill,
->> sheaf_flush_main and sheaf_flush_other count objects filled or flushed
->> from or to slab pages, and can be used to assess how effective the
->> caching is. The refill and flush operations will also count towards the
->> usual alloc_fastpath/slowpath, free_fastpath/slowpath and other
->> counters.
->>
->> Access to the percpu sheaves is protected by local_lock_irqsave()
->> operations, each per-NUMA-node barn has a spin_lock.
->>
->> A current limitation is that when slub_debug is enabled for a cache with
->> percpu sheaves, the objects in the array are considered as allocated from
->> the slub_debug perspective, and the alloc/free debugging hooks occur
->> when moving the objects between the array and slab pages. This means
->> that e.g. an use-after-free that occurs for an object cached in the
->> array is undetected. Collected alloc/free stacktraces might also be less
->> useful. This limitation could be changed in the future.
->>
->> On the other hand, KASAN, kmemcg and other hooks are executed on actual
->> allocations and frees by kmem_cache users even if those use the array,
->> so their debugging or accounting accuracy should be unaffected.
->>
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> Only one possible issue in __pcs_flush_all_cpu(), all other comments
-> are nits and suggestions.
+> > On Wed, Mar 12, 2025 at 02:25:27PM +0100, Andrew Lunn wrote:
+> > > > +   /* AXI 1G/2.5G ethernet IP has following synthesis options:
+> > > > +    * 1) SGMII/1000base-X only.
+> > > > +    * 2) 2500base-X only.
+> > > > +    * 3) Dynamically switching between (1) and (2), and is not
+> > > > +    * implemented in driver.
+> > > > +    */
 
-Thanks.
+> - Keeping previous discussion short, identification of (3) depends
+> on how user implements switching logic in FPGA (external GT or RTL
+> logic). AXI 1G/2.5G IP provides only static speed selections and
+> there is no standard register to communicate that to software.
 
->> +        * Limitations: when slub_debug is enabled for the cache, all relevant
->> +        * actions (i.e. poisoning, obtaining stacktraces) and checks happen
->> +        * when objects move between sheaves and slab pages, which may result in
->> +        * e.g. not detecting a use-after-free while the object is in the array
->> +        * cache, and the stacktraces may be less useful.
-> 
-> I would also love to see a short comparison of sheaves (when objects
-> are freed using kfree_rcu()) vs SLAB_TYPESAFE_BY_RCU. I think both
-> mechanisms rcu-free objects in bulk but sheaves would not reuse an
-> object before RCU grace period is passed. Is that right?
+So if anybody has synthesised it as 3) this change will break their
+system?
 
-I don't think that's right. SLAB_TYPESAFE_BY_RCU doesn't rcu-free objects in
-bulk, the objects are freed immediately. It only rcu-delays freeing the slab
-folio once all objects are freed.
-
->> +struct slub_percpu_sheaves {
->> +       local_lock_t lock;
->> +       struct slab_sheaf *main; /* never NULL when unlocked */
->> +       struct slab_sheaf *spare; /* empty or full, may be NULL */
->> +       struct slab_sheaf *rcu_free;
-> 
-> Would be nice to have a short comment for rcu_free as well. I could
-> guess what main and spare are but for rcu_free had to look further.
-
-Added.
-
->> +static int __kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags,
->> +                                  size_t size, void **p);
->> +
->> +
->> +static int refill_sheaf(struct kmem_cache *s, struct slab_sheaf *sheaf,
->> +                        gfp_t gfp)
->> +{
->> +       int to_fill = s->sheaf_capacity - sheaf->size;
->> +       int filled;
->> +
->> +       if (!to_fill)
->> +               return 0;
->> +
->> +       filled = __kmem_cache_alloc_bulk(s, gfp, to_fill,
->> +                                        &sheaf->objects[sheaf->size]);
->> +
->> +       if (!filled)
->> +               return -ENOMEM;
->> +
->> +       sheaf->size = s->sheaf_capacity;
-> 
-> nit: __kmem_cache_alloc_bulk() either allocates requested number of
-> objects or returns 0, so the current code is fine but if at some point
-> the implementation changes so that it can return smaller number of
-> objects than requested (filled < to_fill) then the above assignment
-> will become invalid. I think a safer thing here would be to just:
-> 
->        sheaf->size += filled;
-> 
-> which also makes logical sense. Alternatively you could add
-> VM_BUG_ON(filled != to_fill) but the increment I think would be
-> better.
-
-It's useful to indicate the refill was not successful, for patch 6. So I'm
-changing this to:
-
-        sheaf->size += filled;
-
-        stat_add(s, SHEAF_REFILL, filled);
-
-        if (filled < to_fill)
-                return -ENOMEM;
-
-        return 0;
-
->> +
->> +       stat_add(s, SHEAF_REFILL, filled);
->> +
->> +       return 0;
->> +}
->> +
->> +
->> +static struct slab_sheaf *alloc_full_sheaf(struct kmem_cache *s, gfp_t gfp)
->> +{
->> +       struct slab_sheaf *sheaf = alloc_empty_sheaf(s, gfp);
->> +
->> +       if (!sheaf)
->> +               return NULL;
->> +
->> +       if (refill_sheaf(s, sheaf, gfp)) {
->> +               free_empty_sheaf(s, sheaf);
->> +               return NULL;
->> +       }
->> +
->> +       return sheaf;
->> +}
->> +
->> +/*
->> + * Maximum number of objects freed during a single flush of main pcs sheaf.
->> + * Translates directly to an on-stack array size.
->> + */
->> +#define PCS_BATCH_MAX  32U
->> +
-> .> +static void __kmem_cache_free_bulk(struct kmem_cache *s, size_t
-> size, void **p);
->> +
-> 
-> A comment clarifying why you are freeing in PCS_BATCH_MAX batches here
-> would be helpful. My understanding is that you do that to free objects
-> outside of the cpu_sheaves->lock, so you isolate a batch, release the
-> lock and then free the batch.
-
-OK.
-
->> +static void sheaf_flush_main(struct kmem_cache *s)
->> +{
->> +       struct slub_percpu_sheaves *pcs;
->> +       unsigned int batch, remaining;
->> +       void *objects[PCS_BATCH_MAX];
->> +       struct slab_sheaf *sheaf;
->> +       unsigned long flags;
->> +
->> +next_batch:
->> +       local_lock_irqsave(&s->cpu_sheaves->lock, flags);
->> +       pcs = this_cpu_ptr(s->cpu_sheaves);
->> +       sheaf = pcs->main;
->> +
->> +       batch = min(PCS_BATCH_MAX, sheaf->size);
->> +
->> +       sheaf->size -= batch;
->> +       memcpy(objects, sheaf->objects + sheaf->size, batch * sizeof(void *));
->> +
->> +       remaining = sheaf->size;
->> +
->> +       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
->> +
->> +       __kmem_cache_free_bulk(s, batch, &objects[0]);
->> +
->> +       stat_add(s, SHEAF_FLUSH_MAIN, batch);
->> +
->> +       if (remaining)
->> +               goto next_batch;
->> +}
->> +
-> 
-> This function seems to be used against either isolated sheaves or in
-> slub_cpu_dead() --> __pcs_flush_all_cpu() path where we hold
-> slab_mutex and I think that guarantees that the sheaf is unused. Maybe
-> a short comment clarifying this requirement or rename the function to
-> reflect that? Something like flush_unused_sheaf()?
-
-It's not slab_mutex, but the fact slub_cpu_dead() is executed in a hotplug
-phase when the given cpu is already not executing anymore and thus cannot be
-manipulating its percpu sheaves, so we are the only one that does.
-So I will clarify and rename to sheaf_flush_unused().
-
->> +
->> +static void __pcs_flush_all_cpu(struct kmem_cache *s, unsigned int cpu)
->> +{
->> +       struct slub_percpu_sheaves *pcs;
->> +
->> +       pcs = per_cpu_ptr(s->cpu_sheaves, cpu);
->> +
->> +       if (pcs->spare) {
->> +               sheaf_flush(s, pcs->spare);
->> +               free_empty_sheaf(s, pcs->spare);
->> +               pcs->spare = NULL;
->> +       }
->> +
->> +       // TODO: handle rcu_free
->> +       BUG_ON(pcs->rcu_free);
->> +
->> +       sheaf_flush_main(s);
-> 
-> Hmm. sheaf_flush_main() always flushes for this_cpu only, so IIUC this
-> call will not necessarily flush the main sheaf for the cpu passed to
-> __pcs_flush_all_cpu().
-
-Thanks, yes I need to call sheaf_flush_unused(pcs->main). It's ok to do
-given my reply above.
-
->> +/*
->> + * Free an object to the percpu sheaves.
->> + * The object is expected to have passed slab_free_hook() already.
->> + */
->> +static __fastpath_inline
->> +void free_to_pcs(struct kmem_cache *s, void *object)
->> +{
->> +       struct slub_percpu_sheaves *pcs;
->> +       unsigned long flags;
->> +
->> +restart:
->> +       local_lock_irqsave(&s->cpu_sheaves->lock, flags);
->> +       pcs = this_cpu_ptr(s->cpu_sheaves);
->> +
->> +       if (unlikely(pcs->main->size == s->sheaf_capacity)) {
->> +
->> +               struct slab_sheaf *empty;
->> +
->> +               if (!pcs->spare) {
->> +                       empty = barn_get_empty_sheaf(pcs->barn);
->> +                       if (empty) {
->> +                               pcs->spare = pcs->main;
->> +                               pcs->main = empty;
->> +                               goto do_free;
->> +                       }
->> +                       goto alloc_empty;
->> +               }
->> +
->> +               if (pcs->spare->size < s->sheaf_capacity) {
->> +                       stat(s, SHEAF_SWAP);
->> +                       swap(pcs->main, pcs->spare);
->> +                       goto do_free;
->> +               }
->> +
->> +               empty = barn_replace_full_sheaf(pcs->barn, pcs->main);
->> +
->> +               if (!IS_ERR(empty)) {
->> +                       pcs->main = empty;
->> +                       goto do_free;
->> +               }
->> +
->> +               if (PTR_ERR(empty) == -E2BIG) {
->> +                       /* Since we got here, spare exists and is full */
->> +                       struct slab_sheaf *to_flush = pcs->spare;
->> +
->> +                       pcs->spare = NULL;
->> +                       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
->> +
->> +                       sheaf_flush(s, to_flush);
->> +                       empty = to_flush;
->> +                       goto got_empty;
->> +               }
->> +
->> +alloc_empty:
->> +               local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
->> +
->> +               empty = alloc_empty_sheaf(s, GFP_NOWAIT);
->> +
->> +               if (!empty) {
->> +                       sheaf_flush_main(s);
->> +                       goto restart;
->> +               }
->> +
->> +got_empty:
->> +               local_lock_irqsave(&s->cpu_sheaves->lock, flags);
->> +               pcs = this_cpu_ptr(s->cpu_sheaves);
->> +
->> +               /*
->> +                * if we put any sheaf to barn here, it's because we raced or
->> +                * have been migrated to a different cpu, which should be rare
->> +                * enough so just ignore the barn's limits to simplify
->> +                */
->> +               if (unlikely(pcs->main->size < s->sheaf_capacity)) {
->> +                       if (!pcs->spare)
->> +                               pcs->spare = empty;
->> +                       else
->> +                               barn_put_empty_sheaf(pcs->barn, empty, true);
->> +                       goto do_free;
->> +               }
->> +
->> +               if (!pcs->spare) {
->> +                       pcs->spare = pcs->main;
->> +                       pcs->main = empty;
->> +                       goto do_free;
->> +               }
->> +
->> +               barn_put_full_sheaf(pcs->barn, pcs->main, true);
->> +               pcs->main = empty;
-> 
-> I find the program flow in this function quite complex and hard to
-> follow. I think refactoring the above block starting from "pcs =
-> this_cpu_ptr(s->cpu_sheaves)" would somewhat simplify it. That
-> eliminates the need for the "got_empty" label and makes the
-> locking/unlocking sequence of s->cpu_sheaves->lock a bit more clear.
-
-I'm a bit lost, refactoring how exactly?
-
->> +       }
->> +
->> +do_free:
->> +       pcs->main->objects[pcs->main->size++] = object;
->> +
->> +       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
->> +
->> +       stat(s, FREE_PCS);
->> +}
+	Andrew
 
