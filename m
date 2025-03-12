@@ -1,107 +1,89 @@
-Return-Path: <linux-kernel+bounces-557853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0391A5DE9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:07:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E930A5DEA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:08:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EC42166BBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:07:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB5283A8518
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE04924C09B;
-	Wed, 12 Mar 2025 14:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D7C22DFB4;
+	Wed, 12 Mar 2025 14:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="BNYd2lSQ"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKZ6mZ/7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6374024BC05
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218E91E48A;
+	Wed, 12 Mar 2025 14:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741788440; cv=none; b=aBY74E/UBJ8fBz22wu6YgNybHCSaEh/XyQpglHNhJ3CEKw7S0vWlkWmn07lCzxlsfFDQTopn2lkiXhgD71M6gxmM+22CMSOsPFBwOuRcSqJbCdSTs76v95z7u6qcvUR/J2lCyzYScksHbzEkAMY8+6rTFekIsns3s5R7a6rLRx0=
+	t=1741788520; cv=none; b=B4w++yQroDMlIi1ND2EVeqLK6Ob4Br4iQi5YhMJfvbYYk35jtfrCp0BLeKgMYcPICk13hC6MrapdbA3FUKfHpOC1XycKFhRtw6ADNGeRbjBtXlQGyI5RX1mPTKdNvYCIHAfiXgRYJsxbp9eDH1b1opyHANKRPo88dq+F9FOZDxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741788440; c=relaxed/simple;
-	bh=KH3wp93Ri05thIPW6RJDRPjNZtEwM1LH6l3DniegfWA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ILXgvZd3FEIs/MAShD2h8vTxrgCVgCXgey/onLts9vzwnWO6WsSawAEIBfMWvIXTW26jueURxAW7fUjgFO3SfEwa00kcwzGDTpbrU64I6JdqOwbGL9iKuaWlnyJ7WER/mP/mkWoXE30wnkh+QISrNcUiOJB5oUSzTXDuyFOrbHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=BNYd2lSQ; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fa8ada6662so14263914a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:07:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1741788436; x=1742393236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KH3wp93Ri05thIPW6RJDRPjNZtEwM1LH6l3DniegfWA=;
-        b=BNYd2lSQFyjpOJPtA+gHI+0E1R7YO2M0SPClTXAkV3Y2YmxeepNlN+QhJ4R169Z0ti
-         Q9NpnfQZW9b4BZDO5GFTuu9s2AS4UG/6+tGS7EH9BbBHWiXH5NJJ26TcSHboU3HofHr2
-         ixLaRbjp5WkuyzjoVkRa5ngZY2ez2AlITfotI9Y77itVru0gbouZZiWWIJp1Naf1+nPQ
-         Pn0szvYXkyUQ0P9PueIBH7vFyd8cOYSEnX0oqQMEBjc1qPjKwRJkwz6w5bK7Ui2zh3Fj
-         NIlQo6xDkU53rt8QnAvO/gbS6QJyDtEop6c0W1RyoXWl/lKt2qFl1iPG0tlQuHiQP0qQ
-         AgqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741788436; x=1742393236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KH3wp93Ri05thIPW6RJDRPjNZtEwM1LH6l3DniegfWA=;
-        b=CvrboqVRsdDw1TuyJORs9e9RsGz1C5f0S+uLNUAygX8BxTzP5WzbVuYvL44rcdKojI
-         FXxMJjScUIrp4Lz7SAAd8P9D0Oww/p4piLV8KL6ilzzcZ1t5SgXjAa+ON0teo2+zh+BG
-         D3pD5DxAyhpjDNqkF1MKIv20rSrBD4lspFhH97VTOSofR7TZM8ffzOJ9/rdFyZeZ2YeK
-         +qDeS03yzmIN13ZH8uXzjY6FDXkAKuQLsMrYuU1w0uvUO56Vh8hy3DJxAglfc9ZZz1ls
-         h/F+ZBPVExEXmTKxck6+HUgNcXX3mkjSJrr5n4KfAVn/jIHovH2xMuzQHihHHlXwNoKY
-         uxqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFSrYykeMFnkFzT2SnNeRt6BxDxKDqP9da9R0vwwpf7/6plkbHx79zqNyLdd+b11/aLtc2phr1usJFhyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA03Rdq7NIMyOzs4jxYH4jnwpGxVRqYnLLdpOayRDLXrpjVONZ
-	5rlANNDfISi6YmHwpy6Q9iiNOn3fI9CCutMvJWZ8MhXzjf5ZhCy12VrCxb+GDTE/SbGLqzeXuWZ
-	vJOekAUP6O5Y9ZOQrHK3/8r8qt66699YHle6lhA==
-X-Gm-Gg: ASbGnctBHkPhNoT2NubLgjBitlltcikFytWH50KAy9ybeFCbismiRglncAGLUUpcXMx
-	ki4NSlSbEhqJZW+l4OVqjZETNvt+FB5YbrUoe6daq9uin6q/JOq+gAuzySS68ABx3nEzgMNoo0H
-	e1tT/DfttAzJE6YHD+oc7cYLjAQg==
-X-Google-Smtp-Source: AGHT+IHvsbHGW07mRzank2wkSniIRevs65V3VVz0HyVfxMy8xVMhSSK6Sbh0HLmTu5lUXvhQGvZKTLI0sTvU1IgXHfQ=
-X-Received: by 2002:a17:90b:3b50:b0:2ff:7c2d:6ff3 with SMTP id
- 98e67ed59e1d1-2ff7cf4f88amr32677988a91.35.1741788435176; Wed, 12 Mar 2025
- 07:07:15 -0700 (PDT)
+	s=arc-20240116; t=1741788520; c=relaxed/simple;
+	bh=gQZx3AWSostPrrlrX7v/SLMBqnfS7i7l99h7odc50sQ=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=Y9K2AHXHyyU8I908WRGXar2vM8C4RN5Ln6igFBcUnMXP6asXLWQJYzMoiCI0Hpi1qMpSFWqJoP0/1uykxU/WDLkwKkkwzueWq5j9s/Df2IbFEwuTxE90fbI6uosj/FtwPmyvawyGMxZFHKaOUcX7h7AvZd7Mfgqf454EaKBg+Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKZ6mZ/7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97995C4CEDD;
+	Wed, 12 Mar 2025 14:08:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741788520;
+	bh=gQZx3AWSostPrrlrX7v/SLMBqnfS7i7l99h7odc50sQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UKZ6mZ/7y2I2E+jEAyxlzmevLnRPPda4vRCO4BiweI3UVIace4B1V3uwupkqK4SFJ
+	 Mw0vxqNrh1t+KVHnut6J6DBWaOfSjO0l5hCKP9nLaz04UyYT5QB1qSjwti1W8Js3vm
+	 qYhWUImBpATrzOTAXsat3CSOJltOqptNP0FLdWtJrSftrLc444ip2SqQPfTS9Ofoza
+	 WvTS4vx6en3zIF3WTZd1oYJMfN+axQxBN1/XFT/dZRt+xRA7O0HE9MGgON65YhEuUQ
+	 6VQC94qpMc/ZZPTQP4UbZ1lyrOxkK8dLEXk1oUAfpBzmS/kREn/Yl6EkmXtJswuatr
+	 tGhxiRcaghvFg==
+Message-ID: <a5d6a54f85162906b7ee1e0e9659e8f9.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] SPI fixes for v6.14-rc6
+Date: Wed, 12 Mar 2025 14:08:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250312111915.2970032-1-naresh.solanki@9elements.com> <CAOMZO5DaZbRXuv4vgWk9evNcV4iW6gXy2Vjv7oWsnMo_R9ku4Q@mail.gmail.com>
-In-Reply-To: <CAOMZO5DaZbRXuv4vgWk9evNcV4iW6gXy2Vjv7oWsnMo_R9ku4Q@mail.gmail.com>
-From: Naresh Solanki <naresh.solanki@9elements.com>
-Date: Wed, 12 Mar 2025 19:37:03 +0530
-X-Gm-Features: AQ5f1JoWqkrBy2LymfmpbHG_gHAHW6gefRY0T0On-nuBPMD3fer0bQ_5dHG3ls0
-Message-ID: <CABqG17gS-kiB73tTC+u-TER2+ABLYPDVM5YyjiqpEzLTb0LbJQ@mail.gmail.com>
-Subject: Re: [oe] [meta-oe][PATCH] meta-openembedded: flashrom: Update to v1.4.0
-To: Fabio Estevam <festevam@gmail.com>
-Cc: openembedded-devel@lists.openembedded.org, linux-kernel@vger.kernel.org, 
-	"Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+The following changes since commit 0ad2507d5d93f39619fc42372c347d6006b64319:
 
-On Wed, 12 Mar 2025 at 19:32, Fabio Estevam <festevam@gmail.com> wrote:
->
-> On Wed, Mar 12, 2025 at 10:52=E2=80=AFAM Naresh Solanki via
-> lists.openembedded.org
-> <naresh.solanki=3D9elements.com@lists.openembedded.org> wrote:
-> >
-> > From: "Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>
->
-> This From line is incorrect.
->
-> It should be:
->
-> From: Patrick Rudolph <patrick.rudolph@9elements.com>
-Correct. Not sure why the tool picked it that way. Will check.
-Thanks
-Naresh
+  Linux 6.14-rc3 (2025-02-16 14:02:44 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.14-rc6
+
+for you to fetch changes up to 91cf42c63f2d8a9c1bcdfe923218e079b32e1a69:
+
+  spi: microchip-core: prevent RX overflows when transmit size > FIFO size (2025-03-03 12:10:03 +0000)
+
+----------------------------------------------------------------
+spi: Fixes for v6.14
+
+A couple of driver specific fixes, an error handling fix for the Atmel
+QuadSPI driver and a fix for a nasty synchronisation issue in the data
+path for the Microchip driver which affects larger transfers.
+
+There's also a MAINTAINERS update for the Samsung driver.
+
+----------------------------------------------------------------
+Claudiu Beznea (1):
+      spi: atmel-quadspi: remove references to runtime PM on error path
+
+Conor Dooley (1):
+      spi: microchip-core: prevent RX overflows when transmit size > FIFO size
+
+Tudor Ambarus (1):
+      MAINTAINERS: add tambarus as R for Samsung SPI
+
+ MAINTAINERS                      |  1 +
+ drivers/spi/atmel-quadspi.c      |  5 +----
+ drivers/spi/spi-microchip-core.c | 41 ++++++++++++++++++----------------------
+ 3 files changed, 20 insertions(+), 27 deletions(-)
 
