@@ -1,106 +1,94 @@
-Return-Path: <linux-kernel+bounces-558351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A809A5E4A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:42:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A59A5E4AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:43:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDD0717B786
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:42:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C39DD17C2FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3096C258CDB;
-	Wed, 12 Mar 2025 19:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81714258CEB;
+	Wed, 12 Mar 2025 19:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8ejfFs7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="DxXCHqgd"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881111DE894;
-	Wed, 12 Mar 2025 19:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471CC136A;
+	Wed, 12 Mar 2025 19:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741808547; cv=none; b=MMyJFyTSIZD0fCIP19NpD8CxMX3WoXfUVCKU0AgoY8k5CHeiRD6Uo5KhSFyTK1uExr+Cpm6G1d5NfaHPUPdYG1759FtjaCHtGx4/Y5laHUsNY1fqjl9sxY6SQCYf6OKrgjoyxSD5D3X9S6EVz7B14LsKP/OO8Su7ecr9K2sFTNk=
+	t=1741808610; cv=none; b=tQlrHj2XRPRxx0hkHHd41VkA4sF+AbtWIx68vyWv0kjD+14NkHGbCIX0kKy60nCnGff8MxV22E2hiDP6uNfSpy4QLtk0G/RBBqlGOQiXR5L7XtwRC+ntC7OIunthIldBTlqlLsiPLVbbDHy40OE4PNu9ntKyAM4ONakQuHW3ID0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741808547; c=relaxed/simple;
-	bh=rR9sGvDvTNBxumgD3sshwMYc//HMbHud/yj/n6J26f4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kAJiAm79QaR0C0yqPuiFhp82p7DA/ufra3H7Zetp5aPzvzLHTazBJMBQONk/IPm91wH3lpeBmG8Qjx5xn45J2tIk1+hDl6yqEmSDIXs1dxzmJRDW1cjwHTYhF7dWj5aQWvJ5UC95tYOQh7qbddQ8k+4w9Lw+n4viSxD6Omq7t64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8ejfFs7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609C6C4CEDD;
-	Wed, 12 Mar 2025 19:42:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741808547;
-	bh=rR9sGvDvTNBxumgD3sshwMYc//HMbHud/yj/n6J26f4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=m8ejfFs7S7gvZAjwVFi7iiCr0PeRC/do7aIRRdyflsY7hQ8wteiVaAfizLGdCb8of
-	 8hEs/BUFpGALpTIwTD4aFwUGInbMnWWuSZyvjDGLD50Navj1UGHKtusrOgWqJoAnS5
-	 v9P1nervb54P1AqJWOfaZaa9hy0dKGytAsyR8yn3U0MrpvsFHFF8YDgU8DY+h16plr
-	 ZfDmIOyxSzxKJYTItaxHYQHPLVW5W1CDcine9ImoqJ0KGkPRvIMFUI2EXSsBL6vSOC
-	 TwAFO8CelBfshKFdvxrGDnBAGQLeAb/zoksqCxUzSGI8MhlgWoLMMWmLivDkjszrHe
-	 1zND03UUP4sXQ==
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72736498817so111364a34.1;
-        Wed, 12 Mar 2025 12:42:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVMFQb3TqFdlYKjb7ylNZTcgeYm4omf1uwZXgnWNFncwwNI1OxMIXL2f0D2O68Tl+CQ34Vd+urcSJl5@vger.kernel.org, AJvYcCWdS89/69Z2vkf0YGnRLt/YR9+FMrGjE391biEU6CODYtJd/Xso1OcH9S+VcpuXik9bLafT4bIxV0CIOjT3@vger.kernel.org, AJvYcCWzCkEs1ZVM8KN2WDok85Or526Qjv5H/cvouKqi/CsDq/NYa48nUMmj03C+S29ogl6l5gigTtarfoHEtkIfymW7@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAP9cS+P8RNphSIhgAdovbYJY5q9cM7llbVLyQwZ2bZnVS4dfx
-	Zhvt5jS3vxxxwp19KLVvgR27+bqTkQwFPyoSoKx41FxEuSiBpIg7sC2SLtAQHLZ4CBBR7WTRYuy
-	ohdLpdMv+cx6IlM6/mZgQ4NlNJiU=
-X-Google-Smtp-Source: AGHT+IEB3NZFvCSX7ReDxQhwwLXfmo6c+PjIOwot7ArsH4J6MB0jCwvgW7uZczVb3k8WyB22HuX8jDYDSbid/yESwJo=
-X-Received: by 2002:a05:6830:2641:b0:72b:9506:8db6 with SMTP id
- 46e09a7af769-72b95069043mr6591433a34.6.1741808546719; Wed, 12 Mar 2025
- 12:42:26 -0700 (PDT)
+	s=arc-20240116; t=1741808610; c=relaxed/simple;
+	bh=MQpsvFjJVmn++42KDeejIYF6zbqUpGV1N2HykXJ9TvA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rkAmTdFpz0bcEN1p2j/OyGPYixJLRhM6GynStMAB7hs6/zMdMYeZn2p7cz89O915bclEabl71PSM/EHgK9UfEnLWiDbq9xUFE/xx7ghdXQszpXNTn0hLmJtO4y9bfwLkf19DBowiJOq/waFPHPXRSAbMseLKGcneOL3ebUBmZq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=DxXCHqgd; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741808605; x=1742067805;
+	bh=k2L8+T93x3C/emjGMuwyW/R5I8BeyS+0TxpevstosCY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=DxXCHqgd37hI1t1+mSl0RVRBwA13vQ/XVaB09BZ/O0VCttgrhLU0EjhZZiQkCK+I/
+	 xirIOJ/C5+SaHokD1EEAq/798EGmTZaCDP/VR1350NPEJyWWqg2agQGAFYNisnikAK
+	 pM9X/nXhCDpQzQLkpQKvirBihIDT0xyDlbu3pMqI9N59zX67RsIrN1lLmVuQ2JhfD5
+	 tttJlaqwfmONRscNeiyAYqg3X1dlR/mn1+fT8HAYPfdkmzf8BEuLcsIshVhhMOvVoK
+	 daXB5Xif7XB4RWcKuUs9smRkdiuD3NrsMernT3k90UVinCE/TWl7PwwxHM3UYlCPvY
+	 l68ZcyT+sgJ4w==
+Date: Wed, 12 Mar 2025 19:43:19 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
+Message-ID: <D8EJM4CJ4HAN.1PB2YV8DB77V7@proton.me>
+In-Reply-To: <CAJ-ks9=zWAuPUM_61EA6i5QkUpwtNtsN8oF_MUerWGn39MRHhw@mail.gmail.com>
+References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com> <20250309-ptr-as-ptr-v2-5-25d60ad922b7@gmail.com> <D8EDP4SMQG2M.3HUNZGX8X0IL7@proton.me> <CAJ-ks9=K06OT6cutUABj2QDHJHJ70719c-eJ=F3n-_bhkYbZ3w@mail.gmail.com> <D8EG9EM9UU0B.2GLHXRU2XROZ3@proton.me> <CAJ-ks9=+3MQb-tp8TAwYvVj=GOFFFVKJxRMprc8YXZHKhqnDrg@mail.gmail.com> <D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me> <CAJ-ks9=zWAuPUM_61EA6i5QkUpwtNtsN8oF_MUerWGn39MRHhw@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: bbd40c62717ae5f9397b8b9c9ae87ff25634c232
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310222432.work.826-kees@kernel.org>
-In-Reply-To: <20250310222432.work.826-kees@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Mar 2025 20:42:15 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hxrj-DW7a=3iXmsCFm-K4rJvsrG=f5YLJreVmaZ207Lw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq1Db5q6FqcKbKLJbTnKn0KewEQfAgm5Ujmcc0Zz0yAQlA2Oc6PZgy3cPE
-Message-ID: <CAJZ5v0hxrj-DW7a=3iXmsCFm-K4rJvsrG=f5YLJreVmaZ207Lw@mail.gmail.com>
-Subject: Re: [PATCH] PNP: Expand length of fixup id string
-To: Kees Cook <kees@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 11:24=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+On Wed Mar 12, 2025 at 8:19 PM CET, Tamir Duberstein wrote:
+> I tried using the strict provenance lints locally and I think we can't
+> until we properly bump MSRV due to `clippy::incompatible_msrv`:
 >
-> GCC 15's -Wunterminated-string-initialization saw that "id" was not
-> including the required trailing NUL character. Instead of marking "id"
-> with __nonstring[1], expand the length of the string as it is used in
-> (debugging) format strings that expect a properly formed C string.
->
-> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D117178 [1]
-> Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> Cc: linux-acpi@vger.kernel.org
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
->  include/linux/pnp.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/linux/pnp.h b/include/linux/pnp.h
-> index b7a7158aaf65..23fe3eaf242d 100644
-> --- a/include/linux/pnp.h
-> +++ b/include/linux/pnp.h
-> @@ -290,7 +290,7 @@ static inline void pnp_set_drvdata(struct pnp_dev *pd=
-ev, void *data)
->  }
->
->  struct pnp_fixup {
-> -       char id[7];
-> +       char id[8];
->         void (*quirk_function) (struct pnp_dev *dev);   /* fixup function=
- */
->  };
->
-> --
+> warning: current MSRV (Minimum Supported Rust Version) is `1.78.0` but
+> this item is stable since `1.84.0`
+>    --> ../rust/kernel/str.rs:696:22
+>     |
+> 696 |             pos: pos.expose_provenance(),
+>     |                      ^^^^^^^^^^^^^^^^^^^
+>     |
+>     =3D help: for further information visit
+> https://rust-lang.github.io/rust-clippy/master/index.html#incompatible_ms=
+rv
 
-Applied as 6.15 material, thanks!
+Oh this is annoying...
+
+> This is with `#![feature(strict_provenance)]`. I can file the issue
+> but I think it's blocked on MSRV >=3D 1.84.0. But maybe you know of a
+> path forward :)
+
+I think we should be able to just `allow(clippy::incompatible_msrv)`,
+since Miguel & other maintainers will test with 1.78 (or at least are
+supposed to :).
+
+---
+Cheers,
+Benno
+
 
