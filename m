@@ -1,174 +1,99 @@
-Return-Path: <linux-kernel+bounces-558398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B29C4A5E55A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:30:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A28A5E555
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FF033BA503
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:30:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4863B178789
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3F11EE7BB;
-	Wed, 12 Mar 2025 20:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6091EEA4B;
+	Wed, 12 Mar 2025 20:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SD7UTkFS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rsFxTw2H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203F71EF0BA;
-	Wed, 12 Mar 2025 20:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C021BD9DD;
+	Wed, 12 Mar 2025 20:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741811402; cv=none; b=DW6Fn2cM0OskfcV+W3HPcAPEIfp5k7UpaJD6bc7ovwmLUN55yETQdG0CBjnEGOuehCxOCdyJyJlAc7VnDVyCrrCl0CXQQZ29AtMlCc0x/2GCMn9m0khgXzsuRjJ9i8QbfZGDxZLdYCnUyjN4S/Iw9ugvMHubPEwPnZt33+YnyNw=
+	t=1741811396; cv=none; b=cMph+wmqdAgViAca3mj9+/i7S/7MJG+7ynw/ZROYhJB2Ln8mIr9jwYfK8W8dSJ+t0YR3+Fh0sN/ToTEI7Gn8n1TMzyYSyasLcaM2MLkxHJgVd7USm7JmfAyOjfnp2yZSkjGPX0+xISMbgha0VbkOp0dKUbJ9nSVwd8xAjRzuD70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741811402; c=relaxed/simple;
-	bh=W4dBY0J4Uk+rhzgTkH7BaDfHixpCMld49I/HUUQ/wRM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eBpIQyLs0UzaotwEU3pcBwMXhNfkwLPYrlJ+gfR/dowY40DechWMiu8V1PCwHON4TJsAp+71TCqJfwduQFXW/pR98OzGFsRK/r0TK8TDKNqLNFXHX50TSHyPQHYcbwY1egCE+j9yXinXE/Rb4zM0Lf86qihVcOUGpVI846WyihM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SD7UTkFS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9247AC4CEEB;
-	Wed, 12 Mar 2025 20:30:01 +0000 (UTC)
+	s=arc-20240116; t=1741811396; c=relaxed/simple;
+	bh=BsDfTZ4J/ZD/x4CEynmxWK5PUtvjFEyamJLg8PXwsTo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=j2xa9q/UWM3S6ttbYUkMx2d68wwRwK3oSf7lnP3nQxAN4+Fmsu8ST1eRmRuQkQsYnLC6tPDX2ABySZrpPlCOrp7+Ed7UvuZn7X5qzt8iQFnTZH1PQxtRcVhCzJjwqecKuh3HGIPeg0CUjxw2stUZkzmZyEwchQPRXTNf0KBRofY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rsFxTw2H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E0CC4CEDD;
+	Wed, 12 Mar 2025 20:29:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741811401;
-	bh=W4dBY0J4Uk+rhzgTkH7BaDfHixpCMld49I/HUUQ/wRM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SD7UTkFSjyd/N0bUBGm1BvlDP8dY3hRugE1BUK+sbOHD+/w+h9eU5K/mp/4kKLLx9
-	 p/erur0xX464O+eIjQC+J0N1S2/SgXWVFcG0hVQg7gqGwk8y9oyJx8lqFCJYZG9SrJ
-	 D97vRIiHTWtkD/7D8+w5yHng98D+V7B1jy2wYSgrH6ZnEGpXz22IxdYR8ZNNfstHVM
-	 2epyQ5Z4i5u1B3T8CWxUENAB74tjGnC6ctlQw+7EjlFThP7d4GAqtQpFnvcZZzCz+i
-	 CUSITgPWjKJBmFOtjuN7My7iUe5JivOImiEu2CgrmlfB2hexhpY4z03mEN99PPPpC6
-	 xzfM/9j/fwqdA==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-72b7f553de3so32489a34.3;
-        Wed, 12 Mar 2025 13:30:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUNskGZSXKYsmIJNSEXnEoAxci89+o5A/fbp8hGlipG8v5lZgy9Sn56N+yR9LNVdqUiZerigUHrqEQ=@vger.kernel.org, AJvYcCVQ1ECym3MoyYx59GXGY3Y/FNqCNdD3SOFapT0tVY/hAP+jIvSMVzy0kqNRNIg8GfQ/CxJPMGLlWzlenzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOjvQ13Es/iVps2EvZfSpnJDCR34Ry+Jp9GdLMfcpaT0uMO4JU
-	AgNMW1BuShME7pGtyglrEIQzXpywRHvmxKcOhutGOb/BcrKdtzVwVSo+8RiTiEnwGx9paZ8EOTT
-	HhjFBMGWq7tJXVXQL1GL5nvRzUAo=
-X-Google-Smtp-Source: AGHT+IGSaa9otr3BuPbKB9DCav98nhlOLCYG4I3D9cGTT7HHUfSlQEFc8c8b23XQEFu/Pmsn7nNttDVsqcO5c9LTnBo=
-X-Received: by 2002:a05:6830:821a:b0:72b:a92b:5797 with SMTP id
- 46e09a7af769-72ba92b5872mr1434656a34.9.1741811400801; Wed, 12 Mar 2025
- 13:30:00 -0700 (PDT)
+	s=k20201202; t=1741811394;
+	bh=BsDfTZ4J/ZD/x4CEynmxWK5PUtvjFEyamJLg8PXwsTo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=rsFxTw2HX3gC2BsO6Wah0fc8SRPF4XCrhcyksYCisNi66O/lqF5BF2Pwe3+36jacb
+	 NCit5W19Z5brosZoCF134vljEbVAe6J7Azahxvhu7eu21r+xOdV47v35FP+je7Y0jk
+	 poG9gaXRHgZW9mh++TUCmGPvR6P3yyGqSg+pKOssf2Tkz8GUjvAU6wo0tIBXkhm0nh
+	 6MWuKyJqxoevxkejq1dMjVGU+5zLCSz15NCxlD0xsXMpiDnlK5qbhjyNTKfuuISPTL
+	 ZnaEezwg9IRWk8n5dPRVQdHXQ+3NIS+Cx5+ETrZbW/0vj2MCqOm1w9JpI0DOWRGh8y
+	 ayJub90Zj/Amw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70B8D380DBDF;
+	Wed, 12 Mar 2025 20:30:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307212347.68785-1-linux@treblig.org>
-In-Reply-To: <20250307212347.68785-1-linux@treblig.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Mar 2025 21:29:49 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0iEpojVO=sJ4FR3LvJzYBYGhihx0d-TN95BuCEpDRaO5A@mail.gmail.com>
-X-Gm-Features: AQ5f1Jrs9sgVstaY-HhC5LfEtc8S1ViaQMx3sbV1Qd674z4M_w-WEIFHi4m_KNI
-Message-ID: <CAJZ5v0iEpojVO=sJ4FR3LvJzYBYGhihx0d-TN95BuCEpDRaO5A@mail.gmail.com>
-Subject: Re: [PATCH] PM: clk: Remove unused pm_clk_remove
-To: linux@treblig.org
-Cc: rafael@kernel.org, len.brown@intel.com, pavel@kernel.org, 
-	gregkh@linuxfoundation.org, dakr@kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 1/3] eth: bnxt: switch to netif_close
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174181142926.921984.9414050988776137119.git-patchwork-notify@kernel.org>
+Date: Wed, 12 Mar 2025 20:30:29 +0000
+References: <20250309215851.2003708-1-sdf@fomichev.me>
+In-Reply-To: <20250309215851.2003708-1-sdf@fomichev.me>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+ michael.chan@broadcom.com, pavan.chebbi@broadcom.com, andrew+netdev@lunn.ch,
+ horms@kernel.org
 
-On Fri, Mar 7, 2025 at 10:23=E2=80=AFPM <linux@treblig.org> wrote:
->
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> pm_clk_remove() is currently unused.
-> It hasn't been used since at least 2011 when it was renamed from
-> pm_runtime_clk_remove by
-> commit 3d5c30367cbc ("PM: Rename clock management functions")
->
-> Remove it.
->
-> Note that the __pm_clk_remove is still used and is left in.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  drivers/base/power/clock_ops.c | 40 ----------------------------------
->  include/linux/pm_clock.h       |  4 ----
->  2 files changed, 44 deletions(-)
->
-> diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_op=
-s.c
-> index 97a53215a274..b69bcb37c830 100644
-> --- a/drivers/base/power/clock_ops.c
-> +++ b/drivers/base/power/clock_ops.c
-> @@ -343,46 +343,6 @@ static void __pm_clk_remove(struct pm_clock_entry *c=
-e)
->         kfree(ce);
->  }
->
-> -/**
-> - * pm_clk_remove - Stop using a device clock for power management.
-> - * @dev: Device whose clock should not be used for PM any more.
-> - * @con_id: Connection ID of the clock.
-> - *
-> - * Remove the clock represented by @con_id from the list of clocks used =
-for
-> - * the power management of @dev.
-> - */
-> -void pm_clk_remove(struct device *dev, const char *con_id)
-> -{
-> -       struct pm_subsys_data *psd =3D dev_to_psd(dev);
-> -       struct pm_clock_entry *ce;
-> -
-> -       if (!psd)
-> -               return;
-> -
-> -       pm_clk_list_lock(psd);
-> -
-> -       list_for_each_entry(ce, &psd->clock_list, node) {
-> -               if (!con_id && !ce->con_id)
-> -                       goto remove;
-> -               else if (!con_id || !ce->con_id)
-> -                       continue;
-> -               else if (!strcmp(con_id, ce->con_id))
-> -                       goto remove;
-> -       }
-> -
-> -       pm_clk_list_unlock(psd);
-> -       return;
-> -
-> - remove:
-> -       list_del(&ce->node);
-> -       if (ce->enabled_when_prepared)
-> -               psd->clock_op_might_sleep--;
-> -       pm_clk_list_unlock(psd);
-> -
-> -       __pm_clk_remove(ce);
-> -}
-> -EXPORT_SYMBOL_GPL(pm_clk_remove);
-> -
->  /**
->   * pm_clk_remove_clk - Stop using a device clock for power management.
->   * @dev: Device whose clock should not be used for PM any more.
-> diff --git a/include/linux/pm_clock.h b/include/linux/pm_clock.h
-> index 45c3f3ccbaf8..c3b46fa358d3 100644
-> --- a/include/linux/pm_clock.h
-> +++ b/include/linux/pm_clock.h
-> @@ -42,7 +42,6 @@ extern void pm_clk_destroy(struct device *dev);
->  extern int pm_clk_add(struct device *dev, const char *con_id);
->  extern int pm_clk_add_clk(struct device *dev, struct clk *clk);
->  extern int of_pm_clk_add_clks(struct device *dev);
-> -extern void pm_clk_remove(struct device *dev, const char *con_id);
->  extern void pm_clk_remove_clk(struct device *dev, struct clk *clk);
->  extern int pm_clk_suspend(struct device *dev);
->  extern int pm_clk_resume(struct device *dev);
-> @@ -75,9 +74,6 @@ static inline int of_pm_clk_add_clks(struct device *dev=
-)
->  {
->         return -EINVAL;
->  }
-> -static inline void pm_clk_remove(struct device *dev, const char *con_id)
-> -{
-> -}
->  #define pm_clk_suspend NULL
->  #define pm_clk_resume  NULL
->  static inline void pm_clk_remove_clk(struct device *dev, struct clk *clk=
-)
-> --
+Hello:
 
-Applied as 6.15 material, thanks!
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Sun,  9 Mar 2025 14:58:49 -0700 you wrote:
+> All (error) paths that call dev_close are already holding instance lock,
+> so switch to netif_close to avoid the deadlock.
+> 
+> v2:
+> - add missing EXPORT_MODULE for netif_close
+> 
+> Fixes: 004b5008016a ("eth: bnxt: remove most dependencies on RTNL")
+> Reported-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2,1/3] eth: bnxt: switch to netif_close
+    (no matching commit)
+  - [net-next,v2,2/3] eth: bnxt: request unconditional ops lock
+    https://git.kernel.org/netdev/net-next/c/eaca6e5dc6ba
+  - [net-next,v2,3/3] eth: bnxt: add missing netdev lock management to bnxt_dl_reload_up
+    https://git.kernel.org/netdev/net-next/c/adbf627f1703
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
