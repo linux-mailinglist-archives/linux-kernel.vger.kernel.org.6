@@ -1,1431 +1,339 @@
-Return-Path: <linux-kernel+bounces-557216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E05EA5D52F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:58:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6319A5D53F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:03:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FC8189318E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:59:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757653B4714
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F971DD9AD;
-	Wed, 12 Mar 2025 04:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5418F1DE4CE;
+	Wed, 12 Mar 2025 05:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rbXAiS7O"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2085.outbound.protection.outlook.com [40.107.220.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="yEe1kYWN"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7EA1CD215;
-	Wed, 12 Mar 2025 04:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741755525; cv=fail; b=j0czIVMDPM1uOZ8fcpj+j2RD7K8UsdXEQVGXAnn3VDvdSlzNoFnIshoXpfVm7BjuFBqmQ9jjcsOSBomU5hW56DbcomG6NmyFntoKehZKn2VQ9osRGhQBJ62i/48LZZPSQ6DVWG86v/A+KPNBxFZ34+VowhM6hJDfaPCTxjNt4b4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741755525; c=relaxed/simple;
-	bh=/JPArHwg3Uo47UqrhIsUKczP+z+bBcu5iG7WCYRS7qo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W9s//0SE7TJnnUMAm5XomeS1e82MF2m/BWzuQ+C/hjk7qJU9WrXoIKPhiUVF21K0QPCmrTdpTA0g91hpPgbt1lkQTsK4GVDOGoPWua67dBvSKoThsLd/dqWeFKApcwKKCPwrST1mliIeMBQ8tXaO/Ct9j7L96Ht/E20rWc2hNaU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rbXAiS7O; arc=fail smtp.client-ip=40.107.220.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fCbYNuDAjQgDypz7AMaoi8QGhSUEuath2+dSsRK2Ss5leNZaKM8XUQmwbeqtq7+bCNhVXWEDb0+ohO67mfDXhQlDgGdo4BLDBHIorBPnZlVvQF8wCVhTbQCiOfL+SPwxVQBBbugZfe9ez0yS5o2dC8f5iKQqcnChK+8OaUEBhRmWVOHZ5OrrIdjcoYmBHO+700BCfup9ox+0B4kVgCVIutN6LN5myGXTSV2v95r0TacZuPnrVrHvywtmEmZ6BM0J9xT9tvveZ09ctzKbfFcaj6lZ+95VFkxElvN5nJPIM61DAhNOQT7j8JyEJQYx+CikuBQdt64nrvmrSxpqvVbAyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I4JaUZow6XGP2vjDY+Wnbr1gTyJV8eDlMUN60glA880=;
- b=ReWi4stf9p8WRTvik4wPBIlPHvsemLELKLcxi82hrvK+YtBiuHBEGlb6gbPTz3IzLCTcfNSUuOKU7lbJLPCz3/uMmb0dqm775h4My3CnBvYlQ51+iTBKpr7B0voLG9qfuV6vNhEJ2UaHNOi8QqSy1y+DQvB/8sQpXrxtiKBoDRzyfoC3T+Tn6jBDt+aGI08vNeGh8XLfVY5QBrRbcmdjw5ShS5VmZReN1Opcncp3383nDYe7Asz9hQUysNrT6dCS2hoVL5jcegML9eYmNRfarXKIaZKmS6whpGc+pR6P7UMQpxbvXTQ+xbelk6iaLmOGG7ZzYSc/Sow8uG/EcDz2wA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I4JaUZow6XGP2vjDY+Wnbr1gTyJV8eDlMUN60glA880=;
- b=rbXAiS7OmW14xrBDu7SWLRcxJDSLpyrZX+vO3kF7aIUvrZasS+Onn0BULEEbYNGHVebh8IlD+qVEpHf3gMiWZGLGPrM7CQRAON24+gNIs/8ntZWb4vIURLyJWH98Nhgf31aDLzPZmbFtsMSmYej8cRQNWf84Or3IF/H4I4c8sOvYrOOYFxeWjQM3ugyx1Yk4ecNfrZkAjBr2x7zTAE21bUZ5ih5v0T4iI8uzkYWbRJMxoQZPaWx5kNzNrJrPxZgTSr+B++JIiF4UlR7wNSFrPgGd1svs3rSewmT69/itlh+zedu3VyaEzVtvR+HsSYxnGH2VvLSslGVZKarkJIzglw==
-Received: from CH2PR18CA0049.namprd18.prod.outlook.com (2603:10b6:610:55::29)
- by PH7PR12MB8425.namprd12.prod.outlook.com (2603:10b6:510:240::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
- 2025 04:58:32 +0000
-Received: from CH1PEPF0000AD74.namprd04.prod.outlook.com
- (2603:10b6:610:55:cafe::b5) by CH2PR18CA0049.outlook.office365.com
- (2603:10b6:610:55::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.27 via Frontend Transport; Wed,
- 12 Mar 2025 04:58:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH1PEPF0000AD74.mail.protection.outlook.com (10.167.244.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Wed, 12 Mar 2025 04:58:32 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 11 Mar
- 2025 21:58:16 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 11 Mar
- 2025 21:58:16 -0700
-Received: from willie-obmc-builder.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Tue, 11 Mar 2025 21:58:16 -0700
-From: Willie Thai <wthai@nvidia.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<joel@jms.id.au>, <andrew@codeconstruct.com.au>, <kees@kernel.org>,
-	<tony.luck@intel.com>, <gpiccoli@igalia.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-	<openbmc@lists.ozlabs.org>
-CC: <wthai@nvidia.com>, <leohu@nvidia.com>, <tingkaic@nvidia.com>,
-	<dkodihalli@nvidia.com>, <maryang@nvidia.com>, <pmenzel@molgen.mpg.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH v2] ARM: dts: aspeed: Add device tree for Nvidia's GB200NVL BMC
-Date: Wed, 12 Mar 2025 04:58:02 +0000
-Message-ID: <20250312045802.4115029-1-wthai@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8285F1C32
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741755822; cv=none; b=UmhayXzM+QGJ/F8644SeLgIiw6F9a421WlkhJU2Ghj6SGh8ZaNFl2F6n8K33Lhb2wM03pkjRL3kdfu5eefl7ZuuM7wjcsswDQVCnNbyo2B/TcDpJgFVwMlSNYxNnJiVYwDiu5fUfba2JDmVNDcVctO2XWg/j7o5RZkR0Q1BgR+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741755822; c=relaxed/simple;
+	bh=JvJ/7O10ZNpWh7VduRBNGBUH6gCm5z8D1KTrvXZNrO0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bC4ZG3/uIJeCBpp4Fa2S3zYd5G5QoM+BgPskX2NM3cbT5w8j9+7Au53nUvpKz2zyiTL0OgNRdhFHRlEaI1O5RkB8kAisMNA3uNPE/AU9NY+/lvp2GpQ7CXhZSvjCk5J+gwfqlvbkl2i9buMlIS3Y6rOQMt+Fc/AlGl9qGf6OnHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=yEe1kYWN; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2240b4de12bso28514635ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:03:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741755820; x=1742360620; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6QiFc6SJG2kyM7Br5fhaU7GX9dr8/OrkWYxYdeRvaF4=;
+        b=yEe1kYWNNAbeLgMPhtZhvA4rEBkpdx8WDzyiuFnQ/VZoTWk4pgY47Soq4MlUtta6iV
+         aDSoc5/tL4s+jNub93icHO6gtBQIfNVgaL54wmFPy+tVNTcUB+2NT99TszW/vqHEckfx
+         0wp78JpOfmZnFPlb0REJeBeUHofu3q2yzOppdbBiecwdjE5JFasOcvoezjDv6NJJjTYj
+         GSjKu8q6yFJIUd+BMMA/yoJoM75aE5osuhbNvU4zO9YYfzD3n2+9jn8CpXDobRA9JjHy
+         kqUqM4CDjl0hkJa9HwvBeOCI2aZqUmCbAGOw31ut2y4Ijy9GEaDU4OFWUD9T3cof27k+
+         60cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741755820; x=1742360620;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6QiFc6SJG2kyM7Br5fhaU7GX9dr8/OrkWYxYdeRvaF4=;
+        b=wt4TYCZH/PJ/Li8me2QfVCTaxJYATulNlzAkg2KiFENv4hEe6H17ewJanVtbjXPnh/
+         bfvdSusT8oq637gBka8zbZwWCboyg82fm8MOPz2m6A/juufLNXO7CqwfPbK+Tu4LQf1S
+         3Nbk077MSyOsBWVxbEXaMVSyxpt4TvuanKCmGTuEs5nwxRAYkyC7Xkr9ybh3aoWBkxi+
+         5e5kGpFalJMXIFMInXgijfC1/LsqQRmeJQaRaTlNMKyIBGCzf4ESETwNjZzvz+2f/LNk
+         UIpqRBUOtWZKq7lk+W9Im/ccbupIzUcZEuC77B9cdOa/eaPGCgcY84ZGf7gT0yOrPxte
+         5jvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFGnM2dvyyIYLFzPbsDecCs80QGx/59wY/T9T1SDPz9VbjDh2BrVurAbQVT6IzfhTMSCvCCNUjupTxpDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGDFKZaxuBya7YBcBqKqsUG32Kdjx/2ttGytXuPRKxwKV0qyf1
+	oWWYsaLqZBBQJEf4bE340aEEdCr7foF37hb0najeI41Oy46F+hyeVkFrpg5UcVw=
+X-Gm-Gg: ASbGncvcfK0rlo+0wZFZkzsv76g/QlShywazR+p/KfBA0c7sFrKtb8Z0yq2BmAK9pV4
+	mQWwMyRAwxGqBaLkZdfNtxjLE/xPLU2Bibyn2rKJCq+feHlc407I6jHptBrv9Gzb4LjkYw3QJP6
+	tf0WgXyYvLXHKISFzqiaarYGu00oiEY/TdxC3DYe02yRPjDEXsjWRMH/OQ10z7gANQdnHKnPmGX
+	/MQPPwEYwHkl0Ku+ejWUu9jhGCjEe/E1shzXlSwi4qX6NfwatpSesrFKz2TAy0ZMh/Uquf8NpC1
+	ZuwVtr85py+OHoeE1g3UVm0WcyTh+qnEyEosO52p5sQnbUovsyGE3jCNsg==
+X-Google-Smtp-Source: AGHT+IENgVGmOQ2e2sjFoBtOxZ+KC1QlBkq4WVH7vBx21DbhpzjmB/6EMIeKK8qnTk6hoj/TMUiufQ==
+X-Received: by 2002:a17:902:e80a:b0:224:de2:7fd6 with SMTP id d9443c01a7336-2242889f527mr316528595ad.25.1741755819696;
+        Tue, 11 Mar 2025 22:03:39 -0700 (PDT)
+Received: from [157.82.205.237] ([157.82.205.237])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f7d6sm106724155ad.107.2025.03.11.22.03.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 22:03:39 -0700 (PDT)
+Message-ID: <ff7916cf-8a9c-4c27-baaf-ca408817c063@daynix.com>
+Date: Wed, 12 Mar 2025 14:03:34 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 3/6] tun: Introduce virtio-net hash feature
+To: Jason Wang <jasowang@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
+ Yuri Benditovich <yuri.benditovich@daynix.com>,
+ Andrew Melnychenko <andrew@daynix.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com,
+ Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+References: <20250307-rss-v9-0-df76624025eb@daynix.com>
+ <20250307-rss-v9-3-df76624025eb@daynix.com>
+ <CACGkMEsNHba=PY5UQoH1zdGQRiHC8FugMG1nkXqOj1TBdOQrww@mail.gmail.com>
+ <7978dfd5-8499-44f3-9c30-e53a01449281@daynix.com>
+ <CACGkMEsR4_RreDbYQSEk5Cr29_26WNUYheWCQBjyMNUn=1eS2Q@mail.gmail.com>
+ <edf41317-2191-458f-a315-87d5af42a264@daynix.com>
+ <CACGkMEta3k_JOhKv44XiBXZb=WuS=KbSeJNpYxCdeiAgRY2azg@mail.gmail.com>
+Content-Language: en-US
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <CACGkMEta3k_JOhKv44XiBXZb=WuS=KbSeJNpYxCdeiAgRY2azg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD74:EE_|PH7PR12MB8425:EE_
-X-MS-Office365-Filtering-Correlation-Id: c3eea50d-b696-4d5e-c04c-08dd612289b6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024|921020|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/+werNdnf0R9aCbZ3fpVMswONLH/8rZdCaHQMsA4TAyXMTvBwr669IkHlJBD?=
- =?us-ascii?Q?qv/KlDOhwI8kI/+Nn1stqlSPxMHVwQ9/wIpRjeJiunu/u+W0DKtDxb+5MxKM?=
- =?us-ascii?Q?nVoJcDSXbUlnuTmO/EFuz0RP43QIXcqZErNpBJIQky/BWShpRBnVmZ2omR95?=
- =?us-ascii?Q?y6FrW1C4sQYcBTkftfyv3QJ9aw94AprbDaq/rylzX0lH8W7TUQN4C1uTFb2m?=
- =?us-ascii?Q?UwGU8cRJTrRhhjF02Q2NdMxEcQRKJfPz3bnAzRRk+xxv/KJjHzO7OO2FncwT?=
- =?us-ascii?Q?wxHiROMxRJ4UsPpR7YkjjqqEbYgj9GFVnfiryr79CubBh5GQ++sxuiWcd5zs?=
- =?us-ascii?Q?TlZxWgSizzdmYvwoLXhMS4h5oGsCVW7B+dBjJA5cDNZ37Z0/3rsffhqwWf+k?=
- =?us-ascii?Q?QoI+WG/pOA5LCvPiW4f72nom+nn5PMBEvcGXQyIsao6ePqY1HlSjMLwj4LDH?=
- =?us-ascii?Q?0F0o+Y+5EpS6hp8ZAbp5DrfK9ayHWadhRFABzBG920g72S8QBKRMib+nLoxt?=
- =?us-ascii?Q?N2yf6Ja9GDlyxn+DPhZ6a3Z40vPG5FdwaXws7t8rMN6pFRJ+NWXfm3FeME3n?=
- =?us-ascii?Q?JNHetXHSfl0quU6GuwNpm66guPQOWk/4m2v/rgpBAwOOehi75Uh3qKBaYaSt?=
- =?us-ascii?Q?g/aFWYeDYvn339pEiwIk4vn4IhTJpCIdInU+/5gNeJDV3+LqOkmWlAIs8VF0?=
- =?us-ascii?Q?ZfbAX1IX6H2RNJAWCXcPkJntCDbbCiiTmxA6wTbjON8q8aU3RhmlyQZ3SWOz?=
- =?us-ascii?Q?r5eR61o2dmtMcIJhreCPd0n6h1IhJ9HxtPe8pe6PrfnwIvsTB7yCOgzpZQ+C?=
- =?us-ascii?Q?dNZU0nnE7ztqUrLhWsNXdtWsSqZoWcfGcf01lGPu8IWUgnpKyoZdOOV06RhG?=
- =?us-ascii?Q?O32ZSute9LO3A5qaNf/QLYQYSsGmM7VIfQx031Ybmci2oRrPSzEZGzIUXJfh?=
- =?us-ascii?Q?tiI1uXxRKFtjV2pcIgvAA0IGEFf6z1pUB9ocfW09iIOIDMv3aHaVowPbb0yw?=
- =?us-ascii?Q?fpoE0ZzDkSa+wB6EeH4tDoRcDWOTkX15qrinqQ6vivpz0Y0CupYSe65T/uKP?=
- =?us-ascii?Q?OTPwewyxHNahOQRVHZG47OnQw+AF3mLrsdv74zbmXmVtZvGVJ3TIv27AkPWl?=
- =?us-ascii?Q?AT0UI5ef/aRenYn909u1retUI8pY/NPnfF343czbcBkj0yfHu7lcs9zskafN?=
- =?us-ascii?Q?O0sAvk5n1H7P9ctewOigzJec5R4LUILLYVOA6n+QvlAwsKMBNk+Li6XcgSeS?=
- =?us-ascii?Q?csfL0vL25gIoB4Gms8XKR8Zvrp7eyO9j9SKBaajaNb2MKDcKgmrzgTLHF1TK?=
- =?us-ascii?Q?jvkX+Sz/tlhTO1ZfoUux2hs7l0CKqy6XZF0bnAbFfsLb3n4QK5yvPAhuVgYj?=
- =?us-ascii?Q?iMZghtx8wsNxL16mpiYuv9//cGVFdcWqCpkmeGjNIZZm91bk7BPCWKeSt3n4?=
- =?us-ascii?Q?uOzqUi5HUgShngYBhhjvK5fKmafsLEygtz+ENI/pR0U+5B8LuZI3xncatj4w?=
- =?us-ascii?Q?PnrjWVsxHVDj6tCT11wiwB5G8HhJS3q9NMrs?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024)(921020)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 04:58:32.2153
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3eea50d-b696-4d5e-c04c-08dd612289b6
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD74.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8425
 
-The GB200NVL BMC is an Aspeed Ast2600 based BMC
-for Nvidia Blackwell GB200NVL platform.
-Reference to Ast2600 SOC [1].
-Reference to Blackwell GB200NVL Platform [2].
-Co-developed-by: Mars Yang <maryang@nvidia.com>
-Signed-off-by: Mars Yang <maryang@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Paul Menzel <pmenzel@molgen.mpg.de>
-Link: Reference to Ast2600 SOC: https://www.aspeedtech.com/server_ast2600/ [1]
-Link: Reference to Blackwell GB200NVL Platform: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
-Signed-off-by: Willie Thai <wthai@nvidia.com>
----
-Changes in v2:
-  - Fix the SOB name [Krzysztof]
-  - Fix warnings from scripts/checkpatch.pl run [Krzysztof]
-  - Fix DTS coding style [Krzysztof]
-  - Move pinctrl override to the bottom [Krzysztof]
-  - Drop bootargs [Krzysztof]
-  - Follow DTS coding style and change naming for leds node [Krzysztof]
-  - Change flash 0 status property [Krzysztof]
-  - Change the phy-mode to rgmii [Andrew]
-  - Remove the max-speed in mac0 [Andrew]
----
----
- arch/arm/boot/dts/aspeed/Makefile             |    1 +
- .../aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts | 1229 +++++++++++++++++
- 2 files changed, 1230 insertions(+)
- create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts
+On 2025/03/12 11:35, Jason Wang wrote:
+> On Tue, Mar 11, 2025 at 2:11 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>
+>> On 2025/03/11 9:38, Jason Wang wrote:
+>>> On Mon, Mar 10, 2025 at 3:45 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>
+>>>> On 2025/03/10 12:55, Jason Wang wrote:
+>>>>> On Fri, Mar 7, 2025 at 7:01 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>>>
+>>>>>> Hash reporting
+>>>>>> ==============
+>>>>>>
+>>>>>> Allow the guest to reuse the hash value to make receive steering
+>>>>>> consistent between the host and guest, and to save hash computation.
+>>>>>>
+>>>>>> RSS
+>>>>>> ===
+>>>>>>
+>>>>>> RSS is a receive steering algorithm that can be negotiated to use with
+>>>>>> virtio_net. Conventionally the hash calculation was done by the VMM.
+>>>>>> However, computing the hash after the queue was chosen defeats the
+>>>>>> purpose of RSS.
+>>>>>>
+>>>>>> Another approach is to use eBPF steering program. This approach has
+>>>>>> another downside: it cannot report the calculated hash due to the
+>>>>>> restrictive nature of eBPF steering program.
+>>>>>>
+>>>>>> Introduce the code to perform RSS to the kernel in order to overcome
+>>>>>> thse challenges. An alternative solution is to extend the eBPF steering
+>>>>>> program so that it will be able to report to the userspace, but I didn't
+>>>>>> opt for it because extending the current mechanism of eBPF steering
+>>>>>> program as is because it relies on legacy context rewriting, and
+>>>>>> introducing kfunc-based eBPF will result in non-UAPI dependency while
+>>>>>> the other relevant virtualization APIs such as KVM and vhost_net are
+>>>>>> UAPIs.
+>>>>>>
+>>>>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+>>>>>> Tested-by: Lei Yang <leiyang@redhat.com>
+>>>>>> ---
+>>>>>>     Documentation/networking/tuntap.rst |   7 ++
+>>>>>>     drivers/net/Kconfig                 |   1 +
+>>>>>>     drivers/net/tap.c                   |  68 ++++++++++++++-
+>>>>>>     drivers/net/tun.c                   |  98 +++++++++++++++++-----
+>>>>>>     drivers/net/tun_vnet.h              | 159 ++++++++++++++++++++++++++++++++++--
+>>>>>>     include/linux/if_tap.h              |   2 +
+>>>>>>     include/linux/skbuff.h              |   3 +
+>>>>>>     include/uapi/linux/if_tun.h         |  75 +++++++++++++++++
+>>>>>>     net/core/skbuff.c                   |   4 +
+>>>>>>     9 files changed, 386 insertions(+), 31 deletions(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/networking/tuntap.rst b/Documentation/networking/tuntap.rst
+>>>>>> index 4d7087f727be5e37dfbf5066a9e9c872cc98898d..86b4ae8caa8ad062c1e558920be42ce0d4217465 100644
+>>>>>> --- a/Documentation/networking/tuntap.rst
+>>>>>> +++ b/Documentation/networking/tuntap.rst
+>>>>>> @@ -206,6 +206,13 @@ enable is true we enable it, otherwise we disable it::
+>>>>>>           return ioctl(fd, TUNSETQUEUE, (void *)&ifr);
+>>>>>>       }
+>>>>>>
+> 
+> [...]
+> 
+>>>>>> +static inline long tun_vnet_ioctl_sethash(struct tun_vnet_hash_container __rcu **hashp,
+>>>>>> +                                         bool can_rss, void __user *argp)
+>>>>>
+>>>>> So again, can_rss seems to be tricky. Looking at its caller, it tires
+>>>>> to make eBPF and RSS mutually exclusive. I still don't understand why
+>>>>> we need this. Allow eBPF program to override some of the path seems to
+>>>>> be common practice.
+>>>>>
+>>>>> What's more, we didn't try (or even can't) to make automq and eBPF to
+>>>>> be mutually exclusive. So I still didn't see what we gain from this
+>>>>> and it complicates the codes and may lead to ambiguous uAPI/behaviour.
+>>>>
+>>>> automq and eBPF are mutually exclusive; automq is disabled when an eBPF
+>>>> steering program is set so I followed the example here.
+>>>
+>>> I meant from the view of uAPI, the kernel doesn't or can't reject eBPF
+>>> while using automq.
+>>   > >>
+>>>> We don't even have an interface for eBPF to let it fall back to another
+>>>> alogirhtm.
+>>>
+>>> It doesn't even need this, e.g XDP overrides the default receiving path.
+>>>
+>>>> I could make it fall back to RSS if the eBPF steeering
+>>>> program is designed to fall back to automq when it returns e.g., -1. But
+>>>> such an interface is currently not defined and defining one is out of
+>>>> scope of this patch series.
+>>>
+>>> Just to make sure we are on the same page, I meant we just need to
+>>> make the behaviour consistent: allow eBPF to override the behaviour of
+>>> both automq and rss.
+>>
+>> That assumes eBPF takes precedence over RSS, which is not obvious to me.
+> 
+> Well, it's kind of obvious. Not speaking the eBPF selector, we have
+> other eBPF stuffs like skbedit etc.
+> 
+>>
+>> Let's add an interface for the eBPF steering program to fall back to
+>> another steering algorithm. I said it is out of scope before, but it
+>> makes clear that the eBPF steering program takes precedence over other
+>> algorithms and allows us to delete the code for the configuration
+>> validation in this patch.
+> 
+> Fallback is out of scope but it's not what I meant.
+> 
+> I meant in the current uAPI take eBPF precedence over automq. It's
+> much more simpler to stick this precedence unless we see obvious
+> advanatge.
 
-diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
-index 2e5f4833a073..20fd357a1ee9 100644
---- a/arch/arm/boot/dts/aspeed/Makefile
-+++ b/arch/arm/boot/dts/aspeed/Makefile
-@@ -50,6 +50,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
- 	aspeed-bmc-lenovo-hr630.dtb \
- 	aspeed-bmc-lenovo-hr855xg2.dtb \
- 	aspeed-bmc-microsoft-olympus.dtb \
-+	aspeed-bmc-nvidia-gb200nvl-bmc.dtb \
- 	aspeed-bmc-opp-lanyang.dtb \
- 	aspeed-bmc-opp-mowgli.dtb \
- 	aspeed-bmc-opp-nicole.dtb \
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts
-new file mode 100644
-index 000000000000..eeec3704a43b
---- /dev/null
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts
-@@ -0,0 +1,1229 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/dts-v1/;
-+
-+#include "aspeed-g6.dtsi"
-+#include <dt-bindings/gpio/aspeed-gpio.h>
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	model = "AST2600 GB200NVL BMC";
-+	compatible = "nvidia,gb200nvl-bmc", "aspeed,ast2600";
-+
-+	aliases {
-+		serial2 = &uart3;
-+		serial4 = &uart5;
-+		i2c16   = &imux16;
-+		i2c17   = &imux17;
-+		i2c18   = &imux18;
-+		i2c19   = &imux19;
-+		i2c20   = &imux20;
-+		i2c21   = &imux21;
-+		i2c22   = &imux22;
-+		i2c23   = &imux23;
-+		i2c24   = &imux24;
-+		i2c25   = &imux25;
-+		i2c26   = &imux26;
-+		i2c27   = &imux27;
-+		i2c28   = &imux28;
-+		i2c29   = &imux29;
-+		i2c30   = &imux30;
-+		i2c31   = &imux31;
-+		i2c32   = &imux32;
-+		i2c33   = &imux33;
-+		i2c34   = &imux34;
-+		i2c35   = &imux35;
-+		i2c36   = &imux36;
-+		i2c37   = &imux37;
-+		i2c38   = &imux38;
-+		i2c39   = &imux39;
-+		i2c40	= &e1si2c0;
-+		i2c41	= &e1si2c1;
-+		i2c42	= &e1si2c2;
-+		i2c43	= &e1si2c3;
-+		i2c44	= &e1si2c4;
-+		i2c45	= &e1si2c5;
-+		i2c46	= &e1si2c6;
-+		i2c47	= &e1si2c7;
-+		i2c48	= &i2c17mux0;
-+		i2c49	= &i2c17mux1;
-+		i2c50	= &i2c17mux2;
-+		i2c51	= &i2c17mux3;
-+		i2c52	= &i2c25mux0;
-+		i2c53	= &i2c25mux1;
-+		i2c54	= &i2c25mux2;
-+		i2c55	= &i2c25mux3;
-+		i2c56	= &i2c29mux0;
-+		i2c57	= &i2c29mux1;
-+		i2c58	= &i2c29mux2;
-+		i2c59	= &i2c29mux3;
-+	};
-+
-+	chosen {
-+		stdout-path = &uart5;
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x80000000 0x80000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		vga_memory: framebuffer@9f000000 {
-+			no-map;
-+			reg = <0x9f000000 0x01000000>; /* 16M */
-+		};
-+
-+		ramoops@a0000000 {
-+			compatible = "ramoops";
-+			reg = <0xa0000000 0x100000>; /* 1MB */
-+			record-size = <0x10000>; /* 64KB */
-+			max-reason = <2>; /* KMSG_DUMP_OOPS */
-+		};
-+
-+		gfx_memory: framebuffer {
-+			size = <0x01000000>;
-+			alignment = <0x01000000>;
-+			compatible = "shared-dma-pool";
-+			reusable;
-+		};
-+
-+		video_engine_memory: jpegbuffer {
-+			size = <0x02000000>;	/* 32M */
-+			alignment = <0x01000000>;
-+			compatible = "shared-dma-pool";
-+			reusable;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		led-0{
-+			label = "uid_led";
-+			gpios = <&sgpiom0 27 GPIO_ACTIVE_LOW>;
-+		};
-+		led-1{
-+			label = "fault_led";
-+			gpios = <&sgpiom0 29 GPIO_ACTIVE_LOW>;
-+		};
-+		led-2{
-+			label = "power_led";
-+			gpios = <&sgpiom0 31 GPIO_ACTIVE_LOW>;
-+		};
-+
-+	};
-+
-+	buttons {
-+		button-power {
-+			label = "power-btn";
-+			gpio = <&sgpiom0 156 GPIO_ACTIVE_LOW>;
-+		};
-+		button-uid {
-+			label = "uid-btn";
-+			gpio = <&sgpiom0 154 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+};
-+
-+// Enable Primary flash on FMC for bring up activity
-+&fmc {
-+	status = "okay";
-+	flash@0 {
-+		status = "okay";
-+		compatible = "jedec,spi-nor";
-+		label = "bmc";
-+		spi-max-frequency = <50000000>;
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			u-boot@0 {
-+				// 896KB
-+				reg = <0x0 0xe0000>;
-+				label = "u-boot";
-+			};
-+
-+			kernel@100000 {
-+				// 9MB
-+				reg = <0x100000 0x900000>;
-+				label = "kernel";
-+			};
-+
-+			rofs@a00000 {
-+				// 55292KB (extends to end of 64MB SPI - 4KB)
-+				reg = <0xa00000 0x35FF000>;
-+				label = "rofs";
-+			};
-+		};
-+	};
-+};
-+
-+&spi2 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_spi2_default>;
-+
-+	// Data SPI is 64MB in size
-+	flash@0 {
-+		status = "okay";
-+		label = "config";
-+		spi-max-frequency = <50000000>;
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			u-boot-env@0 {
-+				// 256KB
-+				reg = <0x0 0x40000>;
-+				label = "u-boot-env";
-+			};
-+
-+			rwfs@40000 {
-+				// 16MB
-+				reg = <0x40000 0x1000000>;
-+				label = "rwfs";
-+			};
-+
-+			log@1040000 {
-+				// 40MB
-+				reg = <0x1040000 0x2800000>;
-+				label = "log";
-+			};
-+		};
-+	};
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&uart3 {
-+	// Enabling SOL
-+	status = "okay";
-+};
-+
-+&uart5 {
-+	// BMC Debug Console
-+	status = "okay";
-+};
-+
-+&uart_routing {
-+	status = "okay";
-+};
-+
-+// MAC1 (per schematics, 1-based MAC1-MAC4) of AST2600 connected to external PHY
-+// This is "mac0" in zero-based DTS
-+&mdio0 {
-+	status = "okay";
-+	ethphy0: ethernet-phy@0 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <0>;
-+	};
-+
-+};
-+
-+&mdio3 {
-+	status = "okay";
-+	ethphy3: ethernet-phy@2 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <2>;
-+	};
-+};
-+
-+&mac0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	phy-mode = "rgmii";
-+	phy-handle = <&ethphy3>;
-+	pinctrl-0 = <&pinctrl_rgmii1_default>;
-+};
-+
-+&mac2 {
-+	status = "okay";
-+	phy-mode = "rmii";
-+	use-ncsi;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_rmii3_default>;
-+};
-+
-+// Enable emmc
-+&emmc_controller {
-+	status = "okay";
-+};
-+
-+&emmc {
-+	non-removable;
-+	pinctrl-0 = <&pinctrl_emmcg5_default>;
-+	bus-width = <4>;
-+	max-frequency = <52000000>;
-+	clk-phase-mmc-hs200 = <9>, <225>;
-+};
-+
-+/*
-+ * Enable USB port A as device (via the virtual hub) to host
-+ */
-+&vhub {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	/*
-+	 * Uncomment below line to enable internal EHCI controller
-+	 * Current config uses xHCI Port1
-+	 */
-+};
-+
-+&video {
-+	status = "okay";
-+	memory-region = <&video_engine_memory>;
-+};
-+
-+// USB 2.0 to HMC, on USB Port B
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+// USB 1.0
-+&uhci {
-+	status = "okay";
-+};
-+
-+&sgpiom0 {
-+	status="okay";
-+	ngpios = <128>;
-+
-+	gpio-line-names =
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"RUN_POWER_FAULT_L-I","SYS_RST_IN_L-O",
-+		"RUN_POWER_PG-I","PWR_BRAKE_L-O",
-+		"SYS_RST_OUT_L-I","RUN_POWER_EN-O",
-+		"L0L1_RST_REQ_OUT_L-I","SHDN_FORCE_L-O",
-+		"L2_RST_REQ_OUT_L-I","SHDN_REQ_L-O",
-+		"SHDN_OK_L-I","UID_LED_N-O",
-+		"BMC_I2C1_FPGA_ALERT_L-I","SYS_FAULT_LED_N-O",
-+		"BMC_I2C0_FPGA_ALERT_L-I","PWR_LED_N-O",
-+		"FPGA_RSVD_FFU3-I","",
-+		"FPGA_RSVD_FFU2-I","",
-+		"FPGA_RSVD_FFU1-I","",
-+		"FPGA_RSVD_FFU0-I","BMC_I2C_SSIF_ALERT_L-O",
-+		"CPU_BOOT_DONE-I","JTAG_MUX_SELECT-O",
-+		"SPI_BMC_FPGA_INT_L-I","RTC_CLR_L-O",
-+		"THERM_BB_WARN_L-I","UART_MUX_SEL-O",
-+		"THERM_BB_OVERT_L-I","",
-+		"CPU0_UPHY3_PRSNT1_L-I","IOBRD0_RUN_POWER_EN-O",
-+		"CPU0_UPHY3_PRSNT0_L-I","IOBRD1_RUN_POWER_EN-O",
-+		"CPU0_UPHY2_PRSNT1_L-I","FPGA_RSVD_FFU4-O",
-+		"CPU0_UPHY2_PRSNT0_L-I","FPGA_RSVD_FFU5-O",
-+		"CPU0_UPHY1_PRSNT1_L-I","FPGA_RSVD_FFU6-O",
-+		"CPU0_UPHY1_PRSNT0_L-I","FPGA_RSVD_FFU7-O",
-+		"CPU0_UPHY0_PRSNT1_L-I","RSVD_NV_PLT_DETECT-O",
-+		"CPU0_UPHY0_PRSNT0_L-I","SPI1_INT_L-O",
-+		"CPU1_UPHY3_PRSNT1_L-I","",
-+		"CPU1_UPHY3_PRSNT0_L-I","HMC_EROT_MUX_STATUS",
-+		"CPU1_UPHY2_PRSNT1_L-I","",
-+		"CPU1_UPHY2_PRSNT0_L-I","",
-+		"CPU1_UPHY1_PRSNT1_L-I","",
-+		"CPU1_UPHY1_PRSNT0_L-I","",
-+		"CPU1_UPHY0_PRSNT1_L-I","",
-+		"CPU1_UPHY0_PRSNT0_L-I","",
-+		"FAN1_PRESENT_L-I","",
-+		"FAN0_PRESENT_L-I","",
-+		"","",
-+		"IPEX_CABLE_PRSNT_L-I","",
-+		"M2_1_PRSNT_L-I","",
-+		"M2_0_PRSNT_L-I","",
-+		"CPU1_UPHY4_PRSNT1_L-I","",
-+		"CPU0_UPHY4_PRSNT0_L-I","",
-+		"","",
-+		"I2C_RTC_ALERT_L-I","",
-+		"FAN7_PRESENT_L-I","",
-+		"FAN6_PRESENT_L-I","",
-+		"FAN5_PRESENT_L-I","",
-+		"FAN4_PRESENT_L-I","",
-+		"FAN3_PRESENT_L-I","",
-+		"FAN2_PRESENT_L-I","",
-+		"IOBRD0_IOX_INT_L-I","",
-+		"IOBRD1_PRSNT_L-I","",
-+		"IOBRD0_PRSNT_L-I","",
-+		"IOBRD1_PWR_GOOD-I","",
-+		"IOBRD0_PWR_GOOD-I","",
-+		"","",
-+		"","",
-+		"FAN_FAIL_IN_L-I","",
-+		"","",
-+		"","",
-+		"","",
-+		"PDB_CABLE_PRESENT_L-I","",
-+		"","",
-+		"CHASSIS_PWR_BRK_L-I","",
-+		"","",
-+		"IOBRD1_IOX_INT_L-I","",
-+		"10GBE_SMBALRT_L-I","",
-+		"PCIE_WAKE_L-I","",
-+		"I2C_M21_ALERT_L-I","",
-+		"I2C_M20_ALERT_L-I","",
-+		"TRAY_FAST_SHDN_L-I","",
-+		"UID_BTN_N-I","",
-+		"PWR_BTN_L-I","",
-+		"PSU_SMB_ALERT_L-I","",
-+		"","",
-+		"","",
-+		"NODE_LOC_ID[0]-I","",
-+		"NODE_LOC_ID[1]-I","",
-+		"NODE_LOC_ID[2]-I","",
-+		"NODE_LOC_ID[3]-I","",
-+		"NODE_LOC_ID[4]-I","",
-+		"NODE_LOC_ID[5]-I","",
-+		"FAN10_PRESENT_L-I","",
-+		"FAN9_PRESENT_L-I","",
-+		"FAN8_PRESENT_L-I","",
-+		"FPGA1_READY_HMC-I","",
-+		"DP_HPD-I","",
-+		"HMC_I2C3_FPGA_ALERT_L-I","",
-+		"HMC_I2C2_FPGA_ALERT_L-I","",
-+		"FPGA0_READY_HMC-I","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"LEAK_DETECT_ALERT_L-I","",
-+		"MOD1_B2B_CABLE_PRESENT_L-I","",
-+		"MOD1_CLINK_CABLE_PRESENT_L-I","",
-+		"FAN11_PRESENT_L-I","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"","",
-+		"RSVD_SGPIO_IN_CRC[0]","RSVD_SGPIO_O_CRC[7]",
-+		"RSVD_SGPIO_IN_CRC[1]","RSVD_SGPIO_O_CRC[6]",
-+		"RSVD_SGPIO_IN_CRC[2]","RSVD_SGPIO_O_CRC[5]",
-+		"RSVD_SGPIO_IN_CRC[3]","RSVD_SGPIO_O_CRC[4]",
-+		"RSVD_SGPIO_IN_CRC[4]","RSVD_SGPIO_O_CRC[3]",
-+		"RSVD_SGPIO_IN_CRC[5]","RSVD_SGPIO_O_CRC[2]",
-+		"RSVD_SGPIO_IN_CRC[6]","RSVD_SGPIO_O_CRC[1]",
-+		"RSVD_SGPIO_IN_CRC[7]","RSVD_SGPIO_O_CRC[0]";
-+};
-+
-+// I2C1, SSIF IPMI interface
-+&i2c0 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+	disable-master = <1>;
-+	i2c-scl-clk-low-timeout-us = <32000>;
-+	ssif-bmc@10 {
-+		compatible = "ssif-bmc";
-+		reg = <0x10>;
-+	};
-+};
-+
-+// I2C2
-+// BMC_I2C1_FPGA - Secondary FPGA
-+// HMC EROT
-+&i2c1 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+	multi-master;
-+	i2c-scl-clk-low-timeout-us = <32000>;
-+};
-+
-+// I2C3
-+// BMC_I2C0_FPGA - Primary FPGA
-+// HMC FRU EEPROM
-+&i2c2 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+	multi-master;
-+	i2c-scl-clk-low-timeout-us = <32000>;
-+};
-+
-+// I2C4
-+&i2c3 {
-+	status = "disabled";
-+};
-+
-+// I2C5
-+// RTC Driver
-+// IO Expander
-+&i2c4 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+	// Module 0, Expander @0x21
-+	exp4: pca9555@21 {
-+		compatible = "nxp,pca9555";
-+		reg = <0x21>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <ASPEED_GPIO(B, 6) IRQ_TYPE_LEVEL_LOW>;
-+
-+		gpio-line-names =
-+			"RTC_MUX_SEL-O",
-+			"PCI_MUX_SEL-O",
-+			"TPM_MUX_SEL-O",
-+			"FAN_MUX-SEL-O",
-+			"SGMII_MUX_SEL-O",
-+			"DP_MUX_SEL-O",
-+			"UPHY3_USB_SEL-O",
-+			"NCSI_MUX_SEL-O",
-+			"BMC_PHY_RST-O",
-+			"RTC_CLR_L-O",
-+			"BMC_12V_CTRL-O",
-+			"PS_RUN_IO0_PG-I",
-+			"",
-+			"",
-+			"",
-+			"";
-+	};
-+};
-+
-+// I2C6
-+// Module 0/1 I2C MUX x3
-+&i2c5 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+	multi-master;
-+	i2c-scl-clk-low-timeout-us = <32000>;
-+
-+	i2c-switch@71 {
-+		compatible = "nxp,pca9546";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x71>;
-+		i2c-mux-idle-disconnect;
-+
-+		imux16: i2c@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+		};
-+
-+		imux17: i2c@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+
-+			i2c-switch@74 {
-+				compatible = "nxp,pca9546";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0x74>;
-+				i2c-mux-idle-disconnect;
-+
-+				i2c17mux0: i2c@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+				};
-+
-+				i2c17mux1: i2c@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+
-+				i2c17mux2: i2c@2 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <2>;
-+				};
-+
-+				i2c17mux3: i2c@3 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <3>;
-+				};
-+			};
-+		};
-+
-+		imux18: i2c@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <2>;
-+		};
-+
-+		imux19: i2c@3 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <3>;
-+		};
-+	};
-+
-+	i2c-switch@72 {
-+		compatible = "nxp,pca9546";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x72>;
-+		i2c-mux-idle-disconnect;
-+
-+		imux20: i2c@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+		};
-+
-+		imux21: i2c@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+			pca9555@21 {
-+				compatible = "nxp,pca9555";
-+				reg = <0x21>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				gpio-line-names =
-+					"RST_CX_0_L-O",
-+					"RST_CX_1_L-O",
-+					"CX0_SSD0_PRSNT_L-I",
-+					"CX1_SSD1_PRSNT_L-I",
-+					"CX_BOOT_CMPLT_CX0-I",
-+					"CX_BOOT_CMPLT_CX1-I",
-+					"CX_TWARN_CX0_L-I",
-+					"CX_TWARN_CX1_L-I",
-+					"CX_OVT_SHDN_CX0-I",
-+					"CX_OVT_SHDN_CX1-I",
-+					"FNP_L_CX0-O",
-+					"FNP_L_CX1-O",
-+					"",
-+					"MCU_GPIO-I",
-+					"MCU_RST_N-O",
-+					"MCU_RECOVERY_N-O";
-+			};
-+		};
-+
-+		imux22: i2c@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <2>;
-+		};
-+
-+		imux23: i2c@3 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <3>;
-+		};
-+	};
-+
-+	i2c-switch@73 {
-+		compatible = "nxp,pca9546";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x73>;
-+		i2c-mux-idle-disconnect;
-+
-+		imux24: i2c@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+		};
-+
-+		imux25: i2c@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+
-+			i2c-switch@70 {
-+				compatible = "nxp,pca9546";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0x70>;
-+				i2c-mux-idle-disconnect;
-+
-+				i2c25mux0: i2c@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+				};
-+
-+				i2c25mux1: i2c@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+
-+				i2c25mux2: i2c@2 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <2>;
-+				};
-+
-+				i2c25mux3: i2c@3 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <3>;
-+				};
-+			};
-+		};
-+
-+		imux26: i2c@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <2>;
-+		};
-+
-+		imux27: i2c@3 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <3>;
-+		};
-+	};
-+
-+	i2c-switch@75 {
-+		compatible = "nxp,pca9546";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x75>;
-+		i2c-mux-idle-disconnect;
-+
-+		imux28: i2c@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+		};
-+
-+		imux29: i2c@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+
-+			i2c-switch@74 {
-+				compatible = "nxp,pca9546";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0x74>;
-+				i2c-mux-idle-disconnect;
-+
-+				i2c29mux0: i2c@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+				};
-+
-+				i2c29mux1: i2c@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+
-+				i2c29mux2: i2c@2 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <2>;
-+				};
-+
-+				i2c29mux3: i2c@3 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <3>;
-+				};
-+			};
-+		};
-+
-+		imux30: i2c@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <2>;
-+		};
-+
-+		imux31: i2c@3 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <3>;
-+		};
-+	};
-+
-+	i2c-switch@76 {
-+		compatible = "nxp,pca9546";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x76>;
-+		i2c-mux-idle-disconnect;
-+
-+		imux32: i2c@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+		};
-+
-+		imux33: i2c@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+			pca9555@21 {
-+				compatible = "nxp,pca9555";
-+				reg = <0x21>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				gpio-line-names =
-+					"SEC_RST_CX_0_L-O",
-+					"SEC_RST_CX_1_L-O",
-+					"SEC_CX0_SSD0_PRSNT_L-I",
-+					"SEC_CX1_SSD1_PRSNT_L-I",
-+					"SEC_CX_BOOT_CMPLT_CX0-I",
-+					"SEC_CX_BOOT_CMPLT_CX1-I",
-+					"SEC_CX_TWARN_CX0_L-I",
-+					"SEC_CX_TWARN_CX1_L-I",
-+					"SEC_CX_OVT_SHDN_CX0-I",
-+					"SEC_CX_OVT_SHDN_CX1-I",
-+					"SEC_FNP_L_CX0-O",
-+					"SEC_FNP_L_CX1-O",
-+					"",
-+					"SEC_MCU_GPIO-I",
-+					"SEC_MCU_RST_N-O",
-+					"SEC_MCU_RECOVERY_N-O";
-+				};
-+		};
-+
-+		imux34: i2c@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <2>;
-+		};
-+
-+		imux35: i2c@3 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <3>;
-+		};
-+	};
-+
-+	i2c-switch@77 {
-+		compatible = "nxp,pca9546";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x77>;
-+		i2c-mux-idle-disconnect;
-+
-+		imux36: i2c@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+		};
-+
-+		imux37: i2c@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+		};
-+
-+		imux38: i2c@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <2>;
-+		};
-+
-+		imux39: i2c@3 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <3>;
-+		};
-+	};
-+};
-+
-+// I2C7
-+// Module 0/1 Leak Sensors
-+// Module 0/1 Fan Controllers
-+&i2c6 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+	hsc@12 {
-+		compatible = "ti,lm5066i";
-+		reg = <0x12>;
-+		shunt-resistor-micro-ohms = <190>;
-+		status = "okay";
-+	};
-+	hsc@14 {
-+		compatible = "ti,lm5066i";
-+		reg = <0x14>;
-+		shunt-resistor-micro-ohms = <190>;
-+		status = "okay";
-+	};
-+	max31790@20 {
-+		compatible = "maxim,max31790";
-+		reg = <0x20>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+	max31790@23 {
-+		compatible = "maxim,max31790";
-+		reg = <0x23>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+	max31790@2c {
-+		compatible = "maxim,max31790";
-+		reg = <0x2c>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+	max31790@2f {
-+		compatible = "maxim,max31790";
-+		reg = <0x2f>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+};
-+
-+// I2C9
-+// M.2
-+&i2c8 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+	multi-master;
-+	i2c-scl-clk-low-timeout-us = <32000>;
-+};
-+
-+// I2C10
-+// HMC IO Expander
-+// Module 0/1 IO Expanders
-+&i2c9 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+	// Module 0, Expander @0x20
-+	exp0: pca9555@20 {
-+		compatible = "nxp,pca9555";
-+		reg = <0x20>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <ASPEED_GPIO(B, 6) IRQ_TYPE_LEVEL_LOW>;
-+
-+		gpio-line-names =
-+		"FPGA_THERM_OVERT_L-I",
-+		"FPGA_READY_BMC-I",
-+		"HMC_BMC_DETECT-O",
-+		"HMC_PGOOD-O",
-+		"",
-+		"BMC_STBY_CYCLE-O",
-+		"FPGA_EROT_FATAL_ERROR_L-I",
-+		"WP_HW_EXT_CTRL_L-O",
-+		"EROT_FPGA_RST_L-O",
-+		"FPGA_EROT_RECOVERY_L-O",
-+		"BMC_EROT_FPGA_SPI_MUX_SEL-O",
-+		"USB_HUB_RESET_L-O",
-+		"NCSI_CS1_SEL-O",
-+		"SGPIO_EN_L-O",
-+		"B2B_IOEXP_INT_L-I",
-+		"I2C_BUS_MUX_RESET_L-O";
-+	};
-+
-+	// Module 1, Expander @0x21
-+	exp1: pca9555@21 {
-+		compatible = "nxp,pca9555";
-+		reg = <0x21>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <ASPEED_GPIO(B, 6) IRQ_TYPE_LEVEL_LOW>;
-+
-+		gpio-line-names =
-+		"SEC_FPGA_THERM_OVERT_L-I",
-+		"SEC_FPGA_READY_BMC-I",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"SEC_FPGA_EROT_FATAL_ERROR_L-I",
-+		"SEC_WP_HW_EXT_CTRL_L-O",
-+		"SEC_EROT_FPGA_RST_L-O",
-+		"SEC_FPGA_EROT_RECOVERY_L-O",
-+		"SEC_BMC_EROT_FPGA_SPI_MUX_SEL-O",
-+		"SEC_USB2_HUB_RST_L-O",
-+		"",
-+		"",
-+		"",
-+		"SEC_I2C_BUS_MUX_RESET_L-O";
-+	};
-+
-+	// HMC Expander @0x27
-+	exp2: pca9555@27 {
-+		compatible = "nxp,pca9555";
-+		reg = <0x27>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <ASPEED_GPIO(B, 6) IRQ_TYPE_LEVEL_LOW>;
-+
-+		gpio-line-names =
-+		"HMC_PRSNT_L-I",
-+		"HMC_READY-I",
-+		"HMC_EROT_FATAL_ERROR_L-I",
-+		"I2C_MUX_SEL-O",
-+		"HMC_EROT_SPI_MUX_SEL-O",
-+		"HMC_EROT_RECOVERY_L-O",
-+		"HMC_EROT_RST_L-O",
-+		"GLOBAL_WP_HMC-O",
-+		"FPGA_RST_L-O",
-+		"USB2_HUB_RST-O",
-+		"CPU_UART_MUX_SEL-O",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"";
-+	};
-+	// HMC Expander @0x74
-+	exp3: pca9555@74 {
-+		compatible = "nxp,pca9555";
-+		reg = <0x74>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <ASPEED_GPIO(B, 6) IRQ_TYPE_LEVEL_LOW>;
-+
-+		gpio-line-names =
-+		"IOB_PRSNT_L",
-+		"IOB_DP_HPD",
-+		"IOX_BMC_RESET",
-+		"IOB_IOEXP_INT_L",
-+		"IOB_UID_LED_L",
-+		"IOB_UID_BTN_L",
-+		"IOB_SYS_RST_BTN_L",
-+		"IOB_PWR_LED_L",
-+		"IOB_PWR_BTN_L",
-+		"IOB_PHY_RST",
-+		"CPLD_JTAG_MUX_SEL",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"";
-+	};
-+};
-+
-+// I2C11
-+// BMC FRU EEPROM
-+// BMC Temp Sensor
-+&i2c10 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+	// BMC FRU EEPROM - 256 bytes
-+	eeprom@50 {
-+		compatible = "atmel,24c02";
-+		reg = <0x50>;
-+		pagesize = <8>;
-+	};
-+};
-+
-+// I2C12
-+&i2c11 {
-+	status = "disabled";
-+};
-+
-+// I2C13
-+&i2c12 {
-+	status = "disabled";
-+};
-+
-+// I2C14
-+// Module 0 UPHY3 SMBus
-+&i2c13 {
-+	status = "disabled";
-+};
-+
-+// I2C15
-+// Module 1 UPHY3 SMBus
-+&i2c14 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+	multi-master;
-+	i2c-scl-clk-low-timeout-us = <32000>;
-+
-+	//E1.S drive slot 0-3
-+	i2c-switch@77 {
-+		compatible = "nxp,pca9546";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x77>;
-+		i2c-mux-idle-disconnect;
-+
-+		e1si2c0: i2c@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+		};
-+
-+		e1si2c1: i2c@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+		};
-+
-+		e1si2c2: i2c@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <2>;
-+		};
-+
-+		e1si2c3: i2c@3 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <3>;
-+		};
-+	};
-+};
-+
-+// I2C16
-+&i2c15 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+	multi-master;
-+	i2c-scl-clk-low-timeout-us = <32000>;
-+
-+	//E1.S drive slot 4-7
-+	i2c-switch@77 {
-+		compatible = "nxp,pca9546";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x77>;
-+		i2c-mux-idle-disconnect;
-+
-+		e1si2c4: i2c@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+		};
-+
-+		e1si2c5: i2c@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+		};
-+
-+		e1si2c6: i2c@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <2>;
-+		};
-+
-+		e1si2c7: i2c@3 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <3>;
-+		};
-+	};
-+};
-+
-+&rng {
-+	status = "okay";
-+};
-+
-+&gpio0 {
-+	gpio-line-names =
-+
-+	/* gpio-line-names are the combination of <signal>-<I/O> , "" is
-+	 *	the placeholder for the unused pins
-+	 */
-+
-+	/* 208 (26*8) 3.3V GPIOs */
-+
-+	/*A0-A7*/ "", "", "", "", "", "", "", "",
-+	/*B0-B7*/ "", "", "", "", "", "", "", "",
-+	/*C0-C7*/ "SGPIO_I2C_MUX_SEL-O", "", "", "", "", "", "", "",
-+	/*D0-D7*/ "", "", "", "UART1_MUX_SEL-O", "", "FPGA_PEX_RST_L-O", "", "",
-+	/*E0-E7*/
-+	"RTL8221_PHY_RST_L-O",
-+	"RTL8211_PHY_INT_L-I",
-+	"",
-+	"UART3_MUX_SEL-O",
-+	"", "", "",
-+	"SGPIO_BMC_EN-O",
-+	/*F0-F7*/ "", "", "", "", "", "", "", "",
-+	/*G0-G7*/ "", "", "", "", "", "", "", "",
-+	/*H0-H7*/ "", "", "", "", "", "", "", "",
-+	/*I0-I7*/ "", "", "", "", "", "QSPI2_RST_L-O", "GLOBAL_WP_BMC-O", "BMC_DDR4_TEN-O",
-+	/*J0-J7*/ "", "", "", "", "", "", "", "",
-+	/*K0-K7*/ "", "", "", "", "", "", "", "",
-+	/*L0-L7*/ "", "", "", "", "", "", "", "",
-+	/*M0-M7*/
-+	"PCIE_EP_RST_EN-O",
-+	"BMC_FRU_WP-O",
-+	"HMC_RESET_L-O",
-+	"STBY_POWER_EN-O",
-+	"STBY_POWER_PG-I",
-+	"PCIE_EP_RST_L-O",
-+	"", "",
-+	/*N0-N7*/ "", "", "", "", "", "", "", "",
-+	/*O0-O7*/ "", "", "", "", "", "", "", "",
-+	/*P0-P7*/ "", "", "", "", "", "", "", "",
-+	/*Q0-Q7*/ "", "", "", "", "", "", "", "",
-+	/*R0-R7*/ "", "", "", "", "", "", "", "",
-+	/*S0-S7*/ "", "", "", "", "", "", "", "",
-+	/*T0-T7*/ "", "", "", "", "", "", "", "",
-+	/*U0-U7*/ "", "", "", "", "", "", "", "",
-+	/*V0-V7*/ "AP_EROT_REQ-O", "EROT_AP_GNT-I", "", "","PCB_TEMP_ALERT-I", "","", "",
-+	/*W0-W7*/ "", "", "", "", "", "", "", "",
-+	/*X0-X7*/ "", "", "TPM_MUX_SEL-O", "", "", "", "", "",
-+	/*Y0-Y7*/ "", "", "", "EMMC_RST-O", "","", "", "",
-+	/*Z0-Z7*/ "BMC_READY-O","", "", "", "", "", "", "";
-+};
-+
-+&gpio1 {
-+	/* 36 1.8V GPIOs */
-+	gpio-line-names =
-+	/*A0-A7*/ "", "", "", "", "", "", "", "",
-+	/*B0-B7*/ "", "", "", "", "", "", "IO_EXPANDER_INT_L-I","",
-+	/*C0-C7*/ "", "", "", "", "", "", "", "",
-+	/*D0-D7*/ "", "", "", "", "", "", "SPI_HOST_TPM_RST_L-O", "SPI_BMC_FPGA_INT_L-I",
-+	/*E0-E7*/ "", "", "", "", "", "", "", "";
-+};
-+
-+// EMMC group that excludes WP pin
-+&pinctrl {
-+	pinctrl_emmcg5_default: emmcg5_default {
-+		function = "EMMC";
-+		groups = "EMMCG5";
-+	};
-+};
--- 
-2.25.1
+We still have three different design options that preserve the current 
+precedence:
+
+1) Precedence order: eBPF -> RSS -> automq
+2) Precedence order: RSS -> eBPF -> automq
+3) Precedence order: eBPF OR RSS -> automq where eBPF and RSS are 
+mutually exclusive
+
+I think this is a unique situation for this steering program and I could 
+not find another example in other eBPF stuffs.
+
+The current version implements 3) because it is not obvious whether we 
+should choose either 1) or 2). But 1) will be the most capable option if 
+eBPF has a fall-back feature.
+
+> 
+>>
+>>>
+>>>>
+>>>>>
+> 
+> [...]
+> 
+>>>>> Is there a chance that we can reach here without TUN_VNET_HASH_REPORT?
+>>>>> If yes, it should be a bug.
+>>>>
+>>>> It is possible to use RSS without TUN_VNET_HASH_REPORT.
+>>>
+>>> Another call to separate the ioctls then.
+>>
+>> RSS and hash reporting are not completely independent though.
+> 
+> Spec said:
+> 
+> """
+> VIRTIO_NET_F_RSSRequires VIRTIO_NET_F_CTRL_VQ.
+> """
+
+I meant the features can be enabled independently, but they will share 
+the hash type set when they are enabled at the same time.
+
+> 
+>>
+>> A plot twist is the "types" parameter; it is a parameter that is
+>> "common" for RSS and hash reporting.
+> 
+> So we can share part of the structure through the uAPI.
+
+Isn't that what this patch does?
+
+> 
+>> RSS and hash reporting must share
+>> this parameter when both are enabled at the same time; otherwise RSS may
+>> compute hash values that are not suited for hash reporting.
+> 
+> Is this mandated by the spec? If yes, we can add a check. If not,
+> userspace risk themselves as a mis-configuration which we don't need
+> to bother.
+
+Yes, it is mandated. 5.1.6.4.3 Hash calculation for incoming packets says:
+ > A device attempts to calculate a per-packet hash in the following
+ > cases:
+ >
+ >   - The feature VIRTIO_NET_F_RSS was negotiated. The device uses the
+ >     hash to determine the receive virtqueue to place incoming packets.
+ >   - The feature VIRTIO_NET_F_HASH_REPORT was negotiated. The device
+ >     reports the hash value and the hash type with the packet.
+ >
+ > If the feature VIRTIO_NET_F_RSS was negotiated:
+ >
+ >   - The device uses hash_types of the virtio_net_rss_config structure
+ >     as ’Enabled hash types’ bitmask.
+ >   - The device uses a key as defined in hash_key_data and
+       hash_key_length of the virtio_net_rss_config structure (see
+ >      5.1.6.5.7.1).
+ >
+ > If the feature VIRTIO_NET_F_RSS was not negotiated:
+ >
+ >   - The device uses hash_types of the virtio_net_hash_config structure
+ >     as ’Enabled hash types’ bitmask.
+ >   - The device uses a key as defined in hash_key_data and
+ >     hash_key_length of the virtio_net_hash_config structure (see
+ >      .1.6.5.6.4).
+
+So when both VIRTIO_NET_F_RSS and VIRTIO_NET_F_HASH_REPORT are 
+negotiated, virtio_net_rss_config not only controls RSS but also the 
+reported hash values and types. They cannot be divergent.
+
+> 
+> Note that spec use different commands for hash_report and rss.
+
+TUNSETVNETHASH is different from these commands in terms that it also 
+negotiates VIRTIO_NET_F_HASH_REPORT and VIRTIO_NET_F_RSS.
+
+In the virtio-net specification, it is not defined what would happen if 
+these features are negotiated but the VIRTIO_NET_CTRL_MQ_RSS_CONFIG or 
+VIRTIO_NET_CTRL_MQ_HASH_CONFIG commands are not sent. There is no such 
+ambiguity with TUNSETVNETHASH.
+
+Regards,
+Akihiko Odaki
+
+> 
+>>
+>> The paramter will be duplicated if we have separate ioctls for RSS and
+>> hash reporting, and the kernel will have a chiken-egg problem when
+>> ensuring they are synchronized; when the ioctl for RSS is issued, should
+>> the kernel ensure the "types" parameter is identical with one specified
+>> for hash reporting? It will not work if the userspace may decide to
+>> configure hash reporting after RSS.
+>>
+> 
+> See my reply above.
+> 
+> Thanks
+> 
 
 
