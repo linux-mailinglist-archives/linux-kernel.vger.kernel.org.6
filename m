@@ -1,170 +1,119 @@
-Return-Path: <linux-kernel+bounces-557955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC15A5DFC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:08:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCD8A5DFCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:09:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E72D718996D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:08:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8591816A39E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038E2156F5E;
-	Wed, 12 Mar 2025 15:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AplTCqYk";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SnHIz0QK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WI4LBhDJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="D7XUBvxW"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EAE250C06;
+	Wed, 12 Mar 2025 15:08:48 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16C0142659
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE8824E00B;
+	Wed, 12 Mar 2025 15:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741792087; cv=none; b=L70qjfsydLpDlgDhAVDKoe1JD/y0O+p8exrcR7Iuyra1uii3W+mh3vtBImoP45NF3ZuhC15rrBY8bEZfBPQ/+JPDq3LqAnC+g44hni+w/LiR6Rsw2+iXxXdX5pH0+afWqtdpAU+kocAjhEQ42fGanuQIvhhxVOVWwR1c8m3Iq60=
+	t=1741792128; cv=none; b=DqLUSuRILBUDBvaXzcEEPsdyInC0pxxVeSkUmemG2AXQNlKyow2ci2GyBbwUNMmzrOylYS6KsTElp9gtwCTut9et/2Qm0aXGGXvXo6Fsr+cuO8BAgOUVNGRCJHu6VEbvrOrBvcCRUNe1Qeb3Xz+5r+diTEtSJV/NffKrWs0KpZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741792087; c=relaxed/simple;
-	bh=wc8JbAP3PIt3Azoy9npzTYy9TnFtAoQqRXYhKLUUSbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WYha6ieSGabNL9qv6HU96pI9MxQhbqpHAEg5zzJrA/H+qx9+SEvj6C1DkMJEJ+Y9vvU6Z0dhHYnoKkvVClKNle3r3q8vhSdioiCBbowDROfHt1ISrZresVTi4D3nyUZESTARUheqpjUOUhM0eGxmiKIEbkkG7bVwPpgZ7QYd5uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AplTCqYk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SnHIz0QK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WI4LBhDJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=D7XUBvxW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E9FE71F394;
-	Wed, 12 Mar 2025 15:07:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741792082; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C7b3OyWlr6XkYpJCgvuDRuD07UMukpDEgYsj61ygyFw=;
-	b=AplTCqYkvL3DrhCJ0K4JRDsu0dBB/mwLwd+eMB+w2IkkBL9DhBEFkW+6oTSXKt/OvehcrM
-	pQzQ0OOhTynPDc+72IjuvZIPx3JoyIGy9a+lI6+56lNIlrLLD6u76h4H9VNPQPdudQ4ZwR
-	lPD1eIiqbZl/Sq24IYYaFG9XnhGz5A4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741792082;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C7b3OyWlr6XkYpJCgvuDRuD07UMukpDEgYsj61ygyFw=;
-	b=SnHIz0QK2y397iZAS9xI9+Ct8BseEn+I66mvSPWGqpcG1/2YBRpfNfFyamro0UJ2ER2HC3
-	6+lXrZ7iUbA8kWDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741792077; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C7b3OyWlr6XkYpJCgvuDRuD07UMukpDEgYsj61ygyFw=;
-	b=WI4LBhDJk4kQMJS8DHrFvUv6cj9RAkycOIM/OO0M2dPIYTWoKavBeBMVw4vhz8AfjtBist
-	scbGx/6uYutASd4JnBpbnr/BsVgWo0GapT/xUWnVajJ5Y1CsIjhLu+9iIWa1UMeKj7ricU
-	Lk+nWWabB6RbEd/AvyBJZ9XE7+TPJnQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741792077;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C7b3OyWlr6XkYpJCgvuDRuD07UMukpDEgYsj61ygyFw=;
-	b=D7XUBvxWYkgkPdEGGiL7U26j0zBMZLSYRYnl1UAo0Dfmce6JrkqsLBA3JijRHsbfhoYPh2
-	tFAlQzCxr/Y9K2CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9EDFB13A91;
-	Wed, 12 Mar 2025 15:07:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id is+XJU2j0WfvBQAAD6G6ig
-	(envelope-from <jroedel@suse.de>); Wed, 12 Mar 2025 15:07:57 +0000
-Date: Wed, 12 Mar 2025 16:07:56 +0100
-From: Joerg Roedel <jroedel@suse.de>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, Larry.Dewey@amd.com,
-	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
-	Juergen Gross <jgross@suse.com>, kirill.shutemov@linux.intel.com,
-	alexey.gladkov@intel.com
-Subject: Re: [PATCH 2/2] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <Z9GjTBHBqXenCWYx@suse.de>
-References: <20250312144107.108451-1-joro@8bytes.org>
- <20250312144107.108451-3-joro@8bytes.org>
- <ef3f3117-6cd5-4b94-8ddb-e6d224efac60@intel.com>
+	s=arc-20240116; t=1741792128; c=relaxed/simple;
+	bh=vQklG8ec9db7Dlo5fbtAFgXm38kjh3vp2rOmrAKlZ7k=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ls9K8ZQsw+NUBm+u9FswZX+n8jcdmRHFg/lbPGi0qyL+VAJlgZaq2O5z8upwmIcmsc0xz/sT70xffJUbRY21q2Rua+yVtibjWo2XIVrlBtn/OijtKvjeXTxndRRUwakEFx+giIaQucSJgohpxat0fusBo5y3MHXt8/R6Owk6yC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZCYqG2KH8z6K9HL;
+	Wed, 12 Mar 2025 23:06:02 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D495F1404FC;
+	Wed, 12 Mar 2025 23:08:37 +0800 (CST)
+Received: from localhost (10.202.227.76) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 12 Mar
+ 2025 16:08:36 +0100
+Date: Wed, 12 Mar 2025 15:08:35 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+CC: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, "Santosh
+ Shilimkar" <ssantosh@kernel.org>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+	<dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+	<ntb@lists.linux.dev>, Bjorn Helgaas <bhelgaas@google.com>,
+	<linux-pci@vger.kernel.org>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+	<wei.liu@kernel.org>, <linux-hyperv@vger.kernel.org>, Wei Huang
+	<wei.huang2@amd.com>, Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>, "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+	<martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>, Dan Williams
+	<dan.j.williams@intel.com>
+Subject: Re: [patch 02/10] genirq/msi: Use lock guards for MSI descriptor
+ locking
+Message-ID: <20250312150835.00001851@huawei.com>
+In-Reply-To: <87senjz2ar.ffs@tglx>
+References: <20250309083453.900516105@linutronix.de>
+	<20250309084110.267883135@linutronix.de>
+	<20250311180017.00003fcc@huawei.com>
+	<87senjz2ar.ffs@tglx>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef3f3117-6cd5-4b94-8ddb-e6d224efac60@intel.com>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	SEM_URIBL_FRESH15_UNKNOWN_FAIL(0.00)[suse.de:server fail];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:url,suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Dave,
+On Tue, 11 Mar 2025 22:26:52 +0100
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-On Wed, Mar 12, 2025 at 07:57:31AM -0700, Dave Hansen wrote:
-> Do we really want to just plumb the raw MSR out to userspace? Users
-> would still need to parse the thing, so it's not _really_ human readable.
+> On Tue, Mar 11 2025 at 18:00, Jonathan Cameron wrote:
+> > On Sun,  9 Mar 2025 09:41:44 +0100 (CET)
+> > Thomas Gleixner <tglx@linutronix.de> wrote:  
+> 
+> >>  
+> >> @@ -1037,25 +1032,23 @@ bool msi_create_device_irq_domain(struct
+> >>  	if (msi_setup_device_data(dev))  
+> >
+> > Hmm. We might want to make the docs in cleanup.h more nuanced.
+> > They specifically say to not mix goto and auto cleanup, but 
+> > in the case of scoped_guard() unlikely almost any other case
+> > it should be fine.
+> >  
+> >>  		goto free_fwnode;  
+> 
+> I got rid of the gotos. It requires __free() for the two allocations.
+That works.
 
-I agree that this is not really human readable. On the other side SYSFS
-is more an interface targeted for tools than optimized for human
-readability (see the one-datum-per-file rule).
+> 
+> Thanks,
+> 
+>         tglx
+> ---
+> --- a/include/linux/cleanup.h
+> +++ b/include/linux/cleanup.h
+> @@ -216,6 +216,8 @@ const volatile void * __must_check_fn(co
+>  
+>  #define return_ptr(p)	return no_free_ptr(p)
+>  
+> +#define retain_ptr(p)				\
+> +	__get_and_null(p, NULL)
+Single line?
 
-The actual use-case (and the reason for these patches) of the sev_status
-file is to provide a better and more secure interface than /dev/msr to a
-tool named snpguest.
+This sort of thing got discussed in the past though I doubt I can find
+the thread. There was some push back but maybe now is it's time!
 
-A human readable form of this can be added as well, if needed. There is
-already a line in dmesg with the decoded features.
+Probably worth shouting about it a bit to attract attention. Maybe
+a separate patch.
 
-Regards,
-
--- 
-Jörg Rödel
-jroedel@suse.de
-
-SUSE Software Solutions Germany GmbH
-Frankenstraße 146
-90461 Nürnberg
-Germany
-https://www.suse.com/
-
-Geschäftsführer: Ivo Totev, Andrew McDonald, Werner Knoblich
-(HRB 36809, AG Nürnberg)
+Jonathan
 
