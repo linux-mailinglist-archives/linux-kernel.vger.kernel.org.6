@@ -1,229 +1,142 @@
-Return-Path: <linux-kernel+bounces-557376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAA4A5D7FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:18:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B63AA5D7FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:18:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 588EE3B3D3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:17:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C4FB178903
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905EF233120;
-	Wed, 12 Mar 2025 08:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mSdm0CDI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2lHpqyUM";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2NOtoWk3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="L1KBGOUI"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592FA1EA7C1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D42233140;
+	Wed, 12 Mar 2025 08:18:50 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9829E1DB356;
+	Wed, 12 Mar 2025 08:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741767476; cv=none; b=KCYDQRd9v6w+e17JoB6+AXBVclagmZbK6Uc7IHAk9E1wDVbDoKfJbcB42g0CziSYxBzBqjpUcra1j/1BBXYw1fPCiLtBJOksS/MFNwoyz0UCaLJP0J+MM1eZCQcgpLWemUpv1DGK4t8gFmrHDXiuAov7FV8EvZHbVvxBExEMEOE=
+	t=1741767529; cv=none; b=nhG9Rn7vlXc6hlbvl1NqvpymsXxdZu+YbMYGPN5ZgNKosqxBuX4HXuGy5JV0VSqJMsRia5O6M0nzhr8F5wVI357uS5dkxzumm6FS01ePdakEaCTntKjkbNvReaoohyy0TMf+iVMIO31RLQc5rbH0jQbUPVRRBT/cgYaRTkwxMLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741767476; c=relaxed/simple;
-	bh=7JtfDFJnmZHRtjNa+tQkiHtYQOHNcn+PWRuERHTuazI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X24T+MIkl1SLzMKH17hGE7TPBlBBwbOrTqvQgmSy7Uc7muZKTo9Rk4KWwdH10sUQ9YnKcvzMMhWpyzhKRmHnM9PBlZVYUHKTkAYkQacat2csePRpWEDv5MXOpqjHKY/Oq54HD6MNHCeKbXAhXtnt1ke1LYsi7ldLHLhaW5AZuns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mSdm0CDI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2lHpqyUM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2NOtoWk3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=L1KBGOUI; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 11A7921182;
-	Wed, 12 Mar 2025 08:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741767468; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GSOHoa1ZQ0qdVTrSgPUGYM6S96Eo1g2ZFjEamRQ2nOU=;
-	b=mSdm0CDIdvB6uLxx6zRnsG4Ecp9B8GLTTcqSpLg/hToiNhovmIQtyPjBp1PdTn48VkauY7
-	N2OX2kmuZiHIU/RyZm809t89hNCuSwcbXtoZj8lUOkKvjwMJjz339ENAAZRD/swLJ5jo1m
-	sthuFFuNF3WuHBtcPwH/dRjdrkVuifw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741767468;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GSOHoa1ZQ0qdVTrSgPUGYM6S96Eo1g2ZFjEamRQ2nOU=;
-	b=2lHpqyUMEMjBLTUq58WAtMt1kwGtVY2JDs8Oj1RToqFsbxqeLxc7c7dtIucbtAN5SmXOCB
-	qci1fxqin8+7vXCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741767467; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GSOHoa1ZQ0qdVTrSgPUGYM6S96Eo1g2ZFjEamRQ2nOU=;
-	b=2NOtoWk3iQVCM2YdgmbdbohAj8C+BBSmrgVP6+qfsnNORQ7mFXkF5HOMZOxn/OcQJVBjv1
-	56w5JL9wxTcT6S7MlMvtA7Xf7ghb9UEgCJTeQtRSsWopAqpjkeLJmPekAItvUtk55qwMOH
-	TF3lRfqVgiQUDIi2VfADxBk08VDLlY8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741767467;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GSOHoa1ZQ0qdVTrSgPUGYM6S96Eo1g2ZFjEamRQ2nOU=;
-	b=L1KBGOUIGPKFfIZN+PbNNV++j9M+DIBK6Q3B+y5QqUe9xvfVXrg5kEcC+xzl+LkBMyzHTG
-	sa1N118DhaKJr8CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 98BAF1377F;
-	Wed, 12 Mar 2025 08:17:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vULzIypD0WcQegAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 12 Mar 2025 08:17:46 +0000
-Message-ID: <41c4b56d-0932-465c-9dc7-c3a20cb49bdb@suse.de>
-Date: Wed, 12 Mar 2025 09:17:46 +0100
+	s=arc-20240116; t=1741767529; c=relaxed/simple;
+	bh=Y9Oz+IZbOUM2+x/HvSwyP9LZmB89nzhbPQ65rCT8kAs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GuNlJOcRVYtsDReXMfWM4DNyAVpoNb8X6IZSQ+3FdXwwW5GoL5YkVcay5QMhKwzg/tOxkJTrIh/KTaRdJkRjaUB5fZoLSdilk8qNMFhqT9GCUd3Hbeop5CF8uAkR5kpsaPcLoA9z+/Lp1YFkEhxIAYAr3jL1e6E3FHSzPuPubTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-9d-67d14360e15c
+From: Rakie Kim <rakie.kim@sk.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	Rakie Kim <rakie.kim@sk.com>
+Subject: Re: [PATCH 0/4] mm/mempolicy: Add memory hotplug support in weighted interleave
+Date: Wed, 12 Mar 2025 17:18:21 +0900
+Message-ID: <20250312081836.665-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <Z87zpg3TLRReikgu@gourry-fedora-PF4VCD3F>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v3] drm/mxsfb: Remove generic DRM drivers in probe
- function
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
- linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
- Michael Trimarchi <michael@amarulasolutions.com>,
- David Airlie <airlied@gmail.com>, Fabio Estevam <festevam@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Marek Vasut <marex@denx.de>, Maxime Ripard <mripard@kernel.org>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Simona Vetter <simona@ffwll.ch>, Stefan Agner <stefan@agner.ch>,
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250305140929.174398-1-dario.binacchi@amarulasolutions.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250305140929.174398-1-dario.binacchi@amarulasolutions.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[amarulasolutions.com,gmail.com,linux.intel.com,denx.de,kernel.org,pengutronix.de,ffwll.ch,agner.ch,lists.freedesktop.org,lists.linux.dev,lists.infradead.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsXC9ZZnkW6C88V0gz9LLC3mrF/DZjF96gVG
+	i593j7NbHN86j93i/KxTLBaXd81hs7i35j+rxeo1GQ4cHjtn3WX36G67zO6xeM9LJo9Nnyax
+	e5yY8ZvFY+dDS4/Pm+QC2KO4bFJSczLLUov07RK4Mm5fPMBS8FOkYtqxe0wNjKcEuhg5OCQE
+	TCTaZhV3MXKCmbeuvmYHCbMJKEkc2xsDYooIqEq0XXHvYuTiYBZYzyTxetMsNpByYYEIiadn
+	WlhBbBagmts/HzOD2LwCxhK9p+awQYzUlGi4dI8JxOYUMJN403uEHcQWEuCReLVhPyNEvaDE
+	yZlPWEBsZgF5ieats5lBlkkInGGTmLNzJtQgSYmDK26wTGDkn4WkZxaSngWMTKsYhTLzynIT
+	M3NM9DIq8zIr9JLzczcxAoN4We2f6B2Mny4EH2IU4GBU4uEVyLmQLsSaWFZcmXuIUYKDWUmE
+	d7UtUIg3JbGyKrUoP76oNCe1+BCjNAeLkjiv0bfyFCGB9MSS1OzU1ILUIpgsEwenVAOj7gNG
+	/43qzp7B7xfZVzjVMjyImCBz/OI5pXd6JfFfVxxRzWXl+/WEz21RwFwJ9fqZGkJZj07fOXP0
+	DovJ0cd3V9adWiWwxVbogFbgEYVZqsKvL58+3vnmnmeBUXF/UeJa/8uve9XUu+ovCazq5Ci8
+	VSCy7pB1nWPM6ZXb13VMu1a39sSexov8SizFGYmGWsxFxYkAX0UZtl4CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsXCNUNNSzfB+WK6wfwnRhZz1q9hs5g+9QKj
+	xc+7x9ktPj97zWxxfOs8dovDc0+yWpyfdYrF4vKuOWwW99b8Z7U4dO05q8XqNRkWv7etYHPg
+	8dg56y67R3fbZXaPxXteMnls+jSJ3ePEjN8sHjsfWnp8u+3hsfjFByaPz5vkAjijuGxSUnMy
+	y1KL9O0SuDJuXzzAUvBTpGLasXtMDYynBLoYOTkkBEwkbl19zd7FyMHBJqAkcWxvDIgpIqAq
+	0XbFvYuRi4NZYD2TxOtNs9hAyoUFIiSenmlhBbFZgGpu/3zMDGLzChhL9J6awwYxUlOi4dI9
+	JhCbU8BM4k3vEXYQW0iAR+LVhv2MEPWCEidnPmEBsZkF5CWat85mnsDIMwtJahaS1AJGplWM
+	Ipl5ZbmJmTmmesXZGZV5mRV6yfm5mxiBobus9s/EHYxfLrsfYhTgYFTi4T2geiFdiDWxrLgy
+	9xCjBAezkgjvalugEG9KYmVValF+fFFpTmrxIUZpDhYlcV6v8NQEIYH0xJLU7NTUgtQimCwT
+	B6dUA+PJ6BxDRcXPHTP2REzS/fZGwSGNZUJPJIeQ1zGHXW3JNYnPbhv3bCusWjfNwKGr++Zc
+	09MvJ18oatkcFtHbtrr96NRvka9jj36Ys1xH6dtnLfF3CXf0Qlt9Xr9MFr+iJ+a1tnnPv3O5
+	+62Ms5MatH733exN+fd4X47z4+qL//aemTDXkfFPRasSS3FGoqEWc1FxIgDli6M4WQIAAA==
+X-CFilter-Loop: Reflected
 
-Merged into drm-misc-next. Thanks for the patch.
+On Mon, 10 Mar 2025 10:13:58 -0400 Gregory Price <gourry@gourry.net> wrote:
 
-Am 05.03.25 um 15:09 schrieb Dario Binacchi:
-> Use aperture helpers to remove all generic graphics drivers before
-> loading mxsfb. Makes mxsfb compatible with simpledrm.
->
-> Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
-> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
->
-> ---
->
-> Changes in v3:
-> - Add 'Reviewed-by' of  Thomas Zimmermann
->
-> Changes in v2:
-> - Use aperture_remove_all_conflicting_devices() instead of
->    drm_aperture_remove_framebuffers().
->
->   drivers/gpu/drm/mxsfb/mxsfb_drv.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
->
-> diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> index 59020862cf65..e5eb644b54ae 100644
-> --- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> +++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> @@ -8,6 +8,7 @@
->    * Copyright (C) 2008 Embedded Alley Solutions, Inc All Rights Reserved.
->    */
->   
-> +#include <linux/aperture.h>
->   #include <linux/clk.h>
->   #include <linux/dma-mapping.h>
->   #include <linux/io.h>
-> @@ -361,6 +362,15 @@ static int mxsfb_probe(struct platform_device *pdev)
->   	if (ret)
->   		goto err_free;
->   
-> +	/*
-> +	 * Remove early framebuffers (ie. simplefb). The framebuffer can be
-> +	 * located anywhere in RAM
-> +	 */
-> +	ret = aperture_remove_all_conflicting_devices(mxsfb_driver.name);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "can't kick out existing framebuffers\n");
-> +
->   	ret = drm_dev_register(drm, 0);
->   	if (ret)
->   		goto err_unload;
+Hi Gregory,
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+I have updated version 2 of the patch series, incorporating the feedback from
+you and Joshua.
+However, this version does not yet include updates to the commit messages
+regarding the points you previously mentioned.
 
+Your detailed explanations have been incredibly valuable in helping us analyze
+the system, and I sincerely appreciate your insights.
+
+> 2) We need to clearly define what the weight of a node will be when
+>    in manual mode and a node goes (memory -> no memory -> memory)
+
+Additionally, I will soon provide an updated document addressing this and
+other points you raised in your emails.
+
+Thank you again for your guidance and support.
+
+Rakie
+
+> On Mon, Mar 10, 2025 at 06:03:59PM +0900, Rakie Kim wrote:
+> > On Fri, 7 Mar 2025 16:55:40 -0500 Gregory Price <gourry@gourry.net> wrote:
+> > > On Fri, Mar 07, 2025 at 10:56:04AM -0500, Gregory Price wrote:
+> > > > 
+> > > > I think the underlying issue you're dealing with is that the system is
+> > > > creating more nodes for you than it should.
+> > > > 
+> > > 
+> > > Looking into this for other reasons, I think you are right that multiple
+> > > numa nodes can exist that cover the same memory - just different
+> > > regions.
+> > > 
+> > 
+> > I understand your concerns, and I agree that the most critical issue at the
+> > moment is that the system is generating more nodes than necessary.
+> > We need to conduct a more thorough analysis of this problem, but a detailed
+> > investigation will require a significant amount of time. In this context,
+> > these patches might offer a quick solution to address the issue.
+> > 
+> 
+> I dug into the expected CEDT / CFMWS behaviors and had some discussions
+> with Dan and Jonathan - assuming your CEDT has multiple CFMWS to cover
+> the same set of devices, this is the expected behavior.
+> 
+> https://lore.kernel.org/linux-mm/Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F/T/#m2780e47df7f0962a79182502afc99843bb046205
+> 
+> Basically your BIOS is likely creating one per device and likely one
+> per host bridge (to allow intra-host-bridge interleave).
+> 
+> This puts us in an awkward state, and I need some time to consider
+> whether we should expose N_POSSIBLE nodes or N_MEMORY nodes.
+> 
+> Probably it makes sense to expose N_MEMORY nodes and allow for hidden
+> state, as the annoying corner condition of a DCD coming and going
+> most likely means a user wouldn't be using weighted interleave anyway.
+> 
+> So if you can confirm what you CEDT says compared to the notes above, I
+> think we can move forward with this.
+> 
+> ~Gregory
 
