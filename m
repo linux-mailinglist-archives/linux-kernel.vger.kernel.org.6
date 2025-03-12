@@ -1,105 +1,135 @@
-Return-Path: <linux-kernel+bounces-557321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F859A5D752
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:30:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDFD7A5D753
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:31:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D8D5175332
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:30:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8452C189D422
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CF21DFDA1;
-	Wed, 12 Mar 2025 07:30:31 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341291EFF96;
+	Wed, 12 Mar 2025 07:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzMDdue8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8064E44C7C;
-	Wed, 12 Mar 2025 07:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363CC1EF0A5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741764630; cv=none; b=rCoNtTvu8Um2yv6dsQye5HFiynjlTvdDMqhP5IxSed68hv9x7QzXV2yLArJKM0iMGUrX5ltU3Cf6wJ5qogFRUtphQev/bemiV+iWNx5hqR48KC2CCTFaDhd1+qXSRbIyoHyd1POv2uw3Urrf8lpRvtJhYVLLydYuZADZy7z2yus=
+	t=1741764694; cv=none; b=a+LVTPwKaZ7Sp34aZCYzJGmume5lkWfgeV5l0r3uNGXtkN1XAeExJ8nbG2WB+fvXJEjTqm8NhPVJhmfTXCtQwyAUTwBy6dKiNwWcjynrIlko+12P+bEyJgWPdEJDvWuywDfUFGFuUXHOnc8ClLnCIvgtujk1GoqWuxN6Akziey0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741764630; c=relaxed/simple;
-	bh=C7+kXOfAnAi2hiBYO/4ZGQbS90UPNCQ5WsYRnA5PCdo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EUZj6WEQaNRjMaWVMxBv4QAUt/Dns4a6LbBtjtMtOelfB2xCSDg8NCPEIOJdmGMzLv0mUGaJG4O5mQIdyJUNUT4Td/pxL3ov2ZXVStVQnVrk9bR8kD8+ksN7p6Yr1akNT7syKbFc9VKW9eNeG1210GS0t9R1rLQLWK6PEpnbzLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowADX39MQONFnQ8N8FA--.4329S2;
-	Wed, 12 Mar 2025 15:30:24 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: jogletre@opensource.cirrus.com,
-	fred.treven@cirrus.com,
-	ben.bright@cirrus.com,
-	dmitry.torokhov@gmail.com,
-	patches@opensource.cirrus.com,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] Input: cs40l50 - Remove redundant 'flush_workqueue()' calls
-Date: Wed, 12 Mar 2025 15:29:40 +0800
-Message-Id: <20250312072940.1429931-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741764694; c=relaxed/simple;
+	bh=vDXXOXMc3BbJU8Zi+rMhAEWot7OTms2YT2Z9GcQat1Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q2Ec+UqSDRNLbWzoa7pumEbgHwdFr8HFxIB5K11fVfQzttpC8xBmHexXLMfUA3c/s5HCsjcjyrP70pzFSbBdigCeGSeYPE/qYu7H/VoI5q6XW5itrmaAY5AN3zMsT9+sW9eLmqghqNp24odGmaW6rnuo2LdllhzyxModHjshYE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzMDdue8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 804EAC4CEE3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741764693;
+	bh=vDXXOXMc3BbJU8Zi+rMhAEWot7OTms2YT2Z9GcQat1Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SzMDdue8oyCV0HOr/eFqwZw0/fbgMEGvDcO+2bjnjpVnx4lqwgoHXF0y2YRXLFp/O
+	 2ETLkV2Q/0/8P5knT+IQQBDE5H5whLQ18spi4MYKc4gIxyAQoBotZ28G4tCBHql5tt
+	 toNZd1pQ+5WoKaLC6NlpWGY67sF2o0RBfHIhoDJftwKoMUJOf5NVCkoAaaZZCoESIw
+	 PmFo81KVE52Ydsx5Gy9+zrxyccMw1Y/n05w+wxnj7qdC3c54iSBBiLHm5f07UM9Sfe
+	 k02OkRuUu5SzidKICh1IJx90PoRBdknshAnxI3aBcRZaqKnV2RqChj21X5+rwAiPML
+	 QZR4X87tIwokg==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30bee1cb370so56238661fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:31:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWzqCBuCQlqbvj4c0fJwgK4AN4J71Nr7KW5bR4IGtYUa1v6crV0bwhPTrQeNO2k6iBpXKegGHR9EWMFNz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHvCpwVjwpuLswF4UH2owUesDsWr42yT76d5aYzqGRd/Sd60wQ
+	PtXl0xiRwmpvvsaaPREaM/oexuxfVLqwjNrxI6CxBCcD8EeeajYVEtaUa3m4kVblXwa7cujpCQP
+	FwYq0nfVpOTMvSu5ANc3KFBJvmDM=
+X-Google-Smtp-Source: AGHT+IGDlhz/9DCOLZddQNIZ0rT0sVsQQf16G2LQmYY/hcBf3yQv3A61MlKdEK7Sp80XPWVOmTw5+lpxP38HhyK2hjc=
+X-Received: by 2002:a05:6512:2342:b0:545:3037:a73a with SMTP id
+ 2adb3069b0e04-54990e5d494mr6385071e87.13.1741764692205; Wed, 12 Mar 2025
+ 00:31:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowADX39MQONFnQ8N8FA--.4329S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKF1xZFy7tr1DuryrtFyxZrb_yoW3KFc_uF
-	W3Kws7KrWUK3yjkFyqqr13XFyvk3Wqvay8ZFsxKr98G3409ws8Z34IvF40v3yDX34DKFnr
-	u34qga4avrnrGjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb-8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAq
-	x4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
-	MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxV
-	CFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r10
-	6r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxV
-	WUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG
-	6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
-	1UYxBIdaVFxhVjvjDU0xZFpf9x0JUkUUUUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+References: <20250312021154.102262-2-elsk@google.com>
+In-Reply-To: <20250312021154.102262-2-elsk@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 12 Mar 2025 16:30:55 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARRtmLBiU+-+O4-jzCz+1YamRwVgBXkBA=v5Vo5djRPpA@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo7C-9XBRWqWE-dODVI6hRdqlBYJ3KnLoLeW2-tT3IYS6mblgvoI5vDjmo
+Message-ID: <CAK7LNARRtmLBiU+-+O4-jzCz+1YamRwVgBXkBA=v5Vo5djRPpA@mail.gmail.com>
+Subject: Re: [PATCH v1] setlocalversion: use ${objtree}/include/config/auto.conf
+To: HONG Yifan <elsk@google.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-'destroy_workqueue()' already drains the queue before destroying it, so
-there is no need to flush it explicitly.
+On Wed, Mar 12, 2025 at 11:12=E2=80=AFAM HONG Yifan <elsk@google.com> wrote=
+:
+>
+> setlocalversion reads include/config/auto.conf, which is located below
+> $(objtree) with commit 214c0eea43b2 ("kbuild: add $(objtree)/ prefix to
+> some in-kernel build artifacts").
+>
+> Hence, the setlocalversion script needs to use
+> $(objtree)/include/config/auto.conf as well.
+>
+> Note that $(objtree) is not necessarily `.` when O (aka KBUILD_OUTPUT)
+> is set, because of commit 13b25489b6f8 ("kbuild: change working
+> directory to external module directory with M=3D").
 
-Remove the redundant 'flush_workqueue()' calls.
+Is this a real issue?
+If so, please attach some commands to reproduce an issue.
 
-This was generated with coccinelle:
+setlocalversion is invoked only at line 1238 of the top-level Makefile,
+within the check "ifeq ($(KBUILD_EXTMOD),)"
+So, it is never called with external module builds.
 
-@@
-expression E;
-@@
-- flush_workqueue(E);
-  destroy_workqueue(E);
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/input/misc/cs40l50-vibra.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/input/misc/cs40l50-vibra.c b/drivers/input/misc/cs40l50-vibra.c
-index dce3b0ec8cf3..0fc7ab032cf5 100644
---- a/drivers/input/misc/cs40l50-vibra.c
-+++ b/drivers/input/misc/cs40l50-vibra.c
-@@ -480,7 +480,6 @@ static int cs40l50_erase(struct input_dev *dev, int effect_id)
- 
- static void cs40l50_remove_wq(void *data)
- {
--	flush_workqueue(data);
- 	destroy_workqueue(data);
- }
- 
--- 
-2.25.1
 
+
+
+
+> Signed-off-by: HONG Yifan <elsk@google.com>
+> ---
+> Implementation note: Should I test -z ${objtree} before using it? Otherwi=
+se it
+> looks at /include/config/auto.conf which is wrong.
+> Or should I fall back to `.` if objtree is not found in the environment
+> variables?
+> I could also `exit 1` if $objtree is not set. Please let me know what you=
+ think.
+>
+>  scripts/setlocalversion | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/setlocalversion b/scripts/setlocalversion
+> index 28169d7e143b..88f54eb5a7c2 100755
+> --- a/scripts/setlocalversion
+> +++ b/scripts/setlocalversion
+> @@ -186,7 +186,7 @@ if ${no_local}; then
+>         exit 0
+>  fi
+>
+> -if ! test -e include/config/auto.conf; then
+> +if ! test -e ${objtree}/include/config/auto.conf; then
+>         echo "Error: kernelrelease not valid - run 'make prepare' to upda=
+te it" >&2
+>         exit 1
+>  fi
+> --
+> 2.49.0.rc0.332.g42c0ae87b1-goog
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
