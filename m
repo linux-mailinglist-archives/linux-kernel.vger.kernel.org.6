@@ -1,119 +1,160 @@
-Return-Path: <linux-kernel+bounces-557149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288FCA5D441
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:56:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A68A5D442
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:00:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69C23B5C4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:56:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9529C3B6EAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E091448F2;
-	Wed, 12 Mar 2025 01:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799431411EB;
+	Wed, 12 Mar 2025 02:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fugaGWXC"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xka/51xQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF102D600;
-	Wed, 12 Mar 2025 01:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64274C81;
+	Wed, 12 Mar 2025 02:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741744601; cv=none; b=ld0eX1dkXUOlZSXkXm7oIDBHFbO4srfuEhEYSKeU28bf8TvnjUj6vkOPio/a5eyPhQ417d6DPsVl7XpyMOKRc9l/LQG3fUz4iP7qwZCBtxGEmsVsrsH4ZzcY1nQeO7n0Xw09YXVZXswMN5i/Nm7flgOcnWQuif59a9mcvf+V//w=
+	t=1741744836; cv=none; b=pfcHwwjcGaZE2uDZIa5uJulqoQwwfn52l0ydUWcYQx+9PnONh+tBm/RkNmpYUB++vMOV3PFOMoJQQm5pqj+1Rf7HnaszuQtOr+UOGZ00m6DF+BYuneik5+jivVYF4K51P3Ir9v/lb7uVePZLglQnWfvyPoZV1DDM9iw+UD/w370=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741744601; c=relaxed/simple;
-	bh=i8z2Xb9lFxcMgAI2K80UrHzxA3FJTlfeKI/zXvLiMok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GJqqzhxzq4192V58HDui+O8GTWRxdcp2rJaTgtLu2c9O4AweQsthKuuBA2EvVSBnxlg015/c7Z+GB6W8bxYyAW5vXG8OcQD02DyQ7AI3E0eSC6NBOgn8EGbkV3OvqzJv2TRVAuQ0jWIC0+kMG6oxh6e5g0G7EUwwLAnPUPLcaQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fugaGWXC; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fd02536660so1599712a91.2;
-        Tue, 11 Mar 2025 18:56:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741744600; x=1742349400; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hhWzg/d0ytpwp9W4Azext2ZzMQHgy1fZGnKhTFyW2CU=;
-        b=fugaGWXCNnRcR4mgC7K4mHNWQy+SVcA4cjg1JaECSPourlW09YG2/IE/0zNO1FaoHg
-         zZlzu2XPSND6jSQxv+DZ3fErXAJNJlDVdu4KI33uDYYuWOT5AKTXmxax0SSjQYMVhzYa
-         PVWu9+VULH024oksJv6pwTv0RjB1EhQXWbc52UkajdRbvMksat95Hohw5xbnxtuavWds
-         tVhMF46O9nhtoTzwStupHYUXfnMDLaRro3EvjCu7vNGdJT7o4OzhTS5VDF8pe7X63TsU
-         YGtLG19loogMDALn4IOi9l9dSFaayR97DAwM36KxFpU99QjKZEoBkkbH1t3981Ya/Pzt
-         Yaow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741744600; x=1742349400;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hhWzg/d0ytpwp9W4Azext2ZzMQHgy1fZGnKhTFyW2CU=;
-        b=YsqWGaHBQYBGjNmdOqHHtvTKEUsyPFV7fIw6GLTHW/hHXUXF84yiFCu+eN1zo+nWbz
-         12+4OJ709IqexlgvdsrqEJMR/0Vldv+2qost6cOWVGJ734bU6MjEG8Sxs+nM48/gu3UZ
-         UnXWRaXloBX57CzGb3wGbI57kZDUaOaYXJ4Tpw1IELSKAahtk8Q0di4OZrDNk1k0LZS2
-         AZBCONKTy/T8jEV45KDh2O7ejK5TwwQre4MvGVj0GvgSf6YlRwkc+C0GaS2PHRl0DMK8
-         2AGvQB/CQzsAuY6wjSwBLI+3VKaJeVJTDzIucJW5Bh2N4AZDdIBeOSGnGDJU+JoIdPDf
-         EuAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvqiXDEMpFgzBAmMwSTQmkbJsTrYrD0YEMk/MWpp0urphtsHym6mcNG3m9JvNGlf8+LpNFBtJPVJT6A7Y=@vger.kernel.org, AJvYcCXCPhjlBxBRKqD5tzh4RiqB6mO1r/5+sLNg6+s/dEoAL92Q8ZcPnPmp7Sw9EXZ4i7NNgCpZcrLgTuxfjPnzhP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUFvaO01LgQ/7Ibv3rajdFI8KjzUmLP38KkXNKNZkcOVLCa715
-	hyVpR0BrnfwNoXoVYLtDiFgldcovF8WC9nIw6mDtWUsY844wQB5dUibMwXpHsJB89mjQ+ZOTfy7
-	7b7HnCjTHBe99f/L8kzzOVy2Eps0=
-X-Gm-Gg: ASbGncsQnKq0FgSBUjJHbtCKav1mXoQvHApOdZc07/m0a5Z8V73WadAYImstHvQytpW
-	G5hrbpry/svz8x7U2XSpYm9u3XHh42LDz4VQZNFezaDpyk8ZqF1tljW7Yd0cAOdXe388Zy0848M
-	5TB+jJ+VJyL17Af/dFPg5/H6Elf06msS/6FYVI
-X-Google-Smtp-Source: AGHT+IH2TOWzUeGxG1/VvM5umB2zQLllV6LRmfHEFJ6bEJKnEcBXB5BqfvcaUtU8PlHUHYAax8MNb/fMhf3PDUmziAs=
-X-Received: by 2002:a17:90b:1809:b0:2fe:b972:a2c3 with SMTP id
- 98e67ed59e1d1-300ff380aaemr2857882a91.0.1741744599798; Tue, 11 Mar 2025
- 18:56:39 -0700 (PDT)
+	s=arc-20240116; t=1741744836; c=relaxed/simple;
+	bh=b2KFyzQPt62EjuLD50rsCqVAb5LhVZON3gByzj5R9z4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l3bqt/N9kVrscdNYa7NBB8rVLqRCHzLRySdnqMuUiK9nZ1BdktXaiWh6u5ea6Ta2o3kk1bL+9NNjDDj8mY6YhB76r94QRZ59tUUbMXrXcrjMxjE2TNGMICOtBhVZOycH3ESmWPpYP91wvtl0J8wlki7cWFRstoKAh3TcQW7GuNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xka/51xQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B4DBC4CEE9;
+	Wed, 12 Mar 2025 02:00:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741744836;
+	bh=b2KFyzQPt62EjuLD50rsCqVAb5LhVZON3gByzj5R9z4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xka/51xQCYDoUQkC8qacAZFwXEWR7+9kB9bxszPwlX4d3OqXq0P0C4UCAuVkFBR6A
+	 FC5J4NO88zqrzfdDzBTC5uF1WR6I8/LI3UNxyGfXyKuwNA9IzA5lS8dOu8p+9p+Squ
+	 FPaI0U99eYdOv9hzKelP46+kYnf2hlVZgSrfqQ3bmf5eaN+2OEfbYS/QplW5xRgDAs
+	 cenCpLHha8pbmmfpX0+8s6MK2t4NFQ1zBign7MYnwRXiQem0TW0BgFuopyq0oHQtRS
+	 z9+D6K47/exV3am8gPo+3IOoPtvJMqtHHe2BFilhvb7jlbhn6yUKIDhoAMzgAWwTSF
+	 pYVCPeLpa3rfA==
+Date: Tue, 11 Mar 2025 19:00:33 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Andi Kleen <ak@linux.intel.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Falcon <thomas.falcon@intel.com>
+Subject: Re: [PATCH v2 4/5] perf x86 evlist: Update comments on topdown
+ regrouping
+Message-ID: <Z9Dqwd_7pyj7Gvqj@google.com>
+References: <20250307023906.1135613-1-irogers@google.com>
+ <20250307023906.1135613-4-irogers@google.com>
+ <Z89Y5pUchAaJj4PY@google.com>
+ <ba8dedbc-9a5f-4038-ad51-2b20baa6af65@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <010001958798b97c-4da7647e-d0bc-4f81-9132-ad24353139cb-000000@email.amazonses.com>
-In-Reply-To: <010001958798b97c-4da7647e-d0bc-4f81-9132-ad24353139cb-000000@email.amazonses.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 12 Mar 2025 02:56:26 +0100
-X-Gm-Features: AQ5f1JqsRDOX4s34-mUC-bMUKfIpM7ebb8PdNYncW_1xsWSlQpvBaseM_USJnec
-Message-ID: <CANiq72mV=160jejuTO8jmsOszrkbXX0UAa1dvZ0VSyKaWcLqBg@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: uaccess: mark UserSliceReader methods inline
-To: Antonio Hickey <contact@antoniohickey.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ba8dedbc-9a5f-4038-ad51-2b20baa6af65@linux.intel.com>
 
-On Wed, Mar 12, 2025 at 12:44=E2=80=AFAM Antonio Hickey
-<contact@antoniohickey.com> wrote:
->
-> Link: https://github.com/Rust-for-Linux/linux/issues/1145
-> Suggested-by: https://github.com/Rust-for-Linux/linux/issues/1145
+On Tue, Mar 11, 2025 at 08:45:20AM +0800, Mi, Dapeng wrote:
+> 
+> On 3/11/2025 5:25 AM, Namhyung Kim wrote:
+> > Hello,
+> >
+> > On Thu, Mar 06, 2025 at 06:39:05PM -0800, Ian Rogers wrote:
+> >> From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> >>
+> >> Update to remove comments about groupings not working and with the:
+> >> ```
+> >> perf stat -e "{instructions,slots},{cycles,topdown-retiring}"
+> >> ```
+> >> case that now works.
+> >>
+> >> Signed-off-by: Ian Rogers <irogers@google.com>
+> > Dapeng, can I get your Signed-off-by here?
+> >
+> > Thanks,
+> > Namhyung
+> >
+> >> ---
+> >>  tools/perf/arch/x86/util/evlist.c | 27 ++++++---------------------
+> >>  1 file changed, 6 insertions(+), 21 deletions(-)
+> >>
+> >> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
+> >> index ed205d1b207d..7905a28d7734 100644
+> >> --- a/tools/perf/arch/x86/util/evlist.c
+> >> +++ b/tools/perf/arch/x86/util/evlist.c
+> >> @@ -39,28 +39,13 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
+> >>  	 *         26,319,024      slots
+> >>  	 *          2,427,791      instructions
+> >>  	 *          2,683,508      topdown-retiring
+> >> -	 *
+> >> -	 * If slots event and topdown metrics events are not in same group, the
+> >> -	 * topdown metrics events must be first event after the slots event group,
+> >> -	 * otherwise topdown metrics events can't be regrouped correctly, e.g.
+> >> -	 *
+> >> -	 * a. perf stat -e "{instructions,slots},cycles,topdown-retiring" -C0 sleep 1
+> >> -	 *    WARNING: events were regrouped to match PMUs
+> >> -	 *     Performance counter stats for 'CPU(s) 0':
+> >> -	 *         17,923,134      slots
+> >> -	 *          2,154,855      instructions
+> >> -	 *          3,015,058      cycles
+> >> -	 *    <not supported>      topdown-retiring
+> >> -	 *
+> >> -	 * If slots event and topdown metrics events are in two groups, the group which
+> >> -	 * has topdown metrics events must contain only the topdown metrics event,
+> >> -	 * otherwise topdown metrics event can't be regrouped correctly as well, e.g.
+> >> -	 *
+> >> -	 * a. perf stat -e "{instructions,slots},{topdown-retiring,cycles}" -C0 sleep 1
+> >> +	 * e. slots event and metrics event are in a group and not adjacent
+> 
+> Yes, here is my SoB.
+> 
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
-The Suggested-by tag is meant to explain who suggested it, rather than
-duplicate the link -- please see:
+Thanks!
 
-    https://docs.kernel.org/process/submitting-patches.html#using-reported-=
-by-tested-by-reviewed-by-suggested-by-and-fixes
+> 
+> BTW, It seems there is a typo and missed the "not" word. It should be 
+> "slots event and metrics event are not in a group and not adjacent"
+ 
+Ok, will update.
 
-(I typically also put the Link after the tag, if the link is meant to
-show the original suggestion, just like the documentation requests for
-the Reported-by/Closes pair)
+Thanks,
+Namhyung
 
-In any case, there is no need to re-send a v3 just for this, you can
-wait to see if there is any feedback.
-
-Thanks for the patch!
-
-Cheers,
-Miguel
+> 
+> >> +	 *    perf stat -e "{instructions,slots},cycles,topdown-retiring" -C0 sleep 1
+> >>  	 *    WARNING: events were regrouped to match PMUs
+> >> -	 *    Error:
+> >> -	 *    The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
+> >> -	 *    event (topdown-retiring)
+> >> +	 *         68,433,522      slots
+> >> +	 *          8,856,102      topdown-retiring
+> >> +	 *          7,791,494      instructions
+> >> +	 *         11,469,513      cycles
+> >>  	 */
+> >>  	if (topdown_sys_has_perf_metrics() &&
+> >>  	    (arch_evsel__must_be_in_group(lhs) || arch_evsel__must_be_in_group(rhs))) {
+> >> -- 
+> >> 2.49.0.rc0.332.g42c0ae87b1-goog
+> >>
 
