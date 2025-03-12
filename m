@@ -1,189 +1,529 @@
-Return-Path: <linux-kernel+bounces-558255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B460A5E384
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:14:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB44A5E386
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:14:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8069B17C1A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:14:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D5CF17C13D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73221256C99;
-	Wed, 12 Mar 2025 18:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484B8256C6F;
+	Wed, 12 Mar 2025 18:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y5sRscnd"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="neKq0sj7"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0221724291F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BF024FC1F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741803279; cv=none; b=D0GG6EAqJ2kfZVgPh93T8AEo8gUIuPACQiNs+y5OldUKAfTWLvX6eNkFbdQQ6SFMCts892gXV9f2b8cNiVeMbqsNzM9oTHtKfrl4wnK7DDYwvsHbgLuocvWL2/J3aOx69AQZ11xxr+flIfNHSp+nAXbtoAdikSba5bvPPhrkUfQ=
+	t=1741803283; cv=none; b=AXm4w9CJIX9uGWJGTzWbsaq5SDnPmhPhKIGYJxUHBBWUqeMCAmVCPwreXp+94Ep+1RetTm18Hwx3kD6waaBnT5pKW+8mSJzG6WSSFrVfaxYQKE5GRHZTWNt0JGZRvGtoCI9nKJmRf5hOS6lO3oZwQdwU7Oyox7VUH/ZyRAzKU9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741803279; c=relaxed/simple;
-	bh=9InqYZjNrb0cQQB6hIFIPZXvnns1AsCgqcb98g1xo7A=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Sc75F9DghfJhbQx2KQ7q3J66BrvyV8PpM5AZJocJFj9gzI3ktzM3gvlo8AgvSZjoVGUr7hIS+BuKxj5v8U9Q97A4mV5X4Q/TG+A++b0Dc/YISuCLGPxWc+yGN14s5qPlnIEKA/O9PBb8nAU1hYsg7bHUAalfGOwc9MTmmydX9CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y5sRscnd; arc=none smtp.client-ip=198.175.65.19
+	s=arc-20240116; t=1741803283; c=relaxed/simple;
+	bh=9kjQH4sGg87IcCx2WB1l0OZBwhYAGZZt8rrEWQiq4fc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=agWTR99/MBtw9WiiOIX262MUFo/2WCOKXS0BlCMfy4NIYqM0H5AgzFe2TWNJidfymU04z2THrn8ON0AOej246s9lUZXfbRqvVMHzXzmwKXwJdGvC/bmCskaDxORGfWfTag/dnNayrbGEa6nEff9V7W0DY+2uhZ/H+tssQ21r1vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=neKq0sj7; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741803278; x=1773339278;
-  h=date:from:to:cc:subject:message-id;
-  bh=9InqYZjNrb0cQQB6hIFIPZXvnns1AsCgqcb98g1xo7A=;
-  b=Y5sRscndcbDFM+yMssN680ulCwKAyi4eJxDALMcYSxE+kBJ27haWCl1W
-   +jJ1LVsyJ6taYFxzO/F7mm+SmS2+iCxcKcD/oMUWyBFfy38gxUlp9lx7B
-   uHsEQ+9aoziD0qP3CQSd3qK1GPx+ndapCqoadQMdREnyVp25Z+T0n4lAM
-   qXPzPvs8s663W/GX/0ZzTaNSMerWiklAo3URJveQCChKytuB/Kf7F3Prd
-   X3I5C1Nw5qfYWEnxUMukrTIDX2CtPGercQDwkpb7cY6Ds8vEfggsV21l6
-   pSPaNRoPkfUa+jlwwYuHhP/qZSBkcC3a5GHQIwi0TxziRMoe4GxxC3PxI
-   w==;
-X-CSE-ConnectionGUID: 9i2ImMdiQguutYwQQzlaQQ==
-X-CSE-MsgGUID: VwPh8di/QQmwu69BU5F4pg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42758713"
+  t=1741803280; x=1773339280;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=9kjQH4sGg87IcCx2WB1l0OZBwhYAGZZt8rrEWQiq4fc=;
+  b=neKq0sj7J9wMeBSBFmEUFjhYLombcwR3I3umoPkVDHGCfExscwAZxrUr
+   MrY3Ot3Za2YzbyDEnMgBZP5zwyGKdbQloqFmrbPzFJe01pPo0VyTKNDly
+   1U0jDQGEk/s9HuUS58ewE71FOQ+tWm3x+0ZrW8/ltI23O/+AORnSdmhgz
+   hbXysB0vK5Q8KE3a6JwVjpyTzTNsOllhIllHIlbvMTAx45TzqTx/eKtWh
+   x3quOOVUSWRSBGwaBNQS5xuFL+nsrGKR2+rw3PNIY458PessWrzWJZzsD
+   JC/uKSk7moAvi1dksz3RCVp54rDEaVLpfZbpzKzNUIqAvYX2pa8WSjXAv
+   g==;
+X-CSE-ConnectionGUID: kX4pwyvwQI6QW7xr3nwJCw==
+X-CSE-MsgGUID: mpvFBlAISIiz4g7lIENXzw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42758717"
 X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="42758713"
+   d="scan'208";a="42758717"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 11:14:38 -0700
-X-CSE-ConnectionGUID: 6svrWbk7TRCQblYNe5WC9A==
-X-CSE-MsgGUID: Bfxx30L6QZGvHD6Vfw0Sxg==
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 11:14:40 -0700
+X-CSE-ConnectionGUID: ArMBUZBASp2di21Tm6cZYw==
+X-CSE-MsgGUID: qsz5pRh4RYqQTZfK2hIcFQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="143906826"
+   d="scan'208";a="143906828"
 Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
   by fmviesa002.fm.intel.com with ESMTP; 12 Mar 2025 11:14:36 -0700
 Received: from kbuild by a4747d147074 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tsQbC-0008nS-0g;
+	id 1tsQbC-0008nQ-0c;
 	Wed, 12 Mar 2025 18:14:34 +0000
-Date: Thu, 13 Mar 2025 02:14:04 +0800
+Date: Thu, 13 Mar 2025 02:14:30 +0800
 From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:non-rcu/next] BUILD SUCCESS
- 87d07e135725dd8976a5ddbc7dfa968198d9ae91
-Message-ID: <202503130258.N075XFFj-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	kernel@collabora.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] drm/tests: hdmi: Add max TMDS rate fallback tests
+ for YUV420 mode
+Message-ID: <202503130136.AnTvw0Cj-lkp@intel.com>
+References: <20250311-hdmi-conn-yuv-v2-7-fbdb94f02562@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250311-hdmi-conn-yuv-v2-7-fbdb94f02562@collabora.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git non-rcu/next
-branch HEAD: 87d07e135725dd8976a5ddbc7dfa968198d9ae91  Merge branches 'lkmm.2025.02.25a', 'nolibc.2025.03.07a' and 'stop-machine.2025.03.11a' into HEAD
+Hi Cristian,
 
-elapsed time: 1458m
+kernel test robot noticed the following build errors:
 
-configs tested: 97
-configs skipped: 3
+[auto build test ERROR on 4423e607ff50157aaf088854b145936cbab4d560]
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+url:    https://github.com/intel-lab-lkp/linux/commits/Cristian-Ciocaltea/drm-connector-hdmi-Evaluate-limited-range-after-computing-format/20250311-190150
+base:   4423e607ff50157aaf088854b145936cbab4d560
+patch link:    https://lore.kernel.org/r/20250311-hdmi-conn-yuv-v2-7-fbdb94f02562%40collabora.com
+patch subject: [PATCH v2 7/7] drm/tests: hdmi: Add max TMDS rate fallback tests for YUV420 mode
+config: arm64-randconfig-004-20250312 (https://download.01.org/0day-ci/archive/20250313/202503130136.AnTvw0Cj-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250313/202503130136.AnTvw0Cj-lkp@intel.com/reproduce)
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                   randconfig-001-20250312    gcc-13.2.0
-arc                   randconfig-002-20250312    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-17
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-001-20250312    clang-19
-arm                   randconfig-002-20250312    clang-21
-arm                   randconfig-003-20250312    clang-19
-arm                   randconfig-004-20250312    clang-21
-arm                        vexpress_defconfig    gcc-14.2.0
-arm64                            allmodconfig    clang-18
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250312    clang-21
-arm64                 randconfig-002-20250312    gcc-14.2.0
-arm64                 randconfig-003-20250312    gcc-14.2.0
-arm64                 randconfig-004-20250312    gcc-14.2.0
-csky                  randconfig-001-20250312    gcc-14.2.0
-csky                  randconfig-002-20250312    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250312    clang-21
-hexagon               randconfig-002-20250312    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250312    clang-19
-i386        buildonly-randconfig-002-20250312    clang-19
-i386        buildonly-randconfig-003-20250312    gcc-12
-i386        buildonly-randconfig-004-20250312    gcc-12
-i386        buildonly-randconfig-005-20250312    gcc-12
-i386        buildonly-randconfig-006-20250312    clang-19
-i386                                defconfig    clang-19
-loongarch             randconfig-001-20250312    gcc-14.2.0
-loongarch             randconfig-002-20250312    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                           gcw0_defconfig    clang-15
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250312    gcc-14.2.0
-nios2                 randconfig-002-20250312    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                randconfig-001-20250312    gcc-14.2.0
-parisc                randconfig-002-20250312    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                 mpc832x_rdb_defconfig    gcc-14.2.0
-powerpc               randconfig-001-20250312    clang-21
-powerpc               randconfig-002-20250312    clang-21
-powerpc               randconfig-003-20250312    clang-21
-powerpc                     sequoia_defconfig    clang-17
-powerpc64             randconfig-001-20250312    clang-17
-powerpc64             randconfig-002-20250312    clang-15
-powerpc64             randconfig-003-20250312    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                 randconfig-001-20250312    clang-21
-riscv                 randconfig-002-20250312    gcc-14.2.0
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-15
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250312    clang-15
-s390                  randconfig-002-20250312    clang-16
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                          landisk_defconfig    gcc-14.2.0
-sh                    randconfig-001-20250312    gcc-14.2.0
-sh                    randconfig-002-20250312    gcc-14.2.0
-sh                          rsk7264_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250312    gcc-14.2.0
-sparc                 randconfig-002-20250312    gcc-14.2.0
-sparc64               randconfig-001-20250312    gcc-14.2.0
-sparc64               randconfig-002-20250312    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                                allnoconfig    clang-18
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250312    gcc-12
-um                    randconfig-002-20250312    clang-15
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250312    clang-19
-x86_64      buildonly-randconfig-002-20250312    clang-19
-x86_64      buildonly-randconfig-003-20250312    gcc-12
-x86_64      buildonly-randconfig-004-20250312    clang-19
-x86_64      buildonly-randconfig-005-20250312    clang-19
-x86_64      buildonly-randconfig-006-20250312    clang-19
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250312    gcc-14.2.0
-xtensa                randconfig-002-20250312    gcc-14.2.0
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503130136.AnTvw0Cj-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+   In file included from include/drm/drm_kunit_helpers.h:10,
+                    from drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:14:
+   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c: In function 'drm_test_check_max_tmds_rate_bpc_fallback_yuv420':
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+   In file included from include/linux/export.h:5,
+                    from include/linux/linkage.h:7,
+                    from include/linux/preempt.h:10,
+                    from include/linux/spinlock.h:56,
+                    from include/drm/drm_crtc.h:28,
+                    from include/drm/drm_atomic.h:31,
+                    from drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:7:
+>> include/linux/compiler.h:32:35: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+      32 |                         ______r = __builtin_expect(!!(x), expect);      \
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:44:26: note: in expansion of macro '__branch_check__'
+      44 | #  define likely(x)     (__branch_check__(x, 1, __builtin_constant_p(x)))
+         |                          ^~~~~~~~~~~~~~~~
+   include/kunit/test.h:784:13: note: in expansion of macro 'likely'
+     784 |         if (likely(__left op __right))                                         \
+         |             ^~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+   include/kunit/test.h:670:35: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     670 |         const struct assert_class __assertion = INITIALIZER;                   \
+         |                                   ^~~~~~~~~~~
+   include/kunit/test.h:787:9: note: in expansion of macro '_KUNIT_FAILED'
+     787 |         _KUNIT_FAILED(test,                                                    \
+         |         ^~~~~~~~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+   include/kunit/test.h:670:35: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     670 |         const struct assert_class __assertion = INITIALIZER;                   \
+         |                                   ^~~~~~~~~~~
+   include/kunit/test.h:787:9: note: in expansion of macro '_KUNIT_FAILED'
+     787 |         _KUNIT_FAILED(test,                                                    \
+         |         ^~~~~~~~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
 --
+   In file included from include/drm/drm_kunit_helpers.h:10,
+                    from drm_hdmi_state_helper_test.c:14:
+   drm_hdmi_state_helper_test.c: In function 'drm_test_check_max_tmds_rate_bpc_fallback_yuv420':
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+>> include/kunit/test.h:776:29: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     776 |         const typeof(right) __right = (right);                                 \
+         |                             ^~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+   In file included from include/linux/export.h:5,
+                    from include/linux/linkage.h:7,
+                    from include/linux/preempt.h:10,
+                    from include/linux/spinlock.h:56,
+                    from include/drm/drm_crtc.h:28,
+                    from include/drm/drm_atomic.h:31,
+                    from drm_hdmi_state_helper_test.c:7:
+>> include/linux/compiler.h:32:35: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+      32 |                         ______r = __builtin_expect(!!(x), expect);      \
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:44:26: note: in expansion of macro '__branch_check__'
+      44 | #  define likely(x)     (__branch_check__(x, 1, __builtin_constant_p(x)))
+         |                          ^~~~~~~~~~~~~~~~
+   include/kunit/test.h:784:13: note: in expansion of macro 'likely'
+     784 |         if (likely(__left op __right))                                         \
+         |             ^~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+   include/kunit/test.h:670:35: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     670 |         const struct assert_class __assertion = INITIALIZER;                   \
+         |                                   ^~~~~~~~~~~
+   include/kunit/test.h:787:9: note: in expansion of macro '_KUNIT_FAILED'
+     787 |         _KUNIT_FAILED(test,                                                    \
+         |         ^~~~~~~~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+   include/kunit/test.h:670:35: error: '-mgeneral-regs-only' is incompatible with the use of floating-point types
+     670 |         const struct assert_class __assertion = INITIALIZER;                   \
+         |                                   ^~~~~~~~~~~
+   include/kunit/test.h:787:9: note: in expansion of macro '_KUNIT_FAILED'
+     787 |         _KUNIT_FAILED(test,                                                    \
+         |         ^~~~~~~~~~~~~
+   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
+     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
+     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
+     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
+         |         ^~~~~~~~~~~~~~~~~~~
+   drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
+    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
+         |         ^~~~~~~~~~~~~~~
+
+
+vim +776 include/kunit/test.h
+
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  734  
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  735  #define KUNIT_TRUE_MSG_ASSERTION(test, assert_type, condition, fmt, ...)       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  736  	KUNIT_UNARY_ASSERTION(test,					       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  737  			      assert_type,				       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  738  			      condition,				       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  739  			      true,					       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  740  			      fmt,					       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  741  			      ##__VA_ARGS__)
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  742  
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  743  #define KUNIT_FALSE_MSG_ASSERTION(test, assert_type, condition, fmt, ...)      \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  744  	KUNIT_UNARY_ASSERTION(test,					       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  745  			      assert_type,				       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  746  			      condition,				       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  747  			      false,					       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  748  			      fmt,					       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  749  			      ##__VA_ARGS__)
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  750  
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  751  /*
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  752   * A factory macro for defining the assertions and expectations for the basic
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  753   * comparisons defined for the built in types.
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  754   *
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  755   * Unfortunately, there is no common type that all types can be promoted to for
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  756   * which all the binary operators behave the same way as for the actual types
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  757   * (for example, there is no type that long long and unsigned long long can
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  758   * both be cast to where the comparison result is preserved for all values). So
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  759   * the best we can do is do the comparison in the original types and then coerce
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  760   * everything to long long for printing; this way, the comparison behaves
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  761   * correctly and the printed out value usually makes sense without
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  762   * interpretation, but can always be interpreted to figure out the actual
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  763   * value.
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  764   */
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  765  #define KUNIT_BASE_BINARY_ASSERTION(test,				       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  766  				    assert_class,			       \
+064ff292aca500d Daniel Latypov  2022-01-25  767  				    format_func,			       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  768  				    assert_type,			       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  769  				    left,				       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  770  				    op,					       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  771  				    right,				       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  772  				    fmt,				       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  773  				    ...)				       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  774  do {									       \
+c2741453478badf Daniel Latypov  2022-01-27  775  	const typeof(left) __left = (left);				       \
+c2741453478badf Daniel Latypov  2022-01-27 @776  	const typeof(right) __right = (right);				       \
+2b6861e2372bac6 Daniel Latypov  2022-01-25  777  	static const struct kunit_binary_assert_text __text = {		       \
+2b6861e2372bac6 Daniel Latypov  2022-01-25  778  		.operation = #op,					       \
+2b6861e2372bac6 Daniel Latypov  2022-01-25  779  		.left_text = #left,					       \
+2b6861e2372bac6 Daniel Latypov  2022-01-25  780  		.right_text = #right,					       \
+2b6861e2372bac6 Daniel Latypov  2022-01-25  781  	};								       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  782  									       \
+8bd5d74babc9255 Mickaël Salaün  2024-04-08  783  	_KUNIT_SAVE_LOC(test);						       \
+97d453bc4007d4a Daniel Latypov  2022-09-30  784  	if (likely(__left op __right))					       \
+97d453bc4007d4a Daniel Latypov  2022-09-30  785  		break;							       \
+97d453bc4007d4a Daniel Latypov  2022-09-30  786  									       \
+97d453bc4007d4a Daniel Latypov  2022-09-30  787  	_KUNIT_FAILED(test,						       \
+21957f90b28f6bc Daniel Latypov  2022-01-13  788  		      assert_type,					       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  789  		      assert_class,					       \
+a8495ad8e973cb6 Daniel Latypov  2022-09-30  790  		      format_func,					       \
+697365c08679137 Daniel Latypov  2022-09-30  791  		      KUNIT_INIT_ASSERT(.text = &__text,		       \
+697365c08679137 Daniel Latypov  2022-09-30  792  					.left_value = __left,		       \
+697365c08679137 Daniel Latypov  2022-09-30  793  					.right_value = __right),	       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  794  		      fmt,						       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  795  		      ##__VA_ARGS__);					       \
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  796  } while (0)
+73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  797  
+
+-- 
 0-DAY CI Kernel Test Service
 https://github.com/intel/lkp-tests/wiki
 
