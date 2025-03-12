@@ -1,153 +1,151 @@
-Return-Path: <linux-kernel+bounces-557178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B304DA5D495
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:04:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61264A5D498
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:06:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2BC218964B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:04:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E993E3B5966
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF3F1993B9;
-	Wed, 12 Mar 2025 03:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB9F19D080;
+	Wed, 12 Mar 2025 03:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b="o3xvLH7Q"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="G1jxs9nR"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED1223DE;
-	Wed, 12 Mar 2025 03:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733B97DA6D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741748634; cv=none; b=CUH6CG/KlnfpUQ42CI5E3OqDt7fMgknxDu+YJQ+3PFgTo1gBiPMISzsEWG8jPQpdcY8ca+65/HrqTSttmcWftqfA50EqBZfkg1zIiuQxdPcVtamlcruW4l5QDDCA+0jvoSWGNkH8Z1dtmOY5ZvHuMJ/UWUtQlJ6UAuRuaz7kxs0=
+	t=1741748749; cv=none; b=cP5Qf8KYUNGlBJp7ONH/Xy3GtRAHL9YjNB5FJH06eeLwxuzdzJMYizgtEWEkA8VDTR4IMKiWDW4GwxcXPR3Q8OUHdSur/mfIbGa56w1ilDJ/LXDf/yKkt68S2TabyWSH+ldWxgs9f9283P5+HOmI7/9yKwOPnA0WvkWZIc3qXDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741748634; c=relaxed/simple;
-	bh=hfB6LmlNXRiXOFa6y6EEyyq6AJIU3mlhZ8TjPoU66kE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zt5exvs2LJcqtrJFLJOW8weVvPnZaEPY4qYG+GA8ih5GXH3TzjTzpJGYFkHx8nRWf19BPzYEOX4M1DyjqVsR8DCQOyevXpV4Rhz8BF13UNMD7sLdVVn4gB5TSMEPPwGPdCzxRIS9SKjTnsRBFYnw9K4DlWd/V9hkI4NdU1HiP/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org; spf=pass smtp.mailfrom=deepin.org; dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b=o3xvLH7Q; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deepin.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=deepin.org;
-	s=ukjg2408; t=1741748618;
-	bh=fWfXLtt/2BULxNvCvOu79qbQYocRmAcLwiJSdNZqkqw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=o3xvLH7Q6zRyexRGL2FUOlU7prvmwkmBvP9EHWHAhLrHoNF6XjKaKyS0He/gRy5TJ
-	 4v0XPOWh9zrwhyPZzj/8ZoUlbsmY5A1YHnru7q+GRAG0I8KbufFEhNw4akB6UxaZAZ
-	 yx27Yo+LbVJuLrg7/l70jUqfEWqrR3yiKxT1VsPo=
-X-QQ-mid: bizesmtpsz1t1741748612tpbdy52
-X-QQ-Originating-IP: 7fgsV5KrbksIUApRUS3a/spzhlTIJo2BCkd+jKCx6ck=
-Received: from mail-yw1-f178.google.com ( [209.85.128.178])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 12 Mar 2025 11:03:30 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 798136978951380909
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6febbd3b75cso50774187b3.0;
-        Tue, 11 Mar 2025 20:03:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJj1EDwYRTkbEyT8HXkWywx/cxvfA/2Kf0T9pJLT46x/EBzgnoYjhLAfZGI+bJmenuq+Q=@vger.kernel.org, AJvYcCWMbpn+DPg/LPcfDDTck0kO9W35kSnWscTo5TsaKTDWhr0X1ewZSGWYoEtb3NG8MlxHcuPJBg6H@vger.kernel.org, AJvYcCXjVTYFKi7k+4i3g+gjWOlXH35NRTv0fyOIfBMQaKF6TQELV1jHIrQ/8TqO7OOiEp+5+2xxI5lvpaK6isZ8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZPVWK7w0qGIZ9ynh6d4gesqw2ai6VWhh4BpxTqorZAWDjt3sA
-	PMiWOUzbwqPyjKR3Z+wymNQP3SVrXbNiXxN/un5gM0t3vQE2pc+ii2dpD6tNZdl3hAKG8mV7lIS
-	MnwfCv6TahunbiFAgyy6YMLbxObQ=
-X-Google-Smtp-Source: AGHT+IG8fzoRTgm+mPO00duGbFaQhdqA80HYU+jOry8PomyyzZFcQNqA3X4BezEcdEnxxa5v6r1H1PMn5ii4SzoB6uE=
-X-Received: by 2002:a05:690c:6c02:b0:6fd:3727:6471 with SMTP id
- 00721157ae682-6febf2a7db2mr295754987b3.6.1741748609898; Tue, 11 Mar 2025
- 20:03:29 -0700 (PDT)
+	s=arc-20240116; t=1741748749; c=relaxed/simple;
+	bh=AZVGWwpSs6vVA7gZ8qiQaYBcWp/tS3lx7Jf9klKPgbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iJk+zkPqybNsZnvGjEy+KNTLK3/ENb+ZiAWn3jbVXIeNKoMCgrAKt7um/iwXv882aCQEA2kfeUqUoiYzVPSxgWe0ORuI+qg5J8LxdG+4UtT8KZcRflD/ysRW/Lc280cv6PYW63XnnxKK2Ps9GD0cs5TFNizq490M6XkGEyNfp8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=G1jxs9nR; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-225477548e1so69506635ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 20:05:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1741748746; x=1742353546; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZxIJUbJst/FnriyNqJsBfUw8Y0pzbE0QuiyjoQaWCNg=;
+        b=G1jxs9nR1wX916WyUOWmw+jdyfOl1AYHXHQSTF5BON4UULyyQTjqBj97bd1dKGmvFa
+         71AVhzIrWlDDn+O7Wcyy9jb8EO25qS0v9zRbLz7UBiQetF4VoXPS0ACkZU3dL3XTDhi4
+         USywb72AcbfjGBesV25Rj3NufF4FVoBBq1owVHpojE61f0nd9BYVBxcZnmHg28SYEPKr
+         UU34v/t1rJ8XLwoqQdqj+oZ34dHLKOdUiZy+16HsPayu7/GtT7nwA1jGcOJihMQ/ncuI
+         jcsC5tXZoaNzjN4d1SEWB29b8Kl3H/Gq/6QaDwRj7eL2FvQlWiccYm4IsZmrBRj+TPj4
+         5bMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741748746; x=1742353546;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZxIJUbJst/FnriyNqJsBfUw8Y0pzbE0QuiyjoQaWCNg=;
+        b=JbUKr9N8hQhwhYLaHq/UXzBf8gKKI3tkO6XOrndXFA/YKHRJEmNSxqvVSpRVB9IrxS
+         q3lw0GM+wd9+CSN33HUY3ZWofEMT5LqxLm1ULTUbCboVHLQfIJY422L1GNVbp1TvknXZ
+         ibdhDmsHWOEaemfyIdR7MK7CVIJOqTe+K2Brt1IyUrAFb/XVjZK29nfpOBQOvHzhYzzd
+         ZPGkMD0aRAqhw6ilxcp8yeZJd4ZaJ34Y8ViKNelAccBuY6tX6fsr17rlxYBdAD3RM9Ck
+         doGseEd9wryRJSHYvihCyDEI0louiMxIGXXllfTbOr9VYMzcNjH9KdDvsi4nSgHViVOz
+         nMGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtlsR0K0qbZympo19Sf2z4oO0q+UmJuRyZNWuhiXcvfM3hJHmUeWQYzf9vr++oL5gGlYmwsVgtabqT7UQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKqjG3KjLmI0L11/cU+19ZgKoX2a8Guw6i7ScKFmIE4CRFrlyZ
+	tRCXI4+U2K9eU67XbrO8lN1eXUqIs8F0DLjtx5HBBxVY8pmnHBaWPP6qaWusW1c=
+X-Gm-Gg: ASbGncuAwYdoFlF/gT6XJZblOeF5GAyDdSlBzh96i/PeUUYvsyjwyHrgHXlb68/X1IR
+	jx3KWc5wWUlQ+VDQ61Ll1uCUT8ui3+CUiCsGvXDKupLfzF3M7EnwijXVV1rwz5oTmCBxIYchyCh
+	29qkNrzqc8zTk+2W3Wkc+3EGzrYlcp1bSfV0Eju64rNd/pMYhhOxX1Lj0yNrIXFhg2NX6JIYn1+
+	U8i9oQlLg78dKGQqG8BArwtvuUxEAHk7l56HBIlIJhZ8RLIsdSDJE/5/pr/thgTA9u6fY2JuFcO
+	sLxBHBFllrJPx8HgrU5p3OktnRA7dFBjcuAFUfQB8Xw4n5glUFGah0uO8kOcXV7g75x50E4WpNa
+	F
+X-Google-Smtp-Source: AGHT+IEMHkbd6b0xTC0DUBVIL+QnQKlshOyaYInuo6Qt8/bg6Hart/Gd6hDiomd/nTFlnaC/tp1Mrw==
+X-Received: by 2002:a05:6a00:174b:b0:736:5f75:4a3b with SMTP id d2e1a72fcca58-736aaa1cfaamr28287847b3a.7.1741748745637;
+        Tue, 11 Mar 2025 20:05:45 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736bf9f1852sm7433158b3a.117.2025.03.11.20.05.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 20:05:45 -0700 (PDT)
+Date: Wed, 12 Mar 2025 12:05:30 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] btrfs: ioctl: use registered buffer for
+ IORING_URING_CMD_FIXED
+Message-ID: <Z9D5-muwGmdVqSDl@sidongui-MacBookPro.local>
+References: <20250311114053.216359-1-sidong.yang@furiosa.ai>
+ <20250311114053.216359-3-sidong.yang@furiosa.ai>
+ <58181ba7-dcb5-4faa-a03a-8ff88cbffc24@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <05D0A9F7DE394601+20250311100555.310788-2-chenlinxuan@deepin.org> <2025031100-impromptu-pastrami-925c@gregkh>
-In-Reply-To: <2025031100-impromptu-pastrami-925c@gregkh>
-From: Chen Linxuan <chenlinxuan@deepin.org>
-Date: Wed, 12 Mar 2025 11:03:18 +0800
-X-Gmail-Original-Message-ID: <CDBA93EAD84C1583+CAC1kPDOXget0yMYPfQWbYPKrnSXL5RZ0f20Q8VmvT2zUTMBsNg@mail.gmail.com>
-X-Gm-Features: AQ5f1JqQVMl5MMY5tXg5YSS_HFN32cnbvkGJw6pL-RFnEJ8qfHj38hUDE-ogGL4
-Message-ID: <CAC1kPDOXget0yMYPfQWbYPKrnSXL5RZ0f20Q8VmvT2zUTMBsNg@mail.gmail.com>
-Subject: Re: [PATCH stable 6.6] lib/buildid: Handle memfd_secret() files in build_id_parse()
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Chen Linxuan <chenlinxuan@deepin.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Sasha Levin <sashal@kernel.org>, Jann Horn <jannh@google.com>, 
-	Alexey Dobriyan <adobriyan@gmail.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, stable@vger.kernel.org, 
-	Eduard Zingerman <eddyz87@gmail.com>, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:deepin.org:qybglogicsvrgz:qybglogicsvrgz7a-0
-X-QQ-XMAILINFO: NEuxXjgkfD8wXbdnVy+MiOVveXMA+NSoQYdPPfa/rLIyVO8CmZ0VGCzO
-	9Yj6+R4lpgVqtPiMXoElcp0J5vXIZr8u24BkLx9Iv1xUGJYf9jTxjjD0aPkptsMuL8Q+2R2
-	cpwGPGSGnK7cTEK5+2yYwsS/t4Ey44nN/qTWBYOj8S0dbpF2JZP2ATTYMs473u1D1u8vKXu
-	6gDYuDjalHgBX7+z0n1hCEFoynOwgHp/QPWlw5CHXgJXv7LyrhH//zo3ozyzTFzsnDpoceJ
-	Cl7bH+SRSbBUz6cTaG4XgansIHvHHxgsGdMJxEyIjNxSHhiX1z626nUYAcOnh/7jLAc6MAY
-	HOzN65Aonsab8bf0Er01/EncUacv58NxsIAlLtm/KjlRf9nivM+fZY2/cmNi9gcFSRcCLGq
-	RZfayYRHBDyvKZTzncgMY1YDCVanm0XcGarEEBq7SrMk3aVsr52Mgja7DeYR8GXUtrlAQ6y
-	Z8+mK5socpWEBgMUPuKt2sZRdNaBT+VT5qeEe4wCmchnnfLLvYq81YQ24CH+8iFjSCWWdnX
-	zHTTQ6Mor5xKWki41y37HyNKDzs0rcLlTJBAt+JV7772E5ZN2wizxPJCKOsYhJo03ge3QM8
-	tfv2Vuzmvsnb6au5B/zDtEETFJdnDszTun0RdE5c0XHaMK9u87tkB+/1ShLmR3C6Rd7qhii
-	QunpR0vhPvbfFoG2wnatR2t6S3z4tA3B0Lrk2JrjfUWGcbQcYiyo0oCZvWlMmXyCxOjD/CU
-	Oi/RiL1ilwObKi7uwMrJdWEvnUbRVFOMhgVOcWF5AeueOycdQ6NLOWEBdxdJ1KNdsksex1/
-	dLMtY34o+kdB+u5GxzA3KbtOxcCqwRubA3YaCiIgs8yceg5tKZ4Agru7db3fVHeF73+y35Z
-	M6NelGP8uHMocyPae6IDJRTs+qOk81W94xGWhBl6mgSjZBmsLMiv0z20VqXR+yhMS2qeWz1
-	Q6msU1O5ghyB2GCV7xfAdwxjMotO9RgvqpEHjQ7UgnYEtvexAYprCL+t4
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <58181ba7-dcb5-4faa-a03a-8ff88cbffc24@gmail.com>
 
-Greg KH <gregkh@linuxfoundation.org> =E4=BA=8E2025=E5=B9=B43=E6=9C=8811=E6=
-=97=A5=E5=91=A8=E4=BA=8C 19:14=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Tue, Mar 11, 2025 at 06:05:55PM +0800, Chen Linxuan wrote:
-> > Backport of a similar change from commit 5ac9b4e935df ("lib/buildid:
-> > Handle memfd_secret() files in build_id_parse()") to address an issue
-> > where accessing secret memfd contents through build_id_parse() would
-> > trigger faults.
-> >
-> > Original report and repro can be found in [0].
-> >
-> >   [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
-> >
-> > This repro will cause BUG: unable to handle kernel paging request in
-> > build_id_parse in 5.15/6.1/6.6.
-> >
-> > Some other discussions can be found in [1].
-> >
-> >   [1] https://lore.kernel.org/bpf/20241104175256.2327164-1-jolsa@kernel=
-.org/T/#u
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 88a16a130933 ("perf: Add build id data in mmap2 event")
-> > Signed-off-by: Chen Linxuan <chenlinxuan@deepin.org>
->
-> You dropped all the original signed-off-by and changelog text.  Just
+On Tue, Mar 11, 2025 at 12:55:48PM +0000, Pavel Begunkov wrote:
 
-The original commit is based on commit de3ec364c3c3 ("lib/buildid: add
-single folio-based file reader abstraction"). `git cherry-pick` result lots=
- of
-conflicts. So I rewrite same logic on old code.
+Hi Pavel,
 
-> provide a backport with all of the original information, and then if you
-> had to do something "different", put that in the signed-off-by area.
-> THere are loads of examples on the list for how that was done.
+> On 3/11/25 11:40, Sidong Yang wrote:
+> > This patch supports IORING_URING_CMD_FIXED flags in io-uring cmd. It
+> > means that user provided buf_index in sqe that is registered before
+> > submitting requests. In this patch, btrfs_uring_encoded_read() makes
+> > iov_iter bvec type by checking the io-uring cmd flag. And there is
+> > additional iou_vec field in btrfs_uring_priv for remaining bvecs
+> > lifecycle.
+> > 
+> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> > ---
+> >   fs/btrfs/ioctl.c | 26 +++++++++++++++++++++-----
+> >   1 file changed, 21 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> > index 6c18bad53cd3..586671eea622 100644
+> > --- a/fs/btrfs/ioctl.c
+> > +++ b/fs/btrfs/ioctl.c
+> > @@ -4643,6 +4643,7 @@ struct btrfs_uring_priv {
+> >   	struct page **pages;
+> >   	unsigned long nr_pages;
+> >   	struct kiocb iocb;
+> > +	struct iou_vec iou_vec;
+> 
+> This structure should not be leaked out of core io_uring ...
 
-Do you means that I should:
+Agreed, but this was needed that priv needs to have bvec than iovec.
+Thinking about this, just adding bvec or make union with iov is
+simple way to do this.
 
-1. Run git cherry-pick 5ac9b4e935df on stable branches;
-2. Resolve conflicts by drop all changes then apply changes
-   as I send in this email;
-3. Note why content of this patch is different from the original
-   one after original signed-off-by area, but before the --- separator.
+> 
+> >   	struct iovec *iov;
+> >   	struct iov_iter iter;
+> >   	struct extent_state *cached_state;
+> > @@ -4711,6 +4712,8 @@ static void btrfs_uring_read_finished(struct io_uring_cmd *cmd, unsigned int iss
+> >   	kfree(priv->pages);
+> >   	kfree(priv->iov);
+> > +	if (priv->iou_vec.iovec)
+> > +		kfree(priv->iou_vec.iovec);
+> 
+> ... exactly because if this. This line relies on details it
+> shouldn't.
 
-I am not familiar with contributing to stable kernel tree.
-Sorry for bothering.
+Yes, we don't need this.
 
->
-> thanks,
->
-> greg k-h
->
->
+Thanks,
+Sidong
+
+> 
+> -- 
+> Pavel Begunkov
+> 
 
