@@ -1,372 +1,140 @@
-Return-Path: <linux-kernel+bounces-557087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57646A5D374
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:04:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D14EA5D379
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:07:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B08317A63F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3796189DFBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAE22F43;
-	Wed, 12 Mar 2025 00:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188C34C9D;
+	Wed, 12 Mar 2025 00:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBgmMVry"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c8b/YNwO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6049F17C2;
-	Wed, 12 Mar 2025 00:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89484A00
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741737886; cv=none; b=pOcwiro6IsBf/HQBu6T3hUf+Q4GTK8qhr1ajkAxgBlN21g21btpmMZhKSjhrlRzhIi541Scuz/KPj0+2JzuP04vKIuLOEjCmLe+/wkBWJ0zidSn0ARb11uSlxurUyoIfH+n2rwnz/IidDQ5H26j2vQEsGYHayAA6aue87EBs7Tk=
+	t=1741738058; cv=none; b=GJwQvuX51WD9jUGPUjrQ3WdSs2DqsaTn8hxr7zDBHDEDV0pZj+mBBZTCQdZl8cILynPvfhkO2hmam6flUIEg/fK6A/Y2cnBfrrqP+4Hl8ht+um0d7sqfbbb8dWEgCnkESSDTgTzChhUKG4ObLmUO1JJByf/KEO81LM5y+zTqNlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741737886; c=relaxed/simple;
-	bh=G7WiqVAnNKWOz6sMNsSRttvx79bcWvs9CVs0vQxasa8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h+njTPhwEYRrTa5Mn5cGE7GQF/Liwi2RzGjOLOVrUpZf4OIoB4uQ09r87jC418QRN9Zl5pQupCpXHUm56VA1KBHDUmkY0l4oJHxBdT+7CdmcF4M1U4KgQQg3lKJjgZXuRCN5uQb0vuRN7V8AZGB6huc116WpOHEbsQWSK+xEmZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBgmMVry; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC900C4CEE9;
-	Wed, 12 Mar 2025 00:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741737885;
-	bh=G7WiqVAnNKWOz6sMNsSRttvx79bcWvs9CVs0vQxasa8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rBgmMVryMhnGy2J/6kOqSzzVTp7oDjoXZeKihPHV3jW0tM2+Ii7q17DZzDCfsoZ2G
-	 uesRYA6JAgLBQMknjmqfprqoeT6T0mMWcBbq0h8rsYCL5j1ROZrcW7dVV3ZznnAPUB
-	 lRGH5IGDDXPQyX477H6k/UhGSgBN/MpaIATga++DcOqPLuPuo6eKaMn2iXgTx83b7P
-	 GmWBkrZpyBzxkBCJEHcrc5WzAVGiDFMwGzfqlKjqtmvG/tQqOssZt2I1TwHUYfArU6
-	 HOcVX/oxxi1YMswoTRk1JyNjNtDPyiKKi0ta5gOlY1doNERFrSG4bE5DMJXqRbe4jw
-	 MbC6728k3HrVA==
-From: Kees Cook <kees@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kunit/fortify: Replace "volatile" with OPTIMIZER_HIDE_VAR()
-Date: Tue, 11 Mar 2025 17:04:40 -0700
-Message-Id: <20250312000439.work.112-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741738058; c=relaxed/simple;
+	bh=ahoiaCICAThel6fGzAyXhFBeyWeKIoJcx5Q+1e5zZN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uV8i4sJqU0wuJ//xD6DqDCM5OZFTrsc7VGB2qp2suNwq/4SDLnvl7AUGr2OkeoGIIk7uohq4ToUjxkh46X/jB72s8FCrZQgwQbz/K55B4g/XeoOhc7OdUFGYbLBGj80tpOjRwBw3bzZGrkc+QEGLU8vccfySt164ppk/c+emj4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c8b/YNwO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741738055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+Jp3d8TwivY0inesFFsBMmfW4NNIDtSVjUkd3EkZcf4=;
+	b=c8b/YNwOHP7J7drlwWoxoirX7EupAtG4LZTPFPSxOnJ3Gd9w5688d/Ng2yGtJ2reHkJBNY
+	XAM9upSqu+yhuiDjAm5XRNpRWNwnZXgxAOmHc43nSYtqqh1kggCeIMUFEt5zwt3hqFM4wJ
+	FWfp/so7rKASrR2EC584eW2VzOWQEt8=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-tVpdxDOENfqjZCOHY5FruQ-1; Tue,
+ 11 Mar 2025 20:07:34 -0400
+X-MC-Unique: tVpdxDOENfqjZCOHY5FruQ-1
+X-Mimecast-MFC-AGG-ID: tVpdxDOENfqjZCOHY5FruQ_1741738051
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F07CE195608A;
+	Wed, 12 Mar 2025 00:07:29 +0000 (UTC)
+Received: from h1.redhat.com (unknown [10.22.88.56])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 20D971956094;
+	Wed, 12 Mar 2025 00:07:20 +0000 (UTC)
+From: Nico Pache <npache@redhat.com>
+To: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	xen-devel@lists.xenproject.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org
+Cc: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	jerrin.shaji-george@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	mst@redhat.com,
+	david@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com,
+	jgross@suse.com,
+	sstabellini@kernel.org,
+	oleksandr_tyshchenko@epam.com,
+	akpm@linux-foundation.org,
+	hannes@cmpxchg.org,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	nphamcs@gmail.com,
+	yosry.ahmed@linux.dev,
+	kanchana.p.sridhar@intel.com,
+	alexander.atanasov@virtuozzo.com
+Subject: [RFC 0/5] track memory used by balloon drivers
+Date: Tue, 11 Mar 2025 18:06:55 -0600
+Message-ID: <20250312000700.184573-1-npache@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13029; i=kees@kernel.org; h=from:subject:message-id; bh=G7WiqVAnNKWOz6sMNsSRttvx79bcWvs9CVs0vQxasa8=; b=owGbwMvMwCVmps19z/KJym7G02pJDOkXzk+34NV60ZAfvup+de6lKMktZ3bFG3MbSh9SSJsox JZz4ejkjlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgIkc0GNkuK//1Hv1oTuCJ75H s93XNInadpnfwDB5atBdt8ZQhm62j4wM9+5sYU95aXzg0J5d+SwhBgtOB7Y7Lc1wi1OVfH2lsre VEwA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-It does seem that using "volatile" isn't going to be sane compared to
-using OPTIMIZER_HIDE_VAR() going forward. Some strange interactions[1]
-with the sanitizers have been observed in the self-test code, so replace
-the logic.
+This series introduces a way to track memory used by balloon drivers.
 
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Closes: https://github.com/ClangBuiltLinux/linux/issues/2075 [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: linux-hardening@vger.kernel.org
----
- lib/tests/fortify_kunit.c | 139 +++++++++++++++++++++-----------------
- 1 file changed, 77 insertions(+), 62 deletions(-)
+Add a NR_BALLOON_PAGES counter to track how many pages are reclaimed by the
+balloon drivers. First add the accounting, then updates the balloon drivers
+(virtio, Hyper-V, VMware, and Xen) to maintain this counter.
 
-diff --git a/lib/tests/fortify_kunit.c b/lib/tests/fortify_kunit.c
-index 18dcdedf777f..29ffc62a71e3 100644
---- a/lib/tests/fortify_kunit.c
-+++ b/lib/tests/fortify_kunit.c
-@@ -411,8 +411,6 @@ struct fortify_padding {
- 	char buf[32];
- 	unsigned long bytes_after;
- };
--/* Force compiler into not being able to resolve size at compile-time. */
--static volatile int unconst;
- 
- static void fortify_test_strlen(struct kunit *test)
- {
-@@ -537,57 +535,56 @@ static void fortify_test_strncpy(struct kunit *test)
- {
- 	struct fortify_padding pad = { };
- 	char src[] = "Copy me fully into a small buffer and I will overflow!";
-+	size_t sizeof_buf = sizeof(pad.buf);
-+
-+	OPTIMIZER_HIDE_VAR(sizeof_buf);
- 
- 	/* Destination is %NUL-filled to start with. */
- 	KUNIT_EXPECT_EQ(test, pad.bytes_before, 0);
--	KUNIT_EXPECT_EQ(test, pad.buf[sizeof(pad.buf) - 1], '\0');
--	KUNIT_EXPECT_EQ(test, pad.buf[sizeof(pad.buf) - 2], '\0');
--	KUNIT_EXPECT_EQ(test, pad.buf[sizeof(pad.buf) - 3], '\0');
-+	KUNIT_EXPECT_EQ(test, pad.buf[sizeof_buf - 1], '\0');
-+	KUNIT_EXPECT_EQ(test, pad.buf[sizeof_buf - 2], '\0');
-+	KUNIT_EXPECT_EQ(test, pad.buf[sizeof_buf - 3], '\0');
- 	KUNIT_EXPECT_EQ(test, pad.bytes_after, 0);
- 
- 	/* Legitimate strncpy() 1 less than of max size. */
--	KUNIT_ASSERT_TRUE(test, strncpy(pad.buf, src,
--					sizeof(pad.buf) + unconst - 1)
-+	KUNIT_ASSERT_TRUE(test, strncpy(pad.buf, src, sizeof_buf - 1)
- 				== pad.buf);
- 	KUNIT_EXPECT_EQ(test, fortify_write_overflows, 0);
- 	/* Only last byte should be %NUL */
--	KUNIT_EXPECT_EQ(test, pad.buf[sizeof(pad.buf) - 1], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 3], '\0');
-+	KUNIT_EXPECT_EQ(test, pad.buf[sizeof_buf - 1], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 3], '\0');
- 
- 	/* Legitimate (though unterminated) max-size strncpy. */
--	KUNIT_ASSERT_TRUE(test, strncpy(pad.buf, src,
--					sizeof(pad.buf) + unconst)
-+	KUNIT_ASSERT_TRUE(test, strncpy(pad.buf, src, sizeof_buf)
- 				== pad.buf);
- 	KUNIT_EXPECT_EQ(test, fortify_write_overflows, 0);
- 	/* No trailing %NUL -- thanks strncpy API. */
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 1], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 1], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
- 	/* But we will not have gone beyond. */
- 	KUNIT_EXPECT_EQ(test, pad.bytes_after, 0);
- 
- 	/* Now verify that FORTIFY is working... */
--	KUNIT_ASSERT_TRUE(test, strncpy(pad.buf, src,
--					sizeof(pad.buf) + unconst + 1)
-+	KUNIT_ASSERT_TRUE(test, strncpy(pad.buf, src, sizeof_buf + 1)
- 				== pad.buf);
- 	/* Should catch the overflow. */
- 	KUNIT_EXPECT_EQ(test, fortify_write_overflows, 1);
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 1], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 1], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
- 	/* And we will not have gone beyond. */
- 	KUNIT_EXPECT_EQ(test, pad.bytes_after, 0);
- 
- 	/* And further... */
--	KUNIT_ASSERT_TRUE(test, strncpy(pad.buf, src,
--					sizeof(pad.buf) + unconst + 2)
-+	KUNIT_ASSERT_TRUE(test, strncpy(pad.buf, src, sizeof_buf + 2)
- 				== pad.buf);
- 	/* Should catch the overflow. */
- 	KUNIT_EXPECT_EQ(test, fortify_write_overflows, 2);
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 1], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 1], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
- 	/* And we will not have gone beyond. */
- 	KUNIT_EXPECT_EQ(test, pad.bytes_after, 0);
- }
-@@ -596,55 +593,56 @@ static void fortify_test_strscpy(struct kunit *test)
- {
- 	struct fortify_padding pad = { };
- 	char src[] = "Copy me fully into a small buffer and I will overflow!";
-+	size_t sizeof_buf = sizeof(pad.buf);
-+	size_t sizeof_src = sizeof(src);
-+
-+	OPTIMIZER_HIDE_VAR(sizeof_buf);
-+	OPTIMIZER_HIDE_VAR(sizeof_src);
- 
- 	/* Destination is %NUL-filled to start with. */
- 	KUNIT_EXPECT_EQ(test, pad.bytes_before, 0);
--	KUNIT_EXPECT_EQ(test, pad.buf[sizeof(pad.buf) - 1], '\0');
--	KUNIT_EXPECT_EQ(test, pad.buf[sizeof(pad.buf) - 2], '\0');
--	KUNIT_EXPECT_EQ(test, pad.buf[sizeof(pad.buf) - 3], '\0');
-+	KUNIT_EXPECT_EQ(test, pad.buf[sizeof_buf - 1], '\0');
-+	KUNIT_EXPECT_EQ(test, pad.buf[sizeof_buf - 2], '\0');
-+	KUNIT_EXPECT_EQ(test, pad.buf[sizeof_buf - 3], '\0');
- 	KUNIT_EXPECT_EQ(test, pad.bytes_after, 0);
- 
- 	/* Legitimate strscpy() 1 less than of max size. */
--	KUNIT_ASSERT_EQ(test, strscpy(pad.buf, src,
--				      sizeof(pad.buf) + unconst - 1),
-+	KUNIT_ASSERT_EQ(test, strscpy(pad.buf, src, sizeof_buf - 1),
- 			-E2BIG);
- 	KUNIT_EXPECT_EQ(test, fortify_write_overflows, 0);
- 	/* Keeping space for %NUL, last two bytes should be %NUL */
--	KUNIT_EXPECT_EQ(test, pad.buf[sizeof(pad.buf) - 1], '\0');
--	KUNIT_EXPECT_EQ(test, pad.buf[sizeof(pad.buf) - 2], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 3], '\0');
-+	KUNIT_EXPECT_EQ(test, pad.buf[sizeof_buf - 1], '\0');
-+	KUNIT_EXPECT_EQ(test, pad.buf[sizeof_buf - 2], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 3], '\0');
- 
- 	/* Legitimate max-size strscpy. */
--	KUNIT_ASSERT_EQ(test, strscpy(pad.buf, src,
--				      sizeof(pad.buf) + unconst),
-+	KUNIT_ASSERT_EQ(test, strscpy(pad.buf, src, sizeof_buf),
- 			-E2BIG);
- 	KUNIT_EXPECT_EQ(test, fortify_write_overflows, 0);
- 	/* A trailing %NUL will exist. */
--	KUNIT_EXPECT_EQ(test, pad.buf[sizeof(pad.buf) - 1], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
-+	KUNIT_EXPECT_EQ(test, pad.buf[sizeof_buf - 1], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
- 
- 	/* Now verify that FORTIFY is working... */
--	KUNIT_ASSERT_EQ(test, strscpy(pad.buf, src,
--				      sizeof(pad.buf) + unconst + 1),
-+	KUNIT_ASSERT_EQ(test, strscpy(pad.buf, src, sizeof_buf + 1),
- 			-E2BIG);
- 	/* Should catch the overflow. */
- 	KUNIT_EXPECT_EQ(test, fortify_write_overflows, 1);
--	KUNIT_EXPECT_EQ(test, pad.buf[sizeof(pad.buf) - 1], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
-+	KUNIT_EXPECT_EQ(test, pad.buf[sizeof_buf - 1], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
- 	/* And we will not have gone beyond. */
- 	KUNIT_EXPECT_EQ(test, pad.bytes_after, 0);
- 
- 	/* And much further... */
--	KUNIT_ASSERT_EQ(test, strscpy(pad.buf, src,
--				      sizeof(src) * 2 + unconst),
-+	KUNIT_ASSERT_EQ(test, strscpy(pad.buf, src, sizeof_src * 2),
- 			-E2BIG);
- 	/* Should catch the overflow. */
- 	KUNIT_EXPECT_EQ(test, fortify_write_overflows, 2);
--	KUNIT_EXPECT_EQ(test, pad.buf[sizeof(pad.buf) - 1], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
--	KUNIT_EXPECT_NE(test, pad.buf[sizeof(pad.buf) - 2], '\0');
-+	KUNIT_EXPECT_EQ(test, pad.buf[sizeof_buf - 1], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
-+	KUNIT_EXPECT_NE(test, pad.buf[sizeof_buf - 2], '\0');
- 	/* And we will not have gone beyond. */
- 	KUNIT_EXPECT_EQ(test, pad.bytes_after, 0);
- }
-@@ -784,7 +782,9 @@ static void fortify_test_strlcat(struct kunit *test)
- 	struct fortify_padding pad = { };
- 	char src[sizeof(pad.buf)] = { };
- 	int i, partial;
--	int len = sizeof(pad.buf) + unconst;
-+	int len = sizeof(pad.buf);
-+
-+	OPTIMIZER_HIDE_VAR(len);
- 
- 	/* Fill 15 bytes with valid characters. */
- 	partial = sizeof(src) / 2 - 1;
-@@ -874,28 +874,32 @@ struct fortify_zero_sized {
- #define __fortify_test(memfunc)					\
- static void fortify_test_##memfunc(struct kunit *test)		\
- {								\
--	struct fortify_zero_sized zero = { };			\
-+	struct fortify_zero_sized empty = { };			\
- 	struct fortify_padding pad = { };			\
- 	char srcA[sizeof(pad.buf) + 2];				\
- 	char srcB[sizeof(pad.buf) + 2];				\
--	size_t len = sizeof(pad.buf) + unconst;			\
-+	size_t len = sizeof(pad.buf);				\
-+	size_t zero = 0;					\
-+								\
-+	OPTIMIZER_HIDE_VAR(len);				\
-+	OPTIMIZER_HIDE_VAR(zero);				\
- 								\
- 	memset(srcA, 'A', sizeof(srcA));			\
- 	KUNIT_ASSERT_EQ(test, srcA[0], 'A');			\
- 	memset(srcB, 'B', sizeof(srcB));			\
- 	KUNIT_ASSERT_EQ(test, srcB[0], 'B');			\
- 								\
--	memfunc(pad.buf, srcA, 0 + unconst);			\
-+	memfunc(pad.buf, srcA, zero);				\
- 	KUNIT_EXPECT_EQ(test, pad.buf[0], '\0');		\
- 	KUNIT_EXPECT_EQ(test, fortify_read_overflows, 0);	\
- 	KUNIT_EXPECT_EQ(test, fortify_write_overflows, 0);	\
--	memfunc(pad.buf + 1, srcB, 1 + unconst);		\
-+	memfunc(pad.buf + 1, srcB, zero + 1);			\
- 	KUNIT_EXPECT_EQ(test, pad.buf[0], '\0');		\
- 	KUNIT_EXPECT_EQ(test, pad.buf[1], 'B');			\
- 	KUNIT_EXPECT_EQ(test, pad.buf[2], '\0');		\
- 	KUNIT_EXPECT_EQ(test, fortify_read_overflows, 0);	\
- 	KUNIT_EXPECT_EQ(test, fortify_write_overflows, 0);	\
--	memfunc(pad.buf, srcA, 1 + unconst);			\
-+	memfunc(pad.buf, srcA, zero + 1);			\
- 	KUNIT_EXPECT_EQ(test, pad.buf[0], 'A');			\
- 	KUNIT_EXPECT_EQ(test, pad.buf[1], 'B');			\
- 	KUNIT_EXPECT_EQ(test, fortify_read_overflows, 0);	\
-@@ -921,10 +925,10 @@ static void fortify_test_##memfunc(struct kunit *test)		\
- 	/* Reset error counter. */				\
- 	fortify_write_overflows = 0;				\
- 	/* Copy nothing into nothing: no errors. */		\
--	memfunc(zero.buf, srcB, 0 + unconst);			\
-+	memfunc(empty.buf, srcB, zero);				\
- 	KUNIT_EXPECT_EQ(test, fortify_read_overflows, 0);	\
- 	KUNIT_EXPECT_EQ(test, fortify_write_overflows, 0);	\
--	memfunc(zero.buf, srcB, 1 + unconst);			\
-+	memfunc(empty.buf, srcB, zero + 1);			\
- 	KUNIT_EXPECT_EQ(test, fortify_read_overflows, 0);	\
- 	KUNIT_EXPECT_EQ(test, fortify_write_overflows, 1);	\
- }
-@@ -936,7 +940,9 @@ static void fortify_test_memscan(struct kunit *test)
- 	char haystack[] = "Where oh where is my memory range?";
- 	char *mem = haystack + strlen("Where oh where is ");
- 	char needle = 'm';
--	size_t len = sizeof(haystack) + unconst;
-+	size_t len = sizeof(haystack);
-+
-+	OPTIMIZER_HIDE_VAR(len);
- 
- 	KUNIT_ASSERT_PTR_EQ(test, memscan(haystack, needle, len),
- 				  mem);
-@@ -955,7 +961,9 @@ static void fortify_test_memchr(struct kunit *test)
- 	char haystack[] = "Where oh where is my memory range?";
- 	char *mem = haystack + strlen("Where oh where is ");
- 	char needle = 'm';
--	size_t len = sizeof(haystack) + unconst;
-+	size_t len = sizeof(haystack);
-+
-+	OPTIMIZER_HIDE_VAR(len);
- 
- 	KUNIT_ASSERT_PTR_EQ(test, memchr(haystack, needle, len),
- 				  mem);
-@@ -974,7 +982,9 @@ static void fortify_test_memchr_inv(struct kunit *test)
- 	char haystack[] = "Where oh where is my memory range?";
- 	char *mem = haystack + 1;
- 	char needle = 'W';
--	size_t len = sizeof(haystack) + unconst;
-+	size_t len = sizeof(haystack);
-+
-+	OPTIMIZER_HIDE_VAR(len);
- 
- 	/* Normal search is okay. */
- 	KUNIT_ASSERT_PTR_EQ(test, memchr_inv(haystack, needle, len),
-@@ -993,8 +1003,11 @@ static void fortify_test_memcmp(struct kunit *test)
- {
- 	char one[] = "My mind is going ...";
- 	char two[] = "My mind is going ... I can feel it.";
--	size_t one_len = sizeof(one) + unconst - 1;
--	size_t two_len = sizeof(two) + unconst - 1;
-+	size_t one_len = sizeof(one) - 1;
-+	size_t two_len = sizeof(two) - 1;
-+
-+	OPTIMIZER_HIDE_VAR(one_len);
-+	OPTIMIZER_HIDE_VAR(two_len);
- 
- 	/* We match the first string (ignoring the %NUL). */
- 	KUNIT_ASSERT_EQ(test, memcmp(one, two, one_len), 0);
-@@ -1015,7 +1028,9 @@ static void fortify_test_kmemdup(struct kunit *test)
- {
- 	char src[] = "I got Doom running on it!";
- 	char *copy;
--	size_t len = sizeof(src) + unconst;
-+	size_t len = sizeof(src);
-+
-+	OPTIMIZER_HIDE_VAR(len);
- 
- 	/* Copy is within bounds. */
- 	copy = kmemdup(src, len, GFP_KERNEL);
+This makes the information visible in memory reporting interfaces like
+/proc/meminfo, show_mem, and OOM reporting.
+
+This provides admins visibility into their VM balloon sizes without
+requiring different virtualization tooling. Furthermore, this information
+is helpful when debugging an OOM inside a VM.
+
+Tested: virtio_balloon, run stress-ng, inflate balloon, oom prints
+Signed-off-by: Nico Pache <npache@redhat.com>
+
+Nico Pache (5):
+  meminfo: add a per node counter for balloon drivers
+  virtio_balloon: update the NR_BALLOON_PAGES state
+  hv_balloon: update the NR_BALLOON_PAGES state
+  vmx_balloon: update the NR_BALLOON_PAGES state
+  xen: balloon: update the NR_BALLOON_PAGES state
+
+ drivers/hv/hv_balloon.c         | 2 ++
+ drivers/misc/vmw_balloon.c      | 5 ++++-
+ drivers/virtio/virtio_balloon.c | 4 ++++
+ drivers/xen/balloon.c           | 4 ++++
+ fs/proc/meminfo.c               | 2 ++
+ include/linux/mmzone.h          | 1 +
+ mm/memcontrol.c                 | 1 +
+ mm/show_mem.c                   | 4 +++-
+ mm/vmstat.c                     | 1 +
+ 9 files changed, 22 insertions(+), 2 deletions(-)
+
 -- 
-2.34.1
+2.48.1
 
 
