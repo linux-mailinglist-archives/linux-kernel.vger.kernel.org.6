@@ -1,125 +1,178 @@
-Return-Path: <linux-kernel+bounces-557486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23829A5D9DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:50:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C1FA5D9EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:53:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A578F3A9002
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:50:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5990416784E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD5D23C8A5;
-	Wed, 12 Mar 2025 09:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W9dF3Z/2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9989222E402;
-	Wed, 12 Mar 2025 09:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8BE23BF91;
+	Wed, 12 Mar 2025 09:53:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C541E3DFC;
+	Wed, 12 Mar 2025 09:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741773005; cv=none; b=WdekgeFO97mAMj888twyho65yzyVvDHK04jLcZ3b5oNeN4cinPU27MurkDmToQmzqwSynxbgWl5fuZRhCFKdA1CIA5fojELNd74xoFCGZmni/XCV56nkXWcLpATqZtlVUZOHR8/ESVugaIWSKfA+/9PnN8T0UMhbnsx7BlEf72Q=
+	t=1741773215; cv=none; b=fZqntCRknm+hEYbyyPAjiK5PAHHvKLkzOuLGnfroCjwb376sPPBRqLXiQfEExzPm5IRBqbk+TVAZ1TDBUS4EstwnpOhqQ/gth1xvRsJhLfhrPO7yS0wEWgkBHss3mIIWLGVXcvlLRd1kE5spml8LUII8hJkCVsyik3OSOFMNshU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741773005; c=relaxed/simple;
-	bh=MI8AoERqihUYmL4TjIkwjFUKRnq/VTLzWRTXWKupLf0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lR7gJ4fbxJC732w1w+bt3dW73HvuduxUQROZ63pUqSJ4OkboJiqesSsMuaSsOZPiBk3KvMNeEgcD5Za2saSDkEhoiBudn4tAsOUKF9WxCoNwUwHrgn9DwmcqCuG+/oxaRW8TzDZ/1HIMdP41BwToRJQ0qjxInjz7XJt6SMbOi+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W9dF3Z/2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BMHA0R013950;
-	Wed, 12 Mar 2025 09:50:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=kgideWmWyJcC3sljKVJ0uN
-	4O1r1uSFuIk7vp+zHSawA=; b=W9dF3Z/2CoMGkkmK6GZHztRN6Gv+0Im67Flox2
-	Va25gqsMipJOkmP8HyVGNdgvTcnCXNZo4WnbEH7Ca5RkTh555gc2n5zNtxcOOuFd
-	ADmIxMbkzVZm7MzSzyYA7naMA71JTwjtMHwl+iVdOAHLxXHNSB2s4xsqvCnpXXR8
-	62Hjljp5zTSoQICgA8F7grgDEiYuW+DHUh1foB3kTd8cU7NGcuvXlKj+QlXrnR3h
-	frqj8RuTVubwkUI9do8/qy845oyeIQg70pCkAueL0P9DaCOz0t+VXraIRLjc9zRM
-	aqCqybJdIBE6sO5cW5zcOxfKlj0P7P+eQQX/Vr/61OHdxomw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2p1wry-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 09:50:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52C9o1Nc009451
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 09:50:01 GMT
-Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 12 Mar 2025 02:49:57 -0700
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
-Subject: [PATCH v1] arm64: dts: qcom: ipq5424: add reserved memory region for bootloader
-Date: Wed, 12 Mar 2025 15:19:48 +0530
-Message-ID: <20250312094948.3376126-1-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741773215; c=relaxed/simple;
+	bh=WFOi1DBsVVjuQ0WjnTCWrENVLWLA6uv3mISED+ocbAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OUAYPXNdAalqES1R1FJr9+/5O5xqnZzLtkZynnapW/k00Jc+x/kedUIDn0ML98gBGp00gFH73JCXqlzHLCjVNav9UouLorsJoFEX2gGCKJEbSvI8OXDJr+A21NZXWh0Mdw5Hi6/hb5LBZ5xuFfG8Tcj5vQQgMM9+Z8aredwFzmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26968152B;
+	Wed, 12 Mar 2025 02:53:43 -0700 (PDT)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 47F213F5A1;
+	Wed, 12 Mar 2025 02:53:29 -0700 (PDT)
+Message-ID: <724e00ea-eb27-46f1-acc3-465c04ffc84d@arm.com>
+Date: Wed, 12 Mar 2025 10:53:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/8] sched/deadline: Rebuild root domain accounting
+ after every update
+To: Waiman Long <llong@redhat.com>, Juri Lelli <juri.lelli@redhat.com>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Qais Yousef <qyousef@layalina.io>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Swapnil Sapkal <swapnil.sapkal@amd.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
+ luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
+ Jon Hunter <jonathanh@nvidia.com>
+References: <20250310091935.22923-1-juri.lelli@redhat.com>
+ <Z86yxn12saDHLSy3@jlelli-thinkpadt14gen4.remote.csb>
+ <797146a4-97d6-442e-b2d3-f7c4f438d209@arm.com>
+ <398c710f-2e4e-4b35-a8a3-4c8d64f2fe68@redhat.com>
+ <fd4d6143-9bd2-4a7c-80dc-1e19e4d1b2d1@redhat.com>
+ <Z9Alq55RpuFqWT--@jlelli-thinkpadt14gen4.remote.csb>
+ <be2c47b8-a5e4-4591-ac4d-3cbc92e2ce5d@redhat.com>
+ <e6731145-5290-41f8-aafb-1d0f1bcc385a@arm.com>
+ <7fb20de6-46a6-4e87-932e-dfc915fff3dc@redhat.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <7fb20de6-46a6-4e87-932e-dfc915fff3dc@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=ePkTjGp1 c=1 sm=1 tr=0 ts=67d158c9 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=XM-gT74EAUeGg6Fp4qoA:9 a=JrUbwKUKoRM7SNILlDhP:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: Gw2olqtuWYpcGzeNARle7bQZYszV-az8
-X-Proofpoint-GUID: Gw2olqtuWYpcGzeNARle7bQZYszV-az8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=544 phishscore=0
- mlxscore=0 malwarescore=0 suspectscore=0 impostorscore=0 bulkscore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 priorityscore=1501
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503120066
 
-In IPQ5424, the bootloader collects the system RAM contents upon a crash
-for post-morterm analysis. If we don't reserve the memory region used by
-the bootloader, linux will consume it. Upon the next boot after a crash,
-the bootloader will be loaded in the same region, which could lead to the
-loss of some data. sometimes, we may miss out critical information.
-Therefore, let's reserve the region used by the bootloader.
+On 11/03/2025 15:51, Waiman Long wrote:
+> On 3/11/25 9:29 AM, Dietmar Eggemann wrote:
+>> On 11/03/2025 13:34, Waiman Long wrote:
+>>> On 3/11/25 7:59 AM, Juri Lelli wrote:
+>>>> On 10/03/25 20:16, Waiman Long wrote:
+>>>>> On 3/10/25 3:18 PM, Waiman Long wrote:
+>>>>>> On 3/10/25 2:54 PM, Dietmar Eggemann wrote:
+>>>>>>> On 10/03/2025 10:37, Juri Lelli wrote:
 
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq5424.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+[...]
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index 7a7ad700a382..cd1acf3898ac 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -132,6 +132,11 @@ reserved-memory {
- 		#size-cells = <2>;
- 		ranges;
- 
-+		bootloader@8a200000 {
-+			reg = <0x0 0x8a200000 0x0 0x400000>;
-+			no-map;
-+		};
-+
- 		tz@8a600000 {
- 			reg = <0x0 0x8a600000 0x0 0x200000>;
- 			no-map;
+>> Testcase: suspend/resume
+>>
+>> on Arm64 big.LITTLE cpumask=[LITTLE][big]=[0,3-5][1-2]
+>> plus cmd line option 'isolcpus=3,4'.
+>>
+>> with Waiman's snippet:
+>> https://lkml.kernel.org/r/fd4d6143-9bd2-4a7c-80dc-1e19e4d1b2d1@redhat.com
+>>
+>> ...
+>> [  234.831675] --- > partition_sched_domains_locked() reset_domain=1
+>> [  234.835966] psci: CPU4 killed (polled 0 ms)
+>> [  234.838912] Error taking CPU3 down: -16
+>> [  234.838952] Non-boot CPUs are not disabled
+>> [  234.838986] Enabling non-boot CPUs ...
+>> ...
+>>
+>> IIRC, that's the old DL accounting issue.
+> 
+> You are right. cpuhp_tasks_frozen will be set in the suspend/resume
+> case. In that case, we do need to add a cpuset helper to acquire the
+> cpuset_mutex. A test patch as follows (no testing done yet):
+> 
+> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+> index c414daa7d503..ef1ffb9c52b0 100644
+> --- a/include/linux/cpuset.h
+> +++ b/include/linux/cpuset.h
+> @@ -129,6 +129,7 @@ extern void dl_rebuild_rd_accounting(void);
+>  extern void rebuild_sched_domains(void);
+> 
+>  extern void cpuset_print_current_mems_allowed(void);
+> +extern void cpuset_reset_sched_domains(void)
+> 
+>  /*
+>   * read_mems_allowed_begin is required when making decisions involving
+> @@ -269,6 +270,11 @@ static inline void rebuild_sched_domains(void)
+>         partition_sched_domains(1, NULL, NULL);
+>  }
+> 
+> +static inline void cpuset_reset_sched_domains(void)
+> +{
+> +       partition_sched_domains(1, NULL, NULL);
+> +}
+> +
+>  static inline void cpuset_print_current_mems_allowed(void)
+>  {
+>  }
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 7995cd58a01b..a51099e5d587 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -1076,6 +1076,13 @@ void rebuild_sched_domains(void)
+>         cpus_read_unlock();
+>  }
+> 
+> +void cpuset_reset_sched_domains(void)
+> +{
+> +       mutex_lock(&cpuset_mutex);
+> +       partition_sched_domains(1, NULL, NULL);
+> +       mutex_unlock(&cpuset_mutex);
+> +}
+> +
+>  /**
+>   * cpuset_update_tasks_cpumask - Update the cpumasks of tasks in the
+> cpuset.
+>   * @cs: the cpuset in which each task's cpus_allowed mask needs to be
+> changed
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 58593f4d09a1..dbf44ddbb6b4 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -8183,7 +8183,7 @@ static void cpuset_cpu_active(void)
+>                  * operation in the resume sequence, just build a single
+> sched
+>                  * domain, ignoring cpusets.
+>                  */
+> -               partition_sched_domains(1, NULL, NULL);
+> +               cpuset_reset_sched_domains();
+>                 if (--num_cpus_frozen)
+>                         return;
+>                 /*
+> @@ -8202,7 +8202,7 @@ static void cpuset_cpu_inactive(unsigned int cpu)
+>                 cpuset_update_active_cpus();
+>         } else {
+>                 num_cpus_frozen++;
+> -               partition_sched_domains(1, NULL, NULL);
+> +               cpuset_reset_sched_domains();
+>         }
+>  }
 
-base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
--- 
-2.34.1
-
+This seems to work. But what about a !CONFIG_CPUSETS build. In this case
+we won't have this DL accounting update during suspend/resume since
+dl_rebuild_rd_accounting() is empty.
 
