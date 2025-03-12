@@ -1,134 +1,135 @@
-Return-Path: <linux-kernel+bounces-557595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A90A5DB58
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:25:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44045A5DB5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:25:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB40E189AEFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:25:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFE7E189ADB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F6A23F28B;
-	Wed, 12 Mar 2025 11:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0868A241129;
+	Wed, 12 Mar 2025 11:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tY4m9qUC"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TW04dLOY"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4E923F381
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F013423F39F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741778696; cv=none; b=uP6H+CRkK3dRbTYZ0WL+Xzffn4OhdPVLAQCu/RP4C8l1Q0/EQB0rd2I0L9RrC0/Phe74QdqtTh2N3yhlsg3Bf3HrhKeBnHj+N5kKCfsKHuuTJqnnngQgE+2uRpWJARqMSx/ZCSSpoGLYoLlX1mpkJXw024cwSuGhFV1/1jL1h8w=
+	t=1741778700; cv=none; b=QsTa0vcLXi3skLh2mqVVnqddwaH6V5dZdAm/IrObWgql+r0kZnR8r/vCWfrKTAxpsSRYD4TsllK/OWQ+Vi79A7hmnT27gVQwoOGZnXZBEWALtZigtFt9arshjHTusHC0t7EcCYrqUI7dAD2ZEMiY7EHvT4ymQuU99tjQYd0l788=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741778696; c=relaxed/simple;
-	bh=UcXaR+GDawWoQaNRuFtyapQxtDjf/bEMrcOSC2FkQ1I=;
+	s=arc-20240116; t=1741778700; c=relaxed/simple;
+	bh=EyLOE0jVe6Ot5eLlgUxopazARR5tkTAv5HgZzzFVFuw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EKbaovwxViMc5DmBt0n3ZH9KEWVSVJ84CbtP5wcPCxDYvNr7DgrNuXPMV0Pezwdt0K0ZRqbuId/U1OX/iH69DG2YlbU7VB0i9NY8f+ukQWxd8LTq+ayAAp6zmWxiNcKf+zf5EeRAeQ3jLyQaeoqe4BxjoyV+y312EgPblait2uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tY4m9qUC; arc=none smtp.client-ip=209.85.128.179
+	 To:Cc:Content-Type; b=AguM1AwklFkYKTQ8ms6CIe7Sd6qWwaxWlCao+zVfH9ImXQGDuovQikLfi4yQO50IVNJkh7jCrL3lKhWgW/Hy6bRdtUhzWH5yoCIeqRBNDJ1hPnsKXfXtKwzm/nTg80IqulFUscdUevEINGdLjXmRCamrjqr9apTImq+mM9iX+ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TW04dLOY; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6f6c90b51c3so64435187b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:24:53 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6ef7c9e9592so55522467b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:24:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741778692; x=1742383492; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741778698; x=1742383498; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7OnDqzR6YtSLwONQoTdDT31SC3+7fyj7xPsRU2pi+G4=;
-        b=tY4m9qUC71QAzCkvtu+FlH3ht9gu/SOiEZ3r+On8JHrv6xL+cPGeBd0HEpK2nbM4Al
-         A4bAIBRyHsRzBWf41VdzD0IH8KsP9RyUNlmz0jLe9dK2QTNHcvniOQFmMZQsexYGsYOn
-         pPPj0gVZTgM5BQvM4HgpNkrSfF6Z+iOISHwWNpZb2BwxF3Xm0P+gnTsimpUYNgjg9pAV
-         RNZqPejxRdlNhPwK4Z9vNgMg/1DbC5uqwHjBrN7oCzVFoBCZT8/5SR6oTk9u0FSTPEQk
-         9r1vDJeb2se0lcbh2yo42KYBXPchoTxqECASTWBNK6gZVjUsWl2YNtWHCyPoSxXRI8Ql
-         /BAA==
+        bh=ESIBsTzEIcUZ/ECc1taqnCKMBy5hYudFtIt6EODPkzM=;
+        b=TW04dLOYqmJcdFVfoD1FwNrpW6qBAaxIMLsDcy86bev1MD0l/2dia6uIyiG90guYeL
+         Z1NWmiPuAfk+cg1pjWJGKQR0j4CyDec5iy3i8eqhqg+hRoz5pcQv7+4V9iAzS6ZsKy56
+         kA33yT9zhgGkrcw8wGF1jLioE9MOLf8m813ZM0YHpqpBd3CC3Vqk7SLOKsbe+0iq1G7P
+         oxxr1o9bpUIi+HOgOFWRAKT919GPnpwwXUjSmsotCwreJnfCDTv4otYoh7OMkdx0pf8p
+         +72Ix1x0aNydFTV9UXKVaJob4sTsk2Ivq4L4/WE2G55mi6uNL/BYLYag2oF7hKemDybx
+         fvhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741778693; x=1742383493;
+        d=1e100.net; s=20230601; t=1741778698; x=1742383498;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7OnDqzR6YtSLwONQoTdDT31SC3+7fyj7xPsRU2pi+G4=;
-        b=Ra7Q2eaF7ST3fPoqwjRWnZVyqhjGTEr9fQlLWHZSiULwFnKJ/VJQPIHql+PSCQm4Um
-         NHBC5qWQovh23W0kyFb9IDUNFDBQDl9VHNdTqeeb2pwCQCFyiWCl66zXTSjuzNteJ4np
-         R2IzmE6+gZ6sofnW1NuDAcAWA/h9DCgtA38sRPnfwR13YRpQt/O1tKvZbPmE8sxaAyFz
-         aFALnMTTl1HmV5DgI+5gtppDR5u9q27rpvF9Y2mfnNAMSAHkF304oK8CqLwjjOIDByHF
-         v42iPaRSXH3Ze/IPalyW08+4As7j80+egz0/zQGG5gJ08vJlex7xFUFOeJCkfmlrbU5l
-         NLlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzw1BlVPas31U3clnlKI/HTU7BCqgtJI3U855f2ZkojBEcjvmKsy407lCpHlZlgFysZXK4JGtO6APe5lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1y17HCMfry6SSTxX2MGR15KCyXWmA2DM5V5R7rTqR1gyjSvd8
-	UwGb71/atk1CoGV1PzNzrB7k3lqKKSKEW0T6hWR5OwX0W2w5H8+METGtot7IWq4chkFhj3rBBpm
-	KZyKO7w23GaAC0Nws4ttK4ht0DjkgGsLzSBMtKw==
-X-Gm-Gg: ASbGncs9FutPT7Ev5IxOs3/l2UJlZIWtU6BMWCUwyTon1NFAwJ3Z//Ma+3eOwkUyK/2
-	1Eoa3KX9wqE0QVP2D+yV2ZZZA9ANrtTFG/tyev/hadiO9PVjujyuZb6rcZh1RFVbDivoO9iUzTp
-	EG1hcbvmk0UhmVsLTwb+R1cM4P6Rc=
-X-Google-Smtp-Source: AGHT+IHIrYfmo2j3yVIIaYFZE5oDvK+hQZ8/RGWocwnTto9a3k4qtBGozDsAeCNABMZLWFLC8+SYFjOJXfUQHYTuZMU=
-X-Received: by 2002:a05:690c:3612:b0:6ee:8363:96d3 with SMTP id
- 00721157ae682-6febf3ade28mr290798997b3.27.1741778692704; Wed, 12 Mar 2025
- 04:24:52 -0700 (PDT)
+        bh=ESIBsTzEIcUZ/ECc1taqnCKMBy5hYudFtIt6EODPkzM=;
+        b=SzIIKHBWzYW629vIWHIHo7iQYvEZrxZebAO4tvOv9hpEXSRNBIyAi7Om1No8Hz/Mnz
+         KEIe+27m6pPEMKR5VFx94/dttQ76MXji0Wm9yQi/3vM7qij3p8QwVC9IrN2GxTc+eESp
+         TqIj6CPy3yE6dsWmuKIH36B3WgOXyRAyMsmLzSe1RtUxekEl9JLI//kBVjW+hNOZQuRx
+         XTwxiS1ckl3ILsgzkUhkEgdm9bj0XjrkOOQih07AXzew4KK0xNhjAox5B05qSxHKqxhJ
+         nrAGpSKepNWhRymReuzFm1UoKvv4joe4vavzGPxKsGW9ieSbek6MJK1lYh4cUYgEZy9V
+         gsQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXS5jel5oGVqLRz84rtsJuzAW7XiHx3JcXqeVn+wEz98pHVug1xMc9Pafocj/7vsIPG7BprLTXY9zHoRSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUyCbzqhY5xHPHbMHDF+Yt1DC+fgFxUJr4PMZNDKsaTIzEcLMN
+	lcwCiycguF+llAy9UF6MkPUfkhvbIQXMmqA70uoxaBPexjwwZGJvQowkkTGPl78Ckw1NHsHVF54
+	voWGt3LK0c+7A1Hk9mXSKTD6t8LayE3P3P8ONkklz0QNUCNSq
+X-Gm-Gg: ASbGncvxKfB+PO71haSfw7Zkp/wvxftRYTvoAqZD8Kri1HCk95bX28hgqfcyMBcCSig
+	JYhyyfHPAWnJzR2djbYTUx1E5yKhkH8yiDzM+enDm2gqvt10tMk7cFRHZ2DM0rY+9EBIRCR0vVr
+	wWK3nQxrKMDJ5he3NUV/bAX1BSnGo=
+X-Google-Smtp-Source: AGHT+IHtmnbXh+/xWHNRtVc/+e25TtwDya77gAG3BQFWZJv3xY+g85qmMUghOraOvNz9vB+GjgG9TqOZpEeA4ZqkZEA=
+X-Received: by 2002:a05:690c:30e:b0:6f9:8436:3d2a with SMTP id
+ 00721157ae682-6febf3f7f61mr306802797b3.32.1741778697916; Wed, 12 Mar 2025
+ 04:24:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219-exynos7870-mmc-v2-0-b4255a3e39ed@disroot.org>
-In-Reply-To: <20250219-exynos7870-mmc-v2-0-b4255a3e39ed@disroot.org>
+References: <20250220164655.2081224-1-Frank.Li@nxp.com>
+In-Reply-To: <20250220164655.2081224-1-Frank.Li@nxp.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 12 Mar 2025 12:24:16 +0100
-X-Gm-Features: AQ5f1JruelnoNSp1FLqFV_ATP8uAM2_7A2P1q-OWLObav93kN6mUQJG3IRna_fc
-Message-ID: <CAPDyKFrmn21xksS6Co9AjLQbtq_EWC8WF=r3RSAc6nfWTT9-zA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] Introduce DW MMC support for Exynos7870
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Date: Wed, 12 Mar 2025 12:24:22 +0100
+X-Gm-Features: AQ5f1Jo7KEKuskQ_5cOeKngtf3fN-L7jwpx8y4RoWNvAYB-ewPO61CKAdCrGxr0
+Message-ID: <CAPDyKFrxGzyNsr5vQjcxPRzyQMTpoR5sZjreYbO_8ZA6i_-XkA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] dt-bindings: mmc: Change to additionalProperties to
+ fix fail detect Unevaluated property
+To: Frank Li <Frank.Li@nxp.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Jaehoon Chung <jh80.chung@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+	Conor Dooley <conor+dt@kernel.org>, 
+	"open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." <linux-mmc@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	imx@lists.linux.dev, shawnguo@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 18 Feb 2025 at 19:48, Kaustabh Chakraborty
-<kauschluss@disroot.org> wrote:
+On Thu, 20 Feb 2025 at 17:47, Frank Li <Frank.Li@nxp.com> wrote:
 >
-> This series adds support for SMU and non-SMU variants of Exynos7870 DW
-> MMC controllers.
+> mmc-controller.yaml is common schema file. According to writing-schema.rst,
 >
-> Some DW MMC controllers require two 32-bit r/w from a 64-bit FIFO,
-> the series implements that feature as well.
+> * additionalProperties: true
+>    Rare case, used for schemas implementing common set of properties. Such
+>    schemas are supposed to be referenced by other schemas, which then use
+>    'unevaluatedProperties: false'.  Typically bus or common-part schemas.
 >
-> This patch series is a part of Exynos7870 upstreaming.
+> Reproduce steps:
+> 1. Add unevaluated property 'abc' at example of fsl-imx-esdhc.yaml
+> 2. Run make dt_binding_check DT_SCHEMA_FILES=fsl-imx-esdhc.yaml
 >
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> No any warning report. But suppose report below warning:
+> mmc@70004000: Unevaluated properties are not allowed ('abc' was unexpected)
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-The series applied for next, thanks!
+Applied for next, thanks!
 
 Kind regards
 Uffe
 
 
 > ---
-> Changes in v2:
-> - Take over ownership of patches by the co-author, upon their request.
-> - Link to v1: https://lore.kernel.org/r/20250204-exynos7870-mmc-v1-0-c87cfc72be4a@disroot.org
+>  Documentation/devicetree/bindings/mmc/mmc-controller.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> ---
-> Kaustabh Chakraborty (3):
->       dt-bindings: mmc: samsung,exynos-dw-mshc: add exynos7870 support
->       mmc: dw_mmc: add a quirk for accessing 64-bit FIFOs in two halves
->       mmc: dw_mmc: add exynos7870 DW MMC support
+> diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
+> index 9d7a1298c4554..26e4f0f8dc1ce 100644
+> --- a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
+> @@ -24,7 +24,7 @@ properties:
+>    $nodename:
+>      pattern: "^mmc(@.*)?$"
 >
->  .../bindings/mmc/samsung,exynos-dw-mshc.yaml       |  2 +
->  drivers/mmc/host/dw_mmc-exynos.c                   | 41 +++++++++-
->  drivers/mmc/host/dw_mmc.c                          | 94 +++++++++++++++++++++-
->  drivers/mmc/host/dw_mmc.h                          | 27 +++++++
->  4 files changed, 161 insertions(+), 3 deletions(-)
-> ---
-> base-commit: e5d3fd687aac5eceb1721fa92b9f49afcf4c3717
-> change-id: 20250203-exynos7870-mmc-75bac583c864
+> -unevaluatedProperties: true
+> +additionalProperties: true
 >
-> Best regards,
+>  examples:
+>    - |
 > --
-> Kaustabh Chakraborty <kauschluss@disroot.org>
+> 2.34.1
 >
 
