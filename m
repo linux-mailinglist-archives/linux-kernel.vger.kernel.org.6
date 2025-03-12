@@ -1,222 +1,185 @@
-Return-Path: <linux-kernel+bounces-558059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77EA5A5E115
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:52:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE23A5E119
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:52:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD385167769
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:52:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781B61885F31
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C178256C6B;
-	Wed, 12 Mar 2025 15:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A972571A4;
+	Wed, 12 Mar 2025 15:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fxMytm9d";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yxo63xRQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fxMytm9d";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yxo63xRQ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mwQIkEMS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A419C2561CA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F33423ED60;
+	Wed, 12 Mar 2025 15:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741794690; cv=none; b=SzEFCGlC+LG/nSa2QT44pncORw6I8FV2LSRFNiRWZ0o9SRlekh7RRTZo5wfaoeIF78KV/+WM63G+acXHhIn08FjyWE9UvhSNgg0ypJSck9QRwl/xGiuQfEM+pc9rRJykIuCdPKifg3ma6JLYQB4u+wNTGZjjlmL7FGfyT0WHMLE=
+	t=1741794714; cv=none; b=lHdgpqLiiIXrZ7vGMYTFtehw+R7iktcLmATNra8kbuLgn0wRFulxrWdGrW17dSsdMpoaOAyC7qW7OWX7tPJKMIEIOfmaJ6sDoWZIzWHlhQx7oTlk+0OGVAwAj1yYIzArC1yPwXf2OogeJTzI3bneSa3EeKg0HQf0IQs+aNvklgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741794690; c=relaxed/simple;
-	bh=x0bzaDEk8aQvniRaJxUgWv0R2t78KM+JXoY5XWMzc4E=;
+	s=arc-20240116; t=1741794714; c=relaxed/simple;
+	bh=3rzunnVX6hlrPNBilZi0C8BivrdvDP3q03Wwh9Wyt7k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N376Lad152QhEapzDRYRdGcww0ZF83eeGv+uQKcWxbildzL85gqo69XNv86Xb6rpa/rYuS7dqn+pvHTATfonu6n/AQhpsiN3J2IfHzt5umXnl27/NQGJWW6V2okH2Nj2mR+I43FnlPqdkwehTDTWuXWlghF7xd9/5gWiK+YMEtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fxMytm9d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yxo63xRQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fxMytm9d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yxo63xRQ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BEDEB21195;
-	Wed, 12 Mar 2025 15:51:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741794686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YAolITJtosWbgnrc4Sl1gW+rHyFKKmQ+Fk910mjL86Q=;
-	b=fxMytm9dRWRHCGHtl03ouUJ/RAM32u41BjH5yWb28VwBeyGiIo3THR55jxsgi//yujU/3h
-	MOlKmPR591vXtv1Abv73AKMvfFsVnQsYK+8PiKNoqORrr8pY7CAQuBZ0NjvqX+7MaI6vrm
-	bB8XcjTb+z7Y+cm7LU07iE5w+daL9ww=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741794686;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YAolITJtosWbgnrc4Sl1gW+rHyFKKmQ+Fk910mjL86Q=;
-	b=Yxo63xRQgDxrt9B4y5UvKmUR34SS4Cs8MVqymB2MqaJUVmcrFeA6ivRuYCb/ilRM+74DEe
-	t68JcSrFQne43BBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fxMytm9d;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Yxo63xRQ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741794686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YAolITJtosWbgnrc4Sl1gW+rHyFKKmQ+Fk910mjL86Q=;
-	b=fxMytm9dRWRHCGHtl03ouUJ/RAM32u41BjH5yWb28VwBeyGiIo3THR55jxsgi//yujU/3h
-	MOlKmPR591vXtv1Abv73AKMvfFsVnQsYK+8PiKNoqORrr8pY7CAQuBZ0NjvqX+7MaI6vrm
-	bB8XcjTb+z7Y+cm7LU07iE5w+daL9ww=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741794686;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YAolITJtosWbgnrc4Sl1gW+rHyFKKmQ+Fk910mjL86Q=;
-	b=Yxo63xRQgDxrt9B4y5UvKmUR34SS4Cs8MVqymB2MqaJUVmcrFeA6ivRuYCb/ilRM+74DEe
-	t68JcSrFQne43BBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B389313AA9;
-	Wed, 12 Mar 2025 15:51:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VcPOK36t0WenFAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 12 Mar 2025 15:51:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 65CB5A0908; Wed, 12 Mar 2025 16:51:22 +0100 (CET)
-Date: Wed, 12 Mar 2025 16:51:22 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
-	audit@vger.kernel.org, axboe@kernel.dk
-Subject: Re: [PATCH] fs: dodge an atomic in putname if ref == 1
-Message-ID: <naalmvyvolpfkwxoztkskhz2kyoznjjhm5y4zmfd44tyf5d24k@2jap6ty4nkwz>
-References: <20250311181804.1165758-1-mjguzik@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cw3jZAu2C9w+FX03/Ake8tRJqGT6KB0GGOh37xR+CxEfGg+mtx1AelO/2kSHSpFRXgo55c5t6JcnJD7X4lBJdteogidzIwF05Spy3GZOH8Ax3V7Y/1YMGAGY4Ec6SdMCIhc34EBxeQZbGCPceTnZH2oFDmnCzgbrIcIgUFhDzwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mwQIkEMS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD4DFC4CEDD;
+	Wed, 12 Mar 2025 15:51:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741794713;
+	bh=3rzunnVX6hlrPNBilZi0C8BivrdvDP3q03Wwh9Wyt7k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mwQIkEMSlYC8zaL+gV01SAJnS+lHGlbW96iDEHbJUB/4qygwLl2axB/WxqVgnEX5D
+	 7AsNbJit+fpLMBpCf/vC5y+Z6R26OMKSTXd1vGrKr8DCpRfcZ611T8gbDCZG7NKiRv
+	 A8E9HC1Sm9GKWlT5WCcIlbTzIsnjAOtqnIoqxx4iiaz9FKNeGP3W4vF3LCx8Z4GfVf
+	 /E+CKw0f9ezIED3ffRUPab6p7WzTbiaHI+/9KrE/dxRlb4kCWgR4M/Al+/SkZsWR4Z
+	 1KWLRV2T9SyNd9yVceJPt7v+M2/hPj6kf/st8D/ZNkFy0wZOqz0MNg3JQG4Wm/ZFb1
+	 Cpe1iIKsqgXWQ==
+Date: Wed, 12 Mar 2025 16:51:50 +0100
+From: Vinod Koul <vkoul@kernel.org>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, quentin.schulz@cherry.de,
+	sebastian.reichel@collabora.com, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dse@thaumatec.com, Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject: Re: [PATCH v6 2/2] phy: rockchip: Add Samsung MIPI D-/C-PHY driver
+Message-ID: <Z9GtlvHwd8/blVKl@vaman>
+References: <20250213210554.1645755-1-heiko@sntech.de>
+ <20250213210554.1645755-3-heiko@sntech.de>
+ <Z68zdiIl75k2Vv9i@vaman>
+ <2030933.8hb0ThOEGa@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250311181804.1165758-1-mjguzik@gmail.com>
-X-Rspamd-Queue-Id: BEDEB21195
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2030933.8hb0ThOEGa@diego>
 
-On Tue 11-03-25 19:18:04, Mateusz Guzik wrote:
-> While the structure is refcounted, the only consumer incrementing it is
-> audit and even then the atomic operation is only needed when it
-> interacts with io_uring.
-> 
-> If putname spots a count of 1, there is no legitimate way for anyone to
-> bump it.
-> 
-> If audit is disabled, the count is guaranteed to be 1, which
-> consistently elides the atomic for all path lookups. If audit is
-> enabled, it still manages to elide the last decrement.
-> 
-> Note the patch does not do anything to prevent audit from suffering
-> atomics. See [1] and [2] for a different approach.
-> 
-> Benchmarked on Sapphire Rapids issuing access() (ops/s):
-> before: 5106246
-> after:  5269678 (+3%)
-> 
-> Link 1:	https://lore.kernel.org/linux-fsdevel/20250307161155.760949-1-mjguzik@gmail.com/
-> Link 2: https://lore.kernel.org/linux-fsdevel/20250307164216.GI2023217@ZenIV/
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-Yeah, I like this much more than the original. Feel free to add:
+Sorry this slipped thru...
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+On 19-02-25, 23:51, Heiko Stübner wrote:
+> Hi Vinod,
+> 
+> thanks for the review.
+> I've dropped all the parts that would've just gotten a "ok, changed" ;-)
+> 
+> Am Freitag, 14. Februar 2025, 13:13:42 MEZ schrieb Vinod Koul:
+> > On 13-02-25, 22:05, Heiko Stuebner wrote:
+> 
+> > > +	{ 200,  7,   1,  0, 33,  9,  0, 26,  5,  0, 11},
+> > > +	{ 190,  7,   1,  0, 32,  9,  0, 25,  5,  0, 11},
+> > > +	{ 180,  6,   1,  0, 32,  8,  0, 25,  5,  0, 10},
+> > > +	{ 170,  6,   0,  0, 32,  8,  0, 25,  5,  0, 10},
+> > > +	{ 160,  5,   0,  0, 31,  8,  0, 24,  4,  0,  9},
+> > > +	{ 150,  5,   0,  0, 31,  8,  0, 24,  5,  0,  9},
+> > > +	{ 140,  5,   0,  0, 31,  8,  0, 24,  5,  0,  8},
+> > > +	{ 130,  4,   0,  0, 30,  6,  0, 23,  3,  0,  8},
+> > > +	{ 120,  4,   0,  0, 30,  6,  0, 23,  3,  0,  7},
+> > > +	{ 110,  3,   0,  0, 30,  6,  0, 23,  3,  0,  7},
+> > > +	{ 100,  3,   0,  0, 29,  5,  0, 22,  2,  0,  6},
+> > > +	{  90,  3,   0,  0, 29,  5,  0, 22,  2,  0,  6},
+> > > +	{  80,  2,   0,  0, 28,  5,  0, 22,  2,  0,  5},
+> > > +};
+> > 
+> > any word on where this table came from, maybe worth documenting that
+> > part
+> 
+> sadly not.
+> 
+> The table itself came from the vendor-kernel, and I would assume there
 
-								Honza
+Maybe make a note that this is from vendor kernel
 
-> This is an alternative to the patch I linked above.
+> it came from some super-secret additional documentation Rockchip
+> got with the IP documentation.
 > 
-> I think the improved commit message should also cover the feedback
-> Christian previously shared concerning it.
+> It is sadly not part of the RK3588 manual.
 > 
-> This is a trivial win until the atomic issue gets resolved, I don't see
-> any reason to NOT include it. At the same time I don't have that much
-> interest arguing about it either.
 > 
-> That is to say, here is a different take, if you don't like it, I'm
-> dropping the subject.
+> > > +
+> > > +static void samsung_mipi_dcphy_bias_block_enable(struct samsung_mipi_dcphy *samsung)
+> > > +{
+> > > +	u32 bias_con2 = 0x3223;
+> > 
+> > magic value?
 > 
-> cheers
+> Converted over to some more meaningful constants.
+> Did the same to bias_con0+1 below that one too.
 > 
->  fs/namei.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 06765d320e7e..add90981cfcd 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -275,14 +275,19 @@ EXPORT_SYMBOL(getname_kernel);
->  
->  void putname(struct filename *name)
->  {
-> +	int refcnt;
-> +
->  	if (IS_ERR_OR_NULL(name))
->  		return;
->  
-> -	if (WARN_ON_ONCE(!atomic_read(&name->refcnt)))
-> -		return;
-> +	refcnt = atomic_read(&name->refcnt);
-> +	if (refcnt != 1) {
-> +		if (WARN_ON_ONCE(!refcnt))
-> +			return;
->  
-> -	if (!atomic_dec_and_test(&name->refcnt))
-> -		return;
-> +		if (!atomic_dec_and_test(&name->refcnt))
-> +			return;
-> +	}
->  
->  	if (name->name != name->iname) {
->  		__putname(name->name);
-> -- 
-> 2.43.0
+> > > +static void samsung_mipi_dphy_lane_disable(struct samsung_mipi_dcphy *samsung)
+> > > +{
+> > > +	regmap_update_bits(samsung->regmap, DPHY_MC_GNR_CON0, PHY_ENABLE, 0);
+> > > +	regmap_update_bits(samsung->regmap, COMBO_MD0_GNR_CON0, PHY_ENABLE, 0);
+> > > +	regmap_update_bits(samsung->regmap, COMBO_MD1_GNR_CON0, PHY_ENABLE, 0);
+> > > +	regmap_update_bits(samsung->regmap, COMBO_MD2_GNR_CON0, PHY_ENABLE, 0);
+> > > +	regmap_update_bits(samsung->regmap, DPHY_MD3_GNR_CON0, PHY_ENABLE, 0);
+> > 
+> > Is writing to a register (mmio) faster than a switch case for checking
+> > lane count and disabling specific lanes?
 > 
+> It might make sense to mimic the lane_enable way of doing things, even if
+> just for things looking the same in both functions.
+> 
+> I guess disabling lanes does not really care about minimal speed differences
+> a switch/case would cause :-)
+
+ok
+
+> 
+> > 
+> > > +static void samsung_mipi_dcphy_pll_configure(struct samsung_mipi_dcphy *samsung)
+> > > +{
+> > > +	regmap_update_bits(samsung->regmap, PLL_CON0, S_MASK | P_MASK,
+> > > +			   S(samsung->pll.scaler) | P(samsung->pll.prediv));
+> > > +
+> > > +	if (samsung->pll.dsm < 0) {
+> > > +		u16 dsm_tmp;
+> > > +
+> > > +		/* Using opposite number subtraction to find complement */
+> > > +		dsm_tmp = abs(samsung->pll.dsm);
+> > > +		dsm_tmp = dsm_tmp - 1;
+> > > +		dsm_tmp ^= 0xffff;
+> > > +		regmap_write(samsung->regmap, PLL_CON1, dsm_tmp);
+> > > +	} else {
+> > > +		regmap_write(samsung->regmap, PLL_CON1, samsung->pll.dsm);
+> > > +	}
+> > > +
+> > > +	regmap_update_bits(samsung->regmap, PLL_CON2,
+> > > +			   M_MASK, M(samsung->pll.fbdiv));
+> > > +
+> > > +	if (samsung->pll.ssc_en) {
+> > > +		regmap_write(samsung->regmap, PLL_CON3,
+> > > +			     MRR(samsung->pll.mrr) | MFR(samsung->pll.mfr));
+> > > +		regmap_update_bits(samsung->regmap, PLL_CON4, SSCG_EN, SSCG_EN);
+> > > +	}
+> > > +
+> > > +	regmap_write(samsung->regmap, PLL_CON5, RESET_N_SEL | PLL_ENABLE_SEL);
+> > > +	regmap_write(samsung->regmap, PLL_CON7, PLL_LOCK_CNT(0xf000));
+> > > +	regmap_write(samsung->regmap, PLL_CON8, PLL_STB_CNT(0xf000));
+> > 
+> > I guess you are writing to upper nibble, maybe define that, if we can
+> 
+> Nope ... the value is defined as bits [15:0] and both being pll lock and
+> stabilization timing control registers. Sadly yet again, their usage detail
+> is not documented, the manual even does not supply a unit for the 
+> register value :-(
+
+:-(
+
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+~Vinod
 
