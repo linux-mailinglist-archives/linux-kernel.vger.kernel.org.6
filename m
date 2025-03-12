@@ -1,46 +1,86 @@
-Return-Path: <linux-kernel+bounces-558272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0F2A5E3B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:33:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D77A5E3B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:35:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B7AA3BC1C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:33:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4D53BBFD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A665925744E;
-	Wed, 12 Mar 2025 18:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF362528E3;
+	Wed, 12 Mar 2025 18:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="K7i2HjPi"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D7E1D5AD4;
-	Wed, 12 Mar 2025 18:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OAYNAVKx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324571CD20D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741804393; cv=none; b=d4EpR7u6SGVtWLqrKn5tz4ZstI8teb4CSYeYk2Jx2gsIBExTgU96v6uNJF2Ypq/C4lr+Q93IJ2l2Yjh/t26I4L37yKOrRJxo2L2Z+dYoqhTtJjBvSyZ+AgreGHGtia4fz3MTr7IO8mJtNYH6HzgK5YjaQTcDL0vKFczJKyMmEHw=
+	t=1741804555; cv=none; b=CTQd1hS30+dAiGJYg3OeXSk8H5rReRoYNTSEBPEC/CkIWuSRAkE6IVVSMnkcIZuxIyNpwffbLH0vCwIo9/9fdc6k8WHbnjf8hwj/Dl9b1gwWsEfKDRahX+ceO2X1pYDUCEcO9xA3vAXNXy9x3VbH7PZrPATr/xOpHfihmusSlfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741804393; c=relaxed/simple;
-	bh=aDjm3DkqZDJX85tJ+yrr6P4kwqc9qTDqHn3I2xyYvgA=;
+	s=arc-20240116; t=1741804555; c=relaxed/simple;
+	bh=S7e/A0BmpmrwWBXbatt1ag6yFDGwJPQylNsUjR3ZK/Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NsFrKWW4aEnGmyKZsJyKl7A2NLgf7GB/KNoU0fxhqPtonEg3P1sAA6lkM0e+Gnb50Mvz17bhyvIr5vSy7vxUkvnaG4t83LxJf4GSOTR0BtTe/fBsytTG3KlAZe14q3pCcSAzSFnigiAaw/Byb2AH5MHfINAQioKGDXgTBBUzRPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=K7i2HjPi; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 5D088210B152;
-	Wed, 12 Mar 2025 11:33:11 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5D088210B152
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741804391;
-	bh=tLT4s8zpi9H4TPqM7ZRQ2exoG2CX0kuuef8GX5dDEHg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K7i2HjPigYJ7aN9a1EUjItNpH2ntPinGBEcprbJMoTg/OFVg8DbIOxVuBnx6FYFfN
-	 K5b5qmytnGwEBlsnAqGiUVGBg0u5MAgxWBIeolqcOHZEvmGg3xmIyvIkjWszMrFgs3
-	 83uRvzX4m0+Ttx01v0EPOiDAQffUDuTKA/HCD8S0=
-Message-ID: <caa0d793-3f05-4d7c-88d0-224ec0503cfb@linux.microsoft.com>
-Date: Wed, 12 Mar 2025 11:33:11 -0700
+	 In-Reply-To:Content-Type; b=cEdxumdIib6Bt4Tf6oJYTL5XKYmjeWRC2N6ld0+bxXHLz+TaD6q4vULQiUtVRn4zVzXeulFNbvwfO/6orQg2XfmUPtB0iqxP62awkkJE6cd9ZgQdw1x9omsYoi1A0587xmTNWxOkUrwvpqSHaxBVjCYobhkuSZvlpu4G8k20zW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OAYNAVKx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741804552;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=kg8OG6fCTKrHasfY8Q5mZEHdaUAY73IbW5wsrfqydq4=;
+	b=OAYNAVKxy+qNeFsADcRAFESdy3YT1resb3D8eJUP+43eDbe+DVkCAM3r2A9VSVPqPBWOfA
+	bE/Byf18RvPqVpghKm3YkE6zc/iRozFFH3XHKNCmp16B8XXYsh4D45NVa753m0kgFUwHZK
+	kM0PTCs2PNgRARpxkyPBIir4wC/djCg=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-614-RNWgj8qUOzaaUl4kjbAZPQ-1; Wed, 12 Mar 2025 14:35:50 -0400
+X-MC-Unique: RNWgj8qUOzaaUl4kjbAZPQ-1
+X-Mimecast-MFC-AGG-ID: RNWgj8qUOzaaUl4kjbAZPQ_1741804550
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d0830c3f7so841155e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:35:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741804549; x=1742409349;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kg8OG6fCTKrHasfY8Q5mZEHdaUAY73IbW5wsrfqydq4=;
+        b=v3nNUphfp5yzbOA/1MzMAxUobiGRDtzS+L+z/RZ8glQV0irg1kOrDnxLpAGGfMTdxZ
+         YhO2R11WMpWQ09NJ46W0Wd3uO0UM6nwkTy/MNtMFt3dQq0FPYfQzx5HSe4HrIqE+7vRo
+         CDrr325K4B8MpU2rli4czDSNCqJFCvjQI6FenvuHhqoroTKdFiXGVPcUT6h2rMXaDgl1
+         IO9XIb0pA6nQBraLUYjqpYKzl7T+uZr2R7+GwQCini7H7Rn/gZUZKwsmQP33q/Id+Vg3
+         QRRXeEtIES+h1iJ+QgcheHUOKNjo0Fnw/7/IyFsjnFpc8mXx64/b+BBTW1PZjClGn7fb
+         PhWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXP12MQga+1/R9enECnPB+ZGUcKFpiviRpswctQWFq8eQbc+ZaL1Hf6ESodByCj/siZjV0/tHXyVQU+G/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhhQuTe58LjUsAdZKFwLhhhdD3n+YyPUeZdZtnR8JfG7zQdTH4
+	6ANFyaKw+oZzWf2KAckF+me5wNkhYhJiiJj7M90PDAN8QjW2FjvYoj0y0n/r9bInR+QtvSue/iZ
+	0mmhFmMMHp9Ka0b0teuQfV5y5KDCqmkpuIq4/WNV5ij6DQMXecCQluLDQLtygsA==
+X-Gm-Gg: ASbGncvn916fQ67QRxYZpfA6oRwPqMzGeflbV+Q9zmrRl5zzTZnsaSyhJrI/apGaL0+
+	vdRpvKAkmJvHlr/FzrXps34P8POrW5cz+yp/8mJ7DPaSV+mjtlsJKgGkFL3/Ox3XC1n6pGWd2Kw
+	nOCUdFjhhoQ16v6K5wlc/q00oxwAkpLsGmTC9Wft/+BJ76txpEeHCn2ScOIOyL5aivaL4o8WUUq
+	Gb/ANYiH8Pex0Rc0bqpXDV8lcdpICU9fu+w1nWoU2NRqen3Rlao3uWpM9OUaCd8wJbUOD7vCFTF
+	cPTz2X8GRdsGCbHJSoVjZg==
+X-Received: by 2002:a05:600c:154c:b0:43c:f63c:babb with SMTP id 5b1f17b1804b1-43cf63cc031mr103512905e9.1.1741804549607;
+        Wed, 12 Mar 2025 11:35:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHgUwihZCzD7+DVSttzbZ8rO0kvBaS+3OmjiSWBjMucBzvhILF5dcq8VX5WPbUXHctg2KmujA==
+X-Received: by 2002:a05:600c:154c:b0:43c:f63c:babb with SMTP id 5b1f17b1804b1-43cf63cc031mr103512755e9.1.1741804549186;
+        Wed, 12 Mar 2025 11:35:49 -0700 (PDT)
+Received: from [192.168.10.81] ([176.206.122.167])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43d0a8d068esm28753615e9.33.2025.03.12.11.35.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 11:35:48 -0700 (PDT)
+Message-ID: <a006b1db-5cdd-4f73-b230-8fd4abfbfc7a@redhat.com>
+Date: Wed, 12 Mar 2025 19:35:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,212 +88,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v5 03/11] Drivers: hv: Enable VTL mode for
- arm64
-To: Michael Kelley <mhklinux@outlook.com>, Arnd Bergmann <arnd@arndb.de>,
- "bhelgaas@google.com" <bhelgaas@google.com>, Borislav Petkov <bp@alien8.de>,
- Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
- <conor+dt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Joey Gouly <joey.gouly@arm.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Wei Liu <wei.liu@kernel.org>,
- Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- Linux-Arch <linux-arch@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>
-Cc: "apais@microsoft.com" <apais@microsoft.com>,
- "benhill@microsoft.com" <benhill@microsoft.com>,
- "bperkins@microsoft.com" <bperkins@microsoft.com>,
- "sunilmut@microsoft.com" <sunilmut@microsoft.com>
-References: <20250307220304.247725-1-romank@linux.microsoft.com>
- <20250307220304.247725-4-romank@linux.microsoft.com>
- <e0f81049-688e-4f53-a002-5d246281bf8d@app.fastmail.com>
- <BN7PR02MB41488C06B7E42830C700318DD4D62@BN7PR02MB4148.namprd02.prod.outlook.com>
- <119cfb59-d68b-4718-b7cb-90cba67827e8@app.fastmail.com>
- <BN7PR02MB4148FC15ADF0E49327262B92D4D62@BN7PR02MB4148.namprd02.prod.outlook.com>
+Subject: Re: [PATCH] ipmi: fix suspicious RCU usage warning
+To: paulmck@kernel.org, Rik van Riel <riel@surriel.com>
+Cc: Corey Minyard <corey@minyard.net>,
+ openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ kernel-team@meta.com
+References: <20250312131932.44d901f7@fangorn>
+ <e28d914d-5842-4bfa-8208-9ac34fd38a95@paulmck-laptop>
+From: Paolo Bonzini <pbonzini@redhat.com>
 Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <BN7PR02MB4148FC15ADF0E49327262B92D4D62@BN7PR02MB4148.namprd02.prod.outlook.com>
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <e28d914d-5842-4bfa-8208-9ac34fd38a95@paulmck-laptop>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 3/12/25 18:29, Paul E. McKenney wrote:
+> On Wed, Mar 12, 2025 at 01:19:32PM -0400, Rik van Riel wrote:
+>> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+>> index 1e5313748f8b..a2823763fd37 100644
+>> --- a/drivers/char/ipmi/ipmi_msghandler.c
+>> +++ b/drivers/char/ipmi/ipmi_msghandler.c
+>> @@ -1235,7 +1235,7 @@ int ipmi_create_user(unsigned int          if_num,
+>>   		return -ENOMEM;
+>>   
+>>   	index = srcu_read_lock(&ipmi_interfaces_srcu);
+>> -	list_for_each_entry_rcu(intf, &ipmi_interfaces, link) {
+>> +	list_for_each_entry_srcu(intf, &ipmi_interfaces, link) {
+> 
+> Doesn't the above line want to be something like this?
+> 
+> +	list_for_each_entry_srcu(intf, &ipmi_interfaces, link,
+> 				 srcu_read_lock_held(&ipmi_interfaces_srcu)) {
+
+Ouch what a mess.  There are multiple occurrences of this,
+almost all susceptible to the same warning.
+
+I'd start with:
+
+-#define ipmi_interfaces_mutex_held() \
+-	lockdep_is_held(&ipmi_interfaces_mutex)
++#define for_each_ipmi_interface(intf) \
++	list_for_each_entry_srcu(intf, &ipmi_interfaces, link,
++				 srcu_read_lock_held(&ipmi_interfaces_srcu)
++				 || lockdep_is_held(&ipmi_interfaces_mutex)) {
+
+and use the for_each_ipmi_interface() macro throughout the file.
+
+Here is the list... all of them are using _rcu, plus:
+
+- ipmi_smi_watcher_register is using the wrong lockdep_is_held() assertion,
+   but would warn if fixed
+- ipmi_add_smi is using _rcu but otherwise correct
+- ipmi_get_smi_info is using _rcu and can warn
+- ipmi_timeout is using _rcu and can warn
+- panic_event is using _rcu and can warn, and is also not
+   using any protection around the walk.  Taking srcu_read_lock
+   would be much better
 
 
-On 3/10/2025 3:18 PM, Michael Kelley wrote:
-> From: Arnd Bergmann <arnd@arndb.de> Sent: Monday, March 10, 2025 2:21 PM
+On top of this, intf->users_srcu never does a synchronize_srcu, so I'm
+a bit at a loss at how it is protecting the list.  The safest change
+here is probably:
+
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index f2a56c624f54..dc8936254c1b 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -3769,12 +3769,12 @@ void ipmi_unregister_smi(struct ipmi_smi *intf)
+  	intf->in_shutdown = true;
+  	list_del_rcu(&intf->link);
+  	mutex_unlock(&ipmi_interfaces_mutex);
+-	synchronize_srcu(&ipmi_interfaces_srcu);
+  
+  	/* At this point no users can be added to the interface. */
+  
+  	device_remove_file(intf->si_dev, &intf->nr_msgs_devattr);
+  	device_remove_file(intf->si_dev, &intf->nr_users_devattr);
++	synchronize_srcu(&ipmi_interfaces_srcu);
+  
+  	/*
+  	 * Call all the watcher interfaces to tell them that
+
+... plus replacing all uses of intf->users_srcu with ipmi_interfaces_srcu.
+
+
+A couple more issues:
+
+- in handle_read_event_rsp() there's a lone rcu_read_unlock()
+that should become srcu_read_unlock() (currently for intf->users_srcu;
+modulo changes like the above)
+
+- while the intf->cmd_rcvrs list is protected by regular RCU,
+there are many other occurrences of rcu_read_lock(), typically
+followed by
+
+         if (intf->in_shutdown) {
+                 rv = -ENODEV;
+                 goto out_err;
+         }
+
+and I think they should use interfaces_srcu instead.
+
+Paolo
+
+>>   		if (intf->intf_num == if_num)
+>>   			goto found;
+>>   	}
+>> -- 
+>> 2.48.1
 >>
->> On Mon, Mar 10, 2025, at 22:01, Michael Kelley wrote:
->>> From: Arnd Bergmann <arnd@arndb.de> Sent: Saturday, March 8, 2025 1:05 PM
->>>>>   config HYPERV_VTL_MODE
->>>>>   	bool "Enable Linux to boot in VTL context"
->>>>> -	depends on X86_64 && HYPERV
->>>>> +	depends on (X86_64 || ARM64)
->>>>>   	depends on SMP
->>>>> +	select OF_EARLY_FLATTREE
->>>>> +	select OF
->>>>>   	default n
->>>>>   	help
->>>>
->>>> Having the dependency below the top-level Kconfig entry feels a little
->>>> counterintuitive. You could flip that back as it was before by doing
->>>>
->>>>        select HYPERV_VTL_MODE if !ACPI
->>>>        depends on ACPI || SMP
->>>>
->>>> in the HYPERV option, leaving the dependency on HYPERV in
->>>> HYPERV_VTL_MODE.
->>>
->>> I would argue that we don't ever want to implicitly select
->>> HYPERV_VTL_MODE because of some other config setting or
->>> lack thereof.  VTL mode is enough of a special case that it should
->>> only be explicitly selected. If someone omits ACPI, then HYPERV
->>> should not be selectable unless HYPERV_VTL_MODE is explicitly
->>> selected.
->>>
->>> The last line of the comment for HYPERV_VTL_MODE says
->>> "A kernel built with this option must run at VTL2, and will not run
->>> as a normal guest."  In other words, don't choose this unless you
->>> 100% know that VTL2 is what you want.
->>
->> It sounds like the latter is the real problem: enabling a feature
->> should never prevent something else from working. Can you describe
->> what VTL context is and why it requires an exception to a rather
->> fundamental rule here? If you build a kernel that runs on every
->> single piece of arm64 hardware and every hypervisor, why can't
->> you add HYPERV_VTL_MODE to that as an option?
->>
-
-In the VTL mode, we're running the kernel as secure firmware inside the
-guest (one might see VTL2 working as Intel SMM or Secure World on ARM).
-
-[...]
-
 > 
-> Ideally, a Linux kernel image could detect at runtime what VTL it is
-> running at, and "do the right thing". Unfortunately, on x86 Linux this
-> has proved difficult (or perhaps impossible) because the amount of
-> boot-time setup required to ask the question about the current VTL
-> is significant. The idiosyncrasies and historical baggage of x86 requires
-> that Linux do some x86-specific initialization steps for VTL > 0
-> before the question can be asked. Hence the introduction of
-> CONFIG_HYPERV_VTL_MODE, and the behavior that when it is
-> selected, the kernel image won't run normally in VTL 0.
-> 
-> I'll go out on a limb and say that I suspect on arm64 a runtime
-> determination based on querying the VTL *could* be made (though
-> I'm not the person writing the code). But taking advantage of that
-> on arm64 produces an undesirable dichotomy with x86.
-
-On arm64 that is much easier, I agree. On x86 we'd need a kludge of
-
-static void __naked __init __aligned(4096) early_hvcall_pg(void)
-{
-	/*
-	 * Fill the early hvcall page with `0xF1` aka `INT1` to catch
-	 * programming errors. The hypervisor will overlay the page with
-	 * the vendor-specific code sequences to make hypercalls on x86(_64).
-	 */
-	asm (".skip 4096, 0xf1");
-}
-
-static u8 __init early_hvcall_pg_input[4096] 
-__attribute__((aligned(4096)));
-static u8 __init early_hvcall_pg_output[4096] 
-__attribute__((aligned(4096)));
-
-static void __init early_connect_to_hv(void)
-{
-	union hv_x64_msr_hypercall_contents hypercall_msr;
-	u64 guest_id;
-
-	guest_id = hv_generate_guest_id(LINUX_VERSION_CODE);
-	wrmsrl(HV_X64_MSR_GUEST_OS_ID, guest_id);
-	rdmsrl(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
-	hypercall_msr.enable = 1;
-	hypercall_msr.guest_physical_address = 
-__phys_to_pfn(virt_to_phys(early_hvcall_pg));
-	wrmsrl(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
-}
-
-or variations thereof.
-
-What's very nice about arm64 in this case at least, it's got SMCCC, hvc,
-OF/DT and a history of options of being power-efficient and embedded.
-Conversely, on x86(_64) the code sequences for hyeprcalls vary from the
-first vendor to the second one so we have to have the hvcall page to
-make this regular in the code. Support for OF/DT on x86 was added for
-Intel set top boxes (MID, ~2015 iirc), and it took a bit of huffing and
-puffing to make that work for us on the large/NUMA systems (and there
-might be something about supporting x2apic that had to be figured out).
-
-All told, we can have nicer things in our arm64 code yet diverging the
-code much from x86(_64) is not very desirable. I am not sure yet what
-the tradeoff should be, and my knowledge of Kconfig is rather basic.
-Certainly I cannot propose to arm64 maintainers that we'd like to do
-quirky things in Kconfig because of x86(-64), legacy specs, etc.
-
-Perhaps, we could go back to the V2's option of
-
-  config HYPERV
-  	tristate "Microsoft Hyper-V client drivers"
-  	depends on (X86 && X86_LOCAL_APIC && HYPERVISOR_GUEST) \
--		|| (ACPI && ARM64 && !CPU_BIG_ENDIAN)
-+		|| (ARM64 && !CPU_BIG_ENDIAN)
-  	select PARAVIRT
-  	select X86_HV_CALLBACK_VECTOR if X86
-  	select OF_EARLY_FLATTREE if OF
-@@ -15,7 +15,7 @@ config HYPERV
-
-  config HYPERV_VTL_MODE
-  	bool "Enable Linux to boot in VTL context"
--	depends on X86_64 && HYPERV
-+	depends on HYPERV
-  	depends on SMP
-  	default n
-  	help
-@@ -31,7 +31,7 @@ config HYPERV_VTL_MODE
-
-  	  Select this option to build a Linux kernel to run at a VTL other than
-  	  the normal VTL0, which currently is only VTL2.  This option
--	  initializes the x86 platform for VTL2, and adds the ability to boot
-+	  initializes the kernel to run in VTL2, and adds the ability to boot
-  	  secondary CPUs directly into 64-bit context as required for VTLs other
-  	  than 0.  A kernel built with this option must run at VTL2, and will
-  	  not run as a normal guest.
-
-That's a minimal extension, its surprise factor is very low. It has not
-been seen to cause issues. If no one has strong opinions against that,
-I'd send that in V6.
-
-> 
-> Roman may have further thoughts on the topic, but that's
-> what I know about how we got here.
-> 
-> Michael
-> 
-> [1] https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/vsm
-> [2] https://techcommunity.microsoft.com/blog/windowsosplatform/openhcl-the-new-open-source-paravisor/4273172
-
--- 
-Thank you,
-Roman
 
 
