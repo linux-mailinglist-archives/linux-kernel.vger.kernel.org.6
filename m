@@ -1,216 +1,232 @@
-Return-Path: <linux-kernel+bounces-557931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8529A5DF75
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:51:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC936A5DF77
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:52:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DB9D18975D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:51:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F23F3B0216
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD7C1E5B7C;
-	Wed, 12 Mar 2025 14:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29959245001;
+	Wed, 12 Mar 2025 14:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KrDPnV8J"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SE97OIjm"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9E42033A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E89086358
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741791100; cv=none; b=T/HYZYFTB4lwU4SgFUJCh1zMqSwihTnBc+VQsf38sspZm0Qrh9dpkFFeKVSk1IetNYNBcIcbr1X4We1u/SZl3BYniaSWlqXA+wlEnq9aw/nNMmgPa//pokJvm8AexgYakkRyETltXhH96BAeteflBiVg4td7N5wVve0X6//aYSQ=
+	t=1741791117; cv=none; b=aVKhliH4SiM1/fjvq4W+QRhAYXAnikSFIwA2yNYt34Zv0p61f2Wah/UjYtRfeHl2XB807/LzcyfrCdBUlAXo+kqFefjAPZrOasQgK4CX8b2sSYOq9jl+jxtw9E06qsAHiearOvM2Wi8j30pENcKaIdUzVCBqrihGnPTAgmZFWDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741791100; c=relaxed/simple;
-	bh=JqS8CbFG98vGYZPOc1OBSSPlVJRCWiANSlVO/O6Oh9k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S28StNAU7e7WtVAFSv6SyARCjFQSPxYpXibgbvt6UndLrf27bP58u2Vu2WrfiaGs5u7IkDjnOEnhTR9jYhWO2RttUS0Ou6LR/vMMlh7QsLCMmPQAd7f78uxAvYWsWlbeihGITzNdp7WtGKmoF2zq+05K488bEtjznXbCUGlyYoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KrDPnV8J; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741791097;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yKAxRE4cpEVReAVBfRWToeyYUILhM0htuYiSpO0zMq4=;
-	b=KrDPnV8J3jifJFr+48Q6I3e9qi7J4YchQOKjqEgJp8v7hozlEdsmKRAZX2pIG8brDqOmHl
-	2RPHd0aMXXW44YJFzahsLFqyXk0h17vDbsfltyRdh1MhnSkrIyZUDcXKNptvVFtVVlYvGw
-	CjNxz1gtqS5FZT01Sgcoq6ceLWFkeTI=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-491-JBL7dfauMSa41Rglu0-wOg-1; Wed, 12 Mar 2025 10:51:36 -0400
-X-MC-Unique: JBL7dfauMSa41Rglu0-wOg-1
-X-Mimecast-MFC-AGG-ID: JBL7dfauMSa41Rglu0-wOg_1741791096
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4767348e239so83399971cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:51:36 -0700 (PDT)
+	s=arc-20240116; t=1741791117; c=relaxed/simple;
+	bh=OFNcx1rFjTYUiFWazM1XPXSs49ger27uc8bpPEi56T8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eqA6cCkdm86ldt6/iArqGWW425734oNyBlIU61sBsYEhczkidcM5eEX8f5MEa0+/VEi1HVlj/vEYX47MhBWqK38trQexc1L5bKpk/Ilrp02eATKcOApscJCp77OJTBzwowdV3CluhTBOWShPVL/mMYXU/dWorQuD7cxPhoI4us0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SE97OIjm; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso409135966b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:51:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741791113; x=1742395913; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QqHa64yZqCN0DuB9FJOk79wf31KR/9+DD1L+8ldk5uU=;
+        b=SE97OIjmw/HHM806tTBeRnkhqKZsJzyC96L/fU9mwzAGQXwVfOjk3Modbn61vdKRNd
+         zS4GXz7iYoTxZZJ6aESMzPpddLhF3t+iDNv6qbQL+loEdCQ1CILZXHkH8kVqiw+4wfeH
+         69wF63Gxc4jO4PvKd/adgUDonLc0lWhCZqDuY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741791095; x=1742395895;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yKAxRE4cpEVReAVBfRWToeyYUILhM0htuYiSpO0zMq4=;
-        b=tcf+DaysW/PvxtKse5ypjz7cOjsYpJBpFpppDgsFmFxkJuVYW+dpt+ZbWOIAzlliwQ
-         WJV+Mh+/r9iHcIuuyWwZXit3QQAZpd0hfZqLXGIII+6MlXwc3Tx/9QmmvZflvdsC8nRf
-         7bPQkFEmYAKgZxmoDNrLBkAKuo6M1pqzeNzpJ4cFrytObDS1+jo92M7+FwHf/5We9Ryq
-         EFTUFPhHZAv8gXYOtRgACRtK5tZTmSmV8NSCLCTW7UqHy811bt84Sn6FdOtA2Y2u9NHg
-         Vf2kRplCTXaibAmSqrBRsPvzfNyyxCF6JBZ4nYqcMK7XNY737iNc3k2HDFoL9CHIAY2H
-         Z9XQ==
-X-Gm-Message-State: AOJu0YxAgk2US2vld+l1AplGyXqzILt2IYi/UtxjiQN9CgUW5+2L/mR/
-	siWMaUS3G0eEdJKjecZaJ5abceMyZyzJaOKLOSjkyRVc1JIdmHD4aVoe+bePDyh1pLD5e1mnLAE
-	Db5aROnk8beiu/THJKlwhq0wXTPvjDXhViq67WLfv1n/G6U74LU5+OPO3kdLCxnnN+XZa80mz4y
-	4YF4lxh72Gi6CGVg85Jq5xq6myhsNu1rkTKY5BdH/Wp9g=
-X-Gm-Gg: ASbGncvAmBfNx67w8v8g3Bq+iJWzjDqC4x6BLrQGjO1l0wQohKjkprssAFy9qAR32+5
-	rxl59ouXkm2cTXkvRaYxE7St9uvg/+WQTpzfYVJuhsCwQBGCNMbAqaHMRn8qgkf+9NNPj98Gzno
-	DZArzO148m1/pMMfaVBeOuNWp39nzSNAticKG/WAPJWqVi/uTP074yHr2V2KYeSeoiK8ykWQO/W
-	nrO3hukO+bUVRZqPMqnxaO5ipLGO05m+W2qcD9r4N8d9luMUgX/9imXQHs7Xw1451brxV1HevP0
-	0wiU
-X-Received: by 2002:a05:622a:355:b0:476:6215:eafc with SMTP id d75a77b69052e-47699502529mr104046081cf.22.1741791095674;
-        Wed, 12 Mar 2025 07:51:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH7uhKZcz1zhEaWhyp/OH/LmrbsvVXXd2Il8QyoPaX0rwx04CgVoOuAopMHTDzurW2U5mJAXw==
-X-Received: by 2002:a05:622a:355:b0:476:6215:eafc with SMTP id d75a77b69052e-47699502529mr104045581cf.22.1741791095226;
-        Wed, 12 Mar 2025 07:51:35 -0700 (PDT)
-Received: from x1.com ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476ae289d35sm9367941cf.17.2025.03.12.07.51.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 07:51:34 -0700 (PDT)
-From: Peter Xu <peterx@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: peterx@redhat.com,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Pavel Emelyanov <xemul@virtuozzo.com>,
-	Jinjiang Tu <tujinjiang@huawei.com>,
-	Dimitris Siakavaras <jimsiak@cslab.ece.ntua.gr>,
-	Andrea Arcangeli <aarcange@redhat.com>
-Subject: [PATCH] mm/userfaultfd: Fix release hang over concurrent GUP
-Date: Wed, 12 Mar 2025 10:51:31 -0400
-Message-ID: <20250312145131.1143062-1-peterx@redhat.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1741791113; x=1742395913;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QqHa64yZqCN0DuB9FJOk79wf31KR/9+DD1L+8ldk5uU=;
+        b=F5kRhcF4+RA2NapBW67ZDMEP2u/2KZB3a6ygxWZyAtyNwlv3Ilk3Jix8Y4lINt5+3S
+         FeEYvMTdW0LUVzK5SFUdTXYB13SzwILlO9YJMzAk1p30sGKmL7UKwWayzwh4WGR9QD3T
+         SzuPptCtijsUG0ydmnSbZaGeMHidhPvcSMmuBbkybsNoJyzFS4q20tEV9EtLlMwkeIXI
+         7DEpyedkp+A+73RqujE5QKPUNH2JuzY4hPMmNb+etwq6FZKpa3zxNWWN8kDW99S0SYET
+         VxGOP1Gm7CDtv9/kJuYzn3+Z8MdcJuKzMdgYMtWrPG9sj8NQmqb0vvJpEziaKBwj9NH0
+         i4Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWu6QJtj1HJ0X+8BzxBRhEA8zPtX34m/Lqh98Y1fim8m5wCGbZFHKIEDeggcmejFv1nWd1PYxythERHd3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVHknqRzkLNtViR1ZKiE9nrVHUf6G/nC8kq0m+o60SqTKHIefN
+	FbLoxN3qkBrEWp1zTtH5o41lfUvkMiGhpSnJnTJgadPFlNxuiT4QMEzNtLdQOMt+qrjeCkcCikZ
+	h6A==
+X-Gm-Gg: ASbGncv9aHlvjXscRgGNTrgyF1kqTp3b6MBpLMOYjbAfFDOtmpKjfyksos9AElp8sI3
+	ZdQTvnkVXk4+3pdR/9Jt5QYPzPxJU0o6Li2mDQ3cBXBzcj0Oy7l+0jR3sngX5tVZyQJxhdrm3PF
+	JBLHWrb2TPuztHDwPfFASvfhumQRNgCvMJtHe6NkgjjnFPhOzSpxF8RSuJZr+LxCBRrCP3yOyz+
+	xp3SoGHhjTO2f2Sth15knAxlO2F0cO6Tm2K53MDbw6h11MW2tsua4lnQ7s7+mh+Go6IftpYQH8U
+	QUnEiSvudM54du9iLRZ3VU+sM+cKvMFu6LbVR6KwclNvkdpMqU5Yu4cBwR80DHzowJ8UIF8Mmg6
+	jGvze
+X-Google-Smtp-Source: AGHT+IFJ2iyFir03V3EU9Os94bWohiXCC9m7bt/9tfjNCUQriosPsEOhEo79Up+mpP+ff8itkXFITQ==
+X-Received: by 2002:a17:907:8690:b0:abf:425d:5d3 with SMTP id a640c23a62f3a-ac2b9ea192dmr1140513166b.40.1741791113262;
+        Wed, 12 Mar 2025 07:51:53 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac287653cdfsm637767666b.82.2025.03.12.07.51.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 07:51:51 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e50bae0f5bso10686a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:51:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVLyBkbEtZKg7W+PHylw83+J7t60avrbp/L5a/V/5O0OuymRCxFjRX72C3jamEjys+DYcXzwJfL9hxII2o=@vger.kernel.org
+X-Received: by 2002:a50:d65c:0:b0:5e6:15d3:ffe7 with SMTP id
+ 4fb4d7f45d1cf-5e7bf56542dmr96067a12.7.1741791110392; Wed, 12 Mar 2025
+ 07:51:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <miliiyxmqko6hx66yhdv4nkkopbm73wbz6kxxlzpts53mscqzy@dpfa6y3wnspv>
+In-Reply-To: <miliiyxmqko6hx66yhdv4nkkopbm73wbz6kxxlzpts53mscqzy@dpfa6y3wnspv>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Wed, 12 Mar 2025 23:51:33 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5AYA=7rQjdQ4AS1vjb0Z3zHec6bdbhrA2cW706DHZyhKg@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr2eaLs2O2EC-uwC0uoIEp4UXUfcQom0TbaZauvbtu2eBYdwulBQ7VOLVA
+Message-ID: <CAAFQd5AYA=7rQjdQ4AS1vjb0Z3zHec6bdbhrA2cW706DHZyhKg@mail.gmail.com>
+Subject: Re: [RFC] sched: add sched_show_task() variant that accepts log level
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch should fix a possible userfaultfd release() hang during
-concurrent GUP.
+Hi Sergey,
 
-This problem was initially reported by Dimitris Siakavaras in July 2023 [1]
-in a firecracker use case.  Firecracker has a separate process handling
-page faults remotely, and when the process releases the userfaultfd it can
-race with a concurrent GUP from KVM trying to fault in a guest page during
-the secondary MMU page fault process.
+On Mon, Mar 10, 2025 at 5:25=E2=80=AFPM Sergey Senozhatsky
+<senozhatsky@chromium.org> wrote:
+>
+> Hi,
+>
+> A request for comments, not a formal patch.
+>
+> Is there any reason why hung-task watchdog prints error header
+> with KERN_ERR log level while task's backtrace is printed with
+> KERN_INFO?  Will it make sense to unify log levels and introduce
+> sched_show_task() variant that accept log level param so that
+> everything that hung-task watchdog prints becomes KERN_ERR?
 
-A similar problem was reported recently again by Jinjiang Tu in March 2025
-[2], even though the race happened this time with a mlockall() operation,
-which does GUP in a similar fashion.
+Thanks a lot for looking into this.
 
-In 2017, commit 656710a60e36 ("userfaultfd: non-cooperative: closing the
-uffd without triggering SIGBUS") was trying to fix this issue.  AFAIU, that
-fixes well the fault paths but may not work yet for GUP.  In GUP, the issue
-is NOPAGE will be almost treated the same as "page fault resolved" in
-faultin_page(), then the GUP will follow page again, seeing page missing,
-and it'll keep going into a live lock situation as reported.
+Let me just add that I've been looking into ways to automatically
+analyze kernel crash reports and I noticed that when I filter out
+KERN_INFO and higher log levels, I end up losing useful information
+for hung-task watchdog-kind of problems. This change would greatly
+help in filtering out unnecessary noise from the logs.
 
-This change makes core mm return RETRY instead of NOPAGE for both the GUP
-and fault paths, proactively releasing the mmap read lock.  This should
-guarantee the other release thread make progress on taking the write lock
-and avoid the live lock even for GUP.
+By the way, if having it as KERN_INFO by default would still be
+desirable, I suppose we could add a KConfig option to set the desired
+log level?
 
-When at it, rearrange the comments to make sure it's uptodate.
+Best regards,
+Tomasz
 
-[1] https://lore.kernel.org/r/79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr
-[2] https://lore.kernel.org/r/20250307072133.3522652-1-tujinjiang@huawei.com
-
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Mike Rapoport (IBM) <rppt@kernel.org>
-Cc: Axel Rasmussen <axelrasmussen@google.com>
-Cc: Jinjiang Tu <tujinjiang@huawei.com>
-Cc: Dimitris Siakavaras <jimsiak@cslab.ece.ntua.gr>
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- fs/userfaultfd.c | 51 ++++++++++++++++++++++++------------------------
- 1 file changed, 25 insertions(+), 26 deletions(-)
-
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 97c4d71115d8..d80f94346199 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -395,32 +395,6 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 	if (!(vmf->flags & FAULT_FLAG_USER) && (ctx->flags & UFFD_USER_MODE_ONLY))
- 		goto out;
- 
--	/*
--	 * If it's already released don't get it. This avoids to loop
--	 * in __get_user_pages if userfaultfd_release waits on the
--	 * caller of handle_userfault to release the mmap_lock.
--	 */
--	if (unlikely(READ_ONCE(ctx->released))) {
--		/*
--		 * Don't return VM_FAULT_SIGBUS in this case, so a non
--		 * cooperative manager can close the uffd after the
--		 * last UFFDIO_COPY, without risking to trigger an
--		 * involuntary SIGBUS if the process was starting the
--		 * userfaultfd while the userfaultfd was still armed
--		 * (but after the last UFFDIO_COPY). If the uffd
--		 * wasn't already closed when the userfault reached
--		 * this point, that would normally be solved by
--		 * userfaultfd_must_wait returning 'false'.
--		 *
--		 * If we were to return VM_FAULT_SIGBUS here, the non
--		 * cooperative manager would be instead forced to
--		 * always call UFFDIO_UNREGISTER before it can safely
--		 * close the uffd.
--		 */
--		ret = VM_FAULT_NOPAGE;
--		goto out;
--	}
--
- 	/*
- 	 * Check that we can return VM_FAULT_RETRY.
- 	 *
-@@ -457,6 +431,31 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 	if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT)
- 		goto out;
- 
-+	if (unlikely(READ_ONCE(ctx->released))) {
-+		/*
-+		 * If a concurrent release is detected, do not return
-+		 * VM_FAULT_SIGBUS or VM_FAULT_NOPAGE, but instead always
-+		 * return VM_FAULT_RETRY with lock released proactively.
-+		 *
-+		 * If we were to return VM_FAULT_SIGBUS here, the non
-+		 * cooperative manager would be instead forced to
-+		 * always call UFFDIO_UNREGISTER before it can safely
-+		 * close the uffd, to avoid involuntary SIGBUS triggered.
-+		 *
-+		 * If we were to return VM_FAULT_NOPAGE, it would work for
-+		 * the fault path, in which the lock will be released
-+		 * later.  However for GUP, faultin_page() does nothing
-+		 * special on NOPAGE, so GUP would spin retrying without
-+		 * releasing the mmap read lock, causing possible livelock.
-+		 *
-+		 * Here only VM_FAULT_RETRY would make sure the mmap lock
-+		 * be released immediately, so that the thread concurrently
-+		 * releasing the userfault would always make progress.
-+		 */
-+		release_fault_lock(vmf);
-+		goto out;
-+	}
-+
- 	/* take the reference before dropping the mmap_lock */
- 	userfaultfd_ctx_get(ctx);
- 
--- 
-2.47.0
-
+>
+> Something like this:
+>
+> ---
+>  include/linux/sched/debug.h |  1 +
+>  kernel/hung_task.c          |  4 ++--
+>  kernel/sched/core.c         | 19 +++++++++++++------
+>  3 files changed, 16 insertions(+), 8 deletions(-)
+>
+> diff --git a/include/linux/sched/debug.h b/include/linux/sched/debug.h
+> index b5035afa2396..8e46854d16fc 100644
+> --- a/include/linux/sched/debug.h
+> +++ b/include/linux/sched/debug.h
+> @@ -34,6 +34,7 @@ extern void show_stack(struct task_struct *task, unsign=
+ed long *sp,
+>                        const char *loglvl);
+>
+>  extern void sched_show_task(struct task_struct *p);
+> +extern void sched_show_task_log_lvl(struct task_struct *p, const char *l=
+vl);
+>
+>  #ifdef CONFIG_SCHED_DEBUG
+>  struct seq_file;
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index ccd7217fcec1..23dec32a05f3 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -119,7 +119,7 @@ static void debug_show_blocker(struct task_struct *ta=
+sk)
+>                 if ((unsigned long)t =3D=3D owner) {
+>                         pr_err("INFO: task %s:%d is blocked on a mutex li=
+kely owned by task %s:%d.\n",
+>                                 task->comm, task->pid, t->comm, t->pid);
+> -                       sched_show_task(t);
+> +                       sched_show_task_log_lvl(t, KERN_ERR);
+>                         return;
+>                 }
+>         }
+> @@ -186,7 +186,7 @@ static void check_hung_task(struct task_struct *t, un=
+signed long timeout)
+>                         pr_err("      Blocked by coredump.\n");
+>                 pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_sec=
+s\""
+>                         " disables this message.\n");
+> -               sched_show_task(t);
+> +               sched_show_task_log_lvl(t, KERN_ERR);
+>                 debug_show_blocker(t);
+>                 hung_task_show_lock =3D true;
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 00ea6f31973c..b6a5a41fbbfc 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -7687,7 +7687,7 @@ void __sched io_schedule(void)
+>  }
+>  EXPORT_SYMBOL(io_schedule);
+>
+> -void sched_show_task(struct task_struct *p)
+> +void sched_show_task_log_lvl(struct task_struct *p, const char *lvl)
+>  {
+>         unsigned long free;
+>         int ppid;
+> @@ -7695,7 +7695,8 @@ void sched_show_task(struct task_struct *p)
+>         if (!try_get_task_stack(p))
+>                 return;
+>
+> -       pr_info("task:%-15.15s state:%c", p->comm, task_state_to_char(p))=
+;
+> +       printk("%stask:%-15.15s state:%c", lvl,
+> +              p->comm, task_state_to_char(p));
+>
+>         if (task_is_running(p))
+>                 pr_cont("  running task    ");
+> @@ -7709,12 +7710,18 @@ void sched_show_task(struct task_struct *p)
+>                 free, task_pid_nr(p), task_tgid_nr(p),
+>                 ppid, p->flags, read_task_thread_flags(p));
+>
+> -       print_worker_info(KERN_INFO, p);
+> -       print_stop_info(KERN_INFO, p);
+> -       print_scx_info(KERN_INFO, p);
+> -       show_stack(p, NULL, KERN_INFO);
+> +       print_worker_info(lvl, p);
+> +       print_stop_info(lvl, p);
+> +       print_scx_info(lvl, p);
+> +       show_stack(p, NULL, lvl);
+>         put_task_stack(p);
+>  }
+> +EXPORT_SYMBOL_GPL(sched_show_task_log_lvl);
+> +
+> +void sched_show_task(struct task_struct *p)
+> +{
+> +       sched_show_task_log_lvl(p, KERN_INFO);
+> +}
+>  EXPORT_SYMBOL_GPL(sched_show_task);
+>
+>  static inline bool
+> --
+> 2.49.0.rc0.332.g42c0ae87b1-goog
+>
 
