@@ -1,194 +1,142 @@
-Return-Path: <linux-kernel+bounces-557520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB75A5DA52
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:19:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AE3A5DA55
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A93EE171918
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:19:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E78BD3B520B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810D123C8B3;
-	Wed, 12 Mar 2025 10:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA6D23E251;
+	Wed, 12 Mar 2025 10:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f1O5eBbc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cBdIgCD5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE69221D59F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C9121D59F;
+	Wed, 12 Mar 2025 10:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741774742; cv=none; b=cvbJ2RydEF/zcUJYkqEzLqaHWvBedmRTp4wUxhrCsA+yjWxnd1L/EKAIhg5sX8JaXnZDpvFg+VNfUlhUQ+Z9J5ab+HQFPVNTq9Y4fM4MMD943U5RlP5B5txQ5T5EYwbhGniZaDjxr0BDbgWA6COtSxdaIohaJsoG4Lwy6xZdM/U=
+	t=1741774770; cv=none; b=jB2lxt9c5zkUqtr540JcrtF7hszJ6/qrVvVFiJJ7FRsb5UzmOU29shxgcgRVrjAD3sQAe3Un2oiT/hYTiw+esTWJOMMCrbXNVUMu8ioaSOokOJ1pHdH/TIK9f6w0/N5sAthtbgbZI2XRWtCOqW6gHN6e24AI9w1uyN9EvfdlO90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741774742; c=relaxed/simple;
-	bh=I/meoAPstTkIHKdRwloxNDfcOzIK+pFIloRdc4WO7sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kp8zlgOeJphReBWnLucTJhDS+JMyPlcs2V4+PQ0MbZ6oPVF8BcLFGYR9TfTMC4YB/EwwPHGr4nfl0uxGzxPPsDqcKvJ36+4Q/AjoBY/eCRyi8VStDiqNBl5XLGJ/tYDELEF1X7iSWeShPNMBPEC3w+lWVNitEmqS2jlzn+DeQgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f1O5eBbc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B44C2C4CEE3;
-	Wed, 12 Mar 2025 10:19:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741774742;
-	bh=I/meoAPstTkIHKdRwloxNDfcOzIK+pFIloRdc4WO7sw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f1O5eBbcrMtnFWQ7cjgryCAyW8hMY5UavUZGc4yAeo7z5LhT9EasqsXq2/BYCf863
-	 cTc6Pjdam3lAWwIgpkaN06nKlBPV5FOeyFLJCNTBpOpHNBviFJ1/tuA+gEx+AvkEg3
-	 LeCeimEkr8ejJQ4QBrofmhuqkULYtkE6TDF9BZgE=
-Date: Wed, 12 Mar 2025 11:18:59 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Nipun Gupta <nipun.gupta@amd.com>
-Cc: linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, derek.kiernan@amd.com, dragan.cvetic@amd.com,
-	arnd@arndb.de, praveen.jain@amd.com, harpreet.anand@amd.com,
-	nikhil.agarwal@amd.com, srivatsa@csail.mit.edu, code@tyhicks.com,
-	ptsm@linux.microsoft.com
-Subject: Re: [RFC PATCH 1/2] drivers/misc: add silex multipk driver
-Message-ID: <2025031256-accurate-tactics-1ff7@gregkh>
-References: <20250312095421.1839220-1-nipun.gupta@amd.com>
+	s=arc-20240116; t=1741774770; c=relaxed/simple;
+	bh=TJHip2cx7e/NfYxyHq5bmIzuT5vtIAhIdopeDQLbvlg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TfbLKTC/1EdDI0Go7vaxae3s/d5Run1N4QYqWSFJKGAW2dI1qbgeOnToG85lA40RfycGKqqzA5ZHepGF1ikZIE5r0W/j9JltTX1NN0bWpYYpPLkvk9H9TRGCStyJ48mjA9yM4L6ebEdyIi3S75tHgIauNsQVaYNHoFzFT+wGf+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cBdIgCD5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CACmi1017709;
+	Wed, 12 Mar 2025 10:19:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yLpwz5o8pHGC1j10ZFntjLYwLh7GdeyWYCoc3lVul+M=; b=cBdIgCD5bfCkIXpy
+	d8XiN32R1/vsJaDrhQ1qIwW4VnaCdA7Y7IfpJNwBJTaSSmsX3W5HoTDASkKkh+fu
+	rzVIwCdUGaSbiXckQiGvXpuAgIhnm8D5YDVgi/gsSSQmlAioMRcNufJ/uooP7YMe
+	v9Iw1S6P3V6VdVmaEf8oEX+oCFAc1DJ6VZiVzsT2Hg1TKYt+a3kusdIsMHbvwCjo
+	EjC8po6aLCzJaO11pJRChVs+u0AKWxrEtl6X+O3S1zsAXgJRtZPpwcI9sJgWv41B
+	rG9wU0rnAK2swcyrdjbGrV5FLcLRMMJqIsOQtDbsOXLNUqAE3xwbSNxQB0QEiWXZ
+	myHcvg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au50a0f8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 10:19:24 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52CAJNag009188
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 10:19:23 GMT
+Received: from [10.219.57.57] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Mar
+ 2025 03:19:20 -0700
+Message-ID: <a59c99a0-262d-4f16-99a4-985486849218@quicinc.com>
+Date: Wed, 12 Mar 2025 15:49:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312095421.1839220-1-nipun.gupta@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs8300: add the pcie smmu node
+To: Dmitry Baryshkov <lumag@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250206-qcs8300-pcie-smmu-v1-1-8eee0e3585bc@quicinc.com>
+ <aau6kgdbsq5mu5h4kqggzgua26o7dwc6hbkpmtgcnqx5dqhlgd@qcm2xzr64fyg>
+ <43450c5e-837c-4215-9bb4-69066b175832@quicinc.com>
+ <rj4jtqchuetrbtczbhvaa5hcp5olumwdbao3x4pulkxiqcq2ag@v6ftffk6bcc5>
+Content-Language: en-US
+From: Pratyush Brahma <quic_pbrahma@quicinc.com>
+In-Reply-To: <rj4jtqchuetrbtczbhvaa5hcp5olumwdbao3x4pulkxiqcq2ag@v6ftffk6bcc5>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: hxadSXf6e1kmLW1MNVyyHlF4NY4_lIMk
+X-Proofpoint-ORIG-GUID: hxadSXf6e1kmLW1MNVyyHlF4NY4_lIMk
+X-Authority-Analysis: v=2.4 cv=a4ow9VSF c=1 sm=1 tr=0 ts=67d15fac cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=y0BQO-919zeWhUMib7cA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_04,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=427
+ clxscore=1015 spamscore=0 malwarescore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120071
 
-On Wed, Mar 12, 2025 at 03:24:20PM +0530, Nipun Gupta wrote:
-> Silex MultiPK device provides a char device interface to interact
-> with Silex device for offloading asymmetric crypto operations.
-> 
-> Signed-off-by: Nipun Gupta <nipun.gupta@amd.com>
-> ---
-> 
-> Silex MultiPK device is a PKI offload device, which has multiple PK engines to
-> perform asymmetric crypto operations like ECDSA, RSA, Point Multiplication etc.
-> 
-> Following provides the brief overview of the device interface with the software:
-> 
->  +------------------+
->  |    Software      |
->  +------------------+
->      |          |
->      |          v
->      |     +-----------------------------------------------------------+
->      |     |                     RAM                                   |
->      |     |  +----------------------------+   +---------------------+ |
->      |     |  |           RQ pages         |   |       CQ pages      | |
->      |     |  | +------------------------+ |   | +-----------------+ | |
->      |     |  | |   START (cmd)          | |   | | req_id | status | | |
->      |     |  | |   TFRI (addr, sz)---+  | |   | | req_id | status | | |
->      |     |  | | +-TFRO (addr, sz)   |  | |   | | ...             | | |
->      |     |  | | | NTFY (req_id)     |  | |   | +-----------------+ | |
->      |     |  | +-|-------------------|--+ |   |                     | |
->      |     |  |   |                   v    |   +---------------------+ |
->      |     |  |   |         +-----------+  |                           |
->      |     |  |   |         | input     |  |                           |
->      |     |  |   |         | data      |  |                           |
->      |     |  |   v         +-----------+  |                           |
->      |     |  |  +----------------+        |                           |
->      |     |  |  |  output data   |        |                           |
->      |     |  |  +----------------+        |                           |
->      |     |  +----------------------------+                           |
->      |     |                                                           |
->      |     +-----------------------------------------------------------+
->      |
->      |
->  +---|----------------------------------------------------+
->  |   v                Silex MultiPK device                |
->  |  +-------------------+     +------------------------+  |
->  |  | New request FIFO  | --> |       PK engines       |  |
->  |  +-------------------+     +------------------------+  |
->  +--------------------------------------------------------+
-> 
-> To perform a crypto operation, the software writes a sequence of descriptors,
-> into the RQ memory. This includes input data and designated location for the
-> output data. After preparing the request, request offset (from the RQ memory
-> region) is written into the NEW_REQUEST register. Request is then stored in a
-> common hardware FIFO shared among all RQs. When a PK engine becomes available,
-> device pops the request from the FIFO and fetches the descriptors. It DMAs the
-> input data from RQ memory and executes the necessary computations. After
-> computation is complete, the device writes output data back to RAM via DMA.
-> Device then writes a new entry in CQ ring buffer in RAM, indicating completion
-> of the request. Device also generates an interrupt for notifying completion to
-> the software.
-> 
-> As Crypto AF_ALG does not support offloading asymmetric operations from 
-> user-space (which was attempted to be added earlier in Linux at:
-> https://lore.kernel.org/all/146672253157.23101.15291203749122389409.stgit@tstruk-mobl1.ra.intel.com/),
-> RQ memory is provided to the user-space via mmap, so that application can
-> directly write to the descriptors.
-> 
-> P.S. Most of the above text is also added as part of silex driver file.
 
-All of that should be in the changelog text, don't put it down here
-where it will never be seen again.
+On 3/12/2025 2:14 PM, Dmitry Baryshkov wrote:
+> On Wed, Mar 12, 2025 at 12:41:38PM +0530, Pratyush Brahma wrote:
+>> On 3/12/2025 12:23 PM, Dmitry Baryshkov wrote:
+>>> On Thu, Feb 06, 2025 at 07:13:17PM +0530, Pratyush Brahma wrote:
+>>>> Add the PCIe SMMU node to enable address translations
+>>>> for pcie.
+>>>>
+>>>> Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
+>>>> ---
+>>>>    arch/arm64/boot/dts/qcom/qcs8300.dtsi | 75 +++++++++++++++++++++++++++++++++++
+>>>>    1 file changed, 75 insertions(+)
+>>>>
+>>> Reviewed-by: Dmitry Baryshkov <lumag@kernel.org>
+>>>
+>>> Though I see a little benefit in having this SMMU node if it is not
+>>> followed by the PCIe enablement.
+>> Thanks for the review!
+>>
+>> PCIe enablement changes for qcs8300 have been posted already [1] and [1]
+>> needs
+>> this patch as mentioned in [2].
+> Ack. In future please consider posting series in a logical way: if PCIe
+> SMMU is only useful for PCIe and it is required for PCIe to work it
+> makes much more sense to have it as a part of the PCIe enablement series
+> rather than having it as a separate patch which can easily get lost.
+Sure, will keep this in mind further.
+>
+>> [1] https://lore.kernel.org/lkml/20250310063103.3924525-8-quic_ziyuzhan@quicinc.com
+>> [2] https://lore.kernel.org/lkml/20250310063103.3924525-1-quic_ziyuzhan@quicinc.com
+>>
+>> -- 
+>> Thanks and Regards
+>> Pratyush Brahma
+>>
+-- 
+Thanks and Regards
+Pratyush Brahma
 
-> +static ssize_t hardware_show(struct device *dev, struct device_attribute *attr,
-> +			     char *buf)
-> +{
-
-Where is the Documentation/ABI/ entries for your new sysfs files?
-
-> +	int v, hwv, cnt, maxtotalreqs, rqmaxpending, mults;
-> +	struct multipk_dev *mpkdev = dev_get_drvdata(dev);
-> +
-> +	v = (int)sx_rdreg(mpkdev->regs, REG_SEMVER);
-> +	hwv = (int)sx_rdreg(mpkdev->regs, REG_HW_VERSION);
-> +	cnt = (int)sx_rdreg(mpkdev->regs, REQ_CFG_REQ_QUEUES_CNT);
-> +	maxtotalreqs = (int)sx_rdreg(mpkdev->regs, REQ_CFG_MAX_PENDING_REQ);
-> +	rqmaxpending = (int)sx_rdreg(mpkdev->regs, REQ_CFG_MAX_REQ_QUEUE_ENTRIES);
-> +	mults = (int)sx_rdreg(mpkdev->regs, REQ_CFG_PK_INST);
-> +
-> +	return sprintf(buf,
-> +		"Hardware interface version: %d.%d.%d\n"
-> +		"Hardware implementation version: %d.%d.%d\n"
-> +		"Count request queues: %d\n"
-> +		"Total max pending requests: %d\n"
-> +		"Max pending requests per request queue: %d\n"
-> +		"Pkcores 64 multipliers: %d\n"
-> +		"Pkcores 256 multipliers: %d\n",
-> +		MPK_SEMVER_MAJOR(v), MPK_SEMVER_MINOR(v), MPK_SEMVER_PATCH(v),
-> +		MPK_HWVER_MAJOR(hwv), MPK_HWVER_MINOR(hwv), MPK_HWVER_SVN(hwv),
-> +		cnt, maxtotalreqs, rqmaxpending,
-> +		mults >> 16, mults & 0xFFFF);
-
-No!
-
-sysfs is "one value per file", which this is not at all.
-
-Also, did you run checkpatch.pl?  It should have told you that you
-should not be calling sprintf() here either.
-
-> +static int __init multipk_init(void)
-> +{
-> +	dev_t devt;
-> +	int ret;
-> +
-> +	multipk_class = class_create("multipk");
-
-Why do you need a whole new class?  Why not just use a misc device?
-
-> +	if (IS_ERR(multipk_class)) {
-> +		ret = PTR_ERR(multipk_class);
-> +		pr_err("can't register class\n");
-> +		goto err;
-> +	}
-> +	ret = alloc_chrdev_region(&devt, 0, MULTIPK_MAX_DEVICES, "multipk");
-
-Again, why not a dynamic misc device per device in the system?
-
-No need to make this harder than it is.
-
-But again, this really should use the in-kernel apis we already have for
-this type of hardware, don't make a custom user/kernel api at all.
-That's not going to scale or be easy to maintain for any amount of time.
-
-thanks,
-
-greg k-h
 
