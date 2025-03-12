@@ -1,236 +1,202 @@
-Return-Path: <linux-kernel+bounces-557738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B779A5DD0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:48:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBA9A5DD0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:48:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A882E16704B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:48:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C643167E21
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC46723E354;
-	Wed, 12 Mar 2025 12:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A0223DE80;
+	Wed, 12 Mar 2025 12:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7gfbJYX"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NDg5B9US"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3F77083C;
-	Wed, 12 Mar 2025 12:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41777083C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741783690; cv=none; b=tQbj1fE9OqflQ6vZMw9uLplYT48vIA55y9LYjRmg7/y+NuB76u2Upn9kXRTW6jwmElDlYzUO45uQtw6s2/3jZabLWRBhNfTQlxwReglsk9mOtiweszohw+JUF3SL/C/WLzMZGTjM4jPiGnqPd079C3+bGgWiU1/eujhmmn9pBeQ=
+	t=1741783704; cv=none; b=IFhBFzU6prSx90MhHqUUBw9jvKFlpLqT8LciFlpFTmYUJMEPpFEaVJCJtLr/FS576C3QAYB0ZbEZqYfkp/fWN0U/xrpyMSqdP7u47yL/wahnci+gr8pP6Vak/Z6GaIXvFJJDGAI1zcrlUTwlQvlzjd7xPTNNauHgM3ksLBaOSoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741783690; c=relaxed/simple;
-	bh=isFALg6CXqDl8cu7cPP7y6ryoQs71iJg27uKq5QT0gM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D4P1fesp7Z14IUFrYASQoCGWyT/P8TEo/7u+PUE2SmUnlHARVp+giZ4mnqWiGL4FxikxJbLtygv1f2MdORrzr01tRfunSxGnRY6QDLnsSocZrBhBLc/f7xnUlmkJ66M29ii2KcLalJK/A22uNuIqtcjEp7yVWjPabdj9R8PWO/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D7gfbJYX; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-224191d92e4so116098345ad.3;
-        Wed, 12 Mar 2025 05:48:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741783688; x=1742388488; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WKfNUEOjLl/LJnQn1CB92jCGeCH7231aksnRXVNSbLI=;
-        b=D7gfbJYXnYYnGC7NlNFFkjvWM9gNLN/20CKb26f4b6WonuCraaPhbFp8EonLLZkgWm
-         kseC86Dfdyl2A224p/Hqp7dBiRXU1u60c5kI69edhZaFO9bnq6QHGS7uRO1JiJ+wWqPU
-         HpYnXhjvVK9oBOoYf4wRCeUJIHfsEphwM/xVGqlTkVaTIPgIzopDQtPh84gKIke3Y2Je
-         cDYvGO0s3Ny223xeUSOwsBi1VjbNCwyfc7WxDpiGWzP8tYNVeTa6aOqqlrwaW++gV/Bo
-         WpRkeL99bGOUjd0W5QOwQ52Yrhwovs3VW/aH8509Tg8Mwdz4K42pxwPsKCUOzlysYDHi
-         xSPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741783688; x=1742388488;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WKfNUEOjLl/LJnQn1CB92jCGeCH7231aksnRXVNSbLI=;
-        b=O5e+K4NZjYSEVPJr5En5cg3OBI17RoajJAopMZMhYpOS3N81iujE3FKULm0/e5Lkjc
-         H3yd3jHMBoE/AGq3gs9CHH8zp0T25+HyEmWan4BJ0CD3f5ZbBwc3R+aOyoQWMFzjZbO0
-         YjGqa33/8iuOPIx7X7eIn/TY+SGSTTwxLutnEQ+ijC+Zm6gxZU2sFA/UOtSKoJhKm5P8
-         WLtXiRuNNg71jOans1zVTgDr238lPGDN5T0NY/zxK1zJCXpUVD13OMqmlTpy89KLo2JU
-         eLwy5vTnb1FIaWVAC3c2d2whex8diPzibwNTmzbphpukGqevg/ZWRkIYlb4YuNGCMO/U
-         upUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQvSQPIJLhcWX23OePCcjoXsRjcik/APNU3LvAAlfA5WH3quYKAWA6JWe8z2jkAZSqcp9tq/Zbsqs=@vger.kernel.org, AJvYcCW0E7YCBho2w2kAST0uGJraTgApZEki+CJDyDdWrG2I7abcL2SXCnYR20kgrHhQQzrQEsVwwxk9cw3pLkHlWT1Vk2+j@vger.kernel.org
-X-Gm-Message-State: AOJu0YybjyGIe7afh7HXLinOgny3SKRdRUDVLez4xuuviLxwWcovXm75
-	VUGVMnDvGu8L0GVU4iT6nUK3OWxyDv0NRNMhVIYM0huiwAtwtZdOxP3eE+E8Sa0=
-X-Gm-Gg: ASbGncvHcxtx+X4odnpmNXhD4i6IGuTDPBmvdMs2RmytzBEiMws2r03K2Xk49VC6LLT
-	LACdLad7Q5OF3qayIedj3nGRA+EWT/fcsLd8ZOxNrC5wF9BCPYXH1TNg6U1YPJfkXey4KvouRq6
-	lgZZVkk1ai3YRQETkuRXw1r09do3SgD+br+GMsENLznv6FOPUXA/axnVrihaDCjXKgZ92vnmqG2
-	CHl4EyRh3Q3sVd2hn1m5MBxTFIunL6IF5DzydNi6I7JpcY7Xe0ad86K6KjDwEIJWdXIRbyIOcCK
-	jBr7wxIYw0wPv6L2Mj9swMsq7XeuNb5WFxFHrAqGsILHDpc52rS0Ue8aVgpRSHjkb9CUMxrldZw
-	=
-X-Google-Smtp-Source: AGHT+IFMdvZe1JJ6e2ro31UkmEH9oJC8nZ4v/iMUoD+Rt7YW/5s4APGKEYUsBzsiB6vMc+O0ttl4bQ==
-X-Received: by 2002:a17:903:1a0e:b0:224:1c95:451e with SMTP id d9443c01a7336-22428c0568amr319909885ad.33.1741783687847;
-        Wed, 12 Mar 2025 05:48:07 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([14.139.108.62])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a9dfbfsm115011535ad.209.2025.03.12.05.48.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 05:48:07 -0700 (PDT)
-From: Purva Yeshi <purvayeshi550@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Purva Yeshi <purvayeshi550@gmail.com>
-Subject: [PATCH v3 1/2] docs: tracing: Refactor index.rst documentation
-Date: Wed, 12 Mar 2025 18:17:44 +0530
-Message-Id: <20250312124744.7234-1-purvayeshi550@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741783704; c=relaxed/simple;
+	bh=oq/UI1w2F5BqykxGx/4fvue02EnRRofo99oV9ZN4bQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=lYrRd+1IJZXL8mo8YNRLpwOMJmsRiQ6cEiOsADpf5uGK67mSSACgWc/5EMB+PnjQN4FF4jkQ/jZFGWqR7MCEolacPuNqkt3CPfPvxelUrd7DR7xLQ0s906cRsi98c19STV9eRagwJSoSEPiOFkYNYAT47sMxrAVKkkYVhx5N3SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NDg5B9US; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250312124818euoutp01ddfb3d9cc1c7402bd7f74f10abd107f1~sDwu9SlvD2418424184euoutp01U
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:48:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250312124818euoutp01ddfb3d9cc1c7402bd7f74f10abd107f1~sDwu9SlvD2418424184euoutp01U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741783699;
+	bh=iWoONCuNdWB43HWVONiz9IiYuuz5nXxtgBCvDvHvs/I=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=NDg5B9USkBogGqHyBctyl/g+Mj5LsIXfzD0b/8SUPWL5AN6YpnydpEiQmPH19fqYm
+	 +396Op8pVZDzRetX2s7D0LfJ1wX4dV075e/eQGv88QvE2SQJ4pvERpw7xwJU0e73MH
+	 FA5k3ljAs82OxBi24P1eNmjama09fFE6WRsEhue8=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250312124818eucas1p1fa0a3c3cee70486cac0d6e49b437164a~sDwuxf4KB0264702647eucas1p1G;
+	Wed, 12 Mar 2025 12:48:18 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 72.19.20821.29281D76; Wed, 12
+	Mar 2025 12:48:18 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250312124818eucas1p18f3281af8a088be8264430010828aa7f~sDwuXByEd0204402044eucas1p1T;
+	Wed, 12 Mar 2025 12:48:18 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250312124818eusmtrp22a5466c800afe950906df18c91bbb7f8~sDwuShm_k1651216512eusmtrp2H;
+	Wed, 12 Mar 2025 12:48:18 +0000 (GMT)
+X-AuditID: cbfec7f2-b11c470000005155-d9-67d182923ff6
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id E4.05.19654.29281D76; Wed, 12
+	Mar 2025 12:48:18 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250312124817eusmtip2e02453169321dfa10b0fe3f0c45af440~sDwthzP_Q2900229002eusmtip29;
+	Wed, 12 Mar 2025 12:48:17 +0000 (GMT)
+Message-ID: <6f6e2eaa-9f56-4400-a555-7264d4596233@samsung.com>
+Date: Wed, 12 Mar 2025 13:48:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dma-mapping: fix missing clear bdr in
+ check_ram_in_range_map()
+To: Baochen Qiang <quic_bqiang@quicinc.com>, robin.murphy@arm.com,
+	justin.he@arm.com, hch@lst.de
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250307030350.69144-1-quic_bqiang@quicinc.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsWy7djPc7qTmi6mGxzbpmGxcvVRJotfXyws
+	np74w25xedccNouHP38wWRz88ITVgc1jzbw1jB4vNs9k9Nh9s4HNY+KeOo/Pm+QCWKO4bFJS
+	czLLUov07RK4MlZd+chc8FK44uikQywNjGf4uxg5OSQETCTWbV3C2MXIxSEksIJR4vyi/UwQ
+	zhdGiT1PnrFAOJ8ZJbrWvWaEaela/AmqZTmjxJRnb9ggnI+MEgunvGcHqeIVsJPoO94MZrMI
+	qEo0zZjBAhEXlDg58wmYLSogL3H/1gywGmGBUIn3/zvANogIJEkceLoCLM4sYC5xdPpxZghb
+	XOLWk/lMIDabgKFE19suNhCbU8BWYvaqdUwQNfIS29/OYQY5SELgAofExg+HmSHOdpFYCXWQ
+	hICwxKvjW6BsGYn/O+czQTS0M0os+H0fypnAKNHw/BbU09YSd879AlrHAbRCU2L9Ln2IsKPE
+	waV3mUDCEgJ8EjfeCkIcwScxadt0Zogwr0RHmxBEtZrErOPr4NYevHCJeQKj0iykYJmF5M1Z
+	SN6ZhbB3ASPLKkbx1NLi3PTUYsO81HK94sTc4tK8dL3k/NxNjMDEc/rf8U87GOe++qh3iJGJ
+	g/EQowQHs5II72rbC+lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeRftb00XEkhPLEnNTk0tSC2C
+	yTJxcEo1MHFFru00udT3qFigMeNT2ZGZUfFrHTfN+zndhz3rsSD/YoawmZ9Zm2pjfCoK9rSt
+	Cp1+7PL9wP+shd/uSR6b5u0+RSjxdmmawPaJRW/mGfov/7C7fnHkzturgz6ci18fx7u5XF6l
+	842FHk/irhtvIp/pi2v4s7M9vFeyOme9cXlpGnNt2YVJJV6dyZu9VvnPa2FWPPla5FjQ7h2n
+	LoblLGFdLtvurO/A3xCXsffhsg1ai1xvPLON14tJVZoiunr/WQf7/ZmzX9jvbhb4wvVn0uGc
+	x0JsXhWukvPOn3mW4Ob2oLt04wc9l9ldyk7vpB359PaEsF9nE3yz59j00rsl8ydFLAku4Psj
+	kRg+sZ0jSYmlOCPRUIu5qDgRAHgVR0qrAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFIsWRmVeSWpSXmKPExsVy+t/xe7qTmi6mGyx7xm6xcvVRJotfXyws
+	np74w25xedccNouHP38wWRz88ITVgc1jzbw1jB4vNs9k9Nh9s4HNY+KeOo/Pm+QCWKP0bIry
+	S0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0MlZd+chc8FK4
+	4uikQywNjGf4uxg5OSQETCS6Fn9i7GLk4hASWMooMeXsYhaIhIzEyWkNrBC2sMSfa11sEEXv
+	GSXWn7rHCJLgFbCT6DvezA5iswioSjTNmMECEReUODnzCZgtKiAvcf/WDLAaYYFQiff/O8B6
+	RQSSJPauOc8GYjMLmEscnX6cGWLBBEaJv/d+MUIkxCVuPZnPBGKzCRhKdL3tAmvgFLCVmL1q
+	HRNEjZlE19YuqHp5ie1v5zBPYBSaheSOWUhGzULSMgtJywJGllWMIqmlxbnpucVGesWJucWl
+	eel6yfm5mxiBkbbt2M8tOxhXvvqod4iRiYPxEKMEB7OSCO9q2wvpQrwpiZVVqUX58UWlOanF
+	hxhNgYExkVlKNDkfGOt5JfGGZgamhiZmlgamlmbGSuK8bFfOpwkJpCeWpGanphakFsH0MXFw
+	SjUwJR3sbV0sUSTO2Wl8cP/k98mnfRe/PmYp7Waoxskmu2bSD8M7DFkCvCWnjgRIb+9/3riv
+	NGxJxL7ZGut3h7XfZ3R6m7n4laz4jdWqj7b2l6T3Hxfru7xFYJJQ7iFmn50Lfn77dE6wYX30
+	v6DSs9NXCxUcEey11jz19nfy/dl39xdzsMl+T9q08lPpwRdb7v9uk+rjyzZ4ozG1jm9n4TuW
+	16X+i29eX3uo5+U3zUu5up1Zj6+8TnISXn1Tbu2J/57zm7iyq8VMJRcKudbafQmYdfloUCmb
+	f+GaX6y7G85OO925aPWquWxFTkf9z/Kd/FWxY+apbu8TnsJnvmt4i0+ptHX690u11vDlPHY7
+	m9Cjs5VYijMSDbWYi4oTAYhJzGE9AwAA
+X-CMS-MailID: 20250312124818eucas1p18f3281af8a088be8264430010828aa7f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250307030416eucas1p1503a42196fbcb4bbc561ada50683981b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250307030416eucas1p1503a42196fbcb4bbc561ada50683981b
+References: <CGME20250307030416eucas1p1503a42196fbcb4bbc561ada50683981b@eucas1p1.samsung.com>
+	<20250307030350.69144-1-quic_bqiang@quicinc.com>
 
-Refactor Documentation/trace/index.rst to improve clarity, structure,
-and organization. Reformat sections and add appropriate headings for
-better readability.
+On 07.03.2025 04:03, Baochen Qiang wrote:
+> As discussed in [1], if 'bdr' is set once, it would never get
+> cleared, hence 0 is always returned.
+>
+> Refactor the range check hunk into a new helper dma_find_range(),
+> which allows 'bdr' to be cleared in each iteration.
+>
+> Link: https://lore.kernel.org/all/64931fac-085b-4ff3-9314-84bac2fa9bdb@quicinc.com/ # [1]
+> Fixes: a409d9600959 ("dma-mapping: fix dma_addressing_limited() if dma_range_map can't cover all system RAM")
+> Suggested-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Baochen Qiang <quic_bqiang@quicinc.com>
 
-Improve section grouping and refine descriptions for better usability.
+Thanks, applied to dma-mapping-fixes branch.
 
-Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
----
-V1 - https://lore.kernel.org/all/20250204133616.27694-1-purvayeshi550@gmail.com/
-V2 - https://lore.kernel.org/lkml/20250206141453.139613-1-purvayeshi550@gmail.com/
-V3 - Improve section grouping and refine descriptions.
+> ---
+>   kernel/dma/direct.c | 28 ++++++++++++++++++----------
+>   1 file changed, 18 insertions(+), 10 deletions(-)
+>
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 5b4e6d3bf7bc..b8fe0b3d0ffb 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -584,6 +584,22 @@ int dma_direct_supported(struct device *dev, u64 mask)
+>   	return mask >= phys_to_dma_unencrypted(dev, min_mask);
+>   }
+>   
+> +static const struct bus_dma_region *dma_find_range(struct device *dev,
+> +						   unsigned long start_pfn)
+> +{
+> +	const struct bus_dma_region *m;
+> +
+> +	for (m = dev->dma_range_map; PFN_DOWN(m->size); m++) {
+> +		unsigned long cpu_start_pfn = PFN_DOWN(m->cpu_start);
+> +
+> +		if (start_pfn >= cpu_start_pfn &&
+> +		    start_pfn - cpu_start_pfn < PFN_DOWN(m->size))
+> +			return m;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+>   /*
+>    * To check whether all ram resource ranges are covered by dma range map
+>    * Returns 0 when further check is needed
+> @@ -593,20 +609,12 @@ static int check_ram_in_range_map(unsigned long start_pfn,
+>   				  unsigned long nr_pages, void *data)
+>   {
+>   	unsigned long end_pfn = start_pfn + nr_pages;
+> -	const struct bus_dma_region *bdr = NULL;
+> -	const struct bus_dma_region *m;
+>   	struct device *dev = data;
+>   
+>   	while (start_pfn < end_pfn) {
+> -		for (m = dev->dma_range_map; PFN_DOWN(m->size); m++) {
+> -			unsigned long cpu_start_pfn = PFN_DOWN(m->cpu_start);
+> +		const struct bus_dma_region *bdr;
+>   
+> -			if (start_pfn >= cpu_start_pfn &&
+> -			    start_pfn - cpu_start_pfn < PFN_DOWN(m->size)) {
+> -				bdr = m;
+> -				break;
+> -			}
+> -		}
+> +		bdr = dma_find_range(dev, start_pfn);
+>   		if (!bdr)
+>   			return 1;
+>   
+>
+> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
 
- Documentation/trace/index.rst | 94 +++++++++++++++++++++++++++++------
- 1 file changed, 79 insertions(+), 15 deletions(-)
-
-diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index 2c991dc96..6b268194f 100644
---- a/Documentation/trace/index.rst
-+++ b/Documentation/trace/index.rst
-@@ -1,39 +1,103 @@
--==========================
--Linux Tracing Technologies
--==========================
-+================================
-+Linux Tracing Technologies Guide
-+================================
-+
-+Tracing in the Linux kernel is a powerful mechanism that allows
-+developers and system administrators to analyze and debug system
-+behavior. This guide provides documentation on various tracing
-+frameworks and tools available in the Linux kernel.
-+
-+Introduction to Tracing
-+-----------------------
-+
-+This section provides an overview of Linux tracing mechanisms
-+and debugging approaches.
- 
- .. toctree::
-    :maxdepth: 2
- 
--   ftrace-design
-+   debugging
-+   tracepoints
-    tracepoint-analysis
-+   ring-buffer-map
-+
-+Core Tracing Frameworks
-+-----------------------
-+
-+The following are the primary tracing frameworks integrated into
-+the Linux kernel.
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-    ftrace
-+   ftrace-design
-    ftrace-uses
--   fprobe
-    kprobes
-    kprobetrace
-    uprobetracer
-    fprobetrace
--   tracepoints
-+   fprobe
-+   ring-buffer-design
-+
-+Event Tracing and Analysis
-+--------------------------
-+
-+A detailed explanation of event tracing mechanisms and their
-+applications.
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-    events
-    events-kmem
-    events-power
-    events-nmi
-    events-msr
--   mmiotrace
-+   boottime-trace
-    histogram
-    histogram-design
--   boottime-trace
--   debugging
--   hwlat_detector
--   osnoise-tracer
--   timerlat-tracer
-+
-+Hardware and Performance Tracing
-+--------------------------------
-+
-+This section covers tracing features that monitor hardware
-+interactions and system performance.
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-    intel_th
--   ring-buffer-design
--   ring-buffer-map
-    stm
-    sys-t
-    coresight/index
--   user_events
-    rv/index
-    hisi-ptt
-+   mmiotrace
-+   hwlat_detector
-+   osnoise-tracer
-+   timerlat-tracer
-+
-+User-Space Tracing
-+------------------
-+
-+These tools allow tracing user-space applications and
-+interactions.
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-+   user_events
-+
-+Additional Resources
-+--------------------
-+
-+For more details, refer to the respective documentation of each
-+tracing tool and framework.
-+
-+.. only:: subproject and html
-+
-+   Indices
-+   =======
-+
-+   * :ref:`genindex`
-\ No newline at end of file
+Best regards
 -- 
-2.34.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
