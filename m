@@ -1,108 +1,102 @@
-Return-Path: <linux-kernel+bounces-558565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D3BA5E7B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:55:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A28A5E7BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8AB1899D59
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:55:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E976C3AE5FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C05F1F12F6;
-	Wed, 12 Mar 2025 22:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D3C1F12EF;
+	Wed, 12 Mar 2025 22:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oas0inYH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdW41dJK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E931D5CC6;
-	Wed, 12 Mar 2025 22:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8992C1D5CC6;
+	Wed, 12 Mar 2025 22:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741820124; cv=none; b=CvsiuDj5T+9rxxaE7RI05gBJuKX8VaX52cHLFQUO5iYVdWW1V8ppFlXk09W2zLOhPZW7fz/5ztgZIT924mucdduWE3zTFOvvlcHLjVE7c73qzuBzK7Gfrl8kb94wHjB8rxTyUHz+PyYp8Bjp/z1lWbWvFQLA/w8S7Q3Wh4u7Vg0=
+	t=1741820179; cv=none; b=PD/7CAhzeNuuQzFsblTV55wLdNR1ColnPmQedODTyp7mBD9wWeQftp+Ikhmiua7IIOGVxxwlp+pOCrEY5T9lAcFWoWNdRvCR6x5FUJhZepKwYXXSHSENk3yPOTOsBVSlhJxi7u9X39LO8PYL1zYYOPQ8doPUvaRJwJJDWq3aiOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741820124; c=relaxed/simple;
-	bh=5vlsMdt2TygEzISoWcSompquV4QZk86+b8voRCk7dmo=;
+	s=arc-20240116; t=1741820179; c=relaxed/simple;
+	bh=C2dVQHeQfpncIDsa2OOeet8ETBUJqNFX8r3zQxrGOsU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xhdr0TOtdVy66U+80BBhvj1DAvR5wEiUKevJhG2fXlAJtvTg+KZujCfDHTeapr0uFnnvYpyeCYquUg81mPdyXD0eF9Ak5vcPP9RA+bFxqh9H5mclwrgP4yGua+ac/V4OoLQ3DuhKo7SFRE4zBITzthVxM7b02rw8xhdYO6L9t6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oas0inYH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB685C4CEDD;
-	Wed, 12 Mar 2025 22:55:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ouw9SHDXw75KGBQuIuHQTVwi8T3ZGJ67DILVutEVk191KC7PHc1pu8YTpPgxfMOk2clnU5cJlMpwcLsK+STJrNuDgEIWgoRt/RCe/nzyrxanFu0kIu/gltIE7ESmZJDT4Su0ZKfjzjg65fKobM24w1lw6w5IIpOpum81DbniUoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdW41dJK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 297B1C4CEDD;
+	Wed, 12 Mar 2025 22:56:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741820123;
-	bh=5vlsMdt2TygEzISoWcSompquV4QZk86+b8voRCk7dmo=;
+	s=k20201202; t=1741820179;
+	bh=C2dVQHeQfpncIDsa2OOeet8ETBUJqNFX8r3zQxrGOsU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oas0inYHVCnWLg7xAvyeRWsOR5CRk1fxMxNIag5HJhM3WhEWRGOScFsCsk1YzyEnA
-	 SPZMTT76hm7TvfC7yErJQFZZkeTuhxkLMPGJsZymkKdkDq67Ug64pIDCih4inhUTuA
-	 dYwMzKgL61biV/ppDhJbIL6xc+jGSNiR69W67V/zSB09o5Oaix5rJAEKs2DkxepaHb
-	 Zri4LtCKwj1TrLnxEZP1m6SJ8cyeu3OS+yMWZcKVyzRuh4Slc2MONSVF/G5mAYb8Rc
-	 j8YVJYB781m3wEVV22Ty/qMVNcoU93JQZqpx0mKo++vpW7l+20J6ZjoMb+dfGMSDYY
-	 41VpWgs0K9ZWA==
-Date: Wed, 12 Mar 2025 15:55:22 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Ruiwu Chen <rwchen404@gmail.com>, corbet@lwn.net, keescook@chromium.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	zachwade.k@gmail.com
-Subject: Re: [PATCH v2] drop_caches: re-enable message after disabling
-Message-ID: <Z9IQ2jam9hkXnPhg@bombadil.infradead.org>
-References: <Z7tZTCsQop1Oxk_O@bombadil.infradead.org>
- <20250308080549.14464-1-rwchen404@gmail.com>
- <zaiqpjvkekhgipcs7smqhbb7hqt5dcneyoyndycofjepitxznf@q22hsykugpme>
+	b=EdW41dJK5Ki4IRn7PulnBUlIvvFljDLIwvK+k1bdRF4zK2qTCqH2qou05o1nweoP/
+	 9pmtgVbhPwhNBd5IJjyq1jabLoKsLNvoachJBoGKVrwFYf0z59apOTzCgFjQDxpYG2
+	 HrHeAeVOzEX6aTYNCVcLxG0rVle9gOWEUFcJkT2FoZakc5iCAulKq26K1J/oO1xDuU
+	 /wwRrLXIOTYhLUW2kLjzb2da1drOzrRBaR+e1c9YpusGxSU1veGqs7qFbT7kwB/G4j
+	 2R2/kiojjpeY74sGWe+6bZtaukzASvexI+4xdoRoz3WtYZbkLgWU3Jme42Ljo7WaK7
+	 gvF8DRqjd5sLQ==
+Date: Wed, 12 Mar 2025 23:56:14 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Purva Yeshi <purvayeshi550@gmail.com>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, piotr.wojtaszczyk@timesys.com, 
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: pwm: Convert lpc32xx-pwm.txt to YAML
+Message-ID: <yvljnqnlka3ecw2n3hw2zgfszlldvbww3k7gq72dczmf6jwzfo@4vqnygxuzvk5>
+References: <20250312122750.6391-1-purvayeshi550@gmail.com>
+ <57ae63a2-544b-4241-a54d-8fa9917c1e44@mleia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iy7a5myo3gppi3xw"
 Content-Disposition: inline
-In-Reply-To: <zaiqpjvkekhgipcs7smqhbb7hqt5dcneyoyndycofjepitxznf@q22hsykugpme>
+In-Reply-To: <57ae63a2-544b-4241-a54d-8fa9917c1e44@mleia.com>
 
-On Mon, Mar 10, 2025 at 02:51:11PM +0100, Joel Granados wrote:
-> On Sat, Mar 08, 2025 at 04:05:49PM +0800, Ruiwu Chen wrote:
-> > >> When 'echo 4 > /proc/sys/vm/drop_caches' the message is disabled,
-> > >> but there is no interface to enable the message, only by restarting
-> > >> the way, so add the 'echo 0 > /proc/sys/vm/drop_caches' way to
-> > >> enabled the message again.
-> > >> 
-> > >> Signed-off-by: Ruiwu Chen <rwchen404@gmail.com>
-> > >
-> > > You are overcomplicating things, if you just want to re-enable messages
-> > > you can just use:
-> > >
-> > > -		stfu |= sysctl_drop_caches & 4;
-> > > +		stfu = sysctl_drop_caches & 4;
-> > >
-> > > The bool is there as 4 is intended as a bit flag, you can can figure
-> > > out what values you want and just append 4 to it to get the expected
-> > > result.
-> > >
-> > >  Luis
-> > 
-> > Is that what you mean ?
-> > 
-> > -               stfu |= sysctl_drop_caches & 4;
-> > +               stfu ^= sysctl_drop_caches & 4;
-> > 
-> > 'echo 4 > /sys/kernel/vm/drop_caches' can disable or open messages,
-> > This is what I originally thought, but there is uncertainty that when different operators execute the command,
-> > It is not possible to determine whether this time is enabled or turned on unless you operate it twice.
-> 
-> So can you use ^= or not?
 
-No,  ^= does not work, see a boolean truth table.
+--iy7a5myo3gppi3xw
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] dt-bindings: pwm: Convert lpc32xx-pwm.txt to YAML
+MIME-Version: 1.0
 
-> And what does operate it twice mean?
+Hello,
 
-I think the reporter meant an "sysadmin", say two folks admining a system.
-Since we this as a flag to enable disabling it easily we can just
-always check for the flag as I suggested:
+On Wed, Mar 12, 2025 at 07:59:21PM +0200, Vladimir Zapolskiy wrote:
+> > +  "#pwm-cells":
+> > +    const: 3
+>=20
+> It shall be 1.
 
-stfu = sysctl_drop_caches & 4
+No, 3 is the right choice.
 
-  Luis
+Best regards
+Uwe
+
+--iy7a5myo3gppi3xw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfSEQsACgkQj4D7WH0S
+/k5lVQgArXoPIgUnIlPyk8q9Bcn7jLJRpgGwO+O5sTvf38V4qPY9FLas1+z8dtZ1
+DD9UQk18kX7sxyYTLpttv0dZIzSmDyp6SRLtX5Od+EglVN1Qot7XBGfVJpDXcUS0
+LPsaEkW+fFGfo6akWOIhD59gmZ5tw6otczN9MhA5ADsqtlGQHDJr60gv0MKFiQwk
+Oe+6CRMt74IXOTXvvmGLaP5dmTDY2ili1/jd8SApSUuOycSr2RKRgUmXyUmnuGlp
+4c8ZS4Cc5FwhkvLb5bDSKfq2+V6LV1U+0GHpXjZeLxt0HMhac7OJfMrR3k/tDfv+
+mMyHg2ZcC58v/HLLzlKGt+w/Wka6CA==
+=Nzf2
+-----END PGP SIGNATURE-----
+
+--iy7a5myo3gppi3xw--
 
