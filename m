@@ -1,172 +1,204 @@
-Return-Path: <linux-kernel+bounces-558015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B58A5E06E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:34:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DDFBA5E072
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:35:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07AC7188FC01
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:34:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A066D1732E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940D4250C09;
-	Wed, 12 Mar 2025 15:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD9F250BFA;
+	Wed, 12 Mar 2025 15:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="thbSx46f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="DoUrEcNZ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sce43T0g"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFED22033A;
-	Wed, 12 Mar 2025 15:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D99A24FC0D;
+	Wed, 12 Mar 2025 15:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741793630; cv=none; b=u0B4CA6ErjUhq4zgEJ53fEITMeTGnXMtrxORFWanweubq3e2DPnzMy38KvKE6uC+gmoz1g+/7zNzd+rgSER1zb0+8OeXh37rSqkKnQOgCo6519ob9IWQXGgpQ9bl0U/axc/BYFqV+ZhWuFUtqTJ8AmFoOLmKMOJn1GL7dJSefX4=
+	t=1741793699; cv=none; b=BVTQXqa+kMMYLM/XNkAiRrhkNZCcI7ahgIff+EcCm4xUTTrWcwvD2AzUPrRUxQnOic9OlK6tANXBkEkY2RT1XSI4RAu4jtVmkE/U7HiJoyNQQC+rn5+mD8wU6YGLv8ZCMb4PwpnscVlfHR2ucaoaG01vnHSgkuMj9BbGbH4BNNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741793630; c=relaxed/simple;
-	bh=ba1USVVp9UuTOENNH3I2YWWddlRcgnuL6Zm1RQg77rY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Vg2dJozgfhMD8qn5abyUTSHXyCIdI0ObB8PPE0KrNARUE3k/0OAGIBfVUINbV2/Cl/BWBV3t9zFNyrxDR9Lb3gGL0ezuqaNoAwmgd7VJ8mtspztEs3dBUMmy7R/TrRs2bsRlTdienp9CT6AN/W/w5u08bBYWVFepcfqZ2Mj/3EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=thbSx46f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AA8FC4CEDD;
-	Wed, 12 Mar 2025 15:33:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741793629;
-	bh=ba1USVVp9UuTOENNH3I2YWWddlRcgnuL6Zm1RQg77rY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=thbSx46fzJkSAsVKZtt12iw14naC/Y54ON75c6rL6KzFDe9ETOCKxRMlHNE070zSa
-	 xr5Gq7K8QBdmXE1gdj4mfurIWR5zq9cKObdrmLThGxbYtkN13yc7fW+dBD6L79Lwkz
-	 2BY+dQ+fzcMUZhNw3aQrgEV+pbvoZ0cTtJgJ2RpvivC0F+Vo3pbV+9UsMypwWIRs8F
-	 vtzu1AhB4Bm8OzcrEFGslZlj9N2J5c7BHxCURuThhLCm9t7IKvKcj9kZCVdT4FDARZ
-	 RvUCQIs+OJIR4fwpmLUYQbmIkoz8eDS1u/NjNbW2WwQ3Av7N9aMobjz0rx7BjLSElE
-	 TijEJOfDdO4cA==
-Date: Wed, 12 Mar 2025 10:33:46 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Chen Wang <unicorn_wang@outlook.com>
-Cc: "lpieralisi@kernel.org >> Lorenzo Pieralisi" <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Chen Wang <unicornxw@gmail.com>, kw@linux.com, robh@kernel.org,
-	s-vadapalli@ti.com, thomas.richard@bootlin.com, bwawrzyn@cisco.com,
-	wojciech.jasko-EXT@continental-corporation.com, kishon@kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sophgo@lists.linux.dev
-Subject: Re: [PATCH] PCI: cadence: Fix NULL pointer error for ops
-Message-ID: <20250312153346.GA678711@bhelgaas>
+	s=arc-20240116; t=1741793699; c=relaxed/simple;
+	bh=aluHuNWMb5BVFCDJ5FkhtNN27ajOpnn2vCjt7SLRQOs=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=WVWAyV9fHLze2hnicIgQczV47KtMmTFsj6p6WarGbXjPw3SfdMYSTmd8fTlLT5AOvi8k5IZERaaWPs+CjGRUd/N/KhyOWCw3/XYYifsX9qFAe405q8bdA/ppWAa9gMtqfkJTYY2j4jFG2n6NN4//hTyEz9oW0EoPDqJS5WI3nSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=DoUrEcNZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=sce43T0g; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id C075911402AA;
+	Wed, 12 Mar 2025 11:34:55 -0400 (EDT)
+Received: from phl-imap-07 ([10.202.2.97])
+  by phl-compute-12.internal (MEProxy); Wed, 12 Mar 2025 11:34:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
+	 t=1741793695; x=1741880095; bh=RK6tNQBB5XZwcZW5zCVWQuEe8VmgCG1s
+	IPsBwXB+nfI=; b=DoUrEcNZXko497OACsMET/0B2IL576TegO5hTPadeZ2zvUSQ
+	w1DfWnfcU8wcOsRyLXLd3jF7I0Va3lxxc5ii4ZN7XFtybrIEHniIkYbt6tzHF8v3
+	wbQl/K/hQsiCWRwdjTIZl1M8A9GiRXanbtxX3K3f7mGeoCZBhHzDy7YZbMsrZbCj
+	+sprf5Q2rewFzJo4yPq57mMJNuDWH/tlGteqc7lCt1I8jkMQu7uPkjXR7+9sH2I7
+	TL99WH5jtJ2dcO4FXVt37ZNX4DLk3j/t2ArNmwgp0TjiNm+6/SnVPPUp+wEp7l4k
+	co8nrZoGeHBs0B3yHo3WA1yuGNelVPTnyCx79g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741793695; x=
+	1741880095; bh=RK6tNQBB5XZwcZW5zCVWQuEe8VmgCG1sIPsBwXB+nfI=; b=s
+	ce43T0gmqrutSUc4nYeVS8eitEZqZQduP+sWAsBWpAi2Sn64+H9S53//MWBmC8GS
+	px7soENYhIsvZHiNdzF4kkNGDU94goi60QK/XsB+U9o3avdlgtFS31oBKkNrck83
+	mQ/wI7O6cqJ7VlVwKnu47TCzQqZstNj3wJ0C2MagYKFsQvcumdcTYkYJM2ZDTFWO
+	Kmy2PL+hoHBdUrKMidk1g84fnJruPQTtY6UUmyswDRcM3GiGCuBePMVlUH9+bvk6
+	wEan5yfNCwlDe7F2lXu9qThFKNelUNgQJ8y2PZ06evCcpwLmMCpiRDJB+yBTYjA7
+	hET9VGu7TgAdUOAxqNaCw==
+X-ME-Sender: <xms:nqnRZ2tt58tZ3nWVRw1iv0BnSoFX1WGmVktE_9c-b6KjWebis58acA>
+    <xme:nqnRZ7fUca4yN_7jXQiFZy1rUuT4T0T2qXoZpd3n1lHcWeA_2tWxsOEIr9QwCm08d
+    EvTNksmNhirSTzulv4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdehgeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
+    tdejnecuhfhrohhmpedfufhvvghnucfrvghtvghrfdcuoehsvhgvnhesshhvvghnphgvth
+    gvrhdruggvvheqnecuggftrfgrthhtvghrnhepgeegheelffdujeduffevfefhieekgeef
+    fedukedtvdduhfffjeehleekfeehhfdtnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepshhvvghnsehsvhgvnhhpvghtvghrrdguvghvpdhnsggp
+    rhgtphhtthhopedvvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghpfiestg
+    grnhhonhhitggrlhdrtghomhdprhgtphhtthhopehsvghnohiihhgrthhskhihsegthhhr
+    ohhmihhumhdrohhrghdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtg
+    hpthhtohepugifrghiphgrhigrnhhrrgihudesghhmrghilhdrtghomhdprhgtphhtthho
+    pehluhhkrghsrdgsuhhlfigrhhhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhosh
+    htvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopehmrhhiphgrrhgusehkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopegrughmihhnsehkohguvghithdrnhgvthdprhgtph
+    htthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+X-ME-Proxy: <xmx:nqnRZxxUqE3Rplw3xxlweXLds8DJOh6Zr3doXOSVQCI9YQLy4HRQEA>
+    <xmx:nqnRZxNk8GLe4dfLmNS9ZcdC1iRybpRS7ES5mWCYrWtGq-biz3nygA>
+    <xmx:nqnRZ29yCxJhSs4NH8QKghUDCpCcsks-MCWQ6d_j94X7_nCOs2PGCA>
+    <xmx:nqnRZ5UP6jiZtrq_Zz9WhBJJk71zSMbYm49xqu5KTeCs3oShLrK5jQ>
+    <xmx:n6nRZ8mDE0-hShbs-xZKPMs5xRFge8Uu8DodisB1FE_CZs5B9ojBvak7>
+Feedback-ID: i51094778:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1EB6CBA006F; Wed, 12 Mar 2025 11:34:54 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PN0PR01MB10393B57EAC99498561CC30FAFED02@PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM>
+Date: Wed, 12 Mar 2025 16:34:06 +0100
+From: "Sven Peter" <sven@svenpeter.dev>
+To: "Aditya Garg" <gargaditya08@live.com>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>
+Cc: "Aun-Ali Zaidi" <admin@kodeit.net>, "Maxime Ripard" <mripard@kernel.org>,
+ "airlied@redhat.com" <airlied@redhat.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "Petr Mladek" <pmladek@suse.com>, "Steven Rostedt" <rostedt@goodmis.org>,
+ "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ "Jonathan Corbet" <corbet@lwn.net>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "apw@canonical.com" <apw@canonical.com>, "joe@perches.com" <joe@perches.com>,
+ "dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+ "lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "Hector Martin" <marcan@marcan.st>,
+ "asahi@lists.linux.dev" <asahi@lists.linux.dev>
+Message-Id: <ff3a9c58-5c7a-4c48-8a9e-cc828a43baed@app.fastmail.com>
+In-Reply-To: 
+ <PN3PR01MB959715C19BCEA54426D24934B8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+References: <ABAEA9D0-97CB-4ADD-9606-A12D5815335A@live.com>
+ <376C9BD3-2F41-4511-BE52-1B8468FE2CB3@live.com>
+ <b74df4b5-ecda-45ba-a98a-c84b0a29e380@suse.de>
+ <PN3PR01MB9597AC6A02B0BF873920D94CB8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <9092a9ed-aecf-40bd-9d15-b53d60d035b5@suse.de>
+ <PN3PR01MB959715C19BCEA54426D24934B8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Subject: Re: [PATCH 1/2] lib/vsprintf: Add support for generic FourCCs by extending
+ %p4cc
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 12, 2025 at 10:08:43AM +0800, Chen Wang wrote:
-> Hello, Bjorn, Lorenzo & Manivannan,
-> 
-> I find your names in MAINTAINERS for PCI controllers, could you please pick
-> this patch for v6.15?
-> 
-> Or who else should I submit a PR for this patch to?
-> 
-> BTW, Siddharth signed the review for this patch (see [1]). Please add this
-> when submitting, thanks in advance.
-> 
-> Link:
-> https://lore.kernel.org/linux-pci/20250307151949.7rmxl22euubnzzpj@uda0492258/
-> [1]
+Hi,
 
-> On 2025/3/4 16:17, Chen Wang wrote:
-> > From: Chen Wang <unicorn_wang@outlook.com>
-> > 
-> > ops of struct cdns_pcie may be NULL, direct use
-> > will result in a null pointer error.
-> > 
-> > Add checking of pcie->ops before using it.
-> > 
-> > Fixes: 40d957e6f9eb ("PCI: cadence: Add support to start link and verify link status")
 
-AFAICT this does not fix a problem in 40d957e6f9eb, since there is no
-driver that calls cdns_pcie_host_setup() or cdns_pcie_ep_setup() with
-a NULL pcie->ops pointer, so I think you should drop this Fixes: tag.
+On Wed, Mar 12, 2025, at 13:03, Aditya Garg wrote:
+>> On 12 Mar 2025, at 5:29=E2=80=AFPM, Thomas Zimmermann <tzimmermann@su=
+se.de> wrote:
+>>=20
+>> =EF=BB=BFHi
+>>=20
+>>> Am 12.03.25 um 12:49 schrieb Aditya Garg:
+>>>=20
+>>>>> On 12 Mar 2025, at 5:16=E2=80=AFPM, Thomas Zimmermann <tzimmermann=
+@suse.de> wrote:
+>>>>=20
+>>>> =EF=BB=BFHi
+>>>>=20
+>>>>> Am 12.03.25 um 10:05 schrieb Aditya Garg:
+>>>>> From: Hector Martin <marcan@marcan.st>
+>>>>>=20
+>>>>> %p4cc is designed for DRM/V4L2 FourCCs with their specific quirks,=
+ but
+>>>>> it's useful to be able to print generic 4-character codes formatte=
+d as
+>>>>> an integer. Extend it to add format specifiers for printing generic
+>>>>> 32-bit FourCCs with various endian semantics:
+>>>>>=20
+>>>>> %p4ch    Host byte order
+>>>>> %p4cn    Network byte order
+>>>>> %p4cl    Little-endian
+>>>>> %p4cb    Big-endian
+>>>> That looks like someone trying to be too clever for their own good.=
+ Just my 2 cts.
+>>> I don't understand what you are trying to say. Anyways, I thought it=
+'s obvious, but Petr's Ack is still left and thus cannot be merged into =
+DRM for now unless he says so in this thread.
+>>=20
+>> I'm trying to say that the author of this patch found the %p4cc funct=
+ionality and over-generalized the feature. Source code should express th=
+e idea of what it's doing in clear terms. %p4ch somehow doesn't do that =
+for me. Printing 4 bytes in various orders without context seems arbitra=
+ry and confusing.
+>>=20
+>> (I don't really have a say here. I'm just asking to reconsider this c=
+hange.)
+>
+> Ah I see. I'll checkout the macros you sent. The Asahi Linux SMC=20
+> drivers would need these as well, so I'll probably first wait for the=20
+> vsprintf maintainers and also Asahi Linux maintainers for their views.
 
-I see that you probably want to *add* an sg2042 driver [2] where you
-don't need a pcie->ops pointer (although the current patch at [2]
-*does* supply a valid pointer).
+I don't have a strong opinion either way: for SMC I just need to print
+FourCC keys for debugging / information in a few places.
 
-So there's no urgency to apply this until you post an sg2042 driver
-that doesn't fill in the pcie->ops pointer.  The best way to do this
-would be to include this patch in the series that adds the sg2042
-driver.
+I'm preparing the SMC driver for upstreaming again (after a two year del=
+ay :-()
+and was just going to use macros to print the SMC FourCC keys similar to
+DRM_MODE_FMT/DRM_MODE_ARG for now to keep the series smaller and revisit
+the topic later.
 
-Then the commit log can explain exactly why we need it (because the
-sg2042 in the next patch of the series doesn't need a pcie->ops
-pointer), and it will be easy to review.
+Right now I have these in my local tree (only compile tested so far):
 
-[2] https://lore.kernel.org/r/ddedd8f76f83fea2c6d3887132d2fe6f2a6a02c1.1736923025.git.unicorn_wang@outlook.com
+#define SMC_KEY_FMT "%c%c%c%c (0x%08x)"
+#define SMC_KEY_ARG(k) (k)>>24, (k)>>16, (k)>>8, (k), (k)
 
-> > Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> > ---
-> >   drivers/pci/controller/cadence/pcie-cadence-host.c | 2 +-
-> >   drivers/pci/controller/cadence/pcie-cadence.c      | 4 ++--
-> >   drivers/pci/controller/cadence/pcie-cadence.h      | 6 +++---
-> >   3 files changed, 6 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
-> > index 8af95e9da7ce..9b9d7e722ead 100644
-> > --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
-> > +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
-> > @@ -452,7 +452,7 @@ static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
-> >   	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_PCI_ADDR1(0), addr1);
-> >   	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(0), desc1);
-> > -	if (pcie->ops->cpu_addr_fixup)
-> > +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
-> >   		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
-> >   	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(12) |
-> > diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
-> > index 204e045aed8c..56c3d6cdd70e 100644
-> > --- a/drivers/pci/controller/cadence/pcie-cadence.c
-> > +++ b/drivers/pci/controller/cadence/pcie-cadence.c
-> > @@ -90,7 +90,7 @@ void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 busnr, u8 fn,
-> >   	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(r), desc1);
-> >   	/* Set the CPU address */
-> > -	if (pcie->ops->cpu_addr_fixup)
-> > +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
-> >   		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
-> >   	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(nbits) |
-> > @@ -120,7 +120,7 @@ void cdns_pcie_set_outbound_region_for_normal_msg(struct cdns_pcie *pcie,
-> >   	}
-> >   	/* Set the CPU address */
-> > -	if (pcie->ops->cpu_addr_fixup)
-> > +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
-> >   		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
-> >   	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(17) |
-> > diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
-> > index f5eeff834ec1..436630d18fe0 100644
-> > --- a/drivers/pci/controller/cadence/pcie-cadence.h
-> > +++ b/drivers/pci/controller/cadence/pcie-cadence.h
-> > @@ -499,7 +499,7 @@ static inline u32 cdns_pcie_ep_fn_readl(struct cdns_pcie *pcie, u8 fn, u32 reg)
-> >   static inline int cdns_pcie_start_link(struct cdns_pcie *pcie)
-> >   {
-> > -	if (pcie->ops->start_link)
-> > +	if (pcie->ops && pcie->ops->start_link)
-> >   		return pcie->ops->start_link(pcie);
-> >   	return 0;
-> > @@ -507,13 +507,13 @@ static inline int cdns_pcie_start_link(struct cdns_pcie *pcie)
-> >   static inline void cdns_pcie_stop_link(struct cdns_pcie *pcie)
-> >   {
-> > -	if (pcie->ops->stop_link)
-> > +	if (pcie->ops && pcie->ops->stop_link)
-> >   		pcie->ops->stop_link(pcie);
-> >   }
-> >   static inline bool cdns_pcie_link_up(struct cdns_pcie *pcie)
-> >   {
-> > -	if (pcie->ops->link_up)
-> > +	if (pcie->ops && pcie->ops->link_up)
-> >   		return pcie->ops->link_up(pcie);
-> >   	return true;
-> > 
-> > base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+which are then used like this:
+
+	dev_info(dev,
+		"Initialized (%d keys " SMC_KEY_FMT " .. " SMC_KEY_FMT ")\n",
+		 smc->key_count, SMC_KEY_ARG(smc->first_key),
+		 SMC_KEY_ARG(smc->last_key));
+
+Best,
+
+Sven
 
