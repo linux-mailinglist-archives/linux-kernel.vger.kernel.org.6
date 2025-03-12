@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-557918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F489A5DF4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:43:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A1B6A5DF52
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:44:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95E671883E99
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77CDC3BC0D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC49250C0F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3BA2528F0;
 	Wed, 12 Mar 2025 14:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u54vPQjs"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lpf4zUwQ"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5151924E012
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5160C24EABF
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741790595; cv=none; b=PmQUDGPfc2U3ezml2Gz1twUcrf31QBlY4he4kxOK82cJc6KtwMlVVfzxlJHJ8nRCxxl4Y6PhODBlTOKWunZgVDrx71pWYEMq+lzk1dPOeTnVEuzOIkvsWyeBC/Np7x8HlzxvoGi/XVFWMglX78xssXEYOUFyGEV+VoAy/uMpDPs=
+	t=1741790595; cv=none; b=mKgHG9t8ZDisk0/vfvODb75QRU6IB5PojDIO7/dk8Lt87KFpxA3Yvm2n6fYMiqefWOWlgGQe9YYlKVJaqVWTWo+DhPb0187myYg0Y64xYmxqK4okB++Ao643DVv3ijn3JnEEMg//2P28WEquiAKTyb8GPyG/6TgDMXAhsK4JVns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741790595; c=relaxed/simple;
-	bh=ZlbBMPciN2T8w+kua5v5xtfGZggrogIGZUS6ANw0g3g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n1FG27YLEHCXrSneY/1Q1TVgy53S18IGpbXSK4Jh5CKSTFfJkEnzQU+HYhtxC8RtA1NmHYTr31MU1eCZs1pfw+FrsgTkHXhoxN5a5MwnUAAv56nxeoNyL5g6l/5xxpls/fVBFPpmNZfpu+sOQUQjZ9d4k7NcOj3KwtVLkZVCDLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u54vPQjs; arc=none smtp.client-ip=90.155.50.34
+	bh=JmF3kgVolE9NdnDOZ/gXDFGedL4Egk4E2CIPt9HV9J8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JHq6F9MOmiw9aFOm9/5qrpp+IUEZwt1eBTyzi3IaghoPx96scMFBR/yb5wNdWD0v5xVIw2pIgnh0ECSvGyXFUAfPh9sVdgr/OmEIunKA+d1OeP/lZAc3miAeFDXPGNCppfbWmIRv2QQ1LmAC1x4d4lkc7dzlaojjzgiGErFzs+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Lpf4zUwQ; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=30Jr6wkyoaAqZ4wqhViXmy9edkJu76AE/m1k7L8k7CI=; b=u54vPQjsFi50BYPhRmvDFNcrc+
-	JOT54WX/vxOyRRGJnKo1hvzsJrVBpBMheQZETRjYdXacYtg6W3pBHre854Z8MeoZKUd9fgqA7VHsQ
-	NQMs0xa7aWRKYVXFoo3u7wGBqQIPMJkJLVGvXarHcG93EMBOYWFu1l32Aq/bwSxSusw0I2dvOmc32
-	LqHWIdXC2M+oTh5uubAgt6iWp6vBvQiv4JANP6vEbnWOIBR39W7jbfb3wJgOhmNFWvHknbMLTgncG
-	hbVQ7oKKJ7A1qf9XPJURGJtXRX8TtRanoq84VOlwnYb4wKF1O5aIXcy6Cji+5SMtiimnEc2VH+/ZN
-	uxiimmgQ==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=ybsUY7o8yqbkApk0dzSa8UzXZgQrXii7fmhg0Fzl2SU=; b=Lpf4zUwQXV7/cVzR0agKC2C9cL
+	1Aij1V44AFbT3Eh+UqJSrf28DqUd42eB0vvUbmcZJ7ZvBraR10bkf1ANYoL8bedlgbnv/iCrhA/4C
+	ISSo9W2ge9dsnoBjn/wbBOFQ+fHxhutRxplYf/P324OSo3oRHTCr5BcbPsNOnfJ4LgSEZ5UO4C/tn
+	xP4GdZ0aZx8mqpdsiD7IyqndEOaeVpdUt8Rr22g62dDbPIiV9TCpLRc+z15g2eK6T+WQsoRkSM/IM
+	SPsyOv3dRw8WWA+3xaL9peTlJF2tpIed7wZLzlYx3gQn3MFsbqyfY8P9z0kmXtklkgg/4/49zF7Rh
+	LQZXf7uQ==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
 	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsNIR-0000000CxJE-2Re5;
+	id 1tsNIR-0000000CxJF-2VLv;
 	Wed, 12 Mar 2025 14:42:59 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsNIR-00000009uTu-1IV5;
+	id 1tsNIR-00000009uU3-1de1;
 	Wed, 12 Mar 2025 14:42:59 +0000
 From: David Woodhouse <dwmw2@infradead.org>
 To: kexec@lists.infradead.org
@@ -64,86 +65,78 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Peter Zijlstra <peterz@infradead.org>,
 	jpoimboe@kernel.org,
 	bsz@amazon.de
-Subject: [PATCH v7 0/8] x86/kexec: Add exception handling for relocate_kernel
-Date: Wed, 12 Mar 2025 14:34:12 +0000
-Message-ID: <20250312144257.2348250-1-dwmw2@infradead.org>
+Subject: [PATCH v7 1/8] x86/kexec: Debugging support: load a GDT
+Date: Wed, 12 Mar 2025 14:34:13 +0000
+Message-ID: <20250312144257.2348250-2-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250312144257.2348250-1-dwmw2@infradead.org>
+References: <20250312144257.2348250-1-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: David Woodhouse <dwmw2@infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-Debugging kexec failures is painful, as anything going wrong in execution
-of the critical relocate_kernel() function tends to just lead to a triple
-fault. Thus leading to *weeks* of my life that I won't get back. Having
-hacked something up for my own use, I figured I should share it...
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-Add a trivial exception handler in the relocate_kernel environment which 
-outputs to the early_printk serial console if configured. Currently only 
-8250-compatible serial ports are supported, but that could be extended.
+There are some failure modes which lead to triple-faults in the
+relocate_kernel function, which is fairly much undebuggable for normal
+mortals.
 
-I had to hack up QEMU support for a PCI serial port which matches what
-the existing early_printk code can drive, and the *real* 8250_pci driver
-doesn't seem to cope with that setup at all, but whatever... the kexec
-code now drives the same 32-bit stride which is all that earlyprintk
-supports. We can always add more later, if anyone cares.
+Adding a GDT in the relocate_kernel environment is step 1 towards being
+able to catch faults and do something more useful.
 
-Someone who cares might want to bring the i386 version into line with
-this, although the lack of rip-based addressing makes all the PIC code a
-bit harder.
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ arch/x86/kernel/relocate_kernel_64.S | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-David Woodhouse (8):
-      x86/kexec: Debugging support: load a GDT
-      x86/kexec: Debugging support: Load an IDT and basic exception entry points
-      x86/kexec: Debugging support: Dump registers on exception
-      x86/kexec: Add 8250 serial port output
-      x86/kexec: Add 8250 MMIO serial port output
-      x86/kexec: Invalidate GDT/IDT from relocate_kernel() instead of earlier
-      [DO NOT MERGE] x86/kexec: Add int3 in kexec path for testing
-      [DO NOT MERGE] x86/kexec: Add CFI type information to relocate_kernel()
-
- arch/x86/include/asm/kexec.h         |   7 ++
- arch/x86/kernel/early_printk.c       |   9 ++
- arch/x86/kernel/machine_kexec_64.c   |  50 ++++++--
- arch/x86/kernel/relocate_kernel_64.S | 254 +++++++++++++++++++++++++++++++++++++++-
- 4 files changed, 308 insertions(+), 12 deletions(-)
-
-
-v7:
- • Drop CONFIG_KEXEC_DEBUG and make it all unconditional in order to
-   "throw regressions back into the face of whoever manages to introduce
-   them" (Ingo, https://lore.kernel.org/kexec/Z7rwA-qVauX7lY8G@gmail.com/)
- • Move IDT invalidation into relocate_kernel() itself.
-
-v6: https://lore.kernel.org/kexec/20250115191423.587774-1-dwmw2@infradead.org/
- • Rebase onto already-merged fixes in tip/x86/boot.
- • Move CONFIG_KEXEC_DEBUG to generic kernel/Kconfig.kexec as Bartosz is
-   working on an Arm64 version.
-
-v5: https://lore.kernel.org/kexec/20241205153343.3275139-1-dwmw2@infradead.org/T/
- • Drop [RFC].
- • Drop _PAGE_NOPTISHADOW fix, which Ingo already took into tip/x86/urgent.
- • Add memory-mapped serial port support (32-bit MMIO spacing only).
-
-v4 (RFC): https://lore.kernel.org/kexec/20241127190343.44916-1-dwmw2@infradead.org/T/
- • Add _PAGE_NOPTISHADOW fix for the identmap code.
- • Drop explicit map of control page, which was masking the identmap bug.
-
-v3 (RFC): https://lore.kernel.org/kexec/20241125100815.2512-1-dwmw2@infradead.org/T/
- • Add CONFIG_KEXEC_DEBUG option and use earlyprintk config.
- • Allocate PGD separately from control page.
- • Explicitly map control page into identmap.
-
-V2 (RFC): https://lore.kernel.org/kexec/20241122224715.171751-1-dwmw2@infradead.org/T/
- • Introduce linker script, start to clean up data access.
-
-V1 (RFC): https://lore.kernel.org/kexec/20241103054019.3795299-1-dwmw2@infradead.org/T/
- • Initial proof-of-concept hacks.
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index b44d8863e57f..ac058971a382 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -40,6 +40,16 @@ SYM_DATA(kexec_pa_table_page, .quad 0)
+ SYM_DATA(kexec_pa_swap_page, .quad 0)
+ SYM_DATA_LOCAL(pa_backup_pages_map, .quad 0)
+ 
++	.balign 16
++SYM_DATA_START_LOCAL(kexec_debug_gdt)
++	.word   kexec_debug_gdt_end - kexec_debug_gdt - 1
++	.long   0
++	.word   0
++	.quad   0x00cf9a000000ffff      /* __KERNEL32_CS */
++	.quad   0x00af9a000000ffff      /* __KERNEL_CS */
++	.quad   0x00cf92000000ffff      /* __KERNEL_DS */
++SYM_DATA_END_LABEL(kexec_debug_gdt, SYM_L_LOCAL, kexec_debug_gdt_end)
++
+ 	.section .text..relocate_kernel,"ax";
+ 	.code64
+ SYM_CODE_START_NOALIGN(relocate_kernel)
+@@ -116,6 +126,19 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	/* store the start address on the stack */
+ 	pushq   %rdx
+ 
++	/* Create a GDTR (16 bits limit, 64 bits addr) on stack */
++	leaq	kexec_debug_gdt(%rip), %rax
++	pushq	%rax
++	pushw	(%rax)
++
++	/* Load the GDT, put the stack back */
++	lgdt	(%rsp)
++	addq	$10, %rsp
++
++	/* Test that we can load segments */
++	movq	%ds, %rax
++	movq	%rax, %ds
++
+ 	/*
+ 	 * Clear X86_CR4_CET (if it was set) such that we can clear CR0_WP
+ 	 * below.
+-- 
+2.48.1
 
 
