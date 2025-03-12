@@ -1,193 +1,228 @@
-Return-Path: <linux-kernel+bounces-558448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B38A5E5F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:03:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8834CA5E5FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:03:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 345C83A5A15
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5908E19C0AB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A74B1F03EF;
-	Wed, 12 Mar 2025 20:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FCF1F1508;
+	Wed, 12 Mar 2025 20:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Qi0dasUx"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYkrB4xp"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A981EF092
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 20:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1A91E9B32;
+	Wed, 12 Mar 2025 20:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741813008; cv=none; b=M0kX8LEnl2+oGUjSfinJsPqBlTqeq+8UJi+/nAi+FryI3x3vfKvEye24AmmmWe7b7KiAncRZveli6ZwwBTYeAuGqqVFNb5rsutwapt6R95jxgoAHVbNJLjQMkxFr4/6hDwh0TML7LQrsj+w8oScAFIW/Z6uA5gCjHMPXlbBviCU=
+	t=1741813180; cv=none; b=qpvGSuLFj/NmSpmB72iQA11jsO2MxwGFXyR59c7o4NAJaVi41WJGm81qMIYfmswuaUJUJ0EPGUM6XP3aZo/ed5pFKGW3VHBqMlil9MjQUvzGhSxP1iihzbNXCOkjH95T/YP5WRLk01J2b5cYBuQt1AxibT5RvU9zuDNMSDLpu+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741813008; c=relaxed/simple;
-	bh=/cLVu/i1J/npZ/UFxDKmVGIv97YHvczKzdlFovdn4U4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pPoYVhfyQ8uRPPQo2L7Judb0XsRUATidHQ/zdLxRZMkBkuZ9NG55UGqwdjp+8BWmDiZBaZ0ge1Axw99ZKXecABxG5OlW5zjJVsQOqaahP2N8XRhFuHLvFRY4gGsPBc65fJbu8GkXeTz8aaWLkigEX4u77BG1qb28tueb1lCEZzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Qi0dasUx; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-548409cd2a8so338774e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:56:45 -0700 (PDT)
+	s=arc-20240116; t=1741813180; c=relaxed/simple;
+	bh=sGE4HOOVVz7WqVzh06w2jhg2dPFxwpHqjhV9mWqBrUo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=az46zY+woIEeQMoP46qGhzOnE2K9DtP2CJPvHDqmdtim0daAmBEjOloIjOdnCcXaI54BHZEyQy7wZ+CRPHJlWLsbacU9YQdVQwKbRF0QcFRVRf/6zelMy2p5BCS+UbNV37tJ8cl8jiAPFC55KgAq732eqjL1j+gPSUDBleEbug8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYkrB4xp; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2254e0b4b79so7317555ad.2;
+        Wed, 12 Mar 2025 13:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741813004; x=1742417804; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GrvETxTzEPANOEDl+dE9UqwlinAPB0E0IpXcGB+inLY=;
-        b=Qi0dasUxq1x9VsCH8pwLMM9wIPDwJKeOo2GKvPZTGkDa6G+3SsYGbbKKZWpnPFB+LP
-         Du2vp/qFMIwHKhI1NlHL90rBsymREqXVIJ4E98TAU/BnPR2/6qaZa3LIgYFsoZNeogy0
-         OzsmjACLuopczDpmH++aHe1uQUfOiiXZOW15M=
+        d=gmail.com; s=20230601; t=1741813178; x=1742417978; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ub4jX9+0jei2hftTvvZhRExenmWl6dTs0WmkODruC4Q=;
+        b=GYkrB4xpEzT9UxPjrNnU8XWxYAN2UxodCUp9mnFJKbyndAO5N2sjDD24Dy9QY0mGbi
+         NeaV0jkcVd+il59avMxwFenGFokHoGEC6Z4/wLs1Lg2bj+NRWtGA5s242DQ2LXzN4+50
+         4AzVNKyH2jZeNA/Zr9wRFGQUqBas7CJMiH/yXtlwfDvp4XJcVFi+IdN1fNT21wgfQtcM
+         sFxl35W+rNy9vwa89Z6Nz1rn/28nsKDrBd/AC7PTYi1wptOvKVAzxKWhOoiqrSrwH3RB
+         LfCULYhWnCugIM0du97csNyRvNrywVl03yeeSTES4QF8g0ByyVC6SpYPoPdUyvYKChTg
+         YP1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741813004; x=1742417804;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GrvETxTzEPANOEDl+dE9UqwlinAPB0E0IpXcGB+inLY=;
-        b=rzjOnriPXqSCDhLKau/M0r3mdHsGdQz5DWNkuhAOmp0NoqXo84Woim9L6kaJPk5Mzc
-         ZJ5Me1/YcwH9TkCK+LSMotiQxqOr91hu6g4IScyAdHC8T5fIl66llmy6iw1jW65dJ63D
-         Fqq80qM/E7rJoBvqY7oi5jb9Adot4aaP9B/C/Ryti80d2ljMx0Id5U0OuvexgV3+bgWm
-         qgdGNpOEX7/fDVAr/LdsddpGbDDiY7wdrqc3khnyAHaVIYBCMcPi3dC6J7jLgwg2MJG+
-         ao5/T8Ltp4hUiYrUMJmOUQsbHkv/BqIiS2FqOVgldojYkPT/OsZvc20JhsJObv5aENI0
-         Pzow==
-X-Forwarded-Encrypted: i=1; AJvYcCU+ZqxcC0NkapzsM8gZ0mXfCd+pJnM64Hx8r6gdYgJGlcz+gCNNJF5H7RmTuS/B3TZaIgdjBN1saEfTeHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGeIeemOUbGPJyl/FoGhBM8ntT8cm8m1FVIhjWLMVdyku/NoXU
-	JORREwP2zPTCLe34R1LKnT8b2j69C1heVirbGbYrptRlLRK4nKzVysfzex39xrUDJy3KnMWua3W
-	/TUvRMEOVPtFY3QhEXKASgRr6eWrFw2tlmcC+
-X-Gm-Gg: ASbGnct1tsmEduGpDCaxH7NwsSGanpcGV08VZzSwSbmi+GE6o8s1OqYK6Ygn60cvxCi
-	NNAjYW63Q1UPRemyv/f7fPVv8cjhx+LwOoUA0TqY4I/RFsVHmv25+EnNtUaN2/ZWEDf2jiSZDUA
-	8b8NkB8clYla2yfBQCVZIQc0U8kA==
-X-Google-Smtp-Source: AGHT+IHUkHHcbtyRAkWY2R1TLCWecAoP+9J2rTrtsm1A8/LiKJUZvmvewYlVLMFBlhjz6pjBCx/KuuT00faBLcXTdlw=
-X-Received: by 2002:a05:6512:3d27:b0:545:df9:5bb5 with SMTP id
- 2adb3069b0e04-54990ec8bd9mr9152703e87.45.1741813004171; Wed, 12 Mar 2025
- 13:56:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741813178; x=1742417978;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ub4jX9+0jei2hftTvvZhRExenmWl6dTs0WmkODruC4Q=;
+        b=HRaZFA/DZYvLGJBV94tFcfFMzkT1FYPr+Ygvd58Fqo815saPtvmZdTbg3iFliwoKVz
+         Ww7YI22X1TYHRVD4c7mW4deefCPzDG/8uwv+bcnX7AFYp2nP/lZiLPrrPlmaQ0Fy9cFu
+         SICFBVpKYmbCmb8B0yoH/GFByD36YN/qm0Qm78s7iGQO7LDpE6kOte0UkAaC/ssqSs2p
+         IqC2C+ken1WxVDd3Hw01IEIcrWju3jE253JMCvmz6rlsah9Hi3aLK9qyf7kek0rB52ve
+         RJMZ73igcJlCIZ/pX22D7HtuY4tit0umsQQBYnGLYb/hIPaSdiELGfjvJh/eRxR5R3Ow
+         3y6w==
+X-Forwarded-Encrypted: i=1; AJvYcCW/5M/ZJozdQO5IQXT/xSC9qBsZSo4es/9aq4LD0ktnCa6YbO5T/bPq7v1JJosW1YAggqkUKxlk/FCBTVhx@vger.kernel.org, AJvYcCW50b/5dkj/HrdME53VkWg07LUqjXQ71vQaTKACf5F3zTX2z0h/cfJ2ai1myFg5IIAIjYCa3ZJuGHUpx+5v@vger.kernel.org, AJvYcCXJrxiRgp7hjNga7D94GFFLfIqynhwWjhNyd/qVJuwSxsplmztAaqWsbdvz2HGdvJPPCZ4=@vger.kernel.org, AJvYcCXcYaIPzaQl35IkBQU1TZrCEIh1eT3/7D3a082FJjcdUtVthNZJWyXj+XRruGUsrBfnTha2gNnp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWeWm2KqbRjePmT7H0V3CB5g98a2mf2WYX0BmADkyyEvLlx6xT
+	xRl3Nnzvao2GSYmQAxu7/lrPA9SLBXs2YxfvmDTboFnd9ZM0YYY/dU+nVrjj
+X-Gm-Gg: ASbGncuUqq57HNWmiCw4Wz8LZSLX2/rk0GKVcKBugDVpwR3tMsO8rJXeOaGQdwmPdwr
+	PQlVjBJwGT+o5EAWSOXeb8psIRNOpz9hGxc0FP0lJqeXYUuS0lBFCSCLUeHU5HaDYi/Ht58+GN1
+	0sNVCif8IBx4zWiBnyx/GLNRdfwyfmnFAqgXqs7aT+vZhH2WTqj4ZybiHu/mXsTTnpAFCDnQ7Ru
+	NzVbPvGqVn3C7SJGcsNCYHpxVezg4I/hre9JjNqk55gPeEzF9DjiIsKs3sia6vzpPaiOf5AcCA9
+	HTG5vcxNZc/ie5hCQ1OdcNOZmBL8x1jgCwN6hWoUhQ==
+X-Google-Smtp-Source: AGHT+IEqhB5kSkIfZY/GZuI6Ky/XtS/IfhWT5TgQfFV/WZTAIT3v8fj5RDGB7a85bswkz94fpuya5g==
+X-Received: by 2002:a05:6a00:2d90:b0:736:4b85:ee05 with SMTP id d2e1a72fcca58-736aaa56dc6mr29765479b3a.11.1741813178520;
+        Wed, 12 Mar 2025 13:59:38 -0700 (PDT)
+Received: from localhost ([2a03:2880:2ff:2::])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736bc3f40desm9732470b3a.50.2025.03.12.13.59.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 13:59:37 -0700 (PDT)
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+Subject: [PATCH v2 0/3] vsock: add namespace support to vhost-vsock
+Date: Wed, 12 Mar 2025 13:59:34 -0700
+Message-Id: <20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303200212.3294679-1-dualli@chromium.org> <20250303200212.3294679-3-dualli@chromium.org>
- <Z8-4SZv6plpyQUwf@google.com> <CANBPYPhR-C3VTv=ZHc1LJ0c7OG8-K2iGS62vXHmg9gcX0y89Cw@mail.gmail.com>
- <CANBPYPg5i5PhqV0-1foaKwNOaoKNoit6-cLUAqNu=2S0AUp==w@mail.gmail.com> <Z9HrEdbI5JYu0pwS@google.com>
-In-Reply-To: <Z9HrEdbI5JYu0pwS@google.com>
-From: Li Li <dualli@chromium.org>
-Date: Wed, 12 Mar 2025 13:56:32 -0700
-X-Gm-Features: AQ5f1JqD9a5qsP1mO79Ph7ePMU0QhGNiwP1z2NP0wllQAR2ToDs_LwX9Kwcahfc
-Message-ID: <CANBPYPi8sT0m4bj9JhVn38rrRBg7nV9kduc34QC_edwHS-wNZg@mail.gmail.com>
-Subject: Re: Fwd: [PATCH v16 2/3] binder: report txn errors via generic netlink
-To: Carlos Llamas <cmllamas@google.com>
-Cc: "Cc:" <dualli@google.com>, corbet@lwn.net, davem@davemloft.net, 
-	edumazet@google.com, Jakub Kicinski <kuba@kernel.org>, pabeni@redhat.com, 
-	donald.hunter@gmail.com, Greg KH <gregkh@linuxfoundation.org>, 
-	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, tkjos@android.com, 
-	maco@android.com, "Joel Fernandes (Google)" <joel@joelfernandes.org>, brauner@kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>, omosnace@redhat.com, shuah@kernel.org, arnd@arndb.de, 
-	masahiroy@kernel.org, Bagas Sanjaya <bagasdotme@gmail.com>, 
-	Simon Horman <horms@kernel.org>, tweek@google.com, LKML <linux-kernel@vger.kernel.org>, 
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org, selinux@vger.kernel.org, 
-	Hridya Valsaraju <hridya@google.com>, smoreland@google.com, ynaffit@google.com, 
-	Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALb10WcC/x3MwQ6CMAwA0F9ZemZkLUOUk/9hOCxQYDFupiVEJ
+ fy7ges7vA2UJbJCazYQXqPGnKA1VBjo55AmtnGA1gA5ql2FZFfN/dMmXpJaXw/h5smPDV2gMPA
+ WHuPn3B5dYWCOumT5nvmKhx6Pc4gXbMjTtawQfdVYtDoF+QXhu/Awh6Xs8wu6fd//lcXAqqEAA
+ AA=
+X-Change-ID: 20250312-vsock-netns-45da9424f726
+To: Stefano Garzarella <sgarzare@redhat.com>, 
+ Jakub Kicinski <kuba@kernel.org>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+ Dexuan Cui <decui@microsoft.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ Bryan Tan <bryan-bt.tan@broadcom.com>, 
+ Vishnu Dasa <vishnu.dasa@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: "David S. Miller" <davem@davemloft.net>, virtualization@lists.linux.dev, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hyperv@vger.kernel.org, kvm@vger.kernel.org, 
+ Bobby Eshleman <bobbyeshleman@gmail.com>
+X-Mailer: b4 0.14.2
 
-On Wed, Mar 12, 2025 at 1:14=E2=80=AFPM Carlos Llamas <cmllamas@google.com>=
- wrote:
->
-> On Wed, Mar 12, 2025 at 11:49:02AM -0700, Li Li wrote:
-> > > > +     mutex_lock(&binder_procs_lock);
-> > > > +     hlist_for_each_entry(proc, &binder_procs, proc_node) {
-> > > > +             if (proc->pid =3D=3D pid)
-> > > > +                     break;
-> > >
-> > > Wait... can't there be multiple binder_proc instances matching the sa=
-me
-> > > pid? I know that binder_proc is a bit of a misnomer but what should y=
-ou
-> > > do in such case? Shouldn't you set the flags in _all_ matching pids?
-> > >
-> > > Furthermore, there could be a single task talking on multiple context=
-s,
-> > > so you could be returning the 'proc' that doesn't match the context t=
-hat
-> > > you are looking for right?
-> > >
-> >
-> > You're right. I should update this logic to search the process within a
-> > certain binder_context only.
->
-> Also, note the comment about multiple 'struct binder_proc' matching the
-> same desired pid.
->
+Picking up Stefano's v1 [1], this series adds netns support to
+vhost-vsock. Unlike v1, this series does not address guest-to-host (g2h)
+namespaces, defering that for future implementation and discussion.
 
-Yes, multiple matching can be found when the context is not specified.
-I'll take care of that as well.
+Any vsock created with /dev/vhost-vsock is a global vsock, accessible
+from any namespace. Any vsock created with /dev/vhost-vsock-netns is a
+"scoped" vsock, accessible only to sockets in its namespace. If a global
+vsock or scoped vsock share the same CID, the scoped vsock takes
+precedence.
 
-> > > > +static void binder_netlink_report(struct binder_context *context, =
-u32 err,
-> > > > +                               u32 pid, u32 tid, u32 to_pid, u32 t=
-o_tid,
-> > >
-> > > Instead of all these parameters, is there a way to pass the transacti=
-on
-> > > itself? Isn't this info already populated there? I think it even hold=
-s
-> > > the info you are looking for from the 'binder_transaction_data' below=
-.
-> > >
-> >
-> > The binder_transaction_data doesn't include all of pid, tid, to_pid and=
- to_tid.
->
-> I'm not referring to binder_transaction_data, I mean 'struct
-> binder_transaction'. I _think_ this should have all you need?
->
+If a socket in a namespace connects with a global vsock, the CID becomes
+unavailable to any VMM in that namespace when creating new vsocks. If
+disconnected, the CID becomes available again.
 
-Ah, yes, let me take a closer look and optimize this. Thanks!
+Testing
 
-> > > > +     ret =3D genlmsg_multicast(&binder_nl_family, skb, 0, BINDER_N=
-LGRP_REPORT, GFP_KERNEL);
-> > >
-> > > Thanks for switching to multicast. On this topic, we can only have a
-> > > single global configuration at a time correct? e.g. context vs per-pr=
-oc.
-> > > So all listeners would ahve to work with the same setup?
-> > >
-> >
-> > We only have a single global configuration, which can include both
-> > context and proc setup.
-> > Yes, all listeners work with the same setup as we have only one
-> > multicast group defined.
-> > The user space code can demux it by checking the context field of the
-> > netlink messages.
->
-> Ack. I understand the demux solution. I was wondering if we'll need to
-> OR the different configurations (per-proc and flags) from each listener
-> in that case.
->
+QEMU with /dev/vhost-vsock-netns support:
+	https://github.com/beshleman/qemu/tree/vsock-netns
 
-They are already OR'ed from all listeners.
+Test: Scoped vsocks isolated by namespace
 
-> > > > +TRACE_EVENT(binder_netlink_report,
-> > > > +     TP_PROTO(const char *name, u32 err, u32 pid, u32 tid, u32 to_=
-pid,
-> > > > +              u32 to_tid, u32 reply, struct binder_transaction_dat=
-a *tr),
-> > >
-> > > Similarly here I think you could get away with passing 'struct
-> > > binder_transaction' instead of all the individual fields.
-> > >
-> >
-> > Same as above, the pid/tid fields are not in the struct
-> > binder_transaction (or redacted for oneway txns).
->
-> There is something off here. You have t->from_{pid|tid} and also
-> t->to_{proc|thead} that you can use. Isn't this what you are looking
-> for?
->
-> --
-> Carlos Llamas
+  host# ip netns add ns1
+  host# ip netns add ns2
+  host# ip netns exec ns1 \
+				  qemu-system-x86_64 \
+					  -m 8G -smp 4 -cpu host -enable-kvm \
+					  -serial mon:stdio \
+					  -drive if=virtio,file=${IMAGE1} \
+					  -device vhost-vsock-pci,netns=on,guest-cid=15
+  host# ip netns exec ns2 \
+				  qemu-system-x86_64 \
+					  -m 8G -smp 4 -cpu host -enable-kvm \
+					  -serial mon:stdio \
+					  -drive if=virtio,file=${IMAGE2} \
+					  -device vhost-vsock-pci,netns=on,guest-cid=15
+
+  host# socat - VSOCK-CONNECT:15:1234
+  2025/03/10 17:09:40 socat[255741] E connect(5, AF=40 cid:15 port:1234, 16): No such device
+
+  host# echo foobar1 | sudo ip netns exec ns1 socat - VSOCK-CONNECT:15:1234
+  host# echo foobar2 | sudo ip netns exec ns2 socat - VSOCK-CONNECT:15:1234
+
+  vm1# socat - VSOCK-LISTEN:1234
+  foobar1
+  vm2# socat - VSOCK-LISTEN:1234
+  foobar2
+
+Test: Global vsocks accessible to any namespace
+
+  host# qemu-system-x86_64 \
+	  -m 8G -smp 4 -cpu host -enable-kvm \
+	  -serial mon:stdio \
+	  -drive if=virtio,file=${IMAGE2} \
+	  -device vhost-vsock-pci,guest-cid=15,netns=off
+
+  host# echo foobar | sudo ip netns exec ns1 socat - VSOCK-CONNECT:15:1234
+
+  vm# socat - VSOCK-LISTEN:1234
+  foobar
+
+Test: Connecting to global vsock makes CID unavailble to namespace
+
+  host# qemu-system-x86_64 \
+	  -m 8G -smp 4 -cpu host -enable-kvm \
+	  -serial mon:stdio \
+	  -drive if=virtio,file=${IMAGE2} \
+	  -device vhost-vsock-pci,guest-cid=15,netns=off
+
+  vm# socat - VSOCK-LISTEN:1234
+
+  host# sudo ip netns exec ns1 socat - VSOCK-CONNECT:15:1234
+  host# ip netns exec ns1 \
+				  qemu-system-x86_64 \
+					  -m 8G -smp 4 -cpu host -enable-kvm \
+					  -serial mon:stdio \
+					  -drive if=virtio,file=${IMAGE1} \
+					  -device vhost-vsock-pci,netns=on,guest-cid=15
+
+  qemu-system-x86_64: -device vhost-vsock-pci,netns=on,guest-cid=15: vhost-vsock: unable to set guest cid: Address already in use
+
+Signed-off-by: Bobby Eshleman <bobbyeshleman@gmail.com>
+---
+Changes in v2:
+- only support vhost-vsock namespaces
+- all g2h namespaces retain old behavior, only common API changes
+  impacted by vhost-vsock changes
+- add /dev/vhost-vsock-netns for "opt-in"
+- leave /dev/vhost-vsock to old behavior
+- removed netns module param
+- Link to v1: https://lore.kernel.org/r/20200116172428.311437-1-sgarzare@redhat.com
+
+Changes in v1:
+- added 'netns' module param to vsock.ko to enable the
+  network namespace support (disabled by default)
+- added 'vsock_net_eq()' to check the "net" assigned to a socket
+  only when 'netns' support is enabled
+- Link to RFC: https://patchwork.ozlabs.org/cover/1202235/
+
+---
+Stefano Garzarella (3):
+      vsock: add network namespace support
+      vsock/virtio_transport_common: handle netns of received packets
+      vhost/vsock: use netns of process that opens the vhost-vsock-netns device
+
+ drivers/vhost/vsock.c                   | 96 +++++++++++++++++++++++++++------
+ include/linux/miscdevice.h              |  1 +
+ include/linux/virtio_vsock.h            |  2 +
+ include/net/af_vsock.h                  | 10 ++--
+ net/vmw_vsock/af_vsock.c                | 85 +++++++++++++++++++++++------
+ net/vmw_vsock/hyperv_transport.c        |  2 +-
+ net/vmw_vsock/virtio_transport.c        |  5 +-
+ net/vmw_vsock/virtio_transport_common.c | 14 ++++-
+ net/vmw_vsock/vmci_transport.c          |  4 +-
+ net/vmw_vsock/vsock_loopback.c          |  4 +-
+ 10 files changed, 180 insertions(+), 43 deletions(-)
+---
+base-commit: 0ea09cbf8350b70ad44d67a1dcb379008a356034
+change-id: 20250312-vsock-netns-45da9424f726
+
+Best regards,
+-- 
+Bobby Eshleman <bobbyeshleman@gmail.com>
+
 
