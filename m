@@ -1,140 +1,148 @@
-Return-Path: <linux-kernel+bounces-557095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A28A5D3A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:12:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E16A5D3AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:18:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7779316918B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:12:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E56BA1897C96
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D412F44;
-	Wed, 12 Mar 2025 00:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69C8282ED;
+	Wed, 12 Mar 2025 00:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kr9Se8UI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N1zmn+t9"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29A820EB
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44969443
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741738338; cv=none; b=P7lY1tqArZErZBdkkOVaN5RWPlkxwoX41pOctZ6CCFdJFLEM3Hrwl6xz5plPd9wjFx9tL1iJYbLOktwnlSRYRFeRECprV/u4KPlkqpjIiAev75oeuv7WVHXTF30vJqVGziaQ3oFsORRxElZwfqln4/s7+HaOharKsamH6oa+9U4=
+	t=1741738728; cv=none; b=kWuplRVRioKNjmpMEJt+3XdCAbH9Flzv0Xa1wxVuUWsYI/VowN49nRezS+I9F5Kg7LcsGwKgMtBisCi2KHCif3nE0XR5gogt7rsN7Ocs7amNX8JbWuoX30MUTUoShpgHPG2BhEYdDDy/SbPydQUbF51/vTwJByHxK1IXtg0wdU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741738338; c=relaxed/simple;
-	bh=JYdPrXQYwvcwkvqZKxgNi+iuZvLgJnHrUW1LyNCQa10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Es5FEkum2urVnc4bM5X49spGQ4aceEkKlbquyrlgZ272SCFwBvHCr+HO0i30atYHtvqQq9mFnVWHTIELsYr3whNCvYhNZh7E5Y7DmBiLgSMQYjryHdHfNE3XfPxhtaeXE8dkbQuPrq8qxurJvQ5kSVtUfpQRBdBped1Xd9hOWHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kr9Se8UI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 007DEC4CEE9;
-	Wed, 12 Mar 2025 00:12:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741738337;
-	bh=JYdPrXQYwvcwkvqZKxgNi+iuZvLgJnHrUW1LyNCQa10=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kr9Se8UIFy/Pu33HoOPKK5Ihvgw1DuCLr1Gi465ogFYmSahH+MCac5BQ+2Id/xdeZ
-	 dQNZm7WIBHfSOg64vnoTtjLoiY0N4z1fBpi6hOeLnnYu8tyeqUusVLp1p4q4YQ7xPr
-	 9OgsEXWDTlHJYYSglcAbtGmo+qVWCyZpAghpBTj6gTxfA06x2l3diSF07Cw0vug2Vf
-	 Q7DAJLooqnDss7mOzxo3Cgbwp/QO/wAIEPd6oqmDO40Wwp6uCEKkQE6tkdMcpnMiUW
-	 fpgVb1hRfS0jIpzf1eXtWcMeE5snHlAS5+K+5OQObZdemgoD62DABiGLyGLwr4i0KX
-	 eXOWG6A15sEXA==
-Received: by venus (Postfix, from userid 1000)
-	id D8C941807CC; Wed, 12 Mar 2025 01:12:14 +0100 (CET)
-Date: Wed, 12 Mar 2025 01:12:14 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] regulator: act8865-regulator: switch psy_cfg from
- of_node to fwnode
-Message-ID: <clovsoj2joegkabhzsbjre5adj7qwo6vmf47urnam6xnlh3cm3@jcitrknzomvf>
-References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
- <20250225-psy-core-convert-to-fwnode-v1-2-d5e4369936bb@collabora.com>
+	s=arc-20240116; t=1741738728; c=relaxed/simple;
+	bh=TuMadePkxb8jxDE0mIQj+ghINJIfrzK4xfCJJdF8X4o=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=OeBnrJb5focUPSaC5ZumUq1xUW8+DS9iVV7YDbvmgzuFOZxkGYYVKdSEpv0S+ERO/BwGY0hAQcBnlvNFS2Q1brJe+/hVmfTeQ3C34i6TVXuXHSfZAAI/S9/gxk4cLoJNu3CU32u4TBZNfaNoHXrJPWI1ktG6PR/a98PF/EgUyI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N1zmn+t9; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6fddfe0448dso5242247b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 17:18:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741738725; x=1742343525; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=REugdpu80t5x64k4y3HKelfVsb35Y8bQ1k2waLdzFQA=;
+        b=N1zmn+t9aT05KmsoSA3UnDar3Lc9VgKgmFcm29+AMk5Ld7r/ryxTK/9/u+4dcyV0bJ
+         GZhMZ9RXn3jFdSi7K0Mt1OahQgoMjj+55fzkP++p8ouvsbMwya0N3yUOVc5bg4o8TgZm
+         4ZItuFfUEE8pU87cCrcpo0FOY3rCEAbmBMBdwFOKhdjxkSPaGfYdJRAg3WEvH6CsJjPu
+         GzM3WLiVBRpVPQs/dRQczYxkXiM3/NkD6T87hZ0ZJHF7RcnbgwWi3GwI+L0Jfak8KPwf
+         M+q6MEV2Av9yGkopNSzi7wDvZozoygJxLDvp57kIhoxqP2SKAUUcTHLG1FuOEjmsVIDI
+         s4MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741738725; x=1742343525;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=REugdpu80t5x64k4y3HKelfVsb35Y8bQ1k2waLdzFQA=;
+        b=SQsVrjaVW+1bdVzxPe7IsuK+uwrONzf0F42h+vZKegxb0Cn4Xq+uJfEubbMxOu+tRe
+         +5sXvDGwZNf9SPFm1UEHaRnn/Rix80D5QocnFBzYt4YTyviZYv+bROQe/szVKVyiUdKI
+         LA3Y0EU68da77xTLxvtQl17hsnxwdgF6pUzRByaqpUy4l8aUsulZsQqa+DcqzCxiiiZd
+         fDaJlCgJvQgIlu5lpL8MyqFmqqZNwNn1EIF7W6fcTZNrmrbe4oxvCtXAvrBXxbfL/np6
+         zuEsvo62DK3enAERxWxDT9egt6yjofieQoAtpTESBYlPoa6Bih6LV2/dbpRgqxvLTvAz
+         TslQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTyL9DMpwhOfVwJjiRFLDqpOjVL5Uf17VJnu3H288+iqEWkYejuorFVpSOfmmGg5ihMT5qLYDGZwWE+3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAyi8Epl5txcky3jquWHkPlLF9jfrZOoZQRW19GL771WoQautb
+	rEo7rOs85t6wkDM9tyIZII086bW92Q+NYFkRhsnILWSGYB+denpQfNb0cW9lVQLn8Rz5xm6Sl/G
+	gX0GFZQ==
+X-Google-Smtp-Source: AGHT+IEZVGyVhHcp5La5S9mDdx95clLmTIYUzQuT/zjQobj8BfFNDhxkugMKrMJCb+8E3WAqToYxgeYiMeZ+
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:8bc2:942f:1b93:42dd])
+ (user=irogers job=sendgmr) by 2002:a05:690c:650e:b0:6ff:1f10:31fa with SMTP
+ id 00721157ae682-6ff1f105c4cmr278467b3.3.1741738725415; Tue, 11 Mar 2025
+ 17:18:45 -0700 (PDT)
+Date: Tue, 11 Mar 2025 17:18:41 -0700
+Message-Id: <20250312001841.1515779-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="a4msmditmuehlsej"
-Content-Disposition: inline
-In-Reply-To: <20250225-psy-core-convert-to-fwnode-v1-2-d5e4369936bb@collabora.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
+Subject: [PATCH v1] perf tests diff: Fixes to variable expansion and stdout
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+When make_data fails its error message needs to go to stderr rather
+than stdout and the stdout value is captured in a variable.  Quote the
+$err value so that it is always a valid input for test.  This error is
+commonly encountered if no sample data is gathered by the test.
 
---a4msmditmuehlsej
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/7] regulator: act8865-regulator: switch psy_cfg from
- of_node to fwnode
-MIME-Version: 1.0
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/tests/shell/diff.sh | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Hello Mark,
+diff --git a/tools/perf/tests/shell/diff.sh b/tools/perf/tests/shell/diff.sh
+index 14b87af88703..e05a5dc49479 100755
+--- a/tools/perf/tests/shell/diff.sh
++++ b/tools/perf/tests/shell/diff.sh
+@@ -39,13 +39,13 @@ make_data() {
+   file="$1"
+   if ! perf record -o "${file}" ${testprog} 2> /dev/null
+   then
+-    echo "Workload record [Failed record]"
++    echo "Workload record [Failed record]" >&2
+     echo 1
+     return
+   fi
+   if ! perf report -i "${file}" -q | grep -q "${testsym}"
+   then
+-    echo "Workload record [Failed missing output]"
++    echo "Workload record [Failed missing output]" >&2
+     echo 1
+     return
+   fi
+@@ -55,12 +55,12 @@ make_data() {
+ test_two_files() {
+   echo "Basic two file diff test"
+   err=$(make_data "${perfdata1}")
+-  if [ $err != 0 ]
++  if [ "$err" != 0 ]
+   then
+     return
+   fi
+   err=$(make_data "${perfdata2}")
+-  if [ $err != 0 ]
++  if [ "$err" != 0 ]
+   then
+     return
+   fi
+@@ -77,12 +77,12 @@ test_two_files() {
+ test_three_files() {
+   echo "Basic three file diff test"
+   err=$(make_data "${perfdata1}")
+-  if [ $err != 0 ]
++  if [ "$err" != 0 ]
+   then
+     return
+   fi
+   err=$(make_data "${perfdata2}")
+-  if [ $err != 0 ]
++  if [ "$err" != 0 ]
+   then
+     return
+   fi
+-- 
+2.49.0.rc0.332.g42c0ae87b1-goog
 
-On Tue, Feb 25, 2025 at 12:21:35AM +0100, Sebastian Reichel wrote:
-> In order to remove .of_node from the power_supply_config struct,
-> use .fwnode instead.
->=20
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
-
-Can you apply this trivial patch for 6.15, so that we don't have to
-bother with an immutable branch for the remaining series in the 6.16
-cycle? In case the patch itself did not reach you for some reason:
-
-b4 am --single-message "20250225-psy-core-convert-to-fwnode-v1-2-d5e4369936=
-bb@collabora.com"
-
-Thanks,
-
--- Sebastian
-
->  drivers/regulator/act8865-regulator.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/regulator/act8865-regulator.c b/drivers/regulator/ac=
-t8865-regulator.c
-> index 0457af23c55acdd97b2cdc6fd6bfd07ae0f9d11f..b2a6ddc6f56d32e8758977e25=
-858b972e294bc84 100644
-> --- a/drivers/regulator/act8865-regulator.c
-> +++ b/drivers/regulator/act8865-regulator.c
-> @@ -643,7 +643,7 @@ static int act8600_charger_probe(struct device *dev, =
-struct regmap *regmap)
->  	struct power_supply *charger;
->  	struct power_supply_config cfg =3D {
->  		.drv_data =3D regmap,
-> -		.of_node =3D dev->of_node,
-> +		.fwnode =3D dev_fwnode(dev),
->  	};
-> =20
->  	charger =3D devm_power_supply_register(dev, &act8600_charger_desc, &cfg=
-);
->=20
-> --=20
-> 2.47.2
->=20
-
---a4msmditmuehlsej
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmfQ0VoACgkQ2O7X88g7
-+prB2RAAklNzPlWVH+CYNbkZHGRWx0rZGAZ9mDbsprAEeMe5Yq1hoCYlzkZno8Ft
-6j9cubQ+70tI7TIlZSW2fbYzacfs5zGmcPK4km8ypc4Oc2w3Xj24UQWuX1FlB3OV
-TGxdpM1zQv49BMhDq4q4WT6SmYR8GeK63LgIYhXlfCE8YvpG4sPYxSVJoQbLc3dz
-C9gQANNObW3GTv6qCDU79tAvyEE602bFtKRNEY6rtsymPKgAIS9dZh/Dsw8KdD2X
-lPhgt5CfVSxq2RyGWMhffxM3DU3FbfecbBXC8JeohQaS2nXOz0UXEup5zqSEXnq8
-mSMdnfWKetnB0wFhCFOBcOhyRTVITvfha9Fim8BJCeCM1f8e84IjN/+7wUGxa4Tg
-mP67v8wRRQfCN/dwKS184Sw0tQ8Mngx3iqyZlUpsRUHKbC5jq6/dmthKduGk6pNo
-0HG06sDYnB7Kaolz8aeJDJsGUQWhh38jJVdYPE3GSU58G6ImjSDkAQJUHNVzsd5t
-GCuQhuitmKE5hX2ykQUwAv8jjsOvHtOK8AZrvKOUpWKrnXUJyalAxmPdPrO4lGnB
-9a8yTbYJ6M/gwsBDU2MfvkbqUg6lzEhcuo9hWnFmkvA42V80j5Qggr3gsP7VB0t1
-03TpzkRr7IXPqyG4eZG6uIknu93E1YnL9vKsMVj6y1Fp5JZLlOw=
-=tJpq
------END PGP SIGNATURE-----
-
---a4msmditmuehlsej--
 
