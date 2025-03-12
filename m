@@ -1,96 +1,166 @@
-Return-Path: <linux-kernel+bounces-557840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62EEDA5DE79
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:55:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C5D5A5DE7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:55:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612D2189DA25
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:55:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64B077AC76E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D7424BBF5;
-	Wed, 12 Mar 2025 13:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67D62459D0;
+	Wed, 12 Mar 2025 13:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HfhH08SS"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PxHZS0sN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622F5241678;
-	Wed, 12 Mar 2025 13:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F53B23E33E
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741787691; cv=none; b=aRb558i7/Bn3OeHy6doGwz9bQHnvy7DlTXQyJn7YBaNP0Scn3zAHVeJ8Xiufwx9t3EclXxx3lxJOCntXLyNVhcWPYcYZycU8ssD+tPk0T00Q2OyhnGfWCIFuANvXsiOZvT54d6Ixnr/Pdw8ZAuPbfUMQjdJmpuTez3uWh1fRAdc=
+	t=1741787727; cv=none; b=lQthRNdYJi+4eb8yIigFO55dtZESBj+/7Vm95jjIw0r5yLfoGPj1ucyMF4h6JkRhiES3NW/c9tzZKgE17Og8CUNqGLdjuMvngHOKSjh6pleXLbhL/olVO94QBs8KbcwUNaQ5sGyqWdYFGfwokKiWJoseEzql/YpR+l5SjR2ooHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741787691; c=relaxed/simple;
-	bh=s7HppErOuRAEfWoZvC9h8SjPc+omLVLEhgLC3zn/b5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qUsmCd+IsB66Mb5k2gO5DquCGsvigUmRnyYF0iRh3o8tWA1ff6bsECZ4haLVu24Pd/ztiPJK7Foh/BkSzRALaarowNWzDCHljQDwo9OnXnCR2tlDmVNYyqVgM4s/NN9qJNGAvF3N1MTX/pfdCJCmWjwAWlGecQ4CJTGGiSzRfyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HfhH08SS; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=lfneeWODElFymFhQnucV3WL3Lau0GPYLjMhVhcnqKW8=; b=HfhH08SSMP3zY3OeXVKlQ3ZbtD
-	ASMEE5hDn5masctrOVgF4cgC5EpNYAB77QksrAgCFHdpJzMsbHkTTMUM6FwdzJmiss4zMryqtPdQB
-	xojhyVY1j+DMG870wbf+qKWdUh0W57WSV9F3/c4VkIcapXkB0QvTkNqnHFyKfhIolGZDS2MEq0Z9J
-	t2NbIASiMHHmR/lIQzzMN0rW4BA+67yGNabsnUopfPZLcHt9jEFr2PZSlMe/gz39DoHjsSW1mS+mo
-	Tlj1lWHOH3I2o8qgH0N35ZlkI+5ynaSPoAI7Na9ex7Ju3EHr5fbxZCjQtyaUFP2M7AOE59OpOG5Rn
-	+tjZnE9w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsMXp-00000008d2W-415a;
-	Wed, 12 Mar 2025 13:54:49 +0000
-Date: Wed, 12 Mar 2025 06:54:49 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
-	djwong@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v5 07/10] xfs: Commit CoW-based atomic writes atomically
-Message-ID: <Z9GSKbuollfpAZeX@infradead.org>
-References: <20250310183946.932054-1-john.g.garry@oracle.com>
- <20250310183946.932054-8-john.g.garry@oracle.com>
- <Z9E6LmV1PHOoEME7@infradead.org>
- <63587581-17a5-431e-9fe3-a1a24ea4fa21@oracle.com>
+	s=arc-20240116; t=1741787727; c=relaxed/simple;
+	bh=waGX/WbcYLhodDWdtv3u8VXnMMJPTcIh3lEekoxXXw8=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Hxix9+VI+rOXMu4Wgvl6L0Tx6be92+uiV+C5x2KTl+iezOE9GWXO8KaDFyogrRb8NuHpu/6UGjIJDduHK28orW5WLAHDjhqan8GwsUgVFd3scGSPko5tS8iooSoka2R6akIDC8nQlv7CrzUX2sgm1CPeR4s1JitfLqj3H7YJ4fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PxHZS0sN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741787724;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=beEL7oKIoj4c6NMjJCD6NPtHJyw6jjIiKvhBkjkgQJI=;
+	b=PxHZS0sN9QaWyuaU2ki2sQzBnD1o6HZl7BTR6RMaerDsRV0gJnNtnJ4huw1e3cGuKECiZ+
+	u7NbZNJaPIa7jAFGeUVOaAWFw+kONLEwStZhQQw8ndlgxDWwuYAYs0s4QE1p7F2STdBCZk
+	yiu//7XRgVb4mwE/i6otX7+UzhWM+PU=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-29-BeWOlqTaObmQ890N7Vfxzw-1; Wed, 12 Mar 2025 09:55:22 -0400
+X-MC-Unique: BeWOlqTaObmQ890N7Vfxzw-1
+X-Mimecast-MFC-AGG-ID: BeWOlqTaObmQ890N7Vfxzw_1741787722
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e8ed78717eso111093996d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 06:55:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741787722; x=1742392522;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=beEL7oKIoj4c6NMjJCD6NPtHJyw6jjIiKvhBkjkgQJI=;
+        b=alZJ0YqgIYg7sSsD3ZBjd/NEzekMOLVlqsiv4t2gDmAE8RdQy/ZHKpTk4iLKbWQLyO
+         sNcmrsXodJipkNs2fVLIhoRWmqYTHrDDdbojx/No2pjhIvk7If4tRRRvpsHK8rxQ5IAK
+         hLJDnSqOr5ikbdughg9SleT/Mdon6cuCVLZBwmkmvF2R1CI1fp1HaGc4VMpv6pcqZyO8
+         b5KatmJoqf8hKKZ+QNMJMBEAkEqNvQkHBEFp6GD+6pZ/IX8Pk0K1t6jXZxMh3g5oKGjq
+         wLuDWD+xV6EXF0KOMaAsVuD4bm0GnvYdulBrI+g9LvP1SCH41eBnbUdpokV2I22PqhPw
+         22IA==
+X-Forwarded-Encrypted: i=1; AJvYcCVni0L4L8cRinqbiHis2G97XemM2PVd4bXS7f2rUZDH4uqLBVponhiAHTcOfptFeD06r4RgdR3q+CPgAas=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/Qz3gBkEYWEwtQWGeFGFA1jK+6LwHO9sUeUWOtWubP7IHrU4q
+	xbTPlQKrcQI9BFTfgbeR5Yo5wv4kkiT6++Dd8SvP0elY1iPSLFk/Ehta+b4MoFuheRrbvYNH8Oj
+	hJ78r3v3LJPiItgCU1kme+UKCUlIYDXnIU1BWhs+fMjS+TQGc02ubuz1ccx+Qvg==
+X-Gm-Gg: ASbGncsnX7J3PVb48st4F267VgL1IWhWJg3qaVP66Bdx6komZaQGDrEHGeKdq1OBa1+
+	G4LC7bqkhcjEy/JrJxqfGA5oyXZ3e3J1jTQweJ8J8vzQz+Xpczo0CxLpCbRBxWI7r9AC75YBavO
+	uU8jAjeQearw/UCjRMeOpPyUfht72qUVGdvxTNkjLc2UkkWcrSIvjHr2PTRBoskE2j0ICNyea+V
+	hryRcqaKSiZZGGr/mXzZI3n43F+Cl7/2U4kcD8DZZ+oJ1RLzjWj6c7jUQByTUwl/AcHn4Z2HTGE
+	mOMXkk1VlLfdaISIM6oW99cx+maYpvcQDB+A8UzDM6vp31u3QJuTiApcPUa9xg==
+X-Received: by 2002:a05:6214:2a8a:b0:6d8:b3a7:75a5 with SMTP id 6a1803df08f44-6ea3a6a652cmr90592616d6.42.1741787722400;
+        Wed, 12 Mar 2025 06:55:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcHl07t33fQl/ulieOA+NEsEZUKtE90Y0FLOq+2nBxlUUr7PD4+hO+Dx0rMwUoCKeYdoMyow==
+X-Received: by 2002:a05:6214:2a8a:b0:6d8:b3a7:75a5 with SMTP id 6a1803df08f44-6ea3a6a652cmr90592256d6.42.1741787722078;
+        Wed, 12 Mar 2025 06:55:22 -0700 (PDT)
+Received: from ?IPV6:2601:188:c100:5710:315f:57b3:b997:5fca? ([2601:188:c100:5710:315f:57b3:b997:5fca])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f71709b9sm84932156d6.115.2025.03.12.06.55.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 06:55:21 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <d38df868-bc65-4186-8ce4-12d8f37a16b5@redhat.com>
+Date: Wed, 12 Mar 2025 09:55:20 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <63587581-17a5-431e-9fe3-a1a24ea4fa21@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/8] sched/deadline: Rebuild root domain accounting
+ after every update
+To: Juri Lelli <juri.lelli@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Waiman Long <llong@redhat.com>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Qais Yousef <qyousef@layalina.io>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Swapnil Sapkal <swapnil.sapkal@amd.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
+ luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
+ Jon Hunter <jonathanh@nvidia.com>
+References: <20250310091935.22923-1-juri.lelli@redhat.com>
+ <Z86yxn12saDHLSy3@jlelli-thinkpadt14gen4.remote.csb>
+ <797146a4-97d6-442e-b2d3-f7c4f438d209@arm.com>
+ <398c710f-2e4e-4b35-a8a3-4c8d64f2fe68@redhat.com>
+ <fd4d6143-9bd2-4a7c-80dc-1e19e4d1b2d1@redhat.com>
+ <Z9Alq55RpuFqWT--@jlelli-thinkpadt14gen4.remote.csb>
+ <be2c47b8-a5e4-4591-ac4d-3cbc92e2ce5d@redhat.com>
+ <e6731145-5290-41f8-aafb-1d0f1bcc385a@arm.com>
+ <7fb20de6-46a6-4e87-932e-dfc915fff3dc@redhat.com>
+ <724e00ea-eb27-46f1-acc3-465c04ffc84d@arm.com>
+ <Z9FdWZsiI9riBImL@jlelli-thinkpadt14gen4.remote.csb>
+Content-Language: en-US
+In-Reply-To: <Z9FdWZsiI9riBImL@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 12, 2025 at 09:04:07AM +0000, John Garry wrote:
-> > As already mentioned in a previous reply:  "all" might be to much.
-> > The code can only support a (relatively low) number of extents
-> > in a single transaction safely.
-> 
-> Then we would need to limit the awu max to whatever can be guaranteed
-> (to fit).
+On 3/12/25 6:09 AM, Juri Lelli wrote:
+> On 12/03/25 10:53, Dietmar Eggemann wrote:
+>> On 11/03/2025 15:51, Waiman Long wrote:
+> ...
+>
+>>> You are right. cpuhp_tasks_frozen will be set in the suspend/resume
+>>> case. In that case, we do need to add a cpuset helper to acquire the
+>>> cpuset_mutex. A test patch as follows (no testing done yet):
+> ...
+>
+>> This seems to work.
+> Thanks for testing!
+>
+> Waiman, how do you like to proceed. Separate patch (in this case can you
+> please send me that with changelog etc.) or incorporate your changes
+> into my original patch and possibly, if you like, add Co-authored-by?
+I think it will be better to merge into a single patch to avoid having a 
+broken patch. It is up to you if you want me as a co-author. I don't 
+really mind.
+>
+>> But what about a !CONFIG_CPUSETS build. In this case we won't have
+>> this DL accounting update during suspend/resume since
+>> dl_rebuild_rd_accounting() is empty.
+> I unfortunately very much suspect !CPUSETS accounting is broken. But if
+> that is indeed the case, it has been broken for a while. :(
+Without CONFIG_CPUSETS, there will be one and only one global sched 
+domain. Will this still be a problem?
+>
+> Will need to double check that, but I would probably do it later on
+> separated from this set that at least seems to cure the most common
+> cases. What do people think?
 
-Yes.  And please add a testcase that creates a badly fragmented file
-and verifies that we can handle the worst case for this limit.
+I am not aware of any distros without setting CONFIG_CPUSETS. So it is 
+mostly a theoretical problem if there is one. So I would recommend going 
+ahead with the current patch series instead of spending more time 
+investigating this issue.
 
-(although being able to reproduce the worst case btree splits might
-be hard, but at least the worst case fragmentation should be doable)
-
-> > Assuming we could actually to the multi extent per transaction
-> > commit safely, what would be the reason to not always do it?
-> > 
-> 
-> Yes, I suppose that it could always be used. I would suggest that as a later
-> improvement, if you agree.
-
-I remember running into some problems with my earlier version, but I'd
-have to dig into it.  Maybe it will resurface with the above testing,
-or it was due to my optimizations for the extent lookups.
+Cheers,
+Longman
 
 
