@@ -1,138 +1,113 @@
-Return-Path: <linux-kernel+bounces-557565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF1AA5DADC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:50:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12772A5DA50
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:17:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66DBB18956BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 950B23ABA2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3623223C8AC;
-	Wed, 12 Mar 2025 10:50:07 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C156F233D85
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE9123BD09;
+	Wed, 12 Mar 2025 10:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TAScYI6y"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C752F1E7C03
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741776606; cv=none; b=QGkq2SgzOnHZwFFbod3rJk4TUGvIwY2XWRnO19ulYUJWoIxxYTaM3uo8ugf+bVDXtujpmV4LQ2h6GK7n51EnZD04NNMMb0KMTBE/OM//UvHZkJA8aHLGcvZHeoXig7piby0UvVSGmpl4hxEkzUqkahaaRT4Y1wnuACR56ERbSdQ=
+	t=1741774622; cv=none; b=jxwImXyuEgswLDIfbKLGFA9gc0HFXfclSnP0Y1FmXxHNx7Tb4XLfwIHX0BmNEN6DAS/z0ZJYaoUiBGvgpT+jFu+1AGM/rBeQN5vjAUYgu0lKMs3zUUQi4HK/tAbTi9OwzpwF9e0Q/kct6Re68QR24ioJk3BEJ3sGKRfXWGgmtIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741776606; c=relaxed/simple;
-	bh=Y45kkFaeGvu203KwL1jnYyfb4Gk/FkGEhZTM1WBbCRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=r7DjX5M8G5ny55EQfiGHwL89SEduxPsaUZi9PoPKJBnPBX5uSzecdRuuuTOb7LMsrb7vGSB593gbznXV0FUrOF5S7rUIxLLNf10P2826y7Vqo1P81Wy65wSD4lWWCvsem1qKnewyxiIsoQ+n2qHOZny6oVG0lNSgnr9Y+lwibsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4ZCRPX36Yhz9sgW;
-	Wed, 12 Mar 2025 11:16:48 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id sWOjLZKmmSMT; Wed, 12 Mar 2025 11:16:48 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZCRPX25Rsz9sgS;
-	Wed, 12 Mar 2025 11:16:48 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 34E478B768;
-	Wed, 12 Mar 2025 11:16:48 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id GVHOBlTWoH6b; Wed, 12 Mar 2025 11:16:48 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DEF2F8B763;
-	Wed, 12 Mar 2025 11:16:47 +0100 (CET)
-Message-ID: <e5a67a3a-f2ca-45b7-b227-267477c62ccb@csgroup.eu>
+	s=arc-20240116; t=1741774622; c=relaxed/simple;
+	bh=Mctx6HJK8lUcA4zMP/2/Ugvzc8u7NE4Q4XHmn0btEF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GE8A7mclHaFqZIn5Yj+VyMXr4tdKA3kvZTzpUld1mCJYj1fOYkDd6UIZFKyrGYmvFuGIQQSjePcryTMA2TnxUKyu92IzD8dIzf8KyZAvxZBgulKalu8gdIr+Y6yKngAj8AcML2IMgk8jiwJdZkb4hSLYzIxKCKHygYo6n+ZBUFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TAScYI6y; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iQm14u3vIWVFyr+TIJc7EsSWgpxdwY6CkflsM34hQds=; b=TAScYI6y+bPdXKPuEr7ASLxcqL
+	bMSkETexMzebEsLm7nLnB76BcyOeI5n2kpCpw1kxnRa482lnaI9vJ4tB/ticZis9LCO/MvA7d8Z00
+	0AorpUQhXw4+AYAYCx9YIfYGq33Bu8VueZehXjfVk4132nLca9ztflLGGvg+BdlQpXtWGHD2nur1+
+	9oP89NWBav15T+TJJ2NkfDdNfrgjIeV7sLlFPoo9F1Q4ZJwhCB4lBesgEwYt7grCxB7YNiBszLFzn
+	JCy50mllWz6Z6C+WM9Aqf+s0ZGC0SB38hR2Q20yOcr0iPFPtX4nyd3bpoO3P4yO+rxOKiOQgjY3eQ
+	5fTG3Ydw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsJ8q-0000000ChvF-3mx1;
+	Wed, 12 Mar 2025 10:16:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B2434300599; Wed, 12 Mar 2025 11:16:47 +0100 (CET)
 Date: Wed, 12 Mar 2025 11:16:47 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: mingo@kernel.org, lucas.demarchi@intel.com,
+	linux-kernel@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Subject: Re: [PATCH v3a 6/7] perf: Rename perf_event_exit_task(.child)
+Message-ID: <20250312101647.GK19424@noisy.programming.kicks-ass.net>
+References: <20250307193305.486326750@infradead.org>
+ <20250307193723.417881572@infradead.org>
+ <20250310153742.GE19344@noisy.programming.kicks-ass.net>
+ <b5a2260f-cedb-4c8c-8435-916d657ee616@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next-20250307] Build Failure
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
- Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
- Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
- Michael Ellerman <mpe@ellerman.id.au>
-References: <70ba4e80-53c4-4583-82f3-2851e0829aa6@linux.ibm.com>
- <5ab103b4-70f0-454e-bca6-0bfc66d143f5@csgroup.eu>
- <c0a716d0-6811-4b1b-b008-d4e97900cb0e@linux.ibm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <c0a716d0-6811-4b1b-b008-d4e97900cb0e@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b5a2260f-cedb-4c8c-8435-916d657ee616@amd.com>
 
-
-
-Le 12/03/2025 à 11:11, Venkat Rao Bagalkote a écrit :
+On Wed, Mar 12, 2025 at 12:01:00PM +0530, Ravi Bangoria wrote:
+> Hi Peter,
 > 
-> On 12/03/25 4:20 am, Christophe Leroy wrote:
->>
->>
->> Le 09/03/2025 à 13:38, Venkat Rao Bagalkote a écrit :
->>> Greetings!!,
->>>
->>> I see linux-next-20250307 fails to build on IBM Power9 and Power10 
->>> servers.
->>>
->>>
->>> Errors:
->>>
->>> In file included from ^[[01m^[[K<command-line>^[[m^[[K:
->>> ^[[01m^[[K./usr/include/cxl/features.h:11:10:^[[m^[[K 
->>> ^[[01;31m^[[Kfatal error: ^[[m^[[Kuuid/uuid.h: No such file or directory
->>>     11 | #include ^[[01;31m^[[K<uuid/uuid.h>^[[m^[[K
->>>        |          ^[[01;31m^[[K^~~~~~~~~~~~~^[[m^[[K
->>
->> This is unreadable. Please avoid fancy colors that add escapes to 
->> logs. You can unset LANG environment var before building in order to 
->> get pastable stuff.
->>
->> By the way I don't think it is a kernel issue because nowhere in the 
->> kernel you have uuid/uuid.h
->>
->> But can you provide your .config (the actual one, not an old one from 
->> kernel 6.0.0-rc3 like last time) and tell which version of GCC you are 
->> using.
->>
-> Attached are the two config files on both CI nodes build failures were 
-> reported.
+> > The task passed to perf_event_exit_task() is not a child, it is
+> > current. Fix this confusing naming, since much of the rest of the code
+> > also relies on it being current.
+> > 
+> > Specifically, both exec() and exit() callers use it with current as
+> > the argument.
 > 
-> On both the CI nodes gcc version is 11.5.0.
+> When perf_event_exit_task_context() gets called by perf_event_free_task():
 > 
-> Below data are from the failure nodes.
+> 1) task_ctx_sched_out(ctx) function should be avoided because the 'ctx'
+>    argument is of the (half baked)child task whereas task_ctx_sched_out()
+>    expects 'ctx' to be the context of 'current'.
+> 2) Similarly, 'task' argument != 'current'.
 > 
-> commit-time: 2025-03-07 20:31:46 +1100
-> commit-id: 0a2f889128969dab41861b6e40111aa03dc57014
-> version: 6.14.0-rc5-next-20250307-auto
-> 
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -13573,7 +13573,8 @@ static void perf_event_exit_task_context(struct task_struct *task, bool exit)
+>  	 * in.
+>  	 */
+>  	raw_spin_lock_irq(&ctx->lock);
+> -	task_ctx_sched_out(ctx, NULL, EVENT_ALL);
+> +	if (exit)
+> +		task_ctx_sched_out(ctx, NULL, EVENT_ALL);
+>  
+>  	/*
+>  	 * Now that the context is inactive, destroy the task <-> ctx relation
+> @@ -13582,7 +13583,7 @@ static void perf_event_exit_task_context(struct task_struct *task, bool exit)
+>  	RCU_INIT_POINTER(task->perf_event_ctxp, NULL);
+>  	put_ctx(ctx); /* cannot be last */
+>  	WRITE_ONCE(ctx->task, TASK_TOMBSTONE);
+> -	put_task_struct(current); /* cannot be last */
+> +	put_task_struct(task); /* cannot be last */
+>  
+>  	clone_ctx = unclone_ctx(ctx);
+>  	raw_spin_unlock_irq(&ctx->lock);
 
-Sorry I'm still puzzled with your config files.
-
-
-The one named p10_build_failure contains:
-
-# Linux/powerpc 6.3.0-rc3 Kernel Configuration
-#
-CONFIG_CC_VERSION_TEXT="gcc (GCC) 8.4.1 20200928 (Red Hat 8.4.1-1)"
-
-
-The one named p10_kdump_config_build_failure contains:
-
-# Linux/powerpc 6.3.0 Kernel Configuration
-#
-CONFIG_CC_VERSION_TEXT="gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-18)"
-
-
-You are talking about CI nodes, do you have an online link to the full 
-report ?
-
-Christophe
+Right you are. Thanks!
 
