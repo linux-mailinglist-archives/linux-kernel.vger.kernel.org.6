@@ -1,71 +1,73 @@
-Return-Path: <linux-kernel+bounces-557097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04E8AA5D3B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:21:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86AF9A5D3B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:21:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C7383B60B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:21:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3E0F175107
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8563595E;
-	Wed, 12 Mar 2025 00:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF30D78F32;
+	Wed, 12 Mar 2025 00:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YOouwTYm"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nBVZokNJ"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EDF182D7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CEF1CAA4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741738887; cv=none; b=pighPRa0E5eGIWbHDJ/1CUYkVRbPZ7GuDASW3iKEH8lh4OtO+hnXB1kVyoNtezW05F4WcJx5AQcjBQMpFBHIf4z6wVCQIDNZsRloDZHnQIDwLOrTEq1QL6sJQkJhhM2HneeVZcv4RKgA43xTa3moMixnLpcgCmmC8yURhUZx43A=
+	t=1741738888; cv=none; b=UrrOMjNJ5B7GRsGGOXgeOw/5IDMG3/mPNPKDUC10IA2HAH5nXr0s+iqYhOKVvfMPHFJlSlzp9XL+S1/P5Su2Zc02vUWUzaXqPxdJvLVk+p9IuyE4nB0ciXsUvXyX2fuQLrm0S2kEZjGR5nqEiauRrls8EwPPUlGblpF5tT5uidY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741738887; c=relaxed/simple;
-	bh=H5++SEOlYVvHKWlmzOVPPdCy7O19bFEfJFTgn0kXp6U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mqw5eWEq5Pp3yIVZRMTr4xSjPPcZ7OE2DLAxpTvcPUNx2Jut4XH9mxtGMeOu8lDdv15bgjl73E3S6BhGTv3KAYGsYhsKG1Y4rF+tQGPVBHSAY0GTReEhxOaVnAAjbt/dld7irmDfa+9kCCP39xopcGwHxFyLncNid37NKGvjHZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YOouwTYm; arc=none smtp.client-ip=209.85.208.43
+	s=arc-20240116; t=1741738888; c=relaxed/simple;
+	bh=E0hajOFy+vpCtuf88R9Ti+b+60Xg+fLnjQmi+V0i0oM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gOi1VHhbXZQUSgvOknRmbVIt1Y4EwpJvsUnNcpwy4VntVoiHBy+lS4H1xrIEl+HHL2D3p81kXjqj/bThWBnYR5yp3Q2q2G0vPH+hTW790jbtNIVhf6wBd5gmL5ROWwt8bCUpRnU7zyEfNlK1HSy1zK0e10DZUHT82Z9AvLIFjpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nBVZokNJ; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e5b736b3fcso809520a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 17:21:24 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5ea062471so946953a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 17:21:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741738883; x=1742343683; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HxhTVWfKMvwlygUn42tfW0inla3um9pm5PRUxvke0sk=;
-        b=YOouwTYmElHEvDj3gkv9FMjcMJdW2j5KeLo5+lYVNsjbiPKl0EM7sFYbpvWXLzoBeW
-         sm4bsJ6vDDil6mRIYFFkylR9sO2w1plR7RHp62o5JnNS2R8gujZRPMScPbwqg/LYh+80
-         K10BSAPW32Z8bMCF6WBRSlNZLp3DKqTruk18Q=
+        d=chromium.org; s=google; t=1741738885; x=1742343685; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=miJIXyGYG3FDRWUe/NKY/2IA/SM1dTsr2zjDOOHuDTo=;
+        b=nBVZokNJULTTLGlDeH+QhdefPlbGtadJTYisrscWeZKoqbMbt8ZdBdD+JAPkFjdXF9
+         oqym5qLf9wyw87OIhlqnNOokF1AZLQZtrujJ3j7KT2q3XXxuUkSooXD0u+vSLh3UhddZ
+         oZAw+q88AZE6Z+CbKZbiWHICyvioBpJjbEwt8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741738883; x=1742343683;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HxhTVWfKMvwlygUn42tfW0inla3um9pm5PRUxvke0sk=;
-        b=YSjQoK/n7XOYihfaHXErej09cU//7/R23ner1VJwD7rXKm0dFA1qVgLuAEIfqqZJoF
-         /fPDvxaL/5KalA/CAmRQAnzcdIjQP0/QSmvFptJNAZFRfZpesi5B5jp5Yu9ov690UgiP
-         jNc3e+plLlz0X3ZfcjSW5oG8XAplzkThCuo7kmuQ6W5SUjOsjP3I21wk36NYtNXsG9Do
-         LSpNAkTACLPS+pmsT6K9R/gHOgNQWLhnOa37m9MKJ83KJW3Vc8C0ADMxrONI4VOlFHRI
-         BR9rTVjoPd4JNa0wP8m0sHgy6VkiO7zvDGCGJ3Kc1y9ZG/OxUIoTYTbDBQ3zvqpCMXBx
-         LyIQ==
-X-Gm-Message-State: AOJu0Yyren9YctzTczCSW9S3/m0opfym6mNLEWOL885WRivNJqx8H3HV
-	yqzELXRm7msSq+lgrWV5T1M2YF4D8N4WIvpuhSCgCT4Y94I3r4GMrK+k09mxJA==
-X-Gm-Gg: ASbGncs+boLniAg5oqwvwh8yC9kuxYx7wuj5Wal2LesZ9bHeXPPK9Bz22l0l55ydmm/
-	CKo3pLd7nqZnWaUn8LBUsCinvrb8bNZzDwFMxx2RmRJWYTLPkyjh8d2XuXRSn4nsh6zVlkAIAs9
-	ZQ3NstsuLXzrGv/9PFb88/X5xFh9JJhSM25R+zeGtIJttVFCD+KLxhNtVnB8jPTXRhnwKynlwhO
-	vPIYy1qHxuPi8mdOQNA2IOI20dOuxjHnbnuLebDYkJC4vU9pBD+MuJvpd976sbzo4KXsz+iopsu
-	iWAOSxDpwtTl1y50J/D0FlPfaRXrQeZ9EP4iIDmVJL7pEmfZ7HbsLoRuiMetB4roOLwi02lIQO9
-	3uIdTFU3zovI=
-X-Google-Smtp-Source: AGHT+IFtgvPPWm2btr1Xtn33I57TNFhVpEuzGkQix5y9M7OehAhXbs7W3QjpSSzY3kDwK7gNa2Zc0g==
-X-Received: by 2002:a05:6402:270d:b0:5e0:8b75:5470 with SMTP id 4fb4d7f45d1cf-5e75f2b404emr3051425a12.5.1741738882887;
-        Tue, 11 Mar 2025 17:21:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741738885; x=1742343685;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=miJIXyGYG3FDRWUe/NKY/2IA/SM1dTsr2zjDOOHuDTo=;
+        b=fJOnzUbwXcN9r/CFzsn7a6CupdsHZaRQEaBOmAnsMYW7NWU6CFwM28fmaPic01wAwh
+         EIvQq+dV9pgkaItM3m9DyfN9lL9bsj125GDxsleHflbzYk6Xdl1mdlPi0HoXbMIXh3PK
+         oto7NBRM7Pa1xEkHH3zVxZtjS7n/L9oMJfmZqMp9kYOuNJ1f/SglBdYqPLoaHZ2/B6OL
+         zxxAcJx9lckXBwM1KgcjY48aaSOr9sTWGywjrawJVX5vi+A1ABY01aMfFRjm1Cft3kxz
+         80rOrratO+VG7SqKDwajUveE7KZhkmhAdTWTORfwXtlB8UQHDe5w9K7qn0YHqLGxH9Z5
+         SblQ==
+X-Gm-Message-State: AOJu0Yw0s7+N1Eqri0Ax2AtaaFZLVIo4RJAYElj/wPnt2JhnxOZTGibx
+	M0IapuabuBEeJkH4few9uwZ4TDkxI/PvF7e0WOtc9Cvvj3n+WWefyohut3VBdA==
+X-Gm-Gg: ASbGncsVed1hrZhAQX4TErt7m6tESKOeD6aNJ8xFoJo1kibbKSyPNqGIrV1y/rI4C45
+	yU83RCNQX3WbCQkOhzMCBqdac6bQsAd6HbrpkGpQu/2syrCMlUin6EmLZOwriaxQ+Qv3lS5iLvX
+	mnGNZp3c3ioAMwRZ6oSo88e9pWXPNFr5K8ptRMGEI+XGooGefN3sRW57uKpQkBEi7zKlsmQfsZs
+	2l4BZAVHDpYzS1CoMwN7F8qpyxU6t2E5mSw9ByRXL7XfLORIVfRKmzZ/K+ea0zfd7XQJYlR2aMq
+	IHYfI2MxT1VfYZoTAVn+ABJF8NuthfRcTaVvLQFmlkwLW5vbPtW0EHJP6rIEW0p9bxrndDrabzs
+	4
+X-Google-Smtp-Source: AGHT+IG2RY8KyPk79cZ65JQw4p98XAf1wvRrztHIEplkXwrKzzh8fZlWbd9JzkmEqA3hVmaYTTf1Tg==
+X-Received: by 2002:a05:6402:35c6:b0:5e5:e17f:22fc with SMTP id 4fb4d7f45d1cf-5e617f919d5mr7379042a12.2.1741738884777;
+        Tue, 11 Mar 2025 17:21:24 -0700 (PDT)
 Received: from cfish.c.googlers.com.com (40.162.204.35.bc.googleusercontent.com. [35.204.162.40])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c7669fd0sm8846503a12.51.2025.03.11.17.21.21
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c7669fd0sm8846503a12.51.2025.03.11.17.21.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 17:21:21 -0700 (PDT)
+        Tue, 11 Mar 2025 17:21:23 -0700 (PDT)
 From: jeffxu@chromium.org
 To: akpm@linux-foundation.org,
 	vbabka@suse.cz,
@@ -83,54 +85,62 @@ Cc: linux-kernel@vger.kernel.org,
 	rdunlap@infradead.org,
 	jannh@google.com,
 	Jeff Xu <jeffxu@chromium.org>
-Subject: [RFC PATCH v1 0/2] mseal: allow noop mprotect
-Date: Wed, 12 Mar 2025 00:21:15 +0000
-Message-ID: <20250312002117.2556240-1-jeffxu@google.com>
+Subject: [RFC PATCH v1 1/2] selftests/mm: mseal_test: avoid using no-op mprotect
+Date: Wed, 12 Mar 2025 00:21:16 +0000
+Message-ID: <20250312002117.2556240-2-jeffxu@google.com>
 X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
+In-Reply-To: <20250312002117.2556240-1-jeffxu@google.com>
+References: <20250312002117.2556240-1-jeffxu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: Jeff Xu <jeffxu@chromium.org>
 
-Initially, when mseal was introduced in 6.10, semantically, when a VMA
-within the specified address range is sealed, the mprotect will be rejected,
-leaving all of VMA unmodified. However, adding an extra loop to check the mseal
-flag for every VMA slows things down a bit, therefore in 6.12, this issue was
-solved by removing can_modify_mm and checking each VMA’s mseal flag directly
-without an extra loop [1]. This is a semantic change, i.e. partial update is
-allowed, VMAs can be updated until a sealed VMA is found.
+Modify mseal_tests to avoid using no-op mprotect.
+The no-op mprotect shall be allowed.
 
-The new semantic also means, we could allow mprotect on a sealed VMA if the new
-attribute of VMA remains the same as the old one. Relaxing this avoids unnecessary
-impacts for applications that want to seal a particular mapping. Doing this also
-has no security impact.
-
-The mseal_test is also modified by this patch to adapt to the new
-semantic. Please note, mseal_test is currently undergoing refactoring,
-and eventually will be replaced with a new memory sealing selftest.
-In this patch, I only make a minimum change to make it pass. I considered
-adding a new testcase in mseal_test to cover this new behavior, however, the
-existing mseal_test is using wrong patterns and won’t pass the review.
-Such a new test is better to be added in the new refactored memory sealing tests.
-The refactoring is currently pending review [2].
-
-[1] https://lore.kernel.org/all/20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com/
-[2] https://lore.kernel.org/all/20241211053311.245636-1-jeffxu@google.com/
-
-Jeff Xu (2):
-  selftests/mm: mseal_test: avoid using no-op mprotect
-  mseal: allow noop mprotect
-
- mm/mprotect.c                           | 6 +++---
+Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+Fixes: 4a2dd02b0916 ("mm/mprotect: replace can_modify_mm with can_modify_vma")
+---
  tools/testing/selftests/mm/mseal_test.c | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/selftests/mm/mseal_test.c
+index ad17005521a8..0d4e5d8aeefb 100644
+--- a/tools/testing/selftests/mm/mseal_test.c
++++ b/tools/testing/selftests/mm/mseal_test.c
+@@ -677,7 +677,7 @@ static void test_seal_mprotect_two_vma(bool seal)
+ 		FAIL_TEST_IF_FALSE(!ret);
+ 	}
+ 
+-	ret = sys_mprotect(ptr, page_size * 2, PROT_READ | PROT_WRITE);
++	ret = sys_mprotect(ptr, page_size * 2, PROT_READ);
+ 	if (seal)
+ 		FAIL_TEST_IF_FALSE(ret < 0);
+ 	else
+@@ -718,7 +718,7 @@ static void test_seal_mprotect_two_vma_with_split(bool seal)
+ 	FAIL_TEST_IF_FALSE(!ret);
+ 
+ 	/* the second page is sealed. */
+-	ret = sys_mprotect(ptr + page_size, page_size, PROT_READ | PROT_WRITE);
++	ret = sys_mprotect(ptr + page_size, page_size, PROT_READ);
+ 	if (seal)
+ 		FAIL_TEST_IF_FALSE(ret < 0);
+ 	else
+@@ -873,7 +873,7 @@ static void test_seal_mprotect_split(bool seal)
+ 		FAIL_TEST_IF_FALSE(!ret);
+ 
+ 
+-	ret = sys_mprotect(ptr + 2 * page_size, 2 * page_size, PROT_READ);
++	ret = sys_mprotect(ptr + 2 * page_size, 2 * page_size, PROT_WRITE);
+ 	if (seal)
+ 		FAIL_TEST_IF_FALSE(ret < 0);
+ 	else
 -- 
 2.49.0.rc0.332.g42c0ae87b1-goog
 
