@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-557124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5FA1A5D3F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:18:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7E3A5D3EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:18:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EE7D3B92E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:17:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCFBA1774B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EC11487D1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A79F14D29B;
 	Wed, 12 Mar 2025 01:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tf0hqtIr"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6/axH7g"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4A378F44;
-	Wed, 12 Mar 2025 01:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C48113A3F7;
+	Wed, 12 Mar 2025 01:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741742267; cv=none; b=Xn10GNfcTvG+fVj86SRO8OAuL33IgqwTukODbAyyvKzlU8b70jzlsFFfgSGoBORcTCmmTO82bC/mJynk1mlAKxALV+mDHQfPbpe9jWPmv58usXHFACkPZBLtTnfyGwbw6iUNtBFt+mj9CA/QzQRn8ul+rOmm7079FwfiB/TTtec=
+	t=1741742268; cv=none; b=GxKjVrms8gUbXepiTtaMfipmlVJ30yuW7JvACh2ZAjCz95ou9qA8NqLQae/4ibZoeRdBf0OUd++rtthqe0r76MdqHOCUTAfTqyeT950CBjGg/VF0o15bpWoS61dLPie12ogrTSCoAIQ6kqnxO/mmYQy55md7+3MmxiHHMUTHfb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741742267; c=relaxed/simple;
-	bh=7JsCd3EOBXCQwCMcOkbL4ce9rxRBvKLTXnVJe2yA+YU=;
+	s=arc-20240116; t=1741742268; c=relaxed/simple;
+	bh=RyaLkXl9kX5iA7WcKe4mmQYs2dDyrXegysm2+y1UChM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hQ0tpKLqRhTj/kEtzVw4Ea4icqDWl09N4Q8f/hprz6cI30LYOtSpX6vOcu5jn0lpuW96CKbkisOeNIDZ3stfezzX678drPNTS/PGntdvPtIyDYP+55x4W94BfNjHetBK8G/crsu95DnS9uuBxqAGyDG1jaC5NY5av3F8Lk7H/Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tf0hqtIr; arc=none smtp.client-ip=209.85.160.172
+	 In-Reply-To:To:Cc; b=BNwH2OgVy5MCpxr5quLkmKHRzBSSrhqv63bikJ55F0fPFeFoeO9WpWxqq2xGRZP5ptZf2/V+YLlnO6z4wtiAPQv6T59khN+GhXymQ9Otnc/bkB2A/cGFMAaumm9A5sSTLHknBmgvA21114LXDzUfni8JZd6KctQ8CXAeZ1Pniso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6/axH7g; arc=none smtp.client-ip=209.85.219.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-475a77bbd8cso59639861cf.3;
-        Tue, 11 Mar 2025 18:17:45 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e8efefec89so49552996d6.3;
+        Tue, 11 Mar 2025 18:17:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741742264; x=1742347064; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741742265; x=1742347065; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=G5Rh0FzO9cRqB5f6DNBFASVAyk0HPfSHAFbCNAH2RxU=;
-        b=Tf0hqtIrOgGs+niA/umr8WaiZo6lhSHzXcFzeeDvbRWML4gBjfbKd1BP0rPov3j7Ly
-         NwHXQ+xGrwGZWVOhoHv1WUE6lWQvQh6j+0W4fzyiw0NTnIldHwH7bn9y3LeD66N4jXs8
-         26E3g53lZfoEsmULdduW9H8pB5rjovu5JMmMEAXG2H34XTKwLwt/+Kpbi9HZWy19/ZWX
-         XplbjK37Gp1DZFRWO8l944GMohDSSPvxdgh8GCfzXFlrricRbW1LZLAswOUDcIaG5DiN
-         /EgEvzq1NQPIrOY/jIVu3QnwGuARCNMcGkZyEIWXtxDCIXhtKol8xBPg1+4HT3p4/vz6
-         l03A==
+        bh=JkdJVLyC+3pFRj2tgwQ7Jhglb327o4ms0rKwM8mHQQI=;
+        b=F6/axH7gfTRAliFNIU5dGWoyvW2opW1wsUjuUgyoxyjXsdoGb1eGjZ7z7kFVLQDJqW
+         4O2EPZ5k1XMP/v/FesDLCkpw7/HE5GAr3VNuU6CJ6t01ZmeJwRDEOIvhwMpdjprVIZqQ
+         as9iz72vlXifJtU0Xmj2J2HaKBLh1YdBwKkOjiPy78PqnC9RnAiOY9rMP8INSlbtheQH
+         M3/hV5j3r+BEMIM50RAtAuxKrlSDWeh0wN26Kn/8uG8J7ZqAnXVTwKgO7+KePEJTdFkn
+         eMq3s4oeQHkH39b13q8h8dmgZO6PFmXOjWJbff3SUg3odzc1+BxRCd+po9UDhF8BqIFY
+         c2Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741742264; x=1742347064;
+        d=1e100.net; s=20230601; t=1741742265; x=1742347065;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G5Rh0FzO9cRqB5f6DNBFASVAyk0HPfSHAFbCNAH2RxU=;
-        b=jVrvBw1RIRR3Nr8N+ZAMJIq97Ow4Zl1WGAUeJ5Gh1NhZf3PcADhdia7IXHsLrHScZB
-         gzQFzazorqU2pKl/+tzCHGyxDlFbf1h2nrZTTLattxkokUlKfzlvAfkr6uHPVBabuUd9
-         g7dsGkFg5MLbiGZUzyhPRrhPVcOfHfeSG2fuVqakAegpHgowm/4IXf7rW25hlVZTwb1x
-         1qH/Ing1kkOjGD8VJqhrqVx2CcQSWPsoYa/pmwUkmqxhrVX6BOj3gxWDANihQMWUzhAY
-         mXXuRoU4b1MhEbnQxbrF238lGGRxJ2FOBj5Aq7cc8uQgeB3xpYgStZu5kD66EPtG73ca
-         69pg==
-X-Forwarded-Encrypted: i=1; AJvYcCVL8ih0F/JqWiUfTc+rd44L9zkVQ6fZHGIfw18Ni0iefvMkBbvJz0XpWl9fu5daAReEbYIYMWJ/csGtQ/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzwfdoDD/XqnvflYSbrJPZD/vySdCwbhrzyeQ/CH3ipVEp7aIQ
-	rWYtcdRQzcAKJnIKQfZSyMbGS4aaPmSM2MfXeeuD7oSAAdH1oguU
-X-Gm-Gg: ASbGnct3agjIV9CULbnP4ArvytU8qJuURjLIF1citGkTS3mVBYTJnI/6Q2m9ixekONj
-	ATjgaUWOZfoLrLosHMMgPFNrHxmoeInNfyl7NENIVZsc49zHXuhqLJ0ZNpHAGgJ9rn90gXrs/Q0
-	OnIHLEp6Zp/V0BABREd1yq0E1d+iplgmohMthtAVZwNQA/eViGzyQMmOUTM7cmm+crdehW6v2oF
-	mAladGua95Act6h5tnrGSsgSU0FhEZ37qQStjNfJlEIkeNBg3upe5C7X2eBAPUE8GP2lOsFazCB
-	T/oGTeDR0ky9YH+rHbsTBatIQh8xB5LPvSn0Q2iVHXrinKpAXS7OfRa8nKR8EZ0ArHWf
-X-Google-Smtp-Source: AGHT+IHWYnvrpKGUXD//62os29Qg48MfBZgnjZLZluSfIaQ6e/1FlaBNu9MsF6Sj8CWwqQJ/sps7iQ==
-X-Received: by 2002:a05:6214:d6d:b0:6e6:6a6e:7596 with SMTP id 6a1803df08f44-6e900694192mr289407166d6.39.1741742264121;
-        Tue, 11 Mar 2025 18:17:44 -0700 (PDT)
+        bh=JkdJVLyC+3pFRj2tgwQ7Jhglb327o4ms0rKwM8mHQQI=;
+        b=VG2Tw7T9G95eA1cq/MPRKTbPXhkdMiwbljuj6b6KmwfDoTGf8qafQfhsYCH4/YMOY+
+         tzJ2eSHxr2myfV07tO78qF3rlT0aScUPXTBE+kJu/6tBv0qJS8JgKZb0yxRjE9gLI6ne
+         ke1jwj/VHLrIf4F+tVhVe6wwILTqAvNPwd3QX2L133Ezrzm99XhUH3KkXSiEmS+sPlJw
+         tOM0+QJsPkhhm6Dy8KsMP1QCO4nPy01GFbgeDBp1RJ+sNTLEDC/U/EYjRnDeYZECIqLt
+         o6v2BPMOW3kT4+jX5+ZLULf2HcQyRrqWTs3STd7ETBNkqhoK3K8MzKAVT8taN4XZ9PoM
+         ipHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKvIQAzcGf9ATNft52qSF5zvnKBNsEiubjOayELwuEt2PN3MU/Jhpz32HtsgHJoy2WZAfgX+hOjoGTsbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY41WkLcCcHMeLFjgqxwgMHU0hUXzmIFPmVXdfH9MoYlK039l4
+	2D2r3v/xjAFVmrBf6bdyBvyvWLiw0NqZwbEQJtEk85CazIpB6jKA
+X-Gm-Gg: ASbGnctG8m6o2/S3duGXn3noxdMs9y0saBDs+Z5+i/OgZ9LSkS2TyHHUJ4PEslGT/jR
+	7iRCPVdQxTndFbrY7LKFtlSsH3hl9i3ern2X9rputdlbIIarZ4+9IDoSZ05C+qfDMTJyb2kpYiP
+	3ahdEuNbZ9p1ndcPW9CFR5m1+sfk7X/JnmRzXMUbr1pfi9dmaPaIxYthEjwA9USZzCcfW5N4xOK
+	RUzXvXbvoFNnuuiPOm7Tpw+PAqqYlHCyWyfrJUN1KGrfJYHdvylznwy3X1pUTE624A9JJw4fLkY
+	sTavXfpGS9LtKAsdk9fLdW2NStONUu03o2oRopfgDA0bUBw3iQ62Uu6LvpIB8/IiujSK
+X-Google-Smtp-Source: AGHT+IF9FkWR3X8MdeEN/67lwUSToC8vl31IgxHkLMLzSQfJrUYX/49zCPEgsyHxtLO51GjTUroPVg==
+X-Received: by 2002:ad4:5e8e:0:b0:6e6:6c7f:1116 with SMTP id 6a1803df08f44-6ea2dd25c19mr74281316d6.24.1741742265336;
+        Tue, 11 Mar 2025 18:17:45 -0700 (PDT)
 Received: from tamird-mac.local ([2600:4041:5be7:7c00:2017:ee95:21ab:177f])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f70915ebsm78599976d6.49.2025.03.11.18.17.42
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f70915ebsm78599976d6.49.2025.03.11.18.17.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 18:17:43 -0700 (PDT)
+        Tue, 11 Mar 2025 18:17:44 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 11 Mar 2025 21:17:22 -0400
-Subject: [PATCH v2 1/7] scripts: generate_rust_analyzer.py: add missing
- whitespace
+Date: Tue, 11 Mar 2025 21:17:23 -0400
+Subject: [PATCH v2 2/7] scripts: generate_rust_analyzer.py: use double
+ quotes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250311-rust-analyzer-host-v2-1-30220e116511@gmail.com>
+Message-Id: <20250311-rust-analyzer-host-v2-2-30220e116511@gmail.com>
 References: <20250311-rust-analyzer-host-v2-0-30220e116511@gmail.com>
 In-Reply-To: <20250311-rust-analyzer-host-v2-0-30220e116511@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -99,41 +99,30 @@ Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
 
-Add a space before the `/` operator for consistency with surrounding
-code and code formatting tools. Add a second newline between top-level
-items in accordance with PEP 8[1]:
-
-> Surround top-level function and class definitions with two blank
-lines.
+Replace inconsistent use of single quotes with double quotes.
 
 This change was made by a code formatting tool.
 
-Link: https://peps.python.org/pep-0008/ [1]
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- scripts/generate_rust_analyzer.py | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ scripts/generate_rust_analyzer.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-index adae71544cbd..15a690ae2edb 100755
+index 15a690ae2edb..5913934ecb5a 100755
 --- a/scripts/generate_rust_analyzer.py
 +++ b/scripts/generate_rust_analyzer.py
-@@ -103,7 +103,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-     ):
-         append_crate(
-             display_name,
--            srctree / "rust"/ display_name / "lib.rs",
-+            srctree / "rust" / display_name / "lib.rs",
-             deps,
-             cfg=cfg,
-         )
-@@ -178,5 +178,6 @@ def main():
+@@ -154,8 +154,8 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
  
-     json.dump(rust_project, sys.stdout, sort_keys=True, indent=4)
- 
-+
- if __name__ == "__main__":
-     main()
+ def main():
+     parser = argparse.ArgumentParser()
+-    parser.add_argument('--verbose', '-v', action='store_true')
+-    parser.add_argument('--cfgs', action='append', default=[])
++    parser.add_argument("--verbose", "-v", action="store_true")
++    parser.add_argument("--cfgs", action="append", default=[])
+     parser.add_argument("srctree", type=pathlib.Path)
+     parser.add_argument("objtree", type=pathlib.Path)
+     parser.add_argument("sysroot", type=pathlib.Path)
 
 -- 
 2.48.1
