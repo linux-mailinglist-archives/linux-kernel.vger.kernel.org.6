@@ -1,150 +1,115 @@
-Return-Path: <linux-kernel+bounces-557395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5486AA5D857
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:38:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127D1A5D860
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 837A87A68BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:37:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06DF73ABE32
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED802356B4;
-	Wed, 12 Mar 2025 08:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0BF2356BC;
+	Wed, 12 Mar 2025 08:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMisL0Al"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D10B1DE3A4;
-	Wed, 12 Mar 2025 08:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="nKAI4Wwo"
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60321E260C;
+	Wed, 12 Mar 2025 08:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741768728; cv=none; b=sDw+bZz2sDEBWuc8C1DPki1d68+Y99IDleejVBMwR9b1bY4L6MmQkobaTdiTWwsz7Is+zpa1HNd7Sa0N5p1qOPD6lJpDlJJIdyXpRRG8ok3Qg8FsAh04Z0X43iRZY+cmHVQWZywgcoZ8bNWErdq8sFFCrN0J5KEPRUTUxxxTEzs=
+	t=1741768779; cv=none; b=qNonJhx+y0dHWFEGAPGjFhELu7GKv9MOyhEt8fLuSEr/rnEaFO2msydubSN4NEH1VFNDiQlw31QdKjbhQN6B8SbZ65H8Q31kx9/h8eZq85oHRHnsMwnrQUAAmdnAHgbuwTML/rktjw6BP3P0anlefyPG13DZnkp9hc/J+ROkSE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741768728; c=relaxed/simple;
-	bh=aoRSn+Ge+OFGhJG+BqVTYAMNvaYrTDa2lkYMIa9r1Go=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pRvwog/GKOW/txbHE5frNvvDMA0k0Gtl1GJQJ/FPHS58CTVpODQedJFhj9PBi1SnfUv/e+0sdus672LARj8j636/TmHMMfJ7mnLqOTfuvSqqoQBLyKTiavHSJNAgvU7eK8LT/xojyInawfb2kuR91mH+r0CSHJjJKwedlcTjXxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMisL0Al; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 211B7C4CEE3;
-	Wed, 12 Mar 2025 08:38:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741768728;
-	bh=aoRSn+Ge+OFGhJG+BqVTYAMNvaYrTDa2lkYMIa9r1Go=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nMisL0Alo24OqfZs5DJsP7fMNYMn/y6s+lb+FUpIiJLNx8Y/vM8nboxVqWeM+VMdZ
-	 HowqnCvj4GoEdZ82v6YBjeAV43CFNO4ubGTbWp4WoMsLhdyT8pvyYIa5ygUkk5DSCH
-	 FXgI+Lqj/338K21275pV3Fnnj6e/uTWuKdBipCB7T7Ri+7IZGQ3mhbjJo+9XDZTwOI
-	 Wo6wNinEYQJ2NtLPyZ5zD4ZfTDM//0qfjzmlVheT0vkFjQ37qdovA3qr3xJi7ECE+B
-	 o9Khei00taruEW78qBahhRq1jXdcoGS4mHpfeFh8aF1xvS3ME9HlBlcznqvMKBgD8C
-	 XV1zRsw/Lhzaw==
-Received: from 82-132-232-216.dab.02.net ([82.132.232.216] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tsHbx-00CnRd-QC;
-	Wed, 12 Mar 2025 08:38:46 +0000
-Date: Wed, 12 Mar 2025 08:38:43 +0000
-Message-ID: <87r0327iek.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	qperret@google.com,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
+	s=arc-20240116; t=1741768779; c=relaxed/simple;
+	bh=yNgoPSJjsf++4XSyvU8tPaX2ml30wu9PFCyRHSCM0U4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TVo/6tp9oy5GV4csKVu+i5tU8vU6sXmro2P5PYqp+7u2HHya30FvpF1rfrqeEigp+TXjByt1OPrSyRKwQVdEwKZhpOWAFuZoEjUt8cgApxH/I2GHdmwwKNFbt3tQXE1HMnalB2Z2wIBUdiJYxPjXPmthFMg8W13p9RbM+4lLYYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=fail (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=nKAI4Wwo reason="key not found in DNS"; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=buaa.edu.cn; s=buaa; h=Received:From:To:Cc:Subject:Date:
+	Message-Id:MIME-Version:Content-Transfer-Encoding; bh=5oUDC6wsjZ
+	WnHqf8K3FBO9GrUnuvrcLdJ7o5wYqKLR8=; b=nKAI4WwoRHKZacWc5f2elxeBrL
+	PDPej3tHtOJL+dJnEapzHlHd4WCRk8RGA0vGYxc9eGVIl99l7un3aR8rPCVNTX0D
+	FU4CzOMjp87COAe5i5EEzknFiVehn0Mkk5UVCgsApchTPoNrlxnGZmsPBnYNnK0n
+	n5stb56fPGQKaX2HI=
+Received: from localhost.localdomain (unknown [10.193.111.103])
+	by coremail-app1 (Coremail) with SMTP id OCz+CgA3_lMaSNFnwCS_AA--.24657S2;
+	Wed, 12 Mar 2025 16:38:50 +0800 (CST)
+From: Si-Jie Bai <sy2239101@buaa.edu.cn>
+To: luiz.dentz@gmail.com
+Cc: marcel@holtmann.org,
+	johan.hedberg@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	linux-bluetooth@vger.kernel.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v3 1/3] KVM: arm64: Add flags to kvm_hyp_memcache
-In-Reply-To: <20250307113411.469018-2-vdonnefort@google.com>
-References: <20250307113411.469018-1-vdonnefort@google.com>
-	<20250307113411.469018-2-vdonnefort@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	cuijianw@buaa.edu.cn,
+	sunyv@buaa.edu.cn,
+	baijiaju@buaa.edu.cn,
+	Si-Jie Bai <sy2239101@buaa.edu.cn>
+Subject: [PATCH] Bluetooth: HCI: Fix value of HCI_ERROR_UNSUPPORTED_REMOTE_FEATURE
+Date: Wed, 12 Mar 2025 16:38:47 +0800
+Message-Id: <20250312083847.7364-1-sy2239101@buaa.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 82.132.232.216
-X-SA-Exim-Rcpt-To: vdonnefort@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:OCz+CgA3_lMaSNFnwCS_AA--.24657S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Wr18uw15Gr4DXw15KF18AFb_yoWfurb_Aw
+	13ZF4kuryUAa4Sqr4qkan8Jw48ur1rZFykWFnxW347Jry29rs5J3sxWF4jq3W3Way7urWS
+	yF4IyFyfW343JjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbgxFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK
+	67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I
+	0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7Cj
+	xVAFwI0_GcCE3s1ln4kS14v26r1Y6r17M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcV
+	Aq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y
+	6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
+	vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r126r1DMxkIecxEwVCm-wCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6c
+	x26F1DJr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s02
+	6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw
+	0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvE
+	c7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14
+	v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x
+	0JUDhLnUUUUU=
+X-CM-SenderInfo: tv1sjjizrqiqpexdthxhgxhubq/
 
-On Fri, 07 Mar 2025 11:34:09 +0000,
-Vincent Donnefort <vdonnefort@google.com> wrote:
-> 
-> Add flags to kvm_hyp_memcache and propagate the latter to the allocation
-> and free callbacks. This will later allow to account for memory, based
-> on the memcache configuration.
-> 
-> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
-> 
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 3a7ec98ef123..12691ae23d4c 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -86,6 +86,7 @@ struct kvm_hyp_memcache {
->  	phys_addr_t head;
->  	unsigned long nr_pages;
->  	struct pkvm_mapping *mapping; /* only used from EL1 */
-> +	unsigned long flags;
->  };
->  
->  static inline void push_hyp_memcache(struct kvm_hyp_memcache *mc,
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index 1f55b0c7b11d..c01ad4430729 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -1086,12 +1086,12 @@ void kvm_free_stage2_pgd(struct kvm_s2_mmu *mmu)
->  	}
->  }
->  
-> -static void hyp_mc_free_fn(void *addr, void *unused)
-> +static void hyp_mc_free_fn(void *addr, void *mc)
->  {
->  	free_page((unsigned long)addr);
->  }
->  
-> -static void *hyp_mc_alloc_fn(void *unused)
-> +static void *hyp_mc_alloc_fn(void *mc)
->  {
->  	return (void *)__get_free_page(GFP_KERNEL_ACCOUNT);
->  }
-> @@ -1102,7 +1102,7 @@ void free_hyp_memcache(struct kvm_hyp_memcache *mc)
->  		return;
->  
->  	kfree(mc->mapping);
-> -	__free_hyp_memcache(mc, hyp_mc_free_fn, kvm_host_va, NULL);
-> +	__free_hyp_memcache(mc, hyp_mc_free_fn, kvm_host_va, (void *)mc);
+HCI_ERROR_UNSUPPORTED_REMOTE_FEATURE is actually 0x1a not 0x1e:
 
-Why the cast? It looks superfluous to me.
+BLUETOOTH CORE SPECIFICATION Version 5.3 | Vol 1, Part F
+page 371:
 
->  }
->  
->  int topup_hyp_memcache(struct kvm_hyp_memcache *mc, unsigned long min_pages)
-> @@ -1117,7 +1117,7 @@ int topup_hyp_memcache(struct kvm_hyp_memcache *mc, unsigned long min_pages)
->  	}
->  
->  	return __topup_hyp_memcache(mc, min_pages, hyp_mc_alloc_fn,
-> -				    kvm_host_pa, NULL);
-> +				    kvm_host_pa, (void *)mc);
+  0x1A  Unsupported Remote Feature
 
-Same here.
+Signed-off-by: Si-Jie Bai <sy2239101@buaa.edu.cn>
+---
+ include/net/bluetooth/hci.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-	M.
-
+diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+index 0d51970d8..3ec915738 100644
+--- a/include/net/bluetooth/hci.h
++++ b/include/net/bluetooth/hci.h
+@@ -683,7 +683,7 @@ enum {
+ #define HCI_ERROR_REMOTE_POWER_OFF	0x15
+ #define HCI_ERROR_LOCAL_HOST_TERM	0x16
+ #define HCI_ERROR_PAIRING_NOT_ALLOWED	0x18
+-#define HCI_ERROR_UNSUPPORTED_REMOTE_FEATURE	0x1e
++#define HCI_ERROR_UNSUPPORTED_REMOTE_FEATURE	0x1a
+ #define HCI_ERROR_INVALID_LL_PARAMS	0x1e
+ #define HCI_ERROR_UNSPECIFIED		0x1f
+ #define HCI_ERROR_ADVERTISING_TIMEOUT	0x3c
 -- 
-Without deviation from the norm, progress is not possible.
+2.25.1
+
 
