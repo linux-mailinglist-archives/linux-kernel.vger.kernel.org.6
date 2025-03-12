@@ -1,90 +1,92 @@
-Return-Path: <linux-kernel+bounces-558157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83F4A5E265
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:17:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DDA5A5E275
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:20:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D43189FCC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:17:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84A0B17C297
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E419224BC09;
-	Wed, 12 Mar 2025 17:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00EC25744E;
+	Wed, 12 Mar 2025 17:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gsB6f/8T"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243C71E8327;
-	Wed, 12 Mar 2025 17:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HD0nQ+8t"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F88924EAAE;
+	Wed, 12 Mar 2025 17:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741799853; cv=none; b=KtqbI1oNWzdi+EtPSP6RaHxJ5TY2hb0ZmhvgvOkE/bH88OCNU1aMwau5I63UM/rHBVI6jU3lwC29uJwSkSA/fPjRqtXbBonaEd3BTDR0lNnP7EgQE8eMjv1+I5M053yEPGbis+AO7fWOiRE28N2E5GPgTJKdzoAqidXxIUfltuA=
+	t=1741800024; cv=none; b=rMDhLYbBucygxFkAdrYjEMz4ia3bmMqhGY1KnAWvjnr5fdCPSeKKpEtp42zBK+nc4fO2pkOgUMfyruFBPJJTrJptr7YTrKSrrq9x4UVnFDmg/QvgIiz4sAcwxi9o9Xi/SxfxJt0NBuvTEGHZ71lGjjemJZn5Vdqo5+CrPhvOqAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741799853; c=relaxed/simple;
-	bh=qPsHWFyqEKIv9C11r5J/nl26DIxHsGDpoTFqRwxczi4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Dp7aM6/ZFvJ/kh+pSwR6+d1Z7QehI585wg/6oJG78IP3RS+QCTPfuQz5kbjvQm0nQdgFzVb0KQQK+dYj0fkbZd+3/4CcN8G2tsyCaDEUw7C8olqRYYTYumbP18fR2WI3A2TDfbZ/3w2b8r17N/XPL4b94/NiaIf+ClUpjB+15aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gsB6f/8T; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1158)
-	id AFC3C210B151; Wed, 12 Mar 2025 10:17:31 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AFC3C210B151
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741799851;
-	bh=LYlF1jZQQZSUdbTS3gcYHxVRCWCvMJzs/Wm15lswkrg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gsB6f/8TwMv4kt0cYyQU1zW5ppEYbpys13XWTSyjG0rg1O9vR8emfPa43sc+D1Lqd
-	 YZbYK9G8Hgj7ECyZsMr5HkPg+Z/N88HzI7zZzN8tB5d0YdKnjlWuhsfVpz3JYU5MKB
-	 9dvCPxrFpHnwwdcDP6FpvvnS041aDIQb9ZAJeRO8=
-From: Hardik Garg <hargar@linux.microsoft.com>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 6.12 000/269] 6.12.19-rc1 review
-Date: Wed, 12 Mar 2025 10:17:31 -0700
-Message-Id: <1741799851-16836-1-git-send-email-hargar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20250310170457.700086763@linuxfoundation.org>
-References: <20250310170457.700086763@linuxfoundation.org>
+	s=arc-20240116; t=1741800024; c=relaxed/simple;
+	bh=Myhv0yGQQB3mIdLPFVgRi5RvxLh/5Iv2Tj7DlB+lz1E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OrHr5VAAAQic3dTSZXe4bRjjyNuli39DLrAoxreyqHLN6vkti3GUhZCRsuA+inw3J5UEuQDrZXdyDb7cE/d1ijOpFPByI5sS5FX/FFpcMF6Wl4qu10CzrxgkDJ5eCmgK6BJwlQhxCF0x1h1AQlIaYgRXbJA+9LMx2lQ1M9c5xpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HD0nQ+8t; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741800022; x=1773336022;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Myhv0yGQQB3mIdLPFVgRi5RvxLh/5Iv2Tj7DlB+lz1E=;
+  b=HD0nQ+8tL35AKHrRCJddVxxjvtORl35xnVK9FbK+dbejJ2nKZqmNKTlB
+   hMR0oEbWjARugKdtecgV7Zzvah6hW+GizH+RuISuMXnpouzLAw8d3XgOd
+   3fVLQtPqkPTmRAgO1JTW+Jh7i7r9GvbAEhBoonwDb1PGHn8c5r7YLhNUu
+   3QAq2Q43VWqISqZTez9a1PZdUpne9TuRqDdx13rSODDsfPnRyunWQaLP5
+   +2+IQVG0GErQEBzBeVXu34ZWRFG46uGwlCGrY8fLW5U38BaFmHsKs5gn1
+   IEM7dA09o4QUgZ5CU8fBKI4T+POl9B7/zR/xWCsxsFLVcYUPNHxTKCX7K
+   w==;
+X-CSE-ConnectionGUID: C+ExU6P4Q2mtbnSyUPOBKg==
+X-CSE-MsgGUID: 8rMeH2MDSKy6EK0pcZk9tw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="60290607"
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="60290607"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 10:20:20 -0700
+X-CSE-ConnectionGUID: m+HNnOfRRwCILfckPUhv8A==
+X-CSE-MsgGUID: KZZYwwkfSnKYumrnHVcEPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="125769470"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 12 Mar 2025 10:20:19 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 7D54E1F2; Wed, 12 Mar 2025 19:20:17 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Longbin Li <looong.bin@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v1 0/2] spi: sg2044-nor: A couple of cleanups
+Date: Wed, 12 Mar 2025 19:19:15 +0200
+Message-ID: <20250312172016.4070094-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The kernel, bpf tool, perf tool, and kselftest builds fine for v6.12.19-rc1 on x86 and arm64 Azure VM.
+The driver has one ordering issue and one missed case for dev_err_probe().
+Address that in this mini-series.
 
-Kernel binary size for x86 build:
-text      data      bss      dec       hex      filename
-27756160  17713706  6397952  51867818  31770aa  vmlinux
+Andy Shevchenko (2):
+  spi: sg2044-nor: Fully convert to device managed resources
+  spi: sg2044-nor: Convert to dev_err_probe()
 
-Kernel binary size for arm64 build:
-text      data      bss      dec       hex      filename
-36399457  14996921  1052816  52449194  3204faa  vmlinux
+ drivers/spi/spi-sg2044-nor.c | 25 +++++++------------------
+ 1 file changed, 7 insertions(+), 18 deletions(-)
 
+-- 
+2.47.2
 
-Tested-by: Hardik Garg <hargar@linux.microsoft.com>
-
-
-
-
-Thanks,
-Hardik
 
