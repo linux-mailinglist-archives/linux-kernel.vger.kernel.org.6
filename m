@@ -1,230 +1,343 @@
-Return-Path: <linux-kernel+bounces-558277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56798A5E3C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:39:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0384A5E3C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:39:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C09973BC35C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:38:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F7453BC4E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0863257AF2;
-	Wed, 12 Mar 2025 18:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3321E2823;
+	Wed, 12 Mar 2025 18:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DRt50Gpe"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WHEtGdiK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A028256C6A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6782256C9E
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741804741; cv=none; b=pOaubk291Y8egBhAaPA1MhDnN8fGaB6uAedVOykhSt15l468/wVIxqhOP4ffz+Oneqdm6IeKoR3oz2J1hO8ijlZCDW5f6rgwz/ZEs80uGnE3Dhq21lDsBfX8eKZMUIcRaxKkKAxkjnMBBCAg4rShNB2g3eHYqWr9STPLlSqevx8=
+	t=1741804769; cv=none; b=H5ugS9NUEs6gtCR+3u2Q3x2kmx2QgmihBw6hLRu3OerhbRu2pgURVJu3xwauPb9/20D3R9dZj5Ws5VVRDwy/evf3oMV1HB8yY6L0R+/+VabowPf7oyh/3PGdLoODm5McAgcccdHaZ6hhXqNr6yvh9+/bDKIqq52GnCF2Bl3g4jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741804741; c=relaxed/simple;
-	bh=CLMgVqyOT0i+H9rQsHK05ZXsd9MqAU6KXohodkkMyY4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KU9WxjWLU9G3GjFV8wZp3KmzbKrPHmnUD9toOyhDIJvL0l2cFCWYCrbpSdQvgoJ0LM+NyFAvnsNygrsquk0q2OVoArikO3+xQ7JLVlODB+4rbhVD+r1uV+G5k37n3DuN881yHjhn8oZ0EmKFLshUsOSKGZrikiyWbtyOisI60Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DRt50Gpe; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e8fca43972so1917016d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:38:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741804738; x=1742409538; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y9eDTRmveeftlzdwnQM78EcvmMZWZ3IJwIxihtK2Uy4=;
-        b=DRt50GpeAcdmM8VS74pt1ccf+un1HeM/WInifA9ICjUX5Pz4ITDMcpiL5jlhCid3/T
-         iyp/ypWtbhPxZ9IBfchENl2aoK757X6/XHb3412Excls0wKI8Ff5gYG4d5wirkN1Cf/N
-         /C8yKfQ69/9ohRfNqBl0oi4cit7LcDZHHmBdu6ynZdrcExs/2rWezKywp62fPXsci7QW
-         SZufVSPavvtIrO+75N8ORcaPh8lfan6a+wum30L3e7C74cQJMIFrM3M+V77LfrSgsbyD
-         LFRE5VdvgN9N5Ymb9RwshiRciI4pzpjWkvcQEQBRfZqQmeGRNU2rUDZRPbIV+ueNp+G/
-         KF5A==
+	s=arc-20240116; t=1741804769; c=relaxed/simple;
+	bh=wVF5UCJq8TwNkOCogaMkn5fk/pOwfq9wFtAG/vz6GOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=twj1AGCH0XS8nQJtz+FCNUOSnaTVgg9qcNGet5/qp3r4/TiQnAOFrkUpuaVXY5jLApLb5J3SCJZywkDap3A2AdZtdwR0Y3bW/lX+ctshEM3UeIbJul/aenfQ6YvDN8fCtVekbtnUMrEoi008zBHWQrYMG1jNdugj+HM9L3XIMlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WHEtGdiK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741804765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=FpAQlvDURVXWfuuOfiLPpYSES6FxJzxrvh27SN0EPb0=;
+	b=WHEtGdiK4XcW+bsstegrHfOTghhdb+uRFrTctUgC08yzYhXJTLT16Ud9S+FxBgvJes9YJB
+	FBGdH3N/aoS52pZVYypddvw9CMOvXNtBC1OidNB+FegbsoqImoXb4fHuEho9hcc07v5SG6
+	hjSOuh18J0eMKq/QSAqkltmv3pcs7u8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-216-4cuVTd3tNPuszjtMizzkrw-1; Wed, 12 Mar 2025 14:39:24 -0400
+X-MC-Unique: 4cuVTd3tNPuszjtMizzkrw-1
+X-Mimecast-MFC-AGG-ID: 4cuVTd3tNPuszjtMizzkrw_1741804763
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43cf446681cso540195e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:39:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741804738; x=1742409538;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y9eDTRmveeftlzdwnQM78EcvmMZWZ3IJwIxihtK2Uy4=;
-        b=Lg+MUD71HfHnSkBWVqEqqROGl+4gvke1UiYEbVpdxI376KBQVBoEpGoyjdemCtRmOn
-         LkqJmnCFP05a2N5fm98kdLXslkSYhPaHq8yYFLZEx/m/4HumyXVBqUdnnJxrvwaJxSn6
-         bfvsKnCKnEtaIiwCfrsmO5jAZ9ErGHc7oa/rA+Gi2KbWUoIoVvL14mjmOFI+uqsMzYar
-         ayUynFdiGQxWzRYbRDyk21diq/ktDHutAeMkgMCeNI/E+QkW2nLU7WhUAA2bzv5sdnlf
-         sfo2FI2xRXP2Da7uIDRJtUnV/cMfHrssBf43EoYx+/COlv2IaRouM78Gxff12T83RxXG
-         KzbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcrS1klw45k7sUDJGCGHpoOWsX08Q3hklA48i5x+BeR4ug1ntj3Fb8szv5yscHGgXRRbPrCa5/IKjKwoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG+Rh4DwEJMZydMSu8TUsHXu+phV6olr1SxGXn0FfdMo94lBRI
-	MzdjGxkmoql/sOZq/kmzEfNKZa2UnTZH1E58+DIjegKiFlqlrAf3F0uqoSd90sBf5cvLXqwuUml
-	PfaEuE4rGRD6kvyY5J3DSj5zdVUqPZUw/Ai3M
-X-Gm-Gg: ASbGnctpuxWYdTzwgP9A+4ws5xiF+pKwYGG6nBpsl/L6y8LlUz6Uvka3w3P+wYoYPsu
-	675TVw14rDpBo8ruZBJk6+qf822atrJpeP7dx5bHV8fF4T74ClwINJ2Ri7hhinczP+bBT6pEbN5
-	a5XJbiQMINDEAFhV8gUW/W/p9XYxLQt8U/WXLewk/0c5LoKA9+OYq4ji3X69e90mhr5g==
-X-Google-Smtp-Source: AGHT+IEZW+IQU8C8ccEmFiiK4dy4yOLgd2WhpSx8zYGYEihrinEdZP2gSQUG2r7ZGKNmwPk346O5Z8kAh95oCdlgXMM=
-X-Received: by 2002:ad4:5aa2:0:b0:6e4:42c2:dd91 with SMTP id
- 6a1803df08f44-6e900691fb0mr399690546d6.37.1741804737883; Wed, 12 Mar 2025
- 11:38:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741804763; x=1742409563;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FpAQlvDURVXWfuuOfiLPpYSES6FxJzxrvh27SN0EPb0=;
+        b=lvdvlxRzbFXXwlfMEKzNiklQExv+SHoTE6NqKyMY2RiejM7DQ461cxj3XrVcyvCrhq
+         l7+aisLHyj0g3ZT3cDNDlRUTUzeZX8NuPZbqvEzq87iF2mUkb5K3ps1NcviCuUxikUW2
+         Au24RL2VQmgTlV0xBgK1x0ylIzMUTojPglfcB6AFYa06Qww/mqsJv93FM4UcOYuxW5O9
+         mIvCGDCC4hM+WbEVWcnOF8+LaJlpc/6BJk1XNRJiFs45OANondGf4WqQLWYX7eElM615
+         Kd2nf3x1+m5abR48mjoSP4o4tijdJt0wgHd6XljA8+BV6LaR5K5ZZzArp1Uzc2V7s7sF
+         mDeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSSFeW1Lb6/CbgVtVBtjBrpyH40R1S5oSDiXgSG9xcXnollS9eYRAjuD3rfcE/vEQdrD1/nraD6MEwmeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG9NCMDnBNOPH9Jjg0fUUEIOvW2aIp4qtteeqKMNsWQMursWj2
+	xrmAnSS+gq1O4zv8pCLD/oPrXozdALn822LM27gSMLr3FRlcRlUoDYbJPmqM0pG1cuxEa3T65tL
+	KVSvLBjE2652xTrOZvSv+knz97UF93O1T7cR+/J/hG7QqDNKCC7XtlhPUXPiYmQ==
+X-Gm-Gg: ASbGncsrUpdNxMgn11ZaC1VvWvvJTLDm2ocKcLA1K9/dWFjonWxbZFl/Yzi748AifHh
+	ptbZ1GqsbuvLc7JINJ2B+KApMFyw8FJB2YbdtcNFi55K1U+qsgTqoNLMhXeEoaZWyAgFF8fY89R
+	9BIJ4ukNI/qynIEgIvpht0FQzcfz4jbssBRa3Jwv6HRAfOu207ylDgijF35e8aYmGSCElUQ3Hut
+	UdMP22VePTGQw9TLFXUWI42WUpk7GIQKo2imTQs0uGb1KwuIdW07r5Jj/TbGTSgW8ta/QwP71wR
+	ahJ+iPofI5vrhqiNm5gwmA==
+X-Received: by 2002:a05:600c:154d:b0:43d:160:cd97 with SMTP id 5b1f17b1804b1-43d0160cfb3mr81433575e9.25.1741804762797;
+        Wed, 12 Mar 2025 11:39:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8Up0exKa8uUyXSVqc46o/ZF8opDLggJlhh9jMidWnfu/BbBjzmo/eHcQWr0AS31ifbuD0MA==
+X-Received: by 2002:a05:600c:154d:b0:43d:160:cd97 with SMTP id 5b1f17b1804b1-43d0160cfb3mr81433405e9.25.1741804762391;
+        Wed, 12 Mar 2025 11:39:22 -0700 (PDT)
+Received: from [192.168.10.81] ([176.206.122.167])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43d0a8d0ab1sm28753375e9.34.2025.03.12.11.39.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 11:39:21 -0700 (PDT)
+Message-ID: <052c37b5-8deb-413e-b8cf-966e00f608ef@redhat.com>
+Date: Wed, 12 Mar 2025 19:39:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304000458.1826450-1-royluo@google.com> <20250308010409.n55ivdubj7ylkr7j@synopsys.com>
- <CA+zupgzB2aKRn_KDcqSLctqmvnEW1923XQPDwDzfDVZxU70ORg@mail.gmail.com>
- <CA+zupgzw0Fr-PHzj0PPRQGuvxB+py0EMseiToq5iPKe=iRNtgg@mail.gmail.com> <20250311234436.dtpkfvnwuwqhw5jr@synopsys.com>
-In-Reply-To: <20250311234436.dtpkfvnwuwqhw5jr@synopsys.com>
-From: Roy Luo <royluo@google.com>
-Date: Wed, 12 Mar 2025 11:38:21 -0700
-X-Gm-Features: AQ5f1JprQvoM-iGZfRi7eO-R4Gm04cmK1rf5VvBgfMgAVbIUHRKik85GGyuGp4U
-Message-ID: <CA+zupgwV3f9gkyFtZLK7H5Li5WW_HuDd5zwKSo4fh6h8xqW6EQ@mail.gmail.com>
-Subject: Re: [PATCH v1] usb: dwc3: core: Avoid redundant system suspend/resume callbacks
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/16] KVM: VMX: Move posted interrupt delivery code to
+ common header
+To: Binbin Wu <binbin.wu@linux.intel.com>, seanjc@google.com,
+ kvm@vger.kernel.org
+Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
+ reinette.chatre@intel.com, xiaoyao.li@intel.com, tony.lindgren@intel.com,
+ isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com,
+ linux-kernel@vger.kernel.org
+References: <20250222014757.897978-1-binbin.wu@linux.intel.com>
+ <20250222014757.897978-4-binbin.wu@linux.intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20250222014757.897978-4-binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 4:44=E2=80=AFPM Thinh Nguyen <Thinh.Nguyen@synopsys=
-.com> wrote:
->
-> On Tue, Mar 11, 2025, Roy Luo wrote:
-> > On Fri, Mar 7, 2025 at 5:04=E2=80=AFPM Thinh Nguyen <Thinh.Nguyen@synop=
-sys.com> wrote:
-> >
-> > > I'm also a bit concernt about moving pinctrl_pm_select* to the
-> > > suspend/resume_common function. Is your device using pinctrl? If not,
-> > > how did you validate this?
-> > >
-> > > Thanks,
-> > > Thinh
-> > >
-> >
-> > I couldn't find any device node that's actually utilizing the pinctrl "=
-sleep"
-> > state in upstream. I digged into the patch that introduced pinctrl to d=
-wc3, i.e.
-> > https://urldefense.com/v3/__https://lore.kernel.org/all/9dd70870cfee401=
-54a37186d4cf3ae0e9a452cbd.1441029572.git.nsekhar@ti.com/__;!!A4F2R9G_pg!chK=
-bE4OVWBGIEQnHmj7n-VFIKaiyjgdJSmP7lqMx1N4pT1gpIz_qYMiI_vSwCRa6IzMHJ41eq9wkN3=
-N8HE4$
-> > The intention was to control DRVVBUS pins using the pinctrl API so
-> > that VBUS can be turned off to conserve power when device is suspended
-> > (which also implies this is only relevant in host mode, at least in the=
- initial
-> > patch). Since there was no runtime PM support in dwc3 at that time, the
-> > code was only added in the system suspend/resume path. Yet I don't see
-> > why this cannot be extended to the runtime suspend/resume path,
-> > ultimately it should be safe to turn off VBUS once the controller is
-> > completely torn down with dwc3_core_exit() regardless of which suspend
-> > path it's taking.
->
-> If this pin drives the VBUS, changing this will also change how often we
-> turning on/off VBUS. Unfortunately, I don't know enough about these
-> platforms to know whether this change may impact its timing and
-> stability.
->
-> >
-> > Besides looking at how pinctrl in dwc3 is intended to be used, I did
-> > an inventory on how it actually is used. There are 3 major players:
-> > ti, qcom and socionext that has pinctrl property set in their dwc3 devi=
-ce node.
-> > 1. ti/omap
-> > The pinctrl property is only set when dr_mode is host or otg.
-> > Only the "default" state is defined, none of boards has "sleep" state
-> > defined, not even the first user
-> > arch/arm/boot/dts/omap/am437x-gp-evm.dts
-> > that introduced the API to dwc3.
-> > (https://urldefense.com/v3/__https://lore.kernel.org/all/4a8a072030c2a8=
-2867c6548627739146681b35a5.1441029572.git.nsekhar@ti.com/__;!!A4F2R9G_pg!ch=
-KbE4OVWBGIEQnHmj7n-VFIKaiyjgdJSmP7lqMx1N4pT1gpIz_qYMiI_vSwCRa6IzMHJ41eq9wkf=
-d77zMg$ )
->
-> Hm... this link to the patch above seems never made it upstream.
->
-> > Setting pinctrl "default" state seems to be pretty common in ti/omap,
-> > and the usage is aligned with the original intention: control DRVVBUS.
-> > It's unclear why "sleep" state is no longer used though.
-> >
-> > 2. qcom
-> > The following 2 boards have pinctrl property defined, dr_mode are all
-> > host and also only the "default" state is defined.
-> > - sa8155p-adp.dts  &usb_1_dwc3 {
-> >                                dr_mode =3D "host";
-> >                                pinctrl-names =3D "default";
-> >                                pinctrl-0 =3D <&usb2phy_ac_en1_default>;
-> >                                };
-> >                                &usb_2_dwc3 {
-> >                                dr_mode =3D "host";
-> >                                pinctrl-names =3D "default";
-> >                                pinctrl-0 =3D <&usb2phy_ac_en2_default>;
-> >                                };
-> > - sm8350-hdk.dts  &usb_2_dwc3 {
-> >                               dr_mode =3D "host";
-> >                               pinctrl-names =3D "default";
-> >                               pinctrl-0 =3D <&usb_hub_enabled_state>;
-> >                               };
-> > It seems the pinctrl is used to control phy and perhaps downstream usb =
-hub.
-> > Nothing is turned off explicitly during sleep as "sleep" state isn't de=
-fined.
-> > It's more like setting the required pins for host mode to work.
-> >
-> > 3. socionext
-> > The pinctrl property is set on controllers with dr_mode peripheral or h=
-ost.
-> > Still, only the "default" state is defined.
-> > The pin is assigned according to its dr_mode, controllers with dr_mode
-> > host will be assigned with pinctrl_usb* pin, while controllers with dr_=
-mode
-> > peripheral will get pinctrl_usb*_device pin.
-> >         pinctrl_usb0: usb0 {
-> >                 groups =3D "usb0";
-> >                 function =3D "usb0";
-> >         };
-> >         pinctrl_usb0_device: usb0-device {
-> >                 groups =3D "usb0_device";
-> >                 function =3D "usb0";
-> >         };
-> > Again, these pins are not related to power management, it's tied to dr_=
-mode.
-> >
-> > To summarize the current pinctrl usage in dwc3:
-> > 1. No user of "sleep" state, meaning it's unlikely to cause any impact
-> > on suspend flow.
-> > 2. Typically, the default pin state reflects the controller's dr_mode,
-> > acting as a pre-configuration step to set the operational mode.
->
-> Thanks for the investigation.
->
-> >
-> > Based on the above observation, the code change on the pinctrl is
-> > unlikely to introduce a regression as it aligns with the original inten=
-tion
-> > of the pinctrl property, and the pinctrl_pm_select_sleep_state() is
-> > essentially an NOP in upstream as of now. Besides,
-> > pinctrl_pm_select_default_state() is called whenever we try to
-> > re-initialize the controller.
-> > I hope this addresses your concern.
-> >
->
-> This still doesn't sit easy for me. I would prefer a change to the
-> pinctrl logic be a separate commit.
->
-> For the particular intention of your patch, can you just do a check if
-> dev->pins exists and leave that alone. Create a separate patch should
-> you think pinctrl logic be set somewhere else.
->
-> Thanks,
-> Thinh
+On 2/22/25 02:47, Binbin Wu wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
+> 
+> Move posted interrupt delivery code to common header so that TDX can
+> leverage it.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> [binbin: split into new patch]
+> Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+> ---
+> TDX interrupts v3:
+>   - fixup comment and add Chao's Reviewed-by
+>     https://lore.kernel.org/kvm/20250211025828.3072076-2-binbin.wu@linux.intel.com/T/#m990cab2280c2f5fdaffc22575c3e3e3012a691df
+> 
+> TDX interrupts v2:
+> - Rebased due to moving pi_desc to vcpu_vt.
+> 
+> TDX interrupts v1:
+> - This is split out from patch "KVM: TDX: Implement interrupt injection"
+> ---
+>   arch/x86/kvm/vmx/common.h | 68 +++++++++++++++++++++++++++++++++++++++
+>   arch/x86/kvm/vmx/vmx.c    | 59 +--------------------------------
+>   2 files changed, 69 insertions(+), 58 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/common.h b/arch/x86/kvm/vmx/common.h
+> index 9d4982694f06..8b12d8214b6c 100644
+> --- a/arch/x86/kvm/vmx/common.h
+> +++ b/arch/x86/kvm/vmx/common.h
+> @@ -4,6 +4,7 @@
+>   
+>   #include <linux/kvm_host.h>
+>   
+> +#include "posted_intr.h"
 
-SGTM, will do it in v2.
-Thanks a lot for the suggestion!
+This include is already needed in "KVM: VMX: Move common fields of 
+struct vcpu_{vmx,tdx} to a struct" due to
 
-Thanks,
-Roy
++struct vcpu_vt {
++	/* Posted interrupt descriptor */
++	struct pi_desc pi_desc;
+
+I'll fix it up in kvm-coco-queue.
+
+Paolo
+
+>   #include "mmu.h"
+>   
+>   union vmx_exit_reason {
+> @@ -108,4 +109,71 @@ static inline int __vmx_handle_ept_violation(struct kvm_vcpu *vcpu, gpa_t gpa,
+>   	return kvm_mmu_page_fault(vcpu, gpa, error_code, NULL, 0);
+>   }
+>   
+> +static inline void kvm_vcpu_trigger_posted_interrupt(struct kvm_vcpu *vcpu,
+> +						     int pi_vec)
+> +{
+> +#ifdef CONFIG_SMP
+> +	if (vcpu->mode == IN_GUEST_MODE) {
+> +		/*
+> +		 * The vector of the virtual has already been set in the PIR.
+> +		 * Send a notification event to deliver the virtual interrupt
+> +		 * unless the vCPU is the currently running vCPU, i.e. the
+> +		 * event is being sent from a fastpath VM-Exit handler, in
+> +		 * which case the PIR will be synced to the vIRR before
+> +		 * re-entering the guest.
+> +		 *
+> +		 * When the target is not the running vCPU, the following
+> +		 * possibilities emerge:
+> +		 *
+> +		 * Case 1: vCPU stays in non-root mode. Sending a notification
+> +		 * event posts the interrupt to the vCPU.
+> +		 *
+> +		 * Case 2: vCPU exits to root mode and is still runnable. The
+> +		 * PIR will be synced to the vIRR before re-entering the guest.
+> +		 * Sending a notification event is ok as the host IRQ handler
+> +		 * will ignore the spurious event.
+> +		 *
+> +		 * Case 3: vCPU exits to root mode and is blocked. vcpu_block()
+> +		 * has already synced PIR to vIRR and never blocks the vCPU if
+> +		 * the vIRR is not empty. Therefore, a blocked vCPU here does
+> +		 * not wait for any requested interrupts in PIR, and sending a
+> +		 * notification event also results in a benign, spurious event.
+> +		 */
+> +
+> +		if (vcpu != kvm_get_running_vcpu())
+> +			__apic_send_IPI_mask(get_cpu_mask(vcpu->cpu), pi_vec);
+> +		return;
+> +	}
+> +#endif
+> +	/*
+> +	 * The vCPU isn't in the guest; wake the vCPU in case it is blocking,
+> +	 * otherwise do nothing as KVM will grab the highest priority pending
+> +	 * IRQ via ->sync_pir_to_irr() in vcpu_enter_guest().
+> +	 */
+> +	kvm_vcpu_wake_up(vcpu);
+> +}
+> +
+> +/*
+> + * Post an interrupt to a vCPU's PIR and trigger the vCPU to process the
+> + * interrupt if necessary.
+> + */
+> +static inline void __vmx_deliver_posted_interrupt(struct kvm_vcpu *vcpu,
+> +						  struct pi_desc *pi_desc, int vector)
+> +{
+> +	if (pi_test_and_set_pir(vector, pi_desc))
+> +		return;
+> +
+> +	/* If a previous notification has sent the IPI, nothing to do.  */
+> +	if (pi_test_and_set_on(pi_desc))
+> +		return;
+> +
+> +	/*
+> +	 * The implied barrier in pi_test_and_set_on() pairs with the smp_mb_*()
+> +	 * after setting vcpu->mode in vcpu_enter_guest(), thus the vCPU is
+> +	 * guaranteed to see PID.ON=1 and sync the PIR to IRR if triggering a
+> +	 * posted interrupt "fails" because vcpu->mode != IN_GUEST_MODE.
+> +	 */
+> +	kvm_vcpu_trigger_posted_interrupt(vcpu, POSTED_INTR_VECTOR);
+> +}
+> +
+>   #endif /* __KVM_X86_VMX_COMMON_H */
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 008e558a6f41..2d4185df1581 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -4186,50 +4186,6 @@ void vmx_msr_filter_changed(struct kvm_vcpu *vcpu)
+>   		pt_update_intercept_for_msr(vcpu);
+>   }
+>   
+> -static inline void kvm_vcpu_trigger_posted_interrupt(struct kvm_vcpu *vcpu,
+> -						     int pi_vec)
+> -{
+> -#ifdef CONFIG_SMP
+> -	if (vcpu->mode == IN_GUEST_MODE) {
+> -		/*
+> -		 * The vector of the virtual has already been set in the PIR.
+> -		 * Send a notification event to deliver the virtual interrupt
+> -		 * unless the vCPU is the currently running vCPU, i.e. the
+> -		 * event is being sent from a fastpath VM-Exit handler, in
+> -		 * which case the PIR will be synced to the vIRR before
+> -		 * re-entering the guest.
+> -		 *
+> -		 * When the target is not the running vCPU, the following
+> -		 * possibilities emerge:
+> -		 *
+> -		 * Case 1: vCPU stays in non-root mode. Sending a notification
+> -		 * event posts the interrupt to the vCPU.
+> -		 *
+> -		 * Case 2: vCPU exits to root mode and is still runnable. The
+> -		 * PIR will be synced to the vIRR before re-entering the guest.
+> -		 * Sending a notification event is ok as the host IRQ handler
+> -		 * will ignore the spurious event.
+> -		 *
+> -		 * Case 3: vCPU exits to root mode and is blocked. vcpu_block()
+> -		 * has already synced PIR to vIRR and never blocks the vCPU if
+> -		 * the vIRR is not empty. Therefore, a blocked vCPU here does
+> -		 * not wait for any requested interrupts in PIR, and sending a
+> -		 * notification event also results in a benign, spurious event.
+> -		 */
+> -
+> -		if (vcpu != kvm_get_running_vcpu())
+> -			__apic_send_IPI_mask(get_cpu_mask(vcpu->cpu), pi_vec);
+> -		return;
+> -	}
+> -#endif
+> -	/*
+> -	 * The vCPU isn't in the guest; wake the vCPU in case it is blocking,
+> -	 * otherwise do nothing as KVM will grab the highest priority pending
+> -	 * IRQ via ->sync_pir_to_irr() in vcpu_enter_guest().
+> -	 */
+> -	kvm_vcpu_wake_up(vcpu);
+> -}
+> -
+>   static int vmx_deliver_nested_posted_interrupt(struct kvm_vcpu *vcpu,
+>   						int vector)
+>   {
+> @@ -4289,20 +4245,7 @@ static int vmx_deliver_posted_interrupt(struct kvm_vcpu *vcpu, int vector)
+>   	if (!vcpu->arch.apic->apicv_active)
+>   		return -1;
+>   
+> -	if (pi_test_and_set_pir(vector, &vt->pi_desc))
+> -		return 0;
+> -
+> -	/* If a previous notification has sent the IPI, nothing to do.  */
+> -	if (pi_test_and_set_on(&vt->pi_desc))
+> -		return 0;
+> -
+> -	/*
+> -	 * The implied barrier in pi_test_and_set_on() pairs with the smp_mb_*()
+> -	 * after setting vcpu->mode in vcpu_enter_guest(), thus the vCPU is
+> -	 * guaranteed to see PID.ON=1 and sync the PIR to IRR if triggering a
+> -	 * posted interrupt "fails" because vcpu->mode != IN_GUEST_MODE.
+> -	 */
+> -	kvm_vcpu_trigger_posted_interrupt(vcpu, POSTED_INTR_VECTOR);
+> +	__vmx_deliver_posted_interrupt(vcpu, &vt->pi_desc, vector);
+>   	return 0;
+>   }
+>   
+
 
