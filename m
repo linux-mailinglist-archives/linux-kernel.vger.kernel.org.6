@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-558218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6AA4A5E2E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:36:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F83A5E2E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:38:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DF8A7A7A13
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:34:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5257B3B8CDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB4823F369;
-	Wed, 12 Mar 2025 17:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0F71DE3C0;
+	Wed, 12 Mar 2025 17:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="wPqmwTpG"
-Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYT/nnLm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273981D63D5
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCFD84D13;
+	Wed, 12 Mar 2025 17:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741800945; cv=none; b=otvUev3rg2sCDRdknL4oL3W13gLhEt4fF3Wvb5LWZ+4r/2oawCRdXhhJTwE5jKO1wizOHIafFadvgOSxTIBRq2FPuVhmL+AdiGIB9TfknWJfXl3JAVq+WTk7Ry0dXSPUiDRvzSlNBRvfFhI8V9MQOn8MPUP3fT3xzxZbPTGXWCk=
+	t=1741801125; cv=none; b=d6bnjgsSlSw1a7b47+Zd985ChLBtv2hUdUGJthBtqzKwlF1u/aXzupNE/2oAPbF6C4ZdDNKB/0pq50F9X0jX5VrWSX/nwvT2VopIZwWzIpGHs0UvMggLveqb5mKQQmxoc5TogDfOv6PRNH5oG9sMmRk+Up4yQ6lZRwUQAS73ReU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741800945; c=relaxed/simple;
-	bh=4qkLX++lFyjNleliVYwoolACCiGvD8umAZsZrlCBTo4=;
+	s=arc-20240116; t=1741801125; c=relaxed/simple;
+	bh=3IQCekR2kO8T0WEg1CoEHBcqTm/HWqSnX3xaIwcLORo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=reWj/U2SIcTwBZsrAXWGjMDnXTWPa8hY6MIE/kQCAal0gLXCNAEppCe4qeEthwUP4OQQT9aQpQyVTa1wbpev+qZxxE1EzmYc01Gg+kYTpfuWTuVQMuqzzdlbMnW2L3Mt8aKeU8d51z6cnpYzXF0krRkVrvKlXyRajKwjmc4F1NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=wPqmwTpG; arc=none smtp.client-ip=158.69.130.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1741800941;
-	bh=4qkLX++lFyjNleliVYwoolACCiGvD8umAZsZrlCBTo4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tp+CBtIdo7ukvUp1q+uwZS7gbE1O2lLSRxbzreHlmgTeputLtXpgYJyMXqYk2mQflumJt3O9GIUxj0nK+UAQPuz5to69pf7pDVpJUlUul5GsACJjgWzE5oxYsbJHrwuhsop+j8RX9Eorgu07w3/qmq1LZyLZVAdzkvneWQOdCng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QYT/nnLm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC032C4CEDD;
+	Wed, 12 Mar 2025 17:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741801125;
+	bh=3IQCekR2kO8T0WEg1CoEHBcqTm/HWqSnX3xaIwcLORo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wPqmwTpGdXOJqNv6lNDC51+hi+V6v31jtUzUQaIUIa26vodfgzFLXMkG8S2bGxeS6
-	 ZstdwCfijI4FKsp8uIEniIzsSvjG7Wte+xt5bM80cmHysGmp8RkQo3dcK4F8LOmrg3
-	 ZWnOK6QXRUtB0Iu6/XnwpXG55kBAbi/PVZ3BuZyNsWkG2/U0yK+gS/T6KS3h84MszD
-	 cl2pqijsDIGpMwksnf0zMGNYrDXMFGaCZg74uhKG4Jv8LfLiEnpyV2gSzPW/9d0Vwn
-	 o0JHJOjGOW5ZmEiwzMQ9pHKsKja+8z5Cl3k5c95EvWAE/CO9SSTSyGodTZJMb4T5x4
-	 +8xMlqKkgUQGA==
-Received: from localhost.localdomain (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4ZCd7x44BDzWnL;
-	Wed, 12 Mar 2025 13:35:41 -0400 (EDT)
-Date: Wed, 12 Mar 2025 13:35:40 -0400
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Kienan Stewart <kstewart@efficios.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>, linux-build@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Nicolas Schier <n.schier@avm.de>
-Subject: Re: [PATCH v2] kbuild: Add missing $(objtree) prefix to powerpc
- crtsavres.o artifact
-Message-ID: <Z9HF7EtC8lNfJ41e@localhost.localdomain>
-References: <20250218-buildfix-extmod-powerpc-v2-1-1e78fcf12b56@efficios.com>
+	b=QYT/nnLm8ww6q2w69OobpziCjXlERE6IOERYBSScUWRxMSFVASe0mELVJ4JcytYGb
+	 S6fg2Byp1oA5+rgyZV49iB0a1DUtPvO2RMPMT5+eRml3IhEJzfzgky850WtS+j3GLU
+	 zLFKEMTVlkuJCDUm/T+fM/spAETiMyhqdovZ1VOw92jklTu0uOQMjhLebcFb1fWFZ7
+	 pZpjGTjkuCxdlemUI67CwDME31GpLkxFbXzcp7RE2dUc7CG665aMGlZkpA/lE9AiF3
+	 rjxcbTpyUz8UCIOwMJFUP+6Oo6rcG/WyAvQGBpIYETHdS2jKBhUM7tXElKHEwCGEW0
+	 NWH6iBwWv7sWw==
+Date: Wed, 12 Mar 2025 10:38:43 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, Petr Mladek <pmladek@suse.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-mm <linux-mm@kvack.org>, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] module: Taint the kernel when write-protecting
+ ro_after_init fails
+Message-ID: <Z9HGoxwTpOfzbBP9@bombadil.infradead.org>
+References: <20250306103712.29549-1-petr.pavlu@suse.com>
+ <Z8nT8PCPThnfb3Cq@bombadil.infradead.org>
+ <c25939c5-d6e8-4450-873b-0a9c774b845b@suse.cz>
+ <202503120923.199D458CB@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,68 +67,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218-buildfix-extmod-powerpc-v2-1-1e78fcf12b56@efficios.com>
+In-Reply-To: <202503120923.199D458CB@keescook>
 
-On 18-Feb-2025 03:26:39 PM, Kienan Stewart wrote:
-> In the upstream commit 214c0eea43b2ea66bcd6467ea57e47ce8874191b
-> ("kbuild: add $(objtree)/ prefix to some in-kernel build artifacts")
-> artifacts required for building out-of-tree kernel modules had
-> $(objtree) prepended to them to prepare for building in other
-> directories.
+On Wed, Mar 12, 2025 at 09:30:28AM -0700, Kees Cook wrote:
+> On Wed, Mar 12, 2025 at 04:45:24PM +0100, Vlastimil Babka wrote:
+> > On 3/6/25 17:57, Luis Chamberlain wrote:
+> > > + linux-mm since we're adding TAINT_BAD_PAGE
+> > > 
+> > > On Thu, Mar 06, 2025 at 11:36:55AM +0100, Petr Pavlu wrote:
+> > >> In the unlikely case that setting ro_after_init data to read-only fails, it
+> > >> is too late to cancel loading of the module. The loader then issues only
+> > >> a warning about the situation. Given that this reduces the kernel's
+> > >> protection, it was suggested to make the failure more visible by tainting
+> > >> the kernel.
+> > >> 
+> > >> Allow TAINT_BAD_PAGE to be set per-module and use it in this case. The flag
+> > >> is set in similar situations and has the following description in
+> > >> Documentation/admin-guide/tainted-kernels.rst: "bad page referenced or some
+> > >> unexpected page flags".
+> > >> 
+> > >> Adjust the warning that reports the failure to avoid references to internal
+> > >> functions and to add information about the kernel being tainted, both to
+> > >> match the style of other messages in the file. Additionally, merge the
+> > >> message on a single line because checkpatch.pl recommends that for the
+> > >> ability to grep for the string.
+> > >> 
+> > >> Suggested-by: Kees Cook <kees@kernel.org>
+> > >> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> > >> ---
+> > >> I opted to use TAINT_BAD_PAGE for now because it seemed unnecessary to me
+> > >> to introduce a new flag only for this specific case. However, if we end up
+> > >> similarly checking set_memory_*() in the boot context, a separate flag
+> > >> would be probably better.
+> > >> ---
+> > >>  kernel/module/main.c | 7 ++++---
+> > >>  kernel/panic.c       | 2 +-
+> > >>  2 files changed, 5 insertions(+), 4 deletions(-)
+> > >> 
+> > >> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> > >> index 1fb9ad289a6f..8f424a107b92 100644
+> > >> --- a/kernel/module/main.c
+> > >> +++ b/kernel/module/main.c
+> > >> @@ -3030,10 +3030,11 @@ static noinline int do_init_module(struct module *mod)
+> > >>  	rcu_assign_pointer(mod->kallsyms, &mod->core_kallsyms);
+> > >>  #endif
+> > >>  	ret = module_enable_rodata_ro_after_init(mod);
+> > >> -	if (ret)
+> > >> -		pr_warn("%s: module_enable_rodata_ro_after_init() returned %d, "
+> > >> -			"ro_after_init data might still be writable\n",
+> > >> +	if (ret) {
+> > >> +		pr_warn("%s: write-protecting ro_after_init data failed with %d, the data might still be writable - tainting kernel\n",
+> > >>  			mod->name, ret);
+> > >> +		add_taint_module(mod, TAINT_BAD_PAGE, LOCKDEP_STILL_OK);
+> > >> +	}
+> > >>  
+> > >>  	mod_tree_remove_init(mod);
+> > >>  	module_arch_freeing_init(mod);
+> > >> diff --git a/kernel/panic.c b/kernel/panic.c
+> > >> index d8635d5cecb2..794c443bfb5c 100644
+> > >> --- a/kernel/panic.c
+> > >> +++ b/kernel/panic.c
+> > >> @@ -497,7 +497,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+> > >>  	TAINT_FLAG(CPU_OUT_OF_SPEC,		'S', ' ', false),
+> > >>  	TAINT_FLAG(FORCED_RMMOD,		'R', ' ', false),
+> > >>  	TAINT_FLAG(MACHINE_CHECK,		'M', ' ', false),
+> > >> -	TAINT_FLAG(BAD_PAGE,			'B', ' ', false),
+> > >> +	TAINT_FLAG(BAD_PAGE,			'B', ' ', true),
+> > >>  	TAINT_FLAG(USER,			'U', ' ', false),
+> > >>  	TAINT_FLAG(DIE,				'D', ' ', false),
+> > >>  	TAINT_FLAG(OVERRIDDEN_ACPI_TABLE,	'A', ' ', false),
+> > > 
+> > > Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> > > 
+> > > For our needs this makes sense, however I am curious if TAINT_BAD_PAGE
+> > > is too broadly generic, and also if we're going to add it, if there are
+> > > other mm uses for such a thing.
+> > 
+> > I'm not sure BAD_PAGE is a good fit. If there was a new flag that meant "a
+> > hardening measure failed", would that have other possible uses? The
+> > semantics would be that the kernel self-protection was weakened wrt
+> > expectations, even if not yet a corruption due to attack would be detected.
+> > Some admins could opt-in to panic in such case anyway, etc. Any other
+> > hardening features where such "failure to harden" is possible and could use
+> > this too? Kees?
 > 
-> When building external modules for powerpc,
-> arch/powerpc/lib/crtsavres.o is required for certain
-> configurations. This artifact is missing the prepended $(objtree).
+> Yeah, it could certainly be used. The direction the hardening stuff has
+> taken is to use WARN() (as Linus requires no direct BUG() usage), and to
+> recommend that end users tune their warn_limit sysctl as needed.
+> 
+> Being able to TAINT might be useful, but I don't have any places that
+> immediately come to mind that seem appropriate for it (besides this
+> case). Hm, well, maybe in the case of a W^X test failure? (I note that
+> this is also a "safe memory permission" failure...)
+> 
+> How about TAINT_WEAKENED_PROTECTION ? Or something that carries that
+> idea?
 
-FYI, the issue resolved here breaks the build of LTTng-modules against
-recent kernels on powerpc. I would gladly welcome upstreaming of this
-fix into the Linux kernel.
+It's different, but hw poison [0] already has policies for running into poisoned
+pages through MCA recovery, there are a few sysctl knobs to tune this,
+for example vm.memory_failure_recovery set to 0 will panic on a hw
+poison page.
 
-Thanks!
+A hw poison event without a panic seems like a possible use case for
+such a taint TAINT_WEAKENED_PROTECTION?
 
-Mathieu
+[0] https://github.com/torvalds/linux/blob/master/Documentation/mm/hwpoison.rst
 
-> 
-> Fixes: 13b25489b6f8 ("kbuild: change working directory to external module directory with M=")
-> Acked-by: Masahiro Yamada <masahiroy@kernel.org>
-> Reviewed-by: Nicolas Schier <n.schier@avm.de>
-> Tested-by: Nicolas Schier <n.schier@avm.de>
-> Signed-off-by: Kienan Stewart <kstewart@efficios.com>
-> ---
-> Changes in v2:
-> - Added Review-by/Tested-by/Fixes/Acked-By
-> - Removed mention of possible work-around for external modules (while
-> the build will pass, `make modules_install` will fail)
-> - Link to v1: https://lore.kernel.org/r/20250127-buildfix-extmod-powerpc-v1-1-450012b16263@efficios.com
-> ---
->  arch/powerpc/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-> index f3804103c56ccfdb16289468397ccaea71bf721e..9933b98df69d7f7b9aaf33d36155cc61ab4460c7 100644
-> --- a/arch/powerpc/Makefile
-> +++ b/arch/powerpc/Makefile
-> @@ -58,7 +58,7 @@ ifeq ($(CONFIG_PPC64)$(CONFIG_LD_IS_BFD),yy)
->  # There is a corresponding test in arch/powerpc/lib/Makefile
->  KBUILD_LDFLAGS_MODULE += --save-restore-funcs
->  else
-> -KBUILD_LDFLAGS_MODULE += arch/powerpc/lib/crtsavres.o
-> +KBUILD_LDFLAGS_MODULE += $(objtree)/arch/powerpc/lib/crtsavres.o
->  endif
->  
->  ifdef CONFIG_CPU_LITTLE_ENDIAN
-> 
-> ---
-> base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
-> change-id: 20250127-buildfix-extmod-powerpc-a744e1331f83
-> 
-> Best regards,
-> -- 
-> Kienan Stewart <kstewart@efficios.com>
-> 
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+  Luis
 
