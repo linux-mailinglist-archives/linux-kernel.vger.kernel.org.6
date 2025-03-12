@@ -1,120 +1,106 @@
-Return-Path: <linux-kernel+bounces-557561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5A7A5DACF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:47:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 472B5A5DAC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:46:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC06179DD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:47:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C87EE3B27B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9D223E352;
-	Wed, 12 Mar 2025 10:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F73244E8C;
+	Wed, 12 Mar 2025 10:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MR41h2J8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="scQeckOr"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E7C2417FA;
-	Wed, 12 Mar 2025 10:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73B3243956;
+	Wed, 12 Mar 2025 10:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741776264; cv=none; b=r2YXd3z2qgNmIBYb4tCtObo0noLNBq7HpWh5MWDOI5RFzd2KZiZRukKmLWVsyde3cD9BqN2SCCRAXTBPm2rHV5A7WXiK/RUSPiNrzi1XcPbCUZAndBvSVmMrK/0Vwtu3mkIYHmuZzov/EBN0fsuNBjTmAXUZryGCJfKiGPj5lFI=
+	t=1741776250; cv=none; b=Lzq4IDvbjwsmfPfa4P6YE4X0Pn7lMjpWdxaV+J3KioJHl51MrQLJ1mUhxlRnO04srbRuqqH5cfRW9V2k/ucHu3CAuQ0Jx/P1CMzJqkaXdkyrg10GVLVlXY6qeZrhDXahMBKt9Gd+axbjEEW0QXSmlHmd4U9D127lEM3uTC+yNjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741776264; c=relaxed/simple;
-	bh=5Z9DCT9kmA5zGGr2AtOLJ1x0i0Yi2zFP/1NJpEtBiUA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XJz0hPP0StsU1wrEPI792ih6Bcj80BSTzxytNUlREzAgB2Pj5BB1HP9BUfqgsnnFHzEgifQNs4INmp3MpKit5JHMiFH7I9hpUA355mW0y+md6+tg9+rcekGfSZO51xpfhcu0SkQVsdKvDDMWRrpwNKW2OMaT+LfkQ/dzS9uQFkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MR41h2J8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52C9ls0g013947;
-	Wed, 12 Mar 2025 10:44:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=6J7aMHvgfGI26N7jsDed/Tmee/bXJyys35uwHP5Quqc=; b=MR
-	41h2J8ULys5aoZ7U5bcXZlAcmuEzy2WXnxGxt22ypBk44in/Gi8r7Lbo9MQRf4Ie
-	O/0JLmw9/PnaCUChVCfoj3aNYMQPcLUP0j/a9ENvk4RdBb5Z4fQe8ER/Yjfy42Aa
-	ZTzJTY2ws++aRqUOfV/dd1pGANohx6jeFRJfkY9BuECSrQAV3fwZRBf5j0LEmhSZ
-	8d84HfXBtHdtxqg6u16DRzUGBcX0axk0D/1ZKa7pkHFyr5lle5U+vIW+h8V41TmW
-	uKSx3mSojCw9XgPgBrRuNglOTeAVdL/I1epSR8kdcgImEQj32cehMogDnipSs2/G
-	wo1J/XS3vzPMWf6A59NA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2p22e1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 10:44:20 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52CAiKiX026985
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 10:44:20 GMT
-Received: from hu-jseerapu-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 12 Mar 2025 03:44:16 -0700
-From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_msavaliy@quicinc.com>,
-        <quic_vtanuku@quicinc.com>
-Subject: [PATCH v1] arm64: dts: qcom: sm8750: Correct clocks property for uart14 node
-Date: Wed, 12 Mar 2025 16:13:58 +0530
-Message-ID: <20250312104358.2558-1-quic_jseerapu@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1741776250; c=relaxed/simple;
+	bh=6Dkt5/w7zBMDrhoHG67V8PcHxk6Y3k5mfkUJzlw5VoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPowUR5JP0ygmrQRj9klwbgYG434RZsTiRwkEO0XnxHQmuV7FXthIUfZPad1QcS9u94etnwfyf0wRx2GGz0DSuadM76jRSosofbPXdHa9fKv0iKeHLCBN5CsKkQpVdhbft4UYgxXufWBMMAA0kK51Q10TUdQR9Jl2JNnODyWk64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=scQeckOr; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=qR4Hm7WDZNeUufbu+QjLgwRPhKliBqhVccVeF6ofnsQ=; b=scQeckOrG+UkeHEF+ATM6U0yUY
+	WsuAVF3H1/pUTbvc/551syNu4FQS6LX9cV0YQYuydwQP/gCC4Asx4n+fRhfAJCIV/RGfGij3hLW78
+	fAzdZAaEDL7VKrpYjpJ+egVx65rkYNJNmXcgAe30eiPlzIxWSGI6H/wET1TxWi5PVnpIzjwLgjm+i
+	tYc+enZvjvTS4COA1CcMkENs3jvaIVqFGPiijEcE0GHaEhDOlLffrHla4cuMsvsoGlu1SuwaT4loK
+	PqHGj/zYqsJVVgEL+QLKLIQZuz0dJsSn8ayQ6CIdhjLcZfdv/YisKw3HgW4HeKY4wpvtTpr+ZSY1Y
+	I/dHv+lg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsJZB-0000000Cj9G-2buh;
+	Wed, 12 Mar 2025 10:44:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 38866300599; Wed, 12 Mar 2025 11:44:01 +0100 (CET)
+Date: Wed, 12 Mar 2025 11:44:01 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: mark.barnett@arm.com
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	irogers@google.com, ben.gainey@arm.com, deepak.surti@arm.com,
+	ak@linux.intel.com, will@kernel.org, james.clark@arm.com,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 3/5] perf: Allow adding fixed random jitter to the
+ alternate sampling period
+Message-ID: <20250312104401.GC9968@noisy.programming.kicks-ass.net>
+References: <20250307202247.648633-1-mark.barnett@arm.com>
+ <20250307202247.648633-4-mark.barnett@arm.com>
+ <20250311113128.GD19424@noisy.programming.kicks-ass.net>
+ <20250311113530.GA9968@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=ePkTjGp1 c=1 sm=1 tr=0 ts=67d16584 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=Q4-S5rRWIOGwMoE6wUMA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: nRmpPufG0V-xgK4RQuHDdlLOFrlEqu9G
-X-Proofpoint-GUID: nRmpPufG0V-xgK4RQuHDdlLOFrlEqu9G
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_04,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=768 phishscore=0
- mlxscore=0 malwarescore=0 suspectscore=0 impostorscore=0 bulkscore=0
- clxscore=1011 lowpriorityscore=0 spamscore=0 priorityscore=1501
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503120074
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250311113530.GA9968@noisy.programming.kicks-ass.net>
 
-Correct the clocks property for the uart14 node to fix UART functionality
-on QUP2_SE6. The current failure is due to an incorrect clocks assignment.
+On Tue, Mar 11, 2025 at 12:35:30PM +0100, Peter Zijlstra wrote:
+> On Tue, Mar 11, 2025 at 12:31:29PM +0100, Peter Zijlstra wrote:
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index b87a5ac42ce2..e5a93edf3b5f 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -8,6 +8,7 @@
+> >   *  Copyright  ©  2009 Paul Mackerras, IBM Corp. <paulus@au1.ibm.com>
+> >   */
+> >  
+> > +#include "linux/random.h"
+> >  #include <linux/fs.h>
+> >  #include <linux/mm.h>
+> >  #include <linux/cpu.h>
+> 
+> Argh, this is neovim trying to be 'helpful'. If anybody reading this
+> knows how to make it stop adding headers, please let me know, its
+> driving me nuts.
 
-Change the clocks property to GCC_QUPV3_WRAP2_S6_CLK to resolve the issue.
+Adding this cmd thing to the lspconfig like so:
 
-Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sm8750.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+require 'lspconfig'.clangd.setup() {
+	cmd = {
+		"clangd",
+		"--header-insertion=never",
+	},
+}
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-index 3bbd7d18598e..9f23a07d0080 100644
---- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-@@ -987,7 +987,7 @@
- 
- 				interrupts = <GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>;
- 
--				clocks = <&gcc GCC_QUPV3_WRAP2_S5_CLK>;
-+				clocks = <&gcc GCC_QUPV3_WRAP2_S6_CLK>;
- 				clock-names = "se";
- 
- 				interconnects =	<&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
--- 
-2.17.1
-
+seems to do the trick.
 
