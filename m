@@ -1,240 +1,89 @@
-Return-Path: <linux-kernel+bounces-557824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484DEA5DE46
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:44:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1326DA5DE4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:45:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1AD63B7649
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:44:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3877A7A16B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD042459C2;
-	Wed, 12 Mar 2025 13:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D8724A071;
+	Wed, 12 Mar 2025 13:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="D9ogUIlD"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nnPbfcl/"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC95226861
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F039C42A82;
+	Wed, 12 Mar 2025 13:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741787065; cv=none; b=qwqzJgKmhD+jxqa8A+hp7yeHz4tDw2qoPrYJP8Mt/pieifZjqDWFQ5pRP+A7OehULMVDbYVHecC3XbCnrSizze7Be9iTxLsHraQIawr6sG7ZzSGEL99uY3hnkE6LJ19XGYGmylDV8pineSPDfgRyL5bg8TAcNDWhT22x8XM8Q7A=
+	t=1741787115; cv=none; b=oSG14+jwrjW/cgELILXJIlXbWrVwbxLBTjZ0zHAZ+FIEVKF9AZlhACfJJJj/IwwHApnAbejKuCY285GEuUI8nVidslVfd6lrwkLUuhn7f+pTUxQ9j9GxxQFHqaeZVirxgIB6/gddp+uV5fH2amIZrmgWdlsCXThLfNWQYzUAX0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741787065; c=relaxed/simple;
-	bh=CKwh8bZGL2+vYB9JbuDSLBR7JG4l/p3BknAMciDF/TI=;
-	h=Message-ID:Date:MIME-Version:From:To:CC:Subject:Content-Type; b=ApFobYl5MrFyaaQuQj45BCQ3pPEH67vUsqiT+hQhbSG/SCS98r/GQcP6q0YFAii5dIXhDB7Tb9vjT6z6UQg5qe2aGIaZDGi721dIWuasIyVOX/pOC67JX1sbex3ic3fJk3ldN7DNi+VrDTE2VPi1OFeoTSUzNpnDZHXC1sn4dKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=D9ogUIlD; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52CDi1fd1043814
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Mar 2025 08:44:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741787041;
-	bh=2jVIV9DnO8Fj9z+Rk95dAiuUSZ3yPdEOI3Ck8BUljhc=;
-	h=Date:From:To:CC:Subject;
-	b=D9ogUIlDfQdlamfPolhwo+7G5hsowQGDbE3nVWbU/np0DpoQ5ynpV2GEmVz4CMiIz
-	 brMrHGxM32VEr8YYxpxBTI32Yjh8DmB8OwR9u3CkVj8nDk5GeiOm2YoT0Ps3oKioso
-	 Cd3bemEh3wzB3nUboWgEDFplrg9Ulc/rCm/R05Ng=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52CDi1Mw107874
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Mar 2025 08:44:01 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
- Mar 2025 08:44:01 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 12 Mar 2025 08:44:00 -0500
-Received: from [10.24.68.192] (dhcp-10-24-68-192.dhcp.ti.com [10.24.68.192])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52CDhwc0054596;
-	Wed, 12 Mar 2025 08:43:59 -0500
-Message-ID: <5d612c0e-4cd4-469a-9856-dd4552d74412@ti.com>
-Date: Wed, 12 Mar 2025 19:13:57 +0530
+	s=arc-20240116; t=1741787115; c=relaxed/simple;
+	bh=4HAhK6US9YpNBFYaYDKcncY7tvv/cqOdDvxd9JID8Uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vDxUuEjw800RYfrm0ngQLa/2vPaRt4uw1MvzNJfyxQ68J1vMpa0PyHAKubg+6wxq1UqYIfVAFWU0WUgjZ65RFcJMhh4FCz2j08UMb8Wt7DVRVB1xHXy2Cy9tMMJFCleOPuTANCTp7B+moZhlKUMbfJMcMxcUmzLqDOQPnE28ugk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nnPbfcl/; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mIH+fIUpb4z14XLHnYSwL/PB/xBu/Oavn7NhiKaNRus=; b=nnPbfcl/JjzVTpEx8LURT5nSKQ
+	k4uhb+XrcpQZD3Q3aE3nwvl8B/48TLJGDtzEvuIJW0n2ikKGtbNuu1Pp6erFa8sO42hDXcsaQcPmZ
+	SSMZClF1BgjfoIygwpKflWJfZ3ObOK5gLUDb8kndMdBGD2QnXVbvqf37hQge2omBtE0Pn1uIfjjLP
+	u0Zu6nDy73/7RKXiHwoQJ0hBNCcYrVeuvskDmT2Smwc2qtpEsVWxmbDRU0nOwk8WiA/O6u61W0DeB
+	TJNvcbsU5cVAjTscbk6X9CmtSii24BCOwrvCMhNH+COZzwGVuqzjVxaOMYyNVvcTi0h9FF13dwTnO
+	sum7AIbA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsMOW-00000008by9-0y8J;
+	Wed, 12 Mar 2025 13:45:12 +0000
+Date: Wed, 12 Mar 2025 06:45:12 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
+	djwong@kernel.org, cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v5 09/10] xfs: Allow block allocator to take an alignment
+ hint
+Message-ID: <Z9GP6F_n2BR3XCn5@infradead.org>
+References: <20250310183946.932054-1-john.g.garry@oracle.com>
+ <20250310183946.932054-10-john.g.garry@oracle.com>
+ <Z9E679YhzP6grfDV@infradead.org>
+ <4d9499e3-4698-4d0c-b7bb-104023b29f3a@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm-soc
-	<arm@kernel.org>, SoC <soc@kernel.org>
-CC: Tero Kristo <kristo@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>
-Subject: [GIT PULL 1/2] arm64: dts: ti: K3 devicetree updates for v6.15
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d9499e3-4698-4d0c-b7bb-104023b29f3a@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi ARM SoC Maintainers,
+On Wed, Mar 12, 2025 at 08:05:14AM +0000, John Garry wrote:
+> > Shouldn't we be doing this by default for any extent size hint
+> > based allocations?
+> 
+> I'm not sure.
+> 
+> I think that currently users just expect extszhint to hint at the
+> granularity only.
+> 
+> Maybe users don't require alignment and adding an alignment requirement just
+> leads to more fragmentation.
 
-
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
-
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git tags/ti-k3-dt-for-v6.15
-
-for you to fetch changes up to 377fde74eae4abcbcd5475676d58fb595a07ff85:
-
-  arm64: dts: ti: k3-am62a-phycore-som: Reorder properties per DTS coding style (2025-03-07 18:48:05 +0530)
-
-----------------------------------------------------------------
-TI K3 device tree updates for v6.15
-
-Generic Fixups/Cleanups:
-
-SoC Specific features and Fixes:
-AM62Ax:
-Enable MCU domain pinctrl node
-
-J784S4/J742S4:
-GICD reg size fixes
-Serdes lane ctrl reg mux mask fix
-
-AM62P/J722s:
-Wakeup UART0 sysc updates for system wakeup
-pinctrl node fixes drop pinctrl-single,gpio-ranges
-BCDMA CSI-RX support
-Audio REFCLKx output support
-
-Board Specific:
-J784S4:
-EVM: Cleanup duplicate gpio-hogs
-
-J722S:
-TypeC port mux selection fix
-
-AM62Ax
-SK: boot-phase tag to support USB bootmode
-RTC support
-Aliases for wakeup and MCU serial UARTs
-
-AM62P
-SK: boot-phase tag to support USB bootmode
-USB wakeup support
-Aliases for wakeup and MCU serial UARTs
-
-AM62:
-verdin-dahila: microphone support
-SK: Aliases for wakeup and MCU serial UARTs
-BeaglePlay: reserved CMA region for Multimedia applications
-
-J721e:
-SK/EVM: boot-phase tags for Serdes for DFU boot
-
-Phytech board updates:
-Boot-phase tag updates for AM64/AM62/AM62A boards
-DTS coding style cleanups
-RTOS IPC reserved-memory additions
-DT overlay for X27 Connectors on AM64 SOMs
-
-J721S2 SOM:
-Add flash partitions
-
-----------------------------------------------------------------
-Daniel Schultz (1):
-      arm64: dts: ti: am64-phyboard-electra: Add DT overlay for X27 connector
-
-Francesco Dolcini (1):
-      arm64: dts: ti: k3-am62p: Enable AUDIO_REFCLKx
-
-Hrushikesh Salunke (1):
-      arm64: dts: ti: k3-j722s-evm: Fix USB2.0_MUX_SEL to select Type-C
-
-Jayesh Choudhary (1):
-      arm64: dts: ti: k3-j784s4-evm-quad-port-eth-exp1: Remove duplicate hogs
-
-Keerthy (1):
-      arm64: dts: ti: k3-j784s4-j742s2-main-common: Correct the GICD size
-
-Markus Schneider-Pargmann (2):
-      arm64: dts: ti: k3-am62x-sk-common: Add serial aliases
-      arm64: dts: ti: k3-am62a7-sk: Add serial alias
-
-Michael Walle (2):
-      arm64: dts: ti: k3-am62p: fix pinctrl settings
-      arm64: dts: ti: k3-j722s: fix pinctrl settings
-
-Nishanth Menon (1):
-      arm64: dts: ti: k3-am625-beagleplay: Reserve 128MiB of global CMA
-
-Sai Sree Kartheek Adivi (1):
-      arm64: dts: ti: k3-am62a-mcu: enable mcu domain pinmux
-
-Siddharth Vadapalli (6):
-      arm64: dts: ti: k3-am62a7-sk: Add boot phase tag for USB0
-      arm64: dts: ti: k3-am62p5-sk: Add boot phase tag for USB0
-      arm64: dts: ti: k3-j721e-common-proc-board: Add boot phase tag to SERDES3
-      arm64: dts: ti: k3-j721e-sk: Add boot phase tag to SERDES3
-      arm64: dts: ti: k3-am62p5-sk: Support SoC wakeup using USB1 wakeup
-      arm64: dts: ti: k3-j784s4-j742s2-main-common: Fix serdes_ln_ctrl reg-masks
-
-Stefan Eichenberger (1):
-      arm64: dts: ti: k3-am62-verdin-dahlia: add Microphone Jack to sound card
-
-Udit Kumar (1):
-      arm64: dts: ti: k3-j721s2-som-p0: Add flash partition details
-
-Vaishnav Achath (3):
-      arm64: dts: ti: k3-j722s-main: Add BCDMA CSI overrides
-      arm64: dts: ti: k3-j722s-main: Add CSI2RX nodes
-      arm64: dts: ti: k3-j722s-evm: Add camera peripherals
-
-Vibhore Vardhan (3):
-      arm64: dts: ti: k3-am62a7-sk: Add alias for RTC
-      arm64: dts: ti: k3-am62p-j722s-common-wakeup: Configure ti-sysc for wkup_uart0
-      arm64: dts: ti: k3-am62p5-sk: Add serial alias
-
-Wadim Egorov (7):
-      arm64: dts: ti: k3-am64-phycore-som: Reserve RTOS IPC memory
-      arm64: dts: ti: k3-am62-phycore-som: Reserve RTOS IPC memory
-      arm64: dts: ti: k3-am62x-phyboard-lyra: Add boot phase tags
-      arm64: dts: ti: k3-am62a-phycore-som: Add boot phase tags
-      arm64: dts: ti: k3-am642-phyboard-electra: Add boot phase tags
-      arm64: dts: ti: k3-am642-phyboard-electra: Reorder properties per DTS coding style
-      arm64: dts: ti: k3-am62a-phycore-som: Reorder properties per DTS coding style
-
- arch/arm64/boot/dts/ti/Makefile                               |   3 +
- arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi               |  25 +-
- arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi             |   6 +-
- arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts                |   8 +
- arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi                      |   1 -
- arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi              |  19 +-
- arch/arm64/boot/dts/ti/k3-am62a7-sk.dts                       |   4 +
- arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi         |   8 -
- arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi      |  36 +-
- arch/arm64/boot/dts/ti/k3-am62p-main.dtsi                     |  26 +-
- arch/arm64/boot/dts/ti/k3-am62p5-sk.dts                       |   4 +-
- arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi            |   9 +
- arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi                |   2 +
- arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi               |  33 +-
- arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts      |  19 +-
- .../ti/k3-am642-phyboard-electra-x27-gpio1-spi1-uart3.dtso    |  63 +++
- arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts         |   1 +
- arch/arm64/boot/dts/ti/k3-j721e-sk.dts                        |   1 +
- arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi                  |  41 ++
- arch/arm64/boot/dts/ti/k3-j722s-evm.dts                       |  30 +-
- arch/arm64/boot/dts/ti/k3-j722s-main.dtsi                     | 208 +++++++++-
- arch/arm64/boot/dts/ti/k3-j784s4-evm-quad-port-eth-exp1.dtso  |   7 -
- arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi      |   6 +-
- 23 files changed, 488 insertions(+), 72 deletions(-)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-x27-gpio1-spi1-uart3.dtso
--- 
-Regards
-Vignesh
-https://ti.com/opensource
+But does it?  Once an extsize hint is set I'd expect that we keep
+getting more allocation with it.  And keeping the aligned is the concept
+of a buddy allocator which reduces fragmentation.  Because of that I
+wonder why we aren't doing that by default.
 
 
