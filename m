@@ -1,116 +1,144 @@
-Return-Path: <linux-kernel+bounces-557387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4D8A5D83E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:32:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F4FCA5D841
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:32:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80C321789D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:32:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219F13A8E93
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07E1235377;
-	Wed, 12 Mar 2025 08:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42CA78C9C;
+	Wed, 12 Mar 2025 08:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Le1U6ds3"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="csE6gA/u"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E879233D85
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F0D1E51FF;
+	Wed, 12 Mar 2025 08:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741768324; cv=none; b=rpDiViuxh0YA/0EnAplEmkc7ksrAIQ9LnGn/sfR02QA0j40/Ty1ZeR3a1yqqwPSHRRpBVUYBuRBPFISfCuEy0VyCVKRsBWiF4uWjTHlJOu+czgKTPPgmRJupyj2GXMnqkLs8Erp1M2UyC01yg/o94P4N6BXPz48/8azvMcNZyLk=
+	t=1741768350; cv=none; b=IrGr/saNHkdPEAdqrzpfmM3j++MYrb37ZlnbjzbGV4Z7u4edeZe0Wy/fhrKgzJvN80NFn7UgxaRuJDQ675v259gha+x3j/e8y9AoqvM74HXnVT0X/lmfFjbMNIRMoa1KB1isHmwaj+RkdpqSE+B7nhAvy84dMtxG8tK+V51Bzd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741768324; c=relaxed/simple;
-	bh=womKgPEIT9EPwHvn/d7tEBavuKDefTq2w7cv1JqJo10=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bmqNUag/8lCYDkr7XozoISIj9Y9cny4CExJjdOsQOWsK5ZYz+RMxt1DeO5zxiVaqO/TxjcyaPM0RaYzxKzchUKKZBciN7WfxnuRg0LLOv2a8UYr6xPrbhkzyNRtsLFFLtYjV3LG17oaXyh7L7QVmIHnlBZRpziwcZTOnz5w364A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Le1U6ds3; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43690d4605dso39362245e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 01:32:01 -0700 (PDT)
+	s=arc-20240116; t=1741768350; c=relaxed/simple;
+	bh=t9CYB8U5Os/bGYTSKRMxXDSQepk6By7ZinPPl4aXtz0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nh04h7z39Yws0gnPG42mdgTkVvlthhDxxPER27+t8UdguK+Xw+HjNVPI72F0B/5y81y+/Pd6uE59E+HpuDDzW7QGVHAKjEXZOh9F+dlrozfbxF0dQCvTUgvMOUc3kkZHzbvleUZEvCUga0r15zqImtTdQK4fvP/Jp+LAd2nk96c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=csE6gA/u; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bf8632052so49755981fa.0;
+        Wed, 12 Mar 2025 01:32:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741768320; x=1742373120; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZEv6giHm6T/LYVWvdNBEPXKv/Lj/EjidI+nVqaZEF3I=;
-        b=Le1U6ds3OByim1KX+KsYcBV0nC8IrhcoiAmLnIj6dgUvE7kggJMijxcohvAWLFXhd6
-         y5YzDrOdNeoiESvnoBmg3IXnSH4hIV/92b8M82ypcMaMiUTxmIEfSl5HWs2pFgGUdKcd
-         W50BWXEH87p+vUxWS+VrAUxM5WS2/soN6WhVEvkIVINYqWZdxjpGdSwesWtxbbEZVw+J
-         BFpeCDub8VTPgAk6EQviwICPpMh0/shkp9TC0qkunb/nWXhswapJ/DYShlbYKPHOyU7X
-         9ysfBqd8ZUCw5WRfyfpd23XiCcae4pze6SmsaQZKwqbdywrVKuCHbJ1/cu0e6zaxk3W1
-         nfEg==
+        d=gmail.com; s=20230601; t=1741768346; x=1742373146; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aQ7pWITWpXwP4dEm+H67RimJByEFVAXCVOS5uvWUZRQ=;
+        b=csE6gA/u2WuBBWKNghONaJ31mfaWfzT1Ljwb62/Kk1uczWNnpFHfX3xuQGnpVheuUp
+         rqhN27FHcWIryLDFBfK4SXD8MRQjXrEEN5fhMhYxmZO5DiOjlIzflHUGrsjQ7c5rceeu
+         CwRCQkqSol6QGDti+bYhlmbAM8jMRzAHGYQUtXNXZof1n023sngMzSQPa4df/ZRhDpFk
+         U0QzA81RjTMjr6MePnrUWyQ2t6WtuM8ncZ7m2AotmV/AY9F/EWVAoNx+xQO0QnL6oY6I
+         CbB8KwmTLHP+1SgqeXcurYa/zC6jA3cL0mIsNCgHKuSK8cKbwggPAl+Vt8wCmY9SSAqG
+         e82g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741768320; x=1742373120;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZEv6giHm6T/LYVWvdNBEPXKv/Lj/EjidI+nVqaZEF3I=;
-        b=rR8RZyEFDglYSXC8FuBdznlpNqXpnrn3m0Y+RB2ROJhX7hjKEK0xV2Gwv+WTAmJDdb
-         vQ4DKyY029XiyR7M7h5Y9zTigjg/ZAgM/oyX1xt42zN1Q6hUWX7c1DJ+qB7PEDOO6bb5
-         0rvTMFz9cmiSJEUIQOgb/h4GXgYCNfzVvX5btuHgb8o2LSBLuFXaVUg10W0cLsM9oGt6
-         4DbNEabYqiQiF7xXWE3g+Uw3OcW/I9lBKhI9uPO6MDNoP4G5BdPNmPScS0lHGKHBW9Xs
-         191djuu2x7rcf7rPWMxoGAhAi4HRy9EANFUkrYWfJ/fDE4eIZLqTGee8ZXkapUmGZZlT
-         uSZA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8wxEGosyQUmR0naeu1LmKVXZtNYTODjxGLJjerv6suL16Nejz+weUAPjzfzngc3ybY49v5NVixQulKxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2BPSzE3DvJKjZeRffvntcKKVn2IwnpTamiF6AvmhGjdJZ2Q86
-	/4nUcFW0wUiIYQFHtm9sEVQyW90SxOO1HVl7YvGNIsspIXYInUPOUdZPTXOqfLI=
-X-Gm-Gg: ASbGncv0gjymdGnPwEefAat+K3fEgVz2rnpwwoAR/XVLSVbYaywZ6t0JEPjWUXnyDyA
-	QCCoKMyt/bYRhXguVQI8UK34QRMbN69oKfTyeoWVG97/yqwd6lSlHV3Tu+N3k0ebVwg7U/DNX+7
-	PMkjTW1j/+m61jow6HDuceAZx/6CAxWJeRco30sO6ChE/tr86wTpwId8IQBjfoKDc6SBqAi/EA4
-	IrjHYq2V2jVdQyXwUCfb47RvYoNcTKkIapj7aAh1NglOrwVaMm8zdRNIIQySfgQURfFb7VIl+ls
-	GD5IpolrMqUPOIncsPuCJ5n4xBGjsCypEDI/HTZBrH28Q6q/Vg==
-X-Google-Smtp-Source: AGHT+IEKC0UilnD8jhLQLusELnZkfDUTC5jmF/RjVLX0yHm2cONnPd8ZMZIZ6muxPlcdhALj4OaMng==
-X-Received: by 2002:a05:6000:1fa9:b0:390:fc83:a070 with SMTP id ffacd0b85a97d-39132b64eadmr18012730f8f.0.1741768320619;
-        Wed, 12 Mar 2025 01:32:00 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c103035sm20021324f8f.88.2025.03.12.01.31.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 01:32:00 -0700 (PDT)
-Date: Wed, 12 Mar 2025 11:31:57 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Sanket Goswami <Sanket.Goswami@amd.com>,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] platform/x86/amd/pmc: fix leak in probe()
-Message-ID: <65e2fffb-a1cb-4297-b725-661d6b790a05@stanley.mountain>
+        d=1e100.net; s=20230601; t=1741768346; x=1742373146;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aQ7pWITWpXwP4dEm+H67RimJByEFVAXCVOS5uvWUZRQ=;
+        b=k1XjovDuroEnQr8F/eMmpzRw2y04+RlOUyOMp6vCUQFwrZ7m8iTcGgeVCqb2ukUKoe
+         SzMlPiU2XkP14AjUvmXz1MJMAGyVzsZFiDOG/9HLhPavo37fbj/McWlaD7ZCJvFz7WEW
+         HwFKmXqYXjlwwHnuua28xzgTZQVFXmuxtMWCI28JwY+sFLMcX1C+n9ZnuJekpZU/dMUm
+         xwQPPJnd31/WbYIdeCkK09ow/9u72jdyH0OCE14IE7cjBfXVeIqGEhyQnIImp1b2fzFp
+         ODgjsbxBfMoqBwacT72a4cIktXQ0AAJ9wG6cKeGdviMxRbcS2t383sYV9Hmgi53Z99Tr
+         uv6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVpjt2+3KxNJem1CfCMseaRqVhP1b7m+xiuEyrve+Px+BX3fgf5cQ2W+T6qLW9X7o8Iq5x2KtmlzZ66KnI=@vger.kernel.org, AJvYcCWcJBW/hz8Cp+T4EChY4NLwl2/d8UX6PDawXJbnUq5tuWdeMJ7nr9PqrKDwQDk4sG1sNlCkUaiKrRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw96GR7yUus28I0FL4Tq9uwFabnHt9s7vWTVmA9ZtykvREnnhFE
+	1I36m9FIiLuBtCiHDRtW23hGPV5TlRUZTob1ty6xJNqVTmU45TO1JPM8aEJTeNysLTYK4cT5SoT
+	KjKDxYbCdie8abn7vJwNK9xXdrVK2rYu3
+X-Gm-Gg: ASbGncud0DjeHbgp+X/GZ2VG73DVHWsFpm/sYP8QCoQE1sjCIZDl/w6rU8L0aol6fzI
+	QZfXFuEOl+Ti85Z77oF7PAPxF12sMmd0mEmp03a89nkc0OFApbmGKOymrhDSrx8fK8V41YsZh7x
+	GAMgKLoGfrVH0CnkZof2o88ruLpg==
+X-Google-Smtp-Source: AGHT+IEMghVBMsvYxOQMaSAkUCPF5bF/h1DiGXhdVu3Z6yfwYlHoNEYp8M8LQVrLaqAwhw2ziPmEfKx0v0w3+Aodjwc=
+X-Received: by 2002:a2e:b951:0:b0:309:bc3:3a71 with SMTP id
+ 38308e7fff4ca-30bf4615855mr49337871fa.31.1741768346151; Wed, 12 Mar 2025
+ 01:32:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <20250216175545.35079-1-contact@artur-rojek.eu>
+ <20250216175545.35079-2-contact@artur-rojek.eu> <5365422a9715376c76a89e255c978fc39064e243.camel@physik.fu-berlin.de>
+ <433bc8a0732bf8a63c64c4bf0e6ad4a7@artur-rojek.eu> <967e29681c8bc39edfdd9c645d943f17d341c2ae.camel@physik.fu-berlin.de>
+In-Reply-To: <967e29681c8bc39edfdd9c645d943f17d341c2ae.camel@physik.fu-berlin.de>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Wed, 12 Mar 2025 09:32:33 +0100
+X-Gm-Features: AQ5f1JqnAQyBOtz35IOkl2Urm5_Ic9EueI3kLaA4FpN2SSqzBtjC3Jdras_yycU
+Message-ID: <CAFULd4b8+HsmJC2XkW50pxtw=fHNrL9gH1_WM90jh+rfLCbSHw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] sh: align .bss section padding to 8-byte boundary
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Artur Rojek <contact@artur-rojek.eu>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	"D . Jeff Dionne" <jeff@coresemi.io>, Rob Landley <rob@landley.net>, linux-sh@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Call pci_dev_put(rdev) before returning.
+On Wed, Mar 12, 2025 at 9:22=E2=80=AFAM John Paul Adrian Glaubitz
+<glaubitz@physik.fu-berlin.de> wrote:
 
-Fixes: 6ad1b2dc0f2a ("platform/x86/amd/pmc: Use managed APIs for mutex")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/platform/x86/amd/pmc/pmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > In the original BSS_SECTION(0, PAGE_SIZE, 4), the last argument inserts
+> > a 4 byte padding after the closing brace of .bss section definition,
+> > causing the __bss_stop symbol offset to grow, but not the .bss section
+> > itself:
+> >
+> > #define BSS_SECTION(sbss_align, bss_align, stop_align)                 =
+       \
+> >       . =3D ALIGN(sbss_align);                                         =
+ \
+> >       __bss_start =3D .;                                               =
+ \
+> >       SBSS(sbss_align)                                                \
+> >       BSS(bss_align)                                                  \
+> >       . =3D ALIGN(stop_align);                                         =
+ \
+> >       __bss_stop =3D .;
+>
+> OK, that's really odd. So, the __bss_stop would be moved to the desired
+> position but the section itself still remains small? What exactly does th=
+e
+> linker fill the region with? Sounds very strange.
+>
+> > TurtleBoard loader is only concerned with the .bss section size - it
+> > doesn't care about any symbol offsets - and hence this seemingly crypti=
+c
+> > change (you can display the section size information with
+> > readelf -t kernel_image).
+>
+> Looking at the actual kernel image with readelf is a very good suggestion=
+!
+>
+> > The rest of the changes are simply to "inline" the BSS() macro (as I
+> > needed to access that closing brace), and the former sbss_align,
+> > bss_align (that's your PAGE_SIZE) and stop_align arguments are passed
+> > accordingly, the same way they used to be passed before. The only
+> > visible effect should be the move of ALIGN(stop_align) inside of .bss
+> > section definition, and the change of stop_align value from 4 to 8.
+>
+> OK. FWIW, do you understand what SBSS is for? I couldn't find any explana=
+tion
+> for it.
 
-diff --git a/drivers/platform/x86/amd/pmc/pmc.c b/drivers/platform/x86/amd/pmc/pmc.c
-index 84bc47009e5f..d789d6cab794 100644
---- a/drivers/platform/x86/amd/pmc/pmc.c
-+++ b/drivers/platform/x86/amd/pmc/pmc.c
-@@ -785,7 +785,7 @@ static int amd_pmc_probe(struct platform_device *pdev)
- 
- 	err = devm_mutex_init(dev->dev, &dev->lock);
- 	if (err)
--		return err;
-+		goto err_pci_dev_put;
- 
- 	/* Get num of IP blocks within the SoC */
- 	amd_pmc_get_ip_info(dev);
--- 
-2.47.2
+Small BSS section. The compiler can put data objects under a certain
+size threshold to the .sbss section. Looking at GCC sh config, sh does
+not use this section.
 
+Uros.
 
