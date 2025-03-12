@@ -1,109 +1,287 @@
-Return-Path: <linux-kernel+bounces-557166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90492A5D469
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:35:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7399EA5D46E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:36:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24B013B7547
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F54A189566E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF3018991E;
-	Wed, 12 Mar 2025 02:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E5F18D620;
+	Wed, 12 Mar 2025 02:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MjxyxJFP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UBKTnHgK"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38983566A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 02:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFB5566A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 02:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741746951; cv=none; b=QHKzfU+PUw1sR9LioGwSqorF098AmHT56mrc88qIpA61XaEDuV9QdFjZSOk/lP4BVtlYletowVpdmR9mm4K8PGv3uhzDhwC9TynqwvgiFGlwledzVUzYBJeFfxRioeQNJAasxKP4kNU2nilZn2A3eGYA2V3V33kW+KlMyom8C8k=
+	t=1741746967; cv=none; b=R1rsOr6JKUYfth5e+M9By2OhbllKE2nwyT0pQrDFr3haXLcUj21OSD9DLcPNXA8VUYXBk6M+JUCuytzh1owhoLL9kTDCRwKAm8XAmIMsFYAVdYJp/qeodSOOubUUsi8jcCe4hY0H8qoKWfAGNssCHVv+FEsocqVrdfX3gMVHUDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741746951; c=relaxed/simple;
-	bh=UEAHi17+ts4HOh04QR7v1Aa6611eN68qG1WScTXkm0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dL3A4SbgyZTnLCujAjx+aKg95LlKyyCyPHWYBa2PhG8T3Jl5bupueoxlFdIS1lO/MmjJyIsZ6NNIJtz8US0H91xXt3hnVOgLNcC2O25uqymy7RTnrjXNBslw3ee2cjQo4ZHVRt4BK3Ptra7MlvofH/c99i4RxHa2FeCrvSrzqQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MjxyxJFP; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1741746967; c=relaxed/simple;
+	bh=/Y6ryLM9U1SmUsI7JJnD4HP0YRU2PkTH5Sg0867JL9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NTk75N66eAM1Dg4M9W2IuaePLuUzfFibd7Fa1DqrSIqUpgN8mvhtLl7/fZmaig0B+QM9jD2QpEqP67FjaM+X3sWL3gKPdLf8ymTvJXQ/5n5WnvpReSzC0CfuUwgEQGc03lVAoEADsTJ9eMqTLoKZVxV0bre2muGmUbVt2/V+iVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UBKTnHgK; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741746948;
+	s=mimecast20190719; t=1741746964;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=B74DKmkBkIdJM4Sb1P0qf00X8M+idQpMzhYOiFT1AYY=;
-	b=MjxyxJFP2PTzoTF3d48X00yZfIjFh+0m0DCC8Jx8+5Cwub4JQnlJ9gR45PZc1fJGJx0NDD
-	nZxIjnG8s4k/5f8MzoL+XZhNZXUmcXNWyR5gp/TBPvYFxPEs890ra18NS8Py69V17pWPd9
-	htOVBoVQBv7EAmXHOlVf56qBLAL/biY=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-500-UgLV66XYOUyJX1HkQt1YGA-1; Tue,
- 11 Mar 2025 22:35:45 -0400
-X-MC-Unique: UgLV66XYOUyJX1HkQt1YGA-1
-X-Mimecast-MFC-AGG-ID: UgLV66XYOUyJX1HkQt1YGA_1741746944
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E5D7F180035C;
-	Wed, 12 Mar 2025 02:35:43 +0000 (UTC)
-Received: from [10.22.65.26] (unknown [10.22.65.26])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D8371195608F;
-	Wed, 12 Mar 2025 02:35:41 +0000 (UTC)
-Message-ID: <03e7cc64-fafd-405e-a07a-4bc6d0e1d743@redhat.com>
-Date: Tue, 11 Mar 2025 22:35:40 -0400
+	bh=n0Qdf6BCD5X+PG4UHFD0dZOYm8Xo5mFSwYaydb7HeOw=;
+	b=UBKTnHgKIbLGd8V1MqRmfjQpu44NykcsnPt/GA1ul5p23fi7g+foWI/4Px78fwQNaQ8CT9
+	2BJBQZVIh+Fa2X81PpIzuazK+YIt+d59QHFsO2Kx0/zo5iwYD5VlMXEjSwWucpSfZXz5Yq
+	ThQ5MxCAvpXMUAWoE38/Y2ZeYG8hJJg=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-52--Sx9o0hzNU6NBoExmqeVgQ-1; Tue, 11 Mar 2025 22:36:01 -0400
+X-MC-Unique: -Sx9o0hzNU6NBoExmqeVgQ-1
+X-Mimecast-MFC-AGG-ID: -Sx9o0hzNU6NBoExmqeVgQ_1741746961
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff5296726fso17352870a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 19:36:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741746961; x=1742351761;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n0Qdf6BCD5X+PG4UHFD0dZOYm8Xo5mFSwYaydb7HeOw=;
+        b=K77O7bK7B9yGf8inoNiCwRmqfrmWx/q/iGJVSGQHykYzOFlIH8vahgW9/WNppU+vWm
+         5q70p3uAmPpcb84L7HGnQ7JWpl4kCJ5lAWA1z1+sBQsaDfz3tJMy+owSZF4z/355Jaw6
+         zQYUu16YtRk0j2eM+1Aq6tH2P/IBLWPvum8/vShprPgia91ST7PwzE2rYrdOGeJopgi4
+         Fv6T5k7h41VDirzj9CCOVSk/gYKbHhA9I0OVjivXymklGcZoUb/ys6i2uSrEQhjExBck
+         qlKMhCpWSjemMLzhKNzdQEUo6r4+y8JLPV7M0eHRQY7NraOqs7KWtidcK9Lwdrvuk8fv
+         OQzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXdEnmP6Ht/nEDu6szuDwLAKvnGvk0VbZ+cLWy7LamVNqcNbrLL1Iyo5zOcwFKVxHRXoNqJ86tqopzvQT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxznZB+lZdo9S3bYZUtWd6JhznqBFRyAdi2RiWk5dTYg/8PKfNO
+	U0KfGOJ4dziqaGUxQ8hYAhsprB73Sm4NI0V20TbdBtA5botutejKTPMabfwarZQ0vFUDoZyo+fs
+	2SWRAieyXQooeMcU/MjpqkrnhWpGpIcxItV2q4Imv/Whp/+IHd72aeME9KmV7GFaT9TFXvaGto6
+	yhAgZG0q0Bwo7xH9UjobUOSGqZG3Y8geaLKsgd
+X-Gm-Gg: ASbGncvjFc9rOtLNhfiSHhF5JgPw2jwsD6Y/sBJeT/Ku0bLTyTo+ARmUJxRMNBchk0B
+	eMpM3qGbfqoL6Iqr9MQcqC6B8RjaLzcMB0pmHEtxztZBOaIHirs4kaslc2EWOqPESO8TMWw==
+X-Received: by 2002:a17:90b:3c8d:b0:2ee:7411:ca99 with SMTP id 98e67ed59e1d1-2ff7ce7b230mr27082197a91.1.1741746960592;
+        Tue, 11 Mar 2025 19:36:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHlLyYz8YJAVDNTXvlrIkZ+ah2U7LaY6qVBnKj82yTIAhQAQGr7mchFwjJakUBUDLzrmHkg5nzqFWCWqq/bzbU=
+X-Received: by 2002:a17:90b:3c8d:b0:2ee:7411:ca99 with SMTP id
+ 98e67ed59e1d1-2ff7ce7b230mr27082162a91.1.1741746960104; Tue, 11 Mar 2025
+ 19:36:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] nvme-multipath: add the NVME_MULTIPATH_PARAM config
- option
-To: Christoph Hellwig <hch@lst.de>
-Cc: kbusch@kernel.org, sagi@grimberg.me, loberman@redhat.com,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- emilne@redhat.com, bgurney@redhat.com
-References: <20250228032541.369804-1-jmeneghi@redhat.com>
- <20250228032541.369804-3-jmeneghi@redhat.com> <20250305143353.GB18526@lst.de>
-Content-Language: en-US
-From: John Meneghini <jmeneghi@redhat.com>
-Organization: RHEL Core Storge Team
-In-Reply-To: <20250305143353.GB18526@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20250307-rss-v9-0-df76624025eb@daynix.com> <20250307-rss-v9-3-df76624025eb@daynix.com>
+ <CACGkMEsNHba=PY5UQoH1zdGQRiHC8FugMG1nkXqOj1TBdOQrww@mail.gmail.com>
+ <7978dfd5-8499-44f3-9c30-e53a01449281@daynix.com> <CACGkMEsR4_RreDbYQSEk5Cr29_26WNUYheWCQBjyMNUn=1eS2Q@mail.gmail.com>
+ <edf41317-2191-458f-a315-87d5af42a264@daynix.com>
+In-Reply-To: <edf41317-2191-458f-a315-87d5af42a264@daynix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 12 Mar 2025 10:35:45 +0800
+X-Gm-Features: AQ5f1JpYZL86COIp0eU_jp91g3-ub-snbz3KyBvB3RDdU7-3JlIdfCetReW4Pdg
+Message-ID: <CACGkMEta3k_JOhKv44XiBXZb=WuS=KbSeJNpYxCdeiAgRY2azg@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 3/6] tun: Introduce virtio-net hash feature
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
+	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/5/25 9:33 AM, Christoph Hellwig wrote:
-> On Thu, Feb 27, 2025 at 10:25:39PM -0500, John Meneghini wrote:
->> The NVME_MULTIPATH_PARAM option controls the core.nvme_multipath module
->> parameter. When NVME_MULTIPATH_PARAM=n the multipath parameter is removed
->> and core nvme multipathing is enabled. When NVME_MULTIPATH_PARAM=y
->> the multipath parameter is added and multipath support becomes
->> configurable with the core.nvme_multipath parameter.
-> 
-> What's the point of adding yet another confusing option?
+On Tue, Mar 11, 2025 at 2:11=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
+.com> wrote:
+>
+> On 2025/03/11 9:38, Jason Wang wrote:
+> > On Mon, Mar 10, 2025 at 3:45=E2=80=AFPM Akihiko Odaki <akihiko.odaki@da=
+ynix.com> wrote:
+> >>
+> >> On 2025/03/10 12:55, Jason Wang wrote:
+> >>> On Fri, Mar 7, 2025 at 7:01=E2=80=AFPM Akihiko Odaki <akihiko.odaki@d=
+aynix.com> wrote:
+> >>>>
+> >>>> Hash reporting
+> >>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>
+> >>>> Allow the guest to reuse the hash value to make receive steering
+> >>>> consistent between the host and guest, and to save hash computation.
+> >>>>
+> >>>> RSS
+> >>>> =3D=3D=3D
+> >>>>
+> >>>> RSS is a receive steering algorithm that can be negotiated to use wi=
+th
+> >>>> virtio_net. Conventionally the hash calculation was done by the VMM.
+> >>>> However, computing the hash after the queue was chosen defeats the
+> >>>> purpose of RSS.
+> >>>>
+> >>>> Another approach is to use eBPF steering program. This approach has
+> >>>> another downside: it cannot report the calculated hash due to the
+> >>>> restrictive nature of eBPF steering program.
+> >>>>
+> >>>> Introduce the code to perform RSS to the kernel in order to overcome
+> >>>> thse challenges. An alternative solution is to extend the eBPF steer=
+ing
+> >>>> program so that it will be able to report to the userspace, but I di=
+dn't
+> >>>> opt for it because extending the current mechanism of eBPF steering
+> >>>> program as is because it relies on legacy context rewriting, and
+> >>>> introducing kfunc-based eBPF will result in non-UAPI dependency whil=
+e
+> >>>> the other relevant virtualization APIs such as KVM and vhost_net are
+> >>>> UAPIs.
+> >>>>
+> >>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> >>>> Tested-by: Lei Yang <leiyang@redhat.com>
+> >>>> ---
+> >>>>    Documentation/networking/tuntap.rst |   7 ++
+> >>>>    drivers/net/Kconfig                 |   1 +
+> >>>>    drivers/net/tap.c                   |  68 ++++++++++++++-
+> >>>>    drivers/net/tun.c                   |  98 +++++++++++++++++-----
+> >>>>    drivers/net/tun_vnet.h              | 159 +++++++++++++++++++++++=
++++++++++++--
+> >>>>    include/linux/if_tap.h              |   2 +
+> >>>>    include/linux/skbuff.h              |   3 +
+> >>>>    include/uapi/linux/if_tun.h         |  75 +++++++++++++++++
+> >>>>    net/core/skbuff.c                   |   4 +
+> >>>>    9 files changed, 386 insertions(+), 31 deletions(-)
+> >>>>
+> >>>> diff --git a/Documentation/networking/tuntap.rst b/Documentation/net=
+working/tuntap.rst
+> >>>> index 4d7087f727be5e37dfbf5066a9e9c872cc98898d..86b4ae8caa8ad062c1e5=
+58920be42ce0d4217465 100644
+> >>>> --- a/Documentation/networking/tuntap.rst
+> >>>> +++ b/Documentation/networking/tuntap.rst
+> >>>> @@ -206,6 +206,13 @@ enable is true we enable it, otherwise we disab=
+le it::
+> >>>>          return ioctl(fd, TUNSETQUEUE, (void *)&ifr);
+> >>>>      }
+> >>>>
 
-If you'll read the kConfig description, hopefully it's not confusing.
+[...]
 
-The whole point of this patch series is to remove the core.nvme_mulipath parameter.
+> >>>> +static inline long tun_vnet_ioctl_sethash(struct tun_vnet_hash_cont=
+ainer __rcu **hashp,
+> >>>> +                                         bool can_rss, void __user =
+*argp)
+> >>>
+> >>> So again, can_rss seems to be tricky. Looking at its caller, it tires
+> >>> to make eBPF and RSS mutually exclusive. I still don't understand why
+> >>> we need this. Allow eBPF program to override some of the path seems t=
+o
+> >>> be common practice.
+> >>>
+> >>> What's more, we didn't try (or even can't) to make automq and eBPF to
+> >>> be mutually exclusive. So I still didn't see what we gain from this
+> >>> and it complicates the codes and may lead to ambiguous uAPI/behaviour=
+.
+> >>
+> >> automq and eBPF are mutually exclusive; automq is disabled when an eBP=
+F
+> >> steering program is set so I followed the example here.
+> >
+> > I meant from the view of uAPI, the kernel doesn't or can't reject eBPF
+> > while using automq.
+>  > >>
+> >> We don't even have an interface for eBPF to let it fall back to anothe=
+r
+> >> alogirhtm.
+> >
+> > It doesn't even need this, e.g XDP overrides the default receiving path=
+.
+> >
+> >> I could make it fall back to RSS if the eBPF steeering
+> >> program is designed to fall back to automq when it returns e.g., -1. B=
+ut
+> >> such an interface is currently not defined and defining one is out of
+> >> scope of this patch series.
+> >
+> > Just to make sure we are on the same page, I meant we just need to
+> > make the behaviour consistent: allow eBPF to override the behaviour of
+> > both automq and rss.
+>
+> That assumes eBPF takes precedence over RSS, which is not obvious to me.
 
-This is what the patch at: https://lore.kernel.org/linux-nvme/20250204211158.43126-1-bgurney@redhat.com/
-does, and this is what this patch does. Since people didn't want to remove core.nvme_multipath parameter
-in  https://lore.kernel.org/linux-nvme/20250204211158.43126-1-bgurney@redhat.com/ I've proposed this
-patch as an alternative.
+Well, it's kind of obvious. Not speaking the eBPF selector, we have
+other eBPF stuffs like skbedit etc.
 
-It provides a kConfig option to remove the core.nvme_multipath parameter so those who want it
-can keep it, and those who don't and compile it out.
+>
+> Let's add an interface for the eBPF steering program to fall back to
+> another steering algorithm. I said it is out of scope before, but it
+> makes clear that the eBPF steering program takes precedence over other
+> algorithms and allows us to delete the code for the configuration
+> validation in this patch.
 
-/John
+Fallback is out of scope but it's not what I meant.
 
+I meant in the current uAPI take eBPF precedence over automq. It's
+much more simpler to stick this precedence unless we see obvious
+advanatge.
+
+>
+> >
+> >>
+> >>>
+
+[...]
+
+> >>> Is there a chance that we can reach here without TUN_VNET_HASH_REPORT=
+?
+> >>> If yes, it should be a bug.
+> >>
+> >> It is possible to use RSS without TUN_VNET_HASH_REPORT.
+> >
+> > Another call to separate the ioctls then.
+>
+> RSS and hash reporting are not completely independent though.
+
+Spec said:
+
+"""
+VIRTIO_NET_F_RSSRequires VIRTIO_NET_F_CTRL_VQ.
+"""
+
+>
+> A plot twist is the "types" parameter; it is a parameter that is
+> "common" for RSS and hash reporting.
+
+So we can share part of the structure through the uAPI.
+
+> RSS and hash reporting must share
+> this parameter when both are enabled at the same time; otherwise RSS may
+> compute hash values that are not suited for hash reporting.
+
+Is this mandated by the spec? If yes, we can add a check. If not,
+userspace risk themselves as a mis-configuration which we don't need
+to bother.
+
+Note that spec use different commands for hash_report and rss.
+
+>
+> The paramter will be duplicated if we have separate ioctls for RSS and
+> hash reporting, and the kernel will have a chiken-egg problem when
+> ensuring they are synchronized; when the ioctl for RSS is issued, should
+> the kernel ensure the "types" parameter is identical with one specified
+> for hash reporting? It will not work if the userspace may decide to
+> configure hash reporting after RSS.
+>
+
+See my reply above.
+
+Thanks
 
 
