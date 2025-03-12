@@ -1,119 +1,166 @@
-Return-Path: <linux-kernel+bounces-558088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C338A5E175
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:08:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8A8A5E184
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:09:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1FAA19C1112
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:08:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBCDC3B2FAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9251DFF7;
-	Wed, 12 Mar 2025 16:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97771CAA9A;
+	Wed, 12 Mar 2025 16:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rsCGXmXL"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1nXbH0l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DDC1BB6BA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28C61DFF7;
+	Wed, 12 Mar 2025 16:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741795705; cv=none; b=kHU6jIouIP3mVfEz0waHecUe59WAZCunJziM57BjgnMwebnp18GeXVo/qBedWJrLwXrE3noMa3YimvcxKyrVnZbjB0sEwWUj5nZ6KjsdoCZOUna7HEVWdOJ6wDulrThXOJxhf0dOM//CU9ZXQLUbiO4W9my20gZNV+uVsXqxjYU=
+	t=1741795771; cv=none; b=Xd/hfCoHPxXA0+ZNFN0Wua9+i79JbbzW4C3Z1JHuErCp9r2xRU+9eEUhJVCFfDwbJ2sva5j8w9AcNP6IN9HhjAk4IvPvuQi+ualtSoiCMixhiIhcRgPJh3rQ1fhurZvln5HoA3Mx9F/gmfI9kNGq8rE5pWHZfI1gLXyt2q4mfoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741795705; c=relaxed/simple;
-	bh=/l81mkc4n15BgZGzuE4Us34XgHcjyXIkl5hqU1q+Oo8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ahOL9Bd4MPBcJSpT9qiNcJC87Ae/OI5qVdgZLUQhwT3GcCjBtfRu1amr4YnSuYcDEF88KC5xxUOY4N6E44u5bFBsZQaKrvQmYqbNgqvcvzTlGXOoiZ0bIYnVRiqNkF4BfAwlhj1Zt5I6rICw8l0+nIXIrDpx+TTBI5tsfk9MzvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rsCGXmXL; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf3192f3bso35502765e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741795702; x=1742400502; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5kRABI63t00ZhwHPnXAq2zHuyopqgID5ECRPytCo344=;
-        b=rsCGXmXLzu/bprVNKhb4LZlry8lLTQOjhsTSTEc24P8xM4uyfaTuyO+5+HNnDofwKp
-         PLejQLSQJ/jLXh82TzAm5XNxYBJdGuDrAhwd0408pEiMavOzistsb5j45Ug7UYWATBpT
-         sKhMII+Akt43jRry/Y3LyCFPmNudCrJUpVreLenyPb4n/finvgvjXmCXrCudXWen8Vyx
-         0dLpVIq2yQXxFEQZdQvORlD5VHpLcisJ03vJxYLNuKrsgO4nRnojLpPCiHKhG6w1N4pf
-         fBfDYyJf1rV0tuEM4D4fiU5XFFGlYxSDYGkid448QCYD5FVlRSY3pF2GBsjFiAmXh7hu
-         IKlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741795702; x=1742400502;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5kRABI63t00ZhwHPnXAq2zHuyopqgID5ECRPytCo344=;
-        b=ts3ujpRbsalCYJ4RHfuSj/o1BjffB0cCA0jW//iDMRaEc9YNtIczpEsb7z+qVAh8pQ
-         h9Osynhw0Q+qaMeW/PI9yDJE8WtuCPzVqMk6NcasYQWqOVE/yP1zPu7ad+HU89bgveQH
-         eO4dtkB0IZiD8jalBYMEbwtLJYpempAG0q6PlJMotNe9H+oShiQD7U3cgcWPaDIOZ20p
-         /D4KYg3MQiRFqzP3UA4Dw4blye50Tf4h2hRFWNYeciakFy5txMRaLkgty+B9k1Frc+o8
-         C/ruKxiLvtdt6JH50CnE0AJyrn7SemAjObd0yr53z963ktIQuaqQDKOdKKH0UHJS4mu1
-         NAIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHusg8kXkOlz1+qweBSSmwgYoQPE/Zi8pfG8lac7kVQsjXMoOsVcPZ9qC6dqT+II57fG9J0pHOOpwlM/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHfsHf/6fQse8Cn9SilPWyaxOm3pcXVmtDuGmy8PsePhsalKDs
-	ncfJguesn/ZXwHNpfWZR2lYxtuPaN7rSxUEVh5VSE+RF1DaC872qUo3jVybpWqM=
-X-Gm-Gg: ASbGncupFllmDskk7Tk7si+w40NyGsYn+BcEGQxMKiUGt/gPdekNh/6HowD2rTkVdLt
-	76gJ0GOq7HU423A+snv8rzdxHAv635NW1+vMTFMqum5LATwZomwybDvIu8IXwu7w5t3HuaTbXGK
-	DhGKcMzuS+Wp0jhNmyzxTbKaZVQCZoKA/057N9qVmBw9LZpPrFG5aNEnA0Zm1XWlKqyMqhCgQ+U
-	JYBocSJ2zYs6SqqSGn+1qxaExI/bThrxJErF6UcQMlUe8jSQWLrTcKLVvt/KEkzOdf3IOE0bvlc
-	r0WbyKmgM+0sEJJCA1bj+K6ZDm686OTDXkeIaAmGYr6CstrRhcnVc1AUFD6UN5MVhkdS6ZLF4rI
-	DHJ4lFlPV
-X-Google-Smtp-Source: AGHT+IF+4mY3bB11AO8af31IGQWD2xZOhSkCDSiLj78VIR/ojQV2gPQFAWRE0UoElYony/PXJed0CQ==
-X-Received: by 2002:a05:600c:1c9d:b0:439:643a:c8d5 with SMTP id 5b1f17b1804b1-43c549dcc0amr199565905e9.0.1741795700168;
-        Wed, 12 Mar 2025 09:08:20 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43d0a731265sm25382605e9.4.2025.03.12.09.08.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 09:08:19 -0700 (PDT)
-Message-ID: <2372dced-c786-4699-9317-2ebcbda1b0cd@linaro.org>
-Date: Wed, 12 Mar 2025 17:08:19 +0100
+	s=arc-20240116; t=1741795771; c=relaxed/simple;
+	bh=U+kn0eqCA1vTkLcceUerHMcbUlG4P1T7ky+SM+cNeZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozrJAaFVFCWioZeaKJmCYDgsf7Qg9+wcrMtjHgN3BJGg5skHVpsJ3AffbEAFsv2jOPXhreKBU6n809FP1wb0tY9t+vEkTH9mzQk5pT58t+89ib6dce6zIKVjIRUAcWHBBp6tyOxCpciEYj7X8ZqIqKyC1V0QcNYpOnGKGracKzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1nXbH0l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBA43C4CEDD;
+	Wed, 12 Mar 2025 16:09:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741795770;
+	bh=U+kn0eqCA1vTkLcceUerHMcbUlG4P1T7ky+SM+cNeZ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o1nXbH0lAp/Eqh29Z9apDenWiT7PjuKxKiO2JQvLOJVWK5GP4OmPvFpXi6asrnzZT
+	 nu94zZUymz0UiYH5e2oHwUKtTI1fSzIDWOtzi+i34Gkz1xkL6x5U9bzNGRhUtzuTKS
+	 DXX5HBMSnM0KQHz9TeDEZUAKZi2/XgNg8n+fKtj+coTJt3gRJNcK3xsnp4c0Rfm92c
+	 yO1JQdFiH5w2Gbb11wg1ZkFYIseNAErd8Fb7JJ7KzSSF/QC6tMXJP/39miA0uSvCwy
+	 IrlqFK1R0v32Dh9qsAKLmrl9vNb/vAYRou4oKyLZKKWsSVO2mj5QR0FroBYJHAdDo/
+	 ffW5IRilofYyA==
+Date: Wed, 12 Mar 2025 18:09:07 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Heiko Carstens <hca@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>,
+	Stafford Horne <shorne@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>,
+	Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH 07/13] s390: make setup_zero_pages() use memblock
+Message-ID: <Z9GxozjZTKOGDPv1@kernel.org>
+References: <20250306185124.3147510-1-rppt@kernel.org>
+ <20250306185124.3147510-8-rppt@kernel.org>
+ <20250307152815.9880Gbd-hca@linux.ibm.com>
+ <Z8_Qawg0dGtZdys7@kernel.org>
+ <CAMj1kXHS1YbnYVqVgsyfFSpg9kJM599Yp9TO8AP6--Nbgk7dHQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal/drivers/qcom-spmi-temp-alarm: drop unused driver
- data
-To: Johan Hovold <johan+linaro@kernel.org>, Amit Kucheria <amitk@kernel.org>,
- Thara Gopinath <thara.gopinath@gmail.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>
-Cc: Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250228082936.5694-1-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250228082936.5694-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXHS1YbnYVqVgsyfFSpg9kJM599Yp9TO8AP6--Nbgk7dHQ@mail.gmail.com>
 
-On 28/02/2025 09:29, Johan Hovold wrote:
-> The platform device driver data has not been used since commit
-> 7a4ca51b7040 ("thermal/drivers/qcom-spmi: Use devm_iio_channel_get") so
-> drop the unnecessary assignment.
+On Wed, Mar 12, 2025 at 04:56:59PM +0100, Ard Biesheuvel wrote:
+> On Tue, 11 Mar 2025 at 06:56, Mike Rapoport <rppt@kernel.org> wrote:
+> >
+> > On Fri, Mar 07, 2025 at 04:28:15PM +0100, Heiko Carstens wrote:
+> > > On Thu, Mar 06, 2025 at 08:51:17PM +0200, Mike Rapoport wrote:
+> > > > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > > >
+> > > > Allocating the zero pages from memblock is simpler because the memory is
+> > > > already reserved.
+> > > >
+> > > > This will also help with pulling out memblock_free_all() to the generic
+> > > > code and reducing code duplication in arch::mem_init().
+> > > >
+> > > > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > > > ---
+> > > >  arch/s390/mm/init.c | 14 +++-----------
+> > > >  1 file changed, 3 insertions(+), 11 deletions(-)
+> > >
+> > > Acked-by: Heiko Carstens <hca@linux.ibm.com>
+> > >
+> > > > -   empty_zero_page = __get_free_pages(GFP_KERNEL | __GFP_ZERO, order);
+> > > > +   empty_zero_page = (unsigned long)memblock_alloc(PAGE_SIZE << order, order);
+> > > >     if (!empty_zero_page)
+> > > >             panic("Out of memory in setup_zero_pages");
+> > >
+> > > This could have been converted to memblock_alloc_or_panic(), but I
+> > > guess this can also be done at a later point in time.
+> >
+> > Duh, I should have remembered about memblock_alloc_or_panic() :)
+> >
+> > @Andrew, can you please pick this as a fixup?
+> >
+> > From 344fec8519e5152c25809c9277b54a68f9cde0e9 Mon Sep 17 00:00:00 2001
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > Date: Tue, 11 Mar 2025 07:51:27 +0200
+> > Subject: [PATCH] s390: use memblock_alloc_or_panic() in setup_zero_page()
+> >
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > ---
+> >  arch/s390/mm/init.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> >
+> > diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
+> > index ab8ece3c41f1..c6a97329d7e7 100644
+> > --- a/arch/s390/mm/init.c
+> > +++ b/arch/s390/mm/init.c
+> > @@ -81,9 +81,7 @@ static void __init setup_zero_pages(void)
+> >         while (order > 2 && (total_pages >> 10) < (1UL << order))
+> >                 order--;
+> >
+> > -       empty_zero_page = (unsigned long)memblock_alloc(PAGE_SIZE << order, order);
+> > -       if (!empty_zero_page)
+> > -               panic("Out of memory in setup_zero_pages");
+> > +       empty_zero_page = (unsigned long)memblock_alloc_or_panic(PAGE_SIZE << order, order);
+> >
 > 
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
-> 
-> I noticed this when doing some rework for pm8008 last year that I have
-> yet to finish.
+> memblock_alloc_or_panic() takes the alignment is in bytes, no? So
+> shouldn't the second argument be BIT(order)?
 
-Applied, thanks
-
+The second argument should be PAGE_SIZE. Thanks for catching that!
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Sincerely yours,
+Mike.
 
