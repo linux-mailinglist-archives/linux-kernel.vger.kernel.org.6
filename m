@@ -1,207 +1,142 @@
-Return-Path: <linux-kernel+bounces-558099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64BBBA5E1A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:19:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF25A5E1A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:20:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569E3175D3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:19:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185B1189A2CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A795F1D514E;
-	Wed, 12 Mar 2025 16:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5009C1D5172;
+	Wed, 12 Mar 2025 16:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="olUsii4b";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HObC+vVS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="olUsii4b";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HObC+vVS"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c9UkDeD0"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EA21D5150
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2601422DD;
+	Wed, 12 Mar 2025 16:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741796362; cv=none; b=ApJuPtR+mIZjaVfQDvK/26/YwdSiwZq3PRC0sm8ysWSJDNTntcVVQ0Ajcz/ruhUZlmYJ1lfqilL0hESMXVkKhhYSTbYKHLqydRVVuocQtNto40IT8Pp7Oo6gArlarPiTi39U73JF+KEUdS7WCB2nk8CHLckURW5aUkDCJmpq/Kw=
+	t=1741796395; cv=none; b=uGncCX1ZknEPAncT+HYXsjOhYQsYNCXL+PmfK1DbLifh/mQvuBhwlAPq3P1PtvyOI2Vumi1p5I+hZ0rgzCr1hihg4Hx3F+Ac1AMSnmD0iLy656QmSbKlA+ixRBKHFOlOu/ZR0Nfy+4k7CAisnpriAb/xCKzfgBKhtk9YtGp0pGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741796362; c=relaxed/simple;
-	bh=tuJElgZKRCERZsoEoK9ywsoznTlCrdkFYk161ps7GKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uQEH2xTJYX4Xjau5YYgafcMmBNMQJz5sizczRg0fp6RhAo5gZa+w5LkiSIZsXmP8wJKODopi9nzrVUo/AQgSWjbG51owtRBf/I/icZ4UYjJcHMsM2a/YeYFWdDyfz7V9UtIOWv9gyG11QYFi/Lwwlq58z9qI7wCa4L98WhJ8/Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=olUsii4b; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HObC+vVS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=olUsii4b; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HObC+vVS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 841902118C;
-	Wed, 12 Mar 2025 16:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741796358; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DnTwYGcMdt2yD7Bx/7ZXmsbNs3yi4b7YI/y4yBC4Fcc=;
-	b=olUsii4b7a7IQ8gk3yHHmXLdmnzC4C3L+oJwrgTQLbSdHjxsRO9s41N1phyqM/+IURZ0WG
-	W3jFRBsEGjf0Rr8j4KIoi5Mjhzk98ZqFGshWxFdeJrCBa2A1tdnJSaI5MZezHcIjN/PqQE
-	ezPrhc4l1YQOStgk/vx1rch/bg5NN+8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741796358;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DnTwYGcMdt2yD7Bx/7ZXmsbNs3yi4b7YI/y4yBC4Fcc=;
-	b=HObC+vVSS/Wpao5eAhBkPwafJLeb5mSTnjwbFmv16/Qe+lUCeqVHdUjlrq2AN8U6kmarji
-	tjffBKarma0bmSBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741796358; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DnTwYGcMdt2yD7Bx/7ZXmsbNs3yi4b7YI/y4yBC4Fcc=;
-	b=olUsii4b7a7IQ8gk3yHHmXLdmnzC4C3L+oJwrgTQLbSdHjxsRO9s41N1phyqM/+IURZ0WG
-	W3jFRBsEGjf0Rr8j4KIoi5Mjhzk98ZqFGshWxFdeJrCBa2A1tdnJSaI5MZezHcIjN/PqQE
-	ezPrhc4l1YQOStgk/vx1rch/bg5NN+8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741796358;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DnTwYGcMdt2yD7Bx/7ZXmsbNs3yi4b7YI/y4yBC4Fcc=;
-	b=HObC+vVSS/Wpao5eAhBkPwafJLeb5mSTnjwbFmv16/Qe+lUCeqVHdUjlrq2AN8U6kmarji
-	tjffBKarma0bmSBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 504A51377F;
-	Wed, 12 Mar 2025 16:19:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KrvsDga00WeoHQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 12 Mar 2025 16:19:18 +0000
-Message-ID: <ba1dcb86-4585-4eb7-927e-d2c8a648f662@suse.cz>
-Date: Wed, 12 Mar 2025 17:19:18 +0100
+	s=arc-20240116; t=1741796395; c=relaxed/simple;
+	bh=z0h4bJv4OLrSIfo7hzNobmJg2YYyIPG/NIJvTizpqr8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jIhgkc2dhCFuJgleQvYOZf7V0AWKwltkZ8RujgBoQwACkvV6zsCfJk2jjPVTn0wqjp5hE1u/0YfiSu/yuJFavzkq2Nx2I/THb0sJ0p9o8RiF5xaMXm2oxtJ/GPRAwDUhnoXQnBpZHwQTLRyNWwqGtAQhFdT1LDuVn53i4jVo+9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c9UkDeD0; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e4d50ed90aso9180388a12.0;
+        Wed, 12 Mar 2025 09:19:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741796392; x=1742401192; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7e7a+31makUjfzi5n5Z3jqV/sxRoCpNQ+KeKCVOFNMs=;
+        b=c9UkDeD09qbIEdP9zeJag6RUW//JdLHCj46kJTWxQZGtKR72qYSRtR8ei81PNbS2Wa
+         g/DlegJ3zbzKpob2BZqlzrCu446/Ns4Q54sIqjE+13ygS8bhDciB5js4J6jST/2nic/w
+         FmKJqLW/WO4sPuFcydV/cIxmdLhN5EgbsAEeOe9CIS6gtz1gf3q2qcMDCw71ptCcWvm1
+         32kPKXoin3g8z2V/ncWA4YoqVKMmTTkVNUtONlyBt+Q0yH13AS4PIgueIRkUd8gBEIhO
+         f1Rmz7NI8aQkemE5p+/n9bvNlz3Pb66NoYrgRrJE8Xjtf5qxr0ZuJPFC712nfqmox8Dt
+         XN9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741796392; x=1742401192;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7e7a+31makUjfzi5n5Z3jqV/sxRoCpNQ+KeKCVOFNMs=;
+        b=giAhMnCsjZJ/x45QU1uBeeWOKbxftMo9ROaLoOV4UonNc/GX9gamCkFOUhWonFaXlj
+         A757ksPK6uE5CbMVrDU71sA7t/kHDffGVGK/dr6I+cdNMGsfNq7TGiEhdXoDilUVaQdO
+         obV3puvRKcH4ELaqNKw81iv/fxwg9YkbtwpJBwnTFkt04UWaCd8yr8Ky2GivGNELApbU
+         R3svikiDTJPW4CKyu3QEQSxtH2AeU6L3LXOeteFS3o2rpyyRcabmIR4EOsgrNEGDQsfH
+         JMsqQ+69x6fD89r/MyuqLbC1Z9vECU/o2DAXYGuoIHZ7wpV/PDcAyn+lKDH2OYBzxgOs
+         XFhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVS9s1mbZ/z41I1ZuM3E4oCUe36kL/1FKTdpenexe85q3ox7eSMJti8BYiOkRHbwSarht5QJh/9f3ZEyh1x@vger.kernel.org, AJvYcCVmGtk3LTJisC05jvh216Zo+K+WDn88Iu9Jg5dZLSf78rAxMM+X4Go2KjYYH9/SA2besDSl09C+hlPS0e/J@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOMZn6BzDHPtf9n2H1hvojSt6oEsI8yj3ptjKgGtLamw514OCm
+	45bn8wjGlDXz15oiyr7i8wcUqWMht6BCyBUAI55FnMcguQIuPVJ6
+X-Gm-Gg: ASbGnctKATw0y3Bf1aiBRJQVAnpkkymLvVvF9l7DXb0ptpU1PWJPnE/m3dRdF/91I+i
+	kTicop1Q7oHvh4WFaqJLXG1ZB7N6lVQZayntOTIiN4TBoiZGcQtd+6mOEw4M/XS+iJlhn21UzS0
+	mcRiHJMjA9IlW5O06lVOmXtf+9zdQetHh5nVeIzf5z+L+jGHGr92psNX32qxJQBGjHpFhILdI4a
+	n3cLmB5HhaMjwlaxg23iuxl40atew31TSRE9VzdnSGA1/ZeDX1muOVeix1xwCBlKiPjqRM3fR7d
+	UI3+zzuNTveIIvJzN4uIJFFg0MB/TNg0AA7XcE19AS61UZdGa9q6rZTh14gq/6k=
+X-Google-Smtp-Source: AGHT+IFKy5OXoJ5dXd/qpzp1wal99wSis1iq5eu87px+/PGcCyRUc78mV1coxRuZwnAz0P6bQeV4oQ==
+X-Received: by 2002:a17:907:1b0a:b0:ac2:4bf1:44bc with SMTP id a640c23a62f3a-ac252fa0593mr3402163566b.41.1741796392050;
+        Wed, 12 Mar 2025 09:19:52 -0700 (PDT)
+Received: from f.. (cst-prg-86-144.cust.vodafone.cz. [46.135.86.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2395174c8sm1081722366b.85.2025.03.12.09.19.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 09:19:50 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: use debug-only asserts around fd allocation and install
+Date: Wed, 12 Mar 2025 17:19:41 +0100
+Message-ID: <20250312161941.1261615-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 02/10] slab: add sheaf support for batching
- kfree_rcu() operations
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
- <20250214-slub-percpu-caches-v2-2-88592ee0966a@suse.cz>
- <CAJuCfpH+sKs6j02j_hFALTT=ccrGXkny1=aUvuHZKKjtgr1fmA@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <CAJuCfpH+sKs6j02j_hFALTT=ccrGXkny1=aUvuHZKKjtgr1fmA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,linux.com,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
 
-On 2/23/25 00:08, Suren Baghdasaryan wrote:
-> On Fri, Feb 14, 2025 at 8:27 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->> Extend the sheaf infrastructure for more efficient kfree_rcu() handling.
->> For caches with sheaves, on each cpu maintain a rcu_free sheaf in
->> addition to main and spare sheaves.
->>
->> kfree_rcu() operations will try to put objects on this sheaf. Once full,
->> the sheaf is detached and submitted to call_rcu() with a handler that
->> will try to put in in the barn, or flush to slab pages using bulk free,
-> 
-> s/in in/it in
-> 
->> when the barn is full. Then a new empty sheaf must be obtained to put
->> more objects there.
->>
->> It's possible that no free sheaves are available to use for a new
->> rcu_free sheaf, and the allocation in kfree_rcu() context can only use
->> GFP_NOWAIT and thus may fail. In that case, fall back to the existing
->> kfree_rcu() machinery.
->>
->> Expected advantages:
->> - batching the kfree_rcu() operations, that could eventually replace the
->>   existing batching
->> - sheaves can be reused for allocations via barn instead of being
->>   flushed to slabs, which is more efficient
->>   - this includes cases where only some cpus are allowed to process rcu
->>     callbacks (Android)
->>
->> Possible disadvantage:
->> - objects might be waiting for more than their grace period (it is
->>   determined by the last object freed into the sheaf), increasing memory
->>   usage - but the existing batching does that too?
->>
->> Only implement this for CONFIG_KVFREE_RCU_BATCHED as the tiny
->> implementation favors smaller memory footprint over performance.
->>
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+This also restores the check which got removed in 52732bb9abc9ee5b
+("fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()")
+for performance reasons -- they no longer apply with a debug-only
+variant.
 
-Thanks.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
->> @@ -2569,6 +2571,24 @@ static void sheaf_flush(struct kmem_cache *s, struct slab_sheaf *sheaf)
->>         sheaf->size = 0;
->>  }
->>
->> +static void __rcu_free_sheaf_prepare(struct kmem_cache *s,
->> +                                    struct slab_sheaf *sheaf);
->> +
->> +static void rcu_free_sheaf_nobarn(struct rcu_head *head)
->> +{
->> +       struct slab_sheaf *sheaf;
->> +       struct kmem_cache *s;
->> +
->> +       sheaf = container_of(head, struct slab_sheaf, rcu_head);
->> +       s = sheaf->cache;
-> 
-> Ah, that's where you are using sheaf->cache. Maybe you should
-> introduce it in this patch?
+I have about 0 opinion whether this should be BUG or WARN, the code was
+already inconsistent on this front. If you want the latter, I'll have 0
+complaints if you just sed it and commit as yours.
 
-Yeah. Will also move the addition of rcu_free to struct slub_percpu_sheaves
-instead of those TODOs.
+This reminded me to sort out that litmus test for smp_rmb, hopefully
+soon(tm) as it is now nagging me.
+
+ fs/file.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/file.c b/fs/file.c
+index 6c159ede55f1..09460ec74ef8 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -582,6 +582,7 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+ 
+ 	__set_open_fd(fd, fdt, flags & O_CLOEXEC);
+ 	error = fd;
++	VFS_BUG_ON(rcu_access_pointer(fdt->fd[fd]) != NULL);
+ 
+ out:
+ 	spin_unlock(&files->file_lock);
+@@ -647,7 +648,7 @@ void fd_install(unsigned int fd, struct file *file)
+ 		rcu_read_unlock_sched();
+ 		spin_lock(&files->file_lock);
+ 		fdt = files_fdtable(files);
+-		WARN_ON(fdt->fd[fd] != NULL);
++		VFS_BUG_ON(fdt->fd[fd] != NULL);
+ 		rcu_assign_pointer(fdt->fd[fd], file);
+ 		spin_unlock(&files->file_lock);
+ 		return;
+@@ -655,7 +656,7 @@ void fd_install(unsigned int fd, struct file *file)
+ 	/* coupled with smp_wmb() in expand_fdtable() */
+ 	smp_rmb();
+ 	fdt = rcu_dereference_sched(files->fdt);
+-	BUG_ON(fdt->fd[fd] != NULL);
++	VFS_BUG_ON(fdt->fd[fd] != NULL);
+ 	rcu_assign_pointer(fdt->fd[fd], file);
+ 	rcu_read_unlock_sched();
+ }
+-- 
+2.43.0
 
 
