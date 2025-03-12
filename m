@@ -1,167 +1,136 @@
-Return-Path: <linux-kernel+bounces-557936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46A49A5DF89
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:57:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9945A5DF8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108CB189835E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:57:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDEBC7A5CBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B963124BD14;
-	Wed, 12 Mar 2025 14:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B2324BD14;
+	Wed, 12 Mar 2025 14:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Vzdk7Fxe";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tK3ELAQo";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VRfa15/M";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ue3lXUSB"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mjmt4/dO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F24323F384
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F1A24A062
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741791427; cv=none; b=RO/5Pbn4NQKNiKatQpE4iq53R+eTKt8KQQpPxLMDU4jAgjO00RFUTsAUTCdj9DlVqIdOsSIsF2E1fxumJRxqbUuESXBB/rIujAaZrEBb/S6MtAWHFQthqyKjPU22RwamXzPFIJV+4UW4jlGxFEOTQv4GdwI20iF3oA9VdEm6+L0=
+	t=1741791454; cv=none; b=oWLGlmkRpWO75AD4WQzUGFOZTRNKtlY9pnKfDNY50bcVPJ3gAglAyHgnEetyqtNorAfxy4ylVQ+3EstdBbgAE23g8pogXKq+0pemTiR3veXyNfDbkt/72E++A8tLN/S3u3j0xDUXyal6NAwZ8L3f5t63kqk9A9qZUV14aDQTU+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741791427; c=relaxed/simple;
-	bh=qHK1pvTnjQuUNj0yF9vF6zbZ8YwKYOmQRS2ETLXbCHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=acLG77IyLDkzkDFHpSyDeBjLcnHmtiCkqkNmuNQL6MAIlVbEhwgjHInEMGZDQC6tr+9ykiVeL7Y+wtBinIaSpS/7STW3LigFDzESaag5TSQ4nZkEu7sTobrMDicsK9WAdJeAycNFumpaNeG7ArXHX3ioRhdgjJw+JbCO0CS3iVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Vzdk7Fxe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tK3ELAQo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VRfa15/M; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ue3lXUSB; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AF3B51F443;
-	Wed, 12 Mar 2025 14:57:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741791423; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xeHbIyEiYm4gCpoHtdXexIbUDHvJnmMPkDkWRGfF9IY=;
-	b=Vzdk7FxeGEiUjuIIR/NYhVPp3HoRIwO5u0Y89T7o7NIbxslhY3NkSgELgeeuNWe0pGlsSw
-	KrQ5rdT2gjWt5vd+V+10dL8aMEdl839NVgHSZU2wNLJ8+/bQd6iJQlcRozJwyEUInUSD9z
-	Lyp1UMVGDhmKIL1TpYIQfDJEVnonBRI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741791423;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xeHbIyEiYm4gCpoHtdXexIbUDHvJnmMPkDkWRGfF9IY=;
-	b=tK3ELAQoQxembhrdw0bHTFKcOow7c3Xyc39/pYlJaFXZwqe22KVxW37JEAx80GOMS1BkX2
-	smZSWWO6NNGbxVCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741791422; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xeHbIyEiYm4gCpoHtdXexIbUDHvJnmMPkDkWRGfF9IY=;
-	b=VRfa15/Ma9garSWHFVnwbMMhj/Tt4U7YSGQ9QojXjJd6LLcUQ26hZMSe3io5uYhvD0yvyx
-	2ITURYXH58crc0YjZQgL6mvRN8caajhny6hLTF+X9VvqESGASNichzl/J4u0x2sWiaIniN
-	Jw4BKKKIhoS7LrBmJbkg9T3AvAPv2Cs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741791422;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xeHbIyEiYm4gCpoHtdXexIbUDHvJnmMPkDkWRGfF9IY=;
-	b=Ue3lXUSBc4bCkeEG4ZK0rAxs2uK07jNJ6pxWTl72LQx3WPTkDWkxgpxYoS8xUboMbdV98x
-	8Mu60E2GqmuhhBBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6A021132CB;
-	Wed, 12 Mar 2025 14:57:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id u0mpGL6g0WcCAgAAD6G6ig
-	(envelope-from <jroedel@suse.de>); Wed, 12 Mar 2025 14:57:02 +0000
-Date: Wed, 12 Mar 2025 15:56:57 +0100
-From: Joerg Roedel <jroedel@suse.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Joerg Roedel <joro@8bytes.org>, x86@kernel.org, hpa@zytor.com,
-	Nikunj A Dadhania <nikunj@amd.com>, Larry.Dewey@amd.com,
-	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
-	Juergen Gross <jgross@suse.com>, kirill.shutemov@linux.intel.com,
-	alexey.gladkov@intel.com
-Subject: Re: [PATCH 2/2] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <Z9GguXasI5AaLMKv@suse.de>
-References: <20250312144107.108451-1-joro@8bytes.org>
- <20250312144107.108451-3-joro@8bytes.org>
- <8d58b03e-9017-c800-4379-f2a667fb8a9b@amd.com>
+	s=arc-20240116; t=1741791454; c=relaxed/simple;
+	bh=30rWqo8z930udy+5ywjJvV26a4Wv6syXa/papODAR6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T+mi8nQrPrk3rmGVuokX5uHeo87DHNOZ6TCdLMjX38c63CLFb9tReyAyDS84KKKPoCzEXmN+8AEObkh+sTCcfTFRAoF6wp+VX39zPXuJngV8p3lKZScueeoxKFBWNu7wMXxnJ4trmZSsUvIPzk3Vz2MKDunjo5jJeGq16whBKnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mjmt4/dO; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741791453; x=1773327453;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=30rWqo8z930udy+5ywjJvV26a4Wv6syXa/papODAR6I=;
+  b=mjmt4/dO9ZQ3kB7YCg3oO76oEYQ7Ov5wDaLXpiBBVi3mZGOkJxvMIsvi
+   JVH5XbeqXMVY36M3qswmGvJRbMEJrLZSc7Mp5rP2rjS4DYzPY9DPS0/oG
+   cww0LTXRxRptMKS7rYTt4ShZaUo19O5ukzKF/pAQjc7lPwxgKKFibsuin
+   ekteOvaU8tV9padfGbmZ4S+gcmIq0syJVDZUxQe/MmQJbfCIzlcLwp8oG
+   xwktu3/aXCHs1nMYtaMaaT2P/XwgaJgpYzz+Zf+FMQc1glXy/tJAEY6/w
+   CdgSKP+kKf/eGub1k3fBWQtvSCBCIFB04ukD9j3LvzXBSu53Oicn0yxcz
+   w==;
+X-CSE-ConnectionGUID: vqeWvLD5RZmDRz2mYJqnUg==
+X-CSE-MsgGUID: Y3sHwN6STKmrBZZnNUt7bg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="54245543"
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="54245543"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 07:57:33 -0700
+X-CSE-ConnectionGUID: 0FaqkDUdRamXwQnAfGkEnQ==
+X-CSE-MsgGUID: 9W+b80xeTXeF7xd3gzAitw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="124812634"
+Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.108.3]) ([10.125.108.3])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 07:57:32 -0700
+Message-ID: <ef3f3117-6cd5-4b94-8ddb-e6d224efac60@intel.com>
+Date: Wed, 12 Mar 2025 07:57:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8d58b03e-9017-c800-4379-f2a667fb8a9b@amd.com>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] x86/sev: Make SEV_STATUS available via SYSFS
+To: Joerg Roedel <joro@8bytes.org>, x86@kernel.org
+Cc: hpa@zytor.com, Tom Lendacky <thomas.lendacky@amd.com>,
+ Nikunj A Dadhania <nikunj@amd.com>, Larry.Dewey@amd.com,
+ linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+ Juergen Gross <jgross@suse.com>, kirill.shutemov@linux.intel.com,
+ alexey.gladkov@intel.com, Joerg Roedel <jroedel@suse.de>
+References: <20250312144107.108451-1-joro@8bytes.org>
+ <20250312144107.108451-3-joro@8bytes.org>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250312144107.108451-3-joro@8bytes.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Tom,
+On 3/12/25 07:41, Joerg Roedel wrote:
+> +static ssize_t sev_status_show(struct kobject *kobj,
+> +			       struct kobj_attribute *attr, char *buf)
+> +{
+> +	return sysfs_emit(buf, "%llx\n", sev_status);
+> +}
 
-On Wed, Mar 12, 2025 at 09:46:45AM -0500, Tom Lendacky wrote:
-> On 3/12/25 09:41, Joerg Roedel wrote:
-> > +static ssize_t sev_status_show(struct kobject *kobj,
-> > +			       struct kobj_attribute *attr, char *buf)
-> > +{
-> > +	return sysfs_emit(buf, "%llx\n", sev_status);
-> 
-> Should it be prefixed with '0x'? That would make use of functions like
-> atoi() and strtol() easier.
-
-Yes, it probably should. Currently I see just a '7' in the file, which
-gives no clue about the used base. I will change that in the next
-version.
-
-Regards,
-
--- 
-Jörg Rödel
-jroedel@suse.de
-
-SUSE Software Solutions Germany GmbH
-Frankenstraße 146
-90461 Nürnberg
-Germany
-https://www.suse.com/
-
-Geschäftsführer: Ivo Totev, Andrew McDonald, Werner Knoblich
-(HRB 36809, AG Nürnberg)
+Do we really want to just plumb the raw MSR out to userspace? Users
+would still need to parse the thing, so it's not _really_ human readable.
 
