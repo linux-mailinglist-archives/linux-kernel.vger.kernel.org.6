@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-557229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111EBA5D560
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:13:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B95C7A5D562
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:13:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A80F3B1F45
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:13:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DA56189939D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09ED1EA7C1;
-	Wed, 12 Mar 2025 05:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B338F1EB19D;
+	Wed, 12 Mar 2025 05:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FWvcxrs4"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMr+1mgC"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F211E5B7A;
-	Wed, 12 Mar 2025 05:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5430F1E9B3D;
+	Wed, 12 Mar 2025 05:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741756340; cv=none; b=WhFM3rQdQMCNPhdleVzSdyf+fVsFWzXLpBbPKB1NlA2IjJlvUbyZa6icPLq2F0SUXhIXRHJKzEDQ/yEb8oSowjMiNwrLNJtxQEWteJgpnuMcvTrLHWajCrlWIbNnCx831WgeX8TXbTaIdkj8iJqNnj0lh3cx49xkwWsFa4uX+qc=
+	t=1741756342; cv=none; b=kSGzyzJQx6WVeSleB2lrG051XhzBWsFen615/IvCXZ7cRWeEbMLxZmFS66UVsL3KNW7nQEmr1p590Z5O5k3qlnLd679OMF49ESV9Q8ZtpzDTB8LwcE1h4YDplcWnQoKtE8gpHb0sPDbOipp1Bg8W6fscU6c0MgxJsNvpT7wbA3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741756340; c=relaxed/simple;
-	bh=oaPXgZuxQdnVVxiKRB7aZ23bK6tGn8BzFWpnsqYDtew=;
+	s=arc-20240116; t=1741756342; c=relaxed/simple;
+	bh=dHuXujcVSt1ISFTA0cys14pup7MMvnU5i4aKzf2dcw8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SLG8H3Ww5BC2yYRoN+20z2Zh++23jOounRPdGWzTeqQkwUqFIHvowzafB681tIxH45iaD/Ya8oJNVU0XB2qB/R1c7xwT6/0t8uC/Ms9ep2eLFywsGle7nsvew3o+8feTmP66EEE2IIdotiUIdUrJ8lJHuMxT5BCgpKkR4KbSbrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FWvcxrs4; arc=none smtp.client-ip=209.85.128.180
+	 In-Reply-To:To:Cc; b=N2sp7nbCJaGYinKyzyl0suomagNtd1gQ663OdJHDM3IPZzptGCuT9zSt6/AxDrOSwGrSsOX9SziUjYJY6TBKjpU6M4aeAGiDXrLWijWRZ7PsAiMYgbU1Xrd9gsJUs5Gt9HEabC8sBR7KSKOd17vn5zhLKI8gCXxyqyX+gA8RmGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMr+1mgC; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6f7031ea11cso64946427b3.2;
-        Tue, 11 Mar 2025 22:12:17 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6f74b78df93so60013637b3.0;
+        Tue, 11 Mar 2025 22:12:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741756336; x=1742361136; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741756339; x=1742361139; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RJXdYgpnaSANjr6mjP2NezwhNSkQ+3v2rcj0Q2SIosY=;
-        b=FWvcxrs4rMeAwG3PV55b4MlxR1o0EoCCg4vfYR2gaiPTgZX1xveEYZBK8lvnJPmM47
-         W2xq1qbc5m76zj2/HrxFyNNaqfGm0+6rkkuHUVvKNg5gFNG/Qtfr6N0n4u6nPpKIXuxD
-         Kt+LO+o7tY65jFnQArWa9z/xLUSEVFVlPD7qmdeyg059c583fuV+xwcpF31DofyzGOCs
-         +3pyyfibvVTkT8+VX1eKcA/YqQvO8FvBm/2f81H5ixAOk/MLj6iwrnTRsSTcvOBBsNF5
-         S/qr0ZCjx0kn+D36UvGJcJ/jjc2FQgaA7HLmcOx8jFMP7N6KsEvXK/19bsH0B78dkTyn
-         8tmw==
+        bh=qyyMMDT9jY3GwgMomKZZLoHQgXtzrxyYgo+dpoCdkj0=;
+        b=HMr+1mgCw80c7EH7jPavLErRbUkN6qjgZT77GMwNtwd2IPZHu4d/WDFtFdHsF/zKOp
+         8nnbHhvMIV/LEdK3sMRXWwFizzX+lt4XhGHdlgU8kmfV4Imra1YkKwqnaic0uDGAkuNA
+         31TpKJ+8OTgN/zB0Tq5e7TRIiNHb9zuZcP0eR7cArSbxG2hGRXv58WLbu0mpCiMK7og7
+         154EpA/b89Zcw1NqJpYNd7R4qfquMdIFYIOQlI3aFqvuffK9Y2hi3n80nMI04L9rPVEx
+         OY2eCGdRFfdf00fV5ytVi+MO4+fAd+eVVgYD8tMTDR5C6CqKh3j2RpTUGzfjTorntTf0
+         JBZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741756336; x=1742361136;
+        d=1e100.net; s=20230601; t=1741756339; x=1742361139;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RJXdYgpnaSANjr6mjP2NezwhNSkQ+3v2rcj0Q2SIosY=;
-        b=qfM5/BKH0Ms6t6gGVK+Q84hBsOSPgEv3oWMWezlqjV0xeGaoN6hHCZC4d/ElzboCMZ
-         fKzlZQWPRwDTIvMJEYKWWtF8O7GtNOoRD4hDMLPYdfYFlLNQ5ULzBL0nNju+gwdNJh3a
-         9nSi0X77h1uVORwh/Uy2PVqohhkqCoBj4g3horcHVXihTCRruadX8m8d5WhyTh0x1s22
-         yJ4xoKMdENtut5Xp/60BHWxS4B7NRduZjUpKHpfy4ijZL46Vh9RjBkt5N0Vb2AOgW6Gi
-         LKz6WRZOpUaNc1+DkwrHTJ8ATcsPXJFCGcrt59UQXQ2d94v3dbY2X4u4kh7kNLvPQx+g
-         KfDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoxg+mrJeaP+1am6/gKeAM/u+bVR/e3Tx2MigtTEOxDbjOkYUPzhWExkbCy+vjekICtDlZ0qSj88s2CKwK@vger.kernel.org, AJvYcCVtxbok/7nVphwHQAeFLU2fYAl3IpLrttBwcQ9E9zjRHUqZBTyQWZZC75gnJJYJtS99NKwV/5a7PuiNdA==@vger.kernel.org, AJvYcCWKFMQCcsWgTER8c5gsam+zrSXQVqDap6zbalJjCkQTrb3l//V4hjUaAinSxOlrEWcj4lp6i6yEeI7x6S831uRKBWS/5g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOqP9Kh4AhsfIljhLNiLvMuzo1Yp9yzFG7kDtYgnZt5kSbRQDZ
-	/8ib5MMm/nkTucUomMKM19ufQTQIZg0WHIgApjLOhcB3r3yaXa7OF/uJts+s
-X-Gm-Gg: ASbGncvQJGt4/jATa5Fxnv2AwiixpsT8z9uwhco3+4a+2AsC9xwCkHJ7hmFnZ0iKFE2
-	RyDXrI2MFh2Q95fGnBjTyPXFl8+UZCFgvp5bBOA82TI6ezNK/ryYcDuspUciWN/COFyFLglZfog
-	Uonaj+adY0oT/vSo/nxT4Icwdd1G+bh+kDwWWm5YIkQo+kQTVK/qgqCBDJXr4aXXHCXIiZByVI6
-	zuTlDDVyDx7COSjyMA7UZkz0XJDtfUSjGofdb0YJHJGJxAMwAXPkWu6+9Q5u1JfshySig9Vkm7Z
-	xkdiq+OQMfppThN/UTLu6tQrCVs8rSDV2rJRgABB3bG+yQ==
-X-Google-Smtp-Source: AGHT+IFxxLr6102fRp8Rlj+gTdwAAvhzpikKt4ybQE3TM6C+D+k3sIKVuQPucmu4mSpUoMY0wQU7SQ==
-X-Received: by 2002:a05:690c:6f84:b0:6fb:9786:5871 with SMTP id 00721157ae682-6febf292ca7mr271938667b3.7.1741756336630;
-        Tue, 11 Mar 2025 22:12:16 -0700 (PDT)
+        bh=qyyMMDT9jY3GwgMomKZZLoHQgXtzrxyYgo+dpoCdkj0=;
+        b=eRkg+4ltVMj07MiRxOGQSfukIbr5i9oM72ndoYQSEsAuGyqnhvHgOoIIIxIlHIbHHp
+         bIycpVHCMMA5/FXiJQHTBMfcHqOqLKyyRHdHb+7mux9VYMrckbCZhHcwMueJob7zFPLo
+         y9xQrKAD/Bq2wg23aTBK2Hfpw0s9ne/Y7F26FqOp/uf7o+VeLZBQ16S/WCQqDC/SsEh2
+         wBjT95CyiNGHQawaCSq85ho2IOrAlQ7MVgBTfHKj8bZBiZ4B1weZJyU8O0bgb5/3ALPj
+         6xJupw3eB1KbxIEJsZNGR9x0vzUbWQv7r33V8nZIgHIZpLa9qpnBdGybaG9KK/Bk5bv4
+         COxw==
+X-Forwarded-Encrypted: i=1; AJvYcCX33qc8aQuGVr40D8AqfMsz2gxvgglCmuOeFjyrBqIEzawPwd/5Odazsq//EBVNTJ9woGHt/ff9YbiO8Pg=@vger.kernel.org, AJvYcCXsPMAdaDKGguVcZsJwWJIhyB0mPvf9YAEUcviF1bmVgGuQiDpv+FSDlECd13b4MaIenavNTD7AgDYVx17yIle/KWpYVw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8jc9qvO2Ymrz0u9w8Y0JN4hOx9TSUq4jmSOSzNfQqWaA4UeoZ
+	slTUUTNTl4P3iTMWnVInaXu/Zkax104rT0Cc44L/BZMX2ULgFf7gDvm0JJ1S
+X-Gm-Gg: ASbGncvAjFDTaZiQRiYox/BFm5Tijf22hspky0juPsvVh21UBVgV9wL/3uPGcfQldO0
+	5CHutgb7QUa6UEgzNDE6FQTNqSKWITCVxbdUvHPSRQZzszOAkpZChQkkUpX5ZxlxKris7Yx51vw
+	NYiHK+jMa9DYFUX902nu+w7ZbMY7o3Gq8oPP/zV4hoG+3bCZASWf8q5vQK0P2JmcJVJxaZ4In00
+	f7kMi66CPpEFqjDkVTyPDVOQN6o0GQvtv4CpqdgrXNBUlM8Kw/YVLGDcAU++pplgERlXuKFaUKm
+	oSxmiqHFkfUWCM3zumwbeBRhp/Lfwhy/bPJAh/nLIfftRg==
+X-Google-Smtp-Source: AGHT+IG5ckgeFhRxiTcewwcfIfkwkTt9CJpTFF1HJ6yB7pNYBlYSlTaJXrmmbsE03/0Ut/06cYGaqA==
+X-Received: by 2002:a05:690c:23c1:b0:6fd:2feb:eb6e with SMTP id 00721157ae682-6febf387345mr269399407b3.28.1741756338962;
+        Tue, 11 Mar 2025 22:12:18 -0700 (PDT)
 Received: from [192.168.100.70] ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2c46defsm29811287b3.105.2025.03.11.22.12.14
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2c46defsm29811287b3.105.2025.03.11.22.12.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 22:12:15 -0700 (PDT)
+        Tue, 11 Mar 2025 22:12:18 -0700 (PDT)
 From: Kurt Borja <kuurtb@gmail.com>
-Date: Wed, 12 Mar 2025 00:11:21 -0500
-Subject: [PATCH v5 08/12] platform/x86: alienware-wmi-wmax: Add support for
- manual fan control
+Date: Wed, 12 Mar 2025 00:11:22 -0500
+Subject: [PATCH v5 09/12] platform/x86: alienware-wmi-wmax: Add a DebugFS
+ interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,292 +83,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250312-hwm-v5-8-deb15ff8f3c6@gmail.com>
+Message-Id: <20250312-hwm-v5-9-deb15ff8f3c6@gmail.com>
 References: <20250312-hwm-v5-0-deb15ff8f3c6@gmail.com>
 In-Reply-To: <20250312-hwm-v5-0-deb15ff8f3c6@gmail.com>
 To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
  Armin Wolf <W_Armin@gmx.de>
 Cc: Kurt Borja <kuurtb@gmail.com>, Hans de Goede <hdegoede@redhat.com>, 
  platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
- linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
- Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org
+ linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
 
-All models with the "AWCC" WMAX device support a way of manually
-controlling fans.
+Add a debugfs interface which exposes thermal private data.
 
-The PWM duty cycle of a fan can't be controlled directly. Instead the
-AWCC interface let's us tune a fan `boost` value, which has the
-following empirically discovered, aproximate behavior over the PWM
-value:
-
-	pwm = pwm_base + (fan_boost / 255) * (pwm_max - pwm_base)
-
-Where the pwm_base is the locked PWM value controlled by the FW and
-fan_boost is a value between 0 and 255.
-
-Expose this fan_boost knob as a custom HWMON attribute.
-
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>
-Cc: linux-hwmon@vger.kernel.org
 Reviewed-by: Armin Wolf <W_Armin@gmx.de>
 Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- drivers/platform/x86/dell/alienware-wmi-wmax.c | 174 ++++++++++++++++++++++++-
- 1 file changed, 172 insertions(+), 2 deletions(-)
+ drivers/platform/x86/dell/alienware-wmi-wmax.c | 90 ++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
 diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-index 0c30ffb6091a15d81f4dc959dfd28417249d3dda..bc15f78054f3c87148b8729d6ae471cdbb36a940 100644
+index bc15f78054f3c87148b8729d6ae471cdbb36a940..e89dc1389a383fd7d20b0a46e56b3a324c3e63d8 100644
 --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
 +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-@@ -13,8 +13,12 @@
+@@ -11,6 +11,7 @@
+ #include <linux/bitfield.h>
+ #include <linux/bitmap.h>
  #include <linux/bits.h>
++#include <linux/debugfs.h>
  #include <linux/dmi.h>
  #include <linux/hwmon.h>
-+#include <linux/hwmon-sysfs.h>
-+#include <linux/kstrtox.h>
-+#include <linux/minmax.h>
+ #include <linux/hwmon-sysfs.h>
+@@ -19,6 +20,7 @@
  #include <linux/moduleparam.h>
  #include <linux/platform_profile.h>
-+#include <linux/pm.h>
+ #include <linux/pm.h>
++#include <linux/seq_file.h>
  #include <linux/units.h>
  #include <linux/wmi.h>
  #include "alienware-wmi.h"
-@@ -181,10 +185,12 @@ enum AWCC_THERMAL_INFORMATION_OPERATIONS {
- 	AWCC_OP_GET_FAN_MIN_RPM			= 0x08,
- 	AWCC_OP_GET_FAN_MAX_RPM			= 0x09,
- 	AWCC_OP_GET_CURRENT_PROFILE		= 0x0B,
-+	AWCC_OP_GET_FAN_BOOST			= 0x0C,
- };
- 
- enum AWCC_THERMAL_CONTROL_OPERATIONS {
- 	AWCC_OP_ACTIVATE_PROFILE		= 0x01,
-+	AWCC_OP_SET_FAN_BOOST			= 0x02,
- };
- 
- enum AWCC_GAME_SHIFT_STATUS_OPERATIONS {
-@@ -248,6 +254,7 @@ struct awcc_fan_data {
- 	const char *label;
- 	u32 min_rpm;
- 	u32 max_rpm;
-+	u8 suspend_cache;
- 	u8 id;
- };
- 
-@@ -628,6 +635,18 @@ static inline int awcc_op_get_temperature(struct wmi_device *wdev, u8 temp_id, u
- 	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &args, out);
+@@ -1252,6 +1254,92 @@ static int awcc_platform_profile_init(struct wmi_device *wdev)
+ 	return PTR_ERR_OR_ZERO(priv->ppdev);
  }
  
-+static inline int awcc_op_get_fan_boost(struct wmi_device *wdev, u8 fan_id, u32 *out)
++/*
++ * DebugFS
++ */
++static int awcc_debugfs_system_description_read(struct seq_file *seq, void *data)
 +{
-+	struct wmax_u32_args args = {
-+		.operation = AWCC_OP_GET_FAN_BOOST,
-+		.arg1 = fan_id,
-+		.arg2 = 0,
-+		.arg3 = 0,
-+	};
-+
-+	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &args, out);
-+}
-+
- static inline int awcc_op_get_current_profile(struct wmi_device *wdev, u32 *out)
- {
- 	struct wmax_u32_args args = {
-@@ -653,6 +672,19 @@ static inline int awcc_op_activate_profile(struct wmi_device *wdev, u8 profile)
- 	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_CONTROL, &args, &out);
- }
- 
-+static inline int awcc_op_set_fan_boost(struct wmi_device *wdev, u8 fan_id, u8 boost)
-+{
-+	struct wmax_u32_args args = {
-+		.operation = AWCC_OP_SET_FAN_BOOST,
-+		.arg1 = fan_id,
-+		.arg2 = boost,
-+		.arg3 = 0,
-+	};
-+	u32 out;
-+
-+	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_CONTROL, &args, &out);
-+}
-+
- /*
-  * HWMON
-  *  - Provides temperature and fan speed monitoring as well as manual fan
-@@ -817,6 +849,81 @@ static const struct hwmon_chip_info awcc_hwmon_chip_info = {
- 	.info = awcc_hwmon_info,
- };
- 
-+static ssize_t fan_boost_show(struct device *dev, struct device_attribute *attr,
-+			      char *buf)
-+{
++	struct device *dev = seq->private;
 +	struct awcc_priv *priv = dev_get_drvdata(dev);
-+	int index = to_sensor_dev_attr(attr)->index;
-+	struct awcc_fan_data *fan = priv->fan_data[index];
-+	u32 boost;
-+	int ret;
 +
-+	ret = awcc_op_get_fan_boost(priv->wdev, fan->id, &boost);
-+	if (ret)
-+		return ret;
++	seq_printf(seq, "0x%08x\n", priv->system_description);
 +
-+	return sysfs_emit(buf, "%u\n", boost);
++	return 0;
 +}
 +
-+static ssize_t fan_boost_store(struct device *dev, struct device_attribute *attr,
-+			       const char *buf, size_t count)
++static int awcc_debugfs_hwmon_data_read(struct seq_file *seq, void *data)
 +{
++	struct device *dev = seq->private;
 +	struct awcc_priv *priv = dev_get_drvdata(dev);
-+	int index = to_sensor_dev_attr(attr)->index;
-+	struct awcc_fan_data *fan = priv->fan_data[index];
-+	unsigned long val;
-+	int ret;
++	const struct awcc_fan_data *fan;
++	unsigned int bit;
 +
-+	ret = kstrtoul(buf, 0, &val);
-+	if (ret)
-+		return ret;
++	seq_printf(seq, "Number of fans: %u\n", priv->fan_count);
++	seq_printf(seq, "Number of temperature sensors: %u\n\n", priv->temp_count);
 +
-+	ret = awcc_op_set_fan_boost(priv->wdev, fan->id, clamp_val(val, 0, 255));
-+
-+	return ret ? ret : count;
-+}
-+
-+static SENSOR_DEVICE_ATTR_RW(fan1_boost, fan_boost, 0);
-+static SENSOR_DEVICE_ATTR_RW(fan2_boost, fan_boost, 1);
-+static SENSOR_DEVICE_ATTR_RW(fan3_boost, fan_boost, 2);
-+static SENSOR_DEVICE_ATTR_RW(fan4_boost, fan_boost, 3);
-+static SENSOR_DEVICE_ATTR_RW(fan5_boost, fan_boost, 4);
-+static SENSOR_DEVICE_ATTR_RW(fan6_boost, fan_boost, 5);
-+
-+static umode_t fan_boost_attr_visible(struct kobject *kobj, struct attribute *attr, int n)
-+{
-+	struct awcc_priv *priv = dev_get_drvdata(kobj_to_dev(kobj));
-+
-+	return n < priv->fan_count ? attr->mode : 0;
-+}
-+
-+static bool fan_boost_group_visible(struct kobject *kobj)
-+{
-+	return true;
-+}
-+
-+DEFINE_SYSFS_GROUP_VISIBLE(fan_boost);
-+
-+static struct attribute *fan_boost_attrs[] = {
-+	&sensor_dev_attr_fan1_boost.dev_attr.attr,
-+	&sensor_dev_attr_fan2_boost.dev_attr.attr,
-+	&sensor_dev_attr_fan3_boost.dev_attr.attr,
-+	&sensor_dev_attr_fan4_boost.dev_attr.attr,
-+	&sensor_dev_attr_fan5_boost.dev_attr.attr,
-+	&sensor_dev_attr_fan6_boost.dev_attr.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group fan_boost_group = {
-+	.attrs = fan_boost_attrs,
-+	.is_visible = SYSFS_GROUP_VISIBLE(fan_boost),
-+};
-+
-+static const struct attribute_group *awcc_hwmon_groups[] = {
-+	&fan_boost_group,
-+	NULL
-+};
-+
- static int awcc_hwmon_temps_init(struct wmi_device *wdev)
- {
- 	struct awcc_priv *priv = dev_get_drvdata(&wdev->dev);
-@@ -954,12 +1061,56 @@ static int awcc_hwmon_init(struct wmi_device *wdev)
- 	if (ret)
- 		return ret;
- 
--	priv->hwdev = devm_hwmon_device_register_with_info(&wdev->dev, "alienware_wmi", priv,
--							   &awcc_hwmon_chip_info, NULL);
-+	priv->hwdev = devm_hwmon_device_register_with_info(&wdev->dev, "alienware_wmi",
-+							   priv, &awcc_hwmon_chip_info,
-+							   awcc_hwmon_groups);
- 
- 	return PTR_ERR_OR_ZERO(priv->hwdev);
- }
- 
-+static void awcc_hwmon_suspend(struct device *dev)
-+{
-+	struct awcc_priv *priv = dev_get_drvdata(dev);
-+	struct awcc_fan_data *fan;
-+	unsigned int i;
-+	u32 boost;
-+	int ret;
-+
-+	for (i = 0; i < priv->fan_count; i++) {
++	for (u32 i = 0; i < priv->fan_count; i++) {
 +		fan = priv->fan_data[i];
 +
-+		ret = awcc_thermal_information(priv->wdev, AWCC_OP_GET_FAN_BOOST,
-+					       fan->id, &boost);
-+		if (ret)
-+			dev_err(dev, "Failed to store Fan %u boost while suspending\n", i);
-+
-+		fan->suspend_cache = ret ? 0 : clamp_val(boost, 0, 255);
-+
-+		awcc_op_set_fan_boost(priv->wdev, fan->id, 0);
-+		if (ret)
-+			dev_err(dev, "Failed to set Fan %u boost to 0 while suspending\n", i);
++		seq_printf(seq, "Fan %u:\n", i);
++		seq_printf(seq, "  ID: 0x%02x\n", fan->id);
++		seq_printf(seq, "  Related temperature sensors bitmap: %lu\n",
++			   fan->auto_channels_temp);
 +	}
++
++	seq_puts(seq, "\nTemperature sensor IDs:\n");
++	for_each_set_bit(bit, priv->temp_sensors, AWCC_ID_BITMAP_SIZE)
++		seq_printf(seq, "  0x%02x\n", bit);
++
++	return 0;
 +}
 +
-+static void awcc_hwmon_resume(struct device *dev)
++static int awcc_debugfs_pprof_data_read(struct seq_file *seq, void *data)
 +{
++	struct device *dev = seq->private;
 +	struct awcc_priv *priv = dev_get_drvdata(dev);
-+	struct awcc_fan_data *fan;
-+	unsigned int i;
-+	int ret;
 +
-+	for (i = 0; i < priv->fan_count; i++) {
-+		fan = priv->fan_data[i];
++	seq_printf(seq, "Number of thermal profiles: %u\n\n", priv->profile_count);
 +
-+		if (!fan->suspend_cache)
++	for (u32 i = 0; i < PLATFORM_PROFILE_LAST; i++) {
++		if (!priv->supported_profiles[i])
 +			continue;
 +
-+		ret = awcc_op_set_fan_boost(priv->wdev, fan->id, fan->suspend_cache);
-+		if (ret)
-+			dev_err(dev, "Failed to restore Fan %u boost while resuming\n", i);
++		seq_printf(seq, "Platform profile %u:\n", i);
++		seq_printf(seq, "  ID: 0x%02x\n", priv->supported_profiles[i]);
 +	}
++
++	return 0;
 +}
 +
- /*
-  * Thermal Profile control
-  *  - Provides thermal profile control through the Platform Profile API
-@@ -1189,6 +1340,24 @@ static int wmax_wmi_probe(struct wmi_device *wdev, const void *context)
- 	return ret;
++static void awcc_debugfs_remove(void *data)
++{
++	struct dentry *root = data;
++
++	debugfs_remove(root);
++}
++
++static void awcc_debugfs_init(struct wmi_device *wdev)
++{
++	struct dentry *root;
++	char name[64];
++
++	scnprintf(name, ARRAY_SIZE(name), "%s-%s", "alienware-wmi", dev_name(&wdev->dev));
++	root = debugfs_create_dir(name, NULL);
++
++	debugfs_create_devm_seqfile(&wdev->dev, "system_description", root,
++				    awcc_debugfs_system_description_read);
++
++	if (awcc->hwmon)
++		debugfs_create_devm_seqfile(&wdev->dev, "hwmon_data", root,
++					    awcc_debugfs_hwmon_data_read);
++
++	if (awcc->pprof)
++		debugfs_create_devm_seqfile(&wdev->dev, "pprof_data", root,
++					    awcc_debugfs_pprof_data_read);
++
++	devm_add_action_or_reset(&wdev->dev, awcc_debugfs_remove, root);
++}
++
+ static int alienware_awcc_setup(struct wmi_device *wdev)
+ {
+ 	struct awcc_priv *priv;
+@@ -1290,6 +1378,8 @@ static int alienware_awcc_setup(struct wmi_device *wdev)
+ 			return ret;
+ 	}
+ 
++	awcc_debugfs_init(wdev);
++
+ 	return 0;
  }
  
-+static int wmax_wmi_suspend(struct device *dev)
-+{
-+	if (awcc->hwmon)
-+		awcc_hwmon_suspend(dev);
-+
-+	return 0;
-+}
-+
-+static int wmax_wmi_resume(struct device *dev)
-+{
-+	if (awcc->hwmon)
-+		awcc_hwmon_resume(dev);
-+
-+	return 0;
-+}
-+
-+DEFINE_SIMPLE_DEV_PM_OPS(wmax_wmi_pm_ops, wmax_wmi_suspend, wmax_wmi_resume);
-+
- static const struct wmi_device_id alienware_wmax_device_id_table[] = {
- 	{ WMAX_CONTROL_GUID, NULL },
- 	{ },
-@@ -1199,6 +1368,7 @@ static struct wmi_driver alienware_wmax_wmi_driver = {
- 	.driver = {
- 		.name = "alienware-wmi-wmax",
- 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-+		.pm = pm_sleep_ptr(&wmax_wmi_pm_ops),
- 	},
- 	.id_table = alienware_wmax_device_id_table,
- 	.probe = wmax_wmi_probe,
 
 -- 
 2.48.1
