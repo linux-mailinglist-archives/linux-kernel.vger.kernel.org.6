@@ -1,99 +1,114 @@
-Return-Path: <linux-kernel+bounces-557997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC68A5E025
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:22:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C7D0A5E030
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:23:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BD7616D866
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:22:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6C477A2CF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54E82586C2;
-	Wed, 12 Mar 2025 15:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E56D258CD8;
+	Wed, 12 Mar 2025 15:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxvmRpLZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iEG9dvLh"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364D7250C0F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524602512E7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741792800; cv=none; b=ZwqG1lhJHEFofcz/FofV8uGO+lFAr8l/U+GHMiD0hXxE+uV/dXahk+TsCgXLkb+zyv0iXtTXgNhyfteeWu9kavuTw4eELRkX/luVoZJHtHGKMMKzupSe9cQ8OZXLISd39nQ4eW/kn4YzubjM8r89YH9C0XxX7oVByQeimME01pc=
+	t=1741792853; cv=none; b=VfIzCjHar1oGnATIXvE784q5RVJDpCM9qB8o+PJgrNa3lZWcutedCchbv/gYGCUDpRsff187otE8+x2h3Rc8KFWx8leCNEmruzNhPIBVl35z47WoYTWiYArIA49yAlyN3FXhk+MeoSIOCYg5Gk/0HM76e8LPfODBAooja6nVfIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741792800; c=relaxed/simple;
-	bh=IxlcF8BZP06JVhdofL8W/C0CQCL3FTai5k9b9g87Tnw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=f3zBGNRsjRtGMjJSwtepDaRio0W3sw7N7ZryKnjZ9uE2kG9jZK2+DhxaRtNvF02ARrKTQ5rA8YEUIyPhfxFvLUy4hB8gMp3eATa5KwIq5yEpXQP+mlvLBd5tycOOle6hp2psuq251/Vl0BKs+/BuInfuQAu13FtPQqs28U1S2WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxvmRpLZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96BC1C4CEDD;
-	Wed, 12 Mar 2025 15:19:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741792799;
-	bh=IxlcF8BZP06JVhdofL8W/C0CQCL3FTai5k9b9g87Tnw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=JxvmRpLZnuI4PFTLQTjOt8GyFaujiPyHJZ1dNdx9+LLyc6P7AAV2SLzojTlGvyyVu
-	 Y3vzDZPRcTM/Y96vY/ni9fDF9sDHcaLBuUCzjLsA8JDLtocInj7M6gi3pu4wU6O1TP
-	 pDNKnxvNc2J8fJyn1sjjEeciYGDCtZ3bq6i0D8mzKGs4ZJ6+Jivs2IvKxi9o8ZNkkG
-	 Zat6u9poaSOImz9GktANikOHug3StTn9DmOG0j3va0WFtRlfNJhciqiLe5iT7G2zuo
-	 DQ0+DqFr9vhS+Zn1jnoFl0C0nv43zcxVTG2swQ0iwMvSd8kXqi0lu+zmqN+vaAox8o
-	 5ZKYq5zgDgINA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33EB5380DBE4;
-	Wed, 12 Mar 2025 15:20:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1741792853; c=relaxed/simple;
+	bh=vFO5RejfroO3/QCBzMpZapYOLh4Wu0SP4ltEFH9/5V8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NRmUqMbPWLSji8N67e2DJp9LKomUvr+qZUmZJsTLAxSUP41wIuxmWOjebwubh5dAkZAilJ8aRAzrKcnzLYHNd686I32RPSAbNmsCfmhXHaffPFdEp6rcsS+2F/28jVGkit68RPKFA7+mnTxjAapSvjRST6gFz9OFDhAijSDXW44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iEG9dvLh; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cf3192d8bso53675e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741792849; x=1742397649; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bGxZkF5t/1wrFPJ00FERNaK3N3Q0WGshExeLmGRXwks=;
+        b=iEG9dvLhmd0BrnthMwEu0OzD2RHaNIgNqI9g/+nhDui/skVHhKYblZeY0fzLxORBL8
+         FrV3UvyNHMzRA7qNTHWAuw1Aq2tCBnTq6lNbE9Xqm+pP3rEGoq3c6TjqBmaQFfJ2CNvO
+         aKRrrKiO0Xbv2Z0QYCY5QNzGxQm2ujnD7M++Wwsnpul33P7q/PKgGkT2meQ0SnozOiGg
+         M5VrZIm1skS/GXq2cOWPaHqF3R6xxiJUJ7zST7u07RL35DM4ZQXljoTq34KDISozB/oW
+         Yd4NpXUg/aPXdPkbt7bCgIAY8GGNJ/gyFEKokmsk8Sz/dpzXy7ihWLhCFyplOYkhaSgU
+         Ujyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741792849; x=1742397649;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bGxZkF5t/1wrFPJ00FERNaK3N3Q0WGshExeLmGRXwks=;
+        b=twn92NLiToJhtTyHTStNM3XTA2fG8MP4P++g+qQBv+xIKAL49zdRSYTvZB6dC0Pz7O
+         KqqIut6jv5YcJBFSP0ekeKgRFHedh5EWaqGbOY9mRlYBUWTm1bY2uwEYAE9LlozznMUS
+         x8B33WMbnu9I/hFEiwt0GMJyKjBgI4aY5IwouJi+stwYOdiAQ8I6EdX27G0XgF15clMq
+         cEMh7FrfIM0mtJ7QvC1X4JWkwwUnm3Jz61Zlquzr6L5kIaJoPESwVNoSY1ZnxgDZUuPt
+         ULo3Uobta66KKdV7g3kyPQ2dBcIUTuWxPrjnNUPt9kGj20wUON+UunMIL1ZglRoAJc9L
+         PRgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVn6oRCzEM0BtxZyFGE0X16rq+26iiuJgGpsKikhCx9sL6qoelg/gaeFRkaIgv/4KSYo/E7l2wP51XaWwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywskod8dXhXrJV7lARN0z4tE8DA0yOShJcQ3bgChhvxIIS5PiKP
+	XfMPfM12l6fdCZkqhMa8REzSfhuJxBpPg2KfPrsH/WsOtMmDyYGlvhrKs5Oa2/OP3zxMuenO3TT
+	/vv9F1ZeinJS5v/S4Z8FTYpa472i8rrh3Eyh5
+X-Gm-Gg: ASbGnct48LrdB6T98y7qhQn2KoR7y+MlSES9/G8VgCZGnAfJ5i1oauJpkUlMMigePQU
+	KrhGliDJuUf58PgdsL7gPrglzz8nI7YY+5eWdsPuXnGHXffd34Ro/aG80wEf0Xw5R071dwHCIEJ
+	8Tdz0GRN+R7OZEQvAjQb5chfUbGHIUdLmja2fLuyb4vnF1c0fsCI0d+2pe
+X-Google-Smtp-Source: AGHT+IHD2nQKbwusxnJ80KAjLgbQAOF0EvyAvqqHHVna5q1oZeuBFrEiEEKAahgMMiR6eRSYCFMQhm6AYgZVdiouPL0=
+X-Received: by 2002:a05:600c:4f49:b0:439:9434:1b66 with SMTP id
+ 5b1f17b1804b1-43d15f8df65mr69355e9.1.1741792849400; Wed, 12 Mar 2025 08:20:49
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid running out of free segments
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: 
- <174179283306.831874.2260893071160537539.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Mar 2025 15:20:33 +0000
-References: <20250312090125.4014447-1-chao@kernel.org>
-In-Reply-To: <20250312090125.4014447-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+References: <CGME20250306074101epcas1p4b24ac546f93df2c7fe3176607b20e47f@epcas1p4.samsung.com>
+ <20250306074056.246582-1-s.suk@samsung.com> <Z8m-vJ6mP1Sh2pt3@infradead.org>
+ <CAJrd-UuLvOPLC2Xr=yOzZYvOw9k8qwbNa0r9oNjne31x8Pmnhw@mail.gmail.com>
+ <848301db8f05$a1d79430$e586bc90$@samsung.com> <CAJuCfpHjV=nRmkAGrf-tyCxEEygZ0CuW-PRp+F_vHwFbfYS8dA@mail.gmail.com>
+ <Z9Gld_s3XYic8-dG@infradead.org>
+In-Reply-To: <Z9Gld_s3XYic8-dG@infradead.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 12 Mar 2025 08:20:36 -0700
+X-Gm-Features: AQ5f1JoRE6F00aRF8p4iMy0O_p5G6IwsOeM_xmMCWwyYOphS5VP-BnJT1SNFaJY
+Message-ID: <CAJuCfpGa43OQHG9BmnvxROX1AneCvkuLxFwM+TdxAdR1v9kWSg@mail.gmail.com>
+Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct IO
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Sooyong Suk <s.suk@samsung.com>, Jaewon Kim <jaewon31.kim@gmail.com>, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	spssyr@gmail.com, axboe@kernel.dk, linux-block@vger.kernel.org, 
+	dhavale@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Wed, Mar 12, 2025 at 8:17=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+>
+> On Thu, Mar 06, 2025 at 06:28:40PM -0800, Suren Baghdasaryan wrote:
+> > I think this will help you only when the pages are faulted in but if
+> > __get_user_pages() finds an already mapped page which happens to be
+> > allocated from CMA, it will not migrate it. So, you might still end up
+> > with unmovable pages inside CMA.
+>
+> Direct I/O pages are not unmovable.  They are temporarily pinned for
+> the duration of the direct I/O.
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+Yes but even temporarily pinned pages can cause CMA allocation
+failure. My point is that if we know beforehand that the pages will be
+pinned we could avoid using CMA and these failures would go away.
 
-On Wed, 12 Mar 2025 17:01:25 +0800 you wrote:
-> If checkpoint is disabled, GC can not reclaim any segments, we need
-> to detect such condition and bail out from fallocate() of a pinfile,
-> rather than letting allocator running out of free segment, which may
-> cause f2fs to be shutdown.
-> 
-> reproducer:
-> mkfs.f2fs -f /dev/vda 16777216
-> mount -o checkpoint=disable:10% /dev/vda /mnt/f2fs
-> for ((i=0;i<4096;i++)) do { dd if=/dev/zero of=/mnt/f2fs/$i bs=1M count=1; } done
-> sync
-> for ((i=0;i<4096;i+=2)) do { rm /mnt/f2fs/$i; } done
-> sync
-> touch /mnt/f2fs/pinfile
-> f2fs_io pinfile set /mnt/f2fs/pinfile
-> f2fs_io fallocate 0 0 4201644032 /mnt/f2fs/pinfile
-> 
-> [...]
-
-Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to avoid running out of free segments
-    https://git.kernel.org/jaegeuk/f2fs/c/f7f8932ca6bb
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>
+> I really don't understand what problem you're trying to fix here.
+>
 
