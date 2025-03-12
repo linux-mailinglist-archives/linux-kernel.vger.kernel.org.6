@@ -1,276 +1,240 @@
-Return-Path: <linux-kernel+bounces-557823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24346A5DE42
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:42:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 484DEA5DE46
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F95A16CF88
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:42:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1AD63B7649
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80382459E5;
-	Wed, 12 Mar 2025 13:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD042459C2;
+	Wed, 12 Mar 2025 13:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QSvyL0lB"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="D9ogUIlD"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D99723F422
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC95226861
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741786972; cv=none; b=YGmy1ruj83WRHd6H7dWNq8rhk7g7vcJGp4+HPho86CL5p+Mv2rle6wTET0nQI1aP1d0/XP76+2yR5Rur2/1cZpaUfccVIy8IgyhRERmT9gbD3JFWTpZq5jbwEhB05aXDLrhbzahxRdCwm1I2Nw3zX6R0XoGPRQTuPf+ITpmmbXo=
+	t=1741787065; cv=none; b=qwqzJgKmhD+jxqa8A+hp7yeHz4tDw2qoPrYJP8Mt/pieifZjqDWFQ5pRP+A7OehULMVDbYVHecC3XbCnrSizze7Be9iTxLsHraQIawr6sG7ZzSGEL99uY3hnkE6LJ19XGYGmylDV8pineSPDfgRyL5bg8TAcNDWhT22x8XM8Q7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741786972; c=relaxed/simple;
-	bh=mTQmbOpwPB9pHwv2w8Sm4aaZLhSRhEt1a/8lwIIgvZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4kONNf1xF68d3EfvGVDrXOaiOEbrAB9gXa/FNh1tXYaQbyovM/BlsrahA09AEQ+wcwBuicwwVeKRLPOiAsJKF9EbLk15Me0OFc1vYwpBHU87vLkOAnIkIWLDyoRU6RbbFr86zfYb931vw4C0pJ4kYHmm2LzzKEas2MGqVYJZe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QSvyL0lB; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3913d45a148so2946882f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 06:42:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741786967; x=1742391767; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TRL+XzLRP8H1n4f8VQBF9LgIUiEPLdcwsw8vod0mrbw=;
-        b=QSvyL0lBI/hJ72R7Bs5cC9zFX3wIKA8NCb3xsUMqyt36yxByx7bcjjbeorv7GbgBXv
-         6qBPgpDi33Sif5Gha00t4FDzAoXwW9eCbQfWjgqDubP3TMq89U5XIlL7n3dlc1yMvmAl
-         ldVJmNccUMmhmKz2ec/JNKvA3FZslAIzhc0TCC9f/ZAB+vitK6AmIegSJMjdXMMaK5hc
-         eVA0/OM/cQDYswmoCHjx9SJ9K7emqRcUgUPmEuyBjZqsAD06DKchOMDg/c/o9DcVXHM4
-         zoNYWYWmMv+jR+PARHYp4+rJMPLjwZMLI5VSxM5ylz+hpEsBG3qg2IYO7KgZoBdXeUOG
-         GuCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741786967; x=1742391767;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TRL+XzLRP8H1n4f8VQBF9LgIUiEPLdcwsw8vod0mrbw=;
-        b=fQZiihPAtlSqJ7//bXpHIIcGwOUSkqg4LEOqkxkmFT4RNwYlI7z7Xrp3RQ3HxJ4E3+
-         uLON/ym/sF6KdJ4G6RmatyxaRDBofenn9IZ7Fg17xsY/v6iZLLEUDl2kOPf6h1kpP2xv
-         AlfGhyX2EZF0+3Zbu+AOiYKtNUA5upra05L4Ee+5jpiRxvwLqoMVNcwcAJjHuLueZZc6
-         YxIeNYyMeEp2Q+HmbHz0SRLg3IrP7+RAwtjAxQnBuwS4wPKpbQm97MPJlKcYhqy4JcSV
-         cTXEFQSmFCNyASVgbaqXvjblJJNSRj3GNcz6t+63IIMCVt/J2B3CAN8hlRhzYUKPiR1+
-         APqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXk89FUFY7BSbJfO9a0E/TYvyTYPy57AsDLIlD9/TDwQnuxfgl8Djdh6Rx5QDGnzljk70iHcopiFtBNvmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx83S51mCl1k1685ggzsHYJGlRthDrgS9DGtJRZt3qKDzEHAlbn
-	FnYECD1MiQgigQKIv4lUNwLvYfP2zLaxKXixyrngNvQ2EnyrnwKIuPwuxaOGhpM=
-X-Gm-Gg: ASbGncvy/o7omvCt77S/jbc92mnQ1gB48pX/+BGtmvutTHGRdHTmYE+hibH/9UtrY0O
-	AIeKD0z4GzfCfcz5VHFZNTec3z8G9rX0XJFoRwuj77qDyNn5pd12lduP561aIdbA1aJjvJ5dF3i
-	pvrr7Bl0NBbQKf/fjQXSdGVT7V2MVATPOmx8FEdNkw3mgaZ/giSawgajktx3UN3dBPxkIK/baWv
-	mluBjbQ+3ZcAMOK5vsXXO6ZfI8k7xKvckIrflOP2E+Z3Hhbf2eYA95LshijAf9ZaK4iXXkrFI8R
-	rdF0QzDt0MD5dPTz4f/6wjC5FOnpI9vCKYoB3Skr+CqnQRY=
-X-Google-Smtp-Source: AGHT+IHFQzTn4zPksAQ8B6QTY+mXcs727bLPbUIT+fCCiNEek6fqMg+/r97172WN0N8oMR4cP0dBRA==
-X-Received: by 2002:a05:6000:144d:b0:391:139f:61af with SMTP id ffacd0b85a97d-39132d8c768mr15352561f8f.32.1741786967439;
-        Wed, 12 Mar 2025 06:42:47 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a7a455dsm21742895e9.40.2025.03.12.06.42.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 06:42:47 -0700 (PDT)
-Date: Wed, 12 Mar 2025 14:42:45 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Adam Simonelli <adamsimonelli@gmail.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v6 3/3] tty: Change order of ttynull to be linked sooner
- if enabled as a console.
-Message-ID: <Z9GPVVTnngGbmbuv@pathway.suse.cz>
-References: <20250304035447.3138221-1-adamsimonelli@gmail.com>
- <7969025.Sb9uPGUboI@nerdopolis2>
- <CAHp75VfadXS8Z2G6U_DcOOZFFmaOSn_9uQN_N7Psse3kiSGj0g@mail.gmail.com>
- <4451040.8hb0ThOEGa@nerdopolis2>
- <CAHp75VdogqwA2qJBp5Sp-tuJbKvmj9mLuop8GZP+vLVeJNg2DQ@mail.gmail.com>
+	s=arc-20240116; t=1741787065; c=relaxed/simple;
+	bh=CKwh8bZGL2+vYB9JbuDSLBR7JG4l/p3BknAMciDF/TI=;
+	h=Message-ID:Date:MIME-Version:From:To:CC:Subject:Content-Type; b=ApFobYl5MrFyaaQuQj45BCQ3pPEH67vUsqiT+hQhbSG/SCS98r/GQcP6q0YFAii5dIXhDB7Tb9vjT6z6UQg5qe2aGIaZDGi721dIWuasIyVOX/pOC67JX1sbex3ic3fJk3ldN7DNi+VrDTE2VPi1OFeoTSUzNpnDZHXC1sn4dKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=D9ogUIlD; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52CDi1fd1043814
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Mar 2025 08:44:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741787041;
+	bh=2jVIV9DnO8Fj9z+Rk95dAiuUSZ3yPdEOI3Ck8BUljhc=;
+	h=Date:From:To:CC:Subject;
+	b=D9ogUIlDfQdlamfPolhwo+7G5hsowQGDbE3nVWbU/np0DpoQ5ynpV2GEmVz4CMiIz
+	 brMrHGxM32VEr8YYxpxBTI32Yjh8DmB8OwR9u3CkVj8nDk5GeiOm2YoT0Ps3oKioso
+	 Cd3bemEh3wzB3nUboWgEDFplrg9Ulc/rCm/R05Ng=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52CDi1Mw107874
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 12 Mar 2025 08:44:01 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
+ Mar 2025 08:44:01 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 12 Mar 2025 08:44:00 -0500
+Received: from [10.24.68.192] (dhcp-10-24-68-192.dhcp.ti.com [10.24.68.192])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52CDhwc0054596;
+	Wed, 12 Mar 2025 08:43:59 -0500
+Message-ID: <5d612c0e-4cd4-469a-9856-dd4552d74412@ti.com>
+Date: Wed, 12 Mar 2025 19:13:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VdogqwA2qJBp5Sp-tuJbKvmj9mLuop8GZP+vLVeJNg2DQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm-soc
+	<arm@kernel.org>, SoC <soc@kernel.org>
+CC: Tero Kristo <kristo@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>
+Subject: [GIT PULL 1/2] arm64: dts: ti: K3 devicetree updates for v6.15
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu 2025-03-06 09:10:29, Andy Shevchenko wrote:
-> On Thu, Mar 6, 2025 at 6:22 AM Adam Simonelli <adamsimonelli@gmail.com> wrote:
-> >
-> > On Wednesday, March 5, 2025 1:52:00 PM EST Andy Shevchenko wrote:
-> > > On Wed, Mar 5, 2025 at 4:06 AM Adam Simonelli <adamsimonelli@gmail.com> wrote:
-> > > > On Tuesday, March 4, 2025 1:51:52 AM EST Andy Shevchenko wrote:
-> > > > > On Tue, Mar 4, 2025 at 5:55 AM <adamsimonelli@gmail.com> wrote:
-> 
-> ...
-> 
-> > > > > >  obj-y                          += vt/
-> > > > >
-> > > > > + blank line.
-> > > > >
-> > > > > > +# If ttynull is configured to be a console by default, ensure that it is linked
-> > > > > > +# earlier before a real one is selected.
-> > > > > > +obj-$(CONFIG_NULL_TTY_DEFAULT_CONSOLE) \
-> > > > > > +                               += ttynull.o
-> > > > >
-> > > > > Here is the question: are you sure that all console drivers that exist
-> > > > > in the kernel happen to be here? Have you grepped the source tree for
-> > > > > checking this?
-> > > > >
-> > > > Grepping for console_initcall, the only other places I see outside of
-> > > > drivers/tty/ is
-> > > >
-> > > > arch/mips/fw/arc/arc_con.c
-> > > > arch/mips/sibyte/common/cfe_console.c
-> > > > arch/powerpc/kernel/legacy_serial.c
-> > > > arch/powerpc/kernel/udbg.c
-> > > > arch/powerpc/platforms/powermac/setup.c
-> > > > arch/um/drivers/stderr_console.c
-> > > > arch/xtensa/platforms/iss/console.c
-> > > > drivers/s390/char/con3215.c
-> > > > drivers/s390/char/con3270.c
-> > > > drivers/s390/char/sclp_con.c
-> > > > drivers/s390/char/sclp_vt220.c
-> > >
-> > > Which means you need to test your stuff on those cases, to see how the
-> > > linker order is done there. It might be that your change wouldn't work
-> > > there as expected (quick workaround is to mark the new option as
-> > > depends on !S390 && !PPC and so on.
-> 
-> > It will be difficult to test other arches, I mean I guess it is possible with
-> > QEMU, and cross-building, though I did do an experimental test on x86:
-> >
-> > Making it temporarily adding an architecture specific console like
-> > powerpc/some mips/s390/arches with Xen enabled.
-> 
-> Thanks. Make sure the summary of this gets into the commit message.
-> Also consider updating the relevant documentation under
-> Documentation/, if any.
-
-Honestly, I am not sure what is the preferred behavior here. I am not
-familiar with the arch-specific consoles.
-
-But it made me think and investigate the various console drivers.
-It is a kind of a mess and I am not sure that I understand it correctly.
-
-Anyway, I suggested to use "add_preferred_console()" in console_initcall()
-in the v5 review, see https://lore.kernel.org/r/Z73teICMWNx7BiHT@pathway.suse.cz
-
-And I expected that it would be enough and the hack with linking order
-won't be needed anymore.
-
-Now, I see that I was wrong. The problem is that many console drivers
-call register_console() in console_initcall(). Such consoles would be
-registered by default when their register_console() is called before
-the ttynull.c calls add_preferred_console().
-
-By other words, the hack with the linking order is still needed to
-call add_preferred_console() in time.
-
-Resume: From my POV, the solution with add_preferred_console() in
-	console_initcall() still relies on the linking order.
-	So, v6 is not better than v5.
-
-	IMHO, v6 is actually be worse, see below.
-
-> > -------------------------------------------------------------------------------
-> > diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> > index 05c5aa951da7..bcd248c44fc8 100644
-> > --- a/arch/x86/kernel/setup.c
-> > +++ b/arch/x86/kernel/setup.c
-> > @@ -1159,6 +1159,8 @@ void __init setup_arch(char **cmdline_p)
-> >
-> >         e820__setup_pci_gap();
-> >
-> > +       add_preferred_console("ttyS", 0, NULL);
-> > +
-> >  #ifdef CONFIG_VT
-> >  #if defined(CONFIG_VGA_CONSOLE)
-> >         if (!efi_enabled(EFI_BOOT) || (efi_mem_type(0xa0000) != EFI_CONVENTIONAL_MEMORY))
-> > -------------------------------------------------------------------------------
-> >
-> > to see what /proc/consoles will look like, to pretend that x86 is an arch that
-> > sets a console somewhere, and I get:
-> >
-> > ttynull0             --- (EC    )  242:0
-> > ttyS0                -W- (E  p a)    4:64
-> >
-> > and I got console messages to ttyS0 with no issue.
-> >
-> > which in my mind is acceptable I would think. ttynull is first in the list,
-> > which is desired effect of CONFIG_NULL_TTY_DEFAULT_CONSOLE, it doesn't have to
-> > be _exclusive_ AFAIK, especially if there are long-time default consoles that.
-> > users or the hardware expects.
-> >
-> >
-> > The only arch that seems to _unconditionally_ add a console without some other
-> > circumstance, like boot loader env var, and command line option, or firmware
-> > flag, or suboption (like CONFIG_SERIAL_PMACZILOG_CONSOLE) is Jazz.
-> >
-> > Like platforms/powernv adds it if CONFIG_HVC_OPAL is disabled, or the firmware
-> > is missing "FW_FEATURE_OPAL". I would assume that a user of this situation
-> > turning on CONFIG_NULL_TTY_DEFAULT_CONSOLE in addition, will just get ttynull
-> > and hvc in /proc/consoles instead of just hvc. Could that cause something to
-> > break?
-> 
-> > Correct me if I am wrong, I could very very very well be wrong.
-> 
-> I leave this to Petr to comment as I'm not that expert in the area.
-
-It depends on the expectations. I see two possibilities:
-
-1. view:
-
-   CONFIG_NULL_TTY_DEFAULT_CONSOLE is disabled by default.
-   We could assume that people would enable it only when they really
-   want to use ttynull for /dev/console. And they do not mind when
-   some other platform-specific console is enabled as well.
-
-   Note that we do not need the hack with the linking order for this.
-   A solution is to call add_preferred_console() directly in
-   console_init(). It has already been used in an earlier version, see
-   https://lore.kernel.org/all/10194425.EvYhyI6sBW@nerdopolis2/
-
-   To make it clear. I consider this as a cleaner and more reliable
-   solution than using the linking order hack.
+Hi ARM SoC Maintainers,
 
 
-2. view:
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-   The new config option wants to prefer "ttynull" when CONFIG_CONSOLE_VT
-   is disabled. So, it is an alternative for "ttyX" from "vt".
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
-   A conservative approach would be to enable it by default in the same
-   situations where "ttyX" from "vt" is enabled by default.
+are available in the Git repository at:
 
-   To make "ttynull" behave the same as "vt" would require using:
+  https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git tags/ti-k3-dt-for-v6.15
 
-     + register_console() in console_initcall().
-     + the same console_initcall() ordering => move ttynull.o
-	    linking order
+for you to fetch changes up to 377fde74eae4abcbcd5475676d58fb595a07ff85:
 
-   => going back to v5 approach.
+  arm64: dts: ti: k3-am62a-phycore-som: Reorder properties per DTS coding style (2025-03-07 18:48:05 +0530)
 
+----------------------------------------------------------------
+TI K3 device tree updates for v6.15
 
-I would normally prefer the conservative approach. But I hate the
-dependency on the linking order. It is so non-intuitive and
-fragile.
+Generic Fixups/Cleanups:
 
-So, I personally prefer to call add_preffed_console() directly in
-console_init() in the end. I guess that
-CONFIG_NULL_TTY_DEFAULT_CONSOLE won't be used on architectures
-with a better native console. So, it will be good enough
-in practice.
+SoC Specific features and Fixes:
+AM62Ax:
+Enable MCU domain pinctrl node
 
-Best Regards,
-Petr
+J784S4/J742S4:
+GICD reg size fixes
+Serdes lane ctrl reg mux mask fix
 
-PS: I am sorry that you have already sent two more versions
-    in the meantime. But I was not able to answer this quickly.
-    I needed to find time and understand the various aspects.
+AM62P/J722s:
+Wakeup UART0 sysc updates for system wakeup
+pinctrl node fixes drop pinctrl-single,gpio-ranges
+BCDMA CSI-RX support
+Audio REFCLKx output support
+
+Board Specific:
+J784S4:
+EVM: Cleanup duplicate gpio-hogs
+
+J722S:
+TypeC port mux selection fix
+
+AM62Ax
+SK: boot-phase tag to support USB bootmode
+RTC support
+Aliases for wakeup and MCU serial UARTs
+
+AM62P
+SK: boot-phase tag to support USB bootmode
+USB wakeup support
+Aliases for wakeup and MCU serial UARTs
+
+AM62:
+verdin-dahila: microphone support
+SK: Aliases for wakeup and MCU serial UARTs
+BeaglePlay: reserved CMA region for Multimedia applications
+
+J721e:
+SK/EVM: boot-phase tags for Serdes for DFU boot
+
+Phytech board updates:
+Boot-phase tag updates for AM64/AM62/AM62A boards
+DTS coding style cleanups
+RTOS IPC reserved-memory additions
+DT overlay for X27 Connectors on AM64 SOMs
+
+J721S2 SOM:
+Add flash partitions
+
+----------------------------------------------------------------
+Daniel Schultz (1):
+      arm64: dts: ti: am64-phyboard-electra: Add DT overlay for X27 connector
+
+Francesco Dolcini (1):
+      arm64: dts: ti: k3-am62p: Enable AUDIO_REFCLKx
+
+Hrushikesh Salunke (1):
+      arm64: dts: ti: k3-j722s-evm: Fix USB2.0_MUX_SEL to select Type-C
+
+Jayesh Choudhary (1):
+      arm64: dts: ti: k3-j784s4-evm-quad-port-eth-exp1: Remove duplicate hogs
+
+Keerthy (1):
+      arm64: dts: ti: k3-j784s4-j742s2-main-common: Correct the GICD size
+
+Markus Schneider-Pargmann (2):
+      arm64: dts: ti: k3-am62x-sk-common: Add serial aliases
+      arm64: dts: ti: k3-am62a7-sk: Add serial alias
+
+Michael Walle (2):
+      arm64: dts: ti: k3-am62p: fix pinctrl settings
+      arm64: dts: ti: k3-j722s: fix pinctrl settings
+
+Nishanth Menon (1):
+      arm64: dts: ti: k3-am625-beagleplay: Reserve 128MiB of global CMA
+
+Sai Sree Kartheek Adivi (1):
+      arm64: dts: ti: k3-am62a-mcu: enable mcu domain pinmux
+
+Siddharth Vadapalli (6):
+      arm64: dts: ti: k3-am62a7-sk: Add boot phase tag for USB0
+      arm64: dts: ti: k3-am62p5-sk: Add boot phase tag for USB0
+      arm64: dts: ti: k3-j721e-common-proc-board: Add boot phase tag to SERDES3
+      arm64: dts: ti: k3-j721e-sk: Add boot phase tag to SERDES3
+      arm64: dts: ti: k3-am62p5-sk: Support SoC wakeup using USB1 wakeup
+      arm64: dts: ti: k3-j784s4-j742s2-main-common: Fix serdes_ln_ctrl reg-masks
+
+Stefan Eichenberger (1):
+      arm64: dts: ti: k3-am62-verdin-dahlia: add Microphone Jack to sound card
+
+Udit Kumar (1):
+      arm64: dts: ti: k3-j721s2-som-p0: Add flash partition details
+
+Vaishnav Achath (3):
+      arm64: dts: ti: k3-j722s-main: Add BCDMA CSI overrides
+      arm64: dts: ti: k3-j722s-main: Add CSI2RX nodes
+      arm64: dts: ti: k3-j722s-evm: Add camera peripherals
+
+Vibhore Vardhan (3):
+      arm64: dts: ti: k3-am62a7-sk: Add alias for RTC
+      arm64: dts: ti: k3-am62p-j722s-common-wakeup: Configure ti-sysc for wkup_uart0
+      arm64: dts: ti: k3-am62p5-sk: Add serial alias
+
+Wadim Egorov (7):
+      arm64: dts: ti: k3-am64-phycore-som: Reserve RTOS IPC memory
+      arm64: dts: ti: k3-am62-phycore-som: Reserve RTOS IPC memory
+      arm64: dts: ti: k3-am62x-phyboard-lyra: Add boot phase tags
+      arm64: dts: ti: k3-am62a-phycore-som: Add boot phase tags
+      arm64: dts: ti: k3-am642-phyboard-electra: Add boot phase tags
+      arm64: dts: ti: k3-am642-phyboard-electra: Reorder properties per DTS coding style
+      arm64: dts: ti: k3-am62a-phycore-som: Reorder properties per DTS coding style
+
+ arch/arm64/boot/dts/ti/Makefile                               |   3 +
+ arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi               |  25 +-
+ arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi             |   6 +-
+ arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts                |   8 +
+ arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi                      |   1 -
+ arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi              |  19 +-
+ arch/arm64/boot/dts/ti/k3-am62a7-sk.dts                       |   4 +
+ arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi         |   8 -
+ arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi      |  36 +-
+ arch/arm64/boot/dts/ti/k3-am62p-main.dtsi                     |  26 +-
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts                       |   4 +-
+ arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi            |   9 +
+ arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi                |   2 +
+ arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi               |  33 +-
+ arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts      |  19 +-
+ .../ti/k3-am642-phyboard-electra-x27-gpio1-spi1-uart3.dtso    |  63 +++
+ arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts         |   1 +
+ arch/arm64/boot/dts/ti/k3-j721e-sk.dts                        |   1 +
+ arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi                  |  41 ++
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts                       |  30 +-
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi                     | 208 +++++++++-
+ arch/arm64/boot/dts/ti/k3-j784s4-evm-quad-port-eth-exp1.dtso  |   7 -
+ arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi      |   6 +-
+ 23 files changed, 488 insertions(+), 72 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-x27-gpio1-spi1-uart3.dtso
+-- 
+Regards
+Vignesh
+https://ti.com/opensource
+
 
