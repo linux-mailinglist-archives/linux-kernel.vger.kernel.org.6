@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-557888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EDDA5DF1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:38:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D08A5DF21
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:38:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9EB5164EAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:38:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE5353BA73B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57E224FC08;
-	Wed, 12 Mar 2025 14:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6455424FC09;
+	Wed, 12 Mar 2025 14:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UyvoIAmm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ruQW06ub"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hDttEXTT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="73tlTTqJ"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A514A24BBEF
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517DC24F5A4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741790277; cv=none; b=YsOLgCuAw1YNOEt3eWPXnuzfFtol6qAF2gfNstkY/gq2gvD9o5tcfp3xk89K55rVn2mKXfE7lxYArtKWNZVlIi09VzJi1BIKw8CHy5xaQknuk1Ob1HBbekJvLRXOpafUxMPQx785quOD7itD0cvYP3V7j/Yiz8AYuvYUhpPAq+A=
+	t=1741790278; cv=none; b=NaFTsle9JH718U5GnjJfjaJ8qesyi1nj4g74oC1r5ryru7m6CZcPsx//6B7EwqPuu/JAod6Bog+OIQlGrpjYbRNX3YakJjrstFjkYOn6dkvrXlqwZ+JcsHPeTALsk3nlOdJY/Wn/u+jvzA+IsUpIE/Ze83g6f/GgeRd9Gj18dkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741790277; c=relaxed/simple;
-	bh=6GF/cyvtwarm61iqKRBEKqwKaoiqcTQEU9Sk3cTJfVQ=;
+	s=arc-20240116; t=1741790278; c=relaxed/simple;
+	bh=4dO68SUYqAkwEY7UThLrLaHl7z6KmwFajAtnun0lg3c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kid3ZXvkGs7awM+AtmpxymhqwieQguCGc36GZe5ZGiixrTmoC/vjYaDkqlqejXoj6GjQD0Uozdqle5MGbcSezqq1SmIKD5JPNxTCd5xF5aPK4EveH9Cfh/3jIG9AqcpCszpjsUMOqWA93PfKcSiTsQYvgvaKSZkF9yohnDXwRg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UyvoIAmm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ruQW06ub; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=lqdbHv8DgqMA2N9Ifl9ENzSSSm0Z/jBVAS9AaC0kSan6PE3rfIcvmsot4CokF+3I3aDRPxBHrNyZ9t0SdUxdLX3Le6Ax8lFPnwskla93tKNkdX3bEL2EJMScbzZkD2W1V2F32lU0OLh+n9VK92KHUo5tKNuOnW2jsTN2RDE1+rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hDttEXTT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=73tlTTqJ; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741790273;
+	s=2020; t=1741790276;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fBfo8AXB79SPLI7+74Hw01qjH5lduLL/N5gJi7n6n7M=;
-	b=UyvoIAmmq5d4AzDEw17Yn3fLtsNAd+kKSiWuswXDeR/NMePT7XmVlNsX/aI+tHlGPA5s15
-	KPo/uOo+HHPo/SbhO1jsR07dJGyDyiQDvyqPpcmVY7e/0w2wAZGBwx5Y4Gx6N4EOk8+qMR
-	3dIs7Kf/bi7HkqtEdt95WPhVhAE7jzjRBSAdYmCuh3raRgg5pGQ239WNSY5Jf6cH5twCKZ
-	whglolOqOpiOu4t9dsdHabV3JFz/UP1HryUMejrl7NW3maiptHEiXk2Kt1wYT2SJpy7YuN
-	8vG1j9nstI91NA9gD77T1xFyDulf1vjDTc0l1g0nPEHsZsN3mUdutaIxNCsryQ==
+	bh=WHWQiTB669kI6RnmP2jWsT5HKf7kcLriNh6vDP9weFU=;
+	b=hDttEXTT6wpd4ZO1SHqhJXXJhCSwGoItQutjBK04F4omrpUbdfN/ljz06k4GC7PsZdgfNr
+	oRKBmGTmVJGKFWxdSfNhT2qP5Z6V4tIHZWLqwkawWvqqz5gaRzyLwGDdU3AnTxyyzpYj0e
+	dKMvB4lKaVvGzC4eSoZl80QfPpkjtLGozg7wER4SZGfAoY2g2Ov0NqefbK1LggnODsJDjD
+	6KxwpmnCqPrJzxPzu5Oia9ZCrt7dv5ElPMYkpQ8p3iAmDpKeV+PcsWULuqBxxDYgssYAUz
+	fJmG570kKVESUk7M3zx9rcsHaWhHuF5ggDyTQTD9i1dh777cZ/M0XWHzw86keQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741790273;
+	s=2020e; t=1741790276;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fBfo8AXB79SPLI7+74Hw01qjH5lduLL/N5gJi7n6n7M=;
-	b=ruQW06ubK65R5tjuR436vL10XXigHzlX714b0sxsYlqpisOneqMrByaiR/kLcaH3lkaIAW
-	vDyIz6pRw9MI36Ag==
+	bh=WHWQiTB669kI6RnmP2jWsT5HKf7kcLriNh6vDP9weFU=;
+	b=73tlTTqJ3jxm2v/K9GKgyhZs1LTqvP5HnYwRmp/bwhZdatkCW9N/DT2fJ+oXbb+h8o2ax3
+	H6e2FQVrBYkNSJDg==
 To: Ingo Molnar <mingo@redhat.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	Borislav Petkov <bp@alien8.de>
@@ -64,9 +64,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v2 02/20] tools/x86/kcpuid: Exit the program on invalid parameters
-Date: Wed, 12 Mar 2025 15:37:19 +0100
-Message-ID: <20250312143738.458507-3-darwi@linutronix.de>
+Subject: [PATCH v2 03/20] tools/x86/kcpuid: Simplify usage() handling
+Date: Wed, 12 Mar 2025 15:37:20 +0100
+Message-ID: <20250312143738.458507-4-darwi@linutronix.de>
 In-Reply-To: <20250312143738.458507-1-darwi@linutronix.de>
 References: <20250312143738.458507-1-darwi@linutronix.de>
 Precedence: bulk
@@ -77,92 +77,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the user passed an invalid CPUID index value through --leaf=index,
-kcpuid prints a warning, does nothing, then exits successfully.
-Transform the warning to an error, and exit the program with a proper
-error code.
+Refactor usage() to accept an exit code parameter and exit the program
+after usage output.  This streamlines its callers' code paths.
 
-Similarly, if the user passed an invalid subleaf, kcpuid prints a
-warning, dumps the whole leaf, then exits successfully.  Print a clear
-error message regarding the invalid subleaf and exit the program with the
-proper error code.
-
-Note, moving the "Invalid input index" message from index_to_func() to
-show_info() localizes error message handling to the latter, where it
-should be.  It also allows index_to_func() to be refactored at further
-commits.
-
-Note, since after this commit and its parent kcpuid does not just "move
-on" on failures, remove the NULL parameter check plus silent exit at
-show_func() and show_leaf().
+Remove the "Invalid option" error message since getopt_long(3) already
+emits a similar message by default.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- tools/arch/x86/kcpuid/kcpuid.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+ tools/arch/x86/kcpuid/kcpuid.c | 37 +++++++++++++++-------------------
+ 1 file changed, 16 insertions(+), 21 deletions(-)
 
 diff --git a/tools/arch/x86/kcpuid/kcpuid.c b/tools/arch/x86/kcpuid/kcpuid.c
-index abfeecce5aa8..8585c1009c8b 100644
+index 8585c1009c8b..b760c5730c89 100644
 --- a/tools/arch/x86/kcpuid/kcpuid.c
 +++ b/tools/arch/x86/kcpuid/kcpuid.c
-@@ -481,9 +481,6 @@ static void decode_bits(u32 value, struct reg_desc *rdesc, enum cpuid_reg reg)
+@@ -10,6 +10,7 @@
  
- static void show_leaf(struct subleaf *leaf)
- {
--	if (!leaf)
--		return;
--
- 	if (show_raw) {
- 		leaf_print_raw(leaf);
- 	} else {
-@@ -505,9 +502,6 @@ static void show_func(struct cpuid_func *func)
- {
- 	int i;
+ #define ARRAY_SIZE(x)	(sizeof(x) / sizeof((x)[0]))
+ #define min(a, b)	(((a) < (b)) ? (a) : (b))
++#define __noreturn	__attribute__((__noreturn__))
  
--	if (!func)
--		return;
--
- 	for (i = 0; i < func->nr; i++)
- 		show_leaf(&func->leafs[i]);
+ typedef unsigned int u32;
+ typedef unsigned long long u64;
+@@ -584,17 +585,17 @@ static void setup_platform_cpuid(void)
+ 	leafs_ext = setup_cpuid_range(0x80000000);
  }
-@@ -528,10 +522,9 @@ static inline struct cpuid_func *index_to_func(u32 index)
- 	range = (index & 0x80000000) ? leafs_ext : leafs_basic;
- 	func_idx = index & 0xffff;
  
--	if ((func_idx + 1) > (u32)range->nr) {
--		warnx("Invalid input index (0x%x)", index);
-+	if ((func_idx + 1) > (u32)range->nr)
- 		return NULL;
+-static void usage(void)
++static void __noreturn usage(int exit_code)
+ {
+-	warnx("kcpuid [-abdfhr] [-l leaf] [-s subleaf]\n"
+-	      "\t-a|--all             Show both bit flags and complex bit fields info\n"
+-	      "\t-b|--bitflags        Show boolean flags only\n"
+-	      "\t-d|--detail          Show details of the flag/fields (default)\n"
+-	      "\t-f|--flags           Specify the cpuid csv file\n"
+-	      "\t-h|--help            Show usage info\n"
+-	      "\t-l|--leaf=index      Specify the leaf you want to check\n"
+-	      "\t-r|--raw             Show raw cpuid data\n"
+-	      "\t-s|--subleaf=sub     Specify the subleaf you want to check"
++	errx(exit_code, "kcpuid [-abdfhr] [-l leaf] [-s subleaf]\n"
++	     "\t-a|--all             Show both bit flags and complex bit fields info\n"
++	     "\t-b|--bitflags        Show boolean flags only\n"
++	     "\t-d|--detail          Show details of the flag/fields (default)\n"
++	     "\t-f|--flags           Specify the cpuid csv file\n"
++	     "\t-h|--help            Show usage info\n"
++	     "\t-l|--leaf=index      Specify the leaf you want to check\n"
++	     "\t-r|--raw             Show raw cpuid data\n"
++	     "\t-s|--subleaf=sub     Specify the subleaf you want to check"
+ 	);
+ }
+ 
+@@ -610,7 +611,7 @@ static struct option opts[] = {
+ 	{ NULL, 0, NULL, 0 }
+ };
+ 
+-static int parse_options(int argc, char *argv[])
++static void parse_options(int argc, char *argv[])
+ {
+ 	int c;
+ 
+@@ -630,9 +631,7 @@ static int parse_options(int argc, char *argv[])
+ 			user_csv = optarg;
+ 			break;
+ 		case 'h':
+-			usage();
+-			exit(1);
+-			break;
++			usage(EXIT_SUCCESS);
+ 		case 'l':
+ 			/* main leaf */
+ 			user_index = strtoul(optarg, NULL, 0);
+@@ -645,11 +644,8 @@ static int parse_options(int argc, char *argv[])
+ 			user_sub = strtoul(optarg, NULL, 0);
+ 			break;
+ 		default:
+-			warnx("Invalid option '%c'", optopt);
+-			return -1;
 -	}
-+
- 	return &range->funcs[func_idx];
+-
+-	return 0;
++			usage(EXIT_FAILURE);
++		}
  }
  
-@@ -550,18 +543,19 @@ static void show_info(void)
- 		/* Only show specific leaf/subleaf info */
- 		func = index_to_func(user_index);
- 		if (!func)
--			return;
-+			errx(EXIT_FAILURE, "Invalid input leaf (0x%x)", user_index);
+ /*
+@@ -662,8 +658,7 @@ static int parse_options(int argc, char *argv[])
+  */
+ int main(int argc, char *argv[])
+ {
+-	if (parse_options(argc, argv))
+-		return -1;
++	parse_options(argc, argv);
  
- 		/* Dump the raw data also */
- 		show_raw = true;
- 
- 		if (user_sub != 0xFFFFFFFF) {
--			if (user_sub + 1 <= (u32)func->nr) {
--				show_leaf(&func->leafs[user_sub]);
--				return;
-+			if (user_sub + 1 > (u32)func->nr) {
-+				errx(EXIT_FAILURE, "Leaf 0x%x has no valid subleaf = 0x%x",
-+				     user_index, user_sub);
- 			}
- 
--			warnx("Invalid input subleaf (0x%x)", user_sub);
-+			show_leaf(&func->leafs[user_sub]);
-+			return;
- 		}
- 
- 		show_func(func);
+ 	/* Setup the cpuid leafs of current platform */
+ 	setup_platform_cpuid();
 -- 
 2.48.1
 
