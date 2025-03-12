@@ -1,126 +1,144 @@
-Return-Path: <linux-kernel+bounces-558024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3312AA5E096
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:39:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9471CA5E0A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:40:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD213B95FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:38:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF37017D142
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6596224419B;
-	Wed, 12 Mar 2025 15:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4993F253F05;
+	Wed, 12 Mar 2025 15:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K+5ySMTT"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EQ/mDQDq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3938D2505CA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D9A1DE2BD;
+	Wed, 12 Mar 2025 15:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741793901; cv=none; b=ZP9feVnTRgpb4+kZ+gGW3bhLI7ESJ6fwrH8gtMA1vdee0DuhM9UFN1bg7hdJu7cAj65R6bp/C9Ijk1+vXT7h23WcklEnbZXiG58sxaDaPhk3Tt3P/fv10ta3C207NP4Q/ejqnej7LCfFQzVacak4mGcyBKR1EZ3UCCM0D9dk5I0=
+	t=1741793929; cv=none; b=Iw7DUMf/OktyqGlKAqxdw9RdQ6i/kbEZSwerwAPHZoPFZdEVMBfzjGBY+h30vwVmOYL2kPhBNOFFbM13teRu26WEkIjmjnAOw7KEGdJatGiol4U726CkvF1qVto4weKtQBgYD6k+zkDDzeOy099QLHd+G0qn8ZJ39pku7S2tUmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741793901; c=relaxed/simple;
-	bh=mECECZUKyT8tJ1zfg2PNBtQFa78DsD3UR2qD52joMLQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f4qIjLS2HXZZvv1cAAh6OVGREH9pmmYXxcqM/5N2Al+2j+z5yJVX6/EgD4fy5/ramKM7PgoAHaEUXTfP1cWQ0dxXIp2HChV/hIw1qRCCDAu+Z0Bhmf2V4LGX2a2vOvqZViAjkih8VZzHRFca3vSKCMBcZfp38iSzfJqHzX5m4KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K+5ySMTT; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-47666573242so337011cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:38:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741793899; x=1742398699; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oad3olm2GEdFBtEEysjN3502N0ME3OM6JNCjW+ME63A=;
-        b=K+5ySMTTjBAxhjT9qopNvR6EZYDfWxMnt8IKrWiVBK6YWqeMh6/FU3jJA2dRgTx81U
-         SmiPCtQKidIlC2wfkRLADkfrmmZ79sD+a/4ayM0kHFy1ES3trxvXhfwsI5KU3JazqsH2
-         ZOQ+iL4b+3SVS6szaRL0mV3UHxt+TO5ZNCiMxcvoKuTDY+lQljrz4jpTD28CCk87VTv2
-         ykW6QmpsaUBynRldirFij0VSMQEDlsZ5Tj0QYEUjEfC4E9WW5ztGUUHfcHHEOaDbyCdE
-         qhKoYzZK19zaEBgJ03U2ViK5PumkXOOXPstRfkFe0lyJcjVyIrMOb5ZmIoyL4t8+Z0pW
-         pyCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741793899; x=1742398699;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oad3olm2GEdFBtEEysjN3502N0ME3OM6JNCjW+ME63A=;
-        b=qvQWlgpMpiwktUEhDrTmfmQRzTqCgKUeHtMzIQnqPLviG4sHPbuznapDKJ8sxN+Bbg
-         de8T0zfh18Qd6wwwnpymsPNCLEPu4ldyRRZKjeYltqz6xhpT2TEEbym4DTmF08sGgPRK
-         uXl7WjMSzhmn7uOoceo3ensCO5ox2XnAsWUZwvsTGhWPpP6f/pOrCXpNrg+9vnnGp16J
-         GIfWy8dB9C2vdHsNbPkRhfRZ8Je7zh/BHg/EZRI3K0HbCOF6Xl3YEs7cGpr1wfY9BBcP
-         aWtmI2vTfkBSP8KoluugSRdOCZEQ6LjRxf/vBVFhypAEV+fCaQIHqWcAweekNhvUeR/J
-         lVvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8fmpY0VmepXwtlFLifqYdG+wnn16YjXLmr8yMYHm71MmBp+dkuicXTan5OfmXgTrV3BHLrDkQVP1d02Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeW9VSGKL/vQkavUvHx84mMmp1MpFZAiB0kG8zA8m2ySZ8r+Wu
-	3F7I+1DAWYoxLHX6WZBNDD8HrqiKnC0D9GVeVgYHFthGT2HlqRrB0yRdoR6URMXhxIvqlnHo9H0
-	mL5QKjKva096nqah232BpAXVq7anF3gNWeMHK
-X-Gm-Gg: ASbGncvSBU7lILC4fScjrrXvEA9xviw3Fcg6e77lQxJ0mZW2D5USejXQ3wHr0sYqllS
-	dFDpqKXHn3pEQen0b7MJCk0b0cFU7Ji0Jf4w09ykMqn9zD6cHdndOzgVpaGEmIatDIK0uypn8QK
-	AJcuyNeTIJnD3MIVeBwH4WP8Ny4gn+HaXRqR1pU2wDoD5PlelmE2tTuigU2jkWQgSAWhk=
-X-Google-Smtp-Source: AGHT+IFQd7cFv173t000O1zcn+8wgPx4dJlGWMBi427eiMql7l9Xmf0NxuFYWlaUbMq6ERIxoPYFIgYpzBuguiARoR4=
-X-Received: by 2002:ac8:5a95:0:b0:472:538:b795 with SMTP id
- d75a77b69052e-476b798f0admr328451cf.22.1741793898834; Wed, 12 Mar 2025
- 08:38:18 -0700 (PDT)
+	s=arc-20240116; t=1741793929; c=relaxed/simple;
+	bh=5sWTWyGSWzMsM7Q52oQzlru0KXZl2CJjlVs+dqkfi3U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SZGq/9uNGYTY5nrTSA6bmrREk7GztqopOYVvmExBHrsyFz1R5VGUe7ixRqtDDvmiKQjH5drsTSyzOR2pe/bDopB2HNzxBXHKLdGYc71jpCLJQGLOh7ygF+zUhi7+39LHnsntjeK078E2Jw19+L8E9Dpe2EEvkk5pXvNOd9Cxe3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EQ/mDQDq; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741793928; x=1773329928;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=5sWTWyGSWzMsM7Q52oQzlru0KXZl2CJjlVs+dqkfi3U=;
+  b=EQ/mDQDqftGCCl2At5J3NfM8a27TRsN3zfdA1eiptevwDMYOD/wJ9uyI
+   hIJXaU00xpD/wuEATgnyJG5yjmELM7hwv0kzKvF9XAY0HO8Fe30oHSlBa
+   99qM9s7r7mOKu7TcNCnS2TEhRGBMwUb+ON9lFhvtvb+cDmIDFZG0L3Wfq
+   1nfu2lrX3E4oUWb4H2ecajtLq2eb240ahRnW0KxkGr+877Qc9iGug/2c2
+   M8lhVQbo1GTbWD5LYg1Wp6UjFYwQrICrzCYrQzmw8UtjXTxaCazpMpqZr
+   /ZjGSOmJ/wuLdj1YSozthchueRPcwX46GGu6czTRGhyKPQsdrzvuWqTVb
+   w==;
+X-CSE-ConnectionGUID: lIXCbMoxQgiYbtG11zdkeg==
+X-CSE-MsgGUID: TBfR/O8TTMe1EChZbZ3New==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42137826"
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="42137826"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 08:38:47 -0700
+X-CSE-ConnectionGUID: vDJD8g2eT9qGquOzG+kPsA==
+X-CSE-MsgGUID: A1KRSP0ZQqqim+fQ4mvjEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="120646467"
+Received: from spandruv-desk1.amr.corp.intel.com ([10.125.111.234])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 08:38:47 -0700
+Message-ID: <fa3a518291e7b122f078099b44a9c4a785567a89.camel@linux.intel.com>
+Subject: Re: [PATCH] HID: remove superfluous (and wrong) Makefile entry for
+ CONFIG_INTEL_ISH_FIRMWARE_DOWNLOADER
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+  Nick Crews <ncrews@chromium.org>, Jett Rink <jettrink@chromium.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-input@vger.kernel.org
+Date: Wed, 12 Mar 2025 08:38:46 -0700
+In-Reply-To: <54o2s270-779o-q635-37o5-7s0o11o74o25@xreary.bet>
+References: <54o2s270-779o-q635-37o5-7s0o11o74o25@xreary.bet>
+Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
+ YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
+ y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
+ NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
+ GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
+ TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
+ oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
+ AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
+ b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
+ AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
+ oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
+ UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
+ ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
+ wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
+ NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
+ J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
+ oOfCQxricddC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250306074101epcas1p4b24ac546f93df2c7fe3176607b20e47f@epcas1p4.samsung.com>
- <20250306074056.246582-1-s.suk@samsung.com> <Z8m-vJ6mP1Sh2pt3@infradead.org>
- <CAJrd-UuLvOPLC2Xr=yOzZYvOw9k8qwbNa0r9oNjne31x8Pmnhw@mail.gmail.com>
- <848301db8f05$a1d79430$e586bc90$@samsung.com> <CAJuCfpHjV=nRmkAGrf-tyCxEEygZ0CuW-PRp+F_vHwFbfYS8dA@mail.gmail.com>
- <Z9Gld_s3XYic8-dG@infradead.org> <CAJuCfpGa43OQHG9BmnvxROX1AneCvkuLxFwM+TdxAdR1v9kWSg@mail.gmail.com>
- <Z9GnUaUD-iaFre_i@infradead.org>
-In-Reply-To: <Z9GnUaUD-iaFre_i@infradead.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 12 Mar 2025 08:38:07 -0700
-X-Gm-Features: AQ5f1Jpfs-45rUWpy4AjGITfWFgctjNpl6Oq04S9EIvxgwjOZng3y_psNvrHlmM
-Message-ID: <CAJuCfpEpWQV8y1RKb3hH+-kxczTUvpvCBNNzGJufsAxpkhB4_A@mail.gmail.com>
-Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct IO
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Sooyong Suk <s.suk@samsung.com>, Jaewon Kim <jaewon31.kim@gmail.com>, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	spssyr@gmail.com, axboe@kernel.dk, linux-block@vger.kernel.org, 
-	dhavale@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 12, 2025 at 8:25=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Wed, Mar 12, 2025 at 08:20:36AM -0700, Suren Baghdasaryan wrote:
-> > > Direct I/O pages are not unmovable.  They are temporarily pinned for
-> > > the duration of the direct I/O.
-> >
-> > Yes but even temporarily pinned pages can cause CMA allocation
-> > failure. My point is that if we know beforehand that the pages will be
-> > pinned we could avoid using CMA and these failures would go away.
->
-> Direct I/O (and other users of pin_user_pages) are designed to work
-> on all anonymous and file backed pages, which is kinda the point.
-> If you CMA user can't wait for the time of an I/O something is wrong
-> with that caller and it really should not use CMA.
+On Wed, 2025-03-12 at 09:08 +0100, Jiri Kosina wrote:
+> From: Jiri Kosina <jkosina@suse.com>
+>=20
+> The line
+>=20
+> 	obj-$(INTEL_ISH_FIRMWARE_DOWNLOADER)=C2=A0=C2=A0 +=3D intel-ish-hid/
+>=20
+> in top-level HID Makefile is both superfluous (as
+> CONFIG_INTEL_ISH_FIRMWARE_DOWNLOADER
+> depends on CONFIG_INTEL_ISH_HID, which contains intel-ish-hid/
+> already) and wrong (as it's
+> missing the CONFIG_ prefix).
+>=20
+> Just remove it.
+>=20
+> Reported-by: Jiri Slaby <jirislaby@kernel.org>
+> Fixes: 91b228107da3e ("HID: intel-ish-hid: ISH firmware loader client
+> driver")
+> Signed-off-by: Jiri Kosina <jkosina@suse.com>
 
-I might be wrong but my understanding is that we should try to
-allocate from CMA when the allocation is movable (not pinned), so that
-CMA can move those pages if necessary. I understand that in some cases
-a movable allocation can be pinned and we don't know beforehand
-whether it will be pinned or not. But in this case we know it will
-happen and could avoid this situation.
+Good one
 
-Yeah, low latency usecases for CMA are problematic and I think the
-only current alternative (apart from solutions involving HW change) is
-to use a memory carveouts. Device vendors hate that since carved-out
-memory ends up poorly utilized. I'm working on a GCMA proposal which
-hopefully can address that.
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
->
+Thanks,
+Srinivas
+
+> ---
+> =C2=A0drivers/hid/Makefile | 1 -
+> =C2=A01 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+> index 482b096eea28..0abfe51704a0 100644
+> --- a/drivers/hid/Makefile
+> +++ b/drivers/hid/Makefile
+> @@ -166,7 +166,6 @@ obj-$(CONFIG_USB_KBD)		+=3D usbhid/
+> =C2=A0obj-$(CONFIG_I2C_HID_CORE)	+=3D i2c-hid/
+> =C2=A0
+> =C2=A0obj-$(CONFIG_INTEL_ISH_HID)	+=3D intel-ish-hid/
+> -obj-$(INTEL_ISH_FIRMWARE_DOWNLOADER)	+=3D intel-ish-hid/
+> =C2=A0
+> =C2=A0obj-$(CONFIG_AMD_SFH_HID)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +=3D =
+amd-sfh-hid/
+> =C2=A0
+
 
