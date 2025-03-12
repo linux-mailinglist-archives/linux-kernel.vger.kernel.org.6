@@ -1,118 +1,105 @@
-Return-Path: <linux-kernel+bounces-557164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596FBA5D461
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:30:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80272A5D463
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:31:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98305179D38
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:30:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E17A189D17C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6460318C936;
-	Wed, 12 Mar 2025 02:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD3517CA17;
+	Wed, 12 Mar 2025 02:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C6q4XuFp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JXnx/+oA"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836F078F26;
-	Wed, 12 Mar 2025 02:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64869566A;
+	Wed, 12 Mar 2025 02:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741746613; cv=none; b=H2ao25HaW32Yw+SlU2aF+2UuFySqUcVVCFx2j4i44QwIwtnq5JNAMw/dBVztdnY1AIY5DRkqdfpl7/pktvQYKlaAZ5i65s8q+QjQZCZectptXLRfim0mU8sm5Nwvy73ZazmRyPnGkTTFcP8U5yQTau6mnxwhn+jpAW6mtBz551U=
+	t=1741746658; cv=none; b=m6RkBHeEbwRfwBMH+/Zvao/e8I6R1vJmjmC1/NdCynZB5TzosPgpd5+l3S6XQ2XdNtkzZFXhLoyIywdau53RJZLzt6TTU8fVr7wYPbnM8kEZlW/8TaUgjSkIIp06FUDvVXknLc/HXFaiOf4XXdpIHoGPGM/YkOL470ZZyBf+I0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741746613; c=relaxed/simple;
-	bh=D+BYOPU/tyZGEaeihV/q19h7846VhI8LhSlf1dlGg1E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i3uNxs5KgF+XymIfrt2RsOpSVoz4B3R/oAK7RjlA1cW7S4w0SkCnzbJ5yMiL9NrPVq/c9I6bVrsYbZpV9R5QoGdEE49e4+qUlolE8gJzPrWjyJ/hdN0sc5H6el6mTPsn2XF22Or2ryxGZfqZoP+JG2vc19FL+g/OkUXO54+OSVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C6q4XuFp; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741746612; x=1773282612;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=D+BYOPU/tyZGEaeihV/q19h7846VhI8LhSlf1dlGg1E=;
-  b=C6q4XuFp8BJFUq6AmWSTsWFgRuUZ43s3+2mk7WAlvT59ilNwSx0tNq8U
-   RN6puKsM3cTAGdUipZkKrpKhj/DhogrkuvZuuEWsUQemgetr0m7Bu2JU2
-   wK4f6bfPLYZcyYYCR2FzIHt9Z55PGsUo/A3h5ChtAnjVsbnzkSRVWguzI
-   GEiJWU/jm45IbMHJs9zEG5OeOTnLI+WoZulf6/eg1pYnsPvb/DVEJ25n7
-   0lAPF0YouuTzB2O3dGK8CmZIfEZm/uWRCKksd1ioKUrp3/EuFz/IZFNYN
-   NXShnQEjbTB+TdvhHyU+llR9ya3M/M7VHCOlNdAITws0YX4OIV66HS0GS
-   w==;
-X-CSE-ConnectionGUID: pj0SfoO2Skmc5EIEzYj6LA==
-X-CSE-MsgGUID: rbUmeT6jR5GC72ijpaUaLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="65270308"
-X-IronPort-AV: E=Sophos;i="6.14,240,1736841600"; 
-   d="scan'208";a="65270308"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 19:30:11 -0700
-X-CSE-ConnectionGUID: RrG0n1x4Sfun5V+xmW/I6Q==
-X-CSE-MsgGUID: 4yFxb486RjuEGEadb6zB6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,240,1736841600"; 
-   d="scan'208";a="157695740"
-Received: from yongliang-ubuntu20-ilbpg12.png.intel.com ([10.88.227.39])
-  by orviesa001.jf.intel.com with ESMTP; 11 Mar 2025 19:30:08 -0700
-From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	David E Box <david.e.box@linux.intel.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] platform/x86: intel_pmc_ipc: add option to build without ACPI
-Date: Wed, 12 Mar 2025 10:29:55 +0800
-Message-Id: <20250312022955.1418234-1-yong.liang.choong@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741746658; c=relaxed/simple;
+	bh=Rs8den/fX1H8sYAS/HU3SQBgVbI8FDQo3dYey2vIAYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iaXrEBx9G8GPPJvVhVic7llt+3aUIRfEnSCYuSY1dJ0MXSD6GONjNuGWJNztc+QvQ0WzIP9WZyJpJ2fIZOrnSYC6MzWVzCSmCo41KIOku6a2cvgzS92mwH87z1MQnY8vXRkpzp2iV8COJJlwxfQKzIo5kde54jNbxYrb6yWvdvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JXnx/+oA; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741746652;
+	bh=Rs8den/fX1H8sYAS/HU3SQBgVbI8FDQo3dYey2vIAYI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JXnx/+oARBIninFVaF8ZcQe3j4tR8Q92sc+5MDv4Y82rF4YCoO2eC1VG9s4WdqEav
+	 QbPIVvxqhXf10rv3SQfTpzWoWwH73UJvdD3iTbwaqM5pF//bx2Esx3Dq4+cnQCoYJ4
+	 14OpGG0WFRz0O8MnuvKi2Kcn+0vW4Nysjj5Q8EaDzUd7h+fw87AeTFvfboDM5AV/gz
+	 Gkskw+fUmzs8eKRGP1L1DQQ2H+uvYGzCRZ0sEEQfBn84WMKPQv2PHKupqz9lqRpLsS
+	 dGjjbluZMqtfa/ifVTqMIO6CjXw6UNaKUPzO1cBWGOFaIRFulRLV7XoYfsHSqEH/iu
+	 /b8KielCTbvXQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCF3v63Wrz4x3p;
+	Wed, 12 Mar 2025 13:30:51 +1100 (AEDT)
+Date: Wed, 12 Mar 2025 13:30:50 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm tree
+Message-ID: <20250312133050.1d23ed5a@canb.auug.org.au>
+In-Reply-To: <20250312021420.nvkahcd3enlt3i6s@master>
+References: <20250312113612.31ac808e@canb.auug.org.au>
+	<20250312021420.nvkahcd3enlt3i6s@master>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/U_l2bx9bPlN7ZlxDmJntc04";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-This patch introduces a configuration option that allows users to
-build the intel_pmc_ipc driver without ACPI support. This is useful
-for systems where ACPI is not available or desired.
+--Sig_/U_l2bx9bPlN7ZlxDmJntc04
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Based on the discussion from the patch: https://patchwork.kernel.org/
-project/netdevbpf/patch/20250227121522.1802832-6-
-yong.liang.choong@linux.intel.com/#26280764, it was necessary to
-provide this option to accommodate specific use cases.
+Hi Wei,
 
-Signed-off-by: David E. Box <david.e.box@linux.intel.com>
-Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
----
- include/linux/platform_data/x86/intel_pmc_ipc.h | 5 +++++
- 1 file changed, 5 insertions(+)
+On Wed, 12 Mar 2025 02:14:20 +0000 Wei Yang <richard.weiyang@gmail.com> wro=
+te:
+>
+> Thanks for your fix. It looks good to me.
+>=20
+> If it is ok to you, I would like to merge this into the original commit.
 
-diff --git a/include/linux/platform_data/x86/intel_pmc_ipc.h b/include/linux/platform_data/x86/intel_pmc_ipc.h
-index 6e603a8c075f..a852f1a02532 100644
---- a/include/linux/platform_data/x86/intel_pmc_ipc.h
-+++ b/include/linux/platform_data/x86/intel_pmc_ipc.h
-@@ -34,6 +34,7 @@ struct pmc_ipc_rbuf {
-  *
-  * Return: 0 on success. Non-zero on mailbox error
-  */
-+#if CONFIG_ACPI
- static inline int intel_pmc_ipc(struct pmc_ipc_cmd *ipc_cmd, struct pmc_ipc_rbuf *rbuf)
- {
- 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
-@@ -90,5 +91,9 @@ static inline int intel_pmc_ipc(struct pmc_ipc_cmd *ipc_cmd, struct pmc_ipc_rbuf
- 
- 	return 0;
- }
-+#else
-+static inline int intel_pmc_ipc(struct pmc_ipc_cmd *ipc_cmd, struct pmc_ipc_rbuf *rbuf)
-+{ return -ENODEV; }
-+#endif /* CONFIG_ACPI */
- 
- #endif /* INTEL_PMC_IPC_H */
--- 
-2.34.1
+Fine by me.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/U_l2bx9bPlN7ZlxDmJntc04
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfQ8doACgkQAVBC80lX
+0Gx5gQgAkKtZ1XugBj9Iat7EI575bxJmVFFqh/SxPN/flLDR9lUNPaGVx0Awd16x
+oP8GkFgCKKHKJCPbDb/ZmhYWZXHtX2k0o8LKSN+J6UInbrwy4dn+5B8fCpriUkeU
+QyR6oQQG+LePPVNb2iImY5aOmWYqtlaYBj9a4ZmxhZN3L4tQh5dZ/8IQtSSnH7vZ
+k8YBfTMDilSe98cOVK8uYy+SN3NWaHVatDlOXhDQF9xpcY6HBH+p7frasDbhuz9B
+HOmvDmi8E4RsLjfqY4hIDA8wj1h81AcHc6BFK2ha6ZVhmnuxhfVf/3xe9SOVRNmS
+xwALxslVsfiVEBJ2E9PaRSjO/wBXYw==
+=L8yj
+-----END PGP SIGNATURE-----
+
+--Sig_/U_l2bx9bPlN7ZlxDmJntc04--
 
