@@ -1,221 +1,165 @@
-Return-Path: <linux-kernel+bounces-557668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 162D5A5DC2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:03:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC4FA5DC27
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:03:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45DA91742CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:03:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D793218947EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B1E241672;
-	Wed, 12 Mar 2025 12:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD74B23F39D;
+	Wed, 12 Mar 2025 12:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cHYya5RA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQHqGr28"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19D82405E8
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B5214F117;
+	Wed, 12 Mar 2025 12:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741781011; cv=none; b=S0kAiQc+qXKwIE6UWIfXdd9lYE6E35HInBGz7WajVcsROo0NNKRatuFz6JNrRexXA+dL434oMkyvNvELRkBmhsRZ9A6uqCpazysKWBBLO7TxiKmPk2oJQL0gnRlBt+qMW0Dz9pekG40JD3QBIlW3g97TcTNPl3yfKN9tGpO7mt0=
+	t=1741780998; cv=none; b=QvGoWnum2NmYvoFLf+gWai9y44HMc9BjlDEv9hIRLqpSebbi6CsJbMMfPRmI127lFuQObhRrD6tK64JBiyBXwc8hGO/q8uARxmkWigi3GuJbgxoa0A+sL297vTBuSTyJx/oc21ktG+ZUnpymmj94M/XhCLimfSPA2DRIJgKUvdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741781011; c=relaxed/simple;
-	bh=xaWsNN1cs0HzDj9R320RuBTYp1Ti2MBG4Pn6SIigU9E=;
+	s=arc-20240116; t=1741780998; c=relaxed/simple;
+	bh=7fyVSWAB8Ertria+vE/ZF+M57y8nsHzIxjq/lWexlzY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h32Wt4i3mNt5/jNNpMyfRYj8mjsVMxCppgWWLiONfx6NuZjwocoyg3UP/h/RxSNxxUj5XZXTP0ciu3m5tA6BwC9eDCXRmoIfgm9sebwYYs17y9cZx7Kweub+A7pT1PeuF5Q6txU5c2vDc5L5iX6MGiZWEVFtEkGKfGOiXIrYYwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cHYya5RA; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741781009; x=1773317009;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=xaWsNN1cs0HzDj9R320RuBTYp1Ti2MBG4Pn6SIigU9E=;
-  b=cHYya5RAhU1bEqSPyxiqoLj6L0/sJtiFPtfrg10yuzvu1TyUdf2q9KZ5
-   KB5/tBlLZXa/bIVLxg7gVw8WkhroiYrCtAGszv3V2oYpWZrzi8pN95fU+
-   O43Dw6sa8SZto/2/TtWvy//IFPDjt+kLbT5gNZZZLLceMc9LaFn1L1RAJ
-   txxY4EtKqpy68/4hYEUJabaYsMZq5q9P77Pa9+JPjM6jPjaWaeBi7tDQe
-   oLqhPyEGHpfXT0sQb7vPceQI+WjMWEIVDLgA+wNs5U3Fg7B5YP2Jzzu1Q
-   +EZyMVq2qRL9I2TMIVXwY/uiVbpnEuj+BDZNhVsnCvNMEiVMkoTaH83D0
-   Q==;
-X-CSE-ConnectionGUID: 2/75K305QlCcuPg8bv36xA==
-X-CSE-MsgGUID: JNrzKiKRR2+TDECNaJjPjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="60256941"
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="60256941"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 05:03:26 -0700
-X-CSE-ConnectionGUID: EOLlO30hSXG4eXfejVwstw==
-X-CSE-MsgGUID: c6hH1Cm/TvycB4FVprr3vg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="151428269"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 12 Mar 2025 05:03:23 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tsKnt-0008Vc-1Q;
-	Wed, 12 Mar 2025 12:03:18 +0000
-Date: Wed, 12 Mar 2025 20:02:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	kernel@collabora.com, dri-devel@lists.freedesktop.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=gybDL/0T9bpOLbxYTybFZm1iOOS2mAq+fXkKb9uigBSlR5U5iTXBOb9LPhtvR/Tl7vrto/oh3lhH9ueA2H3TFDfPHvkT+xkkcWL9K5XDC4Dd3jYv+azUE+XcBtkkC0Y1q1Hnk9UexROQ+13luzUr9VPd7gVk16LFplXL6SSsAzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQHqGr28; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2C3EC4CEE3;
+	Wed, 12 Mar 2025 12:03:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741780997;
+	bh=7fyVSWAB8Ertria+vE/ZF+M57y8nsHzIxjq/lWexlzY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WQHqGr280PrWdMuhLX6TgwQYWT1XEsPRZi/aGuLUufvkxrLutUR/PenBmMclmv9yd
+	 gPpbnjLWMBbRGBjASWhRVGQH7F6eUfw/sa8snCkEkLrCuHiuBS+ET6LBnpoK60rh2q
+	 q6rRvPH6m3lucVqdN8YvzSXgUhDFQG2Ut3Uxhl7GaLIoxBNyQo75Y/0dJXHoNxkKGO
+	 opGU+MVwm4b4QBfD0cYC8gsmJe/czNM1q31T7je8i9qqNpoWcMrhU2qFk78vXcD/XE
+	 +N2060+q9Jyqj65y/V6uvMiLr265IgXnbf49XCQgQXceZj27wQG9hI/6OGBS4mwaPv
+	 Di60w3Js6WqGA==
+Date: Wed, 12 Mar 2025 13:03:09 +0100
+From: Matthias Brugger <matthias.bgg@kernel.org>
+To: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Min Lin <linmin@eswincomputing.com>,
+	Pritesh Patel <pritesh.patel@einfochips.com>,
+	Yangyu Chen <cyy@cyyself.name>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Yu Chien Peter Lin <peterlin@andestech.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Kanak Shilledar <kanakshilledar@gmail.com>,
+	Darshan Prajapati <darshan.prajapati@einfochips.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>,
+	rafal@milecki.pl, Anup Patel <anup@brainfault.org>,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] drm/tests: hdmi: Add max TMDS rate fallback tests
- for YUV420 mode
-Message-ID: <202503121909.5IeaFEUt-lkp@intel.com>
-References: <20250311-hdmi-conn-yuv-v2-7-fbdb94f02562@collabora.com>
+Subject: Re: [PATCH 04/10] dt-bindings: riscv: Add SiFive HiFive Premier P550
+ board
+Message-ID: <Z9F3_Zb4RvHLvgSd@ziggy.stardust>
+References: <20250311073432.4068512-1-pinkesh.vaghela@einfochips.com>
+ <20250311073432.4068512-5-pinkesh.vaghela@einfochips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250311-hdmi-conn-yuv-v2-7-fbdb94f02562@collabora.com>
+In-Reply-To: <20250311073432.4068512-5-pinkesh.vaghela@einfochips.com>
 
-Hi Cristian,
+On Tue, Mar 11, 2025 at 01:04:26PM +0530, Pinkesh Vaghela wrote:
+> From: Pritesh Patel <pritesh.patel@einfochips.com>
+> 
+> Add DT binding documentation for the ESWIN EIC7700 SoC and
+> HiFive Premier P550 Board
+> 
+> Signed-off-by: Pritesh Patel <pritesh.patel@einfochips.com>
+> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> Signed-off-by: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
+> ---
+>  .../devicetree/bindings/riscv/eswin.yaml      | 29 +++++++++++++++++++
+>  MAINTAINERS                                   |  6 ++++
+>  2 files changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/riscv/eswin.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/riscv/eswin.yaml b/Documentation/devicetree/bindings/riscv/eswin.yaml
+> new file mode 100644
+> index 000000000000..c603c45eef22
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/riscv/eswin.yaml
+> @@ -0,0 +1,29 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/riscv/eswin.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ESWIN SoC-based boards
+> +
+> +maintainers:
+> +  - Min Lin <linmin@eswincomputing.com>
+> +  - Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
+> +  - Pritesh Patel <pritesh.patel@einfochips.com>
+> +
+> +description:
+> +  ESWIN SoC-based boards
+> +
+> +properties:
+> +  $nodename:
+> +    const: '/'
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - sifive,hifive-premier-p550
+> +          - const: eswin,eic7700
 
-kernel test robot noticed the following build errors:
+That should be the other way around. You could have, let's say eic7701
+with different peripherals but smae p550 IP core. I don't expect a new
+eic7700 with a CPU IP other then p550.
 
-[auto build test ERROR on 4423e607ff50157aaf088854b145936cbab4d560]
+Regards,
+Matthias
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cristian-Ciocaltea/drm-connector-hdmi-Evaluate-limited-range-after-computing-format/20250311-190150
-base:   4423e607ff50157aaf088854b145936cbab4d560
-patch link:    https://lore.kernel.org/r/20250311-hdmi-conn-yuv-v2-7-fbdb94f02562%40collabora.com
-patch subject: [PATCH v2 7/7] drm/tests: hdmi: Add max TMDS rate fallback tests for YUV420 mode
-config: x86_64-randconfig-004-20250312 (https://download.01.org/0day-ci/archive/20250312/202503121909.5IeaFEUt-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250312/202503121909.5IeaFEUt-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503121909.5IeaFEUt-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/drm/drm_kunit_helpers.h:10,
-                    from drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:14:
-   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c: In function 'drm_test_check_max_tmds_rate_bpc_fallback_yuv420':
->> include/kunit/test.h:776:29: error: SSE register return with SSE disabled
-     776 |         const typeof(right) __right = (right);                                 \
-         |                             ^~~~~~~
-   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
-     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
-     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
-     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
-         |         ^~~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
-    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
-         |         ^~~~~~~~~~~~~~~
---
-   In file included from include/drm/drm_kunit_helpers.h:10,
-                    from drm_hdmi_state_helper_test.c:14:
-   drm_hdmi_state_helper_test.c: In function 'drm_test_check_max_tmds_rate_bpc_fallback_yuv420':
->> include/kunit/test.h:776:29: error: SSE register return with SSE disabled
-     776 |         const typeof(right) __right = (right);                                 \
-         |                             ^~~~~~~
-   include/kunit/test.h:805:9: note: in expansion of macro 'KUNIT_BASE_BINARY_ASSERTION'
-     805 |         KUNIT_BASE_BINARY_ASSERTION(test,                                      \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/kunit/test.h:971:9: note: in expansion of macro 'KUNIT_BINARY_INT_ASSERTION'
-     971 |         KUNIT_BINARY_INT_ASSERTION(test,                                       \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/kunit/test.h:968:9: note: in expansion of macro 'KUNIT_EXPECT_EQ_MSG'
-     968 |         KUNIT_EXPECT_EQ_MSG(test, left, right, NULL)
-         |         ^~~~~~~~~~~~~~~~~~~
-   drm_hdmi_state_helper_test.c:1337:9: note: in expansion of macro 'KUNIT_EXPECT_EQ'
-    1337 |         KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
-         |         ^~~~~~~~~~~~~~~
-
-
-vim +776 include/kunit/test.h
-
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  734  
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  735  #define KUNIT_TRUE_MSG_ASSERTION(test, assert_type, condition, fmt, ...)       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  736  	KUNIT_UNARY_ASSERTION(test,					       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  737  			      assert_type,				       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  738  			      condition,				       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  739  			      true,					       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  740  			      fmt,					       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  741  			      ##__VA_ARGS__)
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  742  
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  743  #define KUNIT_FALSE_MSG_ASSERTION(test, assert_type, condition, fmt, ...)      \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  744  	KUNIT_UNARY_ASSERTION(test,					       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  745  			      assert_type,				       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  746  			      condition,				       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  747  			      false,					       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  748  			      fmt,					       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  749  			      ##__VA_ARGS__)
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  750  
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  751  /*
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  752   * A factory macro for defining the assertions and expectations for the basic
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  753   * comparisons defined for the built in types.
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  754   *
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  755   * Unfortunately, there is no common type that all types can be promoted to for
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  756   * which all the binary operators behave the same way as for the actual types
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  757   * (for example, there is no type that long long and unsigned long long can
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  758   * both be cast to where the comparison result is preserved for all values). So
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  759   * the best we can do is do the comparison in the original types and then coerce
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  760   * everything to long long for printing; this way, the comparison behaves
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  761   * correctly and the printed out value usually makes sense without
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  762   * interpretation, but can always be interpreted to figure out the actual
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  763   * value.
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  764   */
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  765  #define KUNIT_BASE_BINARY_ASSERTION(test,				       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  766  				    assert_class,			       \
-064ff292aca500d Daniel Latypov  2022-01-25  767  				    format_func,			       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  768  				    assert_type,			       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  769  				    left,				       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  770  				    op,					       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  771  				    right,				       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  772  				    fmt,				       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  773  				    ...)				       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  774  do {									       \
-c2741453478badf Daniel Latypov  2022-01-27  775  	const typeof(left) __left = (left);				       \
-c2741453478badf Daniel Latypov  2022-01-27 @776  	const typeof(right) __right = (right);				       \
-2b6861e2372bac6 Daniel Latypov  2022-01-25  777  	static const struct kunit_binary_assert_text __text = {		       \
-2b6861e2372bac6 Daniel Latypov  2022-01-25  778  		.operation = #op,					       \
-2b6861e2372bac6 Daniel Latypov  2022-01-25  779  		.left_text = #left,					       \
-2b6861e2372bac6 Daniel Latypov  2022-01-25  780  		.right_text = #right,					       \
-2b6861e2372bac6 Daniel Latypov  2022-01-25  781  	};								       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  782  									       \
-8bd5d74babc9255 Mickaël Salaün  2024-04-08  783  	_KUNIT_SAVE_LOC(test);						       \
-97d453bc4007d4a Daniel Latypov  2022-09-30  784  	if (likely(__left op __right))					       \
-97d453bc4007d4a Daniel Latypov  2022-09-30  785  		break;							       \
-97d453bc4007d4a Daniel Latypov  2022-09-30  786  									       \
-97d453bc4007d4a Daniel Latypov  2022-09-30  787  	_KUNIT_FAILED(test,						       \
-21957f90b28f6bc Daniel Latypov  2022-01-13  788  		      assert_type,					       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  789  		      assert_class,					       \
-a8495ad8e973cb6 Daniel Latypov  2022-09-30  790  		      format_func,					       \
-697365c08679137 Daniel Latypov  2022-09-30  791  		      KUNIT_INIT_ASSERT(.text = &__text,		       \
-697365c08679137 Daniel Latypov  2022-09-30  792  					.left_value = __left,		       \
-697365c08679137 Daniel Latypov  2022-09-30  793  					.right_value = __right),	       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  794  		      fmt,						       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  795  		      ##__VA_ARGS__);					       \
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  796  } while (0)
-73cda7bb8bfb1d4 Brendan Higgins 2019-09-23  797  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +
+> +additionalProperties: true
+> +
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 25c86f47353d..901d0e0adb25 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8572,6 +8572,12 @@ L:	linux-can@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/net/can/usb/esd_usb.c
+>  
+> +ESWIN DEVICETREES
+> +M:	Min Lin <linmin@eswincomputing.com>
+> +M:	Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
+> +M:	Pritesh Patel <pritesh.patel@einfochips.com>
+> +S:	Maintained
+> +
+>  ET131X NETWORK DRIVER
+>  M:	Mark Einon <mark.einon@gmail.com>
+>  S:	Odd Fixes
+> -- 
+> 2.25.1
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
