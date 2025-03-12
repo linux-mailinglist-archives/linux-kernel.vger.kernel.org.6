@@ -1,128 +1,162 @@
-Return-Path: <linux-kernel+bounces-558602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4018A5E87B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:35:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63780A5E87E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:38:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DEB33BC4A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:35:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3855F7A464B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA35A1D79B6;
-	Wed, 12 Mar 2025 23:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883C11F12ED;
+	Wed, 12 Mar 2025 23:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FZ9RTSQm"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lCKF23Rb"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEA81EE7BD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BBB1D79B6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741822534; cv=none; b=AuePPaLyOQZ7gexZFpCylfC4G2IqXeMsgTOqldttpChX2e8m39J9M1mSXWMyKq3wCAjFOp4nvLsZv1S8R1WbhEBfLcab9mmbFvOSQv4tgAnFOnm3KI3GvzcAnayWwm2mAmcKUotU1BQFFtJLFj+vVmT4l/EygZBLShurhEbb5IE=
+	t=1741822690; cv=none; b=YYLjyYyWYFVOZJCar2rL8UaMc7OuR/hOJXi3EM2V5GfeoLbQga04/mBImet4upkclZ47BtvnFS+762AmQUg8tuzdops5BNSRWbiKgTtlF9t1WUu4nQAi6GiX2vdqExeqJGYyytB9gD0UV6ESYr5Vnx1dmvADK+sOzfHRsyXiBNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741822534; c=relaxed/simple;
-	bh=8r6O9wvu7EU3rj6z4hH7ur3ViykPCapUPGXcVwWMHwY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZKhqgpQEh/XhWy5OZz/lV9rAmz2QUar/JD7RvgcLRPMBTvdJ6UfB7BPLEhYAF6jgvFcDSUxRzzV0F7SOvZaFfBW+yaQ5H30rrv3yJsRHPLCBOB9KpNEQVzLOpw4zYq+MmaoEF5QQV/hhCgfcLK4xfCTclWqalOVxLRcDb8ZJD2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FZ9RTSQm; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30b83290b7bso4134641fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:35:32 -0700 (PDT)
+	s=arc-20240116; t=1741822690; c=relaxed/simple;
+	bh=vN3VEd66BFpxzGPu+gzWhrvDg3yMVNnbOuWzXhos1NE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jDj3jjn65rDwIgVXKhCLjvKCH3oUxCMjsBh3XystrhgvI3tkKGY8J6rPStsbPg6VtNpGIXxlLrWDc4QGG4HjsN4JF+2E9fyxnpJxKzREFtqsAYQdaE2uSMYTeLWMC7fD9Jx8U0cM6Ecc4s+twztdA6vxnmOsCtmOXa/8Q3SKbQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lCKF23Rb; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22337bc9ac3so6722135ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:38:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741822529; x=1742427329; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jas8knot96toCrbIGWSDIcYpL+AdR9dGKrMNFDxG4LI=;
-        b=FZ9RTSQmXymqj2BT8brn2AQqAirLgRREob8nXz4VxXzVBOXhPJTUqkudLySg3a4CQj
-         TyvXO7ezKEin+B28Dto28M6vjLA2lAdLLQMmhcb9wrbf7YnEDWlwfyBwP/GI8rvdA6lv
-         qs85kJLR074ukLZpdhLYABRNYo6sV0k32b1NE=
+        d=gmail.com; s=20230601; t=1741822688; x=1742427488; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iv9X1O+iJ055EOoqMTSQh8pZkA9omS3qAlLfPhpnypc=;
+        b=lCKF23Rb0fxbzgp+zMdvn2rmKoe8osoDfGaJB7hesDyXw3rVkkHlyNKQj7LjDCna7U
+         NUEyGopZBG/wHANDngdY8BK25IL62aDh5llt2FDEOi8hlbPAw2KIWhUrwySDIMnrix2K
+         aIbuNxr98wKM0n1qd0JCXD/quror/mYXnBFdqf1HxTIY5imphwC24koT4RBypti03xjb
+         pIzbJQIOewkoJ26bkuzCXvsxqK90wxcfXcwh+hkL6m5X2TZ7CtJk8Nr3i0j8SGU3N08E
+         x1awBMisZXCNXDBtzYZwsrodw8WtOJXd1Q9PlLoxaRh0HYFoTrvXI0pzCff4Rn6WU1XP
+         5R9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741822529; x=1742427329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jas8knot96toCrbIGWSDIcYpL+AdR9dGKrMNFDxG4LI=;
-        b=iZyppKA3gkylCv2T2F4z39hFHjxpOEWGaSgz1jDFByhMwRnUhjsC46LOaVGcYpEk3d
-         qhnbxjG9K6gFBICRfuY/htjSScgXE9Kjo0buvVKnrbKjdsK6UnGZGYoJcL97SrF8RJKL
-         +SDd5/jZmbvcBoWyuiXjd66M2ch2yby3gQnytmjzIysDB2zpnhPEMAYpguDFO7E6vgyY
-         q+IAKA8ZZPgY+rdzj9L/vpXEcdF2hPaiTg0wg03+5EWcWwmb6er1NzcuIikmGbVfeQgf
-         HMD9U5kncVhIusV3iOGkPl8VeaTvANXOj7Mzxtm2/WhaHLghBK0wqEEIN2U5Zjy3PFiu
-         8vZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXM6s3ucbjdIjo1ZnJtvH0MWxePC7h3EOJy2LHj9EdKFaGz0QkAFRjvzSGTcfJIPNEPqQFyvuCvlweQcts=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5LOpfMfEg19mxGDCJPH0dtuaZON5VLSUOoN4rsn7Y2K0YghhI
-	32uBQOVrzxeaSsNUX5uUDzkVkZVBOgMkMAVeI4DZTV7xxotl3QLoL+wt1kF9LsmdvI/uwpISfUh
-	9hw==
-X-Gm-Gg: ASbGncsQVkl7+T4T+NswsF5NabrZ79EcmuUahI2KQQ7GZwd5KRW4rpKzpxwSfzMBpxn
-	NKCjQpU8l7It4iVOEJXco1Y8+ip+xaq1S7l17WtNSYUyyv2ulH+hcUGP7qkkiNbQeOUcHGvfJ6o
-	0GOIwUQdZbvKY38+PxE9Iyx/jdrTa0sDITwxjXxW23IvhnZwzAHBHyb8HLL+OqtEusT4cGsSabr
-	TSxIZuElQSarwGH3wpQndZNPW5PtUWv6ooWAt66Fjyqx2LjJr1hx0r2mmKtSDgsbBqm331pbNjw
-	ZqpF+3Qnf7N+9o/GqOK/ho9XdqkpRvmSVm0nvWxNveAM9strFKJlfovl8z/aeKZSNfOgoMT+bft
-	lqJPicKPVXyYKenjrtcU=
-X-Google-Smtp-Source: AGHT+IE9ju9qYSVe+zZShDBak3dOUPjt3vMhdwOC1JoI7U9ctyfdaEtEtZb799WIa4ImQlVr7fAV8g==
-X-Received: by 2002:a2e:bc27:0:b0:30b:b987:b6a7 with SMTP id 38308e7fff4ca-30bf43b9339mr84857371fa.0.1741822529327;
-        Wed, 12 Mar 2025 16:35:29 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f116b14sm56221fa.59.2025.03.12.16.35.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 16:35:25 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54998f865b8so339933e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:35:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWBTDavG+EyI+8yws8fNRZsurFO0iBj+Brgv5+S6YIkcBcZStto5yFEablPb8lTCiM9nHTH9rByKOscJwk=@vger.kernel.org
-X-Received: by 2002:a19:641c:0:b0:549:916b:e665 with SMTP id
- 2adb3069b0e04-549916be6d9mr5425219e87.1.1741822523482; Wed, 12 Mar 2025
- 16:35:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741822688; x=1742427488;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Iv9X1O+iJ055EOoqMTSQh8pZkA9omS3qAlLfPhpnypc=;
+        b=WwEdDPxEBw49gbzAq85+hgdE+1MkQokLcB1w3jPDLM+HIL/uwh2oFurOeOYSwHr2c6
+         t9sJ9eSh3yfPhQkzZTxWqw7xs3LjkM/n4MCW1f8RRR+pyredBkw1Fbm+LDO7wBK/Qo7r
+         Xz8Qrbp6g4BjJCqZHIvE+bNd/HQI3kaecgQcJs+64v0BxDKaB+q/p4/l16WKvFvBIumj
+         Ofnr7FbdP4kJfarRhadjE8ohznyRJlmu9kcIovplwNN6hYizIzMfEvwKQZxWU3T5mBXl
+         +YBtqno0ZSadyre2uRR6+RrpNi4UidZKg8zj6Uk+WRpKTK+ABMwbwssB4yFrqcja4kKl
+         jjlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHrqWIr5gynwILAWqqTFJnAFzqXCHmMxvKKdWZO7Oqj0MyxyrSVeMWy0hg4e2l85EFe+f1Vj3OjvHVrwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD7t2MWqRb+zUvIkMVlgKl6YEQEzl0m4X6VVVzOTkQvHiyPo30
+	nOvIseNmrZiCALw/wj1ckD8lhegixOFPSyOQBl2wNOnanZr2jsth
+X-Gm-Gg: ASbGncuGvak3J3cfz7FdjulyY88MHvcwbzV5FWC/LCzjAGXWZz6ZTiDP+UfPZgPb1Uo
+	RwmzbRRMS0bwB5sjSEmxxmoH/JI2hJqWupE91eV4w6yxKYZWVjVw2CWGhEiCJi0bPJU+nx7wFdg
+	KFNR/SuxfSX/K6u2xLQExSCg52K2EKuzLPGEa/aBki1JRz+CWqhX/2WtqtB41XBL64DcsWRiB55
+	75O/qQ1dnaOe2yrjHPLNxoCnSTgHj2Tfy7j8XvOUjluk57W/ta95IRAGeq5D8/oAUlUvzR3Vdcj
+	T31HO9qav9aglNwQBwextXjoebQ0Lex9Vm7dJneLi9oC
+X-Google-Smtp-Source: AGHT+IG5xBWHcUI1ZiPr4lIPXq2LhR2k/iVfRjmn8GAY/lSsqcezJg1grQWMvGOFPF2cHAToz5e+tw==
+X-Received: by 2002:a17:902:f54f:b0:223:58ff:c722 with SMTP id d9443c01a7336-22592e44a1fmr156857395ad.28.1741822687725;
+        Wed, 12 Mar 2025 16:38:07 -0700 (PDT)
+Received: from localhost ([216.228.125.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68883d0sm1323525ad.10.2025.03.12.16.38.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 16:38:06 -0700 (PDT)
+Date: Wed, 12 Mar 2025 19:38:04 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Ignacio Encinas <ignacio@iencinas.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: fix test_and_{set,clear}_bit ordering
+ documentation
+Message-ID: <Z9Ia3AMqFpNj6fUb@thinkpad>
+References: <20250311-riscv-fix-test-and-set-bit-comment-v1-1-8d2598e1e43b@iencinas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312090132.1624445-1-nichen@iscas.ac.cn>
-In-Reply-To: <20250312090132.1624445-1-nichen@iscas.ac.cn>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 12 Mar 2025 16:35:11 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=X9eOSWxuR02WenYxD-rTLdTAxpdo9b2fjbpU=hA4nP4g@mail.gmail.com>
-X-Gm-Features: AQ5f1JqpW1Y2ec186etHxO7OaCmaGkbtJ2Rci2hirhhSerJiADteqbCBM3klWQY
-Message-ID: <CAD=FV=X9eOSWxuR02WenYxD-rTLdTAxpdo9b2fjbpU=hA4nP4g@mail.gmail.com>
-Subject: Re: [PATCH] drm/bridge: anx7625: Remove redundant 'flush_workqueue()' calls
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, yuanhsinte@chromium.org, 
-	jani.nikula@intel.com, xji@analogixsemi.com, robh@kernel.org, 
-	sui.jingfeng@linux.dev, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311-riscv-fix-test-and-set-bit-comment-v1-1-8d2598e1e43b@iencinas.com>
 
-Hi,
+On Tue, Mar 11, 2025 at 06:20:22PM +0100, Ignacio Encinas wrote:
+> test_and_{set,clear}_bit are fully ordered as specified in
+> Documentation/atomic_bitops.txt. Fix incorrect comment stating otherwise.
+> 
+> Note that the implementation is correct since commit
+> 9347ce54cd69 ("RISC-V: __test_and_op_bit_ord should be strongly ordered")
+> was introduced.
+> 
+> Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
 
-On Wed, Mar 12, 2025 at 2:02=E2=80=AFAM Chen Ni <nichen@iscas.ac.cn> wrote:
->
-> 'destroy_workqueue()' already drains the queue before destroying it, so
-> there is no need to flush it explicitly.
->
-> Remove the redundant 'flush_workqueue()' calls.
->
-> This was generated with coccinelle:
->
-> @@
-> expression E;
-> @@
-> - flush_workqueue(E);
->   destroy_workqueue(E);
->
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Applied in bitmap-for-next.
+
+Thanks,
+Yury
+
 > ---
->  drivers/gpu/drm/bridge/analogix/anx7625.c | 1 -
->  1 file changed, 1 deletion(-)
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> This seems to be a leftover comment from the initial implementation
+> which assumed these operations were relaxed.
+> 
+> Documentation/atomic_bitops.txt states:
+> 
+>   [...]
+>   RMW atomic operations with return value:
+>   
+>     test_and_{set,clear,change}_bit()
+>     test_and_set_bit_lock()
+>   [...]
+> 
+>    - RMW operations that have a return value are fully ordered.
+> 
+> Similar comments can be found in
+> include/asm-generic/bitops/instrumented-atomic.h,
+> include/linux/atomic/atomic-long.h, etc...
+> ---
+>  arch/riscv/include/asm/bitops.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/riscv/include/asm/bitops.h b/arch/riscv/include/asm/bitops.h
+> index c6bd3d8354a96b4e7bbef0e98a201da412301b57..49a0f48d93df5be4d38fe25b437378467e4ca433 100644
+> --- a/arch/riscv/include/asm/bitops.h
+> +++ b/arch/riscv/include/asm/bitops.h
+> @@ -226,7 +226,7 @@ static __always_inline int variable_fls(unsigned int x)
+>   * @nr: Bit to set
+>   * @addr: Address to count from
+>   *
+> - * This operation may be reordered on other architectures than x86.
+> + * This is an atomic fully-ordered operation (implied full memory barrier).
+>   */
+>  static __always_inline int arch_test_and_set_bit(int nr, volatile unsigned long *addr)
+>  {
+> @@ -238,7 +238,7 @@ static __always_inline int arch_test_and_set_bit(int nr, volatile unsigned long
+>   * @nr: Bit to clear
+>   * @addr: Address to count from
+>   *
+> - * This operation can be reordered on other architectures other than x86.
+> + * This is an atomic fully-ordered operation (implied full memory barrier).
+>   */
+>  static __always_inline int arch_test_and_clear_bit(int nr, volatile unsigned long *addr)
+>  {
+> 
+> ---
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> change-id: 20250311-riscv-fix-test-and-set-bit-comment-aa9081a27d61
+> 
+> Best regards,
+> -- 
+> Ignacio Encinas <ignacio@iencinas.com>
 
