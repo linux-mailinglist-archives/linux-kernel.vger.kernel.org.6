@@ -1,97 +1,137 @@
-Return-Path: <linux-kernel+bounces-558102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581CAA5E1A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:21:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 214BEA5E1AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:21:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB2117609C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:21:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C3C73BABF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D77D1D5172;
-	Wed, 12 Mar 2025 16:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA3E1D6DA1;
+	Wed, 12 Mar 2025 16:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RJUJj0Zs"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SikGBZGs"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B111422DD;
-	Wed, 12 Mar 2025 16:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACB31C5D7A;
+	Wed, 12 Mar 2025 16:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741796473; cv=none; b=X+GiAEHnwJPfwU3yTJuJ2J8HIqeKD4vnVWkYROx9Q/XyL+TlK4nNMNBsxc4rr8PtlBGcWBq7v+WUJw+Eu4/mQ+W5Xcu4GbCMlkBa5g1HK3Bj68bn6RLJmf0Yr1sITNvUxoOxFKiyd0dsHz27l0h1YZPq92LuFGO6U19aSxPRJZk=
+	t=1741796495; cv=none; b=rQoJxBw0K7ZtyWehQ3gRnNlnJDlXtUhm77xFYO+PRy4W5e4hl7Npb7GkY8Uq7a4gdbv9ktTP1ooKtML2EpOvM+KbX+bxX63dQKnKRNpWagQgHSsTUdDMxmihJ6UE2GA3ytzbB16TjhVf/FptxJ2A+vj35rzvnTGI0/ywZnawrXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741796473; c=relaxed/simple;
-	bh=Dc+zwomVFPomvxQGWavZde5MGx1opu1C/2LjqMLtCv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VY7l5wE9dfWHLXMj9p7vZi/v0cmrRElFBcmyB7O3ZXBjYyq5hpfEO6eAdKCSifbrXEOfEqlKo6rL/tdPEa2QZhjCaQehvWGmLRu4+5bE1xjsRb+oaUds/T4zFwVreVPqJFw1Gs7FlcBk48X8WkBHHsVOaH6FEpVyG1ka9Rc861g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RJUJj0Zs; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mHKYNwmZLDPs2lstGBfQN00eNokieZO2KadeeVHtI9g=; b=RJUJj0ZsLjRFWboYON7273OO0w
-	gd41QRXUGa62CJqAvq+YdyF3rVOKmBYMVZFz/vOt6ShuB/v/0Ayu7A5TJx72KJBNnuoS3BcgKesYx
-	fmIhBcnNk+AgouJQ6tz5VieBDysBDoo+uNCv6aJ4P5AzN2RU7LAlKU3ucZI9pVedVCwz/r500fERv
-	zmQoS7ZcFWQRdjKmNfWR62ExQJLFHhGxKe4fEQbhOGpuv1mfTeySgEV2VjY661SrKI9qfE5t5rC9A
-	BUsoLmYtggTbwqMPgnpxCJ1rUhSuHUIKy0wNpG7ngvuOEto/7rUyUhSqToZT7Zo2ewAmkuzrYBw5h
-	LXexPaFg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsOpS-000000090vh-1ZX5;
-	Wed, 12 Mar 2025 16:21:10 +0000
-Date: Wed, 12 Mar 2025 09:21:10 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Sooyong Suk <s.suk@samsung.com>,
-	Jaewon Kim <jaewon31.kim@gmail.com>, viro@zeniv.linux.org.uk,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	linux-mm@kvack.org, spssyr@gmail.com, axboe@kernel.dk,
-	linux-block@vger.kernel.org, dhavale@google.com
-Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct
- IO
-Message-ID: <Z9G0dm3bPgnM3AMa@infradead.org>
-References: <Z8m-vJ6mP1Sh2pt3@infradead.org>
- <CAJrd-UuLvOPLC2Xr=yOzZYvOw9k8qwbNa0r9oNjne31x8Pmnhw@mail.gmail.com>
- <848301db8f05$a1d79430$e586bc90$@samsung.com>
- <CAJuCfpHjV=nRmkAGrf-tyCxEEygZ0CuW-PRp+F_vHwFbfYS8dA@mail.gmail.com>
- <Z9Gld_s3XYic8-dG@infradead.org>
- <CAJuCfpGa43OQHG9BmnvxROX1AneCvkuLxFwM+TdxAdR1v9kWSg@mail.gmail.com>
- <Z9GnUaUD-iaFre_i@infradead.org>
- <CAJuCfpEpWQV8y1RKb3hH+-kxczTUvpvCBNNzGJufsAxpkhB4_A@mail.gmail.com>
- <Z9Gty3Ax-2RslqDX@infradead.org>
- <CAJuCfpHG9EWAC9p7hcOH6oPMWMMSDr91HDt7ZuX2M7=j6bxuGw@mail.gmail.com>
+	s=arc-20240116; t=1741796495; c=relaxed/simple;
+	bh=AA0MJOsn9jCYm6rQxqAqvA15NsJHoc5M1iB3UxZTL80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UWE+rfQ/xajbWE83aBPog+LL+4f2rztVTMykh6Bq1xorRDA29H/V/EaFLp0KfDkIsYSPM8G99WDPTblKdaV2gmiwEcmcTwn7xVC5cGA5PY3MPzpaNYRbbelTqQfT+EDouCxiHUkpzRstuBPq638R+V5BZdVHCK+a5Ex6FZM37wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SikGBZGs; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e6c18e2c7dso7455159a12.3;
+        Wed, 12 Mar 2025 09:21:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741796492; x=1742401292; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=g+vFr6C40IK/QoHRZZXYgKsZ4IfXSOBUm8PFsyPbVxQ=;
+        b=SikGBZGsJTyCQ/bohuS/YB9oL5R1dIS2E3CoMcmo8z7DnvoSveRq5bAI/3VhXDWVvy
+         lyBKoX9hY5Y9kscHXteN21lTdMzQKMk08Vxqga2A6iclUoXFMvHEpNxlQxP/+68Sdq+U
+         kJ186cRPEJEuXhFeW3//D/UQBR1iNNpq3u99ILwlRpHPebMBG+eTlHho73ADmwH3Fva/
+         eIPoUBsBz6o2tly0n5ghKuE7csmIJOH/WhiHs1yy8/feciMMhs+3Y4fICyn/vNAzCRoT
+         5hOLTXmeLXgTiUCIAuFN7x48N2kPzMqXicdJGoVCaKSh/ORIkQlVkz0yBoPP9sb8OuSh
+         XM7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741796492; x=1742401292;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g+vFr6C40IK/QoHRZZXYgKsZ4IfXSOBUm8PFsyPbVxQ=;
+        b=R+RcGwncLiY3lJQ3lpEA3Qg8pTy/PX1qfWCLza3XRxurVSdGE2eCp51u5ihdRH7Mc2
+         OtO87wzLSdwVW/n30r04qQA0ykYGEhQV1LP0KEc5/Hi+4QuMvqsbA8ogk23ciJ6S+Ip/
+         wM7l/5YNHOap4FZExVVovhgnBIDyvYWUL5KpWNnQoQw0wbkVnCUamwBNAb6/xi2nBShk
+         Q22NnTtyVe/+vFDItsd5QOJX9RztRB0HVznTL1ft1PcvyEP70nFUO9eDQxt93b9DAp8J
+         04VD+kNCBSQA5e2iRU2D5i8wwRgPXYaGDHw/q9wovN2v2G+ZwLxeQGrhD9iSf6uMZSb0
+         2WZw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7JV9HBlE2Yxt/QEbcGm/l0WyxkbABvfT8f5bNopu8y+Gob4M1+WmT87ZTZxjFrn3L6NCQ4suh@vger.kernel.org, AJvYcCV8MIBn6C+Z3T/ivCAEGee9zT6zfRJFI36NC1Z7BlSh20IXiL3LJOXeTlScOVZ7RjrGBllffb/njsdl9N1/zDAR@vger.kernel.org, AJvYcCWVYgiLxpap4dFXxOZ9XMU2zztNJvT/5wxaEjJ0G/LWMWK1jaixyxGky6FEP+6xisP1hdIHGAgr2f96QbN6yVw=@vger.kernel.org, AJvYcCWdLt77Kc+JMoqu2/TOSCsq4ofEj889Ev/Ky6uSYBUHU9Uj+fGGAVb0J3pNGcGQWxbH1q/c4oGcGKVQoBoj@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCDaPSFSEgFWudtbkk00OLAR+VKefqfa/wD2W3VF/9Zv6/dKNi
+	BJrQXn9MHqGmILNjFv889HP69DkTKqYL8sNJSJdXdQFh7ehwzVq4
+X-Gm-Gg: ASbGncvTxHFfrJDX+0eL3dbyKzs+CjqdptRPHW4maUQkcd5ZiHpnXN01sDzld5onoaU
+	2waFRrJvZAl7/QLWqLtSrUs+AewaONncWjXcdq0lg0qUuEf0aFRU7KMq63LeXmd3dcZhqcTCd28
+	ty9PH+y+nJpNKs4/CzY49Ob1YnfNj9dkmtwMaSaFF8P431o6ZPZ0eD2MnJtafmcW4JFX/qDGhkZ
+	8Eyi4fpJ5it2mF7X4/rrvK1I7pTQDqpvcSZxAWRYAf0DN0olr0ce3Mc9bMRrXf+DzahuazMPKDh
+	UAmPq33jmhf9tK4yFmNodcOVLSV/SOMd0YX4SoXoUFd8AHGCD1cVQbwiQbyHAqbvNMzoyKZadtj
+	lq8OPOBgpq1ZXAYAmoF4du//akk7KpXO9g5kX1P2aB3e7Opdq7Jrc/ga9bFu5E5/js9uIVdj0Pa
+	eiMUlVkVKbN6nVkkqYkTDqzTwkU1Vy9A==
+X-Google-Smtp-Source: AGHT+IEaEC38X6pFHkhcOdl/BcwH+TXUrXY3YHVZyCJc94P4HbdEGDzPYfpH7BevKXGOFc1f9RUFvg==
+X-Received: by 2002:a17:907:1b16:b0:abf:607b:d0d with SMTP id a640c23a62f3a-ac252a884cfmr2996838866b.16.1741796492007;
+        Wed, 12 Mar 2025 09:21:32 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:20d:1300:1b1c:4449:176a:89ea? (2001-1c00-020d-1300-1b1c-4449-176a-89ea.cable.dynamic.v6.ziggo.nl. [2001:1c00:20d:1300:1b1c:4449:176a:89ea])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23943945asm1081554266b.22.2025.03.12.09.21.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 09:21:31 -0700 (PDT)
+Message-ID: <58cbe875-80e7-4a44-950b-b836b97f3259@gmail.com>
+Date: Wed, 12 Mar 2025 17:21:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpHG9EWAC9p7hcOH6oPMWMMSDr91HDt7ZuX2M7=j6bxuGw@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 nf 00/15] bridge-fastpath and related improvements
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Nikolay Aleksandrov <razor@blackwall.org>, Roopa Prabhu <roopa@nvidia.com>,
+ Ivan Vecera <ivecera@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>, Simon Horman <horms@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, bridge@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Ahmed Zaki <ahmed.zaki@intel.com>, Vladimir Oltean <olteanv@gmail.com>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Daniel Golle <daniel@makrotopia.org>
+References: <20250305102949.16370-1-ericwouds@gmail.com>
+ <897ade0e-a4d0-47d0-8bf7-e5888ef45a61@gmail.com> <Z9DKxOnxr1fSv0On@calendula>
+From: Eric Woudstra <ericwouds@gmail.com>
+Content-Language: en-US
+In-Reply-To: <Z9DKxOnxr1fSv0On@calendula>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 12, 2025 at 09:06:02AM -0700, Suren Baghdasaryan wrote:
-> > Any file or anonymous folio can be temporarily pinned for I/O and only
-> > moved once that completes.  Direct I/O is one use case for that but there
-> > are plenty others.  I'm not sure how you define "beforehand", but the
-> > pinning is visible in the _pincount field.
-> 
-> Well, by "beforehand" I mean that when allocating for Direct I/O
-> operation we know this memory will be pinned,
 
-Direct I/O is performed on anonymous (or more rarely) file backed pages
-that are allocated from the normal allocators.  Some callers might know
-that they are eventually going to perform direct I/O on them, but most
-won't as that information is a few layers removed from them or totally
-hidden in libraries.
 
-The same is true for other pin_user_pages operations.  If you want memory
-that is easily available for CMA allocations it better not be given out
-as anonymous memory, and probably also not as file backed memory.  Which
-just leaves you with easily migratable kernel allocations, i.e. not much.
+On 3/12/25 12:44 AM, Pablo Neira Ayuso wrote:
+> Therefore, I suggest you start with a much smaller series with a
+> carefully selected subset including preparatory patches. I suggest you
+> start with the software enhancements only. Please, add datapath tests.
+
+Then I will split it in:
+1. Separate preparatory patches and small patch-sets that apply
+     to the forward-fastpath already.
+2. One patch-set that brings the bridge-fastpath with datapath tests.
+
+> P.S: You work is important, very important, but maybe there is no need
+> to Cc so many mailing lists and people, maybe netdev@,
+> netfilter-devel@ and bridge@ is sufficient.
+
+Ok, but my main question then is which tree should I work in, and
+therefore which tag should I give my patches, [nf] or [net-next].
+I think it will get more complicated if I split my patch-set and half of
+the patches go to [nf] and another half to [net-next].
+
+What do you suggest?
+
 
