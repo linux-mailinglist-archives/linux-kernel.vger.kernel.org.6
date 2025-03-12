@@ -1,219 +1,328 @@
-Return-Path: <linux-kernel+bounces-557930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F3AA5DF73
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:50:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44D5A5DF72
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:50:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A9DE7A9834
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:49:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 206177A67AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767D024EF69;
-	Wed, 12 Mar 2025 14:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7989123536B;
+	Wed, 12 Mar 2025 14:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CIf8qs/U"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="H9gN9+SF"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84131E3DFC;
-	Wed, 12 Mar 2025 14:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741791003; cv=fail; b=UxutAA+P0xwtgcHgBUssv5t8o2ToDvO35+plPOv+hDZlUp/t8WnzSUyvD0UVc4KRbj0dCDhr6JWWD7RYWZehI7RYxrROfLsQxfVyBR5ERDahpqKskzyhcalgPoZW5JhAjp/yd9YVX6gZYUoNVqwMxWqAGO6vOo1bXCxS2RTz8Fc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741791003; c=relaxed/simple;
-	bh=4okS6M7vizUMp/IKoQ0XofVc0IBAesrmTtoDhk87coA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VdQ6iTmg2S69nol1bi+xomU2x0N+Ck2lUWh43upZ6c5Y3n8W9WxAAs2xdV9G6nKuJzUPQ4ErbkF9kcAOtXm+xSfSkE5OWfy14U0zS/SDee+U+XxFrkTwjnUex04MlK6kwnGxLoyWD6TxA3hnOhfhViYz8lkyQuychdR+cHN0G14=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CIf8qs/U; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741791002; x=1773327002;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=4okS6M7vizUMp/IKoQ0XofVc0IBAesrmTtoDhk87coA=;
-  b=CIf8qs/UIIlpZ8/tdFj6T0IBxNaNyX8FFFO1miKzGamn2rhxdx3n+zou
-   bGnBN+JuTx+VWNECVW4ia8hCtWDsmg6YgzjPL9AHGYBoocOrRpNzMIDbb
-   jdIt8GyPhYz2y1dkTIAmSmQNLN8DOleJ63aL6ReZ1FuBXeh7aIg9Wuo4a
-   7DYLYV/naz7JJJSYzQuK2j4VztWRwhwXb1EE2m8GEfMt+XQ+kjhultv2M
-   X/0DL8cLxdF++ETtBhpsHfItD24INMdaJwkk53dJ9OxBnvxPCxlNl4Zsk
-   SfBsnmVNnSABl4RhS296dnREDho2EsH/J/0Pyhhkqz9uGqPfNzpS9xhqt
-   Q==;
-X-CSE-ConnectionGUID: gBHDAm58Q+63sNot71meGQ==
-X-CSE-MsgGUID: HnFhX8VcTUCV7EZGo3czOg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="60418710"
-X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="60418710"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 07:49:59 -0700
-X-CSE-ConnectionGUID: pwFOG6wmSP2WHPeMgotBEg==
-X-CSE-MsgGUID: JEHgzMDqRkqXpiaciBnyxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="120613781"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Mar 2025 07:49:56 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 12 Mar 2025 07:49:55 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Wed, 12 Mar 2025 07:49:55 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.49) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 12 Mar 2025 07:49:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rKFJzCDqfgHsxqnssq7KY0SPgkQ5cuHdVkYxI4XZDonVvqcfB53T4JE3C7BKPqKuUiT4NdAWref7LyHdjHv/3LQEfjlyr/zs4RNtxVFvsjK+JLp+9kL38M1gqWpuXQ3/WAPcyOaiKORg/YZThvjxXl/5AN9hRPHyD7u4vq5gqTdPxzkyw/EK4Z3SOmmDGzDZHXzmUQJ2BMlGG+z1jwKQasnaXtd8ZudB8fdJFPjKX6i9ZKyoGD5Svj8OpD79yUAPui1MRV2d91huPSNlaHWMdvH9VnDnpI/aeGVBB9V7iX28IGxDuIG33aNcb6XSM1kXduQmaTkvPGfNrPYxGTbYpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R6J9xCDA5zlYAd07JjjjVQwstPiM9b6zArVf2B1/cwc=;
- b=PPslMHD2Rrah+LGzIYppo2+zikur2EA9ZKGyXLolAIKurUycJW5KJpcnuKCC2kKAkUOamJDZT+Ih5OsbWXVUr9qJqhoKj15Cv9j7EX9t9BJDtMUXApgSlz8esaEo0BTpnyuacWN4n5kF7MxNtzj5nOYzn+9kOF6EMXcy+zJZF74rIZUspVPfYlFzyC0YY2PC5UfrdWsm5A/jNp6UGIum3g7ask9uACldhoMUfITvY6CBB37QSUxocgSYcDWlTONvfw8VRIr2Rv6FeCKAC2H2Yh3z6kXW0AZbbWcJOQyGHYC+sph9ExUXhRn7uhxuB9E6cDndDT8b5K7/wiW78NOHPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB8665.namprd11.prod.outlook.com (2603:10b6:8:1b8::6) by
- DM4PR11MB5971.namprd11.prod.outlook.com (2603:10b6:8:5e::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.28; Wed, 12 Mar 2025 14:49:25 +0000
-Received: from DS0PR11MB8665.namprd11.prod.outlook.com
- ([fe80::8e7e:4f8:f7e4:3955]) by DS0PR11MB8665.namprd11.prod.outlook.com
- ([fe80::8e7e:4f8:f7e4:3955%4]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 14:49:25 +0000
-Date: Wed, 12 Mar 2025 15:49:14 +0100
-From: Michal Kubiak <michal.kubiak@intel.com>
-To: Chen-Yu Tsai <wens@kernel.org>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Heiko Stuebner
-	<heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>, Kunihiko Hayashi
-	<hayashi.kunihiko@socionext.com>, <netdev@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-rockchip@lists.infradead.org>
-Subject: Re: [PATCH netdev v2] net: stmmac: dwmac-rk: Provide FIFO sizes for
- DWMAC 1000
-Message-ID: <Z9Ge6rLHynH1ATjz@localhost.localdomain>
-References: <20250312124206.2108476-1-wens@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250312124206.2108476-1-wens@kernel.org>
-X-ClientProxiedBy: ZR0P278CA0064.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:21::15) To DS0PR11MB8665.namprd11.prod.outlook.com
- (2603:10b6:8:1b8::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4919C23E35B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741790990; cv=none; b=LST+gqNgCpHEAa1nyxT4KGibX3XsGtC1nViGfTWWbsPhiV1Tf8Zp2GA8/N0eiNX0jWTF5RrlpVFauOF1ydrRemoprzPwdemVvLMRpDiLlxAJdazvAh4U3N6hxRM759ZcY8rOQkdpxER2KE2L1Ls0yKMn3aUhwIQeWAXSwRwfUeY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741790990; c=relaxed/simple;
+	bh=S3BJCx1TiMNI2bYjYr51UdaJIIfZ0RRgVgDVT1EsaTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DXMTIRyfI/TArY/wEX1goSCE9JQs0CG9UBKVmfruPhYJoCrFhlxvqBEQGaTL+e7HQjay63m7baNE9/QSb88HOOodYK4/tSsMvrsrOdzaghwmYVt/CIIYJaEXxV2AhrOOR40Knfr0fVY+wYTeC1Vh6ngyKkwq5mWBsBDoJwEZMZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=H9gN9+SF; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741790986;
+	bh=S3BJCx1TiMNI2bYjYr51UdaJIIfZ0RRgVgDVT1EsaTk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H9gN9+SFRUJPC42wppDwapa8dXgNRruR8dra5oRVnlM1K7BV9TFgu7ef9ObB3LV2M
+	 ll3Vlmv3h8pJ6eK0OQ5mJaxQY9UA/+ck1D6Ytr0ZhiYzXhay0unf+VqmDmhKA3RTTG
+	 D+x/sbCpKpHWqP1dSm/eMw9rVb12QDOGzlchBVYODIJxB8gHe7UuqkbfwO0aETM4q0
+	 YUy2WUgHbx3r6lXgMnhHvbAhXCM80NvVFVzvbnKmHOyfF7H/ZZskIT2EbR2x0S7clb
+	 DJEhJzGkfWoSrFSidwFjhxDq+0OHUolfXeTUCwG+tNNc6CDt8uHOqhK/3tL3KOEEtq
+	 OL85OT9xwx0LA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6AA6D17E023F;
+	Wed, 12 Mar 2025 15:49:45 +0100 (CET)
+Message-ID: <99c6850d-0b62-4d1f-a1d1-e5a0065ca27f@collabora.com>
+Date: Wed, 12 Mar 2025 15:49:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB8665:EE_|DM4PR11MB5971:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55adab79-f574-4b13-1f4c-08dd61751574
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Fd/QPl31tQVHvzRvw3t5tzmN9h78ynDJl95anW2qsQEWYNkPEr/YZENSEwdU?=
- =?us-ascii?Q?1p4ttC+KlouPM+Ucj2mtF/ZCtHlmhsLMQ4+tuSk4OGz9BW0R4PngLrHq/ZoC?=
- =?us-ascii?Q?tIes5sw9GRSC7U8mWSAfCSTi2OApahix2PhpSc73QiJrYNj8onVwp8tD9aPh?=
- =?us-ascii?Q?9c0+YN2jRg5JoHQFqigp124HoSixbMf55jc2NpDIMl7D2CFPtZ0OiKdO7GyY?=
- =?us-ascii?Q?Cz2gl3ZXNY6WamewtsI44s10XEs+stobPVG3Z3cswmLGBd7FjP4Je+238Rv8?=
- =?us-ascii?Q?2X5XIq6dv5F7Wyk6kTUKtGBIehyGF2wHGJWzY+86MOsLQoCWXFouPCXzsV9F?=
- =?us-ascii?Q?s31GcRz7tbG1K5uYPDq0iSjNvz8Y9zkF8r3uqDw+1GCdFLGB87MTbjht/q2U?=
- =?us-ascii?Q?XpBE1io7BYnr8Y9KphxU1lrKJGdr6icFL1MOtTIfm884LY5Sh67g4TJ4HBYk?=
- =?us-ascii?Q?KyGWmowz5QcDLrnlCVLSHVKLSpu3r9jOQKnt3zYTrRXxUw61AAM0cEZ1Sw/H?=
- =?us-ascii?Q?HFJLw90oKYoVilHCQNoEXI8by3MJrfl0jktJjB61trcu7SSa1TcaV2KSz2sQ?=
- =?us-ascii?Q?2X7EzA5GylEglJ4cb+zmMMJqBBNISHfxyBB2LV3dKFRHRFyi1aZGquigD+Yn?=
- =?us-ascii?Q?FmIsqKyo0++FCdlvl3DokmoEPe92dmFUeoMzo2xZ7IsKUQFojRg6c61Wrm8K?=
- =?us-ascii?Q?Med4IUOhW59ZWUewSdUXKRiXlCFGdgtBgSgqoIjfyFMXylPCtouGGEzrTod6?=
- =?us-ascii?Q?G8I+80J2pSCqIxWyW7xsxRrmoHUHyqC1UpRtpezRq1u+a5Kk9Ev1QeG7o/D4?=
- =?us-ascii?Q?eotcxN4WStWMY586CnqfZNybgkqr29G+9+GGHXuoPEU1Rly9cRZfXBuP5sfB?=
- =?us-ascii?Q?Tx40W1A8hmIJhBBHO4kDitiEY3HKu0nuryyUETCHcYBZOKwmZS6OX06uJtyE?=
- =?us-ascii?Q?CUm0bUFZhqtRCym0Kyv9USi6+MsD5kp/lfAQebfcM4pGXvxgWveH/2m/qeYj?=
- =?us-ascii?Q?Onl7IAo+nLUa4Hj1iZUp3nlSgsJLpPp1CGz3ZHXnakySXV57k8qwolhntXy1?=
- =?us-ascii?Q?RSUvRD3dJLlexefSocXwlgA5ZI3In55Ascr2rEMBB1wO5VRh5zS++XrLN7bd?=
- =?us-ascii?Q?QQANvD7qmQXE936YEbJXuyM6SiVCTLZmY1RCAcKNtticHglfhh9grsvSzyog?=
- =?us-ascii?Q?Tcbs5tS8qPMxM9eo/BaNDjmyFPi2x78TiL45iy652Gc7X56uChTv6OHHV5Xk?=
- =?us-ascii?Q?rH8CZfq31OmuxGjNsEyLzovUdzXXlZqAPdNaoXlUIqFVtXJmWVdio7mbWfHw?=
- =?us-ascii?Q?8tdLwdryzuIajogWWFpsU3F4Dek0uc4Bqpmmf2sMWjDhxuq3cT6/nN6Hrdj8?=
- =?us-ascii?Q?dZ/j7ArUGV0Lx/cSSR3K3cdvP8CW?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8665.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?4wYphT3gEbbbDiuoPCCgnv7XErZ8uCCEYZF07R38cKpMY2FTwXE71Ph0w4Dc?=
- =?us-ascii?Q?zOgWX8tOgoCYCPlyzAyGxjSWX8++rruBJLGZODFcARx5b7tqLOfV9CvaE1Kh?=
- =?us-ascii?Q?BDN2WT+bKP5G+HGJD6LwfZlGeAGwjmKUBsJgVnBzunW8+nFnhvIjepRuAVqs?=
- =?us-ascii?Q?Mj+l+fhISjb5WTtGFo+c3sNu4P4cGmXvBUF3GzEFh6BxY/ws2bsndRlHnSxP?=
- =?us-ascii?Q?zqneW/RKMO7Fa0ft1dGlGK5xSACC+VnjE1OPYe7LTewX0ArUeVY7mC7hMawO?=
- =?us-ascii?Q?QnvbwLZrNsibdLYNLh5wDyqEyDnQRkL0mUpG03WYpwwiEVJgeu7PYYgFMagQ?=
- =?us-ascii?Q?5/LAnYzr7P8MyhwyjJxwLRdQ+cZK4NSRlcUmFNKRHutI1hMk/P96Mpo5jPqZ?=
- =?us-ascii?Q?0gXMhBvT9zbwZyMGxbxt6+AL1pffOC+i+EVEAwcVOdW6apGg4Ar3K5wn2ndN?=
- =?us-ascii?Q?rr0BiyVQh/v5yYj9W1vYAAm1iTwVMZEULrze3eqIfLMlk9ocnfwaHRWQIjSw?=
- =?us-ascii?Q?rl4PxO/X6SeFOK6eh8Z9gVW75zqY8+KXGY1uoZwLl+X7AIO6+ucI93/ECskF?=
- =?us-ascii?Q?KuRpygh6X801sC2d9MwiMdaW/cWK93d4v5KRDzbWagl0K6LcxKR6ij6D9sTi?=
- =?us-ascii?Q?3G+vDas6b49gWIF84GxPb4bSpWqS+Lb1o5vqbXWTq4x5P65tIABtHFp3KNdE?=
- =?us-ascii?Q?cm/ZZ6dUXG3NiLsWbRP1NgXw98Z1A3VGxUhzIZBW8/a79W8eGp6ygx2JSOrH?=
- =?us-ascii?Q?1kkKuOc3R+A7RuNwJu4KotP1twXBO53RG6nd/6aS3aYN8L6SzOGyw67LMALo?=
- =?us-ascii?Q?yrEiAnOCCfNXKLzb2H9CsvjWw2PCSHIDHhNtpYRzTZiWwEhgVZ2uub5ML+bn?=
- =?us-ascii?Q?0Rn11RwnR4bKg8txpFhA/rGzAR7gvdAt0k2xuca38sr5EaNFXEKiIZIoDtSd?=
- =?us-ascii?Q?kRmzxdrRhy+8NT9Ajxg1mrPsaH8mrzYjGtJuME/LERD6zjGoLx/JTLj1bbdn?=
- =?us-ascii?Q?2WE13eSVQu0yThIF8Tdq+WZf1AGAZ9IX+DdaO2s8h6FEIoLXsXd4hG7OxxUq?=
- =?us-ascii?Q?lhhjQqswxdTTQEAKGeACnlct3eUAVvT128mKjpoAUDQg90kYbnAG36qoYFE/?=
- =?us-ascii?Q?ItYS7t7oILXlnVzfNOuTo4mqwX0PON3JBBwUfdOBBPm6gmBhqttJtJjadIH+?=
- =?us-ascii?Q?PawzXMoK952imHkI8q8s7aXSMEzk0Zgk/eeUDxd+fzQHBc3nPedQdZa8cW/X?=
- =?us-ascii?Q?ehZ6i9+EXj+0xoRey6JKtaYKzsnXPmTvRwdfBPXC7cGvhFiV01rkmF2xkxXC?=
- =?us-ascii?Q?B3/twjdCYgoB6ThF1TK+q7Yh6CIKsnjEqNaXFDska970mbPdPldTZUtQtdwC?=
- =?us-ascii?Q?j+qfA+PahElSl3Nz+e0mBzLy72E0qFiBhRLrOCHLdAAkfjYdPDW/qc4l4+JY?=
- =?us-ascii?Q?2ZIFfZFien3B4VueoUPvnRXBit0eU/Ne/Cr1yvEirDjWgfu4WlHOkcy/ZaBp?=
- =?us-ascii?Q?OnzAWP3vViYU8WMtII/9Wb35ezLojvT9Ix6jWNKgojPyKkUiFkqefpxomDJ4?=
- =?us-ascii?Q?nDsqFkkkWPVj4ZJpgEKes4UjLy86LTBKXlrGL7WgaSwj29+75uf3y5pNQYuy?=
- =?us-ascii?Q?BA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55adab79-f574-4b13-1f4c-08dd61751574
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8665.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 14:49:25.7022
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hblDYDJID8WkGqRTVg5avCXoQoFMUDyL8RkChPqE25k8MC80gsd7P2MdmEAgaVR4JqWZV8e4eCRVaeGdPbx4/w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB5971
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/6] drm/panfrost: Add support for AARCH64_4K page
+ table format
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: boris.brezillon@collabora.com, robh@kernel.org, steven.price@arm.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, kernel@collabora.com,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ sjoerd@collabora.com
+References: <20250310195921.157511-1-ariel.dalessandro@collabora.com>
+ <20250310195921.157511-5-ariel.dalessandro@collabora.com>
+ <760e3112-0433-41ab-ab39-faaf0463fbe8@collabora.com>
+ <d2ec6fe3-db78-4e8b-ac81-fd4c631a599b@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <d2ec6fe3-db78-4e8b-ac81-fd4c631a599b@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 12, 2025 at 08:42:06PM +0800, Chen-Yu Tsai wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
+Il 12/03/25 15:20, Ariel D'Alessandro ha scritto:
+> Angelo,
 > 
-> The DWMAC 1000 DMA capabilities register does not provide actual
-> FIFO sizes, nor does the driver really care. If they are not
-> provided via some other means, the driver will work fine, only
-> disallowing changing the MTU setting.
+> On 3/11/25 6:10 AM, AngeloGioacchino Del Regno wrote:
+>> Il 10/03/25 20:59, Ariel D'Alessandro ha scritto:
+>>> Currently, Panfrost only supports MMU configuration in "LEGACY" (as
+>>> Bifrost calls it) mode, a (modified) version of LPAE "Large Physical
+>>> Address Extension", which in Linux we've called "mali_lpae".
+>>>
+>>> This commit adds support for conditionally enabling AARCH64_4K page
+>>> table format. To achieve that, a "GPU optional configurations" field was
+>>> added to `struct panfrost_features` with the related flag.
 > 
-> Provide the FIFO sizes through the driver's platform data to enable
-> MTU changes. The FIFO sizes are confirmed to be the same across RK3288,
-> RK3328, RK3399 and PX30, based on their respective manuals. It is
-> likely that Rockchip synthesized their DWMAC 1000 with the same
-> parameters on all their chips that have it.
+> [snip]
 > 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
-> Changes since v1:
-> - Removed references to breakage from commit message as it is already fixed
-> - Removed Cc stable and Fixes tags
-> - Rebased onto latest -next
+>>> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/ drm/ 
+>>> panfrost/panfrost_mmu.c
+>>> index 31df3a96f89bd..4a9b8de2ff987 100644
+>>> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+>>> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> 
+> [snip]
+> 
+>>> +static void panfrost_mmu_cfg_init(struct panfrost_mmu *mmu,
+>>> +                  enum io_pgtable_fmt fmt)
+>>> +{
+>>> +    struct panfrost_device *pfdev = mmu->pfdev;
+>>> +
+>>> +    switch (fmt) {
+>>> +    case ARM_64_LPAE_S1:
+>>> +        mmu_cfg_init_aarch64_4k(mmu);
+>>> +        break;
+>>> +    case ARM_MALI_LPAE:
+>>> +        mmu_cfg_init_mali_lpae(mmu);
+>>> +        break;
+>>> +    default:
+>>
+>> If you add a
+>>          /* That should never happen */
+>>
+>> ...it's clear-er why this function doesn't fail (but still raises some eyebrows,
+>> because if the `default` case is not reachable, why does it even have a print?).
+> 
+> Makes sense. In that case, makes sense to just simplify it as:
+> 
+>          default:
+>                  /* This should never happen */
+>                  WARN_ON(1);
+>                  break;
+> 
+>>> +        dev_WARN_ONCE(pfdev->dev, 1, "Unhandled page table format\n");
+>>> +        break;
+>>> +    }
+>>> +}
+>>> +
+>>>   static void
+>>>   _panfrost_mmu_as_control_write(struct panfrost_device *pfdev, u32 as_nr,
+>>> -                   u64 transtab, u64 memattr)
+>>> +                   u64 transtab, u64 memattr, u64 transcfg)
+>>>   {
+>>>       mmu_hw_do_operation_locked(pfdev, as_nr, 0, ~0ULL, AS_COMMAND_FLUSH_MEM);
+>>> @@ -133,25 +223,28 @@ _panfrost_mmu_as_control_write(struct panfrost_device 
+>>> *pfdev, u32 as_nr,
+>>>       mmu_write(pfdev, AS_MEMATTR_LO(as_nr), lower_32_bits(memattr));
+>>>       mmu_write(pfdev, AS_MEMATTR_HI(as_nr), upper_32_bits(memattr));
+>>> +    mmu_write(pfdev, AS_TRANSCFG_LO(as_nr), lower_32_bits(transcfg));
+>>> +    mmu_write(pfdev, AS_TRANSCFG_HI(as_nr), upper_32_bits(transcfg));
+>>> +
+>>>       write_cmd(pfdev, as_nr, AS_COMMAND_UPDATE);
+>>> +
+>>> +    dev_dbg(pfdev->dev, "mmu_as_control: as=%d, transtab=0x%016llx, 
+>>> memattr=0x%016llx, transcfg=0x%016llx",
+>>> +        as_nr, transtab, memattr, transcfg);
+>>>   }
+>>>   static void panfrost_mmu_enable(struct panfrost_device *pfdev, struct 
+>>> panfrost_mmu *mmu)
+>>>   {
+>>> -    int as_nr = mmu->as;
+>>> -    struct io_pgtable_cfg *cfg = &mmu->pgtbl_cfg;
+>>> -    u64 transtab = cfg->arm_mali_lpae_cfg.transtab;
+>>> -    u64 memattr = cfg->arm_mali_lpae_cfg.memattr;
+>>> -
+>>>       /* Need to revisit mem attrs.
+>>>        * NC is the default, Mali driver is inner WT.
+>>>        */
+>>> -    _panfrost_mmu_as_control_write(pfdev, as_nr, transtab, memattr);
+>>> +    _panfrost_mmu_as_control_write(pfdev, mmu->as, mmu->cfg.transtab,
+>>> +                       mmu->cfg.memattr, mmu->cfg.transcfg);
+>>>   }
+>>>   static void panfrost_mmu_disable(struct panfrost_device *pfdev, u32 as_nr)
+>>>   {
+>>> -    _panfrost_mmu_as_control_write(pfdev, as_nr, 0, 0);
+>>> +    _panfrost_mmu_as_control_write(pfdev, as_nr, 0, 0,
+>>> +                       AS_TRANSCFG_ADRMODE_UNMAPPED);
+>>>   }
+>>>   u32 panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
+>>> @@ -616,6 +709,7 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct 
+>>> panfrost_device *pfdev)
+>>>   {
+>>>       u32 va_bits = GPU_MMU_FEATURES_VA_BITS(pfdev- >features.mmu_features);
+>>>       u32 pa_bits = GPU_MMU_FEATURES_PA_BITS(pfdev- >features.mmu_features);
+>>> +    enum io_pgtable_fmt fmt = ARM_MALI_LPAE;
+>>
+>> Double initialization! :-)
+> 
+> Will fix in v2.
+> 
+>>>       struct panfrost_mmu *mmu;
+>>>       mmu = kzalloc(sizeof(*mmu), GFP_KERNEL);
+>>> @@ -641,16 +735,28 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct 
+>>> panfrost_device *pfdev)
+>>>           .iommu_dev    = pfdev->dev,
+>>>       };
+>>> -    mmu->pgtbl_ops = alloc_io_pgtable_ops(ARM_MALI_LPAE, &mmu- >pgtbl_cfg,
+>>> -                          mmu);
+>>> -    if (!mmu->pgtbl_ops) {
+>>> -        kfree(mmu);
+>>> -        return ERR_PTR(-EINVAL);
+>>> +    if (pfdev->comp->gpu_configs & BIT(GPU_CONFIG_AARCH64_4K)) {
+>>
+>> Why aren't you performing this check before kzalloc?
+>>
+>> If you do so, you will be able to avoid having a goto, because this check will
+>> simply return an error (struct not allocated yet, nothing to kfree).
+>> This also means that you won't have to modify anything about the error handling
+>> of the alloc_io_pgtable_ops below....
+> 
+> Yup, definitely agreed. Thanks!
+> 
+>>> +        if (!panfrost_has_hw_feature(pfdev, HW_FEATURE_AARCH64_MMU)) {
+>>> +            dev_err_once(pfdev->dev,
+>>> +                     "AARCH64_4K page table not supported\n");
+>>> +            goto err_free_mmu;
+>>> +        }
+>>> +        fmt = ARM_64_LPAE_S1;
+>>>       }
+>>
+>> } else {
+>>      fmt = ARM_MALI_LPAE;
+>> }
+> 
+> Ack. Will fix in v2.
+> 
+>>
+>>> +    mmu->pgtbl_ops = alloc_io_pgtable_ops(fmt, &mmu->pgtbl_cfg, mmu);
+>>> +    if (!mmu->pgtbl_ops)
+>>> +        goto err_free_mmu;
+>>> +
+>>> +    panfrost_mmu_cfg_init(mmu, fmt);
+>>> +
+>>>       kref_init(&mmu->refcount);
+>>>       return mmu;
+>>> +
+>>> +err_free_mmu:
+>>> +    kfree(mmu);
+>>> +    return ERR_PTR(-EINVAL);
+>>>   }
+>>>   static const char *access_type_name(struct panfrost_device *pfdev,
+>>> diff --git a/drivers/gpu/drm/panfrost/panfrost_regs.h b/drivers/gpu/ drm/ 
+>>> panfrost/panfrost_regs.h
+>>> index b5f279a19a084..2b8f1617b8369 100644
+>>> --- a/drivers/gpu/drm/panfrost/panfrost_regs.h
+>>> +++ b/drivers/gpu/drm/panfrost/panfrost_regs.h
+>>> @@ -301,6 +301,17 @@
+>>>   #define AS_TRANSTAB_HI(as)        (MMU_AS(as) + 0x04) /* (RW) Translation 
+>>> Table Base Address for address space n, high word */
+>>>   #define AS_MEMATTR_LO(as)        (MMU_AS(as) + 0x08) /* (RW) Memory attributes 
+>>> for address space n, low word. */
+>>>   #define AS_MEMATTR_HI(as)        (MMU_AS(as) + 0x0C) /* (RW) Memory attributes 
+>>> for address space n, high word. */
+>>> +#define   AS_MEMATTR_AARCH64_INNER_ALLOC_IMPL        (2 << 2)
+>>> +#define   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(w, r)    ((3 << 2) | \
+>>> +                             ((w) ? BIT(0) : 0) | \
+>>> +                             ((r) ? BIT(1) : 0))
+>>> +#define   AS_MEMATTR_AARCH64_SH_MIDGARD_INNER        (0 << 4)
+>>> +#define   AS_MEMATTR_AARCH64_SH_CPU_INNER        (1 << 4)
+>>> +#define   AS_MEMATTR_AARCH64_SH_CPU_INNER_SHADER_COH    (2 << 4)
+>>> +#define   AS_MEMATTR_AARCH64_SHARED            (0 << 6)
+>>> +#define   AS_MEMATTR_AARCH64_INNER_OUTER_NC        (1 << 6)
+>>> +#define   AS_MEMATTR_AARCH64_INNER_OUTER_WB        (2 << 6)
+>>> +#define   AS_MEMATTR_AARCH64_FAULT            (3 << 6)
+>>>   #define AS_LOCKADDR_LO(as)        (MMU_AS(as) + 0x10) /* (RW) Lock region 
+>>> address for address space n, low word */
+>>>   #define AS_LOCKADDR_HI(as)        (MMU_AS(as) + 0x14) /* (RW) Lock region 
+>>> address for address space n, high word */
+>>>   #define AS_COMMAND(as)            (MMU_AS(as) + 0x18) /* (WO) MMU command 
+>>> register for address space n */
+>>> @@ -311,6 +322,24 @@
+>>>   /* Additional Bifrost AS registers */
+>>>   #define AS_TRANSCFG_LO(as)        (MMU_AS(as) + 0x30) /* (RW) Translation 
+>>> table configuration for address space n, low word */
+>>>   #define AS_TRANSCFG_HI(as)        (MMU_AS(as) + 0x34) /* (RW) Translation 
+>>> table configuration for address space n, high word */
+>>> +#define   AS_TRANSCFG_ADRMODE_LEGACY            (0 << 0)
+>>> +#define   AS_TRANSCFG_ADRMODE_UNMAPPED            (1 << 0)
+>>> +#define   AS_TRANSCFG_ADRMODE_IDENTITY            (2 << 0)
+>>> +#define   AS_TRANSCFG_ADRMODE_AARCH64_4K        (6 << 0)
+>>> +#define   AS_TRANSCFG_ADRMODE_AARCH64_64K        (8 << 0)
+>>
+>> "Anything" shifted in any direction by 0 is equal to the same "anything" :-)
+>>
+>> Those are just 0,1,2,6,8
+> 
+> Well, I agree... However, I'm copying this from panthor as-is. As these are similar 
+> drivers, I just kept all the macro definitions.
+> 
+>>
+>>> +#define   AS_TRANSCFG_INA_BITS(x)            ((x) << 6)
+>>> +#define   AS_TRANSCFG_OUTA_BITS(x)            ((x) << 14)
+>>> +#define   AS_TRANSCFG_SL_CONCAT                BIT(22)
+>>> +#define   AS_TRANSCFG_PTW_MEMATTR_NC            (1 << 24)
+>>
+>> BIT(24)
+>>
+>>> +#define   AS_TRANSCFG_PTW_MEMATTR_WB            (2 << 24)
+>>
+>> BIT(25)
+>>
+>>> +#define   AS_TRANSCFG_PTW_SH_NS                (0 << 28)
+>>
+>> 0
+>>
+>>> +#define   AS_TRANSCFG_PTW_SH_OS                (2 << 28)
+>>
+>> BIT(29)
+>>
+>>> +#define   AS_TRANSCFG_PTW_SH_IS                (3 << 28)
+>>
+>> GENMASK(29, 28) or BIT(28) | BIT(29)
+>>
+>> (btw, rinse and repeat for the memattrs)
+> 
+> I think the criteria used in panfrost/panthor for these definitions is:
+> * if the register field is 1 bit, use BIT()
+> * if the register field is >1 bit, use the value (as defined in the datasheet) an 
+> shift it.
+> * and -be super explicit- do this even if the value is 0.
+> 
+> I don't really have a strong opinion, but I'd attach to the subsystem/driver 
+> criteria used as much as possible :)
 
-The tag of the patch should clearly describe the destination tree. It
-can be either "net" or "net-next". "netdev" is not a proper tag.
-Assuming you removed the "Fixes" tag, you probably want to send the
-patch to "net-next".
+Okay, Fair enough!
 
-Thanks,
-Michal
+Cheers,
+Angelo
+
+> 
+> Thanks!
+> 
 
 
