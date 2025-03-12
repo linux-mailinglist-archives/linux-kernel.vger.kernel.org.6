@@ -1,320 +1,105 @@
-Return-Path: <linux-kernel+bounces-557705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF4BA5DCB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:32:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 336DAA5DCAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:30:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03DB43B8689
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:31:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8F93B58E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3839E245013;
-	Wed, 12 Mar 2025 12:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F8323C390;
+	Wed, 12 Mar 2025 12:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMu3Lbbq"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="qQ49a4EU"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9137241678;
-	Wed, 12 Mar 2025 12:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA43C1E489;
+	Wed, 12 Mar 2025 12:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741782689; cv=none; b=EDX9KIc4V19vfkijH2XEc6BN59PjY61QuL5WAbmbSGIutBV+CNp15RDDJBwwOHG3jsPQVcKeqOl/NBIFyeXBUF+yeeXKGV5iuN31IIUWYzRQ4Lbm2v99v43cwOd2MUQUiy+Xsg3TRX2Rri6IPY82Couu/vqPIdKb6+Dj9xLYy6w=
+	t=1741782652; cv=none; b=Lughch4k5VaRbEDACMDBzcDQivUOSuDi0RWy906fmPovuHdfbNd4hCzxhUTilEASTNfYG9GScMUfHM9e+pV4BuoNyZ9oGVcLCuPghDVeDPWmraKzVrH1pWM9z5QKn1l3ZjJdCmnfWJPAgliUNcNXWbBmpca2qGdDnlvL/X968o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741782689; c=relaxed/simple;
-	bh=H8QG5ecMLGOEY4Og/1MgPGyGHgWq5rjT5XfBRuu9LJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e8PP/53/ljlrizKqE7LwqINpzgtVqHeY83egcy3gx8XUA2htIoIuegdfii6dqVi3f/AFO8DQKe5x6FUwBsbaiYxP2gApvHfyuit7Tcg6hAyUhbpcNG7tyZQ+rcDLWU5lehq+MSQVV93ipCDF+MMJI3yntDiR/cQmWubZbFiPHfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMu3Lbbq; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fec3176ef3so9867902a91.1;
-        Wed, 12 Mar 2025 05:31:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741782687; x=1742387487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cYLJt2gp4oH8mVnJOtzfiFQb5AVimjLmYZhCSJgTXlw=;
-        b=QMu3LbbqC85zl+NPwZ3jOHPdkgBUOnTeYbflkv497S7/nXzaMuWnZ3uv53pehdjoyM
-         49+2SRlKNWa4yQGNatpYjYyq1wo0Hg/RxDx/Q4GQsWMNozXzxA/3Gz2t4+mGBPW8WLSv
-         u7X+YvvGr31d1A3lxaj59skSM2Ph1ndZDF2EvcXnb/UJOIn5VjPnZ/vsYGvBrMbg6zTk
-         HI7VB2cSSExl/F7I0/zjDEz48/tV92G/8xxCXETmdlX90Gw7Xb5vmN9uGqejQBjc0PWO
-         l4TJj1ucMIP/cLrrYorBPAWIQvA+p+UJxpk2uPx2Y8WWVBi/Yq43iIYbospoDcFe/Bjj
-         lbNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741782687; x=1742387487;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cYLJt2gp4oH8mVnJOtzfiFQb5AVimjLmYZhCSJgTXlw=;
-        b=QlmwsHkjRGk9v3Zm6PaYaqNFbsxJvkVGVH3STkInXReQhGSlLjBsJa28pgcjKPmWNj
-         ErsQXNbdaYsEJM+3k/ZM2ysg/Mrex7+Uq2M9L7ujLaAwAioZ+uzii3BYs/s1iTkr/xRZ
-         ShFOSGSmWBgamxp3cIa06VoF5N0YoJxIvIrIjG12PIL2ahxv508fQZ1bRIGvT/xad0xa
-         ms9ktV8DseLkplXMgQSa7tyFouX0OT2ZeJnJfwdIJA1v4iiQ03xWgxmxUXMmrk+cfUsL
-         KnXnAUj/PV080COd4f6HwtnVDn6qywaie/ed0U4ZFjBKHC8V/upNajmTSnFzbXPg9bYt
-         FyzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBx/x2gWq+HyH+wGCJfP0IOBf7+9cb1M8rfNQxo3CCPENfd/QQlDphrmmf1GNkLPy+QX/p5Xc9EE/yu7XN@vger.kernel.org, AJvYcCXet/+d52pWDNZliVY5RwhWXkS73vRUpxiG/N+HSMTktEIhdXYr81vSu1cr3zV7yGnK/B4bOhIo1CJMvA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGCxG+GK/DdGhEPNg06lvRlwh4BsQOW4fVYwvrpwX2lYHXJwya
-	zMCKVvkLGBWp/1zMEXxmBjApc62Yzn+I7ADYleGNpbS00jzsS7Nw
-X-Gm-Gg: ASbGncueFX0xyzX5WHwRxUt7rhXVKqUnxhKNsnSqM6avWK7FCXIYP29CUYhmWhqCLSy
-	9gjWpk5/pqUlOQh6jathteqw0yQ0tc9OpW+iqv0FTAqpGGjwg4Ql3t2gWNOz/qNXWcg3/0YzSOu
-	4IqbVYpNg/N2X96xytLGEMyqnRtFpIl0uBNbUSI8vmWyONlIrLGH7Bga41q6rgy3+UkD7rp8DZ+
-	EdKmeJL4GaM+i/d66ekmDtqae1ejWtTcwE4sSytz3AJVbVpvodl/IuNW1RGActzzQgxPx0lWcS2
-	JeCmaEAsEhXgop6SZTsDSSb2+8C56EP5W9Z5n/37cYhEi6/S9GVofGoYZ2Ih8T1fc3nxWNbNue7
-	V4jqnlY+xnK/hxgchfPMzzE+1eCs=
-X-Google-Smtp-Source: AGHT+IHaV5eNAX6fjVra4FDgV+bkab0WccBzwzAJMJtmvvw5216pVI9cMpIffkO5ZphZ9IBnnEw5GA==
-X-Received: by 2002:a17:90b:1d0a:b0:2ea:5dea:eb0a with SMTP id 98e67ed59e1d1-2ff7ce5965amr30359359a91.4.1741782686911;
-        Wed, 12 Mar 2025 05:31:26 -0700 (PDT)
-Received: from kernel-Apple-Virtualization-Generic-Platform.. ([2401:4900:8898:8129:deb0:598c:ebb7:dc81])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301182181c3sm1621784a91.5.2025.03.12.05.31.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 05:31:26 -0700 (PDT)
-From: Subu Dwevedi <messigoatcr7nop@gmail.com>
-To: 
-Cc: Subu Dwevedi <messigoatcr7nop@gmail.com>,
-	Henrik Rydberg <rydberg@bitmath.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] hwmon/applesmc: add fan support for newer macs
-Date: Wed, 12 Mar 2025 18:00:23 +0530
-Message-ID: <20250312123055.1735-3-messigoatcr7nop@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250312123055.1735-1-messigoatcr7nop@gmail.com>
-References: <20250312123055.1735-1-messigoatcr7nop@gmail.com>
+	s=arc-20240116; t=1741782652; c=relaxed/simple;
+	bh=laYQCx88mjcDu1ZnBLvTOB+6I7d/yFECJ8I8PLU/mrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V08j/Mph9TvcRJjv3BnlezDwHbaq961YAXC85McinfqdBIsIc7sbmry1FQWC5C4ROg6J/9HUAe+kso9NTg0983egH/lNDJP5cs+eApDC/iQnUDKDYyUTjzsqt2WPwLoS5uT5QhnuTV1azYJ8bRemzIh6dGllKe16txN+khNwC9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=qQ49a4EU; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 4F763A0433;
+	Wed, 12 Mar 2025 13:30:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=cmklfvLlFZxYw5WHt0NS
+	MePxUydM1gh/qon5awTqfRY=; b=qQ49a4EU6xjyrrZrVO8B+hvj25GZPeSjA0jb
+	7nWqtx/yE+/PuOh6axYscnpPtJZnCUmT1XiXz34qdphteXIo2TKJ5KsVsaQbrXlk
+	tUylJKdzUJ6EfDz4qFK6yVM1aVGbxPGaUdWI/bQOuiBI7c3nXLNeTFPrfx5bv68J
+	vSJsJYx3lZujSrSva+A6xE/tym5fl0MQR/34G1oev+OcThulayAyqB90QYnXB8rS
+	EsMyweSxMqzxmwvlG/62+oJXrrRx/23oPcywfMzqCIHPrTizUL5I1hKt9qJxNQ7G
+	0hp4aELeQ8tdiUjwGqvTbbbqJykqBqzZzxeWmyZZ3TReORAfhJ7HnlLmirxrBbDa
+	bzfwMJAPkNNpRba8Z2ahlXTtuP/nQbOtBnaJj4Lm561VyLg1pj6n4nQyecsminBK
+	9JZ1iaOdx6ikfJeW+2aC9/eykxPtKm0CahpIScO09ixdrP6D2WUUHpAFdQ8AnqJT
+	FIxcYKKDwenm5asoKkx7K75nJxFX8DHeGnIoMFn3kV01Le7YYX2H3POwTWR8TbRo
+	Izrs5IjAB8SonwI2Nwdi3x4a1yt6XQNPRgXRZE6UQljKWhLFhfwTskZe+LdKCar4
+	bBitkR5bthaRvlro6f2XsFW/g08V6CvdOTl7UVQOg4knyzU6/miZUM2x/aMmdqTZ
+	nOE9+MU=
+Message-ID: <505c2e3b-f1bb-4e3a-96f2-eef0d0d682e6@prolan.hu>
+Date: Wed, 12 Mar 2025 13:30:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v4] dma-engine: sun4i: Use devm functions in probe()
+To: Markus Elfring <Markus.Elfring@web.de>, <dmaengine@vger.kernel.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>
+CC: LKML <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
+	Samuel Holland <samuel@sholland.org>, Vinod Koul <vkoul@kernel.org>
+References: <20250311180254.149484-1-csokas.bence@prolan.hu>
+ <885ceb3e-d6c6-4e7b-a3b6-585d2d110ccf@web.de>
+ <81f87d39-d3f8-4b6a-91cb-b0177d34171b@prolan.hu>
+ <9ef781b0-8a63-42b7-91a2-fa8a8ea3c0b4@web.de>
+Content-Language: en-US, hu-HU
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <9ef781b0-8a63-42b7-91a2-fa8a8ea3c0b4@web.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94852627360
 
-Newer Mac models have transitioned
-the fan speed values from short to float.
+Hi,
 
-Additionally, the fan manual
-control mechanism (fan_manual) have changed from u16 to u8
+On 2025. 03. 12. 12:44, Markus Elfring wrote:
+>>> How good does such a change combination fit to the patch requirement
+>>> according to separation of concerns?
+>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14-rc6#n81
+>>
+>> It is a general refactor patch, it shouldn't change any functionality. I could split it to one part introducing `devm_clk_get_enabled()` and the other `dmaenginem_async_device_register()`, but I don't feel that to be necessary, nor does it bring any advantages I believe.
+> Can it matter a bit more to separate changes for the application of devm functions
+> and the adjustment of corresponding exception handling with dev_err_probe() calls?
 
-Signed-off-by: Subu Dwevedi <messigoatcr7nop@gmail.com>
----
- drivers/hwmon/applesmc.c | 124 +++++++++++++++++++++++++++++++--------
- 1 file changed, 101 insertions(+), 23 deletions(-)
+The change in error handling is just the result of switching to devm 
+functions, because it is no longer needed to separately dev_err(), store 
+the error code to `ret` and goto a cleanup phase (as the whole point of 
+using devm functions is to have auto-cleanup), you can just return with 
+the error code (which dev_err_probe() returns for us) right away. The 
+devm functions are used precisely _because_ they allow us to simplify 
+this error handling.
 
-diff --git a/drivers/hwmon/applesmc.c b/drivers/hwmon/applesmc.c
-index 1be4a4026a6e..9157f5978ee7 100644
---- a/drivers/hwmon/applesmc.c
-+++ b/drivers/hwmon/applesmc.c
-@@ -71,10 +71,12 @@
- #define MOTION_SENSOR_KEY	"MOCN" /* r/w ui16 */
- 
- #define FANS_COUNT		"FNum" /* r-o ui8 */
-+#define FANS_MANUAL_FMT	"F%dMd" /* r-w ui8*/
- #define FANS_MANUAL		"FS! " /* r-w ui16 */
- #define FAN_ID_FMT		"F%dID" /* r-o char[16] */
- 
- #define TEMP_SENSOR_TYPE	"sp78"
-+#define FLOAT_TYPE		"flt "
- 
- /* List of keys used to read/write fan speeds */
- static const char *const fan_speed_fmt[] = {
-@@ -145,6 +147,8 @@ static s16 rest_y;
- static u8 backlight_state[2];
- static u8 *__iomem mmio_base;
- static bool is_mmio;
-+static bool is_fan_manual_fmt;
-+static bool is_fan_speed_float;
- static u32 mmio_base_addr, mmio_base_size;
- static struct device *hwmon_dev;
- static struct input_dev *applesmc_idev;
-@@ -652,6 +656,50 @@ static int applesmc_read_s16(const char *key, s16 *value)
- 	return 0;
- }
- 
-+/*
-+ * applesmc_float_to_u32 - Retrieve the integral part of a float.
-+ * This is needed because Apple made fans use float values in the T2.
-+ * The fractional point is not significantly useful though, and the integral
-+ */
-+static inline u32 applesmc_float_to_u32(u32 from)
-+{
-+	u8 sign = from >> 31;
-+	s32 exp = ((from >> 23) & 0xFF) - 0x7F;
-+	u32 fr = from & GENMASK(22, 0);
-+	u32 round_up = 0;
-+
-+	if (sign || exp < 0)
-+		return 0;
-+
-+	u32 int_part = BIT(exp);
-+	u32 frac_part = fr >> (23 - exp);
-+
-+	if (fr & BIT(22 - exp))
-+		round_up = 1;
-+
-+	return int_part + frac_part + round_up;
-+}
-+
-+/*
-+ * applesmc_u32_to_float - Convert an u32 into a float.
-+ * See applesmc_float_to_u32 for a rationale.
-+ */
-+static inline u32 applesmc_u32_to_float(u32 from)
-+{
-+	if (!from)
-+		return 0;
-+
-+	u32 bc = fls(from) - 1;
-+	u32 exp = 0x7F + bc;
-+	u32 frac_part = (from << (23 - bc)) & GENMASK(22, 0);
-+	u32 round_up = 0;
-+
-+	if (from & BIT(bc - 1))
-+		round_up = 1;
-+
-+	return (exp << 23) | (frac_part + round_up);
-+}
-+
- /*
-  * applesmc_device_init - initialize the accelerometer.  Can sleep.
-  */
-@@ -763,6 +811,8 @@ static int applesmc_init_mmio_try(void)
- static int applesmc_init_smcreg_try(void)
- {
- 	struct applesmc_registers *s = &smcreg;
-+	const struct applesmc_entry *e;
-+	char newkey[5];
- 	bool left_light_sensor = false, right_light_sensor = false;
- 	unsigned int count;
- 	u8 tmp[1];
-@@ -788,6 +838,15 @@ static int applesmc_init_smcreg_try(void)
- 	if (!s->cache)
- 		return -ENOMEM;
- 
-+	scnprintf(newkey, sizeof(newkey), fan_speed_fmt[1], 1); //example value
-+
-+	e = applesmc_get_entry_by_key(newkey);
-+	if (IS_ERR(e))
-+		return PTR_ERR(e);
-+
-+	if (!strcmp(e->type, FLOAT_TYPE))
-+		is_fan_speed_float = true;
-+
- 	ret = applesmc_read_key(FANS_COUNT, tmp, 1);
- 	if (ret)
- 		return ret;
-@@ -820,6 +879,10 @@ static int applesmc_init_smcreg_try(void)
- 	if (ret)
- 		return ret;
- 
-+	ret = applesmc_has_key(FANS_MANUAL_FMT, &is_fan_manual_fmt);
-+	if (ret)
-+		return ret;
-+
- 	s->num_light_sensors = left_light_sensor + right_light_sensor;
- 	s->init_complete = true;
- 
-@@ -1044,11 +1107,16 @@ static ssize_t applesmc_show_fan_speed(struct device *dev,
- 	scnprintf(newkey, sizeof(newkey), fan_speed_fmt[to_option(attr)],
- 		  to_index(attr));
- 
--	ret = applesmc_read_key(newkey, buffer, 2);
-+	if (is_fan_speed_float) {
-+		ret = applesmc_read_key(newkey, (u8 *) &speed, 4);
-+		speed = applesmc_float_to_u32(speed);
-+	} else {
-+		ret = applesmc_read_key(newkey, buffer, 2);
-+		speed = ((buffer[0] << 8 | buffer[1]) >> 2);
-+	}
- 	if (ret)
- 		return ret;
- 
--	speed = ((buffer[0] << 8 | buffer[1]) >> 2);
- 	return sysfs_emit(sysfsbuf, "%u\n", speed);
- }
- 
-@@ -1067,10 +1135,14 @@ static ssize_t applesmc_store_fan_speed(struct device *dev,
- 	scnprintf(newkey, sizeof(newkey), fan_speed_fmt[to_option(attr)],
- 		  to_index(attr));
- 
--	buffer[0] = (speed >> 6) & 0xff;
--	buffer[1] = (speed << 2) & 0xff;
--	ret = applesmc_write_key(newkey, buffer, 2);
--
-+	if (is_fan_speed_float) {
-+		speed = applesmc_u32_to_float(speed);
-+		ret = applesmc_write_key(newkey, (u8 *) &speed, 4);
-+	} else {
-+		buffer[0] = (speed >> 6) & 0xff;
-+		buffer[1] = (speed << 2) & 0xff;
-+		ret = applesmc_write_key(newkey, buffer, 2);
-+	}
- 	if (ret)
- 		return ret;
- 	else
-@@ -1084,11 +1156,13 @@ static ssize_t applesmc_show_fan_manual(struct device *dev,
- 	u16 manual = 0;
- 	u8 buffer[2];
- 
--	ret = applesmc_read_key(FANS_MANUAL, buffer, 2);
--	if (ret)
--		return ret;
--
--	manual = ((buffer[0] << 8 | buffer[1]) >> to_index(attr)) & 0x01;
-+	if (is_fan_manual_fmt) {
-+		ret = applesmc_read_key(FANS_MANUAL_FMT, buffer, 1);
-+		manual = buffer[0];
-+	} else {
-+		ret = applesmc_read_key(FANS_MANUAL, buffer, 2);
-+		manual = ((buffer[0] << 8 | buffer[1]) >> to_index(attr)) & 0x01;
-+	}
- 	return sysfs_emit(sysfsbuf, "%d\n", manual);
- }
- 
-@@ -1104,22 +1178,26 @@ static ssize_t applesmc_store_fan_manual(struct device *dev,
- 	if (kstrtoul(sysfsbuf, 10, &input) < 0)
- 		return -EINVAL;
- 
--	ret = applesmc_read_key(FANS_MANUAL, buffer, 2);
--	if (ret)
--		goto out;
--
--	val = (buffer[0] << 8 | buffer[1]);
-+	if (is_fan_manual_fmt) {
-+		buffer[0] = input & 0x01;
-+		ret = applesmc_write_key(FANS_MANUAL_FMT, buffer, 1);
-+	} else {
-+		ret = applesmc_read_key(FANS_MANUAL, buffer, 2);
-+		if (ret)
-+			goto out;
- 
--	if (input)
--		val = val | (0x01 << to_index(attr));
--	else
--		val = val & ~(0x01 << to_index(attr));
-+		val = (buffer[0] << 8 | buffer[1]);
- 
--	buffer[0] = (val >> 8) & 0xFF;
--	buffer[1] = val & 0xFF;
-+		if (input)
-+			val = val | (0x01 << to_index(attr));
-+		else
-+			val = val & ~(0x01 << to_index(attr));
- 
--	ret = applesmc_write_key(FANS_MANUAL, buffer, 2);
-+		buffer[0] = (val >> 8) & 0xFF;
-+		buffer[1] = val & 0xFF;
- 
-+		ret = applesmc_write_key(FANS_MANUAL, buffer, 2);
-+	}
- out:
- 	if (ret)
- 		return ret;
--- 
-2.43.0
+> Regards,
+> Markus
+
+Bence
 
 
