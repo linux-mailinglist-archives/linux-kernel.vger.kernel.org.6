@@ -1,75 +1,72 @@
-Return-Path: <linux-kernel+bounces-557163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A17ECA5D45E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:28:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596FBA5D461
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:30:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38537189D0F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98305179D38
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE4E15689A;
-	Wed, 12 Mar 2025 02:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6460318C936;
+	Wed, 12 Mar 2025 02:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="uSOMn6ht"
-Received: from smtp-fw-9105.amazon.com (smtp-fw-9105.amazon.com [207.171.188.204])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C6q4XuFp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1234679C2;
-	Wed, 12 Mar 2025 02:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836F078F26;
+	Wed, 12 Mar 2025 02:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741746502; cv=none; b=O2lcBY9Qte8w7qJTY0tBVNq0kJO2g2/5jiUqSzwzTHlmmbO+d4E3ahO7j/8uZSQwYGFlp3UigKC8Evl8L85RMzXiBH66vCt6kBDtvJpnkw+kBrK6yrd+R407BLyUT88XYlclTdqda2dxNwSFQSeWtwXo416K+KgG5LAb80TPg1o=
+	t=1741746613; cv=none; b=H2ao25HaW32Yw+SlU2aF+2UuFySqUcVVCFx2j4i44QwIwtnq5JNAMw/dBVztdnY1AIY5DRkqdfpl7/pktvQYKlaAZ5i65s8q+QjQZCZectptXLRfim0mU8sm5Nwvy73ZazmRyPnGkTTFcP8U5yQTau6mnxwhn+jpAW6mtBz551U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741746502; c=relaxed/simple;
-	bh=HCzKMRF/kzdNtLsDlubIo3DW/JwVFd/sCmu8zJB0m1Y=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DdDeYFCxbdqYBh3iqNkhiYv0KJwukVd8QUlHXXQ3bSf8mSG81UEI/UJinSm9dUpRCciLqJMDz/3DJdNUkMTyPSlW9yrbha5dL1mCmPEfgh/bTvUQspwhg/JVHeH83H5afKn1CWPpRn6S2n2E7glkqgfhsX+fnx0K/u02HHz7INw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=uSOMn6ht; arc=none smtp.client-ip=207.171.188.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1741746501; x=1773282501;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=k0bbz1JbskYpxOapd18ifGSGP+k3vrJAgNrt1pmbLAo=;
-  b=uSOMn6htwNRmiR/Bg7/XbyMjtIb2NJuRcduog/Fs+K5CVL01EBX+HLKk
-   50e7AQTNQjvRbvzJIKiIybS4kR2FhHh9+TIhqthfmOkDsPbCxTtTgcFCm
-   kAAV2EHc94climw43T+5UYoeZ9eTr7M6M53+UPjsnpJ81Yqsul0rdUr+8
-   0=;
-X-IronPort-AV: E=Sophos;i="6.14,240,1736812800"; 
-   d="scan'208";a="463790"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9105.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 02:28:21 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.7.35:40385]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.41.90:2525] with esmtp (Farcaster)
- id 3538b84c-d1fa-4113-a8d1-8ad6aca77024; Wed, 12 Mar 2025 02:28:20 +0000 (UTC)
-X-Farcaster-Flow-ID: 3538b84c-d1fa-4113-a8d1-8ad6aca77024
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 12 Mar 2025 02:28:19 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.94.160.2) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 12 Mar 2025 02:28:09 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <sdf@fomichev.me>
-CC: <andrew+netdev@lunn.ch>, <atenart@kernel.org>, <davem@davemloft.net>,
-	<edumazet@google.com>, <enjuk@amazon.com>, <horms@kernel.org>,
-	<jasowang@redhat.com>, <jdamato@fastly.com>, <kory.maincent@bootlin.com>,
-	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<willemdebruijn.kernel@gmail.com>
-Subject: Re: [PATCH net-next 2/2] net: reorder dev_addr_sem lock
-Date: Tue, 11 Mar 2025 19:27:53 -0700
-Message-ID: <20250312022757.69200-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250311084507.3978048-3-sdf@fomichev.me>
-References: <20250311084507.3978048-3-sdf@fomichev.me>
+	s=arc-20240116; t=1741746613; c=relaxed/simple;
+	bh=D+BYOPU/tyZGEaeihV/q19h7846VhI8LhSlf1dlGg1E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i3uNxs5KgF+XymIfrt2RsOpSVoz4B3R/oAK7RjlA1cW7S4w0SkCnzbJ5yMiL9NrPVq/c9I6bVrsYbZpV9R5QoGdEE49e4+qUlolE8gJzPrWjyJ/hdN0sc5H6el6mTPsn2XF22Or2ryxGZfqZoP+JG2vc19FL+g/OkUXO54+OSVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C6q4XuFp; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741746612; x=1773282612;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=D+BYOPU/tyZGEaeihV/q19h7846VhI8LhSlf1dlGg1E=;
+  b=C6q4XuFp8BJFUq6AmWSTsWFgRuUZ43s3+2mk7WAlvT59ilNwSx0tNq8U
+   RN6puKsM3cTAGdUipZkKrpKhj/DhogrkuvZuuEWsUQemgetr0m7Bu2JU2
+   wK4f6bfPLYZcyYYCR2FzIHt9Z55PGsUo/A3h5ChtAnjVsbnzkSRVWguzI
+   GEiJWU/jm45IbMHJs9zEG5OeOTnLI+WoZulf6/eg1pYnsPvb/DVEJ25n7
+   0lAPF0YouuTzB2O3dGK8CmZIfEZm/uWRCKksd1ioKUrp3/EuFz/IZFNYN
+   NXShnQEjbTB+TdvhHyU+llR9ya3M/M7VHCOlNdAITws0YX4OIV66HS0GS
+   w==;
+X-CSE-ConnectionGUID: pj0SfoO2Skmc5EIEzYj6LA==
+X-CSE-MsgGUID: rbUmeT6jR5GC72ijpaUaLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="65270308"
+X-IronPort-AV: E=Sophos;i="6.14,240,1736841600"; 
+   d="scan'208";a="65270308"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 19:30:11 -0700
+X-CSE-ConnectionGUID: RrG0n1x4Sfun5V+xmW/I6Q==
+X-CSE-MsgGUID: 4yFxb486RjuEGEadb6zB6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,240,1736841600"; 
+   d="scan'208";a="157695740"
+Received: from yongliang-ubuntu20-ilbpg12.png.intel.com ([10.88.227.39])
+  by orviesa001.jf.intel.com with ESMTP; 11 Mar 2025 19:30:08 -0700
+From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	David E Box <david.e.box@linux.intel.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] platform/x86: intel_pmc_ipc: add option to build without ACPI
+Date: Wed, 12 Mar 2025 10:29:55 +0800
+Message-Id: <20250312022955.1418234-1-yong.liang.choong@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,55 +74,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D041UWB002.ant.amazon.com (10.13.139.179) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-From: Stanislav Fomichev <sdf@fomichev.me>
-Date: Tue, 11 Mar 2025 01:45:07 -0700
-> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-> index 9355058bf996..c9d44dad203d 100644
-> --- a/net/core/rtnetlink.c
-> +++ b/net/core/rtnetlink.c
-> @@ -3080,21 +3080,32 @@ static int do_setlink(const struct sk_buff *skb, struct net_device *dev,
->  		struct sockaddr *sa;
->  		int len;
->  
-> +		netdev_unlock_ops(dev);
-> +
-> +		/* dev_addr_sem is an outer lock, enforce proper ordering */
-> +		down_write(&dev_addr_sem);
-> +		netdev_lock_ops(dev);
-> +
->  		len = sizeof(sa_family_t) + max_t(size_t, dev->addr_len,
->  						  sizeof(*sa));
->  		sa = kmalloc(len, GFP_KERNEL);
->  		if (!sa) {
-> +			up_write(&dev_addr_sem);
->  			err = -ENOMEM;
->  			goto errout;
->  		}
->  		sa->sa_family = dev->type;
->  		memcpy(sa->sa_data, nla_data(tb[IFLA_ADDRESS]),
->  		       dev->addr_len);
+This patch introduces a configuration option that allows users to
+build the intel_pmc_ipc driver without ACPI support. This is useful
+for systems where ACPI is not available or desired.
 
-Can we move down_write() and netdev_lock_ops() here ?
+Based on the discussion from the patch: https://patchwork.kernel.org/
+project/netdevbpf/patch/20250227121522.1802832-6-
+yong.liang.choong@linux.intel.com/#26280764, it was necessary to
+provide this option to accommodate specific use cases.
 
+Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+---
+ include/linux/platform_data/x86/intel_pmc_ipc.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> -		err = netif_set_mac_address_user(dev, sa, extack);
-> +		err = netif_set_mac_address(dev, sa, extack);
->  		kfree(sa);
-> -		if (err)
-> +		if (err) {
-> +			up_write(&dev_addr_sem);
->  			goto errout;
-> +		}
->  		status |= DO_SETLINK_MODIFIED;
-> +
-> +		up_write(&dev_addr_sem);
->  	}
->  
->  	if (tb[IFLA_MTU]) {
-> -- 
-> 2.48.1
+diff --git a/include/linux/platform_data/x86/intel_pmc_ipc.h b/include/linux/platform_data/x86/intel_pmc_ipc.h
+index 6e603a8c075f..a852f1a02532 100644
+--- a/include/linux/platform_data/x86/intel_pmc_ipc.h
++++ b/include/linux/platform_data/x86/intel_pmc_ipc.h
+@@ -34,6 +34,7 @@ struct pmc_ipc_rbuf {
+  *
+  * Return: 0 on success. Non-zero on mailbox error
+  */
++#if CONFIG_ACPI
+ static inline int intel_pmc_ipc(struct pmc_ipc_cmd *ipc_cmd, struct pmc_ipc_rbuf *rbuf)
+ {
+ 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+@@ -90,5 +91,9 @@ static inline int intel_pmc_ipc(struct pmc_ipc_cmd *ipc_cmd, struct pmc_ipc_rbuf
+ 
+ 	return 0;
+ }
++#else
++static inline int intel_pmc_ipc(struct pmc_ipc_cmd *ipc_cmd, struct pmc_ipc_rbuf *rbuf)
++{ return -ENODEV; }
++#endif /* CONFIG_ACPI */
+ 
+ #endif /* INTEL_PMC_IPC_H */
+-- 
+2.34.1
+
 
