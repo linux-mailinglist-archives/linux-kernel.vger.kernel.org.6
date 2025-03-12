@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-558166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE75A5E27B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:21:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3F9FA5E27A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:21:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C236D17C328
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:21:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E82B317765B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E895259CB4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD90259CA4;
 	Wed, 12 Mar 2025 17:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jgTUHn/G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4nqi2UGX"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OMzoKwu0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KI6gd/S3"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16D4253322;
-	Wed, 12 Mar 2025 17:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241812571A6;
+	Wed, 12 Mar 2025 17:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741800025; cv=none; b=grtf/UD+rWltx56S8kspbSBh89Hp3bFXTyEP/0/VFpyImNIdwUarkVEMYs9TLwfm4jlhd1iXrJi7rvXECI57lWkHN+dtMbK1O6UMACmuDxE+kj/vQFg73YQMHFV35JOmAdfehawptS/0zT7FmUWCzt4lAXcUlJ9Ds//p+q9HruM=
+	t=1741800026; cv=none; b=HfGRwS+xqn/PAmfA8M9lgIobmblPozmI1kHzpNBfpxelvEyLnDP5pAV2lX3Byl6EZh3pk+VcTo481t3KT2OXA3rI33lK9300VfFtWUBwbBKn3KNgAkbU1+5bDT9uGweQlBHIWqnXhsAxUdDpYI7NeJ/EDVNx3z8TCreYaph/bR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741800025; c=relaxed/simple;
-	bh=kdzp2MvUahiT+/kCdu2GKNLAwFBNpD9Im6xENPRJ6Vs=;
+	s=arc-20240116; t=1741800026; c=relaxed/simple;
+	bh=EaTi/48jpa8K2rytyxZNMBpIB0EDkMSLiWmGfAEhG7o=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=FXd3MvfzCRggn3Wk3wsioHuV4aa5JMspeI4SpP1wHZC2uPZpkvl0XpR9zT1+2OTBTRLobto2Jz3WcaEiSVSn0Gr16rhLlB+ri7nUixCHOSLYw4zcjQX0YnNBjII7rjSKMzRbflxJH9bTH5CYyPeE5x9YOYnRZZufiJaX1ybY4i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jgTUHn/G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4nqi2UGX; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=aGFSouq9xB8ycc0heHNuzvKDWzMsAIq0FpPRSMGGNjPZWxpg5WbcSPR+vRp/bShsS3Q9dMjn3baL9nTN7feOqPjvFZfY+fMTp4voRxLykfQr9NIQgIItp25i/8wmVOKpz/obh60FjXMoeMFA8ENRIWUSK1rhfBkwg0ymsmB9ROE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OMzoKwu0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KI6gd/S3; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 12 Mar 2025 17:20:20 -0000
+Date: Wed, 12 Mar 2025 17:20:21 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1741800021;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=f7TQ+4PjJYlDAl71R00BL1fkcdhYNfyV9pHGh4e7eCw=;
-	b=jgTUHn/GZJRcn4IxeBuC+3SmAjltgioMPVQw/F27ObN31YNFv2n0VkH/Dt9VoXQkywfbCh
-	7XCC3R2fIgfrJU02WGL8Nh8+zHpo2CvsgweYpb0Yf3yaElD/PDuZTCtMrPGmKRNMxvD0/K
-	ptY/osUouxpW1dwQ2LkEwaBREglBxrBvmo0uNLvv30U4Tp4ZCdKM7rEZgf30N3Ze+n23OD
-	riGlbCXZ2CVFEa7DN5vgjxjNeEmDuQ7dqVMDyABMZl7onQgGzmzjdIqGQ/CspOCvkaExCH
-	Qda706rQV9j3pVZ88yOXsoLZ7+zLN8OBfYS//Th3V7mj3BUJzKlzfhDasErHgw==
+	bh=VPRNPaN020NLWUZd8x+3MaPuz2nVpHT8MJiVwjhol2Q=;
+	b=OMzoKwu00e5UFAc1EtnjHMxhq6Dt5hHgKxyKgIwP/kHUxzguEhJo01/UXXm/YZXKGDxZL4
+	Z60sfKETX1L8eeJvp0yk8wj5GDGrF0nFRrxu3/2/bhqqGQyRKLTZctWpiwJ4lRRsO0hDW2
+	j/VxTLCAYmZ7cHBu1JpJFSYGu2e0mROQe+Wj02eNgjppopO99vpu1sgPqiS9v4NFAjYoby
+	nBRzVKd9fh1wF80Oa5mgAN97Saig6CHJcPkh/8EHk35U8+oiyHkZPidq1Fakjrvhfs2cLw
+	1W5aX3rxewNcKU244ga3meeQ+7QsqKG6/IAxJTPeQ/wOl0t84Oegzdi43wwNNA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1741800021;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,15 +52,15 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=f7TQ+4PjJYlDAl71R00BL1fkcdhYNfyV9pHGh4e7eCw=;
-	b=4nqi2UGXwcaqiBQqgjjpYNWCAN6sEoAl+ceh+vRKr1JxjER/+/hwfPx4v1+S6zBpogyUDB
-	CvwRjx4oeDLkf7CQ==
+	bh=VPRNPaN020NLWUZd8x+3MaPuz2nVpHT8MJiVwjhol2Q=;
+	b=KI6gd/S3wO6kB66uSF0OYB6G32dowfsWmRh1W4g2MP8qzmVr2m/O1NWU/gUkp9Mz6ueW3x
+	9Dc2C/yvkso/IdDg==
 From: "tip-bot2 for James Morse" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cache] x86/resctrl: Make resctrl_arch_pseudo_lock_fn() take a plr
+Subject: [tip: x86/cache] x86/resctrl: Make prefetch_disable_bits belong to
+ the arch code
 Cc: James Morse <james.morse@arm.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
  Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>,
  Reinette Chatre <reinette.chatre@intel.com>, Fenghua Yu <fenghuay@nvidia.com>,
@@ -69,15 +69,15 @@ Cc: James Morse <james.morse@arm.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
  Amit Singh Tomar <amitsinght@marvell.com>,
  Shanker Donthineni <sdonthineni@nvidia.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250311183715.16445-27-james.morse@arm.com>
-References: <20250311183715.16445-27-james.morse@arm.com>
+In-Reply-To: <20250311183715.16445-26-james.morse@arm.com>
+References: <20250311183715.16445-26-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174180002033.14745.11512774629570617548.tip-bot2@tip-bot2>
+Message-ID: <174180002117.14745.15433290797717039575.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -87,24 +87,22 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/cache branch of tip:
 
-Commit-ID:     4cf9acfc8f1a322576f0666b882d631cfdf714bf
-Gitweb:        https://git.kernel.org/tip/4cf9acfc8f1a322576f0666b882d631cfdf714bf
+Commit-ID:     4d20f38ab6d922dd6b8a33795b6e72516d733eb2
+Gitweb:        https://git.kernel.org/tip/4d20f38ab6d922dd6b8a33795b6e72516d733eb2
 Author:        James Morse <james.morse@arm.com>
-AuthorDate:    Tue, 11 Mar 2025 18:37:11 
+AuthorDate:    Tue, 11 Mar 2025 18:37:10 
 Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 12 Mar 2025 12:24:33 +01:00
+CommitterDate: Wed, 12 Mar 2025 12:24:30 +01:00
 
-x86/resctrl: Make resctrl_arch_pseudo_lock_fn() take a plr
+x86/resctrl: Make prefetch_disable_bits belong to the arch code
 
-resctrl_arch_pseudo_lock_fn() has architecture specific behaviour,
-and takes a struct rdtgroup as an argument.
+prefetch_disable_bits is set by rdtgroup_locksetup_enter() from a value
+provided by the architecture, but is largely read by other architecture
+helpers.
 
-After the filesystem code moves to /fs/, the definition of struct
-rdtgroup will not be available to the architecture code.
-
-The only reason resctrl_arch_pseudo_lock_fn() wants the rdtgroup is
-for the CLOSID. Embed that in the pseudo_lock_region as a closid,
-and move the definition of struct pseudo_lock_region to resctrl.h.
+Make resctrl_arch_get_prefetch_disable_bits() set prefetch_disable_bits so
+that it can be isolated to arch-code from where the other arch-code helpers
+can use its cached value.
 
 Signed-off-by: James Morse <james.morse@arm.com>
 Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
@@ -119,168 +117,56 @@ Tested-by: Peter Newman <peternewman@google.com>
 Tested-by: Amit Singh Tomar <amitsinght@marvell.com> # arm64
 Tested-by: Shanker Donthineni <sdonthineni@nvidia.com> # arm64
 Tested-by: Babu Moger <babu.moger@amd.com>
-Link: https://lore.kernel.org/r/20250311183715.16445-27-james.morse@arm.com
+Link: https://lore.kernel.org/r/20250311183715.16445-26-james.morse@arm.com
 ---
- arch/x86/include/asm/resctrl.h            |  2 +-
- arch/x86/kernel/cpu/resctrl/internal.h    | 37 +---------------------
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 12 +++----
- include/linux/resctrl.h                   | 39 ++++++++++++++++++++++-
- 4 files changed, 46 insertions(+), 44 deletions(-)
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/resctrl.h b/arch/x86/include/asm/resctrl.h
-index 86407db..011bf67 100644
---- a/arch/x86/include/asm/resctrl.h
-+++ b/arch/x86/include/asm/resctrl.h
-@@ -204,7 +204,7 @@ static inline void resctrl_arch_mon_ctx_free(struct rdt_resource *r, int evtid,
- 					     void *ctx) { };
- 
- u64 resctrl_arch_get_prefetch_disable_bits(void);
--int resctrl_arch_pseudo_lock_fn(void *_rdtgrp);
-+int resctrl_arch_pseudo_lock_fn(void *_plr);
- int resctrl_arch_measure_cycles_lat_fn(void *_plr);
- int resctrl_arch_measure_l2_residency(void *_plr);
- int resctrl_arch_measure_l3_residency(void *_plr);
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 8d35bb4..0d13006 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -209,43 +209,6 @@ struct mongroup {
- };
- 
- /**
-- * struct pseudo_lock_region - pseudo-lock region information
-- * @s:			Resctrl schema for the resource to which this
-- *			pseudo-locked region belongs
-- * @d:			RDT domain to which this pseudo-locked region
-- *			belongs
-- * @cbm:		bitmask of the pseudo-locked region
-- * @lock_thread_wq:	waitqueue used to wait on the pseudo-locking thread
-- *			completion
-- * @thread_done:	variable used by waitqueue to test if pseudo-locking
-- *			thread completed
-- * @cpu:		core associated with the cache on which the setup code
-- *			will be run
-- * @line_size:		size of the cache lines
-- * @size:		size of pseudo-locked region in bytes
-- * @kmem:		the kernel memory associated with pseudo-locked region
-- * @minor:		minor number of character device associated with this
-- *			region
-- * @debugfs_dir:	pointer to this region's directory in the debugfs
-- *			filesystem
-- * @pm_reqs:		Power management QoS requests related to this region
-- */
--struct pseudo_lock_region {
--	struct resctrl_schema	*s;
--	struct rdt_ctrl_domain	*d;
--	u32			cbm;
--	wait_queue_head_t	lock_thread_wq;
--	int			thread_done;
--	int			cpu;
--	unsigned int		line_size;
--	unsigned int		size;
--	void			*kmem;
--	unsigned int		minor;
--	struct dentry		*debugfs_dir;
--	struct list_head	pm_reqs;
--};
--
--/**
-  * struct rdtgroup - store rdtgroup's data in resctrl file system.
-  * @kn:				kernfs node
-  * @rdtgroup_list:		linked list for all rdtgroups
 diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index 90044a0..01fa789 100644
+index 1f42c11..90044a0 100644
 --- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
 +++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -414,7 +414,7 @@ static void pseudo_lock_free(struct rdtgroup *rdtgrp)
- 
- /**
-  * resctrl_arch_pseudo_lock_fn - Load kernel memory into cache
-- * @_rdtgrp: resource group to which pseudo-lock region belongs
-+ * @_plr: the pseudo-lock region descriptor
-  *
-  * This is the core pseudo-locking flow.
-  *
-@@ -431,10 +431,9 @@ static void pseudo_lock_free(struct rdtgroup *rdtgrp)
-  *
-  * Return: 0. Waiter on waitqueue will be woken on completion.
+@@ -84,6 +84,8 @@ static const struct class pseudo_lock_class = {
   */
--int resctrl_arch_pseudo_lock_fn(void *_rdtgrp)
-+int resctrl_arch_pseudo_lock_fn(void *_plr)
+ u64 resctrl_arch_get_prefetch_disable_bits(void)
  {
--	struct rdtgroup *rdtgrp = _rdtgrp;
--	struct pseudo_lock_region *plr = rdtgrp->plr;
-+	struct pseudo_lock_region *plr = _plr;
- 	u32 rmid_p, closid_p;
- 	unsigned long i;
- 	u64 saved_msr;
-@@ -494,7 +493,8 @@ int resctrl_arch_pseudo_lock_fn(void *_rdtgrp)
- 	 * pseudo-locked followed by reading of kernel memory to load it
- 	 * into the cache.
- 	 */
--	__wrmsr(MSR_IA32_PQR_ASSOC, rmid_p, rdtgrp->closid);
-+	__wrmsr(MSR_IA32_PQR_ASSOC, rmid_p, plr->closid);
++	prefetch_disable_bits = 0;
 +
- 	/*
- 	 * Cache was flushed earlier. Now access kernel memory to read it
- 	 * into cache region associated with just activated plr->closid.
-@@ -1312,7 +1312,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL ||
+ 	    boot_cpu_data.x86 != 6)
+ 		return 0;
+@@ -99,7 +101,8 @@ u64 resctrl_arch_get_prefetch_disable_bits(void)
+ 		 * 3    DCU IP Prefetcher Disable (R/W)
+ 		 * 63:4 Reserved
+ 		 */
+-		return 0xF;
++		prefetch_disable_bits = 0xF;
++		break;
+ 	case INTEL_ATOM_GOLDMONT:
+ 	case INTEL_ATOM_GOLDMONT_PLUS:
+ 		/*
+@@ -110,10 +113,11 @@ u64 resctrl_arch_get_prefetch_disable_bits(void)
+ 		 * 2     DCU Hardware Prefetcher Disable (R/W)
+ 		 * 63:3  Reserved
+ 		 */
+-		return 0x5;
++		prefetch_disable_bits = 0x5;
++		break;
+ 	}
  
- 	plr->thread_done = 0;
+-	return 0;
++	return prefetch_disable_bits;
+ }
  
--	thread = kthread_run_on_cpu(resctrl_arch_pseudo_lock_fn, rdtgrp,
-+	thread = kthread_run_on_cpu(resctrl_arch_pseudo_lock_fn, plr,
- 				    plr->cpu, "pseudo_lock/%u");
- 	if (IS_ERR(thread)) {
- 		ret = PTR_ERR(thread);
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 914df24..226cc5c 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -58,6 +58,45 @@ enum resctrl_conf_type {
- 
- #define CDP_NUM_TYPES	(CDP_DATA + 1)
- 
-+/*
-+ * struct pseudo_lock_region - pseudo-lock region information
-+ * @s:			Resctrl schema for the resource to which this
-+ *			pseudo-locked region belongs
-+ * @closid:		The closid that this pseudo-locked region uses
-+ * @d:			RDT domain to which this pseudo-locked region
-+ *			belongs
-+ * @cbm:		bitmask of the pseudo-locked region
-+ * @lock_thread_wq:	waitqueue used to wait on the pseudo-locking thread
-+ *			completion
-+ * @thread_done:	variable used by waitqueue to test if pseudo-locking
-+ *			thread completed
-+ * @cpu:		core associated with the cache on which the setup code
-+ *			will be run
-+ * @line_size:		size of the cache lines
-+ * @size:		size of pseudo-locked region in bytes
-+ * @kmem:		the kernel memory associated with pseudo-locked region
-+ * @minor:		minor number of character device associated with this
-+ *			region
-+ * @debugfs_dir:	pointer to this region's directory in the debugfs
-+ *			filesystem
-+ * @pm_reqs:		Power management QoS requests related to this region
-+ */
-+struct pseudo_lock_region {
-+	struct resctrl_schema	*s;
-+	u32			closid;
-+	struct rdt_ctrl_domain	*d;
-+	u32			cbm;
-+	wait_queue_head_t	lock_thread_wq;
-+	int			thread_done;
-+	int			cpu;
-+	unsigned int		line_size;
-+	unsigned int		size;
-+	void			*kmem;
-+	unsigned int		minor;
-+	struct dentry		*debugfs_dir;
-+	struct list_head	pm_reqs;
-+};
-+
  /**
-  * struct resctrl_staged_config - parsed configuration to be applied
-  * @new_ctrl:		new ctrl value to be loaded
+@@ -713,8 +717,7 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
+ 	 * Not knowing the bits to disable prefetching implies that this
+ 	 * platform does not support Cache Pseudo-Locking.
+ 	 */
+-	prefetch_disable_bits = resctrl_arch_get_prefetch_disable_bits();
+-	if (prefetch_disable_bits == 0) {
++	if (resctrl_arch_get_prefetch_disable_bits() == 0) {
+ 		rdt_last_cmd_puts("Pseudo-locking not supported\n");
+ 		return -EINVAL;
+ 	}
 
