@@ -1,259 +1,319 @@
-Return-Path: <linux-kernel+bounces-557121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0DFA5D3E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:14:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6428A5D3EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:15:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C2A6171D8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:14:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D95F57A3DFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574C213A3F7;
-	Wed, 12 Mar 2025 01:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BE013AA20;
+	Wed, 12 Mar 2025 01:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KcLnhKmg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="g8zF2C7R"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF505CB8
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 01:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A785661;
+	Wed, 12 Mar 2025 01:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741742042; cv=none; b=ryfaI62oYfj7ODVF5fUjCb1h/pO+E0oONtNp7++965A2hXs7/eKEmtj8uR/08zMioc7LxGLHeSuolp11/grxwvctrtPlaMk2QWciWg8YBa2zz6t5RAWQMhfsqthA9Mj1m4WEOUAQTGHNckwvVyH4pwWqBvT4ZeI5ReZRVpm8s0g=
+	t=1741742121; cv=none; b=UClAfumArh5NyeX9tuLOGQtHgkyeDJO7MXErYh/TM73YpFbjK8vO6F8NBRaE1EDP0TO+aF/78tA5wE6FjRR7U9jqn/CSb/XNdaZUEwE0FxZIqR6CiUZZ6XlMqW79vmOHp+VxacoNcivet0bgDKVzWtiV8czL+vxUAsl0swBxFTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741742042; c=relaxed/simple;
-	bh=cw+bu3HxlbNj06nDNyIU+XJthNYzbbahBS9eBPqp78Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fFcPZj1LfVZRD1p5OGPULseOaAFyyBH3I8O68CBP609b04XqVYH2TjBqX4yd6NNEyyenH9mUF5mTcvRdT3kTMT7m/Hl+L2AXutcrmYJUTc1gYQn75kEpBUJ2eHM5aBKL3jVKXrkFdNhK1vHtiOsXK7J6oMjdshv5FomLf7BHeag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KcLnhKmg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741742039;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GTQ6FqeSGJWa4gXakFBln2Ru3c0CV8pFrUsBtR+Ub9U=;
-	b=KcLnhKmgrw+2GMkewoyx7p0ZEofgvFTxR+qs7uh3vT3D3HY94hpnnni5q32UlZuImmWVC5
-	JfToOJ2EFqNZngyXDFEaZsbXyg4ioatPjJ+JjDzibHqku5WLnFT7mLaSPSFdj5KnVUhwU8
-	nDgSmU1w/b/E74dZi6S1hPy7KOh7uTQ=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-498-34Xi6h_tNNSo5Tb8LP3Huw-1; Tue,
- 11 Mar 2025 21:13:56 -0400
-X-MC-Unique: 34Xi6h_tNNSo5Tb8LP3Huw-1
-X-Mimecast-MFC-AGG-ID: 34Xi6h_tNNSo5Tb8LP3Huw_1741742034
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0DA7019560B4;
-	Wed, 12 Mar 2025 01:13:54 +0000 (UTC)
-Received: from tpad.localdomain (unknown [10.96.133.2])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C1A881955BCB;
-	Wed, 12 Mar 2025 01:13:52 +0000 (UTC)
-Received: by tpad.localdomain (Postfix, from userid 1000)
-	id 67841400DCFE8; Tue, 11 Mar 2025 22:13:30 -0300 (-03)
-Date: Tue, 11 Mar 2025 22:13:30 -0300
-From: Marcelo Tosatti <mtosatti@redhat.com>
-To: Isaku Yamahata <isaku.yamahata@intel.com>
-Cc: kvm@vger.kernel.org, pbonzini@redhat.com,
-	Sean Christopherson <seanjc@google.com>, chao.gao@intel.com,
-	rick.p.edgecombe@intel.com, yan.y.zhao@intel.com,
-	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
-	Nikunj A Dadhania <nikunj@amd.com>
-Subject: Re: [PATCH 0/2] KVM: kvm-coco-queue: Support protected TSC
-Message-ID: <Z9DfurM5LwR5fwX4@tpad>
-References: <cover.1728719037.git.isaku.yamahata@intel.com>
+	s=arc-20240116; t=1741742121; c=relaxed/simple;
+	bh=GdIWn8dxvwQNfNGBlXkzMqFUGUh6OBtumAWEyL1MDcA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=KeL4Cqh0nDksWHH9v/+C7QcBwTWqFAWAkZe7HMm7BmjIOMFMQjiD5AP1NqNa8V5ECA7xoueCvvu0U0nSE99s01vOnsxxENr/qKfiqZCfi7uxw1QPcpKN+vMBEl7DhbwQEjiZzzGUfE7YtVzwBefrZQ7UJd5dHwhssIQD6yULZWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=g8zF2C7R; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52C1F0M52325286
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 11 Mar 2025 18:15:01 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52C1F0M52325286
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741742101;
+	bh=jlwxRcrns0OIiqdDfKZ4XIvdhyr1zkyGiaDQmjUp31o=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=g8zF2C7RkWrC0uYcQ9Z2M9gq17yMYDUMilrqFdg8r7xlBrYpwch8z/WhdNTQbXTFQ
+	 PfzRoNASkFpQ8ggEmlTHEHheUxRXBbXKVyfK5cej6+zWJgUeycdxQv0ClwEEnNNffX
+	 dy6UmPVgoSpkfZ35nQfFtkOtDEalKtVNXe8TRSuEeY3hLQVdwkVbjQjp3YfAKKYq19
+	 kmzJeql9juY2ofucFdMo9EtztmvuUPW3ctL2hsAGLXH5GqecvvHhRetEdlZ/wG2hU+
+	 J8XFh8EnXgYfHBjs6recrm8KcS3diM1IKRusX5w1ib0rlfmoNnxqyYNxPMpjT1QOIY
+	 hqWP2AQl40Xug==
+Date: Tue, 11 Mar 2025 18:15:00 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: linux-kernel@vger.kernel.org,
+        tip-bot2 for Thomas Huth <tip-bot2@linutronix.de>,
+        linux-tip-commits@vger.kernel.org
+CC: Thomas Huth <thuth@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, Brian Gerst <brgerst@gmail.com>,
+        x86@kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5Btip=3A_x86/headers=5D_x86/headers=3A_Replace_=5F?=
+ =?US-ASCII?Q?=5FASSEMBLY=5F=5F_with_=5F=5FASSEMBLER=5F=5F_in_UAPI_headers?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <174160617464.14745.3081665054786018758.tip-bot2@tip-bot2>
+References: <20250310104256.123527-1-thuth@redhat.com> <174160617464.14745.3081665054786018758.tip-bot2@tip-bot2>
+Message-ID: <B004CC50-5077-44A2-9EC9-6444BBA400A8@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1728719037.git.isaku.yamahata@intel.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 12, 2024 at 12:55:54AM -0700, Isaku Yamahata wrote:
-> This patch series is for the kvm-coco-queue branch.  The change for TDX KVM is
-> included at the last.  The test is done by create TDX vCPU and run, get TSC
-> offset via vCPU device attributes and compare it with the TDX TSC OFFSET
-> metadata.  Because the test requires the TDX KVM and TDX KVM kselftests, don't
-> include it in this patch series.
+On March 10, 2025 4:29:34 AM PDT, tip-bot2 for Thomas Huth <tip-bot2@linutr=
+onix=2Ede> wrote:
+>The following commit has been merged into the x86/headers branch of tip:
+>
+>Commit-ID:     e28eecf2602bdce826833ccb9a6b7a6bacafd98b
+>Gitweb:        https://git=2Ekernel=2Eorg/tip/e28eecf2602bdce826833ccb9a6=
+b7a6bacafd98b
+>Author:        Thomas Huth <thuth@redhat=2Ecom>
+>AuthorDate:    Mon, 10 Mar 2025 11:42:56 +01:00
+>Committer:     Ingo Molnar <mingo@kernel=2Eorg>
+>CommitterDate: Mon, 10 Mar 2025 12:18:42 +01:00
+>
+>x86/headers: Replace __ASSEMBLY__ with __ASSEMBLER__ in UAPI headers
+>
+>__ASSEMBLY__ is only defined by the Makefile of the kernel, so
+>this is not really useful for UAPI headers (unless the userspace
+>Makefile defines it, too)=2E Let's switch to __ASSEMBLER__ which
+>gets set automatically by the compiler when compiling assembly
+>code=2E
+>
+>Signed-off-by: Thomas Huth <thuth@redhat=2Ecom>
+>Signed-off-by: Ingo Molnar <mingo@kernel=2Eorg>
+>Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
+>Cc: Linus Torvalds <torvalds@linux-foundation=2Eorg>
+>Cc: Kees Cook <keescook@chromium=2Eorg>
+>Cc: Brian Gerst <brgerst@gmail=2Ecom>
+>Link: https://lore=2Ekernel=2Eorg/r/20250310104256=2E123527-1-thuth@redha=
+t=2Ecom
+>---
+> arch/x86/include/uapi/asm/bootparam=2Eh  | 4 ++--
+> arch/x86/include/uapi/asm/e820=2Eh       | 4 ++--
+> arch/x86/include/uapi/asm/ldt=2Eh        | 4 ++--
+> arch/x86/include/uapi/asm/msr=2Eh        | 4 ++--
+> arch/x86/include/uapi/asm/ptrace-abi=2Eh | 6 +++---
+> arch/x86/include/uapi/asm/ptrace=2Eh     | 4 ++--
+> arch/x86/include/uapi/asm/setup_data=2Eh | 4 ++--
+> arch/x86/include/uapi/asm/signal=2Eh     | 8 ++++----
+> 8 files changed, 19 insertions(+), 19 deletions(-)
+>
+>diff --git a/arch/x86/include/uapi/asm/bootparam=2Eh b/arch/x86/include/u=
+api/asm/bootparam=2Eh
+>index 9b82eeb=2E=2Edafbf58 100644
+>--- a/arch/x86/include/uapi/asm/bootparam=2Eh
+>+++ b/arch/x86/include/uapi/asm/bootparam=2Eh
+>@@ -26,7 +26,7 @@
+> #define XLF_5LEVEL_ENABLED		(1<<6)
+> #define XLF_MEM_ENCRYPTION		(1<<7)
+>=20
+>-#ifndef __ASSEMBLY__
+>+#ifndef __ASSEMBLER__
+>=20
+> #include <linux/types=2Eh>
+> #include <linux/screen_info=2Eh>
+>@@ -210,6 +210,6 @@ enum x86_hardware_subarch {
+> 	X86_NR_SUBARCHS,
+> };
+>=20
+>-#endif /* __ASSEMBLY__ */
+>+#endif /* __ASSEMBLER__ */
+>=20
+> #endif /* _ASM_X86_BOOTPARAM_H */
+>diff --git a/arch/x86/include/uapi/asm/e820=2Eh b/arch/x86/include/uapi/a=
+sm/e820=2Eh
+>index 2f491ef=2E=2E55bc668 100644
+>--- a/arch/x86/include/uapi/asm/e820=2Eh
+>+++ b/arch/x86/include/uapi/asm/e820=2Eh
+>@@ -54,7 +54,7 @@
+>  */
+> #define E820_RESERVED_KERN        128
+>=20
+>-#ifndef __ASSEMBLY__
+>+#ifndef __ASSEMBLER__
+> #include <linux/types=2Eh>
+> struct e820entry {
+> 	__u64 addr;	/* start of memory segment */
+>@@ -76,7 +76,7 @@ struct e820map {
+> #define BIOS_ROM_BASE		0xffe00000
+> #define BIOS_ROM_END		0xffffffff
+>=20
+>-#endif /* __ASSEMBLY__ */
+>+#endif /* __ASSEMBLER__ */
+>=20
+>=20
+> #endif /* _UAPI_ASM_X86_E820_H */
+>diff --git a/arch/x86/include/uapi/asm/ldt=2Eh b/arch/x86/include/uapi/as=
+m/ldt=2Eh
+>index d62ac5d=2E=2Ea82c039 100644
+>--- a/arch/x86/include/uapi/asm/ldt=2Eh
+>+++ b/arch/x86/include/uapi/asm/ldt=2Eh
+>@@ -12,7 +12,7 @@
+> /* The size of each LDT entry=2E */
+> #define LDT_ENTRY_SIZE	8
+>=20
+>-#ifndef __ASSEMBLY__
+>+#ifndef __ASSEMBLER__
+> /*
+>  * Note on 64bit base and limit is ignored and you cannot set DS/ES/CS
+>  * not to the default values if you still want to do syscalls=2E This
+>@@ -44,5 +44,5 @@ struct user_desc {
+> #define MODIFY_LDT_CONTENTS_STACK	1
+> #define MODIFY_LDT_CONTENTS_CODE	2
+>=20
+>-#endif /* !__ASSEMBLY__ */
+>+#endif /* !__ASSEMBLER__ */
+> #endif /* _ASM_X86_LDT_H */
+>diff --git a/arch/x86/include/uapi/asm/msr=2Eh b/arch/x86/include/uapi/as=
+m/msr=2Eh
+>index e7516b4=2E=2E4b8917c 100644
+>--- a/arch/x86/include/uapi/asm/msr=2Eh
+>+++ b/arch/x86/include/uapi/asm/msr=2Eh
+>@@ -2,7 +2,7 @@
+> #ifndef _UAPI_ASM_X86_MSR_H
+> #define _UAPI_ASM_X86_MSR_H
+>=20
+>-#ifndef __ASSEMBLY__
+>+#ifndef __ASSEMBLER__
+>=20
+> #include <linux/types=2Eh>
+> #include <linux/ioctl=2Eh>
+>@@ -10,5 +10,5 @@
+> #define X86_IOC_RDMSR_REGS	_IOWR('c', 0xA0, __u32[8])
+> #define X86_IOC_WRMSR_REGS	_IOWR('c', 0xA1, __u32[8])
+>=20
+>-#endif /* __ASSEMBLY__ */
+>+#endif /* __ASSEMBLER__ */
+> #endif /* _UAPI_ASM_X86_MSR_H */
+>diff --git a/arch/x86/include/uapi/asm/ptrace-abi=2Eh b/arch/x86/include/=
+uapi/asm/ptrace-abi=2Eh
+>index 16074b9=2E=2E5823584 100644
+>--- a/arch/x86/include/uapi/asm/ptrace-abi=2Eh
+>+++ b/arch/x86/include/uapi/asm/ptrace-abi=2Eh
+>@@ -25,7 +25,7 @@
+>=20
+> #else /* __i386__ */
+>=20
+>-#if defined(__ASSEMBLY__) || defined(__FRAME_OFFSETS)
+>+#if defined(__ASSEMBLER__) || defined(__FRAME_OFFSETS)
+> /*
+>  * C ABI says these regs are callee-preserved=2E They aren't saved on ke=
+rnel entry
+>  * unless syscall needs a complete, fully filled "struct pt_regs"=2E
+>@@ -57,7 +57,7 @@
+> #define EFLAGS 144
+> #define RSP 152
+> #define SS 160
+>-#endif /* __ASSEMBLY__ */
+>+#endif /* __ASSEMBLER__ */
+>=20
+> /* top of stack page */
+> #define FRAME_SIZE 168
+>@@ -87,7 +87,7 @@
+>=20
+> #define PTRACE_SINGLEBLOCK	33	/* resume execution until next branch */
+>=20
+>-#ifndef __ASSEMBLY__
+>+#ifndef __ASSEMBLER__
+> #include <linux/types=2Eh>
+> #endif
+>=20
+>diff --git a/arch/x86/include/uapi/asm/ptrace=2Eh b/arch/x86/include/uapi=
+/asm/ptrace=2Eh
+>index 85165c0=2E=2Ee0b5b4f 100644
+>--- a/arch/x86/include/uapi/asm/ptrace=2Eh
+>+++ b/arch/x86/include/uapi/asm/ptrace=2Eh
+>@@ -7,7 +7,7 @@
+> #include <asm/processor-flags=2Eh>
+>=20
+>=20
+>-#ifndef __ASSEMBLY__
+>+#ifndef __ASSEMBLER__
+>=20
+> #ifdef __i386__
+> /* this struct defines the way the registers are stored on the
+>@@ -81,6 +81,6 @@ struct pt_regs {
+>=20
+>=20
+>=20
+>-#endif /* !__ASSEMBLY__ */
+>+#endif /* !__ASSEMBLER__ */
+>=20
+> #endif /* _UAPI_ASM_X86_PTRACE_H */
+>diff --git a/arch/x86/include/uapi/asm/setup_data=2Eh b/arch/x86/include/=
+uapi/asm/setup_data=2Eh
+>index b111b0c=2E=2E50c45ea 100644
+>--- a/arch/x86/include/uapi/asm/setup_data=2Eh
+>+++ b/arch/x86/include/uapi/asm/setup_data=2Eh
+>@@ -18,7 +18,7 @@
+> #define SETUP_INDIRECT			(1<<31)
+> #define SETUP_TYPE_MAX			(SETUP_ENUM_MAX | SETUP_INDIRECT)
+>=20
+>-#ifndef __ASSEMBLY__
+>+#ifndef __ASSEMBLER__
+>=20
+> #include <linux/types=2Eh>
+>=20
+>@@ -78,6 +78,6 @@ struct ima_setup_data {
+> 	__u64 size;
+> } __attribute__((packed));
+>=20
+>-#endif /* __ASSEMBLY__ */
+>+#endif /* __ASSEMBLER__ */
+>=20
+> #endif /* _UAPI_ASM_X86_SETUP_DATA_H */
+>diff --git a/arch/x86/include/uapi/asm/signal=2Eh b/arch/x86/include/uapi=
+/asm/signal=2Eh
+>index f777346=2E=2E1067efa 100644
+>--- a/arch/x86/include/uapi/asm/signal=2Eh
+>+++ b/arch/x86/include/uapi/asm/signal=2Eh
+>@@ -2,7 +2,7 @@
+> #ifndef _UAPI_ASM_X86_SIGNAL_H
+> #define _UAPI_ASM_X86_SIGNAL_H
+>=20
+>-#ifndef __ASSEMBLY__
+>+#ifndef __ASSEMBLER__
+> #include <linux/types=2Eh>
+> #include <linux/compiler=2Eh>
+>=20
+>@@ -16,7 +16,7 @@ struct siginfo;
+> typedef unsigned long sigset_t;
+>=20
+> #endif /* __KERNEL__ */
+>-#endif /* __ASSEMBLY__ */
+>+#endif /* __ASSEMBLER__ */
+>=20
+>=20
+> #define SIGHUP		 1
+>@@ -68,7 +68,7 @@ typedef unsigned long sigset_t;
+>=20
+> #include <asm-generic/signal-defs=2Eh>
+>=20
+>-#ifndef __ASSEMBLY__
+>+#ifndef __ASSEMBLER__
+>=20
+>=20
+> # ifndef __KERNEL__
+>@@ -106,6 +106,6 @@ typedef struct sigaltstack {
+> 	__kernel_size_t ss_size;
+> } stack_t;
+>=20
+>-#endif /* __ASSEMBLY__ */
+>+#endif /* __ASSEMBLER__ */
+>=20
+> #endif /* _UAPI_ASM_X86_SIGNAL_H */
 
-OK, previous results were incorrect. In fact, this patches (which apply
-cleanly to current kvm-coco-queue) reduce cyclictest latency from:
-
-Max Latencies: 00167 00160
-Max Latencies: 00132 00151
-Max Latencies: 00138 00142
-Max Latencies: 02512 02582
-Max Latencies: 00139 00140
-Max Latencies: 00128 00131
-Max Latencies: 00131 00132
-Max Latencies: 00131 00134
-Max Latencies: 00136 00147
-Max Latencies: 00153 00135
-Max Latencies: 00138 00138
-
-to:
-
-Max Latencies: 00134 00131                                                                                  
-Max Latencies: 00130 00129                                                                                  
-Max Latencies: 00126 00141                                                                                 
-Max Latencies: 00137 00138                                                                                  
-Max Latencies: 00123 00115                                                                                  
-Max Latencies: 00119 00127                                                                                  
-Max Latencies: 00131 00104                                                                                  
-Max Latencies: 00137 00127                                                                                  
-Max Latencies: 00135 00126                                                                                  
-Max Latencies: 00128 00142                                                                                  
-Max Latencies: 00135 00138         
-
-> 
-> 
-> Background
-> ----------
-> X86 confidential computing technology defines protected guest TSC so that the
-> VMM can't change the TSC offset/multiplier once vCPU is initialized and the
-> guest can trust TSC.  The SEV-SNP defines Secure TSC as optional.  TDX mandates
-> it.  The TDX module determines the TSC offset/multiplier.  The VMM has to
-> retrieve them.
-> 
-> On the other hand, the x86 KVM common logic tries to guess or adjust the TSC
-> offset/multiplier for better guest TSC and TSC interrupt latency at KVM vCPU
-> creation (kvm_arch_vcpu_postcreate()), vCPU migration over pCPU
-> (kvm_arch_vcpu_load()), vCPU TSC device attributes (kvm_arch_tsc_set_attr()) and
-> guest/host writing to TSC or TSC adjust MSR (kvm_set_msr_common()).
-> 
-> 
-> Problem
-> -------
-> The current x86 KVM implementation conflicts with protected TSC because the
-> VMM can't change the TSC offset/multiplier.  Disable or ignore the KVM
-> logic to change/adjust the TSC offset/multiplier somehow.
-> 
-> Because KVM emulates the TSC timer or the TSC deadline timer with the TSC
-> offset/multiplier, the TSC timer interrupts are injected to the guest at the
-> wrong time if the KVM TSC offset is different from what the TDX module
-> determined.
-> 
-> Originally the issue was found by cyclic test of rt-test [1] as the latency in
-> TDX case is worse than VMX value + TDX SEAMCALL overhead.  It turned out that
-> the KVM TSC offset is different from what the TDX module determines.
-> 
-> 
-> Solution
-> --------
-> The solution is to keep the KVM TSC offset/multiplier the same as the value of
-> the TDX module somehow.  Possible solutions are as follows.
-> - Skip the logic
->   Ignore (or don't call related functions) the request to change the TSC
->   offset/multiplier.
->   Pros
->   - Logically clean.  This is similar to the guest_protected case.
->   Cons
->   - Needs to identify the call sites.
-> 
-> - Revert the change at the hooks after TSC adjustment
->   x86 KVM defines the vendor hooks when the TSC offset/multiplier are
->   changed.  The callback can revert the change.
->   Pros
->   - We don't need to care about the logic to change the TSC offset/multiplier.
->   Cons:
->   - Hacky to revert the KVM x86 common code logic.
-> 
-> Choose the first one.  With this patch series, SEV-SNP secure TSC can be
-> supported.
-> 
-> 
-> Patches:
-> 1: Preparation for the next patch
-> 2: Skip the logic to adjust the TSC offset/multiplier in the common x86 KVM logic
-> 
-> [1] https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
-> 
-> Changes for TDX KVM
-> 
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 8785309ccb46..969da729d89f 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -694,8 +712,6 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
->  	vcpu->arch.cr0_guest_owned_bits = -1ul;
->  	vcpu->arch.cr4_guest_owned_bits = -1ul;
->  
-> -	vcpu->arch.tsc_offset = kvm_tdx->tsc_offset;
-> -	vcpu->arch.l1_tsc_offset = vcpu->arch.tsc_offset;
->  	/*
->  	 * TODO: support off-TD debug.  If TD DEBUG is enabled, guest state
->  	 * can be accessed. guest_state_protected = false. and kvm ioctl to
-> @@ -706,6 +722,13 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
->  	 */
->  	vcpu->arch.guest_state_protected = true;
->  
-> +	/* VMM can't change TSC offset/multiplier as TDX module manages them. */
-> +	vcpu->arch.guest_tsc_protected = true;
-> +	vcpu->arch.tsc_offset = kvm_tdx->tsc_offset;
-> +	vcpu->arch.l1_tsc_offset = vcpu->arch.tsc_offset;
-> +	vcpu->arch.tsc_scaling_ratio = kvm_tdx->tsc_multiplier;
-> +	vcpu->arch.l1_tsc_scaling_ratio = kvm_tdx->tsc_multiplier;
-> +
->  	if ((kvm_tdx->xfam & XFEATURE_MASK_XTILE) == XFEATURE_MASK_XTILE)
->  		vcpu->arch.xfd_no_write_intercept = true;
->  
-> @@ -2674,6 +2697,7 @@ static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
->  		goto out;
->  
->  	kvm_tdx->tsc_offset = td_tdcs_exec_read64(kvm_tdx, TD_TDCS_EXEC_TSC_OFFSET);
-> +	kvm_tdx->tsc_multiplier = td_tdcs_exec_read64(kvm_tdx, TD_TDCS_EXEC_TSC_MULTIPLIER);
->  	kvm_tdx->attributes = td_params->attributes;
->  	kvm_tdx->xfam = td_params->xfam;
->  
-> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-> index 614b1c3b8483..c0e4fa61cab1 100644
-> --- a/arch/x86/kvm/vmx/tdx.h
-> +++ b/arch/x86/kvm/vmx/tdx.h
-> @@ -42,6 +42,7 @@ struct kvm_tdx {
->  	bool tsx_supported;
->  
->  	u64 tsc_offset;
-> +	u64 tsc_multiplier;
->  
->  	enum kvm_tdx_state state;
->  
-> diff --git a/arch/x86/kvm/vmx/tdx_arch.h b/arch/x86/kvm/vmx/tdx_arch.h
-> index 861c0f649b69..be4cf65c90a8 100644
-> --- a/arch/x86/kvm/vmx/tdx_arch.h
-> +++ b/arch/x86/kvm/vmx/tdx_arch.h
-> @@ -69,6 +69,7 @@
->  
->  enum tdx_tdcs_execution_control {
->  	TD_TDCS_EXEC_TSC_OFFSET = 10,
-> +	TD_TDCS_EXEC_TSC_MULTIPLIER = 11,
->  };
->  
->  enum tdx_vcpu_guest_other_state {
-> 
-> ---
-> Isaku Yamahata (2):
->   KVM: x86: Push down setting vcpu.arch.user_set_tsc
->   KVM: x86: Don't allow tsc_offset, tsc_scaling_ratio to change
-> 
->  arch/x86/include/asm/kvm_host.h |  1 +
->  arch/x86/kvm/x86.c              | 21 ++++++++++++++-------
->  2 files changed, 15 insertions(+), 7 deletions(-)
-> 
-> 
-> base-commit: 909f9d422f59f863d7b6e4e2c6e57abb97a27d4d
-> -- 
-> 2.45.2
-> 
-> 
-
+Wouldn't it be better to replace this everywhere for consistency?
 
