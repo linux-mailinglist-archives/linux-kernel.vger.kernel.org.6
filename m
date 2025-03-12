@@ -1,77 +1,86 @@
-Return-Path: <linux-kernel+bounces-558232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C060A5E321
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:51:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74B5A5E324
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DF447AAF01
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:50:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DBA118978F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58C52512EC;
-	Wed, 12 Mar 2025 17:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8A1253355;
+	Wed, 12 Mar 2025 17:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cPjS+/BE"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TCa1usWN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9765024FC1F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546B41D5165
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741801897; cv=none; b=FVJeZ3vKNDbAtWRVlHndzi7tHoVuddqMoYZaPIUwfmVgel2mE9RsjgfAhd5bcekro8l6zxp/qWHh4N9gHpcSUnVBElNK4l6R82p5DiB87Gem7anjIyf62150tiAKnOa/4IO7HOc8oXwDDNIl55tGLUqzP+yrwCEDuGDBAAVVoVo=
+	t=1741802081; cv=none; b=mnizBNAT+vTETXLQ7rwAcCVwFEjsi9SFA+NHYOZ6OZdNUkKZMq5WYMlucVodPOwhlijH+MdlAAO0vylJqivHDH2fCz3f/YA03HVQJjyc5K5wamtR8sIU/ZnEVQjXzf9jA6xa1++yakQyMChJZ7Wdh6pzl8ynIZBZSfirsQh4SJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741801897; c=relaxed/simple;
-	bh=/xRe3+zdN+gRFi+1v630ZRJ/P9iKJCBzIyjIxvI6h20=;
+	s=arc-20240116; t=1741802081; c=relaxed/simple;
+	bh=zwqVmLodsfl+JVFY1LzQmxbMBGzfN1ym7c7asAxagbI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h58BZcCAr5fzbQhHv1M3toIQhBBPi687RS94OtfKk21zWb4Xd91o1Vrp6cg0RC0bKXWn8/65SOsfYiTNcwcvmflCHZH4z+SXjn+fSNNWlYaKeCHeuh6PPIQUl8B+KfLdQMpqgvx1ZbrKEMWNvEo1Shr0ydhxH3IkIk5n0Of2eC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=cPjS+/BE; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2bcc0c6c149so137655fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:51:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1741801890; x=1742406690; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=zcwbwn2lH/wq2GnjEWUj7ie3kvxE7shHftPyeIQ9m+M=;
-        b=cPjS+/BEOYQLeAj8djHgTkIBUrhef9Omaac56yyWPHPful0kFIJIWUgFSkWOHjByJD
-         OWv2aN51Cyix0bEgxwzEkkWr/Uy9GWY+p6D46Kr+XSElbrcPrCG1AMa5EDTdzUCE1Jj/
-         cr6y1fw6cJXkr+1uUxozz/36ao05F2DDTJk9c=
+	 In-Reply-To:Content-Type; b=RDl12txlH8q2glVXzwjq1ZHzI5/CsHweAqYHpoknPdMFEkD1irPqMeOwjZfwDPAFndKcweKTnoxxdbWjhv5o4ZFf/xfT9bH15lAVh7ZrbZ/EIB9d7nXuOt40wxQeS10Z4HHD4sl5bRR42TkNFMZM2Y+eFiNjpElRx9wgAHALuTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TCa1usWN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CBDC7H003492
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:54:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nvZ6pQSfPtCdBsC0Pf71CwoupAzu73V8XcCgUrzkfQc=; b=TCa1usWN+bZ96Bwh
+	l1mf+hEhbFWKQMq4YxZ4b11cBkPdwvGxGJ7+gdBJyFP356AEAzl3hAuveBfqvXxJ
+	pOQE9sRNEK/R/hiejb4bo/dtDMO8SlJhPyWFncEhj5nduSt6gEekssj/TtxwFnKU
+	KvKlB0dt5oIKsR9PztlCWrfOMfOEIjKv9DqA1ZJIzqCfWNe57RNhyFl5yV0nafZP
+	fgslSc+V9srETtrrm0ocSrJ54vm0LvpcAYidtSAvj7BREPotUqJR3AcbwhCy6sJ6
+	VHaaqRV+HfdrRnfep8enCVRcZChUwjxRYpF+H1A/+NNsl0M/OMBBECkHzNu8eOUj
+	P5QuGw==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45b96y93a9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 17:54:39 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4766654b0c3so114221cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:54:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741801890; x=1742406690;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zcwbwn2lH/wq2GnjEWUj7ie3kvxE7shHftPyeIQ9m+M=;
-        b=q1saqZqvB7134N6paU+L/zbh2nm8C1zPdNWKKjDJ07ptjVZH/6nqWgHE3HK+5A+dlw
-         pO39rm+qG6FOOhjqlaww68DYNBlC/ZtxN6g08OCaryQw9TXa+Z/4tQwGkjSTofl9n6aX
-         Wmkirxpjobu+Mpv314UJiMBRfnXKVQ4aIiJi0hGzcBfpmAIU0ubm0svP8HL66//CxTXm
-         Q6WLf3HhVZPgBOkXgGCmKd1ELsxSkgJtAG4SXqpJHxxz8iTSf3I8Fj60jVzI/Co98vTd
-         /bA2B79uqAsyp1/HdYMw555iQfa1Cjc+OFJg0wjzfzOdvYbIgs3Lfpzyy9c4g1Opv//R
-         gd6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVV9jNttvS1FWjWZQWdMrmskPbdNGtzBHtgBwcwZDk91xyLIdOkbDWnJSw0btqH3viS10/L/ozWmHbqaHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyy7nsJnvKr7eTOA4fiqb5jAKIWERhK2ltxUc+Fs6OgfKJ/0oF
-	Uhwf3mEURumpmVu4bxWqa7XuDu+a4q+6C0rzwJCfXF+QHtPFC9zZFCfaMslyAQ==
-X-Gm-Gg: ASbGncsUobW75wUnvIWm4wzlZ4TqEK3hCfqYkwDddTscX9MLLjHi5e1TxWOqvDp0v81
-	X2c4Ocv2tZrscj635j31bPII0j8aC7LO73AtT75AVlkI2l1FRVgDmWv7+i/3wsywHzRlM5auMAQ
-	RNC2hWyzj+ES2GGzzz+NF62Ut3GgzczR5RFk1Y+4RTdTjSTtFkCPIhr/oELPMPPgvWtuzCK2ebP
-	sYIdlLR5gaCmTTFJH8rje9C9ABm5f7WcwZo2JT+8knl7XnkMctnwKrdD8T9yLB8sKT12B+PFZHl
-	NbeMdbfWxxhydyCuHC4qKLRVoPmc/Wi+qCsyCadBxQmTWj0LQMGR73F5IrZrIS+hsLiuVzceISd
-	5Fpy2gHd3
-X-Google-Smtp-Source: AGHT+IGTe6RFQQ82TXIt6ZjT9vX2p9NsOi5VE0tMCgKcRs6lizvKwC6F5+6cc54HIilZFggI3MQbZA==
-X-Received: by 2002:a05:6870:a546:b0:2bc:918c:ee04 with SMTP id 586e51a60fabf-2c26102c6bdmr13301757fac.14.1741801890497;
-        Wed, 12 Mar 2025 10:51:30 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c248de52d8sm3054139fac.47.2025.03.12.10.51.28
+        d=1e100.net; s=20230601; t=1741802078; x=1742406878;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nvZ6pQSfPtCdBsC0Pf71CwoupAzu73V8XcCgUrzkfQc=;
+        b=TlCOx2OqEjJX4FaTAuqKC9BC2OKT85AqnXhx3uNPiXrBWk6zkO4V2i3b7SM+IEWdse
+         8YL0TP6E3MkuPMRobVEsM7zTVB4GNWH0adsVJTK3X/a+4mHRgZz/LOBFEDh7YYBHNKqz
+         9/GEStbxC4EPYRYCCjmk+YKqzxuWOE70nlR241y37xZsoRSEHoP1uf+5W/qPVUsz4maS
+         vVsAAgb8nvtKYcL20/Np1THQTNoiUXwXykdpNgmYtQ+s9rqZ4MFrvQ5KuTv4NtTILa17
+         AcdMS5aBhpWhm/WHF/5FafPt5YrZky2+8OU3ZIbCu+vdAI9/TSHtBO6q/kqpH6XeComc
+         8BkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFbz5IFPj7o2noiOVJLCEQ9XRM+She8UyaThp03/MDZ8ae/8CfSlZXLxWPyPQ6VJ5xC1p9bd/VIs+S7FQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwispeZWtWnEucdDk3RgwTo+XI7ksMwYcFM+Ceh9EIOOb5DFMDl
+	z4mJdEM+YUEtWh6S99/U97RvCCGdA+KSHBV1HMZjCwPXtDsoJs/o7h1A/ZM6GIKqBP9TWpqTESX
+	6GxCZx2cqFs9EDt86c8E/bO6+fGVuH4E2IWjYAz0zd6wvlIiLIpWBJ6M8TuRDs/g=
+X-Gm-Gg: ASbGnctIGxPrOeHWg8v2IHmKvNogtOIEx7a8haiSf38j2CEUy6OaqevRhDVdwJ722ae
+	79acq2PJ1y+jurpAYvCe7xgWLq7g7A43Jn8ZATh/cPfY1ICSU33+yUgsmKdn2EmzD+++f7Rp4oN
+	cEUuR4ZqHiae44W9I1ashHaraDc6aIZqXsb8Faj9Y5glKsgUaHwgwukXp3FaHedw5JpqfyCtQG8
+	xZ719N8NoHBAGfTCgs9EnBsEW+RUhMwK8E0zy23MP5mM8CdqPIoOYZcjqQfrQDZImzA+Ow1JBJl
+	7+ny3gOpzXgrTlYu0ZdLQdRLkl4UN5gUlveiHrcrmh53h5fy2f2egRq46uYLjJMRkySZHg==
+X-Received: by 2002:a05:622a:2b0c:b0:474:edd2:11c8 with SMTP id d75a77b69052e-47699621f1amr46843781cf.12.1741802078143;
+        Wed, 12 Mar 2025 10:54:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG0eqQz32HcJaJRaDTJC6gdf4gsgkF7rHNp23QdOHpAdvPCDesCeKRw96+c4IYou6wtwDfzGA==
+X-Received: by 2002:a05:622a:2b0c:b0:474:edd2:11c8 with SMTP id d75a77b69052e-47699621f1amr46843581cf.12.1741802077828;
+        Wed, 12 Mar 2025 10:54:37 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac288ffe157sm656364366b.132.2025.03.12.10.54.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 10:51:29 -0700 (PDT)
-Message-ID: <6328fe8d-c4ea-4945-b6ba-d994403121b5@broadcom.com>
-Date: Wed, 12 Mar 2025 10:51:27 -0700
+        Wed, 12 Mar 2025 10:54:37 -0700 (PDT)
+Message-ID: <9d16204c-40c1-4936-8cd2-5246966d844d@oss.qualcomm.com>
+Date: Wed, 12 Mar 2025 18:54:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,137 +88,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/3] mmc: sdhci-brcmstb: Add rpmb sharing support
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Avri Altman <Avri.Altman@sandisk.com>,
- Kamal Dasu <kamal.dasu@broadcom.com>,
- Jens Wiklander <jens.wiklander@linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
- "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
- "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
- "bcm-kernel-feedback-list@broadcom.com"
- <bcm-kernel-feedback-list@broadcom.com>
-References: <20250206220940.10553-1-kamal.dasu@broadcom.com>
- <CAPDyKFq1ZbP4c9ECfM1SY+MEopf+dC19w9PkqXaUjevf=bPjcw@mail.gmail.com>
- <115a59e1-75b2-4d09-bbf9-50dfcd2b62dd@broadcom.com>
- <PH7PR16MB61967C18645C64E582B222B6E5FD2@PH7PR16MB6196.namprd16.prod.outlook.com>
- <d51a9d7a-b942-4c3b-93d2-65b1bb04c8da@broadcom.com>
- <CAPDyKFrCjo8gGnxmXWP6V39N+b1o62VQH9zwMUNb2_+D3-qrdw@mail.gmail.com>
+Subject: Re: [PATCH v1] arm64: dts: qcom: sm8750: Correct clocks property for
+ uart14 node
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_msavaliy@quicinc.com,
+        quic_vtanuku@quicinc.com
+References: <20250312104358.2558-1-quic_jseerapu@quicinc.com>
 Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <CAPDyKFrCjo8gGnxmXWP6V39N+b1o62VQH9zwMUNb2_+D3-qrdw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250312104358.2558-1-quic_jseerapu@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: S_atNEy5PIdMEJuN_0iD15sWGFkfbt8G
+X-Authority-Analysis: v=2.4 cv=I+llRMgg c=1 sm=1 tr=0 ts=67d1ca5f cx=c_pps a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=xkG_gMnDietyO8DCwaMA:9 a=QEXdDO2ut3YA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: S_atNEy5PIdMEJuN_0iD15sWGFkfbt8G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_06,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=872
+ lowpriorityscore=0 adultscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 spamscore=0 malwarescore=0 mlxscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120124
 
-On 3/12/25 06:17, Ulf Hansson wrote:
-> On Tue, 11 Feb 2025 at 18:01, Florian Fainelli
-> <florian.fainelli@broadcom.com> wrote:
->>
->> On 2/11/25 00:13, Avri Altman wrote:
->>>>>> This patch set adds support for Broadcom TZOS to read and write to
->>>>>> RPMB partition using synchronized access to the controller hardware.
->>> Practically it establishes a communication channel between the trust zone and the host controller regardless of the rpmb protocol.
->>> Or did I get it wrong?
->>
->> Rather than communication channel, I would describe it as an arbitration
->> scheme between N participants, with guaranteed forward progress and
->> fairness between all participants.
+On 3/12/25 11:43 AM, Jyothi Kumar Seerapu wrote:
+> Correct the clocks property for the uart14 node to fix UART functionality
+> on QUP2_SE6. The current failure is due to an incorrect clocks assignment.
 > 
-> A scheduler in the MMC controller HW?
-
-There is no scheduler in the eMMC controller HW, all of the scheduling 
-and coordination is left to the OS and TZOS, and other participants.
-
+> Change the clocks property to GCC_QUPV3_WRAP2_S6_CLK to resolve the issue.
 > 
-> Nevertheless, it means bypassing the I/O scheduler in Linux and the
-> mmc block layer, kind of breaking "fairness" from Linux point of view.
+> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+> ---
 
-Yes that is a given, our approach favors the TZOS that has the ability 
-to preempt for short periods of time the eMMC controller issue a RPMB 
-access and then return control of the eMMC controller back to Linux. The 
-very reason we came up with that scheme is that we are not comfortable 
-with having a Linux task responsible for issuing RPMB accesses to the 
-eMMC device on behalf of the TEE. That task is subject to the same Linux 
-scheduling rules as any other task (yes we can play with priorities and 
-classes) and our TEE team was not comfortable with that, they prefer 
-hard guarantees that their RPMB accesses can complete within a certain 
-time, which this scheme provides.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-> 
->>
->> The interest here is for one of those participants to own the eMMC
->> controller for a certain amount of time and indicate when it is done
->> with it. This is not specific to eMMC as this could scale to virtually
->> any piece of HW that is driven by transactions from a CPU, but the main
->> application is for allowing the Trusted OS to own the eMMC controller
->> for a short period of time in order to do its RPMB access, and then give
->> it back in the same state it found it to the next participant.
-> 
-> Honestly, I think this is a really terrible idea, sorry.
- > > Data and communication with an eMMC needs to be synchronized and
-> managed by a single owner. Having multiple clients with their own
-> channel to the eMMC sounds prone to problems. Is each client going to
-> have its own mmc protocol stack, dealing with eMMC initialization,
-> data-synchronization and power-management, etc?
-
-The synchronization is done around the start/end of transactions and yes 
-each participant does have a minimal amount of eMMC driver knowledge, 
-but is confined to doing RPMB accesses only. The contract is to put the 
-eMMC controller back into the state where you found it for the next 
-participant to make use of it.
-
-When we operate with a single participant such as Linux, which is a 
-degraded mode there is no loss of performance nor any observable difference.
-
-> 
-> As I said, we now have the RPMB subsystem for in-kernel access. Please
-> use it instead.
-
-That scheme works when all of the participants run on the same CPU, that 
-is not our case, as we have another participant that is a separate CPU 
-which you cannot factor into Linux's RPMB subsystem.
-
-We considered doing a mediated/proxied eMMC access through a firmware 
-interface running on a CPU that would exclusively own the hardware, but 
-we really did not like losing access to mmc-utils and other things.
--- 
-Florian
+Konrad
 
