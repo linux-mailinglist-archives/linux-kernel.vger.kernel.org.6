@@ -1,112 +1,113 @@
-Return-Path: <linux-kernel+bounces-557324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB099A5D75A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:34:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B38A5D764
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:37:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 754D3188F823
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:34:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 892673B8F4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FAD1EFFB5;
-	Wed, 12 Mar 2025 07:34:32 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE2B1EFFAD;
+	Wed, 12 Mar 2025 07:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gvk5qrkh"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C841EFF93;
-	Wed, 12 Mar 2025 07:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA711EFFB2;
+	Wed, 12 Mar 2025 07:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741764872; cv=none; b=UAedVKtnYQ7Z9IIDTyBOo39vdugLXyMXU/iEHZ0ef4CUiEDZCyT4/fvG+X7hbx5c5470KG26BMC2KrIhOb5rb9U93eOoJ91kUuxleVcfEDgd0QkwZa23LOxX9k9B1cdPKbqB1kdaOeGUqZD1SDA1txe3+IaL3/rlxFhHXBpsunQ=
+	t=1741765023; cv=none; b=V9pgm3TyNYtP1zkcclejMmNNey6CbaskNJ8gL3L63gc1xX8lSNXWiKEcde9TCNWYi16n9HDOb+fSY9IQtZS1UXphExOTxVI3jjby5KeRRM17dHtG2Z3fQpKKKiL73Av9TbuUDAiExXLQ1pqWJ8HPRkHMnrAVFYkLktf187pwxPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741764872; c=relaxed/simple;
-	bh=OLTuU8F2AI5YTT87vjxQRcxdax0NuEjM2Mk6iK3m5K4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pbYW7dRXf+joO4P274GpBShN4USMgr6ZnKDIh/0QpgzJmBEFKytwH5R0tyErE5pkSP7dAWUaC4gjQqMPp4Fz/FCSBeHSuYw3cnWlQhl7GFwgmhnAQI5ywUYEMlwbFK4nCqMV8MPyKfrjV5LXsb3eHJovaSDiDcWG6exqx+5RTPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowACXn9P9ONFn+Px8FA--.64272S2;
-	Wed, 12 Mar 2025 15:34:21 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: jeff.hugo@oss.qualcomm.com,
-	quic_carlv@quicinc.com,
-	ogabbay@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] accel/qaic: Remove redundant 'flush_workqueue()' calls
-Date: Wed, 12 Mar 2025 15:34:04 +0800
-Message-Id: <20250312073404.1429992-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741765023; c=relaxed/simple;
+	bh=9WDvMlax5GMtGMX2KE7aCiiVjM7oukTeaIvua618FUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iz9tROrQqtIQhH8L24vgUaVEYewhBxE46gv+Rhfxg9zmIIXG3myZ3ztdhBpL1OaLLHKERAOXR/A3P9oTgXY3UiDncnIwnkoyi/itT+xCyNH+YBZHW3A8YBUbkMo6pG9Xcn+vNhTMqe71v4NE0yncccupRT65aFMdxEFHR/3/soE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Gvk5qrkh; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CXfgeNXdrWiHE5y6lsnibLhPb3YMKY8O67MCv6tPCFE=; b=Gvk5qrkh4UjeJ/5aXdTbgH6l4k
+	LlZh17xU8MlBz9wGR0q6wk/Uk7Yqhup1Vij6Y/GOyhIEPFShMa2Km0oVDPOc/TxyzVsZB6Pgoq+ag
+	WWTnlNfxV57lpTzVOvKLkDVhP9twPoQx4nKIflEsb2Is13CykTQMVLN2zh+2aJu1gMaZIBAQneKAS
+	0RV9ij7+Jkxrs0YR2i+BubuITpsiiBZXxvOPHkAvjsFcEsmDYng0/G5+pcSOe+eHFKbBHVq96zagk
+	dlxJq+459ZQuDN7kwE5D6GsXs7WWTRiIA8z55GRWqaN8Lkcz/9s97Pzbf/fEn6hS2umu2qkeSbaLm
+	f/4ddRow==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsGeC-00000007iT3-3xwf;
+	Wed, 12 Mar 2025 07:37:00 +0000
+Date: Wed, 12 Mar 2025 00:37:00 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com
+Subject: Re: [PATCH v5 05/10] xfs: Iomap SW-based atomic write support
+Message-ID: <Z9E5nDg3_cred1bH@infradead.org>
+References: <20250310183946.932054-1-john.g.garry@oracle.com>
+ <20250310183946.932054-6-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACXn9P9ONFn+Px8FA--.64272S2
-X-Coremail-Antispam: 1UD129KBjvJXoWrKF1xZFy7tr1DuryrtFyxZrb_yoW8Jryfpa
-	95AF4rtrs3Jr4DC390kw4UWFyfuan0kFy7XrWIg34av3Z8Jr98X3W5KFW7tr95CF93Jr4q
-	kF4Yy39ava4UKF7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AK
-	xVWUAVWUtwCY02Avz4vE14v_GF4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-	73UjIFyTuYvjfUYl1vDUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310183946.932054-6-john.g.garry@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-'destroy_workqueue()' already drains the queue before destroying it, so
-there is no need to flush it explicitly.
+On Mon, Mar 10, 2025 at 06:39:41PM +0000, John Garry wrote:
+> In cases of an atomic write occurs for misaligned or discontiguous disk
+> blocks, we will use a CoW-based method to issue the atomic write.
+> 
+> So, for that case, return -EAGAIN to request that the write be issued in
+> CoW atomic write mode. The dio write path should detect this, similar to
+> how misaligned regular DIO writes are handled.
 
-Remove the redundant 'flush_workqueue()' calls.
+How is -EAGAIN going to work here given that it is also used to defer
+non-blocking requests to the caller blocking context?
 
-This was generated with coccinelle:
+What is the probem with only setting the flag that causes REQ_ATOMIC
+to be set from the file system instead of forcing it when calling
+iomap_dio_rw?
 
-@@
-expression E;
-@@
-- flush_workqueue(E);
-  destroy_workqueue(E);
+Also how you ensure this -EAGAIN only happens on the first extent
+mapped and you doesn't cause double writes?
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/accel/qaic/qaic_debugfs.c | 2 --
- 1 file changed, 2 deletions(-)
+> +	bool			atomic_hw = flags & IOMAP_ATOMIC_HW;
 
-diff --git a/drivers/accel/qaic/qaic_debugfs.c b/drivers/accel/qaic/qaic_debugfs.c
-index ba0cf2f94732..a991b8198dc4 100644
---- a/drivers/accel/qaic/qaic_debugfs.c
-+++ b/drivers/accel/qaic/qaic_debugfs.c
-@@ -240,7 +240,6 @@ static int qaic_bootlog_mhi_probe(struct mhi_device *mhi_dev, const struct mhi_d
- mhi_unprepare:
- 	mhi_unprepare_from_transfer(mhi_dev);
- destroy_workqueue:
--	flush_workqueue(qdev->bootlog_wq);
- 	destroy_workqueue(qdev->bootlog_wq);
- out:
- 	return ret;
-@@ -253,7 +252,6 @@ static void qaic_bootlog_mhi_remove(struct mhi_device *mhi_dev)
- 	qdev = dev_get_drvdata(&mhi_dev->dev);
- 
- 	mhi_unprepare_from_transfer(qdev->bootlog_ch);
--	flush_workqueue(qdev->bootlog_wq);
- 	destroy_workqueue(qdev->bootlog_wq);
- 	qdev->bootlog_ch = NULL;
- }
--- 
-2.25.1
+Again, atomic_hw is not a very useful variable name.  But the
+whole idea of using a non-descriptive bool variable for a flags
+field feels like an antipattern to me.
+
+> -		if (shared)
+> +		if (shared) {
+> +			if (atomic_hw &&
+> +			    !xfs_bmap_valid_for_atomic_write(&cmap,
+> +					offset_fsb, end_fsb)) {
+> +				error = -EAGAIN;
+> +				goto out_unlock;
+> +			}
+>  			goto out_found_cow;
+
+This needs a big fat comment explaining why bailing out here is
+fine and how it works.
+
+> +		/*
+> +		 * Use CoW method for when we need to alloc > 1 block,
+> +		 * otherwise we might allocate less than what we need here and
+> +		 * have multiple mappings.
+> +		*/
+
+Describe why this is done, not just what is done.
 
 
