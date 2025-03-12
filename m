@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-558484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E67A5E690
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:25:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D33A5E692
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:25:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 327E83B7F7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:24:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 131B81898997
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255F41EFF89;
-	Wed, 12 Mar 2025 21:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EDE1F03D9;
+	Wed, 12 Mar 2025 21:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TtVPrJCZ"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xt2CCD6F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00681EF096
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 21:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF571EFFAC;
+	Wed, 12 Mar 2025 21:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741814616; cv=none; b=PtVesNXo93UNdSOOQKbei42+QNcszbPVjTlJ9w09tZ/n+tlyAZQ91tPKMBYU46s2igLOjWYjLvr0XLNIZ1igNksbwr4oHBTYqow/V7W4hrzRYZmbzvw10PvxHQMAwHN/D47ARk2PaBa9x72DL+7SaVj6skEiMVagEELd+bg0e5Y=
+	t=1741814618; cv=none; b=UV6Dua6sddwUcLbO7O9fd3a6nC4AuCU8a7/OCUSmDn8t3mzjEoWd5hR0wTO6x6f04ZctqDQ/BNnPYEVw2brBblXudyCv1j16IAdqgrZvVFugd3Hq/G0OTywJcFpyklJAFX0tnWUaXxTqJdZv4O6jMXv308amejjBB/NZqJB0gfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741814616; c=relaxed/simple;
-	bh=2m2bVFSu5ILkd+xnMLHcPH3KQqSjmXv4J+SuPqMNwwQ=;
+	s=arc-20240116; t=1741814618; c=relaxed/simple;
+	bh=fnzHkBsN0HcTbIHtBC4wnKkC1gwS9OR6BwvSv99xNqs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifYbi2JRkNmEhSlFaRshqvVZGLBGhqEvy/G6tuR1u8BziNmxMYjRBBkdVRntgE0skjEYCD7wnIMOqGorg/Ax1zxTElqCxTTAsGcQlVKxJv9dTbqqC1H5pXTIFVFsQzMVW0u0YvRRmrk37rsVC1KlIPje120xn9wY3G2SRbIcEtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TtVPrJCZ; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 12 Mar 2025 14:23:17 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741814602;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nDTuzwNOrfnRWzb35HLSmzXt08GEKPQgr4fYc5Z/ZD4=;
-	b=TtVPrJCZGys80899AIs26b1+F9CgqiQotdcfYeWFwylBeD++8Wl5es4XbkJ2ve2pvh4JEx
-	BnqZEhXeqdU2VXDiiP1Jz0CsyTJHB40ppG97regrCRFek3z/LJkIDyJgN0DecQsGYmbaAi
-	p57J3CTrLudNMoOntMTJlWajGndLhNk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Andrew Jones <drjones@redhat.com>,
-	Shannon Zhao <shannon.zhao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, devel@daynix.com
-Subject: Re: [PATCH v3 6/6] KVM: arm64: Reload PMCNTENSET_EL0
-Message-ID: <Z9H7RYEI_cPwNe7h@linux.dev>
-References: <20250312-pmc-v3-0-0411cab5dc3d@daynix.com>
- <20250312-pmc-v3-6-0411cab5dc3d@daynix.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a2HSyK744Qzlx8gQ3TbXn8Qb8NzuiexpVFrYIlxevgHm3jqNA63q2MnpPD7CHVUOxncdQJouNH5pnvR9qbtNEAi5oL3JpDptIctPumkuGTiO8YZhYJZ2QU9kpYGvdvrZX2s+BHx3Q0DaEJKmBQ8eQHVBYKsGPHq/KM52VrXkQII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xt2CCD6F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8EAEC4CEDD;
+	Wed, 12 Mar 2025 21:23:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741814618;
+	bh=fnzHkBsN0HcTbIHtBC4wnKkC1gwS9OR6BwvSv99xNqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xt2CCD6Flcn0afa/+HYxP6IApYG+Cov1Bs6IRV/pNdc6F9eGb/0YmY3JQ3n1GjIPQ
+	 lNFIDH6BU8bHhMbLsYJi+kitFXOgi2qGjTCKb70lZ9e5fUemU8HIxrHH7pqK15iAf9
+	 oyHE0gKxbzV6VOibjd0AtJC/H85LQaGuu7uCsONMBWdxTYeNlBe7LbdPPOavCAZU4i
+	 X6+TmWJSHnEJ3bo7/SsikLcJqU9mNDqIAwMJ9w0mT8ELoRiuWu6dLgN2NAo+WD9lXo
+	 Nkkr+xaKuJ4cJHjsszzOvmTIRZFkD2DffHuzWpgTQccYXlI4BLVhmf22HwJoHXAMfz
+	 0sEJdrfRLEv+w==
+Date: Wed, 12 Mar 2025 22:23:32 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: John Sperbeck <jsperbeck@google.com>
+Cc: Kees Cook <kees@kernel.org>, Wen Yang <wen.yang@linux.dev>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4] sysctl: expose sysctl_check_table for unit testing
+ and use it
+Message-ID: <se2nci5ftb2s53or6ysbgvtgcvvqwudxxzg3lbrxjm3y5mpo5o@y7k77ck3rz3k>
+References: <202501182003.Gfi63jzH-lkp@intel.com>
+ <20250121213354.3775644-1-jsperbeck@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,37 +58,174 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250312-pmc-v3-6-0411cab5dc3d@daynix.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250121213354.3775644-1-jsperbeck@google.com>
 
-On Wed, Mar 12, 2025 at 08:56:00PM +0900, Akihiko Odaki wrote:
-> Disable counters that are no longer included in PMCNTENSET_EL0. It is
-> not necessary to enable counters included in PMCNTENSET_EL0 because
-> kvm_pmu_handle_pmcr() does so if appropriate.
+On Tue, Jan 21, 2025 at 01:33:53PM -0800, John Sperbeck wrote:
+> In commit b5ffbd139688 ("sysctl: move the extra1/2 boundary check
+> of u8 to sysctl_check_table_array"), a kunit test was added that
+> registers a sysctl table.  If the test is run as a module, then a
+> lingering reference to the module is left behind, and a 'sysctl -a'
+> leads to a panic.
 > 
-> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> This can be reproduced with these kernel config settings:
+> 
+>     CONFIG_KUNIT=y
+>     CONFIG_SYSCTL_KUNIT_TEST=m
+> 
+> Then run these commands:
+> 
+>     modprobe sysctl-test
+>     rmmod sysctl-test
+>     sysctl -a
+> 
+> The panic varies but generally looks something like this:
+> 
+>     BUG: unable to handle page fault for address: ffffa4571c0c7db4
+>     #PF: supervisor read access in kernel mode
+>     #PF: error_code(0x0000) - not-present page
+>     PGD 100000067 P4D 100000067 PUD 100351067 PMD 114f5e067 PTE 0
+>     Oops: Oops: 0000 [#1] SMP NOPTI
+>     ... ... ...
+>     RIP: 0010:proc_sys_readdir+0x166/0x2c0
+>     ... ... ...
+>     Call Trace:
+>      <TASK>
+>      iterate_dir+0x6e/0x140
+>      __se_sys_getdents+0x6e/0x100
+>      do_syscall_64+0x70/0x150
+>      entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> Instead of fully registering a sysctl table, expose the underlying
+> checking function and use it in the unit test.
+> 
+> Fixes: b5ffbd139688 ("sysctl: move the extra1/2 boundary check of u8 to sysctl_check_table_array")
+> Signed-off-by: John Sperbeck <jsperbeck@google.com>
 > ---
->  arch/arm64/kvm/pmu-emul.c | 2 ++
->  1 file changed, 2 insertions(+)
 > 
-> diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
-> index 2d19c6048091..b14655dda6db 100644
-> --- a/arch/arm64/kvm/pmu-emul.c
-> +++ b/arch/arm64/kvm/pmu-emul.c
-> @@ -831,6 +831,8 @@ void kvm_vcpu_reload_pmu(struct kvm_vcpu *vcpu)
->  {
->  	u64 mask = kvm_pmu_valid_counter_mask(vcpu);
+> The Change from v3 to v4 is to make sure sysctl_check_table_test_helper_sz()
+> is defined in the unusual case that the sysctl kunit test is enabled, but 
+> CONFIG_SYSCTL is disabled.
+> 
+>  fs/proc/proc_sysctl.c  | 22 +++++++++++++++++-----
+>  include/linux/sysctl.h | 17 +++++++++++++++++
+>  kernel/sysctl-test.c   |  9 ++++++---
+>  3 files changed, 40 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index 27a283d85a6e..2d3272826cc2 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -1137,11 +1137,12 @@ static int sysctl_check_table_array(const char *path, const struct ctl_table *ta
+>  	return err;
+>  }
 >  
-> +	kvm_pmu_disable_counter_mask(vcpu, ~__vcpu_sys_reg(vcpu, PMCNTENSET_EL0));
+> -static int sysctl_check_table(const char *path, struct ctl_table_header *header)
+> +static int sysctl_check_table(const char *path, const struct ctl_table *table,
+> +			      size_t table_size)
+>  {
+> -	const struct ctl_table *entry;
+> +	const struct ctl_table *entry = table;
+>  	int err = 0;
+> -	list_for_each_table_entry(entry, header) {
+> +	for (size_t i = 0 ; i < table_size; ++i, entry++) {
+This should be avoided as the traversal of the ctl_table should be
+handled in one place (the list_for_each_table_entry macro)
+
+>  		if (!entry->procname)
+>  			err |= sysctl_err(path, entry, "procname is null");
+>  		if ((entry->proc_handler == proc_dostring) ||
+> @@ -1173,6 +1174,16 @@ static int sysctl_check_table(const char *path, struct ctl_table_header *header)
+>  	return err;
+>  }
+>  
+> +#if IS_ENABLED(CONFIG_KUNIT)
+> +int sysctl_check_table_test_helper_sz(const char *path,
+> +				      const struct ctl_table *table,
+> +				      size_t table_size)
+> +{
+> +	return sysctl_check_table(path, table, table_size);
+> +}
+> +EXPORT_SYMBOL(sysctl_check_table_test_helper_sz);
+> +#endif /* CONFIG_KUNIT */
 > +
+>  static struct ctl_table_header *new_links(struct ctl_dir *dir, struct ctl_table_header *head)
+>  {
+>  	struct ctl_table *link_table, *link;
+> @@ -1372,6 +1383,9 @@ struct ctl_table_header *__register_sysctl_table(
+>  	struct ctl_dir *dir;
+>  	struct ctl_node *node;
+>  
+> +	if (sysctl_check_table(path, table, table_size))
+> +		return NULL;
+> +
+>  	header = kzalloc(sizeof(struct ctl_table_header) +
+>  			 sizeof(struct ctl_node)*table_size, GFP_KERNEL_ACCOUNT);
+>  	if (!header)
+> @@ -1379,8 +1393,6 @@ struct ctl_table_header *__register_sysctl_table(
+>  
+>  	node = (struct ctl_node *)(header + 1);
+>  	init_header(header, root, set, node, table, table_size);
+> -	if (sysctl_check_table(path, header))
+> -		goto fail;
+>  
+>  	spin_lock(&sysctl_lock);
+>  	dir = &set->dir;
+> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+> index 40a6ac6c9713..02acd3670bd2 100644
+> --- a/include/linux/sysctl.h
+> +++ b/include/linux/sysctl.h
+> @@ -288,4 +288,21 @@ static inline bool sysctl_is_alias(char *param)
+>  int sysctl_max_threads(const struct ctl_table *table, int write, void *buffer,
+>  		size_t *lenp, loff_t *ppos);
+>  
+> +#if IS_ENABLED(CONFIG_KUNIT)
+> +#define sysctl_check_table_test_helper(path, table)	\
+> +	sysctl_check_table_test_helper_sz(path, table, ARRAY_SIZE(table))
+> +#ifdef CONFIG_SYSCTL
+> +int sysctl_check_table_test_helper_sz(const char *path,
+> +				      const struct ctl_table *table,
+> +				      size_t table_size);
+> +#else /* CONFIG_SYSCTL */
+> +static inline int sysctl_check_table_test_helper_sz(const char *path,
+> +				      const struct ctl_table *table,
+> +				      size_t table_size)
+> +{
+> +	return 0;
+> +}
+> +#endif /* CONFIG_SYSCTL */
+> +#endif /* CONFIG_KUNIT */
+> +
+>  #endif /* _LINUX_SYSCTL_H */
+> diff --git a/kernel/sysctl-test.c b/kernel/sysctl-test.c
+> index 3ac98bb7fb82..247dd8536fc7 100644
+> --- a/kernel/sysctl-test.c
+> +++ b/kernel/sysctl-test.c
+> @@ -410,9 +410,12 @@ static void sysctl_test_register_sysctl_sz_invalid_extra_value(
+>  		},
+>  	};
+>  
+> -	KUNIT_EXPECT_NULL(test, register_sysctl("foo", table_foo));
+> -	KUNIT_EXPECT_NULL(test, register_sysctl("foo", table_bar));
+> -	KUNIT_EXPECT_NOT_NULL(test, register_sysctl("foo", table_qux));
+> +	KUNIT_EXPECT_EQ(test, -EINVAL,
+> +			sysctl_check_table_test_helper("foo", table_foo));
+> +	KUNIT_EXPECT_EQ(test, -EINVAL,
+> +			sysctl_check_table_test_helper("foo", table_bar));
+> +	KUNIT_EXPECT_EQ(test, 0,
+> +			sysctl_check_table_test_helper("foo", table_qux));
 
-Just so this function appears consistent, can we move this after the
-point where the mask is applied?
+This should all be in lib/tests_sysctl.c. We should remove all this
+function from the kunit and add an equivalent one to lib/tests_sysctl.c
 
-There's no functional impact of course since PMCR_EL0.N can only be
-changed before the VM is started, i.e. not possible to have running
-counters >= N.
+Best
+>  }
+>  
+>  static struct kunit_case sysctl_test_cases[] = {
+> -- 
+> 2.48.0.rc2.279.g1de40edade-goog
+> 
 
-Thanks,
-Oliver
+-- 
+
+Joel Granados
 
