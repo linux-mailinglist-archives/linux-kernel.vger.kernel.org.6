@@ -1,208 +1,270 @@
-Return-Path: <linux-kernel+bounces-557949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0791A5DFAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:04:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34269A5DFB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:05:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C7EC3A3346
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:04:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A42E3A3039
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BB524EF75;
-	Wed, 12 Mar 2025 15:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA59250BE9;
+	Wed, 12 Mar 2025 15:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XpHyrsJJ"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="d6m1Ie+M"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303F522DF9D;
-	Wed, 12 Mar 2025 15:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4431124DFFD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741791885; cv=none; b=HBmzizjiLGg6nWFdsCPBtI8WfcBRf0piGFOoIMAb551hmLU7/9ZLoe6QFkyAsEgthsX6Fxy5ddO4yEVBJaLJrzSB+F5kyInxBGhgQexOrg7dujr1TvXwtSxoCU8xj45Jw1RTMo21GP6zyJ83FN3rxj77b8dAlpvbBFh4iHc2vcw=
+	t=1741791921; cv=none; b=O5/SjfHgvh13dXDmjGinwnTrsbSk1161v6JQogiKRNnTYNaDGrrx+GvFL2k8Bet6R7kGxtJp1BsMc6nBaPtdt7/xyOvwZ/1BtbdORtJbFPeyGy2WjeYzKH+owJcMpaNWkqaWdLONG5bf9WYWTJMrwX10EOvFkBHAo8axSc62+7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741791885; c=relaxed/simple;
-	bh=4kvwciWhtuLbjmDQrc8d4bXFZQIkcET9QjpPx2Lfh2I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D59UVWpoB+oSMwOJRXbFO3h1sPjFE+a7yx9EmpYXNQdjSzZBPUJ409cbf78IHkaMLLHW533UZsHNnp/HnMcMnqhKLwhXDpnpg7Znr+vyrRBYOFVEiWfBWypvd+HmGofmUmEWZAIYimFbDL5qUec1XvOk9+SKiapwE4wHwXbhZ2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XpHyrsJJ; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6febbd3b75cso56388087b3.0;
-        Wed, 12 Mar 2025 08:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741791883; x=1742396683; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CWJQHvu5mtEWy0MPTSIyoI0L0d27oEw9ieErduQwILE=;
-        b=XpHyrsJJp4wZlHRdN5ITsQTkvW1pFflSnw5+053Sdf1HeUiBPScLlUSM/s86yisqHb
-         3P8/koLxTe3gdDFUPKlbqaKK45RUIawLK6oPInOHDo18eMDHTU8JBjhXmIRejqFBE78k
-         KnUc62XKIXCB/IT/h9o27aDIGgxpKxMoYaFMOKZzS8w2xyliPB5QqDmHsWTGfixOprZD
-         ccOFZYeqLgywLRFc/eh+bpMFtzO+w4e9Ewua0yFbfkHcsRmJbGHLxIxWsqJgtLsQHwMb
-         gPc/P4S2k5eToNKAenFWvU+0vhBp4iW10s+dR3V0U3Y6uW7GVRajw1n2OSyFOabbDkd2
-         eyWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741791883; x=1742396683;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CWJQHvu5mtEWy0MPTSIyoI0L0d27oEw9ieErduQwILE=;
-        b=MAxzEnFc9zx1j7BxLEUstEPoSWIXzo24zgOHlQzDhq99vw6SFbz8NjOSHDS6D2nU/o
-         N3YQwRoN4I2MtyhznKRtVWp3XagoHjuy57FKKM5GnT6LKn3VHvJ83LSbbjNzu+2bXi0a
-         xkT/10C41mSxRHG3M5xuFlrGvcG7gyT2kmYHPyI3PvJ3WhfOyAXUpM8WlWiPaC2KY0Jr
-         SUczcdbdignKK7/1MlTi/rNAgJN1+8UFl1upbQvdpfYi7ZrOCryt+8LpyOxxMeBSblYA
-         ERULnbleTe0hMD9P20Ri8NAGwepv1GWOdfgSm0FT/OtpA4sKvFiL1eGpFEKYs2//42z9
-         dwog==
-X-Forwarded-Encrypted: i=1; AJvYcCWCyUGOwQbuLVGNGX3dpaKvsIJPQzHY6RXNI1A4FqYkDibHuyZMA5MuFFeQbwmI6RKOmU//iGbM9mM=@vger.kernel.org, AJvYcCXJP8FeH5F0qOmR6bgxWRVZIX74RGNi5G7UMgwPKcl68IcXZGjEp16T7rDMGdapoGhr76kaj5w9zpBV50Ys@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOZJxEZgHDUX2QmdQ8M3GvEEQ+0K/1R5CScRrvH4KOeZCuhcEx
-	DiGcvB1D5FXo3HcxQDcEGLQcpMbLo4jVPVUYG+/y+fqzNfdpm6aP
-X-Gm-Gg: ASbGncsCIW9pKvBtxTNIgtkQilhSmMkC+toDg+/4R92E+jrZ7xUzV1EChRoM21N5UqF
-	TdlvAw8irJBXTpzbyaEm4x5gxt45d/YYAlPjATZShb4qpqm4fJOEsUzLMECy/SMsrkW8/qP4ffO
-	f4JzGmibuBxCLKPQVu5FoX13qbY5sGwuRupqWADgYIvmz9o2iLWIpWwDIjrwj171QlyulCf3U5s
-	L73JpHRgToNOHPERQx4DR2y5F8o3kMoAkfez3/k2tG3d6E4cxGs6KKATQEYkY7m4mlOyNpej+I4
-	Elmyf+IlfBQItDuz0Y+1RW7kOGrcZKweY7TrRvp/jVBL
-X-Google-Smtp-Source: AGHT+IF9U6SlWjVO5e8FD64REsmZ+AmpBbsbhviSf5KKYvGmv6Wzl2qnU8103UftabS8nl6n3qlxfg==
-X-Received: by 2002:a05:690c:4b83:b0:6fd:2b7d:9a4e with SMTP id 00721157ae682-6febf30734bmr331638857b3.18.1741791882857;
-        Wed, 12 Mar 2025 08:04:42 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:71::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2a1bf6esm31766217b3.19.2025.03.12.08.04.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 08:04:42 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Rakie Kim <rakie.kim@sk.com>
-Cc: gourry@gourry.net,
-	akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com,
-	dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com
-Subject: Re: [PATCH v2 4/4] mm/mempolicy: Fix duplicate node addition in sysfs for weighted interleave
-Date: Wed, 12 Mar 2025 08:04:39 -0700
-Message-ID: <20250312150440.2301373-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250312075628.648-4-rakie.kim@sk.com>
-References: 
+	s=arc-20240116; t=1741791921; c=relaxed/simple;
+	bh=lkaVr3h8k8MDqUDGA2wr8vqhHwKNjp8uXvlrZ+yWHOQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OpovNaFZpxjaywoFSIXM0/IikmApdl3PDRz48yvQd4xWAQCJLkd9iwfmwGn/qnM/aBQfoOCfhPAu4QFHsrZmjmcw+5b6ESsywshvAgJ+Byu6GImwtbz3e4+LsxClA9o8faHazFWVj4szd5QjlCF7Q/s+6Pc48lpiSGX83/6gTeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=d6m1Ie+M; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=n6ivansrebgizanuseiv5ngepu.protonmail; t=1741791915; x=1742051115;
+	bh=ifQavh2xwoM5ni8IIYcnU08nnIdJQmSsQAjnMmb0m/I=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=d6m1Ie+MPpjT0ndzXqUA0IIISaH0Bqp0jTG0OjYYts//vm56yT9PTBHvV8JAO4JEr
+	 LI8CfGQO1sabsWxnb/HG0j4jQlo1gmZGRj7X0YAbniLjOf8Xqv1WZ++FuDiQmdLko/
+	 GyUH8tbAObNORyCKpiZi/54IIRu5zsDdCMyOijjcHd8sYNLYBKKksyyYSSiW+gcDSh
+	 /GTn5jqo9KXZTAGlfkcRCBViDGQUk8lkeBdB9EK6mKvomSz1PCo1xNoRbMblv3OBOr
+	 kagQC/u6SnPszh/Iuo0eTQTZu4ozpkY49RISmntAk7wgRpqMqdnHVMr4HvcBr1GjfB
+	 zx4W4cSq17/fg==
+Date: Wed, 12 Mar 2025 15:05:08 +0000
+To: Tamir Duberstein <tamird@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
+Message-ID: <D8EDP4SMQG2M.3HUNZGX8X0IL7@proton.me>
+In-Reply-To: <20250309-ptr-as-ptr-v2-5-25d60ad922b7@gmail.com>
+References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com> <20250309-ptr-as-ptr-v2-5-25d60ad922b7@gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 60984a7c33cfac13fdc78c1a649a642031fb12da
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rakie, thank your new revision!
+On Sun Mar 9, 2025 at 5:00 PM CET, Tamir Duberstein wrote:
+> diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+> index 598001157293..20159b7c9293 100644
+> --- a/rust/kernel/devres.rs
+> +++ b/rust/kernel/devres.rs
+> @@ -45,7 +45,7 @@ struct DevresInner<T> {
+>  /// # Example
+>  ///
+>  /// ```no_run
+> -/// # use kernel::{bindings, c_str, device::Device, devres::Devres, io::=
+{Io, IoRaw}};
+> +/// # use kernel::{bindings, c_str, device::Device, devres::Devres, ffi:=
+:c_void, io::{Io, IoRaw}};
+>  /// # use core::ops::Deref;
+>  ///
+>  /// // See also [`pci::Bar`] for a real example.
+> @@ -59,19 +59,19 @@ struct DevresInner<T> {
+>  ///     unsafe fn new(paddr: usize) -> Result<Self>{
+>  ///         // SAFETY: By the safety requirements of this function [`pad=
+dr`, `paddr` + `SIZE`) is
+>  ///         // valid for `ioremap`.
+> -///         let addr =3D unsafe { bindings::ioremap(paddr as _, SIZE as =
+_) };
+> +///         let addr =3D unsafe { bindings::ioremap(paddr as u64, SIZE) =
+};
 
-I think this new ordering of the series makes more sense, since the bug exists
-even before your patch is applied! IMHO, it might also make sense to take
-patch 1 out of this series, and send it separately (and make patches 2-4
-their own series). 
+The argument of `ioremap` is defined as `resource_size_t` which
+ultimately maps to `u64` on 64 bit systems and `u32` on 32 bit ones. I
+don't think that we should have code like this... Is there another
+option?
 
-I have a nit and a few thoughts about this patch and the way we order locking
-and allocating:
+Maybe Gary knows something here, do we have a type that represents that
+better?
 
->  static void sysfs_wi_release(struct kobject *wi_kobj)
-> @@ -3464,35 +3470,54 @@ static const struct kobj_type wi_ktype = {
->  
->  static int sysfs_wi_node_add(int nid)
->  {
-> -	struct iw_node_attr *node_attr;
-> +	int ret = 0;
->  	char *name;
->  
-> -	node_attr = kzalloc(sizeof(*node_attr), GFP_KERNEL);
-> -	if (!node_attr)
-> -		return -ENOMEM;
-> +	if (nid < 0 || nid >= nr_node_ids) {
-> +		pr_err("Invalid node id: %d\n", nid);
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	mutex_lock(&ngrp->kobj_lock);
-> +	if (!ngrp->nattrs[nid]) {
-> +		ngrp->nattrs[nid] = kzalloc(sizeof(struct iw_node_attr), GFP_KERNEL);
+>  ///         if addr.is_null() {
+>  ///             return Err(ENOMEM);
+>  ///         }
+>  ///
+> -///         Ok(IoMem(IoRaw::new(addr as _, SIZE)?))
+> +///         Ok(IoMem(IoRaw::new(addr as usize, SIZE)?))
 
-I am unsure if kzallocing with the mutex_lock held is best practice. Even though
-two threads won't reach this place simultaneously since *most* calls to this
-function are sequential, we should try to keep the code safe since future
-patches might overlook this, and later make non-sequential calls : -)
+This should be `addr.addr()` (requires `strict_provenance` on Rust 1.83
+& before).
 
-It also doesn't seem wise to directly assign the result of an allocation
-without checking for its success (as I explain below).
+(I am assuming that we're never casting the usize back to a pointer,
+since otherwise this change would introduce UB)
 
-IMHO it is best to allocate first, then acquire the lock and check for
-existence, then assign with the lock still held. We can also reduce this code
-section into a single if statement for clarity (but if you think it looks
-cleaner with the if-else, please keep it!)
+>  ///     }
+>  /// }
+>  ///
+>  /// impl<const SIZE: usize> Drop for IoMem<SIZE> {
+>  ///     fn drop(&mut self) {
+>  ///         // SAFETY: `self.0.addr()` is guaranteed to be properly mapp=
+ed by `Self::new`.
+> -///         unsafe { bindings::iounmap(self.0.addr() as _); };
+> +///         unsafe { bindings::iounmap(self.0.addr() as *mut c_void); };
 
-struct iw_node_attr *node_attr;
+Can't this be a `.cast::<c_void>()`?
 
-...
+>  ///     }
+>  /// }
+>  ///
 
-node_attr = kzalloc(sizeof(*node_attr), GFP_KERNEL);
-if (!node_attr) {
-	ret = -ENOMEM;
-	goto out;
-}
+> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+> index 8654d52b0bb9..eb8fa52f08ba 100644
+> --- a/rust/kernel/error.rs
+> +++ b/rust/kernel/error.rs
+> @@ -152,7 +152,7 @@ pub(crate) fn to_blk_status(self) -> bindings::blk_st=
+atus_t {
+>      /// Returns the error encoded as a pointer.
+>      pub fn to_ptr<T>(self) -> *mut T {
+>          // SAFETY: `self.0` is a valid error due to its invariant.
+> -        unsafe { bindings::ERR_PTR(self.0.get() as _).cast() }
+> +        unsafe { bindings::ERR_PTR(self.0.get() as isize).cast() }
 
-mutex_lock(&ngrp->kobj_lock);
-if (ngrp->nattrs[nid]) {
-	mutex_unlock(&ngrp->kobj_lock);
-	kfree(node_attr);
-	pr_info("Node [%d] already exists\n");
-	goto out;
-}
-ngrp->attrs[nid] = node_attr;
-mutex_unlock(&ngrp->kobj_lock):
+Can't this be a `.into()`?
 
+>      }
+> =20
+>      /// Returns a string representing the error, if one exists.
 
-> +	} else {
-> +		mutex_unlock(&ngrp->kobj_lock);
-> +		pr_info("Node [%d] is already existed\n", nid);
+> @@ -119,7 +119,7 @@ pub fn $name(&self, offset: usize) -> $type_name {
+>              let addr =3D self.io_addr_assert::<$type_name>(offset);
+> =20
+>              // SAFETY: By the type invariant `addr` is a valid address f=
+or MMIO operations.
+> -            unsafe { bindings::$name(addr as _) }
+> +            unsafe { bindings::$name(addr as *const c_void) }
 
-NIT: To keep consistency with other parts of the kernel, maybe this can be
-rephrased to "Node [%d] already exists\n"
+Also here, is `.cast::<c_void>()` enough? (and below)
 
-> +		goto out;
-> +	}
-> +	mutex_unlock(&ngrp->kobj_lock);
-> +
-> +	if (!ngrp->nattrs[nid]) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
+>          }
+> =20
+>          /// Read IO data from a given offset.
 
-If we make the changes above, we don't have to check for allocation success
-*after* already having locked & unlocked and making the unnecessary assignment.
+> diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
+> index 04f2d8ef29cb..40d1bd13682c 100644
+> --- a/rust/kernel/of.rs
+> +++ b/rust/kernel/of.rs
+> @@ -22,7 +22,7 @@ unsafe impl RawDeviceId for DeviceId {
+>      const DRIVER_DATA_OFFSET: usize =3D core::mem::offset_of!(bindings::=
+of_device_id, data);
+> =20
+>      fn index(&self) -> usize {
+> -        self.0.data as _
+> +        self.0.data as usize
 
->  
->  	name = kasprintf(GFP_KERNEL, "node%d", nid);
->  	if (!name) {
-> -		kfree(node_attr);
-> -		return -ENOMEM;
-> +		kfree(ngrp->nattrs[nid]);
-> +		ret = -ENOMEM;
-> +		goto out;
->  	}
+This should also be `self.0.data.addr()`.
 
-For the same reasons above, I think it makes sense to make this allocation
-together with the allocation of node_attr above, and free / return -ENOMEM
-as early as possible if we can.
+>      }
+>  }
+> =20
+> @@ -34,10 +34,10 @@ pub const fn new(compatible: &'static CStr) -> Self {
+>          // SAFETY: FFI type is valid to be zero-initialized.
+>          let mut of: bindings::of_device_id =3D unsafe { core::mem::zeroe=
+d() };
+> =20
+> -        // TODO: Use `clone_from_slice` once the corresponding types do =
+match.
+> +        // TODO: Use `copy_from_slice` once stabilized for `const`.
 
-[...snip...]
+This feature has just been stabilized (5 days ago!):
 
-Thank you again for this patch! Please let me know what you think : -)
-Have a great day!
-Joshua
+    https://github.com/rust-lang/rust/issues/131415
 
-Sent using hkml (https://github.com/sjp38/hackermail)
+@Miguel: Do we already have a target Rust version for dropping the
+`RUSTC_BOOTSTRAP=3D1`? If not, then I think we should use this feature
+now, since it will be stable by the time we bump the minimum version.
+(not in this patch [series] though)
+
+>          let mut i =3D 0;
+>          while i < src.len() {
+> -            of.compatible[i] =3D src[i] as _;
+> +            of.compatible[i] =3D src[i];
+>              i +=3D 1;
+>          }
+
+> @@ -317,7 +320,7 @@ unsafe fn do_release(pdev: &Device, ioptr: usize, num=
+: i32) {
+>          // `ioptr` is valid by the safety requirements.
+>          // `num` is valid by the safety requirements.
+>          unsafe {
+> -            bindings::pci_iounmap(pdev.as_raw(), ioptr as _);
+> +            bindings::pci_iounmap(pdev.as_raw(), ioptr as *mut kernel::f=
+fi::c_void);
+
+Again, probably castable.
+
+>              bindings::pci_release_region(pdev.as_raw(), num);
+>          }
+>      }
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index 6a1a982b946d..0b80a119d5f0 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -692,9 +692,9 @@ fn new() -> Self {
+>      pub(crate) unsafe fn from_ptrs(pos: *mut u8, end: *mut u8) -> Self {
+>          // INVARIANT: The safety requirements guarantee the type invaria=
+nts.
+>          Self {
+> -            beg: pos as _,
+> -            pos: pos as _,
+> -            end: end as _,
+> +            beg: pos as usize,
+> +            pos: pos as usize,
+> +            end: end as usize,
+
+I would prefer if we use `pos.expose_provenance()` (also for `end`)
+here.
+
+>          }
+>      }
+> =20
+> @@ -719,7 +719,7 @@ pub(crate) unsafe fn from_buffer(buf: *mut u8, len: u=
+size) -> Self {
+>      ///
+>      /// N.B. It may point to invalid memory.
+>      pub(crate) fn pos(&self) -> *mut u8 {
+> -        self.pos as _
+> +        self.pos as *mut u8
+
+This should then also be `with_exposed_provenance(self.pos)`
+
+---
+Cheers,
+Benno
+
+>      }
+> =20
+>      /// Returns the number of bytes written to the formatter.
+> diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
+> index 8ff54105be3f..d03f3440cb5a 100644
+> --- a/rust/kernel/workqueue.rs
+> +++ b/rust/kernel/workqueue.rs
+> @@ -198,7 +198,7 @@ pub fn enqueue<W, const ID: u64>(&self, w: W) -> W::E=
+nqueueOutput
+>          unsafe {
+>              w.__enqueue(move |work_ptr| {
+>                  bindings::queue_work_on(
+> -                    bindings::wq_misc_consts_WORK_CPU_UNBOUND as _,
+> +                    bindings::wq_misc_consts_WORK_CPU_UNBOUND as i32,
+>                      queue_ptr,
+>                      work_ptr,
+>                  )
+
 
 
