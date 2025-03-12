@@ -1,105 +1,97 @@
-Return-Path: <linux-kernel+bounces-557701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336DAA5DCAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:30:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A858A5DCAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:31:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8F93B58E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:30:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139591893E9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F8323C390;
-	Wed, 12 Mar 2025 12:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E63E46434;
+	Wed, 12 Mar 2025 12:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="qQ49a4EU"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+uj3pvx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA43C1E489;
-	Wed, 12 Mar 2025 12:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18031E489;
+	Wed, 12 Mar 2025 12:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741782652; cv=none; b=Lughch4k5VaRbEDACMDBzcDQivUOSuDi0RWy906fmPovuHdfbNd4hCzxhUTilEASTNfYG9GScMUfHM9e+pV4BuoNyZ9oGVcLCuPghDVeDPWmraKzVrH1pWM9z5QKn1l3ZjJdCmnfWJPAgliUNcNXWbBmpca2qGdDnlvL/X968o4=
+	t=1741782679; cv=none; b=il3hNFp2qWwQE72p5oTfE2ewSCYFHFta+G3QxCHmKsJLfNCoKJV9JdKbM1I1EnOJ8YpOSJAHj5NyVgksme0Tys6jh35EEbW2p7TkCX9VbkXygiP56JN9Q7NnZsoEaIMUwG5ctlzY2y6T9eBnN2InrcACD/Q1rFb4J1jkzzjbOGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741782652; c=relaxed/simple;
-	bh=laYQCx88mjcDu1ZnBLvTOB+6I7d/yFECJ8I8PLU/mrU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=V08j/Mph9TvcRJjv3BnlezDwHbaq961YAXC85McinfqdBIsIc7sbmry1FQWC5C4ROg6J/9HUAe+kso9NTg0983egH/lNDJP5cs+eApDC/iQnUDKDYyUTjzsqt2WPwLoS5uT5QhnuTV1azYJ8bRemzIh6dGllKe16txN+khNwC9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=qQ49a4EU; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 4F763A0433;
-	Wed, 12 Mar 2025 13:30:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=cmklfvLlFZxYw5WHt0NS
-	MePxUydM1gh/qon5awTqfRY=; b=qQ49a4EU6xjyrrZrVO8B+hvj25GZPeSjA0jb
-	7nWqtx/yE+/PuOh6axYscnpPtJZnCUmT1XiXz34qdphteXIo2TKJ5KsVsaQbrXlk
-	tUylJKdzUJ6EfDz4qFK6yVM1aVGbxPGaUdWI/bQOuiBI7c3nXLNeTFPrfx5bv68J
-	vSJsJYx3lZujSrSva+A6xE/tym5fl0MQR/34G1oev+OcThulayAyqB90QYnXB8rS
-	EsMyweSxMqzxmwvlG/62+oJXrrRx/23oPcywfMzqCIHPrTizUL5I1hKt9qJxNQ7G
-	0hp4aELeQ8tdiUjwGqvTbbbqJykqBqzZzxeWmyZZ3TReORAfhJ7HnlLmirxrBbDa
-	bzfwMJAPkNNpRba8Z2ahlXTtuP/nQbOtBnaJj4Lm561VyLg1pj6n4nQyecsminBK
-	9JZ1iaOdx6ikfJeW+2aC9/eykxPtKm0CahpIScO09ixdrP6D2WUUHpAFdQ8AnqJT
-	FIxcYKKDwenm5asoKkx7K75nJxFX8DHeGnIoMFn3kV01Le7YYX2H3POwTWR8TbRo
-	Izrs5IjAB8SonwI2Nwdi3x4a1yt6XQNPRgXRZE6UQljKWhLFhfwTskZe+LdKCar4
-	bBitkR5bthaRvlro6f2XsFW/g08V6CvdOTl7UVQOg4knyzU6/miZUM2x/aMmdqTZ
-	nOE9+MU=
-Message-ID: <505c2e3b-f1bb-4e3a-96f2-eef0d0d682e6@prolan.hu>
-Date: Wed, 12 Mar 2025 13:30:45 +0100
+	s=arc-20240116; t=1741782679; c=relaxed/simple;
+	bh=uk38x0xYwVnHEKQwByxFj/fJlgR5LnKoEU9pVaDjRuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ckyPHs2yt/xnpoyZPoy3XI3x6qsTn0khEpN4tiZ9OG2GLmND+BFWXAFi7YmsR+IboCNyLkRC2IGswMhPaoXzz/92rRrM7OAJ/TJ6yjSOgg24VOetBVpX0zJ3Oq2ddsq3e5pFSoGwzN4dko30kS09Bq7ZJmOw618PZSjS2Figqm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+uj3pvx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5835DC4CEE3;
+	Wed, 12 Mar 2025 12:31:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741782679;
+	bh=uk38x0xYwVnHEKQwByxFj/fJlgR5LnKoEU9pVaDjRuA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H+uj3pvxuXV5TiXRtdocxb1zdq9E4rRRf/P1u/ELDrkKyAI3mvnZXaXyT/Tq6GCAE
+	 xRrrDGkfD/nrKQv7SC1JCHIgQS3NOyv9DKao1kTpYdJajphdaDSUJBg+fWntAdzU1b
+	 7mnXnZeWhAwZLPZJnTRw97TxQIR3TmbXP1drYeDtHWMi99D1fOPMsBGZQUJ6tTyNjh
+	 h6KEsfbqTlR3QUjAC92lMbFQEkUKxxYOtfsIxvjLtOumVbw7FcdQTxqU8YZh939/pz
+	 v/zT2OLDTVuU4c02nSCGU/aaCczvrAhgstFisOLmhEFL9B17ul4anr2rGpGlSsXipE
+	 EJw9iI+bEcAJQ==
+Date: Wed, 12 Mar 2025 12:31:12 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.13 000/197] 6.13.7-rc2 review
+Message-ID: <441a0550-156d-4a05-8d49-f8175002978c@sirena.org.uk>
+References: <20250311144241.070217339@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v4] dma-engine: sun4i: Use devm functions in probe()
-To: Markus Elfring <Markus.Elfring@web.de>, <dmaengine@vger.kernel.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>
-CC: LKML <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
-	Samuel Holland <samuel@sholland.org>, Vinod Koul <vkoul@kernel.org>
-References: <20250311180254.149484-1-csokas.bence@prolan.hu>
- <885ceb3e-d6c6-4e7b-a3b6-585d2d110ccf@web.de>
- <81f87d39-d3f8-4b6a-91cb-b0177d34171b@prolan.hu>
- <9ef781b0-8a63-42b7-91a2-fa8a8ea3c0b4@web.de>
-Content-Language: en-US, hu-HU
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <9ef781b0-8a63-42b7-91a2-fa8a8ea3c0b4@web.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94852627360
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Ss6u7OA97U/YVIbD"
+Content-Disposition: inline
+In-Reply-To: <20250311144241.070217339@linuxfoundation.org>
+X-Cookie: You will outgrow your usefulness.
 
-Hi,
 
-On 2025. 03. 12. 12:44, Markus Elfring wrote:
->>> How good does such a change combination fit to the patch requirement
->>> according to separation of concerns?
->>> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14-rc6#n81
->>
->> It is a general refactor patch, it shouldn't change any functionality. I could split it to one part introducing `devm_clk_get_enabled()` and the other `dmaenginem_async_device_register()`, but I don't feel that to be necessary, nor does it bring any advantages I believe.
-> Can it matter a bit more to separate changes for the application of devm functions
-> and the adjustment of corresponding exception handling with dev_err_probe() calls?
+--Ss6u7OA97U/YVIbD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The change in error handling is just the result of switching to devm 
-functions, because it is no longer needed to separately dev_err(), store 
-the error code to `ret` and goto a cleanup phase (as the whole point of 
-using devm functions is to have auto-cleanup), you can just return with 
-the error code (which dev_err_probe() returns for us) right away. The 
-devm functions are used precisely _because_ they allow us to simplify 
-this error handling.
+On Tue, Mar 11, 2025 at 03:48:06PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.13.7 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-> Regards,
-> Markus
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Bence
+--Ss6u7OA97U/YVIbD
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfRfo8ACgkQJNaLcl1U
+h9Bgggf9Eme7pDVEdiGWQ73Q+QReXZyFphTFjPMxZPj+OSXMN78j2kiz43Dgh/hu
+16zHUENiMLEf4OYs16w+fvswWN26Ky665dcOvzLVennenOcRq1UeYgrgRnWNyI4D
+ku2g775ZR4wKaC+Xp5G5Ix/4Jd1RSrukylxDAAnge3WTlu7jz8HuZ4frmq/Xyk1K
+qJYBW+W8fzHNShTymvwVeApyWZEDjAQMW3DM34IcDx6Vir5v7VcfSVZapuONMfMl
+1Jqsm7rwbs+45ZBRrUokVmycy1eeLmk+IuhhheZAeRzRWX5clm7ZtIRXYbjAjI1b
+V/TtygobaUBLCeNFsPRJWusydzAGeg==
+=8eAw
+-----END PGP SIGNATURE-----
+
+--Ss6u7OA97U/YVIbD--
 
