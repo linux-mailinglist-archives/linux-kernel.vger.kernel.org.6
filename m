@@ -1,119 +1,152 @@
-Return-Path: <linux-kernel+bounces-557237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C591A5D578
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:20:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F72A5D57E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:23:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7402189AC4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:20:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DFD8189AD92
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE501DE4E3;
-	Wed, 12 Mar 2025 05:20:35 +0000 (UTC)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224081DE4F3;
+	Wed, 12 Mar 2025 05:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJLi4J2x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010CB1DB546;
-	Wed, 12 Mar 2025 05:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A1DF9D6;
+	Wed, 12 Mar 2025 05:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741756835; cv=none; b=BEpgoIePj5veloCpgEFi3h0sizYt0xioCLT1gXH2pL2Wr4otYoJ8gz+CLlR1ZMHd4I9ASOw7jG54UDK047KyFo5+1pcaYsMGdodn0ULOYAxHRq8eo1c4XwejpwDOnEHmCCeEDHfcIY/tf2XOyshEdMRrEWpF0rn4RfUEoqWQlbg=
+	t=1741756973; cv=none; b=rTfgHnZ/tzZvHkTsc7gwtO+gBW1JXKLtzdTuKpkRM+i3odu7aq6GmatkkREREYZo4A6oMSvqCpS6fUnybCRjXyWm3PCFusUrI8OxuhZvsZ/vcQ5OLhGinOtkzDOVQIrcY6g8MT4x9La1S2M9/q7/B1LBx17i2iCNIFFyAeOad7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741756835; c=relaxed/simple;
-	bh=0RD6gH9Lv2P9oq2nmKtG/bmzdj0u7M/C3FoVgNguHpg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cRwRTrZjwxZBL9cJSSt4oqqqB40qOF/TxHui9B+Xi+HweMzu/mV/DH82GTJ/8xievpifTacKLIcKa5kLO7kMMxsO5tSVKci55HwBC5TXMIrjrO0wf2NKGQAr+pi9AtGokJmZJTc/bkkPM1t0xCEYmubidYxPimoagfHUuCkIh/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bf1d48843so52821631fa.2;
-        Tue, 11 Mar 2025 22:20:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741756830; x=1742361630;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8CBACq7pupfTR3y0YA4S4UUPtz5mEsdij9kTTqAVipQ=;
-        b=ZWd2rXN5U8Tg0FU6hBKlTYo43+cC6jF3LyVNvgPNowsLSeKpCJvu9yyiuuIV9b+HLu
-         Mv56TGwbHwFIsV5xrA/w05Kb0kH9+swmFckwgfcn5xveBhcj3g2vk50JQ9IwAseLY3ps
-         v13ftmx4Xv0SFw+XcXOx5OWQPeXPixtJBb/5CcB5hfuB3vvRfBNNjeIxatOFrU4M50r3
-         AAqqbWYzB+pI/p+q/lQVEUcyPkYmo+czjmiUMAkBlFhtB8qx3YvkQkNsPdAXwLpuT3ZY
-         gtrSVXMGoW1Bgi6cwguZxaoZK0eDtesbCJCYjioz9qLfecz4Q0fyx0GdQyb/2+19BQU3
-         y/Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmUfhgOZ+u9oEwhfS8spQSZZBbMQjq10Mrlrgszh/sI/SDyXoTIX1CZKFcll4q8fhm00HI6aDgqGo3Xug=@vger.kernel.org, AJvYcCVDWY5TcRucKBYTm/gQvwzNJPkkoSUU0DJQmcl50SavYApU5FEcg2IymE4Cf36xws8f96wmGw1Xm0+iHw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJXXEjtkOobwqfh4n5liyFGkq+0WkOxLtavFIRrfCypQKOpACc
-	0E/ZYbIKI7aZb0je86EopggfhspR9l68HLisoKF62S4vBSMVwjnQzd5DHySS/xw=
-X-Gm-Gg: ASbGncti/w3Jkw7PNnFoOSjqSE+iB0E5BLzbThkg6iHD5vF/8cL4HSXbVBezUL7sUki
-	lxlNjJXp+h1ShUwmkcc3bdjV8eXjeVovjE33/IEqUdtCy1TNET+oLgHsa9xcbyYFS9ElbQX1IKL
-	JkfaJK769uWh35lPgDzRIpEQ5vQg1sOhzYfzPoiFH3veBUhnnWkwq49tUzMayVF3PWPDNTnbAJl
-	7yxv7JlV456m5dZxGvH+rglBAAXjBkZ1vPTpqKSicp1aHISyz8fcNInPBEpZn7FlCSDZO9btQPx
-	yurFV7SPRPHPa66nOReHfiTR4/W4PdtJxts182uviQMwJWKOhlR++JqHmrhzFsqXAGiQ07mhyEN
-	chA==
-X-Google-Smtp-Source: AGHT+IHpCZP/WjNyaut9R2gUdNQzRM4xfRXCsxSkv//24TyqrDGyqp3IzN4edW/MdM6BmY1/Kfe2aQ==
-X-Received: by 2002:a05:6512:3ca0:b0:549:39b1:65c2 with SMTP id 2adb3069b0e04-549910cbf59mr7023801e87.48.1741756829771;
-        Tue, 11 Mar 2025 22:20:29 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae58079sm2002012e87.68.2025.03.11.22.20.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 22:20:27 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bf8632052so48464311fa.0;
-        Tue, 11 Mar 2025 22:20:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVYQDZ2DgytjmH5bFlgLYoAvlGR/4aeJOyXC9So3M1T9WdaJC9vDEq5LxG3gmGn4bVuOIBpDVho/R74+w==@vger.kernel.org, AJvYcCX8F0Ut/wxjEVDp8l5yq2yXs8wTTXN+8cdlXFMD3d6Jgo5qebF1+OOBVBDbQe8Los2Z/9eiKUwBTIYPkic=@vger.kernel.org
-X-Received: by 2002:a2e:a78a:0:b0:30c:160b:c766 with SMTP id
- 38308e7fff4ca-30c160bd6b9mr33439021fa.14.1741756827524; Tue, 11 Mar 2025
- 22:20:27 -0700 (PDT)
+	s=arc-20240116; t=1741756973; c=relaxed/simple;
+	bh=MX9hYn1R3GA95hwjkNf4w1qXBrTQlxYINeZ/wUzSEoE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZBd6cov6z4C4HZMsrG4lJY0u70SK1LS9MLh3+iyTQ7MG/Xm6b6YiNnCACCP2M3A3hNRU5aNWu7xfNJ5AIgZdj3HhI4kcQNzZNd646mhWHgebgjTR5oWA+nFyJ76BQpkLdzdWRJ+vha/wjsU2k7Bbz3ONnesmEYbR6GqgphN4pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJLi4J2x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02259C4CEE3;
+	Wed, 12 Mar 2025 05:22:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741756973;
+	bh=MX9hYn1R3GA95hwjkNf4w1qXBrTQlxYINeZ/wUzSEoE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QJLi4J2x24E0OjEkqPuO1haW7AHR6DGYru/D1S6ptUFAvXbp8in4nAmGLKr2pOUg7
+	 Z1J0plTI95OI5ebPj6ikSorMqIzs0QJEWTxu/wtkocmIXt2J7MukuodYaHq6AaCIbe
+	 jjFPMJdAZgZHtTYJTVSEXf37NEP0oaHu8LCtGp5IhwCZJzWVAmRXwqDqvijPZiTaRi
+	 K6OyYLahKkCniytb67C66EIRERf+81EC2yi2+TksactycCQF2RWhWrZFsp/iCcTi9a
+	 JhFxt5gH9x92KyCsM0hxvS6FcRsy7ygG829sFZf8gGkI7EAo1Jz2UNTLaIb/g4ITvo
+	 6pD0U/hv4Ofow==
+Date: Wed, 12 Mar 2025 07:22:30 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pratyush Yadav <ptyadav@amazon.de>,
+	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Usama Arif <usama.arif@bytedance.com>,
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v4 02/14] memblock: add MEMBLOCK_RSRV_KERN flag
+Message-ID: <Z9EaFhviaZHOqs8j@kernel.org>
+References: <20250206132754.2596694-1-rppt@kernel.org>
+ <20250206132754.2596694-3-rppt@kernel.org>
+ <20250218155004.n53fcuj2lrl5rxll@master>
+ <Z7WHL_Xqgoln9oLg@kernel.org>
+ <20250223002229.xuk6xlp23zr72hkc@master>
+ <20250310095124.pa7dwgqhxglqrfes@master>
+ <Z8_Ju0p63GBCdSG9@kernel.org>
+ <20250311134126.xfjdq6sq7jtcotck@master>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312082439.098124ee@canb.auug.org.au>
-In-Reply-To: <20250312082439.098124ee@canb.auug.org.au>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 12 Mar 2025 13:20:13 +0800
-X-Gmail-Original-Message-ID: <CAGb2v679nTazoZP8B4OL2ECfbGgfvc32wX-J3CNMgCOj5HFPGg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq6bdeuhVByVrSeDNB55NlgeKvj1SgnufsGBOVGRQxm2spFN6BuEZrBSpM
-Message-ID: <CAGb2v679nTazoZP8B4OL2ECfbGgfvc32wX-J3CNMgCOj5HFPGg@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the sunxi tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Maxime Ripard <mripard@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311134126.xfjdq6sq7jtcotck@master>
 
-On Wed, Mar 12, 2025 at 5:31=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> Hi all,
->
-> Commits
->
->   575464821eb0 ("clk: sunxi-ng: add support for the A523/T527 PRCM CCU")
->   9c8d960c13ab ("clk: sunxi-ng: a523: add reset lines")
->   4548c0414839 ("clk: sunxi-ng: a523: add bus clock gates")
->   680f52d723e2 ("clk: sunxi-ng: a523: remaining mod clocks")
->   5fd7421770fb ("clk: sunxi-ng: a523: add USB mod clocks")
->   dd19c52e686e ("clk: sunxi-ng: a523: add interface mod clocks")
->   9bc061e57b4d ("clk: sunxi-ng: a523: add system mod clocks")
->   4b759de121c4 ("clk: sunxi-ng: a523: add video mod clocks")
->   2d47dae93981 ("clk: sunxi-ng: a523: Add support for bus clocks")
->   04f6ff49525a ("clk: sunxi-ng: Add support for the A523/T527 CCU PLLs")
->   38ea575784d3 ("clk: sunxi-ng: Add support for update bit")
->   24ad1a7e8a3e ("clk: sunxi-ng: mp: provide wrappers for setting feature =
-flags")
->   af7a221c1213 ("clk: sunxi-ng: mp: introduce dual-divider clock")
->   17bed1817f11 ("dt-bindings: clk: sunxi-ng: document two Allwinner A523 =
-CCUs")
->
-> are missing a Signed-off-by from their committers.
+On Tue, Mar 11, 2025 at 01:41:26PM +0000, Wei Yang wrote:
+> On Tue, Mar 11, 2025 at 07:27:23AM +0200, Mike Rapoport wrote:
+> >> >> 
+> >> >
+> >> >I took another look into this commit. There maybe a very corner case in which
+> >> >will leave a reserved region with no nid set.
+> >> >
+> >> >memmap_init_reserved_pages()
+> >> >    for_each_mem_region() {
+> >> >        ...
+> >> >	memblock_set_node(start, end, &memblock.reserved, nid);
+> >> >    }
+> >> >
+> >> >We leverage the iteration here to set nid to all regions in memblock.reserved.
+> >> >But memblock_set_node() may call memblock_double_array() to expand the array,
+> >> >which may get a range before current start. So we would miss to set the
+> >> >correct nid to the new reserved region.
+> >> >
+> >> >I have tried to create a case in memblock test. This would happen when there
+> >> >are 126 memblock.reserved regions. And the last region is across the last two
+> >> >node.
+> >> >
+> >> >One way to fix this is compare type->max in memblock_set_node(). Then check
+> >> >this return value in memmap_init_reserved_pages(). If we found the size
+> >> >changes, repeat the iteration.
+> >> >
+> >> >But this is a very trivial one, not sure it worth fix.
+> >> >
+> >> 
+> >> Hi, Mike
+> >> 
+> >> I have done a user space test which shows we may have a chance to leave a
+> >> region with non-nid set.
+> >> 
+> >> Not sure you are ok with my approach of fixing.
+> >
+> >Wouldn't it be better to check for a change in reserved.max in
+> >memmap_init_reserved_pages()?
+> > 
+> 
+> Sounds better.
+> 
+> Previously I thought we need to hide detail from user, but actually it is
+> already in memblock.c :-)
+> 
+> If you agree, I would like to prepare a fix.
 
-Thanks for the heads up. I used the wrong command when applying them.
-All fixed now.
+Sure :)
+ 
+> >> -- 
+> >> Wei Yang
+> >> Help you, Help me
 
-ChenYu
+-- 
+Sincerely yours,
+Mike.
 
