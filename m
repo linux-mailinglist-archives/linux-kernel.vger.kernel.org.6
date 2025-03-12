@@ -1,225 +1,223 @@
-Return-Path: <linux-kernel+bounces-557248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E8C8A5D5C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:56:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74201A5D5C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:59:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8155E3B76ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C673B79F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7021E3DED;
-	Wed, 12 Mar 2025 05:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D231E2007;
+	Wed, 12 Mar 2025 05:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="eXPobSs1"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tVdCO2ST"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514011DF721
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D550F1DE3D6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741758944; cv=none; b=ez/VLJXs9sYDQUX6/ZXIRQBtavvRR5k9HKz3cxu/ABmpPcRgsFsLL9FsNeWHa22iiVdis4NckwHVu0KmmuBXZ1ZF+Sqys2a0f/sNcSrfqt+3+LHrvh+htajXgb/0V71hbkcMojZBpC3YFk/5OXxvuVIKJzquJPtpLdEFE3aNVUU=
+	t=1741759138; cv=none; b=ClvAQNrFNreBWFqYEpbw1KhgtYEZ5QpBXwk7KvHthL9ijfX/5xEfw5mS22qIMJrTvhjq24xy92OEE3lEdPSqeh66D3LPPTSzIIhCyXD8xIB15EYA2TuYIazRiMdl/jQLyVVeSJ2EFkbl16oqQb5oUavEDLYuID6DwLhm1w6Uv8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741758944; c=relaxed/simple;
-	bh=alhU20ihOlc5cJCMuHBajEc7EUqehBtkqo5iRv29oVg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sM3KouAxKiQvSg1Yy3xxYzZOgWj4qiHxICUK3pOQTAyLOLt3gOi6m8uI8xu1IiMEUUG3yyjNSP8sCHx+foDTPtE77BF5yRv/cpQcJxNDF6r82c2O0Y83+K4Qn4jUYL5Ul3A19LGGjzx1Z/xLkbknN8pguAXpQmR940Q2vbHLbtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=eXPobSs1; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fec13a4067so9801551a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:55:42 -0700 (PDT)
+	s=arc-20240116; t=1741759138; c=relaxed/simple;
+	bh=upHWTKFMcqxCm8JdJ3Wu6zMTEP+FCj94qr0zrv4qZSQ=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=rV+ahNeVrA+cFqvoIkPBBu7FbIaK6CpKgFtOu+oQe8hW9RK06DFdghHgJiPoDBfpWut8J+8jA3+tqwQMpHPdXrc5/piKll5/FVCsppFbIAlgktXkHSjdcRG27OkybirtW2dLUM2dKO0AX5dppVUN7pm8BEgs8DchYO4ZOGGcWak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tVdCO2ST; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6fedcc61536so8508867b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:58:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741758941; x=1742363741; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oSOfwAcbQA4fo8Ww+ZUfjP/u2KZyMzcNTNHmT2zLzAs=;
-        b=eXPobSs1pPcY2kkGUDTkUJAz6sPvL59IHQKGYSwAdKIup4QyjLYMD3b9smPrN4YSR5
-         +cejTYlr6XtbunhdGIME9KwDFaa0VKAwgMBHAWmmy3E6TLNrssg7dat/SBWkmS+qU2uI
-         pv3St3becRp49oIv7FgZT2IPvvnTX8HvaKjBc+6ZT7vXI1Ggc1Cdw9JzOtj1PATClKmf
-         zResMG/HZlIdbikSUHgeDPD7ASoiv6FZjEuBOi158kA966Gaa+s4JyA0lnkzsTrVRxlo
-         s0GmGfBgIkmQ3qn8wW4bDdr2VyJn4pmqRb2zTENBVrXdmLcxct4AaY2dkChoruyUkhDQ
-         TWJQ==
+        d=google.com; s=20230601; t=1741759136; x=1742363936; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yVziTp6318IK4oEwMW2HlG8kz999ZqIs5QGLtSSa1UM=;
+        b=tVdCO2STt/CBZtMTdpE55iaGUdgx1UfMv1HzDgb8XJXVoqB3LylFE++Ii3vvshDSHP
+         Vah3KD33k86b+JYZy55X0MK2Oo3u8Npxj4MRFDDCn74HRHtSrvxr6SjcW0E/AhsoXljs
+         Z7vxtzogSkBoustrfjVSwE9gmXcwLl1RWtzrqS1FG9zl6ZWz3qZFn6pTaaWizTcggIyH
+         nZwOQTIhFjDuqhjnyqL5tkhhzMJ6LoRMfoR/6SerSAfiRZl7pO7gh65erv0FhcBAJolo
+         raNYXVITxXuNDGEb4WeWsZ7VMYJLQvmFbGYNIvVDIlM9I8iAEWRoxAzvmkHIvfQOcH2b
+         3M/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741758941; x=1742363741;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oSOfwAcbQA4fo8Ww+ZUfjP/u2KZyMzcNTNHmT2zLzAs=;
-        b=bGSK4oksLUjiShX0dCNC3l/jhM/9ieghUBnA7279lbtA3Q/zJjXjT9qrH+is3g146Q
-         m1/9FyIS5w3brsBJ9hOx9IwZK6JcSd2NxFth9bB6hBOI5MgxAI7jAxpO46vEzzQhkmDb
-         H23TzMAeMJ+pVQXxKt4LNxkLkMF7XfDwiGe6ot2dGmPlHplSRowuK0FQvk3X4KwG0pMV
-         Fc3CcRBVvPhLxyYyV/QW3dgMVS54zr4ZjLxdxU66rOo1a8lD0NJ5BSFc4vmiCqjPYGgv
-         IMGfjc6AVdTI75xM5Le0BxX2yMIRrDSrlPtDdcDER3dfhMBOloIjFQoJyM5QDefDc9eh
-         d+0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXjpRUgf7iTFro4fqfhnuvqEGtmbQuPsZZ50J7QSmqBcK+Zqg8BCO3klwWmN86oWymcram+7xpSZvW0ggA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmHPYbQExbTQWcIZPC7bU7pMPIR+dngvzkJ+b0gW9cT1LcrboS
-	375JLbYFjtdAXdFGE7aVp2+w+GuMpLFmvlCz5marmOcRg8kdfJe1fHXCgLxZcmQ=
-X-Gm-Gg: ASbGncuGjSy3BMi821TsWM+n+qUbRzb2OT+P8KMExawBs2MxdIM/FaTfEut14BpInjx
-	n8KcWsti2LT5aDBlG31qgtT6RUjmhFgEOVhRKjcIF7NOqOPjsxJIQUHS6PkNfIP2Zajv+reSwhr
-	0PHiUbqyMvh/z4mb6CvbaQiq2c+lQr01VSYlAguN/53FYlzOWtjPIWYRP0Rw3AjQOAS98oD6KK7
-	MOs/RJJtDRF15eEW2T+rNVaC8QgpwFkZxJ0BrdNYBrWES9rQhOO+dsyAM0DvmeVdIUr99aePR05
-	lJoVjo/YGdV+B1mLW8SNfmixwpsYil77c8AX68IXAzX4NGHeKyw2O+A7oA==
-X-Google-Smtp-Source: AGHT+IEnYwIq0Gmg9aXj/gdoHcpx7iSAd8arSmzyKfzCe7K3tIJUhpfLuzs4l56U190AWHzReGvYOg==
-X-Received: by 2002:a17:90b:48cc:b0:2ee:d371:3227 with SMTP id 98e67ed59e1d1-300ff104f1emr9530678a91.17.1741758941650;
-        Tue, 11 Mar 2025 22:55:41 -0700 (PDT)
-Received: from [157.82.205.237] ([157.82.205.237])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301190bbd78sm748839a91.39.2025.03.11.22.55.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 22:55:41 -0700 (PDT)
-Message-ID: <39c059c9-fe67-46e4-8c81-854a3de8d726@daynix.com>
-Date: Wed, 12 Mar 2025 14:55:36 +0900
+        d=1e100.net; s=20230601; t=1741759136; x=1742363936;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yVziTp6318IK4oEwMW2HlG8kz999ZqIs5QGLtSSa1UM=;
+        b=sy4KAPQew4IudiPIJd+v3V7R7j+eQbHHRhIlOSNR3L1D0HYEiE0G3JCky9TbNL4nLE
+         rcftIPBVBVY2gjeR/8tLX9HpdLCjXgu/qessJ7g80YXqVQPTGD8zBRwdEudFOH1hzGBK
+         +lA6muUbG5jRviXHRC9U0gYU8uc94OIDIzUlot1D070Y5z/rjT4B5G+zQVHSwiL8ds2f
+         sVql5L7TCPgWHfZwmcbrGCbLtgDNe3OXEFnakDXelmPXr/NFqRu8/tTiJvBe23A7dqzA
+         hJSb7fj5/6Z82r1WKmr1F7FluLg4KTS56mozfstqFAuU3mbav630KqYs8V6hUIXvnOjr
+         QTzg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5OHhLoDjJ/UJNwgfy/59OK8S155usDzcY9ORHnRDXRLsfFlw/T39d0AfFuEltEB66r/y/VeZI9N62qFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmcqmlXdeoUGtj+3qtabisT8IFKcNOQJZaI99ULmCbxKukGzdw
+	ZcmbgFADviihzNutEPIwuOcsaK0Gep0sicaJ/13/OU9tDNIiZx9RrUSr9RvpR6uKus5fsC83npz
+	FuDN1Zw==
+X-Google-Smtp-Source: AGHT+IEL92yy0pvHOGED+dLCRbbetGoDWCIZy3wkzaEPbjyqGE4mqp793eqhvDBNpOqQvq2yXjWDaD0dWRTy
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:8bc2:942f:1b93:42dd])
+ (user=irogers job=sendgmr) by 2002:a05:690c:2a88:b0:6fb:afe0:f186 with SMTP
+ id 00721157ae682-6ff0a28f56emr6059927b3.2.1741759135826; Tue, 11 Mar 2025
+ 22:58:55 -0700 (PDT)
+Date: Tue, 11 Mar 2025 22:58:46 -0700
+Message-Id: <20250312055846.671522-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 3/6] tun: Introduce virtio-net hash feature
-To: Jason Wang <jasowang@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- Yuri Benditovich <yuri.benditovich@daynix.com>,
- Andrew Melnychenko <andrew@daynix.com>,
- Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com,
- Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
-References: <20250307-rss-v9-0-df76624025eb@daynix.com>
- <20250307-rss-v9-3-df76624025eb@daynix.com>
- <CACGkMEsNHba=PY5UQoH1zdGQRiHC8FugMG1nkXqOj1TBdOQrww@mail.gmail.com>
- <7978dfd5-8499-44f3-9c30-e53a01449281@daynix.com>
- <CACGkMEsR4_RreDbYQSEk5Cr29_26WNUYheWCQBjyMNUn=1eS2Q@mail.gmail.com>
- <5e67a0a6-f613-4b0a-b64e-67f649e45c3e@daynix.com>
- <CACGkMEv83iR0vU00XGOGonL1fkd=K1b-shCcNb1K8yJ9O+0BDQ@mail.gmail.com>
-Content-Language: en-US
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-In-Reply-To: <CACGkMEv83iR0vU00XGOGonL1fkd=K1b-shCcNb1K8yJ9O+0BDQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
+Subject: [PATCH v1] perf tests: Harden branch stack sampling test
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, German Gomez <german.gomez@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025/03/12 11:59, Jason Wang wrote:
-> On Tue, Mar 11, 2025 at 2:17 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>
->> On 2025/03/11 9:38, Jason Wang wrote:
->>> On Mon, Mar 10, 2025 at 3:45 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>
->>>> On 2025/03/10 12:55, Jason Wang wrote:
->>>>> On Fri, Mar 7, 2025 at 7:01 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>>>
->>>>>> Hash reporting
->>>>>> ==============
->>>>>>
->>>>>> Allow the guest to reuse the hash value to make receive steering
->>>>>> consistent between the host and guest, and to save hash computation.
->>>>>>
->>>>>> RSS
->>>>>> ===
->>>>>>
->>>>>> RSS is a receive steering algorithm that can be negotiated to use with
->>>>>> virtio_net. Conventionally the hash calculation was done by the VMM.
->>>>>> However, computing the hash after the queue was chosen defeats the
->>>>>> purpose of RSS.
->>>>>>
->>>>>> Another approach is to use eBPF steering program. This approach has
->>>>>> another downside: it cannot report the calculated hash due to the
->>>>>> restrictive nature of eBPF steering program.
->>>>>>
->>>>>> Introduce the code to perform RSS to the kernel in order to overcome
->>>>>> thse challenges. An alternative solution is to extend the eBPF steering
->>>>>> program so that it will be able to report to the userspace, but I didn't
->>>>>> opt for it because extending the current mechanism of eBPF steering
->>>>>> program as is because it relies on legacy context rewriting, and
->>>>>> introducing kfunc-based eBPF will result in non-UAPI dependency while
->>>>>> the other relevant virtualization APIs such as KVM and vhost_net are
->>>>>> UAPIs.
->>>>>>
->>>>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
->>>>>> Tested-by: Lei Yang <leiyang@redhat.com>
->>>>>> ---
->>>>>>     Documentation/networking/tuntap.rst |   7 ++
->>>>>>     drivers/net/Kconfig                 |   1 +
->>>>>>     drivers/net/tap.c                   |  68 ++++++++++++++-
->>>>>>     drivers/net/tun.c                   |  98 +++++++++++++++++-----
->>>>>>     drivers/net/tun_vnet.h              | 159 ++++++++++++++++++++++++++++++++++--
->>>>>>     include/linux/if_tap.h              |   2 +
->>>>>>     include/linux/skbuff.h              |   3 +
->>>>>>     include/uapi/linux/if_tun.h         |  75 +++++++++++++++++
->>>>>>     net/core/skbuff.c                   |   4 +
->>>>>>     9 files changed, 386 insertions(+), 31 deletions(-)
->>>>>>
-> 
-> [...]
-> 
->>>>> Let's has a consistent name for this and the uapi to be consistent
->>>>> with TUNSETIFF/TUNGETIFF. Probably TUNSETVNETHASH and
->>>>> tun_vnet_ioctl_gethash().
->>>>
->>>> They have different semantics so they should have different names.
->>>> TUNGETIFF reports the value currently set while TUNGETVNETHASHCAP
->>>> reports the value that can be set later.
->>>
->>> I'm not sure I will get here. I meant a symmetric name
->>>
->>> TUNSETVNETHASH and TUNVETVNETHASH.
->>
->> TUNGETVNETHASHCAP does not correspond to TUNGETIFF. The correspondence
->> of ioctl names is as follows:
->> TUNGETFEATURES - TUNGETVNETHASHCAP
-> 
-> TUNGETFEATURES returns the value set from TUNSETIFF. This differs from
-> TUNGETVNETHASHCAP semantic which just return the capabilities.
-> 
-> +static inline long tun_vnet_ioctl_gethashcap(void __user *argp)
-> +{
-> +       static const struct tun_vnet_hash cap = {
-> +               .flags = TUN_VNET_HASH_REPORT | TUN_VNET_HASH_RSS,
-> +               .types = VIRTIO_NET_SUPPORTED_HASH_TYPES
-> +       };
-> +
-> +       return copy_to_user(argp, &cap, sizeof(cap)) ? -EFAULT : 0;
-> +}
-> 
-> TUNGETFEATURES doesn't' help too much for non-persist TAP as userspace
-> knows what value it set before.
-> 
->> TUNSETIFF - TUNSETVNETHASH
->> TUNGETIFF - no corresponding ioctl for the virtio-net hash features
-> 
-> And this sounds odd and a hint for a incomplete uAPI as userspace
-> needs to know knowing what can set before doing TUNSETVNETHASH.
+On continuous testing the perf script output can be empty, or nearly
+empty, causing tr/grep to exit and due to "set -e" the test traps and
+fails. Add some empty file handling that sets the test to skip and
+make grep and other text rewriting failures non-fatal by adding
+"|| true".
 
-You are confused with TUNGETFEATURES and TUNGETIFF. Below is the code 
-that implements TUNGETFEATURES:
-if (cmd == TUNGETFEATURES) {
-	/* Currently this just means: "what IFF flags are valid?".
-	 * This is needed because we never checked for invalid flags on
-	 * TUNSETIFF.
-	 */
-	return put_user(IFF_TUN | IFF_TAP | IFF_NO_CARRIER |
-			TUN_FEATURES, (unsigned int __user*)argp);
-} else if (cmd == TUNSETQUEUE) {
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/tests/shell/test_brstack.sh | 79 +++++++++++++++++++-------
+ 1 file changed, 59 insertions(+), 20 deletions(-)
 
-Regards,
-Akihiko Odaki
-
-> 
->>
->> Regards,
->> Akihiko Odaki
->>
-> 
-> Thanks
-> 
+diff --git a/tools/perf/tests/shell/test_brstack.sh b/tools/perf/tests/shell/test_brstack.sh
+index e01df7581393..6f5ae227b3e8 100755
+--- a/tools/perf/tests/shell/test_brstack.sh
++++ b/tools/perf/tests/shell/test_brstack.sh
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ # Check branch stack sampling
+ 
+ # SPDX-License-Identifier: GPL-2.0
+@@ -17,35 +17,54 @@ fi
+ 
+ skip_test_missing_symbol brstack_bench
+ 
++set -x
++err=0
+ TMPDIR=$(mktemp -d /tmp/__perf_test.program.XXXXX)
+ TESTPROG="perf test -w brstack"
+ 
+ cleanup() {
+ 	rm -rf $TMPDIR
++	trap - EXIT TERM INT
+ }
+ 
+-trap cleanup EXIT TERM INT
++trap_cleanup() {
++	set +e
++	echo "Unexpected signal in ${FUNCNAME[1]}"
++	cleanup
++	exit 1
++}
++trap trap_cleanup EXIT TERM INT
+ 
+ test_user_branches() {
+ 	echo "Testing user branch stack sampling"
+ 
+-	perf record -o $TMPDIR/perf.data --branch-filter any,save_type,u -- ${TESTPROG} > /dev/null 2>&1
+-	perf script -i $TMPDIR/perf.data --fields brstacksym | tr -s ' ' '\n' > $TMPDIR/perf.script
++	perf record -o "$TMPDIR/perf.data" --branch-filter any,save_type,u -- ${TESTPROG} > "$TMPDIR/record.txt" 2>&1
++	perf script -i "$TMPDIR/perf.data" --fields brstacksym > "$TMPDIR/perf.script"
+ 
+ 	# example of branch entries:
+ 	# 	brstack_foo+0x14/brstack_bar+0x40/P/-/-/0/CALL
+ 
+-	set -x
+-	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"	$TMPDIR/perf.script
+-	grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
+-	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
+-	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"	$TMPDIR/perf.script
+-	grep -E -m1 "^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"		$TMPDIR/perf.script
+-	grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"	$TMPDIR/perf.script
+-	grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"	$TMPDIR/perf.script
+-	grep -E -m1 "^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"		$TMPDIR/perf.script
+-	set +x
+-
++	expected=(
++		"^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"
++		"^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
++		"^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"
++		"^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
++		"^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"
++		"^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"
++		"^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"
++		"^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"
++	)
++	for x in "${expected[@]}"
++	do
++		if ! tr -s ' ' '\n' < "$TMPDIR/perf.script" | grep -E -m1 -q "$x"
++		then
++			echo "Branches missing $x"
++			if [ "x$err" == "x0" ]
++			then
++				err=2
++			fi
++		fi
++	done
+ 	# some branch types are still not being tested:
+ 	# IND COND_CALL COND_RET SYSCALL SYSRET IRQ SERROR NO_TX
+ }
+@@ -57,14 +76,31 @@ test_filter() {
+ 	test_filter_expect=$2
+ 
+ 	echo "Testing branch stack filtering permutation ($test_filter_filter,$test_filter_expect)"
+-
+-	perf record -o $TMPDIR/perf.data --branch-filter $test_filter_filter,save_type,u -- ${TESTPROG} > /dev/null 2>&1
+-	perf script -i $TMPDIR/perf.data --fields brstack | tr -s ' ' '\n' | grep '.' > $TMPDIR/perf.script
++	perf record -o "$TMPDIR/perf.data" --branch-filter "$test_filter_filter,save_type,u" -- ${TESTPROG}  > "$TMPDIR/record.txt" 2>&1
++	perf script -i "$TMPDIR/perf.data" --fields brstack > "$TMPDIR/perf.script"
+ 
+ 	# fail if we find any branch type that doesn't match any of the expected ones
+ 	# also consider UNKNOWN branch types (-)
+-	if grep -E -vm1 "^[^ ]*/($test_filter_expect|-|( *))/.*$" $TMPDIR/perf.script; then
+-		return 1
++	if [ ! -s "$TMPDIR/perf.script" ]
++	then
++		echo "Empty script output"
++		if [ "x$err" == "x0" ]
++		then
++			err=2
++		fi
++		return
++	fi
++        # Look for lines not matching test_filter_expect ignoring issues caused
++        # by empty output
++	tr -s ' ' '\n' < "$TMPDIR/perf.script" | grep '.' | \
++          grep -E -vm1 "^[^ ]*/($test_filter_expect|-|( *))/.*$" \
++          > "$TMPDIR/perf.script-filtered" || true
++	if [ -s "$TMPDIR/perf.script-filtered" ]
++	then
++		echo "Unexpected branch filter in script output"
++		cat "$TMPDIR/perf.script"
++		err=1
++		return
+ 	fi
+ }
+ 
+@@ -80,3 +116,6 @@ test_filter "any_ret"	"RET|COND_RET|SYSRET|ERET"
+ test_filter "call,cond"		"CALL|SYSCALL|COND"
+ test_filter "any_call,cond"		"CALL|IND_CALL|COND_CALL|IRQ|SYSCALL|COND"
+ test_filter "cond,any_call,any_ret"	"COND|CALL|IND_CALL|COND_CALL|SYSCALL|IRQ|RET|COND_RET|SYSRET|ERET"
++
++cleanup
++exit $err
+-- 
+2.49.0.rc0.332.g42c0ae87b1-goog
 
 
