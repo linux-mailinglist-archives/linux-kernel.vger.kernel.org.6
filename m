@@ -1,78 +1,81 @@
-Return-Path: <linux-kernel+bounces-558521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85E9A5E709
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:12:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 767F3A5E70A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDAC117AF32
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:12:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21B0D189D77E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512071EF38B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C781EFF81;
 	Wed, 12 Mar 2025 22:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D6vtqQFe"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GD5psmxo"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5491D5CD4
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 22:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D111E2823
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 22:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741817528; cv=none; b=paEuwKSPKNhFuB0DD+GjNcDkTzUH4NfL0AUly/IMd4q4OLgm6Q25ScK39CpRPKbhS/4QPwr00KfGsKs8FAxEXKZHRKBHHC5ipe38j27tsFDbL7KUX8nQgaUHda0E0btuCqXKRXySpIkOB5ru+C3eQGOwNhjCXoLp8Ogtdymo5EU=
+	t=1741817528; cv=none; b=B9ERq+GqzoB2EisERqNSlrJJYoTv5mqXAHHdb0/T3dcFIyEjOcAo44bgzIF1IV0JDRBBvXzd7Mfdn0UGEzh8aNmd3EWGIzz51zEI9N/GgbmjQXEMozcq27mXTvgnQoSnh5UcfzZmMvMlMoyqZqOwjj31fiQ8JEgjfBSQ+wz73+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741817528; c=relaxed/simple;
-	bh=mVOwv4gk/Ru3YsGqRyE9Cej02OxzZqGYpijbhmgD/ys=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZpC2gXO7DOSMds1ocTOeSVHOpSdyciLxIbpLoJTZtvmF2PQeLkk8s0c++Rx5CteaGAHODepLyYlG3Qh0tKeQ+GA7enCiGHOcx/fENWcR+zCcMIHj0eSoCPGiHuMsvVjnhsFx3MArzPpv+Zw3BSZC1pWGqAs0rli2O3xR282Lej4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D6vtqQFe; arc=none smtp.client-ip=209.85.216.74
+	bh=ScRvgL5J66/FNMNQgyhMFOslQSnvwTPOErcqUsKWrxc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=rZ8ewWE7TerxZJM8B3ChqN4pSKrXZ3hcavON7c2olnBg4egWmnL2XSbUbPJieklWopBbv14JNRA+JktMCUSKx61FcKMrU5Ql48q53JXQg/ScVQZSD0gZQ9hSHENQanCQ9lrkrcEpYS6vrhwekAPkpx6/YjN6qEl/Y9vFnM4LsZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GD5psmxo; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff6167e9ccso819386a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:12:04 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-225ab4b8fe9so4611045ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:12:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741817523; x=1742422323; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XMoRGAIyglXSYt+x2l3OhtgR+IyIgqGUSX3XXO59reE=;
-        b=D6vtqQFekKz5XJnpRlUTjL3M8iZZUGHSYuCVBfsrxEQJxjak132pBMTVnD/a6Ko3S1
-         VVPAWyJZKytKOSjlFIxLKawHcaLycY8VXdBe5Bk+fym9S4MgpF+dgzrRW0cymtUe2mk8
-         PtUI9ofP+QSoVauDVH9QXnnNKC3Du9Km3Wzo3KqpTylCD6J0b5laBpzmWUM4b2pnE43F
-         Sn13HbzYuUmC426D2kdhzGnb50g0Wc6uJK8RNdexHTpYBAwtAszdnRfpj7PFbecf5SKy
-         RBmBGxvAQJmPu9nDh78Pmpni7IZzKbIYfcbBN/KHVTHwzlEEatM3zJ2ToXeWDMcimohE
-         n5sg==
+        d=google.com; s=20230601; t=1741817525; x=1742422325; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=td7oW6pOWYq7YvXPP724rbAu1/wbGK62pp3VH3i7leI=;
+        b=GD5psmxo1gk179tOiAsO4NQqpHMMqKNNqJjU1BXia/9ZA4qLvzNXE22VY6N/E4Py8K
+         dLVnXktT87r+GZh+mfeL/vtVQ4njiMZ+Th0VhI4WtWHAPPwZi7fxzh2wWw/nc6jwfQkX
+         oFXu6EXMAk5ZHw1XWxAKyrI6tsC1JYJ9HYcfDhNKDnBqUNWbtGov3VwOGHwcW/dxVj/m
+         ql77n6KWLqmtvvn07jL3WpfHZIIsbRhoj66Ptpmt16T+GojnKrDXK2DM8O/KrSYxNX7z
+         w3FGfcUjZK9EOTZuy4mFIA+61UdPVJsivaVV5WeEzizGaAT2Vc9GBBZ39vf1pKcGC8gN
+         ToMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741817523; x=1742422323;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XMoRGAIyglXSYt+x2l3OhtgR+IyIgqGUSX3XXO59reE=;
-        b=cnrBKtNXDKREQKMORSbNEAw+Pcmq2FVUry43Pjs0Wqnm7RSCpHW+pbYyACas8lpwqW
-         17M6TiEBDwJF2Ma4kXEjrGloFLA9zo6z5d7ag0UHlsMxeBBXRKYqRIbqwLvDpZVIy5SF
-         oZgnOxYsWWJUpOhI7Vkas/scnJcwuOqb6+NGMfoqwx0oRKnsDmHOM6A7gH2C1yRwVsei
-         H9P8afVrSA0k2h2XPQxr5mVxKJcXzPWiZeX+c4WHtMMjF52m1fBNoAGLofHvnz+iYLYD
-         Z6kitC55JGqhuzYmw+am9JBAA0AW46XMoO+6fmIb5PqERq0ZC9Bd3dFA/swaKwum8Te/
-         nSlA==
-X-Gm-Message-State: AOJu0Yy3hbilNc/qZ1rWHawVzD9frv9zF4yAHpCnzgFgNNQ7dvHh8aae
-	xP2j25/iDida89CAUX96WGgJSxFKWdFmAYrwIxhwvx6wkYYXGvhoq1fc8U1G5xMxhOvFxBnY2b/
-	GylaZesrs/9PsAJxtm2IJpupd9iCz3xN9RwO1CAycGAXEgZMvQnnfKuW/UWwUlxxzoAFdTyudrJ
-	BNymH8Ej4/w+KvYyl5HgwBPOIg4suSZQSBUpzUHg8vEWKA
-X-Google-Smtp-Source: AGHT+IGZEAjKWIeqoA4bPCMv6Uh/JpftFF0WCXb8YLMY+CVgHWjyexvgqH4pOG+53Mn9xkIX28U37WKGGfdy
-X-Received: from pjur13.prod.google.com ([2002:a17:90a:d40d:b0:2ff:5752:a78f])
- (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5186:b0:2ff:58e1:2bb1
- with SMTP id 98e67ed59e1d1-2ff7cf317efmr29496823a91.32.1741817523614; Wed, 12
- Mar 2025 15:12:03 -0700 (PDT)
-Date: Wed, 12 Mar 2025 15:11:30 -0700
+        d=1e100.net; s=20230601; t=1741817525; x=1742422325;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=td7oW6pOWYq7YvXPP724rbAu1/wbGK62pp3VH3i7leI=;
+        b=ayCPwS6/BmyEYnCJwZNYmKXAbZo4iHbKFYKQgJvjcq4g42I/EDkTfJOOBjaFWRoD99
+         8ZgKx/8BC2PJ8a51VGGO+SVs+aXYdQ0qZ5RlQtAmJICax8iAV2wMibO8SVyOwMwkQqBE
+         9GtnXV2ZHlTMM377lYls5vVGhZFIOX/K977bTS+sRP9rVZpmG6MmHJpZaqeBavrRNF4F
+         CKavq/b58bdT/ht9E0Xf398JU6aXMEyYJt6nZmVKw29mqRrcENSLlRi2ISyPglMawrEs
+         ea7/t5v9TktkWRgjTy3fFO0/4uX6Df1Wc8KCcVKBJMmPaSZjYnCu52p4814Jw6V1X3Cd
+         7HFQ==
+X-Gm-Message-State: AOJu0Yy05JX49ru8QB3ZsV4BoIK8XfKsKwj3HwnH8yWPH/oE7IAMeQqL
+	qyZafGLGEo2aEkniPBTBEu+DTd1YY4gKVP0v4fJhQutQYJilQkAvpm2C/4bXW5C7SgTxRmMt/BR
+	ZdPedczRj4XX4r8HD1H7WJmalQ/AC+XeuhjKIpEfLXICzUhZcrYTAY+Bu7R+WoHAfS6CDXK3Rd1
+	Fw19bhgedHGSO+CWTkSjZ4XGzFiWLZ8EDrU5qxSmbhyN6S
+X-Google-Smtp-Source: AGHT+IGuSkFcXrZEdH54rhkETrN7461UlsipLwjDZ0vn5KVHhJclQ2ZPE5pFd99+xZMGVOT8WBwbI+o8nQVY
+X-Received: from pfuv20.prod.google.com ([2002:a05:6a00:1494:b0:730:4672:64ac])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:3e28:b0:736:4e67:d631
+ with SMTP id d2e1a72fcca58-736eb8a17c0mr11578939b3a.23.1741817525257; Wed, 12
+ Mar 2025 15:12:05 -0700 (PDT)
+Date: Wed, 12 Mar 2025 15:11:31 -0700
+In-Reply-To: <20250312221147.1865364-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250312221147.1865364-1-jstultz@google.com>
 X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-Message-ID: <20250312221147.1865364-1-jstultz@google.com>
-Subject: [RFC PATCH v15 0/7] Single RunQueue Proxy Execution (v15)
+Message-ID: <20250312221147.1865364-2-jstultz@google.com>
+Subject: [RFC PATCH v15 1/7] sched: Add CONFIG_SCHED_PROXY_EXEC & boot
+ argument to enable/disable
 From: John Stultz <jstultz@google.com>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: John Stultz <jstultz@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
@@ -87,107 +90,10 @@ Cc: John Stultz <jstultz@google.com>, Joel Fernandes <joelagnelf@nvidia.com>,
 	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
 	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hey All,
-
-After sending out the previous version of this series and
-getting some great feedback from Peter, I was pulled into a few
-other directions for a bit. But I=E2=80=99ve been able to get back to
-the proxy work the last few weeks and wanted to send this
-iteration out in preparation for discussions at OSPM next week.
-
-So here is v15 of the Proxy Execution series, a generalized form
-of priority inheritance.
-
-As I=E2=80=99m trying to submit this work in smallish digestible pieces,
-in this series, I=E2=80=99m only submitting for review the logic that
-allows us to do the proxying if the lock owner is on the same
-runqueue as the blocked waiter. Introducing the
-CONFIG_SCHED_PROXY_EXEC option and boot-argument, reworking the
-task_struct::blocked_on pointer and wrapper functions, the
-initial sketch of the find_proxy_task() logic, some fixes for
-using split contexts, and finally same-runqueue proxying.
-
-With v15, I=E2=80=99ve tried to address some of Peter=E2=80=99s feedback,
-splitting apart some patches so they are easier to review, and
-breaking out some functionality that is not yet needed for
-single-runqueue proxying, so that it can be introduced later,
-closer to where it is necessary.
-
-I=E2=80=99ve also continued working on the rest of the series, which
-you can find here:
-  https://github.com/johnstultz-work/linux-dev/commits/proxy-exec-v15-6.14-=
-rc6/
-  https://github.com/johnstultz-work/linux-dev.git proxy-exec-v15-6.14-rc6
-
-New changes in the full series include:
-* Having CONFIG_SCHED_PROXY_EXEC depend on EXPERT for now, as
-  its use has pretty narrow value until we get to multi-runqueue
-  proxying.
-* Improved naming consistency and using the guard macro where
-  appropriate
-* Moving the blocked_on_state logic to later in the series
-* Improved comments
-* Build fixes for !CONFIG_SMP
-* Moving the zap_balance_callback() logic to later in the series
-* Fixes for when sched_proxy_exec() is disabled
-
-Issues still to address with the full series:
-* Peter suggested an idea that instead of when tasks become
-  unblocked, using (blocked_on_state =3D=3D BO_WAKING) as a guard
-  against running proxy-migrated tasks on cpu=E2=80=99s they are not
-  affined to, we could dequeue tasks first and then wake them.
-  This does look to be cleaner in many ways, but the locking
-  rework is significant and I=E2=80=99ve not worked out all the kinks
-  with it yet.
-* In the full series with proxy migration (and again, for
-  clarity not with this same-rq proxying series I=E2=80=99m sending out
-  here), I still am using some workarounds to avoid hitting some
-  rare cases of what seem to be lost wakeups, where a task was
-  marked as BO_WAKING, and the mutex it is blocked on has no
-  owner, but the wakeup on the waiter never managed to
-  transition it to BO_RUNNABLE. The workarounds handle doing the
-  return migration from within find_proxy_task() but I still
-  feel that those fixups shouldn=E2=80=99t be necessary, so I suspect
-  the mutex unlock or ttwu logic has a race somewhere I=E2=80=99m
-  missing.
-* One new issue I found with the workarounds I mentioned in the
-  previous bullet, is that they can cause warnings during
-  cpuhotplug if we try to do manual return-migration to
-  task->wake_cpu and that cpu is offline.
-* K Prateek Nayak did some testing about a bit over a year ago
-  with an earlier version of the series and saw ~3-5% regressions
-  in some cases. I=E2=80=99m hoping to look into this soon to see if we
-  can reduce those further.
-* The chain migration functionality needs further iterations and
-  better validation to ensure it truly maintains the RT/DL load
-  balancing invariants (despite this being broken in vanilla
-  upstream with RT_PUSH_IPI currently)
-
-I=E2=80=99d really appreciate any feedback or review thoughts on this
-series. I=E2=80=99m trying to keep the chunks small, reviewable and
-iteratively testable, but if you have any suggestions on how to
-improve the series, I=E2=80=99m all ears.
-
-Credit/Disclaimer:
-=E2=80=94--------------------
-As mentioned previously, this Proxy Execution series has a long
-history:
-
-First described in a paper[1] by Watkins, Straub, Niehaus, then
-from patches from Peter Zijlstra, extended with lots of work by
-Juri Lelli, Valentin Schneider, and Connor O'Brien. (and thank
-you to Steven Rostedt for providing additional details here!)
-
-So again, many thanks to those above, as all the credit for this
-series really is due to them - while the mistakes are likely mine.
-
-Thanks so much!
--john
-
-[1] https://static.lwn.net/images/conf/rtlws11/papers/proc/p38.pdf
-
+Add a CONFIG_SCHED_PROXY_EXEC option, along with a boot argument
+sched_proxy_exec= that can be used to disable the feature at boot
+time if CONFIG_SCHED_PROXY_EXEC was enabled.
 
 Cc: Joel Fernandes <joelagnelf@nvidia.com>
 Cc: Qais Yousef <qyousef@layalina.io>
@@ -212,35 +118,175 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: Suleiman Souhlal <suleiman@google.com>
 Cc: kernel-team@android.com
+Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Signed-off-by: John Stultz <jstultz@google.com>
+---
+v7:
+* Switch to CONFIG_SCHED_PROXY_EXEC/sched_proxy_exec= as
+  suggested by Metin Kaya.
+* Switch boot arg from =disable/enable to use kstrtobool(),
+  which supports =yes|no|1|0|true|false|on|off, as also
+  suggested by Metin Kaya, and print a message when a boot
+  argument is used.
+v8:
+* Move CONFIG_SCHED_PROXY_EXEC under Scheduler Features as
+  Suggested by Metin
+* Minor rework reordering with split sched contexts patch
+v12:
+* Rework for selected -> donor renaming
+v14:
+* Depend on !PREEMPT_RT to avoid build issues for now
+v15:
+* Depend on EXPERT while patch series upstreaming is
+  in progress.
+---
+ .../admin-guide/kernel-parameters.txt         |  5 ++++
+ include/linux/sched.h                         | 13 +++++++++
+ init/Kconfig                                  | 10 +++++++
+ kernel/sched/core.c                           | 29 +++++++++++++++++++
+ kernel/sched/sched.h                          | 12 ++++++++
+ 5 files changed, 69 insertions(+)
 
-John Stultz (3):
-  sched: Add CONFIG_SCHED_PROXY_EXEC & boot argument to enable/disable
-  sched: Fix runtime accounting w/ split exec & sched contexts
-  sched: Add an initial sketch of the find_proxy_task() function
-
-Peter Zijlstra (2):
-  locking/mutex: Rework task_struct::blocked_on
-  sched: Start blocked_on chain processing in find_proxy_task()
-
-Valentin Schneider (2):
-  locking/mutex: Add p->blocked_on wrappers for correctness checks
-  sched: Fix proxy/current (push,pull)ability
-
- .../admin-guide/kernel-parameters.txt         |   5 +
- include/linux/sched.h                         |  62 +++-
- init/Kconfig                                  |  10 +
- kernel/fork.c                                 |   3 +-
- kernel/locking/mutex-debug.c                  |   9 +-
- kernel/locking/mutex.c                        |  11 +
- kernel/locking/mutex.h                        |   3 +-
- kernel/locking/ww_mutex.h                     |  16 +-
- kernel/sched/core.c                           | 266 +++++++++++++++++-
- kernel/sched/fair.c                           |  31 +-
- kernel/sched/rt.c                             |  15 +-
- kernel/sched/sched.h                          |  22 +-
- 12 files changed, 423 insertions(+), 30 deletions(-)
-
---=20
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index fb8752b42ec85..dcc2443078d00 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6262,6 +6262,11 @@
+ 	sa1100ir	[NET]
+ 			See drivers/net/irda/sa1100_ir.c.
+ 
++	sched_proxy_exec= [KNL]
++			Enables or disables "proxy execution" style
++			solution to mutex-based priority inversion.
++			Format: <bool>
++
+ 	sched_verbose	[KNL,EARLY] Enables verbose scheduler debug messages.
+ 
+ 	schedstats=	[KNL,X86] Enable or disable scheduled statistics.
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 9c15365a30c08..1462f2c70aefc 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1636,6 +1636,19 @@ struct task_struct {
+ 	 */
+ };
+ 
++#ifdef CONFIG_SCHED_PROXY_EXEC
++DECLARE_STATIC_KEY_TRUE(__sched_proxy_exec);
++static inline bool sched_proxy_exec(void)
++{
++	return static_branch_likely(&__sched_proxy_exec);
++}
++#else
++static inline bool sched_proxy_exec(void)
++{
++	return false;
++}
++#endif
++
+ #define TASK_REPORT_IDLE	(TASK_REPORT + 1)
+ #define TASK_REPORT_MAX		(TASK_REPORT_IDLE << 1)
+ 
+diff --git a/init/Kconfig b/init/Kconfig
+index d0d021b3fa3b3..b989ddc27444e 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -875,6 +875,16 @@ config UCLAMP_BUCKETS_COUNT
+ 
+ 	  If in doubt, use the default value.
+ 
++config SCHED_PROXY_EXEC
++	bool "Proxy Execution"
++	default n
++	# Avoid some build failures w/ PREEMPT_RT until it can be fixed
++	depends on !PREEMPT_RT
++	depends on EXPERT
++	help
++	  This option enables proxy execution, a mechanism for mutex-owning
++	  tasks to inherit the scheduling context of higher priority waiters.
++
+ endmenu
+ 
+ #
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 67189907214d3..3968c3967ec38 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -119,6 +119,35 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_compute_energy_tp);
+ 
+ DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+ 
++#ifdef CONFIG_SCHED_PROXY_EXEC
++DEFINE_STATIC_KEY_TRUE(__sched_proxy_exec);
++static int __init setup_proxy_exec(char *str)
++{
++	bool proxy_enable;
++
++	if (kstrtobool(str, &proxy_enable)) {
++		pr_warn("Unable to parse sched_proxy_exec=\n");
++		return 0;
++	}
++
++	if (proxy_enable) {
++		pr_info("sched_proxy_exec enabled via boot arg\n");
++		static_branch_enable(&__sched_proxy_exec);
++	} else {
++		pr_info("sched_proxy_exec disabled via boot arg\n");
++		static_branch_disable(&__sched_proxy_exec);
++	}
++	return 1;
++}
++#else
++static int __init setup_proxy_exec(char *str)
++{
++	pr_warn("CONFIG_SCHED_PROXY_EXEC=n, so it cannot be enabled or disabled at boot time\n");
++	return 0;
++}
++#endif
++__setup("sched_proxy_exec=", setup_proxy_exec);
++
+ #ifdef CONFIG_SCHED_DEBUG
+ /*
+  * Debugging: various feature bits
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index c8512a9fb0229..05d2122533619 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1155,10 +1155,15 @@ struct rq {
+ 	 */
+ 	unsigned int		nr_uninterruptible;
+ 
++#ifdef CONFIG_SCHED_PROXY_EXEC
++	struct task_struct __rcu	*donor;  /* Scheduling context */
++	struct task_struct __rcu	*curr;   /* Execution context */
++#else
+ 	union {
+ 		struct task_struct __rcu *donor; /* Scheduler context */
+ 		struct task_struct __rcu *curr;  /* Execution context */
+ 	};
++#endif
+ 	struct sched_dl_entity	*dl_server;
+ 	struct task_struct	*idle;
+ 	struct task_struct	*stop;
+@@ -1355,10 +1360,17 @@ DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+ #define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
+ #define raw_rq()		raw_cpu_ptr(&runqueues)
+ 
++#ifdef CONFIG_SCHED_PROXY_EXEC
++static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
++{
++	rcu_assign_pointer(rq->donor, t);
++}
++#else
+ static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+ {
+ 	/* Do nothing */
+ }
++#endif
+ 
+ #ifdef CONFIG_SCHED_CORE
+ static inline struct cpumask *sched_group_span(struct sched_group *sg);
+-- 
 2.49.0.rc0.332.g42c0ae87b1-goog
 
 
