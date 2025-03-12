@@ -1,196 +1,214 @@
-Return-Path: <linux-kernel+bounces-558020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F66A5E08B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:37:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEFB0A5E08D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:37:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 633DE3AB3B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:36:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8209B19C0534
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236652517B8;
-	Wed, 12 Mar 2025 15:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD06256C9B;
+	Wed, 12 Mar 2025 15:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WdntoeN6"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012053.outbound.protection.outlook.com [52.101.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IqdrYTHh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="00RXRHR8";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="F0BePVfH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2grvEfKj"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CA115539A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A9B254875
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741793803; cv=none; b=Zff0GpMZkcz9Ct5rZuZ5b6IqkXK2JuxL8yOXWa997UmyFDNLo/dW4wKlsuG7dhg/ez9kH+A4R+EEnaIW5I1BVf5FzVzmRS1brrp4lY6OH4YI7kJkaS39hLq3oK1ZN85gcoK3G7VvcBbDXwquIdkykoyRFJ/ACZNCaYmsKPo1FDE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741793803; c=relaxed/simple;
+	bh=qFY9VG5oi6Bf7Am2zf01UPtIpoT1kADJtAHZY/KSbhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fVgEH4AYfWEQQlk5Xz+3f7RhQw6WjIG6Ho0y2KIISQv6nx4/kXqdwBXt6ypdT/CXNGcn1ONR3bv/y1hqtwbhzryxJEHQcZjB8bQnw24TBoCOBbrcgujmTcKEP/8vthfmYVl2RHNmH+3mndhuKzYwsv8oIV0OBeaENrk3HZ4hO8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IqdrYTHh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=00RXRHR8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=F0BePVfH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2grvEfKj; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from localhost (unknown [10.100.12.32])
+	by smtp-out1.suse.de (Postfix) with ESMTP id E3387211CF;
 	Wed, 12 Mar 2025 15:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741793802; cv=fail; b=anP3rzHOzzsDzHmTpf65zkcSz+9LrinlOgRdYOT1RCtJdtPVdSAi4eHkUhSi95Ya6cegmfIYDC191UBGFU+CAv8e/MwY73TXYV9cfYn3EMoF5yAxlrKfiUVjcDDxi8fzDuYFmto0BfXSbEnuLiIXPf65fr1PlVoMe2mgaCN8dB4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741793802; c=relaxed/simple;
-	bh=dR6bqjLHgc+gDYd+b6TLzQRwVG9PrbeLON5cssifSwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=m5SfDASWovGC/EvP3Dp8yY15ZfH0C4mgYTBqPQCIUpv7Lrpn1JT/Idcb/WR8r8t6YIr5TYEc3kHIaQh5CbLC9w/tTjRlz1/wIQREBUvjJ5PBTfr0c95FJaJMOjYasIAAeqZGePH5i04RE5L7raBhB/3Lji4IAorW/D++kRgE4NM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WdntoeN6; arc=fail smtp.client-ip=52.101.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YkI3hIXJ3WiBNlwMMR+17bpiU3tFCugYLFNDzSTndpebEe20+6gUlmQ+urxuIyigHaMUCvowoYUDGUVrEgXR3thlV8cx0/+hEwNtVO75e6IvezfTF3H650li/N7c0xiyFDK9cNs+u7JmTu+FqPN3bqJUex8PNbodV68MQsF4l9t59hCIqMVun4r7UQWLgBixE2GILReNuEI0f0fJH7G+fKGKeNjFYYQahPF+dqJWne/8t0J6WsIrdRUOTUO0QJSxXKNklkCXfHlO0b/vH/98fqQhl5PdYWRBKSpxT/78OvUCrqge6KD01YirsdoxP5pjgmNrIGtZcqxqeiq5EI4/FA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RMteELg+dXMMFeDqf50n4c7xlclrqT9cgjT4atq3+Xo=;
- b=jZZkP3UQ4lw5mglq1mGiY//vSjfLQ3gy3EPUnK0qwKcrlp2xxlELysksbzwOJw33TNkxwkQnZr9wqChekhV/Vvl7urDmcUsiKI7OrBdtr/VfnI6MZGpLMF00IxNQO7BzMWJksJsGMmuffz05NUENojB+AZ9Jj9t+xMOtAhXvZtWyup9MXKwmrU9HKolyFe38mBxkUBMiRFPQ0dLjRMMNf0lrZpLwKm7nroOM03ywaV1UDUX86VY6OE2w4FDlHsm168KLyKn201bK+xCWM7g0J7mDcKePRQ6ioByfTk5Y1H08tRm7Pyl80nI7jpV2On2JOS5MA9yPft/Gk+JU99RiIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RMteELg+dXMMFeDqf50n4c7xlclrqT9cgjT4atq3+Xo=;
- b=WdntoeN6t8aOpURcWF+SjpYWIOINYfdz7I9cXTxrhcOYtgeHwWNJrur3SeA+YYFvtqvZpWCWci0HNq8l4Y4Xls8QsaV428lqzLKNKTlPCWB2Y9tovMTPsl7HXv627l2vpsXim40ytDQaDHkz079ZiYJQ4mcpyUMQ8hJ8goJmk64rnN98d50AOZTA57nd3/OE9WnRfUrMLH2tSQUTUb/nsXud1QzkhqvOXt+PxIfmvyDVqNgJesrM/eXPohv20e9WeEnu3b/ROXUMRMm8UcultszI/zivwtv+ia2uPb2cisN3TGiwT8bngLsGnpjOaLTTf1tMFAMUnFl2U3HNM45dPA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by AM7PR04MB6902.eurprd04.prod.outlook.com (2603:10a6:20b:107::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Wed, 12 Mar
- 2025 15:36:36 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 15:36:36 +0000
-Date: Wed, 12 Mar 2025 17:36:32 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Furong Xu <0x1207@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Xiaolei Wang <xiaolei.wang@windriver.com>,
-	Suraj Jaiswal <quic_jsuraj@quicinc.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Gal Pressman <gal@nvidia.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Chwee-Lin Choong <chwee.lin.choong@intel.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741793800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oX8M8QqGtnL0HTCgbbxAWVuYLqQ6RLyqgkzfCrg0ngE=;
+	b=IqdrYTHh2O1WJBtSCpzlk273Zt5h6e8rO0dR2KFjC2fVNtLdP/ovRaIhvL+f6i2co2o+Yd
+	jmyQIkNa2eWRFwFe65cnJqSHbCwucvSaZ62hDpDrYweHkTeknMV77FZ/m92HWwZ4Pnk/cf
+	dec26tzrzRkoxswRSCD78KgZaDSxpdY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741793800;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oX8M8QqGtnL0HTCgbbxAWVuYLqQ6RLyqgkzfCrg0ngE=;
+	b=00RXRHR8be3lFO5p2b/GOxRHVa6IpgwxIG0VashnlL1qcVGU+oVM6ojmKFV6+IBKf1e/Gw
+	p+nlVUkAghlRaoCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741793799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oX8M8QqGtnL0HTCgbbxAWVuYLqQ6RLyqgkzfCrg0ngE=;
+	b=F0BePVfHsxyFXqqhCO7tBiewuL/s48a8aBEBqcJGc2/kJzJ0Ln4Xfqz0iV7d/NcqM8nM9g
+	F8/JX19ROYWUY2u1o0aE5l6eco/eODi4J1LW1y/ZYW8rXE5XxqVm+lx2aU348uLZ1KSju0
+	aSQD3heH20L76U+dzs6v8QjurfyEERw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741793799;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oX8M8QqGtnL0HTCgbbxAWVuYLqQ6RLyqgkzfCrg0ngE=;
+	b=2grvEfKjon+NHI/ZnIAQ4NdBzQOqwo02KtUjYyBv5c/Wk2EC8H2mKuNpUvA6Lnspkd79fT
+	qmTtf/72BliDwvDQ==
+Date: Wed, 12 Mar 2025 16:36:39 +0100
+From: Jiri Bohac <jbohac@suse.cz>
+To: David Hildenbrand <david@redhat.com>
+Cc: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+	Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>,
+	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>,
 	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
-Subject: Re: [PATCH iwl-next v9 02/14] net: ethtool: mm: extract stmmac
- verification logic into common library
-Message-ID: <20250312153632.evkqnjcsuspvzp5g@skbuf>
-References: <20250309104648.3895551-1-faizal.abdul.rahim@linux.intel.com>
- <20250309104648.3895551-3-faizal.abdul.rahim@linux.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250309104648.3895551-3-faizal.abdul.rahim@linux.intel.com>
-X-ClientProxiedBy: VI1P195CA0055.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:802:5a::44) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	David Hildenbrand <dhildenb@redhat.com>,
+	Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH v2 0/5] kdump: crashkernel reservation from CMA
+Message-ID: <Z9GqB1cRSD-IQM_s@dwarf.suse.cz>
+References: <Z7dc9Cd8KX3b_brB@dwarf.suse.cz>
+ <04904e86-5b5f-4aa1-a120-428dac119189@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AM7PR04MB6902:EE_
-X-MS-Office365-Filtering-Correlation-Id: cc8cfcdf-3071-4e5a-6763-08dd617bacd1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lO/C3wXLlBX790ghRcvSUwc0QFb60phCtW1Wzd23I/31+v6Ev0NZeuxWyPwC?=
- =?us-ascii?Q?EtcWeSeVZX+/X7sjtL8LnqomCP/8cZJDTtDY1MYEJV/KabqWKXxRZ9nZzJJ+?=
- =?us-ascii?Q?5SAYDw146JGE2W1qCyh48P1+39T3fI5j6Jmp9BxoY/Rm8SQS8IsrXTLNLdPZ?=
- =?us-ascii?Q?jkux7L1V6ItXOSwlotJrQ+Zfnylj4px041PHpPyzcwv4hIFxzTkHsYFyChLA?=
- =?us-ascii?Q?glUa7g3vAIWhzv7eAH51SP8Z6P2xfPB3X0xES+sWdLQenpOBc5iCNtYg15Co?=
- =?us-ascii?Q?C47156mZeGdbeZlbQ4HvTlZWeujM3oqyKyfsNyVeFKCfqVAHz+C6x4+/l9IH?=
- =?us-ascii?Q?4CETctf+fw8gyZNkuHDH2gN7nu5hWEva39Y4CpFdMCM378Vo0sC8g+a85P2e?=
- =?us-ascii?Q?6rsgcz61i/6P0jfK1plg1e8BLlY1altkHeHMw65IzxlTCrHi0APOMMZgtmDc?=
- =?us-ascii?Q?FjpSpTv9FkPsSbIq/44a1gIqG7aRCtGOmdGlWimDAqkxTxPaFBxHvQgfx/NU?=
- =?us-ascii?Q?9zJKPxNHGbmyDS2FmGF5ClE7YCyp5quMWEZBUgUg8jA+3izJhoqYu3r3fXoS?=
- =?us-ascii?Q?FbjEv2eim+g4qio4dsKC7Og/UUBCwW4XAGRHqCxYuDgDe65AlMb/sRubIp2y?=
- =?us-ascii?Q?LtIrfCYIivb9UygtrwXeJbNHjZXLm0FPgvJPPxXQzJm9NADf50B41W545oVO?=
- =?us-ascii?Q?v3hZo2RtpO/LIcqa2rd9x5gUTuKK5fOGxadNCTJKZlM3GZfKUrAhxBodi3Qw?=
- =?us-ascii?Q?nqwD8uqkW6Y36/1vKZGQP/ZrY92aJqqLp89K0QN8HsUXlUOk7a8usfcc0zkY?=
- =?us-ascii?Q?iZJKSaA2Vg7TqgGhNARmosfFrXNeobvQMGtvl6cgSagN0dOFjYeT3aXudW4Q?=
- =?us-ascii?Q?bRg1Zjmy4f3KIfZ7c5kGPfOiQI+pPKd52exis8YlHskvd4l632gKmsSnBO5i?=
- =?us-ascii?Q?qghZRFmv3kd++/UieNqIrfJXAh+FPKrTmleLvqMbq421RYVAHUww1AO03YCQ?=
- =?us-ascii?Q?Lcj8tZmLvKNjtN/j1HZV4hENv08VtyjiZGw249pkJ4l+hkFltfAZsRRTuqmw?=
- =?us-ascii?Q?kv7A+akM+M7khY9Sk18UUaB3COYHAI0uCnnwkfVrCg9P0vXGjohRkBK+R1gD?=
- =?us-ascii?Q?InG4P8Knr1yxfAAZ9nh4fV6VOtFstUuK0cEy6kjSNXXKbr38++Yjq++a4J7Z?=
- =?us-ascii?Q?lk1XC0rEKu53/oD7WK+bs2DB0U78JFvbARlyuqV4Wc5SAqWJ7MLGaThUzBal?=
- =?us-ascii?Q?o92GEkrkT7EiyT9OD3xEJxYwaUTRDODfoBKwVkWDazSa3/psdcXynsoTAC07?=
- =?us-ascii?Q?Ixjs8mgqFq3RkIL37NdV36tEr8nKflwNknIVj9ktr2qga0IyyXODP+lVsJdn?=
- =?us-ascii?Q?MZ2i7KJZM0xVxQt5pLaU2XtZ6CQs?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ZmqwO4BW8c9rkE3ubNkY15mfsJaOql0C9WQnp+jVY+O3Mse30J+2DlzLQUyg?=
- =?us-ascii?Q?sl7vAj8uK6qE0wuSXP06HN/sYI46qPSztT1TcdAzUoZk9Q/fA6BolZ0P5BCY?=
- =?us-ascii?Q?GnHWesQPTqcoiMYurPv9o+deoD+GsmepBQWeyz8PwMo0YnN0/DWcSxnoTU4b?=
- =?us-ascii?Q?O6TA60zh4R8KmJOqEID5Enb1JJJnx5dQpuN0P2lDg08mQMDzzbdVSM60paBl?=
- =?us-ascii?Q?z4zOxYrPrPkOOyDxXP7a0kJ6PwZUOOWT4AUlct67RwUqJ0iSEr53JNfiKBep?=
- =?us-ascii?Q?dn+Db7l5yx1VXPut0KdSaf644yV0TIAQZGOmmIR8BzdyuFpY6+UFyFk+Xg6h?=
- =?us-ascii?Q?+ufIwvdPyoSqRNomqRkLjhh9Ybyf+AwG/WhJKL/Cjrh82oovM54d+yLbexsV?=
- =?us-ascii?Q?UyGUjD1RQRmZeb/zoMHtBy75CSJiojjwjkM3VsAonDPoTl65tcBCRhuIjlND?=
- =?us-ascii?Q?BfgnzZswsVBFQP6A2f3R8uAvJ10eA3IhpXK7zyRKEnSgDVW1JVYtPc4uJpFH?=
- =?us-ascii?Q?Uv4QobxlwqGDSnDTca7ypu1kAdfvSc4uItXXON0LwKTC7a8B/WrxBFVXXBn1?=
- =?us-ascii?Q?4E3i3cMucVNMebtYVK24WF4oOWOtFLZrB5Ss25+/liumHFsbTuY/PYWUIOIi?=
- =?us-ascii?Q?Ye3sSacpa5/P1Gkf4WXXsZMA+IDRabvpjzfUaawQnIZYtlp4q750GnNWKliz?=
- =?us-ascii?Q?/jBoltMy6TKToYpRBU9K0rZBZGWPnEWIiGXO1x3WuNy9J+7eCvSYBNnGB2n+?=
- =?us-ascii?Q?XCUy2KDqmdQN7r75S6a/sRv3a6zNF9xI1zlpWw8MfWtRKRPCVvHzvbYE/zKP?=
- =?us-ascii?Q?wT/Pdwgubz8Z5ylAhukAGV9XFYm/fFOV0TIVWag12NZaB75bX5/En/qPZ+fR?=
- =?us-ascii?Q?0zy8ytHXI5n31H0WgLar4zE9s4SOqR/cY8vpjcd1FRW3d846/14SLzjkPntO?=
- =?us-ascii?Q?6XLjvV4BSEOCc9yqzNXaYsKyU42wNU4SUU9E5DKv1hJ25lOvyHVwcOAvdj2V?=
- =?us-ascii?Q?eciQyvcS4acaAHF0l8VaSaR08O8mA1CE9TJ8rA6SDR/xhcKsMfYH0Sgyq+0U?=
- =?us-ascii?Q?ZiRfKihyWjWUXOcQd5r1XqSW4ySqf9LKqkk5HgvdRbbSQ+M/W66X2uV2hCYQ?=
- =?us-ascii?Q?J7C6vxr//icaMvyiwsSQ3FCFeMablUeh9qTmh3ZH0iKcuZfOCAjiYzLrggoA?=
- =?us-ascii?Q?olbX/kNypz9lJ5NzYBxobxQ1i0KDpYKkX96Pct0xQIOwEscuUY6fTkTRyYN+?=
- =?us-ascii?Q?M5t8KLOC5QOkwdpx8T+fcy6xaMPzmQf6eQpikWXTOYm5cwRuLEXmfv941xJ3?=
- =?us-ascii?Q?fv8R3cYkz3kjroTxf34nWnc/T2ejxmz6VWnJCkcwgspZxIrQYfwmamwWALWN?=
- =?us-ascii?Q?kJW2q33ZoSLSknoBCuu6ZON8zlRIBrKqap4LTwUfJjLibXAGr+IIhUBGMLxi?=
- =?us-ascii?Q?K/Up5hNi1aztas5mAG4hop/DNLjfsrxqNgiNwfk/P1rB7Z9UT4IcqLdIPK3Q?=
- =?us-ascii?Q?iBZZWzpzRzosQBqsqJpJAN7V0oPKHJMbM3RURnmgJWY+RhGAfPhNBY1aT5rT?=
- =?us-ascii?Q?5vE4vkiQ4ddj+dvlk2vhrmCoe1xhb2jkEj3ZdIr3K/nnfStwW3tP+Kw8anHU?=
- =?us-ascii?Q?ew=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc8cfcdf-3071-4e5a-6763-08dd617bacd1
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 15:36:36.6107
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L9QYdy9vLXufkRKY8OP1fxg2HbH6eExphWgOuOTMsH2sONzR1ZhqeA5TVQF2DvGswCR3Xe0sCd2I2/a+KOqs9w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6902
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <04904e86-5b5f-4aa1-a120-428dac119189@redhat.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[localhost:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Sun, Mar 09, 2025 at 06:46:36AM -0400, Faizal Rahim wrote:
-> @@ -7850,7 +7850,7 @@ int stmmac_suspend(struct device *dev)
->  	rtnl_unlock();
->  
->  	if (stmmac_fpe_supported(priv))
-> -		timer_shutdown_sync(&priv->fpe_cfg.verify_timer);
-> +		ethtool_mmsv_stop(&priv->fpe_cfg.mmsv);
->  
->  	priv->speed = SPEED_UNKNOWN;
->  	return 0;
+On Mon, Mar 03, 2025 at 09:25:30AM +0100, David Hildenbrand wrote:
+> On 20.02.25 17:48, Jiri Bohac wrote:
+> > 
+> > By reserving additional crashkernel memory from CMA, the main
+> > crashkernel reservation can be just large enough to fit the
+> > kernel and initrd image, minimizing the memory taken away from
+> > the production system. Most of the run-time memory for the crash
+> > kernel will be memory previously available to userspace in the
+> > production system. As this memory is no longer wasted, the
+> > reservation can be done with a generous margin, making kdump more
+> > reliable. Kernel memory that we need to preserve for dumping is
+> > never allocated from CMA. User data is typically not dumped by
+> > makedumpfile. When dumping of user data is intended this new CMA
+> > reservation cannot be used.
+> 
+> I'll note that your comment about "user space" is currently the case, but
+> will likely not hold in the long run. The assumption you are making is that
+> only user-space memory will be allocated from MIGRATE_CMA, which is not
+> necessarily the case. Any movable allocation will end up in there.
+> 
+> Besides LRU folios (user space memory and the pagecache), we already support
+> migration of some kernel allocations using the non-lru migration framework.
+> Such allocations (which use __GFP_MOVABLE, see __SetPageMovable()) currently
+> only include
+> * memory balloon: pages we never want to dump either way
+> * zsmalloc (->zpool): only used by zswap (-> compressed LRU pages)
+> * z3fold (->zpool): only used by zswap (-> compressed LRU pages)
+> 
+> Just imagine if we support migration of other kernel allocations, such as
+> user page tables. The dump would be missing important information.
+> 
+> Once that happens, it will become a lot harder to judge whether CMA can be
+> used or not. At least, the kernel could bail out/warn for these kernel
+> configs.
 
-FWIW, this trivially conflicts with net-next commit 64fdb808660d ("net:
-stmmac: remove write-only priv->speed").
+Thanks for ponting this out. I still don't see this as a
+roadblock for my primary usecase of the CMA reservation: 
+get at least some (less reliable and potentially
+less useful) kdump where the user is not prepared to sacrifice
+the memory needed for the standard reservation and where the only
+other option is no kdump at all.
+
+Still a lot can be analyzed with a vmcore that is missing those
+__GFP_MOVABLE pages. Even if/when some user page tables are
+missing.
+
+I'll send a v3 with the documenatation part updated to better
+describe this.
+
+> > The fourth patch adds a short delay before booting the kdump
+> > kernel, allowing pending DMA transfers to finish.
+> 
+> 
+> What does "short" mean? At least in theory, long-term pinning is forbidden
+> for MIGRATE_CMA, so we should not have such pages mapped into an iommu where
+> DMA can happily keep going on for quite a while.
+ 
+See patch 4/5 in the series:
+I propose 1 second, which is a negligible time from the kdump POV
+but I assume it should be plenty enough for non-long-term pins in
+MIGRATE_CMA. 
+
+> But that assumes that our old kernel is not buggy, and doesn't end up
+> mapping these pages into an IOMMU where DMA will just continue. I recall
+> that DRM might currently be a problem, described here [1].
+>
+> If kdump starts not working as expected in case our old kernel is buggy,
+> doesn't that partially destroy the purpose of kdump (-> debug bugs in the
+> old kernel)?
+
+Again, this is meant as a kind of "lightweight best effort
+kdump". If there is a bug that causes the crash _and_ a bug in a
+driver that hogs MIGRATE_CMA and maps it into IOMMU then this
+lightweight kdump may break. Then it's time to sacrifice more
+memory and use a normal crashkernel reservation.
+
+It's not like any bug in the old kernel will break it. It's a
+very specific kind of bug that can potentially break it.
+
+I see this whole thing as particularly useful for VMs. Unlike big
+physical machines, where taking away a couple hundred MBs of
+memory for kdump does not really hurt, a VM can ideally be given just
+enough memory for its particular task. This can often be less
+than 1 GB. Proper kdump reservation needs a couple hundred MBs,
+so a very large proportion of the VM memory. In case of a
+virtualization host running hundreds or thousands such VMs this
+means a huge waste of memory. And VMs often don't use too many
+drivers for real hardware, decreasing the risk of hitting a buggy
+driver like this.
+
+Thanks,
+
+-- 
+Jiri Bohac <jbohac@suse.cz>
+SUSE Labs, Prague, Czechia
+
 
