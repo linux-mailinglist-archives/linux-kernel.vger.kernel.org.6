@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-557748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67594A5DD31
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:58:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23333A5DD35
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:58:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A638F17919A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:58:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64910166C78
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC25124292B;
-	Wed, 12 Mar 2025 12:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733A02451C8;
+	Wed, 12 Mar 2025 12:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mkS3gcFb"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nKzqfaiX"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6782B7083C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC42923CEE7;
+	Wed, 12 Mar 2025 12:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741784284; cv=none; b=aQospBO4Z7ewYp8bm3ocAaaK1FePMiDSUMWL1+UdXrtGyrak0WrhJlamdG9lO+pNGlVQlOtC+nv60miiVH9ceM09oKEXT6KSCWHpoPA68q9+v9Id7A5KL9e/GWlR7j/jon//bP1t3e8JmlQbC4Vji01+/XrxwuHtxxFbfFgbsU8=
+	t=1741784317; cv=none; b=qoFsubnRidMPJQs1oCjHK8CW0nA77ywiM4sWOIAAu89L7BcEzVdeoiTdoewvDxikw9/T9SWaQHWn5Ezh7SVmHCZKAKTcf1EWpPvDae4LzmtHaKVRNCft4cPqRve14jSymf1famz2Rt78yXYZJf4Jg4poIeicEXLEoCcT7PjszNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741784284; c=relaxed/simple;
-	bh=bl74ciPvTW5Ds69DkMal9hOQn07uY4RaUw/Gasyua4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qs9qOc308ZoxQbi+dijsFSs5+KEdvoK/L7o9mMjqgfl6yDO64x814tmQbtHJINqifqhfQhIMCgcOsTYFHof08sXBn6jO7sUSfbnRLU+K0N2gQZEabVxmnAywyL1AuRw6YSgYu9EomrDL9o1nWXp02gNuhW04WdW+RuiIhHbEBqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mkS3gcFb; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Ai6ukKOfO621HctvE3ks1IHNTAO+lgUNMqcOjSC6b2E=; b=mkS3gcFbmjqrcOF+bJOTqpmmWN
-	yHHZsFiHq09JvFzzOCx9uYVW2jzF1mJRW76vrSDSv2Eezf6JHl2SyDeSwwqvyHIxmKfdXMxZM4Bgr
-	HQ4rRRekK+5B+dhOLgKbK2mPQD8rNlp1TfeNQtMTrG2S4STqQguB7e7hmROLgYN43pJWkL1onsah+
-	GRtHObTt2NpxMuSUX/6EmrG58fxD9bOKOz+Wb09km6rpAnKwl7rh/La2Fv/EQrrk4twW0kJafszRT
-	isRsTRn1RheVdyW5oazyLITbrGhh7w/lKnp9KYE+YG7cnIM5r9Vog6G/CUbbdNQHNC4FrvmyWDfBx
-	PAcCh1Xw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsLel-0000000CrgP-0MTR;
-	Wed, 12 Mar 2025 12:57:55 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 15B36300599; Wed, 12 Mar 2025 13:57:54 +0100 (CET)
-Date: Wed, 12 Mar 2025 13:57:53 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: mingo@kernel.org, lucas.demarchi@intel.com,
-	linux-kernel@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Subject: Re: [PATCH v3 7/7] perf: Make perf_pmu_unregister() useable
-Message-ID: <20250312125753.GL19424@noisy.programming.kicks-ass.net>
-References: <20250307193305.486326750@infradead.org>
- <20250307193723.525402029@infradead.org>
- <05e39b53-8e2f-4e21-8106-028fe54c37a0@amd.com>
+	s=arc-20240116; t=1741784317; c=relaxed/simple;
+	bh=V9lRTTnpFa20bmVZdb8qrVEw3EzhsekbTCLI6o694a4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tv8AV/AuLv8jAIE/mreznoNjAkpB+MTIhwYFphpuZx0fg2hGOQzQgvWiQ8ATOvLLnBh9TctA8JbtZMarZf7zLxX0AY14W2TSMP87GWHDR/BULiQy2zb+eTHV3zx3llP/MsqLYKeRlfqgZhmkpepuFYYLCjPLMAFees63vZ3N5LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nKzqfaiX; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741784310;
+	bh=pXSKGvbw/l6merKyY31ekiwlrdxexscEy/P41aikEaU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nKzqfaiXWuXvQ2cGsmTvUcv4CloXIfxthvfLu5mtnsUmg7jzXXHuYeeQZ9G1t1IME
+	 U/VlCjm73MuX+TPO225Zv0Wp6ON4QnVaHfiw7AiVEQw3BCeFE7UTaEcqZSPL/8NQGV
+	 2qBLnSDoH91WbV/AcUu2Go3gXdaYoS4AH/SOWlxuumSQKHWnP29R3ikZU/NSFAsOT+
+	 vjkIt8bmY3Jv4Q2u2zjrPdCctRlLtzEZUQOcfrV9WTzUcGkphCtCdLZ60Ti2FCQpLh
+	 Uqs0mKHiPFmxwc6KWWlfzdS4hO2a5NiqIAIGZ+VpAGdZqTRyNyD8WsxLOnXdxioLp9
+	 wmuxMr7va+cgg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCW060SGXz4x5k;
+	Wed, 12 Mar 2025 23:58:29 +1100 (AEDT)
+Date: Wed, 12 Mar 2025 23:58:29 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, "Rafael J. Wysocki"
+ <rafael.j.wysocki@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the pm tree
+Message-ID: <20250312235829.2ac0c991@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <05e39b53-8e2f-4e21-8106-028fe54c37a0@amd.com>
+Content-Type: multipart/signed; boundary="Sig_/IW=GnFSo86CuPV8H07BM9zB";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Mar 10, 2025 at 10:16:09PM +0530, Ravi Bangoria wrote:
-> On 08-Mar-25 1:03 AM, Peter Zijlstra wrote:
-> > Previously it was only safe to call perf_pmu_unregister() if there
-> > were no active events of that pmu around -- which was impossible to
-> > guarantee since it races all sorts against perf_init_event().
-> > 
-> > Rework the whole thing by:
-> > 
-> >  - keeping track of all events for a given pmu
-> > 
-> >  - 'hiding' the pmu from perf_init_event()
-> > 
-> >  - waiting for the appropriate (s)rcu grace periods such that all
-> >    prior references to the PMU will be completed
-> > 
-> >  - detaching all still existing events of that pmu (see first point)
-> >    and moving them to a new REVOKED state.
-> > 
-> >  - actually freeing the pmu data.
-> > 
-> > Where notably the new REVOKED state must inhibit all event actions
-> > from reaching code that wants to use event->pmu.
-> 
-> I think perf_event_init_task() failure path can still race with
-> perf_pmu_unregister() and trigger a WARN():
-> 
->         CPU 1                                          CPU 2
-> 
->   perf_event_init_task()
->     perf_event_free_task()
->       perf_free_event(event1)
->       /* event1->refcount is 1 */
->                                                   perf_pmu_unregister()
->                                                     pmu_detach_events()
->                                                       pmu_get_event(pmu) /* Picks event1 */
->                                                         atomic_long_inc_not_zero(&event1->refcount) /* event1 */
->       /* event1->refcount became 2 (by CPU 2) */
->         free_event(event1)
->           WARN()
-> 
+--Sig_/IW=GnFSo86CuPV8H07BM9zB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, I think most free_event() users are broken at this point. Let me
-rip all that out. Not really worth the trouble anymore.
+Hi all,
+
+After merging the pm tree, today's linux-next build (powerpc allyesconfig)
+failed like this:
+
+drivers/pinctrl/pinctrl-amd.c:933:15: error: variable 'pinctrl_amd_s2idle_d=
+ev_ops' has initializer but incomplete type
+  933 | static struct acpi_s2idle_dev_ops pinctrl_amd_s2idle_dev_ops =3D {
+      |               ^~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/pinctrl-amd.c:934:10: error: 'struct acpi_s2idle_dev_ops' h=
+as no member named 'check'
+  934 |         .check =3D amd_gpio_check_pending,
+      |          ^~~~~
+drivers/pinctrl/pinctrl-amd.c:934:18: error: excess elements in struct init=
+ializer [-Werror]
+  934 |         .check =3D amd_gpio_check_pending,
+      |                  ^~~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/pinctrl-amd.c:934:18: note: (near initialization for 'pinct=
+rl_amd_s2idle_dev_ops')
+drivers/pinctrl/pinctrl-amd.c: In function 'amd_gpio_probe':
+drivers/pinctrl/pinctrl-amd.c:1210:9: error: implicit declaration of functi=
+on 'acpi_register_lps0_dev' [-Wimplicit-function-declaration]
+ 1210 |         acpi_register_lps0_dev(&pinctrl_amd_s2idle_dev_ops);
+      |         ^~~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/pinctrl-amd.c: In function 'amd_gpio_remove':
+drivers/pinctrl/pinctrl-amd.c:1229:9: error: implicit declaration of functi=
+on 'acpi_unregister_lps0_dev' [-Wimplicit-function-declaration]
+ 1229 |         acpi_unregister_lps0_dev(&pinctrl_amd_s2idle_dev_ops);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/pinctrl-amd.c: At top level:
+drivers/pinctrl/pinctrl-amd.c:933:35: error: storage size of 'pinctrl_amd_s=
+2idle_dev_ops' isn't known
+  933 | static struct acpi_s2idle_dev_ops pinctrl_amd_s2idle_dev_ops =3D {
+      |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+
+Caused by commit
+
+  a62f03d037cc ("pinctrl: amd: Add an LPS0 check() callback")
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/IW=GnFSo86CuPV8H07BM9zB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfRhPUACgkQAVBC80lX
+0GwEgwf/bImDIOzd9Hr2HLK26fmouY5FFEpCtxj8QigCU7sm9idiqxxd/9sBua2P
+UvIoI3l5U0bknc3pVjqK8JDQBJI3/+UQk2UcSf62FqR5E1B6J73eXnPw+cZufAZ/
+M9tAqpIl83D7/ecfNOzKzXUrjlACpdEGBzUTdLtyBdq4m+3fW1CxWZGbidEx4le9
+j8bpvxDPLwE6zMNMEzlCq10QiUi8Mppn25zzsAA59nK/H7WsD29KOHgAj649kxkP
+mltnedRnFL0OrirhDsPAYRGQHP5+BLlz+1cbeO+csBCfS2Aj/a9x2+nptCF3Km52
+179cjD/mGYEILoKdvQCQd97yJEphyA==
+=NuRL
+-----END PGP SIGNATURE-----
+
+--Sig_/IW=GnFSo86CuPV8H07BM9zB--
 
