@@ -1,142 +1,153 @@
-Return-Path: <linux-kernel+bounces-557914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72C0A5DF4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:44:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C465A5DF0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:34:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E231E1675D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:43:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C089F1665AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C7624CEDF;
-	Wed, 12 Mar 2025 14:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072DF23BCF6;
+	Wed, 12 Mar 2025 14:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K6NXXWyp"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dzJI6DsR"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F4F86358
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05C71CF8B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741790593; cv=none; b=FjRhzoqIOZubhDsMG0mj5h6v3v+chYc+Q8IXgRNHPKVLCWX2xmQE/KQY7uUxWqC5COMnPplPa80F0rnQrwwAGkLJhysCibJaXpghXI7rSpL2S3KZePpNk5GWOJ6CN41tnZy8rXK3UWsBmKdrVme7uVZPJg3Oqk8fga04xXhkgys=
+	t=1741790081; cv=none; b=N7zz/5yiIKzX4sVmWOZ1BVfWI9XV1+t/fshUPMzi9rEZ3jXZPBnTNl1EfLte/ecwRjNVzl0vKWjU67hTblWhifRhMixFyNT05Vg7edDPtGxEZRDUyupqm5dj1jJOdu9lsXuFp0naFRSWj4WPDrOapZIDF3n5j+mlc80Mx4NF7Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741790593; c=relaxed/simple;
-	bh=yB/1DMedibvtTqcKz2b+elEi0esJF8P5TQBtkTwCVB4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SskibMKANuqbSA7YNZsvRX6SJgI93SHb+P0w6XhakCkYFayO0EvSbowjoHddTqsxSnDh2dAO7UsQxi49gRzSJsmA4YGGf3LcZvThMBijucUDLfx34AzNKir69zDbA48an/EBkfUqhn1e5p6ySBN+zO87u3FpOARWH4hW+Z1HV1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=K6NXXWyp; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=oInsi2D7axo2egqLTm6zsJ7BfqLAvSOVJG6AQYZo6i4=; b=K6NXXWypJEHl+g3kj4kkSGqGfu
-	up08gClhXsMJsUWf5e5D2727V1MfG1Tr+1UtL6FsLLem+iaWKM26oRNeTGwR2LLoHVsYi1sxIsRF3
-	3molZPfDWGwrRfXIUvYO/Wvz6q4qBSten06E2YlZJD1dhmQrzoJYt0EsWCESGiVFN3/zILYKtwKtN
-	qgLa8hWEO437Ljep2PIxBIN04pXPaGzweCVkFpR5KtlW4QleFhTzAQ/+MH33XIjiIJubAxVdUQyjk
-	YFbUgTGdCFZ1PYPin3HOLhlICQcvnk2WezL79kLIQr2FYteEmyZTkncyVN8dtSujygRibdr7IYJlA
-	rRtF6k0Q==;
-Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsNIS-00000002QEt-2cM2;
-	Wed, 12 Mar 2025 14:43:00 +0000
-Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsNIR-00000009uUn-31Yp;
-	Wed, 12 Mar 2025 14:42:59 +0000
-From: David Woodhouse <dwmw2@infradead.org>
-To: kexec@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	linux-kernel@vger.kernel.org,
-	Simon Horman <horms@kernel.org>,
-	Dave Young <dyoung@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	jpoimboe@kernel.org,
-	bsz@amazon.de
-Subject: [PATCH v7 8/8] [DO NOT MERGE] x86/kexec: Add CFI type information to relocate_kernel()
-Date: Wed, 12 Mar 2025 14:34:20 +0000
-Message-ID: <20250312144257.2348250-9-dwmw2@infradead.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250312144257.2348250-1-dwmw2@infradead.org>
-References: <20250312144257.2348250-1-dwmw2@infradead.org>
+	s=arc-20240116; t=1741790081; c=relaxed/simple;
+	bh=bxG9BCBbxHP4kGa6WKxlLIvod+Idzq2ikHSp25rlxz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=COt8BEy5iB+CAwEmAD9RKXO/oPTo3JjS+85BEs+uFjV716j7dCuNs5C6ebic+V1NA0orw9GugxzQRQFrRSnBGhBiBttzHO+CrblZExouX0U34wC3VhHCDfD862qLsdCiGceqYZwgTNPQdH4mJcKSPw+u8ZbMduUUuo73xsA+Tlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dzJI6DsR; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 504361E3;
+	Wed, 12 Mar 2025 15:32:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1741789974;
+	bh=bxG9BCBbxHP4kGa6WKxlLIvod+Idzq2ikHSp25rlxz4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dzJI6DsR6tRCtirUCHaU2mqUDRxliqKbUxXsNFWP1W6KfZ4t9Ma5corWsJ3zqBSqf
+	 N+2zGYplnB/t1jXxuLMoIBHsVQ/h5HwtwRL6df49zhDZ3csZEm/gdiac+KlIgwBaQR
+	 Ush/S00oq0OKdmjUYtuhlo/0+Au+M93IUiGRfCRY=
+Message-ID: <c13bf2d9-51c2-40b2-af3d-ad4d5f912489@ideasonboard.com>
+Date: Wed, 12 Mar 2025 16:34:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: xlnx: zynqmp_dpsub: fix Kconfig dependencies for
+ ASoC
+To: Arnd Bergmann <arnd@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vishal Sagar <vishal.sagar@amd.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Jani Nikula <jani.nikula@intel.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250227132036.1136600-1-arnd@kernel.org>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250227132036.1136600-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+Hi Arnd,
 
-A previous commit added __nocfi to machine_kexec() because it makes an
-indirect call to relocate_kernel() which lacked CFI type information,
-and caused the system to crash.
+On 27/02/2025 15:20, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The new audio code fails to build when sounds support is in a loadable
+> module but the GPU driver is built-in:
+> 
+> x86_64-linux-ld: zynqmp_dp_audio.c:(.text+0x6a8): undefined reference to `devm_snd_soc_register_card'
+> x86_64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x1bc): undefined reference to `snd_soc_info_volsw'
+> x86_64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x1f0): undefined reference to `snd_soc_get_volsw'
+> x86_64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x1f4): undefined reference to `snd_soc_put_volsw'
+> 
+> Change the Kconfig dependency to disallow the sound support in this
+> configuration.
+> 
+> Fixes: 3ec5c1579305 ("drm: xlnx: zynqmp_dpsub: Add DP audio support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   drivers/gpu/drm/xlnx/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/xlnx/Kconfig b/drivers/gpu/drm/xlnx/Kconfig
+> index dbecca9bdd54..cfabf5e2a0bb 100644
+> --- a/drivers/gpu/drm/xlnx/Kconfig
+> +++ b/drivers/gpu/drm/xlnx/Kconfig
+> @@ -22,6 +22,7 @@ config DRM_ZYNQMP_DPSUB_AUDIO
+>   	bool "ZynqMP DisplayPort Audio Support"
+>   	depends on DRM_ZYNQMP_DPSUB
+>   	depends on SND && SND_SOC
+> +	depends on SND_SOC=y || DRM_ZYNQMP_DPSUB=m
+>   	select SND_SOC_GENERIC_DMAENGINE_PCM
+>   	help
+>   	  Choose this option to enable DisplayPort audio support in the ZynqMP
 
-Use SYM_TYPED_FUNC_START() to ensure that the type information is
-present, and remove the __nocfi tag.
+Thanks, pushing to drm-misc-next.
 
-I still can't make objtool happy with this in both GCC and Clang builds
-at the same time, so not yet for merging; only included in this series
-to nerd-snipe the objtool maintainers.
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- arch/x86/kernel/machine_kexec_64.c   | 2 +-
- arch/x86/kernel/relocate_kernel_64.S | 4 +++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index 7abc7aa0261b..84f59f18dcb6 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -380,7 +380,7 @@ void machine_kexec_cleanup(struct kimage *image)
-  * Do not allocate memory (or fail in any way) in machine_kexec().
-  * We are past the point of no return, committed to rebooting now.
-  */
--void __nocfi machine_kexec(struct kimage *image)
-+void machine_kexec(struct kimage *image)
- {
- 	unsigned long reloc_start = (unsigned long)__relocate_kernel_start;
- 	relocate_kernel_fn *relocate_kernel_ptr;
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index 2b7fc59af373..999aca909803 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -5,6 +5,7 @@
-  */
- 
- #include <linux/linkage.h>
-+#include <linux/cfi_types.h>
- #include <linux/stringify.h>
- #include <asm/alternative.h>
- #include <asm/page_types.h>
-@@ -59,8 +60,9 @@ SYM_DATA_END(kexec_debug_idt)
- 
- 	.section .text..relocate_kernel,"ax";
- 	.code64
--SYM_CODE_START_NOALIGN(relocate_kernel)
-+SYM_TYPED_FUNC_START(relocate_kernel)
- 	UNWIND_HINT_END_OF_STACK
-+	UNWIND_HINT_FUNC
- 	ANNOTATE_NOENDBR
- 	/*
- 	 * %rdi indirection_page
--- 
-2.48.1
+  Tomi
 
 
