@@ -1,234 +1,178 @@
-Return-Path: <linux-kernel+bounces-557201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43862A5D4E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:53:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0040CA5D4E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:03:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C17B173A13
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:53:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C2E3B4133
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39AA1D79BE;
-	Wed, 12 Mar 2025 03:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806971D79A6;
+	Wed, 12 Mar 2025 04:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AxHIzS5J"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktv14dhd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74534685;
-	Wed, 12 Mar 2025 03:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69A5154426
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741751578; cv=none; b=rG3mVsGXuPG+2swhAwDHwpaUZh5OGx6XLVcuoAhZ4R1xiBWT0y8B/+jfwh0wdxyFhi9/2dJ+9wT4vdfy1D9p8/uzma25Nvt8383a1d1/cdyilkx34VCh95NTyvlZH9hdyAX31yVrYR12kXK/K9sRpvne6cP4WF20qhuToQA0jJU=
+	t=1741752208; cv=none; b=Dgd5ZvTkhG4NNmjGju1jNZln5Uw3t5b/hxSkkcnkMlqPji3mdrOYsxtJWZejpA3HmHkN33adVWhurmefMxs+RETr1x2CpaDhhRUCT74PBGXlDi4Y7eYgq14Igr6GX2m2HwkVkJJr34pZM5tYqOsDd28JyjUCUzURbF5uKJg5h/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741751578; c=relaxed/simple;
-	bh=sLKqKjYLtwBaRwxi4pI2AP0lZkLdOBbifFarCNv34ug=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JyX8cLOsb4wgutVjEwmnMAzTIxNYXzZiZY11F7GOAJEuhbhU1JvjfKRXa025iqAD3Tbmh/MTg6I/E/eLlppxSM88LG5eOodP/Ed93/iTe0EaaDUK66miAzfXCEib0Cklg0otBKYXWKrA3dy24Ue4sYdP0yp7Bb8+yWRYwXjF0QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=AxHIzS5J; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741751571;
-	bh=csLI6VHnfoRTbr9Hhw1hlQTjIqbLO4KYY8VWFZt9+8w=;
-	h=Date:From:To:Cc:Subject:From;
-	b=AxHIzS5J2+9Jp8BHuQmJ852mWt5T25ssDBoOpK2hnU5Dry6iHvJI7WEUu1tESqRdg
-	 J6Um/4FPtb9OXbJ0Sc9FPdVv06BJfR2RJNSB3I/gX8aQudFCUFEf69j3Ee4KrnEEPN
-	 tNtGC5FL8hH67953uZ/S3ehEpxpKAVMiaUnYtxx1sS+Flqkn3XQXKbj7QJ6tyRmcPa
-	 K7yTUPvNDGTe8tGi6ZTzCEpijCUBIJOaJbCkiXEbeqsJkl6Xnk8MEuI0nb249hyfDB
-	 sYBrzWqefi35hyvRCXdC7QExcaQgvIGjLipfATuFGsUbFf2HvDL8Yq6DUbiPh7qU5+
-	 1vxCsMEArvekg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCGtV19Hfz4xCW;
-	Wed, 12 Mar 2025 14:52:49 +1100 (AEDT)
-Date: Wed, 12 Mar 2025 14:52:47 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
- <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, bpf
- <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the bpf-next tree
-Message-ID: <20250312145247.380c2aa5@canb.auug.org.au>
+	s=arc-20240116; t=1741752208; c=relaxed/simple;
+	bh=DSIMBFNsY1w4xtxumS2VbvzlE4iL0ICS9Rp8Ydr7DS4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Y6PZ9mRC3Q0jicYCBCNr9bkRy6Bejk8fXii28bmPI3qZugZzIzg1yme9uPUM6bl+IkLNH8y/SCLMb8Ufx7gQ/eZD8u8/gh6rZQZU+upiMV2iakp73lEED9uKeTWDV1jp+0cM3jB588Lw/jle9njVqeOHd4BHJFN+5uSRLZqFeTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktv14dhd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAA67C4CEE3;
+	Wed, 12 Mar 2025 04:03:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741752208;
+	bh=DSIMBFNsY1w4xtxumS2VbvzlE4iL0ICS9Rp8Ydr7DS4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=ktv14dhdTjmcCCeMlLMQn8NFoOjnwA/Z+kN6QrXbZ5+mAfFQ9F0GnDcmICr43WIHj
+	 0qOkNcg4knR4ES2XWt9V3jZd4n6KI3KRzDhKKmezNjVbOG0cVt/AGYFLP2sZ94WCi6
+	 Gb1ZU8JK9okzB4J6vQi9O5gppynD/9B6dP0tvkC2P539ied6RQ3O9BAxY9Uc1Pzv0z
+	 foaCg1sLTzYVD4k9vK8ZBuXKB3FseA24ysl4/vEjQO6SJzNXUdyAdrhRDpbHmG17f4
+	 riEFvwJZ+6jX1quPPyo1YVQLRvy2xwZIyYxezBUCLRtR0o6Ku7o8HvwHPGiW6tM4Iv
+	 RqdTVfLfv0h+Q==
+Message-ID: <381ac49a-25e9-4c37-9855-e2adb64fa81d@kernel.org>
+Date: Wed, 12 Mar 2025 12:03:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Agm1aDa=ntrjh5CZDTyBZLk";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] f2fs: fix missing discard candidates in fstrim
+To: Chunhai Guo <guochunhai@vivo.com>, "jaegeuk@kernel.org"
+ <jaegeuk@kernel.org>
+References: <20250119140834.1061145-1-guochunhai@vivo.com>
+ <77fa4633-f7db-4daa-a9e1-3fdb5bf9dd1d@kernel.org>
+ <74811428-9fee-467b-802f-dcb9f9dbb5a5@vivo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <74811428-9fee-467b-802f-dcb9f9dbb5a5@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/Agm1aDa=ntrjh5CZDTyBZLk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-After merging the bpf-next tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+On 3/12/25 11:19, Chunhai Guo wrote:
+> 在 1/20/2025 7:45 PM, Chao Yu 写道:
+>> On 1/19/25 22:08, Chunhai Guo wrote:
+>>> fstrim may miss candidates that need to be discarded, as shown in the
+>>> examples below.
+>>>
+>>> The root cause is that when cpc->reason is set with CP_DISCARD,
+>>> add_discard_addrs() expects that ckpt_valid_map and cur_valid_map have
+>>> been synced by seg_info_to_raw_sit() [1], and it tries to find the
+>>> candidates based on ckpt_valid_map and discard_map. However,
+>>> seg_info_to_raw_sit() does not actually run before
+>>> f2fs_exist_trim_candidates(), resulting in the failure.
+>>>
+>>> The code logic can be simplified for all cases by finding all the
+>>> discard blocks based only on discard_map. This might result in more
+>>> discard blocks being sent for the segment during the first checkpoint
+>>> after mounting, which were originally expected to be sent only in
+>>> fstrim. Regardless, these discard blocks should eventually be sent, and
+>>> the simplified code makes sense in this context.
+>>>
+>>> root# cp testfile /f2fs_mountpoint
+>>>
+>>> root# f2fs_io fiemap 0 1 /f2fs_mountpoint/testfile
+>>> Fiemap: offset = 0 len = 1
+>>>           logical addr.    physical addr.   length           flags
+>>> 0       0000000000000000 0000000406a00000 000000003d800000 00001000
+>>>
+>>> root# rm /f2fs_mountpoint/testfile
+>>>
+>>> root# fstrim -v -o 0x406a00000 -l 1024M /f2fs_mountpoint -- no candidate is found
+>>> /f2fs_mountpoint: 0 B (0 bytes) trimmed
+>>>
+>>> Relevant code process of the root cause:
+>>> f2fs_trim_fs()
+>>>       f2fs_write_checkpoint()
+>>>           ...
+>>>           if (cpc->reason & CP_DISCARD) {
+>>>                   if (!f2fs_exist_trim_candidates(sbi, cpc)) {
+>>>                       unblock_operations(sbi);
+>>>                       goto out; // No candidates are found here, and it exits.
+>>>                   }
+>>>               ...
+>>>           }
+>>>
+>>> [1] Please refer to commit d7bc2484b8d4 ("f2fs: fix small discards not
+>>> to issue redundantly") for the relationship between
+>>> seg_info_to_raw_sit() and add_discard_addrs().
+>>>
+>>> Fixes: 25290fa5591d ("f2fs: return fs_trim if there is no candidate")
+>>> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+>>> ---
+>>> v1: https://lore.kernel.org/linux-f2fs-devel/20250102101310.580277-1-guochunhai@vivo.com/
+>>> v1->v2: Find all the discard blocks based only on discard_map in add_discard_addrs().
+>>> ---
+>>>    fs/f2fs/segment.c | 5 +----
+>>>    1 file changed, 1 insertion(+), 4 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index 13ee73a3c481..25ea892a42dd 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -2074,8 +2074,6 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
+>>>    {
+>>>      int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
+>>>      struct seg_entry *se = get_seg_entry(sbi, cpc->trim_start);
+>>> -    unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
+>>> -    unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
+>>>      unsigned long *discard_map = (unsigned long *)se->discard_map;
+>>>      unsigned long *dmap = SIT_I(sbi)->tmp_map;
+>>>      unsigned int start = 0, end = -1;
+>>> @@ -2100,8 +2098,7 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
+>>>
+>>>      /* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
+>>>      for (i = 0; i < entries; i++)
+>>> -            dmap[i] = force ? ~ckpt_map[i] & ~discard_map[i] :
+>>> -                            (cur_map[i] ^ ckpt_map[i]) & ckpt_map[i];
+>>> +            dmap[i] = ~discard_map[i];
+>> discard is critical, we need more sanity check here, maybe:
+>>
+>> /* never issue discard to valid data's block address */
+>> f2fs_bug_on(sbi, (cur_map[i] ^ discard_map[i]) & cur_map[i]);
+>>
+>> Can you please check this?
+> 
+> Sure. I have added the BUG_ON check and performed the following tests
+> without issue:
+> 1. Ran xfstests and fsstress in the QEMU environment.
+> 
+> 2. Ran monkey and reboot tests on ARM64 Android devices with the 6.6 kernel.
 
-In file included from include/asm-generic/percpu.h:7,
-                 from arch/powerpc/include/asm/percpu.h:28,
-                 from arch/powerpc/include/asm/smp.h:26,
-                 from include/linux/smp.h:119,
-                 from include/linux/lockdep.h:14,
-                 from include/linux/radix-tree.h:14,
-                 from include/linux/idr.h:15,
-                 from include/linux/cgroup-defs.h:13,
-                 from mm/memcontrol.c:28:
-mm/memcontrol.c: In function 'memcg_hotplug_cpu_dead':
-include/linux/percpu-defs.h:242:2: error: passing argument 1 of 'local_lock=
-_acquire' from incompatible pointer type [-Wincompatible-pointer-types]
-  242 | ({                                                                 =
-     \
-      | ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~
-      |  |
-      |  localtry_lock_t *
-  243 |         __verify_pcpu_ptr(ptr);                                    =
-     \
-      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~
-  244 |         arch_raw_cpu_ptr(ptr);                                     =
-     \
-      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~
-  245 | })
-      | ~~
-include/linux/percpu-defs.h:254:27: note: in expansion of macro 'raw_cpu_pt=
-r'
-  254 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-      |                           ^~~~~~~~~~~
-include/linux/local_lock_internal.h:105:36: note: in expansion of macro 'th=
-is_cpu_ptr'
-  105 |                 local_lock_acquire(this_cpu_ptr(lock));         \
-      |                                    ^~~~~~~~~~~~
-include/linux/local_lock.h:31:9: note: in expansion of macro '__local_lock_=
-irqsave'
-   31 |         __local_lock_irqsave(lock, flags)
-      |         ^~~~~~~~~~~~~~~~~~~~
-mm/memcontrol.c:1960:9: note: in expansion of macro 'local_lock_irqsave'
- 1960 |         local_lock_irqsave(&memcg_stock.stock_lock, flags);
-      |         ^~~~~~~~~~~~~~~~~~
-In file included from include/linux/local_lock.h:5,
-                 from include/linux/mmzone.h:24,
-                 from include/linux/gfp.h:7,
-                 from include/linux/xarray.h:16,
-                 from include/linux/radix-tree.h:21:
-include/linux/local_lock_internal.h:59:53: note: expected 'local_lock_t *' =
-but argument is of type 'localtry_lock_t *'
-   59 | static inline void local_lock_acquire(local_lock_t *l) { }
-      |                                       ~~~~~~~~~~~~~~^
-include/linux/percpu-defs.h:242:2: error: passing argument 1 of 'local_lock=
-_release' from incompatible pointer type [-Wincompatible-pointer-types]
-  242 | ({                                                                 =
-     \
-      | ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~
-      |  |
-      |  localtry_lock_t *
-  243 |         __verify_pcpu_ptr(ptr);                                    =
-     \
-      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~
-  244 |         arch_raw_cpu_ptr(ptr);                                     =
-     \
-      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~
-  245 | })
-      | ~~
-include/linux/percpu-defs.h:254:27: note: in expansion of macro 'raw_cpu_pt=
-r'
-  254 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-      |                           ^~~~~~~~~~~
-include/linux/local_lock_internal.h:122:36: note: in expansion of macro 'th=
-is_cpu_ptr'
-  122 |                 local_lock_release(this_cpu_ptr(lock));         \
-      |                                    ^~~~~~~~~~~~
-include/linux/local_lock.h:52:9: note: in expansion of macro '__local_unloc=
-k_irqrestore'
-   52 |         __local_unlock_irqrestore(lock, flags)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-mm/memcontrol.c:1962:9: note: in expansion of macro 'local_unlock_irqrestor=
-e'
- 1962 |         local_unlock_irqrestore(&memcg_stock.stock_lock, flags);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~
-include/linux/local_lock_internal.h:61:53: note: expected 'local_lock_t *' =
-but argument is of type 'localtry_lock_t *'
-   61 | static inline void local_lock_release(local_lock_t *l) { }
-      |                                       ~~~~~~~~~~~~~~^
+Thanks, so it looks fine now, can you please update the patch w/ above
+f2fs_bug_on check?
 
-Caused by commits
+Thanks,
 
-  0aaddfb06882 ("locking/local_lock: Introduce localtry_lock_t")
-  01d37228d331 ("memcg: Use trylock to access memcg stock_lock.")
+> 
+> Thanks,
+> 
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>      while (force || SM_I(sbi)->dcc_info->nr_discards <=
+>>>                              SM_I(sbi)->dcc_info->max_discards) {
+> 
+> 
 
-interacting with commit
-
-  885aa5fe7b1d ("memcg: drain obj stock on cpu hotplug teardown")
-
-from the mm-hotfixes tree.
-
-I applied the following merge fix patch.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 12 Mar 2025 14:18:03 +1100
-Subject: [PATCH] fix up for "memcg: Use trylock to access memcg stock_lock"
-
-interacting with "memcg: drain obj stock on cpu hotplug teardown" from
-the mm-hotfixes tree.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- mm/memcontrol.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 8f88b8dd8097..87544df4c3b8 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1957,9 +1957,9 @@ static int memcg_hotplug_cpu_dead(unsigned int cpu)
- 	stock =3D &per_cpu(memcg_stock, cpu);
-=20
- 	/* drain_obj_stock requires stock_lock */
--	local_lock_irqsave(&memcg_stock.stock_lock, flags);
-+	localtry_lock_irqsave(&memcg_stock.stock_lock, flags);
- 	old =3D drain_obj_stock(stock);
--	local_unlock_irqrestore(&memcg_stock.stock_lock, flags);
-+	localtry_unlock_irqrestore(&memcg_stock.stock_lock, flags);
-=20
- 	drain_stock(stock);
- 	obj_cgroup_put(old);
---=20
-2.45.2
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Agm1aDa=ntrjh5CZDTyBZLk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfRBQ8ACgkQAVBC80lX
-0Gwhjgf/SY1L6EY7sBqFhnP+flnrFZsbc+TyMvDrzfsz2JbnfFgufgdHuzR8+jcA
-aE/25UdSpp2x6Qfbe3AWyt5mn/XeMoEermZsV2axGhViqfGhQ8MKOMzD5UYVRUIX
-c2I4cY/mhJwdpDwy3SwLHuvvsKH61GRwxd7LIGgQGH8EdYbdhcfuInCu/owZgfGS
-dcTfqXg93FuwUEOWJAUEq/sJKbPUZxPA1EUUsz8GM9v7CGeAYY9X1X45ejfvO9nA
-pOq7ihS02sh/QbXbkatGZZF5b4s1VpxiV3LTCmqJqzYqRh1RPEdjOxodmXV58R2j
-3/8LfPHpQzkSoWaeL+kZIvEGRSwjwA==
-=KxSD
------END PGP SIGNATURE-----
-
---Sig_/Agm1aDa=ntrjh5CZDTyBZLk--
 
