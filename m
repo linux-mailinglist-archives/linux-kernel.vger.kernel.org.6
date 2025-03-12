@@ -1,179 +1,158 @@
-Return-Path: <linux-kernel+bounces-557651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F071A5DC08
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:54:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C055A5DC09
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:56:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B394A178A0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:54:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4FED1797A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9DF2405E5;
-	Wed, 12 Mar 2025 11:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C2623FC48;
+	Wed, 12 Mar 2025 11:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2tDYPL9Z"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2087.outbound.protection.outlook.com [40.107.237.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="f1an1AFg"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F4C1EB1A9;
-	Wed, 12 Mar 2025 11:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741780451; cv=fail; b=eO6ut2lG8wZFxwUeUsMnz0yFrclsAbtNIqhccWEEkv94cHkSGT+7dIo4cY04zBhxe+pZ+a2rnNI+y0CITnxq6sxbgzBk2Tbd0h/BEoXVkHJKE9lXJuSDsPvFwVp8Cz5pCiF8Aspn7soDWtGNrczKgn72zCr5YinG9wcLFAdiXh4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741780451; c=relaxed/simple;
-	bh=C9BTXGa1NMNQWVE45QxXldp7F75GGYI5H3grYil2TY8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qrt03HX835+7yo3gZRjZ4M14dwV8te7LsIwzksuYlbXCkNmBahybeblSXh2Phxyvq1JSBHM91qQwIvcrrs8ek+g+uPtLGYW+qXzkWg/kuGXEIf3m1NnSoYFGpRRpblXvFaivFeMwfglipto1sYf8AQPmFStqJWN4kFh2sd3GJrg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2tDYPL9Z; arc=fail smtp.client-ip=40.107.237.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AJkcb5L9ebUyv9ngKqKwZgNm/OmosmJoxL+66NSclU6xJV0jPc3vhJLUOKVT++sJsUhoajoLExfnZjvPQx9ODL1CJEwiqn2Qidb7L3jKY+EyBxmm4542SRDYD6E8TnkUXAD2qJpM6sak6iOqfWGi2EQUmBqkPLKIK4D7tqCPAihD43OW03js10w65JsulhM6qZ5+l21EiTnI7T4Mxnu0lPnKemTd9CMHSsqybTB9zWQYwiEI+4BMpVCbwZFQQJ0zj0Jqi+pfBE4zI/kHrd94LvfNAPrfuXaB+i3jD9Xq4bO+bhE4ywxgw7dUbyRCrcKZX6dpfVnnC3NaNvDv+/Jm0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kBU2kpZttIhfDDQV2zzlj/tA1LRVg14m8E1uPEj3PGM=;
- b=pd94s27ycvhj9ZiFvL/adsPuN2ZgswYGvpsMBHE/5H7d6urszPKxHCVfZ+ruscQ3WXyx7WFutS545HIpczARM9kKxNcA95t6L95plHZShEQ6G6GcT8Yi8FkaXKWigvhOmDgJTrz6bRxUWYlrxE5BH2kCZqNSrnDP2CFgZkuJa+/YsNYu9DFAMqVT3h3m6AYJKzu2qzCOx9pF7J5/PW8tt9f0FmU7tDfAIvqdA9/1vvoJwqtLbNnaNfuj8Fd03uhAnkabFeWeP3W0DeZG8hhIZGjWJan/4gWAWpzAPuZeaPQuJHp0/PNlF8kf3bjnkMHbNqOX7IPKft5fnRRquVn4HA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=davemloft.net smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kBU2kpZttIhfDDQV2zzlj/tA1LRVg14m8E1uPEj3PGM=;
- b=2tDYPL9ZaXYUp4N4gI084sdeoIbVPdiJb04Pe/CB9PyfLTN52GFGTctaMiEImrNSmIR0KSECFBBZ9BA4vJEQHzBFu2ImFjI183s5rpY1FfZahdsCI2macHvBG/4k7xBgGEQR62kBT4TcEhsaMm5kO7Ri5KjWZ+eB24ltr6aTrWQ=
-Received: from DS7PR05CA0061.namprd05.prod.outlook.com (2603:10b6:8:57::15) by
- DM6PR12MB4092.namprd12.prod.outlook.com (2603:10b6:5:214::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.27; Wed, 12 Mar 2025 11:54:07 +0000
-Received: from DS3PEPF000099DE.namprd04.prod.outlook.com
- (2603:10b6:8:57:cafe::c0) by DS7PR05CA0061.outlook.office365.com
- (2603:10b6:8:57::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.23 via Frontend Transport; Wed,
- 12 Mar 2025 11:54:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS3PEPF000099DE.mail.protection.outlook.com (10.167.17.200) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Wed, 12 Mar 2025 11:54:06 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 12 Mar
- 2025 06:54:05 -0500
-Received: from xhdsneeli41.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 12 Mar 2025 06:54:01 -0500
-From: Radharapu Rakesh <rakesh.radharapu@amd.com>
-To: <git@amd.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<kuniyu@amazon.com>, <bigeasy@linutronix.de>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<rakesh.radharapu@amd.com>, <harini.katakam@amd.com>,
-	<radhey.shyam.pandey@amd.com>, <michal.simek@amd.com>
-Subject: [RFC PATCH net-next] net: Modify CSUM capability check for USO
-Date: Wed, 12 Mar 2025 17:24:00 +0530
-Message-ID: <20250312115400.773516-1-rakesh.radharapu@amd.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9A123E339
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741780571; cv=none; b=JRsnEEy489yGsd/lmDFa3BKf8qA9W96CbdJIgJVNFU3WYTOAR8IxS/O2kNyJxf8RPCJfOS3r9nViJP4uzzPzVjLgpQ4YLR5VWaCq/PoasLFgecJ7RzAdZoCh07TT4sbq0N/WYe/F7oKhYl8PAIMvle0mzuHt4J/hOGqPkzRgG3k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741780571; c=relaxed/simple;
+	bh=cmBlq/kzr7m17+5OwAx9iOS7U0NNp08z+8zJN/RNvc0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QrhiqkhxfdrNNM0ls6DCJr1UET1Fi+CrRSWa4SubWXoadkV0rLC+re8682onAFl+Rk5Du6oJdtBGYn0dFHNglqhs8/wfY7JyV0iH0NJ+NKkjHAk4z57c5lvLk+Y2BJF50delCLo9bPBf9p95Fh+/kn1KSQ5dARHuB+dkvYssXHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=f1an1AFg; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2241053582dso35477195ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:56:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741780569; x=1742385369; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R9IlyLC7A5fKrEe72gCHfs3e2o6+wpvRXjQlPG7kMic=;
+        b=f1an1AFgdF9CKhQVxs8l5SOjf9oSrSObS5dKMvg2uJY9wuDSgr6XpSebF7A6NXzxaX
+         1kl3ITiZCwQuhUG0wZrOAacOw6zobg1LtmYuWEX8DhodLcUEHR27w+Mki7BeSqIF+2un
+         N7iKg9mDXn1R8G7O//JaA6nZOnoRSGQ3VqsDdDwOU9iF+CIXr5RtxlSlzD0tpEaoK5oN
+         bASLAAA/4p71BeMGdIFJOCVm+d9hb/5MHBYhBSOEuEM2In6+SI4Y0JWh7GQxl8VXV5gQ
+         wEYmz43f7KKlAkpI9ENnG8wPin1+Wh/dYTc3o85MQAOTnWlG0bYzGuWyzuHzacRncyQW
+         FNdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741780569; x=1742385369;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R9IlyLC7A5fKrEe72gCHfs3e2o6+wpvRXjQlPG7kMic=;
+        b=kj3AsDBRztZxbTv68RSjmDtcr7P/jDzvwCbvl67TCZ+x7S65L0nP6+WDd9WQ4j6nNQ
+         UMLyPEtALdkQfiglu+65tLKvXKIiWwzV/223s8uak9HVFZ99u+RsqpVU5uDqeOTidwd2
+         tm7FRotgroBrghBCQTJdRRV3rKM7gnm8uqDPGv/ISyeA3bT7Slbh/h1011MLjsKDQ7nA
+         rkYdB7CNv86ULCHoL3CN8Mii3Mra3SuKDBCpyMenlWYFPWXlPA6TLVzzh4gvhDjqkGaA
+         n2gtGrS6HcyAUQgCN5m+8yIAPIgQhAy28eX40KNAMyuFaGOYE5vVvIVtG1JhN8tMeYtj
+         wnuw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4kFLJBEjqqIHuy3zlcv3x+QPvAER3SWtUhS3UjIx9L1/Bo4euJLz4cyrIJqEPW5wsbS8Ca/175QmydYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0/8L0ITMgD72vHWwieyBuA6y7Gz835FjrNpSKcVm01rJ6WxLA
+	AT2OoBWq28zwACEbcHBxCzrVkgZa34mSabxbpMEIGc4XGXtNKOVxhU94DgpquFE=
+X-Gm-Gg: ASbGnctOn76wurak6fvXICtUPqTBhUogM064HRLlqgXlgFdJ0gL6PLHUk5loaE3xx+z
+	ennT8xnBvLocN8ywII/VugU7l4szxKvAX+UQAjQ5lXpkoOzV2T/7ulwco4hnjYOjho9g0LqA9jt
+	Z+sky90SKWzYQR71l09aaBVaiozsR0cWQ8hsXyt3d27nmA7820FU6kkQbh9Wir9eEkO5AiW6dYF
+	5dxVvOf3UWQBSto71e1AaS+u09EO7zrSAMii8h7+gqkt1ZbhONZ1uzB9cUO9eat1NbWtKa5bdOi
+	0Q7CjIy9gyhZORCLwXr6j57rWbZb80lG3eaFkYo6sjqfnpRd
+X-Google-Smtp-Source: AGHT+IEZMl7qgOp/elCr4VXp7AlgwKiCuKen+kfThanblODxDmQAYt3d4nqftKdNx7NyuuUlrtd5xg==
+X-Received: by 2002:a17:902:c94d:b0:223:5c33:56a8 with SMTP id d9443c01a7336-22428ab89ccmr358251575ad.35.1741780569502;
+        Wed, 12 Mar 2025 04:56:09 -0700 (PDT)
+Received: from localhost ([157.82.205.237])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736a1f813d1sm11378575b3a.129.2025.03.12.04.56.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 04:56:09 -0700 (PDT)
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+Subject: [PATCH v3 0/6] KVM: arm64: PMU: Fix SET_ONE_REG for vPMC regs
+Date: Wed, 12 Mar 2025 20:55:54 +0900
+Message-Id: <20250312-pmc-v3-0-0411cab5dc3d@daynix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: rakesh.radharapu@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099DE:EE_|DM6PR12MB4092:EE_
-X-MS-Office365-Filtering-Correlation-Id: 19fca9f5-1160-4001-61ee-08dd615c97b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+YGpjUfWt5A8eRf0SwhsoyDYVTuvONHqJ74iCfFByq7rAXJkME1ihwEhYGgQ?=
- =?us-ascii?Q?VtbYFtbVEN0iM+bJOPd7y/O0p0kHizKizIuq8Vphw57SWT0OgidIpdU3Xgiv?=
- =?us-ascii?Q?2bpqijBHEcDtwe4mbbkNKam597Gu/DtAQwpYFwfna6Nx5KwGT391uuPMy4QH?=
- =?us-ascii?Q?I04pRm82d7CAmHismWeD3WX49MYcuz7PYqKHDRXIJInp+DQIE6Hc4lbMJZu+?=
- =?us-ascii?Q?4qhAU7DlzRqthI3KA7hbeN8AtQ7sZ6k8qCUMAbadQsrWQli51lSJqVmVbtIW?=
- =?us-ascii?Q?TZUOZGyd+i23mCA3m55pTyW0Sd3eQkS45rzqxP5cjN3/klX6wsuzWVlsABkP?=
- =?us-ascii?Q?KkMdW6fPuTweB/Yu1DI/w+4bgGIvzzV8WIAK2F0zo2cOxdr9pkRSvsOlNtLM?=
- =?us-ascii?Q?7kRnqxFjOZdmSWMLkNfxivYOcCQyCdOd/fnCh5ri6cBDbdU0tPDQatzzr++q?=
- =?us-ascii?Q?HOcmryJCGEbiC4MNn66lf1Y+CdxB561OAwvcv0SfRy0ozrEDIYkK9dPlABu9?=
- =?us-ascii?Q?yQxPRWwA4KH1nsZs+RSPmtlYrx2M1dW3iYEem0Jq7Igq7aCaLaU8BE/fONHk?=
- =?us-ascii?Q?2G4mFfC6QvtrzhBK5o7+Nqz6YhsxslUYLs7pNlhvFcz+irV91F4YOwqCPx+j?=
- =?us-ascii?Q?vf/QT6FxtjWSTirxQFSTeu7gbhOm0a4g4qCYWV6xl+0jFlcbP6qI9dq7bDuc?=
- =?us-ascii?Q?84QP90VTRftLTiVWh4c1JS53ixjKbw5AFWUizJNaw/1D+Y0w0GH6HJAYJlZI?=
- =?us-ascii?Q?PF10fiv8eBRjYxrdXLCKqbA/Y7mQ6qZB7w6RrMDHVo/M/iDq9SiJuZVqITOi?=
- =?us-ascii?Q?Zh3UiqIaSE52tS3KNTMkAvoXTLngHJjfkFQSzcIhkScKF5Hx1v5bw/mvhVGq?=
- =?us-ascii?Q?wzp2L45h4dQXXetEpu8SpxseOO5+J0ynmEqEYVTwlPfHKFUjaE3a4mfd7TjL?=
- =?us-ascii?Q?JZpwA3q5BnkAehjDcv7sHsFNZX3Nlf23Il+fDRVVN5wmHX+fnr5n/Qjokyvx?=
- =?us-ascii?Q?CKiKR+11ervJZ+nnv1iOoLyZiucWv5zlFRo+X29GtQWojUXMs2xxvvk+qQlo?=
- =?us-ascii?Q?KLO7TxMFwfPATVD/F71an9RwqXr0XVO4rOXgWSE9IFPoq63hVldUOkHEO5YC?=
- =?us-ascii?Q?w+7GfZGNlOxvwr4w6HE/b1EYlLAGCWQM4/qO4ktSWC21f5U1M6b13Tl1RpDr?=
- =?us-ascii?Q?xDtQpaqt+PHmIuOGjb85k4hTa0hFPTgVDR+zI30C8tyV7XS+uVBLWen2qWCy?=
- =?us-ascii?Q?sppssc0X4jnHaT5VxwMdud5g/qeVh0esfa5OPu28Ku3Dw6S+Semp0h1GCGd9?=
- =?us-ascii?Q?0Wt4qw6L2CDxUTQB224begF/aAl3KVI679j0YCPskcQlYaM0BNavILQlrG2C?=
- =?us-ascii?Q?Pe/A+xf4IgfUZaX7cL64U2EDlfsOm3Rsg/8mMd41XyKgMWOgfRa6Rya+3PPD?=
- =?us-ascii?Q?V9buk8zI8ywvE6fvERxxoupsWm5bS0Z15xU1xMSout6zBY+OG0MSvDJBEv0p?=
- =?us-ascii?Q?3FBCYsJJGQTs41k=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:54:06.5672
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19fca9f5-1160-4001-61ee-08dd615c97b5
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099DE.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4092
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEp20WcC/1WMOw6DMBAFr4JcZyN/MOBUuUeUwlnssAUf2ZEFQ
+ tw9hjShnKc3s7LoArnIbsXKgksUaRwyqEvBsLPD2wG1mZnkUnPFJUw9wstw21TWm1Ijy88pOE/
+ zUXk8M3cUP2NYjmgS+3r2kwABaL03jeFGtXhv7TLQfMWxZ3sgyX+p/kkSOFSoVK2t9sKVJ2nbt
+ i+40r9pzAAAAA==
+X-Change-ID: 20250302-pmc-b90a86af945c
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Andrew Jones <drjones@redhat.com>, Shannon Zhao <shannon.zhao@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, devel@daynix.com, 
+ Akihiko Odaki <akihiko.odaki@daynix.com>, stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-edae6
 
-Some devices supporting USO have only ipv4 checksum enabled,
-but USO gets disabled because both ipv4 and ipv6 functionality is checked.
+Prepare vPMC registers for user-initiated changes after first run. This
+is important specifically for debugging Windows on QEMU with GDB; QEMU
+tries to write back all visible registers when resuming the VM execution
+with GDB, corrupting the PMU state. Windows always uses the PMU so this
+can cause adverse effects on that particular OS.
 
-IPv4 or IPv6 or both checksums, can be utilized with UDP segmentation
-offload. Separate checks for both IPv4 and IPv6 checksums.
+This series also contains patch "KVM: arm64: PMU: Set raw values from
+user to PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}", which reverts semantic
+changes made for the mentioned registers in the past. It is necessary
+to migrate the PMU state properly on Firecracker, QEMU, and crosvm.
 
-Fixes: 2b2bc3bab158 ("net: Make USO depend on CSUM offload")
-Signed-off-by: Radharapu Rakesh <rakesh.radharapu@amd.com>
+Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
 ---
- net/core/dev.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Changes in v3:
+- Added patch "KVM: arm64: PMU: Assume PMU presence in pmu-emul.c".
+- Added an explanation of this path series' motivation to each patch.
+- Explained why userspace register writes and register reset should be
+  covered in patch "KVM: arm64: PMU: Reload when user modifies
+  registers".
+- Marked patch "KVM: arm64: PMU: Set raw values from user to
+  PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}" for stable.
+- Reoreded so that patch "KVM: arm64: PMU: Set raw values from user to
+  PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}" would come first.
+- Added patch "KVM: arm64: PMU: Call kvm_pmu_handle_pmcr() after masking
+  PMCNTENSET_EL0".
+- Added patch "KVM: arm64: Reload PMCNTENSET_EL0".
+- Link to v2: https://lore.kernel.org/r/20250307-pmc-v2-0-6c3375a5f1e4@daynix.com
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 1cb134ff7327..a22f8f6e2ed1 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -10465,11 +10465,13 @@ static void netdev_sync_lower_features(struct net_device *upper,
- 
- static bool netdev_has_ip_or_hw_csum(netdev_features_t features)
- {
--	netdev_features_t ip_csum_mask = NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
--	bool ip_csum = (features & ip_csum_mask) == ip_csum_mask;
-+	netdev_features_t ipv4_csum_mask = NETIF_F_IP_CSUM;
-+	netdev_features_t ipv6_csum_mask = NETIF_F_IPV6_CSUM;
-+	bool ipv4_csum = (features & ipv4_csum_mask) == ipv4_csum_mask;
-+	bool ipv6_csum = (features & ipv6_csum_mask) == ipv6_csum_mask;
- 	bool hw_csum = features & NETIF_F_HW_CSUM;
- 
--	return ip_csum || hw_csum;
-+	return ipv4_csum || ipv6_csum || hw_csum;
- }
- 
- static netdev_features_t netdev_fix_features(struct net_device *dev,
+Changes in v2:
+- Changed to utilize KVM_REQ_RELOAD_PMU as suggested by Oliver Upton.
+- Added patch "KVM: arm64: PMU: Reload when user modifies registers"
+  to cover more registers.
+- Added patch "KVM: arm64: PMU: Set raw values from user to
+  PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}".
+- Link to v1: https://lore.kernel.org/r/20250302-pmc-v1-1-caff989093dc@daynix.com
+
+---
+Akihiko Odaki (6):
+      KVM: arm64: PMU: Set raw values from user to PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}
+      KVM: arm64: PMU: Assume PMU presence in pmu-emul.c
+      KVM: arm64: PMU: Fix SET_ONE_REG for vPMC regs
+      KVM: arm64: PMU: Reload when user modifies registers
+      KVM: arm64: PMU: Call kvm_pmu_handle_pmcr() after masking PMCNTENSET_EL0
+      KVM: arm64: Reload PMCNTENSET_EL0
+
+ arch/arm64/kvm/arm.c      |  8 ++++---
+ arch/arm64/kvm/guest.c    | 12 +++++++++++
+ arch/arm64/kvm/pmu-emul.c | 54 ++++++++++++++++-------------------------------
+ arch/arm64/kvm/sys_regs.c | 53 ++++++++++++++++++++++++++--------------------
+ include/kvm/arm_pmu.h     |  1 +
+ 5 files changed, 66 insertions(+), 62 deletions(-)
+---
+base-commit: da2f480cb24d39d480b1e235eda0dd2d01f8765b
+change-id: 20250302-pmc-b90a86af945c
+
+Best regards,
 -- 
-2.34.1
+Akihiko Odaki <akihiko.odaki@daynix.com>
 
 
