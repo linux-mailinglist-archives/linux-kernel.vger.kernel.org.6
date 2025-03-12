@@ -1,105 +1,107 @@
-Return-Path: <linux-kernel+bounces-557403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B86A5D875
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:44:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F35A5D885
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:45:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C5F717988B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:44:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E40961799E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF64B236449;
-	Wed, 12 Mar 2025 08:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61EA239099;
+	Wed, 12 Mar 2025 08:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHmsYWCH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="MwFldcri"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03662236445;
-	Wed, 12 Mar 2025 08:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A61238D22;
+	Wed, 12 Mar 2025 08:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741769055; cv=none; b=eucAw5JxgKmbZKa54YlDHOQFUwmw6t1q/APp3pJfBNUKuJnMxX9HJMUUSx1+AvIR41T5iO7ZZvTycHHlQt9QMt8ybnlHfhZps/w3iTUWGs8Ye8RlNa6gbGLLU2sCWSQIPm+A5RRV0vcB74mKIxsboLJVDOYUKAcW2irPryflHLY=
+	t=1741769062; cv=none; b=Cqae4w24ZkRvUpOyBTNm4Fgv0W4J9gV0ZwKCTBWZSXuLwJKxHh4zZ1Xk5XPqWb61BTNIK58ZhN6XOTtmK5gefJzU9/+btybxCNQf2PtbJJ2VGDwNWz45mtFfySuip9zfzuxJ0xSMqWridJUS5Ono59u+r+1nMW7k+76xcLKfhz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741769055; c=relaxed/simple;
-	bh=90jj+F1PoWmDkHrasAfWGfMv1PJi2auNqpCIRetLGdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c5xUCopZzOclKZtn4od92OxNmfdgOLR1GBS5nQPZfV05UAVJ7n6IH+69QLNPdfgGWmfWoygVyoMqXE16z4KMTvUJoP36p0YswvVEhw64mswpmMhvLKMsrqZUJ6sONKZ9B97+hMPZ68x0U/qfdL9QNWlbnZwHQaNzOYm3AxyfmrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHmsYWCH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD6A1C4CEED;
-	Wed, 12 Mar 2025 08:44:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741769054;
-	bh=90jj+F1PoWmDkHrasAfWGfMv1PJi2auNqpCIRetLGdM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JHmsYWCH20ivwHnzwwENo7L3r+EjwK4dZp/ZLdRGgej60MBYAkt9v7bGB2hqwjnxi
-	 ER/Wsr7SZc3QVrLQbRzD3CztAk3qOviT+4+chhrq9vJ5uLmCihcdmdmZHdU1Qy7FsR
-	 7feOyGXeGFo1eX7XgQ5vcdqn4amzn0WojhF3z47oR6dq3OSQeGgHdriSqTbYyPjGL1
-	 3kabv87vlyazujPXpPF3vyI7au0smv5CnOxWEkNH+B5nZ/WByztkQWRkFl7kKirkyD
-	 WlnKeCsdOAduV5VCMhiB1tPDbqSfNU/WooQP3QWPdc/7UYZ60DDJuF5LLDxVX5GcrO
-	 6FMS2a1OlNuhw==
-Date: Wed, 12 Mar 2025 10:44:10 +0200
-From: Dmitry Baryshkov <lumag@kernel.org>
-To: Pratyush Brahma <quic_pbrahma@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: qcs8300: add the pcie smmu node
-Message-ID: <rj4jtqchuetrbtczbhvaa5hcp5olumwdbao3x4pulkxiqcq2ag@v6ftffk6bcc5>
-References: <20250206-qcs8300-pcie-smmu-v1-1-8eee0e3585bc@quicinc.com>
- <aau6kgdbsq5mu5h4kqggzgua26o7dwc6hbkpmtgcnqx5dqhlgd@qcm2xzr64fyg>
- <43450c5e-837c-4215-9bb4-69066b175832@quicinc.com>
+	s=arc-20240116; t=1741769062; c=relaxed/simple;
+	bh=qiUyzG1nRoqPbOfzzsBkMtLAkyTfe2mGpYrCiMsw3sc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cZWQFlPvYR1tlXQk0GC5//ACpglgoy/8jxetSf6zzbb9KhU0ZsW2Y+xo7aCVjnf0Nvef1ebxOaljGXSc4Y1Lnl0COC0wfwYYSQHZG/6N3feHpt5g/JVbFgXbyL2NOCuDoBuD6g9/FoNtSudnSOp/bdA7vTV7APCDrlJzetK39dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=MwFldcri; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Cfv0QxFiB3W/Bade4/QPKcyAHhzjEJaybofyUrxnTEQ=; t=1741769059; x=1742373859; 
+	b=MwFldcriGoo+mJZy5hGfEIPnyHl5sElUTVe10hg3nJoYNgvFCnyUSBv6mCQnONkMW978JSHlLWH
+	VlkMcYbTbCc0hW0Oxem0p1Q+iVuHpXtpzVH9wPT2hotszEdghbNwvfyTLYzzd0NjTkxNXz6MkxCeP
+	LLb38gSNOGtR7Fq7Gg+mBfqqrDnU+633kVeBd0HvQaOxVA+7ynhf5IkU79cpRDhSrc3j6ZVvuFRuf
+	kCAZHl8s2fbKsaGV6bCSoexKAiln/+5lCzFiZU3CkzUOtTk3D8yBdo3Wn15eY4ck7ArMZUIpWV2wB
+	/C+5iztHKkt0vjiA83Udcqw9TBH441cnvDOw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1tsHhG-00000002lbC-2xRo; Wed, 12 Mar 2025 09:44:14 +0100
+Received: from p5dc5515a.dip0.t-ipconnect.de ([93.197.81.90] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1tsHhG-00000000G7J-1pqs; Wed, 12 Mar 2025 09:44:14 +0100
+Message-ID: <c80e0fb60f9b8b13c39215e0418d32244102ece2.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 1/2] sh: align .bss section padding to 8-byte boundary
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Artur Rojek <contact@artur-rojek.eu>, Yoshinori Sato	
+ <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, Daniel Lezcano
+	 <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, "D . Jeff Dionne"
+ <jeff@coresemi.io>, Rob Landley <rob@landley.net>, 
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 12 Mar 2025 09:44:13 +0100
+In-Reply-To: <CAFULd4b8+HsmJC2XkW50pxtw=fHNrL9gH1_WM90jh+rfLCbSHw@mail.gmail.com>
+References: <20250216175545.35079-1-contact@artur-rojek.eu>
+	 <20250216175545.35079-2-contact@artur-rojek.eu>
+	 <5365422a9715376c76a89e255c978fc39064e243.camel@physik.fu-berlin.de>
+	 <433bc8a0732bf8a63c64c4bf0e6ad4a7@artur-rojek.eu>
+	 <967e29681c8bc39edfdd9c645d943f17d341c2ae.camel@physik.fu-berlin.de>
+	 <CAFULd4b8+HsmJC2XkW50pxtw=fHNrL9gH1_WM90jh+rfLCbSHw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <43450c5e-837c-4215-9bb4-69066b175832@quicinc.com>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Wed, Mar 12, 2025 at 12:41:38PM +0530, Pratyush Brahma wrote:
-> 
-> On 3/12/2025 12:23 PM, Dmitry Baryshkov wrote:
-> > On Thu, Feb 06, 2025 at 07:13:17PM +0530, Pratyush Brahma wrote:
-> > > Add the PCIe SMMU node to enable address translations
-> > > for pcie.
-> > > 
-> > > Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/qcs8300.dtsi | 75 +++++++++++++++++++++++++++++++++++
-> > >   1 file changed, 75 insertions(+)
-> > > 
-> > Reviewed-by: Dmitry Baryshkov <lumag@kernel.org>
-> > 
-> > Though I see a little benefit in having this SMMU node if it is not
-> > followed by the PCIe enablement.
-> 
-> Thanks for the review!
-> 
-> PCIe enablement changes for qcs8300 have been posted already [1] and [1]
-> needs
-> this patch as mentioned in [2].
+Hi Uros,
 
-Ack. In future please consider posting series in a logical way: if PCIe
-SMMU is only useful for PCIe and it is required for PCIe to work it
-makes much more sense to have it as a part of the PCIe enablement series
-rather than having it as a separate patch which can easily get lost.
+On Wed, 2025-03-12 at 09:32 +0100, Uros Bizjak wrote:
+> > OK. FWIW, do you understand what SBSS is for? I couldn't find any expla=
+nation
+> > for it.
+>=20
+> Small BSS section. The compiler can put data objects under a certain
+> size threshold to the .sbss section. Looking at GCC sh config, sh does
+> not use this section.
 
-> 
-> [1] https://lore.kernel.org/lkml/20250310063103.3924525-8-quic_ziyuzhan@quicinc.com
-> [2] https://lore.kernel.org/lkml/20250310063103.3924525-1-quic_ziyuzhan@quicinc.com
-> 
-> -- 
-> Thanks and Regards
-> Pratyush Brahma
-> 
+Thank you, that helps me understand what's going a bit more!
 
--- 
-With best wishes
-Dmitry
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
