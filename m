@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-557652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C055A5DC09
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:56:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC17FA5DC0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:56:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4FED1797A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:56:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80500189E273
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C2623FC48;
-	Wed, 12 Mar 2025 11:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5993241672;
+	Wed, 12 Mar 2025 11:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="f1an1AFg"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="DpHpyJTD"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9A123E339
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B59241668
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741780571; cv=none; b=JRsnEEy489yGsd/lmDFa3BKf8qA9W96CbdJIgJVNFU3WYTOAR8IxS/O2kNyJxf8RPCJfOS3r9nViJP4uzzPzVjLgpQ4YLR5VWaCq/PoasLFgecJ7RzAdZoCh07TT4sbq0N/WYe/F7oKhYl8PAIMvle0mzuHt4J/hOGqPkzRgG3k=
+	t=1741780576; cv=none; b=tJfa41q4s0m8VrS/hKPEADvShPqTiMSmIISBfhH6Ffui/vWp91rhAE0BCPNyjdl/WeslHFlkXOdvw6rjdw2kkPUBjm3gAQF+tZuOx+ktA5pCT7RsvRJAWfJSLtVEEtWMwH1AdWgjD2ctE1VHz2UUe8/CKWXj9cjoOkLcljI4ieg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741780571; c=relaxed/simple;
-	bh=cmBlq/kzr7m17+5OwAx9iOS7U0NNp08z+8zJN/RNvc0=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QrhiqkhxfdrNNM0ls6DCJr1UET1Fi+CrRSWa4SubWXoadkV0rLC+re8682onAFl+Rk5Du6oJdtBGYn0dFHNglqhs8/wfY7JyV0iH0NJ+NKkjHAk4z57c5lvLk+Y2BJF50delCLo9bPBf9p95Fh+/kn1KSQ5dARHuB+dkvYssXHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=f1an1AFg; arc=none smtp.client-ip=209.85.214.173
+	s=arc-20240116; t=1741780576; c=relaxed/simple;
+	bh=Nls52lkzjmJ+bhk/FuveEgJphMZM3lsoGJmXIHJqvZ8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=UQKig6gz0F3drQo1IHtO4MgbykkSA0L4+S94t9aPUQ3/HGPC5nKfUemIoXEl10YMXpNpAp37wOTp7y4M7L/LnNcONnNczgtTIyPGj2O9nUdh28/KWuj66eVdLyVVbRPHHZxMszvBOnUNrK3U5GHuSo1TjqX9vXUXiuQFskPXEN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=DpHpyJTD; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2241053582dso35477195ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:56:10 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-225477548e1so75586715ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:56:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741780569; x=1742385369; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R9IlyLC7A5fKrEe72gCHfs3e2o6+wpvRXjQlPG7kMic=;
-        b=f1an1AFgdF9CKhQVxs8l5SOjf9oSrSObS5dKMvg2uJY9wuDSgr6XpSebF7A6NXzxaX
-         1kl3ITiZCwQuhUG0wZrOAacOw6zobg1LtmYuWEX8DhodLcUEHR27w+Mki7BeSqIF+2un
-         N7iKg9mDXn1R8G7O//JaA6nZOnoRSGQ3VqsDdDwOU9iF+CIXr5RtxlSlzD0tpEaoK5oN
-         bASLAAA/4p71BeMGdIFJOCVm+d9hb/5MHBYhBSOEuEM2In6+SI4Y0JWh7GQxl8VXV5gQ
-         wEYmz43f7KKlAkpI9ENnG8wPin1+Wh/dYTc3o85MQAOTnWlG0bYzGuWyzuHzacRncyQW
-         FNdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741780569; x=1742385369;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741780574; x=1742385374; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=R9IlyLC7A5fKrEe72gCHfs3e2o6+wpvRXjQlPG7kMic=;
-        b=kj3AsDBRztZxbTv68RSjmDtcr7P/jDzvwCbvl67TCZ+x7S65L0nP6+WDd9WQ4j6nNQ
-         UMLyPEtALdkQfiglu+65tLKvXKIiWwzV/223s8uak9HVFZ99u+RsqpVU5uDqeOTidwd2
-         tm7FRotgroBrghBCQTJdRRV3rKM7gnm8uqDPGv/ISyeA3bT7Slbh/h1011MLjsKDQ7nA
-         rkYdB7CNv86ULCHoL3CN8Mii3Mra3SuKDBCpyMenlWYFPWXlPA6TLVzzh4gvhDjqkGaA
-         n2gtGrS6HcyAUQgCN5m+8yIAPIgQhAy28eX40KNAMyuFaGOYE5vVvIVtG1JhN8tMeYtj
-         wnuw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4kFLJBEjqqIHuy3zlcv3x+QPvAER3SWtUhS3UjIx9L1/Bo4euJLz4cyrIJqEPW5wsbS8Ca/175QmydYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0/8L0ITMgD72vHWwieyBuA6y7Gz835FjrNpSKcVm01rJ6WxLA
-	AT2OoBWq28zwACEbcHBxCzrVkgZa34mSabxbpMEIGc4XGXtNKOVxhU94DgpquFE=
-X-Gm-Gg: ASbGnctOn76wurak6fvXICtUPqTBhUogM064HRLlqgXlgFdJ0gL6PLHUk5loaE3xx+z
-	ennT8xnBvLocN8ywII/VugU7l4szxKvAX+UQAjQ5lXpkoOzV2T/7ulwco4hnjYOjho9g0LqA9jt
-	Z+sky90SKWzYQR71l09aaBVaiozsR0cWQ8hsXyt3d27nmA7820FU6kkQbh9Wir9eEkO5AiW6dYF
-	5dxVvOf3UWQBSto71e1AaS+u09EO7zrSAMii8h7+gqkt1ZbhONZ1uzB9cUO9eat1NbWtKa5bdOi
-	0Q7CjIy9gyhZORCLwXr6j57rWbZb80lG3eaFkYo6sjqfnpRd
-X-Google-Smtp-Source: AGHT+IEZMl7qgOp/elCr4VXp7AlgwKiCuKen+kfThanblODxDmQAYt3d4nqftKdNx7NyuuUlrtd5xg==
-X-Received: by 2002:a17:902:c94d:b0:223:5c33:56a8 with SMTP id d9443c01a7336-22428ab89ccmr358251575ad.35.1741780569502;
-        Wed, 12 Mar 2025 04:56:09 -0700 (PDT)
+        bh=rAMd6rGhip9Etdi0DcL12HaRjFlmNQeXSBT7tbE4ZZA=;
+        b=DpHpyJTDvRc9ec1bE6qFFFImDqKRMd9xE6ZiR3ZBEiUyGccu2lIkyvTFORokT8UWEk
+         TPWWo20ou48bdvtuVSLcugMNcEeLCKDnAJyp6P9cgmOleMriCTmNkngRaruGoP6+7JeT
+         gX6RHH8WALWvOHyqlW/gCi1QrrswDjTegxYerdZhBBhzi/hDwf+qsxyRyvBbpKhFRsDo
+         cdOHVWLB/19WwVkdx5D7TmPjbRz1Qe3wXRq9YFE9vmbBr3sKfy/fHc5I6SYfJWjB2kJ1
+         vwARCvEXGeQxOOs+sEkYIcGocZRxh7dETVwukNgqJTogFQzbl0rM81EKMgMBZOglvK6i
+         6nRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741780574; x=1742385374;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rAMd6rGhip9Etdi0DcL12HaRjFlmNQeXSBT7tbE4ZZA=;
+        b=o/CXBNKqbSPEu7uk8WaRXFk/RKzokJp7eSrREkFC86KTnsWVEhZuV4I5kCsnlFfh/8
+         BTr/pVXrqmte/B7Js4PEIn6lIX84UwpRCQZilfyZPCuyQvkUnd/9h+oKpICKFKW00//L
+         cvoApX25rdoE/Bx4MaBxuqGOCeXFqvq52Ut6buo7icu261LCRdb4SAjF7rxl/gFQhv2S
+         0v6Paq+wjQfM62Jx4vRok2jnqG2I8tf6551AlE8IqwR9y8gcecPyWSuHTHCSXbZBg1I/
+         VkGkM3qwzE6hqKvQ8VYDtzavKy2zOZKRZAnhQJdXCKqB4boJ8VaH4vB0R+fFraGIaL2t
+         4YCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtjuH3wFYBUGdUfKNOAhAtrkYof0yvqofrQynrNoeVZTfXDDbREfIT+aT9k94H0MytRqSIWtCuyn+QPlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYFrZls0mHhQgPGMV/K4QMSo5QOfdO+NM3qPK8w+6Yqg9m0nDG
+	LFyenUxeaBg0ZTwmo5STH0u8fOXIRoynA0i7PmF+WXAy4Ru4OPWVsotnZyxosE0=
+X-Gm-Gg: ASbGncvOm+QkeMof4V9SPl8YgThgXKbWrfCl4qpH7c4nhv+kwnA73gnIkeilpm4silx
+	TexWae3vDgHRzzWbLTN5C7jhQcJS/szo1khFmRKv+xqh0U5VbTK7vAoqMb/v7snJ+978mPhY+iU
+	HqrwL2GpL5+YvQqHrmPxiT9tXu2B8WXtkuW8AvbB24g11uPNn9d+DE9rl0MVjZbk7wHzkcq+W/b
+	jvsxSDC+9W+7OFwgNCD0MhyvcvaM2B4SmMFDk1lfvJRZBQzYuCkwdfpqGzTZN7YQcSk65aee4R7
+	4FBHbGY/EPF5RRTLUJSNYQ1A/DsD61HpNVhIqiDLoy6NlFnh
+X-Google-Smtp-Source: AGHT+IGVJsaOES3D6e5IgzEgtMMcyBt78uD5r1dUvwmlCbFQdHU9CycZp7wTmKosTDLuCPhOfc8eNw==
+X-Received: by 2002:a17:902:e812:b0:211:e812:3948 with SMTP id d9443c01a7336-2242850b42amr315559235ad.0.1741780574197;
+        Wed, 12 Mar 2025 04:56:14 -0700 (PDT)
 Received: from localhost ([157.82.205.237])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736a1f813d1sm11378575b3a.129.2025.03.12.04.56.06
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73699da011asm11973015b3a.84.2025.03.12.04.56.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 04:56:09 -0700 (PDT)
+        Wed, 12 Mar 2025 04:56:13 -0700 (PDT)
 From: Akihiko Odaki <akihiko.odaki@daynix.com>
-Subject: [PATCH v3 0/6] KVM: arm64: PMU: Fix SET_ONE_REG for vPMC regs
-Date: Wed, 12 Mar 2025 20:55:54 +0900
-Message-Id: <20250312-pmc-v3-0-0411cab5dc3d@daynix.com>
+Date: Wed, 12 Mar 2025 20:55:55 +0900
+Subject: [PATCH v3 1/6] KVM: arm64: PMU: Set raw values from user to
+ PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,11 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEp20WcC/1WMOw6DMBAFr4JcZyN/MOBUuUeUwlnssAUf2ZEFQ
- tw9hjShnKc3s7LoArnIbsXKgksUaRwyqEvBsLPD2wG1mZnkUnPFJUw9wstw21TWm1Ijy88pOE/
- zUXk8M3cUP2NYjmgS+3r2kwABaL03jeFGtXhv7TLQfMWxZ3sgyX+p/kkSOFSoVK2t9sKVJ2nbt
- i+40r9pzAAAAA==
-X-Change-ID: 20250302-pmc-b90a86af945c
+Message-Id: <20250312-pmc-v3-1-0411cab5dc3d@daynix.com>
+References: <20250312-pmc-v3-0-0411cab5dc3d@daynix.com>
+In-Reply-To: <20250312-pmc-v3-0-0411cab5dc3d@daynix.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
  Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
  Zenghui Yu <yuzenghui@huawei.com>, 
@@ -96,63 +96,65 @@ Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
  Akihiko Odaki <akihiko.odaki@daynix.com>, stable@vger.kernel.org
 X-Mailer: b4 0.15-dev-edae6
 
-Prepare vPMC registers for user-initiated changes after first run. This
-is important specifically for debugging Windows on QEMU with GDB; QEMU
-tries to write back all visible registers when resuming the VM execution
-with GDB, corrupting the PMU state. Windows always uses the PMU so this
-can cause adverse effects on that particular OS.
+Commit a45f41d754e0 ("KVM: arm64: Add {get,set}_user for
+PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}") changed KVM_SET_ONE_REG to update
+the mentioned registers in a way matching with the behavior of guest
+register writes. This is a breaking change of a UAPI though the new
+semantics looks cleaner and VMMs are not prepared for this.
 
-This series also contains patch "KVM: arm64: PMU: Set raw values from
-user to PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}", which reverts semantic
-changes made for the mentioned registers in the past. It is necessary
-to migrate the PMU state properly on Firecracker, QEMU, and crosvm.
+Firecracker, QEMU, and crosvm perform migration by listing registers
+with KVM_GET_REG_LIST, getting their values with KVM_GET_ONE_REG and
+setting them with KVM_SET_ONE_REG. This algorithm assumes
+KVM_SET_ONE_REG restores the values retrieved with KVM_GET_ONE_REG
+without any alteration. However, bit operations added by the earlier
+commit do not preserve the values retried with KVM_GET_ONE_REG and
+potentially break migration.
 
+Remove the bit operations that alter the values retrieved with
+KVM_GET_ONE_REG.
+
+Cc: stable@vger.kernel.org
+Fixes: a45f41d754e0 ("KVM: arm64: Add {get,set}_user for PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}")
 Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+Acked-by: Marc Zyngier <maz@kernel.org>
 ---
-Changes in v3:
-- Added patch "KVM: arm64: PMU: Assume PMU presence in pmu-emul.c".
-- Added an explanation of this path series' motivation to each patch.
-- Explained why userspace register writes and register reset should be
-  covered in patch "KVM: arm64: PMU: Reload when user modifies
-  registers".
-- Marked patch "KVM: arm64: PMU: Set raw values from user to
-  PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}" for stable.
-- Reoreded so that patch "KVM: arm64: PMU: Set raw values from user to
-  PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}" would come first.
-- Added patch "KVM: arm64: PMU: Call kvm_pmu_handle_pmcr() after masking
-  PMCNTENSET_EL0".
-- Added patch "KVM: arm64: Reload PMCNTENSET_EL0".
-- Link to v2: https://lore.kernel.org/r/20250307-pmc-v2-0-6c3375a5f1e4@daynix.com
+ arch/arm64/kvm/sys_regs.c | 21 +--------------------
+ 1 file changed, 1 insertion(+), 20 deletions(-)
 
-Changes in v2:
-- Changed to utilize KVM_REQ_RELOAD_PMU as suggested by Oliver Upton.
-- Added patch "KVM: arm64: PMU: Reload when user modifies registers"
-  to cover more registers.
-- Added patch "KVM: arm64: PMU: Set raw values from user to
-  PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}".
-- Link to v1: https://lore.kernel.org/r/20250302-pmc-v1-1-caff989093dc@daynix.com
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index 42791971f758..0a2ce931a946 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -1126,26 +1126,7 @@ static bool access_pmu_evtyper(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+ 
+ static int set_pmreg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r, u64 val)
+ {
+-	bool set;
+-
+-	val &= kvm_pmu_valid_counter_mask(vcpu);
+-
+-	switch (r->reg) {
+-	case PMOVSSET_EL0:
+-		/* CRm[1] being set indicates a SET register, and CLR otherwise */
+-		set = r->CRm & 2;
+-		break;
+-	default:
+-		/* Op2[0] being set indicates a SET register, and CLR otherwise */
+-		set = r->Op2 & 1;
+-		break;
+-	}
+-
+-	if (set)
+-		__vcpu_sys_reg(vcpu, r->reg) |= val;
+-	else
+-		__vcpu_sys_reg(vcpu, r->reg) &= ~val;
+-
++	__vcpu_sys_reg(vcpu, r->reg) = val & kvm_pmu_valid_counter_mask(vcpu);
+ 	return 0;
+ }
+ 
 
----
-Akihiko Odaki (6):
-      KVM: arm64: PMU: Set raw values from user to PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}
-      KVM: arm64: PMU: Assume PMU presence in pmu-emul.c
-      KVM: arm64: PMU: Fix SET_ONE_REG for vPMC regs
-      KVM: arm64: PMU: Reload when user modifies registers
-      KVM: arm64: PMU: Call kvm_pmu_handle_pmcr() after masking PMCNTENSET_EL0
-      KVM: arm64: Reload PMCNTENSET_EL0
-
- arch/arm64/kvm/arm.c      |  8 ++++---
- arch/arm64/kvm/guest.c    | 12 +++++++++++
- arch/arm64/kvm/pmu-emul.c | 54 ++++++++++++++++-------------------------------
- arch/arm64/kvm/sys_regs.c | 53 ++++++++++++++++++++++++++--------------------
- include/kvm/arm_pmu.h     |  1 +
- 5 files changed, 66 insertions(+), 62 deletions(-)
----
-base-commit: da2f480cb24d39d480b1e235eda0dd2d01f8765b
-change-id: 20250302-pmc-b90a86af945c
-
-Best regards,
 -- 
-Akihiko Odaki <akihiko.odaki@daynix.com>
+2.48.1
 
 
