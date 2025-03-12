@@ -1,280 +1,274 @@
-Return-Path: <linux-kernel+bounces-557831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A71A5DE56
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:49:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF13A5DE5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 622567A8097
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A9D3A96EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A841524A062;
-	Wed, 12 Mar 2025 13:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CAD24A071;
+	Wed, 12 Mar 2025 13:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Atw+pq3B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NJMpWxpI";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Ebhwm8e2"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D839623DE;
-	Wed, 12 Mar 2025 13:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741787375; cv=none; b=CfGP8hPh1TFKS0mVMV4nRwJsgla0G+TiIVp5qF2HB3AOkPf372c2e2pVYJ0LO3TKsNx4g/ZW8N0jhUi0yHCDItFhgykGE/PUToQPIhIYOOpqGjNzY0q19T/jL+k9CVc8ZuSdJz5KEhbzl5rm6HT8PMp3Jfj7i30G7AWPYx2Ou+E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741787375; c=relaxed/simple;
-	bh=TpvDD0C1CEXD6JKFNhR6ig3jLwx8gCYCc7kxncStV/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b8jcoKC4BDe03HGX2mqKorQy2A314ubj3bZ4tQ4OU71rN0HorXGuXEuO102FL81vFPYDROL8kiWqtUbNV/J6a5G5zT4RC8pJ85jKQme8E3UDbshYOq/Zudn47rsaM+oDfqPhqldAJXzDwHVli4sjoMfRpFZV3Jw2gsxXYrUZewc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Atw+pq3B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D938C4CEDD;
-	Wed, 12 Mar 2025 13:49:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741787375;
-	bh=TpvDD0C1CEXD6JKFNhR6ig3jLwx8gCYCc7kxncStV/o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Atw+pq3BQ5+e9z1yX4j0az1cCscfTR+kRZbmvYS8JPQQoMN588/06KCuU6TF9bU4n
-	 1oLUBHf5pwkOX2JZnTV9UWrv24pXGC0c033CvnyNYkKIsSY2CFQ01lbK4KeM+iUcRA
-	 R/9n99X1yQ2t9PtwT7DodMvMa1RHFA016i9Qw3erOoPxJawL17ldrcUitqHQK49O4N
-	 n259PdDpYdHt2B99ZpQopzVPw0RGgAlv/pEbEgS65PUiWlkzgtZsWEdjf34MHAlfNG
-	 915LBUhMvB7NNFAOGOMcWN06wYNrO32bZaY52aih9JvAG8cBZSRZmpXfXAam4DgNqy
-	 XSUYGzefL1T1g==
-Date: Wed, 12 Mar 2025 15:49:31 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: jgg@ziepe.ca, cmeiohas@nvidia.com, michaelgur@nvidia.com,
-	huangjunxian6@hisilicon.com, liyuyu6@huawei.com,
-	markzhang@nvidia.com, linux@treblig.org, jbi.octave@gmail.com,
-	dsahern@kernel.org, yuehaibing@huawei.com,
-	zhangchangzhong@huawei.com, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] infiniband: fix use-after-free when rename device
- name
-Message-ID: <20250312134931.GD1322339@unreal>
-References: <20250310064516.3633612-1-wangliang74@huawei.com>
- <20250310101410.GB7027@unreal>
- <946cac23-6348-4b18-bb94-58f470bb5a6c@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3178823DE;
+	Wed, 12 Mar 2025 13:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741787409; cv=fail; b=ed6EFMcGtPySRbyivSIFhYYHQDOKo3wmCdItlgdXdQL/PHbmvHpxQPaXyKsNXjw+kbFECWqB2EURmfk5bMFcFa+hWu7jbe4p3l+eIjz/YMctqEP03o29cmpnGVCozZ11dt04QfGjh4g43J23ln74OoI28E3fqnEHz7bQ3IUzL78=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741787409; c=relaxed/simple;
+	bh=q+qxur5OiqQl2DYh7XJsJFNdaavpfrTJd0agd+QQRu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GqiVGJCMD0t7Mi+XGiOrJX+A7EyLOCCMC9RJSbGR+B2kPRuOY/NxIGfDWAXWSPbP0dCVJnRfei49G+mlG7MJe40NmSlRl7Qaa4t3p9bz+8Y71P/U3ZxFiMb7kEEMv+8YjY6FkPL0xn0fuAyC6JzjveTqlU7vWfB/XtRK17Jjkew=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NJMpWxpI; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Ebhwm8e2; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CC6Efh016876;
+	Wed, 12 Mar 2025 13:49:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=RTeKHsYlV+lN/dQ2lWr733UECzCAaMLcdxkBzbD6Kro=; b=
+	NJMpWxpIK9/GK3Lq4M+fnpf/AtVZOe5PBz1lF5AOvOijfJZVk8myIMdExtpCErT7
+	qAdho6TBKOZSzCJNMXsCOO1QKGKs+qmrEgH8m0CJgcfLWbw4z5iQX3YWhPOK3c8h
+	GXpYGkHZHk6E0/2mfzn0wA8A5IDBfUBW5iyTzSzxbNBYVuSzkxb48XMA7MG4vt3C
+	LvG6gS99Lu5Fwctte7lmxHX53cT3XrGbpJ4vVF2c+/JFzLJBr4B9JOgy6Ymcm5qJ
+	2aKDuVcdo3Qp9rZZQcAtlfbBPTZxAt/736m9EILbV70xA+Oa6j5ysY7fnwDFdryX
+	8pKwK1fFDZVH3Nj/ZWZezA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45au4dstsa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Mar 2025 13:49:46 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52CCvGHx009491;
+	Wed, 12 Mar 2025 13:49:46 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2048.outbound.protection.outlook.com [104.47.55.48])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45atn3aaxg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Mar 2025 13:49:45 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Uaa5zGlmhyJcmp+mD4Ay3kFMHzGA4R1iWc5jcpvHietUvO7A3TyYBG5iwzz2mJZIEYecLAX73O3AEEMNQPn9gWYP6OT9qwiaw5phgRJQQoQGo+qEUElIdAbaFFGEgPJXzFoyKEdKmEHwF6fIMZIuWdzBwChctcoMulxpPY02/dmImDaPX1s3nQHikLueEztDC62Qx4WlscvJKQkpOjijSufIFH9Jc/BBiIGPXTegg1mI8wVw4TsvbQlZBqMfKdS4d+v7ilj0Hx2CnRKi2QIY7Jx3DGTXhMbMzFVLQKt1qkuOI1ac6P3/UqIMsk5JYTZJ/LDqhziQlEW3YiIglf8loQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RTeKHsYlV+lN/dQ2lWr733UECzCAaMLcdxkBzbD6Kro=;
+ b=l80GdQpaNPJMrH34GC+9QLC49TrkcgRL6MfQ4Fwtx3UGMOn7yRSLGQWniYRxOU0Ckvde7NP20C1cy8T9YD+ZmWL88dGon1CPJRpNv5cc/IYRGic6atSGtSrwfMDdYjkf5t2SlzI88CGPdTaREY7Ix6ugSJRUAvENSY+9GDwEOso5z/AD7IXgScVRwSv4dGZ9+DzPzy4tXk0AfWWbp6CMcMvoTBL0NoS7dv+i+31plh+cPMK5Ozs4CCIaIKOmtiQiaGZ63inKVGFEA9B61fD5O1Sk1m+GorSaH3pA4Qit5YazUxQhQsL6XrSqR83iFTtnpGCzpcahgrRaUt7YKr4o9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RTeKHsYlV+lN/dQ2lWr733UECzCAaMLcdxkBzbD6Kro=;
+ b=Ebhwm8e2Bq/ysD+gHNY1z9zE9MM/tyo93XPTIW2N7EZbdyL9hZ1jLKh8HZfVewuoVdC73fmS2sH/He4G3fZH1Dg/xCtBrZTB3lC6EQeMn8Bj9+wuCKKzM7u4pl/LhChUsYuuHB4FMIE3N8NtySXtIHrhFIdqiGjzZ20Vrq2cBzk=
+Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
+ by SJ0PR10MB5645.namprd10.prod.outlook.com (2603:10b6:a03:3e2::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
+ 2025 13:49:42 +0000
+Received: from MN2PR10MB4112.namprd10.prod.outlook.com
+ ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
+ ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8489.025; Wed, 12 Mar 2025
+ 13:49:41 +0000
+Date: Wed, 12 Mar 2025 13:49:39 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com,
+        broonie@kernel.org, skhan@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        jorgelo@chromium.org, keescook@chromium.org, pedro.falcato@gmail.com,
+        rdunlap@infradead.org, jannh@google.com
+Subject: Re: [RFC PATCH v1 2/2] mseal: allow noop mprotect
+Message-ID: <c867bff9-2293-4890-af46-8a797cf512c2@lucifer.local>
+References: <20250312002117.2556240-1-jeffxu@google.com>
+ <20250312002117.2556240-3-jeffxu@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250312002117.2556240-3-jeffxu@google.com>
+X-ClientProxiedBy: LO6P123CA0001.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:338::7) To DM6PR10MB4106.namprd10.prod.outlook.com
+ (2603:10b6:5:17d::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <946cac23-6348-4b18-bb94-58f470bb5a6c@huawei.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|SJ0PR10MB5645:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4ffe967e-829e-4ef7-c98b-08dd616cbcfb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YUk2TE1iNzN2NzVTYXdVZk5qV2kweXBlcEhtQkR2SlhTamJOSmMvNktJaVRE?=
+ =?utf-8?B?clJXSmFiczk2YnlBVkxVRmZqNC8zTHRPK09jaW9CM1hzb2ZGUGtSU0NwL0pv?=
+ =?utf-8?B?Q3k3WTVzZUYrQkpRVThrcEJrQ0Z0SUZ5ZllYYURtT0RNTjI2czdsRkhPMjJr?=
+ =?utf-8?B?ZU9xYlpMVG1FMkVIbnlzdkM1NXY5aGgxcnEyNUQreW9BbXpOYVFWSDZHa0pr?=
+ =?utf-8?B?SW5YbXVCVG9xcmp6RWI1aTlITTZrUTBEV2llMGtMRlU2ckFhVVRIMVJlbE1s?=
+ =?utf-8?B?RTdlcVJ6K3VyaGV2NnRBUE9tdjBWVFRacGZGK2dhQktNN05uRTRLaXdueTVJ?=
+ =?utf-8?B?OXlhTjVGZVZSRWlmRWZnQzFYQ2xXb2FEd0tYTDVDOTRadjM4dnQ2YUR6S2c2?=
+ =?utf-8?B?K0JJSjMzVnI5cDBhQ0E0OFBKTlgwc2JwTnBvLzZIOThlbTgwakxlOWQvRzNx?=
+ =?utf-8?B?M2xLVktLa1hRQ0ZmZWgzdDlHbFlDclhRYnIrbTgybDZoT0ZWWktRWmN4V2FC?=
+ =?utf-8?B?Zm9OSFRISjNKT000UWJsSlQ3eHlIWlRHVWs0VHhGdGdkNG1ZZmdoVHVOcUE2?=
+ =?utf-8?B?K1pDZW9nZmhsRGFHUWxveTl2dXBNSGxoRmttWXVNYmZqZzhXV2VDZFB4dzlo?=
+ =?utf-8?B?WUUyb1I4VnovelpsellPVFgyV1lYQk81OVB6bjUvWDVOZ1JVUTloY2MzaDVj?=
+ =?utf-8?B?aHlmenRJSDBBczB0TnBmSUxVcUIvVGNBVC9VdFlwalRFcEF6MjBCK0F6SFh5?=
+ =?utf-8?B?Z1NudTQ0TmVvU1hDL2FmU002OUh6d1pUTVBka3hyWlpHampWQ3VhbHlPNW1w?=
+ =?utf-8?B?L1NMY2lJM2M4cS9JVU1mQVpybUozaFh5L1cyZXhBdGdOSGg1VjNENWRXbW1D?=
+ =?utf-8?B?eWV4QVpXamhwZ3ZuMjRKQkY0dnlrT1paY0tzNlVheGdFMExwM0Q3alppb1N6?=
+ =?utf-8?B?dGZ4SFczV0lHcWlnS0M3ZVk2R01kMFpuZGI3RUVNRmtDU3BCYWFUdzVRR3Nw?=
+ =?utf-8?B?L24zUkErdGE5dG92UTBaa0JPdVZPUUlzYjJoVkltTXh0MVY2TEZVRk5SbXpP?=
+ =?utf-8?B?NkdvNytvQXYzS1J1YjUxemtMbEpMdmZjd0hJbzRYY0tKRW1LdTBJQkYwdHB5?=
+ =?utf-8?B?blNmNkhiSmZEb0oxREVCVFJxSlZOTldYejFSaGVSajQwYU1lZmF5Zy8vcmhw?=
+ =?utf-8?B?WGFTYURweDlCYVN5R1FnNE1iaEZMczk5V242UVQvbXlzejJadXk0WTU0QWtI?=
+ =?utf-8?B?eHAyVVBoOXEvNXMzUGVQZmU2SVJKRWhVT2N2OWhxRUxpeEJSbWtrZlE3N0Q5?=
+ =?utf-8?B?L1k4MVBtS0ZYaVo2WkJhdjN6eDVPdE1LbUVsQVgzanJWbkVNQVNSYVlFeCtz?=
+ =?utf-8?B?bkRkMFU5UHNraDlZMCtCUmk1WmJXTzdnTys4dG9ST2ZhQ29hYzFkKzM2TEVK?=
+ =?utf-8?B?NEtqU1AwU0E0TjRMRG5Xc2FXTWErb1NEdVBEbzlQNnNSTG5rRkxXQlRZS2k1?=
+ =?utf-8?B?SWsrUjhXeC9DTGJqeGhPK21mN250ZU5HZlFRRHltRzdZVlpwd3NUdUhjaTVR?=
+ =?utf-8?B?NHUyVlBlU3lVbDNzQXhXSVhDMXA0ZXFOUEM4VWcyWW1xSWNjdlNaQXBjR0F5?=
+ =?utf-8?B?b1lrRHJCalBLbkRaMlMzcUdseGNPeW9YcXVuRE5IY05EWThibW9DTmpVMHQ4?=
+ =?utf-8?B?OGw1cDZ0SUo1Q2t5aFBQNk5kek8wVEdkMnVjc3I1L1p6QXhUc0xwWXFmNHNt?=
+ =?utf-8?B?UkFxTmFmZFRtWmJGb2RQUVE4VHhLdkhhR1lvci90dXg0bEhKSkdjeHh3V09G?=
+ =?utf-8?B?dSsxTzRzS2lCaEt5Sjdsa0tkNlNmVjhGbUVpS3Z6NTZzSkdBVEJnVGhITkRM?=
+ =?utf-8?Q?Ok9Ley7J0W2wY?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NXZmMnVOMEJUSGRqMmZ5RjVIZUsrU3VmZUNTeWpZTlZic3hISm8zMGxHc3Bm?=
+ =?utf-8?B?RU53blJaLzRZc1VFUzZsd1V4c3I5RDNLWVRxRjI2RFd1dERpMG1ab25HcmVR?=
+ =?utf-8?B?UTBtVURzM05FMUYxaHdkVjBuVm9sZHpDSmY4YXI5WUg5QjM3N2Z4aUpvTktU?=
+ =?utf-8?B?amk2WDExc0N0M2lXeEpEUThFZWg1eGoxYlgxalAwT1NvMWNMZmYwelpwSFps?=
+ =?utf-8?B?VjVWS1FMOGNLZmZZbDBnVUdyNDg0V0JQQVZScmhad1JxcXYvQlN5aEdBdzB4?=
+ =?utf-8?B?bWlWUDQ5RW9xM3RJQi9XaURXYVRwUGk3ajhPSHJCNm5ZQVhXMUJlNExDd3Mr?=
+ =?utf-8?B?TE4vVVZ4OUZTbmYzdG92bENBeFE5VmRiUUZsYXU2MEV2NUVZYkk4Ukp3M3l0?=
+ =?utf-8?B?YzNNckNXb2l4d3BkbmlnemRLeCszVk96ZDlnVGQybXZnaUVITTVMMXFRU0FR?=
+ =?utf-8?B?cFo0bmhCYkFnMlhwNlBEV1djNnJvYnduQ0szMWtDdk8xNG1lTVZONEp5ZlhR?=
+ =?utf-8?B?OUxVMWV2RzdxYzV6Y3AvVEJyd2NmUlZZMUxEWmdkQkh4aExweHM4dENMTHFO?=
+ =?utf-8?B?R2svL3RUOHRHdXZyVmVCNjFDVUdJZFdEaGlGQUhoZU9DSUJCT3hXQVY2dll2?=
+ =?utf-8?B?YjVZZ1BBUGsrS2dlQzR5NXdJd2d4U0xMNU9Xc2I3b1lnVEdaVlAwRjlHVmJz?=
+ =?utf-8?B?SnZqUG05RXdrcHdzWnlTOHNKbTBYZlROVmJFT05kbkJKMEMrRHhoVWVyT3Zt?=
+ =?utf-8?B?bzRvUEN4UUdxeDRxZm9XVTBCSllKNkpGZ1gvdVRac1M1ZjFtaDhPdU5SajBK?=
+ =?utf-8?B?Y3VKUmZGNkluS05GQVRjelFFdVhGK1hjM0l6RGlVZ2RoZERnVUlvQU9valVM?=
+ =?utf-8?B?OHlNOFdyYnNycG05QXk3OHdQSTNlMStWZmR5cWlKYjZPMUpMMTFSQ0xGMlFQ?=
+ =?utf-8?B?UzVnTThVOVNadm1peVNEeFlabmR4ckRXZ0d3aUllM1d3aDJyZnp1clV0Yzgx?=
+ =?utf-8?B?RGxxbWROZWFWVHN5elZqd2IvUFhXdWVIUGljL2I0elBvemgvcks5aGYzSU5j?=
+ =?utf-8?B?cUJUZlFCTXljVStMOVVBakVteC9BT0g2WGVESk96SElWaVJKejhpdENrb0JC?=
+ =?utf-8?B?RFBQT2hlNXAxOEhKd0Q4NjFNV1QvRisvM2lKTzlSMC82cjdEeU1oS1hPdEpl?=
+ =?utf-8?B?ako1bjhuVmk1NkVodWZOWEFMNzc0NGlJWk83aTdHell3VTIrbUZVcVYzNWxJ?=
+ =?utf-8?B?UGdnYlB6T2ErZ2JVMGlpdVMxbG1Vck5zY3JXb0lBbkdWbzlTbVJkcUJhY2pR?=
+ =?utf-8?B?L2UyUFhqRzFtVGRhSjY5d0ZjR1NHV1IxR1lhWE5MdWo3aURCTjJjNWV2b2tw?=
+ =?utf-8?B?VjJjdHNNRXJjVkd5bEltNWtRb05PYWliOTlJMFZTdlF3Rnc0b0c3d2J6RnBu?=
+ =?utf-8?B?SHdUeXdWcmdTMHM0YXg4dlJwUlVLb3FjS1pma1hoazV4WDV0NDJWdXdNa3FP?=
+ =?utf-8?B?UXgydURaU040ZjR5UXFUam9NOEo3ZUxlTDYxN1FaazExeHoyRG9lTFN4dEVN?=
+ =?utf-8?B?NE9kUSt6QUtLRHZDbjRmYi91M3liZERoNlBwZ2QwTXhlZkRMcENNYXgyUzE4?=
+ =?utf-8?B?c0ZuaTBxSXpFc1ZobHA2aW9zWlJKUnB3b2hWcG4rZWMzQXI1OVcwd1IrUzk2?=
+ =?utf-8?B?aHErNG03dXI0d1lVSytIMDVJSGttN0ZmcWI5cXk5MnFnMEtiODRXNVRySnRD?=
+ =?utf-8?B?ajBueXdJMHU3N2tnS21nUWxMa2RvWTh6cFlMNTlPRnl0VnVLb2NlakJMOWxW?=
+ =?utf-8?B?REt5SU54b1RnSWZ0ZkloU0JUWDhnYTBlcmtuWnZWWHFta0lKN0k5dWp2cVJv?=
+ =?utf-8?B?ZHdkdTQzWW1mblpTVXFnVkFRTTRoYTVOUmd4TGVNeDRmRGFIT0NiLzh6Zmdr?=
+ =?utf-8?B?MWJlV3VEeWdUQzlJM2pmWkUxSXRic1g4dGs1NXE4VU5uVlc3aEFiZkx0MzFL?=
+ =?utf-8?B?TGlZR3p3b1ZobWx4dm1uV2tTdUg5aDQ1UHc0cHgzUnhpOXVVZ2JWQmVPUDRh?=
+ =?utf-8?B?K1dDTEZvY2JpUVltUUtTRXlYYU16ODNoRHpGYnROV2hFSGlkZi9YdVFqeEFL?=
+ =?utf-8?B?aVltY3N1VHVRMFNBMEhneGo0N2pkMEZaekorS1ZEZ0xDdmdiUnMyUVpxeGZz?=
+ =?utf-8?B?WUE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Tlll/15HFjrjD3xDQ7rF6BtaL/o0dTZMG8NzGGWiXpoXUW+RufYE1USPnjJ/pIEGHNau8Ostn1xsXi6aYu2Y7G37Kx3KE9T1FvEgOWMg6P9Nx+pdT9Hu5RERZAgIRZrK63gMGRuVUxc5bduBZu7CtE68r7ZU79EaN21F+O1xU/IWcyjefkSzSNpCgNranKkM0h/BpdERE3wxvOftxBXtlWpeMgvT/vvWPg/OHqdI95PnFE5EZd6/rO4hqpl4XfnFfjRLyCTqzVFZRWwNVAjOvIWh1CTmsOFn2bLHPiCUgoMHWhO9LBGPcpkfPzUuKmHpZk1y6Ok+6h5ps7jpDvovbmfD/hdTeYy7TKgJYUlUaPLhMES4yZi/KXK4ISqS84RVFThy0L8/2pFc+yy835EbpNWU5vtaw1kguNY/rZeorzqGq98Xwj95+hXRwWSE5pF41hMFySmTfO8xVrR/jLKUoLo6dnQOGL3eJ/xeovA5D9JBcaFMfu+NQlnJxPEcijEIMrynlNqHRcn5JWrhJw6Opt7dPa16xWGQX+QQ8XmnbNFi3zP/jlDbWJwBJNsb4ylZlGQi6WRVLrVGgBNrduDJjugtgK1oqCvdtBBvPTP+p9A=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ffe967e-829e-4ef7-c98b-08dd616cbcfb
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4106.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 13:49:41.8762
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6C1O/vxmnRownTBWDE0zQk8YFQnffKDSzEhknI7NY7ZezG7PQ0bpHkH1R8fMwbS74uTAHMamuSZzNXOx15PhNPNHc5rC7QL+Bs5pLziwykE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5645
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_05,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ mlxlogscore=798 mlxscore=0 adultscore=0 phishscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502280000 definitions=main-2503120096
+X-Proofpoint-ORIG-GUID: -UIG8NARQSwg731yvfUJfNznjv4rkHE6
+X-Proofpoint-GUID: -UIG8NARQSwg731yvfUJfNznjv4rkHE6
 
-On Tue, Mar 11, 2025 at 10:55:42AM +0800, Wang Liang wrote:
-> 
-> 在 2025/3/10 18:14, Leon Romanovsky 写道:
-> > On Mon, Mar 10, 2025 at 02:45:16PM +0800, Wang Liang wrote:
-> > > Syzbot reported a slab-use-after-free with the following call trace:
-> > > 
-> > > ==================================================================
-> > > BUG: KASAN: slab-use-after-free in nla_put+0xd3/0x150 lib/nlattr.c:1099
-> > > Read of size 5 at addr ffff888140ea1c60 by task syz.0.988/10025
-> > > 
-> > > CPU: 0 UID: 0 PID: 10025 Comm: syz.0.988 Not tainted 6.14.0-rc4-syzkaller-00859-gf77f12010f67 #0
-> > > Hardware name: Google Compute Engine, BIOS Google 02/12/2025
-> > > Call Trace:
-> > >   <TASK>
-> > >   __dump_stack lib/dump_stack.c:94 [inline]
-> > >   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
-> > >   print_address_description mm/kasan/report.c:408 [inline]
-> > >   print_report+0x16e/0x5b0 mm/kasan/report.c:521
-> > >   kasan_report+0x143/0x180 mm/kasan/report.c:634
-> > >   kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
-> > >   __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
-> > >   nla_put+0xd3/0x150 lib/nlattr.c:1099
-> > >   nla_put_string include/net/netlink.h:1621 [inline]
-> > >   fill_nldev_handle+0x16e/0x200 drivers/infiniband/core/nldev.c:265
-> > >   rdma_nl_notify_event+0x561/0xef0 drivers/infiniband/core/nldev.c:2857
-> > >   ib_device_notify_register+0x22/0x230 drivers/infiniband/core/device.c:1344
-> > >   ib_register_device+0x1292/0x1460 drivers/infiniband/core/device.c:1460
-> > >   rxe_register_device+0x233/0x350 drivers/infiniband/sw/rxe/rxe_verbs.c:1540
-> > >   rxe_net_add+0x74/0xf0 drivers/infiniband/sw/rxe/rxe_net.c:550
-> > >   rxe_newlink+0xde/0x1a0 drivers/infiniband/sw/rxe/rxe.c:212
-> > >   nldev_newlink+0x5ea/0x680 drivers/infiniband/core/nldev.c:1795
-> > >   rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
-> > >   rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
-> > >   netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
-> > >   netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
-> > >   netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
-> > >   sock_sendmsg_nosec net/socket.c:709 [inline]
-> > >   __sock_sendmsg+0x221/0x270 net/socket.c:724
-> > >   ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
-> > >   ___sys_sendmsg net/socket.c:2618 [inline]
-> > >   __sys_sendmsg+0x269/0x350 net/socket.c:2650
-> > >   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > >   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > >   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > RIP: 0033:0x7f42d1b8d169
-> > > Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 ...
-> > > RSP: 002b:00007f42d2960038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> > > RAX: ffffffffffffffda RBX: 00007f42d1da6320 RCX: 00007f42d1b8d169
-> > > RDX: 0000000000000000 RSI: 00004000000002c0 RDI: 000000000000000c
-> > > RBP: 00007f42d1c0e2a0 R08: 0000000000000000 R09: 0000000000000000
-> > > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> > > R13: 0000000000000000 R14: 00007f42d1da6320 R15: 00007ffe399344a8
-> > >   </TASK>
-> > > 
-> > > Allocated by task 10025:
-> > >   kasan_save_stack mm/kasan/common.c:47 [inline]
-> > >   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
-> > >   poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
-> > >   __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
-> > >   kasan_kmalloc include/linux/kasan.h:260 [inline]
-> > >   __do_kmalloc_node mm/slub.c:4294 [inline]
-> > >   __kmalloc_node_track_caller_noprof+0x28b/0x4c0 mm/slub.c:4313
-> > >   __kmemdup_nul mm/util.c:61 [inline]
-> > >   kstrdup+0x42/0x100 mm/util.c:81
-> > >   kobject_set_name_vargs+0x61/0x120 lib/kobject.c:274
-> > >   dev_set_name+0xd5/0x120 drivers/base/core.c:3468
-> > >   assign_name drivers/infiniband/core/device.c:1202 [inline]
-> > >   ib_register_device+0x178/0x1460 drivers/infiniband/core/device.c:1384
-> > >   rxe_register_device+0x233/0x350 drivers/infiniband/sw/rxe/rxe_verbs.c:1540
-> > >   rxe_net_add+0x74/0xf0 drivers/infiniband/sw/rxe/rxe_net.c:550
-> > >   rxe_newlink+0xde/0x1a0 drivers/infiniband/sw/rxe/rxe.c:212
-> > >   nldev_newlink+0x5ea/0x680 drivers/infiniband/core/nldev.c:1795
-> > >   rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
-> > >   rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
-> > >   netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
-> > >   netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
-> > >   netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
-> > >   sock_sendmsg_nosec net/socket.c:709 [inline]
-> > >   __sock_sendmsg+0x221/0x270 net/socket.c:724
-> > >   ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
-> > >   ___sys_sendmsg net/socket.c:2618 [inline]
-> > >   __sys_sendmsg+0x269/0x350 net/socket.c:2650
-> > >   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > >   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > >   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > 
-> > > Freed by task 10035:
-> > >   kasan_save_stack mm/kasan/common.c:47 [inline]
-> > >   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
-> > >   kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
-> > >   poison_slab_object mm/kasan/common.c:247 [inline]
-> > >   __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
-> > >   kasan_slab_free include/linux/kasan.h:233 [inline]
-> > >   slab_free_hook mm/slub.c:2353 [inline]
-> > >   slab_free mm/slub.c:4609 [inline]
-> > >   kfree+0x196/0x430 mm/slub.c:4757
-> > >   kobject_rename+0x38f/0x410 lib/kobject.c:524
-> > >   device_rename+0x16a/0x200 drivers/base/core.c:4525
-> > >   ib_device_rename+0x270/0x710 drivers/infiniband/core/device.c:402
-> > >   nldev_set_doit+0x30e/0x4c0 drivers/infiniband/core/nldev.c:1146
-> > >   rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
-> > >   rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
-> > >   netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
-> > >   netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
-> > >   netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
-> > >   sock_sendmsg_nosec net/socket.c:709 [inline]
-> > >   __sock_sendmsg+0x221/0x270 net/socket.c:724
-> > >   ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
-> > >   ___sys_sendmsg net/socket.c:2618 [inline]
-> > >   __sys_sendmsg+0x269/0x350 net/socket.c:2650
-> > >   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > >   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > >   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > 
-> > > This is because if rename device happens, the old name is freed in
-> > > ib_device_rename() with lock, but fill_nldev_handle() may visit the dev
-> > > name locklessly triggered by rxe_newlink().
-> > > 
-> > > Fix this by add lock around rdma_nl_notify_event() in
-> > > ib_device_notify_register().
-> > > 
-> > > Reported-by: syzbot+f60349ba1f9f08df349f@syzkaller.appspotmail.com
-> > > Closes: https://syzkaller.appspot.com/bug?extid=25bc6f0ed2b88b9eb9b8
-> > > Fixes: 9cbed5aab5ae ("RDMA/nldev: Add support for RDMA monitoring")
-> > > Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> > > ---
-> > >   drivers/infiniband/core/device.c | 2 ++
-> > >   1 file changed, 2 insertions(+)
-> > > 
-> > > diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-> > > index 0ded91f056f3..4536621ada0d 100644
-> > > --- a/drivers/infiniband/core/device.c
-> > > +++ b/drivers/infiniband/core/device.c
-> > > @@ -1341,7 +1341,9 @@ static void ib_device_notify_register(struct ib_device *device)
-> > >   	u32 port;
-> > >   	int ret;
-> > > +	down_write(&devices_rwsem);
-> > The analysis looks correct to me, however this should be down_read(&devices_rwsem)
-> > together with comment about possible race with RDMA netlink, which can change
-> > internals of struct ib_device.
-> > 
-> > I wonder if this read semaphore should be hold for whole
-> > ib_device_notify_register() function and not only for RDMA_REGISTER_EVENT event.
-> > 
-> > Thanks
-> Yes, you are right! The RDMA_NETDEV_ATTACH_EVENT event in function
-> ib_device_notify_register() can also visit the dev name locklessly:
-> 
-> rxe_newlink
->     ...
->     ib_device_notify_register
->         rdma_nl_notify_event(RDMA_NETDEV_ATTACH_EVENT)
->             fill_mon_netdev_association
->                 // visit dev_name without devices_rwsem
-> 
-> What's more, the following trace may also trigger the issue when function
-> nldev_set_doit() rename device:
-> 
-> (1)
-> RDMA_NLDEV_CMD_GET
->     nldev_get_doit
->         fill_dev_info
->             fill_nldev_handle
->                 // visit dev_name without devices_rwsem
-> 
-> (2)
-> RDMA_NLDEV_CMD_PORT_GET
->     nldev_port_get_doit
->         fill_port_info
->             fill_nldev_handle
->                 // visit dev_name without devices_rwsem
-> 
-> (3)
-> RDMA_NLDEV_CMD_RES_GET
->     nldev_res_get_doit
->         fill_res_info
->             fill_nldev_handle
->                 // visit dev_name without devices_rwsem
-> 
-> And more...
-> 
-> However, some scenarios hold devices_rwsem, like function
-> nldev_get_dumpit(),
-> which was modified by 921eab1143aa("RDMA/devices: Re-organize device.c
-> locking"):
-> 
-> RDMA_NLDEV_CMD_GET
->     nldev_get_dumpit
->         ib_enum_all_devs
->             down_read(&devices_rwsem); // hold devices_rwsem read
->                 _nldev_get_dumpit
->                     fill_dev_info
->                         fill_nldev_handle
->                             // visit dev_name with devices_rwsem
->             up_read(&devices_rwsem);
-> 
-> So only hold devices_rwsem for whole ib_device_notify_register() may be not
-> enough.
-> 
-> How about add down_read(&devices_rwsem) around
-> fill_dev_info()/fill_port_info()/
-> fill_res_info()/ib_device_notify_register().
+On Wed, Mar 12, 2025 at 12:21:17AM +0000, jeffxu@chromium.org wrote:
+> From: Jeff Xu <jeffxu@chromium.org>
+>
+> Initially, when mseal was introduced in 6.10, semantically, when a VMA
+> within the specified address range is sealed, the mprotect will be rejected,
+> leaving all of VMA unmodified. However, adding an extra loop to check the mseal
+> flag for every VMA slows things down a bit, therefore in 6.12, this issue was
+> solved by removing can_modify_mm and checking each VMA’s mseal flag directly
+> without an extra loop [1]. This is a semantic change, i.e. partial update is
+> allowed, VMAs can be updated until a sealed VMA is found.
+>
+> The new semantic also means, we could allow mprotect on a sealed VMA if the new
+> attribute of VMA remains the same as the old one. Relaxing this avoids unnecessary
+> impacts for applications that want to seal a particular mapping. Doing this also
+> has no security impact.
+>
+> [1] https://lore.kernel.org/all/20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com/
+>
+> Fixes: 4a2dd02b0916 ("mm/mprotect: replace can_modify_mm with can_modify_vma")
+> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> ---
+>  mm/mprotect.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index 516b1d847e2c..a24d23967aa5 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -613,14 +613,14 @@ mprotect_fixup(struct vma_iterator *vmi, struct mmu_gather *tlb,
+>  	unsigned long charged = 0;
+>  	int error;
+>
+> -	if (!can_modify_vma(vma))
+> -		return -EPERM;
+> -
+>  	if (newflags == oldflags) {
+>  		*pprev = vma;
+>  		return 0;
+>  	}
+>
+> +	if (!can_modify_vma(vma))
+> +		return -EPERM;
+> +
+>  	/*
+>  	 * Do PROT_NONE PFN permission checks here when we can still
+>  	 * bail out without undoing a lot of state. This is a rather
+> --
+> 2.49.0.rc0.332.g42c0ae87b1-goog
+>
 
-I don't think so, as all flows in nldev.c except rdma_nl_notify_event() are
-single threaded and call to ib_device_rename() will make sure that no
-other RDMA_NLDEV_CMD_* commands are executed.
+Hm I'm not so sure about this, to me a seal means 'don't touch', even if
+the touch would be a no-op. It's simpler to be totally consistent on this
+and makes the code easier everywhere.
 
-In your case call to rdma_nl_notify_event() can happen in parallel to
-device_rename only.
+Because if we start saying 'apply mseal rules, except if we can determine
+this to be a no-op' then that implies we might have some inconsistency in
+other operations that do not do that, and sometimes a 'no-op' might be
+ill-defined etc.
 
-Thanks
+I think generally I'd rather leave things as they are unless you have a
+specific real-life case where this is causing problems?
 
