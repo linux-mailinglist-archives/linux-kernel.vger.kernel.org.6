@@ -1,217 +1,157 @@
-Return-Path: <linux-kernel+bounces-557365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DCFBA5D7D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:08:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 719F8A5D7D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:08:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A563A568A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:07:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03E76189F972
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90956235342;
-	Wed, 12 Mar 2025 08:06:56 +0000 (UTC)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82314230D35;
+	Wed, 12 Mar 2025 08:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mpr83yjd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94421233D85;
-	Wed, 12 Mar 2025 08:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1439422E40A;
+	Wed, 12 Mar 2025 08:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741766816; cv=none; b=Hd3NU3VU8YEwjVD7aJ/sQjNXZcj6tfeWIhHbVkNM8ZqqXsMied2AS0wVPKeIGoKamzfAAvQPU71MtoWc4QJ1egZn8PL+ULEV24Six1OEWr2osQxBOV89MdIa9zfI3u6fjMSn8AlCfGLUZe/3A42EfO3xesDTySNP8fW00/UzFa4=
+	t=1741766856; cv=none; b=qINyHxpHXYSl/vrdN3bqA/wXs0qHB7wfy/gDSLhDOyUPsYrmx/z/dmd1C+M1uem5ZgWA5Yoli84Jxk4XxuN2Wf5ENuU2jWtnoaBm6oBkWO1inn8QIphBEtXpb+pI6FIPysjOVn+yGwMAA33nOVzvMYWhJbI/XmfkQ9MNAEXbtHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741766816; c=relaxed/simple;
-	bh=/E+CxfZwg+3uh69C7tp13/GXhlnba+LwlXzgTRr4yyE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TSOtNOZ1uockHCZ5KDtCx9jVo3ZBe6LmeILsaW/s2F5nr2Ruxsj7Es7ygiCQLcc66uyNIdYbjiEOZi+TCqLNK02cAd1k9G4VvxveMYFaVngTd39buyGgofKP9x9Sn3uQ2YZdd+TloH2f972OyPQXunnNIwJPOCTd6uVcFyB8rPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86d42f08135so2188189241.0;
-        Wed, 12 Mar 2025 01:06:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741766812; x=1742371612;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qmGqQHBEwBRbkAoYLiZ6rvfGYL5ug5x1JGdr3Bwp44E=;
-        b=V/s6c4V7iTCUQqP5ffCJlrsnxP3i7MCHK6/s3QdlZgoS1cr/ma9+stFFP/fCw6cseu
-         iMFk5he3Z3mDc+TpaRkBXn/6ochxj/h5nCLo4pJR2wQajgOFivjSIsWl7JFBR4ojAhRX
-         Tk1UAAcHiJ33zaLgWWebWluIoZNxwZjPUXQ9jHWOSJEELXMKVAyEo8P+MavMh5pR3Rxf
-         o8dcRuiLRevwKF+RFF5tKPfuQZCnCXuEVaFYfEcgDXEubBr2gmncgVxwe/JhXB441oTt
-         oSbb4qAFOEPzbqriS20Ma6Pdt746E4XOICf+su6b6Ivy1G86qhP0LXDqlEzVcNyQS9YE
-         oSsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqj4qhWdU/xgx5Ds77V3h9ZciKsSz+hx+yNskPzYUbqLUqQwThfnG3DJP33SsItX/qW3kkl9eg/Ww=@vger.kernel.org, AJvYcCXDlAN+puOK7ZDBCIU43wN0fFlgCQhqwH/mVKMkJXU+aZ6HfgzpoGK2VAoRoiR42R/obgQfkaCeedWD1IY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRYet/Gdlfv2UNQlikGFqV4U1madhP2iT7GjwNglZZZRMNP39Y
-	EZGL8yUhHYpx9gYhO3KH6SEpXG0ELmiqLGaHn7HD7y0RI/uorWJ5mzUFWcP+
-X-Gm-Gg: ASbGncvThL6RxqH9Tw8v6qfdtJj3ozpEMhTutkhdj6bZVkdDdlbeMiPdBuUY8ZyjPX4
-	zZzLqZSUNZxLS9LYQsmfHk+vRXWg+H2f1I7h2McSJj9YUdOVWzzKTCpHFuVzyzOFTtBhqYEYmex
-	P5iJ4Ybsw8qzNuN9zbtdUN9IunpPQVoJwcBxSadKLNMGxld0injase7ZHOyQzI+34O3zOZe0J6s
-	qGaSHkOG11aJBCIzAtK2xqeOqV8bxzZmRSsYRett5BfIdBRt2vJg56aLiBBDj5vEP7FgsCe5Lu7
-	oJylNVSF0FxftpvNg9EGjPTAqVH7/MfCFiB9Pz7PfY3bTn1k2PPAPFQHhpXuk1qZqTqXbBy3Y/g
-	TiA/UneA=
-X-Google-Smtp-Source: AGHT+IE296I3adwjsuzyITlzeScjw+WyrtbNq1rfkc9DzpmD4NKHRWnJy7Dx61NGK0698mhlf9bFrw==
-X-Received: by 2002:a05:6102:3e16:b0:4c1:a395:c57b with SMTP id ada2fe7eead31-4c30a72b35amr13824586137.24.1741766811727;
-        Wed, 12 Mar 2025 01:06:51 -0700 (PDT)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c347bb8611sm800316137.22.2025.03.12.01.06.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 01:06:51 -0700 (PDT)
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-86d6976f768so1104119241.1;
-        Wed, 12 Mar 2025 01:06:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPNgQT7G+kpzb3pomcvTmY5s9QsZ9qR8EhWzHZlvmEi70A+Xvd5PDTjO1atxNLWsGfV9gxnSUsg2dzxBE=@vger.kernel.org, AJvYcCVudFvW04t6vuZOGnUdU1+YHrRgmkb6cukIjqMnYV6XvuHqBHi5KfLp+rjcLAW5fA6TIiVjv7EWOoo=@vger.kernel.org
-X-Received: by 2002:a05:6102:808f:b0:4b6:d108:cac1 with SMTP id
- ada2fe7eead31-4c30a5a7306mr14483092137.9.1741766811160; Wed, 12 Mar 2025
- 01:06:51 -0700 (PDT)
+	s=arc-20240116; t=1741766856; c=relaxed/simple;
+	bh=X7WI9FTJ+ijs6Zp6BzrOyWw76KMqwJUF8T3ieWwiKg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QmB7Cy0m4YQLpOYa+H9wRcUwWw1CT7NQBcyULQhU5Xq7esZnOH9LDW9zxVcw1wDPoNMXV1CXPoBc/n+zElSkzwTs4TX7u2yl38CD2lhPfSgKCoyEQ1tlWCWvF6XMXrADWckoptSQmtzHa/6nUs75xvdpkGdrYenNEv3jMmQashw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mpr83yjd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BMHfA5009124;
+	Wed, 12 Mar 2025 08:07:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZmmnY2Vy5rJd5WK2YpvniHAGkdEady0IcPFK0XyvC8A=; b=mpr83yjd1JQBJ0uT
+	8BnQGmN7MNMCynPwB8zkURCI4mLFe/G5sNRmmKNI/DPBc9hlGbwwPNsqTSql6iV1
+	T0DNNv5N1bwjFBj8a1asqURMVYuVSCvilqmIfUar1DdxFhjM903980Gha541NA5a
+	8LBsm6d+KkEFSyoZEo65bUSTTJs7k/op0DJMJWxHYNS71PaY852wXaJNWrtcqQ4L
+	vT5asaVAOKL0fL6IMAXtwZdEK6M8p/8lcod5pTHN/46OftNgpizqB7+We9pEgYAd
+	GVOQdC7gwvhP8Z2IKjQ7l8wsY+fDE+nMvoUgZ8VTPuIyWRLB6qda5YQZiORaVTtZ
+	mj4xbg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2r9k50-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 08:07:25 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52C87OUp026380
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 08:07:24 GMT
+Received: from [10.216.38.182] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Mar
+ 2025 01:07:19 -0700
+Message-ID: <5e4838e5-b5f1-7107-78b8-cfd9d5620e2e@quicinc.com>
+Date: Wed, 12 Mar 2025 13:37:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250216175545.35079-1-contact@artur-rojek.eu>
- <20250216175545.35079-2-contact@artur-rojek.eu> <5365422a9715376c76a89e255c978fc39064e243.camel@physik.fu-berlin.de>
- <433bc8a0732bf8a63c64c4bf0e6ad4a7@artur-rojek.eu>
-In-Reply-To: <433bc8a0732bf8a63c64c4bf0e6ad4a7@artur-rojek.eu>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Mar 2025 09:06:39 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVmKk9vML=p1MsnkGATzUh3HD+Pa==7C=QMYjjzqzxk2A@mail.gmail.com>
-X-Gm-Features: AQ5f1JpVcQIR2AUq5CsSqZ5TfhWlttBNgDchgzFmEA9b_wdiswP8JhWKfF1izpY
-Message-ID: <CAMuHMdVmKk9vML=p1MsnkGATzUh3HD+Pa==7C=QMYjjzqzxk2A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] sh: align .bss section padding to 8-byte boundary
-To: Artur Rojek <contact@artur-rojek.eu>
-Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Uros Bizjak <ubizjak@gmail.com>, "D . Jeff Dionne" <jeff@coresemi.io>, Rob Landley <rob@landley.net>, 
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 2/4] dt-bindings: media: qcom,sm8550-iris: document
+ SA8775p IRIS accelerator
+Content-Language: en-US
+To: Dmitry Baryshkov <lumag@kernel.org>
+CC: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
+ <20250311-dtbinding-v1-2-5c807d33f7ae@quicinc.com>
+ <ngzl7q3fli3bpuo5gjvppfrsnmlw6viy26ieqwhpfokgue2uxm@whomn2h6h3a7>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <ngzl7q3fli3bpuo5gjvppfrsnmlw6viy26ieqwhpfokgue2uxm@whomn2h6h3a7>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=D6NHKuRj c=1 sm=1 tr=0 ts=67d140bd cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=aMrZHK2ZkiMzTJC1X3MA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: jrP0J6cxO7BTmUO2dEJefqrV3_IC65S4
+X-Proofpoint-ORIG-GUID: jrP0J6cxO7BTmUO2dEJefqrV3_IC65S4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
+ adultscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 impostorscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120053
 
-Hi Artur,
 
-On Wed, 12 Mar 2025 at 00:40, Artur Rojek <contact@artur-rojek.eu> wrote:
-> On 2025-03-11 18:28, John Paul Adrian Glaubitz wrote:
-> > I'm currently trying to review this patch, but I'm not 100% sure how it
-> > this change helps grows the .bss section, see below. Maybe you can help
-> > me understand what's happening.
-> >
-> > On Sun, 2025-02-16 at 18:55 +0100, Artur Rojek wrote:
-> >> J2 based devices expect to find a devicetree blob at the end of the
-> >> bss
-> >> section. As of a77725a9a3c5, libfdt enforces 8-byte alignment for the
-> >> dtb, causing J2 devices to fail early in sh_fdt_init.
-> >>
-> >> As J2 loader firmware calculates the dtb location based on the kernel
-> >> image .bss section size, rather than the __bss_stop symbol offset, the
-> >> required alignment can't be enforced with BSS_SECTION(0, PAGE_SIZE,
-> >> 8).
-> >> Instead, inline modified version of the above macro, which grows .bss
-> >> by the required size.
-> >>
-> >> While this change affects all existing SH boards, it should be benign
-> >> on
-> >> platforms which don't need this alignment.
-> >>
-> >> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
-> >> ---
-> >>  arch/sh/kernel/vmlinux.lds.S | 15 ++++++++++++++-
-> >>  1 file changed, 14 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/sh/kernel/vmlinux.lds.S
-> >> b/arch/sh/kernel/vmlinux.lds.S
-> >> index 9644fe187a3f..008c30289eaa 100644
-> >> --- a/arch/sh/kernel/vmlinux.lds.S
-> >> +++ b/arch/sh/kernel/vmlinux.lds.S
-> >> @@ -71,7 +71,20 @@ SECTIONS
-> >>
-> >>      . = ALIGN(PAGE_SIZE);
-> >>      __init_end = .;
-> >> -    BSS_SECTION(0, PAGE_SIZE, 4)
-> >> +    __bss_start = .;
-> >> +    SBSS(0)
-> >> +    . = ALIGN(PAGE_SIZE);
-> >
-> > What this effectively does is removing ". = ALIGN(sbss_align);" first
-> > from BSS_SECTION().
-> >
-> > Then it inserts ". = ALIGN(PAGE_SIZE);" after the "SBSS(0)".
-> >
-> > If I understand this correctly, SBSS() inserts a zero-padding and if
-> > I'm not mistaken,
-> > inserting ". = ALIGN(PAGE_SIZE);" will cause this padding to grow to at
-> > least PAGE_SIZE
-> > due the alignment.
-> >
-> > Is this correct?
-> >
-> >> +    .bss : AT(ADDR(.bss) - LOAD_OFFSET) {
-> >> +            BSS_FIRST_SECTIONS
-> >> +            . = ALIGN(PAGE_SIZE);
-> >> +            *(.bss..page_aligned)
-> >> +            . = ALIGN(PAGE_SIZE);
-> >> +            *(.dynbss)
-> >> +            *(BSS_MAIN)
-> >> +            *(COMMON)
-> >> +            . = ALIGN(8);
-> >
-> > If my understanding above is correct, why do we will need an additional
-> > ". = ALIGN(8)"
-> > here?
->
-> I'll tackle both of the above questions at once.
-> I'm by no means an expert at GNU Linker syntax, but the intention of
-> this patch is to put . = ALIGN(8) inside the .bss : { ... } section
-> definition, so that the section itself grows by the requested padding.
->
-> In the original BSS_SECTION(0, PAGE_SIZE, 4), the last argument inserts
-> a 4 byte padding after the closing brace of .bss section definition,
-> causing the __bss_stop symbol offset to grow, but not the .bss section
-> itself:
->
-> #define BSS_SECTION(sbss_align, bss_align, stop_align)                  \
->         . = ALIGN(sbss_align);                                          \
->         __bss_start = .;                                                \
->         SBSS(sbss_align)                                                \
->         BSS(bss_align)                                                  \
->         . = ALIGN(stop_align);                                          \
->         __bss_stop = .;
->
-> TurtleBoard loader is only concerned with the .bss section size - it
-> doesn't care about any symbol offsets - and hence this seemingly cryptic
-> change (you can display the section size information with
-> readelf -t kernel_image).
-> The rest of the changes are simply to "inline" the BSS() macro (as I
-> needed to access that closing brace), and the former sbss_align,
-> bss_align (that's your PAGE_SIZE) and stop_align arguments are passed
-> accordingly, the same way they used to be passed before. The only
-> visible effect should be the move of ALIGN(stop_align) inside of .bss
-> section definition, and the change of stop_align value from 4 to 8.
->
-> Arguably the TurtleBoard loader should read the __bss_stop symbol offset
-> instead, but in this patch I'm trying to solve the issue from kernel's
-> point of view.
+On 3/11/2025 9:01 PM, Dmitry Baryshkov wrote:
+> On Tue, Mar 11, 2025 at 05:33:54PM +0530, Vikash Garodia wrote:
+>> Document the IRIS video decoder and encoder accelerator found in the
+>> SA8775P platform. SA8775P has collapsible MX compared to SM8550.
+> 
+> How compatible is SA8775P to SM8550? Should it be using a fallback
+> compatible?
+They are quite compatible. At the moment i do not see any reason for not using
+fallback compatible. Later, if we want to distinguish the associated platform
+data for SA8775P and SM8550, the compatible can be made independent and use it
+in driver to associate with its own platform data ?
+> 
+> This kind of comes as a more generic question: is there anything like
+> 'IP version' or 'core version'? It would be really nice to determine the
+> 'baseline' SoCs and make other instances compatible with the baseline.
+It would be helpful if you can elaborate more on this with some drivers
+following it (if any) ?
 
-What about moving (or duplicating, e.g. sbss_align alignment is
-done before and after __bss_start)  the stop_align alignment
-from BSS_SECTION() into BSS() instead, i.e. just changing
-include/asm-generic/vmlinux.lds.h for everyone?  I don't think that
-would hurt any platforms, while fixing the issue for good.
-IMHO it is a bit strange that the size of the bss section can differ
-from __bss_stop - __bss_start.
-One last question though: what about sbss? How does the TurtleBoard
-loader handle that?  __bss_stop - __bss_start is not the size of bss,
-but the sum of the sizes of sbss and bss, plus extra alignment in
-between. The latter might cause trouble, too.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Vikash
+>>
+>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+>> ---
+>>  Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+>> index 440a0d7cdfe19a1ccedefc207d96b26eed5d6630..20ac596638ba33f49cce9e42d70d31a8aaa7c36e 100644
+>> --- a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+>> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+>> @@ -19,7 +19,9 @@ allOf:
+>>  
+>>  properties:
+>>    compatible:
+>> -    const: qcom,sm8550-iris
+>> +    enum:
+>> +      - qcom,sm8550-iris
+>> +      - qcom,sa8775p-iris
+>>  
+>>    power-domains:
+>>      maxItems: 4
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
 
