@@ -1,70 +1,138 @@
-Return-Path: <linux-kernel+bounces-557517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DF06A5DA4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:16:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BF1AA5DADC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:50:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31F253AD533
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:15:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66DBB18956BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AF923E33D;
-	Wed, 12 Mar 2025 10:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sSw4dYBs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D7F23E32B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3623223C8AC;
+	Wed, 12 Mar 2025 10:50:07 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C156F233D85
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741774554; cv=none; b=EOzT8/pL3fxyrpINNpqSO+HkuRs3d+3mlRhsN/MWnbFYgH8d1a+V5e5KuHZUIUWtLlqhxbSH/pHE7P+DKkx1V5Gnl23gXM+zSEjxEGFuswioMwE+rO4s992SdZkyW+BlJ3EmA6d3vSh6iyurguvC93TyrHtlFMUXWbm5lsBLerY=
+	t=1741776606; cv=none; b=QGkq2SgzOnHZwFFbod3rJk4TUGvIwY2XWRnO19ulYUJWoIxxYTaM3uo8ugf+bVDXtujpmV4LQ2h6GK7n51EnZD04NNMMb0KMTBE/OM//UvHZkJA8aHLGcvZHeoXig7piby0UvVSGmpl4hxEkzUqkahaaRT4Y1wnuACR56ERbSdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741774554; c=relaxed/simple;
-	bh=m/8CcVSzjkw9ZPpZN5jkPhm7S6MvAm8LmEMxsh5n8gs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mLc8IjyhJtE3BVOIqLpuofZ4ap9RJkctBy9dnnSdFgLC56I1NVzY1KKSqPniV3oBpB4Sx1XXiaenrXujjQDkPqCWik8BSmNPJIRC5csn/FVRf+ZyN2fQQS0rG84EuqtWu4Xle1+kxzNSzMA7hudrMuOZ/CJH+QcxPLrlt3oNNZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sSw4dYBs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D648AC4CEED;
-	Wed, 12 Mar 2025 10:15:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741774553;
-	bh=m/8CcVSzjkw9ZPpZN5jkPhm7S6MvAm8LmEMxsh5n8gs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sSw4dYBsCxGnySEMg3hkt3qJV7wpjYgy7SGfGBsq2oVn1HGy7tunr5GSEXL7lvYD3
-	 jNCpUY4QT1fVk/Xhe2xC0MCXcgVqP3m3mcYz3OfmtmK37bDBAb9cSlO0qyrAOF0Qk8
-	 q3GLhCGe+gnWnVxbyhJNJsM5yItW3iKHmDS3gHb8=
-Date: Wed, 12 Mar 2025 11:15:50 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Nipun Gupta <nipun.gupta@amd.com>
-Cc: linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, derek.kiernan@amd.com, dragan.cvetic@amd.com,
-	arnd@arndb.de, praveen.jain@amd.com, harpreet.anand@amd.com,
-	nikhil.agarwal@amd.com, srivatsa@csail.mit.edu, code@tyhicks.com,
-	ptsm@linux.microsoft.com
-Subject: Re: [RFC PATCH 1/2] drivers/misc: add silex multipk driver
-Message-ID: <2025031236-siamese-graffiti-5b98@gregkh>
-References: <20250312095421.1839220-1-nipun.gupta@amd.com>
+	s=arc-20240116; t=1741776606; c=relaxed/simple;
+	bh=Y45kkFaeGvu203KwL1jnYyfb4Gk/FkGEhZTM1WBbCRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=r7DjX5M8G5ny55EQfiGHwL89SEduxPsaUZi9PoPKJBnPBX5uSzecdRuuuTOb7LMsrb7vGSB593gbznXV0FUrOF5S7rUIxLLNf10P2826y7Vqo1P81Wy65wSD4lWWCvsem1qKnewyxiIsoQ+n2qHOZny6oVG0lNSgnr9Y+lwibsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4ZCRPX36Yhz9sgW;
+	Wed, 12 Mar 2025 11:16:48 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id sWOjLZKmmSMT; Wed, 12 Mar 2025 11:16:48 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZCRPX25Rsz9sgS;
+	Wed, 12 Mar 2025 11:16:48 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 34E478B768;
+	Wed, 12 Mar 2025 11:16:48 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id GVHOBlTWoH6b; Wed, 12 Mar 2025 11:16:48 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DEF2F8B763;
+	Wed, 12 Mar 2025 11:16:47 +0100 (CET)
+Message-ID: <e5a67a3a-f2ca-45b7-b227-267477c62ccb@csgroup.eu>
+Date: Wed, 12 Mar 2025 11:16:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312095421.1839220-1-nipun.gupta@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next-20250307] Build Failure
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ Michael Ellerman <mpe@ellerman.id.au>
+References: <70ba4e80-53c4-4583-82f3-2851e0829aa6@linux.ibm.com>
+ <5ab103b4-70f0-454e-bca6-0bfc66d143f5@csgroup.eu>
+ <c0a716d0-6811-4b1b-b008-d4e97900cb0e@linux.ibm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <c0a716d0-6811-4b1b-b008-d4e97900cb0e@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 12, 2025 at 03:24:20PM +0530, Nipun Gupta wrote:
-> Silex MultiPK device provides a char device interface to interact
-> with Silex device for offloading asymmetric crypto operations.
 
-Great, then why isn't this in drivers/accel/ or drivers/crypto/ ?
 
-thanks,
+Le 12/03/2025 à 11:11, Venkat Rao Bagalkote a écrit :
+> 
+> On 12/03/25 4:20 am, Christophe Leroy wrote:
+>>
+>>
+>> Le 09/03/2025 à 13:38, Venkat Rao Bagalkote a écrit :
+>>> Greetings!!,
+>>>
+>>> I see linux-next-20250307 fails to build on IBM Power9 and Power10 
+>>> servers.
+>>>
+>>>
+>>> Errors:
+>>>
+>>> In file included from ^[[01m^[[K<command-line>^[[m^[[K:
+>>> ^[[01m^[[K./usr/include/cxl/features.h:11:10:^[[m^[[K 
+>>> ^[[01;31m^[[Kfatal error: ^[[m^[[Kuuid/uuid.h: No such file or directory
+>>>     11 | #include ^[[01;31m^[[K<uuid/uuid.h>^[[m^[[K
+>>>        |          ^[[01;31m^[[K^~~~~~~~~~~~~^[[m^[[K
+>>
+>> This is unreadable. Please avoid fancy colors that add escapes to 
+>> logs. You can unset LANG environment var before building in order to 
+>> get pastable stuff.
+>>
+>> By the way I don't think it is a kernel issue because nowhere in the 
+>> kernel you have uuid/uuid.h
+>>
+>> But can you provide your .config (the actual one, not an old one from 
+>> kernel 6.0.0-rc3 like last time) and tell which version of GCC you are 
+>> using.
+>>
+> Attached are the two config files on both CI nodes build failures were 
+> reported.
+> 
+> On both the CI nodes gcc version is 11.5.0.
+> 
+> Below data are from the failure nodes.
+> 
+> commit-time: 2025-03-07 20:31:46 +1100
+> commit-id: 0a2f889128969dab41861b6e40111aa03dc57014
+> version: 6.14.0-rc5-next-20250307-auto
+> 
 
-greg k-h
+Sorry I'm still puzzled with your config files.
+
+
+The one named p10_build_failure contains:
+
+# Linux/powerpc 6.3.0-rc3 Kernel Configuration
+#
+CONFIG_CC_VERSION_TEXT="gcc (GCC) 8.4.1 20200928 (Red Hat 8.4.1-1)"
+
+
+The one named p10_kdump_config_build_failure contains:
+
+# Linux/powerpc 6.3.0 Kernel Configuration
+#
+CONFIG_CC_VERSION_TEXT="gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-18)"
+
+
+You are talking about CI nodes, do you have an online link to the full 
+report ?
+
+Christophe
 
