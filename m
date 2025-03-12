@@ -1,101 +1,83 @@
-Return-Path: <linux-kernel+bounces-558228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C233DA5E305
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:46:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA2FAA5E308
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:47:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A99179826
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:46:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19B991788FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED362512EC;
-	Wed, 12 Mar 2025 17:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069DF24EF90;
+	Wed, 12 Mar 2025 17:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NY2EZKCL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y52XRB6j"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVvZvqd2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896C0155A4E;
-	Wed, 12 Mar 2025 17:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5543F155A4E;
+	Wed, 12 Mar 2025 17:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741801611; cv=none; b=Rln6bgZIn1+CdsAERpOcF51BCqCukhal1XMdX1yxzW5WwKkIwYEt1L9NlniROqCbsthty9lm1Cd3MgCq65z4W4RCD2zjtsL14OAbvrgJkbVveieUIcyoyP2L4c8AswgWsMnRK84fR2Hpm6J/q7lHEuT4u+eTasOwj8SpDLmG+Vo=
+	t=1741801630; cv=none; b=leKDHzQ633A/j8VR/884sl/hqwSDOhEQ3GTtRPe5eBCk7dWlEe5/IjHM27lf99h2fF/+dWXDTiHkl3ib4YcTxhLQFRBPBaqRpHa2s8j7KQ0FAQhXGR8NB9UsODhnVdGVHU3+9PIvYWHOCBOJZFKewg0Wh1o4WCSlW61GVJ2ZBS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741801611; c=relaxed/simple;
-	bh=NKCxgHuPZ4uFj78qPOvbD5XkJF4OK5o+IevOA1kfUSw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ekALh8ehhUj4Im1tDTTpPvYi8Vx1DePAa3BtOWPaMH12Hm+UTjrgws1QDigusNzAWXdIpZOMeQn6tIiqP8+8YzaHoVfcTUfXEyASf0NFXXb4QEPSfcRSdOnaPT3m7BjFPnJ8fZb+tzHZR4Ry+qTvocu56vreplHzz9U+ckMG9LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NY2EZKCL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y52XRB6j; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741801608;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tPfbVqo+JayHch2aOVHEH7XB7D8qrWAXL1NgHAeSYLA=;
-	b=NY2EZKCLiZU2Y4wQcE4LOXg/1j2pRcNxi3Ho9trmOgRgRaS2UqHnTCqJHHgmOdKQd3DKhR
-	W13TQfShCDsPCuLdCQJ8YG+y6Lzhr4Eyrla/Q60ETGo6+l+oU1s8Z5fo7ERxR7qOsNTFtI
-	LcW1D/ooIcXosUCzQ9/PUPVjd+QVYfbI8yLKMam6tDgKjSp+UJZ4xrquLPnsA3ZA+xfgva
-	mrlLK2cbgO/sosvRIvKJZHJx/c6yQmEo9t5nFdwg/V3a7Cinll+uwJtJDrTMyE1NGHccMj
-	bg7owk+w1KV3941nd8Q40YU8cB5Huduy8d3y0eXiq8r0FuyVf7TjT1WKK5xEZw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741801608;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tPfbVqo+JayHch2aOVHEH7XB7D8qrWAXL1NgHAeSYLA=;
-	b=y52XRB6jA0wammvGAVfdCKbqX8TE1dpTb4rvqoeLv+K5axv4dqlXpHmS+o1HhcnKxmzg9+
-	XQbw0Erqc2PC/pBA==
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>,
- Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh
- Shilimkar <ssantosh@kernel.org>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
- <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
- ntb@lists.linux.dev, Bjorn Helgaas <bhelgaas@google.com>,
- linux-pci@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
- <wei.liu@kernel.org>, linux-hyperv@vger.kernel.org, Wei Huang
- <wei.huang2@amd.com>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, Dan Williams
- <dan.j.williams@intel.com>
-Subject: Re: [patch 02/10] genirq/msi: Use lock guards for MSI descriptor
- locking
-In-Reply-To: <20250312150835.00001851@huawei.com>
-References: <20250309083453.900516105@linutronix.de>
- <20250309084110.267883135@linutronix.de>
- <20250311180017.00003fcc@huawei.com> <87senjz2ar.ffs@tglx>
- <20250312150835.00001851@huawei.com>
-Date: Wed, 12 Mar 2025 18:46:47 +0100
-Message-ID: <8734fiywe0.ffs@tglx>
+	s=arc-20240116; t=1741801630; c=relaxed/simple;
+	bh=zmQQxNDH4Fds7Lcdf3Pm1gb9moqE2cmfjzhZ+FDb8SM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JIEUF4OunLOSXPhtZR4kLm65iDdlhUWnUXusMG0vx+mhziYbdIIjiCI7twVpGlJjKGhGi/L6AwfD1l7o3w/KP9yafbXwK3bcvkSAofkhxAE0zJy+VH9av8hkioC8d6DkV8+WwxYjipUmQRha9IwFm9y0bJIvtpfndI6N0y9xZKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVvZvqd2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6654C4CEDD;
+	Wed, 12 Mar 2025 17:47:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741801629;
+	bh=zmQQxNDH4Fds7Lcdf3Pm1gb9moqE2cmfjzhZ+FDb8SM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jVvZvqd2xiTRKWSk6B5HnnmfMPfllsLcFKQ3KQjJDQDPiuDAIaFsYRRt9ZTc049TS
+	 Qb32a+zt+4FtuVxg6+5Ru9tTE/oP7+9XLwr3ehmfFQZ7/tc9tpxVMdZPE6LNEd7rZd
+	 5F7aVHsryiWrjFBCdht2ypdgmJvBKnHANHfUn2HhaZIT/0+jfIHohpsy91r2kPmuGF
+	 jKf56PZIS27Es5uN28dlvssqrXeRdYN8x2k6SPV3kuZb/+cV8bH6HQ4jMWNTO2agbX
+	 sxflb5Qc5cmqhU8JcVKhhiWwvYg1tgF3aTKoOMxiQ2WcAdb7EgqsJD/zCnPKx9S5m0
+	 ZEbhSXIPn1/yQ==
+Date: Wed, 12 Mar 2025 19:47:05 +0200
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] drm/display: hdmi: Create documentation section
+Message-ID: <nntv5x5niu33zjxpdlx4zr3zbdvl6mugx34btgejbdgusw3j5i@oakkwqs5mtm2>
+References: <20250312-drm-hdmi-state-docs-v2-0-6352a5d68d5b@kernel.org>
+ <20250312-drm-hdmi-state-docs-v2-1-6352a5d68d5b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312-drm-hdmi-state-docs-v2-1-6352a5d68d5b@kernel.org>
 
-On Wed, Mar 12 2025 at 15:08, Jonathan Cameron wrote:
-> On Tue, 11 Mar 2025 22:26:52 +0100
-> Thomas Gleixner <tglx@linutronix.de> wrote:
->>  
->>  #define return_ptr(p)	return no_free_ptr(p)
->>  
->> +#define retain_ptr(p)				\
->> +	__get_and_null(p, NULL)
-> Single line?
->
-> This sort of thing got discussed in the past though I doubt I can find
-> the thread. There was some push back but maybe now is it's time!
->
-> Probably worth shouting about it a bit to attract attention. Maybe
-> a separate patch.
+On Wed, Mar 12, 2025 at 02:39:16PM +0100, Maxime Ripard wrote:
+> We have had documentation for the public functions in the HDMI helpers,
+> but those were never referenced anywhere and thus not compiled as part
+> of the doc.
+> 
+> Let's add a section.
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  Documentation/gpu/drm-kms-helpers.rst           | 15 +++++++++++++++
+>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 21 +++++++++++++++++++++
+>  2 files changed, 36 insertions(+)
+> 
 
-Yes of course.
+Reviewed-by: Dmitry Baryshkov <lumag@kernel.org>
+
+-- 
+With best wishes
+Dmitry
 
