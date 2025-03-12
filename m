@@ -1,114 +1,97 @@
-Return-Path: <linux-kernel+bounces-557707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E71A5DCB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:32:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CFFA5DCBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:33:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B66B17898E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:32:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D50743B4DAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03D524293D;
-	Wed, 12 Mar 2025 12:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E50C242923;
+	Wed, 12 Mar 2025 12:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IRks0Wav"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDknyuxs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C4B1E4A9;
-	Wed, 12 Mar 2025 12:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45A923F36C;
+	Wed, 12 Mar 2025 12:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741782737; cv=none; b=UeX+c5AvhcEedYUO/9riwcb2d/F1kKjqw9MrybSbsutGq8yuT5j7GyEo0pNOFs8dR3d+R6Lw8DTryVlu9/Ew5eUoOq6kbllMnaPDyxRMkpobxJZiA/DgGC5XpdLRMYtLHWDeKTQ+i/KuHqrelUVAxhlLQjk1SJT5abbcpN2S9AM=
+	t=1741782750; cv=none; b=DophE2H1Wuyie/PISUZgRkxf+aaFz+sTVjZYznZKs898PkMrqITef21GOEScf9HhpMwEpyfGIrunRy+bgI3FUtVJUXGAsoc9XNFqtQjQWUK3FndpJpFjHJFEjP8PC/IesWLc0HSpCWYhTI7nF/JCeSkMdk3STWYz7Y9zyERHxJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741782737; c=relaxed/simple;
-	bh=6PfBLti2GCLyhb5+n+egYTKW5V8tKOVfCwhp5cNmf/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MMYiDB6FH1XDUr0ROJo63Ez8Z9Vb+aj85SseP46HK6Xu46viP9o/JyPocqy3F8nq+bHDvnMMi3p5NH9O3Wz22EJSG8hev9ijZGCeUbwxQEHifh4f29AnypXLAEHDL/L3oU0go+EF/9Vx9BjXWeSug/7jmIV4afwxQLIebV1V9ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IRks0Wav; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741782736; x=1773318736;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6PfBLti2GCLyhb5+n+egYTKW5V8tKOVfCwhp5cNmf/8=;
-  b=IRks0WavRT05K58iiqVo9bPcLoPNOv57Kqc7btp9miCtZhfvlO0CAN3N
-   wbnm16FGmjTLwVuE52lH1adEgGkGk2bRj37ybTNSBJ33dYqKLg50te/OR
-   355UPlTpoWJRhD4hna3ZQUYTEiAUbRFNER5rwquEOgQwAtG+oYU5O+vTI
-   IDmwA+q2Da/XgNmFBQVP/34TUQnATRGX8D0ieUQrpwSslZgDwh1Yh5x0A
-   84Yrd6uHIwszYWl674fyyYMQvGlhQpBgAlQOHXmpumLoFf0QCfmLTAWOH
-   BIvO6lkZbp2Sb5RNRzRtR4sBzuA/ca01vKhwJjkVN1eHUjts+b4ihS41e
-   g==;
-X-CSE-ConnectionGUID: 49yItcRcRbOuAgIC2VTfjQ==
-X-CSE-MsgGUID: Yf8kgAuPQsG7HBiW2ZHrAA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="43038352"
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="43038352"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 05:32:15 -0700
-X-CSE-ConnectionGUID: wKwWVNBrTja/NwUNPTtyEg==
-X-CSE-MsgGUID: Lv2rZVgETySZXTKDLNe8kQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="120325899"
-Received: from soc-5cg4396xfb.clients.intel.com (HELO [172.28.180.56]) ([172.28.180.56])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 05:32:11 -0700
-Message-ID: <7d4ee477-f7e9-41b3-ab22-3af71054c60a@linux.intel.com>
-Date: Wed, 12 Mar 2025 13:32:07 +0100
+	s=arc-20240116; t=1741782750; c=relaxed/simple;
+	bh=+rjJYTP8HwbYWg6ENzkVJt3UuUPibkhpGHD4QQ+eO6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hW+dfqptl14AdL88eV+pzEax5dZPTukccT7fCIXUjGTtorRhFCmiCJnaQnHXDVLbkjJFYuaWeHDcuJHptW8fnMXscJVQFdGs0EDjQCYhRDwzp87d74zhFnfJSWuQ4WPiisM0h+jg75zEku2PJUzpuQXW6Rk66Rvohb0lB1NePLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDknyuxs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5FF5C4CEE3;
+	Wed, 12 Mar 2025 12:32:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741782750;
+	bh=+rjJYTP8HwbYWg6ENzkVJt3UuUPibkhpGHD4QQ+eO6k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hDknyuxsGflVNUyadhV4XtLaZJD/j1GZxLocdLQW68M6mR3VCdbg7uXMtmXFnLV34
+	 vKpXMR0QPz7FsdynNAmrTX1YBXxV5Zv7HYx68Qm00E1vtr72ikdl2G+Mj3CffzItuA
+	 0j/MlzPfNjl2/MRqVZmoZ3RSLv0lulfLrwVUdXLC4xRWb1Z50losijF9B7rgiYZt0O
+	 5s2GBnJ4/ECxZXFjf1WtbHC/Zt0Rn2SOa4h0Ccknpg3+aX2oLTH2rLByEYY8H+tLzz
+	 SFgst1EtgwHRzS29UmAqJ6EDQfvslEZm1t7VEBm8DBZPxu+TNaFTCaSZKNJsORYQNa
+	 wqD5OJszqhJnQ==
+Date: Wed, 12 Mar 2025 12:32:24 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 5.15 000/616] 5.15.179-rc2 review
+Message-ID: <6b5e407a-f2a6-4cdd-a90f-82270af1b70a@sirena.org.uk>
+References: <20250311135758.248271750@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 0/3] net/mlx5: HW Steering cleanups
-To: Tariq Toukan <tariqt@nvidia.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: Gal Pressman <gal@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
- Moshe Shemesh <moshe@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1741780194-137519-1-git-send-email-tariqt@nvidia.com>
-Content-Language: pl, en-US
-From: Dawid Osuchowski <dawid.osuchowski@linux.intel.com>
-In-Reply-To: <1741780194-137519-1-git-send-email-tariqt@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t7229o1Gb+ikn4+0"
+Content-Disposition: inline
+In-Reply-To: <20250311135758.248271750@linuxfoundation.org>
+X-Cookie: You will outgrow your usefulness.
 
-On 2025-03-12 12:49 PM, Tariq Toukan wrote:
-> This short series by Yevgeny contains several small HW Steering cleanups:
-> 
-> - Patch 1: removing unused FW commands
-> - Patch 2: using list_move() instead of list_del/add
-> - Patch 3: printing the unsupported combination of match fields
-> 
-> Regards,
-> Tariq
-> 
-> Yevgeny Kliteynik (3):
->    net/mlx5: HWS, remove unused code for alias flow tables
->    net/mlx5: HWS, use list_move() instead of del/add
->    net/mlx5: HWS, log the unsupported mask in definer
-> 
->   drivers/net/ethernet/mellanox/mlx5/core/steering/hws/cmd.c  | 6 ------
->   drivers/net/ethernet/mellanox/mlx5/core/steering/hws/cmd.h  | 3 ---
->   .../net/ethernet/mellanox/mlx5/core/steering/hws/definer.c  | 6 +++---
->   .../net/ethernet/mellanox/mlx5/core/steering/hws/pat_arg.c  | 3 +--
->   4 files changed, 4 insertions(+), 14 deletions(-)
-> 
-> 
-> base-commit: 0ea09cbf8350b70ad44d67a1dcb379008a356034
 
-Hi, thanks for the submission!
+--t7229o1Gb+ikn4+0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Dawid Osuchowski <dawid.osuchowski@linux.intel.com>
-for the whole series
+On Tue, Mar 11, 2025 at 03:02:03PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.179 release.
+> There are 616 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--t7229o1Gb+ikn4+0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfRftcACgkQJNaLcl1U
+h9B+EAf/ZZLUP0qq+WHUUuZwmiYa341ftsJqn3klcNngjmVu1zojPwg1GsSijVPn
+EJrzN1rQ/bTVHJo4hTH4njcVpW+R3l2nWVs6JQ/88SywedbHPb5GQyhq3/6J8ugf
+es9vgzZbGyMTaZl6pCU1zvs7UoAU2GAUsiT7wv1kBGQ88n8/0tzc7yXIHds/FlHl
+5YOL8swwTTumQ0Jsxq3xhV3jXH/3CvfYI0jJ+vZ516xiRaY8izezQPmbFsggZr+C
+oYtvy/GzPteBEyB326DDCbVrpEzOhOoAqEzp8oqAkBINIPdrKBKVMHhQhyMDlbiW
+FWFgFaxIApS8TdUI+tUTTpdv9532XQ==
+=i+pA
+-----END PGP SIGNATURE-----
+
+--t7229o1Gb+ikn4+0--
 
