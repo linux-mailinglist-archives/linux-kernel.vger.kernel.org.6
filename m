@@ -1,103 +1,158 @@
-Return-Path: <linux-kernel+bounces-557683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A681A5DC64
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:14:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C74BA5DC68
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:16:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12D6F188DE39
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:14:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3AD1897678
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A052417E4;
-	Wed, 12 Mar 2025 12:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F85242920;
+	Wed, 12 Mar 2025 12:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="r/v0NETr"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF6E226CF8
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="KeYcb7yo"
+Received: from out-14.pe-a.jellyfish.systems (out-14.pe-a.jellyfish.systems [198.54.127.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32B023F26B;
+	Wed, 12 Mar 2025 12:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741781643; cv=none; b=RY2RWCcxwEqnZV93DqnISCUp0mSP9gYJtAEA+z4pEjObohhBDqeeXGMH4sAFmj27XpHIxlmg/RE2ErXpJC9GlYKV3qNQbCTKqj+WgVA6k+KW24g/hq0IIg7Is1zjiV+S6DaD0w/fXgsCZEOdL8Uzj6RXJ0CClJ6uzafaHpRxlOI=
+	t=1741781783; cv=none; b=uTzLteoUfunCDiqXkC/keykBZlCQq88BKN92D1fA6ElEzvx3Wtwv4mmbK8hGEX8im/Uy8MkTLqiMZ0hEZMmwDhe+h0ScOaJUR5apAIoMQ8o44TK8761wS9jKnsZ71nUcsG+w2W95ztJFs4u2zkENshryj0QQVKAu2JnBIyjJrTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741781643; c=relaxed/simple;
-	bh=2WxcF1Ap6DKCim6A6UplxZhJw6IpUBv9NIqCy4lIlSs=;
+	s=arc-20240116; t=1741781783; c=relaxed/simple;
+	bh=+JhIv47YGBNM/qh6+n+ZIfJoHiVGRJYpu/WIb6UoC3Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IkZRBzQV3Wr1IK+FAuYN/ixvJBiTzubYRz1ZK1akxcHD8XCP+ZoZuK4h7aizYOEX0RqiGMZK5iPBqtGvrO4MN5YeumCgtMi5SAUT7pdgWj+F8MNQfsDPKEPQISl3QkrdztjJrgXz3sh4iAUMWxa9pmGzJQnaVXgf6XAtUcdAtT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=r/v0NETr; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 86F9314C2D3;
-	Wed, 12 Mar 2025 13:13:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1741781638;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fav7QHPJLFYJX6IazWEN8Wh4VYiGppIfRG3xbT9MEGg=;
-	b=r/v0NETrfHxZ+xW4H0HZd5Hn82azCeLT5F+NQzAXywtmby0sZO9hqu/Pglq+jfVLu6b3T0
-	arvu2kZbGfP6/fvMbFZs9k4jNMNIArPXTCZN4wG3fkQ+LcQVDS0woifMUeeYxBl890p+a0
-	fmfwiazF/CfOUPpS68HBGpe3fywVBZTq+WZZQ5/4Wj7mxGZKZtkclA5+YaAHXUt9YYSCTG
-	2zkGiCX2599jECblcFANj9eUZU3yEWANz36ABQraxqPpqBNrPuEkcA9zHAGF4PMC1tSv7c
-	E83zRTXUyJF8oboOPzuLtIOnzWJ8OJ14ly9sx8pkX+HZySJEeHq0vKMDVLordw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id e08bdb9a;
-	Wed, 12 Mar 2025 12:13:52 +0000 (UTC)
-Date: Wed, 12 Mar 2025 21:13:37 +0900
-From: asmadeus@codewreck.org
-To: Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: ericvh@kernel.org, linux-kernel@vger.kernel.org, lucho@ionkov.net,
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev,
-	syzbot <syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [v9fs?] general protection fault in p9_client_walk
-Message-ID: <Z9F6cakkpF26_KJu@codewreck.org>
-References: <67d12512.050a0220.14e108.0024.GAE@google.com>
- <34836920.9mNPFRc1x4@silver>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j6ITPwHwW4JDTEWNXD1dRaKsokubdoLpxLP1vMIww57AelJ7PlZAFMsyuzZfmhbXKJRbD8zYjz3c2EJNkDW3prLAhfHD6284bqXVZqg6oCJSIM/spQEIQvR4XiZO5c4J4tRF5MIovn6ignyRtBrMT2GGxLZy8gf4dMZH4DUrmK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=KeYcb7yo; arc=none smtp.client-ip=198.54.127.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
+Received: from prod-lbout-phx.jellyfish.systems (new-01-3.privateemail.com [66.29.159.56])
+	by pe-a.jellyfish.systems (Postfix) with ESMTPA id 4ZCV3J4vrjz3xWG;
+	Wed, 12 Mar 2025 12:16:12 +0000 (UTC)
+Received: from MTA-12.privateemail.com (unknown [10.50.14.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by NEW-01-3.privateemail.com (Postfix) with ESMTPS id 4ZCV3J4Kf0z2Sd0R;
+	Wed, 12 Mar 2025 08:16:12 -0400 (EDT)
+Received: from mta-12.privateemail.com (localhost [127.0.0.1])
+	by mta-12.privateemail.com (Postfix) with ESMTP id 4ZCV3J30mmz3hhSW;
+	Wed, 12 Mar 2025 08:16:12 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
+	s=default; t=1741781772;
+	bh=+JhIv47YGBNM/qh6+n+ZIfJoHiVGRJYpu/WIb6UoC3Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KeYcb7yoMKJSUVon6V1Nl7i3KcmNjIN0p655tu1GCPueZfaHuYcTmHczIdWjlNlGo
+	 CzFCifYwHv1hdCxNHx1lG0KSRVv/ywTSBDy0yMosRuYWd2njwKwzGiJeLp98F5ZaM0
+	 cjlXbOlaul8cyphuBW93REyIUHnery17rJaZGf65jkak0Yh+JKuxvBoes++UECsYxs
+	 QuGPA88QoqIXBEK0FSPEgIpD1KnasEynnqquThZmpsfDimPQp5JtJ1i1vwT+XfSm9V
+	 n3uqr3QTdN8Gu+wA6dej1uuxi3vwQo0jsjcSkPe5zAM+wm93+5eZi1l7JiS0QDlHEH
+	 vgl5efv+tomuA==
+Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
+	by mta-12.privateemail.com (Postfix) with ESMTPA;
+	Wed, 12 Mar 2025 08:15:59 -0400 (EDT)
+Date: Wed, 12 Mar 2025 08:16:00 -0400
+From: Sam Winchenbach <sam.winchenbach@framepointer.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-kernel@vger.kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, antoniu.miclaus@analog.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	bpellegrino@arka.org
+Subject: Re: [PATCH v6 6/6] iio: filter: admv8818: Support frequencies >= 2^32
+Message-ID: <Z9F7AJTCtFRIPHpw@65YTFL3.secure.tethers.com>
+References: <20250307150216.374643-1-sam.winchenbach@framepointer.org>
+ <20250307150216.374643-6-sam.winchenbach@framepointer.org>
+ <20250308140143.411caf7b@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <34836920.9mNPFRc1x4@silver>
+In-Reply-To: <20250308140143.411caf7b@jic23-huawei>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-Christian Schoenebeck wrote on Wed, Mar 12, 2025 at 10:36:15AM +0100:
-> > RIP: 0010:p9_client_walk+0x9a/0x530 net/9p/client.c:1165
-> >  clone_fid fs/9p/fid.h:23 [inline]
-> >  v9fs_fid_xattr_set+0x119/0x2d0 fs/9p/xattr.c:121
-> >  v9fs_set_acl+0xe6/0x150 fs/9p/acl.c:276
-> >  v9fs_set_create_acl+0x4b/0x70 fs/9p/acl.c:306
-> >  v9fs_vfs_mkdir_dotl+0x517/0x6e0 fs/9p/vfs_inode_dotl.c:411
-> >  vfs_mkdir+0x57d/0x860 fs/namei.c:4313
-> >  do_mkdirat+0x301/0x3a0 fs/namei.c:4336
-> >  __do_sys_mkdir fs/namei.c:4356 [inline]
-> >  __se_sys_mkdir fs/namei.c:4354 [inline]
-> >  __x64_sys_mkdir+0xef/0x140 fs/namei.c:4354
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+On Sat, Mar 08, 2025 at 02:01:43PM +0000, Jonathan Cameron wrote:
+> On Fri,  7 Mar 2025 10:02:16 -0500
+> Sam Winchenbach <sam.winchenbach@framepointer.org> wrote:
 > 
-> Just had a glimpse on it so far. IIUIC the trigger is in
-> v9fs_vfs_mkdir_dotl() [fs/9p/vfs_inode_dotl.c:411] ?
+> > From: Brian Pellegrino <bpellegrino@arka.org>
+> > 
+> > This patch allows writing u64 values to the ADMV8818's high and low-pass
+> > filter frequencies. It includes the following changes:
+> > 
+> > - Rejects negative frequencies in admv8818_write_raw.
+> > - Adds a write_raw_get_fmt function to admv8818's iio_info, returning
+> >   IIO_VAL_INT_64 for the high and low-pass filter 3dB frequency channels.
+> > 
+> > Fixes: f34fe888ad05 ("iio:filter:admv8818: add support for ADMV8818")
+> > Signed-off-by: Brian Pellegrino <bpellegrino@arka.org>
+> > Signed-off-by: Sam Winchenbach <sam.winchenbach@framepointer.org>
+> I only have that minor comment on patch 5.  If nothing else comes up
+> and the dt binding ack comes in I may just tidy that up whilst applying.
 > 
->     // NULLs out fid (since dafbe6897)
->     v9fs_fid_add(dentry, &fid);
->     // expects fid being non-NULL
->     v9fs_set_create_acl(inode, fid, dacl, pacl);
 
-Sounds about right, inverting the two calls probably makes sense?
-
-OTOH I don't get why all mkdirs don't hit that.. ah, it's only a problem
-if the parent directory has some ACL and none of our tests hit that :/
-
-Well, it shouldn't be too hard to trigger & fix anyway, since you've
-done this much want to send the patch?
+Sounds good. If given the opportunity I would like to submit
+the patchset once more; I would like to use my work email
+for author and signoff, and use the framepointer address
+as an envelope. If I do this, I can update patch 5 as noted.
+Would that be ok?
 
 Thanks,
--- 
-Dominique Martinet | Asmadeus
+-Sam
+
+> > ---
+> >  drivers/iio/filter/admv8818.c | 17 +++++++++++++++++
+> >  1 file changed, 17 insertions(+)
+> > 
+> > diff --git a/drivers/iio/filter/admv8818.c b/drivers/iio/filter/admv8818.c
+> > index e9602bfd4af7..9785533d0cdd 100644
+> > --- a/drivers/iio/filter/admv8818.c
+> > +++ b/drivers/iio/filter/admv8818.c
+> > @@ -402,6 +402,19 @@ static int admv8818_read_lpf_freq(struct admv8818_state *st, u64 *lpf_freq)
+> >  	return ret;
+> >  }
+> >  
+> > +static int admv8818_write_raw_get_fmt(struct iio_dev *indio_dev,
+> > +								struct iio_chan_spec const *chan,
+> > +								long mask)
+> > +{
+> > +	switch (mask) {
+> > +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> > +	case IIO_CHAN_INFO_HIGH_PASS_FILTER_3DB_FREQUENCY:
+> > +		return IIO_VAL_INT_64;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +}
+> > +
+> >  static int admv8818_write_raw(struct iio_dev *indio_dev,
+> >  			      struct iio_chan_spec const *chan,
+> >  			      int val, int val2, long info)
+> > @@ -410,6 +423,9 @@ static int admv8818_write_raw(struct iio_dev *indio_dev,
+> >  
+> >  	u64 freq = ((u64)val2 << 32 | (u32)val);
+> >  
+> > +	if ((s64)freq < 0)
+> > +		return -EINVAL;
+> > +
+> >  	switch (info) {
+> >  	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> >  		return admv8818_lpf_select(st, freq);
+> > @@ -571,6 +587,7 @@ static int admv8818_set_mode(struct iio_dev *indio_dev,
+> >  
+> >  static const struct iio_info admv8818_info = {
+> >  	.write_raw = admv8818_write_raw,
+> > +	.write_raw_get_fmt = admv8818_write_raw_get_fmt,
+> >  	.read_raw = admv8818_read_raw,
+> >  	.debugfs_reg_access = &admv8818_reg_access,
+> >  };
+> 
 
