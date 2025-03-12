@@ -1,124 +1,88 @@
-Return-Path: <linux-kernel+bounces-557788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE40A5DDC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:19:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9BEA5DDC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:18:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB7F3A3DAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:17:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 096B2164964
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90444244EAB;
-	Wed, 12 Mar 2025 13:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD57024502D;
+	Wed, 12 Mar 2025 13:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OR5xSFxe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mixaill.net header.i=@mixaill.net header.b="Jfvn6vb0"
+Received: from mail.mixaill.net (mail.mixaill.net [144.76.234.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80272EAF7;
-	Wed, 12 Mar 2025 13:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AE64A01
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.234.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741785456; cv=none; b=CgH9ShVeVu2oyMoVjMbxo1QNgeIsIJ9PPqZhOpfI4gUP9AcvCNVwABzMR8YQKVaoAMtiXAEoTBvCSSeX54/SzLRkn5RdIalz6+YNPbRG2vtnJS/f6lN2hZcJhLGoxfpfj9YlnLdMG4ug1Bs+gtYhYawR7uYUvlz8p48YyfMoseY=
+	t=1741785480; cv=none; b=N62QYXFNgvEQWUSDchwkM8O1I7dw1DXMzwmF/SxIMlqYFl1xIiR9bQZFeuTKcl5qbeS8NWdFlulDhZv6yPJ9ToKXNzMHFA5kPPiWJFezi5i0eSaSZi4y6g6FvZytkciOkbEt92LzBbQytkyTD8bf/ADGzAucTWr3iX/PpW4fr94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741785456; c=relaxed/simple;
-	bh=q6dHWY/sgNPDiH0VHzYcttxpIZaPa92meReul5KP29Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EDLGJ5z7Zt0A/nCt9HAC9oGfI09zR6LcMI09yi9bn/N40zulPFS6O5ZQ3/E5QOdQMExRKLld3GrxzRsu9AwClcg9QGxt9VVXScMZU96RqvaplwjnJYkgqAo9bkzJB0EcJt2QySMLqgZJ7oF86owWZxax65VNzoWS3G7z5sz2gI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OR5xSFxe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE87C4CEE3;
-	Wed, 12 Mar 2025 13:17:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741785455;
-	bh=q6dHWY/sgNPDiH0VHzYcttxpIZaPa92meReul5KP29Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OR5xSFxe1jq7JdfBvNZY3RH4RT2Rpt0GBysRIAKWCcgWDO/T0M9nGomYJsyKliHXf
-	 zwYE2ek7UIs6azTnHoHuXIFXe5qcuNrX/4b3pId3eG7LH4hpAI0zETkDBPaBHmZiV8
-	 6jlQ2lmmnqQ90aOnqy45rHUwE6yeTmVUSj8zDIXXfkzyK9FF0YKt1XIrizGjptW4VZ
-	 YzbSWg995YF6M9BFPaCILQPrHoMdZEXr3qsNekjIlhRSrreKvGM/Vwr1neJYnamf8c
-	 HeXzGOpZoUUaUWme2UmGz/s1f9HwxO/pemGX6mzhI8gFtbu9cC8PX9kWoFDLzKHkb9
-	 GmqxPe2zq7lOw==
-Date: Wed, 12 Mar 2025 08:17:34 -0500
-From: Rob Herring <robh@kernel.org>
-To: Suraj Gupta <suraj.gupta2@amd.com>
-Cc: radhey.shyam.pandey@amd.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	krzk+dt@kernel.org, conor+dt@kernel.org, michal.simek@amd.com,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	git@amd.com, harini.katakam@amd.com
-Subject: Re: [PATCH net-next V2 1/2] dt-bindings: net: xlnx,axi-ethernet:
- Modify descriptions and phy-mode value to support 2500base-X only
- configuration
-Message-ID: <20250312131734.GA505165-robh@kernel.org>
-References: <20250312095411.1392379-1-suraj.gupta2@amd.com>
- <20250312095411.1392379-2-suraj.gupta2@amd.com>
+	s=arc-20240116; t=1741785480; c=relaxed/simple;
+	bh=7z/nrmh5N+ZhnoVRQxxrFg29kWXCe5+G836Gz43HkV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UCe+EAkh6pJCzpl9OT7lpt+HFiAwpGmzQ1E+/nqgupR14RYVwQarrFvodQliHpHooIzq6P2mqbBz75dxX9L6cGoY4SslS5pF4Y2jw8oM/LbC7Ql6KbS9dkowkzxx0+fFwlFknmLbu9z0/bpigLLboYqavjiHOZixApuCkhZGDaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mixaill.net; spf=pass smtp.mailfrom=mixaill.net; dkim=pass (2048-bit key) header.d=mixaill.net header.i=@mixaill.net header.b=Jfvn6vb0; arc=none smtp.client-ip=144.76.234.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mixaill.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mixaill.net
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 089EE618C6;
+	Wed, 12 Mar 2025 13:17:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mixaill.net; s=dkim;
+	t=1741785476; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=uApGfAkwTNuZ/0f/uziF7SShu01cdICgTAzmtr/PVtc=;
+	b=Jfvn6vb0f4UmjlyAPM8y1aR6pvL0oQdMXGrzY2kTxiREmbG2e+MH8iKkqDB/h9lUqJqSj+
+	hv5V1mWWADGbgR347Wo0/kViPCDE3dKbieWgvY+iLN11GUFx4EHS2aL75PIovOVJtfj5DQ
+	wt5fIFTs+N9UmyQU5WROcsYh5fuATMgz8eCGxCCAyb+8q0zadhuLJtGGTYvCTGMwfcEoxh
+	Cgc4kC5teSdfXoy+qgUV03BsoAXrwumYUYIt9VZ7zwKR5dEBrzNgKz40gO8K8TrLLlSqCS
+	VyH2lrNceDhEs7rxr7nUPsLnp9v6eY7JP6H/dBBikBHfZZYzfSZHZoVIk7Wb4Q==
+Message-ID: <10f010ca-b79f-4886-ba18-3013560905b2@mixaill.net>
+Date: Wed, 12 Mar 2025 16:17:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312095411.1392379-2-suraj.gupta2@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] x86/rdrand: implement sanity check for RDSEED
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>
+References: <20250312123130.8290-1-me@mixaill.net>
+ <20250312124006.GCZ9GApgQQ49dO_BMW@fat_crate.local>
+Content-Language: en-US
+From: Mikhail Paulyshka <me@mixaill.net>
+In-Reply-To: <20250312124006.GCZ9GApgQQ49dO_BMW@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Mar 12, 2025 at 03:24:10PM +0530, Suraj Gupta wrote:
-> AXI 1G/2.5G Ethernet subsystem supports 1G and 2.5G speeds. Modify
-> existing binding description, pcs-handle description and add
-> 2500base-x in phy-mode for 2500base-X only configuration.
-> 
-> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> ---
->  .../devicetree/bindings/net/xlnx,axi-ethernet.yaml       | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml b/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
-> index fb02e579463c..977f55b98f31 100644
-> --- a/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
-> +++ b/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
-> @@ -9,10 +9,12 @@ title: AXI 1G/2.5G Ethernet Subsystem
->  description: |
->    Also called  AXI 1G/2.5G Ethernet Subsystem, the xilinx axi ethernet IP core
->    provides connectivity to an external ethernet PHY supporting different
-> -  interfaces: MII, GMII, RGMII, SGMII, 1000BaseX. It also includes two
-> +  interfaces: MII, GMII, RGMII, SGMII, 1000BaseX and 2500BaseX. It also includes two
+On 3/12/25 3:40 PM, Borislav Petkov wrote:
+> On Wed, Mar 12, 2025 at 03:31:28PM +0300, Mikhail Paulyshka wrote:
+>> On the AMD Cyan Skillfish (Family 0x17 Model 0x47 Stepping 0x0), which
+>> is a Zen2-based APU found on the AMD BC-250 board, there is a situation
+>> where RDRAND works fine, but RDSEED generates FF. This leads to some
+>> applications that use RDSEED to generate random numbers (such as
+>> Qt and KDE) into a nearly unusable state.
+>>
+>> Although AMD has fixed the Zen2 RDRAND issues in 2019 with a microcode update,
+>> no such update has been released for the Family 0x17 Model 0x47 core.
+> What's the microcode level on that machine?
+> dmesg | grep -i microcode [ 0.059689] [ T0] Zenbleed: please update your microcode for the most 
+optimal fix [ 0.663746] [ T1] microcode: Current revision: 0x08407007
+> Also, send
+>
+> cpuid -r
 
-Please re-wrap at 80.
+https://paste.debian.net/1362645
 
->    segments of memory for buffering TX and RX, as well as the capability of
->    offloading TX/RX checksum calculation off the processor.
->  
-> +  AXI 2.5G MAC is incremental speed upgrade of AXI 1G and supports 2.5G speed.
-> +
->    Management configuration is done through the AXI interface, while payload is
->    sent and received through means of an AXI DMA controller. This driver
->    includes the DMA driver code, so this driver is incompatible with AXI DMA
-> @@ -62,6 +64,7 @@ properties:
->        - rgmii
->        - sgmii
->        - 1000base-x
-> +      - 2500base-x
->  
->    xlnx,phy-type:
->      description:
-> @@ -118,8 +121,8 @@ properties:
->      type: object
->  
->    pcs-handle:
-> -    description: Phandle to the internal PCS/PMA PHY in SGMII or 1000Base-X
-> -      modes, where "pcs-handle" should be used to point to the PCS/PMA PHY,
-> +    description: Phandle to the internal PCS/PMA PHY in SGMII or 1000base-x/
-> +      2500base-x modes, where "pcs-handle" should be used to point to the PCS/PMA PHY,
 
-And here.
 
->        and "phy-handle" should point to an external PHY if exists.
->      maxItems: 1
->  
-> -- 
-> 2.25.1
-> 
 
