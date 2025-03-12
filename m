@@ -1,230 +1,118 @@
-Return-Path: <linux-kernel+bounces-558345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351F1A5E49B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:39:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2164A5E49E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:40:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D55F01890B69
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:39:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 819401898723
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F345258CD9;
-	Wed, 12 Mar 2025 19:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA9C2586E2;
+	Wed, 12 Mar 2025 19:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3PMhgLi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGQ90LgB"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865D51E8353;
-	Wed, 12 Mar 2025 19:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B231BD9DD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 19:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741808365; cv=none; b=k5r8+y8GNiszPFOJSadntRm99PyQMlQWLtr3oF4KDppcDMhe8FvT2Ct691KfkW4ecOgyoMde+uNR54EN0Hx4dF1tHDYCZDCZfabCXaP7OPFW4Nnra6eHhxS+bb4Hbd9fxi4O0sGXADnsuHfI5OHazUA4DaX1Gy6ECjWv09axRiI=
+	t=1741808432; cv=none; b=uXwX6EdzTACQwdIqPm5Xb32t4W+byN7dF9C8eV1v60YovCR/9z3WWzLZnhsYRMtK9i8iPL9wFRLcTtWa66TkoqfQSKn8RXLm2t7GWkINRPKibDOMveMuWY2N8OdRZe5QMK9I5vLA/y7ZJ0dRZAPIUaDgQBycrsneoBqR09KNpyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741808365; c=relaxed/simple;
-	bh=CKbvTcQjktbb/fkm2xvKUFHJAUWPFJnyE/7YkFwSoUY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WsCRdfu79734wALfUgj8QkKgTyFd6DamdnXhw4qg9kciivTPMGReX+RB44phLM8A4Fn653WfOKQLAb/iuviibYwz3ou0vqRdBeudZBHbQr3uVIpdpJbm0OIdlQvwkKtBnEgYhM5hYYWYqcITCZaEwBYGFjAZoFyqA4YqPhmhwws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3PMhgLi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 131A6C4AF09;
-	Wed, 12 Mar 2025 19:39:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741808365;
-	bh=CKbvTcQjktbb/fkm2xvKUFHJAUWPFJnyE/7YkFwSoUY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=T3PMhgLiC+1jN2fQn/s868b7rQ4xuI6jCK7ojznJRarsOayJt/9kF0gFd7jd/iYyb
-	 G772gtE9y/TQyqnd9lvi1gqvGrC76fLi4Ho7YBpioi5+QOfOpdUVeB4tHZ8G+dT0qs
-	 pXpBBd51/rP23Iat5xyDHYzcjbs3mCNTIXvUAY8uWMoGtMf9ry+M/3Fub9OANd+Ry3
-	 It5R0yQ6ghT3QEK9dddsbb8H47+sTDAEqIgwH7y1lvcR3Fg+Rbm04NWqlMhC+y9Ufy
-	 l7XzMgJTtri6ZJd7TM2lhWjb1vloMFH5u1kvvJF9NA/4ssGRtn7F7lAXm2OqgpJoEL
-	 +zgDzc5GzdnFQ==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2a88c7fabdeso188642fac.1;
-        Wed, 12 Mar 2025 12:39:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW04ZQ8dvw3SP+7fagWU7Ka80vWviUZDZuQb+EqObe+PxOpqdfAg+Uj285lRsZW1Wfbo2le6FOOBYfN9viw@vger.kernel.org, AJvYcCWT+IPffjgs1d0PS478Yd5fj9tA17I1hrdp7aKBDobYm3TZ2cpq9U58lRgnzyTlpxgbgW2x6I0GZM0T@vger.kernel.org, AJvYcCXr+s3PbhlisGmXUj926eQKI9GFlUaaN1ucrQxM06z34PepHUP+Sqe88owQJu+mYOaR41IZfEUjDlET@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiK5ig4xQT5zD9Zs3Yf559ZjGWIuJVnWyhHpBI27MhEvKOEbI9
-	nt8kaPb3SrSfb4nzpoqtxrnGBG5nyz21J6EuPvo/3wEMdBFpvvi3nW6EihfGw7hc0SqblOPAbNH
-	FWDKvMm7jU0ePz2yi/u0jJw7/QUQ=
-X-Google-Smtp-Source: AGHT+IHuNDHlZF9Ucfxr2gTlbfeWhfR5MVXJQ/d0SqzrupN1QuL8KSZ2cjTwH8+Q2igiU3qP86o6sWS8Qs+oYXJUACA=
-X-Received: by 2002:a05:6871:8a8:b0:2c2:50a5:1248 with SMTP id
- 586e51a60fabf-2c2614d4a3cmr11747453fac.38.1741808364302; Wed, 12 Mar 2025
- 12:39:24 -0700 (PDT)
+	s=arc-20240116; t=1741808432; c=relaxed/simple;
+	bh=0sfjWz9/dfa5XlkZjoh3Px9tGDJeE+Y8rOqWI/cZvJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A0Hu3r8a0RP4rMNAerPU7TJ8xy9z+2H4R0r5xNWA/b4qbPGGicH4DyVqfKOjUsvHSN3TRt3aXFJXrqgw8VqDQ7RTqcZmrsAP9lRLjZwT0m35iqHgcYU3T2guqOvch9Z4cZ63vI1BG6Rvwe+LWm1YjKyC/0S0QCLra2TfWrNOTvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGQ90LgB; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so1270085e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:40:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741808429; x=1742413229; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sS8kTorDyOHdKsMto1ObS5FPe8uF59EmpLR3eUldbQU=;
+        b=RGQ90LgBuEk72vAps+CDGcFcILMyvF5AT7vhxJEpHWgxUgySpxat4kW+KLwSGh71/E
+         28xjX/bPfpg7BA2EMoF6rtiXGD7ZofY4fWv5tTmfCKJMXUArn6GP1qDidc6u6I7nkYv7
+         PtSJz2Mo4dsq8Z5oWytX5RSw+fjLCom+typdOPw2AEzx5/J+xEhdYRKms7vaomqKACUv
+         uyl+nmBEusZ45/GoxPqZ1RDHdvQsP2Mbfvvt+wkNznp97zygge/7Y4oqkYVU4SPfwE3/
+         aghWfEuPqQQ3/XUFN6hVDNqqFGXH+deyVO6mmfhNey9POTXbPrcOVflNjrE4wexiGVBR
+         Zk7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741808429; x=1742413229;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sS8kTorDyOHdKsMto1ObS5FPe8uF59EmpLR3eUldbQU=;
+        b=Tind80wYTiFFYDSHpR5Kx6RbalQz3RH9Wmy1gKSLCmi99z7/MRAKdV3XlWiOGTU/sh
+         5kGggKnRE+rCH92o0vLIzIT+hExUFO5hhiwNSui4Qo54YryVvfcJPSkeznvBnI0lkTWZ
+         TeZaa2W0boFvasac3v5ptPZM61eC9R5pUIWocSBCOyOzsW3UMsUWx0udZl16aVS5WMVo
+         YnBqZMOK9VNDmvR+h/Z707J6d2vwJ4+gFnvvBDNYYxIbEF9Flf/dDs8igGPU9Y+V5TU4
+         AX0HTzs/DRSesefi63wjMaI6csdRgzBL06zsT6Lw1I3pQHxJZDgNFiWwKqX/rEzUMudW
+         nkWQ==
+X-Gm-Message-State: AOJu0Yx3k42utvuvSW/36RYbTMShNEWAPonxBM3ZMuOHngjJUHS+OGZP
+	cOokowWk8qDv/74UCU125pJ0jSdZultYGZIb94DteZ/FudNNxtYn
+X-Gm-Gg: ASbGnctB9f4o2Lvtz98CMajfpzJnVZ1cN5a46QTNzokIC2LFxENxpTctXoSdiED3occ
+	kWMVk5a49nQfF1UVk/+Fk5AhWYMqwtGeEGPP0h4zkplreWKhmAkKuxugUTUF0cjuazXYMYWEyEX
+	349LKaRviLs4Ny+UGNq9SyBQkSyIHwpF6NxrYPleqInQA8cEIM582kn3YsJJZWIsySd6YLeENzM
+	5azR3gKUwnVbDTno8imQ7rfqJ9Kv7F8R47GbaXRpUVCsry5X83XUsz4sDwu/5TGqi8PCX1wICBP
+	QZ6Uc3QNqw3c14ywD7OJju3CWZClAP/hC9f9WFOUB0IGy/Ul0xGie+J658Tp6t+UmKyFE2lWTxN
+	3o0qNQNo=
+X-Google-Smtp-Source: AGHT+IGoyh5LSAaHpp83B2PFWGk/1MertXP2HJBTaGWTdaMqGJ4/sfh9KZzasVwSZJfDKzCVDsslfQ==
+X-Received: by 2002:a05:600c:524d:b0:43c:f470:75df with SMTP id 5b1f17b1804b1-43cf470797emr122311905e9.3.1741808428650;
+        Wed, 12 Mar 2025 12:40:28 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d031d1438sm32442805e9.0.2025.03.12.12.40.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 12:40:28 -0700 (PDT)
+Date: Wed, 12 Mar 2025 19:40:27 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Arnd Bergmann <arnd@arndb.de>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Christophe Leroy
+ <christophe.leroy@c-s.fr>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ nnac123@linux.ibm.com, horms@kernel.org
+Subject: Re: [PATCH next 5/8] test_hexdump: Fix sample output if zero bytes
+ requested
+Message-ID: <20250312194027.70c38581@pumpkin>
+In-Reply-To: <Z86qy5LOAJUlmkC9@smile.fi.intel.com>
+References: <20250308093452.3742-1-david.laight.linux@gmail.com>
+	<20250308093452.3742-6-david.laight.linux@gmail.com>
+	<Z86qy5LOAJUlmkC9@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307214936.74504-1-linux@treblig.org>
-In-Reply-To: <20250307214936.74504-1-linux@treblig.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Mar 2025 20:39:13 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0j+=WYm+j340Z+1fs3aZ4PtTaF4XAFeSgm9s7NA=BR0=g@mail.gmail.com>
-X-Gm-Features: AQ5f1JrtyjGeDehvAPKabOsddC766J_8Cjm-oJ9-AbMlE98bvzAsdgHk-YLJY9E
-Message-ID: <CAJZ5v0j+=WYm+j340Z+1fs3aZ4PtTaF4XAFeSgm9s7NA=BR0=g@mail.gmail.com>
-Subject: Re: [PATCH] PNP: Remove prehistoric deadcode
-To: linux@treblig.org
-Cc: rafael.j.wysocki@intel.com, linux-acpi@vger.kernel.org, corbet@lwn.net, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 7, 2025 at 10:49=E2=80=AFPM <linux@treblig.org> wrote:
->
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> pnp_remove_card() is currently unused, it has been since it was
-> added in 2003's BKrev: 3e6d3f19XSmESWEZnNEReEJOJW5SOw
->
-> pnp_unregister_protocol() is currently unused,  it has been since
-> it was added in 2002's BKrev: 3df0cf6d4FVUKndhbfxjL7pksw5PGA
->
-> Remove them, and pnp_remove_card_device() and __pnp_remove_device()
-> which are now no longer used.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  Documentation/admin-guide/pnp.rst |  3 ---
->  drivers/pnp/base.h                |  4 ----
->  drivers/pnp/card.c                | 32 -------------------------------
->  drivers/pnp/core.c                | 16 ----------------
->  4 files changed, 55 deletions(-)
->
-> diff --git a/Documentation/admin-guide/pnp.rst b/Documentation/admin-guid=
-e/pnp.rst
-> index 3eda08191d13..24d80e3eb309 100644
-> --- a/Documentation/admin-guide/pnp.rst
-> +++ b/Documentation/admin-guide/pnp.rst
-> @@ -129,9 +129,6 @@ pnp_put_protocol
->  pnp_register_protocol
->    use this to register a new PnP protocol
->
-> -pnp_unregister_protocol
-> -  use this function to remove a PnP protocol from the Plug and Play Laye=
-r
-> -
->  pnp_register_driver
->    adds a PnP driver to the Plug and Play Layer
->
-> diff --git a/drivers/pnp/base.h b/drivers/pnp/base.h
-> index 4e80273dfb1e..b342570d0236 100644
-> --- a/drivers/pnp/base.h
-> +++ b/drivers/pnp/base.h
-> @@ -9,7 +9,6 @@ extern const struct attribute_group *pnp_dev_groups[];
->  extern const struct bus_type pnp_bus_type;
->
->  int pnp_register_protocol(struct pnp_protocol *protocol);
-> -void pnp_unregister_protocol(struct pnp_protocol *protocol);
->
->  #define PNP_EISA_ID_MASK 0x7fffffff
->  void pnp_eisa_id_to_string(u32 id, char *str);
-> @@ -21,9 +20,7 @@ int pnp_add_device(struct pnp_dev *dev);
->  struct pnp_id *pnp_add_id(struct pnp_dev *dev, const char *id);
->
->  int pnp_add_card(struct pnp_card *card);
-> -void pnp_remove_card(struct pnp_card *card);
->  int pnp_add_card_device(struct pnp_card *card, struct pnp_dev *dev);
-> -void pnp_remove_card_device(struct pnp_dev *dev);
->
->  struct pnp_port {
->         resource_size_t min;    /* min base number */
-> @@ -138,7 +135,6 @@ void pnp_init_resources(struct pnp_dev *dev);
->  void pnp_fixup_device(struct pnp_dev *dev);
->  void pnp_free_options(struct pnp_dev *dev);
->  int __pnp_add_device(struct pnp_dev *dev);
-> -void __pnp_remove_device(struct pnp_dev *dev);
->
->  int pnp_check_port(struct pnp_dev *dev, struct resource *res);
->  int pnp_check_mem(struct pnp_dev *dev, struct resource *res);
-> diff --git a/drivers/pnp/card.c b/drivers/pnp/card.c
-> index 9610a9f08ff4..c7596dc24fbd 100644
-> --- a/drivers/pnp/card.c
-> +++ b/drivers/pnp/card.c
-> @@ -269,25 +269,6 @@ int pnp_add_card(struct pnp_card *card)
->         return 0;
->  }
->
-> -/**
-> - * pnp_remove_card - removes a PnP card from the PnP Layer
-> - * @card: pointer to the card to remove
-> - */
-> -void pnp_remove_card(struct pnp_card *card)
-> -{
-> -       struct list_head *pos, *temp;
-> -
-> -       device_unregister(&card->dev);
-> -       mutex_lock(&pnp_lock);
-> -       list_del(&card->global_list);
-> -       list_del(&card->protocol_list);
-> -       mutex_unlock(&pnp_lock);
-> -       list_for_each_safe(pos, temp, &card->devices) {
-> -               struct pnp_dev *dev =3D card_to_pnp_dev(pos);
-> -               pnp_remove_card_device(dev);
-> -       }
-> -}
-> -
->  /**
->   * pnp_add_card_device - adds a device to the specified card
->   * @card: pointer to the card to add to
-> @@ -306,19 +287,6 @@ int pnp_add_card_device(struct pnp_card *card, struc=
-t pnp_dev *dev)
->         return 0;
->  }
->
-> -/**
-> - * pnp_remove_card_device- removes a device from the specified card
-> - * @dev: pointer to the device to remove
-> - */
-> -void pnp_remove_card_device(struct pnp_dev *dev)
-> -{
-> -       mutex_lock(&pnp_lock);
-> -       dev->card =3D NULL;
-> -       list_del(&dev->card_list);
-> -       mutex_unlock(&pnp_lock);
-> -       __pnp_remove_device(dev);
-> -}
-> -
->  /**
->   * pnp_request_card_device - Searches for a PnP device under the specifi=
-ed card
->   * @clink: pointer to the card link, cannot be NULL
-> diff --git a/drivers/pnp/core.c b/drivers/pnp/core.c
-> index 6a60c5d83383..ac48db6dcfe3 100644
-> --- a/drivers/pnp/core.c
-> +++ b/drivers/pnp/core.c
-> @@ -78,16 +78,6 @@ int pnp_register_protocol(struct pnp_protocol *protoco=
-l)
->         return ret;
->  }
->
-> -/**
-> - * pnp_unregister_protocol - removes a pnp protocol from the pnp layer
-> - * @protocol: pointer to the corresponding pnp_protocol structure
-> - */
-> -void pnp_unregister_protocol(struct pnp_protocol *protocol)
-> -{
-> -       pnp_remove_protocol(protocol);
-> -       device_unregister(&protocol->dev);
-> -}
-> -
->  static void pnp_free_ids(struct pnp_dev *dev)
->  {
->         struct pnp_id *id;
-> @@ -220,12 +210,6 @@ int pnp_add_device(struct pnp_dev *dev)
->         return 0;
->  }
->
-> -void __pnp_remove_device(struct pnp_dev *dev)
-> -{
-> -       pnp_delist_device(dev);
-> -       device_unregister(&dev->dev);
-> -}
-> -
->  static int __init pnp_init(void)
->  {
->         return bus_register(&pnp_bus_type);
-> --
+On Mon, 10 Mar 2025 11:03:07 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Applied as 6.15 material, thanks!
+> On Sat, Mar 08, 2025 at 09:34:49AM +0000, David Laight wrote:
+> > If 'len' is zero the expected output is an empty string even if
+> > 'ascii' is requested.  
+> 
+> It's related to the previous one...
+> So, seems to me the series need a bit more (re-)thinking...
+> 
+
+Nope, all its own bug.
+This is a request to hexdump zero bytes into a valid buffer size.
+hex_dump_to_buffer() gets it right unless the output buffer length
+is also zero.
+
+Found when I started doing a full range of tests.
+
+	David
 
