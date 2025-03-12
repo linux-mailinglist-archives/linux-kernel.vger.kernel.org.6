@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-558021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEFB0A5E08D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:37:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 359B9A5E090
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:38:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8209B19C0534
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED8113BA657
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD06256C9B;
-	Wed, 12 Mar 2025 15:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27423254B1A;
+	Wed, 12 Mar 2025 15:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IqdrYTHh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="00RXRHR8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="F0BePVfH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2grvEfKj"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AnTL3qVA"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A9B254875
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7642286349
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741793803; cv=none; b=Zff0GpMZkcz9Ct5rZuZ5b6IqkXK2JuxL8yOXWa997UmyFDNLo/dW4wKlsuG7dhg/ez9kH+A4R+EEnaIW5I1BVf5FzVzmRS1brrp4lY6OH4YI7kJkaS39hLq3oK1ZN85gcoK3G7VvcBbDXwquIdkykoyRFJ/ACZNCaYmsKPo1FDE=
+	t=1741793833; cv=none; b=NnzoaaCx/Oul5+RuoyjJwVVkb5wi5X/abphmm0SQRlT6kgFj5bq7jBFQ2ADJXEwcVFnqtrgEYt2cb+VbV8gCfD90jJg6FIl1i61Qy4EuCtKmKtJa30MHZVN5Ry4sGujxx6mgCUFr29k78TblYFPSkb4RSbUMqj1h9NOVpBULqWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741793803; c=relaxed/simple;
-	bh=qFY9VG5oi6Bf7Am2zf01UPtIpoT1kADJtAHZY/KSbhk=;
+	s=arc-20240116; t=1741793833; c=relaxed/simple;
+	bh=FzRC24K2rUcGQSVMB9HuxLcZEuqqamCVHt6GFEg/Fas=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fVgEH4AYfWEQQlk5Xz+3f7RhQw6WjIG6Ho0y2KIISQv6nx4/kXqdwBXt6ypdT/CXNGcn1ONR3bv/y1hqtwbhzryxJEHQcZjB8bQnw24TBoCOBbrcgujmTcKEP/8vthfmYVl2RHNmH+3mndhuKzYwsv8oIV0OBeaENrk3HZ4hO8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IqdrYTHh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=00RXRHR8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=F0BePVfH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2grvEfKj; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from localhost (unknown [10.100.12.32])
-	by smtp-out1.suse.de (Postfix) with ESMTP id E3387211CF;
-	Wed, 12 Mar 2025 15:36:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741793800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oX8M8QqGtnL0HTCgbbxAWVuYLqQ6RLyqgkzfCrg0ngE=;
-	b=IqdrYTHh2O1WJBtSCpzlk273Zt5h6e8rO0dR2KFjC2fVNtLdP/ovRaIhvL+f6i2co2o+Yd
-	jmyQIkNa2eWRFwFe65cnJqSHbCwucvSaZ62hDpDrYweHkTeknMV77FZ/m92HWwZ4Pnk/cf
-	dec26tzrzRkoxswRSCD78KgZaDSxpdY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741793800;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oX8M8QqGtnL0HTCgbbxAWVuYLqQ6RLyqgkzfCrg0ngE=;
-	b=00RXRHR8be3lFO5p2b/GOxRHVa6IpgwxIG0VashnlL1qcVGU+oVM6ojmKFV6+IBKf1e/Gw
-	p+nlVUkAghlRaoCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741793799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oX8M8QqGtnL0HTCgbbxAWVuYLqQ6RLyqgkzfCrg0ngE=;
-	b=F0BePVfHsxyFXqqhCO7tBiewuL/s48a8aBEBqcJGc2/kJzJ0Ln4Xfqz0iV7d/NcqM8nM9g
-	F8/JX19ROYWUY2u1o0aE5l6eco/eODi4J1LW1y/ZYW8rXE5XxqVm+lx2aU348uLZ1KSju0
-	aSQD3heH20L76U+dzs6v8QjurfyEERw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741793799;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oX8M8QqGtnL0HTCgbbxAWVuYLqQ6RLyqgkzfCrg0ngE=;
-	b=2grvEfKjon+NHI/ZnIAQ4NdBzQOqwo02KtUjYyBv5c/Wk2EC8H2mKuNpUvA6Lnspkd79fT
-	qmTtf/72BliDwvDQ==
-Date: Wed, 12 Mar 2025 16:36:39 +0100
-From: Jiri Bohac <jbohac@suse.cz>
-To: David Hildenbrand <david@redhat.com>
-Cc: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
-	Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>,
-	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	David Hildenbrand <dhildenb@redhat.com>,
-	Michal Hocko <mhocko@suse.cz>
-Subject: Re: [PATCH v2 0/5] kdump: crashkernel reservation from CMA
-Message-ID: <Z9GqB1cRSD-IQM_s@dwarf.suse.cz>
-References: <Z7dc9Cd8KX3b_brB@dwarf.suse.cz>
- <04904e86-5b5f-4aa1-a120-428dac119189@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DbRn1IwnQ+b23K5/9nbt3tL7QzmDVSMiW3dLrYcpAaRT+hKDV22xRoVk4mwuk6vm5sk1HxeeD9XMg+UYtde4cX82rpOHC5FCzWoL/3R3j0+QKEREb4kzCtlc/NdufRvNcmfYktfVVbCpO16DN3kAcBjV/LycA4C0IaF7m86UBIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AnTL3qVA; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3913b539aabso2739004f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:37:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741793830; x=1742398630; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ox7PZwipDHpiBMNVxpGln9X1xKo/Hs1Sc5ewJoP05ZU=;
+        b=AnTL3qVAMqR+02rhuuj7fqFLXsHW2gJYvcF3OkkwbEpn5QX8TOuQD+mcKFIuu+t0lo
+         RkTqk+IBwm7c4hchcm95AGcPpwBH2dqq0K3XkWs1UkwAfgzjWqZoNGBZ9oL5lzmAdUq4
+         jcM38exlT6mwQIpCicKNX5j59hTDa7KX39yfq7n1CJmp872GaLS7D5zOia0AAh45yBcM
+         ewPogijBPuOaxiOsm073/qyB+yoftDWczA9aG5CCAKPOeRH6ZTFm1uO7t/2bFU53SP3/
+         SJcHLb7Xe29IG1Mt16YSkOHNgLRWFxMNfCayap86uCBdd+uk7iaLcspni3I24lNTisS+
+         2FiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741793830; x=1742398630;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ox7PZwipDHpiBMNVxpGln9X1xKo/Hs1Sc5ewJoP05ZU=;
+        b=gvKsr1GXKEwYmJzxQ66kOKNd0PkgQfWCQzvj7ScY7r1wB2uUi7eS9c0q5g1UUDwBO1
+         gb4KpKdCOpTtrVdFXzzZttC3Ga0Pf+avWyZSuG0Y5F8emHYHKst+8edTm3+LryIMP4+1
+         XAk0csnmpWSDdfva8nDXNytS8WCyZ/FLfbecjscMgg58EvP8u0/EHNOW5WfgI07yKz+S
+         PNZkpXbJns8ml8eadgJTvJ/w/37lLbOKiSVmsgwRYqOtUGL8NJw3invehHFihQ0dbIV3
+         lSRjN9dFM8q6V+c8PpI7B4lZAfCm48OO94ioz/xTmTq8GCW8bpbXN3Kfvyb86CZtKa7v
+         Ng6A==
+X-Forwarded-Encrypted: i=1; AJvYcCW2/tzmYNaSUxTsFDX71rpFCwhu3xEYzQAF76jmPWwCQzSCIIWvfy/HQ/FsjnzN2CninSN1FeXVy3gJ6Pk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr17ukPjY64vFVBagQ4gMnRQvlSbayYSVIt1BiHB83uLH/1XwD
+	4KA9S3zoLrTUOFiOYGY8zSIs4oM9BOUvox87/AZfn2rYbxKRbfGJtb3UWqD3tpE=
+X-Gm-Gg: ASbGncvoPnhsUT3sEavob40+uxq33s81nDZ48zWge9fOW6Or0C9AwfFqp3RYBbh1Cy9
+	W3xPLq8EvQJDMsc8WDi/9Jrr/J8scc/xqawypKwUl4ovS7vejjXqZ+h1USR4hxczpGEL85HFWio
+	Y6ye0KmDhQIH8o5lKmqOtHGjcJT3ETehjZu9b8qBqUee0W6pJnxewusPuPpFjj3KsfyVMCxmeez
+	XQpKWUfVzrwniO4vZFeTX68oF6zBmFMOnymTkzyNx8Edk5k5IoaEqUokVKIxwh3gY+w1rRvHzd6
+	MouzsZJz9yrgTYGCaz0Wd+b7ETlYaKHssHNTEUv61qPoM/SUrMBiL8kkug==
+X-Google-Smtp-Source: AGHT+IHHxEP/z6N40yXo2QEJRK/TH0iMryWM2SVWb2LisrcwtQwUj24Lm8paSZ0qaYEVKP/yIuIwfA==
+X-Received: by 2002:a05:6000:1564:b0:390:f45e:c84a with SMTP id ffacd0b85a97d-39132db77acmr18766004f8f.48.1741793829718;
+        Wed, 12 Mar 2025 08:37:09 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfba686sm21815646f8f.19.2025.03.12.08.37.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 08:37:09 -0700 (PDT)
+Date: Wed, 12 Mar 2025 16:37:07 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: adamsimonelli@gmail.com
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v8 2/4] ttynull: Add an option to allow ttynull to be
+ used as a console device
+Message-ID: <Z9GqI2HvOJaAOr-r@pathway.suse.cz>
+References: <20250311033133.1859963-1-adamsimonelli@gmail.com>
+ <20250311033133.1859963-3-adamsimonelli@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,123 +93,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <04904e86-5b5f-4aa1-a120-428dac119189@redhat.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[localhost:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+In-Reply-To: <20250311033133.1859963-3-adamsimonelli@gmail.com>
 
-On Mon, Mar 03, 2025 at 09:25:30AM +0100, David Hildenbrand wrote:
-> On 20.02.25 17:48, Jiri Bohac wrote:
-> > 
-> > By reserving additional crashkernel memory from CMA, the main
-> > crashkernel reservation can be just large enough to fit the
-> > kernel and initrd image, minimizing the memory taken away from
-> > the production system. Most of the run-time memory for the crash
-> > kernel will be memory previously available to userspace in the
-> > production system. As this memory is no longer wasted, the
-> > reservation can be done with a generous margin, making kdump more
-> > reliable. Kernel memory that we need to preserve for dumping is
-> > never allocated from CMA. User data is typically not dumped by
-> > makedumpfile. When dumping of user data is intended this new CMA
-> > reservation cannot be used.
+On Mon 2025-03-10 23:31:31, adamsimonelli@gmail.com wrote:
+> From: Adam Simonelli <adamsimonelli@gmail.com>
 > 
-> I'll note that your comment about "user space" is currently the case, but
-> will likely not hold in the long run. The assumption you are making is that
-> only user-space memory will be allocated from MIGRATE_CMA, which is not
-> necessarily the case. Any movable allocation will end up in there.
-> 
-> Besides LRU folios (user space memory and the pagecache), we already support
-> migration of some kernel allocations using the non-lru migration framework.
-> Such allocations (which use __GFP_MOVABLE, see __SetPageMovable()) currently
-> only include
-> * memory balloon: pages we never want to dump either way
-> * zsmalloc (->zpool): only used by zswap (-> compressed LRU pages)
-> * z3fold (->zpool): only used by zswap (-> compressed LRU pages)
-> 
-> Just imagine if we support migration of other kernel allocations, such as
-> user page tables. The dump would be missing important information.
-> 
-> Once that happens, it will become a lot harder to judge whether CMA can be
-> used or not. At least, the kernel could bail out/warn for these kernel
-> configs.
+> The new config option, CONFIG_NULL_TTY_DEFAULT_CONSOLE will allow
+> ttynull to be initialized by console_initcall() and selected as a
+> possible console device.
 
-Thanks for ponting this out. I still don't see this as a
-roadblock for my primary usecase of the CMA reservation: 
-get at least some (less reliable and potentially
-less useful) kdump where the user is not prepared to sacrifice
-the memory needed for the standard reservation and where the only
-other option is no kdump at all.
+It would be great to mention here the motivation. It is nicely
+explained in the 3rd patch.
 
-Still a lot can be analyzed with a vmcore that is missing those
-__GFP_MOVABLE pages. Even if/when some user page tables are
-missing.
+> --- a/drivers/tty/Kconfig
+> +++ b/drivers/tty/Kconfig
+> @@ -383,7 +383,20 @@ config NULL_TTY
+>  	  available or desired.
+>  
+>  	  In order to use this driver, you should redirect the console to this
+> -	  TTY, or boot the kernel with console=ttynull.
+> +	  TTY, boot the kernel with console=ttynull, or enable
+> +	  NULL_TTY_DEFAULT_CONSOLE.
+> +
+> +	  If unsure, say N.
+> +
+> +config NULL_TTY_DEFAULT_CONSOLE
+> +	bool "Support for console on ttynull"
+> +	depends on NULL_TTY=y && !VT_CONSOLE
+> +	help
+> +	  Say Y here if you want the NULL TTY to be used as a /dev/console
+> +	  device.
 
-I'll send a v3 with the documenatation part updated to better
-describe this.
+I would provide few more details, something like:
 
-> > The fourth patch adds a short delay before booting the kdump
-> > kernel, allowing pending DMA transfers to finish.
-> 
-> 
-> What does "short" mean? At least in theory, long-term pinning is forbidden
-> for MIGRATE_CMA, so we should not have such pages mapped into an iommu where
-> DMA can happily keep going on for quite a while.
- 
-See patch 4/5 in the series:
-I propose 1 second, which is a negligible time from the kdump POV
-but I assume it should be plenty enough for non-long-term pins in
-MIGRATE_CMA. 
+<proposal>
+	  Say Y here if you want the NULL TTY to be used as a /dev/console
+	  device by default.
 
-> But that assumes that our old kernel is not buggy, and doesn't end up
-> mapping these pages into an IOMMU where DMA will just continue. I recall
-> that DRM might currently be a problem, described here [1].
->
-> If kdump starts not working as expected in case our old kernel is buggy,
-> doesn't that partially destroy the purpose of kdump (-> debug bugs in the
-> old kernel)?
+	  For example, it might be useful to prevent a VT-less kernel from
+	  writing the system log to a random device connected to
+	  the serial port.
 
-Again, this is meant as a kind of "lightweight best effort
-kdump". If there is a bug that causes the crash _and_ a bug in a
-driver that hogs MIGRATE_CMA and maps it into IOMMU then this
-lightweight kdump may break. Then it's time to sacrifice more
-memory and use a normal crashkernel reservation.
+	  Another console driver still might get preferred via the command line,
+	  SPCR, or the device tree.
+</proposal>
 
-It's not like any bug in the old kernel will break it. It's a
-very specific kind of bug that can potentially break it.
+> +	  This is similar to VT_CONSOLE, but without the dependency on VT.
+> +	  It uses the ttynull driver as the system console.
 
-I see this whole thing as particularly useful for VMs. Unlike big
-physical machines, where taking away a couple hundred MBs of
-memory for kdump does not really hurt, a VM can ideally be given just
-enough memory for its particular task. This can often be less
-than 1 GB. Proper kdump reservation needs a couple hundred MBs,
-so a very large proportion of the VM memory. In case of a
-virtualization host running hundreds or thousands such VMs this
-means a huge waste of memory. And VMs often don't use too many
-drivers for real hardware, decreasing the risk of hitting a buggy
-driver like this.
+Honestly, I do not find this paragraph much useful. I would omit it,
 
-Thanks,
+>  	  If unsure, say N.
+>  
+> diff --git a/drivers/tty/ttynull.c b/drivers/tty/ttynull.c
+> index d8b51edde628..67aad3e6f538 100644
+> --- a/drivers/tty/ttynull.c
+> +++ b/drivers/tty/ttynull.c
+> @@ -96,6 +96,19 @@ static int __init ttynull_init(void)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_NULL_TTY_DEFAULT_CONSOLE
+> +static int __init ttynull_register(void)
+> +{
+> +	if (console_set_on_cmdline)
+> +		return 0;
+> +
+> +	add_preferred_console("ttynull", 0, NULL);
+> +
+> +	return 0;
+> +}
+> +console_initcall(ttynull_register);
+> +#endif
 
--- 
-Jiri Bohac <jbohac@suse.cz>
-SUSE Labs, Prague, Czechia
+I have realized that this does not work without shuffling the linking
+order (3rd patch).
 
+I would prefer to avoid the linking order hack and rather call this
+in console_init() directly, see
+https://lore.kernel.org/r/Z9GPVVTnngGbmbuv@pathway.suse.cz
+for more details.
+
+Best Regards,
+Petr
 
