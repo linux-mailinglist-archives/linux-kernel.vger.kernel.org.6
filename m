@@ -1,226 +1,298 @@
-Return-Path: <linux-kernel+bounces-557742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06B2A5DD1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:53:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF95A5DD22
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:55:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF9C57A3ABA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:52:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C066189C7D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B60242909;
-	Wed, 12 Mar 2025 12:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E1824339D;
+	Wed, 12 Mar 2025 12:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UXjPB7/H"
-Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="abIqVSFX"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BF623E229
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677327083C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741783978; cv=none; b=aupNOrXk0+AH2GygQH/58I3NXqjGD7twyrYEe3pjT6uG5wMxAnx6BWCG2Sp4pzCiEsQeljz4rDdDYUw6pAkEZloIu2PUNo15lyZbPQdO1eZqHpWwwd2YKvJ3Aysolvp6CkCJI2I0dlXZYiIqoM/yJgc+StxmXDRZoRMZifio1Rw=
+	t=1741784095; cv=none; b=HFuVbK3nSa2zKlyTL18M6ezV7saM68K+BpKXWrwLXkDyptKVu8D6BhY/Lri27cseQ46WXnFm6Ea/xwZ5k8SVZAH2aj/64prg9jI590ViGaF6IdvubjR0oMtBweD/MUgGHtog4Ar3Yr5mTWS3Zlg3ChFIcB2CFTI3r3qUUQSGl0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741783978; c=relaxed/simple;
-	bh=5rdqHm/hfFwO48Z86rVwrj13dZQxv9WSdmFYfx6EHNY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DvRbW9mgTuWDeqrYmTXNfbuf9Gf46rBPHsen/wL7DcLWuRAOGz9S4QIC7sm+B0uxdinsX+lizmGX/+Er4/ECl1Ydt/kdFUnjfoPzgUBMhSI5DAf6G8PHpz8QtWQeoyrswv6biGXhO5/y0uyWExC1h2GL/61j8jOWrMKwgtZGmOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UXjPB7/H; arc=none smtp.client-ip=209.85.221.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-3914bc3e01aso1853562f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:52:56 -0700 (PDT)
+	s=arc-20240116; t=1741784095; c=relaxed/simple;
+	bh=V1MjBxHePlfd7OLavw5mLEK5UEgp+wteGLzbglgAMlA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H972iECA50ODJxEbJxBKObsfQ0G+WNy/7nnR2zSBe7Jp3x+JrfPkvTMAbUpf1+9Rjy01Rhh+ITNg4WcfTIuhlod09PFrHferby4bUr535B9XLaR4xnJm1EMtFu5/Zj0DKAmWIXr/hLq3109PcoSYC9x9f6BvTkndhPRe63xWI4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=abIqVSFX; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2232aead377so32874995ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:54:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741783975; x=1742388775; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=nwgfY0bA7bSuiMHyspTu5vv4LRFssjPln36pp6aa5Co=;
-        b=UXjPB7/HAQGr8niR7jE70o/gJ2kY3ANYQlIaiDc5Pcm9+JjjT//9XMVmnMjg1gGZPT
-         /6A2RGxXoXFJ1S8Uz+e1FGkBln4gTIVpCdK0P60XgCR90FHeT4HzKpBrgwzbwtbMnJy+
-         4V9r4RZK+mJ3CM9UUw1aWTSIE2w8aFBlpD7ajHTco7ZWVkSWbl2aSoDohM4SwrynNtUZ
-         DZEfqJfKpNnAoT0/0EWtJPr6I1/9UJEph1AOpu7bCXS6XWMg/eUQAn0gMaxMe9QasZxl
-         wgAy3//yE2+A93BH1z2WWwbEah7MRFdqsQV0Q9fRPTuuPFwLQyHLR4mMrB1xuTiACtxh
-         Cklw==
+        d=linaro.org; s=google; t=1741784093; x=1742388893; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=P41L4c+Opb1IQnEi9LDyI8HBaw91mzMN/9HEGsnySy8=;
+        b=abIqVSFXD2SL83szo8/TjIP8+hTuz5O5fbhAVUHqiKyZMLPal0mtAz2/ZBlzZbZYGZ
+         M60ZsuhLoemKVeab5RAFO9xVrroWJVuixXgFAeVXHvdrTP5e85xfXWoWtHUty6A0Qe86
+         9uwbHJb0tgEYDJ+orcjNyAMtMgg/5DLna8Tvx+izWj58S0vs0XVKPdCvQ0zWC1wJVm9/
+         1FxHgAi4wmVOKxVgk2ODwm6LItFIrlH/PNtdpNm4WI3JU3xkmpLujhDJp+I3UtfriuU8
+         wUC5HJ1vHMtIS7iAP0pMje9UYOQNe4RqHlhmzKtEW4A20WDUklq+kqDQ0+PDctMwFmq2
+         ullg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741783975; x=1742388775;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nwgfY0bA7bSuiMHyspTu5vv4LRFssjPln36pp6aa5Co=;
-        b=bIrFvnpzVcqjKBwTbilXd9ioLGNU1vRLI53cIdayVaeR0JWJnjVFvRceCkVZZJiKEa
-         Dtw+NZXtUjx0GpHluH7y+SAMzILsV01O/G2WMiWD/M+Lwp81abscL/4vBShf6Ki3zRy4
-         mdRI4kPhlTn9GJ8qGxlaGAejz2KwGPpTjRD6cpVNKRXd5Cly52RVTe1MDf5TVCUtwTdv
-         i82CaKbt3WLN5BtOKQr0b6xEHpghkwRjbJMPHyEIwHL3PgI6vO9BIq9iSxaxGr++Neyk
-         5QDsis70JQUpEvHCL17FlL/nu79DO95dGy7AYwQfrB1lp2yOEzEht3Oz+olz4zpRe88c
-         51MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8O3PSUrnHiy9+3LGKw1Bi761Y2vSBLDZAgMmXacSmPX/M8Wo8p+QF1KVcu02fb1ZSRmh6TtB8ED7dErU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU5ERHWfxZ0WbvJzXVmORhgl+LT4ijX7uO8gi7xbILxPuTTY2E
-	lyJOI7ZQ+fujAXXNWKF9HX2Xx5ayLK5ReL65xYYvEDFOQAljZD2uAXyBHnXjf5U=
-X-Gm-Gg: ASbGncsTqRejJmutGk18IKTzbuz9g8tuN8RYZm9QFAKaMqHhSCLBJESg37h3XhI9pve
-	09GAVDxiwrzAiYl7OdMPSonSRwRFf+eDEMG8MG0wMTra+96JxRUcyY2dQd6uYaGySfMo4uCxGmB
-	+uZpIy76xtXCmSU259iaby2WO8kMXWNFQRDjOkxTumDETKy5dX0fVQwOCIkQLUFY+hbhNhRFR01
-	ZgpL/t79VTmEU93OCdQETfH+toWKFUfechs3fcUAtoakkjCGjO9NQDANnyWHejnGwnBdwYr4j6o
-	koqSfvs2AVRw9IGuINr0oIzTLRpi2teBcKqRD1u7Fu92HLk3fMxnAAR67mbObGWP2ySZcN7Gk5b
-	T
-X-Google-Smtp-Source: AGHT+IFoNwU6jrRyqYUKTwKTf0luECKdhiR/vKm+lodvkimjAahJBv9bVwtF43mm4/BByxpK4rSIQw==
-X-Received: by 2002:a5d:47a7:0:b0:391:29f:4f87 with SMTP id ffacd0b85a97d-39132da905cmr14902396f8f.49.1741783974656;
-        Wed, 12 Mar 2025 05:52:54 -0700 (PDT)
-Received: from [192.168.0.19] (81.172.62.104.dyn.user.ono.com. [81.172.62.104])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c015a29sm20599776f8f.42.2025.03.12.05.52.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 05:52:54 -0700 (PDT)
-Message-ID: <31f8a6a7-7f12-43ca-a4cd-4fef1ab9f0fc@suse.com>
-Date: Wed, 12 Mar 2025 13:52:52 +0100
+        d=1e100.net; s=20230601; t=1741784093; x=1742388893;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P41L4c+Opb1IQnEi9LDyI8HBaw91mzMN/9HEGsnySy8=;
+        b=H6VNEQfvvRobPBYuNq6WndPrxbY/brIQXSWikmkVNOjKbEFswZh8OEGzkxbkqUyaA8
+         VoGxE47uMxAIg6wFvUn8NpcJdQfCDIVIVFSRdcDPyCzpY8VSkGLpLxWnYjOQYEcFize+
+         oQwJoa86SQ6qm/m1uAL8974hCfQ/XdMJ/lINr5kfhauMAZkz7b/2vx5ypHT4qDIhDqcv
+         fZwfF1V/8J92v3anYC1Kzx7YXHl7B86SEZmv+bNFLd6OhepDh4rpZzJm/sE5THrjGQyF
+         d8pNtcn7sL3AxK73zAHCWN9lUGVp7qLj8Pcjq/Q/iUF7xnWCv2gEvzr7Y1VQBpUJ0JjB
+         yPgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZPWewrywsecKwlsLWIFypKbYizPBmiZq6Iw2X73WIC5lLKSUlXT3uwiFeH8SzY3ti+x2V3NCIems8VZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzarSSo/P9VRNZxUG+oAZnNy+CfuuwDxSaE/bOU2JuMSU68nOR
+	zOvgVy0y+hWlBvJX0Ol3vsPQFtVgpRqwu831nDt8gCS0Sza6Ds+vlenMsX2URviFtA2qkU841cp
+	KwUVPg106kR4lO6UDYE4wPsYQytP+Cuhb2KZ3ww==
+X-Gm-Gg: ASbGncvMLR4cArAkwxkm/QyEfV906c1birJe2VBg757idreyuOJ9nsGljOy1UAry78Y
+	dotauXnIhVbt+WwLuXCNfxO4vDGXJx0lQACTMtrvkSL+6LKH2Z3BFQz9RF7TA97TVAjzWtQ2rXf
+	2RlyxF7OAMNRWoO+FLbBZeRRR+fNE=
+X-Google-Smtp-Source: AGHT+IEmvzgsrnWJ3LS9iuiefnI5/Y1q51JDiJPKEl1YavKMn2nS0Mp6TQ/OYLWI5gnSPzE5ELMRM9TgS5WSMkJCuv0=
+X-Received: by 2002:a05:6a00:194b:b0:736:5e6f:295b with SMTP id
+ d2e1a72fcca58-736aaa5d6c4mr32299739b3a.12.1741784092687; Wed, 12 Mar 2025
+ 05:54:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/10] dt-bindings: riscv: Add SiFive HiFive Premier P550
- board
-To: Conor Dooley <conor@kernel.org>,
- Matthias Brugger <matthias.bgg@kernel.org>
-Cc: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Min Lin <linmin@eswincomputing.com>,
- Pritesh Patel <pritesh.patel@einfochips.com>, Yangyu Chen
- <cyy@cyyself.name>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Yu Chien Peter Lin <peterlin@andestech.com>,
- Charlie Jenkins <charlie@rivosinc.com>,
- Kanak Shilledar <kanakshilledar@gmail.com>,
- Darshan Prajapati <darshan.prajapati@einfochips.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Heiko Stuebner
- <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>, rafal@milecki.pl,
- Anup Patel <anup@brainfault.org>, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250311073432.4068512-1-pinkesh.vaghela@einfochips.com>
- <20250311073432.4068512-5-pinkesh.vaghela@einfochips.com>
- <Z9F3_Zb4RvHLvgSd@ziggy.stardust>
- <20250312-unloving-shamrock-babbedab8cbe@spud>
-Content-Language: en-US, ca-ES, es-ES
-From: Matthias Brugger <mbrugger@suse.com>
-Autocrypt: addr=mbrugger@suse.com; keydata=
- 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
- PVrr2NoUqi/bxI8fFQJD1jVj8K0=
-In-Reply-To: <20250312-unloving-shamrock-babbedab8cbe@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250310090407.2069489-1-quic_jiegan@quicinc.com>
+ <20250310090407.2069489-2-quic_jiegan@quicinc.com> <CAJ9a7Vh7PmBBbvwnUETfCYrTSiXNzeiWpsz+XAGaUWt1Rq1aZw@mail.gmail.com>
+ <cef984d5-f369-4892-b970-a71285c2ebc5@quicinc.com>
+In-Reply-To: <cef984d5-f369-4892-b970-a71285c2ebc5@quicinc.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Wed, 12 Mar 2025 12:54:41 +0000
+X-Gm-Features: AQ5f1JrjHjNAhBmSqhZ9QdvfeDjrNBtawx-M2q_IwgCWoudUHO1tG95UqLFNpqQ
+Message-ID: <CAJ9a7VhDD3813LtH_5AYyM-2mhCNP+vRmqXn4RWqg5F8FEe-Mg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/4] coresight: tmc: Introduce new APIs to get the RWP
+ offset of ETR buffer
+To: Jie Gan <quic_jiegan@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Tingwei Zhang <quic_tingweiz@quicinc.com>, Jinlong Mao <quic_jinlmao@quicinc.com>, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hi Jie,
+
+On Wed, 12 Mar 2025 at 01:21, Jie Gan <quic_jiegan@quicinc.com> wrote:
+>
+>
+>
+> On 3/12/2025 12:49 AM, Mike Leach wrote:
+> > Hi,
+> >
+> > On Mon, 10 Mar 2025 at 09:04, Jie Gan <quic_jiegan@quicinc.com> wrote:
+> >>
+> >> The new functions calculate and return the offset to the write pointer of
+> >> the ETR buffer based on whether the memory mode is SG, flat or reserved.
+> >> The functions have the RWP offset can directly read data from ETR buffer,
+> >> enabling the transfer of data to any required location.
+> >>
+> >> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> >> ---
+> >>   .../hwtracing/coresight/coresight-tmc-etr.c   | 40 +++++++++++++++++++
+> >>   drivers/hwtracing/coresight/coresight-tmc.h   |  1 +
+> >>   2 files changed, 41 insertions(+)
+> >>
+> >> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> >> index eda7cdad0e2b..ec636ab1fd75 100644
+> >> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> >> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> >> @@ -267,6 +267,46 @@ void tmc_free_sg_table(struct tmc_sg_table *sg_table)
+> >>   }
+> >>   EXPORT_SYMBOL_GPL(tmc_free_sg_table);
+> >>
+> >> +static long tmc_flat_resrv_get_rwp_offset(struct tmc_drvdata *drvdata)
+> >> +{
+> >> +       dma_addr_t paddr = drvdata->sysfs_buf->hwaddr;
+> >> +       u64 rwp;
+> >> +
+> >
+> > It is not valid to read RWP if the TMC is running. It must be in the
+> > stopped or disabled state - see the specifications for TMC /ETR
+> >
+> > It is likely that CSUNLOCK / CSLOCK are needed here too,  along with
+> > the spinlock that protects drvdata
+> >
+> > See the code in coresight_tmc_etr.c :-
+> >
+> > e.g. in
+> >
+> > tmc_update_etr_buffer()
+> >
+> > ...
+> > <take spinlock>
+> > ...
+> > CS_UNLOCK(drvdata->base);
+> > tmc_flush_and_stop(drvdata); // this ensures tmc is stopped and
+> > flushed to memory - essential to ensure full formatted frame is in
+> > memory.
+> > tmc_sync_etr_buf(drvdata); // this function reads rwp.
+> > CS_LOCK(drvdata->base);
+> > <release spinlokc>
+> >
+> > This type of program flow is common to both sysfs and perf handling of
+> > TMC buffers.
+>
+> Hi Mike,
+>
+> I am fully understood your point here.
+>
+> The function is designed this way to read the w_offset (which may not be
+> entirely accurate because the etr buffer is not synced) when the
+
+Why would you ever base memory access on a pointer that is not
+entirely accurate?
+
+The manuals for TMC/ETR all state that reads to both RWP and RRP when
+the ETR is running return unknown values. These cannot be used to
+access the buffer, or determine how much of the buffer has been used
+on a running ETR.
+
+The ETR specification specifically states that it is not permitted to
+read the buffer data while the ETR is running, when configured in
+circular buffer mode - which is the mode used in the TMC-ETR linux
+drivers.
+
+Reading the buffer while ETR is running is only permitted if
+configured in Software FIFO mode 2 - were the ETR will stop on full
+and stall incoming trace until some data is read out, signalled to the
+ETR via the RURP.
+
+I also note that you are reading back the etr_buf data without doing
+any dma_sync operations that the perf and sysfs methods in the driver
+do, after stopping the tmc.
+
+> byte-cntr devnode is opened, aiming to reduce the length of redundant
+> trace data. In this case, we cannot ensure the TMC is stopped or
+> disabled.
+
+The specification requires that you must ensure the TMC is stopped to
+read these registers.
 
 
+>The byte-cntr only requires an offset to know where it can
+> start before the expected trace data gets into ETR buffer.
+>
+> The w_offset is also read when the byte-cntr function stops, which
+> occurs after the TMC is disabled.
+>
+> Maybe this is not a good idea and I should read r_offset upon open?
+> The primary goal for byte-cntr is trying to transfer useful trace data
+> from the ETR buffer to the userspace, if we start from r_offset, a large
+> number of redundant trace data which the user does not expect will be
+> transferred simultaneously.
+>
+>
 
-On 12/03/2025 13:50, Conor Dooley wrote:
-> On Wed, Mar 12, 2025 at 01:03:09PM +0100, Matthias Brugger wrote:
->> On Tue, Mar 11, 2025 at 01:04:26PM +0530, Pinkesh Vaghela wrote:
->>> From: Pritesh Patel <pritesh.patel@einfochips.com>
->>>
->>> Add DT binding documentation for the ESWIN EIC7700 SoC and
->>> HiFive Premier P550 Board
->>>
->>> Signed-off-by: Pritesh Patel <pritesh.patel@einfochips.com>
->>> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
->>> Signed-off-by: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
->>> ---
->>>   .../devicetree/bindings/riscv/eswin.yaml      | 29 +++++++++++++++++++
->>>   MAINTAINERS                                   |  6 ++++
->>>   2 files changed, 35 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/riscv/eswin.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/riscv/eswin.yaml b/Documentation/devicetree/bindings/riscv/eswin.yaml
->>> new file mode 100644
->>> index 000000000000..c603c45eef22
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/riscv/eswin.yaml
->>> @@ -0,0 +1,29 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/riscv/eswin.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: ESWIN SoC-based boards
->>> +
->>> +maintainers:
->>> +  - Min Lin <linmin@eswincomputing.com>
->>> +  - Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
->>> +  - Pritesh Patel <pritesh.patel@einfochips.com>
->>> +
->>> +description:
->>> +  ESWIN SoC-based boards
->>> +
->>> +properties:
->>> +  $nodename:
->>> +    const: '/'
->>> +  compatible:
->>> +    oneOf:
->>> +      - items:
->>> +          - enum:
->>> +              - sifive,hifive-premier-p550
->>> +          - const: eswin,eic7700
->>
->> That should be the other way around. You could have, let's say eic7701
->> with different peripherals but smae p550 IP core. I don't expect a new
->> eic7700 with a CPU IP other then p550.
-> 
-> No, this is correct. The SoC is made by Eswin (eic7700) and the board
-> (hifive premier) by SiFive. None of the compatibles listed here are for
-> the IP core.
-> 
-> If there's another SoC with different peripherals and the same p550 IP
-> core, I would expect a new SoC compatible /and/ a new board compatible.
-> 
+It is difficult to justify adding code to a driver that does not
+correspond to the specification of the hardware device.
 
-Right I mixed up CPU IP core and SoC, so:
+Regards
 
-Reviewed-by: Matthias Brugger <matthias.bgg@kernel.org>
+Mike
+
+> >
+> >> +       rwp = tmc_read_rwp(drvdata);
+> >> +       return rwp - paddr;
+> >> +}
+> >> +
+> >> +static long tmc_sg_get_rwp_offset(struct tmc_drvdata *drvdata)
+> >> +{
+> >> +       struct etr_buf *etr_buf = drvdata->sysfs_buf;
+> >> +       struct etr_sg_table *etr_table = etr_buf->private;
+> >> +       struct tmc_sg_table *table = etr_table->sg_table;
+> >> +       long w_offset;
+> >> +       u64 rwp;
+> >> +
+> >
+> > Same comments as above
+> >
+> >> +       rwp = tmc_read_rwp(drvdata);
+> >> +       w_offset = tmc_sg_get_data_page_offset(table, rwp);
+> >> +
+> >> +       return w_offset;
+> >> +}
+> >> +
+> >> +/*
+> >> + * Retrieve the offset to the write pointer of the ETR buffer based on whether
+> >> + * the memory mode is SG, flat or reserved.
+> >> + */
+> >> +long tmc_get_rwp_offset(struct tmc_drvdata *drvdata)
+> >> +{
+> >> +       struct etr_buf *etr_buf = drvdata->sysfs_buf;
+> >> +
+> >
+> > As this is an exported function, please ensure that the inputs are
+> > valid - check the pointers
+>
+> Sure, will do.
+>
+> Thanks,
+> Jie
+>
+> >
+> > Code to ensure TMC is flushed and stopped could be inserted here.
+> >
+> > Regards
+> >
+> > Mike
+> >
+> >> +       if (etr_buf->mode == ETR_MODE_ETR_SG)
+> >> +               return tmc_sg_get_rwp_offset(drvdata);
+> >> +       else if (etr_buf->mode == ETR_MODE_FLAT || etr_buf->mode == ETR_MODE_RESRV)
+> >> +               return tmc_flat_resrv_get_rwp_offset(drvdata);
+> >> +       else
+> >> +               return -EINVAL;
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(tmc_get_rwp_offset);
+> >> +
+> >>   /*
+> >>    * Alloc pages for the table. Since this will be used by the device,
+> >>    * allocate the pages closer to the device (i.e, dev_to_node(dev)
+> >> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+> >> index b48bc9a01cc0..baedb4dcfc3f 100644
+> >> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+> >> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+> >> @@ -442,5 +442,6 @@ void tmc_etr_remove_catu_ops(void);
+> >>   struct etr_buf *tmc_etr_get_buffer(struct coresight_device *csdev,
+> >>                                     enum cs_mode mode, void *data);
+> >>   extern const struct attribute_group coresight_etr_group;
+> >> +long tmc_get_rwp_offset(struct tmc_drvdata *drvdata);
+> >>
+> >>   #endif
+> >> --
+> >> 2.34.1
+> >>
+> >
+> >
+>
+
+
+--
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
