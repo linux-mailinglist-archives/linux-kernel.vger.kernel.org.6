@@ -1,94 +1,110 @@
-Return-Path: <linux-kernel+bounces-558328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5563EA5E468
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:30:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F122A5E46E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:31:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25EA5189C38D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:30:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D711714A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D41C258CF2;
-	Wed, 12 Mar 2025 19:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7868D24E002;
+	Wed, 12 Mar 2025 19:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5GgQ2Kf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5SC42jS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A5D23CF12;
-	Wed, 12 Mar 2025 19:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF2C1CF96;
+	Wed, 12 Mar 2025 19:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741807797; cv=none; b=qX131rVHooFqbMnu3hctym6I2v0uga2unMnVWuLU+aVvB7bhJlqj34s9zNbMRFszaU2mRa3FTZ8+qrASY6okPAw0ZfaHWaWhvDacm/PSXYtFo2gZ4RzcgxnXjdrmLRwDoNPxmD1Ux2ZpYAZOIgve3zFI7l5cDsatlfd5R8fwDmc=
+	t=1741807895; cv=none; b=mQ4EIj21VX7x9yOfk98BfYd9/a2t3rD02/gPb8R0dSZeE64dVRPvZFKsiWn+YMyq7RFW7gNhrfaSu1hRkRtFTDEIifesX740enaZQmdoWgNYTyCuKGodIrwjnsuvP7v6GJMKWR6+Mqf9OCEXq+BfWMrbZHHu6n7vfZJi6jBAGE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741807797; c=relaxed/simple;
-	bh=w665CGxolMF8oTptBUTJRmpjyGCsr9dHJNKmP6rI5G0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=XpfyaMD/lPZSlgW1Tcjr5UPGp7JgLRL+9V4xr/805Q7jmTmiHEVdtQcwrf5L3Hm3RZy6GL12MY7hmMaLhUsAHZ5OtYo5S16oaOF8cM9vnGBw6ye5Lb6NatJnqYWmrnY2F3a8h/hyRhEoX81OOxpxctgnFzo5gFPbsMe3U4MvYEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5GgQ2Kf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F8FC4CEDD;
-	Wed, 12 Mar 2025 19:29:57 +0000 (UTC)
+	s=arc-20240116; t=1741807895; c=relaxed/simple;
+	bh=CaW1UxJeoHSqP4IvGnDB6JVA17m5sPB3095Cb0mMJ14=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MVvyf69FPaKeuGtiPiZQzVktk30gXZ6MMJ763KEET6nE5SX0onFp0YWGN1h09CfbnR8wVKXFCTuaZ/ghKIunExl/hhTvd0AfMTTfUhKKFGLSca4kehUA1XpDOAsn4UFqsjcYeS3PSFnUtmZMoxyrR3cDbMZ6vnzGITuZ5Gd3Xak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5SC42jS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48034C4CEEC;
+	Wed, 12 Mar 2025 19:31:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741807797;
-	bh=w665CGxolMF8oTptBUTJRmpjyGCsr9dHJNKmP6rI5G0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=A5GgQ2Kf9ooXPuQEPfnwn6ac8IOtTn28zLhJGU3DEbTJks0iIYvUDgBBf6jTtpomP
-	 bSJLBREI38Zi2QamwoGh6hcHVc4O4CYZgdkw76VX7Dz/vPUuJaVnsx0zcIulnEIQvx
-	 w0OIF6PV7Aigc3Sd4yRi3Qmp4TV9WqsJNCx8JXYViLBYlIyh+iVrdJYYb1lQHISZGQ
-	 xjW+mBy1k/o2P1769odTY2JittnYil9HxAiSFYXN45ZSahtgVyl3914TwHmZnhoWKs
-	 AexV1Jum88NUJ4nuvSe94RrR1rG01rgNVUViqWhAB13Cl2uCJtY0U1LjL/M7UAcZqN
-	 4Wx+6lCN4iF5g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC83380DBDF;
-	Wed, 12 Mar 2025 19:30:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1741807894;
+	bh=CaW1UxJeoHSqP4IvGnDB6JVA17m5sPB3095Cb0mMJ14=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=T5SC42jSwOSUQOOJtN733Gaad9jXxutkSjOf6jR4w20P0D0w5LVX7+8h5ZlaPOF3g
+	 uAhdu4mtMOXb31o1nAVVVmhtPDjC6ZQNGn+VIwjASuJ5B/ri8ul+Q7cvuqoIRxrML6
+	 ytOqmt00NUHEwubcFLHyidQ/2HjON/pIG/zz/0b+FmkE4VY9RAQXoboEg3eTzUdBUM
+	 SAbH1LgNI0luEHfKC9hGSUDgxKrqGL0fSk007iCOSq8n292wEnlK/jZsJAgTjCB9Wa
+	 BbrWGZPuU2mz+tRENNeDiGoUc0S2qebDyKLfVleRb3KmgeGzqlSJDdFyXuKh+/GB9E
+	 V8XRDrosSDCOw==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5fcd61e9bcdso76738eaf.0;
+        Wed, 12 Mar 2025 12:31:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1Wu/Mi1PdcI9cm0CIRTEsDQfjurkbI5DOng1oyRdKbRkPZJiSFUywm5K6Udt1Jz76bIixsRUJjJ5Jt3V1@vger.kernel.org, AJvYcCWd/VKOVspRWvkbOLCGCmOx42oo54wC3N8kjxYXqiMb852wkAl2d3tNQabWBMukauYpHjKmwF9wKaYaUGtW+KU=@vger.kernel.org, AJvYcCWlro4KU4bJH99Pk40YlaJvNz+wCaNYpaV8yDjL7w6yAnHOLo6fpbU79rjwu+Vun6cS11YGn6OU/fOx@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZx/vrVafQsQHPiMeUCWSYv727vsbct4zuoLAQRwWtcftKG4CT
+	fc0sXNmT3CnKdzcBaUFcgaFujkS3gbXHcnsbN9eFuLqK47T8AuhGUhPG1qC6FmE2mX6V/BBChov
+	QwMwO+qHVwDIb4obl3uTLUIWWcLg=
+X-Google-Smtp-Source: AGHT+IF0pW0O/4HHSdM+DXVucPScSwmpd7T5iO006EAES0raj7w7pX7ZxaICM4YXWVZK3dXMFGCE8m1/YDhpPgHYbWo=
+X-Received: by 2002:a05:6871:8a8:b0:2c2:50a5:1248 with SMTP id
+ 586e51a60fabf-2c2614d4a3cmr11732507fac.38.1741807893527; Wed, 12 Mar 2025
+ 12:31:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: HCI: Fix value of
- HCI_ERROR_UNSUPPORTED_REMOTE_FEATURE
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <174180783150.904159.8994265489515508641.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Mar 2025 19:30:31 +0000
-References: <20250312083847.7364-1-sy2239101@buaa.edu.cn>
-In-Reply-To: <20250312083847.7364-1-sy2239101@buaa.edu.cn>
-To: Si-Jie Bai <sy2239101@buaa.edu.cn>
-Cc: luiz.dentz@gmail.com, marcel@holtmann.org, johan.hedberg@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, cuijianw@buaa.edu.cn, sunyv@buaa.edu.cn,
- baijiaju@buaa.edu.cn
+References: <20250312-ivo-intel_oc_wdt-v2-0-52d09738cd0b@siemens.com> <20250312-ivo-intel_oc_wdt-v2-2-52d09738cd0b@siemens.com>
+In-Reply-To: <20250312-ivo-intel_oc_wdt-v2-2-52d09738cd0b@siemens.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 12 Mar 2025 20:31:22 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iBcxGcqp88kHN64WddvmC-y6F1XaFeSNHFYuQnayg7dQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr44D1Wr5VQ4K2HGOBGF9RVoswaW7uPrnG--zzPI5KGQJHviiTHGkiNH5U
+Message-ID: <CAJZ5v0iBcxGcqp88kHN64WddvmC-y6F1XaFeSNHFYuQnayg7dQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] ACPI: PNP: Add Intel OC Watchdog IDs to non-PNP
+ device list
+To: Diogo Ivo <diogo.ivo@siemens.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, jan.kiszka@siemens.com, 
+	benedikt.niedermayr@siemens.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Wed, Mar 12, 2025 at 4:46=E2=80=AFPM Diogo Ivo <diogo.ivo@siemens.com> w=
+rote:
+>
+> With the kernel having an ACPI driver for these watchdog devices add
+> their IDs to the known non-PNP device list. Note that this commit is
+> not a complete list of all the possible watchdog IDs.
+>
+> Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
+> ---
+>  drivers/acpi/acpi_pnp.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/acpi/acpi_pnp.c b/drivers/acpi/acpi_pnp.c
+> index 01abf26764b00c86f938dea2ed138424f041f880..3f5a1840f573303c71f5d579e=
+32963a5b29d2587 100644
+> --- a/drivers/acpi/acpi_pnp.c
+> +++ b/drivers/acpi/acpi_pnp.c
+> @@ -355,8 +355,10 @@ static bool acpi_pnp_match(const char *idstr, const =
+struct acpi_device_id **matc
+>   * device represented by it.
+>   */
+>  static const struct acpi_device_id acpi_nonpnp_device_ids[] =3D {
+> +       {"INT3F0D"},
+>         {"INTC1080"},
+>         {"INTC1081"},
+> +       {"INTC1099"},
+>         {""},
+>  };
+>
+>
+> --
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Wed, 12 Mar 2025 16:38:47 +0800 you wrote:
-> HCI_ERROR_UNSUPPORTED_REMOTE_FEATURE is actually 0x1a not 0x1e:
-> 
-> BLUETOOTH CORE SPECIFICATION Version 5.3 | Vol 1, Part F
-> page 371:
-> 
->   0x1A  Unsupported Remote Feature
-> 
-> [...]
-
-Here is the summary with links:
-  - Bluetooth: HCI: Fix value of HCI_ERROR_UNSUPPORTED_REMOTE_FEATURE
-    https://git.kernel.org/bluetooth/bluetooth-next/c/8d35126f69f2
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Is there a particular reason for this patch?
 
