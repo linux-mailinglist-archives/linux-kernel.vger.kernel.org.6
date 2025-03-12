@@ -1,128 +1,136 @@
-Return-Path: <linux-kernel+bounces-558377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275F1A5E500
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:07:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C16A5E508
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:08:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED94F1898241
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:07:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E862C3AB5BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25761EB5E1;
-	Wed, 12 Mar 2025 20:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9541E1EDA33;
+	Wed, 12 Mar 2025 20:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZbzIfjSt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NdvYePad"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA6C1ADC6C;
-	Wed, 12 Mar 2025 20:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3814E1ADC6C;
+	Wed, 12 Mar 2025 20:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741810055; cv=none; b=fCkJ28muIg8r3UgJnfa3PyD6c3wB3LDfmDTZ2ehL0x/opuAUugfvEDTeji3IYALtzILQUKuf4HDkxDP8/uSE00TpXFlk6tUBU8+CFXgnuWOBK8AMoBlYkJqvVVLMt2rEf1m/uSczkpP4CFV6scN111+0zjqBMuBnTVcOozIJMSg=
+	t=1741810111; cv=none; b=qaDZn6H35dKdbV4Kk1NvYMxsFCm/lb7UjL4NiqIHxbsd/NjkcUFPgrfuo8JzHqfjJQGKZUeqZtALqczpnpM6ZVD91XejhYBIKSaOIWzZJfWOpehYM1SlCw9+wh/j3IlTcYeOSmnX9IHwOFxBaBWKpomNg6sLiYXct2SZbsMPg40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741810055; c=relaxed/simple;
-	bh=AAj1WohNGpVntpbLCYIMfXYBSA1bw1W1ywTKwXFLj1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BLDwYFG0MWouCxGmaJIkEk0gzIzTchM/GEnIikKxUVUPfcZ2qn5a1/lGndv3UwJFAuk+xIMC4BPOKxLQRWdhEzNKeXxFvhlTi2ap3fU8YOxcKsU/APxC1VqWtxLswUwDS1CaUnUf8TXRU5ilUFS0wfNwOE3zt8EzJytaCjw8EuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZbzIfjSt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A86C4CEEA;
-	Wed, 12 Mar 2025 20:07:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741810054;
-	bh=AAj1WohNGpVntpbLCYIMfXYBSA1bw1W1ywTKwXFLj1M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZbzIfjStT03wY2zFOxCagp4rgvx9+Auxn4LoiqSIaeuBOwQ1eNRT+xMk7/4GkP38b
-	 KPnpcxlJ8uLNU/lWqtXn8Q6cb0KA6Lgl37ySgRg9l088XzOORDhQTrYTcAEr4WG2UP
-	 xKgrFGKLC79EHjDFAcJw5Kepw3SG8evjW7ZSnv9tbRBt/Zgfkxkmg/ydyBS27KtSep
-	 CpZGgBxw7j1FXAyAD9nshox8Mgmzw3uaIJIKu7zxgFELSqiPE2XiqqGhcpux1+bEhj
-	 D4bniiHaJRjj07LmCVSlpaM028R1YH9Gbfyfyl5Y27R4EfeqUrskTGbvd6reOprZmz
-	 6eWJFGSYjmEfg==
-Date: Wed, 12 Mar 2025 21:07:30 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Fiona Behrens <me@kloenk.dev>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Message-ID: <Z9Hpggn_HE3uMGCo@cassiopeiae>
-References: <20250312220950.28ed9ad7@canb.auug.org.au>
- <2025031235-trailside-unexpired-88c6@gregkh>
+	s=arc-20240116; t=1741810111; c=relaxed/simple;
+	bh=lsSBdLdQ4s0iCWd7bcBOXIm07tS0egm9zlqlZry3PRM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IDw63KxLrS0hTzFBQczgIX5mR5qRicQmrkF1HUW2RI6oIUuMxzm0ocFoP5rvX9n3HV0+StvxQQTX79cB9Ei/MUg49JZZVgfdzgOTKBNf3ScDYqtJUxH34KRIsF0hAWVqPlmTWVnMSZmZK4Yr/CWdL2mkcrojMONlLLP2WeoINBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NdvYePad; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-307d1ab59c6so2252531fa.1;
+        Wed, 12 Mar 2025 13:08:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741810108; x=1742414908; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WvWdxAReWH9rJxfH10m5q08BJW+spweZYCe1Q8vBq2o=;
+        b=NdvYePadAx7nACoq9+DTtrzkJALJKuKwsIwjYIEjTguMkJq/pwM/igKOw/GpG8lk69
+         G77Usu8ruXa0Tzkdn3QT2nmS2w4JJabGyzpEGy/RSKB81j5A/gbQAbEGSjh+1zKKdctE
+         L3GslfMieoznRgNkaoFXE5m1/GkiDBgUnEhvykF7uuHHGVmtwjbw/NQ3u8RCZHtnRC7k
+         7k3eEp+Plz/ISWzCJi5G58pY1Mk/9w5t8MwLAfVe2foQ6eKm3E9892AyTisxX4xyWr42
+         7BHfWM3QuwzfIfdorynUtvilpp0ojWrUIBr/RVIYy7WQGcYwQ2PJ9oYaORDQCDR/Lwbk
+         H+kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741810108; x=1742414908;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WvWdxAReWH9rJxfH10m5q08BJW+spweZYCe1Q8vBq2o=;
+        b=SfOwuwp8NQj3d9qG6T99WxGjYBQA/lX9KDSY3UQVmGEyBo7p2VGSx5+H1znKkQXKf1
+         wGt+fVLmn96Qp0hqjbYUyQAH04QwiCCBLrVkkn5vW1sMlyRZvY75QtNFpFKXp5+BLlyu
+         0GnAY5m4nZehdRRmoX+mQdGq28HcTCkCZm0B+7NZaNoSGXSqGmlTbXVg6S6gfj2ecxER
+         W5m89eoQeLLlJXZJJp0aNUb7NSDKtQ2oR+/CDlHuAHqeObzBJLwE4yPFwbbrqzD9ee/+
+         iEboJ7OztMQHlBpgb3kuK6TJSS0ThuaqBLv56BgU2gHTkp7ZFpkbXWDo25+7nBbTeN3E
+         26AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQYX9dTLzSX3+iCJK17IdDFw84haSZbGlL7wyENXg653DdRLO3EMz1uUi0T9n4NbjSMkPd0YFNN+S6@vger.kernel.org, AJvYcCW+ElhV827NgFsZ0JTiv4Zbs2fMYjGqmeEZYAnr14ikx/aJsET4VxMuGZMdbR7uRLFmP4tEN8WECXya@vger.kernel.org, AJvYcCWCzxeiKcQlQHpYI8YNCbjZ7Klf9hTlV+1Oy7HHhp/bKO3vSJB5Ir2LNFGCZSeOqV6kERx+uIs3qtEDv7Ya@vger.kernel.org, AJvYcCX+RmaL852E9Q/J3WRwP1qIc4TYN8YBdFhOGOXsza2TdmTHnCAiSZQTwnSdjWBqOL1O9lVjhOrVOwgjxIk=@vger.kernel.org, AJvYcCXMkzVEV9oXfxyPvY10yb7EZaFVVqHgOSErf2o8l1kT4ttHjo84KkzKIPLnDr5tfkOzkbU805fbMVCqx/AlexM=@vger.kernel.org, AJvYcCXYvfBsrlxCwo50P6i+ENlLcRrNhKJe0l9RecwgAvRoPehOrqw9nKYJbBwNYBEhjiOhkjPtUZz/XYZU8uqu@vger.kernel.org, AJvYcCXi9KHhqjSmiA7FzPWMHMV94Vuo2L2Y3NW8Mn7XdevSyobAveCjaixjAYtGgZEdUwfDymVwyWa7NR2SwJtNdOON@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbfxa5za/Ygu/wD+A1kMG/S/EMqWcM6Mfkif2t0bqx3fAANWA5
+	NeRZAfpQ3HCQD6mh1UIlLdlBbZzKnbISjDwpihC+qZtoHyNemqZ0yRjQ9QUeuXMSy/b7b6IV8e1
+	EJbqXgdMussi0j3wzNNXlnTjrVwc=
+X-Gm-Gg: ASbGnctfMKUOtLy9S4ZOuHnS3GYA9CAirbORI9rnUHBNhgZQ+11Cvv/FdtJI1CxqKNF
+	gSVZCBHSy9GpYU2FCRNOlnHio4uvWVLnSLMzG7yUOo2CsGbkn6ty9+cq5WPzqluikFQii4MsZT4
+	pIrY7+M285XdLoTR593fkrl3VqqRAQB5Z91cEgAkkAKw==
+X-Google-Smtp-Source: AGHT+IGKy6zn5xgfn8CeCs2iWvvIbfhtT8G8n3Qui6VQS2rPHMF6seq5pQ1f4HajsIodpexn4xjqHKMhzcX7k07A68U=
+X-Received: by 2002:a2e:3517:0:b0:30b:edd8:886 with SMTP id
+ 38308e7fff4ca-30bf451713dmr75313571fa.9.1741810108139; Wed, 12 Mar 2025
+ 13:08:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025031235-trailside-unexpired-88c6@gregkh>
+References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com>
+ <20250309-ptr-as-ptr-v2-5-25d60ad922b7@gmail.com> <D8EDP4SMQG2M.3HUNZGX8X0IL7@proton.me>
+ <CAJ-ks9=K06OT6cutUABj2QDHJHJ70719c-eJ=F3n-_bhkYbZ3w@mail.gmail.com>
+ <D8EG9EM9UU0B.2GLHXRU2XROZ3@proton.me> <CAJ-ks9=+3MQb-tp8TAwYvVj=GOFFFVKJxRMprc8YXZHKhqnDrg@mail.gmail.com>
+ <D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me> <CAJ-ks9=zWAuPUM_61EA6i5QkUpwtNtsN8oF_MUerWGn39MRHhw@mail.gmail.com>
+ <D8EJM4CJ4HAN.1PB2YV8DB77V7@proton.me>
+In-Reply-To: <D8EJM4CJ4HAN.1PB2YV8DB77V7@proton.me>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 12 Mar 2025 16:07:52 -0400
+X-Gm-Features: AQ5f1JrUv6wKNk7y3ewcr0wVyePELpSL2pI1z4NH7DNLDz50gsWeKT8qdmo6mKQ
+Message-ID: <CAJ-ks9mo-H46Wwcu_LOvDy0ncwMR9ii74Fyf3OX-aWNnrZ397g@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 12, 2025 at 06:20:45PM +0100, Greg KH wrote:
-> On Wed, Mar 12, 2025 at 10:09:50PM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > After merging the driver-core tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > error[E0599]: no method named `readl` found for reference `&Bar<8>` in the current scope
-> >   --> drivers/gpu/nova-core/regs.rs:38:18
-> >    |
-> > 38 |         Self(bar.readl(BOOT0_OFFSET))
-> >    |                  ^^^^^
-> >    |
-> > help: there is a method `read8` with a similar name
-> >    |
-> > 38 |         Self(bar.read8(BOOT0_OFFSET))
-> >    |                  ~~~~~
-> > 
-> > error: aborting due to 1 previous error
-> > 
-> > For more information about this error, try `rustc --explain E0599`.
-> > 
-> > Caused by commit
-> > 
-> >   354fd6e86fac ("rust: io: rename `io::Io` accessors")
-> > 
-> > interacting with commit
-> > 
-> >   54e6baf123fd ("gpu: nova-core: add initial driver stub")
-> > 
-> > from the drm-nova tree.
-> > 
-> > I applied the following merge fix patch for today.
-> > 
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Wed, 12 Mar 2025 21:36:48 +1100
-> > Subject: [PATCH] fix up for "rust: io: rename `io::Io` accessors"
-> > 
-> > interacting with "gpu: nova-core: add initial driver stub"
-> > 
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  drivers/gpu/nova-core/regs.rs | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-> > index 50aefb150b0b..b1a25b86ef17 100644
-> > --- a/drivers/gpu/nova-core/regs.rs
-> > +++ b/drivers/gpu/nova-core/regs.rs
-> > @@ -35,7 +35,7 @@
-> >  impl Boot0 {
-> >      #[inline]
-> >      pub(crate) fn read(bar: &Bar0) -> Self {
-> > -        Self(bar.readl(BOOT0_OFFSET))
-> > +        Self(bar.read32(BOOT0_OFFSET))
-> >      }
-> >  
-> >      #[inline]
-> > -- 
-> > 2.45.2
-> > 
-> 
-> Fix looks good to me, thanks!
+On Wed, Mar 12, 2025 at 3:43=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On Wed Mar 12, 2025 at 8:19 PM CET, Tamir Duberstein wrote:
+> > I tried using the strict provenance lints locally and I think we can't
+> > until we properly bump MSRV due to `clippy::incompatible_msrv`:
+> >
+> > warning: current MSRV (Minimum Supported Rust Version) is `1.78.0` but
+> > this item is stable since `1.84.0`
+> >    --> ../rust/kernel/str.rs:696:22
+> >     |
+> > 696 |             pos: pos.expose_provenance(),
+> >     |                      ^^^^^^^^^^^^^^^^^^^
+> >     |
+> >     =3D help: for further information visit
+> > https://rust-lang.github.io/rust-clippy/master/index.html#incompatible_=
+msrv
+>
+> Oh this is annoying...
+>
+> > This is with `#![feature(strict_provenance)]`. I can file the issue
+> > but I think it's blocked on MSRV >=3D 1.84.0. But maybe you know of a
+> > path forward :)
+>
+> I think we should be able to just `allow(clippy::incompatible_msrv)`,
+> since Miguel & other maintainers will test with 1.78 (or at least are
+> supposed to :).
 
-+1, thanks for fixing it up!
+Alright, you've sniped me. This is coming in v3.
 
