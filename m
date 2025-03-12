@@ -1,134 +1,88 @@
-Return-Path: <linux-kernel+bounces-557456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EEECA5D924
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:19:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F831A5D925
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:19:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05BFF1762E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CEBA18954DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DEA23A98C;
-	Wed, 12 Mar 2025 09:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A088123A98E;
+	Wed, 12 Mar 2025 09:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tM5MvYFG"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="Wxk06aPJ"
+Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE61323A986;
-	Wed, 12 Mar 2025 09:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CB023A571
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741771143; cv=none; b=DThoczZMi34A5INyRXDuqonL0j22UtAsRWyazK0x5ZnqbSqGphlW9h7woqPzGbQrg0yDwICx3ZqjK7qECEr5AdXO8w9NSwNFMlmb96RF1EWrEfXWIGDBi6Hh/AOQ9rQ51vLa1JT1oZZk9sryC3Q+bMMVwt6CG0PixC+r1T4ZV1k=
+	t=1741771182; cv=none; b=qmbX5GggGIxojMghOSuUje3Xq0Y2M6sGYY/2+R8OMTXAIuiBjIkSW6OF1vRXDtZBLoPTZJ3yfAcNYV53eoeMmtdiN9Hi2wjlVDGByZxEFX+V5T0rE7JDyN7z6GNg7BHPZYDEkSc5B90AHHn8SYjUVhLtvarAbQgJtoIwdsRstGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741771143; c=relaxed/simple;
-	bh=Hz4PGmHktukDVkUSR6HeErSQ2T1cv335qUES06oxJH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YyihwejM51g3kmXKN59RpfGFMSBx069lJN6tuyICNiw7TeZECiyBgwqAnWkoR41L9bCiGPVvmbpczmUTFQM/X0ne8u62kKdmO9xATURM5cMs6o6VU4bWHSpGyy1dOI9/SWR0kVrY+aakHalSy9Zciah/OPNY9ar7rMYKK6PXsx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tM5MvYFG; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741771136;
-	bh=k51t/txi++gxDD01EOFRlarxmT4bBJZAjptolAVZJhk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tM5MvYFGdeCej6dXXG1R6SQILuUSp40XhstTS32DQUW1CgKMPfMh8qpAzDmW5BQtc
-	 /py/nPv6wDug8M5GICASdNTXHWxO4I8gpCj/VCNMo3gCmuCHSSCu8i3HnfnnqfY41A
-	 HbZ3WTH6DBn44V7iIJzqhCCSo/ea6h1FfnD1DNIfJSpK2RM1yLBLpKX7KtYTljZkGQ
-	 wJAx20eNT9bH8711bj1tTUi5Gt96uYG6L8GMm18gcLH7fLe9FOJIBev9M7BC/eHRKg
-	 D+uFMUO8fsqIqs8MT2ve/Jc4eWSGW3TykAgHQUK8R+lnfZ/sHmisL00X6Rd9i/mQHK
-	 6iL3AxUW9H+8g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCQ6l5FQbz4x1V;
-	Wed, 12 Mar 2025 20:18:55 +1100 (AEDT)
-Date: Wed, 12 Mar 2025 20:18:53 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Oliver Upton
- <oliver.upton@linux.dev>, "Rob Herring (Arm)" <robh@kernel.org>
-Subject: linux-next: manual merge of the kvm-arm tree with the arm-perf tree
-Message-ID: <20250312201853.0d75d9fe@canb.auug.org.au>
+	s=arc-20240116; t=1741771182; c=relaxed/simple;
+	bh=oBwEQFoOy8pOpeJ66KbTKgHr7VFOe1vin9j72U5w3HM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pXffhm4AfdSR16zmBkZAE/lwzAXu85Ivjjy4yrbridPbr3x8xi5Vz+OCNhT4l135wQ1YIp+Sq/CDNrF5gUmgDEIpZdo8Y0IFaa2f3IhtDKu2LcXBxgayVpt3LryP/v2Wloz/jFHbNBpmBkqku/T+Jfu1VJYt1T+WYYET8eXhi7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=Wxk06aPJ; arc=none smtp.client-ip=79.135.106.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1741771172; x=1742030372;
+	bh=oBwEQFoOy8pOpeJ66KbTKgHr7VFOe1vin9j72U5w3HM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Wxk06aPJC5cwC/KqcFNSguUqEo1fWtKJ28lendn5eccilWaeg/Z4ZFbky3AL4vP8B
+	 xY+FoAImNxGgee7UqLSJ9/eYNdZZUqome5i5Z3Qw4bYQASAhCYacWofWhux+QiOEzH
+	 9BY8taYAdnzr+6fofg/e2DcNn0t8wHnWAWf6eZHnMziMpESPoDv+AcL6KA1ObLvsWl
+	 MmXCtdpNnVlheXjlK4lo6MXVpANkRMw7MJAMBsDp6q9o+/iiCEG2xtp3sm7s+tIWrv
+	 ynWn2mCSEt3tAyHcQH1eDHBUD9g1tN+ByG8+8jsnJg3zFHpVDQex3syVrHX78Ag7mk
+	 9oikuojQnQ1gg==
+Date: Wed, 12 Mar 2025 09:19:27 +0000
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/4] New trait OwnableRefCounted for ARef<->Owned conversion.
+Message-ID: <Z9FRm8qkLRbdXq1F@mango>
+In-Reply-To: <CANiq72mR66wn5T7WYCzyyan5dEQDQAyBvtzC381jfWgC6R8K9Q@mail.gmail.com>
+References: <20250310-unique-ref-v7-0-4caddb78aa05@pm.me> <CANiq72mR66wn5T7WYCzyyan5dEQDQAyBvtzC381jfWgC6R8K9Q@mail.gmail.com>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: e8545f65ffc08a44b4e27e3f3091440b49be41b5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/PvqKvpwcWMMPRuxUUNo8Xz0";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/PvqKvpwcWMMPRuxUUNo8Xz0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On 250310 1642, Miguel Ojeda wrote:
+> On Mon, Mar 10, 2025 at 11:57=E2=80=AFAM Oliver Mangold <oliver.mangold@p=
+m.me> wrote:
+> >
+> > - Squash patch to make Owned::from_raw/into_raw public into parent
+>=20
+> In this case, given the changes are minimal (and assuming you didn't
+> discuss it with Lina), I would have personally used the [ ] notation
+> to explain the change from the original patch, and that's it, rather
+> than a Co-developed-by tag -- but do not worry about it :)
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+Sure, I would agree. I was mostly wondering about how the format for that
+looks. You say [ ] notation. Could you maybe give an example for that?
 
-  drivers/perf/apple_m1_cpu_pmu.c
+> Also, in general, please wait at least a couple of days or ideally a
+> week between versions (unless it is urgent etc.). Otherwise, it can
+> get confusing for reviewers and so on.
 
-between commit:
+Ok, sorry. New to this, you know.
 
-  c2e793da59fc ("perf: apple_m1: Don't disable counter in m1_pmu_enable_eve=
-nt()")
+Best regards,
 
-from the arm-perf tree and commit:
+Oliver
 
-  75ecffc361bb ("drivers/perf: apple_m1: Refactor event select/filter confi=
-guration")
-
-from the kvm-arm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/perf/apple_m1_cpu_pmu.c
-index 39349ecec3c1,6be703619a97..000000000000
---- a/drivers/perf/apple_m1_cpu_pmu.c
-+++ b/drivers/perf/apple_m1_cpu_pmu.c
-@@@ -396,7 -428,11 +428,7 @@@ static void m1_pmu_enable_event(struct=20
-  	user =3D event->hw.config_base & M1_PMU_CFG_COUNT_USER;
-  	kernel =3D event->hw.config_base & M1_PMU_CFG_COUNT_KERNEL;
- =20
-- 	m1_pmu_configure_counter(event->hw.idx, evt, user, kernel);
- -	m1_pmu_disable_counter_interrupt(event->hw.idx);
- -	m1_pmu_disable_counter(event->hw.idx);
- -	isb();
- -
-+ 	m1_pmu_configure_counter(event->hw.idx, event->hw.config_base);
-  	m1_pmu_enable_counter(event->hw.idx);
-  	m1_pmu_enable_counter_interrupt(event->hw.idx);
-  	isb();
-
---Sig_/PvqKvpwcWMMPRuxUUNo8Xz0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfRUX0ACgkQAVBC80lX
-0GwXvQgAi9OZHjPyvOsUTr1x27DFTzIWYCHQjzw8ewsw0R3crYaFmkvaKiIlUR3G
-oQkZI41+2JyuWX1K7yic7RsbNVMnoJ0ykNFIHS0yBQeMQCgxv9N782bJRhujA2fB
-KNZwCNF97rvF7faVz/p6IP64+f0Kg/YA8cN7NS3SmKgYTz07svzbgOyZTHLWWLip
-1xKKLxQ9qCHwUSccbaIyCg6AJkNlVnAIMGWaAWB1g/r3vCq1+rn177miuzZxBVZ3
-mX89W2l9btrwjV1e8UYZcfB6O4vJ3Is3qjhcIqmQRNpHdthzIZ36cZobvisRY2Hx
-akx9D73hgA0qtxgRWH/vrZcbNmtpXA==
-=8PdF
------END PGP SIGNATURE-----
-
---Sig_/PvqKvpwcWMMPRuxUUNo8Xz0--
 
