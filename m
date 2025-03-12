@@ -1,107 +1,258 @@
-Return-Path: <linux-kernel+bounces-557193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 191E4A5D4C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:36:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32180A5D4CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37E477AA5FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:35:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C05F3189D7EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AED199FAC;
-	Wed, 12 Mar 2025 03:36:15 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FB91BCA07;
+	Wed, 12 Mar 2025 03:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O/xddV6t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1620D78F44;
-	Wed, 12 Mar 2025 03:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE8178F44
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741750575; cv=none; b=fQEHrp8AMZJPZ413s9x4NQgvSJqhEva6dL074saSuEkFlKB6n207e4lunVFHy7/MJ2QFGkshwZTdT0qvEeyW8b05V9VdYCs223oZ3Wl/kPPT0LvDTCjayXLQCrFnLbvQA9H4Y+R6pjaBl9pifBEWUgZyUBB+LRSDUpoi319tqYQ=
+	t=1741750590; cv=none; b=NY6rawLdIZeFZpVY+SzybhCnYA9GBYlHSnxqxsqaRJsFXUnCY8eLL7bQop1seakT3TxZirugBWtJ2iJEtCJBRDyT3C6VoRXN65uOb95xfMdquYh6IziajJj5Bj4Jsh7R6ZTpUvr+ThxT3wp9goI9yrwVlAXrdtnm/liIsxyGEX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741750575; c=relaxed/simple;
-	bh=OAgx2MfhXWi3VEby4hulS32luPNurXJaHZkZEegwr+o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ikagfb5OmpfsAThg3agIvEVpu2IKyZ00TNxe/LZ79ml7JoPxkmC4Jg9muf+hy9A47xVeM/S5CrMjRL4DjdS22+F7NIZqu0wmBK2Ur7v19omEhOgGfHFVaYC0qFb7E+NOUV4/tAbK3oyazy1ariDNm9fghHG5RcbMmncXPXdqnLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowABXX9MmAdFnHo9vFA--.26624S2;
-	Wed, 12 Mar 2025 11:36:07 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: peter.ujfalusi@gmail.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ASoC: ti: davinci-i2s: remove unnecessary NULL check before clk_disable_unprepare()
-Date: Wed, 12 Mar 2025 11:35:09 +0800
-Message-Id: <20250312033509.1235268-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741750590; c=relaxed/simple;
+	bh=Dyw0HFF2I3UqKNeJMJWrFl+V1/u9vlMYXlU1qdh2Fs0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ObS+9yHq6SnaMNr/24D1dbwD9Y8367hp0GnfkJrix73/zZzpFRH2Rq67isrDYNE3/sb7Ndf+Rp9RwCk3WZqv6UBmU+GtqBCP89sDmOy4Z+aBZVMU0KQzKAL0Xl5eVLgZHbphVPNHnzYd7FyUPQT29Em5hYnh0qCxWW6UxUokx54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O/xddV6t; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741750587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FZpwUgpQlsRSqyhUJVMbAHrvSDusnw6V0w+ye5eNYLw=;
+	b=O/xddV6tAvttgmf0NkPoR3aYCt99nHAK+qRJv0OTAuO3EWmYT487HWCM8V0RzVU/VtRp3y
+	bmVcEck8VNLtGROvu/lpEkT+bIeBaPIuVKWTBBPjUMX4mIN0nr1YnYo1RQ27lr6KFMUVW/
+	oGMqbD1WdE4zt8Wj53ZELtjIjxPuZ7Q=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-548-mzeFZzCrP8ibaaWBtyqHgg-1; Tue, 11 Mar 2025 23:36:25 -0400
+X-MC-Unique: mzeFZzCrP8ibaaWBtyqHgg-1
+X-Mimecast-MFC-AGG-ID: mzeFZzCrP8ibaaWBtyqHgg_1741750585
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-224192ff68bso95616615ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 20:36:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741750585; x=1742355385;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FZpwUgpQlsRSqyhUJVMbAHrvSDusnw6V0w+ye5eNYLw=;
+        b=ePdI+Inr9I0gmoODAwzIHeWa6zDf5PcfqHtjRs1XMR2ICcgCdM4YzjWA2d9OvA0mWZ
+         UMnGYijQT/yPO7988o6qN1sTWiwHeDGxjD95hpyrH4rgd4KAUgb7O44JRm4nlMAXb6TC
+         YdF78ifGXuyPbuYOhIMtZet7yYlmJLnfSBV/1lyWdD4ut0KjXqNAOzCj/KjsxbjY3Jm9
+         m+DzIM9Z7w7qcf5sLwplN75fGBDyWYCT6H8EKdfc1t+5RoriHG2rkEGQk3I8MkhM/yLw
+         1XjecFIZmCmzPykLe1d47q8fpiyQoh4Rkpv9WVxyUAvKJuYaR3T+AL7w+9KDAJ3SSUj3
+         CfbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPsEqqWP/o1G27E5CQRwAj3vFKsl6YwANLJdCreVMDIjMKlFogRZmPYKgBFjnUD+fYHaXugiJZgwuId/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhJ8cCiQ9oS6vcuXi+/zlp88XRDAqoI8R5v7gpuvW1s6/mStCH
+	ztYfZ3GSUqABWa1v65L9A3N+3GKzLrJaYWeE14Onf1yOSMgomnjGS/vmo7C1gLmavB28dc5idyU
+	vaAXtLoxI8x37tTQ5ZDOYiNFQBBToLewdE5wPRe0QEJYTBqN4INAGeg83UpmHrwuQFM0Q14BawT
+	L7u+3xnBndY7gpYZFEkB4yRu2/snjZ43CQ80lD
+X-Gm-Gg: ASbGncub9A4UhiE+6/u4NktDCU2pmvVDB5kbN7LnaxT8U4k2c8H3AIyaNBlHaZtVScR
+	US2Zai1oxyChzlNYe2Jn0F1gIknAqbK6rYodXmlQrn5yJ+eYHgAZoh/8QW4XflLTo78u5aw==
+X-Received: by 2002:a05:6a00:238d:b0:736:d6da:8f9e with SMTP id d2e1a72fcca58-736eb667a71mr7986969b3a.0.1741750584747;
+        Tue, 11 Mar 2025 20:36:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMmxpIAevVVywh2O0MaRFt52q3IQdqP0x11H7Tx5Em3ifIbgwiYbMghj8Z7Q/WU0TpCaMabTo/4ereJNFvbKw=
+X-Received: by 2002:a05:6a00:238d:b0:736:d6da:8f9e with SMTP id
+ d2e1a72fcca58-736eb667a71mr7986941b3a.0.1741750584315; Tue, 11 Mar 2025
+ 20:36:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABXX9MmAdFnHo9vFA--.26624S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XFyrKF1DtryUCFykZryrJFb_yoWkCrbE9w
-	4DurWDWF4rur9avayDCryUAF1vqr1qvFs5uryFvF40qryUXw4Yy3y2vF13Zry5W3yxGF13
-	Wr1qgr43Cr4S9jkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbV
-	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AF
-	wI0_Jw0_GFylc2xSY4AK67AK6r48MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUjM5l5UUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+References: <20250307-rss-v9-0-df76624025eb@daynix.com> <20250307-rss-v9-6-df76624025eb@daynix.com>
+ <CACGkMEuccQ6ah-aZ3tcW1VRuetEoPA_NaLxLT+9fb0uAab8Agg@mail.gmail.com>
+ <2e550452-a716-4c3f-9d5a-3882d2c9912a@daynix.com> <CACGkMEu9tynRgTh__3p_vSqOekSirbVgS90rd5dUiJru9oV1eg@mail.gmail.com>
+ <1dd2417a-3246-44b0-b4ba-feadfd6f794e@daynix.com>
+In-Reply-To: <1dd2417a-3246-44b0-b4ba-feadfd6f794e@daynix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 12 Mar 2025 11:36:11 +0800
+X-Gm-Features: AQ5f1JrxpKp6znsUaqgeF38Q8NdhxxsJo9tfhGhP07-EGgT1K5NsmabBVB2dyas
+Message-ID: <CACGkMEthfj0KJvOHhnc_ww7iqtmhHUy9f9EGOoR-n0OwHOBrvQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 6/6] vhost/net: Support VIRTIO_NET_F_HASH_REPORT
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
+	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-clk_disable_unprepare() already checks NULL by using IS_ERR_OR_NULL.
-Remove unneeded NULL check for dev->ext_clk here.
+On Tue, Mar 11, 2025 at 2:24=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
+.com> wrote:
+>
+> On 2025/03/11 9:42, Jason Wang wrote:
+> > On Mon, Mar 10, 2025 at 3:04=E2=80=AFPM Akihiko Odaki <akihiko.odaki@da=
+ynix.com> wrote:
+> >>
+> >> On 2025/03/10 13:43, Jason Wang wrote:
+> >>> On Fri, Mar 7, 2025 at 7:02=E2=80=AFPM Akihiko Odaki <akihiko.odaki@d=
+aynix.com> wrote:
+> >>>>
+> >>>> VIRTIO_NET_F_HASH_REPORT allows to report hash values calculated on =
+the
+> >>>> host. When VHOST_NET_F_VIRTIO_NET_HDR is employed, it will report no
+> >>>> hash values (i.e., the hash_report member is always set to
+> >>>> VIRTIO_NET_HASH_REPORT_NONE). Otherwise, the values reported by the
+> >>>> underlying socket will be reported.
+> >>>>
+> >>>> VIRTIO_NET_F_HASH_REPORT requires VIRTIO_F_VERSION_1.
+> >>>>
+> >>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> >>>> Tested-by: Lei Yang <leiyang@redhat.com>
+> >>>> ---
+> >>>>    drivers/vhost/net.c | 49 +++++++++++++++++++++++++++++-----------=
+---------
+> >>>>    1 file changed, 29 insertions(+), 20 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> >>>> index b9b9e9d40951856d881d77ac74331d914473cd56..16b241b44f89820a42c3=
+02f3586ea6bb5e0d4289 100644
+> >>>> --- a/drivers/vhost/net.c
+> >>>> +++ b/drivers/vhost/net.c
+> >>>> @@ -73,6 +73,7 @@ enum {
+> >>>>           VHOST_NET_FEATURES =3D VHOST_FEATURES |
+> >>>>                            (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
+> >>>>                            (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
+> >>>> +                        (1ULL << VIRTIO_NET_F_HASH_REPORT) |
+> >>>>                            (1ULL << VIRTIO_F_ACCESS_PLATFORM) |
+> >>>>                            (1ULL << VIRTIO_F_RING_RESET)
+> >>>>    };
+> >>>> @@ -1097,9 +1098,11 @@ static void handle_rx(struct vhost_net *net)
+> >>>>                   .msg_controllen =3D 0,
+> >>>>                   .msg_flags =3D MSG_DONTWAIT,
+> >>>>           };
+> >>>> -       struct virtio_net_hdr hdr =3D {
+> >>>> -               .flags =3D 0,
+> >>>> -               .gso_type =3D VIRTIO_NET_HDR_GSO_NONE
+> >>>> +       struct virtio_net_hdr_v1_hash hdr =3D {
+> >>>> +               .hdr =3D {
+> >>>> +                       .flags =3D 0,
+> >>>> +                       .gso_type =3D VIRTIO_NET_HDR_GSO_NONE
+> >>>> +               }
+> >>>>           };
+> >>>>           size_t total_len =3D 0;
+> >>>>           int err, mergeable;
+> >>>> @@ -1110,7 +1113,6 @@ static void handle_rx(struct vhost_net *net)
+> >>>>           bool set_num_buffers;
+> >>>>           struct socket *sock;
+> >>>>           struct iov_iter fixup;
+> >>>> -       __virtio16 num_buffers;
+> >>>>           int recv_pkts =3D 0;
+> >>>>
+> >>>>           mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_RX);
+> >>>> @@ -1191,30 +1193,30 @@ static void handle_rx(struct vhost_net *net)
+> >>>>                           vhost_discard_vq_desc(vq, headcount);
+> >>>>                           continue;
+> >>>>                   }
+> >>>> +               hdr.hdr.num_buffers =3D cpu_to_vhost16(vq, headcount=
+);
+> >>>>                   /* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET=
+_HDR */
+> >>>>                   if (unlikely(vhost_hlen)) {
+> >>>> -                       if (copy_to_iter(&hdr, sizeof(hdr),
+> >>>> -                                        &fixup) !=3D sizeof(hdr)) {
+> >>>> +                       if (copy_to_iter(&hdr, vhost_hlen,
+> >>>> +                                        &fixup) !=3D vhost_hlen) {
+> >>>>                                   vq_err(vq, "Unable to write vnet_h=
+dr "
+> >>>>                                          "at addr %p\n", vq->iov->io=
+v_base);
+> >>>>                                   goto out;
+> >>>
+> >>> Is this an "issue" specific to RSS/HASH? If it's not, we need a separ=
+ate patch.
+> >>>
+> >>> Honestly, I'm not sure if it's too late to fix this.
+> >>
+> >> There is nothing wrong with the current implementation.
+> >
+> > Note that I meant the vhost_hlen part, and the current code is tricky.
+> >
+> > The comment said:
+> >
+> > """
+> > /* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET_HDR */
+> > """
+> >
+> > So it tries to only offer virtio_net_hdr even if vhost_hlen is the set
+> > to mrg_rxbuf len.
+> >
+> > And this patch changes this behaviour.
+>
+> mrg_rxbuf only adds the num_buffers field, which is always set for
+> mrg_rxbuf.
+>
+> The num_buffers was not set for VIRTIO_F_VERSION_1 in the past, but this
+> was also fixed with commit a3b9c053d82a ("vhost/net: Set num_buffers for
+> virtio 1.0")
+>
+> So there is no behavioral change for existing features with this patch.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- sound/soc/ti/davinci-i2s.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+I meant this part.
 
-diff --git a/sound/soc/ti/davinci-i2s.c b/sound/soc/ti/davinci-i2s.c
-index d682b98d6848..059967f0e632 100644
---- a/sound/soc/ti/davinci-i2s.c
-+++ b/sound/soc/ti/davinci-i2s.c
-@@ -892,8 +892,7 @@ static int davinci_i2s_probe(struct platform_device *pdev)
- err_unregister_component:
- 	snd_soc_unregister_component(&pdev->dev);
- err_disable_ext_clk:
--	if (dev->ext_clk)
--		clk_disable_unprepare(dev->ext_clk);
-+	clk_disable_unprepare(dev->ext_clk);
- err_disable_clk:
- 	clk_disable_unprepare(dev->clk);
- 
-@@ -908,8 +907,7 @@ static void davinci_i2s_remove(struct platform_device *pdev)
- 
- 	clk_disable_unprepare(dev->clk);
- 
--	if (dev->ext_clk)
--		clk_disable_unprepare(dev->ext_clk);
-+	clk_disable_unprepare(dev->ext_clk);
- }
- 
- static const struct of_device_id davinci_i2s_match[] __maybe_unused = {
--- 
-2.25.1
+>>>> +                       if (copy_to_iter(&hdr, vhost_hlen,
+>>>> +                                        &fixup) !=3D vhost_hlen) {
+
+We should copy only sizeof(hdr) instead of vhost_hlen.
+
+Anything I miss?
+
+Thanks
+
+>
+> Regards,
+> Akihiko Odaki
+>
+> >
+> > Thanks
+> >
+> >> The current
+> >> implementation fills the header with zero except num_buffers, which it
+> >> fills some real value. This functionality is working fine with
+> >> VIRTIO_NET_F_MRG_RXBUF and VIRTIO_F_VERSION_1, which change the header=
+ size.
+> >>
+> >> Now I'm adding VIRTIO_NET_F_HASH_REPORT and it adds the hash_report
+> >> field, which also needs to be initialized with zero, so I'm making sur=
+e
+> >> vhost_net will also initialize it.
+> >>
+> >> Regards,
+> >> Akihiko Odaki
+> >>
+> >>>
+> >>> Others look fine.
+> >>>
+> >>> Thanks
+> >>>
+> >>
+> >
+>
 
 
