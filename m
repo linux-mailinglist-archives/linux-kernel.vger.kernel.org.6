@@ -1,298 +1,177 @@
-Return-Path: <linux-kernel+bounces-557743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF95A5DD22
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:55:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80DD0A5DD45
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:03:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C066189C7D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:55:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 762997A5C7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E1824339D;
-	Wed, 12 Mar 2025 12:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="abIqVSFX"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7338024418E;
+	Wed, 12 Mar 2025 13:03:32 +0000 (UTC)
+Received: from birdy.pmhahn.de (birdy.pmhahn.de [88.198.22.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677327083C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C7A1E7C2B;
+	Wed, 12 Mar 2025 13:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.198.22.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741784095; cv=none; b=HFuVbK3nSa2zKlyTL18M6ezV7saM68K+BpKXWrwLXkDyptKVu8D6BhY/Lri27cseQ46WXnFm6Ea/xwZ5k8SVZAH2aj/64prg9jI590ViGaF6IdvubjR0oMtBweD/MUgGHtog4Ar3Yr5mTWS3Zlg3ChFIcB2CFTI3r3qUUQSGl0Q=
+	t=1741784612; cv=none; b=kU4oU7zLwJ0v37mH6W0kbNZhWGFT6wGz6VbkbaXo3d9a0vDSyyxuZJBqFx9/hVYCN37Qs1owpFPafCcT34mi7TEGCv+LPYgRL8vbg9qmHgJfNkUkN8HFSS1mbulK9viLQ8C4HwvfAx/FmVcVUUj4CagoCO7PV5CEaNeb2iIEDdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741784095; c=relaxed/simple;
-	bh=V1MjBxHePlfd7OLavw5mLEK5UEgp+wteGLzbglgAMlA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H972iECA50ODJxEbJxBKObsfQ0G+WNy/7nnR2zSBe7Jp3x+JrfPkvTMAbUpf1+9Rjy01Rhh+ITNg4WcfTIuhlod09PFrHferby4bUr535B9XLaR4xnJm1EMtFu5/Zj0DKAmWIXr/hLq3109PcoSYC9x9f6BvTkndhPRe63xWI4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=abIqVSFX; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2232aead377so32874995ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:54:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741784093; x=1742388893; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=P41L4c+Opb1IQnEi9LDyI8HBaw91mzMN/9HEGsnySy8=;
-        b=abIqVSFXD2SL83szo8/TjIP8+hTuz5O5fbhAVUHqiKyZMLPal0mtAz2/ZBlzZbZYGZ
-         M60ZsuhLoemKVeab5RAFO9xVrroWJVuixXgFAeVXHvdrTP5e85xfXWoWtHUty6A0Qe86
-         9uwbHJb0tgEYDJ+orcjNyAMtMgg/5DLna8Tvx+izWj58S0vs0XVKPdCvQ0zWC1wJVm9/
-         1FxHgAi4wmVOKxVgk2ODwm6LItFIrlH/PNtdpNm4WI3JU3xkmpLujhDJp+I3UtfriuU8
-         wUC5HJ1vHMtIS7iAP0pMje9UYOQNe4RqHlhmzKtEW4A20WDUklq+kqDQ0+PDctMwFmq2
-         ullg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741784093; x=1742388893;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P41L4c+Opb1IQnEi9LDyI8HBaw91mzMN/9HEGsnySy8=;
-        b=H6VNEQfvvRobPBYuNq6WndPrxbY/brIQXSWikmkVNOjKbEFswZh8OEGzkxbkqUyaA8
-         VoGxE47uMxAIg6wFvUn8NpcJdQfCDIVIVFSRdcDPyCzpY8VSkGLpLxWnYjOQYEcFize+
-         oQwJoa86SQ6qm/m1uAL8974hCfQ/XdMJ/lINr5kfhauMAZkz7b/2vx5ypHT4qDIhDqcv
-         fZwfF1V/8J92v3anYC1Kzx7YXHl7B86SEZmv+bNFLd6OhepDh4rpZzJm/sE5THrjGQyF
-         d8pNtcn7sL3AxK73zAHCWN9lUGVp7qLj8Pcjq/Q/iUF7xnWCv2gEvzr7Y1VQBpUJ0JjB
-         yPgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZPWewrywsecKwlsLWIFypKbYizPBmiZq6Iw2X73WIC5lLKSUlXT3uwiFeH8SzY3ti+x2V3NCIems8VZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzarSSo/P9VRNZxUG+oAZnNy+CfuuwDxSaE/bOU2JuMSU68nOR
-	zOvgVy0y+hWlBvJX0Ol3vsPQFtVgpRqwu831nDt8gCS0Sza6Ds+vlenMsX2URviFtA2qkU841cp
-	KwUVPg106kR4lO6UDYE4wPsYQytP+Cuhb2KZ3ww==
-X-Gm-Gg: ASbGncvMLR4cArAkwxkm/QyEfV906c1birJe2VBg757idreyuOJ9nsGljOy1UAry78Y
-	dotauXnIhVbt+WwLuXCNfxO4vDGXJx0lQACTMtrvkSL+6LKH2Z3BFQz9RF7TA97TVAjzWtQ2rXf
-	2RlyxF7OAMNRWoO+FLbBZeRRR+fNE=
-X-Google-Smtp-Source: AGHT+IEmvzgsrnWJ3LS9iuiefnI5/Y1q51JDiJPKEl1YavKMn2nS0Mp6TQ/OYLWI5gnSPzE5ELMRM9TgS5WSMkJCuv0=
-X-Received: by 2002:a05:6a00:194b:b0:736:5e6f:295b with SMTP id
- d2e1a72fcca58-736aaa5d6c4mr32299739b3a.12.1741784092687; Wed, 12 Mar 2025
- 05:54:52 -0700 (PDT)
+	s=arc-20240116; t=1741784612; c=relaxed/simple;
+	bh=urFl68uoAji+L/OZmu9MC+PGlUjZURSh42gOnWDdFzk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jhKlx+K/SEp3eTO2dhQBkH+R4ZDB8QF50XDTX8q3Yqo1zIlzUraXULTbt/5/4jX9KX/mnbjXEqumcQERZGI1gRFBBO81y3+N1DvsAlqgLAsTjIcUZuBTGBGMUgSYujlna4rYhwZ6UUSjZ6DD99T9B5Dei6fODsQ9BwFN4iUfdl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=avm.de; spf=fail smtp.mailfrom=avm.de; arc=none smtp.client-ip=88.198.22.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=avm.de
+Received: from birdy.pmhahn.de (p200300e2774a7B00F7f5672D647b4c86.dip0.t-ipconnect.de [IPv6:2003:e2:774a:7b00:f7f5:672d:647b:4c86])
+	by birdy.pmhahn.de (Postfix) with ESMTPSA id 4565B220261D;
+	Wed, 12 Mar 2025 13:55:29 +0100 (CET)
+Date: Wed, 12 Mar 2025 13:55:27 +0100
+From: Philipp Hahn <phahn-oss@avm.de>
+To: netdev@vger.kernel.org
+Cc: Philipp Hahn <phahn-oss@avm.de>, Oliver Neukum <oliver@neukum.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Leon Schuermann <leon@is.currently.online>,
+	Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH net-next v3]: cdc_ether|r8152: ThinkPad Hybrid USB-C/A Dock
+ quirk
+Message-ID: <Z9GEP/TksqEWFbkd@birdy.pmhahn.de>
+Mail-Followup-To: netdev@vger.kernel.org, Oliver Neukum <oliver@neukum.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Leon Schuermann <leon@is.currently.online>,
+	Kory Maincent <kory.maincent@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310090407.2069489-1-quic_jiegan@quicinc.com>
- <20250310090407.2069489-2-quic_jiegan@quicinc.com> <CAJ9a7Vh7PmBBbvwnUETfCYrTSiXNzeiWpsz+XAGaUWt1Rq1aZw@mail.gmail.com>
- <cef984d5-f369-4892-b970-a71285c2ebc5@quicinc.com>
-In-Reply-To: <cef984d5-f369-4892-b970-a71285c2ebc5@quicinc.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Wed, 12 Mar 2025 12:54:41 +0000
-X-Gm-Features: AQ5f1JrjHjNAhBmSqhZ9QdvfeDjrNBtawx-M2q_IwgCWoudUHO1tG95UqLFNpqQ
-Message-ID: <CAJ9a7VhDD3813LtH_5AYyM-2mhCNP+vRmqXn4RWqg5F8FEe-Mg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/4] coresight: tmc: Introduce new APIs to get the RWP
- offset of ETR buffer
-To: Jie Gan <quic_jiegan@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Tingwei Zhang <quic_tingweiz@quicinc.com>, Jinlong Mao <quic_jinlmao@quicinc.com>, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Jie,
+Lenovo ThinkPad Hybrid USB-C with USB-A Dock (17ef:a359) is affected by
+the same problem as the Lenovo Powered USB-C Travel Hub (17ef:721e):
+Both are based on the Realtek RTL8153B chip used to use the cdc_ether
+driver. However, using this driver, with the system suspended the device
+constantly sends pause-frames as soon as the receive buffer fills up.
+This causes issues with other devices, where some Ethernet switches stop
+forwarding packets altogether.
 
-On Wed, 12 Mar 2025 at 01:21, Jie Gan <quic_jiegan@quicinc.com> wrote:
->
->
->
-> On 3/12/2025 12:49 AM, Mike Leach wrote:
-> > Hi,
-> >
-> > On Mon, 10 Mar 2025 at 09:04, Jie Gan <quic_jiegan@quicinc.com> wrote:
-> >>
-> >> The new functions calculate and return the offset to the write pointer of
-> >> the ETR buffer based on whether the memory mode is SG, flat or reserved.
-> >> The functions have the RWP offset can directly read data from ETR buffer,
-> >> enabling the transfer of data to any required location.
-> >>
-> >> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
-> >> ---
-> >>   .../hwtracing/coresight/coresight-tmc-etr.c   | 40 +++++++++++++++++++
-> >>   drivers/hwtracing/coresight/coresight-tmc.h   |  1 +
-> >>   2 files changed, 41 insertions(+)
-> >>
-> >> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> >> index eda7cdad0e2b..ec636ab1fd75 100644
-> >> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> >> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> >> @@ -267,6 +267,46 @@ void tmc_free_sg_table(struct tmc_sg_table *sg_table)
-> >>   }
-> >>   EXPORT_SYMBOL_GPL(tmc_free_sg_table);
-> >>
-> >> +static long tmc_flat_resrv_get_rwp_offset(struct tmc_drvdata *drvdata)
-> >> +{
-> >> +       dma_addr_t paddr = drvdata->sysfs_buf->hwaddr;
-> >> +       u64 rwp;
-> >> +
-> >
-> > It is not valid to read RWP if the TMC is running. It must be in the
-> > stopped or disabled state - see the specifications for TMC /ETR
-> >
-> > It is likely that CSUNLOCK / CSLOCK are needed here too,  along with
-> > the spinlock that protects drvdata
-> >
-> > See the code in coresight_tmc_etr.c :-
-> >
-> > e.g. in
-> >
-> > tmc_update_etr_buffer()
-> >
-> > ...
-> > <take spinlock>
-> > ...
-> > CS_UNLOCK(drvdata->base);
-> > tmc_flush_and_stop(drvdata); // this ensures tmc is stopped and
-> > flushed to memory - essential to ensure full formatted frame is in
-> > memory.
-> > tmc_sync_etr_buf(drvdata); // this function reads rwp.
-> > CS_LOCK(drvdata->base);
-> > <release spinlokc>
-> >
-> > This type of program flow is common to both sysfs and perf handling of
-> > TMC buffers.
->
-> Hi Mike,
->
-> I am fully understood your point here.
->
-> The function is designed this way to read the w_offset (which may not be
-> entirely accurate because the etr buffer is not synced) when the
+Using the Realtek driver (r8152) fixes this issue. Pause frames are no
+longer sent while the host system is suspended.
 
-Why would you ever base memory access on a pointer that is not
-entirely accurate?
+Cc: Oliver Neukum <oliver@neukum.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: linux-usb@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Leon Schuermann <leon@is.currently.online>
+Link: https://git.kernel.org/netdev/net/c/cb82a54904a9
+Link: https://git.kernel.org/netdev/net/c/2284bbd0cf39
+Link: https://www.lenovo.com/de/de/p/accessories-and-software/docking/docking-usb-docks/40af0135eu
+Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
+Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+V2 -> V3: Move `net-next` in subject.
+V1 -> V2: Prefix subject with `net-next:`
+V1 -> V2: Add additional Cc:s
+ drivers/net/usb/cdc_ether.c | 7 +++++++
+ drivers/net/usb/r8152.c     | 6 ++++++
+ drivers/net/usb/r8153_ecm.c | 6 ++++++
+ 3 files changed, 19 insertions(+)
 
-The manuals for TMC/ETR all state that reads to both RWP and RRP when
-the ETR is running return unknown values. These cannot be used to
-access the buffer, or determine how much of the buffer has been used
-on a running ETR.
+diff --git a/drivers/net/usb/cdc_ether.c b/drivers/net/usb/cdc_ether.c
+index a6469235d904..a032c1ded406 100644
+--- a/drivers/net/usb/cdc_ether.c
++++ b/drivers/net/usb/cdc_ether.c
+@@ -783,6 +783,13 @@ static const struct usb_device_id	products[] = {
+ 	.driver_info = 0,
+ },
+ 
++/* Lenovo ThinkPad Hybrid USB-C with USB-A Dock (40af0135eu, based on Realtek RTL8153) */
++{
++	USB_DEVICE_AND_INTERFACE_INFO(LENOVO_VENDOR_ID, 0xa359, USB_CLASS_COMM,
++			USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
++	.driver_info = 0,
++},
++
+ /* Aquantia AQtion USB to 5GbE Controller (based on AQC111U) */
+ {
+ 	USB_DEVICE_AND_INTERFACE_INFO(AQUANTIA_VENDOR_ID, 0xc101,
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index 468c73974046..96fa3857d8e2 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -785,6 +785,7 @@ enum rtl8152_flags {
+ #define DEVICE_ID_THINKPAD_USB_C_DONGLE			0x720c
+ #define DEVICE_ID_THINKPAD_USB_C_DOCK_GEN2		0xa387
+ #define DEVICE_ID_THINKPAD_USB_C_DOCK_GEN3		0x3062
++#define DEVICE_ID_THINKPAD_HYBRID_USB_C_DOCK		0xa359
+ 
+ struct tally_counter {
+ 	__le64	tx_packets;
+@@ -9787,6 +9788,7 @@ static bool rtl8152_supports_lenovo_macpassthru(struct usb_device *udev)
+ 		case DEVICE_ID_THINKPAD_USB_C_DOCK_GEN2:
+ 		case DEVICE_ID_THINKPAD_USB_C_DOCK_GEN3:
+ 		case DEVICE_ID_THINKPAD_USB_C_DONGLE:
++		case DEVICE_ID_THINKPAD_HYBRID_USB_C_DOCK:
+ 			return 1;
+ 		}
+ 	} else if (vendor_id == VENDOR_ID_REALTEK && parent_vendor_id == VENDOR_ID_LENOVO) {
+@@ -10064,6 +10066,8 @@ static const struct usb_device_id rtl8152_table[] = {
+ 	{ USB_DEVICE(VENDOR_ID_MICROSOFT, 0x0927) },
+ 	{ USB_DEVICE(VENDOR_ID_MICROSOFT, 0x0c5e) },
+ 	{ USB_DEVICE(VENDOR_ID_SAMSUNG, 0xa101) },
++
++	/* Lenovo */
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x304f) },
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3054) },
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3062) },
+@@ -10074,7 +10078,9 @@ static const struct usb_device_id rtl8152_table[] = {
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x720c) },
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x7214) },
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x721e) },
++	{ USB_DEVICE(VENDOR_ID_LENOVO,  0xa359) },
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0xa387) },
++
+ 	{ USB_DEVICE(VENDOR_ID_LINKSYS, 0x0041) },
+ 	{ USB_DEVICE(VENDOR_ID_NVIDIA,  0x09ff) },
+ 	{ USB_DEVICE(VENDOR_ID_TPLINK,  0x0601) },
+diff --git a/drivers/net/usb/r8153_ecm.c b/drivers/net/usb/r8153_ecm.c
+index 20b2df8d74ae..8d860dacdf49 100644
+--- a/drivers/net/usb/r8153_ecm.c
++++ b/drivers/net/usb/r8153_ecm.c
+@@ -135,6 +135,12 @@ static const struct usb_device_id products[] = {
+ 				      USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
+ 	.driver_info = (unsigned long)&r8153_info,
+ },
++/* Lenovo ThinkPad Hybrid USB-C with USB-A Dock (40af0135eu, based on Realtek RTL8153) */
++{
++	USB_DEVICE_AND_INTERFACE_INFO(VENDOR_ID_LENOVO, 0xa359, USB_CLASS_COMM,
++				      USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
++	.driver_info = (unsigned long)&r8153_info,
++},
+ 
+ 	{ },		/* END */
+ };
+-- 
+2.34.1
 
-The ETR specification specifically states that it is not permitted to
-read the buffer data while the ETR is running, when configured in
-circular buffer mode - which is the mode used in the TMC-ETR linux
-drivers.
-
-Reading the buffer while ETR is running is only permitted if
-configured in Software FIFO mode 2 - were the ETR will stop on full
-and stall incoming trace until some data is read out, signalled to the
-ETR via the RURP.
-
-I also note that you are reading back the etr_buf data without doing
-any dma_sync operations that the perf and sysfs methods in the driver
-do, after stopping the tmc.
-
-> byte-cntr devnode is opened, aiming to reduce the length of redundant
-> trace data. In this case, we cannot ensure the TMC is stopped or
-> disabled.
-
-The specification requires that you must ensure the TMC is stopped to
-read these registers.
-
-
->The byte-cntr only requires an offset to know where it can
-> start before the expected trace data gets into ETR buffer.
->
-> The w_offset is also read when the byte-cntr function stops, which
-> occurs after the TMC is disabled.
->
-> Maybe this is not a good idea and I should read r_offset upon open?
-> The primary goal for byte-cntr is trying to transfer useful trace data
-> from the ETR buffer to the userspace, if we start from r_offset, a large
-> number of redundant trace data which the user does not expect will be
-> transferred simultaneously.
->
->
-
-It is difficult to justify adding code to a driver that does not
-correspond to the specification of the hardware device.
-
-Regards
-
-Mike
-
-> >
-> >> +       rwp = tmc_read_rwp(drvdata);
-> >> +       return rwp - paddr;
-> >> +}
-> >> +
-> >> +static long tmc_sg_get_rwp_offset(struct tmc_drvdata *drvdata)
-> >> +{
-> >> +       struct etr_buf *etr_buf = drvdata->sysfs_buf;
-> >> +       struct etr_sg_table *etr_table = etr_buf->private;
-> >> +       struct tmc_sg_table *table = etr_table->sg_table;
-> >> +       long w_offset;
-> >> +       u64 rwp;
-> >> +
-> >
-> > Same comments as above
-> >
-> >> +       rwp = tmc_read_rwp(drvdata);
-> >> +       w_offset = tmc_sg_get_data_page_offset(table, rwp);
-> >> +
-> >> +       return w_offset;
-> >> +}
-> >> +
-> >> +/*
-> >> + * Retrieve the offset to the write pointer of the ETR buffer based on whether
-> >> + * the memory mode is SG, flat or reserved.
-> >> + */
-> >> +long tmc_get_rwp_offset(struct tmc_drvdata *drvdata)
-> >> +{
-> >> +       struct etr_buf *etr_buf = drvdata->sysfs_buf;
-> >> +
-> >
-> > As this is an exported function, please ensure that the inputs are
-> > valid - check the pointers
->
-> Sure, will do.
->
-> Thanks,
-> Jie
->
-> >
-> > Code to ensure TMC is flushed and stopped could be inserted here.
-> >
-> > Regards
-> >
-> > Mike
-> >
-> >> +       if (etr_buf->mode == ETR_MODE_ETR_SG)
-> >> +               return tmc_sg_get_rwp_offset(drvdata);
-> >> +       else if (etr_buf->mode == ETR_MODE_FLAT || etr_buf->mode == ETR_MODE_RESRV)
-> >> +               return tmc_flat_resrv_get_rwp_offset(drvdata);
-> >> +       else
-> >> +               return -EINVAL;
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(tmc_get_rwp_offset);
-> >> +
-> >>   /*
-> >>    * Alloc pages for the table. Since this will be used by the device,
-> >>    * allocate the pages closer to the device (i.e, dev_to_node(dev)
-> >> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-> >> index b48bc9a01cc0..baedb4dcfc3f 100644
-> >> --- a/drivers/hwtracing/coresight/coresight-tmc.h
-> >> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
-> >> @@ -442,5 +442,6 @@ void tmc_etr_remove_catu_ops(void);
-> >>   struct etr_buf *tmc_etr_get_buffer(struct coresight_device *csdev,
-> >>                                     enum cs_mode mode, void *data);
-> >>   extern const struct attribute_group coresight_etr_group;
-> >> +long tmc_get_rwp_offset(struct tmc_drvdata *drvdata);
-> >>
-> >>   #endif
-> >> --
-> >> 2.34.1
-> >>
-> >
-> >
->
-
-
---
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
 
