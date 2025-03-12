@@ -1,151 +1,138 @@
-Return-Path: <linux-kernel+bounces-557584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C8DA5DB16
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:10:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA46A5DB18
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:11:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C2B87AB011
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:09:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB738174E55
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C47623F36F;
-	Wed, 12 Mar 2025 11:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE2223E352;
+	Wed, 12 Mar 2025 11:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oh7EfyC2"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LJA813z+"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D340923E352;
-	Wed, 12 Mar 2025 11:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC8F23A9B7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741777800; cv=none; b=AjIxcYMPeoXfnW/UkcrqUJAVbPCTBqXAEP78SUoDt4bekOZ/B+hBpRpMvd6ulj9Vx38BCfDKTfsS54m5/XT+X3JncYvsFT0I1HUsAUrjlCgvrlels7wPKdDJGqG97QRY03XsPW2QOQEFzQBi1dMk8mQvmuG9lEASFSOPepNBruI=
+	t=1741777871; cv=none; b=piaYH5C53LpDPMLtYZPebBD6b//LmirfaPaK4+3TWbOfp2UtRge/+j50JKzIlmCFqoLL6Ehc0xI+zbHEULe+Am9FEBrRsIf5IWNBhCm2+ZaTRWpHWqszxNFkFcbEQdH/aAyE6XOXgmHxQl4V83VocLcJjL1ID0vETEqKWnk7dag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741777800; c=relaxed/simple;
-	bh=wv5s42yPi9QGrxUPxSOMsjtaRdV5W7LGMFdHVhCovvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DOdEcIzyQ5EG6PKQGKg28nXBLbT4Pxn73bB19o8U6PkUVZpLmmhaYK6pESl8xDPdFEzxTxc7y4RpWKB7Y4Kw/MXMu8IGS2RPApLG47OeOucrZS/pKOcJTF5f5WP+dimQxwGYD6mSCAueLYDtcxiXk25UKtkdVap9sALalKDfHLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oh7EfyC2; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741777793;
-	bh=MUVInfsigzT38UIGbx6GR6B45El4Vkp9vrI5fdtqPuc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=oh7EfyC2jL0852xQHz3/yU2iRYCB06WB2GpqwxIgN2XsLOSnwv/apgsry/6IZbtCf
-	 kMU+X0BnR21y7bE8m8I7v8zaStYBGKV6cG7vtWwAOXfOjvza/s/nDlFYnu/emZMlT6
-	 +Kt5jx4dQWEVHOkzBQjEizS0s5n6WpJ2M92kuPOehH83eMCtWnzMXYUdmYWiyWP0Hr
-	 noetBx1DUbAykbnp9LadwwLTnc+EHnyxzOVKPJAYukGYYBg/Mrnakyw82WNrWHjsNr
-	 78TYagIqGdVuBtSzUwvc6McTaocvOowB+AWsehIJd/Zw6/ReMQxmNa1FA7lL0+skCe
-	 AFhndUx+S1szQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCSZl6VYcz4x89;
-	Wed, 12 Mar 2025 22:09:51 +1100 (AEDT)
-Date: Wed, 12 Mar 2025 22:09:50 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>, Danilo Krummrich <dakr@kernel.org>
-Cc: Fiona Behrens <me@kloenk.dev>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the driver-core tree
-Message-ID: <20250312220950.28ed9ad7@canb.auug.org.au>
+	s=arc-20240116; t=1741777871; c=relaxed/simple;
+	bh=wlyhz4BQvRz1GDHVrSLjQoPo3ZuW0aG7DOk50KPSscQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dyBU1BLaA8zWz0sA15Zh6Zm9XSEYdZbU/O1LhXjqCMMYz15B1BIf7jRFtDDAWvqo0r0kPFPjVjEMa9tsgNd5cjiXTToqAYvneDweQM3MEjjltTlu/56L7tUNeM0KdNCx/oGqbUiALsJzgc4hRrcz+ZTI+sraxD9tzm2JWYopCes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LJA813z+; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38f2f391864so3378139f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:11:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741777868; x=1742382668; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wlyhz4BQvRz1GDHVrSLjQoPo3ZuW0aG7DOk50KPSscQ=;
+        b=LJA813z+bVLQWkxXLlPCR61YB+rKoq5/GfVXTPgpofVgh1OF9WsEDxsxDcooXCH5JL
+         UBaZsH7P5eG8PIUaqVae30fG9hv0q+VDHXw2VC8Hm7RaYsoSizbDdp1qEO3+GgVbOS4W
+         V8VYTPOX1D/YDce/x/8SKl9uGCER2LimsFq0Z7Gcf+q3j9T+jdSc9EyMnZVoKY65v9Cz
+         dbG1cfjs5+Hg6Pjrnz01IwXLsnBATCGCLgXIjMorE/dRCW4w3TP+O7IGk1taR0pGiBMB
+         iEwMdpa3EABWYezZ/UNOBohCkx8kcqiGz+jxypkOjJ7TJ0iXuhf3duoMvf22PQ8Vzc4O
+         2rng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741777868; x=1742382668;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wlyhz4BQvRz1GDHVrSLjQoPo3ZuW0aG7DOk50KPSscQ=;
+        b=OSk5mZzvWrPwjotOPpQmw5BOI43WpDU67aNqmnxfed0T9XkeKz7DzniFIvJdZ11/XX
+         qv+dTEMQ/aeLw8N1ojW8Bctilpre8AGkU8M0Lkde6ExMqzyY711FdjOLaTGfhR+sayc/
+         qKmZm0BKFxauyliTvMOI5qIz4mBUHrrKiUYX0c4bjrkOwCvLJ+OucNKpVgFmArnE50xJ
+         21zyo9x10k+jpjCJCalV+ienMAy5OppdEyOzEZFlu530IXEJY6FhN66XfQtcZ/IF18EB
+         c+qLQR3K7aQ1V+eIwUPUnFQOFdJM5IqsNIYmqu8biZgPq6d5OY51KbnneA7g0iM/SDgb
+         I/AA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSHmddBUMyiqMCxPeyrVXXl2ZTIVdwxsG/23TdHrwnXuZF9tTkHWJwtvf0ylGxE6RWrAE2L3FDVsuicyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6y5UXdoQnO6TCP2zqoy1M9oNORgrWS6TyM7+bjsghSJyXrYup
+	ItxnEiEJHARrdZQTGwNAU68kn2u4YvJ4GlRMUMqGfG1kM37dGZod4aaUEddua4NPviy06huNydp
+	Dl1WommBGYDsOaYIhsNFPmsBWbVVr0ntY3FDPBg==
+X-Gm-Gg: ASbGnctfbDedGuSxQBEYUQHa7LClZshchth2dvQReQf37ENwfE5VdXbzNB66lCXgtwX
+	f+0Flh2ijeupwvzaH1//JZ9Ey8oLRtpz+snGKRcsNSQxPpkyCqFMjpqClyIJH6/jtafiQ4lEoJP
+	jc91fBYyKLjokz+q9f3NGwGV7hx5I=
+X-Google-Smtp-Source: AGHT+IGQqsMzLL1SkIH3EVJhaanHHGJ9uStzi43oBMlQa1DqbbQl8c3C+QW090TXdgpNQcCnk5YClrhuASylQsAX/Pk=
+X-Received: by 2002:a05:6000:1867:b0:391:253b:405d with SMTP id
+ ffacd0b85a97d-39132d98a1emr17304676f8f.41.1741777868403; Wed, 12 Mar 2025
+ 04:11:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ORfN9Fqhk=duj9LJIM/WLvz";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
+ <CACr-zFC=mPNeeHMp9XnSby+cMQaPWt_3s8iUiCN+EnVPeGad8Q@mail.gmail.com>
+ <uljqxwfgl26txrfqvkvzzpj6qurgmwcbuot7gu2u6rwjaqgncb@jeuyi4mexjff>
+ <CACr-zFDSFizYmrVN-dV334n1kq17UB9k4FxrV20NNQCQMhzrwg@mail.gmail.com> <92dd35a2-d1cc-4f2b-b3a8-5752ec33b0d3@kernel.org>
+In-Reply-To: <92dd35a2-d1cc-4f2b-b3a8-5752ec33b0d3@kernel.org>
+From: Christopher Obbard <christopher.obbard@linaro.org>
+Date: Wed, 12 Mar 2025 12:10:56 +0100
+X-Gm-Features: AQ5f1Jr_LcQ_zc_s53yVw1h2DAzbGYxZX7Ayfg2dMTJBpBQw3CievHU4tKHPOpw
+Message-ID: <CACr-zFCYWEFPO8yExp_8hOQdVtC9Zwu1ZOZNksSeyyS6Ht0e9A@mail.gmail.com>
+Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm interconnects as built-in
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/ORfN9Fqhk=duj9LJIM/WLvz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Krzysztof,
 
-Hi all,
+On Wed, 12 Mar 2025 at 09:56, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 11/03/2025 20:15, Christopher Obbard wrote:
+> > Hi Dmitry,
+> >
+> > On Tue, 11 Mar 2025 at 19:58, Dmitry Baryshkov <lumag@kernel.org> wrote:
+> >>
+> >> On Tue, Mar 11, 2025 at 07:10:06PM +0100, Christopher Obbard wrote:
+> >>> I sent this patch to start the discussion, some things I found:
+> >>>
+> >>> 1) Some interconnects are missing from arm defconfig. Should they be =y too ?
+> >>
+> >> No, unless those are required for the UART console.
+> >
+> > OK, that makes sense. FWIW the cryptic (to me, at least) commit log on
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6eee808134ecf1c1093ff1ddfc056dc5e469d0c3
+> > made me think that the interconnects should be built-in on all devices.
+> >
+> > Of course, the real problem here is RB3gen2 not actually finding the
+> > UFS/eMMC device due to no interconnect driver.
+> > Until now, I have been building that into the kernel. I will
+> > investigate instead shoving into the initrd (in both debian and
+> > fedora) which should solve my issue and render this patchset useless.
+>
+> For Qualcomm platforms you are expected to always have initramfs, thus
+> you will have the modules for UFS/eMMC mounts. I don't understand the
+> problem which you were trying to solve.
+>
+> The interconnects were built in *only* because of need for serial
+> console. Only.
 
-After merging the driver-core tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Thanks for confirming. It is all clear now.
 
-error[E0599]: no method named `readl` found for reference `&Bar<8>` in the =
-current scope
-  --> drivers/gpu/nova-core/regs.rs:38:18
-   |
-38 |         Self(bar.readl(BOOT0_OFFSET))
-   |                  ^^^^^
-   |
-help: there is a method `read8` with a similar name
-   |
-38 |         Self(bar.read8(BOOT0_OFFSET))
-   |                  ~~~~~
+Consider this patch dropped from my side.
 
-error: aborting due to 1 previous error
+For reference, I am working on updating initramfs generation tools in
+Debian/Fedora to include the required interconnect modules. Currently
+the interconnect drivers are built as modules in these distros, but
+are not included in the initrd. That is where my confusion initially
+stemmed from.
 
-For more information about this error, try `rustc --explain E0599`.
+Thanks,
 
-Caused by commit
-
-  354fd6e86fac ("rust: io: rename `io::Io` accessors")
-
-interacting with commit
-
-  54e6baf123fd ("gpu: nova-core: add initial driver stub")
-
-from the drm-nova tree.
-
-I applied the following merge fix patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 12 Mar 2025 21:36:48 +1100
-Subject: [PATCH] fix up for "rust: io: rename `io::Io` accessors"
-
-interacting with "gpu: nova-core: add initial driver stub"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/nova-core/regs.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-index 50aefb150b0b..b1a25b86ef17 100644
---- a/drivers/gpu/nova-core/regs.rs
-+++ b/drivers/gpu/nova-core/regs.rs
-@@ -35,7 +35,7 @@
- impl Boot0 {
-     #[inline]
-     pub(crate) fn read(bar: &Bar0) -> Self {
--        Self(bar.readl(BOOT0_OFFSET))
-+        Self(bar.read32(BOOT0_OFFSET))
-     }
-=20
-     #[inline]
---=20
-2.45.2
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ORfN9Fqhk=duj9LJIM/WLvz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfRa34ACgkQAVBC80lX
-0Gxzgwf/TSBmxtCTVVxQ0r+4Q69UZMvsI0udHxcwB7WIR4Izd+4ntY5aZmH24rhP
-g+6DJ3/yxiRnaGScgzPneHSRm9IDPbTorRIQhfMXrGsY9QtA/xfXlSd7eqqjrG56
-bodobNpgFb4fwUlEInVHUUgnMjZMaW5+XptxxoYlTjWwBcZgqA8G4//JqckBUHC6
-mRRF3fq85bbEVMkojYOZUI0Hq+Zs9NyIz3DSar6tJaFDstP1Z+2hauBdUghWoB5X
-LgYCIM1c5lz2O/YJBB1s6U68qciTTVrNLQeS/43aptdPTvd1uvCrYsb0pG0XJ6P2
-Qx2ysuuG4E3fhAUnO8wNYEGnCbG3GA==
-=I+cW
------END PGP SIGNATURE-----
-
---Sig_/ORfN9Fqhk=duj9LJIM/WLvz--
+Chris
 
