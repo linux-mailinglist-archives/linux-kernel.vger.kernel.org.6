@@ -1,176 +1,119 @@
-Return-Path: <linux-kernel+bounces-558096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EB1A5E19C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:16:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FEB8A5E1A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:19:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499891896D14
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:17:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2239189A2FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DC71CBA02;
-	Wed, 12 Mar 2025 16:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB20E1D5143;
+	Wed, 12 Mar 2025 16:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GMj1FHqk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8Xp5iAxR";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GMj1FHqk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8Xp5iAxR"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="ED7vGw/d"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793F51ADC98
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446B01C3BE9
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741796209; cv=none; b=cNUGNAKd5Y3qi7r6qdgGqj1Pkvs2QP7MhGrLH4QQv8ZEThHVFWlBDEV2wwzqPN5u6aI2+V41HBl6QSR/39ZuRDW1Ae4wyvxq2CJwDRgbKbKc0ItT7fuNC7VYAhRxv4eNU8cjxeX6JZWEXDUU/QgL81dQw2X35MemQ8zbgGg8lkU=
+	t=1741796343; cv=none; b=BsbLvtvmKsIlC0aYnrQvPPGPbXcTlY1rHmvFTa4iDJFLtMsBaGiiDhticer5JuSEDJbp6Tr7hd4i+u7IafFCo84Imr9Qo9RSZXez9+UtdBzdtgbOpmTOXOJ0IA/jugoLrmajnoTvzvZFZrNeynGRGaqais6jkV85cnG9xIHrdlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741796209; c=relaxed/simple;
-	bh=4EQSks7ABnZp8jyg+gvmTS0PjFV2gBcRNtca8KtuZfI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WA5pL6IFN9I8xCTfKJa5SOWtZfL3MeDnm/0yQtBabKeVWHHEv4ZQglnZcknpedtniR79a3626bYv73YbXKUTMo8n5aYKumUfV2atSZro/qf3jjR67hHfsOnFvWfQBheDpqs6dnBirJUdcifQDxof7IwEgz06XZpUyVv4j9viW3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GMj1FHqk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8Xp5iAxR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GMj1FHqk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8Xp5iAxR; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6391C1F388;
-	Wed, 12 Mar 2025 16:16:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741796206; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ppOhyx0kE4ei6ipVBks4/WS+k6TC55C6fYxiAo4Xs3Y=;
-	b=GMj1FHqkciFjlfl2AbEeGCyGdU+HLEtzneLUWGK16/ZDxRLJNsrFKTI2Db1/c3rwIErFWh
-	MyeA8bpbRNpAURd93YMDpiTP44d0m6DWwtpko5eH9l1Aw/gih2F1oGnfgKGSHCTwrFhl+z
-	ApW92AV1wP0PkzwWLWmv19MyuKXuZso=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741796206;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ppOhyx0kE4ei6ipVBks4/WS+k6TC55C6fYxiAo4Xs3Y=;
-	b=8Xp5iAxR/kq7ggDTGycn6cEhGYwSIn0zz2Ajays4o20u/gBLUvXJArlJH8RhsdSjKBmlMn
-	mkeeJHmMEir5rlDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GMj1FHqk;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8Xp5iAxR
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741796206; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ppOhyx0kE4ei6ipVBks4/WS+k6TC55C6fYxiAo4Xs3Y=;
-	b=GMj1FHqkciFjlfl2AbEeGCyGdU+HLEtzneLUWGK16/ZDxRLJNsrFKTI2Db1/c3rwIErFWh
-	MyeA8bpbRNpAURd93YMDpiTP44d0m6DWwtpko5eH9l1Aw/gih2F1oGnfgKGSHCTwrFhl+z
-	ApW92AV1wP0PkzwWLWmv19MyuKXuZso=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741796206;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ppOhyx0kE4ei6ipVBks4/WS+k6TC55C6fYxiAo4Xs3Y=;
-	b=8Xp5iAxR/kq7ggDTGycn6cEhGYwSIn0zz2Ajays4o20u/gBLUvXJArlJH8RhsdSjKBmlMn
-	mkeeJHmMEir5rlDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 46F051377F;
-	Wed, 12 Mar 2025 16:16:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Azr6EG6z0WfkHAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 12 Mar 2025 16:16:46 +0000
-Message-ID: <711b5e47-ed20-45a2-a912-42db5491a25f@suse.cz>
-Date: Wed, 12 Mar 2025 17:16:46 +0100
+	s=arc-20240116; t=1741796343; c=relaxed/simple;
+	bh=L+tCdPEuuikQUx15WRiVh8EMMs15WbzGjvM+O08Isg8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nt/bU0zYzXl3hvQMSu5qCJZmr7H6FrB6D+X/vZzeoOGv8FlR3ApdgLpsbrrj/oyLcYiSGEnI1aPw4gZTP2qIKaHCxdyCx1j6FOUVvQkZG7aArnxk3w6mWi46xnA8awIWBWGuug6OjZd4NYqh04rP9oqcnyVQOxdGU9foq5MW9/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=ED7vGw/d; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22403cbb47fso1046845ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:19:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1741796340; x=1742401140; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L+tCdPEuuikQUx15WRiVh8EMMs15WbzGjvM+O08Isg8=;
+        b=ED7vGw/dsDck8oU4NR4oTljZkiLdGHxDVfs5ZSUKj/zqzhJzibms9Nc+3w8oMboA8f
+         FeGdzqZfTFFke1N0wZpHst0a9Me0KgaNlhT6Xh+dpLaSeDFw19sGoAorK24zsPfc7/lX
+         71nfCsF20HtOJTr4E8pVIjZlbdHvCirxAYnj0AwxiXlQwLh/zh9/G3rxzOAbmtdIfHW5
+         IH91yZqhOvhPdA9eIkP2Eb5hFwGdFw3Ukq85cfsYKzAoT0DpKyIYKsmaGmt4+t2+DJxO
+         4Xqns6qsSuCQd4bgR5vfwUkz+brINPOBACHzf4EIt149uqsi+0USe7APbn9+lDLFUMsA
+         L4Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741796340; x=1742401140;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L+tCdPEuuikQUx15WRiVh8EMMs15WbzGjvM+O08Isg8=;
+        b=jon0/6sMX+A/5Rd9h0CIrPYRsSnRtGQtFA8kGWYhRgBVXsWTJxpYmgrZx9cfY6LKtN
+         wCzEC8fppxaOQvEWk40jdP8Q7n6Y/MTe7M7Q7GXqpcTb0qdWqS5yZHrsEYI5SnBaW8hW
+         thh9ryKps6G4yKwa4/O6OUJ8S12ZyXpLGDFUEOk8biCeEtlg8xJ5hP5pxY5HZ8YLpTtE
+         /BBW+q1mIt8Bl3ZHsQbvKUaPpbsrNshkQrztnIFIqIrasBX/GKvQMCcHaxuskGoULTUz
+         5bl0X6Tm5h27PkQv4x4MLOiXDMwl+TXhR6J64yr/ZSJ0pQqYGhxdxYWZOIYP+3UWiwJo
+         tOyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMq0HN29kosjlOwvHNByW7Fw2rNH5M8arFeUEFzBCzQUy6AO1PPpsfXuMkxnzYuxYy4yJ6Ctj2tEAzJgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrNZPbeDiz4k+wQhwUvzdyeCpyBysrAC2oNMAOHP/b66YqPRP8
+	9zR12BVNsFeGSIN5pwammqUrjmwaFD4qdWlle4NqjS1SnZJcCYUVWMRzMnkLrzCtXuE5N+9BEc4
+	+rIKnzIL8yhO2q92NQ0WidZEvGB9PcG+4+7FuQHah9qTYhkxkOaOk6A==
+X-Gm-Gg: ASbGncsr+cO4dCzsJYG4JYpHHVTYloT8VwcyEXUmdYiedI6II3OwOHxFsgxnoaGYzUP
+	HB4ZQlJSc75eC34YqxCJmbKxRF9jDFCp3QeKpGsLf2OtQAfeIafGYuSSUed+ItNorhDxIqecKTQ
+	IZU5GCtn7ObVv6s0/RBQxTeYhmHg==
+X-Google-Smtp-Source: AGHT+IEzeuirJ35v06ZpAeCoudNyX1zllB2KPEQvNHaaKY5Pj8xsVgMJdPGEEnKMVpmZE6ZPTvWiNCfmIkBRzSIqmt8=
+X-Received: by 2002:a05:6a21:4cc2:b0:1f5:8220:7452 with SMTP id
+ adf61e73a8af0-1f582207511mr17977801637.24.1741796340554; Wed, 12 Mar 2025
+ 09:19:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 02/10] slab: add sheaf support for batching
- kfree_rcu() operations
-Content-Language: en-US
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter
- <cl@linux.com>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
- <20250214-slub-percpu-caches-v2-2-88592ee0966a@suse.cz>
- <Z7wwlLQFBDlcmsDT@harry>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <Z7wwlLQFBDlcmsDT@harry>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6391C1F388
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[google.com,oracle.com,linux.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20250312111915.2970032-1-naresh.solanki@9elements.com>
+ <CAOMZO5DaZbRXuv4vgWk9evNcV4iW6gXy2Vjv7oWsnMo_R9ku4Q@mail.gmail.com> <CABqG17gS-kiB73tTC+u-TER2+ABLYPDVM5YyjiqpEzLTb0LbJQ@mail.gmail.com>
+In-Reply-To: <CABqG17gS-kiB73tTC+u-TER2+ABLYPDVM5YyjiqpEzLTb0LbJQ@mail.gmail.com>
+From: Naresh Solanki <naresh.solanki@9elements.com>
+Date: Wed, 12 Mar 2025 21:48:49 +0530
+X-Gm-Features: AQ5f1Jo-5_CpGz2sBHoLxcb-8mpPBzuC8RFH01rncuLzB1k6Cv_o42kwes_3CuM
+Message-ID: <CABqG17gwNJnn89SwJf4xAMWGjz+tW+7GkQZEj-D7dPT2Ox9=jA@mail.gmail.com>
+Subject: Re: [oe] [meta-oe][PATCH] meta-openembedded: flashrom: Update to v1.4.0
+To: Fabio Estevam <festevam@gmail.com>
+Cc: openembedded-devel@lists.openembedded.org, linux-kernel@vger.kernel.org, 
+	"Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/24/25 09:40, Harry Yoo wrote:
->> +static bool kfree_rcu_sheaf(void *obj)
->> +{
->> +	struct kmem_cache *s;
->> +	struct folio *folio;
->> +	struct slab *slab;
->> +
->> +	folio = virt_to_folio(obj);
->> +	if (unlikely(!folio_test_slab(folio)))
->> +		return false;
-> 
-> Does virt_to_folio() work for vmalloc addresses?
+Hi
 
-Hm, no. Good catch.
+On Wed, 12 Mar 2025 at 19:37, Naresh Solanki
+<naresh.solanki@9elements.com> wrote:
+>
+> Hi,
+>
+> On Wed, 12 Mar 2025 at 19:32, Fabio Estevam <festevam@gmail.com> wrote:
+> >
+> > On Wed, Mar 12, 2025 at 10:52=E2=80=AFAM Naresh Solanki via
+> > lists.openembedded.org
+> > <naresh.solanki=3D9elements.com@lists.openembedded.org> wrote:
+> > >
+> > > From: "Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com=
+>
+> >
+> > This From line is incorrect.
+> >
+> > It should be:
+> >
+> > From: Patrick Rudolph <patrick.rudolph@9elements.com>
+> Correct. Not sure why the tool picked it that way. Will check.
+Found that I had set the author name with the Signed-off-by string.
+Will be fixed in v2.
 
-> Probably it should check is_vmalloc_addr() first?
-
-Yes, thanks!
-
-> Otherwise look good to me.
-> 
+Thanks
+Naresh
+> Thanks
+> Naresh
 
