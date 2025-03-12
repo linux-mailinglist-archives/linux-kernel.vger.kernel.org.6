@@ -1,91 +1,193 @@
-Return-Path: <linux-kernel+bounces-558037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE1EFA5E0C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:43:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD10BA5E0D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64B453A5DA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:43:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEAC43A89DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6790D254846;
-	Wed, 12 Mar 2025 15:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E172566DA;
+	Wed, 12 Mar 2025 15:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="hqJU6uT4"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D217518DB0B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QXjklLQa"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D2A1BD01F;
+	Wed, 12 Mar 2025 15:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741794230; cv=none; b=Kn9g9ko7O3hT1Btm6B2SFO88Aq5VYaWqPXGLcRROXez0TVzQzi+ESnn7dNhrNykJtNfRq8VoFGuBBBFhbD8W53QAv9FY6QP1gDWxQ5ZPbpRxDv5mqrpUfItEYr8BIjvbLHPIUmOFHkL5ngo3UbP+xxaHZUtHMBxpXINVAhs9534=
+	t=1741794349; cv=none; b=EAmVzNgTb++U6okrUFupwCob8j4bcWbDmM8KI0/7gl7vtEzPvrDpVtQBns8Fctt2EqHA/kaWZn1hAGJqlI5+Fg9PmB6JOCi7RH/oXoLCo2gTBiWdFCQzQ9jGOFpWDIEv65BrgT3+F6M0Y4pIhjjgcF3bU9dHyC9etAiWaX2G39s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741794230; c=relaxed/simple;
-	bh=F9DKOVMq2swRSUrdwejEWWecXErHBg928DWkynt2bOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kpo70zpcZ+VPmSvTSFw5kO2in8KDL+tFI9qNJFvb48JJlSXuYsA1B69bPrjVbdPTpyA6vr30/OG7PY7uajUpiHMqTDLFBBJ1ddl8UbOpwTVZVgaB3ZxmXaedoBT0oWvz6XrkCEG/2sqRyaOdHBsWbrcLY67z1mH01YU+fzDaCPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=hqJU6uT4; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 98D58455FD;
-	Wed, 12 Mar 2025 16:43:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1741794227;
-	bh=F9DKOVMq2swRSUrdwejEWWecXErHBg928DWkynt2bOg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hqJU6uT4X7Sh9DhDDqUIcgg0RQdEjVy6ZMJo5zor4OBFYr9wbaM7gUC6lvq8toIG0
-	 CR7wj1m49YQgx0g8aIABk5kFlZqD74E8fiUAJCq1MHD3ddQFO8iQVu5ams0uvajKgH
-	 hXJFQ7bITxg0Jp/gLkUue2omnOgzdXCHq2mZh1Fc1qOW/s697lAtjdznk49GYaPT8n
-	 4dLfbMej3MnMl5SUt5feit/a7txset11jAD2bahZSeMBmoSaQKoGFrIkErkZxzzO0I
-	 cwlIq3QV0srAGt3ljMsWtfFwCjtATFoK/j5oAbtcNXobm8YHrwFIekINIqibgoLOIi
-	 tS+7JFz1P1p2w==
-Date: Wed, 12 Mar 2025 16:43:46 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Liam Merwick <liam.merwick@oracle.com>
-Cc: x86@kernel.org, hpa@zytor.com, Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, Larry.Dewey@amd.com,
-	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
-	Juergen Gross <jgross@suse.com>, kirill.shutemov@linux.intel.com,
-	alexey.gladkov@intel.com, Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH 1/2] x86/coco/sev: Move SEV SYSFS group to
- /sys/hypervisor/
-Message-ID: <Z9GrsoIP_NWjPPC-@8bytes.org>
-References: <20250312144107.108451-1-joro@8bytes.org>
- <20250312144107.108451-2-joro@8bytes.org>
- <e6046eff-0b16-4ae7-a8f5-0f765a7e2836@oracle.com>
+	s=arc-20240116; t=1741794349; c=relaxed/simple;
+	bh=YiJ9DmUVX1IbQ4Ir7wZBBuDQ6fawKeW6P6FZIvMQ9eI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cm8t/cR9yrVcyir9407zuH5JqKMNTpXUM2Kd/JeM2C681VA3vsoylonWs6qN/UlPgsR9oD/mymqBKoAfCccjIu3lcYA9DBG7TapjbIehw+ZsiONK1ZT+V8v43lnfS9+OuvfnNVYvBRkstsMvacUyDbEpjnveAO42gOtxBNJTi/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QXjklLQa; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=S1WUJ
+	ADaCqY8wLRXgp+FLvNcgEj2zeHMScWZEdvC9P0=; b=QXjklLQaon2otUi05D3g9
+	UZJoaL1qCUYXyYsRZiLaNebwNmExI6cVarmNCUy6Hj9YmyMw3+N9HZgAK9u7R/JH
+	LNhNLZlCLAWm2bdFsNGxhwUBBqf0V6WAEkzkb7wVVG7QEwsUGkYseiBrfPmgv0F9
+	PwiVJPFfi9MrxtWUvPJcx4=
+Received: from DESKTOP-DMSSUQ5.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgBnGxwErNFnmqUoAw--.31028S2;
+	Wed, 12 Mar 2025 23:45:10 +0800 (CST)
+From: Shixiong Ou <oushixiong1025@163.com>
+To: Simona Vetter <simona@ffwll.ch>
+Cc: Helge Deller <deller@gmx.de>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH v2 1/2] fbcon: Register sysfs groups through device_add_group
+Date: Wed, 12 Mar 2025 23:45:06 +0800
+Message-ID: <20250312154507.10881-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6046eff-0b16-4ae7-a8f5-0f765a7e2836@oracle.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgBnGxwErNFnmqUoAw--.31028S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCFy7uF4fJFykZrWfXF1UWrg_yoW5Kw18pr
+	4DJa4YgFW5G3ZrWw43Zw4DZ3sxWwn2k34fJws5Kw1fKF97A39Iqa48JFyjya4rtas7GF1r
+	Ja4Dtry8AFWxWr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jjtC7UUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/xtbBYxoOD2fRnCz55AAAsj
 
-On Wed, Mar 12, 2025 at 03:32:04PM +0000, Liam Merwick wrote:
-> one suggestion below but either way,
-> 
-> Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-Thanks!
+Use device_add_group() to simplify creation and removal.
 
-> > +	sev_kobj = kobject_create_and_add("sev", hypervisor_kobj);
-> 
-> Given hypervisor_kobj is created elsewhere, and the caller of
-> hypervisor_init() doesn't check for ENOMEM, would it be worth
-> adding a check here that it exists before using it?
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+---
+v1->v2:
+	fix build error.
 
-Hmm, dunno, I guess it would make things slightly more robust. On the
-other side all existing users of this object already assume a successful
-initialization.
+ drivers/video/fbdev/core/fbcon.c | 49 ++++++++++++++------------------
+ 1 file changed, 22 insertions(+), 27 deletions(-)
 
-Regards,
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index e8b4e8c119b5..9ee5f8492249 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -3157,7 +3157,7 @@ static const struct consw fb_con = {
+ 	.con_debug_leave	= fbcon_debug_leave,
+ };
+ 
+-static ssize_t store_rotate(struct device *device,
++static ssize_t rotate_store(struct device *device,
+ 			    struct device_attribute *attr, const char *buf,
+ 			    size_t count)
+ {
+@@ -3179,7 +3179,7 @@ static ssize_t store_rotate(struct device *device,
+ 	return count;
+ }
+ 
+-static ssize_t store_rotate_all(struct device *device,
++static ssize_t rotate_all_store(struct device *device,
+ 				struct device_attribute *attr,const char *buf,
+ 				size_t count)
+ {
+@@ -3201,7 +3201,7 @@ static ssize_t store_rotate_all(struct device *device,
+ 	return count;
+ }
+ 
+-static ssize_t show_rotate(struct device *device,
++static ssize_t rotate_show(struct device *device,
+ 			   struct device_attribute *attr,char *buf)
+ {
+ 	struct fb_info *info;
+@@ -3220,7 +3220,7 @@ static ssize_t show_rotate(struct device *device,
+ 	return sysfs_emit(buf, "%d\n", rotate);
+ }
+ 
+-static ssize_t show_cursor_blink(struct device *device,
++static ssize_t cursor_blink_show(struct device *device,
+ 				 struct device_attribute *attr, char *buf)
+ {
+ 	struct fb_info *info;
+@@ -3245,7 +3245,7 @@ static ssize_t show_cursor_blink(struct device *device,
+ 	return sysfs_emit(buf, "%d\n", blink);
+ }
+ 
+-static ssize_t store_cursor_blink(struct device *device,
++static ssize_t cursor_blink_store(struct device *device,
+ 				  struct device_attribute *attr,
+ 				  const char *buf, size_t count)
+ {
+@@ -3279,32 +3279,30 @@ static ssize_t store_cursor_blink(struct device *device,
+ 	return count;
+ }
+ 
+-static struct device_attribute device_attrs[] = {
+-	__ATTR(rotate, S_IRUGO|S_IWUSR, show_rotate, store_rotate),
+-	__ATTR(rotate_all, S_IWUSR, NULL, store_rotate_all),
+-	__ATTR(cursor_blink, S_IRUGO|S_IWUSR, show_cursor_blink,
+-	       store_cursor_blink),
++static DEVICE_ATTR_RW(rotate);
++static DEVICE_ATTR_WO(rotate_all);
++static DEVICE_ATTR_RW(cursor_blink);
++
++static struct attribute *fbcon_device_attrs[] = {
++	&dev_attr_rotate.attr,
++	&dev_attr_rotate_all.attr,
++	&dev_attr_cursor_blink.attr,
++	NULL,
++};
++
++static const struct attribute_group fbcon_device_attr_group = {
++	.attrs		= fbcon_device_attrs,
+ };
+ 
+ static int fbcon_init_device(void)
+ {
+-	int i, error = 0;
++	int ret;
+ 
+ 	fbcon_has_sysfs = 1;
+ 
+-	for (i = 0; i < ARRAY_SIZE(device_attrs); i++) {
+-		error = device_create_file(fbcon_device, &device_attrs[i]);
+-
+-		if (error)
+-			break;
+-	}
+-
+-	if (error) {
+-		while (--i >= 0)
+-			device_remove_file(fbcon_device, &device_attrs[i]);
+-
++	ret = device_add_group(fbcon_device, &fbcon_device_attr_group);
++	if (ret)
+ 		fbcon_has_sysfs = 0;
+-	}
+ 
+ 	return 0;
+ }
+@@ -3387,11 +3385,8 @@ void __init fb_console_init(void)
+ 
+ static void __exit fbcon_deinit_device(void)
+ {
+-	int i;
+-
+ 	if (fbcon_has_sysfs) {
+-		for (i = 0; i < ARRAY_SIZE(device_attrs); i++)
+-			device_remove_file(fbcon_device, &device_attrs[i]);
++		device_remove_group(fbcon_device, &fbcon_device_attr_group);
+ 
+ 		fbcon_has_sysfs = 0;
+ 	}
+-- 
+2.43.0
 
-	Joerg
 
