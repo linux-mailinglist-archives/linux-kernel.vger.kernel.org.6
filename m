@@ -1,398 +1,290 @@
-Return-Path: <linux-kernel+bounces-557589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318DCA5DB46
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:19:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E7C5A5DB48
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:20:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CED97A7493
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:18:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D61E23B2FCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A616323E35E;
-	Wed, 12 Mar 2025 11:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CB823E35E;
+	Wed, 12 Mar 2025 11:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="TA6CtuKJ"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kfJPnVzc";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wowVmjRe"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11E823C367
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741778378; cv=none; b=DMpGoEfN6kQgRYKMKjulHNK9DOOxQMlB5iwSJx3kJPaMz95vu6nwiCRyQ66Im21wneqb0hIugrpkwYk0e/rjyj5X0nV3tLN6xY1uC6621eBY4K/UwrvtJIFWq+mhXvO2De6gH+orm05HQ1wxYNBTLM4goE9Phvi7uoLhyzO7LEw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741778378; c=relaxed/simple;
-	bh=4THAC+oLlpzzkBbk1/3REuO+K18wZ/JuXPJA9e6AyfA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WaM1XgvYHxlrBdcGye2DqnjSrfd9ZgX2yGuPFJ7FyvfdPQggz97JcOjbwh/529FfPuGPJXLoOvo9sCGBT8TVeFWEVmBpFfDznDn4StpboUxaXMnxqit9tP9qkYKb5FC7jWJA+Ok55wyeW/ttf3ywebMKLZg/QNn9eB5FYvjLFKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=TA6CtuKJ; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso17462575e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:19:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C35D23E352;
+	Wed, 12 Mar 2025 11:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741778401; cv=fail; b=ofpBmD522USiKVio3LSAkVr9H8RdZ2U2u4eHfd0CyHGclmY34R8gnGu7z4Aq3dQBToWIEOBvsmZqP5HOyrRfxSVdyGiByBnyfVQz6TO/cI3qA0FD/aoDE0Gm2FdwWGM0+NkT6vb99kAleSkYYe6yYPmEO8vzSnx3HnfkOJEy7uI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741778401; c=relaxed/simple;
+	bh=+CUu1bhMq0zpZDxmwp3JYgUE+rKdFsGnKJnZvXNLjpA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LXQ0rgA7MBWs4xbwD+NPC95QOeaysC4wjx/59WTGPaHtPn6erJudWFLQcLSOu5ny+PMmCdOL9i/eVQWB7EMvNlCjkUiMT2JiS3VsaoKnAxux29Sea1OiL1srNqVectJRqniDlj5v9H/96wn4s3/Rsvhgc+IpaRzbZuOTOoMcGQE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kfJPnVzc; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wowVmjRe; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52C1g4XS000790;
+	Wed, 12 Mar 2025 11:19:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=+CUu1bhMq0zpZDxmwp3JYgUE+rKdFsGnKJnZvXNLjpA=; b=
+	kfJPnVzc4QmTIK1F+7BTYhryeZ14qVBiVSm9TuHebv/8gUxPTGq2CwlUdvGYYeo7
+	I10MomompWlQCJ58lqOJg+rU/34Q3ewOhhi6VUIGdw8Q5K4fUwNDcReL9ARKWtbP
+	vobZRQwHW8bPERX0jZc4541s2L5C8x/jNnNfs3onem0Bp6vTZJMsD9xj8BmsU7Kz
+	m62pJfWRTAGWbglUl+V8ang9912E/Dw3+JE6UPQMnLCEnwA0PXqeKz/MmzzY9Siu
+	33lTwEyS5cfX5m2i80YPbeMjDPGleJxhduWuagEBKhM+mFN2STv6sLbE8zLytSDu
+	QAOgnRcRvAsGXwWfMPpWnQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45au6vhfhx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Mar 2025 11:19:28 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52CApBCB008591;
+	Wed, 12 Mar 2025 11:19:27 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2168.outbound.protection.outlook.com [104.47.58.168])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45atn35adm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Mar 2025 11:19:27 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P7qd625VzLsREoAGViU8vCYA8API9MahdmI6IIDJZpHmQ408H0R/DpKesTc60JTlU+89A+tQWe5uFey9TXEoY3v+pxqHQkxKCngqLiOIaF1uVrV9dy3DYHPsqQKpTyukxTHH6SfAsuOm9dphmAkAfPFK0CwLUeee27zbwB9fQ+yn+FpjDtRTG4Hy5KXduhaUSNGmV+es4Phiq2ZXPojlNEYgi6DSUD9LCRlIVHOu3ywnGh7HLG8MniP6zcVhHOMER2c4LNy13fXBNCfgnX2r+m+7cftQeq1Ow5FgXANVmngv/4vZMqlju0zxVFUex1q+OxxTX9/19cpTWBiN3AJd+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+CUu1bhMq0zpZDxmwp3JYgUE+rKdFsGnKJnZvXNLjpA=;
+ b=KgwwafwMLQGtZ7B4v6J/nU1qKktEVNS7ezQ3V2rzSjarT0SOQhX3uv0Z43vLVf8esoWadD77Y7mROQpEIzNejzC7Yj23KE+F/wPf6o2YbnRR3IqUGP/67ePHch+GEA5u0Z4fu0HTN9UUgPhuXpdN2IzE2fScPfH8Il824RvN5aqF0Vulv0qse4aNRaa+saAneo21akgNh3TARRUlLX63fsrdnmZw9W/8fydOLQq3YP+ong5XQ4bkEYbzrUjuAFwfuyglDYdvRErc7679lxmTWbIv2FeOATLFRDuD3vew9UIF1aoT2Jzsy4hMTxqeMSdtg7D0Jb6LdXJHrmUdlMGY2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1741778374; x=1742383174; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rXmxl7+GLhH0gQY+K7P03YejOUhiC3cgihFu2sKSnz4=;
-        b=TA6CtuKJDJCP87dExjWugersXj9k7KWrwKg29NXCzYJED2uJi6MY9hwrfCQRoND3i3
-         Lt5hQ493YxbPE1LeXg7H0XFtCs1mDKoLTr8wsNZAe7QXgtalrq9MyWdsP7Te/tzeVgDo
-         uYdYmCBBPHH2bguEDugBNzkuvJ1szvOXccaMKIsQiB9Yv3BN1DPHyAuBU/ARqG8ptASe
-         EFNo+Knj6bHRvBo3oBc/I0mXtAc2Vomahfaf/5qsbpZBbshgDu2MqGrh5EvCtTkN/Z1C
-         hQP3TyrsIMVn2NekttYW3wUuuYDjOhRJCiOtuicI2Cb2RlqhStY7N9vjfagE9twbXaQl
-         UPRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741778374; x=1742383174;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rXmxl7+GLhH0gQY+K7P03YejOUhiC3cgihFu2sKSnz4=;
-        b=a2B8+XoLxMrLtYlyVw85YTdzogwPvtHpqpYMA7gBWLmb5PecjW5RaTuvVXJuPa9auT
-         tdMOey+AWrysM7HHT3a4lutp3Fwtjby1S+xGmxAmuLpjg/alGbGmUA40T23X6TC5+2dg
-         10P5d+Kr5ANtU+J/Zp9BxkfkKKqRNbD6YNPi4pZs8jHKpmmuIdQcCGrqCR0edVYOJkjr
-         U21j+H6+qZq1IdK5vRmoxezbICR+8BDei8Ndo2t/osFOv3vNlW2GuGppJTtc8HG1MqCb
-         jmtdk4E3LCCnZg3KfdcoEqkFkVbSE6o8K+9nZaBiQzzBIZdfXx8OEjQmIS9JuiESSmAL
-         h7pg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZyMc9wJLMJgsdwVEWOxBTZiEpSuIASj+m48mneoWnuv8IPCu5/tqKi+atmDtF/vhhRqS8jkuSycv4Y3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBaC7OE81/VViBJoVodIz+p4E00JzxMyn8aOUkbFnozWzr2zV2
-	keeECv0ZKeuo12f0OIct7JxBDoIUjE8jNTYHqTqyciYWFXFUt8Au9A9WVd6ms2inSjw5lSG4bil
-	tRdo=
-X-Gm-Gg: ASbGncvXJKci/FV54OGk35CnojxCmiJogY1xKYP+i3X+jKRGGGu0bRAR8RPuP3GpcGc
-	x4F8eO2MM+2V0gmqCtdi6a72YYZKX34MOIRXyl6ebTw4PZDwB9H0I9H4DUCmLKjcSCd6kE3GluB
-	U0b4XSsbmgAfItJrfuna05jizEQ7hPA2WBgU5jJa1MGH2oKmPLPZZI+YNZFJnFdCcEmF5F7icLF
-	YVE75wP/+e17Kp3Ey1hLllEmJ/KnKiEpWvG/XEPiBnUo6x2+Z6lFwZT/MLHi9G8APFbdIiWTiwe
-	RTi/GG76zQptBM3/fE9imAtGFDC8HtY0qV2GtvBDNPgEKyvGuK0Lf7jVmDWdB8niRbRDxsxsmAC
-	pAGCco3420qQOrEj3G1ntZSg68hlEGA26a1+4fve5nkZzVg8S8N4=
-X-Google-Smtp-Source: AGHT+IGcgvmbyodvcoPpbCUAdgD/v+nV+RfP03rhPaBlbH974jQPsIIB5qDTf/peFKrAMdaa/Dyfew==
-X-Received: by 2002:a05:600c:1c06:b0:43c:fa0e:4713 with SMTP id 5b1f17b1804b1-43d01bd1c94mr73802535e9.2.1741778373413;
-        Wed, 12 Mar 2025 04:19:33 -0700 (PDT)
-Received: from stroh80.lab.9e.network (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0195casm21190414f8f.53.2025.03.12.04.19.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 04:19:32 -0700 (PDT)
-From: Naresh Solanki <naresh.solanki@9elements.com>
-To: openembedded-devel@lists.openembedded.org,
-	linux-kernel@vger.kernel.org
-Cc: "Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>,
-	Naresh Solanki <naresh.solanki@9elements.com>
-Subject: [meta-oe][PATCH] meta-openembedded: flashrom: Update to v1.4.0
-Date: Wed, 12 Mar 2025 16:49:15 +0530
-Message-ID: <20250312111915.2970032-1-naresh.solanki@9elements.com>
-X-Mailer: git-send-email 2.42.0
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+CUu1bhMq0zpZDxmwp3JYgUE+rKdFsGnKJnZvXNLjpA=;
+ b=wowVmjReXCIF8oktB+WUuFl4G5DLPakvOCBW0ZQt/W0OjFj+No85TxglTkevLn0uyMKNBVy9AQaY9UV8UQOZCwqwBNzQcf5GY6Vuz06Y5YrRbzx1HsxglLrqytuA3fYZjxfixdt1gvR7a3aPKxOhNqN8R+JlvP3Mqam5QQqakyI=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by SA2PR10MB4747.namprd10.prod.outlook.com (2603:10b6:806:110::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
+ 2025 11:19:25 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
+ 11:19:25 +0000
+From: John Garry <john.g.garry@oracle.com>
+To: yangxingui <yangxingui@huawei.com>,
+        "liyihang9@huawei.com"
+	<liyihang9@huawei.com>,
+        "yanaijie@huawei.com" <yanaijie@huawei.com>
+CC: "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        Martin Petersen
+	<martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        "prime.zeng@huawei.com" <prime.zeng@huawei.com>,
+        "liuyonglong@huawei.com"
+	<liuyonglong@huawei.com>,
+        "kangfenglong@huawei.com"
+	<kangfenglong@huawei.com>,
+        "liyangyang20@huawei.com"
+	<liyangyang20@huawei.com>,
+        "f.fangjian@huawei.com" <f.fangjian@huawei.com>,
+        "xiabing14@h-partners.com" <xiabing14@h-partners.com>
+Subject: RE: [PATCH v3 1/3] scsi: hisi_sas: Enable force phy when SATA disk
+ directly connected
+Thread-Topic: [PATCH v3 1/3] scsi: hisi_sas: Enable force phy when SATA disk
+ directly connected
+Thread-Index:
+ AQHbg5hbfRFtBrJv4Umzg42H4A8aM7NQdIQAgACMxICABSPigIAAErSAgAAuFACAAA5ZgIAASSCAgACKEwCAAG0qgIAUv2cAgABNDQCAAp5ygIAAGmtQ
+Date: Wed, 12 Mar 2025 11:19:25 +0000
+Message-ID:
+ <DM6PR10MB4313DA1A6DC01ED10D9D34D5B8D02@DM6PR10MB4313.namprd10.prod.outlook.com>
+References: <20250220130546.2289555-1-yangxingui@huawei.com>
+ <20250220130546.2289555-2-yangxingui@huawei.com>
+ <4bf89b6c-8730-4ae8-8b26-770b2aab2c13@oracle.com>
+ <5a4384dc-4edb-9e29-d1dd-190d69b9e313@huawei.com>
+ <1e98a1eb-a763-4190-94c5-a867cdf0e09b@oracle.com>
+ <235e7ad8-1e19-4b7b-c64b-b6703851ca65@huawei.com>
+ <d233a108-a46e-47dd-86ad-756c60c8665e@oracle.com>
+ <cc9ba6f8-1efb-4910-8952-9ca07c707658@huawei.com>
+ <5d34595f-ff57-4679-b263-fa3fea006ce3@oracle.com>
+ <25552c7d-858d-ea1e-0987-55f71642a503@huawei.com>
+ <420fde94-28ec-4321-943b-5cb84cf14f0e@oracle.com>
+ <d0a6b502-328b-2f83-3cdf-55c1effd80c1@huawei.com>
+ <1fe3bb6b-1f7a-4188-83a3-f4c62e2a963d@oracle.com>
+ <134681bd-0afa-a5cd-2e44-4f22db363734@huawei.com>
+In-Reply-To: <134681bd-0afa-a5cd-2e44-4f22db363734@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR10MB4313:EE_|SA2PR10MB4747:EE_
+x-ms-office365-filtering-correlation-id: d50d614f-1084-42f4-197f-08dd6157bf22
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?NnhWb0tBNHM4V0UwbU5SY2xBSjVRV2drZ1oxcGcwRVhHUjJad29MTmQ2Mmth?=
+ =?utf-8?B?SldhQSt0ZjZzR0IzUzNEMHVyWU0zdkFka25QRWlMZUljTEY3L1M5ZWlrOTFO?=
+ =?utf-8?B?MURBZHJWbzhaazNCclF5Zy9NTkNnOUc0RXdmMTZzQXVvTHdGU2hrRkVScG1D?=
+ =?utf-8?B?UVRORWNhV0E4bGVjTU1GeTgvcmFrOXFXdGVqTTJaaTlYQlVGZFZBZDZLMmc3?=
+ =?utf-8?B?ci85TXc1Q1ZqS3ZYbE43NkFHVHFYMjVQMndKdXdSTmF3cCt6Z3haanB0clli?=
+ =?utf-8?B?Qmw2U0FwL21aUEp6ZXZYcHBKZk1IeUQ5WnZPS3R0Nit2ckREbjFxeWFoajFj?=
+ =?utf-8?B?Z0p4NXNKaDFLQTlQemtGZGNUbFBPdzk1ak8wWGFZcTFXSkx3Y01WRUF5MVNh?=
+ =?utf-8?B?RU5GNWptWndUL25OTEJYVGxCWlhOSWt2NXRyN3pUOE5pb1RMRFRMT1hETEw3?=
+ =?utf-8?B?YVpSbHlFYkNCOFlpVGE2U3EyZ2NyWVlGNjNyM080ajhnU1R2TkpBMU5wbmJT?=
+ =?utf-8?B?R0hYaUEwbWZWaDNmS1BZdGtvTXpjYlNhQ2IyRysyS1ROQ3RvSWY5bFB4Y3Bw?=
+ =?utf-8?B?d2orcjkrZ1ZyWWc0WDVjQWhUSzI0ZW9EQVVSQXMrMGVHTGFBa3AwV0N3SElB?=
+ =?utf-8?B?NDlsY3lzczA5UDhhcE96czVRUHdPTDVjSFNiMDh5eHFDY2NoK0EyMEpPcTFt?=
+ =?utf-8?B?Skd6QVRYeW5CQVU0WklmTjNtTFdvU0hXSWh1enN4cEZWRm1GbHhmVFRMZjEr?=
+ =?utf-8?B?dlFRWS9LOGNjUWxmNER6TTgrSlgzVUFUSm04OGhWUWxBekN6YmFZQXI3bVli?=
+ =?utf-8?B?YUxhVVdILzhKVk5BSVRHb0cvbUM3bE5hSEowS1VELy9LY0tuZEVSZTdlcGlx?=
+ =?utf-8?B?NWQ2RXZXek5YbTZZaG9RTVFvN3I5MVl6N1RPQW5UZXB4VncrSHdjMmlLWlJH?=
+ =?utf-8?B?REFHYVBHSHJxN0Jacm9WUUdSV3dsUU40S0U2RVJwQytFN2gzME9WWFpkbVYr?=
+ =?utf-8?B?MkpGb1NHY3Eya3F6endMN1M4RWtuNTlHeG5rdkEzcVYyMEd4MFN6Q1J3Ukpr?=
+ =?utf-8?B?dmcyUGxLU2hnVDRxamwrL1o1b1BYcHpwMUtOK20zWFFDQVNVcnNaalYza3Bm?=
+ =?utf-8?B?T0hvK29ZQm5vbGdFVnRwSzVkRVFBMzM2OUpsWlhLei83dytEMzJVYTBLdldZ?=
+ =?utf-8?B?Vy9vd1F2Z2toeTdsbHpYdTl0QlhvZUFZK1FNV1laVkVUME92Y1Jad1REMUFi?=
+ =?utf-8?B?YUdGalZvVDdPMTB4cDhVRlViQkFFeElqQ1dNU3dONklrZnNmR05uRm5CRW00?=
+ =?utf-8?B?RTF4emx6d1BCUUFVeGU5L20zVi80QUFRczdjbXZpV1J4NFZDMjZKT2wrOFVq?=
+ =?utf-8?B?SU5BK0N5Y2lYdU95Tjh4YkdkeFJha0twUStuMVZqdVBRbHJmUmFLVjg5VGNV?=
+ =?utf-8?B?bDFBdDdVcmZBN3ZzcmVEcmxiY21RRnBVU3U4blgvb0FMRTlxOFpCUWJFaUE4?=
+ =?utf-8?B?Y1QrOWVqak1vZWl3THcvTTM5WTdMdkM5SE43N3NDYTgzeGN4eHBHMlY5QU9O?=
+ =?utf-8?B?YWpDRGxNbHQvbW9QVS84b3dyYjcvY3EvcG9FQW1UZTkydDhINlNXWGdHVEVv?=
+ =?utf-8?B?OVBvenFEcEVMQnNuUkFzSEcrUlhJT3FrL1VvRVNMcUJSSWwrTXhJTHhEakJw?=
+ =?utf-8?B?bVNEaEVuUGFqNmxVTW1HeHVldjFJS3BnZzlUV2lUNFRvOXliUWxuRm1BZUlr?=
+ =?utf-8?B?YjA4WVNCaUk4OGo5azY1Y1FsalV1WGpIdFJCVjhUeEZub2RkdHljOGZrM3Yz?=
+ =?utf-8?B?Mk5oN1J5djdtc0tpYzNINm80dmozcWFFaUZvK3BpaGRVRnBMajFlbUZKY0dW?=
+ =?utf-8?B?anVpbDhxelNTM2dabmtNRmh2QTNrbE5nT3dNTGtUNUE4UEFJbEZDVG5XQThF?=
+ =?utf-8?Q?nEHarlNAxRRhJDRErcT84UezNJiJkASr?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?Um9kd2JPRXRnbmpuMytNQnJFN1BKT283UFdvU3Q0V0NhTEZtdXg1WHluZG9u?=
+ =?utf-8?B?cFFEajFvMm0rcTJTby8xWDVuOFFNVldHalUrRHFRa3g5djV1OER5alNUOHZ6?=
+ =?utf-8?B?djc2a1lHdVd2aGdrNWFHTjBRcS9pdmdvbUtWUWlZT1VNR1piMjBwRmdRT2xO?=
+ =?utf-8?B?OWxOZUFVYTJPdllGdVJLUTBBOG9ZbG1YU2ZoVmdxMzJIeUlJZG4zWFB2YWpN?=
+ =?utf-8?B?ck9UZ1kvbFZmWFpCV2RtZldmQ0FCZkhwY0s0QTZ6alU4TzdYSmFYbllXUmhm?=
+ =?utf-8?B?OGpVeXBNcUxjbTMxc0ZVQWd3d21uRGZ6L2pTNjl2ZGl5U0IrNi91NVNsTDF3?=
+ =?utf-8?B?YXVyOXFJQ0Z5a1NzUmhLNWV0NXJhbDNsMS9PTzBEZklqMlFJemwwckNvZGsr?=
+ =?utf-8?B?dG9BRStSYTZxYzNMeFVITUVLQUZ5cWJobjBGYjh6c3piNXBjUXBKYTNoKyta?=
+ =?utf-8?B?cEpuN3FpbHV6c3VsS2NOYmhiK25Ka0tUSjJCbzFqbS9SMWl4dUZBZDdXckM2?=
+ =?utf-8?B?WEVibG1CNUdvNXJ4WHZPeDVwbDhYWGIyTEdlcEdjMkxrOWxHR0lod25HN2Vy?=
+ =?utf-8?B?V3NDR2ZzZnEyQS9uMzZkQmtpNHpVWjVJTzg5dXhKSUU1bGhBS01QTnRJcWM2?=
+ =?utf-8?B?Nm1GZm05Mk0vRFZ3TEcvSHZnT2QrTmFxQTMzZTd2d1o3MHY5eTBYVmFld0hL?=
+ =?utf-8?B?cEU5VExqYko0clBabDE2RnpSZWZ2dEFYVytDYWp5TGNodFl5M0UwazNMVXZq?=
+ =?utf-8?B?NG9pMEZQTWlqV1o5N3lHZWFlTXdtZW5ndE1La1JPM2psczR0ZUdZR3RqMEJ4?=
+ =?utf-8?B?OWprcFlEaFNIdkxPVUl1eExRbytmditUNDFnelBZUUpobUU4clExZXl4ZUcw?=
+ =?utf-8?B?Nk1WYUxLVmIyUGZneXBVUktmdFkrYzY0MXBCWEZDWDBxcmNWeUQxbjZXbVRQ?=
+ =?utf-8?B?UzBmdUxEQ2trOTkvd3VQdHV4akdEYW9Cc2RQK1ArMzVlSHE4cjN1b2VpTTVP?=
+ =?utf-8?B?dVJSS0tjWXhDSHdWY2VRclJSUEplaFE4UUttMXNPWnhlTUNBSDBKbm5wVjhy?=
+ =?utf-8?B?NjYyb1RDV1pnNHh0clVzVDV1QThhV1IyUFB6SmRIUFkvTFJPdWdUQ2MyZTV4?=
+ =?utf-8?B?aTNYeTBweUp5cThXQ05QNTMweFJDWExNVk52WnIxNTFmeDVNcmZWR1VDcnFl?=
+ =?utf-8?B?V2k3U0ZoME0wR2FDVXZ0SFFabHBUd1o1cjkvUlhkbXRYQlBaeDByMkdPaXV2?=
+ =?utf-8?B?VGozVVJNSlUwUWtUd09DK01aSXpZZVg5TldMeUU3YmRGb29EbmN0WUxJREdX?=
+ =?utf-8?B?aFJnQkdvQVpZOFBnWHpGbUdZemVkOVk2RU1LcWFVb2dHeFVkSm9teFJra2VZ?=
+ =?utf-8?B?RCt4cGJldGsyVlY1SkU2MUsreTlhR3pEbnBTSnprYmRDdlFudmZUYTNGaEYw?=
+ =?utf-8?B?U0cySWp2NkNkUDUyVmRDbGQvWENUZnk0YVR1Um02ODlaSy93eXZkMi8zckty?=
+ =?utf-8?B?emlPUkdnd3U2NVdvb3ZPSUN6dVR5cEZJWFVSREo4UGptWFpDdUNFYkxLRE4x?=
+ =?utf-8?B?VzZOQ1VZUFB5a3pXYmlmY04yRnVzZ1R2dlRtc3Vta0pxQlZlZXBOb20rdDdv?=
+ =?utf-8?B?VVJoaWtUYWZxdCt1TExkRW1mbUhvdjEvSXJka2VXL2ZObzFtdjJkdTZSaTB6?=
+ =?utf-8?B?bXNUZVpoL3NNSm9xMDRxUTBtK3BDRkx5d2RlZEdhOWRGTmVoS080Z2k1THlF?=
+ =?utf-8?B?S0xOak8yTTQ0ZGxTZ21OQWtLZCtZL01ESXl4LzNsajVRSnkyM0ZRZ2hpaHZp?=
+ =?utf-8?B?eitGYXVJREMydG1pNjFLdWtGUFpsQ21nM0k3cVViNzMwQ0w3NzBIMnhCZkpt?=
+ =?utf-8?B?QUF2NlFnUFY2cGd6eEk3UXNtRHY4bXMwUVlzb3lPTkczL2ZPdEI4dkJGZUt5?=
+ =?utf-8?B?ZURDMWN3b2NXQk4zK2pKYnY4VjhOYmVmMm9ac1R6bHgzYytYS0NVNkVCLzY0?=
+ =?utf-8?B?dm5VcUE2ZGs0S0x4N3pDSzl1SUFmQkFjY3phRG5BTUJrSHlFWVdTWW0weTVt?=
+ =?utf-8?B?UEFyVmIwT0U5Z2ppU3pabGp1Slk5eUFDS1BPeE9KaW51Sk00WDlQM2syVVNY?=
+ =?utf-8?Q?eJMdl4OnMHgAYm1oB54Cxy0RJ?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	le/DjLrNm1dtRCEEx/GYVGXpEd2ib7QZAPcf4qTHaYZ6I2FJ10JTn7UDxdhqc8liOguPqcdN5yiuObQWcerTXnNa3yRDpm+i/1696KMT7P/zprTKMrhIJ4yNhCT/eVNLQphvqTLOqWWRKKQAeycpY0uTQAiDufn0wdnBvaiIcBM4gmt0kPseulu9X4FxSpLxNdsuLK4b7jnjMZprSYQx2Jg5YbauceRAmTvZj83DeARiI9n/VyviKjkrCES+yIka1dbJKwDdsfie52C9rallXclTmvczxoU56bh/p3DB212PfcBf++wC1a91EyRrSLth/ZUvexW+C6zIEjr9OJ/s/kpn3iTkFysKkzmjwkNBkxZwl3QmJJo0s2KbUif1/k/i2voPlaLufBVWaG/gMI/kzI0Ig+fK11wC8V26Rvpo7cBSdA0uoNrOw6Z7HA3rIAypAHi+naK4/nqG86v0W85Wl7o94gE33MZ8tXXtP6xCcZ8mRiMPx66krON48omMh3ONarpyFyf90dA9HbzRR4g/wUe7ninjHEhNxaUMp09VYhn4dibwJ5JNHXYSsy4HpflorLx8JRI4UZdn77negHiW2NZ9FSpO/vzY4L7B5V5iM60=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d50d614f-1084-42f4-197f-08dd6157bf22
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2025 11:19:25.2677
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GxMBRJbeQNV16KOXmgEwz1+2EjBX5aoTEV0EA5y0JP1PdZu2AlKAy/7mJMXAy8CtMU8f60G5LVIL8Wj85vtSGQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4747
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_04,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ mlxlogscore=678 mlxscore=0 adultscore=0 phishscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502280000 definitions=main-2503120079
+X-Proofpoint-GUID: avpIE26UwuTYE064tFxS7Vd8e7DNfAF0
+X-Proofpoint-ORIG-GUID: avpIE26UwuTYE064tFxS7Vd8e7DNfAF0
 
-From: "Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>
-
-Flashrom Release note:
-https://www.flashrom.org/release_notes/v_1_4.html
-
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-Tested-by: Naresh Solanki <naresh.solanki@9elements.com>
----
- ...SCV-as-non-memory-mapped-I-O-archite.patch | 54 ++++++---------
- ...ess-use-__asm__-as-is-done-elsewhere.patch | 52 --------------
- ...-meson-Add-options-pciutils-ftdi-usb.patch | 48 +++++++++++++
- .../flashrom/flashrom/meson-fixes.patch       | 68 -------------------
- .../{flashrom_1.2.1.bb => flashrom_1.4.0.bb}  | 10 +--
- 5 files changed, 74 insertions(+), 158 deletions(-)
- delete mode 100644 meta-oe/recipes-bsp/flashrom/flashrom/0001-hwaccess-use-__asm__-as-is-done-elsewhere.patch
- create mode 100644 meta-oe/recipes-bsp/flashrom/flashrom/0002-meson-Add-options-pciutils-ftdi-usb.patch
- delete mode 100644 meta-oe/recipes-bsp/flashrom/flashrom/meson-fixes.patch
- rename meta-oe/recipes-bsp/flashrom/{flashrom_1.2.1.bb => flashrom_1.4.0.bb} (74%)
-
-diff --git a/meta-oe/recipes-bsp/flashrom/flashrom/0001-flashrom-Mark-RISCV-as-non-memory-mapped-I-O-archite.patch b/meta-oe/recipes-bsp/flashrom/flashrom/0001-flashrom-Mark-RISCV-as-non-memory-mapped-I-O-archite.patch
-index e481c5a161..58f1aa4d43 100644
---- a/meta-oe/recipes-bsp/flashrom/flashrom/0001-flashrom-Mark-RISCV-as-non-memory-mapped-I-O-archite.patch
-+++ b/meta-oe/recipes-bsp/flashrom/flashrom/0001-flashrom-Mark-RISCV-as-non-memory-mapped-I-O-archite.patch
-@@ -1,44 +1,30 @@
--From 2c777126765b4095bf481d5cfe4a21470374d940 Mon Sep 17 00:00:00 2001
--From: Khem Raj <raj.khem@gmail.com>
--Date: Tue, 30 Mar 2021 15:12:09 -0700
--Subject: [PATCH] flashrom: Mark RISCV as non memory-mapped I/O architecture
-+From bf5a30ef30818973eb2cfac792b80c642df8a721 Mon Sep 17 00:00:00 2001
-+From: Patrick Rudolph <patrick.rudolph@9elements.com>
-+Date: Mon, 14 Oct 2024 11:01:37 +0200
-+Subject: [PATCH 1/2] flashrom: Mark RISCV as non memory-mapped I/O
-+ architecture
- 
--Upstream-Status: Submitted [https://review.coreboot.org/c/flashrom/+/51960]
--Signed-off-by: Khem Raj <raj.khem@gmail.com>
--Change-Id: I55c4e8529d36f0850dd56441c3fb8602c5d889fd
-+Upstream-Status: Inactive-Upstream
-+
-+Change-Id: I46d7ede7af61e7fca631e1d465100e65c6ddeee9
-+Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
- ---
-- Makefile   | 2 +-
-- hwaccess.h | 4 ++++
-- 2 files changed, 5 insertions(+), 1 deletion(-)
-+ Makefile | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
- 
- diff --git a/Makefile b/Makefile
--index 6d37d55..203e04b 100644
-+index 97f56b83..08e4c595 100644
- --- a/Makefile
- +++ b/Makefile
--@@ -559,7 +559,7 @@ endif
-- # Disable all drivers needing raw access (memory, PCI, port I/O) on
-- # architectures with unknown raw access properties.
-+@@ -372,7 +372,7 @@ endif
-+ # Additionally disable all drivers needing raw access (memory, PCI, port I/O)
-+ # on architectures with unknown raw access properties.
-  # Right now those architectures are alpha hppa m68k sh s390
---ifneq ($(ARCH),$(filter $(ARCH),x86 mips ppc arm sparc arc))
--+ifneq ($(ARCH),$(filter $(ARCH),x86 mips ppc arm sparc arc riscv))
-- ifeq ($(CONFIG_RAYER_SPI), yes)
-- UNSUPPORTED_FEATURES += CONFIG_RAYER_SPI=yes
-- else
--diff --git a/hwaccess.h b/hwaccess.h
--index 5602c15..e79988a 100644
----- a/hwaccess.h
--+++ b/hwaccess.h
--@@ -295,6 +295,10 @@ int libpayload_wrmsr(int addr, msr_t msr);
-- 
-- /* Non memory mapped I/O is not supported on ARC. */
-- 
--+#elif IS_RISCV
--+
--+/* Non memory mapped I/O is not supported on RISCV. */
--+
-- #else
-+-ifneq ($(ARCH), $(filter $(ARCH), x86 mips ppc arm sparc arc e2k))
-++ifneq ($(ARCH), $(filter $(ARCH), x86 mips ppc arm sparc arc e2k riscv))
-+ $(call mark_unsupported,$(DEPENDS_ON_RAW_MEM_ACCESS))
-+ endif
-  
-- #error Unknown architecture, please check if it supports PCI port IO.
- -- 
--2.31.1
-+2.46.2
- 
-diff --git a/meta-oe/recipes-bsp/flashrom/flashrom/0001-hwaccess-use-__asm__-as-is-done-elsewhere.patch b/meta-oe/recipes-bsp/flashrom/flashrom/0001-hwaccess-use-__asm__-as-is-done-elsewhere.patch
-deleted file mode 100644
-index f3316aa264..0000000000
---- a/meta-oe/recipes-bsp/flashrom/flashrom/0001-hwaccess-use-__asm__-as-is-done-elsewhere.patch
-+++ /dev/null
-@@ -1,52 +0,0 @@
--From 3334dd4e9fc34c79c3925c3c24869939d8955f21 Mon Sep 17 00:00:00 2001
--From: Rosen Penev <rosenp@gmail.com>
--Date: Sat, 18 Jul 2020 12:16:00 -0700
--Subject: [PATCH] hwaccess: use __asm__ as is done elsewhere
--
--Fixes compilation under powerpc platform. Made the change for the SPARC
--platform as well.
--
--../hwaccess.c: In function 'sync_primitive':
--../hwaccess.c:74:2: warning: implicit declaration of function 'asm'
-- [-Wimplicit-function-declaration]
--   74 |  asm("eieio" : : : "memory");
--      |  ^~~
--../hwaccess.c:74:13: error: expected ')' before ':' token
--   74 |  asm("eieio" : : : "memory");
--
--Upstream-Status: Submitted [https://github.com/flashrom/flashrom/pull/155]
--Signed-off-by: Rosen Penev <rosenp@gmail.com>
--Signed-off-by: Khem Raj <raj.khem@gmail.com>
-----
-- hwaccess.c | 6 +++---
-- 1 file changed, 3 insertions(+), 3 deletions(-)
--
--diff --git a/hwaccess.c b/hwaccess.c
--index 48ccb34..2a39989 100644
----- a/hwaccess.c
--+++ b/hwaccess.c
--@@ -71,18 +71,18 @@ static inline void sync_primitive(void)
--  * See also https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/memory-barriers.txt
--  */
-- #if IS_PPC // cf. http://lxr.free-electrons.com/source/arch/powerpc/include/asm/barrier.h
---	asm("eieio" : : : "memory");
--+	__asm__ ("eieio" : : : "memory");
-- #elif IS_SPARC
-- #if defined(__sparc_v9__) || defined(__sparcv9)
-- 	/* Sparc V9 CPUs support three different memory orderings that range from x86-like TSO to PowerPC-like
-- 	 * RMO. The modes can be switched at runtime thus to make sure we maintain the right order of access we
-- 	 * use the strongest hardware memory barriers that exist on Sparc V9. */
---	asm volatile ("membar #Sync" ::: "memory");
--+	__asm__ volatile ("membar #Sync" ::: "memory");
-- #elif defined(__sparc_v8__) || defined(__sparcv8)
-- 	/* On SPARC V8 there is no RMO just PSO and that does not apply to I/O accesses... but if V8 code is run
-- 	 * on V9 CPUs it might apply... or not... we issue a write barrier anyway. That's the most suitable
-- 	 * operation in the V8 instruction set anyway. If you know better then please tell us. */
---	asm volatile ("stbar");
--+	__asm__ volatile ("stbar");
-- #else
-- 	#error Unknown and/or unsupported SPARC instruction set version detected.
-- #endif
---- 
--2.32.0
--
-diff --git a/meta-oe/recipes-bsp/flashrom/flashrom/0002-meson-Add-options-pciutils-ftdi-usb.patch b/meta-oe/recipes-bsp/flashrom/flashrom/0002-meson-Add-options-pciutils-ftdi-usb.patch
-new file mode 100644
-index 0000000000..bc43f17e9a
---- /dev/null
-+++ b/meta-oe/recipes-bsp/flashrom/flashrom/0002-meson-Add-options-pciutils-ftdi-usb.patch
-@@ -0,0 +1,48 @@
-+From 3ea99c117aa4c7a3502c93e4e4df50b3623e46c3 Mon Sep 17 00:00:00 2001
-+From: Patrick Rudolph <patrick.rudolph@9elements.com>
-+Date: Tue, 15 Oct 2024 10:42:05 +0200
-+Subject: [PATCH 2/2] meson: Add options pciutils, ftdi, usb
-+
-+The options have been dropped in favor of an array option called programmer.
-+Since this doesn't integrate well into yocto add back the old options.
-+
-+Upstream-Status: Inappropriate Just to fix yocto build system
-+
-+Change-Id: Ib697b9f7cc7fc553cfdeb75ae9d49a367badd286
-+Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-+---
-+ meson.build       | 6 +++---
-+ meson_options.txt | 3 +++
-+ 2 files changed, 6 insertions(+), 3 deletions(-)
-+
-+diff --git a/meson.build b/meson.build
-+index ae56b26c..21093a7f 100644
-+--- a/meson.build
-++++ b/meson.build
-+@@ -151,9 +151,9 @@ systems_serial     = [ 'linux', 'openbsd', 'freebsd', 'dragonfly', 'netbsd', 'da
-+ 
-+ cpus_port_io = [ 'x86', 'x86_64' ]
-+ 
-+-group_ftdi   = get_option('programmer').contains('group_ftdi')
-+-group_pci    = get_option('programmer').contains('group_pci')
-+-group_usb    = get_option('programmer').contains('group_usb')
-++group_ftdi   = get_option('programmer').contains('group_ftdi') or get_option('ftdi')
-++group_pci    = get_option('programmer').contains('group_pci') or get_option('pciutils')
-++group_usb    = get_option('programmer').contains('group_usb') or get_option('usb')
-+ group_i2c    = get_option('programmer').contains('group_i2c')
-+ group_serial = get_option('programmer').contains('group_serial')
-+ group_jlink  = get_option('programmer').contains('group_jlink')
-+diff --git a/meson_options.txt b/meson_options.txt
-+index 8a04114d..ae722509 100644
-+--- a/meson_options.txt
-++++ b/meson_options.txt
-+@@ -25,3 +25,6 @@ option('ni845x_search_path', type : 'string', value : 'C:\Program Files (x86)\Na
-+ option('delay_minimum_sleep_us', type : 'integer', min : 0, value : 100000,
-+        description : 'Minimum time in microseconds to suspend execution for (rather than polling) when a delay is required.'
-+                    + ' Larger values may perform better on machines with low timer resolution, at the cost of increased power.')
-++option('pciutils', type : 'boolean', value : false, description : 'Select programmer group pci')
-++option('usb', type : 'boolean', value : false, description : 'Select programmer group usb')
-++option('ftdi', type : 'boolean', value : false, description : 'Select programmer group ftdi')
-+-- 
-+2.46.2
-+
-diff --git a/meta-oe/recipes-bsp/flashrom/flashrom/meson-fixes.patch b/meta-oe/recipes-bsp/flashrom/flashrom/meson-fixes.patch
-deleted file mode 100644
-index e45236ee07..0000000000
---- a/meta-oe/recipes-bsp/flashrom/flashrom/meson-fixes.patch
-+++ /dev/null
-@@ -1,68 +0,0 @@
--Add a ftdi option alongside USB and PCI to control the external dependency, and
--ensure that the build is successful in all combinations of options.
--
--Upstream-Status: Pending
--Signed-off-by: Ross Burton <ross.burton@arm.com>
--
--diff --git a/meson.build b/meson.build
--index 375089c..0df9d69 100644
----- a/meson.build
--+++ b/meson.build
--@@ -91,6 +91,8 @@ else
--   config_digilent_spi = false
--   config_developerbox_spi = false
--   config_pickit2_spi = false
--+  config_stlinkv3_spi = false
--+  config_usbblaster_spi = false
-- endif
-- 
-- # some programmers require libpci
--@@ -118,6 +120,21 @@ else
--   config_satasii = false
-- endif
-- 
--+# some programmers require libftdi
--+if get_option('ftdi')
--+  deps += dependency('libftdi1')
--+else
--+  config_ft2232_spi = false
--+  config_usbblaster_spi = false
--+endif
--+
--+if not (target_machine.cpu_family() == 'x86' or target_machine.cpu_family() == 'x86_64')
--+  config_satamv = false
--+  config_nic3com = false
--+  config_rayer_spi = false
--+  config_nicrealtek = false
--+endif
--+
-- # set defines for configured programmers
-- if config_atahpt
--   srcs += 'atahpt.c'
--@@ -163,7 +180,6 @@ endif
-- if config_ft2232_spi
--   srcs += 'ft2232_spi.c'
--   cargs += '-DCONFIG_FT2232_SPI=1'
---  deps += dependency('libftdi1')
--   cargs += '-DHAVE_FT232H=1'
-- endif
-- if config_gfxnvidia
--@@ -216,6 +232,7 @@ endif
-- if config_nicintel
--   srcs += 'nicintel.c'
--   cargs += '-DCONFIG_NICINTEL=1'
--+  need_raw_access = true
-- endif
-- if config_nicintel_eeprom
--   srcs += 'nicintel_eeprom.c'
--diff --git a/meson_options.txt b/meson_options.txt
--index ea87311..b6b842d 100644
----- a/meson_options.txt
--+++ b/meson_options.txt
--@@ -1,5 +1,6 @@
-- option('pciutils', type : 'boolean', value : true, description : 'use pciutils')
-- option('usb', type : 'boolean', value : true, description : 'use libusb1')
--+option('ftdi', type : 'boolean', value : true, description : 'use libftdi')
-- 
-- option('config_atahpt', type : 'boolean', value : false, description : 'Highpoint (HPT) ATA/RAID controllers')
-- option('config_atapromise', type : 'boolean', value : false, description : 'Promise ATA controller')
-diff --git a/meta-oe/recipes-bsp/flashrom/flashrom_1.2.1.bb b/meta-oe/recipes-bsp/flashrom/flashrom_1.4.0.bb
-similarity index 74%
-rename from meta-oe/recipes-bsp/flashrom/flashrom_1.2.1.bb
-rename to meta-oe/recipes-bsp/flashrom/flashrom_1.4.0.bb
-index b2592d294b..b650e15872 100644
---- a/meta-oe/recipes-bsp/flashrom/flashrom_1.2.1.bb
-+++ b/meta-oe/recipes-bsp/flashrom/flashrom_1.4.0.bb
-@@ -3,12 +3,12 @@ LICENSE = "GPL-2.0-or-later"
- HOMEPAGE = "http://flashrom.org"
- 
- LIC_FILES_CHKSUM = "file://COPYING;md5=751419260aa954499f7abaabaa882bbe"
--SRC_URI = "https://download.flashrom.org/releases/flashrom-v${PV}.tar.bz2 \
--           file://meson-fixes.patch \
-+SRC_URI = "https://download.flashrom.org/releases/flashrom-v${PV}.tar.xz \
-            file://0001-flashrom-Mark-RISCV-as-non-memory-mapped-I-O-archite.patch \
--           file://0001-hwaccess-use-__asm__-as-is-done-elsewhere.patch \
-+           file://0002-meson-Add-options-pciutils-ftdi-usb.patch \
-            "
--SRC_URI[sha256sum] = "89a7ff5beb08c89b8795bbd253a51b9453547a864c31793302296b56bbc56d65"
-+
-+SRC_URI[sha256sum] = "eb0eb3e61a57fd1926c66f08664cf04a96f92cee23b600cf563087c2178d70d8"
- 
- S = "${WORKDIR}/flashrom-v${PV}"
- 
-@@ -18,3 +18,5 @@ PACKAGECONFIG ??= "pci usb ftdi"
- PACKAGECONFIG[pci] = "-Dpciutils=true,-Dpciutils=false,pciutils"
- PACKAGECONFIG[usb] = "-Dusb=true,-Dusb=false,libusb"
- PACKAGECONFIG[ftdi] = "-Dftdi=true,-Dftdi=false,libftdi"
-+
-+EXTRA_OEMESON="-Dbash_completion=disabled -Dtests=disabled"
--- 
-2.42.0
-
+SSdsbCBoYXZlIGEgbG9vayB3aGVuIEkgZ2V0IGEgY2hhbmNlDQoNCi0tLS0tT3JpZ2luYWwgTWVz
+c2FnZS0tLS0tDQpGcm9tOiB5YW5neGluZ3VpIDx5YW5neGluZ3VpQGh1YXdlaS5jb20+IA0KU2Vu
+dDogV2VkbmVzZGF5LCBNYXJjaCAxMiwgMjAyNSA5OjQ1IEFNDQpUbzogSm9obiBHYXJyeSA8am9o
+bi5nLmdhcnJ5QG9yYWNsZS5jb20+OyBsaXlpaGFuZzlAaHVhd2VpLmNvbTsgeWFuYWlqaWVAaHVh
+d2VpLmNvbQ0KQ2M6IGplamJAbGludXguaWJtLmNvbTsgTWFydGluIFBldGVyc2VuIDxtYXJ0aW4u
+cGV0ZXJzZW5Ab3JhY2xlLmNvbT47IGxpbnV4LXNjc2lAdmdlci5rZXJuZWwub3JnOyBsaW51eC1r
+ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eGFybUBodWF3ZWkuY29tOyBwcmltZS56ZW5nQGh1
+YXdlaS5jb207IGxpdXlvbmdsb25nQGh1YXdlaS5jb207IGthbmdmZW5nbG9uZ0BodWF3ZWkuY29t
+OyBsaXlhbmd5YW5nMjBAaHVhd2VpLmNvbTsgZi5mYW5namlhbkBodWF3ZWkuY29tOyB4aWFiaW5n
+MTRAaC1wYXJ0bmVycy5jb20NClN1YmplY3Q6IFJlOiBbUEFUQ0ggdjMgMS8zXSBzY3NpOiBoaXNp
+X3NhczogRW5hYmxlIGZvcmNlIHBoeSB3aGVuIFNBVEEgZGlzayBkaXJlY3RseSBjb25uZWN0ZWQN
+Cg0KSGksIEpvaG4NCg0KT24gMjAyNS8zLzExIDE6NDUsIEpvaG4gR2Fycnkgd3JvdGU6DQo+IE9u
+IDEwLzAzLzIwMjUgMTM6MDksIHlhbmd4aW5ndWkgd3JvdGU6DQo+PiBPbiAyMDI1LzIvMjUgMTY6
+MTksIEpvaG4gR2Fycnkgd3JvdGU6DQo+Pj4gT24gMjUvMDIvMjAyNSAwMTo0OCwgeWFuZ3hpbmd1
+aSB3cm90ZToNCj4+Pj4+DQo+Pj4+Pg0KPj4+Pj4gcG04MDAxIHNlbmRzIHNhc19ub3RpZnlfcG9y
+dF9ldmVudChzYXNfcGh5LCBQT1JURV9MSU5LX1JFU0VUX0VSUiwpIA0KPj4+Pj4gbGluayByZXNl
+dCBlcnJvcnMgLSBjYW4geW91IGNvbnNpZGVyIGRvaW5nIHRoYXQgaW4gDQo+Pj4+PiBoaXNpX3Nh
+c191cGRhdGVfcG9ydF9pZCgpIHdoZW4geW91IGZpbmQgYW4gaW5jb25zdGFudCBwb3J0IGlkPw0K
+Pj4+PiBDdXJyZW50bHkgZHVyaW5nIHBoeXVwLCB0aGUgaHcgcG9ydCBpZCBtYXkgY2hhbmdlLCBh
+bmQgdGhlIA0KPj4+PiBjb3JyZXNwb25kaW5nIGhpc2lfc2FzX3BvcnQuaWQgYW5kIHRoZSBwb3J0
+IGlkIGluIGl0Y3QgYXJlIG5vdCANCj4+Pj4gdXBkYXRlZCBzeW5jaHJvbm91c2x5LiBUaGUgcHJv
+YmxlbSBjYXVzZWQgaXMgbm90IGEgbGluayBlcnJvciwgc28gd2UgDQo+Pj4+IGRvbid0IG5lZWQg
+ZGVmb3JtIHBvcnQsIGp1c3QgdXBkYXRlIHRoZSBwb3J0IGlkIHdoZW4gcGh5dXAuDQo+Pj4NCj4+
+PiBTdXJlLCBidXQgSSBhbSBqdXN0IHRyeWluZyB0byBrZWVwIHRoaXMgc2ltcGxlLiBJZiB5b3Ug
+ZGVmb3JtIGFuZCANCj4+PiByZWZvcm0gdGhlIHBvcnQgLSBhbmQgc28gbG9zZSBhbmQgZmluZCB0
+aGUgZGlzayAod2hpY2ggZG9lcyB0aGUgaXRjdCANCj4+PiBjb25maWcpIC0gd2lsbCB0aGF0IHNv
+bHZlIHRoZSBwcm9ibGVtPw0KPj4+DQo+PiBXZSBmb3VuZCB0aGF0IHdlIG5lZWQgdG8gcGVyZm9y
+bSBsb3NlIGFuZCBmaW5kIGZvciBhbGwgZGV2aWNlcyBvbiB0aGUgDQo+PiBwb3J0IGluY2x1ZGlu
+ZyB0aGUgbG9jYWwgcGh5IGFuZCB0aGUgcmVtb3RlIHBoeS4gVGhpcyBwcm9jZXNzIHN0aWxsIA0K
+Pj4gcmVxdWlyZXMgdHJhdmVyc2luZyB0aGUgcGh5IGluZm9ybWF0aW9uIGNvcnJlc3BvbmRpbmcg
+dG8gYWxsIGRldmljZXMgDQo+PiB0byByZXNldCBhbmQgaXQgaXMgYWxzbyBuZWNlc3NhcnkgdG8g
+Y29uc2lkZXIgdGhhdCB0aGVyZSBpcyBhIHJhY2UgDQo+PiBiZXR3ZWVuIGRldmljZSByZW1vdmFs
+IGFuZCB0aGUgY3VycmVudCBwcm9jZXNzLsKgIGl0IGxvb2tzIHNpbWlsYXIgdG8gDQo+PiBzb2x1
+dGlvbiBvZiB1cGRhdGUgcG9ydCBpZCBkaXJlY3RseS4gQW5kIHRoZXJlIHdpbGwgYmUgdGhlIHBy
+b2JsZW0gDQo+PiBtZW50aW9uZWQgYWJvdmUuIGUuZywgZHVyaW5nIGVycm9yIGhhbmRsaW5nLCB0
+aGUgcmVjb3Zlcnkgc3RhdGUgd2lsbCANCj4+IGxhc3QgZm9yIG1vcmUgdGhhbiAxNSBzZWNvbmRz
+LCBhZmZlY3RpbmcgdGhlIHBlcmZvcm1hbmNlIG9mIG90aGVyIA0KPj4gZGlza3Mgb24gdGhlIHNh
+bWUgaG9zdC4NCj4gDQo+IEhvdyBkbyB5b3UgZXZlbiBkZXRlY3QgdGhlIHBvcnQgaWQgaW5jb25z
+aXN0ZW5jeSBmb3IgdGhlIGRldmljZSBhdHRhY2hlZCANCj4gYXQgdGhlIHJlbW90ZSBwaHk/IEZv
+ciB0aGlzIHNlcmllcywgeW91IGNvdWxkIGRldGVjdCBpdCBhdCB0aGUgcGh5IA0KPiB1cC9kb3du
+IGhhbmRsZXIgZm9yIHRoZSBkaXJlY3RseSBhdHRhY2hlZCBkZXZpY2UgLSBob3cgd291bGQgaXQg
+YmUgDQo+IHRyaWdnZXJlZCBmb3IgdGhlIHJlbW90ZSBwaHk/DQoNClRoZSBjdXJyZW50IHByb2Js
+ZW0gd2UgYXJlIGZhY2luZyBvbmx5IGludm9sdmVzIGRpcmVjdGx5IGF0dGFjaGVkIA0KZGV2aWNl
+cy4gYSBuZXcgdmVyc2lvbiBiYXNlZCBvbiB5b3VyIHN1Z2dlc3Rpb24uDQoNClRoYW5rcywNClhp
+bmd1aQ0K
 
