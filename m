@@ -1,169 +1,158 @@
-Return-Path: <linux-kernel+bounces-558193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08C4A5E2B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:27:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E0D4A5E2B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:27:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3909D3BC5FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:26:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 915F416EF93
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B2725744E;
-	Wed, 12 Mar 2025 17:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6766B257AF7;
+	Wed, 12 Mar 2025 17:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="ESlNCfYp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oOLWqqPe"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cSPN1kFI"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F66824BC09;
-	Wed, 12 Mar 2025 17:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1819E257AC9;
+	Wed, 12 Mar 2025 17:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741800054; cv=none; b=gjByeObuccBZBt3mip5R8ShyvEzdzgRfkbg8DoVIelcNT9nx1186jM4uRX6uEF5/9BaBdfSIjXGN81A48QS61fIvZWgREm3j2DfPMgeep3D86vCtHjr88pjGTj6p/KLe7htwOmqN8eMGzR8QnqXEFX2GYAmps8jJsAI48QdVpZM=
+	t=1741800076; cv=none; b=kWlIzuKvd5iMwYR1CqY+Z5qREi/pOEZoeqOLWqFEVTQX2ieJ+cwyhZPOC6tzkMEi6LzKhJgpqFumW8JrwE3pG/qC1bpc3fAwDvLEThFAmsfn+CqEQdGx5XuMVA3gW6CmVIjv+mgbPL2eSxZjUWPu6NsA3dw7C6ggf2KXYE925dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741800054; c=relaxed/simple;
-	bh=5O13yplnFhNunuhJ3wr9SnEC4OAOFAhqMT5eu6N73PE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kd9OjFLRscck0CL2c9RnlNgheFaHnRbsd9V1HVtBi6vpC/qWcv93diPx9uEmUA/Rma6ExR60YATHJi6qXE06v1+GZ8TKIRez8W7HWZJ4SnYCkp9aLx3UBnqBreafBjcd8SmlOd4574EOcabQYXk2+Cwm5WIHccjH6S5yYVN8gsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=ESlNCfYp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oOLWqqPe; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 62EE125402DB;
-	Wed, 12 Mar 2025 13:20:50 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Wed, 12 Mar 2025 13:20:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1741800050; x=1741886450; bh=1/6diSKHHw
-	xZi7Q5f0dDcfiEIdTViztZvS+b3ZuEBj4=; b=ESlNCfYpliwTi2JDBB7PwCYBG4
-	nzmaU6WeWt3AkReAAsYyW15A6sjGyrEt7n23ZGbQXjQ1C9CGIXqlOLumP2JvT/bg
-	ddKclGfAIYBn2IawSrrNTSX6v3L3OL6MXLo7hKJRTDV6VSfQ8Rb0te3gwq9ByLXS
-	IpPkdSJf8vikV9gze7knWG9YCT1x8uVaVU4ioVSwmPkcAT9ZPrqQ6ewNd8JdV+jp
-	1nbxl04O7uFGbnIKzhROArhKG3cNZMVYCuHjdLE4giHNNesA+BGSUmEE4ibbPRZB
-	RgD34z5NYsuqxu2FFde/8wfA9zuYo58lN0xhqL7ODOThdj1zZyukgPTgoBBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1741800050; x=1741886450; bh=1/6diSKHHwxZi7Q5f0dDcfiEIdTViztZvS+
-	b3ZuEBj4=; b=oOLWqqPel1N9bBe3316fSDcmCy1MYoAldK2Da47If9fuiiFOC7h
-	GBSWJOayA1Ma+9WqsOmlp8nLp3JQHP1saTstjXqK0/2CDt7wL0EtRW3vOA2zLSkH
-	uKgQL1hotGJ5ng7eALG5gYc0ag2NbbBhIIlhbife6y7sQcQSj+Vs0lVOny2xirAY
-	DBIwDVghg5Ue4kkSGwg4iXSEndF8D758syoYbR2Nioc7Z5Mn6CuTEkCGahg4vbRc
-	B8oNo8HKaLXMv9AYYe3hfs7R8xy4BDfqaCnEOyhwbzkdnHep1Db94yNiQgIWIJB7
-	vB2nkRi0scHA4O3s+eFTMwU0rsxyzvMOYjA==
-X-ME-Sender: <xms:cMLRZzVkCojzny6SeSOWfgK3IY8Vw-LnhxzERX62YgzrRhqCG6w_Qg>
-    <xme:cMLRZ7lkRuF0V6Yg3INZDebcAaZlQVKD0QjJ4cWneT7LeYx6YCgBaLVTVQ5QRxMD2
-    hSVfVN87alqhA>
-X-ME-Received: <xmr:cMLRZ_ZwY2l6sraCTCXYquckomQdLjpHohp3BIrjpS2g4iH6kueCf8wmUZUfNM8ojuJBhZ4R4ahQz3UKoPJwKMl5_Tnzk8sO5YDfog>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdehieehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecugg
-    ftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeu
-    fefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopedutddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrg
-    hupdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmvges
-    khhlohgvnhhkrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
-    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:cMLRZ-WIf_IldB65gC4WVYA5MBZPczpfBIquCgXx4zGovduoCc6Cmg>
-    <xmx:cMLRZ9nLqtrwUzoAyBWG9VJRhcSUfM5ocW46qV5c6SdbPPRHvDGutA>
-    <xmx:cMLRZ7dd0CijYbC_nX_LTFrzVSdFVyjBahFQEjh33hmBSJObQhmphg>
-    <xmx:cMLRZ3HiOx5bKDGxibopUpsbiJ51FlLs7ycNM5WjR1CnaapF2prYiA>
-    <xmx:csLRZ2cGsCmrFjJlK6FFn_kROxkxmvuzoTBAyk2ly2XvAg1ZIHkeQsCi>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Mar 2025 13:20:47 -0400 (EDT)
-Date: Wed, 12 Mar 2025 18:20:45 +0100
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Message-ID: <2025031235-trailside-unexpired-88c6@gregkh>
-References: <20250312220950.28ed9ad7@canb.auug.org.au>
+	s=arc-20240116; t=1741800076; c=relaxed/simple;
+	bh=ezMQJDDH5pZGdCgBouyFM/QwN7NNld6MDFPteWYa7us=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VLB+GlIBW6OZnDnqllbuwNlYUBgboPk3kvHkNM3LEfRQ6U+NwaFc4tXXzCt3096ednXJbjuR1K6uYrh9f5C6UDJ50+0iUN2V1izvdMo2FpYYF0LguEpQaCbX+vm5gPRijbXfQ92DvnksNnBfEd3CnK7RX4lUNE0Qtc+P8lHGhrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cSPN1kFI; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e6194e9d2cso8965593a12.2;
+        Wed, 12 Mar 2025 10:21:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741800073; x=1742404873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L2jxprZq6/TlXm3X2dWej9t/G/kOGcm/J/rsTCWSbuc=;
+        b=cSPN1kFITvuitElohoEdUbo7SHs+3p3+EcRrPhUsaP11Z1BsZLIKda5b7+c1924kWN
+         JM1wLZdmuG4B+HjrIM6dgKiWgSBQrmh53K5WQ2T6ucAGpyIIxEji6i11NJ7FSObVEL0/
+         c5Lh+9ybpZ0i3YOoeVV12GG8+TrZnPvI5zs56EULiLgJO+P+WHlTEtGAMh5+/xIeefkq
+         WODpz+G+dVT3YkCOL9LzXAHHaV6Ojt5SoWTkq1g7+pqWuICbNaI7pt/5FWs/0Te0pTXA
+         /AoxhbLXmgAPuF5sUoKhLIkNadE8ynf4aoFN10jtF+2mWIOH4Oga+LdyykFQA1DJWFIp
+         6r4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741800073; x=1742404873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L2jxprZq6/TlXm3X2dWej9t/G/kOGcm/J/rsTCWSbuc=;
+        b=Qp3v9nqw2mHZ3ui2eEgIpabxH0UrNf+P9LI2Rq9phS0qyfqnVkdS64CI1C5MADSj42
+         bubfRnOsCFaInJfwfTJMoIPkH0Kvon6VJOK3gOBRzjgJI697Y77iAhK2Pq3LT+Ndv5bz
+         /MjdO7FDEXs/xfNoi01c2+EIgfgMytNdHyLH86zXedsdmdVa+6I9hjHv78t8PLpucBZE
+         TEnWK/cvKaVoRRuvklOWzvC8kO8id3mmKubshd5dvi/3UJMvfeJJLN2Z+biInpJbZbKR
+         VNT2TvIDHl20MVgc4nWkNE3jPDGAwrVAzq8iR+hphEsFa+2X8EBUuT40vr2YPsf+YIOx
+         OUxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4/vet71xpcXt5SZwpBmlUj49uOEYrAQCzt/MHJeMtanRHK0mjfunhVNb9nGCiyF84ENCPqs36Ue81yBXG@vger.kernel.org, AJvYcCXE1Neg7nqPRjeT3Kd/c25zNjdRm8XiSq+Qoolv7zDMDq0AedZuq514R16mYBnoQlyDeve8o2NIl/4rBK/i@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq/pxLnGg/9Rcd2bXJEiIHsIkqv9dU7wMbELRgInz6g7DIhUb6
+	+1XaJX8YpqHz10jLUdkcCvOnvzBLFRDNo2yPwrTgEXEeRdKCOE6tOXRcacvzaK+SQeT1s4yy/yw
+	zEsA6IiYazLVEgCvjejy2VUzmoa8=
+X-Gm-Gg: ASbGnct7qbVWGMCooPv1jL7vJxOREJHGQsNaMymEvS1nackZfMs03q49nlqAXq4fSqk
+	lOo4VKPD7sJeB7quBI3PUMLzn15MTbZzMmWJ6BiC430LNKbOf90nQGyNf12Atiw3WgsThlVgTMA
+	3auOjg01A1YCWHQ2ZLQOP3gLEFsQ==
+X-Google-Smtp-Source: AGHT+IGZKCdNaD46bQEQD4yCZY4m8lNuqNL5dctzGNqdvjioAt8O+CuBxKkpjPkJkDlAD+Y1hwqnOUC0RthR/bQa2T8=
+X-Received: by 2002:a05:6402:520c:b0:5e4:d402:5c20 with SMTP id
+ 4fb4d7f45d1cf-5e5e2115ccbmr31219131a12.0.1741800073124; Wed, 12 Mar 2025
+ 10:21:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312220950.28ed9ad7@canb.auug.org.au>
+References: <20250312161941.1261615-1-mjguzik@gmail.com>
+In-Reply-To: <20250312161941.1261615-1-mjguzik@gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 12 Mar 2025 18:21:01 +0100
+X-Gm-Features: AQ5f1JqIj1j0OFKelg4MBgowbjL56dyWWVXAOq0PAbFCx7yHBpgNlLd3p-OTPro
+Message-ID: <CAGudoHFH70YpLYXnhJq4MDtjJ6FiY59Xn-D_kTB9xsE2UTJD_g@mail.gmail.com>
+Subject: Re: [PATCH] fs: use debug-only asserts around fd allocation and install
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 12, 2025 at 10:09:50PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the driver-core tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> error[E0599]: no method named `readl` found for reference `&Bar<8>` in the current scope
->   --> drivers/gpu/nova-core/regs.rs:38:18
->    |
-> 38 |         Self(bar.readl(BOOT0_OFFSET))
->    |                  ^^^^^
->    |
-> help: there is a method `read8` with a similar name
->    |
-> 38 |         Self(bar.read8(BOOT0_OFFSET))
->    |                  ~~~~~
-> 
-> error: aborting due to 1 previous error
-> 
-> For more information about this error, try `rustc --explain E0599`.
-> 
-> Caused by commit
-> 
->   354fd6e86fac ("rust: io: rename `io::Io` accessors")
-> 
-> interacting with commit
-> 
->   54e6baf123fd ("gpu: nova-core: add initial driver stub")
-> 
-> from the drm-nova tree.
-> 
-> I applied the following merge fix patch for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 12 Mar 2025 21:36:48 +1100
-> Subject: [PATCH] fix up for "rust: io: rename `io::Io` accessors"
-> 
-> interacting with "gpu: nova-core: add initial driver stub"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+On Wed, Mar 12, 2025 at 5:19=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
+rote:
+>
+> This also restores the check which got removed in 52732bb9abc9ee5b
+> ("fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()")
+> for performance reasons -- they no longer apply with a debug-only
+> variant.
+>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 > ---
->  drivers/gpu/nova-core/regs.rs | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-> index 50aefb150b0b..b1a25b86ef17 100644
-> --- a/drivers/gpu/nova-core/regs.rs
-> +++ b/drivers/gpu/nova-core/regs.rs
-> @@ -35,7 +35,7 @@
->  impl Boot0 {
->      #[inline]
->      pub(crate) fn read(bar: &Bar0) -> Self {
-> -        Self(bar.readl(BOOT0_OFFSET))
-> +        Self(bar.read32(BOOT0_OFFSET))
->      }
->  
->      #[inline]
-> -- 
-> 2.45.2
-> 
+>
+> I have about 0 opinion whether this should be BUG or WARN, the code was
+> already inconsistent on this front. If you want the latter, I'll have 0
+> complaints if you just sed it and commit as yours.
+>
+> This reminded me to sort out that litmus test for smp_rmb, hopefully
+> soon(tm) as it is now nagging me.
+>
+>  fs/file.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/file.c b/fs/file.c
+> index 6c159ede55f1..09460ec74ef8 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -582,6 +582,7 @@ static int alloc_fd(unsigned start, unsigned end, uns=
+igned flags)
+>
+>         __set_open_fd(fd, fdt, flags & O_CLOEXEC);
+>         error =3D fd;
+> +       VFS_BUG_ON(rcu_access_pointer(fdt->fd[fd]) !=3D NULL);
+>
 
-Fix looks good to me, thanks!
+when restoring this check i dutifully copy-pasted the original. I only
+now mentally registered it uses a rcu primitive to do the load, while
+the others do a plain load. arguably the former is closer to being
+correct and it definitely does not hurt
 
-greg k-h
+so this line should replace the other 2 lines below. i can send a v2
+to that effect, but given the triviality of the edit, perhaps you will
+be happy to sort it out
+
+>  out:
+>         spin_unlock(&files->file_lock);
+> @@ -647,7 +648,7 @@ void fd_install(unsigned int fd, struct file *file)
+>                 rcu_read_unlock_sched();
+>                 spin_lock(&files->file_lock);
+>                 fdt =3D files_fdtable(files);
+> -               WARN_ON(fdt->fd[fd] !=3D NULL);
+> +               VFS_BUG_ON(fdt->fd[fd] !=3D NULL);
+>                 rcu_assign_pointer(fdt->fd[fd], file);
+>                 spin_unlock(&files->file_lock);
+>                 return;
+> @@ -655,7 +656,7 @@ void fd_install(unsigned int fd, struct file *file)
+>         /* coupled with smp_wmb() in expand_fdtable() */
+>         smp_rmb();
+>         fdt =3D rcu_dereference_sched(files->fdt);
+> -       BUG_ON(fdt->fd[fd] !=3D NULL);
+> +       VFS_BUG_ON(fdt->fd[fd] !=3D NULL);
+>         rcu_assign_pointer(fdt->fd[fd], file);
+>         rcu_read_unlock_sched();
+>  }
+> --
+> 2.43.0
+>
+
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
