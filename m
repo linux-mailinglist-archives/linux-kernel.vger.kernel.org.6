@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-557399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E11DBA5D867
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:41:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E103A5D86C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:42:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9B01897BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07A551898147
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEF5236442;
-	Wed, 12 Mar 2025 08:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D296236454;
+	Wed, 12 Mar 2025 08:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6iFhnvY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ccRgj5Bc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3512235C1E;
-	Wed, 12 Mar 2025 08:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3A422E011;
+	Wed, 12 Mar 2025 08:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741768896; cv=none; b=gH+PZx9xm7MyAEsguj2YK97R+UC6RGyDm3i9A/7VEY/A2ao5D0PtrNfVZYjePt5TV4Zu1m3NfreqREIAXIm81KhK30xRgkgfUX7HhBB3/yti9y68NP95JfdIYliLNxdKPEXDTq8GDMT/uS30xijhfGbmAoSDbYfmZ+e3utVx1Dc=
+	t=1741768969; cv=none; b=G5JyaGZsHbYzOdhhvhXYPLmEmANbidnMh76bXEgdOsqZQBhf1Y0iDGW91+TND26vMFJoKCKjiWfkBjsPHg2XwyxLJxLYCR3MigR/zW/lqKtZw3ocfND9Ov52/p7uSNfAMoFsMYlJjoJkeckFWige9HiFdTvv0P6QKsH5DRBMjUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741768896; c=relaxed/simple;
-	bh=AJEYxyOtVrFZ3nXZfPSsRpVXddzQKsJIgqMyc1x0xhA=;
+	s=arc-20240116; t=1741768969; c=relaxed/simple;
+	bh=BstbsyyGd11C6Z5XYNF2rSSoyJ4hUfW5mmfNA3ehRpk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m73f5cR53vTPMJYomv3dBT9nBI38j1AxnM8Nts4EMLoU/YSUVdg0nb1qXBwrtnTxNf9EAekAeJ+XFqHVXkCbdPUgHMvNkekNQvFBpXM7KtB3tdah1Ne6tTPEIkykyelabNmk6AWAJ1X6HYxhRbWG5lFz8BSHW7IN+EXCQikHlo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6iFhnvY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6656C4CEE3;
-	Wed, 12 Mar 2025 08:41:30 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=nM6kseBCoEHG6TOqK2FshH+itaPpNaKSOrjiAn17yWCmN9rFjgOZztVbFHEW1FYkCrvP+A6u9fF7eMAovbgD280oVm7mSsaZfnosKXZRFifu6B/WOBHjlzbB0dzKjfpO8el8WvZb/bGK/J8zmtORFRYC1Z5u4ShdrbW02kkLouY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ccRgj5Bc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14D1C4CEE3;
+	Wed, 12 Mar 2025 08:42:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741768896;
-	bh=AJEYxyOtVrFZ3nXZfPSsRpVXddzQKsJIgqMyc1x0xhA=;
+	s=k20201202; t=1741768969;
+	bh=BstbsyyGd11C6Z5XYNF2rSSoyJ4hUfW5mmfNA3ehRpk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N6iFhnvYqX6qWXtnRSkzucXrDVFrI/Pa/Gt5hvbkqDY6wJqk2cvrmplcQTbIG0aPV
-	 8Nz9EQf1Fjp9pzfxA0ZFG/YLfOTlB3tBJ0lm452gPDLHBjAJG3+IVCGYCnS1Xe1hJn
-	 UzlBpvzOJ6OEsZCxab1WBUlgDGdkuITy6geXVk9+zbyWsHre9e7nr0nA5Sog/NiZeO
-	 EGdke37JeS8OaMPx6WBsAphJoFXzQAxtuxMCyh727DMhSeIfrQcsSaMawmfAC6YQp7
-	 7evkRxhvAMJsIxYnyqNuGqT3ABh3ketg87y9f4kR2TnO3+QMd5vNbVaUkQGujpGlg2
-	 3AGVIL4uuUT8A==
-Message-ID: <bdad1b69-e992-4f87-a1ad-09bac2f015ee@kernel.org>
-Date: Wed, 12 Mar 2025 09:41:28 +0100
+	b=ccRgj5Bc6KXIzs7dtfXwseKGogf22LSnyx40mLWPRNCDAJfEQfC/FNr++SH+yJMzk
+	 CwCt2E7sfhf7EsEpqV/inuMS0jCAMD9Y+wtKbeTdV0LfZcDBQP8mILhsbw7DSQb8a0
+	 qV+TCjed6dAsv7anskl04llX9SC3ZXN9o6R3rt9NkKaWJyYNhSq5bL1egQ30ZSExCJ
+	 /90IdWlXkUhphknQDUZX/RkvOiNJ+uBQxbkb2iYQzImaOGd8Qmxt21KP4P9f6o9T6V
+	 kveKaUPPxE0gYRJfzAmuFDCL62WUozZkSFa7X98sM75SixaO+tUePzKdN7LUVKHSyZ
+	 IbQhkdBiBOQog==
+Message-ID: <6e70f017-9ca0-41fb-8018-a93f19ff6038@kernel.org>
+Date: Wed, 12 Mar 2025 09:42:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC and
- EQ support
-To: Francesco Dolcini <francesco@dolcini.it>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- patches@opensource.cirrus.com
-Cc: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Francesco Dolcini <francesco.dolcini@toradex.com>,
- Charles Keepax <ckeepax@opensource.cirrus.com>
-References: <20250307135244.100443-1-francesco@dolcini.it>
- <20250307135244.100443-4-francesco@dolcini.it>
+Subject: Re: [PATCH 2/4] dt-bindings: media: qcom,sm8550-iris: document
+ SA8775p IRIS accelerator
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
+ <20250311-dtbinding-v1-2-5c807d33f7ae@quicinc.com>
+ <7e8350dc-dab4-4306-877c-59139b049e26@kernel.org>
+ <6de6ed76-d3fa-1939-d6b4-c11112751406@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,35 +109,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250307135244.100443-4-francesco@dolcini.it>
+In-Reply-To: <6de6ed76-d3fa-1939-d6b4-c11112751406@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/03/2025 14:52, Francesco Dolcini wrote:
-> +  wlf,in1l-as-dmicdat1:
-> +    type: boolean
-> +    description:
-> +      Use IN1L/DMICDAT1 as DMICDAT1, enabling the DMIC input path.
-> +
-> +  wlf,in1r-as-dmicdat2:
-> +    type: boolean
-> +    description:
-> +      Use IN1R/DMICDAT2 as DMICDAT2, enabling the DMIC input path.
-> +
-> +  wlf,gpio-cfg:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 4
-> +    maxItems: 4
-> +    description:
-> +      Default register values for R121/122/123/124 (GPIO Control).
-> +      If any entry has the value 0xFFFF, the related register won't be set.
-> +    default: [0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF]
-> +
-> +  wlf,mic-cfg:
-
-
-Isn't this the same as wlf,micbias-cfg from wm8994? If property matches,
-just use the same.
+On 11/03/2025 18:57, Vikash Garodia wrote:
+> 
+> 
+> On 3/11/2025 11:05 PM, Krzysztof Kozlowski wrote:
+>> On 11/03/2025 13:03, Vikash Garodia wrote:
+>>> Document the IRIS video decoder and encoder accelerator found in the
+>>> SA8775P platform. SA8775P has collapsible MX compared to SM8550.
+>> Does this make interface incompatible? Does not look like.
+> Just the phandle specifier in the DT property, otherwise same.
+I don't understand above. This is about hardware and its interface.
+Hardware does not care about DT or its phandles.
 
 Best regards,
 Krzysztof
