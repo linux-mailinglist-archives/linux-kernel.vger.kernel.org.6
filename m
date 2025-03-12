@@ -1,203 +1,363 @@
-Return-Path: <linux-kernel+bounces-557791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B863A5DDCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:20:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F5EA5DDCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:21:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9523E7AA782
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:18:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 012773B003A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8DE1EB18C;
-	Wed, 12 Mar 2025 13:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1767124501D;
+	Wed, 12 Mar 2025 13:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CvEuz8kA"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tZ4SfOjN"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2040.outbound.protection.outlook.com [40.107.243.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B0423A563
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741785587; cv=none; b=fTC+byjr6KiCIL/By24sKeFClL+KCAzu0+HTryZO55V83+CJ6I1LdJmPqIEuxHp1V9anOzu1NBYl/bokZEyFg46OVj85B4EYa53ZsgnELXaeSm5g3l0V650Yq6Ldy6+ueofSvi+wyacys5det99HvLKG26cmSzWao1XKSDd+brI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741785587; c=relaxed/simple;
-	bh=bOvM3Rb1c7XkWvdeF62rAy/ws7BeWUWiDQbJ7997piQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EMsqRCJYFo6wtp7ueP4JI/LvoRH5shln6TWMyhJTp+ASXbHUw6N2I2bsn94/dWNXxJPJfIKpNftrg6RuDso8iMOw5AffRKu9/kSDp8c8+UP9yFQG4yDRGUlEXBBRzfpQyDvkvJRfgqVMANoOiwt6n2bGXbKdErWtRkC+C5hONsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CvEuz8kA; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5e34f4e89so10666658a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 06:19:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741785584; x=1742390384; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TwOPRwvTyGZCimlRP4ylKx/o2Mk7nBeIZKavoovqttg=;
-        b=CvEuz8kASDgLAhMlcNIZMcz83jTRpDqAAzgyoZtyngJe7Pew3c1NrRJ6Lz75WJacq/
-         kwwabH2gSE0p3CbmR+zTwkLKdLDdcc8DXb/dLJ3dCCV7w4gvm8welOy8vIKsGANsJabH
-         M1xSXX1xXHeq8+iP/SbUhGg4pK97xTd7wbzfFi8UIp8l7nRXnYI8ghUf7TYVIzGTpSwM
-         TSBws/Xk2AM4d+/LTUJU6wl1c07y2NEnEVyhujFuXH9dRPqRI9eiiYLb4lTN7Z5JDpLW
-         8tR86DSunSOjagMRgyMp9k8bWLE+MhVDeYCDhihbqaWoKbTe8H17ig4A+a8iXUv3t7Mi
-         g/oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741785584; x=1742390384;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TwOPRwvTyGZCimlRP4ylKx/o2Mk7nBeIZKavoovqttg=;
-        b=Tpxdt+7eM9QvTOPXbA1MbNB/wvVkcf8y7Ky1dCq+03vef432H5zcZJ1I6UpPYzC3E8
-         7HvAqBl0ZnFgkYRZmNXMnJ92hfpzcx/jrAV+JAnfL1fpfEN0lU36OHna/ra563iRmhu8
-         cKsD69vgVAJFqgnDlnj7vnEr7xZ5g8/vkj2o8w6GSoFf1+EpYISIEhc1JR20m9YP9v8C
-         0Hq40nznwSwX2galPYOS3cTjIHMS9gHw3VoneZPref+FCF7XLejhgTPsCD4gcaTL3g5N
-         cw9fZ5+WbaH0rbfTAnAaO+MG0+bEN2I5Gx30SXwW6eYNqhwrETmeVzwmkDw1uc3uVJGm
-         Jm6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ7IPTpmHm3BAibP5jHax2Usgas+3opqdkY8MCTDJ/NL1xktKrneRtBa06Chs3D3NLKCLOXm1HtB3nVWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD1ekLQ2IkhdGKc3iE/i1Mjynzg/N94UrZVh/4bFxWYPTmDckl
-	1EPABnoLEldHFGkwG3UMRjb0rHFFaVhiIeKxq/0LZ9CIVwOdSxRFEzX84LcRdKdCjA9x0HRnUSF
-	v
-X-Gm-Gg: ASbGncuGoiBtX8Q1Zv7/ctL2R3aJ36tDwjCfYANdg+lwTqOadqm6CTQko3xDp/N/5IY
-	hiZad85esdIN4L5gGEnqlGoibDSfEmkg1PlgPhM5h5yQcTqkyLZ/PDPf1sugGhKa3V37IRlMly+
-	6wd88BoaTiLl8ibz49MK0m1fXPNL7Gckv+9mOSsCjGPWPSsqldfbm7hHuzpZlWGwsY9sLv8capf
-	emXfecU2e9PmvnTv4lGYV5Z2neHF6I4fES7EFf9oXsYKctDRo5uC0MUOlDSISOKzXgxfHNc1GQy
-	hG0RkNSxer8/3Z8chf5eZXPbL5wTJZEcjzzgnfRB8gsNEMe3fREZdFdDO8Q=
-X-Google-Smtp-Source: AGHT+IFzsh4BD3ATv/xGrDU3lT987ULOwDI2KQNLC/6p9B+kW/K648uP7PICWdPatgLjkwI5X/NRIw==
-X-Received: by 2002:a17:907:9490:b0:ab7:9df1:e562 with SMTP id a640c23a62f3a-ac252fe7196mr2436981766b.48.1741785583831;
-        Wed, 12 Mar 2025 06:19:43 -0700 (PDT)
-Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:f2c4:b081:2e8a:cec5])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2773e8641sm735182466b.165.2025.03.12.06.19.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 06:19:43 -0700 (PDT)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Wed, 12 Mar 2025 14:19:27 +0100
-Subject: [PATCH] pinctrl: qcom: Clear latched interrupt status when
- changing IRQ type
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2564C23F38F;
+	Wed, 12 Mar 2025 13:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741785636; cv=fail; b=fQ6sIxW+Htb9H2EM/RKDyCL4N2d/Z9ZasxegoXS8pv34ifB6mPU34RBuVEA9rl28rvGp7x4R6uW+irZcs0zxZRhQyRVdh9KAXtKNYqRwna/e+G1ho94Umlv5Wt/bZeaL70yQlPnBDAWOG7dAHQsCkLX+p+Ltx8LwwzlAIt71Kjs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741785636; c=relaxed/simple;
+	bh=DpLe6Ud3xevf3RUZ3PdXQS1fLxi9P4GKPHqOUzTUdiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=acWmd3ZVzHHfky/4EHWNQtLW+7eyzjUx8itP0IoWFd5vDs58mV3b2rfotttv6sdFIqugNZhfqqm/K3I/dvGbNN/5kvTT36sRuTuhxVQB1i92TYBG7one8gr9DG2nlePwuMY2C4PYkQQMd0FJR7jl9IPqG97zJ5ol+wLRRZ2qaNo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tZ4SfOjN; arc=fail smtp.client-ip=40.107.243.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vYV5FxWnbipgErdCtdn+5bkkMlccO2ae7OEqw9cFLW4XOmcg/VBbKHqKbFg4A8FU2grBY6PnI/nSgY7YVzNmph+s+eHqg9AgPjgkVdaG84gU0kh0VcmacvMg/DeZFUzlForOoR0WlF4F9dQ78thHDJC13tkAkLF5NxQ5956UchYiNC1kWJOlPzLLaFZ/ar4S65CF6T9Hha1FwgGrV0dfxkJuJ55lHvj79Jp6LHEDhKF9FqTBpyQZPteJM8Ty9h0QRJKUXqvOGDbuhg4VIZz7tKkWn2KYNTcpZOHHKUwdw0xK5j0/YAsp2Nxc+JDlhJiBti1MphSLqTckxDZA9vuB3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a6Bkj6JK7YRnG3TUKweBX4iXRUS8pVsLEYyAqz+t1lo=;
+ b=K5t6LEcUzUGf3p6FO8VSHOKaCXHYij6aSTYIA1N85SESzb42+rEsPpVsXQOQSB5kmi8JHqPQzWOobV8Hr//Ivgphao3spPc+uoe8BIZBeNe3uxKSsudLn8Sod0HVV6BZnO93+e3HAN+V3Sm4bxcV01ycN38Oyc7ZhiDu2lYu7yjYZFASZN8tFp/Kel4JPaT5ldxu0/yvMhdeZXsPmQ8ovMi6dx/gi+bOUL2nJU5BymhUvA/2g5LqBx3jZYZf4L5nSwqISn2wzr6nRaIIiP3cRSsqxnxAyH+Se1/tivrJXaHd1Vhiik4guZDyCN0llw35k+eNfpq+a1gJ18qdfTNAdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a6Bkj6JK7YRnG3TUKweBX4iXRUS8pVsLEYyAqz+t1lo=;
+ b=tZ4SfOjNn+aax4KPT7dDdaNCz842TKiUi8IcnavP35ed1akkOtx2MF+GyMEX0SLmJ4xULzOReAVNLLaISjg2gwDO+52gix3HREVZmLBcZZ8mnS/idyWfFL859QYR9EPx2ehC7LEJBNRCc+eSBox08CZDEfO6g2HLAZQ0wps4zABPuO99aQVP6q9kJnls4iUDDwsblZQYKSBqzaD7PVyjpRz+e/fJehxA2KTzWRi0twSyPeaGRIFb0ei4c9ri8DFtDVYmae13qCcMIJ79rZrx+1tNKuL1YAc+x3TPP1ASJEeKUEprFpZtDik6cwNi7GipWggKsyCus31Jn6oJiFKukA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
+ by MN0PR12MB6293.namprd12.prod.outlook.com (2603:10b6:208:3c2::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
+ 2025 13:20:29 +0000
+Received: from SA3PR12MB7901.namprd12.prod.outlook.com
+ ([fe80::66fc:f8a2:1bfb:6de8]) by SA3PR12MB7901.namprd12.prod.outlook.com
+ ([fe80::66fc:f8a2:1bfb:6de8%7]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
+ 13:20:29 +0000
+Date: Wed, 12 Mar 2025 15:20:19 +0200
+From: Ido Schimmel <idosch@nvidia.com>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: andrew+netdev@lunn.ch, chenlinxuan@uniontech.com, czj2441@163.com,
+	davem@davemloft.net, edumazet@google.com, guanwentao@uniontech.com,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, niecheng1@uniontech.com, pabeni@redhat.com,
+	petrm@nvidia.com, zhanjun@uniontech.com
+Subject: Re: [PATCH net 1/2] mlxsw: spectrum_acl_bloom_filter: Expand
+ chunk_key_offsets[chunk_index]
+Message-ID: <Z9GKE-mP3qbmK9cL@shredder>
+References: <484364B641C901CD+20250311141025.1624528-1-wangyuli@uniontech.com>
+ <78951564F9FEA017+20250311141701.1626533-1-wangyuli@uniontech.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78951564F9FEA017+20250311141701.1626533-1-wangyuli@uniontech.com>
+X-ClientProxiedBy: FR4P281CA0111.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:bb::12) To SA3PR12MB7901.namprd12.prod.outlook.com
+ (2603:10b6:806:306::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250312-pinctrl-msm-type-latch-v1-1-ce87c561d3d7@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAN6J0WcC/x3MQQqAIBBA0avErBtQo8KuEi1EpxooE5UoorsnL
- d/i/wcSRaYEQ/VApJMTH75A1hXY1fiFkF0xKKFa0UiJgb3NccM97ZjvQLiZbFfshNaGHPVOKyh
- xiDTz9Y/H6X0/npgpj2gAAAA=
-X-Change-ID: 20250311-pinctrl-msm-type-latch-6099aede7d92
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
- Douglas Anderson <dianders@chromium.org>, 
- Maulik Shah <quic_mkshah@quicinc.com>, Stephen Boyd <swboyd@chromium.org>, 
- linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA3PR12MB7901:EE_|MN0PR12MB6293:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c79cb6b-bdb5-4211-3db1-08dd6168a8e8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tCzzZ6dPvD9dFHliH5kh5JAqSmSJbf7QhNr6FkOEM3au1bCA98nVUKTNS6CO?=
+ =?us-ascii?Q?uXCyr8q1TDzax7khzNATJUjccTi04pFl1g7KmglwWG+CePV6qa08s8pqgb1E?=
+ =?us-ascii?Q?Li+SAe0rLs+As5yOhtWoJ4435g2smUMzTZtwKs5JakDZmJUktYAVoc7JSArN?=
+ =?us-ascii?Q?CYQDfU5/QobDSHVWdL/KNNC8CalQinxzyXXPZxarZSLDnpHIm7fyPL3vJJvT?=
+ =?us-ascii?Q?cLSw0iDkmbeNNlr17dCaEtGFIz9Mp2zRsn3EYbIq+aplBypLN9mIfHoI+k75?=
+ =?us-ascii?Q?7e1D7lYtix2rtM7i83PCKmbbWJKb2V7BP1W8kffIFMfeBmCdbzsF+tcnemQ6?=
+ =?us-ascii?Q?SBMywNVd1kko/X5vtLnZ6QEr4uNJ8HSZBK1bBle7gFojZLgJMN44u2GAoJBL?=
+ =?us-ascii?Q?ZEdOwMOXk8tPVnkVwOE0K2d4I1W62sJUjfRO0uDqSghiKSBPCbriaao+p+yA?=
+ =?us-ascii?Q?SsHMVNCYTfkzMp0AQ7cvKNbU2y/zoZoqFDm2+ujp3ZJgg4Zo7pZ9dzTHC7+W?=
+ =?us-ascii?Q?IyNp2GgzB7kBHk9chF10h1iTVjLUiW/q/0NS1BfWxNjc8VEdQBsjkJeM0Pmp?=
+ =?us-ascii?Q?bPI9I4v6o74q8XSFQSl8IQCJBue339oCSfxVcdfN3Rb7CqWmrkNUb0cNAiGC?=
+ =?us-ascii?Q?sDf7GCOaXS1JJkkQLgoPRrGsmgNOOw7T40oR/X0Lp6HefBOeETDX3dS1LrTk?=
+ =?us-ascii?Q?XXrLQoZePEASIkMGQO+k2H0sFhWnaVCZixjKpukslqOGI3lBzQHTfAcJzKW1?=
+ =?us-ascii?Q?ndFQMBpM1JJd7vcEtHIxdMidWuvf7OMvuLwceH9qMVQsHEhbn/O5x4oFl4Yo?=
+ =?us-ascii?Q?NQFxG/30VOyHjD+W+bJdclwmbscSpeaBGcPBynrmZNQR4W0+fRQnmDoq+/OV?=
+ =?us-ascii?Q?YGLhBG45nwiY6DOOlOhEd/qUL2uRWgTKUdkyjbz/rjBamjI7u+KOZvA/Mvk0?=
+ =?us-ascii?Q?sNcP7+/mKaETvUoWZl9HH0yg89CuNXNsXYgTlGMBXndJv6USApt5PtJdoEhk?=
+ =?us-ascii?Q?KtDoFaGVHoDmlfScVdzfipeYGsjCOcb/Zly2SQbiSo0JqRbWS1BBSO5NhsGH?=
+ =?us-ascii?Q?Ga5Io5uls/UB5hD0Mm0fnWZMoZoYf1kgvoD09d3UPrsrt5rUVOL85mKH8Wh+?=
+ =?us-ascii?Q?BdGg0v9eUqvShAeiLE+cT/+kKph6L11HMAZRuP4FtUgwmOM66RfXMkztFvrJ?=
+ =?us-ascii?Q?gRi4mjXKIw0BgwaHyvquKnkh+dcXOZE0l4nHR1fySz4DIprVbdDEtcl3RQ92?=
+ =?us-ascii?Q?4l5p44zU0WnYAVJv7tRYv8YOw2rCry46lx+jk3fKrQSSkB27h8RleS3FNMpr?=
+ =?us-ascii?Q?2wys63Yk3ofeBa+fIIJWEmjp70C1DZw76ebuiIcT8BVY4zOzWEzwcmdcklnV?=
+ =?us-ascii?Q?lLcIj0V6dF1hLSXzmum8Tj6QM1Ml?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR12MB7901.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?TIAJCjcw1/GPeMmzoYTqwPJRiq4zMVEg0JSX5PZ9LpMTtcy/H49X5YkJGDMA?=
+ =?us-ascii?Q?iIBwt4oPvYAI73NGIvjdi7lcfLTnmuHJEiEY2kIVrfM8a+g2S68P1ztgw/dI?=
+ =?us-ascii?Q?D4Q1FrP7yV4Kq45MuDCYgSTw/IDKm9YfMtFt0TRhIRi6Lf+6suJLEifEt6RZ?=
+ =?us-ascii?Q?0kBrJyf8bbI4D7r5XcTjhMLdfWLG6v5yTqr4RxyMBaUCag25GfDPCWA56Aox?=
+ =?us-ascii?Q?pjNtKRk/pqzsighTzmZBymPUrC7lh1vH3atYDBAXHqre8MdiIVKW7OPB2JKP?=
+ =?us-ascii?Q?XjlHlDUKpDgR37US/3z+XikwZ++h4QbGLHQudDaSS7dnZpoDjew08D6UHZIX?=
+ =?us-ascii?Q?/EvcUFmat5inrW5Yzxs6C/XXwFYuU+tpoJrfsCegY7R50b+RAvoigB/ZiUHz?=
+ =?us-ascii?Q?un+ZTzAZc60bb99cGgUwgKwkaJzMi19sJfMLnimFKZoGQdGEMQ3cPCLVhStt?=
+ =?us-ascii?Q?4YXV5JEcfUAvx4C5Kd0sxQVTsNqtYkvA9A8+hu1Ah7dnJQ5+RTl0BP+irzrn?=
+ =?us-ascii?Q?U8JJXFf4AOhQIQ0oWUzhOiSzGmE+lxmPyVDbM/0UTDOF/O1rBobu6smSJq/w?=
+ =?us-ascii?Q?QoYdiAC5yptKcKNw7UxlNxaVNC6DHElWpEWmUBCI8hZN9uhVJPMt4Tpi2sf9?=
+ =?us-ascii?Q?aez+EKrqFPTRZc4qh3czdBHG0S0NXrsR31zGRQ/+D/evnyrHo6CHLKaTIh2I?=
+ =?us-ascii?Q?ZXz+jcjuzJjiueisDRcfw5INFUwMFHqSGkj4vkIG7cpBZK3LmwiA2FjNnLEf?=
+ =?us-ascii?Q?o8fVNyYJ2P9qzHqBXdrRkih1pDWvIlwbIYvth1YfYA21lDrC71yJYhQq5GU7?=
+ =?us-ascii?Q?+GsEk8AlaQ8PHV0RtUu3CBuvZN5ScXjZ4gQadisdhO2necogWT3f8EJihVDz?=
+ =?us-ascii?Q?el0dxTgrbt83tBJSnX4ddFVImVtHT/X1E850rGQWy2I101h37GUPJLsVXeLW?=
+ =?us-ascii?Q?GGlJlVNeNsBHabU2MLavhf/9Y/hVwbwGm0agqHWjjrHu85URj2lISeEbXpzf?=
+ =?us-ascii?Q?l07l95Vl1ZbG9oQ6sj+plhsYSHzEYLw/ltu/tDCLP3V/KpEXJqhmES9OjM4r?=
+ =?us-ascii?Q?7VtwyaqKbU4jinjV5E/KbQcJRHQ/gZ20zN8Rui0SL4FG8KyzXzhwSDTf1y06?=
+ =?us-ascii?Q?ZDVyf0BQrCmAVTEw14XWKHeQOThy+Fw72/EHegwudtze7T0sqzyBlF1lceWL?=
+ =?us-ascii?Q?Kw6azNdEGkypIkqDq0iDppV7qmvLbteU9+zjzba/k0WaKTa4hpgCZ2AFfRjX?=
+ =?us-ascii?Q?E/x9NxAlvpSlvFM2NjWWZkl623UoIMxrlY69ghpBV2r8/ZtEimtcnVFoHwr1?=
+ =?us-ascii?Q?T6XSOlsTIHV+IjY1d1rj8bBWre7eGZQygc9LWFJW7QgRdVRNQ6nc9gK4A2mg?=
+ =?us-ascii?Q?WwZQdGZofdwns8aPbCGxDJGErSUsItHEYpv4qozEPmNLks50wP+zQqqPQoDD?=
+ =?us-ascii?Q?INcksrMn4DBPvpqnIXUUfxwU3o3kwI3OFhaBDBomVn6LEDkbdoM8dPCrw7Js?=
+ =?us-ascii?Q?GUQBLMnyYozmkwyK87qi+BYLCJWIz1VlzqW0CGG2A1PO6Srckfw9BwuqCqgx?=
+ =?us-ascii?Q?4PHQ4ZxX1Ooj9Q8u0Lyz7OFtRlKJkql9qTcCgfrb?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c79cb6b-bdb5-4211-3db1-08dd6168a8e8
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB7901.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 13:20:29.7212
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RuhHG1NIZpKtK83PQYyzZ19z7S10+rvzmlXQcucNTEo4b1iq4uMCBBBENij/UEekNLGlaVTygeEaxTxdhfu4hA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6293
 
-When submitting the TLMM test driver, Bjorn reported that some of the test
-cases are failing for GPIOs that not are backed by PDC (i.e. "non-wakeup"
-GPIOs that are handled directly in pinctrl-msm). Basically, lingering
-latched interrupt state is still being delivered at IRQ request time, e.g.:
+On Tue, Mar 11, 2025 at 10:17:00PM +0800, WangYuli wrote:
+> This is a workaround to mitigate a compiler anomaly.
+> 
+> During LLVM toolchain compilation of this driver on s390x architecture, an
+> unreasonable __write_overflow_field warning occurs.
+> 
+> Contextually, chunk_index is restricted to 0, 1 or 2. By expanding these
+> possibilities, the compile warning is suppressed.
 
-  ok 1 tlmm_test_silent_rising
-  tlmm_test_silent_falling: ASSERTION FAILED at drivers/pinctrl/qcom/tlmm-test.c:178
-  Expected atomic_read(&priv->intr_count) == 0, but
-      atomic_read(&priv->intr_count) == 1 (0x1)
-  not ok 2 tlmm_test_silent_falling
-  tlmm_test_silent_low: ASSERTION FAILED at drivers/pinctrl/qcom/tlmm-test.c:178
-  Expected atomic_read(&priv->intr_count) == 0, but
-      atomic_read(&priv->intr_count) == 1 (0x1)
-  not ok 3 tlmm_test_silent_low
-  ok 4 tlmm_test_silent_high
+I'm not sure why the fix suppresses the warning when the warning is
+about the destination buffer and the fix is about the source. Can you
+check if the below helps? It removes the parameterization from
+__mlxsw_sp_acl_bf_key_encode() and instead splits it to two variants.
 
-Whether to report interrupts that came in while the IRQ was unclaimed
-doesn't seem to be well-defined in the Linux IRQ API. However, looking
-closer at these specific cases, we're actually reporting events that do not
-match the interrupt type requested by the driver:
-
- 1. After "ok 1 tlmm_test_silent_rising", the GPIO is in low state and
-    configured for IRQF_TRIGGER_RISING.
-
- 2. (a) In preparation for "tlmm_test_silent_falling", the GPIO is switched
-        to high state. The rising interrupt gets latched.
-    (b) The GPIO is re-configured for IRQF_TRIGGER_FALLING, but the latched
-        interrupt isn't cleared.
-    (c) The IRQ handler is called for the latched interrupt, but there
-        wasn't any falling edge.
-
- 3. (a) For "tlmm_test_silent_low", the GPIO remains in high state.
-    (b) The GPIO is re-configured for IRQF_TRIGGER_LOW. This seems to
-        result in a phantom interrupt that gets latched.
-    (c) The IRQ handler is called for the latched interrupt, but the GPIO
-        isn't in low state.
-
- 4. (a) For "tlmm_test_silent_high", the GPIO is switched to low state.
-    (b) This doesn't result in a latched interrupt, because RAW_STATUS_EN
-        was cleared when masking the level-triggered interrupt.
-
-Fix this by clearing the interrupt state whenever making any changes to the
-interrupt configuration. This includes previously disabled interrupts, but
-also any changes to interrupt polarity or detection type.
-
-With this change, all 16 test cases are now passing for the non-wakeup
-GPIOs in the TLMM.
-
-Cc: stable@vger.kernel.org
-Fixes: cf9d052aa600 ("pinctrl: qcom: Don't clear pending interrupts when enabling")
-Reported-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Closes: https://lore.kernel.org/r/20250227-tlmm-test-v1-1-d18877b4a5db@oss.qualcomm.com/
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 47daa47153c970190b0d469dc8d245b3cbeace5e..82f0cc43bbf4f4d24f078af2d0a515d3a03b961a 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -1045,8 +1045,7 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	const struct msm_pingroup *g;
- 	u32 intr_target_mask = GENMASK(2, 0);
- 	unsigned long flags;
--	bool was_enabled;
--	u32 val;
-+	u32 val, oldval;
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
+index a54eedb69a3f..3e1e4be72da2 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
+@@ -110,7 +110,6 @@ static const u16 mlxsw_sp2_acl_bf_crc16_tab[256] = {
+  * +-----------+----------+-----------------------------------+
+  */
  
- 	if (msm_gpio_needs_dual_edge_parent_workaround(d, type)) {
- 		set_bit(d->hwirq, pctrl->dual_edge_irqs);
-@@ -1108,8 +1107,7 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	 * internal circuitry of TLMM, toggling the RAW_STATUS
- 	 * could cause the INTR_STATUS to be set for EDGE interrupts.
- 	 */
--	val = msm_readl_intr_cfg(pctrl, g);
--	was_enabled = val & BIT(g->intr_raw_status_bit);
-+	val = oldval = msm_readl_intr_cfg(pctrl, g);
- 	val |= BIT(g->intr_raw_status_bit);
- 	if (g->intr_detection_width == 2) {
- 		val &= ~(3 << g->intr_detection_bit);
-@@ -1162,9 +1160,11 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	/*
- 	 * The first time we set RAW_STATUS_EN it could trigger an interrupt.
- 	 * Clear the interrupt.  This is safe because we have
--	 * IRQCHIP_SET_TYPE_MASKED.
-+	 * IRQCHIP_SET_TYPE_MASKED. When changing the interrupt type, we could
-+	 * also still have a non-matching interrupt latched, so clear whenever
-+	 * making changes to the interrupt configuration.
- 	 */
--	if (!was_enabled)
-+	if (val != oldval)
- 		msm_ack_intr_status(pctrl, g);
+-#define MLXSW_SP4_BLOOM_CHUNK_PAD_BYTES 0
+ #define MLXSW_SP4_BLOOM_CHUNK_KEY_BYTES 18
+ #define MLXSW_SP4_BLOOM_KEY_CHUNK_BYTES 20
  
- 	if (test_bit(d->hwirq, pctrl->dual_edge_irqs))
+@@ -229,10 +228,9 @@ static u16 mlxsw_sp2_acl_bf_crc(const u8 *buffer, size_t len)
+ }
+ 
+ static void
+-__mlxsw_sp_acl_bf_key_encode(struct mlxsw_sp_acl_atcam_region *aregion,
+-			     struct mlxsw_sp_acl_atcam_entry *aentry,
+-			     char *output, u8 *len, u8 max_chunks, u8 pad_bytes,
+-			     u8 key_offset, u8 chunk_key_len, u8 chunk_len)
++mlxsw_sp2_acl_bf_key_encode(struct mlxsw_sp_acl_atcam_region *aregion,
++			    struct mlxsw_sp_acl_atcam_entry *aentry,
++			    char *output, u8 *len)
+ {
+ 	struct mlxsw_afk_key_info *key_info = aregion->region->key_info;
+ 	u8 chunk_index, chunk_count, block_count;
+@@ -243,30 +241,17 @@ __mlxsw_sp_acl_bf_key_encode(struct mlxsw_sp_acl_atcam_region *aregion,
+ 	chunk_count = 1 + ((block_count - 1) >> 2);
+ 	erp_region_id = cpu_to_be16(aentry->ht_key.erp_id |
+ 				   (aregion->region->id << 4));
+-	for (chunk_index = max_chunks - chunk_count; chunk_index < max_chunks;
+-	     chunk_index++) {
+-		memset(chunk, 0, pad_bytes);
+-		memcpy(chunk + pad_bytes, &erp_region_id,
++	for (chunk_index = MLXSW_BLOOM_KEY_CHUNKS - chunk_count;
++	     chunk_index < MLXSW_BLOOM_KEY_CHUNKS; chunk_index++) {
++		memset(chunk, 0, MLXSW_SP2_BLOOM_CHUNK_PAD_BYTES);
++		memcpy(chunk + MLXSW_SP2_BLOOM_CHUNK_PAD_BYTES, &erp_region_id,
+ 		       sizeof(erp_region_id));
+-		memcpy(chunk + key_offset,
++		memcpy(chunk + MLXSW_SP2_BLOOM_CHUNK_KEY_OFFSET,
+ 		       &aentry->ht_key.enc_key[chunk_key_offsets[chunk_index]],
+-		       chunk_key_len);
+-		chunk += chunk_len;
++		       MLXSW_SP2_BLOOM_CHUNK_KEY_BYTES);
++		chunk += MLXSW_SP2_BLOOM_KEY_CHUNK_BYTES;
+ 	}
+-	*len = chunk_count * chunk_len;
+-}
+-
+-static void
+-mlxsw_sp2_acl_bf_key_encode(struct mlxsw_sp_acl_atcam_region *aregion,
+-			    struct mlxsw_sp_acl_atcam_entry *aentry,
+-			    char *output, u8 *len)
+-{
+-	__mlxsw_sp_acl_bf_key_encode(aregion, aentry, output, len,
+-				     MLXSW_BLOOM_KEY_CHUNKS,
+-				     MLXSW_SP2_BLOOM_CHUNK_PAD_BYTES,
+-				     MLXSW_SP2_BLOOM_CHUNK_KEY_OFFSET,
+-				     MLXSW_SP2_BLOOM_CHUNK_KEY_BYTES,
+-				     MLXSW_SP2_BLOOM_KEY_CHUNK_BYTES);
++	*len = chunk_count * MLXSW_SP2_BLOOM_KEY_CHUNK_BYTES;
+ }
+ 
+ static unsigned int
+@@ -375,15 +360,24 @@ mlxsw_sp4_acl_bf_key_encode(struct mlxsw_sp_acl_atcam_region *aregion,
+ 			    char *output, u8 *len)
+ {
+ 	struct mlxsw_afk_key_info *key_info = aregion->region->key_info;
+-	u8 block_count = mlxsw_afk_key_info_blocks_count_get(key_info);
+-	u8 chunk_count = 1 + ((block_count - 1) >> 2);
+-
+-	__mlxsw_sp_acl_bf_key_encode(aregion, aentry, output, len,
+-				     MLXSW_BLOOM_KEY_CHUNKS,
+-				     MLXSW_SP4_BLOOM_CHUNK_PAD_BYTES,
+-				     MLXSW_SP4_BLOOM_CHUNK_KEY_OFFSET,
+-				     MLXSW_SP4_BLOOM_CHUNK_KEY_BYTES,
+-				     MLXSW_SP4_BLOOM_KEY_CHUNK_BYTES);
++	u8 chunk_index, chunk_count, block_count;
++	char *chunk = output;
++	__be16 erp_region_id;
++
++	block_count = mlxsw_afk_key_info_blocks_count_get(key_info);
++	chunk_count = 1 + ((block_count - 1) >> 2);
++	erp_region_id = cpu_to_be16(aentry->ht_key.erp_id |
++				   (aregion->region->id << 4));
++	for (chunk_index = MLXSW_BLOOM_KEY_CHUNKS - chunk_count;
++	     chunk_index < MLXSW_BLOOM_KEY_CHUNKS; chunk_index++) {
++		memcpy(chunk, &erp_region_id, sizeof(erp_region_id));
++		memcpy(chunk + MLXSW_SP4_BLOOM_CHUNK_KEY_OFFSET,
++		       &aentry->ht_key.enc_key[chunk_key_offsets[chunk_index]],
++		       MLXSW_SP4_BLOOM_CHUNK_KEY_BYTES);
++		chunk += MLXSW_SP4_BLOOM_KEY_CHUNK_BYTES;
++	}
++	*len = chunk_count * MLXSW_SP4_BLOOM_KEY_CHUNK_BYTES;
++
+ 	mlxsw_sp4_bf_key_shift_chunks(chunk_count, output);
+ }
 
----
-base-commit: e058c5f49ceff38bf1579a679a5ca20842718579
-change-id: 20250311-pinctrl-msm-type-latch-6099aede7d92
-
-Best regards,
--- 
-Stephan Gerhold <stephan.gerhold@linaro.org>
-
+> 
+> Fix follow error with clang-19 when -Werror:
+>   In file included from drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c:5:
+>   In file included from ./include/linux/gfp.h:7:
+>   In file included from ./include/linux/mmzone.h:8:
+>   In file included from ./include/linux/spinlock.h:63:
+>   In file included from ./include/linux/lockdep.h:14:
+>   In file included from ./include/linux/smp.h:13:
+>   In file included from ./include/linux/cpumask.h:12:
+>   In file included from ./include/linux/bitmap.h:13:
+>   In file included from ./include/linux/string.h:392:
+>   ./include/linux/fortify-string.h:571:4: error: call to '__write_overflow_field' declared with 'warning' attribute: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror,-Wattribute-warning]
+>     571 |                         __write_overflow_field(p_size_field, size);
+>         |                         ^
+>   1 error generated.
+> 
+> Co-developed-by: Zijian Chen <czj2441@163.com>
+> Signed-off-by: Zijian Chen <czj2441@163.com>
+> Co-developed-by: Wentao Guan <guanwentao@uniontech.com>
+> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> ---
+>  .../mlxsw/spectrum_acl_bloom_filter.c         | 39 ++++++++++++-------
+>  1 file changed, 25 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
+> index a54eedb69a3f..96105bab680b 100644
+> --- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
+> +++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_bloom_filter.c
+> @@ -203,17 +203,6 @@ static const u8 mlxsw_sp4_acl_bf_crc6_tab[256] = {
+>  0x2f, 0x02, 0x18, 0x35, 0x2c, 0x01, 0x1b, 0x36,
+>  };
+>  
+> -/* Each chunk contains 4 key blocks. Chunk 2 uses key blocks 11-8,
+> - * and we need to populate it with 4 key blocks copied from the entry encoded
+> - * key. The original keys layout is same for Spectrum-{2,3,4}.
+> - * Since the encoded key contains a 2 bytes padding, key block 11 starts at
+> - * offset 2. block 7 that is used in chunk 1 starts at offset 20 as 4 key blocks
+> - * take 18 bytes. See 'MLXSW_SP2_AFK_BLOCK_LAYOUT' for more details.
+> - * This array defines key offsets for easy access when copying key blocks from
+> - * entry key to Bloom filter chunk.
+> - */
+> -static const u8 chunk_key_offsets[MLXSW_BLOOM_KEY_CHUNKS] = {2, 20, 38};
+> -
+>  static u16 mlxsw_sp2_acl_bf_crc16_byte(u16 crc, u8 c)
+>  {
+>  	return (crc << 8) ^ mlxsw_sp2_acl_bf_crc16_tab[(crc >> 8) ^ c];
+> @@ -237,6 +226,7 @@ __mlxsw_sp_acl_bf_key_encode(struct mlxsw_sp_acl_atcam_region *aregion,
+>  	struct mlxsw_afk_key_info *key_info = aregion->region->key_info;
+>  	u8 chunk_index, chunk_count, block_count;
+>  	char *chunk = output;
+> +	char *enc_key_src_ptr;
+>  	__be16 erp_region_id;
+>  
+>  	block_count = mlxsw_afk_key_info_blocks_count_get(key_info);
+> @@ -248,9 +238,30 @@ __mlxsw_sp_acl_bf_key_encode(struct mlxsw_sp_acl_atcam_region *aregion,
+>  		memset(chunk, 0, pad_bytes);
+>  		memcpy(chunk + pad_bytes, &erp_region_id,
+>  		       sizeof(erp_region_id));
+> -		memcpy(chunk + key_offset,
+> -		       &aentry->ht_key.enc_key[chunk_key_offsets[chunk_index]],
+> -		       chunk_key_len);
+> +/* Each chunk contains 4 key blocks. Chunk 2 uses key blocks 11-8,
+> + * and we need to populate it with 4 key blocks copied from the entry encoded
+> + * key. The original keys layout is same for Spectrum-{2,3,4}.
+> + * Since the encoded key contains a 2 bytes padding, key block 11 starts at
+> + * offset 2. block 7 that is used in chunk 1 starts at offset 20 as 4 key blocks
+> + * take 18 bytes. See 'MLXSW_SP2_AFK_BLOCK_LAYOUT' for more details.
+> + * This array defines key offsets for easy access when copying key blocks from
+> + * entry key to Bloom filter chunk.
+> + *
+> + * Define the acceptable values for chunk_index to prevent LLVM from failing
+> + * compilation in certain circumstances.
+> + */
+> +		switch (chunk_index) {
+> +		case 0:
+> +			enc_key_src_ptr = &aentry->ht_key.enc_key[2];
+> +			break;
+> +		case 1:
+> +			enc_key_src_ptr = &aentry->ht_key.enc_key[20];
+> +			break;
+> +		case 2:
+> +			enc_key_src_ptr = &aentry->ht_key.enc_key[38];
+> +			break;
+> +		}
+> +		memcpy(chunk + key_offset, enc_key_src_ptr, chunk_key_len);
+>  		chunk += chunk_len;
+>  	}
+>  	*len = chunk_count * chunk_len;
+> -- 
+> 2.47.2
+> 
 
