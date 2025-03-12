@@ -1,131 +1,80 @@
-Return-Path: <linux-kernel+bounces-557499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF56A5DA09
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:57:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6079A5DA07
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64AD37ABB7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:56:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228E21792F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C90C23E327;
-	Wed, 12 Mar 2025 09:56:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4EC23CF12;
-	Wed, 12 Mar 2025 09:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9745423C8D0;
+	Wed, 12 Mar 2025 09:57:00 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012F623C8B7;
+	Wed, 12 Mar 2025 09:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741773381; cv=none; b=lGsZ+SUJGciiLGx8idsXiu61dHgBqtnXYxoXOuu/2OyhhkfQEj/aypzcOvFL6UWNuye9nD8ju0onugmLmOuw9RndhjpaJ9oNphXxxmHMy6eMCz1PPQh4AEhZ+C8nHZjPDyJGdjsWKLz4GpQBIJvKyTzkNn2AIwWwgUBPGkk46zM=
+	t=1741773420; cv=none; b=VyqG0CDugcNTQa43Htf3wrC3MGhy1EvieBhhATOUQMS+9MCUdX/rLNHfDZo7urHFySqqo28F77QbMKn8+ZxtdmAXV6jVrkhhMjMwqmmA1DJM2oAcnYRQX91S2T8+3hrOpv+kV3fZiqc+NzIZA1ZTuFyiDoi6aVdccC23Wweuqvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741773381; c=relaxed/simple;
-	bh=IOxTtn9oEAUi55rJMUn1mdKE85G/bJiTYZGzSQh0+nU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UnzjG7KNsU+VhkjirlXMOa7zZIW9iK4s94T7G7TeOItLbn0+140N2lXHKtvXStQjT3QbT8OgV1FlA1Z8Z0pR6O5Sz9ypJi2OFxiPVE4Ht5zEghJy8dqdQMbg5i0nbgk0Ho6i7WuBWLgYqWR6bRyUqPpNUmuL6rvAWG9SWdNa47g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 85884152B;
-	Wed, 12 Mar 2025 02:56:29 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5666A3F5A1;
-	Wed, 12 Mar 2025 02:56:18 -0700 (PDT)
-Date: Wed, 12 Mar 2025 09:56:13 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Yujie Liu <yujie.liu@intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Martin Liska <martin.liska@hey.com>,
-	James Clark <james.clark@linaro.org>,
-	Sandipan Das <sandipan.das@amd.com>
-Subject: Re: [PATCH v2] perf script: Update brstack syntax documentation
-Message-ID: <20250312095613.GL9682@e132581.arm.com>
-References: <20250312072329.419020-1-yujie.liu@intel.com>
+	s=arc-20240116; t=1741773420; c=relaxed/simple;
+	bh=hyx7eXc6N2QDMkI31SyQM4MiHmDWqcYPqS9p6z4tClE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Oc4cdAbT9+8eVP290n+a+NsIi/QTBeygmDmPfmghjnsTEpnofQLfKl6aSU1597zxcfDNdBvLzrQ5M7Eqd4EGDES3qN6Lmy6kdOWymCs/lgIRQCOtX4BaZhMTQfQAatMwJFmH7ykL8VfNN9DKMB7D+E1hHhGVYbTx6mG9ojLbP48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 491C8C4CEE3;
+	Wed, 12 Mar 2025 09:56:58 +0000 (UTC)
+Date: Wed, 12 Mar 2025 05:56:56 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Nam Cao <namcao@linutronix.de>, john.ogness@linutronix.de,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/10] rv: Add infrastructure for linear temporal logic
+ monitor
+Message-ID: <20250312055656.556a5db1@batman.local.home>
+In-Reply-To: <035d1f1a92f15bfa60d2d133131dd8a25b3c78e4.camel@redhat.com>
+References: <cover.1741708239.git.namcao@linutronix.de>
+	<0b03a7d779707c598068d6ec00f3e5a19de336d8.1741708239.git.namcao@linutronix.de>
+	<035d1f1a92f15bfa60d2d133131dd8a25b3c78e4.camel@redhat.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312072329.419020-1-yujie.liu@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 12, 2025 at 03:23:29PM +0800, Yujie Liu wrote:
-> The following commits added new fields/flags to the branch stack field
-> list:
-> 
-> commit 1f48989cdc7d ("perf script: Output branch sample type")
-> commit 6ade6c646035 ("perf script: Show branch speculation info")
-> commit 1e66dcff7b9b ("perf script: Add not taken event for branch stack")
-> 
-> Update brstack syntax documentation to be consistent with the latest
-> branch stack field list. Improve the descriptions to help users
-> interpret the fields accurately.
-> 
-> Signed-off-by: Yujie Liu <yujie.liu@intel.com>
+On Wed, 12 Mar 2025 07:47:50 +0100
+Gabriele Monaco <gmonaco@redhat.com> wrote:
 
-Reviewed-by: Leo Yan <leo.yan@arm.com>
+>  -/*
+> > - * Futher monitor types are expected, so make this a union.
+> > - */
+> > =C2=A0union rv_task_monitor {
+> > -	struct da_monitor da_mon;
+> > +	struct da_monitor	da_mon;
+> > +	struct ltl_monitor	ltl_mon;
+> > =C2=A0}; =20
+>=20
+> This adds quite some memory overhead if we have multiple per-task
+> monitors (we might in the future) and we don't use this ltl monitors.
+> What about keeping it conditionally compiled out?
+> You could define the struct only if e.g. CONFIG_RV_LTL_MONITORS is set,
+> select it with any LTL monitor via Kconfig, then glue it somehow to
+> have it readable.
 
-> ---
-> Changes in v2:
-> - Add not taken event (Namhyung, Leo)
-> - Change field name from PRED to EVENT for generic use and furture
->   extension (Leo)
-> 
-> v1: https://lore.kernel.org/all/20250225061736.1698175-1-yujie.liu@intel.com/
-> ---
->  tools/perf/Documentation/perf-script.txt | 23 ++++++++++++++++-------
->  1 file changed, 16 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-> index b72866ef270b..28bec7e78bc8 100644
-> --- a/tools/perf/Documentation/perf-script.txt
-> +++ b/tools/perf/Documentation/perf-script.txt
-> @@ -239,13 +239,22 @@ OPTIONS
->  	i.e., -F "" is not allowed.
->  
->  	The brstack output includes branch related information with raw addresses using the
-> -	/v/v/v/v/cycles syntax in the following order:
-> -	FROM: branch source instruction
-> -	TO  : branch target instruction
-> -        M/P/-: M=branch target mispredicted or branch direction was mispredicted, P=target predicted or direction predicted, -=not supported
-> -	X/- : X=branch inside a transactional region, -=not in transaction region or not supported
-> -	A/- : A=TSX abort entry, -=not aborted region or not supported
-> -	cycles
-> +	FROM/TO/EVENT/INTX/ABORT/CYCLES/TYPE/SPEC syntax in the following order:
-> +	FROM  : branch source instruction
-> +	TO    : branch target instruction
-> +	EVENT : M=branch target or direction was mispredicted
-> +	        P=branch target or direction was predicted
-> +	        N=branch not-taken
-> +	        -=no event or not supported
-> +	INTX  : X=branch inside a transactional region
-> +	        -=branch not in transaction region or not supported
-> +	ABORT : A=TSX abort entry
-> +	        -=not aborted region or not supported
-> +	CYCLES: the number of cycles that have elapsed since the last branch was recorded
-> +	TYPE  : branch type: COND/UNCOND/IND/CALL/IND_CALL/RET etc.
-> +	        -=not supported
-> +	SPEC  : branch speculation info: SPEC_WRONG_PATH/NON_SPEC_CORRECT_PATH/SPEC_CORRECT_PATH
-> +	        -=not supported
->  
->  	The brstacksym is identical to brstack, except that the FROM and TO addresses are printed in a symbolic form if possible.
->  
-> 
-> base-commit: b10f74308e1305275e69ddde711ec817cc69e306
-> -- 
-> 2.34.1
-> 
+One thing to do if you compile it out, make it a stub structure, so you
+don't need to add #ifdef into the union.
+
+struct ltl_monitor { int unused; };
+
+Or something like that.
+
+-- Steve
 
