@@ -1,248 +1,225 @@
-Return-Path: <linux-kernel+bounces-557246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F1B7A5D5AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:45:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8C8A5D5C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:56:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17263B6C0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:45:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8155E3B76ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA321DF975;
-	Wed, 12 Mar 2025 05:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7021E3DED;
+	Wed, 12 Mar 2025 05:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rx1kirUi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="eXPobSs1"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DC733F6;
-	Wed, 12 Mar 2025 05:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514011DF721
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741758328; cv=none; b=lS/l9X8G2jq4jdRKCEtDJ8ByZla4B1GyfK1y62UkHO4G1ysZLdHlxG4Z933uhB4hMcYEemKDC2sWes/8y0ODOnx/wxPvhkvNm3GQ1w+RiLQoguP6wEyJnaulajxfFp6spQRH+aNxHXob8lzwPw40wyoA4vkODAQm0PPa/VH2ccU=
+	t=1741758944; cv=none; b=ez/VLJXs9sYDQUX6/ZXIRQBtavvRR5k9HKz3cxu/ABmpPcRgsFsLL9FsNeWHa22iiVdis4NckwHVu0KmmuBXZ1ZF+Sqys2a0f/sNcSrfqt+3+LHrvh+htajXgb/0V71hbkcMojZBpC3YFk/5OXxvuVIKJzquJPtpLdEFE3aNVUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741758328; c=relaxed/simple;
-	bh=2lNkWU7neUbJh5KmbEw6o4WwEOl2tG4Taxsira8ZcTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3GZWG0EktLcv5J0tEBcO5eH1ogwJEx+HxtrV/E9NADRPMA9+rX5PdWq/j+UoMcsKFuNAShXKPy5wn802Oh6JZPpOPB8EHaU0U/PY1vrmXcmNcdeqdUKHbgH+Hlw/M7/8oUnudBgva98TW56reWN3v9El67P7cZPyeLkYQ2EdHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rx1kirUi; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741758326; x=1773294326;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2lNkWU7neUbJh5KmbEw6o4WwEOl2tG4Taxsira8ZcTU=;
-  b=Rx1kirUi44u7M/TXPs+/y25z8mFv+6DEO/EJu/DgjUSPJt8LI0s8Ze3A
-   z22qqjSFXjckyga3jpg1fEq4zfFyXhuvFbspzpfuaH44WqlT4TENE67gc
-   8+BOGKNIBfrOdCEZm9RCN3SdrJG+M6mmhzfDPBq6q2UAtI3CkbO7sDbVo
-   A44cXAMFMZytKj2Erfmi+qLC6Wt1KsIQrD8Z7/dSZSnGgImk1RU0RYWQu
-   HsqrYuVAUDy8sfqk3Hlbb+WMC4J7XPRsuHCBosYStwtfCmZ/0092/RBz7
-   PtZLrO/ksyW4PnHcv6TZnBoUquWw7F4McJSXEMpG/ZQ0WacsSD2vdMMh0
-   g==;
-X-CSE-ConnectionGUID: VqP7gBv3QkW5Eqqww8jwgQ==
-X-CSE-MsgGUID: 93YgMprTRG+fGuoN4NERHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="43002644"
-X-IronPort-AV: E=Sophos;i="6.14,240,1736841600"; 
-   d="scan'208";a="43002644"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 22:45:24 -0700
-X-CSE-ConnectionGUID: v7DTkxGPSDK1/jw399Duwg==
-X-CSE-MsgGUID: f+/ufX8JRXGIlRtlydF+gA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,240,1736841600"; 
-   d="scan'208";a="125593952"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 22:45:24 -0700
-Date: Tue, 11 Mar 2025 22:51:18 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Yunhong Jiang <yunhong.jiang@linux.intel.com>, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
-	wei.liu@kernel.org, decui@microsoft.com, rafael@kernel.org,
-	lenb@kernel.org, kirill.shutemov@linux.intel.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
-	ricardo.neri@intel.com, ravi.v.shankar@intel.com
-Subject: Re: [PATCH v2 2/9] dt-bindings: x86: Add a binding for x86 wakeup
- mailbox
-Message-ID: <20250312055118.GA29492@ranerica-svr.sc.intel.com>
-References: <20240823232327.2408869-1-yunhong.jiang@linux.intel.com>
- <20240823232327.2408869-3-yunhong.jiang@linux.intel.com>
- <ujfqrllrii6iijlhbwx3bltpjogiosw4xx5pqbcddgpxjobrzh@xqqrfxi5lv3i>
- <20240827204549.GA4545@yjiang5-mobl.amr.corp.intel.com>
- <20240910061227.GA76@yjiang5-mobl.amr.corp.intel.com>
- <1d0ba3fc-1504-4af3-a0bc-fba86abe41e8@kernel.org>
- <20240919191725.GA11928@yjiang5-mobl.amr.corp.intel.com>
- <874d5908-f1db-412f-96a2-83fcebe8dd98@kernel.org>
- <20250303222102.GA16733@ranerica-svr.sc.intel.com>
- <acb5fa11-9dce-44d0-85e3-e67a6a10c48f@kernel.org>
+	s=arc-20240116; t=1741758944; c=relaxed/simple;
+	bh=alhU20ihOlc5cJCMuHBajEc7EUqehBtkqo5iRv29oVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sM3KouAxKiQvSg1Yy3xxYzZOgWj4qiHxICUK3pOQTAyLOLt3gOi6m8uI8xu1IiMEUUG3yyjNSP8sCHx+foDTPtE77BF5yRv/cpQcJxNDF6r82c2O0Y83+K4Qn4jUYL5Ul3A19LGGjzx1Z/xLkbknN8pguAXpQmR940Q2vbHLbtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=eXPobSs1; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fec13a4067so9801551a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:55:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741758941; x=1742363741; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oSOfwAcbQA4fo8Ww+ZUfjP/u2KZyMzcNTNHmT2zLzAs=;
+        b=eXPobSs1pPcY2kkGUDTkUJAz6sPvL59IHQKGYSwAdKIup4QyjLYMD3b9smPrN4YSR5
+         +cejTYlr6XtbunhdGIME9KwDFaa0VKAwgMBHAWmmy3E6TLNrssg7dat/SBWkmS+qU2uI
+         pv3St3becRp49oIv7FgZT2IPvvnTX8HvaKjBc+6ZT7vXI1Ggc1Cdw9JzOtj1PATClKmf
+         zResMG/HZlIdbikSUHgeDPD7ASoiv6FZjEuBOi158kA966Gaa+s4JyA0lnkzsTrVRxlo
+         s0GmGfBgIkmQ3qn8wW4bDdr2VyJn4pmqRb2zTENBVrXdmLcxct4AaY2dkChoruyUkhDQ
+         TWJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741758941; x=1742363741;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oSOfwAcbQA4fo8Ww+ZUfjP/u2KZyMzcNTNHmT2zLzAs=;
+        b=bGSK4oksLUjiShX0dCNC3l/jhM/9ieghUBnA7279lbtA3Q/zJjXjT9qrH+is3g146Q
+         m1/9FyIS5w3brsBJ9hOx9IwZK6JcSd2NxFth9bB6hBOI5MgxAI7jAxpO46vEzzQhkmDb
+         H23TzMAeMJ+pVQXxKt4LNxkLkMF7XfDwiGe6ot2dGmPlHplSRowuK0FQvk3X4KwG0pMV
+         Fc3CcRBVvPhLxyYyV/QW3dgMVS54zr4ZjLxdxU66rOo1a8lD0NJ5BSFc4vmiCqjPYGgv
+         IMGfjc6AVdTI75xM5Le0BxX2yMIRrDSrlPtDdcDER3dfhMBOloIjFQoJyM5QDefDc9eh
+         d+0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXjpRUgf7iTFro4fqfhnuvqEGtmbQuPsZZ50J7QSmqBcK+Zqg8BCO3klwWmN86oWymcram+7xpSZvW0ggA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmHPYbQExbTQWcIZPC7bU7pMPIR+dngvzkJ+b0gW9cT1LcrboS
+	375JLbYFjtdAXdFGE7aVp2+w+GuMpLFmvlCz5marmOcRg8kdfJe1fHXCgLxZcmQ=
+X-Gm-Gg: ASbGncuGjSy3BMi821TsWM+n+qUbRzb2OT+P8KMExawBs2MxdIM/FaTfEut14BpInjx
+	n8KcWsti2LT5aDBlG31qgtT6RUjmhFgEOVhRKjcIF7NOqOPjsxJIQUHS6PkNfIP2Zajv+reSwhr
+	0PHiUbqyMvh/z4mb6CvbaQiq2c+lQr01VSYlAguN/53FYlzOWtjPIWYRP0Rw3AjQOAS98oD6KK7
+	MOs/RJJtDRF15eEW2T+rNVaC8QgpwFkZxJ0BrdNYBrWES9rQhOO+dsyAM0DvmeVdIUr99aePR05
+	lJoVjo/YGdV+B1mLW8SNfmixwpsYil77c8AX68IXAzX4NGHeKyw2O+A7oA==
+X-Google-Smtp-Source: AGHT+IEnYwIq0Gmg9aXj/gdoHcpx7iSAd8arSmzyKfzCe7K3tIJUhpfLuzs4l56U190AWHzReGvYOg==
+X-Received: by 2002:a17:90b:48cc:b0:2ee:d371:3227 with SMTP id 98e67ed59e1d1-300ff104f1emr9530678a91.17.1741758941650;
+        Tue, 11 Mar 2025 22:55:41 -0700 (PDT)
+Received: from [157.82.205.237] ([157.82.205.237])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301190bbd78sm748839a91.39.2025.03.11.22.55.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 22:55:41 -0700 (PDT)
+Message-ID: <39c059c9-fe67-46e4-8c81-854a3de8d726@daynix.com>
+Date: Wed, 12 Mar 2025 14:55:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <acb5fa11-9dce-44d0-85e3-e67a6a10c48f@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 3/6] tun: Introduce virtio-net hash feature
+To: Jason Wang <jasowang@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
+ Yuri Benditovich <yuri.benditovich@daynix.com>,
+ Andrew Melnychenko <andrew@daynix.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com,
+ Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+References: <20250307-rss-v9-0-df76624025eb@daynix.com>
+ <20250307-rss-v9-3-df76624025eb@daynix.com>
+ <CACGkMEsNHba=PY5UQoH1zdGQRiHC8FugMG1nkXqOj1TBdOQrww@mail.gmail.com>
+ <7978dfd5-8499-44f3-9c30-e53a01449281@daynix.com>
+ <CACGkMEsR4_RreDbYQSEk5Cr29_26WNUYheWCQBjyMNUn=1eS2Q@mail.gmail.com>
+ <5e67a0a6-f613-4b0a-b64e-67f649e45c3e@daynix.com>
+ <CACGkMEv83iR0vU00XGOGonL1fkd=K1b-shCcNb1K8yJ9O+0BDQ@mail.gmail.com>
+Content-Language: en-US
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <CACGkMEv83iR0vU00XGOGonL1fkd=K1b-shCcNb1K8yJ9O+0BDQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 11, 2025 at 11:01:28AM +0100, Krzysztof Kozlowski wrote:
-> On 03/03/2025 23:21, Ricardo Neri wrote:
-> > On Fri, Sep 20, 2024 at 01:15:41PM +0200, Krzysztof Kozlowski wrote:
-> > 
-> > [...]
-> >  
-> >> enable-method is part of CPUs, so you probably should match the CPUs...
-> >> I am not sure, I don't have the big picture here.
-> >>
-> >> Maybe if companies want to push more of bindings for purely virtual
-> >> systems, then they should first get involved more, instead of relying on
-> >> us. Provide reviews for your virtual stuff, provide guidance. There is
-> >> resistance in accepting bindings for such cases for a reason - I don't
-> >> even know what exactly is this and judging/reviewing based on my
-> >> practices will no be accurate.
-> > 
-> > Hi Krzysztof,
-> > 
-> > I am taking over this work from Yunhong.
-> > 
-> > First of all, I apologize for the late reply. I will make sure
-> > communications are timely in the future.
-> > 
-> > Our goal is to describe in the device tree a mechanism or artifact to boot
-> > secondary CPUs.
-> > 
-> > In our setup, the firmware puts secondary CPUs to monitor a memory location
-> > (i.e., the wakeup mailbox) while spinning. From the boot CPU, the OS writes
-> > in the mailbox the wakeup vector and the ID of the secondary CPU it wants
-> > to boot. When a secondary CPU sees its own ID it will jump to the wakeup
-> > vector.
-> > 
-> > This is similar to the spin-table described in the Device Tree
-> > specification. The key difference is that with the spin-table CPUs spin
-> > until a non-zero value is written in `cpu-release-addr`. The wakeup mailbox
-> > uses CPU IDs.
-> > 
-> > You raised the issue of the lack of a `compatible` property, and the fact
-> > that we are not describing an actual device.
-> > 
-> > I took your suggestion of matching by node and I came up with the binding
-> > below. I see these advantages in this approach:
-> > 
-> >   * I define a new node with a `compatible` property.
-> >   * There is precedent: the psci node. In the `cpus` node, each cpu@n has
+On 2025/03/12 11:59, Jason Wang wrote:
+> On Tue, Mar 11, 2025 at 2:17 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>
+>> On 2025/03/11 9:38, Jason Wang wrote:
+>>> On Mon, Mar 10, 2025 at 3:45 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>
+>>>> On 2025/03/10 12:55, Jason Wang wrote:
+>>>>> On Fri, Mar 7, 2025 at 7:01 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>>>
+>>>>>> Hash reporting
+>>>>>> ==============
+>>>>>>
+>>>>>> Allow the guest to reuse the hash value to make receive steering
+>>>>>> consistent between the host and guest, and to save hash computation.
+>>>>>>
+>>>>>> RSS
+>>>>>> ===
+>>>>>>
+>>>>>> RSS is a receive steering algorithm that can be negotiated to use with
+>>>>>> virtio_net. Conventionally the hash calculation was done by the VMM.
+>>>>>> However, computing the hash after the queue was chosen defeats the
+>>>>>> purpose of RSS.
+>>>>>>
+>>>>>> Another approach is to use eBPF steering program. This approach has
+>>>>>> another downside: it cannot report the calculated hash due to the
+>>>>>> restrictive nature of eBPF steering program.
+>>>>>>
+>>>>>> Introduce the code to perform RSS to the kernel in order to overcome
+>>>>>> thse challenges. An alternative solution is to extend the eBPF steering
+>>>>>> program so that it will be able to report to the userspace, but I didn't
+>>>>>> opt for it because extending the current mechanism of eBPF steering
+>>>>>> program as is because it relies on legacy context rewriting, and
+>>>>>> introducing kfunc-based eBPF will result in non-UAPI dependency while
+>>>>>> the other relevant virtualization APIs such as KVM and vhost_net are
+>>>>>> UAPIs.
+>>>>>>
+>>>>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+>>>>>> Tested-by: Lei Yang <leiyang@redhat.com>
+>>>>>> ---
+>>>>>>     Documentation/networking/tuntap.rst |   7 ++
+>>>>>>     drivers/net/Kconfig                 |   1 +
+>>>>>>     drivers/net/tap.c                   |  68 ++++++++++++++-
+>>>>>>     drivers/net/tun.c                   |  98 +++++++++++++++++-----
+>>>>>>     drivers/net/tun_vnet.h              | 159 ++++++++++++++++++++++++++++++++++--
+>>>>>>     include/linux/if_tap.h              |   2 +
+>>>>>>     include/linux/skbuff.h              |   3 +
+>>>>>>     include/uapi/linux/if_tun.h         |  75 +++++++++++++++++
+>>>>>>     net/core/skbuff.c                   |   4 +
+>>>>>>     9 files changed, 386 insertions(+), 31 deletions(-)
+>>>>>>
+> 
+> [...]
+> 
+>>>>> Let's has a consistent name for this and the uapi to be consistent
+>>>>> with TUNSETIFF/TUNGETIFF. Probably TUNSETVNETHASH and
+>>>>> tun_vnet_ioctl_gethash().
+>>>>
+>>>> They have different semantics so they should have different names.
+>>>> TUNGETIFF reports the value currently set while TUNGETVNETHASHCAP
+>>>> reports the value that can be set later.
+>>>
+>>> I'm not sure I will get here. I meant a symmetric name
+>>>
+>>> TUNSETVNETHASH and TUNVETVNETHASH.
+>>
+>> TUNGETVNETHASHCAP does not correspond to TUNGETIFF. The correspondence
+>> of ioctl names is as follows:
+>> TUNGETFEATURES - TUNGETVNETHASHCAP
+> 
+> TUNGETFEATURES returns the value set from TUNSETIFF. This differs from
+> TUNGETVNETHASHCAP semantic which just return the capabilities.
+> 
+> +static inline long tun_vnet_ioctl_gethashcap(void __user *argp)
+> +{
+> +       static const struct tun_vnet_hash cap = {
+> +               .flags = TUN_VNET_HASH_REPORT | TUN_VNET_HASH_RSS,
+> +               .types = VIRTIO_NET_SUPPORTED_HASH_TYPES
+> +       };
+> +
+> +       return copy_to_user(argp, &cap, sizeof(cap)) ? -EFAULT : 0;
+> +}
+> 
+> TUNGETFEATURES doesn't' help too much for non-persist TAP as userspace
+> knows what value it set before.
+> 
+>> TUNSETIFF - TUNSETVNETHASH
+>> TUNGETIFF - no corresponding ioctl for the virtio-net hash features
+> 
+> And this sounds odd and a hint for a incomplete uAPI as userspace
+> needs to know knowing what can set before doing TUNSETVNETHASH.
+
+You are confused with TUNGETFEATURES and TUNGETIFF. Below is the code 
+that implements TUNGETFEATURES:
+if (cmd == TUNGETFEATURES) {
+	/* Currently this just means: "what IFF flags are valid?".
+	 * This is needed because we never checked for invalid flags on
+	 * TUNSETIFF.
+	 */
+	return put_user(IFF_TUN | IFF_TAP | IFF_NO_CARRIER |
+			TUN_FEATURES, (unsigned int __user*)argp);
+} else if (cmd == TUNSETQUEUE) {
+
+Regards,
+Akihiko Odaki
+
+> 
+>>
+>> Regards,
+>> Akihiko Odaki
+>>
+> 
+> Thanks
 > 
 
-Thanks for your feedback!
-
-> psci is a standard. If you are documenting here a standard, clearly
-> express it and provide reference to the specification.
-
-It is not really a standard, but this mailbox behaves indentically to the
-wakeup mailbox described in the ACPI spec [1]. I am happy reference the
-spec in the documentation of the binding... or describe in full the
-mechanism of mailbox without referring to ACPI. You had indicated you don't
-care about what ACPI does [2].
-
-In a nutshell, the wakeup mailbox is similar to the spin table used in ARM
-boards: it is reserved memory region that secondary CPUs monitor while
-spinning.
-
-> 
-> 
-> >     an `enable-method` property that specify `psci`.
-> >   * The mailbox is a device as it is located in a reserved memory region.
-> >     This true regardless of the device tree describing bare-metal or
-> >     virtualized machines.
-> > 
-> > Thanks in advance for your feedback!
-> > 
-> > Best,
-> > Ricardo
-> > 
-> > (only the relevant sections of the binding are shown for brevity)
-> > 
-> > properties:
-> >   $nodename:
-> >     const: wakeup-mailbox
-> > 
-> >   compatible:
-> >     const: x86,wakeup-mailbox
-> 
-> You need vendor prefix for this particular device. If I pointed out lack
-> of device and specific compatible, then adding random compatible does
-> not solve it. I understand it solves for you, but not from the bindings
-> point of view.
-
-I see. Platform firmware will implement the mailbox. It would not be any
-specific hardware from Intel. Perhaps `intel,wakeup-mailbox`?
-
-> 
-> > 
-> >   mailbox-addr:
-> >     $ref: /schemas/types.yaml#/definitions/uint64
-> 
-> So is this some sort of reserved memory?
-
-Yes, the mailbox is located in reserved memory.
-
-> Mailbox needs mbox-cells, so
-> maybe that's not mailbox.
-
-Your comment got me to look under Documentation/devicetree/bindings/mailbox.
-Maybe I am ovethinking this and I can describe the mailbox as others
-vendors do (see below).
-
-Thanks and BR,
-Ricardo
-
-[1]. https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/05_ACPI_Software_Programming_Model/ACPI_Software_Programming_Model.html#multiprocessor-wakeup-structure
-if that is OK.
-[2]. https://lore.kernel.org/lkml/624e1985-7dd2-4abe-a918-78cb43556967@kernel.oirg
-
-description: |
-  [Removed for brevity]
-
-properties:
-  compatible:
-    const: intel,wakeup-mailbox
-
-  reg:
-    maxItems: 1
-
-  '#mbox-cells':
-    const: 1
-
-required:
-  - compatible
-  - reg
-
-additionalProperties: false
-
-examples:
-  - |
-    wakeupmailbox: mailbox@1c000500 {
-      compatible = "intel,wakeup-mailbox";
-      reg = <0x1c000500 0x100>;
-      #mbox-cells = <1>;
-    };
-
-    cpus {
-        #address-cells = <1>;
-        #size-cells = <0>;
-
-        cpu@0 {
-            device_type = "cpu";
-            reg = <0x00>;
-            enable-method = "wakeup-mailbox";
-        };
-    };
-...
 
