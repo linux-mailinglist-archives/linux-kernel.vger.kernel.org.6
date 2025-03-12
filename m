@@ -1,148 +1,423 @@
-Return-Path: <linux-kernel+bounces-557661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E39A5DC1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:59:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E4E3A5DC1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:59:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DA551892928
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A41391725E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018E22417F2;
-	Wed, 12 Mar 2025 11:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398CA23C367;
+	Wed, 12 Mar 2025 11:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJfgyygt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WA+2hijl";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="05suShhz";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WA+2hijl";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="05suShhz"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57ABA23F411;
-	Wed, 12 Mar 2025 11:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E4523F39D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741780745; cv=none; b=HK1rcKHsTVblbaztwFv0jjPajaizFOSrT63YxbRONSnEvCGgoUDLf0733OSAT96ykRz2zutenx2nJso9CVlU95FUdMrHkVPq6RIG1rh/hUK4AnJTxW/DMpzBhPaJgOhrV/VpIZtbyw+eG27vZrhLl7kjAJRXEh2jq53cuKOvg/Q=
+	t=1741780736; cv=none; b=tnhJeq70eExYBXjT3CXJjEE451lxNSSUmpiQ2ZyfdsRDTcixbGTi0E1TbPznBxhryg22OdtIcMTqNyCacX0sxbkvIRZtwftWoOiasNRhoAKBQu3HJUYugdJSy/q3vgcYAVvnzHUhG2Q3uw1P5l8POhyUCybfDMX9iAKeZ/6mdls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741780745; c=relaxed/simple;
-	bh=2+E249FoMxeCPtng7rCF3Mn0z7RfCf3h+Vca3R9nky8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hc7m2bvGCTEcWpFGjQlIpTot1XPqV8BTlr6o61cvrGClpsnNh6dPjylBlvNMqkQ/IxX1eKw5NETENeaMEi0y0qQc/z2Eosg2myyJo5VOQfNo8cGGmy/RvIwz6ogrp8CpwFjpWEwz6E/eKN9oOIdWm8bMl0+LlLE/wcHxrKBjVf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJfgyygt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0154C4CEED;
-	Wed, 12 Mar 2025 11:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741780744;
-	bh=2+E249FoMxeCPtng7rCF3Mn0z7RfCf3h+Vca3R9nky8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oJfgyygtRo4YfzZIpKTQx5huLeuEx676YcqWcsXT0VH3VkMbeqmdqDNVh6qHIzZSz
-	 HzaLwjW1T9+SYNVSiJbvkwtsF8AA1axicWAGUfoMSNPls//Vb//5Lmh5indWZhEYfQ
-	 INbpin4GnMfb77i3j2GLT84pDjC+f5Uhej7TloEfofddldjmUCwLTGl0F9ElKQKrDK
-	 wnVPor30O9w82lK57+t5VktPDIFPbu+8qFIu4wRgVRs+kfBOeJt2Gr3DH6mfU3Y6ca
-	 g3c1VdTaHuWCUyJQJg4HyYFCf+vjV6CcoesBGxPXMyWiqDGWJNyDDmPglK1ili4CwF
-	 qo2V+Ky+sEBZQ==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so1621742a12.0;
-        Wed, 12 Mar 2025 04:59:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUH0R8fwcF39ADD/iD4+4uJQrvFV5A0aLkO6NAfxYfxxNc9Tb4K/6X7e1aQ5FXMis3EmnL62MjGGTMMgg25@vger.kernel.org, AJvYcCVHeWQdUivgkBQCgFbgbw+6jCUXeBJMyY8NNA0CDKd6KVym3y0Yz0bJxTFBBcMSN6Cj87tvzMs2bMU=@vger.kernel.org, AJvYcCVlgUjXmmFItQnWPjPTgTOGF3E0P5X2w3FnXNxZvwNLR3nKSPJnHfMUdOe/fNG8x7hptZevFzkBDmOV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5Ud5VmgMjp46bcfshrG/LGQjBiGtEy4TiBxKoFDfZ2Ml1OkCt
-	kjscM5VFsC/bq3HBI6hPvRFFzWW/fwm4OduV2R7pKP0IaecoKChLENGphAdxlfpfwUqjJfWsAz6
-	mBjXuf+zicaUKikkD9KWz5yHs8w==
-X-Google-Smtp-Source: AGHT+IH5BQD7ITN/g2eBCi7T0dAu5ljpqR2DL4+BQ5AiD3G98QJvLyb/xuTbUHCaciB5iJ/2IYVIIXj4q33YzTwu+gA=
-X-Received: by 2002:a05:6402:280d:b0:5e5:9c04:777 with SMTP id
- 4fb4d7f45d1cf-5e762900175mr9572561a12.6.1741780743338; Wed, 12 Mar 2025
- 04:59:03 -0700 (PDT)
+	s=arc-20240116; t=1741780736; c=relaxed/simple;
+	bh=uwviro9Sh2mbLX/1qsKdeUg9X+f83TGkHLAG0bzlRqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qPFveF/ufSuArUzx2ujzwYe/yv6yNto4TKn5OMr4Phidh2XhOm5Kdqw2XpCaxw2yBNJ9J/Erb1BIeMV5fbR5LMeYDVucMtnInEmNvBhbfPnC8LbHN3UstiuXs1GlfmRMOtvRi6l3/3rqBJZ3l2zzQRV5OUCnJ4n6B4H3iW4sQS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WA+2hijl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=05suShhz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WA+2hijl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=05suShhz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4CBE11F385;
+	Wed, 12 Mar 2025 11:58:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741780732; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BJozpFjObkVNBtmvlTu6/zOx/tI2eF0iSbrX/MIRk9E=;
+	b=WA+2hijlJ+wbcaRt6ShsZAdg0kx2dNfRdW3JHaHhcercYGVhxRpK84WLAlxahd+6vroicE
+	xCmsxnj5xe659zBj40v4AAQw772SMNw1N/oZY/l3uTpGUy3rbpMoizcbg0D/akP4VNpA7X
+	zvpu1pdqje+mbO5NaFTfA22sx85hcDI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741780732;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BJozpFjObkVNBtmvlTu6/zOx/tI2eF0iSbrX/MIRk9E=;
+	b=05suShhzdjmD+nlHx3wD61vlQJN61XeMzGqaaIzptmV9sWUaY36SUCaG5yW1a1z3y228NJ
+	hj+zDkeXZlvBkmBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WA+2hijl;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=05suShhz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741780732; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BJozpFjObkVNBtmvlTu6/zOx/tI2eF0iSbrX/MIRk9E=;
+	b=WA+2hijlJ+wbcaRt6ShsZAdg0kx2dNfRdW3JHaHhcercYGVhxRpK84WLAlxahd+6vroicE
+	xCmsxnj5xe659zBj40v4AAQw772SMNw1N/oZY/l3uTpGUy3rbpMoizcbg0D/akP4VNpA7X
+	zvpu1pdqje+mbO5NaFTfA22sx85hcDI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741780732;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BJozpFjObkVNBtmvlTu6/zOx/tI2eF0iSbrX/MIRk9E=;
+	b=05suShhzdjmD+nlHx3wD61vlQJN61XeMzGqaaIzptmV9sWUaY36SUCaG5yW1a1z3y228NJ
+	hj+zDkeXZlvBkmBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B88731377F;
+	Wed, 12 Mar 2025 11:58:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id goM+K/p20Wf3RAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 12 Mar 2025 11:58:50 +0000
+Message-ID: <9092a9ed-aecf-40bd-9d15-b53d60d035b5@suse.de>
+Date: Wed, 12 Mar 2025 12:58:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310080237.7400-1-clamor95@gmail.com> <20250310080237.7400-2-clamor95@gmail.com>
- <20250311193732.GA4183071-robh@kernel.org> <CAPVz0n09ZP1i2tasdTvnt8RvjhALvUYjv9u_EGRtnXPOYQtuqQ@mail.gmail.com>
-In-Reply-To: <CAPVz0n09ZP1i2tasdTvnt8RvjhALvUYjv9u_EGRtnXPOYQtuqQ@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 12 Mar 2025 06:58:50 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK53DY7xV8eFBpf+zpN8qPT2bYaR5Z1pyzSgdi1z5yXHg@mail.gmail.com>
-X-Gm-Features: AQ5f1JqxwbCmUdSE4dbkfReQ51RA6N_SE-HhOIL5Mfs-CfN5v7Ilewsjv3M2Q0Q
-Message-ID: <CAL_JsqK53DY7xV8eFBpf+zpN8qPT2bYaR5Z1pyzSgdi1z5yXHg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: power: supply: Document Maxim MAX8971 charger
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] lib/vsprintf: Add support for generic FourCCs by
+ extending %p4cc
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Aun-Ali Zaidi <admin@kodeit.net>, Maxime Ripard <mripard@kernel.org>,
+ "airlied@redhat.com" <airlied@redhat.com>, Simona Vetter <simona@ffwll.ch>,
+ "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+ "apw@canonical.com" <apw@canonical.com>, "joe@perches.com"
+ <joe@perches.com>, "dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+ "lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+ "asahi@lists.linux.dev" <asahi@lists.linux.dev>
+References: <ABAEA9D0-97CB-4ADD-9606-A12D5815335A@live.com>
+ <376C9BD3-2F41-4511-BE52-1B8468FE2CB3@live.com>
+ <b74df4b5-ecda-45ba-a98a-c84b0a29e380@suse.de>
+ <PN3PR01MB9597AC6A02B0BF873920D94CB8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <PN3PR01MB9597AC6A02B0BF873920D94CB8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4CBE11F385
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[live.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
+	FREEMAIL_CC(0.00)[kodeit.net,kernel.org,redhat.com,ffwll.ch,linux.intel.com,suse.com,goodmis.org,rasmusvillemoes.dk,chromium.org,lwn.net,linux-foundation.org,canonical.com,perches.com,gmail.com,vger.kernel.org,lists.freedesktop.org,marcan.st,svenpeter.dev,lists.linux.dev];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[rasmusvillemoes.dk:email,live.com:email,suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,intel.com:email,marcan.st:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-On Wed, Mar 12, 2025 at 1:03=E2=80=AFAM Svyatoslav Ryhel <clamor95@gmail.co=
-m> wrote:
+Hi
+
+Am 12.03.25 um 12:49 schrieb Aditya Garg:
 >
-> =D0=B2=D1=82, 11 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 21:37 Ro=
-b Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Mon, Mar 10, 2025 at 10:02:36AM +0200, Svyatoslav Ryhel wrote:
-> > > Add bindings for Maxim MAX8971 charger.
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >  .../bindings/power/supply/maxim,max8971.yaml  | 64 +++++++++++++++++=
-++
-> > >  1 file changed, 64 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/power/supply/ma=
-xim,max8971.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max=
-8971.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max8971.ya=
-ml
-> > > new file mode 100644
-> > > index 000000000000..d7b3e6ff6906
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/power/supply/maxim,max8971.ya=
-ml
-> > > @@ -0,0 +1,64 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/power/supply/maxim,max8971.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Maxim MAX8971 IC charger
-> > > +
-> > > +maintainers:
-> > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> > > +
-> > > +description:
-> > > +  The MAX8971 is a compact, high-frequency, high-efficiency switch-m=
-ode charger
-> > > +  for a one-cell lithium-ion (Li+) battery.
-> > > +
-> > > +allOf:
-> > > +  - $ref: power-supply.yaml#
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: maxim,max8971
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  interrupts:
-> > > +    maxItems: 1
-> > > +
-> > > +  monitored-battery: true
-> > > +
-> > > +  maxim,usb-connector:
-> >
-> > Just 'connector', so when we have a 3rd case, we don't have a 3rd
-> > vendor.
-> >
->
-> Please, please be explicit and specific, you could not tell me this in
-> v3, you could but you decided to fuck up v4 as well. So wise.
-> Additionally, if you want a generic 'connector' which can be
-> referenced as 'connector: true' then add one, ATM this is classified
-> under your own terms as 'vendor property' and needs a vendor prefix.
+>> On 12 Mar 2025, at 5:16 PM, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>>
+>> ﻿Hi
+>>
+>>> Am 12.03.25 um 10:05 schrieb Aditya Garg:
+>>> From: Hector Martin <marcan@marcan.st>
+>>>
+>>> %p4cc is designed for DRM/V4L2 FourCCs with their specific quirks, but
+>>> it's useful to be able to print generic 4-character codes formatted as
+>>> an integer. Extend it to add format specifiers for printing generic
+>>> 32-bit FourCCs with various endian semantics:
+>>>
+>>> %p4ch    Host byte order
+>>> %p4cn    Network byte order
+>>> %p4cl    Little-endian
+>>> %p4cb    Big-endian
+>> That looks like someone trying to be too clever for their own good. Just my 2 cts.
+> I don't understand what you are trying to say. Anyways, I thought it's obvious, but Petr's Ack is still left and thus cannot be merged into DRM for now unless he says so in this thread.
 
-I don't care for your attitude, so I will be reviewing the 20+ other
-bindings a day I have to review and not yours.
+I'm trying to say that the author of this patch found the %p4cc 
+functionality and over-generalized the feature. Source code should 
+express the idea of what it's doing in clear terms. %p4ch somehow 
+doesn't do that for me. Printing 4 bytes in various orders without 
+context seems arbitrary and confusing.
 
-Rob
+(I don't really have a say here. I'm just asking to reconsider this change.)
+
+Best regards
+Thomas
+
+>> Best regards
+>> Thomas
+>>
+>>> The endianness determines how bytes are interpreted as a u32, and the
+>>> FourCC is then always printed MSByte-first (this is the opposite of
+>>> V4L/DRM FourCCs). This covers most practical cases, e.g. %p4cn would
+>>> allow printing LSByte-first FourCCs stored in host endian order
+>>> (other than the hex form being in character order, not the integer
+>>> value).
+>>>
+>>> Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>>> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>> Signed-off-by: Hector Martin <marcan@marcan.st>
+>>> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+>>> ---
+>>>   Documentation/core-api/printk-formats.rst | 32 +++++++++++++++++++
+>>>   lib/test_printf.c                         | 39 +++++++++++++++++++----
+>>>   lib/vsprintf.c                            | 35 ++++++++++++++++----
+>>>   scripts/checkpatch.pl                     |  2 +-
+>>>   4 files changed, 94 insertions(+), 14 deletions(-)
+>>>
+>>> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+>>> index ecccc0473..bd420e8aa 100644
+>>> --- a/Documentation/core-api/printk-formats.rst
+>>> +++ b/Documentation/core-api/printk-formats.rst
+>>> @@ -648,6 +648,38 @@ Examples::
+>>>       %p4cc    Y10  little-endian (0x20303159)
+>>>       %p4cc    NV12 big-endian (0xb231564e)
+>>>   +Generic FourCC code
+>>> +-------------------
+>>> +
+>>> +::
+>>> +    %p4c[hnlb]    gP00 (0x67503030)
+>>> +
+>>> +Print a generic FourCC code, as both ASCII characters and its numerical
+>>> +value as hexadecimal.
+>>> +
+>>> +The generic FourCC code is always printed in the big-endian format,
+>>> +the most significant byte first. This is the opposite of V4L/DRM FourCCs.
+>>> +
+>>> +The additional ``h``, ``n``, ``l``, and ``b`` specifiers define what
+>>> +endianness is used to load the stored bytes. The data might be interpreted
+>>> +using the host byte order, network byte order, little-endian, or big-endian.
+>>> +
+>>> +Passed by reference.
+>>> +
+>>> +Examples for a little-endian machine, given &(u32)0x67503030::
+>>> +
+>>> +    %p4ch    gP00 (0x67503030)
+>>> +    %p4cn    00Pg (0x30305067)
+>>> +    %p4cl    gP00 (0x67503030)
+>>> +    %p4cb    00Pg (0x30305067)
+>>> +
+>>> +Examples for a big-endian machine, given &(u32)0x67503030::
+>>> +
+>>> +    %p4ch    gP00 (0x67503030)
+>>> +    %p4cn    00Pg (0x30305067)
+>>> +    %p4cl    00Pg (0x30305067)
+>>> +    %p4cb    gP00 (0x67503030)
+>>> +
+>>>   Rust
+>>>   ----
+>>>   diff --git a/lib/test_printf.c b/lib/test_printf.c
+>>> index 59dbe4f9a..b9e8afc01 100644
+>>> --- a/lib/test_printf.c
+>>> +++ b/lib/test_printf.c
+>>> @@ -776,21 +776,46 @@ static void __init fwnode_pointer(void)
+>>>       software_node_unregister_node_group(group);
+>>>   }
+>>>   +struct fourcc_struct {
+>>> +    u32 code;
+>>> +    const char *str;
+>>> +};
+>>> +
+>>> +static void __init fourcc_pointer_test(const struct fourcc_struct *fc, size_t n,
+>>> +                       const char *fmt)
+>>> +{
+>>> +    size_t i;
+>>> +
+>>> +    for (i = 0; i < n; i++)
+>>> +        test(fc[i].str, fmt, &fc[i].code);
+>>> +}
+>>> +
+>>>   static void __init fourcc_pointer(void)
+>>>   {
+>>> -    struct {
+>>> -        u32 code;
+>>> -        char *str;
+>>> -    } const try[] = {
+>>> +    static const struct fourcc_struct try_cc[] = {
+>>>           { 0x3231564e, "NV12 little-endian (0x3231564e)", },
+>>>           { 0xb231564e, "NV12 big-endian (0xb231564e)", },
+>>>           { 0x10111213, ".... little-endian (0x10111213)", },
+>>>           { 0x20303159, "Y10  little-endian (0x20303159)", },
+>>>       };
+>>> -    unsigned int i;
+>>> +    static const struct fourcc_struct try_ch[] = {
+>>> +        { 0x41424344, "ABCD (0x41424344)", },
+>>> +    };
+>>> +    static const struct fourcc_struct try_cn[] = {
+>>> +        { 0x41424344, "DCBA (0x44434241)", },
+>>> +    };
+>>> +    static const struct fourcc_struct try_cl[] = {
+>>> +        { (__force u32)cpu_to_le32(0x41424344), "ABCD (0x41424344)", },
+>>> +    };
+>>> +    static const struct fourcc_struct try_cb[] = {
+>>> +        { (__force u32)cpu_to_be32(0x41424344), "ABCD (0x41424344)", },
+>>> +    };
+>>>   -    for (i = 0; i < ARRAY_SIZE(try); i++)
+>>> -        test(try[i].str, "%p4cc", &try[i].code);
+>>> +    fourcc_pointer_test(try_cc, ARRAY_SIZE(try_cc), "%p4cc");
+>>> +    fourcc_pointer_test(try_ch, ARRAY_SIZE(try_ch), "%p4ch");
+>>> +    fourcc_pointer_test(try_cn, ARRAY_SIZE(try_cn), "%p4cn");
+>>> +    fourcc_pointer_test(try_cl, ARRAY_SIZE(try_cl), "%p4cl");
+>>> +    fourcc_pointer_test(try_cb, ARRAY_SIZE(try_cb), "%p4cb");
+>>>   }
+>>>     static void __init
+>>> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+>>> index 56fe96319..56511a994 100644
+>>> --- a/lib/vsprintf.c
+>>> +++ b/lib/vsprintf.c
+>>> @@ -1781,27 +1781,50 @@ char *fourcc_string(char *buf, char *end, const u32 *fourcc,
+>>>       char output[sizeof("0123 little-endian (0x01234567)")];
+>>>       char *p = output;
+>>>       unsigned int i;
+>>> +    bool pixel_fmt = false;
+>>>       u32 orig, val;
+>>>   -    if (fmt[1] != 'c' || fmt[2] != 'c')
+>>> +    if (fmt[1] != 'c')
+>>>           return error_string(buf, end, "(%p4?)", spec);
+>>>         if (check_pointer(&buf, end, fourcc, spec))
+>>>           return buf;
+>>>         orig = get_unaligned(fourcc);
+>>> -    val = orig & ~BIT(31);
+>>> +    switch (fmt[2]) {
+>>> +    case 'h':
+>>> +        break;
+>>> +    case 'n':
+>>> +        orig = swab32(orig);
+>>> +        break;
+>>> +    case 'l':
+>>> +        orig = (__force u32)cpu_to_le32(orig);
+>>> +        break;
+>>> +    case 'b':
+>>> +        orig = (__force u32)cpu_to_be32(orig);
+>>> +        break;
+>>> +    case 'c':
+>>> +        /* Pixel formats are printed LSB-first */
+>>> +        pixel_fmt = true;
+>>> +        break;
+>>> +    default:
+>>> +        return error_string(buf, end, "(%p4?)", spec);
+>>> +    }
+>>> +
+>>> +    val = pixel_fmt ? swab32(orig & ~BIT(31)) : orig;
+>>>         for (i = 0; i < sizeof(u32); i++) {
+>>> -        unsigned char c = val >> (i * 8);
+>>> +        unsigned char c = val >> ((3 - i) * 8);
+>>>             /* Print non-control ASCII characters as-is, dot otherwise */
+>>>           *p++ = isascii(c) && isprint(c) ? c : '.';
+>>>       }
+>>>   -    *p++ = ' ';
+>>> -    strcpy(p, orig & BIT(31) ? "big-endian" : "little-endian");
+>>> -    p += strlen(p);
+>>> +    if (pixel_fmt) {
+>>> +        *p++ = ' ';
+>>> +        strcpy(p, orig & BIT(31) ? "big-endian" : "little-endian");
+>>> +        p += strlen(p);
+>>> +    }
+>>>         *p++ = ' ';
+>>>       *p++ = '(';
+>>> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+>>> index 7b28ad331..5595a0898 100755
+>>> --- a/scripts/checkpatch.pl
+>>> +++ b/scripts/checkpatch.pl
+>>> @@ -6904,7 +6904,7 @@ sub process {
+>>>                           ($extension eq "f" &&
+>>>                            defined $qualifier && $qualifier !~ /^w/) ||
+>>>                           ($extension eq "4" &&
+>>> -                         defined $qualifier && $qualifier !~ /^cc/)) {
+>>> +                         defined $qualifier && $qualifier !~ /^c[hnlbc]/)) {
+>>>                           $bad_specifier = $specifier;
+>>>                           last;
+>>>                       }
+>> --
+>> --
+>> Thomas Zimmermann
+>> Graphics Driver Developer
+>> SUSE Software Solutions Germany GmbH
+>> Frankenstrasse 146, 90461 Nuernberg, Germany
+>> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+>> HRB 36809 (AG Nuernberg)
+>>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
