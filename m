@@ -1,97 +1,116 @@
-Return-Path: <linux-kernel+bounces-558374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202E2A5E4F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:05:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B46AA5E4F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:05:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAF063B94C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:05:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14F83B57BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD701EC017;
-	Wed, 12 Mar 2025 20:05:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BC81E5B71;
-	Wed, 12 Mar 2025 20:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D181EB1B8;
+	Wed, 12 Mar 2025 20:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XsrwRrCm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5BA1DE3AF;
+	Wed, 12 Mar 2025 20:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741809942; cv=none; b=fjX+GTVFY75koMKSfp3gllD1d0IKppKpcCxvifNthLlH06KSbFiwZshoMspzJ5Oz7wJu/dsDQ1Ekb0HW0Y5M+lefDF0AUXdownEbKvFR/4W8YaOhleFHEMPfptcOtByLR8HXnSFhiSE9zUBKFeBVfqkmiBDo+n1jG4VyTY5TTeA=
+	t=1741809941; cv=none; b=b6kijFbs0niKb9/pgqMP6aJzLYFFJpGFaQQvbiJVVjHRmCa8XdMCePQYtsT4I3s/x14J7jTnaOJMk8bltciYfV/6fYW6QmtcK97pEMDaIl/hXOHADef9hOI1WlvU8oUJVhjlCTKHFRaGFSMx41S+zK44PPWGgRA9LvsHdSqMTKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741809942; c=relaxed/simple;
-	bh=DTexTALS8AbU1aaD5ZlJp1i/lrORRxTCW3JHhyXfH7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YIMP+YQ57uoX8bcC56LPT9ujIthGJmBDuY5X9+AwxuzvDppSGqppKt8c78aZ+P+pjd4reV7h9vUVlhXQC7t+x4YiJxwo+WB8NW3z8ZlA6Bhi3LNkcGQPtlpcV4KPBdPINMM2IZEoJBMRDXQR5KlW4ZbI2GYeo9NImXKCrDxdo3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D64413D5;
-	Wed, 12 Mar 2025 13:05:49 -0700 (PDT)
-Received: from bogus (unknown [10.57.39.33])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B416C3F694;
-	Wed, 12 Mar 2025 13:05:35 -0700 (PDT)
-Date: Wed, 12 Mar 2025 20:05:32 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Adam Young <admiyo@amperemail.onmicrosoft.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Adam Young <admiyo@os.amperecomputing.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Huisong Li <lihuisong@huawei.com>,
-	Robbie King <robbiek@xsightlabs.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v2 00/13] mailbox: pcc: Fixes and cleanup/refactoring
-Message-ID: <20250312200532.67xkag3joatel6m4@bogus>
-References: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
- <Z9AoOg-cx6xVW_Cu@bogus>
- <17a7ca5a-31f5-47fc-ab67-348df20b31ec@amperemail.onmicrosoft.com>
+	s=arc-20240116; t=1741809941; c=relaxed/simple;
+	bh=x0rT9NEiiYRX5MkFRJvYMmCV2JTVEDgBLYkWCR5UE2s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h5nYpX1g5uwi2ds+3zUcBHa5AxGDKaKyieo6uMpDd41yKdx+UDD3ArBCOw3sguWB6oPWDRqg2C3CZ7t7nffnR6ygH53wynFskGvbHlRvO8oKzsimyrf2GS7o/VNtuA1I/Rd9NSKLnxVIdL9JTLpEW2kqCvroCzCo+e07yOl/G4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XsrwRrCm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86B00C4CEEA;
+	Wed, 12 Mar 2025 20:05:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741809940;
+	bh=x0rT9NEiiYRX5MkFRJvYMmCV2JTVEDgBLYkWCR5UE2s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XsrwRrCmBEHVV+lbD5wu78PeeixNX1nwJYlhdReSR5Ww3cDVenlhpv3LJkfHNW1sL
+	 LUE58nPEkPadhdyACVgsijRCjjSvxXMr+xW+BGxM8VF9RX0ANbPYHfAthhcsYTUPPY
+	 F0mujDm+LK67IzYL0cAPP4QYyk96qGe7rIDQ606QzDV2Tqk/LVa7G50UX5oBRmTmay
+	 RFqmjMWemfszgozOoavFt1/isxUNE2k5zFWADN0KH6Ha81iswWTA5q2OtwreNPv+9S
+	 XwTtguZBiq0D4KTFYZRMeANzSE1hPnf3cHdkpLdI64BCX/+dmdBjHJGt7fgRzMcOh9
+	 XcJlqCc6heKrQ==
+From: Kees Cook <kees@kernel.org>
+To: Jack Wang <jinpu.wang@cloud.ionos.com>
+Cc: Kees Cook <kees@kernel.org>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2] scsi: pm80xx: Use C String API for string comparisons
+Date: Wed, 12 Mar 2025 13:05:36 -0700
+Message-Id: <20250312200532.it.808-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2142; i=kees@kernel.org; h=from:subject:message-id; bh=x0rT9NEiiYRX5MkFRJvYMmCV2JTVEDgBLYkWCR5UE2s=; b=owGbwMvMwCVmps19z/KJym7G02pJDOkXXwp4zXjT+XJrvd0CZW7zC3LBV2/pHfsXrWj7K/7aU UcvkY2HO0pZGMS4GGTFFFmC7NzjXDzetoe7z1WEmcPKBDKEgYtTAC5SyPDftZeLK6VsR4Dksl3d zIH8r0Ob+nPvi9vonCi+F3iyRl+PkWH5gTkSKoYtLx8uM/x1+cbvH+7l91hb9j7a9tF1iydj8jZ WAA==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <17a7ca5a-31f5-47fc-ab67-348df20b31ec@amperemail.onmicrosoft.com>
 
-On Wed, Mar 12, 2025 at 02:04:51PM -0400, Adam Young wrote:
-> The XGene patch did not apply on top of Linus's current tree. The other
-> patches applied OK.
->
+When a character array without a terminating NUL character has a static
+initializer, GCC 15's -Wunterminated-string-initialization will only
+warn if the array lacks the "nonstring" attribute[1]. There is no reason
+for the command lookup logic to not use strcmp(), so grow the string
+length and update the check to eliminate the warning:
 
-Yes Guenter had mentioned it in his review. I have it rebased locally [1]
-but yet to push out v3 on the list.
+../drivers/scsi/pm8001/pm8001_ctl.c:652:7: warning: initializer-string for array of 'unsigned char' truncates NUL terminator but destination lacks 'nonstring' attribute (9 chars into 8 available) [-Wunterminated-string-initialization]
+  652 |      {"set_nvmd",    FLASH_CMD_SET_NVMD},
+      |       ^~~~~~~~~~
 
-> I only had to make one modification to my patch to remove the call to
-> ‘pcc_mbox_ioremap’,  as it is performed in the pcc_mbox_request_channel call
-> instead. With that change, my driver continues to work. I will submit
-> another version here shortly.
->
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+In taking another look at this, I realize that actually strcmp() should be used,
+so just grow the size of this character array and use strcmp().
+ v1: https://lore.kernel.org/lkml/20250310222553.work.437-kees@kernel.org/
+ v2: Use strcmp()
+---
+Cc: Jack Wang <jinpu.wang@cloud.ionos.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org
+---
+ drivers/scsi/pm8001/pm8001_ctl.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Nice, I wasn't aware of the Ampere driver using ioremap. Is it posted on
-the list ? Or are you saying you will post it soon.
-
-Thanks for testing. Please provide tested-by for patch 1-8 if you are
-happy with it.
-
-> I like the direction that this change is pushing, making the mailbox layer
-> the owner for other drivers.
->
-
-Yes it was long due. I had changes in my WIP but was away when you changes
-got merged. Otherwise I would have asked you to do some of the changes in
-this series. My bad, couldn't review your patches unfortunately.
-
+diff --git a/drivers/scsi/pm8001/pm8001_ctl.c b/drivers/scsi/pm8001/pm8001_ctl.c
+index 85ff95c6543a..bb8fd5f0f441 100644
+--- a/drivers/scsi/pm8001/pm8001_ctl.c
++++ b/drivers/scsi/pm8001/pm8001_ctl.c
+@@ -644,7 +644,7 @@ static DEVICE_ATTR(gsm_log, S_IRUGO, pm8001_ctl_gsm_log_show, NULL);
+ #define FLASH_CMD_SET_NVMD    0x02
+ 
+ struct flash_command {
+-     u8      command[8];
++     u8      command[9];
+      int     code;
+ };
+ 
+@@ -825,8 +825,7 @@ static ssize_t pm8001_store_update_fw(struct device *cdev,
+ 	}
+ 
+ 	for (i = 0; flash_command_table[i].code != FLASH_CMD_NONE; i++) {
+-		if (!memcmp(flash_command_table[i].command,
+-				 cmd_ptr, strlen(cmd_ptr))) {
++		if (!strcmp(flash_command_table[i].command, cmd_ptr)) {
+ 			flash_command = flash_command_table[i].code;
+ 			break;
+ 		}
 -- 
-Regards,
-Sudeep
+2.34.1
 
-[1] ihttps://git.kernel.org/sudeep.holla/h/b4/pcc_fixes_updates
 
