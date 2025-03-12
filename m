@@ -1,174 +1,107 @@
-Return-Path: <linux-kernel+bounces-558299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B42A5E410
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:02:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA1CA5E429
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:10:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3403B3AA5D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF25189E13D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2907257421;
-	Wed, 12 Mar 2025 19:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BAF257ACA;
+	Wed, 12 Mar 2025 19:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nOolVWXO"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="JjcHXgAs"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007D61E5B76;
-	Wed, 12 Mar 2025 19:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA631E5B71;
+	Wed, 12 Mar 2025 19:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741806154; cv=none; b=fB60eWGA0Jj3ZI7QZfwOClpRBbf4HyjrtdGOxdcXNnpey/ljt3vou/OXRcc32FaH1JefGMWnucVgOydmN/yWM55XrQ7EyHDEvMsxgqxKnsNBHmIKJdg770h/mXodzBOTdxd1O9/lESN1bThWijIRwzygnHNkDDiaJgSON9OsS+Y=
+	t=1741806641; cv=none; b=WPYGhjoJ0hsaiUB+TQgjzeN8+5IEueoZPofGQ+V2OgNT30+xGCSsnwnl24p51MD4+HU0UGkN9PdNPMnrCgcQuplwrXuc46nRYyN3MCd+UWGYPcVH3aVymu3nFc2CgpUHnbSgHNoxyg5oobw6hCBsp5aGttTiQlVCm8kOPOojtq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741806154; c=relaxed/simple;
-	bh=idOmWFvNR/hkrHv8K6P5ExxPfuEgX7xMqzYEmJvI81Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GKgOtOrkrEtlxbfG4z/AJQSQ0h4ZwtJ5FkW4s4U1u/iDXa5gfe8HL6AAJwe1rsnRVVk7+FqvjmmKiQYn72/EGWeee1qzIpaIrZohgmtkYNSn0lfrFwnYxmWK1IVprelbpWEn2k8FAQ2O8NoKPjV9Fn3x+adtuk6w435rJLF+NsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nOolVWXO; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=6yolepTUWycUYSP0NNLMuaVmz6Sw1ofQLTuAXR+lN7k=; b=nOolVWXOwrwm+h38j0+1o0NTme
-	Vm2e2oT75glTXLaSsbcjFtGNrDxqQd/zSwatCVx1BTRKCZEehp2GexcuwjMiFozWB2Phvev30ThWa
-	qeIXkDD0+XN90q+HCVz3qKY2rarAsVjPHaMz1eNHCu1EJlCqatHjd+S3nJFn4BYrUbz4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tsRLL-004kgf-JU; Wed, 12 Mar 2025 20:02:15 +0100
-Date: Wed, 12 Mar 2025 20:02:15 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"Simek, Michal" <michal.simek@amd.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"git (AMD-Xilinx)" <git@amd.com>,
-	"Katakam, Harini" <harini.katakam@amd.com>
-Subject: Re: [PATCH net-next V2 2/2] net: axienet: Add support for 2500base-X
- only configuration.
-Message-ID: <ce0796f4-cf2e-4a3d-ae79-1f9b9966773e@lunn.ch>
-References: <20250312095411.1392379-1-suraj.gupta2@amd.com>
- <20250312095411.1392379-3-suraj.gupta2@amd.com>
- <ad1e81b5-1596-4d94-a0fa-1828d667b7a2@lunn.ch>
- <Z9GWokRDzEYwJmBz@shell.armlinux.org.uk>
- <BL3PR12MB6571795DA783FD05189AD74BC9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
- <34ed11e7-b287-45c6-8ff4-4a5506b79d17@lunn.ch>
- <BL3PR12MB6571540090EE54AC9743E17EC9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
- <fd686050-e794-4b2f-bfb8-3a0769abb506@lunn.ch>
- <BL3PR12MB6571959081FC8DDC5D509560C9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1741806641; c=relaxed/simple;
+	bh=cgz5IX7ed0DoG9H5f0utfDXpJpyil9n5ltI04DxyhYc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Tak9o6JhPLAsdgXpHyvRwkeL9jRhXmbkHHb0XwXHIDILyQDU2tnTULSi3oQw+hQgAR4EJ2wYJGIF4wYhuS4I+hlBbMNvHhPTa07hF9lLIKzxpcMujQZpJzBK+zAJFwBbgfzhSUXbO3Ss3ToDe0a5NYyvB576ewLIQkn+1ulI0jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=JjcHXgAs; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1741806037; bh=kw9gU0TN7H6ODehbFr1G1DOlc7O7YIx4un9PjAtfgFY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=JjcHXgAssXzEQsToknvoQvcASXiUCr1l1jWfYjjq5HFC3BXLb2fBdUaaY0pPOsSiC
+	 +2jSPmKmphe4WW+OE8oH1Vy8YZZQNc6tANaytwJubDILtsED0VI1sQw8aHfFvTMFkJ
+	 DFiA5q/Quxfg4uZCgVBWMk/+Ze7XA1Ay1jjWqs60=
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
+  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>,  Benno Lossin
+ <benno.lossin@proton.me>,  Andreas Hindborg <a.hindborg@kernel.org>,
+  Alice Ryhl <aliceryhl@google.com>,  Trevor Gross <tmgross@umich.edu>,
+  Danilo Krummrich <dakr@kernel.org>,  Boris-Chengbiao Zhou
+ <bobo1239@web.de>,  Kees Cook <kees@kernel.org>,
+  rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org,  Lukas
+ Wirth <lukas.wirth@ferrous-systems.com>
+Subject: Re: [PATCH v2 1/7] scripts: generate_rust_analyzer.py: add missing
+ whitespace
+In-Reply-To: <20250311-rust-analyzer-host-v2-1-30220e116511@gmail.com> (Tamir
+	Duberstein's message of "Tue, 11 Mar 2025 21:17:22 -0400")
+References: <20250311-rust-analyzer-host-v2-0-30220e116511@gmail.com>
+	<20250311-rust-analyzer-host-v2-1-30220e116511@gmail.com>
+Date: Wed, 12 Mar 2025 20:00:36 +0100
+Message-ID: <m2y0xaysyz.fsf@kloenk.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BL3PR12MB6571959081FC8DDC5D509560C9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
+Content-Type: text/plain
 
-On Wed, Mar 12, 2025 at 04:08:02PM +0000, Gupta, Suraj wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
-> 
-> > -----Original Message-----
-> > From: Andrew Lunn <andrew@lunn.ch>
-> > Sent: Wednesday, March 12, 2025 9:03 PM
-> > To: Gupta, Suraj <Suraj.Gupta2@amd.com>
-> > Cc: Russell King <linux@armlinux.org.uk>; Pandey, Radhey Shyam
-> > <radhey.shyam.pandey@amd.com>; andrew+netdev@lunn.ch;
-> > davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
-> > pabeni@redhat.com; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> > Simek, Michal <michal.simek@amd.com>; netdev@vger.kernel.org;
-> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
-> > kernel@lists.infradead.org; git (AMD-Xilinx) <git@amd.com>; Katakam, Harini
-> > <harini.katakam@amd.com>
-> > Subject: Re: [PATCH net-next V2 2/2] net: axienet: Add support for 2500base-X only
-> > configuration.
-> >
-> > Caution: This message originated from an External Source. Use proper caution
-> > when opening attachments, clicking links, or responding.
-> >
-> >
-> > On Wed, Mar 12, 2025 at 03:06:32PM +0000, Gupta, Suraj wrote:
-> > > [AMD Official Use Only - AMD Internal Distribution Only]
-> > >
-> > > > -----Original Message-----
-> > > > From: Andrew Lunn <andrew@lunn.ch>
-> > > > Sent: Wednesday, March 12, 2025 8:29 PM
-> > > > To: Gupta, Suraj <Suraj.Gupta2@amd.com>
-> > > > Cc: Russell King <linux@armlinux.org.uk>; Pandey, Radhey Shyam
-> > > > <radhey.shyam.pandey@amd.com>; andrew+netdev@lunn.ch;
-> > > > davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
-> > > > pabeni@redhat.com; robh@kernel.org; krzk+dt@kernel.org;
-> > > > conor+dt@kernel.org; Simek, Michal <michal.simek@amd.com>;
-> > > > netdev@vger.kernel.org; devicetree@vger.kernel.org;
-> > > > linux-kernel@vger.kernel.org; linux-arm- kernel@lists.infradead.org;
-> > > > git (AMD-Xilinx) <git@amd.com>; Katakam, Harini
-> > > > <harini.katakam@amd.com>
-> > > > Subject: Re: [PATCH net-next V2 2/2] net: axienet: Add support for
-> > > > 2500base-X only configuration.
-> > > >
-> > > > Caution: This message originated from an External Source. Use proper
-> > > > caution when opening attachments, clicking links, or responding.
-> > > >
-> > > >
-> > > > > > On Wed, Mar 12, 2025 at 02:25:27PM +0100, Andrew Lunn wrote:
-> > > > > > > > +   /* AXI 1G/2.5G ethernet IP has following synthesis options:
-> > > > > > > > +    * 1) SGMII/1000base-X only.
-> > > > > > > > +    * 2) 2500base-X only.
-> > > > > > > > +    * 3) Dynamically switching between (1) and (2), and is not
-> > > > > > > > +    * implemented in driver.
-> > > > > > > > +    */
-> > > >
-> > > > > - Keeping previous discussion short, identification of (3) depends
-> > > > > on how user implements switching logic in FPGA (external GT or RTL
-> > > > > logic). AXI 1G/2.5G IP provides only static speed selections and
-> > > > > there is no standard register to communicate that to software.
-> > > >
-> > > > So if anybody has synthesised it as 3) this change will break their system?
-> > > >
-> > > >         Andrew
-> > >
-> > > It will just restrict their system to (2)
-> >
-> > Where as before, it was doing SGMII/1000base-X only. So such systems break?
-> >
-> >         Andrew
-> 
+Tamir Duberstein <tamird@gmail.com> writes:
 
-> If the user wants (3), they need to add their custom FPGA logic
-> which anyway will require additional driver changes. (3) was not
-> completely supported by existing driver.
+> Add a space before the `/` operator for consistency with surrounding
+> code and code formatting tools. Add a second newline between top-level
+> items in accordance with PEP 8[1]:
+>
+>> Surround top-level function and class definitions with two blank
+> lines.
+>
+> This change was made by a code formatting tool.
+>
+> Link: https://peps.python.org/pep-0008/ [1]
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-You say 3) is a synthesis option. Say somebody synthesised it that
-way, and found it works for what they need with SGMII/1000base-X.
-Because the driver took no notice of the capability bit, that is what
-it would do. Since it worked for them, they might not of gone back and
-optimised the options. "If it is not broken, don't fix it". So we
-could have systems out in the wild, synthesised as 3) happily doing 
-SGMII/1000base-X ?
+Reviewed-by: Fiona Behrens <me@kloenk.dev>
 
-With this change, won't you break those systems?
-
-I'm just trying to get to a definitive answer, is this change actually
-safe to all todays possible systems?
-
-	Andrew
-
+> ---
+>  scripts/generate_rust_analyzer.py | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
+> index adae71544cbd..15a690ae2edb 100755
+> --- a/scripts/generate_rust_analyzer.py
+> +++ b/scripts/generate_rust_analyzer.py
+> @@ -103,7 +103,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+>      ):
+>          append_crate(
+>              display_name,
+> -            srctree / "rust"/ display_name / "lib.rs",
+> +            srctree / "rust" / display_name / "lib.rs",
+>              deps,
+>              cfg=cfg,
+>          )
+> @@ -178,5 +178,6 @@ def main():
+>  
+>      json.dump(rust_project, sys.stdout, sort_keys=True, indent=4)
+>  
+> +
+>  if __name__ == "__main__":
+>      main()
 
