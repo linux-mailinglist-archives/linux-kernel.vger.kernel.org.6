@@ -1,306 +1,247 @@
-Return-Path: <linux-kernel+bounces-557358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9957A5D7BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:03:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F126A5D7BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:03:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7134617643A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:03:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1804169F5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7169E22FF58;
-	Wed, 12 Mar 2025 08:03:28 +0000 (UTC)
-Received: from smtpgw-1-2.nogo.comp.nus.edu.sg (84-20.comp.nus.edu.sg [137.132.84.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632F0230278;
+	Wed, 12 Mar 2025 08:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LDJiH6yH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064B622CBFA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=137.132.84.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741766607; cv=none; b=EYbA7jZeM5MiMdHIpthrSk0vkI0xz6ug3K7w8iZZpkwuAhKAlJjUCpqG3Cwrc8fONtJUu6zYFMJAjyR6erhHdSINdc7gpIyGHzQefCtkKzuyAPurSet6ixokUHDPeYm/pykWwoX2UTO5p/INF15B+pQL0Pz9khZvFUuFNdjiaoU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741766607; c=relaxed/simple;
-	bh=oJU4djKrm9Rm6ioU+tMZU2+PzdPdSVktRvsfMCG6txQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SX+BMYfaQ635JKUS1gRQ9jM02F9KCdjgs/J4cVHKq1enmQEEZAskmV0jB2Fb2kImlJToBruHEKIm67KmmuPVHhUQTXshm3ZUSyv9pv/c1bhjEfkDJ2lsXBZxLxdOKAfXLyV7TU+kjRrMC+Ck3FNDuu5aBFPonIYKv0xRKf/sRO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=comp.nus.edu.sg; spf=pass smtp.mailfrom=comp.nus.edu.sg; arc=none smtp.client-ip=137.132.84.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=comp.nus.edu.sg
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=comp.nus.edu.sg
-Received: from localhost (localhost [127.0.0.1])
-	by smtpgw-1-2.nogo.comp.nus.edu.sg (Postfix) with ESMTP id C257E1606E6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:03:15 +0800 (+08)
-X-Virus-Scanned: Debian amavisd-new at smtpgw-1-2.comp.nus.edu.sg
-Received: from smtpgw-1-2.nogo.comp.nus.edu.sg ([127.0.0.1])
-	by localhost (smtpgw-1-2.comp.nus.edu.sg [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 2Vl6k9jMBAa9 for <linux-kernel@vger.kernel.org>;
-	Wed, 12 Mar 2025 16:03:15 +0800 (+08)
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtpgw-1-2.nogo.comp.nus.edu.sg (Postfix) with ESMTPS
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:03:15 +0800 (+08)
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-39143311936so1429186f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 01:03:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741766593; x=1742371393;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RgJ9MVn1ZDiCD6dpQHQCxc25xA/00pK9v/ReT0rqFBw=;
-        b=g5TCELsf6LV6L57yOYQo780FD9lbfad8CKSm6Mpy7QCcfFe6Pg5QxFuiVok+yMFQRk
-         fpVcF3ijLqRAvjT5WNbYWNNUk0UspzRzi/oySQ+RZwHGtkWhtllugT2COFKB25Qbe9vt
-         IQ8uNx9me/lg07VSPz5E+GgKcTgMOhLcCkTqJeXX0KgALT27RYtplR+IlOIrNBoTAWwY
-         O8bHlJeudDLUUAbRvfSziORPfBKdIiqxduAbSQHkQqZdDlcei28SgTxCvu0YIMWpyRY6
-         Itl6+EN8rFvVqyK9/XHz3MEQn/heVjTDtZVnMAyTf8sDJzZRxINXM1CEIPpen7Jgr2Qd
-         3C1w==
-X-Forwarded-Encrypted: i=1; AJvYcCW11eBYY+F9o8Mfk8F01QSRODobkTylFX57qFvzwKdRdH6hagQRvJoQc7HFVzRKFI/tF86eoGzmeMx96Ro=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzggs/PUqwblIdcfebFLTyfKO2MH30UM7O4ym56No8iWd9Va+JY
-	vt5RoUVI2LcDKr7Tw61D21rnJNbFn+DT7CUgFAxUd3cd7bJ5XRVePvbp7GSAHS3RXptpZTC2RG6
-	Wy5Dx4oJ+20ZElqFlYV2jkDbNlEu/yZbe41DhnUw3q5ZCKXn58TfeX98e0w3eAaYou74ec2hlpQ
-	UKjOSPB8idE2xST740xc+/j94iVO/UycwVyiGDm2hA7O0VEdIIuw==
-X-Gm-Gg: ASbGncsxliF8IKOlmlnwwHfXfrYlubGaQrc6Be1hOz1sk+IcoCia5l85x7vDHKWf+61
-	dbTeuvhoTmASsIStr1f4f2+gi0s4d7eoW6riJPN04oK+3KkiqGwjZagh1oZRniC24HBXOIL/yLb
-	M=
-X-Received: by 2002:a5d:64c5:0:b0:390:fdba:ac7 with SMTP id ffacd0b85a97d-3926c78f683mr7006689f8f.51.1741766592644;
-        Wed, 12 Mar 2025 01:03:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFBswwxBkt61fInFIN+2crJHiFOHtDmeeiTykeA+k3ejtaulGXNgAefuFsq5nZ/fSLbNJrFTD6UFi9/AmwPPbU=
-X-Received: by 2002:a5d:64c5:0:b0:390:fdba:ac7 with SMTP id
- ffacd0b85a97d-3926c78f683mr7006630f8f.51.1741766591627; Wed, 12 Mar 2025
- 01:03:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF80E22611;
+	Wed, 12 Mar 2025 08:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741766588; cv=fail; b=aQeu6aLRFHjZ7H28MI44TGcd2Z3izXzZ672M7x7gO0Dw2+9RtCEubyqiZt/+uHJpos0v6I+tEjfLOJ8YoDyGHcpGKFE+nLHwge9IHPJtl4D8nVQGMh960d7Y8q8seEFMZI0V5WiZd7Ef+eheWAgl9FpdALc4yyuo7cjfBv6yfKw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741766588; c=relaxed/simple;
+	bh=LYV6M80De7O7+dIwmc/3Y51jKKcOJciOO9ddVNx8vAE=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gK6LnJl/KHFWQWDctYBPhIic0szPFtcjG5MhNUz0MS8rkZubFN9uXCXNMNz2+LnIMmIKDCeNo5bHt6lHHIJqwVmVfTCn+Adejj6btPAlSnDATQWwrWOTbcS7jNAIx99JgqdLP6T9u9cgajdi7n0ZUxF4h4dELtPDhUgjxu0Xye8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LDJiH6yH; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741766588; x=1773302588;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=LYV6M80De7O7+dIwmc/3Y51jKKcOJciOO9ddVNx8vAE=;
+  b=LDJiH6yHssEuK3+2U+wvKQKgVJnIYKyL2ZbXco83USq1VlrRJoVYWWom
+   KNfJLBQdun+WCPoIRRWFJLyqxXvWVNbj5bMO7sZS+Mmtv+vLvnjswIlEo
+   +Dj3PMDxpGl/kSj1ikwLN4rFTNRFIgJn8rsCVZDxvOE1yTW0RiCI0K4ow
+   SidshKpASnZbsOxg+ZRJBF7YOm0A0U+Xhe12+upP03lmBTDSedt/+KnKF
+   uTqZPURp0q+9GSx65/OX6xVKUhtrSt7QY0iSTeAONI/SDaXs5xZ/X1l58
+   TuUkdlfW2xXlmWFaAtBcZ72JZQJ+J2EvxHNuSVFHmH+kpQYKotuuPkl80
+   A==;
+X-CSE-ConnectionGUID: lKsLL3GnSymnRpjR3fH0rA==
+X-CSE-MsgGUID: aR3HCNqOSCOJ2iziytSP6Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="42688517"
+X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
+   d="scan'208";a="42688517"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 01:03:07 -0700
+X-CSE-ConnectionGUID: 5Jc5ySYYRR+5q0HEYpydbQ==
+X-CSE-MsgGUID: AOTyP3+4Qi6zHEuDCOTYXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
+   d="scan'208";a="121048072"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Mar 2025 01:03:07 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 12 Mar 2025 01:03:05 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Wed, 12 Mar 2025 01:03:05 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.47) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 12 Mar 2025 01:03:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mAXOIjLeSIzTWJKI/Ln8WK483Nm3OHhyJknAQP3StvFZ29yoD/v2rY5xH0G50Fg6dQq6dA+E3vRp+FMUgppsYnnCPvbbpKzwoBoKmspgh0nmNrtoRWQbejoMcGI+z7L73gtBZuXr6c3jErvR68SfpUg1v6GtKIA0NCLwxqnypykkReJmjS+2p8rMVr2WxShfd7GX3cMF3cjKiRjVGcG5UxSDMRrDZjiJQ8GClwsTP3fsVPpYokHmZ+2uqE3kfi0ZIKL9MirDbj/aPA8lFyv9HbzNwaGXalhiuKrb0ZnABBEEfaSRPyzZbxNkzxpjjvtLhWHoNSZUoBGLDaymhg6f2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=flEA7j1Qq1OdTQ5eOTPmpdaVSovR0MBjnOr9vc/YHg4=;
+ b=UTuakyWTX4DJbc3DsycQ3qrqj5d0znBSK946daCusVNrTiMuMH1lXnA2zV8nrekHy457S6PIRCjFN2olpNTQ4mRXAeGdnG5I2u4uRal9mf6yJ3jGBlsRhq8buhJBeTV3GRJPbgNzG6CAxqUsZ/IUbD4lWkyXwIDx+fu5MJgpoT9I7tfGIjLcX4COqM2hpIPA9zYjJkbgaZWyANJ9kK7AighGop55ew/bnkzuyyBONf1mDT32tKRK7xnF61r9dql4ksZUVLBZk7Sm1ydzOjIQyk2TfIMUWVfkCqloj5IpzE1jKnWd5mzYnGqe00UtFpuehYIzLgWfCK+UHtK5kEbA5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
+ by BY1PR11MB7983.namprd11.prod.outlook.com (2603:10b6:a03:52b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
+ 2025 08:02:44 +0000
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6%4]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
+ 08:02:44 +0000
+Message-ID: <2b9d0a66-5e8b-4c28-b2d0-0e6e03a075b7@intel.com>
+Date: Wed, 12 Mar 2025 09:02:38 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] net: intel: Remove unnecessary static variable
+ initialization
+To: Joao Bonifacio <joaoboni017@gmail.com>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Tony Nguyen <anthony.l.nguyen@intel.com>
+References: <20250311221604.92767-1-joaoboni017@gmail.com>
+ <20250311221604.92767-2-joaoboni017@gmail.com>
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250311221604.92767-2-joaoboni017@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VE1PR03CA0006.eurprd03.prod.outlook.com
+ (2603:10a6:802:a0::18) To MN6PR11MB8102.namprd11.prod.outlook.com
+ (2603:10b6:208:46d::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJeEPu++aAiF=ybq+XHEdGad+RsxR8d=tmEe5LxCOnDjWY_OFg@mail.gmail.com>
- <CAJeEPu+0EttQaFYKhGUbn2j=_nLvT-wfdBS0wQjXDkBq962g6g@mail.gmail.com> <8548e6ad-c21d-481c-b9c5-bd0403ee26c1@oracle.com>
-In-Reply-To: <8548e6ad-c21d-481c-b9c5-bd0403ee26c1@oracle.com>
-From: Dylan Wolff <wolffd@comp.nus.edu.sg>
-Date: Wed, 12 Mar 2025 16:02:00 +0800
-X-Gm-Features: AQ5f1JoY0LHi6ir44pClC7s__0tqkS8pYVqPGO6TWj3-ijmKdL--v9C9Srsz-d8
-Message-ID: <CAJeEPu+AgjJD--boaj79Hp-QKskOm2AMqVwor_k+cwqUg_X2BA@mail.gmail.com>
-Subject: Re: General Protection Fault / KASAN: null-ptr-deref in jfs_ioc_trim
-To: Dave Kleikamp <dave.kleikamp@oracle.com>, Dave Kleikamp <shaggy@kernel.org>
-Cc: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	Jiacheng Xu <stitch@zju.edu.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|BY1PR11MB7983:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e076540-2cc4-4ceb-afdd-08dd613c4524
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?N2J1azRoWGFjbml1R2hVUEZ6aUI2cm9xQ0V6ODdHd25PNndLWlU1OStFUWpk?=
+ =?utf-8?B?NTV2OWVYWkZxWkdOT0VLdFFCL2xKNkpzeDA2RjFzZjNta1c0WWtudTRVMnAz?=
+ =?utf-8?B?V3FjdWJ0UUlQcjRPQUFrTkN1V1p5WTlkUzgvTytsYXVlTnc3R3prdFNBMlJE?=
+ =?utf-8?B?cFJtd1N5bUNwYURNT1NDRjlrOElqNDA4eW9YK2RIUTlBbndkb1Q5V0hmcnp6?=
+ =?utf-8?B?a0FJVVIvZEJ5d3FSWjFWc05JQm5QRXhmR0V6cDNDYzg1cEVlVFV6QzlDZTJX?=
+ =?utf-8?B?bDRWTC9QcmxoVXRxcWFGTllwM0tzczhBUTBpVDZmRm8ydEF4SXczYldNYW1O?=
+ =?utf-8?B?aWpUMFZRbGFWemM0S0RnNUJYM2dacXNLVkZLRExOR0xqRFFrVUtyaWpCU2Jj?=
+ =?utf-8?B?dkZtTzhJZGlVV0tRVXFrOFpNa25lK25RVWl3b09DRGlXbURSeHJMV1RGUXk4?=
+ =?utf-8?B?WjI4cjhBNzQyNTBBWmNMRkZJSG1rR2Z4c1F0OTliNG9keG41MVppSXk3MnRx?=
+ =?utf-8?B?KzlKczFZSEhrRUlPOXptTldNdDBqMm9KUmhvbitXclpISUNOcEFHekF0TlQ3?=
+ =?utf-8?B?cHRUa1AvM05JMlJmV1c3YlIrV0d6Sit2S2xib041QUh3MFV4THdVZzVBb2ZY?=
+ =?utf-8?B?OFVTdFpHd050Q2UyTkNDc3pYVFpzZXFnOXBaZEpvY29VSWJ3cnhVOHlxRENM?=
+ =?utf-8?B?QjA5R09sdFZVdHBrYlZpNlBhaWI0d25MOE1uWjUvbUYwZjdPUXR0cUpSS1VR?=
+ =?utf-8?B?TVRmVmp3NEUyMVdIOVJxSFhmK0Zjc3N5TWErd1YxOXpQUkRTV2l6bERUQlpU?=
+ =?utf-8?B?NElmMUUxUW9wZ0tsVFZHUG9UNEx1MWo5enhWNzN1dGJlM29TaitUT3pkSEpz?=
+ =?utf-8?B?L0xWby90SktqdHNWTHU2VUVhQlRmbENyQ1c4TkoyZVAyMW1aVWpDeFoyMGtZ?=
+ =?utf-8?B?cXFzeS9ZSmFPT3R5K2YwUmJlbjZpZWZiaVJVOVVCcUV6LzQ1eGg5NGN3U2pl?=
+ =?utf-8?B?MVJZNlFKNXN0SGxEZUNvMkxWVVVJN3hxbUVqWTY1Q3ZBb25EdVRmenplWTBx?=
+ =?utf-8?B?ODBFUyt4RDdTQXdDQUxXTGhJdHFBUDlpYy85V1Vydi9KMTgxcG00NTU4dklQ?=
+ =?utf-8?B?ZGFQTURsamtDUEoxS3pzZTgvV3JVdlhDandQUThmd0xhdnZrUTVhajNmbmJh?=
+ =?utf-8?B?MEs1eW5XUlM0RjF6N2pYc2d0eWNQL3lWQlNEMy9RWmpwRW9KbzAzV2xSVzFI?=
+ =?utf-8?B?S0c0UC9FTTZtR3JlODZTaWs0RXJpNlZadDFVQ09pd3lsNEg3d2xGOUI4VmhB?=
+ =?utf-8?B?UUllOFBJcVlSNGdXNTJkMlUxQllMa2tsN2RNVFA1TEtIVkdHZGRUUitnOGhm?=
+ =?utf-8?B?Y042UDJSbGtNalFvelZPd1JRWi9nbG1iN3pYdlQ5TElENjV3MzV1bjFBOW5t?=
+ =?utf-8?B?dkszOXpjWUs5SHh6QXNVczdWMWRHblVEYUlkSCtHOGcza3ZRNzFEZGhDR3Zy?=
+ =?utf-8?B?OFZOenEvcjB4RUk0TXdPR1o3VlVDajdOOG44UlVYTGpMTVVxUHEvR3lZYTFp?=
+ =?utf-8?B?Qmo3MGV5eHY3aXZ6S1haUk5ET0lnSTMyaWFmZlZsLzRQZlBvY200T3FDanpW?=
+ =?utf-8?B?dFJ5MnJ6cjVmcUF4b2ZZaGdaMDRscTMzU3pJUWk4Q1FCWWhsN1JvK1FUMmQ4?=
+ =?utf-8?B?YlNEYzZaazRSK0xpb2hUSmErZ3FNNDRRc08xeUZ2OXd0b3NzWDFjWG4rRldN?=
+ =?utf-8?B?VFI0WEUvS0RhQ1NHZzJhbVBseHgra0luNEdNNDUzUjhtRFBPNEl1OURVUE5n?=
+ =?utf-8?B?TDAzb1NDbkNxVWhLdWRadz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UFJYTDVYY1R2SkdlN2l6Q3U5R1UvUzVuUFhudlIwQ0FSYnBmT1N1eHJqalpJ?=
+ =?utf-8?B?VFlnT1pQWDRSYmU2VGx2QlQ0dkdxcWFLMTBFSzRIV0hicU5RbUY2bGpVZ0Yv?=
+ =?utf-8?B?eng4WlhhSHh5VHBGdTh1aEd6R1hCbm1sSjkrOHFSMUpwVWlzdjhPKzJ0Y1ZW?=
+ =?utf-8?B?aE5LRTcxdmcybGtodm1DTzIxY1ZWNkxnVmEyN1dEb2JQZHNoWXR6bzIxNXJ1?=
+ =?utf-8?B?bE1WM3FMTEJvb3lsd29TVVV3ci9VdmloUGthVWJQckM1dDZpS3VvcjQyQnIz?=
+ =?utf-8?B?K1lIVkc1a2htTk5JZ2Y5U0hGTjJuRWpRbi9TSGNKbGlTaHZLZnRzckl5THBS?=
+ =?utf-8?B?bVBVaUVMTkZYeWdSKzRxWkpuUUREaytMbisrY1ZsRnNLSXhZdjkyRk9YTkxF?=
+ =?utf-8?B?RVFReG9aTUVrRW9ReVdYWlR5VDFrUDBlVmNCUlgwWEFEL1BLbHJQem1uUmlk?=
+ =?utf-8?B?TFNBLzB2L1N0VFdDWW5YRXZvZ0J5a3lOUGNxT2RZZ2RCSmVvTW0zOGtIWnRw?=
+ =?utf-8?B?ZlV5eWpUdGM4YWRmQXF3S0I0YkhhajNGTHloTnBMdjI4ekN5dEl3dW1DMzZD?=
+ =?utf-8?B?UU5BbzFnU0s1dVprSVM1YlcrY2JVN0I5V0d1ZWlFOThlVVp6Y1RDMHdaQ0JB?=
+ =?utf-8?B?UlVQUmhoNWRZZkx5Qm1MZjFXSnBtYVdndENFVTJKbXJIZWtNNC8vRjFsNzZX?=
+ =?utf-8?B?K2E3R1hNMElNTzY3Z0lvdTdlcEZ3bVRxTlExVDBNeGV5M01MV25RUlBTSzNC?=
+ =?utf-8?B?cFVWYWhZOG5SK3cwdkJqakFXVkNRYkpTUFBRODJwL2lEWFhQbVJGRlZPalZF?=
+ =?utf-8?B?c0JUa2ticHZDdHROMXJEakYyc1JGN3Q1d3VZMEFPNWtyOElZNEd6UUtsaStv?=
+ =?utf-8?B?UG9yM1lUWmY1K3Nhemp4Skx5TmdKaDRJTExrajBOdldDTzMvNE5mYkh4bkxU?=
+ =?utf-8?B?Yi85VTdXNjl1YmlzTHliMFNiT1ZDSzVmSFBCS1RoVEI5Mkpqb0RSWUV1Rkpj?=
+ =?utf-8?B?ZmpsYnNycDdRaEkyVWRUeTFBRlhBRHBURHNWYW9jbVZZbC9qV3RLY3V3ZkpI?=
+ =?utf-8?B?UmllQVVtSlp4L1BDNHNJeTBmeHVoZk15UzRod1RGeW9EeWc2ZjNnU1NXbGVj?=
+ =?utf-8?B?RlpwbjBzQitHQXlCc0NqUTQvUGMvY054d0JIeUxSZ21FNE1PRExsMDJRRnZ5?=
+ =?utf-8?B?UWpHb0p6dTFtamthR1NZWmFSOFcwT2VXcU1JMVRuWFBGN2JtVFRsQW11cmdh?=
+ =?utf-8?B?dzdrcTdXQzNkQ3EvZ0NBZzcwRkdqMkpmc2ZEdGZ3RXFRbVZRWG5SUzlDU2NV?=
+ =?utf-8?B?RWF6bmZCNEMzeEpsVnFyd3o2cWs1cWl6SDBIaDhmdzRCTE1kYXVRazJQd2Rz?=
+ =?utf-8?B?V1ZEMGN4NldzOHVOYUtoNVFwdlhvNVIyYVIyem9ibTdtNnZiTDhDU0IwcEli?=
+ =?utf-8?B?V0Era3phdDRBR1ozTC9KOGtkckxuOGpuNnZwb2hmT3k2RHhOdUhmUTFwNFQ0?=
+ =?utf-8?B?OFgydW1GM1N4SE5waGFuNE1wcUhRVWx3NGNTVjFoZTFNcmxFbnc0b2p4SExw?=
+ =?utf-8?B?ZFRNQXJxbXZxbDY3by9tZTIrQXM0SC9UTWZEYzNmTXNqSUVXSmFFOTM4WGdE?=
+ =?utf-8?B?Tkh6K0ViUXpoa2JhNU9MaVBDQWZvaW95NFJDVndENi8wTWplSGpMd3gwRTZl?=
+ =?utf-8?B?Q2tEeFBWTjZHRTJMUUVaY2ticE1Ib1l6NjZUM2E5cXdkT2VhZTdtL2FCU1ps?=
+ =?utf-8?B?ZTJQOXNESHdYZVorRE5xdTRwOTFsRHpSbUNnT2dGaU81SU1RSEtFU3N5UjN2?=
+ =?utf-8?B?eWJGNEltZWZuNUE2RzVlWis4SjJjZ20zQSs0TSt0N243MldybGxGSGxRejRr?=
+ =?utf-8?B?MXR1M0tRaUlWd3pvOUtrTkVjTTJUK3NmaldFTS82WG9kS3QvemswNmdHRjhP?=
+ =?utf-8?B?WHlCN3FJdW9KZXowMVl1K0NPdkNSMllNK3d5c0h4QXFGQ2YrV3luWW1lR3lP?=
+ =?utf-8?B?WUtvUk5MR0dKN1p3SklzaEZpZ1NCMkVoM1liQ2hxMTRUaWJxS2d4Mkd2cE5a?=
+ =?utf-8?B?eTEzT2FZSFdiYms1anJWdk1oL05pcVVkNEp1cDcvTlJlYldwMG9KbkcrQjlQ?=
+ =?utf-8?B?UjNiVlJ2SXUzSVE0Rit4cStYTTJVWUwxMzRBS1k5bTRiclk0VGZEOGpNVE1E?=
+ =?utf-8?B?dFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e076540-2cc4-4ceb-afdd-08dd613c4524
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 08:02:44.5415
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UiGc6OPOklWChA0p6tTtR12jbPSPBow5c8obvHyB43qtH1Mja10vVo/P8r/WKoVPwWWVv3JwZuXTcv2iMlniSTfYDAEm3pPao17cqgXhFHM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB7983
+X-OriginatorOrg: intel.com
 
-Thanks Shaggy!
+On 3/11/25 23:15, Joao Bonifacio wrote:
+> Static variables in C are implicitly initialized to zero,
+> so there is no need to explicitly set
+> and  to 0. This change removes the redundant initialization
 
-I've included a summary with sign-off below. Let me know if I am
-missing anything else!
+Thank you for reaching out, and sorry, but this change by itself is too
+trivial, see:
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html#clean-up-patches
 
-Also, we aren't sure if there are security implications for this
-issue. Is it possible that induced load could result in Denial of
-Service? Could you comment on whether we should initiate the process
-for a CVE?
+some feedback anyway:
+the Subject line of this patch is too generic
+whitespace formatting of the next paragraph of commit message is off
 
-Thanks!
-Dylan
+for networking we tag patches as "net" (fixes) and "next-net" (the rest)
+and in particular for series that are mostly Intel eth we tag instead as
+"iwl-net" and "iwl-next"
 
-```
-[ Syzkaller Report ]
+> 
+> Signed-off-by: Joao Bonifacio <joaoboni017@gmail.com>
+> ---
+>   drivers/net/ethernet/intel/e100.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/e100.c b/drivers/net/ethernet/intel/e100.c
+> index 3a5bbda235cb..f5d32663a89a 100644
+> --- a/drivers/net/ethernet/intel/e100.c
+> +++ b/drivers/net/ethernet/intel/e100.c
+> @@ -167,8 +167,8 @@ MODULE_FIRMWARE(FIRMWARE_D101S);
+>   MODULE_FIRMWARE(FIRMWARE_D102E);
+>   
+>   static int debug = 3;
+> -static int eeprom_bad_csum_allow = 0;
+> -static int use_io = 0;
+> +static int eeprom_bad_csum_allow;
+> +static int use_io;
+>   module_param(debug, int, 0);
+>   module_param(eeprom_bad_csum_allow, int, 0444);
+>   module_param(use_io, int, 0444);
 
-Oops: general protection fault, probably for non-canonical address
-0xdffffc0000000087: 0000 [#1
-KASAN: null-ptr-deref in range [0x0000000000000438-0x000000000000043f]
-CPU: 2 UID: 0 PID: 10614 Comm: syz-executor.0 Not tainted
-6.13.0-rc6-gfbfd64d25c7a-dirty #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
-2014
-Sched_ext: serialise (enabled+all), task: runnable_at=3D-30ms
-RIP: 0010:jfs_ioc_trim+0x34b/0x8f0
-Code: e7 e8 59 a4 87 fe 4d 8b 24 24 4d 8d bc 24 38 04 00 00 48 8d 93
-90 82 fe ff 4c 89 ff 31 f6
-RSP: 0018:ffffc900055f7cd0 EFLAGS: 00010206
-RAX: 0000000000000087 RBX: 00005866a9e67ff8 RCX: 000000000000000a
-RDX: 0000000000000001 RSI: 0000000000000004 RDI: 0000000000000001
-RBP: dffffc0000000000 R08: ffff88807c180003 R09: 1ffff1100f830000
-R10: dffffc0000000000 R11: ffffed100f830001 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000438
-FS:  00007fe520225640(0000) GS:ffff8880b7e80000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005593c91b2c88 CR3: 000000014927c000 CR4: 00000000000006f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-<TASK>
-? __die_body+0x61/0xb0
-? die_addr+0xb1/0xe0
-? exc_general_protection+0x333/0x510
-? asm_exc_general_protection+0x26/0x30
-? jfs_ioc_trim+0x34b/0x8f0
-jfs_ioctl+0x3c8/0x4f0
-? __pfx_jfs_ioctl+0x10/0x10
-? __pfx_jfs_ioctl+0x10/0x10
-__se_sys_ioctl+0x269/0x350
-? __pfx___se_sys_ioctl+0x10/0x10
-? do_syscall_64+0xfb/0x210
-do_syscall_64+0xee/0x210
-? syscall_exit_to_user_mode+0x1e0/0x330
-entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe51f4903ad
-Code: c3 e8 a7 2b 00 00 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d
-RSP: 002b:00007fe5202250c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fe51f5cbf80 RCX: 00007fe51f4903ad
-RDX: 0000000020000680 RSI: 00000000c0185879 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe520225640
-R13: 000000000000000e R14: 00007fe51f44fca0 R15: 00007fe52021d000
-</TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:jfs_ioc_trim+0x34b/0x8f0
-Code: e7 e8 59 a4 87 fe 4d 8b 24 24 4d 8d bc 24 38 04 00 00 48 8d 93
-90 82 fe ff 4c 89 ff 31 f6
-RSP: 0018:ffffc900055f7cd0 EFLAGS: 00010206
-RAX: 0000000000000087 RBX: 00005866a9e67ff8 RCX: 000000000000000a
-RDX: 0000000000000001 RSI: 0000000000000004 RDI: 0000000000000001
-RBP: dffffc0000000000 R08: ffff88807c180003 R09: 1ffff1100f830000
-R10: dffffc0000000000 R11: ffffed100f830001 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000438
-FS:  00007fe520225640(0000) GS:ffff8880b7e80000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005593c91b2c88 CR3: 000000014927c000 CR4: 00000000000006f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Kernel panic - not syncing: Fatal exception
-
-[ Analysis ]
-
-We believe that we have found a concurrency bug in the `fs/jfs` module
-that results in a null pointer dereference. There is a closely related
-issue which has been fixed:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3Dd6c1b3599b2feb5c7291f5ac3a36e5fa7cedb234
-
-... but, unfortunately, the accepted patch appears to still be
-susceptible to a null pointer dereference under some interleavings.
-
-To trigger the bug, we think that `JFS_SBI(ipbmap->i_sb)->bmap` is set
-to NULL in `dbFreeBits` and then dereferenced in `jfs_ioc_trim`. This
-bug manifests quite rarely under normal circumstances, but is
-triggereable from a syz-program.
-
-Reported-and-tested-by: Dylan J. Wolff<wolffd@comp.nus.edu.sg>
-Reported-and-tested-by: Jiacheng Xu <stitch@zju.edu.cn>
-Signed-off-by: Dylan J. Wolff<wolffd@comp.nus.edu.sg>
-Signed-off-by: Jiacheng Xu <stitch@zju.edu.cn>
----
- fs/jfs/jfs_discard.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/fs/jfs/jfs_discard.c b/fs/jfs/jfs_discard.c
-index 5f4b30503..4b660296c 100644
---- a/fs/jfs/jfs_discard.c
-+++ b/fs/jfs/jfs_discard.c
-@@ -86,7 +86,8 @@ int jfs_ioc_trim(struct inode *ip, struct fstrim_range *r=
-ange)
-        down_read(&sb->s_umount);
-        bmp =3D JFS_SBI(ip->i_sb)->bmap;
-
--       if (minlen > bmp->db_agsize ||
-+       if (bmp =3D=3D NULL ||
-+           minlen > bmp->db_agsize ||
-            start >=3D bmp->db_mapsize ||
-            range->len < sb->s_blocksize) {
-                up_read(&sb->s_umount);
-```
-
-
-On Tue, Mar 11, 2025 at 11:48=E2=80=AFPM Dave Kleikamp <dave.kleikamp@oracl=
-e.com> wrote:
->
-> On 3/11/25 1:47AM, Dylan Wolff wrote:
->
-> Hi all,
->
-> Just checking in on this report. Is there another email list I should be =
-using for this issue? Can anyone confirm whether or not our fix is acceptab=
-le?
->
-> This is the right list. Somehow I missed this one and/or forgot it.
->
-> The patch looks good to me. Can you re-send it with a Signed-off-by: ?
->
-> Thank you!
->
-> Shaggy
->
->
-> Thanks again!
-> Dylan
->
-> On Tue, Jan 7, 2025 at 4:53=E2=80=AFPM Dylan Wolff <wolffd@comp.nus.edu.s=
-g> wrote:
->>
->> Hello kernel developers!
->>
->> We believe that we have found a concurrency bug in the `fs/jfs` module t=
-hat results in a null pointer dereference. There is a closely related issue=
- which has been fixed:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commi=
-t/?id=3Dd6c1b3599b2feb5c7291f5ac3a36e5fa7cedb234
->>
->> ... but, unfortunately, the accepted patch appears to still be susceptib=
-le to a null pointer dereference under some interleavings.
->>
->> To trigger the bug, we think that `JFS_SBI(ipbmap->i_sb)->bmap` is set t=
-o NULL in `dbFreeBits` and then dereferenced in `jfs_ioc_trim`. This bug ma=
-nifests quite rarely under normal circumstances, but is triggereable with t=
-he attached syz program. We've also attached a trace of an execution that l=
-eads to the crash (thread id:location). If needed, we can share our setup i=
-n detail which reproduces the bug with very high probability.
->>
->> Here's a proposed patch:
->>
->> ```
->> diff --git a/fs/jfs/jfs_discard.c b/fs/jfs/jfs_discard.c
->> index 5f4b30503..4b660296c 100644
->> --- a/fs/jfs/jfs_discard.c
->> +++ b/fs/jfs/jfs_discard.c
->> @@ -86,7 +86,8 @@ int jfs_ioc_trim(struct inode *ip, struct fstrim_range=
- *range)
->>         down_read(&sb->s_umount);
->>         bmp =3D JFS_SBI(ip->i_sb)->bmap;
->>
->> -       if (minlen > bmp->db_agsize ||
->> +       if (bmp =3D=3D NULL ||
->> +           minlen > bmp->db_agsize ||
->>             start >=3D bmp->db_mapsize ||
->>             range->len < sb->s_blocksize) {
->>                 up_read(&sb->s_umount);
->> ```
->>
->> Applying this patch to our kernel locally appears to resolve the issue.
->>
->> If this looks like it might be a security vulnerability, please let us k=
-now if there is anything we need to provide for the CVE process.
->>
->> We would also appreciate attribution for the discovery / fix if applicab=
-le:
->> >Reported-by: Jiacheng Xu<stitch@zju.edu.cn>,  Dylan Wolff <wolffd@comp.=
-nus.edu.sg>
->>
->> Environment:
->>      Qemu (invocation attached) running a Syzkaller image on an Ubuntu 2=
-2.04.4 LTS host
->> Kernel:
->>      HEAD commit: fbfd64d25
->>      tree: upstream
->>      compiler toolchain: clang-17
->>
->> Thanks!
->> Dylan
->>
 
