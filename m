@@ -1,160 +1,149 @@
-Return-Path: <linux-kernel+bounces-557880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8603A5DF07
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:33:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F489A5DF4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:43:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E2E7189EB9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:33:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95E671883E99
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFAA23BCF6;
-	Wed, 12 Mar 2025 14:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC49250C0F;
+	Wed, 12 Mar 2025 14:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lLBEz6zr"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u54vPQjs"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A56E8635E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5151924E012
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741789988; cv=none; b=XNLPyf8+DyrunoyapIMMj7B7wohjFUhi0894RqPIRgFgBeUWALXkwO//tJA4nsRxfc7ifrvY480XupWiO465JRJhxIsruK2bzrgLIgoS6Lwl+IuR5uOZjL2kezKg7SIElh5mgCDVI66x240gfwuRB/41ex6J60F6WxxWt3E2ATY=
+	t=1741790595; cv=none; b=PmQUDGPfc2U3ezml2Gz1twUcrf31QBlY4he4kxOK82cJc6KtwMlVVfzxlJHJ8nRCxxl4Y6PhODBlTOKWunZgVDrx71pWYEMq+lzk1dPOeTnVEuzOIkvsWyeBC/Np7x8HlzxvoGi/XVFWMglX78xssXEYOUFyGEV+VoAy/uMpDPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741789988; c=relaxed/simple;
-	bh=AixPktbXyhYgNZLL/XJCQek2JdSsnYFd9qTxfsG+zwM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TrC12ZgeWQHTOhlFGGZhtc7BnnBiZITfUF/VSqTwji2vcyA78EKn5wcREkvkMYM992+msRH+fWBTUd1MAvZMGGiD1sIhghrQ96kath4DCHHtsDa2jXUtW/fQCv4ud86/w8tEOMEN1AgqUx9oqjSqpUBxauJta7Ps5iGpI9hlfxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lLBEz6zr; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-476b4c9faa2so3836951cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:33:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741789985; x=1742394785; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BxLGV/gTabQc22y8Dfo+hpafOImuUut6Nenup2mQyaY=;
-        b=lLBEz6zrekSPYEoWuANzrY+WhNxqI+VKMWYWHM2ZSzfdeYMafuAMDabGC6sls33RRz
-         YpXUrkQOenLBPSm2XcR/n84oGLS9hRJP4RmpNzXdGVJXIXkV+A//CPYGxuhirXOM8YYl
-         S5aOU+PiA+0TlOSt9zJqob4pUtUpfRprp1sSs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741789985; x=1742394785;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BxLGV/gTabQc22y8Dfo+hpafOImuUut6Nenup2mQyaY=;
-        b=CmWRUC6gfBoDdxYdRV3ZTLdor0ESeLiV3ZjFSNOSr4HNdaZzvMjQrTtLq0a+Vgr778
-         9HlcdyxiNub3ctcj+vbtiun1effOk//xDDed+TTPAboqymPA8731wxHgygkzcrOfO/5H
-         DJpu8apPRpHfTbkkyQ7qsUWy8+MMzxr2qqrbyw6cg5cjlWUZTBlU1k7+aDQAi8IupjBL
-         UPwPh6d/pkQ6Doyo63dYRBMDI7gmlKGLYopcAWx8GELEQxR6uTIKndNcj28/38dmUzQ6
-         55rJg9n9rodWAOtNsov/zqFVVNcLkDUNzTIcWzl9gVLoXCqUkmrsdfqSrACeI7Q9M1H0
-         hDSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPo43b4zPHjCOoYt12E2amXTZp8fk3jIX3m4GD/tx8V3HxJklrxF9TeNyB3BZq+2wiRoH8jbjYl6zXYMo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYgpyVlZTRrFZVYzsMrMb8boANBGSpPjcPT0pf5VemmETUifrk
-	Yv0QcAkXlOoLzrnKjWkao2vxBASEx8H5XL1WS93VhI0A5V4z6UJu10UDMbJXfyof3GDplTEb5Aa
-	ISw==
-X-Gm-Gg: ASbGncvVMDFrZrJOzM/fEPiiauffdmHxUpeT9AeFOfqe5iivhQ+FhqSOv8QR0uZzXKG
-	E4nJhWkKFB8PWM4m4izcrcuytwJAXkNhDXl5a1CoO1jjQOGpszM6N4g9kv0w7Nztkznwe/bh/cD
-	aTRTIVg+X12ipSPm1VHwUDOyOaLsz6PXaFd/DUM7/DBSitQDOCdV/Iknt5ijcQE9fnVfuxNGQJi
-	Cvv0p1mye5pe3/i2guyriCRb0lb1kfKM4T9FBfrfxpd/4+SUOtLRMZq7GKgdasDxu0Bbg+ap4wF
-	0sP5ZnJChFKSKkiM5yZtNSy+qauCoKizI0tMOtgeQ7XzdNq/c3AGCLzx+0ta4kHGyfIE5wpJe7K
-	z4Uf0RXKrq3KA
-X-Google-Smtp-Source: AGHT+IGjvlSqc0zZc7Aij7M2xOcnVbm8HYZOu2WKhyL5y/B6w0ir/0WFDPvQODnEXefpXW32rWbw/Q==
-X-Received: by 2002:a05:622a:5b8a:b0:476:9dc9:3c2a with SMTP id d75a77b69052e-4769dc9444emr81634551cf.48.1741789985094;
-        Wed, 12 Mar 2025 07:33:05 -0700 (PDT)
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com. [209.85.160.177])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4768affa969sm41549571cf.73.2025.03.12.07.33.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 07:33:04 -0700 (PDT)
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-476693c2cc2so263861cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:33:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWQBX0+5uZRFsLcb98taO9g5qwq+pturZ4mgH7CL0kSYAmZhOEB2qNQeEijT+gxiHMNut4At5+MbIVqvOk=@vger.kernel.org
-X-Received: by 2002:ac8:7d8a:0:b0:474:b44f:bb88 with SMTP id
- d75a77b69052e-476adf0e170mr3551051cf.27.1741789983956; Wed, 12 Mar 2025
- 07:33:03 -0700 (PDT)
+	s=arc-20240116; t=1741790595; c=relaxed/simple;
+	bh=ZlbBMPciN2T8w+kua5v5xtfGZggrogIGZUS6ANw0g3g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n1FG27YLEHCXrSneY/1Q1TVgy53S18IGpbXSK4Jh5CKSTFfJkEnzQU+HYhtxC8RtA1NmHYTr31MU1eCZs1pfw+FrsgTkHXhoxN5a5MwnUAAv56nxeoNyL5g6l/5xxpls/fVBFPpmNZfpu+sOQUQjZ9d4k7NcOj3KwtVLkZVCDLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u54vPQjs; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=30Jr6wkyoaAqZ4wqhViXmy9edkJu76AE/m1k7L8k7CI=; b=u54vPQjsFi50BYPhRmvDFNcrc+
+	JOT54WX/vxOyRRGJnKo1hvzsJrVBpBMheQZETRjYdXacYtg6W3pBHre854Z8MeoZKUd9fgqA7VHsQ
+	NQMs0xa7aWRKYVXFoo3u7wGBqQIPMJkJLVGvXarHcG93EMBOYWFu1l32Aq/bwSxSusw0I2dvOmc32
+	LqHWIdXC2M+oTh5uubAgt6iWp6vBvQiv4JANP6vEbnWOIBR39W7jbfb3wJgOhmNFWvHknbMLTgncG
+	hbVQ7oKKJ7A1qf9XPJURGJtXRX8TtRanoq84VOlwnYb4wKF1O5aIXcy6Cji+5SMtiimnEc2VH+/ZN
+	uxiimmgQ==;
+Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsNIR-0000000CxJE-2Re5;
+	Wed, 12 Mar 2025 14:42:59 +0000
+Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsNIR-00000009uTu-1IV5;
+	Wed, 12 Mar 2025 14:42:59 +0000
+From: David Woodhouse <dwmw2@infradead.org>
+To: kexec@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	linux-kernel@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Dave Young <dyoung@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	jpoimboe@kernel.org,
+	bsz@amazon.de
+Subject: [PATCH v7 0/8] x86/kexec: Add exception handling for relocate_kernel
+Date: Wed, 12 Mar 2025 14:34:12 +0000
+Message-ID: <20250312144257.2348250-1-dwmw2@infradead.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311-dead_site-v1-1-7ab3cea374f2@chromium.org> <b3df5e8178107b2a133126e1daf111d10f1b0333.camel@linux.ibm.com>
-In-Reply-To: <b3df5e8178107b2a133126e1daf111d10f1b0333.camel@linux.ibm.com>
-From: Fritz Koenig <frkoenig@chromium.org>
-Date: Wed, 12 Mar 2025 07:32:52 -0700
-X-Gmail-Original-Message-ID: <CAMfZQbxoO0QX=r6ECcVHBToR7jaqAz3HD6ZaOf-Z3nP2RuYFdw@mail.gmail.com>
-X-Gm-Features: AQ5f1JqjD2DWXGYq02-0yYL-x2rBYXh6GczZW-B2jC0-D-TCZJLFB5aqywzcsmw
-Message-ID: <CAMfZQbxoO0QX=r6ECcVHBToR7jaqAz3HD6ZaOf-Z3nP2RuYFdw@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: ocxl.rst: Update consortium site
-To: Andrew Donnellan <ajd@linux.ibm.com>
-Cc: Fritz Koenig <frkoenig@chromium.org>, Frederic Barrat <fbarrat@linux.ibm.com>, 
-	Jonathan Corbet <corbet@lwn.net>, linuxppc-dev@lists.ozlabs.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: David Woodhouse <dwmw2@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Mar 11, 2025 at 9:20=E2=80=AFPM Andrew Donnellan <ajd@linux.ibm.com=
-> wrote:
->
-> On Tue, 2025-03-11 at 11:24 -0700, Fritz Koenig wrote:
-> > Old site no longer associated with consortium.
->
-> Thanks for catching this!
->
-> >
-> > Signed-off-by: Fritz Koenig <frkoenig@chromium.org>
-> > ---
-> > After mergers the OpenCAPI Consortium does not seem to exist.
-> > The github page is the only seemingly relevant site, but it
-> > has not been updated in 4 years.
-> > ---
-> >  Documentation/userspace-api/accelerators/ocxl.rst | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/userspace-api/accelerators/ocxl.rst
-> > b/Documentation/userspace-api/accelerators/ocxl.rst
-> > index db7570d5e50d..5fc86ead39f4 100644
-> > --- a/Documentation/userspace-api/accelerators/ocxl.rst
-> > +++ b/Documentation/userspace-api/accelerators/ocxl.rst
-> > @@ -3,8 +3,8 @@ OpenCAPI (Open Coherent Accelerator Processor
-> > Interface)
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> >  OpenCAPI is an interface between processors and accelerators. It
-> > aims
-> > -at being low-latency and high-bandwidth. The specification is
-> > -developed by the `OpenCAPI Consortium <http://opencapi.org/>`_.
-> > +at being low-latency and high-bandwidth. The specification is
-> > developed
-> > +by the `OpenCAPI Consortium
-> > <https://opencapi.github.io/oc-accel-doc/>`_.
->
-> This link is to the OC-Accel framework documentation, which isn't the
-> core set of OpenCAPI specifications. Those specs are now hosted by CXL,
-> post-merger.
->
-> I think I'd update this to say:
->
-> The specification was developed by the OpenCAPI Consortium, and is now
-> available from the `Compute Express Link Consortium
-> <https://computeexpresslink.org/resource/opencapi-specification-archive/>=
-_.
->
-Thanks for the feedback, V2 posted.
+Debugging kexec failures is painful, as anything going wrong in execution
+of the critical relocate_kernel() function tends to just lead to a triple
+fault. Thus leading to *weeks* of my life that I won't get back. Having
+hacked something up for my own use, I figured I should share it...
 
--Fritz
+Add a trivial exception handler in the relocate_kernel environment which 
+outputs to the early_printk serial console if configured. Currently only 
+8250-compatible serial ports are supported, but that could be extended.
 
-> Thanks,
-> Andrew
->
-> --
-> Andrew Donnellan    OzLabs, ADL Canberra
-> ajd@linux.ibm.com   IBM Australia Limited
+I had to hack up QEMU support for a PCI serial port which matches what
+the existing early_printk code can drive, and the *real* 8250_pci driver
+doesn't seem to cope with that setup at all, but whatever... the kexec
+code now drives the same 32-bit stride which is all that earlyprintk
+supports. We can always add more later, if anyone cares.
+
+Someone who cares might want to bring the i386 version into line with
+this, although the lack of rip-based addressing makes all the PIC code a
+bit harder.
+
+David Woodhouse (8):
+      x86/kexec: Debugging support: load a GDT
+      x86/kexec: Debugging support: Load an IDT and basic exception entry points
+      x86/kexec: Debugging support: Dump registers on exception
+      x86/kexec: Add 8250 serial port output
+      x86/kexec: Add 8250 MMIO serial port output
+      x86/kexec: Invalidate GDT/IDT from relocate_kernel() instead of earlier
+      [DO NOT MERGE] x86/kexec: Add int3 in kexec path for testing
+      [DO NOT MERGE] x86/kexec: Add CFI type information to relocate_kernel()
+
+ arch/x86/include/asm/kexec.h         |   7 ++
+ arch/x86/kernel/early_printk.c       |   9 ++
+ arch/x86/kernel/machine_kexec_64.c   |  50 ++++++--
+ arch/x86/kernel/relocate_kernel_64.S | 254 +++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 308 insertions(+), 12 deletions(-)
+
+
+v7:
+ • Drop CONFIG_KEXEC_DEBUG and make it all unconditional in order to
+   "throw regressions back into the face of whoever manages to introduce
+   them" (Ingo, https://lore.kernel.org/kexec/Z7rwA-qVauX7lY8G@gmail.com/)
+ • Move IDT invalidation into relocate_kernel() itself.
+
+v6: https://lore.kernel.org/kexec/20250115191423.587774-1-dwmw2@infradead.org/
+ • Rebase onto already-merged fixes in tip/x86/boot.
+ • Move CONFIG_KEXEC_DEBUG to generic kernel/Kconfig.kexec as Bartosz is
+   working on an Arm64 version.
+
+v5: https://lore.kernel.org/kexec/20241205153343.3275139-1-dwmw2@infradead.org/T/
+ • Drop [RFC].
+ • Drop _PAGE_NOPTISHADOW fix, which Ingo already took into tip/x86/urgent.
+ • Add memory-mapped serial port support (32-bit MMIO spacing only).
+
+v4 (RFC): https://lore.kernel.org/kexec/20241127190343.44916-1-dwmw2@infradead.org/T/
+ • Add _PAGE_NOPTISHADOW fix for the identmap code.
+ • Drop explicit map of control page, which was masking the identmap bug.
+
+v3 (RFC): https://lore.kernel.org/kexec/20241125100815.2512-1-dwmw2@infradead.org/T/
+ • Add CONFIG_KEXEC_DEBUG option and use earlyprintk config.
+ • Allocate PGD separately from control page.
+ • Explicitly map control page into identmap.
+
+V2 (RFC): https://lore.kernel.org/kexec/20241122224715.171751-1-dwmw2@infradead.org/T/
+ • Introduce linker script, start to clean up data access.
+
+V1 (RFC): https://lore.kernel.org/kexec/20241103054019.3795299-1-dwmw2@infradead.org/T/
+ • Initial proof-of-concept hacks.
+
 
