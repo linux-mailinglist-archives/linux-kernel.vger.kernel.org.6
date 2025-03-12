@@ -1,151 +1,107 @@
-Return-Path: <linux-kernel+bounces-557852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC65A5DE9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:05:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0391A5DE9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:07:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 452DB176227
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:05:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EC42166BBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EECF24C664;
-	Wed, 12 Mar 2025 14:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE04924C09B;
+	Wed, 12 Mar 2025 14:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zBCuePux";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vLPwFMwJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="knxQnRBs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G+RdLoCA"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="BNYd2lSQ"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD26724BBE7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6374024BC05
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741788324; cv=none; b=q/xNHEsqhuH8Fbi4nVubkGbmq4NjXLjRelCKfHyrTYTT4XdtPxpOD4AlWQTAK49JQ+qo++Jfj+X8KEY5nTWjny5vvSAE93tDZUz6/jjvzYIQowIm9HKOQYf5LHSZkBg6PyRfHNiTZPca+L3GY8PQjNGaYj/ubf36gC2Zr8p4rVA=
+	t=1741788440; cv=none; b=aBY74E/UBJ8fBz22wu6YgNybHCSaEh/XyQpglHNhJ3CEKw7S0vWlkWmn07lCzxlsfFDQTopn2lkiXhgD71M6gxmM+22CMSOsPFBwOuRcSqJbCdSTs76v95z7u6qcvUR/J2lCyzYScksHbzEkAMY8+6rTFekIsns3s5R7a6rLRx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741788324; c=relaxed/simple;
-	bh=e3HyHXxDOgTjnjIKHqatzU2aXyCjyfmVii3KUOadhIA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=p/tNiwyunzsFsu78ynqTLZY7yMvitDnz+FHEnEQhBZTkn3UZZ5rERMdNrBHdA50PZFdfzC/xXH/eC5xQsAyFOzIFhUQZYARrod+D4IZL2OpQhvHy+mzC0eM+SCpad/TJCjCIl+ypny7LmPSqGKIqhngtfmYaiWKxGSry+tP1HMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zBCuePux; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vLPwFMwJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=knxQnRBs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G+RdLoCA; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EAD6C2118E;
-	Wed, 12 Mar 2025 14:05:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741788312; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttdCheo2ggrWYc5AfXbMLW3x5iUmEU3SoinUwhJvb+4=;
-	b=zBCuePuxTdL15mtda27hxhA44U5PtfaieYwLwbODqm5KLJjEwAVScmfhtq2JVBOftJnocU
-	MSSM0I2AcrsGcrqUHua+ss9OdmT3+E8jW2deuazu+Bqm65uMhxXg8RgtK/JmRFSMx5hNCJ
-	nGJy4aN8hPYPOpxxFED8A6JYb5LoZG4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741788312;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttdCheo2ggrWYc5AfXbMLW3x5iUmEU3SoinUwhJvb+4=;
-	b=vLPwFMwJwDhkQsUjgJlUKcs+MY+fb2GER5VC48PCCGFbiGeZl1fzkAwQhVuvLGkggeGpQC
-	ZBINYQH50ls20XBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741788306; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttdCheo2ggrWYc5AfXbMLW3x5iUmEU3SoinUwhJvb+4=;
-	b=knxQnRBsUB0eEuotZGQwivI4oVYfb1WhrWBcZ9mbITiIUpQhVA8nRAYNRVxCSqg01Wx3LB
-	kwUfe6xwVcBsxntre6sMb3eCWF3doyrKDvmZWrBWaMyTFzsjTUggoBXDAYRl9goNqwd3MC
-	9m0FsBvoJPGanOey4HH1raatlPnRkWA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741788306;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttdCheo2ggrWYc5AfXbMLW3x5iUmEU3SoinUwhJvb+4=;
-	b=G+RdLoCAe+HmkHrEpPsk7rA7GoPimKWfHbiC+29hoSniJwhP34hdGI8Yb8X8GhBkenF9fH
-	/a8Wofq2UY2qERBA==
-Date: Wed, 12 Mar 2025 15:05:07 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Song Liu <song@kernel.org>
-cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-    linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org, 
-    indu.bhagat@oracle.com, puranjay@kernel.org, wnliu@google.com, 
-    irogers@google.com, joe.lawrence@redhat.com, jpoimboe@kernel.org, 
-    mark.rutland@arm.com, peterz@infradead.org, roman.gushchin@linux.dev, 
-    rostedt@goodmis.org, will@kernel.org, kernel-team@meta.com, 
-    Suraj Jitindar Singh <surajjs@amazon.com>, Torsten Duwe <duwe@suse.de>
-Subject: Re: [PATCH 2/2] arm64: Implement HAVE_LIVEPATCH
-In-Reply-To: <20250308012742.3208215-3-song@kernel.org>
-Message-ID: <alpine.LSU.2.21.2503121503340.12980@pobox.suse.cz>
-References: <20250308012742.3208215-1-song@kernel.org> <20250308012742.3208215-3-song@kernel.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1741788440; c=relaxed/simple;
+	bh=KH3wp93Ri05thIPW6RJDRPjNZtEwM1LH6l3DniegfWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ILXgvZd3FEIs/MAShD2h8vTxrgCVgCXgey/onLts9vzwnWO6WsSawAEIBfMWvIXTW26jueURxAW7fUjgFO3SfEwa00kcwzGDTpbrU64I6JdqOwbGL9iKuaWlnyJ7WER/mP/mkWoXE30wnkh+QISrNcUiOJB5oUSzTXDuyFOrbHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=BNYd2lSQ; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fa8ada6662so14263914a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:07:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1741788436; x=1742393236; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KH3wp93Ri05thIPW6RJDRPjNZtEwM1LH6l3DniegfWA=;
+        b=BNYd2lSQFyjpOJPtA+gHI+0E1R7YO2M0SPClTXAkV3Y2YmxeepNlN+QhJ4R169Z0ti
+         Q9NpnfQZW9b4BZDO5GFTuu9s2AS4UG/6+tGS7EH9BbBHWiXH5NJJ26TcSHboU3HofHr2
+         ixLaRbjp5WkuyzjoVkRa5ngZY2ez2AlITfotI9Y77itVru0gbouZZiWWIJp1Naf1+nPQ
+         Pn0szvYXkyUQ0P9PueIBH7vFyd8cOYSEnX0oqQMEBjc1qPjKwRJkwz6w5bK7Ui2zh3Fj
+         NIlQo6xDkU53rt8QnAvO/gbS6QJyDtEop6c0W1RyoXWl/lKt2qFl1iPG0tlQuHiQP0qQ
+         AgqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741788436; x=1742393236;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KH3wp93Ri05thIPW6RJDRPjNZtEwM1LH6l3DniegfWA=;
+        b=CvrboqVRsdDw1TuyJORs9e9RsGz1C5f0S+uLNUAygX8BxTzP5WzbVuYvL44rcdKojI
+         FXxMJjScUIrp4Lz7SAAd8P9D0Oww/p4piLV8KL6ilzzcZ1t5SgXjAa+ON0teo2+zh+BG
+         D3pD5DxAyhpjDNqkF1MKIv20rSrBD4lspFhH97VTOSofR7TZM8ffzOJ9/rdFyZeZ2YeK
+         +qDeS03yzmIN13ZH8uXzjY6FDXkAKuQLsMrYuU1w0uvUO56Vh8hy3DJxAglfc9ZZz1ls
+         h/F+ZBPVExEXmTKxck6+HUgNcXX3mkjSJrr5n4KfAVn/jIHovH2xMuzQHihHHlXwNoKY
+         uxqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFSrYykeMFnkFzT2SnNeRt6BxDxKDqP9da9R0vwwpf7/6plkbHx79zqNyLdd+b11/aLtc2phr1usJFhyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA03Rdq7NIMyOzs4jxYH4jnwpGxVRqYnLLdpOayRDLXrpjVONZ
+	5rlANNDfISi6YmHwpy6Q9iiNOn3fI9CCutMvJWZ8MhXzjf5ZhCy12VrCxb+GDTE/SbGLqzeXuWZ
+	vJOekAUP6O5Y9ZOQrHK3/8r8qt66699YHle6lhA==
+X-Gm-Gg: ASbGnctBHkPhNoT2NubLgjBitlltcikFytWH50KAy9ybeFCbismiRglncAGLUUpcXMx
+	ki4NSlSbEhqJZW+l4OVqjZETNvt+FB5YbrUoe6daq9uin6q/JOq+gAuzySS68ABx3nEzgMNoo0H
+	e1tT/DfttAzJE6YHD+oc7cYLjAQg==
+X-Google-Smtp-Source: AGHT+IHvsbHGW07mRzank2wkSniIRevs65V3VVz0HyVfxMy8xVMhSSK6Sbh0HLmTu5lUXvhQGvZKTLI0sTvU1IgXHfQ=
+X-Received: by 2002:a17:90b:3b50:b0:2ff:7c2d:6ff3 with SMTP id
+ 98e67ed59e1d1-2ff7cf4f88amr32677988a91.35.1741788435176; Wed, 12 Mar 2025
+ 07:07:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.991];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	MIME_TRACE(0.00)[0:+];
-	SEM_URIBL_UNKNOWN_FAIL(0.00)[suse.cz:server fail,test-kprobe.sh:server fail,suse.de:query timed out];
-	RCVD_COUNT_ZERO(0.00)[0];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	SEM_URIBL_FRESH15_UNKNOWN_FAIL(0.00)[test-kprobe.sh:server fail,suse.cz:query timed out];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.de:email]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+References: <20250312111915.2970032-1-naresh.solanki@9elements.com> <CAOMZO5DaZbRXuv4vgWk9evNcV4iW6gXy2Vjv7oWsnMo_R9ku4Q@mail.gmail.com>
+In-Reply-To: <CAOMZO5DaZbRXuv4vgWk9evNcV4iW6gXy2Vjv7oWsnMo_R9ku4Q@mail.gmail.com>
+From: Naresh Solanki <naresh.solanki@9elements.com>
+Date: Wed, 12 Mar 2025 19:37:03 +0530
+X-Gm-Features: AQ5f1JoWqkrBy2LymfmpbHG_gHAHW6gefRY0T0On-nuBPMD3fer0bQ_5dHG3ls0
+Message-ID: <CABqG17gS-kiB73tTC+u-TER2+ABLYPDVM5YyjiqpEzLTb0LbJQ@mail.gmail.com>
+Subject: Re: [oe] [meta-oe][PATCH] meta-openembedded: flashrom: Update to v1.4.0
+To: Fabio Estevam <festevam@gmail.com>
+Cc: openembedded-devel@lists.openembedded.org, linux-kernel@vger.kernel.org, 
+	"Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Fri, 7 Mar 2025, Song Liu wrote:
-
-> This is largely based on [1] by Suraj Jitindar Singh.
-> 
-> Test coverage:
-> 
-> - Passed manual tests with samples/livepatch.
-> - Passed all but test-kprobe.sh in selftests/livepatch.
->   test-kprobe.sh is expected to fail, because arm64 doesn't have
->   KPROBES_ON_FTRACE.
-
-Correct. The test should take into account and bail out.
-
-> - Passed tests with kpatch-build [2]. (This version includes commits that
->   are not merged to upstream kpatch yet).
-> 
-> [1] https://lore.kernel.org/all/20210604235930.603-1-surajjs@amazon.com/
-> [2] https://github.com/liu-song-6/kpatch/tree/fb-6.13
-> Cc: Suraj Jitindar Singh <surajjs@amazon.com>
-> Cc: Torsten Duwe <duwe@suse.de>
-> Signed-off-by: Song Liu <song@kernel.org>
-
-Acked-by: Miroslav Benes <mbenes@suse.cz>
-
-Also as mentioned in the other thread, parts of this patch will go once 
-arm64 is converted to generic entry infrastructure.
-
-Thank you,
-Miroslav
+On Wed, 12 Mar 2025 at 19:32, Fabio Estevam <festevam@gmail.com> wrote:
+>
+> On Wed, Mar 12, 2025 at 10:52=E2=80=AFAM Naresh Solanki via
+> lists.openembedded.org
+> <naresh.solanki=3D9elements.com@lists.openembedded.org> wrote:
+> >
+> > From: "Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>
+>
+> This From line is incorrect.
+>
+> It should be:
+>
+> From: Patrick Rudolph <patrick.rudolph@9elements.com>
+Correct. Not sure why the tool picked it that way. Will check.
+Thanks
+Naresh
 
