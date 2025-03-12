@@ -1,237 +1,150 @@
-Return-Path: <linux-kernel+bounces-557528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27115A5DA66
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:25:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9691BA5DA68
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:27:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E3A3B4E48
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EDE1179901
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07AAF23E251;
-	Wed, 12 Mar 2025 10:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB86723C8D7;
+	Wed, 12 Mar 2025 10:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ykJtVod8"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4rlvSfFT"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E1E23C8B3
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6AD238D34
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741775138; cv=none; b=ErPAam41oP86RJLFHAG5zo73ujoDcnsHueeObyycb6ArS33yKv4ZviIRW7XdwAu+i3J/V/pax/KSiEFdlaSLDOlZn8lZjNb1NbWBK8FTAOWILSgN7ARTl3Ao71UuO5BMRRNpFLfmbkfQbbZQm9BZME9FIACIBkVRcsINUHTVWVo=
+	t=1741775268; cv=none; b=QZt9ccXjwoMBiBb9JDiJatRwHgWs8chKdFWVIIvkLubsCkjGcU1w6QRAJGt43Gz8ZQvb2FdPr/cgGoscLlJpxyqp/74PbR1k520CMa2F6aATvQ2V0uvC7FoAl+FgTmEsXgDva1v7EzP/soCJsvGrS4dJfnIMXeM6CZGllitfGvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741775138; c=relaxed/simple;
-	bh=PDHO7y+ERlJAnN05ImfV1yuUpp0i/lJuWqtTfGpzzzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SW/gjS2e4tWdIpa/nqEFkL8vh+nJyZ0m9x0+cUNQNs6fuzNY82MdzIiMtbQIk4P/RnadQ1ZyJ18HPoFyD+6bFQNGE1lpK/uwMj1VvFlzntdoHqrNHdrb/Q3QcmWoVDgwO1fK3M9Kn/uBjrUXeWF6kmDO3tnVDuCcWDIZTA0P5T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ykJtVod8; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5240764f7c1so1498668e0c.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:25:36 -0700 (PDT)
+	s=arc-20240116; t=1741775268; c=relaxed/simple;
+	bh=+R/nfa+6sr/q7ce+eZjlkJdFAJtHGVCAAGgYI45Hb2Q=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=N7yRLL1FiCX1xWuUiRSWXkyItZG5vK+BqEFtBUuCsOKwVukxbORGCx2yuPZuB5ttOek27/dfjz6mYezI7srnz0Tk+C5YQzVv2fEdFCYzu74MA6PA4X5dhbmjjC7TFiQMLSfmnyD0rOxyBCVybJo1HsgEm08UFIGH7H8ms0rZeJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4rlvSfFT; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43941ad86d4so32120055e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:27:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741775135; x=1742379935; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EGtpHZfxRNzO6OoMpHooKBsRfISaZAIh8bkBtSxi4jk=;
-        b=ykJtVod8q5rZWeryyKys+KQUnJbZ9bbfdm8dbbiczIQ+8NKlRUtNuqi024vl+83qIS
-         LQAHBYGVOhir3s/BVvq2IthQwmAGrDOnZggcFzd894t6WhfyNl+LSr8C3K6cQzpMg8Gd
-         D6eiLJHAmAB4RBCHBauzxihWO0wvcjLqkzcQDVeMz8K0zRhzh+iN0tUBlAVObWgSp1De
-         /IvIqCaZURWPrf072k/XZCfR/lCHUM4itDYBkmpf4dEqaqMl6EtbI63890FrKocagHMT
-         VPjfPUJsQHhsdwoVy2EixKOvBRcjWi/0weg2Lhnlsul5leJ8cc64qeYMFv3ryRJdNEZg
-         sYQw==
+        d=google.com; s=20230601; t=1741775265; x=1742380065; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NEJPr0RAeLicfIPWbYkCZmxmoGwmaoBCPjUbsG9foM0=;
+        b=4rlvSfFTqSh1lDbVZqHRM24wP8p6GqcDU35SSEJe43rncgYUbV3r0G3mNzcDW7x+t5
+         dfr2oextMgA8YqGKXxs+kv81Fosb/6F21D2LS9QdLJA2ZukjhK5ssxZYJOiWTI2oWkJt
+         7yPNesbmvwn6UigGdr4IK0EHJ4yF8jgrF1B4WA2GfTWpRn42L4gtDH7MlIfAvajNuq89
+         1IFN71VUWUyFke+Xwb2yEKtQ1X/0/Fa0Pm6vJ5FyXRqoD3rtdaYkaLakCQ0ZkTQfW3n6
+         EuMMIrcHzEAR+bd/1TgFf+Ka2lWrEd55j2JHYzFdrzA9fZWSJsagzZgfB9Pb/17CCCaT
+         5d6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741775135; x=1742379935;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EGtpHZfxRNzO6OoMpHooKBsRfISaZAIh8bkBtSxi4jk=;
-        b=OnK3CcdbBLON79gN8v6sYiMjn5fGnSMJO4I/Cg9hhsZ/k9kRFSGdxrI2oZPvWhWhFA
-         1hXFzqcs0aSlu3mdaYdiDLhDEYWXWQf4Vnv66xRVe9Rrtyq/R8CFp4vAY9lTvIpwKRpw
-         HRaXkepg9liREJDE7DDdwG/A6CQxoiUv+g/Vweg6OvVhLmrrlNvf/MLPC0hR1+MArs9B
-         ANE6ClpZNz4VZp8DB8RhlAp3HyvuQRIvBySrY9fFS+1IwsZRCpXamCUNKZw6Taid+FZN
-         tCCzGf0qNENrh/EPm2esURrt6/y3A33eNnNYxgCWSN5Vj2XvnbbtNdZzPHk3yDZlTEkR
-         iGvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZe9gkkppSshbZOD8uDsJKcfm3r1rljwn5n5VaZ+CQ1HZF3r31jNU70tmH5jQoIzD8ALlShjM0ZhZ5lMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEhvQ7sjZV3jpwV2UuoMyi2CWq9IQ17VmqoGSzjAivxevNaMTL
-	a/SmM7FEDqg8CECVNJWLozgj74O2xNj6k1sYwsvY1SGEieUEzigfnjPSE14flzktewBBZ/2rdDF
-	qV+9Y9EY7xMbbx2y9nGchca0SDKaRP5MG/I8/Og==
-X-Gm-Gg: ASbGncvmdkZ5U9ZDG8/uX+hda32COR+XU9UDci3/1X7NF9XjXw+CiPiqgH+SsXXV1kp
-	0/3x2qB9ZatPMzysBpyg2QETP0279fXeK+oNaRXHZ2NuJ82q6yRzVDNkUpmaZShcnAzZ6vLuMnT
-	J29B9DN0iZykoivEWYAAere/KeQwopPwr2odiNT0PYq4vlc3bTbr2qdmi9bpA=
-X-Google-Smtp-Source: AGHT+IFL0HreR/KlcTDMM5OcMZYgMMEODEZdj0hq7LqEb2TK1xUYjtp9ukuN5QzK8OoEYGp1qR9p2Zj/muGfbshTL10=
-X-Received: by 2002:a05:6122:828e:b0:520:51a4:b84f with SMTP id
- 71dfb90a1353d-524198002dbmr4416579e0c.4.1741775135572; Wed, 12 Mar 2025
- 03:25:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741775265; x=1742380065;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NEJPr0RAeLicfIPWbYkCZmxmoGwmaoBCPjUbsG9foM0=;
+        b=cLtYq/bb3hxbCt8cxaJ4f2eVnK9s30VGS2dogdcFQQ2YbTzRBi1Ko4Ha8ThPVctWWX
+         by98QBxpgGNlwpitPCyla08FJlBPjX+gvwjm9EN0nTRNqo0Ul5tefgli2SzzF4wgc1Od
+         3lV5f7asxPBYtWSTpcKS7PIOjofhAV5UtzwMcPkpKvA6sqyvtdSZ6UVgEZTHqXajvvql
+         OviIbrPchya95mY0CV0cCM+0HqWNmxE57ldfmi59TodkQqsf73OnbsjevUEHQb6sPjY6
+         dpqB8ky5EBszBodF/10MZy/2fh4C+Iy25uuCvSiBl6aOkmR6TMYWnrlZ2FnD5qmx18RJ
+         2oWg==
+X-Gm-Message-State: AOJu0YwQQP5FfflaEgCt9ku4aPPZQ2pt3VO0XYTTfYfDKkFagJNDVTOs
+	IUOdzXlNIxUh2PN2rf39uUV47HDcVuIhV7CgFxs8C1y/PGgGExlIg17M4N4qJqjjf9I2VNBY664
+	BfGF/OHs4SO7CRGZZbjKUTg21GZk818BN11uGdFnwGS7WFGNLwzdGRydzh0mn95/uaLkQHKr17V
+	kQRcSY7Rqeqy60AhbvKut2V0Re2cJwDA==
+X-Google-Smtp-Source: AGHT+IGDa+BSdAbGTt2M+zzG1cRtau9tLWxQrf2jnl0EBkYcFyFDHgA4nWjWnbkPR59rqmT7w2yN6Hyt
+X-Received: from wmbay38.prod.google.com ([2002:a05:600c:1e26:b0:43d:1c3:bf33])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3586:b0:43c:ec4c:25b1
+ with SMTP id 5b1f17b1804b1-43cec4c26d2mr115743225e9.23.1741775264936; Wed, 12
+ Mar 2025 03:27:44 -0700 (PDT)
+Date: Wed, 12 Mar 2025 11:27:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250311144241.070217339@linuxfoundation.org>
-In-Reply-To: <20250311144241.070217339@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 12 Mar 2025 15:55:23 +0530
-X-Gm-Features: AQ5f1JocR2QVAetGvMUl47oG9R-0y5q4g7PNIHcghhHTaNTnPuThs4tcrPj0feU
-Message-ID: <CA+G9fYuK2dHLg5AGVyN98eRKwZQ-aMByvhBLyasHuJRVLNkpHg@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/197] 6.13.7-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2530; i=ardb@kernel.org;
+ h=from:subject; bh=gFdtL5JFQVUCKEBUAsZ/feLWQgtFaoLOAgy2VQ1UqH8=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIf1i4lwL5plvtTRb/R/fNOWoCJdd5zdzroj20lfMy4o/i
+ kcy77LuKGVhEONgkBVTZBGY/ffdztMTpWqdZ8nCzGFlAhnCwMUpABP5qcTIcJWbe6ttaU6tY1Ny
+ u/D3PbvdX+9r0PldEXe63Dz5pvuvOIb/5WyuJiodS1ynGbHcs+O9z2LlklK9WHDyn+TtB38c21H KBQA=
+X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
+Message-ID: <20250312102740.602870-2-ardb+git@google.com>
+Subject: [PATCH] x86/head/64: Avoid Clang < 17 stack protector in startup code
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, 11 Mar 2025 at 20:18, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.13.7 release.
-> There are 197 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 13 Mar 2025 14:41:52 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.13.7-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+From: Ard Biesheuvel <ardb@kernel.org>
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Clang versions before 17 will not honour -fdirect-access-external-data
+for the load of the stack cookie emitted into each function's prologue
+and epilogue, and will emit a GOT based reference instead, e.g.,
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+  4c 8b 2d 00 00 00 00    mov    0x0(%rip),%r13
+          18a: R_X86_64_REX_GOTPCRELX     __ref_stack_chk_guard-0x4
+  65 49 8b 45 00          mov    %gs:0x0(%r13),%rax
 
-## Build
-* kernel: 6.13.7-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: fca1356f3f511f72adfed5a76ddf17a30241474c
-* git describe: v6.13.6-198-gfca1356f3f51
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13=
-.6-198-gfca1356f3f51
+This is inefficient, but at least, the linker will usually follow the
+rules of the x86 psABI, and relax the GOT load into a RIP-relative LEA
+instruction.  This is still suboptimal, as the per-CPU load could use a
+RIP-relative reference directly, but at least it gets rid of the first
+load from memory.
 
-## Test Regressions (compared to v6.13.3-552-g3244959bfa6b)
+However, Boris reports that in some cases, when using distro builds of
+Clang/LLD 15, the first load gets relaxed into
 
-## Metric Regressions (compared to v6.13.3-552-g3244959bfa6b)
+  49 c7 c6 20 c0 55 86 	mov    $0xffffffff8655c020,%r14
+  ffffffff8373bf0f: R_X86_64_32S	__ref_stack_chk_guard
+  65 49 8b 06          	mov    %gs:(%r14),%rax
 
-## Test Fixes (compared to v6.13.3-552-g3244959bfa6b)
+instead, which is fine in principle, as MOV may be cheaper than LEA on
+some micro-architectures. However, such absolute references assume that
+the variable in question can be accessed via the kernel virtual mapping,
+and this is not guaranteed for the startup code residing in .head.text.
 
-## Metric Fixes (compared to v6.13.3-552-g3244959bfa6b)
+This is therefore a true positive, that was caught using the recently
+introduced relocs check for absolute references in the startup code:
 
-## Test result summary
-total: 131178, pass: 107823, fail: 3844, skip: 19511, xfail: 0
+  Absolute reference to symbol '__ref_stack_chk_guard' not permitted in .head.text
 
-## Build Summary
-* arc: 6 total, 5 passed, 1 failed
-* arm: 143 total, 137 passed, 6 failed
-* arm64: 58 total, 56 passed, 1 failed, 1 skipped
-* i386: 22 total, 19 passed, 3 failed
-* mips: 38 total, 33 passed, 5 failed
-* parisc: 5 total, 3 passed, 2 failed
-* powerpc: 44 total, 41 passed, 2 failed, 1 skipped
-* riscv: 27 total, 24 passed, 3 failed
-* s390: 26 total, 25 passed, 1 failed
-* sh: 6 total, 5 passed, 1 failed
-* sparc: 5 total, 3 passed, 2 failed
-* x86_64: 50 total, 49 passed, 1 failed
+Work around the issue by disabling the stack protector in the startup
+code for Clang versions older than 17.
 
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-filecaps
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
+Fixes: 80d47defddc0 ("x86/stackprotector/64: Convert to normal per-CPU variable")
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ arch/x86/include/asm/init.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---
-Linaro LKFT
-https://lkft.linaro.org
+diff --git a/arch/x86/include/asm/init.h b/arch/x86/include/asm/init.h
+index 0e82ebc5d1e1..8b1b1abcef15 100644
+--- a/arch/x86/include/asm/init.h
++++ b/arch/x86/include/asm/init.h
+@@ -2,7 +2,11 @@
+ #ifndef _ASM_X86_INIT_H
+ #define _ASM_X86_INIT_H
+ 
++#if defined(CONFIG_CC_IS_CLANG) && CONFIG_CLANG_VERSION < 170000
++#define __head	__section(".head.text") __no_sanitize_undefined __no_stack_protector
++#else
+ #define __head	__section(".head.text") __no_sanitize_undefined
++#endif
+ 
+ struct x86_mapping_info {
+ 	void *(*alloc_pgt_page)(void *); /* allocate buf for page table */
+-- 
+2.49.0.rc0.332.g42c0ae87b1-goog
+
 
