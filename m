@@ -1,170 +1,155 @@
-Return-Path: <linux-kernel+bounces-557511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4B6A5DA31
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:09:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB08A5DA30
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50D413B9655
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:09:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E176175199
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDA223CEE7;
-	Wed, 12 Mar 2025 10:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810D223DE80;
+	Wed, 12 Mar 2025 10:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lrmyhZBR"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eU7TRk0W"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F2B23C8B8
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC12231A51
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741774188; cv=none; b=dmgWFZv2qC5s0/GCaNy7E3ROsK1J+gX21Yw0dgPaM+uKrYzkB55rJO0PZ1OU1H2PA7dkurFcw9YQMn/RYuOHmug6Z/2dIFaCAnwf2gFI6dC4ms6pis8jNjBvppN8SC7TWUHnp1b9WJJU0E89oCt0iVqE3LWoRMRMvudJDvYiGNk=
+	t=1741774177; cv=none; b=HmEueku/0dnN/iB65X/TOPfDVhovosqdposbh7K+UwQVFqLixQ22caSxPQFSe3sxL7pNSITsXHIyOSTdm3XAoNqUoIjQFk69v2XFnpjQ+I0QJ6DPiS5+kHHJhdyWeL+NVkz6aSeV0EHUhVF5rfGirPGaEFjX+/bUssPUxmn/QQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741774188; c=relaxed/simple;
-	bh=yeBvl9NQXB6/tc/9Z2/OzmuKYdFcsirwgsfjsOKJD7g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JML55l64WBTOEcb9RW4W966E1P7jA9l78tOYSrlwWiBEXla38PL2aba9JJG8cSByqC4XjxdgKrJk931VrFEfLhM6zrMLNL3Yn3lKg6FgcSAWeJ0Ce86jm8y+jH62T3vLWJO4IIbnI9sF6BzflyoMyz0V+3ZVnas16zYyJ/rio2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lrmyhZBR; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-300f92661fcso4133222a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:09:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741774185; x=1742378985; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SUkmPYNjy0UdU5Zc+KUzHJuQSSwR0lKvxdX/nX9inOM=;
-        b=lrmyhZBRvVDIYLln21Gfkieip5pwJo9paRLmoTIQFJUnB47mA1Chn378jVWlOPY8R9
-         aTEuURzkIJE23KP0TOkCKRbJBn/3Y+fWboIqTdqoEUULqT9FiXuw8Rgdlek/ZtYjr4LW
-         1UcYMbJTkEMyOMRsTNOaVwfRWfdmfLvyl1voFBbWZHCVUUXFuSN/7DAAl59WUQqq3nNi
-         WIfHztrYcRGnH+q/VJ9R+dfptsmclpgsat7RTruLVN/wDwwwCizYJ6IG3k/eL84TRjks
-         +uektXKi6j8/1wUVRL5ML/VwTXXHBOo9/qXMj5PP9irTXArEbctVsn3OStG/f4U2y94T
-         SoOQ==
+	s=arc-20240116; t=1741774177; c=relaxed/simple;
+	bh=S743+2ahOXuPljV/reeQ/1enQbTDwpjWM1UaL2m9AeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c71GvSCzKM3sg3TTKzbOe7GhcPItOXvJRwsVJYIqK/UYgfPhyvFfQLMnSHpVQC4XPhnQs1VCMr992tCisLBkvSciJbqWaTBUIjrl351BvKmGG7md6Iik2770e7tWY1Lu1uETWXgq6TU0z41HccF+Q5j8SxgthYNHrxcEaiJom2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eU7TRk0W; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741774175;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S743+2ahOXuPljV/reeQ/1enQbTDwpjWM1UaL2m9AeI=;
+	b=eU7TRk0WVI1FxQboMjwvUi/D/vv9LFf9DTK1hVluZD1BkrjJa9etf4cJ7PkjWulDMd3W8x
+	AUtK88ScmS/UkJ5xCy+OzP+BFJrljiHBrt5bgwp+qfcXi82BInM2LUegHH5CsQmkf8T2Za
+	DpEvIX5o94WjJ18Eihd8FoVydeNGgGk=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-696-a-ld3HMXPq20OaGZVIk23Q-1; Wed, 12 Mar 2025 06:09:33 -0400
+X-MC-Unique: a-ld3HMXPq20OaGZVIk23Q-1
+X-Mimecast-MFC-AGG-ID: a-ld3HMXPq20OaGZVIk23Q_1741774172
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39141ffa913so2202386f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:09:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741774185; x=1742378985;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SUkmPYNjy0UdU5Zc+KUzHJuQSSwR0lKvxdX/nX9inOM=;
-        b=EmfW/RkTKU++crAko2r7LjIe3zxsL91DVxivlDyaSZPFx1ZR5ZYvYizovXSujHZM5I
-         6UFI9eeWSg1i5fRjuuGoWBHpG6La+5l9jZ2uzLJRHlItIeHhdz9pF89VV8qrBfrlQzcR
-         RmdF2SlHkP3m35je2jUB30LaHPdRpyzaHcMane9drhqFjQtKhCMgYZTDhTa0o2Mi1hiZ
-         AdRJiY/lh6o/i2V1ykmyPUNl9qkJ+7S2acir2EakCQ/i/zZAApavroP/PuNXmQTlD3QC
-         zMLfx9HfCJrkW/10s0ArBW0CbIw5VNcsE6BM0B8NJsVdbZzWu52XqBNeL6h+xhca2ng9
-         9/GA==
-X-Gm-Message-State: AOJu0YyzLK7zoW/uwdxeowuq9Pymu+1WZQ1GqVkeEqFrGZEFab2Y9jOy
-	ikIYcQLsHfNr/k0gW2zi4NM36R6bjvnuCw+k4vb0AwdAbOLNA4dhXQT+G3zn
-X-Gm-Gg: ASbGncsxfuJcSc4DFNnotWt6jx9Pd05iFKwwIvnBbGT1d85WMgKMn+RfspNscTkAMCG
-	MrN3/PmZBbg0vgQdpnuwA5FYtDWqx6YJcgcHXFse7sGr0RRpE8OV5w5jEvmLN7tgh6uJN2FLl02
-	OzBcPHjTJ4bj79I53NjKHtOPb2vCaQ+BvttexMm6a29NA+XKOQi3ggGpzvILOnDrJafGZ3hSFeg
-	ytjvFzPWhNDLDGTYOfgDeCzDf8Me+74xO9tsOD0ZGQDQbIhU45fj3gS3L2WdW88F8A7tuQDeRPH
-	zXzmwrbq6kEuqhVet/vYJ3K7utrIDGX7Q9WZuwaXaHJSkCAcBRF/d733Aq8cNNg9S2bmbnUcs2f
-	F7lb3FJBymM72IOJg
-X-Google-Smtp-Source: AGHT+IG5W7avSkqFsM0U4VrqHLdYim2Wlk3cNiyBJN+U721KvUWNp1+CxCtYAdKtRAYZKbtMVRGUAQ==
-X-Received: by 2002:a17:90b:17d0:b0:2ee:ee5e:42fb with SMTP id 98e67ed59e1d1-2ff7ce7abc1mr31550232a91.13.1741774185017;
-        Wed, 12 Mar 2025 03:09:45 -0700 (PDT)
-Received: from suda-ws01.. (p1201013-ipoe.ipoe.ocn.ne.jp. [122.26.46.12])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e99dfsm112380335ad.91.2025.03.12.03.09.43
+        d=1e100.net; s=20230601; t=1741774172; x=1742378972;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S743+2ahOXuPljV/reeQ/1enQbTDwpjWM1UaL2m9AeI=;
+        b=qP2cVqOQYfOvzeOlVhpoDh81gg4dJ6XYlCGGPI1qM6uobEr4hMZfaCqvehADt9j+Cd
+         pU+GtwvHd0EZyp2WRZajBEYXs5p6Fa8gcuj5IiQdg8R0UXNgq6yUh/gNcZKF2HCCa2LC
+         GQWm6rXAt15vlOAZn0TXssLoDl8OP6jvA7yglslDChTrczdqr8a86QG16eUzCzVwKjOR
+         0vH6vzUVLf71lzjgEzc6JA16vvcsAokeXSi67uSFt7k+4XvQ1ge8fWaJoi90WSaxcZus
+         /0r7+CCqFeTdfljCkQ7+cUnHAPzQahAeBve0Bnuu76vO/T2KGvZngwZH7mlGM/L3fXGr
+         t3YA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZPFRgO37ckUrGld6pQly/7opeLk+GWbnh2zTfWrtqTQ1OtF7zxFs9k6mrQEfXOcbC4680jOfm7w4OgHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKgpTsozUPS7XGvIz3+aQ7/cP8osno/NyqMYNwsm1MFyov7dMY
+	gJ4iZt3/aWbuYQ5QOV5uTLwpV/NHrzoCyZ5NuvPhiSYopzyXOJtNsXHV3M99eJY5pRzpyOBkdr7
+	siQQZhPMeJRdSYaxytv71Mv9qcpE2QPzuTGSyLeJzO+vXRkrfV00gDgN5Eeqrlw==
+X-Gm-Gg: ASbGncsnb4DOjst6U7XkE07MXdiZOYCO2iAg3Rnx78qMuwc30oET3qk12Y+lcW/2KNc
+	bJJygfJyP4NCSnPdD4ONQsS/qONfPrcYk+uxlB8DB3LuGPY3t8gP6BX6YDz5vKwfZXD6qejkjLz
+	mnGyB0mlX6EP8LXFugbDf4OPnydt6WwcYO3KxqHY8gh93HuvHu9sKAPE/0/MVzAmjuz7QH2gOEK
+	TN8gJKFRydZaEHe+Hw9vDK9RKDU3UcylDRtVFg8nFLDVVkZ67D6P61dCOAlFrycj2pHS6QXJ9zj
+	20B/ydGQ/OEuphnku0FetNDTUBZJeCPOwHX0vWibDvY=
+X-Received: by 2002:a05:6000:2ac:b0:391:1458:2233 with SMTP id ffacd0b85a97d-39132d30145mr16025042f8f.11.1741774172439;
+        Wed, 12 Mar 2025 03:09:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEC/oegylWFmX8HIfDOEmL2IfKq6J8f3RVSsBgAXMYe83/CsTxWQv7uki2xiMPLn7D1hW+oew==
+X-Received: by 2002:a05:6000:2ac:b0:391:1458:2233 with SMTP id ffacd0b85a97d-39132d30145mr16025033f8f.11.1741774172078;
+        Wed, 12 Mar 2025 03:09:32 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.49.7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e34fasm20758388f8f.75.2025.03.12.03.09.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 03:09:44 -0700 (PDT)
-From: Akihiro Suda <suda.gitsendemail@gmail.com>
-X-Google-Original-From: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org,
-	suda.kyoto@gmail.com,
-	regressions@lists.linux.dev,
-	aruna.ramakrishna@oracle.com,
-	tglx@linutronix.de,
-	Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
-Subject: [PATCH v2] x86: disable PKU when running on Apple Virtualization
-Date: Wed, 12 Mar 2025 19:09:26 +0900
-Message-ID: <20250312100926.34954-1-akihiro.suda.cz@hco.ntt.co.jp>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <CAG8fp8Qdmt9vLk=8ORccY5B+ec1huhazXG4PBaNyLEkq31HDjw@mail.gmail.com>
-References: <CAG8fp8Qdmt9vLk=8ORccY5B+ec1huhazXG4PBaNyLEkq31HDjw@mail.gmail.com>
+        Wed, 12 Mar 2025 03:09:31 -0700 (PDT)
+Date: Wed, 12 Mar 2025 11:09:29 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Waiman Long <llong@redhat.com>, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
+	tommaso.cucinotta@santannapisa.it,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 4/8] sched/deadline: Rebuild root domain accounting
+ after every update
+Message-ID: <Z9FdWZsiI9riBImL@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250310091935.22923-1-juri.lelli@redhat.com>
+ <Z86yxn12saDHLSy3@jlelli-thinkpadt14gen4.remote.csb>
+ <797146a4-97d6-442e-b2d3-f7c4f438d209@arm.com>
+ <398c710f-2e4e-4b35-a8a3-4c8d64f2fe68@redhat.com>
+ <fd4d6143-9bd2-4a7c-80dc-1e19e4d1b2d1@redhat.com>
+ <Z9Alq55RpuFqWT--@jlelli-thinkpadt14gen4.remote.csb>
+ <be2c47b8-a5e4-4591-ac4d-3cbc92e2ce5d@redhat.com>
+ <e6731145-5290-41f8-aafb-1d0f1bcc385a@arm.com>
+ <7fb20de6-46a6-4e87-932e-dfc915fff3dc@redhat.com>
+ <724e00ea-eb27-46f1-acc3-465c04ffc84d@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <724e00ea-eb27-46f1-acc3-465c04ffc84d@arm.com>
 
-OSPKE seems broken on Apple Virtualization.
+On 12/03/25 10:53, Dietmar Eggemann wrote:
+> On 11/03/2025 15:51, Waiman Long wrote:
 
-  WARNING: CPU: 0 PID: 1 at arch/x86/kernel/fpu/xstate.c:1003 get_xsave_addr_user+0x28/0x40
-  (...)
-  Call Trace:
-   <TASK>
-   ? get_xsave_addr_user+0x28/0x40
-   ? __warn.cold+0x8e/0xea
-   ? get_xsave_addr_user+0x28/0x40
-   ? report_bug+0xff/0x140
-   ? handle_bug+0x3b/0x70
-   ? exc_invalid_op+0x17/0x70
-   ? asm_exc_invalid_op+0x1a/0x20
-   ? get_xsave_addr_user+0x28/0x40
-   copy_fpstate_to_sigframe+0x1be/0x380
-   ? __put_user_8+0x11/0x20
-   get_sigframe+0xf1/0x280
-   x64_setup_rt_frame+0x67/0x2c0
-   arch_do_signal_or_restart+0x1b3/0x240
-   syscall_exit_to_user_mode+0xb0/0x130
-   do_syscall_64+0xab/0x1a0
-   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+...
 
-Tested on macOS 13.5.1 running on MacBook Pro 2020 with
-Intel(R) Core(TM) i7-1068NG7 CPU @ 2.30GHz.
+> > You are right. cpuhp_tasks_frozen will be set in the suspend/resume
+> > case. In that case, we do need to add a cpuset helper to acquire the
+> > cpuset_mutex. A test patch as follows (no testing done yet):
 
-Fixes: 70044df250d0 ("x86/pkeys: Update PKRU to enable all pkeys before XSAVE")
-Link: https://lore.kernel.org/regressions/CAG8fp8QvH71Wi_y7b7tgFp7knK38rfrF7rRHh-gFKqeS0gxY6Q@mail.gmail.com/T/#u
-Link: https://github.com/lima-vm/lima/issues/3334
-Signed-off-by: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
----
-v2: check oem_table_id rather than oem_id for better robustness
----
- arch/x86/kernel/cpu/common.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+...
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 7cce91b19fb2..8d78d34cd434 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -26,6 +26,7 @@
- #include <linux/pgtable.h>
- #include <linux/stackprotector.h>
- #include <linux/utsname.h>
-+#include <linux/acpi.h>
- 
- #include <asm/alternative.h>
- #include <asm/cmdline.h>
-@@ -516,6 +517,21 @@ static bool pku_disabled;
- 
- static __always_inline void setup_pku(struct cpuinfo_x86 *c)
- {
-+	/*
-+	 * OSPKE seems broken on Apple Virtualization.
-+	 * https://lore.kernel.org/regressions/CAG8fp8QvH71Wi_y7b7tgFp7knK38rfrF7rRHh-gFKqeS0gxY6Q@mail.gmail.com/T/#u
-+	 *
-+	 * TODO: conditionally enable pku depending on the DMI BIOS version when Apple
-+	 * fixes the issue.
-+	 *
-+	 * However, this would be still not enough because DMI is missing when vmlinuz
-+	 * is directly loaded into VM.
-+	 */
-+	if (!memcmp(acpi_gbl_FADT.header.oem_table_id, "Apple Vz", 8)) {
-+		pr_info("pku: disabled on Apple Virtualization platform (Intel) due to a bug\n");
-+		pku_disabled = true;
-+	}
-+
- 	if (c == &boot_cpu_data) {
- 		if (pku_disabled || !cpu_feature_enabled(X86_FEATURE_PKU))
- 			return;
--- 
-2.45.2
+> This seems to work.
+
+Thanks for testing!
+
+Waiman, how do you like to proceed. Separate patch (in this case can you
+please send me that with changelog etc.) or incorporate your changes
+into my original patch and possibly, if you like, add Co-authored-by?
+
+> But what about a !CONFIG_CPUSETS build. In this case we won't have
+> this DL accounting update during suspend/resume since
+> dl_rebuild_rd_accounting() is empty.
+
+I unfortunately very much suspect !CPUSETS accounting is broken. But if
+that is indeed the case, it has been broken for a while. :(
+
+Will need to double check that, but I would probably do it later on
+separated from this set that at least seems to cure the most common
+cases. What do people think?
+
+Thanks,
+Juri
 
 
