@@ -1,152 +1,195 @@
-Return-Path: <linux-kernel+bounces-558050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021AFA5E0F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:49:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C88A5E0F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:49:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14B1417C06D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:48:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617D91882BD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B30D252907;
-	Wed, 12 Mar 2025 15:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E100C2561A8;
+	Wed, 12 Mar 2025 15:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NTavR2yE"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvCD+UwC"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852C4288BA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7ED824BBFA;
+	Wed, 12 Mar 2025 15:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741794505; cv=none; b=g/CzSC5hF6XsGnDZrf5cqXiw+jTr2C2EwKeSrFQY2itJkrkZUE5qH94z2v7jH1Y1ymSAggcM67cGH7FnBraJZWMLO46szTa0786LHlh/UZj43+nFYO2T2Hi3i8uhFDAbbSV5d9JYwNgdPX6JqpY8kN96fhPs2DGn6zfKVdzrwiI=
+	t=1741794525; cv=none; b=PcY5NjnoNr+vmE65I9ZM95bKD5EbIXc7n7ojq3xFa8OxyW6LyAjKYCPWqqca4NkAyr2wdigVnc0J7S2H3bwja6ds8lxYDdTF+cg/qMWX6/p2CF1GG2AKfjeqtLxPJegPFM3sjrU2y5Ogg9PbGX2qCQq7Tu6lT9WwX/gW68YhLbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741794505; c=relaxed/simple;
-	bh=uCPOdA185BvWq5ZjhYWej2duz8xzBQXEQZTw4vCw+HQ=;
+	s=arc-20240116; t=1741794525; c=relaxed/simple;
+	bh=KCLCWORRVefheQNdDvOR0SPuly0YIxWRFHekJNtrfY0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=He9Cn0YwcQv3/G5VEjbyby8yl7T64xfJOEowdSm57rWGYZu61cMGNaPDRsMZgcgRip44GtrxXXpcaQGCILELqNGvh1qrnUYwbVc4IwgJILhu4le2zlISazkSf/FyYHHqLzGUq6wUw3Fjl3ItUDfzhk0gaTbBcxurH3zuq0lunMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NTavR2yE; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5499659e669so6042416e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:48:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=CMyyIaSQDm+7AHODHeCwDQ45mMkJPXzXP6xGqUb2FalE+l5Uu6R0uvnIkciobuuMiyF74xcsLeIp/tLvjxW1re42LDF/Poxh1wPiryLzlUnLBeQxH5A8GxrSScv/QgUowbtx6GzahOw8WyX4r3y7q7RmnxJHNdh26bMcdCm/FiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvCD+UwC; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-523fa0df55dso893921e0c.1;
+        Wed, 12 Mar 2025 08:48:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741794497; x=1742399297; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741794522; x=1742399322; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LdZ/KsjENSBssp+v/dxb+PBQzOCtXKmGBKQGm6xeShA=;
-        b=NTavR2yE7yAGZhxlLIsJJD4Un3rw3JgyR/Z8YmQS//oP2pS/7lHNKaQxugJ6cE9snX
-         W5OlPeNVKEzyI4ir6wXKYkOoi6kaRKdvVt3oX0+lgiemAHI4aqxJgtb3Ol8VugJdWfYX
-         WYiYN2Zd0NM7R8YBLXQYbHyWhkdwOabo+ymZQ=
+        bh=CA0E1+QIouT26J6b1C6kkNeaBYQ2U15SMRJrDpKVBNE=;
+        b=UvCD+UwCD4W8U8YZ8N9VbDlxYM6yLfb0qvq80PIPksoFfKQmEowms94ic08dT6dKrB
+         nsPU8OyX0X5NGiC2/Quc3zX9LX1V0bp8G+gCj9pq/2lkd5yWCk0m954hcw+s47JNzARX
+         6kY68KZ8XXerWK30jKKvHa+FHbJpNWLu2lPiXONSa46qVLbv7O5nbJlwH+8wHOQvpZJ8
+         IVg1rTVwTfm2eHpZnPxWtvetDW8ox/GMX3H1lA9a2ZKb1J17iuFneOq8X1q8rluar+58
+         OY3NpUyR0ZJRxC6cdwEJEU5SIrCMq/qlT//be3iB27v7L8KNHP92YQEC+a9Q4ii52Xu9
+         ZRxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741794497; x=1742399297;
+        d=1e100.net; s=20230601; t=1741794522; x=1742399322;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LdZ/KsjENSBssp+v/dxb+PBQzOCtXKmGBKQGm6xeShA=;
-        b=SW1wEmx/iV69+Y+VTKIflwSTnJROX5qJM8p1K4SYaczMygzwSJQhUX8sansvSaDRm0
-         oy9mdtr30WGctlwAU7KWRhckmq3Y5rd34jbo61kpz8nvhFDhxzHZ9ZVYwlqBzPs7A/qN
-         RO/ySsoL6pFmiD46T8TWpPGpyFOdA4RLJdgNlZKjDI9vrLcx+bUUMmW+nTlsCGwGjMrU
-         0voAGuqx1+8MrYxTDoTvo68ezzzDRkvv4DJrqMFwVdeaGnXLnExshIfaeyMmez8lown9
-         Obd6r3GDyYhBqeGdPTE1EvXDHCyN2d+zqRyQBaSx+4Ehe7Is1Ry3dsXJAfydb8F+Mfow
-         k09Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Gl3qF8OMkfYlVbiK5s/HUuq92UpeeZCkcuHZNKzZCdznqSpif11b5wNcyxLut7X7Yvt6s7ZfFnHpUEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyFNjtD9X7FGT7m8eP8sfhxz+fz5uM8LIyY364DmPIf4ARg/eI
-	GyRJhWR0JmZHcVr9fow146yoHRt3U8PDOmEle/B0jnUwAKzP6+mUR4k8MVNZspOl8d5CrQ/NbEy
-	A1OEV
-X-Gm-Gg: ASbGncvXS8dqJCfnYUOfl67TUH4lYfBPRa8v6QLQw8Sy33CoqwzuhY3U0g2rPCinGpQ
-	HQ9TM907n9N871iyGf9sUgarsL96IFY9dKpcYAtgrd6sMomk44I9tX9D5hsjd3haMWyceObO6Fd
-	6Bj6klZMzgiU18bh/HK6aBWFNU6QEWR8ioF9SgKNDnMYjddKZEHmqI/HXCTGm6LNXKTcoGGxj8T
-	jpcU5L+/hyhGExnSZ6n5AMe+E5moU0KOD7Zut7iWZaJpFjbG7Bkj/SxEynxd/FiCBmO8iHBQYDi
-	qwIrtfmzEQrSu391ueGoEYRrTOddnJknTnrXDi19FRYLaEfCQqOlRCZbLFVlI7wIO9WNz6VfS7g
-	RUt4TTQoR
-X-Google-Smtp-Source: AGHT+IEFC3jlzIZd82yyazj4cpZ7CQCHTGIowCJABhhYcW6bQMNDSE/Jm6LPkVdFu+ydjch0zu3yug==
-X-Received: by 2002:a05:6512:b24:b0:549:9143:4ce1 with SMTP id 2adb3069b0e04-549abaa8c5bmr3472623e87.3.1741794496591;
-        Wed, 12 Mar 2025 08:48:16 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae4626csm2145368e87.48.2025.03.12.08.48.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 08:48:15 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5499659e669so6042195e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:48:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXvW0gHPPMpj04G36EXyt/07KWJjlsxCrE2EA5sC62SdzJuo32+7+T/EMiJROe/4Ws+X/v/iBsdMqcTevI=@vger.kernel.org
-X-Received: by 2002:a05:6512:3b25:b0:549:7394:2ce5 with SMTP id
- 2adb3069b0e04-549abae9732mr3014845e87.41.1741794492068; Wed, 12 Mar 2025
- 08:48:12 -0700 (PDT)
+        bh=CA0E1+QIouT26J6b1C6kkNeaBYQ2U15SMRJrDpKVBNE=;
+        b=Fd820hhdrQiT0VYEaJCrkdnjifpNljkdDiBFCDlBHfgusoYFFAl+uFTVMhvltH48do
+         P4UXiIisDf6gxSE0PfYA2cZ9sMeRuTz0F0J9xDJHJT1qcd+TTTjeO/dzlqNBQ3bB957l
+         6B7cyU3mxeJdmEZlCgKXj+mpAVSM7dTV0M03g1exmUXWtlHemuGu4BcAG8L+bOFej8iu
+         SmrWyPtI4wemb5Bxb7kg5rlIJnvJAAsVEBP17skaS5thUWjbN6Mlu7FpmBzxqv5g8qhj
+         5AsqNcoms1UJe3z7K8E6rCsF3MZtgYfdd5jg8mw6FGkACgFr2v/HJfACOMhBmdaQsoKs
+         K/7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWBqOhHDBfDItUvpk42ymTWNhX7E9v9ZXqoZTxZn7d8tRGfdygbFihk/y5kUQBViPcuGDIinMsxYvRqafVLrpwo@vger.kernel.org, AJvYcCXJrxuhm1lGUqbjNH8uuoLqE1feALZBZtbpYJ9uJmpWnGwwRD2Wk/UEp8GPLZUZgOlw21rrZTJFjPp+mfugjYk=@vger.kernel.org, AJvYcCXsOYg9Ej/sjt5YULc889i4J0qYybThFVappaDPiNGazH9pnOoNvuADlF44pRgvw+TpBrdF0qLnL8M5XQz+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+7UrEaDuIuKCwWBjd4odBt4WXRcOcL3rC4xq2kxt7VPrK3GLF
+	Wkp8dAv185qi2mZ/3NWXjHKLcbp96uQx046SelUrXe2GO2v71I3Bj44OLKoN6pSkJRCvwCZv0Nh
+	m/HpoNre6bTE5OtSbZCCrGZIYvT4=
+X-Gm-Gg: ASbGncsGWFmNmDpQ0fmz7QkNZP9/n4reNdLSjSiGA6LEAHso4tJQrr2aXlTNtTA/E/c
+	rAaOA85jcwLIPuaQxz/UAfkqRiCx8dG74gbk0h/IRrLkkBS0GjPiVRrL4x8tEzs19QNhYFN0igv
+	XqmJZc+x+W0ytQ96uW+kR3EUETAYz5tLtRQxabXu0ZOhX8w2t1ZrLQ6jfHhA==
+X-Google-Smtp-Source: AGHT+IGgNahbxSbQna4G9Ni14R4KFZmtH4JnIZG+uLUGeQ1P4zqoNf+g/NrxbLm5rDHx4iRs96GD9OYdN2cqb4BzjTg=
+X-Received: by 2002:a05:6122:3c43:b0:518:8753:34b0 with SMTP id
+ 71dfb90a1353d-52437de5a95mr97996e0c.4.1741794522420; Wed, 12 Mar 2025
+ 08:48:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310-mipi-synaptic-1-v2-1-20ee4397c670@redhat.com>
- <20250311-warm-icy-rottweiler-cefcdd@houat> <CAN9Xe3Qwu=E=VVZZ_8EHPF7Xsk6Zcbp=R_b=cRgF=9SWCkmsqA@mail.gmail.com>
-In-Reply-To: <CAN9Xe3Qwu=E=VVZZ_8EHPF7Xsk6Zcbp=R_b=cRgF=9SWCkmsqA@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 12 Mar 2025 08:47:59 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XdngrNhUn8jQ3FGitkBCkiQO1dXnPhCKj+S5Jo8_WUrQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JqKOeCFnqz9t-GQAqcT1m-g7AXhkRBMViQRSMxzjFeOfKb4IuUc4Kxm3n4
-Message-ID: <CAD=FV=XdngrNhUn8jQ3FGitkBCkiQO1dXnPhCKj+S5Jo8_WUrQ@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/panel/synaptics-r63353: Use _multi variants
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Michael Trimarchi <michael@amarulasolutions.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Tejas Vipin <tejasvipin76@gmail.com>
+References: <20250312002117.2556240-1-jeffxu@google.com> <20250312002117.2556240-3-jeffxu@google.com>
+ <c867bff9-2293-4890-af46-8a797cf512c2@lucifer.local> <64B6294F-B059-4744-8548-89D7B519BE72@kernel.org>
+In-Reply-To: <64B6294F-B059-4744-8548-89D7B519BE72@kernel.org>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Wed, 12 Mar 2025 15:48:31 +0000
+X-Gm-Features: AQ5f1JrWH_NUnvOlBfCLeU2iGn4bsAsglh4RBB13Bl-yre5HPY3wUm8KqBRNwZk
+Message-ID: <CAKbZUD0M-kfxqD+AxjYK0LjnZhsxyJbGwhL5CGKzfOsFQpnKtg@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 2/2] mseal: allow noop mprotect
+To: Kees Cook <kees@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, jeffxu@chromium.org, 
+	akpm@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com, 
+	broonie@kernel.org, skhan@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, jorgelo@chromium.org, keescook@chromium.org, 
+	rdunlap@infradead.org, jannh@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Wed, Mar 12, 2025 at 8:06=E2=80=AFAM Anusha Srivatsa <asrivats@redhat.co=
-m> wrote:
->
->> > @@ -106,53 +107,46 @@ static int r63353_panel_power_off(struct r63353_=
-panel *rpanel)
->> >  static int r63353_panel_activate(struct r63353_panel *rpanel)
->> >  {
->> >       struct mipi_dsi_device *dsi =3D rpanel->dsi;
->> > -     struct device *dev =3D &dsi->dev;
->> > -     int i, ret;
->> > +     struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D dsi };
->> > +     int i;
->> >
->> > -     ret =3D mipi_dsi_dcs_soft_reset(dsi);
->> > -     if (ret < 0) {
->> > -             dev_err(dev, "Failed to do Software Reset (%d)\n", ret);
->> > +     mipi_dsi_dcs_soft_reset_multi(&dsi_ctx);
->> > +     if (dsi_ctx.accum_err)
->> >               goto fail;
->> > -     }
->>
->> This changes was definitely not what the script is doing.
+On Wed, Mar 12, 2025 at 3:28=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
 >
 >
-> It isnt. Using coccinelle for the major part of pattern matching and repl=
-acing the newer _multi variant API. Some handling (including a newline that=
- it introduces) and  the returns depend on a case by case basis, which had =
-to be done manually.
+>
+> On March 12, 2025 6:49:39 AM PDT, Lorenzo Stoakes <lorenzo.stoakes@oracle=
+.com> wrote:
+> >On Wed, Mar 12, 2025 at 12:21:17AM +0000, jeffxu@chromium.org wrote:
+> >> From: Jeff Xu <jeffxu@chromium.org>
+> >>
+> >> Initially, when mseal was introduced in 6.10, semantically, when a VMA
+> >> within the specified address range is sealed, the mprotect will be rej=
+ected,
+> >> leaving all of VMA unmodified. However, adding an extra loop to check =
+the mseal
+> >> flag for every VMA slows things down a bit, therefore in 6.12, this is=
+sue was
+> >> solved by removing can_modify_mm and checking each VMA=E2=80=99s mseal=
+ flag directly
+> >> without an extra loop [1]. This is a semantic change, i.e. partial upd=
+ate is
+> >> allowed, VMAs can be updated until a sealed VMA is found.
+> >>
+> >> The new semantic also means, we could allow mprotect on a sealed VMA i=
+f the new
+> >> attribute of VMA remains the same as the old one. Relaxing this avoids=
+ unnecessary
+> >> impacts for applications that want to seal a particular mapping. Doing=
+ this also
+> >> has no security impact.
+> >>
+> >> [1] https://lore.kernel.org/all/20240817-mseal-depessimize-v3-0-d8d2e0=
+37df30@gmail.com/
+> >>
+> >> Fixes: 4a2dd02b0916 ("mm/mprotect: replace can_modify_mm with can_modi=
+fy_vma")
+> >> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> >> ---
+> >>  mm/mprotect.c | 6 +++---
+> >>  1 file changed, 3 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> >> index 516b1d847e2c..a24d23967aa5 100644
+> >> --- a/mm/mprotect.c
+> >> +++ b/mm/mprotect.c
+> >> @@ -613,14 +613,14 @@ mprotect_fixup(struct vma_iterator *vmi, struct =
+mmu_gather *tlb,
+> >>      unsigned long charged =3D 0;
+> >>      int error;
+> >>
+> >> -    if (!can_modify_vma(vma))
+> >> -            return -EPERM;
+> >> -
+> >>      if (newflags =3D=3D oldflags) {
+> >>              *pprev =3D vma;
+> >>              return 0;
+> >>      }
+> >>
+> >> +    if (!can_modify_vma(vma))
+> >> +            return -EPERM;
+> >> +
+> >>      /*
+> >>       * Do PROT_NONE PFN permission checks here when we can still
+> >>       * bail out without undoing a lot of state. This is a rather
+> >> --
+> >> 2.49.0.rc0.332.g42c0ae87b1-goog
+> >>
+> >
+> >Hm I'm not so sure about this, to me a seal means 'don't touch', even if
+> >the touch would be a no-op. It's simpler to be totally consistent on thi=
+s
+> >and makes the code easier everywhere.
+> >
+> >Because if we start saying 'apply mseal rules, except if we can determin=
+e
+> >this to be a no-op' then that implies we might have some inconsistency i=
+n
+> >other operations that do not do that, and sometimes a 'no-op' might be
+> >ill-defined etc.
+>
+> Does mseal mean "you cannot call mprotect on this VMA" or does it mean "y=
+ou cannot change this VMA". I've always considered it the latter since the =
+entry point to making VMA changes doesn't matter (mmap, mprotect, etc) it's=
+ the VMA that can't change. Even the internal function name is "can_modify"=
+, and if the flags aren't changing then it's not a modification.
+>
+> I think it's more ergonomic to check for _changes_.
 
-...and now you're getting to see why I didn't think a coccinelle
-script could fully handle this task. ;-) IMO instead of trying to get
-a coccinelle script to do the full conversion, the right approach
-would be to use a coccinelle script (or equivalent) to get the basics
-done (just so you don't make any typos) and then cleanup the result
-manually. Spending more time on the coccinelle script than it would
-take to do the conversion manually is probably not the right approach.
+I think this is a slippery slope because some changes are not trivial
+to deal with e.g
+int fd =3D open("somefile")
+void *ptr =3D mmap(0, 4096, PROT_READ, MAP_SHARED, fd, 0);
+mmap(ptr, 4096, PROT_READ, MAP_FIXED | MAP_SHARED, fd, 0);
 
-If your patch wasn't fully generated by a coccinelle script you should
-document that in the commit message. Something like "Initial patch was
-generated by a coccinelle script and the result was cleaned up
-manually." If the script is too long to fit in the commit message,
-it's fine to put it somewhere online and provide a link. "Somewhere
-online" could easily be a mailing list post.
 
--Doug
+soooo on one hand, I don't really have grounds to say this patch is
+incorrect. On the other hand, I'd like to see either a particular
+problem or a consistent criteria we can apply to all VMA-related
+situations.
+
+--=20
+Pedro
 
