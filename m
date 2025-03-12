@@ -1,138 +1,129 @@
-Return-Path: <linux-kernel+bounces-557596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A033A5DB59
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:25:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08807A5DB78
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:27:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62B33A849C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:25:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F879189B44E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009F423F407;
-	Wed, 12 Mar 2025 11:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335262459DC;
+	Wed, 12 Mar 2025 11:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i9MesHfa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C7YRj9pd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iGnJ2JUZ"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BEC23F289
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D249241668
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741778698; cv=none; b=gHzBE9xcm5oNTjasfsnUw1iOQPC2c1eY2G13FevcgEKTh7bEeshrNyi/uRS6qSRS1/R3gyd4aL0LbhTa2Orv3ZbsCYcTZA84oaFb1DkR/RjSYTSib1Yb1IrlDN28XZrAJb6p7EoqqLEWPHY28dtpZLF2yCB8NH6ZoNT6ZBH5pyQ=
+	t=1741778734; cv=none; b=rDyXVDEDzZJSs6SijnJghB1H+MsEUMnplHrkIdhDyOUhwqZriMCDfotK5FmQbXjlrKQlBdqvHhNKP3KAKVwSM0ezVKxG9oxdPKqFShdAPF1oHf1COA96mylhog1Q1UHxsEolhiAcZU6oxqG6DlFZ8gv0DMjup8W5WFU9YPo4DE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741778698; c=relaxed/simple;
-	bh=jvVvf9lmAWqqcfy/yoPzj0oQxMDvWeUK94f+pQiwKyk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=o4Ot4VPBAyIz3qsTZh1A8IQQZNV+JAVzzdJlj3S+P24mPB+tkoUGUJdx3dyk4WmIUDBvt4g7zp5jL5TyCoz/JgAtHhcqZOb6vu8+6P1lGzmeKf8eIJACI98g/yZBuqB1naB4V3LupEYNQD0M7RqBrtfqMtXr8wR4XFBzdsCRCmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i9MesHfa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C7YRj9pd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741778695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sWKpskQPjhCZutWc6OXz/+ZuVriZFdt1mzefqC2FGQ8=;
-	b=i9MesHfasV9uOwZ/EYOQqMxOhmxeA6bb3e+v2lF7ESGROwBQ6CrHObp0mLJyheoY3Y1x7Q
-	0dYxPWBysEQehXfwNX3WkCYpSmCfcSuglT2K+lFxrLtOH4iN911K5h/7UwFRX3MeP8sdVs
-	JVqO3H0Czs9ixJgqWib+ZROPFneKDirG4Th6MlpYKQnAUwgI4hmEV13AUKVXHSWOAmyrkY
-	gz/zoQA3j88hse0xG1vIPPg01f3KJrCZeksqaNr6IJhuOQNeNaZhWabNYA/M+IqoEVrrhY
-	sUECE/assyYJpIcb7PWLwp93Zq5e53XzF7dn3a85S3P3RXeK0YoYzCabaJcBbQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741778695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sWKpskQPjhCZutWc6OXz/+ZuVriZFdt1mzefqC2FGQ8=;
-	b=C7YRj9pddMG4KvXqv1k7nFwBNZpKAdYe0Qz9LHxgYcj90XgAaov+R4hvxgmkJgp/8f3+OC
-	XEZH5jnEf+REKfDw==
-To: Cyrill Gorcunov <gorcunov@gmail.com>, Frederic Weisbecker
- <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Benjamin Segall <bsegall@google.com>, Eric
- Dumazet <edumazet@google.com>, Andrey Vagin <avagin@openvz.org>, Pavel
- Tikhomirov <ptikhomirov@virtuozzo.com>, Peter Zijlstra
- <peterz@infradead.org>
-Subject: Re: [patch V3a 17/18] posix-timers: Provide a mechanism to allocate
- a given timer ID
-In-Reply-To: <Z9E-L1pvl1j_4E3f@grain>
-References: <20250308155501.391430556@linutronix.de>
- <20250308155624.526740902@linutronix.de> <Z9CsstMf-EVZpsiH@pavilion.home>
- <87msdrz0i9.ffs@tglx> <87jz8vz0en.ffs@tglx>
- <Z9C6GpaB9WvNzvJS@pavilion.home> <Z9E-L1pvl1j_4E3f@grain>
-Date: Wed, 12 Mar 2025 12:24:54 +0100
-Message-ID: <87bju6ze2h.ffs@tglx>
+	s=arc-20240116; t=1741778734; c=relaxed/simple;
+	bh=u09mix5wsyGZEee0OTLlbwtp/i5wIT9Jdm2M0t59Fs8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=buaDANcv0LQTLjW/EjOeCfM3qxApm6bVWw/FxLPS1KLr6FeKS7/yBT/TJoKZTXfBB5C5s4OA3DQn5JdMDETJqsZ8LKNPgRQf6HsCyGlImUBGBzfhuSMGmiuL86dixH9fVbkgxZTYaxPL9fMNSnnx3WbpE+RYk+M4O2fP+jaJBIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iGnJ2JUZ; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ef60e500d7so54708057b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:25:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741778732; x=1742383532; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6/mrslkYIqtp2+mq8p2Qz5J6MxbjiXwBJqUTb8Ezm9o=;
+        b=iGnJ2JUZrW2FGn1w6nR37KHuN7NGjmwSWyi7AJDrE9Qcd7cugwvA3uEYLKURXg1VRK
+         BtMNQrdkfHUSiexHhD/qGXBlT7o05BYSvgZp1nQSnb2iKd32SncyaKMCBw18s9EeIZME
+         oxG8GAwy8X1O+VN0gZhKH90rtqhVT/UKcOb70ANL2m3zXoMgNe37tRnWsFKXlUog1FyG
+         s9bA/jPxa/FMobh4O0bDX8eYgMC9lPq5uKk+KgFvj4HiJbP4r0me9mGSW9NE/MHyMHf5
+         czsEi/kKjYQbngMZd+ny+0igy5rtaTmODqlPfe1RHgl/YOCmpcpc5+jbQuEfp66dzFx1
+         eG7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741778732; x=1742383532;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6/mrslkYIqtp2+mq8p2Qz5J6MxbjiXwBJqUTb8Ezm9o=;
+        b=WpH6ehGSno6oF/bYUppJEQC3yuZcMkKeq5ksWOght+lnKerwVMHovGcBCd3fMDWlXD
+         0Bt5T1BLa+dKv4U1RtGxG6/6jvzxP2xm/+97tDwER6Zuo8unamWrF3YR68BcH2JNscj6
+         TscHPqolbKhe8rPo8PytlC0w8feiKKKmVngSkw08jjf+AXuRW3gbSzXley/fem7krK5d
+         9CEMBuxFgAUiHVw0zE33k3sQxMZWLHhsJEZWYp1ztrvx6TbufTNYccw4G4jRaG5HGsNw
+         SY5cpJsaNqqVBfo1qRsN8MBQN8FI3kZlLKRY01tufX0ZFRxwn0AMe2vc8IhRiKB2yO88
+         koBw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2PCArtWOpmF2j/QHOCssDnyQTlBgkAYUXBELQF5EGjZ/vZk6ceMzGVUBE+3lulGhdQ2I3WRsO0zw/FZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAggfkyJlYzuDltQgLJXrai1LPoaiXi0aU6mndj4VKCsUig9lu
+	OsD/jZksRY4IHjxPjFPX1dRaxXFOj1k+SStXX/t9ZYboA8BpGya2Q4nSAiyjFadcjOUg0bjGSAn
+	NlgLK1TiNJxZZ87+xXHnSnrtX0LChxcp6RsP96A==
+X-Gm-Gg: ASbGnctmYaHps4et/jXkYQmMUmTe/bBOlkJTS80XwRpu3JT1sVORCEeWlyWbFEKcDDj
+	0d5UnAwv+2Kw/6oXeoCM/99ygX2Ajwv/Iv4SFF8gZZYyOzsT/Ndg6DJ1A6J2N9eluPJ2hV65lXV
+	0dDN7RzR0+0XRvt3ELKF3sYSQoq9qLfjOnJlVMZg==
+X-Google-Smtp-Source: AGHT+IFk3gFp/cUReNnM9kzAsWOkTCM5MEQl/tCtb/z5liDbrUseKz74jkUx34wnEgejhu/lLK5rCnP3CIxzHqyLHXc=
+X-Received: by 2002:a05:690c:4c02:b0:6ef:652b:91cf with SMTP id
+ 00721157ae682-6ff0927951fmr104983367b3.27.1741778731810; Wed, 12 Mar 2025
+ 04:25:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250305214108.1327208-1-jonas@kwiboo.se> <20250305214108.1327208-2-jonas@kwiboo.se>
+In-Reply-To: <20250305214108.1327208-2-jonas@kwiboo.se>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 12 Mar 2025 12:24:56 +0100
+X-Gm-Features: AQ5f1JqH2hRXUwfz_vQkPX8i5gK9j7RB0dP4G_O77fuesZmjypeV_Lu2vr_DSTs
+Message-ID: <CAPDyKFqY+0MGsdZDBJ1AoDaDGrnXN=Gu3JNjuK0LoHfjT9JxiA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: mmc: sdhci-of-dwcmhsc: Add compatible
+ string for RK3528
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jisheng Zhang <jszhang@kernel.org>, Yao Zi <ziyao@disroot.org>, 
+	linux-rockchip@lists.infradead.org, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Mar 12 2025 at 10:56, Cyrill Gorcunov wrote:
-> On Tue, Mar 11, 2025 at 11:32:58PM +0100, Frederic Weisbecker wrote:
-> ...
->> > 
->> > Recreating two timers with IDs 1000000 and 2000000 takes 1.5 seconds with
->> > the create/delete method. With the prctl() it takes 3 microseconds.
->> > 
->> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->> 
->> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+On Wed, 5 Mar 2025 at 22:41, Jonas Karlman <jonas@kwiboo.se> wrote:
 >
-> One thing which just popped up in my head -- this interface may be used not
-> only by criu but any application which wants to create timer with specified
-> id (hell know why, but whatever). As far as I understand we don't provide
+> The SDHCI controller in Rockchip RK3528 is similar to the one included
+> in RK3588.
+>
+> Add compatible string for the SDHCI controller in RK3528.
+>
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 
-Sure. Application developers are creative :)
+Applied for next, thanks!
 
-> an interface to _read_ this property, don't we? Thus criu will restore such
-> application which already has this bit set incorrectly.
+Kind regards
+Uffe
 
-Delta patch below.
 
-Thanks,
-
-        tglx
----
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -362,5 +362,6 @@ struct prctl_mm_map {
- #define PR_TIMER_CREATE_RESTORE_IDS		77
- # define PR_TIMER_CREATE_RESTORE_IDS_OFF	0
- # define PR_TIMER_CREATE_RESTORE_IDS_ON		1
-+# define PR_TIMER_CREATE_RESTORE_IDS_GET	2
- 
- #endif /* _LINUX_PRCTL_H */
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -391,11 +391,17 @@ static enum hrtimer_restart posix_timer_
- 
- long posixtimer_create_prctl(unsigned long ctrl)
- {
--	if (ctrl > PR_TIMER_CREATE_RESTORE_IDS_ON)
--		return -EINVAL;
--
--	current->signal->timer_create_restore_ids = ctrl == PR_TIMER_CREATE_RESTORE_IDS_ON;
--	return 0;
-+	switch (ctrl) {
-+	case PR_TIMER_CREATE_RESTORE_IDS_OFF:
-+		current->signal->timer_create_restore_ids = 0;
-+		return 0;
-+	case PR_TIMER_CREATE_RESTORE_IDS_ON:
-+		current->signal->timer_create_restore_ids = 0;
-+		return 0;
-+	case PR_TIMER_CREATE_RESTORE_IDS_GET:
-+		return current->signal->timer_create_restore_ids;
-+	}
-+	return -EINVAL;
- }
- 
- static struct pid *good_sigevent(sigevent_t * event)
+> ---
+>  Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> index c3d5e0230af1..fb2115e805f5 100644
+> --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> @@ -14,7 +14,9 @@ properties:
+>    compatible:
+>      oneOf:
+>        - items:
+> -          - const: rockchip,rk3576-dwcmshc
+> +          - enum:
+> +              - rockchip,rk3528-dwcmshc
+> +              - rockchip,rk3576-dwcmshc
+>            - const: rockchip,rk3588-dwcmshc
+>        - enum:
+>            - rockchip,rk3568-dwcmshc
+> --
+> 2.48.1
+>
 
