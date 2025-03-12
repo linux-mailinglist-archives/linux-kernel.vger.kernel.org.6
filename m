@@ -1,178 +1,171 @@
-Return-Path: <linux-kernel+bounces-558457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3FB3A5E635
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:07:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A87A5E62F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:07:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06A43B926E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:05:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A244717EE11
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEF21FF619;
-	Wed, 12 Mar 2025 21:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="AgsmBmqt"
-Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AF11F7910;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4811F869E;
 	Wed, 12 Mar 2025 21:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.28
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mGa+p08J"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754C51F6694
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 21:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741813281; cv=none; b=fnAHzdfavN6b7xYs6RsgGYE07v2bmCZwZ1sKrCgYYW1Yv/IbQBIEuFfLyoOP0Y8TpgqsAXBVL9to/KyloUye+pE+LAOA7vpOf4OmiMfbsAZ1T+UB/p2wmDQGiRQLpJ1oSPu29Yz/DjPw4C/WhyxR1rI09UYjlG2B4sEcNxagsk0=
+	t=1741813279; cv=none; b=AcbWAVM11fPTRD7sUHGYaqYFBZEaM3B3nvPK30Sff6aN/60XS6XBjanC5+DfcojSkHqAMvQrRLZvD68IAAQitBEpC6ZFvNJ5nK+nETfCTdN3UlUsVe9XEfi9xhYWkbai9YRblyDz+DvDpARbG3GaXMUTY6TlwS7JbBum1Qxo2KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741813281; c=relaxed/simple;
-	bh=EUV+7ueFa4wuC2yYXN5Qxx8JPkLuf5A/I+HBCJ2HIVI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rxwtpmOLununQFl3yHyvXDwFPBVkxPgorzN9fVAg6o9h5sOGLH70jkYZWF415tiCrGjvMPH53Vih3D+gNtqnpKekidveaYqYCdpCPKJv1/iXdvCd1RyhzHdzfx6n6U9dtxe2x6fTMTJn8wKz4t8slMUXRaiezadbxFyxQ2rUed8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=AgsmBmqt; arc=none smtp.client-ip=79.135.106.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=2r56xdogl5dwrazvon4xbvu2zu.protonmail; t=1741813277; x=1742072477;
-	bh=e/HeNz8Swq56+LxdIGu4AcrscDU2ITHyNAwvMErqWQ0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=AgsmBmqtPtEBMtZCUR9m3W5Qa924plNy2S/omSFiwwggDCgLWjLDL5b59jUf4Ym+Y
-	 4HmornF6q0oKShU3PWvl+jO+yl16fZFfF01o2dxAQs3yST5ZFvAbvkUp99QrwmVxfe
-	 QgY3e5QHChwoZiNuBnAfMK2IbnX0R4gFXUxpKJ52/Wex8tCqUcXMaasi7sMj68m9yW
-	 LZLCVEJM5aLvMG597vBZbfo8oQDVugFbiExu+OtshCy2HeHJ4+uv2a87e1mohgjARe
-	 IClgABETHHwXtr/mfE7tdJvKtSHaghlRZdfVMjdLMOQ7e+wEhSJlDFwV+RlA1iaGPv
-	 eWD63TtHW3AKw==
-Date: Wed, 12 Mar 2025 21:01:11 +0000
-To: Tamir Duberstein <tamird@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
-Message-ID: <D8EL9QFS1XNT.JBSMRXD4D7GT@proton.me>
-In-Reply-To: <CAJ-ks9kCgATKDE2qAuO3XpQfjVO2jGyq3D4sbUcVKyW6G1vuuQ@mail.gmail.com>
-References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com> <CAJ-ks9=K06OT6cutUABj2QDHJHJ70719c-eJ=F3n-_bhkYbZ3w@mail.gmail.com> <D8EG9EM9UU0B.2GLHXRU2XROZ3@proton.me> <CAJ-ks9=+3MQb-tp8TAwYvVj=GOFFFVKJxRMprc8YXZHKhqnDrg@mail.gmail.com> <D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me> <CAJ-ks9=zWAuPUM_61EA6i5QkUpwtNtsN8oF_MUerWGn39MRHhw@mail.gmail.com> <D8EJM4CJ4HAN.1PB2YV8DB77V7@proton.me> <CAJ-ks9mo-H46Wwcu_LOvDy0ncwMR9ii74Fyf3OX-aWNnrZ397g@mail.gmail.com> <CAJ-ks9kCgATKDE2qAuO3XpQfjVO2jGyq3D4sbUcVKyW6G1vuuQ@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 179dfb60e06f78a42b6b24975cc212ea1bfde903
+	s=arc-20240116; t=1741813279; c=relaxed/simple;
+	bh=G6k9/ql5Q1cbDizr0QjgBTrqx0v2OwXXY/Rlqh1I4+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OINJFuCgViAID+2KI26v8sQaddHnSsvYYuX7dSRm089tDURVlfYWJRuSCWwPHd/PyuwAjbdbnJlFIPHribtTmuKa4Wmk4zQ+joiza3R9K7Hvd0yhAXCsDrG+u1Mpgqo3kqMi1G084V+IJdEDNVG55EGkJUx7Sp9khWKJi3GstdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mGa+p08J; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso1443325e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:01:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741813276; x=1742418076; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kqc1poXxnyoLh8acLdyx6jnNQG9s8oh95bXH7s4VvkQ=;
+        b=mGa+p08Jio0Pgfvr1ydvgLv/NTIiTwHlZUwc51/gzJpUZZGTeB7pYGvdXzIshybA7M
+         EtQFm6KqJ3RCGqt3a9oUBOyHnL1AWMQ2ozDihKj8ge5l+9A1U7Zvghc2z/waCq3TBZeA
+         SwpL4k6DoRP80LP9f4161SgdVBKhTNr+Wul2bFLsvZ8HSNzb3Ij6ILFoQXZjeni1ZDbr
+         wBzrDzil3cBehplz8v2QGK+hGBgaJSrS/aS3BomcpLfptxZQXtjJ+Ho5+C4jFpdgLwb9
+         MsxeeNIDm0LFrWdGg9jIccnXM32qsqV+sZIEpcpD0nUq9FMB8yrrJkNG4GR9X20tMj21
+         TJow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741813276; x=1742418076;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kqc1poXxnyoLh8acLdyx6jnNQG9s8oh95bXH7s4VvkQ=;
+        b=WXKqjBPo5J53xYmFAt5MW49jbP0c/FLoCE9FOAyJPsTHok7xs3APIOsJHjcQGrt3L0
+         Y9ACNcnMTjTTU6+hVjuUYYqU7U8ZnaphWM5C6BKB1czkz6FYuSXZXqy32PAIRi/jPHC0
+         5dcNqKL0YiPHAiXEJ5quav2/iGsLaGjNiZuSzkvarkzfOvin61bU64JBLdRuvvkDq9GM
+         oHpB7BCYdsGyikfqpMf2CQomrXxHcICxVGzld9B1k0ZR2artcihgSP5OFQnrTnbNIcsa
+         sJ9EuWfmOrG1N7Ay7moDqq8jozV5/COfLyYRZvFDsEogLe7HzFh5HWGPTC9eYpKIMoHh
+         2vHw==
+X-Gm-Message-State: AOJu0Yx7kO8VMiUBWaJHyu2zvM4p9IPOHQWM/+ajsZJgJmPZP+U8yaaD
+	5QNBaTZVzOjO1qexWaHhmKh6US94Dv7Z4Xu/SkeY1KX+338PSaAH
+X-Gm-Gg: ASbGncujztbVTmurne1XYP3dOrKvY0+aRZMzN6jt+H3jKOKWvPKWDC1W6L8O4Nj8+al
+	unaf9WlV7sc6ecRobYiq0raXdwmIWpt5cYB3PxsdMkmzqbSQKhAhP1sZ8m3qMLdwW0Tc5wpkWTM
+	MUunpFKvRP/7Ll5LElob/N00DG6O4i21WMEupOIEbFKvQlml14MkoQf7BW6K6ObkwCZ1wdxLjbR
+	M8LRFUjwbIGkJbEZzfjPhYTap+gF/R2+mguN+5vtOMA2JvHpcTT5zvDN8NMk/n3Ac19vxpyy1kq
+	ZVTa8rHck6BjAbrdZTadPKB0fuhyPhBCMm/omFzgvX7zARKoGEpxbZdOcLjBW8Ym3U5sk6Ju4mX
+	U+Rs+14iB5CJBe41nvQ==
+X-Google-Smtp-Source: AGHT+IFKuygVKUqjYPaYSdKNJPmQrQvxeGb1gcLRVCvTaRzOXVV/7NXqaWSlkHJhQew2IIZLrtPVNA==
+X-Received: by 2002:a5d:59a7:0:b0:391:43cb:43fa with SMTP id ffacd0b85a97d-39143cb4581mr11199633f8f.51.1741813275555;
+        Wed, 12 Mar 2025 14:01:15 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfb79adsm21842301f8f.7.2025.03.12.14.01.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 14:01:15 -0700 (PDT)
+Date: Wed, 12 Mar 2025 21:01:12 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Arnd Bergmann <arnd@arndb.de>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Christophe Leroy
+ <christophe.leroy@c-s.fr>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ nnac123@linux.ibm.com, horms@kernel.org
+Subject: Re: [PATCH v2 1/1] lib: Optimise hex_dump_to_buffer()
+Message-ID: <20250312210112.63e3e207@pumpkin>
+In-Reply-To: <Z9HhLr8zD5M1tdGw@smile.fi.intel.com>
+References: <20250308093421.3724-1-david.laight.linux@gmail.com>
+	<Z86rSd88eSiJxV-M@smile.fi.intel.com>
+	<20250312191816.68de7194@pumpkin>
+	<Z9HhLr8zD5M1tdGw@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed Mar 12, 2025 at 9:41 PM CET, Tamir Duberstein wrote:
-> On Wed, Mar 12, 2025 at 4:07=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
-m> wrote:
->>
->> On Wed, Mar 12, 2025 at 3:43=E2=80=AFPM Benno Lossin <benno.lossin@proto=
-n.me> wrote:
->> >
->> > On Wed Mar 12, 2025 at 8:19 PM CET, Tamir Duberstein wrote:
->> > > I tried using the strict provenance lints locally and I think we can=
-'t
->> > > until we properly bump MSRV due to `clippy::incompatible_msrv`:
->> > >
->> > > warning: current MSRV (Minimum Supported Rust Version) is `1.78.0` b=
-ut
->> > > this item is stable since `1.84.0`
->> > >    --> ../rust/kernel/str.rs:696:22
->> > >     |
->> > > 696 |             pos: pos.expose_provenance(),
->> > >     |                      ^^^^^^^^^^^^^^^^^^^
->> > >     |
->> > >     =3D help: for further information visit
->> > > https://rust-lang.github.io/rust-clippy/master/index.html#incompatib=
-le_msrv
->> >
->> > Oh this is annoying...
->> >
->> > > This is with `#![feature(strict_provenance)]`. I can file the issue
->> > > but I think it's blocked on MSRV >=3D 1.84.0. But maybe you know of =
-a
->> > > path forward :)
->> >
->> > I think we should be able to just `allow(clippy::incompatible_msrv)`,
->> > since Miguel & other maintainers will test with 1.78 (or at least are
->> > supposed to :).
->>
->> Alright, you've sniped me. This is coming in v3.
->
-> I just realized I only covered the kernel crate. In order to cover all
-> Rust code, I need to move the lints and the features out to the root
-> Makefile. I tried something like this:
->
->> diff --git a/Makefile b/Makefile
->> index 2af40bfed9ce..10af1e44370b 100644
->> --- a/Makefile
->> +++ b/Makefile
->> @@ -466,13 +466,21 @@ KBUILD_USERHOSTCFLAGS :=3D -Wall -Wmissing-prototy=
-pes -Wstrict-prototypes \
->>  KBUILD_USERCFLAGS  :=3D $(KBUILD_USERHOSTCFLAGS) $(USERCFLAGS)
->>  KBUILD_USERLDFLAGS :=3D $(USERLDFLAGS)
->>
->> +# Lints were moved to `strict_provenance_lints` when `strict_provenance=
-` was stabilized.
->> +#
->> +# See https://github.com/rust-lang/rust/commit/56ee492a6e7a917b2b3f888e=
-33dd52a13d3ecb64.
->> +KBUILD_RUST_STRICT_PROVENANCE_FEATURE =3D $(if $(CONFIG_RUSTC_HAS_STABL=
-E_STRICT_PROVENANCE),strict_provenance_lints,strict_provenance)
->> +
->>  # These flags apply to all Rust code in the tree, including the kernel =
-and
->>  # host programs.
->>  export rust_common_flags :=3D --edition=3D2021 \
->>      -Zbinary_dep_depinfo=3Dy \
->> +     -Zcrate-attr=3D"feature($(KBUILD_RUST_STRICT_PROVENANCE_FEATURE))"=
- \
->>      -Astable_features \
->>      -Dnon_ascii_idents \
->>      -Dunsafe_op_in_unsafe_fn \
->> +     -Wfuzzy_provenance_casts \
->> +     -Wlossy_provenance_casts \
->>      -Wmissing_docs \
->>      -Wrust_2018_idioms \
->>      -Wunreachable_pub \
->> diff --git a/rust/Makefile b/rust/Makefile
->> index ea3849eb78f6..d7d5be741245 100644
->> --- a/rust/Makefile
->> +++ b/rust/Makefile
->> @@ -435,8 +435,10 @@ $(obj)/helpers/helpers.o: $(src)/helpers/helpers.c =
-$(recordmcount_source) FORCE
->>  # symbol versions generated from Rust objects.
->>  $(obj)/exports.o: private skip_gendwarfksyms =3D 1
->>
->> +KBUILD_RUST_STRICT_PROVENANCE_FEATURE :=3D $(if $(CONFIG_RUSTC_HAS_STAB=
-LE_STRICT_PROVENANCE),strict_provenance_lints,strict_provenance)
->> +
->>  $(obj)/core.o: private skip_clippy =3D 1
->> -$(obj)/core.o: private skip_flags =3D -Wunreachable_pub
->> +$(obj)/core.o: private skip_flags =3D -Zcrate-attr=3D"feature($(KBUILD_=
-RUST_STRICT_PROVENANCE_FEATURE))" -Wunreachable_pub -Wfuzzy_provenance_cast=
-s -Wlossy_provenance_casts
->>  $(obj)/core.o: private rustc_objcopy =3D $(foreach sym,$(redirect-intri=
-nsics),--redefine-sym $(sym)=3D__rust$(sym))
->>  $(obj)/core.o: private rustc_target_flags =3D $(core-cfgs)
->>  $(obj)/core.o: $(RUST_LIB_SRC)/core/src/lib.rs \
->
-> but this doesn't work because
-> `CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE` is not yet defined when I
-> read it in the root Makefile. I can read it lower down and then append
-> the feature flag to `KBUILD_RUSTFLAGS` but by then the rustdoc flags
-> have been copied from `rust_common_flags` and so rustdoc doesn't get
-> the feature flag, resulting in unknown lint warnings in rustdoc and
-> kunit tests.
->
-> Any ideas?
+On Wed, 12 Mar 2025 21:31:58 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Always enable the features, we have `allow(stable_features)` for this
-reason (then you don't have to do this dance with checking if it's
-already stable or not :)
+> On Wed, Mar 12, 2025 at 07:18:16PM +0000, David Laight wrote:
+> > On Mon, 10 Mar 2025 11:05:13 +0200
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:  
+> > > On Sat, Mar 08, 2025 at 09:34:21AM +0000, David Laight wrote:  
+> 
+> ...
+> 
+> > > > -extern int hex_dump_to_buffer(const void *buf, size_t len, int rowsize,
+> > > > -			      int groupsize, char *linebuf, size_t linebuflen,
+> > > > -			      bool ascii);
+> > > > +extern size_t hex_dump_to_buffer(const void *buf, size_t len, size_t rowsize,  
+> > > > +				 size_t groupsize, char *linebuf,
+> > > > +				 size_t linebuflen, bool ascii);    
+> > > 
+> > > int - > size_t in the returned value is incorrect change.
+> > > This is explained in the comments to the test cases patch series.  
+> > 
+> > I don't see you mentioning why.
+> > The return value is 'the number of bytes that would be output if the buffer
+> > were large enough' - it is never negative.  
+> 
+> True...
+> 
+> > Although given 'a large enough buffer' length is trivially calculable
+> > it would have been safer to return the actual number of bytes added
+> > (excluding the '\0').  
+> 
+> ...but the functions keep the snprintf() semantics, which returns an int.
+> This makes it more-or-less 1:1 snprintf() substitute in cases where it can
+> be done in general.
 
----
-Cheers,
-Benno
+And scnprintf() has been added because the return value of snprintf()
+isn't the one most code wanted.
+
+I've looked through all the code that uses the result of hex_dump_to_buffer().
+The only code that needs the 'overflow' result is the test code.
+Everything else will work just the same if it returns the number of characters
+added to the buffer.
+The code in drivers/platform/chrome/wilco_ec/debugfs.c uses the return
+value without checking - hard to say whether the buffer is big enough (or whether
+the code has the required locking to allow for multiple readers.
+
+> 
+> > There were no tests for 'len == 0 && linebuflen == 0', with !ascii the
+> > existing hex_dump_to_buffer() even manages to return -1.
+> > (and the function than generates the 'test compare data' is also broken.)  
+> 
+> Then you can start with fixes of those?
+
+No one calls it like that.
+I could split it into multiple patches, but they don't overlap and it just
+makes more work for everyone.
+> 
+> > Note that libc snprintf() has the same return type as fprintf() which can
+> > be -1, but any code the looks at is probably broken!
+> > 
+> > So an unsigned return type it better.  
+> 
+> Maybe, but this will deviate from the prototype and use cases.
+
+The use cases all want a 'length' never an 'error'.
+Having an unsigned return type makes it absolutely clear that -1 (or -errno)
+won't be returned.
+It isn't the sort of function where you want to have to 'go through hoops'
+to write valid code.
+
+	David
+
 
 
