@@ -1,114 +1,205 @@
-Return-Path: <linux-kernel+bounces-558114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E8FA5E1DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:34:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C1FA5E1DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:35:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 705311758F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:34:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15C78188BD14
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4891DA61B;
-	Wed, 12 Mar 2025 16:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EEB1DACB1;
+	Wed, 12 Mar 2025 16:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7XI3XO7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FAdb7KLM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2WKHA+VJ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qKJx/YOW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aKLKVzI4"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA8C1CD215;
-	Wed, 12 Mar 2025 16:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7B61D5176
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741797273; cv=none; b=gsydrADGFyOosQ9xpQfzVI/KRzQGm969C6SP8fugshzDOkvBo37WvrSTtWKuY1cnU4+/iBypnhD/pCcugxSA4XVdBovassqCb7yZQgXRZKEz3xldDK3iRA1V7fAQ2BgW1YNyQNsxs2NGdK/5EKzAoN5wJtdiwTiAsr8UFFlnXBU=
+	t=1741797311; cv=none; b=uJwNnI9pXDjXZjBwtd7hyDjNY35KrRHllCq/YZcape+Y84MCW4TQAIm8HNvwmFJ7JBCfZCqRAPAjcQFWagMKdpwuvNyJ0lCcTKv1s3LCvWyQMpnPaOnTEY8ZXk9fbT4nM0rIqb1RKBNiKjBoTQ32bLKUNHmNGfzRTe3R1A9N3oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741797273; c=relaxed/simple;
-	bh=TrqwpzyHwOhx55DeV4/s86mTsh9lYCPM7W7wIRkTwn4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cYvjMwKCWkCEVRe13qsxSTq1M5MJwu3HXtHE/96R3Th2jIDApvgV3o2l25Cu+UwrBzKlBHFzgQ0ezDcMjTtYBGe59TEEbf1wcR9gKAmD+ord8aVaRChGP+B44k5dQxH4xVwIAewu4jGqpXj2oT8Ba1E8/yR3d+1eJip+GXL7Eh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7XI3XO7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FB91C4CEDD;
-	Wed, 12 Mar 2025 16:34:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741797273;
-	bh=TrqwpzyHwOhx55DeV4/s86mTsh9lYCPM7W7wIRkTwn4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=d7XI3XO7Io7+7Mm0zhchHjlSOqTm3nhhUoH04TKNMo8T1HCNfrJUZ5cCJYN4HzEYE
-	 HWx5NnqhLcrwYnm2sDQGH+EiipCf32aZxyvKjDaG24V1uq5dULMG8+O+5j5UCvtobT
-	 0D5vxcFKvZQ2JpQGcDsWliX7YjpSftCqY7uTw/EA4ofYPj8hggDsJjtleuYb7UTQA6
-	 ZAWkshyeLFWBvpt7HbTlhikUDcIH/rhWD6U9jKQfi41OURjTx9xcCZwEFc6pXkApW0
-	 V/Wdpv5gngnM4MIot8Eyk+89MqTNkPs8MsloLQ0qiSQUMNq5MHiKlq07AfbrWrx/Nx
-	 sVoXYLx/7135g==
-Received: by wens.tw (Postfix, from userid 1000)
-	id 2512F5FC08; Thu, 13 Mar 2025 00:34:30 +0800 (CST)
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH RESEND net-next v2] net: stmmac: dwmac-rk: Provide FIFO sizes for DWMAC 1000
-Date: Thu, 13 Mar 2025 00:34:26 +0800
-Message-Id: <20250312163426.2178314-1-wens@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1741797311; c=relaxed/simple;
+	bh=xoEemfhLe/hT8wz2RM1g2YsmjYmjkPpdM+Xn0gOBvwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IrNk+v7oOI5gqPjp3iVeKQy48y3Lx68ZWklANgOrqg+fFV2IHq7KI0bwHYTYepjntyXI5L8EFvR7mCl4XIZMROFiGX1mCoHvxb9cK4ZJkcH0Z4g0bCuog4kH7+JIlah7OMeRgTMfHicBAB0t+j8C8sOKy2r8qcvgeEfnc2a+w54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FAdb7KLM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2WKHA+VJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qKJx/YOW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aKLKVzI4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E297F21185;
+	Wed, 12 Mar 2025 16:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741797308; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wyKPY6BsbgyKWF/AfyhaWT4I1iwcwHT3tGILMMBhG1Q=;
+	b=FAdb7KLMPq+ctNIBOHF2Cxu6MvSs9nTT8OLyGWBrt8bCx1FkG0ansp4KucHyawL3n90skV
+	nXmvl5eSyTsVh/74H+KYos5tHANhWsMeGviJZlxUaoJVvlf6+OEGDoyTd0snYWICMJIf4f
+	w3MMTc8MacGWZ1e1Wr9BlweuyRd/Dnk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741797308;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wyKPY6BsbgyKWF/AfyhaWT4I1iwcwHT3tGILMMBhG1Q=;
+	b=2WKHA+VJxdjU8QdTz88wk4eHowItUqgc/m7cC6UOhislmq+P/2v/onj1WASBL1ZxfEdTuB
+	Jbh1ketNTcttobAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="qKJx/YOW";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=aKLKVzI4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741797307; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wyKPY6BsbgyKWF/AfyhaWT4I1iwcwHT3tGILMMBhG1Q=;
+	b=qKJx/YOWB6s6UEY8y1U6UexFPJ56MLXm59UCOMnIlRueIpq18/nzY66WWNWxszLgQf23Tv
+	dlrQoqIABgvOm1AdLTb+cpbZzWYMA84ABiv5E+0mVGX/QRU63P6yXyRqFbbrsaY1wbWNlF
+	LKkJq10dNB7FKfsCnCMzW/A2SKki/Aw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741797307;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wyKPY6BsbgyKWF/AfyhaWT4I1iwcwHT3tGILMMBhG1Q=;
+	b=aKLKVzI4gzRdhKjVIVY96GDY+bD8Ul78vdS2BMTBnNsp/j4IJv9DbWxsyG81fuHEpIXldT
+	Vi4nJ1PXA3l/TdBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D61351377F;
+	Wed, 12 Mar 2025 16:35:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id szU6NLu30WfPIgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 12 Mar 2025 16:35:07 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4F815A0908; Wed, 12 Mar 2025 17:35:03 +0100 (CET)
+Date: Wed, 12 Mar 2025 17:35:03 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: use debug-only asserts around fd allocation and
+ install
+Message-ID: <nlsxinmlymfa6jkafzu4d2xdbrrwjpkvdnz5hxnfn7qahltqws@nagqp77yuk6f>
+References: <20250312161941.1261615-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312161941.1261615-1-mjguzik@gmail.com>
+X-Rspamd-Queue-Id: E297F21185
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-From: Chen-Yu Tsai <wens@csie.org>
+On Wed 12-03-25 17:19:41, Mateusz Guzik wrote:
+> This also restores the check which got removed in 52732bb9abc9ee5b
+> ("fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()")
+> for performance reasons -- they no longer apply with a debug-only
+> variant.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-The DWMAC 1000 DMA capabilities register does not provide actual
-FIFO sizes, nor does the driver really care. If they are not
-provided via some other means, the driver will work fine, only
-disallowing changing the MTU setting.
+Looks good. Feel free to add:
 
-Provide the FIFO sizes through the driver's platform data to enable
-MTU changes. The FIFO sizes are confirmed to be the same across RK3288,
-RK3328, RK3399 and PX30, based on their respective manuals. It is
-likely that Rockchip synthesized their DWMAC 1000 with the same
-parameters on all their chips that have it.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
-Resent with correct subject tag.
+								Honza
 
-Changes since v1:
-- Removed references to breakage from commit message as it is already fixed
-- Removed Cc stable and Fixes tags
-- Rebased onto latest -next
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-index 003fa5cf42c3..e57181ce5f84 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-@@ -1969,8 +1969,11 @@ static int rk_gmac_probe(struct platform_device *pdev)
- 	/* If the stmmac is not already selected as gmac4,
- 	 * then make sure we fallback to gmac.
- 	 */
--	if (!plat_dat->has_gmac4)
-+	if (!plat_dat->has_gmac4) {
- 		plat_dat->has_gmac = true;
-+		plat_dat->rx_fifo_size = 4096;
-+		plat_dat->tx_fifo_size = 2048;
-+	}
- 
- 	plat_dat->set_clk_tx_rate = rk_set_clk_tx_rate;
- 
+> ---
+> 
+> I have about 0 opinion whether this should be BUG or WARN, the code was
+> already inconsistent on this front. If you want the latter, I'll have 0
+> complaints if you just sed it and commit as yours.
+> 
+> This reminded me to sort out that litmus test for smp_rmb, hopefully
+> soon(tm) as it is now nagging me.
+> 
+>  fs/file.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index 6c159ede55f1..09460ec74ef8 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -582,6 +582,7 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+>  
+>  	__set_open_fd(fd, fdt, flags & O_CLOEXEC);
+>  	error = fd;
+> +	VFS_BUG_ON(rcu_access_pointer(fdt->fd[fd]) != NULL);
+>  
+>  out:
+>  	spin_unlock(&files->file_lock);
+> @@ -647,7 +648,7 @@ void fd_install(unsigned int fd, struct file *file)
+>  		rcu_read_unlock_sched();
+>  		spin_lock(&files->file_lock);
+>  		fdt = files_fdtable(files);
+> -		WARN_ON(fdt->fd[fd] != NULL);
+> +		VFS_BUG_ON(fdt->fd[fd] != NULL);
+>  		rcu_assign_pointer(fdt->fd[fd], file);
+>  		spin_unlock(&files->file_lock);
+>  		return;
+> @@ -655,7 +656,7 @@ void fd_install(unsigned int fd, struct file *file)
+>  	/* coupled with smp_wmb() in expand_fdtable() */
+>  	smp_rmb();
+>  	fdt = rcu_dereference_sched(files->fdt);
+> -	BUG_ON(fdt->fd[fd] != NULL);
+> +	VFS_BUG_ON(fdt->fd[fd] != NULL);
+>  	rcu_assign_pointer(fdt->fd[fd], file);
+>  	rcu_read_unlock_sched();
+>  }
+> -- 
+> 2.43.0
+> 
 -- 
-2.39.5
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
