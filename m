@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-557091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E2EAA5D385
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:08:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8F6A5D38D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:08:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C863174C41
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:08:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88F2617C671
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69713FD4;
-	Wed, 12 Mar 2025 00:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57815661;
+	Wed, 12 Mar 2025 00:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZGDW8O0B"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h7/LFnaV"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DD42A1CF
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC0B5684
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741738081; cv=none; b=pEsHMsmad/WFRnIVDLf5LYw8sNzqjiQupK2CZNyIlQIjf7JXDQnuW3rht/WHZ+fnbuUKHrY92H5NyNoebihTSuOiR9QSn64jgRKEPHIY4htUie+0NM6t8syWPaCY2SDIqaWPLTbo/9wGBJ46SWkNDS/QKgAZu4VTvOheaJqlQxY=
+	t=1741738090; cv=none; b=YPEXOw4xXUJ8sEQciumE2smZfa2FQPc0udKZ2TaYff7SaBFDMRsRsueSt64tYhrjF045CuDxqAHe/aDeVo38kOlAKG6LCzFxXfukAv8Vsd/JPINOlRKS9feNcYyrwX9W3cYH8SJ433WMUGqC0587dieVgn6fWNlPMBsLw9Rtn24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741738081; c=relaxed/simple;
-	bh=AzqFum6Agw13RjN3Fu1tKvuI6gP3XBpPLw2tmwLYzUE=;
+	s=arc-20240116; t=1741738090; c=relaxed/simple;
+	bh=d/9U3Hs56MfO9ZDfHXmWmno1K8O1u1XuJHmhdH2F0w4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W3Hx857Ge87w4aDWiBk/sHSf+hALUV9oHQMQ3XGSxMpUHFFBeLH1hvNm2rCg7Rfv+Lz2HIZe12KHUqPUvikovPlsXBJspIwHxvdDE+oZig+N4x4oFJjLygORsnDFVxANxwRbbBsJfIZPsitFaZLVBLKnxFfb8ndi7dc5WpdyfHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZGDW8O0B; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=bDPV9DtAvqZOnaMLN1DbO3R3leGOy9p9KSq1h7rqV/8vWbnhMsOFC123Y3EkLsLNUDHJuWkNftYFLvre5LAcAVBGlJkj1PFvZimFVHB9fMNuBCmbDDjEIV9OLTE72iEXxG4zeXgETnBlncnWUGpYNvAIHrtUaluBzimPScEp3n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h7/LFnaV; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741738078;
+	s=mimecast20190719; t=1741738087;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vPsYu1/Zt9JxInUUfAbvJhaRjTUPwV0c8VAQrmxs/V8=;
-	b=ZGDW8O0BMO3pd9Q8PT5Rl6I3CPzUX9L9IKZp6nwrDnm4xvGViEgAEECzRubPdd4uu+efKU
-	W/ySAuypcu/dUQIfkyeFNudBVc/lmY0VQH1YRC7ibWXk/u6hOQKmd2XBiUA7xwxkwuNRCG
-	ed5c4bd4HyCI5ZhiReh7qJ0DyI6jmYI=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=F2Hs8hV+/gJc3OfaS9x8cWsCD/xR9fjklu355DFl/Jo=;
+	b=h7/LFnaVkUYIZb6F2nEvZdEmWqyBt7dDEoFTk6ZMcX6Yr9FDZx5P6Ae5JoY0MvpIMc4slf
+	JAiMNoXzTIJupuEUWPld4ASXPr5kuPjJCoZYDNSwMok8CcUvuHlf8NstIYCrh3GKq5l/c3
+	858BXLn+8xhqsQOkMCp996R9oXOPdz0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-681-DsGHc5fiN22ggfCluAAvjA-1; Tue,
- 11 Mar 2025 20:07:56 -0400
-X-MC-Unique: DsGHc5fiN22ggfCluAAvjA-1
-X-Mimecast-MFC-AGG-ID: DsGHc5fiN22ggfCluAAvjA_1741738073
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-569-hcKnUj3kOH-9CB9AP-czdw-1; Tue,
+ 11 Mar 2025 20:08:04 -0400
+X-MC-Unique: hcKnUj3kOH-9CB9AP-czdw-1
+X-Mimecast-MFC-AGG-ID: hcKnUj3kOH-9CB9AP-czdw_1741738080
 Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 58D9B1955BC1;
-	Wed, 12 Mar 2025 00:07:53 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 629D51800259;
+	Wed, 12 Mar 2025 00:08:00 +0000 (UTC)
 Received: from h1.redhat.com (unknown [10.22.88.56])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 91DF71955DDD;
-	Wed, 12 Mar 2025 00:07:46 +0000 (UTC)
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 989161956094;
+	Wed, 12 Mar 2025 00:07:53 +0000 (UTC)
 From: Nico Pache <npache@redhat.com>
 To: linux-hyperv@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -90,9 +90,9 @@ Cc: kys@microsoft.com,
 	yosry.ahmed@linux.dev,
 	kanchana.p.sridhar@intel.com,
 	alexander.atanasov@virtuozzo.com
-Subject: [RFC 3/5] hv_balloon: update the NR_BALLOON_PAGES state
-Date: Tue, 11 Mar 2025 18:06:58 -0600
-Message-ID: <20250312000700.184573-4-npache@redhat.com>
+Subject: [RFC 4/5] vmx_balloon: update the NR_BALLOON_PAGES state
+Date: Tue, 11 Mar 2025 18:06:59 -0600
+Message-ID: <20250312000700.184573-5-npache@redhat.com>
 In-Reply-To: <20250312000700.184573-1-npache@redhat.com>
 References: <20250312000700.184573-1-npache@redhat.com>
 Precedence: bulk
@@ -105,33 +105,43 @@ Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
 Update the NR_BALLOON_PAGES counter when pages are added to or
-removed from the Hyper-V balloon.
+removed from the VMware balloon.
 
 Signed-off-by: Nico Pache <npache@redhat.com>
 ---
- drivers/hv/hv_balloon.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/misc/vmw_balloon.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index fec2f18679e3..2b4080e51f97 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -1192,6 +1192,7 @@ static void free_balloon_pages(struct hv_dynmem_device *dm,
- 		__ClearPageOffline(pg);
- 		__free_page(pg);
- 		dm->num_pages_ballooned--;
-+		mod_node_page_state(page_pgdat(pg), NR_BALLOON_PAGES, -1);
- 		adjust_managed_page_count(pg, 1);
+diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
+index c817d8c21641..2c70b08c6fb3 100644
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -673,6 +673,8 @@ static int vmballoon_alloc_page_list(struct vmballoon *b,
+ 
+ 			vmballoon_stats_page_inc(b, VMW_BALLOON_PAGE_STAT_ALLOC,
+ 						 ctl->page_size);
++			mod_node_page_state(page_pgdat(page), NR_BALLOON_PAGES,
++				vmballoon_page_in_frames(ctl->page_size));
+ 		}
+ 
+ 		if (page) {
+@@ -915,6 +917,8 @@ static void vmballoon_release_page_list(struct list_head *page_list,
+ 	list_for_each_entry_safe(page, tmp, page_list, lru) {
+ 		list_del(&page->lru);
+ 		__free_pages(page, vmballoon_page_order(page_size));
++		mod_node_page_state(page_pgdat(page), NR_BALLOON_PAGES,
++			-vmballoon_page_in_frames(page_size));
  	}
- }
-@@ -1221,6 +1222,7 @@ static unsigned int alloc_balloon_pages(struct hv_dynmem_device *dm,
- 			return i * alloc_unit;
  
- 		dm->num_pages_ballooned += alloc_unit;
-+		mod_node_page_state(page_pgdat(pg), NR_BALLOON_PAGES, alloc_unit);
+ 	if (n_pages)
+@@ -1129,7 +1133,6 @@ static void vmballoon_inflate(struct vmballoon *b)
  
- 		/*
- 		 * If we allocatted 2M pages; split them so we
+ 		/* Update the balloon size */
+ 		atomic64_add(ctl.n_pages * page_in_frames, &b->size);
+-
+ 		vmballoon_enqueue_page_list(b, &ctl.pages, &ctl.n_pages,
+ 					    ctl.page_size);
+ 
 -- 
 2.48.1
 
