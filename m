@@ -1,338 +1,270 @@
-Return-Path: <linux-kernel+bounces-557465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD5BA5D96D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:27:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D98E7A5D974
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:29:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 134DB189E1C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:28:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A783A4B6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6482A23E34A;
-	Wed, 12 Mar 2025 09:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5598923AE82;
+	Wed, 12 Mar 2025 09:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EXOPm9VF"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ze2jFdmu"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0599023BD0A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC60723A9A6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741771582; cv=none; b=n4lZt3SzXZvEs8p+6w2Pja9TezZ8aUegeTZmNdcghg3ucmpXhBZxqfrwQy5nqOSK83JB6u8s3w/h1dj8Mz5N+oCm7VOpzTOYQMU5ZV//aKHh2yKKnvoDh1gULdroxmCzAbrPj08AKNAGthDfRL9GaqyGd2TJQQYSMoRblCKdXwU=
+	t=1741771722; cv=none; b=YrH/C28K5AKV94JWP0cLA/8uEXn1TL2ZSDi1fGUBsS/K9y9rOc/NShN4qm3SFzyj7NSwOXPHCy3euzMeXc++BhsHEqayKsaT+RGdCC/lyyVde1e9C3CwspLWPfrGng9/R1v6h0dRfn0C5h5XuHvyq28LVBMOkGQHz+D/gkN6sio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741771582; c=relaxed/simple;
-	bh=a6thn7hA+qXAJgxicdGs8bFGvFD32k4lcOFLnq8ueFU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tPztcduggO3Hiiubeaewh1SWZeWbtXCwZXovcpGsG82SYV7REH11/Ws10D1wuGrzB2LpC1NEffw6tJ1YH9GYIYnS/jxL1lHY2ZYbQiaAqR7uXqIwBxOy46SC5ZYWPlPIdfCABqueFH6huqlbOgitb9TE5JpqSMyxyummS+Mjrl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EXOPm9VF; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac29af3382dso511937866b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 02:26:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741771577; x=1742376377; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ss06ZAV2Y44WucCmHtHDR6YeYV1Iks4LrOZdhsoKVJQ=;
-        b=EXOPm9VFLSATD7f/+4yC0Qa+YZPhP9MBGfH6rQGjMZEdTV/+m8QxA8RZvFrMqut7Tm
-         Gxo/s/LWYJt8p9LLCynrgzWJy+1EKOwjVqamuB3fsPwWYqYJu60J6mHzl8KfaPpm9rJd
-         XL3pxnXRklOT5rbJRCewlcx1xN+26hKqgYFPZazdzXbV5ytf4dgPb1iGuj7AjPvl667u
-         MRPqP5SD6Au0g2j2gtCHjSnxuHr1g/CUngUkiw21AvSJQvlJfyunTU1pf1SQZwW3OA/X
-         q93QOe9E4aEgx2U86yb4+RIs8fI3ndiCW/BtfzG0iQZ18fBkZLwo5hSX2HGfWp4dQ30e
-         rtQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741771577; x=1742376377;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ss06ZAV2Y44WucCmHtHDR6YeYV1Iks4LrOZdhsoKVJQ=;
-        b=joYsgRwgGyoZqk67nGFmBxDCpl+FjWYs4pAmtZKv3mtR3XEzz0NyfdcmkEVhTl1B9x
-         5qSylLuSDM6ZjzlYbo7xeMq+l2r35hQR4h2UCMDGdqA2457Eamn7WhsnaqIoQS6XIZVC
-         Ey09tHodE0t0czPP/K93hfpMKqS4NgEQBp0L7LEAAM96HC3KTIDefDe379Fpn2QFDJO9
-         RLgIU65kHPtRqIpX6UhzCpQzcVRaGjkwlQuhNsm1rd0vlwIAMg1oLIDVLWZRAOp0xdnE
-         TVeq0FH8kn0eIphxMHxJWmdSEVS9qC9W4/Y8uur/iK1GQYKSVbJzOWgsz+aXCxkoDQWi
-         /6uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgktcSkp18uYmQ1VEEBNAEJxrCz/bAG792JUty7kYfc0uvvlqiesw/qQk1df1SH8VnPb6VfMm06crK4uI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRdRZEu5bG63rFS3DLRvcrrbke/WzO8Jx+8DZLI6Fdifa1/TUv
-	HYN+ZfcltDuBeD89B9c+mOTqaCuo7IYvG1HbF9p/qfpldg3eAsXi4LgUx2fCq10=
-X-Gm-Gg: ASbGnctSvBXwgJ++S+xV92JYJqi1gZRl6uEu6knub7IMbunOs16ZE3lGRmeBlLwF79A
-	M0VeV7eKdBzWLHrlb6n2N3jbT2NmW1ePalrjJbmuUU28hFS33GcDNXhRpOzV727THYO+asJPVUn
-	4txDu8U+FqhPusjDuoQa6mtHdL90s8HJ5c8MRYSYH5gKhgG2zpA5LztYamWAjhBxfvPi71/jeTP
-	/y+wRwpBWgyCW0RShMqO5mJycO0A4kGzmINeVq3jYLs37yj4yiPmKTqSYAACTtwZgwwj4kRkWyq
-	tqc+aSjc71vuJrhB3dKzcbwhaLEk0AvSPdnUfJ8bJ/oXfwpmheBCpN2clNL4o/j0scCRA8zjP+S
-	EEP5mEnQYWdxgz4dP/g06CE0wYt1Y
-X-Google-Smtp-Source: AGHT+IGQ9zYlEjceOVk6BC1OjhdrbZDlJDbOZZUJE0NPp9ZIfQ05rfFEQ7TS+7sBkzUnzTPu03UvIw==
-X-Received: by 2002:a17:907:1c0b:b0:ac2:cf0b:b809 with SMTP id a640c23a62f3a-ac2cf0bfd94mr589425466b.31.1741771576626;
-        Wed, 12 Mar 2025 02:26:16 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac25777c748sm894535266b.2.2025.03.12.02.26.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 02:26:16 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 12 Mar 2025 09:26:04 +0000
-Subject: [PATCH v4 6/6] nvmem: max77759: add Maxim MAX77759 NVMEM driver
+	s=arc-20240116; t=1741771722; c=relaxed/simple;
+	bh=6KAeTydDNQmh9ejxV3lHGEocGPHDZC5ErvVvG5/OBoo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=pqI3yII++CVOGoZM/Ap91JfHiGxFFZQxtX0Xls2+gyzFMlAzWf9fRD8WfaBK7/vywtBe8Hqx5YQMXh7KpJiRwreFhd5LaIxDoVpP+escVM3rbec2iF0aiUKDFH+TK7AyZXij/yrRhvCUBrV9XVWS1DY23pCiRPIuo/F+E4KnX8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ze2jFdmu; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250312092838euoutp02ff4df961af85fda61957d7bca023a761~sBCY71agz1298612986euoutp02m
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:28:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250312092838euoutp02ff4df961af85fda61957d7bca023a761~sBCY71agz1298612986euoutp02m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741771718;
+	bh=jM2XikXEr0ikBo0oLtomrsxm7QlhoeG8uKeeSTS19yM=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Ze2jFdmuO0cLLYqLIJd51/wQzBFKAzxgIHozoFZZoNuFZcFG485swGkdKMqUW/Zvp
+	 cl2zr4/04Ndda/wzPd5iBES/LxTo9/80XTM5/yJ6P9bBGWVcJ9B29HLYT+lSWshREK
+	 7AGTFVkE3KSlN6ONOEzzV8Pi8Yif9QuOagwPNUks=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250312092837eucas1p25b1b9a0eaeeeb28386900bd5799beff7~sBCYkpiud1062910629eucas1p2o;
+	Wed, 12 Mar 2025 09:28:37 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 6E.F9.20409.5C351D76; Wed, 12
+	Mar 2025 09:28:37 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250312092837eucas1p141720d6a0df85c410f2b2209e4cb4ae1~sBCYE1szl1182811828eucas1p1t;
+	Wed, 12 Mar 2025 09:28:37 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250312092837eusmtrp1bf90383d9f98004fe39bcc48be1d1fe1~sBCYCvohl2987729877eusmtrp1N;
+	Wed, 12 Mar 2025 09:28:37 +0000 (GMT)
+X-AuditID: cbfec7f4-c39fa70000004fb9-67-67d153c532b4
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 8C.F0.19654.5C351D76; Wed, 12
+	Mar 2025 09:28:37 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250312092833eusmtip25e36488a2aac248bc9b654fb690ddc66~sBCVArikT0743107431eusmtip2e;
+	Wed, 12 Mar 2025 09:28:33 +0000 (GMT)
+Message-ID: <d408b1c7-eabf-4a1e-861c-b2ddf8bf9f0e@samsung.com>
+Date: Wed, 12 Mar 2025 10:28:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/17] Provide a new two step DMA mapping API
+To: Robin Murphy <robin.murphy@arm.com>, Leon Romanovsky <leon@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>, Will
+	Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>, Keith Busch
+	<kbusch@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Logan Gunthorpe
+	<logang@deltatee.com>, Yishai Hadas <yishaih@nvidia.com>, Shameer Kolothum
+	<shameerali.kolothum.thodi@huawei.com>, Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	=?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
+	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org, Randy
+	Dunlap <rdunlap@infradead.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <1166a5f5-23cc-4cce-ba40-5e10ad2606de@arm.com>
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250312-max77759-mfd-v4-6-b908d606c8cb@linaro.org>
-References: <20250312-max77759-mfd-v4-0-b908d606c8cb@linaro.org>
-In-Reply-To: <20250312-max77759-mfd-v4-0-b908d606c8cb@linaro.org>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTZxjH97anp6VQdiwobxRH2l2o6KigZO+CdgyNOfpBXbbswz64NeNY
+	CBehpWzMLDYMtHRctEiAgoDaCqNFsIxuVlHbgS0QBsiYchGDKZVLymgHTmGbkx628e33f97/
+	c83LYfLb8c2clIxsSp4hTRPiXMxy93n/210fDsp23l+IRDUtJhw9fVGEI+PDUhzp85KR684Z
+	gL4zdjHQ8iJCVZVOgKorphmosLqVjbT2XwEyeNrZqKY8C51fNjBRx+h2dPG0HkND1hocTZhe
+	sFDdlSk26qt14MhtL8aQvuAlecYrMGRbcLHQ1bnfMPTDcB4L5Y/HoSvl3IRw0mWrZZCmWhMg
+	3cNuQNablWT/xDWMzO/0sMi2xijy8s0ZBjnUpyTNTYU4afZp2aSzcgUj2/SnyOm2KkDeGFHh
+	5OWSMtbR0E+4e5KotJQcSi6WfMZNHnFuybwt/rLQ7mCoQEOkBnA4kNgNB31JGsDl8IlGAN13
+	F1i0WARw5vwyoMXvAHYUexkaEODPaLSq11wNAN6ssmO08ALou9eMrbp4hATeLzH5MzDiTVg8
+	1bEW3wC7q1x+3khEwEejlexVDiH2wzuWc8zVQqFEEYC2oT/9JibRg8PnTw7QHAZHXXX+ojgR
+	AzUeDb7KAUQ8nC/4hU17IuA37dX+QpCwceEDSyWLnns/tBuMaxwCZx3fs2kOh71lRRidcAbA
+	+pVHDFqcBVD1ZBTQrng4/vMyvnozJrENtljFdPh9OLA0yaZPGQwfeDbQQwRDraWCSYd5UH2a
+	T7vfgjrH1f/a2gbuMc8CoW7dXXTr1tStW0f3f996gDWBMEqpSJdRitgM6otohTRdocyQRX9+
+	It0MXv7s3r8diz+ChllvtB0wOMAOIIcpDOUZ9w7I+Lwkae5XlPzEp3JlGqWwgy0cTBjGu3S7
+	QMYnZNJsKpWiMin5v68MTsBmFePjg7uDJLceL73TCqhcgSZ3LKG6YW5raimP79tbJ7IOPhN9
+	HSw0fNsaNBU73xqi8mZH5R3ftz0oueX68eFbG6mTzUWmngZkbntNqy4XRbD7+1KOxM2ee336
+	5A1nwS4ROcuO73Ad3PNXafjAoLUvzM2aCzarX+lWR838NB75kbDp6OTY4WMRIx/scqDCkmvR
+	mRZfzAF9iWfb4USxTLyvbjgywfB4x3sGZ41AkihauhCYmHr9VEp1z8oxmVv4blpvVhzPc8im
+	FVyaP2T7Y6458NmwoF/wVCu52J3onUh/WLcjMKdr2rh10TDQOPZqIRmeuSmrPj9TH7up842y
+	nCM7JztJIaZIlsZEMeUK6T9oYz5PSAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJKsWRmVeSWpSXmKPExsVy+t/xe7pHgy+mGxybwmoxZ/0aNotv/3vY
+	LFbf7WezWNKUYfHkQDujxcrVR5ksfn2xsJg54wSjxezpL5gsOmdvYLeYdOgao8XSt1vZLeZM
+	LbSY8msps8XeW9oWC9uWsFhc3jWHzeLemv+sFvOXPWW3ODvvOJvFs0O9LBZLWoGst3ems1gc
+	/PCE1WLd6/csFtuvNrFatNwxtVg2lctBxuPJwXlMHmvmrWH0eHb1GaPHgk2lHufvbWTxaDny
+	ltVj8wotj8V7XjJ5XD5b6rFpVSebx6ZPk9g9Tsz4zeKxeUm9x4vNMxk9dt9sYPNY3DeZNUAk
+	Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS/j5gnp
+	gv36FZ2HjjM1MC5X72Lk5JAQMJFYsauDtYuRi0NIYCmjxIS/p5ghEjISJ6c1sELYwhJ/rnWx
+	QRS9Z5RY++UkO0iCV8BO4nrfGiYQm0VAVaL36V4WiLigxMmZT8BsUQF5ifu3ZoDVCwu4SBzY
+	NpEZZJCIQA+jxLdTrxlBHGaBM2wSl08dZodYcZtR4u6OZ2DtzALiEreezAdbwSZgKNH1FuQO
+	Tg5OAWuJd61X2CFqzCS6tnYxQtjyEs1bZzNPYBSaheSSWUhGzULSMgtJywJGllWMIqmlxbnp
+	ucVGesWJucWleel6yfm5mxiBaWrbsZ9bdjCufPVR7xAjEwfjIUYJDmYlEd7VthfShXhTEiur
+	Uovy44tKc1KLDzGaAoNjIrOUaHI+MFHmlcQbmhmYGpqYWRqYWpoZK4nzsl05nyYkkJ5Ykpqd
+	mlqQWgTTx8TBKdXA5MXweTLfSoUt60qSqyf199psCJmzLOjbt8Dp+7jLF2+ZuEluf1nFmbOd
+	l+qXd9/ft6TgwH4DreD/wnf1z2qZXhOetSktKnbvNVmG5GOnBBm31dzN+6q+VYDH/nXctaXM
+	DRaGhnPUPZ5uLq/ju9p/c8Lyk3EfPjhwBL4XLv7acvXf23j5OaW87x66Vu0X7fJa8Thh2ccZ
+	gsVbGVZfm5p4ViVl+65LbPukf8vc5kivmOKxdG+f8RpZ3sqDYcteLtZunVmxxVM+7JHComdz
+	/OTe5AR/tP1X1fZmt+BTkYmPJr/2fLbOLX6/YIXdFHGLCU2v7nSZ83W9mB+3dPf3mvIjtrN5
+	81IPXWh+2M93O+XnxA4lluKMREMt5qLiRABwmQ+33AMAAA==
+X-CMS-MailID: 20250312092837eucas1p141720d6a0df85c410f2b2209e4cb4ae1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250228195423eucas1p221736d964e9aeb1b055d3ee93a4d2648
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250228195423eucas1p221736d964e9aeb1b055d3ee93a4d2648
+References: <cover.1738765879.git.leonro@nvidia.com>
+	<20250220124827.GR53094@unreal>
+	<CGME20250228195423eucas1p221736d964e9aeb1b055d3ee93a4d2648@eucas1p2.samsung.com>
+	<1166a5f5-23cc-4cce-ba40-5e10ad2606de@arm.com>
 
-The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
-includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
-Port Controller (TCPC), NVMEM, and a GPIO expander.
+Hi Robin
 
-This driver exposes the non volatile memory using the platform device
-registered by the core MFD driver.
+On 28.02.2025 20:54, Robin Murphy wrote:
+> On 20/02/2025 12:48 pm, Leon Romanovsky wrote:
+>> On Wed, Feb 05, 2025 at 04:40:20PM +0200, Leon Romanovsky wrote:
+>>> From: Leon Romanovsky <leonro@nvidia.com>
+>>>
+>>> Changelog:
+>>> v7:
+>>>   * Rebased to v6.14-rc1
+>>
+>> <...>
+>>
+>>> Christoph Hellwig (6):
+>>>    PCI/P2PDMA: Refactor the p2pdma mapping helpers
+>>>    dma-mapping: move the PCI P2PDMA mapping helpers to pci-p2pdma.h
+>>>    iommu: generalize the batched sync after map interface
+>>>    iommu/dma: Factor out a iommu_dma_map_swiotlb helper
+>>>    dma-mapping: add a dma_need_unmap helper
+>>>    docs: core-api: document the IOVA-based API
+>>>
+>>> Leon Romanovsky (11):
+>>>    iommu: add kernel-doc for iommu_unmap and iommu_unmap_fast
+>>>    dma-mapping: Provide an interface to allow allocate IOVA
+>>>    dma-mapping: Implement link/unlink ranges API
+>>>    mm/hmm: let users to tag specific PFN with DMA mapped bit
+>>>    mm/hmm: provide generic DMA managing logic
+>>>    RDMA/umem: Store ODP access mask information in PFN
+>>>    RDMA/core: Convert UMEM ODP DMA mapping to caching IOVA and page
+>>>      linkage
+>>>    RDMA/umem: Separate implicit ODP initialization from explicit ODP
+>>>    vfio/mlx5: Explicitly use number of pages instead of allocated 
+>>> length
+>>>    vfio/mlx5: Rewrite create mkey flow to allow better code reuse
+>>>    vfio/mlx5: Enable the DMA link API
+>>>
+>>>   Documentation/core-api/dma-api.rst   |  70 ++++
+>>   drivers/infiniband/core/umem_odp.c   | 250 +++++---------
+>>>   drivers/infiniband/hw/mlx5/mlx5_ib.h |  12 +-
+>>>   drivers/infiniband/hw/mlx5/odp.c     |  65 ++--
+>>>   drivers/infiniband/hw/mlx5/umr.c     |  12 +-
+>>>   drivers/iommu/dma-iommu.c            | 468 
+>>> +++++++++++++++++++++++----
+>>>   drivers/iommu/iommu.c                |  84 ++---
+>>>   drivers/pci/p2pdma.c                 |  38 +--
+>>>   drivers/vfio/pci/mlx5/cmd.c          | 375 +++++++++++----------
+>>>   drivers/vfio/pci/mlx5/cmd.h          |  35 +-
+>>>   drivers/vfio/pci/mlx5/main.c         |  87 +++--
+>>>   include/linux/dma-map-ops.h          |  54 ----
+>>>   include/linux/dma-mapping.h          |  85 +++++
+>>>   include/linux/hmm-dma.h              |  33 ++
+>>>   include/linux/hmm.h                  |  21 ++
+>>>   include/linux/iommu.h                |   4 +
+>>>   include/linux/pci-p2pdma.h           |  84 +++++
+>>>   include/rdma/ib_umem_odp.h           |  25 +-
+>>>   kernel/dma/direct.c                  |  44 +--
+>>>   kernel/dma/mapping.c                 |  18 ++
+>>>   mm/hmm.c                             | 264 +++++++++++++--
+>>>   21 files changed, 1435 insertions(+), 693 deletions(-)
+>>>   create mode 100644 include/linux/hmm-dma.h
+>>
+>> Kind reminder.
+>
+> ...that you've simply reposted the same thing again? Without doing 
+> anything to address the bugs, inconsistencies, fundamental design 
+> flaws in claiming to be something it cannot possibly be, the egregious 
+> abuse of DMA_ATTR_SKIP_CPU_SYNC proudly highlighting how 
+> unfit-for-purpose the most basic part of the whole idea is, nor 
+> *still* the complete lack of any demonstrable justification of how 
+> callers who supposedly can't use the IOMMU API actually benefit from 
+> adding all the complexity of using the IOMMU API in a hat but also 
+> still the streaming DMA API as well?
+>
+> Yeah, consider me reminded.
+>
+>
+>
+> In case I need to make it any more explicit, NAK to this not-generic 
+> not-DMA-mapping API, until you can come up with either something which 
+> *can* actually work in any kind of vaguely generic manner as claimed, 
+> or instead settle on a reasonable special-case solution for 
+> justifiable special cases. Bikeshedding and rebasing through half a 
+> dozen versions, while ignoring fundamental issues I've been pointing 
+> out from the very beginning, has not somehow magically made this 
+> series mature and acceptable to merge.
+>
+> Honestly, given certain other scenarios we may also end up having to 
+> deal with, if by the time everything broken is taken away, it were to 
+> end up stripped all the way back to something well-reasoned like:
+>
+> "Some drivers want more control of their DMA buffer layout than the 
+> general-purpose IOVA allocator is able to provide though the DMA 
+> mapping APIs, but also would rather not have to deal with managing an 
+> entire IOMMU domain and address space, making MSIs work, etc. Expose 
+> iommu_dma_alloc_iova() and some trivial IOMMU API wrappers to allow 
+> drivers of coherent devices to claim regions of the default domain 
+> wherein they can manage their own mappings directly."
+>
+> ...I wouldn't necessarily disagree.
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
----
-v2:
-* align sentinel in max77759_nvmem_of_id[] with other max77759 drivers
- (Christophe)
----
- MAINTAINERS                    |   1 +
- drivers/nvmem/Kconfig          |  12 ++++
- drivers/nvmem/Makefile         |   2 +
- drivers/nvmem/max77759-nvmem.c | 156 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 171 insertions(+)
+Well, this is definitely not a review I've expected. I admit that I 
+wasn't involved in this proposal nor the discussion about it and I 
+wasn't able to devote enough time for keeping myself up to date. Now 
+I've tried to read all the required backlog and I must admit that this 
+was quite demanding.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ef3aadcf86ce35d8807733c94f790cde0f7255af..88c53e3fabe1760abf7914290c8729330739b0b9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14354,6 +14354,7 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/*/maxim,max77759*.yaml
- F:	drivers/gpio/gpio-max77759.c
- F:	drivers/mfd/max77759.c
-+F:	drivers/nvmem/max77759-nvmem.c
- F:	include/linux/mfd/max77759.h
- 
- MAXIM MAX77802 PMIC REGULATOR DEVICE DRIVER
-diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-index 8671b7c974b933e147154bb40b5d41b5730518d2..3de07ef524906ad24a89e58abdfe93529a83c80f 100644
---- a/drivers/nvmem/Kconfig
-+++ b/drivers/nvmem/Kconfig
-@@ -154,6 +154,18 @@ config NVMEM_LPC18XX_OTP
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called nvmem_lpc18xx_otp.
- 
-+config NVMEM_MAX77759
-+	tristate "Maxim Integrated MAX77759 NVMEM Support"
-+	depends on MFD_MAX77759
-+	default MFD_MAX77759
-+	help
-+	  Say Y here to include support for the user-accessible storage found
-+	  in Maxim Integrated MAX77759 PMICs. This IC provides space for 30
-+	  bytes of storage.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called nvmem-max77759.
-+
- config NVMEM_MESON_EFUSE
- 	tristate "Amlogic Meson GX eFuse Support"
- 	depends on (ARCH_MESON || COMPILE_TEST) && MESON_SM
-diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
-index 5b77bbb6488bf89bfb305750a1cbf4a6731a0a58..a9d03cfbbd27e68d40f8c330e72e20378b12a481 100644
---- a/drivers/nvmem/Makefile
-+++ b/drivers/nvmem/Makefile
-@@ -34,6 +34,8 @@ obj-$(CONFIG_NVMEM_LPC18XX_EEPROM)	+= nvmem_lpc18xx_eeprom.o
- nvmem_lpc18xx_eeprom-y			:= lpc18xx_eeprom.o
- obj-$(CONFIG_NVMEM_LPC18XX_OTP)		+= nvmem_lpc18xx_otp.o
- nvmem_lpc18xx_otp-y			:= lpc18xx_otp.o
-+obj-$(CONFIG_NVMEM_MAX77759)		+= nvmem-max77759.o
-+nvmem-max77759-y			:= max77759-nvmem.o
- obj-$(CONFIG_NVMEM_MESON_EFUSE)		+= nvmem_meson_efuse.o
- nvmem_meson_efuse-y			:= meson-efuse.o
- obj-$(CONFIG_NVMEM_MESON_MX_EFUSE)	+= nvmem_meson_mx_efuse.o
-diff --git a/drivers/nvmem/max77759-nvmem.c b/drivers/nvmem/max77759-nvmem.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..bc535a73daaaf2caeb772cd17da61f8a030b6a6f
---- /dev/null
-+++ b/drivers/nvmem/max77759-nvmem.c
-@@ -0,0 +1,156 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+//
-+// Copyright 2020 Google Inc
-+// Copyright 2025 Linaro Ltd.
-+//
-+// NVMEM driver for Maxim MAX77759
-+
-+#include <linux/dev_printk.h>
-+#include <linux/device.h>
-+#include <linux/device/driver.h>
-+#include <linux/err.h>
-+#include <linux/mfd/max77759.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-provider.h>
-+#include <linux/overflow.h>
-+#include <linux/platform_device.h>
-+#include <linux/string.h>
-+
-+#define MAX77759_NVMEM_OPCODE_HEADER_LEN 3
-+/*
-+ * NVMEM commands have a three byte header (which becomes part of the command),
-+ * so we need to subtract that.
-+ */
-+#define MAX77759_NVMEM_SIZE (MAX77759_MAXQ_OPCODE_MAXLENGTH \
-+			     - MAX77759_NVMEM_OPCODE_HEADER_LEN)
-+
-+struct max77759_nvmem {
-+	struct device *dev;
-+	struct max77759_mfd *max77759_mfd;
-+};
-+
-+static bool max77759_nvmem_is_valid(unsigned int offset, size_t bytes)
-+{
-+	return (offset + bytes - 1 <= MAX77759_NVMEM_SIZE);
-+}
-+
-+static int max77759_nvmem_reg_read(void *priv, unsigned int offset,
-+				   void *val, size_t bytes)
-+{
-+	struct max77759_nvmem *nvmem = priv;
-+	DEFINE_FLEX(struct max77759_maxq_command, cmd, cmd, length,
-+		    MAX77759_NVMEM_OPCODE_HEADER_LEN);
-+	DEFINE_FLEX(struct max77759_maxq_response, rsp, rsp, length,
-+		    MAX77759_MAXQ_OPCODE_MAXLENGTH);
-+	int ret;
-+
-+	if (!max77759_nvmem_is_valid(offset, bytes)) {
-+		dev_err(nvmem->dev, "outside NVMEM area: %u / %zu\n",
-+			offset, bytes);
-+		return -EINVAL;
-+	}
-+
-+	cmd->cmd[0] = MAX77759_MAXQ_OPCODE_USER_SPACE_READ;
-+	cmd->cmd[1] = offset;
-+	cmd->cmd[2] = bytes;
-+	rsp->length = bytes + MAX77759_NVMEM_OPCODE_HEADER_LEN;
-+
-+	ret = max77759_maxq_command(nvmem->max77759_mfd, cmd, rsp);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (memcmp(cmd->cmd, rsp->rsp, MAX77759_NVMEM_OPCODE_HEADER_LEN)) {
-+		dev_warn(nvmem->dev, "protocol error (read)\n");
-+		return -EIO;
-+	}
-+
-+	memcpy(val, &rsp->rsp[MAX77759_NVMEM_OPCODE_HEADER_LEN], bytes);
-+
-+	return 0;
-+}
-+
-+static int max77759_nvmem_reg_write(void *priv, unsigned int offset,
-+				    void *val, size_t bytes)
-+{
-+	struct max77759_nvmem *nvmem = priv;
-+	DEFINE_FLEX(struct max77759_maxq_command, cmd, cmd, length,
-+		    MAX77759_MAXQ_OPCODE_MAXLENGTH);
-+	DEFINE_FLEX(struct max77759_maxq_response, rsp, rsp, length,
-+		    MAX77759_MAXQ_OPCODE_MAXLENGTH);
-+	int ret;
-+
-+	if (!max77759_nvmem_is_valid(offset, bytes)) {
-+		dev_err(nvmem->dev, "outside NVMEM area: %u / %zu\n",
-+			offset, bytes);
-+		return -EINVAL;
-+	}
-+
-+	cmd->cmd[0] = MAX77759_MAXQ_OPCODE_USER_SPACE_WRITE;
-+	cmd->cmd[1] = offset;
-+	cmd->cmd[2] = bytes;
-+	memcpy(&cmd->cmd[MAX77759_NVMEM_OPCODE_HEADER_LEN], val, bytes);
-+	cmd->length = bytes + MAX77759_NVMEM_OPCODE_HEADER_LEN;
-+	rsp->length = cmd->length;
-+
-+	ret = max77759_maxq_command(nvmem->max77759_mfd, cmd, rsp);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (memcmp(cmd->cmd, rsp->rsp, cmd->length)) {
-+		dev_warn(nvmem->dev, "protocol error (write)\n");
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int max77759_nvmem_probe(struct platform_device *pdev)
-+{
-+	struct nvmem_config config = {
-+		.dev = &pdev->dev,
-+		.name = dev_name(&pdev->dev),
-+		.id = NVMEM_DEVID_NONE,
-+		.type = NVMEM_TYPE_EEPROM,
-+		.ignore_wp = true,
-+		.size = MAX77759_NVMEM_SIZE,
-+		.word_size = sizeof(u8),
-+		.stride = sizeof(u8),
-+		.reg_read = max77759_nvmem_reg_read,
-+		.reg_write = max77759_nvmem_reg_write,
-+	};
-+	struct max77759_nvmem *nvmem;
-+
-+	nvmem = devm_kzalloc(&pdev->dev, sizeof(*nvmem), GFP_KERNEL);
-+	if (!nvmem)
-+		return -ENOMEM;
-+
-+	nvmem->dev = &pdev->dev;
-+	nvmem->max77759_mfd = dev_get_drvdata(pdev->dev.parent);
-+
-+	config.priv = nvmem;
-+
-+	return PTR_ERR_OR_ZERO(devm_nvmem_register(config.dev, &config));
-+}
-+
-+static const struct of_device_id max77759_nvmem_of_id[] = {
-+	{ .compatible = "maxim,max77759-nvmem", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, max77759_nvmem_of_id);
-+
-+static struct platform_driver max77759_nvmem_driver = {
-+	.driver = {
-+		.name = "max77759-nvmem",
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-+		.of_match_table = max77759_nvmem_of_id,
-+	},
-+	.probe = max77759_nvmem_probe,
-+};
-+
-+module_platform_driver(max77759_nvmem_driver);
-+
-+MODULE_AUTHOR("André Draszik <andre.draszik@linaro.org>");
-+MODULE_DESCRIPTION("NVMEM driver for Maxim MAX77759");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:max77759-nvmem");
+If You didn't like this design from the beginning, then please state 
+that early instead of pointing random minor issues in the code. There 
+have been plenty of time to discuss the overall approach if You think it 
+was wrong. What do to now?
 
+Removing the need for scatterlists was advertised as the main goal of 
+this new API, but it looks that similar effects can be achieved with 
+just iterating over the pages and calling page-based DMA API directly. 
+Maybe I missed something. I still see some advantages in this DMA API 
+extension, but I would also like to see the clear benefits from 
+introducing it, like perf logs or other benchmark summary.
+
+
+Best regards
 -- 
-2.49.0.rc0.332.g42c0ae87b1-goog
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
