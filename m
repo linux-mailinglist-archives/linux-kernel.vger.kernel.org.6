@@ -1,55 +1,63 @@
-Return-Path: <linux-kernel+bounces-558121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB4DA5E1F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:43:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E8FA5E1DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:34:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D707117849A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:43:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 705311758F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6901226861;
-	Wed, 12 Mar 2025 16:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4891DA61B;
+	Wed, 12 Mar 2025 16:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sILim1Bn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7XI3XO7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386E41CDFCE;
-	Wed, 12 Mar 2025 16:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA8C1CD215;
+	Wed, 12 Mar 2025 16:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741797816; cv=none; b=qdLuyUv1pCf0J2kAdPiHCgieM7t3NuLEaCEAzxhifsg2Hb4gTDuBr5MTITP7kPOL0NsMEAkCT0nNoqSOIjKZ+4VGNysdkP5Iec8Au51Wmm2yOMNyZFsgMU0KiERET7KNJ/oTz0/uXZMYzXHno3SkkKChcj4ilVR6u+W51Oi8tQ4=
+	t=1741797273; cv=none; b=gsydrADGFyOosQ9xpQfzVI/KRzQGm969C6SP8fugshzDOkvBo37WvrSTtWKuY1cnU4+/iBypnhD/pCcugxSA4XVdBovassqCb7yZQgXRZKEz3xldDK3iRA1V7fAQ2BgW1YNyQNsxs2NGdK/5EKzAoN5wJtdiwTiAsr8UFFlnXBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741797816; c=relaxed/simple;
-	bh=6Nlfx24/5WyMWH+mVg/nVlAYQ94lGe7m8lLJJ4G7Slk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nf3+S1JfDfsr7Vou6JilYXtFrH2D+mowKRRk7QO+ApT1d3yMMWY4B7LSV5q6kuVKSJoD4yKVBnLU2bqSuu8IY3oCWOVFoE2GgyN6/iQxIDa3FHgsYvMA3eJEhPkOOiSU+mvnS2087WpVw0YPX46HjTlqrpzcEgGZHT4e8oPyr4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sILim1Bn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 809CCC4CEDD;
-	Wed, 12 Mar 2025 16:43:35 +0000 (UTC)
+	s=arc-20240116; t=1741797273; c=relaxed/simple;
+	bh=TrqwpzyHwOhx55DeV4/s86mTsh9lYCPM7W7wIRkTwn4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cYvjMwKCWkCEVRe13qsxSTq1M5MJwu3HXtHE/96R3Th2jIDApvgV3o2l25Cu+UwrBzKlBHFzgQ0ezDcMjTtYBGe59TEEbf1wcR9gKAmD+ord8aVaRChGP+B44k5dQxH4xVwIAewu4jGqpXj2oT8Ba1E8/yR3d+1eJip+GXL7Eh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7XI3XO7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FB91C4CEDD;
+	Wed, 12 Mar 2025 16:34:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741797815;
-	bh=6Nlfx24/5WyMWH+mVg/nVlAYQ94lGe7m8lLJJ4G7Slk=;
+	s=k20201202; t=1741797273;
+	bh=TrqwpzyHwOhx55DeV4/s86mTsh9lYCPM7W7wIRkTwn4=;
 	h=From:To:Cc:Subject:Date:From;
-	b=sILim1BnZ9ITmiC6nb8CcNmG9QTkPLkeT5hpmzawAd9hQICLb7L6sGXuqAfgPqXHP
-	 H6ue/fML9DXKqFI/6DYvd/4mxgtBH8kYvj6uVdql+gWQJl7ssFdt3z6O6m/olh8eQ/
-	 v+dhGFeEYRF+aMSL3jytu3/pTWSOdqGNZs2mSLQMFL4mm+rBcRDDfot4xyL983+Ed8
-	 IPHK1qCntdz4S5kY9X3QtT3sjJaTlHCRNjP9BuD+JhJTJO4/g7E0qP1DfzGLcLwEzH
-	 Q9483bpienLKlDOyj0wTGPxbaXjzzpdOcZ32VxN5Lfa/YPsxPkRScq9dHo1svLDKby
-	 qSVRMOU2hNezA==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Tero Kristo <kristo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: ti: Simplify ti_find_clock_provider()
-Date: Wed, 12 Mar 2025 11:33:30 -0500
-Message-ID: <20250312163330.865573-2-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	b=d7XI3XO7Io7+7Mm0zhchHjlSOqTm3nhhUoH04TKNMo8T1HCNfrJUZ5cCJYN4HzEYE
+	 HWx5NnqhLcrwYnm2sDQGH+EiipCf32aZxyvKjDaG24V1uq5dULMG8+O+5j5UCvtobT
+	 0D5vxcFKvZQ2JpQGcDsWliX7YjpSftCqY7uTw/EA4ofYPj8hggDsJjtleuYb7UTQA6
+	 ZAWkshyeLFWBvpt7HbTlhikUDcIH/rhWD6U9jKQfi41OURjTx9xcCZwEFc6pXkApW0
+	 V/Wdpv5gngnM4MIot8Eyk+89MqTNkPs8MsloLQ0qiSQUMNq5MHiKlq07AfbrWrx/Nx
+	 sVoXYLx/7135g==
+Received: by wens.tw (Postfix, from userid 1000)
+	id 2512F5FC08; Thu, 13 Mar 2025 00:34:30 +0800 (CST)
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH RESEND net-next v2] net: stmmac: dwmac-rk: Provide FIFO sizes for DWMAC 1000
+Date: Thu, 13 Mar 2025 00:34:26 +0800
+Message-Id: <20250312163426.2178314-1-wens@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,84 +66,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove using for_each_of_allnodes_from() which is not safe to use
-without holding the DT spinlock. In reality that probably doesn't
-matter here. This is the only user in the whole tree, so it can be
-made private once removed here. The "from" argument is always NULL, so
-it can be dropped as well.
+From: Chen-Yu Tsai <wens@csie.org>
 
-There's a slight change in behavior in matching the "clock-output-names"
-value as the prior code would match if the node name matched the
-beginning of the value and the comparision was case insensitive. Now
-it must be an exact match.
+The DWMAC 1000 DMA capabilities register does not provide actual
+FIFO sizes, nor does the driver really care. If they are not
+provided via some other means, the driver will work fine, only
+disallowing changing the MTU setting.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Provide the FIFO sizes through the driver's platform data to enable
+MTU changes. The FIFO sizes are confirmed to be the same across RK3288,
+RK3328, RK3399 and PX30, based on their respective manuals. It is
+likely that Rockchip synthesized their DWMAC 1000 with the same
+parameters on all their chips that have it.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
-Compiled only. I'm not sure if the the change in behavior is going to 
-matter. 
+Resent with correct subject tag.
 
- drivers/clk/ti/clk.c | 27 ++++++---------------------
- 1 file changed, 6 insertions(+), 21 deletions(-)
+Changes since v1:
+- Removed references to breakage from commit message as it is already fixed
+- Removed Cc stable and Fixes tags
+- Rebased onto latest -next
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 9c75dcc9a534..693a4459a01b 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -118,13 +118,10 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
-  * Eventually we could standardize to using '_' for clk-*.c files to follow the
-  * TRM naming.
-  */
--static struct device_node *ti_find_clock_provider(struct device_node *from,
--						  const char *name)
-+static struct device_node *ti_find_clock_provider(const char *name)
- {
- 	char *tmp __free(kfree) = NULL;
- 	struct device_node *np;
--	bool found = false;
--	const char *n;
- 	char *p;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+index 003fa5cf42c3..e57181ce5f84 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -1969,8 +1969,11 @@ static int rk_gmac_probe(struct platform_device *pdev)
+ 	/* If the stmmac is not already selected as gmac4,
+ 	 * then make sure we fallback to gmac.
+ 	 */
+-	if (!plat_dat->has_gmac4)
++	if (!plat_dat->has_gmac4) {
+ 		plat_dat->has_gmac = true;
++		plat_dat->rx_fifo_size = 4096;
++		plat_dat->tx_fifo_size = 2048;
++	}
  
- 	tmp = kstrdup_and_replace(name, '-', '_', GFP_KERNEL);
-@@ -137,25 +134,13 @@ static struct device_node *ti_find_clock_provider(struct device_node *from,
- 		*p = '\0';
+ 	plat_dat->set_clk_tx_rate = rk_set_clk_tx_rate;
  
- 	/* Node named "clock" with "clock-output-names" */
--	for_each_of_allnodes_from(from, np) {
--		if (of_property_read_string_index(np, "clock-output-names",
--						  0, &n))
--			continue;
--
--		if (!strncmp(n, tmp, strlen(tmp))) {
--			of_node_get(np);
--			found = true;
--			break;
--		}
--	}
--
--	if (found) {
--		of_node_put(from);
--		return np;
-+	for_each_node_with_property(np, "clock-output-names") {
-+		if (of_property_match_string(np, "clock-output-names", tmp) == 0)
-+			return np;
- 	}
- 
- 	/* Fall back to using old node name base provider name */
--	return of_find_node_by_name(from, tmp);
-+	return of_find_node_by_name(NULL, tmp);
- }
- 
- /**
-@@ -208,7 +193,7 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
- 		if (num_args && clkctrl_nodes_missing)
- 			continue;
- 
--		node = ti_find_clock_provider(NULL, buf);
-+		node = ti_find_clock_provider(buf);
- 		if (num_args && compat_mode) {
- 			parent = node;
- 			child = of_get_child_by_name(parent, "clock");
 -- 
-2.47.2
+2.39.5
 
 
