@@ -1,148 +1,269 @@
-Return-Path: <linux-kernel+bounces-557130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213CAA5D3F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:19:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88BD6A5D3F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:21:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148E23B90C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:19:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD61B16B87A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8861D514C;
-	Wed, 12 Mar 2025 01:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A4213C816;
+	Wed, 12 Mar 2025 01:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+tlLYmk"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MJYsyrSx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8390D13774D;
-	Wed, 12 Mar 2025 01:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DED85684;
+	Wed, 12 Mar 2025 01:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741742280; cv=none; b=ioIoKZkN8r6ZpectdmY635R3PdbPP40VWMAABHqvmRTZ0BKf6bslP11HnoGWVUA9GZvcH2ia2ZJqdOKAugpSTgACvkpDFP+qI/etE8DRAKg/N32uz5/hh509c+Mkkzzz9Crp18Zi90JmMPwE5gC9lY3mkdWJEYAbgopv91KajUU=
+	t=1741742473; cv=none; b=SC4n0tapUPWrYYK0VqCkR2PptLnx6ERhMSKyp2NsbORH5PpiVmd8W+vzJO+jkyRuQgk5fVHPjo8Gbr4I3gOnY0iv09rXS+dLXv58TEUF43pUJVLNI4KcPMND5z8sV47Jg1c9S5i3Pci/4seq0oI4AJRPBUVoVPCdy+WyCErPXO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741742280; c=relaxed/simple;
-	bh=oFLZb+2f3dEKqc3Dj426FJzCsxLtRW2V3ml2C8sU7JU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p2fErlE+v+p/r7ydVzdq8JVAFpX9bIDynKISft5aPvOmCOufNT3Zqf9d5RjuoiCk+0YVDLXO34QWE6tnNdhPZanCatbrRKMqfi3m3Ihn7zkArg+nSrVVmpY5UM+PFO3SR1xY6etW2rgtEarnNDeQKx+zpw3YoOhgUwlKFxDAAVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+tlLYmk; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c0892e4b19so619787585a.3;
-        Tue, 11 Mar 2025 18:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741742277; x=1742347077; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GLcgzo5xr/0iG5n3K7ZIKYHwTAs6P/saBSWm6jDBLCw=;
-        b=R+tlLYmkfZ8HvEQSGYinJnaHbj/fQvALto27bzaXSvd1lyDrbbMslr3dpaQx00GPfW
-         uRs5c+IiaQV6grsQ2t7gx87QwNNUpx2wKynwSkx2Thep5uPqZX9FA++L8cLAvvooc+Ht
-         guDt5XwN4g5+UBglYQqIeKoi6+/x1/x2fPzY++z9kHERQ5lrnBD8ELkRaU0eF9Y3Zt9a
-         7BoAcvB46FC5Ho2ZeUF77lMSBRegYO2CIrM9qOpodQA0+HQNlyT2OTuFb5tNT0fsyngP
-         pfQ5IHoZiFpK4lOUbgohsKA1LpQMHsdGSMoKOg29j/CwlUgKv2kVeJ/kEbpHl2S8KyQv
-         2H8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741742277; x=1742347077;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GLcgzo5xr/0iG5n3K7ZIKYHwTAs6P/saBSWm6jDBLCw=;
-        b=v9h3af8fflVOQrIAWhq+4MRTmlVayGwgz4/eWtq3AkbpoEuX4FGBpZaek36cL8BFDn
-         +XzZNRm8FoHLp/pwFYmS8p2K6kd/8VqfxWQIv+9LnMYlfiVpRmcKauVb68UryZna58Jr
-         n+3SQvL/9GqmIWiDtpdreFuTKrFXAW+2CWuQqLY7b+PmBsqgXDW01JMnH/8CKjDFSueE
-         WFaDXGLzPhgzEwSRqIEJ85wRQoeLJf4e599JlQTiruk9VGWMGuBMSnp5AgIMZzX/DLqF
-         PPWwozi2uBcU82gdtpR5oX7cuucp8rfCWxVYzGBi1pgheu1WNKIjVLkJQaSaMFUSxU+H
-         oEug==
-X-Forwarded-Encrypted: i=1; AJvYcCXAzniarLVva1tj8b4T3sa0oKSCgyfIYtIPRC9rtfATpMPYmiyUZ+kDEfHUigzu854PhcKarPxRkIm+mvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyzt+WRmP4Mg/McjHcqpTqbPs1K3PTncZy6GZgJThRoB9PCibC
-	JJz64WDR7Avr87SJP4B3tHR8042AmmCLDe9vX0qnEWhid7BEMSUp
-X-Gm-Gg: ASbGncsXesF4ChF58dNBI8wKQwkZjGRU2ZE7ke/06vQl44Q7USmRvBI4OfK9kUo/Mvu
-	8ejq7givtpOe8OiSmQz2QMumE6KVo32XwoM7E3mID2hkNPFmRpDFHFL0Ph9CcjV5zlURrZNy6M5
-	9/SeLx3N+rgLvpUjAUhDM9/P9wmpLh1RM4Lsite991lyL0jEmPZx1ZCH+vWuidyPAQ8R2PgWiEi
-	kPZ6cW44D5c8iu8zBavYe7wft3I0XG32H/wEi7hX7Xro7OexMvacos9XVoN9+cWKTA+f/TIjs09
-	wQTqzpGpMYBSCqZDwedHG6GmyM213o99da/WvDQXCSMWgFiKTQvreWgvJJRE4dhU5J/K
-X-Google-Smtp-Source: AGHT+IELfR2KgODTKut+cF9OaKi/VD7QJ0DCl+UiguwJeYOxo4OQjvdKvFS5kKpmgA9CKnTebm0SfQ==
-X-Received: by 2002:ad4:458c:0:b0:6ea:d393:962c with SMTP id 6a1803df08f44-6ead3939845mr213926d6.30.1741742277490;
-        Tue, 11 Mar 2025 18:17:57 -0700 (PDT)
-Received: from tamird-mac.local ([2600:4041:5be7:7c00:2017:ee95:21ab:177f])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f70915ebsm78599976d6.49.2025.03.11.18.17.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 18:17:56 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 11 Mar 2025 21:17:28 -0400
-Subject: [PATCH v2 7/7] scripts: generate_rust_analyzer.py: define host
- crates
+	s=arc-20240116; t=1741742473; c=relaxed/simple;
+	bh=6a5cA9bmg/w9z4v7zievcrpf4I/JzZrTDotNHRzORqo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MueYfDP/E0/WAin8rAgX+3vAZPllKac8bQXChmLi+knwzkOBNyHJ+wzYip6hqNbKmJ1RmPMD8gfnBCfRrprlRR3DEAX1NzqKe6R19F4wl6O1FysWnGTCFHnUE9GyVJ9G8UpBcVyTuf/EApCjjK9lydTshAjQk1xC8DRDgKFFwss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MJYsyrSx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BMH9hj015193;
+	Wed, 12 Mar 2025 01:20:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gOAaVlaEm/vfp/T65ZkmYZIul8TnOLOP/BkOedl/Co4=; b=MJYsyrSxqwa72554
+	es28Bq8SS2qbWCTxhERCuD/t9iqOL4teB3v+9eHi4LjYMk+Z0zHRy4MGwZjgzbbO
+	6zcBadwrW+/DMscFdDPpOZbdwutZLi5mGTcB7rfEJd+/FwdfWTvLqmE+NpVlCv7t
+	G8DdDa/Xp2pwfe0k58/1AYOUW85BwnpTJDSB6GscLm82dwUvQMRbUCPkQWsa3V+E
+	pwTM0Hu2PIgud+4K0SdoTg2ZMR4xXf/pukGC/k0RclWxkfuBe7d0rnraxG4cq02Q
+	srXVWioUM8I1QVgKErfKQ08BvDERjBRDmGQFE5g/KmPkP4zt9sJH8T/l1cxzWIVA
+	Cu0qIw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2nrq65-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 01:20:51 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52C1Ko4M030795
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 01:20:50 GMT
+Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Mar
+ 2025 18:20:46 -0700
+Message-ID: <cef984d5-f369-4892-b970-a71285c2ebc5@quicinc.com>
+Date: Wed, 12 Mar 2025 09:20:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] coresight: tmc: Introduce new APIs to get the RWP
+ offset of ETR buffer
+To: Mike Leach <mike.leach@linaro.org>
+CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        James Clark
+	<james.clark@linaro.org>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Tingwei Zhang
+	<quic_tingweiz@quicinc.com>,
+        Jinlong Mao <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20250310090407.2069489-1-quic_jiegan@quicinc.com>
+ <20250310090407.2069489-2-quic_jiegan@quicinc.com>
+ <CAJ9a7Vh7PmBBbvwnUETfCYrTSiXNzeiWpsz+XAGaUWt1Rq1aZw@mail.gmail.com>
+Content-Language: en-US
+From: Jie Gan <quic_jiegan@quicinc.com>
+In-Reply-To: <CAJ9a7Vh7PmBBbvwnUETfCYrTSiXNzeiWpsz+XAGaUWt1Rq1aZw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250311-rust-analyzer-host-v2-7-30220e116511@gmail.com>
-References: <20250311-rust-analyzer-host-v2-0-30220e116511@gmail.com>
-In-Reply-To: <20250311-rust-analyzer-host-v2-0-30220e116511@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Boris-Chengbiao Zhou <bobo1239@web.de>, Kees Cook <kees@kernel.org>, 
- Fiona Behrens <me@kloenk.dev>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Lukas Wirth <lukas.wirth@ferrous-systems.com>, 
- Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WX4PUy9R_3aW-j0jtHmsAp8SKORZRZA2
+X-Authority-Analysis: v=2.4 cv=ZObXmW7b c=1 sm=1 tr=0 ts=67d0e173 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=V1Y4aJ5uuwzZXcr4G30A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: WX4PUy9R_3aW-j0jtHmsAp8SKORZRZA2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_01,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120007
 
-Define host crates used by the `macros` crate separately from target
-crates, now that we can uniquely identify crates with the same name.
 
-This avoids rust-analyzer thinking the host `core` crate has our target
-configs applied to it.
 
-Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-Link: https://lore.kernel.org/all/CANiq72mw83RmLYeFFoJW6mUUygoyiA_f1ievSC2pmBESsQew+w@mail.gmail.com/
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
- scripts/generate_rust_analyzer.py | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+On 3/12/2025 12:49 AM, Mike Leach wrote:
+> Hi,
+> 
+> On Mon, 10 Mar 2025 at 09:04, Jie Gan <quic_jiegan@quicinc.com> wrote:
+>>
+>> The new functions calculate and return the offset to the write pointer of
+>> the ETR buffer based on whether the memory mode is SG, flat or reserved.
+>> The functions have the RWP offset can directly read data from ETR buffer,
+>> enabling the transfer of data to any required location.
+>>
+>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+>> ---
+>>   .../hwtracing/coresight/coresight-tmc-etr.c   | 40 +++++++++++++++++++
+>>   drivers/hwtracing/coresight/coresight-tmc.h   |  1 +
+>>   2 files changed, 41 insertions(+)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+>> index eda7cdad0e2b..ec636ab1fd75 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+>> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+>> @@ -267,6 +267,46 @@ void tmc_free_sg_table(struct tmc_sg_table *sg_table)
+>>   }
+>>   EXPORT_SYMBOL_GPL(tmc_free_sg_table);
+>>
+>> +static long tmc_flat_resrv_get_rwp_offset(struct tmc_drvdata *drvdata)
+>> +{
+>> +       dma_addr_t paddr = drvdata->sysfs_buf->hwaddr;
+>> +       u64 rwp;
+>> +
+> 
+> It is not valid to read RWP if the TMC is running. It must be in the
+> stopped or disabled state - see the specifications for TMC /ETR
+> 
+> It is likely that CSUNLOCK / CSLOCK are needed here too,  along with
+> the spinlock that protects drvdata
+> 
+> See the code in coresight_tmc_etr.c :-
+> 
+> e.g. in
+> 
+> tmc_update_etr_buffer()
+> 
+> ...
+> <take spinlock>
+> ...
+> CS_UNLOCK(drvdata->base);
+> tmc_flush_and_stop(drvdata); // this ensures tmc is stopped and
+> flushed to memory - essential to ensure full formatted frame is in
+> memory.
+> tmc_sync_etr_buf(drvdata); // this function reads rwp.
+> CS_LOCK(drvdata->base);
+> <release spinlokc>
+> 
+> This type of program flow is common to both sysfs and perf handling of
+> TMC buffers.
 
-diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-index e1002867735b..4832a4901c94 100755
---- a/scripts/generate_rust_analyzer.py
-+++ b/scripts/generate_rust_analyzer.py
-@@ -128,10 +128,12 @@ def generate_crates(
-     # NB: sysroot crates reexport items from one another so setting up our transitive dependencies
-     # here is important for ensuring that rust-analyzer can resolve symbols. The sources of truth
-     # for this dependency graph are `(sysroot_src / crate / "Cargo.toml" for crate in crates)`.
-+    host_core = append_sysroot_crate("core", [])
-+    host_alloc = append_sysroot_crate("alloc", [host_core])
-+    host_std = append_sysroot_crate("std", [host_alloc, host_core])
-+    host_proc_macro = append_sysroot_crate("proc_macro", [host_core, host_std])
-+
-     core = append_sysroot_crate("core", [], cfg=crates_cfgs.get("core", []))
--    alloc = append_sysroot_crate("alloc", [core])
--    std = append_sysroot_crate("std", [alloc, core])
--    proc_macro = append_sysroot_crate("proc_macro", [core, std])
- 
-     compiler_builtins = append_crate(
-         "compiler_builtins",
-@@ -142,7 +144,7 @@ def generate_crates(
-     macros = append_proc_macro_crate(
-         "macros",
-         srctree / "rust" / "macros" / "lib.rs",
--        [std, proc_macro],
-+        [host_std, host_proc_macro],
-     )
- 
-     build_error = append_crate(
+Hi Mike,
 
--- 
-2.48.1
+I am fully understood your point here.
+
+The function is designed this way to read the w_offset (which may not be 
+entirely accurate because the etr buffer is not synced) when the 
+byte-cntr devnode is opened, aiming to reduce the length of redundant 
+trace data. In this case, we cannot ensure the TMC is stopped or 
+disabled. The byte-cntr only requires an offset to know where it can 
+start before the expected trace data gets into ETR buffer.
+
+The w_offset is also read when the byte-cntr function stops, which 
+occurs after the TMC is disabled.
+
+Maybe this is not a good idea and I should read r_offset upon open?
+The primary goal for byte-cntr is trying to transfer useful trace data 
+from the ETR buffer to the userspace, if we start from r_offset, a large 
+number of redundant trace data which the user does not expect will be 
+transferred simultaneously.
+
+
+> 
+>> +       rwp = tmc_read_rwp(drvdata);
+>> +       return rwp - paddr;
+>> +}
+>> +
+>> +static long tmc_sg_get_rwp_offset(struct tmc_drvdata *drvdata)
+>> +{
+>> +       struct etr_buf *etr_buf = drvdata->sysfs_buf;
+>> +       struct etr_sg_table *etr_table = etr_buf->private;
+>> +       struct tmc_sg_table *table = etr_table->sg_table;
+>> +       long w_offset;
+>> +       u64 rwp;
+>> +
+> 
+> Same comments as above
+> 
+>> +       rwp = tmc_read_rwp(drvdata);
+>> +       w_offset = tmc_sg_get_data_page_offset(table, rwp);
+>> +
+>> +       return w_offset;
+>> +}
+>> +
+>> +/*
+>> + * Retrieve the offset to the write pointer of the ETR buffer based on whether
+>> + * the memory mode is SG, flat or reserved.
+>> + */
+>> +long tmc_get_rwp_offset(struct tmc_drvdata *drvdata)
+>> +{
+>> +       struct etr_buf *etr_buf = drvdata->sysfs_buf;
+>> +
+> 
+> As this is an exported function, please ensure that the inputs are
+> valid - check the pointers
+
+Sure, will do.
+
+Thanks,
+Jie
+
+> 
+> Code to ensure TMC is flushed and stopped could be inserted here.
+> 
+> Regards
+> 
+> Mike
+> 
+>> +       if (etr_buf->mode == ETR_MODE_ETR_SG)
+>> +               return tmc_sg_get_rwp_offset(drvdata);
+>> +       else if (etr_buf->mode == ETR_MODE_FLAT || etr_buf->mode == ETR_MODE_RESRV)
+>> +               return tmc_flat_resrv_get_rwp_offset(drvdata);
+>> +       else
+>> +               return -EINVAL;
+>> +}
+>> +EXPORT_SYMBOL_GPL(tmc_get_rwp_offset);
+>> +
+>>   /*
+>>    * Alloc pages for the table. Since this will be used by the device,
+>>    * allocate the pages closer to the device (i.e, dev_to_node(dev)
+>> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+>> index b48bc9a01cc0..baedb4dcfc3f 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+>> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+>> @@ -442,5 +442,6 @@ void tmc_etr_remove_catu_ops(void);
+>>   struct etr_buf *tmc_etr_get_buffer(struct coresight_device *csdev,
+>>                                     enum cs_mode mode, void *data);
+>>   extern const struct attribute_group coresight_etr_group;
+>> +long tmc_get_rwp_offset(struct tmc_drvdata *drvdata);
+>>
+>>   #endif
+>> --
+>> 2.34.1
+>>
+> 
+> 
 
 
