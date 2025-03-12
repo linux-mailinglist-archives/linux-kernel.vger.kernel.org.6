@@ -1,153 +1,241 @@
-Return-Path: <linux-kernel+bounces-557877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0455FA5DEF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:30:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC882A5DEFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:31:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0754716CDF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:30:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61C593B26E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD961F949;
-	Wed, 12 Mar 2025 14:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A8E15DBBA;
+	Wed, 12 Mar 2025 14:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nFD/DX7C";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TR64dDLe"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="asrTPuoj"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25B014601C;
-	Wed, 12 Mar 2025 14:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530EB1F949
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741789811; cv=none; b=Zqtt4Qnzg8M2LgxX+Ke06zMYB16zLaJidmj3VRKHR9ZvI1NFHRqfQRngk8qH+4siUqoJmqXDs2QPCBBprkhrJgoD79xg51cQJEh+OSfnYk2fz1QQIREY76AK0syVysavyrqY6h2Qc+2wkOw+fClg2dqZ61xBKFSsJi5KLrx+IXk=
+	t=1741789875; cv=none; b=A9A39TzxTVNZNnE5LSx1B0los2BrGw7upokb3jFc5iLILxujuJxY5I102CYO0Tlsx117jbWvP4RPgUiqZKU4nCXmVFvCfhTp0EAozzXaKLNuSt3wTkwj8meyunVglr6SJCNOuhknkCY9+r0epL5dKJ/3HL6z5Jqatf/IqwE7Mp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741789811; c=relaxed/simple;
-	bh=GQKAh8R75GVvR8R2whfiTQXIfTseWfrivangFdcK4M0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NwTu9KUZHmrV7EYiBmrsOJTtCP0JUcx3K0CF/8T04+DnwuqEqIt93NHMjTeoIOpeLINPwu9owKVRyb8MiTyht+NUa4zpg4ZDq+FDARvNmatY9qCtvt1Zq2Fn62h+XyT3iEDEeSNfdDDgEKpnp2VrOHTuzaVadTVOx/CBg0Rjt4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nFD/DX7C; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TR64dDLe; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 12 Mar 2025 15:29:53 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741789806;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d1HiEZwZxKQ6XE42vmoWjv0gE0PlXKvQiI/miQHXoTA=;
-	b=nFD/DX7CTZwPBrMpVu8DxnWFVDQLKVgyf5E3fkAlId1EThyeLWmUk62yAy00aWcauR4rhz
-	W5WfgYkD71jHT2QB+0eEwcZTwvBKrc3HxCFa5HltgPpLPTOFyKBGH9bwov+jYu0lAiv2St
-	W48gMADM9ypEVN0+brxEceezSFrG0eRMbXUpQDhzGVV/yKjP6gDIRAoHQmzWQnWMX3qSkm
-	HkgFO/3RRQLBVz9t5+Blt6EIlIm4LK33rKGJEhKKveWGIGEdkkg+MddJrqhcaannu+BX/D
-	nusC61IZJG4RMbyLgDJJnP/6vJnSGiR9Q9a4ad2SOQkl+0Hw9IHn2BlUNFlbGw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741789806;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d1HiEZwZxKQ6XE42vmoWjv0gE0PlXKvQiI/miQHXoTA=;
-	b=TR64dDLeaRdUUpf6iny9CEMDld4vHGbE49qPVJTSWrPFioraY539sEUzPKBJVQ/i7eKKTe
-	/5g9M8RXywRwOoCw==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, john.ogness@linutronix.de,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/10] rv: Add infrastructure for linear temporal logic
- monitor
-Message-ID: <20250312142953.HsobQDBG@linutronix.de>
-References: <cover.1741708239.git.namcao@linutronix.de>
- <0b03a7d779707c598068d6ec00f3e5a19de336d8.1741708239.git.namcao@linutronix.de>
- <035d1f1a92f15bfa60d2d133131dd8a25b3c78e4.camel@redhat.com>
+	s=arc-20240116; t=1741789875; c=relaxed/simple;
+	bh=gaLQEB0SodFsAMFUf7U0XOJDsFQAXxh4Qwrquyn+gOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=C55Pqm41BARE/RAqlcFfcsP2S7oPV5XzC61BR/e0vGBwP7Q19D2ReZJreKuvrAUhapMSqJGP9Cgg54XyfwrKz6VVXvUIBDspvrXA1pEFk1FxlZbAmPKjTHlVtvSdrSbthTET/YKakk2lZmM7RjojjgFcZbUzabu07W4NGz6bUy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=asrTPuoj; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250312143106euoutp018be5a59d8836face69307ea526ef6aa8~sFKe1aUzW1410114101euoutp01a
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:31:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250312143106euoutp018be5a59d8836face69307ea526ef6aa8~sFKe1aUzW1410114101euoutp01a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741789866;
+	bh=HnNcfwuXLGzsfvb6BDDyoiMjkg8CaNMTx1t8raBxs8w=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=asrTPuojlI5fCuvw5P8zGLgaOyB9y8r+a0SHRhZ+kdHTcswwOVwR9XoqC8a4U6ja6
+	 JngZiqX/74HATy5urvzMhSUKgBmcZndewwGkrVyGTr0Na4aI/vm0/QYr0esK5tJ+jc
+	 CaXbPwLo04tObtNjo7jLKz4L95gW8dgUOzmAhK4U=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250312143106eucas1p10573c9cfc8a335a17c7693e49baae594~sFKedJ3_F2225522255eucas1p1I;
+	Wed, 12 Mar 2025 14:31:06 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 36.05.20409.9AA91D76; Wed, 12
+	Mar 2025 14:31:05 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250312143105eucas1p28e084a13846ec3a228745ffea6f12dbf~sFKd5EkDa2675626756eucas1p2Z;
+	Wed, 12 Mar 2025 14:31:05 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250312143105eusmtrp1ca1951535f7ffd1b4ac1436b1cb77495~sFKd4UBcp2360523605eusmtrp1O;
+	Wed, 12 Mar 2025 14:31:05 +0000 (GMT)
+X-AuditID: cbfec7f4-c39fa70000004fb9-71-67d19aa9baec
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id C6.2F.19920.9AA91D76; Wed, 12
+	Mar 2025 14:31:05 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250312143104eusmtip2ee3c4f1dba47a901cfe23aae17ecfa4a~sFKdERw6m2544525445eusmtip2i;
+	Wed, 12 Mar 2025 14:31:04 +0000 (GMT)
+Message-ID: <4b45236e-8252-4dd5-b3f7-3595b0924182@samsung.com>
+Date: Wed, 12 Mar 2025 15:31:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <035d1f1a92f15bfa60d2d133131dd8a25b3c78e4.camel@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/5] TH1520 SoC: Add AON firmware & power-domain
+ support
+To: Ulf Hansson <ulf.hansson@linaro.org>, drew@pdp7.com, guoren@kernel.org,
+	wefu@redhat.com
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, jszhang@kernel.org, m.szyprowski@samsung.com,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <CAPDyKFqeaq5xVNA=0CpMWSt_78qXJsY6+mpE1CSmLrVMQazAjg@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFKsWRmVeSWpSXmKPExsWy7djP87orZ11MN7h00tTi2Z2vrBZbf89i
+	t1iz9xyTxfwj51gt7l3awmTxYm8ji0XzsfVsFi9n3WOzuLxrDpvF594jjBbbPrewWaw9cpfd
+	4uXlHmaLtln8Fv/37GC3OL423KJl/xQWB0GPNy9fsngc7vjC7nHvxDRWj02rOtk87lzbw+ax
+	eUm9R8vaY0we7/ddZfPo27KK0eNS83V2j8+b5AK4o7hsUlJzMstSi/TtErgyWiYcYC3YrlJx
+	sfMGawPjCZkuRk4OCQETibV9Cxi7GLk4hARWMEr8v/mbCcL5wijROnk7lPOZUeLh+l2MMC39
+	zf/YIRLLGSXO/r7NDOG8ZZSY8beDCaSKV8BOYsq3XawgNouAqsTr/U/ZIOKCEidnPmEBsUUF
+	5CXu35rBDmILCwRKbJ+5B2yDiECsxMwJs8FWMwvsZpJ42nUUrIhZQFzi1pP5YAvYBIwkHiyf
+	D7SAg4MTqPn0q2SIEnmJ7W/ngB0kIXCJU2JN02I2iLNdJLZee8kMYQtLvDq+hR3ClpE4PbmH
+	BcLOl3iw9RNUTY3Ezp7jULa1xJ1zv9hAdjELaEqs36UPEXaUeHi5gQkkLCHAJ3HjrSDECXwS
+	k7ZNZ4YI80p0tAlBVKtJTO3phVt6bsU2pgmMSrOQAmUWkh9nIXlmFsLeBYwsqxjFU0uLc9NT
+	i43yUsv1ihNzi0vz0vWS83M3MQKT4+l/x7/sYFz+6qPeIUYmDsZDjBIczEoivKttL6QL8aYk
+	VlalFuXHF5XmpBYfYpTmYFES5120vzVdSCA9sSQ1OzW1ILUIJsvEwSnVwDTN/Ui1Qazkh/MX
+	+r41T+J8eabff7uVSMGSrODeW3elg36wcp1RYtWNuOOiP1spu/VXwi0jp2Aj1btMck+zdlz+
+	lCQ3R6dgdoX+MY6pbLGbf0WLbPj/7uVFRvvbtS9+ft+zsOSEv8qSPyIf/MMuZIXt8b0n8CTF
+	nulg4bx9zvFnlv38d89aa/OKpHsOgWkl0f4TrKbpVG4K+D/LafmC/yFiF68wnrr3qVPzplJz
+	+UqxzuPVr999l+5Y0lxlyuL4Zd8qD84pf08m6yssex5lefurZeyZOw8fnY1jkOncpnO56fDT
+	N+GMK5a22jAvtnHsZT6cuEBx2Z0i94sblzxNlDum0dGT3ikxZWr48+2SJ7iUWIozEg21mIuK
+	EwGJLdmU/QMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDIsWRmVeSWpSXmKPExsVy+t/xe7orZ11MN9jzUNji2Z2vrBZbf89i
+	t1iz9xyTxfwj51gt7l3awmTxYm8ji0XzsfVsFi9n3WOzuLxrDpvF594jjBbbPrewWaw9cpfd
+	4uXlHmaLtln8Fv/37GC3OL423KJl/xQWB0GPNy9fsngc7vjC7nHvxDRWj02rOtk87lzbw+ax
+	eUm9R8vaY0we7/ddZfPo27KK0eNS83V2j8+b5AK4o/RsivJLS1IVMvKLS2yVog0tjPQMLS30
+	jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyWiYcYC3YrlJxsfMGawPjCZkuRk4OCQETif7m
+	f+xdjFwcQgJLGSVufD3CBJGQkbjW/ZIFwhaW+HOtiw2i6DWjxJ+G5YwgCV4BO4kp33axgtgs
+	AqoSr/c/ZYOIC0qcnPkErFlUQF7i/q0Z7CC2sECgxPaZe8B6RQRiJT50bmEEGcossJtJ4szm
+	P4wQG24xSpxc1AN2BrOAuMStJ/PBbDYBI4kHy+cDbePg4ASadPpVMojJLKAusX6eEES1vMT2
+	t3OYJzAKzUJyxiwkg2YhdMxC0rGAkWUVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYDLYduzn
+	5h2M81591DvEyMTBeIhRgoNZSYR3te2FdCHelMTKqtSi/Pii0pzU4kOMpsCgmMgsJZqcD0xH
+	eSXxhmYGpoYmZpYGppZmxkrivG6Xz6cJCaQnlqRmp6YWpBbB9DFxcEo1MDleYitUrsh0m9qZ
+	3PY7wcfUJ8Ht97Yjuk7HJqRuuGWqtX3qptN/2J64RGsFyE747fRS77ZyrbXruYk1tQy5X28G
+	HJBWOment055o0O8/Rmxtxs3Vh2fKCBR2ZV1wLvH/Nb1gFe5/a4prRer1l/eHTBh97kC1p5N
+	rfMac7X9121ffTm94Ls139GjlcscLHfL3dnG8PrT1SmfxbbV+p/kWf5o80PeST53w643712j
+	tP3AxYfbuX7WmantcHTbr1Y3OaT78cGteYm9Oj4/tT294pO1RN65nz2qtVlm+97cfqZXxv67
+	+zPbEnT2Ln+34VbAHdHyZSHqG7a8NGHOTq9xytI9fYLbIbX/9fSTdqz3NJRYijMSDbWYi4oT
+	AW71z36PAwAA
+X-CMS-MailID: 20250312143105eucas1p28e084a13846ec3a228745ffea6f12dbf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250311172030eucas1p12dda42760f751174e774b8d1a3d3f4cd
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250311172030eucas1p12dda42760f751174e774b8d1a3d3f4cd
+References: <CGME20250311172030eucas1p12dda42760f751174e774b8d1a3d3f4cd@eucas1p1.samsung.com>
+	<20250311171900.1549916-1-m.wilczynski@samsung.com>
+	<CAPDyKFqeaq5xVNA=0CpMWSt_78qXJsY6+mpE1CSmLrVMQazAjg@mail.gmail.com>
 
-On Wed, Mar 12, 2025 at 07:47:50AM +0100, Gabriele Monaco wrote:
-> On Tue, 2025-03-11 at 18:05 +0100, Nam Cao wrote:
-> > -/*
-> > - * Futher monitor types are expected, so make this a union.
-> > - */
-> >  union rv_task_monitor {
-> > -	struct da_monitor da_mon;
-> > +	struct da_monitor	da_mon;
-> > +	struct ltl_monitor	ltl_mon;
-> >  };
+
+
+On 3/12/25 14:40, Ulf Hansson wrote:
+> On Tue, 11 Mar 2025 at 18:20, Michal Wilczynski
+> <m.wilczynski@samsung.com> wrote:
+>>
+>> This patch series introduces and documents power management (PM) support and
+>> the AON firmware driver for the T-Head TH1520 SoC, as used on the LicheePi 4A
+>> board. While part of a larger effort to enable the Imagination BXM-4-64 GPU
+>> upstream, these patches can merge independently.
+>>
+>> Bigger series cover letter:
+>> https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung.com/
+>>
+>> This series is versioned to maintain continuity with the bigger patchset it is
+>> a subseries of. Please find below a changelog for the AON & power-domain:
 > 
-> This adds quite some memory overhead if we have multiple per-task
-> monitors (we might in the future) and we don't use this ltl monitors.
-> What about keeping it conditionally compiled out?
-> You could define the struct only if e.g. CONFIG_RV_LTL_MONITORS is set,
-> select it with any LTL monitor via Kconfig, then glue it somehow to
-> have it readable.
-
-Good point.
-
-> > diff --git a/tools/verification/ltl2ba/generate.py
-> > b/tools/verification/ltl2ba/generate.py
-> > new file mode 100755
-> > index 000000000000..52d5b3618e64
-> > --- /dev/null
-> > +++ b/tools/verification/ltl2ba/generate.py
+> I can pick up patch1 -> patch4 via my pmdomain tree, assuming I can
+> get an ack from some of the thead-SoC maintainers.
 > 
-> You may want to rename this script to something more unique, just in
-> case one day we decide to make it possible to install this generator on
-> the system (like dot2k/dot2c).
+> Patch5 is probably better to be routed through the SoC maintainers
+> tree, but let me know if you prefer me to take this one too.
 
-Acked. Inspired by the dot2k name, maybe something like ltl2k.
+Thanks, I don't have a preference, I'll leave it up to SoC maintainers.
+I haven't included the device tree changes in this mini-series, as then
+the PM & firmware, clock, and reset mini-series might conflict with each
+other in th1520.dtsi file, but SoC maintainers might also find it useful
+to pick this commit [1], along with the patch5.
 
-> > + * rv_%%MODEL_NAME%%_get_data - get the custom data of this monitor.
-> > + * @mon: the monitor
-> > + *
-> > + * If this function is used, rv_%%MODEL_NAME%%_init() must have been
-> > called with a positive
-> > + * data_size.
-> > + */
-> > +static inline void *rv_%%MODEL_NAME%%_get_data(struct ltl_monitor
-> > *mon)
-> > +{
-> > +	return &mon->data;
-> > +}
+[1] - https://lore.kernel.org/all/20250219140239.1378758-20-m.wilczynski@samsung.com/
+
 > 
-> Do we need all those functions defined here? We could have them
-> generated by the pre-processor just like with DA monitors.
+> Kind regards
+> Uffe
 > 
-> Having a ltl_monitor.h defining all common utility functions and
-> variables (here I'm assuming most are, indeed, common) may save a lot
-> of maintenance.
-
-I avoided macros like with DA monitors, they are hard to grep. But your
-point on maintenance is true from my experience working on this series..
-
-Pre-processor it is then.
-
-> Also I would rearrange monitors sources a bit differently, like putting
-> everything that doesn't need manual intervention (states and atoms
-> lists) in the header, remaining functions that may need tracepoint
-> wiring or more complex stuff can stay in a single c file, a bit like
-> current da monitors.
 > 
-> I see there seems to be more manual work in the main C file (e.g.
-> rtapp_block.c), but I think it would look cleaner if all other code was
-> generated by the preprocessor in a common header and all lists/inlined
-> functions created by the script stay in a separate header (why not call
-> it rtapp_block.h?).
+>>
+>> v8:
+>> - add proper cleanup in the th1520_pd_probe()
+>> - add "suppress_bind_attrs = true", since there is no need to unbound the driver
+>>   during runtime. This simplifies the code by eliminating the remove function
+>>
+>> v7:
+>> - add '#include <linux/slab.h", due to kernel robot issue
+>>
+>> v6:
+>> - split the firmware & power-domain patches into a separate series
+>>
+>> v5:
+>> - changed the AON driver to be a set of library functions rather than a
+>>   standalone driver
+>>
+>> v4:
+>> - added workaround to disable AUDIO power domain to prevent firmware crashes
+>>
+>> v3:
+>>  - consolidated device tree representation by merging aon and power-domain nodes
+>>    while maintaining separate drivers internally
+>>  - power-domain driver is now instantiated from within the aon driver
+>>  - fixed optional module dependencies in Kconfig
+>>  - added kernel-doc comments for all exported functions
+>>  - implemented th1520_aon_remove() to properly clean up mailbox channel
+>>    resources
+>>
+>> v2:
+>>  - introduced a new firmware driver to manage power-related operations.
+>>  - rewrote the power-domain driver to function alongside the firmware driver.
+>>    These nodes in the device tree lack direct address spaces, despite
+>>    representing HW blocks. Control is achieved via firmware protocol messages
+>>    transmitted through a mailbox to the E902 core.
+>>  - added new dt-bindings for power and firmware nodes.
+>>  - ran dtbs_check and dt_binding_check to ensure compliance.
+>>
+>> Michal Wilczynski (5):
+>>   dt-bindings: firmware: thead,th1520: Add support for firmware node
+>>   firmware: thead: Add AON firmware protocol driver
+>>   dt-bindings: power: Add TH1520 SoC power domains
+>>   pmdomain: thead: Add power-domain driver for TH1520
+>>   riscv: Enable PM_GENERIC_DOMAINS for T-Head SoCs
+>>
+>>  .../bindings/firmware/thead,th1520-aon.yaml   |  53 ++++
+>>  MAINTAINERS                                   |   5 +
+>>  arch/riscv/Kconfig.socs                       |   1 +
+>>  drivers/firmware/Kconfig                      |   9 +
+>>  drivers/firmware/Makefile                     |   1 +
+>>  drivers/firmware/thead,th1520-aon.c           | 248 ++++++++++++++++++
+>>  drivers/pmdomain/Kconfig                      |   1 +
+>>  drivers/pmdomain/Makefile                     |   1 +
+>>  drivers/pmdomain/thead/Kconfig                |  12 +
+>>  drivers/pmdomain/thead/Makefile               |   2 +
+>>  drivers/pmdomain/thead/th1520-pm-domains.c    | 218 +++++++++++++++
+>>  .../dt-bindings/power/thead,th1520-power.h    |  19 ++
+>>  .../linux/firmware/thead/thead,th1520-aon.h   | 200 ++++++++++++++
+>>  13 files changed, 770 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
+>>  create mode 100644 drivers/firmware/thead,th1520-aon.c
+>>  create mode 100644 drivers/pmdomain/thead/Kconfig
+>>  create mode 100644 drivers/pmdomain/thead/Makefile
+>>  create mode 100644 drivers/pmdomain/thead/th1520-pm-domains.c
+>>  create mode 100644 include/dt-bindings/power/thead,th1520-power.h
+>>  create mode 100644 include/linux/firmware/thead/thead,th1520-aon.h
+>>
+>> --
+>> 2.34.1
+>>
 > 
-> What do you think?
-
-Sounds better, let me give me a try.
-
-Thanks so much for the suggestions,
-Nam
 
