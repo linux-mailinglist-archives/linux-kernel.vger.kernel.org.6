@@ -1,114 +1,151 @@
-Return-Path: <linux-kernel+bounces-557851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D52A5DE99
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:05:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC65A5DE9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:05:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D5D172073
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:05:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 452DB176227
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B919924CED6;
-	Wed, 12 Mar 2025 14:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EECF24C664;
+	Wed, 12 Mar 2025 14:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mW13RbkE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zBCuePux";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vLPwFMwJ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="knxQnRBs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G+RdLoCA"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABD723A996;
-	Wed, 12 Mar 2025 14:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD26724BBE7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741788297; cv=none; b=F0sQlbMIxOG20rCadR3BCeg1Yc6vgM66QNMy9oEjXPNCqw6BXsPGNXw/GB3YAkw2LRGfvCGXWr4TpBG2EPJ2CrQaRXTJrBre83Mmn6tzi3h1oWufj8d2aTnjD7UODHSrql5HtcPCP7wsyFZkdsMzGiUoyO61K6sKjm2VceVhbMM=
+	t=1741788324; cv=none; b=q/xNHEsqhuH8Fbi4nVubkGbmq4NjXLjRelCKfHyrTYTT4XdtPxpOD4AlWQTAK49JQ+qo++Jfj+X8KEY5nTWjny5vvSAE93tDZUz6/jjvzYIQowIm9HKOQYf5LHSZkBg6PyRfHNiTZPca+L3GY8PQjNGaYj/ubf36gC2Zr8p4rVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741788297; c=relaxed/simple;
-	bh=LupScz4CaJ9kGRzq8mkFgRBPCXt1vQNREcsiJZUoVuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d0X7LCv23FyiCaor4+raU5MnkFSC5w+dOtvLdhO7/FoTt/+m0k5gogVu1iKmJv9YNE6JHkug1Zfm5ThwT2PsP1OMguwcNujvRgsT6YxjKT9ZkYDbZdU1AUypNl5NxPkX09w8oY1+jmTb28KXTdiAd/wvhsya+sqkQrxRKE2dEKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mW13RbkE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B798C4CEDD;
-	Wed, 12 Mar 2025 14:04:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741788296;
-	bh=LupScz4CaJ9kGRzq8mkFgRBPCXt1vQNREcsiJZUoVuE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mW13RbkElYKwMFLrD6fuz0i53FhQZBKWjleOARIpRFHLwGj1wc2NOPNc/ewieoxAv
-	 V4aGQH6IyzKxHr8x/1sJNF0oU2AfXLWZpEnYTkzkqPqPw6gMXHuhRVXpO87/bvMwap
-	 5+P9TEpSpdBOy3+62A7LN4f1CHTme1/6r5VwtRotQRlPXuiWfdBOfy7A1vgb3F97IQ
-	 g8fHn0fLPAMPXqI6T2xbFr6o0dyfRvtnYevIp48bQ+emsAi6fAKVPAJrcqoncWQS9O
-	 RnK7zkWVbo5vw4R9BwJIZqItNs7Lq+twvnYSAVd3aDra12b6GL/wiGMZUoVgf5c1Ln
-	 Tv1ELCr+4tXJQ==
-Date: Wed, 12 Mar 2025 14:04:49 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Weidong Wang <wangweidong.a@awinic.com>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	anish kumar <yesanishhere@gmail.com>,
-	Ben Yi <yijiangtao@awinic.com>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Igor Prusov <ivprusov@salutedevices.com>,
-	Jack Yu <jack.yu@realtek.com>, Jaroslav Kysela <perex@perex.cz>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Rob Herring <robh@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Subject: Re: [PATCH V3 2/2] ASoC: codecs: Add aw88166 amplifier driver
-Message-ID: <cb3df868-1131-4bf8-a976-66d376a87c88@sirena.org.uk>
-References: <20250312120100.9730-3-wangweidong.a@awinic.com>
- <85859be0-95f7-48f2-bc51-488531529075@web.de>
+	s=arc-20240116; t=1741788324; c=relaxed/simple;
+	bh=e3HyHXxDOgTjnjIKHqatzU2aXyCjyfmVii3KUOadhIA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=p/tNiwyunzsFsu78ynqTLZY7yMvitDnz+FHEnEQhBZTkn3UZZ5rERMdNrBHdA50PZFdfzC/xXH/eC5xQsAyFOzIFhUQZYARrod+D4IZL2OpQhvHy+mzC0eM+SCpad/TJCjCIl+ypny7LmPSqGKIqhngtfmYaiWKxGSry+tP1HMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zBCuePux; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vLPwFMwJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=knxQnRBs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G+RdLoCA; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EAD6C2118E;
+	Wed, 12 Mar 2025 14:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741788312; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ttdCheo2ggrWYc5AfXbMLW3x5iUmEU3SoinUwhJvb+4=;
+	b=zBCuePuxTdL15mtda27hxhA44U5PtfaieYwLwbODqm5KLJjEwAVScmfhtq2JVBOftJnocU
+	MSSM0I2AcrsGcrqUHua+ss9OdmT3+E8jW2deuazu+Bqm65uMhxXg8RgtK/JmRFSMx5hNCJ
+	nGJy4aN8hPYPOpxxFED8A6JYb5LoZG4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741788312;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ttdCheo2ggrWYc5AfXbMLW3x5iUmEU3SoinUwhJvb+4=;
+	b=vLPwFMwJwDhkQsUjgJlUKcs+MY+fb2GER5VC48PCCGFbiGeZl1fzkAwQhVuvLGkggeGpQC
+	ZBINYQH50ls20XBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741788306; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ttdCheo2ggrWYc5AfXbMLW3x5iUmEU3SoinUwhJvb+4=;
+	b=knxQnRBsUB0eEuotZGQwivI4oVYfb1WhrWBcZ9mbITiIUpQhVA8nRAYNRVxCSqg01Wx3LB
+	kwUfe6xwVcBsxntre6sMb3eCWF3doyrKDvmZWrBWaMyTFzsjTUggoBXDAYRl9goNqwd3MC
+	9m0FsBvoJPGanOey4HH1raatlPnRkWA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741788306;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ttdCheo2ggrWYc5AfXbMLW3x5iUmEU3SoinUwhJvb+4=;
+	b=G+RdLoCAe+HmkHrEpPsk7rA7GoPimKWfHbiC+29hoSniJwhP34hdGI8Yb8X8GhBkenF9fH
+	/a8Wofq2UY2qERBA==
+Date: Wed, 12 Mar 2025 15:05:07 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Song Liu <song@kernel.org>
+cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+    linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org, 
+    indu.bhagat@oracle.com, puranjay@kernel.org, wnliu@google.com, 
+    irogers@google.com, joe.lawrence@redhat.com, jpoimboe@kernel.org, 
+    mark.rutland@arm.com, peterz@infradead.org, roman.gushchin@linux.dev, 
+    rostedt@goodmis.org, will@kernel.org, kernel-team@meta.com, 
+    Suraj Jitindar Singh <surajjs@amazon.com>, Torsten Duwe <duwe@suse.de>
+Subject: Re: [PATCH 2/2] arm64: Implement HAVE_LIVEPATCH
+In-Reply-To: <20250308012742.3208215-3-song@kernel.org>
+Message-ID: <alpine.LSU.2.21.2503121503340.12980@pobox.suse.cz>
+References: <20250308012742.3208215-1-song@kernel.org> <20250308012742.3208215-3-song@kernel.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/sb7EUmXh8ErV6ui"
-Content-Disposition: inline
-In-Reply-To: <85859be0-95f7-48f2-bc51-488531529075@web.de>
-X-Cookie: You will outgrow your usefulness.
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.991];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	MIME_TRACE(0.00)[0:+];
+	SEM_URIBL_UNKNOWN_FAIL(0.00)[suse.cz:server fail,test-kprobe.sh:server fail,suse.de:query timed out];
+	RCVD_COUNT_ZERO(0.00)[0];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	SEM_URIBL_FRESH15_UNKNOWN_FAIL(0.00)[test-kprobe.sh:server fail,suse.cz:query timed out];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.de:email]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
+Hi,
 
---/sb7EUmXh8ErV6ui
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 7 Mar 2025, Song Liu wrote:
 
-On Wed, Mar 12, 2025 at 03:00:36PM +0100, Markus Elfring wrote:
-> =E2=80=A6
-> > The driver is for amplifiers aw88166 of Awinic Technology
-> =E2=80=A6
->=20
-> You may occasionally put more than 57 characters into text lines
-> of such a change description.
+> This is largely based on [1] by Suraj Jitindar Singh.
+> 
+> Test coverage:
+> 
+> - Passed manual tests with samples/livepatch.
+> - Passed all but test-kprobe.sh in selftests/livepatch.
+>   test-kprobe.sh is expected to fail, because arm64 doesn't have
+>   KPROBES_ON_FTRACE.
 
-Feel free to ignore Markus, he has a long history of sending
-unhelpful review comments and continues to ignore repeated requests
-to stop.
+Correct. The test should take into account and bail out.
 
---/sb7EUmXh8ErV6ui
-Content-Type: application/pgp-signature; name="signature.asc"
+> - Passed tests with kpatch-build [2]. (This version includes commits that
+>   are not merged to upstream kpatch yet).
+> 
+> [1] https://lore.kernel.org/all/20210604235930.603-1-surajjs@amazon.com/
+> [2] https://github.com/liu-song-6/kpatch/tree/fb-6.13
+> Cc: Suraj Jitindar Singh <surajjs@amazon.com>
+> Cc: Torsten Duwe <duwe@suse.de>
+> Signed-off-by: Song Liu <song@kernel.org>
 
------BEGIN PGP SIGNATURE-----
+Acked-by: Miroslav Benes <mbenes@suse.cz>
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfRlIAACgkQJNaLcl1U
-h9A8SAf/WseTvtO540IJYcvZPWjBX+2pMESToqUJmaj5zObc4R4Gbm4IFIVuiTOv
-sV7v/9cuTNHn6rJ8Zd+dlWiCwCTC9imk4A3NdZFWhZRg8M8aaMmBm+RYEntnh0yt
-Sq8Odm8N8w/MGI41/JEPPkOIJObPPVVJ4mXWvLZqxyp7hvkWJizsNac37b+LAWHQ
-q/URQb8tgQCWd9g9xo0ghhNPDHKDhCu+YMTZuLfty6etjunhBGj3rGeZoSc01INM
-BxcvFShEprcHPQ7FII1x8teoETdFNBOfZGkPA9L/y4LDKbFbAar0NclRCifh5W8l
-0XsrR1SMjXBhq0NUezY+9dXsLY1z1w==
-=eGPI
------END PGP SIGNATURE-----
+Also as mentioned in the other thread, parts of this patch will go once 
+arm64 is converted to generic entry infrastructure.
 
---/sb7EUmXh8ErV6ui--
+Thank you,
+Miroslav
 
