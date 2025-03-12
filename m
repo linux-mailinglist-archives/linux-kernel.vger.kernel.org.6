@@ -1,141 +1,134 @@
-Return-Path: <linux-kernel+bounces-557629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D29A5DBB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:37:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C62D0A5DBB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:37:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEC337A9737
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:36:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530BF3B9DC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B0F23F38A;
-	Wed, 12 Mar 2025 11:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CEE23F377;
+	Wed, 12 Mar 2025 11:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNKyjftN"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NTKDesOH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BA123F38E;
-	Wed, 12 Mar 2025 11:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB2B125B9;
+	Wed, 12 Mar 2025 11:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741779416; cv=none; b=CC8vn7Hch5flE+YsLw21vUUeQm2qtHyOdbCNOh9y9Vjk1sN4XZsbCZHP8wq0X3DvK3hfnO7uZkrm8QhbiR6gILA+LVWljWwwKnKRinXDaesb9OLiUPPM76DC7+gdNhPuw8YETsCb3FEfoSstK3b2t4BluHeRzaj3W6B4z6oPAFQ=
+	t=1741779414; cv=none; b=BTANKzYkG3RrI0uhQxQ9vEf6G0q3Q/mZdK/XUv4+kWt7fiJFz/O9+PKWJ9nt0j8X3kjDbxLbOCA5ZhqDsRIjOs9ENptQsThVX/OyBGqYxfEotIN46dsTL84J8V0DgnM/72FJcfOGu1GktwHX79I9WQmGMpyneQrlzfK6nAFuhI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741779416; c=relaxed/simple;
-	bh=gknEh2t/Je3Rn3xjD+1SZpU4HNy9nSnVGJ/aaMZ0Ecg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wx5Tp3ntLyWoe5aboAzjwNIs+jql4+BWFqhhuVVqzeW+suK+7lVfY6aBJVb3WUHc8joAfN35tANop/Ci0cqICWxrZv9pZut5FJ+gqVKiAWfoxfjU2+T46075ySp8KkrV0agy0zTdde2lhM2ASpQlbPu//vBWCCtsAiXpHtkDIvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNKyjftN; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ff5544af03so1751704a91.1;
-        Wed, 12 Mar 2025 04:36:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741779414; x=1742384214; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gknEh2t/Je3Rn3xjD+1SZpU4HNy9nSnVGJ/aaMZ0Ecg=;
-        b=lNKyjftNloIjlsjeTRPqp3XTG5gE4YWblcdl1DnnXlZATJVt4IVro1MZHd+D2kKyu2
-         dI/IuV0AB+VT/UDG0txP+tFHMMbuuh06gvhlsTmLR3Lc92UK3tSqDyI6VO9nynx2hCkt
-         cW1JGhLcPXEJZsQJnX8QFpj3XuXLE0y7qUvBbIc+fSX2Pc+LKKAUyPAYDlkPzI9+RGNl
-         LQeUofa1smf9DgZiNHlFpAbm3OJfjliA6r6udZKkPTy9p8gf+lAAfcKqYfaZhLTi4RSu
-         EmQNCv/RFqR+FpuCAuGjfI6wILK8MA2jYhKzjLT56lJ9TOINiv5xVCkuu7Y9YQGS0z3z
-         Sg/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741779414; x=1742384214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gknEh2t/Je3Rn3xjD+1SZpU4HNy9nSnVGJ/aaMZ0Ecg=;
-        b=OMGORJuCkuJfH2voPpdkProV+1YVZvBLO4Z312LJVpEboVab+gfLl3cDYMlfhAEWyk
-         3JZx5zEw5tSeCfoUgQkpEAiC5mVDvoKEqE177c5t7EwG1nQkNMYPV2zk2TXLTT9MvCLa
-         qD9hqWptpbQZ0XdHd2QBfkCLnbSx+Jjs00ZetEarBiAM68vNFnGp8EZlg1zB4vIeLM5I
-         EnHrr8aKWFxLXKarmwI+Hvog2Kf/0oI0a+o7mk7hE10plV5wbDMDAlLwpH1HHP37r9p3
-         bV1M4O+VNKmPsd6h8B8V76hqnNHxFELOkeEqFg0KPvzm7sQV8KBbViI+4uvRzpqYHFwN
-         OTgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8LPTC6VkK0xkeXIvGPksYS5qB365eq3BehtIB2YrZA3qKNBGGXXXLt45D+netU9YEm2fqJkirMWrjiQAJ26pXaQI=@vger.kernel.org, AJvYcCWmhdh5/jwUIVWWAKwrfQjRG1E1sfK598EUGtrFZzcbGWo1/+tUJsrEmWbCTKN+anVNpk7c7xD4fal3szQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypiThAtP2dPVIlG32LqWw2p6tUSf35aS+3WaMwJDIjtjVMrHp1
-	nrPLO2cnFOJZBNrRnez5TZXDUTMv5FkzAtBt5hgzkjsq5JSE+6Yd2lmhbVAjMOvhEn3jU7JfSyn
-	Thdn+R/rAQIUFMRou0R8Z7+5GEyE=
-X-Gm-Gg: ASbGncvET9yYdf71a353J1JemeUdaS1TO/N1ksV1ar4Jwree8hLLfZJbUX9st+oC8cy
-	RV9IyxfLX6ZclXCqqj4t1aVbkSUJmi/Ra6BXAwUPen2E5yHK+PjMBeuiIas7o4H2h2zJvNxubBx
-	17ebKUsdeR6t6BQ2fwbtu2u7ngaA==
-X-Google-Smtp-Source: AGHT+IEDN2xmhNlHD/KpfAlbk7SO5pRX4Yth6unjvNI0fUm0BIoxX6m646b5DTRt63pZIvK66yoOhveOUoUHNzUZqQU=
-X-Received: by 2002:a17:90b:1d0b:b0:2ff:7970:d2bd with SMTP id
- 98e67ed59e1d1-300ff9090d1mr3647168a91.5.1741779414383; Wed, 12 Mar 2025
- 04:36:54 -0700 (PDT)
+	s=arc-20240116; t=1741779414; c=relaxed/simple;
+	bh=FroqwxIZyxWRy8NxvaPvPbyYXAPIL2q9WyJPpH0RPSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fA25mca34MXTKZ21bvPcZoi18V/FRMlXU557NzQDoRIOHQAR7FkAxjkx+Vnayr/BZDdu0JUxo+MRxzEfl5gj5iITzTzeTtP3tnT9JdGU2RQcz/v8Y0rd3UpgUMX09W93jk7yjE8cLGn9na7vl1zNXwGi21cyjBceteZ+FX4Rgoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NTKDesOH; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741779412; x=1773315412;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FroqwxIZyxWRy8NxvaPvPbyYXAPIL2q9WyJPpH0RPSg=;
+  b=NTKDesOHtbZwDpTgRd4Q0t053owpfPIhIaGmFb6OD9mc0wTtmi1sEWIv
+   HwEnf4zQEMRuxGcEMMrDrwx2CTfqYznJ3WpPpUrTystEOSezqdo29lzlH
+   Wna1Cqqt29OUWPTdivLOaqnlPz3tns/kI1+DOdfntkmW6UIWpmLbnNqMK
+   uCssiWMME2OnMXemlW1g52fkWyM4SaIJSQfxq6TAUeMoOzLY5Xk0kooIA
+   v47rfh8c2DXpCRu816jjVIf5GZZnINKQW5UEt+AVI57QnqpM8qCWo4dXb
+   OIBNDKIoBrrPomomvN/ILQ1PxzD3UDtUeIc2BPiyjrey6LyTuow7j74Oo
+   Q==;
+X-CSE-ConnectionGUID: bGJizVzWQ+OKLs+IrFuQ9g==
+X-CSE-MsgGUID: +yLE7NjjTvOiF0GyFsGZlw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="30435652"
+X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
+   d="scan'208";a="30435652"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 04:36:51 -0700
+X-CSE-ConnectionGUID: fGXdclrDSciibe9q+Rtoxw==
+X-CSE-MsgGUID: sx2y6Q16R1eOzj0C7o4Ymw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
+   d="scan'208";a="120635886"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa007.fm.intel.com with SMTP; 12 Mar 2025 04:36:45 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 12 Mar 2025 13:36:44 +0200
+Date: Wed, 12 Mar 2025 13:36:44 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	Markus Elfring <elfring@users.sourceforge.net>,
+	Jakob Riepler <jakob+lkml@paranoidlabs.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-usb@vger.kernel.org,
+	Daniel Scally <djrscally@gmail.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH v1 4/4] usb: typec: tcpm: Use
+ fwnode_get_child_node_count()
+Message-ID: <Z9FxzECvo5o7zaVH@kuha.fi.intel.com>
+References: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
+ <20250310150835.3139322-5-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224124200.820402212@infradead.org> <174057447519.10177.9447726208823079202.tip-bot2@tip-bot2>
- <20250226195308.GA29387@noisy.programming.kicks-ass.net> <CANiq72=3ghFxy8E=AU9p+0imFxKr5iU3sd0hVUXed5BA+KjdNQ@mail.gmail.com>
- <20250310160242.GH19344@noisy.programming.kicks-ass.net> <CAOcBZOSPBsTvWFdpwE0-ZU76yMDGBEo3p9y614XYEu+ZSnQ6Sg@mail.gmail.com>
- <CANiq72mcCEbeWb-RAXLcWRnJms2LA6xV=QqQ5=N3ii=3TC89fw@mail.gmail.com>
- <CAOcBZOQnGCqKut-BTvfJNgB9Rz+f5DAANwMs9DU16Js+QDGOrw@mail.gmail.com> <20250312091633.GI19424@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250312091633.GI19424@noisy.programming.kicks-ass.net>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 12 Mar 2025 12:36:42 +0100
-X-Gm-Features: AQ5f1JoWE1IHsvmTAsXyQOhSft5_BwvvABh61PPokhGerXhpR6A5ZQumzZyMbRA
-Message-ID: <CANiq72mi62AkrKzre254DDd_VwUsZzEMqNuXpFeY_4AjObrNVw@mail.gmail.com>
-Subject: Re: [tip: x86/core] x86/ibt: Implement FineIBT-BHI mitigation
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ramon de C Valle <rcvalle@google.com>, Matthew Maurer <mmaurer@google.com>, linux-kernel@vger.kernel.org, 
-	ojeda@kernel.org, linux-tip-commits@vger.kernel.org, 
-	Scott Constable <scott.d.constable@intel.com>, Ingo Molnar <mingo@kernel.org>, 
-	Kees Cook <kees@kernel.org>, x86@kernel.org, Sami Tolvanen <samitolvanen@google.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Nathan Chancellor <nathan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310150835.3139322-5-andriy.shevchenko@linux.intel.com>
 
-On Wed, Mar 12, 2025 at 10:16=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
->
-> The rust-log-analyzer seems to suggest the nightly build failed?
->
-> Suppose it didn't fail, where do I find it?
+On Mon, Mar 10, 2025 at 04:54:54PM +0200, Andy Shevchenko wrote:
+> Since fwnode_get_child_node_count() was split from its device property
+> counterpart, we may utilise it in the driver and drop custom implementation.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Ah, sorry for the confusion -- by "nightly" here I meant the toolchain
-that gets built and distributed by the Rust project.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-To get one, we need the PR to land first, and then we can use the new
-flag. It is easy to land such a PR/feature because it lands as an
-"unstable feature", i.e. meant for testing and so on only. So we can
-get quickly "proper" toolchains (i.e. tested and built like the
-full/normal releases are), and if everything checks out, then upstream
-Rust can commit to stabilize the feature later on.
+> ---
+>  drivers/usb/typec/tcpm/tcpm.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index 9c455f073233..8ca2e26752fb 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -7166,7 +7166,7 @@ static void tcpm_fw_get_timings(struct tcpm_port *port, struct fwnode_handle *fw
+>  
+>  static int tcpm_fw_get_caps(struct tcpm_port *port, struct fwnode_handle *fwnode)
+>  {
+> -	struct fwnode_handle *capabilities, *child, *caps = NULL;
+> +	struct fwnode_handle *capabilities, *caps = NULL;
+>  	unsigned int nr_src_pdo, nr_snk_pdo;
+>  	const char *opmode_str;
+>  	u32 *src_pdo, *snk_pdo;
+> @@ -7232,9 +7232,7 @@ static int tcpm_fw_get_caps(struct tcpm_port *port, struct fwnode_handle *fwnode
+>  	if (!capabilities) {
+>  		port->pd_count = 1;
+>  	} else {
+> -		fwnode_for_each_child_node(capabilities, child)
+> -			port->pd_count++;
+> -
+> +		port->pd_count = fwnode_get_child_node_count(capabilities);
+>  		if (!port->pd_count) {
+>  			ret = -ENODATA;
+>  			goto put_capabilities;
+> -- 
+> 2.47.2
 
-That is why I suggested to wait for that, since the PR seemed
-straightforward to land to me, and thus it could land soon.
-
-I don't know if there may be a way to pick up the toolchains that
-their CI built for testing PRs, though. It is not too hard to build
-from scratch anyway if you want to do so -- I can also build it for
-you if you want to test right away before it lands. Otherwise, I can
-ping you when the nightly toolchain is ready.
-
-> I normally build llvm toolchains using tc-build, but it seems rust is
-> not actually part of llvm?
-
-Yeah, Rust uses LLVM but is not part of the LLVM project.
-
-But I think we could have support to build Rust there easily -- I
-discussed it with Nathan (Cc'd) in the past. Currently, for the
-LLVM+Rust toolchains he provides in kernel.org, he just bundles the
-upstream Rust binaries AFAIR -- and IIRC he uses tc-build to drive
-that build, so if we do that we could also "easily" get the full chain
-in kernel.org too ("easily" if we ignore doing the PGO dance for the
-Rust side etc. and assuming the building time/resources makes it
-doable, which I don't know about).
-
-If that is correct, I could take a look into adding a simple Rust
-build to tc-build (i.e. without PGO etc.).
-
-Cheers,
-Miguel
+-- 
+heikki
 
