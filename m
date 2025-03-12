@@ -1,54 +1,49 @@
-Return-Path: <linux-kernel+bounces-557261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075F7A5D5F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:18:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BADCDA5D5F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:18:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91E673B35FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:18:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5290B3B3C5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC961E3DC8;
-	Wed, 12 Mar 2025 06:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHo7dNC9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7CC1E376C;
+	Wed, 12 Mar 2025 06:18:44 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91561925A2;
-	Wed, 12 Mar 2025 06:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075851925A2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 06:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741760285; cv=none; b=cN5/nlhDiPQZZhGXyfI7zTRcELpo4GNWjae49w0X90hqKhOwXPTvHetnaL18aOcCfTpEGln6rMbcufqbYMIGOYzdpHlFrPZPuJ7p5OfV6To1bIHYZ6ywmvxYFmN3g4WeAJC2ooJoKos+DvAmFmRVLaEljI2boQ4ccSgjCX5P6kg=
+	t=1741760324; cv=none; b=lh6VRkD2kikkKJRBnGorRNtK1zwsoZ/u64X+HiyMti8DcITOA1i4a3Bp2Bc9fPED90ZxFLCjLClDWTpNz3y4ubB1oB2Q5TpHMFFoO+nmSSC0+TALXl4qx4RaNffZwZurMpN/SyL+AtObLaRVRyOhCD4X9K58KNUpjl52J6p24Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741760285; c=relaxed/simple;
-	bh=SIIRA/IaGAGW0+GTgHgB1CPsQFPU3Jrkrdi0uZ5ot1A=;
+	s=arc-20240116; t=1741760324; c=relaxed/simple;
+	bh=tFcs81LD6K7zSwx6FzkSCLL3f2rawGm+KCqWSnfMdIU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uJpJWrvX3Jd6fv3prn/JD9CJKuVjzkNNluajMbsAhlEG/36i7d12npyHKAXhJuNlLG+zpZPRL+2dBd8HSf7zQRO+usIBMDzp4aYEL1ad9EanDyHaUNNwzdtLLW5iDxo17cx+MpJ5HLM7bt5z00E3nN6PTFnjGcgbpfH5Uw0o/30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHo7dNC9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1F80C4CEE3;
-	Wed, 12 Mar 2025 06:18:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741760285;
-	bh=SIIRA/IaGAGW0+GTgHgB1CPsQFPU3Jrkrdi0uZ5ot1A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cHo7dNC9RB0LvRuTbEFUJO6LHL+PRTcSA83Iq4ppqs0I+U9zvfEHVvLohKhPfElCv
-	 8aDeB3CBTWFBDM6NHcP5kiFjnG8A0c65ktBa8i91aQWr1J760TVi9vthAe7xqgQP2d
-	 RmgWa6ggcLobv+xSRHfiotYPIfq/MbFnrn8k1whj9MXQe2NuvOAPgObhK3qnsmsgNu
-	 Wn/B6/058udiFW2UmURIyu9x4sWgM8WZDOmLmtGRyzwGg/hamIiXjEdAZLuv9TGVlG
-	 v0ioQmhrW580GbkLcGGfAVGnKnXroF3q9T0BIo/LQ/urJv6Lx0R1Rq6B8qX/yyQEwQ
-	 v2+IaagEcr7ZA==
-Date: Wed, 12 Mar 2025 08:18:01 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stuart Yoder <stuart.yoder@arm.com>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 5/5] Documentation: tpm: add documentation for the CRB
- FF-A interface
-Message-ID: <Z9EnGfQGMZhn1JVF@kernel.org>
-References: <20250311141718.145276-1-stuart.yoder@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O19Fj3gyHMmp6YK/EFUAgVuLhMWyF0CkbAjds+009OgMVOV/fAF4EdrIDQsOryYZePXTUSWsIX0yZW2KVqS6y+4XQun/eW/Aj9i+RwZLu9SVj0A8Tc0ji40vsx190KDBOUfUgVTX3FBywigxZqKZGHVzMHSdC1PYqU/1K1jw1Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id AFD7868AA6; Wed, 12 Mar 2025 07:18:36 +0100 (CET)
+Date: Wed, 12 Mar 2025 07:18:36 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Huan Yang <link@vivo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Zi Yan <ziy@nvidia.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com,
+	Christoph Hellwig <hch@lst.de>,
+	Bingbu Cao <bingbu.cao@linux.intel.com>
+Subject: Re: [PATCH] mm/vmalloc: fix mischeck pfn valid in vmap_pfns
+Message-ID: <20250312061836.GA12841@lst.de>
+References: <20250312061513.1126496-1-link@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,107 +52,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250311141718.145276-1-stuart.yoder@arm.com>
+In-Reply-To: <20250312061513.1126496-1-link@vivo.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Mar 11, 2025 at 09:17:18AM -0500, Stuart Yoder wrote:
-> Add documentation providing details of how the CRB driver interacts
-> with FF-A.
+On Wed, Mar 12, 2025 at 02:15:12PM +0800, Huan Yang wrote:
+> When invoke vmap_pfns, it call vmap_pfn_apply to set pfn into pte.
+> It check pfn is valid, if true then warn and return.
 > 
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
-> ---
->  Documentation/security/tpm/index.rst       |  1 +
->  Documentation/security/tpm/tpm_ffa_crb.rst | 65 ++++++++++++++++++++++
->  2 files changed, 66 insertions(+)
->  create mode 100644 Documentation/security/tpm/tpm_ffa_crb.rst
-> 
-> diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
-> index fa593d960040..deda952eacbe 100644
-> --- a/Documentation/security/tpm/index.rst
-> +++ b/Documentation/security/tpm/index.rst
-> @@ -10,3 +10,4 @@ Trusted Platform Module documentation
->     tpm_vtpm_proxy
->     xen-tpmfront
->     tpm_ftpm_tee
-> +   tpm_ffa_crb
-> diff --git a/Documentation/security/tpm/tpm_ffa_crb.rst b/Documentation/security/tpm/tpm_ffa_crb.rst
-> new file mode 100644
-> index 000000000000..0184193da3c7
-> --- /dev/null
-> +++ b/Documentation/security/tpm/tpm_ffa_crb.rst
-> @@ -0,0 +1,65 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +========================
-> +TPM CRB over FF-A Driver
-> +========================
-> +
-> +The TPM Command Response Buffer (CRB) interface is a standard TPM interface
-> +defined in the TCG PC Client Platform TPM Profile (PTP) Specification [1]_.
-> +The CRB provides a structured set of control registers a client uses when
-> +interacting with a TPM as well as a data buffer for storing TPM commands and
-> +responses. A CRB interface can be implemented in:
-> +
-> +- hardware registers in a discrete TPM chip
-> +
-> +- in memory for a TPM running in isolated environment where shared memory
-> +  allows a client to interact with the TPM
-> +
-> +The Firmware Framework for Arm A-profile (FF-A) [2]_ is a specification
-> +that defines interfaces and protocols for the following purposes:
-> +
-> +- Compartmentalize firmware into software partitions that run in the Arm
-> +  Secure world environment (also know as TrustZone)
-> +
-> +- Provide a standard interface for software components in the Non-secure
-> +  state, for example OS and Hypervisors, to communicate with this firmware.
-> +
-> +A TPM can be implemented as an FF-A secure service.  This could be a firmware
-> +TPM or could potentially be a TPM service that acts as a proxy to a discrete
-> +TPM chip. An FF-A based TPM abstracts hardware details (e.g. bus controller
-> +and chip selects) away from the OS and can protect locality 4 from access
-> +by an OS.  The TCG-defined CRB interface is used by clients to interact
-> +with the TPM service.
-> +
-> +The Arm TPM Service Command Response Buffer Interface Over FF-A [3]_
-> +specification defines FF-A messages that can be used by a client to signal
-> +when updates have been made to the CRB.
-> +
-> +How the Linux CRB driver interacts with FF-A is summarized below:
-> +
-> +- The tpm_crb_ffa driver registers with the FF-A subsystem in the kernel
-> +  with an architected TPM service UUID defined in the CRB over FF-A spec.
-> +
-> +- If a TPM service is discovered by FF-A, the probe() function in the
-> +  tpm_crb_ffa driver runs, and the driver initializes.
-> +
-> +- The probing and initialization of the Linux CRB driver is triggered
-> +  by the discovery of a TPM advertised via ACPI.  The CRB driver can
-> +  detect the type of TPM through the ACPI 'start' method.  The start
-> +  method for Arm FF-A was defined in TCG ACPI v1.4 [4]_.
-> +
-> +- When the CRB driver performs its normal functions such as signaling 'start'
-> +  and locality request/relinquish it invokes the tpm_crb_ffa_start() funnction
-> +  in the tpm_crb_ffa driver which handles the FF-A messaging to the TPM.
-> +
-> +References
-> +==========
-> +
-> +.. [1] **TCG PC Client Platform TPM Profile (PTP) Specification**
-> +   https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/
-> +.. [2] **Arm Firmware Framework for Arm A-profile (FF-A)**
-> +   https://developer.arm.com/documentation/den0077/latest/
-> +.. [3] **Arm TPM Service Command Response Buffer Interface Over FF-A**
-> +   https://developer.arm.com/documentation/den0138/latest/
-> +.. [4] **TCG ACPI Specification**
-> +   https://trustedcomputinggroup.org/resource/tcg-acpi-specification/
-> -- 
-> 2.34.1
-> 
+> This is a mischeck, actually we need set a valid pfn into pte, not an
+> invalid pfn.
 
-LGTM
+As just discussed this is wrong.  vmap_pfn is for mapping non-page
+PFNs and the check is what enforces that.  What is the point of having
+that detailed discussion if you just send the broken patch anyway with
+a commit log not even acknowledging the facts?
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-BR, Jarkko
 
