@@ -1,345 +1,218 @@
-Return-Path: <linux-kernel+bounces-558269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249EFA5E3A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:29:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC08A5E3A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:29:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBB93AFED6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:28:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0810A3AE018
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AF8257ACF;
-	Wed, 12 Mar 2025 18:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABF478F29;
+	Wed, 12 Mar 2025 18:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ucb7ME/c"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="EfzNzMWP"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2074.outbound.protection.outlook.com [40.107.21.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A054A156C62
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741804131; cv=none; b=fyaEwzCkjh/X9VvD2Ej4iIr82T3LLiV5ZpKbptgZkApjgov7dHotKct4POc+2N04kdzEflit4PqqqQEyUa3Yo/a2g0ar4dG5TufEgLiXq2CPR3grNyL/26MdJFNepOaGjL9mBmQ9kJ/JII5Nu+83K4UdM4QI10KJ59D3ZQFFYEc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741804131; c=relaxed/simple;
-	bh=Ngpr1p1nbTglbSpAFKZZ5TvhJkrFCBN3/OXaMil2WNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ovowC+0JMa7rSCqGWBX9cQ/zxjGR7Te+ozfJlv3cTp2Lhj8ZWrMDgD9U9rS7IWLaa0xhOuMqaqQ0MEGq2QRbsyikPr1descvBWONBMd3kYMt7A1+Yp4XS4Q9inpmBe2MEHRfw1bIu7BU0CsR+XM8dt7JCRyiQuYPfJCDg9u3jY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ucb7ME/c; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-601c46a92d1so50670eaf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:28:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741804128; x=1742408928; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CHwHQMJua3klBUMulVATkOY1QanUZb02DTdOUUD5AYw=;
-        b=Ucb7ME/coS8UnKdOMVLY1EAnoxCVr9xV9XtwJeuv9tNqs08zLXrDzdRhx5UNOhkw9X
-         0FFAV04sccP3PQPQtMCOD7kP8i3fW2et34awZoXXGhgB62dE/6KCO/HjepKZtOlEEKVI
-         TnYo0YZIFVCMzZTQWSu1Se4WrJoTHXwkr3cy4DMV4XLVSism0prm+Qlog9pxhCk+H1To
-         5aXihZvSEr6cYe+wr+5dTpa10DU/8XzDJe6PdgA4+dowqb5iJZL4FjonAGqap/cewhny
-         /emKVSK3+7p1DNtbOAlvnHIqTxiXCC39f5ZBVcLPUMB94gfPft4nn6d5D2dJlj+WnatJ
-         suDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741804128; x=1742408928;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CHwHQMJua3klBUMulVATkOY1QanUZb02DTdOUUD5AYw=;
-        b=e6VnywZaMpqCH3X7ngH8F+wP05Jss4DRnk4Twh/QnwKvputx+9XK1eaud/hFOQffpe
-         nFUSL5QqLOtuc25gXhxXyuDGLY/hCIOP0HPqxVJgFnOpUIYgXPHnJXgAyfuoeEX8109J
-         v/87MBayLVoDoh3BJERXgVBn9QlUqDPJJc4cT5yb4fM1+yYmCyZWFgzkCfPlPERS/tb8
-         p+bruq3Ruc7NbjphbT+lV9QkOprIPfnJiLYpbxndV3mMxhm3kdpJI1SsU2ANfKNUIG/a
-         8KmgwMXYfq3J1OoQkrnF+F2hSvJ3gTgnkTE+HGWL+EoitsPVZuSBfFtCxn40I0u39gvF
-         Iuag==
-X-Forwarded-Encrypted: i=1; AJvYcCW/mtlLyo6wyWkZQUmgwpf9NrXqkEO1oJL+qf1DTIZc3S1ulX7tFjYGP7HeJYzHcmSUs/HO3SM5H90rNXs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6xOjtah0W0S+S2+r5RsavwrEqJnGDO7ztVdmyRFlgccfUGSDi
-	Nt3Lu5Ses10xkncseROPogteYoEriYotUeFYwZy5wYtheH1K0bPShGTMmcuHxwpMeov3X1MC4/f
-	tqo32PiHIiHwajceUTtqc2fqSWDg=
-X-Gm-Gg: ASbGncvhPrslF/HkKfbFQZpCTsb9XvuM/HULegmuCZtBbpFGB0/mxJ20WH21WooASvO
-	Ajzd7jte//QRQPoxpguC2pkqCCVNlf1/rsEqCkvvrP+1Sr2R2UZuYoLP/O7lSF1ZAON1FhNhv1k
-	RwJV2QccFHxfdTCwIaN5JEdMVbOcSJWyN04tlHK7cjFvo=
-X-Google-Smtp-Source: AGHT+IFut0Zk09cK6vm0MnorvtHXYibBHad055rpS9o3iUhWRsYEptWFMswj4MDeB58uTmXwuVz4UcQoWo32oy2j6kw=
-X-Received: by 2002:a05:6820:8c6:b0:5fc:b7f4:c013 with SMTP id
- 006d021491bc7-6004ab16543mr9411552eaf.5.1741804128391; Wed, 12 Mar 2025
- 11:28:48 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DCC250BFC;
+	Wed, 12 Mar 2025 18:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741804162; cv=fail; b=nictC74wsBagoZoQSiZ1RzOdCDnqqZuIOCeHsoqxqdMSLERebvSxphrNuSi1/+lakwpik1ogxUXnPK2g0hlC0nkN2OwpZdkkmfFSM6os9eKIQ3kxHqvID6vDGjgO85PPvKZH07zlLhLoCPGJ3h0YaR2zikkhYI9S3QhECE1/dTo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741804162; c=relaxed/simple;
+	bh=udQvGGUq0FkIxFlZ6Czvr4zDUoN4eNsw9J5uwIIg9ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=l4KYAci1G1mnHdYkVx8AqGQY6AKQjLf9SHtvfYwZljgan32FnjX6AQqIB8QwncRv3j2Y/9sw6KxtFyQDllSYScFXq4uHQLT7CrSKmGneOw0MHJdUejI6x4KPkNi2J184XI8DAQAzbaeoUS4jea52P1NTLv3TEw73O3CQwecuH+o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=EfzNzMWP; arc=fail smtp.client-ip=40.107.21.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R7Ucl6gc9Hbg+I3V/viGyb5O70VwqiTJxOQmQLiWm7KrqgSG5P0exYtyeYvTeiJujp4hgqdU0WoglzVNftdMfhgGuhKrQidHHF0JAu51Dsw09TSXGg0QJgBVdc20V+w8kV+NNNJhr6jqbcZoopc8Uol16ZXkpieEoIkE/5UPHQ5/crCS5d3VOGmyuDRblx4U/1UO23URKf9FjonSPK/u2Isex0c3LZ3VnV3WPrfe2sBK1igsTp4Z7huHniinPAEeRWwJTkAAywHCh1lLsqECVYVCbnwg4GCrZFamS2uSYlfauFMM/QlUm+yb0M/QArjCLaEpz3V1YFyBX9uKjjkOrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Pc2fgNSvb2r79KaEsywvUJ/qIRsgl5bPLNkFFMLjbVA=;
+ b=uzNer1Pb+n13IwJfxqF+eQ40HoHEsKpJlVCuMaVKVSrh8NJqsp6uLZ60lmP55Ydv4WHGTml35FpvoTlSzKA2aR4zSG2AGZGz3My/qO7TPOtaqCSVpqQ7SCVLrN/1dZKinMUUGw4L3FtlXrwBdZKjdWM1lWVp4SITOWXAQgYXKQxQBChJTjZ5bbOby/l1yf1mcJeV30IaebOYS62K9D6b/BCTx8d+ywUjKqL0S/CCKKp/JHUXd2+bQP6GZaBc/I0F+W+e8eNCyTbs0OFHldZLkMd/gfcNjeOMn5ql91G722SxuiYaT0noyfWVeGbnG2IlHTgekpE9NszG3m82BRS1VA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Pc2fgNSvb2r79KaEsywvUJ/qIRsgl5bPLNkFFMLjbVA=;
+ b=EfzNzMWPKDAqPitUzilO6BLpk6NvwlaYLsOSQZAsvRnEQqs7rWf4IeAnyft8ZpP6vrD7zqcLP1j2SlewDW9SBG19/XxDUSgnjVhbu2wpYYy34APkf2CcFDW94bNVi6dCaoUz12Spfrm8ZAPvO7+K93wMrBNCtqBbU3Dw+on6UEGxip/11ck4g7EeSZkVMlUXzKuUojFks67gWss32rg+DW1MET9HMSY1WYpJ5fWO1MMX0/iE84PHKWdn3MdL2KQkfR4WishFbWHy71C+ibutAc+HlFJlOKsPnMZpSoVkB5L+2N5RjYdhXzvfVwWHdQLor0Z9DDdCj7momPQsK531pQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DB9PR04MB9579.eurprd04.prod.outlook.com (2603:10a6:10:306::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.25; Wed, 12 Mar
+ 2025 18:29:16 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
+ 18:29:16 +0000
+Date: Wed, 12 Mar 2025 14:29:10 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
+Cc: miquel.raynal@bootlin.com, conor.culhane@silvaco.com,
+	alexandre.belloni@bootlin.com, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	rvmanjumce@gmail.com
+Subject: Re: [PATCH v4] svc-i3c-master: Fix read from unreadable memory at
+ svc_i3c_master_ibi_work()
+Message-ID: <Z9HSdtD1CkdCpGu9@lizhi-Precision-Tower-5810>
+References: <20250312135356.2318667-1-manjunatha.venkatesh@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312135356.2318667-1-manjunatha.venkatesh@nxp.com>
+X-ClientProxiedBy: SA0PR11CA0120.namprd11.prod.outlook.com
+ (2603:10b6:806:d1::35) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250302191558.47180-1-suchitkarunakaran@gmail.com> <e495bf9c-9fba-44ce-99fe-04879f8dd0c2@oracle.com>
-In-Reply-To: <e495bf9c-9fba-44ce-99fe-04879f8dd0c2@oracle.com>
-From: Suchit K <suchitkarunakaran@gmail.com>
-Date: Wed, 12 Mar 2025 23:58:37 +0530
-X-Gm-Features: AQ5f1JoaH6gJd1xzn1mzi_Gxo7sc9H-m4gHwbkfSxFM4MV4CBQqsV2opbOYzVU8
-Message-ID: <CAO9wTFgMCsS9L1PwpkDr48t9R4hO2UvFRwbPu2mMQMP0aqD+cQ@mail.gmail.com>
-Subject: Re: [PATCH] jfs: jfs_xtree: replace XT_GETPAGE macro with
- xt_getpage() function
-To: Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB9579:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91317b7d-b11a-467f-2eb0-08dd6193cbac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?89GTPipFRBBG1Hp2vh9Ys0k7dNmLEPZwl0CGMailTLLFUgSJ+Xindn4nZTn9?=
+ =?us-ascii?Q?7RM7znsQyfYmGbrYjR83/lbksZu9Gwa6YzfbEqXQhu5g38YzZDA5A2+VHNop?=
+ =?us-ascii?Q?Lr743rSYIyi2+J9qABHQwkf7M1ZmajXnfnmWC4vZDc0xRZCGGEbPUGwOm4vk?=
+ =?us-ascii?Q?RNB1Q2nOWVzist1Op57bH/z/TLelfwFyMGlDBNR/oFY26SFCbiFDTNd3RXCx?=
+ =?us-ascii?Q?NK1+kU23yrXeg02rXW29m+ySAs03nr4ip+cu/M0DDYORJBduIf3NQSrb0JGL?=
+ =?us-ascii?Q?z8jCBy7Sf5pnnVMs0eT/CEh3g1dbqiMvIy9kJSnJ17b7v4jGooz3wXdDsrL1?=
+ =?us-ascii?Q?t3Wbmb5hwQEpLYvACXU5QHMbZDh/DbSsuhd7kIgKhvRfs0VQsUMjxC4Cn4fY?=
+ =?us-ascii?Q?0z+SNEIy1KGBkazwTTjbRxb1t7EWpfoNcfS3hfO4uYv6aTJnSrsdq0LCTV5g?=
+ =?us-ascii?Q?kd7vkIJSdr76osnRJdrrrFYHyEv4E1lqSfC8dgeNlCuVNmZOahxntXzIU9Eg?=
+ =?us-ascii?Q?adBLlfIW2WwaVnD3MdrlTOy/p5TMWarv5ol9xc9Q/wwW9eqy+M4OfVZIRXY7?=
+ =?us-ascii?Q?23GTfQxaoJxBWd7MemWnx2Ut/Ox3y7O7gb+pOgXQNSNkRKGV8x+ZubediSmu?=
+ =?us-ascii?Q?EvzVW+to6gA51BSLn4ryJynqhHFF2hZ8fPyVDNQGDQIxPm22VuqYR5ytfzPp?=
+ =?us-ascii?Q?ln3T0oiPs7wa4PQPzcirgq2YfSQh5v5SWOj5aLZdTRt5O6Ph9h9vtc54laZb?=
+ =?us-ascii?Q?OgXA9vg/WfB5NK2OIdcVRaTuSrwrf3jXUdAJnK2j4lGnLobXSQMYlg3rm96t?=
+ =?us-ascii?Q?h+XjwbwEbyZKV+G7BAhJ2ZIvK3IRuJ7olXFFH85qLJqFuQ34mPRKoaPL+hMv?=
+ =?us-ascii?Q?Ts9jlqruyH4DBlh9fa+H89KPmYw9Z38e2gA1WrnfbCXguJL+AYdk/JMHNzdv?=
+ =?us-ascii?Q?UVtjiH9jSFB9nluW/j+4AwDfkn+VHvrAIMvNuoLgRgWqAO2SBgXusdM5HR2z?=
+ =?us-ascii?Q?3E5drJtQYoCTwQsI3vuTdDhCN/5dvipq6RPYHwNG9ifNNa2vKynByj1DNqIK?=
+ =?us-ascii?Q?El61kcDyn6OE6xpBDQJ57UVX9qAh0lKGgr+OUJ+VyHvNwXYDm2xm0jHYUrRE?=
+ =?us-ascii?Q?hC78Oz8A0So+/1GsFrf3iYwRI+GgpTusNUqcPz2RgMAQaWW5gldQQJprlWZA?=
+ =?us-ascii?Q?fsuTUESFYa0YU+CrQW42/eh6K+OuZ8V268lajy1p1NcHKsALg5QCOP0ptfvo?=
+ =?us-ascii?Q?rvRRMNCA/bZ4CKi89MDLez36x6Wlcbt+AyfJL+QH3OugKWZzfdRzNnSASaJK?=
+ =?us-ascii?Q?e9XnxlSlCMuG6CR5uN1MMVeKxFd6Hd6f7qMftzgp2ouU0KIBrVMFh9WY1GVs?=
+ =?us-ascii?Q?xwOJuuMOMZ6BUFsCWRwxEFJW1bocmqQSg12Mm4M6OYm+1K/RpPEeORh3m/Si?=
+ =?us-ascii?Q?nJlk77WEMti+DPLvtNXW16enSEQ9OQOj?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WqMDQkVzf1M6Uopw9RXof8PpioCoavyH3isQz5C948KLopPkDtidIuOVTlE7?=
+ =?us-ascii?Q?sHxcxx6FyLBavwZPF6/byH38LTHS95dzRDSkJPhZU6/bv5ytxm2VKf0kVrI+?=
+ =?us-ascii?Q?HO+BFTbqjYUpmoIUuVNNF4JwlzmpOnLhnBCrrES3RnyLDz3WgEjDWszXXKVT?=
+ =?us-ascii?Q?bHoBKI1ZDM3gDsZkzpOUvDGYazUKqitFM9YQUu5joCXnifyhFTE4AxgB25aZ?=
+ =?us-ascii?Q?FlI4A8FGD3Q7w5126sYpZw6xo4tOZq+n2QL22ouNCa3bhLFUdA1G5bvVRpmQ?=
+ =?us-ascii?Q?MjyV/jjeBo8iajx+y5yWVzlaY5kCR1a8YsAMvResi7rZdmcLI/OLdNi1JT54?=
+ =?us-ascii?Q?JatRXoPY9tAvpCrbYoI2JibK9MjP4u1GwE5suKccTgmpf8tyW1dIHtPXdcNg?=
+ =?us-ascii?Q?bat18mnhDTzM6TojcECFU3PXDIfLrnqiHB6aNQXLrpv3mzKaIPFeV3YlRW/x?=
+ =?us-ascii?Q?oqdQNcoP+lFKOsabDeHRPixX8jy7n+7KAsaAZKdKlRY2X4oJaeqxnYUvcb1l?=
+ =?us-ascii?Q?H6tz8VsoWVRClSfL8Vz8mwYPr9LStDH9obp6RRqk3xlwbTgbZfh5GAKz9NZu?=
+ =?us-ascii?Q?18ig4QxByRYTtUELD+r8xWXqEVX/ik+OWnCnXywlLiNTdbq7c5qeSTO83SxK?=
+ =?us-ascii?Q?19CypIAb6zDwA3QzQgPXt13E9w7zIuLEbFS6PFYsF9Z4cwJ/5eQwxV1cQ6Q/?=
+ =?us-ascii?Q?zCOlO+4YrpPRMq1J4gVa8vS2mA0rp3KqOz00C5uBj6o7iulem5Xefq/PEuyQ?=
+ =?us-ascii?Q?jqbcYqQ/HVL4hGg+ZbCRm1JVLSlp6neacyHreQJaCF30HrsUmaiWpLrBfGGx?=
+ =?us-ascii?Q?qsa5bRHc0VEde1obahCr4mK1XrtMR8bEQGMNtRwThK52KnPWDkZaxvvaIq5U?=
+ =?us-ascii?Q?YtpJubleUmYx2CfuOsg1g7Gw1XeNWHwHws1wLcd6zMHN+v762XL9tgBggn0v?=
+ =?us-ascii?Q?Q8XaNMhKGwQiCcn928zkPtavBZnjrI4JQopDKLPBasqf0VxKGhehySebrQN2?=
+ =?us-ascii?Q?d4IxQrbhx+kIwPEM+ZutUR8JDU6ABJThSjiHNOjugG0fTTmpeiboFphXK+q2?=
+ =?us-ascii?Q?Z7ztzjJZVlUbNrdj5ADQDdPDCWiU/IgkCiMRhtkD3bF2/kKQfNJVdPa+om3I?=
+ =?us-ascii?Q?ehGtutZs5ozk13So413g6E7MoO38ofPwimG962J1G0W0P548qjX5fIHRuZff?=
+ =?us-ascii?Q?j5kLigFUuyPLl4MZ9FJ35oaBkmULvm3N/b/Lk+e5wEL4aJNQH2b2obYlAp18?=
+ =?us-ascii?Q?p5rcMgsFp+aNECwltkDayDk82rv4Ofj3JoVYwxxeaGAhsmlJF6p8MytM9Xla?=
+ =?us-ascii?Q?fD9TZssVhY+8uptf1YShEboJgXWP9s/y9mdkWG+pd1dX8O63o6KwBztDSq2X?=
+ =?us-ascii?Q?h43tNSJuY6EUHUJeMb0nzYyPsb5ujWd+n0ivvmmiHii++Pm9YJEgJtDoK1mp?=
+ =?us-ascii?Q?01y05Sl15327wgW112IvBZIPc3MLFqaEsnzjElWJdRp2iMJFDoVqLXK4OH3W?=
+ =?us-ascii?Q?tT51kKJp6nTBk1PEnlo5gaSiwwYxVcvmiCUsS97NlsMx2dAGmfqFz3r0dZbw?=
+ =?us-ascii?Q?rqLYbiV+jfIShGeh3L5/CkO5BBNnnCcPcDtv7If2?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91317b7d-b11a-467f-2eb0-08dd6193cbac
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 18:29:16.3954
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zyUWoutviFUPdTSTSqvugCJAZc3Toa5AI4BPmbyG9gyilrS7drqFShntFtvrBtXgvSZMHjqR34fqsrFqFYZQiw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9579
 
-Hi Dave,
-Thanks for the comments. I=E2=80=99m still a beginner so I wanted to share =
-my
-thoughts and check with you. Almost all references to the xt_getpage
-function directly return the rc value obtained from it. I feel that
-changing its return type to (xtpage_t *) might not be ideal, as it
-would require modifying the code in multiple places. That said, if you
-think changing the return value is the better approach, I=E2=80=99ll try to
-change it. Also, I=E2=80=99ll update struct inode** ip to struct inode* ip.
-Thanks once again.
+On Wed, Mar 12, 2025 at 07:23:56PM +0530, Manjunatha Venkatesh wrote:
+> As part of I3C driver probing sequence for particular device instance,
+> While adding to queue it is trying to access ibi variable of dev which is
+> not yet initialized causing "Unable to handle kernel read from unreadable
+> memory" resulting in kernel panic.
+>
+> Below is the sequence where this issue happened.
+> 1. During boot up sequence IBI is received at host  from the slave device
+>    before requesting for IBI, Usually will request IBI by calling
+>    i3c_device_request_ibi() during probe of slave driver.
+> 2. Since master code trying to access IBI Variable for the particular
+>    device instance before actually it initialized by slave driver,
+>    due to this randomly accessing the address and causing kernel panic.
+> 3. i3c_device_request_ibi() function invoked by the slave driver where
+>    dev->ibi = ibi; assigned as part of function call
+>    i3c_dev_request_ibi_locked().
+> 4. But when IBI request sent by slave device, master code  trying to access
+>    this variable before its initialized due to this race condition
+>    situation kernel panic happened.
+>
+> Fixes: dd3c52846d595 ("i3c: master: svc: Add Silvaco I3C master driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
+> ---
+> Changes since v3:
+>   - Description  updated typo "Fixes:"
+>
+>  drivers/i3c/master/svc-i3c-master.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+> index d6057d8c7dec..98c4d2e5cd8d 100644
+> --- a/drivers/i3c/master/svc-i3c-master.c
+> +++ b/drivers/i3c/master/svc-i3c-master.c
+> @@ -534,8 +534,11 @@ static void svc_i3c_master_ibi_work(struct work_struct *work)
+>  	switch (ibitype) {
+>  	case SVC_I3C_MSTATUS_IBITYPE_IBI:
+>  		if (dev) {
+> -			i3c_master_queue_ibi(dev, master->ibi.tbq_slot);
+> -			master->ibi.tbq_slot = NULL;
+> +			data = i3c_dev_get_master_data(dev);
+> +			if (master->ibi.slots[data->ibi]) {
+> +				i3c_master_queue_ibi(dev, master->ibi.tbq_slot);
+> +				master->ibi.tbq_slot = NULL;
+> +			}
 
-On Tue, 11 Mar 2025 at 22:19, Dave Kleikamp <dave.kleikamp@oracle.com> wrot=
-e:
->
-> On 3/2/25 1:15PM, Suchit Karunakaran wrote:
-> > Replace legacy XT_GETPAGE macro with an inline function and update all
-> > instances of XT_GETPAGE in jfs_xtree.c file to use the new function.
->
-> I like the idea, but as long as we are changing this to a function, I'd
-> like to simplify it to return the xtpage (xtpage_t *). A NULL return
-> would indicate a failure.
->
-> Also, the first argument should just be "struct inode *ip". That should
-> eliminate your second patch.
->   >
-> > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-> > ---
-> >   fs/jfs/jfs_xtree.c | 86 ++++++++++++++++++++++++++++-----------------=
--
-> >   1 file changed, 52 insertions(+), 34 deletions(-)
-> >
-> > diff --git a/fs/jfs/jfs_xtree.c b/fs/jfs/jfs_xtree.c
-> > index 5ee618d17e77..fb736a06ea58 100644
-> > --- a/fs/jfs/jfs_xtree.c
-> > +++ b/fs/jfs/jfs_xtree.c
-> > @@ -49,26 +49,6 @@
-> >
-> >   #define XT_PAGE(IP, MP) BT_PAGE(IP, MP, xtpage_t, i_xtroot)
-> >
-> > -/* get page buffer for specified block address */
-> > -/* ToDo: Replace this ugly macro with a function */
-> > -#define XT_GETPAGE(IP, BN, MP, SIZE, P, RC)                          \
-> > -do {                                                                 \
-> > -     BT_GETPAGE(IP, BN, MP, xtpage_t, SIZE, P, RC, i_xtroot);        \
-> > -     if (!(RC)) {                                                    \
-> > -             if ((le16_to_cpu((P)->header.nextindex) < XTENTRYSTART) |=
-| \
-> > -                 (le16_to_cpu((P)->header.nextindex) >               \
-> > -                  le16_to_cpu((P)->header.maxentry)) ||              \
-> > -                 (le16_to_cpu((P)->header.maxentry) >                \
-> > -                  (((BN) =3D=3D 0) ? XTROOTMAXSLOT : PSIZE >> L2XTSLOT=
-SIZE))) { \
-> > -                     jfs_error((IP)->i_sb,                           \
-> > -                               "XT_GETPAGE: xtree page corrupt\n");  \
-> > -                     BT_PUTPAGE(MP);                                 \
-> > -                     MP =3D NULL;                                     =
- \
-> > -                     RC =3D -EIO;                                     =
- \
-> > -             }                                                       \
-> > -     }                                                               \
-> > -} while (0)
-> > -
-> >   /* for consistency */
-> >   #define XT_PUTPAGE(MP) BT_PUTPAGE(MP)
-> >
-> > @@ -114,6 +94,44 @@ static int xtSplitPage(tid_t tid, struct inode *ip,=
- struct xtsplit * split,
-> >   static int xtSplitRoot(tid_t tid, struct inode *ip,
-> >                      struct xtsplit * split, struct metapage ** rmpp);
-> >
-> > +/*
-> > + *   xt_getpage()
-> > + *
-> > + * function: get the page buffer for a specified block address.
-> > + *
-> > + * parameters:
-> > + *   ip      - pointer to the inode
-> > + *   bn      - block number (s64) of the xtree page to be retrieved;
-> > + *   mp      - pointer to a metapage pointer where the page buffer is =
-returned;
-> > + *   size    - size parameter to pass to BT_GETPAGE;
-> > + *   p       - pointer to an xtpage_t pointer mapping the page's data.
-> > + *
-> > + * returns:
-> > + *   0 on success, or -EIO if the page is corrupt or an error occurs.
-> > + */
-> > +
-> > +static inline int xt_getpage(struct inode **ip, s64 bn, struct metapag=
-e **mp,
-> > +                     unsigned int size, xtpage_t **p)
-> > +{
-> > +     int rc;
-> > +
-> > +     BT_GETPAGE(ip, bn, *mp, xtpage_t, size, *p, rc, i_xtroot);
-> > +
-> > +     if (!rc) {
-> > +             if ((le16_to_cpu((*p)->header.nextindex) < XTENTRYSTART) =
-||
-> > +                     (le16_to_cpu((*p)->header.nextindex) >
-> > +                             le16_to_cpu((*p)->header.maxentry)) ||
-> > +                     (le16_to_cpu((*p)->header.maxentry) >
-> > +                             ((bn =3D=3D 0) ? XTROOTMAXSLOT : PSIZE >>=
- L2XTSLOTSIZE))) {
-> > +                     jfs_error(ip->i_sb, "xt_getpage: xtree page corru=
-pt\n");
-> > +                     BT_PUTPAGE(*mp);
-> > +                     *mp =3D NULL;
-> > +                     rc =3D -EIO;
-> > +             }
-> > +     }
-> > +     return rc;
-> > +}
-> > +
-> >   /*
-> >    *  xtLookup()
-> >    *
-> > @@ -252,7 +270,7 @@ static int xtSearch(struct inode *ip, s64 xoff,   s=
-64 *nextp,
-> >        */
-> >       for (bn =3D 0;;) {
-> >               /* get/pin the page to search */
-> > -             XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> > +             rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
-> >               if (rc)
-> >                       return rc;
-> >
-> > @@ -807,7 +825,7 @@ xtSplitUp(tid_t tid,
-> >                * insert router entry in parent for new right child page=
- <rp>
-> >                */
-> >               /* get/pin the parent page <sp> */
-> > -             XT_GETPAGE(ip, parent->bn, smp, PSIZE, sp, rc);
-> > +             rc =3D xt_getpage(ip, parent->bn, &smp, PSIZE, &sp);
-> >               if (rc) {
-> >                       XT_PUTPAGE(rcmp);
-> >                       return rc;
-> > @@ -1062,7 +1080,7 @@ xtSplitPage(tid_t tid, struct inode *ip,
-> >        * update previous pointer of old next/right page of <sp>
-> >        */
-> >       if (nextbn !=3D 0) {
-> > -             XT_GETPAGE(ip, nextbn, mp, PSIZE, p, rc);
-> > +             rc =3D xt_getpage(ip, nextbn, &mp, PSIZE, &p);
-> >               if (rc) {
-> >                       XT_PUTPAGE(rmp);
-> >                       goto clean_up;
-> > @@ -1417,7 +1435,7 @@ int xtExtend(tid_t tid,         /* transaction id=
- */
-> >                       return rc;
-> >
-> >               /* get back old page */
-> > -             XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> > +             rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
-> >               if (rc)
-> >                       return rc;
-> >               /*
-> > @@ -1433,7 +1451,7 @@ int xtExtend(tid_t tid,         /* transaction id=
- */
-> >                       XT_PUTPAGE(mp);
-> >
-> >                       /* get new child page */
-> > -                     XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> > +                     rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
-> >                       if (rc)
-> >                               return rc;
-> >
-> > @@ -1711,7 +1729,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t *=
- nxad)
-> >                       return rc;
-> >
-> >               /* get back old page */
-> > -             XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> > +             rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
-> >               if (rc)
-> >                       return rc;
-> >               /*
-> > @@ -1727,7 +1745,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t *=
- nxad)
-> >                       XT_PUTPAGE(mp);
-> >
-> >                       /* get new child page */
-> > -                     XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> > +                     rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
-> >                       if (rc)
-> >                               return rc;
-> >
-> > @@ -1788,7 +1806,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t *=
- nxad)
-> >               XT_PUTPAGE(mp);
-> >
-> >               /* get new right page */
-> > -             XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> > +             rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
-> >               if (rc)
-> >                       return rc;
-> >
-> > @@ -1864,7 +1882,7 @@ printf("xtUpdate.updateLeft.split p:0x%p\n", p);
-> >                       return rc;
-> >
-> >               /* get back old page */
-> > -             XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> > +             rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
-> >               if (rc)
-> >                       return rc;
-> >
-> > @@ -1881,7 +1899,7 @@ printf("xtUpdate.updateLeft.split p:0x%p\n", p);
-> >                       XT_PUTPAGE(mp);
-> >
-> >                       /* get new child page */
-> > -                     XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> > +                     rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
-> >                       if (rc)
-> >                               return rc;
-> >
-> > @@ -2268,7 +2286,7 @@ s64 xtTruncate(tid_t tid, struct inode *ip, s64 n=
-ewsize, int flag)
-> >        * first access of each page:
-> >        */
-> >         getPage:
-> > -     XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> > +     rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
-> >       if (rc)
-> >               return rc;
-> >
-> > @@ -2506,7 +2524,7 @@ s64 xtTruncate(tid_t tid, struct inode *ip, s64 n=
-ewsize, int flag)
-> >
-> >       /* get back the parent page */
-> >       bn =3D parent->bn;
-> > -     XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> > +     rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
-> >       if (rc)
-> >               return rc;
-> >
-> > @@ -2791,7 +2809,7 @@ s64 xtTruncate_pmap(tid_t tid, struct inode *ip, =
-s64 committed_size)
-> >                * first access of each page:
-> >                */
-> >         getPage:
-> > -             XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> > +             rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
-> >               if (rc)
-> >                       return rc;
-> >
-> > @@ -2836,7 +2854,7 @@ s64 xtTruncate_pmap(tid_t tid, struct inode *ip, =
-s64 committed_size)
-> >
-> >       /* get back the parent page */
-> >       bn =3D parent->bn;
-> > -     XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
-> > +     rc =3D xt_getpage(ip, bn, &mp, PSIZE, &p);
-> >       if (rc)
-> >               return rc;
-> >
+You still not reply previous discussion:
+
+https://lore.kernel.org/linux-i3c/Z8sOKZSjHeeP2mY5@lizhi-Precision-Tower-5810/T/#mfd02d6ddca0a4b57bc823dcbfa7571c564800417
+
+This is not issue only at svc driver, which should be common problem for
+other master controller drivers
+
+Frank
+
+>  		}
+>  		svc_i3c_master_emit_stop(master);
+>  		break;
+> --
+> 2.46.1
 >
 
