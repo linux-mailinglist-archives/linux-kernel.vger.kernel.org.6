@@ -1,137 +1,183 @@
-Return-Path: <linux-kernel+bounces-557470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E568A5D997
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:35:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 165F0A5DA1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:05:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC157189F81E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:35:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479E8179156
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD4223BCE0;
-	Wed, 12 Mar 2025 09:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331C223C8C9;
+	Wed, 12 Mar 2025 10:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SSc9SUM/"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="rjoyd4mQ"
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC8A23AE82;
-	Wed, 12 Mar 2025 09:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841B71DF735;
+	Wed, 12 Mar 2025 10:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741772116; cv=none; b=iuvboZsK87lgvKfn4dhEmHlY1b3IZ3B5evMcQ6pZdmgF7RioEcW79/eD4/+xJ16ug5kIIjRaTmhkT9m4edRTo0mz8UyCTOToc6w48gJAwoJqkvHzVI0FMIRQ902eiOqI+vpkA9dpCbp0yLtjiBeJ9MoFPHyuX735s1bSX3sya38=
+	t=1741773909; cv=none; b=nvHVDXKYixPuJ+AQTzDIdkRWTBr7T6VW7yBPbpSQWnm4S3saq8uUQGWl3WbPZZb8dXhPOBgGAb9bSSDV93mrlE2E28ayV6qGAYthJawGihE9FxyXl3jt8Pm7UCM3zya6MVKw9ljp8m62kbA58zy5Ya/aeYeamEb4UBRTj51At6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741772116; c=relaxed/simple;
-	bh=PmzjR4Cpz/cGaEj6B7a8P4PKsIGJbrlzZH11KwxHt3Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c25k6iotn1jhwcV+j14oLaSWFTPFK4aHRU9sFz/g9jS7oeBlZ9FnyDpEURGNUSlKrlBwWQ8MxZ66RqhSkyIHuN/JWBIckSF/37ZMpHiH3pxTjh+BdanyvxyUGts3/ehagYgIPfH7zVdEPDyeAYlPMvrxSbj6ZCSamGJqtWiXQ8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SSc9SUM/; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fee05829edso12677318a91.3;
-        Wed, 12 Mar 2025 02:35:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741772114; x=1742376914; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ttwRvArVp1ym17d1zB0rA2V5k7MFc9PYa4gsOt24iR8=;
-        b=SSc9SUM/q8X/v3ndeTm47BNQ8b/CbxvXYKW67xyh6mieAf1mCgHY/Lu3nGSmZkfJP3
-         ikd44dUv40tH1/mAI5ioIDp6nO1LGyPquzkbv9oaeD+BoCC/b/f7UuHYYq/vcOYHI21e
-         ygH8ZiuOvIY5IwXI5lIGlYz38pbH4j8K5nxMC/+cq5Imyy3NRaHXvaYzwUFOKpCqxjV0
-         uoapGc2oNta5WvugFsY3L+l6o38+HspoEwegdO4rf4tavxPxiFFj5HGXcZv7jND1sj02
-         +7w8B5XVSL6TRslmjBOUrV/teFQtJ0ws4h1hJLjwEcka/JYZQhWWUi7R3oK73OwcK4TX
-         jpcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741772114; x=1742376914;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ttwRvArVp1ym17d1zB0rA2V5k7MFc9PYa4gsOt24iR8=;
-        b=bA1GIbLRUBP8ASFBP3Nnnv5r9/JOJfO/Ju3nhGbBYtyG0tICB1nTdevDF+qrFfVMdu
-         fp70+wozoivlqa4moCowanYddpfTwSGifoCOj3J3rzOQUPaEzJfjjvmGGoOEwuC+Avng
-         8uk9UcRnEUrFj0c6M6ZmzENum8mWK5RFZRNMaCEBtBjR9c0Rz3+4fjvbTX4Vv8KROWVp
-         9I5iodiJqvsyqOwTGVrfhhIzdm7xGJf7t+Kb0hQdA5sKGMMNsrrKaF8MjQHhVuAcaqEF
-         ISRRzaLVHxT9UvRKbSxlIck1zJp17ot5j08jlynGwwvmi0EygixnWeNzT18XPTzTFckw
-         ggUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV95rATDed3uGbB/vy106VDNqfiDGMQS07cmZP7QNuIhEkVMQaJeLtouIME2JOuSpEvk3AndYg5@vger.kernel.org, AJvYcCVgbMPwMfVevOp/5N1fzcMtpzA1nUyx6VlTKlihRzjjeiLx9dtzH3EXoU4EwZEMLXkwPvfwMJuLZd8wp20=@vger.kernel.org, AJvYcCX3yUQL4N5KCWru7AquVPkH7615KaDQi5qHbMDMMtIMWgLG6yW+8HJ0L/dqLng0zeIjdTDwJmepbCLU+E0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTt93OU7V3ThC3GZ1NoCt0Fz523SLA202TfDnYAeRLFeq7gGeY
-	3n625qGb1aHVdI/zie/UlfrYEKRHaitGYnffxWGU1aeUsWvtZ4zcTR/tUcTosGK/issyrE27nnS
-	sfeYtA/DWGTRjyJOOf01zmiG3uAo=
-X-Gm-Gg: ASbGnctV5rMCI8KETa10Gn4mFEB75OrlOUYRXluPPRKp4xHlYfClrgnU9VcLkJPR6xP
-	qbC8rar5dTiNKR1xQi30hH/KUzE62PDRQO1pTLXCIYCP+SwpZFPzIbaB+xUsePTowpY7VXPWUcL
-	r2HWty/fnGy1Af6Qc8rtq2Pa5AeKQ=
-X-Google-Smtp-Source: AGHT+IEYSRe0gRR5yo1g7wU440dBsuRnZCe/vswTvp6uZ5rlXqRYBZ9uB2Uyw4ni/IgE8JGFvBGWEL/ibOE2TyQi0Es=
-X-Received: by 2002:a17:90a:bb8d:b0:2fe:b016:a6ac with SMTP id
- 98e67ed59e1d1-2ff7cf5f7aemr32864523a91.15.1741772114286; Wed, 12 Mar 2025
- 02:35:14 -0700 (PDT)
+	s=arc-20240116; t=1741773909; c=relaxed/simple;
+	bh=W17geC8O76oOSoaemmRBa62PV0mRbp043YTD+HRUYnM=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tUPCeZVQ7PZWakM57S/dHBoRnk0twlS6vKhcqNRuzMkXkw/lyoHt7kOZmWurwFjPZJgypXfwzbmWF4dqv+dtwdpVwo+p8J9J9p6y9cd3hMi7YUVHKPWMRGcOPStYQEoKcBzgGndbamUuJlPoEobzB/U5ZuyVYMmz3NpmYKzhaX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=rjoyd4mQ; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:To:From:Cc:
+	Content-ID:Content-Description;
+	bh=soJ+7cSs0XAkqlkvlTIv9267QzTdaow+9b6Ns8vHX1g=; b=rjoyd4mQbsvG1wumRuzw7+XhRI
+	uri5qMZzLMJsTOPq26FLWFyjGPhQgsfBoNunxpOcY+JAasvyZxDP0wEj630LPQoLINI43/yoAjaxr
+	zf6VVeFm3QZ+AuV8NEWePIcCw/87TcoRn+tpG4onShV8vxiueN34cKT41DyvkvYRBQRRTnBHsLJ+i
+	sje0/GuYuSCAfIz6Qu+g/hrEzLVJXIGVKyO0Kwd/hhN21YtdNM/MRuyDgIr49H8v3A23VNpeoOrFE
+	LRk2xvHtVwyRDjm0Jg+tjol5ILNHv3gMoWTt4+R+svWaGQ+Lp30HRda2imMOOnsuJ7wJXgZH+8OsR
+	dbIYbe/N+4xEV7e5JHvcWCQwvMFP+Sdwgb19nUTdoL8AbdNSlf3phFGnHmN6Z/1X10JGmcKtT87JX
+	/WMsZoBUSxp3IuaT1KpF/EBg/M7b0Qz58h7efOnLbk39Ck18wNi4Rdfah0/mnSceNCrsI5Fm9ese6
+	yiWMgld7nvUxJtUo1Hdklk9XeIXDknlELkn9L8/NTBYSfI4vzGFKYrWZlHCbMIT2gxoubxCD6gTDg
+	0XrZOHn9y2hImNRLYEcvhIspd+HEp6X9to8yv6jxzu3Y5Wq1j0BBwCLVQaB9x1Ka7npdsPLNrb/wh
+	+wtcwhfm1W7GUtShwqibRywu0Xy2V55lzOt+2qT6s=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org,
+ lucho@ionkov.net, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev,
+ syzbot <syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [v9fs?] general protection fault in p9_client_walk
+Date: Wed, 12 Mar 2025 10:36:15 +0100
+Message-ID: <34836920.9mNPFRc1x4@silver>
+In-Reply-To: <67d12512.050a0220.14e108.0024.GAE@google.com>
+References: <67d12512.050a0220.14e108.0024.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311144241.070217339@linuxfoundation.org> <2b269f01-e508-4940-81ea-31c5cd961bb1@drhqmail201.nvidia.com>
-In-Reply-To: <2b269f01-e508-4940-81ea-31c5cd961bb1@drhqmail201.nvidia.com>
-From: Luna Jernberg <droidbittin@gmail.com>
-Date: Wed, 12 Mar 2025 09:35:00 +0000
-X-Gm-Features: AQ5f1Jq0KNR5demOD7iOfh9YAuVYOUcWURsYUGw0TJtcXQdVfw8evk7uh_JbE1w
-Message-ID: <CADo9pHgbPPFZW=TMBw9mF15f9hsro4E3bw8FnQUsABZEqROBCg@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/197] 6.13.7-rc2 review
-To: Jon Hunter <jonathanh@nvidia.com>, Luna Jernberg <droidbittin@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Works fine on my Dell Latitude 7390 laptop with model name    :
-Intel(R) Core(TM) i5-8350U CPU @ 1.70GHz
-and Arch Linux with testing repos enabled
+On Wednesday, March 12, 2025 7:09:22 AM CET syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    0fed89a961ea Merge tag 'hyperv-fixes-signed-20250311' of g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=173fa654580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f71f17a9b92472b2
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5b667f9a1fee4ba3775a
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177b6874580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=138b17a8580000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-0fed89a9.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/178c4c7fb0b4/vmlinux-0fed89a9.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/97ef169a8fde/bzImage-0fed89a9.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5b667f9a1fee4ba3775a@syzkaller.appspotmail.com
+> 
+> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> CPU: 3 UID: 0 PID: 5936 Comm: syz-executor316 Not tainted 6.14.0-rc6-syzkaller-00016-g0fed89a961ea #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:p9_client_walk+0x9a/0x530 net/9p/client.c:1165
+> Code: 28 00 00 00 48 89 84 24 88 00 00 00 31 c0 e8 3d 44 b0 f6 48 89 d8 31 f6 48 c1 e8 03 66 89 74 24 40 48 c7 44 24 50 00 00 00 00 <42> 80 3c 30 00 0f 85 3e 04 00 00 31 ff 89 ee 4c 8b 33 e8 0f 3f b0
+> RSP: 0018:ffffc9000380faa0 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000001
+> RDX: ffff88802a9bc880 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000001 R08: 0000000000000007 R09: fffffffffffff000
+> R10: 0000000000000000 R11: 0000000000000002 R12: 0000000000000000
+> R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff92000701f56
+> FS:  000055558c345380(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f412d1932a9 CR3: 000000002107c000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  clone_fid fs/9p/fid.h:23 [inline]
+>  v9fs_fid_xattr_set+0x119/0x2d0 fs/9p/xattr.c:121
+>  v9fs_set_acl+0xe6/0x150 fs/9p/acl.c:276
+>  v9fs_set_create_acl+0x4b/0x70 fs/9p/acl.c:306
+>  v9fs_vfs_mkdir_dotl+0x517/0x6e0 fs/9p/vfs_inode_dotl.c:411
+>  vfs_mkdir+0x57d/0x860 fs/namei.c:4313
+>  do_mkdirat+0x301/0x3a0 fs/namei.c:4336
+>  __do_sys_mkdir fs/namei.c:4356 [inline]
+>  __se_sys_mkdir fs/namei.c:4354 [inline]
+>  __x64_sys_mkdir+0xef/0x140 fs/namei.c:4354
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Tested-by: Luna Jernberg <droidbittin@gmail.com>
+Just had a glimpse on it so far. IIUIC the trigger is in
+v9fs_vfs_mkdir_dotl() [fs/9p/vfs_inode_dotl.c:411] ?
 
-Den tis 11 mars 2025 kl 20:42 skrev Jon Hunter <jonathanh@nvidia.com>:
->
-> On Tue, 11 Mar 2025 15:48:06 +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 6.13.7 release.
-> > There are 197 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu, 13 Mar 2025 14:41:52 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >       https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.7-rc2.gz
-> > or in the git tree and branch at:
-> >       git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
->
-> All tests passing for Tegra ...
->
-> Test results for stable-v6.13:
->     10 builds:  10 pass, 0 fail
->     28 boots:   28 pass, 0 fail
->     116 tests:  116 pass, 0 fail
->
-> Linux version:  6.13.7-rc2-gfca1356f3f51
-> Boards tested:  tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
->                 tegra194-p3509-0000+p3668-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
->
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
->
-> Jon
->
+    // NULLs out fid (since dafbe6897)
+    v9fs_fid_add(dentry, &fid);
+    // expects fid being non-NULL
+    v9fs_set_create_acl(inode, fid, dacl, pacl);
+
+/Christian
+
+> RIP: 0033:0x7fd26f335429
+> Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fff6d918e28 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
+> RAX: ffffffffffffffda RBX: 00004000000000c0 RCX: 00007fd26f335429
+> RDX: 00007fd26f335429 RSI: 0000000000000040 RDI: 00004000000000c0
+> RBP: 0000000000000073 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> R13: 00007fff6d919008 R14: 0000000000000001 R15: 0000000000000001
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:p9_client_walk+0x9a/0x530 net/9p/client.c:1165
+> Code: 28 00 00 00 48 89 84 24 88 00 00 00 31 c0 e8 3d 44 b0 f6 48 89 d8 31 f6 48 c1 e8 03 66 89 74 24 40 48 c7 44 24 50 00 00 00 00 <42> 80 3c 30 00 0f 85 3e 04 00 00 31 ff 89 ee 4c 8b 33 e8 0f 3f b0
+> RSP: 0018:ffffc9000380faa0 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000001
+> RDX: ffff88802a9bc880 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000001 R08: 0000000000000007 R09: fffffffffffff000
+> R10: 0000000000000000 R11: 0000000000000002 R12: 0000000000000000
+> R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff92000701f56
+> FS:  000055558c345380(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f412d1932a9 CR3: 000000002107c000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> ----------------
+> Code disassembly (best guess):
+>    0:	28 00                	sub    %al,(%rax)
+>    2:	00 00                	add    %al,(%rax)
+>    4:	48 89 84 24 88 00 00 	mov    %rax,0x88(%rsp)
+>    b:	00
+>    c:	31 c0                	xor    %eax,%eax
+>    e:	e8 3d 44 b0 f6       	call   0xf6b04450
+>   13:	48 89 d8             	mov    %rbx,%rax
+>   16:	31 f6                	xor    %esi,%esi
+>   18:	48 c1 e8 03          	shr    $0x3,%rax
+>   1c:	66 89 74 24 40       	mov    %si,0x40(%rsp)
+>   21:	48 c7 44 24 50 00 00 	movq   $0x0,0x50(%rsp)
+>   28:	00 00
+> * 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
+>   2f:	0f 85 3e 04 00 00    	jne    0x473
+>   35:	31 ff                	xor    %edi,%edi
+>   37:	89 ee                	mov    %ebp,%esi
+>   39:	4c 8b 33             	mov    (%rbx),%r14
+>   3c:	e8                   	.byte 0xe8
+>   3d:	0f 3f                	(bad)
+>   3f:	b0                   	.byte 0xb0
+> 
+> 
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+
+
 
