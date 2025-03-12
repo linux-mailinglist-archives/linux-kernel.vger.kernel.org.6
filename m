@@ -1,87 +1,114 @@
-Return-Path: <linux-kernel+bounces-558466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B1ADA5E64F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:14:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D227FA5E651
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:14:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EA66165625
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ADE61891D0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0043C1EEA3B;
-	Wed, 12 Mar 2025 21:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3351EF080;
+	Wed, 12 Mar 2025 21:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cGWUJjUQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Eiaw079A"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBA83D81
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 21:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1251EE7A7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 21:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741814045; cv=none; b=JYP6CP9QMn5cC7SS+jP2qdfHKPIzDcBFp1uuORDzIjOeLj9RgH9OjOZAYJ72awcz9VGH4EAI19ieawF8zGJUNcuSgjCDR+joke639QNNGCWT2PHhhO3GWR92rcwpfTApGsJEMb+K2/NHR2AggZCE2e/kI5qBgRijBzpUSbHNpXU=
+	t=1741814069; cv=none; b=j0JOSQYClHDkse+q39mYB2aPtvzSnWs728Shu9XatJeUyi+nl8+3aAwH1wFzEawIQdoIt7g0o5a/FWecTYV48Zz4ZRocpLbgOx5CThV2zHmQXQrQo0/SM/FbXGBQSfw5M7AFCdTCxG12pDFSuxeciObtyy8pWhpn+ywfs70Oqbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741814045; c=relaxed/simple;
-	bh=fDJWUvivJfWvxswiKcX+bh4YnAo11JQUFxKNJakCsBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MzhvbMfw9luhnzmF3WXlJFN6w0NiIK1Fv62J0wIS8K6sgMn3QNMbQTmqVyf/9pb2zekhGCF2iSwGKBVWJvreVadLWh/j83Woy9uv6AHLiJ3q3cHLg0EfS/qyJueVYUDCa4FT1xEdiyF8ZIy5h54DkEa9+lQ8iZP0+bQu0YR87lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cGWUJjUQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BABB1C4CEDD;
-	Wed, 12 Mar 2025 21:14:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741814044;
-	bh=fDJWUvivJfWvxswiKcX+bh4YnAo11JQUFxKNJakCsBw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=cGWUJjUQuP/rp6XAfpAjocTdAiZkuLbwdGk2UqCXKZDP8qKU6qxQ+zBzjEF0uQssr
-	 4o3V8uwUAcWATlYZCX2EwdMVMOvcATfxDct9iJXKOIbvr8v3gfDy8Y+HtM/hLdzhi8
-	 jRxLNAP2ydsSn8YypxfQGUzkGgfln6Ybf2D3MOCGI3QykYSVb5zHsSkHSKSkrs39zT
-	 xMjTwqEM6lRsffNzufwF+Uz1DV6JutTAKmQEtg4ZEwgUKA5DAWR3IIHkKGs99ihAnQ
-	 Vr8DYmkuz4TR95xfn3WCx7mp5kVZTJ3avEyA5YTtAcljrI5w77677dQjuwqE8yyH9L
-	 CBley+hMTF6Ag==
-Date: Wed, 12 Mar 2025 11:14:03 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Subject: [GIT PULL] sched_ext: A fix for v6.14-rc6
-Message-ID: <Z9H5G3I7A477CRuP@slm.duckdns.org>
+	s=arc-20240116; t=1741814069; c=relaxed/simple;
+	bh=6UF+YuU0wX+plFZORJsomemL5KK5qUeLNTxNubR9Gy0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=luBPm/3/0cFJof/1yROgqP5TxDyQM9KYcvERmEqez7KzJoaGUdFOGNvslMtx2qFZ7kbQKNfZtZM+1E3nbec6PadpLC81YpCcCZZNAiQBhvLAFG33A19hURTYR8+FV7cgA/u7c9dV6QvHE3jihUT40Dewoxk0zIvIXsajS9MhSMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Eiaw079A; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-85ae4dc67e5so11908839f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:14:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1741814067; x=1742418867; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6UF+YuU0wX+plFZORJsomemL5KK5qUeLNTxNubR9Gy0=;
+        b=Eiaw079AJPMe4tvCbBY0TZKq/04VF4ZInCLWVtDGM36AaE8SXsYGD52vIk48Es9nGf
+         6HHbCOgbpNpgAFUBnkkepjYAe5Nntcf7S0E/xlfHPLs2Jtf07t6EomuD99M9rPznCG+Q
+         sFqsJ55X/aUht0Bl15/rEviceXfA9crv17Pn4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741814067; x=1742418867;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6UF+YuU0wX+plFZORJsomemL5KK5qUeLNTxNubR9Gy0=;
+        b=QFg56kOVq0V4LEuG2/pedRRsgwx+GXOpMy+BbStLKltWnmg2YYHc8x9dlx2g1oRMUk
+         L+f7elw5hMd4R3xRQA6VTJsVatbYjKtkY9QJ0SdS0hNpGffk6N2ZkP4d63LQ45zxUkkt
+         7h/puIq5u2sXMxrem8RGE2mT9swVp4XR/WvC1N/uSIN+VIxVa0fr73ZCGcACp8muLYBk
+         8g8oJKkZrHuGCq1csUK2iAP5iDvoxkWGeUfC6LRDLjDlC8QYznov9cDIhbm9XSlAjRZd
+         xSaLHy+1KO32X9LDyH3V/LziD1MTQ7BTWxF2naKQIYtJujs4WjeNw4pve7TAFPojbmJE
+         FISA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/wnBBM1f9JIF5kaYsX5EmBHbzwDP91XBKGHqHVKHEz9roGMJzoQDB69txmbvQQNGefZ74DL9nXcB6SQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY+/rPtlqbFFyhikYaR7yveUU8imI4VZBAgC3xFP059T+etIG5
+	53STRq7rI8DmqR661nqUgxqcXgdL0knvw8E3JnASHrI3WPHtERGOp2KXe3D6gOM=
+X-Gm-Gg: ASbGncsMcCBLfZ19oyVDZ1w6cNY4wq2BaLixHMErYpiTzaC9uMwM8aGKYWT0519HeqW
+	JuZIYS0GCaKRnOaO/zCgUCd6rPwffyAEChS9Dd1WzeBXhlJMg8ldODakbg89k5OvYRUmAJeDCbn
+	TAfKw+gOXgLuZ9KDFQl1KQ9h69KHU107O6GUjj6J/P1lMlG+/KDe3ZQdLT1kqOR0NqHSOqKdCRK
+	jLanHVeb31wUvVM8F4+ic/0jzb/SgNPmC7bGYLbL/bFgtyGkeLrU+1xYx7CmOyjZLgLg0Ly3jXn
+	Q9xPWnrtS5q2ydcRMmmH8iaBzRrDN3hQjJyBXf6Gkun8TKMz6eaPJSs=
+X-Google-Smtp-Source: AGHT+IGOWv8tETkCL7TpozFaaeobHyPBrXirDu6J30+UeEkj5+Kdc8PtxUnsQvlwjO3xwT77Ej6y0w==
+X-Received: by 2002:a05:6602:4143:b0:85b:4941:3fe2 with SMTP id ca18e2360f4ac-85b494177d8mr1695652339f.7.1741814067014;
+        Wed, 12 Mar 2025 14:14:27 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2504b11a0sm776586173.22.2025.03.12.14.14.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 14:14:26 -0700 (PDT)
+Message-ID: <0842477c-6063-40f8-8e8e-b9ce98711f80@linuxfoundation.org>
+Date: Wed, 12 Mar 2025 15:14:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: David Gow <davidgow@google.com>,
+ Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+From: Shuah Khan <skhan@linuxfoundation.org>
+Subject: Error during --arch x86_64 kunit test run
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit 8fef0a3b17bb258130a4fcbcb5addf94b25e9ec5:
+David, Brendan, Rae,
 
-  sched_ext: Fix pick_task_scx() picking non-queued tasks when it's called without balance() (2025-02-25 08:28:52 -1000)
+I am seeing the following error when I run
 
-are available in the Git repository at:
+./tools/testing/kunit/kunit.py run --arch x86_64
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.14-rc6-fixes
+ERROR:root:ld:arch/x86/realmode/rm/realmode.lds:236: undefined symbol `sev_es_trampoline_start' referenced in expression
 
-for you to fetch changes up to 9360dfe4cbd62ff1eb8217b815964931523b75b3:
+I isolated it to dependency on CONFIG_AMD_MEM_ENCRYPT
 
-  sched_ext: Validate prev_cpu in scx_bpf_select_cpu_dfl() (2025-03-03 07:55:48 -1000)
+I added the option using --kconfig_add
 
-----------------------------------------------------------------
-sched_ext: A fix for v6.14-rc6
+./tools/testing/kunit/kunit.py run --arch x86_64 --kconfig_add CONFIG_AMD_MEM_ENCRYPT=y
 
-BPF schedulers could trigger a crash by passing in an invalid CPU to the
-helper scx_bpf_select_cpu_dfl(). Fix it by verifying input validity.
+I see the following
 
-----------------------------------------------------------------
-Andrea Righi (1):
-      sched_ext: Validate prev_cpu in scx_bpf_select_cpu_dfl()
+RROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+This is probably due to unsatisfied dependencies.
+Missing: CONFIG_AMD_MEM_ENCRYPT=y
 
- kernel/sched/ext.c | 3 +++
- 1 file changed, 3 insertions(+)
+Is there a better way to fix the dependencies? Does kunit default config
+need changing for x86_64?
 
--- 
-tejun
+thanks,
+-- Shuah
 
