@@ -1,258 +1,128 @@
-Return-Path: <linux-kernel+bounces-557250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCC8A5D5CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:59:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85771A5D5D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:01:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A92A817920D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 05:59:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C77CE17920D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54CE1E377F;
-	Wed, 12 Mar 2025 05:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA701DFD86;
+	Wed, 12 Mar 2025 06:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="o5OuM1a7"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUdG+1Uu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7023E1DFDA1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 05:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBDB2F43;
+	Wed, 12 Mar 2025 06:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741759185; cv=none; b=bJQ6M8qkKQpbObCA7WlHhsAzqa+gdRMqBogcjJewtw13RcZEfhAkbJYjsls6V7b4OaOXHWQBeR5nI2YilTE0/C+5UFrjVMJdxYXP9+OorK68LlOUPOF++nRscr3/LUdMQZ+8unZUnt6T/s/7AWQYhamYwt4XsFdko4Fl9/1Zl74=
+	t=1741759260; cv=none; b=PJYGT3vgcW+oBCEHZIWR9CCA3HVh5iM/Cu/hDxoJEirj/NpKUzARVjJiUSCdI0YoMdNMvWAj6PA4ASQJir9vLuG3ONKSTRsDtfY1yDWzhnsr6C0xN5JzBtqyVSeu3d2lqZP3UN5Q5VdTzzox/tm0CHzoAaBHFV46FhkxLG/g8Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741759185; c=relaxed/simple;
-	bh=R7tuHjNoroVMo9h2O5mHayl7xY5IH0gYVy1+W3i+UMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m5P+MU0wV7D7DzvPvA9P1e9tk1f0HiQGRIKxGBeHpxH+1TBIwOSTX9lflXI4VLWoZn4WHAnqfxPVkUKzIoaKlk/RCbePpcXKN2QzA3X8vYw4pkVFB5ZPJWRv2x/1aXidTxriJdTSGc1z8THAoIk7AbJ8OAjIx10XyCkFCNQTFr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=o5OuM1a7; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-224019ad9edso141212965ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:59:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741759183; x=1742363983; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CZESZje65E8gcTEnwSqTnH4kGbDuL6yGOWt5IOmRc30=;
-        b=o5OuM1a7MsxUaa/+Kj3bg6yjWWmMRwpGf06ilI1R46thRszBmt0NH1WmBS3yVYkhLe
-         XANaURsDOkS48zqsILYuEDQws7yeZqC7JwEofk5b7EIgJOt8LCIJ8zCQ7dUzFJikFjpC
-         O+gKcpr8zJCsjyOKdJ00ikdaF210BQvkF2UkVLjsnL7T0WwZvF5+9KeQ4Ck4iGr9W9lT
-         AYZ2XLYqShATzJ093rXavMpyWmjYKx723dxqk/pGVVY+80P4fX++jQPLWQPujw6oShPk
-         17bfIC3TvTLE47SgrKVWBsunUc5p9CNL3JQiigZtSWLFFyjX12gspYRn/mZxz7PokQ91
-         g7Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741759183; x=1742363983;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CZESZje65E8gcTEnwSqTnH4kGbDuL6yGOWt5IOmRc30=;
-        b=OU6kvygTWmK8UUJxTbdiv7/76qbgk8SKMt4E6y4cwDtDT36X11RSOs8V28UR/oe1AX
-         qmExI9AeWntOyHnAA27EAwlXbmFn85TyEyPUPQ+qMIsTGGT0gwzIheonqOOGk76Vkyqo
-         eelsl5Vf1W1lilqomIzVXVECrOzNRvBks5FhntGYFeF/1gsCbnXoWbl1+I1qERbtGUu+
-         1lrElAeWLrCEwl8mpyCPfat0oHK533HBiwx0Tq2EOmii0Md3tjAGR5wBo6nxfvngWumb
-         GWCVe7bSn7dgveaj1InZz02+7K9z0ietLEKfPj+Q3VReYZtLGy9c++E/tGvyP6dpWIg6
-         JYiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5bHdc2I06eKfG2CSjix09h4ienb0C0o7ib5PimViipe95veGXcSGo0dBNHda8GgXQM5geof49R6FT5Vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT6dD0y53U/brcIXtc1Z4L2dkCyJF4WWGq53LXdCa9Rx5uYjwv
-	ETvIEOVMCZsWfm0LfkwOI0k7lhzaL7x/BPKi1K8K6/sTHdHwmD0NuhjEljKkeUA=
-X-Gm-Gg: ASbGncur0t+38Tfoy4pw4D2cOXXhGVLI3uDAOnLSbjua+VfGp1RkZNpWzmK9VrezDPD
-	uEcQwf++jgPBeS8mFOJJH8ZtAlbg0yKF4TBgQONuAS2iViMjCToeyciz0ztE45ZZrHWE8cmcgI1
-	s3AYmSyB3+2gP/4FcnD2I4rh++7kmCUUdB8UKQX/fWY2VLcjHKudDROk00a6jMyKW3LRtydO4Zz
-	SE/Brrgm8oa66BuYJW2ALH+Txea6/ANItgcp4A3P8A0vNeQHCe4ZiqGjzSMQZ3v5FWKfLfK7j5c
-	Iuc1f928/6TOso1z9aIrVpCZzgZIJoX5xd2rbqnd7EbqIaUesSBt9KJvlw==
-X-Google-Smtp-Source: AGHT+IHNxn8E8ipTo8o+6AGn7pM/bGpbwkMrzPK64AMoQJ3BPQiT3yi57XUpV2Dk7/oIOt6/kYhYhQ==
-X-Received: by 2002:a17:902:f541:b0:224:c76:5e57 with SMTP id d9443c01a7336-22428ab7665mr257241305ad.39.1741759183662;
-        Tue, 11 Mar 2025 22:59:43 -0700 (PDT)
-Received: from [157.82.205.237] ([157.82.205.237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e848csm107914775ad.63.2025.03.11.22.59.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 22:59:43 -0700 (PDT)
-Message-ID: <77c21953-b850-4962-8673-6effb593d819@daynix.com>
-Date: Wed, 12 Mar 2025 14:59:36 +0900
+	s=arc-20240116; t=1741759260; c=relaxed/simple;
+	bh=9pAA/yH6P+xsx2MApZdeJOVyxbVik21j2UMqV/OdY/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hGRZkiwtgLrdqTbqfbg73P9khiALH1FyMQzMIjVIOU76FfwJXcuxgrFkkGd6fv4Z2cT4EfulB2NPgeUS2zWaiBS1ccbXx2X2cMHBS2DUwfjm9sknihtS+2ZY44WdKOW7/PW28ZBDkszepQYAZZkpZ3dXRWbToI0sdVGuJISc5mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUdG+1Uu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A32AC4CEE3;
+	Wed, 12 Mar 2025 06:00:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741759259;
+	bh=9pAA/yH6P+xsx2MApZdeJOVyxbVik21j2UMqV/OdY/M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tUdG+1UusDMvYlqU6TDDAoy5MK2TbaR/9OXJT5bGwAgbwO+np3TbS0SCLDvlC4sJJ
+	 bJYd3K7HkbZ0oGYDk/qSNZaO89Ir3ii8DUOYZn1EfytuQVIVvSTvAHgo+KKdMj7RAo
+	 Xard+klOkiBnpHBq6xo4X68YrI0XHgi4UTLBk2rZR8Dv3wUhMvoQpCPtWI1kxvC3rj
+	 4fnpJCuJGVuQiH+UKUpZqtQl880xhF8oirGJf4pCxaDx//7GOEguGKyBmb6CeKnQAF
+	 iYrIGxeXf40rFlsEa9e5Wttf54ehlq66a1rJDMUY4iqt1b6LvC6YceyxW3tDiKK9bg
+	 NMK9+2BCWfP4g==
+Date: Wed, 12 Mar 2025 08:00:55 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Stuart Yoder <stuart.yoder@arm.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lenb@kernel.org, rafael@kernel.org,
+	jgg@ziepe.ca, peterhuewe@gmx.de, sudeep.holla@arm.com,
+	linux-integrity@vger.kernel.org,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: Build error on -next due to tpm_crb.c changes? (was: Re: [PATCH
+ v6 0/5] Add support for the TPM FF-A start method)
+Message-ID: <Z9EjF-pybmZlnTws@kernel.org>
+References: <20250305173611.74548-1-stuart.yoder@arm.com>
+ <0ad035ff-400e-4b15-8b8f-40b69152ec46@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 6/6] vhost/net: Support
- VIRTIO_NET_F_HASH_REPORT
-To: Jason Wang <jasowang@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- Yuri Benditovich <yuri.benditovich@daynix.com>,
- Andrew Melnychenko <andrew@daynix.com>,
- Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com,
- Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
-References: <20250307-rss-v9-0-df76624025eb@daynix.com>
- <20250307-rss-v9-6-df76624025eb@daynix.com>
- <CACGkMEuccQ6ah-aZ3tcW1VRuetEoPA_NaLxLT+9fb0uAab8Agg@mail.gmail.com>
- <2e550452-a716-4c3f-9d5a-3882d2c9912a@daynix.com>
- <CACGkMEu9tynRgTh__3p_vSqOekSirbVgS90rd5dUiJru9oV1eg@mail.gmail.com>
- <1dd2417a-3246-44b0-b4ba-feadfd6f794e@daynix.com>
- <CACGkMEthfj0KJvOHhnc_ww7iqtmhHUy9f9EGOoR-n0OwHOBrvQ@mail.gmail.com>
-Content-Language: en-US
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-In-Reply-To: <CACGkMEthfj0KJvOHhnc_ww7iqtmhHUy9f9EGOoR-n0OwHOBrvQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0ad035ff-400e-4b15-8b8f-40b69152ec46@leemhuis.info>
 
-On 2025/03/12 12:36, Jason Wang wrote:
-> On Tue, Mar 11, 2025 at 2:24 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>
->> On 2025/03/11 9:42, Jason Wang wrote:
->>> On Mon, Mar 10, 2025 at 3:04 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>
->>>> On 2025/03/10 13:43, Jason Wang wrote:
->>>>> On Fri, Mar 7, 2025 at 7:02 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>>>
->>>>>> VIRTIO_NET_F_HASH_REPORT allows to report hash values calculated on the
->>>>>> host. When VHOST_NET_F_VIRTIO_NET_HDR is employed, it will report no
->>>>>> hash values (i.e., the hash_report member is always set to
->>>>>> VIRTIO_NET_HASH_REPORT_NONE). Otherwise, the values reported by the
->>>>>> underlying socket will be reported.
->>>>>>
->>>>>> VIRTIO_NET_F_HASH_REPORT requires VIRTIO_F_VERSION_1.
->>>>>>
->>>>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
->>>>>> Tested-by: Lei Yang <leiyang@redhat.com>
->>>>>> ---
->>>>>>     drivers/vhost/net.c | 49 +++++++++++++++++++++++++++++--------------------
->>>>>>     1 file changed, 29 insertions(+), 20 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
->>>>>> index b9b9e9d40951856d881d77ac74331d914473cd56..16b241b44f89820a42c302f3586ea6bb5e0d4289 100644
->>>>>> --- a/drivers/vhost/net.c
->>>>>> +++ b/drivers/vhost/net.c
->>>>>> @@ -73,6 +73,7 @@ enum {
->>>>>>            VHOST_NET_FEATURES = VHOST_FEATURES |
->>>>>>                             (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
->>>>>>                             (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
->>>>>> +                        (1ULL << VIRTIO_NET_F_HASH_REPORT) |
->>>>>>                             (1ULL << VIRTIO_F_ACCESS_PLATFORM) |
->>>>>>                             (1ULL << VIRTIO_F_RING_RESET)
->>>>>>     };
->>>>>> @@ -1097,9 +1098,11 @@ static void handle_rx(struct vhost_net *net)
->>>>>>                    .msg_controllen = 0,
->>>>>>                    .msg_flags = MSG_DONTWAIT,
->>>>>>            };
->>>>>> -       struct virtio_net_hdr hdr = {
->>>>>> -               .flags = 0,
->>>>>> -               .gso_type = VIRTIO_NET_HDR_GSO_NONE
->>>>>> +       struct virtio_net_hdr_v1_hash hdr = {
->>>>>> +               .hdr = {
->>>>>> +                       .flags = 0,
->>>>>> +                       .gso_type = VIRTIO_NET_HDR_GSO_NONE
->>>>>> +               }
->>>>>>            };
->>>>>>            size_t total_len = 0;
->>>>>>            int err, mergeable;
->>>>>> @@ -1110,7 +1113,6 @@ static void handle_rx(struct vhost_net *net)
->>>>>>            bool set_num_buffers;
->>>>>>            struct socket *sock;
->>>>>>            struct iov_iter fixup;
->>>>>> -       __virtio16 num_buffers;
->>>>>>            int recv_pkts = 0;
->>>>>>
->>>>>>            mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_RX);
->>>>>> @@ -1191,30 +1193,30 @@ static void handle_rx(struct vhost_net *net)
->>>>>>                            vhost_discard_vq_desc(vq, headcount);
->>>>>>                            continue;
->>>>>>                    }
->>>>>> +               hdr.hdr.num_buffers = cpu_to_vhost16(vq, headcount);
->>>>>>                    /* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET_HDR */
->>>>>>                    if (unlikely(vhost_hlen)) {
->>>>>> -                       if (copy_to_iter(&hdr, sizeof(hdr),
->>>>>> -                                        &fixup) != sizeof(hdr)) {
->>>>>> +                       if (copy_to_iter(&hdr, vhost_hlen,
->>>>>> +                                        &fixup) != vhost_hlen) {
->>>>>>                                    vq_err(vq, "Unable to write vnet_hdr "
->>>>>>                                           "at addr %p\n", vq->iov->iov_base);
->>>>>>                                    goto out;
->>>>>
->>>>> Is this an "issue" specific to RSS/HASH? If it's not, we need a separate patch.
->>>>>
->>>>> Honestly, I'm not sure if it's too late to fix this.
->>>>
->>>> There is nothing wrong with the current implementation.
->>>
->>> Note that I meant the vhost_hlen part, and the current code is tricky.
->>>
->>> The comment said:
->>>
->>> """
->>> /* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET_HDR */
->>> """
->>>
->>> So it tries to only offer virtio_net_hdr even if vhost_hlen is the set
->>> to mrg_rxbuf len.
->>>
->>> And this patch changes this behaviour.
->>
->> mrg_rxbuf only adds the num_buffers field, which is always set for
->> mrg_rxbuf.
->>
->> The num_buffers was not set for VIRTIO_F_VERSION_1 in the past, but this
->> was also fixed with commit a3b9c053d82a ("vhost/net: Set num_buffers for
->> virtio 1.0")
->>
->> So there is no behavioral change for existing features with this patch.
+On Tue, Mar 11, 2025 at 04:21:38PM +0100, Thorsten Leemhuis wrote:
+> On 05.03.25 18:36, Stuart Yoder wrote:
+> > Firmware Framework for Arm A-profile (FF-A) is a messaging framework
+> > for Arm-based systems, and in the context of the TPM CRB driver is used
+> > to signal 'start' to a CRB-based TPM service which is hosted in an
+> > FF-A secure partition running in TrustZone.
+> > 
+> > These patches add support for the CRB FF-A start method defined
+> > in the TCG ACPI specification v1.4 and the FF-A ABI defined
+> > in the Arm TPM Service CRB over FF-A (DEN0138) specification:
+> > https://developer.arm.com/documentation/den0138/latest/
+> > [...]
+> > Stuart Yoder (5):
+> >   tpm_crb: implement driver compliant to CRB over FF-A
+> >   tpm_crb: clean-up and refactor check for idle support
+> >   ACPICA: add start method for Arm FF-A
+> >   tpm_crb: add support for the Arm FF-A start method
+> >   Documentation: tpm: add documentation for the CRB FF-A interface
+> > 
+> >  Documentation/security/tpm/tpm_ffa_crb.rst |  65 ++++
+> >  drivers/char/tpm/Kconfig                   |   9 +
+> >  drivers/char/tpm/Makefile                  |   1 +
+> >  drivers/char/tpm/tpm_crb.c                 | 105 +++++--
+> >  drivers/char/tpm/tpm_crb_ffa.c             | 348 +++++++++++++++++++++
+> >  drivers/char/tpm/tpm_crb_ffa.h             |  25 ++
+> >  include/acpi/actbl3.h                      |   1 +
+> > [...]
 > 
-> I meant this part.
+> My daily linux-next builds for Fedora failed building on ARM64 today. I did
+> not bisect, but from the error message I suspect it's du to  patches in this
+> series touching drivers/char/tpm/tpm_crb.c :
 > 
->>>>> +                       if (copy_to_iter(&hdr, vhost_hlen,
->>>>> +                                        &fixup) != vhost_hlen) {
+> ld: Unexpected GOT/PLT entries detected!
+> ld: Unexpected run-time procedure linkages detected!
+> ld: drivers/char/tpm/tpm_crb.o: in function `crb_cancel':
+> /builddir/foo//drivers/char/tpm/tpm_crb.c:496:(.text+0x2c0): undefined reference to `tpm_crb_ffa_start'
+> ld: drivers/char/tpm/tpm_crb.o: in function `__crb_request_locality':
+> /builddir/foo/drivers/char/tpm/tpm_crb.c:285:(.text+0x768): undefined reference to `tpm_crb_ffa_start'
+> ld: drivers/char/tpm/tpm_crb.o: in function `__crb_relinquish_locality':
+> /builddir/foo/drivers/char/tpm/tpm_crb.c:319:(.text+0x81c): undefined reference to `tpm_crb_ffa_start'
+> ld: drivers/char/tpm/tpm_crb.o: in function `__crb_request_locality':
+> /builddir/foo/drivers/char/tpm/tpm_crb.c:285:(.text+0x8bc): undefined reference to `tpm_crb_ffa_start'
+> ld: drivers/char/tpm/tpm_crb.o: in function `__crb_relinquish_locality':
+> /builddir/foo/drivers/char/tpm/tpm_crb.c:319:(.text+0x958): undefined reference to `tpm_crb_ffa_start'
+> ld: drivers/char/tpm/tpm_crb.o:/builddir/foo/drivers/char/tpm/tpm_crb.c:474: more undefined references to `tpm_crb_ffa_start' follow
+> ld: drivers/char/tpm/tpm_crb.o: in function `crb_acpi_add':
+> /builddir/foo/drivers/char/tpm/tpm_crb.c:830:(.text+0x1518): undefined reference to `tpm_crb_ffa_init'
+> make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error 1
+> make[1]: *** [/builddir/foo/Makefile:1242: vmlinux] Error 2
+> make: *** [Makefile:259: __sub-make] Error 2
 > 
-> We should copy only sizeof(hdr) instead of vhost_hlen.> > Anything I miss?
+> Full log:
+> https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-41-aarch64/08750241-next-next-all/builder-live.log.gz
+> 
+> Same problem on Fedora 40, 42 and 43. 
 
-sizeof(hdr) will be greater than vhost_hlen when neither 
-VIRTIO_NET_F_MRG_RXBUF or VIRTIO_F_VERSION_1 is negotiated.
+I dropped these commit, requested for fixes from the author, and a
+couple of additional nitpicks:
 
-Regards,
-Akihiko Odaki
+https://lore.kernel.org/all/Z9EiRDuWfPOkcjXN@kernel.org/
 
-> 
-> Thanks
-> 
->>
->> Regards,
->> Akihiko Odaki
->>
->>>
->>> Thanks
->>>
->>>> The current
->>>> implementation fills the header with zero except num_buffers, which it
->>>> fills some real value. This functionality is working fine with
->>>> VIRTIO_NET_F_MRG_RXBUF and VIRTIO_F_VERSION_1, which change the header size.
->>>>
->>>> Now I'm adding VIRTIO_NET_F_HASH_REPORT and it adds the hash_report
->>>> field, which also needs to be initialized with zero, so I'm making sure
->>>> vhost_net will also initialize it.
->>>>
->>>> Regards,
->>>> Akihiko Odaki
->>>>
->>>>>
->>>>> Others look fine.
->>>>>
->>>>> Thanks
->>>>>
->>>>
->>>
->>
-> 
-
+BR, Jarkko
 
