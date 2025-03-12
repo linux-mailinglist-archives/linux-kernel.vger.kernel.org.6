@@ -1,151 +1,123 @@
-Return-Path: <linux-kernel+bounces-557099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C1DA5D3B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:21:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A14A5D3B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 01:25:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48B2F1744E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:21:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B27A3B4072
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 00:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F703182D7;
-	Wed, 12 Mar 2025 00:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8DF4CB5B;
+	Wed, 12 Mar 2025 00:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CXH1yE2/"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Btob8UYq"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB5E1CF96
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B72182D7;
+	Wed, 12 Mar 2025 00:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741738889; cv=none; b=it+QbjNZu8IjzfX2HyQZNRid6109ATl8zppy3IZo5SlufbeE05jLMw+1vtTB36VDaog8y3O9OOxC/Jb6sKuDvLvO9Gx16aiDQYi2fGFrY1xt/WrS/CJ+OKf0LRgMdu9v359FUpl/f2mV4bm+NAhba6WJKVGqTV2vcRSdUxxLpw4=
+	t=1741739127; cv=none; b=EF8OPiUprrg5XKhfyQcXYQuadL2BMfjsRgrjeTHSg+sQgE1F3Koppa1/hezvHJhwY+dO5O1QZzaKW9cnqZBXfQEwrnVU3vcDKNr4czXwoBYzEVFcCk3VCqjj9znziipARbnkjfYSit6MAS5z0tLJgCcN4U6bx92B/Od5ZT9UFhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741738889; c=relaxed/simple;
-	bh=e608xdJeqBKKdGNq0v7LWmeQ6DQjWhBH7FxgELGlglQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DWO+wsBjMPSzCehm+OOCbWkz0rLrB4M02hP7DSC6bAnUeEvnnupCFycmWjB/gJmxSZBdJiq7+ad2bv3C/DhFyISOcQggp+nhUG1qqcapQisi0TUeG6ME92k8yrDej78PLNZUWatT9SHp26C33jm+XSAul69W5cZiv8s3AVaxV3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CXH1yE2/; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5b736b3fcso809528a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 17:21:27 -0700 (PDT)
+	s=arc-20240116; t=1741739127; c=relaxed/simple;
+	bh=UiKXXbItb8ZucoRjpfS0B0zXM0/NLaQWlMZR8g6m81A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ptE7lXR5kD2898xKj2ow8i7DbkhFFI+6Y+13xt3vqyH8jCsfYz1btqjJForBw+y9YjB7jaRuMAQBux4GDFIY7cDoUHwegU8SYgsInsBNkkobQhhtUUghi+Gg1Z7EtueFinNwoOS4BiSUsnN6AQUVftoD4+XFbEw46XhLY2qh7y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Btob8UYq; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3913d45a148so2543649f8f.3;
+        Tue, 11 Mar 2025 17:25:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741738886; x=1742343686; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K5xe36OxoXeIkbizVHSnBn4NRndqdFCX6+LlkAnxrvI=;
-        b=CXH1yE2/Yl07OH3aRArU2m+/IjBVe/+zr9zByRPaEbjedAoCDIfGAh0DoVSWOCofmb
-         a4NdZsHY6r3NhHdFvW/0bGXNQOgQWNrJcT7Z8+tp5RRoDmSXJM+z4jeZRM7DfdY6JWnr
-         EahK7rbvE1eD2tdj7kNS1WzhO4SfxplcYj89w=
+        d=googlemail.com; s=20230601; t=1741739124; x=1742343924; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jRO5PYHQhqGm3Ej2KRsU47wjnN58fQqLtAauhVx1rUc=;
+        b=Btob8UYqlHars7T7A4EnOYNe9ryGzF3+m1m0rgMhPCPwZgsaqWzp6wo6+mS1WKv83F
+         Wj8Z1C7QR5xxASobbnpzWLJXi1GCJlIklSyYoSec7aHn6BuL73b5h9Vmkag2H7Cf8yqn
+         ZpXDdRaergGCrs/I8uh0IPb+bov7Z7efKMuG/7h0ISww+HzJYV019zt1YvSPnOynBz4A
+         qe9nNrNiaNmQ75DgIpRig0b99qT2qWdVoPinE0vK9khva/vdNNfq7FGoZUXBxu1jl2q+
+         oh0gGlmoIxrjQtXwoxXpeUqmWDKUVtLcwCh+xV5Wc/XMRi36twse6uy4SYP6r7OeBElq
+         XWNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741738886; x=1742343686;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K5xe36OxoXeIkbizVHSnBn4NRndqdFCX6+LlkAnxrvI=;
-        b=jmkwYXLLdPUn4AR2fYZLSGsBmbQfQ+NVBCW9qrqZliACesutacwW9i0hpTRMcIdM6o
-         8hjiYRxDoJ7zHJxLFhDgrFmJpUCOYu1nkWbJlqMv2L4Wa8td0QqniX74i88gKvDbYXPj
-         /epG35+DEqEXWY0qv15baEp4GAihOBDSScRq79kQNc4TEIW4YG5gx+VD4Tr+87qhb/jL
-         bi1kNAdkvGEOiAJJVwAyB9dMzaC9sUeTQx8zZ4cHT83b36QN2H0wRtrH8MtjGaEpFTqD
-         7+9TY1sL+NWxoHuuRtDGEVlPplmWwsTbL/2qlyxuFyqxjUadzLxkZza6g59uJaqM3Xlb
-         SR4Q==
-X-Gm-Message-State: AOJu0YxmecCr61jkpALu0fPUELgltW+gz6GzkH9MRIpxnaf1bq/lYmv9
-	0svLCnwycm5rJOfrlyXJIO+IvgaKp6YInTQ0Qym6T/QU6SZxDJUlyK12Hw8QMQ==
-X-Gm-Gg: ASbGncuoLjjxnn2nHNQSWwvnqAFTHssaCFU1nQbtt13f6ey0vazTarEOoQKQ7eL9s1c
-	tJtUvQXl1b70mokLMZxbPEzqsHJOapHj/BCYc52TbAA9yrR1nHjBqWCOaysacKOdWc9JBJGce69
-	nfk7izX+8r2GGTHhXXOviDsxqdOsfx4RFGUhy3X7yPfGcYu20MTGOlVmBbChh4l81lCMSQUcHbi
-	7pQblB8y0BndJmUZX6i9YFBzUbomLFWnL7yRYesaKP4nbI8XuYoxa3XxTW8/PDE6YwpYQpnEdAa
-	q0ayixy/UotoEksPFmWUlFyHn1XsZsIT6RNR5l/PB0KMhP+lxRtMJpt4/0jO9usEGYel29jexz7
-	o
-X-Google-Smtp-Source: AGHT+IHtp8ouTXVsgTp2SJJgz2rGEBY4ebI7QJXVPc63NR9EJfuX37UqlqudFu1bAKoYDI0sugwhXA==
-X-Received: by 2002:a17:907:6ea1:b0:abf:6b30:7a83 with SMTP id a640c23a62f3a-ac2b9ef11e6mr297381266b.13.1741738886472;
-        Tue, 11 Mar 2025 17:21:26 -0700 (PDT)
-Received: from cfish.c.googlers.com.com (40.162.204.35.bc.googleusercontent.com. [35.204.162.40])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c7669fd0sm8846503a12.51.2025.03.11.17.21.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 17:21:25 -0700 (PDT)
-From: jeffxu@chromium.org
-To: akpm@linux-foundation.org,
-	vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@Oracle.com,
-	broonie@kernel.org,
-	skhan@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	jorgelo@chromium.org,
-	keescook@chromium.org,
-	pedro.falcato@gmail.com,
-	rdunlap@infradead.org,
-	jannh@google.com,
-	Jeff Xu <jeffxu@chromium.org>
-Subject: [RFC PATCH v1 2/2] mseal: allow noop mprotect
-Date: Wed, 12 Mar 2025 00:21:17 +0000
-Message-ID: <20250312002117.2556240-3-jeffxu@google.com>
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-In-Reply-To: <20250312002117.2556240-1-jeffxu@google.com>
-References: <20250312002117.2556240-1-jeffxu@google.com>
+        d=1e100.net; s=20230601; t=1741739124; x=1742343924;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jRO5PYHQhqGm3Ej2KRsU47wjnN58fQqLtAauhVx1rUc=;
+        b=VJNNRTWTxhN8eop6fmUIrBndlsWDwKdF5LQ1/ymmwFgQZUtb6z3b1SCUjsFpsXL/6Z
+         Y01D6g3tSPDA93iCXiRkWqZc337IU6y7tkMYM6pVuqC57FzyAMLefQT11cUbrOr12kcP
+         Beyp6Y0MW94F8raSH0/x6GEyQfVns4u9jbqYyanKWJuJvsPOTR5n9gATLLRjdmDhOYeE
+         g8gHRwHX5Nsu3trSHNwVj8QH1x1QWrk5swyE/ShqwnnrzBHKpNXow1exRRg2jW22UO8d
+         bderIWyrBDIiveZFsdBD17a39csfedBFjnFCE3aMDHnyX2Nrsze0+nm3Rl3kGfH3A/B3
+         jUvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVV11FYxFDlbXTLth9PRLaoaxG99AHKZRzMNTdU3YMDNLQPbhySFF8zV3J1WnxKHFNIHDumXmh5yUlNroE=@vger.kernel.org, AJvYcCWLB710sgNYzZjZ39grC6nKeBv5yLLzwGCXbpjb4bWDBNnXkblhd1/AOeMws55c+J3lpQLeRdl1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw626VOlaGrEjSW/Fu55Hz3LEIWoNth+z5IvFSSODVLwS+Gfke2
+	ZQO2fLynb6uEDMWo8zKDBpOHXris51+yJ/7HlxmK5WjkQA3P2KySpdpd
+X-Gm-Gg: ASbGnctIVnXsAEfAjUBVsE9/Lm2WVTzqMGF/gBx5kCLGWvcewFxqSaxu09jGOMAU6AO
+	SkN4Psn/dK5zaHPV0s8u/abDsXlhNnbOEOy7VI4oe6BFlB1Noa86ci1OnGJEhu5gVyfOUcBHzRQ
+	OWFYkc7VaFauR9o2RyemB6pnVY0BY7RlRdYf7b+0A7EW8W2xJ357NFGYrQxfmnAei2EAgQFU1Vu
+	XQu01uBGRQyXtUWA7rBdlDwrMn7uZ+96kmlhw1aWkge59tA/Xz53DUvucN2wAytNBqHdKhQcsyL
+	ryWymfN5mL9cYg57jQ9YPh4Hz97JvgfRn7O2IBv4y8WowJhCovcglwVzKvdWck2YrGDx+Fq/X+v
+	BMLJqHvFZb9FpZMSyThwQzlhD8AN/CQAN
+X-Google-Smtp-Source: AGHT+IHS1c7L9ZauVsfcZ8jPR2htutvRPZQItfsPQewiI6FF6kUSgi8bmLezXCGdatLWjLp2g4pESQ==
+X-Received: by 2002:a05:6000:402a:b0:38f:2efb:b829 with SMTP id ffacd0b85a97d-39132db8f39mr16870733f8f.50.1741739124413;
+        Tue, 11 Mar 2025 17:25:24 -0700 (PDT)
+Received: from [192.168.1.3] (p5b05767c.dip0.t-ipconnect.de. [91.5.118.124])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a74d51esm4633055e9.16.2025.03.11.17.25.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 17:25:23 -0700 (PDT)
+Message-ID: <e91d9294-8e4b-469e-9fc5-1570b1aefa5b@googlemail.com>
+Date: Wed, 12 Mar 2025 01:25:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.13 000/197] 6.13.7-rc2 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250311144241.070217339@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250311144241.070217339@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Jeff Xu <jeffxu@chromium.org>
+Am 11.03.2025 um 15:48 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.13.7 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Initially, when mseal was introduced in 6.10, semantically, when a VMA
-within the specified address range is sealed, the mprotect will be rejected,
-leaving all of VMA unmodified. However, adding an extra loop to check the mseal
-flag for every VMA slows things down a bit, therefore in 6.12, this issue was
-solved by removing can_modify_mm and checking each VMA’s mseal flag directly
-without an extra loop [1]. This is a semantic change, i.e. partial update is
-allowed, VMAs can be updated until a sealed VMA is found.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-The new semantic also means, we could allow mprotect on a sealed VMA if the new
-attribute of VMA remains the same as the old one. Relaxing this avoids unnecessary
-impacts for applications that want to seal a particular mapping. Doing this also
-has no security impact.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-[1] https://lore.kernel.org/all/20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com/
 
-Fixes: 4a2dd02b0916 ("mm/mprotect: replace can_modify_mm with can_modify_vma")
-Signed-off-by: Jeff Xu <jeffxu@chromium.org>
----
- mm/mprotect.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Beste Grüße,
+Peter Schneider
 
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 516b1d847e2c..a24d23967aa5 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -613,14 +613,14 @@ mprotect_fixup(struct vma_iterator *vmi, struct mmu_gather *tlb,
- 	unsigned long charged = 0;
- 	int error;
- 
--	if (!can_modify_vma(vma))
--		return -EPERM;
--
- 	if (newflags == oldflags) {
- 		*pprev = vma;
- 		return 0;
- 	}
- 
-+	if (!can_modify_vma(vma))
-+		return -EPERM;
-+
- 	/*
- 	 * Do PROT_NONE PFN permission checks here when we can still
- 	 * bail out without undoing a lot of state. This is a rather
 -- 
-2.49.0.rc0.332.g42c0ae87b1-goog
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
