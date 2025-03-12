@@ -1,204 +1,111 @@
-Return-Path: <linux-kernel+bounces-558017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DDFBA5E072
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:35:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02388A5E06F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:34:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A066D1732E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:35:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D2EC3AA370
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD9F250BFA;
-	Wed, 12 Mar 2025 15:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275AF24CEFD;
+	Wed, 12 Mar 2025 15:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="DoUrEcNZ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sce43T0g"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UmDrcLxS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D99A24FC0D;
-	Wed, 12 Mar 2025 15:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF76686349
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741793699; cv=none; b=BVTQXqa+kMMYLM/XNkAiRrhkNZCcI7ahgIff+EcCm4xUTTrWcwvD2AzUPrRUxQnOic9OlK6tANXBkEkY2RT1XSI4RAu4jtVmkE/U7HiJoyNQQC+rn5+mD8wU6YGLv8ZCMb4PwpnscVlfHR2ucaoaG01vnHSgkuMj9BbGbH4BNNs=
+	t=1741793675; cv=none; b=baxnb5WD/+ADX25TI53pSRPkdhdKQoeciuBy7YLxnJDtCbVNsOrdnjx3nkmYRNEzu/mXbaKzsB/dtzKqRVVwqZ2QgY3lvBUnpnu043c1AqHfdUJqgb5S1EsHEbfXGax1p4jcACoB0fOq1rZI1gkkqxC+D8CcnoAxQaTJAIciD2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741793699; c=relaxed/simple;
-	bh=aluHuNWMb5BVFCDJ5FkhtNN27ajOpnn2vCjt7SLRQOs=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=WVWAyV9fHLze2hnicIgQczV47KtMmTFsj6p6WarGbXjPw3SfdMYSTmd8fTlLT5AOvi8k5IZERaaWPs+CjGRUd/N/KhyOWCw3/XYYifsX9qFAe405q8bdA/ppWAa9gMtqfkJTYY2j4jFG2n6NN4//hTyEz9oW0EoPDqJS5WI3nSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=DoUrEcNZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=sce43T0g; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.stl.internal (Postfix) with ESMTP id C075911402AA;
-	Wed, 12 Mar 2025 11:34:55 -0400 (EDT)
-Received: from phl-imap-07 ([10.202.2.97])
-  by phl-compute-12.internal (MEProxy); Wed, 12 Mar 2025 11:34:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1741793695; x=1741880095; bh=RK6tNQBB5XZwcZW5zCVWQuEe8VmgCG1s
-	IPsBwXB+nfI=; b=DoUrEcNZXko497OACsMET/0B2IL576TegO5hTPadeZ2zvUSQ
-	w1DfWnfcU8wcOsRyLXLd3jF7I0Va3lxxc5ii4ZN7XFtybrIEHniIkYbt6tzHF8v3
-	wbQl/K/hQsiCWRwdjTIZl1M8A9GiRXanbtxX3K3f7mGeoCZBhHzDy7YZbMsrZbCj
-	+sprf5Q2rewFzJo4yPq57mMJNuDWH/tlGteqc7lCt1I8jkMQu7uPkjXR7+9sH2I7
-	TL99WH5jtJ2dcO4FXVt37ZNX4DLk3j/t2ArNmwgp0TjiNm+6/SnVPPUp+wEp7l4k
-	co8nrZoGeHBs0B3yHo3WA1yuGNelVPTnyCx79g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741793695; x=
-	1741880095; bh=RK6tNQBB5XZwcZW5zCVWQuEe8VmgCG1sIPsBwXB+nfI=; b=s
-	ce43T0gmqrutSUc4nYeVS8eitEZqZQduP+sWAsBWpAi2Sn64+H9S53//MWBmC8GS
-	px7soENYhIsvZHiNdzF4kkNGDU94goi60QK/XsB+U9o3avdlgtFS31oBKkNrck83
-	mQ/wI7O6cqJ7VlVwKnu47TCzQqZstNj3wJ0C2MagYKFsQvcumdcTYkYJM2ZDTFWO
-	Kmy2PL+hoHBdUrKMidk1g84fnJruPQTtY6UUmyswDRcM3GiGCuBePMVlUH9+bvk6
-	wEan5yfNCwlDe7F2lXu9qThFKNelUNgQJ8y2PZ06evCcpwLmMCpiRDJB+yBTYjA7
-	hET9VGu7TgAdUOAxqNaCw==
-X-ME-Sender: <xms:nqnRZ2tt58tZ3nWVRw1iv0BnSoFX1WGmVktE_9c-b6KjWebis58acA>
-    <xme:nqnRZ7fUca4yN_7jXQiFZy1rUuT4T0T2qXoZpd3n1lHcWeA_2tWxsOEIr9QwCm08d
-    EvTNksmNhirSTzulv4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdehgeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
-    tdejnecuhfhrohhmpedfufhvvghnucfrvghtvghrfdcuoehsvhgvnhesshhvvghnphgvth
-    gvrhdruggvvheqnecuggftrfgrthhtvghrnhepgeegheelffdujeduffevfefhieekgeef
-    fedukedtvdduhfffjeehleekfeehhfdtnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepshhvvghnsehsvhgvnhhpvghtvghrrdguvghvpdhnsggp
-    rhgtphhtthhopedvvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghpfiestg
-    grnhhonhhitggrlhdrtghomhdprhgtphhtthhopehsvghnohiihhgrthhskhihsegthhhr
-    ohhmihhumhdrohhrghdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtg
-    hpthhtohepugifrghiphgrhigrnhhrrgihudesghhmrghilhdrtghomhdprhgtphhtthho
-    pehluhhkrghsrdgsuhhlfigrhhhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhosh
-    htvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopehmrhhiphgrrhgusehkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopegrughmihhnsehkohguvghithdrnhgvthdprhgtph
-    htthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:nqnRZxxUqE3Rplw3xxlweXLds8DJOh6Zr3doXOSVQCI9YQLy4HRQEA>
-    <xmx:nqnRZxNk8GLe4dfLmNS9ZcdC1iRybpRS7ES5mWCYrWtGq-biz3nygA>
-    <xmx:nqnRZ29yCxJhSs4NH8QKghUDCpCcsks-MCWQ6d_j94X7_nCOs2PGCA>
-    <xmx:nqnRZ5UP6jiZtrq_Zz9WhBJJk71zSMbYm49xqu5KTeCs3oShLrK5jQ>
-    <xmx:n6nRZ8mDE0-hShbs-xZKPMs5xRFge8Uu8DodisB1FE_CZs5B9ojBvak7>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 1EB6CBA006F; Wed, 12 Mar 2025 11:34:54 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1741793675; c=relaxed/simple;
+	bh=0nkw7Z2I1Ugurl7EHYlKvwJDrQZP1fkJSv3MUsYV9Vo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NxtpT76csHqw27OD4R6AJNyLeQm5F70QVZAcoJUuOlhhKCBHWHLnVCe+HFYKyHzt7Xp5+wuLGhDHkiIeNZ7JP4An0Ejx9897cdjSE884r11BsyMK8g3bf4nQdOw7K3Aoh1tlmmffpUuAy3X2SVR4qQCaJnau/hmvmnkViFggCt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UmDrcLxS; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741793674; x=1773329674;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0nkw7Z2I1Ugurl7EHYlKvwJDrQZP1fkJSv3MUsYV9Vo=;
+  b=UmDrcLxSD0GFUX3o0WL7e8e7OwlYLQbCc9Yh5tF63wzgymYDm7NtkXNZ
+   VQlce6P3H/dHD3C19168NPJQn6/PMUh8nzLUaI30gUnIvQ02DTyLaJcfo
+   tERYTXuoyhGwtf6iDdPf85Eq9dwf+SgEUIsC3D36g4CzjiNeazUdVcNHH
+   cnudeYbJEj4xiQRX9yiMj/pNp2H2PzevmC+vZPfhiTkZCxRCBhtbsupBw
+   u5FGM2+N4Nn2lmjHAlcB/WezLYIgjJn8Vt2HETRbuLCPkfU16+QgTYqL2
+   fTDh482b42rPQW/xuisCwXuXM15G/iqKQM7vJUEG0E0AUIdBhWesK9Ht5
+   Q==;
+X-CSE-ConnectionGUID: MLP77wJpRo6WxTq+DG25cg==
+X-CSE-MsgGUID: Ak/v8QneTSm31LeUMV2LcQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42755509"
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="42755509"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 08:34:33 -0700
+X-CSE-ConnectionGUID: NHloVZboSIiRKrgni6PYjQ==
+X-CSE-MsgGUID: JYTDTW8fQsGDM8wN1bosxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="125557150"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 08:34:33 -0700
+Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 84AA620B5736;
+	Wed, 12 Mar 2025 08:34:31 -0700 (PDT)
+Message-ID: <8303cd57-cbc3-4d36-b544-d894f59e1535@linux.intel.com>
+Date: Wed, 12 Mar 2025 11:34:30 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 12 Mar 2025 16:34:06 +0100
-From: "Sven Peter" <sven@svenpeter.dev>
-To: "Aditya Garg" <gargaditya08@live.com>,
- "Thomas Zimmermann" <tzimmermann@suse.de>
-Cc: "Aun-Ali Zaidi" <admin@kodeit.net>, "Maxime Ripard" <mripard@kernel.org>,
- "airlied@redhat.com" <airlied@redhat.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Petr Mladek" <pmladek@suse.com>, "Steven Rostedt" <rostedt@goodmis.org>,
- "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "Jonathan Corbet" <corbet@lwn.net>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "apw@canonical.com" <apw@canonical.com>, "joe@perches.com" <joe@perches.com>,
- "dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
- "lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "Hector Martin" <marcan@marcan.st>,
- "asahi@lists.linux.dev" <asahi@lists.linux.dev>
-Message-Id: <ff3a9c58-5c7a-4c48-8a9e-cc828a43baed@app.fastmail.com>
-In-Reply-To: 
- <PN3PR01MB959715C19BCEA54426D24934B8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-References: <ABAEA9D0-97CB-4ADD-9606-A12D5815335A@live.com>
- <376C9BD3-2F41-4511-BE52-1B8468FE2CB3@live.com>
- <b74df4b5-ecda-45ba-a98a-c84b0a29e380@suse.de>
- <PN3PR01MB9597AC6A02B0BF873920D94CB8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <9092a9ed-aecf-40bd-9d15-b53d60d035b5@suse.de>
- <PN3PR01MB959715C19BCEA54426D24934B8D02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Subject: Re: [PATCH 1/2] lib/vsprintf: Add support for generic FourCCs by extending
- %p4cc
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V7 1/6] perf: Save PMU specific data in task_struct
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, tglx@linutronix.de, bp@alien8.de, acme@kernel.org,
+ namhyung@kernel.org, irogers@google.com, linux-kernel@vger.kernel.org,
+ ak@linux.intel.com, eranian@google.com
+References: <20250312130424.3863916-1-kan.liang@linux.intel.com>
+ <20250312135423.GM19424@noisy.programming.kicks-ass.net>
+ <20250312135749.GD9968@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250312135749.GD9968@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-On Wed, Mar 12, 2025, at 13:03, Aditya Garg wrote:
->> On 12 Mar 2025, at 5:29=E2=80=AFPM, Thomas Zimmermann <tzimmermann@su=
-se.de> wrote:
->>=20
->> =EF=BB=BFHi
->>=20
->>> Am 12.03.25 um 12:49 schrieb Aditya Garg:
->>>=20
->>>>> On 12 Mar 2025, at 5:16=E2=80=AFPM, Thomas Zimmermann <tzimmermann=
-@suse.de> wrote:
->>>>=20
->>>> =EF=BB=BFHi
->>>>=20
->>>>> Am 12.03.25 um 10:05 schrieb Aditya Garg:
->>>>> From: Hector Martin <marcan@marcan.st>
->>>>>=20
->>>>> %p4cc is designed for DRM/V4L2 FourCCs with their specific quirks,=
- but
->>>>> it's useful to be able to print generic 4-character codes formatte=
-d as
->>>>> an integer. Extend it to add format specifiers for printing generic
->>>>> 32-bit FourCCs with various endian semantics:
->>>>>=20
->>>>> %p4ch    Host byte order
->>>>> %p4cn    Network byte order
->>>>> %p4cl    Little-endian
->>>>> %p4cb    Big-endian
->>>> That looks like someone trying to be too clever for their own good.=
- Just my 2 cts.
->>> I don't understand what you are trying to say. Anyways, I thought it=
-'s obvious, but Petr's Ack is still left and thus cannot be merged into =
-DRM for now unless he says so in this thread.
->>=20
->> I'm trying to say that the author of this patch found the %p4cc funct=
-ionality and over-generalized the feature. Source code should express th=
-e idea of what it's doing in clear terms. %p4ch somehow doesn't do that =
-for me. Printing 4 bytes in various orders without context seems arbitra=
-ry and confusing.
->>=20
->> (I don't really have a say here. I'm just asking to reconsider this c=
-hange.)
->
-> Ah I see. I'll checkout the macros you sent. The Asahi Linux SMC=20
-> drivers would need these as well, so I'll probably first wait for the=20
-> vsprintf maintainers and also Asahi Linux maintainers for their views.
 
-I don't have a strong opinion either way: for SMC I just need to print
-FourCC keys for debugging / information in a few places.
+On 2025-03-12 9:57 a.m., Peter Zijlstra wrote:
+> On Wed, Mar 12, 2025 at 02:54:23PM +0100, Peter Zijlstra wrote:
+>>> The whole patch set was posted several years ago. But it's buried in the
+>>> LKML without merging. I've received several requests recently to fix the
+>>> LBR issue with system-wide events. Rebase and repost it.
+>>>
+>>> - Rebase on top of Peter's perf/core branch.
+>>
+>> That branch is older than tip/perf/core, as such things don't apply
+>> anymore :/
+> 
+> I've pushed out a new queue/perf/core, based on tip/perf/core + your
+> patch from yesterday.
+> 
 
-I'm preparing the SMC driver for upstreaming again (after a two year del=
-ay :-()
-and was just going to use macros to print the SMC FourCC keys similar to
-DRM_MODE_FMT/DRM_MODE_ARG for now to keep the series smaller and revisit
-the topic later.
+Thanks. I will rebase the patch set.
 
-Right now I have these in my local tree (only compile tested so far):
+Thanks,
+Kan
 
-#define SMC_KEY_FMT "%c%c%c%c (0x%08x)"
-#define SMC_KEY_ARG(k) (k)>>24, (k)>>16, (k)>>8, (k), (k)
-
-which are then used like this:
-
-	dev_info(dev,
-		"Initialized (%d keys " SMC_KEY_FMT " .. " SMC_KEY_FMT ")\n",
-		 smc->key_count, SMC_KEY_ARG(smc->first_key),
-		 SMC_KEY_ARG(smc->last_key));
-
-Best,
-
-Sven
 
