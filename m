@@ -1,151 +1,84 @@
-Return-Path: <linux-kernel+bounces-557314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E080A5D73A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:23:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D1AA5D73E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:24:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B982D3B8AE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:23:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C2463B8E6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDCD1E9B3B;
-	Wed, 12 Mar 2025 07:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4729A1EA7CB;
+	Wed, 12 Mar 2025 07:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nRQg1ZPl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VDaTM/QZ"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EE02F44;
-	Wed, 12 Mar 2025 07:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA3D1E9B07;
+	Wed, 12 Mar 2025 07:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741764224; cv=none; b=QrGl1YC6C0WHiBs670Jeigig5kiXs5FBLBVytjDU1X359148WamHO7GVCNCEFVb2gmwumlHUxGRAryxKGN+Xn2NWAYglUF3MLTygLSaHk8gLau2dcZdYCbir7h/bRk136I5WwcDPHOQkwI9nd5ngqJSA1Zw0RcIJ3rZq2hvJdHg=
+	t=1741764242; cv=none; b=oCBoMIXuRU+FTJCu7y/FJxSXr6ctv8wAKz8xYt9+hLTX0BwEQDD0WeTxqUnILKJqnDz/PCkBDJCF4zLD0aHtZP/i91NkD1WjX19vgwPYxCPSVugmsA8+e11ac85EHZvL/fpVVu8qJxkpOJ6nKGjgbGU1+4cNu3NNvriLb5fydXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741764224; c=relaxed/simple;
-	bh=V6UDUiMHT+CbaIDyrgCI71BKmZNpKmVv67K0d3756nU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E51mMh0yarFPULW/8L0uh/JXEXT2+TciSFmdABN2fdDw+sKWwxyTr2Q3D3fQVx8FiQU8Il7H5m+umg1n0zoNOz3qz8331gC+OgWucp45QD34XTX3LR6DgXAmnEdYTNFegUSONV4RXTdXQdoYzzeXyc2fXlk9qedAL1wnnZ5OJa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nRQg1ZPl; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741764222; x=1773300222;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=V6UDUiMHT+CbaIDyrgCI71BKmZNpKmVv67K0d3756nU=;
-  b=nRQg1ZPlljYLc8M9ButlQCncPFyPiXJMPDGgOFvP18dLtHB9um8Z716d
-   Iudgwr6Sl5sMu7GbXY9WPUkVdSXTX4b3DgpqyLJrV4AcYWvM4M0oBL/EM
-   0N+AvDwxvts1jcHpVRB2/xu2Gm2NXhxlOPe2KNHi7PRjiCnnNdF611ieM
-   VUAMXCb0Ldhq1nmD9uNjpVNPyZc+hew1PgLl7wXUoT47UtPlICzHALlNs
-   Mi8pPxNJRXmNOTSvByIp0MHZRFJzeOwspOiq/P61l8vNFjbQDdwwQt5HP
-   jSon1xjs3KhLo/+ANCadFlEFTBRSzJ0bzXPhl/iB1Y0gdcfqALY+wQlqD
-   A==;
-X-CSE-ConnectionGUID: JU4oKm3bS3GzwuaNrIi9zg==
-X-CSE-MsgGUID: eij6kRTaTdCSl9WcFMXdKQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="42086111"
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="42086111"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 00:23:41 -0700
-X-CSE-ConnectionGUID: dz3+V7+QTC+VuZLSXOwXZA==
-X-CSE-MsgGUID: WLwyEhlaRqC/lZhuCPw1NQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="124722313"
-Received: from yujie-x299.sh.intel.com ([10.239.159.77])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 00:23:38 -0700
-From: Yujie Liu <yujie.liu@intel.com>
-To: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Martin Liska <martin.liska@hey.com>,
-	James Clark <james.clark@linaro.org>,
-	Leo Yan <leo.yan@arm.com>,
-	Sandipan Das <sandipan.das@amd.com>
-Subject: [PATCH v2] perf script: Update brstack syntax documentation
-Date: Wed, 12 Mar 2025 15:23:29 +0800
-Message-Id: <20250312072329.419020-1-yujie.liu@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741764242; c=relaxed/simple;
+	bh=AJNGKMUYdkDKQJYNTNfZpN6r4y4CvwR+lnsI6mq05x8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NHAvbBjgeVq02vjTsWIO624dbjNrFpYQ2RqsM4DiG44aX6LYIC4uzyUxwxMbI4wwGHHvTweUAdvfbWpG4MeVLjIW1WsP5cyRs2KUN7RNRDJn0AMz74Qd4XXBlhHQ1meP21hyDVO6F+POOqFn/u3LBAdciya34Qs1Bt8oflYqGqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VDaTM/QZ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+jDHe8GiMC72tdyv506IKhWnJAN4V5D48aavkbObk+I=; b=VDaTM/QZvChCk38bb1ZfhfzIjo
+	ikKpUDWn3KVgA5U/OmNhIQ6zfztIWd7s92PkgTWFT2QTAH2X/0HCt1TtF90pwYsIBZcx585h1nqjo
+	jkK7CANBRd29CivPqDP6HJAeU6iQXNKXD4CUelfzHSR4LlSIQ0p/QwDI+vVTRmvhnteKtH2gzopzO
+	A43tEIpOZbE5hffBo/OxmrKyJLtmgq7j5mD/ebOY1u5L5cQGdf1UfMkavx31lk6Nod7d8Pa4jxIZw
+	tHHvoA6o8q8DRW967IrZapxcquyMM/qdMuuuXH8iVWiCN+p6noiJOCCYRPNm4P0KHUJGHe4O4+JzN
+	sC/MjHKg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsGRd-00000007h7S-0SkS;
+	Wed, 12 Mar 2025 07:24:01 +0000
+Date: Wed, 12 Mar 2025 00:24:01 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com
+Subject: Re: [PATCH v5 03/10] xfs: Refactor xfs_reflink_end_cow_extent()
+Message-ID: <Z9E2kSQs-wL2a074@infradead.org>
+References: <20250310183946.932054-1-john.g.garry@oracle.com>
+ <20250310183946.932054-4-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310183946.932054-4-john.g.garry@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-The following commits added new fields/flags to the branch stack field
-list:
+On Mon, Mar 10, 2025 at 06:39:39PM +0000, John Garry wrote:
+> Refactor xfs_reflink_end_cow_extent() into separate parts which process
+> the CoW range and commit the transaction.
+> 
+> This refactoring will be used in future for when it is required to commit
+> a range of extents as a single transaction, similar to how it was done
+> pre-commit d6f215f359637.
 
-commit 1f48989cdc7d ("perf script: Output branch sample type")
-commit 6ade6c646035 ("perf script: Show branch speculation info")
-commit 1e66dcff7b9b ("perf script: Add not taken event for branch stack")
+Darrick pointed out that if you do more than just a tiny number
+of extents per transactions you run out of log reservations very
+quickly here:
 
-Update brstack syntax documentation to be consistent with the latest
-branch stack field list. Improve the descriptions to help users
-interpret the fields accurately.
+https://lore.kernel.org/all/20240329162936.GI6390@frogsfrogsfrogs/
 
-Signed-off-by: Yujie Liu <yujie.liu@intel.com>
----
-Changes in v2:
-- Add not taken event (Namhyung, Leo)
-- Change field name from PRED to EVENT for generic use and furture
-  extension (Leo)
-
-v1: https://lore.kernel.org/all/20250225061736.1698175-1-yujie.liu@intel.com/
----
- tools/perf/Documentation/perf-script.txt | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index b72866ef270b..28bec7e78bc8 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -239,13 +239,22 @@ OPTIONS
- 	i.e., -F "" is not allowed.
- 
- 	The brstack output includes branch related information with raw addresses using the
--	/v/v/v/v/cycles syntax in the following order:
--	FROM: branch source instruction
--	TO  : branch target instruction
--        M/P/-: M=branch target mispredicted or branch direction was mispredicted, P=target predicted or direction predicted, -=not supported
--	X/- : X=branch inside a transactional region, -=not in transaction region or not supported
--	A/- : A=TSX abort entry, -=not aborted region or not supported
--	cycles
-+	FROM/TO/EVENT/INTX/ABORT/CYCLES/TYPE/SPEC syntax in the following order:
-+	FROM  : branch source instruction
-+	TO    : branch target instruction
-+	EVENT : M=branch target or direction was mispredicted
-+	        P=branch target or direction was predicted
-+	        N=branch not-taken
-+	        -=no event or not supported
-+	INTX  : X=branch inside a transactional region
-+	        -=branch not in transaction region or not supported
-+	ABORT : A=TSX abort entry
-+	        -=not aborted region or not supported
-+	CYCLES: the number of cycles that have elapsed since the last branch was recorded
-+	TYPE  : branch type: COND/UNCOND/IND/CALL/IND_CALL/RET etc.
-+	        -=not supported
-+	SPEC  : branch speculation info: SPEC_WRONG_PATH/NON_SPEC_CORRECT_PATH/SPEC_CORRECT_PATH
-+	        -=not supported
- 
- 	The brstacksym is identical to brstack, except that the FROM and TO addresses are printed in a symbolic form if possible.
- 
-
-base-commit: b10f74308e1305275e69ddde711ec817cc69e306
--- 
-2.34.1
+how does your scheme deal with that?
 
 
