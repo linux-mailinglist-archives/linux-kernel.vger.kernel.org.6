@@ -1,80 +1,126 @@
-Return-Path: <linux-kernel+bounces-557296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC137A5D6C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:00:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03651A5D6C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:01:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EB813AEBFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:00:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 610BA7A2361
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE89B1E991C;
-	Wed, 12 Mar 2025 07:00:14 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D1A1E9B00;
+	Wed, 12 Mar 2025 07:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="c+Z7jXJE"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512801E51F2;
-	Wed, 12 Mar 2025 07:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B00C1E32C5;
+	Wed, 12 Mar 2025 07:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741762814; cv=none; b=QN3BoIyc7Oy9GoDmArtH34XntsQayavv/TqzQgA3nu6uTLCUhz2pWdb9QvctrUovwbjDPdfpZANkrLo60+0bPRKil9oezj6YGupUo9OHuYEnIS6pa/bWFB9woD3iji0OTRr2KJhjGbaPEaqZ6Xvn62i4CTF0fwo3GtY3EyaG9NA=
+	t=1741762878; cv=none; b=QQTUL1xeI3onKXHZebdJQw8GnD/mgZ/0u/+82AnwHQRLBhPfgOE7FdQWtzFs2QG7YOgCI2uQPQTZMhSZCIemy1K1Ci1Yi3Qmb0eDYo+5eBBm3H5qXtHsL9trAse0pS1OrkfGfvrk4hSJarQI0jZLNr62CcU8jqujK0V61KohU8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741762814; c=relaxed/simple;
-	bh=1CJTcYCwsRFZ+O5NMSrgDfguy72KHW9i2ywGHIEpo7E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rZgB1Fspi8XFz2u3myjcZaRIoSEZksILwEMt3OdLYBMCKC0RT0+SAB8jG7ug/2V7ss76MEOEoB5Azh4bijYNTfAsuFWZfAkQwipVet7hvODzziTgr3GFnCrkdiCcSip4ctg7kA7vXwRrZajd/S8V2mcO4Uesp78YCkX8iujRHx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F6DAC4CEE3;
-	Wed, 12 Mar 2025 07:00:13 +0000 (UTC)
-Received: by venus (Postfix, from userid 1000)
-	id 334031806F4; Wed, 12 Mar 2025 08:00:05 +0100 (CET)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: arnd@arndb.de, lee@kernel.org, dmitry.torokhov@gmail.com, 
- sre@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, 
- alexandre.belloni@bootlin.com, danielt@kernel.org, jingoohan1@gmail.com, 
- deller@gmx.de, linus.walleij@linaro.org, brgl@bgdev.pl, 
- tsbogend@alpha.franken.de, linux@treblig.org
-Cc: linux-mips@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250311014959.743322-7-linux@treblig.org>
-References: <20250311014959.743322-1-linux@treblig.org>
- <20250311014959.743322-7-linux@treblig.org>
-Subject: Re: [PATCH v2 6/9] power: supply: pcf50633: Remove charger
-Message-Id: <174176280519.183324.14039063530250449155.b4-ty@collabora.com>
-Date: Wed, 12 Mar 2025 08:00:05 +0100
+	s=arc-20240116; t=1741762878; c=relaxed/simple;
+	bh=pcrZWjYvWhd4C+NrPQAN3aBU6u1DILHC43lgm/p4AyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I5MWiCLdtDsdasIDHXiem1FgtFFhJiB645rRN5JGb/1cXW0BVyjEriT58em4kEtCx6+EWOKIA+tMV4dBo1Wb/fn1xIvI8lSCa00L4dF7ARapAEp93suLmSNnATsLx+DdcAikjcRoeLu/QuptUbBjhuZWASUkiG7/hnlpOyqhkcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=c+Z7jXJE; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=T4cQcUJ36qNbXsGyNZN8cofiMvUd+P7GunVsv0lw7ng=; b=c+Z7jXJEsCDQ9/aVNgTQtUgjLQ
+	9bBfzxsRzEr+7FgnoT0aLBS72UX8EMfN4yuhXInO/xqKBcWaOlQ3xJH10Hb+H//OG0D4+/Ftas+mh
+	Ad7+HvP37hxYRSdvb95uLBkgh68AbtFocQlTEKGTWuuvG3R8S6HYYimbWALR7jMXOkfFiSU5LED0s
+	TTp+Gw/WSL9zsvuXmkZ1sbabx/mQg/jaBGYpKSQ1nvGAT/iAUWS2XBXTgs8zrDK+e6sZwvA1ektdr
+	h6h8aDqap0NSXKpjLINaomhQt51r8XDO6lRh15D7jMWSuep2VXpjQVBhbxxnsITO4n6k/qAzZQDdP
+	HGE7Ru5g==;
+Received: from ip-185-104-138-79.ptr.icomera.net ([185.104.138.79] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tsG5P-0005ev-CI; Wed, 12 Mar 2025 08:01:03 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Jonathan Cameron <jic23@kernel.org>, Simon Xue <xxm@rock-chips.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Shreeya Patel <shreeya.patel@collabora.com>, linux-iio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Simon Xue <xxm@rock-chips.com>
+Subject: Re: [PATCH] iio: adc: rockchip: Fix clock initialization sequence
+Date: Wed, 12 Mar 2025 08:00:54 +0100
+Message-ID: <10623626.nUPlyArG6x@phil>
+In-Reply-To: <20250312062016.137821-1-xxm@rock-chips.com>
+References: <20250312062016.137821-1-xxm@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+
+Am Mittwoch, 12. M=C3=A4rz 2025, 07:20:16 MEZ schrieb Simon Xue:
+> clock_set_rate should be executed after devm_clk_get_enabled.
+>=20
+> Fixes: 97ad10bb2901 ("iio: adc: rockchip_saradc: Make use of devm_clk_get=
+_enabled")
+> Signed-off-by: Simon Xue <xxm@rock-chips.com>
+
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+> ---
+>  drivers/iio/adc/rockchip_saradc.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/rockchip_saradc.c b/drivers/iio/adc/rockchip=
+_saradc.c
+> index a29e54754c8f..ab4de67fb135 100644
+> --- a/drivers/iio/adc/rockchip_saradc.c
+> +++ b/drivers/iio/adc/rockchip_saradc.c
+> @@ -480,15 +480,6 @@ static int rockchip_saradc_probe(struct platform_dev=
+ice *pdev)
+>  	if (info->reset)
+>  		rockchip_saradc_reset_controller(info->reset);
+> =20
+> -	/*
+> -	 * Use a default value for the converter clock.
+> -	 * This may become user-configurable in the future.
+> -	 */
+> -	ret =3D clk_set_rate(info->clk, info->data->clk_rate);
+> -	if (ret < 0)
+> -		return dev_err_probe(&pdev->dev, ret,
+> -				     "failed to set adc clk rate\n");
+> -
+>  	ret =3D regulator_enable(info->vref);
+>  	if (ret < 0)
+>  		return dev_err_probe(&pdev->dev, ret,
+> @@ -515,6 +506,14 @@ static int rockchip_saradc_probe(struct platform_dev=
+ice *pdev)
+>  	if (IS_ERR(info->clk))
+>  		return dev_err_probe(&pdev->dev, PTR_ERR(info->clk),
+>  				     "failed to get adc clock\n");
+> +	/*
+> +	 * Use a default value for the converter clock.
+> +	 * This may become user-configurable in the future.
+> +	 */
+> +	ret =3D clk_set_rate(info->clk, info->data->clk_rate);
+> +	if (ret < 0)
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				     "failed to set adc clk rate\n");
+> =20
+>  	platform_set_drvdata(pdev, indio_dev);
+> =20
+>=20
 
 
-On Tue, 11 Mar 2025 01:49:56 +0000, linux@treblig.org wrote:
-> The pcf50633 was used as part of the OpenMoko devices but
-> the support for its main chip was recently removed in:
-> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support")
-> 
-> See https://lore.kernel.org/all/Z8z236h4B5A6Ki3D@gallifrey/
-> 
-> Remove it.
-> 
-> [...]
 
-Applied, thanks!
-
-[6/9] power: supply: pcf50633: Remove charger
-      commit: aae075a93f7705e29c599d101abc7e467125d871
-
-Best regards,
--- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
 
 
