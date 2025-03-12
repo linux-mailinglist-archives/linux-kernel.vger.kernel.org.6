@@ -1,61 +1,57 @@
-Return-Path: <linux-kernel+bounces-558304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA6FA5E419
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:06:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1216A5E41A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:06:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0007177A74
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:06:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC68F7AE474
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82052256C9E;
-	Wed, 12 Mar 2025 19:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BAA2580D2;
+	Wed, 12 Mar 2025 19:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QZ/s72Cc"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byrug321"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414E4250BFC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 19:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF57250BFC;
+	Wed, 12 Mar 2025 19:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741806340; cv=none; b=YD3sTp2FTOsuOiLvuym8KEQ7Xn1kq7FFEaZzKsw5Qzhj5wyEKZI21dJLsL0ulTcKpVziXOttCSMcZhjEOXXHXi6wJdwk55Rp7Fl6oaN12mzWifraAdn0JI60WOmgiXmDDJXF10bdD1LKaKFcdpGUlH9LcaiRObyU4TKUeRHno0E=
+	t=1741806384; cv=none; b=cKJ8cD8zF2Hjh2ZvZxw7EgfxzgxwnKrHdI19dQwb8BPH2L41K4M+djBzzefUdY3JQkknsxOcVLRmSHChap2eMpscBLhxVsD+GHmgCFIFtWxsUNDbrG3uTy7jsu+k+q8d6CU9FNg1AjlrmQAtHMSFcohFbu146lTxo+k5yv5Kcu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741806340; c=relaxed/simple;
-	bh=pipdSOj1oF2CVOdQ8oNb7NXXjNn50Cc8d9IQ8y6XcGo=;
+	s=arc-20240116; t=1741806384; c=relaxed/simple;
+	bh=59hxJxczmtJRD9AjP9dImrpiPr5PKifeoERgMGmkCUQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A4zCjmD+3+lg6T68Q8EJ80KUPuhr02XjxlJ2V0M/oRBtK0dto00PwnwrnEFPIckxK7N5eipBrtfmmELVBb3wW5h4DVO8NFsF5k7cHT5IpbPWw69NJS3nGjpynZ6T/tcTwZbg+EhSE3/LzuZ/E19j0q2HoWsG5FzXyEU7j/wgmkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QZ/s72Cc; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HktMF3/MYJfU02oLRc5WZbsNrXFmz3Uj9rcfS/MppcA=; b=QZ/s72CceYKOSDvdFXSV3h8lBe
-	O6siS5cyGYzcKUZzpSIvu1ea50HJEWv9ZXykXv5EcP5ODpNvH13e3DqDCWUPhM5dbKxzM+YSpzEZk
-	g3f0U196XI6rN+Xy+hN1/EwsTgKU/2p66hFFpP3zya0BVoriiaV7T0petHPwgkyoO0Q5VwZoBaLXc
-	rKICsiuY95BflLstkcZ0syfEENG2e5ZMObwxT5Ey3FsofXeXAtEFj7ZgI9Z0z3zo7i3IUOvP7QYhP
-	1/HdOQYHrrrYfwXop415QAsdzHsPovnCEg4V0rLtCCX23jx8bF8ss/zJIJdqTM4k0K1uh3jK/SHKE
-	yBkUZJ3A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsROY-0000000DDzs-0RGj;
-	Wed, 12 Mar 2025 19:05:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 34BEA300599; Wed, 12 Mar 2025 20:05:33 +0100 (CET)
-Date: Wed, 12 Mar 2025 20:05:33 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: kan.liang@linux.intel.com
-Cc: mingo@redhat.com, tglx@linutronix.de, bp@alien8.de, acme@kernel.org,
-	namhyung@kernel.org, irogers@google.com,
-	linux-kernel@vger.kernel.org, ak@linux.intel.com,
-	eranian@google.com
-Subject: Re: [PATCH V8 1/6] perf: Save PMU specific data in task_struct
-Message-ID: <20250312190533.GA10453@noisy.programming.kicks-ass.net>
-References: <20250312182525.4078433-1-kan.liang@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ii8KG2Dvk0U+dbRnEklbwW/qeZkhwzMegQUcfYYV4tQRh3sXMdR1ww/++gpUFUkFDEiibFpgx61bwPy9dRNJWVKUUHawTTyylEy49GzgGhn476vY4nycxHjxtN0ha4xO2JbeH1JhHlPlakzZraPLWPhf3XFZJemeF44Nu1TwkQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byrug321; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AED28C4CEDD;
+	Wed, 12 Mar 2025 19:06:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741806383;
+	bh=59hxJxczmtJRD9AjP9dImrpiPr5PKifeoERgMGmkCUQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=byrug321pPE95aUOrnvb48tmdWaZUxUkYcHtY6LmOiFMkfQ27+xqSQ2cNX+jN12TJ
+	 VnRrvMrShqavvQ8oXEIZdDnlYVKU2L65yInzOqs9/H6hAPIvHDdXBFKpZvFCzduABX
+	 4M8CbQwdmLlvkdve0N5etUfLwNNbxePJnsNzAM4bmjC17HOfA0ySypa6nbs0wpI6q7
+	 oUdWn4hQTS0OJWAkozP90xI/B0mwfYlo4cn7t3K7wFvwCvfXTTJlnnqAsQ6HSxDM+w
+	 MHKcmlKT/BzDnPuG+To2MwZPqdo6sP3q19hVr4oDzWNuwt2HfxmfsmbRrEa3Z7cVts
+	 b5vjrz0pOtysA==
+Date: Wed, 12 Mar 2025 21:06:18 +0200
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, ~postmarketos/upstreaming@lists.sr.ht, 
+	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 0/3] Fairphone 5 DisplayPort over USB-C support
+Message-ID: <y7dfv4mmtzkv2umvverkn6qvjt3tg7cz4jj4zsb4t6vu4heh4d@64zpkjihjc23>
+References: <20250312-fp5-pmic-glink-dp-v2-0-a55927749d77@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,72 +60,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250312182525.4078433-1-kan.liang@linux.intel.com>
+In-Reply-To: <20250312-fp5-pmic-glink-dp-v2-0-a55927749d77@fairphone.com>
 
+On Wed, Mar 12, 2025 at 01:05:07PM +0100, Luca Weiss wrote:
+> This series adds all the necessary bits to enable DisplayPort-out over
+> USB-C on Fairphone 5.
+> 
+> There's currently a dt validation error with this, not quite sure how to
+> resolve this:
+> 
+>   arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dtb: typec-mux@42: port:endpoint: Unevaluated properties are not allowed ('data-lanes' was unexpected)
+>           from schema $id: http://devicetree.org/schemas/usb/fcs,fsa4480.yaml#
 
-I'm sorry, but since I spotted a bug in the second patch, I'm going to
-reply and suggest some overall changes.
+This comes from usb-switch.yaml, it requires that 'port' adheres to the
+/schemas/graph.yaml#/properties/port (which forbids extra properties).
+The usb-switch.yaml needs to be fixed to use port-base for that node.
 
-On Wed, Mar 12, 2025 at 11:25:20AM -0700, kan.liang@linux.intel.com wrote:
+> 
+> See also this mail plus replies:
+> * https://lore.kernel.org/linux-arm-msm/D0H3VE6RLM2I.MK2NT1P9N02O@fairphone.com/
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+> Changes in v2:
+> - Move adding "*-switch;" properties already in earlier patches
+> - Move wiring up SS USB & DP to SoC instead of being done in device
+> - Pick up tags
+> - Link to v1: https://lore.kernel.org/r/20250226-fp5-pmic-glink-dp-v1-0-e6661d38652c@fairphone.com
+> 
+> ---
+> Luca Weiss (3):
+>       arm64: dts: qcom: qcm6490-fairphone-fp5: Add PTN36502 redriver
+>       arm64: dts: qcom: qcm6490-fairphone-fp5: Add OCP96011 audio switch
+>       arm64: dts: qcom: qcm6490-fairphone-fp5: Hook up DisplayPort over USB-C
+> 
+>  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 103 +++++++++++++++++++--
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi               |   9 +-
+>  2 files changed, 104 insertions(+), 8 deletions(-)
+> ---
+> base-commit: dcb11dc4740372cd4cce0b763a4a8ec4e9f347a6
+> change-id: 20231208-fp5-pmic-glink-dp-216b76084bee
+> 
+> Best regards,
+> -- 
+> Luca Weiss <luca.weiss@fairphone.com>
+> 
 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 3e270822b915..b8442047a2b6 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -1021,6 +1021,36 @@ struct perf_event_context {
->  	local_t				nr_no_switch_fast;
->  };
->  
-> +/**
-> + * struct perf_ctx_data - PMU specific data for a task
-> + * @rcu_head:  To avoid the race on free PMU specific data
-> + * @refcount:  To track users
-> + * @global:    To track system-wide users
-> + * @ctx_cache: Kmem cache of PMU specific data
-> + * @data:      PMU specific data
-> + *
-> + * Currently, the struct is only used in Intel LBR call stack mode to
-> + * save/restore the call stack of a task on context switches.
-> + * The data only be allocated when Intel LBR call stack mode is enabled.
-> + * The data will be freed when the mode is disabled. The rcu_head is
-> + * used to prevent the race on free the data.
-> + * The content of the data will only be accessed in context switch, which
-> + * should be protected by rcu_read_lock().
-> + *
-> + * Careful: Struct perf_ctx_data is added as a pointor in struct task_struct.
-
-pointer
-
-> + * When system-wide Intel LBR call stack mode is enabled, a buffer with
-> + * constant size will be allocated for each task.
-> + * Also, system memory consumption can further grow when the size of
-> + * struct perf_ctx_data enlarges.
-> + */
-> +struct perf_ctx_data {
-> +	struct rcu_head			rcu_head;
-> +	refcount_t			refcount;
-> +	int				global;
-> +	struct kmem_cache		*ctx_cache;
-> +	void				*data;
-> +};
-
-I can't remember why this is complicated like this. Why do we have a
-kmemcache and yet another data pointer in there?
-
-Specifically, why can't we do something like:
-
-struct perf_ctx_data {
-	struct rcu_head		rcu;
-	refcount_t		refcount;
-	int			global;
-	char			data[];
-};
-
-and simply allocate the whole thing as a single allocation?
-
-So then the allocation is something like:
-
-	cd = kzalloc(sizeof(*cd) + event->pmu->task_ctx_size, GFP_KERNEL);
-
-
+-- 
+With best wishes
+Dmitry
 
