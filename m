@@ -1,144 +1,126 @@
-Return-Path: <linux-kernel+bounces-558025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9471CA5E0A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:40:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8E5A5E0A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:40:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF37017D142
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:39:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 829BD1660C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4993F253F05;
-	Wed, 12 Mar 2025 15:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD612517B8;
+	Wed, 12 Mar 2025 15:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EQ/mDQDq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="AdZLtUYY"
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D9A1DE2BD;
-	Wed, 12 Mar 2025 15:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEBC156237
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741793929; cv=none; b=Iw7DUMf/OktyqGlKAqxdw9RdQ6i/kbEZSwerwAPHZoPFZdEVMBfzjGBY+h30vwVmOYL2kPhBNOFFbM13teRu26WEkIjmjnAOw7KEGdJatGiol4U726CkvF1qVto4weKtQBgYD6k+zkDDzeOy099QLHd+G0qn8ZJ39pku7S2tUmo=
+	t=1741793949; cv=none; b=PxpFxbs5RHo/9lDcPtT2ZiLzbZEGXIAc1q83aGqmjjdEYI15O7T+/G2Y9hyNEE/6eLUmSt09xcIX+waYA6GQUHtphUwu1Y+bAtkMg5X0SJJH5ENEeShwsHKoF8yZWdJQbzfzr++Y6AQec345GRoTOufDaUEuCcCCsdDfxzh2Q68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741793929; c=relaxed/simple;
-	bh=5sWTWyGSWzMsM7Q52oQzlru0KXZl2CJjlVs+dqkfi3U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SZGq/9uNGYTY5nrTSA6bmrREk7GztqopOYVvmExBHrsyFz1R5VGUe7ixRqtDDvmiKQjH5drsTSyzOR2pe/bDopB2HNzxBXHKLdGYc71jpCLJQGLOh7ygF+zUhi7+39LHnsntjeK078E2Jw19+L8E9Dpe2EEvkk5pXvNOd9Cxe3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EQ/mDQDq; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741793928; x=1773329928;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=5sWTWyGSWzMsM7Q52oQzlru0KXZl2CJjlVs+dqkfi3U=;
-  b=EQ/mDQDqftGCCl2At5J3NfM8a27TRsN3zfdA1eiptevwDMYOD/wJ9uyI
-   hIJXaU00xpD/wuEATgnyJG5yjmELM7hwv0kzKvF9XAY0HO8Fe30oHSlBa
-   99qM9s7r7mOKu7TcNCnS2TEhRGBMwUb+ON9lFhvtvb+cDmIDFZG0L3Wfq
-   1nfu2lrX3E4oUWb4H2ecajtLq2eb240ahRnW0KxkGr+877Qc9iGug/2c2
-   M8lhVQbo1GTbWD5LYg1Wp6UjFYwQrICrzCYrQzmw8UtjXTxaCazpMpqZr
-   /ZjGSOmJ/wuLdj1YSozthchueRPcwX46GGu6czTRGhyKPQsdrzvuWqTVb
-   w==;
-X-CSE-ConnectionGUID: lIXCbMoxQgiYbtG11zdkeg==
-X-CSE-MsgGUID: TBfR/O8TTMe1EChZbZ3New==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42137826"
-X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="42137826"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 08:38:47 -0700
-X-CSE-ConnectionGUID: vDJD8g2eT9qGquOzG+kPsA==
-X-CSE-MsgGUID: A1KRSP0ZQqqim+fQ4mvjEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="120646467"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.125.111.234])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 08:38:47 -0700
-Message-ID: <fa3a518291e7b122f078099b44a9c4a785567a89.camel@linux.intel.com>
-Subject: Re: [PATCH] HID: remove superfluous (and wrong) Makefile entry for
- CONFIG_INTEL_ISH_FIRMWARE_DOWNLOADER
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
-  Nick Crews <ncrews@chromium.org>, Jett Rink <jettrink@chromium.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-input@vger.kernel.org
-Date: Wed, 12 Mar 2025 08:38:46 -0700
-In-Reply-To: <54o2s270-779o-q635-37o5-7s0o11o74o25@xreary.bet>
-References: <54o2s270-779o-q635-37o5-7s0o11o74o25@xreary.bet>
-Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
- YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
- y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
- NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
- GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
- TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
- oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
- AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
- b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
- AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
- oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
- UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
- ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
- wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
- NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
- J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
- oOfCQxricddC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1741793949; c=relaxed/simple;
+	bh=eSXthJ9gBFUjOBPDiwOsndhzo+g/mmYY7/XUp4vG9cE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CDIO32N86iPkPQT/aio0AgDg+Ssw5ea1B2NE82Bh3DcJjuK65FtjbgYLuKMbIuo3C+WTqBMC5/m/9+/JbiV5pAIJFEnUYVX/XbhMPSmAOCgAkQQixcQ8mAR1k2Vh62jcl+zcciITFplDpE7kTn4l30OT6Skg06u6hgwRw07aNXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=AdZLtUYY; arc=none smtp.client-ip=185.136.64.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20250312153857710fa14e90957d5a48
+        for <linux-kernel@vger.kernel.org>;
+        Wed, 12 Mar 2025 16:38:57 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=9fug/AyD5MGpJaI7QeEK4OFdBV5tMRDjJLZy5ng3g5Y=;
+ b=AdZLtUYYdFWI1geDDdo4UNxBp/f11z90w549zOJxi7+RpFmgVW7VBxAKYvonUsCEHUmizR
+ gCCo9R4T7//++bPUmfD26cCeetSUHKuvXS/NgPVT2qvTQaQuncgWix8Zn3UnHcxSEx4QD/Vf
+ RMfrEp9AaJkr6yPYoQ3ueumLn5fAeq1Kg9qyjA2fsjMEPbbv12kwF6lMt+08PWZmvmd8+ECF
+ UT+51IfIdPQzWlkYoW35j0oID/ZUe04Ox+Kop1Z60mxJisK5AYE19lq6T6yqAyRQHVNDltI6
+ PxB37/+QE8xkKmSNrQPMr1GT7mt/Ut8SwzGR5CcNDpHUVKoi90qq0GkQ==;
+Message-ID: <7bf7b708-9075-4914-82da-f0a510d914a7@siemens.com>
+Date: Wed, 12 Mar 2025 15:38:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH] watchdog: Add driver for Intel OC WDT
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, jan.kiszka@siemens.com,
+ benedikt.niedermayr@siemens.com
+References: <20250311-ivo-intel_oc_wdt-v1-1-fd470460d9f5@siemens.com>
+ <bd411390-25bd-417e-9caa-aa4a45ad9161@kernel.org>
+Content-Language: en-US
+From: Diogo Ivo <diogo.ivo@siemens.com>
+In-Reply-To: <bd411390-25bd-417e-9caa-aa4a45ad9161@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328357:519-21489:flowmailer
 
-On Wed, 2025-03-12 at 09:08 +0100, Jiri Kosina wrote:
-> From: Jiri Kosina <jkosina@suse.com>
->=20
-> The line
->=20
-> 	obj-$(INTEL_ISH_FIRMWARE_DOWNLOADER)=C2=A0=C2=A0 +=3D intel-ish-hid/
->=20
-> in top-level HID Makefile is both superfluous (as
-> CONFIG_INTEL_ISH_FIRMWARE_DOWNLOADER
-> depends on CONFIG_INTEL_ISH_HID, which contains intel-ish-hid/
-> already) and wrong (as it's
-> missing the CONFIG_ prefix).
->=20
-> Just remove it.
->=20
-> Reported-by: Jiri Slaby <jirislaby@kernel.org>
-> Fixes: 91b228107da3e ("HID: intel-ish-hid: ISH firmware loader client
-> driver")
-> Signed-off-by: Jiri Kosina <jkosina@suse.com>
+Hi Krzysztof, thanks for the review.
 
-Good one
+On 3/12/25 8:50 AM, Krzysztof Kozlowski wrote:
+> On 11/03/2025 14:18, Diogo Ivo wrote:
+>> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+>> index f81705f8539aa0b12d156a86aae521aa40b4527d..16e6df441bb344c0f91b40bd76b6322ad3016e72 100644
+>> --- a/drivers/watchdog/Kconfig
+>> +++ b/drivers/watchdog/Kconfig
+>> @@ -1350,6 +1350,17 @@ config INTEL_MID_WATCHDOG
+>>   
+>>   	  To compile this driver as a module, choose M here.
+>>   
+>> +config INTEL_OC_WATCHDOG
+>> +	tristate "Intel OC Watchdog"
+>> +	depends on X86 && ACPI
+> 
+> Why can't this be compile tested?
 
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+I'll add it in v2 as well as HAS_IOPORT.
 
-Thanks,
-Srinivas
+>> +static const struct acpi_device_id intel_oc_wdt_match[] = {
+>> +	{ "INT3F0D" },
+>> +	{ "INTC1099" },
+>> +	{ },
+>> +};
+>> +MODULE_DEVICE_TABLE(acpi, intel_oc_wdt_match);
+>> +
+>> +static struct platform_driver intel_oc_wdt_platform_driver = {
+>> +	.driver = {
+>> +		.name = DRV_NAME,
+>> +		.acpi_match_table = ACPI_PTR(intel_oc_wdt_match),
+> 
+> Drop ACPI_PTR, causes warnigns and is not really beneficial.
 
-> ---
-> =C2=A0drivers/hid/Makefile | 1 -
-> =C2=A01 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
-> index 482b096eea28..0abfe51704a0 100644
-> --- a/drivers/hid/Makefile
-> +++ b/drivers/hid/Makefile
-> @@ -166,7 +166,6 @@ obj-$(CONFIG_USB_KBD)		+=3D usbhid/
-> =C2=A0obj-$(CONFIG_I2C_HID_CORE)	+=3D i2c-hid/
-> =C2=A0
-> =C2=A0obj-$(CONFIG_INTEL_ISH_HID)	+=3D intel-ish-hid/
-> -obj-$(INTEL_ISH_FIRMWARE_DOWNLOADER)	+=3D intel-ish-hid/
-> =C2=A0
-> =C2=A0obj-$(CONFIG_AMD_SFH_HID)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +=3D =
-amd-sfh-hid/
-> =C2=A0
+I'll drop it in v2.
 
+>> +	},
+>> +	.probe = intel_oc_wdt_probe,
+>> +};
+>> +
+>> +module_platform_driver(intel_oc_wdt_platform_driver);
+>> +
+>> +MODULE_AUTHOR("Diogo Ivo <diogo.ivo@siemens.com>");
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_DESCRIPTION("Intel OC Watchdog driver");
+>> +MODULE_ALIAS("platform:" DRV_NAME);
+> 
+> Drop alias, you have match table.
+
+I'll drop it in v2.
+
+> Best regards,
+> Krzysztof
+
+Best regards,
+Diogo
 
