@@ -1,150 +1,150 @@
-Return-Path: <linux-kernel+bounces-557394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA869A5D855
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:37:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5486AA5D857
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:38:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E1DC3B0DB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:37:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 837A87A68BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F0A23536B;
-	Wed, 12 Mar 2025 08:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED802356B4;
+	Wed, 12 Mar 2025 08:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="udsTIskL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RlNclRxr";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="udsTIskL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RlNclRxr"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMisL0Al"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B7423278D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D10B1DE3A4;
+	Wed, 12 Mar 2025 08:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741768660; cv=none; b=uVx9puFpLjgNi06o4E95oGwC9IFruWHaDbTZx1y3XLcB/arnZRdG7mj3FtxfQ1suAjMdMCp5EuCdDszrlt49tb/OqD4HrF1IR1ndMj2SfUlCeXXyL4rB8a15OIwNZ+/FO+dYv3T67SdESvOFLHVExcU1HSdmj/jMrEZ+43g32gE=
+	t=1741768728; cv=none; b=sDw+bZz2sDEBWuc8C1DPki1d68+Y99IDleejVBMwR9b1bY4L6MmQkobaTdiTWwsz7Is+zpa1HNd7Sa0N5p1qOPD6lJpDlJJIdyXpRRG8ok3Qg8FsAh04Z0X43iRZY+cmHVQWZywgcoZ8bNWErdq8sFFCrN0J5KEPRUTUxxxTEzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741768660; c=relaxed/simple;
-	bh=2wbiqFqqWZMjSHcLrYzN3FIwQO0Lt39FnojFVkME+8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pkAwuUcfvT9a1Qw4o2YJb5YCHZA0iOFYwJ7l2qjNbipElGIfhPu0pkGGTJxxOFay19/e+6/+yYfXuqepp39GEjLT18nZyzq5lUOcxYuOt2ExT2PxlW/4nQk7tDQtWCQK+XaOi0dtE9ZFwLO/RRIdH8uMyDLtCzWD/4/26Z62Jvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=udsTIskL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RlNclRxr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=udsTIskL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RlNclRxr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 73A0021125;
-	Wed, 12 Mar 2025 08:37:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741768657; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5cML1HaDhpWYa4lNsyeiZh6Uj2uXAn/7WR60HtEXBSU=;
-	b=udsTIskLFEPzW1RX2Vwr12kVaDq/lwisonjukBuQ7o2eWbloNIUGSJkXYejiWt7AyWLImB
-	tQukdc+twxTvIEwbvopsKyiRUC1AGWX7VURNYolm/Txl8y2VofWZ+HdyhQ+qfxq7HwM8Lq
-	rYRDCy/myg5NoHcXdMqPnY7XpCqA//g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741768657;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5cML1HaDhpWYa4lNsyeiZh6Uj2uXAn/7WR60HtEXBSU=;
-	b=RlNclRxrD9JNT5ht7MWOzsyavnEBmLiHGOlyrGp9xZl/tyl8Inlq5+dDkZIv51bnrIQzYH
-	Qo+jkq30b2P12hCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=udsTIskL;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RlNclRxr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741768657; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5cML1HaDhpWYa4lNsyeiZh6Uj2uXAn/7WR60HtEXBSU=;
-	b=udsTIskLFEPzW1RX2Vwr12kVaDq/lwisonjukBuQ7o2eWbloNIUGSJkXYejiWt7AyWLImB
-	tQukdc+twxTvIEwbvopsKyiRUC1AGWX7VURNYolm/Txl8y2VofWZ+HdyhQ+qfxq7HwM8Lq
-	rYRDCy/myg5NoHcXdMqPnY7XpCqA//g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741768657;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5cML1HaDhpWYa4lNsyeiZh6Uj2uXAn/7WR60HtEXBSU=;
-	b=RlNclRxrD9JNT5ht7MWOzsyavnEBmLiHGOlyrGp9xZl/tyl8Inlq5+dDkZIv51bnrIQzYH
-	Qo+jkq30b2P12hCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20727132CB;
-	Wed, 12 Mar 2025 08:37:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9kI1BdFH0WdBAQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 12 Mar 2025 08:37:37 +0000
-Date: Wed, 12 Mar 2025 09:37:31 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: Liu Ye <liuye@kylinos.cn>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: Re: [PATCH v2] mm/debug: Fix minor issues in mm
-Message-ID: <Z9FHy8O154ds0QVK@localhost.localdomain>
-References: <20250312032344.297946-1-liuye@kylinos.cn>
+	s=arc-20240116; t=1741768728; c=relaxed/simple;
+	bh=aoRSn+Ge+OFGhJG+BqVTYAMNvaYrTDa2lkYMIa9r1Go=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pRvwog/GKOW/txbHE5frNvvDMA0k0Gtl1GJQJ/FPHS58CTVpODQedJFhj9PBi1SnfUv/e+0sdus672LARj8j636/TmHMMfJ7mnLqOTfuvSqqoQBLyKTiavHSJNAgvU7eK8LT/xojyInawfb2kuR91mH+r0CSHJjJKwedlcTjXxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMisL0Al; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 211B7C4CEE3;
+	Wed, 12 Mar 2025 08:38:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741768728;
+	bh=aoRSn+Ge+OFGhJG+BqVTYAMNvaYrTDa2lkYMIa9r1Go=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nMisL0Alo24OqfZs5DJsP7fMNYMn/y6s+lb+FUpIiJLNx8Y/vM8nboxVqWeM+VMdZ
+	 HowqnCvj4GoEdZ82v6YBjeAV43CFNO4ubGTbWp4WoMsLhdyT8pvyYIa5ygUkk5DSCH
+	 FXgI+Lqj/338K21275pV3Fnnj6e/uTWuKdBipCB7T7Ri+7IZGQ3mhbjJo+9XDZTwOI
+	 Wo6wNinEYQJ2NtLPyZ5zD4ZfTDM//0qfjzmlVheT0vkFjQ37qdovA3qr3xJi7ECE+B
+	 o9Khei00taruEW78qBahhRq1jXdcoGS4mHpfeFh8aF1xvS3ME9HlBlcznqvMKBgD8C
+	 XV1zRsw/Lhzaw==
+Received: from 82-132-232-216.dab.02.net ([82.132.232.216] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tsHbx-00CnRd-QC;
+	Wed, 12 Mar 2025 08:38:46 +0000
+Date: Wed, 12 Mar 2025 08:38:43 +0000
+Message-ID: <87r0327iek.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	qperret@google.com,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v3 1/3] KVM: arm64: Add flags to kvm_hyp_memcache
+In-Reply-To: <20250307113411.469018-2-vdonnefort@google.com>
+References: <20250307113411.469018-1-vdonnefort@google.com>
+	<20250307113411.469018-2-vdonnefort@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312032344.297946-1-liuye@kylinos.cn>
-X-Rspamd-Queue-Id: 73A0021125
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 82.132.232.216
+X-SA-Exim-Rcpt-To: vdonnefort@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Mar 12, 2025 at 11:23:44AM +0800, Liu Ye wrote:
-> This patch includes several minor fixes:
+On Fri, 07 Mar 2025 11:34:09 +0000,
+Vincent Donnefort <vdonnefort@google.com> wrote:
 > 
-> - Simplify compound page judgment conditions.
-> - Missing a newline character at the end of the format string.
+> Add flags to kvm_hyp_memcache and propagate the latter to the allocation
+> and free callbacks. This will later allow to account for memory, based
+> on the memcache configuration.
 > 
-> Each change is independent.
+> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> 
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 3a7ec98ef123..12691ae23d4c 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -86,6 +86,7 @@ struct kvm_hyp_memcache {
+>  	phys_addr_t head;
+>  	unsigned long nr_pages;
+>  	struct pkvm_mapping *mapping; /* only used from EL1 */
+> +	unsigned long flags;
+>  };
+>  
+>  static inline void push_hyp_memcache(struct kvm_hyp_memcache *mc,
+> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> index 1f55b0c7b11d..c01ad4430729 100644
+> --- a/arch/arm64/kvm/mmu.c
+> +++ b/arch/arm64/kvm/mmu.c
+> @@ -1086,12 +1086,12 @@ void kvm_free_stage2_pgd(struct kvm_s2_mmu *mmu)
+>  	}
+>  }
+>  
+> -static void hyp_mc_free_fn(void *addr, void *unused)
+> +static void hyp_mc_free_fn(void *addr, void *mc)
+>  {
+>  	free_page((unsigned long)addr);
+>  }
+>  
+> -static void *hyp_mc_alloc_fn(void *unused)
+> +static void *hyp_mc_alloc_fn(void *mc)
+>  {
+>  	return (void *)__get_free_page(GFP_KERNEL_ACCOUNT);
+>  }
+> @@ -1102,7 +1102,7 @@ void free_hyp_memcache(struct kvm_hyp_memcache *mc)
+>  		return;
+>  
+>  	kfree(mc->mapping);
+> -	__free_hyp_memcache(mc, hyp_mc_free_fn, kvm_host_va, NULL);
+> +	__free_hyp_memcache(mc, hyp_mc_free_fn, kvm_host_va, (void *)mc);
 
-If each change is indepenent, send a patch per change.
+Why the cast? It looks superfluous to me.
 
-Also CC Willy since he has been dealing with __dump_page lately.
+>  }
+>  
+>  int topup_hyp_memcache(struct kvm_hyp_memcache *mc, unsigned long min_pages)
+> @@ -1117,7 +1117,7 @@ int topup_hyp_memcache(struct kvm_hyp_memcache *mc, unsigned long min_pages)
+>  	}
+>  
+>  	return __topup_hyp_memcache(mc, min_pages, hyp_mc_alloc_fn,
+> -				    kvm_host_pa, NULL);
+> +				    kvm_host_pa, (void *)mc);
 
- 
+Same here.
+
+Thanks,
+
+	M.
 
 -- 
-Oscar Salvador
-SUSE Labs
+Without deviation from the norm, progress is not possible.
 
