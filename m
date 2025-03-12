@@ -1,105 +1,110 @@
-Return-Path: <linux-kernel+bounces-557522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C4DEA5DA58
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:19:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65EECA5DA15
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:01:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36EFA3B76F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:19:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310B2189D4E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7595423C8AE;
-	Wed, 12 Mar 2025 10:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2E623CF1F;
+	Wed, 12 Mar 2025 10:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="g0zL4dey"
-Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LM+WMKTE"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5997E23E326
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECD223BF93
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741774773; cv=none; b=SadkIZPtH35PO3KVZ85Zp4k8jpPLvaKFumgFggbCY4obAHqZCfFPUu5HtgL97+W277DflmgCIY8GCTHWHHKEa82dhqqckSF2gtFSUG84cF+Z9I0F+GUwsourLuraH+JieIivIPxndPIz2Uzq1wHZvg2epPOMgr6awBOvzwjhmjA=
+	t=1741773675; cv=none; b=YwpINSxP2vklOJ3fOgC+mSv3ZWaAGQrmECejv1EeAlwGapjaOvy9+RGHvfZLWNNuurwjdhCHehzHhcu/uskfA1/zF3srT5pNe+uDc5ttSBiEr6Hm2KxTJPVbcqMFqAcjSR3uNudDR8lYl8ihjoRNrkO7yIzH1JOxyWcBaIL6b7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741774773; c=relaxed/simple;
-	bh=28xJg6gapHqktUP3G98ig3pZzO9ELnPrig/osmgFQUA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=sVbjqEq+DPv0Nsj0rKScXlm7n5WNQkinefngDH74PoplJhB7HXcqEi6XU+fBVtAh8YgPjBgZeeGbN1opv5169wGS4Ryss6OEbMqIW87WaGfaOPP71qE64Oxvi85N4E/ym+avZN8TZE/iSSWcANCjG3nB+NJUIgem6MZXOz8fjCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=g0zL4dey; arc=none smtp.client-ip=217.70.178.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	by mslow3.mail.gandi.net (Postfix) with ESMTP id 3FEEB583C7B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:59:59 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4370F43212;
-	Wed, 12 Mar 2025 09:59:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741773596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YE1jiy9kN43iGRytxK1aWHUVaHmUxNQdzJgC95dMlMc=;
-	b=g0zL4deymrtd8MN4KO2/Qh7LgNN5pePACqlhrAV6WkWqMoKBwxG0oldRqDgAvRjqrr6w2M
-	2uLmzsOuKNrkhBMPTOz9+xtj+OIguIZfI3z58WD+j47Hny2W6obQSARDoltGTDP7BN7J4k
-	CwgunAMYVaAwHGXke8uG9W5jwb/oM8lUI+2AxOPXtXqG94A9/tKCM3ppdmJSpnwOWbsipQ
-	jXbA0eYVFwJ+IAD4l+7FaGmEDP9HBalpBnX9gRgFxjjZd7rnv7jnyY515n+bJIwTviqo2J
-	u62kZaaAsmNCtGiX504fufXtu0ttiwm0Frns7AgsKzc8Or9hC8eJRSHrF3JiLQ==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250226-drm-debugfs-show-all-bridges-v8-0-bb511cc49d83@bootlin.com>
-References: <20250226-drm-debugfs-show-all-bridges-v8-0-bb511cc49d83@bootlin.com>
-Subject: Re: [PATCH v8 0/2] drm: show "all" bridges in debugfs
-Message-Id: <174177359506.2719371.292782597798658368.b4-ty@bootlin.com>
-Date: Wed, 12 Mar 2025 10:59:55 +0100
+	s=arc-20240116; t=1741773675; c=relaxed/simple;
+	bh=H70cromMzBc7G1Dxdn7Ujl+1TcPLdylbz6SBFKEdUOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W7wk1HL5khNmDTHgZLkihTKVf2jM7/1QNoQU/MpPCJ3/RjOKIFZ59HOgGOaOm91BV29objxP8WWaMQg+vuq8J+KjU97ypjILQczl/zUxzKoJvi2aFj4joLC4zEtQrld8BKufEFg0HqkeVveA72fYeKtbYAVOsbPit17YHxX0268=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LM+WMKTE; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30615661f98so68652961fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:01:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741773672; x=1742378472; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H70cromMzBc7G1Dxdn7Ujl+1TcPLdylbz6SBFKEdUOo=;
+        b=LM+WMKTEtBro67ucRHGFG82QurBUVVTKueWjq6fDb4ct1i3KejryugfkoRLxmXodsT
+         gEpX5bmbXgc0Pia5+kYM/u22mb5eE2PU965J+nKcNzU+gnD5g0qPMC+AGwDIvQNU6OvV
+         4gMhJu81ak6Plrm7PcR85qREnu0ChRdO7Emv1PqiXCRAnO4HUygSvj4GME7wukOG4JqE
+         nNvagmkxB0k4nQPKYBG9kk4nnP3qFHWfkRXv4BzJq1kZiCUbpYTyee0J/hz4Ljbj0zUU
+         mRyJzAftdRRvSOocXvmTHIPX+TQQJF6mMMuI2P28z22iLTQX56T6IOJLTq83PNJ5WsYz
+         J8xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741773672; x=1742378472;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H70cromMzBc7G1Dxdn7Ujl+1TcPLdylbz6SBFKEdUOo=;
+        b=DqWpoqcrOQQ9usyTV/K32ddtSmIh61CnN8uNz1J9Z8nVS1t4g8jCTfTvJChveGs0J3
+         piizcUtOtzTC8Gyx2Gwg62JkbvtCwhtIFxw+z2UE5TS4gG3vhHATIlIrVHMFuIkAfnRR
+         Y0vf+M7TK3uH59/otUNeSKUMJaDECZJfnuuwe+vNFok+/bPwsf5ACk0pFBlU5lvdkNUD
+         bHuuFqcWdn1KE7VZ2SYptyoDqBZXP0CkHlK+kRqDkiHxlt25bMXd3sEShT6Vk4XpRifa
+         M1U2tGusTfZ6eK9+E11AVFYDkUCkuMHiYHbtkzgGaqDwmJaV1p/YwlQTI4QPcIYPCDPN
+         /OgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW//FX6tnpddHsd+DTngP2YEgqOCi52dV7gNNBC6hTbrbpo3h+qUGlxYZJeSpDa9KFcJD4d9BndqpggMRc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrflb1gTDLzQ/m8RitUL+/SsR/BNqFCXYMFWseFzwN464ey+D+
+	txC4iU1vjgrJo7TanLEj8Mh5fbKMw0GASOFN/VnMndTpKLtnDvy6cO5tduLmjNUpZ6LnSXw3O14
+	eXdZl1NpLoYekyrzbATVlU+gJAnr4Ei0hem/bBQ==
+X-Gm-Gg: ASbGnctloF6Io8CCfTeiMRWxaxQr+bunPi8Hag+z+HZbjl6ZcVfQLmAdz0d2zhSrRk1
+	C8eIxYeCKBzh1VsC4w4cu3MZpi5M8Ffzbsm9rNd8H+QZv7Q+djRwELKX6PEtG+UucSeiYfqPd00
+	N4BNKW3Krrsq46NZk91AiJFeT0L1BFv61kcJTapZ/0A7wmc8XQ2w3jIWZh0A==
+X-Google-Smtp-Source: AGHT+IF3JsnGDmtC8cFGGo9UJ3LwBpBWNU0LU9dhkqF7FdQC0xv6vW0juUcQgoshe4Cj7uKAJnjHv9k5v01339Iy9Rw=
+X-Received: by 2002:a05:6512:220a:b0:545:49d:547a with SMTP id
+ 2adb3069b0e04-54990e5dac1mr7224533e87.18.1741773671774; Wed, 12 Mar 2025
+ 03:01:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdegjeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevjghfuffkffggtgfgofesthejredtredtjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejheeiledvkeeigeeluddtleejvdfhleefleffffeitdetvdeltddttddtgfelteenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgdujedvrddujedrtddrudgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopegumhhithhrhidrsggrrhihshhhkhhovheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtohepjhgrnhhirdhnihhkuhhlrgeslhhinhhugidrihhnthgvlhdrtghomhdpr
- hgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhm
-X-GND-Sasl: louis.chauvet@bootlin.com
+References: <20250312-max77759-mfd-v4-0-b908d606c8cb@linaro.org> <20250312-max77759-mfd-v4-1-b908d606c8cb@linaro.org>
+In-Reply-To: <20250312-max77759-mfd-v4-1-b908d606c8cb@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 12 Mar 2025 11:01:00 +0100
+X-Gm-Features: AQ5f1Jp2A-9h5YN6Ed4bZKIBT4UotjU0jd3UNyhUp6pXeEy9BD3imBjHO6ZUslo
+Message-ID: <CAMRc=Mddcku1vokKQzxyJOtvpdJSjM2TFvG9r0tnZ_qY7HBGJA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] dt-bindings: gpio: add max77759 binding
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Mar 12, 2025 at 10:26=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@=
+linaro.org> wrote:
+>
+> The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
+> includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
+> Port Controller (TCPC), NVMEM, and a GPIO expander.
+>
+> This describes its GPIO module.
+>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
 
-On Wed, 26 Feb 2025 22:23:51 +0100, Luca Ceresoli wrote:
-> This series adds a /sys/kernel/debug/dri/bridges file showing all bridges
-> between drm_bridge_add() and drm_bridge_remove(), which might not be bound
-> to any encoder and thus not visible anywhere in debugfs.
-> 
-> It also cleans up the DRM bridge debugfs code by moving code to
-> drm_bridge.c.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/2] drm/bridge: move bridges_show logic from drm_debugfs.c
-      commit: 9497c5a0f7c26ff81f11df738a94c6b80f890c0a
-[2/2] drm/debugfs: add top-level 'bridges' file showing all added bridges
-      commit: eff0347e7c228335e9ff64aaf02c66957803af6a
-
-Best regards,
--- 
-Louis Chauvet <louis.chauvet@bootlin.com>
-
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
