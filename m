@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-558266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6CDCA5E39D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:25:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5358A5E39C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:25:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8A13BB2E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:25:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE6A189EC97
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B60258CD9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8576F258CD6;
 	Wed, 12 Mar 2025 18:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bITHzdxH"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gLiyXsvH"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709CA257AFA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE18257AE4
 	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741803920; cv=none; b=HtVaJKwKsfYpAuA5NA2h9BjxSAkYffHRuK59tOg5OsaOmaSbaIhrDSdTKn9VHtf/rnh6iAO7RaZRzfZGDqKORmPWcsASxs856npcM11CyrkK+u5VQZ1xdpzu4OJP5D0xIWk9ZsINg3fMoMjztYu5c449FKUB+dxN2H0H9b8F3BA=
+	t=1741803919; cv=none; b=oZ1S5V4mLWCmlfiqZ9q9S18iSM10hfnQTc36zYb4bvTV2GnU1mliu2W7vEgDPuOS2TJI4uQSWQQziZDVPbwlYXBVjiMqRDcgMZz0ddgGuDG6bqremD/MyjeL0TJhxDavkDuRaTtLH0xv5ZFejctBDMRfec0idiB39JMeOeRwSnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741803920; c=relaxed/simple;
-	bh=K8b9jiKOOxsACEIskPQFmzB7NKdnnxdLI84jUrinUe4=;
+	s=arc-20240116; t=1741803919; c=relaxed/simple;
+	bh=kK8y4SUZa4Y6hxUU+crnhQDdJvNw0ut3Qg6gXuI4cv0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gwT10pcKZYZIK7xnUhN6zs7WgdsgtXivJ/9jfoNovmlScbF+aDFmF0/IJUiwE3TPYBW1VOAfjHJiFL3v0Iukba4mfCHlLa50SadN1+XM9zp3XUKU3w/z003nItGFO5po8DSypgLh3jedVd2Q0qss+WAf6vuC9M4VdZy+G+WQRfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bITHzdxH; arc=none smtp.client-ip=192.198.163.18
+	 MIME-Version; b=Uo2DrNvs+n1wTSCKew6ehyGqT9NaW3s3mL+NR4ssE635kzu3Hs/n4vAzj8tHuWGuoOwl3HiT5q+oJNr+tNdQi5At4hyeVyjmNiibL/v1VfGHQeQwdU7EXdn0GG/30SeCSJb7TZWrfhl+gTR0L9uSnJrPjF4kvXHM0vZBh4zQoSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gLiyXsvH; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,26 +35,26 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1741803918; x=1773339918;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=K8b9jiKOOxsACEIskPQFmzB7NKdnnxdLI84jUrinUe4=;
-  b=bITHzdxHgVvdA7MevEe0S74Yx3PXgAn6khrFt3aQIfO8ssc+y02+oWwQ
-   QIrtfu7tMiwA3/47IfPi9WlkJZF5IA+f7yRVvGEpTZgNu3OGw4aXOaAQe
-   wQPXxsZ6EwNq0EEY59Cblo8zdTj6XctMq87blJESdRvB7uXjZKYxbjJT0
-   YLKF5weTs9NF9BOgpvX9ymB7qcvoqK/DE2Kql63O21YYCF+kIRWWHM5Jy
-   veRxYXc+CYlch4aW27FbgagyDyzccve3Uu3pqSmmyut/TSg3Sfnfxe5dZ
-   ptKPts/7y8kB6v/gOeNtYqZyrdG9qveCiXGZH4oHEFUDiejnkdszYmxqC
-   g==;
-X-CSE-ConnectionGUID: s8hMf+qpTZy8Y2Az8zz6Yg==
-X-CSE-MsgGUID: uStwZJJ5Q2a64JLNy0T7QA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42154405"
+  bh=kK8y4SUZa4Y6hxUU+crnhQDdJvNw0ut3Qg6gXuI4cv0=;
+  b=gLiyXsvHfryBTYJRouMm7EXvjfELs2SjMWZeyENgAOD1mHq5d9Obqbk7
+   gx2UxeGonupi7eSPxhaab0apPGjDXvQcz001gmDv0oiR7CaFKNrPX8T5n
+   MNSaldOgVw6IweeJ5OtA1pKsTnrDXSSf9E/9tDWn7rjxWYNtX2bSf0d7y
+   rCmlLmD8GePs/I1oLkLTdw8a4dw6SO0mn0GUBP3+vPEq+Y0HMSOA+Gch4
+   aPyuoiPQ/19O7L+HG1u2kCZE/pydX3PAbAbz7Ed4aYZFMYDBTWFpSmtSi
+   c+uSdlwwkiVoN0sVoC7YpOHCkQl9jYOruSEyPexMpy/SJBApx6om6IrRz
+   w==;
+X-CSE-ConnectionGUID: WPE5MEhwQZGs59BrNlek6Q==
+X-CSE-MsgGUID: Dq4Wh+dQSEuosqTCGBEVag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42154411"
 X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="42154405"
+   d="scan'208";a="42154411"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
   by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 11:25:13 -0700
-X-CSE-ConnectionGUID: j274ONknSKi/Yq7ML1bMFA==
-X-CSE-MsgGUID: NNhmdNO0S3a0j+QFE6MCjA==
+X-CSE-ConnectionGUID: tOMNif6lSey11ZD+lxutEQ==
+X-CSE-MsgGUID: PUk1OGtQTluLv7GlLjZu7A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
-   d="scan'208";a="125899514"
+   d="scan'208";a="125899517"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
   by orviesa005.jf.intel.com with ESMTP; 12 Mar 2025 11:25:13 -0700
 From: kan.liang@linux.intel.com
@@ -69,9 +69,9 @@ To: peterz@infradead.org,
 Cc: ak@linux.intel.com,
 	eranian@google.com,
 	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V8 5/6] perf/x86: Remove swap_task_ctx()
-Date: Wed, 12 Mar 2025 11:25:24 -0700
-Message-Id: <20250312182525.4078433-5-kan.liang@linux.intel.com>
+Subject: [PATCH V8 6/6] perf: Clean up pmu specific data
+Date: Wed, 12 Mar 2025 11:25:25 -0700
+Message-Id: <20250312182525.4078433-6-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20250312182525.4078433-1-kan.liang@linux.intel.com>
 References: <20250312182525.4078433-1-kan.liang@linux.intel.com>
@@ -85,148 +85,204 @@ Content-Transfer-Encoding: 8bit
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-The pmu specific data is saved in task_struct now. It doesn't need to
-swap between context.
+The pmu specific data is saved in task_struct now. Remove it from event
+context structure.
 
-Remove swap_task_ctx() support.
+Remove swap_task_ctx() as well.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- arch/x86/events/core.c       |  9 ---------
- arch/x86/events/intel/core.c |  7 -------
- arch/x86/events/intel/lbr.c  | 23 -----------------------
- arch/x86/events/perf_event.h | 11 -----------
- 4 files changed, 50 deletions(-)
+ include/linux/perf_event.h | 12 ------
+ kernel/events/core.c       | 76 ++------------------------------------
+ 2 files changed, 3 insertions(+), 85 deletions(-)
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index ae8c90adca0f..833478ffbbf5 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -87,7 +87,6 @@ DEFINE_STATIC_CALL_NULL(x86_pmu_commit_scheduling, *x86_pmu.commit_scheduling);
- DEFINE_STATIC_CALL_NULL(x86_pmu_stop_scheduling,   *x86_pmu.stop_scheduling);
- 
- DEFINE_STATIC_CALL_NULL(x86_pmu_sched_task,    *x86_pmu.sched_task);
--DEFINE_STATIC_CALL_NULL(x86_pmu_swap_task_ctx, *x86_pmu.swap_task_ctx);
- 
- DEFINE_STATIC_CALL_NULL(x86_pmu_drain_pebs,   *x86_pmu.drain_pebs);
- DEFINE_STATIC_CALL_NULL(x86_pmu_pebs_aliases, *x86_pmu.pebs_aliases);
-@@ -2039,7 +2038,6 @@ static void x86_pmu_static_call_update(void)
- 	static_call_update(x86_pmu_stop_scheduling, x86_pmu.stop_scheduling);
- 
- 	static_call_update(x86_pmu_sched_task, x86_pmu.sched_task);
--	static_call_update(x86_pmu_swap_task_ctx, x86_pmu.swap_task_ctx);
- 
- 	static_call_update(x86_pmu_drain_pebs, x86_pmu.drain_pebs);
- 	static_call_update(x86_pmu_pebs_aliases, x86_pmu.pebs_aliases);
-@@ -2644,12 +2642,6 @@ static void x86_pmu_sched_task(struct perf_event_pmu_context *pmu_ctx,
- 	static_call_cond(x86_pmu_sched_task)(pmu_ctx, task, sched_in);
- }
- 
--static void x86_pmu_swap_task_ctx(struct perf_event_pmu_context *prev_epc,
--				  struct perf_event_pmu_context *next_epc)
--{
--	static_call_cond(x86_pmu_swap_task_ctx)(prev_epc, next_epc);
--}
--
- void perf_check_microcode(void)
- {
- 	if (x86_pmu.check_microcode)
-@@ -2714,7 +2706,6 @@ static struct pmu pmu = {
- 
- 	.event_idx		= x86_pmu_event_idx,
- 	.sched_task		= x86_pmu_sched_task,
--	.swap_task_ctx		= x86_pmu_swap_task_ctx,
- 	.check_period		= x86_pmu_check_period,
- 
- 	.aux_output_match	= x86_pmu_aux_output_match,
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 3efbb03fd77e..dc38dec244c1 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -5300,12 +5300,6 @@ static void intel_pmu_sched_task(struct perf_event_pmu_context *pmu_ctx,
- 	intel_pmu_lbr_sched_task(pmu_ctx, task, sched_in);
- }
- 
--static void intel_pmu_swap_task_ctx(struct perf_event_pmu_context *prev_epc,
--				    struct perf_event_pmu_context *next_epc)
--{
--	intel_pmu_lbr_swap_task_ctx(prev_epc, next_epc);
--}
--
- static int intel_pmu_check_period(struct perf_event *event, u64 value)
- {
- 	return intel_pmu_has_bts_period(event, value) ? -EINVAL : 0;
-@@ -5474,7 +5468,6 @@ static __initconst const struct x86_pmu intel_pmu = {
- 
- 	.guest_get_msrs		= intel_guest_get_msrs,
- 	.sched_task		= intel_pmu_sched_task,
--	.swap_task_ctx		= intel_pmu_swap_task_ctx,
- 
- 	.check_period		= intel_pmu_check_period,
- 
-diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
-index 24719adbcd7e..f44c3d866f24 100644
---- a/arch/x86/events/intel/lbr.c
-+++ b/arch/x86/events/intel/lbr.c
-@@ -522,29 +522,6 @@ static void __intel_pmu_lbr_save(void *ctx)
- 	cpuc->last_log_id = ++task_context_opt(ctx)->log_id;
- }
- 
--void intel_pmu_lbr_swap_task_ctx(struct perf_event_pmu_context *prev_epc,
--				 struct perf_event_pmu_context *next_epc)
--{
--	void *prev_ctx_data, *next_ctx_data;
--
--	swap(prev_epc->task_ctx_data, next_epc->task_ctx_data);
--
--	/*
--	 * Architecture specific synchronization makes sense in case
--	 * both prev_epc->task_ctx_data and next_epc->task_ctx_data
--	 * pointers are allocated.
--	 */
--
--	prev_ctx_data = next_epc->task_ctx_data;
--	next_ctx_data = prev_epc->task_ctx_data;
--
--	if (!prev_ctx_data || !next_ctx_data)
--		return;
--
--	swap(task_context_opt(prev_ctx_data)->lbr_callstack_users,
--	     task_context_opt(next_ctx_data)->lbr_callstack_users);
--}
--
- void intel_pmu_lbr_sched_task(struct perf_event_pmu_context *pmu_ctx,
- 			      struct task_struct *task, bool sched_in)
- {
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 67d2d250248c..8e5a4c3c5b95 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -958,14 +958,6 @@ struct x86_pmu {
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index beb6799d80d0..c22bc7214d99 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -501,16 +501,6 @@ struct pmu {
  	 */
- 	int		num_topdown_events;
+ 	struct kmem_cache		*task_ctx_cache;
  
 -	/*
--	 * perf task context (i.e. struct perf_event_pmu_context::task_ctx_data)
--	 * switch helper to bridge calls from perf/core to perf/x86.
--	 * See struct pmu::swap_task_ctx() usage for examples;
+-	 * PMU specific parts of task perf event context (i.e. ctx->task_ctx_data)
+-	 * can be synchronized using this function. See Intel LBR callstack support
+-	 * implementation and Perf core context switch handling callbacks for usage
+-	 * examples.
 -	 */
--	void		(*swap_task_ctx)(struct perf_event_pmu_context *prev_epc,
+-	void (*swap_task_ctx)		(struct perf_event_pmu_context *prev_epc,
 -					 struct perf_event_pmu_context *next_epc);
+-					/* optional */
 -
  	/*
- 	 * AMD bits
+ 	 * Set up pmu-private data structures for an AUX area
  	 */
-@@ -1671,9 +1663,6 @@ void intel_pmu_lbr_save_brstack(struct perf_sample_data *data,
- 				struct cpu_hw_events *cpuc,
- 				struct perf_event *event);
+@@ -932,7 +922,6 @@ struct perf_event_pmu_context {
+ 	atomic_t			refcount; /* event <-> epc */
+ 	struct rcu_head			rcu_head;
  
--void intel_pmu_lbr_swap_task_ctx(struct perf_event_pmu_context *prev_epc,
--				 struct perf_event_pmu_context *next_epc);
+-	void				*task_ctx_data; /* pmu specific data */
+ 	/*
+ 	 * Set when one or more (plausibly active) event can't be scheduled
+ 	 * due to pmu overcommit or pmu constraints, except tolerant to
+@@ -980,7 +969,6 @@ struct perf_event_context {
+ 	int				nr_user;
+ 	int				is_active;
+ 
+-	int				nr_task_data;
+ 	int				nr_stat;
+ 	int				nr_freq;
+ 	int				rotate_disable;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 7b31ae194a08..0c749b3bce86 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -1254,20 +1254,6 @@ static void get_ctx(struct perf_event_context *ctx)
+ 	refcount_inc(&ctx->refcount);
+ }
+ 
+-static void *alloc_task_ctx_data(struct pmu *pmu)
+-{
+-	if (pmu->task_ctx_cache)
+-		return kmem_cache_zalloc(pmu->task_ctx_cache, GFP_KERNEL);
 -
- void intel_pmu_lbr_sched_task(struct perf_event_pmu_context *pmu_ctx,
- 			      struct task_struct *task, bool sched_in);
+-	return NULL;
+-}
+-
+-static void free_task_ctx_data(struct pmu *pmu, void *task_ctx_data)
+-{
+-	if (pmu->task_ctx_cache && task_ctx_data)
+-		kmem_cache_free(pmu->task_ctx_cache, task_ctx_data);
+-}
+-
+ static void free_ctx(struct rcu_head *head)
+ {
+ 	struct perf_event_context *ctx;
+@@ -3577,42 +3563,6 @@ static void perf_event_sync_stat(struct perf_event_context *ctx,
+ 	}
+ }
  
+-#define double_list_for_each_entry(pos1, pos2, head1, head2, member)	\
+-	for (pos1 = list_first_entry(head1, typeof(*pos1), member),	\
+-	     pos2 = list_first_entry(head2, typeof(*pos2), member);	\
+-	     !list_entry_is_head(pos1, head1, member) &&		\
+-	     !list_entry_is_head(pos2, head2, member);			\
+-	     pos1 = list_next_entry(pos1, member),			\
+-	     pos2 = list_next_entry(pos2, member))
+-
+-static void perf_event_swap_task_ctx_data(struct perf_event_context *prev_ctx,
+-					  struct perf_event_context *next_ctx)
+-{
+-	struct perf_event_pmu_context *prev_epc, *next_epc;
+-
+-	if (!prev_ctx->nr_task_data)
+-		return;
+-
+-	double_list_for_each_entry(prev_epc, next_epc,
+-				   &prev_ctx->pmu_ctx_list, &next_ctx->pmu_ctx_list,
+-				   pmu_ctx_entry) {
+-
+-		if (WARN_ON_ONCE(prev_epc->pmu != next_epc->pmu))
+-			continue;
+-
+-		/*
+-		 * PMU specific parts of task perf context can require
+-		 * additional synchronization. As an example of such
+-		 * synchronization see implementation details of Intel
+-		 * LBR call stack data profiling;
+-		 */
+-		if (prev_epc->pmu->swap_task_ctx)
+-			prev_epc->pmu->swap_task_ctx(prev_epc, next_epc);
+-		else
+-			swap(prev_epc->task_ctx_data, next_epc->task_ctx_data);
+-	}
+-}
+-
+ static void perf_ctx_sched_task_cb(struct perf_event_context *ctx,
+ 				   struct task_struct *task, bool sched_in)
+ {
+@@ -3687,16 +3637,15 @@ perf_event_context_sched_out(struct task_struct *task, struct task_struct *next)
+ 			WRITE_ONCE(next_ctx->task, task);
+ 
+ 			perf_ctx_sched_task_cb(ctx, task, false);
+-			perf_event_swap_task_ctx_data(ctx, next_ctx);
+ 
+ 			perf_ctx_enable(ctx, false);
+ 
+ 			/*
+ 			 * RCU_INIT_POINTER here is safe because we've not
+ 			 * modified the ctx and the above modification of
+-			 * ctx->task and ctx->task_ctx_data are immaterial
+-			 * since those values are always verified under
+-			 * ctx->lock which we're now holding.
++			 * ctx->task is immaterial since this value is
++			 * always verified under ctx->lock which we're now
++			 * holding.
+ 			 */
+ 			RCU_INIT_POINTER(task->perf_event_ctxp, next_ctx);
+ 			RCU_INIT_POINTER(next->perf_event_ctxp, ctx);
+@@ -5000,7 +4949,6 @@ find_get_pmu_context(struct pmu *pmu, struct perf_event_context *ctx,
+ 		     struct perf_event *event)
+ {
+ 	struct perf_event_pmu_context *new = NULL, *pos = NULL, *epc;
+-	void *task_ctx_data = NULL;
+ 
+ 	if (!ctx->task) {
+ 		/*
+@@ -5033,14 +4981,6 @@ find_get_pmu_context(struct pmu *pmu, struct perf_event_context *ctx,
+ 	if (!new)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	if (event->attach_state & PERF_ATTACH_TASK_DATA) {
+-		task_ctx_data = alloc_task_ctx_data(pmu);
+-		if (!task_ctx_data) {
+-			kfree(new);
+-			return ERR_PTR(-ENOMEM);
+-		}
+-	}
+-
+ 	__perf_init_event_pmu_context(new, pmu);
+ 
+ 	/*
+@@ -5075,14 +5015,7 @@ find_get_pmu_context(struct pmu *pmu, struct perf_event_context *ctx,
+ 	epc->ctx = ctx;
+ 
+ found_epc:
+-	if (task_ctx_data && !epc->task_ctx_data) {
+-		epc->task_ctx_data = task_ctx_data;
+-		task_ctx_data = NULL;
+-		ctx->nr_task_data++;
+-	}
+ 	raw_spin_unlock_irq(&ctx->lock);
+-
+-	free_task_ctx_data(pmu, task_ctx_data);
+ 	kfree(new);
+ 
+ 	return epc;
+@@ -5098,7 +5031,6 @@ static void free_cpc_rcu(struct rcu_head *head)
+ 	struct perf_cpu_pmu_context *cpc =
+ 		container_of(head, typeof(*cpc), epc.rcu_head);
+ 
+-	kfree(cpc->epc.task_ctx_data);
+ 	kfree(cpc);
+ }
+ 
+@@ -5106,7 +5038,6 @@ static void free_epc_rcu(struct rcu_head *head)
+ {
+ 	struct perf_event_pmu_context *epc = container_of(head, typeof(*epc), rcu_head);
+ 
+-	kfree(epc->task_ctx_data);
+ 	kfree(epc);
+ }
+ 
+@@ -14092,7 +14023,6 @@ inherit_event(struct perf_event *parent_event,
+ 	if (is_orphaned_event(parent_event) ||
+ 	    !atomic_long_inc_not_zero(&parent_event->refcount)) {
+ 		mutex_unlock(&parent_event->child_mutex);
+-		/* task_ctx_data is freed with child_ctx */
+ 		free_event(child_event);
+ 		return NULL;
+ 	}
 -- 
 2.38.1
 
