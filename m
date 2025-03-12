@@ -1,295 +1,497 @@
-Return-Path: <linux-kernel+bounces-557938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DEAEA5DF8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:58:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 904A5A5DF8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B133B7E5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:57:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 764721680C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B0E24E01A;
-	Wed, 12 Mar 2025 14:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198FF24CEDF;
+	Wed, 12 Mar 2025 14:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ncrPr9uG";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Xwyrg7iH"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bUAecovx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SMYvXAmW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pXsFZoM5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="scuwjW2o"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB471EB1A9;
-	Wed, 12 Mar 2025 14:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741791475; cv=fail; b=jHV2S9599N+dbCCi28od8TtYiFbNP6XN0BYaCvjlvPnJaxk7PVjIVY9XyhbN/07V0HC5qfE6n6fLhEb6KZf48j7rk6UnCpnpJUEXTkeNsY4E2sDtL+0TbHDVmBkXBzxG2i+kGRXLfx8x3W+sRipogoezMIOlW05tN0vOH24ffKE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741791475; c=relaxed/simple;
-	bh=bxdMLqmcW9hOhq6Vgx3IgX2bp8k+o49a58c2sVBoDow=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=V2oihOA4N5aD9fpDtUH47tptJ0JHdR6Ivfleu5g2pZZ473H7G/ptOBjf10ojBcq3ZLH2uP/cQDSkYeHbzIMRFRVVfqvewhfVmxOfdVYmugns6zOmfMvogfVGZelTsagG4JdgnYbqvaHRXx4YGLhl2/uNzI+KNWwVCKMpqNJPz98=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ncrPr9uG; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Xwyrg7iH; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CBihp4014784;
-	Wed, 12 Mar 2025 14:57:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=oBxgkGWppi6BQzopok4xNWklwgUdG1xiiWjZaNuqCIk=; b=
-	ncrPr9uGR4BJ2v+ptRZVKRSYoQ+RhxJDONrl8QxYTQTEA1PqMz+9vhnx7cmcZpZ4
-	4Y99YpYWbQt5wIaHkBlYgnsseGIdsJcVLgsTKWTMZZ7HUHuBooosGfgQKQJ5psL7
-	kitNVbn0BKTTXu5zuzC/AnMa+hTzgQsdQgmIAsaFYRGHKEfZ+8YYmIFigWxZDWeo
-	vMTNpRo1jOteVxesp+148irKJLUiqKHCVOGBzRKO8Hyy9e2+L0fNDyjL9pT5aLwH
-	fPh3nmSeQvoJCl3YpZHaXYvOisOLTxVW7posfnFZmphIgwQS6muXvrhbVxDi21DS
-	eTuKFcPegLBYTgGOf+gtDQ==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45au4dt0nw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Mar 2025 14:57:45 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52CEpsuR019562;
-	Wed, 12 Mar 2025 14:57:44 GMT
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2044.outbound.protection.outlook.com [104.47.51.44])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 45atn0mc6c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Mar 2025 14:57:43 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X8fVHqrzdAFFvBXW8IJjKScomVT3ZUhB2FzfqR942qtZH5s4mKMbj8Pu5loieJ+kFnbzEcLdSgcVp394FRNllCpL48z2KTVUQBNMmm2YKxOlaJbUyAM90aHNwsBB8+5pdxm39/N1He+6r2Xt4MqG6FSiL1r6menpxKNny5Wu+G5U9tC0fLyl/jgKd2C1Vdkl5EU64duIy+TW2j0TPWepAos1in4+ONRr13dNTiqquYTJt3UOpqlI/8v6r8cikItS0AzB6pKGuuCsdoQQSlfVD6fLTbO6YwbZiKMyU+OTGnzI/ZVfBiHV0mGSh2ExQiHH8XOcdsDej71IcHdSKz2l4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oBxgkGWppi6BQzopok4xNWklwgUdG1xiiWjZaNuqCIk=;
- b=IUQvD6IDE2zKTy4Bj1innRxTr9Rso41l+wjzUHfg170lcifsjjT1tyj7pJ54PfZaYQEwsZNZi2uHJ0pUeCUIPx4Mxt1FKJwviyiFmDV7xXtjqQBPjgZ97PDPmJxLmqNoEhBKLolcDRPYbJNE6e2HLS2CxHFiMSs14yzqGo8S78TIvtnQuMsHZr5U6cH74IwVvafElwvmDm4Jj1oqdRO1BBHdxSMRSk9xDftsVmX21hQIEWPl9w1tr89GSyGTKZre2egYk0J5++3yBwQ0+n1H4jdPjw0M6JKeA7dd2thaqEcnjCUeCMqjXYccMMD3OlEq5lwfgsDpoBYDx0pgG9djNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oBxgkGWppi6BQzopok4xNWklwgUdG1xiiWjZaNuqCIk=;
- b=Xwyrg7iHTIHoc3Y9FMV5fcYGm/0ZygaYrYNrdrEiMd+n68kllxLsZaR2i8QRQS025EBCL9HJQJkxTIMVT6tfsjOGNjOm4Eg5DXcMV+glRo+m0Jo1xqU+j9VVckNvTHjE9AxJuHf4ngRlrje1uh8RNP0TyL0JKwNvriwVyW/u72M=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by DS7PR10MB5072.namprd10.prod.outlook.com (2603:10b6:5:3b1::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
- 2025 14:57:41 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 14:57:41 +0000
-Message-ID: <9337105f-d35a-4985-ad21-bf0c36c8fd50@oracle.com>
-Date: Wed, 12 Mar 2025 14:57:38 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 05/10] xfs: Iomap SW-based atomic write support
-To: Christoph Hellwig <hch@infradead.org>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-        ritesh.list@gmail.com, martin.petersen@oracle.com
-References: <20250310183946.932054-1-john.g.garry@oracle.com>
- <20250310183946.932054-6-john.g.garry@oracle.com>
- <Z9E5nDg3_cred1bH@infradead.org>
- <ea94c5cd-ebba-404f-ba14-d59f1baa6e16@oracle.com>
- <Z9GRg-X76T-7rshv@infradead.org>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <Z9GRg-X76T-7rshv@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0097.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:c::13) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4866C245001
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741791486; cv=none; b=qd6UOB2+Cy7Sxgz1J4A4uX550wzEBLUIznvttGERmno///Z0C3PAhcgYey6KWi+s+uQYsAduPY51EhnKWAKUa3UWqMt5jGbNNgUBFRrjSAIWr8aJpf/XBs7a6qSoF56zfawgXxIWLq3Rdwdp7Y+a2PozB+HO38QBRXISof1+LWI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741791486; c=relaxed/simple;
+	bh=cd4WBhUHKfcc5EID31IvjjhuqQ0bx++CKGLdmXt7td8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eHg7bz1uK6XxR/npg7v1+mk170UFOPMaikfpYDsScHZyeT8yd1xlJoThz9DbCNrz0vfS74483xtdHMXWeVnNLiaatyr2VXrWCPO4kBSCTB9kDnsS2vO0uZA/NeTg3WWiYQTu/D1Q3WUPVxjQPstVoOR9hV1lI1JuokHGPrGRXL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bUAecovx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SMYvXAmW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pXsFZoM5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=scuwjW2o; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 410451F388;
+	Wed, 12 Mar 2025 14:58:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741791481; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x7WD2XsTpzTFKoZOc3nhZIXrM4cIYiYfZH3pyvx6hMI=;
+	b=bUAecovxufFsvQxggDCCx8Y3DyZk+rNGotjoDo6HIb0ITUEkWAQgEMt8zcVqvu8fuj8/Kx
+	Bt0wotsAJFBMx0hr8DyJXQk/rRZ+aZYybsiqR26MIO4F78tNSn4Bzn2VvJyFr1+wpol0AT
+	cT0AzVn23PX7NG2Qj3QI0fxlg2KF9W8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741791481;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x7WD2XsTpzTFKoZOc3nhZIXrM4cIYiYfZH3pyvx6hMI=;
+	b=SMYvXAmW1g3TNwwTc4XM8onhkEEi2xT9rKWJCM6PiUASWWYirgzwKlOVhyBF+1ulO+1Y0k
+	0p7IEvNggRmYj3CA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=pXsFZoM5;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=scuwjW2o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741791480; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x7WD2XsTpzTFKoZOc3nhZIXrM4cIYiYfZH3pyvx6hMI=;
+	b=pXsFZoM5XCoHDOisVf0wbfSWsX/ZkkbLTWW1KnH2cqkTVDWQvkeoQWAMZujvwWRqFhVwx+
+	Nkql1e2hcyKK+tnZmyLCCfoZBWcYijaQpiK3UXe4vm3j4kAElqhKQLplCGpqKMOAruhKgX
+	Ul13dIjsNLL0L6QzMztH6UgDIObajcc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741791480;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x7WD2XsTpzTFKoZOc3nhZIXrM4cIYiYfZH3pyvx6hMI=;
+	b=scuwjW2o9N+zQ6gvHgqJ11+GAWNBVKBW1YbwQpB1ElgyO9+YR4CoOtVwGcYKy1IqpdzasI
+	yqjYVUlIzLgE4OCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 26061132CB;
+	Wed, 12 Mar 2025 14:58:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bmnNCPig0WdOAgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 12 Mar 2025 14:58:00 +0000
+Message-ID: <befd17b0-160e-4933-96d9-8d5c4a774162@suse.cz>
+Date: Wed, 12 Mar 2025 15:57:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS7PR10MB5072:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ce7b125-4202-4343-b26c-08dd61763ccf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Zk5VbmJieUZoZEQ2OTNJN2VNakttcVBKTFBIRE1oTi9jYjRVNjZDM0poTHdm?=
- =?utf-8?B?MDN6RGlXTmFuNE5tMUd2b3lNS0JQM1kvTktnZkJxOUxnZ29FSWJGVVdTTFFJ?=
- =?utf-8?B?N0pFVHhmYWVCb1dhRytYMUs0V200bkpXbFNOU2JOR1pyZlNmamNOdlFRSmlz?=
- =?utf-8?B?SEQwWlhjc2xaUkNiWEx2aFhRZ3lzSG5VTStNUE90eFVCSzVPMGVSdEpaaGNB?=
- =?utf-8?B?VWZMa2VNTUtwWEFRVWJ2N2x2d3NnVUt0cmw4ek9TMTVTNnlReVduTmhacGo0?=
- =?utf-8?B?YTBJdndDb0tEVXZzR0haMFRpUXpWZUVEUmJ4cGVFU0E2cllJRVdFVFk1UXRN?=
- =?utf-8?B?L0crd2p4b085T01wZjc3TytGUFQyVEF3ZWdnZ0VFM094aWJmMmQrMlVKRWM2?=
- =?utf-8?B?OWZ1bHdORWJoYzl4amNFVW9qLzJxZ0F2akV6RCtEZ0tQLytPV3VRMzBrMHp1?=
- =?utf-8?B?aXd4UG5XUFdjMk54RlZzaVNJdytaQThaRHBiZXk4RG81WjdSOG00ZFpHczF2?=
- =?utf-8?B?WGtNb2o2TU5jQmUvRGd3Y3U2bVUzcFFIUjkzdEgyeitNUkIzTllFWVdMZG5Q?=
- =?utf-8?B?SmN6c3BLY1pBc0pHUlJITnNFM2l5VDhMbFI1VlJDbVY1OHlwSFlPMGdiQXlt?=
- =?utf-8?B?ZTRWODZ0dFFYQ3dLZ2Z2dUF5bFlBT0ozZitpS0NsbFB2bU0wcVNyb3pjL05m?=
- =?utf-8?B?ZUF6NHRrMDM0Sy9ibXhzMnBWakpvbVRkNXRCQzdHblpodjZTZGk1QldxMkNM?=
- =?utf-8?B?QTVKWFY5OXM0L3U1RHFieTd0WFZ5K3N3MGNIQ09PM2lBdE1xZzRBTG03eUg3?=
- =?utf-8?B?Qmt0ZFVqczQyS2JrNkd6Yk9OR0tqdXVzUDZabENwRFQva1NoNkpvNnJ3U2t3?=
- =?utf-8?B?VXBtKzVFL0FmOE02WVpldmpxdlpWcVFDTG9UOUFtOUN1bC9hY1JsSWMvNmND?=
- =?utf-8?B?bFVXT1F1eVUwcG5LenVxRXB5NnBzYmFOZnhuYUd0ZXZZR2duVkNRditjMEhQ?=
- =?utf-8?B?U2VkQlZvMnFHa0o4dGpKaWZoL0JRcm1XVmM5bTN3aUVSSkl1VmlidThQcmV3?=
- =?utf-8?B?R2NDSW1Va2ZjYkFBZ1d5ZVQ5TTFCMENFaDNqbkhrUDJIQ0RCYWtQeDNYa25P?=
- =?utf-8?B?b2xtaDh5Z256M2UxUnBnSTNpNGpxbE9TYkM5OTJSYSt5dkxpeUx5akp4dnpX?=
- =?utf-8?B?TzF2V3NsUjdzU2xEOTRhd21uTERqSXpmRmVoVm94aHZBc21NSXRvT1ZjcEhN?=
- =?utf-8?B?UExLMjZKQjFVMDNuQnlwVzJIVWZseGlKZGhtR0ZQbkdrSHZuNnF3TTdjSWtU?=
- =?utf-8?B?R3hsWTBzb1FPNlM1V1VqMXJIVXl2RFNqclkzeWhLYkZkZ3B1QUtkS2w5dHYz?=
- =?utf-8?B?YUNDcFR2dFNRYkxNQ2ZtTXk2ZEtsOWhUOEorWlBmQnhHZ3U5OWhpajAvV3Nv?=
- =?utf-8?B?TitVQ1dGZUJBclZpMEdHTUxWR0szNng3ZUJSVHhHaG02RHF0Vm0yc0Nyemw4?=
- =?utf-8?B?V291RWxhNGtFdTlMZytCV0JtMy9BVFZTVHJUaGZzNnA2SDNnOWlMQWZlYWNC?=
- =?utf-8?B?RFExaWd3VjdaekZIV3pVRGUxVCtDTytZT25sMkRwK2J2Q0R3R1UyRnhRNjd2?=
- =?utf-8?B?SGtlRklCZWVTZ3orNncxZlRJWTIzUE9WRVFiNjFaU1B4QXAvMW9KRml5Rnhp?=
- =?utf-8?B?QWtsWFA5TEtKcHdiQUN0S1hlL2pSSTQ1a0lCZEkxZkRVWitQWlo5azFySmRY?=
- =?utf-8?B?SExETHo5NExVUndRbEpjZDZTSlVvKzhPSlBDRUMzeCtOWXlIV3IrSzBKY25T?=
- =?utf-8?B?NnkweVFPd1JLNmdYZTVTSmRHd2g3T2Q2SFhzNXhVa09KVmNtWldFUzdzcmlV?=
- =?utf-8?Q?HxeJMP2M1Vqmh?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cEV5RHZDRzVBdHAyN0dkbFpPTENlRG1lelM2N3lRdklJaFBoYWlkQXBsOFFW?=
- =?utf-8?B?YStQZG5IVit5WkVySE1vL2w3ZE9JbGNEUzVDRSt6cFFoSkpHdGJoWjJmY2Rn?=
- =?utf-8?B?dzQzUjNzYWYySnhBcFhnaW5wSDhDaTdPS0ZsN3pPb0JjZ2w3ZHhCVGF5Zlg4?=
- =?utf-8?B?M3dvY0JFc2E1VFZ0enN3dFR3SC9DY3htKzZaMUExWktRQnBFVXFRc2VXK0Mr?=
- =?utf-8?B?UUNHMm1nTC8ydTkwREkxZERDK1RlRDMvRnVERlhvR1hQOGRBM2RyeHlIWUwr?=
- =?utf-8?B?aVZRL0ZxVjB1UzgvWWJPaDd4MlNROGN2OVlyQS9Lbzl2bFF1NUJaSzVVVzdO?=
- =?utf-8?B?ckdiS2pCcEt0OW0rYkI1UGJ0bDIvUE1mdERzREdSVmdGSk5MMWUwM0x2Lzc2?=
- =?utf-8?B?NEF4UStZZ2M4WkUvNzJHWkpsbzk0eXF6VkxMZmV1YmxYc0RNRHlTcW9NUjAz?=
- =?utf-8?B?QUJNWFFKTGRGRDNCYmZNaWcxOHBXYWs0c216TDl1K1dwMVZ0VjExTVB5Rkto?=
- =?utf-8?B?N3pjd09CczI2MjVLaWFnKzhweGFYQ2dya2FhV2JXTXhqM2twT3dkRUtWeDJT?=
- =?utf-8?B?UUN2aEM3NVhibS9RNWkzUXV2TFB5WmFTUHUwNHpPN0VjeWZ3ZU51OTVJRjcw?=
- =?utf-8?B?bC9CYUduc24xRHJSTzViTzR5c2JaQlZhSzZKdFE1ZVpmS0RKWDFkNFJyRGk0?=
- =?utf-8?B?K01nNnR5VkhzYWEwcU5tVVAvQWY4dDMvYjE3N3RvS3gvMHpGVzVuR3FvSStW?=
- =?utf-8?B?Sk51Vi81THh6Z3JRcmZweTlWYnlEUXVVT0JjUVZvMzVTMDRKQWgzVFB1TEg3?=
- =?utf-8?B?Wm11U2dVcEtFS3IrSENGSitHc0I1TzFYdWdZM0tjODdOTUdiWXhHQjJ6U3Nz?=
- =?utf-8?B?dkhRQ0Z1ZGhyWTFMczBKU2w4WDFDTWloazFjU0FCNm1mVFc4clNQWVNoZlJo?=
- =?utf-8?B?Z2VRNklkbzZjcW1TODl4QjVHYlpjS3RVRXY1L0tubG9wcUVoYVkyMlozUUN6?=
- =?utf-8?B?bFozd1A2cDdNRDN0U3c0ZCtNNld6eU9OcmFzVjl0SHZEaEpGMlEyMHBxL3ls?=
- =?utf-8?B?dnNlUXVpeUt4RFl0UWpWU3hvbUdDajRsbWdYQmJkblBYNzdiRk9Sdm9RQWlE?=
- =?utf-8?B?TS9IZDVVc00vTHk2eW1EUUx2OVdUbXN2Y3ZuVDZyWXp6UkF0WTRwSE5LNUpB?=
- =?utf-8?B?aU9mMW9paE9mM2d0THlYRS9mVzVQTUlQeEIxcnJOT0poSWgwVUtsQkZMZlZx?=
- =?utf-8?B?Z2hCZk9aaHYxMXB4NkVsU0pyM0kzNSs1a05iOHIwZUU2em5XcmRpSTFJZzlu?=
- =?utf-8?B?Q2FLZjRsTi9NSHc4T2E1WkZOa0VGMlF2WFVIV0JTMGRuUEw5eHYxcFQzUmJm?=
- =?utf-8?B?YUYyT1I5bzBYalRQa2NOYXBxZUhPZ0I0VS90Rlo2MlVxWVJCNVZvR25NUUds?=
- =?utf-8?B?NUZ1OElrMS9ia0ZHU0cxNC9YRmJBMERkVHY4c01uTlFvY2xxZ1l2bHBveFIv?=
- =?utf-8?B?dVd1bFhMWHVRb2NSYWtXNXJ6alFUeDlHa29SWEw2cjBCUzdJVDVmSkhoeUdk?=
- =?utf-8?B?a2ZRYXdKSjI3dUh1TzJDQ1A2ejlvK1UyMkR4bGVRSXF3UkkzZG1VZVZ1MEo5?=
- =?utf-8?B?OFhLeHJJQUV5OXU1TGwyZ01rb2RQOE1tMW9wbGFTakdCM3VsUTlqY1FwNUpz?=
- =?utf-8?B?VTl5QkFLZDZJek5JemFuQ29rcFhtN21CSnIwNURuMjdZNm04SHlGYjdOQUt0?=
- =?utf-8?B?Qk9DV1MvWGZMQ2tqendVR3E4enNqQ3NjOVJQVzI5Tmd3aUhNOHRpL1B5YjVv?=
- =?utf-8?B?ZlorUXhaTjBSNTNPOWNnQ3JQa2xkRmdtNW8xZytrT0w5d0Fsa1BkK0xuSVhi?=
- =?utf-8?B?QlkzVFZYUFNJSWJNZjlucUJoNzQvUXdWYTJMajUvdXZ0SmxYRnZEUU9DWDMv?=
- =?utf-8?B?OXdWek5uV0pEWm5jclo4K0pKeS8za0dZaWlRajRpSHV0MEp2Syt6b01XZjVD?=
- =?utf-8?B?TGlnOExubXlDODdFWVB2MG1xTE5EdnRhL0F0N2c4YzlEUC8wZXZmVk9GbkMy?=
- =?utf-8?B?NVE5dENjdE8wZnNReFBpMkZUdER1dHpGU3BKNDJmUTlFYVMwcDJxaEg5OE94?=
- =?utf-8?B?YjlSWk14N1RqdExCeEozaWdDQzB6RnFhME9oanprSzkvWWJxOWM1cHJ0V1Vl?=
- =?utf-8?B?cEE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	l3ktQ/Qjkz0XOGiCGhMoQy7IdIWOQljZzRT8AJa6KaYTpgrfWZN+zgbpzhpC79oA76dw7g3VtgLi95y7HJYGfukQEjC3a7bPCXE0xl399LDGTIn4RxtSp6kCnLwGdrpN/34lQ74AA12WdiA6C/ViQ+Y3OsTMTAdmJt5F4UWqBGOSqo2gkAdukGBs/vTZx+HkEo6RTiCuSieIdWNxpBlhsP9U7m9MGkR2vmgHczQUmjE2+JXy7382DOdnSrD5CL+wDJauE0H0tfsWG6Hya3AQ2L0APUH2rlA2A2lsHfYTVRfrdiIf2mfGr1pnpEtuTr0qnJfdjDiMUVtdbdHopZNUWATkL3J9XqgPfwMQIBLzgId7+ccBMWw95N1VXXnM6EqxHGw4T+X0y3FfETtJQPl8yu+Tb0qyln7TTd+rBcYNIkIvCT+FdWYlF832axJ+b73x65RMcdBbDXlONRDHOJLiSC84E9F7j+qZIl8OxX013RGjN57YkyCJViNrH+1ae49K1kBskVatl5PENmT9x3G+R5EFXY0gGD/rqJ6vUEjmwOuJmDIqr39NK3vGn5E/UeCNOq0BCjkX0/BSuoufYeFrUXXYIhp3EYI+dP96KDPxzps=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ce7b125-4202-4343-b26c-08dd61763ccf
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 14:57:41.3144
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: efuiMNln09qsHGyq7s4LXJCElfArKbdKivK6Db0rcUvfrdcavJj/joj39HjuARe4UknelIxAtmnxoeNrkufU3Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5072
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_05,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
- mlxlogscore=999 bulkscore=0 malwarescore=0 adultscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502280000 definitions=main-2503120102
-X-Proofpoint-ORIG-GUID: OBAEtIHT0VMHB0Bwj7H4GnQalyXDE6n4
-X-Proofpoint-GUID: OBAEtIHT0VMHB0Bwj7H4GnQalyXDE6n4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 01/10] slab: add opt-in caching layer of percpu
+ sheaves
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org
+References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
+ <20250214-slub-percpu-caches-v2-1-88592ee0966a@suse.cz>
+ <CAJuCfpG4BYNWM24_Jha-SapfeaGdO0GKuteHwNE1hDdWXRS+1Q@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <CAJuCfpG4BYNWM24_Jha-SapfeaGdO0GKuteHwNE1hDdWXRS+1Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 410451F388
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,linux.com,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid,suse.cz:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 12/03/2025 13:52, Christoph Hellwig wrote:
-> On Wed, Mar 12, 2025 at 09:00:52AM +0000, John Garry wrote:
->>> How is -EAGAIN going to work here given that it is also used to defer
->>> non-blocking requests to the caller blocking context?
+On 2/22/25 23:46, Suren Baghdasaryan wrote:
+> On Fri, Feb 14, 2025 at 8:27 AM Vlastimil Babka <vbabka@suse.cz> wrote:
 >>
->> You are talking about IOMAP_NOWAIT handling, right?
-> 
-> Yes.
-> 
->> If so, we handle that in
->> xfs_file_dio_write_atomic(), similar to xfs_file_dio_write_unaligned(), i.e.
->> if IOMAP_NOWAIT is set and we get -EAGAIN, then we will return -EAGAIN
->> directly to the caller.
-> 
-> Can you document this including the interaction between the different
-> cases of -EAGAIN somewhere?
-
-Sure
-
-We do the same for dio write unaligned - but that already has a big 
-comment explaining the retry mechanism.
-
-> 
->>> What is the probem with only setting the flag that causes REQ_ATOMIC
->>> to be set from the file system instead of forcing it when calling
->>> iomap_dio_rw?
+>> Specifying a non-zero value for a new struct kmem_cache_args field
+>> sheaf_capacity will setup a caching layer of percpu arrays called
+>> sheaves of given capacity for the created cache.
 >>
->> We have this in __iomap_dio_rw():
+>> Allocations from the cache will allocate via the percpu sheaves (main or
+>> spare) as long as they have no NUMA node preference. Frees will also
+>> refill one of the sheaves.
 >>
->> 	if (dio_flags & IOMAP_DIO_ATOMIC_SW)
->> 		iomi.flags |= IOMAP_ATOMIC_SW;
->> 	else if (iocb->ki_flags & IOCB_ATOMIC)
->>   		iomi.flags |= IOMAP_ATOMIC_HW;
+>> When both percpu sheaves are found empty during an allocation, an empty
+>> sheaf may be replaced with a full one from the per-node barn. If none
+>> are available and the allocation is allowed to block, an empty sheaf is
+>> refilled from slab(s) by an internal bulk alloc operation. When both
+>> percpu sheaves are full during freeing, the barn can replace a full one
+>> with an empty one, unless over a full sheaves limit. In that case a
+>> sheaf is flushed to slab(s) by an internal bulk free operation. Flushing
+>> sheaves and barns is also wired to the existing cpu flushing and cache
+>> shrinking operations.
 >>
->> I do admit that the checks are a bit uneven, i.e. check vs
->> IOMAP_DIO_ATOMIC_SW and IOCB_ATOMIC
+>> The sheaves do not distinguish NUMA locality of the cached objects. If
+>> an allocation is requested with kmem_cache_alloc_node() with a specific
+>> node (not NUMA_NO_NODE), sheaves are bypassed.
 >>
->> If we want a flag to set REQ_ATOMIC from the FS then we need
->> IOMAP_DIO_BIO_ATOMIC, and that would set IOMAP_BIO_ATOMIC. Is that better?
-> 
-> My expectation from a very cursory view is that iomap would be that
-> there is a IOMAP_F_REQ_ATOMIC that is set in ->iomap_begin and which
-> would make the core iomap code set REQ_ATOMIC on the bio for that
-> iteration.
-
-but we still need to tell ->iomap_begin about IOCB_ATOMIC, hence 
-IOMAP_DIO_BIO_ATOMIC which sets IOMAP_BIO_ATOMIC.
-
-We can't allow __iomap_dio_rw() check IOCB_ATOMIC only (and set 
-IOMAP_BIO_ATOMIC), as this is the common path for COW and regular atomic 
-write
-
-> 
->>> Also how you ensure this -EAGAIN only happens on the first extent
->>> mapped and you doesn't cause double writes?
+>> The bulk operations exposed to slab users also try to utilize the
+>> sheaves as long as the necessary (full or empty) sheaves are available
+>> on the cpu or in the barn. Once depleted, they will fallback to bulk
+>> alloc/free to slabs directly to avoid double copying.
 >>
->> When we find that a mapping does not suit REQ_ATOMIC-based atomic write,
->> then we immediately bail and retry with FS-based atomic write. And that
->> check should cover all requirements for a REQ_ATOMIC-based atomic write:
->> - aligned
->> - contiguous blocks, i.e. the mapping covers the full write
+>> Sysfs stat counters alloc_cpu_sheaf and free_cpu_sheaf count objects
+>> allocated or freed using the sheaves. Counters sheaf_refill,
+>> sheaf_flush_main and sheaf_flush_other count objects filled or flushed
+>> from or to slab pages, and can be used to assess how effective the
+>> caching is. The refill and flush operations will also count towards the
+>> usual alloc_fastpath/slowpath, free_fastpath/slowpath and other
+>> counters.
 >>
->> And we also have the check in iomap_dio_bit_iter() to ensure that the
->> mapping covers the full write (for REQ_ATOMIC-based atomic write).
+>> Access to the percpu sheaves is protected by local_lock_irqsave()
+>> operations, each per-NUMA-node barn has a spin_lock.
+>>
+>> A current limitation is that when slub_debug is enabled for a cache with
+>> percpu sheaves, the objects in the array are considered as allocated from
+>> the slub_debug perspective, and the alloc/free debugging hooks occur
+>> when moving the objects between the array and slab pages. This means
+>> that e.g. an use-after-free that occurs for an object cached in the
+>> array is undetected. Collected alloc/free stacktraces might also be less
+>> useful. This limitation could be changed in the future.
+>>
+>> On the other hand, KASAN, kmemcg and other hooks are executed on actual
+>> allocations and frees by kmem_cache users even if those use the array,
+>> so their debugging or accounting accuracy should be unaffected.
+>>
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 > 
-> Ah, I guess that's the
+> Only one possible issue in __pcs_flush_all_cpu(), all other comments
+> are nits and suggestions.
+
+Thanks.
+
+>> +        * Limitations: when slub_debug is enabled for the cache, all relevant
+>> +        * actions (i.e. poisoning, obtaining stacktraces) and checks happen
+>> +        * when objects move between sheaves and slab pages, which may result in
+>> +        * e.g. not detecting a use-after-free while the object is in the array
+>> +        * cache, and the stacktraces may be less useful.
 > 
-> 	if (bio_atomic && length != iter->len)
-> 		return -EINVAL;
+> I would also love to see a short comparison of sheaves (when objects
+> are freed using kfree_rcu()) vs SLAB_TYPESAFE_BY_RCU. I think both
+> mechanisms rcu-free objects in bulk but sheaves would not reuse an
+> object before RCU grace period is passed. Is that right?
+
+I don't think that's right. SLAB_TYPESAFE_BY_RCU doesn't rcu-free objects in
+bulk, the objects are freed immediately. It only rcu-delays freeing the slab
+folio once all objects are freed.
+
+>> +struct slub_percpu_sheaves {
+>> +       local_lock_t lock;
+>> +       struct slab_sheaf *main; /* never NULL when unlocked */
+>> +       struct slab_sheaf *spare; /* empty or full, may be NULL */
+>> +       struct slab_sheaf *rcu_free;
 > 
-> So yes, please adda comment there that this is about a single iteration
-> covering the entire write.
+> Would be nice to have a short comment for rcu_free as well. I could
+> guess what main and spare are but for rcu_free had to look further.
 
-ok, fine.
+Added.
 
-Thanks,
-John
-
+>> +static int __kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags,
+>> +                                  size_t size, void **p);
+>> +
+>> +
+>> +static int refill_sheaf(struct kmem_cache *s, struct slab_sheaf *sheaf,
+>> +                        gfp_t gfp)
+>> +{
+>> +       int to_fill = s->sheaf_capacity - sheaf->size;
+>> +       int filled;
+>> +
+>> +       if (!to_fill)
+>> +               return 0;
+>> +
+>> +       filled = __kmem_cache_alloc_bulk(s, gfp, to_fill,
+>> +                                        &sheaf->objects[sheaf->size]);
+>> +
+>> +       if (!filled)
+>> +               return -ENOMEM;
+>> +
+>> +       sheaf->size = s->sheaf_capacity;
 > 
+> nit: __kmem_cache_alloc_bulk() either allocates requested number of
+> objects or returns 0, so the current code is fine but if at some point
+> the implementation changes so that it can return smaller number of
+> objects than requested (filled < to_fill) then the above assignment
+> will become invalid. I think a safer thing here would be to just:
+> 
+>        sheaf->size += filled;
+> 
+> which also makes logical sense. Alternatively you could add
+> VM_BUG_ON(filled != to_fill) but the increment I think would be
+> better.
 
+It's useful to indicate the refill was not successful, for patch 6. So I'm
+changing this to:
+
+        sheaf->size += filled;
+
+        stat_add(s, SHEAF_REFILL, filled);
+
+        if (filled < to_fill)
+                return -ENOMEM;
+
+        return 0;
+
+>> +
+>> +       stat_add(s, SHEAF_REFILL, filled);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +
+>> +static struct slab_sheaf *alloc_full_sheaf(struct kmem_cache *s, gfp_t gfp)
+>> +{
+>> +       struct slab_sheaf *sheaf = alloc_empty_sheaf(s, gfp);
+>> +
+>> +       if (!sheaf)
+>> +               return NULL;
+>> +
+>> +       if (refill_sheaf(s, sheaf, gfp)) {
+>> +               free_empty_sheaf(s, sheaf);
+>> +               return NULL;
+>> +       }
+>> +
+>> +       return sheaf;
+>> +}
+>> +
+>> +/*
+>> + * Maximum number of objects freed during a single flush of main pcs sheaf.
+>> + * Translates directly to an on-stack array size.
+>> + */
+>> +#define PCS_BATCH_MAX  32U
+>> +
+> .> +static void __kmem_cache_free_bulk(struct kmem_cache *s, size_t
+> size, void **p);
+>> +
+> 
+> A comment clarifying why you are freeing in PCS_BATCH_MAX batches here
+> would be helpful. My understanding is that you do that to free objects
+> outside of the cpu_sheaves->lock, so you isolate a batch, release the
+> lock and then free the batch.
+
+OK.
+
+>> +static void sheaf_flush_main(struct kmem_cache *s)
+>> +{
+>> +       struct slub_percpu_sheaves *pcs;
+>> +       unsigned int batch, remaining;
+>> +       void *objects[PCS_BATCH_MAX];
+>> +       struct slab_sheaf *sheaf;
+>> +       unsigned long flags;
+>> +
+>> +next_batch:
+>> +       local_lock_irqsave(&s->cpu_sheaves->lock, flags);
+>> +       pcs = this_cpu_ptr(s->cpu_sheaves);
+>> +       sheaf = pcs->main;
+>> +
+>> +       batch = min(PCS_BATCH_MAX, sheaf->size);
+>> +
+>> +       sheaf->size -= batch;
+>> +       memcpy(objects, sheaf->objects + sheaf->size, batch * sizeof(void *));
+>> +
+>> +       remaining = sheaf->size;
+>> +
+>> +       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
+>> +
+>> +       __kmem_cache_free_bulk(s, batch, &objects[0]);
+>> +
+>> +       stat_add(s, SHEAF_FLUSH_MAIN, batch);
+>> +
+>> +       if (remaining)
+>> +               goto next_batch;
+>> +}
+>> +
+> 
+> This function seems to be used against either isolated sheaves or in
+> slub_cpu_dead() --> __pcs_flush_all_cpu() path where we hold
+> slab_mutex and I think that guarantees that the sheaf is unused. Maybe
+> a short comment clarifying this requirement or rename the function to
+> reflect that? Something like flush_unused_sheaf()?
+
+It's not slab_mutex, but the fact slub_cpu_dead() is executed in a hotplug
+phase when the given cpu is already not executing anymore and thus cannot be
+manipulating its percpu sheaves, so we are the only one that does.
+So I will clarify and rename to sheaf_flush_unused().
+
+>> +
+>> +static void __pcs_flush_all_cpu(struct kmem_cache *s, unsigned int cpu)
+>> +{
+>> +       struct slub_percpu_sheaves *pcs;
+>> +
+>> +       pcs = per_cpu_ptr(s->cpu_sheaves, cpu);
+>> +
+>> +       if (pcs->spare) {
+>> +               sheaf_flush(s, pcs->spare);
+>> +               free_empty_sheaf(s, pcs->spare);
+>> +               pcs->spare = NULL;
+>> +       }
+>> +
+>> +       // TODO: handle rcu_free
+>> +       BUG_ON(pcs->rcu_free);
+>> +
+>> +       sheaf_flush_main(s);
+> 
+> Hmm. sheaf_flush_main() always flushes for this_cpu only, so IIUC this
+> call will not necessarily flush the main sheaf for the cpu passed to
+> __pcs_flush_all_cpu().
+
+Thanks, yes I need to call sheaf_flush_unused(pcs->main). It's ok to do
+given my reply above.
+
+>> +/*
+>> + * Free an object to the percpu sheaves.
+>> + * The object is expected to have passed slab_free_hook() already.
+>> + */
+>> +static __fastpath_inline
+>> +void free_to_pcs(struct kmem_cache *s, void *object)
+>> +{
+>> +       struct slub_percpu_sheaves *pcs;
+>> +       unsigned long flags;
+>> +
+>> +restart:
+>> +       local_lock_irqsave(&s->cpu_sheaves->lock, flags);
+>> +       pcs = this_cpu_ptr(s->cpu_sheaves);
+>> +
+>> +       if (unlikely(pcs->main->size == s->sheaf_capacity)) {
+>> +
+>> +               struct slab_sheaf *empty;
+>> +
+>> +               if (!pcs->spare) {
+>> +                       empty = barn_get_empty_sheaf(pcs->barn);
+>> +                       if (empty) {
+>> +                               pcs->spare = pcs->main;
+>> +                               pcs->main = empty;
+>> +                               goto do_free;
+>> +                       }
+>> +                       goto alloc_empty;
+>> +               }
+>> +
+>> +               if (pcs->spare->size < s->sheaf_capacity) {
+>> +                       stat(s, SHEAF_SWAP);
+>> +                       swap(pcs->main, pcs->spare);
+>> +                       goto do_free;
+>> +               }
+>> +
+>> +               empty = barn_replace_full_sheaf(pcs->barn, pcs->main);
+>> +
+>> +               if (!IS_ERR(empty)) {
+>> +                       pcs->main = empty;
+>> +                       goto do_free;
+>> +               }
+>> +
+>> +               if (PTR_ERR(empty) == -E2BIG) {
+>> +                       /* Since we got here, spare exists and is full */
+>> +                       struct slab_sheaf *to_flush = pcs->spare;
+>> +
+>> +                       pcs->spare = NULL;
+>> +                       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
+>> +
+>> +                       sheaf_flush(s, to_flush);
+>> +                       empty = to_flush;
+>> +                       goto got_empty;
+>> +               }
+>> +
+>> +alloc_empty:
+>> +               local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
+>> +
+>> +               empty = alloc_empty_sheaf(s, GFP_NOWAIT);
+>> +
+>> +               if (!empty) {
+>> +                       sheaf_flush_main(s);
+>> +                       goto restart;
+>> +               }
+>> +
+>> +got_empty:
+>> +               local_lock_irqsave(&s->cpu_sheaves->lock, flags);
+>> +               pcs = this_cpu_ptr(s->cpu_sheaves);
+>> +
+>> +               /*
+>> +                * if we put any sheaf to barn here, it's because we raced or
+>> +                * have been migrated to a different cpu, which should be rare
+>> +                * enough so just ignore the barn's limits to simplify
+>> +                */
+>> +               if (unlikely(pcs->main->size < s->sheaf_capacity)) {
+>> +                       if (!pcs->spare)
+>> +                               pcs->spare = empty;
+>> +                       else
+>> +                               barn_put_empty_sheaf(pcs->barn, empty, true);
+>> +                       goto do_free;
+>> +               }
+>> +
+>> +               if (!pcs->spare) {
+>> +                       pcs->spare = pcs->main;
+>> +                       pcs->main = empty;
+>> +                       goto do_free;
+>> +               }
+>> +
+>> +               barn_put_full_sheaf(pcs->barn, pcs->main, true);
+>> +               pcs->main = empty;
+> 
+> I find the program flow in this function quite complex and hard to
+> follow. I think refactoring the above block starting from "pcs =
+> this_cpu_ptr(s->cpu_sheaves)" would somewhat simplify it. That
+> eliminates the need for the "got_empty" label and makes the
+> locking/unlocking sequence of s->cpu_sheaves->lock a bit more clear.
+
+I'm a bit lost, refactoring how exactly?
+
+>> +       }
+>> +
+>> +do_free:
+>> +       pcs->main->objects[pcs->main->size++] = object;
+>> +
+>> +       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
+>> +
+>> +       stat(s, FREE_PCS);
+>> +}
 
