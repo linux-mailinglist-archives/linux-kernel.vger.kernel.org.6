@@ -1,109 +1,126 @@
-Return-Path: <linux-kernel+bounces-557695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94AFA5DC84
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:25:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C40B2A5DC8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:26:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06579177D84
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2CFC3AA9DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A283D241CB6;
-	Wed, 12 Mar 2025 12:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B8C242910;
+	Wed, 12 Mar 2025 12:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lW6Cn2cp"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNMvr/ac"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAC63232;
-	Wed, 12 Mar 2025 12:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC60F23C8A5;
+	Wed, 12 Mar 2025 12:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741782316; cv=none; b=dX9DTjR7c5hDwdpQnY6xpim7sEsxVJgKPfoAMSnzkRvOFcumMZ+KEsKQgt1nuQ2Sgul5wxJefoLkabgS+qOIJHLLSU+xx4UfJXQ21CivvoPu7/AqUZgQjvldpsQfVD/SgqkYLJsB+MnL0jwG6vKAQUCQiJa2PabzV3JpX7h0mHM=
+	t=1741782386; cv=none; b=OF5/EDO7C+oLSBQf+JENRsDjiOeqncLavDkIGh/H9y2G63mIZNO3RkpkpYYS9LmrjAG5EdKGSZIEcP7dTKoWYIxNJCRMNNL9DfNNg4RMGJJCoTPIiRZDqI/RZVTiA3XkIYu5fAPdRl1zss2xfKfvkWBfCcKMUiImNo0QiHOHbyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741782316; c=relaxed/simple;
-	bh=DnVLNoqsrWjgWsStScPnpBjsWw6Eo3YDVUKXVuiAJh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XukY3dqim13WrFL3MdpfFIa55qWqCMjcGNevZD/nzO56t0B6FnWsc94JOcrgP4Squdzw91TB2AWwmzCb0lR8q6u2IbiCIt/48Zl/g5micyd0W+E1XR49qiWdBVTR05bNo74x6KMTxWnYFXLQPdP2xZzgk10M88S6enQOOg0Vx9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lW6Cn2cp; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741782308;
-	bh=Rvygff/7y7TC8a5d6eV+N2DAMKcBgZ3O37xQ0uRTr08=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lW6Cn2cp1sf13uTHW6mKMq8nMZtFTwDMkoLiwr5YJ7PrfoRzzdZzQRS1joSn1gW+E
-	 G/V2SdfuX0h22ym4G5/QA7l7iruzL2wZQxAviyEftPoPLoJc/9S87ZvrogpdeQvECA
-	 cKAwK0zaQQ87+3MNuMTDqZG/eiHnwalEGTP0n2xZaN521elI2YBBCiKciPeA87vhxq
-	 voMoVEcCMb7ejp+2pRrx8fClPeYt1xfPh4Op5LnnmDTK9to1dSbEuQ8zk9Z61rMc8m
-	 n8q3BjwIk7GX8S+YeFw1hBLT2ZpxtPhbHxvfCu+vLpFyE7kE1LTRNTaL0pqsdo1i4a
-	 u8pR0BGEnMAUg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCVFb5cWWz4wb0;
-	Wed, 12 Mar 2025 23:25:07 +1100 (AEDT)
-Date: Wed, 12 Mar 2025 23:25:06 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simona Vetter <simona.vetter@ffwll.ch>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Imre Deak <imre.deak@intel.com>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the drm-intel tree
-Message-ID: <20250312232506.47451f83@canb.auug.org.au>
+	s=arc-20240116; t=1741782386; c=relaxed/simple;
+	bh=60bX5leRriG/PeHiLZJbUxrTQl+YufpehzKSr66mctg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GMPYFy0GO0j6ZCv0cMeglqOX+C5ua8ovcm0V1z4fq0IGh7/Ssk+r4G0KqRQMrW+1Y5aJ5T2IYU0JEm4qcSOltCwrWakdUn0qtFvbEmSlB2+b/cUe5T1V5Bs7kkE+RAvohdhe7bZ/dGRmxHKyhci38NXokZKKETYvn7fysQD2w7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNMvr/ac; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C3CC4CEEE;
+	Wed, 12 Mar 2025 12:26:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741782385;
+	bh=60bX5leRriG/PeHiLZJbUxrTQl+YufpehzKSr66mctg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KNMvr/acQGeA/HLm6Z+vWXcPJ1u8hwYgLNeYP7Gm1gXQLbn+hBMAof8LCTHLneBZz
+	 S8sGj8uvuJbxUrsxqyZIVKIPWG863KyuV945bXCD2C3LxNYT4Qp8yThZxr118bTuTH
+	 oJRvZqYgs0X+VvMMj9opBOqnkbprwMvk396VmAgX0y4qLjvINMowOcy4lCtrR9dyEF
+	 Gba7nhypKj+1jcprxn0mbtYuD1YW+ZPJQnl+kFAmCVsZTWjSkK5wWGnIbJUv4BpKrw
+	 oCFESDa85MjjvS8+oyBmXDmMDffmuKY4gkPOXfsrsU6BRTmFlRg9OhGGKXGX+gkHb0
+	 WRdw365rHpT5A==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54954fa61c8so6924469e87.1;
+        Wed, 12 Mar 2025 05:26:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUOF115/yZ4NgjkdrlBxabeli19E3t4wScF+kYAQF1i3ddegmeZcz+YuQ3Rqlkzoc57MJLDx9twby5xOKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKnK7mCVN504vOGwbLSOfLxm+ex9fdH4NoOunHGsFdr2+3Aeeq
+	dBNOtqbayqgFfnvq/ZnKktrQaOJB6P8888m5qaVA2pQCwD0qfIBjvmcxhZEt+83GVAyJTQAkoQO
+	s9uIhixlyGUqinQRcvcDD7N/rSc0=
+X-Google-Smtp-Source: AGHT+IEfcz8Z8RBun5aDzMJh/iWeeqlDwaeZQ8mtO44hMbOvcvI/StuAQz9lvME4/cxmWxEJLOgv9z1TSGm4eX6tssM=
+X-Received: by 2002:a05:6512:1597:b0:545:1db5:f224 with SMTP id
+ 2adb3069b0e04-54990e2989dmr7039884e87.11.1741782383985; Wed, 12 Mar 2025
+ 05:26:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IW.toj2BZOadnOUu8oh_Duw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/IW.toj2BZOadnOUu8oh_Duw
-Content-Type: text/plain; charset=US-ASCII
+References: <20250311190212.634123-1-masahiroy@kernel.org> <20250311192036.GC1958594@ax162>
+In-Reply-To: <20250311192036.GC1958594@ax162>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 12 Mar 2025 21:25:47 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATwnW_uHZr2CPTKMb2ETm9WxOqTGvWN8GHxXuEAP=Po_Q@mail.gmail.com>
+X-Gm-Features: AQ5f1Jp4aTYYfbev7A0r71dgTS2TXIeKs0gpqiNVgyajTXPjL2SsfxA0Wky9G1Q
+Message-ID: <CAK7LNATwnW_uHZr2CPTKMb2ETm9WxOqTGvWN8GHxXuEAP=Po_Q@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: deb-pkg: fix versioning for -rc releases
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ben Hutchings <ben@decadent.org.uk>, Nicolas Schier <nicolas@fjasle.eu>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Mar 12, 2025 at 4:20=E2=80=AFAM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
+>
+> On Wed, Mar 12, 2025 at 04:01:33AM +0900, Masahiro Yamada wrote:
+> > The version number with -rc should be considered older than the final
+> > release.
+> >
+> > For example, 6.14-rc1 should be older than 6.14, but to handle this
+> > correctly (just like Debian kernel), "-rc" must be replace with "~rc".
+> >
+> >   $ dpkg --compare-versions 6.14-rc1 lt 6.14
+> >   $ echo $?
+> >   1
+> >   $ dpkg --compare-versions 6.14~rc1 lt 6.14
+> >   $ echo $?
+> >   0
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+>
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+>
+> > ---
+> >
+> >  scripts/package/mkdebian | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+> > index 193e33bcb989..80ed96561993 100755
+> > --- a/scripts/package/mkdebian
+> > +++ b/scripts/package/mkdebian
+> > @@ -167,7 +167,9 @@ version=3D$KERNELRELEASE
+> >  if [ "${KDEB_PKGVERSION:+set}" ]; then
+> >       packageversion=3D$KDEB_PKGVERSION
+> >  else
+> > -     packageversion=3D$(${srctree}/scripts/setlocalversion --no-local =
+${srctree})-$($srctree/scripts/build-version)
+> > +     upstream_version=3D$("${srctree}/scripts/setlocalversion" --no-lo=
+cal "${srctree}" | sed 's/-\(rc[1-9]\)/~\1/')
+>
+> I don't think there has ever been an -rc10 but would it hurt to make it
+> [1-9]+?
 
-After merging the drm-intel tree, today's linux-next build (htmldocs)
-produced these warnings:
 
-Documentation/gpu/i915:141: drivers/gpu/drm/i915/display/intel_hotplug.c:10=
-68: ERROR: Unexpected indentation. [docutils]
-Documentation/gpu/i915:141: drivers/gpu/drm/i915/display/intel_hotplug.c:10=
-69: WARNING: Block quote ends without a blank line; unexpected unindent. [d=
-ocutils]
+The current code should work with -rc10 as well.
 
-Introduced by commit
+$ echo 6.14-rc10 | sed 's/-\(rc[1-9]\)/~\1/'
+6.14~rc10
 
-  0d77a3e0ea90 ("drm/i915/hpd: Add support for blocking the IRQ handling on=
- an HPD pin")
+
 
 --=20
-Cheers,
-Stephen Rothwell
-
---Sig_/IW.toj2BZOadnOUu8oh_Duw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfRfSIACgkQAVBC80lX
-0Gy9Lgf/SPNdcR2k5QeP2FgY7I7bJh6T9o3IfBIzjSdfvXddSZKQ8q3EXBkquwtT
-XlSrPHraYozYM+iBEa9Y4NcoYoBlOcWOlEgnm/r52U95ORhdph0IAG0Xk3OKTEgY
-EIPNSrJvHBpvSkobJD2svXThW65vy4qQfJydKrGW24zE2MHZdA1GOJOznN8VK/uk
-70qgj77/UBCyT/QkmoBrcpOQCLFT70sE9rBmN1dmki97qw2p79tR5HkqpMZhgpYv
-R+fUsjXnqxjYsRHNSLTEG/b5KjCeKWeGbcHbCcH9CVeJKwge/uoqMsJplbp5bK98
-WUyi0q40kVrgsdrgKGzSOhrpJNrdLQ==
-=lWRH
------END PGP SIGNATURE-----
-
---Sig_/IW.toj2BZOadnOUu8oh_Duw--
+Best Regards
+Masahiro Yamada
 
