@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-557336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD92A5D782
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:44:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E0CBA5D785
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:46:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63FC6189D0FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EDA73B0E17
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E13F20C038;
-	Wed, 12 Mar 2025 07:44:16 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E764229B01;
+	Wed, 12 Mar 2025 07:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="2NMSr2Ed"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8391F4E59;
-	Wed, 12 Mar 2025 07:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA341CBEB9;
+	Wed, 12 Mar 2025 07:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741765456; cv=none; b=fnSN6Q6npbAjV0rSK6V3vCq8CwW7h2Cl7H8Eskxj6UcrQ37mLkoYoD5lmLiJ9qycEMGABJSt5YYoZkD24VHCRqzwGwpKEMFtnRrcctSVOfAFiprrAbRGIQC4GKRrZDYJ4oOzAbZtjiFMU9YwC978XMiV3nxiRA7Joly7AQzbAEg=
+	t=1741765582; cv=none; b=ey5u1CjZRx/euHKywcC66HDfU+Tt4+7g8XWkvAq1hc80KnwaC1wfRyaLbhKh/9pmL+P38DOnoR+PQ8MKmP3v7CJZpSfSX+ig0wDGMQfuHf02JXnVEeEcPvOMtEmB/YwaPB+SQuSvyG8qipsuf/RUxB0A30tGkDLnqEqCVatv5MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741765456; c=relaxed/simple;
-	bh=Cyo9tjCjexIlydA6S9GkYP/NMqyLRkxul3n6aO2tyLg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bpO6mh7ibq/8Gfrl6kQTubaxLp6ix32K/MHc2ZATExWK+UiZ53QH0mJ16qst7qEcMMLjzdCtvkkHxXK0+QzmVHNbAtGBVz6L1kHw2zmsULOHvVrFrAIcaPART+zK2yuG9npk/3w8KrbxiYdkt+AwcuLl1ALNT4wyPUvOWX6IfHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowAAnr_hEO9FnpZt9FA--.4136S2;
-	Wed, 12 Mar 2025 15:44:04 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: satishkh@cisco.com,
-	sebaddel@cisco.com,
-	kartilak@cisco.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] scsi: fnic: Remove redundant 'flush_workqueue()' calls
-Date: Wed, 12 Mar 2025 15:43:20 +0800
-Message-Id: <20250312074320.1430175-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741765582; c=relaxed/simple;
+	bh=QsnFpCm/unlAsT7zJ1emM77YdMbgo/TGO6rGmdvJlSQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dh7vNLBQmqfd0Qjvhkis/GB1ilrOEVdUD0jriWo3vshiEijCriJeALS8ZoMLG8ysryoreZqu3rWagN1vr54CRInLHQfYePkK/Xd6bXwcDusDljc83j3ZvzlNlfzh83H34B820wa2d1nv5hrfB+1+WkayoSt24ygzMCriQc1gxLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=2NMSr2Ed; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=RIr0sQIfWa4T3BPRRuuVacSrn8+fQt4tblX1wU8anCU=; b=2NMSr2EdI/5uCqDILkGsak3e/k
+	8QPm9/Xxz5AL6lJH00q5jHTHpy+XolBg/letmAxrIwLH27C3+G9x+izrEE+pxAYcEpP4DMlNab3fH
+	RTxqi4Du/yok3DB5tkm2UAhV3Lx1G/HkvrfmiUTjVJlvma988l3P4JmS6sXH5onnt7ILCqL4EL2YY
+	l3oGF+rQ0JvedmLY+K0fmryLy7Ks+RN6NqnGuz/4hbWd1ISEbNepUSjt18BbqMBj6YhaSEYYS8E+4
+	BPxjGJXkMlLEwLB51JZNEPSjy/IyKErflpVEuAHcSdftawZ6yIc+piwLvbBO3meAgJH2u1R2EV0Tm
+	e6bmPn5w==;
+Received: from ip-185-104-138-79.ptr.icomera.net ([185.104.138.79] helo=phil..)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tsGn5-0005zY-5W; Wed, 12 Mar 2025 08:46:11 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Yao Zi <ziyao@disroot.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/2] arm64: dts: rockchip: Add pwm nodes for RK3528
+Date: Wed, 12 Mar 2025 08:45:56 +0100
+Message-ID: <174176555637.249409.2785731072183565436.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250307120004.959980-1-amadeus@jmu.edu.cn>
+References: <20250307120004.959980-1-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAnr_hEO9FnpZt9FA--.4136S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKF1xZFy7tr1DuryrtFyxZrb_yoWkCrg_Wr
-	WxtFnFkrWUtw1IkryUtr4rZFZ3Za9FvFnxKF4Fga4fAryUZwn0yF1DuFs5ZrWUXw4UCF17
-	u34qq34Yvr47CjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbV8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r1q6r43MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-	1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-	x4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
-	DU0xZFpf9x0JUHuWLUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-'destroy_workqueue()' already drains the queue before destroying it, so
-there is no need to flush it explicitly.
 
-Remove the redundant 'flush_workqueue()' calls.
+On Fri, 07 Mar 2025 20:00:02 +0800, Chukun Pan wrote:
+> Add pwm nodes for RK3528. Most rk3528 boards use pwm-regulator to
+> supply to CPU, add node to enable them. The PWM core on RK3528 is
+> the same as RK3328, but the driver doesn't support interrupts yet.
+> 
+> Unlike other SoCs, pinctrl-names need to be in "active" state,
+> I'm not sure about this, but otherwise the pwm-regulator will
+> not work properly.
+> 
+> [...]
 
-This was generated with coccinelle:
+Applied, thanks!
 
-@@
-expression E;
-@@
-- flush_workqueue(E);
-  destroy_workqueue(E);
+[2/2] arm64: dts: rockchip: Add pwm nodes for RK3528
+      commit: 2973d077aedfc114affab96c3b2c7286163cc8c9
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/scsi/fnic/fnic_main.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/scsi/fnic/fnic_main.c b/drivers/scsi/fnic/fnic_main.c
-index 0b20ac8c3f46..3dd06376e97b 100644
---- a/drivers/scsi/fnic/fnic_main.c
-+++ b/drivers/scsi/fnic/fnic_main.c
-@@ -1365,10 +1365,9 @@ static void __exit fnic_cleanup_module(void)
- 	if (pc_rscn_handling_feature_flag == PC_RSCN_HANDLING_FEATURE_ON)
- 		destroy_workqueue(reset_fnic_work_queue);
- 
--	if (fnic_fip_queue) {
--		flush_workqueue(fnic_fip_queue);
-+	if (fnic_fip_queue)
- 		destroy_workqueue(fnic_fip_queue);
--	}
-+
- 	kmem_cache_destroy(fnic_sgl_cache[FNIC_SGL_CACHE_MAX]);
- 	kmem_cache_destroy(fnic_sgl_cache[FNIC_SGL_CACHE_DFLT]);
- 	kmem_cache_destroy(fnic_io_req_cache);
+Best regards,
 -- 
-2.25.1
-
+Heiko Stuebner <heiko@sntech.de>
 
