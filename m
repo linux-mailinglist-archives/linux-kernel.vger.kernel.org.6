@@ -1,142 +1,112 @@
-Return-Path: <linux-kernel+bounces-558316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B145CA5E442
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:20:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2F6A5E451
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:23:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0D5189C406
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 629743B7242
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1EF25745C;
-	Wed, 12 Mar 2025 19:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83A025744D;
+	Wed, 12 Mar 2025 19:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gqh8ubnH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZxxX5jk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A531D79A0;
-	Wed, 12 Mar 2025 19:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D9B1CF96;
+	Wed, 12 Mar 2025 19:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741807200; cv=none; b=Ii8VdY1LS9Z768IORI9+bjHiVarHh3D0KQ7dAIbfdvj6FYklwX0OHRAqvk1szLiuSmQKhWWwxv9Y9IU82DMuxQYvddjE91vcid0lE750zkzd7qYsgkMfMNPqY268f2hMtwI6DWhN22MX7gHH2OjgfSTB7E4OgUbfmsuwpmyQ3e0=
+	t=1741807424; cv=none; b=lZ+hsEcjbyVSiw+boSHfQ6IHeunjrswXnTzXO3rVz8QuIu7/di2hPjG2N2wOCQcEIKbH1hyjFFUMng5oJqaEUnvL6cRij5fmQc9GqzSfK2mDvJDz1o9sgwRKHQTq62VBaoQiV2mzSqo1cSUg4uAVp35Nf7AsBzVtYHgcf0mmozw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741807200; c=relaxed/simple;
-	bh=M1xnlN82E4/WT0IWUe65Rxh+WCnxZFDN8gpw4CT2uVQ=;
+	s=arc-20240116; t=1741807424; c=relaxed/simple;
+	bh=qk+sYtAMNjTS8ab4Su+xjDH77o6/bEg0NUz5rCc1fxU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F0/8VspJVlaq0+ssuyBEn9/TkzMK4Cy/SzSN4s5VdCl4bFvoxHfNmXC32U/R6tAATHlGajX96k6n8cJ1szx2LBmh04Zn8/jFKVpGIX0vmQXFyS1+Nv69FLnlUXxY95VDfnGzZyZ6DYcUsPcQvfvSQjRCNHtzmqP84i52d8NoWv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gqh8ubnH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43D08C4CEEA;
-	Wed, 12 Mar 2025 19:20:00 +0000 (UTC)
+	 To:Cc:Content-Type; b=mnfDZCAxPutg+gBv3jRv27lBfrqAyFt8hJZ+kKEJdtY2aSjdowEo6YtXkEd71cj7sRXGp3hvDiXmqV0I52NRBBXYFaqc6kcIAzoGhhZ0iIxXsKqLT4qXVCYyTX0qlCIDcuriv54/3LLeC83w5l05eU4oU4te7D2PzSOZmhK3eBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZxxX5jk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3AF8C4AF09;
+	Wed, 12 Mar 2025 19:23:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741807200;
-	bh=M1xnlN82E4/WT0IWUe65Rxh+WCnxZFDN8gpw4CT2uVQ=;
+	s=k20201202; t=1741807423;
+	bh=qk+sYtAMNjTS8ab4Su+xjDH77o6/bEg0NUz5rCc1fxU=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Gqh8ubnHaPHoWmlEJTwIbVnB3z91lkSNMFeziufpq/7rn4BwOTIAn3NxHmaw7jQhh
-	 kWL3l2qa5GYtWMajp5e5EHXPjFxEdLnZGd6aN5/S5/UhJgTUAv28WzgTunYE+ewTYg
-	 MDZxvFT/DXAENZrViHuHltkNxqGtWF/6SJj4g8kbCF0+JDRkO9BFmgpbyPILZF/r8A
-	 l3HSTea2JnQgbI6EzpWMFghK/1SffxuyqNKMuLj/HVfSVpwe/cwQ+KM2mXlsMpoJ4u
-	 d/CiTMmT6TGMOuQj4nvmRiugBHd25QrTkCTnwK8sWg0xkgp2BBY4P3Hu9ekkv0dPz2
-	 SpHY31juJ2EoQ==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3f422d6e3b0so81796b6e.1;
-        Wed, 12 Mar 2025 12:20:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU0mRow7Ofp+m8VxIka7sCEG5Na8a/qCqG/VUMopu8mT4DPk6QF2DTkMLs/4HlQqkCdXYcRX/cWVmXucps=@vger.kernel.org, AJvYcCV0kuzPiR3v0hQW7KZj3vQvxxopgHNRhOA9cgRDk6Me/tkfIvQr/6uNG2RWArBEeglWQuHvadQyUp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5w9yEBC+62ye90xweTRrOWLbLp2GkUrHNK9D/Dw8G7glCAtmd
-	a/3aTWfPtRbMcbo3CVh47wiE5VzKJsUjhlzY3JIkUAPNjPiGJlHfUILyIatQ7pK3H5QvUY2N8TF
-	UIAmfMy9t6yK1cDwtFChpfqPQzNA=
-X-Google-Smtp-Source: AGHT+IF0pBM+kfrBcBjKtZbU9C+7nkh0lSCqkvS1dJjKmL8FXVUeg5ydSvuk5QvshXLc86MYc/uqRNShq9AFX+6F3sc=
-X-Received: by 2002:a05:6808:4446:b0:3f9:1fee:8041 with SMTP id
- 5614622812f47-3fa29f84964mr5030153b6e.11.1741807199570; Wed, 12 Mar 2025
- 12:19:59 -0700 (PDT)
+	b=bZxxX5jkYKR4OcWAOnzFnD2w6bIg8MkwTtyDBEW9ouNRejSJavZdjhXY3HnG1MNlF
+	 4chb1d4U53NTDcwV1nDi7w0dY6i9i6RD2hOufrb38rYPFpaue4dWLi4lvSWKNPNtmZ
+	 vGDl4yzaTpbkcppWfc0yAH1RGpBCEhR4/asO99BoTy5T+hHuTSO5+jnSo9JZmRFBi/
+	 WCfWAfVlrMN7dp3PZs0dbbrW3JcK+SH1EokS3uDL571FgJyRga8SvM8rc04MP+mzNX
+	 IpJBeRrWMM0HTXSxiyfS8VG5QqtSwVZINNdukEut1HulIzEQMRvk0TG+MMutOZyf0M
+	 AU12S2OSLGGtA==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2b2b6019a74so139181fac.0;
+        Wed, 12 Mar 2025 12:23:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/kBwEhu89uY2QkfBlCBYli9avO3AdY1Z5B5mulITOkI2/GzUyQNKhP6GILSXbRVmyyUeklZ3He/dPZjsT@vger.kernel.org, AJvYcCWzKRSVw8v00rpJFF5y+eME3fDaYkRfIoU9MtSasrp2qQ6ie+1FWlYbs+Gcp4JXlZew150uvbevOmUW@vger.kernel.org, AJvYcCXxWTfKVzkWMwb+s6GtjAnDXu2NfnakdrTnU26gmSY1PvYHYIVVIKBenk0G02ugY+97mRYEAJJcNkIy9A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/rlxT3BScs3l5/2T9ldgbnpT7JeuIcpzDwdszpPPV24PGtK/l
+	8JQNe0qvJc60Jv9HYVJo/qOOhE6hHL0AtencGnqP/pXP52NUQ5Spx30xIa6H2GV/vZbYeJYplW1
+	faF2+TDbJg2ZaaPswI/p2YInrxSA=
+X-Google-Smtp-Source: AGHT+IExKgixAomysE1WTCv5vmvxjoRBLCX7DMiIhR9d1Y81QNdc/yHsmgNJLtvKlgnFJXlDKYUVhGUN8K8l76IvkUQ=
+X-Received: by 2002:a05:6871:109:b0:289:2126:6826 with SMTP id
+ 586e51a60fabf-2c261304b27mr13457476fac.30.1741807423019; Wed, 12 Mar 2025
+ 12:23:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <826ecff6-5b43-4cf8-ba8e-3d5a44e5a318@linuxfoundation.org>
-In-Reply-To: <826ecff6-5b43-4cf8-ba8e-3d5a44e5a318@linuxfoundation.org>
+References: <20250305220146.3932955-1-superm1@kernel.org>
+In-Reply-To: <20250305220146.3932955-1-superm1@kernel.org>
 From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Mar 2025 20:19:47 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0g1Thtwxt52LsdmCsxp5SC0aMKsR4gmPWS3B6csPE-mmg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jrxd6bvf2mPb04mtTZYSI62ztypPPji7obWb8_TmY64Kw6omupTp-90dVA
-Message-ID: <CAJZ5v0g1Thtwxt52LsdmCsxp5SC0aMKsR4gmPWS3B6csPE-mmg@mail.gmail.com>
-Subject: Re: [GIT PULL] cpupower update for Linux 6.15-rc1
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Thomas Renninger <trenn@suse.com>, Thomas Renninger <trenn@suse.de>, 
-	"John B. Wyatt IV" <jwyatt@redhat.com>, John Kacur <jkacur@redhat.com>, shuah <shuah@kernel.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 12 Mar 2025 20:23:31 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gowcNwmLc_q508DcqgtGAP3z9bNoFB-0jdtLBZZ1TNzQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr013KghzqSJ9xWt3J1PWumwVjVKxjebppmHBRt5pH4Ho1Xwd8wne-zQd8
+Message-ID: <CAJZ5v0gowcNwmLc_q508DcqgtGAP3z9bNoFB-0jdtLBZZ1TNzQ@mail.gmail.com>
+Subject: Re: [PATCH v3 RESEND 0/2] Add LPS0 check() for pinctrl-amd
+To: Mario Limonciello <superm1@kernel.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, 
+	"open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	linux-acpi@vger.kernel.org, Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Mario Limonciello <mario.limonciello@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Shuah,
-
-On Mon, Mar 10, 2025 at 6:19=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.o=
+On Wed, Mar 5, 2025 at 11:01=E2=80=AFPM Mario Limonciello <superm1@kernel.o=
 rg> wrote:
 >
-> Hi Rafael,
+> From: Mario Limonciello <mario.limonciello@amd.com>
 >
-> Please pull the following cpupower  update for Linux 6.15-rc1.
+> During suspend the pinctrl_amd driver disables the interrupts for
+> any GPIOs that are not marked as wake sources.
 >
-> Fixes lib version-ing, memory leaks in error legs, removes hard-coded
-> values, and implements CPU physical core querying.
+> This however does not prevent them from changing the wake status
+> bit during suspend, it just stops the system from waking.
 >
-> diff is attached.
+> If the system wakes from hardware sleep for another reason (such
+> as plugging in the AC adapter) this wake bits might be active.
 >
-> thanks,
-> -- Shuah
+> This could potentially cause problems with going back to hardware
+> sleep.  Add an extra debugging message when PM debugging is enabled
+> to help identify if this is happening.
 >
-> ----------------------------------------------------------------
-> The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52=
-d3:
+> ---
+> I'm resending this because kw seemed to have split the patches on
+> separate mailing lists and the lkp robot didn't know and reported
+> failures.
+> No changes from v3 -> v3 RESEND
 >
->    Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
+> Mario Limonciello (2):
+>   ACPI: Add missing prototype for non CONFIG_SUSPEND/CONFIG_X86 case
+>   pinctrl: amd: Add an LPS0 check() callback
 >
-> are available in the Git repository at:
+>  drivers/pinctrl/pinctrl-amd.c | 28 ++++++++++++++++++++++++++++
+>  include/linux/acpi.h          |  9 ++++++++-
+>  2 files changed, 36 insertions(+), 1 deletion(-)
 >
->    git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-c=
-pupower-6.15-rc1
->
-> for you to fetch changes up to fffadbdd6b5acdb6390d6d0bc3ad6d3da5d2bd53:
->
->    cpupower: Make lib versioning scheme more obvious and fix version link=
- (2025-03-07 13:58:10 -0700)
->
-> ----------------------------------------------------------------
-> linux-cpupower-6.15-rc1
->
-> Fixes lib version-ing, memory leaks in error legs, removes hard-coded
-> values, and implements CPU physical core querying.
->
-> ----------------------------------------------------------------
-> John B. Wyatt IV (1):
->        cpupower: Implement CPU physical core querying
->
-> Shuah Khan (2):
->        pm: cpupower: Fix cmd_monitor() error legs to free cpu_topology
->        pm: cpupower: remove hard-coded topology depth values
->
-> Thomas Renninger (1):
->        cpupower: Make lib versioning scheme more obvious and fix version =
-link
->
-> Yiwei Lin (1):
->        cpupower: monitor: Exit with error status if execvp() fail
->
-> Zhongqiu Han (1):
->        pm: cpupower: bench: Prevent NULL dereference on malloc failure
->
->   tools/power/cpupower/Makefile                      | 19 +++++----
->   tools/power/cpupower/bench/parse.c                 |  4 ++
->   tools/power/cpupower/lib/cpupower.c                | 48 +++++++++++++++=
-+++----
->   tools/power/cpupower/lib/cpupower.h                |  3 ++
->   .../cpupower/utils/idle_monitor/cpupower-monitor.c | 48 +++++++++++++++=
-+------
->   5 files changed, 94 insertions(+), 28 deletions(-)
-> ----------------------------------------------------------------
+> --
 
-Pulled and added to linux-pm.git/linux-next, thanks!
+I've dropped this because of a build issue in linux-next introduced by it:
+
+https://lore.kernel.org/lkml/20250312235829.2ac0c991@canb.auug.org.au/
 
