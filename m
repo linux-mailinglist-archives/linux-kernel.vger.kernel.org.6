@@ -1,114 +1,100 @@
-Return-Path: <linux-kernel+bounces-557998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C7D0A5E030
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:23:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D9DA5E038
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:23:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6C477A2CF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4783018893DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E56D258CD8;
-	Wed, 12 Mar 2025 15:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CC4252906;
+	Wed, 12 Mar 2025 15:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iEG9dvLh"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uAx3Sg8D"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524602512E7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F782528F5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741792853; cv=none; b=VfIzCjHar1oGnATIXvE784q5RVJDpCM9qB8o+PJgrNa3lZWcutedCchbv/gYGCUDpRsff187otE8+x2h3Rc8KFWx8leCNEmruzNhPIBVl35z47WoYTWiYArIA49yAlyN3FXhk+MeoSIOCYg5Gk/0HM76e8LPfODBAooja6nVfIQ=
+	t=1741792867; cv=none; b=IrVmc8H9n22y0FXgPgd+zkXbQQed8ZbLTjNYZ7zqpmSPvCKSEtQ3c8MFjnOykRYw7v567nzECWUPZe+udukwbcNNCo8VLi9gFKsDjm311NGxKcMFn5dJslyZZrOb9RpIY9/fHNaNV1jzy89PO8Nk8f548PrOIO/Sq5GCC6Ak4Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741792853; c=relaxed/simple;
-	bh=vFO5RejfroO3/QCBzMpZapYOLh4Wu0SP4ltEFH9/5V8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NRmUqMbPWLSji8N67e2DJp9LKomUvr+qZUmZJsTLAxSUP41wIuxmWOjebwubh5dAkZAilJ8aRAzrKcnzLYHNd686I32RPSAbNmsCfmhXHaffPFdEp6rcsS+2F/28jVGkit68RPKFA7+mnTxjAapSvjRST6gFz9OFDhAijSDXW44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iEG9dvLh; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cf3192d8bso53675e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741792849; x=1742397649; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bGxZkF5t/1wrFPJ00FERNaK3N3Q0WGshExeLmGRXwks=;
-        b=iEG9dvLhmd0BrnthMwEu0OzD2RHaNIgNqI9g/+nhDui/skVHhKYblZeY0fzLxORBL8
-         FrV3UvyNHMzRA7qNTHWAuw1Aq2tCBnTq6lNbE9Xqm+pP3rEGoq3c6TjqBmaQFfJ2CNvO
-         aKRrrKiO0Xbv2Z0QYCY5QNzGxQm2ujnD7M++Wwsnpul33P7q/PKgGkT2meQ0SnozOiGg
-         M5VrZIm1skS/GXq2cOWPaHqF3R6xxiJUJ7zST7u07RL35DM4ZQXljoTq34KDISozB/oW
-         Yd4NpXUg/aPXdPkbt7bCgIAY8GGNJ/gyFEKokmsk8Sz/dpzXy7ihWLhCFyplOYkhaSgU
-         Ujyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741792849; x=1742397649;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bGxZkF5t/1wrFPJ00FERNaK3N3Q0WGshExeLmGRXwks=;
-        b=twn92NLiToJhtTyHTStNM3XTA2fG8MP4P++g+qQBv+xIKAL49zdRSYTvZB6dC0Pz7O
-         KqqIut6jv5YcJBFSP0ekeKgRFHedh5EWaqGbOY9mRlYBUWTm1bY2uwEYAE9LlozznMUS
-         x8B33WMbnu9I/hFEiwt0GMJyKjBgI4aY5IwouJi+stwYOdiAQ8I6EdX27G0XgF15clMq
-         cEMh7FrfIM0mtJ7QvC1X4JWkwwUnm3Jz61Zlquzr6L5kIaJoPESwVNoSY1ZnxgDZUuPt
-         ULo3Uobta66KKdV7g3kyPQ2dBcIUTuWxPrjnNUPt9kGj20wUON+UunMIL1ZglRoAJc9L
-         PRgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVn6oRCzEM0BtxZyFGE0X16rq+26iiuJgGpsKikhCx9sL6qoelg/gaeFRkaIgv/4KSYo/E7l2wP51XaWwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywskod8dXhXrJV7lARN0z4tE8DA0yOShJcQ3bgChhvxIIS5PiKP
-	XfMPfM12l6fdCZkqhMa8REzSfhuJxBpPg2KfPrsH/WsOtMmDyYGlvhrKs5Oa2/OP3zxMuenO3TT
-	/vv9F1ZeinJS5v/S4Z8FTYpa472i8rrh3Eyh5
-X-Gm-Gg: ASbGnct48LrdB6T98y7qhQn2KoR7y+MlSES9/G8VgCZGnAfJ5i1oauJpkUlMMigePQU
-	KrhGliDJuUf58PgdsL7gPrglzz8nI7YY+5eWdsPuXnGHXffd34Ro/aG80wEf0Xw5R071dwHCIEJ
-	8Tdz0GRN+R7OZEQvAjQb5chfUbGHIUdLmja2fLuyb4vnF1c0fsCI0d+2pe
-X-Google-Smtp-Source: AGHT+IHD2nQKbwusxnJ80KAjLgbQAOF0EvyAvqqHHVna5q1oZeuBFrEiEEKAahgMMiR6eRSYCFMQhm6AYgZVdiouPL0=
-X-Received: by 2002:a05:600c:4f49:b0:439:9434:1b66 with SMTP id
- 5b1f17b1804b1-43d15f8df65mr69355e9.1.1741792849400; Wed, 12 Mar 2025 08:20:49
- -0700 (PDT)
+	s=arc-20240116; t=1741792867; c=relaxed/simple;
+	bh=g33keADMtBTqLGGeUZPNTEZup2ruOa4uwufaq/VDLLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h7K3ciCiC/lNQff1O5skQoVKcWZDOhCoy3n3nMpXsIhSqwokwUCzo+0YQFQ0NoZM93wrD+TqZHV0eYqMXVqPJWT+ftrTBB62+uqEP8S/517wlOiHngKT+kGz/4NVa5DqGydIELuWXe7698iyaXptsKi0Kdb4/vO5sW+da6apUsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uAx3Sg8D; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XIdDKUptq8/xr7ZlXrpuZGXg2rNejNyZjWJ17UFWXoA=; b=uAx3Sg8DEVn2bO+FLZ2H/E0FXN
+	pN7+jJ0z2ZGvmfweRPXTkRsVwZasFYeNeahstq3t6wIyzQlKCwfcAF3kPiqipF4dJtxxOStaF5MZ3
+	j3E8fvMo7erQpBjN9R2cSyF2QXQL63JYCTRluKyq82oFEB4iZ934PrrfA9BqPZapMGotudMjuXgZn
+	EyIWu+COxuWyU8iQjvbZCXHLUyzLy7OOrAJXCKqsdOrkeFdJcd1fJAdaO1NGPaGtymlJ1pRO1JyUy
+	w8teCd0fLAyBuTA5wtDyVlKljiyadacOPpg0fgwGOyMzFOicDVGWDqa+ssXxiursKSAki0yo1/83G
+	pIBCz7Zg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsNtJ-00000008q5u-1zfY;
+	Wed, 12 Mar 2025 15:21:05 +0000
+Date: Wed, 12 Mar 2025 08:21:05 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Sooyong Suk <s.suk@samsung.com>,
+	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, linux-mm@kvack.org,
+	jaewon31.kim@gmail.com, spssyr@gmail.com
+Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct
+ IO
+Message-ID: <Z9GmYe-bdOZ8LQV5@infradead.org>
+References: <CGME20250306074101epcas1p4b24ac546f93df2c7fe3176607b20e47f@epcas1p4.samsung.com>
+ <20250306074056.246582-1-s.suk@samsung.com>
+ <Z8m-vJ6mP1Sh2pt3@infradead.org>
+ <Z8tVrOezU2q_0ded@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250306074101epcas1p4b24ac546f93df2c7fe3176607b20e47f@epcas1p4.samsung.com>
- <20250306074056.246582-1-s.suk@samsung.com> <Z8m-vJ6mP1Sh2pt3@infradead.org>
- <CAJrd-UuLvOPLC2Xr=yOzZYvOw9k8qwbNa0r9oNjne31x8Pmnhw@mail.gmail.com>
- <848301db8f05$a1d79430$e586bc90$@samsung.com> <CAJuCfpHjV=nRmkAGrf-tyCxEEygZ0CuW-PRp+F_vHwFbfYS8dA@mail.gmail.com>
- <Z9Gld_s3XYic8-dG@infradead.org>
-In-Reply-To: <Z9Gld_s3XYic8-dG@infradead.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 12 Mar 2025 08:20:36 -0700
-X-Gm-Features: AQ5f1JoRE6F00aRF8p4iMy0O_p5G6IwsOeM_xmMCWwyYOphS5VP-BnJT1SNFaJY
-Message-ID: <CAJuCfpGa43OQHG9BmnvxROX1AneCvkuLxFwM+TdxAdR1v9kWSg@mail.gmail.com>
-Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct IO
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Sooyong Suk <s.suk@samsung.com>, Jaewon Kim <jaewon31.kim@gmail.com>, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	spssyr@gmail.com, axboe@kernel.dk, linux-block@vger.kernel.org, 
-	dhavale@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8tVrOezU2q_0ded@casper.infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Mar 12, 2025 at 8:17=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Thu, Mar 06, 2025 at 06:28:40PM -0800, Suren Baghdasaryan wrote:
-> > I think this will help you only when the pages are faulted in but if
-> > __get_user_pages() finds an already mapped page which happens to be
-> > allocated from CMA, it will not migrate it. So, you might still end up
-> > with unmovable pages inside CMA.
->
-> Direct I/O pages are not unmovable.  They are temporarily pinned for
-> the duration of the direct I/O.
+On Fri, Mar 07, 2025 at 08:23:08PM +0000, Matthew Wilcox wrote:
+> Howver, the problem is real.
 
-Yes but even temporarily pinned pages can cause CMA allocation
-failure. My point is that if we know beforehand that the pages will be
-pinned we could avoid using CMA and these failures would go away.
+What is the problem?
 
->
-> I really don't understand what problem you're trying to fix here.
->
+> What I've been asking for and don't have the answer to yet is:
+> 
+>  - What latency is acceptable to reclaim the pages allocated from CMA
+>    pageblocks?
+>     - Can we afford a TLB shootdown?  An rmap walk?
+>  - Is the problem with anonymous or pagecache memory?
+> 
+> I have vaguely been wondering about creating a separate (fake) NUMA node
+> for the CMA memory so that userspace can control "none of this memory is
+> in the CMA blocks".  But that's not a great solution either.
+
+Maybe I'm misunderstanding things, but CMA basically provides a region
+that allows for large contiguous allocations from it, but otherwise
+is used as bog normal kernel memory.  But anyone who wants to allocate
+from it needs to move all that memory.  Which to me implies that:
+
+ - latency can be expected to be horrible because a lot of individual
+   allocations need to possibly be moved, and all of them could
+   be temporarily pinned for I/O
+ - any driver using CMA better do this during early boot time, or
+   at least under the expectation that doing a CMA allocation
+   temporarily causes a huge performance degradation.
+
+If a caller can't cope with that it better don't use CMA.
 
