@@ -1,146 +1,122 @@
-Return-Path: <linux-kernel+bounces-557996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23F8A5E033
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:23:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F684A5E029
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:22:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E477519C05F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:22:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3593819C06D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81C3253B4B;
-	Wed, 12 Mar 2025 15:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10B2256C8A;
+	Wed, 12 Mar 2025 15:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f2L9vETx"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="N6Qz6MBJ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40269250BE9;
-	Wed, 12 Mar 2025 15:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4BF253B4A;
+	Wed, 12 Mar 2025 15:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741792775; cv=none; b=Hoez01aeJc+3pUCW7lNIDrYAnlGBE3sLtQERbT8+OWrReS9FxgWUwyniH5wTSkxMJeRxRgcrLog2zDRyboHKqhbOzmjKJ7C1Dha90iG03JT3Xk9Yq3Wwshi1P79g6SP+my3UIZlz0w6z/VuxNNtmWg5FbyezZnu3MOgsEeiU07I=
+	t=1741792754; cv=none; b=A/SCRslzWQ9DcxbemdFTokYTWpvEHlf2XGcWQgZ1ANAXsrTY6L6B3hBLC1Fvw+iefMCYKP6AXu9ssYIct126RrgApRzWa4cdSoS903UKl1YBh3LFWtrJe5QICaIZK67JcceBwiWe8QAxifvuy0+sZ0WmdjRksdosq1bvwdDldWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741792775; c=relaxed/simple;
-	bh=DZ1Y+gpCWCY9gKqjbGx1YlA81MAHDVWvWbEPAiVSvzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rbLAovF3ZJMAnIH1WqmLgLGZyknFXqeLYWCIyGXcyFvCH1pQQhDp2SOiqMLYl5D1ZJiB1PZXN0altxFQ1QbuZ+Ompf0Wmz1yfvqeTpRSQWp0H4tAPO4LOSaEgjlHcrK14EXqyli8Dm6HdCpJ3V65VUUwyPEHa/9wM9RGcYFD4bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f2L9vETx; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2963dc379so523031266b.2;
-        Wed, 12 Mar 2025 08:19:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741792772; x=1742397572; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w/pXIDpOp6BNiWBUcqQ2AhAHmg0GVGeLpFmyRHgc3pE=;
-        b=f2L9vETxOjhFHt4qjMoo/4c6jNtezvdUw2WVDcef1/yoL+aPsbmgquk+srAlmv7/ZQ
-         cR0rIf3NW7Z0y5N68ie1/75rUlE32YOBMPtmGehqq0Rqf9LcewBjIiRsst3rHIRa9FSH
-         T9YOtBdD1ynGWwEzSGLxdLzFQklhTsZOZZ9rvZoA0jbiZVv/9Cynx39sW1UkgP5gGVEs
-         dw3N5b/Ienxumf3aDSrU6d6Ko4h5AS86emhXSJ8SAG4vPx1xW1Q68VwXWmzN3pCtBPop
-         aU5ElsnjHqaZGt5zyrTNWxkiI7IOOh6a44XvgXG4nNKmSoC3z4D2vNsrPwucMVPNiaGO
-         kcBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741792772; x=1742397572;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w/pXIDpOp6BNiWBUcqQ2AhAHmg0GVGeLpFmyRHgc3pE=;
-        b=OmaacCNcRnmAt8N8aB0RVCWBs/leC2+Yu+YYAJyWmVJe/ssR4xBnyzQ4NfPqKqvuEP
-         ukR0HvvwFR8985p4TmX2sJ8z+e+ixGdE6pjeiO9MqpMkXAeKg1cF6cfBkilMPflo0Vr9
-         91OZ3xlyT8ATuNMvXpxTejAzOGLgkWiestO9R1hWacCUuk30Smk6zUcYXxsz2DsEwWIY
-         VwAZg3MI9Lu51DLmg63GzT2PcnLgkATOqPXUIn29JrIQn58NOlHpR8e430qD9pWi4AhH
-         kKJ4OibXvI+HPtvLPjEydICfoOOKvwPG8/uDD9bFSXX9Z8mu5SMatahdG818RMy2/2EG
-         sT8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUm+7KUixVkU6+hAwFDxAzdMhVrmLgNzdpmAfQqwJbbGF5qTjyv9s+4kKOWrVBhuiwsAofuvM4hq6X/hbap@vger.kernel.org, AJvYcCVIKZ0PPOBeiLAJc6KJMEdzzA7wdylnjz6hS0iLZ6fZT+F8YUDbN5QRCuRJHTBZU2kaJMtVaZUCXXbgg/zA@vger.kernel.org, AJvYcCVksydJ1ssi9biopRUq0Mzb9R1YEkPmhJ887nkicdLSK5nTCmaQCrQfOur1oPIgmB7j2ZgYED/ICDb44Sg3AkY=@vger.kernel.org, AJvYcCW2JUvT4JN+uCsDXJfbnygoUA6bGxPY/9/kNnIUDeTx8PVl5x151Zu93knE//QY2t/xCre3LG2OBfcY@vger.kernel.org, AJvYcCX65ech20LkzcNCUdpdGJJTBGeot/jz6aTr3ks4y3I7vCk5QB3XiJpuv3PtcBK65ylsWlp22YrxDYt2@vger.kernel.org, AJvYcCXIVHBM/j9zIb0ul9jEpMu0J4TrB7hKv5LwkXLpOz00jP/z6pUrIi3j/vYHYFMYfgPk8Otq1rDdNOYJq6Y=@vger.kernel.org, AJvYcCXKVJd42IjmWhL1DSBp0i4eXJ5JdlMGSnRzM/YgrI9PPJGArxGfTnYH2gAqAcZa5Tn3nZu/DC0eCGWLS9z07z85@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP0D0CfMNNuX9mFFDLAtyzW+PNG8PVDQPxcIXxOv9GtjZKSDX/
-	Vn9HiggpNZpOiMmMsEfCid4ghgxW3/2+17nH4KO7+GLzxSrUxqtB+ErDOl1nm5+0EPB+GwX/UND
-	w3jvj7uRS7/jApOr9Aq7xqlrcSeE=
-X-Gm-Gg: ASbGnctHEF+TyHBp1t55DBgnf1+wmOSV0jC9vGndkdMhAV5WCHv/0kCztB54q27Jm14
-	QstzVCn+4/vFQ+ymRbUS6ktcxJ02Lf/GQOCwC6Cw3WPYEDxjd6IPfqcA+T6E7ljqMhUzdO7ujTL
-	6KHV+pm6ZBfkuf8vqI7XtdT9EL/m7a3I/P1+uW8z1pTg==
-X-Google-Smtp-Source: AGHT+IEec6B4lJH1kJ1qHPybkofl06oPx4WtqrcLkOLw+lXdaHEZafbVI/G1oeMNC9lXPgjx3er5Eb5Gd21kfKnMS/g=
-X-Received: by 2002:a17:906:f10d:b0:ac1:e332:b1e7 with SMTP id
- a640c23a62f3a-ac2525af682mr518458366b.4.1741792770733; Wed, 12 Mar 2025
- 08:19:30 -0700 (PDT)
+	s=arc-20240116; t=1741792754; c=relaxed/simple;
+	bh=jNb7ofhEY6SToOBHz5m6ErUAC0PyqJ9CZaND4c4AKDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tjA8utZqxbz4RoJsyvNcgAonPArrXfI9ej2qJGPjNsBoSis5ChBulMgzm9ySsXsWbIXTs5bokkemRTW5bPRGvWkShrGrXsCwVcNSNidmn0Zb7wcQxngb615beIG6npOByBcIJR8aQrhyyWmAeWCsnWcG5cR5PFnpM/wWYsO8byo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=N6Qz6MBJ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CE3FvS023107;
+	Wed, 12 Mar 2025 15:19:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ok6GZB
+	71aBRQITqSs+UG3I4EO7p/C6x1/eDKvx/Ld5M=; b=N6Qz6MBJkKEFfQEQfTwQ/6
+	FwhWphgSJAM0uD+E7GIZZQXJL0aHSEIgsS+pOHWhsMaoKRok+y9omYf9r5dJR0IE
+	te7deJadVzh6zyrtZru0f+ZHXYV+Ku7/7HTuqnEwPHDSIPdiGKfThungoULt1vOX
+	GJHqMTY8TWcQsunDiQH5Ci3phaHYRbbfBxEZT28Fya0fccPCUexjzTLvypEJcqDo
+	daFbc9O5sNpB84o7UzwvYrgB9VSGPui70wnbiY/emIwEDF8KvMdJqyW/un13YAdZ
+	SaQTORHjbYL3mTeMLK+R/IUbL1oAZjEfQpaw+djp7BYX1+s/miLJBaNtukPyHCXQ
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45bbpprekh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 15:19:09 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52CDjQpK026048;
+	Wed, 12 Mar 2025 15:19:08 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atspcs6q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 15:19:08 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52CFJ6lQ55378362
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Mar 2025 15:19:07 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A9A075805A;
+	Wed, 12 Mar 2025 15:19:06 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D0F2658052;
+	Wed, 12 Mar 2025 15:19:05 +0000 (GMT)
+Received: from [9.61.55.227] (unknown [9.61.55.227])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 12 Mar 2025 15:19:05 +0000 (GMT)
+Message-ID: <b763cd33-fb89-498a-841d-1a5423b7ef9b@linux.ibm.com>
+Date: Wed, 12 Mar 2025 11:19:05 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com>
- <20250309-ptr-as-ptr-v2-2-25d60ad922b7@gmail.com> <D8ED5UWKL2N1.2JPWVV0297BJ0@proton.me>
-In-Reply-To: <D8ED5UWKL2N1.2JPWVV0297BJ0@proton.me>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 12 Mar 2025 11:18:54 -0400
-X-Gm-Features: AQ5f1JryaC9D1lS-G8sJ5tBzfvkxBopn5cTygfhECRK8JmXzAdfXvR_ZyRwcnOw
-Message-ID: <CAJ-ks9kOLgXrOHucFXHB+DwZEZpZEKhBNmXKh_hB_agrq=2n6g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] rust: enable `clippy::ptr_as_ptr` lint
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] s390/vfio-ap: lock mdev object when handling mdev remove
+ request
+To: Anthony Krowiak <akrowiak@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: jjherne@linux.ibm.com, pasic@linux.ibm.com, hca@linux.ibm.com,
+        gor@linux.ibm.com, borntraeger@linux.ibm.com,
+        alex.williamson@redhat.com, clg@redhat.com, stable@vger.kernel.org
+References: <20250221153238.3242737-1-akrowiak@linux.ibm.com>
+Content-Language: en-US
+From: Matthew Rosato <mjrosato@linux.ibm.com>
+In-Reply-To: <20250221153238.3242737-1-akrowiak@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ch44e_yl2Ni0C-dx_O-Zjlp6RSe5zxgc
+X-Proofpoint-GUID: ch44e_yl2Ni0C-dx_O-Zjlp6RSe5zxgc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_05,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
+ adultscore=0 malwarescore=0 bulkscore=0 clxscore=1011 mlxscore=0
+ mlxlogscore=958 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503120102
 
-On Wed, Mar 12, 2025 at 10:40=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
-me> wrote:
->
-> On Sun Mar 9, 2025 at 5:00 PM CET, Tamir Duberstein wrote:
-> > In Rust 1.51.0, Clippy introduced the `ptr_as_ptr` lint [1]:
-> >
-> >> Though `as` casts between raw pointers are not terrible,
-> >> `pointer::cast` is safer because it cannot accidentally change the
-> >> pointer's mutability, nor cast the pointer to other types like `usize`=
-.
-> >
-> > There are a few classes of changes required:
-> > - Modules generated by bindgen are marked
-> >   `#[allow(clippy::ptr_as_ptr)]`.
-> > - Inferred casts (` as _`) are replaced with `.cast()`.
-> > - Ascribed casts (` as *... T`) are replaced with `.cast::<T>()`.
-> > - Multistep casts from references (` as *const _ as *const T`) are
-> >   replaced with `let x: *const _ =3D &x;` and `.cast()` or `.cast::<T>(=
-)`
->
-> Similarly to the other patch, this could be `let x =3D &raw x;`. (but it'=
-s
-> fine to leave it as-is for now, we can also make that a
-> good-first-issue.)
+On 2/21/25 10:32 AM, Anthony Krowiak wrote:
+> The vfio_ap_mdev_request function in drivers/s390/crypto/vfio_ap_ops.c
+> accesses fields of an ap_matrix_mdev object without ensuring that the
+> object is accessed by only one thread at a time. This patch adds the lock
+> necessary to secure access to the ap_matrix_mdev object.
+> 
+> Fixes: 2e3d8d71e285 ("s390/vfio-ap: wire in the vfio_device_ops request callback")
+> Signed-off-by: Anthony Krowiak <akrowiak@linux.ibm.com>
+> Cc: <stable@vger.kernel.org>
 
-Yeah, same as the other patch; we can't directly do that here without
-introducing some compiler infra or bumping MSRV.
+The new code itself seems sane.
 
-> >   according to the previous rules. The intermediate `let` binding is
-> >   required because `(x as *const _).cast::<T>()` results in inference
-> >   failure.
-> > - Native literal C strings are replaced with `c_str!().as_char_ptr()`.
-> >
-> > Apply these changes and enable the lint -- no functional change
-> > intended.
-> >
-> > Link: https://rust-lang.github.io/rust-clippy/master/index.html#ptr_as_=
-ptr [1]
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+But besides this area of code, there are 2 other paths that touch matrix_mdev->req_trigger:
 
-Thanks!
+the one via vfio_ap_set_request_irq will already hold the lock via vfio_ap_mdev_ioctl (OK).
+
+However the other one in vfio_ap_mdev_probe acquires mdevs_lock a few lines -after- initializing req_trigger and cfg_chg_trigger to NULL.  Should the lock also be held there since we would have already registered the vfio device above?  We might be protected by circumstance because we are in .probe() but I'm not sure, and we bother getting the lock already to protect mdev_list...
+
 
