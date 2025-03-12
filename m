@@ -1,350 +1,252 @@
-Return-Path: <linux-kernel+bounces-558200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D66A5E2BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:29:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA3FA5E2BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:28:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BA653BC634
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:28:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFE7E3B6479
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F191E9B30;
-	Wed, 12 Mar 2025 17:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8B625A2BA;
+	Wed, 12 Mar 2025 17:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="cCu45HK3"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QqeHP41G"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1E725A2B3;
-	Wed, 12 Mar 2025 17:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741800158; cv=none; b=Ze8SwHhz5dNqSHz8ARBZ4zI9mpTdaekLLfzHSeM5+A9dKgXUwRXI2tYJVjB2YGC9orUP4C9mEGuAPlvb8CpErftMIYPkwq2QmCKukFGGb6ylrdgx62t+P+YNz6ofYh+Bop62p/BWseXOWYx3tmwkb3od8LIRAoS+Mev6VwLR/wI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741800158; c=relaxed/simple;
-	bh=1jv5CvsISS6VubHiNYfPXEiQCOjE2PTh28+yZ7KKLUg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uZC5Csu4iSSEvMSaB0RQy7t4dY4eC+N1kWO0FQminFz1487g9nZAYmL1B1b/FEu56iYiNrNOnJ4mr0fOTFMWXLZaHtxh2FJExgaiVRDtSW0pEcdNHhMsN3WprgpVjNvmrHdDkn0NJ0C762UHH9uLlp6C0QPlIjY+NmefOCUGGuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=cCu45HK3; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52C6FZHP029588;
-	Wed, 12 Mar 2025 12:22:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=k9x6Xsf+Pxlzu/Z2hlNLxQlPcOLync0Kzy/PrS741+M=; b=
-	cCu45HK398eJjeAReqqjS5sAjydcphqUle7KfcrEVIx97wuz2mBLs04DmPGjrAcs
-	wciW9JG833hsSnMMYSE8BY1abGnUz3ZdLnYca66d5guOpLznMHzhcYLMHKAvVyXP
-	u8XzqSeM+2eEfi7s/5id2jGWxbopi+m2wrzOHKLsTXU6EXNvkrn4bM46+3RLU+3D
-	K0VTNrMCfqTQGOqjzvgxsYF9CibZ0pkXVlvCWz3BEVHgG4WA+JCG7ei4zD61C8rG
-	mazrpfQ+nF5LqgcbGIsKfliumnsfWZ1If+9OVeG59R0KGi+bvAt0Vsby5LRln14e
-	KQ6/DLLsXr2C0j6Ny2zssQ==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 45au85tfdp-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 12:22:08 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 12 Mar
- 2025 17:22:05 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Wed, 12 Mar 2025 17:22:05 +0000
-Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 58FFB822561;
-	Wed, 12 Mar 2025 17:22:05 +0000 (UTC)
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <lgirdwood@gmail.com>, <pierre-louis.bossart@linux.dev>,
-        <yung-chuan.liao@linux.intel.com>, <peter.ujfalusi@linux.intel.com>,
-        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH 6/6] ASoC: SDCA: Add support for GE Entity properties
-Date: Wed, 12 Mar 2025 17:22:05 +0000
-Message-ID: <20250312172205.4152686-7-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250312172205.4152686-1-ckeepax@opensource.cirrus.com>
-References: <20250312172205.4152686-1-ckeepax@opensource.cirrus.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82266258CF4;
+	Wed, 12 Mar 2025 17:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741800139; cv=fail; b=N8MD5N2bJ5k1PrX72TrsZyEZnjkN6Mf8CSJfDIWuDLI22c7x4qwXQPHFphuwBimzIKFdNa+TtpRfhYFRhwGjBv5Xja2aV2VqoNte4O592QOPf8yruKnnoH7Wxt8HL8y5n/Q7/zBImkY6x4zncCfPlNM+gB/YuN8dX/0eR4RY9qc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741800139; c=relaxed/simple;
+	bh=1pXgbsNxKRbEPGmvwj8dxW1vpp8nl1mC7gUAiZPnGyg=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qLEjz/tIEKEtilE/qKHU7kFS4l7ulff/86nFpp9h3QHYdpTxQkYsrMerY9q07N1U8NcdPwT405BT+HY7oVj4HlW5FgWQRcdL5+QdHygzbDrPwKxRARwdmzLyTBifcO63oiZ3Hz8hpB45rwKZx3ayAdv23zNEzu1OC3AuIgBTD+A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QqeHP41G; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741800137; x=1773336137;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=1pXgbsNxKRbEPGmvwj8dxW1vpp8nl1mC7gUAiZPnGyg=;
+  b=QqeHP41Gpy8kEpJMtP5xU23HJLg7gaohhWbcbo8zo0lp9zvAlaRLIrxR
+   q941PRkkKQgw4cYFIS85rYBgITlLQRRmBS3vz6DARx2XA8zd32h//64dj
+   Wc8eVQuTQ5O7JhXAbowAQPRtR/TqIkUwzRwmCatfa2B+orolRWQ492Yl9
+   SWpizPz4i2VTIkzdm1cL7ToGYsbLw2RoXMwHHqWZ9gJBe1KEnQbfkwqlW
+   1NTyNUmOd1/zRTo5k05rF6tXzdaKcq0tQvWrBgxTzkR824btu1v+oeX8J
+   2YZsTEWWPvJlSYjBiNecnc7Fdjl1OhBvsOJ5F61BY7xcHs2SL73Md21lB
+   Q==;
+X-CSE-ConnectionGUID: WUglsgfaQiCum8FmR+5KCg==
+X-CSE-MsgGUID: SI2JzryHTVm4uHcaVYSUWA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="46542310"
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="46542310"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 10:22:16 -0700
+X-CSE-ConnectionGUID: xw4GwzhnRySiGgwE7h8MQg==
+X-CSE-MsgGUID: 6LdvLrcGS9GtDLZDyPB1yQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="121202090"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Mar 2025 10:22:16 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 12 Mar 2025 10:22:15 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Wed, 12 Mar 2025 10:22:15 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.171)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 12 Mar 2025 10:22:14 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ByjuQ976yDWxGjxHZbnn8BvmYlNfgxjlrsH6m7M9mfy5EwPrGsQaGCsODeIsVEdmK/EiImTP1MFIK1rcEJyvN53ODHdpEI3QJgrfj1PVWOEZAe73OSTHcwjLOC8xqToOdpQrvUtz0Vg4gbKkXv4B+4utYV/mb7AF4Rhzp9otcYg6pBewg67EiHvjSACpu4NrKozdA6yOpFO9r6CV5pNmovHz8vJIbl76jfDaQ0v8KLdK41vhn7pNmD3SChACsw0GCdTSsdGOCcdcfejoIHOjj19gLAAOYrlXns7x3hPDJw00nbe3xiCU0epvVDPaomBudemDTcYIyU0Fcm3C+Bqm4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DwL83zbxZePN75NIyjyhsKrbk7g4gZZkvtgejudToq0=;
+ b=UeodBpE+dUKV0jmqqlODU0/7DdDHgcBW8lV0OKF+LFMv4M8gNGJuUnzMNAFt6vCbERbxxu7MhqKzyVTbxcQDdV8qpeitx7Bq7oukOg9qNlA4d+n/2Yap9Hb2hQyCeAxSf/1MZnzzfF8JtgsCCJR1eKYvAgOezOYA7hgkVsUu9KVMrlFqhgXyg5TROsTcXCujDpd41JEi3aAPh6gHhp78Fl8uVnOGbe6TkOXImMKOP/aPyEtRkkDQbEj/dMFnZ7Q+CcVgSYX/rU96vgRXQN+JmQP8Ar2papQ6rOTv02Z3iqJpSOyUCqBa7Vxpc1CQkVb3O5nVLdTm1x5iUHX0oP5Rig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by PH0PR11MB5112.namprd11.prod.outlook.com (2603:10b6:510:3b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Wed, 12 Mar
+ 2025 17:22:12 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%5]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
+ 17:22:12 +0000
+Message-ID: <ae42f7a3-10dd-4b5a-8bd0-fbab0148a419@intel.com>
+Date: Wed, 12 Mar 2025 18:22:06 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 06/16] idpf: a use saner limit for default number
+ of queues to allocate
+To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+CC: <intel-wired-lan@lists.osuosl.org>, Michal Kubiak
+	<michal.kubiak@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, "Przemek
+ Kitszel" <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+	"Jesper Dangaard Brouer" <hawk@kernel.org>, John Fastabend
+	<john.fastabend@gmail.com>, Simon Horman <horms@kernel.org>,
+	<bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250305162132.1106080-1-aleksander.lobakin@intel.com>
+ <20250305162132.1106080-7-aleksander.lobakin@intel.com>
+ <Z8rLLwZlRACyA49U@boxer>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <Z8rLLwZlRACyA49U@boxer>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MI1P293CA0018.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:3::12) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: tvaR9cD-wxFiSL18ngUDqnET8YLwUkrh
-X-Proofpoint-GUID: tvaR9cD-wxFiSL18ngUDqnET8YLwUkrh
-X-Authority-Analysis: v=2.4 cv=fv/cZE4f c=1 sm=1 tr=0 ts=67d1c2c0 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=Vs1iUdzkB0EA:10 a=w1d2syhTAAAA:8 a=MldGFf8XINzs0YfW2RIA:9
-X-Proofpoint-Spam-Reason: safe
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|PH0PR11MB5112:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9d21e701-a67b-43bc-9459-08dd618a6d2c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?NmlzL3QvSENkUjVMVG9aOGp0ejAxdERyaHFGNklwWUNld0tMa0k5cFNPUTJO?=
+ =?utf-8?B?aUpVTEdyMkdyTEpSWWtOWXlUV1BXVHNQTXBKcWhCZWtwVFl4eXlQSThjU1pB?=
+ =?utf-8?B?TEZRYVVZbnk3cml5cS85QkN3TzZROFpRZkxNTFI1TnJmWFl6dHZlV1p5Tm9T?=
+ =?utf-8?B?NE9pNytNTU1VN1pzMlVjdE1YM2UwcC9ZTVZDNUNHd3UxMWZRWUVpRWZLN3Zp?=
+ =?utf-8?B?OVlrUnYzQlY1WG9abVdqTm1QdVpSSTZ4RjdMQjBNUnc0T25VMUt6MDBhNDZo?=
+ =?utf-8?B?ek83RjVGWmIyZUtnL01RQURWSUtRNjJTQVkvdDc0bzZFV1B1dHlrUVFlQjJM?=
+ =?utf-8?B?N3hSYzI0bDBSY2lydUg2YkR4Q0tuNWtwVTRKamx6dVdhYXREYjBZTXFTSWRY?=
+ =?utf-8?B?RFhldnlJRmZmckFza1J2V3dLbFJhSTdvWGJCUzlHT1k5bVZWWmc0Q2dXSVZF?=
+ =?utf-8?B?VU5DY2wwSjBVWUlBbG8wV3JESEpXNC85RWc0TWlieGhpbHRVTjFtR0RMeFAr?=
+ =?utf-8?B?ZC9VNDdzOEdKbmtlWHlSNGhPaFNuT2R4aXN2R3pnN3RTazBGZHYvRkRCVXR0?=
+ =?utf-8?B?cGRKS1E3VkhERzUyL0txSUxEd1VhZlEvVjRTR2Q3U2NmY3pMNTluc2QyQ0VH?=
+ =?utf-8?B?bC9PeDdSQVZuS3NlRDhkSXNQNHBJalZTaUxqdVE3QmVzV056dzc1NlU0YTZS?=
+ =?utf-8?B?QkEvM3F5cVJvenEybVpzRXlNYm5lcEx0TXUzelA3TWFzNThvUlBXZE50YWxh?=
+ =?utf-8?B?eTZoVDFmbnlPcnBycjhaR085MGN3TmdGRXNISmZsZkxLYzlGbFVFTmJwbUt5?=
+ =?utf-8?B?SzJDOHU5dEI0K0haUHo5OCszd2NZWlp4R0xqdTR0ZlhDSUFyY3VxRXhCRjBw?=
+ =?utf-8?B?WmNva2s1dUYvOU40UnJWR1lYbWF1Vm8rVTNpeFBxMlc0VVF0Q2FXZktrR1hD?=
+ =?utf-8?B?S0ZSTlhRb0lyS2xWeFlMNHdrMElGVUk5Q2UweUlKdDVULzVITTY1aWdGdXVG?=
+ =?utf-8?B?RkVKQjRsQkNUaXFUZDQ5citqQ29ESXBVdWlINzV3dGVWUWtQL01qTFpLa3BY?=
+ =?utf-8?B?RUNKT0oxQzNCSTlsenBSV1FWOHBMc3MrT1lvTlZUYXd4dW9zQnluVjQwb2RJ?=
+ =?utf-8?B?TmpLUGxkK3pIV3pROGZxYXNKRXU1bzlJR1BxSWJWYzFLZ0tTNXJheFB4M1d2?=
+ =?utf-8?B?eGpDc2NoM3l6U2UrR1cxMXJuaG5Ca2gyaVNJMEpaSlFWNWxMU3JwWUQyVTY3?=
+ =?utf-8?B?WUNOaEV1RS9pWnBvaTNLRGFjRERSNTF3YXlxQVByWVRVdkNkNGYraUJsRkZs?=
+ =?utf-8?B?S0FnK1FzZmZQdlRVcGlPWEo2NjI3amUzaG1NazVEOWw2SmxicTJqV1FrMnN5?=
+ =?utf-8?B?VXp5S3FrN1lQcnRUMm9KTjVGdnhWVitieGczZm1neHVMeWVLcXZHUjlqSExX?=
+ =?utf-8?B?enZxOVpmc1ZlMlYvS29wenV0LzhCZXQ0RUZ0UHJueEFQSVlwZWJ6RzhGZnJ3?=
+ =?utf-8?B?UVFVR1J5dFJIZXRuVFZUV2ZKQ2IxWGZyOHZpWHpjbU9FZjR2TkRkVGZEOHJa?=
+ =?utf-8?B?ZUpXdUxvMVY5MUlEM0hndVVYUUhvU2x3MjB3cVEzcGVQb29sa3REQThRQXZq?=
+ =?utf-8?B?WDFIVXl2SVl3clRuSHdxWlNnQjNRS2JvaEdjZmtpaUVoZUo2OWhmWFhneGZP?=
+ =?utf-8?B?ckxkeGdreUZ5THZMN0JTN0hld1pXaHprN2k0bng5aXNtdXordW5HOURBczR0?=
+ =?utf-8?B?azZZMUs2UnNBWlFDT29VQlFSUENuNGhuV0JlZDZ4d0E3SitWRENXSElBNnMr?=
+ =?utf-8?B?SmJaQTJqb0ptVHpyRmtzMno1aUdPeEc0UkpmWC85MFRtb0QzSHY5Y0dQRFNo?=
+ =?utf-8?Q?lEADhtE8FqA4r?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UlU5OEp6Y3RWcXN2c1VTS0RVdmNIU095RFl3MlVZei9sZ3pCeVE0cUoxUU0x?=
+ =?utf-8?B?VkdoY1RwbFRKNm5wT2dHSkhkdW5lWkJ0UjhHL0pBbUNsaGFxcmQxZWZ0Y3Yv?=
+ =?utf-8?B?Wi9MK1RvQmtkcW80MjUwd1hLMFk2TTRqc0x1YVpMK2ZYSlVSVzJoUHJzb3dF?=
+ =?utf-8?B?QjhuTGtJYWZyWUlqdXljMzZJNU0yYkcxVUU4WGN2WUlMUVI0VngzL01WRGdu?=
+ =?utf-8?B?UlJJdnJrWjNNd3ozcko0OWFBY0JyM0gxS280WEJEaGo5NEgwQkVkM2d5NUJZ?=
+ =?utf-8?B?Z0s3NGFmUGlDQ01lbHd2QjVqYkljQ09KOG12TmUxYTNwRXNhODJQdW5ydXJF?=
+ =?utf-8?B?YVNBOVZXeW03djNZL2g5SDNzYkJ3UkUzWU9ycmVSRk1abzRuVFpKTFF1cXVU?=
+ =?utf-8?B?WWx5SGFZejNpUUd0MG1UNXBtenJhMkxySjVhVWxxKzZIS2d2RHBPN3I0WWMr?=
+ =?utf-8?B?S2tIRzYxditDSDkvbFFRWVF0WkRpUDdaNTdDdVozQVYzQVVhYzcvcEZLTFdF?=
+ =?utf-8?B?RW50NXFMZWVvZ0h6RlpLdTJJWGllbFVmMEJWNGZMQ1pEbHlBRFA0RHYyeW5y?=
+ =?utf-8?B?YWhyYXpzOW9nTWw4eVZBaThBN1V2SHgva3J1VjI2UU9hVHpNdzVSRDJQc0xX?=
+ =?utf-8?B?TDhFYmJ4d0Y4NHJsejQ3TnVPUzVxRnBKSTRRcTZTOHVQMXROcmdudjJZSUMv?=
+ =?utf-8?B?d2tWNnV1K2RNSk1XOUROMzFpUW1RZUNTdzJiYjdBcy9qc2dDUkFmbWQvQXF5?=
+ =?utf-8?B?TFFyS1ZGT0tCREtiTStWSWdGWXplelJnUkl3MnpzOGdDUTFKZndNWFpXM0No?=
+ =?utf-8?B?SFpyT0EremF4UFdsQ1NJT3krSEtJbnZYUGpkMmlnbEpXTURwcDlPQVk5ZjBj?=
+ =?utf-8?B?dW9uZGRRT2o0bm4rd3hrSzVpQmJmb01wRm5mTFA4OWpXM1VyU2p5MndmV3lF?=
+ =?utf-8?B?U2hHYUh0bUY5ZzUwREg5NC9PdEthWnB4QURjdGs5QkFpVklyK3RyUVFucEhq?=
+ =?utf-8?B?MGVtMVl3ZDQ2U1hFdVZlTXp3T1FWWkhKRk1rU0lMSmhmNXUyTVRCb3F2RnNT?=
+ =?utf-8?B?OUloUVlUbTJteVFpREQ5REMvMFhqeXBVVWgyVTQ5YUpQUjZORmNpWFc5elk1?=
+ =?utf-8?B?MUF4bkFuZndaTGdCNjdPNEFvU2sybUN6anJLbExodUZ2aFBHcnE5T1pxQ2lx?=
+ =?utf-8?B?QnowekxJRjNIK0x5aDJXc21zZUtDRGp5bVpZMG9vMXdMalRJZ2hTT2FhUEJP?=
+ =?utf-8?B?Q0JxSk1zeWthTlhkTmFYU2ZzZHNLQlRaTHQyY3IvQktaVTV0dks3VHZZbHJo?=
+ =?utf-8?B?WTg4MzFZdHpsWnFhRVA3M3JJWWhOL0hxcWdFQW15SmxFeXVoak1TcG1WL2Vj?=
+ =?utf-8?B?ODZIelpUYWQxTEFBa1BNYVdrR0RPelcvcUM3TmdqMXpMT0xKTEVGczhsakww?=
+ =?utf-8?B?cFYvWStPcElzZjVIWFVySUNaN29WQ01wdFk0TWUwVCtjNUdsNnN3a1pMdEMw?=
+ =?utf-8?B?TGpGZmZKNXJnS3V4dllvSjZKOVZHYjhIZnYxQUhRNEVzSlZwdHpNeldXVStL?=
+ =?utf-8?B?eEN0NHdZU1k4MkNuWDRCcG8xUmdKWEM0enM0MWR2TXpxcDh2RGJ5eVhnaEkv?=
+ =?utf-8?B?dXl5bWlGWmZPak9TYytsWUpXY1Roek5ncEpPdktvVDJ3QStGWDFHc0NTMWJz?=
+ =?utf-8?B?OU9pUnNRZGhSSGJRdVJlcUk1YWdoRkJZSUJOUzdXOWhyVWNlVUFMOU1MdFd3?=
+ =?utf-8?B?QnhtQktyOEV0bUsraEt3NzUvMytsTmcxV1VZVkFiZDNleC9OMkNWbDd4eVg0?=
+ =?utf-8?B?Unl0a25JdWphZ2Nqa3FBcG9iQWFsa3JORmFRVXVvczVDZmFlU25QSzIxczJP?=
+ =?utf-8?B?SjRGeFFPQmxnU3Fadm56dGxhbGlKelFHYmZoK3Z5WU1seE5xWlk3dTJMenda?=
+ =?utf-8?B?UGkxbUNPRko0em5vR0toSEROYmJaU2VVZm96NmxEYTJ2SHNLeFI4dHpnZXRo?=
+ =?utf-8?B?SU9peXZXdklPclIwNHVpRFBrTnNMVWh5VWV4Zk93dit4QnJLR1IyTXA2eGRN?=
+ =?utf-8?B?VWFCREdZM0tsYlZ6dU04OEpLaVpRTWhmZTBQTTNaMmk2eWk0dFZGZWEyNEV4?=
+ =?utf-8?B?WjZnZ2Z3bUlvWDlXdVRSQWw4OXFVcUtXRG4vTGpBemNHS05mT2VuL0NXNWNP?=
+ =?utf-8?B?N1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d21e701-a67b-43bc-9459-08dd618a6d2c
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 17:22:12.4154
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: z02UdseMT/38T7GOIaKIsg9QLC03zCw/k4GfHRViP1GMNp15gYMkv0b69ZdSlB6gsMJpmdamL8CjO/63d6zW+IFUWaBGs3YBkEGHuUgXQlM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5112
+X-OriginatorOrg: intel.com
 
-Add support for parsing the Group Entity properties from DisCo/ACPI.
-Group Entities allow control of several other Entities, typically
-Selector Units, from a single control.
+From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Date: Fri, 7 Mar 2025 11:32:15 +0100
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- include/sound/sdca_function.h   |  48 ++++++++++++
- sound/soc/sdca/sdca_functions.c | 129 ++++++++++++++++++++++++++++++++
- 2 files changed, 177 insertions(+)
+> On Wed, Mar 05, 2025 at 05:21:22PM +0100, Alexander Lobakin wrote:
+>> Currently, the maximum number of queues available for one vport is 16.
+>> This is hardcoded, but then the function calculating the optimal number
+>> of queues takes min(16, num_online_cpus()).
+>> On order to be able to allocate more queues, which will be then used for
+> 
+> nit: s/On/In
 
-diff --git a/include/sound/sdca_function.h b/include/sound/sdca_function.h
-index d7489e3c7e471..253654568a41e 100644
---- a/include/sound/sdca_function.h
-+++ b/include/sound/sdca_function.h
-@@ -44,6 +44,11 @@ struct sdca_function_desc;
-  */
- #define SDCA_MAX_DELAY_COUNT 256
- 
-+/*
-+ * Sanity check on size of affected controls data, can be expanded if needed.
-+ */
-+#define SDCA_MAX_AFFECTED_COUNT 2048
-+
- /**
-  * enum sdca_function_type - SDCA Function Type codes
-  * @SDCA_FUNCTION_TYPE_SMART_AMP: Amplifier with protection features.
-@@ -927,11 +932,51 @@ enum sdca_entity_type {
- 	SDCA_ENTITY_TYPE_HIDE				= 0x31,
- };
- 
-+/**
-+ * struct sdca_ge_control - control entry in the affected controls list
-+ * @id: Entity ID of the Control affected.
-+ * @sel: Control Selector of the Control affected.
-+ * @cn: Control Number of the Control affected.
-+ * @val: Value written to Control for this Mode.
-+ */
-+struct sdca_ge_control {
-+	int id;
-+	int sel;
-+	int cn;
-+	int val;
-+};
-+
-+/**
-+ * struct sdca_ge_mode - mode entry in the affected controls list
-+ * @controls: Dynamically allocated array of controls written for this Mode.
-+ * @num_controls: Number of controls written in this Mode.
-+ * @val: GE Selector Mode value.
-+ */
-+struct sdca_ge_mode {
-+	struct sdca_ge_control *controls;
-+	int num_controls;
-+	int val;
-+};
-+
-+/**
-+ * struct sdca_entity_ge - information specific to Group Entities
-+ * @kctl: ALSA control pointer that can be used by linked Entities.
-+ * @modes: Dynamically allocated array of Modes and the Controls written
-+ * in each mode.
-+ * @num_modes: Number of Modes.
-+ */
-+struct sdca_entity_ge {
-+	struct snd_kcontrol_new *kctl;
-+	struct sdca_ge_mode *modes;
-+	int num_modes;
-+};
-+
- /**
-  * struct sdca_entity - information for one SDCA Entity
-  * @label: String such as "OT 12".
-  * @id: Identifier used for addressing.
-  * @type: Type code for the Entity.
-+ * @group: Pointer to Group Entity controlling this one, NULL if N/A.
-  * @sources: Dynamically allocated array pointing to each input Entity
-  * connected to this Entity.
-  * @controls: Dynamically allocated array of Controls.
-@@ -940,12 +985,14 @@ enum sdca_entity_type {
-  * @iot: Input/Output Terminal specific Entity properties.
-  * @cs: Clock Source specific Entity properties.
-  * @pde: Power Domain Entity specific Entity properties.
-+ * @ge: Group Entity specific Entity properties.
-  */
- struct sdca_entity {
- 	const char *label;
- 	int id;
- 	enum sdca_entity_type type;
- 
-+	struct sdca_entity *group;
- 	struct sdca_entity **sources;
- 	struct sdca_control *controls;
- 	int num_sources;
-@@ -954,6 +1001,7 @@ struct sdca_entity {
- 		struct sdca_entity_iot iot;
- 		struct sdca_entity_cs cs;
- 		struct sdca_entity_pde pde;
-+		struct sdca_entity_ge ge;
- 	};
- };
- 
-diff --git a/sound/soc/sdca/sdca_functions.c b/sound/soc/sdca/sdca_functions.c
-index 0cc25fb9679b4..c8efdc5301b53 100644
---- a/sound/soc/sdca/sdca_functions.c
-+++ b/sound/soc/sdca/sdca_functions.c
-@@ -1136,6 +1136,92 @@ static int find_sdca_entity_pde(struct device *dev,
- 	return 0;
- }
- 
-+struct raw_ge_mode {
-+	u8 val;
-+	u8 num_controls;
-+	struct {
-+		u8 id;
-+		u8 sel;
-+		u8 cn;
-+		__le32 val;
-+	} __packed controls[] __counted_by(num_controls);
-+} __packed;
-+
-+static int find_sdca_entity_ge(struct device *dev,
-+			       struct fwnode_handle *entity_node,
-+			       struct sdca_entity *entity)
-+{
-+	struct sdca_entity_ge *group = &entity->ge;
-+	u8 *affected_list __free(kfree) = NULL;
-+	u8 *affected_iter;
-+	int num_affected;
-+	int i, j;
-+
-+	num_affected = fwnode_property_count_u8(entity_node,
-+						"mipi-sdca-ge-selectedmode-controls-affected");
-+	if (!num_affected || num_affected == -EINVAL) {
-+		return 0;
-+	} else if (num_affected < 0) {
-+		dev_err(dev, "%s: failed to read affected controls: %d\n",
-+			entity->label, num_affected);
-+		return num_affected;
-+	} else if (num_affected > SDCA_MAX_AFFECTED_COUNT) {
-+		dev_err(dev, "%s: maximum affected controls size exceeded\n",
-+			entity->label);
-+		return -EINVAL;
-+	}
-+
-+	affected_list = kcalloc(num_affected, sizeof(*affected_list), GFP_KERNEL);
-+	if (!affected_list)
-+		return -ENOMEM;
-+
-+	fwnode_property_read_u8_array(entity_node,
-+				      "mipi-sdca-ge-selectedmode-controls-affected",
-+				      affected_list, num_affected);
-+
-+	group->num_modes = *affected_list;
-+	affected_iter = affected_list + 1;
-+
-+	group->modes = devm_kcalloc(dev, group->num_modes, sizeof(*group->modes),
-+				    GFP_KERNEL);
-+	if (!group->modes)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < group->num_modes; i++) {
-+		struct raw_ge_mode *raw = (struct raw_ge_mode *)affected_iter;
-+		struct sdca_ge_mode *mode = &group->modes[i];
-+
-+		affected_iter += sizeof(*raw);
-+		if (affected_iter > affected_list + num_affected)
-+			goto bad_list;
-+
-+		mode->val = raw->val;
-+		mode->num_controls = raw->num_controls;
-+
-+		affected_iter += mode->num_controls * sizeof(raw->controls[0]);
-+		if (affected_iter > affected_list + num_affected)
-+			goto bad_list;
-+
-+		mode->controls = devm_kcalloc(dev, mode->num_controls,
-+					      sizeof(*mode->controls), GFP_KERNEL);
-+		if (!mode->controls)
-+			return -ENOMEM;
-+
-+		for (j = 0; j < mode->num_controls; j++) {
-+			mode->controls[j].id = raw->controls[j].id;
-+			mode->controls[j].sel = raw->controls[j].sel;
-+			mode->controls[j].cn = raw->controls[j].cn;
-+			mode->controls[j].val = le32_to_cpu(raw->controls[j].val);
-+		}
-+	}
-+
-+	return 0;
-+
-+bad_list:
-+	dev_err(dev, "%s: malformed affected controls list\n", entity->label);
-+	return -EINVAL;
-+}
-+
- static int find_sdca_entity(struct device *dev,
- 			    struct fwnode_handle *function_node,
- 			    struct fwnode_handle *entity_node,
-@@ -1174,6 +1260,9 @@ static int find_sdca_entity(struct device *dev,
- 	case SDCA_ENTITY_TYPE_PDE:
- 		ret = find_sdca_entity_pde(dev, entity_node, entity);
- 		break;
-+	case SDCA_ENTITY_TYPE_GE:
-+		ret = find_sdca_entity_ge(dev, entity_node, entity);
-+		break;
- 	default:
- 		break;
- 	}
-@@ -1384,6 +1473,42 @@ static int find_sdca_entity_connection_pde(struct device *dev,
- 	return 0;
- }
- 
-+static int find_sdca_entity_connection_ge(struct device *dev,
-+					  struct sdca_function_data *function,
-+					  struct fwnode_handle *entity_node,
-+					  struct sdca_entity *entity)
-+{
-+	int i, j;
-+
-+	for (i = 0; i < entity->ge.num_modes; i++) {
-+		struct sdca_ge_mode *mode = &entity->ge.modes[i];
-+
-+		for (j = 0; j < mode->num_controls; j++) {
-+			struct sdca_ge_control *affected = &mode->controls[j];
-+			struct sdca_entity *managed;
-+
-+			managed = find_sdca_entity_by_id(function, affected->id);
-+			if (!managed) {
-+				dev_err(dev, "%s: failed to find entity with id %#x\n",
-+					entity->label, affected->id);
-+				return -EINVAL;
-+			}
-+
-+			if (managed->group && managed->group != entity) {
-+				dev_err(dev,
-+					"%s: entity controlled by two groups %s, %s\n",
-+					managed->label, managed->group->label,
-+					entity->label);
-+				return -EINVAL;
-+			}
-+
-+			managed->group = entity;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int find_sdca_entity_connection(struct device *dev,
- 				       struct sdca_function_data *function,
- 				       struct fwnode_handle *entity_node,
-@@ -1404,6 +1529,10 @@ static int find_sdca_entity_connection(struct device *dev,
- 		ret = find_sdca_entity_connection_pde(dev, function,
- 						      entity_node, entity);
- 		break;
-+	case SDCA_ENTITY_TYPE_GE:
-+		ret = find_sdca_entity_connection_ge(dev, function,
-+						     entity_node, entity);
-+		break;
- 	default:
- 		ret = 0;
- 		break;
--- 
-2.39.5
+Also "use a saner limit", not "a use saner limit" in the subject =\
 
+> 
+>> XDP, stop hardcoding 16 and rely on what the device gives us. Instead of
+>> num_online_cpus(), which is considered suboptimal since at least 2013,
+>> use netif_get_num_default_rss_queues() to still have free queues in the
+>> pool.
+> 
+> Should we update older drivers as well?
+
+That would be good.
+
+For idpf, this is particularly important since the current logic eats
+128 Tx queues for skb traffic on my Xeon out of 256 available by default
+(per vport). On a 256-thread system, it would eat the whole limit,
+leaving nothing for XDP >_< ice doesn't have a per-port limit IIRC.
+
+> 
+>> nr_cpu_ids number of Tx queues are needed only for lockless XDP sending,
+>> the regular stack doesn't benefit from that anyhow.
+>> On a 128-thread Xeon, this now gives me 32 regular Tx queues and leaves
+>> 224 free for XDP (128 of which will handle XDP_TX, .ndo_xdp_xmit(), and
+>> XSk xmit when enabled).
+
+Thanks,
+Olek
 
