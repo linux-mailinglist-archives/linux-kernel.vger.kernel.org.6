@@ -1,191 +1,174 @@
-Return-Path: <linux-kernel+bounces-557168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B9EA5D472
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:39:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25219A5D474
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:39:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 986E37A96E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:38:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A2B67AAC4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 02:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DECD18B46E;
-	Wed, 12 Mar 2025 02:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414F018DB0B;
+	Wed, 12 Mar 2025 02:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="M5NPeYY2"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fMa1bZ3L"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013008.outbound.protection.outlook.com [40.107.162.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567168633A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 02:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741747147; cv=none; b=lMhlROsg/9bQjk5fVlRLSvaOGjozGOq1TFGXfsythLXMIhSeiyw7B5U0AF4UyNcvRQl1Doy2fxzNdf5vfRLIqwfhjQKQA3z/eExcKQAJlhTg6ko277W2I5EM3jIBP3NYYgUUSkFK0niCw/dCmrP8Z9ynVqNukunZmyXQkj7JNWY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741747147; c=relaxed/simple;
-	bh=JGTUx+vZhgTcxc7A0OHnH+uACyGI2QXmhdI7qpfj7jo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FCNYOLFxYQgk1QSkaH5SI0amG1FSz5OceEXE1tluRk0tOerF9XNzOOvd3xeoQo7NIHvlvzGopsYLWjJdxUaF392d3SUuvSZMBkpEkAHSR2LOfqZYufSenDXYjqFRlTeHypkzZRHYs51UqT06rxI5B1ZN91ZKZP1ck3wavxm1vJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=M5NPeYY2; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1741747131;
-	bh=JGTUx+vZhgTcxc7A0OHnH+uACyGI2QXmhdI7qpfj7jo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=M5NPeYY2m02nzZEPe5+vuivUh59bHuLboOwIoIzhqiWc7pdol+Mna0vyVSo1itFXj
-	 XWm7tN/HTwxdnmn1sOKiWXglHAcdXxiJfKA8bSgmvCYKxYIPJSOWdptJ8KcTe/FEb0
-	 IbOu98Yo+R2OZJNlLwbx83319PTIdrQ8sJXKw7rU=
-X-QQ-mid: bizesmtpip4t1741747118ts6o8v4
-X-QQ-Originating-IP: o3nEVXIgqVr4Vy+SxGR5R++Os4Cd3eWOquCs/y6PuaI=
-Received: from [IPV6:240e:668:120a::212:156] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 12 Mar 2025 10:38:36 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 16522105991542044273
-Message-ID: <D5778071F336E5F6+5c5fc5ae-1ef3-45e7-8b01-c1e496bcfd58@uniontech.com>
-Date: Wed, 12 Mar 2025 10:38:36 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993818633A;
+	Wed, 12 Mar 2025 02:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741747159; cv=fail; b=cJZlaft6SLX184P9uizfXHzn8lXGQT+14FGQ3wokqYQKOToVXdLCVy/Gku126Jt3aZ3OTwp6KN4Wf+ufTPge8r3fZ9O3rZDXRDkZijvtWema/FlnGJ2U3BLKiC2FftZ/A8CqHWG0bLG5DrEo4uhYTr+l89bDI2dWqSFMfugM1Ds=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741747159; c=relaxed/simple;
+	bh=pRbOF0A0uyxxkHib5SP9N7xRvDDwsU7tZWCrbla6PsE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Bd1VyGAjof8TF2q/rM0AhSivCloZAgZAdYjJjRw8GZl4m4BGODM93HZy1tMAqq8Oc/8UI1lCpIZq3wplrhHk44vtwLysZMuPpiSf6dDu+msWir/o4+qOqTh7yFWul8gNuLVt2ZLwMMpnUzDEqV/u+dhk6jzCvlkI0D8HzDI2edk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fMa1bZ3L; arc=fail smtp.client-ip=40.107.162.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cmdMad9IUruPelV9VHb0YOTvPgVhNhg+17CgISCc1tRncLYO6C65UsBER7rouWyEbukTYuBesBBjx5YhXDiJe/1/MT7RafbcsobzJrBFX2b2oejq9alOhXdqVeqe2OO/rbJFDSJzB6vCuVtAfayQrJdwG3UFoaTWvb5Fp+thzcmNsGpNw8o5oh9p9u+bfg7ifDIUREIuEnU163GxplP/TtVPoxkAWY9CJehxRfJv8f7oBAnxlEtSRASJQfhiX0cEKEfxgvksLyl1N6RlCXyqcaFXgulvzDmneVu6FaTMsn87TijGle7J/fM3igZvS8thfer2BinHMB8ARNaSRR6i3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S2gUBNHVndqk+oRvVeeuVkfKp0+7epifJo6vUzEG5Io=;
+ b=oXxqvjXiuLaCm1wk0V3pyQGyTNAxiW5ttYglMDWqYVkFdAHTPNoiT83obQhpIrHoVNcve/7YTp5ZyFblQXLcaXD70bPtC4zWSxIuY8V4HSe755a+ankINUyK6YsDdqjjg4P16TDOB+byMpxX1uh8un+0vtGuOBZEtaSkx4kBSi5/Za6+MWVzJc6OkZ2KDEayuYycncG19DGm6ADSMkKv50eIjDY9uYb5JJs6+aaCFJRiwSnEO6KF6YF5DrDD/p0xKuHvHod6Cw87hgvBL2JNmEneV0qo28gIz6Fuo2KDTKQA+SW6oylBUeKRPc/udCiF6FDf/YvkBfuA1HmYdW6WHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S2gUBNHVndqk+oRvVeeuVkfKp0+7epifJo6vUzEG5Io=;
+ b=fMa1bZ3LBI/b5sk9Luu7aX02nnSlzhDzwXURbRRvSt8M6KwXHPr2xl5tdyhtLmM2hE1JUCJ3Y4nGGlau6KQJq26Y9GSeLBWlsfTrDaO7QDglMJhp9kL7YSg9o6gLhm3PiHdznG8weAms3tPYZpuc8Nv/lmUAta6RoIqbRhyH++PIpv4Y2Jf8O1tn6UxkQMOlGeOV9tHiyEdLGdZuKGVC1kaM7sKH3zg65VwaRbs7J18QDkvozMps1Up7y2av2wfUH5ap4fk8WV4Uo7HLtPQV1GGqe3mcqhEbsiVNhcOWZ/E6mIIEgemplXhP1oBLfZR7Cj/G598L3rmgwE7/7Z9gog==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19)
+ by DUZPR04MB9794.eurprd04.prod.outlook.com (2603:10a6:10:4e0::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
+ 2025 02:39:14 +0000
+Received: from DB9PR04MB8429.eurprd04.prod.outlook.com
+ ([fe80::2edf:edc4:794f:4e37]) by DB9PR04MB8429.eurprd04.prod.outlook.com
+ ([fe80::2edf:edc4:794f:4e37%6]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
+ 02:39:14 +0000
+From: Sherry Sun <sherry.sun@nxp.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	shenwei.wang@nxp.com
+Subject: [PATCH V3 0/3] tty: serial: fsl_lpuart: cleanup lpuart driver
+Date: Wed, 12 Mar 2025 10:39:01 +0800
+Message-Id: <20250312023904.1343351-1-sherry.sun@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0037.apcprd02.prod.outlook.com
+ (2603:1096:4:196::8) To DB9PR04MB8429.eurprd04.prod.outlook.com
+ (2603:10a6:10:242::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] LoongArch: Fix use of logical '&&' with constant operand
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: kernel@xen0n.name, yangtiezhu@loongson.cn, maobibo@loongson.cn,
- guoweikang.kernel@gmail.com, agordeev@linux.ibm.com, ast@kernel.org,
- usamaarif642@gmail.com, jiaxun.yang@flygoat.com, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, zhanjun@uniontech.com,
- niecheng1@uniontech.com, chenlinxuan@uniontech.com, donmor3000@hotmail.com,
- Wentao Guan <guanwentao@uniontech.com>
-References: <EEBE30D1ACFF646F+20250304105246.766404-1-wangyuli@uniontech.com>
- <CAAhV-H6zkq1KoLQSQgimEgHhdD=S--kHa9hmhfbxUS_6OOfSJQ@mail.gmail.com>
-Content-Language: en-US
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <CAAhV-H6zkq1KoLQSQgimEgHhdD=S--kHa9hmhfbxUS_6OOfSJQ@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------43mx7ySSAqJvNUBrybIdpW9f"
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OBlwWD/GWDEo+KSp4P4Rv0uSsXk1a/wU/LKhQFQFriGhh9NU0Cr1GdEN
-	XtWEUFogertcItfOelQwAUkG/vgjKhgmGt3UqeflN+pMao0UD683vI+Rz38iYhCxpJZXe1v
-	jUC+OYsiy12TIt5sTgv6CufV6jkX7WFTj2owzfaGzp7h2i3x8K2dq769HMnquUznJaCCupR
-	hYtdjycf9pwQGSKaxUZgbQQhLb5kUBqrX8t+voMx3G5DrvQZ6WATC7rJKFFFFLKbJy0fA4v
-	TQqVTXP53ZNXoYzU+FKuveJ8tQwgrrwar1Nr5cfrCsMSROd8x/P1AZCybKcJ8gf82nJL699
-	xq5VmQ3uOxUcBtpnhO+Xf26KVSaWbkZClVrFlj/8MImRb7I4Jw8QfAQKZcDO2mj67posd0S
-	6L3YiCGw+UikE+V2IauW20NHLUx+O+sLnV3wr7iFVtvZKBo+Aay+82LONSKitYR1CNc9tJD
-	y/KT0XBFBS1ZSeBBpE8/bWgly1bTm9et4J1U4jJr1NsGVPaVENOniH5r86eb4Z3u8Mz1Dyi
-	OCtbHtd5yCuxFdcDxDhhHJUmdqkx6keYswdP0h8lWth+NnKgF40fXWstBSKpzIjpGQ6laDf
-	08QJ5L9ROY6AisitgZt2wCrzEswoO4fGfX6q+K18pwmeEShhDJscYE1DpYr98oTyMVyz5F7
-	16Gif/PxzokidK8sbi4468yK2LnyrLq71pUESLlkCpm5wsAqa5QCTQe0Oq76rJD701BZCQq
-	mhuF8VEH/UBL9X2NzjuBPahFYvottlPHKQD6jocyhFSPzHzKu+tc3ic8B8oLBJiW33gOpbL
-	DGKnGgaR+gCiRxEgGsihlTyoAKli6LGpAZgPf3aFqwEfzTIh3KrbSktnqjKFaUMFHInVpm5
-	me4VxXru75iTGxmonuXY8MqU5yo1x1O67LqNc1yHnZx8A5dCZD+MYQGeVwSuKVBntGUQ2dU
-	W3hoFz0MxJHGoQUJecQ8OYynyOKzPVA8kwKgVrBaN6YYfo3ObQvWdj7D9/ML7mE7Wg0Unl4
-	jpBc83xR0HzjUUKJb3uP+v1i0Adto=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB8429:EE_|DUZPR04MB9794:EE_
+X-MS-Office365-Filtering-Correlation-Id: 407ba67b-85ce-4755-01df-08dd610f13fb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KcZenZsmdPwaIAj8hHXMTaRMxLA7mmK3hvFSPS5kiJ39cp44vaP4Y2+v62eP?=
+ =?us-ascii?Q?jsuBDsEovktD4leUr2jwzVVt2v4yvpAfOz1FaJ8zSCXfe1vOJT0xGdcoJmyS?=
+ =?us-ascii?Q?KANKUIcsvRblyrF2f2HKBfGzfrl48xeSsnpdH2JbYUzXMKrKPgh0XFdnLZbd?=
+ =?us-ascii?Q?fB3loy8WMwP++Jgja4ZgenjjzPISyCcshFwKZo1Tjx7R9PLOqxa3Q9KKzTwE?=
+ =?us-ascii?Q?51Q/qZE1Yha2fkN1e4q+ELYro2plcq77m1CkA6fA8F+OZy+93Co/u+r+sObY?=
+ =?us-ascii?Q?lQvXLnenPYNGbu9tBR7ej75yQmMeIj1y3v5FV+q/1f+BBhd88ecO40fla6Xq?=
+ =?us-ascii?Q?pQa4Xu4ogEO4l5iqs/lgomXaDO4A8rr3VFF0hpYTNJm9k0kkOckilV4AXm5T?=
+ =?us-ascii?Q?DDBTiqYEBZ6jOybKAHwu6g5OEcwPpEwD4K6o7BxFeM/J/MNjZhidWiTXZWbc?=
+ =?us-ascii?Q?yMDjiqouQCdnNSDslGHbl8xqZPCukf9hCrKYfDhnqpTH4L3MQ4IxL76wM5uS?=
+ =?us-ascii?Q?hSN5S2whNCLlfsl7Hikt4YT53PvSP5nmoV0+0OLMNqER8r1LqK35shGhjsB0?=
+ =?us-ascii?Q?OJsYEVb25soY9XRlQvb5FcyYE6EcSbbyrj194CVOMagqnW+/9V+KczHZblTA?=
+ =?us-ascii?Q?jAAPko6fSfXaBs8zk5331mh+apFY0OHY3Sw+OO+fxAKSnE8Xs9MatHW2ZbjN?=
+ =?us-ascii?Q?owdKQMTjjZJJ+vixMwdiEIwjJuzX80djxk53SDhAwm0+AQShroMONdrPRKDK?=
+ =?us-ascii?Q?ZKWq6Qj/oWjSP83Z+cke6gMVINSZ3jKRY9/yt1yYoGJVdehXyyzPisffP+mu?=
+ =?us-ascii?Q?oFkHe3lX51GQRnyrayMtOqLGw59xROLZvvQyZk55AixHGHqWzvZbWD/4HMKU?=
+ =?us-ascii?Q?Q16ZrTdDSJTaZB69x1VXsejn0JT86MJPHTI4PbxhWX4Z0GChDZqbGP/mUiWC?=
+ =?us-ascii?Q?y4hHeWJFV8zk5KqbCNwvw9DS97n+OTFWmaFfAtmfIx8WfO/5rMTAXVa8C8mJ?=
+ =?us-ascii?Q?s4Zh804ZQ2NF34+rqN/HujP3GD9kshx6KPO+5Bd+Cv4ayG2E2mVymjzqH3IG?=
+ =?us-ascii?Q?aqPAmhtFItWzpCoSpnzr110t7JP11IkdVjqlvqLJ2qsBrhfV7GbpJBw/zY5L?=
+ =?us-ascii?Q?8wkgwEQ4AghEB0au5c1dmy2uOQPFvsWyUR0Cahtd4Cru/6dCyh4bLu0t/+jP?=
+ =?us-ascii?Q?aqPyAN82haaUSwG14t/hLe68tmq79IJOenxjO5qSywXEhw85kAji4byYkK1j?=
+ =?us-ascii?Q?VC3QFRcut7sXC8JD9hXajGZE3rLTtfeb/IvkNsBMzwENxobL7Zjvt8kxeutd?=
+ =?us-ascii?Q?fT66s4Zw5GE1iP5R9HwuK6MTk2DwhaGtbRm7FiI+2LhWJf3Enoys2oYK1Nux?=
+ =?us-ascii?Q?8XDcz5aKIpwUV5lmfMXix7rQAHWA/EGaG+on5/If8UrWxWh7+CE5bRDS9rP1?=
+ =?us-ascii?Q?OWqQzWdvsyeG6gK6Mr2EuZ6A6BNJzqqi?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8429.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ymqIeUvSutepulejPzhuWTh3DQ7wVBh8upMvVkhT4wU6GLDuTLSlr3cIo9DH?=
+ =?us-ascii?Q?krp7wd0HvpV0EKVP+rTYZN0Q8vajqqBBs/YC1H7By3Hu4mXeiVWXXyRSvq8o?=
+ =?us-ascii?Q?EOzEjmb7EB3rgy0lq7B9f63VqNLp29crkxkNwjXdStsQXGH2sH28ZScbaT/E?=
+ =?us-ascii?Q?mXKtm/zvpZfCBZRd2Tb9oVx9Hbm+pxZeJ/pTG+3hP7eNAF4jVHiIwdrIsrEw?=
+ =?us-ascii?Q?2yQ+6ldKNWohpUFEMErah9tiM6esCC5c9OfiOLWBunddvZyGQ6Wp1LwKOiD1?=
+ =?us-ascii?Q?sIdtclAE4QbM4YfHTWnfQ8Si3JhJshik685JxpRZut0oBJ2bxX0opC6YOl69?=
+ =?us-ascii?Q?4G0IxWQLnU6RNI7jUvYOq0FN7McrRSGyHju2QdXFH1hzkWGiN/0nF9mOr+zq?=
+ =?us-ascii?Q?Qni3Lne9Jq5qMjAtIqa9283Hb5FpozhOCcefsjjKvf+20tAnv9Y96+VUv3lu?=
+ =?us-ascii?Q?nnxe2vjKbn5F2N6b2snyTseowDM3dRjKnGIr3PrV5maaS33HRsXByankF1h6?=
+ =?us-ascii?Q?Tjai/53yvhanR5vgrhKMlq7moo+11QmI9GHde9ZE7RaDCA8mJh93EGpAj13O?=
+ =?us-ascii?Q?c25Xj6LVS7SJm6ErTQqpQNZy95ued3UW1ltOTOC9iOF2I1BFH+FDJHTZ+K7r?=
+ =?us-ascii?Q?OZ5ZymVIpxHrlacQT1eMxVFWf9Gg1BbjjbjPXH+gTTTemjpKzcsNmyxLxCsD?=
+ =?us-ascii?Q?3LV0i6dQKZKSyzYgUWAf7suPhW/T5nvr0MfrzQG3rrrLi9P8Ydn0M3LTF9rB?=
+ =?us-ascii?Q?ktLmrndKoVKxItvbHThD245NvmauT5qn2WiAMGwV7g2gALxAKei1rFsAfa/N?=
+ =?us-ascii?Q?+fVIjOOEs8gMaNCwBCVNpoAeuaSFqvrnPVCVrXBYs2Ykms+0p9yAshoYeJ+v?=
+ =?us-ascii?Q?jHBDjc7P1FfuEEACjotOmlgjXM5GucYOFDzoDa8JD0P8vinZD3LP5ddnBAFt?=
+ =?us-ascii?Q?I1e788f0F53MQuume2a7CEpNxDvp0ErLBdkoNG3bIyyqDENFGktijSGCP7D+?=
+ =?us-ascii?Q?64V2RmFLsZjubFJMDgaWPqPrqHUpiNS7LBkLIdcJob99SBDVB3x0oERV8kw3?=
+ =?us-ascii?Q?Pwynwnv/GJGGybbv3lbMKMewHLW1BczDj2nr/mInQ4jlQM77PgaMB0NXD63e?=
+ =?us-ascii?Q?cJv8SwmSPmwnYeWh2M0iAtrR4Fvg/HxWtrzd9h5I0M5An52pwqcjL6eCff69?=
+ =?us-ascii?Q?MSjbaUBYTRN++Z68iH3Kuyv18WX97Aj+kuj3IypOvdBxdoGPFWl1wUv3OIOb?=
+ =?us-ascii?Q?DvGxMJnSTChfcP1Ez2wzfNklQ7jZ7uEDxs3bU3VpND76CpLSDdc1HhGQ4WSX?=
+ =?us-ascii?Q?+wLA4IiTVgxJarjZ9cek9uPmIc1jFVg+zXnI52GuVF4L2s4OH7SEPBHY+zf+?=
+ =?us-ascii?Q?TVih/7PnM+fBaeSsUrgVbAqSzV5Y7LOQ5Yzh1RJVpZsi7ablSj0asTQMARpK?=
+ =?us-ascii?Q?gkktK1be1592sWhRPxuYh7LWHLDv64ub/8HDEUW1VacbgByOgyOywX4jjJwc?=
+ =?us-ascii?Q?7C+pcXln5jDtrbGYkbrvVZPtP3chLIIJx/agAjcVpltPde5a/SUxX+3B6AqX?=
+ =?us-ascii?Q?D7iWOVET2/4HuhqDoetai/euAbW/gvqJ8HHG8SSj?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 407ba67b-85ce-4755-01df-08dd610f13fb
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8429.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 02:39:14.7281
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: r6256743gMOSlpr2j42Qw5jCABWLBSNNyZAdIGe/jgVeoV5LG1zCDu9hV48oXJC6LOs2u/3U0BEkHtOI3l1Khg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR04MB9794
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------43mx7ySSAqJvNUBrybIdpW9f
-Content-Type: multipart/mixed; boundary="------------wJKrXM8GukpgPJYkT2vgJx9p";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: kernel@xen0n.name, yangtiezhu@loongson.cn, maobibo@loongson.cn,
- guoweikang.kernel@gmail.com, agordeev@linux.ibm.com, ast@kernel.org,
- usamaarif642@gmail.com, jiaxun.yang@flygoat.com, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, zhanjun@uniontech.com,
- niecheng1@uniontech.com, chenlinxuan@uniontech.com, donmor3000@hotmail.com,
- Wentao Guan <guanwentao@uniontech.com>
-Message-ID: <5c5fc5ae-1ef3-45e7-8b01-c1e496bcfd58@uniontech.com>
-Subject: Re: [PATCH] LoongArch: Fix use of logical '&&' with constant operand
-References: <EEBE30D1ACFF646F+20250304105246.766404-1-wangyuli@uniontech.com>
- <CAAhV-H6zkq1KoLQSQgimEgHhdD=S--kHa9hmhfbxUS_6OOfSJQ@mail.gmail.com>
-In-Reply-To: <CAAhV-H6zkq1KoLQSQgimEgHhdD=S--kHa9hmhfbxUS_6OOfSJQ@mail.gmail.com>
+Do some cleanup for lpuart driver, no functionality change.
 
---------------wJKrXM8GukpgPJYkT2vgJx9p
-Content-Type: multipart/mixed; boundary="------------mOZb0BEc7RosiYPOwaRq0lSa"
+Changes in V3:
+1. Add the change to covert unsigned char to u8 in the first patch as Jiri suggested.
 
---------------mOZb0BEc7RosiYPOwaRq0lSa
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Changes in V2:
+1. Add the third patch to rename the register variables as Jiri suggested.
 
-SGkgSHVhY2FpLA0KDQpPbiAyMDI1LzMvNCAyMDowMCwgSHVhY2FpIENoZW4gd3JvdGU6DQo+
-IEFyZSB5b3Uga2lkZGluZyBtZT8NCg0Kbm9wZQ0KDQo+IENPTkZJR19DTURMSU5FWzBdIGlz
-IGEgY29uc3RhbnQgZm9yIGEgc3BlY2lmaWMNCj4gY29uZmlnIGJ1dCB0aGUgY29uZmlnIGlz
-IHZhcmlhYmxlIGFjcm9zcyBidWlsZGluZ3MuIFNvIHRoZSAiY29uc3RhbnQiDQo+IGZvciBj
-b21waWxlcnMgaXMgbm90IGFzICJjb25zdGFudCIgZm9yIHBlb3BsZS4NCg0KUGVyaGFwcyBJ
-J20gbm90IGZ1bGx5IHVuZGVyc3RhbmRpbmcgeW91ciBwb2ludC4NCg0KIEZyb20gbXkgdmFu
-dGFnZSBwb2ludCwgaXQgYXBwZWFycyB0aGF0IGFsbCB0aGF0J3MgbmVjZXNzYXJ5IGlzIHRv
-IA0KYXNjZXJ0YWluIHdoZXRoZXIgQ09ORklHX0NNRExJTkVbMF0gaXMgYSBudWxsIHZhbHVl
-Lg0KDQpHaXZlbiB0aGF0IHRoZSBBU0NJSSByZXByZXNlbnRhdGlvbiBvZiBOVUwgaXMgaW5k
-ZWVkIDAsIHRoaXMgbWV0aG9kIG9mIA0KYm9vbGVhbiBjb2VyY2lvbiBmb2xsb3dlZCBieSBh
-IGxvZ2ljYWwgY29uanVuY3Rpb24gd2l0aCB0aGUgYW50ZWNlZGVudCANCmJvb2xlYW4gdmFs
-dWUgc2hvdWxkIG5vdCBpbXBpbmdlIHVwb24gdGhlIGludGVuZGVkIG9wZXJhdGlvbmFsaXR5
-IG9mIA0KdGhpcyBsaW5lIG9mIGNvZGUsIGFuZCBpdCBmdXJ0aGVyIG9idmlhdGVzIGEgY29t
-cGlsYXRpb24gd2FybmluZy4NCg0KVG8gYmUgcHJlY2lzZSwgYW1lbmRpbmcgISFDT05GSUdf
-Q01ETElORVswXSB0byAoQ09ORklHX0NNRExJTkVbMF0gPT0gMCkgDQpvciBjb252ZXJ0aW5n
-IHRoZSBsb2dpY2FsIEFORCB0byBhIGJpdHdpc2UgQU5EIG9wZXJhdGlvbiB3b3VsZCBhbHNv
-IA0KbGlrZWx5IGVuZ2VuZGVyIGEgY29tbWVuc3VyYXRlIG91dGNvbWUuDQoNCkkgbWVyZWx5
-IG9wdGVkIGZvciBvbmUgbW9kaWZpY2F0aW9uIHN0cmF0ZWd5IGFuZCBwYXRjaGVkIGl0Lg0K
-DQo+IENvbXBpbGVyIHdhcm5pbmdzDQo+IHNob3VsZCBiZSBkb3VibGUtY2hlY2tlZCBieSBw
-ZW9wbGUsIHJpZ2h0Pw0KDQpOYXR1cmFsbHkuDQoNCkNvbXBpbGVycyBhcmUsIGluIGVzc2Vu
-Y2UsIGp1c3Qgc29waGlzdGljYXRlZCBzb2Z0d2FyZSBwcm9ncmFtcywgYW5kIGFyZSANCnN1
-c2NlcHRpYmxlIHRvIG51bWVyb3VzIGltcGVyZmVjdGlvbnMuDQoNCk5vbmV0aGVsZXNzLCBm
-b3IgdGhlIG1vc3QgcGFydCwgdGhlIHdhcm5pbmdzIGFuZCBlcnJvciByZXBvcnRzIHRoZXkg
-DQpvdXRwdXQgYXJlIHR5cGljYWxseSBqdXN0aWZpZWQuDQoNCg0KVGhhbmtzLg0KDQotLSAN
-Cll1bGkgV2FuZyoNCioNCg==
---------------mOZb0BEc7RosiYPOwaRq0lSa
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Sherry Sun (3):
+  tty: serial: fsl_lpuart: Use u32 and u8 for register variables
+  tty: serial: fsl_lpuart: use port struct directly to simply code
+  tty: serial: fsl_lpuart: rename register variables more specifically
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+ drivers/tty/serial/fsl_lpuart.c | 469 ++++++++++++++++----------------
+ 1 file changed, 231 insertions(+), 238 deletions(-)
 
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
+-- 
+2.34.1
 
---------------mOZb0BEc7RosiYPOwaRq0lSa--
-
---------------wJKrXM8GukpgPJYkT2vgJx9p--
-
---------------43mx7ySSAqJvNUBrybIdpW9f
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ9DzrAUDAAAAAAAKCRDF2h8wRvQL7qwY
-APwP10RAUyDie7MZZPCvj1sJSpidz/YYJnZdv6g+Z+JfOAEAmh+yBeL9UL+shsjO/SEjLVg0LhQm
-SOZBZKb8XsD5Jwg=
-=jOvR
------END PGP SIGNATURE-----
-
---------------43mx7ySSAqJvNUBrybIdpW9f--
 
