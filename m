@@ -1,90 +1,91 @@
-Return-Path: <linux-kernel+bounces-558028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCA1A5E0A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:40:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA55A5E0AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:40:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C6ED3A85B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:40:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E34D31882CE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E74253F06;
-	Wed, 12 Mar 2025 15:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24E0252913;
+	Wed, 12 Mar 2025 15:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P6osIvGd"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FkAfEU3A"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD112505CA;
-	Wed, 12 Mar 2025 15:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEBC156C6F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741794015; cv=none; b=KORVgvv2B61as7zdIiy4qy07jM7tb/CrjKkdcrGkUc/0S1eGGPLNuuU6uR1BIhZWedzQ+hCEs/xCdO5X0EgCYwVtKAuRvTc0LdVgWr8Yqvf7dLki0x9Wl0Q0gwxsdjz4xeaF4M1UBs+ZiaUUu6jFcOAl7ZeS5eoYu12RgTzgu9I=
+	t=1741794048; cv=none; b=PAkxbybsV7i+rnfML2jVZIbNJ+Py3QtOmNEMG+N1XmQ0N1sIa+7ChCYy//6Q7SID+84KVA6syIc9Dz4aaCKbcEMIhw3DEH/gDlJus8qx2wOjDdFhAVRzqUL0vhJn3Pz+zr4wV2j1jxzDgXecnKnKXgNYKhJVXajhK9Oacb0BNds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741794015; c=relaxed/simple;
-	bh=uWMXUuJdjNFPcXgYW0FLnqKEeb9+smRa/7n//Bl3ARk=;
+	s=arc-20240116; t=1741794048; c=relaxed/simple;
+	bh=ZsCJPcdSe7Tw1kb5p8vquVkzMebfiXs4Jd/L8C/W7qw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LEJihNvJ0tHtAgywUxjSZ8gE/sRukrm+AxSOaj92pg9Dm/BzVZgw6Xd8/IDJG+22ddo6qO34NtxNONNoUVTK5Gqhu2mmkhxNa9pGKXygJfZUeQ+zLtBRKUOqfGcc0CB6Zo1AT03/3S0Ai/yQhz/vPNDCpmYNAKK0uHXOR+Y5cBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P6osIvGd; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CE3Q2I023238;
-	Wed, 12 Mar 2025 15:39:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=VZ7ifWZBuEZlwJ/gbqhjVZwDwvUPlj
-	6sC7oEJEnDm38=; b=P6osIvGdcWpwVdGfgcvVsgKATzdWsJwpWY+Z+PSX1vJONV
-	ffzqYd+Nn5oJ5OMJ67+vcrS23fmguQdljpqe6i5W3KT9UuxleXXAkEx3CTFfOBjj
-	qFAyBZh7hPN7BJHc76QdQbX2z1sTTHTyOGCc86C/nC1Kt/V6txweDrJJGq6nHgYF
-	y4JVRNR+m+OwVm/EAEiBSkafAR4dmg81qT3ID3bJXg+reICncEUuwCK+7/Ep62fy
-	wfXwdsihAfbKynCu/h2qt/0Wx4Aht3jGG6aPVDK7Sh0VvZzbszCtXeH79JNMzrDj
-	jc1f8/QE2EIq2LPC7ctrAlQiIMann+8CXjmAbYKA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45bbpprhjt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 15:39:53 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52CE1frV007468;
-	Wed, 12 Mar 2025 15:39:52 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45atsr4tmg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 15:39:52 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52CFdmas18219500
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Mar 2025 15:39:48 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8C0962004D;
-	Wed, 12 Mar 2025 15:39:48 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C287120040;
-	Wed, 12 Mar 2025 15:39:47 +0000 (GMT)
-Received: from osiris (unknown [9.171.49.190])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 12 Mar 2025 15:39:47 +0000 (GMT)
-Date: Wed, 12 Mar 2025 16:39:46 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Jeff Xu <jeffxu@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Kees Cook <kees@kernel.org>,
-        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-hardening@vger.kernel.org
-Subject: Re: [PATCH mm-unstable 2/2] mseal sysmap: enable s390
-Message-ID: <20250312153946.10610B02-hca@linux.ibm.com>
-References: <20250311123326.2686682-1-hca@linux.ibm.com>
- <20250311123326.2686682-3-hca@linux.ibm.com>
- <CABi2SkXWD4Pg7Y7TG9fMV9eat_1fOGwHjvEUKHXREN+pRe18NA@mail.gmail.com>
- <CABi2SkXzqJ10NW3j1y-FtmrheDkqzL5QgMcN9UN6UvhbXFHCuQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZEfpx0Zw2JPSN2nFB5aYVOHGPAOvoyz/zrHFYIUHVh3b/pRPSS3DurB00noq9O1z8pazDqXFJZhTCgXATHG+B4bgKeSWG7tmY1Aaeez/TFj9WTf25wanwoXie8BgTn0KTFJnyeY2tIp376cMOUJ1PT0khIzK/TKp1Hf5PUUbijo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FkAfEU3A; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3913fdd003bso9791f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:40:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741794044; x=1742398844; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SohDC+MqOB5QB3dRD2BBd5gf9MI45ZJLD/i4I7QXdTE=;
+        b=FkAfEU3AAD7WkKDxNZ8JyGhXj0iIrCZhRbaC46t4/vdqn+YZBrSneJpnGrNJj3hMWO
+         U1XakA4GIOfmDcLdCN3MNG/PSP0rz89/iaQNzosk9+26BFe4iVXC9iEWnuXwQoc4ZWDl
+         r2rx1Ncx3ZDgqBpL2S7i7cAN8t8atpAnW2cLhE/Dbse29SGNVr6CF5v3SPilY65pVh5h
+         4Cur0ZSV2XvTaSkwjAL82pxjRdlc7PvNyqdz72p2tZyk3kDStBTuHjPX1gCfPMcbkraO
+         idsDVFMTNIZ/Lth5ImlsSPis2nu/D77NCBqTTteK4/zHrFUEK8m9LZ0VX4EF9u0IBz37
+         BEOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741794044; x=1742398844;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SohDC+MqOB5QB3dRD2BBd5gf9MI45ZJLD/i4I7QXdTE=;
+        b=ccg6dkZg+Cq4siivxY8uADXaIRelr1uzdQWcIisLQ65sL5zq+UDQG/tiPmWM5udBQx
+         Grn3ETVQO82TZTQZTem4Qj7ShRsuv+Gcw7vxWqGJS96rHsFWQOmBfgF09mdkzKbJOQKg
+         dNG7dL+aBahjFkm5LDZIxNq/6iewRImpgj5B0brp2mKJryRq4TyNphILF1ytOtA4NAgh
+         n4MBIhndhoMmMXSBOYJMMOAtPr9jT1lDmvi+lvQVXfF77JKdTA1kb5R0o0KIAAAZNQKY
+         w7rj6gcummsb7CX9RtFWnEF6oFJx99JUnyfwiPbTkvqvKGfaF2eB6QhgtoTwNTaQkmeD
+         hFYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgiFvL5iJ+Y8ECHzBGk+p/4J54Zaf7J29rThHsaUtq4ckC9msaFgERjG5eRfplcQ17849YT3bKPuv0z1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK26D+EIDh6sjRDgZAkaWMGlYgRznZb9VE7t4a5DeS9WNaNHY8
+	rpam2nWruHRiQXNkae2tiHH+WQiU2ojbfSE8TMCGqgmefCIN05w3wiDeTEflAz3W48UecuX9gON
+	E
+X-Gm-Gg: ASbGnctOns+PHyuUfXpGfXI3+S+tSFq7Bc167a3HLhrl077Z/Pel8gfzu3rhMgnnuHC
+	ZEp0oulvVygcm03RQumgrfcpwI0mtgn9dr0R+5fG0QpG/NUFt+/xSaSto/PwBFXZasLD3o3ufkv
+	Tu8Uc7vCsnsTm+VLhSJBh6mFl46vnI6auYLWqlZbD6gVtNHaDqzkmltbjrMgAjN8e2gVa2MDuG4
+	HqmFIsuqn6dh3+S9/rlONNCysYspQwPUNf0Lc6gcxBcWHRJGv6cTI0XvUeQXbHGD1gDVxi+fZYL
+	JBLm9nf4MuwFBP/fHZsieo9lfH839M06s5/nqfQN9KTT6cFh2wSiY6MY8Q==
+X-Google-Smtp-Source: AGHT+IEI4qphOyuM6FRyf8K5fbXrZk7BGS7097WEPNMO96kH01+ahmZ3y3Q+T0Bk2uCXUnkiggKnWw==
+X-Received: by 2002:a5d:6d02:0:b0:391:3207:2e68 with SMTP id ffacd0b85a97d-395671d968bmr82842f8f.9.1741794044532;
+        Wed, 12 Mar 2025 08:40:44 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfb7aefsm21094101f8f.20.2025.03.12.08.40.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 08:40:44 -0700 (PDT)
+Date: Wed, 12 Mar 2025 16:40:42 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: adamsimonelli@gmail.com
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v8 4/4] Documentation/serial-console: Document
+ CONFIG_NULL_TTY_DEFAULT_CONSOLE.
+Message-ID: <Z9Gq-oIr8wPGLGEy@pathway.suse.cz>
+References: <20250311033133.1859963-1-adamsimonelli@gmail.com>
+ <20250311033133.1859963-5-adamsimonelli@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,29 +94,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CABi2SkXzqJ10NW3j1y-FtmrheDkqzL5QgMcN9UN6UvhbXFHCuQ@mail.gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: iThVHiUBlsCRTPEGkrdgIkFIkJsnOiAK
-X-Proofpoint-GUID: iThVHiUBlsCRTPEGkrdgIkFIkJsnOiAK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_05,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
- adultscore=0 malwarescore=0 bulkscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=507 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503120105
+In-Reply-To: <20250311033133.1859963-5-adamsimonelli@gmail.com>
 
-On Tue, Mar 11, 2025 at 03:12:55PM -0700, Jeff Xu wrote:
-> One more thing: do you want to update mseal.rst to add s390 as
-> supported architecture?
+On Mon 2025-03-10 23:31:33, adamsimonelli@gmail.com wrote:
+> From: Adam Simonelli <adamsimonelli@gmail.com>
 > 
-> Currently in the mseal.rst:
->  "The following architectures currently support this feature: x86-64 and arm64."
+> When the kernel is compiled with CONFIG_NULL_TTY_DEFAULT_CONSOLE and
+> no console= options are selected, it defaults to using the ttynull
+> device.
 
-Thanks, I missed that, however I'm wondering if it would make sense to add
-mseal to the generic feature list instead (no, I am not volunteering to do
-that :) ).
+There is a missing Signed-off-by.
 
-See Documentation/features/... and scripts/get_feat.pl
+The change looks fine to me. Feel free to use:
+
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+That said, I would personally squash this into the patch adding
+the CONFIG_NULL_TTY_DEFAULT_CONSOLE configure option.
+
+Best Regards,
+Petr
+
 
