@@ -1,94 +1,103 @@
-Return-Path: <linux-kernel+bounces-558251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FDC7A5E378
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:09:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1165EA5E37F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:12:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C386C179685
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:09:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5510417A7C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A782566DA;
-	Wed, 12 Mar 2025 18:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C6D256C99;
+	Wed, 12 Mar 2025 18:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0pP4BPu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6311118FDAB;
-	Wed, 12 Mar 2025 18:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDFAB1D5173;
+	Wed, 12 Mar 2025 18:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741802966; cv=none; b=gUxuTEtXnF0xXBUg/FCXkeZ0u6GQKPW30f7F1+v6UZaZJD+Bw/Aso/B3ecQF7bRuS/YlsjQaDqcBKOYEY0XfQhexBuxsBzNrGiIZhLjH4mpzauvjOCaBaqmArwq/xgzLuokZFBu3VcMKWFD/zOsNRz29UxDj6Ai30rlBtOj+ZFI=
+	t=1741803118; cv=none; b=sCG58hze+6jWalvdj4z30E0vFGvK2kPQ4LvsWT+dU9n2WAejFXOLoq3lc8Kj3wsY6fNdakAvRsWrPVtq1cBs4UhXcutQNeG/vKaVm8heSWYVGxV5nYieLrAK65o/FhLjSwQzAgCB3w7vz34No/QwyNxRRx2YyXgUW9rvmh968B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741802966; c=relaxed/simple;
-	bh=zzZm4bP51vRe5DLXMdXQZoptqAsANoUXE7ZtekgeWz4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PyvFOVv+qakL7avF/hZgW7CH8p6OVTulNJt2W0eUTS7exPyqp0hp+Sugbat6drB+kimclxVXjDkOveh6UJsgH8sX9GiwKJOqFUSFrr6ELgekxjpAsld47WFVEKnsdErMxGH2tsRyc0otwQd9LsXK0aWBIK7J/qcFuJCLi6uoT70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C21CC4CEDD;
-	Wed, 12 Mar 2025 18:09:23 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: arm-kernel@lists.infradead.org,
-	Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Will Deacon <will@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	kvmarm@lists.linux.dev,
+	s=arc-20240116; t=1741803118; c=relaxed/simple;
+	bh=cV5aSqFJ33K30QuBwrJdyen4GmLJdTHeksSaAnwrNvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p6ty9vsVb7asw9LyVhTBaUYkHKLsRxBIF8TCkq5rvyBYZWpWMU6mnslZR84bUdfQ/I618+RKw2evQ3ChtjbtSf4krFA9JYzoE61ncUUv0WMzbCydQZqroT6f2ZgrPEJ56H1HCR67aQiISY/0/dnsZ6l0lhHEeV2YbiVSSOyUHno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0pP4BPu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4192C4CEEA;
+	Wed, 12 Mar 2025 18:11:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741803116;
+	bh=cV5aSqFJ33K30QuBwrJdyen4GmLJdTHeksSaAnwrNvk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W0pP4BPua5VsTBkh0FpSVUqjdFqimB1E+VhzMfKj3ctZXHRbRoSqGEi2sXcYjAHkM
+	 AghgELe61AVdvO6cTJzCyvvnuYRi9FreuYv0GjGr2oYuKJVm7MWfVPuHHtqn40iGRI
+	 IErzgBV9Kmr6i6sTf90ZySBfDMiH/bQYM9r5ZlrkZw5YjXZ7hfUhD+bDu9izHJmgJ5
+	 oDzftJeZQckOAzX/RDfLlhNnH5zknbTIl++WmF+AmRWd6FwaC4UKbe8I4XddiJ6vzx
+	 Gv72okJGBz5sy9Xen7AHpUVXS84F/DtQxccnT+nnBBIsv2gxNPmEF8Nl/iyJ7JF6uV
+	 1vr8/HHt4tnlg==
+Date: Wed, 12 Mar 2025 11:11:54 -0700
+From: Minchan Kim <minchan@kernel.org>
+To: Qun-Wei Lin <qun-wei.lin@mediatek.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	Kairui Song <kasong@tencent.com>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Barry Song <baohua@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-mm@kvack.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 0/8] arm64/mm: Drop PXD_TABLE_BIT
-Date: Wed, 12 Mar 2025 18:09:21 +0000
-Message-Id: <174180295545.4162360.4956385573664588446.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250221044227.1145393-1-anshuman.khandual@arm.com>
-References: <20250221044227.1145393-1-anshuman.khandual@arm.com>
+	linux-mediatek@lists.infradead.org,
+	Casper Li <casper.li@mediatek.com>,
+	Chinwen Chang <chinwen.chang@mediatek.com>,
+	Andrew Yang <andrew.yang@mediatek.com>,
+	James Hsu <james.hsu@mediatek.com>
+Subject: Re: [PATCH 0/2] Improve Zram by separating compression context from
+ kswapd
+Message-ID: <Z9HOavSkFf01K9xh@google.com>
+References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
 
-On Fri, 21 Feb 2025 10:12:19 +0530, Anshuman Khandual wrote:
-> Remove the PXX_TABLE_BIT definitions and instead rely on PXX_TYPE_MASK,
-> PXX_TYPE_SECT and PXX_TYPE_TABLE. The latter versions are more abstract
-> and also include the PTE_VALID bit.
+Hi Qun-Wei
+
+On Fri, Mar 07, 2025 at 08:01:02PM +0800, Qun-Wei Lin wrote:
+> This patch series introduces a new mechanism called kcompressd to
+> improve the efficiency of memory reclaiming in the operating system. The
+> main goal is to separate the tasks of page scanning and page compression
+> into distinct processes or threads, thereby reducing the load on the
+> kswapd thread and enhancing overall system performance under high memory
+> pressure conditions.
 > 
-> This abstraction is valuable for the impending D128 page table support,
-> which doesn't have a single page table bit to determine table vs block.
-> Instead it has the skip level (SKL) field, where it will consider 0 to
-> mean table and any other value to mean a block entry. So PXX_TABLE_BIT
-> therefore doesn't fit into the D128 model well, but the type fields do.
-> 
-> [...]
+> Problem:
+>  In the current system, the kswapd thread is responsible for both
+>  scanning the LRU pages and compressing pages into the ZRAM. This
+>  combined responsibility can lead to significant performance bottlenecks,
+>  especially under high memory pressure. The kswapd thread becomes a
+>  single point of contention, causing delays in memory reclaiming and
+>  overall system performance degradation.
 
-Applied to arm64 (for-next/drop-pxd_table_bit), thanks!
-
-[1/8] KVM: arm64: ptdump: Test PMD_TYPE_MASK for block mapping
-      https://git.kernel.org/arm64/c/0b626b245c57
-[2/8] arm64/ptdump: Test PMD_TYPE_MASK for block mapping
-      https://git.kernel.org/arm64/c/f5e93819e2cc
-[3/8] arm64/mm: Clear PXX_TYPE_MASK in mk_[pmd|pud]_sect_prot()
-      https://git.kernel.org/arm64/c/dba954801004
-[4/8] arm64/mm: Clear PXX_TYPE_MASK and set PXD_TYPE_SECT in [pmd|pud]_mkhuge()
-      https://git.kernel.org/arm64/c/1601df9e366e
-[5/8] arm64/mm: Check PXD_TYPE_TABLE in [p4d|pgd]_bad()
-      https://git.kernel.org/arm64/c/4fa8a9c0fc99
-[6/8] arm64/mm: Check PUD_TYPE_TABLE in pud_bad()
-      https://git.kernel.org/arm64/c/bfb1d2b9021c
-[7/8] arm64/mm: Check pmd_table() in pmd_trans_huge()
-      https://git.kernel.org/arm64/c/d1770e909898
-[8/8] arm64/mm: Drop PXD_TABLE_BIT
-      https://git.kernel.org/arm64/c/50c2726654bb
-
--- 
-Catalin
-
+Isn't it general problem if backend for swap is slow(but synchronous)?
+I think zram need to support asynchrnous IO(can do introduce multiple
+threads to compress batched pages) and doesn't declare it's
+synchrnous device for the case.
 
