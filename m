@@ -1,134 +1,121 @@
-Return-Path: <linux-kernel+bounces-557627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62D0A5DBB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:37:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E668EA5DBB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:38:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530BF3B9DC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:36:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FCBB3ADE37
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CEE23F377;
-	Wed, 12 Mar 2025 11:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAEF23F362;
+	Wed, 12 Mar 2025 11:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NTKDesOH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HwJvAkD0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB2B125B9;
-	Wed, 12 Mar 2025 11:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05071A256B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741779414; cv=none; b=BTANKzYkG3RrI0uhQxQ9vEf6G0q3Q/mZdK/XUv4+kWt7fiJFz/O9+PKWJ9nt0j8X3kjDbxLbOCA5ZhqDsRIjOs9ENptQsThVX/OyBGqYxfEotIN46dsTL84J8V0DgnM/72FJcfOGu1GktwHX79I9WQmGMpyneQrlzfK6nAFuhI8=
+	t=1741779435; cv=none; b=Tr6yMG/TRSozY7x5eQEde+jke7UXOFIK4P30Z0acizBJuySa6n9PLWExVB6sET68huFgWNtmEUlr5Pc7TSexcLBBeZeIaqfodWM53spP9nRX3TsWHdPS4OGq1j65c+sQn/gX1Wo8AIquD/5u6QeNIAe9zEhXUbuOFrgBmIQ82Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741779414; c=relaxed/simple;
-	bh=FroqwxIZyxWRy8NxvaPvPbyYXAPIL2q9WyJPpH0RPSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fA25mca34MXTKZ21bvPcZoi18V/FRMlXU557NzQDoRIOHQAR7FkAxjkx+Vnayr/BZDdu0JUxo+MRxzEfl5gj5iITzTzeTtP3tnT9JdGU2RQcz/v8Y0rd3UpgUMX09W93jk7yjE8cLGn9na7vl1zNXwGi21cyjBceteZ+FX4Rgoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NTKDesOH; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741779412; x=1773315412;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FroqwxIZyxWRy8NxvaPvPbyYXAPIL2q9WyJPpH0RPSg=;
-  b=NTKDesOHtbZwDpTgRd4Q0t053owpfPIhIaGmFb6OD9mc0wTtmi1sEWIv
-   HwEnf4zQEMRuxGcEMMrDrwx2CTfqYznJ3WpPpUrTystEOSezqdo29lzlH
-   Wna1Cqqt29OUWPTdivLOaqnlPz3tns/kI1+DOdfntkmW6UIWpmLbnNqMK
-   uCssiWMME2OnMXemlW1g52fkWyM4SaIJSQfxq6TAUeMoOzLY5Xk0kooIA
-   v47rfh8c2DXpCRu816jjVIf5GZZnINKQW5UEt+AVI57QnqpM8qCWo4dXb
-   OIBNDKIoBrrPomomvN/ILQ1PxzD3UDtUeIc2BPiyjrey6LyTuow7j74Oo
-   Q==;
-X-CSE-ConnectionGUID: bGJizVzWQ+OKLs+IrFuQ9g==
-X-CSE-MsgGUID: +yLE7NjjTvOiF0GyFsGZlw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="30435652"
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="30435652"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 04:36:51 -0700
-X-CSE-ConnectionGUID: fGXdclrDSciibe9q+Rtoxw==
-X-CSE-MsgGUID: sx2y6Q16R1eOzj0C7o4Ymw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
-   d="scan'208";a="120635886"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa007.fm.intel.com with SMTP; 12 Mar 2025 04:36:45 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 12 Mar 2025 13:36:44 +0200
-Date: Wed, 12 Mar 2025 13:36:44 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Markus Elfring <elfring@users.sourceforge.net>,
-	Jakob Riepler <jakob+lkml@paranoidlabs.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, linux-usb@vger.kernel.org,
-	Daniel Scally <djrscally@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v1 4/4] usb: typec: tcpm: Use
- fwnode_get_child_node_count()
-Message-ID: <Z9FxzECvo5o7zaVH@kuha.fi.intel.com>
-References: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
- <20250310150835.3139322-5-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1741779435; c=relaxed/simple;
+	bh=7Z26bGllpYXu8uBHNuMML/I4jSffsSVsXJKQG3g7s9g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fsnzl/bOQGGYE+GNca/hTegSExcC/WBlrRjyTOqECmcP43eel9Dr8yIjLYbe8X2e6rHbRPQULzWK4im4dqlO5VV8ls14zEzMJ3PJyzjSFCiIX7tjA0JVme0zOpvZkXu9UPnFS3nSYExVY68RWhvD8+M4bz6/phRTn0DRYGddMhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HwJvAkD0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741779432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v39mmJ/ZoF+dw+zjNgOr5RkZMHs7oG2cf+OVSp6s3sM=;
+	b=HwJvAkD0cnKPxz+/hkAmilNPE8BBGyFV/ArWs2Pr4N1NtPOPZZU7/TrNijNq1d/xYT73Gl
+	g3/P5MCWi+KsM8oGdvA7oU6ADC1dkaIUY/7BbT9nugT7iR1JnyQB6PuO/TbI7OenVJ047b
+	2GYkNK1lRCRJ9txfndiM3XmQAa0gGwI=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-620-2hX1PTfDPNyCyCWh9Rh1Vw-1; Wed, 12 Mar 2025 07:37:11 -0400
+X-MC-Unique: 2hX1PTfDPNyCyCWh9Rh1Vw-1
+X-Mimecast-MFC-AGG-ID: 2hX1PTfDPNyCyCWh9Rh1Vw_1741779430
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3912539665cso354055f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:37:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741779430; x=1742384230;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v39mmJ/ZoF+dw+zjNgOr5RkZMHs7oG2cf+OVSp6s3sM=;
+        b=Sz1nPx80tASsuHmDVEAsSszedPYnAUsCSGsdFezXTm/JalIvvH7btaVSQ72OcaA3Bt
+         ou/84AnTEobtMc/uMkBrQYe1DQMvH0Vu4mjLD2sOAWzLNa+/iZOALFzp/sU56VnSPIH4
+         3lFsGU9fTRR4FNJpBY1c2u53qKc2tTcOthYKH/rHE8OXx2RWfRLhrVTLnm/ewUmhpLEY
+         PrJSIjiGGzucABjLFkglc/3ql7mkRoV/OJViZcqaQwN5QkEO5SdK0R9qoqlPd4Qb+p8a
+         Z6uUyWyD8JuFe6SZ8rPPsEfoJVbuGqsrFsXzhWcGACR1u/AQvNkhTX5d4CizXfo7NYTv
+         eZKw==
+X-Gm-Message-State: AOJu0YziR1qdhXWfYCTfySzwlVJPTqZgHuQDuXGVGvhutQYVqc89Lt6R
+	XBTxSP9UirD3AkCXRTRPTJeSNyc+uEW5vis4GEYw8aei/rlphifaP8NgLNsoJLtyhnGKWuPKHSU
+	E0+rVFwvg1jz0nJskO9M97JDpLRAr/hGnO+ZBOqXQ6FHrnoqrSJ0iMlOl2y4nT5N57csVORiElK
+	j+EQtqRr/wwVIrb4UkoxkKg4kex8rRapGl0rmQ
+X-Gm-Gg: ASbGncs8S2/Y8Of8Q2VmrxQHeJU5ZNMNko0PZVgMN4o1kiNDWVdq4yLV5j642sHTbJV
+	DZIehXUGGZy113sLVuiPBUVcPGk0yzft4SuHPLkwe7UvpSq4oPdgR6pr5pCwVz44XDz8b7WAksZ
+	I=
+X-Received: by 2002:a5d:6c65:0:b0:391:98b:e5b3 with SMTP id ffacd0b85a97d-3926cb6442fmr6993445f8f.14.1741779430055;
+        Wed, 12 Mar 2025 04:37:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7hIva+qqfbAEoA76LRf9FvRMmtz4KNW3wTSXaAkTtMnkEd0MmL7x1VFb9AhRfs/15MSWdNi4TGmI00qsBok8=
+X-Received: by 2002:a5d:6c65:0:b0:391:98b:e5b3 with SMTP id
+ ffacd0b85a97d-3926cb6442fmr6993432f8f.14.1741779429767; Wed, 12 Mar 2025
+ 04:37:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310150835.3139322-5-andriy.shevchenko@linux.intel.com>
+References: <20250307212053.2948340-1-pbonzini@redhat.com> <20250307212053.2948340-6-pbonzini@redhat.com>
+ <405c30e9-73be-4812-86dc-6791b08ba43c@intel.com>
+In-Reply-To: <405c30e9-73be-4812-86dc-6791b08ba43c@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Wed, 12 Mar 2025 12:36:58 +0100
+X-Gm-Features: AQ5f1Jr4qB7EzSh_KRS3HvUL2rvLWxmR_egbZcCrsJItfsIes2DzNlQGEhnpkNw
+Message-ID: <CABgObfZOhNtk0DKq+nB2UC+FFhsEkyiysngZoovoJP-vF43bYA@mail.gmail.com>
+Subject: Re: [PATCH v3 05/10] KVM: TDX: restore host xsave state when exit
+ from the guest TD
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, adrian.hunter@intel.com, 
+	seanjc@google.com, rick.p.edgecombe@intel.com, 
+	Isaku Yamahata <isaku.yamahata@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 04:54:54PM +0200, Andy Shevchenko wrote:
-> Since fwnode_get_child_node_count() was split from its device property
-> counterpart, we may utilise it in the driver and drop custom implementation.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Mon, Mar 10, 2025 at 8:24=E2=80=AFAM Xiaoyao Li <xiaoyao.li@intel.com> w=
+rote:
+>
+> On 3/8/2025 5:20 AM, Paolo Bonzini wrote:
+> > From: Isaku Yamahata <isaku.yamahata@intel.com>
+> >
+> > On exiting from the guest TD, xsave state is clobbered; restore it.
+>
+> I prefer the implementation as this patch, which is straightforward.
+> (I would be much better if the changelog can describe more)
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Ok:
 
-> ---
->  drivers/usb/typec/tcpm/tcpm.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index 9c455f073233..8ca2e26752fb 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -7166,7 +7166,7 @@ static void tcpm_fw_get_timings(struct tcpm_port *port, struct fwnode_handle *fw
->  
->  static int tcpm_fw_get_caps(struct tcpm_port *port, struct fwnode_handle *fwnode)
->  {
-> -	struct fwnode_handle *capabilities, *child, *caps = NULL;
-> +	struct fwnode_handle *capabilities, *caps = NULL;
->  	unsigned int nr_src_pdo, nr_snk_pdo;
->  	const char *opmode_str;
->  	u32 *src_pdo, *snk_pdo;
-> @@ -7232,9 +7232,7 @@ static int tcpm_fw_get_caps(struct tcpm_port *port, struct fwnode_handle *fwnode
->  	if (!capabilities) {
->  		port->pd_count = 1;
->  	} else {
-> -		fwnode_for_each_child_node(capabilities, child)
-> -			port->pd_count++;
-> -
-> +		port->pd_count = fwnode_get_child_node_count(capabilities);
->  		if (!port->pd_count) {
->  			ret = -ENODATA;
->  			goto put_capabilities;
-> -- 
-> 2.47.2
+Do not use kvm_load_host_xsave_state(), as it relies on vcpu->arch
+to find out whether other KVM_RUN code has loaded guest state into
+XCR0/PKRU/XSS or not.  In the case of TDX, the exit values are known
+independent of the guest CR0 and CR4, and in fact the latter are not
+available.
 
--- 
-heikki
+Thanks!
+
+Paolo
+
 
