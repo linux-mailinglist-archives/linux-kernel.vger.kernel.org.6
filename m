@@ -1,264 +1,217 @@
-Return-Path: <linux-kernel+bounces-557364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720E0A5D7D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:07:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCFBA5D7D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:08:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 016677A7B8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A563A568A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17110230D3A;
-	Wed, 12 Mar 2025 08:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/vef+q8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90956235342;
+	Wed, 12 Mar 2025 08:06:56 +0000 (UTC)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62955232364;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94421233D85;
 	Wed, 12 Mar 2025 08:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741766814; cv=none; b=FMcTY6qjhO72QhoLCSABeMk2u9UVJiXHtd+eRsfToaaeCnWJxUMkgUHXiXsObp0+ehj/9BzERsf3JXs9NdkwXN3dpzR+gcdxqpbOWBn41hKCDYCk9QHo1Z2gOCnn2s6bYfZf+n8F7oskIznBdBG/7lxDVsFSi/UOc/alsR2eqSY=
+	t=1741766816; cv=none; b=Hd3NU3VU8YEwjVD7aJ/sQjNXZcj6tfeWIhHbVkNM8ZqqXsMied2AS0wVPKeIGoKamzfAAvQPU71MtoWc4QJ1egZn8PL+ULEV24Six1OEWr2osQxBOV89MdIa9zfI3u6fjMSn8AlCfGLUZe/3A42EfO3xesDTySNP8fW00/UzFa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741766814; c=relaxed/simple;
-	bh=hy1fPZC2FIGVsEIMGtrBPmDIOw6KnV62HzIoDTQYHLw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ocZpsBxy4INqb9H6hgrKaTAeEIuJUrgOBuzG546yZQajBVD+2Kh/uKlL1VlJByszBHQXAGVbWeTkn0TYHkuEnzAPrBByTxNxIqfhyZscZu+/I1sOPD/aIrIvcYuQlZwbOPhnmc/mQdgqTuYa1kHrRC/mh6/Wu3FP7HHbjk7ceTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/vef+q8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 764B6C4CEEE;
-	Wed, 12 Mar 2025 08:06:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741766813;
-	bh=hy1fPZC2FIGVsEIMGtrBPmDIOw6KnV62HzIoDTQYHLw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=m/vef+q8ptNAQIaH3VyG6fBhF7ecuTqBBMiXdTB2jQ0Q2VNtJytrUpn+WhTUwmvMR
-	 eW8X8QlFyCq25GtJRYU+sF2SzThP7n1/GefEXOrYUy0B27KRZsVRhPma0b4LvjYDMX
-	 DtkCnf724+RbJByyYc16BCmaeIsFb8YQ3+4lZO4x3OJXVOjpjyoFU/q6cHINhYTTvp
-	 4a8k5qfKXNKBvzgWdgsQxPB4ZYquNp91aDvrY3pFuAfgZw0EQQJMT9QoGkM5RX1y69
-	 3SsC3XhGPhfrXw92lfKsoG0CcNIUiYP+FEfP3tGAkjsXT0psRz69KFXAcETDWKZuVy
-	 B0Bb+8eCq5VCQ==
-From: Philipp Stanner <phasta@kernel.org>
-To: =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <phasta@kernel.org>,
-	Bingbu Cao <bingbu.cao@linux.intel.com>
-Subject: [PATCH v3 2/2] PCI: Check BAR index for validity
-Date: Wed, 12 Mar 2025 09:06:35 +0100
-Message-ID: <20250312080634.13731-4-phasta@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250312080634.13731-2-phasta@kernel.org>
-References: <20250312080634.13731-2-phasta@kernel.org>
+	s=arc-20240116; t=1741766816; c=relaxed/simple;
+	bh=/E+CxfZwg+3uh69C7tp13/GXhlnba+LwlXzgTRr4yyE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TSOtNOZ1uockHCZ5KDtCx9jVo3ZBe6LmeILsaW/s2F5nr2Ruxsj7Es7ygiCQLcc66uyNIdYbjiEOZi+TCqLNK02cAd1k9G4VvxveMYFaVngTd39buyGgofKP9x9Sn3uQ2YZdd+TloH2f972OyPQXunnNIwJPOCTd6uVcFyB8rPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86d42f08135so2188189241.0;
+        Wed, 12 Mar 2025 01:06:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741766812; x=1742371612;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qmGqQHBEwBRbkAoYLiZ6rvfGYL5ug5x1JGdr3Bwp44E=;
+        b=V/s6c4V7iTCUQqP5ffCJlrsnxP3i7MCHK6/s3QdlZgoS1cr/ma9+stFFP/fCw6cseu
+         iMFk5he3Z3mDc+TpaRkBXn/6ochxj/h5nCLo4pJR2wQajgOFivjSIsWl7JFBR4ojAhRX
+         Tk1UAAcHiJ33zaLgWWebWluIoZNxwZjPUXQ9jHWOSJEELXMKVAyEo8P+MavMh5pR3Rxf
+         o8dcRuiLRevwKF+RFF5tKPfuQZCnCXuEVaFYfEcgDXEubBr2gmncgVxwe/JhXB441oTt
+         oSbb4qAFOEPzbqriS20Ma6Pdt746E4XOICf+su6b6Ivy1G86qhP0LXDqlEzVcNyQS9YE
+         oSsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqj4qhWdU/xgx5Ds77V3h9ZciKsSz+hx+yNskPzYUbqLUqQwThfnG3DJP33SsItX/qW3kkl9eg/Ww=@vger.kernel.org, AJvYcCXDlAN+puOK7ZDBCIU43wN0fFlgCQhqwH/mVKMkJXU+aZ6HfgzpoGK2VAoRoiR42R/obgQfkaCeedWD1IY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRYet/Gdlfv2UNQlikGFqV4U1madhP2iT7GjwNglZZZRMNP39Y
+	EZGL8yUhHYpx9gYhO3KH6SEpXG0ELmiqLGaHn7HD7y0RI/uorWJ5mzUFWcP+
+X-Gm-Gg: ASbGncvThL6RxqH9Tw8v6qfdtJj3ozpEMhTutkhdj6bZVkdDdlbeMiPdBuUY8ZyjPX4
+	zZzLqZSUNZxLS9LYQsmfHk+vRXWg+H2f1I7h2McSJj9YUdOVWzzKTCpHFuVzyzOFTtBhqYEYmex
+	P5iJ4Ybsw8qzNuN9zbtdUN9IunpPQVoJwcBxSadKLNMGxld0injase7ZHOyQzI+34O3zOZe0J6s
+	qGaSHkOG11aJBCIzAtK2xqeOqV8bxzZmRSsYRett5BfIdBRt2vJg56aLiBBDj5vEP7FgsCe5Lu7
+	oJylNVSF0FxftpvNg9EGjPTAqVH7/MfCFiB9Pz7PfY3bTn1k2PPAPFQHhpXuk1qZqTqXbBy3Y/g
+	TiA/UneA=
+X-Google-Smtp-Source: AGHT+IE296I3adwjsuzyITlzeScjw+WyrtbNq1rfkc9DzpmD4NKHRWnJy7Dx61NGK0698mhlf9bFrw==
+X-Received: by 2002:a05:6102:3e16:b0:4c1:a395:c57b with SMTP id ada2fe7eead31-4c30a72b35amr13824586137.24.1741766811727;
+        Wed, 12 Mar 2025 01:06:51 -0700 (PDT)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c347bb8611sm800316137.22.2025.03.12.01.06.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 01:06:51 -0700 (PDT)
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-86d6976f768so1104119241.1;
+        Wed, 12 Mar 2025 01:06:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVPNgQT7G+kpzb3pomcvTmY5s9QsZ9qR8EhWzHZlvmEi70A+Xvd5PDTjO1atxNLWsGfV9gxnSUsg2dzxBE=@vger.kernel.org, AJvYcCVudFvW04t6vuZOGnUdU1+YHrRgmkb6cukIjqMnYV6XvuHqBHi5KfLp+rjcLAW5fA6TIiVjv7EWOoo=@vger.kernel.org
+X-Received: by 2002:a05:6102:808f:b0:4b6:d108:cac1 with SMTP id
+ ada2fe7eead31-4c30a5a7306mr14483092137.9.1741766811160; Wed, 12 Mar 2025
+ 01:06:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250216175545.35079-1-contact@artur-rojek.eu>
+ <20250216175545.35079-2-contact@artur-rojek.eu> <5365422a9715376c76a89e255c978fc39064e243.camel@physik.fu-berlin.de>
+ <433bc8a0732bf8a63c64c4bf0e6ad4a7@artur-rojek.eu>
+In-Reply-To: <433bc8a0732bf8a63c64c4bf0e6ad4a7@artur-rojek.eu>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Mar 2025 09:06:39 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVmKk9vML=p1MsnkGATzUh3HD+Pa==7C=QMYjjzqzxk2A@mail.gmail.com>
+X-Gm-Features: AQ5f1JpVcQIR2AUq5CsSqZ5TfhWlttBNgDchgzFmEA9b_wdiswP8JhWKfF1izpY
+Message-ID: <CAMuHMdVmKk9vML=p1MsnkGATzUh3HD+Pa==7C=QMYjjzqzxk2A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] sh: align .bss section padding to 8-byte boundary
+To: Artur Rojek <contact@artur-rojek.eu>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Uros Bizjak <ubizjak@gmail.com>, "D . Jeff Dionne" <jeff@coresemi.io>, Rob Landley <rob@landley.net>, 
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Many functions in PCI use accessor macros such as pci_resource_len(),
-which take a BAR index. That index, however, is never checked for
-validity, potentially resulting in undefined behavior by overflowing the
-array pci_dev.resource in the macro pci_resource_n().
+Hi Artur,
 
-Since many users of those macros directly assign the accessed value to
-an unsigned integer, the macros cannot be changed easily anymore to
-return -EINVAL for invalid indexes. Consequently, the problem has to be
-mitigated in higher layers.
+On Wed, 12 Mar 2025 at 00:40, Artur Rojek <contact@artur-rojek.eu> wrote:
+> On 2025-03-11 18:28, John Paul Adrian Glaubitz wrote:
+> > I'm currently trying to review this patch, but I'm not 100% sure how it
+> > this change helps grows the .bss section, see below. Maybe you can help
+> > me understand what's happening.
+> >
+> > On Sun, 2025-02-16 at 18:55 +0100, Artur Rojek wrote:
+> >> J2 based devices expect to find a devicetree blob at the end of the
+> >> bss
+> >> section. As of a77725a9a3c5, libfdt enforces 8-byte alignment for the
+> >> dtb, causing J2 devices to fail early in sh_fdt_init.
+> >>
+> >> As J2 loader firmware calculates the dtb location based on the kernel
+> >> image .bss section size, rather than the __bss_stop symbol offset, the
+> >> required alignment can't be enforced with BSS_SECTION(0, PAGE_SIZE,
+> >> 8).
+> >> Instead, inline modified version of the above macro, which grows .bss
+> >> by the required size.
+> >>
+> >> While this change affects all existing SH boards, it should be benign
+> >> on
+> >> platforms which don't need this alignment.
+> >>
+> >> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+> >> ---
+> >>  arch/sh/kernel/vmlinux.lds.S | 15 ++++++++++++++-
+> >>  1 file changed, 14 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/sh/kernel/vmlinux.lds.S
+> >> b/arch/sh/kernel/vmlinux.lds.S
+> >> index 9644fe187a3f..008c30289eaa 100644
+> >> --- a/arch/sh/kernel/vmlinux.lds.S
+> >> +++ b/arch/sh/kernel/vmlinux.lds.S
+> >> @@ -71,7 +71,20 @@ SECTIONS
+> >>
+> >>      . = ALIGN(PAGE_SIZE);
+> >>      __init_end = .;
+> >> -    BSS_SECTION(0, PAGE_SIZE, 4)
+> >> +    __bss_start = .;
+> >> +    SBSS(0)
+> >> +    . = ALIGN(PAGE_SIZE);
+> >
+> > What this effectively does is removing ". = ALIGN(sbss_align);" first
+> > from BSS_SECTION().
+> >
+> > Then it inserts ". = ALIGN(PAGE_SIZE);" after the "SBSS(0)".
+> >
+> > If I understand this correctly, SBSS() inserts a zero-padding and if
+> > I'm not mistaken,
+> > inserting ". = ALIGN(PAGE_SIZE);" will cause this padding to grow to at
+> > least PAGE_SIZE
+> > due the alignment.
+> >
+> > Is this correct?
+> >
+> >> +    .bss : AT(ADDR(.bss) - LOAD_OFFSET) {
+> >> +            BSS_FIRST_SECTIONS
+> >> +            . = ALIGN(PAGE_SIZE);
+> >> +            *(.bss..page_aligned)
+> >> +            . = ALIGN(PAGE_SIZE);
+> >> +            *(.dynbss)
+> >> +            *(BSS_MAIN)
+> >> +            *(COMMON)
+> >> +            . = ALIGN(8);
+> >
+> > If my understanding above is correct, why do we will need an additional
+> > ". = ALIGN(8)"
+> > here?
+>
+> I'll tackle both of the above questions at once.
+> I'm by no means an expert at GNU Linker syntax, but the intention of
+> this patch is to put . = ALIGN(8) inside the .bss : { ... } section
+> definition, so that the section itself grows by the requested padding.
+>
+> In the original BSS_SECTION(0, PAGE_SIZE, 4), the last argument inserts
+> a 4 byte padding after the closing brace of .bss section definition,
+> causing the __bss_stop symbol offset to grow, but not the .bss section
+> itself:
+>
+> #define BSS_SECTION(sbss_align, bss_align, stop_align)                  \
+>         . = ALIGN(sbss_align);                                          \
+>         __bss_start = .;                                                \
+>         SBSS(sbss_align)                                                \
+>         BSS(bss_align)                                                  \
+>         . = ALIGN(stop_align);                                          \
+>         __bss_stop = .;
+>
+> TurtleBoard loader is only concerned with the .bss section size - it
+> doesn't care about any symbol offsets - and hence this seemingly cryptic
+> change (you can display the section size information with
+> readelf -t kernel_image).
+> The rest of the changes are simply to "inline" the BSS() macro (as I
+> needed to access that closing brace), and the former sbss_align,
+> bss_align (that's your PAGE_SIZE) and stop_align arguments are passed
+> accordingly, the same way they used to be passed before. The only
+> visible effect should be the move of ALIGN(stop_align) inside of .bss
+> section definition, and the change of stop_align value from 4 to 8.
+>
+> Arguably the TurtleBoard loader should read the __bss_stop symbol offset
+> instead, but in this patch I'm trying to solve the issue from kernel's
+> point of view.
 
-Add pci_bar_index_valid(). Use it where appropriate.
+What about moving (or duplicating, e.g. sbss_align alignment is
+done before and after __bss_start)  the stop_align alignment
+from BSS_SECTION() into BSS() instead, i.e. just changing
+include/asm-generic/vmlinux.lds.h for everyone?  I don't think that
+would hurt any platforms, while fixing the issue for good.
+IMHO it is a bit strange that the size of the bss section can differ
+from __bss_stop - __bss_start.
+One last question though: what about sbss? How does the TurtleBoard
+loader handle that?  __bss_stop - __bss_start is not the size of bss,
+but the sum of the sizes of sbss and bss, plus extra alignment in
+between. The latter might cause trouble, too.
 
-Reported-by: Bingbu Cao <bingbu.cao@linux.intel.com>
-Closes: https://lore.kernel.org/all/adb53b1f-29e1-3d14-0e61-351fd2d3ff0d@linux.intel.com/
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
- drivers/pci/devres.c | 16 ++++++++++++++--
- drivers/pci/iomap.c  | 29 +++++++++++++++++++++--------
- drivers/pci/pci.c    |  6 ++++++
- drivers/pci/pci.h    | 16 ++++++++++++++++
- 4 files changed, 57 insertions(+), 10 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-index 728ed0c7f70a..73047316889e 100644
---- a/drivers/pci/devres.c
-+++ b/drivers/pci/devres.c
-@@ -577,7 +577,7 @@ static int pcim_add_mapping_to_legacy_table(struct pci_dev *pdev,
- {
- 	void __iomem **legacy_iomap_table;
- 
--	if (bar >= PCI_STD_NUM_BARS)
-+	if (!pci_bar_index_is_valid(bar))
- 		return -EINVAL;
- 
- 	legacy_iomap_table = (void __iomem **)pcim_iomap_table(pdev);
-@@ -622,7 +622,7 @@ static void pcim_remove_bar_from_legacy_table(struct pci_dev *pdev, int bar)
- {
- 	void __iomem **legacy_iomap_table;
- 
--	if (bar >= PCI_STD_NUM_BARS)
-+	if (!pci_bar_index_is_valid(bar))
- 		return;
- 
- 	legacy_iomap_table = (void __iomem **)pcim_iomap_table(pdev);
-@@ -655,6 +655,9 @@ void __iomem *pcim_iomap(struct pci_dev *pdev, int bar, unsigned long maxlen)
- 	void __iomem *mapping;
- 	struct pcim_addr_devres *res;
- 
-+	if (!pci_bar_index_is_valid(bar))
-+		return NULL;
-+
- 	res = pcim_addr_devres_alloc(pdev);
- 	if (!res)
- 		return NULL;
-@@ -722,6 +725,9 @@ void __iomem *pcim_iomap_region(struct pci_dev *pdev, int bar,
- 	int ret;
- 	struct pcim_addr_devres *res;
- 
-+	if (!pci_bar_index_is_valid(bar))
-+		return IOMEM_ERR_PTR(-EINVAL);
-+
- 	res = pcim_addr_devres_alloc(pdev);
- 	if (!res)
- 		return IOMEM_ERR_PTR(-ENOMEM);
-@@ -823,6 +829,9 @@ static int _pcim_request_region(struct pci_dev *pdev, int bar, const char *name,
- 	int ret;
- 	struct pcim_addr_devres *res;
- 
-+	if (!pci_bar_index_is_valid(bar))
-+		return -EINVAL;
-+
- 	res = pcim_addr_devres_alloc(pdev);
- 	if (!res)
- 		return -ENOMEM;
-@@ -991,6 +1000,9 @@ void __iomem *pcim_iomap_range(struct pci_dev *pdev, int bar,
- 	void __iomem *mapping;
- 	struct pcim_addr_devres *res;
- 
-+	if (!pci_bar_index_is_valid(bar))
-+		return IOMEM_ERR_PTR(-EINVAL);
-+
- 	res = pcim_addr_devres_alloc(pdev);
- 	if (!res)
- 		return IOMEM_ERR_PTR(-ENOMEM);
-diff --git a/drivers/pci/iomap.c b/drivers/pci/iomap.c
-index 9fb7cacc15cd..fe706ed946df 100644
---- a/drivers/pci/iomap.c
-+++ b/drivers/pci/iomap.c
-@@ -9,6 +9,8 @@
- 
- #include <linux/export.h>
- 
-+#include "pci.h" /* for pci_bar_index_is_valid() */
-+
- /**
-  * pci_iomap_range - create a virtual mapping cookie for a PCI BAR
-  * @dev: PCI device that owns the BAR
-@@ -33,12 +35,19 @@ void __iomem *pci_iomap_range(struct pci_dev *dev,
- 			      unsigned long offset,
- 			      unsigned long maxlen)
- {
--	resource_size_t start = pci_resource_start(dev, bar);
--	resource_size_t len = pci_resource_len(dev, bar);
--	unsigned long flags = pci_resource_flags(dev, bar);
-+	resource_size_t start, len;
-+	unsigned long flags;
-+
-+	if (!pci_bar_index_is_valid(bar))
-+		return NULL;
-+
-+	start = pci_resource_start(dev, bar);
-+	len = pci_resource_len(dev, bar);
-+	flags = pci_resource_flags(dev, bar);
- 
- 	if (len <= offset || !start)
- 		return NULL;
-+
- 	len -= offset;
- 	start += offset;
- 	if (maxlen && len > maxlen)
-@@ -77,16 +86,20 @@ void __iomem *pci_iomap_wc_range(struct pci_dev *dev,
- 				 unsigned long offset,
- 				 unsigned long maxlen)
- {
--	resource_size_t start = pci_resource_start(dev, bar);
--	resource_size_t len = pci_resource_len(dev, bar);
--	unsigned long flags = pci_resource_flags(dev, bar);
-+	resource_size_t start, len;
-+	unsigned long flags;
- 
--
--	if (flags & IORESOURCE_IO)
-+	if (!pci_bar_index_is_valid(bar))
- 		return NULL;
- 
-+	start = pci_resource_start(dev, bar);
-+	len = pci_resource_len(dev, bar);
-+	flags = pci_resource_flags(dev, bar);
-+
- 	if (len <= offset || !start)
- 		return NULL;
-+	if (flags & IORESOURCE_IO)
-+		return NULL;
- 
- 	len -= offset;
- 	start += offset;
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 869d204a70a3..da82d734d09c 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3921,6 +3921,9 @@ EXPORT_SYMBOL(pci_enable_atomic_ops_to_root);
-  */
- void pci_release_region(struct pci_dev *pdev, int bar)
- {
-+	if (!pci_bar_index_is_valid(bar))
-+		return;
-+
- 	/*
- 	 * This is done for backwards compatibility, because the old PCI devres
- 	 * API had a mode in which the function became managed if it had been
-@@ -3965,6 +3968,9 @@ EXPORT_SYMBOL(pci_release_region);
- static int __pci_request_region(struct pci_dev *pdev, int bar,
- 				const char *name, int exclusive)
- {
-+	if (!pci_bar_index_is_valid(bar))
-+		return -EINVAL;
-+
- 	if (pci_is_managed(pdev)) {
- 		if (exclusive == IORESOURCE_EXCLUSIVE)
- 			return pcim_request_region_exclusive(pdev, bar, name);
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 01e51db8d285..19af5491f674 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -167,6 +167,22 @@ static inline void pci_wakeup_event(struct pci_dev *dev)
- 	pm_wakeup_event(&dev->dev, 100);
- }
- 
-+/**
-+ * pci_bar_index_is_valid - check wehether a BAR index is within valid range
-+ * @bar: the bar index
-+ *
-+ * Protects against overflowing &struct pci_dev.resource array.
-+ *
-+ * Return: true for valid index, false otherwise
-+ */
-+static inline bool pci_bar_index_is_valid(int bar)
-+{
-+	if (bar >= 0 || bar < PCI_NUM_RESOURCES)
-+		return true;
-+
-+	return false;
-+}
-+
- static inline bool pci_has_subordinate(struct pci_dev *pci_dev)
- {
- 	return !!(pci_dev->subordinate);
+                        Geert
+
 -- 
-2.48.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
