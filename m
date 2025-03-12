@@ -1,171 +1,356 @@
-Return-Path: <linux-kernel+bounces-558456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A87A5E62F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:07:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 483D1A5E636
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:08:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A244717EE11
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:05:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E4C3BC3CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4811F869E;
-	Wed, 12 Mar 2025 21:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B19C1EDA17;
+	Wed, 12 Mar 2025 21:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mGa+p08J"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="igNDsUhA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RnZmJeOi";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="igNDsUhA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RnZmJeOi"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754C51F6694
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 21:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1891BD9DD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 21:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741813279; cv=none; b=AcbWAVM11fPTRD7sUHGYaqYFBZEaM3B3nvPK30Sff6aN/60XS6XBjanC5+DfcojSkHqAMvQrRLZvD68IAAQitBEpC6ZFvNJ5nK+nETfCTdN3UlUsVe9XEfi9xhYWkbai9YRblyDz+DvDpARbG3GaXMUTY6TlwS7JbBum1Qxo2KI=
+	t=1741813392; cv=none; b=O8c8WU6Og5SmGdmorF/f6Da1mw8CIOYGKLoDo5nl8YYwjPjz0H18mTz49+9pWHJ8394ur9gNzHo/SJTN+dnILHitBtznzbNh/jMEa1dqc0ZrI+397qSrVPhU/cDYccO2eU6fTuIscHPvVD9KsSj1Ol/ZaYQOTkm8r4Iql6QQuSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741813279; c=relaxed/simple;
-	bh=G6k9/ql5Q1cbDizr0QjgBTrqx0v2OwXXY/Rlqh1I4+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OINJFuCgViAID+2KI26v8sQaddHnSsvYYuX7dSRm089tDURVlfYWJRuSCWwPHd/PyuwAjbdbnJlFIPHribtTmuKa4Wmk4zQ+joiza3R9K7Hvd0yhAXCsDrG+u1Mpgqo3kqMi1G084V+IJdEDNVG55EGkJUx7Sp9khWKJi3GstdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mGa+p08J; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso1443325e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:01:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741813276; x=1742418076; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kqc1poXxnyoLh8acLdyx6jnNQG9s8oh95bXH7s4VvkQ=;
-        b=mGa+p08Jio0Pgfvr1ydvgLv/NTIiTwHlZUwc51/gzJpUZZGTeB7pYGvdXzIshybA7M
-         EtQFm6KqJ3RCGqt3a9oUBOyHnL1AWMQ2ozDihKj8ge5l+9A1U7Zvghc2z/waCq3TBZeA
-         SwpL4k6DoRP80LP9f4161SgdVBKhTNr+Wul2bFLsvZ8HSNzb3Ij6ILFoQXZjeni1ZDbr
-         wBzrDzil3cBehplz8v2QGK+hGBgaJSrS/aS3BomcpLfptxZQXtjJ+Ho5+C4jFpdgLwb9
-         MsxeeNIDm0LFrWdGg9jIccnXM32qsqV+sZIEpcpD0nUq9FMB8yrrJkNG4GR9X20tMj21
-         TJow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741813276; x=1742418076;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kqc1poXxnyoLh8acLdyx6jnNQG9s8oh95bXH7s4VvkQ=;
-        b=WXKqjBPo5J53xYmFAt5MW49jbP0c/FLoCE9FOAyJPsTHok7xs3APIOsJHjcQGrt3L0
-         Y9ACNcnMTjTTU6+hVjuUYYqU7U8ZnaphWM5C6BKB1czkz6FYuSXZXqy32PAIRi/jPHC0
-         5dcNqKL0YiPHAiXEJ5quav2/iGsLaGjNiZuSzkvarkzfOvin61bU64JBLdRuvvkDq9GM
-         oHpB7BCYdsGyikfqpMf2CQomrXxHcICxVGzld9B1k0ZR2artcihgSP5OFQnrTnbNIcsa
-         sJ9EuWfmOrG1N7Ay7moDqq8jozV5/COfLyYRZvFDsEogLe7HzFh5HWGPTC9eYpKIMoHh
-         2vHw==
-X-Gm-Message-State: AOJu0Yx7kO8VMiUBWaJHyu2zvM4p9IPOHQWM/+ajsZJgJmPZP+U8yaaD
-	5QNBaTZVzOjO1qexWaHhmKh6US94Dv7Z4Xu/SkeY1KX+338PSaAH
-X-Gm-Gg: ASbGncujztbVTmurne1XYP3dOrKvY0+aRZMzN6jt+H3jKOKWvPKWDC1W6L8O4Nj8+al
-	unaf9WlV7sc6ecRobYiq0raXdwmIWpt5cYB3PxsdMkmzqbSQKhAhP1sZ8m3qMLdwW0Tc5wpkWTM
-	MUunpFKvRP/7Ll5LElob/N00DG6O4i21WMEupOIEbFKvQlml14MkoQf7BW6K6ObkwCZ1wdxLjbR
-	M8LRFUjwbIGkJbEZzfjPhYTap+gF/R2+mguN+5vtOMA2JvHpcTT5zvDN8NMk/n3Ac19vxpyy1kq
-	ZVTa8rHck6BjAbrdZTadPKB0fuhyPhBCMm/omFzgvX7zARKoGEpxbZdOcLjBW8Ym3U5sk6Ju4mX
-	U+Rs+14iB5CJBe41nvQ==
-X-Google-Smtp-Source: AGHT+IFKuygVKUqjYPaYSdKNJPmQrQvxeGb1gcLRVCvTaRzOXVV/7NXqaWSlkHJhQew2IIZLrtPVNA==
-X-Received: by 2002:a5d:59a7:0:b0:391:43cb:43fa with SMTP id ffacd0b85a97d-39143cb4581mr11199633f8f.51.1741813275555;
-        Wed, 12 Mar 2025 14:01:15 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfb79adsm21842301f8f.7.2025.03.12.14.01.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 14:01:15 -0700 (PDT)
-Date: Wed, 12 Mar 2025 21:01:12 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Arnd Bergmann <arnd@arndb.de>, Linus Torvalds
- <torvalds@linux-foundation.org>, Christophe Leroy
- <christophe.leroy@c-s.fr>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- nnac123@linux.ibm.com, horms@kernel.org
-Subject: Re: [PATCH v2 1/1] lib: Optimise hex_dump_to_buffer()
-Message-ID: <20250312210112.63e3e207@pumpkin>
-In-Reply-To: <Z9HhLr8zD5M1tdGw@smile.fi.intel.com>
-References: <20250308093421.3724-1-david.laight.linux@gmail.com>
-	<Z86rSd88eSiJxV-M@smile.fi.intel.com>
-	<20250312191816.68de7194@pumpkin>
-	<Z9HhLr8zD5M1tdGw@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1741813392; c=relaxed/simple;
+	bh=GtbQVyI9HOTpjy93ppZfMLbvExGyUWM3I66gXtg1ggQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CTu5DQNSLC9YfBaO69nSqSt2mvkdiTQ0IZ9RaBczLoh3mod5GTA6FH7dUN918EfH0LU35TpWY23Bjh8T5MHuVbcwvxBsQtc2JjpEzlguXt6kmouZbaibmTHwsiIzmKBswk8md9KBMwfgbsnAc7vOmWI3apKrDqqW9byJb0HP4Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=igNDsUhA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RnZmJeOi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=igNDsUhA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RnZmJeOi; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from localhost (unknown [10.100.12.32])
+	by smtp-out1.suse.de (Postfix) with ESMTP id 8D41B21169;
+	Wed, 12 Mar 2025 21:03:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741813387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QYPVIjuXtyEWnSA0TQuv2Z6ecwvOqLWWeLHzxxVGJgo=;
+	b=igNDsUhAvWy+YUiNrJnRnQDC0ArpaeNtUrBmYcEDdZh0wFR5Mw+Z0QJPNh0c1VmD991fT8
+	Z27g/xiL303sApjcrXhDO7pYq/1pv0NCnNFfPYU7Ug5kwXcLk0nWYqohQo8sLNCwz29nnL
+	GT2k+s4++ck5iMyka2t8MQIigcIBSvg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741813387;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QYPVIjuXtyEWnSA0TQuv2Z6ecwvOqLWWeLHzxxVGJgo=;
+	b=RnZmJeOiBjydxZ1YIiLlUR6JHiXCnzJo3F+DNMqrOOuWb5QsVONJODP/7AS5aYljf6Sgeg
+	bHzUN6KCtJewJ2Bw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741813387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QYPVIjuXtyEWnSA0TQuv2Z6ecwvOqLWWeLHzxxVGJgo=;
+	b=igNDsUhAvWy+YUiNrJnRnQDC0ArpaeNtUrBmYcEDdZh0wFR5Mw+Z0QJPNh0c1VmD991fT8
+	Z27g/xiL303sApjcrXhDO7pYq/1pv0NCnNFfPYU7Ug5kwXcLk0nWYqohQo8sLNCwz29nnL
+	GT2k+s4++ck5iMyka2t8MQIigcIBSvg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741813387;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QYPVIjuXtyEWnSA0TQuv2Z6ecwvOqLWWeLHzxxVGJgo=;
+	b=RnZmJeOiBjydxZ1YIiLlUR6JHiXCnzJo3F+DNMqrOOuWb5QsVONJODP/7AS5aYljf6Sgeg
+	bHzUN6KCtJewJ2Bw==
+Date: Wed, 12 Mar 2025 22:03:07 +0100
+From: Jiri Bohac <jbohac@suse.cz>
+To: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org
+Cc: Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>,
+	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	David Hildenbrand <dhildenb@redhat.com>,
+	Michal Hocko <mhocko@suse.cz>
+Subject: [PATCH v3 1/5] Add a new optional ",cma" suffix to the crashkernel=
+ command line option
+Message-ID: <Z9H2iw83e7eXD8JB@dwarf.suse.cz>
+References: <Z9H10pYIFLBHNKpr@dwarf.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9H10pYIFLBHNKpr@dwarf.suse.cz>
+X-Spam-Score: -4.29
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.19)[-0.950];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, 12 Mar 2025 21:31:58 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+Add a new cma_size parameter to parse_crashkernel().
+When not NULL, call __parse_crashkernel to parse the CMA
+reservation size from "crashkernel=size,cma" and store it
+in cma_size.
 
-> On Wed, Mar 12, 2025 at 07:18:16PM +0000, David Laight wrote:
-> > On Mon, 10 Mar 2025 11:05:13 +0200
-> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:  
-> > > On Sat, Mar 08, 2025 at 09:34:21AM +0000, David Laight wrote:  
-> 
-> ...
-> 
-> > > > -extern int hex_dump_to_buffer(const void *buf, size_t len, int rowsize,
-> > > > -			      int groupsize, char *linebuf, size_t linebuflen,
-> > > > -			      bool ascii);
-> > > > +extern size_t hex_dump_to_buffer(const void *buf, size_t len, size_t rowsize,  
-> > > > +				 size_t groupsize, char *linebuf,
-> > > > +				 size_t linebuflen, bool ascii);    
-> > > 
-> > > int - > size_t in the returned value is incorrect change.
-> > > This is explained in the comments to the test cases patch series.  
-> > 
-> > I don't see you mentioning why.
-> > The return value is 'the number of bytes that would be output if the buffer
-> > were large enough' - it is never negative.  
-> 
-> True...
-> 
-> > Although given 'a large enough buffer' length is trivially calculable
-> > it would have been safer to return the actual number of bytes added
-> > (excluding the '\0').  
-> 
-> ...but the functions keep the snprintf() semantics, which returns an int.
-> This makes it more-or-less 1:1 snprintf() substitute in cases where it can
-> be done in general.
+Set cma_size to NULL in all calls to parse_crashkernel().
 
-And scnprintf() has been added because the return value of snprintf()
-isn't the one most code wanted.
+Signed-off-by: Jiri Bohac <jbohac@suse.cz>
+---
+ arch/arm/kernel/setup.c              |  2 +-
+ arch/arm64/mm/init.c                 |  2 +-
+ arch/loongarch/kernel/setup.c        |  2 +-
+ arch/mips/kernel/setup.c             |  2 +-
+ arch/powerpc/kernel/fadump.c         |  2 +-
+ arch/powerpc/kexec/core.c            |  2 +-
+ arch/powerpc/mm/nohash/kaslr_booke.c |  2 +-
+ arch/riscv/mm/init.c                 |  2 +-
+ arch/s390/kernel/setup.c             |  2 +-
+ arch/sh/kernel/machine_kexec.c       |  2 +-
+ arch/x86/kernel/setup.c              |  2 +-
+ include/linux/crash_reserve.h        |  3 ++-
+ kernel/crash_reserve.c               | 16 ++++++++++++++--
+ 13 files changed, 27 insertions(+), 14 deletions(-)
 
-I've looked through all the code that uses the result of hex_dump_to_buffer().
-The only code that needs the 'overflow' result is the test code.
-Everything else will work just the same if it returns the number of characters
-added to the buffer.
-The code in drivers/platform/chrome/wilco_ec/debugfs.c uses the return
-value without checking - hard to say whether the buffer is big enough (or whether
-the code has the required locking to allow for multiple readers.
+diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+index a41c93988d2c..0bfd66c7ada0 100644
+--- a/arch/arm/kernel/setup.c
++++ b/arch/arm/kernel/setup.c
+@@ -1004,7 +1004,7 @@ static void __init reserve_crashkernel(void)
+ 	total_mem = get_total_mem();
+ 	ret = parse_crashkernel(boot_command_line, total_mem,
+ 				&crash_size, &crash_base,
+-				NULL, NULL);
++				NULL, NULL, NULL);
+ 	/* invalid value specified or crashkernel=0 */
+ 	if (ret || !crash_size)
+ 		return;
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 9c0b8d9558fc..06bf216a4b0d 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -107,7 +107,7 @@ static void __init arch_reserve_crashkernel(void)
+ 
+ 	ret = parse_crashkernel(cmdline, memblock_phys_mem_size(),
+ 				&crash_size, &crash_base,
+-				&low_size, &high);
++				&low_size, NULL, &high);
+ 	if (ret)
+ 		return;
+ 
+diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
+index edcfdfcad7d2..ffdfb5407043 100644
+--- a/arch/loongarch/kernel/setup.c
++++ b/arch/loongarch/kernel/setup.c
+@@ -266,7 +266,7 @@ static void __init arch_reserve_crashkernel(void)
+ 		return;
+ 
+ 	ret = parse_crashkernel(cmdline, memblock_phys_mem_size(),
+-				&crash_size, &crash_base, &low_size, &high);
++				&crash_size, &crash_base, &low_size, NULL, &high);
+ 	if (ret)
+ 		return;
+ 
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index fbfe0771317e..11b9b6b63e19 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -458,7 +458,7 @@ static void __init mips_parse_crashkernel(void)
+ 	total_mem = memblock_phys_mem_size();
+ 	ret = parse_crashkernel(boot_command_line, total_mem,
+ 				&crash_size, &crash_base,
+-				NULL, NULL);
++				NULL, NULL, NULL);
+ 	if (ret != 0 || crash_size <= 0)
+ 		return;
+ 
+diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+index 4b371c738213..f90aaa2263aa 100644
+--- a/arch/powerpc/kernel/fadump.c
++++ b/arch/powerpc/kernel/fadump.c
+@@ -334,7 +334,7 @@ static __init u64 fadump_calculate_reserve_size(void)
+ 	 * memory at a predefined offset.
+ 	 */
+ 	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
+-				&size, &base, NULL, NULL);
++				&size, &base, NULL, NULL, NULL);
+ 	if (ret == 0 && size > 0) {
+ 		unsigned long max_size;
+ 
+diff --git a/arch/powerpc/kexec/core.c b/arch/powerpc/kexec/core.c
+index 58a930a47422..35f92427d282 100644
+--- a/arch/powerpc/kexec/core.c
++++ b/arch/powerpc/kexec/core.c
+@@ -66,7 +66,7 @@ void __init reserve_crashkernel(void)
+ 	total_mem_sz = memory_limit ? memory_limit : memblock_phys_mem_size();
+ 	/* use common parsing */
+ 	ret = parse_crashkernel(boot_command_line, total_mem_sz,
+-			&crash_size, &crash_base, NULL, NULL);
++			&crash_size, &crash_base, NULL, NULL, NULL);
+ 	if (ret == 0 && crash_size > 0) {
+ 		crashk_res.start = crash_base;
+ 		crashk_res.end = crash_base + crash_size - 1;
+diff --git a/arch/powerpc/mm/nohash/kaslr_booke.c b/arch/powerpc/mm/nohash/kaslr_booke.c
+index 5c8d1bb98b3e..5e4897daaaea 100644
+--- a/arch/powerpc/mm/nohash/kaslr_booke.c
++++ b/arch/powerpc/mm/nohash/kaslr_booke.c
+@@ -178,7 +178,7 @@ static void __init get_crash_kernel(void *fdt, unsigned long size)
+ 	int ret;
+ 
+ 	ret = parse_crashkernel(boot_command_line, size, &crash_size,
+-				&crash_base, NULL, NULL);
++				&crash_base, NULL, NULL, NULL);
+ 	if (ret != 0 || crash_size == 0)
+ 		return;
+ 	if (crash_base == 0)
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 15b2eda4c364..9634a800629b 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -1405,7 +1405,7 @@ static void __init arch_reserve_crashkernel(void)
+ 
+ 	ret = parse_crashkernel(cmdline, memblock_phys_mem_size(),
+ 				&crash_size, &crash_base,
+-				&low_size, &high);
++				&low_size, NULL, &high);
+ 	if (ret)
+ 		return;
+ 
+diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
+index d78bcfe707b5..4d9b5b5d0cb2 100644
+--- a/arch/s390/kernel/setup.c
++++ b/arch/s390/kernel/setup.c
+@@ -607,7 +607,7 @@ static void __init reserve_crashkernel(void)
+ 	int rc;
+ 
+ 	rc = parse_crashkernel(boot_command_line, ident_map_size,
+-			       &crash_size, &crash_base, NULL, NULL);
++			       &crash_size, &crash_base, NULL, NULL, NULL);
+ 
+ 	crash_base = ALIGN(crash_base, KEXEC_CRASH_MEM_ALIGN);
+ 	crash_size = ALIGN(crash_size, KEXEC_CRASH_MEM_ALIGN);
+diff --git a/arch/sh/kernel/machine_kexec.c b/arch/sh/kernel/machine_kexec.c
+index 8321b31d2e19..37073ca1e0ad 100644
+--- a/arch/sh/kernel/machine_kexec.c
++++ b/arch/sh/kernel/machine_kexec.c
+@@ -146,7 +146,7 @@ void __init reserve_crashkernel(void)
+ 		return;
+ 
+ 	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
+-			&crash_size, &crash_base, NULL, NULL);
++			&crash_size, &crash_base, NULL, NULL, NULL);
+ 	if (ret == 0 && crash_size > 0) {
+ 		crashk_res.start = crash_base;
+ 		crashk_res.end = crash_base + crash_size - 1;
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index cebee310e200..853afde761a7 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -481,7 +481,7 @@ static void __init arch_reserve_crashkernel(void)
+ 
+ 	ret = parse_crashkernel(cmdline, memblock_phys_mem_size(),
+ 				&crash_size, &crash_base,
+-				&low_size, &high);
++				&low_size, NULL, &high);
+ 	if (ret)
+ 		return;
+ 
+diff --git a/include/linux/crash_reserve.h b/include/linux/crash_reserve.h
+index 5a9df944fb80..a681f265a361 100644
+--- a/include/linux/crash_reserve.h
++++ b/include/linux/crash_reserve.h
+@@ -16,7 +16,8 @@ extern struct resource crashk_low_res;
+ 
+ int __init parse_crashkernel(char *cmdline, unsigned long long system_ram,
+ 		unsigned long long *crash_size, unsigned long long *crash_base,
+-		unsigned long long *low_size, bool *high);
++		unsigned long long *low_size, unsigned long long *cma_size,
++		bool *high);
+ 
+ #ifdef CONFIG_ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
+ #ifndef DEFAULT_CRASH_KERNEL_LOW_SIZE
+diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
+index a620fb4b2116..4969d60c00d6 100644
+--- a/kernel/crash_reserve.c
++++ b/kernel/crash_reserve.c
+@@ -172,17 +172,19 @@ static int __init parse_crashkernel_simple(char *cmdline,
+ 
+ #define SUFFIX_HIGH 0
+ #define SUFFIX_LOW  1
+-#define SUFFIX_NULL 2
++#define SUFFIX_CMA  2
++#define SUFFIX_NULL 3
+ static __initdata char *suffix_tbl[] = {
+ 	[SUFFIX_HIGH] = ",high",
+ 	[SUFFIX_LOW]  = ",low",
++	[SUFFIX_CMA]  = ",cma",
+ 	[SUFFIX_NULL] = NULL,
+ };
+ 
+ /*
+  * That function parses "suffix"  crashkernel command lines like
+  *
+- *	crashkernel=size,[high|low]
++ *	crashkernel=size,[high|low|cma]
+  *
+  * It returns 0 on success and -EINVAL on failure.
+  */
+@@ -298,9 +300,11 @@ int __init parse_crashkernel(char *cmdline,
+ 			     unsigned long long *crash_size,
+ 			     unsigned long long *crash_base,
+ 			     unsigned long long *low_size,
++			     unsigned long long *cma_size,
+ 			     bool *high)
+ {
+ 	int ret;
++	unsigned long long __always_unused cma_base;
+ 
+ 	/* crashkernel=X[@offset] */
+ 	ret = __parse_crashkernel(cmdline, system_ram, crash_size,
+@@ -331,6 +335,14 @@ int __init parse_crashkernel(char *cmdline,
+ 
+ 		*high = true;
+ 	}
++
++	/*
++	 * optional CMA reservation
++	 * cma_base is ignored
++	 */
++	if (cma_size)
++		__parse_crashkernel(cmdline, 0, cma_size,
++			&cma_base, suffix_tbl[SUFFIX_CMA]);
+ #endif
+ 	if (!*crash_size)
+ 		ret = -EINVAL;
 
-> 
-> > There were no tests for 'len == 0 && linebuflen == 0', with !ascii the
-> > existing hex_dump_to_buffer() even manages to return -1.
-> > (and the function than generates the 'test compare data' is also broken.)  
-> 
-> Then you can start with fixes of those?
-
-No one calls it like that.
-I could split it into multiple patches, but they don't overlap and it just
-makes more work for everyone.
-> 
-> > Note that libc snprintf() has the same return type as fprintf() which can
-> > be -1, but any code the looks at is probably broken!
-> > 
-> > So an unsigned return type it better.  
-> 
-> Maybe, but this will deviate from the prototype and use cases.
-
-The use cases all want a 'length' never an 'error'.
-Having an unsigned return type makes it absolutely clear that -1 (or -errno)
-won't be returned.
-It isn't the sort of function where you want to have to 'go through hoops'
-to write valid code.
-
-	David
-
+-- 
+Jiri Bohac <jbohac@suse.cz>
+SUSE Labs, Prague, Czechia
 
 
