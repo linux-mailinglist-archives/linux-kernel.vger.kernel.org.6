@@ -1,237 +1,174 @@
-Return-Path: <linux-kernel+bounces-558536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A31F9A5E750
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:24:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F73CA5E757
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:25:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D853616964B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:24:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB91618963ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18AF1F03E6;
-	Wed, 12 Mar 2025 22:24:31 +0000 (UTC)
-Received: from cosmicgizmosystems.com (cosgizsys.com [63.249.102.155])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47F71F098A;
+	Wed, 12 Mar 2025 22:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FDbJAAe1"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE5719E96D;
-	Wed, 12 Mar 2025 22:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.249.102.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F1219E96D;
+	Wed, 12 Mar 2025 22:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741818271; cv=none; b=RWI5g5SvrsVK+RRcAYehmR5paF6jqMidBQEcsvb8ifw426qcQda9tf2mrYrSn64t9U4fml1X5UZPkW6O0aaVgq4WT+EpCz9ltLnrFZxCGT9Rm0bJvbtGqAENzaBNFQd2qvHteGfcg5zaDd1SYXJDvhx0G3fjdKILEKVwkVmb01g=
+	t=1741818329; cv=none; b=XwTFqlLzfd6raBAaZqu1oohwJRNjpok6HTptAQYaxwQs6aiykyXVvw7mbejoreG/0AkQMxMGUE3ijh4HuA95wn+00Q7L0PcOXFIAqbt+aKortnhNE71yVvjI31L+E1KLG3zLzCGdLHl5syfpruulOB3YdxkQSg59aw9YJq+TkMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741818271; c=relaxed/simple;
-	bh=aKB6uJLD7Tj/jkqWr7UbVcwzSVHvViuFhCAApt4sCe8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mqfVRRwOOx8OEihvKJTBl8zfz1zzIOgJIdVcSlF4PNxm5FjwZ/Vo16Eb002tlxwBZH9HbpssrenPGFGVr5dt6pmYAkkRo7efwGzpQErq6BsacdK8kEltq48MC7ive6FeCjh8HG0fnYwBuZ42pUpkYsnQCEMkD5BLks+IDv+hgtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cosmicgizmosystems.com; spf=pass smtp.mailfrom=cosmicgizmosystems.com; arc=none smtp.client-ip=63.249.102.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cosmicgizmosystems.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cosmicgizmosystems.com
-Received: from terrys-Precision-M4600.hsd1.wa.comcast.net (c-71-63-147-217.hsd1.wa.comcast.net [71.63.147.217])
-	by host11.cruzio.com (Postfix) with ESMTPSA id B6B2428A6324;
-	Wed, 12 Mar 2025 15:24:20 -0700 (PDT)
-From: Terry Junge <linuxhid@cosmicgizmosystems.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Terry Junge <linuxhid@cosmicgizmosystems.com>,
-	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-input@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	lvc-project@linuxtesting.org,
-	syzbot+c52569baf0c843f35495@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH v2] HID: usbhid: Eliminate recurrent out-of-bounds bug in usbhid_parse()
-Date: Wed, 12 Mar 2025 15:23:31 -0700
-Message-ID: <20250312222333.2296363-1-linuxhid@cosmicgizmosystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250307045449.745634-1-linuxhid@cosmicgizmosystems.com>
-References: <20250307045449.745634-1-linuxhid@cosmicgizmosystems.com>
+	s=arc-20240116; t=1741818329; c=relaxed/simple;
+	bh=VXAHyoi6S/bte6WaCD/Pn5Ote/xnR2EBUMQ/zji8uZM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HMt1cuM0r69V48l1ofAtFoAdxBhrsh9UWPUZTbqPdJRxtM0EN9zNm6Q4qy7Iit4v/NNsI2A1HH+Ll4nkvsIR7nNH6Xb41osTAZvbB10715p3Ao6GfKfg5e5hWIEHwoX8Sfti828SbMDilf30Q9qoaWD40zFF21uK8EIGn4SbSzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FDbJAAe1; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bfd4d4c63so3672191fa.2;
+        Wed, 12 Mar 2025 15:25:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741818325; x=1742423125; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RQpIKnFqQqjnZqrWUgK5hmSZufspTpLTGHs2PYXqx+A=;
+        b=FDbJAAe1V8P31C6+Cb2eoC2aljsxNHsCQEezO/155K2uUla9org+AbbK8vTw30ysGt
+         UGXSHmu4C8MBQBFD8S2lHvfoaoHcirqPnua4tD9b1bquu4q8CTkEz2uW4/A3RnLjRf8P
+         lE+2la9n/y94lhiQHAilEwTkD7OMIctNixk35o8PdgDM75VkyuGMM+3xwvdvMHwZ0ptv
+         vJDB31L+eM1E4VUQNmUHd4aZmU1O+ChpJpofOmNN8tazohLIAVuSkD374i1RZCop4I2l
+         W5GKeujmJcna0i6wYLzizSrNbt9eiyO2ErZLEuPjmqMnrMX9oeK6n9tRy8QcF/tfTK3j
+         OtwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741818325; x=1742423125;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RQpIKnFqQqjnZqrWUgK5hmSZufspTpLTGHs2PYXqx+A=;
+        b=d/gZAszQhliEEk8OpockAdxgEmDT8HbQ8DExpZMFbePlyHMzfmyFzvsfjByN5bxhmc
+         Fs16xzYuVNtYBBNfR+HRzf1UpQrtcMP3WTMokddV05bpC8M+Vm3U04/oPnMZP0b53E/+
+         KR9cJeKMIJQl0gEbbAWokrAi8VrZO/aQI0ECFklsquTYtZQzMjLdyE9LOIqY2+aTM8g3
+         h2HBDqtDERAPOmCPTsR1WGTlzfaQ0Ab8LSAm4dK4TFV/3HGhilxKYfseWmCEt3CKCbCx
+         e0WBI46qyJoqOiWFu4JJz197bhezFI02oeSl0r0y7hKqjqksUgnFttW+0lKxI2P0bcWG
+         FSEA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Tna6cEVTRlGmOzOrR9/oIQCNM6edoldKS9TZQThvSYmaNyAF1vlmolhCm1hVQVtktBKO8tKKwaR8@vger.kernel.org, AJvYcCV4RIW7k5Xm0DIcK6YrBU7aAaFYXEeOqKphoes15iFFIu4fKn+Rzt8TEPEK/3OcJ6YcNl/p0as4UwjG@vger.kernel.org, AJvYcCVjdxCWSkTSgzRUnmJVkn67MxvlWo6f0yGgg6tO2FzcxOVFVYqeWdRLD9DqrZgyj7FkVlzqy/O2Bp+eSSXA@vger.kernel.org, AJvYcCVtDbS3DGvFTYR1Zz+UArbG2jXH1dezgd1xNNb9VD7A0znDfkPJ0U+iw7DilIHHfVRTGUKWu27Enr5UU1Y=@vger.kernel.org, AJvYcCW+OvXYOWXERNgnMAS4tB0qbjgPYOxCTaeLfMf50OOE1ReBRkIIFqqEkM9md17z6XTT9SfednIZVZR22v19Yq/s@vger.kernel.org, AJvYcCWcgrmaX2P/L/14kPM5rn8eHsViaRB5GXM8CnV7go6RZH/XdDoATqAchlnPzAk4oEoe6ooXduLZ2KTu9Fb7@vger.kernel.org, AJvYcCXdqCmRhc3lZybjtYCQxJ4yE/M7f4VISYOZVC392avc7DrTGr1u7ADQK2nF24VvYen97sWPM3G20I9Ef868psE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2olGBkxolvZk6CM9/9j7TN713ciS7p+vM/fa1jYfpgyusiMKv
+	w6mtixBQMmLlf5590FwuHeXevBkdef9abfe9ar5GGIT85MiGH0zlp422QOpvMFWemA0sakSVM5r
+	wWnHe1BWEbxT34YdvbCdmZ4ohL68=
+X-Gm-Gg: ASbGncvfDWaCJ4V2YeBh4bs7Xir90E1z1ZVRN3un+E/EfgimQhPwh7FXbr+Pr7wblRK
+	NvR3ldJpSyRWKSFSHX7Zk9yfds7XmafYpWZBtWMPFxMj2beQg6AS31f8ddpVfUurN2ze8CQjJ6k
+	jy3VbOHKKp2l4cxNPjHE8k90tj4PoRxZ/Ur84/AlifXg==
+X-Google-Smtp-Source: AGHT+IGKQgI9mHdQYDXn8YP8O+oMMjkLyXMRIC+V9diumKcyagJmgjCx2MUOMGSE+cXBt7MpiP4TDI26sRzoA7NpJk4=
+X-Received: by 2002:a05:651c:2209:b0:30b:c8b1:dd95 with SMTP id
+ 38308e7fff4ca-30c2069a33fmr34989931fa.22.1741818325120; Wed, 12 Mar 2025
+ 15:25:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com>
+ <D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me> <CAJ-ks9=zWAuPUM_61EA6i5QkUpwtNtsN8oF_MUerWGn39MRHhw@mail.gmail.com>
+ <D8EJM4CJ4HAN.1PB2YV8DB77V7@proton.me> <CAJ-ks9mo-H46Wwcu_LOvDy0ncwMR9ii74Fyf3OX-aWNnrZ397g@mail.gmail.com>
+ <CAJ-ks9kCgATKDE2qAuO3XpQfjVO2jGyq3D4sbUcVKyW6G1vuuQ@mail.gmail.com>
+ <D8EL9QFS1XNT.JBSMRXD4D7GT@proton.me> <CAJ-ks9=TRDg3g=NG7k97P_5jXpZ4K4v0DxrmJFR+uF0-3zJkXw@mail.gmail.com>
+ <CAJ-ks9=hAwOGtVv0zh9CcH7XOxjGnizvK1QOMAi8nKStocKr2Q@mail.gmail.com> <D8ELW7X9796K.2ZGJS34LDTHOP@proton.me>
+In-Reply-To: <D8ELW7X9796K.2ZGJS34LDTHOP@proton.me>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 12 Mar 2025 18:24:48 -0400
+X-Gm-Features: AQ5f1JrV0I808OxKHRnh7f5P8lP8791ez-Nxt_VvKYEi31EaPmsz0HYFkpYMAbo
+Message-ID: <CAJ-ks9k1gZ=tLSe6OjuKFgg6=QE5R_Ajo0ZJwZJp08_1LMiODw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Update struct hid_descriptor to better reflect the mandatory and
-optional parts of the HID Descriptor as per USB HID 1.11 specification.
-Note: the kernel currently does not parse any optional HID class
-descriptors, only the mandatory report descriptor.
+On Wed, Mar 12, 2025 at 5:30=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On Wed Mar 12, 2025 at 10:10 PM CET, Tamir Duberstein wrote:
+> > On Wed, Mar 12, 2025 at 5:04=E2=80=AFPM Tamir Duberstein <tamird@gmail.=
+com> wrote:
+> >>
+> >> On Wed, Mar 12, 2025 at 5:01=E2=80=AFPM Benno Lossin <benno.lossin@pro=
+ton.me> wrote:
+> >> > Always enable the features, we have `allow(stable_features)` for thi=
+s
+> >> > reason (then you don't have to do this dance with checking if it's
+> >> > already stable or not :)
+> >>
+> >> It's not so simple. In rustc < 1.84.0 the lints *and* the strict
+> >> provenance APIs are behind `feature(strict_provenance)`. In rustc >=3D
+> >> 1.84.0 the lints are behind `feature(strict_provenance_lints)`. So you
+> >> need to read the config to learn that you need to enable
+> >> `feature(strict_provenance_lints)`.
+>
+> I see... And `strict_provenance_lints` doesn't exist in <1.84? That's a
+> bit of a bummer...
+>
+> But I guess we could have this config option (in `init/Kconfig`):
+>
+>     config RUSTC_HAS_STRICT_PROVENANCE
+>             def_bool RUSTC_VERSION >=3D 108400
+>
+> and then do this in `lib.rs`:
+>
+>     #![cfg_attr(CONFIG_RUSTC_HAS_STRICT_PROVENANCE, feature(strict_proven=
+ance_lints))]
 
-Update all references to member element desc[0] to rpt_desc.
+Yep! That's exactly what I did, but as I mentioned up-thread, the
+result is that we only cover the `kernel` crate.
 
-Add test to verify bLength and bNumDescriptors values are valid.
+>
+> > Actually this isn't even the only problem. It seems that
+> > `-Astable_features` doesn't affect features enabled on the command
+> > line at all:
+> >
+> > error[E0725]: the feature `strict_provenance` is not in the list of
+> > allowed features
+> >  --> <crate attribute>:1:9
+> >   |
+> > 1 | feature(strict_provenance)
+> >   |         ^^^^^^^^^^^^^^^^^
+>
+> That's because you need to append the feature to `rust_allowed_features`
+> in `scripts/Makefile.build` (AFAIK).
 
-Replace the for loop with direct access to the mandatory HID class
-descriptor member for the report descriptor. This eliminates the
-possibility of getting an out-of-bounds fault.
+Thanks, that's a helpful pointer, and it solves some problems but not
+all. The root Makefile contains this bit:
 
-Add a warning message if the HID descriptor contains any unsupported
-optional HID class descriptors.
+> KBUILD_HOSTRUSTFLAGS :=3D $(rust_common_flags) -O -Cstrip=3Ddebuginfo \
+> -Zallow-features=3D $(HOSTRUSTFLAGS)
 
-Reported-by: syzbot+c52569baf0c843f35495@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c52569baf0c843f35495
-Fixes: f043bfc98c19 ("HID: usbhid: fix out-of-bounds bug")
-Cc: stable@vger.kernel.org
-Signed-off-by: Terry Junge <linuxhid@cosmicgizmosystems.com>
----
-v1: Remove unnecessary for loop searching for the report descriptor size.
-v2: Fix compiler warning.
-base-commit: 58c9bf3363e596d744f56616d407278ef5f97f5a
+which means we can't use the provenance lints against these host
+targets (including e.g. `rustdoc_test_gen`). We can't remove this
+-Zallow-features=3D either because then core fails to compile.
 
-P.S. This is an alternative to the solution proposed by Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Link: https://lore.kernel.org/all/20250131151600.410242-1-n.zhandarovich@fintech.ru/
+I'm at the point where I think I need more involved help. Want to take
+a look at my attempt? It's here:
+https://github.com/tamird/linux/tree/b4/ptr-as-ptr.
 
- include/linux/hid.h                 |  3 ++-
- drivers/usb/gadget/function/f_hid.c | 12 ++++++------
- drivers/hid/hid-hyperv.c            |  4 ++--
- drivers/hid/usbhid/hid-core.c       | 25 ++++++++++++++-----------
- 4 files changed, 24 insertions(+), 20 deletions(-)
-
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index cdc0dc13c87f..7abc8c74bdd5 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -738,8 +738,9 @@ struct hid_descriptor {
- 	__le16 bcdHID;
- 	__u8  bCountryCode;
- 	__u8  bNumDescriptors;
-+	struct hid_class_descriptor rpt_desc;
- 
--	struct hid_class_descriptor desc[1];
-+	struct hid_class_descriptor opt_descs[];
- } __attribute__ ((packed));
- 
- #define HID_DEVICE(b, g, ven, prod)					\
-diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
-index 740311c4fa24..c7a05f842745 100644
---- a/drivers/usb/gadget/function/f_hid.c
-+++ b/drivers/usb/gadget/function/f_hid.c
-@@ -144,8 +144,8 @@ static struct hid_descriptor hidg_desc = {
- 	.bcdHID				= cpu_to_le16(0x0101),
- 	.bCountryCode			= 0x00,
- 	.bNumDescriptors		= 0x1,
--	/*.desc[0].bDescriptorType	= DYNAMIC */
--	/*.desc[0].wDescriptorLenght	= DYNAMIC */
-+	/*.rpt_desc.bDescriptorType	= DYNAMIC */
-+	/*.rpt_desc.wDescriptorLength	= DYNAMIC */
- };
- 
- /* Super-Speed Support */
-@@ -939,8 +939,8 @@ static int hidg_setup(struct usb_function *f,
- 			struct hid_descriptor hidg_desc_copy = hidg_desc;
- 
- 			VDBG(cdev, "USB_REQ_GET_DESCRIPTOR: HID\n");
--			hidg_desc_copy.desc[0].bDescriptorType = HID_DT_REPORT;
--			hidg_desc_copy.desc[0].wDescriptorLength =
-+			hidg_desc_copy.rpt_desc.bDescriptorType = HID_DT_REPORT;
-+			hidg_desc_copy.rpt_desc.wDescriptorLength =
- 				cpu_to_le16(hidg->report_desc_length);
- 
- 			length = min_t(unsigned short, length,
-@@ -1210,8 +1210,8 @@ static int hidg_bind(struct usb_configuration *c, struct usb_function *f)
- 	 * We can use hidg_desc struct here but we should not relay
- 	 * that its content won't change after returning from this function.
- 	 */
--	hidg_desc.desc[0].bDescriptorType = HID_DT_REPORT;
--	hidg_desc.desc[0].wDescriptorLength =
-+	hidg_desc.rpt_desc.bDescriptorType = HID_DT_REPORT;
-+	hidg_desc.rpt_desc.wDescriptorLength =
- 		cpu_to_le16(hidg->report_desc_length);
- 
- 	hidg_hs_in_ep_desc.bEndpointAddress =
-diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
-index 0fb210e40a41..9eafff0b6ea4 100644
---- a/drivers/hid/hid-hyperv.c
-+++ b/drivers/hid/hid-hyperv.c
-@@ -192,7 +192,7 @@ static void mousevsc_on_receive_device_info(struct mousevsc_dev *input_device,
- 		goto cleanup;
- 
- 	input_device->report_desc_size = le16_to_cpu(
--					desc->desc[0].wDescriptorLength);
-+					desc->rpt_desc.wDescriptorLength);
- 	if (input_device->report_desc_size == 0) {
- 		input_device->dev_info_status = -EINVAL;
- 		goto cleanup;
-@@ -210,7 +210,7 @@ static void mousevsc_on_receive_device_info(struct mousevsc_dev *input_device,
- 
- 	memcpy(input_device->report_desc,
- 	       ((unsigned char *)desc) + desc->bLength,
--	       le16_to_cpu(desc->desc[0].wDescriptorLength));
-+	       le16_to_cpu(desc->rpt_desc.wDescriptorLength));
- 
- 	/* Send the ack */
- 	memset(&ack, 0, sizeof(struct mousevsc_prt_msg));
-diff --git a/drivers/hid/usbhid/hid-core.c b/drivers/hid/usbhid/hid-core.c
-index a6eb6fe6130d..f8b853180680 100644
---- a/drivers/hid/usbhid/hid-core.c
-+++ b/drivers/hid/usbhid/hid-core.c
-@@ -983,12 +983,11 @@ static int usbhid_parse(struct hid_device *hid)
- 	struct usb_host_interface *interface = intf->cur_altsetting;
- 	struct usb_device *dev = interface_to_usbdev (intf);
- 	struct hid_descriptor *hdesc;
-+	struct hid_class_descriptor *hcdesc;
- 	u32 quirks = 0;
- 	unsigned int rsize = 0;
- 	char *rdesc;
--	int ret, n;
--	int num_descriptors;
--	size_t offset = offsetof(struct hid_descriptor, desc);
-+	int ret;
- 
- 	quirks = hid_lookup_quirk(hid);
- 
-@@ -1010,20 +1009,19 @@ static int usbhid_parse(struct hid_device *hid)
- 		return -ENODEV;
- 	}
- 
--	if (hdesc->bLength < sizeof(struct hid_descriptor)) {
--		dbg_hid("hid descriptor is too short\n");
-+	if (!hdesc->bNumDescriptors ||
-+	    hdesc->bLength != sizeof(*hdesc) +
-+			      (hdesc->bNumDescriptors - 1) * sizeof(*hcdesc)) {
-+		dbg_hid("hid descriptor invalid, bLen=%hhu bNum=%hhu\n",
-+			hdesc->bLength, hdesc->bNumDescriptors);
- 		return -EINVAL;
- 	}
- 
- 	hid->version = le16_to_cpu(hdesc->bcdHID);
- 	hid->country = hdesc->bCountryCode;
- 
--	num_descriptors = min_t(int, hdesc->bNumDescriptors,
--	       (hdesc->bLength - offset) / sizeof(struct hid_class_descriptor));
--
--	for (n = 0; n < num_descriptors; n++)
--		if (hdesc->desc[n].bDescriptorType == HID_DT_REPORT)
--			rsize = le16_to_cpu(hdesc->desc[n].wDescriptorLength);
-+	if (hdesc->rpt_desc.bDescriptorType == HID_DT_REPORT)
-+		rsize = le16_to_cpu(hdesc->rpt_desc.wDescriptorLength);
- 
- 	if (!rsize || rsize > HID_MAX_DESCRIPTOR_SIZE) {
- 		dbg_hid("weird size of report descriptor (%u)\n", rsize);
-@@ -1051,6 +1049,11 @@ static int usbhid_parse(struct hid_device *hid)
- 		goto err;
- 	}
- 
-+	if (hdesc->bNumDescriptors > 1)
-+		hid_warn(intf,
-+			"%u unsupported optional hid class descriptors\n",
-+			(int)(hdesc->bNumDescriptors - 1));
-+
- 	hid->quirks |= quirks;
- 
- 	return 0;
--- 
-2.43.0
-
+Thanks!
+Tamir
 
