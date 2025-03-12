@@ -1,103 +1,102 @@
-Return-Path: <linux-kernel+bounces-558389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF9C7A5E534
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BADA5E536
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 869D01777B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:18:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C70B0177518
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348E91EC01F;
-	Wed, 12 Mar 2025 20:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4411EC01B;
+	Wed, 12 Mar 2025 20:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="opVjwjHW"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C951D5147;
-	Wed, 12 Mar 2025 20:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c10uLhiM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D131D5147;
+	Wed, 12 Mar 2025 20:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741810706; cv=none; b=GA/rQwI/+4+kGaGCtyfqGL8qEp7wDD75k/Zgye0i5yp1iFkCOGO/YQetamrXdPSAzTqHI4PGPXPz3WvpE0xpGfI/398haZklTiDuOJ/rYlPLOkm4sgdlYcq7H+WXjWmYRY4TAX30YYdtk1xMzuNpoWwW+iLhNalTz0VQiIMn8bI=
+	t=1741810774; cv=none; b=cBchHP7mBFAP5fhA/2vEInVhsEDhjd6rb2Ygz5KkymrAN/7ODI9I40YnNlxC8b3zG1oq2WZzNHMBQyxSN4dlAP0A4PfSsb53srQBBUZ5iFuNILXlIR0lcQruNCwIMBVvxZgvb/WGY7+yWKVp333l5SUJgl28HYzov7UWjCFgP/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741810706; c=relaxed/simple;
-	bh=pz/a8ZybWgnwBEZ2oost9LBHEmLLK5BCpdayrd/C8qw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=npLQ/zU1MRwX7ZH4VYCi6Kjw098RNWfg6toD7mLOANsWMGBrVWJnbMhoQfpXrqpOi7NCuY0NgLFGDw7LHEkXFEzt50HfdVgeeqmzmPaEw+xHGpHKvFHHGCnSB04KwTwxAFMJ+BZxgP/oHjNhSebJ4rWrSpXPq/Qma4q88FEhwT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=opVjwjHW; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 27F73210B158;
-	Wed, 12 Mar 2025 13:18:24 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 27F73210B158
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741810704;
-	bh=JIP94RdIzcPShqhb5Ttz2y0m5JI3DqpSY2PdMNKJqh0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=opVjwjHW1DYaqZGWtQyH7EhxeIM3Kho3KwKBgx7n/6GH/XYtwElfY1e7qAHlPhqHC
-	 sgS0P6cCSzwKt+aJ8KSdu9rflLngi86lSxWbISh3/KwxJMnrHg2raKMXakc5M9OQKY
-	 oVsV+EJUhLR5AuapTRuL9NI44ASp+MlPJRHraDNk=
-Message-ID: <dba492d0-8640-43c1-80b5-aa8bd1cd618f@linux.microsoft.com>
-Date: Wed, 12 Mar 2025 13:17:59 -0700
+	s=arc-20240116; t=1741810774; c=relaxed/simple;
+	bh=dP8j15QLVHCFzZENDuU3agpW/8W1hNls4T8B5Yzf/1c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jz4RLG5VKoavPvrEyAaI++d4qugdGvrAR5ORXgOGZahRAuT0qQNBDsPdp7LDFcIkMRRqg1i7VSrbX/ljYyzTpx/an84dz9ZyeIKlLR7GWhhMKnU4KCwQUV22io7zdJOvQiQDGlGryPvbPq9RzifRcewDtFb6Rk6V/HbuNV+E7X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c10uLhiM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0846FC4CEE3;
+	Wed, 12 Mar 2025 20:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741810774;
+	bh=dP8j15QLVHCFzZENDuU3agpW/8W1hNls4T8B5Yzf/1c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=c10uLhiMpHqHwE7ODWos3IqpFPyBUJ+KfUvijj0PEczyscybTbinIYiRp1LASzmcy
+	 5FL3iLGYUK28us2+DIUbKuds/JsC/iZ/GWCTrdAYh6IRsuHpsmSzJkeSVY8nwMZ3K8
+	 8r+OhG2RpiPwr7Ft37S8CZuSsDl1mRd+ev/V4I+tNa1xtoXIUVGfk7eJxjsCYbY80V
+	 QgxVx0OWrfGbmmQLjPruMDowgGr3/1/w1ADnVYKTFWPkDEMHHJFkR2oYM+skBWaBbO
+	 tPmOTY4ggYretfdttoTkN2MbYXc/Qqr3bWfYLt46HNX0bAcjIv/MOakwcvhzGBm3+W
+	 4klrE8ScBFdyA==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2b38896c534so154377fac.0;
+        Wed, 12 Mar 2025 13:19:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXVKTxfmqNrWnYXCB7UJ5AmiO6ERSgd15oiAd2aUz2LN72DW4jW4b/xukBcGBorkS3UGIO3P4zUc5HC7No=@vger.kernel.org, AJvYcCXkbVTa5TxP4Den6MTBHN3OJHf2nLkx/TQpS0stRyuDAEx6cW6uIbn2c43qbstmO7HkDly4q1KUH88=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYBEHcrBaAAL/wrme9lbNac9XgNCyzTNB9okiL72I7M3nEna8F
+	uekyuEUW6KQ+6oFziiRcA75BiHuY95ngaEzAj2vfUMlqg1GEHVRvlsvjyAqKEKi1mMWh65G38ym
+	vUccj4OFHedSaEI0wXotd2koJ3gU=
+X-Google-Smtp-Source: AGHT+IGPtIF9n8Q2zJiH5GLOWyfayshIf1MppX2HsgP9ODt5i6P6R9UmXD/Y4iQWdD9K8NuF29K1ZXcbQwiWtnigJ08=
+X-Received: by 2002:a05:6871:8416:b0:2c2:b18c:9be9 with SMTP id
+ 586e51a60fabf-2c2b18d470amr5236207fac.3.1741810773370; Wed, 12 Mar 2025
+ 13:19:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 09/10] hyperv: Add definitions for root partition
- driver to hv headers
-To: Tianyu Lan <ltykernel@gmail.com>
-Cc: linux-hyperv@vger.kernel.org, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org, kys@microsoft.com,
- haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com,
- decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
- joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
- jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
- ssengar@linux.microsoft.com, apais@linux.microsoft.com,
- Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
- gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
- muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
- lenb@kernel.org, corbet@lwn.net
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-10-git-send-email-nunodasneves@linux.microsoft.com>
- <CAMvTesB5dCD5Cx+CE8oPQ35OHC+C=tyXbHQ0BNxSABEFVK53Tg@mail.gmail.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <CAMvTesB5dCD5Cx+CE8oPQ35OHC+C=tyXbHQ0BNxSABEFVK53Tg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <9c8ff2b103c3ba7b0d27bdc8248b05e3b1dc9551.1741776430.git.geert+renesas@glider.be>
+In-Reply-To: <9c8ff2b103c3ba7b0d27bdc8248b05e3b1dc9551.1741776430.git.geert+renesas@glider.be>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 12 Mar 2025 21:19:22 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hOUHQeWYtJ2Nousa9C6Coi7W6njaXDCa_=vk0Rzo6=pw@mail.gmail.com>
+X-Gm-Features: AQ5f1JoQXdRNfRAL6c45dmkPkHvUFlBg-EBDerL3rMhug15BgJN_QHAryHC73xE
+Message-ID: <CAJZ5v0hOUHQeWYtJ2Nousa9C6Coi7W6njaXDCa_=vk0Rzo6=pw@mail.gmail.com>
+Subject: Re: [PATCH] PM: core: Fix indentation in dpm_wait_for_children()
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, 
+	Pavel Machek <pavel@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/10/2025 5:40 AM, Tianyu Lan wrote:
-> On Thu, Feb 27, 2025 at 7:11 AM Nuno Das Neves
-> <nunodasneves@linux.microsoft.com> wrote:
->>
->> A few additional definitions are required for the mshv driver code
->> (to follow). Introduce those here and clean up a little bit while
->> at it.
->>
->> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
->> ---
-> 
-> It may be better to unify data type u8, u16, u32, u64 or __u8, __u16,
-> __u32, __u64 in the hvhdk.h.
-> 
-Agreed, this was an oversight. They should all be the kernel types
-without the __ prefix.
+On Wed, Mar 12, 2025 at 11:47=E2=80=AFAM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> The body of dpm_wait_for_children() is indented by 7 spaces instead of a
+> single TAB.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/base/power/main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index e4103d29a21a6b2f..2fc37658b0b582e2 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -249,7 +249,7 @@ static int dpm_wait_fn(struct device *dev, void *asyn=
+c_ptr)
+>
+>  static void dpm_wait_for_children(struct device *dev, bool async)
+>  {
+> -       device_for_each_child(dev, &async, dpm_wait_fn);
+> +       device_for_each_child(dev, &async, dpm_wait_fn);
+>  }
+>
+>  static void dpm_wait_for_suppliers(struct device *dev, bool async)
+> --
 
-Thanks
-Nuno
-
-> Others like good.
-> 
-> Reviewed-by: Tianyu Lan <tiala@microsoft.com>
-> 
-
+Applied as 6.15 material, thanks!
 
