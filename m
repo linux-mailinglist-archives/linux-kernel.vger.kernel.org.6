@@ -1,154 +1,162 @@
-Return-Path: <linux-kernel+bounces-558007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E04A5E058
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:28:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5A1A5E059
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:29:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BE813B35AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:27:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C356018995AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2172505B7;
-	Wed, 12 Mar 2025 15:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144A524DFF8;
+	Wed, 12 Mar 2025 15:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cu6VBmQz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n/StN/63"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7628A15539A;
-	Wed, 12 Mar 2025 15:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A062419D087
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741793281; cv=none; b=Rro7s6uU5Ze92GDZ78F1jmPVS3ARheEAoT6DaAdayOGK/atWKkb4/RO3JYfEZsge1BpaVKxj2TOnBCc6hAr+v6oGjOQULFPKQteImKns58YaLl0GAdi1cCpvIA7fXP7dkIT1sepgri4BcwI9iPiAgpfQBNVEsXsWSZa1L/4Gsdg=
+	t=1741793344; cv=none; b=ohYbJtryhuFJ/kPHwx0Ut4MRcjG8FitXmcWebRiwm/UgwDhTCzmE0BYun6zGOU++AW5R0TwUh6NN4vLJzDfcWm8s8UP1VYXzsB3DzA4F6V9ZBxY9wLeP8ovJhwOZmr5LmM3c41/ZhhGcJdklKwkb5iWn3PiZpgaUxxAU2HL/aWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741793281; c=relaxed/simple;
-	bh=knZ+0Ki91XfMnnNBjvRtQYxda8bcVvsvaE8A+MwLFJY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=FzbGAAwJssFJ7w8MidavEdvnslrSgTt21OPoO2UKo3MB9cD2C4IQfKtLScq5wqYzZKw5qcCGTC8WFP3a/vIeyVzd9h2NiFIetNzlKGiSD57C1cZPQ7KmRT9gtSqSJa+7uyrSTS0j79HCG5/RtwaErQpGGDSibTwB/VjSYq4M5cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cu6VBmQz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1AD8C4CEDD;
-	Wed, 12 Mar 2025 15:28:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741793280;
-	bh=knZ+0Ki91XfMnnNBjvRtQYxda8bcVvsvaE8A+MwLFJY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=cu6VBmQz26ajpPamenktK8g8GX/gSYoIYgTmN5l+RfYdCJzKwBt7BzNIJbL84ItlK
-	 Jvl+nOahTBFgn9Ui++4b5xOD4aRvGcFb7GW7QP734hYNxsFkvRyBF0wlZs2Kb33SKC
-	 UklngiqgjbOxKFocLsWxCeQ/wrU8F67OzDIQ+X6Szr6EXP+9EB+dVIyPBFbcGdYrBj
-	 X6udwysXh1kU/fI1E0R05tiF6xDiWGbv5AMAE1EiGtklHkYzZHfwJ1UL9G3tnW7yrZ
-	 8ZdjlrgSMmdgKqGeChgl5Zxv8Uxisp7LGJX4oZ8hirmU4+Vm8TyeMQW6y9QDNZQURI
-	 wAoG3IGVVQuvw==
-Date: Wed, 12 Mar 2025 08:27:57 -0700
-From: Kees Cook <kees@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, jeffxu@chromium.org
-CC: akpm@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com,
- broonie@kernel.org, skhan@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, jorgelo@chromium.org, keescook@chromium.org,
- pedro.falcato@gmail.com, rdunlap@infradead.org, jannh@google.com
-Subject: Re: [RFC PATCH v1 2/2] mseal: allow noop mprotect
-User-Agent: K-9 Mail for Android
-In-Reply-To: <c867bff9-2293-4890-af46-8a797cf512c2@lucifer.local>
-References: <20250312002117.2556240-1-jeffxu@google.com> <20250312002117.2556240-3-jeffxu@google.com> <c867bff9-2293-4890-af46-8a797cf512c2@lucifer.local>
-Message-ID: <64B6294F-B059-4744-8548-89D7B519BE72@kernel.org>
+	s=arc-20240116; t=1741793344; c=relaxed/simple;
+	bh=GoJGCdF3oDbA7eULlsGOHzFmKcP6ZxsGi3iStEDY0S0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HhiM+72gFksLOz6bq0jsihSGNV+JAibYZKBpFWIf4h7HLIAJYHorvIo3BNuCxRbQsUiPeUAMa6v6Tjj4o4hisq0iKNFtf5teZ39qvojYGqqmIIBkMA1O0Q0IAR/bHw6sWwzDH0nOamNA1+zv2HlThMP78qpnnvvuqBn1wJdfudo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n/StN/63; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3913fdd003bso576f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:29:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741793341; x=1742398141; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GoJGCdF3oDbA7eULlsGOHzFmKcP6ZxsGi3iStEDY0S0=;
+        b=n/StN/63iRmLBmt9TbIsWaswPCegG/w0wJsN0EH50oUQRfa5L12cs5lqX5Ti+Y/4d2
+         elnTSIKV/RJQztLF4Bb+sv+Jlwyvi3EU9GDPdjqIzPqL2GFRZi/y8xb8UZmjpXSrZjtC
+         d5tcZSKnqsCmHanudsGD3Pv4YJF36H58lW12rpdGTIICPWWH5u6/f5YZuPhtvR3XWnLE
+         tvu/o4SpCm9zYZru4lbdNLwotI6CxLLUYuxAnEu6IcUy5GDazlpNvMW4x8UCnRrawE76
+         oR1lq5DzDwvKNLAwQ+vaxRDNB2O2JR6TFz4xk2WPpbG/NM479WREe8VTCJ7GE6wrG3Eu
+         OUjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741793341; x=1742398141;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GoJGCdF3oDbA7eULlsGOHzFmKcP6ZxsGi3iStEDY0S0=;
+        b=ZIi0LeauvG/M1peIf0xFLSClrOqVkET7DD/9m2wWXvTjMLgb75L0eya5mnglSeZcIP
+         x5kAcSGUNxQZUVBzke8jQeclYpL71ErcFIi70M0SYDzP7qvmqQzCdr7JLkAVl2XU+bLq
+         TcdaYVl5gyD9ozamUiqCaJmyojUL3K9j3xEfEo9mV8AM/CeHmpcSaDGur7SoZxgIjFZg
+         DzWrFtRjIk7USFfdW2vB7x7sNUSFtv6COUB9Bdgz2xcdTp1a0SU0b6hFSuN6dW7xWfBA
+         wtr7fkiy/QDPeA57VMdlk/HnJ+4dARf9/ZEgIuRtP2gfGfzhAH6W75HR8Q6rxGsJwQOw
+         ukBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUa39+GOeDkHUiIxLCxQSV80lMiDpop1EeZ/WW96ODdwQTsULqUu8bjsachkMbfESGpK2zZ0q0F19t9ZTI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo/u6prtXKv8/Y4vclgZDtPfLyzHbDot0vLaBlq7zKkvx6Cp4y
+	GE48islS6B77azM+ivqF5C5HXlQCKyIKT2FkebHwo9Z3zoOBWfIG5p/wuu1vSvNjTOmLopB/xFF
+	53EXEWRtnAwU460Q/QdIxYlw2CO9vdlMmnJLQvA==
+X-Gm-Gg: ASbGncvp4PQ7LI+WE1WcajZP4y+8xcuaF2UbNuE7Jek+qlzt77vrWqe0hbAmuK7mNa8
+	MfEBZcDQubOe2KGRDG/oYyfPbFzvRxFV3Kx8hjkbJCayc8qlMdGyI40B1GQxMES79yIlKe5Hqlq
+	pCZjHQP/YcdWg3rT9SoHAzgVesISo=
+X-Google-Smtp-Source: AGHT+IGw4bTsCNZeyHyE2bBo2kT2RvE7wgPFf4FL+k+G4SRUq7UKiAhEDf/H5m1+yHQGeBMie4MSyvCDJCGtPn4RUIg=
+X-Received: by 2002:a05:6000:1448:b0:38d:df15:2770 with SMTP id
+ ffacd0b85a97d-395633b59e0mr126422f8f.0.1741793340830; Wed, 12 Mar 2025
+ 08:29:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
+ <CACr-zFC=mPNeeHMp9XnSby+cMQaPWt_3s8iUiCN+EnVPeGad8Q@mail.gmail.com>
+ <uljqxwfgl26txrfqvkvzzpj6qurgmwcbuot7gu2u6rwjaqgncb@jeuyi4mexjff>
+ <CACr-zFDSFizYmrVN-dV334n1kq17UB9k4FxrV20NNQCQMhzrwg@mail.gmail.com>
+ <92dd35a2-d1cc-4f2b-b3a8-5752ec33b0d3@kernel.org> <CACr-zFCYWEFPO8yExp_8hOQdVtC9Zwu1ZOZNksSeyyS6Ht0e9A@mail.gmail.com>
+ <5ecb69c9-c877-4c91-a1ae-0ef59d0ee3d6@kernel.org>
+In-Reply-To: <5ecb69c9-c877-4c91-a1ae-0ef59d0ee3d6@kernel.org>
+From: Christopher Obbard <christopher.obbard@linaro.org>
+Date: Wed, 12 Mar 2025 16:28:49 +0100
+X-Gm-Features: AQ5f1JrsTOrUVQk8MQpv1Smb_EIlMCLrXov_OVBk2xwC6hUgiuoRDMUNqMw387s
+Message-ID: <CACr-zFAMa3Awx16avbXNMRhkELFkEZedZfHVCFuFc4fitWFL4w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm interconnects as built-in
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Krzysztof,
 
-
-On March 12, 2025 6:49:39 AM PDT, Lorenzo Stoakes <lorenzo=2Estoakes@oracl=
-e=2Ecom> wrote:
->On Wed, Mar 12, 2025 at 12:21:17AM +0000, jeffxu@chromium=2Eorg wrote:
->> From: Jeff Xu <jeffxu@chromium=2Eorg>
->>
->> Initially, when mseal was introduced in 6=2E10, semantically, when a VM=
-A
->> within the specified address range is sealed, the mprotect will be reje=
-cted,
->> leaving all of VMA unmodified=2E However, adding an extra loop to check=
- the mseal
->> flag for every VMA slows things down a bit, therefore in 6=2E12, this i=
-ssue was
->> solved by removing can_modify_mm and checking each VMA=E2=80=99s mseal =
-flag directly
->> without an extra loop [1]=2E This is a semantic change, i=2Ee=2E partia=
-l update is
->> allowed, VMAs can be updated until a sealed VMA is found=2E
->>
->> The new semantic also means, we could allow mprotect on a sealed VMA if=
- the new
->> attribute of VMA remains the same as the old one=2E Relaxing this avoid=
-s unnecessary
->> impacts for applications that want to seal a particular mapping=2E Doin=
-g this also
->> has no security impact=2E
->>
->> [1] https://lore=2Ekernel=2Eorg/all/20240817-mseal-depessimize-v3-0-d8d=
-2e037df30@gmail=2Ecom/
->>
->> Fixes: 4a2dd02b0916 ("mm/mprotect: replace can_modify_mm with can_modif=
-y_vma")
->> Signed-off-by: Jeff Xu <jeffxu@chromium=2Eorg>
->> ---
->>  mm/mprotect=2Ec | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/mm/mprotect=2Ec b/mm/mprotect=2Ec
->> index 516b1d847e2c=2E=2Ea24d23967aa5 100644
->> --- a/mm/mprotect=2Ec
->> +++ b/mm/mprotect=2Ec
->> @@ -613,14 +613,14 @@ mprotect_fixup(struct vma_iterator *vmi, struct m=
-mu_gather *tlb,
->>  	unsigned long charged =3D 0;
->>  	int error;
->>
->> -	if (!can_modify_vma(vma))
->> -		return -EPERM;
->> -
->>  	if (newflags =3D=3D oldflags) {
->>  		*pprev =3D vma;
->>  		return 0;
->>  	}
->>
->> +	if (!can_modify_vma(vma))
->> +		return -EPERM;
->> +
->>  	/*
->>  	 * Do PROT_NONE PFN permission checks here when we can still
->>  	 * bail out without undoing a lot of state=2E This is a rather
->> --
->> 2=2E49=2E0=2Erc0=2E332=2Eg42c0ae87b1-goog
->>
+On Wed, 12 Mar 2025 at 12:34, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
->Hm I'm not so sure about this, to me a seal means 'don't touch', even if
->the touch would be a no-op=2E It's simpler to be totally consistent on th=
-is
->and makes the code easier everywhere=2E
+> On 12/03/2025 12:10, Christopher Obbard wrote:
+> > Hi Krzysztof,
+> >
+> > On Wed, 12 Mar 2025 at 09:56, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >>
+> >> On 11/03/2025 20:15, Christopher Obbard wrote:
+> >>> Hi Dmitry,
+> >>>
+> >>> On Tue, 11 Mar 2025 at 19:58, Dmitry Baryshkov <lumag@kernel.org> wrote:
+> >>>>
+> >>>> On Tue, Mar 11, 2025 at 07:10:06PM +0100, Christopher Obbard wrote:
+> >>>>> I sent this patch to start the discussion, some things I found:
+> >>>>>
+> >>>>> 1) Some interconnects are missing from arm defconfig. Should they be =y too ?
+> >>>>
+> >>>> No, unless those are required for the UART console.
+> >>>
+> >>> OK, that makes sense. FWIW the cryptic (to me, at least) commit log on
+> >>> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6eee808134ecf1c1093ff1ddfc056dc5e469d0c3
+> >>> made me think that the interconnects should be built-in on all devices.
+> >>>
+> >>> Of course, the real problem here is RB3gen2 not actually finding the
+> >>> UFS/eMMC device due to no interconnect driver.
+> >>> Until now, I have been building that into the kernel. I will
+> >>> investigate instead shoving into the initrd (in both debian and
+> >>> fedora) which should solve my issue and render this patchset useless.
+> >>
+> >> For Qualcomm platforms you are expected to always have initramfs, thus
+> >> you will have the modules for UFS/eMMC mounts. I don't understand the
+> >> problem which you were trying to solve.
+> >>
+> >> The interconnects were built in *only* because of need for serial
+> >> console. Only.
+> >
+> > Thanks for confirming. It is all clear now.
+> >
+> > Consider this patch dropped from my side.
+> >
+> > For reference, I am working on updating initramfs generation tools in
+> > Debian/Fedora to include the required interconnect modules. Currently
+> > the interconnect drivers are built as modules in these distros, but
+> > are not included in the initrd. That is where my confusion initially
+> > stemmed from.
 >
->Because if we start saying 'apply mseal rules, except if we can determine
->this to be a no-op' then that implies we might have some inconsistency in
->other operations that do not do that, and sometimes a 'no-op' might be
->ill-defined etc=2E
+> Sure. This defconfig is anyway for us - developers, not for the distros
+> to use directly. Distros have much bigger configs and use almost
+> everything as module.
 
-Does mseal mean "you cannot call mprotect on this VMA" or does it mean "yo=
-u cannot change this VMA"=2E I've always considered it the latter since the=
- entry point to making VMA changes doesn't matter (mmap, mprotect, etc) it'=
-s the VMA that can't change=2E Even the internal function name is "can_modi=
-fy", and if the flags aren't changing then it's not a modification=2E
+Completely agree - my usual workflow is to build with the kernel's
+defconfig (disto config is generally huge) and install the resulting
+kernel into my Debian image.
 
-I think it's more ergonomic to check for _changes_=2E
+Installing a kernel built with `make bindeb-pkg` then calls
+update-initramfs to create the initrd - which then should pack the
+RIGHT modules needed for loading storage/network boot/etc into the
+initrd. In this case it simply didn't yet copy that module into the
+initrd in Debian, so I will sort it out in the distro space ;-).
 
--Kees
+We can likely stop this discussion now as it's clear to everyone
+what's going on I think.
 
---=20
-Kees Cook
+Thanks,
+
+Chris
 
