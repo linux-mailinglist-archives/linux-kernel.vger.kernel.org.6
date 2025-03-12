@@ -1,99 +1,128 @@
-Return-Path: <linux-kernel+bounces-557940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACDA9A5DF93
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:59:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9415A5DF97
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:59:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791883B97BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:58:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA0F51894E84
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB6F24E002;
-	Wed, 12 Mar 2025 14:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D980224EF9A;
+	Wed, 12 Mar 2025 14:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sAbZoGCA"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="joa9ZSch"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0259F24500F;
-	Wed, 12 Mar 2025 14:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA65324E01A;
+	Wed, 12 Mar 2025 14:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741791544; cv=none; b=jzqUS2U3KDqI4yKp48HZxWnB7HkkwFyWunQ0kqApAlQ8NZrALPvAqMJkjHRJLF/Fl65M8iJrO7+LstAGKTgaMrl67yHLvFANaRi14MBNTepZJCRpJXDC6As8yHxxbkxUVc2dUCkaiuwvc5R3dbbsQzhb1QJn6VzAsoXiVv1EOeg=
+	t=1741791559; cv=none; b=sbv5J1QpU0T9edeKUNlYATylgTGaO1s2MIkW0Fpl9ZJW0umxq/5asTK1EPgts0QEbJNsNxSPKkLUS5vGtZ5GL58fxdbjOQvFYgnYcdEWhTRWs8Z1I0bLB0oY0i+HMkk54HPzNnM3RrVzrQ9f4NmwQ33f+jT+ElF2BGOYGxIA2Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741791544; c=relaxed/simple;
-	bh=rqtsorVxeT/UcYbtW74hOajsi/kKskf3UdlHs8QdsIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aPcEu7Y4M2bEMpJrRRnQWGcO6wEmgLWuSy9wCBo0c684N/WLmsfFVWF1d2v09TU+u9tLJuykcf+E/38p4Nyc9mb2QJK1svlJH5hRD2YatbHVLTbObQ2TlAbTQ6BJx9JkHEpD38SDvfCf1CMRqGKGW4jWx4ylw5PxixjQRXiT9Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sAbZoGCA; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=+T/w2/VBo7X+S3ivNqnFFzhypZQMklkKS536n+tlnR0=; b=sAbZoGCAsXA1U0VGKX4h7NMH5y
-	BxIMWJFCCoxUos0ItYNQvQh2ZgR13vyahlJ7AkASJFxCxweNjM6Vlb/PKwrv7PnN+mrWvoEkhkcYR
-	ZMgmm/SBTTilJ4p4gHbDFHA4IunP+alIVPwJUYSs1BFdr7f81QijJv+8S39IOGD1l5O4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tsNXp-004hII-20; Wed, 12 Mar 2025 15:58:53 +0100
-Date: Wed, 12 Mar 2025 15:58:53 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"Simek, Michal" <michal.simek@amd.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"git (AMD-Xilinx)" <git@amd.com>,
-	"Katakam, Harini" <harini.katakam@amd.com>
-Subject: Re: [PATCH net-next V2 2/2] net: axienet: Add support for 2500base-X
- only configuration.
-Message-ID: <34ed11e7-b287-45c6-8ff4-4a5506b79d17@lunn.ch>
-References: <20250312095411.1392379-1-suraj.gupta2@amd.com>
- <20250312095411.1392379-3-suraj.gupta2@amd.com>
- <ad1e81b5-1596-4d94-a0fa-1828d667b7a2@lunn.ch>
- <Z9GWokRDzEYwJmBz@shell.armlinux.org.uk>
- <BL3PR12MB6571795DA783FD05189AD74BC9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1741791559; c=relaxed/simple;
+	bh=1fAEBoQ5LalZFGrdcJXD/IgKT7X7kSFr8XH/ZV5q5ss=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=AwtkkKQKQpbVNj+ifzHIVP23tLrj6vDMdWrwDfwwI5yBdltm2xbz+hMdwo7hfOJ1IH2HmwLRgGYoshEOua7F9l0kk3cGES4vwWt+2rCJ9NybtW67yB1ABBD9e4J/t7uLJ02JIwxaPgkGIkmd+jj5/doFM0ROp+uOoKY8fDP91z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=joa9ZSch; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so154060466b.3;
+        Wed, 12 Mar 2025 07:59:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741791556; x=1742396356; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vY4Awnn/aaB5x1WDx2/xkXk1nHfjl1OEmOE4k5LCiu4=;
+        b=joa9ZSchgS9ztNAFPI7jOXyZBBSg1SzMXTKAISp9bQTYhwFq/n8iKloJrUzS3thaSv
+         H6AzYXb3sBVAU9L49RFYsQhBBWnTEePdPU/oX+EqcoN8kJSDeF67qvvfUm9otL7H45K4
+         YDGy/iD86qIsJOxIzZWt8YsQAqwubFrlK7RFfQMU2WCvYYvVkBQGcntWcvnjuouZKIHp
+         eo4Pubi+we1Jz/QlGa9oN8Hz+fYx201rsJ7g6+uQOJohdnsjFsGyBBNS1mqA0QcOZ+Nl
+         PM0sv5Tkz4N6Wcf+YRW2xU3NrAC3MVwsQZMZUnwhZFFqUdXCvXquAJFOozcd2JsdwQZD
+         K7Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741791556; x=1742396356;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vY4Awnn/aaB5x1WDx2/xkXk1nHfjl1OEmOE4k5LCiu4=;
+        b=NUOI5IfSyx53FSqtIIXDgY5l/LkDvb5HU3dpahne0eOeAtmBHuW8Fn3r0fVptVZ6Nw
+         JcuDngZFJ6VADwDKVc4I69rQNHQJzvMsccKjlYGDZ9n3QXmhfggrmhdP2H9y/3qDPV/d
+         oNMGbDcO7atgOxHnrsy5lsm1K8BNu6P/kZBoywRaaTUMigOSaQvPMD1WVqoofgOgMqOx
+         MvnOPlztK5mdWwgX9xwacawlQIya7MoiUKkudRDtwiRcJL9RXkw/FZiSyTTL2v+RZ1/W
+         +81kSizuvvT5G3jbAxjPeW301zsV4fr7fpE3UxDixAY+BDRRtUYHNecteRmCrmdD3J5Y
+         7iYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoiNXSuWwng61YXp1DKATH8uQoOyE7PnIhhMbcXKKmDclC7fgzkPUUQ9QW8Ue+D6SNgBjRyvyYYz07iLk=@vger.kernel.org, AJvYcCVJSBAWeeMZMe6GM6mjOcdreMWGE4dLlK15KqvI0/tgCf4qfi17VYorytnCa/uoaaP6FPIcBT5fZYp9GPFFM1MYnEw=@vger.kernel.org, AJvYcCWul3R+hNyvw8phmeKoXvXcWbs7yhg8RwtCo140v5g/2m+5hIanWH7LKGGC1E40kGBoKwsqWjuMioY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrCoTQrg7ri03+NEefcbHgQDie0awX7+APAQKwxZqS3ypACLP3
+	Gv6ii3jO78z5Gr7N5EiMDrZUcHKGvCieWgDKt/FXRNLyz7A1iaII31Ksyhm2WwlKflElC5v0MJq
+	TWyEB6rqT3CLYzcQqN67maY6RtHs=
+X-Gm-Gg: ASbGncsmOcO5xJ097VWgAFI/HzQsrOR9zIN9pg3nlkf0R/E57B7dpSb4n7WKxpFwLry
+	HJBo04UkOkonNH0dTVoGtM0ydGrfAaLIOSnDES7S9kr4vkfUtpVoA1Qh4AHXLnUlnsFjMieFb7j
+	J6k7gUfwnLT+9oaapRM5jOWEG0qA==
+X-Google-Smtp-Source: AGHT+IGiPv/RqZONre6oHaSE9PreL8gyCQ96Y/2k8z7w+Ar336UjLvC65ewlUy5TkAYOXML/OLtyjwmp9Al5GI6HvRc=
+X-Received: by 2002:a17:907:9691:b0:ac2:166f:42eb with SMTP id
+ a640c23a62f3a-ac25259836dmr2972251766b.2.1741791555675; Wed, 12 Mar 2025
+ 07:59:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BL3PR12MB6571795DA783FD05189AD74BC9D02@BL3PR12MB6571.namprd12.prod.outlook.com>
+References: <20250310143450.8276-1-linux.amoon@gmail.com> <20250310143450.8276-2-linux.amoon@gmail.com>
+In-Reply-To: <20250310143450.8276-2-linux.amoon@gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 12 Mar 2025 20:28:58 +0530
+X-Gm-Features: AQ5f1Jo-jjPkEoei21awrWrKjHVJPFPfCS1Ru_y01gNm4hp5leBwMNi4MCMjL_w
+Message-ID: <CANAwSgRcuMZTrdn27qdEkZF33cQ4RemjExs5eySO-CMv3Qq6eg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] drivers/thermal/exynos: Refactor clk_sec
+ initialization inside SOC-specific case
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, 
+	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-> > On Wed, Mar 12, 2025 at 02:25:27PM +0100, Andrew Lunn wrote:
-> > > > +   /* AXI 1G/2.5G ethernet IP has following synthesis options:
-> > > > +    * 1) SGMII/1000base-X only.
-> > > > +    * 2) 2500base-X only.
-> > > > +    * 3) Dynamically switching between (1) and (2), and is not
-> > > > +    * implemented in driver.
-> > > > +    */
+Hi All,
 
-> - Keeping previous discussion short, identification of (3) depends
-> on how user implements switching logic in FPGA (external GT or RTL
-> logic). AXI 1G/2.5G IP provides only static speed selections and
-> there is no standard register to communicate that to software.
+On Mon, 10 Mar 2025 at 20:05, Anand Moon <linux.amoon@gmail.com> wrote:
+>
+> Refactor the initialization of the clk_sec clock to be inside the
+> SOC_ARCH_EXYNOS5420_TRIMINFO case. It ensures that the clk_sec clock
+> is only initialized for the specified SOC and not for other SOCs,
+> thereby simplifying the code. The clk_sec clock is used by the TMU
+> for GPU on the Exynos 542x platform.
+>
+> Removed redundant IS_ERR() checks for the clk_sec clock since error
+> handling is already managed internally by clk_unprepare() functions.
+>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
-So if anybody has synthesised it as 3) this change will break their
-system?
+On Exynos4412 Odroid U3 uses the clocks name
+      clock-names = "tmu_apbif";
 
-	Andrew
+On Exynos5422 Odroid XU4 uses the clocks name
+       clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+
+So Exynos 5433 and Exynos7  SoC use the clocks name
+      clock-names = "tmu_apbif", "tmu_sclk";
+
+As per my understanding, there could be a common case for GPU clock in
+TMU driver
+which could simplify the code, any thoughts
+
+-----------------------8<-------------------------------------
+switch (data->soc) {
+        case SOC_ARCH_EXYNOS5420_TRIMINFO:
+        case SOC_ARCH_EXYNOS5433:
+        case SOC_ARCH_EXYNOS7:
+
+Thanks
+-Anand
 
