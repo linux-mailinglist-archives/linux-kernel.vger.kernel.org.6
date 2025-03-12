@@ -1,124 +1,114 @@
-Return-Path: <linux-kernel+bounces-558319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08CCAA5E452
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:24:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADBAFA5E453
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BB6B17B524
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:24:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F180B17B6F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A787425744E;
-	Wed, 12 Mar 2025 19:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A702580D0;
+	Wed, 12 Mar 2025 19:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H84PZIOY"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IOnu/wBr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954EB1CF96
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 19:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8094F1CF96;
+	Wed, 12 Mar 2025 19:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741807466; cv=none; b=BHRXX+CbjNdM6jeU3yf1JF8WEizxilS1GpnEpG+cyKuwfq8/6rEZT7uLXJqo5qbKN0xyBKhqPrVpnAGby0hwvYcQmhhA2dISBJXxkWKBuTJonbY1xPCCtQCGTD/EXe8JmA4RYh0wqGGfpDDn88m4YUigir09FZIFHK8YwjZGs94=
+	t=1741807544; cv=none; b=qqio9kyyBIV3vZQn5j2CTMfOXUHpp6a8BEnuRoLaN0y3Ft7LCv07FacK1rYwGGGV1o41fN0HTHmogT6Rbj2M+i/D31P3acGv38Qux6jJcT3W7aankT8PjSAYwoYok5rnUhfDx+xdcGk/gNnpCUGhj47D3hktoEwwXyQ0kAAEkqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741807466; c=relaxed/simple;
-	bh=ecx/mALSmVD3DKmAP7pAnfHpiGaII93VAa1nLItOJZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tnc8JLfAG4TtSaCXZK+7tduxq1rvCS4PnlewxNDMrvDa+ePy/C4k+3/ozvmXN+FDEecNkhFSPLp+5nyxyv1OVAEr0iYZ6DxxY1uHYdbFnEndQcctQI62K5rwC87GcltgS9tEuiL7NeYp2RhxLwuUULFicy4L//CxRNCKYZ42vL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H84PZIOY; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-47666573242so2061cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:24:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741807463; x=1742412263; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ecx/mALSmVD3DKmAP7pAnfHpiGaII93VAa1nLItOJZU=;
-        b=H84PZIOYBpR/38okdFGp4sD/Z/w4crMrfFciVhJE3Je55PuN0Rgn3Zd6yZm53hqlth
-         ykKw2wK37ItAZExpqEK2V+BaFHa31Z/h/tcu0jgKn9+wiZ+ZCCC9xCo+khuUbv8SFJME
-         fzdG0xcsfpSyPFooIidJTmh9a5ewflHCaJmWA2EottV+twSk89wU7jnNo8QDJJ5p+Uya
-         Wg/XuxPKDnCyfIMCLnKgh9EVZU8+ADIMVuGtQhoFvOyLjedvP3u1mKOtrgV1zOhN+POp
-         ZXv6HSPSULmTJYRZMMbQ/XMDITM3FgXpQzRP+h/zzTpvwMhRxRO+SH6ZvplWbf3XMVYW
-         D4Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741807463; x=1742412263;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ecx/mALSmVD3DKmAP7pAnfHpiGaII93VAa1nLItOJZU=;
-        b=UKKKuPBg0ttaFiXakHQZ96ZEcyPYK5ELn/rH1M94zlN6pm21xdjCJzUpVm6gJQYKlN
-         Gl28nRUytmfviyu+TnqGji3ZW6V5/9KYX6VAd0cd74kMImFuFeEs6cEK95Sd8W8222jz
-         q51ZB6YbxX7UG7Lk88sNwyiOu4OMjVsBkZz8dWKrGBpFfHxGepYpomPR5qj4mVX1/6W0
-         /VxSNIanKKNtwSVPqk3qxBCqLCsbaK972ki+XZC3C5GhRMsIXfSqYzpVWEFreFOkUcoY
-         65J+NbrCQcr8zoxi4h7CeJ7lyCqXzo3rsa3D+REPMiTuTccV1OLXWGqK+vaUqc5GkKB4
-         KM0A==
-X-Forwarded-Encrypted: i=1; AJvYcCX6oKTS1cn2/XuHZH1/fED7ZqAnS/1envQbqCcrHb9XFudP3bE0OXtnVTJoKa76EazVXjrmZAxW/qzzz64=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTroC5Tk0ghIt+Vn1qP3dHt52QwB3h4fnfxhKDQRe3rothjP8q
-	Wp053pusSUSGuxgAJgOMJyjCT46s0zF/bTFdhe8s6DrGIfHE5rAlEYslHkh0QFpLUs4yil4/EBQ
-	1tzWs+O9R3t4FIHblukCq0o4wxj7AC9smNzocbN+hoBtGL73PVTHMh+F79w==
-X-Gm-Gg: ASbGnct4gALZbfPEY9aFxdYb2+hL1d9Wu++yG2gj6opeGX9j5XZ7SuOBBNMbaVhrXIn
-	EZPy/dPoEs0F83m1kyrTIVoSJBZBMje5k0en+jjpG4fZvoqlb/FHwDwD8Xoth6jveh9/MfcbQt1
-	/JtbfwmQVf9/Bx5O4Okz1v8kMdYVk=
-X-Google-Smtp-Source: AGHT+IFi/q9MFA3vtQeN5S+4jf9qTPaP1gNHs88A725CYYOt3oXTiJuZVjsnhi0G1yHpHdPQ9lXwcZ7WVHFI2v8Bva8=
-X-Received: by 2002:a05:622a:1898:b0:474:b32b:8387 with SMTP id
- d75a77b69052e-476b924b409mr308821cf.4.1741807463259; Wed, 12 Mar 2025
- 12:24:23 -0700 (PDT)
+	s=arc-20240116; t=1741807544; c=relaxed/simple;
+	bh=fy3R2fOQj+oEKlbaGBCNURzWpqtJgy8zdkZEUZFK1Jk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g8gvmpwN7GVO5hDmFHTcCm9Va5wayv8xN0kKU+B6xsQBX6p07sGrAEkKnWvg8v5tTWA80x7s1B7B631JEvoODh7w4FRXwNT8yQqV5bTbJjFIjRsFg8CtDeXZnWenXM1EmcZiT7QNsEfHvtXfrKWwHKhwxDliC19wcSQZxdydhgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IOnu/wBr; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741807543; x=1773343543;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fy3R2fOQj+oEKlbaGBCNURzWpqtJgy8zdkZEUZFK1Jk=;
+  b=IOnu/wBrvqceHInQKZM+Vy48c8CgqUVKxChDNzNamXIM7fUHLclpTB9l
+   Owd5osxQu1KTEu6W5iHaOnuYgpz0z6Bb6dujHcHUXEzxfbTxT1UFgNj5v
+   ndECm72bG/QbLwNelKtjwWdyXmFkBY0US9+hEIexBhHkbwJAjpnIwu8/e
+   fXVz0EP+wLPaTuiPlpi4lxEWwFOuG1ER3Eb84bHEyDo9DJ+1rq0V2NxNi
+   w1G6xp8g44fTGCQK2DA+G4GxcWmubl3DoI9XlxI/S0Lidq/bkugc5VEe/
+   rFMaGapUF27rgGrl5K/BlKOgZNsygBnfnrGJpXd0blSiQNob4SwZAefgp
+   Q==;
+X-CSE-ConnectionGUID: dlq64jMsQyK3XNqLpfEn8w==
+X-CSE-MsgGUID: Di028o8JRiqG3AmIodrrKg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42781136"
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="42781136"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 12:25:41 -0700
+X-CSE-ConnectionGUID: sDuS5t/lTM2aTM083jMVcw==
+X-CSE-MsgGUID: IpVfOIAfRzqYGnciYCfUEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="121227082"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP; 12 Mar 2025 12:25:39 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 3EC641F2; Wed, 12 Mar 2025 21:25:37 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/1] =?UTF-8?q?media:=20v4l2-core:=20Replace=20the=20ch?= =?UTF-8?q?eck=20for=20firmware=20registered=20I=C2=B2C=20devices?=
+Date: Wed, 12 Mar 2025 21:24:43 +0200
+Message-ID: <20250312192528.95838-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310074044.3656-1-wuyun.abel@bytedance.com>
- <20250310074044.3656-3-wuyun.abel@bytedance.com> <CABk29Ns9wq+mB5mAfu72gi3RZkNdwzXmkZSq3FQpKkTEH23dgw@mail.gmail.com>
- <2c8c4cdb-e9b7-40f3-aa83-d82676641162@bytedance.com>
-In-Reply-To: <2c8c4cdb-e9b7-40f3-aa83-d82676641162@bytedance.com>
-From: Josh Don <joshdon@google.com>
-Date: Wed, 12 Mar 2025 12:24:11 -0700
-X-Gm-Features: AQ5f1Jr9n7TR6Ts3EAz5r0r6TLvUUFtBJsR-Pz3KBukznmMG62b9WL7nfJy9Yu4
-Message-ID: <CABk29Ntuzux+AYEhuDO0EPKEupAEsQ+=OwfSi8VrtUmUXZbHEQ@mail.gmail.com>
-Subject: Re: Re: [RFC PATCH 2/2] sched/fair: Do not specialcase SCHED_IDLE
- cpus in select slowpath
-To: Abel Wu <wuyun.abel@bytedance.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Tianchen Ding <dtcccc@linux.alibaba.com>, 
-	"open list:SCHEDULER" <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 11, 2025 at 9:43=E2=80=AFAM Abel Wu <wuyun.abel@bytedance.com> =
-wrote:
-[snip]
-> False positives are possible, but the possibility can be reduced by
-> optimizing blooming setup.
+Replace the check for firmware registered I²C devices as the firmware node
+independently on type should be retrieved via dev_fwnode().
 
-An interesting approach, thanks for sharing. Not that it matters
-(given that we're not pursuing this now), but just to call out that
-this has poor scaling with large cgroup hierarchies and updates to
-cgroup idle state, so in an actual implementation it would be ideal to
-do the updates asynchronously from sched_group_set_idle (ie. via a
-kworker).
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-We could also greatly simplify this down if we assume certain
-contrived setups, for example if we assume we primarily care about
-sched_idle cpu preemption against only root-level sched_idle cgroups
-(as everything inside a root-level sched_idle cgroup is trivially
-preemptible by a task from another hierarchy). But obviously your
-cgroup setup doesn't fall under this category, so it is not very
-useful.
+v2: fixed obvious typo (media CI)
 
-> I chose the simplest way for now to workaround the issue we encountered,
-> while I am still trying to do something to get rid of sched_idle_cpu().
-> Thoughts?
+ drivers/media/v4l2-core/v4l2-i2c.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-That sounds reasonable to me.
+diff --git a/drivers/media/v4l2-core/v4l2-i2c.c b/drivers/media/v4l2-core/v4l2-i2c.c
+index 586c46544255..ffc64e10fcae 100644
+--- a/drivers/media/v4l2-core/v4l2-i2c.c
++++ b/drivers/media/v4l2-core/v4l2-i2c.c
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/i2c.h>
+ #include <linux/module.h>
++#include <linux/property.h>
+ #include <media/v4l2-common.h>
+ #include <media/v4l2-device.h>
+ 
+@@ -24,7 +25,7 @@ void v4l2_i2c_subdev_unregister(struct v4l2_subdev *sd)
+ 	 * registered by us, and would not be
+ 	 * re-created by just probing the V4L2 driver.
+ 	 */
+-	if (client && !client->dev.of_node && !client->dev.fwnode)
++	if (client && !dev_fwnode(&client->dev))
+ 		i2c_unregister_device(client);
+ }
+ 
+-- 
+2.47.2
 
-Reviewed-by: Josh Don <joshdon@google.com>
 
