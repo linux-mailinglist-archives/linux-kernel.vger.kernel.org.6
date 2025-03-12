@@ -1,161 +1,82 @@
-Return-Path: <linux-kernel+bounces-557813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD539A5DE23
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:36:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB504A5DE20
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E292E7ACD81
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:35:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7A4F167C2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3FD2459CC;
-	Wed, 12 Mar 2025 13:36:40 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E8E24501B;
+	Wed, 12 Mar 2025 13:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mixaill.net header.i=@mixaill.net header.b="Vx7qBigk"
+Received: from mail.mixaill.net (mail.mixaill.net [144.76.234.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FD31E48A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746CB5474C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.234.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741786600; cv=none; b=OulsUIUPlZpVaWLLh/wv2U25I5y75B/Lq+Ppw1+w3H1gmXVsf6khKfIc3ANZbUbq0Mqwk8qKkLmC97jYwghT89h1804kf/bd7PEbX+VrE9RiH2nQKtZASopPfWfqFjeUlKaJ8ZpszF90MPlc6Bw4D8XQGJT5GAw8Xki1dvzTs6o=
+	t=1741786580; cv=none; b=bTqJX6ms4keTeGjDFS+cvBptJCW0N/zbnCgym6pvGB1TjpeUKHJzrZSydz8rkS8GU+8WxMuux8CgHC1FaXHcN0zoL+D9rgbmKVsNaqfV3STvYPIcS48tedZjCI1++f4mA/yQP3cMUNP+efO7xrXQzJw2TEfbQUbunBnoegqvhG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741786600; c=relaxed/simple;
-	bh=zD5ceLjbuXPe6+5fOTicgv3WUEXkziJ/7+hhKU7mWaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cjpJhLvw2gk9PLk4Rec2pSnheGqjnxA3dfhnBGmm3JRQcehlZjUi0NK35DZKCwQqkdZ3BK+qIF71G5pv7zqkSTK2ILG8VU7/kbFsE8ch1DdUwP8369hxkUmJCTAYWOp6k5CrE5dRtkT36W2PnNfU8cRGOCzI4t9iRLTEoRlSBlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tsMFk-0006Gj-GU; Wed, 12 Mar 2025 14:36:08 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tsMFi-005Mqb-0w;
-	Wed, 12 Mar 2025 14:36:06 +0100
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id DFFB73D8DBF;
-	Wed, 12 Mar 2025 13:36:05 +0000 (UTC)
-Date: Wed, 12 Mar 2025 14:36:05 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
-Cc: Harald Mommer <harald.mommer@opensynergy.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-	Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com>, Wolfgang Grandegger <wg@grandegger.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Damir Shaikhutdinov <Damir.Shaikhutdinov@opensynergy.com>, 
-	linux-kernel@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH v5] can: virtio: Initial virtio CAN driver.
-Message-ID: <20250312-able-refreshing-hog-ed14e7-mkl@pengutronix.de>
-References: <20240108131039.2234044-1-Mikhail.Golubev-Ciuchea@opensynergy.com>
- <a366f529-c901-4cd1-a1a6-c3958562cace@wanadoo.fr>
- <0878aedf-35c2-4901-8662-2688574dd06f@opensynergy.com>
- <Z9FicA7bHAYZWJAb@fedora>
- <20250312-conscious-sloppy-pegasus-b5099d-mkl@pengutronix.de>
- <Z9GL6o01fuhTbHWO@fedora>
+	s=arc-20240116; t=1741786580; c=relaxed/simple;
+	bh=cP9TOort8UDbRdFcMVU/1z8wOgpvIIaKCmiC9n52nto=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FxwuTbRrj9GOycv+qDRACk4dEhda672wrwLdxVzYfhV+rg9SAGW+Aps93E2pbBgSaYe+T0NqLogQfw5YE13x/Xawoovbb+rYN1L9Zrel3HB6QZ2DfNTifXWlZRn+e4n3hd9ob4WjhkkIXbx3X7VbQHV3RGIpfYgsuQVEW2Vt8sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mixaill.net; spf=pass smtp.mailfrom=mixaill.net; dkim=pass (2048-bit key) header.d=mixaill.net header.i=@mixaill.net header.b=Vx7qBigk; arc=none smtp.client-ip=144.76.234.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mixaill.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mixaill.net
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A89D661BAD;
+	Wed, 12 Mar 2025 13:36:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mixaill.net; s=dkim;
+	t=1741786576; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=1kJWyf2G03T60ssCrbVlJjK2wYFQEcclWEmwastU/so=;
+	b=Vx7qBigkIRMstljmFMtGAPjgc32inVOFbaOnDfTOAuLv/HVi7uoTwWA/hyYtaDjO9mHNQe
+	5xHIKOA+7+ujOPAkMmE2q0fSg8Fy6azEZpGjlZNOStr8gRZDn83bms0ze3FAM7X0gqK43E
+	WhIOXeGN0b/LviVWekrvi2b7A+Px8eUm21n5JLbXYwP18ds5B59fQrEcr7hWp1xZCi+gsY
+	ixP71y3WICBg0UMp5Gz5TjTsmmhJMXngLnMpnt/T15HDtta3XCTaEg6ni9ZI8HEhPLEiTw
+	3GZ7KST6UyAcaizREIr+J+qdNn1TWiWWMRGiAeOyRNG5xPFIjzZ5mG8pb2kv3g==
+Message-ID: <2916bccf-a252-4a57-bb4b-efb8703fd909@mixaill.net>
+Date: Wed, 12 Mar 2025 16:36:13 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vs4q5lbuhwsinm4l"
-Content-Disposition: inline
-In-Reply-To: <Z9GL6o01fuhTbHWO@fedora>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] x86/rdrand: hide RDRAND and RDSEED from CPUID in case
+ of a malfunction
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250312123130.8290-1-me@mixaill.net>
+ <20250312123130.8290-3-me@mixaill.net>
+ <20250312124530.GDZ9GB6vscPTpDv8Aq@fat_crate.local>
+Content-Language: en-US
+From: Mikhail Paulyshka <me@mixaill.net>
+In-Reply-To: <20250312124530.GDZ9GB6vscPTpDv8Aq@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
+
+On 3/12/25 3:45 PM, Borislav Petkov wrote:
+> On Wed, Mar 12, 2025 at 03:31:30PM +0300, Mikhail Paulyshka wrote:
+>> @@ -46,6 +47,8 @@ void x86_init_rdrand(struct cpuinfo_x86 *c)
+>>   
+>>   	if (failure) {
+>>   		clear_cpu_cap(c, X86_FEATURE_RDRAND);
+>> +		if (c->x86_vendor == X86_VENDOR_AMD || c->x86_vendor == X86_VENDOR_HYGON)
+> Hygon is family 0x18. Have you tested it there?
+
+My bad, I thought Hygon is backwards compatible with AMD Zen1/2. Then it 
+can be removed in case Hygon's MSRs are different.
 
 
---vs4q5lbuhwsinm4l
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5] can: virtio: Initial virtio CAN driver.
-MIME-Version: 1.0
-
-On 12.03.2025 14:28:10, Matias Ezequiel Vara Larsen wrote:
-> On Wed, Mar 12, 2025 at 11:41:26AM +0100, Marc Kleine-Budde wrote:
-> > On 12.03.2025 11:31:12, Matias Ezequiel Vara Larsen wrote:
-> > > On Thu, Feb 01, 2024 at 07:57:45PM +0100, Harald Mommer wrote:
-> > > > Hello,
-> > > >=20
-> > > > I thought there would be some more comments coming and I could addr=
-ess
-> > > > everything in one chunk. Not the case, besides your comments silenc=
-e.
-> > > >=20
-> > > > On 08.01.24 20:34, Christophe JAILLET wrote:
-> > > > >=20
-> > > > > Hi,
-> > > > > a few nits below, should there be a v6.
-> > > > >=20
-> > > >=20
-> > > > I'm sure there will be but not so soon. Probably after acceptance o=
-f the
-> > > > virtio CAN specification or after change requests to the specificat=
-ion are
-> > > > received and the driver has to be adapted to an updated draft.
-> > > >=20
-> > > What is the status of this series?
-> >=20
-> > There has been no movement from the Linux side. The patch series is
-> > quite extensive. To get this mainline, we need not only a proper Linux
-> > CAN driver, but also a proper VirtIO specification.=20
->=20
-> Thanks for your answer. AFAIK the spec has been merged (see
-> https://github.com/oasis-tcs/virtio-spec/tree/virtio-1.4).=20
-
-Yes, the spec was merged. I think it was written with a specific
-use-case (IIRC: automotive, Linux on-top of a specific hypervisor) in
-mind, in Linux we have other use cases that might not be covered.
-
-> > This whole project is too big for me to do it as a collaborative
-> > effort.
->=20
-> What do you mean?
-
-I mean the driver is too big to review on a non-paid community based
-effort.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---vs4q5lbuhwsinm4l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfRjcIACgkQDHRl3/mQ
-kZzDpAf/X6+oHnjKGYwW4I9Lv9kcQu6D2ENfhcQKgS/Mb01KLJgVym9THvjrXq2p
-gsxtzzjHc6kiPBwgrx0CRcqL4lOMmaJOCciAzmeCU+3WYPB8GxJceCk09gw4tJJj
-0maj4PsCePgTekqu/hD0Oe5K8rImw2wKn+5xbFBf5fKrgLGyWNLwkoIO2CMj0E89
-a1w7czCUBG5F8tpS/ryzfs/kNbXMgCAB0od26HgHOKggYPvL9hqkSMejiVfBsRlu
-mM0w7H2GyJHXLnuBQqS7YPNDSPH0/NJSEwo2+AbX30ALhQDK5md3FSgQZ9MaxYj7
-OAK+ES+660rBsbPscWDNlk6Q94CdIA==
-=hEiz
------END PGP SIGNATURE-----
-
---vs4q5lbuhwsinm4l--
 
