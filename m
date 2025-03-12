@@ -1,124 +1,137 @@
-Return-Path: <linux-kernel+bounces-557348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D4DA5D7AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:56:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB430A5D7AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:56:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA31189D7A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:56:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C003B1682
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963F422DF9D;
-	Wed, 12 Mar 2025 07:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388CA22F150;
+	Wed, 12 Mar 2025 07:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hz0Ybvgt"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W60plOnT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E561D88A6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 07:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD4522DF8D;
+	Wed, 12 Mar 2025 07:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741766198; cv=none; b=EAa3m0c1Xygylj/HVbu0snrReqySsw5rRr7I6LsEmv8knGpWKdXS5hBck7bLLNC/zo0TySsFzAv9+uKLtVuhHZtKrUiCEulX6ppLix62iT5oYG79NiwiCwad5v/rclD5xlx7G6W72XcJuHHA61pfkPTAZ0AuV4wzTlb3GNl3lpQ=
+	t=1741766205; cv=none; b=Ap95RYemFUmS89iHlr3YfC+2F9TNUt6o5WhJcG/xoiBQK7NgfivnDSEEW+gEDP47PztFyH55DA4pozn0ztJQ8uZohzJ73cjniJwd1mk1NTZ1miJi17ohLBMGSK2+a2qJ6R73kfFIsewn3UsKoY7vtOjUO2Tk1AWeiLUcwjweNDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741766198; c=relaxed/simple;
-	bh=35CZaj9e0EDEqpNnf5IVtlgWXdDQPbnOKfskpsFe6uc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L7eId2IslH5geKze7+CZfopcp8CVFkezatjCyXyAFivX4nefWzBKFhruoPpM9+AlYUJOQ2xvF/k1MW9g0rmM32Ol+M7TiCrBJnIdW7k2eIbCgY2UEeVr5lhy01agjJ7tDQPkOfMUeqXl07BxHiElLmpSa6Cra5pTVI4Gxzj9RjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hz0Ybvgt; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5495c1e1b63so6629672e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 00:56:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741766193; x=1742370993; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A3wyyfwOpoNsq0clOc6hSFVvZfLJtb8AcaIz2Ox+0V8=;
-        b=hz0Ybvgt0jq8t02yldqP9VnW7I5YgW2ZeXaln2Dqr9CpHQh+T+5KDW9MVghirW1Aqh
-         yeHPhNluxGvN+TNgkkabJ4TWNfJIOTRRGhyTNJLt4+kY5J3WcYGBzK/HKnAuUu5TVap4
-         sPoxf30yxxMpuNLc9tRZWQyM+C0pmXMmAzUDpMi8vhj6h0gCoZ+tXXrwoyyGP9w1kizf
-         lSE+9GPI2SgbL2WLp7kMGTe2Pc7pyNHf87slUIgEkTunVKhVkkmk40TZPyein4kAC3BH
-         LH7js3H998oI4XcO0kKOfidLrh8JZOvrbZvvT8CXk1BYxWFtN7TSsV4Cc5kyP//+vNCW
-         xNuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741766193; x=1742370993;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A3wyyfwOpoNsq0clOc6hSFVvZfLJtb8AcaIz2Ox+0V8=;
-        b=vywt+1GM7GCIHOzwmDWziVOBgrsp7zWkhkz/M+s04EFPsM91p0gPqhRRYNprf88tgs
-         WhhhAT8UHqBQi0ydLG9KwISZsweSSRphjQaSdUNEWh1ienB/JII4GkDBR3hlgmdDoZYb
-         zAuNJKR3rUVa+t9nOxq0mQnKWQPwJh3tcz5qIa/uuQHIQIGSCPEwIKJxUbdXXgAxej7t
-         8haeBTeVAFOmlBx6REyDTpYQMFm2quldHcM2C5CvC7oHKXEBSEKsDh1HrnsQQbaM+Jwg
-         ZSKvVVLHLDwjkNk9h4TsfRnHV8Z+mKQ7OV+A5AND9wX+HaJGQc7I2tY1/yZ2EHNCgqZu
-         1DEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUA9AFxWyyp8rtv1nzwg0hzhVlOhz/MJO1rlxbFqexIq8bzrtuuKNfbi+0kD6PYD8yJ/bPktQi/f/O1v4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1huJU1b9YF3jTBR22XGWAR4xhBIjDbJ1zcoNBZboxCPOjhNpk
-	fF4mIihyf3SsMVAiv8RfrUoGNUy4BQV4z1KM0OlwqSkch2HmVWMx
-X-Gm-Gg: ASbGncsyEOZzh/0UQV8tK9qYDtJf02ttfNq9bc9rmCZmYebWgyIpXfovCMrUA+5TGti
-	nUARR73Qut4FGt2r+3IQBw5KDH5vfDhB77mBLYUrnvPGRINUt9YUjkDhj/Q0Oh223mh3vXPy/HQ
-	aVPtQuOnaAdEa16Jdt72yKvQVcoH7p6jEHRxZxmAiez5GVGuhFBxSvf/n7+hEvJn+O+x0CmxQFv
-	+oSgZOw+pWcnjhS0IB+b1Q5XqXAk7RqD/S3HejRuqiUkk3tK0BTd/DUO7jlbs373ek44IypxGag
-	tQ36h2Lr4lKU8EtOj7riQa9Rd+GG2OPOpdWvcQ8w/UkiMws=
-X-Google-Smtp-Source: AGHT+IEjQaZs5T5ZDDjAKYJGVt1s6iYpZ8Lci0SjZKojtUFYU2/65513d3B9k+EdWSOZIVi3BNR3Hw==
-X-Received: by 2002:a05:6512:158e:b0:545:cd5:84d9 with SMTP id 2adb3069b0e04-549ababc3bcmr2484258e87.12.1741766193120;
-        Wed, 12 Mar 2025 00:56:33 -0700 (PDT)
-Received: from grain.localdomain ([5.18.255.97])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b0bd148sm2045714e87.139.2025.03.12.00.56.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 00:56:32 -0700 (PDT)
-Received: by grain.localdomain (Postfix, from userid 1000)
-	id 0AB565A0044; Wed, 12 Mar 2025 10:56:32 +0300 (MSK)
-Date: Wed, 12 Mar 2025 10:56:31 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Benjamin Segall <bsegall@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrey Vagin <avagin@openvz.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [patch V3a 17/18] posix-timers: Provide a mechanism to allocate
- a given timer ID
-Message-ID: <Z9E-L1pvl1j_4E3f@grain>
-References: <20250308155501.391430556@linutronix.de>
- <20250308155624.526740902@linutronix.de>
- <Z9CsstMf-EVZpsiH@pavilion.home>
- <87msdrz0i9.ffs@tglx>
- <87jz8vz0en.ffs@tglx>
- <Z9C6GpaB9WvNzvJS@pavilion.home>
+	s=arc-20240116; t=1741766205; c=relaxed/simple;
+	bh=9j32Q9ko3nzPeg45xM2NtQmpmXTW//lBQJ+uN6+5dN8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EM0jfowc6/Opr5tSgtk4sLCMN2h5trVnt6afW9wnbHyIaxMPkRD23SXITESfso1ZqsmraP5L7E6dlgsYctH+9mQhIys0RUvytd5TGrmROWC2+1f2fPHpmMNMgrg5IaEumKEo9d78VWEIvD+8ifSElUTkSBm8gmBVzz/qmoFWj7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W60plOnT; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741766204; x=1773302204;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9j32Q9ko3nzPeg45xM2NtQmpmXTW//lBQJ+uN6+5dN8=;
+  b=W60plOnTcAat8iw+KFa6KluOl9qsIXcFZgKi1Zj8LDngmunh/sSYpMXG
+   FegwrQ6866OLaDxUpJwDnh6bYARWSmFnS6mDVtmPdFcJjGYfiRqd0PLfp
+   nRFfPRorse0OjhrvRc3D+SoDzwgRviNqXerWXzZkbsdR/gFZ2xC7uKsmN
+   6kF7R3Pn94cJccr34TMV/BeE+SU8K0diz1BGkwRCC0henkwkVN0pw5w1H
+   aL8hu+NGNGxhQ1oODVN65ow+xTThNlQO4BjEUbF4/R5Ecxl5YZov6NukH
+   A4ToMsmHAiTstlKd0PV95AcbIYRad/G5AdioFv/pa4RK738fz6dvUCImp
+   w==;
+X-CSE-ConnectionGUID: DV6sN3MuQICEO+0gpNkOcA==
+X-CSE-MsgGUID: 07aMHwYbRXyunWr9yOhtJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="42869911"
+X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
+   d="scan'208";a="42869911"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 00:56:43 -0700
+X-CSE-ConnectionGUID: je2W3usmSyC6bdqstz/sZw==
+X-CSE-MsgGUID: nhpioELPS3+NzVxrnVtM3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,241,1736841600"; 
+   d="scan'208";a="125462623"
+Received: from yujie-x299.sh.intel.com ([10.239.159.77])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 00:56:39 -0700
+From: Yujie Liu <yujie.liu@intel.com>
+To: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Leo Yan <leo.yan@arm.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Graham Woodward <graham.woodward@arm.com>,
+	Paschalis.Mpeis@arm.com
+Subject: [PATCH] perf script: Fix typo in branch event mask
+Date: Wed, 12 Mar 2025 15:56:36 +0800
+Message-Id: <20250312075636.429127-1-yujie.liu@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9C6GpaB9WvNzvJS@pavilion.home>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 11, 2025 at 11:32:58PM +0100, Frederic Weisbecker wrote:
-...
-> > 
-> > Recreating two timers with IDs 1000000 and 2000000 takes 1.5 seconds with
-> > the create/delete method. With the prctl() it takes 3 microseconds.
-> > 
-> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> 
-> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+BRACH -> BRANCH
 
-One thing which just popped up in my head -- this interface may be used not
-only by criu but any application which wants to create timer with specified
-id (hell know why, but whatever). As far as I understand we don't provide
-an interface to _read_ this property, don't we? Thus criu will restore such
-application which already has this bit set incorrectly.
+Fixes: 88b1473135e4 ("perf script: Separate events from branch types")
+Signed-off-by: Yujie Liu <yujie.liu@intel.com>
+---
+ tools/perf/util/event.h                 | 2 +-
+ tools/perf/util/trace-event-scripting.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-	Cyrill
+diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
+index c7f4b4b841ca..664bf39567ce 100644
+--- a/tools/perf/util/event.h
++++ b/tools/perf/util/event.h
+@@ -91,7 +91,7 @@ enum {
+ 	PERF_IP_FLAG_VMENTRY		|\
+ 	PERF_IP_FLAG_VMEXIT)
+ 
+-#define PERF_IP_FLAG_BRACH_EVENT_MASK	\
++#define PERF_IP_FLAG_BRANCH_EVENT_MASK	\
+ 	(PERF_IP_FLAG_BRANCH_MISS |	\
+ 	 PERF_IP_FLAG_NOT_TAKEN)
+ 
+diff --git a/tools/perf/util/trace-event-scripting.c b/tools/perf/util/trace-event-scripting.c
+index 29cc467be14a..72abb28b7b5a 100644
+--- a/tools/perf/util/trace-event-scripting.c
++++ b/tools/perf/util/trace-event-scripting.c
+@@ -347,7 +347,7 @@ static int sample_flags_to_name(u32 flags, char *str, size_t size)
+ 
+ 	flags &= ~(PERF_IP_FLAG_TRACE_BEGIN | PERF_IP_FLAG_TRACE_END);
+ 
+-	types = flags & ~PERF_IP_FLAG_BRACH_EVENT_MASK;
++	types = flags & ~PERF_IP_FLAG_BRANCH_EVENT_MASK;
+ 	for (i = 0; sample_flags[i].name; i++) {
+ 		if (sample_flags[i].flags != types)
+ 			continue;
+@@ -359,7 +359,7 @@ static int sample_flags_to_name(u32 flags, char *str, size_t size)
+ 		break;
+ 	}
+ 
+-	events = flags & PERF_IP_FLAG_BRACH_EVENT_MASK;
++	events = flags & PERF_IP_FLAG_BRANCH_EVENT_MASK;
+ 	for (i = 0; branch_events[i].name; i++) {
+ 		if (!(branch_events[i].flags & events))
+ 			continue;
+
+base-commit: b10f74308e1305275e69ddde711ec817cc69e306
+-- 
+2.34.1
+
 
