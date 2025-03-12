@@ -1,53 +1,90 @@
-Return-Path: <linux-kernel+bounces-557874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67C7A5DEF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:27:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1487A5DEF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:28:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80E517ACDCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:26:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E57BB7AD8C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553CD24E002;
-	Wed, 12 Mar 2025 14:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E778524E019;
+	Wed, 12 Mar 2025 14:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQ6JJ8ih"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DxScmDzI"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF6724635E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA9D645;
+	Wed, 12 Mar 2025 14:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741789656; cv=none; b=IXpoG4zozk5LP/j5NECVAeuxrrjVgqKfstrgtPg85ylQK2ZE+bWO3VAfI8BUkN0o87vIovFpaDHqptJKPvUaPKqFZLVj/mImQJywoRmdBbE1uf2A/75lLUWW10QgbapvPDkEZMjIOmwLZ4ZL+5BR6djsi4nacf72xfPY9d4xL1s=
+	t=1741789697; cv=none; b=ewPnkHoob8wwNvQ3pzLvGSWCb0E+UAMWdu9EdVtr0aSF8zuyq6KYG4vcVRlzIYFsSfWTrRgu0C1qXeD3r4OSi3FJocFuXIl+Yp9Kl4vp/oIOiu58E/6pOEeKGURvlhCKXR5+YAvey/98Z9w+M2oSGCOW+osp3IBgr9wEZzN8coc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741789656; c=relaxed/simple;
-	bh=vDwFwAtBZOVv/LiDgNGup/VLBOobWxXV6QVTB8kVnNQ=;
+	s=arc-20240116; t=1741789697; c=relaxed/simple;
+	bh=Tj20qUq8bit/VqfZHgFjjOgayyDULNQIOkxhiVTBaRw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XD1vKs+budCErkkuQ5A/eH9B+tYmHoejNSndLN2dUYCjQzGLhZyMhy5BTI5V7eRkN6dQGUQcbRSekD7DfAXvzNKHDJPLIiHgE+hzjAD7pe9fjsxLm93nqsVjH/LaaVdbeBsqLOOzZm7XVCB1DMY1ltaU+A7omLoCc67K0TUjZT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQ6JJ8ih; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDBF5C4CEDD;
-	Wed, 12 Mar 2025 14:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741789656;
-	bh=vDwFwAtBZOVv/LiDgNGup/VLBOobWxXV6QVTB8kVnNQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TQ6JJ8ih0IRaf49JNes3gyJbaHP43wrBhyc2ze6AYpSUd8kOVX6Kk8MO1ABtIeKjr
-	 vPN9AekTQzOz3YQo6saoJeldSivUFWy2ihGCaaVWsqwEgDhG2KOwZL5GoU25GgCZBX
-	 Rdy3qzgR7HlEkh9bV5uo4MVuXoVQVgEKJOnP+QeZtNeWpQSCaP2pOHGrdcYMemMhgZ
-	 wpRzop5dH+xkGwBCtOio9LipaM6nK80coOnwqWgnTuAl+aeYnm7x68XgMOf/Un8KGi
-	 Diuw0+rIi21I+RmVcJoOClRV+dasutb7AvjG/4CmDmzVK4DEiwwvwSH09pNOV30QqN
-	 2CPcOdBlHLfqA==
-Date: Wed, 12 Mar 2025 14:27:34 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chunhai Guo <guochunhai@vivo.com>
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] f2fs: fix missing discard candidates in fstrim
-Message-ID: <Z9GZ1kg6VVMFpomb@google.com>
-References: <20250312102005.2893698-1-guochunhai@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GdXMi2nNvkaIEeZPBptGxvhkD5plpp4EjJ8/Meb4CA9S5WfrYrQg+6XLP4AJixCyCagWbwjk3arV3speKjS8MmjqH0cE8OiiJzlyyq7ut5F/ypzYLTeyvm4Zi6mIzeKx7gUJRa8fUNmB9wgVplrkJjhgNpFwM9NjRZ1t3VnM+c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DxScmDzI; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CCdoaD002782;
+	Wed, 12 Mar 2025 14:28:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=v4RhvKiukPVyZq0Mn6aqODJLsEcOHi
+	w+q2IJ3sXgsN8=; b=DxScmDzIVLzg+qCSmb4aFaJlgx5ZTu1u4u4345AURyW7Up
+	ceuGgoLUVdGXL/aH4vtB9eikG6iWnN0hLQp/2Ogp6DKGiVD3I2tUHS8+3B9QmavM
+	3FafbDksx2wrNxQ648+u+c2DOyYeJ8EFC9D9XZOnKqUyzMI113XYYcf8DTUfg0uv
+	9VYm6/NRYXfb1z5it6WlgPxN5ISa1i9JxrlVJK1MWrmA5/1lgNaNufn19nLqvhzk
+	43rxvTWTt+jY6JMzK4BY1koaIAPmEMtSKKxr2llLgl/5ySQLVSCWwRESuYrOOYGj
+	GjLKMANWvc+R0/fZpefWaskD2jqFJkwML2myNNmA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45avbpmbfw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 14:28:06 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52CES6gW000304;
+	Wed, 12 Mar 2025 14:28:06 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45avbpmbfj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 14:28:06 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52CDfCBQ026099;
+	Wed, 12 Mar 2025 14:28:02 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atspcj0u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 14:28:02 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52CES1F032309846
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Mar 2025 14:28:01 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 371BC2004B;
+	Wed, 12 Mar 2025 14:28:01 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3CDB320040;
+	Wed, 12 Mar 2025 14:27:59 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.21.67])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 12 Mar 2025 14:27:59 +0000 (GMT)
+Date: Wed, 12 Mar 2025 19:57:56 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
+        linux-kernel@vger.kernel.org, Mahesh Kumar <maheshkumar657g@gmail.com>
+Subject: Re: [PATCH v2 2/3] ext4: avoid journaling sb update on error if
+ journal is destroying
+Message-ID: <Z9GZ7PPWtJLSj6Ms@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1741270780.git.ojaswin@linux.ibm.com>
+ <1bf59095d87e5dfae8f019385ba3ce58973baaff.1741270780.git.ojaswin@linux.ibm.com>
+ <ad999fb3-51a5-4a76-9783-cf2053c031c1@sandeen.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,93 +93,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250312102005.2893698-1-guochunhai@vivo.com>
+In-Reply-To: <ad999fb3-51a5-4a76-9783-cf2053c031c1@sandeen.net>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: LisqaVmYgirQrrcfxWd2q_Cdf5ACr_vV
+X-Proofpoint-GUID: ELQpwQ6OdetDghZfQnwWk4xzqf2KQD9R
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_05,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
+ mlxlogscore=899 malwarescore=0 impostorscore=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 mlxscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120100
 
-On 03/12, Chunhai Guo wrote:
-> fstrim may miss candidates that need to be discarded, as shown in the
-> examples below.
+On Wed, Mar 12, 2025 at 08:57:34AM -0500, Eric Sandeen wrote:
+> On 3/6/25 8:28 AM, Ojaswin Mujoo wrote:
+> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> > index 2b7d781bfcad..d48e93bd5690 100644
+> > --- a/fs/ext4/ext4.h
+> > +++ b/fs/ext4/ext4.h
+> > @@ -1728,6 +1728,8 @@ struct ext4_sb_info {
+> >  	 */
+> >  	struct work_struct s_sb_upd_work;
+> >  
+> > +	bool s_journal_destorying;
 > 
-> The root cause is that when cpc->reason is set with CP_DISCARD,
-> add_discard_addrs() expects that ckpt_valid_map and cur_valid_map have
-> been synced by seg_info_to_raw_sit() [1], and it tries to find the
-> candidates based on ckpt_valid_map and discard_map. However,
-> seg_info_to_raw_sit() does not actually run before
-> f2fs_exist_trim_candidates(), resulting in the failure.
+> Just a late nitpick and noted that Jan suggested making this a flag,
+> but just in case, this is a typo: s_journal_destorying -> s_journal_destroying
+> 
+> Thanks,
+> -Eric
 
-I think we need to fix the above logic.
+Thanks for pointing that Eric. We will be moving to a flag in next
+version mostly so we should be okay :)
+
+regards,
+ojaswin
 
 > 
-> The code logic can be simplified for all cases by finding all the
-> discard blocks based only on discard_map. This might result in more
-> discard blocks being sent for the segment during the first checkpoint
-> after mounting, which were originally expected to be sent only in
-> fstrim. Regardless, these discard blocks should eventually be sent, and
-> the simplified code makes sense in this context.
+> >  	/* Atomic write unit values in bytes */
+> >  	unsigned int s_awu_min;
+> >  	unsigned int s_awu_max;
 > 
-> root# cp testfile /f2fs_mountpoint
-> 
-> root# f2fs_io fiemap 0 1 /f2fs_mountpoint/testfile
-> Fiemap: offset = 0 len = 1
->         logical addr.    physical addr.   length           flags
-> 0       0000000000000000 0000000406a00000 000000003d800000 00001000
-> 
-> root# rm /f2fs_mountpoint/testfile
-> 
-> root# fstrim -v -o 0x406a00000 -l 1024M /f2fs_mountpoint -- no candidate is found
-> /f2fs_mountpoint: 0 B (0 bytes) trimmed
-> 
-> Relevant code process of the root cause:
-> f2fs_trim_fs()
->     f2fs_write_checkpoint()
->         ...
->         if (cpc->reason & CP_DISCARD) {
->                 if (!f2fs_exist_trim_candidates(sbi, cpc)) {
->                     unblock_operations(sbi);
->                     goto out; // No candidates are found here, and it exits.
->                 }
->             ...
->         }
-> 
-> [1] Please refer to commit d7bc2484b8d4 ("f2fs: fix small discards not
-> to issue redundantly") for the relationship between
-> seg_info_to_raw_sit() and add_discard_addrs().
-> 
-> Fixes: 25290fa5591d ("f2fs: return fs_trim if there is no candidate")
-> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
-> ---
-> v2->v3: Add f2fs_bug_on() to make sure it never issues discard to valid data's block address.
-> v1->v2: Find all the discard blocks based only on discard_map in add_discard_addrs().
-> v1: https://lore.kernel.org/linux-f2fs-devel/20250102101310.580277-1-guochunhai@vivo.com/
-> ---
->  fs/f2fs/segment.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 86e547f008f9..c8ad8e3bfebb 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -2075,7 +2075,6 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
->  	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
->  	struct seg_entry *se = get_seg_entry(sbi, cpc->trim_start);
->  	unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
-> -	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
->  	unsigned long *discard_map = (unsigned long *)se->discard_map;
->  	unsigned long *dmap = SIT_I(sbi)->tmp_map;
->  	unsigned int start = 0, end = -1;
-> @@ -2097,9 +2096,10 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
->  	}
->  
->  	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
-> -	for (i = 0; i < entries; i++)
-> -		dmap[i] = force ? ~ckpt_map[i] & ~discard_map[i] :
-> -				(cur_map[i] ^ ckpt_map[i]) & ckpt_map[i];
-> +	for (i = 0; i < entries; i++) {
-> +		dmap[i] = ~discard_map[i];
-> +		f2fs_bug_on(sbi, (cur_map[i] ^ discard_map[i]) & cur_map[i]);
-> +	}
->  
->  	while (force || SM_I(sbi)->dcc_info->nr_discards <=
->  				SM_I(sbi)->dcc_info->max_discards) {
-> -- 
-> 2.34.1
 
