@@ -1,162 +1,261 @@
-Return-Path: <linux-kernel+bounces-558008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5A1A5E059
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:29:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C8DA5E05C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:30:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C356018995AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:29:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FB847A693B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144A524DFF8;
-	Wed, 12 Mar 2025 15:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98682250C09;
+	Wed, 12 Mar 2025 15:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n/StN/63"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPja19er"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A062419D087
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED7D1E493;
+	Wed, 12 Mar 2025 15:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741793344; cv=none; b=ohYbJtryhuFJ/kPHwx0Ut4MRcjG8FitXmcWebRiwm/UgwDhTCzmE0BYun6zGOU++AW5R0TwUh6NN4vLJzDfcWm8s8UP1VYXzsB3DzA4F6V9ZBxY9wLeP8ovJhwOZmr5LmM3c41/ZhhGcJdklKwkb5iWn3PiZpgaUxxAU2HL/aWA=
+	t=1741793396; cv=none; b=dNYh9qRw/pFfQ5OMfyg2CDgPK89IEVTb6YOivLsRFOamVNK/89A1Va/6+v47/eLX6bTLO8qW303GvQHnsyhuSNJLXTVNfw45RmeuZdoVRHo6NmUfWhogVUK5Tit6cVjKiJqvVtCxtqgSgdI0lellA2WLKVFuEK8+wvKwRI/hjsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741793344; c=relaxed/simple;
-	bh=GoJGCdF3oDbA7eULlsGOHzFmKcP6ZxsGi3iStEDY0S0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HhiM+72gFksLOz6bq0jsihSGNV+JAibYZKBpFWIf4h7HLIAJYHorvIo3BNuCxRbQsUiPeUAMa6v6Tjj4o4hisq0iKNFtf5teZ39qvojYGqqmIIBkMA1O0Q0IAR/bHw6sWwzDH0nOamNA1+zv2HlThMP78qpnnvvuqBn1wJdfudo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n/StN/63; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3913fdd003bso576f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 08:29:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741793341; x=1742398141; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GoJGCdF3oDbA7eULlsGOHzFmKcP6ZxsGi3iStEDY0S0=;
-        b=n/StN/63iRmLBmt9TbIsWaswPCegG/w0wJsN0EH50oUQRfa5L12cs5lqX5Ti+Y/4d2
-         elnTSIKV/RJQztLF4Bb+sv+Jlwyvi3EU9GDPdjqIzPqL2GFRZi/y8xb8UZmjpXSrZjtC
-         d5tcZSKnqsCmHanudsGD3Pv4YJF36H58lW12rpdGTIICPWWH5u6/f5YZuPhtvR3XWnLE
-         tvu/o4SpCm9zYZru4lbdNLwotI6CxLLUYuxAnEu6IcUy5GDazlpNvMW4x8UCnRrawE76
-         oR1lq5DzDwvKNLAwQ+vaxRDNB2O2JR6TFz4xk2WPpbG/NM479WREe8VTCJ7GE6wrG3Eu
-         OUjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741793341; x=1742398141;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GoJGCdF3oDbA7eULlsGOHzFmKcP6ZxsGi3iStEDY0S0=;
-        b=ZIi0LeauvG/M1peIf0xFLSClrOqVkET7DD/9m2wWXvTjMLgb75L0eya5mnglSeZcIP
-         x5kAcSGUNxQZUVBzke8jQeclYpL71ErcFIi70M0SYDzP7qvmqQzCdr7JLkAVl2XU+bLq
-         TcdaYVl5gyD9ozamUiqCaJmyojUL3K9j3xEfEo9mV8AM/CeHmpcSaDGur7SoZxgIjFZg
-         DzWrFtRjIk7USFfdW2vB7x7sNUSFtv6COUB9Bdgz2xcdTp1a0SU0b6hFSuN6dW7xWfBA
-         wtr7fkiy/QDPeA57VMdlk/HnJ+4dARf9/ZEgIuRtP2gfGfzhAH6W75HR8Q6rxGsJwQOw
-         ukBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUa39+GOeDkHUiIxLCxQSV80lMiDpop1EeZ/WW96ODdwQTsULqUu8bjsachkMbfESGpK2zZ0q0F19t9ZTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo/u6prtXKv8/Y4vclgZDtPfLyzHbDot0vLaBlq7zKkvx6Cp4y
-	GE48islS6B77azM+ivqF5C5HXlQCKyIKT2FkebHwo9Z3zoOBWfIG5p/wuu1vSvNjTOmLopB/xFF
-	53EXEWRtnAwU460Q/QdIxYlw2CO9vdlMmnJLQvA==
-X-Gm-Gg: ASbGncvp4PQ7LI+WE1WcajZP4y+8xcuaF2UbNuE7Jek+qlzt77vrWqe0hbAmuK7mNa8
-	MfEBZcDQubOe2KGRDG/oYyfPbFzvRxFV3Kx8hjkbJCayc8qlMdGyI40B1GQxMES79yIlKe5Hqlq
-	pCZjHQP/YcdWg3rT9SoHAzgVesISo=
-X-Google-Smtp-Source: AGHT+IGw4bTsCNZeyHyE2bBo2kT2RvE7wgPFf4FL+k+G4SRUq7UKiAhEDf/H5m1+yHQGeBMie4MSyvCDJCGtPn4RUIg=
-X-Received: by 2002:a05:6000:1448:b0:38d:df15:2770 with SMTP id
- ffacd0b85a97d-395633b59e0mr126422f8f.0.1741793340830; Wed, 12 Mar 2025
- 08:29:00 -0700 (PDT)
+	s=arc-20240116; t=1741793396; c=relaxed/simple;
+	bh=FSXBX4j7B7b+XnlTLJ17zxN4ccJzAqSAdocTOkuwjFE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=a68ZYlVaeT11MQY8xFcG3nurOSlsbc1b9bEXmbS9Ybe2Kn/qsAV0FASsBQ3FTojsFy+n21z2ZUkIbtq4Aau1nVzjuGqG0cjSuvZErsCWqGZ10xiqvtWbPzuAp5eDK3hRpaz2SX+pUu7T7NsWxTh+kr1U6wXcL4p+LqmTmkconM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPja19er; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 62444C4CEEC;
+	Wed, 12 Mar 2025 15:29:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741793394;
+	bh=FSXBX4j7B7b+XnlTLJ17zxN4ccJzAqSAdocTOkuwjFE=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=FPja19erujvsYrf3tmXvsIjEPGgfu98M/ReHdy+PozpROvc1p5nU5k2hUK5cfXD+O
+	 aQqHao/nMuLNz/jlkuRGxr9LG9Kd327socaBoD+wHIeg7rw/jpa2D12L39l0C4wlNI
+	 TCPy0dQ2bNb6g0WiK4F2B/bmK2+Ekq5WlSjMrmNitt3otjEHYtVma7cS9+FeQyOLa5
+	 4g/12xhCG2FuoTtu3XouKDjHRevREEmmiSatX0XM7OfArf6thntgMpbEww52OVpxrK
+	 dj/93O+KJJNN91g+JKnh2U8mORPjNwBPgtcm2ksmSwLVxWnks+6ldo7DbIWbmGVC6J
+	 M9751FzDikTiQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5116DC28B28;
+	Wed, 12 Mar 2025 15:29:54 +0000 (UTC)
+From: Tobias Sperling via B4 Relay <devnull+tobias.sperling.softing.com@kernel.org>
+Date: Wed, 12 Mar 2025 16:29:40 +0100
+Subject: [PATCH] iio: adc: sort TI drivers alphanumerical
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
- <CACr-zFC=mPNeeHMp9XnSby+cMQaPWt_3s8iUiCN+EnVPeGad8Q@mail.gmail.com>
- <uljqxwfgl26txrfqvkvzzpj6qurgmwcbuot7gu2u6rwjaqgncb@jeuyi4mexjff>
- <CACr-zFDSFizYmrVN-dV334n1kq17UB9k4FxrV20NNQCQMhzrwg@mail.gmail.com>
- <92dd35a2-d1cc-4f2b-b3a8-5752ec33b0d3@kernel.org> <CACr-zFCYWEFPO8yExp_8hOQdVtC9Zwu1ZOZNksSeyyS6Ht0e9A@mail.gmail.com>
- <5ecb69c9-c877-4c91-a1ae-0ef59d0ee3d6@kernel.org>
-In-Reply-To: <5ecb69c9-c877-4c91-a1ae-0ef59d0ee3d6@kernel.org>
-From: Christopher Obbard <christopher.obbard@linaro.org>
-Date: Wed, 12 Mar 2025 16:28:49 +0100
-X-Gm-Features: AQ5f1JrsTOrUVQk8MQpv1Smb_EIlMCLrXov_OVBk2xwC6hUgiuoRDMUNqMw387s
-Message-ID: <CACr-zFAMa3Awx16avbXNMRhkELFkEZedZfHVCFuFc4fitWFL4w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm interconnects as built-in
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250312-sort_ti_drivers-v1-1-4e8813e662d2@softing.com>
+X-B4-Tracking: v=1; b=H4sIAGOo0WcC/x3MPQqAMAxA4atIZgu1Pw5eRaQUGzWLSiJFKL27x
+ fEb3isgyIQCU1eAMZPQdTYMfQfrEc8dFaVmMNp4bQej5OInPBQSU0YWpZ21Y9RjdMZDq27Gjd7
+ /OC+1fsa55R5hAAAA
+X-Change-ID: 20250312-sort_ti_drivers-04336a06a425
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Tobias Sperling <tobias.sperling@softing.com>
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741793385; l=5636;
+ i=tobias.sperling@softing.com; s=20241122; h=from:subject:message-id;
+ bh=pr36xwj3Tb4zVizwF/veJfHorhZaS8NYWrN5ZPaOFoY=;
+ b=qTX1AO98j3b96kwWP2rf/qDe9PH+ILdOpWXtlmNDK2GCf1+oqdC8FkSNGwQlQisyzCGFJuyGZ
+ XnxwQLOeCk6Ds+VXUrVDbxr6VXCUUIQuHFhNYoBNK3q0f6RaGxD0XHe
+X-Developer-Key: i=tobias.sperling@softing.com; a=ed25519;
+ pk=v7hgaMHsrA9ul4UXkBVUuwusS9PF3uHW/CC+gABI65E=
+X-Endpoint-Received: by B4 Relay for tobias.sperling@softing.com/20241122
+ with auth_id=281
+X-Original-From: Tobias Sperling <tobias.sperling@softing.com>
+Reply-To: tobias.sperling@softing.com
 
-Hi Krzysztof,
+From: Tobias Sperling <tobias.sperling@softing.com>
 
-On Wed, 12 Mar 2025 at 12:34, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 12/03/2025 12:10, Christopher Obbard wrote:
-> > Hi Krzysztof,
-> >
-> > On Wed, 12 Mar 2025 at 09:56, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >>
-> >> On 11/03/2025 20:15, Christopher Obbard wrote:
-> >>> Hi Dmitry,
-> >>>
-> >>> On Tue, 11 Mar 2025 at 19:58, Dmitry Baryshkov <lumag@kernel.org> wrote:
-> >>>>
-> >>>> On Tue, Mar 11, 2025 at 07:10:06PM +0100, Christopher Obbard wrote:
-> >>>>> I sent this patch to start the discussion, some things I found:
-> >>>>>
-> >>>>> 1) Some interconnects are missing from arm defconfig. Should they be =y too ?
-> >>>>
-> >>>> No, unless those are required for the UART console.
-> >>>
-> >>> OK, that makes sense. FWIW the cryptic (to me, at least) commit log on
-> >>> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6eee808134ecf1c1093ff1ddfc056dc5e469d0c3
-> >>> made me think that the interconnects should be built-in on all devices.
-> >>>
-> >>> Of course, the real problem here is RB3gen2 not actually finding the
-> >>> UFS/eMMC device due to no interconnect driver.
-> >>> Until now, I have been building that into the kernel. I will
-> >>> investigate instead shoving into the initrd (in both debian and
-> >>> fedora) which should solve my issue and render this patchset useless.
-> >>
-> >> For Qualcomm platforms you are expected to always have initramfs, thus
-> >> you will have the modules for UFS/eMMC mounts. I don't understand the
-> >> problem which you were trying to solve.
-> >>
-> >> The interconnects were built in *only* because of need for serial
-> >> console. Only.
-> >
-> > Thanks for confirming. It is all clear now.
-> >
-> > Consider this patch dropped from my side.
-> >
-> > For reference, I am working on updating initramfs generation tools in
-> > Debian/Fedora to include the required interconnect modules. Currently
-> > the interconnect drivers are built as modules in these distros, but
-> > are not included in the initrd. That is where my confusion initially
-> > stemmed from.
->
-> Sure. This defconfig is anyway for us - developers, not for the distros
-> to use directly. Distros have much bigger configs and use almost
-> everything as module.
+Sort TI drivers again in an alphanumerical manner.
 
-Completely agree - my usual workflow is to build with the kernel's
-defconfig (disto config is generally huge) and install the resulting
-kernel into my Debian image.
+Signed-off-by: Tobias Sperling <tobias.sperling@softing.com>
+---
+At some point the order of TI IIO ADC drivers
+was scrambled up and is now brought back to
+alphanumerical order.
+---
+ drivers/iio/adc/Kconfig | 114 ++++++++++++++++++++++++------------------------
+ 1 file changed, 57 insertions(+), 57 deletions(-)
 
-Installing a kernel built with `make bindeb-pkg` then calls
-update-initramfs to create the initrd - which then should pack the
-RIGHT modules needed for loading storage/network boot/etc into the
-initrd. In this case it simply didn't yet copy that module into the
-initrd in Debian, so I will sort it out in the distro space ;-).
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index 6529df1a498c2c3b32b3640b5c3a90d8fff33788..75ed633a3c43d176a4e73e341eea3fef890325d0 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -1440,18 +1440,6 @@ config TI_ADC084S021
+ 	  This driver can also be built as a module. If so, the module will be
+ 	  called ti-adc084s021.
+ 
+-config TI_ADC12138
+-	tristate "Texas Instruments ADC12130/ADC12132/ADC12138"
+-	depends on SPI
+-	select IIO_BUFFER
+-	select IIO_TRIGGERED_BUFFER
+-	help
+-	  If you say yes here you get support for Texas Instruments ADC12130,
+-	  ADC12132 and ADC12138 chips.
+-
+-	  This driver can also be built as a module. If so, the module will be
+-	  called ti-adc12138.
+-
+ config TI_ADC108S102
+ 	tristate "Texas Instruments ADC108S102 and ADC128S102 driver"
+ 	depends on SPI
+@@ -1464,6 +1452,18 @@ config TI_ADC108S102
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called ti-adc108s102.
+ 
++config TI_ADC12138
++	tristate "Texas Instruments ADC12130/ADC12132/ADC12138"
++	depends on SPI
++	select IIO_BUFFER
++	select IIO_TRIGGERED_BUFFER
++	help
++	  If you say yes here you get support for Texas Instruments ADC12130,
++	  ADC12132 and ADC12138 chips.
++
++	  This driver can also be built as a module. If so, the module will be
++	  called ti-adc12138.
++
+ config TI_ADC128S052
+ 	tristate "Texas Instruments ADC128S052/ADC122S021/ADC124S021"
+ 	depends on SPI
+@@ -1499,6 +1499,16 @@ config TI_ADS1015
+ 	  This driver can also be built as a module. If so, the module will be
+ 	  called ti-ads1015.
+ 
++config TI_ADS1100
++	tristate "Texas Instruments ADS1100 and ADS1000 ADC"
++	depends on I2C
++	help
++	  If you say yes here you get support for Texas Instruments ADS1100 and
++	  ADS1000 ADC chips.
++
++	  This driver can also be built as a module. If so, the module will be
++	  called ti-ads1100.
++
+ config TI_ADS1119
+        tristate "Texas Instruments ADS1119 ADC"
+        depends on I2C
+@@ -1511,6 +1521,41 @@ config TI_ADS1119
+          This driver can also be built as a module. If so, the module will be
+          called ti-ads1119.
+ 
++config TI_ADS124S08
++	tristate "Texas Instruments ADS124S08"
++	depends on SPI
++	select IIO_BUFFER
++	select IIO_TRIGGERED_BUFFER
++	help
++	  If you say yes here you get support for Texas Instruments ADS124S08
++	  and ADS124S06 ADC chips
++
++	  This driver can also be built as a module. If so, the module will be
++	  called ti-ads124s08.
++
++config TI_ADS1298
++	tristate "Texas Instruments ADS1298"
++	depends on SPI
++	select IIO_BUFFER
++	help
++	  If you say yes here you get support for Texas Instruments ADS1298
++	  medical ADC chips
++
++	  This driver can also be built as a module. If so, the module will be
++	  called ti-ads1298.
++
++config TI_ADS131E08
++	tristate "Texas Instruments ADS131E08"
++	depends on SPI
++	select IIO_BUFFER
++	select IIO_TRIGGERED_BUFFER
++	help
++	  Say yes here to get support for Texas Instruments ADS131E04, ADS131E06
++	  and ADS131E08 chips.
++
++	  This driver can also be built as a module. If so, the module will be
++	  called ti-ads131e08.
++
+ config TI_ADS7138
+ 	tristate "Texas Instruments ADS7128 and ADS7138 ADC driver"
+ 	depends on I2C
+@@ -1532,27 +1577,6 @@ config TI_ADS7924
+ 	  This driver can also be built as a module. If so, the module will be
+ 	  called ti-ads7924.
+ 
+-config TI_ADS1100
+-	tristate "Texas Instruments ADS1100 and ADS1000 ADC"
+-	depends on I2C
+-	help
+-	  If you say yes here you get support for Texas Instruments ADS1100 and
+-	  ADS1000 ADC chips.
+-
+-	  This driver can also be built as a module. If so, the module will be
+-	  called ti-ads1100.
+-
+-config TI_ADS1298
+-	tristate "Texas Instruments ADS1298"
+-	depends on SPI
+-	select IIO_BUFFER
+-	help
+-	  If you say yes here you get support for Texas Instruments ADS1298
+-	  medical ADC chips
+-
+-	  This driver can also be built as a module. If so, the module will be
+-	  called ti-ads1298.
+-
+ config TI_ADS7950
+ 	tristate "Texas Instruments ADS7950 ADC driver"
+ 	depends on SPI && GPIOLIB
+@@ -1588,30 +1612,6 @@ config TI_ADS8688
+ 	  This driver can also be built as a module. If so, the module will be
+ 	  called ti-ads8688.
+ 
+-config TI_ADS124S08
+-	tristate "Texas Instruments ADS124S08"
+-	depends on SPI
+-	select IIO_BUFFER
+-	select IIO_TRIGGERED_BUFFER
+-	help
+-	  If you say yes here you get support for Texas Instruments ADS124S08
+-	  and ADS124S06 ADC chips
+-
+-	  This driver can also be built as a module. If so, the module will be
+-	  called ti-ads124s08.
+-
+-config TI_ADS131E08
+-	tristate "Texas Instruments ADS131E08"
+-	depends on SPI
+-	select IIO_BUFFER
+-	select IIO_TRIGGERED_BUFFER
+-	help
+-	  Say yes here to get support for Texas Instruments ADS131E04, ADS131E06
+-	  and ADS131E08 chips.
+-
+-	  This driver can also be built as a module. If so, the module will be
+-	  called ti-ads131e08.
+-
+ config TI_AM335X_ADC
+ 	tristate "TI's AM335X ADC driver"
+ 	depends on MFD_TI_AM335X_TSCADC && HAS_DMA
 
-We can likely stop this discussion now as it's clear to everyone
-what's going on I think.
+---
+base-commit: 97fe5f8a4299e4b8601ecb62c9672c27f2d2ccce
+change-id: 20250312-sort_ti_drivers-04336a06a425
 
-Thanks,
+Best regards,
+-- 
+Tobias Sperling <tobias.sperling@softing.com>
 
-Chris
+
 
