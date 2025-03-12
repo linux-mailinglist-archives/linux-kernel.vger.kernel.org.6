@@ -1,183 +1,129 @@
-Return-Path: <linux-kernel+bounces-558592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 839E4A5E84B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:22:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E951A5E851
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:23:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB4C03ABA02
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:22:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A250617C3AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E901F180F;
-	Wed, 12 Mar 2025 23:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFFE1F1906;
+	Wed, 12 Mar 2025 23:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngsOwFCe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XVEHSrdp"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BE51F1515;
-	Wed, 12 Mar 2025 23:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7F11F1515
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741821731; cv=none; b=Qui1IhfpANCdTu0xIeOx6wFj410GIajP756bDZnR9kxuSv92I1jI5JfkUMWz8nfcfPBTokAJwOT2fX7GGj/RMDfcnFugm2h0pp6bsLNBuIHkM9up/p2nrI4OkBfoF4QYTZa+tVbRzHTdkXUAvzaeui05KGjIQhUM85FlQ2uzXcE=
+	t=1741821803; cv=none; b=TUs1FJquvlQqM1KLQxHUKlk3KgUhnb9jPOcV1PH3FspltEip/WdE3ueWYSng4XsPhXvcfLUKxqKlr0T+a/62EWSrlncuNMEN6tftiBPhZlEzmWslaRfPdYXMcYaF5vq4THXePX8z4a9cwdlEsErT0Q3LHS7JoiO3pzopukJvGN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741821731; c=relaxed/simple;
-	bh=EMf9sg4/j4jBcXvtW6xBhGZjpQXXIzxJRQwIhVs1+EQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k75UckC39A56jMWRrtdMhQLNK+kmK0TX9u7Zu8ZhnzfHcPHMt6gpzO2u6HzaLhsYJXLr5H+dNtVtGOk9a1fZeU58UdDdVeEZ5aPGryRAkItkI6jVJDD2bbcCpXwkaK+VBp4eVrqUnYJea4VBnaL/n28SsXv91V5rzDkMsGgRto8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngsOwFCe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1324C4CEDD;
-	Wed, 12 Mar 2025 23:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741821731;
-	bh=EMf9sg4/j4jBcXvtW6xBhGZjpQXXIzxJRQwIhVs1+EQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ngsOwFCe0FGH3KUSoKGDGqwb2IG1oRBThYTZLnQqe8/5ra+J5IcYTVdS+min3bRtV
-	 YH8qhQPJRe+Ql9is5SVX2y0EG4x250mMvr34d1s4CRnHtpgnGSz4DgMfIapnNXWlRd
-	 OuByWsII+rzDYotcH0ltsYtTHJvviJ4+8IVdwiXLJnMYVn2mgvXuw+9wn4thtG24IF
-	 9+cV/J+c3x5Xh/d9zl2j13nT6A4dN0FmXy8/ceOtp6gIsADsVS1t+ZddajltnNGLg3
-	 HYBpE+7nfSR42t6pSi3mywy5DzFwpl02cLtZT32L19df/GZUlx16u5kQXPkuGpiRiJ
-	 UPyW6e2HmLElQ==
-Date: Wed, 12 Mar 2025 16:22:10 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
-	cem@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v5 03/10] xfs: Refactor xfs_reflink_end_cow_extent()
-Message-ID: <20250312232210.GD2803730@frogsfrogsfrogs>
-References: <20250310183946.932054-1-john.g.garry@oracle.com>
- <20250310183946.932054-4-john.g.garry@oracle.com>
- <Z9E2kSQs-wL2a074@infradead.org>
- <589f2ce0-2fd8-47f6-bbd3-28705e306b68@oracle.com>
- <Z9FHSyZ7miJL7ZQM@infradead.org>
- <20250312154636.GX2803749@frogsfrogsfrogs>
- <62f035a9-05e7-40fc-ae05-3d21255d89f4@oracle.com>
+	s=arc-20240116; t=1741821803; c=relaxed/simple;
+	bh=AlMyTKDEpt5SFnEfiL/4Y+fTEsmXPpNzUT5Ac4vNIlY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W28ReNLdAKKfIiL7SGmvAgcOItIvIv53f8+dxtXLpX8Rjfc7azBieaLqagk2yBiiqSjDtiQXcfGYN+Ha/kYkMJLVy+3/vSZ7ANgvK4/ZW018U3GSv92HHtMHPSdobdRjUL5oy1DmuiB18e7JzeCmCFMqnDHT1GYAbuoyVvXvf/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XVEHSrdp; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e6ff035e9aso700734a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:23:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741821800; x=1742426600; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N5XiRjmmSEl/27WyQtk9B76hARduq1iukuO2DeaA0TI=;
+        b=XVEHSrdpGmngGZCI/mAg9qlNLLeouVxhA7is0W/xB56GsG+/4ImJsTDm5tFAwy015H
+         4nNRLSzweF5C3LrsOZSfYFlKkQejkbdNSsnvEgAulNL21aIHX6uiRQCj2KPUa4CeLa8K
+         6UU/F+z5bymQkfqPqXRl5Igt7NcEGesniPF6lzUphjRjWh1YWqQaTona9AgnVA4qRdK7
+         pC3Qdwbxfhy1p43Kddbdi2YzWOVOHRWskGskGZyleO8OQrYq4D4Z8o6UWkbY8nmD+BEv
+         enis7xbKNZLdTIgK0DnCX4TM9cvupHYiZemEulY9wKDGXZsvrQDUbOUIF8/9dcqqmUiT
+         /gQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741821800; x=1742426600;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N5XiRjmmSEl/27WyQtk9B76hARduq1iukuO2DeaA0TI=;
+        b=jiFXOJsRvQkF4iR1SK68lWheb/zXNjbKi4pVUrBsmO3NXT/LAn7gI7gTjjQPXURRCd
+         QfNZUcuXHcc6pZJtSfWG6kF6PSaHGyHrSW7ARn9UChRWCjsmn5T0aCFY5sAz/H6fgcaM
+         DnfpMmNQ2Fu79otw6+57ILl0QRTy5eXLWPlzDZQCu71pGlnQnlXrHKUEisao/hK8dBiT
+         7rWjs1gMrNe83Wx3IQBnBtPtEKTaEpAW2f9Wv5yygSCh+a+msgZm9vsAtUINtQsIb0F1
+         nTRW8YdMvoOLfZxREaJxBDnIj+E7KnZx2y86M2R72+cX16SngLIzNlTfJQFE+fIUsqL0
+         oupw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSnHnnoU95DkCx+QDDGuu+RuYkjVpE925Anm8BH/Xvoq9KVLvVW8KBtj2w7kDtySNFlC3y0RiSwwVQ7pc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGtQg27x4wNnFdsxszzNCL8Ik5Li4e1SBqGIetfArh9wt75XLZ
+	7GdUszVDSaUDj8POcW0lt9n29KFya2ZydwdO/wrflt+EFfpzipfS
+X-Gm-Gg: ASbGncsn+gBRjnqDQSFUYcqaCnE+uS3XoVmwxgbXvJLx9WpZQb+KoyA/P+LYdPX15q8
+	yHY5oxGzk0bpI8dOyb6juThOH7BlFCQ9m2EmuP/USCjCysmD+2KhlC8Hd9HewI1MsY3/2RI3dav
+	zp3ehdYdAmNDAcq4Se5LBtqVuEYLeGymKHgF1p9aDcdA88p/6gcyZYOfBkeZbSd9wXks2E+eCac
+	IEC0NVmd3v4fCJJ3yfwmI2IJWKO2SDHnhumeWHnfkZv+TVsSfF3cv+WpvypftXZ5Q8wgSRN3btA
+	8QrHgphER0pvT69WOwIoVGh1rCAFTktDGr8Lk/iEbbTs3WDQgT4pjklCV+8nzeXcr46g0Nw0HaR
+	7RD3TfGxLiNbpISYrnBgI0cm3yZshAIiaqnyjvoWbQw==
+X-Google-Smtp-Source: AGHT+IGHCuvkKN2Hnl4IIftTv7iSM7L6WhcdJmI8aN2Zt/SmXrCXjIxp9Wwtgzg+MHajHiqjVl+fZA==
+X-Received: by 2002:a05:6402:d08:b0:5e6:60da:dc45 with SMTP id 4fb4d7f45d1cf-5e75f987950mr11542688a12.31.1741821800333;
+        Wed, 12 Mar 2025 16:23:20 -0700 (PDT)
+Received: from localhost.localdomain (146.10-240-81.adsl-dyn.isp.belgacom.be. [81.240.10.146])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816afe223sm26732a12.70.2025.03.12.16.23.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 16:23:20 -0700 (PDT)
+From: Philippe Simons <simons.philippe@gmail.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	Andre Przywara <andre.przywara@arm.com>,
+	=?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Subject: [PATCH 0/2] drm/panfrost:
+Date: Thu, 13 Mar 2025 00:23:17 +0100
+Message-ID: <20250312232319.25712-1-simons.philippe@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62f035a9-05e7-40fc-ae05-3d21255d89f4@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 12, 2025 at 10:06:11PM +0000, John Garry wrote:
-> On 12/03/2025 15:46, Darrick J. Wong wrote:
-> > On Wed, Mar 12, 2025 at 01:35:23AM -0700, Christoph Hellwig wrote:
-> > > On Wed, Mar 12, 2025 at 08:27:05AM +0000, John Garry wrote:
-> > > > On 12/03/2025 07:24, Christoph Hellwig wrote:
-> > > > > On Mon, Mar 10, 2025 at 06:39:39PM +0000, John Garry wrote:
-> > > > > > Refactor xfs_reflink_end_cow_extent() into separate parts which process
-> > > > > > the CoW range and commit the transaction.
-> > > > > > 
-> > > > > > This refactoring will be used in future for when it is required to commit
-> > > > > > a range of extents as a single transaction, similar to how it was done
-> > > > > > pre-commit d6f215f359637.
-> > > > > 
-> > > > > Darrick pointed out that if you do more than just a tiny number
-> > > > > of extents per transactions you run out of log reservations very
-> > > > > quickly here:
-> > > > > 
-> > > > > https://urldefense.com/v3/__https://lore.kernel.org/all/20240329162936.GI6390@frogsfrogsfrogs/__;!!ACWV5N9M2RV99hQ!PWLcBof1tKimKUObvCj4vOhljWjFmjtzVHLx9apcU5Rah1xZnmp_3PIq6eSwx6TdEXzMLYYyBfmZLgvj$
-> > > > > 
-> > > > > how does your scheme deal with that?
-> > > > > 
-> > > > The resblks calculation in xfs_reflink_end_atomic_cow() takes care of this,
-> > > > right? Or does the log reservation have a hard size limit, regardless of
-> > > > that calculation?
-> > > 
-> > > The resblks calculated there are the reserved disk blocks and have
-> > > nothing to do with the log reservations, which comes from the
-> > > tr_write field passed in.  There is some kind of upper limited to it
-> > > obviously by the log size, although I'm not sure if we've formalized
-> > > that somewhere.  Dave might be the right person to ask about that.
-> > 
-> > The (very very rough) upper limit for how many intent items you can
-> > attach to a tr_write transaction is:
-> > 
-> > per_extent_cost = (cui_size + rui_size + bui_size + efi_size + ili_size)
-> > max_blocks = tr_write::tr_logres / per_extent_cost
-> > 
-> > (ili_size is the inode log item size)
-> 
-> So will it be something like this:
-> 
-> static size_t
-> xfs_compute_awu_max_extents(
-> 	struct xfs_mount	*mp)
-> {
-> 	struct xfs_trans_res	*resp = &M_RES(mp)->tr_write;
-> 	size_t			logtotal = xfs_bui_log_format_sizeof(1)+
+Allwinner H616 has a dedicated power domain for its Mali G31.
 
-Might want to call it "per_extent_logres" since that's what it is.
+Currently after probe, the GPU is put in runtime suspend which 
+disable the power domain.
+On first usage of GPU, the power domain enable hangs the system.
 
-> 				xfs_cui_log_format_sizeof(1) +
-> 				xfs_efi_log_format_sizeof(1) +
-> 				xfs_rui_log_format_sizeof(1) +
-> 				sizeof(struct xfs_inode_log_format);
+This series adds the necessary calls to enable the clocks and
+deasserting the reset line after the power domain enabling and
+asserting the reset line and disabling the clocks prior to the
+power domain disabling.
 
-Something like that, yeah.  You should probably add
-xfs_log_dinode_size(ip->i_mount) to that.
+This allows to use the Mali GPU on all Allwinner H616
+boards and devices.
 
-What you're really doing is summing the *nbytes output of the
-->iop_size() call for each possible log item.  For the four log intent
-items it's the xfs_FOO_log_format_sizeof() function like you have above.
-For inode items it's:
+Philippe Simons (2):
+  drm/panfrost: Add PM runtime flags
+  drm/panfrost: add h616 compatible string
 
-	*nbytes += sizeof(struct xfs_inode_log_format) +
-		   xfs_log_dinode_size(ip->i_mount);
+ drivers/gpu/drm/panfrost/panfrost_device.c | 37 ++++++++++++++++++++++
+ drivers/gpu/drm/panfrost/panfrost_device.h |  4 +++
+ drivers/gpu/drm/panfrost/panfrost_drv.c    |  8 +++++
+ 3 files changed, 49 insertions(+)
 
-> 	return rounddown_pow_of_two(resp->tr_logres / logtotal);
 
-and like I said earlier, you should double logtotal to be on the safe
-side with a 2x safety margin:
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+prerequisite-patch-id: eb8a11e2b24bb282970d8b8528834dea7ee392cc
+-- 
+2.48.1
 
-	/* 100% safety margin for safety's sake */
-	return rounddown_pow_of_two(resp->tr_logres /
-				    (2 * per_extent_logres));
-
-I'm curious what number you get back from this function?  Hopefully it's
-at least a few hundred blocks.
-
-Thanks for putting that together.  :)
-
---D
-
-> }
-> 
-> static inline void
-> xfs_compute_awu_max(
-> 	struct xfs_mount	*mp, int jjcount)
-> {
-> ....
-> 	mp->m_awu_max =
-> 	min_t(unsigned int, awu_max, xfs_compute_awu_max_extents(mp));
-> }
-> 
-> > 
-> > ((I would halve that for the sake of paranoia))
-> > 
-> > since you have to commit all those intent items into the first
-> > transaction in the chain.  The difficulty we've always had is computing
-> > the size of an intent item in the ondisk log, since that's a (somewhat
-> > minor) layering violation -- it's xfs_cui_log_format_sizeof() for a CUI,
-> > but then there' could be overhead for the ondisk log headers themselves.
-> > 
-> > Maybe we ought to formalize the computation of that since reap.c also
-> > has a handwavy XREAP_MAX_DEFER_CHAIN that it uses to roll the scrub
-> > transaction periodically... because I'd prefer we not add another
-> > hardcoded limit.  My guess is that the software fallback can probably
-> > support any awu_max that a hardware wants to throw at us, but let's
-> > actually figure out the min(sw, hw) that we can support and cap it at
-> > that.
-> > 
-> > --D
-> 
-> 
 
