@@ -1,165 +1,183 @@
-Return-Path: <linux-kernel+bounces-557526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF9CA5DA60
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:21:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF1B4A5DA64
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D92B7A3614
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:20:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 334883B5038
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323D823E329;
-	Wed, 12 Mar 2025 10:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE20023E251;
+	Wed, 12 Mar 2025 10:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OmlkWsFp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="wdYszyxw"
+Received: from smtp16.bhosted.nl (smtp16.bhosted.nl [94.124.121.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A38D23CF06;
-	Wed, 12 Mar 2025 10:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EDE17BB6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741774897; cv=none; b=ZnPEIHjUKKQLdiwrl4BdJeJtIfR8uWmEKfDujR1pK86nLt0JSRu/jeLS3hwJcLsTLPaRHyOQ9YYz0UbMw7wUz/zfNYxd3e4RGHww+5DIrPltR56Zb0i8+zW1Fq0sjyZd6yy6EFxCMYc/MGBdI6k8JcedhfaUOa3H/8yRGLKpTHs=
+	t=1741775054; cv=none; b=FTkwTQMWL/755ODYdJp+NexWnop8k6OSdEdN6JTXTdwX5i0cChORQPN0mjyD8TxJBmSaowqxmWlIw+skjLzxShIb3NaXyiiCZ8jhseEWKbcScr3CeQuuIZrF5OvT1P6SWAyJdGgAO1DpOzm+UQStg5ipFGemFkSI9Twz4KMiuQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741774897; c=relaxed/simple;
-	bh=TwfYyqb9/mMQUrdLVTvq9KdVsmAKrhEkOXYXu6MsYrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YtAiFX51vaptyW2COnO+x9oi1IlILgzxinSem0sRMf9B3ioo3Aztlp9wboxqXfNbPwO+Ir0n7t8OjwHHb1SEoKMTTdQrovFUa49pzllXHz79z+wpnPD5bhTNHWAwYkbSysoPid5seJlzNw+EqAsZIbvLSA7Xd+3CVJLjVLK+KqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OmlkWsFp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC24FC4CEE3;
-	Wed, 12 Mar 2025 10:21:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741774897;
-	bh=TwfYyqb9/mMQUrdLVTvq9KdVsmAKrhEkOXYXu6MsYrc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OmlkWsFpMtUR9XXN7XLsmWVlpBclQ2BZmSnpib54pKhUO0xMGiHMxavAaOcOW4Ao8
-	 TJcZBqpd4MZKTw4ud6+x9WajNEhY+iHijSLVXFuGD1aB2ETpG8EmTVtbOzdcx2Iw92
-	 mL+KYuP9Qkl3lD9M/k9gMqCsVAqO1wU/xwBGfovQ=
-Date: Wed, 12 Mar 2025 11:21:34 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Akihiro Suda <suda.gitsendemail@gmail.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, suda.kyoto@gmail.com,
-	regressions@lists.linux.dev, aruna.ramakrishna@oracle.com,
-	tglx@linutronix.de, Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
-Subject: Re: [PATCH v2] x86: disable PKU when running on Apple Virtualization
-Message-ID: <2025031206-require-ranged-e62e@gregkh>
-References: <CAG8fp8Qdmt9vLk=8ORccY5B+ec1huhazXG4PBaNyLEkq31HDjw@mail.gmail.com>
- <20250312100926.34954-1-akihiro.suda.cz@hco.ntt.co.jp>
+	s=arc-20240116; t=1741775054; c=relaxed/simple;
+	bh=wV4vvx1epJR1UgaiyVzyyHquG4Q89fi7M1hxEWlpDKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uHy23nDnz5qvl0GciKaTB6gXq1tT7FQAZaADpN/vmcmlh5Y38RfOicMNK+s7fN4Qm6+rXVB6pXKXz9RBHja1YdSBqyC3Lvj7QpciLbwHYekvgIe7WWDrtNRiCedKpOaxXt4B9W0avEMwYSigzB85d5SdGBvCF3PadBFfP60KQiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=wdYszyxw; arc=none smtp.client-ip=94.124.121.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=ob8H5QIH3xWgrc1ssUVcQVrQO0vKzhgN8WsPC6YgYl8=;
+	b=wdYszyxw7fASZCRSN8ns6xL+KX+9wNRsS2CByIAia+NEsAXJxPWXUCt+LGDBESoUyloQTGqpF2TZx
+	 /A9qIDXJn/DyFeXMavM7qQSd6cFhVKIZE+ngHeKzwZ9pcTdP1xTfCwmVgtNCxvcgv5J8DNiDih+iEk
+	 KeEZFhJFjgLEMki4NNSeH+7dfeK2gE+RU++cZZ+cETENg7UO8vmlm9cuszEptPhEigb/qS0NtPaiVb
+	 MClyP+I/GOCAU/MtqpOk6T5n1DDC3LqLII657coUta4cq5afVY3TxUxjokSdeWHfSACAQx7wRUioU9
+	 4/ao1675TbGOUS7nj79z/25KOgi9Ecg==
+X-MSG-ID: 1dfed03c-ff2c-11ef-8b50-005056817704
+Date: Wed, 12 Mar 2025 11:24:01 +0100
+From: David Jander <david@protonic.nl>
+To: Kent Gibson <warthog618@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Bartosz Golaszewski
+ <bartosz.golaszewski@linaro.org>, Linus Walleij <linus.walleij@linaro.org>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: regression: gpiolib: switch the line state notifier to atomic
+ unexpected impact on performance
+Message-ID: <20250312112401.5e292612@erd003.prtnl>
+In-Reply-To: <20250312091056.GA105343@rigel>
+References: <20250311110034.53959031@erd003.prtnl>
+	<CAMRc=MeWp=m1Bi_t_FCrxFOtiv3s8fSjiBjDk4pOB+_RuN=KGg@mail.gmail.com>
+	<20250311120346.21ba086d@erd003.prtnl>
+	<20250312013256.GB27058@rigel>
+	<20250312090829.5de823b7@erd003.prtnl>
+	<20250312091056.GA105343@rigel>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312100926.34954-1-akihiro.suda.cz@hco.ntt.co.jp>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 12, 2025 at 07:09:26PM +0900, Akihiro Suda wrote:
-> OSPKE seems broken on Apple Virtualization.
+On Wed, 12 Mar 2025 17:10:56 +0800
+Kent Gibson <warthog618@gmail.com> wrote:
+
+> On Wed, Mar 12, 2025 at 09:08:29AM +0100, David Jander wrote:
+> > On Wed, 12 Mar 2025 09:32:56 +0800
+> > Kent Gibson <warthog618@gmail.com> wrote:
+> >  
+> > > On Tue, Mar 11, 2025 at 12:03:46PM +0100, David Jander wrote:  
+> > > >
+> > > > Indeed, it does. My application is written in python and uses the python gpiod
+> > > > module. Even in such an environment the impact is killing.  
+> > >
+> > > Interesting - the only reason I could think of for an application
+> > > requesting/releasing GPIOs at a high rate was it if was built on top of
+> > > the libgpiod tools and so was unable to hold the request fd.  
+> >  
 > 
->   WARNING: CPU: 0 PID: 1 at arch/x86/kernel/fpu/xstate.c:1003 get_xsave_addr_user+0x28/0x40
->   (...)
->   Call Trace:
->    <TASK>
->    ? get_xsave_addr_user+0x28/0x40
->    ? __warn.cold+0x8e/0xea
->    ? get_xsave_addr_user+0x28/0x40
->    ? report_bug+0xff/0x140
->    ? handle_bug+0x3b/0x70
->    ? exc_invalid_op+0x17/0x70
->    ? asm_exc_invalid_op+0x1a/0x20
->    ? get_xsave_addr_user+0x28/0x40
->    copy_fpstate_to_sigframe+0x1be/0x380
->    ? __put_user_8+0x11/0x20
->    get_sigframe+0xf1/0x280
->    x64_setup_rt_frame+0x67/0x2c0
->    arch_do_signal_or_restart+0x1b3/0x240
->    syscall_exit_to_user_mode+0xb0/0x130
->    do_syscall_64+0xab/0x1a0
->    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Btw, I'm not suggesting that anyone build an app on top of the libgpiod
+> tools - I was just hunting for an explanation as to why anyone might be
+> opening and closing chips or requests at a high rate.
+
+Very understandable.
+
+> > I didn't want to bother the list with the details, but this is during the
+> > configuration phase of the application.  
 > 
-> Tested on macOS 13.5.1 running on MacBook Pro 2020 with
-> Intel(R) Core(TM) i7-1068NG7 CPU @ 2.30GHz.
+> The fact that close() was slow is valid but it left me wondering why you
+> were needing to do that so frequently.
+> It helps to understand what you are doing and why to see if there are
+> other better solutions - or it there should be.
+
+You are right. In this case it was warranted to describe the situation in a
+bit more detail.
+
+> > It receives many configuration messages
+> > for different IO objects at a fast pace. Most of those objects use one or more
+> > GPIO lines identified by their label. So the application calls
+> > gpiod.find_line(label) on each of them. Apparently libgiod (version 1.6.3 in
+> > our case) isn't very efficient, since it will open and close each of the
+> > gpiodev devices in order to query for each of the gpio lines. I wouldn't blame
+> > libgpiod (python bindings) for doing it that way, since open()/close() of a
+> > chardev are expected to be fast, and caching this information is probably
+> > error prone anyway, since AFAIK user space cannot yet be informed of changes
+> > to gpio chips from kernel space.
+> >  
 > 
-> Fixes: 70044df250d0 ("x86/pkeys: Update PKRU to enable all pkeys before XSAVE")
-> Link: https://lore.kernel.org/regressions/CAG8fp8QvH71Wi_y7b7tgFp7knK38rfrF7rRHh-gFKqeS0gxY6Q@mail.gmail.com/T/#u
-> Link: https://github.com/lima-vm/lima/issues/3334
-> Signed-off-by: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
-> ---
-> v2: check oem_table_id rather than oem_id for better robustness
-> ---
->  arch/x86/kernel/cpu/common.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+> Ok, if the issue is purely the name -> (chip,offset) mapping it is pretty
+> safe to assume that line names are immutable - though not unique, so
+> caching the mapping should be fine.
+
+On our board that would be fine, but what about hot-pluggable GPIO
+chips/devices, or modules that are loaded at a later time? I was thinking
+about libgpiod in general...
+
+> The kernel can already tell userspace about a number of changes.
+> What changes are you concerned about - adding/removing chips?
+
+Yes, since the patches from Bartosz I understand that is indeed possible now
+;-)
+No special concern, just thinking about general applicability of caching such
+information in libgpiod (especially considering the old version I am using
+presumably from long before the kernel could do this).
+
+> > If this had been this slow always (even before 6.13), I would probably have
+> > done things a bit differently and cached the config requests to then "find"
+> > the lines in batches directly working on the character devices instead of
+> > using gpiod, so I could open/close each one just once for finding many
+> > different lines each time.
 > 
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index 7cce91b19fb2..8d78d34cd434 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -26,6 +26,7 @@
->  #include <linux/pgtable.h>
->  #include <linux/stackprotector.h>
->  #include <linux/utsname.h>
-> +#include <linux/acpi.h>
->  
->  #include <asm/alternative.h>
->  #include <asm/cmdline.h>
-> @@ -516,6 +517,21 @@ static bool pku_disabled;
->  
->  static __always_inline void setup_pku(struct cpuinfo_x86 *c)
->  {
-> +	/*
-> +	 * OSPKE seems broken on Apple Virtualization.
-> +	 * https://lore.kernel.org/regressions/CAG8fp8QvH71Wi_y7b7tgFp7knK38rfrF7rRHh-gFKqeS0gxY6Q@mail.gmail.com/T/#u
-> +	 *
-> +	 * TODO: conditionally enable pku depending on the DMI BIOS version when Apple
-> +	 * fixes the issue.
-> +	 *
-> +	 * However, this would be still not enough because DMI is missing when vmlinuz
-> +	 * is directly loaded into VM.
-> +	 */
-> +	if (!memcmp(acpi_gbl_FADT.header.oem_table_id, "Apple Vz", 8)) {
-> +		pr_info("pku: disabled on Apple Virtualization platform (Intel) due to a bug\n");
-> +		pku_disabled = true;
-> +	}
-> +
->  	if (c == &boot_cpu_data) {
->  		if (pku_disabled || !cpu_feature_enabled(X86_FEATURE_PKU))
->  			return;
-> -- 
-> 2.45.2
+> The libgpiod v2 tools do just that - they scan the chips once rather
+> than once per line.  But that functionality is not exposed in the
+> libgpiod v2 API as the C interface is hideous and it is difficult to
+> provide well defined behaviour (e.g. in what order are the chips scanned?).
+> So it is left to the application to determine how they want to do it.
+> There isn't even a find_line() equivalent in v2, IIRC.
+ 
+I think I should move to v2 as soon as I find the time to do it. ;-)
+
+In any case, I also could reproduce the issue with the gpiodetect tool from
+v2. You can visually see each found chips being printed individually on the
+terminal with kernel v6.13, while with 6.12 all chip names would appear
+"instantly". Hard to describe with words, but you could in fact tell which
+kernel was running just by looking at the terminal output of "gpiodetect"
+while it was being executed... my board has 16 gpio chips, so you can really
+see it "scrolling" up as it prints them with kernel 6.13.
+
+> > > Generally an application should request the lines it requires once and hold
+> > > them for the duration.  Similarly functions such as find_line() should be
+> > > performed once per line.  
+> >
+> > Of course it does that ;-)
+> > This board has a large amount of GPIO lines, and like I said, it is during the
+> > initial configuration phase of the application that I am seeing this problem.
+> >  
 > 
-> 
+> Good to hear - from your earlier description I was concerned that
+> you might be doing it continuously.
 
-Hi,
+Thanks. Tbh, I am quite proud of the efficiency and speed of the application
+itself. Being written in pure python and running on a rather slow Cortex-A7,
+it is surprisingly fast, controlling 16 stepper motors, reacting to 26 sensor
+inputs changing at a blazing high pace and continuously sampling several IIO
+adcs at 16kHz sample rate, all with rather low CPU usage (in python!). It makes
+heavy use of asyncio an thus of course the epoll() event mechanisms the kernel
+provides for GPIOs, IIO, LMC and other interfaces.
+So you may understand that I was a bit triggered by your suggestion of
+inefficiency initially. Sorry ;-)
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Best regards,
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+-- 
+David Jander
 
