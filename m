@@ -1,119 +1,100 @@
-Return-Path: <linux-kernel+bounces-558097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FEB8A5E1A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:19:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E500A5E1A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:19:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2239189A2FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC089189AA26
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB20E1D5143;
-	Wed, 12 Mar 2025 16:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2E11D9A54;
+	Wed, 12 Mar 2025 16:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="ED7vGw/d"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446B01C3BE9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="pV3kuEbb"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF5D1D5150
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741796343; cv=none; b=BsbLvtvmKsIlC0aYnrQvPPGPbXcTlY1rHmvFTa4iDJFLtMsBaGiiDhticer5JuSEDJbp6Tr7hd4i+u7IafFCo84Imr9Qo9RSZXez9+UtdBzdtgbOpmTOXOJ0IA/jugoLrmajnoTvzvZFZrNeynGRGaqais6jkV85cnG9xIHrdlw=
+	t=1741796345; cv=none; b=elluxTAmpKwF5aXWE3NNBRTVK9TfnjQ0bQGTcjkJO5iKsukjIBCyrxMs8jCG+thyPpesrXMIuJitnLeDoJas5ATQ2lLkFBcaNPPmKYfICEIj9Od3foYq79BLutiYcANh1iWIXajdsPcCem83whtwoVLyw1CHXZ6gEdekOKuDZqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741796343; c=relaxed/simple;
-	bh=L+tCdPEuuikQUx15WRiVh8EMMs15WbzGjvM+O08Isg8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nt/bU0zYzXl3hvQMSu5qCJZmr7H6FrB6D+X/vZzeoOGv8FlR3ApdgLpsbrrj/oyLcYiSGEnI1aPw4gZTP2qIKaHCxdyCx1j6FOUVvQkZG7aArnxk3w6mWi46xnA8awIWBWGuug6OjZd4NYqh04rP9oqcnyVQOxdGU9foq5MW9/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=ED7vGw/d; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22403cbb47fso1046845ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:19:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1741796340; x=1742401140; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L+tCdPEuuikQUx15WRiVh8EMMs15WbzGjvM+O08Isg8=;
-        b=ED7vGw/dsDck8oU4NR4oTljZkiLdGHxDVfs5ZSUKj/zqzhJzibms9Nc+3w8oMboA8f
-         FeGdzqZfTFFke1N0wZpHst0a9Me0KgaNlhT6Xh+dpLaSeDFw19sGoAorK24zsPfc7/lX
-         71nfCsF20HtOJTr4E8pVIjZlbdHvCirxAYnj0AwxiXlQwLh/zh9/G3rxzOAbmtdIfHW5
-         IH91yZqhOvhPdA9eIkP2Eb5hFwGdFw3Ukq85cfsYKzAoT0DpKyIYKsmaGmt4+t2+DJxO
-         4Xqns6qsSuCQd4bgR5vfwUkz+brINPOBACHzf4EIt149uqsi+0USe7APbn9+lDLFUMsA
-         L4Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741796340; x=1742401140;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L+tCdPEuuikQUx15WRiVh8EMMs15WbzGjvM+O08Isg8=;
-        b=jon0/6sMX+A/5Rd9h0CIrPYRsSnRtGQtFA8kGWYhRgBVXsWTJxpYmgrZx9cfY6LKtN
-         wCzEC8fppxaOQvEWk40jdP8Q7n6Y/MTe7M7Q7GXqpcTb0qdWqS5yZHrsEYI5SnBaW8hW
-         thh9ryKps6G4yKwa4/O6OUJ8S12ZyXpLGDFUEOk8biCeEtlg8xJ5hP5pxY5HZ8YLpTtE
-         /BBW+q1mIt8Bl3ZHsQbvKUaPpbsrNshkQrztnIFIqIrasBX/GKvQMCcHaxuskGoULTUz
-         5bl0X6Tm5h27PkQv4x4MLOiXDMwl+TXhR6J64yr/ZSJ0pQqYGhxdxYWZOIYP+3UWiwJo
-         tOyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMq0HN29kosjlOwvHNByW7Fw2rNH5M8arFeUEFzBCzQUy6AO1PPpsfXuMkxnzYuxYy4yJ6Ctj2tEAzJgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrNZPbeDiz4k+wQhwUvzdyeCpyBysrAC2oNMAOHP/b66YqPRP8
-	9zR12BVNsFeGSIN5pwammqUrjmwaFD4qdWlle4NqjS1SnZJcCYUVWMRzMnkLrzCtXuE5N+9BEc4
-	+rIKnzIL8yhO2q92NQ0WidZEvGB9PcG+4+7FuQHah9qTYhkxkOaOk6A==
-X-Gm-Gg: ASbGncsr+cO4dCzsJYG4JYpHHVTYloT8VwcyEXUmdYiedI6II3OwOHxFsgxnoaGYzUP
-	HB4ZQlJSc75eC34YqxCJmbKxRF9jDFCp3QeKpGsLf2OtQAfeIafGYuSSUed+ItNorhDxIqecKTQ
-	IZU5GCtn7ObVv6s0/RBQxTeYhmHg==
-X-Google-Smtp-Source: AGHT+IEzeuirJ35v06ZpAeCoudNyX1zllB2KPEQvNHaaKY5Pj8xsVgMJdPGEEnKMVpmZE6ZPTvWiNCfmIkBRzSIqmt8=
-X-Received: by 2002:a05:6a21:4cc2:b0:1f5:8220:7452 with SMTP id
- adf61e73a8af0-1f582207511mr17977801637.24.1741796340554; Wed, 12 Mar 2025
- 09:19:00 -0700 (PDT)
+	s=arc-20240116; t=1741796345; c=relaxed/simple;
+	bh=r5wW3O7Nnkvs71M/SLdq386LsVv5kb/pJTQyMSmxX7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VblLtmvc6OIcBqikTc/mxynoWECzDYqEKhSJaQ6gSuqLkojW1Y1FdbuNfwNB9e+Mk4o7QKhxEMCHFJlo+Mkoab8gjM+5dYpa3+6uTauKEzE20R7YE1c3ZQqVql+xYcQCLGKt5GUAwNv8uHPE/QYOLXQmpSj4C/Rq3JIsqn5p3pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=pV3kuEbb; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id BC68345742;
+	Wed, 12 Mar 2025 17:19:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1741796342;
+	bh=r5wW3O7Nnkvs71M/SLdq386LsVv5kb/pJTQyMSmxX7c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pV3kuEbbx74gmsu4xnQaEbkMf6NVwuMeR0+cqxHb8z16w9rNqF2rPdjGeT75ll+qK
+	 Kx6VrHkBCBJJqz++GyYBhhiyJGKdggkAbG3QgjXu/JwYcqMxCLvB22R/uZOUuO/QUb
+	 cHzko8fC0Iva21PpnhKhjGRhiC906h/f0MmwaZMXvaqloTxRDBdOFSEsVE9oTVod6c
+	 xFNkZNb/DLuUxIP/isWmOuPt+s8Aiu2TTET2zvSKZy6Oto1CYNO/o83UQZRq25UPOr
+	 nfWnQWDbaz+J+fPZcXiPLlGTLVOAI4iP443X8JFJkHoln+jBExxJkuHm70yrI4vksq
+	 EitZqTSOX0uYg==
+Date: Wed, 12 Mar 2025 17:19:01 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Joerg Roedel <jroedel@suse.de>, x86@kernel.org, hpa@zytor.com,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>, Larry.Dewey@amd.com,
+	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+	Juergen Gross <jgross@suse.com>, kirill.shutemov@linux.intel.com,
+	alexey.gladkov@intel.com
+Subject: Re: [PATCH 2/2] x86/sev: Make SEV_STATUS available via SYSFS
+Message-ID: <Z9Gz9WnQRmLUR73I@8bytes.org>
+References: <20250312144107.108451-1-joro@8bytes.org>
+ <20250312144107.108451-3-joro@8bytes.org>
+ <ef3f3117-6cd5-4b94-8ddb-e6d224efac60@intel.com>
+ <Z9GjTBHBqXenCWYx@suse.de>
+ <862e626a-3d4b-40c0-b1b1-6a51b30dcd22@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312111915.2970032-1-naresh.solanki@9elements.com>
- <CAOMZO5DaZbRXuv4vgWk9evNcV4iW6gXy2Vjv7oWsnMo_R9ku4Q@mail.gmail.com> <CABqG17gS-kiB73tTC+u-TER2+ABLYPDVM5YyjiqpEzLTb0LbJQ@mail.gmail.com>
-In-Reply-To: <CABqG17gS-kiB73tTC+u-TER2+ABLYPDVM5YyjiqpEzLTb0LbJQ@mail.gmail.com>
-From: Naresh Solanki <naresh.solanki@9elements.com>
-Date: Wed, 12 Mar 2025 21:48:49 +0530
-X-Gm-Features: AQ5f1Jo-5_CpGz2sBHoLxcb-8mpPBzuC8RFH01rncuLzB1k6Cv_o42kwes_3CuM
-Message-ID: <CABqG17gwNJnn89SwJf4xAMWGjz+tW+7GkQZEj-D7dPT2Ox9=jA@mail.gmail.com>
-Subject: Re: [oe] [meta-oe][PATCH] meta-openembedded: flashrom: Update to v1.4.0
-To: Fabio Estevam <festevam@gmail.com>
-Cc: openembedded-devel@lists.openembedded.org, linux-kernel@vger.kernel.org, 
-	"Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <862e626a-3d4b-40c0-b1b1-6a51b30dcd22@intel.com>
 
-Hi
+On Wed, Mar 12, 2025 at 09:04:14AM -0700, Dave Hansen wrote:
+> Let's draw this out to its natural conclusion. There are also a bunch of
+> TDX attributes that tell you about the capabilities of the VM and the
+> TDX module.
+> 
+> Should we have:
+> 
+> 	/sys/devices/system/cpu/tdx/tdx_attributes
+> 
+> which just dumps out the raw register values that come back from the
+> TDCALL? Then we'll go write a tdxguest tool to parse those values.
 
-On Wed, 12 Mar 2025 at 19:37, Naresh Solanki
-<naresh.solanki@9elements.com> wrote:
->
-> Hi,
->
-> On Wed, 12 Mar 2025 at 19:32, Fabio Estevam <festevam@gmail.com> wrote:
-> >
-> > On Wed, Mar 12, 2025 at 10:52=E2=80=AFAM Naresh Solanki via
-> > lists.openembedded.org
-> > <naresh.solanki=3D9elements.com@lists.openembedded.org> wrote:
-> > >
-> > > From: "Signed-off-by: Patrick Rudolph" <patrick.rudolph@9elements.com=
->
-> >
-> > This From line is incorrect.
-> >
-> > It should be:
-> >
-> > From: Patrick Rudolph <patrick.rudolph@9elements.com>
-> Correct. Not sure why the tool picked it that way. Will check.
-Found that I had set the author name with the Signed-off-by string.
-Will be fixed in v2.
+If I remember correctly the goal of the VirTEE project (where the
+snpguest tool lives) is to come up with a combined teeguest tool. This
+will serve as a vendor- and architecture-independent frontend for the
+various kernel interfaces for confidential computing (configfs-tsm,
+sysfs-attributes, ...).
 
-Thanks
-Naresh
-> Thanks
-> Naresh
+So yes, my expectation is that this tool will understand the raw values
+returned from the TDCALL, as long as they are architectural.
+
+But let me think a bit more about a solution that takes care of the
+tooling and the human requirements.
+
+Regards,
+
+	Joerg
 
