@@ -1,125 +1,154 @@
-Return-Path: <linux-kernel+bounces-557659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE95A5DC17
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:57:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 793ACA5DC11
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:56:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14B43B537B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:57:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A1D47A7FAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423D723F42A;
-	Wed, 12 Mar 2025 11:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2798024290C;
+	Wed, 12 Mar 2025 11:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="hRDLXru1"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RlQrrYbc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358D024501E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6690A241C8B;
+	Wed, 12 Mar 2025 11:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741780599; cv=none; b=MaAySrlgljDJUV+eTAxipSuwp1igfpLQeGLJVOzO4JVnv1dzA1fzdh9awcNG6m81QA2pD2m+pPVAPPxTulQQJLTUcDhnQaIWt1r9WEAoF6Bi7KLkJHEC1BwKwmxiCn5R9GR2/ZdVhYgs3g+idDOT02IoJitNNPi4JE3+LeJ6GAc=
+	t=1741780582; cv=none; b=XZarz9GOwKVmtEUwbASjk64wqmgJtg9PbyHC5wy/0BIho9eOz/vdgfuIDB9fjjiU24k2jU7e6IuU7MZcGFzT30Lv4OEpzLXZL6Pl/cbQfPpOYmU+geo9ndbFIqVHtZBYotiEYUek+lK3BpR//x8BNGBVeN1e0Z9oP/s+FEDsjmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741780599; c=relaxed/simple;
-	bh=HzzfwQzBMa06gpOYm7ED9Z4TNgABvoHrMUKZXgLGOoE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nNhIgANGNkO2KSCz2O/swuPs7/AKpb1WsP160ldZi66R4LnIAs2zkTS8Z5lycMxQK06751oUZOQDqYlhHa7noJi1Jr/rnl4gNtDP+RGoluOL7ObyHik3x+xX2NY/eIqOWweK1oqWsS0SS+p8ACri2j7SdNqgOqQ53MX5822AJu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=hRDLXru1; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22355618fd9so124762115ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 04:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741780597; x=1742385397; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u2W4Xv+9VQWQQBSPngguZ3XObUjYW0AuhHcxMG6Wj0Y=;
-        b=hRDLXru1x5Yej7QYsI9zqFpP0u+2kNee6ctEfJ1WFijqggxofnUosdicEClpxgIaMg
-         r5/6QAtSy8jEXCykBidMjMIBLoTKHYQ4/5qeq5u0X143wy+dQvJpHuYUGw0ojsmOdxDt
-         CIW6nWtFn/dkf3NhtRDRKpWO9wnn0MQJVIz2YdrvTC8Q3GXK7GMcoqeo58Rjm3sUlGQA
-         WT0st++TKvxDU1H4WmrKCePPVK6KFb3855tPm4BSx/gk9F8ffukklGneA3UyKFQk4+3F
-         MYem+1pqSQTjVihpCweGbzjb6RZ3CUUznpnQ4hMvtdYe0lpg//31FpdUKKaozUiYgF87
-         0zyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741780597; x=1742385397;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u2W4Xv+9VQWQQBSPngguZ3XObUjYW0AuhHcxMG6Wj0Y=;
-        b=u9zT3Wxi4RZ7r2kxpgyMMwJBU4/+szb60DcarzmQi2Tdbn0pc+XftblX4ENmCjGGPM
-         AkRGj+V1GlEYUStHZJd8EDS1/KFyKYZZ9XthwyaA5w7tx1w9twwwQzOzQQc3qWufL29V
-         ByEIBQAi+ZdEh9Dax2U+v2Lvy6++ca42RogosEoDqah2Cu7yAqGNWuMTfdYcBStAuxBm
-         L+QG/+SEJC0/vcX1CF8Y4IyQY4QZEAx6cv3xv5EOggqM0tqjnOVRKifcEDC/EVbROsmJ
-         3c584T3PuHXCRqIFDQI7LHEj3+nkeddcn7Ar3XGPRGA/vFlDtJGFz8KGThnAfqypkckL
-         tPjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNFtO4IfTts6E4yLhgv5A2zRQ2GsgSRnn2Q6udZhQW6iP60yZ3PfBKgKQhL9nHp6EhgDATNnMNQlwdX8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQKJ01zeYWJJqJELnJ/6fafl/PXTZpK6R6KqV/ZSAutJUIQsYl
-	0DCzFK5mOV+Je9bsbfCCTDl5MM3W6hS+rWOUleLUrkqltUhRCz7Or1pCFeKRmKYle/4iJ7J6TxM
-	O8sc=
-X-Gm-Gg: ASbGncuukuJgB+t+bzkdzRN5dB9kFrgnaAlZRqHlaSmMj6wOOfuigwV4BtbxFgqXmiM
-	azRuIM0IH1PrnHCKPI/8ubzEhqkh1qnKaCqbi5ryNEidAsXOxxgMxgr5fGvxY04lYF6tisPIN6Q
-	EY338K+degIsq5KoL72vF+i5VkgHXs8mkQcjtQGwEbC1eGnTBbcJuNrVhgH0+BYOo+7NT7NpLNI
-	B5SbZZxxe4iOhQUUGWH6MZBtPYUmfXeVNYR6LY7T5ZT3XCYioC23Y1WgoBW+hPCQebVNeedTBJB
-	zYlzEkABaiSZQYQifw04AcTPD743+jLBnxP0Wn6HkYPDe/nJ
-X-Google-Smtp-Source: AGHT+IFKd8JzPs00shGeDPszPVRqf7Tdd+CUl4POW8V13KNLbNVMybkA3YJRReDGIm9qT/E2zqWsNQ==
-X-Received: by 2002:a05:6a21:9d48:b0:1f5:8a1d:38fd with SMTP id adf61e73a8af0-1f58caefbf9mr12020498637.2.1741780597517;
-        Wed, 12 Mar 2025 04:56:37 -0700 (PDT)
-Received: from localhost ([157.82.205.237])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736d4f20913sm6410407b3a.13.2025.03.12.04.56.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 04:56:37 -0700 (PDT)
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-Date: Wed, 12 Mar 2025 20:56:00 +0900
-Subject: [PATCH v3 6/6] KVM: arm64: Reload PMCNTENSET_EL0
+	s=arc-20240116; t=1741780582; c=relaxed/simple;
+	bh=VETkLINRI8hcNJRpuez892xea1lFBVqg7ZWvjLXYyZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uh8B9+QPdLC6tRTWeu53zaTZHPC9sBuuEmJRqB3w7rC+wkSbTrwgz81SHKEn6+V5OHu9kh3WnZJCFryh1MPJjEkXLWSLIV3SHP/f+q2YBkWii7qkJK14ed9qplcdQozQyVDVgn7S0Gexk4TUmydh4JRbgm/1HItLS/IKLFh+hvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RlQrrYbc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1805AC4CEED;
+	Wed, 12 Mar 2025 11:56:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741780581;
+	bh=VETkLINRI8hcNJRpuez892xea1lFBVqg7ZWvjLXYyZI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RlQrrYbc+mQyR0zAoC1RAtoBY1ZqSo2cq+DOkxMfK52zQgeQNc4eaaZlndSyJ2pJD
+	 GHNEw7huNhJZ/HRlvyZ60LLbota9C9dhT3hyhvbbj/v0g+OoRfnNsghuLZI53rt8EW
+	 RLVchYzwI5o0Gt4tVKxP0oqeilv/wj/d+t7Iv0KMu6iPrWjFyUaP7p7WG9FDoJ1OMN
+	 hvHyNmC6q3HOTMmDMpRlnEVL8lIPtkLBeT47QfyLOgU7RjW5vO+Irp3VaGWPd0b7Vb
+	 zGiL/igrRb+UaFG3dSuaTaWRhxm3t+eEdd/05hLLPc0Jc0gQogNKGnICZpbAc1ydif
+	 vS+ZeT5X+hw3w==
+Message-ID: <328d89da-4246-4c75-a277-b06934e4a9d9@kernel.org>
+Date: Wed, 12 Mar 2025 12:56:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/4] pinctrl: samsung: add gs101 specific eint
+ suspend/resume callbacks
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com,
+ semen.protsenko@linaro.org, kernel-team@android.com,
+ jaewon02.kim@samsung.com, stable@vger.kernel.org
+References: <20250307-pinctrl-fltcon-suspend-v4-0-2d775e486036@linaro.org>
+ <20250307-pinctrl-fltcon-suspend-v4-3-2d775e486036@linaro.org>
+ <59a1a6eb-d719-49bd-a4b5-bfb9c2817f08@kernel.org>
+ <CADrjBPqYoHckqr43y1z8UtthZ9DOG15TJWSv_707Jbyf1yforw@mail.gmail.com>
+ <CADrjBPqSSbt=xM7u12BU2nsF2xvyXe_+bLSCxCPBTfCc07VpuQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <CADrjBPqSSbt=xM7u12BU2nsF2xvyXe_+bLSCxCPBTfCc07VpuQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250312-pmc-v3-6-0411cab5dc3d@daynix.com>
-References: <20250312-pmc-v3-0-0411cab5dc3d@daynix.com>
-In-Reply-To: <20250312-pmc-v3-0-0411cab5dc3d@daynix.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Andrew Jones <drjones@redhat.com>, Shannon Zhao <shannon.zhao@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- linux-kernel@vger.kernel.org, devel@daynix.com, 
- Akihiko Odaki <akihiko.odaki@daynix.com>
-X-Mailer: b4 0.15-dev-edae6
 
-Disable counters that are no longer included in PMCNTENSET_EL0. It is
-not necessary to enable counters included in PMCNTENSET_EL0 because
-kvm_pmu_handle_pmcr() does so if appropriate.
+On 12/03/2025 12:39, Peter Griffin wrote:
+> Hi Krzysztof,
+> 
+> On Wed, 12 Mar 2025 at 11:31, Peter Griffin <peter.griffin@linaro.org> wrote:
+>>
+>> Hi Krzysztof,
+>>
+>> Thanks for the review feedback.
+>>
+>> On Tue, 11 Mar 2025 at 19:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>
+>>> On 07/03/2025 11:29, Peter Griffin wrote:
+>>>> gs101 differs to other SoCs in that fltcon1 register doesn't
+>>>> always exist. Additionally the offset of fltcon0 is not fixed
+>>>> and needs to use the newly added eint_fltcon_offset variable.
+>>>>
+>>>> Fixes: 4a8be01a1a7a ("pinctrl: samsung: Add gs101 SoC pinctrl configuration")
+>>>> Cc: stable@vger.kernel.org
+>>>
+>>> It looks this depends on previous commit, right?
+>>
+>> Yes that's right, it depends on the refactoring in the previous patch.
+>> To fix the bug (which is an Serror on suspend for gs101), we need the
+>> dedicated gs101 callback so it can have the knowledge that fltcon1
+>> doesn't always exist and it's varying offset.
+> 
+> and also dependent on the first patch that adds the eint_fltcon_offset :)
 
-Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
----
- arch/arm64/kvm/pmu-emul.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
-index 2d19c6048091..b14655dda6db 100644
---- a/arch/arm64/kvm/pmu-emul.c
-+++ b/arch/arm64/kvm/pmu-emul.c
-@@ -831,6 +831,8 @@ void kvm_vcpu_reload_pmu(struct kvm_vcpu *vcpu)
- {
- 	u64 mask = kvm_pmu_valid_counter_mask(vcpu);
- 
-+	kvm_pmu_disable_counter_mask(vcpu, ~__vcpu_sys_reg(vcpu, PMCNTENSET_EL0));
-+
- 	__vcpu_sys_reg(vcpu, PMOVSSET_EL0) &= mask;
- 	__vcpu_sys_reg(vcpu, PMINTENSET_EL1) &= mask;
- 	__vcpu_sys_reg(vcpu, PMCNTENSET_EL0) &= mask;
+That would be fine because it's a fix as well. Ah, well, let's keep the
+dependency, but then I think syntax would be:
 
--- 
-2.48.1
+Cc: <stable@vger.kernel.org> # depends on the previous three patches
 
+
+Best regards,
+Krzysztof
 
