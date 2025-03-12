@@ -1,113 +1,105 @@
-Return-Path: <linux-kernel+bounces-557328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B38A5D764
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:37:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E66A5D767
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 08:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 892673B8F4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561343A697B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE2B1EFFAD;
-	Wed, 12 Mar 2025 07:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gvk5qrkh"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4A51F03CE;
+	Wed, 12 Mar 2025 07:38:06 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA711EFFB2;
-	Wed, 12 Mar 2025 07:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC761EFFA0;
+	Wed, 12 Mar 2025 07:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741765023; cv=none; b=V9pgm3TyNYtP1zkcclejMmNNey6CbaskNJ8gL3L63gc1xX8lSNXWiKEcde9TCNWYi16n9HDOb+fSY9IQtZS1UXphExOTxVI3jjby5KeRRM17dHtG2Z3fQpKKKiL73Av9TbuUDAiExXLQ1pqWJ8HPRkHMnrAVFYkLktf187pwxPw=
+	t=1741765085; cv=none; b=uoluRYSQdZO71DP4wYsVC3JYbSqAkGhh8JX5gG2ESMny80/lYhn+fDBgUMItFi5Tvv0vi/dN1jPwrkvk7jvsEiWi1lSKEcF8JCqsOIzUDelW+7hZD/76bObgCCL6+YoTsYbID7Yf/WiASqC/aejPx86Vc0pdThaK7sTr/cXDW6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741765023; c=relaxed/simple;
-	bh=9WDvMlax5GMtGMX2KE7aCiiVjM7oukTeaIvua618FUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iz9tROrQqtIQhH8L24vgUaVEYewhBxE46gv+Rhfxg9zmIIXG3myZ3ztdhBpL1OaLLHKERAOXR/A3P9oTgXY3UiDncnIwnkoyi/itT+xCyNH+YBZHW3A8YBUbkMo6pG9Xcn+vNhTMqe71v4NE0yncccupRT65aFMdxEFHR/3/soE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Gvk5qrkh; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CXfgeNXdrWiHE5y6lsnibLhPb3YMKY8O67MCv6tPCFE=; b=Gvk5qrkh4UjeJ/5aXdTbgH6l4k
-	LlZh17xU8MlBz9wGR0q6wk/Uk7Yqhup1Vij6Y/GOyhIEPFShMa2Km0oVDPOc/TxyzVsZB6Pgoq+ag
-	WWTnlNfxV57lpTzVOvKLkDVhP9twPoQx4nKIflEsb2Is13CykTQMVLN2zh+2aJu1gMaZIBAQneKAS
-	0RV9ij7+Jkxrs0YR2i+BubuITpsiiBZXxvOPHkAvjsFcEsmDYng0/G5+pcSOe+eHFKbBHVq96zagk
-	dlxJq+459ZQuDN7kwE5D6GsXs7WWTRiIA8z55GRWqaN8Lkcz/9s97Pzbf/fEn6hS2umu2qkeSbaLm
-	f/4ddRow==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tsGeC-00000007iT3-3xwf;
-	Wed, 12 Mar 2025 07:37:00 +0000
-Date: Wed, 12 Mar 2025 00:37:00 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com
-Subject: Re: [PATCH v5 05/10] xfs: Iomap SW-based atomic write support
-Message-ID: <Z9E5nDg3_cred1bH@infradead.org>
-References: <20250310183946.932054-1-john.g.garry@oracle.com>
- <20250310183946.932054-6-john.g.garry@oracle.com>
+	s=arc-20240116; t=1741765085; c=relaxed/simple;
+	bh=kPxDmp3bNU+SrN1H+9TwyTdeRqaYQeKep/ARnX59Og4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aFGjNYrlHpbfVXjd4w0ATDazNEi2zcGAwhBHFzJLnY5RK4VdXVPlg1qEU/kc1pD05xjgyybcjClATuS74tB+u5VqISHjbmU9eb28291AlQ5iQ3eoQf8za4W7lrbDzjxEz1M44WHqfCT1GHtmBGCJ0r4+s0R1JgO9YLY9V8bAfX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowADX39PTOdFn7DZ9FA--.4424S2;
+	Wed, 12 Mar 2025 15:37:56 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: sre@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] power: supply: mt6370: Remove redundant 'flush_workqueue()' calls
+Date: Wed, 12 Mar 2025 15:37:29 +0800
+Message-Id: <20250312073729.1430053-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310183946.932054-6-john.g.garry@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowADX39PTOdFn7DZ9FA--.4424S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKF1xZFy7tr1DuryrtFyxZrb_yoW3tFcE93
+	y7Ja4kKrWDWF1jk34Dtr1rXFyvk3srZF17Aan0qry3Ka4Y9wn0yryDZF40qr1UX34UGrnx
+	ZasIgay3Zr9rGjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbV8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r1q6r43MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x0JUHuWLUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Mon, Mar 10, 2025 at 06:39:41PM +0000, John Garry wrote:
-> In cases of an atomic write occurs for misaligned or discontiguous disk
-> blocks, we will use a CoW-based method to issue the atomic write.
-> 
-> So, for that case, return -EAGAIN to request that the write be issued in
-> CoW atomic write mode. The dio write path should detect this, similar to
-> how misaligned regular DIO writes are handled.
+'destroy_workqueue()' already drains the queue before destroying it, so
+there is no need to flush it explicitly.
 
-How is -EAGAIN going to work here given that it is also used to defer
-non-blocking requests to the caller blocking context?
+Remove the redundant 'flush_workqueue()' calls.
 
-What is the probem with only setting the flag that causes REQ_ATOMIC
-to be set from the file system instead of forcing it when calling
-iomap_dio_rw?
+This was generated with coccinelle:
 
-Also how you ensure this -EAGAIN only happens on the first extent
-mapped and you doesn't cause double writes?
+@@
+expression E;
+@@
+- flush_workqueue(E);
+  destroy_workqueue(E);
 
-> +	bool			atomic_hw = flags & IOMAP_ATOMIC_HW;
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/power/supply/mt6370-charger.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Again, atomic_hw is not a very useful variable name.  But the
-whole idea of using a non-descriptive bool variable for a flags
-field feels like an antipattern to me.
-
-> -		if (shared)
-> +		if (shared) {
-> +			if (atomic_hw &&
-> +			    !xfs_bmap_valid_for_atomic_write(&cmap,
-> +					offset_fsb, end_fsb)) {
-> +				error = -EAGAIN;
-> +				goto out_unlock;
-> +			}
->  			goto out_found_cow;
-
-This needs a big fat comment explaining why bailing out here is
-fine and how it works.
-
-> +		/*
-> +		 * Use CoW method for when we need to alloc > 1 block,
-> +		 * otherwise we might allocate less than what we need here and
-> +		 * have multiple mappings.
-> +		*/
-
-Describe why this is done, not just what is done.
+diff --git a/drivers/power/supply/mt6370-charger.c b/drivers/power/supply/mt6370-charger.c
+index a6939c6059c7..98579998b300 100644
+--- a/drivers/power/supply/mt6370-charger.c
++++ b/drivers/power/supply/mt6370-charger.c
+@@ -772,7 +772,6 @@ static void mt6370_chg_destroy_wq(void *data)
+ {
+ 	struct workqueue_struct *wq = data;
+ 
+-	flush_workqueue(wq);
+ 	destroy_workqueue(wq);
+ }
+ 
+-- 
+2.25.1
 
 
