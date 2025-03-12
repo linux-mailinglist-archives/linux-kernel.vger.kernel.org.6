@@ -1,147 +1,260 @@
-Return-Path: <linux-kernel+bounces-558293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BACA5E3F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:57:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BEF4A5E405
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:59:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FE987A4714
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:56:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 606A2176DD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 18:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102DB2580C0;
-	Wed, 12 Mar 2025 18:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2108C2586C2;
+	Wed, 12 Mar 2025 18:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZjvPzLXo"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZLmDwPMy"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2060.outbound.protection.outlook.com [40.107.236.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D959C257AE4
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 18:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741805864; cv=none; b=hX92tHFAPBEmOMDLPgD3su163q4r6epucGP9MGMqlWjBHUXjEvx6k05Y5wnQRGBDdbW1OYrcMa6Cw7xRk2n/jhxmJopFeRoZTPzGnaNoDpGsHfND3n6DRFrJwPCaHl076+aazEqNBpdgC1X1ERgFT9x7RvlNJDLXwDiftpW7Ar0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741805864; c=relaxed/simple;
-	bh=Rv49Ha/ZvJUbKiu/++T2g80WuU1VQL0NluqmATtqT8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MZvVHxVZ4WZr8GgPsEfHMhHv2vI1vs9HZjYs6Y20tI6tptJZumiRb+ulDzJ6opMr60zB1b7ezbbFCmz+LB6MxIb3esPImaE0fTIgAdURX3seXJ1O5aEmsGTERpM5lAbrvyUNedhKXa2diFW9u1+7F1Vx57cYw57j+Zy9gOXdiBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZjvPzLXo; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso752525e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 11:57:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741805861; x=1742410661; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ULYqbjLMLkGIT27EXJx34jr7z9q8otSc76SDI5vWuMI=;
-        b=ZjvPzLXo0H47Sp0cvYjVmrPwAQO41HDwh5Ns2thsbsDh2bNYjeXdyUoVBDkJob4fab
-         xanX1E8CfsxIPFGpf9st2fORrx8dtwTsrRG+HlWS6dnELvsb7EUgo3k0rbhWVF7EE4X2
-         DJUR+U06+vc83cxgmPQD/4t1L+2bX4EqrXy9tuOWtdPBbhHaKcF94+61PsXTKh03uTWj
-         Pt5PbKabL0nRnVD6rg+zWyniJ7p4Rb+jAYGv0cT0i79atKI+NBtAFXMgfxs1ZjWuoadN
-         APk/PBQa1jxMO0qArBTFSxW9iusxriMr6ZsbGbLqDZvacA2XC0KjBWW72rTszyYal/ZP
-         T6BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741805861; x=1742410661;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ULYqbjLMLkGIT27EXJx34jr7z9q8otSc76SDI5vWuMI=;
-        b=jmD3X9cM+ZPlGolLzuH7Tes5dqu1zSm8UFhlxoNWNiczKZhiPq2T5zTla7MLqNykKv
-         RVvKTP5IXr6X/OAnXaWuN3TE8Tc3TSg4KPvxco5xHZGYzjUBvoqp9dxRoTYwhmOjAWVf
-         wIh2bUpod4RYY5505xDJ7NrdOwDLx5QUH9wIWOpz1F1wZvxtS7HH184r08uXzzqFuYrM
-         oWNSsjcAVeNw21InPPTTuxHW8wB7+5nQ6xqogC6YVPfvSAk2n3eiWPir5lVo4Xmm62qg
-         QQbYCcXINno7K0siSvRPzgju8w3nOMMiLajxd0Jb5Ar62cuPQSrXB7EZl6zdbo4IGvKG
-         ER5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXbe1IfEviYbOxsPGIZ3Kk0Tbn34bNlfKUdsLR0+WFZ/j9fsLGiJK2jDbB4pLenD69r2eYNCCwUVbs12tM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+7trTaYNrxuTopjbOziduMMOdPEKFytNi2bxDj367oo9nKFxy
-	bqfFebL63FpaU5dYKTZKPTGjjcYzPa1M2vDCzwhbeOGlD5UgCLmk
-X-Gm-Gg: ASbGncs+sBFbkriic3VAuGjPRnjLMhyi2nNUHmMU2fSj0SX86Q+ek9TwYvFLnrg4q/3
-	RiECkd8pWrlrCHgupDFc3KxnYq4uL5YndlEoSmExEsDZimekGegfudHczJLGHW081B9+ucri/Ik
-	VfrNDH4EuKJPRvbKV0Cylt/qYyxn5KadES0bLcEkfZvoBSdaybaxXYzsigwMs8bvJcMQmbMwZSL
-	Vq/aHObXnE9tFU83XrBQ/sod3cXKZRy1SwT0fvOhrmGTuF02GXayYQg63i3gt+BT4jH/t6kCB3b
-	ClSkGSgZ+nI/iVVQ72dnywXEGn8IYSY7GzbZWPqQOxbVfv0qVR6g8XDcTcebgxetwDUx7220645
-	bt6Pa460=
-X-Google-Smtp-Source: AGHT+IEgc0FElY6tpazw9l8jmgQOQo8z3ZbIXxXRv/rhuxcxM/6aaY/UglBp493k0CMb+Z57MxHvIw==
-X-Received: by 2002:a05:600c:1c1a:b0:43c:fd72:f028 with SMTP id 5b1f17b1804b1-43cfd72f207mr103770685e9.29.1741805861015;
-        Wed, 12 Mar 2025 11:57:41 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a74d4bbsm29140075e9.13.2025.03.12.11.57.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 11:57:40 -0700 (PDT)
-Date: Wed, 12 Mar 2025 18:57:39 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Vitaly Kuznetsov
- <vkuznets@redhat.com>, Ard Biesheuvel <ardb+git@google.com>,
- linux-kernel@vger.kernel.org, x86@kernel.org, Gerd Hoffmann
- <kraxel@redhat.com>, Juergen Gross <jgross@suse.com>, Jan Beulich
- <jbeulich@suse.com>, Paul Durrant <paul@xen.org>, David Woodhouse
- <dwmw2@infradead.org>
-Subject: Re: [RFC PATCH resend] x86/boot: Drop CRC-32 checksum and the build
- tool that generates it
-Message-ID: <20250312185739.426a8229@pumpkin>
-In-Reply-To: <CAMj1kXGmyssEYer_Su1N+s9svNd3yNm7W4bf9DYHsJszxHoyUg@mail.gmail.com>
-References: <20250307164801.885261-2-ardb+git@google.com>
-	<87bju7o65f.fsf@redhat.com>
-	<3AD32490-F072-4C10-A732-E5BF1E303C43@zytor.com>
-	<CAMj1kXHZsk68kVA=dFbCb3yCrLJmHvn7HZ-qqSjjuQkdUf9_2Q@mail.gmail.com>
-	<988E1140-BF0F-49CF-AA0B-D05741148836@zytor.com>
-	<CAMj1kXGmyssEYer_Su1N+s9svNd3yNm7W4bf9DYHsJszxHoyUg@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FE62417F2;
+	Wed, 12 Mar 2025 18:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741805936; cv=fail; b=Ft7PlWozvrzrpRGDApVoc+amy6nQfU5vZDVYmUDMjhJqO3XuSd2uDboPg4H+0RRfxl5KH5sAJ7DxaMkMNYiJo0AzZceLYuTmGlMbr2fZRptrdUfdqXzHhenThX0b0chmBeX1wtCQGqcELYbyS7YYpUe38sdwrO+MuXTCSMIHREI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741805936; c=relaxed/simple;
+	bh=+jkQzT0CHutegRfxTxMY01BUaWhuILyKDPf6FD/sXTM=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nI+2vWSOWAOv2123h5fm+jxc0M/qrUewaS9wzF3Z32v/yUaBlznSdRhLvz45SeqK9461OceLsHOmWYOKOXCsO2jcyVE06JpKF4lVmrBckuF8k3r+7eTr0bQAwBDhylPfdOqihWjGeMrFMJk4yu7CbqlDrdW2b1b4qnDvLQax8C8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZLmDwPMy; arc=fail smtp.client-ip=40.107.236.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X4kJyYPwPCN3D8xTHY0OIxaSN0F1J5EHPUL+kET9v+Oi/Nm/RTbltbrq6kDRO//gXHidTMXLJLb352ixXLYKfBf4CRUfdHIDgOtDCQ+04vn71xljKacagGuZN4muREXpMxhZQCLrFiJpSsuU3zOYhfIUE3o5R4N2RK5OUTlFZCLxsStCZlU7dq7UgV5+KNPjaOoMMn9tkOigGd1NLPi/nKdbpnnNTNMogj9+yFQfRyrdzOorFORZPL/ZOoIP7v0eXHUZIQKFXOyuHg6sU3iIbEUEDv42t5T2KiNZqk4KYI1Zq5T3PBhoQEeR0YySPiSR8s7DZ9uATRZ8zrXacJ3+dg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zR4QQvp8ZCPsqYlGT6nmY4adtPO7H1RC1KQdoa0BUQM=;
+ b=XaFDwxugX3tPAqUZsxkVGnScFveZpMRVj/UvLZmOJiHwE0m+u6wo8/a7jCBoofXXUXyflMB8axAjT+bGb176EZJk6ZsBBAXKqsQXQL0J+B4+okSXz5CIqhhU78uh+7xKu5Gpnj0chwwh0cyBul5j3PJ7gCqM8NZEDWk79pdmq+fHM2pIfBOYG6kbTzbLvh1jq8odTg/npBy2C0wKgvdT+3939rwxnHE3CEp4WP56CkStoIfJiSwF0k+nMzUTNMP1isW2ytgBRtEakLHgVk9v2445Yqca9gm/zgokmC9vDrIlAubIC0VEfInY5ruxBAfEI/19P3dT2Mguy3eRLCfgdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zR4QQvp8ZCPsqYlGT6nmY4adtPO7H1RC1KQdoa0BUQM=;
+ b=ZLmDwPMy6Ziii0CBkTzGFqXjM9jTVP+kvPt+QydCnoOU/oKZm/NPkwaa30aYuw1qPD42F5PP7qvP2wJztQ4ozOgyV3UzUcKTxRaLITne4S3hsrjJThPJv7W2OTJyEUJ+TwpRRM15AvOcq1OL4j/ED6XooeDAGOIJSZkHnB8fRjY=
+Received: from BL1P221CA0003.NAMP221.PROD.OUTLOOK.COM (2603:10b6:208:2c5::9)
+ by CY8PR12MB8364.namprd12.prod.outlook.com (2603:10b6:930:7f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Wed, 12 Mar
+ 2025 18:58:47 +0000
+Received: from BL02EPF0001A107.namprd05.prod.outlook.com
+ (2603:10b6:208:2c5:cafe::96) by BL1P221CA0003.outlook.office365.com
+ (2603:10b6:208:2c5::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.21 via Frontend Transport; Wed,
+ 12 Mar 2025 18:58:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF0001A107.mail.protection.outlook.com (10.167.241.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Wed, 12 Mar 2025 18:58:47 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 12 Mar
+ 2025 13:58:47 -0500
+From: Nathan Lynch <nathan.lynch@amd.com>
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, Vinod Koul
+	<vkoul@kernel.org>, <dmaengine@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <dave.jiang@intel.com>, <kristen.c.accardi@intel.com>, Vinicius Costa
+ Gomes <vinicius.gomes@intel.com>, kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH v1] dmaengine: dmatest: Fix dmatest waiting less when
+ interrupted
+In-Reply-To: <20250305230007.590178-1-vinicius.gomes@intel.com>
+References: <20250305230007.590178-1-vinicius.gomes@intel.com>
+Date: Wed, 12 Mar 2025 13:58:45 -0500
+Message-ID: <878qpa13fe.fsf@AUSNATLYNCH.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A107:EE_|CY8PR12MB8364:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4dfacec3-0a68-4afb-cde2-08dd6197eb8f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024|7053199007|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1AjIkxg+c6MulIYkJUpm31DZSoJQBxlfga2g4ajkS306mGzTjHtbuIoOI5u/?=
+ =?us-ascii?Q?BsSeruvTSVFm0FelJKDzBsb184pU7rG0xdLdf2nj7saq3ZCUt2fWPJtviRH3?=
+ =?us-ascii?Q?GNCqL8Tjk9/WqsNhIFoqmpK87jtsqMEluFdLfQ3ebWBOKxct3/Zo5wou8D3h?=
+ =?us-ascii?Q?EdpC6AVNK5qCG9pJmnRxWf0lt9grGzd1smu934qiJxNrKq4c4yW57nvnWQ4l?=
+ =?us-ascii?Q?gZQLaSxb1CEI7V+djoycmhusyvi0gmrGNfz+kxL4yBaIh5JIg9ox/ha/wRSn?=
+ =?us-ascii?Q?hMq/NYVSnk+URdG3wVCK6v6tOqBmhctVHmK8qo4hd5D6DojHUz+TuGPOqOyK?=
+ =?us-ascii?Q?/KowE6XmYMcAP8LQQS6DVz2cBzh3yE2WxyeIiycEElB/j97QY++lQjrJiyRp?=
+ =?us-ascii?Q?lyiFf2+NTupZC79hQHr3u832mQANtWZqwgqNdeSoFkmHN7GxOk85JsfOAL12?=
+ =?us-ascii?Q?NRMFu0ylzdmrhPzjAflv4GSG9NTcJ6seOd9sPjxanIxchxm3PLBIvkARraHM?=
+ =?us-ascii?Q?qbc0RUsVubMAtMbMu0qkSTcKjH2WC4uisvY/SwGuceWLuxZmZcHKqhl0MjIW?=
+ =?us-ascii?Q?7n8cTRPFrSMkxWAasPE6ZVnTKp7iwPB/W/FsqMkv6Vbj2tMZBlSqt9k2qOTw?=
+ =?us-ascii?Q?qCS/VoG/F52k93uSnAVRyvXB/B9mMgRdChZaS0FXPl/d0LwnptRdsmekmKjW?=
+ =?us-ascii?Q?0u4gMNCxKPv7p86eg7IBSr92vgJHngFc5CV8unqhi6s0eYP6n/d8Yd0cWQDj?=
+ =?us-ascii?Q?FOLET6XOrjlm0l2TgAuffVwnt1XwmA03TlRWZJ/dH9V59KZIS1Oiqwm0bOBq?=
+ =?us-ascii?Q?wHTJE+vThResEg1lEwnr2uwWNj0CZwBMJ5e0rqWxTtGvsf2O+8xNTLHg7vG9?=
+ =?us-ascii?Q?qeJEOJv/oBS4tEKtnqpA1dpkagBS3Qkwm53ZrjLL7wKe5ABdJPwQ+SspmlQC?=
+ =?us-ascii?Q?sKlFyb79zoVL3hhrqeYor/zTF2emJsqXOkidIXFa0tUj3a6EUudzVVLpYDbQ?=
+ =?us-ascii?Q?ReHCeOieRE+fAMbWN7zHr39cVKpeWQMpKziR3rU4YWWc2CbIVIz2FiDlRyQM?=
+ =?us-ascii?Q?hgT9TfVSB2jK9PfYnMBvY77B3g0w5CuaKAw1eh/Hk53l31kjuWrAPzHF1Q6o?=
+ =?us-ascii?Q?kRpf6MEYxE44txkAt2m/h03qL8gQ4KcRByuT8gk9GkUXFqEhRHXW2KHd2Di3?=
+ =?us-ascii?Q?uG9g9N6yObPsVMhHUbxR8cVollQdt/QoaGzsA+9HGWSNXJNBccc0UBNPxQz4?=
+ =?us-ascii?Q?QkfSWAolyPIm9cb+lyW0Uk3q2F4O+SP8Y2/prDaKdNqjcrXv9AQ/4SlfT6YY?=
+ =?us-ascii?Q?svD6og/Uil6LIXZ2+HvoyNVxZUZhDdxgFOp1yqRG2JyJyizrJVyMYzIfJTSx?=
+ =?us-ascii?Q?13kqIYTmBqx/iqI1qUz3Y5+/590fMs9QZXXIjhjGGywW4dza3X3zU0yH5UR1?=
+ =?us-ascii?Q?hOrEwxNtBr8wfi1Urg/2m29U+8Ou5gub2nozx3O64g4mHulXTyaqiAq2X/sS?=
+ =?us-ascii?Q?PzO2ud/CkIrmygg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024)(7053199007)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 18:58:47.6192
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4dfacec3-0a68-4afb-cde2-08dd6197eb8f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A107.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8364
 
-On Tue, 11 Mar 2025 18:44:09 +0100
-Ard Biesheuvel <ardb@kernel.org> wrote:
+Hi,
 
-> On Tue, 11 Mar 2025 at 18:29, H. Peter Anvin <hpa@zytor.com> wrote:
-> >
-> > On March 11, 2025 10:25:15 AM PDT, Ard Biesheuvel <ardb@kernel.org> wrote:  
-> > >On Tue, 11 Mar 2025 at 18:14, H. Peter Anvin <hpa@zytor.com> wrote:  
-> > >>  
-> > >> >Ard Biesheuvel <ardb+git@google.com> writes:
-> > >> >  
-> > >...  
-> > >> >> it seems quite unlikely that this checksum is being used, so let's just
-> > >> >> drop it, along with the tool that generates it.
-> > >> >>
-> > >> >> Instead, use simple file concatenation and truncation to combine the two
-> > >> >> pieces into bzImage, and replace the checks on the size of the setup
-> > >> >> block with a couple of ASSERT()s in the linker script.
-> > >> >>  
-> > >...  
-> > >>
-> > >> Please leave the bytes in question as explicit zeroes if possible.  
-> > >
-> > >Keeping the
-> > >
-> > >. = ALIGN(. + 4, 0x200);
-> > >
-> > >in arch/x86/boot/compressed/vmlinux.lds.S should be sufficient to
-> > >guarantee that the last 4 bytes of the file are zero, so it is quite
-> > >trivial to implement. However, I'm not quite sure what purpose that
-> > >would serve: could you elaborate?  
-> >
-> > It means if someone *does* care it will be easier for them to adjust.  
-> 
-> I.e., someone can always stick a CRC-32 into the last 4 bytes if they
-> wanted to? Yeah that makes sense.
+Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:
+> Change the "wait for operation finish" logic to take interrupts into
+> account.
+>
+> When using dmatest with idxd DMA engine, it's possible that during
+> longer tests, the interrupt notifying the finish of an operation
+> happens during wait_event_freezable_timeout(), which causes dmatest to
+> cleanup all the resources, some of which might still be in use.
+>
+> This fix ensures that the wait logic correctly handles interrupts,
+> preventing premature cleanup of resources.
+>
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202502171134.8c403348-lkp@intel.com
 
-I think you'd need a comment saying the last 4 bytes are reserved in case
-anyone wants to add a hash.
+Given the report at the URL above I'm struggling to follow the rationale
+for this change. It looks like a use-after-free in idxd while
+resetting/unbinding the device, and I can't see how changing whether
+dmatest threads perform freezeable waits would change this.
 
-	David
+Note the idxd code emits a couple of warnings about inconsistent state
+before the UAF:
 
-> 
+[   81.023244][ T1644] idxd dsa0: Active wq 0 on disable wq0.0.
+[   81.040447][ T1644] idxd 0000:6a:01.0: Clients has claim on wq 0: 1
 
+Here is the bad access:
+
+BUG: KASAN: slab-use-after-free in idxd_dma_complete_txd+0x418/0x510 [idxd]
+Write of size 4 at addr ff11000134978114 by task kworker/118:1/1644
+CPU: 118 UID: 0 PID: 1644 Comm: kworker/118:1 Tainted: G S                 6.13.0-rc1-00054-g98d187a98903 #1
+Tainted: [S]=CPU_OUT_OF_SPEC
+Hardware name: Intel Corporation D50DNP1SBB/D50DNP1SBB, BIOS SE5C7411.86B.8118.D04.2206151341 06/15/2022
+Workqueue: 0000:6a:01.0 idxd_device_flr [idxd]
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x4f/0x70
+ print_address_description+0x2c/0x3a0
+ print_report+0xb9/0x280
+ kasan_report+0xaa/0xe0
+ idxd_dma_complete_txd+0x418/0x510 [idxd]
+ idxd_flush_pending_descs+0x4a8/0x7e0 [idxd]
+ idxd_wq_free_irq+0xcd/0x330 [idxd]
+ idxd_drv_disable_wq+0x125/0x2d0 [idxd]
+ idxd_dmaengine_drv_remove+0x1fd/0x2f0 [idxd]
+ device_release_driver_internal+0x36d/0x530
+ idxd_device_drv_remove+0xa0/0x240 [idxd]
+ device_release_driver_internal+0x36d/0x530
+ idxd_reset_done+0x600/0x770 [idxd]
+ pci_reset_function+0x1c9/0x230
+ idxd_device_flr+0x34/0x90 [idxd]
+ process_one_work+0x676/0x1000
+ worker_thread+0x710/0xf40
+ kthread+0x2d4/0x3c0
+ ret_from_fork+0x2d/0x70
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+
+Here is the allocation site:
+
+Allocated by task 3664:
+ kasan_save_stack+0x1c/0x40
+ kasan_save_track+0x10/0x30
+ __kasan_kmalloc+0x8b/0x90
+ idxd_dmaengine_drv_probe+0x2eb/0x860 [idxd]
+ really_probe+0x1e0/0x920
+ __driver_probe_device+0x18c/0x3d0
+ device_driver_attach+0xae/0x1b0
+ bind_store+0xc9/0x140
+ kernfs_fop_write_iter+0x2e6/0x4c0
+
+And here is where the memory was released earlier:
+
+Freed by task 1644:
+ kasan_save_stack+0x1c/0x40
+ kasan_save_track+0x10/0x30
+ kasan_save_free_info+0x37/0x60
+ __kasan_slab_free+0x33/0x40
+ kfree+0xef/0x3e0
+ idxd_dmaengine_drv_remove+0x1cb/0x2f0 [idxd]
+ device_release_driver_internal+0x36d/0x530
+ idxd_device_drv_remove+0xa0/0x240 [idxd]
+ device_release_driver_internal+0x36d/0x530
+ idxd_reset_done+0x600/0x770 [idxd]
+ pci_reset_function+0x1c9/0x230
+ idxd_device_flr+0x34/0x90 [idxd]
+ process_one_work+0x676/0x1000
+ worker_thread+0x710/0xf40
+ kthread+0x2d4/0x3c0
+ ret_from_fork+0x2d/0x70
+
+
+> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> ---
+>  drivers/dma/dmatest.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
+> index 91b2fbc0b864..d891dfca358e 100644
+> --- a/drivers/dma/dmatest.c
+> +++ b/drivers/dma/dmatest.c
+> @@ -841,9 +841,9 @@ static int dmatest_func(void *data)
+>  		} else {
+>  			dma_async_issue_pending(chan);
+>  
+> -			wait_event_freezable_timeout(thread->done_wait,
+> -					done->done,
+> -					msecs_to_jiffies(params->timeout));
+> +			wait_event_timeout(thread->done_wait,
+> +					   done->done,
+> +					   msecs_to_jiffies(params->timeout));
+>  
+>  			status = dma_async_is_tx_complete(chan, cookie, NULL,
+>  							  NULL);
+> -- 
+> 2.48.1
 
