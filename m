@@ -1,103 +1,212 @@
-Return-Path: <linux-kernel+bounces-557180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A9A8A5D49C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:06:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0445EA5D4A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:08:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F7A67AAE7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:05:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 351E51773AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480B718FC75;
-	Wed, 12 Mar 2025 03:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A325C1A00E7;
+	Wed, 12 Mar 2025 03:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="A0Ki10Pk"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="DRt8hGco"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771D379EA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D86879EA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741748789; cv=none; b=XGdxIO27RQ8qQYRMcAQhz4wCJ+TU/gBqNqs1nqkwtTnLVQnNzd/oITsYRMTtFcGVOSCs17SbmftbXPulxToStANbTjv1u16K02zjqsD6+N8/xpHha1z4qJFttexuFVfveUmcQBDbFNr3TUVnu9wbDkG8daMoW4h5p7oRdGo5Yz8=
+	t=1741748923; cv=none; b=TOKwN23Brao2atOka+YJr7yeOu/wL52L7LqPVWExcs5xr6bihyzyvDX4GEx1xcEjUDhVPBYJ56tyXj95JzFBAVnP+vXw4QfzxWeC+NKUqqNb+BR3u/vFcvUgZyp8QNbUxaBWJAm3ADUy2whbY6CEXX0OaEezfvDzqj9nOMNAzDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741748789; c=relaxed/simple;
-	bh=NxWtveOedIz2/jaXP/aZXRUu4jabOktCckMz34Uj7Wg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z00+avGA/rqe7twdy5xbkaRlJxqXQWtWmLPmtbKhGmMuyNpl1n9EWsGyU7J5KVynRTrk2nEAutcwBRAkS0wWTokDuVeyrKGiLB86R/32TQGvkpKBxBFpP7susWwKTofcsusb7fGzA5aOcwGFrmS6w50mcOZ8MBrpuBNxNxhJti8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=A0Ki10Pk; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741748785;
-	bh=NxWtveOedIz2/jaXP/aZXRUu4jabOktCckMz34Uj7Wg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=A0Ki10PkPRnhNcY+anxDKfZ6/+s2M3nM0tBtcH7SIcFvRM2pf3mzc1t3WEEp6PoBG
-	 9gh1djWyHlPuYdu1XEJ+8HxyJvIkmYpLtp2Fi6a820oCDu5GNVNWmMAWPqWPyjsF7Z
-	 4yVrqTCl/ZpxkWv0hZkfS38a7NREG/0MEO2aZT/4OiLleER18KpRSewwvEy5K4JVf8
-	 mVcYSm4SVtVdh4ExCP4/vycPqc5dMhNsMN330824cfrSx+0+lVKywZ3fjWrA9rCo/u
-	 08uhM2tVLp05OESS9mS+Cl2NM/xaBhq/XQINnVE1w/pnKbdGqAaiDFsV1FR4ZnR7mU
-	 vFq+wstPl6pwQ==
-Received: from [192.168.50.250] (unknown [171.76.87.92])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3E94E17E0F83;
-	Wed, 12 Mar 2025 04:06:22 +0100 (CET)
-Message-ID: <46f78829-a65a-4cd9-b35a-7608e547096d@collabora.com>
-Date: Wed, 12 Mar 2025 08:36:13 +0530
+	s=arc-20240116; t=1741748923; c=relaxed/simple;
+	bh=CY++IkvGD9mzlNgjcURWiROXcjv3axhLujm4MpeGf3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J7MlhcLg4Rw6pLVD1jzcgkF5dCVzfV56Bhr0LZJfvJSweDbHvVzwet5ea1Sg6vBeuPPBg7Jx+qaeMk3uqDfmrEQO9Fbgr8lpY3suSX+yGxAInlrrVMYotInb7/aOy2R0J4OA4Yb0MndOngemelfJ8mMIVrtINMuhqxWY93Fij9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=DRt8hGco; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fea47bcb51so13158892a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 20:08:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1741748920; x=1742353720; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8qaaDT8d5dt68njAAVWgepNAkATZGX5grpaRU87Pye8=;
+        b=DRt8hGcoQ2jw5YhG9jGErR0bDB9ZzGU4sYwoiys6xc8jCoZLbd0/wpa1kd6hvZ17bW
+         AofF7mQ1WzEDiCPkW7tWL70Lpwzzw8B43k1QuhB8yahb73/mw1NlfA8tsiRwM5yFYxMy
+         HmANzeXH6t7qNAfnWbKfHXD/Hv9AJWxhmT6K+GPNbdC3Lis04Dr76xGXJga2Sr3KJMLJ
+         oPFlkQ3qRs1A5HriQJWBh2yqeCIw2njRTVThpzzIynpVO0EF1r643zDUf1pONvySpUEE
+         2e8n+nPNPn5UzpCOB8Ao3kHZqxeYpQ9sbKf4XZwI3E00kJ48+QzgFlm5M5kIdE8mwS84
+         B+zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741748920; x=1742353720;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8qaaDT8d5dt68njAAVWgepNAkATZGX5grpaRU87Pye8=;
+        b=jQQTYhzj9WkNgnJ8xOnIqBhd7gWpaTCtfoLvxd4ANH+jFnaYyGNhMutpK0FRluaQUP
+         RCc++J1Y+BzYm+kNpC6TMyQNPGqPXa5g0t0RnyWRtgDeQa7Rug81nhXRGfprxpdMBapt
+         NcZhjk56n/jJF5MsvEPmiCZSIEtixXt/am0kdWtYtAjdRTg1EWm1yO8xgmX332hsqFNB
+         BZTVtcdgLZqzFz2ljYaQ5Uwis5NW9WPvLo2nJuBnzvdcodAei/yAXpmFUWOh85zXIrNk
+         6WbrWUuxaSM6DK4gnBC+hv3CW6I/tOCudSJSOpGdeDEWXwVfdseLOEKlFG4ext6ZxgJm
+         mQsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZx8NQuEaSPJf4F7h76s5L8U5Y2tJJZjS/9k5yCj2NSWZ5I4m6h9GTSymJohCSj8WpsGRFc51mWCEtG7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI4DdfSsSDmZcoQaz2Chh7Dgf3cTf5VXFAQCN74/ejZ6WG/A6U
+	LzOvEC/F8s5rLess50ArUBMI5CRee/qby/QCD4zlFbd9qxx9Nl+1VsU5nYG7wO8nyAVtTH+86rv
+	P
+X-Gm-Gg: ASbGncsEF82ciRjiz5nFVbwhG8oE+3twkhGEnB4VRXpCoSJW5gSLFx+ET6W9xSqz4nl
+	KxTE2c/DActTzf0UePislBODL8a008TlMxA0EAPeJF3bWr0VV1wEuhHkNm6jgrIMbNxZPztTJp7
+	ZM7DpsqMSnSiNHX3z8YXlXOamtq6VpQ8ei/1Jbq4U2yQZCqqLLspbbyV51IVdtIq2uDF+PVrmdx
+	hIN2Gv0ePfTuZwwolHSXcAiNiJ9eulyZTvLCEkTDdL0cUWb2N6OcyZI7KELanjTqHDG7paF+W+E
+	83ppIMZymwwjQX7c9en9GHYo8qbEy0HItXAu7mCgvyz5piAUTHOEP4cLOiFBvf3U19Oq1uPHsUG
+	/
+X-Google-Smtp-Source: AGHT+IGTTCfJTEC2v4WnJsJwRKxs0QJmhoql3RTNGhVrIBaPATqhYsGs2lZika80jl4UZPlO/JOJHg==
+X-Received: by 2002:a05:6a21:3989:b0:1f5:6680:82b6 with SMTP id adf61e73a8af0-1f56681a9dfmr22689470637.38.1741748920474;
+        Tue, 11 Mar 2025 20:08:40 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736a336010dsm10712509b3a.59.2025.03.11.20.08.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 20:08:40 -0700 (PDT)
+Date: Wed, 12 Mar 2025 12:08:36 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] io_uring: cmd: introduce
+ io_uring_cmd_import_fixed_vec
+Message-ID: <Z9D6tDJPLxApNESZ@sidongui-MacBookPro.local>
+References: <20250311114053.216359-1-sidong.yang@furiosa.ai>
+ <20250311114053.216359-2-sidong.yang@furiosa.ai>
+ <8b5cd4f9-5c45-4ffb-be9a-d8dd6d0baf53@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] drm/ci: enable lockdep detection
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
- helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch,
- robdclark@gmail.com, guilherme.gallo@collabora.com,
- sergi.blanch.torne@collabora.com, valentine.burley@collabora.com,
- jani.nikula@linux.intel.com, dmitry.baryshkov@linaro.org,
- mripard@kernel.org, boqun.feng@gmail.com, linux-kernel@vger.kernel.org
-References: <20250217053719.442644-1-vignesh.raman@collabora.com>
- <CAPj87rNUMDMUtrfV=8c_+T5VQ0FykjpR5JW5dgO4grYXpabSdQ@mail.gmail.com>
-Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <CAPj87rNUMDMUtrfV=8c_+T5VQ0FykjpR5JW5dgO4grYXpabSdQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8b5cd4f9-5c45-4ffb-be9a-d8dd6d0baf53@gmail.com>
 
-Hi Daniel,
-
-On 10/03/25 13:53, Daniel Stone wrote:
-> Hi Vignesh,
+On Tue, Mar 11, 2025 at 01:08:14PM +0000, Pavel Begunkov wrote:
+> On 3/11/25 11:40, Sidong Yang wrote:
+> > io_uring_cmd_import_fixed_vec() could be used for using multiple
+> > fixed buffer in uring_cmd callback.
+> > 
+> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> > ---
+> >   include/linux/io_uring/cmd.h | 14 ++++++++++++++
+> >   io_uring/uring_cmd.c         | 29 +++++++++++++++++++++++++++++
+> >   2 files changed, 43 insertions(+)
+> > 
+> > diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+> > index 598cacda4aa3..75cf25c1e730 100644
+> > --- a/include/linux/io_uring/cmd.h
+> > +++ b/include/linux/io_uring/cmd.h
+> > @@ -44,6 +44,13 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+> >   			      struct io_uring_cmd *ioucmd,
+> >   			      unsigned int issue_flags);
+> > +int io_uring_cmd_import_fixed_vec(const struct iovec __user *uiovec,
+> > +				  unsigned long nr_segs, int rw,
+> > +				  struct iov_iter *iter,
+> > +				  struct io_uring_cmd *ioucmd,
 > 
-> On Mon, 17 Feb 2025 at 05:37, Vignesh Raman <vignesh.raman@collabora.com> wrote:
->> This patch series enables lockdep detection in drm-ci. Any lockdep
->> failures will be shown as warnings in the pipeline. This series
->> also enables CONFIG_DEBUG_WW_MUTEX_SLOWPATH for mutex slowpath
->> debugging and refactors software-driver stage jobs.
->>
->> Test run with this series,
->> https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1366054
-> 
-> Series is:
-> Reviewed-by: Daniel Stone <daniels@collabora.com>
-> 
-> Please merge at will.
+> nit: it's better to be the first arg
 
-applied to drm-misc-next
+Thanks for tip.
+> 
+> > +				  struct iou_vec *iou_vec, bool compat,
+> 
+> Same comment, iou_vec should not be exposed. And why do we
+> need to pass compat here? Instead of io_is_compat() inside
+> the helper.
 
-Regards,
-Vignesh
+Actually I don't know about io_is_compat(). Thanks.
 
 > 
-> Cheers,
-> Daniel
+> > +				  unsigned int issue_flags);
+> > +
+> >   /*
+> >    * Completes the request, i.e. posts an io_uring CQE and deallocates @ioucmd
+> >    * and the corresponding io_uring request.
+> > @@ -76,6 +83,13 @@ io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+> >   {
+> >   	return -EOPNOTSUPP;
+> >   }
+> > +int io_uring_cmd_import_fixed_vec(int rw, struct iov_iter *iter,
+> > +				  struct io_uring_cmd *ioucmd,
+> > +				  struct iou_vec *vec, unsigned nr_iovs,
+> > +				  unsigned iovec_off, unsigned int issue_flags)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> >   static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
+> >   		u64 ret2, unsigned issue_flags)
+> >   {
+> > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> > index de39b602aa82..58e2932f29e7 100644
+> > --- a/io_uring/uring_cmd.c
+> > +++ b/io_uring/uring_cmd.c
+> > @@ -255,6 +255,35 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+> >   }
+> >   EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
+> > +int io_uring_cmd_import_fixed_vec(const struct iovec __user *uiovec,
+> > +				  unsigned long nr_segs, int rw,
+> > +				  struct iov_iter *iter,
+> > +				  struct io_uring_cmd *ioucmd,
+> > +				  struct iou_vec *iou_vec, bool compat,
+> > +				  unsigned int issue_flags)
+> > +{
+> > +	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
+> > +	struct iovec *iov;
+> > +	int ret;
+> > +
+> > +	iov = iovec_from_user(uiovec, nr_segs, 0, NULL, compat);
+> > +	if (IS_ERR(iov))
+> > +		return PTR_ERR(iov);
+> 
+> That's one allocation
+> 
+> > +
+> > +	ret = io_vec_realloc(iou_vec, nr_segs);
+> 
+> That's a second one
+> 
+> > +	if (ret) {
+> > +		kfree(iov);
+> > +		return ret;
+> > +	}
+> > +	memcpy(iou_vec->iovec, iov, sizeof(*iov) * nr_segs);
+> > +	kfree(iov);
+> > +
+> > +	ret = io_import_reg_vec(rw, iter, req, iou_vec, iou_vec->nr, 0,
+> 
+> It's slightly out of date, the import side should use io_prep_reg_iovec(),
+> it abstracts from iovec placement questions.
+> 
+> > +				issue_flags);
+> 
+> And there will likely be a 3rd one. That's pretty likely why
+> performance is not up to expectations, unlike the rw/net
+> side which cache it to eventually 0 realloctions.
+> 
+> The first one can be easily removed, but it'll need better
+> abstractions for cmds not to expose iou_vec. Let me think
+> what would be a good approach here.
 
+Totally agreed, There is too many allocation for this. It should be done
+allocation.
+
+Thanks,
+Sidong
+> 
+> -- 
+> Pavel Begunkov
+> 
 
