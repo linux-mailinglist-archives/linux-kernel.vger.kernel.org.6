@@ -1,115 +1,170 @@
-Return-Path: <linux-kernel+bounces-557539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6D6A5DA87
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:37:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A41A5DA8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:38:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6281887D47
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:37:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D2F618966FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDA323E33E;
-	Wed, 12 Mar 2025 10:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E21523E343;
+	Wed, 12 Mar 2025 10:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="Em0Z9Wb/"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vATPkzFD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BA323C8AB
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4A8233D85;
+	Wed, 12 Mar 2025 10:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741775857; cv=none; b=unnQAMvJ18uo/gESdq0CsVPWa2IXXnGFxJ/qx1Ry/hE3MJFYcZVondPfZqNgwcb2kH1rHVH2orNRlot4R6yw+MKDe8qyq9ngCIVYHSq4g6unxAKeX94LR2JZHHc+aCwamMBhN2KYmQ4ilWOAkMhaKJl6LViE7ODvNlYfHPk1+ZE=
+	t=1741775899; cv=none; b=tKZ5zRTS/fRbzU1N7tSjvRDaLHLKG2eXYBxOT7x/DgmYOhWLreqYQwEno0qkhSuiGnGjEcdKKNUkoYXqLIgZzo+IKiYEANmzqL8XqgmLrNeaMaancT+gev1PbWEgxDh764lSxH6b4kpWNugi1e4CmKFKtAkOQ9wbv3ocu8mylyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741775857; c=relaxed/simple;
-	bh=iJ4NlzyYcNM12rMMCIVIyvzby6LWOdymnBY0BkuExDM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ucdg/99fjSSnom8QDfjpnp+m8XkLh6MJYs8mgus0Nh9UMfwOu3FhZ91+ltDl+k9NLnYJRfZJp3n5tWh+E1ZUkeM1K0lDWQ6il7OmzHyr0TznIY9DHSi8M8gB5SbkyGW2PXoMv2/iIPdtCjo6nuH6/gEQK+t2slML3qOkMxRtTJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=Em0Z9Wb/; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1741775852; x=1742035052;
-	bh=KRHpzm/tg2SHCs5xXakiwO2X7kqF1KvJIrw1VAfxtvE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=Em0Z9Wb/LTthJYVnXSW1JrssH3/A407byAVwcuu2LDuL3yrhjkqLrPtnut10+IPPr
-	 U+qxkuZDTxHzXRPMSrcL0+SkGBoPlh/YDQBfX4pEMIVmOrt7SDwEVUhVNQxerLltyy
-	 0C6BEhLSmj4rbZypTT0qT8AHU4eAbQj3GGJip2BvPrkhCFl/8zfv/DPpsxkA5/+kzw
-	 BsrWpOAYghnwIRx10c7B8NZd+qClGs4R/67HRztHr6X13stpxmkk7pW38Hk+qlSoMi
-	 BWkXz+BQOMWvDcqcRYEr1cG1/4dau24LrEc8qFCRfi7lSm6EG1yQD5E4eczkt/f+im
-	 RECL5brSZqawQ==
-Date: Wed, 12 Mar 2025 10:37:29 +0000
-To: Boqun Feng <boqun.feng@gmail.com>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 4/4] rust: adding OwnableRefCounted and SimpleOwnableRefCounted
-Message-ID: <Z9Fj5nROnMkj8Oau@mango>
-In-Reply-To: <Z88lzDPsO7UStQ85@boqun-archlinux>
-References: <20250310-unique-ref-v7-0-4caddb78aa05@pm.me> <20250310-unique-ref-v7-4-4caddb78aa05@pm.me> <Z88lzDPsO7UStQ85@boqun-archlinux>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: 8d49b651f9b136c85ccb3250c43af42e28a547bc
+	s=arc-20240116; t=1741775899; c=relaxed/simple;
+	bh=bCeCT0ekEY01oH6fjXfZhEActp17j78VQ1OXq1k5gNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gp1LC71s0wtdx10ICR/6FDmgZ3U0iWGlbL7jzJeqg0JY+xsIRhbzh59Bg3CrAqi5lukz4MBKV9UHMYB7A/+9lAIlDLisXGukV637sc+PdBgON6RdDLu3+zZ2AWNKTYcDjTiKPohId+7WzrSLDs4DH4Clcmp9Wus6dSYgHX62zWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vATPkzFD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF095C4CEE3;
+	Wed, 12 Mar 2025 10:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741775897;
+	bh=bCeCT0ekEY01oH6fjXfZhEActp17j78VQ1OXq1k5gNA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vATPkzFDEDNpKHPD82kpz4lxsP5oMtOY1IyZLAneSgx48OxT9R88c3YPoBqB9TzX+
+	 mAYEGb9p4eVFKOhV/yCtOSyyx2QCQ7wV5ad25YKAdLmGdnY8NPCl/jleoiwgDOIsCl
+	 FbVjF/80WNhCmaZAXAg38718NLVbi3ftM+yFkKin2y2/D+0eYunS6m3I7z2XadWbit
+	 LLow3VPRaIhj2P2lOBxA67dDe7/VwnA52PUtQbPjCGpYVcUzefq5enqRuZ06JpUl6M
+	 4BQuaOVybanzEnlKPL6GvnurY5JUUZut+OlCcaLi4PcUiwPuGOryxGTjndlKjGnhO3
+	 roUQi4DHkM4DA==
+Message-ID: <243b62df-7a0a-4197-9cf4-10ad73a9f421@kernel.org>
+Date: Wed, 12 Mar 2025 11:38:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 1/4] dt-bindings: PCI: qcom: Add MHI registers for
+ IPQ9574
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+ quic_srichara@quicinc.com, quic_devipriy@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250312084330.873994-1-quic_varada@quicinc.com>
+ <20250312084330.873994-2-quic_varada@quicinc.com>
+ <7b2d7f14-4274-4ff0-87a6-ac3dd649df4e@kernel.org>
+ <Z9FWVh1NinKOsRNq@hu-varada-blr.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z9FWVh1NinKOsRNq@hu-varada-blr.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 250310 1047, Boqun Feng wrote:
-> On Mon, Mar 10, 2025 at 10:57:47AM +0000, Oliver Mangold wrote:
-> > +pub unsafe trait SimpleOwnableRefCounted {
->=20
-> Can you make this trait as a sub-trait of RefCounted:
->=20
-> =09pub unsafe trait SimpleOwnableRefCounted: RefCounted {
-> =09    fn is_unique(&self) -> bool;
-> =09}
->=20
-> ?
->=20
+On 12/03/2025 10:39, Varadarajan Narayanan wrote:
+> On Wed, Mar 12, 2025 at 09:46:41AM +0100, Krzysztof Kozlowski wrote:
+>> On 12/03/2025 09:43, Varadarajan Narayanan wrote:
+>>> Append the MHI register range to IPQ9574.
+>>
+>> Why?
+> 
+> This is needed for ipq5332 to use ipq9574 as fallback compatible.
 
-Good idea. Simplifies things. Will do that.
+This sounds like you incorrect hardware description, because some other
+device needs this.
 
-> > +    /// Checks if exactly one [`ARef`] to the object exists. In case t=
-he object is [`Sync`], the
-> > +    /// check needs to be race-free.
-> > +    fn is_unique(&self) -> bool;
-> > +
-> > +    /// Increments the reference count on the object.
-> > +    fn inc_ref(&self);
-> > +
-> > +    /// Decrements the reference count on the object when the [`Simple=
-OwnableRefCounted`] is
->=20
-> Should be:
->=20
-> "... when ARef<SimpleOwnableRefCounted> or
-> Owned<SimpleOwnableRefCounted> is dropped"
->=20
-> ?
->=20
-> > +    /// dropped.
-> > +    ///
-> > +    /// Frees the object when the count reaches zero.
->=20
-> It may not end up freeing the object, because ARef<..> only tracks the
-> Rust side of refcounting, we should avoid mentioning "refcount reaching
-> to zero" here.
->=20
+Your commit msg must explain why you do things, not me keep asking the
+same question over and over.
 
-This docu will vanish together with the functions, of course, after the cha=
-nge
-above. One might note, though, that the last comment was a copy-paste from
-AlwaysRefCounted (now RefCounted) where it still exists identically.
+In the same time reason "ipq5332 needs it" is not correct reason.
+ipq5332 is not related anyhow to this hardware. Write bindings matching
+the hardware, not some other patches.
+
+
+> 
+>>> Fixes: e0662dae178d ("dt-bindings: PCI: qcom: Document the IPQ9574 PCIe controller")
+>>
+>> What is being fixed here?
+> 
+> Ok, will remove this.
+> 
+>>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+>>> ---
+>>> New patch introduced in this patchset. MHI range was missed in the
+>>> initial post
+>>> ---
+>>>  Documentation/devicetree/bindings/pci/qcom,pcie.yaml | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+>>> index 8f628939209e..77e66ab8764f 100644
+>>> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+>>> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+>>> @@ -175,7 +175,7 @@ allOf:
+>>>        properties:
+>>>          reg:
+>>>            minItems: 5
+>>> -          maxItems: 5
+>>> +          maxItems: 6
+>>
+>> Why qcom,pcie-ipq6018 gets mhi? Nothing in commit msg mentions ipq6018.
+> 
+> Didn't mention ipq6018 as I was under the impression that 'minItems: 5' would
+> apply for ipq6018.
+
+items=5 applies to all of them and there is nothing here claiming that
+items=6 does not apply...
 
 Best regards,
-
-Oliver
-
+Krzysztof
 
