@@ -1,96 +1,100 @@
-Return-Path: <linux-kernel+bounces-558392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 613E6A5E53E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:20:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56BDEA5E53B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:20:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E001A3ADC18
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:20:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A8F77ADD97
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557B71EDA02;
-	Wed, 12 Mar 2025 20:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBE51EDA33;
+	Wed, 12 Mar 2025 20:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFyF/bYS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRopA5nT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB803D81;
-	Wed, 12 Mar 2025 20:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4711EB191;
+	Wed, 12 Mar 2025 20:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741810837; cv=none; b=kEYoDOqgjgm5s4mXHJ5GNxmZKpN/jwLMbhAai1NtgExRN8fUddp38kO81tZnQ0+rCG7iVL7Wu1VxCvBe785PHZkFbrYz65Ewu9l0I+MjsrKba19mpufmYyYxono+VzovQxj5ImTP1Pdmj5wSAflJM1TG2mH+eO1abMdr0O3coQw=
+	t=1741810796; cv=none; b=Xwnq9H+ScFaLl/96fgEU6n/7JI1JjSlEIbszygnWDbEu8FznbRC2ItRU+W/aWHA+rfoRjCqtxshUFRYiwryWdRKpT6eCdS5yLgqgBPZMqU9hxqkUXn/M6QuJlCv9jMcgT8vt0t/GhIJskrctuykb34X0qvmQvwACIDaPVsKF888=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741810837; c=relaxed/simple;
-	bh=191cN9Be6lYXTlsG5ApbiQoMSU4OQE2UppDIftw7wL4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=meRntukfcSmdSvhNVSeXgpzwjWxVqzAooexGsadC5rse9NM/gweEug2siC7oLugHgc43Q52QIqpha3twO3p772RNASzYfDGGjoPUvItpaQJWzFgc3aflK7hs1fAwTG1WPyRM7zs1hjZpW8I81UAlyPA9NHPZgcDYAk+/2q2vdYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HFyF/bYS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37723C4CEE3;
-	Wed, 12 Mar 2025 20:20:37 +0000 (UTC)
+	s=arc-20240116; t=1741810796; c=relaxed/simple;
+	bh=eUPDWDjxdEdOfOSl6gOwd5Lk7nckPxgTXNP4nYLK3/g=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Hm3Esr+CQzu8dyhRdTfwgev7Pjn71XLrl2TjOXXsv6J3lHouzM2LEyPbd1PzPayHaTHsVOQRqC568FA6tKnFqFAUrzs2AlXJA0AOLNTB8HRWgwAo+5HRbnZ2Vsgzk67BfUMCw2LOgcG+Xek6BuZ+GN/4JHbnAetnpjoWUhe9AwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRopA5nT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 896CAC4CEDD;
+	Wed, 12 Mar 2025 20:19:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741810837;
-	bh=191cN9Be6lYXTlsG5ApbiQoMSU4OQE2UppDIftw7wL4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HFyF/bYSVYtukHoyXWBFESDdzn60lTmtTg9dVLtsyW2B9J9uu5eNtAUjCbnZprmL0
-	 WlCai9Ii601DdgNiK2WaUxSCjU982O9rHpwntcTEoTv9Qs0jatgHDgLPCXcShUpiME
-	 LP5eU3JQZwjpywxY38nKHZ7yj2JgN4MdZ8pPS6MQfw9QhZrEvIQBy621d7Nsidr9ne
-	 R/ZRRcmVbtvW6GsipA9rATfWUzR38WyfF4pLxfXcGJu9PReaB9OHLwpQEZWkEb0LXm
-	 68kK4n8NGGDf+JuSjXU7Ps1CHLfEUbEKuOUbkw38bu2A2z6StZWXwicX2l1bK7LsLR
-	 Jh7gSpSzZr0aQ==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2bcc0c6c149so254820fac.1;
-        Wed, 12 Mar 2025 13:20:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUsnMsZ8xMNSksqzil0plPzLrkYP9Vlg0CyUGEbFRPirWagWX88towMvpRIZfM19szOQmX/tOkDTQE=@vger.kernel.org, AJvYcCW38L75g3bxOS8UcJPjYsJVN8NYpJeG0OKK16orhQlk8iMiuOq7QLY6YnabTmU+6su9I/q7Z+WMV8G/3jw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJuAoNJ1s2MiZx/NSf/dLkUp9mNGTsQQXnOOcyeN/qRzl4Vm2V
-	PWD5jW+XtWQpnSi60hJL/fU+lKSqF5NOA7gUk+iveWRIEf4fsr7o+gbP4qDeVxMs/JgoXCJmvBo
-	PcCPLQui4GAUZ/4gjQpJ3mqb5ULo=
-X-Google-Smtp-Source: AGHT+IFkQqFePGtzUqvRMUdvv06++o/IztrYHiosgInnc+5rxXilGbqHpHMEewloEEyPDF2c28FvTHjEKv2JdKlV6k4=
-X-Received: by 2002:a05:6870:d886:b0:2c1:5dbb:ecb6 with SMTP id
- 586e51a60fabf-2c261398a70mr11822143fac.38.1741810836496; Wed, 12 Mar 2025
- 13:20:36 -0700 (PDT)
+	s=k20201202; t=1741810796;
+	bh=eUPDWDjxdEdOfOSl6gOwd5Lk7nckPxgTXNP4nYLK3/g=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=GRopA5nTl1UI8BIj/22q0D3CqVF1tD1x54XFYeQh3RA8o7+Okj90wto+YNjVCehC2
+	 GXCGD8mOa7T5w25BoAHP2YpoWVLv/iV5V+b4jWzsDhfHISkB7DwmjopJ14px3LwvD5
+	 2h0awpU+20q5NufImWzu7PQBiPfqUFYdZ/H8VPCKEXWpLEy3Fmd/EM3xj5yrSB1f4s
+	 NYLS3IiBW3QcAuVnqYXvCYsGJuTvDnJOyH1QYnTduwJ2yP+tU39gd3tpS+8BuQU8N8
+	 IIUJm+R3FlOhZc6W1FU21jpt+X4oGkIPx4Z8PFZxxcAH1XjN4UWY6YMKHSsN/Zp05z
+	 RQQujsm+j69BA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DD8380DBDF;
+	Wed, 12 Mar 2025 20:20:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311160827.1129643-1-ulf.hansson@linaro.org>
-In-Reply-To: <20250311160827.1129643-1-ulf.hansson@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Mar 2025 21:20:25 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hgzVvA6vcRxUeByhVPgjyeUfY7v5Aj5GPi=_T_XWpPvQ@mail.gmail.com>
-X-Gm-Features: AQ5f1Jo4bcmkwN3s7uVPG_AArFVAMqWOsxYbRVJfnVX3sUEfnb9nLW56cGhcvVg
-Message-ID: <CAJZ5v0hgzVvA6vcRxUeByhVPgjyeUfY7v5Aj5GPi=_T_XWpPvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] PM: s2idle: A couple of minor lock-simplifications
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: revert to lockless TC_SETUP_BLOCK and
+ TC_SETUP_FT
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174181083101.918963.13075833361323469787.git-patchwork-notify@kernel.org>
+Date: Wed, 12 Mar 2025 20:20:31 +0000
+References: <20250308044726.1193222-1-sdf@fomichev.me>
+In-Reply-To: <20250308044726.1193222-1-sdf@fomichev.me>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, horms@kernel.org, corbet@lwn.net,
+ andrew+netdev@lunn.ch, pablo@netfilter.org, kadlec@netfilter.org
 
-On Tue, Mar 11, 2025 at 5:08=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
->
-> While working on s2idle a few things caught my attention when looking
-> closer in the code in the s2idle_enter(), in regards to locks. These two
-> patches tries to improve the situation a bit.
->
-> Kind regards
-> Ulf Hansson
->
-> Ulf Hansson (2):
->   PM: s2idle: Drop redundant locks when entering s2idle
->   PM: s2idle: Extend comment in s2idle_enter()
->
->  kernel/power/suspend.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->
-> --
+Hello:
 
-Both patches applied as 6.15 material, but I rewrote the new comments.
-Hopefully, this is not a problem.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Thanks!
+On Fri,  7 Mar 2025 20:47:26 -0800 you wrote:
+> There is a couple of places from which we can arrive to ndo_setup_tc
+> with TC_SETUP_BLOCK/TC_SETUP_FT:
+> - netlink
+> - netlink notifier
+> - netdev notifier
+> 
+> Locking netdev too deep in this call chain seems to be problematic
+> (especially assuming some/all of the call_netdevice_notifiers
+> NETDEV_UNREGISTER) might soon be running with the instance lock).
+> Revert to lockless ndo_setup_tc for TC_SETUP_BLOCK/TC_SETUP_FT. NFT
+> framework already takes care of most of the locking. Document
+> the assumptions.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] net: revert to lockless TC_SETUP_BLOCK and TC_SETUP_FT
+    https://git.kernel.org/netdev/net-next/c/0a13c1e0a449
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
