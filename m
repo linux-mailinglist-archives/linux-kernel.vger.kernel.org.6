@@ -1,94 +1,78 @@
-Return-Path: <linux-kernel+bounces-558352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A59A5E4AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:43:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B642A5E4B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:44:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C39DD17C2FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:43:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CEEF18950A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81714258CEB;
-	Wed, 12 Mar 2025 19:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B66258CF6;
+	Wed, 12 Mar 2025 19:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="DxXCHqgd"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jm6RkIOR"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471CC136A;
-	Wed, 12 Mar 2025 19:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7EA258CF8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 19:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741808610; cv=none; b=tQlrHj2XRPRxx0hkHHd41VkA4sF+AbtWIx68vyWv0kjD+14NkHGbCIX0kKy60nCnGff8MxV22E2hiDP6uNfSpy4QLtk0G/RBBqlGOQiXR5L7XtwRC+ntC7OIunthIldBTlqlLsiPLVbbDHy40OE4PNu9ntKyAM4ONakQuHW3ID0=
+	t=1741808633; cv=none; b=uYlzLB9QPg6eO3KNb5arcYvD/uOhvNENHvMW66KdhG3r1ih81f0jWYgQ3NSdT8JwtadDt2fygjINXv6yPILAG9m44m4w5MJeRZ8RL8sabIdUDBdg2pVakYu8CGGcFAIf7eiZrXDKqIp9hhLVHBM6T/COTrIOnRrqPiz6mkknuBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741808610; c=relaxed/simple;
-	bh=MQpsvFjJVmn++42KDeejIYF6zbqUpGV1N2HykXJ9TvA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rkAmTdFpz0bcEN1p2j/OyGPYixJLRhM6GynStMAB7hs6/zMdMYeZn2p7cz89O915bclEabl71PSM/EHgK9UfEnLWiDbq9xUFE/xx7ghdXQszpXNTn0hLmJtO4y9bfwLkf19DBowiJOq/waFPHPXRSAbMseLKGcneOL3ebUBmZq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=DxXCHqgd; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741808605; x=1742067805;
-	bh=k2L8+T93x3C/emjGMuwyW/R5I8BeyS+0TxpevstosCY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=DxXCHqgd37hI1t1+mSl0RVRBwA13vQ/XVaB09BZ/O0VCttgrhLU0EjhZZiQkCK+I/
-	 xirIOJ/C5+SaHokD1EEAq/798EGmTZaCDP/VR1350NPEJyWWqg2agQGAFYNisnikAK
-	 pM9X/nXhCDpQzQLkpQKvirBihIDT0xyDlbu3pMqI9N59zX67RsIrN1lLmVuQ2JhfD5
-	 tttJlaqwfmONRscNeiyAYqg3X1dlR/mn1+fT8HAYPfdkmzf8BEuLcsIshVhhMOvVoK
-	 daXB5Xif7XB4RWcKuUs9smRkdiuD3NrsMernT3k90UVinCE/TWl7PwwxHM3UYlCPvY
-	 l68ZcyT+sgJ4w==
-Date: Wed, 12 Mar 2025 19:43:19 +0000
-To: Tamir Duberstein <tamird@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
-Message-ID: <D8EJM4CJ4HAN.1PB2YV8DB77V7@proton.me>
-In-Reply-To: <CAJ-ks9=zWAuPUM_61EA6i5QkUpwtNtsN8oF_MUerWGn39MRHhw@mail.gmail.com>
-References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com> <20250309-ptr-as-ptr-v2-5-25d60ad922b7@gmail.com> <D8EDP4SMQG2M.3HUNZGX8X0IL7@proton.me> <CAJ-ks9=K06OT6cutUABj2QDHJHJ70719c-eJ=F3n-_bhkYbZ3w@mail.gmail.com> <D8EG9EM9UU0B.2GLHXRU2XROZ3@proton.me> <CAJ-ks9=+3MQb-tp8TAwYvVj=GOFFFVKJxRMprc8YXZHKhqnDrg@mail.gmail.com> <D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me> <CAJ-ks9=zWAuPUM_61EA6i5QkUpwtNtsN8oF_MUerWGn39MRHhw@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: bbd40c62717ae5f9397b8b9c9ae87ff25634c232
+	s=arc-20240116; t=1741808633; c=relaxed/simple;
+	bh=d6zzect/sdYr/cCXfvJppxjmdys4AynPPOCTWQdhxR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FP6X6u3NX0+sC8p6r/ux1XPC7Dc2uBwNNhP9yTDrO0I9zUSLtJFxRkfliJIbVNYzvB7OiepSShMC/4qKpi75/8XAUNSlufvplaVsbjS1wftyggvWpXu9iihErFjq+C83mqj4OzwQqGKQyNbubhwDiiw3OI9gYVGX2eeMykwvRSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jm6RkIOR; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=d6zzect/sdYr/cCXfvJppxjmdys4AynPPOCTWQdhxR8=; b=jm6RkIORheRR37Qn1JMjFsbUQT
+	iLYkXsPs4azi8XT2oMX7olEpzhF4rooJm3MiOmtZgbEqZXL8Bu1j9z2TuSeuq78FEuJRv6S01sQKb
+	VXJ5S0yhHVdxf48Vj6ND9vnhbZlIMKam9CRX/qtFU6cpWHdBjXeT8zCOZfsg3shiETKQCfL3Wmkze
+	bGQ+XZARohwzUkvUBzodcfUafLhv8SrNGWHg1S9kayPzSTBLbE31/KmFEaBq+aW84/q43blbWgnRN
+	fd+LsWIf5TdY2Q7Hf9w+OJhkuhOjiiQJ/Ma9fYPvO1fE64FvYskfrmkGGGxlNtpQGd25qHDo93Cjy
+	Lg2W64+w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsRzU-00000002TN0-3eTN;
+	Wed, 12 Mar 2025 19:43:45 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5D909300599; Wed, 12 Mar 2025 20:43:43 +0100 (CET)
+Date: Wed, 12 Mar 2025 20:43:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: mingo@redhat.com, tglx@linutronix.de, bp@alien8.de, acme@kernel.org,
+	namhyung@kernel.org, irogers@google.com,
+	linux-kernel@vger.kernel.org, ak@linux.intel.com,
+	eranian@google.com
+Subject: Re: [PATCH V8 1/6] perf: Save PMU specific data in task_struct
+Message-ID: <20250312194343.GC10453@noisy.programming.kicks-ass.net>
+References: <20250312182525.4078433-1-kan.liang@linux.intel.com>
+ <20250312190533.GA10453@noisy.programming.kicks-ass.net>
+ <702802d2-7318-4575-81ac-4fad6f8ff42f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <702802d2-7318-4575-81ac-4fad6f8ff42f@linux.intel.com>
 
-On Wed Mar 12, 2025 at 8:19 PM CET, Tamir Duberstein wrote:
-> I tried using the strict provenance lints locally and I think we can't
-> until we properly bump MSRV due to `clippy::incompatible_msrv`:
->
-> warning: current MSRV (Minimum Supported Rust Version) is `1.78.0` but
-> this item is stable since `1.84.0`
->    --> ../rust/kernel/str.rs:696:22
->     |
-> 696 |             pos: pos.expose_provenance(),
->     |                      ^^^^^^^^^^^^^^^^^^^
->     |
->     =3D help: for further information visit
-> https://rust-lang.github.io/rust-clippy/master/index.html#incompatible_ms=
-rv
+On Wed, Mar 12, 2025 at 03:41:06PM -0400, Liang, Kan wrote:
 
-Oh this is annoying...
+> The kmem_cache is introduced to address the alignment requirement for
+> Arch LBR.
+> https://lore.kernel.org/lkml/159420190705.4006.11190540790919295173.tip-bot2@tip-bot2/
 
-> This is with `#![feature(strict_provenance)]`. I can file the issue
-> but I think it's blocked on MSRV >=3D 1.84.0. But maybe you know of a
-> path forward :)
-
-I think we should be able to just `allow(clippy::incompatible_msrv)`,
-since Miguel & other maintainers will test with 1.78 (or at least are
-supposed to :).
-
----
-Cheers,
-Benno
-
+Urgh, okay. Please stick that in a comment somewhere.
 
