@@ -1,121 +1,164 @@
-Return-Path: <linux-kernel+bounces-557480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A6DAA5D9C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:44:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0B3A5D9D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:47:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD4AB7AAD4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:43:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A434B189C49C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A2F23C375;
-	Wed, 12 Mar 2025 09:44:46 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D68723817E;
+	Wed, 12 Mar 2025 09:47:20 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C3023A9BB;
-	Wed, 12 Mar 2025 09:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698881DC991;
+	Wed, 12 Mar 2025 09:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741772686; cv=none; b=HtrCkT95f3nfsUSCcieNslRDYSnv/xbf2YKK70TX7/4uxmVrbzFIM3Gvx2sLz+++CGysWO5eGYTGQHqVJzcun0fvn0t57iMOMNlohDoJhgRhvDpxiXoFC3gwetnQhTW2ChyI5BrNIeErYpRsC3FHab8HmmlfKr3ZJwZ2/AAAx+k=
+	t=1741772839; cv=none; b=L7o+1nqSZahE4+/GMyzn+tNEYQTI5nce8kxEU049bavmbPQLK/yyHw3goqsKhPa7Ow2GVYON8rMZwwZSS/ZY65dzt5ZI8NhoJfL4dMVTBFVVjK3RDp7PJ36FxIxTzhWYX000WE+etd5hOcZZMggB/INZt7v6YiESa7o3NdtOtzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741772686; c=relaxed/simple;
-	bh=njmqW+rfyQb6XJXU1l6V+5wpMkIjVulBOeT+G06FSk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MEz5mmtE0DaP1fdDWAmcvB8JOtd+wOoIh476BfRHSbtCUPkEtwHw2xMGu14T1TVDSuLBTbCjVsLbSshLpRHuJQ/HcaXeluggfxbYCmtduEh4z6lMCor1MQG3o/HAGVu1RXqDh6uKu3YtRwGPknh/bCay2lqmw5q4FZi0xw4JUSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZCQcN1t0SzCs9j;
-	Wed, 12 Mar 2025 17:41:08 +0800 (CST)
-Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0E683140392;
-	Wed, 12 Mar 2025 17:44:41 +0800 (CST)
-Received: from [10.67.120.108] (10.67.120.108) by
- kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 12 Mar 2025 17:44:40 +0800
-Message-ID: <134681bd-0afa-a5cd-2e44-4f22db363734@huawei.com>
-Date: Wed, 12 Mar 2025 17:44:39 +0800
+	s=arc-20240116; t=1741772839; c=relaxed/simple;
+	bh=r58vrp2EstxFyN26G7F/QhcD0jYpTudGlXZLmZGjH6g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pzfv/tzGIV4HqkYT574FvYOa7P2CNNUuBAjG7ur3mMVY2qb8Jph+nZ13bXYgaLYi/X+sXoo0Zl0dzth3CPkULmB+2ER2zpZdJm8GvIlLlgVZfdOSryP0yY9jaiqJKJB8duJrmCHQhcVH0O104Jt/z5O6ERA60MKRsrzqUl/cfX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-523ee30e0d4so2255038e0c.2;
+        Wed, 12 Mar 2025 02:47:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741772834; x=1742377634;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d62xAkjCjzvah8gGs20whVVYHb+UQ2bouE+wm1G9QwE=;
+        b=qg2RwtkW+IJ93WCGyOBZnQnUckkHWiOyzaErRf2xvCuLMDMWZ9E1cqH45R/41xHi1Y
+         1DwMGZ2Ot02bPDnCpuDhaOUtTcL+RAXZ4J2alqJ6eE6laj2rURADw5d28HTRwPdaHddU
+         dxyh4c8Z/yBPZ37gOdwdljUwjHm+z7prktUMkKXDO8k+Ryn0EQqH4CAAEDKAoUeJ4sXq
+         zwjDsdcv+lK24AkVLIwG+LVXs40EsUpELxGDlH0HUT3E1yIFa0ATq00luwHXMGEZ6fh7
+         OoSMNXSl7EPhQd3Yj18nZkVId0A5Mcs4viYcU8+o35NgkuqEfY6CckuYU3vcWkJhYXX1
+         0NbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULRETbo4BH9jhK+25FWjSBSM+cG2V8ZgUNiepR1VFHMIlRMUZMk9GKDYHj8LMSVIgyLFTqaCtZ2Go=@vger.kernel.org, AJvYcCWKBBbYkAdzKkyMIzlO2EZLp6f2vO0UqsT2VmbUVPorAYh4ig/SXBCfOwo2pcRig4RSR95N5qnFneTnKMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2OKPz68b9/tM+ds1yYHoQ/Mz4KrZDi8kZC73KycC32OG67P2M
+	Mo7G/govaTLUf980DaSPODpDzLGmKNj08XjfFgiXDhLfDrjXPNZNtjCpTE/J
+X-Gm-Gg: ASbGnctWCZ0oM+ITdZFLeavLZb6FCYNMnQhM2ETHwkJfjni1CksgXARJvYWXD/eArGn
+	zuCvssItiA0zzE31xlic+xtOb+SYycqLGjqallJ4sBNQ1/My5wvJ5H4So69leTsU652/6ihPJlC
+	YMAojk0D96g3eTneKSbMsaw0cm/qTqcTPqOj8oUS2aokFnOal8apFImdDsd0rTLUf+jF5Us44cg
+	duQnAO++jxW+8oDvuS++JzzddumJk1FiBNfXwVqfPNYClqhUBQoVJIda1UiZK2HiG1+DnqpzgMv
+	Xwmk1X7H8jvpG/qmkXdO6MB06PVaYvnitDtq+NSQRgEK++R3Dl1ZPV4Rtu2GOQhIpzhoBtlGBUE
+	UwgCt8NO3l0U=
+X-Google-Smtp-Source: AGHT+IHI/kwET4BOyIL5R8ogAYziQ1rhHQx4zxxfLuxMDVsHZun5c1zS0pE5P6WU4tJQ96taz5wzuA==
+X-Received: by 2002:a05:6122:3191:b0:520:61ee:c815 with SMTP id 71dfb90a1353d-523e4188194mr11709957e0c.10.1741772833709;
+        Wed, 12 Mar 2025 02:47:13 -0700 (PDT)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8a84f06sm2119915e0c.10.2025.03.12.02.47.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 02:47:13 -0700 (PDT)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-523ee30e0d4so2255015e0c.2;
+        Wed, 12 Mar 2025 02:47:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXBzyMh8JXK7p4kX9k5STXObBO1jyFo/lYwm3UDkxXU4I9dizf2c99qOt2qG5TXJaFpHti9WiRGfWnzs4U=@vger.kernel.org, AJvYcCXbpQntSui9KkdARckOJGRMCpwJWnLoVyc8Po9f0oBfzBkRBvA5FYxiX5cctmYBV8or7ZKs/NhwknY=@vger.kernel.org
+X-Received: by 2002:a05:6102:41a8:b0:4bb:e14a:944b with SMTP id
+ ada2fe7eead31-4c30a6c0602mr13369838137.20.1741772832869; Wed, 12 Mar 2025
+ 02:47:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v3 1/3] scsi: hisi_sas: Enable force phy when SATA disk
- directly connected
-Content-Language: en-CA
-To: John Garry <john.g.garry@oracle.com>, <liyihang9@huawei.com>,
-	<yanaijie@huawei.com>
-CC: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <liuyonglong@huawei.com>,
-	<kangfenglong@huawei.com>, <liyangyang20@huawei.com>,
-	<f.fangjian@huawei.com>, <xiabing14@h-partners.com>
-References: <20250220130546.2289555-1-yangxingui@huawei.com>
- <20250220130546.2289555-2-yangxingui@huawei.com>
- <4bf89b6c-8730-4ae8-8b26-770b2aab2c13@oracle.com>
- <5a4384dc-4edb-9e29-d1dd-190d69b9e313@huawei.com>
- <1e98a1eb-a763-4190-94c5-a867cdf0e09b@oracle.com>
- <235e7ad8-1e19-4b7b-c64b-b6703851ca65@huawei.com>
- <d233a108-a46e-47dd-86ad-756c60c8665e@oracle.com>
- <cc9ba6f8-1efb-4910-8952-9ca07c707658@huawei.com>
- <5d34595f-ff57-4679-b263-fa3fea006ce3@oracle.com>
- <25552c7d-858d-ea1e-0987-55f71642a503@huawei.com>
- <420fde94-28ec-4321-943b-5cb84cf14f0e@oracle.com>
- <d0a6b502-328b-2f83-3cdf-55c1effd80c1@huawei.com>
- <1fe3bb6b-1f7a-4188-83a3-f4c62e2a963d@oracle.com>
-From: yangxingui <yangxingui@huawei.com>
-In-Reply-To: <1fe3bb6b-1f7a-4188-83a3-f4c62e2a963d@oracle.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepemh100007.china.huawei.com (7.202.181.92) To
- kwepemg100017.china.huawei.com (7.202.181.58)
+References: <20250216175545.35079-1-contact@artur-rojek.eu>
+ <20250216175545.35079-2-contact@artur-rojek.eu> <5365422a9715376c76a89e255c978fc39064e243.camel@physik.fu-berlin.de>
+ <433bc8a0732bf8a63c64c4bf0e6ad4a7@artur-rojek.eu> <967e29681c8bc39edfdd9c645d943f17d341c2ae.camel@physik.fu-berlin.de>
+ <CAFULd4b8+HsmJC2XkW50pxtw=fHNrL9gH1_WM90jh+rfLCbSHw@mail.gmail.com>
+In-Reply-To: <CAFULd4b8+HsmJC2XkW50pxtw=fHNrL9gH1_WM90jh+rfLCbSHw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Mar 2025 10:47:00 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXaw117mimN_7UgwbfbG9grVg09WfjKa2Lz4eGqM24EvA@mail.gmail.com>
+X-Gm-Features: AQ5f1JpmvV1WR8P4TSacSWlcg8eeK0249gT4jim4zcWy0MoFkMgE7kfgLifM39g
+Message-ID: <CAMuHMdXaw117mimN_7UgwbfbG9grVg09WfjKa2Lz4eGqM24EvA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] sh: align .bss section padding to 8-byte boundary
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Artur Rojek <contact@artur-rojek.eu>, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, "D . Jeff Dionne" <jeff@coresemi.io>, 
+	Rob Landley <rob@landley.net>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, John
+Hi Uros,
 
-On 2025/3/11 1:45, John Garry wrote:
-> On 10/03/2025 13:09, yangxingui wrote:
->> On 2025/2/25 16:19, John Garry wrote:
->>> On 25/02/2025 01:48, yangxingui wrote:
->>>>>
->>>>>
->>>>> pm8001 sends sas_notify_port_event(sas_phy, PORTE_LINK_RESET_ERR,) 
->>>>> link reset errors - can you consider doing that in 
->>>>> hisi_sas_update_port_id() when you find an inconstant port id?
->>>> Currently during phyup, the hw port id may change, and the 
->>>> corresponding hisi_sas_port.id and the port id in itct are not 
->>>> updated synchronously. The problem caused is not a link error, so we 
->>>> don't need deform port, just update the port id when phyup.
->>>
->>> Sure, but I am just trying to keep this simple. If you deform and 
->>> reform the port - and so lose and find the disk (which does the itct 
->>> config) - will that solve the problem?
->>>
->> We found that we need to perform lose and find for all devices on the 
->> port including the local phy and the remote phy. This process still 
->> requires traversing the phy information corresponding to all devices 
->> to reset and it is also necessary to consider that there is a race 
->> between device removal and the current process.  it looks similar to 
->> solution of update port id directly. And there will be the problem 
->> mentioned above. e.g, during error handling, the recovery state will 
->> last for more than 15 seconds, affecting the performance of other 
->> disks on the same host.
-> 
-> How do you even detect the port id inconsistency for the device attached 
-> at the remote phy? For this series, you could detect it at the phy 
-> up/down handler for the directly attached device - how would it be 
-> triggered for the remote phy?
+On Wed, 12 Mar 2025 at 09:32, Uros Bizjak <ubizjak@gmail.com> wrote:
+> On Wed, Mar 12, 2025 at 9:22=E2=80=AFAM John Paul Adrian Glaubitz
+> <glaubitz@physik.fu-berlin.de> wrote:
+> > > In the original BSS_SECTION(0, PAGE_SIZE, 4), the last argument inser=
+ts
+> > > a 4 byte padding after the closing brace of .bss section definition,
+> > > causing the __bss_stop symbol offset to grow, but not the .bss sectio=
+n
+> > > itself:
+> > >
+> > > #define BSS_SECTION(sbss_align, bss_align, stop_align)               =
+         \
+> > >       . =3D ALIGN(sbss_align);                                       =
+   \
+> > >       __bss_start =3D .;                                             =
+   \
+> > >       SBSS(sbss_align)                                               =
+ \
+> > >       BSS(bss_align)                                                 =
+ \
+> > >       . =3D ALIGN(stop_align);                                       =
+   \
+> > >       __bss_stop =3D .;
+> >
+> > OK, that's really odd. So, the __bss_stop would be moved to the desired
+> > position but the section itself still remains small? What exactly does =
+the
+> > linker fill the region with? Sounds very strange.
+> >
+> > > TurtleBoard loader is only concerned with the .bss section size - it
+> > > doesn't care about any symbol offsets - and hence this seemingly cryp=
+tic
+> > > change (you can display the section size information with
+> > > readelf -t kernel_image).
+> >
+> > Looking at the actual kernel image with readelf is a very good suggesti=
+on!
+> >
+> > > The rest of the changes are simply to "inline" the BSS() macro (as I
+> > > needed to access that closing brace), and the former sbss_align,
+> > > bss_align (that's your PAGE_SIZE) and stop_align arguments are passed
+> > > accordingly, the same way they used to be passed before. The only
+> > > visible effect should be the move of ALIGN(stop_align) inside of .bss
+> > > section definition, and the change of stop_align value from 4 to 8.
+> >
+> > OK. FWIW, do you understand what SBSS is for? I couldn't find any expla=
+nation
+> > for it.
+>
+> Small BSS section. The compiler can put data objects under a certain
+> size threshold to the .sbss section. Looking at GCC sh config, sh does
+> not use this section.
 
-The current problem we are facing only involves directly attached 
-devices. a new version based on your suggestion.
+Hence the moment gcc (or clang) starts using that section, the
+TurtleBoard loader is broken again...
 
-Thanks,
-Xingui
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
