@@ -1,366 +1,268 @@
-Return-Path: <linux-kernel+bounces-557574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B30DA5DAED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:55:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D769A5DAF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:56:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C70177B47
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:55:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F83D177FEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E7E23E32D;
-	Wed, 12 Mar 2025 10:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB7123E35D;
+	Wed, 12 Mar 2025 10:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="Or0PYM5i"
-Received: from esa3.fujitsucc.c3s2.iphmx.com (esa3.fujitsucc.c3s2.iphmx.com [68.232.151.212])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X1eZjwhS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9974923C8AF
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.151.212
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741776933; cv=fail; b=K7WETTvKwHiehpaGb+wqi2rjqLqQcIL0aEmY8ACYjBgAWnDeNZxxF4/z3OrE6W7S3OZH9D5m4CgIXRr2m4wc7Fj5TKPaO92toVpeF/3VlVFB/k7cvQOGAHNWqiwBRFwfIxMN27DN9Db3OtKTd1ZOHehMdAQYvoeBzo/wEpT03/0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741776933; c=relaxed/simple;
-	bh=bxzFU7VAcWVes1AZTc1H9a6KC1Sxh/FPFB5rRNJlXu4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Z64hS/411J/IuRWcrnM5ClrkVfbPX8AWZ+8fDipcIIz0Z9rqVbBI/TCZW3nUwHnIjbJmhWq8g0ygXtN0fYZHG/2M3gnMMgqYv4OwdMl+bjPG83ktzdLrRqJvYC7Y1zu7uLcZ1F/0flqykLSmdy2Pqtw/MZyhxSdlRirGW5KM+xU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=Or0PYM5i; arc=fail smtp.client-ip=68.232.151.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1741776930; x=1773312930;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=bxzFU7VAcWVes1AZTc1H9a6KC1Sxh/FPFB5rRNJlXu4=;
-  b=Or0PYM5iv2IQPyx+cSYHbtE7cxuLfUTowZnc+B7Wwy7KHcNkwxxXsuSi
-   XdFHhRikrRGqHYQVlDw5+ZzY4xge6BVbmHjATT5GmeCqd8BCxGvlNp6Lh
-   OEOejEmJi29FW7leQQGFctNmahTfj2+QiWHI9bQuDAiksmKFgUc436kxC
-   hGJhIePXr7hzJjQ8RPGc/56B8t5pa4kkZNq+6Dwv1Gy5x6+gfhf2pICpH
-   3kz72q5WyNQntIaPZORuXtjEKaY8Uh60Ybr4v6mW7qQ7/JDm9MpmkIzun
-   i6XYaZVGGSZoCsEZUiWBFSgyMRbk8aYT9Dt9yM4NR8ujzxgbkHWruYeni
-   w==;
-X-CSE-ConnectionGUID: Z1JtarFnR7iCoTb0v903wA==
-X-CSE-MsgGUID: 0fmbEs+FTu+bv1vMmyK/+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="60458349"
-X-IronPort-AV: E=Sophos;i="6.14,241,1736780400"; 
-   d="scan'208";a="60458349"
-Received: from mail-japaneastazlp17010004.outbound.protection.outlook.com (HELO TY3P286CU002.outbound.protection.outlook.com) ([40.93.73.4])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 19:55:21 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KFEtRS1KrtlaXwGIJXe3ocRL0sNBWlFHxQR+MO7e2Ekjk8owzSOV10P7phByaQLJC/MiOX27iOwJmSSdqkeVqbiGkpnV72cO06K4gOZ1O9lhTQpRyuIhIN1m6VChC9BH2L1iXwMQQ09fpfbN3BkWPUJ3pBJtxcFr/6RNf1zm66zUMOPFR3ZSAYv7/t+qpYGnuaqi/ETSFtbAha30RP1NjhutgNM7peislmyL0B8BlO4WHF4NSZtqyY8HcGmyTd6Vi9nBbvaErcL31gP1fKKPvc+eAQiJSFiIznMkAwKejUja3jf5Udf1ntewCt582+WFJRwn7w8H/yspYf5Pad2DVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mFWce5DyV3ATlk0aorZxbi8dZZXI3dPyObUIGY+IW2A=;
- b=mt57Fwew4afPKwjnm9195wqlUof/iMIaZ6V28VT4nJwSAI3WN3OEdAQyFEW9ZacloO4EGUE0fFKByQUhLTc7J7n1fAneapw1Nt+CLaW3kur9FL+u4s0i71UJDXWFR2K+WLqVS3stKASFL7Qh0dH7SiAIlGWMPq8TfVf/mOaeRiKUCNx32oa6phZpscnivPiQUToMjsP86rAxB3m95F+lfAiroit8M+MXOBslaym75gHPjuJpNAySudbrLodBVykdf64GrpCiB4l5le42Vly21BP1zGehABoVbNzZMM4Er8UQuwnT2ZoAeh/VDu42b0COtYAi0kwuZJHYukDzz05xCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-Received: from TYCPR01MB8804.jpnprd01.prod.outlook.com (2603:1096:400:18d::10)
- by TYCPR01MB10335.jpnprd01.prod.outlook.com (2603:1096:400:243::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
- 2025 10:55:18 +0000
-Received: from TYCPR01MB8804.jpnprd01.prod.outlook.com
- ([fe80::b2f6:161a:adee:a32c]) by TYCPR01MB8804.jpnprd01.prod.outlook.com
- ([fe80::b2f6:161a:adee:a32c%6]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 10:55:18 +0000
-From: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>
-To: 'James Morse' <james.morse@arm.com>, "x86@kernel.org" <x86@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Reinette Chatre <reinette.chatre@intel.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, H Peter Anvin <hpa@zytor.com>, Babu Moger
-	<Babu.Moger@amd.com>, "shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, "carl@os.amperecomputing.com"
-	<carl@os.amperecomputing.com>, "lcherian@marvell.com" <lcherian@marvell.com>,
-	"bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
-	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	"peternewman@google.com" <peternewman@google.com>, "dfustini@baylibre.com"
-	<dfustini@baylibre.com>, "amitsinght@marvell.com" <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>, Dave
- Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, Shanker Donthineni
-	<sdonthineni@nvidia.com>, "fenghuay@nvidia.com" <fenghuay@nvidia.com>
-Subject: RE: [PATCH v8:for-boris 00/30] x86/resctrl: Move the resctrl
- filesystem code to /fs/resctrl
-Thread-Topic: [PATCH v8:for-boris 00/30] x86/resctrl: Move the resctrl
- filesystem code to /fs/resctrl
-Thread-Index: AQHbkrT9Rw5eUSkS6kaP7JkEZT9PuLNvU8QA
-Date: Wed, 12 Mar 2025 10:55:18 +0000
-Message-ID:
- <TYCPR01MB8804C3B3169809A6DE1A9FBE8BD02@TYCPR01MB8804.jpnprd01.prod.outlook.com>
-References: <20250311183715.16445-1-james.morse@arm.com>
-In-Reply-To: <20250311183715.16445-1-james.morse@arm.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ActionId=5bc51568-4845-4bdc-b52e-f4889c36e79c;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=true;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED?;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2025-03-12T10:50:38Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB8804:EE_|TYCPR01MB10335:EE_
-x-ms-office365-filtering-correlation-id: fbabb018-0817-45a7-6434-08dd615460ae
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|1580799027|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-2022-jp?B?UjJOSHhDd2F1YWVhQllZTlhLeDg3cDlDeVF3WGZDQWdoaTM0LzE4Tm5T?=
- =?iso-2022-jp?B?WGtKem5OS0pSald5M08vSGZHb01hL1pzRVEzSVlyNExsUmdYUHo4cm02?=
- =?iso-2022-jp?B?bFBxNjlGaHpHMnZYNDk4aHlmUlNGOXZPdmxTSWgyVVZhTEJBUXMrazZx?=
- =?iso-2022-jp?B?ZnFscVdpa3lRT2hWbmpLMGlncER5cS9BS0dyYUV6ODdud2lVM1JQamRk?=
- =?iso-2022-jp?B?MmdqNUFsQnpHK0EzNWQwaURrVFMvUlJXbHRQZElQa1dwRm5najUvSVVw?=
- =?iso-2022-jp?B?TVBiMFEwcm50Ky9zbzcvVDdWRm9idHRNbnI3dWVKQThDWlIxK3pMUExq?=
- =?iso-2022-jp?B?bURGZUR5czVYT1FUMDYxeEhSOVcyck9XNjlhNThnWUZTYlE0QllJZlo2?=
- =?iso-2022-jp?B?U3ZMZmRnU1JnMTl0MzdjaldwMGltMVBTd3J0MW5CbjRvY2VObFhVTUdG?=
- =?iso-2022-jp?B?aElKMG9Bcld1RUJocEN2M05tT0I4UzlIbVFDSDU2emlldVZmckI1alZM?=
- =?iso-2022-jp?B?b210WjFBZFpGTmd2NnJ5RWw1cXYwbEYwOFR4aHZBdWNkdFpTTG9DcTAr?=
- =?iso-2022-jp?B?TWx0S21XUXF5MTFEWlIwNVBja2IxV3Bzc0w1UXpoR3ZlbGU4Z1dxZlE2?=
- =?iso-2022-jp?B?MDF3ZVcyKys0QmJEZXNlUUhZdjRGTG5tSk9uU3d4QWx6YitmMEFMRVlm?=
- =?iso-2022-jp?B?bmpaSUR5OW0xM0NUMFc0YUJxcEcybWVOeHBISGtYcjY3YnVvUkJKRFNW?=
- =?iso-2022-jp?B?YVYzTmNSSFA5cnFMK0d6SVVZT1Z6QkROcXRldEtNdzRPQzVBYmVpVS8v?=
- =?iso-2022-jp?B?RmtmOFBzRlBGbXg4SmZJOUErNkNCSWZOMTM3bkg1Y0Z5OTg1WWtPOUZ6?=
- =?iso-2022-jp?B?ZFluRFdzbkoyV2o3V2NDcmpyc1o2WnoxVlgvZUJ0OVVrOGlZWlRGMkpx?=
- =?iso-2022-jp?B?aVdGTXFjTVkyVGtGQU1OTm1MQm5BNlpmVXpkU2V0cUVjNEhCb2ZXNUZz?=
- =?iso-2022-jp?B?UGMwTVFlSjAxZ0RES0p1eWlrcW53SlVndWtTcDdwY3I0Z2FYejJjbW43?=
- =?iso-2022-jp?B?aHRtL1pwSHo0a1BFRDVld3JqeEg5WnNBVkdYRWVkKzhQbVVBSm1Gamtw?=
- =?iso-2022-jp?B?UUpqUGwrcTNMN2NwOWtVZ0t3SWUvYk9MR1VlS3FQakRNM1ZuWktZMnYr?=
- =?iso-2022-jp?B?UnA3dWJmQk51Q3QvbHRReXY5WUlJRGNrYUMrZWJhRy9Uck14TWFzdWE0?=
- =?iso-2022-jp?B?dVVNWThrekg5NzkzbXh5OVpzUUNoUlJ0V25CSUZ4bHFrSFlGbHRRSURR?=
- =?iso-2022-jp?B?ZlErNkNsbEEwK1R5T243SXFpUHJoUXhPa3VQVHlLeDNRRjJ2d1BZMmZU?=
- =?iso-2022-jp?B?bGljcjg0NVlNSURWZUNsSXlVcE9wd1pxRWxCQ1lPR1dGaklpMTdqR2Jv?=
- =?iso-2022-jp?B?TXZJR3Vleko4MUxMaUl2S2tBWjBHa0pwMmRiZXp4djlEMGNvSkVCSmRD?=
- =?iso-2022-jp?B?L01TaTkzU0U2UGNkUHIxWGVEcXgvNWdRRnM1bWptWEVxYjgrWHI1Q2lR?=
- =?iso-2022-jp?B?QXNkYUx2QVJUWlRPYi92RFpYbGt1RlN2QVByMjhNRWh4UStqU1NZdnpi?=
- =?iso-2022-jp?B?KzVjT0ZxRmJ5R0dYV2ZVVVRiNlo1QWwyOTBmT0pSeGpmTkRCd0RGRWIw?=
- =?iso-2022-jp?B?ZkUwMGRSajdiUXMwYnZXa01qM1lXY1JxU25wL1doS2dHMTFjWkZRZkJJ?=
- =?iso-2022-jp?B?MFZKQ3hoSlRuOEdlbnZNZVg5bi9KSnNFaVdoaS9tV2g5cm00aGtvdk5C?=
- =?iso-2022-jp?B?Nk9GVzJrYUlXaEY2V1l2dzdnNHJ3WGtoK2lzeWl5cGhicndFYkJ2STVo?=
- =?iso-2022-jp?B?ZW9yUUp6ekMzdGVLczJtZU5RVlFrRjA3RU1QV3M1bldCZEpDWnUrakdL?=
- =?iso-2022-jp?B?Njd6UjhQbXR1U2ZzK2N0ZEdIYkVRdHdKaXA4b1ZydFFIeTR2TnI1NDJ5?=
- =?iso-2022-jp?B?a3NLUTVFQTR5a2ZZb1VodkFBS3M0SERFZzRvei94WDhwdWNZUmErSFNo?=
- =?iso-2022-jp?B?OFVmRit4Y2d3bXBUMEc0ajBJejVmS0J3T2VoK3NqYzZsbHVMTHJVc1JJ?=
- =?iso-2022-jp?B?cS9PemMramxwRVVqUDhEZ1JocjUyQkV3STNGRjBJYXNmU2tBYzg3dmFv?=
- =?iso-2022-jp?B?Z2VFPQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB8804.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(1580799027)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-2022-jp?B?OU1vTUVJM251UHE1V0U0dVNGSC8vM3FlWkxVdk1pcUxWN1FzdkhCUzYy?=
- =?iso-2022-jp?B?Vlp4Z3FINmJSL25pQ3lpeHlhUVg0R3RqWk0wdy83YVpBUnN4RU10NEdh?=
- =?iso-2022-jp?B?alpmY1hOSE91dHVQdjB0d3ZlT0huR0RwV2RmYmVTTE9qSENSWm4wZWZw?=
- =?iso-2022-jp?B?czR5YzVrNWZtRTlNSG9IWmlpM09GSVhMOFFJUDJ5ZG5SeWZEcUhPSzNX?=
- =?iso-2022-jp?B?VitQYlUyQ1FSMFhtMUc1VTFmcXVkS0R4Wit4QkNFNEw2dGNDaG04MVMv?=
- =?iso-2022-jp?B?VzI4T3BnZVoySnlQalN0eFNUaFY0RC9lWk9GMk43MEJHdmtCQWpDL0pG?=
- =?iso-2022-jp?B?MDRueHYxZ0J4YWE3UUZZZEs3ME9TRWMrblF1Ny9zRXd1cU9rL3VLS2NR?=
- =?iso-2022-jp?B?dVFoTFZkNS9tRHZCdjhCYkZ1Zys1SUNTWkZqZTUvdXVjdldyWFo0VEtj?=
- =?iso-2022-jp?B?NFJBdW1teUpDTW9sYitTeFN5REd3cG5lWFU0em5pdVRFWVpTSnhHVnoy?=
- =?iso-2022-jp?B?Nm1OQ2hQSU5EWnhvc1dFYmNzV0NxaGVPV1crN3ZwNjNVSlZFV3V0SFFm?=
- =?iso-2022-jp?B?UDB5bEJMRVZUcHRSOCtqMGw0MjhXT2ZKbWJ3a0tEd09lZ1F6d2M2SXpX?=
- =?iso-2022-jp?B?RWNjMEJXQ0dzZXQwMHBRa0JWdXhEWFVodFhhd2dFVXBzUlRrVFBOQWtr?=
- =?iso-2022-jp?B?TFIyMXpnNGR4THIzREtpeDlpS1Z5amRNSzlVUW92a3ZLamxyZmRManZT?=
- =?iso-2022-jp?B?NmhWbjdzbVI5bkJyQk5adHhBUm5BL040WmVITlFHWEZ4d1Y2cTIrNk8v?=
- =?iso-2022-jp?B?b1J6L2lrQnJQM29NcjlIYWwyMEpjSFQwSGVXQ3YwQkhoWjJmbTQxbHk2?=
- =?iso-2022-jp?B?UmsveGluakRCS2xENlBpc05nYTA3MXdVd0t6WHNjVERBV1FNbkRKdW4x?=
- =?iso-2022-jp?B?ZXlSK2lwV1JCMUc4M0VkOUdLdDMvVmMwMEN4ZjFFd2w5MDFyK2ZkalhK?=
- =?iso-2022-jp?B?OVhZTjNuNnFNbWpkS3RycWMvTlgzNzRKWXdjZUNjaFdnK0lWTTl5d284?=
- =?iso-2022-jp?B?c3Y2MHdJUTVpRXV2bnhmVTNGNkxsWjY1WVBQSnN2bEZ4Q2FwTlU3eFps?=
- =?iso-2022-jp?B?dHg2VTN0cGVqL0ZReTNXU2VOV01yVTlEcis5M0hzRUdhcVprL1NLTlNJ?=
- =?iso-2022-jp?B?eVl0cEtUTjVVZHFsRUszZ3Y2YjFieWRQODdDRzRTYXpMa1lxbWJwRWhM?=
- =?iso-2022-jp?B?dHlRWklKMkRjd2dEd2dqT0Ntc2xwdU5oTjBIYStldHRZMFcrTE5jTW1M?=
- =?iso-2022-jp?B?UXN1OFFaZ082c0ZBOHBlYkdUbmd2QXZTR0hTQmtxcnBqMXRmZGE1TDNk?=
- =?iso-2022-jp?B?NVI4aWdNZ1Bvd05vdUlUeGJYNFN1N0JxdFc3ZVZFdGsyam9uR2hrVEdz?=
- =?iso-2022-jp?B?YTNaK0s2d1BGV280QXB5OW14SVQ5QTY5YU5sTmFVcnB4bTcxL0daOEFi?=
- =?iso-2022-jp?B?N05VVm52RGV5d20vbWJFbDlFQzlZWU1aRTNFOEVEMUxYM3N3eExTUVd6?=
- =?iso-2022-jp?B?SlJpYWwrUUJ0cytRa0I0YWorNk9vejlXS3Y5bVlsbXlZUkdyTC9HZXRn?=
- =?iso-2022-jp?B?aUFydU1ONGQ0Z0NsQzRnczhvQTBob20zZ0VRT1F4eEFMR3RlTVMzRHNl?=
- =?iso-2022-jp?B?TlExRU1IVDZXSW1nc1U0Ti9xUWw0NkFxVkxWR3MyOEU4dWhteU1ycFJi?=
- =?iso-2022-jp?B?U3lid2ZGSGM3ZHVPTURKMGhQRlExbEloZGpvdjd4MjFyUGN4bTV3OUFK?=
- =?iso-2022-jp?B?UkZLTkRyYmJuang1QXAxTmxSeGUxcWdST2dHUyt5NnBrdUVYeTFET2p1?=
- =?iso-2022-jp?B?REthb2tqd0cvL09pakhUODdkUElyZC9MSmtlUlVFWUtkZkdDUm93Mitk?=
- =?iso-2022-jp?B?bGpBVkRVL0pwUlRXQ2F4M250RnlFcThlUEphZEFZN1NDNXlEN21QamhL?=
- =?iso-2022-jp?B?SXp0TUFuRnI0dUROTEZuSDhSbTJNSjRiVmVxRUVjNHJsQURBVGE1bHpo?=
- =?iso-2022-jp?B?cVRnckFNcGVPRko4a0dOQ25KbkltcE50d0tvNVNxYWxEZWRKeXRiL3o0?=
- =?iso-2022-jp?B?OTZMVHA0MGQ2VTVCcGZFZ3hsMXRidTBRa2t0M09MTlA4MXJYREgzSFYz?=
- =?iso-2022-jp?B?bjNBQlU2aUxYM3pSNW42MFZZblZMdkdPSTJYKzdGdjd0ajk5L1F0Zk9k?=
- =?iso-2022-jp?B?MWVRUlNiVEVvUStiemxYc0JNYldLSTBGQlU3NGRyMjBEWE1MK2thNXhU?=
- =?iso-2022-jp?B?VDVyZ3BGOHhhSUVXNXlaYmsvK0tVMjR1UXc9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C48623E32D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741776980; cv=none; b=J7N56J3sIkJ+zbsWqBAkpODs6FxIvH58jM8AoDqvB8Kn7iB03vAj6106sNhIJ/33fg+6ZB2PxjgsM3jC2zm5MX7pQYhJ8nQOv74ELS1d/O1zqxSFkUZzT4fQ4ZFq1W7zRIJTIHVv7FPwD7Pg1+/+oR1o26UJvK8VSxrZbaR9Pe0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741776980; c=relaxed/simple;
+	bh=C9ho3y8Z4AjksfuMtwufWo5v3OhuqO4rkMnvsa73uUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ckcJZp7fRBWtSdL5ZctEr/hmsWHr4RTKd4UMlV4Y2GcFFbhJig4XRINAXwvwMmgf12guqFHWL0sURHF4bdBhuoFnU0W6QuER9W9no5Tc1H5xN6yoiEILOB+sbstWC1igEfl7kHpPVkuoAgHqUnPz+jMzE447IRq9nLEKFlT1c/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X1eZjwhS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741776977;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BMO4udXDunUhobQ7Fjp1hXfrNyFJ45K7k54QtO+Zp4s=;
+	b=X1eZjwhSqCddIl21idC/THK/4fRxmcpZKez9NZjbW901vArTWGBMqMt3J0qM83X4dVxf+I
+	NMBTu2bvB92dIeKB9IlSuVYHHEhkCH312sUvl/DHkZ6FmUdWOxzvQXddHul1FVoiesQd91
+	6vToibW1U6/jUlkaT+0M0U05IoUYKM8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-367--cfZGWcUOwOtGUGWWrc_Yw-1; Wed, 12 Mar 2025 06:56:15 -0400
+X-MC-Unique: -cfZGWcUOwOtGUGWWrc_Yw-1
+X-Mimecast-MFC-AGG-ID: -cfZGWcUOwOtGUGWWrc_Yw_1741776975
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43ced8c2eb7so27950935e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 03:56:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741776974; x=1742381774;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BMO4udXDunUhobQ7Fjp1hXfrNyFJ45K7k54QtO+Zp4s=;
+        b=Xy17u/MDbKG1UChKktB1W28ThlO+XRJ829GDcq9hZ9u9dRcCRQNyOwTWvflUeHq2+r
+         9dACw6UsaDUU3KfZLjmum98QqZJCSqy+teBbKee80DBugFz9sGShpPxayh2uoFIoVAv9
+         QZ7w779/NTFARrT/EafpKrdCOsic9VHmSbtgjpy1NTAInl4RiYs0wkTCGIBLHopVDP3k
+         hPrdGyhKSpIO0d6wIyAjNwsf+ttvOXxtKXTHDV26DHU06FN+DsmQXCxeJWC1vboGMr5P
+         +N/knNklR92eOtXIVKIqo/qQ1qu142RJiEZutIRmjuwIywPf4gxUqBKQK/NbRePKFMy+
+         7/tw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYR5LfuajVMiaTwcZhLhgprSrUYXU2qWdOqaVbGlMpxBDbF2Q+RaZHJgMZjrl36P/wOsVeGJfXpEnftDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySLl96HczlD+LuAFmONe2epjx7ScfgH8DpkhXwBtpEYmTlgJ/j
+	5ErkPYCFR/MwWI3XWxHzVasgUvixkrGH2FfZTInBqZ2M1QioQAm9CdyrRHVIHr4YJqFEpYAczQn
+	pbGsgDX/dFLe6/zC36RDENDDVXFJ2tDxnIw2MeP1c9z25HnAilB62nyB5RLtcSEnjcNtu2g==
+X-Gm-Gg: ASbGnctPgkJF+frIfSNpw2cPWDYkyY1t4pTiX2YU+QMOOHmD+EIsV8FMUqP9UcpSGa0
+	OU4LU1wDkzNeCZxc7y1b/xMKgRfv7OAGDAsuXS+6sQFIcJETQ068wacQd2HB8yD2/bsV4dlwwfA
+	JCISIATenq42PFB37EA1iEAHDQHcjKtkmhvZu8NGJOvl8K/Yl/4VhH7710bTUwgxh1J7b0iYiQ9
+	0m+z9cvL10h+BqqifymfQDk/4K1nJmopNA0vGfcG6c5mWBH92f2zlIxhZuqHmJ1xmtBZRb5R/2J
+	JaiZDMYokosd5+fO/PzFyFo+BRVuzEEX8bBiE2x3WMDOx08mmcSFpvYIZRcdH73R
+X-Received: by 2002:a05:600c:5112:b0:43d:4e9:27fe with SMTP id 5b1f17b1804b1-43d04e92abamr55444205e9.8.1741776973879;
+        Wed, 12 Mar 2025 03:56:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9AMJIu9eKhF569vVgvbzoy+XnTi3xrEHJ2FOChRIcm/dKfdUJ7RQpEPKwGeSxzTGkYglWjQ==
+X-Received: by 2002:a05:600c:5112:b0:43d:4e9:27fe with SMTP id 5b1f17b1804b1-43d04e92abamr55443785e9.8.1741776973173;
+        Wed, 12 Mar 2025 03:56:13 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a74c6a1sm17240825e9.13.2025.03.12.03.56.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 03:56:12 -0700 (PDT)
+Date: Wed, 12 Mar 2025 11:56:06 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Jason Gunthorpe <jgg@ziepe.ca>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>, linux-integrity@vger.kernel.org, 
+	Dov Murik <dovmurik@linux.ibm.com>, Dionna Glaze <dionnaglaze@google.com>, 
+	linux-coco@lists.linux.dev, James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Claudio Carvalho <cclaudio@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH v3 1/4] x86/sev: add SVSM vTPM probe/send_command
+ functions
+Message-ID: <2of2zhxi2c735fgvjxug2bxjfpz2zk25adf3h2ps5byau3rj3k@pgbxmpbskezi>
+References: <20250311094225.35129-1-sgarzare@redhat.com>
+ <20250311094225.35129-2-sgarzare@redhat.com>
+ <Z9AIx9kFKWcHB_WK@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	h/XQ6NjVhwi6MCd9TRUJ8AR79/t8T5lWuFlE4ZqqJobcUNPRWW/8vPjrTg3wvV94nxtvoDnpJgsUeL6enu8sJ02Eb9WL2x/T/TLDxP46oqOVkuRaq1mSP+o62KEvkfM2A3N2ZMyXUsAzo/PhwFpLRXZSka0cRs5ivr2lTCK6rEykslWKd2h+xKt+eChkVuX0HpD1eugeWN43NH/ME3LpmokWgn55aQLJrpp0Qfzc/2bLk7G9Lv87Ivv2CoYdsnPWkMKRQ9q79+QaiIf0OxLAJ1opPS6jK61ND8HpGA0p4QUFLzM5yufTXEy+QzUANNUKWDDYBkk6s1+iaC5MLqiRNlAzSfx99jOGbOlGMrTIwwvCoWZ9meK12uGnfke64jjalWpEJYFVUiwZGB7nOsSimLuth5SlCd+iPQIia/XO8LxW0a+4dJ4iuNI7H+Z1Q5RVYdPdlRGQvh9wBbC3XuTwGhY3B8MC/sWEvCEQ0nTPvmjeo0c1PjgdO5ITu5hyL0iFA/KM2dqA0MOUK+HMUSGxfmvmHfiT6cezXCV475ERga9QK4l67+5vCLY3jYNcmd+SOM7x25FgYmmpv716ih2JJzUT7MJQmn66NIzJV8BhjDbacoK8Qy3rX+xoa01kR4HR
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB8804.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fbabb018-0817-45a7-6434-08dd615460ae
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2025 10:55:18.3215
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sifOMlaxOzOZnMht7crnRnQTr43fWUgngdwS1HaZWsEV/KcrQ15UtVhl9zlBac+gbFD554I3w+JVR5wyCW3bzKFlQUWsFGY+XGiLPSSw1sA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10335
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <Z9AIx9kFKWcHB_WK@kernel.org>
 
-Hello
+On Tue, Mar 11, 2025 at 11:56:23AM +0200, Jarkko Sakkinen wrote:
+>On Tue, Mar 11, 2025 at 10:42:22AM +0100, Stefano Garzarella wrote:
+>> Add two new functions to probe and send commands to the SVSM vTPM.
+>> They leverage the two calls defined by the AMD SVSM specification [1]
+>> for the vTPM protocol: SVSM_VTPM_QUERY and SVSM_VTPM_CMD.
+>>
+>> Expose these functions to be used by other modules such as a tpm
+>> driver.
+>>
+>> [1] "Secure VM Service Module for SEV-SNP Guests"
+>>     Publication # 58019 Revision: 1.00
+>>
+>> Co-developed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+>> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+>> Co-developed-by: Claudio Carvalho <cclaudio@linux.ibm.com>
+>> Signed-off-by: Claudio Carvalho <cclaudio@linux.ibm.com>
+>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+>> ---
+>> v3:
+>> - removed link to the spec because those URLs are unstable [Borislav]
+>> - squashed "x86/sev: add SVSM call macros for the vTPM protocol" patch
+>>   in this one [Borislav]
+>> - slimmed down snp_svsm_vtpm_probe() [Borislav]
+>> - removed features check and any print related [Tom]
+>> ---
+>>  arch/x86/include/asm/sev.h |  7 +++++++
+>>  arch/x86/coco/sev/core.c   | 31 +++++++++++++++++++++++++++++++
+>>  2 files changed, 38 insertions(+)
+>>
+>> diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+>> index ba7999f66abe..09471d058ce5 100644
+>> --- a/arch/x86/include/asm/sev.h
+>> +++ b/arch/x86/include/asm/sev.h
+>> @@ -384,6 +384,10 @@ struct svsm_call {
+>>  #define SVSM_ATTEST_SERVICES		0
+>>  #define SVSM_ATTEST_SINGLE_SERVICE	1
+>>
+>> +#define SVSM_VTPM_CALL(x)		((2ULL << 32) | (x))
+>> +#define SVSM_VTPM_QUERY			0
+>> +#define SVSM_VTPM_CMD			1
+>> +
+>>  #ifdef CONFIG_AMD_MEM_ENCRYPT
+>>
+>>  extern u8 snp_vmpl;
+>> @@ -481,6 +485,9 @@ void snp_msg_free(struct snp_msg_desc *mdesc);
+>>  int snp_send_guest_request(struct snp_msg_desc *mdesc, struct snp_guest_req *req,
+>>  			   struct snp_guest_request_ioctl *rio);
+>>
+>> +bool snp_svsm_vtpm_probe(void);
+>> +int snp_svsm_vtpm_send_command(u8 *buffer);
+>> +
+>>  void __init snp_secure_tsc_prepare(void);
+>>  void __init snp_secure_tsc_init(void);
+>>
+>> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+>> index 96c7bc698e6b..2166bdff88b7 100644
+>> --- a/arch/x86/coco/sev/core.c
+>> +++ b/arch/x86/coco/sev/core.c
+>> @@ -2628,6 +2628,37 @@ static int snp_issue_guest_request(struct snp_guest_req *req, struct snp_req_dat
+>>  	return ret;
+>>  }
+>>
+>
+>Since this is an exported symbol, it'd be a good practice document
+>snp_svsm_vtpm_probe().
 
-I ran tools/tests/selftests/resctrl on Intel(R) Xeon(R) Gold 6338T CPU @ 2.=
-10GHz,
-and reviewed all the patches.
+Yes, you are right, since the others were not documented, I had not 
+added it, but I agree with you, I'll do in v4.
 
-Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+>
+>> +bool snp_svsm_vtpm_probe(void)
+>> +{
+>> +	struct svsm_call call = {};
+>> +
+>> +	/* The vTPM device is available only if a SVSM is present */
+>> +	if (!snp_vmpl)
+>> +		return false;
+>> +
+>> +	call.caa = svsm_get_caa();
+>> +	call.rax = SVSM_VTPM_CALL(SVSM_VTPM_QUERY);
+>
+>I supposed CAA is some kind of shared memory area for host and VM?
 
-Best regards,
-Shaopeng TAN
+Not with the host, but with SVSM, which is the firmware running in the 
+guest, but at a higher privilege level (VMPL) than the kernel, where, 
+for example, the vTPM is emulated.
 
-> -----Original Message-----
-> From: James Morse <james.morse@arm.com>
-> Sent: Wednesday, March 12, 2025 3:37 AM
-> To: x86@kernel.org; linux-kernel@vger.kernel.org
-> Cc: Reinette Chatre <reinette.chatre@intel.com>; Thomas Gleixner
-> <tglx@linutronix.de>; Ingo Molnar <mingo@redhat.com>; Borislav Petkov
-> <bp@alien8.de>; H Peter Anvin <hpa@zytor.com>; Babu Moger
-> <Babu.Moger@amd.com>; James Morse <james.morse@arm.com>;
-> shameerali.kolothum.thodi@huawei.com; D Scott Phillips OS
-> <scott@os.amperecomputing.com>; carl@os.amperecomputing.com;
-> lcherian@marvell.com; bobo.shaobowang@huawei.com; Tan, Shaopeng/=1B$Bk}=
-=1B(B =1B$B>R=1B(B
-> =1B$BK2=1B(B <tan.shaopeng@fujitsu.com>; baolin.wang@linux.alibaba.com; J=
-amie Iles
-> <quic_jiles@quicinc.com>; Xin Hao <xhao@linux.alibaba.com>;
-> peternewman@google.com; dfustini@baylibre.com; amitsinght@marvell.com;
-> David Hildenbrand <david@redhat.com>; Rex Nie
-> <rex.nie@jaguarmicro.com>; Dave Martin <dave.martin@arm.com>; Koba Ko
-> <kobak@nvidia.com>; Shanker Donthineni <sdonthineni@nvidia.com>;
-> fenghuay@nvidia.com
-> Subject: [PATCH v8:for-boris 00/30] x86/resctrl: Move the resctrl filesys=
-tem
-> code to /fs/resctrl
->=20
-> Changes since v7?:
->  * Series split to the first 30 patches, requested by Boris.
->  * Fixed stale function names, definitions/declartions and typos.
->  * Dropped the use of the default ctrlval helper in cache_alloc_hsw_probe=
-()
->=20
-> As ever, changes are noted on each patch.
-> ---
-> This series renames functions and moves code around. With the exception o=
-f
-> invalid configurations for the configurable-events, there should be no ch=
-anges
-> in behaviour caused by this series. It is now possible for throttle_mode =
-to report
-> 'undefined', but no known platform will do this.
->=20
-> The driving pattern is to make things like struct rdtgroup private to res=
-ctrl.
-> Features like pseudo-lock aren't going to work on arm64, the ability to d=
-isable it
-> at compile time is added.
->=20
-> All this is to allow the filesystem portions of resctrl to be moved to li=
-ve in /fs/,
-> which allows resctrl to be supported by other architecture, such as arm64=
-'s
-> MPAM.
-> (What's MPAM? See the cover letter of the first series. [1])
->=20
-> This series is based on v6.14-rc3 and can be retrieved from:
-> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git
-> mpam/move_to_fs/v8_for_boris
->=20
-> As ever - bugs welcome,
-> Thanks,
->=20
-> James
->=20
-> [v7]
-> https://lore.kernel.org/lkml/20250228195913.24895-1-james.morse@arm.com
-> [v6]
-> https://lore.kernel.org/lkml/20250207181823.6378-1-james.morse@arm.com/
-> [v5]
-> https://lore.kernel.org/r/20241004180347.19985-1-james.morse@arm.com
-> [v4]
-> https://lore.kernel.org/all/20240802172853.22529-1-james.morse@arm.com/
-> [v3]
-> https://lore.kernel.org/r/20240614150033.10454-1-james.morse@arm.com
-> [v2] https://lore.kernel.org/r/20240426150537.8094-1-Dave.Martin@arm.com
-> [v1]
-> https://lore.kernel.org/r/20240321165106.31602-1-james.morse@arm.com
-> [1]
-> https://lore.kernel.org/lkml/20201030161120.227225-1-james.morse@arm.co
-> m/
->=20
-> James Morse (30):
->   x86/resctrl: Fix allocation of cleanest CLOSID on platforms with no
->     monitors
->   x86/resctrl: Add a helper to avoid reaching into the arch code
->     resource list
->   x86/resctrl: Remove fflags from struct rdt_resource
->   x86/resctrl: Use schema type to determine how to parse schema values
->   x86/resctrl: Use schema type to determine the schema format string
->   x86/resctrl: Remove data_width and the tabular format
->   x86/resctrl: Add max_bw to struct resctrl_membw
->   x86/resctrl: Generate default_ctrl instead of sharing it
->   x86/resctrl: Add helper for setting CPU default properties
->   x86/resctrl: Remove rdtgroup from update_cpu_closid_rmid()
->   x86/resctrl: Expose resctrl fs's init function to the rest of the
->     kernel
->   x86/resctrl: Move rdt_find_domain() to be visible to arch and fs code
->   x86/resctrl: Move resctrl types to a separate header
->   x86/resctrl: Add an arch helper to reset one resource
->   x86/resctrl: Move monitor exit work to a resctrl exit call
->   x86/resctrl: Move monitor init work to a resctrl init call
->   x86/resctrl: Rewrite and move the for_each_*_rdt_resource() walkers
->   x86/resctrl: Move the is_mbm_*_enabled() helpers to asm/resctrl.h
->   x86/resctrl: Add resctrl_arch_is_evt_configurable() to abstract BMEC
->   x86/resctrl: Change mon_event_config_{read,write}() to be arch helpers
->   x86/resctrl: Move mba_mbps_default_event init to filesystem code
->   x86/resctrl: Move mbm_cfg_mask to struct rdt_resource
->   x86/resctrl: Add resctrl_arch_ prefix to pseudo lock functions
->   x86/resctrl: Allow an architecture to disable pseudo lock
->   x86/resctrl: Make prefetch_disable_bits belong to the arch code
->   x86/resctrl: Make resctrl_arch_pseudo_lock_fn() take a plr
->   x86/resctrl: Move RFTYPE flags to be managed by resctrl
->   x86/resctrl: Handle throttle_mode for SMBA resources
->   x86/resctrl: Move get_config_index() to a header
->   x86/resctrl: Move get_{mon,ctrl}_domain_from_cpu() to live with their
->     callers
->=20
->  MAINTAINERS                               |   1 +
->  arch/x86/Kconfig                          |   7 +
->  arch/x86/include/asm/resctrl.h            |  36 ++-
->  arch/x86/kernel/cpu/resctrl/Makefile      |   5 +-
->  arch/x86/kernel/cpu/resctrl/core.c        | 181 ++++----------
->  arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  93 ++++---
->  arch/x86/kernel/cpu/resctrl/internal.h    | 201 ++++-----------
->  arch/x86/kernel/cpu/resctrl/monitor.c     | 119 ++++++---
->  arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  55 +++--
->  arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 284
-> ++++++++++++++++------
->  include/linux/resctrl.h                   | 212 ++++++++++++++--
->  include/linux/resctrl_types.h             |  54 ++++
->  12 files changed, 769 insertions(+), 479 deletions(-)  create mode 10064=
-4
-> include/linux/resctrl_types.h
->=20
-> --
-> 2.39.5
+BTW, yep it is a shared memory defined by the SVSM calling convention.
+ From AMD SVSM specification:
+
+   5 Calling Convention
+
+     Each call to the SVSM conveys data through a combination of the
+     SVSM Calling Area (whose address was first configured through the
+     SVSM_CAA field of the secrets page) and registers. Use of the
+     Calling Area is necessary for the SVSM to detect the difference
+     between a call that was issued by the guest and a spurious
+     invocation by a poorly behaved host. Registers are used for all
+     other parameters.
+     The initially configured SVSM Calling Area is a page of memory that
+     lies outside the initial SVSM memory range and has not had its VMPL
+     permissions restricted in any way. The address is guaranteed to be
+     aligned to a 4 KB boundary, so the remainder of the page may be used
+     by the guest for memory-based parameter passing if desired.
+     The contents of the Calling Area are described in the following
+     table:
+
+     Table 2: Calling Area
+     Byte      Size     Name                Description
+     Offset
+
+     0x000     1 byte   SVSM_CALL_PENDING   Indicates whether a call has
+                                            been requested by the guest
+                                            (0=no call requested, 1=call
+                                            requested).
+     0x001     1 byte   SVSM_MEM_AVAILABLE  Free memory is available to
+                                            be withdrawn.
+     0x002     6 byte                       Reserved. The SVSM is not
+                                            required to verify that
+                                            these bytes are 0.
+
+>
+>> +
+>> +	if (svsm_perform_call_protocol(&call))
+>> +		return false;
+>> +
+>> +	/* Check platform commands contains TPM_SEND_COMMAND - platform command 8 */
+>> +	return (call.rcx_out & BIT_ULL(8)) == BIT_ULL(8);
+>> +}
+>> +EXPORT_SYMBOL_GPL(snp_svsm_vtpm_probe);
+>> +
+>
+>Ditto.
+
+Ack.
+
+>
+>> +int snp_svsm_vtpm_send_command(u8 *buffer)
+>> +{
+>> +	struct svsm_call call = {};
+>> +
+>> +	call.caa = svsm_get_caa();
+>> +	call.rax = SVSM_VTPM_CALL(SVSM_VTPM_CMD);
+>> +	call.rcx = __pa(buffer);
+>> +
+>> +	return svsm_perform_call_protocol(&call);
+>> +}
+>> +EXPORT_SYMBOL_GPL(snp_svsm_vtpm_send_command);
+>> +
+>>  static struct platform_device sev_guest_device = {
+>>  	.name		= "sev-guest",
+>>  	.id		= -1,
+>> --
+>> 2.48.1
+>>
+>
+>That said, these are rather self-documenting (i.e, nice and clean).
+
+Thanks for the review!
+Stefano
 
 
