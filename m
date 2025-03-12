@@ -1,87 +1,353 @@
-Return-Path: <linux-kernel+bounces-557564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6240DA5DAD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:48:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC5CA5DAE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 11:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD1811899B6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 672273A34DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B5223E34B;
-	Wed, 12 Mar 2025 10:47:32 +0000 (UTC)
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A3623E340;
+	Wed, 12 Mar 2025 10:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cYaA7A91";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jLaF5k/8";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cYaA7A91";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jLaF5k/8"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A302C23AE9A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6E823E32D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 10:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741776451; cv=none; b=B2rms+BNyrUVTw158w95vMU7JEcCQSovnVg88Lt+uqMnSsn5z+eiQJRFNzJSxRnhrdKanG08ZRLhvvPiULSytvWyjaa3e44no/JUUCoxnZpLmM9pIlJ3MJHoIX2mGiDBgkqNa9gZn2XYSi15Z+2g+3R7crV19il/v2kmYwCXXCc=
+	t=1741776671; cv=none; b=EH9fK65DvD7HRDp0BBh5GSb589XbGLKLZmlDRee9PQvfsaePJ/+fHTKci6ebUkWG2X6t8i0EkEOfgBuv1NBWMont0DkeGOpab8YNWa4MR6d0QcG5mrbiYLyHbk0tEyMZ7KNHsj/ANlP2HD5XWY4dh+v6GHVjitIpN/F1YJlPNQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741776451; c=relaxed/simple;
-	bh=3xsN0kx24BXP3yguHMFGTD7H6CnWMEE7M3OPME5SAFk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DyAR7I6RzsVOq053rVM3vSF+zGRXVoSmPq4bzvYzqSU2iAP4PbtHAQN2WcKAmOLZU3RxUfcySH9FfGrnFdjEzLMMrPOF9EK+5g5B+NKc1a1/5kvNsl0QQ/Iu2+TTV55pKotZTCuHTXAVDzzEdIsfDNSpt0bIX2KOTP8E3Fbw/8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:bb30:6286:99f4:5b9d])
-	by albert.telenet-ops.be with cmsmtp
-	id PmnN2E0014xs17S06mnNQp; Wed, 12 Mar 2025 11:47:22 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tsJc2-0000000Dg35-1VaC;
-	Wed, 12 Mar 2025 11:47:22 +0100
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tsJcQ-00000000Rr8-08zI;
-	Wed, 12 Mar 2025 11:47:22 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <len.brown@intel.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] PM: core: Fix indentation in dpm_wait_for_children()
-Date: Wed, 12 Mar 2025 11:47:19 +0100
-Message-ID: <9c8ff2b103c3ba7b0d27bdc8248b05e3b1dc9551.1741776430.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741776671; c=relaxed/simple;
+	bh=E5bg+GLYVKpHYRKr5lfXct1sUfJCZ9dFFUkXW6fB0jc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpLbGyMEYQ/RmaNBZW3MR6Zd6Iv8vfSjI+g8cYfzY6Az3oxxVmJl6479OEZyBVrD034KUDzecHsnMYDFm+jJK7pMh7sG6Syc5HToolW8TPnoP+FgpkzWEj7Zjlcljru0M9K4lFFH0PRRoSo1XhKGHOSCuZTg+cGATkdGZvf8r1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cYaA7A91; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jLaF5k/8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cYaA7A91; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jLaF5k/8; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B296421134;
+	Wed, 12 Mar 2025 10:51:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741776667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ZmcVXPZ7+TXW24PsEAaSx1n69dwWK+qUZeeM3lHsqU=;
+	b=cYaA7A91xWHXxdl9U7K633S4EYQnKQmiCdOKZluqgk//Bc/WePa7cKqBLwFmgPqlBVsqFP
+	D8ODmChTV343NLqBj5jYpzWcpoUhWt0mNuTlia9aXgjk22Ga5BBOr/MHRJorpef7u/+aBn
+	PBS/J+8g4azRjbr5JAI3pLMN3aRDl6c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741776667;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ZmcVXPZ7+TXW24PsEAaSx1n69dwWK+qUZeeM3lHsqU=;
+	b=jLaF5k/8VgjHU2tWUTL7ITjp9U8k1pbPZNZp82brEyj8XoelbF/qfnnKJAY3Xo/P9xCYIq
+	C9u2ORj77/49XFCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cYaA7A91;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="jLaF5k/8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741776667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ZmcVXPZ7+TXW24PsEAaSx1n69dwWK+qUZeeM3lHsqU=;
+	b=cYaA7A91xWHXxdl9U7K633S4EYQnKQmiCdOKZluqgk//Bc/WePa7cKqBLwFmgPqlBVsqFP
+	D8ODmChTV343NLqBj5jYpzWcpoUhWt0mNuTlia9aXgjk22Ga5BBOr/MHRJorpef7u/+aBn
+	PBS/J+8g4azRjbr5JAI3pLMN3aRDl6c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741776667;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ZmcVXPZ7+TXW24PsEAaSx1n69dwWK+qUZeeM3lHsqU=;
+	b=jLaF5k/8VgjHU2tWUTL7ITjp9U8k1pbPZNZp82brEyj8XoelbF/qfnnKJAY3Xo/P9xCYIq
+	C9u2ORj77/49XFCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A3901132CB;
+	Wed, 12 Mar 2025 10:51:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3vbrJxtn0Wf/LgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 12 Mar 2025 10:51:07 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5F86DA08CF; Wed, 12 Mar 2025 11:51:03 +0100 (CET)
+Date: Wed, 12 Mar 2025 11:51:03 +0100
+From: Jan Kara <jack@suse.cz>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org, 
+	Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>, 
+	linux-kernel@vger.kernel.org, Mahesh Kumar <maheshkumar657g@gmail.com>
+Subject: Re: [PATCH v2 2/3] ext4: avoid journaling sb update on error if
+ journal is destroying
+Message-ID: <bct36ajzi6sardnmc6yz4ot4fbpr654b4k2xz54mrtyje7wofq@qpwzbtctwqnf>
+References: <cover.1741270780.git.ojaswin@linux.ibm.com>
+ <1bf59095d87e5dfae8f019385ba3ce58973baaff.1741270780.git.ojaswin@linux.ibm.com>
+ <87ldtfhmo7.fsf@gmail.com>
+ <Z8xAmyICsNlln4Y3@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <87ecz7hcw0.fsf@gmail.com>
+ <Z8xbLrdN3L1E50-G@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <87cyergyb1.fsf@gmail.com>
+ <Z82EjcExRMc8nz2v@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <871pv5cx6v.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871pv5cx6v.fsf@gmail.com>
+X-Rspamd-Queue-Id: B296421134
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[linux.ibm.com,vger.kernel.org,mit.edu,suse.cz,huawei.com,gmail.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
-The body of dpm_wait_for_children() is indented by 7 spaces instead of a
-single TAB.
+On Mon 10-03-25 10:13:36, Ritesh Harjani wrote:
+> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+> > On Sun, Mar 09, 2025 at 12:11:22AM +0530, Ritesh Harjani wrote:
+> >> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+> >> > On Sat, Mar 08, 2025 at 06:56:23PM +0530, Ritesh Harjani wrote:
+> >> >> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+> >> >> > On Sat, Mar 08, 2025 at 03:25:04PM +0530, Ritesh Harjani (IBM) wrote:
+> >> >> >> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+> >> >> >> > Presently we always BUG_ON if trying to start a transaction on a journal marked
+> >> >> >> > with JBD2_UNMOUNT, since this should never happen. However, while ltp running
+> >> >> >> > stress tests, it was observed that in case of some error handling paths, it is
+> >> >> >> > possible for update_super_work to start a transaction after the journal is
+> >> >> >> > destroyed eg:
+> >> >> >> >
+> >> >> >> > (umount)
+> >> >> >> > ext4_kill_sb
+> >> >> >> >   kill_block_super
+> >> >> >> >     generic_shutdown_super
+> >> >> >> >       sync_filesystem /* commits all txns */
+> >> >> >> >       evict_inodes
+> >> >> >> >         /* might start a new txn */
+> >> >> >> >       ext4_put_super
+> >> >> >> > 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
+> >> >> >> >         jbd2_journal_destroy
+> >> >> >> >           journal_kill_thread
+> >> >> >> >             journal->j_flags |= JBD2_UNMOUNT;
+> >> >> >> >           jbd2_journal_commit_transaction
+> >> >> >> >             jbd2_journal_get_descriptor_buffer
+> >> >> >> >               jbd2_journal_bmap
+> >> >> >> >                 ext4_journal_bmap
+> >> >> >> >                   ext4_map_blocks
+> >> >> >> >                     ...
+> >> >> >> >                     ext4_inode_error
+> >> >> >> >                       ext4_handle_error
+> >> >> >> >                         schedule_work(&sbi->s_sb_upd_work)
+> >> >> >> >
+> >> >> >> >                                                /* work queue kicks in */
+> >> >> >> >                                                update_super_work
+> >> >> >> >                                                  jbd2_journal_start
+> >> >> >> >                                                    start_this_handle
+> >> >> >> >                                                      BUG_ON(journal->j_flags &
+> >> >> >> >                                                             JBD2_UNMOUNT)
+> >> >> >> >
+> >> >> >> > Hence, introduce a new sbi flag s_journal_destroying to indicate journal is
+> >> >> >> > destroying only do a journaled (and deferred) update of sb if this flag is not
+> >> >> >> > set. Otherwise, just fallback to an un-journaled commit.
+> >> >> >> >
+> >> >> >> > We set sbi->s_journal_destroying = true only after all the FS updates are done
+> >> >> >> > during ext4_put_super() (except a running transaction that will get commited
+> >> >> >> > during jbd2_journal_destroy()). After this point, it is safe to commit the sb
+> >> >> >> > outside the journal as it won't race with a journaled update (refer
+> >> >> >> > 2d01ddc86606).
+> >> >> >> >
+> >> >> >> > Also, we don't need a similar check in ext4_grp_locked_error since it is only
+> >> >> >> > called from mballoc and AFAICT it would be always valid to schedule work here.
+> >> >> >> >
+> >> >> >> > Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
+> >> >> >> > Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
+> >> >> >> > Suggested-by: Jan Kara <jack@suse.cz>
+> >> >> >> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> >> >> >> > ---
+> >> >> >> >  fs/ext4/ext4.h      | 2 ++
+> >> >> >> >  fs/ext4/ext4_jbd2.h | 8 ++++++++
+> >> >> >> >  fs/ext4/super.c     | 4 +++-
+> >> >> >> >  3 files changed, 13 insertions(+), 1 deletion(-)
+> >> >> >> >
+> >> >> >> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> >> >> >> > index 2b7d781bfcad..d48e93bd5690 100644
+> >> >> >> > --- a/fs/ext4/ext4.h
+> >> >> >> > +++ b/fs/ext4/ext4.h
+> >> >> >> > @@ -1728,6 +1728,8 @@ struct ext4_sb_info {
+> >> >> >> >  	 */
+> >> >> >> >  	struct work_struct s_sb_upd_work;
+> >> >> >> >  
+> >> >> >> > +	bool s_journal_destorying;
+> >> >> >> > +
+> >> >> >> >  	/* Atomic write unit values in bytes */
+> >> >> >> >  	unsigned int s_awu_min;
+> >> >> >> >  	unsigned int s_awu_max;
+> >> >> >> > diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
+> >> >> >> > index 9b3c9df02a39..6bd3ca84410d 100644
+> >> >> >> > --- a/fs/ext4/ext4_jbd2.h
+> >> >> >> > +++ b/fs/ext4/ext4_jbd2.h
+> >> >> >> > @@ -437,6 +437,14 @@ static inline int ext4_journal_destroy(struct ext4_sb_info *sbi, journal_t *jour
+> >> >> >> >  {
+> >> >> >> >  	int err = 0;
+> >> >> >> >  
+> >> >> >> > +	/*
+> >> >> >> > +	 * At this point all pending FS updates should be done except a possible
+> >> >> >> > +	 * running transaction (which will commit in jbd2_journal_destroy). It
+> >> >> >> > +	 * is now safe for any new errors to directly commit superblock rather
+> >> >> >> > +	 * than going via journal.
+> >> >> >> > +	 */
+> >> >> >> > +	sbi->s_journal_destorying = true;
+> >> >> >> 
+> >> >> >> This is not correct right. I think what we decided to set this flag
+> >> >> >> before we flush the workqueue. So that we don't schedule any new
+> >> >> >> work after this flag has been set. At least that is what I understood.
+> >> >> >> 
+> >> >> >> [1]: https://lore.kernel.org/all/87eczc6rlt.fsf@gmail.com/
+> >> >> >> 
+> >> >> >> -ritesh
+> >> >> >
+> >> >> > Hey Ritesh,
+> >> >> >
+> >> >> > Yes that is not correct, I missed that in my patch however we realised
+> >> >> > that adding it before flush_work() also has issues [1]. More
+> >> >> > specifically:
+> >> >> 
+> >> >> Ohk. right. 
+> >> >> 
+> >> >> >
+> >> >> >                      **kjournald2**
+> >> >> >                      jbd2_journal_commit_transaction()
+> >> >> >                      ...
+> >> >> >                      ext4_handle_error()
+> >> >> >                         /* s_journal_destorying is not set */
+> >> >> >                         if (journal && !s_journal_destorying)
+> >> >> 
+> >> >> Then maybe we should not schedule another work to update the superblock
+> >> >> via journalling, it the error itself occurred while were trying to
+> >> >> commit the journal txn? 
+> >> >> 
+> >> >> 
+> >> >> -ritesh
+> >> >
+> >> > Hmm, ideally yes that should not happen, but how can we achieve that?
+> >> > For example with the trace we saw:
+> >> >
+> >> >    **kjournald2**
+> >> >    jbd2_journal_commit_transaction()
+> >> >      jbd2_journal_get_descriptor_buffer
+> >> >        jbd2_journal_bmap
+> >> >          ext4_journal_bmap
+> >> >            ext4_map_blocks
+> >> >              ...
+> >> >              ext4_inode_error
+> >> >                ext4_handle_error
+> >> >                  schedule_work(&sbi->s_sb_upd_work)
+> >> >
+> >> > How do we tell ext4_handle_error that it is in the context of a
+> >> > committing txn.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/base/power/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So I was thinking about this. It is not a problem to determine we are
+running in kjournald context - it is enough to check
 
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index e4103d29a21a6b2f..2fc37658b0b582e2 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -249,7 +249,7 @@ static int dpm_wait_fn(struct device *dev, void *async_ptr)
- 
- static void dpm_wait_for_children(struct device *dev, bool async)
- {
--       device_for_each_child(dev, &async, dpm_wait_fn);
-+	device_for_each_child(dev, &async, dpm_wait_fn);
- }
- 
- static void dpm_wait_for_suppliers(struct device *dev, bool async)
+	current == EXT4_SB(sb)->s_journal->j_task
+
+But I'm not sure checking this in ext4_handle_error() and doing direct sb
+update instead of scheduling a journalled one is always correct. For
+example kjournald does also writeback of ordered data and if that hits an
+error, we do not necessarily abort the journal (well, currently we do as
+far as I'm checking but it seems a bit fragile to rely on this).
+
+So I'd rather keep the solution for these umount issues specific to the
+umount path. What if we did:
+
+static void ext4_journal_destroy(struct super_block *sb)
+{
+	/*
+	 * At this point only two things can be operating on the journal.
+	 * JBD2 thread performing transaction commit and s_sb_upd_work
+	 * issuing sb update through the journal. Once we set
+	 * EXT4_FLAGS_JOURNAL_DESTROY, new ext4_handle_error() calls will not
+	 * queue s_sb_upd_work and ext4_force_commit() makes sure any
+	 * ext4_handle_error() calls from the running transaction commit are
+	 * finished. Hence no new s_sb_upd_work can be queued after we
+	 * flush it here.
+	 */
+	set_bit(EXT4_FLAGS_JOURNAL_DESTROY, &EXT4_SB(sb)->s_ext4_flags);
+	ext4_force_commit(sb);
+	flush_work(&EXT4_SB(sb)->s_sb_upd_work);
+	jbd2_journal_destroy(EXT4_SB(sb)->s_journal);
+}
+
+And then add the check to ext4_handle_error():
+
+                /*
+                 * In case the fs should keep running, we need to writeout
+                 * superblock through the journal. Due to lock ordering
+                 * constraints, it may not be safe to do it right here so we
+-		 * defer superblock flushing to a workqueue.
++		 * defer superblock flushing to a workqueue. We just need
++		 * to be careful when the journal is already shutting down.
++		 * If we get here in that case, just update the sb directly
++		 * as the last transaction won't commit anyway.
+                 */
+-		if (continue_fs && journal)
++		if (continue_fs && journal &&
++		    !test_bit(EXT4_FLAGS_JOURNAL_DESTROY,
++			      &EXT4_SB(sb)->s_ext4_flags))
+			schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
+		else
+			ext4_commit_super(sb);
+
+What do people think about this? Am I missing some possible race?
+
+								Honza
+
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
