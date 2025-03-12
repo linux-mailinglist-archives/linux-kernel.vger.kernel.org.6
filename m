@@ -1,192 +1,142 @@
-Return-Path: <linux-kernel+bounces-557265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91673A5D5F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:22:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 331B6A5D5FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 07:22:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B6443B3F7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:21:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EEC07A5D18
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 06:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2DD1E377F;
-	Wed, 12 Mar 2025 06:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D021E501C;
+	Wed, 12 Mar 2025 06:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bS60GNsj"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hys5tl6T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9651922F6;
-	Wed, 12 Mar 2025 06:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3381DB551;
+	Wed, 12 Mar 2025 06:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741760513; cv=none; b=gnzjsU8cdt7X0CnI5ybvpJ61oN6W4qAugHaJ8zJEhQ3GK80JvFvKz/+O6bFniNjW9Pgg/akA9fFRu/nYGomhoAEe4MzZMiyoFBS5ZpGOf4BXkreoGrQdlt82hlD8sTRD2uNiG7l9r/2MsEsjSUr8XK1AeUoLbYf+X7S0u3hI7eI=
+	t=1741760531; cv=none; b=Wcc9MXQl5gQxBTMH+R6vIowZvZBKs7ZFa1e7rF2K+IaYYcafdZejUtI2QYHtKmsE4S/rjz85fkuQ1p6uZFaq18192QieYLfe9bpbp5ZeXunYLgDtywyjmZ1a1OVXS2u0fl5EG5qdaLNRji2OcDDmHflkvG6nQLmm1VR2+1p5gmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741760513; c=relaxed/simple;
-	bh=FV9MCMpxrhX8pJZGObltZGLJfv74ruTHiIvW6OILA6c=;
+	s=arc-20240116; t=1741760531; c=relaxed/simple;
+	bh=FqdJefIg8ikvVSCYyqCjDW5HTyvdKG0E9EFlXvUwRD8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=orsQ+1dMF7UfhLKaw3yCS82bYBDZ/Ght5lezi9x+TLyXR5MoAZUbAccmToHaJeEE7aKOmvItM41+PZZ4m5EBRMf5mN/STLn5sbuG9ps0+Y+XQCrUlQBBAx3QxJlN4/iHXZp86yeqYdKXp6yLgOddISTpJg29FoeTo4qyf6uDS0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bS60GNsj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 956D5C4CEE3;
-	Wed, 12 Mar 2025 06:21:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741760513;
-	bh=FV9MCMpxrhX8pJZGObltZGLJfv74ruTHiIvW6OILA6c=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=kcEpkcGbVX+o+kKX4kuhTnIuWaMUpMBNHyASL7fHEFqfOzpVy3XTAqiJqftycptPMp4kd68+5D0f3uESoGxpTpRT/XDl01AKN3bvU5d3ZqPCumj3+WIhJixyEyZnZmlpZnVNwlCGndgyNOc/lmC2yS8080yBKMSNCaTFIrz0Eck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hys5tl6T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C62C4CEE3;
+	Wed, 12 Mar 2025 06:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741760530;
+	bh=FqdJefIg8ikvVSCYyqCjDW5HTyvdKG0E9EFlXvUwRD8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bS60GNsjv5nCxsqhRhvg9qDMkiimQH4tqQFWodYqo63Xj/AEa/6oQGsu1ea2vCv0I
-	 /FuGcTJui8mWXTJMWAesT83wAtfcvesfHBS+VKB6aZNK6Eh+BkEAglAPYjePXED/Eh
-	 a63USW4JE2rx6toGhJc4Pczqw/BXxhG16vX3FZTpPASxbByR3d68UtmqklkKb0D+7U
-	 RzIsKB3TGqm42LTE8MsEqT6jg3xHkq4MSP3czGk5CSGT/KJWs/lHwNuAIsetoQpadj
-	 yfOqMjomj5Z/sOZtHlHj6z8BvjPTwWE4rAYdSoS3/gM54UMflSTs7eb90Kr8OdYad9
-	 oEvpn9p0odqZg==
-Date: Wed, 12 Mar 2025 08:21:49 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, ardb@kernel.org, gourry@gourry.net,
-	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-	zhanjun@uniontech.com, niecheng1@uniontech.com,
-	guanwentao@uniontech.com, Chen Linxuan <chenlinxuan@uniontech.com>
-Subject: Re: [PATCH] tpm: eventlog: Declare mapping_size __maybe_unused
-Message-ID: <Z9En_ZP4jZE0bkAF@kernel.org>
-References: <10590A3A04DA011F+20250311120115.1451048-1-wangyuli@uniontech.com>
+	b=hys5tl6TcN3NXFZTd/T2qyA4+szlFs4nh+KWQwtI02j65jMQplmzT9Ej3ybQVZxjT
+	 Txv1gVDjBFi0Yw9OKhW/Lv4xOR2YYKlr02X0Yjdo4isAUy5yRfI3j3ncDYdKB3fClr
+	 ZWGbCKGO8cUHA4THmAWk1BCaBx65TMjHBiDDQSUI=
+Date: Wed, 12 Mar 2025 07:22:07 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+Cc: Jonathan.Cameron@huawei.com, airlied@gmail.com,
+	aleksander.lobakin@intel.com, andriy.shevchenko@linux.intel.com,
+	bhelgaas@google.com, broonie@kernel.org, dakr@kernel.org,
+	dri-devel@lists.freedesktop.org, hamohammed.sa@gmail.com,
+	lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, louis.chauvet@bootlin.com,
+	lukas@wunner.de, lyude@redhat.com,
+	maarten.lankhorst@linux.intel.com, mairacanal@riseup.net,
+	melissa.srw@gmail.com, mripard@kernel.org, quic_zijuhu@quicinc.com,
+	rafael@kernel.org, robin.murphy@arm.com,
+	rust-for-linux@vger.kernel.org, simona.vetter@ffwll.ch,
+	simona@ffwll.ch, tzimmermann@suse.de
+Subject: Re: [PATCH v4 9/9] drm/vkms: convert to use faux_device
+Message-ID: <2025031218-oxidize-backing-e278@gregkh>
+References: <2025022643-scouting-petticoat-492b@gregkh>
+ <20250311172054.2903-1-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <10590A3A04DA011F+20250311120115.1451048-1-wangyuli@uniontech.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250311172054.2903-1-jose.exposito89@gmail.com>
 
-On Tue, Mar 11, 2025 at 08:01:15PM +0800, WangYuli wrote:
-> Given that when CONFIG_EFI is not enabled, do_mapping is inherently
-> false. Thus, the mapping_size variable is set but remains unused,
-> resulting in a compilation warning.
+On Tue, Mar 11, 2025 at 06:20:53PM +0100, José Expósito wrote:
+> Hi everyone,
 > 
-> Simply annotating it with __maybe_unused will resolve this compilation
-> warning.
+> > On Tue, Feb 25, 2025 at 02:51:40PM +0100, Louis Chauvet wrote:
+> > > 
+> > > 
+> > > Le 25/02/2025 à 12:41, Thomas Zimmermann a écrit :
+> > > > Hi
+> > > > 
+> > > > Am 10.02.25 um 15:37 schrieb Louis Chauvet:
+> > > > > On 10/02/25 - 13:30, Greg Kroah-Hartman wrote:
+> > > > > > The vkms driver does not need to create a platform device, as there is
+> > > > > > no real platform resources associated it,  it only did so because it was
+> > > > > > simple to do that in order to get a device to use for resource
+> > > > > > management of drm resources.  Change the driver to use the faux device
+> > > > > > instead as this is NOT a real platform device.
+> > > > > > 
+> > > > > > Cc: Louis Chauvet <louis.chauvet@bootlin.com>
+> > > > > > Cc: Haneen Mohammed <hamohammed.sa@gmail.com>
+> > > > > > Cc: Simona Vetter <simona@ffwll.ch>
+> > > > > > Cc: Melissa Wen <melissa.srw@gmail.com>
+> > > > > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> > > > > > Cc: Maxime Ripard <mripard@kernel.org>
+> > > > > > Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> > > > > > Cc: David Airlie <airlied@gmail.com>
+> > > > > > Cc: dri-devel@lists.freedesktop.org
+> > > > > > Reviewed-by: Lyude Paul <lyude@redhat.com>
+> > > > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > 
+> > > > Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+> > > > 
+> > > > > Tested-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > > > > Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > > > > 
+> > > > > Thanks for the modification, it seems to work.
+> > > > 
+> > > > Should this patch be merged through DRM trees? drm-misc-next is at
+> > > > v6.14-rc4 and has struct faux_device.
+> > > 
+> > > Hi,
+> > > 
+> > > I was not aware the faux-device was merged, as it is a new feature, I
+> > > expected it to reach drm-misc-next on 6.15-rc1.
+> > 
+> > I added it to Linus's tree just so that DRM could get these changes into
+> > their tree now :)
+> > 
+> > > I plan to merge [1] today/tomorrow (well tested with platform_device), and
+> > > then I will submit an updated version of this patch (only trivial conflicts,
+> > > but never tested with multiple VKMS devices).
+> > > 
+> > > [1]:https://lore.kernel.org/all/20250218101214.5790-1-jose.exposito89@gmail.com/
+> > 
+> > Great, thanks!
+> > 
+> > greg k-h
 > 
-> [ Fix follow errors with clang-19 when W=1e: ]
->   In file included from drivers/char/tpm/tpm1-cmd.c:21:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm1-cmd.o] Error 1
->   make[8]: *** Waiting for unfinished jobs....
->   In file included from drivers/char/tpm/tpm-dev-common.c:19:
->   In file included from drivers/char/tpm/tpm.h:28:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm-dev-common.o] Error 1
->   In file included from drivers/char/tpm/tpm2-cmd.c:14:
->   In file included from drivers/char/tpm/tpm.h:28:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   In file included from drivers/char/tpm/tpm-dev.c:16:
->   In file included from drivers/char/tpm/tpm-dev.h:6:
->   In file included from drivers/char/tpm/tpm.h:28:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm-dev.o] Error 1
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm2-cmd.o] Error 1
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpmrm-dev.o] Error 1
->   In file included from drivers/char/tpm/tpm-chip.c:24:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   In file included from drivers/char/tpm/tpm-sysfs.c:16:
->   In file included from drivers/char/tpm/tpm.h:28:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm-chip.o] Error 1
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm-sysfs.o] Error 1
->   In file included from drivers/char/tpm/tpm2-sessions.c:71:
->   In file included from drivers/char/tpm/tpm.h:28:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm2-sessions.o] Error 1
->   In file included from drivers/char/tpm/tpm-interface.c:28:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm-interface.o] Error 1
->   In file included from drivers/char/tpm/tpm2-space.c:16:
->   In file included from drivers/char/tpm/tpm.h:28:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm2-space.o] Error 1
->   In file included from drivers/char/tpm/eventlog/tpm1.c:24:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/eventlog/tpm1.o] Error 1
->   In file included from drivers/char/tpm/eventlog/common.c:20:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/eventlog/common.o] Error 1
->   In file included from drivers/char/tpm/eventlog/tpm2.c:20:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/eventlog/tpm2.o] Error 1
->   In file included from drivers/char/tpm/tpm_vtpm_proxy.c:24:
->   In file included from drivers/char/tpm/tpm.h:28:
->   ./include/linux/tpm_eventlog.h:167:6: error: variable 'mapping_size' set but not used [-Werror,-Wunused-but-set-variable]
->     167 |         int mapping_size;
->         |             ^
->   1 error generated.
->   make[8]: *** [scripts/Makefile.build:207: drivers/char/tpm/tpm_vtpm_proxy.o] Error 1
->   make[7]: *** [scripts/Makefile.build:465: drivers/char/tpm] Error 2
->   make[6]: *** [scripts/Makefile.build:465: drivers/char] Error 2
->   make[6]: *** Waiting for unfinished jobs....
+> Testing this patch again as part of some IGT tests I'm working on,
+> I noticed that, applying this patch on top of the latest drm-misc-next
+> triggers a warning at drivers/gpu/drm/drm_gem.c:571, in
+> drm_gem_get_pages():
 > 
-> Suggested-by: Chen Linxuan <chenlinxuan@uniontech.com>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
->  include/linux/tpm_eventlog.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
-> index 891368e82558..7ca58b2e96e8 100644
-> --- a/include/linux/tpm_eventlog.h
-> +++ b/include/linux/tpm_eventlog.h
-> @@ -164,7 +164,7 @@ static __always_inline u32 __calc_tpm2_event_size(struct tcg_pcr_event2_head *ev
->  	struct tcg_efi_specid_event_head *efispecid;
->  	struct tcg_event_field *event_field;
->  	void *mapping = NULL;
-> -	int mapping_size;
-> +	__maybe_unused int mapping_size;
+>     if (WARN_ON(!obj->filp))
+>             return ERR_PTR(-EINVAL);
 
-NAK for the code change. Unused is not a problem.
-Uninitialized is.
+I don't see how the faux bus change would have anything to do with a
+filp as that's not related as far as I can tell.  But I don't know the
+drm layer at all, where does that filp come from?
 
->  	void *marker;
->  	void *marker_start;
->  	u32 halg_size;
-> -- 
-> 2.47.2
-> 
->
-BR, Jarkko
+thanks,
+
+greg k-h
 
