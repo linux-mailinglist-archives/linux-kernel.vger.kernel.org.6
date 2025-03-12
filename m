@@ -1,272 +1,130 @@
-Return-Path: <linux-kernel+bounces-558085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318DFA5E16D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:07:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B66C9A5E172
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 17:08:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8486B7A7911
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:06:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AC343BC5E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE701D5CDE;
-	Wed, 12 Mar 2025 16:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EB11BCA07;
+	Wed, 12 Mar 2025 16:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPNZ4Tad"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HZe/Rgjw"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179FD1BCA07;
-	Wed, 12 Mar 2025 16:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6D71C84A0
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741795631; cv=none; b=RyIUCSXVJzax4rPVXXpRfErWKSFLQGl4MzlbMo/IkuQBg27jx807lwte6fLpoQEHYW/SmkmeI2qYdrqBFxw4xohDPvBI5PDjSWiVIDbOkUEO6piy7MAUHLqrYE7c+fkgQMWc/jhUx+UpNk/691TLQ6L24ziJPdxCg0LtnO+HU6Q=
+	t=1741795646; cv=none; b=oJZW0d0/nSLR6/61rgAuwtZo4ttl1PV/LggXk4S8oeGxJgRnAgqzQFtwUEL6H3eQ6u20P8ql2DLEJz9co5aqSm6jYXNwAwoZB53ZhjOXEJ+MklnIcB2QGZqbaQN/JMusq2gcLGebWO3HOG2pHW5N4J77R3B/c//7FoQfaxLXuy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741795631; c=relaxed/simple;
-	bh=46xRCXWbIBHRCLTqqyMeJZ3nLxdD2D7kjeMKxw12v6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l3IfmiIH26Zm4nsFsag8cCwXsmWyXVnSvYIMM7iMPi6jeIVy9cnH66Pmy6yHnMuLeuHFNGFsD6bLASUzL9csXSxYbUrUAJp2oGxFpitSfc/VOQ5PJel5xWCgziNmA3tbGQyc0kxRXYDsI+1u2War46axg4bYXNTBWTUSh9UG8i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPNZ4Tad; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86B74C4CEED;
-	Wed, 12 Mar 2025 16:07:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741795629;
-	bh=46xRCXWbIBHRCLTqqyMeJZ3nLxdD2D7kjeMKxw12v6Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PPNZ4TadNVfsXB82RIm1gm4dpfBefTbk/K0O1O2NumEKg0XOFF0CWJydijQpz+nHU
-	 X/R15ghDpWmXmlozmfZs4HfmB1iSFN3tRTTK2LbGn1dR42tKeyVYpL9b5ec8+7raK7
-	 r9eLvD4YALZ6fOOjkx7f5W+7ruJc1GksI/aqqgPl1w8k36J3jxhTQtFQPPp1Q7SiD1
-	 7kO8eQEG9MYmfIU6y4JLuN4NwA0lIdfJWypc0W414v4Ku7VGUlSJo92YzHqpBtmIgE
-	 mjgGmR7Hs63A3VZCTMQRQwzLo7A7JUkTEiH0UMBBLAxNvT72NL3c9Nelz20YCAsFJZ
-	 UpG4cT67QshBQ==
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	James Clark <james.clark@linaro.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 3/3] perf python: Don't keep a raw_data pointer to consumed ring buffer space
-Date: Wed, 12 Mar 2025 13:06:51 -0300
-Message-ID: <20250312160651.280817-4-acme@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250312160651.280817-1-acme@kernel.org>
-References: <20250312160651.280817-1-acme@kernel.org>
+	s=arc-20240116; t=1741795646; c=relaxed/simple;
+	bh=+DPcVpt5jm09eAi/Y9n5785dJsafsofbqA8F/h57dus=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FLOjnBCekJBEQanluFiD1CmlHaG1DfcLuXVnrNu8EJ9kv8uuDFAQHMLj6ZG0stCT965XtJfTsko9FxY4pdAoiE6CIyhQlTmIKwMv/GgOFqrmj0GeN0Qyw2IeH44dQQ4vNAn4jbwFLeEQfsxaEPvlOs//62oywesXDe1BROo/QRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HZe/Rgjw; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-854a68f5a9cso139239f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:07:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741795643; x=1742400443; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ExMoY/YUEJ2sXZfuXzKCTdc9+tog41q5+FPX04PqUyM=;
+        b=HZe/RgjwWI1hEqmeTUpZ7rLgRzKZbdsCLSjpiIZwywmwJMJ7rpKITg+E+bNy2VmPA3
+         IXP66hluxKFO1nUuFB97+n015rW282h0l3WS6oSFD4BCQGeDnXInZkpeJJGAJx5xKHo1
+         wylHfhTaRJRSVDoQX0JR0cIYXPLxmrcGiXnxPtenFa7zE4adRUaOKenn9Q6mwk2/sjpe
+         ObaEDKowiY/sh2AF5g5FVxhgZZ76mQY6Xfa/1zeE1UrBHyU0gz2AWaUwnb1xhI3RbcAb
+         BMkdAkiZzlHY3FyxqDwxgT5FQHU9ZZBWxOb/LHgS5vNpc7nEVtO8uWyp+B5c4UTP/PUY
+         BAGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741795643; x=1742400443;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ExMoY/YUEJ2sXZfuXzKCTdc9+tog41q5+FPX04PqUyM=;
+        b=eK8mdzH4HT9YbLrxTFTGMUIeDoqqBNPnRcdKu8kghFgwjwFSbAqjzja6EyB3h6XHca
+         IhoNeC4cUxJp/7biqB4k64tRkyJsD+f2amMl0keVP1xPnfD9bUrSPVYkdSlPb2cIMm7o
+         zXtkAzb5IRsPZu7EpVsGWuweEb70XeJGjwvNu05x17kMyjUcjsLk5CM+GFiAwdSN84fM
+         0svjw8c2mDYsugSIHv5krh9E7NlDg8T80jCKK7UhEzA1Sx6Cj6BxlN941RtZAf19Uij7
+         K6XKuSp5HLbGGkjiUIAW760rgDh8L8JuIovpYI66m5YyLGxP5/920MDkaSVJu9aLn4Es
+         NgTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpU3foqVzpE3t04DfLJ/zF6KFeZo71rxF5KNUX2Frr4/M7c2d18UplGTG8qBEP3/+hgfpreIg052w3av8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXZ4NZAwUtsCBQBgBeB1bflMPfzxOIpKRWENWm03Uq5cNatBpU
+	E/pFBRZxQzXzv1sAqDOnaQI7wG0qiiXFuu61RtSXn2EYq5LjZahE84lRPWNg/pw=
+X-Gm-Gg: ASbGnctiL4ZTRCcUi3xpqjpfy8GpyBvYuZEqHZBfLPbP97O3Y7Enmyej9pNm/P9BaBF
+	SyPpMb9agihg7TwMkq9DU16D5h4ZmQNbPOSSRHFPPvBEbolYnOh1zh4BIHgrxYMVDUF8PlYbtuC
+	o06ZWDCYfsISBWROpv5mV2KJbpEIa97/h5FQhsTw+5AS7QjtXhPZRwr1KW2x6ADi3o2oRAPRQy8
+	GHd4DvcHUgnNdb1aGDzz4yfREWkjYEhUEimgK+H8e3HIDU4DjOarfgO/Pl4W6YVxggwLMnFCPKP
+	ar3OF6O3iRk9XLFSeEykY2d73V3IGYn52ieHsEbe
+X-Google-Smtp-Source: AGHT+IElo/nFdPS6E/5N5+GL1pAZfk0yR7kOrU1+gao2muzmo9g0AwgP1v3zMHzkrcml22cA5yeNRw==
+X-Received: by 2002:a05:6602:398f:b0:85c:5521:cbfe with SMTP id ca18e2360f4ac-85d8e2233c5mr1023090939f.8.1741795642951;
+        Wed, 12 Mar 2025 09:07:22 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85b119a823asm284201939f.14.2025.03.12.09.07.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 09:07:22 -0700 (PDT)
+Message-ID: <6115bfac-658c-4e8c-859f-d4a1a5820dae@kernel.dk>
+Date: Wed, 12 Mar 2025 10:07:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: dodge an atomic in putname if ref == 1
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org,
+ viro@zeniv.linux.org.uk
+Cc: jack@suse.cz, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ audit@vger.kernel.org
+References: <20250311181804.1165758-1-mjguzik@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250311181804.1165758-1-mjguzik@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On 3/11/25 12:18 PM, Mateusz Guzik wrote:
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 06765d320e7e..add90981cfcd 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -275,14 +275,19 @@ EXPORT_SYMBOL(getname_kernel);
+>  
+>  void putname(struct filename *name)
+>  {
+> +	int refcnt;
+> +
+>  	if (IS_ERR_OR_NULL(name))
+>  		return;
+>  
+> -	if (WARN_ON_ONCE(!atomic_read(&name->refcnt)))
+> -		return;
+> +	refcnt = atomic_read(&name->refcnt);
+> +	if (refcnt != 1) {
+> +		if (WARN_ON_ONCE(!refcnt))
+> +			return;
+>  
+> -	if (!atomic_dec_and_test(&name->refcnt))
+> -		return;
+> +		if (!atomic_dec_and_test(&name->refcnt))
+> +			return;
+> +	}
 
-When processing tracepoints the perf python binding was parsing the
-event before calling perf_mmap__consume(&md->core) in
-pyrf_evlist__read_on_cpu().
+Looks good to me, I use this trick with bitops too all the time, to
+avoid a RMW when possible.
 
-But part of this event parsing was to set the perf_sample->raw_data
-pointer to the payload of the event, which then could be overwritten by
-other event before tracepoint fields were asked for via event.prev_comm
-in a python program, for instance.
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-This also happened with other fields, but strings were were problems
-were surfacing, as there is UTF-8 validation for the potentially garbled
-data.
-
-This ended up showing up as (with some added debugging messages):
-
-  ( field 'prev_comm' ret=0x7f7c31f65110, raw_size=68 )  ( field 'prev_pid' ret=0x7f7c23b1bed0, raw_size=68 )  ( field 'prev_prio' ret=0x7f7c239c0030, raw_size=68 )  ( field 'prev_state' ret=0x7f7c239c0250, raw_size=68 ) time 14771421785867 prev_comm= prev_pid=1919907691 prev_prio=796026219 prev_state=0x303a32313175 ==>
-  ( XXX '��' len=16, raw_size=68)  ( field 'next_comm' ret=(nil), raw_size=68 ) Traceback (most recent call last):
-   File "/home/acme/git/perf-tools-next/tools/perf/python/tracepoint.py", line 51, in <module>
-     main()
-   File "/home/acme/git/perf-tools-next/tools/perf/python/tracepoint.py", line 46, in main
-     event.next_comm,
-     ^^^^^^^^^^^^^^^
-  AttributeError: 'perf.sample_event' object has no attribute 'next_comm'
-
-When event.next_comm was asked for, the PyUnicode_FromString() python
-API would fail and that tracepoint field wouldn't be available, stopping
-the tools/perf/python/tracepoint.py test tool.
-
-So if the event is a tracepoint, copy the raw_data before consuming the
-ring buffer for the event.
-
-This is similar to what was done in e8968e654191390a ("perf python: Fix
-pyrf_evlist__read_on_cpu event consuming"), but wasn't when adding
-support for tracepoints in bae57e3825a3dded ("perf python: Add support
-to resolve tracepoint fields"), fix it.
-
-Fixes: bae57e3825a3dded ("perf python: Add support to resolve tracepoint fields")
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/python.c | 38 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index f9491b6699764fbc..e1bd8143296385fc 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -4,6 +4,7 @@
- #include <inttypes.h>
- #include <poll.h>
- #include <linux/err.h>
-+#include <linux/string.h>
- #include <perf/cpumap.h>
- #ifdef HAVE_LIBTRACEEVENT
- #include <event-parse.h>
-@@ -38,9 +39,16 @@ struct pyrf_event {
- 	PyObject_HEAD
- 	struct evsel *evsel;
- 	struct perf_sample sample;
-+	/** @raw_data_copy: read_on_cpu consumes rb, may be overwritten at get_tracepoint_field */
-+	void *raw_data_copy;
- 	union perf_event   event;
- };
- 
-+static void pyrf_event__delete(struct pyrf_event *pevent)
-+{
-+	zfree(&pevent->raw_data_copy);
-+}
-+
- #define sample_members \
- 	sample_member_def(sample_ip, ip, T_ULONGLONG, "event ip"),			 \
- 	sample_member_def(sample_pid, pid, T_INT, "event pid"),			 \
-@@ -94,6 +102,7 @@ static PyTypeObject pyrf_mmap_event__type = {
- 	.tp_doc		= pyrf_mmap_event__doc,
- 	.tp_members	= pyrf_mmap_event__members,
- 	.tp_repr	= (reprfunc)pyrf_mmap_event__repr,
-+	.tp_dealloc	= (destructor)pyrf_event__delete,
- };
- 
- static const char pyrf_task_event__doc[] = PyDoc_STR("perf task (fork/exit) event object.");
-@@ -129,6 +138,7 @@ static PyTypeObject pyrf_task_event__type = {
- 	.tp_doc		= pyrf_task_event__doc,
- 	.tp_members	= pyrf_task_event__members,
- 	.tp_repr	= (reprfunc)pyrf_task_event__repr,
-+	.tp_dealloc	= (destructor)pyrf_event__delete,
- };
- 
- static const char pyrf_comm_event__doc[] = PyDoc_STR("perf comm event object.");
-@@ -158,6 +168,7 @@ static PyTypeObject pyrf_comm_event__type = {
- 	.tp_doc		= pyrf_comm_event__doc,
- 	.tp_members	= pyrf_comm_event__members,
- 	.tp_repr	= (reprfunc)pyrf_comm_event__repr,
-+	.tp_dealloc	= (destructor)pyrf_event__delete,
- };
- 
- static const char pyrf_throttle_event__doc[] = PyDoc_STR("perf throttle event object.");
-@@ -190,6 +201,7 @@ static PyTypeObject pyrf_throttle_event__type = {
- 	.tp_doc		= pyrf_throttle_event__doc,
- 	.tp_members	= pyrf_throttle_event__members,
- 	.tp_repr	= (reprfunc)pyrf_throttle_event__repr,
-+	.tp_dealloc	= (destructor)pyrf_event__delete,
- };
- 
- static const char pyrf_lost_event__doc[] = PyDoc_STR("perf lost event object.");
-@@ -225,6 +237,7 @@ static PyTypeObject pyrf_lost_event__type = {
- 	.tp_doc		= pyrf_lost_event__doc,
- 	.tp_members	= pyrf_lost_event__members,
- 	.tp_repr	= (reprfunc)pyrf_lost_event__repr,
-+	.tp_dealloc	= (destructor)pyrf_event__delete,
- };
- 
- static const char pyrf_read_event__doc[] = PyDoc_STR("perf read event object.");
-@@ -255,6 +268,7 @@ static PyTypeObject pyrf_read_event__type = {
- 	.tp_doc		= pyrf_read_event__doc,
- 	.tp_members	= pyrf_read_event__members,
- 	.tp_repr	= (reprfunc)pyrf_read_event__repr,
-+	.tp_dealloc	= (destructor)pyrf_event__delete,
- };
- 
- static const char pyrf_sample_event__doc[] = PyDoc_STR("perf sample event object.");
-@@ -295,11 +309,14 @@ static PyObject*
- tracepoint_field(const struct pyrf_event *pe, struct tep_format_field *field)
- {
- 	struct tep_handle *pevent = field->event->tep;
--	void *data = pe->sample.raw_data;
-+	void *data = pe->raw_data_copy;
- 	PyObject *ret = NULL;
- 	unsigned long long val;
- 	unsigned int offset, len;
- 
-+	if (data == NULL)
-+		return ret;
-+
- 	if (field->flags & TEP_FIELD_IS_ARRAY) {
- 		offset = field->offset;
- 		len    = field->size;
-@@ -346,6 +363,11 @@ get_tracepoint_field(struct pyrf_event *pevent, PyObject *attr_name)
- 	field = tep_find_any_field(tp_format, str);
- 	return field ? tracepoint_field(pevent, field) : NULL;
- }
-+#else // HAVE_LIBTRACEEVENT
-+static bool is_tracepoint(const struct pyrf_event *pevent __maybe_unused)
-+{
-+	return false;
-+}
- #endif /* HAVE_LIBTRACEEVENT */
- 
- static PyObject*
-@@ -369,6 +391,7 @@ static PyTypeObject pyrf_sample_event__type = {
- 	.tp_doc		= pyrf_sample_event__doc,
- 	.tp_members	= pyrf_sample_event__members,
- 	.tp_repr	= (reprfunc)pyrf_sample_event__repr,
-+	.tp_dealloc	= (destructor)pyrf_event__delete,
- 	.tp_getattro	= (getattrofunc) pyrf_sample_event__getattro,
- };
- 
-@@ -407,6 +430,7 @@ static PyTypeObject pyrf_context_switch_event__type = {
- 	.tp_doc		= pyrf_context_switch_event__doc,
- 	.tp_members	= pyrf_context_switch_event__members,
- 	.tp_repr	= (reprfunc)pyrf_context_switch_event__repr,
-+	.tp_dealloc	= (destructor)pyrf_event__delete,
- };
- 
- static int pyrf_event__setup_types(void)
-@@ -478,8 +502,10 @@ static PyObject *pyrf_event__new(const union perf_event *event)
- 
- 	ptype = pyrf_event__type[event->header.type];
- 	pevent = PyObject_New(struct pyrf_event, ptype);
--	if (pevent != NULL)
-+	if (pevent != NULL) {
- 		memcpy(&pevent->event, event, event->header.size);
-+		pevent->raw_data_copy = NULL;
-+	}
- 	return (PyObject *)pevent;
- }
- 
-@@ -1020,6 +1046,14 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
- 
- 		err = evsel__parse_sample(evsel, event, &pevent->sample);
- 
-+		if (is_tracepoint(pevent) &&
-+		    pevent->sample.raw_size > 0 && !pevent->raw_data_copy) {
-+			// No need to check here, only when get_tracepoint_field gets
-+			// called, if ever, then it can fail getting the value for
-+			// a tracepoint field.
-+			pevent->raw_data_copy = memdup(pevent->sample.raw_data, pevent->sample.raw_size);
-+		}
-+
- 		/* Consume the even only after we parsed it out. */
- 		perf_mmap__consume(&md->core);
- 
 -- 
-2.48.1
-
+Jens Axboe
 
