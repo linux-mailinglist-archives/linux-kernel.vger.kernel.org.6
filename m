@@ -1,153 +1,234 @@
-Return-Path: <linux-kernel+bounces-557202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB7DA5D4E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:53:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43862A5D4E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 04:53:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C7393B5A34
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:53:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C17B173A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 03:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E421D79A6;
-	Wed, 12 Mar 2025 03:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39AA1D79BE;
+	Wed, 12 Mar 2025 03:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="mDV81nO3"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737351D63D0;
-	Wed, 12 Mar 2025 03:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AxHIzS5J"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74534685;
+	Wed, 12 Mar 2025 03:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741751601; cv=none; b=GTmpJBhMmaQ7Z9+KCfL+ceGx+u3TuZC5+H5wUQNgIkUlmuDUBJInH0rPo2yV4KnxPdUY1TZDi/Xhsrvh9IQMr+zV+LNretZpeSgXzcNjtUk7bxkYrfV2/nF6XtD9volkER70tdoYGqttU6CoGXcfkW7o4kQyyJkueyg9vzQUzfo=
+	t=1741751578; cv=none; b=rG3mVsGXuPG+2swhAwDHwpaUZh5OGx6XLVcuoAhZ4R1xiBWT0y8B/+jfwh0wdxyFhi9/2dJ+9wT4vdfy1D9p8/uzma25Nvt8383a1d1/cdyilkx34VCh95NTyvlZH9hdyAX31yVrYR12kXK/K9sRpvne6cP4WF20qhuToQA0jJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741751601; c=relaxed/simple;
-	bh=50QNA4rEUL5GW3S0GjFuhcMVbRtP6H/ea2M/vgXrMD0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=KCl6V8ruSwudStIdJrOI7l/qLhFlSroHtDiNvz9GBrMraqJ2wZXQWW3I0g0FV0ors5Y2jRWS8uFWQg4F4ZMMdGf8wlUYy45eJP6rgGh51HUcOOIoxobWFrD+Oc2mj0pjoB7KXaOubb9C67yvMOYviQ1QCl+mtyuwlqJdyjZ0r+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=mDV81nO3 reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=6XI4Slkoy1M0rqTSf35Ow6UKaNFOV3PAv3wPbD3wF3U=; b=m
-	DV81nO3lQxMZpSA7zSkrPxZKLLfUMWvYOg+NmgJvjntqocjING6kNNYuuzdTFtqK
-	MHg+KcKLSFQ3xHOfl0cYmGk4UzOo1T19veUDwMMniYKJpPPuOus2Pw13PxWg8cL0
-	/G8jX7obo9v3pbOauvhrg3qccm/v12orF3K/EehGIo=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-123 (Coremail) ; Wed, 12 Mar 2025 11:51:58 +0800
- (CST)
-Date: Wed, 12 Mar 2025 11:51:58 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Piotr Oniszczuk" <piotr.oniszczuk@gmail.com>
-Cc: heiko@sntech.de, neil.armstrong@linaro.org,
-	sebastian.reichel@collabora.com, devicetree@vger.kernel.org,
-	hjc@rock-chips.com, mripard@kernel.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, yubing.zhang@rock-chips.com,
-	dri-devel@lists.freedesktop.org,
-	"Andy Yan" <andy.yan@rock-chips.com>, krzk+dt@kernel.org,
-	robh@kernel.org, linux-arm-kernel@lists.infradead.org,
-	lumag@kernel.org, stephen@radxa.com
-Subject: Re:Re: [PATCH 0/6] Add support for RK3588 DisplayPort Controller
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <AD2A56F9-B4FB-406B-BE7C-49BB5DFD3BAD@gmail.com>
-References: <25401bfa.291d.19564244e54.Coremail.andyshrk@163.com>
- <75189787-28E1-4FC2-8E10-4960B3877A6F@gmail.com>
- <28b0d3fc.bb3.19568f6b5f8.Coremail.andyshrk@163.com>
- <44213B17-FE14-4FB8-8319-1E31BBF6EAA0@gmail.com>
- <74c154b6.8c50.1956aa8c8d2.Coremail.andyshrk@163.com>
- <1573D5D6-AFED-4D92-8112-B0C6BB52D5FF@gmail.com>
- <46c0d239.a4f5.1956b619b97.Coremail.andyshrk@163.com>
- <252BB2E2-4BC5-4402-953D-F7B30EA5DE14@gmail.com>
- <326B91E9-FB91-43C3-B98B-3EF079F313C6@gmail.com>
- <545cc438.7e3.1956e13a3e2.Coremail.andyshrk@163.com>
- <AD2A56F9-B4FB-406B-BE7C-49BB5DFD3BAD@gmail.com>
-X-NTES-SC: AL_Qu2fA/uevk0q7iOYZOlSyjNW+7xfHKv6+qRChMQvQtsqqTHr9T0KcVtuP1XR3/9iWlV8euuspyqU8XtlMgI5
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1741751578; c=relaxed/simple;
+	bh=sLKqKjYLtwBaRwxi4pI2AP0lZkLdOBbifFarCNv34ug=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JyX8cLOsb4wgutVjEwmnMAzTIxNYXzZiZY11F7GOAJEuhbhU1JvjfKRXa025iqAD3Tbmh/MTg6I/E/eLlppxSM88LG5eOodP/Ed93/iTe0EaaDUK66miAzfXCEib0Cklg0otBKYXWKrA3dy24Ue4sYdP0yp7Bb8+yWRYwXjF0QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=AxHIzS5J; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741751571;
+	bh=csLI6VHnfoRTbr9Hhw1hlQTjIqbLO4KYY8VWFZt9+8w=;
+	h=Date:From:To:Cc:Subject:From;
+	b=AxHIzS5J2+9Jp8BHuQmJ852mWt5T25ssDBoOpK2hnU5Dry6iHvJI7WEUu1tESqRdg
+	 J6Um/4FPtb9OXbJ0Sc9FPdVv06BJfR2RJNSB3I/gX8aQudFCUFEf69j3Ee4KrnEEPN
+	 tNtGC5FL8hH67953uZ/S3ehEpxpKAVMiaUnYtxx1sS+Flqkn3XQXKbj7QJ6tyRmcPa
+	 K7yTUPvNDGTe8tGi6ZTzCEpijCUBIJOaJbCkiXEbeqsJkl6Xnk8MEuI0nb249hyfDB
+	 sYBrzWqefi35hyvRCXdC7QExcaQgvIGjLipfATuFGsUbFf2HvDL8Yq6DUbiPh7qU5+
+	 1vxCsMEArvekg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZCGtV19Hfz4xCW;
+	Wed, 12 Mar 2025 14:52:49 +1100 (AEDT)
+Date: Wed, 12 Mar 2025 14:52:47 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
+ <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, bpf
+ <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the bpf-next tree
+Message-ID: <20250312145247.380c2aa5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <4003289a.41da.195887b0462.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:eygvCgCXPn_eBNFnxoN8AA--.19966W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkAcOXmfQ-RqhAQAEsz
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: multipart/signed; boundary="Sig_/Agm1aDa=ntrjh5CZDTyBZLk";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-CkhpIFBpb3RyLArlnKggMjAyNS0wMy0xMCAwNDo1Mzo1MO+8jCJQaW90ciBPbmlzemN6dWsiIDxw
-aW90ci5vbmlzemN6dWtAZ21haWwuY29tPiDlhpnpgZPvvJoKPgo+Cj4+IFdpYWRvbW/Fm8SHIG5h
-cGlzYW5hIHByemV6IEFuZHkgWWFuIDxhbmR5c2hya0AxNjMuY29tPiB3IGRuaXUgNyBtYXIgMjAy
-NSwgbyBnb2R6LiAwMTo0ODoKPj4gCj4+IAo+PiBIaSBQaW90ciwKPj4g5ZyoIDIwMjUtMDMtMDYg
-MjI6Mjg6MDjvvIwiUGlvdHIgT25pc3pjenVrIiA8cGlvdHIub25pc3pjenVrQGdtYWlsLmNvbT4g
-5YaZ6YGT77yaCj4+PiAKPj4+IAo+PiAKPj4gQWxsIGR1bXAgaW5mb3JtYXRpb24gY3VycmVudGx5
-IGFwcGVhcnMgdG8gYmUgY29ycmVjdCwgc28gSSdtIHRlbXBvcmFyaWx5IHVuc3VyZSB3aHkKPj4g
-dGhlcmUgaXMgbm8gZGlzcGxheSBvbiB0aGUgbW9uaXRvci4KPj4gTWF5YmUgdHJ5IHNvbWUgcGx1
-ZyBhbmQgdW5wbHVnIGZvciB0aGUgRFAgY2FibGUsIG9yIHRyeSBhbm90aGVyIGNhYmxlIG9yIG1v
-bml0b3I/Cj4+IAo+PiBJdCBzZWVtcyB0aGF0IHRoaXMgYm9hcmQgdXNlcyBhIERQIHRvIEhETUkg
-Y29udmVydGVyPyBEb2VzIHRoaXMgdHJhbnNtaXR0ZXIgbmVlZCBhIGRyaXZlcj8KPj4gCj4+IEkg
-d29uJ3QgYmUgYXQgbXkgY29tcHV0ZXIgb3ZlciB0aGUgbmV4dCB0d28gb3IgdGhyZWUgZGF5cywg
-c28gYW55IGZ1cnRoZXIgcmVwbGllcyB0byB5b3VyIGVtYWlsCj4+IG1pZ2h0IGhhdmUgdG8gd2Fp
-dCB1bnRpbCBuZXh0IHdlZWsuCj4+IAo+PiAKPgo+QW5keSwKPkZZSToKPgo+SSBkb25lIHRlc3Qg
-b24gbWluZSByb2NrNWEgd2l0aCBhcHBsaWVkIE5hb2tpIGRwMCBlbmFibGVtZW50IGluIGR0cyAo
-YW5kIG9ubHkgaW4gZHRzKS4KPk5vIGFueSBjaGFuZ2VzIGluIGR3IGRwIGRyaXZlciAoc28gaeKA
-mW0gb24gdmFuaWxsYSAgaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wcm9qZWN0L2xpbnV4
-LXJvY2tjaGlwL2NvdmVyLzIwMjUwMjIzMTEzMDM2Ljc0MjUyLTEtYW5keXNocmtAMTYzLmNvbS8g
-ICApCj4KPm9uIG1pbmUgcm9jazVhIHJhNjIwIGhkbWkgcG9ydCB3b3JrcyBvay4KPihJIGNvbnRh
-Y3RlZCBhbHNvIFJhZHhhIGFib3V0IHJhNjIwIGFuZCB0aGV5IGNvbmZpcm1lZDogcmE2MjAgaXMg
-anVzdCBEUC0+SERNSSBjb252ZXJ0ZXIuIE5vIGFueSBkcml2ZXIgbm9yIHNwZWNpYWwgcHJvZ3Jh
-bW1pbmcvZW5hYmxlbWVudCBpcyBuZWVkZWQpCj4KPlRoaXMgdGVsbHMgbWUgdGhhdCBkcDAgKHJv
-Y2s1YSkgd29ya3Mgb2sgd2hpbGUgZHAxIChyb2NrNWl0eCkgbm90LgoKCj5pIHN1c3BlY3QgaXNz
-dWUgaXMgcHJvYmFibHkgaW4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wcm9qZWN0L2xp
-bnV4LXJvY2tjaGlwL2NvdmVyLzIwMjUwMjIzMTEzMDM2Ljc0MjUyLTEtYW5keXNocmtAMTYzLmNv
-bS8gYW5kIGlzIHJlbGF0ZWQgdG8gZHAxIGhhbmRsaW5nPwoKV2l0aCBoZWxwIGZyb20gU3RlcGhl
-biwgd2UgZG8gc29tZSBvbmxpbmUgZGVidWcsIHRoZSBEUDEgZGlzcGxheSBpcyAgb2sgb24gaGlz
-IHJvY2s1aXR4IGJvYXJkIG5vd+OAggoKClRyeSB0aGUgcGF0Y2ggYXMgYmVsbG93OgoKZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctZHAuYyBiL2RyaXZlcnMv
-Z3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctZHAuYwppbmRleCA3NWEwM2U2YTg3NWMuLmQ5NDM0
-MzEwYTE0MSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1k
-cC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctZHAuYwpAQCAtMzI5
-LDcgKzMyOSw3IEBAIHN0cnVjdCBkd19kcCB7CiAKICAgICAgICBzdHJ1Y3QgZHdfZHBfbGluayBs
-aW5rOwogICAgICAgIHN0cnVjdCBkd19kcF92aWRlbyB2aWRlbzsKLSAgICAgICBjb25zdCBzdHJ1
-Y3QgZHdfZHBfcGxhdF9kYXRhICpwbGF0X2RhdGE7CisgICAgICAgc3RydWN0IGR3X2RwX3BsYXRf
-ZGF0YSBwbGF0X2RhdGE7CgoKQEAgLTE5OTgsNyArMjAxMiw3IEBAIHN0cnVjdCBkd19kcCAqZHdf
-ZHBfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlciwK
-ICAgICAgICBkcC0+ZGV2ID0gZGV2OwogICAgICAgIGRwLT52aWRlby5waXhlbF9tb2RlID0gRFdf
-RFBfTVBfUVVBRF9QSVhFTDsKIAotICAgICAgIGRwLT5wbGF0X2RhdGEgPSBwbGF0X2RhdGE7Cisg
-ICAgICAgZHAtPnBsYXRfZGF0YS5tYXhfbGlua19yYXRlID0gcGxhdF9kYXRhLT5tYXhfbGlua19y
-YXRlOwogICAgICAgIGJyaWRnZSA9ICZkcC0+YnJpZGdlOwogICAgICAgIG11dGV4X2luaXQoJmRw
-LT5pcnFfbG9jayk7CiAgICAgICAgSU5JVF9XT1JLKCZkcC0+aHBkX3dvcmssIGR3X2RwX2hwZF93
-b3JrKTsKIAoKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBf
-ZHJtX3ZvcDIuYyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wMi5j
-CmluZGV4IDE3YTk4ODQ1ZmQzMS4uMmNmNzlhMTQwOWFmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
-cm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIuYwpAQCAtMjA4OSw5ICsyMDg5LDkgQEAgc3RhdGlj
-IHVuc2lnbmVkIGxvbmcgcmszNTg4X3NldF9pbnRmX211eChzdHJ1Y3Qgdm9wMl92aWRlb19wb3J0
-ICp2cCwgaW50IGlkLCB1MzIKICAgICAgICAgICAgICAgIGRpcCB8PSBGSUVMRF9QUkVQKFJLMzU4
-OF9EU1BfSUZfUE9MX19EUDBfUElOX1BPTCwgcG9sZmxhZ3MpOwogICAgICAgICAgICAgICAgYnJl
-YWs7CiAgICAgICAgY2FzZSBST0NLQ0hJUF9WT1AyX0VQX0RQMToKLSAgICAgICAgICAgICAgIGRp
-ZSAmPSB+UkszNTg4X1NZU19EU1BfSU5GQUNFX0VOX01JUEkxX01VWDsKLSAgICAgICAgICAgICAg
-IGRpZSB8PSBSSzM1ODhfU1lTX0RTUF9JTkZBQ0VfRU5fTUlQSTEgfAotICAgICAgICAgICAgICAg
-ICAgICAgICAgICBGSUVMRF9QUkVQKFJLMzU4OF9TWVNfRFNQX0lORkFDRV9FTl9NSVBJMV9NVVgs
-IHZwLT5pZCk7CisgICAgICAgICAgICAgICBkaWUgJj0gflJLMzU4OF9TWVNfRFNQX0lORkFDRV9F
-Tl9EUDFfTVVYOworICAgICAgICAgICAgICAgZGllIHw9IFJLMzU4OF9TWVNfRFNQX0lORkFDRV9F
-Tl9EUDEgfAorICAgICAgICAgICAgICAgICAgICAgICAgICBGSUVMRF9QUkVQKFJLMzU4OF9TWVNf
-RFNQX0lORkFDRV9FTl9EUDFfTVVYLCB2cC0+aWQpOwogICAgICAgICAgICAgICAgZGlwICY9IH5S
-SzM1ODhfRFNQX0lGX1BPTF9fRFAxX1BJTl9QT0w7CiAgICAgICAgICAgICAgICBkaXAgfD0gRklF
-TERfUFJFUChSSzM1ODhfRFNQX0lGX1BPTF9fRFAxX1BJTl9QT0wsIHBvbGZsYWdzKTsKICAgICAg
-ICAgICAgICAgIGJyZWFrOwoKCgo+Cj5CVFc6IHRoZXJlIHNlZW1zIHRvIGJlIGlzc3VlIHdpdGgg
-dmlkZW8gbW9kZXMgaGFuZGxpbmcgb24gZHAwIHBvcnQ6IAo+LXBsYXlpbmcgdmlkZW8gMTkyMEAx
-MDgwQDUwIC0gb2sKPi1wbGF5aW5nIHRoZW4gdmlkZW8xOTIwQDEwODBANTksNjQgaGFuZ3MgYm9h
-cmTigKYuCj4KPmhkbWkwIHdvcmtzIG9rLiB2aWRlbyBtb2RlcyBpc3N1ZSBpcyBvbmx5IG9uIGRw
-MApUaGUgZGNsayBmb3IgdnAyIGlzIGRlZmF1bHQgZnJvbSBHUExMLCBpdCBjYW4ndCBkaXZkZSBw
-aXhlbCBjbG9jayBmb3Igc3VjaCBhIHJlZnJlc2ggcmF0ZXMsIApCdXQgaXQgc2hvdWxkIG5vdCBo
-YW5nIHRoZSBib2FyZCwgU2ViYXN0aWFuLCBpdCBzZWVtcyB0aGUgZnJlcXVlbmNlIG9mICBHUExM
-IGJlIGNoYW5nZWQ/CgoKUGxlc2FzZSB0cnkgaXQgbGlrZSB0aGlzOiBib25kIHRoZSBkY2xrIHNv
-dXJjZSBmb3IgVlAyIGZyb20gVjBQTEwuCgorJnZvcCB7CisJYXNzaWduZWQtY2xvY2tzID0gPCZj
-cnUgRENMS19WT1AyX1NSQz47CisJYXNzaWduZWQtY2xvY2stcGFyZW50cyA9IDwmY3J1IFBMTF9W
-MFBMTD47CisJc3RhdHVzID0gIm9rYXkiOworfTsKKwo+Cj4K
+--Sig_/Agm1aDa=ntrjh5CZDTyBZLk
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+After merging the bpf-next tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+In file included from include/asm-generic/percpu.h:7,
+                 from arch/powerpc/include/asm/percpu.h:28,
+                 from arch/powerpc/include/asm/smp.h:26,
+                 from include/linux/smp.h:119,
+                 from include/linux/lockdep.h:14,
+                 from include/linux/radix-tree.h:14,
+                 from include/linux/idr.h:15,
+                 from include/linux/cgroup-defs.h:13,
+                 from mm/memcontrol.c:28:
+mm/memcontrol.c: In function 'memcg_hotplug_cpu_dead':
+include/linux/percpu-defs.h:242:2: error: passing argument 1 of 'local_lock=
+_acquire' from incompatible pointer type [-Wincompatible-pointer-types]
+  242 | ({                                                                 =
+     \
+      | ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~
+      |  |
+      |  localtry_lock_t *
+  243 |         __verify_pcpu_ptr(ptr);                                    =
+     \
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~
+  244 |         arch_raw_cpu_ptr(ptr);                                     =
+     \
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~
+  245 | })
+      | ~~
+include/linux/percpu-defs.h:254:27: note: in expansion of macro 'raw_cpu_pt=
+r'
+  254 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
+      |                           ^~~~~~~~~~~
+include/linux/local_lock_internal.h:105:36: note: in expansion of macro 'th=
+is_cpu_ptr'
+  105 |                 local_lock_acquire(this_cpu_ptr(lock));         \
+      |                                    ^~~~~~~~~~~~
+include/linux/local_lock.h:31:9: note: in expansion of macro '__local_lock_=
+irqsave'
+   31 |         __local_lock_irqsave(lock, flags)
+      |         ^~~~~~~~~~~~~~~~~~~~
+mm/memcontrol.c:1960:9: note: in expansion of macro 'local_lock_irqsave'
+ 1960 |         local_lock_irqsave(&memcg_stock.stock_lock, flags);
+      |         ^~~~~~~~~~~~~~~~~~
+In file included from include/linux/local_lock.h:5,
+                 from include/linux/mmzone.h:24,
+                 from include/linux/gfp.h:7,
+                 from include/linux/xarray.h:16,
+                 from include/linux/radix-tree.h:21:
+include/linux/local_lock_internal.h:59:53: note: expected 'local_lock_t *' =
+but argument is of type 'localtry_lock_t *'
+   59 | static inline void local_lock_acquire(local_lock_t *l) { }
+      |                                       ~~~~~~~~~~~~~~^
+include/linux/percpu-defs.h:242:2: error: passing argument 1 of 'local_lock=
+_release' from incompatible pointer type [-Wincompatible-pointer-types]
+  242 | ({                                                                 =
+     \
+      | ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~
+      |  |
+      |  localtry_lock_t *
+  243 |         __verify_pcpu_ptr(ptr);                                    =
+     \
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~
+  244 |         arch_raw_cpu_ptr(ptr);                                     =
+     \
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~
+  245 | })
+      | ~~
+include/linux/percpu-defs.h:254:27: note: in expansion of macro 'raw_cpu_pt=
+r'
+  254 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
+      |                           ^~~~~~~~~~~
+include/linux/local_lock_internal.h:122:36: note: in expansion of macro 'th=
+is_cpu_ptr'
+  122 |                 local_lock_release(this_cpu_ptr(lock));         \
+      |                                    ^~~~~~~~~~~~
+include/linux/local_lock.h:52:9: note: in expansion of macro '__local_unloc=
+k_irqrestore'
+   52 |         __local_unlock_irqrestore(lock, flags)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+mm/memcontrol.c:1962:9: note: in expansion of macro 'local_unlock_irqrestor=
+e'
+ 1962 |         local_unlock_irqrestore(&memcg_stock.stock_lock, flags);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~
+include/linux/local_lock_internal.h:61:53: note: expected 'local_lock_t *' =
+but argument is of type 'localtry_lock_t *'
+   61 | static inline void local_lock_release(local_lock_t *l) { }
+      |                                       ~~~~~~~~~~~~~~^
+
+Caused by commits
+
+  0aaddfb06882 ("locking/local_lock: Introduce localtry_lock_t")
+  01d37228d331 ("memcg: Use trylock to access memcg stock_lock.")
+
+interacting with commit
+
+  885aa5fe7b1d ("memcg: drain obj stock on cpu hotplug teardown")
+
+from the mm-hotfixes tree.
+
+I applied the following merge fix patch.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 12 Mar 2025 14:18:03 +1100
+Subject: [PATCH] fix up for "memcg: Use trylock to access memcg stock_lock"
+
+interacting with "memcg: drain obj stock on cpu hotplug teardown" from
+the mm-hotfixes tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/memcontrol.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 8f88b8dd8097..87544df4c3b8 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1957,9 +1957,9 @@ static int memcg_hotplug_cpu_dead(unsigned int cpu)
+ 	stock =3D &per_cpu(memcg_stock, cpu);
+=20
+ 	/* drain_obj_stock requires stock_lock */
+-	local_lock_irqsave(&memcg_stock.stock_lock, flags);
++	localtry_lock_irqsave(&memcg_stock.stock_lock, flags);
+ 	old =3D drain_obj_stock(stock);
+-	local_unlock_irqrestore(&memcg_stock.stock_lock, flags);
++	localtry_unlock_irqrestore(&memcg_stock.stock_lock, flags);
+=20
+ 	drain_stock(stock);
+ 	obj_cgroup_put(old);
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Agm1aDa=ntrjh5CZDTyBZLk
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfRBQ8ACgkQAVBC80lX
+0Gwhjgf/SY1L6EY7sBqFhnP+flnrFZsbc+TyMvDrzfsz2JbnfFgufgdHuzR8+jcA
+aE/25UdSpp2x6Qfbe3AWyt5mn/XeMoEermZsV2axGhViqfGhQ8MKOMzD5UYVRUIX
+c2I4cY/mhJwdpDwy3SwLHuvvsKH61GRwxd7LIGgQGH8EdYbdhcfuInCu/owZgfGS
+dcTfqXg93FuwUEOWJAUEq/sJKbPUZxPA1EUUsz8GM9v7CGeAYY9X1X45ejfvO9nA
+pOq7ihS02sh/QbXbkatGZZF5b4s1VpxiV3LTCmqJqzYqRh1RPEdjOxodmXV58R2j
+3/8LfPHpQzkSoWaeL+kZIvEGRSwjwA==
+=KxSD
+-----END PGP SIGNATURE-----
+
+--Sig_/Agm1aDa=ntrjh5CZDTyBZLk--
 
