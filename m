@@ -1,167 +1,219 @@
-Return-Path: <linux-kernel+bounces-557458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09139A5D957
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:26:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 406ADA5D95F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:26:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38618176B84
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:26:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30993B5E13
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B5323A996;
-	Wed, 12 Mar 2025 09:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9306423BFA9;
+	Wed, 12 Mar 2025 09:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eINzvCc6"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I7e/l9JF"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19D223A9AA;
-	Wed, 12 Mar 2025 09:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EFA23A9BE
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 09:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741771574; cv=none; b=AX0vtAEpZuEviG6Neu5rcpywQENW+WyY71N+7UG8B9iBxyOYr7dKNKMwMie+g7gAYFkFDhsXqv/BftOdZA1Q9K5M57rnS32iEp1SkIcdMDg5D6378hY1lq22H0zvMP/zSFF96SsSLteCTsxwDYtWgH5NG+j2yxf7ADk2piJXYFo=
+	t=1741771579; cv=none; b=GSfyo8QEWR1bWmzOUa0+mrehMFQNi2qzLNb+tj39dF+PM4/sc3PzKWyRjj86WGot7Hx6GJgBx2Cyjt3czhPBzrIGAP6kv2blxq2Gb3JH5MR13XEeVGvK3y4o3wfQabK9FGwoj/v6dD7yGpsCnolQKvSf4p0NfD4z13QuvGtIZa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741771574; c=relaxed/simple;
-	bh=Nmm8VgtieAQ4FAI9YKaspzHqrPuXV2aoYQj/SLIoIBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mTJkYSyn//APSSyHn5z3RWG5t3DV3v3IHQT6kq+r85fmheC4A3rXJv9Qw848fIFP+LZArTtOQG5nEdVlxGalQTmdb26kO3WiFjvnrA+Bm/ImfZRldVItPI0c+JwoOaKEmV2IvoCXUb7N6NeIxL9AzTztKEkR3zIY5FHhXIhKD5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eINzvCc6; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52C9PhRU1462281
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Mar 2025 04:25:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741771543;
-	bh=GYK+ovr4hj8awrE0zu1FagYt/ssvw4mcYqybiZ+cfmE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=eINzvCc68vBAG+l4XyhOrpkJMPebu3M+z0Sm3dMtsSk+BX+BCPLf+YCVGRGjPfsz1
-	 fMsDeBLYCBAZ/h79owlmgOIH8eXwDl+WBUoyPP8IGaZCse3MKNVKFTc0Affxpfen0v
-	 m/ZE9Y2flNLBft1NVGN9f4zGlxIGLOy+9kOGekSc=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52C9PhtT041708
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Mar 2025 04:25:43 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
- Mar 2025 04:25:43 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 12 Mar 2025 04:25:43 -0500
-Received: from [10.24.72.128] (psdkl-workstation0.dhcp.ti.com [10.24.72.128])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52C9PcE3030236;
-	Wed, 12 Mar 2025 04:25:39 -0500
-Message-ID: <91b9752c-38e9-453d-90cb-3466e18a15b6@ti.com>
-Date: Wed, 12 Mar 2025 14:55:38 +0530
+	s=arc-20240116; t=1741771579; c=relaxed/simple;
+	bh=WrKCHVU9WeE23NeOMrdhi+N2H8I570pU6Ew1AKLcPyg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Txu7MRszWJTNuTCjFmWtGnygibcou3twxmfn+YfVDNOHqwBEecUyoSqdh7/0m+V/K5pUoVhwlX9Cg5ujZolrRkeSPSTo2O45vNKz0DJJtcpOHQ46l1Hp8n+g+Z983f/OHKjoJPBKVxcWUutwlX5gP1SqzxdBQphPkQKpwrj07bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I7e/l9JF; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so1116273966b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 02:26:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741771574; x=1742376374; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Lfobpgc3Deyg3z2F30QYKZenkvsowTCFz1IUvtrFV4=;
+        b=I7e/l9JFBGWxUbrBYIb4KZpPlvnLot4Ae2gGS8Dso5uL9snVibcdocOt1MxJtC7BqI
+         WytDUEZERenf/tCfvE8bzFofzLY4gBhXryEqMleBJXzdkqj1XxDHD8Buuy8L63tSF8ul
+         CMO6fpN6yL+0AUV9SkUjYaZRfgTTulYyanMc9afNei7bWqJDKX9ODNH6rPDeZ/9Q4co8
+         lxNuLUVNJDmetoIDzsnnZmQXf3zjpogJvnhaFVuS5iGVGk+8U8jJzYxZONjmT37orvHg
+         b2IPJphha+8BsSl5dUPYwuFoMj3klPAxfgdk+Pcoa/a839CcYbL/S0xIMewgYbaCEkqi
+         XGcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741771574; x=1742376374;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+Lfobpgc3Deyg3z2F30QYKZenkvsowTCFz1IUvtrFV4=;
+        b=UsU96oe6YtsBvZwQ9Ym5BT5VpXToDu8r2CDgtV9eQhqtKqCUj5sOb/x78R9wr1h1ib
+         8hHVO8U1l0wg7lNZne+LfKmYxQ6v7F2d2ys3JplUhAoJylfhfaeZAWLa8UJWycAvpmBe
+         MUJPeExQI5nt8Cn2CJ+vgAtOGTl6QOo8Rg/I8HlYBJ5cYNjgj7ua1dUWI2Gal/iQL81n
+         CvBgYuBkP1lV7ER5QBGgtw/h0uBGZnWaTdJV4j0yNzHyrtZly8m7lETv1pcUhn/1fzCC
+         M7DkQzgYcuQ8BPFPIZN2zd2FIttCidc7N3Zvif04eBpZQvcMPbDUPzh+KP68/aMe6NC5
+         1l+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWKhRna/r5mxBMxO45ycnlK4FFHIaDddo2xnL0X3M6PkbW2NZDi++UhE4uUBbBygK8k/N7sSYu9R+U55KM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8rxviDaN4Q5QGwm9Q6olJvpdkJGG10MQDCRmojHfXU4hjbAjr
+	LQw7Z5FrMqqxWGr+tSniKvWleb7RaDbN745pFUYIXm524BIq9OudC7H6E38dby4=
+X-Gm-Gg: ASbGnctHqKvQ0VU19DK2pptk5ZGAxiAJoZHsh/67cXNVhJ1Y1rlyNLC7Y8SNuDEIZez
+	Q3v93QTB8pUDFMgMMyLP/UnMuzHnHsuZYJ8j/N2RRMPdX68TjSVZiwZytDo/sx+3+AnSt7MBoxt
+	zW7ln9vr1cOIw7Q8TB+C6dYJMLl5wE6d24Cqb5x1nxQ8DsKIKy6qzJCysRPQq8+5V43eeSMDOaW
+	IA9sYF6frMK6Zm5Ts1XmO6SR/tLRZDJAd5ozzH8dm5hkKakzO4vOrTsGBZifzG9YOmEzeinVcWj
+	64e6wFrdIVTrcDVo53u8t67MhNw/yQ2zlRsRJK9tCRn7VrouC8ACMOQrAnzAILWfESA6MoqjsQh
+	b1l7NH9CxxQNpCfrQ9iPUTSb7R+Xwt9Z+VpD1kK8=
+X-Google-Smtp-Source: AGHT+IGMqDlLwT7rGvz8I6XYBpku/gmPdWmh/R1p3fJdAcAGTYdKy3MrEXnddG5CRbYlt4DioQT3/Q==
+X-Received: by 2002:a17:907:828a:b0:ac2:c424:c316 with SMTP id a640c23a62f3a-ac2c424cd75mr606058866b.57.1741771573595;
+        Wed, 12 Mar 2025 02:26:13 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac25777c748sm894535266b.2.2025.03.12.02.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 02:26:13 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v4 0/6] Maxim Integrated MAX77759 PMIC MFD-based drivers
+Date: Wed, 12 Mar 2025 09:25:58 +0000
+Message-Id: <20250312-max77759-mfd-v4-0-b908d606c8cb@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] i2c: omap: fix IRQ storms
-To: Andi Shyti <andi.shyti@kernel.org>, Nishanth Menon <nm@ti.com>
-CC: Andreas Kemnade <andreas@kemnade.info>, <vigneshr@ti.com>,
-        <aaro.koskinen@iki.fi>, <khilman@baylibre.com>, <rogerq@kernel.org>,
-        <tony@atomide.com>, <jmkrzyszt@gmail.com>, <reidt@ti.com>,
-        <wsa@kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@kernel.org>
-References: <20250228140420.379498-1-andreas@kemnade.info>
- <20250311123947.jce4i5heeufzwmji@serotonin>
- <t43j7wmwsqvs5f6utld72enobqwkendgtpzfu3mth3bdgpxhsh@qeok5d2ujdm2>
-Content-Language: en-US
-From: Aniket Limaye <a-limaye@ti.com>
-In-Reply-To: <t43j7wmwsqvs5f6utld72enobqwkendgtpzfu3mth3bdgpxhsh@qeok5d2ujdm2>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACZT0WcC/3XM0Q6CIBiG4VtxHEeDH4HsqPtoHfwIKFtpw8Zsz
+ nsPPTJbh9+3Pe9EBheDG8i5mEh0KQyh7/IoDwWpW+waR4PNmwADyQBK+sBRay0r+vCWIqJGwYE
+ bBSSTZ3Q+jGvuesu7DcOrj++1nvjy/gklThkF471QvrJMyss9dBj7Yx8bspQSbLXaacgalXTGg
+ akZVj9abPVpp0XWrBYKtC1BgvrS8zx/AAKKFmMlAQAA
+X-Change-ID: 20250224-max77759-mfd-aaa7a3121b62
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
 
 Hi,
 
-On 12/03/25 03:55, Andi Shyti wrote:
-> Hi,
-> 
-> On Tue, Mar 11, 2025 at 07:39:47AM -0500, Nishanth Menon wrote:
->> On 15:04-20250228, Andreas Kemnade wrote:
->>> On the GTA04A5 writing a reset command to the gyroscope causes IRQ
->>> storms because NACK IRQs are enabled and therefore triggered but not
->>> acked.
->>>
->>> Sending a reset command to the gyroscope by
->>> i2cset 1 0x69 0x14 0xb6
->>> with an additional debug print in the ISR (not the thread) itself
->>> causes
->>>
->>> [ 363.353515] i2c i2c-1: ioctl, cmd=0x720, arg=0xbe801b00
->>> [ 363.359039] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: 0x0, stop: 1
->>> [ 363.366180] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x1110)
->>> [ 363.371673] omap_i2c 48072000.i2c: IRQ (ISR = 0x0010)
->>> [ 363.376892] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
->>> [ 363.382263] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
->>> [ 363.387664] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
->>> repeating till infinity
->>> [...]
->>> (0x2 = NACK, 0x100 = Bus free, which is not enabled)
->>> Apparently no other IRQ bit gets set, so this stalls.
->>>
->>> Do not ignore enabled interrupts and make sure they are acked.
->>> If the NACK IRQ is not needed, it should simply not enabled, but
->>> according to the above log, caring about it is necessary unless
->>> the Bus free IRQ is enabled and handled. The assumption that is
->>> will always come with a ARDY IRQ, which was the idea behind
->>> ignoring it, proves wrong.
->>> It is true for simple reads from an unused address.
->>>
->>> To still avoid the i2cdetect trouble which is the reason for
->>> commit c770657bd261 ("i2c: omap: Fix standard mode false ACK readings"),
->>> avoid doing much about NACK in omap_i2c_xfer_data() which is used
->>> by both IRQ mode and polling mode, so also the false detection fix
->>> is extended to polling usage and IRQ storms are avoided.
->>>
->>> By changing this, the hardirq handler is not needed anymore to filter
->>> stuff.
->>>
->>> The mentioned gyro reset now just causes a -ETIMEDOUT instead of
->>> hanging the system.
->>>
->>> Fixes: c770657bd261 ("i2c: omap: Fix standard mode false ACK readings").
->>> CC: <stable@kernel.org>
->>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
->>> ---
->>> This needs at least to be tested on systems where false acks were
->>> detected.
->>
->> At least on BeaglePlay, I have not been able to reproduce the original
->> bug which was the trigger for commit c770657bd261
->>
->> I also ran basic boot tests on other K3 platforms and none seem to show
->> regressions at the very least.
->>
->> Tested-by: Nishanth Menon <nm@ti.com>
-> 
-> Thanks for testing it! I asked some OMAP folks to check this
-> patch, but no one took action. With Nishanth's test, I can now
-> sleep soundly. :-)
-> 
-> Merged to i2c/i2c-host-fixes.
-> 
-> Thanks,
-> Andi
-> 
+This series improves support for the Maxim Integrated MAX77759
+companion PMIC for USB Type-C applications using the MFD framework.
 
-I see that the patch got merged so don't know if this is useful at all 
-at this point, but yeah looks good to me. Apologies for the slow 
-response. Nishanth, Thanks for testing it too!
+This series must be applied in-order, due to interdependencies of some
+of the patches:
+* to avoid use of undocumented compatibles by the newly added drivers,
+  the bindings are added first in this series
+* patch 1 ("dt-bindings: gpio: add max77759 binding") also creates a
+  new MAINTAINERS entry, including a wildcard match for the other
+  bindings in this series
+* patch 3 ("dt-bindings: mfd: add max77759 binding") references the
+  bindings added in patch 1 and 2 and can not work if those aren't
+  available
+* patch 4 ("mfd: max77759: add Maxim MAX77759 core mfd driver") adds
+  the core MFD driver, which also exposes an API to its leaf drivers
+  and is used by patches 5 and 6
+* patches 5 and 6 won't compile without patch 4
 
-Reviewed-by: Aniket Limaye <a-limaye@ti.com>
+The MAX77759 PMIC includes Battery Charger, Fuel Gauge, temperature
+sensors, USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
 
-Thanks,
-Aniket
+This PMIC is used on the Google Pixel 6 and 6 Pro (oriole / raven).
+
+This series adds support for the top-level MFD device, the gpio, and
+nvmem cells. Other components are excluded for the following reasons:
+
+    While in the same package, Fuel Gauge and TCPC have separate and
+    independent I2C addresses, register maps, interrupt lines, and
+    aren't part of the top-level package interrupt hierarchy.
+    Furthermore, a driver for the TCPC part exists already (in
+    drivers/usb/typec/tcpm/tcpci_maxim_core.c).
+
+    I'm leaving out temperature sensors and charger in this submission,
+    because the former are not in use on Pixel 6 and I therefore can
+    not test them, and the latter can be added later, once we look at
+    the whole charging topic in more detail.
+
+To make maintainers' work easier, I am planning to send the relevant
+DTS and defconfig changes via a different series, unless everything
+is expected to go via Lee's MFD tree in one series?
+
+Cheers,
+Andre'
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v4:
+- collect tags
+- mfd: add missing build_bug.h include
+- mfd: update an irq chip comment
+- mfd: fix a whitespace in register definitions
+- Link to v3: https://lore.kernel.org/r/20250228-max77759-mfd-v3-0-0c3627d42526@linaro.org
+
+Changes in v3:
+- collect tags
+- mfd: drop gpio-controller and gpio-cells, GPIO is provided by the
+  child (Rob)
+- gpio: drop duplicate init of 'handled' variable in irq handler
+- gpio: use boolean with IRQ_RETVAL() (Linus)
+- gpio: drop 'virq' variable inside irq handler to avoid confusion
+  (Linus)
+- gpio: drop assignment of struct gpio_chip::owner (Linus)
+- Link to v2: https://lore.kernel.org/r/20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org
+
+Changes in v2:
+- reorder bindings patches to avoid validation failures
+- add dependency information to cover letter (Krzysztof)
+- fix max77759_gpio_direction_from_control() in gpio driver
+- gpio: drop 'interrupts' property from binding and sort properties
+  alphabetically (Rob)
+- nvmem: drop example from nvmem binding as the MFD binding has a
+  complete one (Rob)
+- nvmem: rename expected nvmem subdev nodename to 'nvmem-0' (Rob)
+- mfd: add kernel doc
+- mfd: fix an msec / usec typo
+- mfd: error handling of devm_mutex_init (Christophe)
+- whitespace fixes & tidy-ups (Christophe)
+- Link to v1: https://lore.kernel.org/r/20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org
+
+---
+André Draszik (6):
+      dt-bindings: gpio: add max77759 binding
+      dt-bindings: nvmem: add max77759 binding
+      dt-bindings: mfd: add max77759 binding
+      mfd: max77759: add Maxim MAX77759 core mfd driver
+      gpio: max77759: add Maxim MAX77759 gpio driver
+      nvmem: max77759: add Maxim MAX77759 NVMEM driver
+
+ .../bindings/gpio/maxim,max77759-gpio.yaml         |  44 ++
+ .../devicetree/bindings/mfd/maxim,max77759.yaml    |  99 +++
+ .../bindings/nvmem/maxim,max77759-nvmem.yaml       |  32 +
+ MAINTAINERS                                        |  10 +
+ drivers/gpio/Kconfig                               |  13 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-max77759.c                       | 524 +++++++++++++++
+ drivers/mfd/Kconfig                                |  20 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/max77759.c                             | 738 +++++++++++++++++++++
+ drivers/nvmem/Kconfig                              |  12 +
+ drivers/nvmem/Makefile                             |   2 +
+ drivers/nvmem/max77759-nvmem.c                     | 156 +++++
+ include/linux/mfd/max77759.h                       |  98 +++
+ 14 files changed, 1750 insertions(+)
+---
+base-commit: 0226d0ce98a477937ed295fb7df4cc30b46fc304
+change-id: 20250224-max77759-mfd-aaa7a3121b62
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
 
