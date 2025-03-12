@@ -1,161 +1,154 @@
-Return-Path: <linux-kernel+bounces-558006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9919A5E056
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:27:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E04A5E058
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:28:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD551895B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:27:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BE813B35AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302CD23F38A;
-	Wed, 12 Mar 2025 15:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2172505B7;
+	Wed, 12 Mar 2025 15:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LNPHEaG9"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cu6VBmQz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186A11422DD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 15:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7628A15539A;
+	Wed, 12 Mar 2025 15:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741793245; cv=none; b=LOPsdd7app/PFEY4l1kXWcovApIm86rgu177ZdoXn0ziMdB8Q+gw5kkB393oN51MTN4u8p6C+RpUHyn74b+QJXc44sOTT//zE43NwCchIqV3QQrwgadIklKxxItb9vC70fkWjXi0WEMKDaPeVnRRQqfD42SjklDelN1d5dZKrSE=
+	t=1741793281; cv=none; b=Rro7s6uU5Ze92GDZ78F1jmPVS3ARheEAoT6DaAdayOGK/atWKkb4/RO3JYfEZsge1BpaVKxj2TOnBCc6hAr+v6oGjOQULFPKQteImKns58YaLl0GAdi1cCpvIA7fXP7dkIT1sepgri4BcwI9iPiAgpfQBNVEsXsWSZa1L/4Gsdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741793245; c=relaxed/simple;
-	bh=wiTciTG7c0gbv9O4jp5k8kB2u1ZVph3PvRvBPEV6tas=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RrU4bbfLckuR8YMYJD6SvKOxByIa/My3YPBhkPjFJQBv2buZBlBm/GD8A2cSCdicfqmXjt7BZ6KoZW/TLjaxEdrbIv08fINXsbouEVcZjNNGw6TQ+XIY9OkJka9Db9I7tAAeemHJMJDWkCjfWvUWctkciOBnk1rXMDnwGY+Z/Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LNPHEaG9; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CCdpoA002855;
-	Wed, 12 Mar 2025 15:27:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=SSN6kl
-	QU3Lfa89SnGqZVCjQNXAaPadcQkryGW51WD28=; b=LNPHEaG9CCLUyol0cYsSf1
-	Vjd7HHc1x/ZgFemjUnLqhwEw69ieadVX1w7tSxO84w1KLnjMGc1Wb7Po1cAtZ9mG
-	+33hdKrPrBbQp+tiZjIfzbgYssyCzkILHE8Ye2KCTpJqoekGYF6ExEIOc7A3ueX2
-	GZ1AH5OOWvzMfFwPicLqbAH1J1KPUju/wvwL56ogm/CcTQsOAk7feTAoak71/Iqa
-	QgBbRy3dF9c0QfGbh4KDz8ZZ/LaOFwZ99JdDkZ8/+uRHz5Y5FRlpGoRMv4k/cmmX
-	OYQTT7hmogguE/3oQBh0CA6FwpZN7ipeV7Ta2ZiG5OXQ3WJL/R+17DWcXcW2Wj5A
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45avbpmps7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 15:27:06 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52CDfCRY026099;
-	Wed, 12 Mar 2025 15:27:05 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atspct10-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 15:27:05 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52CFR4QO57868552
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Mar 2025 15:27:04 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3244458052;
-	Wed, 12 Mar 2025 15:27:04 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 738675805A;
-	Wed, 12 Mar 2025 15:27:00 +0000 (GMT)
-Received: from [9.61.69.177] (unknown [9.61.69.177])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Mar 2025 15:27:00 +0000 (GMT)
-Message-ID: <d7d284ac-a8d1-4f9d-901c-424dccc5a1b1@linux.ibm.com>
-Date: Wed, 12 Mar 2025 20:56:58 +0530
+	s=arc-20240116; t=1741793281; c=relaxed/simple;
+	bh=knZ+0Ki91XfMnnNBjvRtQYxda8bcVvsvaE8A+MwLFJY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=FzbGAAwJssFJ7w8MidavEdvnslrSgTt21OPoO2UKo3MB9cD2C4IQfKtLScq5wqYzZKw5qcCGTC8WFP3a/vIeyVzd9h2NiFIetNzlKGiSD57C1cZPQ7KmRT9gtSqSJa+7uyrSTS0j79HCG5/RtwaErQpGGDSibTwB/VjSYq4M5cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cu6VBmQz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1AD8C4CEDD;
+	Wed, 12 Mar 2025 15:28:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741793280;
+	bh=knZ+0Ki91XfMnnNBjvRtQYxda8bcVvsvaE8A+MwLFJY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=cu6VBmQz26ajpPamenktK8g8GX/gSYoIYgTmN5l+RfYdCJzKwBt7BzNIJbL84ItlK
+	 Jvl+nOahTBFgn9Ui++4b5xOD4aRvGcFb7GW7QP734hYNxsFkvRyBF0wlZs2Kb33SKC
+	 UklngiqgjbOxKFocLsWxCeQ/wrU8F67OzDIQ+X6Szr6EXP+9EB+dVIyPBFbcGdYrBj
+	 X6udwysXh1kU/fI1E0R05tiF6xDiWGbv5AMAE1EiGtklHkYzZHfwJ1UL9G3tnW7yrZ
+	 8ZdjlrgSMmdgKqGeChgl5Zxv8Uxisp7LGJX4oZ8hirmU4+Vm8TyeMQW6y9QDNZQURI
+	 wAoG3IGVVQuvw==
+Date: Wed, 12 Mar 2025 08:27:57 -0700
+From: Kees Cook <kees@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, jeffxu@chromium.org
+CC: akpm@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com,
+ broonie@kernel.org, skhan@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org, jorgelo@chromium.org, keescook@chromium.org,
+ pedro.falcato@gmail.com, rdunlap@infradead.org, jannh@google.com
+Subject: Re: [RFC PATCH v1 2/2] mseal: allow noop mprotect
+User-Agent: K-9 Mail for Android
+In-Reply-To: <c867bff9-2293-4890-af46-8a797cf512c2@lucifer.local>
+References: <20250312002117.2556240-1-jeffxu@google.com> <20250312002117.2556240-3-jeffxu@google.com> <c867bff9-2293-4890-af46-8a797cf512c2@lucifer.local>
+Message-ID: <64B6294F-B059-4744-8548-89D7B519BE72@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme: remove multipath module parameter
-To: John Meneghini <jmeneghi@redhat.com>, Keith Busch <kbusch@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-        Sagi Grimberg <sagi@grimberg.me>, bmarzins@redhat.com,
-        Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
-        axboe@kernel.dk, Randy Jennings <randyj@purestorage.com>
-References: <Z8hrJ5JVqi7TgFCn@kbusch-mbp> <20250305235119.GB896@lst.de>
- <Z8jk-D3EjEdyBIU5@kbusch-mbp> <20250306000348.GA1233@lst.de>
- <1ffebf60-5672-4cd0-bb5a-934376c16694@suse.de>
- <20250306141837.GA21353@lst.de> <Z8m4vzE36UHWjwep@kbusch-mbp>
- <20250306151654.GA22810@lst.de> <Z8pB9jQALxMN6WaA@kbusch-mbp>
- <b2c9df64-0afc-46cd-9e8d-6a3f41a4f1c7@linux.ibm.com>
- <Z8sUB2bbbMsurZmu@kbusch-mbp>
- <69cdaf9d-2fb4-4ee0-9c32-cc946405a23a@linux.ibm.com>
- <01d799d1-fc93-4285-aa8f-89ac2d01478b@redhat.com>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <01d799d1-fc93-4285-aa8f-89ac2d01478b@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: r6vJbcw2bvB4WlR3SZtMe9f1qxIekOde
-X-Proofpoint-GUID: r6vJbcw2bvB4WlR3SZtMe9f1qxIekOde
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_05,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
- mlxlogscore=999 malwarescore=0 impostorscore=0 bulkscore=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 mlxscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503120105
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
 
-On 3/12/25 9:17 AM, John Meneghini wrote:
-> On 3/9/25 1:23 PM, Nilay Shroff wrote:
->>> It honestly has potential to solve some real problems, like
->>> re-enumeration triggered by a link reset on an in-use drive. You'd
->>> currently need to close the old handle and open a new on, even though
->>> it's the same device. It may not even be possible to do that if that
->>> device contains your root partition, and then you can only power cycle.
->>>
->>> The downside is we wouldn't get the short cut to blk_mq_submit_bio. We'd
->>> instead stack that atop an indirect call, so it's not free.
->>>
->> Yes agreed however it seems advantages of using an indirect call outweighs
->> using the short cut to blk_mq_submit_bio. Moreover it seems the cost of
->> indirect call is trivial because we already cache the nexthop.
+On March 12, 2025 6:49:39 AM PDT, Lorenzo Stoakes <lorenzo=2Estoakes@oracl=
+e=2Ecom> wrote:
+>On Wed, Mar 12, 2025 at 12:21:17AM +0000, jeffxu@chromium=2Eorg wrote:
+>> From: Jeff Xu <jeffxu@chromium=2Eorg>
 >>
->> I integrated your proposed patch (with few trivial additional changes on top)
->> and I see that it's coming out nicely. I ran few tests and confirmed it's
->> working well. However, in the proposed patch we*always* delay (~10 sec) the
-> Have you tested this with a NVMe-oF controller... yet?
-Not on real target. But tested it against blktests which has few NVMeOF 
-test cases though it uses loopback interface.
-> 
-> Where did the number 10 seconds come from?
-That was probably used as hard coded value for POC. However, we shall be able to
-configure that.
-> 
->> removal of multipath head node. That means that even while removing the
->> nvme module (rmmod nvme) or if user delete/detache the namespace, we delay
->> the removal of head node but that may not be what we want. So I'd suggest
->> instead, delayed removal of multipath head not shall be configurable using a
->> sysfs attribute. With this attribute then we shall let user opt for pinning
->> the head node (with optional delayed time as well?). And it's only when user
-> 
-> So be aware the TP-4129 is adding a CQT parameter which does almost exactly this.
-> 
->> shows the intent to pin the node we should delay its removal. This is what
->> exactly (pinning of head node) Christoph's proposed patch implements. So I'd
->> suggest a bit of amalgamation of yours as well as Christoph patch to implement
->> this change.
-> 
-> Please cc: me on your patches Nilay, I'd like to test them with my NVMe-oF testbed.
-> 
-Sure, I will keep you in Cc when I send the patch. 
+>> Initially, when mseal was introduced in 6=2E10, semantically, when a VM=
+A
+>> within the specified address range is sealed, the mprotect will be reje=
+cted,
+>> leaving all of VMA unmodified=2E However, adding an extra loop to check=
+ the mseal
+>> flag for every VMA slows things down a bit, therefore in 6=2E12, this i=
+ssue was
+>> solved by removing can_modify_mm and checking each VMA=E2=80=99s mseal =
+flag directly
+>> without an extra loop [1]=2E This is a semantic change, i=2Ee=2E partia=
+l update is
+>> allowed, VMAs can be updated until a sealed VMA is found=2E
+>>
+>> The new semantic also means, we could allow mprotect on a sealed VMA if=
+ the new
+>> attribute of VMA remains the same as the old one=2E Relaxing this avoid=
+s unnecessary
+>> impacts for applications that want to seal a particular mapping=2E Doin=
+g this also
+>> has no security impact=2E
+>>
+>> [1] https://lore=2Ekernel=2Eorg/all/20240817-mseal-depessimize-v3-0-d8d=
+2e037df30@gmail=2Ecom/
+>>
+>> Fixes: 4a2dd02b0916 ("mm/mprotect: replace can_modify_mm with can_modif=
+y_vma")
+>> Signed-off-by: Jeff Xu <jeffxu@chromium=2Eorg>
+>> ---
+>>  mm/mprotect=2Ec | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/mm/mprotect=2Ec b/mm/mprotect=2Ec
+>> index 516b1d847e2c=2E=2Ea24d23967aa5 100644
+>> --- a/mm/mprotect=2Ec
+>> +++ b/mm/mprotect=2Ec
+>> @@ -613,14 +613,14 @@ mprotect_fixup(struct vma_iterator *vmi, struct m=
+mu_gather *tlb,
+>>  	unsigned long charged =3D 0;
+>>  	int error;
+>>
+>> -	if (!can_modify_vma(vma))
+>> -		return -EPERM;
+>> -
+>>  	if (newflags =3D=3D oldflags) {
+>>  		*pprev =3D vma;
+>>  		return 0;
+>>  	}
+>>
+>> +	if (!can_modify_vma(vma))
+>> +		return -EPERM;
+>> +
+>>  	/*
+>>  	 * Do PROT_NONE PFN permission checks here when we can still
+>>  	 * bail out without undoing a lot of state=2E This is a rather
+>> --
+>> 2=2E49=2E0=2Erc0=2E332=2Eg42c0ae87b1-goog
+>>
+>
+>Hm I'm not so sure about this, to me a seal means 'don't touch', even if
+>the touch would be a no-op=2E It's simpler to be totally consistent on th=
+is
+>and makes the code easier everywhere=2E
+>
+>Because if we start saying 'apply mseal rules, except if we can determine
+>this to be a no-op' then that implies we might have some inconsistency in
+>other operations that do not do that, and sometimes a 'no-op' might be
+>ill-defined etc=2E
 
-Thanks,
---Nilay
+Does mseal mean "you cannot call mprotect on this VMA" or does it mean "yo=
+u cannot change this VMA"=2E I've always considered it the latter since the=
+ entry point to making VMA changes doesn't matter (mmap, mprotect, etc) it'=
+s the VMA that can't change=2E Even the internal function name is "can_modi=
+fy", and if the flags aren't changing then it's not a modification=2E
 
+I think it's more ergonomic to check for _changes_=2E
+
+-Kees
+
+--=20
+Kees Cook
 
