@@ -1,135 +1,121 @@
-Return-Path: <linux-kernel+bounces-558385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775EEA5E526
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:16:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9176A5E529
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 21:17:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9663B92DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:16:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D0CE3B9025
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6831E98E0;
-	Wed, 12 Mar 2025 20:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5967E1EE02F;
+	Wed, 12 Mar 2025 20:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VUpyb42c"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fokXjfwP"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1078C13B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 20:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2D0FBF6;
+	Wed, 12 Mar 2025 20:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741810611; cv=none; b=gyEdkcCQbhHj/MYW3rBX/yAuioIAiRWJIBy0aLM08hZzwqv3TjjPYEulsiQHfpzhfbdxXzE1KkUhKexc/T5ZQIAjZATTLWtXNfIeKY6uGTZHOmHkUjiDHwBsjChxWaVoaLma0qnZ+wuzHSKIdzjDXoG+Vt6jjyseglKVO8XLvzg=
+	t=1741810614; cv=none; b=kDbzfUe48FoLC5mGWeuP2Ut2OsxhRoBh6WPA8fkOoKppHP6jO29J09exENkfKXXYol54kmKFnw60HqU+NcbTtnIIoP9ji3W7bQPoJ5MD9UoCZ4reVsjKeh5RneZmLaRbYJbEZVgUEIp/N/z7GwkkE2VYd5sxH072hye/HVF3ZqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741810611; c=relaxed/simple;
-	bh=+xKFX1pp3mEipSSCK8l7b4EKmFag5w8aJf2eklRJ4QI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=beBZ9FxrpOYqTYhP3aIQ/lqJhzrXnqqYvOoNvVR3ma7r6hNMJCCqMiaF3TBd8RiL8opzCLEH3Uy9rlHqOHUeSFl62SALgfvrO84zK8kAEygFUoYeeb6t4dhVdApixgDiPLrO+9nhpAUqbSt+7JgCpuv5mA96/QZPhzYYsfp2aDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VUpyb42c; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6fee50bfea5so2531407b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:16:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741810609; x=1742415409; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NlAiZHSczHL4dPmU0Svxpoh1IeIWVxip/9BPH0/DEs0=;
-        b=VUpyb42cv3jxSVh+FkHK+b+yOFpB/jqpxfFd14SrBoYhm5f+xVRBH4/Xpe8d1280Eq
-         oZxXvveLVME24iB4B5Nj4CPM/HZtACPaLh513/PXENvN2f7jSyzNUO7PdLtOMjArHaPT
-         k/h3xUOuIQyhYUgavBJRZfCBskeBxdTCWDFwBvqqxcC4gQ2zDu/qlaYICzS8e+Jk8doc
-         1x8b6gtJUym1+3RNra3noEgZ+D1gF2YUkLRo5CCyEf+RU8UVigfnukJzwaR2j4ris5kE
-         9ulqZThheCnHuatp9ll/+LLUcUfoao8uZTK43itHSONNE/ULhikD6kkaJARA8kX+jPKl
-         4mkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741810609; x=1742415409;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NlAiZHSczHL4dPmU0Svxpoh1IeIWVxip/9BPH0/DEs0=;
-        b=WGu1EfdLbFWH0DDuNSbw0/WcKs+2nHDV++w0xmrcW9XjsQLpeOA1nhB8fZikHQqKvE
-         whyyEfvH+gAujTWH4mK0D0sTsk1Rx4CN5Lvh1jo3Lu15hChNiXstGY6/4z6WJ+4WCGdD
-         SF9ENMYzv4mDXAhmrerIhxvYoTFW/ug5nWRF3ye/56LrinopUrPc3mhwSdfk6PnVivZL
-         7zdFRHjKsTPwaX0k/VKPluXJK2RAfIVeY1riS3vySupsTelOz3NJc44I2tcI/0XvWwqF
-         rPffJLdi/eB64rvwgbjqdIc+Q3k7Q6IqTTZTHytBbvPdZn2FthjFFbn9CoV43dQ43d1e
-         ++eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUw46B6wJLnAXBgDJ+nHZhFt9IuaJh4WONhzR1o8VLR0YFvMz6cCw5+5/94wdF2Jppfd0SsXcpZpCcBC9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxq5a3g1l0DxkxNAy20AzGz52edeeydG5Zi6hX+HnMAqf41XoR
-	MHHaxSEX8c6+/BhjRx9kYG9BuPnFz+W4F5ZP5GNOnAF9jR8ye1LGLzCEDIRDZeuXU1ialLk/HJT
-	WY+JZwKJkPJixV9ginOHwssS1eh/EQs3V8q8b
-X-Gm-Gg: ASbGncvghJx+ZNcWKnJY/DYkQjil3Sh5QzxpsxihYcovbQFQGA/9es+w/kz0iLnAxbA
-	4bOHWFj3N2WlXeJHUxS4BLTLlZSsV/IzqA2tjk6uOkaIPvvBKR0Iy4EWoSabYGdV9epyyDLhyev
-	WQ26ZSDWxbbM243o686cdPkxI1fA==
-X-Google-Smtp-Source: AGHT+IGsMfpU4NDQUU7HmINQA7wNmAYjX+dxqWkgxOHEnX0Fo1BZ419T/c+57j2erW8jJdPXACroUyNNCW7XYAAoqbM=
-X-Received: by 2002:a05:690c:6088:b0:6f5:2793:2897 with SMTP id
- 00721157ae682-6febf37b72bmr342709407b3.30.1741810608700; Wed, 12 Mar 2025
- 13:16:48 -0700 (PDT)
+	s=arc-20240116; t=1741810614; c=relaxed/simple;
+	bh=Akp4FrSGg1WIV98VBqwZ/4Q7by/C7cNcynpUz9Rjxbo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=irDS0qfgwSt6lmav9K7izraUW6qPrF2tBLrKemDhUEEvLqvcCUYXX6pDmzi7k23APicRTUnBe3Sj4c+1mttxgSZXm4+Xy7lFENDZ+snQMyUP3Vckkv6KeZdLmnbTXWBydKLboM4P3vcFjPDGty4o2v2j1hMnSFd2OXXRDHp5Suc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fokXjfwP; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741810606; x=1742415406; i=markus.elfring@web.de;
+	bh=Akp4FrSGg1WIV98VBqwZ/4Q7by/C7cNcynpUz9Rjxbo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=fokXjfwPgqkxy/HL9t5yE0vj2GZ7rq1+1fHRK/fDjBn03e6W4qjCpgZH9cJ9m9K+
+	 0Ix9zJfrpKlEiV55yCzK8JP+mL/k9/OcdOzZ5lSopM4c0snj2FI2I0nz+g2nD6MgN
+	 cJB/kSTp7Bg7VVabcqrpNktLRZ9X2zNkb+gRkSVmrazrZ21G8b4hjVbZfYFNtmQfd
+	 BLSoJzfu+YRcgtc6ww31R+ExCThF99eZKWlxNxFZanyQCcxz2zgS5Kq0lKH4PFG/k
+	 IJW57k5NjeUzbVfVNbHmXeAsKha2goHY7fyz1iP/17WXl35CahcIq55pH0zIkpNbA
+	 cpZ0IA+tW8/GJXOFQw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1My6lX-1t0dlZ2Hi3-00wida; Wed, 12
+ Mar 2025 21:16:46 +0100
+Message-ID: <7ea83bd5-b19b-4bd8-ac2a-8fb2ad616f8b@web.de>
+Date: Wed, 12 Mar 2025 21:16:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312200216.104986-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20250312200216.104986-1-andriy.shevchenko@linux.intel.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 12 Mar 2025 16:16:36 -0400
-X-Gm-Features: AQ5f1JqM7dTfNxqvjM7Bbx6USu9RTu4JsG1NDCgTEFRgJ8zuzc8E0i2b76FB-ys
-Message-ID: <CAHC9VhRHZL+QTsfK2Sg5+rw7RSxUoaF=YTwGW9Oia5xnvqAL1w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] audit: Mark audit_log_vformat() with __printf() attribute
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: wifi: iwlwifi: Fix uninitialized variable with __free()
+To: Miriam Rachel Korenblit <miriam.rachel.korenblit@intel.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>, linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
+ Avraham Stern <avraham.stern@intel.com>,
+ Daniel Gabay <daniel.gabay@intel.com>,
+ Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Johannes Berg <johannes.berg@intel.com>,
+ Yedidya Benshimol <yedidya.ben.shimol@intel.com>
+References: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
+ <1b32cd5b-aa46-4a23-bd21-908196c4bab3@web.de>
+ <MW5PR11MB5810329D2D44A188239D3093A3D02@MW5PR11MB5810.namprd11.prod.outlook.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <MW5PR11MB5810329D2D44A188239D3093A3D02@MW5PR11MB5810.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Zg3T6KfdUN0TrgR8KKHJquhbB2IqpLXk7grLPw/Lllh3EVJCrX+
+ Lo1FfqOS9qnhAwtIgKTgShPyAptLPzxPRZf58ZIorxYbzJ6fci9EvlRAw8bYWPEZ+pdSaVD
+ iPy2k1tWIDJ/cRjHzrTJb9ITbltpOnh16rbaIuJhlW628hOq9T2c2OCevYyNwJJC3mZjmzS
+ XF6+NvGfF83+RXCq8tg2Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:NjZ6SfH1+LQ=;/K1/xCQTLSn0sdXG0wculEthvjB
+ kgK+UUvwFV/ALemTZMQlDhLzpfXr7Bg05Bi3Wr//h621Ptt1W/2VJYY2KnOW5Z/kV554I+9p5
+ Uykg9AiYCl+8+ilSP2FZdD6nWh9eeb2AD67Jghdoe+Qe3RZbVbVhwP2B+RlRxT/dwmAR/vB8T
+ gCpwwx+8aIZLAf0zBqHXfQBpuqcvUASbj9nNItnUzwgEWrtkmP9mIVLiU3lCwwSbrC5vT1MfS
+ 2Q+pUxPJdiNGsCxUOn6goqTxN+MgYZ0cSEPsHcMYroPsLOQ0dnE1pBqW2aAmddH44R+YZqsDe
+ Z5SSqZyZxwhKI2WMG0iUmtS54l2EMDO6GWtj4l5RZ4opBT4+8CgIlzT9Hwqh482WQYp0/EY23
+ TtnKsiKBd5cewRvu1xr4RXVuqGSqnNRUfZ98yqKSpa8AJnmd4A5pel41z4lyg7Te6jk5zNsRf
+ JHhOtqOqe8FBdgWtuyT3Pjb+8dETWuZEF0OEOpIZ7y1e+kykdQIYTmUGopod9m9qu/v5yWMLz
+ kKFqqy5fwd1O3dpPx6UzHLK567N+wtXcv+taqvRP12gzbiLJf2hiuNjy8TpSDHFAT2bfZ8T99
+ OjLklJHYi2cU8P8TkZDb507/ByuCFU6tsFLCyaHt0WUX5WjR4mbqVPta1UDmxy+I0Ea0nh+y9
+ CKErf6HPqdpHdtwDAudQxUIbg8bzPpVFW9vbsOpTFimg+cS6ktCFFmMjoQTOLEeVEFHOc3+P5
+ K3UDhiteevt2NS/9rxx9IOJyxxleovzW3iaUO78IR0Zt3npq0UpEmveuLj/DnQfRAxLqNrfla
+ KN6uxhOF/l61SJZqqfvroY/v8u9ubd+jHGRfMg6Q7ySVBz/DOxGH8ZlxDSaCf0tXJtGuO/ktd
+ WMn8S5wP91wWWEy7Yrl+MrsZKTKUHvJGHG820u7020gKauY8Gf0dFP53nkXaIny6KWBDt8tsb
+ XJsCrC90Q4uCzqiVE1g7tY+bPPRYMbxsMBGLIBxhUXZP5B6VQt/nPAo7PDpa8s4GGv1PD5Sqp
+ /ViZlTYT7BC42C261b+yxWs4h6roSruols+tLLsBWuGf8r/QrAZnTufIFwQTn+M/0vR0chH/O
+ ahIafdVvBcOmYNPl6CCeD5rp8oRYf4j58nVTJUVkpI9iKuHTeQroxjNS9e8pXktTL6kCP1MVo
+ vOotYQpYxCzs/JRaYpHJHUwvV9yuAbXFu3Ub4mphoeqLUzrq+NC0loC2hxCv4jlbU/4V55xNr
+ DUYbG7qbruHIgwQfnPBXyHWXZO41SQHshrLlkYZIzmhjBViADgZASY/L1fYp+pa+0eRGkLq/D
+ dQhus3JSS4OiuHkLMXlAixpUYRhkIvL2WiFmmFrl1OuJZrEAUr0yyo3rY9cZ/B6KU8UAJ+brB
+ AzHcB52yIaHW3wu3NTqRs9O8eqAo2QWYE2j/v1V7+oEzOLOeTktQMszjcanUqEJNY7Ej/5TAO
+ kbc+hNELVpSp3+nB8G8PaJ85R+I+mTCRRokprOFrJ+j1TkIB2
 
-On Wed, Mar 12, 2025 at 4:02=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+>> Can it be recommended to reduce the scope for the affected local variab=
+le instead?
+>> https://elixir.bootlin.com/linux/v6.14-rc6/source/include/linux/cleanup=
+.h#L129-L133
 >
-> audit_log_vformat() is using printf() type of format, and compiler
-> is not happy about this:
->
-> kernel/audit.c:1978:9: error: function =E2=80=98audit_log_vformat=E2=80=
-=99 might be a candidate for =E2=80=98gnu_printf=E2=80=99 format attribute =
-[-Werror=3Dsuggest-attribute=3Dformat]
-> kernel/audit.c:1987:17: error: function =E2=80=98audit_log_vformat=E2=80=
-=99 might be a candidate for =E2=80=98gnu_printf=E2=80=99 format attribute =
-[-Werror=3Dsuggest-attribute=3Dformat]
->
-> Fix the compilation errors by adding __printf() attribute.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  kernel/audit.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> As said in reply to Jeff's review -
+> This is recommended if you have multiple __kfree variables (and the orde=
+r of freeing matters)
+> Or if there is a guard() later in the function.
+How does such a view fit to the documentation of this programming interfac=
+e?
 
-It would be good to list the compiler version/flags that triggers this
-error in the patch description as I've compiled the audit code quite a
-bit and haven't seen these errors :)
-
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 5f5bf85bcc90..f365e1bbeac6 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -1956,8 +1956,8 @@ static inline int audit_expand(struct audit_buffer =
-*ab, int extra)
->   * will be called a second time.  Currently, we assume that a printk
->   * can't format message larger than 1024 bytes, so we don't either.
->   */
-> -static void audit_log_vformat(struct audit_buffer *ab, const char *fmt,
-> -                             va_list args)
-> +static __printf(2, 0)
-> +void audit_log_vformat(struct audit_buffer *ab, const char *fmt, va_list=
- args)
->  {
->         int len, avail;
->         struct sk_buff *skb;
-> --
-> 2.47.2
-
---=20
-paul-moore.com
+Regards,
+Markus
 
