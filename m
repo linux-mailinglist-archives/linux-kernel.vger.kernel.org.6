@@ -1,108 +1,204 @@
-Return-Path: <linux-kernel+bounces-558364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D97A5E4D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:54:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B603A5E4D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:55:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1318189F19A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:54:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BF853BE99E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D83A1F0E4A;
-	Wed, 12 Mar 2025 19:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BB21F0E4A;
+	Wed, 12 Mar 2025 19:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lw2NHxdR"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="ND7GjzrA"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1F41DDC3F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 19:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FAD1DE4CE
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 19:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741809251; cv=none; b=r+2oTHyFrvQ2Uw6632+DmE5JgOWzKr1qMGmOTZ/ewB7/U6Q+rK/xehBuk2SV+5Y//GYLmAv6ku5GlMwDTGIvGtQo95wIRZnf1YYMrPBrkrm4l2wfDrKf1oyXrmKz8xbDFXUBrVRdmou9Te2kPysN6CsceHmVxQf80/hrYAcdPBw=
+	t=1741809314; cv=none; b=E9Tf4j3IJoYgN/fm1PBaTsp/3ZQGZDnJylZy0z1FAmABFsVtlLwXQMpEMUp8U5GPh9ciLhbNzO7CLTLQeNKluoXmFH8ZTUsfayGKOb3v85gKTXWaoudbzBv/ZJmaCd7P8UzxDvva7bB+QVY61lPi7XOcCfO/tEwly+M3qDEmjqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741809251; c=relaxed/simple;
-	bh=5vZP7CpJcceQEyeDzE28W+oXvxlBBvt4aIcN9qWy604=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UF2mRp2YFaBix1BS2KiXbjJx7xP91BLexq7gDJeD9Qwv8Ben4DR/nAcT+fV6ZYxZI4+qzGvZZuM/W18zuPxo3n1nG0uYyGLaZltICR09X+yAQDLR4+LVacvBVf1JVjs7963bC32tF5HUjBuSVleZVkEGJz9NmsisOv388cG4nig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lw2NHxdR; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5497e7bf2e0so248219e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:54:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741809244; x=1742414044; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RiZMorRI2puhN1dptiZYy2TXMfV6sCyUspmPm9Ypzjo=;
-        b=Lw2NHxdRaFEZu8d9CcDibq2uMY/C2+JHisDzIecfEfVEzVB+5ppAnfq62bzu86smtY
-         lxQUZbrVRm2QzHhylkWXg+zfCzBu5gBmuv9jeG1aIBo/1BSJUuCIbXtYaYui+VxNSo5X
-         4r9ikey9vqZWnAlVhOIPkL/nhBOvax0nFWBJ6gS92hr7pps/TyPOL5Gz+6ZqT5WXoQjk
-         42AA0DG+4kK+YKlcvhOpQbxEKxhw+E0cdXIqvqv0P9R/q11G53KFHfBfuwSuVtxPEkBi
-         26FBwz4ajDyLCgwy3JvtNgdzUGAdYYGCwC8MkjYsje6UtqNYQHYPVEHbSbsO+otvDAJN
-         IhXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741809244; x=1742414044;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RiZMorRI2puhN1dptiZYy2TXMfV6sCyUspmPm9Ypzjo=;
-        b=e2K9/2xnKO/rYh44MiP5/KK0SWtkmWDZiBE458yozY7StyhkcUWCUgYtFtDAgLZnBK
-         wnoLccTWXloriXgGHgHIRECaQvqRk0K8lWt7SnSfoXaIYeY+TTVCrFZ0dUVx7kQ+aHIm
-         b1EesCd6BPZ6bBk/veT8tfqGwtpPsIJoKkmcljPTliJBIOoMG+g0hE2PrAbcPiM9S4TB
-         3MitBKOZaHV+Za71/YndznBptWE9IPFRNTneuJj5x1fnAe7mlZzanO+o5SfMyqOqmPCg
-         pQSo4R1kz6yTug8fKcG9ZQivYPKRh+I726UT2zXVue2ITeLcughXowvx8SB3T8zAxyuT
-         I3Zg==
-X-Gm-Message-State: AOJu0YziJYZJtehYsp5kgXqZO35VDGRWGLeJ09DLXQI5KDnVqPd/5W7w
-	ay0AVFnKPBhI02mjCE3w5AUcFF8RXKEqMQdVREPt0TpEdKu73Qfn
-X-Gm-Gg: ASbGncuEBRTdhU3p0NSIwcFsya6O7w5lRTnyDyy8CbWeqUVz++4G9/cM5SbaeN6x3Vx
-	jrrOMvYLxyQ0nWjdJoJ+qqRnl7qBA+5biYI+LdtDKPNoPx9wysr53k+SmnQFGmOVnjgZjKW9cFX
-	KDM7bP9wd4aOm8H/LC8HHtWjE58KfLz9RBIV/UrZOeqgmZJpCbrKkjQgbmadkGt28uLw/Fix3vP
-	iywnnLs0Ij0g/a5xJIRJFHqz9zTLdxSM9wKK7QknyuIXzNeDfV8cl76EzfBlo/8o+yp2dA7JC2B
-	CyV81xPE6z7SHq8hI0vAwxJD1m9uFhixate/zirsk83ZVxY=
-X-Google-Smtp-Source: AGHT+IGzDL/vpqjy3KDVM4+o1qR0C1796dIKI2z6DirpvC0rP7wpmsbqrsmz3Q9ycwNc/t3Wz4O6qA==
-X-Received: by 2002:a05:6512:3a88:b0:549:5769:6ae3 with SMTP id 2adb3069b0e04-549abaad1e4mr3397039e87.6.1741809243976;
-        Wed, 12 Mar 2025 12:54:03 -0700 (PDT)
-Received: from grain.localdomain ([5.18.255.97])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1b6483sm2235711e87.135.2025.03.12.12.54.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 12:54:03 -0700 (PDT)
-Received: by grain.localdomain (Postfix, from userid 1000)
-	id 381BE5A0044; Wed, 12 Mar 2025 22:54:03 +0300 (MSK)
-Date: Wed, 12 Mar 2025 22:54:03 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Jean Delvare <jdelvare@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] firmware: dmi: Respect buffer size in get_modalias
-Message-ID: <Z9HmWxbTulCfBJfL@grain>
-References: <Z7eWSCCqp_HP3iSh@grain>
+	s=arc-20240116; t=1741809314; c=relaxed/simple;
+	bh=CplhzlJ4smylxHe7GvjlK3HB9K0ptwoBb3gJK2jRDiY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=g8ruCMjbf7KlVgWvoUQR/OgjdlLzLDXmc6JvNa6qM9Xrnc10oXw38pqF6ls0Vf966FaiQzsJU/TRCGagHDm3CTU7Mo+ZTaTYUuup20i5dF6YkAut4a6cG+Setou0g8rYKZUlBH8VNKtKPL5qcvqj9c5MRHVV5rxUMMhEmt/dy+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=ND7GjzrA; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52CJsVp02657411
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 12 Mar 2025 12:54:31 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52CJsVp02657411
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741809272;
+	bh=doQCaHhiMQgxyHB06XJnVyXGfPJ4R8+yj4l9i89I6Lg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=ND7GjzrARImK75gOCS1BYdgH7YfLk9S8LAtRJvc/z0F1ooXAYkjFqdR+D61Jg4bwm
+	 Q015uCD2hatqoXf2PQXa4vMIUqC+We1q9rDUFe3Pm6rwp0Eo/lIIuXTkG5F1DQUwN9
+	 gIdwKgvQtBv5vi7Muasa3wxaLkhMkBV7xMpz7ws7ZS+rEmQYZdT45WS4SVw26Xzvv0
+	 MCzjfsYj+1zUeAontoRpQDFY1tw4VnOL+2gHQEqmAb1xHKe/cw1XjDGM/D8Nu3Z857
+	 BqMtdQlFQzNA4xRSbST8dk1ZQJktRRjig5zUkv1CsXC1wWCEaH8/GQsqhmhf11pqU2
+	 i+8S/efzWwvPg==
+Date: Wed, 12 Mar 2025 12:54:31 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: "Ahmed S. Darwish" <darwi@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>
+CC: Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+        x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_19/20=5D_tools/x86/kcpuid=3A?=
+ =?US-ASCII?Q?_Update_bitfields_to_x86-cpuid-db_v2=2E3?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250312143738.458507-20-darwi@linutronix.de>
+References: <20250312143738.458507-1-darwi@linutronix.de> <20250312143738.458507-20-darwi@linutronix.de>
+Message-ID: <4BCBA481-AC3A-4A65-B791-235E580286CC@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7eWSCCqp_HP3iSh@grain>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2025 at 11:53:28PM +0300, Cyrill Gorcunov wrote:
-> When we collect data from DMI data the result is accumulated either
-> in a page buffer from sysfs entry or from uevent environment buffer.
-> Both are big enough (4K and 2K) and it is hard to imagine that we
-> overflow 4K page with the data, still the situation is different for
-> uevent buffer where buffer may be already filled with data and we
-> possibly may overflow it.
-> 
-> Thus lets respect buffer size given by a caller and never write
-> data unconditionally.
-> 
-> CC: Jean Delvare <jdelvare@suse.com>
-> Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
+On March 12, 2025 7:37:36 AM PDT, "Ahmed S=2E Darwish" <darwi@linutronix=2E=
+de> wrote:
+>Update kcpuid's CSV file to version 2=2E3, as generated by x86-cpuid-db=
+=2E
+>
+>Summary of the v2=2E3 changes:
+>
+>* Per H=2E Peter Anvin's feedback, leaf 0x3 is not unique to Transmeta as
+>  the CSV file earlier claimed=2E  Since leaf 0x3's format differs betwee=
+n
+>  Intel and Transmeta, and the project does not yet support having the
+>  same CPUID bitfield with varying interpretations across vendors, leaf
+>  0x3 is removed for now=2E  Given that Intel discontinued support for PS=
+N
+>  from Pentium 4 onward, and Linux force disables it on early boot for
+>  privacy concerns, this should have minimal impact=2E
+>
+>* Leaf 0x80000021: Make bitfield IDs and descriptions coherent with each
+>  other=2E  Remove "_support" from bitfield IDs, as no other leaf has suc=
+h
+>  convention=2E
+>
+>Reported-by: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
+>Closes: https://lkml=2Ekernel=2Eorg/r/C7684E03-36E0-4D58-B6F0-78F4DB82D73=
+7@zytor=2Ecom
+>Signed-off-by: Ahmed S=2E Darwish <darwi@linutronix=2Ede>
+>Link: https://gitlab=2Ecom/x86-cpuid=2Eorg/x86-cpuid-db/-/blob/v2=2E3/CHA=
+NGELOG=2Erst
+>---
+> tools/arch/x86/kcpuid/cpuid=2Ecsv | 30 +++++++++++-------------------
+> 1 file changed, 11 insertions(+), 19 deletions(-)
+>
+>diff --git a/tools/arch/x86/kcpuid/cpuid=2Ecsv b/tools/arch/x86/kcpuid/cp=
+uid=2Ecsv
+>index 9613e09cbfb3=2E=2E8d25b0b49f3b 100644
+>--- a/tools/arch/x86/kcpuid/cpuid=2Ecsv
+>+++ b/tools/arch/x86/kcpuid/cpuid=2Ecsv
+>@@ -1,5 +1,5 @@
+> # SPDX-License-Identifier: CC0-1=2E0
+>-# Generator: x86-cpuid-db v2=2E2
+>+# Generator: x86-cpuid-db v2=2E3
+>=20
+> #
+> # Auto-generated file=2E
+>@@ -116,14 +116,6 @@
+>        0x2,         0,  edx,   30:24,    desc15                 , Descri=
+ptor #15
+>        0x2,         0,  edx,      31,    edx_invalid            , Descri=
+ptors 12-15 are invalid if set
+>=20
+>-# Leaf 3H
+>-# Transmeta Processor Serial Number (PSN)
+>-
+>-       0x3,         0,  eax,    31:0,    cpu_psn_0              , Proces=
+sor Serial Number bytes 0 - 3
+>-       0x3,         0,  ebx,    31:0,    cpu_psn_1              , Proces=
+sor Serial Number bytes 4 - 7
+>-       0x3,         0,  ecx,    31:0,    cpu_psn_2              , Proces=
+sor Serial Number bytes 8 - 11
+>-       0x3,         0,  edx,    31:0,    cpu_psn_3              , Proces=
+sor Serial Number bytes 12 - 15
+>-
+> # Leaf 4H
+> # Intel deterministic cache parameters
+>=20
+>@@ -1020,20 +1012,20 @@
+> 0x80000021,         0,  eax,       0,    no_nested_data_bp      , No nes=
+ted data breakpoints
+> 0x80000021,         0,  eax,       1,    fsgs_non_serializing   , WRMSR =
+to {FS,GS,KERNEL_GS}_BASE is non-serializing
+> 0x80000021,         0,  eax,       2,    lfence_rdtsc           , LFENCE=
+ always serializing / synchronizes RDTSC
+>-0x80000021,         0,  eax,       3,    smm_page_cfg_lock      , SMM pa=
+ging configuration lock is supported
+>+0x80000021,         0,  eax,       3,    smm_page_cfg_lock      , SMM pa=
+ging configuration lock
+> 0x80000021,         0,  eax,       6,    null_sel_clr_base      , Null s=
+elector clears base
+>-0x80000021,         0,  eax,       7,    upper_addr_ignore      , EFER M=
+SR Upper Address Ignore Enable bit supported
+>-0x80000021,         0,  eax,       8,    autoibrs               , EFER M=
+SR Automatic IBRS enable bit supported
+>-0x80000021,         0,  eax,       9,    no_smm_ctl_msr         , SMM_CT=
+L MSR (0xc0010116) is not present
+>-0x80000021,         0,  eax,      10,    fsrs_supported         , Fast S=
+hort Rep STOSB (FSRS) is supported
+>-0x80000021,         0,  eax,      11,    fsrc_supported         , Fast S=
+hort Rep CMPSB (FSRC) is supported
+>-0x80000021,         0,  eax,      13,    prefetch_ctl_msr       , Prefet=
+ch control MSR is supported
+>+0x80000021,         0,  eax,       7,    upper_addr_ignore      , EFER M=
+SR Upper Address Ignore
+>+0x80000021,         0,  eax,       8,    autoibrs               , EFER M=
+SR Automatic IBRS
+>+0x80000021,         0,  eax,       9,    no_smm_ctl_msr         , SMM_CT=
+L MSR (0xc0010116) is not available
+>+0x80000021,         0,  eax,      10,    fsrs                   , Fast S=
+hort Rep STOSB
+>+0x80000021,         0,  eax,      11,    fsrc                   , Fast S=
+hort Rep CMPSB
+>+0x80000021,         0,  eax,      13,    prefetch_ctl_msr       , Prefet=
+ch control MSR is available
+> 0x80000021,         0,  eax,      16,    opcode_reclaim         , Reserv=
+es opcode space
+> 0x80000021,         0,  eax,      17,    user_cpuid_disable     , #GP wh=
+en executing CPUID at CPL > 0 is supported
+>-0x80000021,         0,  eax,      18,    epsf_supported         , Enhanc=
+ed Predictive Store Forwarding (EPSF) is supported
+>+0x80000021,         0,  eax,      18,    epsf                   , Enhanc=
+ed Predictive Store Forwarding
+> 0x80000021,         0,  eax,      22,    wl_feedback            , Worklo=
+ad-based heuristic feedback to OS
+>-0x80000021,         0,  eax,      24,    eraps_support          , Enhanc=
+ed Return Address Predictor Security
+>-0x80000021,         0,  eax,      27,    sbpb                   , Suppor=
+t for the Selective Branch Predictor Barrier
+>+0x80000021,         0,  eax,      24,    eraps                  , Enhanc=
+ed Return Address Predictor Security
+>+0x80000021,         0,  eax,      27,    sbpb                   , Select=
+ive Branch Predictor Barrier
+> 0x80000021,         0,  eax,      28,    ibpb_brtype            , Branch=
+ predictions flushed from CPU branch predictor
+> 0x80000021,         0,  eax,      29,    srso_no                , CPU is=
+ not subject to the SRSO vulnerability
+> 0x80000021,         0,  eax,      30,    srso_uk_no             , CPU is=
+ not vulnerable to SRSO at user-kernel boundary
 
-Ping?
+As I said, you can simply treat leaf 3 as raw 128-bit hexadecimal number; =
+there really isn't a need to "interpret" it since the only meaningful use o=
+f it is as a unique identifier combined with vendor-FMS=2E
 
