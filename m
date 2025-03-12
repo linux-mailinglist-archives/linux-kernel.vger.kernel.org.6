@@ -1,91 +1,106 @@
-Return-Path: <linux-kernel+bounces-558554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C91A5E78D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:36:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1219BA5E790
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:36:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 186EA7A37E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:35:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E53081899F44
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 22:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C3D1F0E31;
-	Wed, 12 Mar 2025 22:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7C31F130C;
+	Wed, 12 Mar 2025 22:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="krkTAbkP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="mCGKV3ac"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702FE1F098A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 22:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7AA1F0E42;
+	Wed, 12 Mar 2025 22:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741818979; cv=none; b=DO84SYN5AxhSCk+we7z67NQi9xPo8ixvX/nS1tMvCH5d1g/NPswnBnVNioi4Qii+bPK1JyHZnkQcAv+CHCmBWO2imZoSOkfsuXH7lt1NUrcocZ1Vmt/GIUXvTDwpW0KOeZQ4WdSNX9XpjuIAZ4MrNFNLk2RAcMx6OevCeHAIW9w=
+	t=1741818982; cv=none; b=m71wcSuDB6o06XGUx6v7xnY0ldo5tf+EfafrD7lMeVWj4ZwcOTUzqklY3uqI26awqmrCOKgMFpVVvKOMPKgq1+SI1xupdhJhx1CZqm5o5s96eq7mFoO7Aaab08+DxuQPgtkkuO8bItZCdTD6jHwuQO7RkbYldfiN5BQRGY72Ij0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741818979; c=relaxed/simple;
-	bh=esNciyZGGa4yuxE1In7Ugw3hY1fgk+4q/nGujvoPSHE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ZTvNlAKLKFkgOnF2iRR6Wz78qcBKlf8youIZqMD0l2KtFcHQwVlTRgqAAF4cp/s50T359gZ6s0cpAhobx9r7UKdtS7GLQx4XE7OA/GkiKN7aBMKN/szGW7sk0/z+GSiNfpHhS0TpOFc/9YnWbQ/krgdUiB3y/1+q6sYs6aZEuXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=krkTAbkP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE158C4CEDD;
-	Wed, 12 Mar 2025 22:36:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1741818979;
-	bh=esNciyZGGa4yuxE1In7Ugw3hY1fgk+4q/nGujvoPSHE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=krkTAbkPIIdY70Yq3zuaB9FSIdrTel4qNE3xdlDNjVLFwwxTGZMGP+7hylJJYWEcC
-	 WQy5X9zW0skQ1LsECxI/C6MsMaLBdvstxMaDWsxXRdGRpjDMtoF3d2p4dfCBbS8BZ/
-	 8mMzQQVvi4FkiP0YFwH5XQoF4dJJd8GnJRIJNmLY=
-Date: Wed, 12 Mar 2025 15:36:18 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Cc: mhocko@suse.com, hannes@cmpxchg.org, muchun.song@linux.dev,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: vmscan: skip the file folios in proactive reclaim
- if swappiness is MAX
-Message-Id: <20250312153618.e24f399d2d9767ebef87519f@linux-foundation.org>
-In-Reply-To: <20250312094337.2296278-1-hezhongkun.hzk@bytedance.com>
-References: <20250312094337.2296278-1-hezhongkun.hzk@bytedance.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741818982; c=relaxed/simple;
+	bh=BaVWbSQENie34pWfic/pbRF/wriQKKMjAg34hMpBRvY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=J8TpyL8zRuYrPN1U9PJYwz8jjFYTboXrjC8SRNGIJgfE0jSWZkrepdMk0MhfcUY9HFw4czVD7RL8mVdXYq30sqoJjvoXlQ88+fCV+KqJ7LWFuFCNo+DXo+VN41gCKzrAfdtcYpZhbNJPuniMaXdzcoJMzq/DtXs54PvAkNPctF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=mCGKV3ac; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0FB7E41063
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1741818980; bh=GTMfbvfPe3rGQpfvz+NRGN74Tvu8HffllNDpfQa9owA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=mCGKV3acK+jLSNTwFG4FSzwiDSq690fcbkqEMydifNSaBFsaxZPO6dPWlKhLMmIib
+	 yFOIUY7n9Z2bwDy9Jn5D+4eB+A13pMdkkTB19Ii9WgmL/Rl++ppWhTuS+vMCrDJXtb
+	 FTXCQEb34bWO73R7fO+Vzos7qbgGRrrKENjNBoJN06yJtO1TpcP/wAuCXgBq8FyWxm
+	 sQQPgsR6oA3oeHZ9dvJ1gUJFtZUQmjjCEhk12rqGeR6QtRfKlrDEOWVLuNquvmMKst
+	 /+P8M4UAUQ+QTtmjf5tBNXiFSiy4NemJeMaOiSC49TNSuxHDfMQNbCGotIIbAHvYZy
+	 KP8ino3r31b+g==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 0FB7E41063;
+	Wed, 12 Mar 2025 22:36:20 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Ignacio Encinas <ignacio@iencinas.com>,
+ linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, Marco
+ Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>
+Cc: kasan-dev@googlegroups.com, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Ignacio Encinas
+ <ignacio@iencinas.com>
+Subject: Re: [PATCH] Documentation: kcsan: fix "Plain Accesses and Data
+ Races" URL in kcsan.rst
+In-Reply-To: <20250306-fix-plain-access-url-v1-1-9c653800f9e0@iencinas.com>
+References: <20250306-fix-plain-access-url-v1-1-9c653800f9e0@iencinas.com>
+Date: Wed, 12 Mar 2025 16:36:19 -0600
+Message-ID: <87o6y5lvvg.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Wed, 12 Mar 2025 17:43:37 +0800 Zhongkun He <hezhongkun.hzk@bytedance.com> wrote:
+Ignacio Encinas <ignacio@iencinas.com> writes:
 
-> With this patch 'commit <68cd9050d871> ("mm: add swappiness= arg to
-> memory.reclaim")', we can submit an additional swappiness=<val> argument
-> to memory.reclaim. It is very useful because we can dynamically adjust
-> the reclamation ratio based on the anonymous folios and file folios of
-> each cgroup. For example,when swappiness is set to 0, we only reclaim
-> from file pages.
-> 
-> However,we have also encountered a new issue: when swappiness is set to
-> the MAX_SWAPPINESS, it may still only reclaim file folios. This is due
-> to the knob of cache_trim_mode, which depends solely on the ratio of
-> inactive folios, regardless of whether there are a large number of cold
-> folios in anonymous folio list.
-> 
-> So, we hope to add a new control logic where proactive memory reclaim only
-> reclaims from anonymous folios when swappiness is set to MAX_SWAPPINESS.
-> For example, something like this:
-> 
-> echo "2M swappiness=200" > /sys/fs/cgroup/memory.reclaim
-> 
-> will perform reclaim on the rootcg with a swappiness setting of 200 (max
-> swappiness) regardless of the file folios. Users have a more comprehensive
-> view of the application's memory distribution because there are many
-> metrics available.
-> 
-> With this patch, the swappiness argument of memory.reclaim has a more
-> precise semantics: 0 means reclaiming only from file pages, while 200
-> means reclaiming just from anonymous pages.
+> Make the URL point to the "Plain Accesses and Data Races" section again
+> and prevent it from becoming stale by adding a commit id to it.
+>
+> Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
+> ---
+> I noticed this while reviewing the documentation.
+>
+> The "fix" isn't perfect as the link might become stale because it points
+> to a fixed commit. Alternatively, we could lose the line number
+> altogether.
+> ---
+>  Documentation/dev-tools/kcsan.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/dev-tools/kcsan.rst b/Documentation/dev-tools/kcsan.rst
+> index d81c42d1063eab5db0cba1786de287406ca3ebe7..8575178aa87f1402d777af516f5c0e2fc8a3379d 100644
+> --- a/Documentation/dev-tools/kcsan.rst
+> +++ b/Documentation/dev-tools/kcsan.rst
+> @@ -203,7 +203,7 @@ they happen concurrently in different threads, and at least one of them is a
+>  least one is a write. For a more thorough discussion and definition, see `"Plain
+>  Accesses and Data Races" in the LKMM`_.
+>  
+> -.. _"Plain Accesses and Data Races" in the LKMM: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/explanation.txt#n1922
+> +.. _"Plain Accesses and Data Races" in the LKMM: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/explanation.txt?id=8f6629c004b193d23612641c3607e785819e97ab#n2164
+>  
 
-Please update Documentation/admin-guide/cgroup-v2.rst for this.
+This seems like an improvement over what we have, so I've applied it.
+
+It would be best, of course, to get the memory-model documentation
+properly into our built docs...someday...
+
+Thanks,
+
+jon
 
