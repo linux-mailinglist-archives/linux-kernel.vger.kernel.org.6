@@ -1,139 +1,139 @@
-Return-Path: <linux-kernel+bounces-558579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7EAA5E800
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:04:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B340CA5E816
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 00:12:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62B427A95F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:03:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2489D189B7AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 23:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EC61F1505;
-	Wed, 12 Mar 2025 23:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C5E1F1517;
+	Wed, 12 Mar 2025 23:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MlU6q2A8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="t0qJL/2b";
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="qbeolRdz"
+Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB73C1F0E5B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 23:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2511F12F2;
+	Wed, 12 Mar 2025 23:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741820685; cv=none; b=OEp24VDBTzSybxDFEZffBqjjESa9bxcLcM+ZmZTwQLiWgVWqUIzRpNgP1fy5tfk+hYJNbuuNtz3nROzytoBBP3btzhqeB5M9+TtMYlaAKHPgh+qCEj3W7tDcyZNV2tZZHk5ks667JY6n4XBlpW5OlbXOymcByVZJ2v5QcXva70M=
+	t=1741821111; cv=none; b=LuUhJaOlSwNUUbGATgWg/gv+ISDxS9HxK33L4wQpm0DyhYH38icTWmaiqjRrH42D+D3siSMpcyQgzhnWjhnLHkFJMpdeDbAluDOFf9W0MQr2TUZoD228yGq167b70+q1Kztg08fyMNNMeDcIMMV2HpE026nOREJtiE3XtK0OQ48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741820685; c=relaxed/simple;
-	bh=d5PEY+yC9Huewb0HnCtpeT52eaIOfYoMMqMSFveNI50=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BvWwKxCQ8afnJdpRsPqh6ZD1LTIanM6bzPVMXDyUAIXNnm/5HPACLc+U3bzxcq+jzqGSL23VlMdo2wyKMok0BXjZ2c097XN6ZbxHVqLYeYl9w9HPz5ngWqH/2rg1kDYt1iRnF4GzrAs0PUq7Eq8G2cdQEHub1NNOzCWPKo5KS2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MlU6q2A8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741820682;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d5PEY+yC9Huewb0HnCtpeT52eaIOfYoMMqMSFveNI50=;
-	b=MlU6q2A8a4uCwqBNOlxeDEILGorCOSeWUvxDY+SIWf5LWnKEi1j7LJyx151qsyGUl2RY6t
-	NiR9c+TsFmuceIU6+dGFxR1J9sfo1xk8irhkoqPSbYwLVSnYz1FrJDYI8hqERbUhNU4yNv
-	+8X9qeZ9LqKRd2CvH1K/NA4ervmG4fE=
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
- [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-90-99HictFsNE-Ey1mGiXKIYw-1; Wed, 12 Mar 2025 19:04:41 -0400
-X-MC-Unique: 99HictFsNE-Ey1mGiXKIYw-1
-X-Mimecast-MFC-AGG-ID: 99HictFsNE-Ey1mGiXKIYw_1741820681
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-6f2bc451902so4768117b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 16:04:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741820681; x=1742425481;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d5PEY+yC9Huewb0HnCtpeT52eaIOfYoMMqMSFveNI50=;
-        b=rvTLGI/ZQb9KMEIWh5FYMT3Sr7VauEquWgLd6VDrqg6ZK92ASPPIqWzSvu4XskWzcN
-         ZjR23B5LNOFM7VIb+2wJatHo58E1QCQYEtiW53F3xwrPSP/7dMj2sj9BOa8Vh7im2zYf
-         VzxnDfQXtqHUSfzxHF4e20U4epGct6Amc7lkRHh2TspOJPS5ggFjULNAhBTmKIX+X5MJ
-         xu7LdGPMD45L1WIkv+v/ZMedALZjl40FYGziQbZrJtqDTRqg3q4w8onmwFKk4QmnsrPJ
-         Vbik2sNwXUlncvysdRyLtRCsmb1nouw+rTky0d1GERO/52qDk+mXAv0G8dyVT9+PDvNS
-         xx4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUtihyJK4qXIo0FlMszCsomNE7AVWJG7rWDfqgAgDXBWwu1cEYP2Q2esgFKTm51WepktcajpST2TkC5xyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9ZbVtTR4PnrCfhyKmaS13V5JpJyXfik7F3I02aNmkIXsqJS1m
-	svjjzoMPBKh6F143gD8Mmjd1mgxG3nEfAdHReM6h8VOY9Oa65b35hg/7Cs+cQvPgfiCSy8So+6R
-	rs1K6CpptDRnojUqlx2pbvodDlECxo0/kkN8AARMVKR1KBmqQAzSdU2wNI7rZv2YnLBV7+Z2YA4
-	4GMqWsq/wnD7K/R/7O7SYx8aXU7lBZvwHBZADd
-X-Gm-Gg: ASbGnctNB0mzC7lYa026+v5HQA0JNxJk6TeAyp/+mXAqMoZlhAEk8OCzPr1p2XqdAHF
-	658sXqST8KTEr/4cVihkIC0AMYFW67bL0IMT2zwcMc0wI2FJXZO8onwc6PsnBqseAE2kPKkPklB
-	Ye9wHf6TgmreI=
-X-Received: by 2002:a05:6902:2ec3:b0:e63:65bc:a173 with SMTP id 3f1490d57ef6-e6365bca293mr20489060276.41.1741820681076;
-        Wed, 12 Mar 2025 16:04:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFE29IOsL3if064ONRlZf/bCswPuk7JbIN/+ScTtHA6PhUNFhrt31PPwWl6SfPGyM46nmrjRUH8DQbWz44H/+M=
-X-Received: by 2002:a05:6902:2ec3:b0:e63:65bc:a173 with SMTP id
- 3f1490d57ef6-e6365bca293mr20489001276.41.1741820680678; Wed, 12 Mar 2025
- 16:04:40 -0700 (PDT)
+	s=arc-20240116; t=1741821111; c=relaxed/simple;
+	bh=2W3aVFmGwvClwVTmM7aCRx2KgO4A4R1U0tJDkBzH+nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyUcKwlaqXv7zMtQADwTmZmLwCo+AjDdPFl7/K/LDa2gFn38Dq5Zva412OIT2DztPDa0NQ3d/Y1C0pUMWJb0biIcn8hMlKUNdK3Wp03o+T4O/Onnhm86pLP56JjjhhtG44JO4OAqh3EepHR2kwZon+XKYqKRCg284l+yMygib2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=t0qJL/2b; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=qbeolRdz; arc=none smtp.client-ip=217.70.190.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: by mail.netfilter.org (Postfix, from userid 109)
+	id EC09C602BB; Thu, 13 Mar 2025 00:11:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1741821107;
+	bh=PQSKrOlMPfzl9nwDmSr8qh4iamX82LLyOlMFMg/9c7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t0qJL/2bU8GPh32cdA69JdoMZVh7TSHGCLtgmOuIXAHN5T4eCT+YGrfUtcdLc6w+H
+	 wBBFOYHJGgv4OwC9drZb/SBxoeodBTIhuHSuKLTgwzxJP1oKP+FkzrL4MghCg4YOP9
+	 /oT591oO5UG7EmDyYrM22yxzBY4bgwlvZLjRZkYGRWS61A52Yyp0C1TPy5uZ1ntRqz
+	 pjqhRrBlNu9dCHr4EiGmpfrW5KjQLI9BSXXrfrqvle9U6Ua/ut73znipRs/3NmHf4P
+	 Y1kr3PP1yTEQ0T2sj/JmgDVGyL71KEnhVue+A8agztNv6lH/wDkMfRSrUjBBnzjue4
+	 p2eP3mU7YW7OQ==
+X-Spam-Level: 
+Received: from netfilter.org (mail-agni [217.70.190.124])
+	by mail.netfilter.org (Postfix) with ESMTPSA id 49BB3602A4;
+	Thu, 13 Mar 2025 00:11:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1741821102;
+	bh=PQSKrOlMPfzl9nwDmSr8qh4iamX82LLyOlMFMg/9c7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qbeolRdzmWfAU19cU0ccSVcMVP9Fk4SSQN9BVqHZ8FLRhk39ZK03WcEJ+WQOmOxZF
+	 cy23JB5bF5+aVpudZJXvgQrTaeLjetLivZIvhEEDf9Re9Itl0VnGNk2tB0s4w2+kXT
+	 talIeV1XAVKL25ykSMxM5fUeXwDlOLPo7r2V1/53tyLuKpyHDKpWW+c4oRWWG6CHax
+	 4zIHURnVcKBNHgV75Bd3agsDnngcIvT3lvGyOfj2Ddp/CejMNpCEnvtz+qkgNMldVY
+	 o5hT/rRHam+N+4/Lhradu4N5nlIXFhpj14jDpnuYxuEfASgXrzhghIOpCK4MXyAr4O
+	 CBArB71yfg7xQ==
+Date: Thu, 13 Mar 2025 00:11:40 +0100
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Eric Woudstra <ericwouds@gmail.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Roopa Prabhu <roopa@nvidia.com>, Ivan Vecera <ivecera@redhat.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Simon Horman <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, bridge@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Daniel Golle <daniel@makrotopia.org>
+Subject: Re: [PATCH v9 nf 00/15] bridge-fastpath and related improvements
+Message-ID: <Z9IUrL0IHTKQMUvC@calendula>
+References: <20250305102949.16370-1-ericwouds@gmail.com>
+ <897ade0e-a4d0-47d0-8bf7-e5888ef45a61@gmail.com>
+ <Z9DKxOnxr1fSv0On@calendula>
+ <58cbe875-80e7-4a44-950b-b836b97f3259@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312000700.184573-1-npache@redhat.com> <20250312000700.184573-2-npache@redhat.com>
- <c4229ea5-d991-4f5e-a0ff-45dce78a242a@redhat.com>
-In-Reply-To: <c4229ea5-d991-4f5e-a0ff-45dce78a242a@redhat.com>
-From: Nico Pache <npache@redhat.com>
-Date: Wed, 12 Mar 2025 17:04:14 -0600
-X-Gm-Features: AQ5f1JrCck7ZrLXTjsNL6uP-21nbhhEyl_MT0WXZGBOwpNadq0-oKKZGcnVqKd4
-Message-ID: <CAA1CXcCv20TW+Xgn18E0Jn1rbT003+3gR-KAxxE9GLzh=EHNmQ@mail.gmail.com>
-Subject: Re: [RFC 1/5] meminfo: add a per node counter for balloon drivers
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	virtualization@lists.linux.dev, xen-devel@lists.xenproject.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
-	decui@microsoft.com, jerrin.shaji-george@broadcom.com, 
-	bcm-kernel-feedback-list@broadcom.com, arnd@arndb.de, 
-	gregkh@linuxfoundation.org, mst@redhat.com, jasowang@redhat.com, 
-	xuanzhuo@linux.alibaba.com, eperezma@redhat.com, jgross@suse.com, 
-	sstabellini@kernel.org, oleksandr_tyshchenko@epam.com, 
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
-	nphamcs@gmail.com, yosry.ahmed@linux.dev, kanchana.p.sridhar@intel.com, 
-	alexander.atanasov@virtuozzo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <58cbe875-80e7-4a44-950b-b836b97f3259@gmail.com>
 
-On Wed, Mar 12, 2025 at 4:19=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 12.03.25 01:06, Nico Pache wrote:
-> > Add NR_BALLOON_PAGES counter to track memory used by balloon drivers an=
-d
-> > expose it through /proc/meminfo and other memory reporting interfaces.
->
-> In balloon_page_enqueue_one(), we perform a
->
-> __count_vm_event(BALLOON_INFLATE)
->
-> and in balloon_page_list_dequeue
->
-> __count_vm_event(BALLOON_DEFLATE);
->
->
-> Should we maybe simply do the per-node accounting similarly there?
+On Wed, Mar 12, 2025 at 05:21:29PM +0100, Eric Woudstra wrote:
+> 
+> 
+> On 3/12/25 12:44 AM, Pablo Neira Ayuso wrote:
+> > Therefore, I suggest you start with a much smaller series with a
+> > carefully selected subset including preparatory patches. I suggest you
+> > start with the software enhancements only. Please, add datapath tests.
+> 
+> Then I will split it in:
+> 1. Separate preparatory patches and small patch-sets that apply
+>      to the forward-fastpath already.
+> 2. One patch-set that brings the bridge-fastpath with datapath tests.
+> 
+> > P.S: You work is important, very important, but maybe there is no need
+> > to Cc so many mailing lists and people, maybe netdev@,
+> > netfilter-devel@ and bridge@ is sufficient.
+> 
+> Ok, but my main question then is which tree should I work in, and
+> therefore which tag should I give my patches, [nf] or [net-next].
+> I think it will get more complicated if I split my patch-set and half of
+> the patches go to [nf] and another half to [net-next].
 
-I think the issue is that some balloon drivers use the
-balloon_compaction interface while others use their own.
+Use [nf-next].
 
-This would require unifying all the drivers under a single api which
-may be tricky if they all have different behavior
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+> What do you suggest?
 
+Probably I can collect 4/15 and 5/15 from this series to be included
+in the next pull request, let me take a look. But it would be good to
+have tests for these two patches.
+
+I would suggest you continue by making a series to add bridge support
+for the flowtable, software only, including tests.
+
+Once this gets merged, then follow up with the hardware offload code.
+
+Thanks.
 
