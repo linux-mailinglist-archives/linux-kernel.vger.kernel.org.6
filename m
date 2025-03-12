@@ -1,128 +1,182 @@
-Return-Path: <linux-kernel+bounces-557942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9415A5DF97
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:59:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7BEA5DF94
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:59:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA0F51894E84
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:59:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D489189468B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D980224EF9A;
-	Wed, 12 Mar 2025 14:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B875F24CED6;
+	Wed, 12 Mar 2025 14:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="joa9ZSch"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qF8Q3tmZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PkVWaqgd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qF8Q3tmZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PkVWaqgd"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA65324E01A;
-	Wed, 12 Mar 2025 14:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F78E24A062
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 14:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741791559; cv=none; b=sbv5J1QpU0T9edeKUNlYATylgTGaO1s2MIkW0Fpl9ZJW0umxq/5asTK1EPgts0QEbJNsNxSPKkLUS5vGtZ5GL58fxdbjOQvFYgnYcdEWhTRWs8Z1I0bLB0oY0i+HMkk54HPzNnM3RrVzrQ9f4NmwQ33f+jT+ElF2BGOYGxIA2Cc=
+	t=1741791550; cv=none; b=UHAxtZHqCRw85uP8qr+h3FX6XLg3yepaQWj8ySHXszlRfLNI0S1YDug+yLCBOo15/Sh6MsaT8BkA4etF7H5UvyqlJ9BRbMZH6hK6X7rDoP6yAdpa+IdwMwF2fxwcUbD9MHapdYCyE6cHKBNWOQluGNie6CkHkxrgwuKSN0BpX70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741791559; c=relaxed/simple;
-	bh=1fAEBoQ5LalZFGrdcJXD/IgKT7X7kSFr8XH/ZV5q5ss=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=AwtkkKQKQpbVNj+ifzHIVP23tLrj6vDMdWrwDfwwI5yBdltm2xbz+hMdwo7hfOJ1IH2HmwLRgGYoshEOua7F9l0kk3cGES4vwWt+2rCJ9NybtW67yB1ABBD9e4J/t7uLJ02JIwxaPgkGIkmd+jj5/doFM0ROp+uOoKY8fDP91z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=joa9ZSch; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so154060466b.3;
-        Wed, 12 Mar 2025 07:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741791556; x=1742396356; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vY4Awnn/aaB5x1WDx2/xkXk1nHfjl1OEmOE4k5LCiu4=;
-        b=joa9ZSchgS9ztNAFPI7jOXyZBBSg1SzMXTKAISp9bQTYhwFq/n8iKloJrUzS3thaSv
-         H6AzYXb3sBVAU9L49RFYsQhBBWnTEePdPU/oX+EqcoN8kJSDeF67qvvfUm9otL7H45K4
-         YDGy/iD86qIsJOxIzZWt8YsQAqwubFrlK7RFfQMU2WCvYYvVkBQGcntWcvnjuouZKIHp
-         eo4Pubi+we1Jz/QlGa9oN8Hz+fYx201rsJ7g6+uQOJohdnsjFsGyBBNS1mqA0QcOZ+Nl
-         PM0sv5Tkz4N6Wcf+YRW2xU3NrAC3MVwsQZMZUnwhZFFqUdXCvXquAJFOozcd2JsdwQZD
-         K7Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741791556; x=1742396356;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vY4Awnn/aaB5x1WDx2/xkXk1nHfjl1OEmOE4k5LCiu4=;
-        b=NUOI5IfSyx53FSqtIIXDgY5l/LkDvb5HU3dpahne0eOeAtmBHuW8Fn3r0fVptVZ6Nw
-         JcuDngZFJ6VADwDKVc4I69rQNHQJzvMsccKjlYGDZ9n3QXmhfggrmhdP2H9y/3qDPV/d
-         oNMGbDcO7atgOxHnrsy5lsm1K8BNu6P/kZBoywRaaTUMigOSaQvPMD1WVqoofgOgMqOx
-         MvnOPlztK5mdWwgX9xwacawlQIya7MoiUKkudRDtwiRcJL9RXkw/FZiSyTTL2v+RZ1/W
-         +81kSizuvvT5G3jbAxjPeW301zsV4fr7fpE3UxDixAY+BDRRtUYHNecteRmCrmdD3J5Y
-         7iYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoiNXSuWwng61YXp1DKATH8uQoOyE7PnIhhMbcXKKmDclC7fgzkPUUQ9QW8Ue+D6SNgBjRyvyYYz07iLk=@vger.kernel.org, AJvYcCVJSBAWeeMZMe6GM6mjOcdreMWGE4dLlK15KqvI0/tgCf4qfi17VYorytnCa/uoaaP6FPIcBT5fZYp9GPFFM1MYnEw=@vger.kernel.org, AJvYcCWul3R+hNyvw8phmeKoXvXcWbs7yhg8RwtCo140v5g/2m+5hIanWH7LKGGC1E40kGBoKwsqWjuMioY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrCoTQrg7ri03+NEefcbHgQDie0awX7+APAQKwxZqS3ypACLP3
-	Gv6ii3jO78z5Gr7N5EiMDrZUcHKGvCieWgDKt/FXRNLyz7A1iaII31Ksyhm2WwlKflElC5v0MJq
-	TWyEB6rqT3CLYzcQqN67maY6RtHs=
-X-Gm-Gg: ASbGncsmOcO5xJ097VWgAFI/HzQsrOR9zIN9pg3nlkf0R/E57B7dpSb4n7WKxpFwLry
-	HJBo04UkOkonNH0dTVoGtM0ydGrfAaLIOSnDES7S9kr4vkfUtpVoA1Qh4AHXLnUlnsFjMieFb7j
-	J6k7gUfwnLT+9oaapRM5jOWEG0qA==
-X-Google-Smtp-Source: AGHT+IGiPv/RqZONre6oHaSE9PreL8gyCQ96Y/2k8z7w+Ar336UjLvC65ewlUy5TkAYOXML/OLtyjwmp9Al5GI6HvRc=
-X-Received: by 2002:a17:907:9691:b0:ac2:166f:42eb with SMTP id
- a640c23a62f3a-ac25259836dmr2972251766b.2.1741791555675; Wed, 12 Mar 2025
- 07:59:15 -0700 (PDT)
+	s=arc-20240116; t=1741791550; c=relaxed/simple;
+	bh=DDschxg9aON+yUX+qbbRhunT4IdafoatbQyYwH2uQjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KrSU0sYydHn5e6df7hhku54guWS8yrpaYJHF1WOx/dIPniNkeHvLGyibJtHc6PzzefXcaGA3J66iUj1B1jUFJbd2cykZjv57BD4k0OV9GhLszCDtvuHAgJkEMotyhS6Vi5zxQig8CDbTf6o/PB0HmYwbHvP4X7sCR3M26y1XOd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qF8Q3tmZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PkVWaqgd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qF8Q3tmZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PkVWaqgd; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CBE6721162;
+	Wed, 12 Mar 2025 14:59:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741791546; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9ZvV4vKA5vYd6vr6nTnELCHn+UXS+fNwMlNQ1aAYmss=;
+	b=qF8Q3tmZQZrDdBv4pMmY45d2A+kaMugGTS20tq10V6NpXXsG6Km8+BTnSEcHpI/jzsZe5T
+	frhJhBD/4qkEdojAGoANn+ppAJeN/zgJENg2FNpn0OQO/BQKM2EMlQ/aXNEAfM+8t1w7/m
+	i6xRGcon6sUO3kBPv8zaklEQF0PxTWc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741791546;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9ZvV4vKA5vYd6vr6nTnELCHn+UXS+fNwMlNQ1aAYmss=;
+	b=PkVWaqgd1GFjeCjYjEMsjlUU9kjZtzbA5tLgTp4SLL1PuAVyMsUNyXix5t2dPn4UiSf714
+	z3kbGe3sC8MNdfCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741791546; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9ZvV4vKA5vYd6vr6nTnELCHn+UXS+fNwMlNQ1aAYmss=;
+	b=qF8Q3tmZQZrDdBv4pMmY45d2A+kaMugGTS20tq10V6NpXXsG6Km8+BTnSEcHpI/jzsZe5T
+	frhJhBD/4qkEdojAGoANn+ppAJeN/zgJENg2FNpn0OQO/BQKM2EMlQ/aXNEAfM+8t1w7/m
+	i6xRGcon6sUO3kBPv8zaklEQF0PxTWc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741791546;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9ZvV4vKA5vYd6vr6nTnELCHn+UXS+fNwMlNQ1aAYmss=;
+	b=PkVWaqgd1GFjeCjYjEMsjlUU9kjZtzbA5tLgTp4SLL1PuAVyMsUNyXix5t2dPn4UiSf714
+	z3kbGe3sC8MNdfCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A6960132CB;
+	Wed, 12 Mar 2025 14:59:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0HkqKDqh0WfTAgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 12 Mar 2025 14:59:06 +0000
+Message-ID: <0b843e18-1e1e-427f-832e-f49c156ee99d@suse.cz>
+Date: Wed, 12 Mar 2025 15:59:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310143450.8276-1-linux.amoon@gmail.com> <20250310143450.8276-2-linux.amoon@gmail.com>
-In-Reply-To: <20250310143450.8276-2-linux.amoon@gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Wed, 12 Mar 2025 20:28:58 +0530
-X-Gm-Features: AQ5f1Jo-jjPkEoei21awrWrKjHVJPFPfCS1Ru_y01gNm4hp5leBwMNi4MCMjL_w
-Message-ID: <CANAwSgRcuMZTrdn27qdEkZF33cQ4RemjExs5eySO-CMv3Qq6eg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] drivers/thermal/exynos: Refactor clk_sec
- initialization inside SOC-specific case
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 01/10] slab: add opt-in caching layer of percpu
+ sheaves
+Content-Language: en-US
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter
+ <cl@linux.com>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org
+References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
+ <20250214-slub-percpu-caches-v2-1-88592ee0966a@suse.cz>
+ <Z7woDjICqD0fkghA@harry>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <Z7woDjICqD0fkghA@harry>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,oracle.com,linux.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi All,
+On 2/24/25 09:04, Harry Yoo wrote:
+>> +static void barn_shrink(struct kmem_cache *s, struct node_barn *barn)
+>> +{
+>> +	struct list_head empty_list;
+>> +	struct list_head full_list;
+>> +	struct slab_sheaf *sheaf, *sheaf2;
+>> +	unsigned long flags;
+>> +
+>> +	INIT_LIST_HEAD(&empty_list);
+>> +	INIT_LIST_HEAD(&full_list);
+>> +
+>> +	spin_lock_irqsave(&barn->lock, flags);
+>> +
+>> +	list_splice_init(&barn->sheaves_full, &full_list);
+>> +	barn->nr_full = 0;
+>> +	list_splice_init(&barn->sheaves_empty, &empty_list);
+>> +	barn->nr_empty = 0;
+>> +
+>> +	spin_unlock_irqrestore(&barn->lock, flags);
+>> +
+>> +	list_for_each_entry_safe(sheaf, sheaf2, &full_list, barn_list) {
+>> +		sheaf_flush(s, sheaf);
+>> +		list_move(&sheaf->barn_list, &empty_list);
+>> +	}
+> 
+> nit: is this list_move() necessary?
 
-On Mon, 10 Mar 2025 at 20:05, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Refactor the initialization of the clk_sec clock to be inside the
-> SOC_ARCH_EXYNOS5420_TRIMINFO case. It ensures that the clk_sec clock
-> is only initialized for the specified SOC and not for other SOCs,
-> thereby simplifying the code. The clk_sec clock is used by the TMU
-> for GPU on the Exynos 542x platform.
->
-> Removed redundant IS_ERR() checks for the clk_sec clock since error
-> handling is already managed internally by clk_unprepare() functions.
->
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+You mean I can just do free_empty_sheaf(s, sheaf); ? Yeah why not.
 
-On Exynos4412 Odroid U3 uses the clocks name
-      clock-names = "tmu_apbif";
+>> +
+>> +	list_for_each_entry_safe(sheaf, sheaf2, &empty_list, barn_list)
+>> +		free_empty_sheaf(s, sheaf);
+>> +}
+> 
+> Otherwise looks good to me.
 
-On Exynos5422 Odroid XU4 uses the clocks name
-       clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+Thanks.
 
-So Exynos 5433 and Exynos7  SoC use the clocks name
-      clock-names = "tmu_apbif", "tmu_sclk";
-
-As per my understanding, there could be a common case for GPU clock in
-TMU driver
-which could simplify the code, any thoughts
-
------------------------8<-------------------------------------
-switch (data->soc) {
-        case SOC_ARCH_EXYNOS5420_TRIMINFO:
-        case SOC_ARCH_EXYNOS5433:
-        case SOC_ARCH_EXYNOS7:
-
-Thanks
--Anand
 
