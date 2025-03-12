@@ -1,169 +1,208 @@
-Return-Path: <linux-kernel+bounces-557948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEFBCA5DFAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:04:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0791A5DFAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 16:04:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE30B18892A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:04:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C7EC3A3346
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 15:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D287A24F587;
-	Wed, 12 Mar 2025 15:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BB524EF75;
+	Wed, 12 Mar 2025 15:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I216Xd/e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XpHyrsJJ"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2725A22DF9D;
-	Wed, 12 Mar 2025 15:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303F522DF9D;
+	Wed, 12 Mar 2025 15:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741791869; cv=none; b=DVZ7l4M60koFb8aIg7iAyKEChJ+Kj3lOfczf++BHWUAffF4AFC5kgYKZPMd8oU0ipr33+MhY95fyzZ5jmETjMDBuJXG6XNDGx6Omy/QrkGJV5DdroInSTlF2ohE+QBsZkfL/90sg1gsyNIzX4UoLh5f31RP+MlXTACL+8tnuAB0=
+	t=1741791885; cv=none; b=HBmzizjiLGg6nWFdsCPBtI8WfcBRf0piGFOoIMAb551hmLU7/9ZLoe6QFkyAsEgthsX6Fxy5ddO4yEVBJaLJrzSB+F5kyInxBGhgQexOrg7dujr1TvXwtSxoCU8xj45Jw1RTMo21GP6zyJ83FN3rxj77b8dAlpvbBFh4iHc2vcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741791869; c=relaxed/simple;
-	bh=0LPk8+MvfGynbwPGt0NyOytayCc66T5wfAVNQKAjUrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ASaR6XEdIYB9bibKRET8fF/Oz1MeydVcH6zRakvKhTwOSoI4RojsyD0AhL1oCwV5ew/HnMuXw9GFMi/QIG8JYSPEWdQ3RsbUXa6qWHpdUFczlqd7JhUF1HtGFdNn7D1EeDZTp1narjJ1L8NGrDnSEamXowqSRysvHwMUwuFqKKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I216Xd/e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6940BC4CEDD;
-	Wed, 12 Mar 2025 15:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741791868;
-	bh=0LPk8+MvfGynbwPGt0NyOytayCc66T5wfAVNQKAjUrY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=I216Xd/eU3neOxcuswv7lF+WIHdCJHXoZollljYS9f5Sg3tH1cpxwS6+GmLSaHZn5
-	 OckHLmef0JjB9F/50Ks/GVtqOQsh1YxNfGc2tBFgovF9H/lNV3QgC8bLD6o+3pZQpI
-	 hTV/xrbPwP1m0p5ysSBZ+nzGcPuvNx1KAvA0LAszJqGHrwCivPCwcDiTdDXQpqTJPw
-	 I7x79FU3hWDQfscuGsp17s5E067AhXp++KBfhbfZ4uUIgQHG3skB8zkiWGm4y5/p5O
-	 Fyeo0kuJkdL7ZD0mYuuwFZ/vr6W3zRW0Un9ilz+8pt2G5BlYMSZepkODtztnP9VRs2
-	 S0STqRqv1Ah9Q==
-Date: Wed, 12 Mar 2025 10:04:26 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Hongxing Zhu <hongxing.zhu@nxp.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kw@linux.com" <kw@linux.com>,
-	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 2/2] PCI: imx6: Use domain number replace the hardcodes
-Message-ID: <20250312150426.GA674002@bhelgaas>
+	s=arc-20240116; t=1741791885; c=relaxed/simple;
+	bh=4kvwciWhtuLbjmDQrc8d4bXFZQIkcET9QjpPx2Lfh2I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=D59UVWpoB+oSMwOJRXbFO3h1sPjFE+a7yx9EmpYXNQdjSzZBPUJ409cbf78IHkaMLLHW533UZsHNnp/HnMcMnqhKLwhXDpnpg7Znr+vyrRBYOFVEiWfBWypvd+HmGofmUmEWZAIYimFbDL5qUec1XvOk9+SKiapwE4wHwXbhZ2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XpHyrsJJ; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6febbd3b75cso56388087b3.0;
+        Wed, 12 Mar 2025 08:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741791883; x=1742396683; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CWJQHvu5mtEWy0MPTSIyoI0L0d27oEw9ieErduQwILE=;
+        b=XpHyrsJJp4wZlHRdN5ITsQTkvW1pFflSnw5+053Sdf1HeUiBPScLlUSM/s86yisqHb
+         3P8/koLxTe3gdDFUPKlbqaKK45RUIawLK6oPInOHDo18eMDHTU8JBjhXmIRejqFBE78k
+         KnUc62XKIXCB/IT/h9o27aDIGgxpKxMoYaFMOKZzS8w2xyliPB5QqDmHsWTGfixOprZD
+         ccOFZYeqLgywLRFc/eh+bpMFtzO+w4e9Ewua0yFbfkHcsRmJbGHLxIxWsqJgtLsQHwMb
+         gPc/P4S2k5eToNKAenFWvU+0vhBp4iW10s+dR3V0U3Y6uW7GVRajw1n2OSyFOabbDkd2
+         eyWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741791883; x=1742396683;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CWJQHvu5mtEWy0MPTSIyoI0L0d27oEw9ieErduQwILE=;
+        b=MAxzEnFc9zx1j7BxLEUstEPoSWIXzo24zgOHlQzDhq99vw6SFbz8NjOSHDS6D2nU/o
+         N3YQwRoN4I2MtyhznKRtVWp3XagoHjuy57FKKM5GnT6LKn3VHvJ83LSbbjNzu+2bXi0a
+         xkT/10C41mSxRHG3M5xuFlrGvcG7gyT2kmYHPyI3PvJ3WhfOyAXUpM8WlWiPaC2KY0Jr
+         SUczcdbdignKK7/1MlTi/rNAgJN1+8UFl1upbQvdpfYi7ZrOCryt+8LpyOxxMeBSblYA
+         ERULnbleTe0hMD9P20Ri8NAGwepv1GWOdfgSm0FT/OtpA4sKvFiL1eGpFEKYs2//42z9
+         dwog==
+X-Forwarded-Encrypted: i=1; AJvYcCWCyUGOwQbuLVGNGX3dpaKvsIJPQzHY6RXNI1A4FqYkDibHuyZMA5MuFFeQbwmI6RKOmU//iGbM9mM=@vger.kernel.org, AJvYcCXJP8FeH5F0qOmR6bgxWRVZIX74RGNi5G7UMgwPKcl68IcXZGjEp16T7rDMGdapoGhr76kaj5w9zpBV50Ys@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOZJxEZgHDUX2QmdQ8M3GvEEQ+0K/1R5CScRrvH4KOeZCuhcEx
+	DiGcvB1D5FXo3HcxQDcEGLQcpMbLo4jVPVUYG+/y+fqzNfdpm6aP
+X-Gm-Gg: ASbGncsCIW9pKvBtxTNIgtkQilhSmMkC+toDg+/4R92E+jrZ7xUzV1EChRoM21N5UqF
+	TdlvAw8irJBXTpzbyaEm4x5gxt45d/YYAlPjATZShb4qpqm4fJOEsUzLMECy/SMsrkW8/qP4ffO
+	f4JzGmibuBxCLKPQVu5FoX13qbY5sGwuRupqWADgYIvmz9o2iLWIpWwDIjrwj171QlyulCf3U5s
+	L73JpHRgToNOHPERQx4DR2y5F8o3kMoAkfez3/k2tG3d6E4cxGs6KKATQEYkY7m4mlOyNpej+I4
+	Elmyf+IlfBQItDuz0Y+1RW7kOGrcZKweY7TrRvp/jVBL
+X-Google-Smtp-Source: AGHT+IF9U6SlWjVO5e8FD64REsmZ+AmpBbsbhviSf5KKYvGmv6Wzl2qnU8103UftabS8nl6n3qlxfg==
+X-Received: by 2002:a05:690c:4b83:b0:6fd:2b7d:9a4e with SMTP id 00721157ae682-6febf30734bmr331638857b3.18.1741791882857;
+        Wed, 12 Mar 2025 08:04:42 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:71::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2a1bf6esm31766217b3.19.2025.03.12.08.04.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 08:04:42 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Rakie Kim <rakie.kim@sk.com>
+Cc: gourry@gourry.net,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com
+Subject: Re: [PATCH v2 4/4] mm/mempolicy: Fix duplicate node addition in sysfs for weighted interleave
+Date: Wed, 12 Mar 2025 08:04:39 -0700
+Message-ID: <20250312150440.2301373-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250312075628.648-4-rakie.kim@sk.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <fcb5f09f8e4311c7a6ef60aaf3cb4e3f05a8f05e.camel@pengutronix.de>
 
-On Wed, Mar 12, 2025 at 09:28:02AM +0100, Lucas Stach wrote:
-> Am Mittwoch, dem 12.03.2025 um 04:05 +0000 schrieb Hongxing Zhu:
-> > > -----Original Message-----
-> > > From: Bjorn Helgaas <helgaas@kernel.org>
-> > > Sent: 2025年3月11日 23:55
-> > > On Tue, Mar 11, 2025 at 01:11:04AM +0000, Hongxing Zhu wrote:
-> > > > > -----Original Message-----
-> > > > > From: Bjorn Helgaas <helgaas@kernel.org>
-> > > > > Sent: 2025年3月10日 23:11
-> > > > > On Wed, Feb 26, 2025 at 10:42:56AM +0800, Richard Zhu wrote:
-> > > > > > Use the domain number replace the hardcodes to uniquely identify
-> > > > > > different controller on i.MX8MQ platforms. No function changes.
-> > > > > > 
-> > > > > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > > > > > ---
-> > > > > >  drivers/pci/controller/dwc/pci-imx6.c | 14 ++++++--------
-> > > > > >  1 file changed, 6 insertions(+), 8 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/pci/controller/dwc/pci-imx6.c
-> > > > > > b/drivers/pci/controller/dwc/pci-imx6.c
-> > > > > > index 90ace941090f..ab9ebb783593 100644
-> > > > > > --- a/drivers/pci/controller/dwc/pci-imx6.c
-> > > > > > +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> > > > > > @@ -41,7 +41,6 @@
-> > > > > >  #define IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE	BIT(11)
-> > > > > >  #define IMX8MQ_GPR_PCIE_VREG_BYPASS		BIT(12)
-> > > > > >  #define IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE	GENMASK(11,
-> > > 8)
-> > > > > > -#define IMX8MQ_PCIE2_BASE_ADDR			0x33c00000
-> > > > > > 
-> > > > > >  #define IMX95_PCIE_PHY_GEN_CTRL			0x0
-> > > > > >  #define IMX95_PCIE_REF_USE_PAD			BIT(17)
-> > > > > > @@ -1474,7 +1473,6 @@ static int imx_pcie_probe(struct
-> > > > > > platform_device
-> > > > > *pdev)
-> > > > > >  	struct dw_pcie *pci;
-> > > > > >  	struct imx_pcie *imx_pcie;
-> > > > > >  	struct device_node *np;
-> > > > > > -	struct resource *dbi_base;
-> > > > > >  	struct device_node *node = dev->of_node;
-> > > > > >  	int i, ret, req_cnt;
-> > > > > >  	u16 val;
-> > > > > > @@ -1515,10 +1513,6 @@ static int imx_pcie_probe(struct
-> > > > > platform_device *pdev)
-> > > > > >  			return PTR_ERR(imx_pcie->phy_base);
-> > > > > >  	}
-> > > > > > 
-> > > > > > -	pci->dbi_base = devm_platform_get_and_ioremap_resource(pdev,
-> > > 0,
-> > > > > &dbi_base);
-> > > > > > -	if (IS_ERR(pci->dbi_base))
-> > > > > > -		return PTR_ERR(pci->dbi_base);
+Hi Rakie, thank your new revision!
 
-> > Use the domain number replace the hardcodes to uniquely identify
-> > different controller on i.MX8MQ platforms. No function changes.
-> > Please make sure the " linux,pci-domain" is set for i.MX8MQ correctly, since
-> >  the controller id is relied on it totally.
-> > 
-> This breaks running a new kernel on an old DT without the
-> linux,pci-domain property, which I'm absolutely no fan of. We tried
-> really hard to keep this way around working in the i.MX world.
-> 
-> I'm fine with using the property if present and even mandating it for
-> new platforms, but getting rid of the existing code for the i.MX8MQ
-> platform is only a marginal cleanup of the driver code with the obvious
-> downside of the above breakage.
+I think this new ordering of the series makes more sense, since the bug exists
+even before your patch is applied! IMHO, it might also make sense to take
+patch 1 out of this series, and send it separately (and make patches 2-4
+their own series). 
 
-I don't know the history of these DTs, but if there are any old DTs
-for platforms that use controller 1 but lack 'linux,pci-domain', I
-agree that we should not break them.
+I have a nit and a few thoughts about this patch and the way we order locking
+and allocating:
 
-If we need to retain the dbi_base check so that old DTs continue to
-work, I think it should look something like this:
+>  static void sysfs_wi_release(struct kobject *wi_kobj)
+> @@ -3464,35 +3470,54 @@ static const struct kobj_type wi_ktype = {
+>  
+>  static int sysfs_wi_node_add(int nid)
+>  {
+> -	struct iw_node_attr *node_attr;
+> +	int ret = 0;
+>  	char *name;
+>  
+> -	node_attr = kzalloc(sizeof(*node_attr), GFP_KERNEL);
+> -	if (!node_attr)
+> -		return -ENOMEM;
+> +	if (nid < 0 || nid >= nr_node_ids) {
+> +		pr_err("Invalid node id: %d\n", nid);
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	mutex_lock(&ngrp->kobj_lock);
+> +	if (!ngrp->nattrs[nid]) {
+> +		ngrp->nattrs[nid] = kzalloc(sizeof(struct iw_node_attr), GFP_KERNEL);
 
-  domain = of_get_pci_domain_nr(node);
-  if (domain >= 0) {
-      if (domain > 1)
-          return dev_err_probe(..., "invalid domain %d\n", domain);
-      imx_pcie->controller_id = domain;
-  } else {
-      dev_warn(..., "DT lacks linux,pci-domain, falling back to DBI addr\n");
-      dbi_res = platform_get_resource(pdev, IORESOURCE_MEM, index);
-      if (dbi_res->start == IMX8MQ_PCIE2_BASE_ADDR)
-          imx_pcie->controller_id = 1;
-  }
+I am unsure if kzallocing with the mutex_lock held is best practice. Even though
+two threads won't reach this place simultaneously since *most* calls to this
+function are sequential, we should try to keep the code safe since future
+patches might overlook this, and later make non-sequential calls : -)
 
-The previous code used devm_platform_get_and_ioremap_resource() and
-set pci->dbi_base, but (1) there's no need to set pci->dbi_base since
-the DWC core does that anyway, and (2) I think using ioremap() means
-we depend on CPU virt == CPU phys, and I don't think we need to depend
-on that.
+It also doesn't seem wise to directly assign the result of an allocation
+without checking for its success (as I explain below).
 
-Bjorn
+IMHO it is best to allocate first, then acquire the lock and check for
+existence, then assign with the lock still held. We can also reduce this code
+section into a single if statement for clarity (but if you think it looks
+cleaner with the if-else, please keep it!)
+
+struct iw_node_attr *node_attr;
+
+...
+
+node_attr = kzalloc(sizeof(*node_attr), GFP_KERNEL);
+if (!node_attr) {
+	ret = -ENOMEM;
+	goto out;
+}
+
+mutex_lock(&ngrp->kobj_lock);
+if (ngrp->nattrs[nid]) {
+	mutex_unlock(&ngrp->kobj_lock);
+	kfree(node_attr);
+	pr_info("Node [%d] already exists\n");
+	goto out;
+}
+ngrp->attrs[nid] = node_attr;
+mutex_unlock(&ngrp->kobj_lock):
+
+
+> +	} else {
+> +		mutex_unlock(&ngrp->kobj_lock);
+> +		pr_info("Node [%d] is already existed\n", nid);
+
+NIT: To keep consistency with other parts of the kernel, maybe this can be
+rephrased to "Node [%d] already exists\n"
+
+> +		goto out;
+> +	}
+> +	mutex_unlock(&ngrp->kobj_lock);
+> +
+> +	if (!ngrp->nattrs[nid]) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+
+If we make the changes above, we don't have to check for allocation success
+*after* already having locked & unlocked and making the unnecessary assignment.
+
+>  
+>  	name = kasprintf(GFP_KERNEL, "node%d", nid);
+>  	if (!name) {
+> -		kfree(node_attr);
+> -		return -ENOMEM;
+> +		kfree(ngrp->nattrs[nid]);
+> +		ret = -ENOMEM;
+> +		goto out;
+>  	}
+
+For the same reasons above, I think it makes sense to make this allocation
+together with the allocation of node_attr above, and free / return -ENOMEM
+as early as possible if we can.
+
+[...snip...]
+
+Thank you again for this patch! Please let me know what you think : -)
+Have a great day!
+Joshua
+
+Sent using hkml (https://github.com/sjp38/hackermail)
+
 
