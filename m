@@ -1,118 +1,141 @@
-Return-Path: <linux-kernel+bounces-558347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2164A5E49E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:40:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF578A5E4A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:41:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 819401898723
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:40:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 244CB17B250
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA9C2586E2;
-	Wed, 12 Mar 2025 19:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D799C258CCB;
+	Wed, 12 Mar 2025 19:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGQ90LgB"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UDilVDFu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B231BD9DD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 19:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E861BD9DD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 19:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741808432; cv=none; b=uXwX6EdzTACQwdIqPm5Xb32t4W+byN7dF9C8eV1v60YovCR/9z3WWzLZnhsYRMtK9i8iPL9wFRLcTtWa66TkoqfQSKn8RXLm2t7GWkINRPKibDOMveMuWY2N8OdRZe5QMK9I5vLA/y7ZJ0dRZAPIUaDgQBycrsneoBqR09KNpyk=
+	t=1741808495; cv=none; b=O0DbF0LDlg9Lhl3AoaSQ9j38lyrF+binGkfgavE7RyeRZNjTngbd78HdR6/WSqDf3Ww31Gwi1AfzgITZwpVb6lCervtG6VkLhx5Heagbk1wi+gWr74DOOtIcf8qZML5f0594hNcCD6pYQj7gMvI4f2xEWos3Dcx17N9p5BJoH9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741808432; c=relaxed/simple;
-	bh=0sfjWz9/dfa5XlkZjoh3Px9tGDJeE+Y8rOqWI/cZvJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A0Hu3r8a0RP4rMNAerPU7TJ8xy9z+2H4R0r5xNWA/b4qbPGGicH4DyVqfKOjUsvHSN3TRt3aXFJXrqgw8VqDQ7RTqcZmrsAP9lRLjZwT0m35iqHgcYU3T2guqOvch9Z4cZ63vI1BG6Rvwe+LWm1YjKyC/0S0QCLra2TfWrNOTvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGQ90LgB; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so1270085e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:40:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741808429; x=1742413229; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sS8kTorDyOHdKsMto1ObS5FPe8uF59EmpLR3eUldbQU=;
-        b=RGQ90LgBuEk72vAps+CDGcFcILMyvF5AT7vhxJEpHWgxUgySpxat4kW+KLwSGh71/E
-         28xjX/bPfpg7BA2EMoF6rtiXGD7ZofY4fWv5tTmfCKJMXUArn6GP1qDidc6u6I7nkYv7
-         PtSJz2Mo4dsq8Z5oWytX5RSw+fjLCom+typdOPw2AEzx5/J+xEhdYRKms7vaomqKACUv
-         uyl+nmBEusZ45/GoxPqZ1RDHdvQsP2Mbfvvt+wkNznp97zygge/7Y4oqkYVU4SPfwE3/
-         aghWfEuPqQQ3/XUFN6hVDNqqFGXH+deyVO6mmfhNey9POTXbPrcOVflNjrE4wexiGVBR
-         Zk7g==
+	s=arc-20240116; t=1741808495; c=relaxed/simple;
+	bh=chqaRTqy0/9wIACLkVCZlXVspE39+hFf13nQroISW9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TdCJUHQXaHy66Cuk0gJUlSuLzvqUAGOz21Mn1FtLwcIWvzXDmfAJMkNeSl8n6LiAb31GvGym7bdqZne4yTrsBb6RdZIVRyBwZ0rtObE0+JzN2XPx9RxzLT1v6QgUns9CzNSHlOld+3vi3cxKu30yLKIGlvU3i2h5rh5DoYkuBkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UDilVDFu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741808486;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=chqaRTqy0/9wIACLkVCZlXVspE39+hFf13nQroISW9Q=;
+	b=UDilVDFuzbMNKzhUWXas3HbaR9sr4LOyRc3bljAjR7IBmkvYk5viTB2FaLaTXL8I2LvP8G
+	Z8c2OMvA5QvQs9qMh3XQq+bFT+MdokIjAARIrVl8Iul06R21rzAoz5SdqJmbXLVdPc+DfW
+	7mIi9zKN4WriJpuU+b9hDvMeZlTG2ms=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-696-Eh6T5tWDMBiZlsaCD7KXlQ-1; Wed, 12 Mar 2025 15:40:43 -0400
+X-MC-Unique: Eh6T5tWDMBiZlsaCD7KXlQ-1
+X-Mimecast-MFC-AGG-ID: Eh6T5tWDMBiZlsaCD7KXlQ_1741808438
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c3b53373f7so35212985a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:40:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741808429; x=1742413229;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
+        d=1e100.net; s=20230601; t=1741808438; x=1742413238;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sS8kTorDyOHdKsMto1ObS5FPe8uF59EmpLR3eUldbQU=;
-        b=Tind80wYTiFFYDSHpR5Kx6RbalQz3RH9Wmy1gKSLCmi99z7/MRAKdV3XlWiOGTU/sh
-         5kGggKnRE+rCH92o0vLIzIT+hExUFO5hhiwNSui4Qo54YryVvfcJPSkeznvBnI0lkTWZ
-         TeZaa2W0boFvasac3v5ptPZM61eC9R5pUIWocSBCOyOzsW3UMsUWx0udZl16aVS5WMVo
-         YnBqZMOK9VNDmvR+h/Z707J6d2vwJ4+gFnvvBDNYYxIbEF9Flf/dDs8igGPU9Y+V5TU4
-         AX0HTzs/DRSesefi63wjMaI6csdRgzBL06zsT6Lw1I3pQHxJZDgNFiWwKqX/rEzUMudW
-         nkWQ==
-X-Gm-Message-State: AOJu0Yx3k42utvuvSW/36RYbTMShNEWAPonxBM3ZMuOHngjJUHS+OGZP
-	cOokowWk8qDv/74UCU125pJ0jSdZultYGZIb94DteZ/FudNNxtYn
-X-Gm-Gg: ASbGnctB9f4o2Lvtz98CMajfpzJnVZ1cN5a46QTNzokIC2LFxENxpTctXoSdiED3occ
-	kWMVk5a49nQfF1UVk/+Fk5AhWYMqwtGeEGPP0h4zkplreWKhmAkKuxugUTUF0cjuazXYMYWEyEX
-	349LKaRviLs4Ny+UGNq9SyBQkSyIHwpF6NxrYPleqInQA8cEIM582kn3YsJJZWIsySd6YLeENzM
-	5azR3gKUwnVbDTno8imQ7rfqJ9Kv7F8R47GbaXRpUVCsry5X83XUsz4sDwu/5TGqi8PCX1wICBP
-	QZ6Uc3QNqw3c14ywD7OJju3CWZClAP/hC9f9WFOUB0IGy/Ul0xGie+J658Tp6t+UmKyFE2lWTxN
-	3o0qNQNo=
-X-Google-Smtp-Source: AGHT+IGoyh5LSAaHpp83B2PFWGk/1MertXP2HJBTaGWTdaMqGJ4/sfh9KZzasVwSZJfDKzCVDsslfQ==
-X-Received: by 2002:a05:600c:524d:b0:43c:f470:75df with SMTP id 5b1f17b1804b1-43cf470797emr122311905e9.3.1741808428650;
-        Wed, 12 Mar 2025 12:40:28 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d031d1438sm32442805e9.0.2025.03.12.12.40.27
+        bh=chqaRTqy0/9wIACLkVCZlXVspE39+hFf13nQroISW9Q=;
+        b=kCrTjMQr67z/re7nMB2JIP8EcU7GPSadh52mcmfYYx63XEcJZ/+Z5IwbpzU7UHMW/g
+         fGKKxRkAhxJ1/9WSbKfETd+kF8f5j4AG7khtA69wz/RoYYeiguNskxEOHh9xRboq8xmO
+         Ni+tJ7GM3aFfdLxQLXw8LvtLwXHKnnpPMuPfdqKU4JGYmk4+HvBNnCBy88Uo9S/kdWEH
+         6aa5ulvC0JLPPcF15musjt6FBfDMKF0RzIHKEXHB8WkzVLZWg2UZYVqjkKImZRSnCoAf
+         L8X1T+ptLNM4QGBSFYxcmtaNcAtvAT84W+UjTGN1w/pRslLT3+nhk/R5ks+PN2UrPbLS
+         /O5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWOWp9VG7tnUrVeWCWZfzqSjhn8uTEkKhcopIw7amQsccjKJhA1a6Q7k6ac5w455+5OSBomKR8XhUgf2Bk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMoAu4yNE4lgZdJ/c8C4aaT15v4GrV1DMXgXcI8+YibwtEcAlb
+	pxrJvD9kcDDkmZgmAZFw6FVBRqhBDUvQlWfT31kwCUkA5jgiPX6Yp3JAT+TzfkCzukwvAcuRsZB
+	BoHt97YapKrH86yNhRlmGi4Ygnn7FVkMnjZFDAsY/kjZhVC67+qV/c/5JnOwHLA==
+X-Gm-Gg: ASbGncthByzqkHq2d1cbGlHFSVFaiBrId6O0Q6+tn/A4ZH9Vz980ylqn6DSfmHLJ3uf
+	ICoOpr1kspc7zJnGDhcWczLU2rK5caiwlOnglm8d4tu5SDifNcobJ1B8A09AZcIrhA3BztbmDQ+
+	Zyq5dqXX9Fa/MxQQaW3QLz06ghgBiZ+wJgPcrKkCElQvD34F5gK9dFaYwgJTHJnP+RJdNIBdltI
+	3cfaPJx0Um659+ynhVIVr4dz/MHTa6+wtzeQoQ2KVCv9ZJXaaCa4NgSL530mTfluAKvIrse24TH
+	uccFMtnWLWLvcPx5NBB89Cp2hKUML3rbbrJ4yGk=
+X-Received: by 2002:a05:620a:271c:b0:7c5:544e:2ccf with SMTP id af79cd13be357-7c5544e2e11mr1931051185a.57.1741808438026;
+        Wed, 12 Mar 2025 12:40:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFtjXSl18V3cVDW3uvVcF7AOwZPDm8P35ziMG/2MMADWgaMpNEr9E4j/T7ipIz220mu+4PBA==
+X-Received: by 2002:a05:620a:271c:b0:7c5:544e:2ccf with SMTP id af79cd13be357-7c5544e2e11mr1931048685a.57.1741808437783;
+        Wed, 12 Mar 2025 12:40:37 -0700 (PDT)
+Received: from x1 (c-98-219-206-88.hsd1.pa.comcast.net. [98.219.206.88])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5568480d8sm476215785a.91.2025.03.12.12.40.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 12:40:28 -0700 (PDT)
-Date: Wed, 12 Mar 2025 19:40:27 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Arnd Bergmann <arnd@arndb.de>, Linus Torvalds
- <torvalds@linux-foundation.org>, Christophe Leroy
- <christophe.leroy@c-s.fr>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- nnac123@linux.ibm.com, horms@kernel.org
-Subject: Re: [PATCH next 5/8] test_hexdump: Fix sample output if zero bytes
- requested
-Message-ID: <20250312194027.70c38581@pumpkin>
-In-Reply-To: <Z86qy5LOAJUlmkC9@smile.fi.intel.com>
-References: <20250308093452.3742-1-david.laight.linux@gmail.com>
-	<20250308093452.3742-6-david.laight.linux@gmail.com>
-	<Z86qy5LOAJUlmkC9@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Wed, 12 Mar 2025 12:40:36 -0700 (PDT)
+Date: Wed, 12 Mar 2025 15:40:35 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Christopher Obbard <christopher.obbard@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm interconnects as
+ built-in
+Message-ID: <Z9HjMyjzE9XlqrEj@x1>
+References: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
+ <CACr-zFC=mPNeeHMp9XnSby+cMQaPWt_3s8iUiCN+EnVPeGad8Q@mail.gmail.com>
+ <uljqxwfgl26txrfqvkvzzpj6qurgmwcbuot7gu2u6rwjaqgncb@jeuyi4mexjff>
+ <CACr-zFDSFizYmrVN-dV334n1kq17UB9k4FxrV20NNQCQMhzrwg@mail.gmail.com>
+ <92dd35a2-d1cc-4f2b-b3a8-5752ec33b0d3@kernel.org>
+ <CACr-zFCYWEFPO8yExp_8hOQdVtC9Zwu1ZOZNksSeyyS6Ht0e9A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACr-zFCYWEFPO8yExp_8hOQdVtC9Zwu1ZOZNksSeyyS6Ht0e9A@mail.gmail.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Mon, 10 Mar 2025 11:03:07 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+Hi Christopher,
 
-> On Sat, Mar 08, 2025 at 09:34:49AM +0000, David Laight wrote:
-> > If 'len' is zero the expected output is an empty string even if
-> > 'ascii' is requested.  
-> 
-> It's related to the previous one...
-> So, seems to me the series need a bit more (re-)thinking...
-> 
+On Wed, Mar 12, 2025 at 12:10:56PM +0100, Christopher Obbard wrote:
+> For reference, I am working on updating initramfs generation tools in
+> Debian/Fedora to include the required interconnect modules. Currently
+> the interconnect drivers are built as modules in these distros, but
+> are not included in the initrd. That is where my confusion initially
+> stemmed from.
 
-Nope, all its own bug.
-This is a request to hexdump zero bytes into a valid buffer size.
-hex_dump_to_buffer() gets it right unless the output buffer length
-is also zero.
+From a Fedora and centos-stream-9/10 perspective, we have dracut
+updated so that the interconnect modules are included in the initramfs
+by default.
 
-Found when I started doing a full range of tests.
+https://github.com/dracutdevs/dracut/blob/master/modules.d/90kernel-modules/module-setup.sh#L74
 
-	David
+Let me know if you are seeing a specific issue with the initramfs on
+Fedora and I can help you.
+
+We also configured all of the QC pinctrl drivers to be modules in
+Fedora, and this causes a large number of probe deferrals on boot up.
+One of the boots I measured was about a half second:
+
+https://lore.kernel.org/linux-embedded/Z6J3WpeJKIKENC81@x13s/
+
+Everything eventually loads and works as expected though. The upstream
+defconfig configures most of the pinctrl drivers to be built in for
+Qualcomm.
+
+Brian
+
 
