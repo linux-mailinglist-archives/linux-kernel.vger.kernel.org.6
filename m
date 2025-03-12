@@ -1,155 +1,108 @@
-Return-Path: <linux-kernel+bounces-557475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D14A5D9B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:40:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FAD4A5D9B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 10:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2CE3A8632
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:39:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B250A189CBCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 09:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752F823BCF4;
-	Wed, 12 Mar 2025 09:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816AC23AE62;
+	Wed, 12 Mar 2025 09:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cJTCQbsz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BvNigwEp"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6078715820C;
-	Wed, 12 Mar 2025 09:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E9815820C;
+	Wed, 12 Mar 2025 09:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741772392; cv=none; b=Sqaj/JzH9ournj+2viVHkI5y3OswCcgkg2FwtDosuDZXH3kh/RvbXObfChghCGgHpb4ybOYtIPtCEwmEf23RrMseE7RPVVzDnHdnrlesp3Q0dD/ris/Riq7NHpjK7KujALOCKEuLvILPLXni0ao12wf7U6Jc4lnz/d3OB49wGEQ=
+	t=1741772400; cv=none; b=dfkYaeot+WArRa7D83qlmvI4lrnHlYXXNYtNtZTvugrbgqwIWKF8VfHPOkUEU3Hf+LBWdCBFQ0+TbUaXRbuTULYZs1IwHwt+6+EbtoU2rSHTooeFieJTCjHmIJ3868TJqsEIKXTmFYjU+nY7pk05E/I/+0er3XmLF84FAcqV6n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741772392; c=relaxed/simple;
-	bh=Zl07tU7+p0PpzqbFzUpsduh+7Da4qFqCRGZ9W6ReZ3c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XAca6+Hz87Wn5HWCqUDOR4qvg9vkFEj+vmstQJTD6SKdYf61OTYM9F87UfDt4bKHZuLtS2Z2z0yhTk4GqtROyzjzchiqNjiNEGmM8lxZVXy/pFYCMz8GSEFpLetFdn2/dD1LfUxJ8iDEtnv6QZPPQz4lNdHcqLGgKAs2OyB+SSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cJTCQbsz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BMHCTq030286;
-	Wed, 12 Mar 2025 09:39:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Bs/d2yOM5HvoJ3Fs/iubFgUi
-	IpZVkkeRuPDobV4RML8=; b=cJTCQbszIqE+5ZPqvW7Rrr12sRHj8DY2cnE45VKh
-	RrGIZ/yUNYsGX69iIatS7laqc67K9qBKLGNZGhshJPBdC4DbVFCtRcBGHF4eFzQJ
-	8FiprT0AZH06+TnvJyJ7eTW59XUZur1EKKIcU0KOfP28EOLJJ3iqdwBCe1uDf7BJ
-	U00K5pu9rMBxcd7/wwLYr4dMNCxaQmHajLrvMXqe271Eh7iHbeFwXaEC3+bkXIt+
-	dRPICHETXUJPektCMRcQvuE4+RSDdM+PLTPUHpyVo5LY1U3hGZYkRmfaSWTMznWg
-	Gx0SUSEEJbRur3+HNh0SuGxdlVezmgP2kgP0A1ypcrbK/w==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2qhw07-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 09:39:44 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52C9dgkR020391
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Mar 2025 09:39:43 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 12 Mar 2025 02:39:38 -0700
-Date: Wed, 12 Mar 2025 15:09:34 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <quic_srichara@quicinc.com>,
-        <quic_devipriy@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 1/4] dt-bindings: PCI: qcom: Add MHI registers for
- IPQ9574
-Message-ID: <Z9FWVh1NinKOsRNq@hu-varada-blr.qualcomm.com>
-References: <20250312084330.873994-1-quic_varada@quicinc.com>
- <20250312084330.873994-2-quic_varada@quicinc.com>
- <7b2d7f14-4274-4ff0-87a6-ac3dd649df4e@kernel.org>
+	s=arc-20240116; t=1741772400; c=relaxed/simple;
+	bh=o7M7fRkbCHIKzerwL4wLRbTmeINyNYlXBbL4qCtA+Lo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IwmAtg5b9ibwCBwhwuNa5VYzSeHUjZsY8K5VYZxxnFm9IU2sLiBPi6L/a9oW3k2Q5JP2I5/4rPJxOZ4mAF3ZFwpehWLsuN7q45DhNwLAosfDunWTTjZlMp5CL1FUsrJ+dp9BUw0Hpz8ad671NTFL9y53wct25BWZNwbQeeaCW14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BvNigwEp; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+guXa85l4m8374ZSaIhSq5yBVp6GHqv8PZJqOh4Sv24=; b=BvNigwEpbh0bCumOLG+Vr9+/dk
+	qERJ6KukgwmSyjlHyfkaf82Cu43ZP2iuXg6fWsMR8W0ezR7O5Zbs5zFk3CYTMvgppOfEEmAHfb69c
+	C0n7Pqh9tWHAAnpl3bZwGnZu201gAg2KlarWBKJJYeo9loxXOh8gIxVBIcpqXjtEmP6MsPDrL5SqL
+	GLiXzMDEiP+UXH2DfHyqTUjFpjWtxJ5mDQ6XHra1VmBfqx0v+y6h5SOteD+NSr9Vr61fOtas9GwGH
+	elVbDYnyE0JQwM22kIc9rb47dPOZtS6TgI8qoGaFVRPbeQrPPzHeaQKi5T1We2oOVeUZvqmufS1UX
+	IMrUSSuQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tsIZ3-00000002LRo-0MO4;
+	Wed, 12 Mar 2025 09:39:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0A096300599; Wed, 12 Mar 2025 10:39:48 +0100 (CET)
+Date: Wed, 12 Mar 2025 10:39:47 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mark Barnett <mark.barnett@arm.com>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	irogers@google.com, ben.gainey@arm.com, deepak.surti@arm.com,
+	ak@linux.intel.com, will@kernel.org, james.clark@arm.com,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 3/5] perf: Allow adding fixed random jitter to the
+ alternate sampling period
+Message-ID: <20250312093947.GJ19424@noisy.programming.kicks-ass.net>
+References: <20250307202247.648633-1-mark.barnett@arm.com>
+ <20250307202247.648633-4-mark.barnett@arm.com>
+ <20250311113128.GD19424@noisy.programming.kicks-ass.net>
+ <431a5acb-4906-4095-8dec-b2d824adaac6@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7b2d7f14-4274-4ff0-87a6-ac3dd649df4e@kernel.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VLZnR-Gwgi09wzAZYhOChL3XibPlTXpM
-X-Proofpoint-GUID: VLZnR-Gwgi09wzAZYhOChL3XibPlTXpM
-X-Authority-Analysis: v=2.4 cv=TIhFS0la c=1 sm=1 tr=0 ts=67d15660 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=FAg4eJUAi5izC7YpO0UA:9 a=CjuIK1q_8ugA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 mlxlogscore=970 mlxscore=0 clxscore=1015 bulkscore=0
- malwarescore=0 suspectscore=0 spamscore=0 phishscore=0 impostorscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503120065
+In-Reply-To: <431a5acb-4906-4095-8dec-b2d824adaac6@arm.com>
 
-On Wed, Mar 12, 2025 at 09:46:41AM +0100, Krzysztof Kozlowski wrote:
-> On 12/03/2025 09:43, Varadarajan Narayanan wrote:
-> > Append the MHI register range to IPQ9574.
->
-> Why?
+On Tue, Mar 11, 2025 at 05:22:16PM +0000, Mark Barnett wrote:
 
-This is needed for ipq5332 to use ipq9574 as fallback compatible.
+> > @@ -9979,6 +9985,8 @@ static int __perf_event_overflow(struct perf_event *event,
+> >   				 int throttle, struct perf_sample_data *data,
+> >   				 struct pt_regs *regs)
+> >   {
+> > +	struct hw_perf_event *hwc = &event->hw;
+> > +	u64 sample_period;
+> >   	int events = atomic_read(&event->event_limit);
+> >   	int ret = 0;
+> > @@ -9989,15 +9997,50 @@ static int __perf_event_overflow(struct perf_event *event,
+> >   	if (unlikely(!is_sampling_event(event)))
+> >   		return 0;
+> > -	ret = __perf_event_account_interrupt(event, throttle);
+> > +	/*
+> > +	 * High Freq samples are injected inside the larger period:
+> > +	 *
+> > +	 *   |------------|-|------------|-|
+> > +	 *   P0          HF P1          HF
+> > +	 *
+> > +	 * By ignoring the HF samples, we measure the actual period.
+> > +	 */
+> > +	if (!(hwc->state & PERF_HES_HF_SAMPLE))
+> > +		ret = __perf_event_account_interrupt(event, throttle);
+> 
+> The high-frequency samples should still contribute to interrupt
+> accounting/throttling, right? We'd just need to put guards around the
+> adaptive period stuff so that HF samples don't contribute to the frequency
+> training.
 
-> > Fixes: e0662dae178d ("dt-bindings: PCI: qcom: Document the IPQ9574 PCIe controller")
->
-> What is being fixed here?
-
-Ok, will remove this.
-
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
-> > New patch introduced in this patchset. MHI range was missed in the
-> > initial post
-> > ---
-> >  Documentation/devicetree/bindings/pci/qcom,pcie.yaml | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> > index 8f628939209e..77e66ab8764f 100644
-> > --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> > @@ -175,7 +175,7 @@ allOf:
-> >        properties:
-> >          reg:
-> >            minItems: 5
-> > -          maxItems: 5
-> > +          maxItems: 6
->
-> Why qcom,pcie-ipq6018 gets mhi? Nothing in commit msg mentions ipq6018.
-
-Didn't mention ipq6018 as I was under the impression that 'minItems: 5' would
-apply for ipq6018.
-
-> >          reg-names:
-> >            items:
-> >              - const: dbi # DesignWare PCIe registers
-> > @@ -183,6 +183,7 @@ allOf:
-> >              - const: atu # ATU address space
-> >              - const: parf # Qualcomm specific registers
-> >              - const: config # PCIe configuration space
-> > +            - const: mhi # MHI registers
->
-> Never tested - you introduce new warnings. AGAIN.
->
-> Properties xxx and xxx-names must have always the same constraints.
-
-Ok, will add 'minItems: 5' here.
-
-Thanks
-Varada
+Yeah, I suppose it should. This means breaking up that function but that
+isn't hard.
 
