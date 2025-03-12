@@ -1,125 +1,140 @@
-Return-Path: <linux-kernel+bounces-557773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B068A5DD78
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:10:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83920A5DD81
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:12:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA043BAD1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:10:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AD357A3A5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85621245027;
-	Wed, 12 Mar 2025 13:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1A4245013;
+	Wed, 12 Mar 2025 13:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ak6hIBXK"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wn7H+CKu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5388F23A563;
-	Wed, 12 Mar 2025 13:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F6E23A9AE;
+	Wed, 12 Mar 2025 13:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741785031; cv=none; b=aGkwo0CIBwcs/88ZJqODZSAxdqqFD17k6M6vvh4lymyyZTBD8C7CqIe+uZi0Cm+ri0LmCs4cf7gDYaq4iHdDUXqhEf6QWSGa00eOvSPYypni4Suosd2/fHXr73eo4xh9cxI5ONLEejqlPnT5qeLB+sOZ7zaRHt39jUwxkhlXtns=
+	t=1741785153; cv=none; b=nvHVWnKRBF/ifqWD+bMQv4gseRwbA95y6iMyVXltbljsh94yi0SjhwHwKxmQj9EuD3EL6SGuJWFuhX9IakdNSo4jo/ha2fW+z8rXFR4xrbTTIQqoDfMUnzh39bcX61hc2X4M1xuGTjB1ZHlkNEOXTv32q+Gj05GLQY7erPdYGis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741785031; c=relaxed/simple;
-	bh=03Su45tvg5hFXwoAPydc+kGyfPPw0WcDWLM4ny1iarA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K+7X55JqUeWl1YqbT9o9FHHo+l7CUfwe8t4DrHKnZ9qM/HaI5L8RUoF5CBJ9wxY9ZstfvBT5K9OHVcPgCp3WO7ALrClEJ3NNzlHdX9mthwxBS9iWt2yo7qALroPUaoG52f5TPkoqjuVHtyw/ENZzwVm3aRsT0m0t60xA6Mm5s/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ak6hIBXK; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso907500566b.1;
-        Wed, 12 Mar 2025 06:10:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741785027; x=1742389827; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=75nPXSZjGPj5ZqtWjCrn2ByIMWAAHynamAN9dBikK2Q=;
-        b=Ak6hIBXK/C/ZIGOwVog14q9wZu08wRIZ0cQ47j1eHNQ+ILuyoJd54FKoEl9siSRf/H
-         VZ9PaTAW7fJNWfWsck7OpnCVYAB5SCBOQd4jmaZOm8zaNGyD5xKEhVdmSgXJSYtV10KJ
-         V5x52AGgAtjru1HwhbX106fDhALjOn58crpIEKpOUI2Al454O1Yqt6MZIU/Wl6iKmE2z
-         uotf5jEJU/xJDFZhjwSn2vA/qGn8Gbsb+PzxJCKptrms1c0zZulz+pjVVoqNkTZDT9vW
-         DCblkHO47Uf6Myfcn6lQ2vUacdzJ5OQoYAlPYxaKjZl5aVlKr/IXh2lcaSrI8HdLDYlq
-         w7sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741785027; x=1742389827;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=75nPXSZjGPj5ZqtWjCrn2ByIMWAAHynamAN9dBikK2Q=;
-        b=vKNpwkdtmyw/HQi8D0KybWMjEH4ZTMi7KFIqsZ9Sc+Vzh331wbVpA7fY+/HAMgjJJD
-         /iyG0bkeh2dkTMU87BvHFgUPYK4VYHet4dKLCXR3AnmQupBU+Z8k8GqLTcH2se7jPrjF
-         wOKv36wv1cn0k7IQfWluMvbdZixi8cJi13RGQbD3qlr7RNX6TEvyWYMzMuWPgsfwhl0u
-         +nGLWSAkPnXQcbl2DIdHLCgbEptz6tygZzcHzqvgY1GM4gDenrWl+wCqVZUx19W8qjqH
-         29+aUMSiGHMoTiRpFc8pc7W/QbhMA6zYN2xDWQZvdR5KvENE5Q5oMcpd9KdUWdPAM4oV
-         CeEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4G0QhvJOTix+rOQdjoHOxlZkk27OIGCwSIeWgKDgOqVflK9gP93oT/Wc/B5C2pzhIU2iWGRKmKluw9g==@vger.kernel.org, AJvYcCWf4DiVw0j7eHFLHsqzJS4aQlLzanUMAqboHGVJHZdvGxv0wj1RovYxb3AyjpKIv/QL4aTbysyBtESPf5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEQoUZIGc/mTRvEzk/qFEHLpo61qdg+v07J1q7aQW6VMQnlybg
-	jPzXio4+JA2hHQmgRh5TUb0G/N7QLJOm3wUAA/3x1sFb6O+N3Gn/
-X-Gm-Gg: ASbGncs18bo7PGukkiHTJN9y/ZrmrsA4dTI886Egva9zpjUvDyaF6DOT0ysDxy+znpB
-	M+2395/5utE5snB5TsEDRhvDPVHmM1yBa2rJ/0GH6+xBzDDrIsoAOpl7DvqRoluSik9iCDVQirp
-	rnKY8/ABV63JiFVO2DHJZGqQeMbbZq0RHfndxk7CBN4eIOHCsGBuOXXFe6CPRBqbcCNmAGOCy9v
-	N9TmUmGnuzK4l1Al6R4YP+4690WBBVYFksxIDyit3UQLfv5IzvUtGrng+t3KAwu8arQiiSMZxU6
-	r5jiQ7WwVWon3ReTF0umoNAtd+pmMvFUpuWaBVjncUuY
-X-Google-Smtp-Source: AGHT+IEdDRJ6qXBMfKuc/WyBjixNVZydYXAZICqURhWRFKP3xWJo0qizR4nH2ita/ugZWSSNuJlntQ==
-X-Received: by 2002:a17:907:c0d:b0:ac2:892f:439 with SMTP id a640c23a62f3a-ac2892f132emr1958853566b.37.1741785027200;
-        Wed, 12 Mar 2025 06:10:27 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2a21f34c1sm483656766b.19.2025.03.12.06.10.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Mar 2025 06:10:26 -0700 (PDT)
-Date: Wed, 12 Mar 2025 13:10:26 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Wei Yang <richard.weiyang@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the mm tree
-Message-ID: <20250312131026.lk5jqrzyrmrlt27v@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250312113612.31ac808e@canb.auug.org.au>
- <20250312021420.nvkahcd3enlt3i6s@master>
- <20250312133050.1d23ed5a@canb.auug.org.au>
+	s=arc-20240116; t=1741785153; c=relaxed/simple;
+	bh=Nb2EwrGaRlhLj2cZ1F+XA6Qs+Czq/zIJZZeXSvObuTE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EQ0b3FlBWCghJgpyfm5pk6y7bfuUObNMwK+X4FsIVg4Rb/mUFx6Ibvzd68kjsYmkduXzMaRH0MhqMx4Bz8yS4xA/MXOGnluQ61BkClvVoE1ORsTWaios1zjJDys4mOI47hmjif0mxk+BYZLyaQAre7LshdV7tMe2c45f7/gx9TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wn7H+CKu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82DC2C4CEE3;
+	Wed, 12 Mar 2025 13:12:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741785152;
+	bh=Nb2EwrGaRlhLj2cZ1F+XA6Qs+Czq/zIJZZeXSvObuTE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Wn7H+CKup/hxhFVUW8COsYMrIGFjrC5FGpDmyoRDZpoMK27/PtgGWIYsYsf4gBdbb
+	 H124ET3VmW2meXGlgvtdyiSjejGD23jmdGTOueWHwbFX13y9pkalTKjZRX8yoh6hUw
+	 FsV6dlYMoR2v2xjSok3U21FGK387nbA9yLkr0yzqr04ns++R39fubbWItiPdtXYS9W
+	 xOZU2lQj+gO806dVOV54yYZfru96MrkKQsnO/FjxSCT5teVumv6XB76deSzhmxELaA
+	 FJ/vD4SkDJHSQACp9YhyiL2xiVnRCGZmPTkt3Tc1bnq8/FA0eOlcTanFeWn7RLWoZn
+	 pn/Bf4uET5mYQ==
+From: Conor Dooley <conor@kernel.org>
+To: linux-riscv@lists.infradead.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Andy Chiu <andybnac@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/6] Add some validation for vector, vector crypto and fp stuff
+Date: Wed, 12 Mar 2025 13:11:43 +0000
+Message-ID: <20250312-abide-pancreas-3576b8c44d2c@spud>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312133050.1d23ed5a@canb.auug.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2355; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=8zYh8ffrjif+99QfRpKCRW9tNgdzrhSzvyJS1+s7Es8=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOkXO4R8W8+/35Gj1p/BVV2o+yBzXYHg5KucBUFrIi9/+ yJTXnK4o5SFQYyDQVZMkSXxdl+L1Po/Ljuce97CzGFlAhnCwMUpABPx2cbw31NHfMFEganTes+7 7tpSlFoasTTJJo89UbDz6imuXWxBNxgZ3p95/3b7St4tU1vKWUVb9DJOz/W7afB+U847/TNRTsx beQE=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 12, 2025 at 01:30:50PM +1100, Stephen Rothwell wrote:
->Hi Wei,
->
->On Wed, 12 Mar 2025 02:14:20 +0000 Wei Yang <richard.weiyang@gmail.com> wrote:
->>
->> Thanks for your fix. It looks good to me.
->> 
->> If it is ok to you, I would like to merge this into the original commit.
->
->Fine by me.
->
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Thanks
+Yo,
 
-Andrew
+This series is partly leveraging Clement's work adding a validate
+callback in the extension detection code so that things like checking
+for whether a vector crypto extension is usable can be done like:
+	has_extension(<vector crypto>)
+rather than
+	has_vector() && has_extension(<vector crypto>)
+which Eric pointed out was a poor design some months ago.
 
-Would you mind merging it or prefer me to send a new version? 
+The rest of this is adding some requirements to the bindings that
+prevent combinations of extensions disallowed by the ISA.
 
->-- 
->Cheers,
->Stephen Rothwell
+There's a bunch of over-long lines in here, but I thought that the
+over-long lines were clearer than breaking them up.
 
+Cheers,
+Conor.
 
+(I've been unintentionally sitting on this for a month, hope I
+haven't omitted anything as a result)
+
+v4:
+- Zvbb -> vector_crypto_validate()
+- remove copy-pasta section of commit messages
+- Add commentary justifying !EPROBE_DEFER cases
+- EPROBE_DEFER where possible (one instance, zve32x check)
+
+v3:
+- rebase on v6.14-rc1
+- split vector crypto validation patch into vector validation and vector
+  crypto validation
+- fix zve64x requiring extension list to match Eric's PR
+
+v2:
+- Fix an inverted clause Clément pointed out
+- Add Zvbb validation, that I had missed accidentally
+- Drop the todo about checking the number of validation rounds,
+  I tried in w/ qemu's max cpu and things looked right
+
+CC: Eric Biggers <ebiggers@kernel.org>
+CC: Conor Dooley <conor@kernel.org>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Paul Walmsley <paul.walmsley@sifive.com>
+CC: Palmer Dabbelt <palmer@dabbelt.com>
+CC: "Clément Léger" <cleger@rivosinc.com>
+CC: Andy Chiu <andybnac@gmail.com>
+CC: linux-riscv@lists.infradead.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+
+Conor Dooley (6):
+  RISC-V: add vector extension validation checks
+  RISC-V: add vector crypto extension validation checks
+  RISC-V: add f & d extension validation checks
+  dt-bindings: riscv: d requires f
+  dt-bindings: riscv: add vector sub-extension dependencies
+  dt-bindings: riscv: document vector crypto requirements
+
+ .../devicetree/bindings/riscv/extensions.yaml |  85 +++++++++++
+ arch/riscv/include/asm/cpufeature.h           |   3 +
+ arch/riscv/kernel/cpufeature.c                | 140 +++++++++++++-----
+ 3 files changed, 190 insertions(+), 38 deletions(-)
 
 -- 
-Wei Yang
-Help you, Help me
+2.45.2
+
 
