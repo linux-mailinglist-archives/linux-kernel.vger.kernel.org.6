@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-557781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAF3A5DDB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:16:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDCDDA5DDB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 14:16:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2565189F7F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:15:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F7E11637F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BE1244EA1;
-	Wed, 12 Mar 2025 13:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C62245017;
+	Wed, 12 Mar 2025 13:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uFbP5NzN"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GqWm8zyo"
 Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2C124338F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AB824889A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 13:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741785261; cv=none; b=qKzca+HA9xiWvyQ2O7udWNpxtULu7ZrCNkEdnn1UFXv/CaSgmkT7sjGQcCAJ/5Xtwy49xruXN57FfUhJdQM6fXtQVX9PMzFiEu8clBhxnkoPo3n3/nQEFQwjkWIwfMneNARIq+mgieXsQ6jDuD8uaZTdvQcUriPW2/xo0hZPSGA=
+	t=1741785272; cv=none; b=jwQldriC8wJL/4ZkL5D9eOp2EVTC2XoJGK6IOKJB1RFE25SzPyBaL4kKGlOoXHyCBPwNzO5Cl8SeLbtN//6Az6bLRtIwXJvY32SNVo75CHeMEDCS2FGJ55BVU91eTYgnmuC+6JmH9PKDKhVhYxj4Cs32ivY0XeKmuzX1yyGK6yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741785261; c=relaxed/simple;
-	bh=vBJoYS6kgea9KnuipejUiu6W/UyWi3+gXOVaAXDBGu8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=r5p3Qi3bHeSj441hIkgilWAUb2QBotEPOEJmdiZyJ+NajDJI7gWVBJS0tcRbvGctToQKOTGNeXcwW9v56WvYT3L+ByBgzAvZYm1srh7q7c7GLmIVrtdZ8hWBlcarIeCArSXYbuL+CRdBHl0IVzIkN3dYvz/V+J84MdtZkKbo2Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uFbP5NzN; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1741785272; c=relaxed/simple;
+	bh=WwJ1D/xQhYnnE70APK5HUuAgSfdcB5C+d9hVsHP/PwU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=fZawwk5tGxZeeIIr1apbZYs5aOSiV6m+/h8gWSf5vu9ZTIWzXGijExKB0RXLMGLE4RzkGRLDfnAwwnST4kV/goVXkwc17LuBM94wd08vVL/7TmdU8Ax30TGr/tfyW+FYXPSH1ATcyM7frKnGG6W01gzRfHT2E1Zu5otIwHfJX8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GqWm8zyo; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4394944f161so7336835e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 06:14:19 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43ce5cd91e5so4693125e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 06:14:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741785258; x=1742390058; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DGzPkd7r2+zM91oQhOH/mQvzjdgz6ag3mHHJbjsWzpk=;
-        b=uFbP5NzNxDmAc+6S5//WxTBMbW+0oz/9oT1+a7tBviBZlEdhfIi3VMrQeFPwuRHiN0
-         2uKzJVTUEJigbegOTYu+8cf+Oo5rLGDpkNnXHd59hAdp0Y+i1UBPy4+iio35YV57IfTk
-         DeSX1+Pj8ZwJq44HaUtRskUewuLm/9if7SvHEKl5GJJ2C8EyE+iAiGYZiFvArt8XN+Oe
-         32uRNj8kHDU9TwiMgE3lpJiQ/N617MvvxiwhJa155HB9GfGhQFnPbmJLkt8UCkxzX3Z9
-         0/iwUdBRuZJiuISSsQvJ8kWowD7tZt2C4lPcT2Go5608UoWS1seNvkjjeZHOYtZD2s27
-         bTGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741785258; x=1742390058;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1741785267; x=1742390067; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DGzPkd7r2+zM91oQhOH/mQvzjdgz6ag3mHHJbjsWzpk=;
-        b=Xt7b+J8voI66DVPpA8axchnGjt286WAQJvJMaiNSn+RmuRlNWMoBlF9uOeP8+VlLk0
-         Go3mLvMgOZRIwQ1ZOPRTMAln50jRQd591zQAbjor5ScLHGiemmizA1iU43X7DHluCkD5
-         nCch7AQBjh8LYuyth9RvmTVuyE/MFqA34wIEPrpKxJBA8T2HEbgkIDOfekTnoGdyQSDF
-         qLb2JAs7E+al658WHz7SxkvS+NC3EpL3ADaXBdP0FZr8ypb7Gb0S9BdoVsEyoXAqiLFU
-         OvuPqr2Kfk4YbMFr9mshaD6j1ubduGR9deCxykcOKkL53Y/YDuWM5ZdZeQGBfjZYPXIf
-         uroA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8duvv+7H4K9ooeZuz3fpX1fWLBZWBKTxBnKZkiq38VP1HDOehXN6ptXW8TfHNIfzgvW6k9JAgYSrGnfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5cFzQ1UcoPRiriHoF+JcQBVX3HwMq1IyfNOG+DdV0gRokuzqQ
-	h+iFW+jhHPyYsbXy5Z/x9k7Bx7qQsRBtcbxc1OSc8UlnokvQwrvSD9AY+aTEjmJ2qe6OOiSmIvY
-	Y
-X-Gm-Gg: ASbGncsNfhPEj8X2MXvpfvGAryV54N1NtzxgKOXFYm80z/2ZrK8KIpRZ+jA/B9eE052
-	UY7KTfPREcSkZ/Q2etK6lNMPNXiFzOLgWtbfrdpDmA/jO8ZlXS6m8Om5c1BUvvMSw0el8Rd7qnm
-	OInfGEYt1wY4xrva6eptpN2RBdU7CSjMZCJ6pEwu4tNzr/PlWWMmhk38xl1akvapiSlt9nV9CWS
-	Tu3B+OHRyssJSjQ/DlP/HbBicwjU6tCbVxsbbIDfK+DyGr7CycB9MRn5TN/+F5b+p9wK/eeK8DL
-	jNXcI0tDRNCUESfebixv4VTsaQLc6NSEIndhorL/VUr/y+uKqtNkr8SiUzoV+Qe49WayNg==
-X-Google-Smtp-Source: AGHT+IH+qpDNzN/QfZBrZqjgfeka3w0jEA+aQ5oaMH8e3V/VqjGWoPeo22IKDneXVdzf4OlJgAu3yw==
-X-Received: by 2002:a05:600c:b91:b0:439:9c0e:36e6 with SMTP id 5b1f17b1804b1-43d01c1fa4dmr32998775e9.3.1741785257752;
-        Wed, 12 Mar 2025 06:14:17 -0700 (PDT)
+        bh=iqtIX+KRQ/gRjdq8FBtPRASYggrMYH2b/Et+HrtT7KA=;
+        b=GqWm8zyoz1q4a0X/ZxOXjfL9LZMWHm/Z9impPE8NKzc8e9LKtWdmOLiXucA/5OX9wI
+         qpqLEID4VoE3reez3d+Qc8a1XzToW9npyL+Pr7yRXWNdZMyEBh28vnyLLLHKHiNkTaab
+         3FL9O8KL3ZayriGQDVgkBYuZYQcB07v/iyxiY604HRp6+WaD+OA2Tnel3gsF9PU2XZkk
+         3gIlb2lhrixrNiIEX0gqHU8FXjnMRHSEyYXTGhHvTIvhXFLPGQkjj+miVc8D9ejaLMMu
+         wVH1ldxaH7Z00RakkCm/FIusDQpt02muQsHyczHB28/FggF8Jka4iVjSeqh9DJA5XauH
+         8FOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741785267; x=1742390067;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iqtIX+KRQ/gRjdq8FBtPRASYggrMYH2b/Et+HrtT7KA=;
+        b=CQH0zG6OYCsL/d2iexl9aAZ6bjKmsJmNXDdc/amixb/wSuqCjTIQYqig7T4xN2CFHd
+         ki3zwiYPXA4/aZOeDcYmEcbWm6zbDCaqVXedNxgB/3+JbcQkEGV0t5Xjr8yy6O/A9eQH
+         dY2f2MXOIrU4JvtGETSUwUMjJJrT/MgpgQXVVn7Q+WwmaRGzXq3Tp0H9FUVHI+N0UZTb
+         zH0Ypbrbb2uee/d2Ls/nLTu/+hQRmaKROshua8HCSE/+tylqlnixs/tQYCfh1tspe6ri
+         IpJgUVLpcVJkzpeyqOL1LNWQd4tYQxMYYBS0rH3s/KuXSWYf5tDNitmpa8OIn0lXgi9n
+         xhyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTgckBrzKadMQOzzXuQIXm1v28pqHG1BYzsjNyT4gV+cVzSvztUXiRx+Twn+WhRbe3CwMA5Hs9aEQ/gmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR3+rjfmRwxkwFip4nHIQef86u/Qgc81onFYVDe50D9UWn2TqL
+	OGpN1rzRB6D3dNQcozoSH0rDnEf2YYPJwvR08sOxLe1lJeCI8CTbq393n3nSd8Q=
+X-Gm-Gg: ASbGncu+RohH8iVvDzby4k/wutkPGsJ1bib/TWn2MNaLHhg2Inyqxvqbbj46Gxrhdm4
+	qajWqTTAQWO/ndx7Vbao/LBymhjHcXqAWyvo1Oydta+PTHQRzo5n5st/OOrbyuGxaMMoK3jJjZn
+	z2xcXOoZN+7vUM1TPT91cfNMZr1b0ib8+DayxqwJLDJCuySSBAzMsak3HxCRvo5NKSqXH/gqlRA
+	+wTTADn2w/3SoGatDHdBAJhrer9FDsLgHQIosxhcJQKS7biMvGAe2Pf1zVBWNSmYG5txgSjOQ0A
+	49WBrkNQ+/hrVPHFopbcBTBXm1uj4iq3CmJXD58rvu7GUh9mTgo5d/phR34=
+X-Google-Smtp-Source: AGHT+IED+vl3AXpREuDJ5mIKT8LKqXcPzMJ8VEOqUZGlUTk+UpRr6QXtx6UiWUWl7mS6aJzcw5mw5Q==
+X-Received: by 2002:a5d:6da2:0:b0:38d:e472:e6a0 with SMTP id ffacd0b85a97d-3926beebdfemr3133256f8f.9.1741785267533;
+        Wed, 12 Mar 2025 06:14:27 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8c5cb4sm20966745e9.25.2025.03.12.06.14.15
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8c5cb4sm20966745e9.25.2025.03.12.06.14.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 06:14:16 -0700 (PDT)
+        Wed, 12 Mar 2025 06:14:18 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4 0/3] arm64: dts: qcom: sm8750: CDSP
-Date: Wed, 12 Mar 2025 14:13:56 +0100
-Message-Id: <20250312-b4-sm8750-cdsp-v4-0-4925d607cea6@linaro.org>
+Date: Wed, 12 Mar 2025 14:13:57 +0100
+Subject: [PATCH v4 1/3] arm64: dts: qcom: sm8750: Add CDSP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,13 +82,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJWI0WcC/3WQy27DIBBFf8ViXSpmsHl41f+ougAzTpBqk4Jjt
- Yry7yWOorayumBxkc6ZuXNhhXKkwvrmwjKtscQ019A+NWw4uvlAPIaaGQpsARC5b3mZjO4EH0I
- 5cWmcGlC10snAKnTKNMbPTfj6VvMxliXlr82/wu33X9UKXHDrlHXG2ABev7zH2eX0nPKB3VwrP
- vhOIIodj5V3WoSAQbQt2B0vf/Ow42XlR0JjwRPR+Hf+9V4u08e5Hmm5N/y5Ud9star34XTnEBM
- PkvTolVYaVF8XqBbvCvEhTVNc+obIYdcZKzUYVIbAedPh6OvTYlAgAwjrra0LXL8B0UmOka0BA
- AA=
-X-Change-ID: 20241122-b4-sm8750-cdsp-38a6c2643a3d
+Message-Id: <20250312-b4-sm8750-cdsp-v4-1-4925d607cea6@linaro.org>
+References: <20250312-b4-sm8750-cdsp-v4-0-4925d607cea6@linaro.org>
+In-Reply-To: <20250312-b4-sm8750-cdsp-v4-0-4925d607cea6@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -98,71 +94,247 @@ Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
  Dmitry Baryshkov <lumag@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1719;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6280;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=vBJoYS6kgea9KnuipejUiu6W/UyWi3+gXOVaAXDBGu8=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBn0YigT+3azmRAzoiP5kKesAhS+LovXxiaqTUSH
- XVtYyCkInOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ9GIoAAKCRDBN2bmhouD
- 11+0D/9UdkSkavwrurxGEPRe15zNeHtxOzWfEDEm0oYIm10dmRExyP0pe8nngv87n+LkuufxzxI
- vG1UocuOzfbuTSX30a1MW7E/Y4rfedXz0thQzC3TByH0CaR2On5LA09OR0Gky+Kz8XfpAPfXnKw
- wPnQMcEufV8wSeqZ3j5V6gkrQ9uHmuL58xzc3VryLn+D2K8M0BAyGRKGYzM86goJWTO2b9B38Ur
- ipF9asdV8Es2lyhnEKLtMHO8Rb7K8UpMawLgeOCKi8Ijio2LGvndS622ucd4SDeSR+FHULg7P5i
- EAYtQRPjXE8PecfUsMzC2O/4KCC9lV5L102oz5n5m5WiD0sTAEbUp+1t1UtT9anvZRKLJd1kkue
- Mk1cKdH0/XsXTSrWzUQV/Yk1/hP1R70h4sOhOG3Gsh3e2SSunYuikkFJES1dbKvu2BfOqCyUuEh
- NDFHgij7cLZGZoksVg8e7aIfo4az05M+XX78n79Ey/rR0PlPP5y7SCp4EdkK3PQpaUVExbyiidb
- i5ONm99gHRksHNB286+7SELcZaVwolMcSFezjg5/da2wZKD9kUBKGYGbOSefBQ67lizon8VFCfU
- NdqXWzoxqIDFdU+5IZRxMZmkxCJs+GW1qDcCgquHm+pq5YwwPt2GrsxQYrqGiCfJKtniqSxUaCg
- XIgrKQlLkfXp2SQ==
+ bh=WwJ1D/xQhYnnE70APK5HUuAgSfdcB5C+d9hVsHP/PwU=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBn0Yik6TVPAZg3B+bAOY5c4izBiOCMOj3GJb9Jv
+ uScly2QmO6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ9GIpAAKCRDBN2bmhouD
+ 1+yED/45FulectWPX5QKmjW5wJDBp4wegC0UefUYnIpLyhaYTnE9GrUrqA71F2Pc5WjFmBs8xCk
+ 1n5DtNr1tHdYhOVFh4DQ838nYhPZrcgDHFc0u6Kt+hUm5VvHIZMglVPqDw+cU6Zi/H+BLJZfOjf
+ Xljk6fTQ/9Wn71AeNx+HJT0V8ZBa9cHmdxqTvfV1Pr/XrzsTGbNHKSad+fxl/Y0X3gzP2rc3Sd1
+ vHLXFyh9VF4nqU+LRjSoOdlis8BfDGOWbdVttg7NpgXW9i1FF7Pf5Id+yXOqJqevP6k+0pG2LrG
+ i9mnhNpla0GIt8/iSLDKfBWnubwy92cgipc7QmLS8XBWkZuN7gHIWiOgBvMG+9bmSp/t+CJfMOf
+ P2K/Xb7vTkhkglGu/ESZBgdV1qeFA6hGS4quiWNH3aDFBcNPQigjtIfBStMXYWSEQc6udhn/BDa
+ D4Ns5sXqgL7MSqAy5GNbLsmNAfBVMaeiqViXbBrYJl+hmS+tqDD8iikRfqDOFt/GUDSjtS7olzs
+ 38wh6G6Qrz1Ip7Twg0E/9l9+vHit/bm4xxhcBhZ5jyaHPSeBPud9hJrN7lgMNRcli+Py/c8DDVY
+ ysEYQSOQoaSugYHH4nUimV3oqsKCJ3XrkPZ7lJIoL3MKXjEH56FbwY4vso2uGPL9GelZlWVHXVz
+ r4RBxvl4+BUfCIg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Hi,
+Add nodes for the CDSP and its SMP2P.  These are compatible with earlier
+SM8650 with difference in one more interrupt.
 
-Remoteproc bindings were merged to remoteproc tree.
-
-Changes in v4:
-- None, only rebase (context changes).
-- Link to v3: https://lore.kernel.org/r/20250221-b4-sm8750-cdsp-v3-0-fe2891beeef7@linaro.org
-
-Changes in v3:
-- Based on Dmitry's feedback, move modem pieces to separate patchset, so
-  this can be easily merged.
-- Keep previous tags.
-- Link to v2: https://lore.kernel.org/r/20250220-b4-sm8750-cdsp-v2-0-a70dd2d04419@linaro.org
-
-Changes in v2:
-- Fix CDSP and MPSS PAS address space range.
-- Re-order nodes for correct placement.
-- Rb tags.
-- Link to v1: https://lore.kernel.org/r/20241122-b4-sm8750-cdsp-v1-0-9a69a889d1b7@linaro.org
-
-Context of this depends on my audio patches:
-https://lore.kernel.org/r/20250220-sm8750-audio-v2-0-fbe243c4afc3@linaro.org
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Krzysztof Kozlowski (3):
-      arm64: dts: qcom: sm8750: Add CDSP
-      arm64: dts: qcom: sm8750-mtp: Enable CDSP
-      arm64: dts: qcom: sm8750-qrd: Enable CDSP
+ arch/arm64/boot/dts/qcom/sm8750.dtsi | 194 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 194 insertions(+)
 
- arch/arm64/boot/dts/qcom/sm8750-mtp.dts |   7 ++
- arch/arm64/boot/dts/qcom/sm8750-qrd.dts |   7 ++
- arch/arm64/boot/dts/qcom/sm8750.dtsi    | 194 ++++++++++++++++++++++++++++++++
- 3 files changed, 208 insertions(+)
----
-base-commit: eea255893718268e1ab852fb52f70c613d109b99
-change-id: 20241122-b4-sm8750-cdsp-38a6c2643a3d
-prerequisite-change-id: 20241022-sm8750-audio-d3e7fb676716:v3
-prerequisite-patch-id: b55e186eee8900b7a4f58684018cb3babd1f6fab
-prerequisite-patch-id: f43e8633f9f6e2f50fda536727f8de5908d3e21a
-prerequisite-patch-id: 64e093ece66679a7a4b9290374176811e1938337
-prerequisite-patch-id: d2fd6b3e1a17a96b805b4eae6971168ed2bb11cf
+diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+index 20ddc16c49462cc316e22272cb630cf2478f52fe..e7a3177d6098352166c0a609e364e9f0094e5a7f 100644
+--- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+@@ -545,6 +545,32 @@ smp2p_adsp_in: slave-kernel {
+ 		};
+ 	};
+ 
++	smp2p-cdsp {
++		compatible = "qcom,smp2p";
++
++		interrupts-extended = <&ipcc IPCC_CLIENT_CDSP
++					     IPCC_MPROC_SIGNAL_SMP2P
++					     IRQ_TYPE_EDGE_RISING>;
++
++		mboxes = <&ipcc IPCC_CLIENT_CDSP
++				IPCC_MPROC_SIGNAL_SMP2P>;
++
++		qcom,smem = <94>, <432>;
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <5>;
++
++		smp2p_cdsp_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		smp2p_cdsp_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
+ 	soc: soc@0 {
+ 		compatible = "simple-bus";
+ 
+@@ -3241,6 +3267,174 @@ nsp_noc: interconnect@320c0000 {
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 			#interconnect-cells = <2>;
+ 		};
++
++		remoteproc_cdsp: remoteproc@32300000 {
++			compatible = "qcom,sm8750-cdsp-pas", "qcom,sm8650-cdsp-pas";
++			reg = <0x0 0x32300000 0x0 0x10000>;
++
++			interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp_in 0 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp_in 2 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp_in 3 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp_in 7 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog",
++					  "fatal",
++					  "ready",
++					  "handover",
++					  "stop-ack",
++					  "shutdown-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			interconnects = <&nsp_noc MASTER_CDSP_PROC QCOM_ICC_TAG_ALWAYS
++					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
++
++			power-domains = <&rpmhpd RPMHPD_CX>,
++					<&rpmhpd RPMHPD_MXC>,
++					<&rpmhpd RPMHPD_NSP>;
++			power-domain-names = "cx",
++					     "mxc",
++					     "nsp";
++
++			memory-region = <&cdsp_mem>, <&q6_cdsp_dtb_mem>, <&global_sync_mem>;
++			qcom,qmp = <&aoss_qmp>;
++			qcom,smem-states = <&smp2p_cdsp_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			glink-edge {
++				interrupts-extended = <&ipcc IPCC_CLIENT_CDSP
++							     IPCC_MPROC_SIGNAL_GLINK_QMP
++							     IRQ_TYPE_EDGE_RISING>;
++				mboxes = <&ipcc IPCC_CLIENT_CDSP
++						IPCC_MPROC_SIGNAL_GLINK_QMP>;
++				qcom,remote-pid = <5>;
++				label = "cdsp";
++
++				fastrpc {
++					compatible = "qcom,fastrpc";
++					qcom,glink-channels = "fastrpcglink-apps-dsp";
++					label = "cdsp";
++					qcom,non-secure-domain;
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					compute-cb@1 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <1>;
++						iommus = <&apps_smmu 0x19c1 0x0>,
++							 <&apps_smmu 0x0c21 0x0>,
++							 <&apps_smmu 0x0c01 0x40>;
++						dma-coherent;
++					};
++
++					compute-cb@2 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <2>;
++						iommus = <&apps_smmu 0x1962 0x0>,
++							 <&apps_smmu 0x0c02 0x20>,
++							 <&apps_smmu 0x0c42 0x0>,
++							 <&apps_smmu 0x19c2 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@3 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <3>;
++						iommus = <&apps_smmu 0x1963 0x0>,
++							 <&apps_smmu 0x0c23 0x0>,
++							 <&apps_smmu 0x0c03 0x40>,
++							 <&apps_smmu 0x19c3 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@4 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <4>;
++						iommus = <&apps_smmu 0x1964 0x0>,
++							 <&apps_smmu 0x0c24 0x0>,
++							 <&apps_smmu 0x0c04 0x40>,
++							 <&apps_smmu 0x19c4 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@5 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <5>;
++						iommus = <&apps_smmu 0x1965 0x0>,
++							 <&apps_smmu 0x0c25 0x0>,
++							 <&apps_smmu 0x0c05 0x40>,
++							 <&apps_smmu 0x19c5 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@6 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <6>;
++						iommus = <&apps_smmu 0x1966 0x0>,
++							 <&apps_smmu 0x0c06 0x20>,
++							 <&apps_smmu 0x0c46 0x0>,
++							 <&apps_smmu 0x19c6 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@7 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <7>;
++						iommus = <&apps_smmu 0x1967 0x0>,
++							 <&apps_smmu 0x0c27 0x0>,
++							 <&apps_smmu 0x0c07 0x40>,
++							 <&apps_smmu 0x19c7 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@8 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <8>;
++						iommus = <&apps_smmu 0x1968 0x0>,
++							 <&apps_smmu 0x0c08 0x20>,
++							 <&apps_smmu 0x0c48 0x0>,
++							 <&apps_smmu 0x19c8 0x0>;
++						dma-coherent;
++					};
++
++					/* note: secure cb9 in downstream */
++
++					compute-cb@12 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <12>;
++						iommus = <&apps_smmu 0x196c 0x0>,
++							 <&apps_smmu 0x0c2c 0x20>,
++							 <&apps_smmu 0x0c0c 0x40>,
++							 <&apps_smmu 0x19cc 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@13 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <13>;
++						iommus = <&apps_smmu 0x196d 0x0>,
++							 <&apps_smmu 0x0c0d 0x20>,
++							 <&apps_smmu 0x0c2e 0x0>,
++							 <&apps_smmu 0x0c4d 0x0>,
++							 <&apps_smmu 0x19cd 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@14 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <14>;
++						iommus = <&apps_smmu 0x196e 0x0>,
++							 <&apps_smmu 0x0c0e 0x20>,
++							 <&apps_smmu 0x19ce 0x0>;
++						dma-coherent;
++					};
++				};
++			};
++		};
+ 	};
+ 
+ 	timer {
 
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.43.0
 
 
