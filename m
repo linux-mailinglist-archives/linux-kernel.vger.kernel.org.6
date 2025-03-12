@@ -1,157 +1,98 @@
-Return-Path: <linux-kernel+bounces-558343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A575A5E494
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:38:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E1C7A5E498
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 20:39:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFE5A3AA5C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:38:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0028A1881E0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 19:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E052586FE;
-	Wed, 12 Mar 2025 19:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD301258CDB;
+	Wed, 12 Mar 2025 19:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0w6DVHcP"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="n4GTqQQI"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9144770809;
-	Wed, 12 Mar 2025 19:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B516D2500BE;
+	Wed, 12 Mar 2025 19:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741808326; cv=none; b=MnOCbwy6vZHqoUF2VWgFD08XtkLk3ki8fpL2DsedvWCANEE/EHDPRN7D0lMUPE2r2Vk1nr4oycHJboJalExeBXbR0Vz2/MU99gMgh5VBgAwPYhh65e1yipGRGKOuKHrvxirYzzmOu6ReKdIy7RP3lZu0NLSBb2BW2yvQfDJ6bHs=
+	t=1741808339; cv=none; b=CdMNaTs3U99TDKgEeK7mLG6TLSrwqWXBITMwBVoPFZiBZ17bdY2e5HZ1wB95BEqtwaSsTtLKUOFrC3Mpen8BP4qdZUs2Qh/X+U/1OyfDmLOcvz708mBDYO9Gu4z5GdGFFwMXfQA2dXFeNotxZrAur/JFVicXdioHO31EuBVWujg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741808326; c=relaxed/simple;
-	bh=C9INF1sRuTRBiE4I1IZ7b5gSF2dewfFG5yTbHzD+y0o=;
+	s=arc-20240116; t=1741808339; c=relaxed/simple;
+	bh=6D7TPM9fIWmxp7fQ8s1JIDBlYRWkbhrWVq0EcEUKk+c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LlBHLnt+JHt6974i8ao5usGZ8epiTk5zubewQzF858OKL+RLxIns6lLYAweTvIvaZe9VCvy9odPYbtSlrL8ew0jsHfBCJqH8bM+khIZJYSf/8dmESYjVV7Hbx71WIl49dx4ix8UPPZmNuRZX7ClJeY1ixTkQeDaj9YMSnF1vYdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0w6DVHcP; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=McAFQpR+XrzPMJFoHzHjhcHhxqJFmoY1AMZLZmnUjwfsUUrncUk6qh5ScS0ka8btE9bufK+8vPYAxZ9Fu7KtFZh5oLxfZI9Q1gALDc1AF7i/Mfe3KHYJ7D48sdUsFQRRQTS1FRdbHFHjapZ4YfbOEncEh9vLePOAHYXxnHim3SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=n4GTqQQI; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=9G2KX65Ab+9QthP7hU+dGSKLgGHDZbANHAkXoqK6ZJ8=; b=0w6DVHcP8Ff1NsM8gB7G2O7rSU
-	nQacEOXrojn9wRema8yOaO0egRFn0zuygBNIDCIswibMncUt/Ng/CbZMssdRIr0SUNRuaCzpzM29q
-	XeddB38hzG7sGIPAS8eRvmEe2nFPKCSKh+CZkRnxyCfEeyUnQGDdWBevdPv5EEQiJhvEIWMxqpWRN
-	E4mna9N2wg8wb9UFCaFND4cWatp12Cb8WBQYbPile+C6rOoG+m3IbpoQ7FZBxXIe97x0zpGZhUNnk
-	UrxT6va3aKF91llsyjHRTr6XNcOtEqmJH4spBOnz37Z2PfTSzzp38OZPb5XHW+9pUfJf7BRcCdlZj
-	eXLPSZVg==;
-Received: from p3ee2c254.dip0.t-ipconnect.de ([62.226.194.84] helo=phil.localnet)
+	bh=Yd22Qxz7kDBJnd2ZYEgaGoACeEuIVuHffsOhyto1sRk=; b=n4GTqQQIMhcq4YAluRDwHbKnoH
+	TjRQEBWJJBqEZkeSd4FKjYrt9GreyYhsgoTZR94NU60koVcyszyVg93Ok/x/yhCH1z+2etja3CmAG
+	fapBW4qGaRMl858/NCffQUMfIL7I9NdoZyt9mUhK2mxXC1ZhPC5M1lTwndqyDR/+8fnzli1Kf0N/g
+	agHyq1cycPPK0l33SRcZ1GootxNikCN5N1NJB1tkMtHJkb7nRMrWzndEalbAQP6Z8rxxYz2DFPBKk
+	RPJXWf6mVOGO2n+z9J0loh5YfjRbPaENRvDfT1lZsrtop/7HjjhYCsXGKUqc1V9vQdx3QHzshm30s
+	G3FYU4gA==;
+Received: from p3ee2c254.dip0.t-ipconnect.de ([62.226.194.84] helo=phil..)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1tsRuS-0001ql-MV; Wed, 12 Mar 2025 20:38:32 +0100
+	id 1tsRuk-0001qz-2J; Wed, 12 Mar 2025 20:38:50 +0100
 From: Heiko Stuebner <heiko@sntech.de>
-To: Chukun Pan <amadeus@jmu.edu.cn>, Jonas Karlman <jonas@kwiboo.se>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 0/2] arm64: dts: rockchip: Add pwm nodes for RK3528
-Date: Wed, 12 Mar 2025 20:38:31 +0100
-Message-ID: <7779050.EvYhyI6sBW@phil>
-In-Reply-To: <b7d8d385-81ee-4947-ab8f-1da43843464b@kwiboo.se>
-References:
- <a5ec9062-ca57-4748-8c0f-fb5b9c75fa28@kwiboo.se>
- <20250312143515.1225171-1-amadeus@jmu.edu.cn>
- <b7d8d385-81ee-4947-ab8f-1da43843464b@kwiboo.se>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Yao Zi <ziyao@disroot.org>,
+	linux-rockchip@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/3] rockchip: Add support for onboard eMMC on Radxa E20C
+Date: Wed, 12 Mar 2025 20:38:48 +0100
+Message-ID: <174180832194.262650.6974587881042851056.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250305214108.1327208-1-jonas@kwiboo.se>
+References: <20250305214108.1327208-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-
-Am Mittwoch, 12. M=C3=A4rz 2025, 16:00:00 MEZ schrieb Jonas Karlman:
-> Hi Chukun,
->=20
-> On 2025-03-12 15:35, Chukun Pan wrote:
-> > Hi,
-> >=20
-> >> The pinctrl-names should be changed to "default" and not "active",
-> >> something you can fixup or do you want a patch?
-
-so yes of course the pinctrl needs to be default - simply because
-that's the only pinctrl state mainline supports.
-
-But judging by the fact that you're discussing working vs. non-working
-below, can you please check if we should drop the patch for 6.15 till
-that is solved?
-
-Thanks a lot
-Heiko
-
-> > Sorry I've been a bit busy this week and forgot to send the v2 patch.
-> > In rk3528.dtsi, the uart and upcoming i2c nodes do not have pinctrl,
-> > so I prefer to remove them.
-> >=20
-> >>> Unlike other SoCs, pinctrl-names need to be in "active" state,
-> >>> I'm not sure about this, but otherwise the pwm-regulator will
-> >>> not work properly.
-> >=20
-> > BTW, setting the pinctrl of pwm corresponding to pwm-regulator
-> > to "default" will cause kernel boot suspended.
-> > Sorry but do you know why?
->=20
-> Not an issue I have seen, do you have any more logs or details? E.g.
-> what board you use, full regulator node, do you have operating points
-> defined etc.
->=20
-> I have runtime tested a branch at [1], that use pinctrl-names =3D default,
-> have vdd_arm and vdd_logic defined, also an opp table for cpu and gpu.
->=20
-> For E20C there is a commit to enable the vdd_logic, however without gpu
-> enabled and a mali-supply the pwm-regulator is initialized to
-> max-microvolt by Linux. Have instead updated U-Boot to initialize the
-> pwm-regulator's:
->=20
-> ```
-> &vdd_arm {
-> 	regulator-init-microvolt =3D <953000>;
-> };
->=20
-> &vdd_logic {
-> 	regulator-init-microvolt =3D <900000>;
-> };
-> ```
->=20
-> [1] https://github.com/Kwiboo/linux-rockchip/commits/next-20250311-rk3528/
->=20
-> Regards,
-> Jonas
->=20
-> >=20
-> > e.g.
-> > ```
-> > vdd_arm: regulator-vdd-arm {
-> > 	compatible =3D "pwm-regulator";
-> > 	pwms =3D <&pwm1 0 5000 1>;
-> > 	...
-> > };
-> >=20
-> > &pwm1 {
-> > 	pinctrl-0 =3D <&pwm1m0_pins>;
-> > 	pinctrl-names =3D "default";
-> > 	status =3D "okay";
-> > };
-> > ```
-> >=20
-> > Thanks,
-> > Chukun
-> >=20
-> > --
-> > 2.25.1
-> >=20
->=20
->=20
+Content-Transfer-Encoding: 8bit
 
 
+On Wed, 05 Mar 2025 21:41:01 +0000, Jonas Karlman wrote:
+> The Radxa E20C may come with an onboard eMMC (8GB / 16GB / 32GB / 64GB).
+> 
+> This series add dt-binding and SoC DT node for the SDHCI controller
+> and enable use of the SDCHI controller on the Radxa E20C.
+> 
+> This series add support for the onboard eMMC on Radxa E20C.
+> 
+> [...]
 
+Applied, thanks!
 
+[2/3] arm64: dts: rockchip: Add SDHCI controller for RK3528
+      commit: d62917b63e9f2c876bd9abf019a25313bd9cbc07
+[3/3] arm64: dts: rockchip: Enable onboard eMMC on Radxa E20C
+      commit: f25c3b93f50387849db692891e2b2c6f9cc7d055
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
