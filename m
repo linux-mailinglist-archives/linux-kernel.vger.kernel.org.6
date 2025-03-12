@@ -1,97 +1,154 @@
-Return-Path: <linux-kernel+bounces-557735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE795A5DD08
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:46:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC40A5DD0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 13:47:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 483B97ABE62
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:45:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46C983B40A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Mar 2025 12:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600BB242927;
-	Wed, 12 Mar 2025 12:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0BF23E354;
+	Wed, 12 Mar 2025 12:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="As+MUjgd"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTbPWsFa"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964A84C9D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Mar 2025 12:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0F6192D96;
+	Wed, 12 Mar 2025 12:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741783545; cv=none; b=lOLXrW+SQgOtCLe2EZGrxy/sSPTBvyd0PsUhbwH8PITRH/Iy1TyVIEfeTV6Uw3oaaHfO/6pk68NMciGmQiXAWHRS3VdKVsmylvBdq8zSntAgjJ2aTQvxxTxykEIZRllhrouQByp0fGlqVUWnGn51BIWZh8w+EKFl6SKM/ipWPlM=
+	t=1741783652; cv=none; b=H72QR2XyG51PxC4I14xAw1MCJwnq8aG4O9hIJ8xj0A8mii9QJrzmBa7JsM+fLNb+mDGYQASLyfaCQkIhuo4H3rCg/ou9lJl3QGHrcO88C7QEdXUQyJUnze5ZiHh3vsdf0Kog0V34lrxG6YuWFj7fNbQ/byd60OMvQpcIdy+Exe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741783545; c=relaxed/simple;
-	bh=v4wj1VlIiooBRomZGi74kCwiC6WOsJSmj8dlr9agTwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eTAQ6FsZKrdr010FFJxsvL6teiEtlIc3FMfCvGSE+MYhDhjC1yLSY0y0eaGVwwOxteCi3ut0gMp/wgxdaVPQiXF0SyeA1T6d1f2sNmPcDiFiHVMw6LfGP6o3sFHSY/z814AcAsm88MdyZvosN4uCmCCyC53BJosKfJ2+Cq5d12Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=As+MUjgd; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8B7D640E0202;
-	Wed, 12 Mar 2025 12:45:41 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id WryxJLMgiLpN; Wed, 12 Mar 2025 12:45:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741783538; bh=skzq4sHGhwpxzNxwfZitMvz8tkYl2s8yJrDC51yKX7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=As+MUjgdApgzwU6DvE8gQELGCTUWkdrhdgXbFlhXzyoZrk+QtipLidsmLlcMSenf0
-	 zOlJdLe6LwwuioO/yVoukwkeGVj2LrKAiXMHwQIJfC+a0z5vglJYwFirc6Y5imuHIC
-	 HlMk1fc97/Omk00R1cFXzumiSQni5pv66ov/vZp90+A6e01qYTE6UzrAM7Z9dATrAt
-	 dK4f0IBrJBWUXvFDeYCcenQvhamLdlj0mw4g9LTECXTxJqAiKf6X4Itj/MiZXYoXRq
-	 tTb1Hjd8q5IeAKcjrisfyp0vKnX4cjRHKa+PlYOqb1JF1gge2VGcCc2+mnQys3Z1Hs
-	 EvWEjXlwLE4q2wp/Qiy7/xOW9A3PJmRrixvfHO82z11gl5vUbWjoNI4OjHg7isslIq
-	 n0bKnlExiz6YAiqKvjBQwo1RIl83gv5bod0tJjCnq0OUIZbqzlCZYabsVo+bUDdoz7
-	 I1XNCuZRW55tJjiYeTVb1WzpRUcPpDsH0Zj5yUeYV6xEYUNtDappWc/WwXNZ10I8+N
-	 +Vma0uoBQfSiVZQetpn1i9n7vdPjumVlDfne9casljcpbepAkT5BCgPXjRdKJlKs9H
-	 grMljmH7NZrv1YmIwzLg5l6Hqs5ie4UXyF1c7VCHN+Xmsu9LgTMXSIAW2wWE5lVJn0
-	 Q1N3wzbKH5aOYPFB2n3audyc=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D31DE40E0218;
-	Wed, 12 Mar 2025 12:45:31 +0000 (UTC)
-Date: Wed, 12 Mar 2025 13:45:30 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Mikhail Paulyshka <me@mixaill.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/rdrand: hide RDRAND and RDSEED from CPUID in
- case of a malfunction
-Message-ID: <20250312124530.GDZ9GB6vscPTpDv8Aq@fat_crate.local>
-References: <20250312123130.8290-1-me@mixaill.net>
- <20250312123130.8290-3-me@mixaill.net>
+	s=arc-20240116; t=1741783652; c=relaxed/simple;
+	bh=yr2NeM5xZd+21Kz+8dbrA+63YokkKPeruGiWILIFWq0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S8CVpYZeTUxkUiBLN5jXGN6oL8lAEcyISEOawEGlz03B+HavmYARhk2eHw8POjdZnPsBFUUZkKTxBHWgB63MtVkpI5bR07ELqCfCo5006ElsA02EeAVkH0njmUSiSuRgJ1yTLDQx/eSaiwzWNjmkiTqlauhPbNH+oqVmPN8nRfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTbPWsFa; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff694d2d4dso9752082a91.0;
+        Wed, 12 Mar 2025 05:47:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741783651; x=1742388451; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4M/3rcO0sPMe5Iql+QqO4QeWNUxz9DotePxQss5GMBg=;
+        b=LTbPWsFatOWLpppfA5AsktsfLfTgtMvZnCj1DJTCdJO9bQz85BULJyRT/Ot+QtyVRJ
+         C25yYtHSvnZySxeUGBl18ySyN1uRK2+TnzVDZBcczrgsLry+9W5cVYVEgMzcSHPv+qHs
+         l3BmRhmfLrw3UKmpNFnPCCPUjK6UQrTJFrPxEPnKlvTOX/qeIgLbH5g3waaBN1dKGFei
+         m1PgCJOUjfngZyC439DLYjRGIBTzKjXK9vZG4dIyWie6+nl5C00qiBtAyV8Y6u1T8GR1
+         wVOrN514qgL9w9Y6GJVwLHpgCMMsUMQfYRPNq2d8qevYIakVMOE4rx2ActGvbok3t6F8
+         tksA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741783651; x=1742388451;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4M/3rcO0sPMe5Iql+QqO4QeWNUxz9DotePxQss5GMBg=;
+        b=WGIbv8dDDsI+DZFq9GwKyj3Jr+47KIz3FtSZyJuqG3WevXLlNwUhlx93wyckh0rTnB
+         LrwA480jgcUpbYiEfvbEgn3Q5Vu+fsAU54UrlAqmUv54+4Tow8mIsX30+Jl/72Cp6pls
+         oZUtMXUocrvZXLaMLNvBWBW2ltujXWdsZNyhkSatCslWcE0X8/Iso38W1krFSSDCvkdh
+         zoOwYP7R377WKVu91q1z4qULMVdSLFhLK1J7ExdMZ1vt5Gp+1XtDhVietsdkmP1eGGcs
+         NnpFwR1+ludarrCAf9Trgxa68Pog6+HJ+yUN9fLAm0eQ+aQkM18CxZdoFSJ9St1ACgR4
+         bxIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVusvrDob3Xaj4r5OD3OpaPEPA7zZbiohiHgfCQAx4NYCc6BupGFJgEetNw4ya+88YgrR5ISS8PUuUyhvz7LYVu4skz@vger.kernel.org, AJvYcCWZ/0ajGVBu1FAPTYH59vPx2OCDHyb0/8mmGjJ0wwHGkHb15z6ziMKMMwfT9ofcnl/6TeplNwO/ecA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwobKM5Ob630FQ8R/e/bXDaPK68tWEdF+fLLpTZh5K26iP1C9Mg
+	2FT6lSj2OaXCZkUJmlheBbf6fIj6GtrgN7mSCe7/oApeoyoD9t4G
+X-Gm-Gg: ASbGncseWo5N23sVJpRDRZHnhRqSGR7+LHFoxaLECWv8ZZ2K4ypwqy4Rek6UqqcqSXr
+	8fkCvPpL04SB87VZYyT3q8sIHp3jEyf0B9sbUazijvTDHn80O0U73g0RZRF4KX/2WDTeJIsptTp
+	vtwUXgFoGjE0wpgodoQzOxSWlLxuWYxie7T1D6lX8+qcSq6n+vYjNC5H7owvm32sxa2C9PfT9vy
+	VMENZTJTNgweBOlLO6BAM9ztx8Xotqk6Ayb0RMphQKfNVD86oeKqiYnBax7x9Mse5ACBFJs7ABU
+	Pi1OZ4P0n4+NWWsXlDjTNygf/DlHtfwTAj7YrsX8FZGEpRRxxWggIrwXECgfgbwplwXyUBWmLrQ
+	=
+X-Google-Smtp-Source: AGHT+IFWbvxz8UDjRoEtUCmgLDLjxbFxdBLMGus6HijIkfSeWRHuo3KliLRdNinI/I608X/mH2aLrQ==
+X-Received: by 2002:a17:90b:4b11:b0:2ff:5c4e:5ac2 with SMTP id 98e67ed59e1d1-2ff7ce59533mr29967704a91.6.1741783650701;
+        Wed, 12 Mar 2025 05:47:30 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301191cb1f7sm1638141a91.43.2025.03.12.05.47.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 05:47:30 -0700 (PDT)
+From: Purva Yeshi <purvayeshi550@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Purva Yeshi <purvayeshi550@gmail.com>
+Subject: [PATCH v3 2/2] docs: tracing: Reduce maxdepth in index documentation
+Date: Wed, 12 Mar 2025 18:17:17 +0530
+Message-Id: <20250312124717.7208-1-purvayeshi550@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250312123130.8290-3-me@mixaill.net>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 12, 2025 at 03:31:30PM +0300, Mikhail Paulyshka wrote:
-> @@ -46,6 +47,8 @@ void x86_init_rdrand(struct cpuinfo_x86 *c)
->  
->  	if (failure) {
->  		clear_cpu_cap(c, X86_FEATURE_RDRAND);
-> +		if (c->x86_vendor == X86_VENDOR_AMD || c->x86_vendor == X86_VENDOR_HYGON)
+Reduce :maxdepth: from 2 to 1 in index.rst to simplify the table of
+contents, showing only top-level document titles for better readability.
 
-Hygon is family 0x18. Have you tested it there?
+Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+---
+ Documentation/trace/index.rst | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
+index 6b268194f..5ddd47ee7 100644
+--- a/Documentation/trace/index.rst
++++ b/Documentation/trace/index.rst
+@@ -14,7 +14,7 @@ This section provides an overview of Linux tracing mechanisms
+ and debugging approaches.
+ 
+ .. toctree::
+-   :maxdepth: 2
++   :maxdepth: 1
+ 
+    debugging
+    tracepoints
+@@ -28,7 +28,7 @@ The following are the primary tracing frameworks integrated into
+ the Linux kernel.
+ 
+ .. toctree::
+-   :maxdepth: 2
++   :maxdepth: 1
+ 
+    ftrace
+    ftrace-design
+@@ -47,7 +47,7 @@ A detailed explanation of event tracing mechanisms and their
+ applications.
+ 
+ .. toctree::
+-   :maxdepth: 2
++   :maxdepth: 1
+ 
+    events
+    events-kmem
+@@ -65,7 +65,7 @@ This section covers tracing features that monitor hardware
+ interactions and system performance.
+ 
+ .. toctree::
+-   :maxdepth: 2
++   :maxdepth: 1
+ 
+    intel_th
+    stm
+@@ -85,7 +85,7 @@ These tools allow tracing user-space applications and
+ interactions.
+ 
+ .. toctree::
+-   :maxdepth: 2
++   :maxdepth: 1
+ 
+    user_events
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.34.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
