@@ -1,182 +1,114 @@
-Return-Path: <linux-kernel+bounces-560387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8334A60367
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:26:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E14A60365
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:26:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41A453AC451
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:26:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CDBF3ACF4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8421F4CA2;
-	Thu, 13 Mar 2025 21:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9601F4E48;
+	Thu, 13 Mar 2025 21:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DPAyuHcT"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnPUcGWQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68592126C1E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 21:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAD2126C1E;
+	Thu, 13 Mar 2025 21:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741901170; cv=none; b=uen77ZCH/Pn9M172u3c3E+RkMZCwvOdfW9tgvdsdTWhF1uNGagStbqkmOwIfes3/ZO7c47Glgg/+1UtL7PmJTwnezArF+ywVwVCc3rr+rCA/LpT9v6Kep21S9DcnaBgoGMe/PtJpBFxmhdChy+/5zkWPuHbXmPWV9jW9eoqMXb4=
+	t=1741901158; cv=none; b=GG6sErMHPiTaoHj8GtUE8bSFBczJK0lzm+T2vKIm3Hf9hTWS3yvBVr6LhQs/N+zj+orwP7HTmo8JRHbh+pItUE9KN8LTeTxXLFGhcrAePwb/W+0wYRLqGtN41WVnwnMq/VfA6cgc97aKUuvj4NxY8RmIZvXPH5ujZcwROrMe8hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741901170; c=relaxed/simple;
-	bh=UfXACb8VfYItqeVlsi0BGbqMyOFIDyF57IXGiKf6dfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HJ7MTfmF4E4bEE9P+DoNfli7ij2ZQfmDsHpVQdFwzzO9KLbggfp7qAdQS0BKOk4BPIeRpa6yVFuuWMt3bzJcdKMT5aHcw7EFgeCPLtTngQf0aw9UWEalGRh6PyyQZEN8WpHYSbWVeiiwa3XYt1YEfYVSr8SlDpLcppT+rcCCnfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DPAyuHcT; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54993c68ba0so1611249e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:26:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741901166; x=1742505966; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lEvSm/qV/gA4924ww+yiikc6EOcgXf2+Ryx6VfqPSVs=;
-        b=DPAyuHcThzY62v6CJT6aaJ+huGprvPxXkR/ZArExmMykVNg+JuOMayLor2+vOPG/Kq
-         MtGyyyqh77u2bkTLUF2VfWhEOAA41o+i/r6hRlO1hTrMMY4Mp1SuP2CDBmbcbvIktLDs
-         dF5dBHI4SEKRHUGN/qTgMIdbwECQEbV9cquWd2xij9y7k9pY/IyaMlgS6VbcxNktMDHk
-         AUZu5A6Rj53LxTnYeq6IgPpauvvl9vHvhfUHjNU6Xg9uzZBC/Exu0gcv91uu9hXPJfsW
-         ovj199aneCD4e9MxNShTfWgxt3cRyRYX9G3oqD4YvEc/+oqO7JG3m3hJzDaKQaQwpU2F
-         0Piw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741901166; x=1742505966;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lEvSm/qV/gA4924ww+yiikc6EOcgXf2+Ryx6VfqPSVs=;
-        b=vaDLneG+LypbcewcICTcc5peGErzrsgKfhyT/fpliRfFDTfawQ1CR4RoUpxklryjrV
-         L0fT9pprZiqyMAa6zUj5emOzEiwM38RLirTjNZH6DbBW8mOUhwG+m9qwKEDzyaUSnkK7
-         gpxylJhbsKUzcQNgJscVfJlWqm29CYlPEReqd9CRFr1U3tMiwp3EpxDrxXfPypbluTEn
-         hp86TtU4OeO6nXNbDWss8fH6qX1Wm3CCPXHZTl1N2BmWEv0ZaPF/oFbK5McRJs1r1Bao
-         gXmxVE4CbW2raiqvniTE+bN2sMtVoETLZ5z/0JH7cc4V5WM8dc+gmAOK9z4RWfl76ehU
-         aweQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsnfAzocg9N5jFXfzn3hCuUZqgSJNdpRSwqOWHbGz6gubkeSkl+g74Zp4Ofm/jvfMYR427FP/9wHX3N0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrBgaJYArWlbyuKG21i3zjW0u5eGz/m5bGY2QIaaSQTC3+5lsd
-	fU+1jJaTEVHRfmtIWCapSHqv613deQERooyT2fjJgbwSPODbn7AjterkGiCO85Mvm1papXjt3SS
-	a0KSgLe7jabmA4eb0SnSAv660hlT/nstgvoLg
-X-Gm-Gg: ASbGncv8gMh5ewV6Za2ExOzQk8vK83+OZ10xXXHRxMA3WL3sA6Gk5jJrGKf09vw4xqG
-	VKHthFp+NS4EcdpQpouRLXjdhryGgIUNjG3YcRI/9a1bw8BfG1SWJurQKHcvdt9V92tJLgAJIGz
-	kxsBlT6Uhs1jxzuNcq1wkAYFzps+qEi+0Mw0seL/90enM/0pIKTulLjCgWrallo98=
-X-Google-Smtp-Source: AGHT+IEUpl49m15csoisl4xdaOkvHB8pMtPnENRpafG0hTYq79/CSmqGTNA7Wf/Eyj58fOjm/pwvBRSNin5jsVrWKfM=
-X-Received: by 2002:a05:6512:ac6:b0:545:225d:6463 with SMTP id
- 2adb3069b0e04-549c3989a09mr7738e87.42.1741901166311; Thu, 13 Mar 2025
- 14:26:06 -0700 (PDT)
+	s=arc-20240116; t=1741901158; c=relaxed/simple;
+	bh=qYeT6sg3o0N3LisLXr2XhjHV7IFvBdDp00R762l5BHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=NsnxfwKsPsgaK3qYKkyozwVBXmAd6VzRNwOHkBxTn1jyJmuPTKqoxM426C5aaWGo+ZyJQE+JMF77WBmEIajKQWpGogzkSw7LKqCCl6nrIPZNWXrFtHy1lBKVQlqsRU2hrvjWPSRqe4vDqM6m/gSdMnywUw5yFnStBdcICQ7j0BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnPUcGWQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69A88C4CEDD;
+	Thu, 13 Mar 2025 21:25:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741901157;
+	bh=qYeT6sg3o0N3LisLXr2XhjHV7IFvBdDp00R762l5BHM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=MnPUcGWQoUM9IkqxucI7SH1sBbRubpnGpPw1lssb/UUk3lwzq4rmlkc0xPyPCj5rd
+	 JlMyh/PHDy1W1CuPonbH/Pll68nI+tTwx94KvYM9+7AMUmCGiA93ztgdHm4VZ64E8h
+	 AoK1FqzJmulAoLfr78IUWxAbSSzA2HT56EliMAXTMHKtOwUBZp2iTwrQcoP0bZ66x0
+	 y3DRfvijKNyhLHSoGbpoyqOd9XhhQ9gX32rUWtf+COpyZhMKi/L8YscXr82JNP2BBM
+	 gmAjwny/5OjZEiCi+8y/6R88KqK3zWru5ROzfxer2M5JwoVVuYNBZ4WgSfiCcdj5gk
+	 4MCYTN30/B+HQ==
+Date: Thu, 13 Mar 2025 16:25:55 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH v11 04/11] PCI: dwc: Move devm_pci_alloc_host_bridge() to
+ the beginning of dw_pcie_host_init()
+Message-ID: <20250313212555.GA755531@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12627587.O9o76ZdvQC@rjwysocki.net>
-In-Reply-To: <12627587.O9o76ZdvQC@rjwysocki.net>
-From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 13 Mar 2025 14:25:29 -0700
-X-Gm-Features: AQ5f1Jqh94uLmKYTj2Ojq8OmsbxaVGGM4qAQ2zcuSBghRC-ys5SVAMfqNlmaOJs
-Message-ID: <CAGETcx-sydVJcigqin-zO=ANc65kuz5F3X51a8-SnM0X2zKhMw@mail.gmail.com>
-Subject: Re: [PATCH v1] PM: sleep: Fix handling devices with direct_complete
- set on errors
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Jon Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9ND5vARXpL8g1t/@lizhi-Precision-Tower-5810>
 
-On Thu, Mar 13, 2025 at 9:00=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.ne=
-t> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> When dpm_suspend() fails, some devices with power.direct_complete set
-> may not have been handled by device_suspend() yet, so runtime PM has
-> not been disabled for them yet even though power.direct_complete is set.
->
-> Since device_resume() expects that runtime PM has been disabled for all
-> devices with power.direct_complete set, it will attempt to reenable
-> runtime PM for the devices that have not been processed by device_suspend=
-()
-> which does not make sense.  Had those devices had runtime PM disabled
-> before device_suspend() had run, device_resume() would have inadvertently
-> enable runtime PM for them, but this is not expected to happen because
-> it would require ->prepare() callbacks to return positive values for
-> devices with runtime PM disabled, which would be invalid.
->
-> In practice, this issue is most likely benign because pm_runtime_enable()
-> will not allow the "disable depth" counter to underflow, but it causes a
-> warning message to be printed for each affected device.
->
-> To allow device_resume() to distinguish the "direct complete" devices
-> that have been processed by device_suspend() from those which have not
-> been handled by it, make device_suspend() set power.is_suspended for
-> "direct complete" devices.
->
-> Next, move the power.is_suspended check in device_resume() before the
-> power.direct_complete check in it to make it skip the "direct complete"
-> devices that have not been handled by device_suspend().
->
-> This change is based on a preliminary patch from Saravana Kannan.
->
-> Fixes: aae4518b3124 ("PM / sleep: Mechanism to avoid resuming runtime-sus=
-pended devices unnecessarily")
-> Link: https://lore.kernel.org/linux-pm/20241114220921.2529905-2-saravanak=
-@google.com/
-> Reported-by: Saravana Kannan <saravanak@google.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Mar 13, 2025 at 04:45:26PM -0400, Frank Li wrote:
+> On Thu, Mar 13, 2025 at 02:22:54PM -0500, Bjorn Helgaas wrote:
+> > On Thu, Mar 13, 2025 at 11:38:40AM -0400, Frank Li wrote:
+> > > Move devm_pci_alloc_host_bridge() to the beginning of dw_pcie_host_init().
+> > > Since devm_pci_alloc_host_bridge() is common code that doesn't depend on
+> > > any DWC resource, moving it earlier improves code logic and readability.
+> > >
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > >  drivers/pci/controller/dwc/pcie-designware-host.c | 12 ++++++------
+> > >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > > index c57831902686e..52a441662cabe 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > > @@ -452,6 +452,12 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+> > >
+> > >  	raw_spin_lock_init(&pp->lock);
+> > >
+> > > +	bridge = devm_pci_alloc_host_bridge(dev, 0);
+> > > +	if (!bridge)
+> > > +		return bridge;
+> >
+> > This returns NULL (0) where it previously returned -ENOMEM.  Callers
+> > interpret zero as "success", so I think it should stil return -ENOMEM.
+> 
+> It should be -ENOMEM. Sorry for that. Strange, not sure what happen when
+> I copy/past code.
+> 
+> Do you need respin it or you can fix it?
 
-Reviewed-by: Saravana Kannan <saravanak@google.com>
+I fixed it locally.  But you should fix it, too, in case we do another
+spin for other reasons.
 
-> ---
->  drivers/base/power/main.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -938,6 +938,9 @@
->         if (dev->power.syscore)
->                 goto Complete;
->
-> +       if (!dev->power.is_suspended)
-> +               goto Complete;
-> +
->         if (dev->power.direct_complete) {
->                 /*
->                  * Allow new children to be added under the device after =
-this
-> @@ -963,9 +966,6 @@
->          */
->         dev->power.is_prepared =3D false;
->
-> -       if (!dev->power.is_suspended)
-> -               goto Unlock;
-> -
->         if (dev->pm_domain) {
->                 info =3D "power domain ";
->                 callback =3D pm_op(&dev->pm_domain->ops, state);
-> @@ -1005,7 +1005,6 @@
->         error =3D dpm_run_callback(callback, dev, state, info);
->         dev->power.is_suspended =3D false;
->
-> - Unlock:
->         device_unlock(dev);
->         dpm_watchdog_clear(&wd);
->
-> @@ -1669,6 +1668,7 @@
->                         pm_runtime_disable(dev);
->                         if (pm_runtime_status_suspended(dev)) {
->                                 pm_dev_dbg(dev, state, "direct-complete "=
-);
-> +                               dev->power.is_suspended =3D true;
->                                 goto Complete;
->                         }
->
->
->
->
+> > I tentatively changed it back to -ENOMEM locally, let me know if
+> > that's wrong.
+> >
+> > > +	pp->bridge = bridge;
+> > > +
 
