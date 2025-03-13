@@ -1,110 +1,140 @@
-Return-Path: <linux-kernel+bounces-560159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3163A5FEDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:09:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEBC5A5FEE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:11:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0C9D189CC0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:09:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2024216A85E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8BE1EDA0B;
-	Thu, 13 Mar 2025 18:09:08 +0000 (UTC)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE2B1EBA14;
+	Thu, 13 Mar 2025 18:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lj8nzhz/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VfHjNKEK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE821E9B26;
-	Thu, 13 Mar 2025 18:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EE61C84CB;
+	Thu, 13 Mar 2025 18:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741889348; cv=none; b=LZzAzipW6368DLQfmVDIK4iV7tfDjHHnEmRg1njIGC3V87VCxy/vs8lwcPqpXuKqM7TIY9w9XPxgE6b4IGuUTlv8vMu/lPnA7Desu1594vPTGvPxUYyPUH81Dfh3MYvdnlMWCkkGENgqE5Rp2EWkN8A/sYy9Rw+OqPc9Lx0CXrw=
+	t=1741889463; cv=none; b=isbbZ//ZGeEokHvI5KlGQ1RZ2vBTZcEEFvYShweUgPnZmK+2mHGOXz51G8G4A/e2V88L+fPdQyLh6OcUtJN02BRWBOteIJ9pfRsSezZQqPDeOeEUVbQTgVvJfzad6gY1fLElzkDlJSZVf7J5n+THk/QRvMy9UtSHb+q5y6OMD+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741889348; c=relaxed/simple;
-	bh=/2TX7oqp5EZ59EfzAb/BphrBtCTWtTDGm2PFTAUVHZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mhGbdVDuoh4AeLOAXJsfZ2rA+BtMtmSTeoGj8IgBbJqHLYGWTJ70NMsE52u+5B230QuZHe5oBstZDqO9+wecj8PfxrTka5jRdZHaknXlUh98FWxqxH22EHMDxd3zO9P+Yzm1UP+EGvSbGKC04XIRz/GhNcGKs1N4P7riSnBc62Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2b10bea16so256362866b.0;
-        Thu, 13 Mar 2025 11:09:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741889344; x=1742494144;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VaouCn+gVoU+eTcyNhX+f9Nv54n71MJJFoVOkqHdXiY=;
-        b=EYZENX9IublUrY3iv4E+vHW+HwLoeihjHjgmHGSDDURHTwuHhYwowS4KuORS73CexS
-         Lhh7AaZwpLexAvFt6+GdF04TFHTIGWadzaSyzB3bNkCKEC1DDoJ1x3+Vi9b5m8VgeaKc
-         7KEK32I6TcFV+db4TXAbgsM+rxJyCFqKKkU2XkvOgXFA+RBLUm+Td02eFjJqtmGmsMEV
-         xiTHNDo/tEzsXY99r87guuDReD3opg8t9/I3hH6fE4zcWi0CT14OuFpo4d2uEVEgnrmM
-         CBRE2jVy0hv0DXP2eZCHcyDbJ562KfdqkiZSk5JKF96hjTlWwq1AqlQvSvlyyhNc0YFw
-         1YxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVw/V5s+zVVtA/Aw5b66Dl0g1qQcGE7n4XcBPgdI0fKW/HFk5VGOcbhkt65mUEzlMa3Uc20YbefN+w8gH/76C4sWg==@vger.kernel.org, AJvYcCXJk4y9s95SQb20/j1lF4dRsO4Jv0JoyEYJexL/IzgKoIxzgmIX/L1pvNjY+/ba3Cp0gN0heXpSMnKSoig=@vger.kernel.org, AJvYcCXQ5n8ewcDEC8XqutVm6JNnm+GclVjUnJyA8bxJFJ3dP0y0OiN5Vi1kUkLmmWW0mXP9ilFGzUN2hAuCKpp8Jw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzklHC1xpgjeU0GlK6V+zOBAwqWQNA9YifWKu/srw1If6MBjpfg
-	Suj8s21goE109FY3Np1rx2lz11qphkGhyi9mQjfHsfnyUAkBQOkH
-X-Gm-Gg: ASbGncvFnpPLePlqorVBdtfaQZwc7gy5+4KeQuQeOQh8Y2VVARpH0X9juOLfxpB3my3
-	mA9uKU/CdBdBomFJ/trdHBZ2lX5Q9wBgsQHr8ze65u0Let7fBcSDTxxQo06EJfV3CYTDRboFs5F
-	07pdpYjaaDlF1ny+o2sbWvha1pgvySfJhnX1JlXPQlcgObi6AaY1B+Syt1KyPkgW+Mswp49rWKJ
-	pBmrz66l7+gLArTlRMSEgrVN14+5IOW5UYuKFVdPrTRfXK/O8HPAPQ8LninV+q4cqe1R3PFbnQJ
-	TlSwi6IY/ueOLikHH0fvrxz5Lrgkfazdlwc=
-X-Google-Smtp-Source: AGHT+IH9avSX5v9rVOb5M/GqkETrqEWlWjAuanfOK7yi22Ikj/OiRCa+LiNivmTskXBxpPr+KOjuBQ==
-X-Received: by 2002:a17:906:da88:b0:ac1:fcda:78c1 with SMTP id a640c23a62f3a-ac3290221f0mr50851066b.34.1741889344124;
-        Thu, 13 Mar 2025 11:09:04 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:8::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147f0bd3sm109488066b.67.2025.03.13.11.09.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 11:09:03 -0700 (PDT)
-Date: Thu, 13 Mar 2025 11:09:01 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Song Liu <song@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org,
-	indu.bhagat@oracle.com, puranjay@kernel.org, wnliu@google.com,
-	irogers@google.com, joe.lawrence@redhat.com, jpoimboe@kernel.org,
-	mark.rutland@arm.com, peterz@infradead.org,
-	roman.gushchin@linux.dev, rostedt@goodmis.org, will@kernel.org,
-	kernel-team@meta.com, Suraj Jitindar Singh <surajjs@amazon.com>,
-	Torsten Duwe <duwe@suse.de>
-Subject: Re: [PATCH 2/2] arm64: Implement HAVE_LIVEPATCH
-Message-ID: <20250313-grinning-giraffe-of-holiness-3dbda1@leitao>
-References: <20250308012742.3208215-1-song@kernel.org>
- <20250308012742.3208215-3-song@kernel.org>
+	s=arc-20240116; t=1741889463; c=relaxed/simple;
+	bh=wBrs6IsEkOi3FRBo2YtYplP3f65GpmL3dkOKG8LqvM8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Gn+7L05vGnxUqrh5Umh7sCOuZZ5OVZKZ2TecK6bGBwsXMkeBPPz6upCDs2sqgTmLl368TuX1HswUVOKeOS3Pnz3qcA1N0iZNmKrpUvGYSY2N+WzyAoFUq87EPvlpSPoEdRBwoLXIxmmMcxkGpOgU6XyJoX7n0o3OFRU2lDop/+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lj8nzhz/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VfHjNKEK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 13 Mar 2025 18:10:56 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741889458;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uLQo1hFi2Zeua/VEe8ZtQkIGsCxgyiW7vBpaLvp/aW0=;
+	b=lj8nzhz/UMXg2mprS06OO6ryDKfndclizmhSfafEH8yUr9e21QCq7Z5OgrtBvoH5Wue+nq
+	oc8D2ugg8QGvZp4YONbyGLPlleUwiLOeNXnQCK4oicMdEke2tt7ZDGJXk1JibrLzwtbgJM
+	DzwCqIhNCDADBD1dreH7c29G9FcKkQs2wgN/kjVMvPNUBmX/aIyJ+9a0XIVomlVRO9vgh+
+	fVXplNrAYBFgf7uceN1PBmwvgv6csub41Fm8ydtHL/qZKauKXuhwggbXu4ijXNOxg3azMt
+	Z4/q+Hhmv804rOU3/JqxfXg8nVfwkUwZ+Hn88sEOEamOl6EA2mwhvsU27C0KHw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741889458;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uLQo1hFi2Zeua/VEe8ZtQkIGsCxgyiW7vBpaLvp/aW0=;
+	b=VfHjNKEKBp6vePUQhMvrChSwjRzkP0rmnpSkEedbxrIVsONSmMYFOv57QafbBo6UFoKDza
+	3Yx+oa+jJAJdRkCg==
+From: "tip-bot2 for Ajay Kaher" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/vmware: Parse MP tables for SEV-SNP enabled
+ guests under VMware hypervisors
+Cc: Ye Li <ye.li@broadcom.com>, Ajay Kaher <ajay.kaher@broadcom.com>,
+ Ingo Molnar <mingo@kernel.org>, Kevin Loughlin <kevinloughlin@google.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250313173111.10918-1-ajay.kaher@broadcom.com>
+References: <20250313173111.10918-1-ajay.kaher@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250308012742.3208215-3-song@kernel.org>
+Message-ID: <174188945627.14745.9945316413409402163.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 07, 2025 at 05:27:42PM -0800, Song Liu wrote:
-> This is largely based on [1] by Suraj Jitindar Singh.
-> 
-> Test coverage:
-> 
-> - Passed manual tests with samples/livepatch.
-> - Passed all but test-kprobe.sh in selftests/livepatch.
->   test-kprobe.sh is expected to fail, because arm64 doesn't have
->   KPROBES_ON_FTRACE.
-> - Passed tests with kpatch-build [2]. (This version includes commits that
->   are not merged to upstream kpatch yet).
-> 
-> [1] https://lore.kernel.org/all/20210604235930.603-1-surajjs@amazon.com/
-> [2] https://github.com/liu-song-6/kpatch/tree/fb-6.13
-> Cc: Suraj Jitindar Singh <surajjs@amazon.com>
-> Cc: Torsten Duwe <duwe@suse.de>
-> Signed-off-by: Song Liu <song@kernel.org>
+The following commit has been merged into the x86/urgent branch of tip:
 
-Tested-by: Breno Leitao <leitao@debian.org>
+Commit-ID:     a2ab25529bbcea51b5e01dded79f45aeb94f644a
+Gitweb:        https://git.kernel.org/tip/a2ab25529bbcea51b5e01dded79f45aeb94f644a
+Author:        Ajay Kaher <ajay.kaher@broadcom.com>
+AuthorDate:    Thu, 13 Mar 2025 17:31:11 
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 13 Mar 2025 19:01:09 +01:00
 
-PS: I've tested this patchset with the examples from samples/ on a arm64
-host, and they worked as expected.
+x86/vmware: Parse MP tables for SEV-SNP enabled guests under VMware hypervisors
 
-Thanks
---breno
+Under VMware hypervisors, SEV-SNP enabled VMs are fundamentally able to boot
+without UEFI, but this regressed a year ago due to:
+
+  0f4a1e80989a ("x86/sev: Skip ROM range scans and validation for SEV-SNP guests")
+
+In this case, mpparse_find_mptable() has to be called to parse MP
+tables which contains the necessary boot information.
+
+[ mingo: Updated the changelog. ]
+
+Fixes: 0f4a1e80989a ("x86/sev: Skip ROM range scans and validation for SEV-SNP guests")
+Co-developed-by: Ye Li <ye.li@broadcom.com>
+Signed-off-by: Ye Li <ye.li@broadcom.com>
+Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: Ye Li <ye.li@broadcom.com>
+Reviewed-by: Kevin Loughlin <kevinloughlin@google.com>
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20250313173111.10918-1-ajay.kaher@broadcom.com
+---
+ arch/x86/kernel/cpu/vmware.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
+index 00189cd..cb3f900 100644
+--- a/arch/x86/kernel/cpu/vmware.c
++++ b/arch/x86/kernel/cpu/vmware.c
+@@ -26,6 +26,7 @@
+ #include <linux/export.h>
+ #include <linux/clocksource.h>
+ #include <linux/cpu.h>
++#include <linux/efi.h>
+ #include <linux/reboot.h>
+ #include <linux/static_call.h>
+ #include <asm/div64.h>
+@@ -429,6 +430,9 @@ static void __init vmware_platform_setup(void)
+ 		pr_warn("Failed to get TSC freq from the hypervisor\n");
+ 	}
+ 
++	if (cc_platform_has(CC_ATTR_GUEST_SEV_SNP) && !efi_enabled(EFI_BOOT))
++		x86_init.mpparse.find_mptable = mpparse_find_mptable;
++
+ 	vmware_paravirt_ops_setup();
+ 
+ #ifdef CONFIG_X86_IO_APIC
 
