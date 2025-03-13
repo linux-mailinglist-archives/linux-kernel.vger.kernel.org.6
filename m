@@ -1,264 +1,128 @@
-Return-Path: <linux-kernel+bounces-559577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA34FA5F5B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:15:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C81A5F5B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E35A91662EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:15:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C498C3BA6F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E402676F1;
-	Thu, 13 Mar 2025 13:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE4A26772D;
+	Thu, 13 Mar 2025 13:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bj6IXNwe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NkfmqRF0"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3442676F9;
-	Thu, 13 Mar 2025 13:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF52724E010;
+	Thu, 13 Mar 2025 13:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741871746; cv=none; b=aVQit0QNT1Vop4YBqswKrA3/sW5IInevxXlRqlrdNUJGufdMGakWzKN8uoeob2CYI9X4T9sPWbos8BJ7/RJzR6zvB0alBCd64ivOejC9cAejU6SA9YVVYmfjVW0uf6sUP9C6iwLoTb0B72DdABIXFqXCwIqyokHMtlTyk4dQnhw=
+	t=1741871700; cv=none; b=DkpPqkU3rrXIuHHtO+NrFyZHtPHZzaOjkv/daQ4oqPLj4kdJ+qNk3kjB8kjkYTXsuBrYUUG8bfX+aXU+aUhFRbD10S9uz0qCpQyv8zc2GwXBHeOI6P/KgV3lKWtLR73U3xJcMGviPdr9HYDhhpd1u+xE5bXk2YhZPV3+Fl6607c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741871746; c=relaxed/simple;
-	bh=ccTjPdt350IulInM4Wn/+yqS5sSqqhAdPy79Zmp2csM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=R1ttl2vuYf1xaEERoPyA9lcVuh7rQMwpvXZBviu2EfYfJ76fGsUa7h3Gag3ZiPxUTcVWzB5NqXba1P7Arp7Y9XJXXfvbsXNmYvWJyiGcW+95flAgNroWwxGN2zj7rhgPrGBL+Q0cO6AU+4lDOF9T90i2K0vI40OB2ZH91x456uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bj6IXNwe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9537CC4CEDD;
-	Thu, 13 Mar 2025 13:15:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741871746;
-	bh=ccTjPdt350IulInM4Wn/+yqS5sSqqhAdPy79Zmp2csM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=bj6IXNweAqpmG2FzKjyNhFoR+K/eE/MTr4uhH1UjDENBsjvQAcJi/aQkpwY8kiw3q
-	 WtshW9vcjTjZyxk+70y4CnOxn6NPtuV+J8OtIw51oAprxH6RTem58fr0EDums+jNvt
-	 C8OGsI8SxfS84fUkITtNIZ/SHm66sIaOw7ScYHkTE36ncER1IrcIb2UYh1NpMDrasA
-	 9NfuTScxjBTsRDebvWdhk+UlmC6ONAP/HGyRqIRTrAXe+XY6UjA6OdPu7sZ1vFO+1p
-	 TutJ/nMPl6PunXY+TWGyJPgH63uDnSSHTZW+Dp4RsZWwPVm1Fl0shJEaiGWVyYuNbU
-	 db+8iKi8ozBIw==
-Message-ID: <ee74d5920532d81f77e503d6ef8bc5fbfc66d04e.camel@kernel.org>
-Subject: Re: [PATCH] sunrpc: add a rpc_clnt shutdown control in debugfs
-From: Jeff Layton <jlayton@kernel.org>
-To: Trond Myklebust <trondmy@hammerspace.com>, "bcodding@redhat.com"
-	 <bcodding@redhat.com>
-Cc: "anna@kernel.org" <anna@kernel.org>, "linux-nfs@vger.kernel.org"
-	 <linux-nfs@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>
-Date: Thu, 13 Mar 2025 09:15:44 -0400
-In-Reply-To: <8bf55a6fb64ba9e21a1ec8c5644355ffd6496c6e.camel@hammerspace.com>
-References: <20250312-rpc-shutdown-v1-1-cc90d79a71c2@kernel.org>
-			 <7906109F-91D2-4ECF-B868-5519B56D2CEE@redhat.com>
-		 <997f992f951bd235953c5f0e2959da6351a65adb.camel@kernel.org>
-	 <8bf55a6fb64ba9e21a1ec8c5644355ffd6496c6e.camel@hammerspace.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1741871700; c=relaxed/simple;
+	bh=VLJNg6lVMoooVVl1DScIpAPZZeM78jzK1vkciFNTLM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TFfObx1D0V6ZUFfKOfABiF+erw8zQRfc+spfBpV2f9I3lilfIfFOsEh+0iCi49c4EKBRjD+RyOtQSBzZb1yJ7XR/z1J7z/8QfI20HcMBttwbwIebpWW9vHTS2UiUv4l7e80b76IYFE1rrOjJEfthnXXZS1Y+cE5QTrHJYWjlSvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NkfmqRF0; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e5e0caa151so1658148a12.0;
+        Thu, 13 Mar 2025 06:14:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741871697; x=1742476497; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pDzKsxJKNgXSp+dU7QY1JBhVYKMUfmTAqfRS6qsK4MU=;
+        b=NkfmqRF0ir4f8I0+PeVl/o4Mb0lyZA3YLhd15S4vXmPbmzlcnQuvC17mHj5EDFzfny
+         be9vgo4DqdninqrR+6/Y1eY063tdalrI/FgAp/wvcEzWzuiY7MsAN7ttlB5khDxowonX
+         RBwWJzWGlNOeAJZly2OAGty+IxjhreqlQDZa4W3uFl9uDOafo7A431qkdUsSgb9M4NRL
+         KrSVp66zLX3MbZx/Yl62+SHpKoa8B3xKXs3hYT1NwbuMhmXCli+mmq4DkYXh8/oEwT8Y
+         n9O4tUd3dr5aWqBpeC7R1Vh86CYGEtHUZWRwiI6udSOFwd/81UC2QA0kmVXBo+PVmdDj
+         0ftg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741871697; x=1742476497;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pDzKsxJKNgXSp+dU7QY1JBhVYKMUfmTAqfRS6qsK4MU=;
+        b=K/M/6Aj0qAUQPsmKM1TiXphL8oQDcNbEOCY1bKHmcIiDG2C4MSUiumZQ1MT3ovB6qV
+         xNZyfev1nN4QhxKduHO2Iz9fLmu/SSBjVK1sNSE4Zp4HfPY2OD4VFDKAKQ/BjpZzwrrI
+         l3stPblmZ/JBcI65Vf9fX8+5oQta+WH/kiEXhbPnKcTribUCj3cuFVv+pYLFOS16lhCC
+         1k3U84vHsH4mt+76P+rZaihMeh9WM0G3nEKkpmgpPQJwsIj5U6FR0T0dU8dG89wEqOT3
+         Swatknnbb9+Gndg6RDjFZMEas2SxBaDUatIXSSSUoMzQCwLCGGMrHJ39CG/pReoY/WNb
+         oM3w==
+X-Forwarded-Encrypted: i=1; AJvYcCV5s55UytItDzx0H36nSyg2h4WBClGV9ruB2cXUZhNWnDL+ntRkJEQRbhye3SojYuF08qjVllmYzEtkD95T@vger.kernel.org, AJvYcCVaoJOwHLhYh6H1ax1V1Ws5eQg/bElu5XmyoER/WB93QtxOYDgHcmJwPdpeKthiMY4FSoFF6klvlA==@vger.kernel.org, AJvYcCXeSmTHFEpEgRxpIel72QZNsQ7vUIt1JL1kvCtw7RApHXKabZT/ecnxAhxq04RBYh+b6VCNXt6UMAWDttY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRpyQ46f8gNI0yx4PgvQyu04q1QZGehmdj/ZjTXFCoUEP+rr3o
+	QMxMpU6GPJMhEUragVApX2VhNqHUJvxBTGG9zSD/pjQnVGKEIb3Y
+X-Gm-Gg: ASbGncvnTY8P9MAkF+Iqci9i4vS9Et+hgmKDIgzaT+wqNGPtSmV2ixFhhUnXxWb/EdW
+	kK1YHu9duZ16NxopjyMUY8q8VXG3bv3akLyaEViNm378qz0wcvtGaK9ewZUqQEJd6v2udf0XpfC
+	RJGsO3Rf+i7QH5CaD0aBRoP0IUXjN+9Tpc5jVc0SUo2GI4p1cH7qcjSR8yTpGnR4Vp+sSsFoa6t
+	JS/fOIbtO7aUoqqp+ObmFmO/36lCvpGXuY+/mh6zCbIJ075OJBH9buLw86H4TBWqJYu344k3+us
+	n8OEpBltEuldV+N8kicJa4heIdA5uFlunhABZ+KqqijItJar824Wpt4AIg==
+X-Google-Smtp-Source: AGHT+IGloPfMpVcyvSI4gSYAfTMqQJN5Evc9ByhQ/i5dxx727NH40uiKtBLFMDYVKpT1JPovCIn/FA==
+X-Received: by 2002:a05:6402:5248:b0:5e7:b081:d6e0 with SMTP id 4fb4d7f45d1cf-5e7b081d955mr9681473a12.19.1741871696725;
+        Thu, 13 Mar 2025 06:14:56 -0700 (PDT)
+Received: from [192.168.116.141] ([148.252.146.254])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e81692e534sm746639a12.1.2025.03.13.06.14.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 06:14:55 -0700 (PDT)
+Message-ID: <95529e8f-ac4d-4530-94fa-488372489100@gmail.com>
+Date: Thu, 13 Mar 2025 13:15:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 0/2] introduce io_uring_cmd_import_fixed_vec
+To: Sidong Yang <sidong.yang@furiosa.ai>
+Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20250312142326.11660-1-sidong.yang@furiosa.ai>
+ <7a4217ce-1251-452c-8570-fb36e811b234@gmail.com>
+ <Z9K2-mU3lrlRiV6s@sidongui-MacBookPro.local>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <Z9K2-mU3lrlRiV6s@sidongui-MacBookPro.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-03-12 at 22:31 +0000, Trond Myklebust wrote:
-> On Wed, 2025-03-12 at 10:37 -0400, Jeff Layton wrote:
-> > On Wed, 2025-03-12 at 09:52 -0400, Benjamin Coddington wrote:
-> > > On 12 Mar 2025, at 9:36, Jeff Layton wrote:
-> > >=20
-> > > > There have been confirmed reports where a container with an NFS
-> > > > mount
-> > > > inside it dies abruptly, along with all of its processes, but the
-> > > > NFS
-> > > > client sticks around and keeps trying to send RPCs after the
-> > > > networking
-> > > > is gone.
-> > > >=20
-> > > > We have a reproducer where if we SIGKILL a container with an NFS
-> > > > mount,
-> > > > the RPC clients will stick around indefinitely. The orchestrator
-> > > > does a MNT_DETACH unmount on the NFS mount, and then tears down
-> > > > the
-> > > > networking while there are still RPCs in flight.
-> > > >=20
-> > > > Recently new controls were added[1] that allow shutting down an
-> > > > NFS
-> > > > mount. That doesn't help here since the mount namespace is
-> > > > detached from
-> > > > any tasks at this point.
-> > >=20
-> > > That's interesting - seems like the orchestrator could just reorder
-> > > its
-> > > request to shutdown before detaching the mount namespace.=C2=A0 Not a=
-n
-> > > objection,
-> > > just wondering why the MNT_DETACH must come first.
-> > >=20
-> >=20
-> > The reproducer we have is to systemd-nspawn a container, mount up an
-> > NFS mount inside it, start some I/O on it with fio and then kill -9
-> > the
-> > systemd running inside the container. There isn't much the
-> > orchestrator
-> > (root-level systemd) can do to at that point other than clean up
-> > what's
-> > left.
-> >=20
-> > I'm still working on a way to reliably detect when this has happened.
-> > For now, we just have to notice that some clients aren't dying.
-> >=20
-> > > > Transplant shutdown_client() to the sunrpc module, and give it a
-> > > > more
-> > > > distinct name. Add a new debugfs sunrpc/rpc_clnt/*/shutdown knob
-> > > > that
-> > > > allows the same functionality as the one in /sys/fs/nfs, but at
-> > > > the
-> > > > rpc_clnt level.
-> > > >=20
-> > > > [1]: commit d9615d166c7e ("NFS: add sysfs shutdown knob").
-> > > >=20
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > >=20
-> > > I have a TODO to patch Documentation/ for this knob mostly to write
-> > > warnings
-> > > because there are some potential "gotchas" here - for example you
-> > > can have
-> > > shared RPC clients and shutting down one of those can cause
-> > > problems for a
-> > > different mount (this is true today with the
-> > > /sys/fs/nfs/[bdi]/shutdown
-> > > knob).=C2=A0 Shutting down aribitrary clients will definitely break
-> > > things in
-> > > weird ways, its not a safe place to explore.
-> > >=20
-> >=20
-> > Yes, you really do need to know what you're doing. 0200 permissions
-> > are
-> > essential for this file, IOW. Thanks for the R-b!
->=20
-> Sorry, but NACK! We should not be adding control mechanisms to debugfs.
->=20
+On 3/13/25 10:44, Sidong Yang wrote:
+> On Thu, Mar 13, 2025 at 08:57:45AM +0000, Pavel Begunkov wrote:
+>> On 3/12/25 14:23, Sidong Yang wrote:
+>>> This patche series introduce io_uring_cmd_import_vec. With this function,
+>>> Multiple fixed buffer could be used in uring cmd. It's vectored version
+>>> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
+>>> for new api for encoded read in btrfs by using uring cmd.
+>>
+>> Pretty much same thing, we're still left with 2 allocations in the
+>> hot path. What I think we can do here is to add caching on the
+>> io_uring side as we do with rw / net, but that would be invisible
+>> for cmd drivers. And that cache can be reused for normal iovec imports.
+>>
+>> https://github.com/isilence/linux.git regvec-import-cmd
+>> (link for convenience)
+>> https://github.com/isilence/linux/tree/regvec-import-cmd
+>>
+>> Not really target tested, no btrfs, not any other user, just an idea.
+>> There are 4 patches, but the top 3 are of interest.
+> 
+> Thanks, I justed checked the commits now. I think cache is good to resolve
+> this without allocation if cache hit. Let me reimpl this idea and test it
+> for btrfs.
 
-Ok. Would adding sunrpc controls under sysfs be more acceptable? I do
-agree that this is a potential footgun, however. It would be nicer to
-clean this situation up automagically.
+Sure, you can just base on top of that branch, hashes might be
+different but it's identical to the base it should be on. Your
+v2 didn't have some more recent merged patches.
 
-> One thing that might work in situations like this is perhaps to make
-> use of the fact that we are monitoring whether or not rpc_pipefs is
-> mounted. So if the mount is containerised, and the orchestrator
-> unmounts everything, including rpc_pipefs, we might take that as a hint
-> that we should treat any future connection errors as being fatal.
->=20
+-- 
+Pavel Begunkov
 
-rpc_pipefs isn't being mounted at all in the container I'm using. I
-think that's not going to be a reliable test for this.
-
-> Otherwise, we'd have to be able to monitor the root task, and check if
-> it is still alive in order to figure out if out containerised world has
-> collapsed.
->=20
-
-If by the root task, you mean the initial task in the container, then
-that method seems a little sketchy too. How would we determine that
-from the RPC layer?
-
-To be clear: the situation here is that we have a container with a veth
-device that is communicating with the outside world. Once all of the
-processes in the container exit, the veth device in the container
-disappears. The rpc_xprt holds a ref on the netns though, so that
-sticks around trying to retransmit indefinitely.
-
-I think what we really need is a lightweight reference on the netns.
-Something where we can tell that there are no userland tasks that care
-about it anymore, so we can be more aggressive about giving up on it.
-
-There is a "passive" refcount inside struct net, but that's not quite
-what we need as it won't keep the sunrpc_net in place.
-
-What if instead of holding a netns reference in the xprt, we have it
-hold a reference on a new refcount_t that lives in sunrpc_net? Then, we
-add a pre_exit pernet_ops callback that does a shutdown_client() on all
-of the rpc_clnt's attached to the xprts in that netns. The pre_exit can
-then just block until the sunrpc_net refcount goes to 0.
-
-I think that would allow everything to be cleaned up properly?
---=20
-Jeff Layton <jlayton@kernel.org>
 
