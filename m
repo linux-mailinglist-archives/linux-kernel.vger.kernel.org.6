@@ -1,89 +1,62 @@
-Return-Path: <linux-kernel+bounces-559830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 761F3A5FA5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:47:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB60A5FA64
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:49:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAEC2177D51
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:47:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D1833B640C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A87268FC9;
-	Thu, 13 Mar 2025 15:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E133D268FE9;
+	Thu, 13 Mar 2025 15:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="loqoAOxs"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ri95nqXX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470B513AA2F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A885523A;
+	Thu, 13 Mar 2025 15:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741880816; cv=none; b=VaGPDyvWSbdiT0ZYyP0q4nU7OaklEW4KofZCDnh1nCcv1dgg8veNcVmLI1wCFpchhiYQ7K9e+ngc9kz+McDLPNlFN5D9VTol47BbtKvbWd3r9Q/XEmWWHo0CJKOdqMK8OTWof6UPt9tf9N8bWrFCmiwVBBtl4BLkrNHdepPEK6o=
+	t=1741880941; cv=none; b=Kw7V1FGrZFmfidZk2tg7uge7FpWuQ6/V7RHOlyirbj/5ApAIS0md5kNCCvXqSuoenRF4bHtdaxIlJkiQT2bti+7JLggW2Qj8gogCkVcl+QI3M/RsqRRUiv+GTSuQDiBs3uVCr/HlKabLDWWgyKzpEb+S67vCIcKkZKNhMPkHIbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741880816; c=relaxed/simple;
-	bh=8rhT5K5h5si2y4Q7V7FrHe+5lvc9WpW5/QmzS2Xdq6A=;
+	s=arc-20240116; t=1741880941; c=relaxed/simple;
+	bh=KOtUKVYArSvSjd+bgQSYpEBlLmiI7To92Pb6LyNe5us=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MypXz3fbSJ2d8HHQBcwFs8mEMQs/f58kc9HgotNBvW7bZ72UeEf2QB7WLpXrhO6mnM+Wa4aATvipISOBzJOfRxd1c1JE2f9ZgcNkWQ+i/jQ7eVtkdNBAiSd0H8Lr/nxQmBeW6inzX15WavnNBsv7th4hVxiRZ/zUekOBdkA9AyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=loqoAOxs; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-223f4c06e9fso22121705ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:46:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741880813; x=1742485613; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/dk/KVdNUO+2NCTC/VAHji5cbX9MUum8KYD6NkCMODY=;
-        b=loqoAOxsrNCT+KT4/XZN3NjJrlW0ZlWYuqvo7jp1T5GyvQietaJgifeQ9EoGNYPIY2
-         YiGm9ObGouzNkrOPoBUsGsLuBvbjfEMMkfx7a0ORhcj2FUQI8/fJ7HHt9Rk6vW3LKMix
-         ZNRcaajWUiVQpZMtoYM3v2ykLRd1UIUp8uWDd5kWG2ZODcUzroAPQR6UWHgQhNHhO3qA
-         edeIlUH0qpmvdPq+61JdXLOfn4ORfgfUDQUsPUxjNC1EG2hLUaDZ0jb8DAraUeqxtWv0
-         odVvKD1L+9dS3HwnPZcZzvKoHa0NucYx7DXpom3S+VyNAi/6IK8G9/My5ud3pnNi2L0L
-         vtGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741880813; x=1742485613;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/dk/KVdNUO+2NCTC/VAHji5cbX9MUum8KYD6NkCMODY=;
-        b=r5m8nq8wwqbeTge+1ZY+1OaJQLQi/TgCvgn9hsZ1Z5lPG/QRah2TzpSY9bEfMokKCz
-         oqhVkB5iDqEQalvdJw79qhrgzqAuaqHOxcJPPtBO9EeNq800fBig6v91jZrdnuFmycVV
-         QV0fRUa5Um+lU/HegHXK7PLHhnlYQXuq/wSf2XXxRQGcuQ2r4VMgimkBE8LcjIJz8To5
-         tv8TPtzaas6ZCbDMkN1fPYnqqdem2gVOcLzDIBC8qtXfN5yqbU/ipdTo1HetDFewt2cP
-         1JqExnszCF25UEuuCO2XuIArLDI9rbC8Je24WX+07XmKH0Aju4TMxAn+DHj3FMpoEmQC
-         /+0w==
-X-Forwarded-Encrypted: i=1; AJvYcCV9tCBeHTEAbzmKOoTgY3u05h2soOc0oaaZi7aSWVBfAj1mECJizxjyaQ91Z2L2zH3SsPwmlYKyJXeHJow=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztu3EwwLCMI+Z60Md+TOq+CofzxoAJgJ8947KDBhuPVtvpkP+9
-	T22yGemf/m7BqoDIGim7/0x6mR7Z1ubN3tS/PJdqGmlJeAvi7t8BKwDxnRJ7HN0=
-X-Gm-Gg: ASbGnctDcw61g1rWTLjTNmbsjyrjzHcYUv71m5v5EdyoVSvxrMnbHGDAXz9h8BFjhH1
-	BRIrCkPTL5jmP0qVf8ExTQaObqbziRI6+qh5rbGpoICeFxM4fXwbaovcrxziAGIUivLAZZs9VBQ
-	StUJX+mH8tjA2ZqGkJ+Z4XYL/8BwHN4tvakqlXSFfFxgaw1mf+MACk5JsdjCC4ktCyOCjb1mX8B
-	dMIZ+wQMIc3KKmZM5UA+TxuaGRwoc7aOGIXi5iEGAWajhT/Yd+LFzEnfJtkF8sYei7MyQBQYwoq
-	XSVh1FBkhnmblRtPIk4QqAq6btgNRasiGnm7Rk+a0+MYU4D/qE/OyQieToA=
-X-Google-Smtp-Source: AGHT+IHmhKUWmuw5hxmGn5MltXhJp+mOVpY2OPHTTEaVO3b51JPFYbzscOBmXvFxMsGPCnOFc7K2lg==
-X-Received: by 2002:a17:903:3d03:b0:223:5187:a886 with SMTP id d9443c01a7336-225c66a7cb6mr49221535ad.22.1741880813496;
-        Thu, 13 Mar 2025 08:46:53 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:46d2:1635:3673:c3f9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba710dsm14851215ad.128.2025.03.13.08.46.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 08:46:52 -0700 (PDT)
-Date: Thu, 13 Mar 2025 09:46:50 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: p.zabel@pengutronix.de, robh@kernel.org, krzk+dt@kernel.org,
-	shawnguo@kernel.org, devicetree@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, conor+dt@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, andersson@kernel.org,
-	Frank.Li@nxp.com, peng.fan@nxp.com, laurentiu.mihalcea@nxp.com,
-	iuliana.prodan@nxp.com, shengjiu.wang@nxp.com
-Subject: Re: [PATCH v5 0/8] imx8mp: Add support to Run/Stall DSP via reset API
-Message-ID: <Z9L96ssnL1S5z7rb@p14s>
-References: <20250311085812.1296243-1-daniel.baluta@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fgjD9zvEdSw3W0VANa1wlbt/NjOp6XHxo64W5hgsdg89fmU74vZ7wEXJ7Qc0SUkNSDgLlHYxawcfJ4ACfKv8MbIjABy+JGgkhwzYbZ2W1ZFkVWjnRauTOuErscLGbaSPx7WIH5nhQ8IOv7FcfT3e1YpRvBKGRFmHukRjXk1Sz0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ri95nqXX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53087C4CEDD;
+	Thu, 13 Mar 2025 15:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741880940;
+	bh=KOtUKVYArSvSjd+bgQSYpEBlLmiI7To92Pb6LyNe5us=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ri95nqXXFZzrKT6wOvjqkbyhpXF6uSp/JUcsWxiWRPkv4UeRyCw0s+RiJROzdHQNf
+	 3/PlOO9ADUocL+5I17B6O3Era+bX1aQiGZGCFgdq7ZRVxZj2TO/Fe/UIf86xb5kE54
+	 Rb0FcC7xweXsarlp6p2mopNAMCl2QWoCZLsWag5XHbG2cjz18tZ2156DPE8KSAktk5
+	 jv4Z9EvDjXeoM3QtB3RBSxC4d/IQry0Z/l1B6sTFYGL3x2BUNg1d21NFebXajj0C1S
+	 HzfQvnjYIFjqbCzuqybCimbf0aG2dm8Na1wQwzDJ8je5X1AA8lqgeTuNn62y/wuD8d
+	 7cc3RjhxWAZMA==
+Date: Thu, 13 Mar 2025 16:48:55 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust/revocable: add try_with() convenience method
+Message-ID: <Z9L-Z4Aw64Hi5Lj8@pollux>
+References: <20250313-try_with-v1-1-adcae7ed98a9@nvidia.com>
+ <D8F7D2RPRVAO.2EF39MZXM6FPR@proton.me>
+ <D8F8E4PBHK7O.399Y83M1L3XK3@nvidia.com>
+ <D8F91L51P2EA.2FBHGJYSV06HY@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,99 +65,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250311085812.1296243-1-daniel.baluta@nxp.com>
+In-Reply-To: <D8F91L51P2EA.2FBHGJYSV06HY@proton.me>
 
-On Tue, Mar 11, 2025 at 10:58:03AM +0200, Daniel Baluta wrote:
-> This patch series adds support to control the Run/Stall DSP bits found on
-> i.MX8MP via the reset controller API instead of using the syscon API.
+On Thu, Mar 13, 2025 at 03:38:55PM +0000, Benno Lossin wrote:
+> On Thu Mar 13, 2025 at 4:08 PM CET, Alexandre Courbot wrote:
+> > On Thu Mar 13, 2025 at 11:19 PM JST, Benno Lossin wrote:
+> >> Would it make sense to not use `Result` here and continue with `Option`?
+> >
+> > We would have to return an Option<Result<R>> in this case. The current
+> > code folds the closure's Result into the one of the guard's acquisition
+> > for convenience.
+> >
+> > Actually, I don't think I have ever used try_access() a single time
+> > without converting its returned Option into a Result. Wouldn't it make
+> > sense to do the opposite, i.e. make try_access() return Err(ENXIO) when
+> > the guard cannot be acquired and document this behavior?
 > 
-> DSP found on i.MX8MP doesn't have a direct reset line so according to hardware
-> design team in order to handle assert/deassert/reset functionality we
-> need to use a combination of control bits from two modules.
+> Sure, if you're always doing
 > 
-> Audio block control module:
-> 	- for Run/Stall control bits of the DSP
+>     let guard = rev.try_access().ok_or(ENXIO)?;
 > 
-> Debug Access Port (DAP)
-> 	- for Software Reset via IMX8M_DAP_PWRCTL register
-> 
-> The current implementation for IMX DSP Remotproc driver and for Sound Open
-> Firmware driver (already upstream) uses the following approach:
-> 	- maps the Audio Block Control address via syscon API through
->           the fsl,dsp-ctrl property of the dsp node.
-> 	- maps the DAP address space using directly a call to ioremap
->           with IMX8M_DAP_DEBUG macro depicting the DAP base address.
-> 
-> The both approaches are problematic when comes to describing the address
-> spaces via the DT:
-> 	- for Audio Block Control, because it uses the syscon interface
-> 	- for DAP because it hardcodes de base address instead of using a dt node.
-> 
-> This patch series aims to fix the Audio Block control usage of the
-> syscon interface and replace it with Reset Controller interface.
-> 
-> Main advantages of using the Reset Controller API is that we stop
-> abusing the syscon interface, offer a better probe ordering, PM runtime
-> support. Main critique of using the Reset Controller API is that
-> Run/Stall bits are not reset bits (but according the hardware design
-> team they are part of the reset proccess since there is no real reset
-> line).
-> 
-> Initial discussion is here:
-> https://patchwork.kernel.org/project/imx/patch/20250212085222.107102-6-daniel.baluta@nxp.com/
-> 
-> Note that we can safely remove the fsl,dsp-ctrl property usage from IMX DSP
-> remoteproc driver because there is no Device Tree users.
-> 
-> Changes since v4:
-> https://lore.kernel.org/lkml/20250305100037.373782-3-daniel.baluta@nxp.com/T/
-> 	- picked-up R-b tags from Frank Li and Peng Fan
-> 	- reworded commit message of patch 8/8 as per Mathieu Poirier suggestion
-> 
-> Changes since v3:
-> https://lore.kernel.org/linux-arm-kernel/20250225102005.408773-5-daniel.baluta@nxp.com/T/
-> 	- renamed resets ids as per Philipp comments
-> 	- add boths resets (named them runstall and softreset) as per Philipp comments
-> 
-> Changes since v2:
-> (https://lore.kernel.org/lkml/Z7ZNngd3wtJ5MZgl@lizhi-Precision-Tower-5810/T/)
->         - picked R-b and A-b tags
->         - use run_stall instead of reset to refer to reset controller
->           instance
->         - remove 'resets' description as it is a common property
->         - add correct include in the yaml dts snippet example
-> Changes since v1:
-> (https://lore.kernel.org/imx/20250219030809.GD6537@nxa18884-linux/T/)
->         - addresed comments received on v1
->         - picked up R-b and A-b tags
-> 
-> Daniel Baluta (8):
->   dt-bindings: reset: audiomix: Add reset ids for EARC and DSP
->   dt-bindings: dsp: fsl,dsp: Add resets property
->   arm64: dts: imx8mp: Use resets property
->   reset: imx8mp-audiomix: Add prefix for internal macro
->   reset: imx8mp-audiomix: Prepare the code for more reset bits
->   reset: imx8mp-audiomix: Introduce active_low configuration option
->   reset: imx8mp-audiomix: Add support for DSP run/stall
->   imx_dsp_rproc: Use reset controller API to control the DSP
-> 
->  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 24 +++++-
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi     |  3 +
->  drivers/remoteproc/imx_dsp_rproc.c            | 25 ++++--
->  drivers/remoteproc/imx_rproc.h                |  2 +
->  drivers/reset/reset-imx8mp-audiomix.c         | 78 +++++++++++++------
->  .../dt-bindings/reset/imx8mp-reset-audiomix.h | 13 ++++
->  6 files changed, 114 insertions(+), 31 deletions(-)
->  create mode 100644 include/dt-bindings/reset/imx8mp-reset-audiomix.h
+> Then it makes sense from my view, maybe Danilo has some other argument
+> for why `Option` is better.
 
-Other than patch 3 for which I haven't received a Reviewed-by, I have applied
-this set.
-
-Thanks,
-Mathieu
-
-> 
-> -- 
-> 2.43.0
-> 
+Most of the time I think we indeed want to derive an Err() if try_access()
+fails, but not with a specific error code. The error code depends on the context
+of where the revocable is used (e.g. for I/O mappings), but it also depends on
+the driver semantics.
 
