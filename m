@@ -1,181 +1,239 @@
-Return-Path: <linux-kernel+bounces-559584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CFBA5F5CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:19:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC819A5F5DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:22:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6599E3ACA21
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:19:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBCC71884ED5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6293D26770A;
-	Thu, 13 Mar 2025 13:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFBF267721;
+	Thu, 13 Mar 2025 13:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Fya+B5uv"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBtA0e4Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C520B266EF1
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45ABF265610;
+	Thu, 13 Mar 2025 13:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741871977; cv=none; b=mKBGlAViaj4/kArnL3Df78NazGqFOoIj7n4W47odaW3Ri3HxmazdC4T/m9+wy9kyIBpH8LzQ3BF451/06agROqtkxCvY+7ucDcMeIKQgXl2nf58S/73pCDl6CdqHQubSsKPmCD+9/nfS2QONnZ/TpioMMBEH8gCxtq0DAJmhg/Q=
+	t=1741872043; cv=none; b=C6Hp83h/ZJq6kS5smgXZ91ETzhNdSIm2DqTycDpzxUeY93GpOZ8jU+2ra+Qp+cFgNnr9+gFrZbNDpXVmH/z9ijiTYWXV5nIbhmzYHUNLVVRie6lw+iajmFO8WZhCgW4glHztFDvgWaaU5cUtPu1zfA04XdfElclUA9288Ae9ETc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741871977; c=relaxed/simple;
-	bh=Gdz8UJhWShBn1LGKb52FUKgFJdhhJNGhVtNjQr+Ljhw=;
+	s=arc-20240116; t=1741872043; c=relaxed/simple;
+	bh=7sLRPlPMdxJhpz09Z2Z7FAiXZqSpH6scXcJJzy6jD6M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQuRI4ys2/wXAKOYhMAou80cXr2q9cV3krZpHeFXiY1Vi+QpiEByUIfMSqsCiMOroEK3hp0aBO864YSyX3c+fadYwGJcsFxETAyolZAo7aRIaQRTGGx3I5lHab5hSC+62LvI64xYY9RYlOcDnVxDzp6TfcSR0y7HFgvJwVuzR8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Fya+B5uv; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac2a9a74d9cso208628166b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 06:19:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1741871974; x=1742476774; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SLwI9+XgDvx6y1QmCRm2s349AXzMPGhMLML8/FN0xLk=;
-        b=Fya+B5uvMaBWg05/ZRaooO28oARMieTKejYuRJHRQIjyrXOuvQoFXtsyZGxHLoiqGL
-         3dxTmbWsHoc/LO3ACZs+ovLFovc85/cZDAFlz4Dr+Np2mRFz+D/XMy6Yy9Fdx2qs84ny
-         rp5uIw5CRIrGOkqHeFwdv8DUsSLZ0RAdaeJqNgnjynazmIg3FDYRa0vOpHiRwZFKJH5/
-         G3CEBRjEzjPipxd+Xx25UTJa6oXICPZLQ+CcujMNWwKjyhV7QnxyM0+/J8XoKLvkDpQp
-         C9w2NQYJDA9rpmIe5YofDyga9OrNItLRekWl+/h9p0E9oAN+c48I94bUQRMPo8p4ISfU
-         YbBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741871974; x=1742476774;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SLwI9+XgDvx6y1QmCRm2s349AXzMPGhMLML8/FN0xLk=;
-        b=r2oEhfxhqmPHVrueRCYpV8MbIGCfrRfJwalbTlnL/1FhPRqGp9jjs5W33xQ3WUPFDS
-         tzTbOsxYVXO8mYTb5X76aIegsV94BgfWxf3+PTV8p35ps3G/C/PXVR5osEh+IDQdIhYs
-         IU9N9h5hN3kNncJLGyiCD5S9CwUH+nmbaJ8zChpE0YypC4UkrWhTg4QI2tXQdbNhDyQ0
-         u/T7jjapn1wUARpeQk4CcRIN+VxjiHfOcVHcsOv7LyGG82Z0QvWcKCtdieIQkepXg/HH
-         HsdUqpDZcFjkrkO/fnwM0unUrl87qEqibdUCLp+fBhxljGJQ1xBrXbJ9BpyHmcW8EUlz
-         NdZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJhFsORAvDZwbftdjUTrj70jxmRpr2seiXSXJRNHR8lIK0AwAd0FnNdj4TeIDS5xEVXmVyQe5i5b4HTYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN6uyd+n+7Vc2s7MWgGQo8eu7oSpQzr634lM/8mcn+ZUZ7REwj
-	lHY26u3s+WxW6rZs69tHNrhqbDkV5nCM6uCo9v9amX0OnqSmEMsX1w+fa2NX7Ko=
-X-Gm-Gg: ASbGncuUbFgvz18fNbdfhqzSRz+dooMjgTJC37DxaaQmWd/Zzfr4j3XSfJZjdnjatsQ
-	jaIk7OdzHRugPZJ17GeKVMbI3WMH0oHrSqT5X0TarAlC6HzwR/9kkMDjfJmTsIo5ore3RZ3Yj7f
-	xBiMrPB61X1U/vl3BPAjrI79asBMGhpMoBVGsdIGUgLGMaPT7IS/nmZbV8RlhsB1f+RgYX3kDNE
-	syTfo3mFE1EDq6faj3oC9ZXtE9j3jjXVNgq7KcrVX7KseGm5jMh58ENiCBQspqjb2xqmFS3AHId
-	E/E9/2uUnvl5vaPd880glwRmMfMvzEhS
-X-Google-Smtp-Source: AGHT+IF3RjvN3caMGccSNmH1eaKCAyeC0UKLdIujqC0Ubvi5/eGttJVhWRGqhwIRTen+UtV+e2lwpQ==
-X-Received: by 2002:a17:907:7da8:b0:ac1:dd6f:f26c with SMTP id a640c23a62f3a-ac2b9ede2f5mr1499361666b.46.1741871973986;
-        Thu, 13 Mar 2025 06:19:33 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::59a5])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147ead1dsm81138266b.58.2025.03.13.06.19.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 06:19:33 -0700 (PDT)
-Date: Thu, 13 Mar 2025 14:19:32 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v3 08/17] riscv: misaligned: add a function to check
- misalign trap delegability
-Message-ID: <20250313-4bea400c5770a5a5d3d70b38@orel>
-References: <20250310151229.2365992-1-cleger@rivosinc.com>
- <20250310151229.2365992-9-cleger@rivosinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gt/EKdcokMf8Q0li4YThGGNJfU096YxQpdGb5eoBbn3TuRknCHctF65t/BvPWwWQMZroZVRpyHXD23BYygzatLampCzEjM2ubX/MMLRCRSrlf1ViXaLQDZybG3oa6KWqW6Vr1qgsSxcFRK2m5w/E/k27USGa3eTfZ9SRNCRIqWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBtA0e4Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC62EC4CEE5;
+	Thu, 13 Mar 2025 13:20:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741872041;
+	bh=7sLRPlPMdxJhpz09Z2Z7FAiXZqSpH6scXcJJzy6jD6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WBtA0e4YOEjcIza/D/OQhLriwtnpU6IR3sxl+1DAQ+cHYTn77DmxnxinkMlGg/TBR
+	 hhbQha4y9eqMBmMseUhJrkzkbqzsvsDaEkeMLCr3Q4MvR60adtKrFyaxUrM7khRj9F
+	 UnGbBm+jALy6kuskJ3iSySuxDxb3ZMrX8AxddDinr2wKFDnrE5Da2+R/YqX3VHND6A
+	 splMA/3ogKPO5qR2j6ifCvSPWBTMZ2w7Ytx7njAiS+vaTzjo6dZgs1p/1UDcorCSjT
+	 n7abIhzeOS3hVMURteAiU88Z2QtloTx53jyL6PYXjzfHzEC8X6acvjkBTRXV09uby/
+	 SMpmUw7/RMIxw==
+Date: Thu, 13 Mar 2025 13:20:36 +0000
+From: Lee Jones <lee@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stanislav Jakubek <stano.jakubek@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v6 06/10] mfd: bcm590xx: Add PMU ID/revision parsing
+ function
+Message-ID: <20250313132036.GB3616286@google.com>
+References: <20250304-bcm59054-v6-0-ae8302358443@gmail.com>
+ <20250304-bcm59054-v6-6-ae8302358443@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250310151229.2365992-9-cleger@rivosinc.com>
+In-Reply-To: <20250304-bcm59054-v6-6-ae8302358443@gmail.com>
 
-On Mon, Mar 10, 2025 at 04:12:15PM +0100, ClÈment LÈger wrote:
-> Checking for the delegability of the misaligned access trap is needed
-> for the KVM FWFT extension implementation. Add a function to get the
-> delegability of the misaligned trap exception.
+On Tue, 04 Mar 2025, Artur Weber wrote:
+
+> The BCM590xx PMUs have two I2C registers for reading the PMU ID
+> and revision. The revision is useful for subdevice drivers, since
+> different revisions may have slight differences in behavior (for
+> example - BCM59054 has different regulator configurations for
+> revision A0 and A1).
 > 
-> Signed-off-by: ClÈment LÈger <cleger@rivosinc.com>
+> Check the PMU ID register and make sure it matches the DT compatible.
+> Fetch the digital and analog revision from the PMUREV register
+> so that it can be used in subdevice drivers.
+> 
+> Also add some known revision values to bcm590xx.h, for convenience
+> when writing subdevice drivers.
+> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 > ---
->  arch/riscv/include/asm/cpufeature.h  |  5 +++++
->  arch/riscv/kernel/traps_misaligned.c | 17 +++++++++++++++--
->  2 files changed, 20 insertions(+), 2 deletions(-)
+> Changes in v6:
+> - Adapt to PMUID being passed as device type value
+> - Rename rev_dig and rev_ana to rev_digital and rev_analog
+> - Rewrite commit message
 > 
-> diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
-> index ad7d26788e6a..8b97cba99fc3 100644
-> --- a/arch/riscv/include/asm/cpufeature.h
-> +++ b/arch/riscv/include/asm/cpufeature.h
-> @@ -69,12 +69,17 @@ int cpu_online_unaligned_access_init(unsigned int cpu);
->  #if defined(CONFIG_RISCV_SCALAR_MISALIGNED)
->  void unaligned_emulation_finish(void);
->  bool unaligned_ctl_available(void);
-> +bool misaligned_traps_can_delegate(void);
->  DECLARE_PER_CPU(long, misaligned_access_speed);
->  #else
->  static inline bool unaligned_ctl_available(void)
->  {
->  	return false;
->  }
-> +static inline bool misaligned_traps_can_delegate(void)
+> Changes in v5:
+> - Add REG_ prefix to register offset constant names
+> 
+> Changes in v4:
+> - Added this commit
+> ---
+>  drivers/mfd/bcm590xx.c       | 63 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/bcm590xx.h | 14 ++++++++++
+>  2 files changed, 77 insertions(+)
+> 
+> diff --git a/drivers/mfd/bcm590xx.c b/drivers/mfd/bcm590xx.c
+> index 4620eed0066fbf1dd691a2e392e967747b4d125b..74dc4ae5ecd5db7fadc56918f63110c1265d4a76 100644
+> --- a/drivers/mfd/bcm590xx.c
+> +++ b/drivers/mfd/bcm590xx.c
+> @@ -17,6 +17,15 @@
+>  #include <linux/regmap.h>
+>  #include <linux/slab.h>
+>  
+> +/* Under primary I2C address: */
+> +#define BCM590XX_REG_PMUID		0x1e
+> +
+> +#define BCM590XX_REG_PMUREV		0x1f
+> +#define BCM590XX_PMUREV_DIG_MASK	0xF
+> +#define BCM590XX_PMUREV_DIG_SHIFT	0
+> +#define BCM590XX_PMUREV_ANA_MASK	0xF0
+> +#define BCM590XX_PMUREV_ANA_SHIFT	4
+> +
+>  static const struct mfd_cell bcm590xx_devs[] = {
+>  	{
+>  		.name = "bcm590xx-vregs",
+> @@ -37,6 +46,56 @@ static const struct regmap_config bcm590xx_regmap_config_sec = {
+>  	.cache_type	= REGCACHE_MAPLE,
+>  };
+>  
+> +/* Map PMU ID value to model name string */
+> +static const char * const bcm590xx_names[] = {
+> +	[BCM590XX_PMUID_BCM59054] = "BCM59054",
+> +	[BCM590XX_PMUID_BCM59056] = "BCM59056",
+> +};
+> +
+> +/*
+> + * Parse the version from version registers and make sure it matches
+> + * the device type passed to the compatible.
+> + */
+> +static int bcm590xx_parse_version(struct bcm590xx *bcm590xx)
 > +{
-> +	return false;
-> +}
->  #endif
->  
->  bool check_vector_unaligned_access_emulated_all_cpus(void);
-> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
-> index db31966a834e..a67a6e709a06 100644
-> --- a/arch/riscv/kernel/traps_misaligned.c
-> +++ b/arch/riscv/kernel/traps_misaligned.c
-> @@ -716,10 +716,10 @@ static int cpu_online_check_unaligned_access_emulated(unsigned int cpu)
->  }
->  #endif
->  
-> -#ifdef CONFIG_RISCV_SBI
-> -
->  static bool misaligned_traps_delegated;
->  
-> +#ifdef CONFIG_RISCV_SBI
+> +	unsigned int id, rev;
+> +	int ret;
 > +
->  static int cpu_online_sbi_unaligned_setup(unsigned int cpu)
->  {
->  	if (sbi_fwft_set(SBI_FWFT_MISALIGNED_EXC_DELEG, 1, 0) &&
-> @@ -761,6 +761,7 @@ static int cpu_online_sbi_unaligned_setup(unsigned int cpu __always_unused)
->  {
->  	return 0;
->  }
+> +	/* Get PMU ID and verify that it matches compatible */
+> +	ret = regmap_read(bcm590xx->regmap_pri, BCM590XX_REG_PMUID, &id);
+> +	if (ret) {
+> +		dev_err(bcm590xx->dev, "failed to read PMU ID: %d\n", ret);
+> +		return ret;
+> +	}
 > +
->  #endif
->  
->  int cpu_online_unaligned_access_init(unsigned int cpu)
-> @@ -773,3 +774,15 @@ int cpu_online_unaligned_access_init(unsigned int cpu)
->  
->  	return cpu_online_check_unaligned_access_emulated(cpu);
->  }
-> +
-> +bool misaligned_traps_can_delegate(void)
-> +{
-> +	/*
-> +	 * Either we successfully requested misaligned traps delegation for all
-> +	 * CPUS or the SBI does not implemented FWFT extension but delegated the
-> +	 * exception by default.
-> +	 */
-> +	return misaligned_traps_delegated ||
-> +	       all_cpus_unaligned_scalar_access_emulated();
-> +}
-> +EXPORT_SYMBOL_GPL(misaligned_traps_can_delegate);
-> \ No newline at end of file
+> +	if (id != bcm590xx->pmu_id) {
+> +		dev_err(bcm590xx->dev,
+> +			"Incorrect ID for %s: expected %x, got %x. Check your DT compatible.\n",
 
-Check your editor settings.
+Isn't it more likely that the H/W this is being executed on is
+unsupported?  If so, say that instead.
 
+> +			bcm590xx_names[bcm590xx->pmu_id], bcm590xx->pmu_id, id);
+> +		return -EINVAL;
+
+-ENODEV
+
+> +	}
+> +
+> +	/* Get PMU revision and store it in the info struct */
+> +	ret = regmap_read(bcm590xx->regmap_pri, BCM590XX_REG_PMUREV, &rev);
+> +	if (ret) {
+> +		dev_err(bcm590xx->dev, "failed to read PMU revision: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	bcm590xx->rev_digital = (rev & BCM590XX_PMUREV_DIG_MASK)
+> +				     >> BCM590XX_PMUREV_DIG_SHIFT;
+> +
+> +	bcm590xx->rev_analog = (rev & BCM590XX_PMUREV_ANA_MASK)
+> +				    >> BCM590XX_PMUREV_ANA_SHIFT;
+> +
+> +	dev_info(bcm590xx->dev, "PMU ID 0x%x (%s), revision: digital %d, analog %d",
+> +		 id, bcm590xx_names[id],
+> +		 bcm590xx->rev_digital, bcm590xx->rev_analog);
+> +
+> +	return 0;
+> +}
+> +
+>  static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri)
+>  {
+>  	struct bcm590xx *bcm590xx;
+> @@ -78,6 +137,10 @@ static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri)
+>  		goto err;
+>  	}
+>  
+> +	ret = bcm590xx_parse_version(bcm590xx);
+> +	if (ret)
+> +		goto err;
+> +
+>  	ret = devm_mfd_add_devices(&i2c_pri->dev, -1, bcm590xx_devs,
+>  				   ARRAY_SIZE(bcm590xx_devs), NULL, 0, NULL);
+>  	if (ret < 0) {
+> diff --git a/include/linux/mfd/bcm590xx.h b/include/linux/mfd/bcm590xx.h
+> index 8d146e3b102a7dbce6f4dbab9f8ae5a9c4e68c0e..fbc458e94bef923ca1b69afe2cac944adf6fedf8 100644
+> --- a/include/linux/mfd/bcm590xx.h
+> +++ b/include/linux/mfd/bcm590xx.h
+> @@ -17,6 +17,16 @@
+>  #define BCM590XX_PMUID_BCM59054		0x54
+>  #define BCM590XX_PMUID_BCM59056		0x56
+>  
+> +/* Known chip revision IDs */
+> +#define BCM59054_REV_DIGITAL_A1		1
+> +#define BCM59054_REV_ANALOG_A1		2
+> +
+> +#define BCM59056_REV_DIGITAL_A0		1
+> +#define BCM59056_REV_ANALOG_A0		1
+> +
+> +#define BCM59056_REV_DIGITAL_B0		2
+> +#define BCM59056_REV_ANALOG_B0		2
+> +
+>  /* max register address */
+>  #define BCM590XX_MAX_REGISTER_PRI	0xe7
+>  #define BCM590XX_MAX_REGISTER_SEC	0xf0
+> @@ -30,6 +40,10 @@ struct bcm590xx {
+>  
+>  	/* PMU ID value; also used as device type */
+>  	u8 pmu_id;
+> +
+> +	/* Chip revision, read from PMUREV reg */
+> +	u8 rev_digital;
+> +	u8 rev_analog;
+>  };
+>  
+>  #endif /*  __LINUX_MFD_BCM590XX_H */
+> 
 > -- 
-> 2.47.2
+> 2.48.1
+> 
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+-- 
+Lee Jones [ÊùéÁêºÊñØ]
 
