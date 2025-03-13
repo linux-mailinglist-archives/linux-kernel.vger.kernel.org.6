@@ -1,126 +1,141 @@
-Return-Path: <linux-kernel+bounces-559680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF16A5F7F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:25:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866C8A5F7FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:26:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 701774209ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:25:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4FD019C467D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E2D267F4F;
-	Thu, 13 Mar 2025 14:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832CF267F7E;
+	Thu, 13 Mar 2025 14:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KMEKgBVl"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoR5w33N"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECAF265CDC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B59C267F5E;
+	Thu, 13 Mar 2025 14:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741875948; cv=none; b=Q9nnNAfoxfwcz8T4UJ2//J0VkZ4y72WnOLWaOSZ2QT+65IaoJom4iumJgVkpwSV4W1Lb4AsN2NHbnM2Gups6xb89DQzBqjyDikUNFWkMuvrg6kIUean6Xa5JpkRifCjwWm+fk6687XubTQsRt1jBmBNWJX2sseKaEeuBJYAPxMs=
+	t=1741875951; cv=none; b=ae9BunNOAuvLFfinkpyq7wzHEsb2JUuDumCZXbKrmTMVBbB8WH8/zVTDV7AmC8uPFSdf5EyTXI1CzvPLhentn22pxUvAmbLX5QarzVfAoEsu/w6KWwL1/9n1OFI5tzK72nfPlgjxgAwC7N+QlfKddYblQBqBVwBfBLc0pVDPI5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741875948; c=relaxed/simple;
-	bh=QJ0RYlYw7SiEQC+4LWZiDgWcZNOAvSBGt8/GVYykKZ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=m/jsy+87WhdECt1ZYcjKXAZl5ldRb7qFaOVmpij9WFalthOnTaV2inu4xNbqKuLQGqfwtF9XlrraWwhm/K40w3r3Y9vmpRm7j5s4O/DFT6KQBCGCDcN4qJqmBMjuTL/hDX4FXirxD/N6gHf1rtH2+5ttO8QIlFsfdknUqcRICGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KMEKgBVl; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 70D27444F4;
-	Thu, 13 Mar 2025 14:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741875937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vrsRvrI2fVkzeaX8UjmDzn0XjDjCg6WTOhzziOVkric=;
-	b=KMEKgBVls9RbWZlGt4UHN2T0cibIhnQ4oQxSR9n5eSq2UlsemvsVLgxzZtRhUHqGlZk3PO
-	pBScKqn59/3RGZdiZmr2bD857dG620+Vjqk3jrEFOoAQAvFDxjDnYF470hoQVgQCmMIwcr
-	LpS3qx8TOFzc5hep5vyjXHLNtwZ4piXeh6c9q/ikQeVduy0uG560Jyyj48oTJrWlx6d6aF
-	0sj7fHbaojLRTtSdXXsJ8FhGdGTNl+LVZOROCcHV+tMTu2aXAcS8oGDcNx50ID/DFP/go2
-	sUMJkoa/UayqKhELoKovvpUjNt7dWfSKOsxjNLterwauL1PrAy+5HeFlnkSWEQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Thu, 13 Mar 2025 15:25:17 +0100
-Subject: [PATCH] drm/mxsfb: fix missing rollback on failure in
- mxsfb_probe()
+	s=arc-20240116; t=1741875951; c=relaxed/simple;
+	bh=/X1T8m4Bnen3WeN9vFB5QU0qKn0cMJp+nlGe1TVUSho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JNs/D3LvLIQTLWOvxb2OEQWi+KTvqTwFSpFvh5S5OKJYWOsT2ftD4KFEGG4dGLtWl2c7ezWFTbfuQmStv5QXao+20ljXSJhHJ3JytqqwD+hUFJ5Jih+cmKi93uXqHxKNKqEhpHbjqzR6q98iwVxAU4h5Kf1ff+6kAyt0DfvMRco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoR5w33N; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2255003f4c6so18965805ad.0;
+        Thu, 13 Mar 2025 07:25:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741875950; x=1742480750; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yt2liAs3aMHm+KHHmdHu8tTJ1pcBVxGtNnpneo2Ud6Y=;
+        b=JoR5w33NivKJALkb6NI/0Tj4ERc/hIGZwYklI1bH1GNq0l6o73fdvKDp0uK6TxX29h
+         oz5wuO/bK9joahXh5UdAX8lV+zXmjuDQ8pSFO2SMIrdyjey1BwZpnJjmJl3LJ7moyvn+
+         4tXGf9UtTe5MhXTSjJIwersYs0//3F0V+drlZi2ZidiI+QpysecM/dn6ZohgscLl80MA
+         zQGxHfTpaBl+vCviHYGl6DrSWPim0lAZRSQpJ2xUZUAJFfrXhulfL2MGd9P56tzQN9Hy
+         7/Q6LBZ8XLZTrRGD32PT7xa/Ay6x8eDgIrUeypd7Xtu3Of62xVNwQh093jejuPWbtwML
+         YVGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741875950; x=1742480750;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yt2liAs3aMHm+KHHmdHu8tTJ1pcBVxGtNnpneo2Ud6Y=;
+        b=jj4iwlVPcIczKuVQV4LuALpWswe8x/sOV3g2DoC6gFyAMEIFjOh7mLAyifv/BwcHBE
+         4qxJ0k6/ShBJ5rXyf3ziDdz5VyeJBZEyh+ufHvOKK3jJBN5K6KuAcmYFTXKWzjgzEY44
+         BIR32LMgVRuFfQLtvzU/3mifzlSx1e0Z3EjN+95Solld3ZaNay2/LvRsZDks7IC2AR8V
+         Ygv/+lpuYeQvBmkEVZx/NIY4mt0zwKwbmq1wb9OEPV0CQC/7K3vx1NnJubMZhXk9zzUq
+         SVzHP+DIgqIkhZHfE8JfnT0HPKSFXXzT3PM2fRkJiPNbCGXF3nbYbyvRetIqVlnSgQMH
+         cYKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpudtwQWwSkmnM2iwCzd2N5eZeTb2PgivqySqGkuRcvms8BxWjhCt0blIm3wBE9CFXarJJNOuIM2jWV+xX@vger.kernel.org, AJvYcCV9xgXsY8MLL6eZHxlrdwAw+CYKq6sHBBVEgzMiNjKEk7CRaWYg9Zp2vvWeuHb3Kv3DhYul/qGAPo5b@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSsBvDAk/ut9k4HebIx+XzxsPAy1KkjrvNM821ojR8WYechSqo
+	xIx2XiCZDnEsuRbqPTSpcDmboDECHSA47ykBU7RAcHVQU/dLR5Lqun65WbzcgRo=
+X-Gm-Gg: ASbGncuI6ZcdD06Z655DFuLbIdBXgHhVSDyLzaWOIqfij2/9GMfcjENic7yFRdLmFo4
+	7XG5/JHEbLvEpkhQ34WF88DrPU/+5m0Mnuu/ELjQJHVNXf7ifwc+GyI8k5tciIwTCLl8DZ/6Uah
+	4MIXUjIRc8ZggPX3Ph1UHF7umA3CL7+fiYBVumf6FExf6ZQqX16KMyq0r2z+/GIJfx8+UrRxdkF
+	XLbhklOa5n5t23UHarrUmGsl+QUegS48GuHsMS/rDr9KZpHroFFRSGB8hTGG6aa4NJ53UxGKSP7
+	qmdABDBVg6e3z9CAvLcIs5na0HKw4grn3e44A25g619us0A8Tw0u/hllJvvLcCDOdBPieWQ8eaR
+	OWgFWW5s6D8gNuiwtcldM/Q==
+X-Google-Smtp-Source: AGHT+IF6eAtFOSwvFOI4Gm40tsebSeGzoaBQCU7pRdsE126LhuSwKSdaUakjB7uJmyjpQif4VQKq2g==
+X-Received: by 2002:a05:6a20:9f0a:b0:1f5:7eb5:72c7 with SMTP id adf61e73a8af0-1f58cbc5d79mr17800801637.29.1741875949583;
+        Thu, 13 Mar 2025 07:25:49 -0700 (PDT)
+Received: from ?IPV6:2409:4081:1112:2682:8c5d:7e25:b34:fa93? ([2409:4081:1112:2682:8c5d:7e25:b34:fa93])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9e195asm1318840a12.25.2025.03.13.07.25.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 07:25:49 -0700 (PDT)
+Message-ID: <70cab705-c656-48bd-9b65-841f68c41d40@gmail.com>
+Date: Thu, 13 Mar 2025 19:55:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: pwm: Convert lpc32xx-pwm.txt to YAML
+To: Krzysztof Kozlowski <krzk@kernel.org>, ukleinek@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, vz@mleia.com,
+ piotr.wojtaszczyk@timesys.com
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250312122750.6391-1-purvayeshi550@gmail.com>
+ <b2f6a357-a468-4526-a1b6-69ab2c643b2c@kernel.org>
+Content-Language: en-US
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <b2f6a357-a468-4526-a1b6-69ab2c643b2c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250313-mxsfb_probe-fix-rollback-on-error-v1-1-ad2fb79de4cb@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAMzq0mcC/x2N0QqDMAwAf0XybCBaZW6/IjKspjPMNZLCEMR/t
- /h4cNwdkNiEE7yKA4z/kkRjhqosYFrG+GGUOTPUVLfkKoe/PQX/3kw9Y5AdTdfVj9MXNSKbqaG
- jR+Of1FFwDeTOZpzF+9EP53kBBQ8OK3MAAAA=
-X-Change-ID: 20250313-mxsfb_probe-fix-rollback-on-error-3074b9080f34
-To: Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
- Michael Trimarchi <michael@amarulasolutions.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekudekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefghfffgeekhfdtveffheeuudeltefhfeduteekleffvefgfffgkeevfeejtdekkeenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegrtddtvdemudgsrgejmeegkehfjeemudeltgehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegrtddtvdemudgsrgejmeegkehfjeemudeltgehpdhhvghloheplgduledvrdduieekrddujeekrdejhegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtohepthhhohhmrghsrdhpvghtr
- giiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrdguvghv
-X-GND-Sasl: luca.ceresoli@bootlin.com
 
-When aperture_remove_all_conflicting_devices() fails, the current code
-returns without going through the rollback actions at the end of the
-function, thus the actions done by drm_dev_alloc() and mxsfb_load() are not
-undone.
+On 13/03/25 16:34, Krzysztof Kozlowski wrote:
+> On 12/03/2025 13:27, Purva Yeshi wrote:
+>> Convert the existing `lpc32xx-pwm.txt` bindings documentation into a
+>> YAML schema (`nxp,lpc3220-pwm.yaml`).
+>>
+>> Set `"#pwm-cells"` to `const: 3` for expected PWM cell properties.
+>>
+>> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+>> ---
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> 
+> ---
+> 
+> <form letter>
+> This is an automated instruction, just in case, because many review tags
+> are being ignored. If you know the process, you can skip it (please do
+> not feel offended by me posting it here - no bad intentions intended).
+> If you do not know the process, here is a short explanation:
+> 
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+> of patchset, under or above your Signed-off-by tag, unless patch changed
+> significantly (e.g. new properties added to the DT bindings). Tag is
+> "received", when provided in a message replied to you on the mailing
+> list. Tools like b4 can help here. However, there's no need to repost
+> patches *only* to add the tags. The upstream maintainer will do that for
+> tags received on the version they apply.
+> 
+> Full context and explanation:
+> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+> </form letter>
+> 
+> Best regards,
+> Krzysztof
 
-Fix by using a goto statament, as done for the previous and following error
-conditions.
+Hi Krzysztof,
 
-Fixes: c8e7b185d45b ("drm/mxsfb: Remove generic DRM drivers in probe function")
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
-The offending commit is not yet merged into master, and even less in a
-released kernel, so this does not need to go through stable.
----
- drivers/gpu/drm/mxsfb/mxsfb_drv.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-index c183b1112bc4e9fe4f3b048a2b6e4c98d1d47cb3..b4273e678d26dbc3dee2014266d61470da4e8010 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-@@ -365,9 +365,10 @@ static int mxsfb_probe(struct platform_device *pdev)
- 	 * located anywhere in RAM
- 	 */
- 	ret = aperture_remove_all_conflicting_devices(mxsfb_driver.name);
--	if (ret)
--		return dev_err_probe(&pdev->dev, ret,
--				     "can't kick out existing framebuffers\n");
-+	if (ret) {
-+		dev_err_probe(&pdev->dev, ret, "can't kick out existing framebuffers\n");
-+		goto err_unload;
-+	}
- 
- 	ret = drm_dev_register(drm, 0);
- 	if (ret)
-
----
-base-commit: f9f087d946266bc5da7c3a17bd8fd9d01969e3cf
-change-id: 20250313-mxsfb_probe-fix-rollback-on-error-3074b9080f34
+Thank you for your review! I will include your Reviewed-by tag in the 
+next version if no significant changes are made.
 
 Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
-
+Purva Yeshi
 
