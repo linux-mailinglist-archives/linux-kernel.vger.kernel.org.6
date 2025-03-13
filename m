@@ -1,128 +1,191 @@
-Return-Path: <linux-kernel+bounces-559243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC05A5F13A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:47:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14AAA5F170
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:52:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C95C77A36EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:46:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 329F616F36B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF60265CCF;
-	Thu, 13 Mar 2025 10:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04369267F4C;
+	Thu, 13 Mar 2025 10:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rmGhsliZ"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4B8bsFU"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2A91EEA28
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D230E13C689;
+	Thu, 13 Mar 2025 10:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741862851; cv=none; b=WQ/ScFpKwPP/WfTlScVoXkbaUvOqpOSRY76/pOPJNKiu3gjgV7ALwIHmWWZFYLCAQNOoEpNHzeeb2Tk+u0o69Vg3jdxRCkwtFNzcOkyBFiJJlqU6HrfHQORuFXXGKMiFjN/u8QpHKCN94AfAJ5vsYsRKOhjj7EOWMMIb4nRIrVk=
+	t=1741862905; cv=none; b=Lr3ZisLECGo7wdK14ptl/VDG7brBqcpPh7S08vnVOO0BAYs8l3Wj9AC0J4aQa7TLdSlDIlDSIBkTJtWKQgbK8ZRE9+uQgR7Qj7FifMR1Si1wVwNRcXN22GgxtmHjq7jbgSjmlyun4NkkCNW5PQ+20BlnDuL6Uf22/GH75oJSvwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741862851; c=relaxed/simple;
-	bh=LP5eXeugNTen1bBkv90xRuq2BmM2qnVG2bEcP7+53GM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hEIh2O7CbKa4WONGWKcaNpGJ+ntkd8V5K7UH7fn4dUNUYfDJoN6Uyq8dgEN32MHdUK+rlBV9+qQwQXI2tVHYZVGgKzWgjXJUK1Lo/67M1ONu5i+KwJKLuOxC2JWJ5bXNdbKAP7Y47g3vNmfzDV5TXcqEybsd0Gu0JILfXA/sg60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rmGhsliZ; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43943bd1409so5992875e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 03:47:29 -0700 (PDT)
+	s=arc-20240116; t=1741862905; c=relaxed/simple;
+	bh=NTvv7eK4pWA0tU7itqQwNc79CFE8kY/nvAPtwxhpCN8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aZp/RaZL4ELDFD5FiIgPskolbzhvF0gQN5upzD8DtalijM4kgNesaTbByggA7Up14JNS2RJ1nQQYqEdT+ERsz5441Cn1181xcsvICysg4bBUcTE3rKRiWPMAlj6A3spDth6XX/hQfqtjGuJKh7W15MRR5l98/IVrNiVX0l5GeOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h4B8bsFU; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bf1d48843so7199451fa.2;
+        Thu, 13 Mar 2025 03:48:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741862848; x=1742467648; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NQ9g0Gaavw77PwDpx2+pgwcbpRIgEDZUZKLzgDfdqpQ=;
-        b=rmGhsliZCZqPCaiYS6tHSdiOm/EPUha9hftpT4t5EWat5KRYalCcH7IeD0XbFd+TVE
-         DkvgSneZohPcQOPnR0m9jvkUFcSBuQOoVv3Mu35P80I83DUrOBxru+A1y2bO5vV4HjPk
-         rCRlEyLJbNvltl8hoe1+m5GnY4jDgEc8deVhNOtjQ8zpHpqTmdmwx4zI9wkP3N1axX98
-         J9r1Imv5Ck+H+hREUqtE/aGjGYwOgO9RSMoEZU1LV61G4Uw1niKn+hvGQ9gyss98oa7L
-         FrYmTxho0CrDVSoJWog31TBpEc67fpKro6wtlKXZnYjLOhcvoLvlqPPDHDXkNTp9febE
-         eGJQ==
+        d=gmail.com; s=20230601; t=1741862901; x=1742467701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IU4PHlrJ+sa0If2/fuT4pY69xSIqLjUfkdogKvImc9o=;
+        b=h4B8bsFUH1HdLVPKmLXUfYkJEjpFHpsaGPQ+33ZhIJNnLo4eDtkqFSkLVPEz8b9EoL
+         qNOAJb4pxcf87xlLgyEG+ygIThQi6ogQS2ksGD3l2k40csaGV5xlnYbUgNldAz0PROuB
+         ngmPFbt4bM/sJXWfDm/+YrNhM42oUuWN4MqHa0EYIyykhnuXyHzAgpskQG/8PBabqMWD
+         NtrsNubPvd6FhJNVXADyCnlIE4tVCDxrpnZudFotlyCnxQJUGpWwgtyHoDoJigdYrWcY
+         Dh5mp4DIccZrxwZEP2VXamE8vQYgOH+6vqAUce8h+uAsJchZJknvvjzmsGixBEsh172q
+         z/NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741862848; x=1742467648;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NQ9g0Gaavw77PwDpx2+pgwcbpRIgEDZUZKLzgDfdqpQ=;
-        b=k00pGTpUFuRWIIkLhtWS3IS03lO5ny2JlD3OJ/BXxV7jmaCE2EL7C+NXPLR82V7Jce
-         vHc2C9Fvv11duV4CaqzAbUPvU5YKYW/AdyMz88JnY/QQgRSzJZvdcoiZdwmF95FK5L9c
-         cpnSpUmWR35Vim5o63ZVsfKnwYeq42Xf2BPPCHGeir8cOnry49v8w8Ejb9dcop1fGZOj
-         HSahuZIaIwv2ZZlWUK9/BvtIn/5NwzB13eSnCMRea+LMgwonS6jl+gMiNBfPoYD3t0+4
-         gVFkc7u1mhfenC/TEyMyvjD+2pKkYuaMUlGLDcbGc2OLdI5aw94X5jnZtYH8ldXO1iDB
-         B6tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWrQG4FhU25aVm7PKuCvHyL5bGa9FLqjKr38eXfzXLWRYSCCsYy7repwenA/XzxysAXWIyzfnrzfF+OsPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTTwe3Q/Xk/cjNdVHIItT5M5zAcXkt32mra/0OiZacI+UGDygl
-	RCO45hSC/EEBXItvLgJw+iKUMnjrRkpXVthea9LP9GpSuoYf901Qj5gK0ifkxRXi17gnK840EaZ
-	00+qKPcXhR/pMYA==
-X-Google-Smtp-Source: AGHT+IFnP3JhBHMfVAgiBjDgec8Dj8Ys+oEmuI/lcu/U/vWhF0K6dANq8oFHYUxugoP1r6AAO5LgIu0hY38u4Vs=
-X-Received: from wmbbh12.prod.google.com ([2002:a05:600c:3d0c:b0:43c:e9df:2ecd])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:b95:b0:43c:ec97:75db with SMTP id 5b1f17b1804b1-43cec97779fmr192265835e9.11.1741862848323;
- Thu, 13 Mar 2025 03:47:28 -0700 (PDT)
-Date: Thu, 13 Mar 2025 10:47:26 +0000
-In-Reply-To: <20250313084525.773620-1-kunwu.chan@linux.dev>
+        d=1e100.net; s=20230601; t=1741862901; x=1742467701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IU4PHlrJ+sa0If2/fuT4pY69xSIqLjUfkdogKvImc9o=;
+        b=g2J3zzt+9RgO5hxHNKklt2vXpelt4/53h6BhwVTtqZyB/xWVWjrHoMg2Z9W8O3fs+g
+         TVNBvzzeSuw5bpfiwl5M3Y+2Dw3Ba77hH9C3P++/bID1QzfxyUbBp7XcO70oFwkW/cX1
+         UVvssiQEoabYoYhVw3fmqxAj0UsoDKSA3moVa7BtlCBE57vJM2WGvTN3V/S8Sxtvr7VG
+         Oq8XiZ3yAsQyzNhe0Ax3EQLpXIk9gSzWbY2+Qls7MmoFBXc1c4npeAN+wp7nMzsPD8X+
+         yVmhHiEPIEQH8/edHUSLLQz3NkTbXHJ0LSuVPIIS4tmvfH+1ROOp1x+1C+UvL8PuxbEo
+         il1w==
+X-Forwarded-Encrypted: i=1; AJvYcCURfAwDLehj0CXNB+Zk4vpnbcGTlXijz8ZwlJqrpHV4ei9mEkkPzKiyivtTxG9pJMPBceCTjav7/UdD@vger.kernel.org, AJvYcCUbuoyDgEl5iBNcT3yCkbCCRF8ft7mlNGbiaV1yREFY9HTH6S31ockINFkfnY7Sbef8KJfEV85YeqlDAI4=@vger.kernel.org, AJvYcCUslkPs/gKM/lboKd6jmVol2OIGHG68c5yaPaHxp84in3x+q+ii3vs8S/sglhQXXvp3Z1+8OlPYdLzt7LDSUT0z@vger.kernel.org, AJvYcCVZkuIrA3lecUbvxzqFSWDj+32+ghV7OnWv7j+eUukvHGHwUUHWyc3ygVGeyZFIW25XhAjEf1ap3O+HX3+Ao2M=@vger.kernel.org, AJvYcCVxo5hb1numaXp/a9SldgHcAHGH4OOq+clHfTUj9LRwN0cOci/hohIkdDIbyI3ZYe3rAa5tIwWZxpQ1Ktx5@vger.kernel.org, AJvYcCWLVxTqLYxL/kylYzcHuuTIEoi8P3rB1i+dsTo5DfCiaHr+XEpVM73CCQyoeiUBdc44378h/css/7ORs/Dg@vger.kernel.org, AJvYcCWb2IQ9c7cSMsvg0rK6RG++H2pigxJm1q6OMkuO50gTr8uWtD9TabAiVXiSiUhtH9Y/LRtrs/woWmP3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUdroeewBK+lzWBPjGLZQtvoze05GwIWimAbE3KE+BvPp/JfGi
+	aCPNvu0RVMQcx6HO5+z1WX5FbTsLg8DgTby4qsRo1usmf+GEHakMdtH5sOH0vrEe2wtccUHnYpx
+	hYod0Wx6ls+EKZlbUUcJhUZqecrQ=
+X-Gm-Gg: ASbGnct4I8y7HS1/oxIfuAA0xCIBpRhC5wDDE05SSykOxbQhPxGDIcx0fT+H9i1BB1u
+	lhreQ0mikg1ani2kMSYeAFyJ8Ui/O5XHmUnEoluNgQfXuZtXOHoqERNvYkNICuooYIhtc2zCmvB
+	6nSI77SQg2wuK6se+EMrgXHkXruziHV+Ba25FidL2/z4ES4TpkGpRwCaj2y4yl
+X-Google-Smtp-Source: AGHT+IGowr6w1dXmTWQTcCHSJ8F0Lzgjpfr6l5SxosTwGeAYfAxqaTTaJIQl2YIbjX0BGAMKbRP0NSO2ddhYR2C1llk=
+X-Received: by 2002:a2e:3517:0:b0:30b:edd8:886 with SMTP id
+ 38308e7fff4ca-30bf451713dmr84066751fa.9.1741862900515; Thu, 13 Mar 2025
+ 03:48:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250313084525.773620-1-kunwu.chan@linux.dev>
-Message-ID: <Z9K3vokYu5osMCwh@google.com>
-Subject: Re: [PATCH] rust: file: optimize rust symbol generation for FileDescriptorReservation
-From: Alice Ryhl <aliceryhl@google.com>
-To: Kunwu Chan <kunwu.chan@linux.dev>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	a.hindborg@kernel.org, tmgross@umich.edu, dakr@kernel.org, nathan@kernel.org, 
-	nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, Kunwu Chan <kunwu.chan@hotmail.com>, 
-	Grace Deng <Grace.Deng006@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com>
+ <D8EJM4CJ4HAN.1PB2YV8DB77V7@proton.me> <CAJ-ks9mo-H46Wwcu_LOvDy0ncwMR9ii74Fyf3OX-aWNnrZ397g@mail.gmail.com>
+ <CAJ-ks9kCgATKDE2qAuO3XpQfjVO2jGyq3D4sbUcVKyW6G1vuuQ@mail.gmail.com>
+ <D8EL9QFS1XNT.JBSMRXD4D7GT@proton.me> <CAJ-ks9=TRDg3g=NG7k97P_5jXpZ4K4v0DxrmJFR+uF0-3zJkXw@mail.gmail.com>
+ <CAJ-ks9=hAwOGtVv0zh9CcH7XOxjGnizvK1QOMAi8nKStocKr2Q@mail.gmail.com>
+ <D8ELW7X9796K.2ZGJS34LDTHOP@proton.me> <CAJ-ks9k1gZ=tLSe6OjuKFgg6=QE5R_Ajo0ZJwZJp08_1LMiODw@mail.gmail.com>
+ <D8ENBWTC8UPH.LLEGZ2D4U7KQ@proton.me>
+In-Reply-To: <D8ENBWTC8UPH.LLEGZ2D4U7KQ@proton.me>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Thu, 13 Mar 2025 06:47:43 -0400
+X-Gm-Features: AQ5f1JpvT0pCHkZRvibXqm2vlfPfrKbPxFhR2eEtWGWUHW0BSrI5KdQ4s_SfHLQ
+Message-ID: <CAJ-ks9mJ=2hFxfWEkq+9b=atE89sHXa5NBcdVNRd3az6MSv0pA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 04:45:25PM +0800, Kunwu Chan wrote:
-> From: Kunwu Chan <kunwu.chan@hotmail.com>
-> 
-> When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
-> with ARCH=arm64, the following symbols are generated:
-> 
-> $ nm vmlinux | grep ' _R'.*FileDescriptorReservation | rustfilt
-> ffff8000805b6ef0 T <kernel::fs::file::FileDescriptorReservation>
-> 						::fd_install
-> ffff8000805b6e60 T <kernel::fs::file::FileDescriptorReservation>
-> 						::get_unused_fd_flags
-> ffff8000805b6f08 T <kernel::fs::file::FileDescriptorReservation
-> 					 as core::ops::drop::Drop>::drop
-> 
-> These Rust symbols are trivial wrappers around the C functions
-> fd_install, put_unused_fd and put_task_struct.It
-> doesn't make sense to go through a trivial wrapper for these
-> functions, so mark them inline.
-> 
-> After doing so, the above symbol will not in output.
-> 
-> Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
-> Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
-> Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
+On Wed, Mar 12, 2025 at 6:38=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On Wed Mar 12, 2025 at 11:24 PM CET, Tamir Duberstein wrote:
+> > On Wed, Mar 12, 2025 at 5:30=E2=80=AFPM Benno Lossin <benno.lossin@prot=
+on.me> wrote:
+> >>
+> >> On Wed Mar 12, 2025 at 10:10 PM CET, Tamir Duberstein wrote:
+> >> > On Wed, Mar 12, 2025 at 5:04=E2=80=AFPM Tamir Duberstein <tamird@gma=
+il.com> wrote:
+> >> >>
+> >> >> On Wed, Mar 12, 2025 at 5:01=E2=80=AFPM Benno Lossin <benno.lossin@=
+proton.me> wrote:
+> >> >> > Always enable the features, we have `allow(stable_features)` for =
+this
+> >> >> > reason (then you don't have to do this dance with checking if it'=
+s
+> >> >> > already stable or not :)
+> >> >>
+> >> >> It's not so simple. In rustc < 1.84.0 the lints *and* the strict
+> >> >> provenance APIs are behind `feature(strict_provenance)`. In rustc >=
+=3D
+> >> >> 1.84.0 the lints are behind `feature(strict_provenance_lints)`. So =
+you
+> >> >> need to read the config to learn that you need to enable
+> >> >> `feature(strict_provenance_lints)`.
+> >>
+> >> I see... And `strict_provenance_lints` doesn't exist in <1.84? That's =
+a
+> >> bit of a bummer...
+> >>
+> >> But I guess we could have this config option (in `init/Kconfig`):
+> >>
+> >>     config RUSTC_HAS_STRICT_PROVENANCE
+> >>             def_bool RUSTC_VERSION >=3D 108400
+> >>
+> >> and then do this in `lib.rs`:
+> >>
+> >>     #![cfg_attr(CONFIG_RUSTC_HAS_STRICT_PROVENANCE, feature(strict_pro=
+venance_lints))]
+> >
+> > Yep! That's exactly what I did, but as I mentioned up-thread, the
+> > result is that we only cover the `kernel` crate.
+>
+> Ah I see, can't we just have the above line in the other crate roots?
 
-A few notes:
+The most difficult case is doctests. You'd have to add this to every
+example AFAICT.
 
-* Your own Signed-off-by must always be last.
-* You're missing Link: and Suggested-by: tags.
-* There are some grammar issues, e.g. a missing space before "It" and
-  the phrase "will not in output" is not good.
-* Let's also add the marker to `reserved_fd` to be on the safe side.
-* I think it is easier to read the symbols if you list each sybmol on
-  one line like this:
+> >> > Actually this isn't even the only problem. It seems that
+> >> > `-Astable_features` doesn't affect features enabled on the command
+> >> > line at all:
+> >> >
+> >> > error[E0725]: the feature `strict_provenance` is not in the list of
+> >> > allowed features
+> >> >  --> <crate attribute>:1:9
+> >> >   |
+> >> > 1 | feature(strict_provenance)
+> >> >   |         ^^^^^^^^^^^^^^^^^
+> >>
+> >> That's because you need to append the feature to `rust_allowed_feature=
+s`
+> >> in `scripts/Makefile.build` (AFAIK).
+> >
+> > Thanks, that's a helpful pointer, and it solves some problems but not
+> > all. The root Makefile contains this bit:
+> >
+> >> KBUILD_HOSTRUSTFLAGS :=3D $(rust_common_flags) -O -Cstrip=3Ddebuginfo =
+\
+> >> -Zallow-features=3D $(HOSTRUSTFLAGS)
+> >
+> > which means we can't use the provenance lints against these host
+> > targets (including e.g. `rustdoc_test_gen`). We can't remove this
+> > -Zallow-features=3D either because then core fails to compile.
+> >
+> > I'm at the point where I think I need more involved help. Want to take
+> > a look at my attempt? It's here:
+> > https://github.com/tamird/linux/tree/b4/ptr-as-ptr.
+>
+> I'll take a look tomorrow, you're testing my knowledge of the build
+> system a lot here :)
 
-ffff8000805b6ef0 T <kernel::fs::file::FileDescriptorReservation>::fd_install
-ffff8000805b6e60 T <kernel::fs::file::FileDescriptorReservation>::get_unused_fd_flags
-ffff8000805b6f08 T <kernel::fs::file::FileDescriptorReservation as core::ops::drop::Drop>::drop
-
-Alice
+We're guaranteed to learn something :)
 
