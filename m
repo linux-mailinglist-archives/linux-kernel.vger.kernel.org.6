@@ -1,183 +1,218 @@
-Return-Path: <linux-kernel+bounces-559511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A553DA5F4C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:44:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91F48A5F4CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5074619C16D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:44:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4202019C1650
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEF32676CA;
-	Thu, 13 Mar 2025 12:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3377266F06;
+	Thu, 13 Mar 2025 12:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="o/GrbqLC"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nE8ZX09V";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WTjyPNT/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF231FAC30
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B716F1FAC50;
+	Thu, 13 Mar 2025 12:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741869860; cv=none; b=BDevJ6/roA24YgcYtmRFy8Ml+z/xbaEMXzTDbmsFSFj+Isn9Wx3FlB1C5YSlIIay3mrApkYmKG8V1l09m/PB5hAPpTZej6oE6OU5VGa2VqwUrfwKtcEY0aRXGqogiI6P2JKFx0WODnwLb7vDX2EHET8jdkeLEdl8YiK3RqH8AM4=
+	t=1741869965; cv=none; b=uRhStAJGKFz1HuUfmhPV3fLdyJ2SPNGyPaup8jRfyEyu11NBe0SGqE5HUvi327lJO3Y6BJMJuk4/sZHZyadzJbY8gy4XSuqOQGpL3NcadTlwCkI26eA4GWJzjkQUl2H9t22mfhizcYHRoAfUHyTGwJCy5lTfNuuzk63hSRx+INo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741869860; c=relaxed/simple;
-	bh=EleUDN0p7TORHE0wSEwSE0kj+mfdR9PO/rSWsPpYYTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dwWpqnh/8GMOXdSnRybiBllgR8Thk9oBoDKwYteqHFY6IkpMace6CXvG4mIT5gZT6c0Ll6gZU6Hg1BgootADFj3OvXvVBcvWCwzZioxlnQ408qiJVbdrElWwk0gfsIceck1aSURxDqkBFRsZjwiBfFZsMGd+hooaN1xxgy1T/mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=o/GrbqLC; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so8044505e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 05:44:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1741869857; x=1742474657; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=p4eBilR3cQKKkUL6iTV1U2gPm+aqkc/I2/ErCrbp51A=;
-        b=o/GrbqLCeyyu8Cw/4q1t9rjSCjvoqeKges7sjFAbL8xsEX4XHQpHVCLphDjin3B9OI
-         bzH0u6lO2okzsgxF40lvXb5ECkMBJO6/cCjV6DKWv6Kglw7bDGRuvSQCrUntcbN9VjSS
-         nQH0avWE+dP1UHHjTjRQ5e4RlCeU4leL0UL107u6LhJYTBUi7fey8r6o3xMEVgwBW+EB
-         KFjWy39uxnnNuTrhFMFPiOvmuCqxhDcbXQ9U0Y1+4lHLBJ4+IX6f47JFGM0jPYQOYCiy
-         0VBR2fo1zX4/RvWsoHbsxtYsWV8x+Ja7FTK46XSHdb4t66myUDN/WnJX6+2lVUWsnuei
-         WYpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741869857; x=1742474657;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p4eBilR3cQKKkUL6iTV1U2gPm+aqkc/I2/ErCrbp51A=;
-        b=dJhB99GyoRXyrl1wBtr5LLNL8HVs+TuPbMG5CRLl5HwtJZjZFFF93zmJyiEHkvdhqC
-         IOf+6mAZZUHPZfkdQWOPq590I1DT0IK7/yCdjoxehr9bDTKsTKQhOCgwEc5m9uyQq6hL
-         vtAES1qy2noR2mNbk6yGfaso9/nE15umTivj2sF57KymTeOE54OsrKFkfICA55Ptbyx2
-         bbgnOo20OniRoaDqXXSi2fHWvktNnQIegVC+E7Z+HrlNq4QkVPkfQqBiMe0/MmL7ncgY
-         WyzuoVhuJs39cOIkS32Zz1c2qsA4THhcFWrstYWOz+ysJTBtqgXF2U+6XXbJiE+yCAcg
-         cOow==
-X-Forwarded-Encrypted: i=1; AJvYcCUHKP0VKp6P+ejQl34a+ZCH+szcytrmsnky9UZQOvQAxoPbn8u4ggYUUgI2/71J9eBKh38msOVghiuJAsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx77+02b3d8mZUKyVdwCFkcH6cyau8TwPKN6O8DO7YeMo+XVbfA
-	9CquL6Uxxr9coIKBA4Zt+SLyyI3Mvd1bOM/3RNaAaJey9XXeBvciEgO/SdM5/c4=
-X-Gm-Gg: ASbGncvyQo98w51GNrLuC7nUoAkPXAhQN14++n5foN5dnwswwzU02YI6V7w2wmoTjeQ
-	c4BuKCuDjXuq87xNI+bFQjRi3mtWl9fBKQhLUR9iCA0kacmMdI+TowO6giL4Yl8HNdLG5SboQJM
-	FM4S8bjEOwNrE0SOv1GFaV43Ozeswapd7Sh2AHcMHNkwt6PuDwWW+fq8Ms8EhqTzKJE2l9YypIG
-	rDko2tQSNd/6kWT8Ra5F2SwSp1SoaHDbIEpJCpUgfEcj70WvP1kx/Jf5JxahbKOd/UqbqkobWd3
-	102T/27IPYsLEw0LnKC5lF756Mm8kraOSeQtPQCgzxE=
-X-Google-Smtp-Source: AGHT+IEVKvciONpN7IaLFK/qsTCvmNWqORyhjjKaAjaSuACjOZk+fDyP3VpTM/ig5PwqolpsjOd7kg==
-X-Received: by 2002:a05:6000:1a87:b0:391:1923:5a91 with SMTP id ffacd0b85a97d-39132dc4395mr17992640f8f.55.1741869857406;
-        Thu, 13 Mar 2025 05:44:17 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::59a5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c83b6e87sm2097439f8f.32.2025.03.13.05.44.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 05:44:16 -0700 (PDT)
-Date: Thu, 13 Mar 2025 13:44:16 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v3 03/17] riscv: sbi: add SBI FWFT extension calls
-Message-ID: <20250313-ce439653d16b484dba6a8d3e@orel>
-References: <20250310151229.2365992-1-cleger@rivosinc.com>
- <20250310151229.2365992-4-cleger@rivosinc.com>
+	s=arc-20240116; t=1741869965; c=relaxed/simple;
+	bh=qxndFUZ0995ivdAeUKljJ+YX17oLEJ/3PqcdibEtKtU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=gHhGd0CF+W8LBzYFn0U8eyqKPoQVZBoiWxOU67s1Pb9EHQIBtov9IlhDkAKXIbUTurxe76rOsZDlJnvzPuX3n/KyFZfxBc0JqyIG2yUzlEuu8W3aWjI1KtzD10ugL2UfFpzLOMWQOyoecAIWdLzSvhB0E30feBEMfB8h83hDXkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nE8ZX09V; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WTjyPNT/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 13 Mar 2025 12:45:56 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741869960;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zm3G8ZcMlovMIdNEHfpSYw/oicmU1TDHVBDx0u1h0f8=;
+	b=nE8ZX09Va8CDwFdwTcsrEmXWqSGiUoLdd2FDJsRh67rE5UN9OjaM28IXSDkeJKNwRd0lyU
+	OLKbwD1QaUb+vvbFb/Z4Wj7tsZ7zAPGSNiYnpg71FaZ11OhFujq6J0fHoufynIa5fi4dWS
+	qyyJlDlpkXJLaM5wnErsk86py6gysiOyRFVsBmI3qCt0De1XuGhU0PR2xx587szM5iDdUk
+	sdZ2zGYeVwLZJ730r21DvwbSIPHfp0Y3Inb8bQwElqaacKZNfNVCMBXlf1lvzHB6Jq5hQ8
+	s+ERgyrTDPDNpqPWmvISeI5/7Y5haFitSHffR4lMqlWaGtnnnkT55vFSxKI6hA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741869960;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zm3G8ZcMlovMIdNEHfpSYw/oicmU1TDHVBDx0u1h0f8=;
+	b=WTjyPNT/qRVHRErdGerEOPu7i49yCMuyGaIjyQsdBVop8n/lX7UZ4b/IVFjotI3O2YfEV4
+	hmEGChLDtPopgGDw==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/msi] genirq/msi: Make a few functions static
+Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250309084110.204054172@linutronix.de>
+References: <20250309084110.204054172@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250310151229.2365992-4-cleger@rivosinc.com>
+Message-ID: <174186995610.14745.8917886531875410170.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 04:12:10PM +0100, Clément Léger wrote:
-> Add FWFT extension calls. This will be ratified in SBI V3.0 hence, it is
-> provided as a separate commit that can be left out if needed.
-> 
-> Signed-off-by: Clément Léger <cleger@rivosinc.com>
-> ---
->  arch/riscv/kernel/sbi.c | 30 ++++++++++++++++++++++++++++--
->  1 file changed, 28 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
-> index 256910db1307..af8e2199e32d 100644
-> --- a/arch/riscv/kernel/sbi.c
-> +++ b/arch/riscv/kernel/sbi.c
-> @@ -299,9 +299,19 @@ static int __sbi_rfence_v02(int fid, const struct cpumask *cpu_mask,
->  	return 0;
->  }
->  
-> +static bool sbi_fwft_supported;
-> +
->  int sbi_fwft_get(u32 feature, unsigned long *value)
->  {
-> -	return -EOPNOTSUPP;
-> +	struct sbiret ret;
-> +
-> +	if (!sbi_fwft_supported)
-> +		return -EOPNOTSUPP;
-> +
-> +	ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_GET,
-> +			feature, 0, 0, 0, 0, 0);
-> +
-> +	return sbi_err_map_linux_errno(ret.error);
->  }
->  
->  /**
-> @@ -314,7 +324,15 @@ int sbi_fwft_get(u32 feature, unsigned long *value)
->   */
->  int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags)
->  {
-> -	return -EOPNOTSUPP;
-> +	struct sbiret ret;
-> +
-> +	if (!sbi_fwft_supported)
-> +		return -EOPNOTSUPP;
-> +
-> +	ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET,
-> +			feature, value, flags, 0, 0, 0);
-> +
-> +	return sbi_err_map_linux_errno(ret.error);
+The following commit has been merged into the irq/msi branch of tip:
 
-sbi_err_map_linux_errno() doesn't know about SBI_ERR_DENIED_LOCKED.
+Commit-ID:     537625233537179cb2e8293b2c0dc9c989363f41
+Gitweb:        https://git.kernel.org/tip/537625233537179cb2e8293b2c0dc9c989363f41
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Sun, 09 Mar 2025 09:41:42 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 13 Mar 2025 13:35:33 +01:00
 
->  }
->  
->  struct fwft_set_req {
-> @@ -389,6 +407,9 @@ static int sbi_fwft_feature_local_set(u32 feature, unsigned long value,
->  int sbi_fwft_all_cpus_set(u32 feature, unsigned long value, unsigned long flags,
->  			  bool revert_on_fail)
->  {
-> +	if (!sbi_fwft_supported)
-> +		return -EOPNOTSUPP;
-> +
->  	if (feature & SBI_FWFT_GLOBAL_FEATURE_BIT)
->  		return sbi_fwft_set(feature, value, flags);
->  
-> @@ -719,6 +740,11 @@ void __init sbi_init(void)
->  			pr_info("SBI DBCN extension detected\n");
->  			sbi_debug_console_available = true;
->  		}
-> +		if ((sbi_spec_version >= sbi_mk_version(2, 0)) &&
+genirq/msi: Make a few functions static
 
-Should check sbi_mk_version(3, 0)
+None of these functions are used outside of the MSI core.
 
-> +		    (sbi_probe_extension(SBI_EXT_FWFT) > 0)) {
-> +			pr_info("SBI FWFT extension detected\n");
-> +			sbi_fwft_supported = true;
-> +		}
->  	} else {
->  		__sbi_set_timer = __sbi_set_timer_v01;
->  		__sbi_send_ipi	= __sbi_send_ipi_v01;
-> -- 
-> 2.47.2
->
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250309084110.204054172@linutronix.de
+---
+ include/linux/msi.h |  5 -----
+ kernel/irq/msi.c    | 40 +++++++---------------------------------
+ 2 files changed, 7 insertions(+), 38 deletions(-)
 
-Thanks,
-drew
+diff --git a/include/linux/msi.h b/include/linux/msi.h
+index b10093c..df2dd63 100644
+--- a/include/linux/msi.h
++++ b/include/linux/msi.h
+@@ -81,7 +81,6 @@ struct device_attribute;
+ struct irq_domain;
+ struct irq_affinity_desc;
+ 
+-void __get_cached_msi_msg(struct msi_desc *entry, struct msi_msg *msg);
+ #ifdef CONFIG_GENERIC_MSI_IRQ
+ void get_cached_msi_msg(unsigned int irq, struct msi_msg *msg);
+ #else
+@@ -603,8 +602,6 @@ void msi_remove_device_irq_domain(struct device *dev, unsigned int domid);
+ bool msi_match_device_irq_domain(struct device *dev, unsigned int domid,
+ 				 enum irq_domain_bus_token bus_token);
+ 
+-int msi_domain_alloc_irqs_range_locked(struct device *dev, unsigned int domid,
+-				       unsigned int first, unsigned int last);
+ int msi_domain_alloc_irqs_range(struct device *dev, unsigned int domid,
+ 				unsigned int first, unsigned int last);
+ int msi_domain_alloc_irqs_all_locked(struct device *dev, unsigned int domid, int nirqs);
+@@ -613,8 +610,6 @@ struct msi_map msi_domain_alloc_irq_at(struct device *dev, unsigned int domid, u
+ 				       const struct irq_affinity_desc *affdesc,
+ 				       union msi_instance_cookie *cookie);
+ 
+-void msi_domain_free_irqs_range_locked(struct device *dev, unsigned int domid,
+-				       unsigned int first, unsigned int last);
+ void msi_domain_free_irqs_range(struct device *dev, unsigned int domid,
+ 				unsigned int first, unsigned int last);
+ void msi_domain_free_irqs_all_locked(struct device *dev, unsigned int domid);
+diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
+index fa92882..57e6421 100644
+--- a/kernel/irq/msi.c
++++ b/kernel/irq/msi.c
+@@ -270,16 +270,11 @@ fail:
+ 	return ret;
+ }
+ 
+-void __get_cached_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
+-{
+-	*msg = entry->msg;
+-}
+-
+ void get_cached_msi_msg(unsigned int irq, struct msi_msg *msg)
+ {
+ 	struct msi_desc *entry = irq_get_msi_desc(irq);
+ 
+-	__get_cached_msi_msg(entry, msg);
++	*msg = entry->msg;
+ }
+ EXPORT_SYMBOL_GPL(get_cached_msi_msg);
+ 
+@@ -1352,21 +1347,17 @@ static int msi_domain_alloc_locked(struct device *dev, struct msi_ctrl *ctrl)
+ }
+ 
+ /**
+- * msi_domain_alloc_irqs_range_locked - Allocate interrupts from a MSI interrupt domain
++ * msi_domain_alloc_irqs_range - Allocate interrupts from a MSI interrupt domain
+  * @dev:	Pointer to device struct of the device for which the interrupts
+  *		are allocated
+  * @domid:	Id of the interrupt domain to operate on
+  * @first:	First index to allocate (inclusive)
+  * @last:	Last index to allocate (inclusive)
+  *
+- * Must be invoked from within a msi_lock_descs() / msi_unlock_descs()
+- * pair. Use this for MSI irqdomains which implement their own descriptor
+- * allocation/free.
+- *
+  * Return: %0 on success or an error code.
+  */
+-int msi_domain_alloc_irqs_range_locked(struct device *dev, unsigned int domid,
+-				       unsigned int first, unsigned int last)
++int msi_domain_alloc_irqs_range(struct device *dev, unsigned int domid,
++				unsigned int first, unsigned int last)
+ {
+ 	struct msi_ctrl ctrl = {
+ 		.domid	= domid,
+@@ -1374,27 +1365,10 @@ int msi_domain_alloc_irqs_range_locked(struct device *dev, unsigned int domid,
+ 		.last	= last,
+ 		.nirqs	= last + 1 - first,
+ 	};
+-
+-	return msi_domain_alloc_locked(dev, &ctrl);
+-}
+-
+-/**
+- * msi_domain_alloc_irqs_range - Allocate interrupts from a MSI interrupt domain
+- * @dev:	Pointer to device struct of the device for which the interrupts
+- *		are allocated
+- * @domid:	Id of the interrupt domain to operate on
+- * @first:	First index to allocate (inclusive)
+- * @last:	Last index to allocate (inclusive)
+- *
+- * Return: %0 on success or an error code.
+- */
+-int msi_domain_alloc_irqs_range(struct device *dev, unsigned int domid,
+-				unsigned int first, unsigned int last)
+-{
+ 	int ret;
+ 
+ 	msi_lock_descs(dev);
+-	ret = msi_domain_alloc_irqs_range_locked(dev, domid, first, last);
++	ret = msi_domain_alloc_locked(dev, &ctrl);
+ 	msi_unlock_descs(dev);
+ 	return ret;
+ }
+@@ -1618,8 +1592,8 @@ static void msi_domain_free_locked(struct device *dev, struct msi_ctrl *ctrl)
+  * @first:	First index to free (inclusive)
+  * @last:	Last index to free (inclusive)
+  */
+-void msi_domain_free_irqs_range_locked(struct device *dev, unsigned int domid,
+-				       unsigned int first, unsigned int last)
++static void msi_domain_free_irqs_range_locked(struct device *dev, unsigned int domid,
++					      unsigned int first, unsigned int last)
+ {
+ 	struct msi_ctrl ctrl = {
+ 		.domid	= domid,
 
