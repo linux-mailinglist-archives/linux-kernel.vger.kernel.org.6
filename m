@@ -1,189 +1,205 @@
-Return-Path: <linux-kernel+bounces-558935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19724A5ED52
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:51:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 047B0A5ED59
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 08:52:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86F073B6CFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC419189C4BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 07:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D821725FA1B;
-	Thu, 13 Mar 2025 07:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8AC25FA29;
+	Thu, 13 Mar 2025 07:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="d3f+Ib2h";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vIiANh1P";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="d3f+Ib2h";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vIiANh1P"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WDEFS6hE"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB851FBCB1
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EF825FA10;
+	Thu, 13 Mar 2025 07:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741852289; cv=none; b=Y4stEp2uTVbGyd+3ElS9feK67b6sUF9VGB7sy4axFdsLWxm5RSZ0xQx9QSoIfZJ6YfvTZvzlyeKJukbSMfKkIXZ1y3BNlR3MaOFxP0trTcuNwWAeU+juP6Ge/3p58rIu6whx3pbFliGZQb4EzD0bUpA0YtdkkKWxFI3QBehSV20=
+	t=1741852339; cv=none; b=ZfgxIzH8SyEm0TVGXR2OZjb759mhj6kahs3GxrIl9a32D3N+Zr5PdJ/SCrhM/8R2iaP5ZD1T2ZUAX5mFhs3JgvA1a/3tI82Xsd/JH8XvJ2epFjKHpdRK+QzQ3AaqVM8mYkSrT911pMOZoOZWg6iyje1nBet1lbVBtNWXfYAUOJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741852289; c=relaxed/simple;
-	bh=6LE7xktakEC0NfoWDOJaDQw/3bV9KQop0BZOx1Kq8ZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RgvQixC6+1GclF99HTexPI6U2Tas//8pc8l8YwY4ECl7nSDMtynyGA4Tdmw0lQlPC67FBtbBb47cWPUJbIbOtaO1MKSupkONw5U6NpbMttZfu/eUeZpG6mv5EKLvoSfP8IyTuW1zdI+NPTgD5q1DlXN37Wl4PAb2efS3V1Tf258=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=d3f+Ib2h; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vIiANh1P; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=d3f+Ib2h; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vIiANh1P; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 353C921180;
-	Thu, 13 Mar 2025 07:51:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741852284; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uCJnaYfBV+bCveHsvLRPGjY00SQjzI4tFLM4k70eHG8=;
-	b=d3f+Ib2hYiNQFRoP0LDfkid1rYwpV9Zec21KuIvdFIoiFt0o5uezAIxHRJWp2srC2df/ZW
-	71DuQMIWGK0fXK6z9VpPWyhSn/VWkL6TTv7m2e7KHBdl5a3VB90GdHlkQhZBhqM0INa/cL
-	7XYw/jRgrLe59vFn9KkprNLtuk/h5Ec=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741852284;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uCJnaYfBV+bCveHsvLRPGjY00SQjzI4tFLM4k70eHG8=;
-	b=vIiANh1PBpqaqyWRcdGDgYPapfK3QDPw/xVwPB3zdoN+/N7EVZqWk1b5JsE0+aOTMhhoUc
-	rHTNRMlEscRrblBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=d3f+Ib2h;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vIiANh1P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741852284; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uCJnaYfBV+bCveHsvLRPGjY00SQjzI4tFLM4k70eHG8=;
-	b=d3f+Ib2hYiNQFRoP0LDfkid1rYwpV9Zec21KuIvdFIoiFt0o5uezAIxHRJWp2srC2df/ZW
-	71DuQMIWGK0fXK6z9VpPWyhSn/VWkL6TTv7m2e7KHBdl5a3VB90GdHlkQhZBhqM0INa/cL
-	7XYw/jRgrLe59vFn9KkprNLtuk/h5Ec=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741852284;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uCJnaYfBV+bCveHsvLRPGjY00SQjzI4tFLM4k70eHG8=;
-	b=vIiANh1PBpqaqyWRcdGDgYPapfK3QDPw/xVwPB3zdoN+/N7EVZqWk1b5JsE0+aOTMhhoUc
-	rHTNRMlEscRrblBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEC48137BA;
-	Thu, 13 Mar 2025 07:51:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OilfMHuO0mfrGQAAD6G6ig
-	(envelope-from <hare@suse.de>); Thu, 13 Mar 2025 07:51:23 +0000
-Message-ID: <deb1584c-67b8-4543-9017-9ca18a9ee7d8@suse.de>
-Date: Thu, 13 Mar 2025 08:51:23 +0100
+	s=arc-20240116; t=1741852339; c=relaxed/simple;
+	bh=gedR1dtFtnCRn8w58vk7alcMu7KQkECnS+oo3tCjlq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=G/Inwyp3T3Qx8gITPpotpnMdvccwjPd9N5H2TuOnxYMAVNyLRup727MpCr8EvV8OI549vWn2e/1FHNwurP6h8beck4f1y+qDw94YXCHWH1XRjDJ91rT9HluSg8ZLLlql6zN+t+LzIL8Rgri0S9VpK07k4F6MR219Ez54H40IY3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WDEFS6hE; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CMWFGT023024;
+	Thu, 13 Mar 2025 07:52:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=jH+b7pTyfpjSwAnXy
+	JyeBmChyDlRKjpWN/yUwvVGuSg=; b=WDEFS6hEoXghrrRjjTaezGoLFmTZ/3+U8
+	zYYUF8rIMyonwNUCvu5UlUHWfrfrkTpCZKQUWZn6xGsE5gOhRsKGgHITRzzmYdpS
+	/UIrxHiRKKJfrwho5EpWkiwS/6zBLkHM/sd7XEEuTeg0HIjPQwpone4mxSruchlp
+	5AWbmO7ei+RJ4RrA3vJwcKGsmyBXLZUVaVxEqs4K66R/3wtjIlqrDBQLw6Yj0K7p
+	wep9OvkIHrLb3qseDchXpVVlrc9M4p0j2lDjJd2JhCoo7JmnRc3ECG1R0urm1G9D
+	R+o3AAdxiG39U7bKFgTCUkvtDiASveCUGl911t/Xklx9ds3sZsrNg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45bbppvck4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 07:52:04 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52D7pwU8004301;
+	Thu, 13 Mar 2025 07:52:04 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45bbppvck0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 07:52:04 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52D51FwV026021;
+	Thu, 13 Mar 2025 07:52:03 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atspgkar-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 07:52:03 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52D7q1D536897066
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Mar 2025 07:52:01 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5B0EC2004B;
+	Thu, 13 Mar 2025 07:52:01 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EA35320043;
+	Thu, 13 Mar 2025 07:51:58 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.in.ibm.com (unknown [9.204.206.66])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 13 Mar 2025 07:51:58 +0000 (GMT)
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 3/3] libperf: Add counting.py example to demonstrate libperf usage from python
+Date: Thu, 13 Mar 2025 13:21:24 +0530
+Message-ID: <20250313075126.547881-4-gautam@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250313075126.547881-1-gautam@linux.ibm.com>
+References: <20250313075126.547881-1-gautam@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_nvme-tcp=3A_fix_a_possible_UAF_when_failing_to_send?=
- =?UTF-8?B?IHJlcXVlc3TjgJDor7fms6jmhI/vvIzpgq7ku7bnlLFzYWdpZ3JpbUBnbWFpbC5j?=
- =?UTF-8?B?b23ku6Plj5HjgJE=?=
-To: "zhang.guanghui@cestc.cn" <zhang.guanghui@cestc.cn>,
- Maurizio Lombardi <mlombard@bsdbackstore.eu>, sagi <sagi@grimberg.me>,
- mgurtovoy <mgurtovoy@nvidia.com>, kbusch <kbusch@kernel.org>,
- sashal <sashal@kernel.org>, "chunguang.xu" <chunguang.xu@shopee.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
- linux-nvme <linux-nvme@lists.infradead.org>,
- linux-block <linux-block@vger.kernel.org>
-References: <2025021015413817916143@cestc.cn>
- <aed9dde7-3271-4b97-9632-8380d37505d9@grimberg.me>
- <202503071810452687957@cestc.cn> <D8DDP6LIPOKB.2ACTHLE9FPI2A@bsdbackstore.eu>
- <2025031309485746586710@cestc.cn>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <2025031309485746586710@cestc.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 353C921180
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: DoCVUCURExpo5HknrM-ne3o0IVx3GuDv
+X-Proofpoint-GUID: j8dguHwLuVYkULisaGTlJsFbJjefrhfA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
+ adultscore=0 malwarescore=0 bulkscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503130058
 
-On 3/13/25 02:48, zhang.guanghui@cestc.cn wrote:
-> Yes, the problem here is that,  despite the nvme_tcp_try_send() failure, the target sends a response capsule for the command, leading to a UAF in the host.
-> 
-> Is it more reasonable to disable queue->rd_enabled to prevent receiving. Thanks
->   
-> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> index be04c5f3856d..17407eb12ad9 100644
-> --- a/drivers/nvme/host/tcp.c
-> +++ b/drivers/nvme/host/tcp.c
-> @@ -1203,8 +1203,9 @@ static int nvme_tcp_try_send(struct nvme_tcp_queue *queue)
->          } else if (ret < 0) {
->                  dev_err(queue->ctrl->ctrl.device,
->                          "failed to send request %d\n", ret);
-> -               nvme_tcp_fail_request(queue->request);
->                  nvme_tcp_done_send_req(queue);
-> +              queue->rd_enabled = false;
-> +              nvme_tcp_error_recovery(&queue->ctrl->ctrl);
->          }
->   out:
->          memalloc_noreclaim_restore(noreclaim_flag);
-> 
-> 
-> 
-Hmm. In principle, yes. Problem is that network is a bi-directional 
-communication, and a failure on one side doesn't necessarily imply
-a failure on the other.
-In particular when the send side fails we should _continue_ to read
-as we should be flushing the read side buffer before closing.
+Add a counting.py example to demonstrate usage of libperf from python
+using the C extension module support.
 
-So I agree with starting error recovery, but not with disabling the 
-reading side (as we haven't encountered a read error).
+Example usage:
+$ sudo ./counting.py
+count 7903256, enabled 7903670, run 7903670
+count 7902787, enabled 7902787, run 7902787
 
-Cheers,
+Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+---
+ .../perf/Documentation/examples/counting.py   | 74 +++++++++++++++++++
+ 1 file changed, 74 insertions(+)
+ create mode 100755 tools/lib/perf/Documentation/examples/counting.py
 
-Hannes
+diff --git a/tools/lib/perf/Documentation/examples/counting.py b/tools/lib/perf/Documentation/examples/counting.py
+new file mode 100755
+index 000000000000..887111bf2e04
+--- /dev/null
++++ b/tools/lib/perf/Documentation/examples/counting.py
+@@ -0,0 +1,74 @@
++#!/usr/bin/python3
++
++import sys
++sys.path.append('../../')
++from libperf import *
++
++# software ids
++PERF_COUNT_SW_CPU_CLOCK = 0
++PERF_COUNT_SW_TASK_CLOCK = 1
++
++# Perf event types
++PERF_TYPE_HARDWARE = 0
++PERF_TYPE_SOFTWARE = 1
++PERF_TYPE_TRACEPOINT = 2
++PERF_TYPE_HW_CACHE = 3
++
++# perf_event_attr_read format
++PERF_FORMAT_TOTAL_TIME_ENABLED = 1 << 0
++PERF_FORMAT_TOTAL_TIME_RUNNING = 1 << 1
++PERF_FORMAT_ID = 1 << 2
++PERF_FORMAT_GROUP = 1 << 3
++PERF_FORMAT_LOST = 1 << 4
++
++# Perf sample identifier
++PERF_SAMPLE_IDENTIFIER = 1 << 16
++
++def get_attr(config):
++    attr = perf_event_attr()
++    attr.type = PERF_TYPE_SOFTWARE
++    attr.config = config
++    attr.read_format = PERF_FORMAT_TOTAL_TIME_ENABLED|PERF_FORMAT_TOTAL_TIME_RUNNING
++    attr.disabled = 1
++    attr.size = 136
++    attr.sample_type = PERF_SAMPLE_IDENTIFIER
++    return attr
++
++libperf_init(None)
++threads = perf_thread_map__new_dummy()
++assert(threads)
++perf_thread_map__set_pid(threads, 0, 0)
++
++evlist = perf_evlist__new()
++assert(evlist)
++
++attr1 = get_attr(PERF_COUNT_SW_CPU_CLOCK)
++evsel = perf_evsel__new(attr1)
++assert(evsel)
++perf_evlist__add(evlist, evsel)
++
++attr2 = get_attr(PERF_COUNT_SW_TASK_CLOCK)
++evsel = perf_evsel__new(attr2)
++assert(evsel)
++perf_evlist__add(evlist, evsel)
++
++perf_evlist__set_maps(evlist, None, threads)
++rc = perf_evlist__open(evlist)
++if rc != 0:
++    print("failed to open evsel: ", rc)
++
++perf_evlist__enable(evlist)
++
++count = 100000
++while count >= 0:
++    count-=1
++
++perf_evlist__disable(evlist)
++c = perf_counts_values()
++for sel  in evlist:
++		perf_evsel__read(sel, 0, 0, c);
++		print("count %lu, enabled %lu, run %lu" %(c.val, c.ena, c.run))
++
++perf_evlist__close(evlist);
++perf_evlist__delete(evlist);
++perf_thread_map__put(threads);
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.47.0
+
 
