@@ -1,89 +1,124 @@
-Return-Path: <linux-kernel+bounces-560043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 125DAA5FCF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:04:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D45A5FCF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:04:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8356119C1E7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE141883BD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAB726A0CF;
-	Thu, 13 Mar 2025 17:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A7226AA8D;
+	Thu, 13 Mar 2025 17:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i5g9nS0x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AI68vsZT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26D92686B4;
-	Thu, 13 Mar 2025 17:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF4B267F71;
+	Thu, 13 Mar 2025 17:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741885338; cv=none; b=uArl241zvUtM0QikzLuiapVfiOEtgObqMtEBCNskPSzEllfXtajJ0/5kAE053Ay0HBRH2XIZkpymEg3yAPV7UDQb705qpPwPuU9vFeUIpXjXnfAMwEgo0GVCRj1ji4CErcBV8z4JsBe9Npx7VByTg42wPRJ0h02s624k9JQCkPk=
+	t=1741885343; cv=none; b=WJRgwK5X35jnfV8cMpD5SL40b9JUj+iNsWW+7JmJbS5YejSoMbdlcVhuHVSDPaAECmLxiSWso9BgQomzPDQnnYvQrJRoFHQocSAsgFSKefGlCTOEeO+pIbVyN67Ludf5bqRimZL3ju9c6XmHylKVh7UwRfbd2qLf9zyHwZW0yJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741885338; c=relaxed/simple;
-	bh=THq6mHlOJLV8EKqHAnKoFlUZWn392yIEy47QMjShAlE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=n/8/SmmvVzeRSWRh8Yzd3oOqDYVZILyRP94z6V7Yd654TCTptle3bXa3WXWTlrbGwLX8lKP6PqEXJ8tGdcVwnn9+xMOC1oRSsnQjZDujLu0NAfiPdawekloDzuiJpb6EihJuVQrPd5T4fvaQ6f+tvQNnQ+oFYPOJ2/aBlXKVLO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i5g9nS0x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE776C4CEDD;
-	Thu, 13 Mar 2025 17:02:13 +0000 (UTC)
+	s=arc-20240116; t=1741885343; c=relaxed/simple;
+	bh=Pq4GiX3lvKXfmijltB3bBZ70E7uKdot26ObyVre3x2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tu2UpX1RspZ7y5k3s4PNcLA9pY/mPvoTYOQh8g1RdmL4vNiMOa30y+z5dZTeKP6Knub2CLHi/TmR0Kqv4WaqjK8WhsXK1TKieW5qzjpEzknW0waSzwDRgqBSfacTpiT+pD6AsyjomSuLVQFWp9WWWctDqLBRF3KPQLOlUpjMkYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AI68vsZT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2E92C4CEDD;
+	Thu, 13 Mar 2025 17:02:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741885338;
-	bh=THq6mHlOJLV8EKqHAnKoFlUZWn392yIEy47QMjShAlE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=i5g9nS0xdkkWOO2oyUMVw6JOyWHfOuPKYcRdCeAhlp8NtPFR3V0QhwKDazBHOhspa
-	 /hClD780+aGg4tvEKi6dKWcJ1aYELECR7nu8sgVScVYj9sr1RMjeOLuzN9IaMfVk8t
-	 Pd+ftQu+RjxikPmqzGIYhjHTy/YntzBKN0hSTXLhACVi89tbCvPFn4S7H3DO+IcuFP
-	 MFSE9WUiligV7g2g1NZjGbd7XiBBBSVPWUAMWyDM/1v9seEo34+49mnKqt1ZPoI4jv
-	 oHiQZh9XiL9g08aauK8pV+TMQbB+1bhkgkws6TeDQgSIr7qsomMwqxxqr37BlVNo/4
-	 etOof65Xcr0Kw==
-From: Lee Jones <lee@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
- Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- linux-pm@vger.kernel.org, Andrew Perepech <andrew.perepech@mediatek.com>
-In-Reply-To: <20250305-mt6359-accdet-dts-v4-2-e5ffa5ee9991@collabora.com>
-References: <20250305-mt6359-accdet-dts-v4-0-e5ffa5ee9991@collabora.com>
- <20250305-mt6359-accdet-dts-v4-2-e5ffa5ee9991@collabora.com>
-Subject: Re: (subset) [PATCH v4 02/19] mfd: mt6397-core: Add mfd_cell for
- mt6359-accdet
-Message-Id: <174188533371.3796672.1232285311249129492.b4-ty@kernel.org>
-Date: Thu, 13 Mar 2025 17:02:13 +0000
+	s=k20201202; t=1741885341;
+	bh=Pq4GiX3lvKXfmijltB3bBZ70E7uKdot26ObyVre3x2Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AI68vsZT5xSdlZ2dB/0dmjA4jkPMbXzB3rSJFyeto3MaM5yEmxIlC4CQV4xn5jJfi
+	 fbLncQghJDiotcfbn9H82dfNnFoSCj40DFMo1YHBhPDRaSArkLGGiAG/gLB/UX0d6w
+	 VWZnyJ2X2OtJS/LDspDGQl3TMIRWcNxt0ZrK/OhWpDyxqi8ncvnwcul4TMNfKU9AkA
+	 D46IeUKC0+10clFHz7lfTnPO+CKmqDFGbUMIgR3TE3amuZBoDQN/GxX5fTpB+JQElx
+	 336a/L6cOKrCNqeGM5SXfkElnEfmMuOnnnrT9fHinvhrKABaPvNaM/mzRdWb20hpA4
+	 Mf8xd/upTzyIA==
+Date: Thu, 13 Mar 2025 18:02:16 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Akihiro Suda <suda.gitsendemail@gmail.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, suda.kyoto@gmail.com,
+	regressions@lists.linux.dev, aruna.ramakrishna@oracle.com,
+	tglx@linutronix.de, Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
+Subject: Re: [PATCH v2] x86: disable PKU when running on Apple Virtualization
+Message-ID: <Z9MPmA-myNZxcc-E@gmail.com>
+References: <CAG8fp8Qdmt9vLk=8ORccY5B+ec1huhazXG4PBaNyLEkq31HDjw@mail.gmail.com>
+ <20250312100926.34954-1-akihiro.suda.cz@hco.ntt.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-510f9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312100926.34954-1-akihiro.suda.cz@hco.ntt.co.jp>
 
-On Wed, 05 Mar 2025 15:58:17 -0300, Nícolas F. R. A. Prado wrote:
-> Add an mfd_cell for mt6359-accdet and describe its IRQ resources to
-> allow the mt6359-accdet driver to probe.
+
+* Akihiro Suda <suda.gitsendemail@gmail.com> wrote:
+
+> OSPKE seems broken on Apple Virtualization.
 > 
+>   WARNING: CPU: 0 PID: 1 at arch/x86/kernel/fpu/xstate.c:1003 get_xsave_addr_user+0x28/0x40
+>   (...)
+>   Call Trace:
+>    <TASK>
+>    ? get_xsave_addr_user+0x28/0x40
+>    ? __warn.cold+0x8e/0xea
+>    ? get_xsave_addr_user+0x28/0x40
+>    ? report_bug+0xff/0x140
+>    ? handle_bug+0x3b/0x70
+>    ? exc_invalid_op+0x17/0x70
+>    ? asm_exc_invalid_op+0x1a/0x20
+>    ? get_xsave_addr_user+0x28/0x40
+>    copy_fpstate_to_sigframe+0x1be/0x380
+>    ? __put_user_8+0x11/0x20
+>    get_sigframe+0xf1/0x280
+>    x64_setup_rt_frame+0x67/0x2c0
+>    arch_do_signal_or_restart+0x1b3/0x240
+>    syscall_exit_to_user_mode+0xb0/0x130
+>    do_syscall_64+0xab/0x1a0
+>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 > 
+> Tested on macOS 13.5.1 running on MacBook Pro 2020 with
+> Intel(R) Core(TM) i7-1068NG7 CPU @ 2.30GHz.
+> 
+> Fixes: 70044df250d0 ("x86/pkeys: Update PKRU to enable all pkeys before XSAVE")
+> Link: https://lore.kernel.org/regressions/CAG8fp8QvH71Wi_y7b7tgFp7knK38rfrF7rRHh-gFKqeS0gxY6Q@mail.gmail.com/T/#u
+> Link: https://github.com/lima-vm/lima/issues/3334
+> Signed-off-by: Akihiro Suda <akihiro.suda.cz@hco.ntt.co.jp>
+> ---
+> v2: check oem_table_id rather than oem_id for better robustness
 
-Applied, thanks!
+So this is rather weird, but I've applied the quirk as it upgrades 
+broken guest side code into a boot time warning.
 
-[02/19] mfd: mt6397-core: Add mfd_cell for mt6359-accdet
-        commit: 1b9e922a8df918812aff4090207abf4a8cb5aefa
+> +	/*
+> +	 * OSPKE seems broken on Apple Virtualization.
+> +	 * https://lore.kernel.org/regressions/CAG8fp8QvH71Wi_y7b7tgFp7knK38rfrF7rRHh-gFKqeS0gxY6Q@mail.gmail.com/T/#u
+> +	 *
+> +	 * TODO: conditionally enable pku depending on the DMI BIOS version when Apple
+> +	 * fixes the issue.
+> +	 *
+> +	 * However, this would be still not enough because DMI is missing when vmlinuz
+> +	 * is directly loaded into VM.
+> +	 */
+> +	if (!memcmp(acpi_gbl_FADT.header.oem_table_id, "Apple Vz", 8)) {
+> +		pr_info("pku: disabled on Apple Virtualization platform (Intel) due to a bug\n");
+> +		pku_disabled = true;
+> +	}
 
---
-Lee Jones [李琼斯]
+Note that I updated the comments here (the git log gives enough 
+information), plus enclosed this into #ifdef CONFIG_ACPI, as 
+acpi_gbl_FADT is not available on !CONFIG_ACPI builds.
 
+Thanks,
+
+	Ingo
 
