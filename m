@@ -1,105 +1,151 @@
-Return-Path: <linux-kernel+bounces-559064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F87CA5EF0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:09:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96261A5EF0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 10:09:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ECEC17D4D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:08:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0939B3AB433
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 09:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5227F264A7E;
-	Thu, 13 Mar 2025 09:07:38 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D2C263C8E;
-	Thu, 13 Mar 2025 09:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF330264FBB;
+	Thu, 13 Mar 2025 09:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4QRz7V6"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355C5263F31;
+	Thu, 13 Mar 2025 09:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741856857; cv=none; b=YLGd2ItCdWVgMuiOzhvvjO/x72W7OkwNg9ypXxODocRYaPjPpi00WDJJ2IW2ZR3iNk8fGnYBGSBYlXlEs2owcBC/aqvvukoxR87U0ehGIQoPAFLWAcNjqVTv40GVxsI+tfgU9N82FoyEs563L3brXjsfuL4bf7M4eAHspRRMJRQ=
+	t=1741856899; cv=none; b=dntR7IpYoHOqnj8mOpufFhxx+8rVUqEjQT8TBDpOeOo66kW6/5buoVswhJcTCCA8ZQ6YN10lA3484KoWA3sE3d79T1v+4WTvaPou5ZmXV2uuEZeyDO5MfeE3wGUv+c1qi5OwXwnt9NF/zXQi7VqIMvEvyveTkUx3P0Is/INhr8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741856857; c=relaxed/simple;
-	bh=JJT0xKaXaZbUgXN6/UbovqbanS9D1jRe6uHKILJ+Qck=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=F5fDON4XslNYbo45X/Cm2M5sxZn3FqVdtLg+GXoOJVsmJ6KRm+x76A6N9AE5c599OoGqgvBj1K4cq+O/2f9Lp8M8/tcHCPeTM0ZduwkcuwO6okCnYSqbgRvP7eUKH+PdSiHraS9Cso8MVn+wwAVLwPC367Gsp2QsCvuLxImCiCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.40.54.90])
-	by gateway (Coremail) with SMTP id _____8AxlnBWoNJnH76UAA--.56120S3;
-	Thu, 13 Mar 2025 17:07:34 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.40.54.90])
-	by front1 (Coremail) with SMTP id qMiowMBx3MRLoNJnbjpIAA--.3773S3;
-	Thu, 13 Mar 2025 17:07:24 +0800 (CST)
-From: Qunqin Zhao <zhaoqunqin@loongson.cn>
-To: lee@kernel.org,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	peterhuewe@gmx.de,
-	jarkko@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-crypto@vger.kernel.org,
-	jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org,
-	pmenzel@molgen.mpg.de,
-	Qunqin Zhao <zhaoqunqin@loongson.cn>
-Subject: [PATCH v5 6/6] MAINTAINERS: Add tpm_lsse.c to LOONGSON CRYPTO DRIVER entry
-Date: Thu, 13 Mar 2025 17:07:02 +0800
-Message-Id: <20250313090702.21300-2-zhaoqunqin@loongson.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250313090702.21300-1-zhaoqunqin@loongson.cn>
-References: <20250313090702.21300-1-zhaoqunqin@loongson.cn>
+	s=arc-20240116; t=1741856899; c=relaxed/simple;
+	bh=Y46uAjc2WwsYW0kvpCtRMIkFelQx1ayGujrqPyP8wFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rkSBQJuGEmcitUljNHYTx8E3k0f7MAjJGdg0YDOVOTzSb2sLPgESpM0JC1cyZha9yjr8u6gOm4CTJ+orE2MtetgiEhDHffoB5Ntz2QX42Pxo4kuAfOY1I+74X7OvnPLOjbtHF0QYUz/KzbSSuTj3gxCmh7pgE1yizfhIatBk72s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b4QRz7V6; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso3779835e9.2;
+        Thu, 13 Mar 2025 02:08:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741856894; x=1742461694; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qq8chwA6KqjCz+471khnFvPik6MocooRpqaoLoCyprM=;
+        b=b4QRz7V65Kl19ymt5Ju6lb4Yck6QCXLx7hB5NJCwAg8i6CFvlDEIWlWTOvpfnYTvTk
+         1ED/dZK8Tk2FH0Z4+Xg2dra+1tuLJ6/zooPjEqKb2Az7aIO7v5zWqL+VO/wrLHmJBtvk
+         O7OCprWC/3JWMTjwK/+mXY185IljtfJu6FTHLHnK7XNSJkyzbo85S3YN18Z+QXjgdQiG
+         l6ZYt8rFHhq8Nz9kS2XGSE+00RFKrQiRTCYDV0jqJUvidCUsii97x7SjA23Iublx90+h
+         81RuE7wOoTUJ++EkD3iLLWB49wcXMyiRpM3OqFl4Nw5+9gpfO1Vu50bKfavwthDQVCnT
+         bqBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741856894; x=1742461694;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qq8chwA6KqjCz+471khnFvPik6MocooRpqaoLoCyprM=;
+        b=vJEsmbyao1Fz5A8SFvvYfJCxQY6u5DzkMErDWq3xULRKLLTYZwIffDpXeD1dOko5H/
+         +yokKuVdeiPJmUky8VtonBfgdQkLTdvBrnIJiPQcHkDH4WD09WHGzbEuHit4KrOKp0Fv
+         69BgheJlGJI+YjUWuHz6/z8/6Bo+XqTR27Kr8XaRyc7VZabxLMtSsJTEHE7rn1JuFU5Z
+         WmPNkb6ZMcxpnVgcsxmOHlEdXPUktVq3skVd1wfrN595cVPW//yGH0J2OnAf1fu1Wd50
+         74Tl//ueTeSGl6ZCiaY/iA4KGw3Fd0ZvZ29TWfkLJ0dFc0WOwCA3T/unGYAhpGb0Oyz9
+         VbHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLrk7jZzf6cpEP6Sg4ITa6qcQ+W9g3zqpDCCzdCs47Nm9N9QX4jdezgt9sHm/s902DAcVDIoiw@vger.kernel.org, AJvYcCWuwmJxbILG1qpFtQtI6Ht4OKjW0C1IhKnUiQO/dEnnkedYduNsNuSyN/TB8CKQrZafWcWBaHVq/i4EJA==@vger.kernel.org, AJvYcCXxojT443RBH6RtYikP9Y0qxlgY5MmAoK57H1GS+XlMF5V/OjLYO6pj62Zc5/+24VzZLjO0B6AJhtt1Mpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLgZxdrDOkdBn9Q+D9/vUc0GAMBLL4Ba/PQ1N0sEJNmO9y9xd4
+	PGsY0qz02mKaQHSwfKJGpgnkj1g8IVeXdHOY20hgagsv5PNfEiOI
+X-Gm-Gg: ASbGnctJwfICNHzv+NKO6y315gexSeM2g6qb2EW2dXnUAv8665+HRIMkeQkpwUNWasN
+	JJ0OBxEAZ6wLyVbi4OPSwHxk9SISwozicjLoS08209I6q7vc0jHJU5RczRH56PiLQfIx+Tu84hC
+	BrKYJC0A67BSACYeCkGSG5cBJn5diC+T7gHPCIPBpZ6IxYSEQ2BQwEQEHfeFNvj1GlyqzjkxaB5
+	HhX9RskrhOHFcK//tnWB1k7qY+6NXiw4/j3bsfEmbXaf0nuNDKWHmg8H5e/kynGL0rcDPZBpH11
+	kAtVsB3ZrO1UwL5t6xOBSIDqC5b44GM6+SWto0bnI7292E6pomcE+fBJyNeJatsP1Q==
+X-Google-Smtp-Source: AGHT+IEx/vxoywpLDtliIf06LUvxQQPA669OYg9JK8g+lJBkZEhkeL9LDTGRU2nz7ga7JcF45nzaAw==
+X-Received: by 2002:a05:600c:1d1d:b0:43c:f8fc:f687 with SMTP id 5b1f17b1804b1-43d01c25c75mr90143395e9.27.1741856893725;
+        Thu, 13 Mar 2025 02:08:13 -0700 (PDT)
+Received: from [172.27.56.126] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a73127esm47706005e9.8.2025.03.13.02.08.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 02:08:13 -0700 (PDT)
+Message-ID: <a26fd105-deae-4efd-8d77-d5d9e0cac13a@gmail.com>
+Date: Thu, 13 Mar 2025 11:08:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBx3MRLoNJnbjpIAA--.3773S3
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
-	BjDU0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
-	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxV
-	AFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x02
-	67AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI
-	0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWrXVW3AwAv7VC2z280
-	aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20x
-	vY0x0EwIxGrwCF54CYxVAaw2AFwI0_JF0_Jw1l4c8EcI0Ec7CjxVAaw2AFwI0_JF0_Jw1l
-	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Ar0_tr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F
-	4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j7qXQUUU
-	UU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [pull-request] mlx5-next updates 2025-03-10
+To: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: patchwork-bot+netdevbpf@kernel.org, davem@davemloft.net,
+ edumazet@google.com, andrew+netdev@lunn.ch, leon@kernel.org,
+ saeedm@nvidia.com, gal@nvidia.com, mbloch@nvidia.com, moshe@nvidia.com,
+ linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, leonro@nvidia.com, ychemla@nvidia.com,
+ Tariq Toukan <tariqt@nvidia.com>
+References: <1741608293-41436-1-git-send-email-tariqt@nvidia.com>
+ <174168972325.3890771.16087738431627229920.git-patchwork-notify@kernel.org>
+ <9960fce1-991e-4aa3-b2a9-b3b212a03631@gmail.com>
+ <20250312212942.56d778e7@kernel.org>
+ <f30ee793-6538-4ec8-b90d-90e7513a5b3c@gmail.com>
+ <2ff2d876-84b4-4f2f-a8cc-5eeb0affed2b@redhat.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <2ff2d876-84b4-4f2f-a8cc-5eeb0affed2b@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Changes to Loongson TPM driver would be best reviewed by the Loongson
-crypto driver maintainers.
 
-Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
----
-v4-v5: None
 
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+On 13/03/2025 10:56, Paolo Abeni wrote:
+> On 3/13/25 9:07 AM, Tariq Toukan wrote:
+>> On 12/03/2025 22:29, Jakub Kicinski wrote:
+>>> On Tue, 11 Mar 2025 22:50:24 +0200 Tariq Toukan wrote:
+>>>>> This pull request was applied to bpf/bpf-next.git (net)
+>>>>
+>>>> Seems to be mistakenly applied to bpf-next instead of net-next.
+>>>
+>>> The bot gets confused. You should probably throw the date into the tag
+>>> to make its job a little easier.
+>>
+>> It did not pull the intended patch in this PR:
+>> f550694e88b7 net/mlx5: Add IFC bits for PPCNT recovery counters group
+>>
+>> Anything wrong with the PR itself?
+>> Or it is bot issue?
+>>
+>>> In any case, the tag pulls 6 commits
+>>> for me now.. (I may have missed repost, I'm quite behind on the ML
+>>> traffic)
+>>
+>> How do we get the patch pulled?
+> 
+> My [limited] understanding is as follow: nobody actually processed the
+> PR yet, the bot was just confused by the generic tag name.
+> 
+> I can pull the tag right now/soon, if you confirm that this tag:
+> 
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git/log/?h=mlx5-next
+> 
+> is still valid/correct.
+> 
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3f04f43ffe..75760e6ec2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13606,6 +13606,7 @@ LOONGSON CRYPTO DRIVER
- M:	Qunqin Zhao <zhaoqunqin@loongson.com>
- L:	linux-crypto@vger.kernel.org
- S:	Maintained
-+F:	drivers/char/tpm/tpm_lsse.c
- F:	drivers/crypto/loongson/
- 
- LOONGSON-2 APB DMA DRIVER
--- 
-2.43.0
+Yes please. Confirmed. Thank you.
 
+>> It's necessary for my next feature in queue...
+> 
+> Please note that due to the concurrent NetDev conference we are
+> processing patches with limited capacity, please expect considerable delay.
+> 
+
+Of course! That's totally expected.
+I wouldn't nudge pulling this without the bot's weird misleading reply.
+
+Regards,
+Tariq
 
