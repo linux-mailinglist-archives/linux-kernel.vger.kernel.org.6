@@ -1,82 +1,93 @@
-Return-Path: <linux-kernel+bounces-560056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12987A5FD14
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:08:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5210A5FD2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:13:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 505E91712DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D300218838EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38407269AE6;
-	Thu, 13 Mar 2025 17:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2349426A08D;
+	Thu, 13 Mar 2025 17:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="at5SdzpL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="HxjYMc+h"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A00268FDB
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90C663B9;
+	Thu, 13 Mar 2025 17:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741885707; cv=none; b=GKqfJtN1kO+jVyvasE30edWUZhMJkYt5xr5GDn2x1KvjTRP0biIanHhKCg+HZ60HmKtw3coZsjZui1bjMtkDlMkxdnHFQwag5KV7ARVTnTL5dmXYMOIQhNqpGWB3EAX6Rxd/XrgNj8BaOPVTr/qp34nkC96sLYvokiI37+szuVk=
+	t=1741885992; cv=none; b=kukEz9u4UUdHIxtVy8C6xyzlF80FqNo/mHyU7oV5eJcSEqOaAtuz2HYJ5SemPongKj8GLEeudb7ElDQgCPqeMTyaUOd0Pm7fZ3OdOz7XEOoaUu1cK2++FtDsEUoOXhOj0Ex3nURE6UrjsgDakbPZBp2m8MmmzZVAaRM4WpeNpcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741885707; c=relaxed/simple;
-	bh=QAUHNbSDOYstTbGDXDcCiRiWP+fJLKO7uJTAdJrfDC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I6BSt00fg2dE3kel+pbwGfxHFVzNaTuUPG+WbXliB+RYpb/eo1Y0fCXEJStvfJ1SO1jWz8vupAFeUxV88QuddvgjaGwyRYFk9KtHMLHKiojQuyO1Zjpu2ntUcDMi2f7OKL0fMyXhp0ApP505LAnm+BqUqCUuPWcG5J90LEJVZ8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=at5SdzpL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E48F6C4CEDD;
-	Thu, 13 Mar 2025 17:08:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741885707;
-	bh=QAUHNbSDOYstTbGDXDcCiRiWP+fJLKO7uJTAdJrfDC4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=at5SdzpLLgv7fg5PK22Q17mPwZ1XLhLrRS/iW7iWtWkKKdFnf5Ak69l++27WkxVLb
-	 pVF7CMx7yUFoUAooq/j+j/q10u6nSXWm6iecIMiyCAQrEUXoXfSvWiD7dsWppk1hlo
-	 RmaRsTZbx9R9bE5VHZeUZY9oe/nbpqPQuCCtXZZs5nxtLKpmIfw5zr+XA3T6rXYhiM
-	 /Zmtm/eMu6jT9A/p5gCToYAtARYDTtroSSApXbvzLvss4/fKjNT1HXByxmL9YplUr/
-	 S6bMu9+9G1O+8jyORCCkppTeqfXRwN1MLZIZi9/6Vlq/9UdIQOn5AFFq2M5kw+TkuC
-	 iNlMDSYXy3/Tw==
-Date: Thu, 13 Mar 2025 07:08:25 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched_ext: Skip per-CPU tasks in
- scx_bpf_reenqueue_local()
-Message-ID: <Z9MRCY0DwYrZOpkD@slm.duckdns.org>
-References: <20250313170321.99510-1-arighi@nvidia.com>
+	s=arc-20240116; t=1741885992; c=relaxed/simple;
+	bh=9O6nNEssvDL7ZyDZtbLL1yjkarm1WBvWe/ehZBDssnU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WLXcbcVyYvjl4t3ZkjccmWd03U5ELozfeK62FmVhJYe3lM58DoZXQj/zHZWGHsfDc7RW9qHK/AHUbmPJF+NeFCMEFP2VOF3pZlHbVr8ikdqi+Sn78ZAPYDDyyaSYmFD3MrAOpqWKHMX+mqc+jCHAUVpPRanmCEGFuMpVuDMwJMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=HxjYMc+h; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1741885991; x=1773421991;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9O6nNEssvDL7ZyDZtbLL1yjkarm1WBvWe/ehZBDssnU=;
+  b=HxjYMc+hNMMamkXfD1BmaRYaXQlwEVX40iygqD5ro9E8dUVpapsU/0JL
+   WaBQmszoEeujetf0OfirnDgoCYVZWhzVjwmnCQRfNOlIqQLknFSty4Uw+
+   P+cdGX2n1oGfzwI7GRdzvaLGQcEcYqBNM5M7HaCX7jgy49zmPNh2kx6pX
+   afQ461xaBkFlny77h/9NZlg2D7JudMP9+6mkDQAYTcFPAVGIZbvgWHgIP
+   B8IKHlui/Z9WkEmRj7eQhSHJw8FUWrjcZXQqQ0tNa35lhM7o2AqXauct7
+   E/XZXNka2HtbTvbuLkIpcXN4f01PDCy23RsD18pWqO5OGmbC8VGRFY73p
+   w==;
+X-CSE-ConnectionGUID: NuBGJSZZTvSJoh/JmS1Gyg==
+X-CSE-MsgGUID: 8MmtI+pIRBKpKkSVSSOD2w==
+X-IronPort-AV: E=Sophos;i="6.14,245,1736838000"; 
+   d="scan'208";a="39421681"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Mar 2025 10:13:04 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 13 Mar 2025 10:12:35 -0700
+Received: from che-dk-ungapp03lx.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Thu, 13 Mar 2025 10:12:33 -0700
+From: Rengarajan S <rengarajan.s@microchip.com>
+To: <vaibhaavram.tl@microchip.com>, <kumaravel.thiagarajan@microchip.com>,
+	<arnd@arndb.de>, <gregkh@linuxfoundation.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <unglinuxdriver@microchip.com>
+CC: <rengarajan.s@microchip.com>
+Subject: [PATCH v1 char-misc-linus 0/2] misc: microchip: pci1xxxx: Resolve IRQ handler kernel panic and incorrect IRQ status update issues
+Date: Thu, 13 Mar 2025 22:38:54 +0530
+Message-ID: <20250313170856.20868-1-rengarajan.s@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313170321.99510-1-arighi@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Mar 13, 2025 at 06:03:21PM +0100, Andrea Righi wrote:
-> scx_bpf_reenqueue_local() can be invoked from ops.cpu_release() to give
-> tasks that are queued to the local DSQ a chance to migrate to other
-> CPUs, when a CPU is taken by a higher scheduling class.
-> 
-> However, there is no point re-enqueuing tasks that can only run on that
-> particular CPU, as they would simply be re-added to the same local DSQ
-> without any benefit.
-> 
-> Therefore, skip per-CPU tasks in scx_bpf_reenqueue_local().
-> 
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+This patch series resolves couple of interrupt handling issues namely
+fixing the kernel panic during IRQ handler initialization and resolving
+the incorrect IRQ status update inside irq_ack.
 
-Applied to sched_ext/for-6.15.
+Rengarajan S (2):
+  misc: microchip: pci1xxxx: Fix Kernel panic during IRQ handler
+    registration
+  misc: microchip: pci1xxxx: Fix incorrect IRQ status handling during
+    ack
 
-Thanks.
+ drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 -- 
-tejun
+2.25.1
+
 
