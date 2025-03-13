@@ -1,145 +1,207 @@
-Return-Path: <linux-kernel+bounces-560173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F103FA5FEF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:14:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E529A5FEF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:14:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165CB1685AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:14:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F9DB1892C5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B80D1EFFA9;
-	Thu, 13 Mar 2025 18:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617591E8353;
+	Thu, 13 Mar 2025 18:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixWDCJeL"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Vjde6D3e"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAAF1EBA09
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 18:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97071F03E0;
+	Thu, 13 Mar 2025 18:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741889534; cv=none; b=XUzAsjjHDXjb9B59+3fSYw0vadkEc2bCK2qWniUaPxauYCN34k4wnQeB6h0+ge6OAtYyIrPDfWjTp7DTiBBSGvRdRls+JGP9t1dqKR9DEcf/a2IkHOyFmiN/s0QH6//CrXcePOoXMr3TEUJgMZ9eL0pGUBMeHsuUdPT+4AOE4qo=
+	t=1741889540; cv=none; b=ZiSrpbH0Un9g3MsvEUq0c98gwICfJz2TYfZlyhQ8h63tsmIr6MlusVXP2g1AqCkStK4Gen9zJ3lkJEA8B7yhSvoxe+If3tEK++VeB28mqEvr518Uv/4VDiWmf4pro2b/HdCImmefpsNjr8N/jf91FWRawR4vrTMNyE1dIdis3IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741889534; c=relaxed/simple;
-	bh=bFGlRr27RUUO1iz269TvssoU0M3nZBVruXDO8/lNmoQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ls6Nye6HpDX/sSPUZ8Rmx6eh04Yh2tGqYUf+WfrPk2XHlHqmy5xQAWFWER6OiDiQUjwLwcm6MQF12NY1R6WslCnQhIc1NQah+PKtrYB1kD+pfNTOM4q4fOtbo9sfOSpaBECtI/PperkJyVQtuC5Av7v2cHUCfbCPug9/nw1K9bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ixWDCJeL; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ff694d2d4dso2345094a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 11:12:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741889532; x=1742494332; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=swndidqFROwOBEqG3wesdy7WmWrjyR83c+ssL3XTYOw=;
-        b=ixWDCJeLOZRhrtmKk79Yidlt/6yrYz+oRd7SyBDwnythlB1uzns+XfJNhDYbOpJynk
-         kws9SEnRCknH7CdyJrOJCelJbBr815HToZZCkCctNNkPXCOpdf29+gYHjeg6qs+KOLnK
-         sDE0VG5xiX3kZE5QRPBjPgqeJUcw6jMPpFaMf5ChZBGLNZV/qaukIEzBFIrBzjooerq1
-         Son6S2EhkLCEzjPNfcj1HxYSS+0fgXbYFHy/8OXFaAjbgADJJkUrQqqCJ4fvD6gZQEkD
-         xZAFErzKF31SnCuGfjq9ooK5OTVRa7LOUaY0KobwX96/10yGhcU3WmSKtvLRtz+cJKvw
-         SH7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741889532; x=1742494332;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=swndidqFROwOBEqG3wesdy7WmWrjyR83c+ssL3XTYOw=;
-        b=v9JSrnMRQyGRCp8g82hcNfik18Dj1GR80znotIGldXnBrPId1DpWkpuuKZ+NB/l+oY
-         OedO90437tc6X4f/q28905JG3jzG1StJjsGqzH962tnbBq419b+yNuidk5uhBWCiHg/2
-         wbkPljiWjtM128hRIXJAusESuPkuoVWdny86G7I4t0MFSG+0e1TLXPmZ9apnRaO+jaq7
-         V3NQ4cGQeFfJO/rJR6QG5W+FKZ1HBWeruMSBqJ0Ni5guTB1Ir79yWXhSWy67HkfNRODj
-         i03PdKIGQAvVhx5ekwHsm7djX53Y4DNufOg4EWPS7Yn1j2imTe8fEdQ/2DdvMhZ0h1SM
-         6Bhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkOYFz8LR5NaSCmzAo8SrTI0BYk83fQ9Q4hZ2u5MPdb1n/urXJzeLLdK4MTT2OtUD1pz7cEv+sKysf7cQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3QajMOYaqAN5ya7T2KT4ZUOuRwrS+jBS5dEYDRgjoBySDQ5as
-	PXQ4xGweAhS4r2BezzRlT2NxLkBTxs5D6crtES6JEWJnuCuMkfEASzWUQmBQj+phNn8nAWDsotc
-	F5oLeV++TMIEizpT82XwPDaFGg20=
-X-Gm-Gg: ASbGnctdCrQcQC/SB/yk7A4N6W2tPTmg+S2HDN+v8s0CG81BLBXCZ309UbmUgqJHnFP
-	D+x7Ii6afR+bcsDgBYsY49r1mIzyawl7eKH3gYaL9tbclMUZA69i/+cU09/lpj10GQLIwKh02n+
-	exB7MnE6ejDmD84jAQHmbBUP7F
-X-Google-Smtp-Source: AGHT+IFhWr0mQH/ORI3Oe/Ce66HJj5thevy7RQd2RtrRcph8GzEovPCbhC46lwWDqGllBV+kcJUT5GO0fdErRBMq8Cw=
-X-Received: by 2002:a17:90b:1f86:b0:2fe:e0a9:49d4 with SMTP id
- 98e67ed59e1d1-3014e80f07dmr677872a91.2.1741889532088; Thu, 13 Mar 2025
- 11:12:12 -0700 (PDT)
+	s=arc-20240116; t=1741889540; c=relaxed/simple;
+	bh=8Zqt9zi/FnC7k8GuHDy1ukGq3CUt3k0moSNlURadgLI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Vf0W4VqmZg8ccsN0PnXjSRWgZwVrJUxqaLclrYApKMMmjBfj8tEzWK8yltW5ELM5e0/Y/lhuzcfYEd9HK1hEOfuPrVhhbQh8ER1wtHOoKBFogNnFPpQXMz90RkGXcz04lZEcBJB++JLMlQJqZWP3F9WdQoTZqshDBAK8/iYaSc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Vjde6D3e; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741889533; x=1742148733;
+	bh=srZ9dMa1whdbkDsfnTWuQVdrHW1c6weSBgLs5X2xzXk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Vjde6D3es+FZD2i6nszzd+Hgukt8o27vgDDfWp2jm96W+oLCnogjSWy9m1JzHPVJX
+	 1irYvVn3fp2UlTepZj4LPqame5PkF1jsA/iUl3OWvTXt9hYSi8UiXKaUQ99JEn/DEz
+	 fo2oDRmOFgswdoLgpDm5x+Ei8G2KeWGyHF3tYcWIgv8mZVR3cvzX8aEGShpo2vcghX
+	 vN6eboR5Md26RDXfVYE5uFKUhR/68AYzFJsEnXn97LUFJnEnlo1zgi4n1lY2E+/sIC
+	 QJaAeDw3MssC1B7ZprfH0fReKBb8747T8wWsl/TQKPc4bW24dWbtRN3QQ4SzLYD6Vz
+	 ZekcLQszuPFXg==
+Date: Thu, 13 Mar 2025 18:12:08 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] rust: enable `clippy::as_underscore` lint
+Message-ID: <D8FCATTC479L.BDRZBC6TJ51Q@proton.me>
+In-Reply-To: <CAJ-ks9n1oGAGSrXYWjvR+_raw8h+skkdfSYpeSuQZ9jEs5q-6Q@mail.gmail.com>
+References: <20250309-ptr-as-ptr-v2-0-25d60ad922b7@gmail.com> <CAJ-ks9=TRDg3g=NG7k97P_5jXpZ4K4v0DxrmJFR+uF0-3zJkXw@mail.gmail.com> <CAJ-ks9=hAwOGtVv0zh9CcH7XOxjGnizvK1QOMAi8nKStocKr2Q@mail.gmail.com> <D8ELW7X9796K.2ZGJS34LDTHOP@proton.me> <CAJ-ks9k1gZ=tLSe6OjuKFgg6=QE5R_Ajo0ZJwZJp08_1LMiODw@mail.gmail.com> <D8ENBWTC8UPH.LLEGZ2D4U7KQ@proton.me> <CAJ-ks9mJ=2hFxfWEkq+9b=atE89sHXa5NBcdVNRd3az6MSv0pA@mail.gmail.com> <D8F76A4JSEXO.2OKKJLAU5OZN@proton.me> <CAJ-ks9n1oGAGSrXYWjvR+_raw8h+skkdfSYpeSuQZ9jEs5q-6Q@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: d74d9f9fe6f44074994f0914e725607f21a3708b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127172908.17149-1-andybnac@gmail.com> <20241127172908.17149-7-andybnac@gmail.com>
- <87ldtck8k0.fsf@all.your.base.are.belong.to.us> <Z9AwF5hwF0ES9Grl@andrea>
- <87ldtbwrdb.fsf@all.your.base.are.belong.to.us> <Z9B8vgdTq1M9r3_k@andrea>
-In-Reply-To: <Z9B8vgdTq1M9r3_k@andrea>
-From: Andy Chiu <andybnac@gmail.com>
-Date: Fri, 14 Mar 2025 02:12:01 +0800
-X-Gm-Features: AQ5f1Jpg2qNW6FMkkw1vv-lje3Lj7loei2DrMtm_6kL3ZJ_w2QCD05L9hNNFzUg
-Message-ID: <CAFTtA3NawdhM3fF_xc9a0EogaejHGWSxhWGre+FpLeXH9J+q5A@mail.gmail.com>
-Subject: Re: [PATCH v3 6/7] riscv: add a data fence for CMODX in the kernel mode
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, bjorn@rivosinc.com, puranjay12@gmail.com, 
-	alexghiti@rivosinc.com, yongxuan.wang@sifive.com, greentime.hu@sifive.com, 
-	nick.hu@sifive.com, nylon.chen@sifive.com, tommy.wu@sifive.com, 
-	eric.lin@sifive.com, viccent.chen@sifive.com, zong.li@sifive.com, 
-	samuel.holland@sifive.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Andrea Parri <parri.andrea@gmail.com> =E6=96=BC 2025=E5=B9=B43=E6=9C=8812=
-=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=882:11=E5=AF=AB=E9=81=93=EF=BC=
-=9A
+On Thu Mar 13, 2025 at 6:50 PM CET, Tamir Duberstein wrote:
+> On Thu, Mar 13, 2025 at 10:11=E2=80=AFAM Benno Lossin <benno.lossin@proto=
+n.me> wrote:
+>>
+>> On Thu Mar 13, 2025 at 11:47 AM CET, Tamir Duberstein wrote:
+>> > On Wed, Mar 12, 2025 at 6:38=E2=80=AFPM Benno Lossin <benno.lossin@pro=
+ton.me> wrote:
+>> >>
+>> >> On Wed Mar 12, 2025 at 11:24 PM CET, Tamir Duberstein wrote:
+>> >> > On Wed, Mar 12, 2025 at 5:30=E2=80=AFPM Benno Lossin <benno.lossin@=
+proton.me> wrote:
+>> >> >>
+>> >> >> On Wed Mar 12, 2025 at 10:10 PM CET, Tamir Duberstein wrote:
+>> >> >> > On Wed, Mar 12, 2025 at 5:04=E2=80=AFPM Tamir Duberstein <tamird=
+@gmail.com> wrote:
+>> >> >> >>
+>> >> >> >> On Wed, Mar 12, 2025 at 5:01=E2=80=AFPM Benno Lossin <benno.los=
+sin@proton.me> wrote:
+>> >> >> >> > Always enable the features, we have `allow(stable_features)` =
+for this
+>> >> >> >> > reason (then you don't have to do this dance with checking if=
+ it's
+>> >> >> >> > already stable or not :)
+>> >> >> >>
+>> >> >> >> It's not so simple. In rustc < 1.84.0 the lints *and* the stric=
+t
+>> >> >> >> provenance APIs are behind `feature(strict_provenance)`. In rus=
+tc >=3D
+>> >> >> >> 1.84.0 the lints are behind `feature(strict_provenance_lints)`.=
+ So you
+>> >> >> >> need to read the config to learn that you need to enable
+>> >> >> >> `feature(strict_provenance_lints)`.
+>> >> >>
+>> >> >> I see... And `strict_provenance_lints` doesn't exist in <1.84? Tha=
+t's a
+>> >> >> bit of a bummer...
+>> >> >>
+>> >> >> But I guess we could have this config option (in `init/Kconfig`):
+>> >> >>
+>> >> >>     config RUSTC_HAS_STRICT_PROVENANCE
+>> >> >>             def_bool RUSTC_VERSION >=3D 108400
+>> >> >>
+>> >> >> and then do this in `lib.rs`:
+>> >> >>
+>> >> >>     #![cfg_attr(CONFIG_RUSTC_HAS_STRICT_PROVENANCE, feature(strict=
+_provenance_lints))]
+>> >> >
+>> >> > Yep! That's exactly what I did, but as I mentioned up-thread, the
+>> >> > result is that we only cover the `kernel` crate.
+>> >>
+>> >> Ah I see, can't we just have the above line in the other crate roots?
+>> >
+>> > The most difficult case is doctests. You'd have to add this to every
+>> > example AFAICT.
+>> >
+>> >> >> > Actually this isn't even the only problem. It seems that
+>> >> >> > `-Astable_features` doesn't affect features enabled on the comma=
+nd
+>> >> >> > line at all:
+>> >> >> >
+>> >> >> > error[E0725]: the feature `strict_provenance` is not in the list=
+ of
+>> >> >> > allowed features
+>> >> >> >  --> <crate attribute>:1:9
+>> >> >> >   |
+>> >> >> > 1 | feature(strict_provenance)
+>> >> >> >   |         ^^^^^^^^^^^^^^^^^
+>> >> >>
+>> >> >> That's because you need to append the feature to `rust_allowed_fea=
+tures`
+>> >> >> in `scripts/Makefile.build` (AFAIK).
+>> >> >
+>> >> > Thanks, that's a helpful pointer, and it solves some problems but n=
+ot
+>> >> > all. The root Makefile contains this bit:
+>> >> >
+>> >> >> KBUILD_HOSTRUSTFLAGS :=3D $(rust_common_flags) -O -Cstrip=3Ddebugi=
+nfo \
+>> >> >> -Zallow-features=3D $(HOSTRUSTFLAGS)
+>> >> >
+>> >> > which means we can't use the provenance lints against these host
+>> >> > targets (including e.g. `rustdoc_test_gen`). We can't remove this
+>> >> > -Zallow-features=3D either because then core fails to compile.
+>> >> >
+>> >> > I'm at the point where I think I need more involved help. Want to t=
+ake
+>> >> > a look at my attempt? It's here:
+>> >> > https://github.com/tamird/linux/tree/b4/ptr-as-ptr.
+>>
+>> With doing `allow(clippy::incompatible_msrv)`, I meant doing that
+>> globally, not having a module to re-export the functions :)
 >
-> On Tue, Mar 11, 2025 at 03:53:36PM +0100, Bj=C3=B6rn T=C3=B6pel wrote:
-> > Andrea Parri <parri.andrea@gmail.com> writes:
-> >
-> > >> FWIW, the for S-IMSIC the write is already writel(), so we'll have t=
-he
-> > >> text patching and IPI ordered. Regardless, there's more than one fla=
-vor
-> > >> of IPI on RISC-V!
-> > >
-> > > AFAIU, this writel() is intended to order the insertion (and the init=
-ialization)
-> > > of the CSD object before the MMIO writes; so, the "right fix" seems t=
-o turn the
-> > > "other flavors" into using a writel() or providing a similar ordering=
- guarantee.
+> Yeah, but I think that's too big a hammer. It's a useful warning, and
+> it doesn't accept per-item configuration.
 
-I found that Apple's aic irqchip uses writel_relaxed for sending IPIs.
-I am not sure if it is a practice using relaxed mmio in the driver to
-deal with IPIs. I am more convinced that driver should use the relaxed
-version if there is no data/io dependency for the driver itself. But
-it is true that a fence in the driver makes programming easier.
+Hmm, I don't think it's as useful. We're going to be using more unstable
+features until we eventually bump the minimum version when we can
+disable `RUSTC_BOOTSTRAP=3D1`. From that point onwards, it will be very
+useful, but before that I don't think that it matters too much. Maybe
+the others disagree.
 
-> >
-> > Yes, that's probably the right approach, or maybe follow-up!
-> >
-> > > As a bonus, such change should address/fix all current and future occ=
-urrences of
-> > > the message-passing scenario in question (the patch addressed the occ=
-urrence in
-> > > flush_icache_all(), but there appears to be a similar one in flush_ic=
-ache_mm()).
-> >
-> > Indeed. I wonder if the SBI remote fence.i needs it?
+>> >> I'll take a look tomorrow, you're testing my knowledge of the build
+>> >> system a lot here :)
+>> >
+>> > We're guaranteed to learn something :)
+>>
+>> Yep! I managed to get it working, but it is rather janky and
+>> experimental. I don't think you should use this in your patch series
+>> unless Miguel has commented on it.
+>>
+>> Notable things in the diff below:
+>> * the hostrustflags don't get the *provenance_casts lints (which is
+>>   correct, I think, but probably not the way I did it with filter-out)
+>> * the crates compiler_builtins, bindings, uapi, build_error, libmacros,
+>>   ffi, etc do get them, but probably shouldn't?
 >
-> Ah!  So I am not alone: AFAICT, that remains a matter of discussions with=
- your SEE
-> team/developers.  :-|
+> Why don't we want host programs to have the same warnings applied? Why
+> don't we want it for all those other crates?
 
-As far as OpenSBI is concerned, there is a wmb(), which translated to
-fence ow, ow, in the generic code path. Regardless, there may be more
-than one flavor of SBIs, should we also consider that?
+I have never looked at the rust hostprogs before, so I'm missing some
+context here.
 
-Thanks,
-Andy
+I didn't enable them, because they are currently being compiled without
+any unstable features and I thought we might want to keep that. (though
+I don't really see a reason not to compile them with unstable features
+that we also use for the kernel crate)
+
+> I'd expect we want uniform diagnostics settings throughout which is
+> why these things are in the Makefile rather than in individual crates
+> in the first place.
+>
+> Your patch sidesteps the problems I'm having by not applying these
+> lints to host crates, but I think we should.
+
+We're probably working on some stuff that Miguel's new build system will
+do entirely differently. So I wouldn't worry too much about getting it
+perfect, as it will be removed in a couple cycles.
+
+---
+Cheers,
+Benno
+
 
