@@ -1,111 +1,119 @@
-Return-Path: <linux-kernel+bounces-558660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-558661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED70A5E929
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:02:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF24A5E92B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 02:03:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46BEC3B9FC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:02:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34B0D17564A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 01:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6C7171C9;
-	Thu, 13 Mar 2025 01:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD39E1BF37;
+	Thu, 13 Mar 2025 01:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdnxQnke"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="bLwtccGY"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB8B610C;
-	Thu, 13 Mar 2025 01:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741827765; cv=none; b=iQsRBMjpaynYc7nBCKEnV685gTTYpdzV6cfg1QMBkGrRHiyDxzsAWh93VBfmz/SXEH5RwspNMF0gm0uskhOFaSo6e6CaWAptLGKuBHyJfGgU4Fvisb52hgGMlWEG5nBxdbwE76Q9kj1ad9v28++DUH1+HVVDPd40DQ0n7LePxPA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741827765; c=relaxed/simple;
-	bh=Q1aM5cKFYnCHCe+T3JOO7jfxAGoZ83bIHgGxGhIR7KI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G/H6MTaEaj1SWJmajPYl3XZBOsGFMJYPdnMq348XnyzPc0/wUQnSudFCcmqrutiNi30sBgxpjyVIcMAmuF5LUsEY4LDZb3gqqa6UNP7880CqGFwhJhRn6VIC6ZHpO1m1mSVTwVWTTbItdWeAIVwJ3DtDz/1LmtJ+a9v63jkkvgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bdnxQnke; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6686C4CEDD;
-	Thu, 13 Mar 2025 01:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741827764;
-	bh=Q1aM5cKFYnCHCe+T3JOO7jfxAGoZ83bIHgGxGhIR7KI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bdnxQnke3jBtHWePuV7KUt/fojwaT4L3NoOnAKZFudZ3qcbujGYHj1u1QidUExrld
-	 UuBunM5C7ZA8Tlj8Q35GWUBWQiFepi5/v45djtvHrq8an2w3b36iP/39QGpRJ2vtZR
-	 tAnxSQsfO0Yx4rFN5xrqH84WpVitA5LJ2YYhXgUB5pcopST1DRcM1PvU0zGFCmO83F
-	 mEvVti9UPh/mipArpdxMTxlgL7CtMimzhAIOR2qPXbXXeeADw5VbUnOLCzfqhatLC5
-	 Kv686iQaNqUDfW8lcawDuMZNJ91iV67Uu7YxQ523stEXNN/MlB7Y+ybJGKhExEjKO+
-	 ko1JGGEX1MVlg==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-547bcef2f96so505370e87.1;
-        Wed, 12 Mar 2025 18:02:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWjy++1+5y2voJKzRU5s2whV0PNonJCJX3k1/0A08a01PNyWua+MwAlb3fYWhguQI9ysNJxiQMfSoA=@vger.kernel.org, AJvYcCWwOxayiRzZQH1AuEk9EOcXfx0LDpAORJu/yVjIglLP6I6XnhST4IKMgJZ4XoZMFyFLCNWiEnf3op2mUXRr@vger.kernel.org, AJvYcCXvRMtB6ZsfkukSVSp8UnFDNbIt2cQVGaTw68Uv+blASgYugQWki3fo2+WysrIocA+lGHObYu5HYFX8kqRk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yycv/9hdsPMpGwwKvmx+vPsDPs1Ub/WMbtGE6LchNYrng+EXgj6
-	W9gO2TTQ3dR+zC+W4fX3N04rJLKOh0ckH1IsYIOkE0sOD3bWhlEWZoY7n2S3NMjG1i5XL6qZ7/V
-	KizDmkIgV0UXvKL/Xshp18VXucSA=
-X-Google-Smtp-Source: AGHT+IFhpoWAb7JEwtDxPPyUFo+XGguBg11A4gNdZlqOCCzXKIRoCEOHiOu8g3CZG/LuNlO8PKASOBCMoq+eLun8uEg=
-X-Received: by 2002:a05:6512:6d6:b0:549:8d2a:8820 with SMTP id
- 2adb3069b0e04-549ababf0ccmr3887313e87.17.1741827763390; Wed, 12 Mar 2025
- 18:02:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8346610C;
+	Thu, 13 Mar 2025 01:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741827811; cv=pass; b=I8G6xYzOtesUgk9hiyH15vq10ZaSzjtttjzjmctWk+VUToXrSkaoWYP0H3pFpocIAngiYWAaCn7I7A42L56QM1JNH8X6uXDHYEADeQBBPdjXZKbiELH/s8wP9BMEpyOJEAgz6xmNpQ0F1xleTnxpjOltPsdWFHYyED0xD71jKAk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741827811; c=relaxed/simple;
+	bh=Xe3B4hZH/39/1+ZMlB91zwQAW7BESAh9yC8Kk4Poq64=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PLLsVr1TQ6AGenQeuZxDHaelFTo9xFngxEMXyBs3WIkTRx3Jx4LMlheRUH0Cr+Xc34IG7xm9tu55ya8kjjsv8HqdgQ3tVxdogXM2zif6YIq9gH5kY1u3w0rZ3C4kG2QHhsHbGDhGM2Fw5f2EqDii5KlyG6eV7c3wRQcD16PaCXo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=bLwtccGY; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741827791; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=aYqMtTqG+3p/MkkiUTzJHc0ZxysbxdP9h+M3dXq8Ml2nGJ8plJM4KVlPTmWlqPYhuE7GmbSDvjd6bzNFCkw2bfR8pPtn6t2b/5JMvJ0isiFnqWw8yF86tMRgwgCkC/vwQk4G5TXJQvn7QU5abSV10UdC5avkEozKSy02MRAwLLs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741827791; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=PeCprVw92CsL02sIwDel1VhQLuEYGEuNiwZXot++wG0=; 
+	b=oBoePiScMNSLd7Gn2io+GSdzJaQ1xDMOJ53bRGh495lIsDxot7z4JeD/pmKyK2wkpZ5EPK5m428O3mgkLB9SziJsIPyaLZ8Bju/0/1oSCpjAfm4JlsRuxlvcaMLCr1OgzMooYYOE3aBfWpr8lp7qUZD1vc77WWyDygn5Jh5Whvs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741827791;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=PeCprVw92CsL02sIwDel1VhQLuEYGEuNiwZXot++wG0=;
+	b=bLwtccGYu5TkXjhgc/TouFRTBpkNdtlCehACVl3JVIjZdIwqgGZ+p9PxHClDPkoB
+	fzRSAlw35yjGp1+ijF1cxkAr+9CH5xuhHRIyFOexiLbcEsXsdAdeJ6AN70Ja5TJ2wbK
+	U+9dZHDCrlNf3fXnjRMg6rCFX+mT9zZ7+zbDu/v4=
+Received: by mx.zohomail.com with SMTPS id 1741827788003628.5791664550408;
+	Wed, 12 Mar 2025 18:03:08 -0700 (PDT)
+Message-ID: <18b174c5-1b1a-4c1c-ad55-0168eb58350c@zohomail.com>
+Date: Thu, 13 Mar 2025 09:03:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311154535.56560-1-liukefan24s@ict.ac.cn>
-In-Reply-To: <20250311154535.56560-1-liukefan24s@ict.ac.cn>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 13 Mar 2025 10:02:06 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQPdxFStU8=opM8_gZvwFL26F7SMKZ94uHDnUpZ=tpBbw@mail.gmail.com>
-X-Gm-Features: AQ5f1JoFpbmptc9jMsV1ah9W40wua59RShx7QVusfFdHCzSV2gDwXlxV8K7646A
-Message-ID: <CAK7LNAQPdxFStU8=opM8_gZvwFL26F7SMKZ94uHDnUpZ=tpBbw@mail.gmail.com>
-Subject: Re: [PATCH] Documentation/kbuild: Fix indentation in modules.rst example
-To: Kefan Liu <liukefan24s@ict.ac.cn>
-Cc: corbet@lwn.net, linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/2] acpi/ghes, cxl/pci: Process CXL CPER Protocol
+ Errors
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Yazen Ghannam <yazen.ghannam@amd.com>, Terry Bowman <terry.bowman@amd.com>,
+ linux-efi@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250310223839.31342-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20250310223839.31342-2-Smita.KoralahalliChannabasappa@amd.com>
+From: Li Ming <ming.li@zohomail.com>
+In-Reply-To: <20250310223839.31342-2-Smita.KoralahalliChannabasappa@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr080112270372dcc6d7d8e91220cd4f0b000029f7c72569e97a3b5cbc51e5a2ea8ec402eb324e50cd3daf2d:zu08011227875961aed2394afabe7f5c840000110cc8c0f03617f41081dc088d9a73e640a182697eedee418f:rf0801122d1d8295c2f4af958307a0a4ff0000066c9f27c7a3b6d06b704efcad7d07900ad2df7c240e9f11fdfaf7d67329fb:ZohoMail
+X-ZohoMailClient: External
 
-On Wed, Mar 12, 2025 at 12:46=E2=80=AFAM Kefan Liu <liukefan24s@ict.ac.cn> =
-wrote:
+On 3/11/2025 6:38 AM, Smita Koralahalli wrote:
+> When PCIe AER is in FW-First, OS should process CXL Protocol errors from
+> CPER records. Introduce support for handling and logging CXL Protocol
+> errors.
 >
-> Correct the indentation in an example within the `modules.rst` file
-> to improve readability.
+> The defined trace events cxl_aer_uncorrectable_error and
+> cxl_aer_correctable_error trace native CXL AER endpoint errors. Reuse them
+> to trace FW-First Protocol errors.
 >
-> Signed-off-by: Kefan Liu <liukefan24s@ict.ac.cn>
-
-Applied to linux-kbuild.
-Thanks!
-
+> Since the CXL code is required to be called from process context and
+> GHES is in interrupt context, use workqueues for processing.
+>
+> Similar to CXL CPER event handling, use kfifo to handle errors as it
+> simplifies queue processing by providing lock free fifo operations.
+>
+> Add the ability for the CXL sub-system to register a workqueue to
+> process CXL CPER protocol errors.
+>
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
 > ---
->  Documentation/kbuild/modules.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modu=
-les.rst
-> index a42f00d8cb90..d0703605bfa4 100644
-> --- a/Documentation/kbuild/modules.rst
-> +++ b/Documentation/kbuild/modules.rst
-> @@ -318,7 +318,7 @@ Several Subdirectories
->                 |       |__ include
->                 |           |__ hardwareif.h
->                 |__ include
-> -               |__ complex.h
-> +                       |__ complex.h
->
->         To build the module complex.ko, we then need the following
->         kbuild file::
-> --
-> 2.43.0
->
->
+[snip]
+> +int cxl_ras_init(void)
+> +{
+> +	int rc;
+> +
+> +	rc = cxl_cper_register_prot_err_work(&cxl_cper_prot_err_work);
+> +
+> +	return rc;
+> +}
+
+Just one minor comment.
+
+This rc is not needed, can return cxl_cper_register_prot_err_work() directly.
 
 
---=20
-Best Regards
-Masahiro Yamada
+Reviewed-by: Li Ming <ming.li@zohomail.com>
+
 
