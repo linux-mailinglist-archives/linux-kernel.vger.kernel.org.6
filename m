@@ -1,204 +1,146 @@
-Return-Path: <linux-kernel+bounces-560105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB52BA5FDCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:31:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD211A5FDCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:31:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974FE189DBD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:31:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39A13880436
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A87814386D;
-	Thu, 13 Mar 2025 17:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EBC15747C;
+	Thu, 13 Mar 2025 17:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Bxu/CBGh"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KwgxIzgu"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4404FAD5E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001F7225D6
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 17:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741887065; cv=none; b=pCVprxa5BQ41ThglpusLl5Hi0EbLUlhZay9fKRRZaTQupNmy4R7HawsdYuJ7jqLtpslNjoKQiElP3T6hiETn1+pQktlhn61WekGaaD5w6vjuV/hOMautwjn9ELZTY5xYO4srgRQcUEwr3OK9y/ENHRhQ3DdW/La6VsRa83LSi9w=
+	t=1741887103; cv=none; b=cywnbHceRuaLAQ1E2DMEKhG1ufk5yihGBC6sNecDBETFKZcAVdpgAWmtVUHkf0yAqahZozFkem2xtzA6uRMZKIjmpET8pVbchf7LnWqY4CB9DCV97Bz4ta3NHSZuE9VU6/NMpuKasW8pTKvjJgYUdVLMnRw8FJ96UbgI6lY5kX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741887065; c=relaxed/simple;
-	bh=6NuaKrlJwzqSDKDjBHf+Cx4W/xW2kBVGqK/Gow+UQ3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NsIMwRQ7QeztqijeY1twIDHkG0Fel9663o38hg01sqDxBol/McbsSbO2tz9CpgXXokx/SJB3PqnHnP8rxT3vKmaGDjW/0PPtiABDOTmOmmL8FPU6AYrJkNJ1luSgQev10/P3vrAj6MCvFB8oKGjJQIqMz0I3fEmNNA6Yxynyf8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Bxu/CBGh; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e8fb83e137so11254386d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:31:01 -0700 (PDT)
+	s=arc-20240116; t=1741887103; c=relaxed/simple;
+	bh=yfW1gIa1MbRIx3vJ4nkUHmJnpytrI2/a0Qk/PMxYlCI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZH/i1kIh+9cQB6Noj/5SNv5Rs7PcKUX0unEPFl3wMvIzPgo8pvFh01UcZWi2ETpSJLS3mpDIzIrHG02JslJHot9OD1kA9utqPavSLMzORciwPW2DAMAIEu0WyZ3AwN+1vRPrhrULLNcey9/G+ik/wfAN4r11uStUeqzx+OoQd9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=KwgxIzgu; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ff615a114bso4465364a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 10:31:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1741887061; x=1742491861; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O83EJQJInxOlaXTG5L5nMhpQUXrgmfAXio9XKQcNg+E=;
-        b=Bxu/CBGh1pVH5fT0NdtdDxQhTO/pJDlrkGJbdAIvv8FvPP/bvdScXcnGaLIsDMAvQs
-         yuyS+90g3Q2E+9ZmAmDmeHAy0imuT/3I3n650YVGnggUbZ6IBgpFwr8YFhE0mIWsyOrp
-         hAs548NQtxzVcwVdu7T8AAQEpYajbhMXyoxoy7DO0S5dEXqkdQvCuVJpuz7BI4j5nUw8
-         /9hsiplD/eX2Xlp0l1p119LtByn6QTY5LT1p0e8WUa//zzS4CqHoNFOYZg4bpTJOnH9G
-         n9KJnQrbpO3sBxisoNkowHb+n22z1V8VcH/TozRwoWWmofq53D8vKCcXARMzRIr+tmYh
-         HGPg==
+        d=broadcom.com; s=google; t=1741887101; x=1742491901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ggMXVBojLEYrYjpK3rBBG/mb1zKKBgNArl4a0+lTQ20=;
+        b=KwgxIzguf6oSprsVGgZhsVBmBOb9K0RO3fpa/F8+A7Am9vwm/C09O/8F/I9uDYZXW1
+         u4w2noASygZa8b4F2yMC/lvaywPU1PQ8H3zzgdCdcwiOy3lUCF0kYQRiWMqIMY3a/PAN
+         k5FbcVuIsIvjgXYfUBk7W8Zf2Ih0PFTmlE0b4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741887061; x=1742491861;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O83EJQJInxOlaXTG5L5nMhpQUXrgmfAXio9XKQcNg+E=;
-        b=scxove4aHIUumMzhVJCHOFhLl9Qzux/Ttj0ShIcj0hZnEo0y77Z72y0lEF5G3WUO+w
-         xKU3HE9DQXRw4CDW4ynmqM250j39m6gnlHoQ9Gic5dd2qMwKdITa0QsWyTQAcjMIXEIf
-         sTKpbCMTrtrzQ0HKRHCcw1+A3dta4Q1u0lbc7i8yGBRzVLfhxO77Hei9ZfbVggFZawsx
-         u07juKT+niTkuMKuEGRdvAj8EtET5004wnKjLymFo/tdTUMhtGeCm/WgwCBFMTe8CV7p
-         nVh7TyI08D2EPa+1ZUi84uk9r95Moe/5De1AjefmMZGffoN0HzvsNWKqQdVmLOrtkKvS
-         Gf8A==
-X-Forwarded-Encrypted: i=1; AJvYcCX0k/vLh/Qz/a92Zg3dioCExBirfHuBnNXHCcMS2k8esJE6UQxuA5aSIsPV/LH+ld7LcVFUYWclxBtydV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXKWPLtu+C/z2sA1hDpbhqUmC4M7xrjRfeiI9uGgs+3p35tta0
-	fnFSYCuwiiOK17rpDGr6zbnvIdLfunlWRS1Ij4WKGildkRzX91el+H0a6uPhir4=
-X-Gm-Gg: ASbGncu6PfJ8sX09Oh0Y0UOD8s6u4o8WK5CH8mEbmMHGYi2jQB4p1YciiiD96DkJpAo
-	/QKzL4smtMtxeKueTUn4P22M+21Y/D9JUnUwfe9I7r1EB1ioiVQqO1ubzBPJg4vdKaLYkFHYiwy
-	PvoJC4A45EDZy7CiOdWYlBJblO8VveWWJzdZhYfku+ptl3SGaDaQ/6L/l9BjDEA/Jfk7Mp/MHPZ
-	jHS1EAqigYIkLmoTi2Ws1YQjc5zUvtWFnWvXuctpKsseTfuXl5MKup4BJEg6fUpohIltQVvLPUc
-	cxjbMm6/43rpK9nNz9hmsmvqmajxvFTyRozxsekem0r1RtWmNqDlVBHKnVQQDzwrQ2HVVn2Lgpp
-	BaHcRDwL3pcuONVQTnUp79gZVeXC6uDthw+cAMg==
-X-Google-Smtp-Source: AGHT+IHuylmJfYk7wLLXX/2M7mKuROyvy47bvGrvCnuvmNFtINIICBzR6GpKU9pV+TBfiu9Nbi1ktg==
-X-Received: by 2002:ad4:4ee9:0:b0:6e4:4484:f35b with SMTP id 6a1803df08f44-6eae7aa22d7mr6914286d6.30.1741887061046;
-        Thu, 13 Mar 2025 10:31:01 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb663603sm11829221cf.43.2025.03.13.10.30.59
+        d=1e100.net; s=20230601; t=1741887101; x=1742491901;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ggMXVBojLEYrYjpK3rBBG/mb1zKKBgNArl4a0+lTQ20=;
+        b=KUkmpehaGVXLsxpYu/wVxyN9dc2qo/ZqXsKq6Or2xIanAGnkAdXQbVvMMEd+LfpdGS
+         nkIbkeS/vTWLaTMSTrj1oZ9445iLehQsYT+RGgnwYynyDhjsUCO+UGwnbKcb06cfKNgP
+         x34p4KjnLHb1P6UItZ1CqkB9+G8QzRzO0WXa3gFzsoCPbab5xT9B//3ZzfdtBXRWWpSV
+         /JGP3VlG0SaE21Iv2kyvHoaaIs0h9heoom3J9VfAJyMAmQ6Is3D14G4tAT+2n6R3hr3n
+         YfnOAxbSEWitUc8EEPg6fSBiWxnZlh4Z61x0Q+EEWbxsPyncj/dnW4Ake5OAAaQcP3sB
+         pyqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEZa4rnGHvt3SBUrss57jKP05Xk5seokzPb27Fuiwr5P9PDhDDMgSFh1me6DlA7RATj4FG/cPFU8gPqyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxmPmeh8rVgSNWvYznJhdIeC1ZDksdZfpyTku+7vLf6wsgca6l
+	1JZceEDglY0m/bGOWljhQLqMnIIsW/US1wQcW/n1AWBBzhmzIY8/D1CsyYVDWg==
+X-Gm-Gg: ASbGncss4jMiSHAxSPwE6FOBEfW1L2sfBR4y7EUr3oiLGpebksefgxR4pBVGprr85ll
+	O60cIKiGA1TFH/HDcKu3rFMZ5nOEYHnpZWyqnZDhAUvJDSjipACbTgk1HciPqmSY9arc4t9qcVs
+	GyFdWKJEzF4hVsqJYr3kJh3buAGEWwOfdVk/VvuqJ9fCakx1nFvF4UQZ6NvKipVgnuvNW8BwxM+
+	aos6RBqOOm/VanNhXydst8bFjR6GvDJjVK0lb9OCRmROzkFUJ17Bs/emRV/tpZHSq+gxuaqmdP5
+	bMEwR/l4pEYN90D064DyGtuDPgsEX1L70hDo+FxUuHcFdpQziPa1gi+YSOKWVq/uxdQfG1Vp/w=
+	=
+X-Google-Smtp-Source: AGHT+IHTh9DQK18PXTqgsKvgHuC0vEOJvBIRPhsGggDCXl4nz4ApyCfoHStC5pwpS2+3w/OHm4FWkQ==
+X-Received: by 2002:a05:6a00:844:b0:725:41c4:dbc7 with SMTP id d2e1a72fcca58-737107120d6mr4984412b3a.4.1741887101113;
+        Thu, 13 Mar 2025 10:31:41 -0700 (PDT)
+Received: from photon-dev.. ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371167d89asm1646471b3a.94.2025.03.13.10.31.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 10:31:00 -0700 (PDT)
-Date: Thu, 13 Mar 2025 13:30:58 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [LSF/MM] CXL Boot to Bash - Section 0: ACPI and Linux Resources
-Message-ID: <Z9MWUhHmZ5ND0b_e@gourry-fedora-PF4VCD3F>
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
- <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
- <20250313165539.000001f4@huawei.com>
+        Thu, 13 Mar 2025 10:31:40 -0700 (PDT)
+From: Ajay Kaher <ajay.kaher@broadcom.com>
+To: bp@alien8.de,
+	thomas.lendacky@amd.com
+Cc: ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	bo.gan@broadcom.com,
+	dave.hansen@linux.intel.com,
+	florian.fainelli@broadcom.com,
+	hpa@zytor.com,
+	kevinloughlin@google.com,
+	linux-kernel@vger.kernel.org,
+	mingo@redhat.com,
+	tglx@linutronix.de,
+	vamsi-krishna.brahmajosyula@broadcom.com,
+	vasavi.sirnapalli@broadcom.com,
+	virtualization@lists.linux.dev,
+	x86@kernel.org,
+	ye.li@broadcom.com
+Subject: [PATCH v2] sev-snp: parse MP tables for VMware hypervisor
+Date: Thu, 13 Mar 2025 17:31:11 +0000
+Message-Id: <20250313173111.10918-1-ajay.kaher@broadcom.com>
+X-Mailer: git-send-email 2.39.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313165539.000001f4@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 13, 2025 at 04:55:39PM +0000, Jonathan Cameron wrote:
-> 
-> Maybe ignore Generic Initiators for this doc.  They are relevant for
-> CXL but in the fabric they only matter for type 1 / 2 devices not
-> memory and only if the BIOS wants to do HMAT for end to end.  Gets
-> more fun when they are in the host side of the root bridge.
->
+For VMware hypervisor, SEV-SNP enabled VM's could boot without UEFI.
+In this case, mpparse_find_mptable() has to be called to parse MP
+tables which contains boot information.
 
-Fair, I wanted to reference the proposals but I personally don't have a
-strong understanding of this yet. Dave Jiang mentioned wanting to write
-some info on CDAT with some reference to the Generic Port work as well.
+Fixes: 0f4a1e80989a ("x86/sev: Skip ROM range scans and validation for SEV-SNP guests")
+Co-developed-by: Ye Li <ye.li@broadcom.com>
+Signed-off-by: Ye Li <ye.li@broadcom.com>
+Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
+Tested-by: Ye Li <ye.li@broadcom.com>
+Reviewed-by: Kevin Loughlin <kevinloughlin@google.com>
+---
+Changes since v1:
+https://lore.kernel.org/lkml/20241219114400.858980-1-ajay.kaher@broadcom.com/
+        - use cc_platform_has(CC_ATTR_GUEST_SEV_SNP) instead of
+          (sev_status & MSR_AMD64_SEV_SNP_ENABLED)
+	- remove unwanted header files
+---
+ arch/x86/kernel/cpu/vmware.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Some help understanding this a little better would be very much
-appreciated, but I like your summary below. Noted for updated version.
+diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
+index 00189cdeb..cb3f900c4 100644
+--- a/arch/x86/kernel/cpu/vmware.c
++++ b/arch/x86/kernel/cpu/vmware.c
+@@ -26,6 +26,7 @@
+ #include <linux/export.h>
+ #include <linux/clocksource.h>
+ #include <linux/cpu.h>
++#include <linux/efi.h>
+ #include <linux/reboot.h>
+ #include <linux/static_call.h>
+ #include <asm/div64.h>
+@@ -429,6 +430,9 @@ static void __init vmware_platform_setup(void)
+ 		pr_warn("Failed to get TSC freq from the hypervisor\n");
+ 	}
+ 
++	if (cc_platform_has(CC_ATTR_GUEST_SEV_SNP) && !efi_enabled(EFI_BOOT))
++		x86_init.mpparse.find_mptable = mpparse_find_mptable;
++
+ 	vmware_paravirt_ops_setup();
+ 
+ #ifdef CONFIG_X86_IO_APIC
+-- 
+2.39.4
 
-> # Generic Port
-> 
-> In the scenario where CXL memory devices are not present at boot, or
-> not configured by the BIOS or he BIOS has not provided full HMAT
-> descriptions for the configured memory, we may still want to
-> generate proximity domain configurations for those devices.
-> The Generic Port structures are intended to fill this gap, so
-> that performance information can still be utilized when the
-> devices are available at runtime by combining host information
-> with that discovered from devices.
-> 
-> Or just 
-> # Generic Ports
-> 
-> These are fun ;)
->
-
-> > 
-> > ====
-> > HMAT
-> > ====
-> > The Heterogeneous Memory Attributes Table contains information such as
-> > cache attributes and bandwidth and latency details for memory proximity
-> > domains.  For the purpose of this document, we will only discuss the
-> > SSLIB entry.
-> 
-> No fun. You miss Intel's extensions to memory-side caches ;)
-> (which is wise!)
-> 
-
-Yes yes, but I'm trying to be nice. I'm debating on writing the Section
-4 interleave addendum on Zen5 too :P
-
-> > ==================
-> > NUMA node creation
-> > ===================
-> > NUMA nodes are *NOT* hot-pluggable.  All *POSSIBLE* NUMA nodes are
-> > identified at `__init` time, more specifically during `mm_init`.
-> > 
-> > What this means is that the CEDT and SRAT must contain sufficient
-> > `proximity domain` information for linux to identify how many NUMA
-> > nodes are required (and what memory regions to associate with them).
-> 
-> Is it worth talking about what is effectively a constraint of the spec
-> and what is a Linux current constraint?
-> 
-> SRAT is only ACPI defined way of getting Proximity nodes. Linux chooses
-> to at most map those 1:1 with NUMA nodes. 
-> CEDT adds on description of SPA ranges where there might be memory that Linux
-> might want to map to 1 or more NUMA nodes
->
-
-Rather than asking if it's worth talking about, I'll spin that around
-and ask what value the distinction adds.  The source of the constraint
-seems less relevant than "All nodes must be defined during mm_init by
-something - be it ACPI or CXL source data".
-
-Maybe if this turns into a book, it's worth breaking it out for
-referential purposes (pointing to each point in each spec).
-
-> > 
-> > Basically, the heuristic is as follows:
-> > 1) Add one NUMA node per Proximity Domain described in SRAT
-> 
->     if it contains, memory, CPU or generic initiator. 
-> 
-
-noted
-
-> > 2) If the SRAT describes all memory described by all CFMWS
-> >    - do not create nodes for CFMWS
-> > 3) If SRAT does not describe all memory described by CFMWS
-> >    - create a node for that CFMWS
-> > 
-> > Generally speaking, you will see one NUMA node per Host bridge, unless
-> > inter-host-bridge interleave is in use (see Section 4 - Interleave).
-> 
-> I just love corners: QoS concerns might mean multiple CFMWS and hence
-> multiple nodes per host bridge (feel free to ignore this one - has
-> anyone seen this in the wild yet?)  Similar mess for properties such
-> as persistence, sharing etc.
-
-This actually come up as a result of me writing this - this does exist
-in the wild and is causing all kinds of fun on the weighted_interleave
-functionality.
-
-I plan to come back and add this as an addendum, but probably not until
-after LSF.
-
-We'll probably want to expand this into a library of case studies that
-cover these different choices - in hopes of getting some set of
-*suggested* configurations for platform vendors to help play nice with
-linux (especially for things that actually consume these blasted nodes).
-
-~Gregory
 
