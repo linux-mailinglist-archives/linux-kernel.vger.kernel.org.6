@@ -1,134 +1,148 @@
-Return-Path: <linux-kernel+bounces-559775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628DFA5F99A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:21:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7317A5F9A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:22:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B694B3BFE90
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F132188EC1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250382690EC;
-	Thu, 13 Mar 2025 15:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD90268C6C;
+	Thu, 13 Mar 2025 15:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WwnmLC3F"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="d28oktsv"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD92B15E97;
-	Thu, 13 Mar 2025 15:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91EE267721
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741879153; cv=none; b=MZWWSbdVw6Ct3y2O+uxE/4dsP4pfmi6Sq1q+72aaPKUT9iHocwPfmJ44okrbFR8kMLDABX1q/8zIYV2rTFm/OnEL/WnJUnyq/FAqJB4TMdcDzv5XlQpViaw5/Oq6HxQGxoSM9oOOWCKZ7SpKrsAaHqRQsFntT16ea8T6DL3dBp4=
+	t=1741879297; cv=none; b=HwEgQnDjBb6VIXR1zKZvBkQ3lq+YGPBGo0FUGdnQ25IgEkkF+pCWLVkNE57pU1cTfh7D7+D0F/25OnColWAnNh1EvfoehcLWZBu916Rbatn0ZnXGPR4c3Ozt0355y0/Vkon3Z83n/pyegppaQbY2cr4h0sCm5Q++fSpwSdxW+h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741879153; c=relaxed/simple;
-	bh=LC011z6AwHjc7tVf34PLdUgUl30pEZi9+T4ZlM0W3y4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=um30Ds/r6WiCraZcDEt3GzShDsoEjrKdej6jg0jelmoXOX0KOBWtdVucaHmqy6FFIuuuSUMUSosTCNBXWFHm8b/P3Ry9yCH2zwtDReic3KBfkDcq93SSDWZd7tfyoLmy8CHhJsKliHuPOA7QU3oR34j53x7IDNwaPZ4eBN1vvWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WwnmLC3F; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741879152; x=1773415152;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LC011z6AwHjc7tVf34PLdUgUl30pEZi9+T4ZlM0W3y4=;
-  b=WwnmLC3Fu65HJdIB8zNLTqawENDCw8qRYpdzhRNkeSqMyiB4h8r5MhOG
-   wu6bKdticVTxBk+5DzeiEvPGON9SVoW84mXWa+dbUhPIKxXfE3LmnaaPO
-   wzL2WVhZvFldgX7P8O78j/Xo9tmiHKbmJUnlmrpFLQ5Jfk6C2xohJm0xL
-   FSEkezcrlIKf6cJVEAo0h0Qs7LHrSeP9Nvw5Ui+F8ScbRDPpXhav31s7i
-   +Mcc55j3l+3BJjODKjTMud/93T+K6TMbcfUsUPMEkwDNt0drmiYsy7cNW
-   Wzt68mhWXL0xkRgs/hU05tIy6IremSdmoAAIh1jGgYpnZ0TkPeQbZw4+s
-   Q==;
-X-CSE-ConnectionGUID: aLrmJK9eRUmvTvXIDdsoAQ==
-X-CSE-MsgGUID: Uec/1IdST4ymbLwvrqtI7Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="60404188"
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="60404188"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 08:19:11 -0700
-X-CSE-ConnectionGUID: 4obyxuIlS0aXMAj7NLH8Ew==
-X-CSE-MsgGUID: 5T3/LeCkRhmrGnHgFI4YdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
-   d="scan'208";a="121202588"
-Received: from unknown (HELO [10.237.72.199]) ([10.237.72.199])
-  by fmviesa008.fm.intel.com with ESMTP; 13 Mar 2025 08:19:09 -0700
-Message-ID: <8001828c-f623-409a-8ba0-6da00d1db4f3@linux.intel.com>
-Date: Thu, 13 Mar 2025 17:20:14 +0200
+	s=arc-20240116; t=1741879297; c=relaxed/simple;
+	bh=PhQ9D8VZhUrXGMAXt+SHdTTqLgyaOspnB9Zx+xPd1wI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HvJ1LBUOTF5F787L72R+udTV9Orecg+8SO7QoX+5XiwBhx2hLmAXNMe0K0AxZWrW0qDQR10Bocx3eT073lbFh3kvGyXUPClEyxgRIh6Ho/K0Ca5toRGEamH3ob4ueKHwlYj7q7eZw8EQAhb93+yB6jsjB0p9YqQTri8/2yBcVpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=d28oktsv; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D7BA5431EB;
+	Thu, 13 Mar 2025 15:21:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741879294;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xZt+mlQFBZxNvQEdnGuW9k4Ji7TcJ+Lb9gt53WNlSq0=;
+	b=d28oktsvrAkQowL9pEDD/JzIlNrJDAZM/UTHlfLgMS4DV51FmxXs1xDvXlKV64K7q55WhQ
+	FdR6xI6M0/1qAwJxwqI2KERfwK9B+O7DRAznF2+CKl64T65e9+hOMo5dDvubeY4E+/NKOe
+	hYHI13TGxa+CdqMSa0nSxW+eaqN6681i4a5+z6wxxitvfL/9J9AvwDZeDBNUlmTzQIgrjs
+	24Aeny2Q5wxvEOASYlYxLkVmBFIbqDxtUQcc9VQvyECusNNxxWOhAsokvZRCg4ni4FoJKB
+	S7gptuM4TGUKFjYsVWPp3MAkU/6aD1K2WCF7A+aT8xAsSouGFsqzqPHM3156AQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Date: Thu, 13 Mar 2025 16:21:25 +0100
+Subject: [PATCH v2] drm/mxsfb: fix missing rollback on failure in
+ mxsfb_probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5] usb:xhci: Add debugfs support for xHCI port bandwidth
-To: raoxu <raoxu@uniontech.com>, mathias.nyman@intel.com,
- gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- wangyuli@uniontech.com, zhanjun@uniontech.com
-References: <20250313132132.2856-1-raoxu@uniontech.com>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20250313132132.2856-1-raoxu@uniontech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250313-mxsfb_probe-fix-rollback-on-error-v2-1-38374088e8c7@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAPT30mcC/5WNWwqDMBBFtyL57pQ8LNZ+dR9FiomTGqoZmYhYx
+ L03dQf9PJfLOZtIyAGTuBWbYFxCChQz6FMhXN/GF0LoMgst9UUaZWBck7fPicki+LAC0zDY1r2
+ BIiAzMRhZlbaWV+lNKbJnYszHo/FoMvchzcSfI7mo3/qPfVGgoO20t1XdYens3RLNQ4hnR6No9
+ n3/Aoq4bDbUAAAA
+X-Change-ID: 20250313-mxsfb_probe-fix-rollback-on-error-3074b9080f34
+To: Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+ Michael Trimarchi <michael@amarulasolutions.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekvdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefghfffgeekhfdtveffheeuudeltefhfeduteekleffvefgfffgkeevfeejtdekkeenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegrtddtvdemudgsrgejmeegkehfjeemudeltgehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegrtddtvdemudgsrgejmeegkehfjeemudeltgehpdhhvghloheplgduledvrdduieekrddujeekrdejhegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgp
+ dhrtghpthhtohepmhhitghhrggvlhesrghmrghruhhlrghsohhluhhtihhonhhsrdgtohhmpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On 13.3.2025 15.21, raoxu wrote:
-> From: Xu Rao <raoxu@uniontech.com>
-> 
-> In many projects, you need to obtain the available bandwidth of the
-> xhci roothub port. Refer to xhci rev1_2 and use the TRB_GET_BW
-> command to obtain it.
-> 
-> hardware tested:
-> 03:00.3 USB controller: Advanced Micro Devices, Inc. [AMD] Raven USB 3.1
-> (prog-if 30 [XHCI])
-> Subsystem: Huawei Technologies Co., Ltd. Raven USB 3.1
-> Flags: bus master, fast devsel, latency 0, IRQ 30
-> Memory at c0300000 (64-bit, non-prefetchable) [size=1M]
-> Capabilities: [48] Vendor Specific Information: Len=08 <?>
-> Capabilities: [50] Power Management version 3
-> Capabilities: [64] Express Endpoint, MSI 00
-> Capabilities: [a0] MSI: Enable- Count=1/8 Maskable- 64bit+
-> Capabilities: [c0] MSI-X: Enable+ Count=8 Masked-
-> Kernel driver in use: xhci_hcd
-> 
+When aperture_remove_all_conflicting_devices() fails, the current code
+returns without going through the rollback actions at the end of the
+function, thus the actions done by drm_dev_alloc() and mxsfb_load() are not
+undone.
 
-...
+Fix by moving this call at the very beginning of the probe function, so
+that no rollback is needed if it fails. Conflicting drivers need to be
+kicked out before setting up DRM anyway.
 
-> @@ -2463,7 +2497,16 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
->   	 * will be allocated with dma_alloc_coherent()
->   	 */
-> 
-> -	if (!xhci->small_streams_pool || !xhci->medium_streams_pool)
-> +	/* refer to xhci rev1_2 protocol 5.3.3 max ports is 255.
-> +	 * refer to xhci rev1_2 protocol 6.2.6 port bandwidth buffer need to be
-> +	 * 8-byte aligned.
-> +	 */
+Fixes: c8e7b185d45b ("drm/mxsfb: Remove generic DRM drivers in probe function")
+Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+The offending commit is not yet merged into master, and even less in a
+released kernel, so this does not need to go through stable.
 
-The context size needs to be rounded up to nearest 8-byte boundary.
-We allocate 256 bytes so we are covered.
+Changes in v2:
+- move this call at the beginning instead of adding a goto
+---
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Specification unfortunately fails to mention about the 16-byte context alignment
-requirement here in section 6.2.6 'Port Bandwith Context'.
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+index c183b1112bc4e9fe4f3b048a2b6e4c98d1d47cb3..ee64053d381448360140c419fed1dc4fe9f7c68e 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+@@ -352,14 +352,6 @@ static int mxsfb_probe(struct platform_device *pdev)
+ 	struct drm_device *drm;
+ 	int ret;
+ 
+-	drm = drm_dev_alloc(&mxsfb_driver, &pdev->dev);
+-	if (IS_ERR(drm))
+-		return PTR_ERR(drm);
+-
+-	ret = mxsfb_load(drm, device_get_match_data(&pdev->dev));
+-	if (ret)
+-		goto err_free;
+-
+ 	/*
+ 	 * Remove early framebuffers (ie. simplefb). The framebuffer can be
+ 	 * located anywhere in RAM
+@@ -369,6 +361,14 @@ static int mxsfb_probe(struct platform_device *pdev)
+ 		return dev_err_probe(&pdev->dev, ret,
+ 				     "can't kick out existing framebuffers\n");
+ 
++	drm = drm_dev_alloc(&mxsfb_driver, &pdev->dev);
++	if (IS_ERR(drm))
++		return PTR_ERR(drm);
++
++	ret = mxsfb_load(drm, device_get_match_data(&pdev->dev));
++	if (ret)
++		goto err_free;
++
+ 	ret = drm_dev_register(drm, 0);
+ 	if (ret)
+ 		goto err_unload;
 
-This info is hidden in section 6.4.3.14 'Get Port Bandwidth Command TRB' in
-'Port Bandwidth Context Pointer Hi and Lo' field 63:4
+---
+base-commit: f9f087d946266bc5da7c3a17bd8fd9d01969e3cf
+change-id: 20250313-mxsfb_probe-fix-rollback-on-error-3074b9080f34
 
-"The memory structure referenced by this physical memory pointer shall be aligned
-  on a 16-byte address boundary."
-
-> +	xhci->port_bw_pool =
-> +		dma_pool_create("xHCI 256 port bw ctx arrays",
-> +			dev, GET_PORT_BW_ARRAY_SIZE, 8, 0);
-
-Thanks
-Mathias
-
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 
