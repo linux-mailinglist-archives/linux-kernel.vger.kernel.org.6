@@ -1,74 +1,169 @@
-Return-Path: <linux-kernel+bounces-560326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884C3A60253
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:19:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD19BA60255
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:19:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE04F189BE59
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:19:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FC467B0580
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48CB1F4622;
-	Thu, 13 Mar 2025 20:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C1F1F463B;
+	Thu, 13 Mar 2025 20:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajUIWuLk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="grJ9HdPi"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167A2157E88;
-	Thu, 13 Mar 2025 20:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7AB42AA9
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 20:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741897132; cv=none; b=CVTwFu/Hi6n0H4QtN5cOyLczEdrtU3J0L3dI6OSn4szDLIjT1I+Rq0MhWxe6M1MXuM80kkkQW/EbhwQCPocaJ4KNgVYR6lxNS2OFugB+lJTf5UfobIB8p2QWQT9gPTdhs2o0v7tmF7WWffaIETC/hj//CIGiMYV+scdSyYgcrZo=
+	t=1741897150; cv=none; b=Aozc37MwI+sdii6y7/aEQ7X4ilJ6YsPhCszqKWN5nblkT7n/oVgDpfoM2TiYmFZW/fNn+21/tNZQFM8ffx3ydLX9D55bRloT1jWEzPPvWbSbZK9t3pdWwRsgE5qZBldU3iJdwvGVSkwRlmxs3puUzxzYeb/8mM6wOIk5C+AbmZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741897132; c=relaxed/simple;
-	bh=CyQCiUlVRxKRabGRBG1oGXq8j8zbrLOWvqmEr1uQdOk=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=A9cmNvJbi4PHsQLpRfBRobNr5XPNPzLNRuMvm8mLIxjEO+9G8MmudqpgyCRAdUbInAcza43Zn8/elgQGtH8o5BvLCqu8k//8uhFGUT+daHdGH3p6wYi4hNK2eR8OLv5dkrWxxXb+0Z/JR4QHr1HEC++scgUKit0gb+lUHKdpiys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajUIWuLk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80697C4CEDD;
-	Thu, 13 Mar 2025 20:18:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741897131;
-	bh=CyQCiUlVRxKRabGRBG1oGXq8j8zbrLOWvqmEr1uQdOk=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ajUIWuLkMvear16wZe/tTht16PW/72ThSdd9bPAhydg/5eTmtahMrwNOIxJWUe96c
-	 XlWmxL3oNNcpu6RH9yVElNpKBTzejsXvpLrabzDehZLM+IaNj3y2bV+fb4nsVuEr7W
-	 dfasTMh/RRhWyRpT8F0uKzqgOgMVQP9BPyDPlEXRzdbk45T3NUX3dYq6U85d+2EPpF
-	 IuZOpFftLH+4ZB6l37PlL9ZNdre5PUDKNsCGYfd+Yqr97mK9M/OJ+AtPLo4eENFDnP
-	 yJEmcgn/oEcfJ6Z+QbFlEJFBZgZKgPSRyYfSx3uTONWsupsaXKy2Gb354AJX5SjlVC
-	 d5aX38HXRIPsA==
-Message-ID: <8a701f5bbc3cd3ef2fcd29137e33112c.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1741897150; c=relaxed/simple;
+	bh=GwNXEPzVcYXJ1nmphyJMfGIxqNCqJjVL84gD7F2VovI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X6EEAeDvhWrWvyM1c7BTubbfXqEXAsr1/Oh8psOQp9Jhoh+DIQoDBQYeWoN1GjNfT0GRZaU8jm8EaS5kjTh1O40bSoKrMzGVa8Ciw6RlRLyorFctTiBFzqjSAQf+i6PaZFIXgz6s4Facu68w9NXO4XVXgREBovFBuXdqNtYMZ0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=grJ9HdPi; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d03ac846a7so4817415ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1741897147; x=1742501947; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=am1e3Yr0N9sJ7xnCyU39iPs0xuOYmSNADUSGEo4MjnQ=;
+        b=grJ9HdPidBkpVJaMGcYkaPdnkYgqBBPoiTOj2LpVXuJ48La78EtB74KnK4SCU/5k+x
+         yrgR8puuJghafDggQiWYA8/ig3zTbxMl5+hEa8ScDMIKI6stX3Fx6NBzwKIpf0znJPx/
+         8jwIeCsKp4UFft4jh01vI/hMscLKm6+fkvyTQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741897147; x=1742501947;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=am1e3Yr0N9sJ7xnCyU39iPs0xuOYmSNADUSGEo4MjnQ=;
+        b=w57hU5kotEcSblb2kw5m4+dpMxf798J5eajbE6cUCLiYtGY6Yy/67/wNp0pC38rU2h
+         OxzBab3I1RnB6IzOxxdz8+e3PGKpo1kmz12GNhvEH5g9W6d8m8eStU91O9Ec3e5KfILY
+         xu7p+if6/5kcmT9ESGRSFjywRxIXzeGo1rEFMnF/rHbDVibIoI6IJMuF59kKXnFPTtTR
+         f0uxMq2Nn66otGo+UthJ1o4DABRiyB/KoEZZkhNBe0QLflkR6TnJXJ3iA9RTjTiZUYl4
+         faVbv28hUuQHze4mxDmq0agwLwJ5K+bpmxdIN7x5kB1hZWqorTWRmVbfuL/faC4RVI6J
+         dMAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWju6g4suLEoLl74QIpkfj/44bpqcK8Z+rdUXR8DPGWExXU+bIw9OYj61mLWKw8fE6O5H9wuosBE1/DIhU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2VTFW660V0MkVdylj/srzQZGFTNmusPzRrRW4i+XxBdkizgC8
+	JQcS+Kol3A+4u5di4gV0/o6Nn51/twd15pJGNMsHY+OZrNgblc0kGlcgbJ0rrVE=
+X-Gm-Gg: ASbGncuJppAXUjn0MC6N282gg3tiGP6S5q1Eqs9Qm0wOVTyJwW787vugz29i9yizAL/
+	x+viVe/AQOrKTleAgQmISvoCOtq/mjY9sexQVU4NaIJIAnEziAQ/7lNT7UlFpOYHWKxFXm1q8rB
+	WuaKKhTq6oLvZJj3AWcSHYN/pvuJtWEQXv+9Nm4hjJYY6HazFYkFLZZ5Dmc94HS/8mslgSOI7Te
+	IWNkWrn4/ydCWofNg220aZLAwOLAM1UfaeJCCILfUoAIEBxqS+6jEQhJEWEZrmuOjLTn1uUIedj
+	bxukfLYWBPmUCoxOG6fQB6R/gU12icWxkr+Nb9i74cQ3gn0ykfZ5H8R/LosB9TFRBg==
+X-Google-Smtp-Source: AGHT+IGa/5eAuSmarcFKHqqOj2hcTd+7r+7qyTF/LSe7zhj2zp1QDtRJ6+rjw+eQw5dmnyJZFVG3Mg==
+X-Received: by 2002:a05:6e02:20e4:b0:3d3:fbae:3978 with SMTP id e9e14a558f8ab-3d4816fa3b5mr11336425ab.9.1741897147299;
+        Thu, 13 Mar 2025 13:19:07 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2637274aasm527015173.64.2025.03.13.13.19.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Mar 2025 13:19:06 -0700 (PDT)
+Message-ID: <65050389-2b80-4355-be2e-604c1c5b6b9a@linuxfoundation.org>
+Date: Thu, 13 Mar 2025 14:19:06 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250304133423.100884-1-brgl@bgdev.pl>
-References: <20250304133423.100884-1-brgl@bgdev.pl>
-Subject: Re: [PATCH] clk: davinci: remove support for da830
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Thu, 13 Mar 2025 13:18:49 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+User-Agent: Mozilla Thunderbird
+Subject: Re: Error during --arch x86_64 kunit test run
+To: David Gow <davidgow@google.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <0842477c-6063-40f8-8e8e-b9ce98711f80@linuxfoundation.org>
+ <CABVgOSk+xztNcNJ5fQiRSGC3DKHS2H3kN1wHwAO4gCfG7cWY1Q@mail.gmail.com>
+ <5a1e11fb-4213-45f6-a5ef-636de5e175d8@linuxfoundation.org>
+ <CABVgOSmvKgE6EHcWWR0CnCSjsSkBPsJy_+sDS5thgzuq9=T14A@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CABVgOSmvKgE6EHcWWR0CnCSjsSkBPsJy_+sDS5thgzuq9=T14A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Quoting Bartosz Golaszewski (2025-03-04 05:34:23)
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->=20
-> This SoC has some leftover code all over the kernel but no boards are
-> supported anymore. Remove support for da830 from the davinci clock
-> driver. With it: remove the ifdefs around the data structures as the
-> da850 remains the only davinci SoC supported and the only user of this
-> driver.
->=20
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+On 3/12/25 20:21, David Gow wrote:
+> On Thu, 13 Mar 2025 at 07:51, Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>
+>> On 3/12/25 16:52, David Gow wrote:
+>>> Hi Shuah,
+>>>
+>>> On Thu, 13 Mar 2025 at 05:14, Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>>>
+>>>> David, Brendan, Rae,
+>>>>
+>>>> I am seeing the following error when I run
+>>>>
+>>>> ./tools/testing/kunit/kunit.py run --arch x86_64
+>>>>
+>>>> ERROR:root:ld:arch/x86/realmode/rm/realmode.lds:236: undefined symbol `sev_es_trampoline_start' referenced in expression
+>>>>
+>>>> I isolated it to dependency on CONFIG_AMD_MEM_ENCRYPT
+>>>>
+>>>
+>>> That's interesting. I recall seeing this issue briefly about a year
+>>> ago on an internal branch, and we worked around it there by enabling
+>>> CONFIG_AMD_MEM_ENCRYPT (which worked).
+>>>
+>>> But I've been totally unable to reproduce it this morning: are you
+>>> seeing this on any particular branch / config / environment?
+>>
+>> linux_next - I did allmodconfig build prior to running the tests.
+>> That means I had to run make ARCH=x86_64 mrproper before running
+>>
+>> ./tools/testing/kunit/kunit.py run --arch x86_64
+>>
+>> I tried something different checking out a fresh
+>> linux_next repo and running ./tools/testing/kunit/kunit.py run --arch x86_64
+>>
+>> No errors on
+>>
+>> ./tools/testing/kunit/kunit.py run --arch x86_64
+>>
+>> I will try this again and let you know. Can you try this as well.
+>>
+>> - Clean linux_next and run tests
+>> - Run tests after buidling allmodconfig and mrproper
+>>
+> 
+> Thanks, Shuah.
+> 
+> Alas, I've tried both on a clean linux-next (next-20250312), and after
+> doing an allmodconfig build (and make mrproper), and am still unable
+> to reproduce this here.
+> 
+> I also dug up the old 5.10-based version we saw something similar on,
+> and wasn't able to reproduce it there, either. (That had been built
+> with clang, but using clang on upstream doesn't seem to reproduce it
+> either.)
+> 
+> I'll continue to play around with different setups, but none of the
+> obvious things seem to work. Worst-case, I don't think it'd be a
+> _problem_ to make EFI + AMD_MEM_ENCRYPT the default for the
+> x86_64/qemu KUnit configuration.
+> 
 
-Applied to clk-next
+I tried again starting with a clean linux_next repo next-20250313
+
+- Ran tests first
+- Built allmodconfig
+- Ran mrproper
+- Ran tests
+
+Saw no problems. Let's watch and see if we can narrow the problem.
+For now I was able to test the pr I will be sending soon.
+
+thanks,
+-- Shuah
+
 
