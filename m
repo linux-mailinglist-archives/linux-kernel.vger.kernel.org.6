@@ -1,106 +1,174 @@
-Return-Path: <linux-kernel+bounces-560181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42652A5FF11
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:17:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F627A5FF04
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:16:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13F3D7A65D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 569223ABCB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10FC1EE7BD;
-	Thu, 13 Mar 2025 18:15:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBC71C8631;
-	Thu, 13 Mar 2025 18:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9901EE7BB;
+	Thu, 13 Mar 2025 18:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="KKtQvRO8"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F106E1E8353;
+	Thu, 13 Mar 2025 18:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741889752; cv=none; b=qiqyUwyqpbgMi7dGxlJy2cSgVRSZsLb3ys5dEafkDHEXI1aEDsCXvE8P6OPKtVmJUeo9O6R+ZxYuOekWj8Tib2MGCuAxj+w0r8kG+XFcZRvFZmK8bjcaX/aGmjj2LxTZlgRDcxuk9IjKW9tzPjY6jsPbA57PbiJHW36+3Wjw6To=
+	t=1741889699; cv=none; b=CUzxs7c0GjNHxB8uYybLTZyslhxCk9xgPoeTBi1rTuODkfRR23djhFJXdpToSU4WWOUGzip6IKJfNxSxmfjrp3+fJuxw7xEOmPKQas9dBkrSRvlddJnPS3ogKuXtkQFawKG4BZtv/u6Q66i5YDo0rIm0766d6nYpxq0WExJBkvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741889752; c=relaxed/simple;
-	bh=790nIjekPGYAliGPAZRKB2moAt8x9SJMIpb1bPx7iVE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PJWwCGnQSXMGKhJJwIuNn6T5oMqFne8xthx3C4kUviwKqT18C+j9DssopQPIfBg9OKRVYz5qUoyZ8fYCHC4msVdH7ALfrt8CRAz/ECCDfkosyDcBD7BAMoCZBU0JpqDFellBre7pDpe3qGI/gyVpQ6YrlqWXGJ+HfD/abeGz+V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07FEE12FC;
-	Thu, 13 Mar 2025 11:16:01 -0700 (PDT)
-Received: from K4MQJ0H1H2.arm.com (unknown [10.163.42.238])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AE5113F694;
-	Thu, 13 Mar 2025 11:15:45 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: jroedel@suse.de,
-	akpm@linux-foundation.org
-Cc: ryan.roberts@arm.com,
-	david@redhat.com,
-	willy@infradead.org,
-	hch@lst.de,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] mm: Update mask post pxd_clear_bad()
-Date: Thu, 13 Mar 2025 23:44:14 +0530
-Message-Id: <20250313181414.78512-1-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1741889699; c=relaxed/simple;
+	bh=hIBH78mE6GO1MejE6dr+XaQJGM2c3fwjbfirYnMXDGo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FjEtX98sz39ff3KDmsDQft/xMgvS2adS0S40QsYMW0ox5IUCqZvCr3D3aY6UW42g5VQP79UEmuffs46Mhh8NW7J+R7aB+pIWgXVMWAk6330+597OKjMpiNtbtmTjcfBAqsOOxGS83ts1Wi93FRIGB0xc4H6yKCHLkNfWqIAgSKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=KKtQvRO8; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZDFym5cLGzlxY1w;
+	Thu, 13 Mar 2025 18:14:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1741889693; x=1744481694; bh=LV8qgu4HNhR4DJaiWiuYUDp2
+	+uUqQ+GBcNS/EVeGX+8=; b=KKtQvRO8z/4Nb47g/yEcTK7W6yIYi2zh4o+BlHcF
+	Xxq0QgPiRUKWg0VtVwmsTbUdAmOlrOgDTjUvZWheXNlLoNKRoYR/qBPztpOFBrVf
+	b4v/eswekj3vLOPQjxMjyiS1HZY5QpwAFPl+b87nN/UgT4lv+bSo8kqh79wgaEdi
+	EVX+mn6EfShJ9N7kr2NPdsxDQcJgohBBQUj1A3S516xz9ZzIh/CoDW4E5kntjQkR
+	c28jtFiAJPz7KemUtZQB7Prqpm60Z285fwVkzsqqLU+rq7waKVuQOmxpyPf8nmYS
+	n4fy/o+Hb5HSpP7L6VkB5xcaknZhBSnV84HJzaJPU8HwdQ==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id RfCfv0FjJaMb; Thu, 13 Mar 2025 18:14:53 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZDFyR13KlzlxY1r;
+	Thu, 13 Mar 2025 18:14:37 +0000 (UTC)
+Message-ID: <41678800-470f-4ea2-802c-f9f4d21817f6@acm.org>
+Date: Thu, 13 Mar 2025 11:14:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] scsi: ufs: core: add device level exception
+ support
+To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>, quic_cang@quicinc.com,
+ quic_nitirawa@quicinc.com, avri.altman@wdc.com, peter.wang@mediatek.com,
+ manivannan.sadhasivam@linaro.org, minwoo.im@samsung.com,
+ adrian.hunter@intel.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Bean Huo <beanhuo@micron.com>, Ziqi Chen <quic_ziqichen@quicinc.com>,
+ Keoseong Park <keosung.park@samsung.com>,
+ Gwendal Grignou <gwendal@chromium.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Eric Biggers <ebiggers@google.com>, open list <linux-kernel@vger.kernel.org>
+References: <772730b9a036a33bebc27cb854576a012e76ca91.1741282081.git.quic_nguyenb@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <772730b9a036a33bebc27cb854576a012e76ca91.1741282081.git.quic_nguyenb@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Since pxd_clear_bad() is an operation changing the state of the page tables,
-we should call arch_sync_kernel_mappings() post this.
+On 3/6/25 9:31 AM, Bao D. Nguyen wrote:
+> +What:		/sys/bus/platform/drivers/ufshcd/*/device_lvl_exception
+> +What:		/sys/bus/platform/devices/*.ufs/device_lvl_exception
+> +Date:		March 2025
+> +Contact:	Bao D. Nguyen <quic_nguyenb@quicinc.com>
+> +Description:
+> +		The device_lvl_exception is a counter indicating the number
+> +		of times the device level exceptions have occurred since the
+> +		last time this variable is reset. Read the device_lvl_exception_id
+> +		sysfs node to know more information about the exception.
+> +		The file is read only.
 
-Fixes: e80d3909be42 ("mm: track page table modifications in __apply_to_page_range()")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- mm/memory.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Shouldn't this sysfs attribute have a "_count" suffix to make it clear
+that it represents a count?
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 78c7ee62795e..9a4a8c710be0 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2987,6 +2987,7 @@ static int apply_to_pmd_range(struct mm_struct *mm, pud_t *pud,
- 			if (!create)
- 				continue;
- 			pmd_clear_bad(pmd);
-+			*mask = PGTBL_PMD_MODIFIED;
- 		}
- 		err = apply_to_pte_range(mm, pmd, addr, next,
- 					 fn, data, create, mask);
-@@ -3023,6 +3024,7 @@ static int apply_to_pud_range(struct mm_struct *mm, p4d_t *p4d,
- 			if (!create)
- 				continue;
- 			pud_clear_bad(pud);
-+			*mask = PGTBL_PUD_MODIFIED;
- 		}
- 		err = apply_to_pmd_range(mm, pud, addr, next,
- 					 fn, data, create, mask);
-@@ -3059,6 +3061,7 @@ static int apply_to_p4d_range(struct mm_struct *mm, pgd_t *pgd,
- 			if (!create)
- 				continue;
- 			p4d_clear_bad(p4d);
-+			*mask = PGTBL_P4D_MODIFIED;
- 		}
- 		err = apply_to_pud_range(mm, p4d, addr, next,
- 					 fn, data, create, mask);
-@@ -3095,6 +3098,7 @@ static int __apply_to_page_range(struct mm_struct *mm, unsigned long addr,
- 			if (!create)
- 				continue;
- 			pgd_clear_bad(pgd);
-+			mask = PGTBL_PGD_MODIFIED;
- 		}
- 		err = apply_to_p4d_range(mm, pgd, addr, next,
- 					 fn, data, create, &mask);
--- 
-2.30.2
+Additionally, here and below, please change "file" into "attribute".
 
+> +What:		/sys/bus/platform/drivers/ufshcd/*/device_lvl_exception_id
+> +What:		/sys/bus/platform/devices/*.ufs/device_lvl_exception_id
+> +Date:		March 2025
+> +Contact:	Bao D. Nguyen <quic_nguyenb@quicinc.com>
+> +Description:
+> +		Reading the device_lvl_exception_id returns the device JEDEC
+> +		standard's qDeviceLevelExceptionID attribute. The definition of the
+> +		qDeviceLevelExceptionID is the ufs device vendor specific design.
+> +		Refer to the device manufacturer datasheet for more information
+> +		on the meaning of the qDeviceLevelExceptionID attribute value.
+> +		The file is read only.
+
+I'm not sure it is useful to export vendor-specific information to
+sysfs.
+
+> diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
+> index 90b5ab6..0248288a 100644
+> --- a/drivers/ufs/core/ufs-sysfs.c
+> +++ b/drivers/ufs/core/ufs-sysfs.c
+> @@ -466,6 +466,56 @@ static ssize_t critical_health_show(struct device *dev,
+>   	return sysfs_emit(buf, "%d\n", hba->critical_health_count);
+>   }
+>   
+> +static ssize_t device_lvl_exception_show(struct device *dev,
+> +					 struct device_attribute *attr,
+> +					 char *buf)
+> +{
+> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+> +
+> +	if (hba->dev_info.wspecversion < 0x410)
+> +		return -EOPNOTSUPP;
+> +
+> +	return sysfs_emit(buf, "%u\n", hba->dev_lvl_exception_count);
+> +}
+
+The preferred approach for sysfs attributes that are not supported is to 
+make these invisible rather than returning an error code.
+
+> +static ssize_t device_lvl_exception_id_show(struct device *dev,
+> +					    struct device_attribute *attr,
+> +					    char *buf)
+> +{
+> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+> +	u64 exception_id;
+> +	int err;
+> +
+> +	ufshcd_rpm_get_sync(hba);
+> +	err = ufshcd_read_device_lvl_exception_id(hba, &exception_id);
+> +	ufshcd_rpm_put_sync(hba);
+> +
+> +	if (err)
+> +		return err;
+> +
+> +	hba->dev_lvl_exception_id = exception_id;
+> +	return sysfs_emit(buf, "%llu\n", exception_id);
+> +}
+
+Just like device_lvl_exception, this attribute shouldn't be visible if
+device level exceptions are not supported.
+
+> +	if (status & hba->ee_drv_mask & MASK_EE_DEV_LVL_EXCEPTION) {
+> +		hba->dev_lvl_exception_count++;
+> +		sysfs_notify(&hba->dev->kobj, NULL, "device_lvl_exception");
+> +	}
+
+sysfs_notify() may sleep and hence must not be called from an interrupt
+handler.
+
+Thanks,
+
+Bart.
 
