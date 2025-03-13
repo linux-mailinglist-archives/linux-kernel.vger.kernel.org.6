@@ -1,126 +1,197 @@
-Return-Path: <linux-kernel+bounces-560269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E85E0A60143
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:32:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B255A60146
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:32:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 377A94202DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:32:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 702FA179008
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 19:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5011F37DA;
-	Thu, 13 Mar 2025 19:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849E51F3BAC;
+	Thu, 13 Mar 2025 19:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TS/dfdqH"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CSLkm0PE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F741F30B2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 19:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EE71F3B89;
+	Thu, 13 Mar 2025 19:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741894249; cv=none; b=gbDehNmMKWKu7UX938bXeX9dE9fy0Sxt4mbO0jtz3UBDbnxCipPjKJC4bHT0Uq88ht3d585g8RFvZ2oWwK0oPLQv73SCCZWz8Brr40p1k2FwBfCTDCUMFuyMNZmdAv9yYrBtqD/pfB3e3EVno2PdiQDrbH89M+HhNSkB2vVF68E=
+	t=1741894264; cv=none; b=ExpOrzTZJSGt+w1EVEYeGxMf+nLFpYlYDhom/gpXXt97c5vnjiQYPu9CFrETDK9WN7OUJ/bxuURc4h/yVGT+XtK1wDTqlf+2NCtZG5Ef3cYUCWhfEGJ7LnCWmUAVSamlvDTLKvqgjAbFxUxoz0BYf592KrHFXSOWVZfnndbKiWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741894249; c=relaxed/simple;
-	bh=7Md4guzuu+5PteE4+/PKz/uRcgnmj/2p8chBDnxxxko=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cbE9D/0ZD3QNLebcBa3CJRNKxNI+TNVc0r2TQR4Vth0TWrK/HVN9IYXIR8M5WRRsC8N8nKiwEMlA7PTzabQ34oUc2x+dtsgpwnNxqJ4RIxDVKj+HRiFMrkd+RZnMdbs2V2iskgjX7CwNN3CbherZ5IxuiTSbGcQHDgQl8JkYge4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TS/dfdqH; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6dd01781b56so17477566d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 12:30:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741894245; x=1742499045; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pU5dmfFAwtKVHugQOsEi9KoVusxSRI65CQ1c6e5/OxU=;
-        b=TS/dfdqHCxtk9Ymy8JbpxdJlHMKgQYFBer9P61wrDRX6zDy0WZ8aupAlblLssuLtPD
-         wjoJAT9855DSbgt/E7oU/7S8Oo9coNhP949NK4vE7C+Pi/nhwNH7KuD58EOYXqmYqsjG
-         GJq9onHL5MrbVSSm7hNRhEWDBozvPAWcQkRRQaGP4htmt5OkQc1KFHIZPyeSrXVAirXq
-         ICTTDEAKKJYTLTO4eUwkcBRgUDomHG5OZuyLM0xgPUoyt3bnU9Wupyoieer0Wrsr7zvR
-         0DWsWCHLBM8/cXlZKFhQ4YNzpNve7dFpb8RHqSAaFaN3hb27pEvvPx7A1M7nnwnEUZ9I
-         jmCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741894245; x=1742499045;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pU5dmfFAwtKVHugQOsEi9KoVusxSRI65CQ1c6e5/OxU=;
-        b=np+vy3c6jLC/6SdKChVhiT6eGkaUWQynDWDvgNximbUANdsv9biLlDmV8QXolL/Vim
-         FO9bGJtirDEFAAWJVLvfNclhjrrQkp8B4C9chT1W0UuM4V9iX8B8KWRQRZHkYCCe3XvL
-         UZGV0Jb+cxV4SO3EzgyjOaZ82HTMjBqO4q1clmcXnR8OM3o2vljSGCna7mlOdgPE1130
-         Ex9DpvL70DlXhzknBG85hIV6W8j4J9ngtDwMC3sSFj3J0fFishg7OgBuClz9sOZRJsO0
-         VxY7jogFwPomaZ59SqfMKQhX/XX3XfqbYBdMcjPe2jRfFvbOYNyDLXo9T1+0TValRRgZ
-         YGiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXW5uqbqFxCWscj/iR8pm/zrTARF4B7EsiOQRowJDWjOqUthLVwY4tqmGuK2VvtgDLNKD3xPDo2tb+yQbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCO7EV5zjebMxxNNBkjLzfStZ4F5tFcqcKew+sRMT8ebV2U5Q0
-	evpis7s7r67H38jYV26hkTaFi12aI0BdDW0MbhWcFLQtCWhrHxcNv/ZayFjn4Cw/zsjZXvYt+mf
-	CfQas5iM/09PJPMfY7myhj0YYCIIPNMaW7g6g
-X-Gm-Gg: ASbGncuYadYcgjiqWHWhBDHrTw5/ny6RkiemhM3aV7et8T6Zj5qB/O6KdnFePveyfU+
-	WK4eTo9vdlmbj/NxNp81h81zqiGvQhgOiB+ZBEUxu78m2Mv20ZUoNdI3W0jjjtCx98L0yKpbXZi
-	ygCjsOEUdG2adFRoSPbz3M0si4pG59TBxq8/5xRi50waKTxfdOKpuvgoEt
-X-Google-Smtp-Source: AGHT+IErYf0CMh7pjopA3FPIsyT1DWsU21J14PsrsdFu892DgD9E7YId1+/cdaugNZMtD2vYkpyH/8y4YKpcXNKFUr0=
-X-Received: by 2002:ad4:5def:0:b0:6e8:f2aa:a8af with SMTP id
- 6a1803df08f44-6eae7af13camr12862786d6.38.1741894245341; Thu, 13 Mar 2025
- 12:30:45 -0700 (PDT)
+	s=arc-20240116; t=1741894264; c=relaxed/simple;
+	bh=atuEPx6iJ0rL6pAp8s4JxhvT/PcR6fvU8+nzY8V+xV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SDveFWyK2/XQ0jU4U+d5xVrnkV9+UkxEx4F/v7fdA2JkCpxdGlz+2LqdNG4l1rJi7GgDfJqCmxsj91FhOFu1vPi4Zee5yFVT7yn9hU0vg2eajem/k5gKnDFgfmG5od+hLyvcWeJBmSpNc76YmtZi0EZy3OFU7uqDFXlSCwHuWbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CSLkm0PE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAFF8C4CEDD;
+	Thu, 13 Mar 2025 19:31:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741894264;
+	bh=atuEPx6iJ0rL6pAp8s4JxhvT/PcR6fvU8+nzY8V+xV0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CSLkm0PEB/nEkfB+lJaIzvAQ7L1e9w7uj+UMZdHuZQCOB4iQpUXJdZmWmerWocpVx
+	 aE7FglW70BbEcvyN5HvQmj04tw4t6ybOZV+OeS1XI2T+tg7Qg1PPB/Mudzr8NIhZ5u
+	 /990C02GaqNbfKue+E5EY33t+nj2Y8V6ggKYwSwOyvvSuFIHywGBOOAsKRKJQTpWGg
+	 kv0aghyYMYOmbHgHJdZn2RM5K4y2QyNtRebzKQsQ6mFsnxtl1QOzrDFn9p/CZ0sLao
+	 beac0BkXH50LyxdJ6H+wPky6qMiQRrXHEXwKxMoyC0dPjk0aDxSgVkEeeaHg/gScZl
+	 OZIL2Ms5F0KyQ==
+Date: Thu, 13 Mar 2025 19:30:58 +0000
+From: Will Deacon <will@kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: syzbot <syzbot+e13e654d315d4da1277c@syzkaller.appspotmail.com>,
+	catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	maz@kernel.org, mark.rutland@arm.com, richard.xnu.clark@gmail.com,
+	jiangshanlai@gmail.com, marcel@holtmann.org,
+	johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+	linux-bluetooth@vger.kernel.org
+Subject: Re: [syzbot] [arm?] WARNING in delayed_work_timer_fn
+Message-ID: <20250313193057.GA7784@willie-the-truck>
+References: <00000000000046efb605fec3def0@google.com>
+ <675c28e0.050a0220.17d782.000d.GAE@google.com>
+ <20250211111045.GA8885@willie-the-truck>
+ <Z6u6MgaJWMpjCn4O@slm.duckdns.org>
+ <20250214164556.GA13743@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312223434.3071598-1-royluo@google.com> <480c7796-2402-4009-9463-81280f9405bd@rowland.harvard.edu>
-In-Reply-To: <480c7796-2402-4009-9463-81280f9405bd@rowland.harvard.edu>
-From: Roy Luo <royluo@google.com>
-Date: Thu, 13 Mar 2025 12:30:09 -0700
-X-Gm-Features: AQ5f1JqqW3P8PdoKGB2y2ZgzSjr5ecrMCcWMGY3liW6jDEIX9qUAMkq0C0Wo3FQ
-Message-ID: <CA+zupgxoHjK_JU-2djDa-bPFCn97gHDMnz0GSvXtJfL2mpFyyg@mail.gmail.com>
-Subject: Re: [PATCH v2] usb: dwc3: core: Avoid redundant system suspend/resume callbacks
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214164556.GA13743@willie-the-truck>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Mar 13, 2025 at 7:27=E2=80=AFAM Alan Stern <stern@rowland.harvard.e=
-du> wrote:
->
-> On Wed, Mar 12, 2025 at 10:34:34PM +0000, Roy Luo wrote:
-> > dwc3 device suspend/resume callbacks were being triggered during system
-> > suspend and resume even if the device was already runtime-suspended.
-> > This is redundant for device mode because the suspend and resume routin=
-es
-> > are essentially identical for system PM and runtime PM.
-> >
-> > To prevent these unnecessary callbacks, indicate to the PM core that it
-> > can safely leave the device in runtime suspend if it's already
-> > runtime-suspended in device mode by returning a positive value in
-> > prepare() callback. This optimization only applies to devices without
-> > pinctrl, as pinctrl has distinct logic tied to system suspend/resume.
-> >
-> > Signed-off-by: Roy Luo <royluo@google.com>
->
-> Out of curiosity: What happens if the USB controller is already in
-> runtime suspend (with wakeup interrupts enabled) when a system suspend
-> occurs?  Does the fact that the interrupts are enabled mean the
-> controller will remain able to wake up the system even if
-> device_may_wakeup() is false?
->
-> Alan Stern
+On Fri, Feb 14, 2025 at 04:45:57PM +0000, Will Deacon wrote:
+> On Tue, Feb 11, 2025 at 10:59:30AM -1000, Tejun Heo wrote:
+> > On Tue, Feb 11, 2025 at 11:10:46AM +0000, Will Deacon wrote:
+> > > Given that this seems to explode a few times a month, I wonder if it's
+> > > worth adding some instrumentation to e.g. dump the name of the workqueue?
+> > 
+> > It's usually most useful to print out the work function when identifying the
+> > culprit. I'd be happy to take the patch.
+> 
+> Thanks, Tejun. I sent a patch adding some more diagnostics:
+> 
+> https://lore.kernel.org/r/20250214164349.13694-1-will@kernel.org
 
-For this specific device-mode scenario, "runtime suspend (with wakeup
-interrupts enabled)" seems unlikely to happen, all irqs are masked as a
-part of dwc3_gadget_suspend() and then the dwc3 core is torn down.
-If this really happens in a hypothetical scenario, I would expect
-device_may_wakeup() set to true when wakeup interrupt is enabled.
-In device_suspend(), it does explicitly check
-"(device_may_wakeup(dev) || device_wakeup_path(dev))"
-and won't enable direct_complete if the device could wake up.
+Ok, we have our first crash [1] with the new debug information:
 
-Best,
-Roy
+[   77.133818][   T10] Bluetooth: hci3: Opcode 0x0c1a failed: -110
+[   77.135329][   T10] Bluetooth: hci3: Error when powering off device on rfkill (-110)
+[   77.143656][    C1] ------------[ cut here ]------------
+[   77.145336][    C1] workqueue: cannot queue hci_cmd_timeout on wq hci3
+[   77.147101][    C1] WARNING: CPU: 1 PID: 7433 at kernel/workqueue.c:2258 __queue_work+0xe94/0x1324
+[   77.149301][    C1] Modules linked in:
+[   77.150287][    C1] CPU: 1 UID: 0 PID: 7433 Comm: syz.2.193 Not tainted 6.14.0-rc5-syzkaller-g77c95b8c7a16 #0
+[   77.152960][    C1] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+[   77.155583][    C1] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   77.157546][    C1] pc : __queue_work+0xe94/0x1324
+[   77.158811][    C1] lr : __queue_work+0xe94/0x1324
+[   77.160114][    C1] sp : ffff800080017b40
+[   77.161145][    C1] x29: ffff800080017b90 x28: dfff800000000000 x27: ffff700010002f88
+[   77.163285][    C1] x26: ffff80008fbbd600 x25: ffff0000dacac800 x24: 0000000000000008
+[   77.165326][    C1] x23: ffff0000dacac9c0 x22: 0000000000000100 x21: 1fffe0001b595938
+[   77.167421][    C1] x20: ffff800092f09000 x19: ffff0000ecf20948 x18: 0000000000000008
+[   77.169356][    C1] x17: 0000000000000000 x16: ffff80008b72ce6c x15: ffff700011f87b38
+[   77.171279][    C1] x14: 1ffff00011f87b38 x13: 0000000000000004 x12: ffffffffffffffff
+[   77.173271][    C1] x11: 0000000000000103 x10: 0000000000ff0100 x9 : d5bcdc7e4519df00
+[   77.175255][    C1] x8 : d5bcdc7e4519df00 x7 : 0000000000000001 x6 : 0000000000000001
+[   77.177277][    C1] x5 : ffff8000800172f8 x4 : ffff80008fcaf7c0 x3 : ffff8000804a7bb4
+[   77.179372][    C1] x2 : 0000000000000000 x1 : 0000000100000101 x0 : 0000000000000000
+[   77.181374][    C1] Call trace:
+[   77.182230][    C1]  __queue_work+0xe94/0x1324 (P)
+[   77.183476][    C1]  delayed_work_timer_fn+0x74/0x90
+[   77.184755][    C1]  call_timer_fn+0x1b4/0x8b8
+[   77.185932][    C1]  __run_timer_base+0x59c/0x7b4
+[   77.187119][    C1]  run_timer_softirq+0xcc/0x194
+[   77.188360][    C1]  handle_softirqs+0x320/0xd34
+[   77.189576][    C1]  __do_softirq+0x14/0x20
+[   77.190672][    C1]  ____do_softirq+0x14/0x20
+[   77.191884][    C1]  call_on_irq_stack+0x24/0x4c
+[   77.193050][    C1]  do_softirq_own_stack+0x20/0x2c
+[   77.194311][    C1]  __irq_exit_rcu+0x1d8/0x544
+[   77.195550][    C1]  irq_exit_rcu+0x14/0x84
+[   77.196669][    C1]  el1_interrupt+0x38/0x68
+[   77.197818][    C1]  el1h_64_irq_handler+0x18/0x24
+[   77.199152][    C1]  el1h_64_irq+0x6c/0x70
+[   77.200245][    C1]  lock_acquire+0x278/0x724 (P)
+[   77.201520][    C1]  rcu_lock_acquire+0x44/0x54
+[   77.202722][    C1]  page_ext_get+0x2c/0x2e8
+[   77.203908][    C1]  page_table_check_set+0xa0/0x408
+[   77.205117][    C1]  __page_table_check_ptes_set+0x2d0/0x398
+[   77.206601][    C1]  set_pte_range+0x618/0x644
+[   77.207792][    C1]  finish_fault+0x968/0xd6c
+[   77.208968][    C1]  handle_pte_fault+0x3528/0x57b0
+[   77.210314][    C1]  handle_mm_fault+0xfa8/0x188c
+[   77.211592][    C1]  __get_user_pages+0x1878/0x3400
+[   77.212967][    C1]  populate_vma_page_range+0x220/0x2f0
+[   77.214435][    C1]  __mm_populate+0x240/0x3d8
+[   77.215600][    C1]  vm_mmap_pgoff+0x304/0x3c4
+[   77.216833][    C1]  ksys_mmap_pgoff+0xd0/0x5c8
+[   77.218066][    C1]  __arm64_sys_mmap+0xf8/0x110
+[   77.219195][    C1]  invoke_syscall+0x98/0x2b8
+[   77.220453][    C1]  el0_svc_common+0x130/0x23c
+[   77.221747][    C1]  do_el0_svc+0x48/0x58
+[   77.222881][    C1]  el0_svc+0x54/0x168
+[   77.223946][    C1]  el0t_64_sync_handler+0x84/0x108
+[   77.225305][    C1]  el0t_64_sync+0x198/0x19c
+[   77.226425][    C1] irq event stamp: 3967
+[   77.227573][    C1] hardirqs last  enabled at (3966): [<ffff80008b7ec538>] _raw_spin_unlock_irqrestore+0x38/0x98
+[   77.230143][    C1] hardirqs last disabled at (3967): [<ffff80008b7ec3e0>] _raw_spin_lock_irq+0x28/0x70
+[   77.232639][    C1] softirqs last  enabled at (2318): [<ffff800080311b48>] handle_softirqs+0xb44/0xd34
+[   77.235151][    C1] softirqs last disabled at (3923): [<ffff800080020dbc>] __do_softirq+0x14/0x20
+[   77.237528][    C1] ---[ end trace 0000000000000000 ]---
+
+
+So it looks like I was right about bluetooth (the work function is
+"hci_cmd_timeout") but, unfortunately, "hci3" doesn't tell us much about
+the client.
+
+Perhaps the failed power-off right before the warning suggests that
+we're not tearing down the wq properly on that error path? Let's see...
+
+hci_rfkill_set_block() calls hci_dev_do_close() if the power-off fails.
+That in turn cancels the delayed 'cmd_timer' work but only if HCI_UP is
+not set in the device flags. But if hci_dev_do_poweroff() failed, HCI_UP
+may well still be set. Then somehow the workqueue is destroyed, I guess
+via hci_unregister_dev() setting HCI_UNREGISTER which enables
+hci_release_dev() but at that point it's hard to know which bluetooth
+driver is responsible.
+
+Assuming hci_unregister_dev() is triggered via hci_dev_do_close()
+closing the device, then unconditionally cancelling the delayed cmd work
+when clearing HCI_UP sounds like a reasonable starter for ten?
+
+Dunno, this is all guesswork in code that I'm not familiar with, so I'm
+hoping somebody can tell me why I'm wrong :)
+
+Will
+
+--->8
+
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index dd770ef5ec36..d2623f6d0593 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -5147,11 +5147,9 @@ int hci_dev_close_sync(struct hci_dev *hdev)
+        }
+
+        err = hci_dev_shutdown(hdev);
+-
+-       if (!test_and_clear_bit(HCI_UP, &hdev->flags)) {
+-               cancel_delayed_work_sync(&hdev->cmd_timer);
++       cancel_delayed_work_sync(&hdev->cmd_timer);
++       if (!test_and_clear_bit(HCI_UP, &hdev->flags))
+                return err;
+-       }
+
+        hci_leds_update_powered(hdev, false);
+ 
 
