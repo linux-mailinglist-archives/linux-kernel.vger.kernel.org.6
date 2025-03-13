@@ -1,212 +1,103 @@
-Return-Path: <linux-kernel+bounces-559736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578AFA5F8D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:44:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACBBEA5F8FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC7D13A57FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:42:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 109503B4F6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22D5268681;
-	Thu, 13 Mar 2025 14:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298FF2686AD;
+	Thu, 13 Mar 2025 14:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FThduapB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="agQ7/Afl"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBB2267F5C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D48D241C8B;
+	Thu, 13 Mar 2025 14:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741876940; cv=none; b=tof0fJ3ALvP0IM8weFgYKhdP8s3wWFNXyjl83QVopWeBQMgRJFhWoRij5E8u1gYY38HUhRitXviB32MUQDh7mI4+gRuCnFrUbGdx+iCrwNQXSbxL1Cg89cawhlA7rqb3PSuIRj0cJQGpRIETipfF934ZUxzd04tEXNddmN9ITgs=
+	t=1741877437; cv=none; b=gw9YWD0lqIH0a9XQb+Uajc3T/VBZA0iFhykzPi4lE3wY8a7G1HkWAAqxJ0dYAn5VipFYFs4grFU80p67SglyVeHAdcAzQnBQwv6WgMqurx/mVlKEDWJm1ewvhSE6tqvNnu63mhkXy1qUWkGyYFd7Xdh1KT1PkZ5chr64zRQHjrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741876940; c=relaxed/simple;
-	bh=6dpJeyLN21oQG4oE0dG/l6v4eRgwx6mxRl3Myz7KDZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nOvUqzC9rTqOP6CRM+kT909tTMu2vHnb95zc+6P9Fa4eH7Byzj9O+7QQyVymDIUUoLgwq4kOEOYP1WenKcqZiS09eghfbLlaCoTHUHdroU8088dXun4CI5AIq2eaD96RskMW8g4FvOo2iYZDikV8drOKt6r6uEWEnpzpkzhdgLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FThduapB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2993FC4CEE5;
-	Thu, 13 Mar 2025 14:42:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741876937;
-	bh=6dpJeyLN21oQG4oE0dG/l6v4eRgwx6mxRl3Myz7KDZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FThduapBGbRyh3/xQxSUHags2TA2PPc0P3PLGau0imU26/c60VKrAr0nooOUMTe3c
-	 1QtVgKznPTvQVpPNW6MJ3rbmRY28jNNiuSPauFv4ncWMbcMjGDgI2tpqT4ymqH9gEu
-	 G7SzsDXuO6X8IuZ3mmnuKr3v/4UJi3hX9hHjkyGzU1ULhTiOUERzfdKasdDvS2AenS
-	 ql0AXncyCIZwb2AdNFTXV/NONVjjB+ot4iLnz1G9VElr8NLALLakiEdlA28qZkDxqw
-	 SUEttWjW311v4nvtNOM1bTNTvqs3FZtLbj3E+AJtYWqMU4oDM0Cm7vfKwvdH+4TaTQ
-	 QPK0d3skFI2/g==
-Date: Thu, 13 Mar 2025 15:42:15 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] drm/panel: Add new helpers for refcounted panel
- allocatons
-Message-ID: <20250313-feathered-peach-okapi-b32f9d@houat>
-References: <20250312-drm-panel-v1-0-e99cd69f6136@redhat.com>
- <20250312-drm-panel-v1-1-e99cd69f6136@redhat.com>
+	s=arc-20240116; t=1741877437; c=relaxed/simple;
+	bh=JASbuPnq/fZZqtfMCcxNabCPg2YoMwjcfwmLMkH+GjU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cu+WGg5cZUz+wxO3qhiB8zODab15fbZVX0C6+2NDhC9hEP7T/jNAWEUDe9FctnPDEiXoWDd5m38cARPUJLba2YxWUqFkF4xkCw1+YrDRoTsfEHBpU467Bqi0neSPOVzd1J2hsJuRNCgChPsdsyirJKjj1HGRSxIhTYs7gwlCWkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=agQ7/Afl; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 6D3391F92C;
+	Thu, 13 Mar 2025 15:43:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1741877015;
+	bh=u4y3Mf6vb5tkFjtxo50EBb/g8sSjRTOwS1HEz/JCbvI=; h=From:To:Subject;
+	b=agQ7/AflldL57JLuFwV0NTTCbXaKqalGl3674H4jRNx/vwUS6tf0B0t2vB/GAwE6n
+	 pZ1yIlKhhQ3OPEGWPOOAlJmbDm+9dxWpoibqB6ibEZnRO6yEr4VmkMMZCGuXAPCs43
+	 5uW4BHSEHoTtZDTVZ9kWG01ZYJhKC+Mlt+m4lkuLcbLwzfqehFddXDSMWzUvY910BV
+	 WYyqJrRzPI/oDtFW2q3BKbd1W4/dRY31eLKEba1tnq604iqsF20UzIfQp9bS4GHpFF
+	 9aK0eYcfS8Kaa3/amZ0DLeD0MIDXvcKvJkzM6yo7qBvo0MqXI/bK51t7OiIVj/sK1/
+	 0/lsOtvtX8LIA==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	soc@kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [RFC PATCH v1 0/2] platform: toradex: Add toradex embedded controller
+Date: Thu, 13 Mar 2025 15:43:29 +0100
+Message-Id: <20250313144331.70591-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4vtgk7bl5mhaj45p"
-Content-Disposition: inline
-In-Reply-To: <20250312-drm-panel-v1-1-e99cd69f6136@redhat.com>
+Content-Transfer-Encoding: 8bit
 
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
---4vtgk7bl5mhaj45p
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC 1/2] drm/panel: Add new helpers for refcounted panel
- allocatons
-MIME-Version: 1.0
+This series adds support for the Toradex Embedded Controller, currently used
+on Toradex SMARC iMX95 and iMX8MP boards, with more to come in the future.
 
-Hi Anusha,
+The EC provides board power-off, reset and GPIO expander functionalities.
 
-In addition to the feedback Luca already provided, I have a few comments
+Sending it as an RFC to gather initial feedback on it before investing more
+time in testing and adding the remaining functionalities, with that said both
+the code and the binding are in condition to be wholly reviewed.
 
-On Wed, Mar 12, 2025 at 08:54:42PM -0400, Anusha Srivatsa wrote:
-> Introduce reference counted allocations for panels to avoid
-> use-after-free. The patch adds the macro devm_drm_bridge_alloc()
-> to allocate a new refcounted panel. Followed the documentation for
-> drmm_encoder_alloc() and devm_drm_dev_alloc and other similar
-> implementations for this purpose.
->=20
-> Also adding drm_panel_get() and drm_panel_put() to suitably
-> increment and decrement the refcount
->=20
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
-> ---
->  drivers/gpu/drm/drm_panel.c | 50 ++++++++++++++++++++++++++++++++++++++
->  include/drm/drm_panel.h     | 58 +++++++++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 108 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-> index c627e42a7ce70459f50eb5095fffc806ca45dabf..b55e380e4a2f7ffd940c207e8=
-41c197d85113907 100644
-> --- a/drivers/gpu/drm/drm_panel.c
-> +++ b/drivers/gpu/drm/drm_panel.c
-> @@ -79,6 +79,7 @@ EXPORT_SYMBOL(drm_panel_init);
->   */
->  void drm_panel_add(struct drm_panel *panel)
->  {
-> +	drm_panel_get(panel);
->  	mutex_lock(&panel_lock);
->  	list_add_tail(&panel->list, &panel_list);
->  	mutex_unlock(&panel_lock);
-> @@ -96,6 +97,7 @@ void drm_panel_remove(struct drm_panel *panel)
->  	mutex_lock(&panel_lock);
->  	list_del_init(&panel->list);
->  	mutex_unlock(&panel_lock);
-> +	drm_panel_put(panel);
->  }
->  EXPORT_SYMBOL(drm_panel_remove);
+Emanuele Ghidoli (2):
+  dt-bindings: firmware: add toradex,embedded-controller
+  platform: toradex: add preliminary support for Embedded Controller
 
-I think these two should be added as a separate patch, with some
-additional comment on why it's needed (because we store a pointer in the
-panel list).
+ .../firmware/toradex,embedded-controller.yaml |  44 +++++
+ MAINTAINERS                                   |   7 +
+ drivers/platform/Kconfig                      |   2 +
+ drivers/platform/Makefile                     |   1 +
+ drivers/platform/toradex/Kconfig              |  18 ++
+ drivers/platform/toradex/Makefile             |   1 +
+ drivers/platform/toradex/toradex-ec.c         | 155 ++++++++++++++++++
+ 7 files changed, 228 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/toradex,embedded-controller.yaml
+ create mode 100644 drivers/platform/toradex/Kconfig
+ create mode 100644 drivers/platform/toradex/Makefile
+ create mode 100644 drivers/platform/toradex/toradex-ec.c
 
-> =20
-> @@ -355,6 +357,54 @@ struct drm_panel *of_drm_find_panel(const struct dev=
-ice_node *np)
->  }
->  EXPORT_SYMBOL(of_drm_find_panel);
-> =20
-> +/* Internal function (for refcounted panels) */
-> +void __drm_panel_free(struct kref *kref)
-> +{
-> +	struct drm_panel *panel =3D container_of(kref, struct drm_panel, refcou=
-nt);
-> +	void *container =3D ((void *)panel) - panel->container_offset;
-> +
-> +	kfree(container);
-> +}
-> +EXPORT_SYMBOL(__drm_panel_free);
-> +
-> +static void drm_panel_put_void(void *data)
-> +{
-> +	struct drm_panel *panel =3D (struct drm_panel *)data;
-> +
-> +	drm_panel_put(panel);
-> +}
-> +
-> +void *__devm_drm_panel_alloc(struct device *dev, size_t size, size_t off=
-set,
-> +			     const struct drm_panel_funcs *funcs)
-> +{
-> +	void *container;
-> +	struct drm_panel *panel;
-> +	int err;
-> +
-> +	if (!funcs) {
-> +		dev_warn(dev, "Missing funcs pointer\n");
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	container =3D kzalloc(size, GFP_KERNEL);
-> +	if (!container)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	panel =3D container + offset;
-> +	panel->container_offset =3D offset;
-> +	panel->funcs =3D funcs;
-> +	kref_init(&panel->refcount);
-> +
-> +	err =3D devm_add_action_or_reset(dev, drm_panel_put_void, panel);
-> +	if (err)
-> +		return ERR_PTR(err);
-> +
-> +	drm_panel_init(panel, dev, funcs, panel->connector_type);
-> +
-> +	return container;
-> +}
-> +EXPORT_SYMBOL(__devm_drm_panel_alloc);
+-- 
+2.39.5
 
-Similarly, here, I think we'd need to split that some more. Ideally, we
-should have a series of patches doing
-
-1: Adding that allocation function you have right now, but using
-   devm_kzalloc
-
-2: Adding the reference counting to drm_panel, with drm_panel_get /
-   drm_panel_put and the devm_action to put the reference in
-   __devm_drm_panel_alloc()
-
-3: Adding X patches to add calls to drm_bridge_get/drm_bridge_put
-   everywhere it's needed, starting indeed by
-   drm_panel_add/drm_panel_put. We don't have to do all of them in that
-   series though. of_drm_find_panel though will probably merit a series
-   of its own, given we'd have to fix all its callers too.
-
-4: Convert some panels to the new allocation function. You already did
-   that with panel_simple so there's nothing to change yet, but once we
-   agree on the API we should mass convert all the panels.
-
-Maxime
-
---4vtgk7bl5mhaj45p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ9LuxgAKCRDj7w1vZxhR
-xSRgAQCno5eoDe+xyhVEei0/Ps82ZZhNj1CsmAZx5K/86MEOaQEAzEUc18v3gy35
-monod6iGrJugTyHpZo+jVW5lOddsRQI=
-=+pVU
------END PGP SIGNATURE-----
-
---4vtgk7bl5mhaj45p--
 
