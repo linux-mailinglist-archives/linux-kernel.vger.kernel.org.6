@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-559555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD7EA5F577
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:08:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F13E0A5F57F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 004C87AE2CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E852A880818
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF32E26770E;
-	Thu, 13 Mar 2025 13:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640D0267AE8;
+	Thu, 13 Mar 2025 13:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ebAhNtxo"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EzmPzSu7"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD26261396
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22873262817
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741871324; cv=none; b=sTQsVfu5LVAp3lVSAyHV+jNq3H9Tjhd8JhtmKqGqw8rq/ndZi2gel85+8np61f/vzvz8OUEeSOvUQCvmXjTnuzUxOr9cLK2T4yjM3iRcTnKNPElpcXxEeAxoQDWgn93MW7Nht2qgMNj3eUSbLuZQWxJF8aZpeOSHnAhgOEE2j4s=
+	t=1741871326; cv=none; b=iCcw48QlLyqvufHT6k9HpgYzbZ58y3dq2VIG1D/IHZMZtqRGHU2CXWPUfo0f9a5NpiErOyRTXKOi1I5pNCltYGbbQlN+K+jBt+fMCmN7iKCuL2whmNaxQMPasrYza65Rx44wr1yeUaxOnIgq+IMkA4T3Gysui8aHG83/nr8zkl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741871324; c=relaxed/simple;
-	bh=4sgJP4yokk61l7eFyLchQfJsl+tBmG20NMrzh6DyHL8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QfRR3S0I3AbTyJOnMTWo9HC3x/xDhOANI4c4IjQVYidLvkNX00fxAXdRcmT45C2OdgzdifOAB31ib0E66WafZWVwF1w43iHFenl5RD5Y45nStu2JU14qz8w7pTPGhy551ERj8AnOHlsaMERXqyrQeHQk3b225ZYYwbUN29pG5bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ebAhNtxo; arc=none smtp.client-ip=198.175.65.11
+	s=arc-20240116; t=1741871326; c=relaxed/simple;
+	bh=ySl0pH5HVZXBPH/qqDQBOVJ45xXXFTj65gXWcnoIcNM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=RaURCfUsJK6YMVlZjcx+d2pR2hDooC909l6mtbT4fPzMtNnkpUdkiWeWQzubcwMTjF3ojSESpne+Pkd2yUIhOSZPWhNmBuwVd5xHDfMywHBJIAM90Kg/2Hyw2SmtusOO7UvjSnI7PfkTVUHRC4PpBboAE342Spr9sQyLVk/vFIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EzmPzSu7; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741871323; x=1773407323;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=4sgJP4yokk61l7eFyLchQfJsl+tBmG20NMrzh6DyHL8=;
-  b=ebAhNtxoMeSKMIUh5q50PAg1xEWdVdIWUtWHI0mktiTnfuOsLG/zV/xS
-   DL/r90JFZjFpJalcpCqbBX0WTwyKzXxdxEHa0VcQX0XgI0b4H5GaFHKet
-   zYMvlX89pD88aME9QmprbSzaE6CJ3hZIlJFnbgDUuhGY2hVaVw3zUvHpJ
-   XrF32eCALA2ii9iu0FNnXGPhtPxS4JyiGP+oCMnbgIj4af1/sDinGQ+gY
-   ytdR905777MwK6g3yExLGYPlopWXtwJSb3X/3f9s7Acr9ILf9xanCAqWs
-   gGR/xA912aTXVzkqfPEmwwppTPLYxKGnz6SkDW3fRBV9YyoSjWduL1beb
+  t=1741871324; x=1773407324;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ySl0pH5HVZXBPH/qqDQBOVJ45xXXFTj65gXWcnoIcNM=;
+  b=EzmPzSu7lSMz3SZOlVNPlI7eBV0rUSDfByK1IoEcAgYU/7330z/pnZoj
+   AeRRe6O/SIufhnMExPw9uwkS3jrHqoPlkTbdUXkmAOh7iG5zy7HP05wlh
+   XrvN/2/KmAisQvjJrFcm7nWqMYyZajfbGoYDQHVkFXcpkqliCmRURxDjE
+   vEpPbmBbIbp+6mBe3Q+5HXbfYgJ0z93sdXROsmdbAYLGPyeBbf6ZD+6JD
+   gZGVxFNmXPp7FYl8xZiIlQ1wsREsnMYVlMIOnbtozfmbwt+nVKj5ZtKYE
+   Ao/96Y2PxS6NynFV6gS6nAbVzDwEDSZc/g/781fFj0uvGY17Wa8X6XlSA
    A==;
-X-CSE-ConnectionGUID: T53y1RAyQYqnev5/ftBWMg==
-X-CSE-MsgGUID: cUPhXTzGSh2qyLlz3ieZPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="53191633"
+X-CSE-ConnectionGUID: /3VYPIDqTQ+XrS1LuZoy4w==
+X-CSE-MsgGUID: vO/fvATvTQ2F9kYTvKSUPQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="53191636"
 X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="53191633"
+   d="scan'208";a="53191636"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
   by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:08:41 -0700
-X-CSE-ConnectionGUID: pxnZjseOTzaPeHUiD4NXpQ==
-X-CSE-MsgGUID: K2DFXMhZQji/adqEfvfI5Q==
+X-CSE-ConnectionGUID: AaeTMGuvRySW6ZNld0lv3w==
+X-CSE-MsgGUID: uO7BIq9SQGyrk75IhtQenA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="126011491"
+   d="scan'208";a="126011494"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
   by orviesa004.jf.intel.com with ESMTP; 13 Mar 2025 06:08:41 -0700
 From: kan.liang@linux.intel.com
@@ -63,10 +64,12 @@ To: peterz@infradead.org,
 	namhyung@kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V2 1/4] perf/x86/intel/uncore: Support MSR portal for discovery tables
-Date: Thu, 13 Mar 2025 06:08:44 -0700
-Message-Id: <20250313130847.4081079-1-kan.liang@linux.intel.com>
+Subject: [PATCH V2 2/4] perf/x86/intel/uncore: Support customized MMIO map size
+Date: Thu, 13 Mar 2025 06:08:45 -0700
+Message-Id: <20250313130847.4081079-2-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20250313130847.4081079-1-kan.liang@linux.intel.com>
+References: <20250313130847.4081079-1-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,157 +80,46 @@ Content-Transfer-Encoding: 8bit
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-Starting from the Panther Lake, the discovery table mechanism is also
-supported in client platforms. The difference is that the portal of the
-global discovery table is retrieved from an MSR.
+For a server platform, the MMIO map size is always 0x4000. However, a
+client platform may have a smaller map size.
 
-The layout of discovery tables are the same as the server platforms.
-Factor out __parse_discovery_table() to parse discover tables.
-
-The uncore PMON is Die scope. Need to parse the discovery tables for
-each die.
+Make the map size customizable.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
 
 No changes since V1
 
- arch/x86/events/intel/uncore_discovery.c | 87 ++++++++++++++++++------
- arch/x86/events/intel/uncore_discovery.h |  3 +
- 2 files changed, 70 insertions(+), 20 deletions(-)
+ arch/x86/events/intel/uncore_discovery.c | 2 +-
+ arch/x86/events/intel/uncore_snbep.c     | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/events/intel/uncore_discovery.c b/arch/x86/events/intel/uncore_discovery.c
-index 251e1f8fabb1..8dc9b712dafb 100644
+index 8dc9b712dafb..bfd8af90d02d 100644
 --- a/arch/x86/events/intel/uncore_discovery.c
 +++ b/arch/x86/events/intel/uncore_discovery.c
-@@ -273,32 +273,15 @@ uncore_ignore_unit(struct uncore_unit_discovery *unit, int *ignore)
- 	return false;
+@@ -655,7 +655,7 @@ void intel_generic_uncore_mmio_init_box(struct intel_uncore_box *box)
+ 	}
+ 
+ 	addr = unit->addr;
+-	box->io_addr = ioremap(addr, UNCORE_GENERIC_MMIO_SIZE);
++	box->io_addr = ioremap(addr, type->mmio_map_size);
+ 	if (!box->io_addr) {
+ 		pr_warn("Uncore type %d box %d: ioremap error for 0x%llx.\n",
+ 			type->type_id, unit->id, (unsigned long long)addr);
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 60973c209c0e..48e19b26dca6 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -6495,6 +6495,8 @@ static void uncore_type_customized_copy(struct intel_uncore_type *to_type,
+ 		to_type->get_topology = from_type->get_topology;
+ 	if (from_type->cleanup_mapping)
+ 		to_type->cleanup_mapping = from_type->cleanup_mapping;
++	if (from_type->mmio_map_size)
++		to_type->mmio_map_size = from_type->mmio_map_size;
  }
  
--static int parse_discovery_table(struct pci_dev *dev, int die,
--				 u32 bar_offset, bool *parsed,
--				 int *ignore)
-+static int __parse_discovery_table(resource_size_t addr, int die,
-+				   bool *parsed, int *ignore)
- {
- 	struct uncore_global_discovery global;
- 	struct uncore_unit_discovery unit;
- 	void __iomem *io_addr;
--	resource_size_t addr;
- 	unsigned long size;
--	u32 val;
- 	int i;
- 
--	pci_read_config_dword(dev, bar_offset, &val);
--
--	if (val & ~PCI_BASE_ADDRESS_MEM_MASK & ~PCI_BASE_ADDRESS_MEM_TYPE_64)
--		return -EINVAL;
--
--	addr = (resource_size_t)(val & PCI_BASE_ADDRESS_MEM_MASK);
--#ifdef CONFIG_PHYS_ADDR_T_64BIT
--	if ((val & PCI_BASE_ADDRESS_MEM_TYPE_MASK) == PCI_BASE_ADDRESS_MEM_TYPE_64) {
--		u32 val2;
--
--		pci_read_config_dword(dev, bar_offset + 4, &val2);
--		addr |= ((resource_size_t)val2) << 32;
--	}
--#endif
- 	size = UNCORE_DISCOVERY_GLOBAL_MAP_SIZE;
- 	io_addr = ioremap(addr, size);
- 	if (!io_addr)
-@@ -346,7 +329,32 @@ static int parse_discovery_table(struct pci_dev *dev, int die,
- 	return 0;
- }
- 
--bool intel_uncore_has_discovery_tables(int *ignore)
-+static int parse_discovery_table(struct pci_dev *dev, int die,
-+				 u32 bar_offset, bool *parsed,
-+				 int *ignore)
-+{
-+	resource_size_t addr;
-+	u32 val;
-+
-+	pci_read_config_dword(dev, bar_offset, &val);
-+
-+	if (val & ~PCI_BASE_ADDRESS_MEM_MASK & ~PCI_BASE_ADDRESS_MEM_TYPE_64)
-+		return -EINVAL;
-+
-+	addr = (resource_size_t)(val & PCI_BASE_ADDRESS_MEM_MASK);
-+#ifdef CONFIG_PHYS_ADDR_T_64BIT
-+	if ((val & PCI_BASE_ADDRESS_MEM_TYPE_MASK) == PCI_BASE_ADDRESS_MEM_TYPE_64) {
-+		u32 val2;
-+
-+		pci_read_config_dword(dev, bar_offset + 4, &val2);
-+		addr |= ((resource_size_t)val2) << 32;
-+	}
-+#endif
-+
-+	return __parse_discovery_table(addr, die, parsed, ignore);
-+}
-+
-+static bool intel_uncore_has_discovery_tables_pci(int *ignore)
- {
- 	u32 device, val, entry_id, bar_offset;
- 	int die, dvsec = 0, ret = true;
-@@ -395,6 +403,45 @@ bool intel_uncore_has_discovery_tables(int *ignore)
- 	return ret;
- }
- 
-+static bool intel_uncore_has_discovery_tables_msr(int *ignore)
-+{
-+	unsigned long *die_mask;
-+	bool parsed = false;
-+	int cpu, die;
-+	u64 base;
-+
-+	die_mask = kcalloc(BITS_TO_LONGS(__uncore_max_dies),
-+			   sizeof(unsigned long), GFP_KERNEL);
-+	if (!die_mask)
-+		return false;
-+
-+	cpus_read_lock();
-+	for_each_online_cpu(cpu) {
-+		die = topology_logical_die_id(cpu);
-+		if (__test_and_set_bit(die, die_mask))
-+			continue;
-+
-+		if (rdmsrl_safe_on_cpu(cpu, UNCORE_DISCOVERY_MSR, &base))
-+			continue;
-+
-+		if (!base)
-+			continue;
-+
-+		__parse_discovery_table(base, die, &parsed, ignore);
-+	}
-+
-+	cpus_read_unlock();
-+
-+	kfree(die_mask);
-+	return parsed;
-+}
-+
-+bool intel_uncore_has_discovery_tables(int *ignore)
-+{
-+	return intel_uncore_has_discovery_tables_msr(ignore) ||
-+	       intel_uncore_has_discovery_tables_pci(ignore);
-+}
-+
- void intel_uncore_clear_discovery_tables(void)
- {
- 	struct intel_uncore_discovery_type *type, *next;
-diff --git a/arch/x86/events/intel/uncore_discovery.h b/arch/x86/events/intel/uncore_discovery.h
-index 0e94aa7db8e7..690f737e6837 100644
---- a/arch/x86/events/intel/uncore_discovery.h
-+++ b/arch/x86/events/intel/uncore_discovery.h
-@@ -1,5 +1,8 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- 
-+/* Store the full address of the global discovery table */
-+#define UNCORE_DISCOVERY_MSR			0x201e
-+
- /* Generic device ID of a discovery table device */
- #define UNCORE_DISCOVERY_TABLE_DEVICE		0x09a7
- /* Capability ID for a discovery table device */
+ static struct intel_uncore_type **
 -- 
 2.38.1
 
