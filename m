@@ -1,141 +1,310 @@
-Return-Path: <linux-kernel+bounces-559308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3251CA5F230
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:19:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E6BA5F234
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 12:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE771896C72
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D3E3BDFAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 11:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA71D2661A1;
-	Thu, 13 Mar 2025 11:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0E8266185;
+	Thu, 13 Mar 2025 11:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ax9II8Fu"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="CoEmhtgV"
+Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011032.outbound.protection.outlook.com [52.103.67.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8153526563B;
-	Thu, 13 Mar 2025 11:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741864741; cv=none; b=dM6A+aaXCVrm8svT3bIrEaQ2qHPBIyMxWLlv/JXjSrR3z5gUNyCJR5czcru8fMcn2Bys2cBYzsLs0ujaMpx+07c5d7oVjNE3pCFdB7wz2orp7VVO3E7nZ3kEvjNnlUlcZ1FNXFAuntDoGiOuh2E6f50EfFEF6GsWengrf02FKRw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741864741; c=relaxed/simple;
-	bh=exJvKtRGcNtxJCGx3dcAmTVLZlX/d0FQIWwfznTTjj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ff4NRvxJrWLFOz2cESFjWkVLSVgx3Dew0cNoj8fzc6esqzJskRnBSTwBc0ZPxURsAEJc2RbMP38EkIGoeTgNj6Facr1bLNlrc7Oe1jIlTibzvVxNrqivTMsLDQapXQX8KdLkMtxIosMAZSHmpr9BXMwHMyjF8RvZIQpwOPp6AgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ax9II8Fu; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52D8RtsJ009903;
-	Thu, 13 Mar 2025 11:18:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=030sz2
-	TtLqOkQj6aFfSS41uI8Fof4nW8LclT1zGrP5I=; b=ax9II8FuyVkJEuEmEm384K
-	PDvyET2yePVbUU/NacXu8uZqSy8naHEgZrQ4wwJg4w8DrNAdf4ewkmvcaMZwtvSl
-	/xfoZaOaOiJs5vygDatkeO5DgHFG2P2dhkaK57YAvcfNhxvRMDIzmGdZNWSZdtx1
-	Q5XcnBwJxo6qdRQUYhw0Td06U2sGboc66r2Vypdn83S+mBdJl1iDQI/ti5qm6RoO
-	3vEQ7RJFWNYHbkS2fg4uZpS/Y+Z+KeNdXtbU3HGGUSZoh3a7gQ5aLxM30urPl3rP
-	ut7wuPp0e5HEONoPhugfAFfufSJ20vQePTH0Lk1xUJU6MCppnjVL9TIuaBsThw8A
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45bhg0bage-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 11:18:56 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52D8Vd2S003181;
-	Thu, 13 Mar 2025 11:18:56 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atstser1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 11:18:56 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52DBItju22217366
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Mar 2025 11:18:55 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6592158058;
-	Thu, 13 Mar 2025 11:18:55 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 86FB558057;
-	Thu, 13 Mar 2025 11:18:54 +0000 (GMT)
-Received: from [9.61.127.211] (unknown [9.61.127.211])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 13 Mar 2025 11:18:54 +0000 (GMT)
-Message-ID: <ff21c2cd-2999-4507-b5bc-26da5333e955@linux.ibm.com>
-Date: Thu, 13 Mar 2025 07:18:54 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B29B1D7984;
+	Thu, 13 Mar 2025 11:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741864785; cv=fail; b=i8xgmByGFaIeA0qmj/D7lsRofNz625l9ydF8SiOcZWsvoz+XBotrVoAH6+m3RsHteNZO+ugFgbxBes/LRJ1e1jb0IUQ2Ak+TDe2Mi8lcULrOUV6ayhKRGfpniz7W+l4Y+UVzURN270X5KumNq0FgPcYLbMDEME/k+PrjKCDpvj0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741864785; c=relaxed/simple;
+	bh=MwvXUoxGNg7btJHeQxQszyIRwoXE4Zr8/J5wjPuMTvY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MU7rF3pfV+23rxAysF5096zykSmT+/xHkamSoLI45+VGCO3u1mC1Y4MmHqNIFAlnFOiztoRX2HTS6pw5+6K+pc4SiBqmybxBagkMtr1tSs87+Xs9m0l3izNKUyJ8JGd00hneUj1jV/gsLUzFWoWVxSz8jSwsbIgmGnv+/zQA1tI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=CoEmhtgV; arc=fail smtp.client-ip=52.103.67.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TCMrrIM3fSV/7ZyMC3bP4Yd382j1uLTDgMY9tU38kjpNw9N4zCG8lqpOHo+Ptqpw3eDclmvYOJCBcGRHWylrObaVAWQ1jC4Lar5wy17RzqYHOCMPkkbR8NMIxKlK57uAMJZH8CbYROD5BtPRXPnyfUxLYD3sJV4RbKmEeNCCrf7orHymMmj9U6+5AsH5omBVGczIarHwMs4ey9+ds5y21ZImhlPFyJ5Q2xLohR7U7qDqyjMyNT3aPJVyGMtNwaitQkFhV2Ddol2ie4XHamo/LPNMCkcFAN4650G6yuQZEEuyT3qmJIoYhBtccdmAvOiFoxKKNDgNVckI2MgLYANr1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kzJM5vyMl3s56WJMhq6BZAyalpNM5Q0ZF/PIrKBcI9g=;
+ b=ueN5dnbaIC6AaEjyItPLP7oEIkxsdqk1MhAlP2GTM1mW8p3hL8I8etS2fGWZUIxIETapHFCU7wD3SJ1PWsC5IZuDwI2Wrx3Xb1GIBwGhENxUQrCAJeCoNAj/BNSpUCVByOluUMGQDOIQotqOEmIsdtVl4qSyNtCf/i6+GfORGrGcU2iOp3KLrNK/pp2iM5pVmZQkyKlY0G82j7EJFdXxfdm9AA4CCFwXfM4EgSpLyP/lnsBO/BzTKRqdBQdGcNVYmI1l28Brp96ZXQgBXklkGdAaYMx5oPX3cheUOrvSS0ImkmLRvCoYFikQk2d1puHdylE2ufGUlG9SONjcfXtrFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kzJM5vyMl3s56WJMhq6BZAyalpNM5Q0ZF/PIrKBcI9g=;
+ b=CoEmhtgV/99hO117FlahxRRFn3t0Mecr9amCYmBIHA3uCprcOyFN8k3tdVlFApTX8CdcFGh4VBnCGfYYuJ+0UF8xKN515TpSu0IndNkhRptVS9Omalp3BpqkzBET4RRN8qe1gyoa6sUYK5oN2hgWldcbUgz4qlMG5kPnN/qC7goPO0wsEP4uMYJ1E0M8d63WvBFmPBicFWqWXblwvICHwBOtBVbFmgj414skQR6Thto3QW2u/fQLD20DvCWQPkiZWRKElWzhijUzdVQUgYaD0BaUmALZhsLeaqg3Se4aY7HhpPN1llxE7tslXwiFumUMlqjZvc06Ycxkj7Rpobo03A==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by MA1PPFE52A1FAE5.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a04::331) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.25; Thu, 13 Mar
+ 2025 11:19:33 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8534.025; Thu, 13 Mar 2025
+ 11:19:33 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Petr Mladek <pmladek@suse.com>, "keescook@chromium.org"
+	<keescook@chromium.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sven Peter <sven@svenpeter.dev>, Thomas Zimmermann <tzimmermann@suse.de>,
+	Aun-Ali Zaidi <admin@kodeit.net>, Maxime Ripard <mripard@kernel.org>,
+	"airlied@redhat.com" <airlied@redhat.com>, Simona Vetter <simona@ffwll.ch>,
+	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+	"apw@canonical.com" <apw@canonical.com>, "joe@perches.com" <joe@perches.com>,
+	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Hector Martin
+	<marcan@marcan.st>, Asahi Linux Mailing List <asahi@lists.linux.dev>
+Subject: [PATCH v2 1/2] lib/vsprintf: Add support for generic FourCCs by
+ extending %p4cc
+Thread-Topic: [PATCH v2 1/2] lib/vsprintf: Add support for generic FourCCs by
+ extending %p4cc
+Thread-Index: AQHblAnLqD345R2rs0audT7tx610NQ==
+Date: Thu, 13 Mar 2025 11:19:33 +0000
+Message-ID: <79FA3F41-FD7A-41D9-852B-D32606AF5EB4@live.com>
+References: <F61E0F31-980B-4855-9AA8-D594BEEFEC6F@live.com>
+In-Reply-To: <F61E0F31-980B-4855-9AA8-D594BEEFEC6F@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|MA1PPFE52A1FAE5:EE_
+x-ms-office365-filtering-correlation-id: cc35713d-f2ee-4127-eb85-08dd6220ee3e
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|19110799003|8062599003|8060799006|15080799006|7092599003|440099028|3412199025|41001999003|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?CiYjPsJTeqfvDsJJrle9AhJTBovu2ldZFkFWWu9Spa+a+R3i02B/3Wbe1UL7?=
+ =?us-ascii?Q?iMjoczQXbwWFKXCRAcgCmmM22REiID1IIbIhq4JFSz6whInSWnpGzYlrkqoo?=
+ =?us-ascii?Q?aZJc+rqa9MHPGmwLjFDNdk7l3cPkyDG1XyRYqhhCD0XLoHn3oWkOANZLoAox?=
+ =?us-ascii?Q?7V9FWfoF3Pi3iIzNFJ8a6t9nxPuOCXPbmrKxJZy1iz2gEVNsJSNbyaulmO3R?=
+ =?us-ascii?Q?bNHN+KV9MZ3/IWddvLRUyRr8dsmOOcK1j4MsVzHzUId80CredmdHWHYGP6ab?=
+ =?us-ascii?Q?kimWfPhwt5792JJGYJF6yL81jRH5FcRzAwjQxb4tkl4mwmv28B98GdKyJiWr?=
+ =?us-ascii?Q?XthKntkQYs6BMYDImMF5l3+cOFeyr/8ATfnpN99R12pBVCjegN0Yr+0I2rBe?=
+ =?us-ascii?Q?ZZyr+P67eKo3vbOBLza5gqTff7Qegyo8uEtgLCGAN3xcg2qwIaPINocuv4lT?=
+ =?us-ascii?Q?fByPiAbaU1f/TZ8MkkdEJ1MGB9JWfzJXUK3fjU15lq7focWSwdtoZ4cU2/Aw?=
+ =?us-ascii?Q?KiUzQnEawrhrEYaO3e3NZH5olU9ZLBn+Ygn8pJMuEx401SW1Mq0F+r5I4c8P?=
+ =?us-ascii?Q?GmJbOr7K6lgGSwq+vPxP7GdRtjxpCGspVW9ghQC7AQYm1nyz1/e2VvmA1gXi?=
+ =?us-ascii?Q?DWk0/9SfuECvn7Cn8MWCHQ+3tWc+o//9aEuWLWBKfJs9E06GzgaPvkToC+dK?=
+ =?us-ascii?Q?P//Mm1nGz/cTTnOpBDw5f852YINPvw8oX3/oR4l1GZDppABstszoepTkU1pY?=
+ =?us-ascii?Q?yw2P/TUP+hnllCl9llLu30rXTwftsv2syykqqZFmN2Qo0oYdZENuYiYcIbUL?=
+ =?us-ascii?Q?Co372nxOyhr59UGAgpWpK69EKBOTVQK876U+E3aOpweCnXjObJ6luRGir0s7?=
+ =?us-ascii?Q?fp2ypPWnlE0zWLQ5JhUH+R0SznU6cV39hy2DvyRVx/H139ygPDSBn1eYLFy2?=
+ =?us-ascii?Q?wBBFBxN215pBTHrMZa7yaaf8SwaUEHeZ5rsLjE92WnxKWc+kmKiFH0M0elWj?=
+ =?us-ascii?Q?uv12MKLw4PLo/QunxM/zxtSY36quTWkrgA0uBV9oF4V1+zhWLpMccE1f6Au+?=
+ =?us-ascii?Q?Uq56c99BLw36enjVzykX7oQ1sC7ItnSvWSKrmTwkdLZvKbEGcQY=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?eqTG1vlJx7OFjhs290fO2l8GCDvG3MOr6hzP0QJ3KRXJbd7UxjVCXz/5//HA?=
+ =?us-ascii?Q?sweCqUG0YarX47Q8qmrCvVMrySXOTzBX4p+tnhIAXyFvdPFxvyDnbBuYYXhY?=
+ =?us-ascii?Q?FSubbtOLX7RgCsAbyQD2K9lm2cM8+pV8tvrzKsrL8Vw82gwmTqvzQ1pZJjIX?=
+ =?us-ascii?Q?OIsp7ts6BLSgudEdnsvJ49zT3GceN+ov9lzEeuZKWHAa8L1YAxo6MoMsxXWc?=
+ =?us-ascii?Q?jFiqU65F02d+yWZidugjaprnZcS4TqTf4wEQkOH1D8nD9SZ64utWGPquW61O?=
+ =?us-ascii?Q?+M0NJs/m24GVF3PKJuEIenK1/6eDCDCt3DdOiYz2+U5jZsqz9iI4ZMvLq3G2?=
+ =?us-ascii?Q?p7tdsDcldJCfvahHnNELiJyHah7vnGmMFITESmRqRNS+bACRyQ+/YbxPuUXs?=
+ =?us-ascii?Q?PSxMaausWaOEZuIs9xW6Xr7yIHM9aY3Q6S00A2VxGKvfdOJppYadnaZRWWW/?=
+ =?us-ascii?Q?IxZjuCWlu4DbJUdka/DwX5HZir3lE+StS2K9qdJcfgksD1yVCf26/O1FJWY3?=
+ =?us-ascii?Q?TXAjKkrdxKGKH9y511iuId7O4KtVDf3CiFz8DoZqHNa+28Br6zNdWj2rZje1?=
+ =?us-ascii?Q?IlIdpkQduQzkBhabYczBWHY6V8k7JbXXxkjozrLA8EmeenQZ7hVQHBDFXgJ3?=
+ =?us-ascii?Q?7HlkRBuq+yl3CokPGSQAgj49AJyeyXQ/HY3Ioskb7wcebYFqFCG9R3hNK79k?=
+ =?us-ascii?Q?CgNTOmt6z4taq3Es7f40IbcI56UlT4Ulk10JkHexNP80tXPZQruXF7aV1SNU?=
+ =?us-ascii?Q?kfXOqhZG3ANeAlj3bLVuK9cdpe+4zno+YDu963dwuu6xsENGlAe3DSpukt5i?=
+ =?us-ascii?Q?BGhRcn5+IVLdbt7N9CiU5Rh3yQC9Pj/5pGD3n71VeFpNolKNn2FSCbSpo4oP?=
+ =?us-ascii?Q?a2YZ+qkVWZcpBIiWLDVxHebcHvfqXIP5cVvY9JKnpSiLhOm8xVfv7a/GCzRM?=
+ =?us-ascii?Q?hHUn0YLBt82EUuVH4pHyfrYhr9V1zhv8cjmQ4IIhzTpc1XUmVkDRgrYM3pp7?=
+ =?us-ascii?Q?LEEjF6bVvkTVix9B4OHq5ifW3zDrb8Y/WBOZc0UnceNHbRlZuDwm9ikvtXVI?=
+ =?us-ascii?Q?Ir4XbgaACgEmN0nST5c9rR6Yx+G4HufGFeOqXVjwbYUZzmvscLxGRd4KYxIK?=
+ =?us-ascii?Q?OMB7/BRsWFDx0RbX1vl8wtZwhFNlMhpZPr6wBVpPvjlX3X22F9uiljsvahuW?=
+ =?us-ascii?Q?X9xqSOoiQRr+1VKue7/mu68cTWYz7rO4peGzP8i7bf1fuse5m5dXK1NXkaDk?=
+ =?us-ascii?Q?1J7VBnsYgF9Qf3H0FLwgPoV6bXBoKRBDEnNNp9HNoIpOY0htMdVjU70T9+5U?=
+ =?us-ascii?Q?FqaKafPelC1IAW6knsuE8CQ3?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <38ED7DEC3CF38D45B6B5CB0C6589AAEE@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] s390/vfio-ap: lock mdev object when handling mdev remove
- request
-To: Matthew Rosato <mjrosato@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: jjherne@linux.ibm.com, pasic@linux.ibm.com, hca@linux.ibm.com,
-        gor@linux.ibm.com, borntraeger@linux.ibm.com,
-        alex.williamson@redhat.com, clg@redhat.com, stable@vger.kernel.org
-References: <20250221153238.3242737-1-akrowiak@linux.ibm.com>
- <b763cd33-fb89-498a-841d-1a5423b7ef9b@linux.ibm.com>
-Content-Language: en-US
-From: Anthony Krowiak <akrowiak@linux.ibm.com>
-In-Reply-To: <b763cd33-fb89-498a-841d-1a5423b7ef9b@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: tbIH2omU48pJZLZxUWBWYAPMeXPIca9q
-X-Proofpoint-ORIG-GUID: tbIH2omU48pJZLZxUWBWYAPMeXPIca9q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_05,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxlogscore=919 lowpriorityscore=0 spamscore=0 impostorscore=0 bulkscore=0
- clxscore=1015 mlxscore=0 phishscore=0 adultscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130087
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc35713d-f2ee-4127-eb85-08dd6220ee3e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2025 11:19:33.1855
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA1PPFE52A1FAE5
 
+From: Hector Martin <marcan@marcan.st>
 
+%p4cc is designed for DRM/V4L2 FourCCs with their specific quirks, but
+it's useful to be able to print generic 4-character codes formatted as
+an integer. Extend it to add format specifiers for printing generic
+32-bit FourCCs with various endian semantics:
 
+%p4ch	Host byte order
+%p4cn	Network byte order
+%p4cl	Little-endian
+%p4cb	Big-endian
 
-On 3/12/25 11:19 AM, Matthew Rosato wrote:
-> On 2/21/25 10:32 AM, Anthony Krowiak wrote:
->> The vfio_ap_mdev_request function in drivers/s390/crypto/vfio_ap_ops.c
->> accesses fields of an ap_matrix_mdev object without ensuring that the
->> object is accessed by only one thread at a time. This patch adds the lock
->> necessary to secure access to the ap_matrix_mdev object.
->>
->> Fixes: 2e3d8d71e285 ("s390/vfio-ap: wire in the vfio_device_ops request callback")
->> Signed-off-by: Anthony Krowiak <akrowiak@linux.ibm.com>
->> Cc: <stable@vger.kernel.org>
-> The new code itself seems sane.
->
-> But besides this area of code, there are 2 other paths that touch matrix_mdev->req_trigger:
->
-> the one via vfio_ap_set_request_irq will already hold the lock via vfio_ap_mdev_ioctl (OK).
+The endianness determines how bytes are interpreted as a u32, and the
+FourCC is then always printed MSByte-first (this is the opposite of
+V4L/DRM FourCCs). This covers most practical cases, e.g. %p4cn would
+allow printing LSByte-first FourCCs stored in host endian order
+(other than the hex form being in character order, not the integer
+value).
 
-I have plans to create a patch to insert a call to lockdep_assert_held() 
-in functions that require a lock,
-such as the one you mentioned
+Acked-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Tested-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Hector Martin <marcan@marcan.st>
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+ Documentation/core-api/printk-formats.rst | 32 +++++++++++++++++++++
+ lib/vsprintf.c                            | 35 +++++++++++++++++++----
+ scripts/checkpatch.pl                     |  2 +-
+ 3 files changed, 62 insertions(+), 7 deletions(-)
 
->
-> However the other one in vfio_ap_mdev_probe acquires mdevs_lock a few lines -after- initializing req_trigger and cfg_chg_trigger to NULL.  Should the lock also be held there since we would have already registered the vfio device above?  We might be protected by circumstance because we are in .probe() but I'm not sure, and we bother getting the lock already to protect mdev_list...
-
-While it may have been reasonable to include the initialization of those 
-fields inside the lock, it really isn't
-necessary. These two fields are used to signal events to userspace, so 
-these fields will not be used until the
-mdev - which is in the process of being created - is attached to a guest 
-and the VFIO_DEVICE_SET_IRQS ioctl
-is subsequently invoked.
-
->
+diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core=
+-api/printk-formats.rst
+index ecccc0473..bd420e8aa 100644
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@ -648,6 +648,38 @@ Examples::
+ 	%p4cc	Y10  little-endian (0x20303159)
+ 	%p4cc	NV12 big-endian (0xb231564e)
+=20
++Generic FourCC code
++-------------------
++
++::
++	%p4c[hnlb]	gP00 (0x67503030)
++
++Print a generic FourCC code, as both ASCII characters and its numerical
++value as hexadecimal.
++
++The generic FourCC code is always printed in the big-endian format,
++the most significant byte first. This is the opposite of V4L/DRM FourCCs.
++
++The additional ``h``, ``n``, ``l``, and ``b`` specifiers define what
++endianness is used to load the stored bytes. The data might be interpreted
++using the host byte order, network byte order, little-endian, or big-endia=
+n.
++
++Passed by reference.
++
++Examples for a little-endian machine, given &(u32)0x67503030::
++
++	%p4ch	gP00 (0x67503030)
++	%p4cn	00Pg (0x30305067)
++	%p4cl	gP00 (0x67503030)
++	%p4cb	00Pg (0x30305067)
++
++Examples for a big-endian machine, given &(u32)0x67503030::
++
++	%p4ch	gP00 (0x67503030)
++	%p4cn	00Pg (0x30305067)
++	%p4cl	00Pg (0x30305067)
++	%p4cb	gP00 (0x67503030)
++
+ Rust
+ ----
+=20
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 56fe96319..56511a994 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1781,27 +1781,50 @@ char *fourcc_string(char *buf, char *end, const u32=
+ *fourcc,
+ 	char output[sizeof("0123 little-endian (0x01234567)")];
+ 	char *p =3D output;
+ 	unsigned int i;
++	bool pixel_fmt =3D false;
+ 	u32 orig, val;
+=20
+-	if (fmt[1] !=3D 'c' || fmt[2] !=3D 'c')
++	if (fmt[1] !=3D 'c')
+ 		return error_string(buf, end, "(%p4?)", spec);
+=20
+ 	if (check_pointer(&buf, end, fourcc, spec))
+ 		return buf;
+=20
+ 	orig =3D get_unaligned(fourcc);
+-	val =3D orig & ~BIT(31);
++	switch (fmt[2]) {
++	case 'h':
++		break;
++	case 'n':
++		orig =3D swab32(orig);
++		break;
++	case 'l':
++		orig =3D (__force u32)cpu_to_le32(orig);
++		break;
++	case 'b':
++		orig =3D (__force u32)cpu_to_be32(orig);
++		break;
++	case 'c':
++		/* Pixel formats are printed LSB-first */
++		pixel_fmt =3D true;
++		break;
++	default:
++		return error_string(buf, end, "(%p4?)", spec);
++	}
++
++	val =3D pixel_fmt ? swab32(orig & ~BIT(31)) : orig;
+=20
+ 	for (i =3D 0; i < sizeof(u32); i++) {
+-		unsigned char c =3D val >> (i * 8);
++		unsigned char c =3D val >> ((3 - i) * 8);
+=20
+ 		/* Print non-control ASCII characters as-is, dot otherwise */
+ 		*p++ =3D isascii(c) && isprint(c) ? c : '.';
+ 	}
+=20
+-	*p++ =3D ' ';
+-	strcpy(p, orig & BIT(31) ? "big-endian" : "little-endian");
+-	p +=3D strlen(p);
++	if (pixel_fmt) {
++		*p++ =3D ' ';
++		strcpy(p, orig & BIT(31) ? "big-endian" : "little-endian");
++		p +=3D strlen(p);
++	}
+=20
+ 	*p++ =3D ' ';
+ 	*p++ =3D '(';
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 7b28ad331..5595a0898 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -6904,7 +6904,7 @@ sub process {
+ 					    ($extension eq "f" &&
+ 					     defined $qualifier && $qualifier !~ /^w/) ||
+ 					    ($extension eq "4" &&
+-					     defined $qualifier && $qualifier !~ /^cc/)) {
++					     defined $qualifier && $qualifier !~ /^c[hnlbc]/)) {
+ 						$bad_specifier =3D $specifier;
+ 						last;
+ 					}
+--=20
+2.47.1
 
 
