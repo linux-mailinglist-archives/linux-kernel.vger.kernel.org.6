@@ -1,86 +1,77 @@
-Return-Path: <linux-kernel+bounces-559768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6500A5F950
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:13:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD69A5F953
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:13:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA94189FE46
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D2C3B450E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBA22686B0;
-	Thu, 13 Mar 2025 15:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169A6268C49;
+	Thu, 13 Mar 2025 15:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M1vMrWTL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GOK0sdbG"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E5922612
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18D122612
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741878812; cv=none; b=foD4v7nL10XuLXNJkltcqKLM4FBcKY/OAQjajmSXXECbuc+Dn3eChq4odAWem3lYXXIo8yiTXqGMRtWCjSz+ZLwwLWVzovgLEH/y8FygFjNCcYvWUAmJ0ucTyT4piw8qiaronsseelon85LzT9tR76eOfuqNkMzXC1vtyKxeTpo=
+	t=1741878823; cv=none; b=q9LB5S4feqzG+/dAHqrYw4aoJb28txLJBsDmHSmbz8KuVGx7w0fXtcRHYPNuL4XPuM8W/JlUXeZzVap/qlEAYmpeyd6A4eIhrAykBxusbTJv8Q6UCPIn3slgxypDV3x2FR2zuK/gXJ7MW4Afs/emJ1Ya86yGhEvqfNtpBn/zXdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741878812; c=relaxed/simple;
-	bh=F6KcbIPUgfP6kX1LbBxUFczoKtPUcvCPuPG03lq65CM=;
+	s=arc-20240116; t=1741878823; c=relaxed/simple;
+	bh=fJxfW2SO60LSZjE08ryPgcw3EaJ/8K92lDP2S5xhGvA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tYbTAWkshMnd7Cpf6822jRYli1WH42IXkbBw8yUSmuynU7f05GccLc/i6aY8l7+M9vYqHPaH2ii//HcYw2DUYdp51qAJt8yfaVgZMMi2enb7j6MF1QtGaOKZPxkCXjhxaOMtOADTdGBGN+UI6MYwzitGJVMnoVeh3L0STdjtB2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M1vMrWTL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741878809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f5K4pCCizVTVFaCfJxsbcvtellHTlJx5Au+uaHTpI0k=;
-	b=M1vMrWTLrfbmfQ0YZXo+nYq7kaV72K1lfL6rmSINnJEMzJT9NshZUhrJu8o+Bx2tcFkTC8
-	PXJjYCygDiOux9T//uT/Qw6GtCbebrPRi4ZkZrXzB7kCdp0pn4ONYHAEo02dTqhqd2gZaT
-	UMFhWLvSMqQEx8vRR4XfzqIDi8ULXtA=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-180-efF33m3-O4GxvD8GU3iwYQ-1; Thu, 13 Mar 2025 11:13:27 -0400
-X-MC-Unique: efF33m3-O4GxvD8GU3iwYQ-1
-X-Mimecast-MFC-AGG-ID: efF33m3-O4GxvD8GU3iwYQ_1741878807
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ac218738618so86262766b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:13:27 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=UdcGMsC3+h89VcNHfXebbVYkBGNfgrBegs8SmiGDeV1zMU+ezdrzJd0+1+YfqsIGjR1RGUKkvoWcMnZybJhdYtqogE7nzuFNP8p+WkgsFo27qEcaEU6yb5TUOKe0Ujq9BVWzh9AkO/hNKqXJWSV06vaLxfpwagvrh5HK1YO+9lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GOK0sdbG; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-223fd89d036so23266065ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 08:13:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1741878821; x=1742483621; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=LtjPSYCYextd8p+081cZMv9XSGQU1Zsd9DWrufPXUHg=;
+        b=GOK0sdbG11u5OurIiq3TpSuv/nEG91FWuRhy/KO1o2me9bJTV4nNsMNHTn8AFIytpb
+         8xoheskVv4kgI+05jin+Wx7gq7BL1pQrY6xYlMVNa6CBG9jiU0jUfybt3+xvtJdZ9WXZ
+         Y7KQvzaKo+N6C2eszX5gtCYUeITNRfsPTMKH0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741878807; x=1742483607;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f5K4pCCizVTVFaCfJxsbcvtellHTlJx5Au+uaHTpI0k=;
-        b=PjXeidIOjGkCm9sKHDCIIdtf6Rvit9THq+Qac37WOm6Hsqq/pnrVYPGRL7b9OpwGR+
-         OIywYiPYIK3TfA5U/SweOuPuVQhdUTQvD9WB2JzbhwjkDUSIFghbFlCxGpmWGnKZOHPS
-         8S2ClC2sQJi0QuB3VqJu61PJRfHKWDk9JCTOq5BQOp1eIvN20FXqlyYQa75gQg4FwWLE
-         y33VFAyVt+WK5GewCfnVUahVQ5RsJoo8nWKBQPW0T673WC7CE3pdE0kTgxbf8T5lrBfM
-         J6e4EWI0F9W9SoOnnVDMaMkX3Eya9IMe/LzmkVAm3sXjpRtLcVzEUOvxF/UYvjsObTiv
-         1X4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVr1wb7hxuRU0+HmVJqA7tUHqAPpC1xvAVSbmX4MN+I6JDHtvqX5SMFY2tZKh79W4mLwYOHWjCvflmLQwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHxt7ttUn2OLtArMdP94tA82JE9X1gLLuzXhDflvJL4HuG2/xs
-	AELDxFZ65BMDJxztg8nkqdJXFiqwC6zU9zGwaCt37+2DT/C7g5wV+zAG/EUDJyM2Wzkch9Jabxy
-	//xpnoEw32BxlPibTshLr066I1iL1gYKQPuxSgo+mGmriL5G8f9JmohUxATR2uA==
-X-Gm-Gg: ASbGncviDMep/gBOz57mr+AXNa/o0gN1aTGuIHlUC5HO7lWYgvsm+9bw5f9pBoCRZnJ
-	9OdRmAJOAmDltjSi0ti1DLh0u1pz2l5cJqiVRnDWWbbZm3K1HhwLQYWkuIm0lSp8e8zI+5B6K2x
-	LRYJW3U/Rf2y6b74HC7Se4rTvikW7OFmfg4zeA4AAanbSa6R9kSRfmDswet1/npeVOvdZcBfDhW
-	GXcCMdSdPb0Puva4LDIG9+0+Y3CZKYgT9iz4oYOvOf5xSSc00IB5EDg23M+CYmPc0zunzbnpVdI
-	OJtxLKckbU1+YMSriRQrjASaiWTod8AC9buvz0O4HPp9sNrSaoSC9EzHflwTyhGb/9/2dAJyn/6
-	QNiQzm6pLisNt4rAbq8O+6WJxTNFW9ioryI1nQgZhqHUfKkh5OQ3Q4DnXL3q8M5VpoA==
-X-Received: by 2002:a17:906:c381:b0:ac2:ff66:dd68 with SMTP id a640c23a62f3a-ac2ff66e08dmr593616566b.39.1741878806663;
-        Thu, 13 Mar 2025 08:13:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIfef2yMH96c0YIEDZ4YUlcCBGhBwi8aFPWDDZ+VDysqpAUegkeCUPWy1GYkWLR9SUagK39A==
-X-Received: by 2002:a17:906:c381:b0:ac2:ff66:dd68 with SMTP id a640c23a62f3a-ac2ff66e08dmr593612466b.39.1741878806264;
-        Thu, 13 Mar 2025 08:13:26 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a40f61sm90305766b.134.2025.03.13.08.13.25
+        d=1e100.net; s=20230601; t=1741878821; x=1742483621;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LtjPSYCYextd8p+081cZMv9XSGQU1Zsd9DWrufPXUHg=;
+        b=TfkuKc9PPRZtj/SWm+qpzrY7Dusp77sn0UxIIQO3OsMzrKi2pV96TbLaZJmF5skEx3
+         +/oR/9838N4sKLDM5wI3oIYZvi5QGO8bYvfvGe41Hzvo41MgtfXYUGQHkKVJ9F7E+VbE
+         JOAaCwnrHup/2KRaoUw9vIHt+5WoWpNGl6Q/yPvMVaDGpnBYo7SMdIKdG1CMCm4nQvhU
+         GlMFaVk5Q2za6m8rjXCPaGhLIzSDRFBNnuspBC94NUc9KUOeQat7V++AQqJpF+8cwUnG
+         iGm+X00KlisMSvFYS72OD7C5JxWyd6nVtIcaQ9BsR/9jt1Rz9oHEaaLNXkGIHcPBU/gp
+         zp0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVP78YCC2YMJAwHjuTEah3oU0080DBRwtPPkP1ZXXGxh95fuYdu3OtWnZCXG6IcmVQzSwpWcHuuTtTBrJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPtfjhBCwWtSWoy0jp6IJRj/hPbDt6jFyvHx86xc9yObm1I9Wm
+	zdu43vCCasCHndn9DmYbE0IkSROFAJVqg3glyigwwx2GonCya4XNqNwh4hRpPg==
+X-Gm-Gg: ASbGncuW43UExdVihayvdcOwa4TR3/9smpL6Eoa81+wBvkEyHhFsth2ytfk2iNRlpus
+	PlkGaBYe30noqggVDwQi5moEoMXkzX4ipdrMIlvNeDxjqKwnPA5ifywLQUIH1bWbyWvKA2KdMM4
+	EfcXyI5qR/ZIaTqmjh4vq9NdXqaLvP9338SCHqNAAfuYAG+gwMebDaWwbt6rEwpUQOngahPmm63
+	vpPSK2R/klLZ2JMdMOTVboAXIJoP2mdnVfNHdnD4XLrVNQxRa8xxCo9V8zHh1v467I0vOpkJ64P
+	HKBKywh4awng/05QBS0VedQvFDjMADxkSAtLw8LPZivhRw024ms8le3S3NGsg4YSb4qHIAoB24F
+	YbRRwjCP+7oEUAHenhlI=
+X-Google-Smtp-Source: AGHT+IH6rVvz6wUlxxNUwr/JAWpyXdb7amienre/dUzOfRJnNc3NkCdr7ltThD0dYTVCfDPZwdv9wQ==
+X-Received: by 2002:a17:902:ef4e:b0:223:628c:199 with SMTP id d9443c01a7336-22428c1cca9mr373944625ad.52.1741878821152;
+        Thu, 13 Mar 2025 08:13:41 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbebebsm14416825ad.201.2025.03.13.08.13.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 08:13:25 -0700 (PDT)
-Message-ID: <d5470665-4fee-432a-9cb7-fff9813b3e97@redhat.com>
-Date: Thu, 13 Mar 2025 16:13:24 +0100
+        Thu, 13 Mar 2025 08:13:39 -0700 (PDT)
+Message-ID: <06ee4b30-e4c8-4670-9054-b30827ca8931@broadcom.com>
+Date: Thu, 13 Mar 2025 08:13:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,111 +79,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
- board type") on reboot (but not cold boot)
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Eric <eric.4.debian@grabatoulnz.fr>,
- Salvatore Bonaccorso <carnil@debian.org>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Christoph Hellwig <hch@infradead.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Damien Le Moal <dlemoal@kernel.org>, Jian-Hong Pan <jhp@endlessos.org>,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, linux-ide@vger.kernel.org,
- Dieter Mummenschanz <dmummenschanz@web.de>
-References: <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
- <Z8l61Kxss0bdvAQt@ryzen> <Z8l7paeRL9szo0C0@ryzen>
- <689f8224-f118-47f0-8ae0-a7377c6ff386@grabatoulnz.fr>
- <Z8rCF39n5GjTwfjP@ryzen> <9c4a635a-ce9f-4ed9-9605-002947490c61@redhat.com>
- <Z88rtGH39C-S8phk@ryzen> <383d5740-7740-4051-b39a-b8c74b035ec2@redhat.com>
- <Z9BFSM059Wj2cYX5@ryzen> <9ac6e1ab-f2af-4bff-9d50-24df68ca1bb9@redhat.com>
- <Z9LUH2IkwoMElSDg@ryzen>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <Z9LUH2IkwoMElSDg@ryzen>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] mmc: sdhci-brcmstb: add cqhci suspend/resume to PM ops
+To: Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20250311165946.28190-1-kamal.dasu@broadcom.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250311165946.28190-1-kamal.dasu@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Niklas,
 
-On 13-Mar-25 1:48 PM, Niklas Cassel wrote:
-> Hello Hans,
-> 
-> On Thu, Mar 13, 2025 at 11:04:13AM +0100, Hans de Goede wrote:
->>
->> I do agree with you that it is a question if this is another bad
->> interaction with Samsung SATA SSDs, or if it is a general ATI SATA
->> controller problem, but see below.
-> 
-> (snip)
-> 
->> Right in the mean time Eric has reported back that the above patch fixes
->> this. Thank you for testing this Eric,
->>
->> One reason why ATA_QUIRK_NO_NCQ_ON_ATI was introduced is because
->> disabling NCQ has severe performance impacts for SSDs, so we did not want
->> to do this for all ATI controllers; or for all Samsung drives. Given that
->> until the recent LPM default change we did not use DIPM on ATI chipsets
->> the above fix IMHO is a good fix, which even keeps the rest of the LPM
->> power-savings.
-> 
-> One slightly interesting thing was that neither the Maxtor or the Samsung
-> drive reported support for Host-Initiated Power Management (HIPM).
-> 
-> Both drives supported Device-Initiated Power Management (DIPM), and we
-> could see that DIPM was enabled on both drives.
-> 
-> We already know that LPM works on the Samsung drive with an Intel AHCI
-> controller. (But since the device does not report support for HIPM, even
-> on Intel, only DIPM will be used/enabled.)
-> 
-> 
->>
->> Right I think it is safe to assume that this is not a Samsung drive problem
->> it is an ATI controller problem. The only question is if this only impacts
->> ATI <-> Samsung SSD combinations or if it is a general issue with ATI
->> controllers. But given the combination of DIPM not having been enabled
->> on these controllers by default anyways, combined with the age of these
->> motherboards (*) I believe that the above patch is a good compromise to
->> fix the regression without needing to wait for more data.
->>
->> Regards,
->>
->> Hans
->>
->> *) And there thus being less users making getting more data hard. And
->> alo meaning not having DIPM will impact only the relatively few remaining
->> users
-> 
-> I'm still not 100% sure with the best way forward.
-> 
-> The ATI SATA controller reports that it supports ALPM (i.e. also HIPM).
-> It also reports support for slumber and partial, which means that it must
-> support both host initiated and device initiated requests to these states.
-> (See AHCI spec 3.1.1 - Offset 00h: CAP – HBA Capabilities,
-> CAP.PSC and CAP.SSC fields.)
-> 
-> Considering that DIPM seems to work fine on the Maxtor drive, I guess your
-> initial suggestion of a Samsung only quirk which only disables LPM on ATI
-> is the best way?
 
-I have no objections against going that route, except that I guess this
-should then be something like ATA_QUIRK_NO_DIPM_ON_ATI to not loose the
-other LPM modes / savings? AFAIK/IIRC there still is quite some powersaving
-to be had without DIPM.
+On 3/11/2025 9:59 AM, Kamal Dasu wrote:
+> cqhci timeouts observed on brcmstb platforms during suspend:
+>    ...
+>    [  164.832853] mmc0: cqhci: timeout for tag 18
+>    ...
+> 
+> Adding cqhci_suspend()/resume() calls to disable cqe
+> in sdhci_brcmstb_suspend()/resume() respectively to fix
+> CQE timeouts seen on PM suspend.
+> 
+> Fixes: d46ba2d17f90 ("mmc: sdhci-brcmstb: Add support for Command Queuing (CQE)")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
+> ---
+>   drivers/mmc/host/sdhci-brcmstb.c | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-brcmstb.c
+> index 0ef4d578ade8..48cdcba0f39c 100644
+> --- a/drivers/mmc/host/sdhci-brcmstb.c
+> +++ b/drivers/mmc/host/sdhci-brcmstb.c
+> @@ -503,8 +503,15 @@ static int sdhci_brcmstb_suspend(struct device *dev)
+>   	struct sdhci_host *host = dev_get_drvdata(dev);
+>   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>   	struct sdhci_brcmstb_priv *priv = sdhci_pltfm_priv(pltfm_host);
+> +	int ret;
 
-> It seems that ATI and Samsung must have interpreted some spec differently
-> from each other, otherwise, I don't understand why this combination
-> specificially seems to be so extremely bad, ATI + anything other than
-> Samsung, or Samsung + anything other than ATI seems to work.
+Hopefully this won't be causing a possibly uninitialized warning.
 
-Yes the most severe problems do seem to come from that specific mix,
-although the long list of other ATI controller quirks also shows those
-controllers are somewhat finicky.
-
-Regards,
-
-Hans
-
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
