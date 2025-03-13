@@ -1,152 +1,104 @@
-Return-Path: <linux-kernel+bounces-559805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E852A5FA01
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:32:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8107A5F9ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 16:31:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 051FB17A119
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:32:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DE6D42140D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EAE26B0A7;
-	Thu, 13 Mar 2025 15:29:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA6726A1D0;
-	Thu, 13 Mar 2025 15:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D308826A0E7;
+	Thu, 13 Mar 2025 15:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smpKKLRw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A90026A0D0;
+	Thu, 13 Mar 2025 15:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741879773; cv=none; b=Yx80IuYO56kpckcXMrdUCucmdjYQq8AEIuBKheKhnBVMGg3LNOrNwzfs/YOT4JNLDiop2WMBXZiDWsqaDN5qNqpYqx8Qz10aS6UV9ZpJDLT6Axzaw6Bp7WS86f2Xkd5XwP0kCsrEAIhb43jTbpXjEA2j1ZCCV1E6i+31iTnqLSg=
+	t=1741879767; cv=none; b=t52dB/Yuvp1PaziCY+dhJ1N93Bz1N7hNHKKek7PUzPcAHs+q4m5yfZmZRvAZevZnNq4VagpmaTuIZ6jXj8e0KFPLkR0Ufv+RWn2vHvpSgf4icCeodd8D9bGKRFPNYnxBDC6eXZGfm3xmN7bpkdJz3yFKN/uuiSmVuJlrOq79Zk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741879773; c=relaxed/simple;
-	bh=aXg6RgwqMQoYUSR7L+4RvyibSNxPKGi4o12ZLke9smI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FWGibt1/13jeNZYEaLYWf7zdm/rnTuxc9mV1zP04RlfuE7i676WUm87p6dG7fq4y1JZKVeNyXXU+IGIyLBjyS3vDDJy61872XzoWKYZuwzqaF756zkbmnsdS4E3DKD1wa2ke9PeC0isY5Jg9iCUgJlairm9sjvAkszj4DUnkv1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECE99201B;
-	Thu, 13 Mar 2025 08:29:41 -0700 (PDT)
-Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 536A33F694;
-	Thu, 13 Mar 2025 08:29:30 -0700 (PDT)
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Thu, 13 Mar 2025 15:28:59 +0000
-Subject: [PATCH v3 13/13] ACPI: CPPC: Simplify PCC shared memory region
- handling
+	s=arc-20240116; t=1741879767; c=relaxed/simple;
+	bh=z1F/N+uyen+sKYPadxbDvEvh55FfdtiKufmg7gfJL8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tppDc4vvED6+eQgTPDfmvLhFVpY5Zy9DN701rS1HWxem0ivc+eV7S9EXlXmMZtj3Duqd1wn0Kfh6KTS9LzhLja1+IAWuUGtcjs1KR3orE/H5ZA0XKmKQn84sEyQmSuJs06/lr2z0+f+NmWKIW0WxpSv9yYlP42w6E+WAzB67rMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smpKKLRw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7179C4CEDD;
+	Thu, 13 Mar 2025 15:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741879766;
+	bh=z1F/N+uyen+sKYPadxbDvEvh55FfdtiKufmg7gfJL8g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=smpKKLRwdX+gAfBcRd2DR093HqdYCRagRFXKRMiEUQhQQW6yEfyq0+zNf21V/HcOF
+	 QoZ15W3A/eGWCWrseJNV8gFs6rLyRzSSlhFgtLszBMmaI6uMbJ0oF2jIfpADOLmPyG
+	 2XlJK8Z7zeVjkZex0RSJ9owzaoqSWysX7sjj/PJ+z0QJ3R6CR+45xkGS0khu0jo5he
+	 y7vUe5Md/b9+aaL6nw0Ybq8N22z+NmDDc0k+S+RUTyrp7brnEdQquCVsJcUdsnZty9
+	 ouJJ+cHesTccyWAYSUNnavpORIBS/MRGFZ2Bbfm714dgtkSckdY6ITmn0BIU1PSwCn
+	 7PdOUts+as7+g==
+Date: Thu, 13 Mar 2025 15:29:21 +0000
+From: Lee Jones <lee@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Bamvor Jian Zhang <bamv2005@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Keerthy <j-keerthy@ti.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: (subset) [PATCH v2 01/15] leds: aw200xx: don't use return with
+ gpiod_set_value() variants
+Message-ID: <20250313152921.GB3645863@google.com>
+References: <20250220-gpio-set-retval-v2-0-bc4cfd38dae3@linaro.org>
+ <20250220-gpio-set-retval-v2-1-bc4cfd38dae3@linaro.org>
+ <174130146134.987559.8662566490718210141.b4-ty@kernel.org>
+ <CAMRc=MdQcxtXMUCt00=JbGY47cMMWcW8=r3-ZrMKjQkViqnxvA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250313-pcc_fixes_updates-v3-13-019a4aa74d0f@arm.com>
-References: <20250313-pcc_fixes_updates-v3-0-019a4aa74d0f@arm.com>
-In-Reply-To: <20250313-pcc_fixes_updates-v3-0-019a4aa74d0f@arm.com>
-To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>, 
- Jassi Brar <jassisinghbrar@gmail.com>, Huisong Li <lihuisong@huawei.com>, 
- Adam Young <admiyo@os.amperecomputing.com>, 
- Robbie King <robbiek@xsightlabs.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2920; i=sudeep.holla@arm.com;
- h=from:subject:message-id; bh=aXg6RgwqMQoYUSR7L+4RvyibSNxPKGi4o12ZLke9smI=;
- b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBn0vnFlGRXwjy9cTaaMj/r+JhxSEJ57FZdBydxK
- 1a8OYIWgDCJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ9L5xQAKCRAAQbq8MX7i
- mJfHD/9er9/XFfWSnZPvTNnmLDJwIrPdU9JK/+seka+nu4TghpzbUe8J6vvCiUUVCrx/n1Incjg
- VGLbRP/MSpIgDoAKXgNgW8Cz4HF7fxbOmDeyihn0/g6JIsYlPq/UXwqdwirSbwDcjqku/GOfgEd
- dqFk9ofzSIYISae8m1O6Q+z6sZ7qD4sFFLR/iDYiKuEiAoPBPUoSgVP158syGWVJVMWmpO0xz0B
- BtHeOxriZYzb4YkrXvrTUe/vLYBVkvwZaJyUMOwdWpBkpagdhlQxowIjLH2Prtqen+pyAvBV/0z
- IvmzIjdB76qXkh9e2579JiDpOnyEiisePjbjYGPfyiwzWpQYzYrCrXYlYwTtF6bLP2eKhSsrN8k
- DyBnclrqdTJPMIg89tIaentznacDmAqkd9AYv+G+qrMgDe2a14UlV25wuUYKnmgWzwrE9xy6SWz
- xmiJsSDoo+6Se0hXl1r71Boc60zqeo+MGOWRPTE59uqSBxPuop3NAZ2CBIDRV9CapTfBHeu8ibF
- YlWbllMFj39ZSnsBSiDeNaInb4xynstu5Q+gz2Z3DcfP0/Rmbe9tyH2/MgKfC1k1EHKR7IBeZEi
- BET/4O2v/LH7kPFAdqXsuYtqhSC4DmHuyYp2WPCNLWslts+lLtBZWuS+bIkwiuOTnlemOXgADNh
- hR/1u6rr0GWS0dg==
-X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
- fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MdQcxtXMUCt00=JbGY47cMMWcW8=r3-ZrMKjQkViqnxvA@mail.gmail.com>
 
-The PCC driver now handles mapping and unmapping of shared memory
-areas as part of pcc_mbox_{request,free}_channel(). Without these before,
-this ACPI CPPC driver did handling of those mappings like several
-other PCC mailbox client drivers.
+On Fri, 07 Mar 2025, Bartosz Golaszewski wrote:
 
-There were redundant operations, leading to unnecessary code. Maintaining
-the consistency across these driver was harder due to scattered handling
-of shmem.
+> On Thu, Mar 6, 2025 at 11:51 PM Lee Jones <lee@kernel.org> wrote:
+> >
+> > On Thu, 20 Feb 2025 10:56:58 +0100, Bartosz Golaszewski wrote:
+> > > While gpiod_set_value() currently returns void, it will soon be converted
+> > > to return an integer instead. Don't do `return gpiod_set...`.
+> > >
+> > >
+> >
+> > Applied, thanks!
+> >
+> > [01/15] leds: aw200xx: don't use return with gpiod_set_value() variants
+> >         commit: 5d5e2a6f15a6c5e0c431c1388fd90e14b448da1e
+> >
+> 
+> Hi Lee!
+> 
+> Can you please drop it from your tree? You acked v1 of this patch
+> after I had already sent v2 (this patch remained unchanged) folded
+> into a respin of the bigger GPIO series that had triggered build bots
+> to point this issue out in the first place. I picked the entire series
+> up and this commit is already in next as
+> 129fdfe25ac513018d5fe85b0c493025193ef19f.
 
-Just use the mapped shmem and remove all redundant operations from this
-driver.
-
-Cc: Rafael J. Wysocki <rafael@kernel.org>
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/acpi/cppc_acpi.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-index f193e713825ac24203ece5f94d6cf99dd4724ce4..d972157a79b6ade2f3738c90128e8692141b3ee5 100644
---- a/drivers/acpi/cppc_acpi.c
-+++ b/drivers/acpi/cppc_acpi.c
-@@ -47,7 +47,6 @@
- 
- struct cppc_pcc_data {
- 	struct pcc_mbox_chan *pcc_channel;
--	void __iomem *pcc_comm_addr;
- 	bool pcc_channel_acquired;
- 	unsigned int deadline_us;
- 	unsigned int pcc_mpar, pcc_mrtt, pcc_nominal;
-@@ -95,7 +94,7 @@ static DEFINE_PER_CPU(int, cpu_pcc_subspace_idx);
- static DEFINE_PER_CPU(struct cpc_desc *, cpc_desc_ptr);
- 
- /* pcc mapped address + header size + offset within PCC subspace */
--#define GET_PCC_VADDR(offs, pcc_ss_id) (pcc_data[pcc_ss_id]->pcc_comm_addr + \
-+#define GET_PCC_VADDR(offs, pcc_ss_id) (pcc_data[pcc_ss_id]->pcc_channel->shmem + \
- 						0x8 + (offs))
- 
- /* Check if a CPC register is in PCC */
-@@ -223,7 +222,7 @@ static int check_pcc_chan(int pcc_ss_id, bool chk_err_bit)
- 	int ret, status;
- 	struct cppc_pcc_data *pcc_ss_data = pcc_data[pcc_ss_id];
- 	struct acpi_pcct_shared_memory __iomem *generic_comm_base =
--		pcc_ss_data->pcc_comm_addr;
-+					pcc_ss_data->pcc_channel->shmem;
- 
- 	if (!pcc_ss_data->platform_owns_pcc)
- 		return 0;
-@@ -258,7 +257,7 @@ static int send_pcc_cmd(int pcc_ss_id, u16 cmd)
- 	int ret = -EIO, i;
- 	struct cppc_pcc_data *pcc_ss_data = pcc_data[pcc_ss_id];
- 	struct acpi_pcct_shared_memory __iomem *generic_comm_base =
--		pcc_ss_data->pcc_comm_addr;
-+					pcc_ss_data->pcc_channel->shmem;
- 	unsigned int time_delta;
- 
- 	/*
-@@ -571,15 +570,6 @@ static int register_pcc_channel(int pcc_ss_idx)
- 		pcc_data[pcc_ss_idx]->pcc_mpar = pcc_chan->max_access_rate;
- 		pcc_data[pcc_ss_idx]->pcc_nominal = pcc_chan->latency;
- 
--		pcc_data[pcc_ss_idx]->pcc_comm_addr =
--			acpi_os_ioremap(pcc_chan->shmem_base_addr,
--					pcc_chan->shmem_size);
--		if (!pcc_data[pcc_ss_idx]->pcc_comm_addr) {
--			pr_err("Failed to ioremap PCC comm region mem for %d\n",
--			       pcc_ss_idx);
--			return -ENOMEM;
--		}
--
- 		/* Set flag so that we don't come here for each CPU. */
- 		pcc_data[pcc_ss_idx]->pcc_channel_acquired = true;
- 	}
+Unapplied, thanks.
 
 -- 
-2.34.1
-
+Lee Jones [李琼斯]
 
