@@ -1,293 +1,357 @@
-Return-Path: <linux-kernel+bounces-560097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7579BA5FDAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:24:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DCF7A5FD9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 18:21:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51D519C410E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:24:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B6647A4B74
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 17:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBA118C006;
-	Thu, 13 Mar 2025 17:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5675D156653;
+	Thu, 13 Mar 2025 17:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="lovnPHTc"
-Received: from mx-rz-3.rrze.uni-erlangen.de (mx-rz-3.rrze.uni-erlangen.de [131.188.11.22])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PAeFTM9Y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DW0uYVby"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECF0189528;
-	Thu, 13 Mar 2025 17:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0BA1519AE;
+	Thu, 13 Mar 2025 17:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741886660; cv=none; b=n2T62mM34AgbT0KiG5H00ZGetY90oReBg/QFyGWoY1SHMOyXsVrTv1OGJdDMi8GFXMsWmAVF3l55XDvEogmYL9DYzJ1vyPeyfkoLv2FOo7M8wE4avNHu7tUNl5rAVfYLbaNbI+Hq+bewL9IGrpZBpERRuCe1v5YIvRgaP0Ea5tU=
+	t=1741886496; cv=none; b=Ln4HpmpkL4ZOx8vNmK2A/EpyHvupJHUBdqW3qGOKYh/miUBWKwf1IqvQ1G/bQ5ucQZGmEolTvhdfFXSZ1txD4v3Oa0bsX6uwRKyWxJFEceIpdybimXU3AEt0oyQXyb4m5yFMkimTTrIOZmBtt9zOh9txQYtZEG17Jd/p/HB8o/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741886660; c=relaxed/simple;
-	bh=V9k5U9VtqtC7i81mrNZB3XwvT58iPzhjz085WF5V9Mo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F2d+CyfDYHh7UXIKZg06BoSc+jKToOEHxW7uJJsj4LtdGFLS1mJOotbhdx4ih+hMmqXrp0osACjgj0UPqc0WAaC5UX22JJ1WnRGB612DmTQgIYl8vU5PDW0fi2maeXAjo4/aE/j+lVC1KrfmwhzIYmCwCTetnAKg/cVmzaHu9XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=lovnPHTc; arc=none smtp.client-ip=131.188.11.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-	t=1741886656; bh=qwgrTdB0Bu6IpqE8C75I8kNHcv2Lf1HJhe7mTZPHIwk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
-	 Subject;
-	b=lovnPHTcVDk30D6nmB2R14ho6QhKa1xzJbSthkDxBFDnAWNGdXPdgIRlVzQqg4tOA
-	 fOH3O1u2LjPFyFiucapsYXv/VPi2AtSFDozjGF10WDOjgSopIlBDhmO9SDr6v67cM2
-	 tcBIDO0i8prJn0t8lA/Q9mIlOHracyL+jZ/UqIstUeenpTsSYaW2vgxGkESMkwTA33
-	 +SzcXCoUJY0eu0ZIyAq9Q7EqEa2m+UZnW/uFwHJ7Oet1q9K6SpUp1dW4n4CbCTeZwC
-	 d9zAtHRbc4uceGi1qK0pd/1sBjjq1EGc/qknhda152UWb6bvUHVsZR9KqHMhCget7Y
-	 DxmUzIr3r4vQA==
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4ZDDrJ28Hxz1yl4;
-	Thu, 13 Mar 2025 18:24:16 +0100 (CET)
-X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 2001:9e8:3614:2b00:7ee6:68e5:4447:ba92
-Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:3614:2b00:7ee6:68e5:4447:ba92])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: U2FsdGVkX1/PrOwOzHzKFI/d/DZbMoLU9o6wLPbvG0U=)
-	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4ZDDrD0FbDz1xsl;
-	Thu, 13 Mar 2025 18:24:12 +0100 (CET)
-From: Luis Gerhorst <luis.gerhorst@fau.de>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Xu Kuohai <xukuohai@huaweicloud.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Hari Bathini <hbathini@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Luis Gerhorst <luis.gerhorst@fau.de>,
-	Henriette Herzog <henriette.herzog@rub.de>,
-	Cupertino Miranda <cupertino.miranda@oracle.com>,
-	Matan Shachnai <m.shachnai@gmail.com>,
-	Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
-	Daniel Xu <dxu@dxuuu.xyz>,
-	bpf@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kselftest@vger.kernel.org,
-	George Guo <guodongtai@kylinos.cn>,
-	WANG Xuerui <git@xen0n.name>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Maximilian Ott <ott@cs.fau.de>,
-	Milan Stephan <milan.stephan@fau.de>
-Subject: [PATCH bpf-next 02/11] bpf: Return -EFAULT on misconfigurations
-Date: Thu, 13 Mar 2025 18:21:18 +0100
-Message-ID: <20250313172127.1098195-3-luis.gerhorst@fau.de>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250313172127.1098195-1-luis.gerhorst@fau.de>
-References: <20250313172127.1098195-1-luis.gerhorst@fau.de>
+	s=arc-20240116; t=1741886496; c=relaxed/simple;
+	bh=NVCGhAouJUasH/BREpDurMep9hgLHLS0AcQUME+59i8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=cuVaoXoS1J5Kw9vH1Jb1qIpiKSmcH9kIbhfi7M3kQS/RFxljW2uLYpdvo1IvlV1RlcmWRk3OoyWK4imgpzjUT8j5RodZrJtTPmXXc3YMKXzi/Xo69+xt/U6cbXwKOzd08Iw9gu2S//k/DVvVM8ktOhcDJJq/GqjVg94+L1+W+lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PAeFTM9Y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DW0uYVby; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 13 Mar 2025 17:21:31 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741886492;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MbaZBsyr9quWomJXj1kMU0PyDKTRBIzlMSWmZq0hROE=;
+	b=PAeFTM9Y/tf846jbrRtNHXuwQHXkdNPKeUpdq9s+O0SBxeiydCxMnXY4H4k7aFx7qbLlDR
+	43SLjgckuzQ79y0GBhQRoOhKUsyl81fNAquo8jMm0s9Z2UF06CjYvC3oErOiyyLrV+NeWw
+	fvF5YowuR/sXhQ9vCHiIhgRyzguMZjFC0o6L6jz9xn+aQ0DQZo6duYdguyWBskQCdZkS58
+	Oxz4hbeDl0VCe0pLibdH/P7+ZS9VmaTZcuxImbmzjPK3ciN12K0xY1amr/qPuxp7/RY9up
+	CoVmtcA1axofFEY7WZYpo5sb0kD+ExWA9vuQpKemj2PywQdD4qbpQI4BMbkvqQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741886492;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MbaZBsyr9quWomJXj1kMU0PyDKTRBIzlMSWmZq0hROE=;
+	b=DW0uYVbyazJXR3vaFMNN5D7lFiaiywSxEcJk+r1mRNFWrVCChQ3ANfGG2KyGkWIZvsUyNn
+	sXEbwOqubkRUsJBA==
+From: "tip-bot2 for Ard Biesheuvel" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/boot] x86/boot: Move the LA57 trampoline to separate source file
+Cc: Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250313120324.1095968-2-ardb+git@google.com>
+References: <20250313120324.1095968-2-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <174188649133.14745.9068040012782463635.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Mark these cases as non-recoverable to later prevent them from being
-cought when they occur during speculative path verification.
+The following commit has been merged into the x86/boot branch of tip:
 
-Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
-Acked-by: Henriette Herzog <henriette.herzog@rub.de>
-Cc: Maximilian Ott <ott@cs.fau.de>
-Cc: Milan Stephan <milan.stephan@fau.de>
+Commit-ID:     e27dffba1b1d6c047b48c325adcb1342d3e3fa69
+Gitweb:        https://git.kernel.org/tip/e27dffba1b1d6c047b48c325adcb1342d3e3fa69
+Author:        Ard Biesheuvel <ardb@kernel.org>
+AuthorDate:    Thu, 13 Mar 2025 13:03:25 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 13 Mar 2025 18:12:38 +01:00
+
+x86/boot: Move the LA57 trampoline to separate source file
+
+To permit the EFI stub to call this code even when building the kernel
+without the legacy decompressor, move the trampoline out of the latter's
+startup code.
+
+This is part of an ongoing WIP effort on my part to make the existing,
+generic EFI zboot format work on x86 as well.
+
+No functional change intended.
+
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20250313120324.1095968-2-ardb+git@google.com
 ---
- kernel/bpf/verifier.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ arch/x86/boot/compressed/Makefile     |   1 +-
+ arch/x86/boot/compressed/head_64.S    | 103 +-----------------------
+ arch/x86/boot/compressed/la57toggle.S | 112 +++++++++++++++++++++++++-
+ 3 files changed, 113 insertions(+), 103 deletions(-)
+ create mode 100644 arch/x86/boot/compressed/la57toggle.S
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 199a6341ac82..6234d0bb59d6 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -8889,7 +8889,7 @@ static int resolve_map_arg_type(struct bpf_verifier_env *env,
- 	if (!meta->map_ptr) {
- 		/* kernel subsystem misconfigured verifier */
- 		verbose(env, "invalid map_ptr to access map->type\n");
--		return -EACCES;
-+		return -EFAULT;
- 	}
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 606c74f..0e0b238 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -98,6 +98,7 @@ ifdef CONFIG_X86_64
+ 	vmlinux-objs-$(CONFIG_AMD_MEM_ENCRYPT) += $(obj)/mem_encrypt.o
+ 	vmlinux-objs-y += $(obj)/pgtable_64.o
+ 	vmlinux-objs-$(CONFIG_AMD_MEM_ENCRYPT) += $(obj)/sev.o
++	vmlinux-objs-y += $(obj)/la57toggle.o
+ endif
  
- 	switch (meta->map_ptr->map_type) {
-@@ -9577,7 +9577,7 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 arg,
- 			 * that kernel subsystem misconfigured verifier
- 			 */
- 			verbose(env, "invalid map_ptr to access map->key\n");
--			return -EACCES;
-+			return -EFAULT;
- 		}
- 		key_size = meta->map_ptr->key_size;
- 		err = check_helper_mem_access(env, regno, key_size, BPF_READ, false, NULL);
-@@ -9604,7 +9604,7 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 arg,
- 		if (!meta->map_ptr) {
- 			/* kernel subsystem misconfigured verifier */
- 			verbose(env, "invalid map_ptr to access map->value\n");
--			return -EACCES;
-+			return -EFAULT;
- 		}
- 		meta->raw_mode = arg_type & MEM_UNINIT;
- 		err = check_helper_mem_access(env, regno, meta->map_ptr->value_size,
-@@ -10903,7 +10903,7 @@ record_func_map(struct bpf_verifier_env *env, struct bpf_call_arg_meta *meta,
+ vmlinux-objs-$(CONFIG_ACPI) += $(obj)/acpi.o
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index 1dcb794..3dc8635 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -483,110 +483,7 @@ SYM_FUNC_START_LOCAL_NOALIGN(.Lrelocated)
+ 	jmp	*%rax
+ SYM_FUNC_END(.Lrelocated)
  
- 	if (map == NULL) {
- 		verbose(env, "kernel subsystem misconfigured verifier\n");
--		return -EINVAL;
-+		return -EFAULT;
- 	}
- 
- 	/* In case of read-only, some additional restrictions
-@@ -10942,7 +10942,7 @@ record_func_key(struct bpf_verifier_env *env, struct bpf_call_arg_meta *meta,
- 		return 0;
- 	if (!map || map->map_type != BPF_MAP_TYPE_PROG_ARRAY) {
- 		verbose(env, "kernel subsystem misconfigured verifier\n");
--		return -EINVAL;
-+		return -EFAULT;
- 	}
- 
- 	reg = &regs[BPF_REG_3];
-@@ -11196,7 +11196,7 @@ static int check_helper_call(struct bpf_verifier_env *env, struct bpf_insn *insn
- 	if (changes_data && fn->arg1_type != ARG_PTR_TO_CTX) {
- 		verbose(env, "kernel subsystem misconfigured func %s#%d: r1 != ctx\n",
- 			func_id_name(func_id), func_id);
--		return -EINVAL;
-+		return -EFAULT;
- 	}
- 
- 	memset(&meta, 0, sizeof(meta));
-@@ -11498,7 +11498,7 @@ static int check_helper_call(struct bpf_verifier_env *env, struct bpf_insn *insn
- 		if (meta.map_ptr == NULL) {
- 			verbose(env,
- 				"kernel subsystem misconfigured verifier\n");
--			return -EINVAL;
-+			return -EFAULT;
- 		}
- 
- 		if (func_id == BPF_FUNC_map_lookup_elem &&
-@@ -16528,7 +16528,7 @@ static int check_ld_imm(struct bpf_verifier_env *env, struct bpf_insn *insn)
- 		dst_reg->type = CONST_PTR_TO_MAP;
- 	} else {
- 		verbose(env, "bpf verifier is misconfigured\n");
--		return -EINVAL;
-+		return -EFAULT;
- 	}
- 
- 	return 0;
-@@ -16575,7 +16575,7 @@ static int check_ld_abs(struct bpf_verifier_env *env, struct bpf_insn *insn)
- 
- 	if (!env->ops->gen_ld_abs) {
- 		verbose(env, "bpf verifier is misconfigured\n");
--		return -EINVAL;
-+		return -EFAULT;
- 	}
- 
- 	if (insn->dst_reg != BPF_REG_0 || insn->off != 0 ||
-@@ -20614,7 +20614,7 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 						 -(subprogs[0].stack_depth + 8));
- 		if (epilogue_cnt >= INSN_BUF_SIZE) {
- 			verbose(env, "bpf verifier is misconfigured\n");
--			return -EINVAL;
-+			return -EFAULT;
- 		} else if (epilogue_cnt) {
- 			/* Save the ARG_PTR_TO_CTX for the epilogue to use */
- 			cnt = 0;
-@@ -20637,13 +20637,13 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 	if (ops->gen_prologue || env->seen_direct_write) {
- 		if (!ops->gen_prologue) {
- 			verbose(env, "bpf verifier is misconfigured\n");
--			return -EINVAL;
-+			return -EFAULT;
- 		}
- 		cnt = ops->gen_prologue(insn_buf, env->seen_direct_write,
- 					env->prog);
- 		if (cnt >= INSN_BUF_SIZE) {
- 			verbose(env, "bpf verifier is misconfigured\n");
--			return -EINVAL;
-+			return -EFAULT;
- 		} else if (cnt) {
- 			new_prog = bpf_patch_insn_data(env, 0, insn_buf, cnt);
- 			if (!new_prog)
-@@ -20800,7 +20800,7 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 
- 			if (type == BPF_WRITE) {
- 				verbose(env, "bpf verifier narrow ctx access misconfigured\n");
--				return -EINVAL;
-+				return -EFAULT;
- 			}
- 
- 			size_code = BPF_H;
-@@ -20819,7 +20819,7 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 		if (cnt == 0 || cnt >= INSN_BUF_SIZE ||
- 		    (ctx_field_size && !target_size)) {
- 			verbose(env, "bpf verifier is misconfigured\n");
--			return -EINVAL;
-+			return -EFAULT;
- 		}
- 
- 		if (is_narrower_load && size < target_size) {
-@@ -20827,7 +20827,7 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 				off, size, size_default) * 8;
- 			if (shift && cnt + 1 >= INSN_BUF_SIZE) {
- 				verbose(env, "bpf verifier narrow ctx load misconfigured\n");
--				return -EINVAL;
-+				return -EFAULT;
- 			}
- 			if (ctx_field_size <= 4) {
- 				if (shift)
-@@ -21590,7 +21590,7 @@ static int do_misc_fixups(struct bpf_verifier_env *env)
- 			cnt = env->ops->gen_ld_abs(insn, insn_buf);
- 			if (cnt == 0 || cnt >= INSN_BUF_SIZE) {
- 				verbose(env, "bpf verifier is misconfigured\n");
--				return -EINVAL;
-+				return -EFAULT;
- 			}
- 
- 			new_prog = bpf_patch_insn_data(env, i + delta, insn_buf, cnt);
-@@ -21926,7 +21926,7 @@ static int do_misc_fixups(struct bpf_verifier_env *env)
- 					goto patch_map_ops_generic;
- 				if (cnt <= 0 || cnt >= INSN_BUF_SIZE) {
- 					verbose(env, "bpf verifier is misconfigured\n");
--					return -EINVAL;
-+					return -EFAULT;
- 				}
- 
- 				new_prog = bpf_patch_insn_data(env, i + delta,
-@@ -22286,7 +22286,7 @@ static int do_misc_fixups(struct bpf_verifier_env *env)
- 		    !map_ptr->ops->map_poke_untrack ||
- 		    !map_ptr->ops->map_poke_run) {
- 			verbose(env, "bpf verifier is misconfigured\n");
--			return -EINVAL;
-+			return -EFAULT;
- 		}
- 
- 		ret = map_ptr->ops->map_poke_track(map_ptr, prog->aux);
--- 
-2.48.1
-
+-/*
+- * This is the 32-bit trampoline that will be copied over to low memory. It
+- * will be called using the ordinary 64-bit calling convention from code
+- * running in 64-bit mode.
+- *
+- * Return address is at the top of the stack (might be above 4G).
+- * The first argument (EDI) contains the address of the temporary PGD level
+- * page table in 32-bit addressable memory which will be programmed into
+- * register CR3.
+- */
+-	.section ".rodata", "a", @progbits
+-SYM_CODE_START(trampoline_32bit_src)
+-	/*
+-	 * Preserve callee save 64-bit registers on the stack: this is
+-	 * necessary because the architecture does not guarantee that GPRs will
+-	 * retain their full 64-bit values across a 32-bit mode switch.
+-	 */
+-	pushq	%r15
+-	pushq	%r14
+-	pushq	%r13
+-	pushq	%r12
+-	pushq	%rbp
+-	pushq	%rbx
+-
+-	/* Preserve top half of RSP in a legacy mode GPR to avoid truncation */
+-	movq	%rsp, %rbx
+-	shrq	$32, %rbx
+-
+-	/* Switch to compatibility mode (CS.L = 0 CS.D = 1) via far return */
+-	pushq	$__KERNEL32_CS
+-	leaq	0f(%rip), %rax
+-	pushq	%rax
+-	lretq
+-
+-	/*
+-	 * The 32-bit code below will do a far jump back to long mode and end
+-	 * up here after reconfiguring the number of paging levels. First, the
+-	 * stack pointer needs to be restored to its full 64-bit value before
+-	 * the callee save register contents can be popped from the stack.
+-	 */
+-.Lret:
+-	shlq	$32, %rbx
+-	orq	%rbx, %rsp
+-
+-	/* Restore the preserved 64-bit registers */
+-	popq	%rbx
+-	popq	%rbp
+-	popq	%r12
+-	popq	%r13
+-	popq	%r14
+-	popq	%r15
+-	retq
+-
+ 	.code32
+-0:
+-	/* Disable paging */
+-	movl	%cr0, %eax
+-	btrl	$X86_CR0_PG_BIT, %eax
+-	movl	%eax, %cr0
+-
+-	/* Point CR3 to the trampoline's new top level page table */
+-	movl	%edi, %cr3
+-
+-	/* Set EFER.LME=1 as a precaution in case hypervsior pulls the rug */
+-	movl	$MSR_EFER, %ecx
+-	rdmsr
+-	btsl	$_EFER_LME, %eax
+-	/* Avoid writing EFER if no change was made (for TDX guest) */
+-	jc	1f
+-	wrmsr
+-1:
+-	/* Toggle CR4.LA57 */
+-	movl	%cr4, %eax
+-	btcl	$X86_CR4_LA57_BIT, %eax
+-	movl	%eax, %cr4
+-
+-	/* Enable paging again. */
+-	movl	%cr0, %eax
+-	btsl	$X86_CR0_PG_BIT, %eax
+-	movl	%eax, %cr0
+-
+-	/*
+-	 * Return to the 64-bit calling code using LJMP rather than LRET, to
+-	 * avoid the need for a 32-bit addressable stack. The destination
+-	 * address will be adjusted after the template code is copied into a
+-	 * 32-bit addressable buffer.
+-	 */
+-.Ljmp:	ljmpl	$__KERNEL_CS, $(.Lret - trampoline_32bit_src)
+-SYM_CODE_END(trampoline_32bit_src)
+-
+-/*
+- * This symbol is placed right after trampoline_32bit_src() so its address can
+- * be used to infer the size of the trampoline code.
+- */
+-SYM_DATA(trampoline_ljmp_imm_offset, .word  .Ljmp + 1 - trampoline_32bit_src)
+-
+-	/*
+-         * The trampoline code has a size limit.
+-         * Make sure we fail to compile if the trampoline code grows
+-         * beyond TRAMPOLINE_32BIT_CODE_SIZE bytes.
+-	 */
+-	.org	trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_SIZE
+-
+-	.text
+ SYM_FUNC_START_LOCAL_NOALIGN(.Lno_longmode)
+ 	/* This isn't an x86-64 CPU, so hang intentionally, we cannot continue */
+ 1:
+diff --git a/arch/x86/boot/compressed/la57toggle.S b/arch/x86/boot/compressed/la57toggle.S
+new file mode 100644
+index 0000000..9ee0023
+--- /dev/null
++++ b/arch/x86/boot/compressed/la57toggle.S
+@@ -0,0 +1,112 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <linux/linkage.h>
++#include <asm/segment.h>
++#include <asm/boot.h>
++#include <asm/msr.h>
++#include <asm/processor-flags.h>
++#include "pgtable.h"
++
++/*
++ * This is the 32-bit trampoline that will be copied over to low memory. It
++ * will be called using the ordinary 64-bit calling convention from code
++ * running in 64-bit mode.
++ *
++ * Return address is at the top of the stack (might be above 4G).
++ * The first argument (EDI) contains the address of the temporary PGD level
++ * page table in 32-bit addressable memory which will be programmed into
++ * register CR3.
++ */
++
++	.section ".rodata", "a", @progbits
++SYM_CODE_START(trampoline_32bit_src)
++	/*
++	 * Preserve callee save 64-bit registers on the stack: this is
++	 * necessary because the architecture does not guarantee that GPRs will
++	 * retain their full 64-bit values across a 32-bit mode switch.
++	 */
++	pushq	%r15
++	pushq	%r14
++	pushq	%r13
++	pushq	%r12
++	pushq	%rbp
++	pushq	%rbx
++
++	/* Preserve top half of RSP in a legacy mode GPR to avoid truncation */
++	movq	%rsp, %rbx
++	shrq	$32, %rbx
++
++	/* Switch to compatibility mode (CS.L = 0 CS.D = 1) via far return */
++	pushq	$__KERNEL32_CS
++	leaq	0f(%rip), %rax
++	pushq	%rax
++	lretq
++
++	/*
++	 * The 32-bit code below will do a far jump back to long mode and end
++	 * up here after reconfiguring the number of paging levels. First, the
++	 * stack pointer needs to be restored to its full 64-bit value before
++	 * the callee save register contents can be popped from the stack.
++	 */
++.Lret:
++	shlq	$32, %rbx
++	orq	%rbx, %rsp
++
++	/* Restore the preserved 64-bit registers */
++	popq	%rbx
++	popq	%rbp
++	popq	%r12
++	popq	%r13
++	popq	%r14
++	popq	%r15
++	retq
++
++	.code32
++0:
++	/* Disable paging */
++	movl	%cr0, %eax
++	btrl	$X86_CR0_PG_BIT, %eax
++	movl	%eax, %cr0
++
++	/* Point CR3 to the trampoline's new top level page table */
++	movl	%edi, %cr3
++
++	/* Set EFER.LME=1 as a precaution in case hypervsior pulls the rug */
++	movl	$MSR_EFER, %ecx
++	rdmsr
++	btsl	$_EFER_LME, %eax
++	/* Avoid writing EFER if no change was made (for TDX guest) */
++	jc	1f
++	wrmsr
++1:
++	/* Toggle CR4.LA57 */
++	movl	%cr4, %eax
++	btcl	$X86_CR4_LA57_BIT, %eax
++	movl	%eax, %cr4
++
++	/* Enable paging again. */
++	movl	%cr0, %eax
++	btsl	$X86_CR0_PG_BIT, %eax
++	movl	%eax, %cr0
++
++	/*
++	 * Return to the 64-bit calling code using LJMP rather than LRET, to
++	 * avoid the need for a 32-bit addressable stack. The destination
++	 * address will be adjusted after the template code is copied into a
++	 * 32-bit addressable buffer.
++	 */
++.Ljmp:	ljmpl	$__KERNEL_CS, $(.Lret - trampoline_32bit_src)
++SYM_CODE_END(trampoline_32bit_src)
++
++/*
++ * This symbol is placed right after trampoline_32bit_src() so its address can
++ * be used to infer the size of the trampoline code.
++ */
++SYM_DATA(trampoline_ljmp_imm_offset, .word  .Ljmp + 1 - trampoline_32bit_src)
++
++	/*
++         * The trampoline code has a size limit.
++         * Make sure we fail to compile if the trampoline code grows
++         * beyond TRAMPOLINE_32BIT_CODE_SIZE bytes.
++	 */
++	.org	trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_SIZE
 
