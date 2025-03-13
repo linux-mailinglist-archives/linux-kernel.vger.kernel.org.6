@@ -1,183 +1,255 @@
-Return-Path: <linux-kernel+bounces-560438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337C6A6043A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:26:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C2CA6044B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 23:28:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD71619C22EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:26:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22CD3168519
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 22:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897971F7095;
-	Thu, 13 Mar 2025 22:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0C41F8735;
+	Thu, 13 Mar 2025 22:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lPQcFsDm"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QYdYPJtT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF2C1D8A10
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 22:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741904761; cv=none; b=M/i6u90grUQeHyHBVkUTWU6xy6q7ORElku5/kPlmH+8PLfMlGg+nsaCrHgmhtSXDXs0FSqZniZj4p4+5mJrM7lcbSbiprqN2piluPrAJspmHVZ525XdJP/FftQekxsKizaWze5dlmHYpZ8s4ntONBb931RI2v/qQbxpFj/BToEg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741904761; c=relaxed/simple;
-	bh=QZV2NTgEg7k+1XHNq5HE27b9f2LssIVk3RUzMP/R1r8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZFddEYYFdsfuQB7lueNB+3GaywbUZXjD6h9Whg8Xj9DpimVb6EZBMZL23r0gUZ+fZUNSAMTxDGKsh6Dn69hJyoclTTe1Kja4DvRN9QUFUoXzK/e5UlYPh+TCPt+NuxlUSdaHq3zgXQAP4mPn2a+qzez/JcXPESvwo7Uu6m+RUJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lPQcFsDm; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2c2bc6acd74so201061fac.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 15:25:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741904758; x=1742509558; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HO0VpTSFVmDIRg6D2iUyymvRyONg1pufELLgkVchWVM=;
-        b=lPQcFsDmbZy6AEqIflKhd9RqVMEAaX/V3CmrKtK+/ehEXw4UlsUl0Zws0QlR/IlV1X
-         VX6iRbMJzUxxvi5tW2J/EBjQ+HaG2QEMleLlE50U4ZC05e26SNkMixHWajrQo/edHZQI
-         YSuwXegy7cgYyyUHqWbY+iZA38i8ox4dkYskQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741904758; x=1742509558;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HO0VpTSFVmDIRg6D2iUyymvRyONg1pufELLgkVchWVM=;
-        b=QlROympLDyB/T5h36jqkeF0vE333QB1qR6pR7jnyrrL6xSnL/Shcfsj8YmcZvmryeB
-         jWWZhNgvgcarwJot4ZoL42+Gy058iebDqF69VSFlqZRkUbvbRv+D+87fCOJxwdKtsWzH
-         5KXM3jYhe0hZMtIidso9XI3XZLO6R+kc6yDkkh8hQmhj6yULRcil59Hb5vloYnWX5AYM
-         fzO6mstIBPwrCXjVGl3fKZ988JnzXcaN58tguQvrDEIQdlgaHZzanHK8ZKTpIqxE0Kc3
-         pwEMFbnRhV7c//gT7Sv4kukF4oA7eKW7J27XRBMo5ffBaglP6/gUaA+uY+XPZgSNLTLY
-         1CZw==
-X-Forwarded-Encrypted: i=1; AJvYcCU11rdNMhpffDq0vE7Qgig+jCFQ+teogGH7I/Du9IMV7NgXbHY34F/AA4wnTT47j+gjQk6yZeuXU3NAGjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLtp5jWxMQVkKlSIIvXCpzk8u47zpJErM89uWWZBAz51DjJ77G
-	czhwAGFey6tRoXuUZvNwOr6su4S0itJHcalbZofdQkvL8hcZBbXHqN9I5sU/0LIjlvVuDJS4JAm
-	s8IWPSssUHWtJ4kO/SgLtLFc4j6sQ1fL2YC80
-X-Gm-Gg: ASbGncu/3EHf0O+kRIvsc1KH+oivUdymDGrj4pJFxB+dsTX204HL+hCPM1zRmZgPrJP
-	hxeSnTIpXvS/zhuoQ3OQCK1JoDzOuSjWWhBKuFQ9JCSqxQPm0IC8lRfszvupoPgSldg8I0q1ZuQ
-	XlVp8x9VwymCxkMz0ReZl9zNHfYwRzn2JaO9I=
-X-Google-Smtp-Source: AGHT+IFGFOX+JdCKJ5EW0lljriIIgVcYBIERJmy8IRbYMG52NjTsVEcHPVx2F0p10iZ15QufBCgqhdZZ/AQ7u3A452s=
-X-Received: by 2002:a05:6870:41cd:b0:29e:723c:8e9d with SMTP id
- 586e51a60fabf-2c690f385c8mr57268fac.4.1741904757815; Thu, 13 Mar 2025
- 15:25:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45A01F5821;
+	Thu, 13 Mar 2025 22:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741904883; cv=fail; b=BVZCiSs1Ep2x2lMpHyjFu6HWcIkhhul5Q9ruEdUsxKkPjh8xBfaI+0TmG4LCrgBtZu6BfXoDwZ1fhZ5W/3tjSctvmcok2mK0Okmt6sOvzCf9bUmldMEYGaFYhr3uzxmcmthnQAbHl7bbsnX979/KAOvtiTa9DKRRj9qDrY/R1BE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741904883; c=relaxed/simple;
+	bh=n8rywSAUHHrzoj8EpHZ9ri1bQHgujpg+8z4DLoV3mgc=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=avaYDD4eMSrGKvg+Wgs6CqpLl776+fY3ExlrAHV94raTtjLads/kisKbVOo5yNa2p4VtS7aXyHkrU8K++1a3nxZ2uymErkmDEit2z9owZU0KL0Fv//nFtgRLNmLLfU870/i0EVUkNkkXG5MI010aIw9ngazJtX+bjnlwWSDRnio=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QYdYPJtT; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741904882; x=1773440882;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=n8rywSAUHHrzoj8EpHZ9ri1bQHgujpg+8z4DLoV3mgc=;
+  b=QYdYPJtTebL0Bf3hDp2BNdKHiFDzg9R93eOIqK6bKIK2he5VEmKI+tXN
+   2mx7sd2GLyzFtmQxE8JEd2ddW6gZSDSRJL261EiIlGOv4cvQUWrA1RKxF
+   1EuB79tYWbPipuCz7vD+uHxSL0A/QqtKQYt8aV83aUYJohJqkD6HXhnCN
+   wWS8Z8GlPmVLP824zMppOlj8TlpiRTOl3PtcmwzV7T+rf3S9GMSsnSRzv
+   tt81ELtjkc6rUmT5y+7Iv8GX0b1IP2OtpOk/nSpE7tR3AnB+dSeDQS79M
+   E75C8dik02m+T8Pgek9iKQ9kbISdwlJE0X8iBkjvdjthtjFxXdwgxdo6Y
+   g==;
+X-CSE-ConnectionGUID: 6phvZfBJRCCBFrKCcQGNjw==
+X-CSE-MsgGUID: fccN18KXTVSb6VX0iQpldQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="65503787"
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="65503787"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 15:28:01 -0700
+X-CSE-ConnectionGUID: eHfg+HGtQvK2udmgx9+oaw==
+X-CSE-MsgGUID: DEyVQF7pQ++A8aCYwXUUXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,245,1736841600"; 
+   d="scan'208";a="152026299"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Mar 2025 15:28:00 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 13 Mar 2025 15:28:00 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Thu, 13 Mar 2025 15:28:00 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.42) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 13 Mar 2025 15:27:57 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lSzlqC6k6wcnm0A921Td2qsPNEQ/uDVrIu2Sy77YKA73Xep3swQ4MEzsNqn1yY49h27e1p3m8sMjNqT6H5KUQC/Ce1XD/OyfXRv8Rn6qYnHSzGvHwEYVefrsZSaJ+uwdeuxsKvZfO8kEahQw8LvKbDK/bgAkOI3GNpP1cVMn/N9MugwhWyBBoDDpXqOCPr+aQQ3ygqD5Q9/GcvbnlC90AePcA2ayOW6znVa/GdR6LHmZxaqQLeIlxZiTKJkGznSQlqOLRe78mGBUQCaTeXLg3OBQOwBa435gjJgY3xAn1fUvp8/CMV0xXVyNJc/hKa+0JfNxI9vVAdR9McsUKzCMjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DhgE2ZqpNP6bbXc6rL3xg9aGyBF94rCkzLqE22ACNGA=;
+ b=UEAjaQwTuPyRF7+igg16RzYszGyXKHBgKAUtWEJNyThDT2rWDqRBjfrxP3tXOUAoKlFSqewOIa+3b/DtoWuiN2UnLGQ7Tcb+WWavq3vr/A9r+wlPuJ5zXLqWYpmE8Caoa8Y0mxCzLxWJi7PZkDY1xW+DI9iWt52eRbBX93/vrLzPVMxZFlznJpdbBy5ESMHxGbt6lXTTWYLuwqreq0Rqr15kx6VwHfdgboBrz6WP9pGacDBS+qcg1wwhRRW0g9wyHkrK1mxjgIBin18jbFSsbv9DywZZJD+HACnZ/7C8+vjTUsgLAk4TixXP3aKg2PqwpQy0aUJHpfIZUTNAX4wR/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by SA3PR11MB7581.namprd11.prod.outlook.com (2603:10b6:806:31b::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
+ 2025 22:27:19 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
+ 22:27:19 +0000
+Message-ID: <358039ad-930d-464a-9a77-9bc1554ed6c5@intel.com>
+Date: Thu, 13 Mar 2025 15:27:18 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 0/4] mlx5: Support setting a parent for a devlink
+ rate node
+To: Tariq Toukan <tariqt@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
+ Abeni" <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>
+CC: Gal Pressman <gal@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, "Moshe
+ Shemesh" <moshe@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>, "Leon
+ Romanovsky" <leon@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Carolina Jubran
+	<cjubran@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>, Dragos Tatulea
+	<dtatulea@nvidia.com>
+References: <1741642016-44918-1-git-send-email-tariqt@nvidia.com>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+In-Reply-To: <1741642016-44918-1-git-send-email-tariqt@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW2PR16CA0017.namprd16.prod.outlook.com (2603:10b6:907::30)
+ To CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313000623.3192896-1-jeffxu@google.com> <1bbce89c-1efe-40cf-9085-ec4ec16f7996@lucifer.local>
-In-Reply-To: <1bbce89c-1efe-40cf-9085-ec4ec16f7996@lucifer.local>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Thu, 13 Mar 2025 15:25:46 -0700
-X-Gm-Features: AQ5f1Jp2EPkBExs0LgI3wECuDDPaXmKkN-4wE1NQSGw_NG7eEjTDTsm1Ivwa46c
-Message-ID: <CABi2SkVKxyX0uDabg+wHiq_vTBFbUST-nRdur7cCPB2myhCWhg@mail.gmail.com>
-Subject: Re: [PATCH] mseal sysmap: add arch-support txt
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, agordeev@linux.ibm.com, 
-	borntraeger@linux.ibm.com, gor@linux.ibm.com, hca@linux.ibm.com, 
-	kees@kernel.org, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, svens@linux.ibm.com, 
-	thomas.weissschuh@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|SA3PR11MB7581:EE_
+X-MS-Office365-Filtering-Correlation-Id: 63dac4e0-de06-4c33-8c9d-08dd627e377d
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?YWJJK20wVytoVTBVYStZc0JrcjhqVnpGLy83dUluN3JFbm1vWHFjWGVYT0pl?=
+ =?utf-8?B?STZPTTlKbkZHWEJDK0FjUmVFNHhDZE1qbUpuVSt3MWo5bWJBUkMvQ04vWHB0?=
+ =?utf-8?B?K1FMZlRWNzRMcCtVSG5DOXg2NmlsWUl0clhKQWZLZUh1cnRDdFJ2Tk4wVnV4?=
+ =?utf-8?B?LzZoOFcxSnRHQ2dVS1RSZFJYd3FmQkxTSk1nSy93NjlWY1NSV2hERWdkVXNP?=
+ =?utf-8?B?eFgrb1B4R0dEUVNjQnQxNGdkb1BMaFU3SzZ6a29meCtQc2M2R2pEZjE2ejNG?=
+ =?utf-8?B?WDZhb0NNYlEvMTJEUG1XTUpyZ0U2T0dpR01HL3czQVFoaVpibEsyTnZUQlhZ?=
+ =?utf-8?B?UW12WW1GYlFQdW9GZWczQmhiRkRybjFuTXZudXo4b0ZHZzJyZWdlSGZTWHdF?=
+ =?utf-8?B?ZTFpcFlWU2RYTG5XbjRtdHYyby8xV0pSRyt0RXo4THV6aDNrWEg3MmxoZzJO?=
+ =?utf-8?B?bFAxOWxjMi9OT3ZUckRUYy82RjAyYjNIaW5BUFBpT0FTTVFRQ1phc2FaY25C?=
+ =?utf-8?B?V252UFQzMjE5T0dIYjZWbkpEcERVMWt4N2FoVFc3T0dhNDgvY1l0TWN4ekJG?=
+ =?utf-8?B?b0ExeHhyL0R3SWo0eko0NEhnNmZpRTRXVW54VXJUV1lDVjJTOEhDVWF6djJa?=
+ =?utf-8?B?WE5qMWJ6d1RMNjl5dE1uRkJPajM1UG5YUGgrWG1TbXlqSjhCZEJyK1ZmbERQ?=
+ =?utf-8?B?OWZpV0M2Z3dpY2JPbE1kNzBQOWo5WkJ2R3JBY2pjYUVTK1BaRXpUVGt3cVdI?=
+ =?utf-8?B?VnFtNzFTUDk4K3Uya2lYTThrMUZEYW9pN2YxTWUxV3dGQlhWWlp0aDNQdk8x?=
+ =?utf-8?B?YzE1QU1reFhGTXZmSG9adEZ1VjYzM08vZ05VRnI2SnFTdGQ4enl2Z3BEVTR2?=
+ =?utf-8?B?Y3psRytOU29NZWYzZ0x5QnoweDQvUmhTUTd2VmFTdTJjdXM5bzF1Y1NSUFVr?=
+ =?utf-8?B?UWxmeVhPZ1V4a2l2T0lnMktoZWpwdDEvcG1kN0l3NjlsK0dOTkp2ZEorQ0R3?=
+ =?utf-8?B?a0FoVmNSOThuL2xiaXl1ZXlJek9vVFVtYjFVVlR0M2FTR1pkZjI1UGplZUgx?=
+ =?utf-8?B?V3grc2VZQ0RzYW81RnVPSFVMVWxTdnJGTUVWNnk3VDl3dCtyZ21vZFhmd3FG?=
+ =?utf-8?B?d0ZJc0hua0tKWFZBdXgzbUJHa0ZkbFBnL3dLdFRkcFBML095WFJZUCtNV3dV?=
+ =?utf-8?B?b0RGdzFkRGpFWEJwK25KSlhqRE1IQk5KUHNLR3RXZExLRU5lR014Wi91c1BM?=
+ =?utf-8?B?QWcrdm5ORXh0cjdNTWo3K2NjaUpLTExpeWEycmp1QTFOeFBEWktSWFJGWU1w?=
+ =?utf-8?B?KzVXWTczVGNxTEhZQU9sUWtDNGMzT2VaRE12aWs1K2FKTzNCOFVZZmNOUG03?=
+ =?utf-8?B?MGVJM3dsbEZpYlBxa3Q4K0VGdE9lU0NRb2hVQkVUVFNJUUtIR09WbTdMUkFq?=
+ =?utf-8?B?NjUzN00xbnBCMm1oMU9tZFhrRDBpVVREdWhERkhwanIveUs5OTVFNUc0aUdG?=
+ =?utf-8?B?OW9lS3ovNEc1aWVyM005ZHRkZEFWcFdGRWVuNHdvczhJUFdQSGlUSTBYY0l3?=
+ =?utf-8?B?MEN1ZVNITi9hOHR6SDZ0a2FweVcxenlIMk84QTlIWlBUVnFpYmt2L3dtZDZB?=
+ =?utf-8?B?VS83V0RlTFlJSkVMRDFwTjVpTlZubnRMMWxTeEFGRkpKd1A5OXRyMnR6VkNH?=
+ =?utf-8?B?TjZId3UwTXFNT25kNEZvNmlPb0k1RU1CazJ2SEFqZnF5TTdBT3A5TE5iT2hq?=
+ =?utf-8?B?MUEwbXdyK0tpcVlINjExMHJzMy9PY2tpMkYyT0FuTDl5eWZQMm1aNjRhSkhO?=
+ =?utf-8?B?ejcyMHFDQWpXZVN6czMwUEpQTG1Yb2dqQ3F1a3d3ZldTL09TQ0ZscmpzVENt?=
+ =?utf-8?Q?xI2Qc/1Dg/LRy?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZDkxVmxWUHpTUnJEckFPVGhvZkNUZHYzeTFwNWdCam5DTFRucys4QXN1ejRk?=
+ =?utf-8?B?bmU3RjhkOXJvakxQZVBUSCtZN0VycEtxVFo3MUNlc3gzMjdoNWhFQnpKeTlt?=
+ =?utf-8?B?QzREQzhDRFRLSGVKajNUc1lVZGJQTUxNMUwrNnBLbWJUcUlOZTBybGxkTXNV?=
+ =?utf-8?B?Rlg0YXpBWFd0Wnh5MVBXWVM1dGxPb3lERkJWMXpSS0Rud3dCaGpLTmxtdEpK?=
+ =?utf-8?B?T0hqeXpQcHBxVXlaZW5pVmEwL0V3SStTa09sNUh2ckl3bXk5ZWF1bm1YcjF3?=
+ =?utf-8?B?SlhQY2JidzdwTE52THVpSUttZlB1TFg3RTV4cllvUzVpQTZqSmxrRzRaWi9Z?=
+ =?utf-8?B?K0tJSURzMW5SbHVXOGh1RTdqbDFmRG8zSjJ2YTAyUmNiWUdBZzBXbmh3aHAv?=
+ =?utf-8?B?bklPRFlKLzZvcHRTeHpYcjRLWmVmNkl1bHJpMHlwaTg5amlwRXkrVTBuWEhy?=
+ =?utf-8?B?V1EzaE03TDNHdXYrNjY0b1pmZTlwWTBUODlMMlpnSkE0MklxSVJVcnBFZ0Fw?=
+ =?utf-8?B?K0lNT1o4NERhYjNjVCsvbS9NdC9CcC80ZkhyMFI1QmZ0Uy9VUmw1eXQ4c0tJ?=
+ =?utf-8?B?b2ZOTUlKdU1LR2hzUXRDSFBsVFByQlNMNm1RZ3lHZGZuWnN1RUswT3Vqajly?=
+ =?utf-8?B?ZkZoYU9JejY1RU9ITGp5RllvQzlNbnpPQ3BVTm9GOGI1d1FGZldNQWxvYnFB?=
+ =?utf-8?B?cDhwbDZqcGp1UGsvaGJnTUZrYTc2VXh3ZXpmSnlCK3VmNUFPeFJJWUU0aGdZ?=
+ =?utf-8?B?eDFxQ2YzU0x0SVJ5aWJJZlhtWnIxQjZDbHZrci9JdGpwSVRYZUdaMDZJcWE5?=
+ =?utf-8?B?aHhWL2ExRnljRCtMQkZIem9LOEwycmlnMi8wblVnczhhVjNGenI5eUxReXJC?=
+ =?utf-8?B?RGg5akZrZDhDVTZUc25zMlRpWFhkeVFTMm5hVlJDQ0RaR3ZJL3lUV3gvWjgr?=
+ =?utf-8?B?bmdZdkYxVDl0YmpHZzExdnRnL0s5ZVNPL21kbjFVTVhoRlZMT01Zb2NUdUJw?=
+ =?utf-8?B?L3I4TVBUUVJSdDJyekNrVWxxTU01ODEwNjVqa2daRXNOQjhtTXJZOVR4ckk4?=
+ =?utf-8?B?T0VXdVZJRzhzbW5rT3lTNXFJYkJwc0RhWTkxUUdRUVUrY0FXcC9hODkzSmEw?=
+ =?utf-8?B?RnlhNkxIRVU0RXhRUzkyK0lyL1RuLzNwc0V1WENWWHhqdGU1OU13R0NuZHZB?=
+ =?utf-8?B?TWt3UDZlSldBdm5UaXk2clA2TFViUnJHcHlhclR4RitNUzNOR083aFdrQmd2?=
+ =?utf-8?B?akw0UTAyaVI0bXUzU3hqaXkzRnF4ZmtvdGl3VDkyTFpIazgwSjJtUnEvR2RJ?=
+ =?utf-8?B?eXZ3ejN6SWpvQkFMbDVSeUlRWlpVQm95cEJzSmlKK2RHYVllWFhBZlFkNlBP?=
+ =?utf-8?B?eGVRZTFWVVdSWGxXRzQwaWdteWRTeDFacllzSTZyQzlHRm9adS9HM0RZZUhq?=
+ =?utf-8?B?ZXVqcDNsZ2NnK1llMUZSWFIycjF1LzM1Z2FVUVIxSVVSOTJYaW93UGtqQ21C?=
+ =?utf-8?B?MU0xS1pkcFhvekx4Q2IweVNzZGJrWkthcVVOa1lWV2oyWmp6OVg3L0FTMnJo?=
+ =?utf-8?B?RXhockpidGdvVjlqYXduSFdZeVBHTStIZzV0SmlTSmF0Y0RCaHRmc1FwY1lK?=
+ =?utf-8?B?WDRwT2xSaHBGSEhGWXNtSWRVaE9XWER2Rjk0T2xJYlI4d0tqbFVkdXg0WmNV?=
+ =?utf-8?B?SXk0UjlKaEgxRWhJSkwwZUp0Vyt1NHdQZ2s1TnVMN252YkoxbFZSRFhpL3NB?=
+ =?utf-8?B?c0U1alRmSVo5TDNMZThzWFRVQThOKy9CdnNxdWZtdUdVNzBxVEU1bDZzU3JQ?=
+ =?utf-8?B?S0pkeFhTZ0c1Z0VSQ0lkVXFHd0Jrc0Ywdi9wemVGTU44RnNEZkpQMmwxL0h5?=
+ =?utf-8?B?WkNSWER5SG11TUF6VWxtbWdYN1lBNjFoU0JRMW1ubklidW5jRmRFd2ZCcnQy?=
+ =?utf-8?B?amlhclZoVVBoZmdubU42WWhXTUI1QzFLNWJhck5lbVZ3Y21Ld3hOMThLVC9x?=
+ =?utf-8?B?Q3FpWkV1YlQ5dHlDTXVXdkR4SmRxaStRcUJZSUdOUWZ3RW1FdWlQQmpCbjdG?=
+ =?utf-8?B?NVZidSt2UmNWZzdhTnN2aWM2cTJEdUNlcTU4Si90aDQvcC9wR2s0RHlta2hu?=
+ =?utf-8?B?NGs1bzdiQzJxTFV5TmU1WEoxR09RUzdJU2ozUzlLeVRWRFkxdUpUVWZxaXZV?=
+ =?utf-8?B?bFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63dac4e0-de06-4c33-8c9d-08dd627e377d
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 22:27:19.4357
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qFClLOV/01MBCxPahcJUZFfriYArCyw+tOhHsYoh/QSfCqlflQaU8dyFR/sGirx/WKXhsnbbf1tWOxZFwrxDlJPBwIRr87Tx1ecjHBcE2hE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7581
+X-OriginatorOrg: intel.com
 
-On Wed, Mar 12, 2025 at 10:21=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Thu, Mar 13, 2025 at 12:06:23AM +0000, jeffxu@chromium.org wrote:
-> > From: Jeff Xu <jeffxu@chromium.org>
-> >
-> > Add Documentation/features/core/mseal_sys_mappings/arch-support.txt
-> >
-> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> > ---
-> >  .../core/mseal_sys_mappings/arch-support.txt  | 30 +++++++++++++++++++
-> >  1 file changed, 30 insertions(+)
-> >  create mode 100644 Documentation/features/core/mseal_sys_mappings/arch=
--support.txt
-> >
-> > diff --git a/Documentation/features/core/mseal_sys_mappings/arch-suppor=
-t.txt b/Documentation/features/core/mseal_sys_mappings/arch-support.txt
-> > new file mode 100644
-> > index 000000000000..8db637254de9
-> > --- /dev/null
-> > +++ b/Documentation/features/core/mseal_sys_mappings/arch-support.txt
-> > @@ -0,0 +1,30 @@
-> > +#
-> > +# Feature name:          mseal-system-mappings
-> > +#         Kconfig:       ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
-> > +#         description:   arch supports mseal system mappings
-> > +#
-> > +    -----------------------
-> > +    |         arch |status|
-> > +    -----------------------
-> > +    |       alpha: | TODO |
-> > +    |         arc: | TODO |
-> > +    |         arm: |  N/A |
-> > +    |       arm64: |  ok  |
-> > +    |        csky: | TODO |
-> > +    |     hexagon: | TODO |
-> > +    |   loongarch: | TODO |
-> > +    |        m68k: | TODO |
-> > +    |  microblaze: | TODO |
-> > +    |        mips: | TODO |
-> > +    |       nios2: | TODO |
-> > +    |    openrisc: | TODO |
-> > +    |      parisc: | TODO |
-> > +    |     powerpc: | TODO |
-> > +    |       riscv: | TODO |
-> > +    |        s390: |  ok  |
-> > +    |          sh: | TODO |
-> > +    |       sparc: | TODO |
-> > +    |          um: | TODO |
-> > +    |         x86: |  ok  |
-> > +    |      xtensa: | TODO |
-> > +    -----------------------
-> > --
-> > 2.49.0.rc0.332.g42c0ae87b1-goog
-> >
->
-> I mean fine, but why not in the existing mseal documentation file where y=
-ou
-> already document system mappings?
->
-you mean adding s390 in the mseal.rst ? I thought Heiko was going to
-add that ? [1], maybe not ?
 
-From the example given by Heiko [1] , arch-support.txt is the official
-way of documenting arch specific support. But adding these info in
-mseal.rst won't hurt.
 
-> Plus I feel this need expansion a bit 'N/A' is because of being non-64 bi=
-t
-> right?
->
-Below is the definition of N/A in Documentation/features/arch-support.txt
-   | N/A|  # feature doesn't apply to the architecture
+On 3/10/2025 2:26 PM, Tariq Toukan wrote:
+> Hi,
+> 
+> This series by Carolina adds mlx5 support for the setting of a parent to
+> devlink rate nodes.
+> 
+> By introducing a hierarchical level to scheduling nodes, these changes
+> allow for more granular control over bandwidth allocation and isolation
+> of Virtual Functions.
+> 
+> Function renaming for parent setting on leafs:
+> - net/mlx5: Rename devlink rate parent set function for leaf nodes
+> 
+> Add support for hierarchy level tracking:
+> - net/mlx5: Introduce hierarchy level tracking on scheduling nodes
+> - net/mlx5: Preserve rate settings when creating a rate node
+> 
+> Support setting parent for rate nodes:
+> - net/mlx5: Add support for setting parent of nodes
+> 
+> Regards,
+> Tariq
+> 
+> Carolina Jubran (4):
+>   net/mlx5: Rename devlink rate parent set function for leaf nodes
+>   net/mlx5: Introduce hierarchy level tracking on scheduling nodes
+>   net/mlx5: Preserve rate settings when creating a rate node
+>   net/mlx5: Add support for setting parent of nodes
+> 
 
-It fits the arm case because mseal is not supported in 32 bit.
+Nice work. The whole series was a pleasant read.
 
-> Actually this will change soon btw, based on Matthew's idea I plan to dro=
-p the
-> 32-bit vma flags limit.
->
-Okay, we can update this section to TODO when 32-bit vma flags are
-expanded. Based on past comments, I gather we want the document to
-reflect the current state of the kernel, not future features.
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
 
-> Anyway yeah, let's move that over there please.
+>  .../net/ethernet/mellanox/mlx5/core/devlink.c |   3 +-
+>  .../net/ethernet/mellanox/mlx5/core/esw/qos.c | 146 ++++++++++++++++--
+>  .../net/ethernet/mellanox/mlx5/core/esw/qos.h |  12 +-
+>  3 files changed, 143 insertions(+), 18 deletions(-)
+> 
+> 
+> base-commit: 8ef890df4031121a94407c84659125cbccd3fdbe
 
-I'm looking at Heiko's direction first to see if mseal.rst will be
-updated as part of the s390 patch, technically that belongs to Heiko's
-patch series. I can also add that if Heiko doesn't care :-)
-
-Thanks
--Jeff
-
-[1]https://lore.kernel.org/all/20250312153946.10610B02-hca@linux.ibm.com/
 
