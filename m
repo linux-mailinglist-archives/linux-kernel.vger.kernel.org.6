@@ -1,161 +1,105 @@
-Return-Path: <linux-kernel+bounces-559642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D90A5F715
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:57:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C2AA5F711
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:57:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20C9C3BDDAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:56:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D38B117357A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 13:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF9B267F4E;
-	Thu, 13 Mar 2025 13:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F0B267B07;
+	Thu, 13 Mar 2025 13:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="fShdanW6"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U14gIKjP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFDE267B8D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99E9267701
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 13:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741874178; cv=none; b=PaaZcbeQ/RKMVPQCbxosBOdde9Imhu2dzAzELBjo/wRPPcF+zQoGHI/U2XvBVu81Wc5MfziyBjp96Z7qqH0SvXrn1FXCuiIAm45ZIyO87mZ54J9Z6Q4qQ/IjvBDnaGXaKHd0f4UIJxoJNSYjU/U7Unsyj0om84x3DKLiXFN+IY0=
+	t=1741874223; cv=none; b=Zzp9EtoKvuv/p7EDNli5onBcqLyGRC7s0AN4jZiOWES4kMBHOekyyl7+gTvRQdOSOqNgO9ZQteM0cUnIuP8C20oC/6lAmPpHtrVsUwY2/zzVdtSET0ATuJVIhvHh/dbJ0QGkEs80adlcSakXGEwWeo62v71ISOg9tHYumgE6fmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741874178; c=relaxed/simple;
-	bh=qlYjQkndD+jN2uSnFaoEaumU1+kID5pARueOA2oTUyA=;
+	s=arc-20240116; t=1741874223; c=relaxed/simple;
+	bh=LGMAZVxMLMP4zoINiImPzFOYs0NI6DAPitF/gHKG7v4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jgoPzvw2QZyLMATFJLzlsnSFnac4ibVzGKXVGTgBVFjlh0dVv8EgL2seFKAPJQ7ULs6HUjBrR0OHYFb6zFyinbjroIrlRBvgxcgiPWTQfEIt35gsaL6/kuc+OX/HCjIls27g6wCCkD/3inHZp+78sWQRgTxtbTXEus0hBPCCROI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=fShdanW6; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=lM0g+et7+koHvwD3M6Xbjrzfe2Oj1PGsMfiK3GoCkb0=; b=fShdanW6PbvuMFwP
-	d1KJgdHaBd9oqatJIw5wA440G9mE87T9T7pcZPbqnEr/U25jvEF/fb9jkBiIllm6yjUBaGXMMQJgQ
-	3riEx4T9FqTUlLmZiGaj/BphArEk5qjlRF7Rd32O8Nk5ugQp+6Rs6nNZ3MgczTvCMMeJf/PhJqqk1
-	M1DTti6LAUeCZ3X732q2w44mc4TrghGxiJFwWclX5/WpD3EcVD9ZBRndSnT32MSTRfq9BaZ/R0ZiT
-	LPvwKn/OT/+x1DBiy/Bku+Tk0CNowUwiHyCcmqWlK7X42Gp5xocQUlZ9yqWJJfN55QiR9kbcqmAIZ
-	R8pIkXl1jwJioPNI7g==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tsj2d-004e9J-1n;
-	Thu, 13 Mar 2025 13:56:07 +0000
-Date: Thu, 13 Mar 2025 13:56:07 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: gregkh@linuxfoundation.org, Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, stuyoder@gmail.com,
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bus: fsl-mc: Remove deadcode
-Message-ID: <Z9Lj9_yM1EK5pKee@gallifrey>
-References: <20241115152055.279732-1-linux@treblig.org>
- <3f9dbb7b-6527-48e1-9028-b46e5a0c58ce@csgroup.eu>
- <Z9LbwRUsHwFLpBZA@gallifrey>
- <362f9392-f891-4a15-9ffd-5f5a6cac41b8@csgroup.eu>
- <oz65tdekf2ywyzadbntuxntwxulcdzyo33se54qqdsddkogquh@bqnmsmqijfvb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=igWkbAAuFGPNsiuqN05aO9igZ7/l0qCjdGdUqbAHjzYZ7OQcsHY6Cz1rdSHO6i8mNkwyXU5xMC8ZT7axfGAXWMIeRUmxi8Rwi4adcUqyZWklrG96FiN6jE8qy6xm1qPE5zt6BtbN+sRaOxu7e4umjoUNjbPY1Oj7p3eA3VbVKRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U14gIKjP; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741874222; x=1773410222;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=LGMAZVxMLMP4zoINiImPzFOYs0NI6DAPitF/gHKG7v4=;
+  b=U14gIKjPnUJGG1IJFxvj2NR36jCZ3dNnf9EWs4fIcrSVuS7k8BY43wS1
+   0FEHxfdFtXNywa4NuXH42Pzi48kJcT34sqi5zUDqizgohbuo1DylSzoH6
+   mnBJ7sSQCb6ISZVQVOXLl6HaszlqEUo3RMhleJqicTc+v89Mr/31zFTEw
+   j573THmbrqeXAxjwDVrjirYyY+/IqsP502071fN8PInZyfMR/Dtv5n/F4
+   HB412o4zFIwmvBlAKw8+W+3zPiWDoHafPdfDdeuUELpTMDO4SHQK2Y2xD
+   EbQ3yWTCe5/L85W81zJ/+WrA/YU1kqm+A1lr3HKOV64epkdgP49jHbXwy
+   A==;
+X-CSE-ConnectionGUID: gKU5JbfiSgafU8DcYJcB1Q==
+X-CSE-MsgGUID: Cu8kQfslTdaGCr19u/VamA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="54364730"
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="54364730"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:57:01 -0700
+X-CSE-ConnectionGUID: /DiW6qIxT324umM7RI1qug==
+X-CSE-MsgGUID: jY5Rv8mzRpiuSYHqa61QlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
+   d="scan'208";a="121016098"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:57:00 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tsj3R-00000002BzV-10we;
+	Thu, 13 Mar 2025 15:56:57 +0200
+Date: Thu, 13 Mar 2025 15:56:56 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH v2 1/1] mtd: mtdpart: Do not supply NULL to printf()
+Message-ID: <Z9LkKLLl2Z5cANga@smile.fi.intel.com>
+References: <20250313091631.243346-1-andriy.shevchenko@linux.intel.com>
+ <f17a1851-7360-3f18-4e89-dbf6948eeaff@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <oz65tdekf2ywyzadbntuxntwxulcdzyo33se54qqdsddkogquh@bqnmsmqijfvb>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 13:54:58 up 309 days,  1:09,  1 user,  load average: 0.13, 0.07,
- 0.01
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <f17a1851-7360-3f18-4e89-dbf6948eeaff@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Greg,
+On Thu, Mar 13, 2025 at 09:09:09PM +0800, Zhihao Cheng wrote:
+> åœ¨ 2025/3/13 17:15, Andy Shevchenko å†™é“:
+> > GCC compiler is not happy about NULL being supplied as printf() parameter:
+> > 
+> > drivers/mtd/mtdpart.c:693:34: error: â€˜%sâ€™ directive argument is null [-Werror=format-overflow=]
+> > 
+> > Move the code after the parser test for NULL, and drop the ternary completely.
+> > The user can deduct this since when it's not NULL two messages will be printed.
 
-* Ioana Ciornei (ioana.ciornei@nxp.com) wrote:
-> On Thu, Mar 13, 2025 at 02:37:56PM +0100, Christophe Leroy wrote:
-> > 
-> > 
-> > Le 13/03/2025 à 14:21, Dr. David Alan Gilbert a écrit :
-> > > [Vous ne recevez pas souvent de courriers de linux@treblig.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> > > 
-> > > * Christophe Leroy (christophe.leroy@csgroup.eu) wrote:
-> > > > 
-> > > > 
-> > > > Le 15/11/2024 à 16:20, linux@treblig.org a écrit :
-> > > > > [Vous ne recevez pas souvent de courriers de linux@treblig.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> > > > > 
-> > > > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > > > 
-> > > > > fsl_mc_allocator_driver_exit() was added explicitly by
-> > > > > commit 1e8ac83b6caf ("bus: fsl-mc: add fsl_mc_allocator cleanup function")
-> > > > > but was never used.
-> > > > > 
-> > > > > Remove it.
-> > > > > 
-> > > > > fsl_mc_portal_reset() was added in 2015 by
-> > > > > commit 197f4d6a4a00 ("staging: fsl-mc: fsl-mc object allocator driver")
-> > > > > but was never used.
-> > > > > 
-> > > > > Remove it.
-> > > > > 
-> > > > > fsl_mc_portal_reset() was the only caller of dpmcp_reset().
-> > > > > 
-> > > > > Remove it.
-> > > > > 
-> > > > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > > > 
-> > > > Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> > > 
-> > > Hi,
-> > >    Can someone pick this old change up please?  I see the PPC patchwork says
-> > >    'handled elsewhere' but doesn't say where.
-> > 
-> > MAINTAINERS file says where:
-> > 
-> > QORIQ DPAA2 FSL-MC BUS DRIVER
-> > M:	Stuart Yoder <stuyoder@gmail.com>
-> > M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
-> > L:	linux-kernel@vger.kernel.org
-> > S:	Maintained
-> > F:	Documentation/ABI/stable/sysfs-bus-fsl-mc
-> > F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-> > F:
-> > Documentation/networking/device_drivers/ethernet/freescale/dpaa2/overview.rst
-> > F:	drivers/bus/fsl-mc/
-> > F:	include/uapi/linux/fsl_mc.h
-> > 
-> > FREESCALE SOC DRIVERS
-> > M:	Christophe Leroy <christophe.leroy@csgroup.eu>
-> > L:	linuxppc-dev@lists.ozlabs.org
-> > L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> > S:	Maintained
-> > F:	Documentation/devicetree/bindings/misc/fsl,dpaa2-console.yaml
-> > F:	Documentation/devicetree/bindings/soc/fsl/
-> > F:	drivers/soc/fsl/
-> > F:	include/linux/fsl/
-> > F:	include/soc/fsl/
-> > 
-> > I acked the 2 line changes in include/linux/fsl/mc.h, the main changes being
-> > in the C files which are not under my scope.
-> > 
-> > Stuart, Laurentiu, can you pick up the patch ?
-> 
-> Stuart and Laurentiu are no longer at NXP. Even when they handled the
-> fsl-mc bus driver, they didn't have a tree themselves to pick patches up
-> but rather, historically, patches on the fsl-mc bus were picked by Greg
-> KH.
+> Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
 
-OK, copied Greg in.
+Thank you!
 
-Dave
-
-> Ioana
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+With Best Regards,
+Andy Shevchenko
+
+
 
