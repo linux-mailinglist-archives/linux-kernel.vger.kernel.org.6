@@ -1,209 +1,215 @@
-Return-Path: <linux-kernel+bounces-559687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-559688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6778FA5F816
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:27:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41373A5F81C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 15:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CE2B420CBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:27:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73A05166785
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 14:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9FD2686BD;
-	Thu, 13 Mar 2025 14:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002EE267F5C;
+	Thu, 13 Mar 2025 14:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="P7yi17oi"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZr0fHek"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F41268680
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 14:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E342267393;
+	Thu, 13 Mar 2025 14:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741876042; cv=none; b=TlbDHXkWyekV5vWvuueLhL+FJge+P1hIMAOtm0hJqvG4a/zC61hQNaj5HFLGomfMQGYef2WH5pGhUp0cdXeSeUFiB3fJi8/CKiQ5DMK0hxlXYpcnPoE3olULYqu6UfgMrxpg9Tv3gTihAkGVvmikKjSm45gyYehQhnPhrX1v3lw=
+	t=1741876079; cv=none; b=Tedp4PiGSKRJQUwWBOPbKzvIKpmbNM8U0u0WKge1ITEqu29NC9N7Z7ewGv99BZE4xNkom7kjKzM90wW7IFpo187q7v5uqecwW11l1g7PLAtiDjJYWLhoKNLWWKS4T/lWhu81s0LfwS3K6j/zc6H3Nkx3I3tiAuH5lm2+TpADHf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741876042; c=relaxed/simple;
-	bh=oKvFJqfjCg0oe1WKlBfVLElWET9EO+f7JfuuJyGbUVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DV+kBDN/2hn4Wk4cBJkh4vVA4rwaWVb8qtpLGYWNnLgd4k0ansFI3uEd0ahWG/Ov8RgsTDcecdDHojub+VqtZZWKgE3LMqnu4BVmvNvi6J2QnXOX3qTcNOFRL8DhZ8CaIGMzk0+vCRTeVjiir/hWsa1tO5GMIg9QfGPaFi45m+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=P7yi17oi; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso6851825e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 07:27:20 -0700 (PDT)
+	s=arc-20240116; t=1741876079; c=relaxed/simple;
+	bh=gxg+0lDzP4WW6H+ac5tKgySrv/5xRkMqt16F5FhafeQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ssj/HYqDW4kvh8+IXlMghJ/Fn2tuMAWmXganwbTf9i5xBaPOcErCs5S+tUvOcdJUNtfqGwPnwAjlTmu2y5PEprO8PJn/wteXSu9KveU8+fShUd3RZefjHORCM8al3FJBAgi4CH6UDqJwXYp+zAjEtfhK6gpmxV5WH8KoOSebnDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZr0fHek; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso218849466b.0;
+        Thu, 13 Mar 2025 07:27:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1741876039; x=1742480839; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XLr2/Str8PUdULF1c2O3jE557wb7uOe7x8v7FUGx02s=;
-        b=P7yi17oiP/kFyc7tFrJt1WkF3+jMRiMD0Icna6K78dT50QHQRWFdSHF6nvm8TDfg/h
-         B2EtVmFVn9nXYvF58uA8KB1VM/QQC1FKN1B2U8BAnAeI/RVdSxN8UF2V9sEnWLhAiBXj
-         /geP+giTm8aI3ss2BGq/LSi08PAt8qqwGDRUFmItaYbnbqj8azD63AXnGPcA+YCEhHEj
-         161TDSSeOyu1ZHQD7uJcBNiOLnVwNVWPKNLixvjn9pUjBYIVanWtOIwnrd1TynV37EHW
-         5ZFvrkUl2lWzpeMGzM+7SGSFZvUb2RNJQDvWeSkv87GO7qR65n8lXrdfyY1/OYFluqDQ
-         uPLQ==
+        d=gmail.com; s=20230601; t=1741876076; x=1742480876; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XNUKO0Et5yT84TqbQgeEjeVZKHHspqia0B9fx6XJNnc=;
+        b=eZr0fHekS6ldgQw+cL8QKHjo/Ymdi7o/ER6+LOU9NwPliiskKSRzF3xi98FzaNVzKe
+         bAx0WWOZz/JzPuB1Qb39rlRO11fcHVxvlkyKBBcocxZ5GChafqs/DZMAKMevyHl2CEtF
+         tgElWXF0h4DcJrcVAWyesTqTkrqyFiJBXj218+n8UiRf0BVSdvPp/By/Qs5i/ZchxUZ6
+         yAQpyjYDDr6TFdYnBbAvdCV+//BGq6ed+LAFxYiqkUyUqn8pR32WSMt5jGdDPOFm9l3k
+         Qs2eyOZR6R4cm56jmox4Ax7B9z7xbCOTaJemOvcQU+LEE/lmDiB7XFTBxUcDaAMPnNEE
+         LKdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741876039; x=1742480839;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XLr2/Str8PUdULF1c2O3jE557wb7uOe7x8v7FUGx02s=;
-        b=im0dW0dksSG7kNjAK0MFTB4JlK6q2Yt2NuIUBDAoxeo+lOzC9XEUaTDQiKjC7udfST
-         1u9SDkgboSd34RmTH+9Bz2hZDfjIfQQisD3I1uJqDEwiIpC3nlub35cwinY2Xo+aT4ta
-         ZSzSU/ua2GuRgs6hRHZTVarTQUO3MRKB04Eg7Tm8NNynWyJ19+/6VeEFuOfXFdeWRx4L
-         Lw5dFzNAIOZQ70bVa3DM3MOC3ZH4QDrIlBfaVTR872kcoiFvcqUlWZtYyUxKDElKaDlm
-         EhVwaLQWeV7w6YJTi6lJ3EzAnVQIxBHoxf3mtCU8D9bWt15VzDjVQnLTNLTQlvrGr+Ug
-         6T6g==
-X-Forwarded-Encrypted: i=1; AJvYcCU1+uT3IX9yhR540FWeHa8QltlW6hbGhkrsCiFNM1GfuxFv749kNTMRHafyJ+/6AvjFvwZCd9IIbhPedxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrWkfeCo4Hjz7HQbhTaE7WjvoJ1lywIDJsHrPS4X/KLRC/yKTN
-	Y52HbgrfDlCqwoV+jmtkXnbJaW3vLKLYmGCu7M1//6rl7Dl+Gv9ytCpPd4RGrSU=
-X-Gm-Gg: ASbGncsZetN8Ga5g+2uy+DrKTj37tHau8kFWz73TkCobKVNYoYXMcbB8ARudIhzVMwx
-	LQMdUz6vukEvLhuegz6XlqOgEq4++6+hV/w0vWGwN6xxkCmBAFLY/u25hXhzQb2bK30tOUpeD13
-	fndSEdofONVB9zeX9Dy6ZllhsGy/pGZCXFKtnE51DezOG5jxTNJbeUr1dA0rqtYvgDNzn/xIVul
-	z01emsDC19rs/R4Bsd4KDEi+f3WVeraXAN32o8x6akiPizBWi0g0TL4SQ1k4qENg3t3lZKdmEAR
-	xPmnKtzoTjioDZUHPUneXLo79a+pvLGRMcpD1VeCkEw=
-X-Google-Smtp-Source: AGHT+IGx3Sab5SDKogjK4G9G6vPewBpr2VjhUbGJwcX+nwTAiQQruD0qs0HuNiII4DaXFL2TeXeVoQ==
-X-Received: by 2002:a5d:64cb:0:b0:391:40b8:e890 with SMTP id ffacd0b85a97d-39140b8e9f4mr17833900f8f.22.1741876038933;
-        Thu, 13 Mar 2025 07:27:18 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::59a5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975b34sm2303314f8f.55.2025.03.13.07.27.18
+        d=1e100.net; s=20230601; t=1741876076; x=1742480876;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XNUKO0Et5yT84TqbQgeEjeVZKHHspqia0B9fx6XJNnc=;
+        b=TAUR3y+U0c/oToHWyKt6ReE72luVpxqlsVPt93bKuySNoZ+fIuWFVKS+KOOABe4dkL
+         UFXlGBGkEFDjyVhvu7w6BLpPERl5usPcN4B9WXvJmBL4xjhxgpSU2dnfGa4l4/ll+Ese
+         BrC7z2o6J9sqm6YSYLak8uG4CJ4wEDM7NnijQOs6noYmriFmAqBCyhwHkMZBxqbT53v7
+         VvwbWuo+ZqtK4GWEcXzOdIQmQogGfXILlLr8fZUSQy3k4P6VAUFn1RMbjAVI8C1ZwPvF
+         lcnhn+TF+depoFLpJbLcwlQTpUuk3Eb719N6De1mjqlEDdThFOhKgrikOFALfs390HjZ
+         +Gdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnpfKhxlzWA4WhGVSBjIdk+hTEHtKNoiqsMKbsF5GcGRG52J47tN7Vdyq7Qce1mwH1XGjTkNvO2bEDCu21@vger.kernel.org, AJvYcCVn+/4CGGltreEHPCpgGStdvXV1Hh9lm/+SML2MXJY5tX9mVZk6aL6XeoyTTIexDLITSU+xl4X2LKRpmCjz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7T102YWXQPDzsULWZ2wogC3azTSuXr5/BQ9poVj92HBzzkvlZ
+	6b77h6ks8RVlEF9iwHocPdUNlBaYeMfntW5ZDl8YcPzHBe1dzp7J
+X-Gm-Gg: ASbGncuIfEGa36eBRbwB0fuAH7Qi4RnwyjLErCvtBAWDqzLykNyxB7gA70Zyj/0Ncqq
+	QhOIzUqUiCiR9e7UXVOQ49sk3SfZKO4KhJAWx89ELkqPuVOoVmGJ+JUG6mB1uFkF8xwZQmIT28g
+	dBqq/xBcFJC2Wb6uZ0uez8TxfYXUKKa7vAJddN+FhpySQU1pw7D/1dr/SjQ3kmBFfjjzBygjF1f
+	ct70YXfTnHghRk7cwB5aOl0OCGtBH0sUHmKlXca0RRiCSHdKJCyW7Pn5EML8nzT65SFGvYd2zEG
+	csJExC/ukKDZP95QT7o6aA7I3KYq0Vzad/2NwDu4ZC3yWtSVx8H57c6DrFv2XXc=
+X-Google-Smtp-Source: AGHT+IEVZmpHLZrjcMQPf6kMwb6oK78NasXzqSzxf7wU1VF0VoUZxabsmjus6/LDL9zjOhY19483+A==
+X-Received: by 2002:a17:907:1b16:b0:ac1:fa6f:4941 with SMTP id a640c23a62f3a-ac252a9d6a0mr3352723966b.13.1741876075535;
+        Thu, 13 Mar 2025 07:27:55 -0700 (PDT)
+Received: from f.. (cst-prg-90-242.cust.vodafone.cz. [46.135.90.242])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aefadsm86411066b.8.2025.03.13.07.27.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 07:27:18 -0700 (PDT)
-Date: Thu, 13 Mar 2025 15:27:17 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v3 14/17] RISC-V: KVM: add SBI extension init()/deinit()
- functions
-Message-ID: <20250313-f08cee46c912f729d1829d37@orel>
-References: <20250310151229.2365992-1-cleger@rivosinc.com>
- <20250310151229.2365992-15-cleger@rivosinc.com>
+        Thu, 13 Mar 2025 07:27:54 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: dedup handling of struct filename init and refcounts bumps
+Date: Thu, 13 Mar 2025 15:27:44 +0100
+Message-ID: <20250313142744.1323281-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250310151229.2365992-15-cleger@rivosinc.com>
 
-On Mon, Mar 10, 2025 at 04:12:21PM +0100, Clément Léger wrote:
-> The FWFT SBI extension will need to dynamically allocate memory and do
-> init time specific initialization. Add an init/deinit callbacks that
-> allows to do so.
-> 
-> Signed-off-by: Clément Léger <cleger@rivosinc.com>
-> ---
->  arch/riscv/include/asm/kvm_vcpu_sbi.h |  9 +++++++++
->  arch/riscv/kvm/vcpu.c                 |  2 ++
->  arch/riscv/kvm/vcpu_sbi.c             | 29 +++++++++++++++++++++++++++
->  3 files changed, 40 insertions(+)
-> 
-> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/include/asm/kvm_vcpu_sbi.h
-> index 4ed6203cdd30..bcb90757b149 100644
-> --- a/arch/riscv/include/asm/kvm_vcpu_sbi.h
-> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi.h
-> @@ -49,6 +49,14 @@ struct kvm_vcpu_sbi_extension {
->  
->  	/* Extension specific probe function */
->  	unsigned long (*probe)(struct kvm_vcpu *vcpu);
-> +
-> +	/*
-> +	 * Init/deinit function called once during VCPU init/destroy. These
-> +	 * might be use if the SBI extensions need to allocate or do specific
-> +	 * init time only configuration.
-> +	 */
-> +	int (*init)(struct kvm_vcpu *vcpu);
-> +	void (*deinit)(struct kvm_vcpu *vcpu);
->  };
->  
->  void kvm_riscv_vcpu_sbi_forward(struct kvm_vcpu *vcpu, struct kvm_run *run);
-> @@ -69,6 +77,7 @@ const struct kvm_vcpu_sbi_extension *kvm_vcpu_sbi_find_ext(
->  bool riscv_vcpu_supports_sbi_ext(struct kvm_vcpu *vcpu, int idx);
->  int kvm_riscv_vcpu_sbi_ecall(struct kvm_vcpu *vcpu, struct kvm_run *run);
->  void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu);
-> +void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu);
->  
->  int kvm_riscv_vcpu_get_reg_sbi_sta(struct kvm_vcpu *vcpu, unsigned long reg_num,
->  				   unsigned long *reg_val);
-> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-> index 60d684c76c58..877bcc85c067 100644
-> --- a/arch/riscv/kvm/vcpu.c
-> +++ b/arch/riscv/kvm/vcpu.c
-> @@ -185,6 +185,8 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
->  
->  void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
->  {
-> +	kvm_riscv_vcpu_sbi_deinit(vcpu);
-> +
->  	/* Cleanup VCPU AIA context */
->  	kvm_riscv_vcpu_aia_deinit(vcpu);
->  
-> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
-> index d1c83a77735e..858ddefd7e7f 100644
-> --- a/arch/riscv/kvm/vcpu_sbi.c
-> +++ b/arch/riscv/kvm/vcpu_sbi.c
-> @@ -505,8 +505,37 @@ void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu)
->  			continue;
->  		}
->  
-> +		if (!ext->default_disabled && ext->init &&
-> +		    ext->init(vcpu) != 0) {
-> +			scontext->ext_status[idx] = KVM_RISCV_SBI_EXT_STATUS_UNAVAILABLE;
-> +			continue;
-> +		}
+No functional changes.
 
-I think this new block should be below the assignment below (and it can
-drop the continue) and it shouldn't check default_disabled (as I've done
-below). IOW, we should always run ext->init when there is one to run here.
-Otherwise, I how will it get run later?
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-> +
->  		scontext->ext_status[idx] = ext->default_disabled ?
->  					KVM_RISCV_SBI_EXT_STATUS_DISABLED :
->  					KVM_RISCV_SBI_EXT_STATUS_ENABLED;
+This is extracted from the patch which tried to introduce optional
+non-atomic operation.
 
-                if (ext->init && ext->init(vcpu))
-                    scontext->ext_status[idx] = KVM_RISCV_SBI_EXT_STATUS_UNAVAILABLE;
+I think this is an ok cleanup, but I'm not going to argue about it.
 
->  	}
->  }
-> +
-> +void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm_vcpu_sbi_context *scontext = &vcpu->arch.sbi_context;
-> +	const struct kvm_riscv_sbi_extension_entry *entry;
-> +	const struct kvm_vcpu_sbi_extension *ext;
-> +	int idx, i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(sbi_ext); i++) {
-> +		entry = &sbi_ext[i];
-> +		ext = entry->ext_ptr;
-> +		idx = entry->ext_idx;
-> +
-> +		if (idx < 0 || idx >= ARRAY_SIZE(scontext->ext_status))
-> +			continue;
-> +
-> +		if (scontext->ext_status[idx] == KVM_RISCV_SBI_EXT_STATUS_UNAVAILABLE ||
-> +		    !ext->deinit)
-> +			continue;
-> +
-> +		ext->deinit(vcpu);
-> +	}
-> +}
-> -- 
-> 2.47.2
->
+ultimately this is a big NOP
 
-Thanks,
-drew
+ fs/namei.c         | 17 +++++++++--------
+ include/linux/fs.h |  6 ++++++
+ kernel/auditsc.c   | 12 +++++-------
+ 3 files changed, 20 insertions(+), 15 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 06765d320e7e..699158c325bf 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -125,6 +125,13 @@
+ 
+ #define EMBEDDED_NAME_MAX	(PATH_MAX - offsetof(struct filename, iname))
+ 
++static inline void initname(struct filename *name)
++{
++	name->uptr = NULL;
++	name->aname = NULL;
++	atomic_set(&name->refcnt, 1);
++}
++
+ struct filename *
+ getname_flags(const char __user *filename, int flags)
+ {
+@@ -203,10 +210,7 @@ getname_flags(const char __user *filename, int flags)
+ 			return ERR_PTR(-ENAMETOOLONG);
+ 		}
+ 	}
+-
+-	atomic_set(&result->refcnt, 1);
+-	result->uptr = filename;
+-	result->aname = NULL;
++	initname(result);
+ 	audit_getname(result);
+ 	return result;
+ }
+@@ -264,11 +268,8 @@ struct filename *getname_kernel(const char * filename)
+ 		return ERR_PTR(-ENAMETOOLONG);
+ 	}
+ 	memcpy((char *)result->name, filename, len);
+-	result->uptr = NULL;
+-	result->aname = NULL;
+-	atomic_set(&result->refcnt, 1);
++	initname(result);
+ 	audit_getname(result);
+-
+ 	return result;
+ }
+ EXPORT_SYMBOL(getname_kernel);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 62440a9383dc..016b0fe1536e 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2865,6 +2865,12 @@ static inline struct filename *getname_maybe_null(const char __user *name, int f
+ extern void putname(struct filename *name);
+ DEFINE_FREE(putname, struct filename *, if (!IS_ERR_OR_NULL(_T)) putname(_T))
+ 
++static inline struct filename *refname(struct filename *name)
++{
++	atomic_inc(&name->refcnt);
++	return name;
++}
++
+ extern int finish_open(struct file *file, struct dentry *dentry,
+ 			int (*open)(struct inode *, struct file *));
+ extern int finish_no_open(struct file *file, struct dentry *dentry);
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 9c853cde9abe..78fd876a5473 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2207,10 +2207,8 @@ __audit_reusename(const __user char *uptr)
+ 	list_for_each_entry(n, &context->names_list, list) {
+ 		if (!n->name)
+ 			continue;
+-		if (n->name->uptr == uptr) {
+-			atomic_inc(&n->name->refcnt);
+-			return n->name;
+-		}
++		if (n->name->uptr == uptr)
++			return refname(n->name);
+ 	}
+ 	return NULL;
+ }
+@@ -2237,7 +2235,7 @@ void __audit_getname(struct filename *name)
+ 	n->name = name;
+ 	n->name_len = AUDIT_NAME_FULL;
+ 	name->aname = n;
+-	atomic_inc(&name->refcnt);
++	refname(name);
+ }
+ 
+ static inline int audit_copy_fcaps(struct audit_names *name,
+@@ -2369,7 +2367,7 @@ void __audit_inode(struct filename *name, const struct dentry *dentry,
+ 		return;
+ 	if (name) {
+ 		n->name = name;
+-		atomic_inc(&name->refcnt);
++		refname(name);
+ 	}
+ 
+ out:
+@@ -2496,7 +2494,7 @@ void __audit_inode_child(struct inode *parent,
+ 		if (found_parent) {
+ 			found_child->name = found_parent->name;
+ 			found_child->name_len = AUDIT_NAME_FULL;
+-			atomic_inc(&found_child->name->refcnt);
++			refname(found_child->name);
+ 		}
+ 	}
+ 
+-- 
+2.43.0
+
 
