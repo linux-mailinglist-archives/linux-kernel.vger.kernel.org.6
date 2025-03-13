@@ -1,236 +1,103 @@
-Return-Path: <linux-kernel+bounces-560338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 972FFA602B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:35:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0E2A602B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 21:35:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57AD417EA7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:35:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18ACB17E95C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Mar 2025 20:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3071F4C85;
-	Thu, 13 Mar 2025 20:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939C11F4610;
+	Thu, 13 Mar 2025 20:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="ORaCZlcw"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hPXDeoEm"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844571F37C5;
-	Thu, 13 Mar 2025 20:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDB516B3A1;
+	Thu, 13 Mar 2025 20:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741898132; cv=none; b=Ze1mjNjfHQ54Wv0ne79T+keAGFsrwOEjRggGt3R3s0X4/oMWwpoPfGFup/tf06qF/rCgI1DJxiIauto8VqmMbYZinPsiNTHEL9L4sINKRJzfwsIZnwaV4Ynai8r7OuxsCrQJtRsfoRxy1UpfPgPGM3bJ3ur4R3bo6tK4AnHPwRQ=
+	t=1741898131; cv=none; b=DiVR4RRbHqhPq3yjP2KVBF15KhcDdZMhgaKMyhtfEapRBsJEzEnGoiFX6ro1NqbIx+oj+UzDDCC9Hbu4PdJsyi7ZTkzHo0W1WeSIr/jbL2GzJa1WaLG8ezVZsfZyyOh7G32/+fiAv2FgqvA1wiyDJz+NU/ZJlbFdwwoK2ouZDoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741898132; c=relaxed/simple;
-	bh=Bu0PktBMHBhQFAY01Z2FQXI2KJUpuNghVeOrGayJTC8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UZzJg4NrVNpc9uScg07eGcy5fEIThr3R1XJrYUVwDPJuY0A8Mex8Kvf7OKk4zYyOET6TAlxHt22txU797cpwQ1ASAHJWiXiG/2MnSjoo8VBoiZoXEv0iwqERmu4m1wJ610+RG/veBrj6tLIJfX4mC6cuOgFd8Puop6lq0CXX/Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=ORaCZlcw; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
- id 5c0ce5d0e197efee; Thu, 13 Mar 2025 21:35:28 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id D9D428E4517;
-	Thu, 13 Mar 2025 21:35:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1741898128;
-	bh=Bu0PktBMHBhQFAY01Z2FQXI2KJUpuNghVeOrGayJTC8=;
-	h=From:Subject:Date;
-	b=ORaCZlcwCKy3PNpT43l/Q7W5qIyX0jMtipCZz7nvJbKKsgcC+YqEvPV8fz/efLwg2
-	 Jh/nn4EyaSnWQDmUPI5Ecyp2vk4omoE1ZdecemVT6J1FhvOjuZFPyOYEAYcSkMVrw+
-	 YOAdPalGzpK7B2fbhpiJ1l/1ZRnT634BVpHQ6dFaQVxwuYV0VNKb926PVHa5fjR3Cs
-	 RrEDzp+OBoi7zEYxB4ulLJOfIWTRNXL44R9DDFr8vijxr+oddTXziJZ6XmlY2bBiM/
-	 McyNUCcvVSwJ65PKj0CaRlTLWKC2efwWVCqvWVaD4O1dgTsirrxDU3brnveYMPumjr
-	 ZzHHUHSBM3pcQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
- Johan Hovold <johan@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Jon Hunter <jonathanh@nvidia.com>, Saravana Kannan <saravanak@google.com>
-Subject:
- [PATCH v2 2/3] PM: sleep: Suspend parents and suppliers after suspending
- subordinates
-Date: Thu, 13 Mar 2025 21:34:33 +0100
-Message-ID: <3271724.5fSG56mABF@rjwysocki.net>
-In-Reply-To: <1915694.tdWV9SEqCh@rjwysocki.net>
-References: <1915694.tdWV9SEqCh@rjwysocki.net>
+	s=arc-20240116; t=1741898131; c=relaxed/simple;
+	bh=vG1/GTZTztaKTlFbvjaWpZ7BP6jdv4Vi801Ajq1rZxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dhmdZP9VcbbxYDeuu6RHSS+SNrqMeV22kkLGhqEJo2IW9GiJ0ORqwFnQrPqrbXLuXNbjl2ind07CpRRM+Ehe9bWsj/uIlbtDNvELsq8Sjw7VOFWyi7yOM2Q+DJh5DwAw4+VRsaupJdd2CUVAzX59X+dgi53c1Byiq25z3EYy+pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hPXDeoEm; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=47pVUFdvv/TqY2u3zdaa6j0HG9FLVWfVN2aBELxBuiE=; b=hPXDeoEmQp90e5m6r6DEysatbO
+	a5RBxQjmlA+6jQBUOcyA3g2CG47an3uhOzVB21iFiUJCBEJm77HxomiNhjCq+esOnT5XjXbPvzMwd
+	sSjRcTSnBM3eu/d03my6FROS8urAsi5lfzWqlXIS1KH6P/uCPLkUe5bzLZQ33jrKGJZY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tspGj-0056DQ-Tk; Thu, 13 Mar 2025 21:35:05 +0100
+Date: Thu, 13 Mar 2025 21:35:05 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>,
+	"markus.stockhausen@gmx.de" <markus.stockhausen@gmx.de>,
+	"sander@svanheule.net" <sander@svanheule.net>,
+	netdev <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10] net: mdio: Add RTL9300 MDIO driver
+Message-ID: <be39bb63-446e-4c6a-9bb9-a823f0a482be@lunn.ch>
+References: <20250313010726.2181302-1-chris.packham@alliedtelesis.co.nz>
+ <f7c7f28b-f2b0-464a-a621-d4b2f815d206@lunn.ch>
+ <5ea333ec-c2e4-4715-8a44-0fd2c77a4f3c@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdekleefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgvrhhnsehrohiflhgrnhgurdhhrghrvhgrrhgurdgvughupdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhgpdhrtghpthhtohepjhhohhgrnheskhgvrhhnvghlrdhorhhgpdhrtgh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=8 Fuz1=8 Fuz2=8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ea333ec-c2e4-4715-8a44-0fd2c77a4f3c@alliedtelesis.co.nz>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Mar 13, 2025 at 07:54:39PM +0000, Chris Packham wrote:
+> +cc netdev, lkml
+> 
+> On 14/03/2025 01:34, Andrew Lunn wrote:
+> >> +	/* Put the interfaces into C45 mode if required */
+> >> +	glb_ctrl_mask = GENMASK(19, 16);
+> >> +	for (i = 0; i < MAX_SMI_BUSSES; i++)
+> >> +		if (priv->smi_bus_is_c45[i])
+> >> +			glb_ctrl_val |= GLB_CTRL_INTF_SEL(i);
+> >> +
+> >> +	fwnode_for_each_child_node(node, child)
+> >> +		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
+> >> +			priv->smi_bus_is_c45[mdio_bus] = true;
+> >> +
+> > This needs more explanation. Some PHYs mix C22 and C45, e.g. the > 1G
+> > speed support registers are in the C45 address space, but <= 1G is in
+> > the C22 space. And 1G PHYs which support EEE need access to C45 space
+> > for the EEE registers.
+> 
+> Ah good point. The MDIO interfaces are either in GPHY (i.e. clause 22) 
+> or 10GPHY mode (i.e. clause 45). This does mean we can't support support 
+> both c45 and c22 on the same MDIO bus (whether that's one PHY that 
+> supports both or two different PHYs). I'll add a comment to that effect 
+> and I should probably only provide bus->read/write or 
+> bus->read_c45/write_c45 depending on the mode.
 
-In analogy with the previous change affecting the resume path,
-make device_suspend() start the async suspend of the device's parent
-and suppliers after the device itself has been processed and make
-dpm_suspend() start processing "async" leaf devices (that is, devices
-without children or consumers) upfront because they don't need to wait
-for any other devices.
+Is there more to it than this? Because why not just set the mode per
+bus transaction?
 
-On the Dell XPS13 9360 in my office, this change reduces the total
-duration of device suspend by approximately 100 ms (over 20%).
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Suggested-by: Saravana Kannan <saravanak@google.com>
----
-
-v1 -> v2:
-   * Adjust for the changes in patch [1/3].
-   * Fix walking suppliers in dpm_async_suspend_superior().
-   * Use device links read locking in dpm_async_suspend_superior() (Saravana).
-   * Move all devices to the target list even if there are errors in
-     dpm_suspend() so they are properly resumed during rollback (Saravana).
-
----
- drivers/base/power/main.c |   78 ++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 72 insertions(+), 6 deletions(-)
-
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1231,6 +1231,50 @@
- 
- /*------------------------- Suspend routines -------------------------*/
- 
-+static bool dpm_leaf_device(struct device *dev)
-+{
-+	struct device *child;
-+
-+	lockdep_assert_held(&dpm_list_mtx);
-+
-+	child = device_find_any_child(dev);
-+	if (child) {
-+		put_device(child);
-+
-+		return false;
-+	}
-+
-+	/*
-+	 * Since this function is required to run under dpm_list_mtx, the
-+	 * list_empty() below will only return true if the device's list of
-+	 * consumers is actually empty before calling it.
-+	 */
-+	return list_empty(&dev->links.consumers);
-+}
-+
-+static void dpm_async_suspend_superior(struct device *dev, async_func_t func)
-+{
-+	struct device_link *link;
-+	int idx;
-+
-+	mutex_lock(&dpm_list_mtx);
-+
-+	/* Start processing the device's parent if it is "async". */
-+	if (dev->parent)
-+		dpm_async_with_cleanup(dev->parent, func);
-+
-+	mutex_unlock(&dpm_list_mtx);
-+
-+	idx = device_links_read_lock();
-+
-+	/* Start processing the device's "async" suppliers. */
-+	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
-+		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
-+			dpm_async_with_cleanup(link->supplier, func);
-+
-+	device_links_read_unlock(idx);
-+}
-+
- /**
-  * resume_event - Return a "resume" message for given "suspend" sleep state.
-  * @sleep_state: PM message representing a sleep state.
-@@ -1656,6 +1700,8 @@
- 	device_links_read_unlock(idx);
- }
- 
-+static void async_suspend(void *data, async_cookie_t cookie);
-+
- /**
-  * device_suspend - Execute "suspend" callbacks for given device.
-  * @dev: Device to handle.
-@@ -1785,7 +1831,13 @@
- 
- 	complete_all(&dev->power.completion);
- 	TRACE_SUSPEND(error);
--	return error;
-+
-+	if (error || async_error)
-+		return error;
-+
-+	dpm_async_suspend_superior(dev, async_suspend);
-+
-+	return 0;
- }
- 
- static void async_suspend(void *data, async_cookie_t cookie)
-@@ -1803,6 +1855,7 @@
- int dpm_suspend(pm_message_t state)
- {
- 	ktime_t starttime = ktime_get();
-+	struct device *dev;
- 	int error = 0;
- 
- 	trace_suspend_resume(TPS("dpm_suspend"), state.event, true);
-@@ -1816,12 +1869,28 @@
- 
- 	mutex_lock(&dpm_list_mtx);
- 
-+	/*
-+	 * Start processing "async" leaf devices upfront because they don't need
-+	 * to wait.
-+	 */
-+	list_for_each_entry_reverse(dev, &dpm_prepared_list, power.entry) {
-+		dpm_clear_async_state(dev);
-+		if (dpm_leaf_device(dev))
-+			dpm_async_with_cleanup(dev, async_suspend);
-+	}
-+
- 	while (!list_empty(&dpm_prepared_list)) {
--		struct device *dev = to_device(dpm_prepared_list.prev);
-+		dev = to_device(dpm_prepared_list.prev);
- 
- 		list_move(&dev->power.entry, &dpm_suspended_list);
- 
--		dpm_clear_async_state(dev);
-+		/*
-+		 * Move all devices to the target list to resume them properly
-+		 * on errors.
-+		 */
-+		if (error || async_error)
-+			continue;
-+
- 		if (dpm_async_fn(dev, async_suspend))
- 			continue;
- 
-@@ -1834,9 +1903,6 @@
- 		put_device(dev);
- 
- 		mutex_lock(&dpm_list_mtx);
--
--		if (error || async_error)
--			break;
- 	}
- 
- 	mutex_unlock(&dpm_list_mtx);
-
-
-
+	Andrew
 
